@@ -23,8 +23,9 @@ default:
 
 stages:
   - lint
-  - test
   - build
+  - test
+  - deploy
 
 eslint:
   stage: lint
@@ -36,13 +37,23 @@ prettier:
   script:
     - npm run prettier:check
 
+build:
+  stage: build
+  variables:
+    SKIP_SENTRY_RELEASE: 'true'
+  script:
+    - npm run build
+  except:
+    - develop
+    - main
+
 unit-test:
   stage: test
   script:
     - npm run test:ci
 
-build-dev:
-  stage: build
+deploy-dev:
+  stage: deploy
   extends: .build-image-using-kaniko
   before_script: []
   variables:
@@ -60,8 +71,8 @@ build-dev:
   only:
     - develop
 
-build-prod:
-  stage: build
+deploy-prod:
+  stage: deploy
   extends: .build-image-using-kaniko
   before_script: []
   variables:
