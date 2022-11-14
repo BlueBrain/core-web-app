@@ -1,0 +1,25 @@
+.placeHolder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 1em;
+  margin: 0;
+  overflow: auto;
+}
+
+.placeHolder::after {
+  content: 'PLACEHOLDER';
+  position: absolute;
+  opacity: 0.5;
+  text-align: center;
+  border: 0.25em solid #fff;
+  line-height: 3em;
+  width: 10em;
+  left: 50%;
+  top: 50%;
+  transform: rotate(-45deg);
+  margin: -1.5em -5em;
+  font-size: 8vmin;
+}

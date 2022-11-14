@@ -1,16 +1,13 @@
 import Head from 'next/head';
-import styles from '@/styles/Home.module.scss';
+import Home from '@/components/home';
 
-export default function Home() {
+export default function App() {
   return (
-    <div className={styles.container}>
+    <>
       <Head>
         <title>Swiss brain observatory</title>
       </Head>
-
-      <main className={styles.main}>
-        <h1>Welcome to the Swiss Brain Observatory</h1>
-      </main>
-    </div>
+      <Home />
+    </>
   );
 }

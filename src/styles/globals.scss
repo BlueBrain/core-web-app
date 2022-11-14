@@ -1,3 +1,41 @@
 @import '~tailwindcss/base';
 @import '~tailwindcss/components';
 @import '~tailwindcss/utilities';
+
+/**
+ * Following styles comes from Loris Olivier specifications:
+ * https://www.figma.com/file/pnTNrLGKOyeNkfL4d2P5zR/Swiss-Brain-Observatory?node-id=278%3A3341&t=2XFrYxlJyJ3ENd4s-0
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+
+html {
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+h1 {
+  font-size: 38px;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+h4 {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+h5 {
+  font-size: 16px;
+  line-height: 1.25;
+}
