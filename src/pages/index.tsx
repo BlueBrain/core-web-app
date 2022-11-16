@@ -7,6 +7,7 @@ export default function App() {
       <Head>
         <title>Swiss brain observatory</title>
       </Head>
+
       <Home />
     </>
   );

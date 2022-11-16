@@ -1,5 +1,7 @@
 import * as React from 'react';
 import type { AppProps } from 'next/app';
+import { Titillium_Web } from '@next/font/google';
+
 import '@/styles/globals.scss';
 import { useSetAtom } from 'jotai';
 import loginService from '@/services/login';
@@ -27,8 +29,18 @@ function useLogin() {
   }, [setLoginAtom]);
 }
 
+const titilliumWeb = Titillium_Web({
+  weight: ['300', '400', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-titillium-web',
+});
+
 export default function App({ Component, pageProps }: AppProps) {
   useLogin();
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  return <Component {...pageProps} />;
+
+  return (
+    <main className={`${titilliumWeb.variable} font-sans`}>
+      <Component {...pageProps} /> {/* eslint-disable-line react/jsx-props-no-spreading */}
+    </main>
+  );
 }
