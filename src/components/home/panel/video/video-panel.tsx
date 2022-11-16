@@ -1,4 +1,5 @@
 import LoginButton from '@/components/login-button';
+import { basePath } from '@/config';
 import Theme from '@/styles/theme.module.css';
 import Styles from './video-panel.module.css';
 
@@ -16,7 +17,7 @@ function getClassName(className?: string) {
 export default function VideoPanel({ className }: VideoPanelProps) {
   return (
     <div className={getClassName(className)}>
-      <video src="video/home.mp4" autoPlay loop muted />
+      <video src={`${basePath}/video/home.mp4`} autoPlay loop muted />
       <section>
         <h1>
           Swiss
