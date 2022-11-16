@@ -2,11 +2,6 @@
 @import '~tailwindcss/components';
 @import '~tailwindcss/utilities';
 
-/**
- * Following styles comes from Loris Olivier specifications:
- * https://www.figma.com/file/pnTNrLGKOyeNkfL4d2P5zR/Swiss-Brain-Observatory?node-id=278%3A3341&t=2XFrYxlJyJ3ENd4s-0
- */
-
 html {
   font-size: 14px;
   line-height: 1.45;
@@ -35,4 +30,34 @@ h4 {
 h5 {
   font-size: 16px;
   line-height: 1.25;
+}
+
+.accordion-chevron {
+  @apply transition-transform;
+}
+
+.accordion-trigger[data-state='open'] > .accordion-chevron {
+  @apply rotate-180;
+}
+
+.accordion-trigger[data-state='open'] {
+  @apply text-white;
+  @apply font-bold;
+}
+
+.accordion-trigger[data-state='open'] > .accordion-chevron path {
+  @apply fill-white;
+}
+
+.accordion-header[data-state='open'] > .accordion-arrow path {
+  @apply fill-white;
+}
+
+.accordion-header.is-active {
+  @apply font-bold;
+  @apply text-white;
+}
+
+.accordion-header.is-active > .accordion-arrow path {
+  @apply fill-white;
 }

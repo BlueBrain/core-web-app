@@ -1,11 +1,8 @@
 import Styles from './icon.module.css';
 
-const defaultProps = {
-  className: '',
-};
 export type IconProps = {
   className?: string;
-} & typeof defaultProps;
+};
 
 function getClassName(className?: string) {
   const classes = [Styles.icon];
@@ -20,4 +17,3 @@ export default function IconPlus({ className }: IconProps) {
     </svg>
   );
 }
-IconPlus.defaultProps = defaultProps;

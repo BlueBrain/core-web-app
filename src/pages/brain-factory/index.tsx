@@ -1,11 +1,8 @@
 import * as React from 'react';
-import PlaceHolder from '@/components/placeholder';
-import Theme from '@/styles/theme.module.css';
+import dynamic from 'next/dynamic';
+
+const SidebarGroup = dynamic(() => import('./Sidebar'), { ssr: false });
 
 export default function BrainFactory() {
-  return (
-    <PlaceHolder className={Theme.colorPrimary8}>
-      <h1>Brain Factory</h1>
-    </PlaceHolder>
-  );
+  return <SidebarGroup />;
 }

@@ -3,5 +3,8 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "ignorePatterns": ["**/*.js", "**/*.jsx"]
+  "ignorePatterns": ["**/*.js", "**/*.jsx"],
+  "rules": {
+    "react/require-default-props": "off"
+  }
 }

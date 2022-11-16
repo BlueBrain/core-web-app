@@ -1,0 +1,29 @@
+.accordion-chevron {
+  @apply transition-transform;
+}
+
+.accordion-trigger[data-state='open'] > .accordion-chevron {
+  @apply rotate-180;
+}
+
+.accordion-trigger[data-state='open'] {
+  @apply text-white;
+  @apply font-bold;
+}
+
+.accordion-header[data-state='open'] > .accordion-arrow path {
+  @apply fill-white;
+}
+
+.accordion-trigger[data-state='open'] > .accordion-chevron path {
+  @apply fill-white;
+}
+
+.accordion-header.is-active {
+  @apply font-bold;
+  @apply text-white;
+}
+
+.accordion-header.is-active > .accordion-arrow path {
+  @apply fill-white;
+}
