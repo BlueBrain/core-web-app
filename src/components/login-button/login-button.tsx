@@ -1,23 +1,20 @@
 import * as React from 'react';
-import { loginService } from '@/services/login';
+import loginService from '@/services/login';
+import { useLoginAtomValue } from '@/atoms/login';
 import Styles from './login-button.module.css';
-import { GenericEventInterface } from '../../services/login/generic-event';
-
-function useGenericEvent<T>(event: GenericEventInterface<T>, defaultValue: T): T {
-  const [value, setValue] = React.useState(defaultValue);
-  React.useEffect(() => {
-    event.addListener(setValue);
-    return () => event.removeListener(setValue);
-  }, [event]);
-  return value;
-}
 
 export default function LoginButton() {
-  const islogged = useGenericEvent(loginService.eventLogged, loginService.isLogged);
-  if (islogged) {
+  const login = useLoginAtomValue();
+
+  if (login) {
     return (
       <div className={Styles.logoutButton}>
-        <div>{loginService.userName}</div>
+        <button className={Styles.loginButton} type="button" onClick={() => loginService.logout()}>
+          Logout
+        </button>
+        <div>
+          {login.displayname} ({login.username})
+        </div>
       </div>
     );
   }

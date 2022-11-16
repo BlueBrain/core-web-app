@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLoginAtomValue } from '@/atoms/login';
 import Styles from './place-holder.module.css';
 
 const defaultProps = {
@@ -16,6 +17,18 @@ function getClassName(className: string) {
 }
 
 export default function PlaceHolder({ children, className }: PlaceHolderProps) {
-  return <div className={getClassName(className)}>{children}</div>;
+  const login = useLoginAtomValue();
+  return (
+    <div className={getClassName(className)}>
+      {children}
+      <br />
+      {login && (
+        <ul>
+          <li>{login.displayname}</li>
+          <li>{login.username}</li>
+        </ul>
+      )}
+    </div>
+  );
 }
 PlaceHolder.defaultProps = defaultProps;

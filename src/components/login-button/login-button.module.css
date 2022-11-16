@@ -8,6 +8,11 @@
   margin: 0.5em 0;
   background: none;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.loginButton:active {
+  background-color: #003a8c;
 }
 
 .logoutButton {

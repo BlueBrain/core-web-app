@@ -1,4 +1,3 @@
-import loginService, { LoginServiceInterface as LoginServiceInterfaceType } from './login';
+import loginService from './login';
 
-export { loginService };
-export type LoginServiceInterface = LoginServiceInterfaceType;
+export default loginService;

@@ -14,7 +14,10 @@ export interface KeycloakTokenResponse {
 
 export interface UserInfo {
   email: string;
+  family_name: string;
+  given_name: string;
   name: string;
+  preferred_username: string;
 }
 
 export function isKeycloakTokenResponse(data: unknown): data is KeycloakTokenResponse {
@@ -43,6 +46,12 @@ export function isKeycloakTokenResponse(data: unknown): data is KeycloakTokenRes
 
 export function isUserInfo(data: unknown): data is UserInfo {
   if (!isObject(data)) return false;
-  const { name, email } = data;
-  return isString(name) && isString(email);
+  const { name, family_name, given_name, preferred_username, email } = data;
+  return (
+    isString(name) &&
+    isString(email) &&
+    isString(family_name) &&
+    isString(given_name) &&
+    isString(preferred_username)
+  );
 }
