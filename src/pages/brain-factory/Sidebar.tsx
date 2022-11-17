@@ -2,6 +2,9 @@ import { useLoginAtomValue } from '@/atoms/login';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
+import Image from 'next/image';
+
+import { basePath } from '@/config';
 import utils from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
@@ -95,8 +98,9 @@ function NavItem({
         )}
       </Accordion.Header>
       {items && items.length > 0 && (
-        <Accordion.Content className="pl-3 divide-y divide-blue-7">
+        <Accordion.Content className="pl-3">
           <Accordion.Root
+            className="divide-y divide-blue-7"
             collapsible
             type="single"
             onValueChange={(value) => onChange && onChange(value)}
@@ -200,7 +204,7 @@ function BrainRegionDetails({ title, me_type_details: meTypeDetails }: BrainRegi
             {neuronsMtypes &&
               neuronsMtypes.map(({ id, e_types, title: mtypeTitle }) => (
                 <NavItem
-                  className="font-bold"
+                  className="text-base"
                   id={id}
                   items={e_types}
                   key={id}
@@ -216,7 +220,7 @@ function BrainRegionDetails({ title, me_type_details: meTypeDetails }: BrainRegi
             Glia
             {gliaDensity && <small className="font-normal text-base">{gliaDensity}</small>}
           </h2>
-          <Accordion.Root className="space-y-0 divide-y divide-blue-7" collapsible type="single">
+          <Accordion.Root className="divide-y divide-blue-7" collapsible type="single">
             {gliaCellTypes &&
               gliaCellTypes.map(({ id, ...props }) => (
                 <NavItem
@@ -289,10 +293,8 @@ function SidebarGroup() {
 
   return (
     <div className="flex">
-      <div className="bg-blue-9 h-screen w-12 py-6 flex justify-center items-baseline">
-        <div className="text-md font-bold text-white" style={{ writingMode: 'sideways-lr' }}>
-          Release 23.01
-        </div>
+      <div className="bg-blue-9 h-screen w-12 py-20 flex justify-center items-baseline">
+        <div className="text-md font-bold text-white -rotate-90 whitespace-pre">Release 23.01</div>
       </div>
       <div className="bg-blue-8 flex flex-1 flex-col h-screen max-w-xs ">
         <div className="flex flex-1 flex-col overflow-y-auto px-7 py-8">
@@ -319,6 +321,57 @@ function SidebarGroup() {
               {...selectedBrainRegion} // eslint-disable-line react/jsx-props-no-spreading
             />
           )}
+        </div>
+      </div>
+
+      {/*
+        This is only for the purpose of the demo
+        TODO: move this and page layout to upper level compenent (Brain factory page)
+       */}
+      <div className="flex-auto bg-gray-1" style={{ width: 'calc(100vw - 840px)' }}>
+        <div className="flex flex-col flex-auto h-screen">
+          <div className="flex ">
+            <button
+              type="button"
+              className="flex-auto text-blue-7 h-12"
+              style={{ marginRight: '1px' }}
+            >
+              Cell composition
+            </button>
+            <button
+              type="button"
+              className="flex-auto bg-blue-7 text-white"
+              style={{ marginRight: '1px' }}
+            >
+              Cell model assignment
+            </button>
+            <button
+              type="button"
+              className="flex-auto bg-blue-7 text-white"
+              style={{ marginRight: '1px' }}
+            >
+              Connectome definition
+            </button>
+            <button
+              type="button"
+              className="flex-auto bg-blue-7 text-white"
+              style={{ marginRight: '1px' }}
+            >
+              Connection model assignment
+            </button>
+            <button type="button" className="flex-auto bg-green-2 text-white">
+              Build
+            </button>
+          </div>
+          <div className="flex-1 relative">
+            <Image
+              className="mv-1"
+              src={`${basePath}/images/cell-composition-placeholder.png`}
+              alt="Cell composition placeholder image"
+              fill
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
         </div>
       </div>
     </div>

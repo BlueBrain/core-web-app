@@ -26,6 +26,14 @@ module.exports = {
           2: '#389E0D',
           4: '#95DE64',
         },
+        gray: {
+          1: '#F5F5F5',
+          2: '#D9D9D9',
+          3: '#BFBFBF',
+          4: '#8C8C8C',
+          5: '#434343',
+          6: '#141414',
+        },
       },
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],
