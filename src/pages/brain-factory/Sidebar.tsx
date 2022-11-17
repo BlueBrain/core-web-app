@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 
 import { basePath } from '@/config';
 import utils from '@/util/utils';
@@ -10,6 +11,14 @@ import BrainIcon from '@/components/icons/Brain';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
+import {
+  WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
+  CIRCUIT_BUILDING_FILES,
+} from '@/services/bbp-workflow/config';
+
+const WorkflowLauncher = dynamic(() => import('@/components/workflow-launcher-btn'), {
+  ssr: false,
+});
 
 const { classNames, fetchAtlasAPI } = utils;
 
@@ -359,9 +368,11 @@ function SidebarGroup() {
             >
               Connection model assignment
             </button>
-            <button type="button" className="flex-auto bg-green-2 text-white">
-              Build
-            </button>
+            <WorkflowLauncher
+              buttonText="Build"
+              workflowName={WORKFLOW_CIRCUIT_BUILD_TASK_NAME}
+              workflowFiles={CIRCUIT_BUILDING_FILES}
+            />
           </div>
           <div className="flex-1 relative">
             <Image

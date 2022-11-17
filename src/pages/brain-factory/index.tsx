@@ -1,4 +1,3 @@
-import * as React from 'react';
 import dynamic from 'next/dynamic';
 
 const SidebarGroup = dynamic(() => import('./Sidebar'), { ssr: false });
