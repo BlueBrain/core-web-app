@@ -39,6 +39,8 @@ prettier:
 
 build:
   stage: build
+  variables:
+    SKIP_SENTRY_RELEASE: 'true'
   script:
     - npm run build
   except:

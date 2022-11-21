@@ -4,7 +4,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const SentryWebpackPluginOptions = { silent: true };
+const SentryWebpackPluginOptions = { silent: true, dryRun: !!process.env.SKIP_SENTRY_RELEASE };
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
 
