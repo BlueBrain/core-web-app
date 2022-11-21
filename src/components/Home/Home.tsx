@@ -1,7 +1,8 @@
+import SimplePanel from './panel/SimplePanel';
+import VideoPanel from './panel/VideoPanel';
+
 import Theme from '@/styles/theme.module.css';
-import SimplePanel from './panel/simple';
 import styles from './home.module.css';
-import VideoPanel from './panel/video';
 
 export default function Home() {
   return (

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import { Titillium_Web } from '@next/font/google';
 
@@ -9,7 +9,7 @@ import { loginAtom } from '@/atoms/login';
 
 function useLogin() {
   const setLoginAtom = useSetAtom(loginAtom);
-  React.useEffect(() => {
+  useEffect(() => {
     setLoginAtom(null);
     const handleLoginChange = () => {
       if (loginService.isLogged) {

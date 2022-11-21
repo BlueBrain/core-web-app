@@ -1,19 +1,16 @@
-import IconPlus from '@/components/icons/plus';
 import Link from 'next/link';
-import React from 'react';
+
+import IconPlus from '@/components/icons/Plus';
 import Styles from './simple-panel.module.css';
 
-const defaultProps = {
-  className: '',
-};
 export type SimplePanelProps = {
   className?: string;
   title: string;
   link: string;
   children: React.ReactNode;
-} & typeof defaultProps;
+};
 
-function getClassName(className: string) {
+function getClassName(className?: string) {
   const classes = [Styles.simplePanel];
   if (className) classes.push(className);
   return classes.join(' ');
@@ -30,4 +27,3 @@ export default function SimplePanel({ className, title, link, children }: Simple
     </Link>
   );
 }
-SimplePanel.defaultProps = defaultProps;

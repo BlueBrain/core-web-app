@@ -1,4 +1,3 @@
-import * as React from 'react';
 import loginService from '@/services/login';
 import { useLoginAtomValue } from '@/atoms/login';
 import Styles from './login-button.module.css';

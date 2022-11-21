@@ -5,6 +5,25 @@
   },
   "ignorePatterns": ["**/*.js", "**/*.jsx"],
   "rules": {
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "import/order": [
+      "error",
+      {
+        "pathGroups": [
+          {
+            "pattern": "**/*.+(css|scss|less)",
+            "patternOptions": { "dot": true, "nocomment": true },
+            "group": "unknown",
+            "position": "after"
+          },
+          {
+            "pattern": "{.,..}/**/*.+(css|scss|less)",
+            "patternOptions": { "dot": true, "nocomment": true },
+            "group": "unknown",
+            "position": "after"
+          }
+        ]
+      }
+    ]
   }
 }

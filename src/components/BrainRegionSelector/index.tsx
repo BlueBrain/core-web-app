@@ -1,24 +1,13 @@
-import { useLoginAtomValue } from '@/atoms/login';
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
-import Image from 'next/image';
-import dynamic from 'next/dynamic';
 
-import { basePath } from '@/config';
+import { useLoginAtomValue } from '@/atoms/login';
 import utils from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
-import {
-  WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
-  CIRCUIT_BUILDING_FILES,
-} from '@/services/bbp-workflow/config';
-
-const WorkflowLauncher = dynamic(() => import('@/components/workflow-launcher-btn'), {
-  ssr: false,
-});
 
 const { classNames, fetchAtlasAPI } = utils;
 
@@ -271,7 +260,7 @@ function getBrainRegionById(id: string, accessToken: string) {
   ).then((response) => response.json());
 }
 
-function SidebarGroup() {
+function BrainRegionSelector() {
   const login = useLoginAtomValue();
 
   const [data, setData] = useState<any>();
@@ -332,61 +321,8 @@ function SidebarGroup() {
           )}
         </div>
       </div>
-
-      {/*
-        This is only for the purpose of the demo
-        TODO: move this and page layout to upper level compenent (Brain factory page)
-       */}
-      <div className="flex-auto bg-gray-1" style={{ width: 'calc(100vw - 840px)' }}>
-        <div className="flex flex-col flex-auto h-screen">
-          <div className="flex ">
-            <button
-              type="button"
-              className="flex-auto text-blue-7 h-12"
-              style={{ marginRight: '1px' }}
-            >
-              Cell composition
-            </button>
-            <button
-              type="button"
-              className="flex-auto bg-blue-7 text-white"
-              style={{ marginRight: '1px' }}
-            >
-              Cell model assignment
-            </button>
-            <button
-              type="button"
-              className="flex-auto bg-blue-7 text-white"
-              style={{ marginRight: '1px' }}
-            >
-              Connectome definition
-            </button>
-            <button
-              type="button"
-              className="flex-auto bg-blue-7 text-white"
-              style={{ marginRight: '1px' }}
-            >
-              Connection model assignment
-            </button>
-            <WorkflowLauncher
-              buttonText="Build"
-              workflowName={WORKFLOW_CIRCUIT_BUILD_TASK_NAME}
-              workflowFiles={CIRCUIT_BUILDING_FILES}
-            />
-          </div>
-          <div className="flex-1 relative">
-            <Image
-              className="mv-1"
-              src={`${basePath}/images/cell-composition-placeholder.png`}
-              alt="Cell composition placeholder image"
-              fill
-              style={{ objectFit: 'contain' }}
-            />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
 
-export default SidebarGroup;
+export default BrainRegionSelector;

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import WorkflowLauncher from '@/components/workflow-launcher-btn';
+import WorkflowLauncher from '@/components/WorkflowLauncherBtn';
 import { WORKFLOW_SIMULATION_TASK_NAME, SIMULATION_FILES } from '@/services/bbp-workflow/config';
 import { basePath } from '@/config';
 

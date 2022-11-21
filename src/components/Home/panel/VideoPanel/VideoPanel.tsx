@@ -1,15 +1,14 @@
-import LoginButton from '@/components/login-button';
+import LoginButton from '@/components/LoginButton';
 import { basePath } from '@/config';
-import Theme from '@/styles/theme.module.css';
-import Styles from './video-panel.module.css';
+import theme from '@/styles/theme.module.css';
+import styles from './video-panel.module.css';
 
-const defaultProps = { className: '' };
 export type VideoPanelProps = {
   className?: string;
-} & typeof defaultProps;
+};
 
 function getClassName(className?: string) {
-  const classes = [Styles.videoPanel, Theme.colorPrimary6];
+  const classes = [styles.videoPanel, theme.colorPrimary6];
   if (className) classes.push(className);
   return classes.join(' ');
 }
@@ -31,4 +30,3 @@ export default function VideoPanel({ className }: VideoPanelProps) {
     </div>
   );
 }
-VideoPanel.defaultProps = defaultProps;
