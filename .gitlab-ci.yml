@@ -88,5 +88,4 @@ deploy-prod:
       --build-arg=NEXT_PUBLIC_BASE_PATH
       --build-arg=NEXT_PUBLIC_ENVIRONMENT
   only:
-    - main
-  when: manual
+    - develop
