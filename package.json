@@ -20,10 +20,11 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@next/font": "13.0.3",
+    "@ant-design/icons": "^4.8.0",
+    "@next/font": "^13.0.3",
     "@radix-ui/react-accordion": "^1.0.1",
     "@sentry/nextjs": "^7.18.0",
-    "antd": "^4.24.1",
+    "antd": "^5.0.1",
     "crypto-js": "^4.1.1",
     "jotai": "^1.9.2",
     "next": "13.0.3",
