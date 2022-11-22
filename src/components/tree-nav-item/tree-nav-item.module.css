@@ -1,0 +1,25 @@
+.accordionChevron {
+  @apply transition-transform;
+}
+
+.accordionTrigger:hover .accordionChevron path {
+  @apply fill-white;
+}
+
+.accordionTrigger[data-state='open'] > .accordionChevron {
+  @apply rotate-180;
+}
+
+.accordionTrigger[data-state='open'] {
+  @apply text-white;
+  @apply font-bold;
+}
+
+.accordionTrigger[data-state='open'] > .accordionChevron path {
+  @apply fill-white;
+}
+
+.accordionHeader.is-active {
+  @apply font-bold;
+  @apply text-white;
+}
