@@ -17,6 +17,7 @@ FROM node:18-alpine AS builder
 ARG NEXT_PUBLIC_SENTRY_DSN
 ARG SENTRY_AUTH_TOKEN
 ARG NEXT_PUBLIC_BASE_PATH
+ARG NEXT_PUBLIC_ENVIRONMENT
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
