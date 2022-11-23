@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { launchWorkflowTask } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME, WorkflowFilesType } from '@/services/bbp-workflow/config';
@@ -8,29 +8,26 @@ type Props = {
   buttonText?: string;
   workflowName?: string;
   workflowFiles?: WorkflowFilesType;
+  onLaunchingChange?: any;
 };
 
 export default function WorkflowLauncher({
   buttonText = 'Launch BBP-Workflow',
   workflowName = WORKFLOW_TEST_TASK_NAME,
   workflowFiles = [],
+  onLaunchingChange = () => {},
 }: Props) {
-  const [loading, setLoading] = useState(false);
+  const [launching, setLaunching] = useState(false);
   const login = useLoginAtomValue();
 
   const launchBbpWorkflow = useCallback(async () => {
     if (!login) return;
-    setLoading(true);
+    onLaunchingChange(true);
+    setLaunching(true);
     await launchWorkflowTask(login, workflowName, workflowFiles);
-    setLoading(false);
-  }, [login, workflowName, workflowFiles]);
-
-  if (loading)
-    return (
-      <button type="button" className="flex-auto bg-green-2 text-white h-12 px-8">
-        Launching...
-      </button>
-    );
+    onLaunchingChange(false);
+    setLaunching(false);
+  }, [login, workflowName, workflowFiles, onLaunchingChange]);
 
   return (
     <button
@@ -38,7 +35,7 @@ export default function WorkflowLauncher({
       type="button"
       className="flex-auto bg-green-2 text-white h-12 px-8"
     >
-      {buttonText}
+      {launching ? 'Launching...' : buttonText}
     </button>
   );
 }
