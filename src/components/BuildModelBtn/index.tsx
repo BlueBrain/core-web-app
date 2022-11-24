@@ -29,7 +29,7 @@ export default function BuildModelBtn() {
       <button
         onClick={() => setModalIsOpen(true)}
         type="button"
-        className="flex-auto bg-green-2 text-white h-12 px-8"
+        className="flex-auto bg-secondary-2 text-white h-12 px-8"
       >
         Build
       </button>

@@ -12,14 +12,14 @@ export default function Item({ name, status }: Props) {
   let StatusIconComponent = null;
   switch (status) {
     case STATUS.BUILT:
-      statusColor = 'text-green-1';
+      statusColor = 'text-secondary-1';
       StatusIconComponent = dynamic(() => import('@/components/icons/BuildValidated'), {
         ssr: false,
       });
       break;
 
     case STATUS.CONFIGURED:
-      statusColor = 'text-gray-4';
+      statusColor = 'text-neutral-4';
       StatusIconComponent = dynamic(() => import('@/components/icons/BuildConfigured'), {
         ssr: false,
       });
@@ -38,7 +38,7 @@ export default function Item({ name, status }: Props) {
       break;
 
     default:
-      statusColor = 'text-gray-4';
+      statusColor = 'text-neutral-4';
       StatusIconComponent = dynamic(() => import('@/components/icons/BuildConfigured'), {
         ssr: false,
       });
@@ -47,8 +47,8 @@ export default function Item({ name, status }: Props) {
 
   return (
     <>
-      <div className="h-2.5 w-2.5 bg-gray-400 rounded-3xl mb-3" />
-      <div className="text-lg text-blue-7">{name}</div>
+      <div className="h-2.5 w-2.5 bg-neutral-400 rounded-3xl mb-3" />
+      <div className="text-lg text-primary-7">{name}</div>
       <div className={classNames(statusColor, 'flex items-center gap-1')}>
         <StatusIconComponent />
         <span>{status}</span>

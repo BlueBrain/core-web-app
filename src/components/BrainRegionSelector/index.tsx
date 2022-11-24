@@ -94,7 +94,7 @@ function MeTypeDetails({
         <Accordion.Root collapsible type="single">
           {neuronMtypes.map(({ id, e_types, title }) => (
             <TreeNavItem
-              className="hover:text-white py-3 text-blue-3"
+              className="hover:text-white py-3 text-primary-3"
               id={id}
               items={e_types}
               key={id}
@@ -186,23 +186,23 @@ function BrainRegionSelector() {
 
   return !login ? null : (
     <div className="flex">
-      <div className="bg-blue-9 h-screen w-12 py-20 flex justify-center items-baseline">
+      <div className="bg-primary-9 h-screen w-12 py-20 flex justify-center items-baseline">
         <div className="text-md font-bold text-white -rotate-90 whitespace-pre">Release 23.01</div>
       </div>
-      <div className="bg-blue-8 flex flex-1 flex-col h-screen max-w-[300px]">
+      <div className="bg-primary-8 flex flex-1 flex-col h-screen max-w-[300px]">
         <div className="flex flex-1 flex-col overflow-y-auto px-7 py-8">
           <div className="grid gap-5">
             <Header label={<span>Brain region</span>} icon={<BrainIcon />} />
-            <div className="border-b border-white focus-within:border-blue-2">
+            <div className="border-b border-white focus-within:border-primary-2">
               <input
                 type="text"
-                className="block w-full py-3 text-blue-4 placeholder-blue-4 border-0 border-b border-transparent bg-transparent focus:border-blue-4 focus:ring-0"
+                className="block w-full py-3 text-primary-4 placeholder-primary-4 border-0 border-b border-transparent bg-transparent focus:border-primary-4 focus:ring-0"
                 disabled
                 placeholder="Search region..."
               />
             </div>
             <Accordion.Root
-              className="divide-y divide-blue-7"
+              className="divide-y divide-primary-7"
               collapsible
               onValueChange={setSelectedBrainRegion}
               type="single"
@@ -210,7 +210,7 @@ function BrainRegionSelector() {
               {data &&
                 data.map(({ id, title, items }) => (
                   <TreeNavItem
-                    className="font-bold hover:bg-blue-8 hover:text-white py-3 text-blue-4"
+                    className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
                     id={id}
                     items={items}
                     key={id}
@@ -225,12 +225,12 @@ function BrainRegionSelector() {
           </div>
         </div>
       </div>
-      <div className="bg-blue-7 flex flex-1 flex-col h-screen max-w-[300px]">
+      <div className="bg-primary-7 flex flex-1 flex-col h-screen max-w-[300px]">
         <div className="flex flex-1 flex-col overflow-y-auto py-8">
           {selectedBrainRegion && (
             <div className="grid gap-5 px-7">
               <Header
-                label={<span className="text-green-4">{selectedBrainRegion.title}</span>}
+                label={<span className="text-secondary-4">{selectedBrainRegion.title}</span>}
                 icon={<BrainRegionIcon />}
               />
               {

@@ -5,7 +5,7 @@ import { statusStructure } from '@/components/ExecutionStatus/config';
 
 export default function ExecutionStatus() {
   const items: StepProps[] = statusStructure.map((group) => ({
-    title: <h3 className="text-blue-7">{group.groupName}</h3>,
+    title: <h3 className="text-primary-7">{group.groupName}</h3>,
     description: (
       <div className="flex justify-between w-full mt-5 mb-8">
         {group.items.map((step) => (

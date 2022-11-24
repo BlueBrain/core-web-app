@@ -33,7 +33,7 @@ export default function WorkflowLauncher({
     <button
       onClick={launchBbpWorkflow}
       type="button"
-      className="flex-auto bg-green-2 text-white h-12 px-8"
+      className="flex-auto bg-secondary-2 text-white h-12 px-8"
     >
       {launching ? 'Launching...' : buttonText}
     </button>

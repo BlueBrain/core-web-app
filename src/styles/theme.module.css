@@ -1,100 +1,64 @@
-/**
- * The colors defined in this file come from (current) Loris Olivier specification:
- * https://www.figma.com/file/pnTNrLGKOyeNkfL4d2P5zR/Swiss-Brain-Observatory?node-id=278%3A3341&t=2XFrYxlJyJ3ENd4s-0
- *
- * CSS variable for the colors defines by our graphic designer (Loris Olivier).
- * When a color is used as background, there is mapped one for the text above.
- * For example, a banner with a `--theme-color-primary-3` background color,
- * will have text in `--theme-color-on-primary-3` color to preserve maximum reading
- * contrast.
- * Just add `-on-` after `--theme-color` to get a color for the text "on" another color.
- */
-.theme {
-  --theme-color-text-light: #fff;
-  --theme-color-text-dark: #002766;
-  /**
-     * "surface" is used for panels without color.
-     * Mostly sectons of text, graphics, etc.
-     */
-  --theme-color-surface-1: #f5f5f5;
-  --theme-color-on-surface-1: var(--theme-color-text-dark);
-  --theme-color-surface-2: #d9d9d9;
-  --theme-color-on-surface-2: var(--theme-color-text-dark);
-  --theme-color-surface-3: #bfbfbf;
-  --theme-color-on-surface-3: var(--theme-color-text-dark);
-  --theme-color-surface-4: #8c8c8c;
-  --theme-color-on-surface-4: var(--theme-color-text-dark);
-  --theme-color-surface-5: #434343;
-  --theme-color-on-surface-5: var(--theme-color-text-light);
-  --theme-color-surface-6: #141414;
-  --theme-color-on-surface-6: var(--theme-color-text-light);
-  /**
-     * "primary" is used for side menu panels, headers, highlighted banners, etc.
-     */
-  --theme-color-primary-1: #bae7ff;
-  --theme-color-on-primary-1: var(--theme-color-text-dark);
-  --theme-color-primary-2: #91d5ff;
-  --theme-color-on-primary-2: var(--theme-color-text-dark);
-  --theme-color-primary-3: #69c0ff;
-  --theme-color-on-primary-3: var(--theme-color-text-dark);
-  --theme-color-primary-4: #40a9ff;
-  --theme-color-on-primary-4: var(--theme-color-text-dark);
-  --theme-color-primary-5: #1890ff;
-  --theme-color-on-primary-5: var(--theme-color-text-dark);
-  --theme-color-primary-6: #096dd9;
-  --theme-color-on-primary-6: var(--theme-color-text-light);
-  --theme-color-primary-7: #0050b3;
-  --theme-color-on-primary-7: var(--theme-color-text-light);
-  --theme-color-primary-8: #003a8c;
-  --theme-color-on-primary-8: var(--theme-color-text-light);
-  --theme-color-primary-9: #002766;
-  --theme-color-on-primary-9: var(--theme-color-text-light);
-  /**
-     * "accent" is used for highlighted buttons, links, etc. (TBD)
-     */
-  --theme-color-accent-light: #95de64;
-  --theme-color-on-accent-light: var(--theme-color-text-dark);
-  --theme-color-accent-dark: #389e0d;
-  --theme-color-on-accent-dark: var(--theme-color-text-dark);
+.colorAccentDark {
+  @apply bg-accent-dark;
+  @apply text-dark;
+}
 
-  --theme-color-error: #ff4d4f;
-  --theme-color-on-error: var(--theme-color-text-dark);
-  --theme-color-warning: #fa8c16;
-  --theme-color-on-warning: var(--theme-color-text-dark);
+.colorAccentLight {
+  @apply bg-accent-light;
+  @apply text-dark;
+}
+
+.colorError {
+  @apply bg-error;
+  @apply text-dark;
+}
+
+.colorPrimary1 {
+  @apply bg-primary-1;
+  @apply text-dark;
+}
+
+.colorPrimary2 {
+  @apply bg-primary-2;
+  @apply text-dark;
+}
+
+.colorPrimary3 {
+  @apply bg-primary-3;
+  @apply text-dark;
 }
 
 .colorPrimary4 {
-  composes: theme;
-  background-color: var(--theme-color-primary-4);
-  color: var(--theme-color-on-primary-4);
+  @apply bg-primary-4;
+  @apply text-dark;
 }
 
 .colorPrimary5 {
-  composes: theme;
-  background-color: var(--theme-color-primary-5);
-  color: var(--theme-color-on-primary-5);
+  @apply bg-primary-5;
+  @apply text-dark;
 }
 
 .colorPrimary6 {
-  composes: theme;
-  background-color: var(--theme-color-primary-6);
-  color: var(--theme-color-on-primary-6);
+  @apply bg-primary-6;
+  @apply text-light;
 }
 
 .colorPrimary7 {
-  composes: theme;
-  background-color: var(--theme-color-primary-7);
-  color: var(--theme-color-on-primary-7);
+  @apply bg-primary-7;
+  @apply text-light;
 }
 
 .colorPrimary8 {
-  composes: theme;
-  background-color: var(--theme-color-primary-8);
-  color: var(--theme-color-on-primary-8);
+  @apply bg-primary-8;
+  @apply text-light;
 }
 
 .colorPrimary9 {
-  composes: theme;
-  background-color: var(--theme-color-primary-9);
-  color: var(--theme-color-on-primary-9);
+  @apply bg-primary-9;
+  @apply text-light;
+}
+
+.colorWarning {
+  @apply bg-warning;
+  @apply text-dark;
 }
