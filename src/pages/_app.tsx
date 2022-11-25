@@ -1,10 +1,12 @@
 import * as React from 'react';
 import type { AppProps } from 'next/app';
 import { Titillium_Web } from '@next/font/google';
+import 'antd/dist/antd.css';
 
 import '@/styles/globals.scss';
 import { useSetAtom } from 'jotai';
 import loginService from '@/services/login';
+
 import { loginAtom } from '@/atoms/login';
 
 function useLogin() {
@@ -37,7 +39,6 @@ const titilliumWeb = Titillium_Web({
 
 export default function App({ Component, pageProps }: AppProps) {
   useLogin();
-
   return (
     <main className={`${titilliumWeb.variable} font-sans`}>
       <Component {...pageProps} /> {/* eslint-disable-line react/jsx-props-no-spreading */}
