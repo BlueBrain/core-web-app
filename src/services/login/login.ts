@@ -69,7 +69,7 @@ class LoginService {
       code_challenge: getCodeChallenge(codeVerifier),
       response_type: 'code',
       code_challenge_method: 'S256',
-      scope: 'profile openid',
+      scope: 'profile openid nexus groups',
     };
     const requestUrl = new URL(KEYCLOAK_AUTH_URL);
     Object.entries(requestParams).forEach(([key, value]) =>

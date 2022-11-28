@@ -7,6 +7,7 @@ function fetchAtlasAPI(method, url, accessToken) {
     method,
     headers: new Headers({
       'Access-Control-Allow-Origin': '*',
+      Accept: '*/*',
       Authorization: `Bearer ${accessToken}`,
     }),
   });

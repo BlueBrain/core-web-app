@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import { Titillium_Web } from '@next/font/google';
-
 import '@/styles/globals.scss';
 import { useSetAtom } from 'jotai';
 import loginService from '@/services/login';

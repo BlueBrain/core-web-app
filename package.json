@@ -32,7 +32,9 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sharp": "^0.31.2",
-    "typescript": "4.8.4"
+    "three": "^0.110.0",
+    "typescript": "4.8.4",
+    "wavefront-obj-parser": "^2.0.1"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.0.2",

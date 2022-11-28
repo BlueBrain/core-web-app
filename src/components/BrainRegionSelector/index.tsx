@@ -6,7 +6,8 @@ import utils from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
-import TreeNavItem from '@/components/tree-nav-item';
+import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/components/tree-nav-item';
+import BrainRegionMeshTrigger, { Distribution } from '@/components/BrainRegionMeshTrigger';
 import styles from './brain-region-selector.module.css';
 
 const { fetchAtlasAPI, classNames } = utils;
@@ -54,12 +55,6 @@ function Header({ label, icon }: HeaderProps) {
   );
 }
 
-type TreeChildren = {
-  id: string;
-  title: string;
-  items?: TreeChildren[];
-};
-
 type MeTypeDetailsProps = {
   neurons_density: number;
   neurons_mtypes: {
@@ -92,7 +87,7 @@ function MeTypeDetails({
       </h2>
       {neuronMtypes && (
         <Accordion.Root collapsible type="single">
-          {neuronMtypes.map(({ id, e_types, title }) => (
+          {neuronMtypes.map(({ e_types, id, title }) => (
             <TreeNavItem
               className="hover:text-white py-3 text-primary-3"
               id={id}
@@ -159,14 +154,26 @@ function UppercaseTitle({ title }: TitleComponentProps) {
 }
 
 type BrainRegion = {
+  distribution?: Distribution;
   id: string;
-  title: string;
   me_type_details: MeTypeDetailsProps;
+  title: string;
+  color_code: string;
+};
+
+type AtlasInterface = {
+  visibleMeshes: string[];
 };
 
 function BrainRegionSelector() {
   const login = useLoginAtomValue();
   const [data, setData] = useState<TreeChildren[]>();
+  const [atlas, setAtlas] = useState<AtlasInterface>({
+    visibleMeshes: [
+      'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b',
+    ],
+  });
+
   const fetchDataAPI = useCallback(() => {
     if (!data && login) {
       getBrainRegionsTree(login.accessToken).then((tree) => setData(tree as TreeChildren[]));
@@ -174,15 +181,28 @@ function BrainRegionSelector() {
   }, [data, login]);
   const [selectedBrainRegion, setBrainRegion] = useState<BrainRegion>();
   const setSelectedBrainRegion = useCallback(
-    async (id: string) => {
+    async ({ id, distribution }: TreeNavItemCallbackProps) => {
       if (login && id) {
-        setBrainRegion(await getBrainRegionById(id, login.accessToken));
+        const brainRegionDetails = await getBrainRegionById(id, login.accessToken);
+
+        setBrainRegion({ ...brainRegionDetails, distribution });
       }
     },
     [login]
   );
 
   useEffect(() => fetchDataAPI());
+
+  /**
+   * It updates the visible meshes array of the atlas state
+   * @param updatedMeshes
+   */
+  const updateVisibleMeshes = (updatedMeshes: string[]) => {
+    setAtlas((prevState) => ({
+      ...prevState,
+      visibleMeshes: updatedMeshes,
+    }));
+  };
 
   return !login ? null : (
     <div className="flex">
@@ -201,20 +221,16 @@ function BrainRegionSelector() {
                 placeholder="Search region..."
               />
             </div>
-            <Accordion.Root
-              className="divide-y divide-primary-7"
-              collapsible
-              onValueChange={setSelectedBrainRegion}
-              type="single"
-            >
+            <Accordion.Root className="divide-y divide-primary-7" collapsible type="single">
               {data &&
-                data.map(({ id, title, items }) => (
+                data.map(({ distribution, id, items, title }) => (
                   <TreeNavItem
                     className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
+                    distribution={distribution}
                     id={id}
                     items={items}
                     key={id}
-                    onValueChange={setSelectedBrainRegion}
+                    onValueChange={setSelectedBrainRegion} // Will be attached to nested Accordion.Trigger
                     selectedId={selectedBrainRegion ? selectedBrainRegion.id : ''}
                     title={<UppercaseTitle title={title} />}
                   >
@@ -232,6 +248,12 @@ function BrainRegionSelector() {
               <Header
                 label={<span className="text-secondary-4">{selectedBrainRegion.title}</span>}
                 icon={<BrainRegionIcon />}
+              />
+              <BrainRegionMeshTrigger
+                distribution={selectedBrainRegion.distribution}
+                colorCode={selectedBrainRegion.color_code}
+                updateVisibleMeshes={updateVisibleMeshes}
+                visibleMeshes={atlas.visibleMeshes}
               />
               {
                 <MeTypeDetails {...selectedBrainRegion.me_type_details} /> // eslint-disable-line react/jsx-props-no-spreading

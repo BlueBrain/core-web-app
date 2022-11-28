@@ -1,7 +1,5 @@
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
-
-import { basePath } from '@/config';
+import ThreeDeeView from '@/components/ThreeDeeView';
 import styles from './brain-factory.module.css';
 
 const BrainRegionSelector = dynamic(() => import('@/components/BrainRegionSelector'), {
@@ -22,12 +20,7 @@ export default function BrainFactory() {
         </Tabs>
       </div>
       <div className={styles.imageContainer}>
-        <Image
-          src={`${basePath}/images/cell-composition-placeholder.png`}
-          alt="Cell composition placeholder image"
-          fill
-          className="object-contain"
-        />
+        <ThreeDeeView />
       </div>
     </div>
   );
