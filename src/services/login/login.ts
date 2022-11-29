@@ -1,7 +1,7 @@
 import GenericEvent, { GenericEventInterface } from './generic-event';
 import { CLIENT_ID, KEYCLOAK_AUTH_URL, KEYCLOAK_TOKEN_URL, KEYCLOAK_USERINFO_URL } from './config';
 import { createCodeVerifier, getCodeChallenge } from './crypto';
-import { hideTechnicalURLParams, waitForEver } from './util';
+import { stripAuthRelatedQueryParams, waitForEver } from './util';
 import { isKeycloakTokenResponse, isUserInfo } from './types';
 import { storageDelete, storageLoad, storageSave } from './storage';
 
@@ -148,10 +148,9 @@ class LoginService {
     }
 
     storageDelete('codeVerifier');
-    hideTechnicalURLParams();
     const requestParams = {
       client_id: CLIENT_ID,
-      redirect_uri: globalThis.window?.location.href,
+      redirect_uri: stripAuthRelatedQueryParams(globalThis.window?.location.href),
       grant_type: 'authorization_code',
       code: authorizationCode,
       code_verifier: codeVerifier,
@@ -169,7 +168,7 @@ class LoginService {
       body: requestBody,
     });
     const response = await fetch(request);
-    if (!response.ok && response.status !== 200) {
+    if (!response.ok || response.status !== 200) {
       // We will need a proper loggin with Sentry, later.
       // eslint-disable-next-line no-console
       console.error('Unable to get access token from Keycloak!');
@@ -178,7 +177,7 @@ class LoginService {
     const data = await response.json();
     if (!isKeycloakTokenResponse(data)) {
       // eslint-disable-next-line no-console
-      console.error('Keycloak returned an expected object:', data);
+      console.error('Keycloak returned an unexpected object:', data);
       return;
     }
 

@@ -2,7 +2,7 @@ import { EyeFilled, EyeInvisibleFilled, LoadingOutlined } from '@ant-design/icon
 import { Button, Spin } from 'antd';
 import { useState } from 'react';
 import { fetchAndAddMesh } from '@/components/RootMeshContainer';
-import { useLoginAtomValue } from '@/atoms/login';
+import { useLoginAtomValue } from '@/state/login';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import styles from './brain-region-mesh-trigger.module.css';
 

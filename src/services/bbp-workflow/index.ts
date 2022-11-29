@@ -6,7 +6,7 @@ import {
   WorkflowFilesType,
   PLACEHOLDERS,
 } from '@/services/bbp-workflow/config';
-import { LoginAtomInterface } from '@/atoms/login';
+import { LoginAtomInterface } from '@/state/login';
 
 async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
   // check the pod is active

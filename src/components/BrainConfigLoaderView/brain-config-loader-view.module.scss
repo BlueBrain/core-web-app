@@ -1,0 +1,116 @@
+.container {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 33vh auto;
+  grid-template-rows: repeat(3, 1fr);
+  grid-auto-flow: column;
+  grid-template-areas:
+    '. model-list-view'
+    '. model-list-view'
+    '. model-list-view';
+}
+
+.modelListView {
+  grid-area: model-list-view;
+  color: white;
+  padding: 3rem 14rem 0 6rem;
+  @apply bg-primary-9;
+}
+
+.curatedModel {
+  color: white;
+}
+
+.container .curatedModel:nth-child(1) {
+  @apply bg-primary-9;
+}
+
+.container .curatedModel:nth-child(2) {
+  @apply bg-primary-8;
+}
+
+.container .curatedModel:nth-child(3) {
+  @apply bg-primary-7;
+}
+
+.panel {
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  cursor: pointer;
+}
+
+.panel > header {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  line-height: 140%;
+}
+
+.panel > div {
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.backBtn {
+  position: absolute;
+  right: 2rem;
+  top: 2rem;
+  @apply bg-primary-7;
+  width: 160px;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 16px;
+}
+
+.tabBtn {
+  font-size: 20px;
+  height: 42px;
+  margin-right: 2rem;
+  @apply text-primary-4;
+
+  svg {
+    display: inline-block;
+    margin-right: 1rem;
+    vertical-align: middle;
+    height: 1em;
+    width: 1em;
+  }
+
+  span {
+    vertical-align: middle;
+  }
+}
+
+.tabBtn.activeTabBtn {
+  @apply text-white;
+}
+
+.searchCtrlContainer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.textPrimary4 {
+  @apply text-primary-4;
+}
+
+.searchInput {
+  width: 320px;
+  border-bottom-width: 1px;
+  @apply border-b-primary-1;
+  @apply placeholder-primary-3;
+  @apply bg-primary-9;
+  height: 1.8rem;
+  line-height: 1.8rem;
+}

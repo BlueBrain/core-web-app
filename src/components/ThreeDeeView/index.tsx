@@ -1,3 +1,5 @@
+'use client';
+
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Layout } from 'antd';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';

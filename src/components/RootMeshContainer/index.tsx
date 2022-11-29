@@ -3,7 +3,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import * as THREE from 'three';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
-import { useLoginAtomValue } from '@/atoms/login';
+import { useLoginAtomValue } from '@/state/login';
 
 const parseWFObj = require('wavefront-obj-parser');
 

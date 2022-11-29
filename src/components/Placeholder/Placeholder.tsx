@@ -1,4 +1,4 @@
-import { useLoginAtomValue } from '@/atoms/login';
+import { useLoginAtomValue } from '@/state/login';
 import styles from './placeholder.module.css';
 
 export type PlaceholderProps = {

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import HomePage from '../src/pages';
+import HomePage from '../src/app/page';
 
 test('Home page', async () => {
   render(<HomePage />);

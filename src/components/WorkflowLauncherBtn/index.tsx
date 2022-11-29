@@ -1,8 +1,10 @@
+'use client';
+
 import { useCallback, useState } from 'react';
 
 import { launchWorkflowTask } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME, WorkflowFilesType } from '@/services/bbp-workflow/config';
-import { useLoginAtomValue } from '@/atoms/login';
+import { useLoginAtomValue } from '@/state/login';
 
 type Props = {
   buttonText?: string;

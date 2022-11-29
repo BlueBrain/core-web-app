@@ -6,9 +6,11 @@ export async function waitForEver() {
   return new Promise(() => {});
 }
 
-export function hideTechnicalURLParams() {
-  const win = globalThis.window;
-  if (!win) return;
+export function stripAuthRelatedQueryParams(href: string) {
+  const url = new URL(href);
 
-  win.history.pushState({}, document.title, win.location.pathname);
+  url.searchParams.delete('session_state');
+  url.searchParams.delete('code');
+
+  return url.toString();
 }

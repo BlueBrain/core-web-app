@@ -1,7 +1,9 @@
+'use client';
+
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
-import { useLoginAtomValue } from '@/atoms/login';
+import { useLoginAtomValue } from '@/state/login';
 import utils from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
@@ -209,8 +211,8 @@ function BrainRegionSelector() {
       <div className="bg-primary-9 h-screen w-12 py-20 flex justify-center items-baseline">
         <div className="text-md font-bold text-white -rotate-90 whitespace-pre">Release 23.01</div>
       </div>
-      <div className="bg-primary-8 flex flex-1 flex-col h-screen max-w-[300px]">
-        <div className="flex flex-1 flex-col overflow-y-auto px-7 py-8">
+      <div className="bg-primary-8 flex flex-1 flex-col h-screen">
+        <div className="flex flex-1 flex-col overflow-y-auto px-7 py-8 w-[300px]">
           <div className="grid gap-5">
             <Header label={<span>Brain region</span>} icon={<BrainIcon />} />
             <div className="border-b border-white focus-within:border-primary-2">
@@ -241,10 +243,10 @@ function BrainRegionSelector() {
           </div>
         </div>
       </div>
-      <div className="bg-primary-7 flex flex-1 flex-col h-screen max-w-[300px]">
+      <div className="bg-primary-7 flex flex-1 flex-col h-screen">
         <div className="flex flex-1 flex-col overflow-y-auto py-8">
           {selectedBrainRegion && (
-            <div className="grid gap-5 px-7">
+            <div className="grid gap-5 px-7 min-w-[300px]">
               <Header
                 label={<span className="text-secondary-4">{selectedBrainRegion.title}</span>}
                 icon={<BrainRegionIcon />}

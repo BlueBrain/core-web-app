@@ -1,5 +1,5 @@
 import loginService from '@/services/login';
-import { useLoginAtomValue } from '@/atoms/login';
+import { useLoginAtomValue } from '@/state/login';
 import Styles from './login-button.module.css';
 
 export default function LoginButton() {
