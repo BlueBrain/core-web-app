@@ -1,17 +1,40 @@
 import {
+  BBP_WORKFLOW_PING_TASK,
+  BBP_WORKFLOW_AUTH_URL,
   BBP_WORKFLOW_TASK_PATH,
   WORKFLOW_TEST_TASK_NAME,
   WorkflowFilesType,
+  PLACEHOLDERS,
 } from '@/services/bbp-workflow/config';
 import { LoginAtomInterface } from '@/atoms/login';
+
+async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
+  // check the pod is active
+  const podResponse = await fetch(BBP_WORKFLOW_PING_TASK.replace(PLACEHOLDERS.USERNAME, username), {
+    method: 'OPTIONS',
+    headers,
+  });
+  if (!podResponse.ok) {
+    throw new Error('Pod is not available. Please run "bbp-workflow version" on your terminal');
+  }
+
+  // set offline token if not there
+  const authResponse = await fetch(BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username), {
+    method: 'GET',
+    headers,
+  });
+  if (!authResponse.ok) {
+    throw new Error('Auth exchange failed. Please run "bbp-workflow version" on your terminal');
+  }
+}
 
 export async function launchWorkflowTask(
   loginInfo: LoginAtomInterface,
   workflowName: string = WORKFLOW_TEST_TASK_NAME,
   workflowFiles: WorkflowFilesType = []
-): Promise<boolean> {
-  const url = BBP_WORKFLOW_TASK_PATH.replace('{USERNAME}', loginInfo.username).replace(
-    '{TASK_NAME}',
+): Promise<boolean | string> {
+  const url = BBP_WORKFLOW_TASK_PATH.replace(PLACEHOLDERS.USERNAME, loginInfo.username).replace(
+    PLACEHOLDERS.TASK_NAME,
     workflowName
   );
 
@@ -29,24 +52,27 @@ export async function launchWorkflowTask(
     Authorization: `Bearer ${loginInfo.accessToken}`,
   });
 
+  await runChecksBeforeLaunching(headers, loginInfo.username);
+
+  let workflowResponse;
   try {
-    const response = await fetch(url, {
+    workflowResponse = await fetch(url, {
       method: 'POST',
       body: data,
       headers,
     });
-    if (response.status === 404) {
-      // The pod is not available
-      // Launch Unicore to initialize the pod
+    if (workflowResponse.status === 404) {
       return false;
     }
   } catch {
     return false;
   }
 
+  const nexusUrl = await workflowResponse.text();
+
   // eslint-disable-next-line no-promise-executor-return
-  await new Promise((r) => setTimeout(r, 5 * 1000));
-  return true;
+  await new Promise((r) => setTimeout(r, 3 * 1000));
+  return nexusUrl;
 }
 
 export default launchWorkflowTask;

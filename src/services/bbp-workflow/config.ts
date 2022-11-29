@@ -1,10 +1,16 @@
-export const BBP_WORKFLOW_URL = 'https://bbp-workflow-api-{USERNAME}.kcp.bbp.epfl.ch';
+export const PLACEHOLDERS = {
+  USERNAME: '{USERNAME}',
+  TASK_NAME: '{TASK_NAME}',
+};
+export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
+export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
 
 export const WORKFLOW_CIRCUIT_BUILD_TASK_NAME = 'bbp_workflow.cwl_workflow.CWLWorkflow/';
-export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.simulation.GenerateAndRunSimCampaign/';
+export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.report.GenerateRunReportSimCampaign/';
 export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
 
-export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/{TASK_NAME}`;
+export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
+export const BBP_WORKFLOW_PING_TASK = `${BBP_WORKFLOW_URL}/launch/a/`;
 
 export type WorkflowFilesType = {
   NAME: string;
