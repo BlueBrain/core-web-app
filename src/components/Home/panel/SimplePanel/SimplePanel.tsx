@@ -1,5 +1,4 @@
-import Link from 'next/link';
-
+import Link from '@/components/Link';
 import IconPlus from '@/components/icons/Plus';
 import Styles from './simple-panel.module.css';
 
@@ -18,7 +17,7 @@ function getClassName(className?: string) {
 
 export default function SimplePanel({ className, title, link, children }: SimplePanelProps) {
   return (
-    <Link className={getClassName(className)} href={link} prefetch={false}>
+    <Link className={getClassName(className)} href={link}>
       <header>
         <div>{title}</div>
         <IconPlus />

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, ReactNode } from 'react';
-import Link from 'next/link';
 import { Button, ConfigProvider } from 'antd';
 
 import { CURATED_MODELS } from './placeholder-data';
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
 import { tableTheme } from './antd-theme';
+import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 import IconPlus from '@/components/icons/Plus';
 import ArrowLeftIcon from '@/components/icons/ArrowLeft';

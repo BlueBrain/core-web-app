@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
-import Link from 'next/link';
 import { useAtomValue } from 'jotai';
 import { usePathname } from 'next/navigation';
 
+import Link from '@/components/Link';
 import { themeAtom, Theme } from '@/state/theme';
 import { classNames } from '@/util/utils';
 

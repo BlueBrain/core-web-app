@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { Table, Button, ConfigProvider } from 'antd';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { modalTheme } from './antd-theme';
 import { RECENTLY_USED_CONFIGS } from './placeholder-data';
 import CloneBrainConfigModal from './CloneBrainConfigModal';
+import Link from '@/components/Link';
 import EditIcon from '@/components/icons/Edit';
 import CloneIcon from '@/components/icons/Clone';
 
@@ -52,10 +52,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
           width={86}
           render={(config) => (
             <>
-              <Link
-                href={`${baseHref}?brainConfigId=${encodeURIComponent(config.name)}`}
-                prefetch={false}
-              >
+              <Link href={`${baseHref}?brainConfigId=${encodeURIComponent(config.name)}`}>
                 <Button size="small" type="text" className="inline-block mr-2">
                   <EditIcon />
                 </Button>
