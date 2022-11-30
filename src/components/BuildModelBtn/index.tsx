@@ -6,10 +6,15 @@ import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
   CIRCUIT_BUILDING_FILES,
 } from '@/services/bbp-workflow/config';
+import { classNames } from '@/util/utils';
 import LauncherModal from '@/components/BuildModelBtn/LauncherModal';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
 
-export default function BuildModelBtn() {
+type BuildModelBtnProps = {
+  className?: string;
+};
+
+export default function BuildModelBtn({ className }: BuildModelBtnProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const modalContainer = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -31,7 +36,7 @@ export default function BuildModelBtn() {
       <button
         onClick={() => setModalIsOpen(true)}
         type="button"
-        className="flex-auto bg-secondary-2 text-white h-12 px-8"
+        className={classNames('flex-auto bg-secondary-2 text-white h-12 px-8', className)}
       >
         Build
       </button>

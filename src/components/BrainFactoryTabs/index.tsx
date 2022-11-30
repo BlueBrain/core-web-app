@@ -1,14 +1,11 @@
 import { ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
 import { usePathname } from 'next/navigation';
+import * as Popover from '@radix-ui/react-popover';
 
 import Link from '@/components/Link';
 import { themeAtom, Theme } from '@/state/theme';
 import { classNames } from '@/util/utils';
-
-type Props = {
-  children: ReactNode;
-};
 
 const COMMON_CLASSNAME = 'flex-auto text-center h-12 leading-[3rem] mr-px';
 
@@ -43,7 +40,11 @@ function getTabClassName(active: boolean, theme: Theme) {
   return classNames(COMMON_CLASSNAME, className);
 }
 
-export default function BrainFactoryTabs({ children }: Props) {
+type BrainFactoryTabsProps = {
+  children: ReactNode;
+};
+
+export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
   const theme = useAtomValue(themeAtom);
   const pathname = usePathname();
 
@@ -59,7 +60,17 @@ export default function BrainFactoryTabs({ children }: Props) {
         </Link>
       ))}
 
-      {children}
+      <Popover.Root>
+        <Popover.Trigger className="flex-auto bg-secondary-2 text-white h-12 px-8">
+          Build & Simulate
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content className="text-white z-[100] flex flex-col">
+            {children}
+            <Popover.Arrow className="fill-white" />
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
     </div>
   );
 }

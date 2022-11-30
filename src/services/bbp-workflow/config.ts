@@ -2,6 +2,7 @@ export const PLACEHOLDERS = {
   USERNAME: '{USERNAME}',
   TASK_NAME: '{TASK_NAME}',
   SIMULATION_URL: '{SIMULATION_URL}',
+  CIRCUIT_URL: '{CIRCUIT_URL}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
@@ -36,7 +37,7 @@ export const SIMULATION_FILES: WorkflowFilesType = [
 
       [GenerateSimulationCampaign]
       name: SBO - Sonata Simulation
-      circuit-url: https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/273977ed-c10b-4e31-8761-0d18bc995849
+      circuit-url: ${PLACEHOLDERS.CIRCUIT_URL}
       seed-as-coord: {"low": 100000, "high": 400000, "size": 1}
       attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/home/\${USER}/sims", "blue_config_template": "simulation_config.tmpl", "user_target": "node_sets.json", "duration": 100ms}
       [SimulationCampaign]

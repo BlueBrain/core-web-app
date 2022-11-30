@@ -7,6 +7,8 @@ import BrainRegionSelector from '@/components/BrainRegionSelector';
 import Tabs from '@/components/BrainFactoryTabs';
 import BuildModelBtn from '@/components/BuildModelBtn';
 import { themeAtom } from '@/state/theme';
+import WorkflowLauncher from '@/components/WorkflowLauncherBtn';
+import { WORKFLOW_SIMULATION_TASK_NAME, SIMULATION_FILES } from '@/services/bbp-workflow/config';
 
 import styles from './brain-factory-main.module.css';
 
@@ -27,7 +29,14 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
 
       <div className={`${styles.tabsContainer} ${bgClassName}`}>
         <Tabs>
-          <BuildModelBtn />
+          <BuildModelBtn className="w-[250px]" />
+          <div className="mt-px w-[250px] flex">
+            <WorkflowLauncher
+              buttonText="New in silico experiment"
+              workflowName={WORKFLOW_SIMULATION_TASK_NAME}
+              workflowFiles={SIMULATION_FILES}
+            />
+          </div>
         </Tabs>
       </div>
 

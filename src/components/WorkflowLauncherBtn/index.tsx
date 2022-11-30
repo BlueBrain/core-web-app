@@ -1,10 +1,12 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { useAtomValue } from 'jotai';
 
 import { launchWorkflowTask } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME, WorkflowFilesType } from '@/services/bbp-workflow/config';
 import { useLoginAtomValue } from '@/state/login';
+import circuitAtom from '@/state/circuit';
 
 type Props = {
   buttonText?: string;
@@ -21,15 +23,16 @@ export default function WorkflowLauncher({
 }: Props) {
   const [launching, setLaunching] = useState(false);
   const login = useLoginAtomValue();
+  const circuitInfo = useAtomValue(circuitAtom);
 
   const launchBbpWorkflow = useCallback(async () => {
     if (!login) return;
     onLaunchingChange(true);
     setLaunching(true);
-    await launchWorkflowTask(login, workflowName, workflowFiles);
+    await launchWorkflowTask(login, workflowName, workflowFiles, circuitInfo);
     onLaunchingChange(false);
     setLaunching(false);
-  }, [login, workflowName, workflowFiles, onLaunchingChange]);
+  }, [login, workflowName, workflowFiles, onLaunchingChange, circuitInfo]);
 
   return (
     <button

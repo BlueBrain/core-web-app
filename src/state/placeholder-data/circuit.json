@@ -1,0 +1,35 @@
+{
+  "@id": "https://bbp.epfl.ch/neurosciencegraph/data/273977ed-c10b-4e31-8761-0d18bc995849",
+  "@type": "DetailedCircuit",
+  "brainLocation": {
+    "brainRegion": {
+      "@id": "uberon:0008933",
+      "label": "primary somatosensory cortex"
+    }
+  },
+  "circuitBase": {
+    "@type": "DataDownload",
+    "url": "file:///gpfs/bbp.cscs.ch/project/proj83/jira-tickets/NSETM-1948-extract-hex-O1/data/O1_data"
+  },
+  "circuitConfigPath": {
+    "@type": "DataDownload",
+    "url": "file:///gpfs/bbp.cscs.ch/project/proj83/jira-tickets/NSETM-1948-extract-hex-O1/data/O1_data/circuit_config.json"
+  },
+  "circuitType": "Circuit with O1 geometry",
+  "description": "Sonata test description",
+  "name": "Sonata test",
+  "subject": {
+    "@id": "https://bbp.epfl.ch/neurosciencegraph/data/03032eba-1cb4-473c-9187-fb48d0057fc2",
+    "@type": "Subject"
+  },
+  "_createdAt": "2022-10-21T15:38:33.978Z",
+  "_createdBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska",
+  "_deprecated": false,
+  "_incoming": "https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/273977ed-c10b-4e31-8761-0d18bc995849/incoming",
+  "_outgoing": "https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/273977ed-c10b-4e31-8761-0d18bc995849/outgoing",
+  "_project": "https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp_test/studio_data3",
+  "_rev": 1,
+  "_self": "https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/273977ed-c10b-4e31-8761-0d18bc995849",
+  "_updatedAt": "2022-10-21T15:38:33.978Z",
+  "_updatedBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska"
+}
