@@ -6,6 +6,7 @@
   "ignorePatterns": ["**/*.js", "**/*.jsx"],
   "rules": {
     "react/require-default-props": "off",
+    "no-underscore-dangle": "off",
     "import/order": [
       "error",
       {

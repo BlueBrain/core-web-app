@@ -1,0 +1,92 @@
+.table-header {
+  color: #8c8c8c;
+  background: white;
+  text-transform: uppercase;
+}
+
+.table-row {
+  border: none !important;
+}
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    'braincells content'
+    'experimental content'
+    'reconstructions content'
+    'simulations info';
+}
+
+.content {
+  grid-area: content;
+  background: url(/images/img_3d-interactive-brain_placeholder.jpg) no-repeat;
+  background-color: black;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+}
+
+.braincells {
+  min-height: 0;
+  grid-area: braincells;
+  @apply bg-primary-8;
+}
+
+.experimental {
+  min-height: 0;
+  grid-area: experimental;
+  @apply bg-primary-7;
+}
+
+.reconstructions {
+  min-height: 0;
+  grid-area: reconstructions;
+  @apply bg-primary-6;
+}
+.simulations {
+  min-height: 0;
+  grid-area: simulations;
+  @apply bg-primary-5;
+}
+
+.info,
+.experimental,
+.simulations,
+.braincells,
+.reconstructions {
+  @apply px-14 py-8 text-white;
+  > a > div > span {
+    float: right;
+    @apply text-xl;
+  }
+  h1 {
+    @apply text-xl font-bold inline;
+  }
+  button {
+    @apply border border-white px-4 py-2 mt-4;
+  }
+  p {
+    @apply mt-2 font-thin text-sm;
+  }
+}
+
+.info {
+  min-height: 0;
+  background-color: black;
+  @apply text-white py-0;
+  h1 {
+    @apply text-xl;
+  }
+  p {
+    @apply w-8/12;
+  }
+  button {
+    @apply text-black bg-white;
+  }
+}

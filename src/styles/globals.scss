@@ -1,3 +1,17 @@
 @import '~tailwindcss/base';
 @import '~tailwindcss/components';
 @import '~tailwindcss/utilities';
+
+// Antd overrides
+th.ant-table-cell {
+  background-color: white !important;
+  border: none !important;
+
+  &::before {
+    background-color: white !important;
+  }
+}
+
+td.ant-table-cell {
+  border: none !important;
+}
