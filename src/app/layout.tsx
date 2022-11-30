@@ -4,7 +4,9 @@ import { useEffect, ReactNode } from 'react';
 import { Titillium_Web } from '@next/font/google';
 import { useSetAtom } from 'jotai';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { ConfigProvider } from 'antd';
 
+import commonAntdTheme from '@/theme/antd';
 import loginService from '@/services/login';
 import { loginAtom } from '@/state/login';
 
@@ -64,7 +66,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
-      <body>{children}</body>
+      <ConfigProvider theme={commonAntdTheme}>
+        <body>{children}</body>
+      </ConfigProvider>
     </html>
   );
 }
