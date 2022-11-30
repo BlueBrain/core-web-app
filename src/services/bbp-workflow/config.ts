@@ -1,6 +1,7 @@
 export const PLACEHOLDERS = {
   USERNAME: '{USERNAME}',
   TASK_NAME: '{TASK_NAME}',
+  SIMULATION_URL: '{SIMULATION_URL}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
@@ -8,6 +9,7 @@ export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl
 export const WORKFLOW_CIRCUIT_BUILD_TASK_NAME = 'bbp_workflow.cwl_workflow.CWLWorkflow/';
 export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.report.GenerateRunReportSimCampaign/';
 export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
+export const WORKFLOW_VIDEO_GENERATION_TASK_NAME = 'bbp_workflow.viz.VideoTask/';
 
 export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
 export const BBP_WORKFLOW_PING_TASK = `${BBP_WORKFLOW_URL}/launch/a/`;
@@ -142,5 +144,57 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFilesType = [
     NAME: 'cfg_name',
     TYPE: 'string',
     CONTENT: 'circuit_building.cfg',
+  },
+];
+
+export const VIDEO_GENERATION_FILES: WorkflowFilesType = [
+  {
+    NAME: 'video_generation.cfg',
+    TYPE: 'file',
+    CONTENT: `
+      [DEFAULT]
+      kg-base: https://staging.nise.bbp.epfl.ch/nexus/v1
+      kg-org: bbp_test
+      kg-proj: studio_data3
+      account: proj134
+      
+      [LookupSimulationCampaign]
+      url: ${PLACEHOLDERS.SIMULATION_URL}
+      
+      [VideoTask]
+      cpus-per-task: 72
+      mem: 0
+      exclusive: True
+      time: 8:00:00
+      nodes: 3
+      module-archive: unstable
+      modules: brayns py-brayns ffmpeg
+      
+      populations: [
+              {
+                  "name": "S1nonbarrel_neurons",
+                  "report_type": "compartment",
+                  "report_name": "soma_report",
+                  "density": 0.01,
+                  "radius_multiplier": 10,
+                  "load_soma": true,
+                  "load_dendrites": false,
+                  "load_axon": false
+              }
+          ]
+      resolution: [1920, 1080]
+      camera-type: perspective
+      camera-view: front
+      background-color: [1, 1, 1, 0]
+      fps: 1
+      slowing-factor: 100
+      start_frame: 0
+      end_frame: -1
+    `,
+  },
+  {
+    NAME: 'cfg_name',
+    TYPE: 'string',
+    CONTENT: 'video_generation.cfg',
   },
 ];

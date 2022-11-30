@@ -5,7 +5,11 @@ import {
   WORKFLOW_TEST_TASK_NAME,
   WorkflowFilesType,
   PLACEHOLDERS,
+  WORKFLOW_VIDEO_GENERATION_TASK_NAME,
+  VIDEO_GENERATION_FILES,
+  WORKFLOW_SIMULATION_TASK_NAME,
 } from '@/services/bbp-workflow/config';
+import { getSimulationCampaignConfiguration } from '@/services/bbp-workflow/nexus';
 import { LoginAtomInterface } from '@/state/login';
 
 async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
@@ -71,7 +75,21 @@ export async function launchWorkflowTask(
   const nexusUrl = await workflowResponse.text();
 
   // eslint-disable-next-line no-promise-executor-return
-  await new Promise((r) => setTimeout(r, 3 * 1000));
+  await new Promise((r) => setTimeout(r, 3000));
+
+  // workaround to connect the simulation and the video generation
+  if (workflowName === WORKFLOW_SIMULATION_TASK_NAME) {
+    const newConfigFiles = [...VIDEO_GENERATION_FILES];
+    const simulationConfigUrl = await getSimulationCampaignConfiguration(
+      loginInfo.accessToken,
+      nexusUrl
+    );
+    newConfigFiles[0].CONTENT = newConfigFiles[0].CONTENT.replace(
+      PLACEHOLDERS.SIMULATION_URL,
+      simulationConfigUrl
+    );
+    await launchWorkflowTask(loginInfo, WORKFLOW_VIDEO_GENERATION_TASK_NAME, newConfigFiles);
+  }
   return nexusUrl;
 }
 
