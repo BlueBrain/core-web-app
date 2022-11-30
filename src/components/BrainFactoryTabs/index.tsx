@@ -12,7 +12,7 @@ const COMMON_CLASSNAME = 'flex-auto text-center h-12 leading-[3rem] mr-px';
 const tabs = [
   {
     name: 'Cell composition',
-    href: '/brain-factory/cell-composition',
+    href: '/brain-factory/cell-composition/interactive',
   },
   {
     name: 'Cell model assignment',
@@ -54,7 +54,7 @@ export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
         <Link
           key={tab.href}
           href={tab.href}
-          className={getTabClassName(tab.href === pathname, theme)}
+          className={getTabClassName(!!pathname?.startsWith(tab.href), theme)}
         >
           {tab.name}
         </Link>

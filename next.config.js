@@ -25,7 +25,7 @@ const nextConfig = {
     return [
       {
         source: '/brain-factory',
-        destination: '/brain-factory/cell-composition',
+        destination: '/brain-factory/cell-composition/interactive',
         permanent: false,
       },
     ];

@@ -8,6 +8,7 @@ import { ConfigProvider } from 'antd';
 
 import commonAntdTheme from '@/theme/antd';
 import loginService from '@/services/login';
+import useTheme from '@/hooks/theme';
 import { loginAtom } from '@/state/login';
 
 import '@/styles/globals.scss';
@@ -63,6 +64,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   useLogin();
+  useTheme();
 
   return (
     <html lang="en" className={`${titilliumWeb.variable} font-sans`}>

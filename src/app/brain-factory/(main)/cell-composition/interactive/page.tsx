@@ -1,5 +1,5 @@
 import ThreeDeeView from '@/components/ThreeDeeView';
 
-export default function CellCompositionView() {
+export default function InteractiveView() {
   return <ThreeDeeView />;
 }
