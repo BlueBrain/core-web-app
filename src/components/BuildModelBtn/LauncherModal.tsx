@@ -7,7 +7,6 @@ import ExecutionStatus from '@/components/ExecutionStatus';
 type Props = {
   isOpen: boolean;
   onCloseModal: any;
-  container: any;
   loading: boolean;
   children: ReactNode;
 };
@@ -15,7 +14,6 @@ type Props = {
 export default function LauncherModal({
   isOpen = false,
   onCloseModal,
-  container,
   loading = false,
   children,
 }: Props) {
@@ -32,7 +30,6 @@ export default function LauncherModal({
         open={isOpen}
         onCancel={() => onCloseModal(false)}
         maskStyle={maskStyle}
-        getContainer={container}
       >
         <span className="text-primary-7">
           Your model is being built. This can take up to 4 days.
@@ -66,7 +63,6 @@ export default function LauncherModal({
       open={isOpen}
       onCancel={() => onCloseModal(false)}
       maskStyle={maskStyle}
-      getContainer={container}
     >
       <div className="text-primary-7 mb-4 mt-4">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde id vitae natus minima quam,

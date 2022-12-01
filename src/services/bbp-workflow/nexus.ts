@@ -1,13 +1,10 @@
+import type { BaseEntity } from '@/types/nexus';
+
 const SIM_CAMP_GEN_ONTOLOGY_STR =
   'https://bbp.epfl.ch/ontologies/core/bmo/SimulationCampaignGeneration';
 const SIM_CAMP_CONF_ONTOLOGY_STR =
   'https://bbp.epfl.ch/ontologies/core/bmo/SimulationCampaignConfiguration';
 const WORKFLOW_EXECUTION_STR = 'WorkflowExecution';
-
-type NexusResource = {
-  _incoming: string;
-  _self: string;
-};
 
 export function getInfo(url: string, headers: HeadersInit) {
   return fetch(url, { method: 'get', headers }).then((response) => response.json());
@@ -23,12 +20,12 @@ async function pollingUntilFetch(url: string, cbCheck: any, headers: HeadersInit
 }
 
 async function getResourceFromIncome(
-  nexusResource: NexusResource,
+  nexusEntity: BaseEntity,
   type: string,
   headers: HeadersInit
-): Promise<NexusResource> {
+): Promise<BaseEntity> {
   /* eslint-disable no-underscore-dangle */
-  const incomings = await getInfo(nexusResource._incoming, headers);
+  const incomings = await getInfo(nexusEntity._incoming, headers);
   const incomeResource = incomings._results.find((item: any) => item['@type'] === type);
   return getInfo(incomeResource._self, headers);
   /* eslint-enable no-underscore-dangle */
@@ -48,7 +45,7 @@ export async function getSimulationCampaignConfiguration(
   }
   const callbackCheck = (response: any) => response._results.length > 0;
   await pollingUntilFetch(workflowExecution._incoming, callbackCheck, headers);
-  const simulationCampaignGeneration: NexusResource = await getResourceFromIncome(
+  const simulationCampaignGeneration: BaseEntity = await getResourceFromIncome(
     workflowExecution,
     SIM_CAMP_GEN_ONTOLOGY_STR,
     headers
@@ -59,7 +56,7 @@ export async function getSimulationCampaignConfiguration(
   await pollingUntilFetch(simulationCampaignGeneration._self, callbackCheckFinished, headers);
 
   // SimulationCampaignGeneration -> SimulationCampaignConfiguration
-  const simulationCampaignConfiguration: NexusResource = await getResourceFromIncome(
+  const simulationCampaignConfiguration: BaseEntity = await getResourceFromIncome(
     simulationCampaignGeneration,
     SIM_CAMP_CONF_ONTOLOGY_STR,
     headers

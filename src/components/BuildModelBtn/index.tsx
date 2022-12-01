@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
@@ -16,7 +16,6 @@ type BuildModelBtnProps = {
 
 export default function BuildModelBtn({ className }: BuildModelBtnProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const modalContainer = useRef(null);
   const [loading, setLoading] = useState(false);
 
   const onLaunchingChange = useCallback((newState: boolean) => {
@@ -30,9 +29,6 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
 
   return (
     <>
-      {/* need to use this to apply fonts (only in main they are applied) */}
-      <div className="modal-container" ref={modalContainer} />
-
       <button
         onClick={() => setModalIsOpen(true)}
         type="button"
@@ -41,12 +37,7 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
         Build
       </button>
 
-      <LauncherModal
-        isOpen={modalIsOpen}
-        onCloseModal={onCloseModal}
-        container={modalContainer.current}
-        loading={loading}
-      >
+      <LauncherModal isOpen={modalIsOpen} onCloseModal={onCloseModal} loading={loading}>
         <WorkflowLauncherBtn
           buttonText="Build"
           workflowName={WORKFLOW_CIRCUIT_BUILD_TASK_NAME}

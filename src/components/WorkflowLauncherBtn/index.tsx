@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useAtomValue } from 'jotai';
 
+import { classNames } from '@/util/utils';
 import { launchWorkflowTask } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME, WorkflowFilesType } from '@/services/bbp-workflow/config';
 import { useLoginAtomValue } from '@/state/login';
@@ -13,6 +14,7 @@ type Props = {
   workflowName?: string;
   workflowFiles?: WorkflowFilesType;
   onLaunchingChange?: any;
+  className?: string;
 };
 
 export default function WorkflowLauncher({
@@ -20,6 +22,7 @@ export default function WorkflowLauncher({
   workflowName = WORKFLOW_TEST_TASK_NAME,
   workflowFiles = [],
   onLaunchingChange = () => {},
+  className = '',
 }: Props) {
   const [launching, setLaunching] = useState(false);
   const login = useLoginAtomValue();
@@ -38,7 +41,7 @@ export default function WorkflowLauncher({
     <button
       onClick={launchBbpWorkflow}
       type="button"
-      className="flex-auto bg-secondary-2 text-white h-12 px-8"
+      className={classNames('flex-auto bg-secondary-2 text-white h-12 px-8', className)}
     >
       {launching ? 'Launching...' : buttonText}
     </button>
