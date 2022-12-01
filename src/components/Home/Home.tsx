@@ -25,7 +25,7 @@ export default function Home() {
         models and configuring the desired connectivity pattern.
       </SimplePanel>
 
-      <SimplePanel className={Theme.colorPrimary7} title="Virtual Lab" link="virtual-lab">
+      <SimplePanel className={Theme.colorPrimary7} title="Virtual Lab" link="/virtual-lab">
         Build your own brain configurations by customizing the cell compositions, assigning neuronal
         models and configuring the desired connectivity pattern.{' '}
       </SimplePanel>
