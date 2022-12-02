@@ -97,25 +97,15 @@ async function launchWorkflow(
   headers: Headers,
   data: FormData
 ): Promise<null | string> {
-  let workflowResponse;
-  try {
-    workflowResponse = await fetch(url, {
-      method: 'POST',
-      body: data,
-      headers,
-    });
-    if (workflowResponse.status === 404) {
-      return null;
-    }
-  } catch {
+  const workflowResponse = await fetch(url, {
+    method: 'POST',
+    body: data,
+    headers,
+  }).catch(() => null);
+  if (!workflowResponse?.ok) {
     return null;
   }
-
   const nexusUrl = await workflowResponse.text();
-
-  // eslint-disable-next-line no-promise-executor-return
-  await new Promise((r) => setTimeout(r, 3000));
-
   return nexusUrl;
 }
 
