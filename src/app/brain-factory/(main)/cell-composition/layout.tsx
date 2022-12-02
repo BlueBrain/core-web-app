@@ -1,12 +1,15 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
 import { useAtomValue } from 'jotai';
 
 import { classNames } from '@/util/utils';
 import Link from '@/components/Link';
+import usePathname from '@/hooks/pathname';
 import { themeAtom, Theme } from '@/state/theme';
+import BrainIcon from '@/components/icons/Brain';
+import AnalysisIcon from '@/components/icons/Analysis';
+import SettingsIcon from '@/components/icons/Settings';
 
 const COMMON_TAB_CLASSNAME = 'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl';
 
@@ -14,14 +17,17 @@ const tabs = [
   {
     name: 'Interactive',
     href: '/brain-factory/cell-composition/interactive',
+    icon: <BrainIcon className="h-4 inline-block mr-2" />,
   },
   {
     name: 'Analysis',
     href: '/brain-factory/cell-composition/analysis',
+    icon: <AnalysisIcon className="h-4 inline-block mr-2" />,
   },
   {
     name: 'Configuration',
     href: '/brain-factory/cell-composition/configuration',
+    icon: <SettingsIcon className="h-4 inline-block mr-2" />,
   },
 ];
 
@@ -54,6 +60,7 @@ export default function CellCompositionLayout({ children }: CellCompositionLayou
             href={tab.href}
             className={getTabClassName(!!pathname?.startsWith(tab.href), theme)}
           >
+            {tab.icon}
             {tab.name}
           </Link>
         ))}
