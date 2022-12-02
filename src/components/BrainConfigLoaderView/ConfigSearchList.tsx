@@ -7,19 +7,15 @@ import { useRouter } from 'next/navigation';
 import { modalTheme } from './antd-theme';
 import { PUBLIC_CONFIGS } from './placeholder-data';
 import CloneBrainConfigModal from './CloneBrainConfigModal';
+import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
 
 const { Column } = Table;
 
-type TableEntry = {
-  name: string;
-  description: string;
-  createdBy: string;
-  createdAt: string;
-};
+type BrainConfig = typeof PUBLIC_CONFIGS[number];
 
-function getSorterFn(sortProp: keyof TableEntry) {
-  return (a: TableEntry, b: TableEntry) => (a[sortProp] < b[sortProp] ? 1 : -1);
+function getSorterFn(sortProp: keyof BrainConfig) {
+  return (a: BrainConfig, b: BrainConfig) => (a[sortProp] < b[sortProp] ? 1 : -1);
 }
 
 type ConfigSearchListProps = {
@@ -29,11 +25,11 @@ type ConfigSearchListProps = {
 export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const router = useRouter();
 
-  const [brainConfigId, setBrainConfigId] = useState<string>();
+  const [brainConfig, setBrainConfig] = useState<BrainConfig>();
   const [isCloneModalOpened, setIsCloneModalOpened] = useState<boolean>(false);
 
-  const openModal = (currentBrainConfigId: string) => {
-    setBrainConfigId(currentBrainConfigId);
+  const openModal = (currentBrainConfig: BrainConfig) => {
+    setBrainConfig(currentBrainConfig);
     setIsCloneModalOpened(true);
   };
 
@@ -43,14 +39,22 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
 
   return (
     <>
-      <Table
+      <Table<BrainConfig>
         size="small"
         className="mt-6 mb-12"
         dataSource={PUBLIC_CONFIGS}
         pagination={false}
         rowKey="id"
       >
-        <Column title="NAME" dataIndex="name" key="name" sorter={getSorterFn('name')} />
+        <Column
+          title="NAME"
+          dataIndex="name"
+          key="name"
+          sorter={getSorterFn('name')}
+          render={(name, { id }: BrainConfig) => (
+            <Link href={`${baseHref}?brainConfigId=${encodeURIComponent(id)}`}>{name}</Link>
+          )}
+        />
         <Column
           title="DESCRIPTION"
           dataIndex="description"
@@ -67,18 +71,18 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
           title=""
           key="actions"
           width={86}
-          render={(brainConfig) => (
-            <Button size="small" type="text" onClick={() => openModal(brainConfig.name)}>
+          render={(_, config: BrainConfig) => (
+            <Button size="small" type="text" onClick={() => openModal(config)}>
               <CloneIcon />
             </Button>
           )}
         />
       </Table>
 
-      {brainConfigId && (
+      {brainConfig && (
         <ConfigProvider theme={modalTheme}>
           <CloneBrainConfigModal
-            brainConfigId={brainConfigId}
+            brainConfig={brainConfig}
             open={isCloneModalOpened}
             onCancel={() => setIsCloneModalOpened(false)}
             onCloneSuccess={onCloneSuccess}

@@ -16,7 +16,7 @@ export const tableTheme = {
 
 export const modalTheme = {
   token: {
-    colorBgBase: '#002766',
-    colorTextBase: 'white',
+    colorBgBase: 'white',
+    colorTextBase: 'black',
   },
 };

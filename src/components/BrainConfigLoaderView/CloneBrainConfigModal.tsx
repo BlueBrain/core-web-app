@@ -3,13 +3,16 @@ import { Modal, Input } from 'antd';
 
 type CloneBrainConfigModalProps = {
   open: boolean;
-  brainConfigId: string;
+  brainConfig: {
+    name: string;
+    id: string;
+  };
   onCancel: () => void;
   onCloneSuccess: (brainConfigId: string) => void;
 };
 
 export default function CloneBrainConfigModal({
-  brainConfigId,
+  brainConfig,
   open,
   onCancel,
   onCloneSuccess,
@@ -21,8 +24,8 @@ export default function CloneBrainConfigModal({
     setIsCloning(true);
     setTimeout(() => {
       setIsCloning(false);
-      onCloneSuccess(`${brainConfigId}-new`);
-    }, 3000);
+      onCloneSuccess(`${brainConfig.id}-new`);
+    }, 2000);
   };
 
   return (
@@ -32,6 +35,7 @@ export default function CloneBrainConfigModal({
       okText="Start editing"
       onOk={clone}
       onCancel={onCancel}
+      destroyOnClose
       confirmLoading={isCloning}
     >
       <p>
@@ -45,6 +49,7 @@ export default function CloneBrainConfigModal({
         onChange={(e) => {
           setConfigName(e.target.value);
         }}
+        onPressEnter={clone}
       />
     </Modal>
   );
