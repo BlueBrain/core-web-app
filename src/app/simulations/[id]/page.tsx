@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import usePathname from '@/hooks/pathname';
 
 import Placeholder from '@/components/Placeholder';
 import Theme from '@/styles/theme.module.css';

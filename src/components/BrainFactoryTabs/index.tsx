@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
-import { usePathname } from 'next/navigation';
 import * as Popover from '@radix-ui/react-popover';
 
+import usePathname from '@/hooks/pathname';
 import Link from '@/components/Link';
 import { themeAtom, Theme } from '@/state/theme';
 import { classNames } from '@/util/utils';

@@ -3,13 +3,15 @@
 import { useEffect, ReactNode } from 'react';
 import { Titillium_Web } from '@next/font/google';
 import { useSetAtom } from 'jotai';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { ConfigProvider } from 'antd';
 
 import commonAntdTheme from '@/theme/antd';
+import usePathname from '@/hooks/pathname';
 import loginService from '@/services/login';
 import useTheme from '@/hooks/theme';
 import { loginAtom } from '@/state/login';
+import { basePath } from '@/config';
 
 import '@/styles/globals.scss';
 
@@ -45,7 +47,9 @@ function useLogin() {
       nextSearchParams.delete('code');
 
       const nextSearchParamsStr = nextSearchParams.toString();
-      const href = pathname + (nextSearchParamsStr ? `?${nextSearchParamsStr}` : '');
+      const href = `${basePath ?? ''}${pathname}${
+        nextSearchParamsStr ? `?${nextSearchParamsStr}` : ''
+      }`;
 
       router.replace(href);
     }

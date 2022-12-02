@@ -10,3 +10,8 @@ This is a known bug in Next.js when using the `app` folder: [#41824](https://git
 
 Temporary workaround is to use a wrapper from [@/components/Link](./src/components/Link/index.tsx)
 which force adds basePath, the downside: links will appear to have duplicated basePath prefix.
+
+### The usePathname hook from `next/navigation` returns a value containing the basePath.
+
+Which might break the logic if not accounted for. As developers we probably don't want to care about that.
+Workaround: custom usePathname hook located at `@/src/hooks/pathway`.

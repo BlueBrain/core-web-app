@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 import { useSetAtom } from 'jotai';
 
+import usePathname from '@/hooks/pathname';
 import { themeAtom } from '@/state/theme';
 
 const DARK_THEME_PATHNAMES = ['/brain-factory/cell-composition/interactive'];
