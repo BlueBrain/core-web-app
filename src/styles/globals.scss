@@ -1,3 +1,11 @@
+/*
+  This is used instead of Tailwind's preflight to prevent
+  overriding Antd button background colors.
+
+  https://github.com/tailwindlabs/tailwindcss/issues/6602
+*/
+@import './tailwind-preflight.css';
+
 @import '~tailwindcss/base';
 @import '~tailwindcss/components';
 @import '~tailwindcss/utilities';
