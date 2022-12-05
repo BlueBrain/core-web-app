@@ -7,6 +7,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useLoginAtomValue } from '@/state/login';
 import Link from '@/components/Link';
 import styles from '../observatory/observatory.module.scss';
+import tableStyles from './table.module.scss';
 
 const { Search } = Input;
 
@@ -157,6 +158,7 @@ export default function Observatory() {
           style={{ height: 'calc(100vh - 100px)' }}
         >
           <Table
+            className={tableStyles.container}
             dataSource={results}
             rowClassName={styles['table-row']}
             columns={columns}

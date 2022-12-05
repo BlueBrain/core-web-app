@@ -3,8 +3,10 @@
 import { Table, Tag } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
+
 import styles from '../../observatory/observatory.module.scss';
 import Link from '@/components/Link';
+import tableStyles from '../table.module.scss';
 
 interface Simulation {
   key: string;
@@ -148,6 +150,7 @@ export default function Observatory() {
         </div>
         <div className="bg-white w-full flex-1 pl-4">
           <Table
+            className={tableStyles.container}
             dataSource={dataSource}
             rowClassName={styles['table-row']}
             columns={columns}
