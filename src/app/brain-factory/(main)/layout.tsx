@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
 
 import BrainRegionSelector from '@/components/BrainRegionSelector';
+import BrainConfigPanel from '@/components/BrainConfigPanel';
 import Tabs from '@/components/BrainFactoryTabs';
 import BuildModelBtn from '@/components/BuildModelBtn';
 import { themeAtom } from '@/state/theme';
@@ -23,6 +24,10 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
 
   return (
     <div className={styles.container}>
+      <div className={styles.brainConfigSelectorContainer}>
+        <BrainConfigPanel baseHref="/brain-factory/cell-composition/interactive" />
+      </div>
+
       <div className={styles.brainSelectorContainer}>
         <BrainRegionSelector />
       </div>

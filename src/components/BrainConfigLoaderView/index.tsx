@@ -72,9 +72,9 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
     <div className={styles.container}>
       {CURATED_MODELS.map((model) => (
         <Panel
-          key={model.title}
+          key={model.name}
           className={styles.curatedModel}
-          title={model.title}
+          title={model.name}
           description={model.description}
           href={`${baseHref}?brainConfigId=${encodeURIComponent(model.id)}`}
         />

@@ -208,9 +208,6 @@ function BrainRegionSelector() {
 
   return !login ? null : (
     <div className="flex">
-      <div className="bg-primary-9 h-screen w-12 py-20 flex justify-center items-baseline">
-        <div className="text-md font-bold text-white -rotate-90 whitespace-pre">Release 23.01</div>
-      </div>
       <div className="bg-primary-8 flex flex-1 flex-col h-screen">
         <div className="flex flex-1 flex-col overflow-y-auto px-7 py-8 w-[300px]">
           <div className="grid gap-5">

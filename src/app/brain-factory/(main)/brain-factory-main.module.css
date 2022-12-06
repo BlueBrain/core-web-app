@@ -1,14 +1,18 @@
 .container {
   display: grid;
-  grid-template-columns: min-content auto;
+  grid-template-columns: min-content min-content auto;
   grid-template-rows: 3rem calc(100vh - 3rem);
   grid-template-areas:
-    'brain-selector tabs'
-    'brain-selector content-container';
+    'brain-config-selector brain-region-selector tabs'
+    'brain-config-selector brain-region-selector content-container';
+}
+
+.brainConfigSelectorContainer {
+  grid-area: brain-config-selector;
 }
 
 .brainSelectorContainer {
-  grid-area: brain-selector;
+  grid-area: brain-region-selector;
 }
 .tabsContainer {
   grid-area: tabs;

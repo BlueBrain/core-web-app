@@ -91,17 +91,17 @@ export const PUBLIC_CONFIGS = [
 export const CURATED_MODELS = [
   {
     id: '1',
-    title: 'Release 23.01',
+    name: 'Release 23.01',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
   {
     id: '2',
-    title: 'Disease model 1',
+    name: 'Disease model 1',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
   {
     id: '3',
-    title: 'Disease model 2',
+    name: 'Disease model 2',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
 ];
