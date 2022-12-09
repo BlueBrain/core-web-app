@@ -1,8 +1,9 @@
-import { EyeFilled, EyeInvisibleFilled, LoadingOutlined } from '@ant-design/icons';
-import { Button, Spin } from 'antd';
 import { useState } from 'react';
+import { Button, Spin } from 'antd';
+import { EyeFilled, EyeInvisibleFilled, LoadingOutlined } from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
+
 import { fetchAndAddMesh } from '@/components/RootMeshContainer';
-import { useLoginAtomValue } from '@/state/login';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import styles from './brain-region-mesh-trigger.module.css';
 
@@ -27,7 +28,7 @@ export default function BrainRegionMeshTrigger({
   visibleMeshes,
   updateVisibleMeshes,
 }: BrainRegionMeshTriggerProps) {
-  const login = useLoginAtomValue();
+  const { data: session } = useSession();
   const [isFetching, setIsFetching] = useState<boolean | undefined>(undefined);
 
   /**
@@ -72,12 +73,12 @@ export default function BrainRegionMeshTrigger({
 
   return (
     <div>
-      {login && distribution ? (
+      {session?.accessToken && distribution ? (
         <Button
           className={`${styles.buttonTrigger} border-none text-primary-1 ${
             isVisible ? 'bg-primary-5' : 'bg-primary-6'
           }`}
-          onClick={() => onClickEye(login?.accessToken, distribution.content_url)}
+          onClick={() => onClickEye(session.accessToken, distribution.content_url)}
           icon={
             isFetching ? (
               <Spin indicator={<LoadingOutlined />} />

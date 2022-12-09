@@ -1,7 +1,12 @@
 node_modules
+.DS_Store
+.env.local
 .next
 .vscode
 .idea
+.git
+.gitignore
+.swc
 doc
 out
 tmp

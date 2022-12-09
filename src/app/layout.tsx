@@ -1,60 +1,15 @@
 'use client';
 
-import { useEffect, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Titillium_Web } from '@next/font/google';
-import { useSetAtom } from 'jotai';
-import { useSearchParams, useRouter } from 'next/navigation';
 import { ConfigProvider } from 'antd';
+import { SessionProvider } from 'next-auth/react';
 
 import commonAntdTheme from '@/theme/antd';
-import usePathname from '@/hooks/pathname';
-import loginService from '@/services/login';
 import useTheme from '@/hooks/theme';
-import { loginAtom } from '@/state/login';
 import { basePath } from '@/config';
 
 import '@/styles/globals.scss';
-
-function useLogin() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const setLoginAtom = useSetAtom(loginAtom);
-
-  useEffect(() => {
-    const handleLoginChange = () => {
-      if (loginService.isLogged) {
-        setLoginAtom({
-          accessToken: loginService.tokens?.access ?? '',
-          idToken: loginService.tokens?.access ?? '',
-          displayname: loginService.userInfo?.displayName ?? '',
-          username: loginService.userInfo?.preferredUserName ?? '',
-        });
-      } else {
-        setLoginAtom(null);
-      }
-    };
-
-    loginService.initialize().then(handleLoginChange);
-    return () => loginService.eventLogged.removeListener(handleLoginChange);
-  }, [setLoginAtom]);
-
-  useEffect(() => {
-    if (pathname && Array.from(searchParams.keys()).includes('session_state')) {
-      const nextSearchParams = new URLSearchParams(searchParams);
-
-      nextSearchParams.delete('session_state');
-      nextSearchParams.delete('code');
-
-      const nextSearchParamsStr = nextSearchParams.toString();
-      const href = `${basePath ?? ''}${pathname}${
-        nextSearchParamsStr ? `?${nextSearchParamsStr}` : ''
-      }`;
-
-      router.replace(href);
-    }
-  }, [pathname, router, searchParams]);
-}
 
 const titilliumWeb = Titillium_Web({
   weight: ['300', '400', '600', '700'],
@@ -67,13 +22,14 @@ type RootLayoutProps = {
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
-  useLogin();
   useTheme();
 
   return (
     <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
       <ConfigProvider theme={commonAntdTheme}>
-        <body>{children}</body>
+        <SessionProvider basePath={`${basePath}/api/auth`}>
+          <body>{children}</body>
+        </SessionProvider>
       </ConfigProvider>
     </html>
   );

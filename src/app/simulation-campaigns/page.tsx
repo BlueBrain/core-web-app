@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect, useState, useMemo } from 'react';
 import { Table, Tag, Input } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
-import { useEffect, useState, useMemo } from 'react';
-import { useLoginAtomValue } from '@/state/login';
+import { useSession } from 'next-auth/react';
+
 import Link from '@/components/Link';
 import styles from '../observatory/observatory.module.scss';
 import tableStyles from './table.module.scss';
@@ -39,7 +40,7 @@ const QueryBase = {
 };
 export default function Observatory() {
   const router = useRouter();
-  const login = useLoginAtomValue();
+  const { data: session } = useSession();
   const [results, setResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -54,14 +55,14 @@ export default function Observatory() {
 
   useEffect(() => {
     async function fetchSimCampaigns() {
-      if (!login) return;
+      if (!session?.user) return;
       const query = searchTerm ? { ...QueryBase, ...searchQuery } : QueryBase;
 
       const res = await fetch('https://bbp.epfl.ch/nexus/v1/search/query', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${login?.accessToken}`,
+          Authorization: `Bearer ${session.accessToken}`,
         },
         body: JSON.stringify(query),
       });
@@ -81,7 +82,7 @@ export default function Observatory() {
     }
 
     fetchSimCampaigns();
-  }, [login, searchTerm, searchQuery]);
+  }, [session, searchTerm, searchQuery]);
 
   const columHeader = (text: string) => <div className={styles['table-header']}>{text}</div>;
 

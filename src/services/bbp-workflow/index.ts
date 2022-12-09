@@ -1,3 +1,5 @@
+import { Session } from 'next-auth';
+
 import {
   BBP_WORKFLOW_PING_TASK,
   BBP_WORKFLOW_AUTH_URL,
@@ -11,7 +13,6 @@ import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
 } from '@/services/bbp-workflow/config';
 import { getSimulationCampaignConfiguration } from '@/services/bbp-workflow/nexus';
-import { LoginAtomInterface } from '@/state/login';
 import type { Circuit } from '@/types/nexus';
 
 async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
@@ -110,18 +111,18 @@ async function launchWorkflow(
 }
 
 export async function launchWorkflowTask(
-  loginInfo: LoginAtomInterface,
+  loginInfo: Session,
   workflowName: string = WORKFLOW_TEST_TASK_NAME,
   workflowFiles: WorkflowFilesType = [],
   circuitInfo?: Circuit | null
 ): Promise<string> {
-  const url = getWorkflowTaskUrl(loginInfo.username, workflowName);
+  const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
 
   const headers = new Headers({
     Authorization: `Bearer ${loginInfo.accessToken}`,
   });
 
-  await runChecksBeforeLaunching(headers, loginInfo.username);
+  await runChecksBeforeLaunching(headers, loginInfo.user.username);
 
   let replacedConfigFiles = workflowFiles;
 
@@ -144,7 +145,10 @@ export async function launchWorkflowTask(
       nexusUrl
     );
     replacedConfigFiles = getVideoGenerationTaskFiles(simulationConfigUrl);
-    const videoUrl = getWorkflowTaskUrl(loginInfo.username, WORKFLOW_VIDEO_GENERATION_TASK_NAME);
+    const videoUrl = getWorkflowTaskUrl(
+      loginInfo.user.username,
+      WORKFLOW_VIDEO_GENERATION_TASK_NAME
+    );
     const videoData = generateFormData(replacedConfigFiles);
     await launchWorkflow(videoUrl, headers, videoData);
   }

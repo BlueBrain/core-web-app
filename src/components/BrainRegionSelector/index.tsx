@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
-import { useLoginAtomValue } from '@/state/login';
+import { useSession } from 'next-auth/react';
+
 import utils from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
@@ -168,7 +169,7 @@ type AtlasInterface = {
 };
 
 function BrainRegionSelector() {
-  const login = useLoginAtomValue();
+  const { data: session } = useSession();
   const [data, setData] = useState<TreeChildren[]>();
   const [atlas, setAtlas] = useState<AtlasInterface>({
     visibleMeshes: [
@@ -177,20 +178,20 @@ function BrainRegionSelector() {
   });
 
   const fetchDataAPI = useCallback(() => {
-    if (!data && login) {
-      getBrainRegionsTree(login.accessToken).then((tree) => setData(tree as TreeChildren[]));
+    if (!data && session?.user) {
+      getBrainRegionsTree(session.accessToken).then((tree) => setData(tree as TreeChildren[]));
     }
-  }, [data, login]);
+  }, [data, session]);
   const [selectedBrainRegion, setBrainRegion] = useState<BrainRegion>();
   const setSelectedBrainRegion = useCallback(
     async ({ id, distribution }: TreeNavItemCallbackProps) => {
-      if (login && id) {
-        const brainRegionDetails = await getBrainRegionById(id, login.accessToken);
+      if (session?.user && id) {
+        const brainRegionDetails = await getBrainRegionById(id, session.accessToken);
 
         setBrainRegion({ ...brainRegionDetails, distribution });
       }
     },
-    [login]
+    [session]
   );
 
   useEffect(() => fetchDataAPI());
@@ -206,7 +207,7 @@ function BrainRegionSelector() {
     }));
   };
 
-  return !login ? null : (
+  return !session?.user ? null : (
     <div className="flex">
       <div className="bg-primary-8 flex flex-1 flex-col h-screen">
         <div className="flex flex-1 flex-col overflow-y-auto px-7 py-8 w-[300px]">

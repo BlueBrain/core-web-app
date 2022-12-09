@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import * as THREE from 'three';
+import { useSession } from 'next-auth/react';
+
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
-import { useLoginAtomValue } from '@/state/login';
 
 const parseWFObj = require('wavefront-obj-parser');
 
@@ -41,13 +42,14 @@ export const fetchAndAddMesh = (accessToken: string, distributionID: string, col
     });
 
 export default function RootMeshContainer() {
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const login = useLoginAtomValue();
+
   const fetchDataAPI = useCallback(() => {
-    if (login) {
-      fetchAndAddMesh(login.accessToken, contentURL, '#FFF').then(() => setIsLoading(false));
+    if (session?.user) {
+      fetchAndAddMesh(session.accessToken, contentURL, '#FFF').then(() => setIsLoading(false));
     }
-  }, [login]);
+  }, [session]);
 
   useEffect(() => fetchDataAPI());
 

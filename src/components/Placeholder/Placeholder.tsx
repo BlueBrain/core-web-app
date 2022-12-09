@@ -1,4 +1,4 @@
-import { useLoginAtomValue } from '@/state/login';
+import { useSession } from 'next-auth/react';
 import styles from './placeholder.module.css';
 
 export type PlaceholderProps = {
@@ -13,15 +13,16 @@ function getClassName(className?: string) {
 }
 
 export default function Placeholder({ children, className }: PlaceholderProps) {
-  const login = useLoginAtomValue();
+  const { data: session } = useSession();
+
   return (
     <div className={getClassName(className)}>
       {children}
       <br />
-      {login && (
+      {session?.user && (
         <ul>
-          <li>{login.displayname}</li>
-          <li>{login.username}</li>
+          <li>{session.user.name}</li>
+          <li>{session.user.username}</li>
         </ul>
       )}
     </div>

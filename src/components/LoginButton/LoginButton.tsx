@@ -1,25 +1,24 @@
-import loginService from '@/services/login';
-import { useLoginAtomValue } from '@/state/login';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Styles from './login-button.module.css';
 
 export default function LoginButton() {
-  const login = useLoginAtomValue();
+  const { data: session } = useSession();
 
-  if (login) {
+  if (session?.user) {
     return (
       <div className={Styles.logoutButton}>
-        <button className={Styles.loginButton} type="button" onClick={() => loginService.logout()}>
+        <button className={Styles.loginButton} type="button" onClick={() => signOut()}>
           Logout
         </button>
         <div>
-          {login.displayname} ({login.username})
+          {session.user.name} ({session.user.username})
         </div>
       </div>
     );
   }
 
   return (
-    <button className={Styles.loginButton} type="button" onClick={() => loginService.login()}>
+    <button className={Styles.loginButton} type="button" onClick={() => signIn('keycloak')}>
       Login
     </button>
   );

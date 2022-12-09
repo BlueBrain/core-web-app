@@ -2,11 +2,11 @@
 
 import { useCallback, useState } from 'react';
 import { useAtomValue } from 'jotai';
+import { useSession } from 'next-auth/react';
 
 import { classNames } from '@/util/utils';
 import { launchWorkflowTask } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME, WorkflowFilesType } from '@/services/bbp-workflow/config';
-import { useLoginAtomValue } from '@/state/login';
 import circuitAtom from '@/state/circuit';
 
 type Props = {
@@ -25,17 +25,17 @@ export default function WorkflowLauncher({
   className = '',
 }: Props) {
   const [launching, setLaunching] = useState(false);
-  const login = useLoginAtomValue();
+  const { data: session } = useSession();
   const circuitInfo = useAtomValue(circuitAtom);
 
   const launchBbpWorkflow = useCallback(async () => {
-    if (!login) return;
+    if (!session?.user) return;
     onLaunchingChange(true);
     setLaunching(true);
-    await launchWorkflowTask(login, workflowName, workflowFiles, circuitInfo);
+    await launchWorkflowTask(session, workflowName, workflowFiles, circuitInfo);
     onLaunchingChange(false);
     setLaunching(false);
-  }, [login, workflowName, workflowFiles, onLaunchingChange, circuitInfo]);
+  }, [session, workflowName, workflowFiles, onLaunchingChange, circuitInfo]);
 
   return (
     <button
