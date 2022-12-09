@@ -1,6 +1,8 @@
 import NextAuth, { NextAuthOptions, TokenSet } from 'next-auth';
 
-import { keycloakIssuer, keycloakClientId as clientId } from '@/config';
+import { keycloak } from '@/config';
+
+const { issuer, clientId, clientSecret } = keycloak;
 
 /**
  * Takes a token, and returns a new token with updated
@@ -9,7 +11,7 @@ import { keycloakIssuer, keycloakClientId as clientId } from '@/config';
  */
 async function refreshAccessToken(token: TokenSet) {
   try {
-    const tokenUrl = `${keycloakIssuer}/protocol/openid-connect/token`;
+    const tokenUrl = `${issuer}/protocol/openid-connect/token`;
 
     const response = await fetch(tokenUrl, {
       headers: {
@@ -57,9 +59,9 @@ export const authOptions: NextAuthOptions = {
 
       // next-auth package requires clientSecret because it supports only confidential clients,
       // while Keycloak SBO client is configured to be public and doesn't require it.
-      clientSecret: 'requiredButNotUsed',
+      clientSecret,
 
-      wellKnown: `${keycloakIssuer}/.well-known/openid-configuration`,
+      wellKnown: `${issuer}/.well-known/openid-configuration`,
       authorization: {
         params: {
           scope: 'profile openid nexus groups',
