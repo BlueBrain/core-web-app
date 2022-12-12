@@ -52,9 +52,9 @@ async function refreshAccessToken(token: TokenSet) {
 export const authOptions: NextAuthOptions = {
   providers: [
     {
+      clientId,
       id: 'keycloak',
       name: 'BBP Keycloak',
-      clientId: 'bbp-sbo-application',
       type: 'oauth',
 
       // next-auth package requires clientSecret because it supports only confidential clients,
