@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 
 import { fetchAndAddMesh } from '@/components/RootMeshContainer';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
+import { classNames } from '@/util/utils';
 import styles from './brain-region-mesh-trigger.module.css';
 
 type BrainRegionMeshTriggerProps = {
@@ -71,29 +72,30 @@ export default function BrainRegionMeshTrigger({
     isVisible = false;
   }
 
-  return (
-    <div>
-      {session?.accessToken && distribution ? (
-        <Button
-          className={`${styles.buttonTrigger} border-none text-primary-1 ${
-            isVisible ? 'bg-primary-5' : 'bg-primary-6'
-          }`}
-          onClick={() => onClickEye(session.accessToken, distribution.content_url)}
-          icon={
-            isFetching ? (
-              <Spin indicator={<LoadingOutlined />} />
-            ) : (
-              <EyeFilled className="text-primary-1" />
-            )
-          }
-          disabled={isFetching}
-        />
-      ) : (
-        <Button
-          className={`${styles.buttonTrigger} cursor-not-allowed bg-primary-6 border-none`}
-          icon={<EyeInvisibleFilled className="text-error" />}
-        />
-      )}
-    </div>
-  );
+  const btn =
+    session?.accessToken && distribution ? (
+      <Button
+        className={classNames(
+          styles.buttonTrigger,
+          'border-none text-primary-1',
+          isVisible ? 'bg-primary-5' : 'bg-primary-6'
+        )}
+        disabled={isFetching}
+        icon={
+          isFetching ? (
+            <Spin indicator={<LoadingOutlined />} />
+          ) : (
+            <EyeFilled className="text-primary-1" />
+          )
+        }
+        onClick={() => onClickEye(session?.accessToken, distribution.content_url)}
+      />
+    ) : (
+      <Button
+        className={classNames(styles.buttonTrigger, 'cursor-not-allowed bg-primary-6 border-none')}
+        icon={<EyeInvisibleFilled className="text-error" />}
+      />
+    );
+
+  return btn;
 }

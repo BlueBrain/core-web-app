@@ -1,0 +1,99 @@
+.horizontalSlider {
+  display: flex;
+  flex-flow: row nowrap;
+  flex-basis: 100%;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.seriesPointer {
+  padding: 0 0.5rem 0 0;
+}
+
+.seriesLabelWrapper {
+  width: 45%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.seriesLabel {
+  flex-grow: 1;
+  color: #0050b3;
+  font-weight: 700;
+
+  button {
+    margin-left: 0.2rem;
+  }
+}
+
+.seriesValue {
+  //flex-grow: 1;
+  color: #0050b3;
+  font-weight: 700;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  margin: 0.4rem 0;
+  padding: 0 0.2rem;
+  justify-content: flex-end;
+  border: 1px solid #ddd;
+
+  input {
+    color: #0050b3;
+    border-radius: 0;
+    border: none;
+    margin-right: 0.2rem;
+    padding: 0;
+    width: 2rem;
+    text-align: right;
+    &:focus {
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.sliderWrapper {
+  flex-grow: 7;
+  padding: 0 0 0 1rem;
+  --slider-color: #52c41a;
+
+  :global .ant-slider-rail {
+    height: 1px;
+    background-color: #d9d9d9;
+    transform: translateY(1px);
+  }
+
+  :global .ant-slider-handle {
+    &:before {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:after {
+      background: var(--slider-color);
+      box-shadow: none;
+    }
+  }
+
+  :global .ant-slider-track {
+    background: var(--slider-color);
+    width: 4px;
+  }
+
+  :global .ant-slider:hover {
+    :global .ant-slider-track {
+      background: var(--slider-color);
+    }
+
+    :global .ant-slider-handle:after {
+      box-shadow: 0 0 0 4px var(--slider-color);
+    }
+  }
+
+  :global .ant-slider-handle:active::after,
+  :global .ant-slider-handle:focus::after {
+    box-shadow: 0 0 0 4px var(--slider-color);
+  }
+}

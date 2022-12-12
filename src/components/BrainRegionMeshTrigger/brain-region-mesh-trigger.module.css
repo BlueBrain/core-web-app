@@ -5,4 +5,7 @@
   font-size: 14px;
   border-radius: 2px;
   float: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

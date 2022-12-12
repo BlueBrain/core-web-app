@@ -1,0 +1,38 @@
+.subnavigationTabs {
+  :global .ant-tabs-nav {
+    :global .ant-tabs-tab {
+      @apply text-primary-7;
+
+      font-size: 16px;
+      font-weight: 300;
+
+      &.ant-tabs-tab-active {
+        font-weight: 700;
+
+        .ant-tabs-tab-btn {
+          @apply text-primary-7;
+        }
+      }
+    }
+
+    :global .ant-tabs-ink-bar {
+      display: flex;
+      justify-content: center;
+      height: 8px;
+      background-color: transparent;
+    }
+
+    :global .ant-tabs-ink-bar::after {
+      @apply bg-primary-7;
+
+      content: '';
+      display: block;
+      width: 24px;
+      height: 3px;
+    }
+  }
+
+  :global .ant-tabs-nav::before {
+    border: none;
+  }
+}
