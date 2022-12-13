@@ -32,3 +32,30 @@ export type Circuit = BaseEntity & {
   description: string;
   circuitType: string;
 };
+
+export interface Campaign {
+  id: string;
+  org: string;
+  self: string;
+  name: string;
+  project: string;
+  status?: string;
+  description?: string;
+  configuration?: string;
+  dimensions?: string;
+  startedAt?: string;
+  updatedAt?: string;
+  endedAt?: string;
+  createdAt?: string;
+  attributes?: string;
+  updatedBy?: string;
+  tags?: string[];
+}
+
+export interface Dimension {
+  key: string;
+  dimensionValues: string;
+  startedAt: string;
+  endedAt: string;
+  status: string;
+}

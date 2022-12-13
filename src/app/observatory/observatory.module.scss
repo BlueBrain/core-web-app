@@ -1,11 +1,11 @@
 .table-header {
   color: #8c8c8c;
-  background: white;
   text-transform: uppercase;
 }
 
 .table-row {
   border: none !important;
+  @apply bg-slate-200;
 }
 .container {
   height: 100vh;
