@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { useSession } from 'next-auth/react';
+import { notification } from 'antd';
 
 import { classNames } from '@/util/utils';
 import { launchWorkflowTask } from '@/services/bbp-workflow';
@@ -32,7 +33,14 @@ export default function WorkflowLauncher({
     if (!session?.user) return;
     onLaunchingChange(true);
     setLaunching(true);
-    await launchWorkflowTask(session, workflowName, workflowFiles, circuitInfo);
+    try {
+      await launchWorkflowTask(session, workflowName, workflowFiles, circuitInfo);
+    } catch (e: any) {
+      notification.open({
+        message: 'Error launching workflow',
+        description: e.message || '',
+      });
+    }
     onLaunchingChange(false);
     setLaunching(false);
   }, [session, workflowName, workflowFiles, onLaunchingChange, circuitInfo]);

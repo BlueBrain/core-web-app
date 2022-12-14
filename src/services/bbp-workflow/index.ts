@@ -20,7 +20,7 @@ async function runChecksBeforeLaunching(headers: HeadersInit, username: string) 
   const podResponse = await fetch(BBP_WORKFLOW_PING_TASK.replace(PLACEHOLDERS.USERNAME, username), {
     method: 'OPTIONS',
     headers,
-  });
+  }).catch(() => ({ ok: false }));
   if (!podResponse.ok) {
     throw new Error('Pod is not available. Please run "bbp-workflow version" on your terminal');
   }
@@ -29,7 +29,7 @@ async function runChecksBeforeLaunching(headers: HeadersInit, username: string) 
   const authResponse = await fetch(BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username), {
     method: 'GET',
     headers,
-  });
+  }).catch(() => ({ ok: false }));
   if (!authResponse.ok) {
     throw new Error('Auth exchange failed. Please run "bbp-workflow version" on your terminal');
   }
