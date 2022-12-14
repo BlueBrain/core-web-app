@@ -86,7 +86,7 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           accessToken: account.access_token,
-          accessTokenExpires: account.expires_at ? Date.now() + account.expires_at * 1000 : null,
+          accessTokenExpires: account.expires_at ? account.expires_at * 1000 : null,
           refreshToken: account.refresh_token,
           user,
         };
