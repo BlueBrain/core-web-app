@@ -47,11 +47,9 @@ class MeshCollection {
     currentMesh.name = id;
     this.collection[id] = mesh;
     this.container.add(mesh);
-
     if (focusOn) {
       this.focusOn(id);
     }
-
     this.threeContext.needRender = true;
   }
 

@@ -3,6 +3,8 @@ import { atom, useAtomValue } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
+import { Button } from 'antd';
+import { EyeInvisibleFilled } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import utils from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
@@ -174,10 +176,6 @@ function MeTypeDetails({
   );
 }
 
-type AtlasInterface = {
-  visibleMeshes: string[];
-};
-
 export const compositionAtom = atom<Densities | null>(null);
 export const densityOrCountAtom = atom<keyof Composition>('density');
 
@@ -186,17 +184,14 @@ interface MeTypeDetailsState extends MeTypeDetailsProps {
   distribution: Distribution;
   id: string;
   title: string;
+  color_code: string;
 }
 
 function BrainRegionSelector() {
   const { data: session } = useSession();
   const [brainRegions, setBrainRegions] = useState<TreeChildren[]>();
-  const [atlas, setAtlas] = useState<AtlasInterface>({
-    visibleMeshes: [
-      'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b',
-    ],
-  });
   const [meTypeDetails, setMeTypeDetails] = useState<MeTypeDetailsState>();
+
   const fetchDataAPI = useCallback(() => {
     if (!brainRegions && session?.user) {
       getBrainRegionsTree(session.accessToken).then((tree) =>
@@ -245,17 +240,6 @@ function BrainRegionSelector() {
 
   useEffect(() => fetchDataAPI());
 
-  /**
-   * It updates the visible meshes array of the atlas state
-   * @param updatedMeshes
-   */
-  const updateVisibleMeshes = (updatedMeshes: string[]) => {
-    setAtlas((prevState) => ({
-      ...prevState,
-      visibleMeshes: updatedMeshes,
-    }));
-  };
-
   return !session?.user ? null : (
     <div className="flex">
       <div className="bg-primary-8 flex flex-1 flex-col h-screen">
@@ -297,14 +281,19 @@ function BrainRegionSelector() {
                 label={<span className="text-secondary-4">{meTypeDetails.title}</span>}
                 icon={<BrainRegionIcon />}
               />
-              <span>
-                <BrainRegionMeshTrigger
-                  distribution={meTypeDetails.distribution}
-                  colorCode={meTypeDetails.colorCode}
-                  updateVisibleMeshes={updateVisibleMeshes}
-                  visibleMeshes={atlas.visibleMeshes}
+              {meTypeDetails.distribution ? (
+                <span>
+                  <BrainRegionMeshTrigger
+                    distribution={meTypeDetails.distribution}
+                    colorCode={meTypeDetails.colorCode}
+                  />
+                </span>
+              ) : (
+                <Button
+                  className={`${styles.buttonTrigger} cursor-not-allowed bg-primary-6 border-none`}
+                  icon={<EyeInvisibleFilled className="text-error" />}
                 />
-              </span>
+              )}
               {composition && (
                 <MeTypeDetails
                   densityOrCount={densityOrCount}

@@ -1,18 +1,12 @@
-import { useState } from 'react';
+import { EyeFilled, LoadingOutlined } from '@ant-design/icons';
 import { Button, Spin } from 'antd';
-import { EyeFilled, EyeInvisibleFilled, LoadingOutlined } from '@ant-design/icons';
-import { useSession } from 'next-auth/react';
-
-import { fetchAndAddMesh } from '@/components/RootMeshContainer';
-import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
-import { classNames } from '@/util/utils';
+import { useAtomValue, useSetAtom } from 'jotai';
+import AtlasVisualizationAtom from '@/state/atlas';
 import styles from './brain-region-mesh-trigger.module.css';
 
 type BrainRegionMeshTriggerProps = {
-  distribution?: Distribution;
+  distribution: Distribution;
   colorCode: string;
-  visibleMeshes: string[];
-  updateVisibleMeshes: (updatedMeshes: string[]) => void;
 };
 
 export type Distribution = {
@@ -26,76 +20,54 @@ export type Distribution = {
 export default function BrainRegionMeshTrigger({
   distribution,
   colorCode,
-  visibleMeshes,
-  updateVisibleMeshes,
 }: BrainRegionMeshTriggerProps) {
-  const { data: session } = useSession();
-  const [isFetching, setIsFetching] = useState<boolean | undefined>(undefined);
-
-  /**
-   * Fetches the mesh and handles the fetching state
-   * @param accessToken
-   * @param contentUrl
-   */
-  const fetchMesh = (accessToken: string, contentUrl: string) => {
-    setIsFetching(true);
-    fetchAndAddMesh(accessToken, contentUrl, colorCode).then(() => setIsFetching(false));
-  };
+  const { visibleMeshes } = useAtomValue(AtlasVisualizationAtom);
+  const isVisible =
+    visibleMeshes.filter((mesh) => mesh.contentURL === distribution.content_url).length > 0;
+  const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
+  const meshObject = visibleMeshes.find(
+    (meshToFind) => meshToFind.contentURL === distribution.content_url
+  );
+  let isLoading = false;
+  if (meshObject && meshObject.isLoading) {
+    isLoading = true;
+  }
 
   /**
    * Handles the eye clicking functionality.
    * If the brain region mesh is already visible, it hides it in the mesh collection and removes it from the state
    * If the brain region mesh is not visible, it fetches it and adds it in the state
-   *
-   * @param accessToken
    * @param contentUrl
    */
-  const onClickEye = (accessToken: string, contentUrl: string) => {
-    // if the brain region mesh is already visible, hides it
-    if (visibleMeshes.includes(contentUrl)) {
-      const mc = threeCtxWrapper.getMeshCollection();
-      // @ts-ignore
-      mc.hide(contentUrl);
-      const updatedMeshes = visibleMeshes.filter((mesh) => mesh !== contentUrl);
-      updateVisibleMeshes(updatedMeshes);
+  const onClickEye = (contentUrl: string) => {
+    // if the brain region mesh is already visible, remove it
+    if (isVisible) {
+      setAtlasVisualizationAtom({
+        visibleMeshes: visibleMeshes.filter((mesh) => mesh.contentURL !== distribution.content_url),
+      });
     } else {
-      fetchMesh(accessToken, contentUrl);
-      visibleMeshes.push(contentUrl);
-      updateVisibleMeshes(visibleMeshes);
+      visibleMeshes.push({ contentURL: contentUrl, color: colorCode, isLoading: true });
+      setAtlasVisualizationAtom({
+        visibleMeshes,
+      });
     }
   };
 
-  let isVisible;
-  if (distribution) {
-    isVisible = visibleMeshes.includes(distribution.content_url);
-  } else {
-    isVisible = false;
-  }
-
-  const btn =
-    session?.accessToken && distribution ? (
+  return (
+    <div>
       <Button
-        className={classNames(
-          styles.buttonTrigger,
-          'border-none text-primary-1',
+        className={`${styles.buttonTrigger} border-none text-primary-1 ${
           isVisible ? 'bg-primary-5' : 'bg-primary-6'
-        )}
-        disabled={isFetching}
+        }`}
+        onClick={() => onClickEye(distribution.content_url)}
         icon={
-          isFetching ? (
-            <Spin indicator={<LoadingOutlined />} />
+          isLoading ? (
+            <Spin indicator={<LoadingOutlined />} className="text-neutral-1" />
           ) : (
             <EyeFilled className="text-primary-1" />
           )
         }
-        onClick={() => onClickEye(session?.accessToken, distribution.content_url)}
       />
-    ) : (
-      <Button
-        className={classNames(styles.buttonTrigger, 'cursor-not-allowed bg-primary-6 border-none')}
-        icon={<EyeInvisibleFilled className="text-error" />}
-      />
-    );
-
-  return btn;
+    </div>
+  );
 }

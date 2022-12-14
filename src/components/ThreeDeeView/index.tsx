@@ -1,9 +1,9 @@
 'use client';
 
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Layout } from 'antd';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
-import RootMeshContainer from '@/components/RootMeshContainer';
+import MeshGenerator from '@/components/MeshGenerator';
 import styles from './styles.module.css';
 
 const { Content } = Layout;
@@ -12,11 +12,9 @@ export default function ThreeDeeView() {
   const [ready, isReady] = useState(false);
   const threeDeeDiv = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
-    if (threeDeeDiv.current !== null) {
-      threeCtxWrapper.init(threeDeeDiv.current);
-      isReady(true);
-    }
+  useEffect(() => {
+    threeCtxWrapper.init(threeDeeDiv.current);
+    isReady(true);
   }, [threeDeeDiv]);
 
   return (
@@ -24,7 +22,7 @@ export default function ThreeDeeView() {
       <div className={styles.threeDeeContainer}>
         <div className={styles.threeDeeView} ref={threeDeeDiv} />
         <div className={styles.backgroundContainer} />
-        {ready ? <RootMeshContainer /> : null}
+        {ready ? <MeshGenerator /> : null}
       </div>
     </Content>
   );

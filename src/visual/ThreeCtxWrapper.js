@@ -9,11 +9,12 @@ class ThreeCtxWrapper {
   }
 
   init(div) {
-    if (this.threeContext !== null) {
+    // this is a way to avoid double renderings (eg. from strict mode on development mode)
+    if (div.childNodes.length > 0) {
       this.threeContext.needRender = true;
       return;
     }
-    const divElement = div;
+
     const camPos = new THREE.Vector3(36984.948, 3938.164, 5712.791);
     const camLookat = new THREE.Vector3(6612.504, 3938.164, 5712.791);
     let camUp = null;
@@ -34,11 +35,6 @@ class ThreeCtxWrapper {
       // is emitted with the list of intersected object from the scene as argument.
     };
 
-    // Due to some display issue (probably antd is to blame), we hide the div until
-    // it contains the context. Later we'll show it with a a 'resize' event to
-    // trigger all the scaling thing
-    divElement.style.display = 'none';
-
     // Instanciating the context
     this.threeContext = new ThreeContext(div, options);
 
@@ -46,7 +42,7 @@ class ThreeCtxWrapper {
     const camera = this.threeContext.getCamera();
     // this is because our unit is micron
     camera.far = 1000000;
-    // this is because the the Allen orientation is reversed compared to the OpenGL orientation
+    // this is because the Allen orientation is reversed compared to the OpenGL orientation
     if (camUp) {
       camera.up.x = camUp.x;
       camera.up.y = camUp.y;
@@ -65,22 +61,7 @@ class ThreeCtxWrapper {
     // Optionally, you can show a torus knot, simply to make sure your context is properly setup
     // this._threeContext.addSampleShape()
 
-    // gross hack to make sure the canvas takes all
-    setTimeout(() => {
-      divElement.style.display = 'inherit';
-      window.dispatchEvent(new Event('resize'));
-    }, 10);
-
-    // instanciation of the MeshCollection
     this.meshCollection = new MeshCollection(this.threeContext);
-
-    // Updating the URL hash when the scroll is over (zooming)
-    let isScrolling = null;
-    divElement.addEventListener('wheel', function (event) {
-      event.stopPropagation();
-
-      clearTimeout(isScrolling);
-    });
   }
 
   getCtx() {
@@ -92,6 +73,9 @@ class ThreeCtxWrapper {
   }
 
   getMeshCollection() {
+    if (!this.meshCollection) {
+      this.meshCollection = new MeshCollection(this.getCtx());
+    }
     return this.meshCollection;
   }
 }
