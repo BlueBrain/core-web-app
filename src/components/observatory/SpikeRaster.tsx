@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function SpikeRaster({ rasterImage }: { rasterImage: string }) {
   return (
-    <div className="h-full basis-1/4">
+    <div className="h-full basis-1/4 border-solid border-red-700 border-2">
       {rasterImage && (
         <Image
           src={rasterImage}

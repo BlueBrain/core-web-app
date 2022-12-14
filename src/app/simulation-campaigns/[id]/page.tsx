@@ -10,6 +10,8 @@ import { Dimension, Campaign } from '@/types/nexus';
 import CampaignDetails from '@/components/observatory/CampaignDetails';
 import DimensionFilter from '@/components/observatory/DimensionFilter';
 import SpikeRaster from '@/components/observatory/SpikeRaster';
+import CampaignVideo from '@/components/observatory/CampaignVideo';
+
 import REPORT_SPARQL_QUERY from '@/constants/observatory';
 
 function Observatory() {
@@ -26,10 +28,14 @@ function Observatory() {
     description: '',
   });
 
-  const [reportData, setReportData] = useState({
-    analysis_report_self: { value: '' },
-  });
-  const [rasterImage, setRasterImage] = useState('');
+  const [reportData, setReportData] = useState([
+    {
+      analysis_report_self: { value: '' },
+    },
+  ]);
+
+  const [campaignImages, setCampaignImages] = useState<string[]>([]);
+  const [campaignVideos, setCampaignVideos] = useState<string[]>([]);
 
   const { data: session } = useSession();
 
@@ -39,7 +45,6 @@ function Observatory() {
     async function fetchSimCampaign() {
       const parts = path?.split('/');
       if (!session?.user || !path || parts === undefined) return;
-
       const id = atob(parts[parts.length - 1]);
 
       if (!id || !path) return;
@@ -53,6 +58,7 @@ function Observatory() {
       });
 
       const simCampaignInfo = await simCampaignResponse.json();
+      if (!simCampaignInfo._self) return;
 
       const transformedCampaign = {
         id: simCampaignInfo['@id'],
@@ -71,7 +77,6 @@ function Observatory() {
       };
       setCampaign(transformedCampaign);
     }
-
     fetchSimCampaign();
   }, [session, path]);
 
@@ -90,44 +95,53 @@ function Observatory() {
       }).then((res) => res.json());
 
       const responses = await Promise.all([reportInfo]);
-      setReportData(responses[0].results.bindings[0]);
+      setReportData(responses[0].results.bindings);
     }
     fetchReportData();
-  }, [session, campaign]);
+  }, [campaign]);
 
   useEffect(() => {
-    if (!reportData?.analysis_report_self?.value || !session?.user || !campaign.id) return;
+    if (!reportData[0]?.analysis_report_self?.value || !session?.user || !campaign.id) return;
+    const imagesArray: string[] = [];
+    const videosArray: string[] = [];
     async function fetchImageData() {
-      const reportSelf = reportData.analysis_report_self.value;
-      const assetPromise = await fetch(reportSelf, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
-      const assetInfo = await assetPromise.json();
+      await Promise.all(
+        reportData.map(async (report) => {
+          const reportSelf = report.analysis_report_self.value;
+          const reportInfoResponse = await fetch(reportSelf, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session?.accessToken}`,
+            },
+          });
+          const reportInfo = await reportInfoResponse.json();
+          if (!reportInfo.hasPart.distribution.contentUrl['@id']) return;
 
-      if (!assetInfo.hasPart.distribution.contentUrl['@id']) return;
+          const assetUuid = reportInfo.hasPart.distribution.contentUrl['@id'].split('/').pop();
+          const assetUrl = `https://staging.nise.bbp.epfl.ch/nexus/v1/files/${campaign.org}/${campaign.project}/${assetUuid}`;
 
-      const imageUuid = assetInfo.hasPart.distribution.contentUrl['@id'].split('/').pop();
-      const imageUrl = `https://staging.nise.bbp.epfl.ch/nexus/v1/files/${campaign.org}/${campaign.project}/${imageUuid}`;
+          const distributionAssetResponse = await fetch(assetUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': '*/*',
+              Authorization: `Bearer ${session?.accessToken}`,
+            },
+          });
+          const assetBlob = await distributionAssetResponse.blob();
 
-      const imagePromise = await fetch(imageUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': '*/*',
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
-
-      const imageInfo = await imagePromise.blob();
-      const blob = URL.createObjectURL(imageInfo);
-      setRasterImage(blob);
+          const blob = URL.createObjectURL(assetBlob);
+          if (assetBlob.type.includes('image')) imagesArray.push(blob);
+          if (assetBlob.type.includes('video')) videosArray.push(blob);
+        })
+      );
     }
 
-    fetchImageData();
-  }, [session, campaign, reportData]);
+    fetchImageData().then(() => {
+      setCampaignImages(imagesArray);
+      setCampaignVideos(videosArray);
+    });
+  }, [reportData]);
 
   const dimensions: Dimension[] = [
     {
@@ -170,7 +184,6 @@ function Observatory() {
       <div className="w-full h-full flex flex-col">
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         {campaign.id !== '' && campaign.self !== '' && <CampaignDetails {...campaign} />}
-
         <div className="bg-white p-7 text-primary-7 font-bold">
           Total simulations in campaign: 4000
         </div>
@@ -179,8 +192,13 @@ function Observatory() {
         </div>
         <div className="w-full h-full flex-1 bg-white p-4">
           <h1 className="text-xl font-bold mt-4 text-primary-7">Raster Images</h1>
-          <div className="flex abosolute flex-row pt-4">
-            {rasterImage && <SpikeRaster rasterImage={rasterImage} />}
+          <div className="flex flex-row pt-4">
+            {campaignImages.map((imageSrc) => (
+              <SpikeRaster key={imageSrc} rasterImage={imageSrc} />
+            ))}
+            {campaignVideos.map((videoSrc) => (
+              <CampaignVideo key={videoSrc} campaignVideo={videoSrc} />
+            ))}
           </div>
         </div>
       </div>
