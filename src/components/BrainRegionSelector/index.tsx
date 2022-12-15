@@ -148,7 +148,7 @@ function MeTypeDetails({
       <h2 className="flex font-bold justify-between text-white text-lg uppercase">
         Neurons
         <small className="font-normal text-base">
-          {neuronComposition && neuronComposition.density}
+          {neuronComposition && neuronComposition.count}
         </small>
       </h2>
       {neurons && (
@@ -177,7 +177,7 @@ function MeTypeDetails({
 }
 
 export const compositionAtom = atom<Densities | null>(null);
-export const densityOrCountAtom = atom<keyof Composition>('density');
+export const densityOrCountAtom = atom<keyof Composition>('count');
 
 interface MeTypeDetailsState extends MeTypeDetailsProps {
   colorCode: string;
