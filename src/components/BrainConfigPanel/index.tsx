@@ -69,7 +69,9 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
             />
           </div>
 
-          <div className="my-8 bg-primary-5 h-px" />
+          <div className="my-8">
+            <div className="bg-primary-5 h-px" />
+          </div>
 
           <Collapse className="mb-8" title="Reference configurations">
             <div className="space-y-4">
