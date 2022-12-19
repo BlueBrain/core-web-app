@@ -3,19 +3,20 @@
 import { useState } from 'react';
 import { Table, Button, ConfigProvider } from 'antd';
 import { useRouter } from 'next/navigation';
+import { useAtomValue } from 'jotai';
 
 import { modalTheme } from './antd-theme';
-import { PUBLIC_CONFIGS } from './placeholder-data';
 import CloneBrainConfigModal from './CloneBrainConfigModal';
+import { brainModelConfigListAtom } from './state';
+import { collapseId } from '@/util/nexus';
+import { BrainModelConfig } from '@/types/nexus';
 import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
 
 const { Column } = Table;
 
-type BrainConfig = typeof PUBLIC_CONFIGS[number];
-
-function getSorterFn(sortProp: keyof BrainConfig) {
-  return (a: BrainConfig, b: BrainConfig) => (a[sortProp] < b[sortProp] ? 1 : -1);
+function getSorterFn(sortProp: 'name' | 'description' | '_createdBy') {
+  return (a: BrainModelConfig, b: BrainModelConfig) => (a[sortProp] < b[sortProp] ? 1 : -1);
 }
 
 type ConfigSearchListProps = {
@@ -24,35 +25,42 @@ type ConfigSearchListProps = {
 
 export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const router = useRouter();
+  const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
 
-  const [brainConfig, setBrainConfig] = useState<BrainConfig>();
+  const [brainModelConfig, setBrainModelConfig] = useState<BrainModelConfig>();
   const [isCloneModalOpened, setIsCloneModalOpened] = useState<boolean>(false);
 
-  const openModal = (currentBrainConfig: BrainConfig) => {
-    setBrainConfig(currentBrainConfig);
+  const openModal = (currentConfig: BrainModelConfig) => {
+    setBrainModelConfig(currentConfig);
     setIsCloneModalOpened(true);
   };
 
   const onCloneSuccess = (clonedBrainConfigId: string) => {
-    router.push(`${baseHref}?brainConfigId=${encodeURIComponent(clonedBrainConfigId)}`);
+    router.push(
+      `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedBrainConfigId))}`
+    );
   };
 
   return (
     <>
-      <Table<BrainConfig>
+      <Table<BrainModelConfig>
         size="small"
         className="mt-6 mb-12"
-        dataSource={PUBLIC_CONFIGS}
+        dataSource={brainModelConfigs}
         pagination={false}
-        rowKey="id"
+        rowKey="@id"
       >
         <Column
           title="NAME"
           dataIndex="name"
           key="name"
           sorter={getSorterFn('name')}
-          render={(name, { id }: BrainConfig) => (
-            <Link href={`${baseHref}?brainConfigId=${encodeURIComponent(id)}`}>{name}</Link>
+          render={(name, conf: BrainModelConfig) => (
+            <Link
+              href={`${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(conf['@id']))}`}
+            >
+              {name}
+            </Link>
           )}
         />
         <Column
@@ -63,15 +71,16 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
         />
         <Column
           title="CREATED BY"
-          dataIndex="createdBy"
+          dataIndex="_createdBy"
           key="createdBy"
-          sorter={getSorterFn('createdBy')}
+          sorter={getSorterFn('_createdBy')}
+          render={(createdBy) => createdBy.split('/').reverse()[0]}
         />
         <Column
           title=""
           key="actions"
           width={86}
-          render={(_, config: BrainConfig) => (
+          render={(_, config: BrainModelConfig) => (
             <Button size="small" type="text" onClick={() => openModal(config)}>
               <CloneIcon />
             </Button>
@@ -79,10 +88,10 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
         />
       </Table>
 
-      {brainConfig && (
+      {brainModelConfig && (
         <ConfigProvider theme={modalTheme}>
           <CloneBrainConfigModal
-            brainConfig={brainConfig}
+            config={brainModelConfig}
             open={isCloneModalOpened}
             onCancel={() => setIsCloneModalOpened(false)}
             onCloneSuccess={onCloneSuccess}

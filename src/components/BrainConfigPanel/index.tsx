@@ -1,29 +1,106 @@
+'use client';
+
 import { useState } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined, MinusOutlined, RightOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 
-import {
-  CURATED_MODELS,
-  RECENTLY_USED_CONFIGS,
-  PUBLIC_CONFIGS,
-} from '../BrainConfigLoaderView/placeholder-data';
 import Collapse from './Collapse';
 import BrainConfigEntry from './BrainConfigEntry';
 import FooterLink from './FooterLink';
-import { BrainConfig } from './types';
-import brainModelConfigAtom from '@/state/brain-model-config';
+import { recentConfigsAtom, publicConfigsAtom, personalConfigsAtom } from './state';
+import { configAtom } from '@/state/brain-model-config';
 import HomeIcon from '@/components/icons/Home';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
+
+export const CURATED_MODELS = [
+  {
+    id: '1482c334-8a72-489d-9f39-5214752bcf5d',
+    name: 'Release 23.01',
+    description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
+  },
+  {
+    id: '1482c334-8a72-489d-9f39-5214752bcf5d',
+    name: 'Disease model 1',
+    description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
+  },
+  {
+    id: '1482c334-8a72-489d-9f39-5214752bcf5d',
+    name: 'Disease model 2',
+    description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
+  },
+];
 
 type BrainConfigPanelProps = {
   baseHref: string;
 };
 
-export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
-  const brainModelConfig = useAtomValue(brainModelConfigAtom);
+function BrainModelConfigName() {
+  const brainModelConfig = useAtomValue(configAtom);
 
+  return <span>{brainModelConfig?.name}</span>;
+}
+
+type ConfigListProps = {
+  baseHref: string;
+};
+
+function RecentConfigs({ baseHref }: ConfigListProps) {
+  const recentConfigs = useAtomValue(recentConfigsAtom);
+
+  return (
+    <>
+      {recentConfigs.map((config) => (
+        <BrainConfigEntry key={config['@id']} config={config} baseHref={baseHref} />
+      ))}
+    </>
+  );
+}
+
+function PublicConfigs({ baseHref }: ConfigListProps) {
+  const publicConfigs = useAtomValue(publicConfigsAtom);
+
+  return (
+    <>
+      {publicConfigs.map((config) => (
+        <BrainConfigEntry key={config['@id']} config={config} baseHref={baseHref} />
+      ))}
+    </>
+  );
+}
+
+function PersonalConfigs({ baseHref }: ConfigListProps) {
+  const personalConfigs = useAtomValue(personalConfigsAtom);
+
+  return (
+    <>
+      {personalConfigs.map((config) => (
+        <BrainConfigEntry key={config['@id']} config={config} baseHref={baseHref} />
+      ))}
+    </>
+  );
+}
+
+function CuratedModelLinkBtn({
+  config,
+  baseHref,
+}: {
+  config: { id: string; name: string };
+  baseHref: string;
+}) {
+  return (
+    <Link
+      className="flex items-center justify-center text-primary-3 border border-primary-3 h-12"
+      key={config.id}
+      href={`${baseHref}/?brainModelConfigId=${encodeURIComponent(config.id)}`}
+    >
+      {config.name}
+    </Link>
+  );
+}
+
+export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -43,24 +120,22 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
             onClick={() => setIsOpen(true)}
           />
 
-          {brainModelConfig && (
-            <>
-              <div style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
-                {brainModelConfig.name}
-              </div>
+          <div style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+            <BrainModelConfigName />
+          </div>
 
-              <Link className="text-lg text-primary-3 mt-4" href="/">
-                <HomeIcon />
-              </Link>
-            </>
-          )}
+          <Link className="text-lg text-primary-3 mt-4" href="/">
+            <HomeIcon />
+          </Link>
         </div>
       )}
 
       {isOpen && (
         <div className="h-full overflow-y-scroll flex flex-col px-6 pt-4 pb-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl">{brainModelConfig?.name}</h2>
+            <h2 className="text-xl">
+              <BrainModelConfigName />
+            </h2>
             <Button
               className="p-2"
               type="text"
@@ -75,51 +150,27 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
 
           <Collapse className="mb-8" title="Reference configurations">
             <div className="space-y-4">
-              {CURATED_MODELS.map((brainConfig: BrainConfig) => (
-                <Link
-                  className="flex items-center justify-center text-primary-3 border border-primary-3 h-12"
-                  key={brainConfig.id}
-                  href={`${baseHref}?brainConfigId=${encodeURIComponent(brainConfig.id)}`}
-                >
-                  {brainConfig.name}
-                </Link>
+              {CURATED_MODELS.map((config) => (
+                <CuratedModelLinkBtn key={config.id} config={config} baseHref={baseHref} />
               ))}
             </div>
           </Collapse>
 
           <Collapse className="mb-8" title="Recently used configurations">
             <div className="space-y-2">
-              {RECENTLY_USED_CONFIGS.map((brainConfig: BrainConfig) => (
-                <BrainConfigEntry
-                  key={brainConfig.id}
-                  brainConfig={brainConfig}
-                  baseHref={baseHref}
-                />
-              ))}
+              <RecentConfigs baseHref={baseHref} />
             </div>
           </Collapse>
 
           <Collapse className="mb-8" title="Public configurations" defaultCollapsed>
             <div className="space-y-2">
-              {PUBLIC_CONFIGS.map((brainConfig: BrainConfig) => (
-                <BrainConfigEntry
-                  key={brainConfig.id}
-                  brainConfig={brainConfig}
-                  baseHref={baseHref}
-                />
-              ))}
+              <PublicConfigs baseHref={baseHref} />
             </div>
           </Collapse>
 
           <Collapse className="mb-8" title="My configurations" defaultCollapsed>
             <div className="space-y-2">
-              {PUBLIC_CONFIGS.map((brainConfig: BrainConfig) => (
-                <BrainConfigEntry
-                  key={brainConfig.id}
-                  brainConfig={brainConfig}
-                  baseHref={baseHref}
-                />
-              ))}
+              <PersonalConfigs baseHref={baseHref} />
             </div>
           </Collapse>
 

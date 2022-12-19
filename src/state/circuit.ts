@@ -1,3 +1,5 @@
+'use client';
+
 import { atom } from 'jotai';
 
 import DEFAULT_PLACEHOLDER_CIRCUIT from './placeholder-data/circuit.json';

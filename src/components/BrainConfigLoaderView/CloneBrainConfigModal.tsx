@@ -1,31 +1,36 @@
 import { useState } from 'react';
 import { Modal, Input } from 'antd';
+import { useSession } from 'next-auth/react';
+
+import { BrainModelConfig } from '@/types/nexus';
+import { cloneBrainModelConfig } from '@/api/nexus';
 
 type CloneBrainConfigModalProps = {
   open: boolean;
-  brainConfig: {
-    name: string;
-    id: string;
-  };
+  config: BrainModelConfig;
   onCancel: () => void;
   onCloneSuccess: (brainConfigId: string) => void;
 };
 
 export default function CloneBrainConfigModal({
-  brainConfig,
+  config,
   open,
   onCancel,
   onCloneSuccess,
 }: CloneBrainConfigModalProps) {
-  const [configName, setConfigName] = useState<string>();
+  const { data: session } = useSession();
+
+  const [configName, setConfigName] = useState<string>(config.name);
   const [isCloning, setIsCloning] = useState<boolean>(false);
 
-  const clone = () => {
+  const clone = async () => {
+    if (!session) return;
+
     setIsCloning(true);
-    setTimeout(() => {
-      setIsCloning(false);
-      onCloneSuccess(`${brainConfig.id}-new`);
-    }, 2000);
+
+    const newConfigMetadata = await cloneBrainModelConfig(config['@id'], configName, session);
+    setIsCloning(false);
+    onCloneSuccess(`${newConfigMetadata['@id']}`);
   };
 
   return (

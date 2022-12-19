@@ -59,3 +59,39 @@ export interface Dimension {
   endedAt: string;
   status: string;
 }
+export type BrainModelConfig = BaseEntity & {
+  name: string;
+  description: string;
+  cellComposition: {
+    '@id': string;
+  };
+  circuit?: {
+    '@id': string;
+  };
+};
+
+export type CellComposition = BaseEntity & {
+  name: string;
+  description: string;
+  distribution: {
+    '@id': string;
+    '@type': 'DataDownload';
+  };
+};
+
+export type CellCompositionConfig = {
+  [entityId: string]: {
+    hasProtocol: {
+      algorythm: string;
+      version: string;
+    };
+    hasParameter: {
+      name: string;
+      type: 'Dataset';
+      follow: string;
+      id: string;
+    }[];
+    configuration: Record<string, any>;
+    jobConfiguration: Record<string, string | number>;
+  };
+};

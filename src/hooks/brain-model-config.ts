@@ -1,0 +1,22 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useAtom, useSetAtom } from 'jotai';
+
+import { idAtom, addRecentlyUsedConfigIdAtom } from '@/state/brain-model-config';
+
+export default function useBrainModelConfig() {
+  const [currentId, setId] = useAtom(idAtom);
+  const addRecentlyUsedConfig = useSetAtom(addRecentlyUsedConfigIdAtom);
+
+  const searchParams = useSearchParams();
+  const id = searchParams.get('brainModelConfigId');
+
+  useEffect(() => {
+    if (id && currentId !== id) {
+      setId(id);
+      addRecentlyUsedConfig(id);
+    }
+  }, [id, currentId, setId, addRecentlyUsedConfig]);
+}

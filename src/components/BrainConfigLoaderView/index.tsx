@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Button, ConfigProvider } from 'antd';
+import { useAtom, useAtomValue } from 'jotai';
 
-import { CURATED_MODELS } from './placeholder-data';
+import { CURATED_MODELS } from '../BrainConfigPanel';
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
 import { tableTheme } from './antd-theme';
+import { searchTypeAtom, brainModelConfigListAtom } from './state';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 import IconPlus from '@/components/icons/Plus';
@@ -36,7 +38,7 @@ function Panel({ title, description, href, className = '' }: PanelProps) {
   );
 }
 
-type TabType = 'public' | 'my' | 'archives';
+type TabType = 'public' | 'personal' | 'archive';
 type SearchTab = {
   id: TabType;
   name: string;
@@ -50,12 +52,12 @@ const searchTabs: SearchTab[] = [
     icon: <SettingsIcon />,
   },
   {
-    id: 'my',
+    id: 'personal',
     name: 'My configurations',
     icon: <UserIcon />,
   },
   {
-    id: 'archives',
+    id: 'archive',
     name: 'Archives',
     icon: <ArchiveIcon />,
   },
@@ -66,7 +68,8 @@ type BrainConfigLoaderProps = {
 };
 
 export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) {
-  const [activeTabId, setActiveTabId] = useState<TabType>('public');
+  const [activeTabId, setActiveTabId] = useAtom(searchTypeAtom);
+  const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
 
   return (
     <div className={styles.container}>
@@ -76,7 +79,7 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
           className={styles.curatedModel}
           title={model.name}
           description={model.description}
-          href={`${baseHref}?brainConfigId=${encodeURIComponent(model.id)}`}
+          href={`${baseHref}?brainModelConfigId=${encodeURIComponent(model.id)}`}
         />
       ))}
 
@@ -102,7 +105,8 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
 
             <div className={styles.searchCtrlContainer}>
               <small>
-                <span className={styles.textPrimary4}>Total configurations: </span> 34
+                <span className={styles.textPrimary4}>Total configurations: </span>{' '}
+                {brainModelConfigs.length}
               </small>
               <input className={styles.searchInput} placeholder="Search brain configuration..." />
             </div>

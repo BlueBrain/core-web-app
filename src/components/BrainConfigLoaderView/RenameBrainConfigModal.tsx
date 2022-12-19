@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Modal, Input, Button } from 'antd';
+import { useSession } from 'next-auth/react';
+
+import { BrainModelConfig } from '@/types/nexus';
+import { renameBrainModelConfig } from '@/api/nexus';
 
 type RenameBrainConfigModalProps = {
   open: boolean;
-  brainConfig: {
-    id: string;
-    name: string;
-  };
+  config: BrainModelConfig;
   onCancel: () => void;
   onRenameSuccess: (id: string, newName: string) => void;
 };
@@ -15,19 +16,21 @@ export default function RenameBrainConfigModal({
   open,
   onCancel,
   onRenameSuccess,
-  brainConfig,
+  config,
 }: RenameBrainConfigModalProps) {
-  const [newName, setNewName] = useState<string>(brainConfig.name);
+  const { data: session } = useSession();
+
+  const [newName, setNewName] = useState<string>(config.name);
   const [isRenaming, setIsRenaming] = useState<boolean>(false);
 
-  const rename = () => {
-    if (!newName) return;
+  const rename = async () => {
+    if (!newName || !session) return;
 
     setIsRenaming(true);
-    setTimeout(() => {
-      setIsRenaming(false);
-      onRenameSuccess(brainConfig.id, newName);
-    }, 2000);
+    await renameBrainModelConfig(config, newName, session);
+    setIsRenaming(false);
+
+    onRenameSuccess(config['@id'], newName);
   };
 
   useEffect(() => {}, []);
@@ -48,7 +51,7 @@ export default function RenameBrainConfigModal({
           type="primary"
           loading={isRenaming}
           onClick={rename}
-          disabled={!newName && newName === brainConfig.name}
+          disabled={!newName && newName === config.name}
         >
           Rename configuration
         </Button>,

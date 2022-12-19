@@ -9,6 +9,8 @@ import Tabs from '@/components/BrainFactoryTabs';
 import BuildModelBtn from '@/components/BuildModelBtn';
 import { themeAtom } from '@/state/theme';
 import WorkflowLauncher from '@/components/WorkflowLauncherBtn';
+import useBrainModelConfigState from '@/hooks/brain-model-config';
+import useSessionState from '@/hooks/session';
 import { WORKFLOW_SIMULATION_TASK_NAME, SIMULATION_FILES } from '@/services/bbp-workflow/config';
 
 import styles from './brain-factory-main.module.css';
@@ -18,6 +20,9 @@ type BrainFactoryLayoutProps = {
 };
 
 export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps) {
+  useBrainModelConfigState();
+  useSessionState();
+
   const theme = useAtomValue(themeAtom);
 
   const bgClassName = theme === 'light' ? styles.bgThemeLight : styles.bgThemeDark;
