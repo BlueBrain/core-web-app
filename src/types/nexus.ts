@@ -13,6 +13,31 @@ export type BaseEntity = {
   _updatedBy: string;
 };
 
+export type FileMetadata = {
+  '@id': string;
+  '@type': 'File';
+  _bytes: number;
+  _createdAt: string;
+  _createdBy: string;
+  _deprecated: boolean;
+  _digest: {
+    _algorithm: string;
+    _value: string;
+  };
+  _filename: string;
+  _mediaType: string;
+  _project: string;
+  _rev: number;
+  _self: string;
+  _storage: {
+    '@id': string;
+    '@type': 'DiskStorage';
+    _rev: number;
+  };
+  _updatedAt: string;
+  _updatedBy: string;
+};
+
 export type Circuit = BaseEntity & {
   brainLocation?: {
     brainRegion?: {

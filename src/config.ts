@@ -17,3 +17,5 @@ export const nexus = {
   defaultIdBaseUrl: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations',
   defaultESIndexId: 'https://bbp.epfl.ch/neurosciencegraph/data/views/es/dataset',
 };
+
+export const autoSaveDebounceInterval = 10000;

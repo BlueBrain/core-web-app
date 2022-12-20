@@ -1,9 +1,9 @@
 import { Session } from 'next-auth';
-import { v4 as uuidv4 } from 'uuid';
 
+import defaultCellCompositionConfig from './defaults';
 import { nexus } from '@/config';
-import { composeUrl } from '@/util/nexus';
-import { BrainModelConfig, BaseEntity, CellComposition } from '@/types/nexus';
+import { composeUrl, createId } from '@/util/nexus';
+import { BrainModelConfig, BaseEntity, CellComposition, FileMetadata } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
   getPublicBrainModelConfigsQuery,
@@ -19,6 +19,55 @@ export function fetchJsonFileById<T>(id: string, session: Session) {
       Authorization: `Bearer ${session.accessToken}`,
     },
   }).then<T>((res) => res.json());
+}
+
+export function fetchFileMetadataById(id: string, session: Session) {
+  const url = composeUrl('file', id);
+
+  return fetch(url, {
+    headers: {
+      Accept: 'application/ld+json',
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  }).then<FileMetadata>((res) => res.json());
+}
+
+export function createJsonFile(data: any, filename: string, session: Session) {
+  const url = composeUrl('file', '');
+
+  const formData = new FormData();
+  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  formData.append('file', dataBlob, filename);
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+    body: formData,
+  }).then<FileMetadata>((res) => res.json());
+}
+
+export function updateJsonFile(
+  id: string,
+  data: any,
+  filename: string,
+  rev: number,
+  session: Session
+) {
+  const url = composeUrl('file', id, { rev });
+
+  const formData = new FormData();
+  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  formData.append('file', dataBlob, filename);
+
+  return fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+    body: formData,
+  }).then<FileMetadata>((res) => res.json());
 }
 
 export function fetchResourceById<T>(id: string, session: Session) {
@@ -69,10 +118,29 @@ export async function cloneBrainModelConfig(configId: string, newName: string, s
     },
   }).then((res) => res.json());
 
-  const cellCompositionCloneId = `https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/${uuidv4()}`;
+  const cellCompositionConfigId = cellComposition?.distribution?.['@id'];
+  const cellCompositionConfigUrl = composeUrl('file', cellCompositionConfigId ?? '');
+  const cellCompositionConfig = cellCompositionConfigId
+    ? fetchJsonFileById(cellCompositionConfigUrl, session)
+    : defaultCellCompositionConfig;
+
+  // cloning CellComposition config (JSON file in the distribution)
+  const cellCompositionConfigCloneMeta = await createJsonFile(
+    cellCompositionConfig,
+    'cell-composition-config',
+    session
+  );
+
+  // clonning CellComposition itself
+  const cellCompositionCloneId = createId('cellcomposition');
   const clonedCellComposition = {
     ...cellComposition,
     '@id': cellCompositionCloneId,
+    distribution: {
+      // TODO: add more metadata from cellCompositionConfigCloneMeta
+      '@id': cellCompositionConfigCloneMeta['@id'],
+      '@type': 'DataDownload',
+    },
   };
   const clonedCellCompositionMetadata: BaseEntity = await fetch(createResourceApiUrl, {
     method: 'POST',
@@ -83,8 +151,8 @@ export async function cloneBrainModelConfig(configId: string, newName: string, s
     body: JSON.stringify(clonedCellComposition),
   }).then((res) => res.json());
 
-  const brainModelConfigCloneId = `https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations/${uuidv4()}`;
-
+  // clonning BrainModelConfig
+  const brainModelConfigCloneId = createId('modelconfiguration');
   const clonedModelConfig = {
     ...brainModelConfigSource,
     name: newName,

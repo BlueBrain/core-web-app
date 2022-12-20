@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { nexus } from '@/config';
 
 export function collapseId(nexusId: string) {
@@ -70,4 +72,12 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
   return [nexus.url, '/', pathname, seachParamsStr ? `?${seachParamsStr}` : null]
     .filter(Boolean)
     .join('');
+}
+
+type IdType = 'file' | 'cellcomposition' | 'modelconfiguration';
+
+export function createId(type: IdType, id?: string) {
+  const typePath = type === 'file' ? '' : `/${type}s`;
+
+  return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? uuidv4()}`;
 }

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { atom, useAtomValue } from 'jotai';
-import { useUpdateAtom } from 'jotai/utils';
+import { atom, useSetAtom, useAtomValue } from 'jotai';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
@@ -200,7 +199,7 @@ function BrainRegionSelector() {
     }
   }, [brainRegions, session]);
   const composition = useAtomValue(compositionAtom);
-  const setComposition = useUpdateAtom(compositionAtom);
+  const setComposition = useSetAtom(compositionAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const setBrainRegionCallback = useCallback(
     async ({ id }: TreeNavItemCallbackProps) => {
