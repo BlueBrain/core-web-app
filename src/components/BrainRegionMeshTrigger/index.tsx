@@ -21,11 +21,13 @@ export default function BrainRegionMeshTrigger({
   distribution,
   colorCode,
 }: BrainRegionMeshTriggerProps) {
-  const { visibleMeshes } = useAtomValue(AtlasVisualizationAtom);
+  const atlasVisualizationAtom = useAtomValue(AtlasVisualizationAtom);
   const isVisible =
-    visibleMeshes.filter((mesh) => mesh.contentURL === distribution.content_url).length > 0;
+    atlasVisualizationAtom.visibleMeshes.filter(
+      (mesh) => mesh.contentURL === distribution.content_url
+    ).length > 0;
   const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
-  const meshObject = visibleMeshes.find(
+  const meshObject = atlasVisualizationAtom.visibleMeshes.find(
     (meshToFind) => meshToFind.contentURL === distribution.content_url
   );
   let isLoading = false;
@@ -43,12 +45,20 @@ export default function BrainRegionMeshTrigger({
     // if the brain region mesh is already visible, remove it
     if (isVisible) {
       setAtlasVisualizationAtom({
-        visibleMeshes: visibleMeshes.filter((mesh) => mesh.contentURL !== distribution.content_url),
+        ...atlasVisualizationAtom,
+        visibleMeshes: atlasVisualizationAtom.visibleMeshes.filter(
+          (mesh) => mesh.contentURL !== distribution.content_url
+        ),
       });
     } else {
-      visibleMeshes.push({ contentURL: contentUrl, color: colorCode, isLoading: true });
+      atlasVisualizationAtom.visibleMeshes.push({
+        contentURL: contentUrl,
+        color: colorCode,
+        isLoading: true,
+      });
       setAtlasVisualizationAtom({
-        visibleMeshes,
+        ...atlasVisualizationAtom,
+        visibleMeshes: atlasVisualizationAtom.visibleMeshes,
       });
     }
   };

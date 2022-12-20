@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import PointCloudMesh from './PointCloudMesh';
 import MorphologyHybrid from './morphologyGeneration/MorphologyHybrid';
 import AtlasMesh from './AtlasMesh';
 
@@ -151,70 +150,14 @@ class MeshCollection {
    *
    * @returns {*[]}
    */
-  getAllVisibleMeshes(localMeshes) {
+  getAllVisibleMeshes() {
     const visible = [];
     Object.keys(this.collection).forEach((id) => {
-      if (
-        this.collection[id].visible &&
-        this.collection[id] instanceof AtlasMesh &&
-        !localMeshes.includes(id)
-      ) {
+      if (this.collection[id].visible) {
         visible.push(id);
       }
     });
     return visible;
-  }
-
-  getAllVisibleLocalMeshes(localMeshes) {
-    const visible = [];
-    Object.keys(this.collection).forEach((id) => {
-      if (
-        this.collection[id].visible &&
-        (this.collection[id] instanceof AtlasMesh ||
-          this.collection[id] instanceof MorphologyHybrid) &&
-        localMeshes.includes(id)
-      ) {
-        visible.push(id);
-      }
-    });
-    return visible;
-  }
-
-  /**
-   * Returns all visible neuron morphologies
-   *
-   * @returns {*[]}
-   */
-  getAllVisibleNeuronMorphologies() {
-    const visible = [];
-    Object.keys(this.collection).forEach((id) => {
-      if (this.collection[id].visible && this.collection[id] instanceof MorphologyHybrid) {
-        visible.push(id);
-      }
-    });
-    return visible;
-  }
-
-  /**
-   * Returns all the currently visible meshes
-   *
-   * @returns {*[]}
-   */
-  getAllVisiblePointClouds() {
-    const visible = [];
-    Object.keys(this.collection).forEach((id) => {
-      if (this.collection[id].visible && this.collection[id] instanceof PointCloudMesh) {
-        visible.push(id);
-      }
-    });
-    return visible;
-  }
-
-  toggleVisible(id) {
-    if (id in this.collection) {
-      this.collection[id].visible = !this.collection[id].visible;
-      this.threeContext.needRender = true;
-    }
   }
 
   detachAllFromContainer() {

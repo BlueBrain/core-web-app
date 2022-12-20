@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Layout } from 'antd';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
-import MeshGenerator from '@/components/MeshGenerator';
+import RootMesh from '@/components/RootMesh';
 import styles from './styles.module.css';
 
 const { Content } = Layout;
@@ -22,7 +22,7 @@ export default function ThreeDeeView() {
       <div className={styles.threeDeeContainer}>
         <div className={styles.threeDeeView} ref={threeDeeDiv} />
         <div className={styles.backgroundContainer} />
-        {ready ? <MeshGenerator /> : null}
+        {ready ? <RootMesh /> : null}
       </div>
     </Content>
   );

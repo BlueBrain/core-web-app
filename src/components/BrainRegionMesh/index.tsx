@@ -47,19 +47,24 @@ const fetchMesh = (accessToken: string, distributionID: string) =>
 
 export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps) {
   const { data: session } = useSession();
-  const { visibleMeshes } = useAtomValue(AtlasVisualizationAtom);
+  const atlasVisualizationAtom = useAtomValue(AtlasVisualizationAtom);
   const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
 
   /**
    * Sets the loading state to false
    */
-  const disableLoadingState = () => {
-    const meshIndex = visibleMeshes.findIndex((meshToFind) => meshToFind.contentURL === id);
-    visibleMeshes[meshIndex].isLoading = false;
-    setAtlasVisualizationAtom({
-      visibleMeshes,
-    });
-  };
+  const disableLoadingState = useCallback(() => {
+    const meshIndex = atlasVisualizationAtom.visibleMeshes.findIndex(
+      (meshToFind) => meshToFind.contentURL === id
+    );
+    if (atlasVisualizationAtom.visibleMeshes[meshIndex].isLoading) {
+      atlasVisualizationAtom.visibleMeshes[meshIndex].isLoading = false;
+      setAtlasVisualizationAtom({
+        ...atlasVisualizationAtom,
+        visibleMeshes: atlasVisualizationAtom.visibleMeshes,
+      });
+    }
+  }, [atlasVisualizationAtom, id, setAtlasVisualizationAtom]);
 
   /**
    * Fetches the data from the API
@@ -75,7 +80,7 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
         })
         .catch(() => disableLoadingState());
     }
-  }, [colorCode, id, session?.user, setAtlasVisualizationAtom]);
+  }, [colorCode, disableLoadingState, id, session?.accessToken, session?.user]);
 
   useEffect(() => {
     const mc = threeCtxWrapper.getMeshCollection();
@@ -86,7 +91,7 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
     } else {
       fetchDataAPI();
     }
-  }, [id, colorCode, fetchDataAPI]);
+  }, [id, colorCode, fetchDataAPI, disableLoadingState]);
 
   return null;
 }

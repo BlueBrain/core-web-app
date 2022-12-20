@@ -11,7 +11,7 @@ import BrainRegionIcon from '@/components/icons/BrainRegion';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
 import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/components/tree-nav-item';
 import BrainRegionMeshTrigger, { Distribution } from '@/components/BrainRegionMeshTrigger';
-
+import PointCloudTrigger from '@/components/PointCloudTrigger';
 import styles from './brain-region-selector.module.css';
 
 const { fetchAtlasAPI, classNames } = utils;
@@ -286,6 +286,7 @@ function BrainRegionSelector() {
                     distribution={meTypeDetails.distribution}
                     colorCode={meTypeDetails.colorCode}
                   />
+                  <PointCloudTrigger regionID={meTypeDetails.id} color={meTypeDetails.colorCode} />
                 </span>
               ) : (
                 <Button
