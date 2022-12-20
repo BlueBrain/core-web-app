@@ -4,12 +4,12 @@ import sessionAtom from '@/state/session';
 import { recentlyUsedConfigIdsAtom } from '@/state/brain-model-config';
 import { BrainModelConfig } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
+import { fetchBrainModelConfigsByIds } from '@/api/nexus';
 import { nexus } from '@/config';
 import {
   getPublicBrainModelConfigsQuery,
   getPersonalBrainModelConfigsQuery,
   getArchiveBrainModelConfigsQuery,
-  getEntitiesByIdsQuery,
 } from '@/queries/es';
 
 export const refetchTriggerAtom = atom<{}>({});
@@ -23,27 +23,13 @@ export const searchStringAtom = atom<string>('');
 
 export const recentlyUsedConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (get) => {
   const session = get(sessionAtom);
-  const recentlyUsedConfigs = get(recentlyUsedConfigIdsAtom);
+  const ids = get(recentlyUsedConfigIdsAtom);
 
   get(refetchTriggerAtom);
 
-  if (!session || !recentlyUsedConfigs.length) return [];
+  if (!session || !ids.length) return [];
 
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
-
-  const query = getEntitiesByIdsQuery(recentlyUsedConfigs);
-
-  const configs = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(query),
-  })
-    .then((res) => res.json())
-    .then((res) => res.hits.hits)
-    .then((hits) => hits.map((hit: any) => hit._source as BrainModelConfig));
+  const configs = await fetchBrainModelConfigsByIds(ids, session);
 
   return configs;
 });

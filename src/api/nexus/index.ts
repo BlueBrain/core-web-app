@@ -2,7 +2,7 @@ import { Session } from 'next-auth';
 
 import defaultCellCompositionConfig from './defaults';
 import { nexus } from '@/config';
-import { composeUrl, createId } from '@/util/nexus';
+import { composeUrl, createId, expandId } from '@/util/nexus';
 import { BrainModelConfig, BaseEntity, CellComposition, FileMetadata } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -215,7 +215,8 @@ export function fetchBrainModelConfigsByIds(
   session: Session
 ): Promise<BrainModelConfig[]> {
   const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
-  const query = getEntitiesByIdsQuery(ids);
+  const expandedIds = ids.map((id) => expandId(id));
+  const query = getEntitiesByIdsQuery(expandedIds);
 
   return fetch(apiUrl, {
     method: 'POST',
