@@ -1,7 +1,7 @@
 export interface DistributionSliderSeries {
   label: string;
   color: string;
-  percentage: number;
+  percentage: number; // TODO: This should take an absolute value
   isLocked: boolean;
   breakdown?: DistributionSliderSeries[];
 }

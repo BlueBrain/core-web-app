@@ -13,3 +13,12 @@
 html {
   font-size: 14px;
 }
+
+.ant-tabs .ant-tabs-tab {
+  @apply text-lg;
+  @apply text-primary-7;
+}
+
+.ant-tabs-top > .ant-tabs-nav::before {
+  @apply border-none;
+}

@@ -8,6 +8,7 @@ function intern(value) {
 // https://observablehq.com/@d3/sankey
 // Modified to use a React.refObject.
 export default function sankey(
+  ref,
   {
     links, // an iterable of node objects (typically [{id}, …]); implied by links if missing
     nodes, // an iterable of link objects (typically [{source, target}, …])
@@ -15,6 +16,7 @@ export default function sankey(
   {
     format = ',', // a function or format specifier for values in titles
     align = 'justify', // convenience shorthand for nodeAlign
+    nodeColorScale,
     nodeId = (d) => d.id, // given d in nodes, returns a unique identifier (string)
     nodeGroup, // given d in nodes, returns an (ordinal) value for color
     nodeGroups, // an array of ordinal values representing the node groups
@@ -43,8 +45,7 @@ export default function sankey(
     marginRight = 1, // right margin, in pixels
     marginBottom = 5, // bottom margin, in pixels
     marginLeft = 1, // left margin, in pixels
-  },
-  ref
+  }
 ) {
   // Convert nodeAlign from a name to a function (since d3-sankey is not part of core d3).
   if (typeof nodeAlign !== 'function')
@@ -64,7 +65,7 @@ export default function sankey(
   const G = nodeGroup == null ? null : d3.map(nodes, nodeGroup).map(intern);
 
   // Replace the input nodes and links with mutable objects for the simulation.
-  // nodes = d3.map(nodes, (_, i) => ({ id: N[i] })); // eslint-disable-line no-param-reassign
+  nodes = d3.map(nodes, ({ id, label }) => ({ id, label })); // eslint-disable-line no-param-reassign
   links = d3.map(links, (_, i) => ({ source: LS[i], target: LT[i], value: LV[i] })); // eslint-disable-line no-param-reassign
 
   // Ignore a group-based linkColor option if no groups are specified.
@@ -74,7 +75,12 @@ export default function sankey(
   if (G && nodeGroups === undefined) nodeGroups = G; // eslint-disable-line no-param-reassign
 
   // Construct the scales.
-  const color = nodeGroup == null ? null : d3.scaleOrdinal(nodeGroups, colors);
+  const color =
+    nodeGroup == null
+      ? null
+      : nodeColorScale
+      ? nodeColorScale
+      : d3.scaleOrdinal(nodeGroups, colors);
 
   // Compute the Sankey layout.
   d3Sankey

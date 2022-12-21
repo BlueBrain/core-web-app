@@ -108,7 +108,7 @@ export type Node = {
   glia_composition: Composition;
   id: string;
   label: string;
-  neuron_composition: string | Composition;
+  neuron_composition: Composition;
 };
 
 export type Densities = {
@@ -175,7 +175,7 @@ function MeTypeDetails({
   );
 }
 
-export const compositionAtom = atom<Densities | null>(null);
+export const compositionAtom = atom<Densities>({ links: [], nodes: [] });
 export const densityOrCountAtom = atom<keyof Composition>('count');
 
 interface MeTypeDetailsState extends MeTypeDetailsProps {

@@ -1,9 +1,0 @@
-.verticalSlidersPanel {
-  display: flex;
-  flex-flow: row;
-  flex-basis: 100%;
-
-  > :nth-child(n + 2) {
-    margin-left: 2rem;
-  }
-}
