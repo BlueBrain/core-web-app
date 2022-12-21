@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
-import { tableFromIPC } from 'apache-arrow';
 import * as THREE from 'three';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Color } from 'three';
+import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasVisualizationAtom from '@/state/atlas';
 import { basePath } from '@/config';
