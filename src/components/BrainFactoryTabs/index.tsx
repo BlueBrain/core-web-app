@@ -9,22 +9,32 @@ import { classNames } from '@/util/utils';
 
 const COMMON_CLASSNAME = 'flex-auto text-center h-12 leading-[3rem] mr-px';
 
-const tabs = [
+type Tab = {
+  name: string;
+  href: string;
+  baseHref: string;
+};
+
+const tabs: Tab[] = [
   {
     name: 'Cell composition',
     href: '/brain-factory/cell-composition/interactive',
+    baseHref: '/brain-factory/cell-composition',
   },
   {
     name: 'Cell model assignment',
     href: '/brain-factory/cell-model-assignment',
+    baseHref: '/brain-factory/cell-model-assignment',
   },
   {
     name: 'Connectome definition',
     href: '/brain-factory/connectome-definition',
+    baseHref: '/brain-factory/connectome-definition',
   },
   {
     name: 'Connection model assignment',
     href: '/brain-factory/connectome-model-assignment',
+    baseHref: '/brain-factory/connectome-model-assignment',
   },
 ];
 
@@ -54,7 +64,7 @@ export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
         <Link
           key={tab.href}
           href={tab.href}
-          className={getTabClassName(!!pathname?.startsWith(tab.href), theme)}
+          className={getTabClassName(!!pathname?.startsWith(tab.baseHref), theme)}
         >
           {tab.name}
         </Link>
