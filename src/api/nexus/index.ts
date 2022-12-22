@@ -210,7 +210,7 @@ export async function renameBrainModelConfig(
   return clonedModelConfigMetadata;
 }
 
-export function fetchBrainModelConfigsByIds(
+export async function fetchBrainModelConfigsByIds(
   ids: string[],
   session: Session
 ): Promise<BrainModelConfig[]> {
@@ -218,7 +218,7 @@ export function fetchBrainModelConfigsByIds(
   const expandedIds = ids.map((id) => expandId(id));
   const query = getEntitiesByIdsQuery(expandedIds);
 
-  return fetch(apiUrl, {
+  const configs = await fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -228,6 +228,10 @@ export function fetchBrainModelConfigsByIds(
   })
     .then((res) => res.json())
     .then<BrainModelConfig[]>((res) => res.hits.hits.map((hit: any) => hit._source));
+
+  configs.sort((a, b) => expandedIds.indexOf(a['@id']) - expandedIds.indexOf(b['@id']));
+
+  return configs;
 }
 
 export function fetchPublicBrainModels(session: Session): Promise<BrainModelConfig[]> {

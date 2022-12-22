@@ -18,9 +18,11 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
 
   return (
     <div className="flex justify-between items-center">
-      <Link href={href}>
-        {config.name}
-        <small className="text-primary-3 ml-2">{createdAtFormatted}</small>
+      <Link className="inline-flex items-baseline max-w-[190px]" href={href}>
+        <span title={config.name} className="overflow-hidden text-ellipsis whitespace-pre flex-1">
+          {config.name}
+        </span>
+        <small className="text-primary-3 ml-2 whitespace-nowrap">{createdAtFormatted}</small>
       </Link>
 
       <div className="text-primary-3 space-x-2">

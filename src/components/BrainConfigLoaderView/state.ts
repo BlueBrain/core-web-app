@@ -29,9 +29,7 @@ export const recentlyUsedConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (
 
   if (!session || !ids.length) return [];
 
-  const configs = await fetchBrainModelConfigsByIds(ids, session);
-
-  return configs;
+  return fetchBrainModelConfigsByIds(ids, session);
 });
 
 export const brainModelConfigListAtom = atom<Promise<BrainModelConfig[]>>(async (get) => {

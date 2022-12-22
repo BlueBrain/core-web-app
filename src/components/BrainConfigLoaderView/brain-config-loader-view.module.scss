@@ -12,6 +12,7 @@
 
 .modelListView {
   grid-area: model-list-view;
+  overflow-y: scroll;
   color: white;
   padding: 3rem 14rem 0 6rem;
   @apply bg-primary-9;
@@ -71,7 +72,7 @@
   padding: 9px 16px;
 }
 
-.tabBtn {
+:global(.ant-btn).tabBtn {
   font-size: 20px;
   height: 42px;
   margin-right: 2rem;
@@ -90,7 +91,7 @@
   }
 }
 
-.tabBtn.activeTabBtn {
+:global(.ant-btn).tabBtn.activeTabBtn {
   @apply text-white;
 }
 
