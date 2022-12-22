@@ -3,8 +3,9 @@ import { atom, useSetAtom, useAtomValue } from 'jotai';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
-import { EyeInvisibleFilled } from '@ant-design/icons';
+import { EyeInvisibleFilled, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
+
 import utils from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
@@ -12,6 +13,7 @@ import AngledArrowIcon from '@/components/icons/AngledArrow';
 import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/components/tree-nav-item';
 import BrainRegionMeshTrigger, { Distribution } from '@/components/BrainRegionMeshTrigger';
 import PointCloudTrigger from '@/components/PointCloudTrigger';
+import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import styles from './brain-region-selector.module.css';
 
 const { fetchAtlasAPI, classNames } = utils;
@@ -186,10 +188,63 @@ interface MeTypeDetailsState extends MeTypeDetailsProps {
   color_code: string;
 }
 
-function BrainRegionSelector() {
+type VerticalCollapsedRegionsProps = {
+  regionFullPath: RegionFullPathType[];
+};
+
+function VerticalCollapsedRegions({ regionFullPath }: VerticalCollapsedRegionsProps) {
+  if (!regionFullPath.length) return <div className="text-lg font-bold">Brain region</div>;
+
+  // remove 'Whole mouse brain'
+  let [, ...displaySubregions] = [...regionFullPath];
+  displaySubregions.reverse();
+
+  // if path is too long, make it short with ...
+  if (displaySubregions.length > 4) {
+    const reducedSubregions = [...displaySubregions].slice(0, 4);
+    displaySubregions = [...reducedSubregions, { id: 'dots', name: '...' }];
+  }
+
+  // highlight the last element in path (more nested selection)
+  const hightlightElemId = displaySubregions[0].id;
+
+  const subRegionElems = displaySubregions.map((subregions) => (
+    <div
+      key={subregions.id}
+      className={classNames(
+        'text-sm',
+        subregions.id === hightlightElemId ? 'font-bold' : 'font-thin'
+      )}
+    >
+      {subregions.name}
+    </div>
+  ));
+  return (
+    <>
+      {subRegionElems}
+      <div className="text-lg font-bold">Brain region</div>
+    </>
+  );
+}
+
+function VerticalCollapsedMeType({ meTypeDetailsTitle }: { meTypeDetailsTitle: string }) {
+  return (
+    <>
+      <div className="text-sm">
+        View <span className="font-bold">Counts[N]</span>
+      </div>
+      <div className="text-lg text-secondary-4 font-bold">{meTypeDetailsTitle}</div>
+    </>
+  );
+}
+
+export default function BrainRegionSelector() {
   const { data: session } = useSession();
+  const [isBrainRegionOpen, setIsBrainRegionOpen] = useState<boolean>(true);
+  const [isMeTypeOpen, setisMeTypeOpen] = useState<boolean>(true);
   const [brainRegions, setBrainRegions] = useState<TreeChildren[]>();
   const [meTypeDetails, setMeTypeDetails] = useState<MeTypeDetailsState>();
+  const [regionFullPath, setRegionFullPath] = useState<RegionFullPathType[]>([]);
 
   const fetchDataAPI = useCallback(() => {
     if (!brainRegions && session?.user) {
@@ -203,111 +258,179 @@ function BrainRegionSelector() {
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const setBrainRegionCallback = useCallback(
     async ({ id }: TreeNavItemCallbackProps) => {
-      if (session?.user && id) {
-        const {
-          title,
-          color_code: colorCode,
-          composition_details: compositionDetails,
-          distribution,
-        } = await getBrainRegionById(id, session.accessToken);
+      if (!brainRegions?.length) return;
+      if (!session?.user || !id) return;
 
-        const {
-          neuron_composition: neuronComposition,
-          glia_composition: gliaComposition,
-          nodes,
-          links,
-        } = compositionDetails || {
-          neuron_composition: 0,
-          glia_composition: 0,
-          nodes: [],
-          links: [],
-        };
+      const path = getBottomUpPath(brainRegions, id);
+      setRegionFullPath(path);
 
-        setMeTypeDetails({
-          colorCode,
-          distribution,
-          gliaComposition, // The total will remain constant for a given brain region
-          id,
-          neuronComposition, // The total will remain constant for a given brain region
-          title,
-        } as MeTypeDetailsState);
-        setComposition(compositionDetails && { nodes, links });
-      }
+      const {
+        title,
+        color_code: colorCode,
+        composition_details: compositionDetails,
+        distribution,
+      } = await getBrainRegionById(id, session.accessToken);
+
+      const {
+        neuron_composition: neuronComposition,
+        glia_composition: gliaComposition,
+        nodes,
+        links,
+      } = compositionDetails || {
+        neuron_composition: 0,
+        glia_composition: 0,
+        nodes: [],
+        links: [],
+      };
+
+      setMeTypeDetails({
+        colorCode,
+        distribution,
+        gliaComposition, // The total will remain constant for a given brain region
+        id,
+        neuronComposition, // The total will remain constant for a given brain region
+        title,
+      } as MeTypeDetailsState);
+      setComposition(compositionDetails && { nodes, links });
     },
-    [session, setComposition, setMeTypeDetails]
+    [session, setComposition, setMeTypeDetails, brainRegions]
   );
 
   useEffect(() => fetchDataAPI());
 
-  return !session?.user ? null : (
+  if (!session?.user) return null;
+
+  return (
     <div className="flex">
       <div className="bg-primary-8 flex flex-1 flex-col h-screen">
-        <div className="flex flex-1 flex-col overflow-y-auto px-7 py-8 w-[300px]">
-          <div className="grid gap-5">
-            <Header label={<span>Brain region</span>} icon={<BrainIcon />} />
-            <div className="border-b border-white focus-within:border-primary-2">
-              <input
-                type="text"
-                className="block w-full py-3 text-primary-4 placeholder-primary-4 border-0 border-b border-transparent bg-transparent focus:border-primary-4 focus:ring-0"
-                disabled
-                placeholder="Search region..."
-              />
+        {!isBrainRegionOpen && (
+          <div className="flex flex-col items-center pt-2 w-[40px]">
+            <Button
+              className="mb-4"
+              type="text"
+              size="small"
+              icon={<PlusOutlined style={{ color: 'white' }} />}
+              onClick={() => setIsBrainRegionOpen(true)}
+            />
+
+            <div
+              className="text-white flex gap-x-3.5 items-center"
+              style={{
+                writingMode: 'vertical-rl',
+                transform: 'rotate(180deg)',
+                cursor: 'e-resize',
+              }}
+              role="presentation"
+              onClick={() => setIsBrainRegionOpen(true)}
+            >
+              <VerticalCollapsedRegions regionFullPath={regionFullPath} />
             </div>
-            <Accordion.Root className="divide-y divide-primary-7" collapsible type="single">
-              {brainRegions &&
-                brainRegions.map(({ id, items, title }) => (
-                  <TreeNavItem
-                    className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
-                    id={id}
-                    items={items}
-                    key={id}
-                    onValueChange={setBrainRegionCallback} // Will be attached to nested Accordion.Trigger
-                    selectedId={meTypeDetails ? meTypeDetails.id : ''}
-                    title={<UppercaseTitle title={title} />}
-                  >
-                    <TreeNavItem className="font-normal pl-3" title={<CapitalizedTitle />} />
-                  </TreeNavItem>
-                ))}
-            </Accordion.Root>
           </div>
-        </div>
+        )}
+        {isBrainRegionOpen && (
+          <div className="flex flex-1 flex-col overflow-y-auto px-6 pt-4 pb-6 w-[300px]">
+            <div className="grid gap-5">
+              <div className="flex justify-between">
+                <Header label={<span>Brain region</span>} icon={<BrainIcon />} />
+                <Button
+                  className="p-2"
+                  type="text"
+                  icon={<MinusOutlined style={{ color: 'white' }} />}
+                  onClick={() => setIsBrainRegionOpen(false)}
+                />
+              </div>
+              <div className="border-b border-white focus-within:border-primary-2">
+                <input
+                  type="text"
+                  className="block w-full py-3 text-primary-4 placeholder-primary-4 border-0 border-b border-transparent bg-transparent focus:border-primary-4 focus:ring-0"
+                  disabled
+                  placeholder="Search region..."
+                />
+              </div>
+              <Accordion.Root className="divide-y divide-primary-7" collapsible type="single">
+                {brainRegions &&
+                  brainRegions.map(({ id, items, title }) => (
+                    <TreeNavItem
+                      className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
+                      id={id}
+                      items={items}
+                      key={id}
+                      onValueChange={setBrainRegionCallback} // Will be attached to nested Accordion.Trigger
+                      selectedId={meTypeDetails ? meTypeDetails.id : ''}
+                      title={<UppercaseTitle title={title} />}
+                    >
+                      <TreeNavItem className="font-normal pl-3" title={<CapitalizedTitle />} />
+                    </TreeNavItem>
+                  ))}
+              </Accordion.Root>
+            </div>
+          </div>
+        )}
       </div>
-      <div className="bg-primary-7 flex flex-1 flex-col h-screen min-w-[300px] overflow-hidden">
-        <div className="flex flex-col overflow-y-auto py-8">
-          {meTypeDetails && (
-            <div className="grid gap-5 px-7">
+      <div className="bg-primary-7 flex h-screen overflow-hidden">
+        {!isMeTypeOpen && meTypeDetails && (
+          <div className="flex flex-col items-center pt-2 w-[40px]">
+            <Button
+              className="mb-4"
+              type="text"
+              size="small"
+              icon={<PlusOutlined style={{ color: 'white' }} />}
+              onClick={() => setisMeTypeOpen(true)}
+            />
+
+            <div
+              className="text-white flex gap-x-3.5 items-center"
+              style={{
+                writingMode: 'vertical-rl',
+                transform: 'rotate(180deg)',
+                cursor: 'e-resize',
+              }}
+              role="presentation"
+              onClick={() => setisMeTypeOpen(true)}
+            >
+              <VerticalCollapsedMeType meTypeDetailsTitle={meTypeDetails.title} />
+            </div>
+          </div>
+        )}
+        {isMeTypeOpen && meTypeDetails && (
+          <div className="flex flex-col gap-5 overflow-y-auto px-6 pt-4 pb-4 min-w-[300px]">
+            <div className="flex justify-between">
               <Header
                 label={<span className="text-secondary-4">{meTypeDetails.title}</span>}
                 icon={<BrainRegionIcon />}
               />
-              {meTypeDetails.distribution ? (
-                <span>
-                  <BrainRegionMeshTrigger
-                    distribution={meTypeDetails.distribution}
-                    colorCode={meTypeDetails.colorCode}
-                  />
-                  <PointCloudTrigger regionID={meTypeDetails.id} color={meTypeDetails.colorCode} />
-                </span>
-              ) : (
-                <Button
-                  className={`${styles.buttonTrigger} cursor-not-allowed bg-primary-6 border-none`}
-                  icon={<EyeInvisibleFilled className="text-error" />}
-                />
-              )}
-              {composition && (
-                <MeTypeDetails
-                  densityOrCount={densityOrCount}
-                  gliaComposition={meTypeDetails.gliaComposition}
-                  neuronComposition={meTypeDetails.neuronComposition}
-                  nodes={composition.nodes}
-                />
-              )}
+              <Button
+                className="p-2"
+                type="text"
+                icon={<MinusOutlined style={{ color: 'white' }} />}
+                onClick={() => setisMeTypeOpen(false)}
+              />
             </div>
-          )}
-        </div>
+            {meTypeDetails.distribution ? (
+              <span>
+                <BrainRegionMeshTrigger
+                  distribution={meTypeDetails.distribution}
+                  colorCode={meTypeDetails.colorCode}
+                />
+                <PointCloudTrigger regionID={meTypeDetails.id} color={meTypeDetails.colorCode} />
+              </span>
+            ) : (
+              <Button
+                className={`${styles.buttonTrigger} cursor-not-allowed bg-primary-6 border-none`}
+                icon={<EyeInvisibleFilled className="text-error" />}
+              />
+            )}
+            {composition && (
+              <MeTypeDetails
+                densityOrCount={densityOrCount}
+                gliaComposition={meTypeDetails.gliaComposition}
+                neuronComposition={meTypeDetails.neuronComposition}
+                nodes={composition.nodes}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-export default BrainRegionSelector;
