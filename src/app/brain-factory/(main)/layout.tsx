@@ -12,6 +12,7 @@ import WorkflowLauncher from '@/components/WorkflowLauncherBtn';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import useSessionState from '@/hooks/session';
 import { WORKFLOW_SIMULATION_TASK_NAME, SIMULATION_FILES } from '@/services/bbp-workflow/config';
+import useEnsureLogin from '@/hooks/ensure-login';
 
 import styles from './brain-factory-main.module.css';
 
@@ -22,6 +23,7 @@ type BrainFactoryLayoutProps = {
 export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps) {
   useBrainModelConfigState();
   useSessionState();
+  useEnsureLogin();
 
   const theme = useAtomValue(themeAtom);
 

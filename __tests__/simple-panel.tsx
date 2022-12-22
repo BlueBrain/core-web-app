@@ -1,15 +1,17 @@
 import { render } from '@testing-library/react';
-import * as NextAuthReact from 'next-auth/react';
 import * as Navigation from 'next/navigation';
-import HomePage from '../src/app/page';
+import SimplePanel from '../src/components/Home/panel/SimplePanel';
 
-jest.mock('next-auth/react');
+jest.mock('next/navigation');
 
-NextAuthReact.useSession = jest.fn(() => ({ data: null, status: 'loading' }));
 Navigation.useSearchParams = jest.fn(() => new URLSearchParams());
 
 test('Home page', async () => {
-  render(<HomePage />);
+  render(
+    <SimplePanel title="Observatory" link="/observatory">
+      Text
+    </SimplePanel>
+  );
 
   // For now, we put a dummy test because the UI has not
   // yet been validated by Henry.

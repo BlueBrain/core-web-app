@@ -1,15 +1,18 @@
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { unstable_getServerSession } from 'next-auth/next';
+
+import { SignInButton, SignOutButton } from './buttons';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
+
 import Styles from './login-button.module.css';
 
-export default function LoginButton() {
-  const { data: session } = useSession();
+export default async function LoginButton() {
+  const session = await unstable_getServerSession(authOptions);
 
   if (session?.user) {
     return (
       <div className={Styles.logoutButton}>
-        <button className={Styles.loginButton} type="button" onClick={() => signOut()}>
-          Logout
-        </button>
+        <SignInButton />
+
         <div>
           {session.user.name} ({session.user.username})
         </div>
@@ -17,9 +20,5 @@ export default function LoginButton() {
     );
   }
 
-  return (
-    <button className={Styles.loginButton} type="button" onClick={() => signIn('keycloak')}>
-      Login
-    </button>
-  );
+  return <SignOutButton />;
 }

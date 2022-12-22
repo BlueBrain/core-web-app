@@ -1,5 +1,3 @@
-'use client';
-
 import SimplePanel from './panel/SimplePanel';
 import VideoPanel from './panel/VideoPanel';
 
