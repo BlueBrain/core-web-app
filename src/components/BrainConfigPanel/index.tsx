@@ -116,7 +116,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
             className="mb-4"
             type="text"
             size="small"
-            icon={<PlusOutlined className="text-white" />}
+            icon={<PlusOutlined style={{ color: 'white' }} />}
             onClick={() => setIsOpen(true)}
           />
 
