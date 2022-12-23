@@ -193,7 +193,10 @@ type VerticalCollapsedRegionsProps = {
 };
 
 function VerticalCollapsedRegions({ regionFullPath }: VerticalCollapsedRegionsProps) {
-  if (!regionFullPath.length) return <div className="text-lg font-bold">Brain region</div>;
+  // default or if only 'Whole mouse brain selected' discard it.
+  if (!regionFullPath.length || regionFullPath.length === 1) {
+    return <div className="text-lg font-bold">Brain region</div>;
+  }
 
   // remove 'Whole mouse brain'
   let [, ...displaySubregions] = [...regionFullPath];
