@@ -4,11 +4,11 @@ import { ReactNode } from 'react';
 import { Button, ConfigProvider } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 
-import { CURATED_MODELS } from '../BrainConfigPanel';
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
 import { tableTheme } from './antd-theme';
 import { searchTypeAtom, brainModelConfigListAtom } from './state';
+import { CURATED_MODELS } from '@/components/BrainConfigPanel';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 import IconPlus from '@/components/icons/Plus';

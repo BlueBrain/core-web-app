@@ -2,7 +2,7 @@ import { Button, Spin } from 'antd';
 import { CloudFilled, LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue, useSetAtom } from 'jotai';
 import AtlasVisualizationAtom from '@/state/atlas';
-import styles from '../BrainRegionMeshTrigger/brain-region-mesh-trigger.module.css';
+import styles from '@/components/BrainRegionMeshTrigger/brain-region-mesh-trigger.module.css';
 
 type PointCloudTriggerProps = {
   regionID: string;

@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import moment from 'moment';
 import Link from '@/components/Link';
 import { Campaign } from '@/types/nexus';
-import styles from '../observatory/observatory.module.scss';
+import styles from '@/app/observatory/observatory.module.scss';
 import tableStyles from './table.module.scss';
 
 const { Search } = Input;

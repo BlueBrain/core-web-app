@@ -3,7 +3,7 @@
 import { atom } from 'jotai';
 import { selectAtom, atomWithStorage } from 'jotai/utils';
 
-import sessionAtom from '../session';
+import sessionAtom from '@/state/session';
 import { BrainModelConfig } from '@/types/nexus';
 import { fetchResourceById, updateResource } from '@/api/nexus';
 

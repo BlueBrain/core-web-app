@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import threeCtxWrapper from '../ThreeCtxWrapper';
+import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 
 const USE_MATERIAL_CASE = {
   GHOST: 1,

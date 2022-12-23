@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import parseWFObj from 'wavefront-obj-parser';
-import constants from '../constants';
+import constants from '@/visual/constants';
 
 const MESH_FORMAT_LOOKUP = {
   [constants.OBJ_MIME]: 'parseObj',
