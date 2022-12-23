@@ -14,24 +14,3 @@
 .loginButton:active {
   background-color: #003a8c;
 }
-
-.logoutButton {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1em;
-  margin: 0.5em 0;
-}
-
-.logoutButton > div {
-  flex: 1 1 auto;
-  font-weight: bolder;
-}
-
-.logoutButton > img {
-  flex: 0 0 auto;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  overflow: hidden;
-}
