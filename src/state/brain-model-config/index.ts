@@ -3,8 +3,8 @@
 import { atom } from 'jotai';
 import { selectAtom, atomWithStorage } from 'jotai/utils';
 
-import sessionAtom from '@/state/session';
-import { BrainModelConfig } from '@/types/nexus';
+import sessionAtom from '../session';
+import { BrainModelConfigResource } from '@/types/nexus';
 import { fetchResourceById, updateResource } from '@/api/nexus';
 
 const RECENTLY_USED_SIZE = 5;
@@ -27,7 +27,7 @@ export const addRecentlyUsedConfigIdAtom = atom(null, (get, set, id: string) => 
 export const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-export const configAtom = atom<Promise<BrainModelConfig | null>>(async (get) => {
+export const configAtom = atom<Promise<BrainModelConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = get(idAtom);
 
@@ -35,17 +35,17 @@ export const configAtom = atom<Promise<BrainModelConfig | null>>(async (get) => 
 
   if (!session || !id) return null;
 
-  return fetchResourceById<BrainModelConfig>(id, session);
+  return fetchResourceById<BrainModelConfigResource>(id, session);
 });
 
-export const updateConfigAtom = atom(null, async (get, set, config: BrainModelConfig) => {
+export const updateConfigAtom = atom(null, async (get, set, config: BrainModelConfigResource) => {
   const session = get(sessionAtom);
 
   if (!session) {
     throw new Error('No session state found');
   }
 
-  updateResource(config, session);
+  updateResource(config, config._rev, session);
 
   set(triggerRefetchAtom);
 });
@@ -74,9 +74,7 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
   set(updateConfigAtom, updatedConfig);
 });
 
-export const getCellCompositionIdAtom = selectAtom(
+export const getCellCompositionConfigIdAtom = selectAtom(
   configAtom,
-  (config) => config?.cellComposition['@id'] ?? null
+  (config) => config?.cellCompositionConfig?.['@id'] ?? null
 );
-
-export const getCircuitIdAtom = selectAtom(configAtom, (config) => config?.circuit?.['@id']);

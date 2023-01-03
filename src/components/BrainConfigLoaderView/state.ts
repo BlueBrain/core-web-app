@@ -2,10 +2,8 @@ import { atom } from 'jotai';
 
 import sessionAtom from '@/state/session';
 import { recentlyUsedConfigIdsAtom } from '@/state/brain-model-config';
-import { BrainModelConfig } from '@/types/nexus';
-import { composeUrl } from '@/util/nexus';
-import { fetchBrainModelConfigsByIds } from '@/api/nexus';
-import { nexus } from '@/config';
+import { BrainModelConfigResource } from '@/types/nexus';
+import { fetchBrainModelConfigsByIds, queryES } from '@/api/nexus';
 import {
   getPublicBrainModelConfigsQuery,
   getPersonalBrainModelConfigsQuery,
@@ -21,7 +19,7 @@ export const searchTypeAtom = atom<SearchType>('public');
 
 export const searchStringAtom = atom<string>('');
 
-export const recentlyUsedConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (get) => {
+export const recentlyUsedConfigsAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
   const session = get(sessionAtom);
   const ids = get(recentlyUsedConfigIdsAtom);
 
@@ -32,7 +30,7 @@ export const recentlyUsedConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (
   return fetchBrainModelConfigsByIds(ids, session);
 });
 
-export const brainModelConfigListAtom = atom<Promise<BrainModelConfig[]>>(async (get) => {
+export const brainModelConfigListAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
   const session = get(sessionAtom);
   const searchType = get(searchTypeAtom);
   const searchString = get(searchStringAtom);
@@ -40,8 +38,6 @@ export const brainModelConfigListAtom = atom<Promise<BrainModelConfig[]>>(async 
   get(refetchTriggerAtom);
 
   if (!session) return [];
-
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
 
   let query;
 
@@ -53,15 +49,5 @@ export const brainModelConfigListAtom = atom<Promise<BrainModelConfig[]>>(async 
     query = getArchiveBrainModelConfigsQuery();
   }
 
-  return fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(query),
-  })
-    .then((res) => res.json())
-    .then((res) => res.hits.hits)
-    .then((hits) => hits.map((hit: any) => hit._source as BrainModelConfig));
+  return queryES<BrainModelConfigResource>(query, session);
 });

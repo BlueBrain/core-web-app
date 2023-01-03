@@ -9,14 +9,15 @@ import { modalTheme } from './antd-theme';
 import CloneBrainConfigModal from './CloneBrainConfigModal';
 import { brainModelConfigListAtom } from './state';
 import { collapseId } from '@/util/nexus';
-import { BrainModelConfig } from '@/types/nexus';
+import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
 
 const { Column } = Table;
 
 function getSorterFn(sortProp: 'name' | 'description' | '_createdBy') {
-  return (a: BrainModelConfig, b: BrainModelConfig) => (a[sortProp] < b[sortProp] ? 1 : -1);
+  return (a: BrainModelConfigResource, b: BrainModelConfigResource) =>
+    a[sortProp] < b[sortProp] ? 1 : -1;
 }
 
 type ConfigSearchListProps = {
@@ -27,10 +28,10 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const router = useRouter();
   const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
 
-  const [brainModelConfig, setBrainModelConfig] = useState<BrainModelConfig>();
+  const [brainModelConfig, setBrainModelConfig] = useState<BrainModelConfigResource>();
   const [isCloneModalOpened, setIsCloneModalOpened] = useState<boolean>(false);
 
-  const openModal = (currentConfig: BrainModelConfig) => {
+  const openModal = (currentConfig: BrainModelConfigResource) => {
     setBrainModelConfig(currentConfig);
     setIsCloneModalOpened(true);
   };
@@ -43,7 +44,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
 
   return (
     <>
-      <Table<BrainModelConfig>
+      <Table<BrainModelConfigResource>
         size="small"
         className="mt-6 mb-12"
         dataSource={brainModelConfigs}
@@ -55,7 +56,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
           dataIndex="name"
           key="name"
           sorter={getSorterFn('name')}
-          render={(name, conf: BrainModelConfig) => (
+          render={(name, conf: BrainModelConfigResource) => (
             <Link
               href={`${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(conf['@id']))}`}
             >
@@ -80,7 +81,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
           title=""
           key="actions"
           width={86}
-          render={(_, config: BrainModelConfig) => (
+          render={(_, config: BrainModelConfigResource) => (
             <Button size="small" type="text" onClick={() => openModal(config)}>
               <CloneIcon />
             </Button>

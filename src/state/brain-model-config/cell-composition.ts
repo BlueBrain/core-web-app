@@ -3,94 +3,92 @@
 import { atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 
-import { getCellCompositionIdAtom } from './index';
-import sessionAtom from '@/state/session';
+import sessionAtom from '../session';
+import { getCellCompositionConfigIdAtom } from './index';
 import {
   fetchResourceById,
-  fetchJsonFileById,
-  fetchFileMetadataById,
-  updateJsonFile,
+  fetchJsonFileByUrl,
+  fetchFileMetadataByUrl,
+  updateJsonFileByUrl,
 } from '@/api/nexus';
-import { CellComposition, CellCompositionConfig } from '@/types/nexus';
+import { CellCompositionConfigPayload, CellCompositionConfigResource } from '@/types/nexus';
 import { debounce } from '@/util/common';
 import { autoSaveDebounceInterval } from '@/config';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const cellCompositionAtom = atom<Promise<CellComposition | null>>(async (get) => {
+const configAtom = atom<Promise<CellCompositionConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
-  const id = await get(getCellCompositionIdAtom);
+  const id = await get(getCellCompositionConfigIdAtom);
 
   if (!session || !id) return null;
 
-  return fetchResourceById<CellComposition>(id, session);
+  return fetchResourceById<CellCompositionConfigResource>(id, session);
 });
 
-const cellCompositionConfigRevAtom = atom<Promise<number | null>>(async (get) => {
+const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
   const session = get(sessionAtom);
-  const cellComposition = await get(cellCompositionAtom);
+  const config = await get(configAtom);
 
   get(refetchTriggerAtom);
 
-  if (!session || !cellComposition) {
+  if (!session || !config) {
     return null;
   }
 
-  const id = cellComposition?.distribution['@id'];
+  const url = config?.configuration.contentUrl;
 
-  if (!id) {
+  if (!url) {
     return null;
   }
 
-  const metadata = await fetchFileMetadataById(id, session);
+  const metadata = await fetchFileMetadataByUrl(url, session);
 
   return metadata._rev;
 });
 
-const localCellCompositionConfigAtom = atom<CellCompositionConfig | null>(null);
+const localConfigPayloadAtom = atom<CellCompositionConfigPayload | null>(null);
 
-const remoteCellCompositionConfigAtom = atom<Promise<CellCompositionConfig | null>>(async (get) => {
+const remoteConfigPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
   const session = get(sessionAtom);
-  const cellComposition = await get(cellCompositionAtom);
+  const config = await get(configAtom);
 
-  get(cellCompositionConfigRevAtom); // this is a workaround to preload rev
+  get(configPayloadRevAtom); // this is a workaround to preload rev
 
-  if (!session || !cellComposition) {
+  if (!session || !config) {
     return null;
   }
 
-  const id = cellComposition?.distribution['@id'];
+  const url = config?.configuration.contentUrl;
 
-  if (!id) {
+  if (!url) {
     // ? return default value
     return null;
   }
 
-  return fetchJsonFileById<CellCompositionConfig>(id, session);
+  return fetchJsonFileByUrl<CellCompositionConfigPayload>(url, session);
 });
 
-export const cellCompositionConfigAtom = atom<Promise<CellCompositionConfig | null>>(
-  async (get) => {
-    const localConfig = get(localCellCompositionConfigAtom);
-    const remoteConfig = await get(remoteCellCompositionConfigAtom);
+export const configPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
+  const localConfig = get(localConfigPayloadAtom);
+  const remoteConfig = await get(remoteConfigPayloadAtom);
 
-    if (localConfig) {
-      return localConfig;
-    }
-
-    return remoteConfig;
+  if (localConfig) {
+    return localConfig;
   }
-);
 
-export const updateCellCompositionConfigAtom = atom(
+  return remoteConfig;
+});
+
+export const updateConfigPayloadAtom = atom(
   null,
-  async (get, set, cellCompositionConfig: CellCompositionConfig) => {
+  async (get, set, configPayload: CellCompositionConfigPayload) => {
     const session = get(sessionAtom);
-    const rev = await get(cellCompositionConfigRevAtom);
-    const cellComposition = await get(cellCompositionAtom);
+    const rev = await get(configPayloadRevAtom);
+    const config = await get(configAtom);
 
-    const id = cellComposition?.distribution['@id'];
+    const url = config?.configuration.contentUrl;
 
     if (!session) {
       throw new Error('No auth session found in the state');
@@ -100,11 +98,13 @@ export const updateCellCompositionConfigAtom = atom(
       throw new Error('No revision found in the cell composition config state');
     }
 
-    if (!id) {
+    if (!url) {
       throw new Error('No id found for cellCompositionConfig');
     }
 
-    await updateJsonFile(id, cellCompositionConfig, 'cell-composition-config.json', rev, session);
+    await updateJsonFileByUrl(url, configPayload, 'cell-composition-config.json', session);
+
+    // update the config to point to the new payload
 
     set(triggerRefetchAtom);
   }
@@ -114,39 +114,39 @@ const triggerUpdateDebouncedAtom = atom(
   null,
   debounce(async (get: any, set: any) => {
     // TODO: type this function properly
-    const updatedConfig = get(localCellCompositionConfigAtom);
+    const updatedConfig = get(localConfigPayloadAtom);
 
-    set(updateCellCompositionConfigAtom, updatedConfig);
+    set(updateConfigPayloadAtom, updatedConfig);
   }, autoSaveDebounceInterval)
 );
 
-const setCellCompositionConfigAtom = atom(
+const setConfigPayloadAtom = atom(
   null,
-  async (get, set, cellCompositionConfig: CellCompositionConfig) => {
-    set(localCellCompositionConfigAtom, cellCompositionConfig);
+  async (get, set, cellCompositionConfigPayload: CellCompositionConfigPayload) => {
+    set(localConfigPayloadAtom, cellCompositionConfigPayload);
     set(triggerUpdateDebouncedAtom);
   }
 );
 
 export const createGetProtocolAtom = (entityId: string) => {
-  const selectorFn = (cellCompositionConfig: CellCompositionConfig | null) =>
-    cellCompositionConfig?.[entityId].hasProtocol;
+  const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>
+    cellCompositionConfigPayload?.[entityId].hasProtocol;
 
-  return selectAtom(cellCompositionConfigAtom, selectorFn);
+  return selectAtom(configPayloadAtom, selectorFn);
 };
 
 export const createGetParameterAtom = (entityId: string) => {
-  const selectorFn = (cellCompositionConfig: CellCompositionConfig | null) =>
-    cellCompositionConfig?.[entityId].hasParameter;
+  const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>
+    cellCompositionConfigPayload?.[entityId].hasParameter;
 
-  return selectAtom(cellCompositionConfigAtom, selectorFn);
+  return selectAtom(configPayloadAtom, selectorFn);
 };
 
 export const createGetConfigurationAtom = (entityId: string) => {
-  const selectorFn = (cellCompositionConfig: CellCompositionConfig | null) =>
-    cellCompositionConfig?.[entityId]?.configuration;
+  const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>
+    cellCompositionConfigPayload?.[entityId]?.configuration;
 
-  return selectAtom(cellCompositionConfigAtom, selectorFn);
+  return selectAtom(configPayloadAtom, selectorFn);
 };
 
 type SetConfigurationValue = {
@@ -156,24 +156,24 @@ type SetConfigurationValue = {
 export const setConfigurationAtom = atom(
   null,
   async (get, set, { entityId, config }: SetConfigurationValue) => {
-    const cellCompositionConfig = await get(cellCompositionConfigAtom);
+    const configPayload = await get(configPayloadAtom);
 
-    if (!cellCompositionConfig) {
+    if (!configPayload) {
       return;
     }
 
-    cellCompositionConfig[entityId] = {
-      ...(cellCompositionConfig[entityId] ?? {}),
+    configPayload[entityId] = {
+      ...(configPayload[entityId] ?? {}),
       configuration: config,
     };
 
-    set(setCellCompositionConfigAtom, cellCompositionConfig);
+    set(setConfigPayloadAtom, configPayload);
   }
 );
 
 export const createGetJobConfigAtom = (entityId: string) => {
-  const selectorFn = (cellCompositionConfig: CellCompositionConfig | null) =>
-    cellCompositionConfig?.[entityId].jobConfiguration;
+  const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>
+    cellCompositionConfigPayload?.[entityId].jobConfiguration;
 
-  return selectAtom(cellCompositionConfigAtom, selectorFn);
+  return selectAtom(configPayloadAtom, selectorFn);
 };

@@ -1,6 +1,10 @@
-export type BaseEntity = {
+export interface Entity {
   '@id': string;
   '@type': string | string[];
+  '@context': string | string[];
+}
+
+export interface ResourceMetadata {
   _createdAt: string;
   _createdBy: string;
   _deprecated: boolean;
@@ -11,7 +15,9 @@ export type BaseEntity = {
   _self: string;
   _updatedAt: string;
   _updatedBy: string;
-};
+}
+
+export interface EntityResource extends ResourceMetadata, Entity {}
 
 export type FileMetadata = {
   '@id': string;
@@ -38,7 +44,7 @@ export type FileMetadata = {
   _updatedBy: string;
 };
 
-export type Circuit = BaseEntity & {
+export interface Circuit extends Entity {
   brainLocation?: {
     brainRegion?: {
       '@id': string;
@@ -56,7 +62,9 @@ export type Circuit = BaseEntity & {
   name: string;
   description: string;
   circuitType: string;
-};
+}
+
+export interface CircuitResource extends ResourceMetadata, Circuit {}
 
 export interface Campaign {
   id: string;
@@ -84,27 +92,40 @@ export interface Dimension {
   endedAt: string;
   status: string;
 }
-export type BrainModelConfig = BaseEntity & {
-  name: string;
-  description: string;
-  cellComposition: {
-    '@id': string;
-  };
-  circuit?: {
-    '@id': string;
-  };
-};
 
-export type CellComposition = BaseEntity & {
+export interface BrainModelConfig extends Entity {
   name: string;
   description: string;
-  distribution: {
+  cellCompositionConfig?: {
     '@id': string;
+  };
+  cellPositionConfig?: {
+    '@id': string;
+  };
+}
+
+export interface BrainModelConfigResource extends ResourceMetadata, BrainModelConfig {}
+
+export interface CellCompositionConfig extends Entity {
+  name: string;
+  description: string;
+  configuration: {
     '@type': 'DataDownload';
+    contentSize: {
+      unitCode: 'bytes';
+      value: number;
+    };
+    contentUrl: string;
+    digest: {
+      algorithm: string;
+      value: string;
+    };
   };
-};
+}
 
-export type CellCompositionConfig = {
+export interface CellCompositionConfigResource extends ResourceMetadata, CellCompositionConfig {}
+
+export type CellCompositionConfigPayload = {
   [entityId: string]: {
     hasProtocol: {
       algorythm: string;
@@ -120,3 +141,9 @@ export type CellCompositionConfig = {
     jobConfiguration: Record<string, string | number>;
   };
 };
+
+export interface CellPositionConfig extends Entity {
+  name: string;
+}
+
+export interface CellPositionConfigResource extends ResourceMetadata, CellPositionConfig {}

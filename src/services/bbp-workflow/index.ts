@@ -13,7 +13,7 @@ import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
 } from '@/services/bbp-workflow/config';
 import { getSimulationCampaignConfiguration } from '@/services/bbp-workflow/nexus';
-import type { Circuit } from '@/types/nexus';
+import type { CircuitResource } from '@/types/nexus';
 
 async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
   // check the pod is active
@@ -62,7 +62,7 @@ function generateFormData(replacedConfigFiles: WorkflowFilesType): FormData {
 
 function getSimulationTaskFiles(
   workflowFiles: WorkflowFilesType,
-  circuit: Circuit
+  circuit: CircuitResource
 ): WorkflowFilesType {
   return replacePlaceholdersInFile(
     workflowFiles,
@@ -114,7 +114,7 @@ export async function launchWorkflowTask(
   loginInfo: Session,
   workflowName: string = WORKFLOW_TEST_TASK_NAME,
   workflowFiles: WorkflowFilesType = [],
-  circuitInfo?: Circuit | null
+  circuitInfo?: CircuitResource | null
 ): Promise<string> {
   const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
 

@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { nexus } from '@/config';
+import { CellCompositionConfig, CellPositionConfig, FileMetadata } from '@/types/nexus';
+import { PartialBy } from '@/types/common';
 
 export function collapseId(nexusId: string) {
   return nexusId.replace(`${nexus.defaultIdBaseUrl}/`, '');
@@ -74,10 +76,59 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     .join('');
 }
 
-type IdType = 'file' | 'cellcomposition' | 'modelconfiguration';
+type IdType = 'file' | 'modelconfiguration' | 'cellcompositionconfig' | 'cellpositionconfig';
 
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;
 
   return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? uuidv4()}`;
+}
+
+interface CreateCellCompositionConfigProps {
+  id?: string;
+  name?: string;
+  description?: string;
+  payloadMetadata: FileMetadata;
+}
+export function createCellCompositionConfig({
+  id,
+  name = 'Cell composition generator configuration',
+  description = 'NA',
+  payloadMetadata,
+}: CreateCellCompositionConfigProps): PartialBy<CellCompositionConfig, '@id'> {
+  return {
+    '@context': 'https://bbp.neuroshapes.org',
+    '@type': ['CellCompositionConfig', 'Entity'],
+    '@id': id,
+    name,
+    description,
+    configuration: {
+      '@type': 'DataDownload',
+      contentSize: {
+        unitCode: 'bytes',
+        value: payloadMetadata._bytes,
+      },
+      contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+      digest: {
+        algorithm: payloadMetadata._digest._algorithm,
+        value: payloadMetadata._digest._value,
+      },
+    },
+  };
+}
+
+interface CreateCellPositionConfigProps {
+  id?: string;
+  name?: string;
+}
+export function createCellPositionConfig({
+  id,
+  name = 'Cell position generator configuration',
+}: CreateCellPositionConfigProps): PartialBy<CellPositionConfig, '@id'> {
+  return {
+    '@context': 'https://bbp.neuroshapes.org',
+    '@type': ['CellPositionConfig', 'Entity'],
+    '@id': id,
+    name,
+  };
 }

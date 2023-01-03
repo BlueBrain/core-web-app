@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-import { BrainModelConfig } from '@/types/nexus';
+import { BrainModelConfigResource } from '@/types/nexus';
 import sessionAtom from '@/state/session';
 import { recentlyUsedConfigIdsAtom } from '@/state/brain-model-config';
 import {
@@ -23,7 +23,7 @@ export const triggerRefetchPersonalAtom = atom(null, (get, set) =>
   set(refetchPersonalTriggerAtom, {})
 );
 
-export const recentConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (get) => {
+export const recentConfigsAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
   const session = get(sessionAtom);
   const ids = get(recentlyUsedConfigIdsAtom);
 
@@ -35,7 +35,7 @@ export const recentConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (get) =
   return fetchBrainModelConfigsByIds(ids, session);
 });
 
-export const publicConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (get) => {
+export const publicConfigsAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
   const session = get(sessionAtom);
 
   get(refetchAllTriggerAtom);
@@ -46,7 +46,7 @@ export const publicConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (get) =
   return fetchPublicBrainModels(session);
 });
 
-export const personalConfigsAtom = atom<Promise<BrainModelConfig[]>>(async (get) => {
+export const personalConfigsAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
   const session = get(sessionAtom);
 
   get(refetchAllTriggerAtom);

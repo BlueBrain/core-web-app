@@ -1,14 +1,29 @@
 import { Session } from 'next-auth';
 
-import defaultCellCompositionConfig from './defaults';
 import { nexus } from '@/config';
-import { composeUrl, createId, expandId } from '@/util/nexus';
-import { BrainModelConfig, BaseEntity, CellComposition, FileMetadata } from '@/types/nexus';
+import {
+  composeUrl,
+  createCellCompositionConfig,
+  createCellPositionConfig,
+  createId,
+  expandId,
+} from '@/util/nexus';
+import {
+  BrainModelConfig,
+  FileMetadata,
+  CellCompositionConfig,
+  CellPositionConfig,
+  EntityResource,
+  BrainModelConfigResource,
+  Entity,
+} from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
   getPublicBrainModelConfigsQuery,
   getPersonalBrainModelConfigsQuery,
 } from '@/queries/es';
+
+// #################################### Generic methods ##########################################
 
 export function fetchJsonFileById<T>(id: string, session: Session) {
   const url = composeUrl('file', id);
@@ -21,9 +36,27 @@ export function fetchJsonFileById<T>(id: string, session: Session) {
   }).then<T>((res) => res.json());
 }
 
+export function fetchJsonFileByUrl<T>(url: string, session: Session) {
+  return fetch(url, {
+    headers: {
+      Accept: '*/*',
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  }).then<T>((res) => res.json());
+}
+
 export function fetchFileMetadataById(id: string, session: Session) {
   const url = composeUrl('file', id);
 
+  return fetch(url, {
+    headers: {
+      Accept: 'application/ld+json',
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  }).then<FileMetadata>((res) => res.json());
+}
+
+export function fetchFileMetadataByUrl(url: string, session: Session) {
   return fetch(url, {
     headers: {
       Accept: 'application/ld+json',
@@ -48,7 +81,7 @@ export function createJsonFile(data: any, filename: string, session: Session) {
   }).then<FileMetadata>((res) => res.json());
 }
 
-export function updateJsonFile(
+export function updateJsonFileById(
   id: string,
   data: any,
   filename: string,
@@ -57,6 +90,20 @@ export function updateJsonFile(
 ) {
   const url = composeUrl('file', id, { rev });
 
+  const formData = new FormData();
+  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  formData.append('file', dataBlob, filename);
+
+  return fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+    body: formData,
+  }).then<FileMetadata>((res) => res.json());
+}
+
+export function updateJsonFileByUrl(url: string, data: any, filename: string, session: Session) {
   const formData = new FormData();
   const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
   formData.append('file', dataBlob, filename);
@@ -81,11 +128,34 @@ export function fetchResourceById<T>(id: string, session: Session) {
   }).then<T>((res) => res.json());
 }
 
-export async function updateResource(resource: BaseEntity, session: Session) {
-  const id = resource['@id'];
-  const rev = resource._rev;
+export function fetchResourceSourceById<T>(id: string, session: Session) {
+  const url = composeUrl('resource', id, { source: true });
 
-  const url = composeUrl('resource', id, { rev });
+  return fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  }).then<T>((res) => res.json());
+}
+
+export function createResource(resource: Record<string, any>, session: Session) {
+  const createResourceApiUrl = composeUrl('resource', '', { sync: true, schema: null });
+
+  return fetch(createResourceApiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+    body: JSON.stringify(resource),
+  }).then<EntityResource>((res) => res.json());
+}
+
+export async function updateResource(resource: Entity, rev: number, session: Session) {
+  const id = resource['@id'];
+
+  const url = composeUrl('resource', id, { rev, sync: true });
 
   await fetch(url, {
     method: 'PUT',
@@ -97,115 +167,115 @@ export async function updateResource(resource: BaseEntity, session: Session) {
   });
 }
 
-export async function cloneBrainModelConfig(configId: string, newName: string, session: Session) {
-  const createResourceApiUrl = composeUrl('resource', '', { sync: true, schema: null });
+export function queryES<T>(query: Record<string, any>, session: Session) {
+  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
 
-  const configSourceUrl = composeUrl('resource', configId, { source: true });
-
-  const brainModelConfigSource: BrainModelConfig = await fetch(configSourceUrl, {
+  return fetch(apiUrl, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${session.accessToken}`,
     },
-  }).then((res) => res.json());
+    body: JSON.stringify(query),
+  })
+    .then((res) => res.json())
+    .then<T[]>((res) => res.hits.hits.map((hit: any) => hit._source));
+}
 
-  const cellCompositionId = brainModelConfigSource.cellComposition['@id'];
-  const cellCompositionSourceUrl = composeUrl('resource', cellCompositionId, { source: true });
-  const cellComposition: CellComposition = await fetch(cellCompositionSourceUrl, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-  }).then((res) => res.json());
+// #################################### Non-generic methods ##########################################
 
-  const cellCompositionConfigId = cellComposition?.distribution?.['@id'];
-  const cellCompositionConfigUrl = composeUrl('file', cellCompositionConfigId ?? '');
-  const cellCompositionConfig = cellCompositionConfigId
-    ? fetchJsonFileById(cellCompositionConfigUrl, session)
-    : defaultCellCompositionConfig;
+async function cloneOrCreateCellCompositionConfig(id: string | null, session: Session) {
+  if (id) {
+    // clone existing config and payload
+    const configSource = await fetchResourceSourceById<CellCompositionConfig>(id, session);
+    const payload = await fetchJsonFileByUrl(configSource.configuration.contentUrl, session);
+    const clonedPayloadMeta = await createJsonFile(
+      payload,
+      'cell-composition-config.json',
+      session
+    );
 
-  // cloning CellComposition config (JSON file in the distribution)
-  const cellCompositionConfigCloneMeta = await createJsonFile(
-    cellCompositionConfig,
-    'cell-composition-config',
+    const clonedConfig: CellCompositionConfig = {
+      ...configSource,
+      '@id': createId('cellcompositionconfig'),
+      configuration: createCellCompositionConfig({ payloadMetadata: clonedPayloadMeta })
+        .configuration,
+    };
+
+    return createResource(clonedConfig, session);
+  }
+
+  // create new
+  const payload = {};
+  const payloadMetadata = await createJsonFile(payload, 'cell-composition-config.json', session);
+  const config = createCellCompositionConfig({
+    id: createId('cellcompositionconfig'),
+    payloadMetadata,
+  });
+
+  return createResource(config, session);
+}
+
+async function cloneOrCreateCellPositionConfig(id: string | null, session: Session) {
+  if (id) {
+    // clone existing config
+    const configSource = await fetchResourceSourceById<CellPositionConfig>(id, session);
+    configSource['@id'] = createId('cellpositionconfig');
+    return createResource(configSource, session);
+  }
+
+  // create a new one
+  const config = createCellPositionConfig({ id: createId('cellpositionconfig') });
+  return createResource(config, session);
+}
+
+export async function cloneBrainModelConfig(configId: string, name: string, session: Session) {
+  const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
+
+  const cellCompositionConfigId = brainModelConfigSource.cellCompositionConfig?.['@id'] ?? null;
+  const clonedCellCompositionConfigMetadata = await cloneOrCreateCellCompositionConfig(
+    cellCompositionConfigId,
     session
   );
 
-  // clonning CellComposition itself
-  const cellCompositionCloneId = createId('cellcomposition');
-  const clonedCellComposition = {
-    ...cellComposition,
-    '@id': cellCompositionCloneId,
-    distribution: {
-      // TODO: add more metadata from cellCompositionConfigCloneMeta
-      '@id': cellCompositionConfigCloneMeta['@id'],
-      '@type': 'DataDownload',
-    },
-  };
-  const clonedCellCompositionMetadata: BaseEntity = await fetch(createResourceApiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(clonedCellComposition),
-  }).then((res) => res.json());
+  const cellPositionConfigId = brainModelConfigSource.cellPositionConfig?.['@id'] ?? null;
+  const clonedCellPositionConfigMetadata = await cloneOrCreateCellPositionConfig(
+    cellPositionConfigId,
+    session
+  );
 
   // clonning BrainModelConfig
-  const brainModelConfigCloneId = createId('modelconfiguration');
   const clonedModelConfig = {
     ...brainModelConfigSource,
-    name: newName,
-    '@id': brainModelConfigCloneId,
-    cellComposition: {
-      '@id': clonedCellCompositionMetadata['@id'],
+    '@id': createId('modelconfiguration'),
+    name,
+    cellCompositionConfig: {
+      '@id': clonedCellCompositionConfigMetadata['@id'],
+    },
+    cellPositionConfig: {
+      '@id': clonedCellPositionConfigMetadata['@id'],
     },
   };
 
-  const clonedModelConfigMetadata: BaseEntity = await fetch(createResourceApiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(clonedModelConfig),
-  }).then((res) => res.json());
-
-  return clonedModelConfigMetadata;
+  return createResource(clonedModelConfig, session);
 }
 
 export async function renameBrainModelConfig(
-  config: BrainModelConfig,
+  config: BrainModelConfigResource,
   newName: string,
   session: Session
 ) {
   const configId = config['@id'];
   const rev = config._rev;
 
-  const configSourceUrl = composeUrl('resource', configId, { source: true });
-
-  const brainModelConfigSource = await fetch(configSourceUrl, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-  }).then((res) => res.json());
+  const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
 
   const renamedModelConfig = {
     ...brainModelConfigSource,
     name: newName,
   };
 
-  const updateApiUrl = composeUrl('resource', renamedModelConfig['@id'], { rev, sync: true });
-
-  const clonedModelConfigMetadata: BaseEntity = await fetch(updateApiUrl, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(renamedModelConfig),
-  }).then((res) => res.json());
+  const clonedModelConfigMetadata = await updateResource(renamedModelConfig, rev, session);
 
   return clonedModelConfigMetadata;
 }
@@ -213,55 +283,24 @@ export async function renameBrainModelConfig(
 export async function fetchBrainModelConfigsByIds(
   ids: string[],
   session: Session
-): Promise<BrainModelConfig[]> {
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
+): Promise<BrainModelConfigResource[]> {
   const expandedIds = ids.map((id) => expandId(id));
   const query = getEntitiesByIdsQuery(expandedIds);
 
-  const configs = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(query),
-  })
-    .then((res) => res.json())
-    .then<BrainModelConfig[]>((res) => res.hits.hits.map((hit: any) => hit._source));
-
+  const configs = await queryES<BrainModelConfigResource>(query, session);
   configs.sort((a, b) => expandedIds.indexOf(a['@id']) - expandedIds.indexOf(b['@id']));
 
   return configs;
 }
 
-export function fetchPublicBrainModels(session: Session): Promise<BrainModelConfig[]> {
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
+export function fetchPublicBrainModels(session: Session): Promise<BrainModelConfigResource[]> {
   const query = getPublicBrainModelConfigsQuery();
 
-  return fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(query),
-  })
-    .then((res) => res.json())
-    .then<BrainModelConfig[]>((res) => res.hits.hits.map((hit: any) => hit._source));
+  return queryES<BrainModelConfigResource>(query, session);
 }
 
-export function fetchPersonalBrainModels(session: Session): Promise<BrainModelConfig[]> {
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
+export function fetchPersonalBrainModels(session: Session): Promise<BrainModelConfigResource[]> {
   const query = getPersonalBrainModelConfigsQuery('', session.user.username);
 
-  return fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    body: JSON.stringify(query),
-  })
-    .then((res) => res.json())
-    .then<BrainModelConfig[]>((res) => res.hits.hits.map((hit: any) => hit._source));
+  return queryES<BrainModelConfigResource>(query, session);
 }

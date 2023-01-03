@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { Modal, Input, Button } from 'antd';
 import { useSession } from 'next-auth/react';
 
-import { BrainModelConfig } from '@/types/nexus';
+import { BrainModelConfigResource } from '@/types/nexus';
 import { renameBrainModelConfig } from '@/api/nexus';
 
 type RenameBrainConfigModalProps = {
   open: boolean;
-  config: BrainModelConfig;
+  config: BrainModelConfigResource;
   onCancel: () => void;
   onRenameSuccess: (id: string, newName: string) => void;
 };

@@ -13,7 +13,7 @@ import Link from '@/components/Link';
 import EditIcon from '@/components/icons/Edit';
 import CloneIcon from '@/components/icons/Clone';
 import { basePath } from '@/config';
-import { BrainModelConfig } from '@/types/nexus';
+import { BrainModelConfigResource } from '@/types/nexus';
 import { collapseId } from '@/util/nexus';
 
 const { Column } = Table;
@@ -27,16 +27,16 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
   const recentlyUsedConfigs = useAtomValue(recentlyUsedConfigsAtom);
   const triggerRefetch = useSetAtom(triggerRefetchAtom);
 
-  const [brainConfig, setBrainConfig] = useState<BrainModelConfig>();
+  const [brainConfig, setBrainConfig] = useState<BrainModelConfigResource>();
   const [isCloneModalOpened, setIsCloneModalOpened] = useState<boolean>(false);
   const [isRenameModalOpened, setIsRenameModalOpened] = useState<boolean>(false);
 
-  const openCloneModal = (currentBrainConfig: BrainModelConfig) => {
+  const openCloneModal = (currentBrainConfig: BrainModelConfigResource) => {
     setBrainConfig(currentBrainConfig);
     setIsCloneModalOpened(true);
   };
 
-  const openRenameModal = (currentBrainConfig: BrainModelConfig) => {
+  const openRenameModal = (currentBrainConfig: BrainModelConfigResource) => {
     setBrainConfig(currentBrainConfig);
     setIsRenameModalOpened(true);
   };
@@ -61,7 +61,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
     <>
       <h3 className="text-xl">Recently used configurations</h3>
 
-      <Table<BrainModelConfig>
+      <Table<BrainModelConfigResource>
         size="small"
         className="mt-6 mb-12"
         dataSource={recentlyUsedConfigs}
@@ -72,7 +72,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
           title="NAME"
           dataIndex="name"
           key="name"
-          render={(name, config: BrainModelConfig) => (
+          render={(name, config: BrainModelConfigResource) => (
             <Link
               href={`${baseHref}?brainModelConfigId=${encodeURIComponent(
                 collapseId(config['@id'])

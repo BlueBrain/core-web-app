@@ -1,12 +1,12 @@
 import { CopyOutlined, EditOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
-import { BrainModelConfig } from '@/types/nexus';
+import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import { collapseId } from '@/util/nexus';
 
 type BrainConfigEntryProps = {
-  config: BrainModelConfig;
+  config: BrainModelConfigResource;
   baseHref: string;
 };
 
