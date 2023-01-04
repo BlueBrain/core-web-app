@@ -3,7 +3,7 @@ import { atom, useSetAtom, useAtomValue } from 'jotai';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
-import { EyeInvisibleFilled, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 
 import utils from '@/util/utils';
@@ -11,8 +11,7 @@ import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
 import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/components/tree-nav-item';
-import BrainRegionMeshTrigger, { Distribution } from '@/components/BrainRegionMeshTrigger';
-import PointCloudTrigger from '@/components/PointCloudTrigger';
+import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import styles from './brain-region-selector.module.css';
 
@@ -352,7 +351,7 @@ export default function BrainRegionSelector() {
               </div>
               <Accordion.Root className="divide-y divide-primary-7" collapsible type="single">
                 {brainRegions &&
-                  brainRegions.map(({ id, items, title }) => (
+                  brainRegions.map(({ id, items, title, distribution, color_code: colorCode }) => (
                     <TreeNavItem
                       className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
                       id={id}
@@ -361,6 +360,8 @@ export default function BrainRegionSelector() {
                       onValueChange={setBrainRegionCallback} // Will be attached to nested Accordion.Trigger
                       selectedId={meTypeDetails ? meTypeDetails.id : ''}
                       title={<UppercaseTitle title={title} />}
+                      distribution={distribution}
+                      colorCode={colorCode}
                     >
                       <TreeNavItem className="font-normal pl-3" title={<CapitalizedTitle />} />
                     </TreeNavItem>
@@ -409,20 +410,6 @@ export default function BrainRegionSelector() {
                 onClick={() => setisMeTypeOpen(false)}
               />
             </div>
-            {meTypeDetails.distribution ? (
-              <span>
-                <BrainRegionMeshTrigger
-                  distribution={meTypeDetails.distribution}
-                  colorCode={meTypeDetails.colorCode}
-                />
-                <PointCloudTrigger regionID={meTypeDetails.id} color={meTypeDetails.colorCode} />
-              </span>
-            ) : (
-              <Button
-                className={`${styles.buttonTrigger} cursor-not-allowed bg-primary-6 border-none`}
-                icon={<EyeInvisibleFilled className="text-error" />}
-              />
-            )}
             {composition && (
               <MeTypeDetails
                 densityOrCount={densityOrCount}
