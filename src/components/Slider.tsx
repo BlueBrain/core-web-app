@@ -10,7 +10,7 @@ interface HorizontalSliderProps {
   label: string;
   max: number;
   onChange?: ((value: number | null) => void) | undefined;
-  onToggleLock?: MouseEventHandler<HTMLInputElement>;
+  onToggleLock?: MouseEventHandler;
   value?: number;
 }
 
@@ -22,7 +22,7 @@ interface VerticalSliderProps {
   label: string;
   max: number;
   onChange?: ((value: number | null) => void) | undefined;
-  onToggleLock?: MouseEventHandler<HTMLInputElement>;
+  onToggleLock?: MouseEventHandler;
   onClick?: MouseEventHandler<HTMLDivElement> | KeyboardEventHandler<HTMLDivElement>;
   value?: number;
 }

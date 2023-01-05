@@ -21,6 +21,7 @@ import {
   getEntitiesByIdsQuery,
   getPublicBrainModelConfigsQuery,
   getPersonalBrainModelConfigsQuery,
+  getBrainModelConfigsByNameQuery,
 } from '@/queries/es';
 
 // #################################### Generic methods ##########################################
@@ -139,7 +140,10 @@ export function fetchResourceSourceById<T>(id: string, session: Session) {
   }).then<T>((res) => res.json());
 }
 
-export function createResource(resource: Record<string, any>, session: Session) {
+export function createResource<T extends EntityResource>(
+  resource: Record<string, any>,
+  session: Session
+) {
   const createResourceApiUrl = composeUrl('resource', '', { sync: true, schema: null });
 
   return fetch(createResourceApiUrl, {
@@ -149,7 +153,7 @@ export function createResource(resource: Record<string, any>, session: Session) 
       Authorization: `Bearer ${session.accessToken}`,
     },
     body: JSON.stringify(resource),
-  }).then<EntityResource>((res) => res.json());
+  }).then<T>((res) => res.json());
 }
 
 export async function updateResource(resource: Entity, rev: number, session: Session) {
@@ -229,7 +233,12 @@ async function cloneOrCreateCellPositionConfig(id: string | null, session: Sessi
   return createResource(config, session);
 }
 
-export async function cloneBrainModelConfig(configId: string, name: string, session: Session) {
+export async function cloneBrainModelConfig(
+  configId: string,
+  name: string,
+  description: string,
+  session: Session
+) {
   const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
 
   const cellCompositionConfigId = brainModelConfigSource.cellCompositionConfig?.['@id'] ?? null;
@@ -244,11 +253,12 @@ export async function cloneBrainModelConfig(configId: string, name: string, sess
     session
   );
 
-  // clonning BrainModelConfig
+  // cloning BrainModelConfig
   const clonedModelConfig = {
     ...brainModelConfigSource,
     '@id': createId('modelconfiguration'),
     name,
+    description,
     cellCompositionConfig: {
       '@id': clonedCellCompositionConfigMetadata['@id'],
     },
@@ -257,7 +267,7 @@ export async function cloneBrainModelConfig(configId: string, name: string, sess
     },
   };
 
-  return createResource(clonedModelConfig, session);
+  return createResource<BrainModelConfigResource>(clonedModelConfig, session);
 }
 
 export async function renameBrainModelConfig(
@@ -303,4 +313,16 @@ export function fetchPersonalBrainModels(session: Session): Promise<BrainModelCo
   const query = getPersonalBrainModelConfigsQuery('', session.user.username);
 
   return queryES<BrainModelConfigResource>(query, session);
+}
+
+export async function checkNameIfUniq(brainModelConfigName: string, session: Session) {
+  const query = {
+    ...getBrainModelConfigsByNameQuery(brainModelConfigName),
+    fields: ['name'],
+    size: 1,
+  };
+
+  const sameNameConfigs = await queryES<Pick<BrainModelConfigResource, 'name'>>(query, session);
+
+  return !sameNameConfigs.length;
 }

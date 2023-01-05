@@ -1,4 +1,4 @@
-export const tableTheme = {
+const tableTheme = {
   components: {
     Table: {
       colorSplit: '#0050B3',
@@ -14,9 +14,4 @@ export const tableTheme = {
   },
 };
 
-export const modalTheme = {
-  token: {
-    colorBgBase: 'white',
-    colorTextBase: 'black',
-  },
-};
+export default tableTheme;

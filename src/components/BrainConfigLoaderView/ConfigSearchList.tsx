@@ -1,13 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Table, Button, ConfigProvider } from 'antd';
+import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useAtomValue } from 'jotai';
 
-import { modalTheme } from './antd-theme';
-import CloneBrainConfigModal from './CloneBrainConfigModal';
 import { brainModelConfigListAtom } from './state';
+import useCloneModal from '@/hooks/brain-config-clone-modal';
 import { collapseId } from '@/util/nexus';
 import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
@@ -28,17 +26,13 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const router = useRouter();
   const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
 
-  const [brainModelConfig, setBrainModelConfig] = useState<BrainModelConfigResource>();
-  const [isCloneModalOpened, setIsCloneModalOpened] = useState<boolean>(false);
+  const { showModal, contextHolder } = useCloneModal();
 
-  const openModal = (currentConfig: BrainModelConfigResource) => {
-    setBrainModelConfig(currentConfig);
-    setIsCloneModalOpened(true);
-  };
-
-  const onCloneSuccess = (clonedBrainConfigId: string) => {
-    router.push(
-      `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedBrainConfigId))}`
+  const showCloneModal = (currentConfig: BrainModelConfigResource) => {
+    showModal(currentConfig, (clonedConfig) =>
+      router.push(
+        `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
+      )
     );
   };
 
@@ -82,23 +76,14 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
           key="actions"
           width={86}
           render={(_, config: BrainModelConfigResource) => (
-            <Button size="small" type="text" onClick={() => openModal(config)}>
+            <Button size="small" type="text" onClick={() => showCloneModal(config)}>
               <CloneIcon />
             </Button>
           )}
         />
       </Table>
 
-      {brainModelConfig && (
-        <ConfigProvider theme={modalTheme}>
-          <CloneBrainConfigModal
-            config={brainModelConfig}
-            open={isCloneModalOpened}
-            onCancel={() => setIsCloneModalOpened(false)}
-            onCloneSuccess={onCloneSuccess}
-          />
-        </ConfigProvider>
-      )}
+      {contextHolder}
     </>
   );
 }

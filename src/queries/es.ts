@@ -80,3 +80,27 @@ export const getEntitiesByIdsQuery = (ids: string[]) => ({
     },
   },
 });
+
+export const getBrainModelConfigsByNameQuery = (name: string) => ({
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: { term: { _deprecated: false } },
+          },
+        },
+        {
+          bool: {
+            must: { term: { '@type': 'ModelBuildingConfig' } },
+          },
+        },
+        {
+          bool: {
+            must: { term: { 'name.keyword': name } },
+          },
+        },
+      ],
+    },
+  },
+});

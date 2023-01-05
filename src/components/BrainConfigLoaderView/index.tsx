@@ -6,7 +6,7 @@ import { useAtom, useAtomValue } from 'jotai';
 
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
-import { tableTheme } from './antd-theme';
+import tableTheme from './antd-theme';
 import { searchTypeAtom, brainModelConfigListAtom } from './state';
 import { CURATED_MODELS } from '@/components/BrainConfigPanel';
 import Link from '@/components/Link';
