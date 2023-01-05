@@ -2,14 +2,17 @@
 
 import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useSession } from 'next-auth/react';
 
-import { brainModelConfigListAtom } from './state';
+import { brainModelConfigListAtom, triggerRefetchAtom } from './state';
 import useCloneModal from '@/hooks/brain-config-clone-modal';
+import useRenameModal from '@/hooks/brain-config-rename-modal';
 import { collapseId } from '@/util/nexus';
 import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
+import EditIcon from '@/components/icons/Edit';
 
 const { Column } = Table;
 
@@ -23,17 +26,24 @@ type ConfigSearchListProps = {
 };
 
 export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
+  const { data: session } = useSession();
   const router = useRouter();
   const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
+  const triggerRefetch = useSetAtom(triggerRefetchAtom);
 
-  const { showModal, contextHolder } = useCloneModal();
+  const { createModal: createCloneModal, contextHolder: cloneContextHolder } = useCloneModal();
+  const { createModal: createRenameModal, contextHolder: renameContextHolder } = useRenameModal();
 
-  const showCloneModal = (currentConfig: BrainModelConfigResource) => {
-    showModal(currentConfig, (clonedConfig) =>
+  const openCloneModal = (config: BrainModelConfigResource) => {
+    createCloneModal(config, (clonedConfig: BrainModelConfigResource) =>
       router.push(
         `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
       )
     );
+  };
+
+  const openRenameModal = (config: BrainModelConfigResource) => {
+    createRenameModal(config, triggerRefetch);
   };
 
   return (
@@ -76,14 +86,27 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
           key="actions"
           width={86}
           render={(_, config: BrainModelConfigResource) => (
-            <Button size="small" type="text" onClick={() => showCloneModal(config)}>
-              <CloneIcon />
-            </Button>
+            <>
+              <Button
+                size="small"
+                type="text"
+                disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
+                className="inline-block mr-2"
+                onClick={() => openRenameModal(config)}
+              >
+                <EditIcon />
+              </Button>
+
+              <Button size="small" type="text" onClick={() => openCloneModal(config)}>
+                <CloneIcon />
+              </Button>
+            </>
           )}
         />
       </Table>
 
-      {contextHolder}
+      {cloneContextHolder}
+      {renameContextHolder}
     </>
   );
 }

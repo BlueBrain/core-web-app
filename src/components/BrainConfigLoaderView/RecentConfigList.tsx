@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { useSession } from 'next-auth/react';
 
-import RenameBrainConfigModal from './RenameBrainConfigModal';
 import { recentlyUsedConfigsAtom, triggerRefetchAtom } from './state';
 import useCloneConfigModal from '@/hooks/brain-config-clone-modal';
+import useRenameModal from '@/hooks/brain-config-rename-modal';
 import Link from '@/components/Link';
 import EditIcon from '@/components/icons/Edit';
 import CloneIcon from '@/components/icons/Clone';
@@ -22,21 +22,16 @@ type RecentConfigListProps = {
 
 export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
   const router = useRouter();
+  const { data: session } = useSession();
   const recentlyUsedConfigs = useAtomValue(recentlyUsedConfigsAtom);
   const triggerRefetch = useSetAtom(triggerRefetchAtom);
 
-  const { showModal, contextHolder } = useCloneConfigModal();
+  const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
+    useCloneConfigModal();
+  const { createModal: createRenameModal, contextHolder: renameContextHolder } = useRenameModal();
 
-  const [brainConfig, setBrainConfig] = useState<BrainModelConfigResource>();
-  const [isRenameModalOpened, setIsRenameModalOpened] = useState<boolean>(false);
-
-  const openRenameModal = (currentBrainConfig: BrainModelConfigResource) => {
-    setBrainConfig(currentBrainConfig);
-    setIsRenameModalOpened(true);
-  };
-
-  const showCloneModal = (currentConfig: BrainModelConfigResource) => {
-    showModal(currentConfig, (clonedConfig) => {
+  const openCloneModal = (currentConfig: BrainModelConfigResource) => {
+    createCloneModal(currentConfig, (clonedConfig: BrainModelConfigResource) => {
       triggerRefetch();
       router.push(
         `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
@@ -44,11 +39,8 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
     });
   };
 
-  const onRenameSuccess = () => {
-    if (!brainConfig) return;
-
-    triggerRefetch();
-    setIsRenameModalOpened(false);
+  const openRenameModal = (config: BrainModelConfigResource) => {
+    createRenameModal(config, triggerRefetch);
   };
 
   return (
@@ -93,6 +85,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
                 size="small"
                 type="text"
                 className="inline-block mr-2"
+                disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
                 onClick={() => openRenameModal(config)}
               >
                 <EditIcon />
@@ -102,7 +95,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
                 size="small"
                 type="text"
                 className="inline-block"
-                onClick={() => showCloneModal(config)}
+                onClick={() => openCloneModal(config)}
               >
                 <CloneIcon />
               </Button>
@@ -111,16 +104,8 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
         />
       </Table>
 
-      {brainConfig && isRenameModalOpened && (
-        <RenameBrainConfigModal
-          config={brainConfig}
-          open={isRenameModalOpened}
-          onCancel={() => setIsRenameModalOpened(false)}
-          onRenameSuccess={onRenameSuccess}
-        />
-      )}
-
-      {contextHolder}
+      {cloneContextHolder}
+      {renameContextHolder}
     </>
   );
 }

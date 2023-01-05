@@ -1,12 +1,14 @@
 import { CopyOutlined, EditOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { useSetAtom } from 'jotai';
+import { useSession } from 'next-auth/react';
 
 import { triggerRefetchAllAtom } from './state';
 import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import { collapseId } from '@/util/nexus';
 import useCloneConfigModal from '@/hooks/brain-config-clone-modal';
+import useRenameConfigModal from '@/hooks/brain-config-rename-modal';
 
 type BrainConfigEntryProps = {
   config: BrainModelConfigResource;
@@ -14,8 +16,13 @@ type BrainConfigEntryProps = {
 };
 
 export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryProps) {
-  const { showModal, contextHolder } = useCloneConfigModal();
-  const refetchConfigs = useSetAtom(triggerRefetchAllAtom);
+  const { data: session } = useSession();
+
+  const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
+    useCloneConfigModal();
+  const { createModal: createRenameModal, contextHolder: renameContextHolder } =
+    useRenameConfigModal();
+  const triggerRefetchAll = useSetAtom(triggerRefetchAllAtom);
 
   const uriEncodedId = encodeURIComponent(collapseId(config['@id']));
   const href = `${baseHref}?brainModelConfigId=${uriEncodedId}`;
@@ -23,7 +30,11 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
   const createdAtFormatted = moment(config._createdAt).fromNow();
 
   const openCloneModal = () => {
-    showModal(config, refetchConfigs);
+    createCloneModal(config, triggerRefetchAll);
+  };
+
+  const openRenameModal = () => {
+    createRenameModal(config, triggerRefetchAll);
   };
 
   return (
@@ -37,8 +48,13 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
         </Link>
 
         <div className="text-primary-3 space-x-2">
-          <button type="button">
-            <EditOutlined className="text-primary-3" />
+          <button
+            type="button"
+            className="text-primary-3 disabled:text-primary-7 disabled:cursor-not-allowed"
+            onClick={openRenameModal}
+            disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
+          >
+            <EditOutlined className="" />
           </button>
 
           <button type="button" onClick={openCloneModal}>
@@ -51,7 +67,8 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
         </div>
       </div>
 
-      {contextHolder}
+      {renameContextHolder}
+      {cloneContextHolder}
     </>
   );
 }

@@ -272,7 +272,8 @@ export async function cloneBrainModelConfig(
 
 export async function renameBrainModelConfig(
   config: BrainModelConfigResource,
-  newName: string,
+  name: string,
+  description: string,
   session: Session
 ) {
   const configId = config['@id'];
@@ -282,7 +283,8 @@ export async function renameBrainModelConfig(
 
   const renamedModelConfig = {
     ...brainModelConfigSource,
-    name: newName,
+    name,
+    description,
   };
 
   const clonedModelConfigMetadata = await updateResource(renamedModelConfig, rev, session);
