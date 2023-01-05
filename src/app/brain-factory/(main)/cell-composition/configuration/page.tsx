@@ -206,7 +206,7 @@ function updatedNodesReducer(
 // ... Including the sidebar composition reducer as well.
 function CellDensity() {
   const [composition, setComposition] = useAtom(compositionAtom);
-  const { nodes, links } = composition;
+  const { nodes, links } = composition !== null ? composition : { nodes: [], links: [] };
 
   const sankeyData = links.reduce(sankeyLinksReducer, {
     links: [],
