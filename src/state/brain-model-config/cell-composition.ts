@@ -157,17 +157,18 @@ export const setConfigurationAtom = atom(
   null,
   async (get, set, { entityId, config }: SetConfigurationValue) => {
     const configPayload = await get(configPayloadAtom);
+    let localConfigPayload: CellCompositionConfigPayload = {};
 
-    if (!configPayload) {
-      return;
+    if (configPayload) {
+      localConfigPayload = { ...configPayload };
     }
 
-    configPayload[entityId] = {
-      ...(configPayload[entityId] ?? {}),
+    localConfigPayload[entityId] = {
+      ...(localConfigPayload[entityId] ?? {}),
       configuration: config,
     };
 
-    set(setConfigPayloadAtom, configPayload);
+    await set(setConfigPayloadAtom, localConfigPayload);
   }
 );
 

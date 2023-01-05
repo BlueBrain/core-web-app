@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { atom, useSetAtom, useAtomValue } from 'jotai';
+import { atom, useAtomValue, useAtom } from 'jotai';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
@@ -13,6 +13,7 @@ import AngledArrowIcon from '@/components/icons/AngledArrow';
 import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/components/tree-nav-item';
 import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
+import { setConfigurationAtom } from '@/state/brain-model-config/cell-composition';
 import styles from './brain-region-selector.module.css';
 
 const { fetchAtlasAPI, classNames } = utils;
@@ -176,8 +177,30 @@ function MeTypeDetails({
   );
 }
 
-export const compositionAtom = atom<Densities>({ links: [], nodes: [] });
+export const meTypeDetailsAtom = atom<MeTypeDetailsState | null, MeTypeDetailsState>(
+  null,
+  (get, set, payload) => {
+    set(meTypeDetailsAtom, payload);
+  }
+);
+
 export const densityOrCountAtom = atom<keyof Composition>('count');
+
+export const compositionAtom = atom<Densities, Densities>(
+  { links: [], nodes: [] },
+  async (get, set, newComposition) => {
+    const meTypeDetails = get(meTypeDetailsAtom);
+    if (meTypeDetails === null) {
+      return;
+    }
+    const entityId = meTypeDetails.id;
+    const newConfig = {
+      compositionDetails: newComposition,
+    };
+    await set(compositionAtom, newComposition);
+    await set(setConfigurationAtom, { entityId, config: newConfig });
+  }
+);
 
 interface MeTypeDetailsState extends MeTypeDetailsProps {
   colorCode: string;
@@ -208,14 +231,14 @@ function VerticalCollapsedRegions({ regionFullPath }: VerticalCollapsedRegionsPr
   }
 
   // highlight the last element in path (more nested selection)
-  const hightlightElemId = displaySubregions[0].id;
+  const highlightElemId = displaySubregions[0].id;
 
   const subRegionElems = displaySubregions.map((subregions) => (
     <div
       key={subregions.id}
       className={classNames(
         'text-sm',
-        subregions.id === hightlightElemId ? 'font-bold' : 'font-thin'
+        subregions.id === highlightElemId ? 'font-bold' : 'font-thin'
       )}
     >
       {subregions.name}
@@ -245,7 +268,7 @@ export default function BrainRegionSelector() {
   const [isBrainRegionOpen, setIsBrainRegionOpen] = useState<boolean>(true);
   const [isMeTypeOpen, setisMeTypeOpen] = useState<boolean>(true);
   const [brainRegions, setBrainRegions] = useState<TreeChildren[]>();
-  const [meTypeDetails, setMeTypeDetails] = useState<MeTypeDetailsState>();
+  const [meTypeDetails, setMeTypeDetails] = useAtom(meTypeDetailsAtom);
   const [regionFullPath, setRegionFullPath] = useState<RegionFullPathType[]>([]);
 
   const fetchDataAPI = useCallback(() => {
@@ -255,8 +278,7 @@ export default function BrainRegionSelector() {
       );
     }
   }, [brainRegions, session]);
-  const composition = useAtomValue(compositionAtom);
-  const setComposition = useSetAtom(compositionAtom);
+  const [composition, setComposition] = useAtom(compositionAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const setBrainRegionCallback = useCallback(
     async ({ id }: TreeNavItemCallbackProps) => {

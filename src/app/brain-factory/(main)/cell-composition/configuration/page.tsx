@@ -10,20 +10,19 @@ import {
   useState,
 } from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
-import { useAtomValue } from 'jotai';
-import { useUpdateAtom } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import { Button, Image, Tabs } from 'antd';
 import sankey from './sankey';
 import {
   AboutNode,
   editorlinksReducer,
-  SankeyLinksReducerAcc,
   sankeyLinksReducer,
+  SankeyLinksReducerAcc,
   sankeyNodesReducer,
 } from './util';
 import { compositionAtom, Densities, Link, Node } from '@/components/BrainRegionSelector';
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
-import { UndoIcon, ResetIcon, GripDotsVerticalIcon } from '@/components/icons';
+import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 
 function CellPosition() {
@@ -206,8 +205,8 @@ function updatedNodesReducer(
 // TODO: There's probaly a nice way to combine the different reducers here...
 // ... Including the sidebar composition reducer as well.
 function CellDensity() {
-  const { nodes, links } = useAtomValue(compositionAtom);
-  const setComposition = useUpdateAtom(compositionAtom);
+  const [composition, setComposition] = useAtom(compositionAtom);
+  const { nodes, links } = composition;
 
   const sankeyData = links.reduce(sankeyLinksReducer, {
     links: [],
@@ -226,6 +225,25 @@ function CellDensity() {
       schemeTableau10
     ),
     []
+  );
+
+  const handleSlidersChange = useCallback(
+    (id: string, value: number | null) => {
+      const { links: newLinks, nodes: newNodes } = nodes.reduce(updatedNodesReducer, {
+        links,
+        nodes: [],
+        id,
+        value,
+      } as {
+        links: Link[];
+        nodes: Node[];
+        id: string;
+        value: number;
+      });
+
+      return setComposition({ links: newLinks, nodes: newNodes });
+    },
+    [links, nodes, setComposition]
   );
 
   return (
@@ -252,21 +270,7 @@ function CellDensity() {
               nodes={sliderNodes}
               colorScale={colorScale}
               max={max}
-              onChange={(id, value) => {
-                const { links: newLinks, nodes: newNodes } = nodes.reduce(updatedNodesReducer, {
-                  links,
-                  nodes: [],
-                  id,
-                  value,
-                } as {
-                  links: Link[];
-                  nodes: Node[];
-                  id: string;
-                  value: number;
-                });
-
-                return setComposition({ links: newLinks, nodes: newNodes });
-              }}
+              onChange={handleSlidersChange}
             />
           ),
         }))}
