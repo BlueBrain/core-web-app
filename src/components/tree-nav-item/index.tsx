@@ -67,7 +67,7 @@ export default function TreeNavItem({
     return (
       <Button
         className="border-none items-center justify-center flex"
-        style={{ backgroundColor: 'transparent' }}
+        type="text"
         disabled
         icon={<EyeOutlined style={{ color: '#F5222D' }} />}
       />

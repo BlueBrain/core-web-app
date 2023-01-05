@@ -95,6 +95,7 @@ export default function BrainRegionVisualizationTrigger({
   return (
     <Button
       className="border-none items-center text-primary-1 bg-transparent justify-center flex"
+      type="text"
       onClick={() => onClickEye()}
       icon={icon}
     />
