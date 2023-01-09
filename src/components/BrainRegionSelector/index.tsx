@@ -21,12 +21,17 @@ const { fetchAtlasAPI, classNames } = utils;
 const atlasIdUri =
   'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885';
 
+// the content URL specifies the URL of the distribution to retrieve the brain regions from
+// it is added in order to make the request faster
+const contentUrl =
+  'https://bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/f4ded89f-67fb-4d34-831a-a3b317c37c1d';
+
 async function getBrainRegionsTree(accessToken: string) {
   if (!accessToken) throw new Error('Access token should be defined');
 
   return fetchAtlasAPI(
     'get',
-    `https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions?atlas_id=${atlasIdUri}`,
+    `https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions?atlas_id=${atlasIdUri}&content_url=${contentUrl}`,
     accessToken
   )
     .then((response) => response.json())
