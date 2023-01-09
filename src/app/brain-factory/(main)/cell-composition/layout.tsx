@@ -10,10 +10,18 @@ import { themeAtom, Theme } from '@/state/theme';
 import BrainIcon from '@/components/icons/Brain';
 import AnalysisIcon from '@/components/icons/Analysis';
 import SettingsIcon from '@/components/icons/Settings';
+import { cellCompositionHasChanged } from '@/state/brain-model-config/cell-composition';
 
 const COMMON_TAB_CLASSNAME = 'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl';
 
-const tabs = [
+type CellCompositionTab = {
+  name: string;
+  href: string;
+  icon: ReactNode;
+  disableOnChange?: boolean;
+};
+
+const tabs: CellCompositionTab[] = [
   {
     name: 'Interactive',
     href: '/brain-factory/cell-composition/interactive',
@@ -23,6 +31,7 @@ const tabs = [
     name: 'Analysis',
     href: '/brain-factory/cell-composition/analysis',
     icon: <AnalysisIcon className="h-4 inline-block mr-2" />,
+    disableOnChange: true,
   },
   {
     name: 'Configuration',
@@ -49,21 +58,24 @@ type CellCompositionLayoutProps = {
 
 export default function CellCompositionLayout({ children }: CellCompositionLayoutProps) {
   const theme = useAtomValue(themeAtom);
+  const compositionHasChanged = useAtomValue(cellCompositionHasChanged);
   const pathname = usePathname();
 
   return (
     <>
       <div className="absolute right-7 top-7 z-10">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.href}
-            href={tab.href}
-            className={getTabClassName(!!pathname?.startsWith(tab.href), theme)}
-          >
-            {tab.icon}
-            {tab.name}
-          </Link>
-        ))}
+        {tabs.map((tab) =>
+          tab.disableOnChange && compositionHasChanged ? null : (
+            <Link
+              key={tab.href}
+              href={tab.href}
+              className={getTabClassName(!!pathname?.startsWith(tab.href), theme)}
+            >
+              {tab.icon}
+              {tab.name}
+            </Link>
+          )
+        )}
       </div>
 
       {children}

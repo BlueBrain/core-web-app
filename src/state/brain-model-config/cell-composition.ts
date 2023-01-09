@@ -17,6 +17,7 @@ import { autoSaveDebounceInterval } from '@/config';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
+export const cellCompositionHasChanged = atom<boolean>(false);
 
 const configAtom = atom<Promise<CellCompositionConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -123,6 +124,7 @@ const triggerUpdateDebouncedAtom = atom(
 const setConfigPayloadAtom = atom(
   null,
   async (get, set, cellCompositionConfigPayload: CellCompositionConfigPayload) => {
+    set(cellCompositionHasChanged, true);
     set(localConfigPayloadAtom, cellCompositionConfigPayload);
     set(triggerUpdateDebouncedAtom);
   }
