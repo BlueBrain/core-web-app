@@ -3,8 +3,8 @@
 import { atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 
-import sessionAtom from '../session';
 import { getCellCompositionConfigIdAtom } from './index';
+import sessionAtom from '@/state/session';
 import {
   fetchResourceById,
   fetchJsonFileByUrl,
