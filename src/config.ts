@@ -13,7 +13,7 @@ export const keycloak = {
 export const nexus = {
   url: process.env.NEXT_PUBLIC_NEXUS_URL ?? 'https://bbp.epfl.ch/nexus/v1',
   org: 'bbp',
-  project: 'atlasdatasetrelease',
+  project: 'mmb-point-neuron-framework-model',
   defaultIdBaseUrl: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations',
   defaultESIndexId: 'https://bbp.epfl.ch/neurosciencegraph/data/views/es/dataset',
 };

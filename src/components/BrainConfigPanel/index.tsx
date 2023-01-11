@@ -16,17 +16,17 @@ import { classNames } from '@/util/utils';
 
 export const CURATED_MODELS = [
   {
-    id: '1482c334-8a72-489d-9f39-5214752bcf5d',
+    id: '1921aaae-69c4-4366-ae9d-7aa1453f2158',
     name: 'Release 23.01',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
   {
-    id: '1482c334-8a72-489d-9f39-5214752bcf5d',
+    id: '1921aaae-69c4-4366-ae9d-7aa1453f2158',
     name: 'Disease model 1',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
   {
-    id: '1482c334-8a72-489d-9f39-5214752bcf5d',
+    id: '1921aaae-69c4-4366-ae9d-7aa1453f2158',
     name: 'Disease model 2',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
@@ -151,7 +151,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
           <Collapse className="mb-8" title="Reference configurations">
             <div className="space-y-4">
               {CURATED_MODELS.map((config) => (
-                <CuratedModelLinkBtn key={config.id} config={config} baseHref={baseHref} />
+                <CuratedModelLinkBtn key={config.name} config={config} baseHref={baseHref} />
               ))}
             </div>
           </Collapse>
