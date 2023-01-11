@@ -3,9 +3,8 @@ import { atom, useAtomValue, useAtom } from 'jotai';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
-import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
-
 import { fetchAtlasAPI, classNames } from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
@@ -29,7 +28,7 @@ async function getBrainRegionsTree(accessToken: string) {
 
   return fetchAtlasAPI(
     'get',
-    `https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions?atlas_id=${atlasIdUri}&content_url=${contentUrl}`,
+    `https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions?content_url=${contentUrl}`,
     accessToken
   )
     .then((response) => response.json())
@@ -40,6 +39,20 @@ async function getBrainRegionsTree(accessToken: string) {
         childrenField: 'items',
       })
     );
+}
+
+/**
+ * This function returns the promise of fetching the distributions of the brain regions
+ * @param accessToken
+ */
+async function getDistributions(accessToken: string) {
+  if (!accessToken) throw new Error('Access token should be defined');
+
+  return fetchAtlasAPI(
+    'get',
+    `https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions/distributions?atlas_id=${atlasIdUri}`,
+    accessToken
+  ).then((response) => response.json());
 }
 
 async function getBrainRegionById(id: string, accessToken: string) {
@@ -163,6 +176,7 @@ function MeTypeDetails({
               id={id}
               items={items}
               key={id}
+              distributions={null}
               title={<CompositionTitle composition={composition} title={title} />}
             >
               <TreeNavItem className="pl-3" title={<CompositionTitle />} />
@@ -271,6 +285,7 @@ export default function BrainRegionSelector() {
   const [isBrainRegionOpen, setIsBrainRegionOpen] = useState<boolean>(true);
   const [isMeTypeOpen, setisMeTypeOpen] = useState<boolean>(true);
   const [brainRegions, setBrainRegions] = useState<TreeChildren[]>();
+  const [distributions, setDistributions] = useState<Distribution[] | undefined>(undefined);
   const [meTypeDetails, setMeTypeDetails] = useAtom(meTypeDetailsAtom);
   const [regionFullPath, setRegionFullPath] = useState<RegionFullPathType[]>([]);
 
@@ -279,8 +294,10 @@ export default function BrainRegionSelector() {
       getBrainRegionsTree(session.accessToken).then((tree) =>
         setBrainRegions(tree as TreeChildren[])
       );
+      getDistributions(session.accessToken).then((dists) => setDistributions(dists));
     }
   }, [brainRegions, session]);
+
   const [composition, setComposition] = useAtom(compositionAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const setBrainRegionCallback = useCallback(
@@ -326,7 +343,6 @@ export default function BrainRegionSelector() {
   useEffect(() => fetchDataAPI());
 
   if (!session?.user) return null;
-
   return (
     <div className="flex">
       <div className="bg-primary-8 flex flex-1 flex-col h-screen">
@@ -375,8 +391,8 @@ export default function BrainRegionSelector() {
                 />
               </div>
               <Accordion.Root className="divide-y divide-primary-7" collapsible type="single">
-                {brainRegions &&
-                  brainRegions.map(({ id, items, title, distribution, color_code: colorCode }) => (
+                {brainRegions ? (
+                  brainRegions.map(({ id, items, title, color_code: colorCode }) => (
                     <TreeNavItem
                       className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
                       id={id}
@@ -385,12 +401,17 @@ export default function BrainRegionSelector() {
                       onValueChange={setBrainRegionCallback} // Will be attached to nested Accordion.Trigger
                       selectedId={meTypeDetails ? meTypeDetails.id : ''}
                       title={<UppercaseTitle title={title} />}
-                      distribution={distribution}
+                      distributions={distributions}
                       colorCode={colorCode}
                     >
                       <TreeNavItem className="font-normal pl-3" title={<CapitalizedTitle />} />
                     </TreeNavItem>
-                  ))}
+                  ))
+                ) : (
+                  <div className="text-neutral-1 text-3xl flex justify-center items-center">
+                    <LoadingOutlined />
+                  </div>
+                )}
               </Accordion.Root>
             </div>
           </div>

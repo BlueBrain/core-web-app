@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { Button } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
+import { EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import { classNames } from '@/util/utils';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
 import BrainRegionVisualizationTrigger, {
@@ -28,7 +28,7 @@ type TreeNavItemProps = {
   onValueChange?: ({ id }: TreeNavItemCallbackProps) => void;
   selectedId?: string;
   title?: string | React.ReactElement;
-  distribution?: Distribution;
+  distributions?: Distribution[] | null;
   colorCode?: string;
 };
 
@@ -44,20 +44,23 @@ export default function TreeNavItem({
   onValueChange,
   selectedId,
   title = '',
-  distribution,
+  distributions,
   colorCode,
 }: TreeNavItemProps) {
   // renders the color box that is placed next to the region name
   const colorbox = useMemo(() => (colorCode ? <ColorBox color={colorCode} /> : null), [colorCode]);
-
   // renders the visualization trigger button.
   // If there is a distribution and color, renders the trigger. In any other case renders a disabled button
   const visualizationTrigger = useMemo(() => {
-    if (distribution && colorCode) {
+    if (distributions === undefined) {
+      return <LoadingOutlined />;
+    }
+
+    if (distributions && id in distributions && colorCode) {
       return (
         <BrainRegionVisualizationTrigger
           regionID={id}
-          distribution={distribution}
+          distribution={distributions[id]}
           colorCode={colorCode}
         />
       );
@@ -70,7 +73,7 @@ export default function TreeNavItem({
         icon={<EyeOutlined style={{ color: '#F5222D' }} />}
       />
     );
-  }, [distribution, colorCode, id]);
+  }, [distributions, id, colorCode]);
 
   return (
     <Accordion.Item value={id} className={className}>
@@ -118,7 +121,7 @@ export default function TreeNavItem({
                     key: itemId,
                     onValueChange, // Pass-down the same callback.
                     selectedId,
-                    distribution: itemDistribution,
+                    distributions,
                     colorCode: itemColorCode,
                     title: React.isValidElement(children.props.title)
                       ? React.cloneElement(
@@ -135,7 +138,7 @@ export default function TreeNavItem({
                     key={itemId}
                     onValueChange={onValueChange} // Pass-down the same callback
                     selectedId={selectedId}
-                    distribution={itemDistribution}
+                    distributions={distributions}
                     colorCode={itemColorCode}
                     title={
                       React.isValidElement(title)
