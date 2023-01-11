@@ -6,7 +6,7 @@ import { Button } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 
-import utils from '@/util/utils';
+import { fetchAtlasAPI, classNames } from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
@@ -15,8 +15,6 @@ import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import { setConfigurationAtom } from '@/state/brain-model-config/cell-composition';
 import styles from './brain-region-selector.module.css';
-
-const { fetchAtlasAPI, classNames } = utils;
 
 const atlasIdUri =
   'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885';

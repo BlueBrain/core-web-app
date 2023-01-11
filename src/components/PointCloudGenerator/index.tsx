@@ -55,7 +55,6 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
     return fetch(url, {
       method: 'get',
       headers: new Headers({
-        'Access-Control-Allow-Origin': '*',
         Accept: '*/*',
       }),
     }).then((response) => response.arrayBuffer());

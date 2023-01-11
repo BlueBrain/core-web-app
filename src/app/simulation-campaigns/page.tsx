@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react';
 import moment from 'moment';
 import Link from '@/components/Link';
 import { Campaign } from '@/types/nexus';
+import { createHeaders } from '@/util/utils';
 import styles from '@/app/observatory/observatory.module.scss';
 import tableStyles from './table.module.scss';
 
@@ -62,10 +63,7 @@ export default function Observatory() {
         'https://staging.nise.bbp.epfl.ch/nexus/v1/search/query',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.accessToken}`,
-          },
+          headers: createHeaders(session.accessToken),
           body: JSON.stringify(query),
         }
       );

@@ -23,6 +23,7 @@ import {
   getPersonalBrainModelConfigsQuery,
   getBrainModelConfigsByNameQuery,
 } from '@/queries/es';
+import { createHeaders } from '@/util/utils';
 
 // #################################### Generic methods ##########################################
 
@@ -30,19 +31,13 @@ export function fetchJsonFileById<T>(id: string, session: Session) {
   const url = composeUrl('file', id);
 
   return fetch(url, {
-    headers: {
-      Accept: '*/*',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
   }).then<T>((res) => res.json());
 }
 
 export function fetchJsonFileByUrl<T>(url: string, session: Session) {
   return fetch(url, {
-    headers: {
-      Accept: '*/*',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
   }).then<T>((res) => res.json());
 }
 
@@ -50,19 +45,13 @@ export function fetchFileMetadataById(id: string, session: Session) {
   const url = composeUrl('file', id);
 
   return fetch(url, {
-    headers: {
-      Accept: 'application/ld+json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken, { Accept: 'application/ld+json' }),
   }).then<FileMetadata>((res) => res.json());
 }
 
 export function fetchFileMetadataByUrl(url: string, session: Session) {
   return fetch(url, {
-    headers: {
-      Accept: 'application/ld+json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken, { Accept: 'application/ld+json' }),
   }).then<FileMetadata>((res) => res.json());
 }
 
@@ -75,9 +64,7 @@ export function createJsonFile(data: any, filename: string, session: Session) {
 
   return fetch(url, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
 }
@@ -97,9 +84,7 @@ export function updateJsonFileById(
 
   return fetch(url, {
     method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
 }
@@ -111,9 +96,7 @@ export function updateJsonFileByUrl(url: string, data: any, filename: string, se
 
   return fetch(url, {
     method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
 }
@@ -122,10 +105,7 @@ export function fetchResourceById<T>(id: string, session: Session) {
   const url = composeUrl('resource', id);
 
   return fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
   }).then<T>((res) => res.json());
 }
 
@@ -133,10 +113,7 @@ export function fetchResourceSourceById<T>(id: string, session: Session) {
   const url = composeUrl('resource', id, { source: true });
 
   return fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
   }).then<T>((res) => res.json());
 }
 
@@ -148,10 +125,7 @@ export function createResource<T extends EntityResource>(
 
   return fetch(createResourceApiUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
     body: JSON.stringify(resource),
   }).then<T>((res) => res.json());
 }
@@ -163,10 +137,7 @@ export async function updateResource(resource: Entity, rev: number, session: Ses
 
   await fetch(url, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
     body: JSON.stringify(resource),
   });
 }
@@ -176,10 +147,7 @@ export function queryES<T>(query: Record<string, any>, session: Session) {
 
   return fetch(apiUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.accessToken}`,
-    },
+    headers: createHeaders(session.accessToken),
     body: JSON.stringify(query),
   })
     .then((res) => res.json())

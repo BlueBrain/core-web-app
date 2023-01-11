@@ -2,15 +2,13 @@ import React, { useMemo } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { Button } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
-import utils from '@/util/utils';
+import { classNames } from '@/util/utils';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
 import BrainRegionVisualizationTrigger, {
   Distribution,
 } from '@/components/BrainRegionVisualizationTrigger';
 import ColorBox from '@/components/ColorBox';
 import styles from './tree-nav-item.module.css';
-
-const { classNames } = utils;
 
 export type TreeNavItemCallbackProps = { id: string };
 

@@ -5,6 +5,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
 import AtlasVisualizationAtom from '@/state/atlas';
+import { createHeaders } from '@/util/utils';
 
 const parseWFObj = require('wavefront-obj-parser');
 
@@ -39,10 +40,7 @@ const createMesh = (data: string, options: object) => {
 const fetchMesh = (accessToken: string, distributionID: string) =>
   fetch(distributionID, {
     method: 'get',
-    headers: new Headers({
-      Accept: '*/*',
-      Authorization: `Bearer ${accessToken}`,
-    }),
+    headers: createHeaders(accessToken),
   }).then((response) => response.text());
 
 export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps) {
