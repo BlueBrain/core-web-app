@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { atom, useAtomValue, useAtom } from 'jotai';
+import { atom } from 'jotai/vanilla';
+import { useAtomValue, useAtom } from 'jotai/react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
@@ -194,16 +195,11 @@ function MeTypeDetails({
   );
 }
 
-export const meTypeDetailsAtom = atom<MeTypeDetailsState | null, MeTypeDetailsState>(
-  null,
-  (get, set, payload) => {
-    set(meTypeDetailsAtom, payload);
-  }
-);
+export const meTypeDetailsAtom = atom<MeTypeDetailsState | null>(null);
 
 export const densityOrCountAtom = atom<keyof Composition>('count');
 
-export const compositionAtom = atom<Densities, Densities>(
+export const compositionAtom = atom<Densities, Densities[], void>(
   { links: [], nodes: [] },
   async (get, set, newComposition) => {
     const meTypeDetails = get(meTypeDetailsAtom);

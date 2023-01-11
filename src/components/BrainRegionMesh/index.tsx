@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai/react';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
 import AtlasVisualizationAtom from '@/state/atlas';

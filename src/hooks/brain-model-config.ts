@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai/react';
 
 import { idAtom, addRecentlyUsedConfigIdAtom } from '@/state/brain-model-config';
 import { expandId } from '@/util/nexus';

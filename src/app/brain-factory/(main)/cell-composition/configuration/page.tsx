@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
-import { useAtom } from 'jotai';
+import { useAtom } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
 import sankey from './sankey';
 import {

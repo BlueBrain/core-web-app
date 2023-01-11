@@ -1,6 +1,6 @@
 import { CopyOutlined, EditOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai/react';
 import { useSession } from 'next-auth/react';
 
 import { triggerRefetchAllAtom } from './state';

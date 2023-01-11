@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai/react';
 import { useSession } from 'next-auth/react';
 import { notification } from 'antd';
 

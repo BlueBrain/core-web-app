@@ -1,4 +1,4 @@
-import { atom } from 'jotai';
+import { atom } from 'jotai/vanilla';
 
 import { BrainModelConfigResource } from '@/types/nexus';
 import sessionAtom from '@/state/session';

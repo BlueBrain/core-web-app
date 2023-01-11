@@ -1,6 +1,6 @@
 'use client';
 
-import { atom } from 'jotai';
+import { atom } from 'jotai/vanilla';
 
 export type Theme = 'dark' | 'light';
 

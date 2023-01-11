@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai/react';
 import * as Popover from '@radix-ui/react-popover';
 
 import usePathname from '@/hooks/pathname';

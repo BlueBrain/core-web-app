@@ -1,6 +1,6 @@
 'use client';
 
-import { atom } from 'jotai';
+import { atom } from 'jotai/vanilla';
 import { Session } from 'next-auth';
 
 const sessionAtom = atom<Session | null>(null);

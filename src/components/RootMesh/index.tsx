@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai/react';
 import MeshGenerator from '@/components/MeshGenerator';
 import PointCloudGenerator from '@/components/PointCloudGenerator';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';

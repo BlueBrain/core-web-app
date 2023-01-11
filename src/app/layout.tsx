@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { Titillium_Web } from '@next/font/google';
 import { ConfigProvider } from 'antd';
 import { SessionProvider } from 'next-auth/react';
+import { Provider as JotaiProvider } from 'jotai/react';
 
 import commonAntdTheme from '@/theme/antd';
 import useTheme from '@/hooks/theme';
@@ -25,12 +26,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
   useTheme();
 
   return (
-    <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
-      <ConfigProvider theme={commonAntdTheme}>
+    <ConfigProvider theme={commonAntdTheme}>
+      <JotaiProvider>
         <SessionProvider basePath={`${basePath}/api/auth`}>
-          <body>{children}</body>
+          <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
+            <body>{children}</body>
+          </html>
         </SessionProvider>
-      </ConfigProvider>
-    </html>
+      </JotaiProvider>
+    </ConfigProvider>
   );
 }

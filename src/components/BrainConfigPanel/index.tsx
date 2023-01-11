@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined, MinusOutlined, RightOutlined } from '@ant-design/icons';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai/react';
 
 import Collapse from './Collapse';
 import BrainConfigEntry from './BrainConfigEntry';

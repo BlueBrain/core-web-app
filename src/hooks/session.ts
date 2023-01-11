@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai/react';
 
 import { useSession } from 'next-auth/react';
 import sessionAtom from '@/state/session';

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import { Atom, useAtom } from 'jotai';
+import { Atom } from 'jotai/vanilla';
+import { useAtom } from 'jotai/react';
 import { Spin } from 'antd';
 
 import { STATUS, StatusResponse } from '@/state/build-status';

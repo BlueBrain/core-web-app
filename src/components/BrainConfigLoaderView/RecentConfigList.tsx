@@ -2,7 +2,7 @@
 
 import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai/react';
 import { useSession } from 'next-auth/react';
 
 import { recentlyUsedConfigsAtom, triggerRefetchAtom } from './state';

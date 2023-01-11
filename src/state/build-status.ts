@@ -1,4 +1,4 @@
-import { atom, Atom } from 'jotai';
+import { atom, Atom } from 'jotai/vanilla';
 
 export const STATUS = {
   BUILT: 'Built',

@@ -1,8 +1,8 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import { Button, ConfigProvider } from 'antd';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai/react';
 
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
@@ -85,7 +85,9 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
 
       <ConfigProvider theme={tableTheme}>
         <div className={styles.modelListView}>
-          <RecentConfigList baseHref={baseHref} />
+          <Suspense>
+            <RecentConfigList baseHref={baseHref} />
+          </Suspense>
 
           <div>
             {searchTabs.map((tab) => (
@@ -111,7 +113,9 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
               <input className={styles.searchInput} placeholder="Search brain configuration..." />
             </div>
 
-            <ConfigSearchList baseHref={baseHref} />
+            <Suspense>
+              <ConfigSearchList baseHref={baseHref} />
+            </Suspense>
           </div>
         </div>
       </ConfigProvider>

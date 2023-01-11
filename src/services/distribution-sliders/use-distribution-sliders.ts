@@ -1,5 +1,5 @@
 import { SetStateAction, useCallback } from 'react';
-import { useAtom } from 'jotai';
+import { useAtom } from 'jotai/react';
 import { DistributionSliderSeries } from '@/services/distribution-sliders/types';
 import round from '@/services/distribution-sliders/round';
 import { selectedSeriesLabelAtom } from '@/state/density-editor';

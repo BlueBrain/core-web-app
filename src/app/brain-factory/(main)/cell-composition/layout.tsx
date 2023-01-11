@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai/react';
 
 import { classNames } from '@/util/utils';
 import Link from '@/components/Link';

@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import * as THREE from 'three';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Color } from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';

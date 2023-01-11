@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai/react';
 
 import BrainRegionSelector from '@/components/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
