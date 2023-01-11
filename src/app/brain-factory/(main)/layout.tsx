@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { useAtomValue } from 'jotai/react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import BrainRegionSelector from '@/components/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
@@ -13,6 +14,7 @@ import useBrainModelConfigState from '@/hooks/brain-model-config';
 import useSessionState from '@/hooks/session';
 import { WORKFLOW_SIMULATION_TASK_NAME, SIMULATION_FILES } from '@/services/bbp-workflow/config';
 import useEnsureLogin from '@/hooks/ensure-login';
+import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 
 import styles from './brain-factory-main.module.css';
 
@@ -32,27 +34,35 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
   return (
     <div className={styles.container}>
       <div className={styles.brainConfigSelectorContainer}>
-        <BrainConfigPanel baseHref="/brain-factory/cell-composition/interactive" />
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <BrainConfigPanel baseHref="/brain-factory/cell-composition/interactive" />
+        </ErrorBoundary>
       </div>
 
       <div className={styles.brainSelectorContainer}>
-        <BrainRegionSelector />
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <BrainRegionSelector />
+        </ErrorBoundary>
       </div>
 
       <div className={`${styles.tabsContainer} ${bgClassName}`}>
-        <Tabs>
-          <BuildModelBtn className="w-[250px]" />
-          <div className="mt-px w-[250px] flex">
-            <WorkflowLauncher
-              buttonText="New in silico experiment"
-              workflowName={WORKFLOW_SIMULATION_TASK_NAME}
-              workflowFiles={SIMULATION_FILES}
-            />
-          </div>
-        </Tabs>
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <Tabs>
+            <BuildModelBtn className="w-[250px]" />
+            <div className="mt-px w-[250px] flex">
+              <WorkflowLauncher
+                buttonText="New in silico experiment"
+                workflowName={WORKFLOW_SIMULATION_TASK_NAME}
+                workflowFiles={SIMULATION_FILES}
+              />
+            </div>
+          </Tabs>
+        </ErrorBoundary>
       </div>
 
-      <div className={`${styles.contentContainer} ${bgClassName}`}>{children}</div>
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <div className={`${styles.contentContainer} ${bgClassName}`}>{children}</div>
+      </ErrorBoundary>
     </div>
   );
 }
