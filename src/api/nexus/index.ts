@@ -96,7 +96,7 @@ export function updateJsonFileByUrl(url: string, data: any, filename: string, se
 
   return fetch(url, {
     method: 'PUT',
-    headers: createHeaders(session.accessToken),
+    headers: createHeaders(session.accessToken, null),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
 }
@@ -160,7 +160,7 @@ async function cloneOrCreateCellCompositionConfig(id: string | null, session: Se
   if (id) {
     // clone existing config and payload
     const configSource = await fetchResourceSourceById<CellCompositionConfig>(id, session);
-    const payload = await fetchJsonFileByUrl(configSource.configuration.contentUrl, session);
+    const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
     const clonedPayloadMeta = await createJsonFile(
       payload,
       'cell-composition-config.json',
@@ -170,8 +170,8 @@ async function cloneOrCreateCellCompositionConfig(id: string | null, session: Se
     const clonedConfig: CellCompositionConfig = {
       ...configSource,
       '@id': createId('cellcompositionconfig'),
-      configuration: createCellCompositionConfig({ payloadMetadata: clonedPayloadMeta })
-        .configuration,
+      distribution: createCellCompositionConfig({ payloadMetadata: clonedPayloadMeta })
+        .distribution,
     };
 
     return createResource(clonedConfig, session);

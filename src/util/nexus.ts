@@ -102,13 +102,15 @@ export function createCellCompositionConfig({
     '@id': id,
     name,
     description,
-    configuration: {
+    distribution: {
       '@type': 'DataDownload',
+      name: payloadMetadata._filename,
       contentSize: {
         unitCode: 'bytes',
         value: payloadMetadata._bytes,
       },
       contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+      encodingFormat: payloadMetadata._mediaType,
       digest: {
         algorithm: payloadMetadata._digest._algorithm,
         value: payloadMetadata._digest._value,
@@ -131,4 +133,21 @@ export function createCellPositionConfig({
     '@id': id,
     name,
   };
+}
+
+/**
+ * Create a URL with customized rev search parameter
+ */
+export function setRevision<T extends string | undefined>(url?: T, rev?: number | null) {
+  if (!url) return url as T extends string ? string : undefined;
+
+  const urlObj = new URL(url);
+
+  if (rev) {
+    urlObj.searchParams.set('rev', rev.toString());
+  } else {
+    urlObj.searchParams.delete('rev');
+  }
+
+  return urlObj.toString() as T extends string ? string : undefined;
 }

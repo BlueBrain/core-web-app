@@ -109,8 +109,10 @@ export interface BrainModelConfigResource extends ResourceMetadata, BrainModelCo
 export interface CellCompositionConfig extends Entity {
   name: string;
   description: string;
-  configuration: {
+  distribution: {
     '@type': 'DataDownload';
+    name: string;
+    encodingFormat: string;
     contentSize: {
       unitCode: 'bytes';
       value: number;
@@ -128,7 +130,7 @@ export interface CellCompositionConfigResource extends ResourceMetadata, CellCom
 export type CellCompositionConfigPayload = {
   [entityId: string]: {
     hasProtocol: {
-      algorythm: string;
+      algorithm: string;
       version: string;
     };
     hasParameter: {

@@ -1,6 +1,9 @@
 export function createHeaders(
   token: string,
-  extraOptions: any = { 'Content-Type': 'application/json', Accept: '*/*' }
+  extraOptions: Record<string, string> | null = {
+    'Content-Type': 'application/json',
+    Accept: '*/*',
+  }
 ) {
   return new Headers({
     Authorization: `Bearer ${token}`,

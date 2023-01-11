@@ -10,9 +10,11 @@ import {
   fetchJsonFileByUrl,
   fetchFileMetadataByUrl,
   updateJsonFileByUrl,
+  updateResource,
 } from '@/api/nexus';
 import { CellCompositionConfigPayload, CellCompositionConfigResource } from '@/types/nexus';
 import { debounce } from '@/util/common';
+import { setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 
 const refetchTriggerAtom = atom<{}>({});
@@ -22,6 +24,8 @@ export const cellCompositionHasChanged = atom<boolean>(false);
 const configAtom = atom<Promise<CellCompositionConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = await get(getCellCompositionConfigIdAtom);
+
+  get(refetchTriggerAtom);
 
   if (!session || !id) return null;
 
@@ -38,7 +42,7 @@ const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
     return null;
   }
 
-  const url = config?.configuration.contentUrl;
+  const url = setRevision(config?.distribution.contentUrl, null);
 
   if (!url) {
     return null;
@@ -55,13 +59,11 @@ const remoteConfigPayloadAtom = atom<Promise<CellCompositionConfigPayload | null
   const session = get(sessionAtom);
   const config = await get(configAtom);
 
-  get(configPayloadRevAtom); // this is a workaround to preload rev
-
   if (!session || !config) {
     return null;
   }
 
-  const url = config?.configuration.contentUrl;
+  const url = config?.distribution.contentUrl;
 
   if (!url) {
     // ? return default value
@@ -73,11 +75,12 @@ const remoteConfigPayloadAtom = atom<Promise<CellCompositionConfigPayload | null
 
 export const configPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
   const localConfig = get(localConfigPayloadAtom);
-  const remoteConfig = await get(remoteConfigPayloadAtom);
 
   if (localConfig) {
     return localConfig;
   }
+
+  const remoteConfig = await get(remoteConfigPayloadAtom);
 
   return remoteConfig;
 });
@@ -89,7 +92,7 @@ export const updateConfigPayloadAtom = atom(
     const rev = await get(configPayloadRevAtom);
     const config = await get(configAtom);
 
-    const url = config?.configuration.contentUrl;
+    const url = setRevision(config?.distribution.contentUrl, rev);
 
     if (!session) {
       throw new Error('No auth session found in the state');
@@ -103,9 +106,22 @@ export const updateConfigPayloadAtom = atom(
       throw new Error('No id found for cellCompositionConfig');
     }
 
-    await updateJsonFileByUrl(url, configPayload, 'cell-composition-config.json', session);
+    if (!config) return;
 
-    // update the config to point to the new payload
+    const updatedFile = await updateJsonFileByUrl(
+      url,
+      configPayload,
+      'cell-composition-config.json',
+      session
+    );
+    const newFileUrl = setRevision(url, updatedFile._rev);
+
+    config.distribution.contentUrl = newFileUrl;
+    config.distribution.contentSize.value = updatedFile._bytes;
+    config.distribution.name = updatedFile._filename;
+    config.distribution.encodingFormat = updatedFile._mediaType;
+
+    await updateResource(config, config?._rev, session);
 
     set(triggerRefetchAtom);
   }
@@ -166,7 +182,9 @@ export const setConfigurationAtom = atom(
     }
 
     localConfigPayload[entityId] = {
-      ...(localConfigPayload[entityId] ?? {}),
+      ...(localConfigPayload[entityId] ?? {
+        hasProtocol: { algorithm: 'algorithmId', version: 'v0.0.1' },
+      }),
       configuration: config,
     };
 
