@@ -12,6 +12,7 @@ import {
 import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
+import { ErrorBoundary } from 'react-error-boundary';
 import sankey from './sankey';
 import {
   AboutNode,
@@ -20,10 +21,17 @@ import {
   SankeyLinksReducerAcc,
   sankeyNodesReducer,
 } from './util';
-import { compositionAtom, Densities, Link, Node } from '@/components/BrainRegionSelector';
+import {
+  compositionAtom,
+  Densities,
+  Link,
+  meTypeDetailsAtom,
+  Node,
+} from '@/components/BrainRegionSelector';
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
+import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 
 function CellPosition() {
   return (
@@ -205,8 +213,16 @@ function updatedNodesReducer(
 // TODO: There's probaly a nice way to combine the different reducers here...
 // ... Including the sidebar composition reducer as well.
 function CellDensity() {
+  const [meTypeDetails] = useAtom(meTypeDetailsAtom);
   const [composition, setComposition] = useAtom(compositionAtom);
-  const { nodes, links } = composition !== null ? composition : { nodes: [], links: [] };
+  const isCompositionAvailable = composition !== null;
+  const { nodes, links } = isCompositionAvailable ? composition : { nodes: [], links: [] };
+
+  // This should be treated as a temporary solution
+  // as we shouldn't expect empty composition in the end.
+  if (!isCompositionAvailable) {
+    throw new Error(`There is no configuration data for the ${meTypeDetails?.title}`);
+  }
 
   const sankeyData = links.reduce(sankeyLinksReducer, {
     links: [],
@@ -280,6 +296,7 @@ function CellDensity() {
 }
 
 export default function ConfigurationView() {
+  const [composition] = useAtom(compositionAtom);
   return (
     <Tabs
       // TODO: There may be a way to improve this using Ant-D's ConfigProvider
@@ -291,7 +308,11 @@ export default function ConfigurationView() {
         {
           label: 'Density',
           key: 'density',
-          children: <CellDensity />,
+          children: (
+            <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
+              <CellDensity />
+            </ErrorBoundary>
+          ),
         },
         { label: 'Distribution', key: 'distribution', children: <CellDistribution /> },
         { label: 'Position', key: 'position', children: <CellPosition /> },
