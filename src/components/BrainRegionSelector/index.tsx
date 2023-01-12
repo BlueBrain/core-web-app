@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { atom } from 'jotai/vanilla';
-import { useAtomValue, useAtom } from 'jotai/react';
+import { useAtomValue, useAtom, useSetAtom } from 'jotai/react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { PlusOutlined, MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { fetchAtlasAPI, classNames } from '@/util/utils';
+import VerticalSwitch from '@/components/VerticalSwitch';
 import BrainIcon from '@/components/icons/Brain';
 import BrainRegionIcon from '@/components/icons/BrainRegion';
 import AngledArrowIcon from '@/components/icons/AngledArrow';
@@ -18,11 +19,27 @@ import styles from './brain-region-selector.module.css';
 
 const atlasIdUri =
   'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885';
-
 // the content URL specifies the URL of the distribution to retrieve the brain regions from
 // it is added in order to make the request faster
 const contentUrl =
   'https://bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/f4ded89f-67fb-4d34-831a-a3b317c37c1d';
+
+const switchStateType = {
+  COUNT: 'count',
+  DENSITY: 'density',
+};
+
+/**
+ * Maps metrics to units in order to appear in the sidebar
+ */
+const metricToUnit = {
+  density: (
+    <span>
+      mm<sup>3</sup>
+    </span>
+  ),
+  count: <span>N</span>,
+};
 
 async function getBrainRegionsTree(accessToken: string) {
   if (!accessToken) throw new Error('Access token should be defined');
@@ -151,7 +168,7 @@ function MeTypeDetails({
   const neurons = arrayToTree(
     nodes.map(({ neuron_composition, label, ...node }) => ({
       ...node,
-      composition: `${(neuron_composition as Composition)[densityOrCount]} neurons`,
+      composition: (neuron_composition as Composition)[densityOrCount],
       title: label,
     })), // TODO: Refactor TreeNavItem to be property name agnostic
     {
@@ -161,28 +178,51 @@ function MeTypeDetails({
     }
   );
 
+  /**
+   * Calculates the metric to be displayed based on whether count or density is
+   * currently selected
+   */
+  const metric = useMemo(() => {
+    if (neuronComposition && densityOrCount === switchStateType.COUNT) {
+      return neuronComposition.count;
+    }
+    if (neuronComposition && densityOrCount === switchStateType.DENSITY) {
+      return Number(neuronComposition.density.toFixed(4));
+    }
+    return null;
+  }, [densityOrCount, neuronComposition]);
+
   return (
     <>
       <h2 className="flex font-bold justify-between text-white text-lg uppercase">
         Neurons
-        <small className="font-normal text-base">
-          {neuronComposition && neuronComposition.count}
-        </small>
+        <small className="font-normal text-base">{metric}</small>
       </h2>
       {neurons && (
         <Accordion.Root collapsible type="single">
-          {neurons.map(({ id, items, composition, title }) => (
-            <TreeNavItem
-              className="py-3 text-primary-3 hover:text-white"
-              id={id}
-              items={items}
-              key={id}
-              distributions={null}
-              title={<CompositionTitle composition={composition} title={title} />}
-            >
-              <TreeNavItem className="pl-3" title={<CompositionTitle />} />
-            </TreeNavItem>
-          ))}
+          {neurons.map(({ id, items, composition, title }) => {
+            const normalizedComposition = composition ? (
+              <div>
+                {Number(composition.toFixed(4))} &nbsp;
+                {metricToUnit[densityOrCount]}
+              </div>
+            ) : (
+              composition
+            );
+
+            return (
+              <TreeNavItem
+                className="py-3 text-primary-3 hover:text-white"
+                id={id}
+                items={items}
+                key={id}
+                distributions={null}
+                title={<CompositionTitle composition={normalizedComposition} title={title} />}
+              >
+                <TreeNavItem className="pl-3" title={<CompositionTitle />} />
+              </TreeNavItem>
+            );
+          })}
         </Accordion.Root>
       )}
       <h2 className="flex font-bold justify-between text-white text-lg uppercase">
@@ -196,8 +236,6 @@ function MeTypeDetails({
 }
 
 export const meTypeDetailsAtom = atom<MeTypeDetailsState | null>(null);
-
-export const densityOrCountAtom = atom<keyof Composition>('count');
 
 export const compositionAtom = atom<Densities, Densities[], void>(
   { links: [], nodes: [] },
@@ -276,6 +314,14 @@ function VerticalCollapsedMeType({ meTypeDetailsTitle }: { meTypeDetailsTitle: s
   );
 }
 
+function HorizontalLine() {
+  return (
+    <div className="w-[250px] h-0 flex-none order-0 grow-0 border border-solid border-primary-6" />
+  );
+}
+
+const densityOrCountAtom = atom<keyof Composition>('count');
+
 export default function BrainRegionSelector() {
   const { data: session } = useSession();
   const [isBrainRegionOpen, setIsBrainRegionOpen] = useState<boolean>(true);
@@ -284,6 +330,7 @@ export default function BrainRegionSelector() {
   const [distributions, setDistributions] = useState<Distribution[] | undefined>(undefined);
   const [meTypeDetails, setMeTypeDetails] = useAtom(meTypeDetailsAtom);
   const [regionFullPath, setRegionFullPath] = useState<RegionFullPathType[]>([]);
+  const setDensityOrCountAtom = useSetAtom(densityOrCountAtom);
 
   const fetchDataAPI = useCallback(() => {
     if (!brainRegions && session?.user) {
@@ -296,6 +343,7 @@ export default function BrainRegionSelector() {
 
   const [composition, setComposition] = useAtom(compositionAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
+
   const setBrainRegionCallback = useCallback(
     async ({ id }: TreeNavItemCallbackProps) => {
       if (!brainRegions?.length) return;
@@ -452,6 +500,29 @@ export default function BrainRegionSelector() {
                 onClick={() => setisMeTypeOpen(false)}
               />
             </div>
+            <div className="flex flex-col gap-3">
+              <HorizontalLine />
+              <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-1">
+                  <VerticalSwitch
+                    isChecked={densityOrCount === switchStateType.COUNT}
+                    onChange={(checked: boolean) => {
+                      const toSet = checked ? switchStateType.COUNT : switchStateType.DENSITY;
+                      // @ts-ignore
+                      setDensityOrCountAtom(toSet);
+                    }}
+                  />
+
+                  <div className="flex flex-col gap-1 text-primary-1">
+                    <div>Densities [{metricToUnit.density}]</div>
+                    <div>Counts [{metricToUnit.count}]</div>
+                  </div>
+                </div>
+                <div />
+              </div>
+            </div>
+            <HorizontalLine />
+
             {composition && (
               <MeTypeDetails
                 densityOrCount={densityOrCount}
