@@ -136,7 +136,7 @@ function Sliders({ colorScale, nodes, max, onChange }: DensityEditorProps) {
         nodes: nodes[active.index] ? nodes[active.index].nodes : active.nodes,
         max: nodes[active.index] ? nodes[active.index].max : active.max,
       }),
-    [active, nodes]
+    [nodes]
   );
 
   return (
