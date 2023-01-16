@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { Table, Tag, Input } from 'antd';
+import { Table, Pagination, Tag, Input } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { useSession } from 'next-auth/react';
@@ -15,10 +15,11 @@ import tableStyles from './table.module.scss';
 
 const { Search } = Input;
 
+const PAGE_SIZE = 10;
+
 const QueryBase = {
   track_total_hits: true,
-  size: 200,
-  from: 0,
+  sort: [{ createdAt: { order: 'desc' } }],
   query: {
     bool: {
       filter: {
@@ -39,25 +40,43 @@ const QueryBase = {
     },
   },
 };
+
 export default function Observatory() {
   const router = useRouter();
   const { data: session } = useSession();
   const [results, setResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalResults, setTotalResults] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(PAGE_SIZE);
 
   const searchQuery = useMemo(
     () => ({
       query: {
-        multi_match: { query: searchTerm, prefix_length: 0, fields: ['*'] },
+        multi_match: {
+          query: searchTerm,
+          prefix_length: 0,
+          fields: ['*'],
+        },
       },
     }),
     [searchTerm]
   );
 
+  const paginationQuery = useMemo(
+    () => ({
+      size: pageSize,
+      from: (currentPage - 1) * pageSize,
+    }),
+    [pageSize, currentPage]
+  );
+
   useEffect(() => {
     async function fetchSimCampaigns() {
       if (!session?.user) return;
-      const query = searchTerm ? { ...QueryBase, ...searchQuery } : QueryBase;
+      const query = searchTerm
+        ? { ...QueryBase, ...paginationQuery, ...searchQuery }
+        : { ...QueryBase, ...paginationQuery };
 
       const simCampaignResponse = await fetch(
         'https://staging.nise.bbp.epfl.ch/nexus/v1/search/query',
@@ -69,6 +88,7 @@ export default function Observatory() {
       );
 
       const simCampaigns = await simCampaignResponse.json();
+      setTotalResults(simCampaigns._shards.total);
       const data = simCampaigns.hits.hits.map((item: any) => ({
         key: btoa(item._id),
         name: item._source.name,
@@ -86,7 +106,7 @@ export default function Observatory() {
     }
 
     fetchSimCampaigns();
-  }, [session, searchTerm, searchQuery]);
+  }, [session, searchTerm, searchQuery, paginationQuery]);
 
   const columHeader = (text: string) => <div className={styles['table-header']}>{text}</div>;
 
@@ -198,13 +218,20 @@ export default function Observatory() {
             dataSource={results}
             rowClassName={styles['table-row']}
             columns={columns}
-            pagination={{ total: 200 }}
+            pagination={false}
             onRow={(record) => ({
               onClick: (e) => {
                 e.preventDefault();
                 router.push(`/simulation-campaigns/${record.self}`);
               },
             })}
+          />
+          <Pagination
+            className={tableStyles.pagination}
+            onChange={(page) => setCurrentPage(page)}
+            onShowSizeChange={(current, size) => setPageSize(size)}
+            defaultCurrent={1}
+            total={totalResults}
           />
         </div>
       </section>

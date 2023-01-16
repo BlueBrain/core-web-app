@@ -12,3 +12,6 @@
     border: none !important;
   }
 }
+.pagination {
+  @apply flex justify-end pr-10 mt-10;
+}
