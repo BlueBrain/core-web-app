@@ -5,7 +5,7 @@ import { Table, Pagination, Tag, Input } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { useSession } from 'next-auth/react';
-
+import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import Link from '@/components/Link';
 import { Campaign } from '@/types/nexus';
@@ -147,14 +147,14 @@ export default function Observatory() {
       sorter: true,
     },
     {
-      title: columHeader('StartedAt'),
+      title: columHeader('Started At'),
       dataIndex: 'startedAt',
       key: 'startedAt',
       render: (text) => <div className="text-primary-7">{moment(text).format('MMM Do YY')}</div>,
       sorter: (a, b) => moment(a.startedAt).unix() - moment(b.startedAt).unix(),
     },
     {
-      title: columHeader('CreatedAt'),
+      title: columHeader('Created At'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (text) => <div className="text-primary-7">{moment(text).format('MMM Do YY')}</div>,
@@ -193,6 +193,14 @@ export default function Observatory() {
         >
           Simulation Observatory
         </Link>
+        <div className={styles.fixednav}>
+          <Link href="/">
+            <UserOutlined />
+          </Link>
+          <Link href="/">
+            <HomeOutlined />
+          </Link>
+        </div>
       </div>
       <section className="w-full">
         <div className="flex py-8">

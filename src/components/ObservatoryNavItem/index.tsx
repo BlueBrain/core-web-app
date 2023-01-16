@@ -14,9 +14,7 @@ export default function ObservatoryNavItem({ title, text, url }: Props) {
         <span>+</span>
       </div>
       <p>{text}</p>
-      <button type="button" className="text-sm">
-        Browse
-      </button>
+      <button type="button">Browse</button>
     </Link>
   );
 }

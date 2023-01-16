@@ -12,10 +12,11 @@
   width: 100vw;
   display: grid;
   grid-template-columns: 0.7fr 1.3fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
+    'observatoryheader content'
     'braincells content'
     'experimental content'
     'reconstructions content'
@@ -30,6 +31,12 @@
   -moz-background-size: contain;
   -o-background-size: contain;
   background-size: contain;
+}
+
+.observatoryheader {
+  min-height: 0;
+  grid-area: observatoryheader;
+  @apply bg-primary-9;
 }
 
 .braincells {
@@ -56,6 +63,7 @@
 }
 
 .info,
+.observatoryheader,
 .experimental,
 .simulations,
 .braincells,
@@ -69,13 +77,25 @@
     @apply text-xl font-bold inline;
   }
   button {
-    @apply border border-white px-4 py-2 mt-4;
+    @apply border border-white px-4 py-2 mt-4 text-sm;
   }
   p {
     @apply mt-2 font-thin text-sm;
   }
 }
 
+.observatoryheader {
+  h1 {
+    @apply text-7xl font-bold uppercase block;
+    word-spacing: 100vw;
+  }
+  button {
+    @apply border border-primary-4 text-primary-4;
+    > span {
+      @apply mr-5;
+    }
+  }
+}
 .info {
   min-height: 0;
   background-color: black;
@@ -88,5 +108,14 @@
   }
   button {
     @apply text-black bg-white;
+  }
+}
+
+// Side bar menu styles
+
+.fixednav {
+  @apply absolute bottom-2.5 left-2.5;
+  a {
+    @apply mb-1 block;
   }
 }

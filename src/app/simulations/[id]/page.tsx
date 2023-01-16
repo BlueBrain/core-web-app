@@ -5,7 +5,7 @@ import usePathname from '@/hooks/pathname';
 import Placeholder from '@/components/Placeholder';
 import Theme from '@/styles/theme.module.css';
 
-export default function Oservatory() {
+export default function Observatory() {
   const path = usePathname();
   const parts = path?.split('/');
   if (!parts) return null;
