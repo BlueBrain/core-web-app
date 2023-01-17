@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Color } from 'three';
@@ -10,6 +10,7 @@ import {
   CELL_API_BASE_PATH,
   CELL_API_INPUT_PATH,
 } from '@/components/PointCloudGenerator/constants';
+import useNotification from '@/hooks/notifications';
 
 type PointCloudMeshProps = {
   regionID: string;
@@ -28,22 +29,43 @@ type Point = {
 function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
   const atlasVisualizationAtom = useAtomValue(AtlasVisualizationAtom);
   const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
+  const addNotification = useNotification();
+
+  // the index of the point cloud
+  const pcIndex = useMemo(
+    () =>
+      atlasVisualizationAtom.visiblePointClouds.findIndex(
+        (meshToFind) => meshToFind.regionID === regionID
+      ),
+    [atlasVisualizationAtom.visiblePointClouds, regionID]
+  );
 
   /**
    * Sets the loading state to false
    */
   const disableLoadingState = useCallback(() => {
-    const meshIndex = atlasVisualizationAtom.visiblePointClouds.findIndex(
-      (meshToFind) => meshToFind.regionID === regionID
-    );
-    if (atlasVisualizationAtom.visiblePointClouds[meshIndex].isLoading) {
-      atlasVisualizationAtom.visiblePointClouds[meshIndex].isLoading = false;
+    if (atlasVisualizationAtom.visiblePointClouds[pcIndex].isLoading) {
+      atlasVisualizationAtom.visiblePointClouds[pcIndex].isLoading = false;
       setAtlasVisualizationAtom({
         ...atlasVisualizationAtom,
         visiblePointClouds: atlasVisualizationAtom.visiblePointClouds,
       });
     }
-  }, [atlasVisualizationAtom, regionID, setAtlasVisualizationAtom]);
+  }, [atlasVisualizationAtom, pcIndex, setAtlasVisualizationAtom]);
+
+  /**
+   * Sets the error state of the object in jotai
+   */
+  const setErrorState = useCallback(
+    (newState: boolean) => {
+      atlasVisualizationAtom.visiblePointClouds[pcIndex].hasError = newState;
+      setAtlasVisualizationAtom({
+        ...atlasVisualizationAtom,
+        visiblePointClouds: atlasVisualizationAtom.visiblePointClouds,
+      });
+    },
+    [atlasVisualizationAtom, pcIndex, setAtlasVisualizationAtom]
+  );
 
   /**
    * Fetches point cloud data from cells API. Returns the data in an array buffer format
@@ -77,42 +99,49 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
   };
 
   const fetchAndShowPointCloud = useCallback(() => {
-    fetchData().then(async (arrayBuffer) => {
-      const table = tableFromIPC(arrayBuffer);
-      const points = table.toArray().map((elem, index) => {
-        const dataStr = elem.toString();
-        const data = JSON.parse(dataStr);
-        const id = index;
-        return { id, ...data };
-      });
+    fetchData()
+      .then(async (arrayBuffer) => {
+        const table = tableFromIPC(arrayBuffer);
+        const points = table.toArray().map((elem, index) => {
+          const dataStr = elem.toString();
+          const data = JSON.parse(dataStr);
+          const id = index;
+          return { id, ...data };
+        });
 
-      const sprite = new THREE.TextureLoader().load(`${basePath}/images/disc.png`);
+        const sprite = new THREE.TextureLoader().load(`${basePath}/images/disc.png`);
 
-      const material = new THREE.PointsMaterial({
-        color: new Color(color),
-        size: 400,
-        map: sprite,
-        sizeAttenuation: true,
-        alphaTest: 0.5,
-        transparent: true,
+        const material = new THREE.PointsMaterial({
+          color: new Color(color),
+          size: 400,
+          map: sprite,
+          sizeAttenuation: true,
+          alphaTest: 0.5,
+          transparent: true,
+        });
+        const geometry = buildGeometry(points);
+        const mesh = new THREE.Points(geometry, material);
+        const mc = threeCtxWrapper.getMeshCollection();
+        mc.addOrShowMesh(regionID, mesh);
+        disableLoadingState();
+      })
+      .catch(() => {
+        disableLoadingState();
+        addNotification.error('Something went wrong while fetch point cloud mesh');
+        setErrorState(true);
       });
-      const geometry = buildGeometry(points);
-      const mesh = new THREE.Points(geometry, material);
-      const mc = threeCtxWrapper.getMeshCollection();
-      mc.addOrShowMesh(regionID, mesh);
-      disableLoadingState();
-    });
-  }, [color, disableLoadingState, fetchData, regionID]);
+  }, [addNotification, color, disableLoadingState, fetchData, regionID, setErrorState]);
 
   useEffect(() => {
+    const pcObject = atlasVisualizationAtom.visiblePointClouds[pcIndex];
+    if (pcObject?.hasError) return;
     const mc = threeCtxWrapper.getMeshCollection();
     if (mc.has(regionID)) {
       mc.show(regionID);
-      disableLoadingState();
     } else {
       fetchAndShowPointCloud();
     }
-  }, [disableLoadingState, fetchAndShowPointCloud, regionID]);
+  }, [atlasVisualizationAtom.visiblePointClouds, fetchAndShowPointCloud, pcIndex, regionID]);
 
   return null;
 }

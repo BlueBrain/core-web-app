@@ -4,12 +4,14 @@ type MeshType = {
   contentURL: string;
   color: string;
   isLoading: boolean;
+  hasError: boolean;
 };
 
 type PointCloudType = {
   regionID: string;
   color: string;
   isLoading: boolean;
+  hasError: boolean;
 };
 
 type AtlasVisualizationType = {
@@ -24,6 +26,7 @@ const defaultCollection = {
         'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b',
       color: '#FFF',
       isLoading: true,
+      hasError: false,
     },
   ],
   visiblePointClouds: [],

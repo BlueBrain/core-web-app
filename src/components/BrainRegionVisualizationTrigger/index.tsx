@@ -67,6 +67,7 @@ export default function BrainRegionVisualizationTrigger({
             contentURL: distribution.content_url,
             color: colorCode,
             isLoading: true,
+            hasError: false,
           },
         ],
         visiblePointClouds: [
@@ -75,6 +76,7 @@ export default function BrainRegionVisualizationTrigger({
             regionID,
             color: colorCode,
             isLoading: true,
+            hasError: false,
           },
         ],
       });

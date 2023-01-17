@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
 import AtlasVisualizationAtom from '@/state/atlas';
 import { createHeaders } from '@/util/utils';
+import useNotification from '@/hooks/notifications';
 
 const parseWFObj = require('wavefront-obj-parser');
 
@@ -47,14 +48,18 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
   const { data: session } = useSession();
   const atlasVisualizationAtom = useAtomValue(AtlasVisualizationAtom);
   const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
+  const addNotification = useNotification();
+
+  const meshIndex = useMemo(
+    () =>
+      atlasVisualizationAtom.visibleMeshes.findIndex((meshToFind) => meshToFind.contentURL === id),
+    [atlasVisualizationAtom.visibleMeshes, id]
+  );
 
   /**
    * Sets the loading state to false
    */
   const disableLoadingState = useCallback(() => {
-    const meshIndex = atlasVisualizationAtom.visibleMeshes.findIndex(
-      (meshToFind) => meshToFind.contentURL === id
-    );
     if (atlasVisualizationAtom.visibleMeshes[meshIndex].isLoading) {
       atlasVisualizationAtom.visibleMeshes[meshIndex].isLoading = false;
       setAtlasVisualizationAtom({
@@ -62,7 +67,21 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
         visibleMeshes: atlasVisualizationAtom.visibleMeshes,
       });
     }
-  }, [atlasVisualizationAtom, id, setAtlasVisualizationAtom]);
+  }, [atlasVisualizationAtom, meshIndex, setAtlasVisualizationAtom]);
+
+  /**
+   * Sets the error state of the object in jotai
+   */
+  const setErrorState = useCallback(
+    (newState: boolean) => {
+      atlasVisualizationAtom.visibleMeshes[meshIndex].hasError = newState;
+      setAtlasVisualizationAtom({
+        ...atlasVisualizationAtom,
+        visibleMeshes: atlasVisualizationAtom.visibleMeshes,
+      });
+    },
+    [atlasVisualizationAtom, meshIndex, setAtlasVisualizationAtom]
+  );
 
   /**
    * Fetches the data from the API
@@ -76,20 +95,25 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
           mc.addOrShowMesh(id, mesh, false);
           disableLoadingState();
         })
-        .catch(() => disableLoadingState());
+        .catch(() => {
+          addNotification.error('Something went wrong while fetching brain region mesh');
+          disableLoadingState();
+          setErrorState(true);
+        });
     }
-  }, [colorCode, disableLoadingState, id, session?.accessToken, session?.user]);
+  }, [addNotification, colorCode, disableLoadingState, id, session, setErrorState]);
 
   useEffect(() => {
+    const meshObject = atlasVisualizationAtom.visibleMeshes[meshIndex];
+    if (meshObject?.hasError) return;
     const mc = threeCtxWrapper.getMeshCollection();
     // if the mesh already exists in the mesh collection, it is shown. If not, it is fetched
     if (mc.has(id)) {
       mc.show(id);
-      disableLoadingState();
     } else {
       fetchDataAPI();
     }
-  }, [id, colorCode, fetchDataAPI, disableLoadingState]);
+  }, [atlasVisualizationAtom.visibleMeshes, fetchDataAPI, id, meshIndex]);
 
   return null;
 }

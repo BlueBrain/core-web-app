@@ -15,6 +15,7 @@ import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/component
 import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import { setConfigurationAtom } from '@/state/brain-model-config/cell-composition';
+import useNotification from '@/hooks/notifications';
 import styles from './brain-region-selector.module.css';
 
 const atlasIdUri =
@@ -326,20 +327,30 @@ export default function BrainRegionSelector() {
   const { data: session } = useSession();
   const [isBrainRegionOpen, setIsBrainRegionOpen] = useState<boolean>(true);
   const [isMeTypeOpen, setisMeTypeOpen] = useState<boolean>(true);
-  const [brainRegions, setBrainRegions] = useState<TreeChildren[]>();
-  const [distributions, setDistributions] = useState<Distribution[] | undefined>(undefined);
+  const [brainRegions, setBrainRegions] = useState<TreeChildren[] | null | undefined>(undefined);
+  const [distributions, setDistributions] = useState<Distribution[] | null | undefined>(undefined);
   const [meTypeDetails, setMeTypeDetails] = useAtom(meTypeDetailsAtom);
   const [regionFullPath, setRegionFullPath] = useState<RegionFullPathType[]>([]);
   const setDensityOrCountAtom = useSetAtom(densityOrCountAtom);
+  const addNotification = useNotification();
 
   const fetchDataAPI = useCallback(() => {
-    if (!brainRegions && session?.user) {
-      getBrainRegionsTree(session.accessToken).then((tree) =>
-        setBrainRegions(tree as TreeChildren[])
-      );
-      getDistributions(session.accessToken).then((dists) => setDistributions(dists));
+    if (brainRegions || brainRegions === null) return;
+    if (session?.user) {
+      getBrainRegionsTree(session.accessToken)
+        .then((tree) => setBrainRegions(tree as TreeChildren[]))
+        .catch(() => {
+          setBrainRegions(null);
+          addNotification.error('Something went wrong while fetching brain regions');
+        });
+      getDistributions(session.accessToken)
+        .then((dists) => setDistributions(dists))
+        .catch(() => {
+          setDistributions(null);
+          addNotification.error('Something went wrong while fetching distributions');
+        });
     }
-  }, [brainRegions, session]);
+  }, [addNotification, brainRegions, session]);
 
   const [composition, setComposition] = useAtom(compositionAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
@@ -385,6 +396,35 @@ export default function BrainRegionSelector() {
   );
 
   useEffect(() => fetchDataAPI());
+
+  // memoized constant for rendered brain regions
+  const brainRegionsRender = useMemo(() => {
+    if (brainRegions) {
+      return brainRegions.map(({ id, items, title, color_code: colorCode }) => (
+        <TreeNavItem
+          className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
+          id={id}
+          items={items}
+          key={id}
+          onValueChange={setBrainRegionCallback} // Will be attached to nested Accordion.Trigger
+          selectedId={meTypeDetails ? meTypeDetails.id : ''}
+          title={<UppercaseTitle title={title} />}
+          distributions={distributions}
+          colorCode={colorCode}
+        >
+          <TreeNavItem className="font-normal pl-3" title={<CapitalizedTitle />} />
+        </TreeNavItem>
+      ));
+    }
+    if (brainRegions === undefined) {
+      return (
+        <div className="text-neutral-1 text-3xl flex justify-center items-center">
+          <LoadingOutlined />
+        </div>
+      );
+    }
+    return null;
+  }, [brainRegions, distributions, meTypeDetails, setBrainRegionCallback]);
 
   if (!session?.user) return null;
   return (
@@ -435,27 +475,7 @@ export default function BrainRegionSelector() {
                 />
               </div>
               <Accordion.Root className="divide-y divide-primary-7" collapsible type="single">
-                {brainRegions ? (
-                  brainRegions.map(({ id, items, title, color_code: colorCode }) => (
-                    <TreeNavItem
-                      className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4"
-                      id={id}
-                      items={items}
-                      key={id}
-                      onValueChange={setBrainRegionCallback} // Will be attached to nested Accordion.Trigger
-                      selectedId={meTypeDetails ? meTypeDetails.id : ''}
-                      title={<UppercaseTitle title={title} />}
-                      distributions={distributions}
-                      colorCode={colorCode}
-                    >
-                      <TreeNavItem className="font-normal pl-3" title={<CapitalizedTitle />} />
-                    </TreeNavItem>
-                  ))
-                ) : (
-                  <div className="text-neutral-1 text-3xl flex justify-center items-center">
-                    <LoadingOutlined />
-                  </div>
-                )}
+                {brainRegionsRender}
               </Accordion.Root>
             </div>
           </div>
