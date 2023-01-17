@@ -1,29 +1,19 @@
 'use client';
 
-import {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useState, useEffect, useMemo, useRef, RefObject } from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
 import sankey from './sankey';
+import { sankeyNodesReducer, getSankeyLinks, sumArray, recalculateAndGetNewNodes } from './util';
+import { AboutNode, CompositionDataSet, EditorLinksProps, SankeyLinksReducerAcc } from './types';
+import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import {
-  AboutNode,
-  editorlinksReducer,
-  sankeyLinksReducer,
-  SankeyLinksReducerAcc,
-  sankeyNodesReducer,
-} from './util';
-import {
+  Composition,
   compositionAtom,
   Densities,
+  densityOrCountAtom,
   Link,
   meTypeDetailsAtom,
   Node,
@@ -31,7 +21,7 @@ import {
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
-import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import { switchStateType } from '@/util/common';
 
 function CellPosition() {
   return (
@@ -54,17 +44,67 @@ function CellDistribution() {
 }
 
 function CellDensityToolbar() {
+  const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
+  const toggleDensityAndCount = useCallback(
+    () =>
+      setDensityOrCount((prev) => {
+        const nextState =
+          prev === switchStateType.DENSITY ? switchStateType.COUNT : switchStateType.DENSITY;
+        return nextState as keyof Composition;
+      }),
+    [setDensityOrCount]
+  );
+
+  const densityOrCountDisplay = useMemo(
+    () => (densityOrCount === switchStateType.DENSITY ? 'Densities [mm³]' : 'Counts [N]'),
+    [densityOrCount]
+  );
+
   const items = [
-    { key: 'density', children: 'Densities [mm³]' },
-    { key: 'percentage', children: 'Percentage' },
-    { icon: <UndoIcon />, key: 'undo', children: `Undo` },
-    { icon: <ResetIcon />, key: 'reset', children: `Reset` },
+    {
+      key: switchStateType.DENSITY,
+      children: densityOrCountDisplay,
+      callback: toggleDensityAndCount,
+    },
+    {
+      key: 'percentage',
+      children: 'Percentage',
+      isDisabled: true,
+      callback: () => {
+        console.warn('Not implemented yet');
+      },
+    },
+    {
+      icon: <UndoIcon />,
+      key: 'undo',
+      children: `Undo`,
+      isDisabled: true,
+      callback: () => {
+        console.warn('Not implemented yet');
+      },
+    },
+    {
+      icon: <ResetIcon />,
+      key: 'reset',
+      children: `Reset`,
+      isDisabled: true,
+      callback: () => {
+        console.warn('Not implemented yet');
+      },
+    },
   ];
 
   return (
     <div className="flex gap-2 justify-end">
-      {items.map(({ icon, key, children }) => (
-        <Button className="flex gap-2 items-center text-sm" icon={icon} key={key} type="text">
+      {items.map(({ icon, key, children, callback, isDisabled }) => (
+        <Button
+          className="flex gap-2 items-center text-sm"
+          icon={icon}
+          key={key}
+          type="text"
+          disabled={isDisabled ?? false}
+          onClick={callback}
+        >
           {children}
         </Button>
       ))}
@@ -100,123 +140,121 @@ function DensityChart({ className = '', colorScale, data }: DensityChartProps) {
   return <svg className={className} ref={ref} />;
 }
 
-type DensityEditorProps = {
+type SlidersProps = {
+  about: string;
   colorScale: Function;
   nodes: AboutNode[];
   max: number;
-  onChange?: (id: string, value: number | null) => void;
+  onChange?: (about: string, node: Node, value: number | null, parentId: string | null) => void;
+  lockedNodeIds: string[];
+  handleToggleLockSlider: (id: string) => void;
+  step: number;
 };
 
-function handleToggleLock(
-  id: string,
-  disabled: string[],
-  callback: Dispatch<SetStateAction<string[]>>
-) {
-  const existingIndex = disabled.indexOf(id);
+function Sliders({
+  about,
+  colorScale,
+  nodes,
+  max,
+  onChange,
+  lockedNodeIds,
+  handleToggleLockSlider,
+  step,
+}: SlidersProps) {
+  const [activeSliderIndex, setActiveSliderIndex] = useState<number>(0);
 
-  return existingIndex === -1
-    ? callback([...disabled, id])
-    : callback([...disabled.slice(0, existingIndex), ...disabled.slice(existingIndex + 1)]);
-}
+  const activeSlider: AboutNode = useMemo<AboutNode>(
+    () => (typeof nodes[activeSliderIndex] !== 'undefined' ? nodes[activeSliderIndex] : nodes[0]),
+    [activeSliderIndex, nodes]
+  );
 
-function Sliders({ colorScale, nodes, max, onChange }: DensityEditorProps) {
-  const [disabled, setDisabled] = useState<string[]>([]);
-  const [nestedDisabled, setNestedDisabled] = useState<string[]>([]);
-
-  const [active, setActive] = useState<{
-    id: string;
-    index: number;
-    nodes: AboutNode[];
-    max: number;
-  }>({
-    id: '',
-    index: -1,
-    nodes: [],
-    max: 0,
-  });
-
-  // Make sure that "active" takes the newly calculated values
-  useEffect(
+  const verticalSliders = useMemo(
     () =>
-      setActive({
-        id: active.id,
-        index: active.index,
-        nodes: nodes[active.index] ? nodes[active.index].nodes : active.nodes,
-        max: nodes[active.index] ? nodes[active.index].max : active.max,
-      }),
-    [nodes]
+      nodes.map((node, i) => (
+        <VerticalSlider
+          className="flex flex-col gap-2 h-64 pt-3 px-5 pb-5 flex-auto"
+          color={colorScale(node.id)}
+          disabled={lockedNodeIds.includes(node.id) || nodes.length <= 1}
+          isActive={activeSlider.id === node.id}
+          key={node.id}
+          label={node.label}
+          max={max}
+          step={step}
+          onClick={() => setActiveSliderIndex(i)}
+          onChange={(newValue) => onChange && onChange(about, node, newValue, null)}
+          onToggleLock={() => handleToggleLockSlider(node.id)}
+          value={node.value}
+        />
+      )),
+    [
+      about,
+      activeSlider.id,
+      colorScale,
+      handleToggleLockSlider,
+      lockedNodeIds,
+      max,
+      nodes,
+      onChange,
+      step,
+    ]
+  );
+
+  const horizontalSliders = useMemo(
+    () =>
+      activeSlider.nodes &&
+      activeSlider.nodes.map((nestedNode) => (
+        <div key={nestedNode.id}>
+          <HorizontalSlider
+            color={colorScale(nestedNode.id)}
+            disabled={
+              lockedNodeIds.includes(`${activeSlider.id}__${nestedNode.id}`) ||
+              activeSlider.nodes.length <= 1
+            }
+            key={nestedNode.id}
+            label={nestedNode.label}
+            max={activeSlider.max}
+            step={step}
+            onChange={(newValue) =>
+              onChange && onChange(about, nestedNode, newValue, activeSlider.id)
+            }
+            onToggleLock={() => handleToggleLockSlider(`${activeSlider.id}__${nestedNode.id}`)}
+            value={nestedNode.value}
+          />
+        </div>
+      )),
+    [
+      activeSlider.nodes,
+      activeSlider.id,
+      activeSlider.max,
+      colorScale,
+      lockedNodeIds,
+      step,
+      onChange,
+      about,
+      handleToggleLockSlider,
+    ]
   );
 
   return (
     <div className="bg-white flex gap-10 p-3 w-full">
-      <div className="flex max-w-3xl overflow-x-clip">
-        {nodes.map(({ id, label, max: nestedMax, nodes: nestedSliders, value }, i) => (
-          <VerticalSlider
-            className="flex flex-col gap-2 h-64 pt-3 px-5 pb-5"
-            color={colorScale(id)}
-            disabled={disabled.includes(id) || nodes.length <= 1}
-            isActive={active.id === id}
-            key={id}
-            label={label}
-            max={max}
-            onClick={() =>
-              setActive({
-                id,
-                index: i,
-                nodes: nestedSliders,
-                max: nestedMax,
-              })
-            }
-            onChange={(newValue) => onChange && onChange(id, newValue)}
-            onToggleLock={() => handleToggleLock(id, disabled, setDisabled)}
-            value={value}
-          />
-        ))}
-      </div>
+      <div className="flex max-w-3xl flex-auto overflow-x-scroll">{verticalSliders}</div>
       <div className="flex flex-col basis-full">
         <div className="font-bold text-primary-7">BREAKDOWN</div>
-        {active.nodes &&
-          active.nodes.map(({ id: nestedId, label: nestedLabel, value: nestedValue }) => (
-            <HorizontalSlider
-              color={colorScale(nestedId)}
-              disabled={nestedDisabled.includes(nestedId) || active.nodes.length <= 1}
-              key={nestedId}
-              label={nestedLabel}
-              max={active.max}
-              onChange={(newValue) => onChange && onChange(nestedId, newValue)}
-              onToggleLock={() => handleToggleLock(nestedId, nestedDisabled, setNestedDisabled)}
-              value={nestedValue}
-            />
-          ))}
+        {horizontalSliders}
       </div>
     </div>
   );
 }
 
-function updatedNodesReducer(
-  { links, nodes, id, value }: { links: Link[]; nodes: Node[]; id: string; value: number },
-  { id: curId, neuron_composition, ...rest }: Node
-) {
-  return {
-    links,
-    nodes: [
-      ...nodes,
-      id === curId
-        ? { id: curId, ...rest, neuron_composition: { ...neuron_composition, count: value } }
-        : { id: curId, ...rest, neuron_composition },
-    ],
-    id,
-    value,
-  };
-}
-
 // TODO: There's probaly a nice way to combine the different reducers here...
 // ... Including the sidebar composition reducer as well.
 function CellDensity() {
+  const [densityOrCount] = useAtom(densityOrCountAtom);
   const [meTypeDetails] = useAtom(meTypeDetailsAtom);
   const [composition, setComposition] = useAtom(compositionAtom);
   const isCompositionAvailable = composition !== null;
   const { nodes, links } = isCompositionAvailable ? composition : { nodes: [], links: [] };
+  const [lockedNodeIds, setLockedNodeIds] = useState<string[]>([]);
 
   // This should be treated as a temporary solution
   // as we shouldn't expect empty composition in the end.
@@ -224,43 +262,185 @@ function CellDensity() {
     throw new Error(`There is no configuration data for the ${meTypeDetails?.title}`);
   }
 
-  const sankeyData = links.reduce(sankeyLinksReducer, {
-    links: [],
-    nodes: nodes.reduce(sankeyNodesReducer, []),
-    type: 'neuron_composition',
-    value: 'count',
-  } as SankeyLinksReducerAcc);
+  const editorLinksReducer = useCallback(
+    ({ accNodes, allNodes }: EditorLinksProps, { source, target }: Link) => {
+      const {
+        about,
+        label,
+        neuron_composition: sourceComposition,
+      } = allNodes.find(({ id: nodeId }) => nodeId === source) || ({} as AboutNode);
+      const targetIndex = allNodes.findIndex(({ id: nodeId }) => nodeId === target);
+      const { label: targetLabel, neuron_composition: targetComposition } = allNodes[targetIndex];
+      const existingAbout = Object.prototype.hasOwnProperty.call(accNodes, about);
+      const existingNodeIndex =
+        existingAbout && accNodes[about].findIndex((node) => node.id === source);
+      const newAllNodes = allNodes.filter((node, i) => targetIndex !== i);
 
-  const { accNodes: editorNodes, max } =
-    links && links.reduce(editorlinksReducer, { accNodes: {}, allNodes: nodes, max: 0 });
+      const totalMax = newAllNodes.reduce(
+        (previousValue, currentValue) =>
+          previousValue + currentValue.neuron_composition[densityOrCount],
+        0
+      );
+
+      return !existingAbout || existingNodeIndex === -1
+        ? ({
+            accNodes: {
+              ...accNodes,
+              [about as string]: [
+                ...(existingAbout ? accNodes[about] : []),
+                {
+                  id: source,
+                  label,
+                  max: targetComposition[densityOrCount], // No need for math, as so-far there's only one value
+                  nodes: [
+                    {
+                      id: target,
+                      label: targetLabel,
+                      value: targetComposition[densityOrCount],
+                    },
+                  ],
+                  value: sourceComposition && sourceComposition[densityOrCount],
+                },
+              ],
+            },
+            allNodes: newAllNodes,
+            max: totalMax,
+          } as EditorLinksProps)
+        : ({
+            accNodes: {
+              ...accNodes,
+              [about]: [
+                ...accNodes[about].slice(0, existingNodeIndex as number),
+                {
+                  ...accNodes[about][existingNodeIndex as number],
+                  max: sumArray([
+                    accNodes[about][existingNodeIndex as number].max,
+                    targetComposition[densityOrCount],
+                  ]),
+                  nodes: [
+                    ...accNodes[about][existingNodeIndex as number].nodes,
+                    { id: target, label: targetLabel, value: targetComposition[densityOrCount] },
+                  ],
+                },
+                ...accNodes[about].slice((existingNodeIndex as number) + 1),
+              ],
+            },
+            allNodes: newAllNodes,
+            max: totalMax,
+          } as EditorLinksProps);
+    },
+    [densityOrCount]
+  );
+
+  const sankeyData = useMemo(
+    () =>
+      ({
+        links: getSankeyLinks(links, nodes, 'neuron_composition', densityOrCount),
+        nodes: nodes.reduce(sankeyNodesReducer, []),
+        type: 'neuron_composition',
+        value: densityOrCount,
+      } as SankeyLinksReducerAcc),
+    [densityOrCount, links, nodes]
+  );
+
+  const { accNodes: editorNodes, max } = useMemo(
+    () =>
+      links &&
+      links.reduce(editorLinksReducer, {
+        accNodes: {},
+        allNodes: nodes,
+        max: 0,
+      }),
+    [editorLinksReducer, links, nodes]
+  );
 
   // Prevent colorScale from ever changing after initial render
-  const colorScale = useCallback(
-    scaleOrdinal(
-      Object.entries(sankeyData.nodes).map((id) => id), // eslint-disable-line @typescript-eslint/no-unused-vars
-      schemeTableau10
-    ),
-    []
+  const colorScale = useMemo(
+    () =>
+      scaleOrdinal(
+        Object.entries(sankeyData.nodes).map((id) => id), // eslint-disable-line @typescript-eslint/no-unused-vars
+        schemeTableau10
+      ),
+    [sankeyData.nodes]
   );
 
-  const handleSlidersChange = useCallback(
-    (id: string, value: number | null) => {
-      const { links: newLinks, nodes: newNodes } = nodes.reduce(updatedNodesReducer, {
+  const handleSliderChange = useCallback(
+    (about: string, changedNode: Node, value: number | null, parentId: string | null) => {
+      setComposition({
         links,
-        nodes: [],
-        id,
+        nodes: recalculateAndGetNewNodes(
+          about,
+          changedNode,
+          value,
+          nodes,
+          parentId,
+          densityOrCount
+        ),
+        id: changedNode.id,
         value,
-      } as {
-        links: Link[];
-        nodes: Node[];
-        id: string;
-        value: number;
+      } as CompositionDataSet);
+    },
+    [densityOrCount, links, nodes, setComposition]
+  );
+
+  const handleToggleLockSlider = useCallback(
+    (id: string) => {
+      const existingIndex = lockedNodeIds.indexOf(id);
+      const newLockedNodes =
+        existingIndex === -1
+          ? [...lockedNodeIds, id]
+          : [...lockedNodeIds.slice(0, existingIndex), ...lockedNodeIds.slice(existingIndex + 1)];
+      setLockedNodeIds(newLockedNodes);
+    },
+    [lockedNodeIds]
+  );
+
+  const sliderStep = useMemo(
+    () => (densityOrCount === switchStateType.DENSITY ? 0.0001 : 1),
+    [densityOrCount]
+  );
+
+  const sliderItems = useMemo(() => {
+    const nodeEntries = Object.entries(editorNodes);
+
+    return nodeEntries.map(([about, sliderNodes]) => {
+      sliderNodes.sort((a, b) => {
+        if (a.label < b.label) return -1;
+        if (a.label > b.label) return 1;
+        return 0;
       });
 
-      return setComposition({ links: newLinks, nodes: newNodes });
-    },
-    [links, nodes, setComposition]
-  );
+      return {
+        label: (
+          <div className="flex gap-4 items-center px-5">
+            <GripDotsVerticalIcon />
+            <span>{`By ${about}`}</span>
+          </div>
+        ),
+        key: about,
+        children: (
+          <Sliders
+            about={about}
+            nodes={sliderNodes}
+            colorScale={colorScale}
+            max={max}
+            step={sliderStep}
+            onChange={handleSliderChange}
+            lockedNodeIds={lockedNodeIds}
+            handleToggleLockSlider={handleToggleLockSlider}
+          />
+        ),
+      };
+    });
+  }, [
+    colorScale,
+    editorNodes,
+    handleSliderChange,
+    handleToggleLockSlider,
+    lockedNodeIds,
+    max,
+    sliderStep,
+  ]);
 
   return (
     <>
@@ -273,23 +453,7 @@ function CellDensity() {
         renderTabBar={(props, DefaultTabBar) => (
           <DefaultTabBar {...props} className="bg-white" style={{ margin: 0 }} /> // eslint-disable-line react/jsx-props-no-spreading
         )}
-        items={Object.entries(editorNodes).map(([about, sliderNodes]) => ({
-          label: (
-            <div className="flex gap-4 items-center px-5">
-              <GripDotsVerticalIcon />
-              <span>{`By ${about}`}</span>
-            </div>
-          ),
-          key: about,
-          children: (
-            <Sliders
-              nodes={sliderNodes}
-              colorScale={colorScale}
-              max={max}
-              onChange={handleSlidersChange}
-            />
-          ),
-        }))}
+        items={sliderItems}
       />
     </>
   );
@@ -306,8 +470,8 @@ export default function ConfigurationView() {
       className="mx-4 my-10"
       items={[
         {
-          label: 'Density',
-          key: 'density',
+          label: switchStateType.DENSITY,
+          key: switchStateType.DENSITY,
           children: (
             <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
               <CellDensity />

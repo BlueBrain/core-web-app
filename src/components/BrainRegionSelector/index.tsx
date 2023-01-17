@@ -16,6 +16,7 @@ import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import { setConfigurationAtom } from '@/state/brain-model-config/cell-composition';
 import useNotification from '@/hooks/notifications';
+import { switchStateType } from '@/util/common';
 import styles from './brain-region-selector.module.css';
 
 const atlasIdUri =
@@ -24,11 +25,6 @@ const atlasIdUri =
 // it is added in order to make the request faster
 const contentUrl =
   'https://bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/f4ded89f-67fb-4d34-831a-a3b317c37c1d';
-
-const switchStateType = {
-  COUNT: 'count',
-  DENSITY: 'density',
-};
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -141,9 +137,10 @@ export type Composition = {
 export type Link = { source: string; target: string; value?: number };
 
 export type Node = {
+  id: string;
+  parent_id: string;
   about: string;
   glia_composition: Composition;
-  id: string;
   label: string;
   neuron_composition: Composition;
 };
@@ -321,7 +318,9 @@ function HorizontalLine() {
   );
 }
 
-const densityOrCountAtom = atom<keyof Composition>('count');
+export const densityOrCountAtom = atom<keyof Composition>(
+  switchStateType.COUNT as keyof Composition
+);
 
 export default function BrainRegionSelector() {
   const { data: session } = useSession();

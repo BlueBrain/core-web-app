@@ -15,3 +15,8 @@ export function debounce(func: Function, wait: number, immediate?: boolean) {
     if (immediate && !timeoutId) func.apply(context, ...args);
   };
 }
+
+export const switchStateType = {
+  COUNT: 'count',
+  DENSITY: 'density',
+};

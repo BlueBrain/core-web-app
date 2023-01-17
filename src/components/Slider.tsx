@@ -1,14 +1,16 @@
-import { KeyboardEventHandler, MouseEventHandler } from 'react';
+import { KeyboardEventHandler, MouseEventHandler, useCallback, useEffect, useState } from 'react';
 import { InputNumber, Slider } from 'antd';
 import { ArrowRightIcon, EyeIcon, LockIcon, LockOpenIcon } from '@/components/icons';
 import IconButton from '@/components/IconButton';
 import { classNames } from '@/util/utils';
+import round from '@/services/distribution-sliders/round';
 
 interface HorizontalSliderProps {
   color: string;
   disabled?: boolean;
   label: string;
   max: number;
+  step: number;
   onChange?: ((value: number | null) => void) | undefined;
   onToggleLock?: MouseEventHandler;
   value?: number;
@@ -21,10 +23,47 @@ interface VerticalSliderProps {
   disabled?: boolean;
   label: string;
   max: number;
+  step: number;
   onChange?: ((value: number | null) => void) | undefined;
   onToggleLock?: MouseEventHandler;
   onClick?: MouseEventHandler<HTMLDivElement> | KeyboardEventHandler<HTMLDivElement>;
   value?: number;
+}
+
+function useDeferredSlider(
+  value: number | undefined,
+  step: number,
+  onChange?: ((value: number | null) => void) | undefined
+) {
+  const [sliderValue, setSliderValue] = useState(value);
+  const [isSliderMoving, setIsSliderMoving] = useState(false);
+
+  const onSliderChange = useCallback(
+    (newValue: number) => {
+      // eslint-disable-next-line no-bitwise
+      setSliderValue(round(newValue, (Math.log(1 / step) * Math.LOG10E + 1) | 0));
+      setIsSliderMoving(true);
+    },
+    [step]
+  );
+
+  const onAfterChange = useCallback(
+    (newValue: number) => {
+      if (onChange) {
+        onChange(newValue);
+      }
+      setIsSliderMoving(false);
+    },
+    [onChange]
+  );
+
+  useEffect(() => {
+    if (!isSliderMoving && sliderValue !== value) {
+      setSliderValue(value);
+    }
+  }, [isSliderMoving, sliderValue, value]);
+
+  return { sliderValue, isSliderMoving, onSliderChange, onAfterChange };
 }
 
 export function HorizontalSlider({
@@ -35,8 +74,15 @@ export function HorizontalSlider({
   onChange,
   onToggleLock,
   value,
+  step,
 }: HorizontalSliderProps) {
   const lockIcon = disabled ? <LockIcon /> : <LockOpenIcon />;
+
+  const { sliderValue, isSliderMoving, onSliderChange, onAfterChange } = useDeferredSlider(
+    value,
+    step,
+    onChange
+  );
 
   return (
     <div className="flex justify-between">
@@ -51,7 +97,7 @@ export function HorizontalSlider({
           className="border border-neutral-3 rounded-none shadow-none text-right"
           onChange={onChange}
           inputMode="decimal"
-          value={value}
+          value={isSliderMoving ? sliderValue : value}
         />
         <Slider
           className="grow"
@@ -59,8 +105,10 @@ export function HorizontalSlider({
           tooltip={{ open: false }}
           min={0}
           max={max}
-          value={value}
-          onChange={onChange}
+          step={step}
+          value={sliderValue}
+          onChange={onSliderChange}
+          onAfterChange={onAfterChange}
           range={false}
           trackStyle={{ backgroundColor: color, width: '100%' }}
         />
@@ -76,12 +124,19 @@ export function VerticalSlider({
   disabled = false,
   label,
   max,
+  step,
   onChange,
   onClick,
   onToggleLock,
   value,
 }: VerticalSliderProps) {
   const lockIcon = disabled ? <LockIcon /> : <LockOpenIcon />;
+
+  const { sliderValue, isSliderMoving, onSliderChange, onAfterChange } = useDeferredSlider(
+    value,
+    step,
+    onChange
+  );
 
   return (
     <div
@@ -98,16 +153,13 @@ export function VerticalSlider({
           <EyeIcon />
         </IconButton>
       </div>
-
       <div className="flex h-2" style={{ backgroundColor: color }} />
-
       <InputNumber
         className="border border-neutral-3 rounded-none shadow-none w-full"
         onChange={onChange}
         inputMode="decimal"
-        value={value}
+        value={isSliderMoving ? sliderValue : value}
       />
-
       <Slider
         className="self-center"
         vertical
@@ -115,8 +167,10 @@ export function VerticalSlider({
         tooltip={{ open: false }}
         min={0}
         max={max}
-        value={value}
-        onChange={onChange}
+        step={step}
+        value={sliderValue}
+        onChange={onSliderChange}
+        onAfterChange={onAfterChange}
         handleStyle={{ backgroundColor: color, boxShadow: color }}
         trackStyle={{ backgroundColor: color }}
       />
