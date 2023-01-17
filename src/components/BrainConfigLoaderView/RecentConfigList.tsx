@@ -52,7 +52,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
         className="mt-6 mb-12"
         dataSource={recentlyUsedConfigs}
         pagination={false}
-        rowKey="id"
+        rowKey="@id"
       >
         <Column
           title="NAME"

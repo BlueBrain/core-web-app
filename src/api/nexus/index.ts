@@ -64,7 +64,7 @@ export function createJsonFile(data: any, filename: string, session: Session) {
 
   return fetch(url, {
     method: 'POST',
-    headers: createHeaders(session.accessToken),
+    headers: createHeaders(session.accessToken, null),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
 }
