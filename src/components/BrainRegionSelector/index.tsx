@@ -176,16 +176,19 @@ function MeTypeDetails({
     }
   );
 
+  // formats the number in the 4th significant digit and uses US locale for commas in thousands
+  const formatNumber = (num: number) => Number(num.toPrecision(4)).toLocaleString('en-US');
+
   /**
    * Calculates the metric to be displayed based on whether count or density is
    * currently selected
    */
   const metric = useMemo(() => {
     if (neuronComposition && densityOrCount === switchStateType.COUNT) {
-      return neuronComposition.count;
+      return formatNumber(neuronComposition.count);
     }
     if (neuronComposition && densityOrCount === switchStateType.DENSITY) {
-      return Number(neuronComposition.density.toFixed(4));
+      return formatNumber(neuronComposition.density);
     }
     return null;
   }, [densityOrCount, neuronComposition]);
@@ -201,7 +204,7 @@ function MeTypeDetails({
           {neurons.map(({ id, items, composition, title }) => {
             const normalizedComposition = composition ? (
               <div>
-                {Number(composition.toFixed(4))} &nbsp;
+                {formatNumber(composition)} &nbsp;
                 {metricToUnit[densityOrCount]}
               </div>
             ) : (
