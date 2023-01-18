@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { atom } from 'jotai/vanilla';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai/react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
@@ -14,9 +13,19 @@ import AngledArrowIcon from '@/components/icons/AngledArrow';
 import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/components/tree-nav-item';
 import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
-import { setConfigurationAtom } from '@/state/brain-model-config/cell-composition';
 import useNotification from '@/hooks/notifications';
 import { switchStateType } from '@/util/common';
+import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
+import {
+  Composition,
+  MeTypeDetailsProps,
+  MeTypeDetailsState,
+} from '@/components/BrainRegionSelector/types';
+import {
+  compositionAtom,
+  densityOrCountAtom,
+  meTypeDetailsAtom,
+} from '@/components/BrainRegionSelector/atoms';
 import styles from './brain-region-selector.module.css';
 
 const atlasIdUri =
@@ -129,34 +138,6 @@ function CompositionTitle({ composition, title }: { composition?: number; title?
   );
 }
 
-export type Composition = {
-  count: number;
-  density: number;
-};
-
-export type Link = { source: string; target: string; value?: number };
-
-export type Node = {
-  id: string;
-  parent_id: string;
-  about: string;
-  glia_composition: Composition;
-  label: string;
-  neuron_composition: Composition;
-};
-
-export type Densities = {
-  nodes: Node[];
-  links: Link[];
-};
-
-type MeTypeDetailsProps = {
-  densityOrCount: keyof Composition;
-  gliaComposition?: Composition;
-  neuronComposition?: Composition;
-  nodes: Densities['nodes'];
-};
-
 function MeTypeDetails({
   densityOrCount,
   gliaComposition,
@@ -236,32 +217,6 @@ function MeTypeDetails({
   );
 }
 
-export const meTypeDetailsAtom = atom<MeTypeDetailsState | null>(null);
-
-export const compositionAtom = atom<Densities, Densities[], void>(
-  { links: [], nodes: [] },
-  async (get, set, newComposition) => {
-    const meTypeDetails = get(meTypeDetailsAtom);
-    if (meTypeDetails === null) {
-      return;
-    }
-    const entityId = meTypeDetails.id;
-    const newConfig = {
-      compositionDetails: newComposition,
-    };
-    await set(compositionAtom, newComposition);
-    await set(setConfigurationAtom, { entityId, config: newConfig });
-  }
-);
-
-interface MeTypeDetailsState extends MeTypeDetailsProps {
-  colorCode: string;
-  distribution: Distribution;
-  id: string;
-  title: string;
-  color_code: string;
-}
-
 type VerticalCollapsedRegionsProps = {
   regionFullPath: RegionFullPathType[];
 };
@@ -321,10 +276,6 @@ function HorizontalLine() {
   );
 }
 
-export const densityOrCountAtom = atom<keyof Composition>(
-  switchStateType.COUNT as keyof Composition
-);
-
 export default function BrainRegionSelector() {
   const { data: session } = useSession();
   const [isBrainRegionOpen, setIsBrainRegionOpen] = useState<boolean>(true);
@@ -354,7 +305,8 @@ export default function BrainRegionSelector() {
     }
   }, [addNotification, brainRegions, session]);
 
-  const [composition, setComposition] = useAtom(compositionAtom);
+  const [composition] = useAtom(compositionAtom);
+  const { resetHistory } = useCompositionHistory();
   const densityOrCount = useAtomValue(densityOrCountAtom);
 
   const setBrainRegionCallback = useCallback(
@@ -392,9 +344,12 @@ export default function BrainRegionSelector() {
         neuronComposition, // The total will remain constant for a given brain region
         title,
       } as MeTypeDetailsState);
-      setComposition(compositionDetails && { nodes, links });
+      const loadedComposition = compositionDetails && { nodes, links };
+
+      // This will load a new composition and reset the history of changes
+      resetHistory(loadedComposition);
     },
-    [session, setComposition, setMeTypeDetails, brainRegions]
+    [session, resetHistory, setMeTypeDetails, brainRegions]
   );
 
   useEffect(() => fetchDataAPI());

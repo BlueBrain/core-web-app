@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect, useMemo, useRef, RefObject } from 'react';
+import { useCallback, useState, useEffect, useMemo, useRef, RefObject, ReactNode } from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
@@ -9,19 +9,17 @@ import sankey from './sankey';
 import { sankeyNodesReducer, getSankeyLinks, sumArray, recalculateAndGetNewNodes } from './util';
 import { AboutNode, CompositionDataSet, EditorLinksProps, SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
-import {
-  Composition,
-  compositionAtom,
-  Densities,
-  densityOrCountAtom,
-  Link,
-  meTypeDetailsAtom,
-  Node,
-} from '@/components/BrainRegionSelector';
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
+import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
+import { Composition, Densities, Link, Node } from '@/components/BrainRegionSelector/types';
+import {
+  compositionAtom,
+  meTypeDetailsAtom,
+  densityOrCountAtom,
+} from '@/components/BrainRegionSelector/atoms';
 
 function CellPosition() {
   return (
@@ -43,8 +41,19 @@ function CellDistribution() {
   );
 }
 
+interface CellDensityToolbarButtonItem {
+  key: string;
+  children: ReactNode;
+  icon?: ReactNode;
+  isDisabled?: boolean;
+  callback: () => void;
+}
+
 function CellDensityToolbar() {
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
+  const { undoComposition, redoComposition, resetHistory, canUndo, canRedo } =
+    useCompositionHistory();
+
   const toggleDensityAndCount = useCallback(
     () =>
       setDensityOrCount((prev) => {
@@ -60,7 +69,19 @@ function CellDensityToolbar() {
     [densityOrCount]
   );
 
-  const items = [
+  const handleUndo = useCallback(() => {
+    undoComposition();
+  }, [undoComposition]);
+
+  const handleRedo = useCallback(() => {
+    redoComposition();
+  }, [redoComposition]);
+
+  const handleReset = useCallback(() => {
+    resetHistory();
+  }, [resetHistory]);
+
+  const items: CellDensityToolbarButtonItem[] = [
     {
       key: switchStateType.DENSITY,
       children: densityOrCountDisplay,
@@ -78,19 +99,21 @@ function CellDensityToolbar() {
       icon: <UndoIcon />,
       key: 'undo',
       children: `Undo`,
-      isDisabled: true,
-      callback: () => {
-        console.warn('Not implemented yet');
-      },
+      isDisabled: !canUndo,
+      callback: handleUndo,
+    },
+    {
+      icon: <UndoIcon style={{ transform: 'scaleX(-1)' }} />,
+      key: 'redo',
+      children: `Redo`,
+      isDisabled: !canRedo,
+      callback: handleRedo,
     },
     {
       icon: <ResetIcon />,
       key: 'reset',
       children: `Reset`,
-      isDisabled: true,
-      callback: () => {
-        console.warn('Not implemented yet');
-      },
+      callback: handleReset,
     },
   ];
 
@@ -145,7 +168,12 @@ type SlidersProps = {
   colorScale: Function;
   nodes: AboutNode[];
   max: number;
-  onChange?: (about: string, node: Node, value: number | null, parentId: string | null) => void;
+  onChange?: (
+    about: string,
+    node: AboutNode,
+    value: number | null,
+    parentId: string | null
+  ) => void;
   lockedNodeIds: string[];
   handleToggleLockSlider: (id: string) => void;
   step: number;
@@ -252,6 +280,7 @@ function CellDensity() {
   const [densityOrCount] = useAtom(densityOrCountAtom);
   const [meTypeDetails] = useAtom(meTypeDetailsAtom);
   const [composition, setComposition] = useAtom(compositionAtom);
+  const { appendToHistory } = useCompositionHistory();
   const isCompositionAvailable = composition !== null;
   const { nodes, links } = isCompositionAvailable ? composition : { nodes: [], links: [] };
   const [lockedNodeIds, setLockedNodeIds] = useState<string[]>([]);
@@ -366,7 +395,7 @@ function CellDensity() {
 
   const handleSliderChange = useCallback(
     (about: string, changedNode: Node, value: number | null, parentId: string | null) => {
-      setComposition({
+      const newComposition = {
         links,
         nodes: recalculateAndGetNewNodes(
           about,
@@ -378,9 +407,12 @@ function CellDensity() {
         ),
         id: changedNode.id,
         value,
-      } as CompositionDataSet);
+      } as CompositionDataSet;
+
+      setComposition(newComposition);
+      appendToHistory(newComposition);
     },
-    [densityOrCount, links, nodes, setComposition]
+    [densityOrCount, links, nodes, setComposition, appendToHistory]
   );
 
   const handleToggleLockSlider = useCallback(
@@ -470,8 +502,8 @@ export default function ConfigurationView() {
       className="mx-4 my-10"
       items={[
         {
-          label: switchStateType.DENSITY,
-          key: switchStateType.DENSITY,
+          label: 'Density',
+          key: 'density',
           children: (
             <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
               <CellDensity />

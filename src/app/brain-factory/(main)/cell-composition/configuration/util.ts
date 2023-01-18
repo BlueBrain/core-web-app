@@ -1,6 +1,6 @@
-import { Composition, Link, Node } from '@/components/BrainRegionSelector';
 import { switchStateType } from '@/util/common';
 import round from '@/services/distribution-sliders/round';
+import { Composition, Link, Node } from '@/components/BrainRegionSelector/types';
 
 export const DENSITY_DECIMAL_PLACES = 4;
 export const COUNT_DECIMAL_PLACES = 0;

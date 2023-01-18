@@ -1,4 +1,4 @@
-import { Link, Node } from '@/components/BrainRegionSelector';
+import { Link, Node } from '@/components/BrainRegionSelector/types';
 
 export interface AboutNode extends Node {
   nodes: AboutNode[];
