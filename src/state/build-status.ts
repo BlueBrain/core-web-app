@@ -22,7 +22,9 @@ const GROUPS = {
   CELL_MODEL_ASSIGNMENT: 'Cell model assignment',
   CONNECTOME_DEFINITION: 'Connectome definition',
   CONNECTION_MODEL_ASSIGNMENT: 'Connection model assignment',
-};
+} as const;
+
+export type CellCompositionStepGroupValues = typeof GROUPS[keyof typeof GROUPS];
 
 export type StatusResponse = typeof STATUS.BUILT | typeof STATUS.TO_BUILD | null;
 
@@ -41,7 +43,7 @@ export const getStatusAtom = (): Atom<Promise<StatusResponse>> =>
   atom(() => fakeStatusFetch().then((status) => status));
 
 export type StatusStructureItem = {
-  name: string;
+  name: CellCompositionStepGroupValues;
   items: {
     name: string;
     status: Atom<Promise<StatusResponse>>;

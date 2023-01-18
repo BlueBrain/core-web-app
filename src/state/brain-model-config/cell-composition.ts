@@ -16,6 +16,7 @@ import { CellCompositionConfigPayload, CellCompositionConfigResource } from '@/t
 import { debounce } from '@/util/common';
 import { setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
+import { CellCompositionStepGroupValues } from '@/state/build-status';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
@@ -198,3 +199,5 @@ export const createGetJobConfigAtom = (entityId: string) => {
 
   return selectAtom(configPayloadAtom, selectorFn);
 };
+
+export const cellCompositionStepsToBuildAtom = atom<CellCompositionStepGroupValues[]>([]);

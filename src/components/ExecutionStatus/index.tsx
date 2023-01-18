@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Checkbox } from 'antd';
 
+import { useSetAtom } from 'jotai/react';
 import StepItem from '@/components/ExecutionStatus/StepItem';
 import { statusStructure, StatusStructureItem } from '@/state/build-status';
+import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
 
 type UncheckingWarningProps = {
   statusStructureState: StatusStructureItem[];
@@ -33,6 +35,8 @@ export default function ExecutionStatus() {
   const [statusStructureState, setStatusStructureState] =
     useState<StatusStructureItem[]>(statusStructure);
 
+  const setStepsToBuild = useSetAtom(cellCompositionStepsToBuildAtom);
+
   const handleChecked = (groupName: string, newCheckedValue: boolean) => {
     setStatusStructureState((groups) => {
       const groupIdx = groups.findIndex((group) => group.name === groupName);
@@ -50,6 +54,13 @@ export default function ExecutionStatus() {
       });
     });
   };
+
+  useEffect(() => {
+    const selectedGroups = statusStructureState
+      .filter((group) => group.checked)
+      .map((group) => group.name);
+    setStepsToBuild(selectedGroups);
+  }, [statusStructureState, setStepsToBuild]);
 
   return (
     <>
