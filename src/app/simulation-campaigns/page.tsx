@@ -10,6 +10,7 @@ import moment from 'moment';
 import Link from '@/components/Link';
 import { Campaign } from '@/types/nexus';
 import { createHeaders } from '@/util/utils';
+import { basePath } from '@/config';
 import styles from '@/app/observatory/observatory.module.scss';
 import tableStyles from './table.module.scss';
 
@@ -230,7 +231,7 @@ export default function Observatory() {
             onRow={(record) => ({
               onClick: (e) => {
                 e.preventDefault();
-                router.push(`/simulation-campaigns/${record.self}`);
+                router.push(`${basePath}/simulation-campaigns/${record.self}`);
               },
             })}
           />
