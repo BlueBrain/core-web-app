@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import TrackballControls from './thirdparty/TrackballControls';
 import OrbitControls from './thirdparty/OrbitControls';
+import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 
 /* eslint no-use-before-define: "off" */
 /* eslint no-shadow: "off" */
@@ -136,6 +137,15 @@ export class ThreeContext {
       false
     );
 
+    // when the 3D container resizes, calls the resize function to re-calculate the width
+    const resizeObserver = new ResizeObserver(() => {
+      if (threeCtxWrapper.threeContext !== null) {
+        this.resize();
+      }
+    });
+
+    resizeObserver.observe(this._renderer.domElement.parentElement);
+
     this._defaultRaycastParent = this._scene;
 
     if ('raycastOnDoubleClick' in options ? options.raycastOnDoubleClick : false) {
@@ -182,6 +192,20 @@ export class ThreeContext {
 
   setDefaultRaycastParent(obj) {
     this._defaultRaycastParent = obj;
+  }
+
+  /**
+   * Resize the 3d render container to match a given width
+   * @param width the width to match
+   */
+  resize() {
+    const canvas = this._renderer.domElement;
+    const width = canvas.parentElement.clientWidth;
+    const height = canvas.parentElement.clientHeight;
+    // look up the size the canvas is being displayed
+    this._renderer.setSize(width, height, true);
+    this._camera.aspect = width / height;
+    this._camera.updateProjectionMatrix();
   }
 
   saveCameraSpatialSettings() {
