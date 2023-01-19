@@ -30,10 +30,6 @@ import styles from './brain-region-selector.module.css';
 
 const atlasIdUri =
   'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885';
-// the content URL specifies the URL of the distribution to retrieve the brain regions from
-// it is added in order to make the request faster
-const contentUrl =
-  'https://bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/f4ded89f-67fb-4d34-831a-a3b317c37c1d';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -52,10 +48,15 @@ async function getBrainRegionsTree(accessToken: string) {
 
   return fetchAtlasAPI(
     'get',
-    `https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions?content_url=${contentUrl}`,
+    `https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions?atlas_id=${atlasIdUri}`,
     accessToken
   )
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json();
+      }
+      throw new Error('Something went wrong while fetching brain regions');
+    })
     .then((json) =>
       arrayToTree(json, {
         dataField: null,
