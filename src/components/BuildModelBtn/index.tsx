@@ -2,10 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import {
-  WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
-  CIRCUIT_BUILDING_FILES,
-} from '@/services/bbp-workflow/config';
+import { WORKFLOW_CIRCUIT_BUILD_TASK_NAME } from '@/services/bbp-workflow/config';
 import { classNames } from '@/util/utils';
 import LauncherModal from '@/components/BuildModelBtn/LauncherModal';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
@@ -41,7 +38,6 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
         <WorkflowLauncherBtn
           buttonText="Build"
           workflowName={WORKFLOW_CIRCUIT_BUILD_TASK_NAME}
-          workflowFiles={CIRCUIT_BUILDING_FILES}
           onLaunchingChange={onLaunchingChange}
         />
       </LauncherModal>

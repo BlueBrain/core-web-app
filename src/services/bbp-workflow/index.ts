@@ -7,12 +7,7 @@ import {
   WORKFLOW_TEST_TASK_NAME,
   WorkflowFilesType,
   PLACEHOLDERS,
-  WORKFLOW_VIDEO_GENERATION_TASK_NAME,
-  VIDEO_GENERATION_FILES,
-  WORKFLOW_SIMULATION_TASK_NAME,
-  WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
 } from '@/services/bbp-workflow/config';
-import { getSimulationCampaignConfiguration } from '@/services/bbp-workflow/nexus';
 import type { CircuitResource } from '@/types/nexus';
 
 async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
@@ -60,10 +55,12 @@ function generateFormData(replacedConfigFiles: WorkflowFilesType): FormData {
   return data;
 }
 
-function getSimulationTaskFiles(
+export function getSimulationTaskFiles(
   workflowFiles: WorkflowFilesType,
-  circuit: CircuitResource
+  circuit: CircuitResource | null
 ): WorkflowFilesType {
+  if (!circuit) return workflowFiles;
+
   return replacePlaceholdersInFile(
     workflowFiles,
     'simulation.cfg',
@@ -73,13 +70,26 @@ function getSimulationTaskFiles(
   );
 }
 
-function getCircuitBuildingTaskFiles(workflowFiles: WorkflowFilesType): WorkflowFilesType {
-  return workflowFiles;
+export function getCircuitBuildingTaskFiles(
+  workflowFiles: WorkflowFilesType,
+  configId: string | null
+): WorkflowFilesType {
+  if (!configId) return workflowFiles;
+
+  return replacePlaceholdersInFile(
+    workflowFiles,
+    'circuit_building.cfg',
+    PLACEHOLDERS.CONFIG_ID,
+    configId
+  );
 }
 
-function getVideoGenerationTaskFiles(simulationConfigUrl: string): WorkflowFilesType {
+export function getVideoGenerationTaskFiles(
+  workflowFiles: WorkflowFilesType,
+  simulationConfigUrl: string
+): WorkflowFilesType {
   return replacePlaceholdersInFile(
-    VIDEO_GENERATION_FILES,
+    workflowFiles,
     'video_generation.cfg',
     PLACEHOLDERS.SIMULATION_URL,
     simulationConfigUrl
@@ -110,12 +120,17 @@ async function launchWorkflow(
   return nexusUrl;
 }
 
-export async function launchWorkflowTask(
-  loginInfo: Session,
-  workflowName: string = WORKFLOW_TEST_TASK_NAME,
-  workflowFiles: WorkflowFilesType = [],
-  circuitInfo?: CircuitResource | null
-): Promise<string> {
+export type WorkflowRunProps = {
+  loginInfo: Session;
+  workflowName: string;
+  workflowFiles: WorkflowFilesType;
+};
+
+export async function launchWorkflowTask({
+  loginInfo,
+  workflowName = WORKFLOW_TEST_TASK_NAME,
+  workflowFiles = [],
+}: WorkflowRunProps): Promise<string> {
   const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
 
   const headers = new Headers({
@@ -124,34 +139,9 @@ export async function launchWorkflowTask(
 
   await runChecksBeforeLaunching(headers, loginInfo.user.username);
 
-  let replacedConfigFiles = workflowFiles;
-
-  if (workflowName === WORKFLOW_SIMULATION_TASK_NAME) {
-    if (!circuitInfo) throw new Error('Circuit information is not available');
-    replacedConfigFiles = getSimulationTaskFiles(workflowFiles, circuitInfo);
-  }
-  if (workflowName === WORKFLOW_CIRCUIT_BUILD_TASK_NAME) {
-    replacedConfigFiles = getCircuitBuildingTaskFiles(workflowFiles);
-  }
-
-  const data = generateFormData(replacedConfigFiles);
+  const data = generateFormData(workflowFiles);
   const nexusUrl = await launchWorkflow(url, headers, data);
   if (!nexusUrl) throw new Error('Error launching workflow');
-
-  // workaround to connect the simulation and the video generation
-  if (workflowName === WORKFLOW_SIMULATION_TASK_NAME) {
-    const simulationConfigUrl = await getSimulationCampaignConfiguration(
-      loginInfo.accessToken,
-      nexusUrl
-    );
-    replacedConfigFiles = getVideoGenerationTaskFiles(simulationConfigUrl);
-    const videoUrl = getWorkflowTaskUrl(
-      loginInfo.user.username,
-      WORKFLOW_VIDEO_GENERATION_TASK_NAME
-    );
-    const videoData = generateFormData(replacedConfigFiles);
-    await launchWorkflow(videoUrl, headers, videoData);
-  }
 
   return nexusUrl;
 }

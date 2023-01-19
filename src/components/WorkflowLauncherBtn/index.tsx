@@ -1,19 +1,17 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useAtomValue } from 'jotai/react';
 import { useSession } from 'next-auth/react';
 import { notification } from 'antd';
 
 import { classNames } from '@/util/utils';
 import { launchWorkflowTask } from '@/services/bbp-workflow';
-import { WORKFLOW_TEST_TASK_NAME, WorkflowFilesType } from '@/services/bbp-workflow/config';
-import circuitAtom from '@/state/circuit';
+import { WORKFLOW_TEST_TASK_NAME } from '@/services/bbp-workflow/config';
+import { useWorkflowConfig } from '@/hooks/workflow';
 
 type Props = {
   buttonText?: string;
   workflowName?: string;
-  workflowFiles?: WorkflowFilesType;
   onLaunchingChange?: any;
   className?: string;
 };
@@ -21,20 +19,24 @@ type Props = {
 export default function WorkflowLauncher({
   buttonText = 'Launch BBP-Workflow',
   workflowName = WORKFLOW_TEST_TASK_NAME,
-  workflowFiles = [],
   onLaunchingChange = () => {},
   className = '',
 }: Props) {
   const [launching, setLaunching] = useState(false);
   const { data: session } = useSession();
-  const circuitInfo = useAtomValue(circuitAtom);
+
+  const workflowConfig = useWorkflowConfig(workflowName);
 
   const launchBbpWorkflow = useCallback(async () => {
     if (!session?.user) return;
     onLaunchingChange(true);
     setLaunching(true);
     try {
-      await launchWorkflowTask(session, workflowName, workflowFiles, circuitInfo);
+      await launchWorkflowTask({
+        loginInfo: session,
+        workflowName,
+        workflowFiles: workflowConfig,
+      });
     } catch (e: any) {
       notification.open({
         message: 'Error launching workflow',
@@ -43,7 +45,7 @@ export default function WorkflowLauncher({
     }
     onLaunchingChange(false);
     setLaunching(false);
-  }, [session, workflowName, workflowFiles, onLaunchingChange, circuitInfo]);
+  }, [session, workflowName, workflowConfig, onLaunchingChange]);
 
   return (
     <button

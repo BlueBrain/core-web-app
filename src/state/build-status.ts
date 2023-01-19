@@ -17,7 +17,7 @@ const STEPS = {
   MICRO: 'Micro',
 };
 
-const GROUPS = {
+export const GROUPS = {
   CELL_COMPOSITION: 'Cell composition',
   CELL_MODEL_ASSIGNMENT: 'Cell model assignment',
   CONNECTOME_DEFINITION: 'Connectome definition',

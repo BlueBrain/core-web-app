@@ -3,6 +3,7 @@ export const PLACEHOLDERS = {
   TASK_NAME: '{TASK_NAME}',
   SIMULATION_URL: '{SIMULATION_URL}',
   CIRCUIT_URL: '{CIRCUIT_URL}',
+  CONFIG_ID: '{CONFIG_ID}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
@@ -139,6 +140,7 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFilesType = [
       kg-proj: mmb-point-neuron-framework-model
       account: proj134
       output-dir: /gpfs/bbp.cscs.ch/project/proj134/demos/20221117/out/TXDQLF
+      config-id: ${PLACEHOLDERS.CONFIG_ID}
     `,
   },
   {

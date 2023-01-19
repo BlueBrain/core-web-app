@@ -9,10 +9,10 @@ import BrainConfigPanel from '@/components/BrainConfigPanel';
 import Tabs from '@/components/BrainFactoryTabs';
 import BuildModelBtn from '@/components/BuildModelBtn';
 import { themeAtom } from '@/state/theme';
-import WorkflowLauncher from '@/components/WorkflowLauncherBtn';
+import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import useSessionState from '@/hooks/session';
-import { WORKFLOW_SIMULATION_TASK_NAME, SIMULATION_FILES } from '@/services/bbp-workflow/config';
+import { WORKFLOW_SIMULATION_TASK_NAME } from '@/services/bbp-workflow/config';
 import useEnsureLogin from '@/hooks/ensure-login';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 
@@ -50,10 +50,9 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
           <Tabs>
             <BuildModelBtn className="w-[250px]" />
             <div className="mt-px w-[250px] flex">
-              <WorkflowLauncher
+              <WorkflowLauncherBtn
                 buttonText="New in silico experiment"
                 workflowName={WORKFLOW_SIMULATION_TASK_NAME}
-                workflowFiles={SIMULATION_FILES}
               />
             </div>
           </Tabs>
