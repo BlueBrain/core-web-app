@@ -6,7 +6,13 @@ import { useAtom } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
 import sankey from './sankey';
-import { sankeyNodesReducer, getSankeyLinks, sumArray, recalculateAndGetNewNodes } from './util';
+import {
+  sankeyNodesReducer,
+  getSankeyLinks,
+  sumArray,
+  recalculateAndGetNewNodes,
+  filterOutEmptyNodes,
+} from './util';
 import { AboutNode, CompositionDataSet, EditorLinksProps, SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
@@ -49,10 +55,13 @@ interface CellDensityToolbarButtonItem {
   callback: () => void;
 }
 
-function CellDensityToolbar() {
+interface CellDensityToolbarProps {
+  onReset: () => void;
+}
+
+function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
-  const { undoComposition, redoComposition, resetHistory, canUndo, canRedo } =
-    useCompositionHistory();
+  const { undoComposition, redoComposition, canUndo, canRedo } = useCompositionHistory();
 
   const toggleDensityAndCount = useCallback(
     () =>
@@ -76,10 +85,6 @@ function CellDensityToolbar() {
   const handleRedo = useCallback(() => {
     redoComposition();
   }, [redoComposition]);
-
-  const handleReset = useCallback(() => {
-    resetHistory();
-  }, [resetHistory]);
 
   const items: CellDensityToolbarButtonItem[] = [
     {
@@ -113,7 +118,7 @@ function CellDensityToolbar() {
       icon: <ResetIcon />,
       key: 'reset',
       children: `Reset`,
-      callback: handleReset,
+      callback: onReset,
     },
   ];
 
@@ -202,7 +207,7 @@ function Sliders({
         <VerticalSlider
           className="flex flex-col gap-2 h-64 pt-3 px-5 pb-5 flex-auto"
           color={colorScale(node.id)}
-          disabled={lockedNodeIds.includes(node.id) || nodes.length <= 1}
+          disabled={lockedNodeIds.includes(node.id)}
           isActive={activeSlider.id === node.id}
           key={node.id}
           label={node.label}
@@ -234,10 +239,7 @@ function Sliders({
         <div key={nestedNode.id}>
           <HorizontalSlider
             color={colorScale(nestedNode.id)}
-            disabled={
-              lockedNodeIds.includes(`${activeSlider.id}__${nestedNode.id}`) ||
-              activeSlider.nodes.length <= 1
-            }
+            disabled={lockedNodeIds.includes(`${activeSlider.id}__${nestedNode.id}`)}
             key={nestedNode.id}
             label={nestedNode.label}
             max={activeSlider.max}
@@ -280,7 +282,7 @@ function CellDensity() {
   const [densityOrCount] = useAtom(densityOrCountAtom);
   const [meTypeDetails] = useAtom(meTypeDetailsAtom);
   const [composition, setComposition] = useAtom(compositionAtom);
-  const { appendToHistory } = useCompositionHistory();
+  const { appendToHistory, resetHistory } = useCompositionHistory();
   const isCompositionAvailable = composition !== null;
   const { nodes, links } = isCompositionAvailable ? composition : { nodes: [], links: [] };
   const [lockedNodeIds, setLockedNodeIds] = useState<string[]>([]);
@@ -290,6 +292,13 @@ function CellDensity() {
   if (!isCompositionAvailable) {
     throw new Error(`There is no configuration data for the ${meTypeDetails?.title}`);
   }
+
+  useEffect(() => {
+    // Reset all locks when switching to other brain region
+    if (meTypeDetails?.id) {
+      setLockedNodeIds([]);
+    }
+  }, [meTypeDetails?.id]);
 
   const editorLinksReducer = useCallback(
     ({ accNodes, allNodes }: EditorLinksProps, { source, target }: Link) => {
@@ -365,7 +374,11 @@ function CellDensity() {
     () =>
       ({
         links: getSankeyLinks(links, nodes, 'neuron_composition', densityOrCount),
-        nodes: nodes.reduce(sankeyNodesReducer, []),
+        nodes: filterOutEmptyNodes(
+          nodes.reduce(sankeyNodesReducer, []),
+          'neuron_composition',
+          densityOrCount
+        ),
         type: 'neuron_composition',
         value: densityOrCount,
       } as SankeyLinksReducerAcc),
@@ -403,7 +416,8 @@ function CellDensity() {
           value,
           nodes,
           parentId,
-          densityOrCount
+          densityOrCount,
+          lockedNodeIds
         ),
         id: changedNode.id,
         value,
@@ -412,7 +426,7 @@ function CellDensity() {
       setComposition(newComposition);
       appendToHistory(newComposition);
     },
-    [densityOrCount, links, nodes, setComposition, appendToHistory]
+    [densityOrCount, links, nodes, setComposition, appendToHistory, lockedNodeIds]
   );
 
   const handleToggleLockSlider = useCallback(
@@ -474,12 +488,17 @@ function CellDensity() {
     sliderStep,
   ]);
 
+  const handleReset = useCallback(() => {
+    resetHistory();
+    setLockedNodeIds([]);
+  }, [resetHistory, setLockedNodeIds]);
+
   return (
     <>
       {sankeyData.links.length > 0 && (
         <DensityChart className="w-full" colorScale={colorScale} data={sankeyData} />
       )}
-      <CellDensityToolbar />
+      <CellDensityToolbar onReset={handleReset} />
       <Tabs
         // TODO: See whether Ant-D ConfigProvider can be used instead of renderTabBar
         renderTabBar={(props, DefaultTabBar) => (

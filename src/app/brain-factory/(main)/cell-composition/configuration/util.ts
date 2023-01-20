@@ -28,6 +28,11 @@ export function sankeyNodesReducer(acc: Node[], cur: Node) {
     : [...acc, cur];
 }
 
+export function filterOutEmptyNodes(nodes: Node[], type: string, value: string) {
+  // @ts-ignore
+  return nodes.filter((node) => node[type][value] > 0);
+}
+
 export function getSankeyLinks(links: Link[], nodes: Node[], type: string, value: string) {
   const sankeyLinks: Link[] = [];
   links.forEach(({ source, target }: Link) => {
@@ -55,27 +60,31 @@ export function recalculateAndGetNewNodes(
   sliderValue: number | null,
   nodes: Node[],
   parentId: string | null,
-  densityOrCount: keyof Composition
+  densityOrCount: keyof Composition,
+  lockedNodeIds: string[]
 ): Node[] {
   const newNodes = [...nodes];
 
   let newCountValue: number | null = null;
   let newDensityValue: number | null = null;
 
-  if (densityOrCount === switchStateType.COUNT && sliderValue !== null) {
-    newCountValue = round(sliderValue, COUNT_DECIMAL_PLACES);
-  } else if (densityOrCount === switchStateType.DENSITY && sliderValue !== null) {
-    newDensityValue = round(sliderValue, DENSITY_DECIMAL_PLACES);
-  } else {
-    throw new Error(`Unhandled slider key value = '${densityOrCount}'`);
-  }
-
   // Normalize values in the same "about"-group
   const parallelNodes = newNodes.filter((n) =>
-    parentId === null ? n.about === about : n.parent_id === parentId
+    parentId === null
+      ? n.about === about && !lockedNodeIds.includes(n.id)
+      : n.parent_id === parentId && !lockedNodeIds.includes(`${parentId}__${n.id}`)
   );
+
+  if (parallelNodes.length === 1) {
+    // If there's only one active parallel node, you don't modify anything.
+    // Recalculation isn't possible since it can't change its value
+    // (= no available nodes to transfer values to/from)
+    return newNodes;
+  }
+
+  // We assume that we always find the node
   const activeNode = parallelNodes.find((n) => n.id === changedNode.id) as Node;
-  const otherNodes = parallelNodes.filter((n) => n.id !== changedNode.id);
+  const siblingNodes = parallelNodes.filter((n) => n.id !== changedNode.id);
 
   const oldCountValue = activeNode.neuron_composition.count;
   const oldDensityValue = activeNode.neuron_composition.density;
@@ -88,6 +97,14 @@ export function recalculateAndGetNewNodes(
     (previousValue, currentValue) => previousValue + currentValue.neuron_composition.density,
     0
   );
+
+  if (densityOrCount === switchStateType.COUNT && sliderValue !== null) {
+    newCountValue = Math.min(round(sliderValue, COUNT_DECIMAL_PLACES), totalCountValue);
+  } else if (densityOrCount === switchStateType.DENSITY && sliderValue !== null) {
+    newDensityValue = Math.min(round(sliderValue, DENSITY_DECIMAL_PLACES), totalDensityValue);
+  } else {
+    throw new Error(`Unhandled slider key value = '${densityOrCount}'`);
+  }
 
   // Set the value for the affected node as provided in the slider/input
   let newValueRatio: number;
@@ -115,7 +132,7 @@ export function recalculateAndGetNewNodes(
   let newCountRemaining = totalNewCountRemaining;
   let newDensityRemaining = totalNewDensityRemaining;
 
-  otherNodes.forEach((node, index, array) => {
+  siblingNodes.forEach((node, index, array) => {
     const last = index === array.length - 1;
     const nOld = node.neuron_composition.count;
     let nRatio = nOld / totalOldCountRemaining;
@@ -146,8 +163,8 @@ export function recalculateAndGetNewNodes(
       nDensityValue = 0;
     }
 
-    otherNodes[index].neuron_composition.count = nCountValue;
-    otherNodes[index].neuron_composition.density = nDensityValue;
+    siblingNodes[index].neuron_composition.count = nCountValue;
+    siblingNodes[index].neuron_composition.density = nDensityValue;
   });
 
   parallelNodes.forEach((node) => {
