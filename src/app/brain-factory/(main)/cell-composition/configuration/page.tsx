@@ -18,7 +18,7 @@ import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
-import { switchStateType } from '@/util/common';
+import { switchStateType, formatNumber } from '@/util/common';
 import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
 import { Composition, Densities, Link, Node } from '@/components/BrainRegionSelector/types';
 import {
@@ -74,7 +74,7 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   );
 
   const densityOrCountDisplay = useMemo(
-    () => (densityOrCount === switchStateType.DENSITY ? 'Densities [mm³]' : 'Counts [N]'),
+    () => (densityOrCount === switchStateType.DENSITY ? 'Densities [/mm³]' : 'Counts [N]'),
     [densityOrCount]
   );
 
@@ -156,7 +156,7 @@ function DensityChart({ className = '', colorScale, data }: DensityChartProps) {
           linkColor: 'source',
           linkTitle: (d: any) => `${d.source.label} → ${d.target.label}\n${d.source.value}`,
           nodeGroup: (d: any) => d.id,
-          nodeLabel: (d: any) => `${d.label} (${d.value})`,
+          nodeLabel: (d: any) => `${d.label} (~${formatNumber(d.value)})`,
           width: 860,
         },
       ];

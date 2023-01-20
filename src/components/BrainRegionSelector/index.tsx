@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAtomValue, useAtom, useSetAtom } from 'jotai/react';
+import { useAtom } from 'jotai/react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
@@ -14,7 +14,7 @@ import TreeNavItem, { TreeChildren, TreeNavItemCallbackProps } from '@/component
 import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import useNotification from '@/hooks/notifications';
-import { switchStateType } from '@/util/common';
+import { switchStateType, formatNumber } from '@/util/common';
 import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
 import {
   Composition,
@@ -37,7 +37,7 @@ const atlasIdUri =
 const metricToUnit = {
   density: (
     <span>
-      mm<sup>3</sup>
+      /mm<sup>3</sup>
     </span>
   ),
   count: <span>N</span>,
@@ -158,9 +158,6 @@ function MeTypeDetails({
     }
   );
 
-  // formats the number in the 4th significant digit and uses US locale for commas in thousands
-  const formatNumber = (num: number) => Number(num.toPrecision(4)).toLocaleString('en-US');
-
   /**
    * Calculates the metric to be displayed based on whether count or density is
    * currently selected
@@ -177,18 +174,15 @@ function MeTypeDetails({
 
   return (
     <>
-      <h2 className="flex font-bold justify-between text-white text-lg uppercase">
-        Neurons
+      <h2 className="flex font-bold justify-between text-white text-lg">
+        <span className="justify-self-start">NEURONS [{metricToUnit[densityOrCount]}]</span>
         <small className="font-normal text-base">{metric}</small>
       </h2>
       {neurons && (
         <Accordion.Root collapsible type="single">
           {neurons.map(({ id, items, composition, title }) => {
             const normalizedComposition = composition ? (
-              <div>
-                {formatNumber(composition)} &nbsp;
-                {metricToUnit[densityOrCount]}
-              </div>
+              <div>~&nbsp;{formatNumber(composition)}</div>
             ) : (
               composition
             );
@@ -285,7 +279,7 @@ export default function BrainRegionSelector() {
   const [distributions, setDistributions] = useState<Distribution[] | null | undefined>(undefined);
   const [meTypeDetails, setMeTypeDetails] = useAtom(meTypeDetailsAtom);
   const [regionFullPath, setRegionFullPath] = useState<RegionFullPathType[]>([]);
-  const setDensityOrCountAtom = useSetAtom(densityOrCountAtom);
+  const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
   const addNotification = useNotification();
 
   const fetchDataAPI = useCallback(() => {
@@ -308,7 +302,6 @@ export default function BrainRegionSelector() {
 
   const [composition] = useAtom(compositionAtom);
   const { resetHistory } = useCompositionHistory();
-  const densityOrCount = useAtomValue(densityOrCountAtom);
 
   const setBrainRegionCallback = useCallback(
     async ({ id }: TreeNavItemCallbackProps) => {
@@ -487,7 +480,7 @@ export default function BrainRegionSelector() {
                     onChange={(checked: boolean) => {
                       const toSet = checked ? switchStateType.COUNT : switchStateType.DENSITY;
                       // @ts-ignore
-                      setDensityOrCountAtom(toSet);
+                      setDensityOrCount(toSet);
                     }}
                   />
 
