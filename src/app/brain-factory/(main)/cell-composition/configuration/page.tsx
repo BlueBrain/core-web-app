@@ -20,7 +20,12 @@ import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType, formatNumber } from '@/util/common';
 import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
-import { Composition, Densities, Link, Node } from '@/components/BrainRegionSelector/types';
+import {
+  Composition,
+  CompositionNodesAndLinks,
+  Link,
+  Node,
+} from '@/components/BrainRegionSelector/types';
 import {
   compositionAtom,
   meTypeDetailsAtom,
@@ -140,7 +145,11 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   );
 }
 
-type DensityChartProps = { className?: string; colorScale?: Function; data: Densities };
+type DensityChartProps = {
+  className?: string;
+  colorScale?: Function;
+  data: CompositionNodesAndLinks;
+};
 
 function DensityChart({ className = '', colorScale, data }: DensityChartProps) {
   const ref: RefObject<SVGSVGElement> = useRef(null);
@@ -442,7 +451,7 @@ function CellDensity() {
   );
 
   const sliderStep = useMemo(
-    () => (densityOrCount === switchStateType.DENSITY ? 0.0001 : 1),
+    () => (densityOrCount === switchStateType.DENSITY ? 1 : 1),
     [densityOrCount]
   );
 

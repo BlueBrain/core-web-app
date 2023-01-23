@@ -26,6 +26,7 @@ import {
   densityOrCountAtom,
   meTypeDetailsAtom,
 } from '@/components/BrainRegionSelector/atoms';
+import { sanitizeNodeValues } from '@/app/brain-factory/(main)/cell-composition/configuration/util';
 import styles from './brain-region-selector.module.css';
 
 const atlasIdUri =
@@ -330,6 +331,10 @@ export default function BrainRegionSelector() {
         links: [],
       };
 
+      // This is where the composition is set for the first time (after selecting a brain region)
+      const originalComposition = compositionDetails && { nodes, links };
+      const cleanComposition = sanitizeNodeValues(originalComposition);
+
       setMeTypeDetails({
         colorCode,
         distribution,
@@ -338,12 +343,11 @@ export default function BrainRegionSelector() {
         neuronComposition, // The total will remain constant for a given brain region
         title,
       } as MeTypeDetailsState);
-      const loadedComposition = compositionDetails && { nodes, links };
 
       // This will load a new composition and reset the history of changes
-      resetHistory(loadedComposition);
+      resetHistory(cleanComposition);
     },
-    [session, resetHistory, setMeTypeDetails, brainRegions]
+    [brainRegions, session?.user, session?.accessToken, setMeTypeDetails, resetHistory]
   );
 
   useEffect(() => fetchDataAPI());

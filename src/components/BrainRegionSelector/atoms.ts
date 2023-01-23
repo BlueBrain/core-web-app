@@ -1,11 +1,11 @@
 import { atom } from 'jotai/vanilla';
-import { Composition, Densities, MeTypeDetailsState } from './types';
+import { Composition, CompositionNodesAndLinks, MeTypeDetailsState } from './types';
 import { setConfigurationAtom } from '@/state/brain-model-config/cell-composition';
 import { switchStateType } from '@/util/common';
 
 export const meTypeDetailsAtom = atom<MeTypeDetailsState | null>(null);
 
-export const compositionAtom = atom<Densities, Densities[], void>(
+export const compositionAtom = atom<CompositionNodesAndLinks, CompositionNodesAndLinks[], void>(
   { links: [], nodes: [] },
   async (get, set, newComposition) => {
     const meTypeDetails = get(meTypeDetailsAtom);

@@ -1,8 +1,13 @@
 import { switchStateType } from '@/util/common';
 import round from '@/services/distribution-sliders/round';
-import { Composition, Link, Node } from '@/components/BrainRegionSelector/types';
+import {
+  Composition,
+  CompositionNodesAndLinks,
+  Link,
+  Node,
+} from '@/components/BrainRegionSelector/types';
 
-export const DENSITY_DECIMAL_PLACES = 4;
+export const DENSITY_DECIMAL_PLACES = 0;
 export const COUNT_DECIMAL_PLACES = 0;
 
 export function sankeyNodesReducer(acc: Node[], cur: Node) {
@@ -108,6 +113,7 @@ export function recalculateAndGetNewNodes(
 
   // Set the value for the affected node as provided in the slider/input
   let newValueRatio: number;
+
   if (newCountValue !== null) {
     newValueRatio = newCountValue / oldCountValue;
     newDensityValue = round(oldDensityValue * newValueRatio, DENSITY_DECIMAL_PLACES);
@@ -127,6 +133,7 @@ export function recalculateAndGetNewNodes(
   const totalOldCountRemaining = totalCountValue - oldCountValue;
   const totalNewCountRemaining = totalCountValue - newCountValue;
 
+  const totalOldDensityRemaining = totalDensityValue - oldDensityValue;
   const totalNewDensityRemaining = totalDensityValue - newDensityValue;
 
   let newCountRemaining = totalNewCountRemaining;
@@ -134,8 +141,12 @@ export function recalculateAndGetNewNodes(
 
   siblingNodes.forEach((node, index, array) => {
     const last = index === array.length - 1;
-    const nOld = node.neuron_composition.count;
-    let nRatio = nOld / totalOldCountRemaining;
+    const nCountOld = node.neuron_composition.count;
+    const nDensityOld = node.neuron_composition.density;
+    const nCountRatio = nCountOld / totalOldCountRemaining;
+    const nDensityRatio = nDensityOld / totalOldDensityRemaining;
+
+    let nRatio = densityOrCount === 'count' ? nCountRatio : nDensityRatio;
 
     if (Number.isNaN(nRatio)) {
       nRatio = 1 / array.length;
@@ -218,4 +229,52 @@ export function recalculateAndGetNewNodes(
   });
 
   return newNodes;
+}
+
+/**
+ * This function prepares the composition data to be used with the Sankey diagram and the sliders.
+ * It basically rounds up the count and density values to the required decimal place (i.e. the whole number).
+ * After that, it makes sure that the value of the parent node matches the sum of its children values.
+ *
+ * It returns a new object.
+ */
+export function sanitizeNodeValues(composition: CompositionNodesAndLinks) {
+  const newComposition = structuredClone(composition);
+
+  // Round up the values
+  newComposition.nodes
+    .filter((childNode) => !!childNode.parent_id)
+    .forEach((childNode) => {
+      // eslint-disable-next-line no-param-reassign
+      childNode.neuron_composition.count = round(
+        childNode.neuron_composition.count,
+        COUNT_DECIMAL_PLACES
+      );
+      // eslint-disable-next-line no-param-reassign
+      childNode.neuron_composition.density = round(
+        childNode.neuron_composition.density,
+        DENSITY_DECIMAL_PLACES
+      );
+    });
+
+  // Sum
+  newComposition.nodes
+    .filter((value) => value.parent_id == null)
+    .forEach((parentNode) => {
+      // eslint-disable-next-line no-param-reassign
+      parentNode.neuron_composition.count = newComposition.nodes
+        .filter((childNode) => childNode.parent_id === parentNode.id)
+        .reduce(
+          (previousValue, currentValue) => previousValue + currentValue.neuron_composition.count,
+          0
+        );
+      // eslint-disable-next-line no-param-reassign
+      parentNode.neuron_composition.density = newComposition.nodes
+        .filter((childNode) => childNode.parent_id === parentNode.id)
+        .reduce(
+          (previousValue, currentValue) => previousValue + currentValue.neuron_composition.density,
+          0
+        );
+    });
+  return newComposition;
 }

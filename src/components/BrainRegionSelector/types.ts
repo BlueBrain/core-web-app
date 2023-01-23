@@ -16,7 +16,7 @@ export type Node = {
   neuron_composition: Composition;
 };
 
-export type Densities = {
+export type CompositionNodesAndLinks = {
   nodes: Node[];
   links: Link[];
 };
@@ -25,7 +25,7 @@ export type MeTypeDetailsProps = {
   densityOrCount: keyof Composition;
   gliaComposition?: Composition;
   neuronComposition?: Composition;
-  nodes: Densities['nodes'];
+  nodes: CompositionNodesAndLinks['nodes'];
 };
 
 export interface MeTypeDetailsState extends MeTypeDetailsProps {

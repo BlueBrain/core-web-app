@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useAtom } from 'jotai/react';
 import { atom } from 'jotai/vanilla';
-import { Densities } from '@/components/BrainRegionSelector/types';
+import { CompositionNodesAndLinks } from '@/components/BrainRegionSelector/types';
 import { compositionAtom } from '@/components/BrainRegionSelector/atoms';
 
-const compositionHistoryAtom = atom<Densities[]>([]);
+const compositionHistoryAtom = atom<CompositionNodesAndLinks[]>([]);
 const compositionHistoryIndexAtom = atom<number>(0);
 
 export default function useCompositionHistory() {
@@ -13,7 +13,7 @@ export default function useCompositionHistory() {
   const [historyIndex, setHistoryIndex] = useAtom(compositionHistoryIndexAtom);
 
   const appendToHistory = useCallback(
-    (newComposition: Densities) => {
+    (newComposition: CompositionNodesAndLinks) => {
       // We clone the composition to get a completely new object
       const compositionClone = structuredClone(newComposition);
       const newHistory = [...compositionHistory.slice(0, historyIndex + 1), compositionClone];
@@ -24,7 +24,7 @@ export default function useCompositionHistory() {
   );
 
   const resetHistory = useCallback(
-    (newComposition: Densities | null = null) => {
+    (newComposition: CompositionNodesAndLinks | null = null) => {
       const freshComposition = structuredClone(newComposition ?? compositionHistory[0]);
       const newHistory = [structuredClone(freshComposition)];
       setComposition(freshComposition);
