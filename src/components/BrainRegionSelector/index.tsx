@@ -36,11 +36,7 @@ const atlasIdUri =
  * Maps metrics to units in order to appear in the sidebar
  */
 const metricToUnit = {
-  density: (
-    <span>
-      /mm<sup>3</sup>
-    </span>
-  ),
+  density: <span>mm⁻³</span>,
   count: <span>N</span>,
 };
 

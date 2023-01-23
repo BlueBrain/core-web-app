@@ -79,7 +79,7 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   );
 
   const densityOrCountDisplay = useMemo(
-    () => (densityOrCount === switchStateType.DENSITY ? 'Densities [/mm³]' : 'Counts [N]'),
+    () => (densityOrCount === switchStateType.DENSITY ? 'Densities [mm⁻³]' : 'Counts [N]'),
     [densityOrCount]
   );
 
