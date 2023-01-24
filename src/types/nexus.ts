@@ -127,19 +127,40 @@ export interface CellCompositionConfig extends Entity {
 
 export interface CellCompositionConfigResource extends ResourceMetadata, CellCompositionConfig {}
 
+type EtypeWorkflowConfigEntry = {
+  label: string;
+  about: string;
+  density: number;
+  count: number;
+};
+
+type MtypeWorkflowConfigEntry = {
+  label: string;
+  about: string;
+  hasPart: Record<string, EtypeWorkflowConfigEntry>;
+};
+
+export type CompositionOverridesWorkflowConfig = Record<string, MtypeWorkflowConfigEntry>;
+
 export type CellCompositionConfigPayload = {
   [entityId: string]: {
-    hasProtocol: {
+    variantDefinition: {
       algorithm: string;
       version: string;
     };
-    hasParameter: {
+    inputs: {
       name: string;
       type: 'Dataset';
-      follow: string;
       id: string;
     }[];
-    configuration: Record<string, any>;
+    configuration: {
+      version: number;
+      base_atlas_density_dataset: {
+        '@id': string;
+        _rev: number;
+      };
+      overrides: CompositionOverridesWorkflowConfig;
+    };
     jobConfiguration: Record<string, string | number>;
   };
 };

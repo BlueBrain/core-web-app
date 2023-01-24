@@ -3,8 +3,7 @@
 import { ReactNode } from 'react';
 import { useAtomValue } from 'jotai/react';
 import { ErrorBoundary } from 'react-error-boundary';
-
-import BrainRegionSelector from '@/components/BrainRegionSelector';
+import { BrainRegionsSidebar, RegionDetailsSidebar } from '@/components/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
 import Tabs from '@/components/BrainFactoryTabs';
 import BuildModelBtn from '@/components/BuildModelBtn';
@@ -41,7 +40,10 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
 
       <div className={styles.brainSelectorContainer}>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <BrainRegionSelector />
+          <div className="flex">
+            <BrainRegionsSidebar />
+            <RegionDetailsSidebar />
+          </div>
         </ErrorBoundary>
       </div>
 

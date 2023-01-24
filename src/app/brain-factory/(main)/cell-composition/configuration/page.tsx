@@ -1,8 +1,17 @@
 'use client';
 
-import { useCallback, useState, useEffect, useMemo, useRef, RefObject, ReactNode } from 'react';
+import {
+  useCallback,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  RefObject,
+  Suspense,
+  ReactNode,
+} from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
-import { useAtom } from 'jotai/react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
 import sankey from './sankey';
@@ -15,22 +24,18 @@ import {
 } from './util';
 import { AboutNode, CompositionDataSet, EditorLinksProps, SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import { Composition, CompositionUnit, Node, Link } from '@/types/atlas';
+import {
+  brainRegionAtom,
+  densityOrCountAtom,
+  compositionAtom,
+  setCompositionAtom,
+} from '@/state/brain-regions';
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType, formatNumber } from '@/util/common';
 import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
-import {
-  Composition,
-  CompositionNodesAndLinks,
-  Link,
-  Node,
-} from '@/components/BrainRegionSelector/types';
-import {
-  compositionAtom,
-  meTypeDetailsAtom,
-  densityOrCountAtom,
-} from '@/components/BrainRegionSelector/atoms';
 
 function CellPosition() {
   return (
@@ -73,13 +78,13 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
       setDensityOrCount((prev) => {
         const nextState =
           prev === switchStateType.DENSITY ? switchStateType.COUNT : switchStateType.DENSITY;
-        return nextState as keyof Composition;
+        return nextState as keyof CompositionUnit;
       }),
     [setDensityOrCount]
   );
 
   const densityOrCountDisplay = useMemo(
-    () => (densityOrCount === switchStateType.DENSITY ? 'Densities [mm⁻³]' : 'Counts [N]'),
+    () => (densityOrCount === switchStateType.DENSITY ? 'Densities [/mm³]' : 'Counts [N]'),
     [densityOrCount]
   );
 
@@ -123,6 +128,7 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
       icon: <ResetIcon />,
       key: 'reset',
       children: `Reset`,
+      isDisabled: !canUndo,
       callback: onReset,
     },
   ];
@@ -145,11 +151,7 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   );
 }
 
-type DensityChartProps = {
-  className?: string;
-  colorScale?: Function;
-  data: CompositionNodesAndLinks;
-};
+type DensityChartProps = { className?: string; colorScale?: Function; data: Composition };
 
 function DensityChart({ className = '', colorScale, data }: DensityChartProps) {
   const ref: RefObject<SVGSVGElement> = useRef(null);
@@ -289,35 +291,40 @@ function Sliders({
 // ... Including the sidebar composition reducer as well.
 function CellDensity() {
   const [densityOrCount] = useAtom(densityOrCountAtom);
-  const [meTypeDetails] = useAtom(meTypeDetailsAtom);
-  const [composition, setComposition] = useAtom(compositionAtom);
-  const { appendToHistory, resetHistory } = useCompositionHistory();
-  const isCompositionAvailable = composition !== null;
-  const { nodes, links } = isCompositionAvailable ? composition : { nodes: [], links: [] };
+  const brainRegion = useAtomValue(brainRegionAtom);
+  const composition = useAtomValue(compositionAtom);
+  const setComposition = useSetAtom(setCompositionAtom);
+  const { appendToHistory, resetHistory, resetComposition } = useCompositionHistory();
+
+  const { nodes, links } = composition ?? { nodes: [], links: [] };
   const [lockedNodeIds, setLockedNodeIds] = useState<string[]>([]);
 
   // This should be treated as a temporary solution
   // as we shouldn't expect empty composition in the end.
-  if (!isCompositionAvailable) {
-    throw new Error(`There is no configuration data for the ${meTypeDetails?.title}`);
+  if (!composition && brainRegion) {
+    throw new Error(`There is no configuration data for the ${brainRegion?.title}`);
   }
 
   useEffect(() => {
+    if (composition) {
+      resetHistory(composition);
+    }
+
     // Reset all locks when switching to other brain region
-    if (meTypeDetails?.id) {
+    if (brainRegion?.id) {
       setLockedNodeIds([]);
     }
-  }, [meTypeDetails?.id]);
+  }, [brainRegion?.id, resetHistory]);
 
   const editorLinksReducer = useCallback(
     ({ accNodes, allNodes }: EditorLinksProps, { source, target }: Link) => {
       const {
         about,
         label,
-        neuron_composition: sourceComposition,
+        neuronComposition: sourceComposition,
       } = allNodes.find(({ id: nodeId }) => nodeId === source) || ({} as AboutNode);
       const targetIndex = allNodes.findIndex(({ id: nodeId }) => nodeId === target);
-      const { label: targetLabel, neuron_composition: targetComposition } = allNodes[targetIndex];
+      const { label: targetLabel, neuronComposition: targetComposition } = allNodes[targetIndex];
       const existingAbout = Object.prototype.hasOwnProperty.call(accNodes, about);
       const existingNodeIndex =
         existingAbout && accNodes[about].findIndex((node) => node.id === source);
@@ -325,7 +332,7 @@ function CellDensity() {
 
       const totalMax = newAllNodes.reduce(
         (previousValue, currentValue) =>
-          previousValue + currentValue.neuron_composition[densityOrCount],
+          previousValue + currentValue.neuronComposition[densityOrCount],
         0
       );
 
@@ -382,13 +389,13 @@ function CellDensity() {
   const sankeyData = useMemo(
     () =>
       ({
-        links: getSankeyLinks(links, nodes, 'neuron_composition', densityOrCount),
+        links: getSankeyLinks(links, nodes, 'neuronComposition', densityOrCount),
         nodes: filterOutEmptyNodes(
           nodes.reduce(sankeyNodesReducer, []),
-          'neuron_composition',
+          'neuronComposition',
           densityOrCount
         ),
-        type: 'neuron_composition',
+        type: 'neuronComposition',
         value: densityOrCount,
       } as SankeyLinksReducerAcc),
     [densityOrCount, links, nodes]
@@ -498,9 +505,9 @@ function CellDensity() {
   ]);
 
   const handleReset = useCallback(() => {
-    resetHistory();
+    resetComposition();
     setLockedNodeIds([]);
-  }, [resetHistory, setLockedNodeIds]);
+  }, [resetComposition, setLockedNodeIds]);
 
   return (
     <>
@@ -534,7 +541,9 @@ export default function ConfigurationView() {
           key: 'density',
           children: (
             <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
-              <CellDensity />
+              <Suspense fallback={null}>
+                <CellDensity />
+              </Suspense>
             </ErrorBoundary>
           ),
         },

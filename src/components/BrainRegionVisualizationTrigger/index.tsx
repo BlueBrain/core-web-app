@@ -4,19 +4,12 @@ import { useAtomValue, useSetAtom } from 'jotai/react';
 import { useMemo } from 'react';
 import AtlasVisualizationAtom from '@/state/atlas';
 import LoadingIcon from '@/components/icons/LoadingIcon';
+import { MeshDistribution } from '@/types/atlas';
 
 type BrainRegionVisualizationTriggerProps = {
   regionID: string;
-  distribution: Distribution;
+  distribution: MeshDistribution;
   colorCode: string;
-};
-
-export type Distribution = {
-  name: string;
-  content_url: string;
-  encoding_format: string;
-  content_size: string;
-  data_sample_modality?: string;
 };
 
 export default function BrainRegionVisualizationTrigger({
@@ -27,11 +20,11 @@ export default function BrainRegionVisualizationTrigger({
   const atlasVisualizationAtom = useAtomValue(AtlasVisualizationAtom);
   const isVisible =
     atlasVisualizationAtom.visibleMeshes.filter(
-      (mesh) => mesh.contentURL === distribution.content_url
+      (mesh) => mesh.contentURL === distribution.contentUrl
     ).length > 0;
   const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
   const meshObject = atlasVisualizationAtom.visibleMeshes.find(
-    (meshToFind) => meshToFind.contentURL === distribution.content_url
+    (meshToFind) => meshToFind.contentURL === distribution.contentUrl
   );
   const pointCloudObject = atlasVisualizationAtom.visiblePointClouds.find(
     (pointCloud) => pointCloud.regionID === regionID
@@ -46,13 +39,15 @@ export default function BrainRegionVisualizationTrigger({
    * If the brain region mesh is already visible, it hides it in the mesh collection and removes it from the state
    * If the brain region mesh is not visible, it fetches it and adds it in the state
    */
-  const onClickEye = () => {
+  const onClickEye = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+
     // if the brain region mesh is already visible, remove it
     if (isVisible) {
       setAtlasVisualizationAtom({
         ...atlasVisualizationAtom,
         visibleMeshes: atlasVisualizationAtom.visibleMeshes.filter(
-          (mesh) => mesh.contentURL !== distribution.content_url
+          (mesh) => mesh.contentURL !== distribution.contentUrl
         ),
         visiblePointClouds: atlasVisualizationAtom.visiblePointClouds.filter(
           (pointCloud) => pointCloud.regionID !== regionID
@@ -64,7 +59,7 @@ export default function BrainRegionVisualizationTrigger({
         visibleMeshes: [
           ...atlasVisualizationAtom.visibleMeshes,
           {
-            contentURL: distribution.content_url,
+            contentURL: distribution.contentUrl,
             color: colorCode,
             isLoading: true,
             hasError: false,
@@ -96,9 +91,9 @@ export default function BrainRegionVisualizationTrigger({
 
   return (
     <Button
-      className="border-none items-center text-primary-1 bg-transparent justify-center flex"
+      className="border-none rounded-sm items-center text-primary-1 bg-transparent justify-center flex"
       type="text"
-      onClick={() => onClickEye()}
+      onClick={onClickEye}
       icon={icon}
     />
   );

@@ -12,7 +12,11 @@ import {
   updateJsonFileByUrl,
   updateResource,
 } from '@/api/nexus';
-import { CellCompositionConfigPayload, CellCompositionConfigResource } from '@/types/nexus';
+import {
+  CellCompositionConfigPayload,
+  CellCompositionConfigResource,
+  CompositionOverridesWorkflowConfig,
+} from '@/types/nexus';
 import { debounce } from '@/util/common';
 import { setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
@@ -147,16 +151,16 @@ const setConfigPayloadAtom = atom(
   }
 );
 
-export const createGetProtocolAtom = (entityId: string) => {
+export const createGetVariantAtom = (entityId: string) => {
   const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>
-    cellCompositionConfigPayload?.[entityId].hasProtocol;
+    cellCompositionConfigPayload?.[entityId].variantDefinition;
 
   return selectAtom(configPayloadAtom, selectorFn);
 };
 
-export const createGetParameterAtom = (entityId: string) => {
+export const createGetInputsAtom = (entityId: string) => {
   const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>
-    cellCompositionConfigPayload?.[entityId].hasParameter;
+    cellCompositionConfigPayload?.[entityId].inputs;
 
   return selectAtom(configPayloadAtom, selectorFn);
 };
@@ -168,30 +172,61 @@ export const createGetConfigurationAtom = (entityId: string) => {
   return selectAtom(configPayloadAtom, selectorFn);
 };
 
-type SetConfigurationValue = {
-  entityId: string;
-  config: any;
+// TODO: move to a separate module
+const configPayloadDefaults = {
+  VARIANT_DEFINITION: {
+    algorithm: 'cell_composition_manipulation',
+    version: 'v0.3.1',
+  },
+  INPUTS: [
+    {
+      name: 'base_composition_summary',
+      type: 'Dataset',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/f5094a3a-5dff-45d7-9b04-5db1a162e01a?rev=1',
+    },
+    {
+      name: 'base_density_distribution',
+      type: 'Dataset',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/d6485af7-820c-465b-aacc-e1110b2b8d95?rev=1',
+    },
+    {
+      name: 'atlas_release',
+      type: 'Dataset',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885?rev=2',
+    },
+  ],
+  BASE_ATLAS_DENSITY_DATASET: {
+    '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/27652d4d-3a6f-42c7-9833-64396104c445',
+    _rev: 10,
+  },
 };
-export const setConfigurationAtom = atom(
+export const setCompositionOverridesAtom = atom<
   null,
-  async (get, set, { entityId, config }: SetConfigurationValue) => {
-    const configPayload = await get(configPayloadAtom);
-    let localConfigPayload: CellCompositionConfigPayload = {};
+  [string, CompositionOverridesWorkflowConfig],
+  void
+>(null, async (get, set, brainRegionUri, compositionOverrides) => {
+  const configPayload = await get(configPayloadAtom);
 
-    if (configPayload) {
-      localConfigPayload = { ...configPayload };
-    }
+  let updatedConfigPayload: CellCompositionConfigPayload = {};
 
-    localConfigPayload[entityId] = {
-      ...(localConfigPayload[entityId] ?? {
-        hasProtocol: { algorithm: 'algorithmId', version: 'v0.0.1' },
-      }),
-      configuration: config,
-    };
-
-    await set(setConfigPayloadAtom, localConfigPayload);
+  if (configPayload) {
+    updatedConfigPayload = { ...configPayload };
   }
-);
+
+  updatedConfigPayload[brainRegionUri] = {
+    ...(updatedConfigPayload[brainRegionUri] ?? {
+      variantDefinition: configPayloadDefaults.VARIANT_DEFINITION,
+      inputs: configPayloadDefaults.INPUTS,
+    }),
+    configuration: {
+      version: 1,
+      base_atlas_density_dataset: configPayloadDefaults.BASE_ATLAS_DENSITY_DATASET,
+      overrides: compositionOverrides,
+    },
+  };
+
+  await set(setConfigPayloadAtom, updatedConfigPayload);
+});
 
 export const createGetJobConfigAtom = (entityId: string) => {
   const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>

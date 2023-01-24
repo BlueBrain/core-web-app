@@ -1,11 +1,6 @@
+import { Composition, CompositionUnit, Link, Node } from '@/types/atlas';
 import { switchStateType } from '@/util/common';
 import round from '@/services/distribution-sliders/round';
-import {
-  Composition,
-  CompositionNodesAndLinks,
-  Link,
-  Node,
-} from '@/components/BrainRegionSelector/types';
 
 export const DENSITY_DECIMAL_PLACES = 0;
 export const COUNT_DECIMAL_PLACES = 0;
@@ -20,12 +15,8 @@ export function sankeyNodesReducer(acc: Node[], cur: Node) {
         {
           ...existingNode,
           neuron_composition: {
-            count:
-              (existingNode.neuron_composition as Composition).count +
-              (cur.neuron_composition as Composition).count,
-            density:
-              (existingNode.neuron_composition as Composition).density +
-              (cur.neuron_composition as Composition).density,
+            count: existingNode.neuronComposition.count + cur.neuronComposition.count,
+            density: existingNode.neuronComposition.density + cur.neuronComposition.density,
           },
         },
         ...acc.slice(existingNodeIndex + 1),
@@ -41,9 +32,9 @@ export function filterOutEmptyNodes(nodes: Node[], type: string, value: string) 
 export function getSankeyLinks(links: Link[], nodes: Node[], type: string, value: string) {
   const sankeyLinks: Link[] = [];
   links.forEach(({ source, target }: Link) => {
-    const linkValue = (
-      nodes.find((node: Node) => node.id === target && node.parent_id === source) as any
-    )[type][value];
+    const linkValue = (nodes.find((node) => node.id === target && node.parentId === source) as any)[
+      type
+    ][value];
     if (linkValue > 0) {
       sankeyLinks.push({
         source,
@@ -65,7 +56,7 @@ export function recalculateAndGetNewNodes(
   sliderValue: number | null,
   nodes: Node[],
   parentId: string | null,
-  densityOrCount: keyof Composition,
+  densityOrCount: keyof CompositionUnit,
   lockedNodeIds: string[]
 ): Node[] {
   const newNodes = [...nodes];
@@ -77,7 +68,7 @@ export function recalculateAndGetNewNodes(
   const parallelNodes = newNodes.filter((n) =>
     parentId === null
       ? n.about === about && !lockedNodeIds.includes(n.id)
-      : n.parent_id === parentId && !lockedNodeIds.includes(`${parentId}__${n.id}`)
+      : n.parentId === parentId && !lockedNodeIds.includes(`${parentId}__${n.id}`)
   );
 
   if (parallelNodes.length === 1) {
@@ -91,15 +82,15 @@ export function recalculateAndGetNewNodes(
   const activeNode = parallelNodes.find((n) => n.id === changedNode.id) as Node;
   const siblingNodes = parallelNodes.filter((n) => n.id !== changedNode.id);
 
-  const oldCountValue = activeNode.neuron_composition.count;
-  const oldDensityValue = activeNode.neuron_composition.density;
+  const oldCountValue = activeNode.neuronComposition.count;
+  const oldDensityValue = activeNode.neuronComposition.density;
 
   const totalCountValue = parallelNodes.reduce(
-    (previousValue, currentValue) => previousValue + currentValue.neuron_composition.count,
+    (previousValue, currentValue) => previousValue + currentValue.neuronComposition.count,
     0
   );
   const totalDensityValue = parallelNodes.reduce(
-    (previousValue, currentValue) => previousValue + currentValue.neuron_composition.density,
+    (previousValue, currentValue) => previousValue + currentValue.neuronComposition.density,
     0
   );
 
@@ -126,8 +117,8 @@ export function recalculateAndGetNewNodes(
     throw new Error('Calculated density or count values must not be null.');
   }
 
-  activeNode.neuron_composition.count = newCountValue;
-  activeNode.neuron_composition.density = newDensityValue;
+  activeNode.neuronComposition.count = newCountValue;
+  activeNode.neuronComposition.density = newDensityValue;
 
   // Recalculate parallel nodes to keep same total value
   const totalOldCountRemaining = totalCountValue - oldCountValue;
@@ -141,8 +132,8 @@ export function recalculateAndGetNewNodes(
 
   siblingNodes.forEach((node, index, array) => {
     const last = index === array.length - 1;
-    const nCountOld = node.neuron_composition.count;
-    const nDensityOld = node.neuron_composition.density;
+    const nCountOld = node.neuronComposition.count;
+    const nDensityOld = node.neuronComposition.density;
     const nCountRatio = nCountOld / totalOldCountRemaining;
     const nDensityRatio = nDensityOld / totalOldDensityRemaining;
 
@@ -174,26 +165,26 @@ export function recalculateAndGetNewNodes(
       nDensityValue = 0;
     }
 
-    siblingNodes[index].neuron_composition.count = nCountValue;
-    siblingNodes[index].neuron_composition.density = nDensityValue;
+    siblingNodes[index].neuronComposition.count = nCountValue;
+    siblingNodes[index].neuronComposition.density = nDensityValue;
   });
 
   parallelNodes.forEach((node) => {
-    const childNodes = newNodes.filter((n) => n.parent_id === node.id);
+    const childNodes = newNodes.filter((n) => n.parentId === node.id);
     const currentTotalCountValue = childNodes.reduce(
-      (previousValue, currentValue) => previousValue + currentValue.neuron_composition.count,
+      (previousValue, currentValue) => previousValue + currentValue.neuronComposition.count,
       0
     );
 
-    const newTotalTargetCountValue = node.neuron_composition.count;
-    const newTotalTargetDensityValue = node.neuron_composition.density;
+    const newTotalTargetCountValue = node.neuronComposition.count;
+    const newTotalTargetDensityValue = node.neuronComposition.density;
 
     let newChildCountRemaining = newTotalTargetCountValue;
     let newChildDensityRemaining = newTotalTargetDensityValue;
 
     childNodes.forEach((childNode, index, array) => {
       const last = index === array.length - 1;
-      const oldChildCountValue = childNode.neuron_composition.count;
+      const oldChildCountValue = childNode.neuronComposition.count;
       let childRatio = oldChildCountValue / currentTotalCountValue;
 
       if (Number.isNaN(childRatio)) {
@@ -223,8 +214,8 @@ export function recalculateAndGetNewNodes(
         newChildDensityValue = 0;
       }
 
-      childNodes[index].neuron_composition.count = newChildCountValue;
-      childNodes[index].neuron_composition.density = newChildDensityValue;
+      childNodes[index].neuronComposition.count = newChildCountValue;
+      childNodes[index].neuronComposition.density = newChildDensityValue;
     });
   });
 
@@ -238,41 +229,41 @@ export function recalculateAndGetNewNodes(
  *
  * It returns a new object.
  */
-export function sanitizeNodeValues(composition: CompositionNodesAndLinks) {
-  const newComposition = structuredClone(composition);
+export function sanitizeNodeValues(composition: Composition) {
+  const newComposition = structuredClone<Composition>(composition);
 
   // Round up the values
   newComposition.nodes
-    .filter((childNode) => !!childNode.parent_id)
+    .filter((childNode) => !!childNode.parentId)
     .forEach((childNode) => {
       // eslint-disable-next-line no-param-reassign
-      childNode.neuron_composition.count = round(
-        childNode.neuron_composition.count,
+      childNode.neuronComposition.count = round(
+        childNode.neuronComposition.count,
         COUNT_DECIMAL_PLACES
       );
       // eslint-disable-next-line no-param-reassign
-      childNode.neuron_composition.density = round(
-        childNode.neuron_composition.density,
+      childNode.neuronComposition.density = round(
+        childNode.neuronComposition.density,
         DENSITY_DECIMAL_PLACES
       );
     });
 
   // Sum
   newComposition.nodes
-    .filter((value) => value.parent_id == null)
+    .filter((value) => value.parentId == null)
     .forEach((parentNode) => {
       // eslint-disable-next-line no-param-reassign
-      parentNode.neuron_composition.count = newComposition.nodes
-        .filter((childNode) => childNode.parent_id === parentNode.id)
+      parentNode.neuronComposition.count = newComposition.nodes
+        .filter((childNode) => childNode.parentId === parentNode.id)
         .reduce(
-          (previousValue, currentValue) => previousValue + currentValue.neuron_composition.count,
+          (previousValue, currentValue) => previousValue + currentValue.neuronComposition.count,
           0
         );
       // eslint-disable-next-line no-param-reassign
-      parentNode.neuron_composition.density = newComposition.nodes
-        .filter((childNode) => childNode.parent_id === parentNode.id)
+      parentNode.neuronComposition.density = newComposition.nodes
+        .filter((childNode) => childNode.parentId === parentNode.id)
         .reduce(
-          (previousValue, currentValue) => previousValue + currentValue.neuron_composition.density,
+          (previousValue, currentValue) => previousValue + currentValue.neuronComposition.density,
           0
         );
     });

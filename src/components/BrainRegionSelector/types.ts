@@ -1,37 +1,19 @@
-import { Distribution } from '@/components/BrainRegionVisualizationTrigger';
+import { ReactElement } from 'react';
+import { MeshDistribution } from '@/types/atlas';
 
-export type Composition = {
-  count: number;
-  density: number;
+type HeaderProps = {
+  label: string | React.ReactElement;
+  icon: React.ReactElement;
 };
 
-export type Link = { source: string; target: string; value?: number };
-
-export type Node = {
-  id: string;
-  parent_id: string;
-  about: string;
-  glia_composition: Composition;
-  label: string;
-  neuron_composition: Composition;
+type TitleComponentProps = {
+  colorCode?: string;
+  children?: ReactElement;
+  distributions?: MeshDistribution[] | null;
+  id?: string;
+  onClick?: (id: string) => void;
+  title?: string;
+  selectedId?: string;
 };
 
-export type CompositionNodesAndLinks = {
-  nodes: Node[];
-  links: Link[];
-};
-
-export type MeTypeDetailsProps = {
-  densityOrCount: keyof Composition;
-  gliaComposition?: Composition;
-  neuronComposition?: Composition;
-  nodes: CompositionNodesAndLinks['nodes'];
-};
-
-export interface MeTypeDetailsState extends MeTypeDetailsProps {
-  colorCode: string;
-  distribution: Distribution;
-  id: string;
-  title: string;
-  color_code: string;
-}
+export type { HeaderProps, TitleComponentProps };

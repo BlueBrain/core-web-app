@@ -1,17 +1,23 @@
+import AngledArrowIcon from './AngledArrow';
 import ArrowRightIcon from './ArrowRightIcon';
+import BrainIcon from './Brain';
+import BrainRegionIcon from './BrainRegion';
 import EyeIcon from './EyeIcon';
+import GripDotsVerticalIcon from './GripDotsVerticalIcon';
 import LockIcon from './LockIcon';
 import LockOpenIcon from './LockOpenIcon';
-import UndoIcon from '@/components/icons/UndoIcon';
-import ResetIcon from '@/components/icons/ResetIcon';
-import GripDotsVerticalIcon from '@/components/icons/GripDotsVerticalIcon';
+import ResetIcon from './ResetIcon';
+import UndoIcon from './UndoIcon';
 
 export {
+  AngledArrowIcon,
   ArrowRightIcon,
+  BrainIcon,
+  BrainRegionIcon,
   EyeIcon,
+  GripDotsVerticalIcon,
   LockIcon,
   LockOpenIcon,
-  UndoIcon,
   ResetIcon,
-  GripDotsVerticalIcon,
+  UndoIcon,
 };

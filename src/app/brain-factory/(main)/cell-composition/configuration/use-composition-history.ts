@@ -1,19 +1,20 @@
 import { useCallback, useMemo } from 'react';
-import { useAtom } from 'jotai/react';
+import { useAtom, useSetAtom } from 'jotai/react';
 import { atom } from 'jotai/vanilla';
-import { CompositionNodesAndLinks } from '@/components/BrainRegionSelector/types';
-import { compositionAtom } from '@/components/BrainRegionSelector/atoms';
 
-const compositionHistoryAtom = atom<CompositionNodesAndLinks[]>([]);
+import { Composition } from '@/types/atlas';
+import { setCompositionAtom } from '@/state/brain-regions';
+
+const compositionHistoryAtom = atom<Composition[]>([]);
 const compositionHistoryIndexAtom = atom<number>(0);
 
 export default function useCompositionHistory() {
-  const [, setComposition] = useAtom(compositionAtom);
+  const setComposition = useSetAtom(setCompositionAtom);
   const [compositionHistory, setCompositionHistory] = useAtom(compositionHistoryAtom);
   const [historyIndex, setHistoryIndex] = useAtom(compositionHistoryIndexAtom);
 
   const appendToHistory = useCallback(
-    (newComposition: CompositionNodesAndLinks) => {
+    (newComposition: Composition) => {
       // We clone the composition to get a completely new object
       const compositionClone = structuredClone(newComposition);
       const newHistory = [...compositionHistory.slice(0, historyIndex + 1), compositionClone];
@@ -24,15 +25,22 @@ export default function useCompositionHistory() {
   );
 
   const resetHistory = useCallback(
-    (newComposition: CompositionNodesAndLinks | null = null) => {
-      const freshComposition = structuredClone(newComposition ?? compositionHistory[0]);
-      const newHistory = [structuredClone(freshComposition)];
-      setComposition(freshComposition);
-      setCompositionHistory(newHistory);
+    (currentComposition: Composition) => {
+      setCompositionHistory([structuredClone(currentComposition)]);
       setHistoryIndex(0);
     },
-    [compositionHistory, setComposition, setCompositionHistory, setHistoryIndex]
+    [setCompositionHistory, setHistoryIndex]
   );
+
+  const resetComposition = useCallback(() => {
+    if (!compositionHistory.length) return;
+
+    const freshComposition = structuredClone(compositionHistory[0]);
+    const newHistory = [structuredClone(freshComposition)];
+    setComposition(freshComposition);
+    setCompositionHistory(newHistory);
+    setHistoryIndex(0);
+  }, [compositionHistory, setCompositionHistory, setHistoryIndex, setComposition]);
 
   const undoComposition = useCallback(() => {
     let newIndex = historyIndex;
@@ -64,6 +72,7 @@ export default function useCompositionHistory() {
   return {
     appendToHistory,
     resetHistory,
+    resetComposition,
     undoComposition,
     redoComposition,
     historyCount,
