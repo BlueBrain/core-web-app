@@ -138,10 +138,17 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
     const mc = threeCtxWrapper.getMeshCollection();
     if (mc.has(regionID)) {
       mc.show(regionID);
+      disableLoadingState();
     } else {
       fetchAndShowPointCloud();
     }
-  }, [atlasVisualizationAtom.visiblePointClouds, fetchAndShowPointCloud, pcIndex, regionID]);
+  }, [
+    atlasVisualizationAtom.visiblePointClouds,
+    disableLoadingState,
+    fetchAndShowPointCloud,
+    pcIndex,
+    regionID,
+  ]);
 
   return null;
 }

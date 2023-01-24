@@ -110,10 +110,11 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
     // if the mesh already exists in the mesh collection, it is shown. If not, it is fetched
     if (mc.has(id)) {
       mc.show(id);
+      disableLoadingState();
     } else {
       fetchDataAPI();
     }
-  }, [atlasVisualizationAtom.visibleMeshes, fetchDataAPI, id, meshIndex]);
+  }, [atlasVisualizationAtom.visibleMeshes, disableLoadingState, fetchDataAPI, id, meshIndex]);
 
   return null;
 }
