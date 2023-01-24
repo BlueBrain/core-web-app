@@ -138,16 +138,16 @@ function UppercaseTitle({
 function NeuronCompositionTitle({
   composition,
   title,
-  children, // Children is the Accordion.Trigger
+  children, // Children is the Accordion.Trigger that triggers the drop-down
 }: {
-  composition?: number | JSX.Element;
+  composition?: JSX.Element;
   title?: string;
   children: ReactElement;
 }) {
   return (
-    <div className="flex gap-3 justify-end items-center text-left w-full text-primary-3 hover:text-white fill-red py-3">
-      <span className="font-bold text-white whitespace-nowrap">{title}</span>
-      <span className="ml-auto text-white whitespace-nowrap">{composition}</span>
+    <div className="flex gap-3 items-center justify-end py-3 text-left text-primary-3 w-full whitespace-nowrap hover:text-white">
+      <span className="font-bold text-white">{title}</span>
+      <span className="ml-auto text-white">{composition}</span>
       {children}
     </div>
   );
@@ -157,15 +157,31 @@ function NeuronCompositionSubTitle({
   composition,
   title,
 }: {
-  composition?: number | JSX.Element;
+  composition?: number;
   title?: string;
 }) {
   return (
-    <div className="flex gap-3 justify-between items-center text-secondary-4 font-bold py-3">
-      <span className="whitespace-nowrap">{title}</span>
-      <span className="whitespace-nowrap">{composition}</span>
+    <div className="flex gap-3 items-center justify-between py-3 text-secondary-4 whitespace-nowrap">
+      <span className="font-bold whitespace-nowrap">{title}</span>
+      <span>~&nbsp;{composition && formatNumber(composition)}</span>
     </div>
   );
+}
+
+/**
+ * Calculates the metric to be displayed based on whether count or density is
+ * currently selected
+ */
+function getMetric(composition: CompositionUnit, densityOrCount: keyof CompositionUnit) {
+  if (composition && densityOrCount === 'count') {
+    return formatNumber(composition.count);
+  }
+
+  if (composition && densityOrCount === 'density') {
+    return formatNumber(composition.density);
+  }
+
+  return null;
 }
 
 function MeTypeDetails({ neuronComposition }: { neuronComposition: CompositionUnit }) {
@@ -187,28 +203,16 @@ function MeTypeDetails({ neuronComposition }: { neuronComposition: CompositionUn
       }
     );
 
-  /**
-   * Calculates the metric to be displayed based on whether count or density is
-   * currently selected
-   */
-  const metric = useMemo(() => {
-    if (neuronComposition && densityOrCount === 'count') {
-      return formatNumber(neuronComposition.count);
-    }
-    if (neuronComposition && densityOrCount === 'density') {
-      return formatNumber(neuronComposition.density);
-    }
-    return null;
-  }, [densityOrCount, neuronComposition]);
-
   return (
     <>
       <h2 className="flex font-bold justify-between text-white text-lg">
         <span className="justify-self-start">NEURONS [{metricToUnit[densityOrCount]}]</span>
-        <small className="font-normal text-base">~ {metric}</small>
+        <small className="font-normal text-base">
+          ~ {getMetric(neuronComposition, densityOrCount)}
+        </small>
       </h2>
       {neurons && (
-        <Accordion.Root type="multiple" className="divide-y divide-primary-6">
+        <Accordion.Root type="multiple" className="divide-y divide-primary-6 -ml-5">
           {neurons.map(({ id, items, composition: c, title }) => {
             const normalizedComposition = c ? <span>~&nbsp;{formatNumber(c)}</span> : c;
 

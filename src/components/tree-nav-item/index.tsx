@@ -33,7 +33,7 @@ export default function TreeNavItem({
   return (
     <Accordion.Item value={id} className={className}>
       <>
-        <Accordion.Header asChild>
+        <Accordion.Header>
           {isValidElement(children) &&
             cloneElement(
               children as ReactElement,
