@@ -9,7 +9,6 @@ export default async function loadMeshFromURL(
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('🚀 [menu-view] response = ', response); // @FIXME: Remove this line written on 2023-01-23 at 09:08
     if (!response.ok)
       throw Error(`HTTP error code is ${response.status} (${response.statusText})!`);
 

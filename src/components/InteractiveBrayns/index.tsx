@@ -18,7 +18,6 @@ export default function CellModelAssignmentView() {
   React.useEffect(() => {
     // eslint-disable-next-line no-restricted-syntax
     for (const mesh of atlas.visibleMeshes) {
-      console.log('🚀 [page] mesh.contentURL = ', mesh.contentURL); // @FIXME: Remove this line written on 2023-01-24 at 17:19
       if (session && controller) {
         controller
           .loadMeshFromURL({
