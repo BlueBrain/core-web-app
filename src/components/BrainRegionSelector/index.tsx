@@ -428,7 +428,7 @@ export function RegionDetailsSidebar() {
             </div>
             <div className="flex flex-col gap-3">
               <div className="flex flex-row gap-2 py-4 border-y border-primary-6">
-                <div className="flex flex-row gap-1">
+                <div className="flex flex-row gap-3">
                   <VerticalSwitch
                     isChecked={densityOrCount === 'count'}
                     onChange={(checked: boolean) => {
@@ -442,7 +442,6 @@ export function RegionDetailsSidebar() {
                     <div>Counts [{metricToUnit.count}]</div>
                   </div>
                 </div>
-                <div />
               </div>
             </div>
             <MeTypeDetails neuronComposition={brainRegion.composition.neuronComposition} />

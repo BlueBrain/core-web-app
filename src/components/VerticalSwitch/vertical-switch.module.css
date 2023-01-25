@@ -1,22 +1,20 @@
 .SwitchRoot {
-  margin-top: 16px;
-  transform: rotate(90deg);
-  width: 40px;
-  height: 15px;
-  border-radius: 29px;
-  position: relative;
+  @apply rotate-180;
   border: 1px solid #69c0ff;
+  @apply rounded-full;
+  @apply px-px;
 }
 
 .SwitchThumb {
   display: block;
-  width: 13px;
-  height: 13px;
+  width: 10px;
+  height: 10px;
   background-color: white;
-  border-radius: 9999px;
+  @apply rounded-full;
   transition: transform 100ms;
   will-change: transform;
+  transform: translateY(16px);
 }
 .SwitchThumb[data-state='checked'] {
-  transform: translateX(25px);
+  transform: translateY(-16px);
 }
