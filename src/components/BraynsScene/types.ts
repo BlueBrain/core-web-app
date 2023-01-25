@@ -32,6 +32,8 @@ export interface BraynsSceneController {
   loadMeshFromURL(options: {
     /** Nexus URL. */
     url: string;
+    /** Filename with extension, used to recognised the Mesh format. */
+    path: string;
     /** Token to use to access Nexus. */
     token: string;
     /**
