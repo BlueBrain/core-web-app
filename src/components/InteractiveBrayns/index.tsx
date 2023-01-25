@@ -11,7 +11,7 @@ import { SignInButton } from '@/components/LoginButton/buttons';
 import AtlasVisualizationAtom from '@/state/atlas';
 import styles from './interactive-brayns.module.css';
 
-export default function CellModelAssignmentView() {
+export default function InteractiveBraynsView() {
   const atlas = useAtomValue(AtlasVisualizationAtom);
   const [controller, setController] = React.useState<null | BraynsSceneController>(null);
   const { data: session } = useSession();
@@ -22,6 +22,7 @@ export default function CellModelAssignmentView() {
         controller
           .loadMeshFromURL({
             url: mesh.contentURL,
+            path: 'mesh.obj',
             token: session.accessToken,
             color: convertStringColorIntoArrayColor(mesh.color),
           })
