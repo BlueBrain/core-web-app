@@ -123,11 +123,11 @@ const initialComposition = atom<Promise<Composition | null>>(async (get) => {
 
   if (!compositionOverridesWorkflowConfig) return atlasComposition;
 
-  const atlasCompositionClone = structuredClone(atlasComposition);
+  const clonedAtlasComposition = structuredClone(atlasComposition);
 
-  applyCompositionOverrides(atlasCompositionClone, compositionOverridesWorkflowConfig);
+  applyCompositionOverrides(clonedAtlasComposition, compositionOverridesWorkflowConfig);
 
-  return atlasComposition;
+  return clonedAtlasComposition;
 });
 
 export const compositionAtom = atom<Promise<Composition | null>>(async (get) => {
