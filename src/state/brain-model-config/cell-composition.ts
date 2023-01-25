@@ -200,9 +200,12 @@ const configPayloadDefaults = {
     _rev: 10,
   },
 };
+
+type BrainRegionUri = string;
+
 export const setCompositionOverridesAtom = atom<
   null,
-  [string, CompositionOverridesWorkflowConfig],
+  [BrainRegionUri, CompositionOverridesWorkflowConfig],
   void
 >(null, async (get, set, brainRegionUri, compositionOverrides) => {
   const configPayload = await get(configPayloadAtom);

@@ -65,8 +65,11 @@ export type CompositionWithSummary = Composition & {
 
 export type BrainRegion = {
   id: string;
+  parentId?: string;
   title: string;
   colorCode: string;
   composition: CompositionWithSummary;
   items?: BrainRegion[];
 };
+
+export type BrainRegionWOComposition = Omit<BrainRegion, 'composition'>;

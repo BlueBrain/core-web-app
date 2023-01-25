@@ -17,6 +17,7 @@ import {
   brainRegionAtom,
   brainRegionsAtom,
   brainRegionIdAtom,
+  setBrainRegionIdAtom,
   compositionAtom,
   densityOrCountAtom,
   meshDistributionsAtom,
@@ -343,7 +344,7 @@ function CollapsedBrainRegionsSidebar({
 export function BrainRegionsSidebar() {
   const brainRegions = useAtomValue(brainRegionsAtom);
   const brainRegionId = useAtomValue(brainRegionIdAtom);
-  const setBrainRegionId = useSetAtom(brainRegionIdAtom);
+  const setBrainRegionId = useSetAtom(setBrainRegionIdAtom);
 
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
 

@@ -1,7 +1,11 @@
-import { arrayToTree } from 'performant-array-to-tree';
-
 import { fetchAtlasAPI } from '@/util/utils';
-import { BrainRegion, MeshDistribution, MeshDistributionRaw, BrainRegionRaw } from '@/types/atlas';
+import {
+  BrainRegionWOComposition,
+  MeshDistribution,
+  MeshDistributionRaw,
+  BrainRegionRaw,
+  BrainRegion,
+} from '@/types/atlas';
 
 const API_BASE = 'https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions';
 const CELL_COMPOSITION_ID =
@@ -14,7 +18,7 @@ const atlasIdUri =
 const brainRegionsContentUrl =
   'https://bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/f4ded89f-67fb-4d34-831a-a3b317c37c1d';
 
-export async function getBrainRegionsTree(accessToken: string) {
+export async function getBrainRegions(accessToken: string) {
   if (!accessToken) throw new Error('Access token should be defined');
 
   return fetchAtlasAPI(
@@ -23,21 +27,15 @@ export async function getBrainRegionsTree(accessToken: string) {
     accessToken
   )
     .then<BrainRegionRaw[]>((response) => response.json())
-    .then<Omit<BrainRegion, 'composition'>[]>((brainRegions) =>
+    .then<BrainRegionWOComposition[]>((brainRegions) =>
       brainRegions.map(({ color_code: colorCode, id, parentID: parentId, title }) => ({
         colorCode,
         id,
-        parentId,
+        // Some Atlas endoints (e.g. the current one) return parentId as a string[] with a single id in it.
+        // TODO: to investigate (with later fixing API or updating types)
+        parentId: (parentId as unknown as string[])?.[0],
         title,
       }))
-    )
-    .then(
-      (json) =>
-        arrayToTree(json, {
-          dataField: null,
-          parentId: 'parentId',
-          childrenField: 'items',
-        }) as BrainRegion[]
     );
 }
 
@@ -82,8 +80,8 @@ export async function getBrainRegionById(id: string, accessToken: string) {
         title,
         colorCode,
         composition: {
-          links: composition.links,
-          nodes: composition.nodes.map(
+          links: composition?.links ?? [],
+          nodes: (composition?.nodes ?? []).map(
             ({ about, id: brainRegionId, label, neuron_composition, parent_id }) => ({
               about,
               id: brainRegionId,
@@ -92,15 +90,17 @@ export async function getBrainRegionById(id: string, accessToken: string) {
               parentId: parent_id,
             })
           ),
-          neuronComposition: composition.neuron_composition,
+          neuronComposition: composition?.neuron_composition,
         },
-        distribution: {
-          name: distribution.name,
-          contentUrl: distribution.content_url,
-          encodingFormat: distribution.encoding_format,
-          contentSize: distribution.content_size,
-          dataSampleModality: distribution.data_sample_modality,
-        },
+        distribution: distribution
+          ? {
+              name: distribution.name,
+              contentUrl: distribution.content_url,
+              encodingFormat: distribution.encoding_format,
+              contentSize: distribution.content_size,
+              dataSampleModality: distribution.data_sample_modality,
+            }
+          : null,
       };
     });
 }

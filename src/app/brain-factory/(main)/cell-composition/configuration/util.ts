@@ -14,7 +14,7 @@ export function sankeyNodesReducer(acc: Node[], cur: Node) {
         ...acc.slice(0, existingNodeIndex),
         {
           ...existingNode,
-          neuron_composition: {
+          neuronComposition: {
             count: existingNode.neuronComposition.count + cur.neuronComposition.count,
             density: existingNode.neuronComposition.density + cur.neuronComposition.density,
           },

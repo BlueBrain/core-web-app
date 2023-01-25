@@ -140,10 +140,20 @@ type MtypeWorkflowConfigEntry = {
   hasPart: Record<string, EtypeWorkflowConfigEntry>;
 };
 
-export type CompositionOverridesWorkflowConfig = Record<string, MtypeWorkflowConfigEntry>;
+type BrainRegionWorkflowConfigEntry = {
+  label: string;
+  hasPart: Record<string, MtypeWorkflowConfigEntry>;
+};
+
+export type BrainRegionURI = string;
+
+export type CompositionOverridesWorkflowConfig = Record<
+  BrainRegionURI,
+  BrainRegionWorkflowConfigEntry
+>;
 
 export type CellCompositionConfigPayload = {
-  [entityId: string]: {
+  [rootBrainRegionURI: BrainRegionURI]: {
     variantDefinition: {
       algorithm: string;
       version: string;

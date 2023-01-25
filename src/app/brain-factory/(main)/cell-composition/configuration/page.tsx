@@ -30,6 +30,7 @@ import {
   densityOrCountAtom,
   compositionAtom,
   setCompositionAtom,
+  isLeafNodeAtom,
 } from '@/state/brain-regions';
 import { HorizontalSlider, VerticalSlider } from '@/components/Slider';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
@@ -181,6 +182,7 @@ function DensityChart({ className = '', colorScale, data }: DensityChartProps) {
 
 type SlidersProps = {
   about: string;
+  disabled?: boolean;
   colorScale: Function;
   nodes: AboutNode[];
   max: number;
@@ -197,6 +199,7 @@ type SlidersProps = {
 
 function Sliders({
   about,
+  disabled,
   colorScale,
   nodes,
   max,
@@ -218,7 +221,7 @@ function Sliders({
         <VerticalSlider
           className="flex flex-col gap-2 h-64 pt-3 px-5 pb-5 flex-auto"
           color={colorScale(node.id)}
-          disabled={lockedNodeIds.includes(node.id)}
+          disabled={disabled || lockedNodeIds.includes(node.id)}
           isActive={activeSlider.id === node.id}
           key={node.id}
           label={node.label}
@@ -232,6 +235,7 @@ function Sliders({
       )),
     [
       about,
+      disabled,
       activeSlider.id,
       colorScale,
       handleToggleLockSlider,
@@ -250,7 +254,7 @@ function Sliders({
         <div key={nestedNode.id}>
           <HorizontalSlider
             color={colorScale(nestedNode.id)}
-            disabled={lockedNodeIds.includes(`${activeSlider.id}__${nestedNode.id}`)}
+            disabled={disabled || lockedNodeIds.includes(`${activeSlider.id}__${nestedNode.id}`)}
             key={nestedNode.id}
             label={nestedNode.label}
             max={activeSlider.max}
@@ -265,6 +269,7 @@ function Sliders({
       )),
     [
       activeSlider.nodes,
+      disabled,
       activeSlider.id,
       activeSlider.max,
       colorScale,
@@ -293,6 +298,7 @@ function CellDensity() {
   const [densityOrCount] = useAtom(densityOrCountAtom);
   const brainRegion = useAtomValue(brainRegionAtom);
   const composition = useAtomValue(compositionAtom);
+  const isLeafNode = useAtomValue(isLeafNodeAtom);
   const setComposition = useSetAtom(setCompositionAtom);
   const { appendToHistory, resetHistory, resetComposition } = useCompositionHistory();
 
@@ -483,6 +489,7 @@ function CellDensity() {
         children: (
           <Sliders
             about={about}
+            disabled={!isLeafNode}
             nodes={sliderNodes}
             colorScale={colorScale}
             max={max}
@@ -497,6 +504,7 @@ function CellDensity() {
   }, [
     colorScale,
     editorNodes,
+    isLeafNode,
     handleSliderChange,
     handleToggleLockSlider,
     lockedNodeIds,

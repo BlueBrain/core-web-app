@@ -156,6 +156,7 @@ export function VerticalSlider({
       <div className="flex h-2" style={{ backgroundColor: color }} />
       <InputNumber
         className="border border-neutral-3 rounded-none shadow-none w-full"
+        disabled={disabled}
         onChange={onChange}
         inputMode="decimal"
         value={isSliderMoving ? sliderValue : value}
