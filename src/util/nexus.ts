@@ -102,6 +102,7 @@ export function createCellCompositionConfig({
     '@id': id,
     name,
     description,
+    generatorName: 'cell_composition',
     distribution: {
       '@type': 'DataDownload',
       name: payloadMetadata._filename,

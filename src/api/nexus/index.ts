@@ -229,6 +229,7 @@ export async function cloneBrainModelConfig(
     name,
     description,
     configs: {
+      ...brainModelConfigSource.configs,
       cellCompositionConfig: {
         '@id': clonedCellCompositionConfigMetadata['@id'],
         '@type': ['CellCompositionConfig', 'Entity'],

@@ -103,7 +103,15 @@ export interface BrainModelConfig extends Entity {
     };
     cellPositionConfig?: {
       '@id': string;
-      '@type': string;
+      '@type': string[];
+    };
+    eModelAssignmentConfig?: {
+      '@id': string;
+      '@type': string[];
+    };
+    morphologyAssignmentConfig?: {
+      '@id': string;
+      '@type': string[];
     };
   };
 }
@@ -112,6 +120,7 @@ export interface BrainModelConfigResource extends ResourceMetadata, BrainModelCo
 
 export interface CellCompositionConfig extends Entity {
   name: string;
+  generatorName: 'cell_composition';
   description: string;
   distribution: {
     '@type': 'DataDownload';
