@@ -209,13 +209,14 @@ export async function cloneBrainModelConfig(
 ) {
   const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
 
-  const cellCompositionConfigId = brainModelConfigSource.cellCompositionConfig?.['@id'] ?? null;
+  const cellCompositionConfigId =
+    brainModelConfigSource.configs?.cellCompositionConfig?.['@id'] ?? null;
   const clonedCellCompositionConfigMetadata = await cloneOrCreateCellCompositionConfig(
     cellCompositionConfigId,
     session
   );
 
-  const cellPositionConfigId = brainModelConfigSource.cellPositionConfig?.['@id'] ?? null;
+  const cellPositionConfigId = brainModelConfigSource.configs?.cellPositionConfig?.['@id'] ?? null;
   const clonedCellPositionConfigMetadata = await cloneOrCreateCellPositionConfig(
     cellPositionConfigId,
     session
@@ -227,11 +228,15 @@ export async function cloneBrainModelConfig(
     '@id': createId('modelconfiguration'),
     name,
     description,
-    cellCompositionConfig: {
-      '@id': clonedCellCompositionConfigMetadata['@id'],
-    },
-    cellPositionConfig: {
-      '@id': clonedCellPositionConfigMetadata['@id'],
+    configs: {
+      cellCompositionConfig: {
+        '@id': clonedCellCompositionConfigMetadata['@id'],
+        '@type': ['CellCompositionConfig', 'Entity'],
+      },
+      cellPositionConfig: {
+        '@id': clonedCellPositionConfigMetadata['@id'],
+        '@type': ['CellCompositionConfig', 'Entity'],
+      },
     },
   };
 

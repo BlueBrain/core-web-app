@@ -76,5 +76,5 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
 
 export const getCellCompositionConfigIdAtom = selectAtom(
   configAtom,
-  (config) => config?.cellCompositionConfig?.['@id'] ?? null
+  (config) => config?.configs?.cellCompositionConfig?.['@id'] ?? null
 );

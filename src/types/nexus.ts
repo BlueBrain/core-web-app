@@ -96,11 +96,15 @@ export interface Dimension {
 export interface BrainModelConfig extends Entity {
   name: string;
   description: string;
-  cellCompositionConfig?: {
-    '@id': string;
-  };
-  cellPositionConfig?: {
-    '@id': string;
+  configs: {
+    cellCompositionConfig?: {
+      '@id': string;
+      '@type': string[];
+    };
+    cellPositionConfig?: {
+      '@id': string;
+      '@type': string;
+    };
   };
 }
 
