@@ -12,7 +12,7 @@
   width: 100vw;
   display: grid;
   grid-template-columns: 0.7fr 1.3fr;
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-rows: auto repeat(4, 1fr);
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
@@ -37,6 +37,7 @@
   min-height: 0;
   grid-area: observatoryheader;
   @apply bg-primary-9;
+  min-height: 20%;
 }
 
 .braincells {

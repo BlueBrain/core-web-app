@@ -5,7 +5,7 @@ import { CellCompositionConfig, CellPositionConfig, FileMetadata } from '@/types
 import { PartialBy } from '@/types/common';
 
 export function collapseId(nexusId: string) {
-  return nexusId.replace(`${nexus.defaultIdBaseUrl}/`, '');
+  return nexusId?.replace(`${nexus.defaultIdBaseUrl}/`, '') ?? '';
 }
 
 export function expandId(collapsedId: string) {
