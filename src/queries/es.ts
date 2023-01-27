@@ -1,3 +1,13 @@
+const idExistsFilter = {
+  bool: {
+    must: {
+      exists: {
+        field: '@id',
+      },
+    },
+  },
+};
+
 export const getPublicBrainModelConfigsQuery = () => ({
   query: {
     bool: {
@@ -12,6 +22,7 @@ export const getPublicBrainModelConfigsQuery = () => ({
             must: { term: { '@type': 'ModelBuildingConfig' } },
           },
         },
+        idExistsFilter,
       ],
     },
   },
@@ -38,6 +49,7 @@ export const getPersonalBrainModelConfigsQuery = (searchString: string, username
             },
           },
         },
+        idExistsFilter,
       ],
     },
   },
@@ -57,6 +69,7 @@ export const getArchiveBrainModelConfigsQuery = () => ({
             must: { term: { '@type': 'ModelBuildingConfig' } },
           },
         },
+        idExistsFilter,
       ],
     },
   },
@@ -76,6 +89,7 @@ export const getEntitiesByIdsQuery = (ids: string[]) => ({
             must: { terms: { '@id': ids } },
           },
         },
+        idExistsFilter,
       ],
     },
   },
@@ -100,6 +114,7 @@ export const getBrainModelConfigsByNameQuery = (name: string) => ({
             must: { term: { 'name.keyword': name } },
           },
         },
+        idExistsFilter,
       ],
     },
   },
