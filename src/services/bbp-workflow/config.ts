@@ -3,12 +3,13 @@ export const PLACEHOLDERS = {
   TASK_NAME: '{TASK_NAME}',
   SIMULATION_URL: '{SIMULATION_URL}',
   CIRCUIT_URL: '{CIRCUIT_URL}',
-  CONFIG_ID: '{CONFIG_ID}',
+  CONFIG_URL: '{CONFIG_URL}',
+  UUID: '{UUID}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
 
-export const WORKFLOW_CIRCUIT_BUILD_TASK_NAME = 'bbp_workflow.cwl_workflow.CWLWorkflow/';
+export const WORKFLOW_CIRCUIT_BUILD_TASK_NAME = 'bbp_workflow.generation.SBOWorkflow/';
 export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.report.GenerateRunReportSimCampaign/';
 export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
 export const WORKFLOW_VIDEO_GENERATION_TASK_NAME = 'bbp_workflow.viz.VideoTask/';
@@ -131,16 +132,15 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFilesType = [
     CONTENT: `
       [DEFAULT]
       workers: 1
-
-      [CWLWorkflow]
-      recipe-file: /gpfs/bbp.cscs.ch/project/proj134/demos/20221117/recipe-v2-whole-brain.yml
-      host: bbpv1.epfl.ch
       kg-base: https://bbp.epfl.ch/nexus/v1
       kg-org: bbp
       kg-proj: mmb-point-neuron-framework-model
+
+      [SBOWorkflow]
+      config-id: ${PLACEHOLDERS.CONFIG_URL}
+      host: bbpv1.epfl.ch
       account: proj134
-      output-dir: /gpfs/bbp.cscs.ch/project/proj134/demos/20221117/out/TXDQLF
-      config-id: ${PLACEHOLDERS.CONFIG_ID}
+      output-dir: /gpfs/bbp.cscs.ch/project/proj134/workflow-outputs/${PLACEHOLDERS.UUID}
     `,
   },
   {

@@ -19,11 +19,19 @@ import {
 import { GROUPS as EXECUTION_GROUPS } from '@/state/build-status';
 
 import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
-import { idAtom } from '@/state/brain-model-config';
+import { configAtom } from '@/state/brain-model-config';
 import circuitAtom from '@/state/circuit';
+import { BrainModelConfigResource } from '@/types/nexus';
+
+function getCircuitUrl(config: BrainModelConfigResource | null): string {
+  if (!config?._self) return '';
+  return `${config?._self}?rev=${config?._rev}`;
+}
 
 export function useWorkflowConfig(workflowName: string): WorkflowFilesType {
-  const configId = useAtomValue(idAtom);
+  const config = useAtomValue(configAtom);
+  const configUrl = getCircuitUrl(config);
+
   const circuitInfo = useAtomValue(circuitAtom);
   const stepsToBuild = useAtomValue(cellCompositionStepsToBuildAtom);
 
@@ -35,7 +43,7 @@ export function useWorkflowConfig(workflowName: string): WorkflowFilesType {
 
     case WORKFLOW_CIRCUIT_BUILD_TASK_NAME:
       if (stepsToBuild.includes(EXECUTION_GROUPS.CELL_COMPOSITION)) {
-        replacedConfigFiles = getCircuitBuildingTaskFiles(CIRCUIT_BUILDING_FILES, configId);
+        replacedConfigFiles = getCircuitBuildingTaskFiles(CIRCUIT_BUILDING_FILES, configUrl);
       }
       break;
 

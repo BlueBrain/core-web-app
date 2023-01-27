@@ -72,16 +72,25 @@ export function getSimulationTaskFiles(
 
 export function getCircuitBuildingTaskFiles(
   workflowFiles: WorkflowFilesType,
-  configId: string | null
+  configUrl: string | null
 ): WorkflowFilesType {
-  if (!configId) return workflowFiles;
+  if (!configUrl) return workflowFiles;
 
-  return replacePlaceholdersInFile(
+  const escapedConfigUrl = configUrl.includes('%') ? configUrl.replaceAll('%', '%%') : configUrl;
+
+  const withConfig = replacePlaceholdersInFile(
     workflowFiles,
     'circuit_building.cfg',
-    PLACEHOLDERS.CONFIG_ID,
-    configId
+    PLACEHOLDERS.CONFIG_URL,
+    escapedConfigUrl
   );
+  const withUuid = replacePlaceholdersInFile(
+    withConfig,
+    'circuit_building.cfg',
+    PLACEHOLDERS.UUID,
+    crypto.randomUUID()
+  );
+  return withUuid;
 }
 
 export function getVideoGenerationTaskFiles(
@@ -130,7 +139,7 @@ export async function launchWorkflowTask({
   loginInfo,
   workflowName = WORKFLOW_TEST_TASK_NAME,
   workflowFiles = [],
-}: WorkflowRunProps): Promise<string> {
+}: WorkflowRunProps): Promise<string | null> {
   const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
 
   const headers = new Headers({
@@ -141,7 +150,6 @@ export async function launchWorkflowTask({
 
   const data = generateFormData(workflowFiles);
   const nexusUrl = await launchWorkflow(url, headers, data);
-  if (!nexusUrl) throw new Error('Error launching workflow');
 
   return nexusUrl;
 }
