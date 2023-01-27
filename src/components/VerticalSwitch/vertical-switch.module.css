@@ -2,6 +2,7 @@
   @apply rotate-180;
   border: 1px solid #69c0ff;
   @apply rounded-full;
+  @apply my-[4px];
   @apply px-px;
 }
 
@@ -13,8 +14,8 @@
   @apply rounded-full;
   transition: transform 100ms;
   will-change: transform;
-  transform: translateY(16px);
+  transform: translateY(12px);
 }
 .SwitchThumb[data-state='checked'] {
-  transform: translateY(-16px);
+  transform: translateY(-12px);
 }
