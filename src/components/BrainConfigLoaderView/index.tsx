@@ -63,13 +63,18 @@ const searchTabs: SearchTab[] = [
   },
 ];
 
+function BrainModelConfigsCount() {
+  const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
+
+  return <span>{brainModelConfigs.length}</span>;
+}
+
 type BrainConfigLoaderProps = {
   baseHref: string;
 };
 
 export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) {
   const [activeTabId, setActiveTabId] = useAtom(searchTypeAtom);
-  const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
 
   return (
     <div className={styles.container}>
@@ -108,7 +113,9 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
             <div className={styles.searchCtrlContainer}>
               <small>
                 <span className={styles.textPrimary4}>Total configurations: </span>{' '}
-                {brainModelConfigs.length}
+                <Suspense fallback={null}>
+                  <BrainModelConfigsCount />
+                </Suspense>
               </small>
               <input className={styles.searchInput} placeholder="Search brain configuration..." />
             </div>
