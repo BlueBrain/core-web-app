@@ -1,8 +1,8 @@
 diff --git a/node_modules/@next/font/dist/google/utils.js b/node_modules/@next/font/dist/google/utils.js
-index 3b7d844..dd9ad58 100644
+index ff4ec86..b75b97a 100644
 --- a/node_modules/@next/font/dist/google/utils.js
 +++ b/node_modules/@next/font/dist/google/utils.js
-@@ -147,6 +147,7 @@ async function fetchCSSFromGoogleFonts(url, fontFamily) {
+@@ -168,6 +168,7 @@ async function fetchCSSFromGoogleFonts(url, fontFamily) {
                  // The file format is based off of the user agent, make sure woff2 files are fetched
                  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36',
              },
@@ -10,7 +10,7 @@ index 3b7d844..dd9ad58 100644
          });
          if (!res.ok) {
              (0, utils_1.nextFontError)(`Failed to fetch font  \`${fontFamily}\`.\nURL: ${url}`);
-@@ -163,7 +164,9 @@ async function fetchFontFile(url) {
+@@ -184,7 +185,9 @@ async function fetchFontFile(url) {
          }
          return Buffer.from(url);
      }

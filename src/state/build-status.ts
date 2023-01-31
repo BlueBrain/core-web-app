@@ -24,7 +24,7 @@ export const GROUPS = {
   CONNECTION_MODEL_ASSIGNMENT: 'Connection model assignment',
 } as const;
 
-export type CellCompositionStepGroupValues = typeof GROUPS[keyof typeof GROUPS];
+export type CellCompositionStepGroupValues = (typeof GROUPS)[keyof typeof GROUPS];
 
 export type StatusResponse = typeof STATUS.BUILT | typeof STATUS.TO_BUILD | null;
 
