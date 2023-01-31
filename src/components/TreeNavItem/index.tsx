@@ -1,8 +1,9 @@
 import { cloneElement, isValidElement, ReactElement } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
-// import { classNames } from '@/util/utils';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
 import styles from './tree-nav-item.module.css';
+
+export type NavValue = { [key: string]: NavValue };
 
 export type TreeChildren = {
   id: string;
@@ -15,9 +16,11 @@ export type TreeChildren = {
 type TreeNavItemProps = {
   children?: ReactElement;
   className?: string;
-  id?: any;
+  id: any;
   items?: TreeChildren[];
-  value?: string[];
+  value: NavValue | null;
+  onValueChange: (newValue: string[], path: string[]) => void;
+  path: string[];
   // All other props - https://stackoverflow.com/questions/40032592/typescript-workaround-for-rest-props-in-react
   [x: string]: any;
 };
@@ -28,6 +31,8 @@ export default function TreeNavItem({
   id,
   items,
   value,
+  onValueChange,
+  path,
   ...props
 }: TreeNavItemProps) {
   return (
@@ -53,7 +58,12 @@ export default function TreeNavItem({
         </Accordion.Header>
         {items && items.length > 0 && (
           <Accordion.Content asChild>
-            <Accordion.Root type="multiple" asChild>
+            <Accordion.Root
+              onValueChange={(newValue) => onValueChange(newValue, path)}
+              type="multiple"
+              value={value ? Object.keys(value) : []}
+              asChild
+            >
               <>
                 {items.map(({ id: itemId, items: nestedItems, ...itemProps }) =>
                   nestedItems ? (
@@ -62,6 +72,9 @@ export default function TreeNavItem({
                       id={itemId}
                       items={nestedItems}
                       className={className}
+                      value={value ? value[itemId] : null}
+                      onValueChange={onValueChange}
+                      path={[...path, itemId]}
                       {...props} // eslint-disable-line react/jsx-props-no-spreading
                       {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
                     >

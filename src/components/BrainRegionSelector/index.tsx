@@ -1,15 +1,23 @@
-import React, { useMemo, useState, Dispatch, ReactElement, SetStateAction } from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+} from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { PlusOutlined, MinusOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
+import { getOr, set } from 'lodash/fp';
 import { HeaderProps, TitleComponentProps } from '@/components/BrainRegionSelector/types';
 import { classNames } from '@/util/utils';
 import ColorBox from '@/components/ColorBox';
 import VerticalSwitch from '@/components/VerticalSwitch';
 import { BrainIcon, BrainRegionIcon, AngledArrowIcon } from '@/components/icons';
-import TreeNavItem from '@/components/tree-nav-item';
+import TreeNavItem, { NavValue } from '@/components/TreeNavItem';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import { CompositionUnit } from '@/types/atlas';
 import { formatNumber } from '@/util/common';
@@ -36,6 +44,28 @@ const metricToUnit = {
   ),
   count: <span>N</span>,
 };
+
+function handleNavValueChange(navValue: NavValue, setNavValue: Dispatch<SetStateAction<NavValue>>) {
+  return (newValue: string[], path: string[]) => {
+    // Root level
+    if (path?.length) {
+      setNavValue(
+        set(
+          path,
+          newValue.length
+            ? newValue.reduce(
+                (acc, cur) => ({ ...acc, [cur]: getOr(null, [...path, cur], navValue) }),
+                {}
+              )
+            : null,
+          navValue
+        )
+      );
+    } else {
+      setNavValue(newValue.reduce((acc, cur) => ({ ...acc, [cur]: null }), {}));
+    }
+  };
+}
 
 function Header({ label, icon }: HeaderProps) {
   return (
@@ -185,7 +215,15 @@ function getMetric(composition: CompositionUnit, densityOrCount: keyof Compositi
   return null;
 }
 
-function MeTypeDetails({ neuronComposition }: { neuronComposition: CompositionUnit }) {
+function MeTypeDetails({
+  neuronComposition,
+  meTypeNavValue,
+  onValueChange,
+}: {
+  neuronComposition: CompositionUnit;
+  meTypeNavValue: NavValue;
+  onValueChange: (newValue: string[], path: string[]) => void;
+}) {
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const composition = useAtomValue(compositionAtom);
 
@@ -213,7 +251,12 @@ function MeTypeDetails({ neuronComposition }: { neuronComposition: CompositionUn
         </small>
       </h2>
       {neurons && (
-        <Accordion.Root type="multiple" className="divide-y divide-primary-6 -ml-5">
+        <Accordion.Root
+          type="multiple"
+          className="divide-y divide-primary-6 -ml-5"
+          value={Object.keys(meTypeNavValue)}
+          onValueChange={(newValue) => onValueChange(newValue, [])}
+        >
           {neurons.map(({ id, items, composition: c, title }) => {
             const normalizedComposition = c ? <span>~&nbsp;{formatNumber(c)}</span> : c;
 
@@ -223,6 +266,9 @@ function MeTypeDetails({ neuronComposition }: { neuronComposition: CompositionUn
                 items={items}
                 key={id}
                 className="ml-5 divide-y divide-primary-6"
+                path={[id]}
+                value={meTypeNavValue[id]}
+                onValueChange={onValueChange}
               >
                 <NeuronCompositionTitle composition={normalizedComposition} title={title}>
                   <NeuronCompositionSubTitle />
@@ -347,6 +393,16 @@ export function BrainRegionsSidebar() {
   const setBrainRegionId = useSetAtom(setBrainRegionIdAtom);
 
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
+  const [brainRegionsNavValue, setNavValue] = useState<NavValue>({});
+
+  const onValueChange = useCallback(
+    (newValue: string[], path: string[]) => {
+      const callback = handleNavValueChange(brainRegionsNavValue, setNavValue);
+
+      return callback(newValue, path);
+    },
+    [brainRegionsNavValue, setNavValue]
+  );
 
   return brainRegions ? (
     <div className="bg-primary-8 flex flex-1 flex-col h-screen">
@@ -372,13 +428,21 @@ export function BrainRegionsSidebar() {
                 placeholder="Search region..."
               />
             </div>
-            <Accordion.Root type="multiple" className="-ml-5 divide-y divide-primary-7">
+            <Accordion.Root
+              type="multiple"
+              className="-ml-5 divide-y divide-primary-7"
+              value={Object.keys(brainRegionsNavValue)}
+              onValueChange={(newValue) => onValueChange(newValue, [])}
+            >
               {brainRegions.map(({ colorCode, id, title, ...props }) => (
                 <TreeNavItem
                   className="ml-5 divide-y divide-primary-6"
                   id={id}
                   key={id}
                   selectedId={brainRegionId}
+                  value={brainRegionsNavValue[id]}
+                  onValueChange={onValueChange}
+                  path={[id]}
                   {...props} // eslint-disable-line react/jsx-props-no-spreading
                 >
                   <UppercaseTitle
@@ -407,6 +471,17 @@ export function RegionDetailsSidebar() {
   const brainRegion = useAtomValue(brainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
   const [isMeTypeOpen, setisMeTypeOpen] = useState<boolean>(true);
+
+  const [meTypeNavValue, setNavValue] = useState<NavValue>({});
+
+  const onValueChange = useCallback(
+    (newValue: string[], path: string[]) => {
+      const callback = handleNavValueChange(meTypeNavValue, setNavValue);
+
+      return callback(newValue, path);
+    },
+    [meTypeNavValue, setNavValue]
+  );
 
   return (
     brainRegion && (
@@ -449,7 +524,11 @@ export function RegionDetailsSidebar() {
                 </div>
               </div>
             </div>
-            <MeTypeDetails neuronComposition={brainRegion.composition.neuronComposition} />
+            <MeTypeDetails
+              neuronComposition={brainRegion.composition.neuronComposition}
+              meTypeNavValue={meTypeNavValue}
+              onValueChange={onValueChange}
+            />
           </div>
         )}
       </div>

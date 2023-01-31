@@ -1,6 +1,6 @@
 import { Composition, Node } from '@/types/atlas';
 import { BrainRegionURI, CompositionOverridesWorkflowConfig } from '@/types/nexus';
-import { TreeChildren } from '@/components/tree-nav-item';
+import { TreeChildren } from '@/components/TreeNavItem';
 
 const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
