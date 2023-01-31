@@ -137,7 +137,7 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFilesType = [
       kg-proj: mmb-point-neuron-framework-model
 
       [SBOWorkflow]
-      config-id: ${PLACEHOLDERS.CONFIG_URL}
+      config-url: ${PLACEHOLDERS.CONFIG_URL}
       host: bbpv1.epfl.ch
       account: proj134
       output-dir: /gpfs/bbp.cscs.ch/project/proj134/workflow-outputs/${PLACEHOLDERS.UUID}
