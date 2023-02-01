@@ -5,9 +5,8 @@ import { Table, Pagination, Tag, Input } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { useSession } from 'next-auth/react';
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import Link from '@/components/Link';
+import Sidebar from '@/components/observatory/Sidebar';
 import { Campaign } from '@/types/nexus';
 import { createHeaders } from '@/util/utils';
 import { basePath } from '@/config';
@@ -186,23 +185,7 @@ export default function Observatory() {
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <div className="bg-primary-9 text-light w-10">
-        <Link
-          href="/observatory"
-          className="block text-sm"
-          style={{ transform: 'translate(-37%, 100px) rotate(-90deg)', width: 'max-content' }}
-        >
-          Simulation Observatory
-        </Link>
-        <div className={styles.fixednav}>
-          <Link href="/">
-            <UserOutlined />
-          </Link>
-          <Link href="/">
-            <HomeOutlined />
-          </Link>
-        </div>
-      </div>
+      <Sidebar />
       <section className="w-full">
         <div className="flex py-8">
           <div className="ml-10 text-primary-7 text-2xl font-bold flex-auto w-10/12">

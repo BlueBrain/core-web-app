@@ -11,6 +11,7 @@ import CampaignDetails from '@/components/observatory/CampaignDetails';
 import DimensionFilter from '@/components/observatory/DimensionFilter';
 import SpikeRaster from '@/components/observatory/SpikeRaster';
 import CampaignVideo from '@/components/observatory/CampaignVideo';
+import Sidebar from '@/components/observatory/Sidebar';
 
 import REPORT_SPARQL_QUERY from '@/constants/observatory';
 
@@ -162,15 +163,7 @@ function Observatory() {
 
   return (
     <div className="flex h-screen" style={{ background: '#d1d1d1' }}>
-      <div className="bg-primary-9 text-light w-10">
-        <Link
-          href="/observatory"
-          className="block text-sm"
-          style={{ transform: 'translate(-37%, 100px) rotate(-90deg)', width: 'max-content' }}
-        >
-          Simulation Observatory
-        </Link>
-      </div>
+      <Sidebar />
       <div className="bg-primary-8 text-light w-10">
         <Link
           href="/simulation-campaigns"

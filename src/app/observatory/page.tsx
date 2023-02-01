@@ -53,8 +53,7 @@ export default function Observatory() {
           ac ut consequat semper. Curabitur vitae nunc sed velit dignissim sodales ut eu sem.
           Curabitur vitae nunc sed velit dignissim sodales. Commodo odio aenean sed adipiscing diam
           donec adipiscing. Lacus sed turpis tincidunt id aliquet risus feugiat. Vitae tortor
-          condimentum lacinia quis vel eros donec ac odio. Pretium fusce id velit ut tortor pretium
-          viverra suspendisse.
+          condimentum lacinia quis vel.
         </div>
         <button type="button" className="text-xs">
           Start Exploring

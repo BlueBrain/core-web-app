@@ -78,16 +78,20 @@
     @apply text-xl font-bold inline;
   }
   button {
-    @apply border border-white px-4 py-2 mt-4 text-sm;
+    font-size: clamp(1rem, 0.5vw + 5px, 3rem);
+    @apply border border-white px-4 py-2 mt-4;
   }
   p {
-    @apply mt-2 font-thin text-sm;
+    font-size: clamp(1rem, 0.4vw + 5px, 3rem);
+    @apply mt-2 font-thin;
   }
 }
 
 .observatoryheader {
   h1 {
-    @apply text-7xl font-bold uppercase block;
+    @apply font-bold uppercase block;
+    font-size: clamp(1rem, 2.5vw, 5rem);
+    line-height: 0.8;
     word-spacing: 100vw;
   }
   button {
@@ -109,14 +113,5 @@
   }
   button {
     @apply text-black bg-white;
-  }
-}
-
-// Side bar menu styles
-
-.fixednav {
-  @apply absolute bottom-2.5 left-2.5;
-  a {
-    @apply mb-1 block;
   }
 }

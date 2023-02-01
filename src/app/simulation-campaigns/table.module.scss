@@ -10,6 +10,7 @@
 
   td:global(.ant-table-cell) {
     border: none !important;
+    @apply cursor-pointer;
   }
 }
 .pagination {
