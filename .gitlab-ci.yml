@@ -89,3 +89,24 @@ deploy-prod:
       --build-arg=NEXT_PUBLIC_ENVIRONMENT
   only:
     - develop
+
+deploy-test:
+  stage: deploy
+  extends: .build-image-using-kaniko
+  before_script: []
+  variables:
+    CI_PROJECT_DIR: /builds/project/sbo/core-web-app
+    CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app/test
+    CI_COMMIT_SHORT_SHA: $CI_COMMIT_SHORT_SHA
+    REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-$(date +%s)
+    NEXT_PUBLIC_ENVIRONMENT: test
+    NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
+    SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
+    KANIKO_EXTRA_ARGS: >
+      --build-arg=NEXT_PUBLIC_SENTRY_DSN
+      --build-arg=SENTRY_AUTH_TOKEN
+      --build-arg=NEXT_PUBLIC_ENVIRONMENT
+  except:
+    - main
+    - develop
+  when: manual
