@@ -9,7 +9,11 @@ export default function Home() {
     <div className={styles.home}>
       <VideoPanel />
 
-      <SimplePanel className={Theme.colorPrimary9} title="Brain Observatory" link="/observatory">
+      <SimplePanel
+        className={Theme.colorPrimary9}
+        title="Brain Observatory"
+        link="/observatory"
+      >
         Explore a large collection of neuronal models, virtual simulations, and brain cell
         distribution in a 3D and interactive manner.
       </SimplePanel>
@@ -23,7 +27,7 @@ export default function Home() {
         models and configuring the desired connectivity pattern.
       </SimplePanel>
 
-      <SimplePanel className={Theme.colorPrimary7} title="Brain simulation" link="/virtual-lab">
+      <SimplePanel className={Theme.colorPrimary7} title="Brain Simulation" link="/virtual-lab">
         Build your own brain configurations by customizing the cell compositions, assigning neuronal
         models and configuring the desired connectivity pattern.{' '}
       </SimplePanel>

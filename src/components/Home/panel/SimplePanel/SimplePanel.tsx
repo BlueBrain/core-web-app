@@ -26,9 +26,9 @@ export default function SimplePanel({ className, title, link, children }: Simple
     <Link className={getClassName(className)} href={link}>
       <header>
         {
-          title === 'Observatory' ? <ObservatoryIcon /> 
-          : title === 'Brain Factory' ? <BrainFactoryIcon />
-          : title === 'Virtual Lab' ? <VirtualLabIcon />
+          title === 'Brain Observatory' ? <ObservatoryIcon /> 
+          : title === 'Brain Lab' ? <BrainFactoryIcon />
+          : title === 'Brain Simulation' ? <VirtualLabIcon />
           : <IconPlus />
         }
         <div>{title}</div>
