@@ -7,6 +7,7 @@ import IconPlus from '@/components/icons/Plus';
 import ObservatoryIcon from '@/components/icons/ObservatoryIcon';
 import BrainFactoryIcon from '@/components/icons/BrainFactoryIcon';
 import VirtualLabIcon from '@/components/icons/VirtualLabIcon';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 export type SimplePanelProps = {
   className?: string;
@@ -22,19 +23,27 @@ function getClassName(className?: string) {
 }
 
 export default function SimplePanel({ className, title, link, children }: SimplePanelProps) {
+  const panelIcon = () => {
+    if (title === 'Brain Observatory') {
+      return <ObservatoryIcon />
+
+    } else if (title === 'Brain Lab') {
+      return <BrainFactoryIcon /> 
+
+    } else if (title === 'Brain Simulation') {
+      return <VirtualLabIcon />
+      
+    } else {
+      return <IconPlus />
+    }
+  }
   return (
     <Link className={getClassName(className)} href={link}>
       <header>
-        {title === 'Brain Observatory' ? (
-          <ObservatoryIcon />
-        ) : title === 'Brain Lab' ? (
-          <BrainFactoryIcon />
-        ) : title === 'Brain Simulation' ? (
-          <VirtualLabIcon />
-        ) : (
-          <IconPlus />
-        )}
-        <div>{title}</div>
+        <>
+          { panelIcon }
+          <div>{title}</div>
+        </>
       </header>
       <div>{children}</div>
     </Link>
