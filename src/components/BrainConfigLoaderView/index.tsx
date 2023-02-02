@@ -112,7 +112,7 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
 
             <div className={styles.searchCtrlContainer}>
               <small>
-                <span className={styles.textPrimary4}>Total configurations: </span>{' '}
+                <span className={styles.textPrimary5}>Total configurations: </span>{' '}
                 <Suspense fallback={null}>
                   <BrainModelConfigsCount />
                 </Suspense>

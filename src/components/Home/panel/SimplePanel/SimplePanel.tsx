@@ -1,8 +1,12 @@
 'use client';
 
 import Link from '@/components/Link';
-import IconPlus from '@/components/icons/Plus';
 import Styles from './simple-panel.module.css';
+// Icons import
+import IconPlus from '@/components/icons/Plus';
+import ObservatoryIcon from '@/components/icons/ObservatoryIcon';
+import BrainFactoryIcon from '@/components/icons/BrainFactoryIcon';
+import VirtualLabIcon from '@/components/icons/VirtualLabIcon';
 
 export type SimplePanelProps = {
   className?: string;
@@ -21,8 +25,13 @@ export default function SimplePanel({ className, title, link, children }: Simple
   return (
     <Link className={getClassName(className)} href={link}>
       <header>
+        {
+          title === 'Observatory' ? <ObservatoryIcon /> 
+          : title === 'Brain Factory' ? <BrainFactoryIcon />
+          : title === 'Virtual Lab' ? <VirtualLabIcon />
+          : <IconPlus />
+        }
         <div>{title}</div>
-        <IconPlus />
       </header>
       <div>{children}</div>
     </Link>
