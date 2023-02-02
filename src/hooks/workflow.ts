@@ -1,6 +1,8 @@
 'use client';
 
 import { useAtomValue } from 'jotai/react';
+import { loadable } from 'jotai/vanilla/utils';
+
 import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
   WORKFLOW_SIMULATION_TASK_NAME,
@@ -10,14 +12,12 @@ import {
   VIDEO_GENERATION_FILES,
   WorkflowFilesType,
 } from '@/services/bbp-workflow/config';
-
 import {
   getCircuitBuildingTaskFiles,
   getSimulationTaskFiles,
   getVideoGenerationTaskFiles,
 } from '@/services/bbp-workflow';
 import { GROUPS as EXECUTION_GROUPS } from '@/state/build-status';
-
 import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
 import { configAtom } from '@/state/brain-model-config';
 import circuitAtom from '@/state/circuit';
@@ -29,13 +29,18 @@ function getCircuitUrl(config: BrainModelConfigResource | null): string {
 }
 
 export function useWorkflowConfig(workflowName: string): WorkflowFilesType {
-  const config = useAtomValue(configAtom);
-  const configUrl = getCircuitUrl(config);
-
   const circuitInfo = useAtomValue(circuitAtom);
   const stepsToBuild = useAtomValue(cellCompositionStepsToBuildAtom);
 
   let replacedConfigFiles: WorkflowFilesType = [];
+
+  const config = useAtomValue(loadable(configAtom));
+  if (config.state !== 'hasData') {
+    return replacedConfigFiles;
+  }
+
+  const configUrl = getCircuitUrl(config.data);
+
   switch (workflowName) {
     case WORKFLOW_SIMULATION_TASK_NAME:
       replacedConfigFiles = getSimulationTaskFiles(SIMULATION_FILES, circuitInfo);

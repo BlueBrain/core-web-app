@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined, MinusOutlined, RightOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai/react';
@@ -121,7 +121,9 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
           />
 
           <div style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
-            <BrainModelConfigName />
+            <Suspense fallback={null}>
+              <BrainModelConfigName />
+            </Suspense>
           </div>
 
           <Link className="text-lg text-primary-3 mt-4" href="/">
@@ -134,7 +136,9 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
         <div className="h-full overflow-y-scroll flex flex-col px-6 pt-4 pb-6">
           <div className="flex justify-between items-center">
             <h2 className="text-xl">
-              <BrainModelConfigName />
+              <Suspense fallback={null}>
+                <BrainModelConfigName />
+              </Suspense>
             </h2>
             <Button
               className="p-2"
@@ -158,19 +162,25 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
 
           <Collapse className="mb-8" title="Recently used configurations">
             <div className="space-y-2">
-              <RecentConfigs baseHref={baseHref} />
+              <Suspense fallback={null}>
+                <RecentConfigs baseHref={baseHref} />
+              </Suspense>
             </div>
           </Collapse>
 
           <Collapse className="mb-8" title="Public configurations" defaultCollapsed>
             <div className="space-y-2">
-              <PublicConfigs baseHref={baseHref} />
+              <Suspense fallback={null}>
+                <PublicConfigs baseHref={baseHref} />
+              </Suspense>
             </div>
           </Collapse>
 
           <Collapse className="mb-8" title="My configurations" defaultCollapsed>
             <div className="space-y-2">
-              <PersonalConfigs baseHref={baseHref} />
+              <Suspense fallback={null}>
+                <PersonalConfigs baseHref={baseHref} />
+              </Suspense>
             </div>
           </Collapse>
 

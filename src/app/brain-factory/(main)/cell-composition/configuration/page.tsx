@@ -7,13 +7,14 @@ import {
   useMemo,
   useRef,
   RefObject,
-  Suspense,
   ReactNode,
+  Suspense,
 } from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
+
 import sankey from './sankey';
 import {
   sankeyNodesReducer,
@@ -534,8 +535,16 @@ function CellDensity() {
   );
 }
 
+function CellDensityWrapper() {
+  const composition = useAtomValue(compositionAtom);
+  return (
+    <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
+      <CellDensity />
+    </ErrorBoundary>
+  );
+}
+
 export default function ConfigurationView() {
-  const [composition] = useAtom(compositionAtom);
   return (
     <Tabs
       // TODO: There may be a way to improve this using Ant-D's ConfigProvider
@@ -548,11 +557,9 @@ export default function ConfigurationView() {
           label: 'Density',
           key: 'density',
           children: (
-            <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
-              <Suspense fallback={null}>
-                <CellDensity />
-              </Suspense>
-            </ErrorBoundary>
+            <Suspense fallback={null}>
+              <CellDensityWrapper />
+            </Suspense>
           ),
         },
         { label: 'Distribution', key: 'distribution', children: <CellDistribution /> },

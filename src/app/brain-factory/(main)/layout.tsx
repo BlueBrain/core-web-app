@@ -14,6 +14,7 @@ import useSessionState from '@/hooks/session';
 import { WORKFLOW_SIMULATION_TASK_NAME } from '@/services/bbp-workflow/config';
 import useEnsureLogin from '@/hooks/ensure-login';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 import styles from './brain-factory-main.module.css';
 
@@ -41,7 +42,10 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
       <div className={styles.brainSelectorContainer}>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
           <div className="flex">
-            <BrainRegionsSidebar />
+            <DefaultLoadingSuspense>
+              <BrainRegionsSidebar />
+            </DefaultLoadingSuspense>
+
             <RegionDetailsSidebar />
           </div>
         </ErrorBoundary>
