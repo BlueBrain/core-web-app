@@ -1,12 +1,12 @@
 'use client';
 
 import Link from '@/components/Link';
-import Styles from './simple-panel.module.css';
 // Icons import
 import IconPlus from '@/components/icons/Plus';
 import ObservatoryIcon from '@/components/icons/ObservatoryIcon';
 import BrainFactoryIcon from '@/components/icons/BrainFactoryIcon';
 import VirtualLabIcon from '@/components/icons/VirtualLabIcon';
+import Styles from './simple-panel.module.css';
 
 export type SimplePanelProps = {
   className?: string;
