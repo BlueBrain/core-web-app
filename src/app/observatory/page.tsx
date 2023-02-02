@@ -3,9 +3,11 @@
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import ObservatoryNavItem from '@/components/ObservatoryNavItem';
 import Link from '@/components/Link';
+import { basePath } from '@/config';
 import styles from './observatory.module.scss';
 
 export default function Observatory() {
+  const bgUrl = `url(${basePath}/images/img_3d-interactive-brain_placeholder.jpg)`;
   return (
     <div className={styles.container}>
       <div className={styles.observatoryheader}>
@@ -45,7 +47,7 @@ export default function Observatory() {
           url="/simulation-campaigns"
         />
       </div>
-      <div className={styles.content} />
+      <div className={styles.content} style={{ background: bgUrl }} />
       <div className={`${styles.info} text-sm`} style={{ paddingBottom: 12 }}>
         <h1 className="text-lg">Title</h1>
         <div>

@@ -196,7 +196,7 @@ export default function Observatory() {
               allowClear
               size="large"
               onSearch={onSearch}
-              className="bg-primary-7"
+              className="bg-primary-7 border-none bg-transparent"
               enterButton="Search"
             />
           </div>
