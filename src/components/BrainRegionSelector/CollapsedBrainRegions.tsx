@@ -19,11 +19,6 @@ export default function CollapsedBrainRegionsSidebar({
     [brainRegionId, brainRegions]
   );
 
-  // default or if only 'Whole mouse brain selected' discard it.
-  if (!regionFullPath.length || regionFullPath.length === 1) {
-    return <div className="text-lg font-bold">Brain region</div>;
-  }
-
   // remove 'Whole mouse brain'
   let [, ...displaySubregions] = [...regionFullPath];
   displaySubregions.reverse();
@@ -35,7 +30,8 @@ export default function CollapsedBrainRegionsSidebar({
   }
 
   // highlight the last element in path (more nested selection)
-  const highlightElemId = displaySubregions[0].id;
+  // with optional chaining, allow subRegionElems to be empty array
+  const highlightElemId = displaySubregions[0]?.id;
 
   const subRegionElems = displaySubregions.map((subregions) => (
     <div
