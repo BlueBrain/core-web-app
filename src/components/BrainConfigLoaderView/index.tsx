@@ -107,7 +107,7 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
 
             <div className={styles.searchCtrlContainer}>
               <small>
-                <span className={styles.textPrimary4}>Total configurations: </span>{' '}
+                <span className={styles.textPrimary5}>Total configurations: </span>{' '}
                 {brainModelConfigs.length}
               </small>
               <input className={styles.searchInput} placeholder="Search brain configuration..." />
