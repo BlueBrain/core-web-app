@@ -138,7 +138,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
   return (
     <div
       className={classNames(
-        'h-screen bg-primary-9 w-[40px] text-white',
+        'h-screen bg-black w-[40px] text-white',
         isOpen ? 'w-[300px]' : null
       )}
     >
@@ -188,7 +188,11 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
             <div className="bg-primary-5 h-px" />
           </div>
 
+
           <Collapse className="mb-8" title="Reference configurations">
+            <div className="flex items-center justify-center text-primary-3 border border-primary-3 h-12">
+              My test box
+            </div>         
             <div className="space-y-4">
               {CURATED_MODELS.map((config) => (
                 <CuratedModelLinkBtn key={config.name} config={config} baseHref={baseHref} />
