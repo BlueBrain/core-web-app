@@ -1,0 +1,23 @@
+.feedback-button {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  background-color: #f4364c;
+  border: none;
+  color: white;
+  transform: translateX(32%) translateY(-50%) rotate(-90deg);
+  font-size: 18px;
+  height: fit-content;
+}
+
+.feedback-modal {
+  position: fixed;
+  right: 0;
+  top: calc(50% - 150px);
+  height: 200px;
+}
+
+.feedback-text-area {
+  margin-top: 10px;
+  min-height: 150px !important;
+}

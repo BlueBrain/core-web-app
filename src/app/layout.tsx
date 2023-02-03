@@ -13,6 +13,7 @@ import { basePath } from '@/config';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import '@/styles/globals.scss';
 import NotificationProvider from '@/components/NotificationProvider';
+import Feedback from '@/components/Feedback';
 
 const titilliumWeb = Titillium_Web({
   weight: ['300', '400', '600', '700'],
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <body>{children}</body>
               </ErrorBoundary>
               <NotificationProvider />
+              <Feedback />
             </html>
           </SessionProvider>
         </JotaiProvider>
