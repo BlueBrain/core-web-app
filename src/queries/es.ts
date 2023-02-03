@@ -1,3 +1,5 @@
+const DEFAULT_SIZE = 1000;
+
 const idExistsFilter = {
   bool: {
     must: {
@@ -9,6 +11,7 @@ const idExistsFilter = {
 };
 
 export const getPublicBrainModelConfigsQuery = () => ({
+  size: DEFAULT_SIZE,
   query: {
     bool: {
       filter: [
@@ -29,6 +32,7 @@ export const getPublicBrainModelConfigsQuery = () => ({
 });
 
 export const getPersonalBrainModelConfigsQuery = (searchString: string, username: string) => ({
+  size: DEFAULT_SIZE,
   query: {
     bool: {
       filter: [
@@ -56,6 +60,7 @@ export const getPersonalBrainModelConfigsQuery = (searchString: string, username
 });
 
 export const getArchiveBrainModelConfigsQuery = () => ({
+  size: DEFAULT_SIZE,
   query: {
     bool: {
       filter: [
@@ -76,6 +81,7 @@ export const getArchiveBrainModelConfigsQuery = () => ({
 });
 
 export const getEntitiesByIdsQuery = (ids: string[]) => ({
+  size: DEFAULT_SIZE,
   query: {
     bool: {
       filter: [
@@ -96,6 +102,7 @@ export const getEntitiesByIdsQuery = (ids: string[]) => ({
 });
 
 export const getBrainModelConfigsByNameQuery = (name: string) => ({
+  size: DEFAULT_SIZE,
   query: {
     bool: {
       filter: [

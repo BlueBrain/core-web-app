@@ -55,7 +55,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
         size="small"
         className="mt-6 mb-12"
         dataSource={brainModelConfigs}
-        pagination={false}
+        pagination={brainModelConfigs.length > 10 ? { defaultPageSize: 10 } : false}
         rowKey="@id"
       >
         <Column
