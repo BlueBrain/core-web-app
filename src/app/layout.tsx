@@ -32,7 +32,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <Toast.Provider swipeDirection="right">
       <ConfigProvider theme={commonAntdTheme}>
         <JotaiProvider>
-          <SessionProvider basePath={`${basePath}/api/auth`}>
+          <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={5 * 60}>
             <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
               <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                 <body>{children}</body>

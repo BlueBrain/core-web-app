@@ -1,5 +1,10 @@
+import AuthWrapper from '@/components/AuthWrapper';
 import Home from '@/components/Home';
 
 export default function RootPage() {
-  return <Home />;
+  return (
+    <AuthWrapper>
+      <Home />
+    </AuthWrapper>
+  );
 }

@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import useEnsureLogin from '@/hooks/ensure-login';
+import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 
 type GenericLayoutProps = {
@@ -11,7 +11,7 @@ type GenericLayoutProps = {
 };
 
 export default function GenericLayout({ children }: GenericLayoutProps) {
-  useEnsureLogin();
+  useAuth(true);
 
   return <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>;
 }

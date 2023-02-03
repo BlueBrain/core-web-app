@@ -1,12 +1,14 @@
-import { unstable_getServerSession } from 'next-auth/next';
+import { getServerSession } from 'next-auth/next';
 
 import { SignInButton, SignOutButton } from './buttons';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 export default async function LoginButton() {
-  const session = await unstable_getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-  return !session?.user ? (
+  const sessionValid = session?.user && !session.error;
+
+  return !sessionValid ? (
     <SignInButton />
   ) : (
     <div>
