@@ -13,6 +13,7 @@ import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
+import { basePath } from '@/config';
 
 const { Column } = Table;
 
@@ -37,7 +38,9 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const openCloneModal = (config: BrainModelConfigResource) => {
     createCloneModal(config, (clonedConfig: BrainModelConfigResource) =>
       router.push(
-        `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
+        `${basePath}${baseHref}?brainModelConfigId=${encodeURIComponent(
+          collapseId(clonedConfig['@id'])
+        )}`
       )
     );
   };
