@@ -1,31 +1,25 @@
-import { cloneElement, isValidElement, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
+import { TreeItem } from 'performant-array-to-tree';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
+import { classNames } from '@/util/utils';
 import styles from './tree-nav-item.module.css';
 
-export type NavValue = { [key: string]: NavValue };
-
-export type TreeChildren = {
-  id: string;
-  items?: TreeChildren[];
-  title: string;
-  // All other props - https://stackoverflow.com/questions/40032592/typescript-workaround-for-rest-props-in-react
-  [x: string]: any;
-};
+export type NavValue = { [key: string]: NavValue } | null;
 
 type TreeNavItemProps = {
-  children?: ReactElement;
   className?: string;
   id: any;
-  items?: TreeChildren[];
-  value: NavValue | null;
+  value: NavValue;
   onValueChange: (newValue: string[], path: string[]) => void;
   path: string[];
+  children: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+  items?: TreeItem[];
   // All other props - https://stackoverflow.com/questions/40032592/typescript-workaround-for-rest-props-in-react
   [x: string]: any;
 };
 
-export default function TreeNavItem({
+export function TreeNavItem({
   children,
   className = 'ml-5',
   id,
@@ -35,72 +29,115 @@ export default function TreeNavItem({
   path,
   ...props
 }: TreeNavItemProps) {
+  const header = (
+    <Accordion.Header>
+      {children &&
+        children({
+          id,
+          ...props,
+          trigger: items?.length ? (
+            <Accordion.Trigger
+              className={styles.accordionTrigger}
+              data-disabled={!items || items.length === 0}
+            >
+              <ArrowDownOutlinedIcon
+                className={styles.accordionChevron}
+                style={{ height: '13px' }}
+              />
+            </Accordion.Trigger>
+          ) : null,
+        })}
+    </Accordion.Header>
+  );
+
+  const content = (
+    <Accordion.Content asChild>
+      <Accordion.Root
+        onValueChange={(newValue) => onValueChange(newValue, path)}
+        type="multiple"
+        value={value ? Object.keys(value) : []}
+        asChild
+      >
+        <>
+          {/* eslint-disable-line react/jsx-no-useless-fragment */}
+          {items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
+            // children may return another render-prop
+            const render = children({
+              id: itemId,
+              items: nestedItems,
+              ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
+            });
+
+            return nestedItems ? (
+              <TreeNavItem
+                key={itemId}
+                id={itemId}
+                items={nestedItems}
+                className={className}
+                value={value?.[itemId] ?? null}
+                onValueChange={onValueChange}
+                path={[...path, itemId]}
+                {...props} // eslint-disable-line react/jsx-props-no-spreading
+                {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
+              >
+                {
+                  /* Pass-down the nested render-prop, if one exists. */
+                  render?.props?.children ?? children
+                }
+              </TreeNavItem>
+            ) : (
+              render
+            );
+          })}
+        </>
+      </Accordion.Root>
+    </Accordion.Content>
+  );
+
   return (
     <Accordion.Item value={id} className={className}>
       <>
-        <Accordion.Header>
-          {isValidElement(children) &&
-            cloneElement(
-              children as ReactElement,
-              { id, ...props },
-              items && items.length > 0 && (
-                <Accordion.Trigger
-                  className={styles.accordionTrigger}
-                  data-disabled={!items || items.length === 0}
-                >
-                  <ArrowDownOutlinedIcon
-                    className={styles.accordionChevron}
-                    style={{ height: '13px' }}
-                  />
-                </Accordion.Trigger>
-              )
-            )}
-        </Accordion.Header>
-        {items && items.length > 0 && (
-          <Accordion.Content asChild>
-            <Accordion.Root
-              onValueChange={(newValue) => onValueChange(newValue, path)}
-              type="multiple"
-              value={value ? Object.keys(value) : []}
-              asChild
-            >
-              <>
-                {items.map(({ id: itemId, items: nestedItems, ...itemProps }) =>
-                  nestedItems ? (
-                    <TreeNavItem
-                      key={itemId}
-                      id={itemId}
-                      items={nestedItems}
-                      className={className}
-                      value={value ? value[itemId] : null}
-                      onValueChange={onValueChange}
-                      path={[...path, itemId]}
-                      {...props} // eslint-disable-line react/jsx-props-no-spreading
-                      {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
-                    >
-                      {(children?.props as any).children
-                        ? (children?.props as any)?.children
-                        : children}
-                    </TreeNavItem>
-                  ) : (
-                    isValidElement(children) &&
-                    cloneElement(
-                      (children?.props as any)?.children
-                        ? (children.props as any)?.children
-                        : children,
-                      {
-                        id: itemId,
-                        items: nestedItems,
-                        ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
-                      }
-                    )
-                  )
-                )}
-              </>
-            </Accordion.Root>
-          </Accordion.Content>
-        )}
+        {header}
+        {items && items.length > 0 && content}
       </>
     </Accordion.Item>
+  );
+}
+
+export default function TreeNav({
+  className,
+  items: navItems,
+  onValueChange,
+  value,
+  children,
+}: {
+  className: string;
+  children: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+  items: TreeItem[];
+  onValueChange: (newValue: string[], path: string[]) => void;
+  value: NavValue;
+}) {
+  return (
+    <Accordion.Root
+      type="multiple"
+      className={classNames('-ml-5', className)}
+      value={value ? Object.keys(value) : []}
+      onValueChange={(newValue) => onValueChange(newValue, [])} // Empty path for root
+    >
+      {navItems.map(({ id, items, ...rest }) => (
+        <TreeNavItem
+          id={id}
+          items={items}
+          key={id}
+          className={classNames('ml-5', className)}
+          path={[id]}
+          value={value?.[id] ?? null}
+          onValueChange={onValueChange}
+          {...rest} // eslint-disable-line react/jsx-props-no-spreading
+        >
+          {children}
+        </TreeNavItem>
+      ))}
+    </Accordion.Root>
   );
 }

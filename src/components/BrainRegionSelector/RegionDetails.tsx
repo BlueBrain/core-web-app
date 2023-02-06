@@ -1,14 +1,14 @@
-import React, { useCallback, useState, ReactElement } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai/react';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
-import * as Accordion from '@radix-ui/react-accordion';
 import CollapsedRegionDetails from './CollapsedRegionDetails';
 import { getMetric, handleNavValueChange } from './util';
+import { CompositionListProps } from './types';
 import { CompositionUnit } from '@/types/atlas';
 import { formatNumber } from '@/util/common';
-import TreeNavItem, { NavValue } from '@/components/TreeNavItem';
+import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import { brainRegionAtom, compositionAtom, densityOrCountAtom } from '@/state/brain-regions';
 import { BrainRegionIcon } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
@@ -28,32 +28,29 @@ const metricToUnit = {
 function NeuronCompositionTitle({
   composition,
   title,
-  children, // Children is the Accordion.Trigger that triggers the drop-down
-}: {
-  composition?: JSX.Element;
-  title?: string;
-  children: ReactElement;
-}) {
+  trigger, // trigger is the Accordion.Trigger that triggers the drop-down
+}: CompositionListProps) {
+  const normalizedComposition = composition ? (
+    <span>~&nbsp;{formatNumber(composition)}</span>
+  ) : (
+    composition
+  );
+
   return (
     <div className="flex gap-3 items-center justify-end py-3 text-left text-primary-3 w-full whitespace-nowrap hover:text-white">
       <span className="font-bold text-white">{title}</span>
-      <span className="ml-auto text-white">{composition}</span>
-      {children}
+      <span className="ml-auto text-white">{normalizedComposition}</span>
+      {trigger}
     </div>
   );
 }
 
-function NeuronCompositionSubTitle({
-  composition,
-  title,
-}: {
-  composition?: number;
-  title?: string;
-}) {
+function NeuronCompositionSubTitle({ composition, title, trigger }: CompositionListProps) {
   return (
     <div className="flex gap-3 items-center justify-between py-3 text-secondary-4 whitespace-nowrap">
       <span className="font-bold whitespace-nowrap">{title}</span>
       <span>~&nbsp;{composition && formatNumber(composition)}</span>
+      {trigger}
     </div>
   );
 }
@@ -94,32 +91,28 @@ function MeTypeDetails({
         </small>
       </h2>
       {neurons && (
-        <Accordion.Root
-          type="multiple"
-          className="divide-y divide-primary-6 -ml-5"
-          value={Object.keys(meTypeNavValue)}
-          onValueChange={(newValue) => onValueChange(newValue, [])}
+        <TreeNav
+          items={neurons}
+          onValueChange={onValueChange}
+          value={meTypeNavValue}
+          className="divide-y divide-primary-6"
         >
-          {neurons.map(({ id, items, composition: c, title }) => {
-            const normalizedComposition = c ? <span>~&nbsp;{formatNumber(c)}</span> : c;
-
-            return (
-              <TreeNavItem
-                id={id}
-                items={items}
-                key={id}
-                className="ml-5 divide-y divide-primary-6"
-                path={[id]}
-                value={meTypeNavValue[id]}
-                onValueChange={onValueChange}
-              >
-                <NeuronCompositionTitle composition={normalizedComposition} title={title}>
-                  <NeuronCompositionSubTitle />
-                </NeuronCompositionTitle>
-              </TreeNavItem>
-            );
-          })}
-        </Accordion.Root>
+          {({ composition: renderedComposition, title, trigger }) => (
+            <NeuronCompositionTitle
+              composition={renderedComposition}
+              title={title}
+              trigger={trigger}
+            >
+              {({ composition: nestedComposition, title: nestedTitle, trigger: nestedTrigger }) => (
+                <NeuronCompositionSubTitle
+                  composition={nestedComposition}
+                  title={nestedTitle}
+                  trigger={nestedTrigger}
+                />
+              )}
+            </NeuronCompositionTitle>
+          )}
+        </TreeNav>
       )}
     </>
   );

@@ -1,18 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
-import * as Accordion from '@radix-ui/react-accordion';
 import { Button } from 'antd';
 import { MinusOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import { handleNavValueChange } from './util';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
-import TitleComponentProps from '@/components/BrainRegionSelector/types';
+import { TitleComponentProps } from './types';
 import { classNames } from '@/util/utils';
 import ColorBox from '@/components/ColorBox';
 import { BrainIcon, AngledArrowIcon } from '@/components/icons';
-import TreeNavItem, { NavValue } from '@/components/TreeNavItem';
+import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {
   brainRegionsAtom,
-  brainRegionIdAtom,
   setBrainRegionIdAtom,
   meshDistributionsAtom,
 } from '@/state/brain-regions';
@@ -55,7 +53,7 @@ function CapitalizedTitle({
   onClick = () => {},
   title,
   selectedId,
-  children, // The Accordion.Trigger
+  trigger, // The Accordion.Trigger
 }: TitleComponentProps) {
   return (
     <div
@@ -73,7 +71,7 @@ function CapitalizedTitle({
       <span className={classNames(selectedId === id && 'text-white', 'capitalize mr-auto')}>
         {title}
       </span>
-      {children}
+      {trigger}
       {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
     </div>
   );
@@ -85,7 +83,7 @@ function UppercaseTitle({
   onClick = () => {},
   title,
   selectedId,
-  children, // The Accordion.Trigger
+  trigger, // The Accordion.Trigger
 }: TitleComponentProps) {
   return (
     <div
@@ -103,7 +101,7 @@ function UppercaseTitle({
       <span className={classNames(selectedId === id && 'text-white', 'uppercase text-lg mr-auto')}>
         {title}
       </span>
-      {children}
+      {trigger}
       {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
     </div>
   );
@@ -111,7 +109,6 @@ function UppercaseTitle({
 
 export default function BrainRegions() {
   const brainRegions = useAtomValue(brainRegionsAtom);
-  const brainRegionId = useAtomValue(brainRegionIdAtom);
   const setBrainRegionId = useSetAtom(setBrainRegionIdAtom);
 
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
@@ -153,34 +150,39 @@ export default function BrainRegions() {
                 placeholder="Search region..."
               />
             </div>
-            <Accordion.Root
-              type="multiple"
-              className="-ml-5 divide-y divide-primary-7"
-              value={Object.keys(brainRegionsNavValue)}
-              onValueChange={(newValue) => onValueChange(newValue, [])}
+            <TreeNav
+              items={brainRegions}
+              onValueChange={onValueChange}
+              value={brainRegionsNavValue}
+              className="divide-y divide-primary-6"
             >
-              {brainRegions.map(({ colorCode, id, title, ...props }) => (
-                <TreeNavItem
-                  className="ml-5 divide-y divide-primary-6"
+              {({ colorCode, id, title, selectedId, trigger }) => (
+                <UppercaseTitle
+                  onClick={setBrainRegionId}
+                  colorCode={colorCode}
                   id={id}
-                  key={id}
-                  selectedId={brainRegionId}
-                  value={brainRegionsNavValue[id]}
-                  onValueChange={onValueChange}
-                  path={[id]}
-                  {...props} // eslint-disable-line react/jsx-props-no-spreading
+                  title={title}
+                  selectedId={selectedId}
+                  trigger={trigger}
                 >
-                  <UppercaseTitle
-                    colorCode={colorCode}
-                    id={id}
-                    onClick={() => setBrainRegionId(id)}
-                    title={title}
-                  >
-                    <CapitalizedTitle onClick={(itemId) => setBrainRegionId(itemId)} />
-                  </UppercaseTitle>
-                </TreeNavItem>
-              ))}
-            </Accordion.Root>
+                  {({
+                    colorCode: nestedColorCode,
+                    id: nestedId,
+                    title: nestedTitle,
+                    trigger: nestedTrigger,
+                  }) => (
+                    <CapitalizedTitle
+                      onClick={setBrainRegionId}
+                      colorCode={nestedColorCode}
+                      id={nestedId}
+                      title={nestedTitle}
+                      selectedId={selectedId}
+                      trigger={nestedTrigger}
+                    />
+                  )}
+                </UppercaseTitle>
+              )}
+            </TreeNav>
           </div>
         </div>
       )}

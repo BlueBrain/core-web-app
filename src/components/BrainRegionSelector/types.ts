@@ -1,14 +1,20 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { MeshDistribution } from '@/types/atlas';
 
-type TitleComponentProps = {
+export type TitleComponentProps = {
   colorCode?: string;
-  children?: ReactElement;
+  trigger: ReactNode;
   distributions?: MeshDistribution[] | null;
   id?: string;
   onClick?: (id: string) => void;
   title?: string;
   selectedId?: string;
+  children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
 
-export default TitleComponentProps;
+export type CompositionListProps = {
+  composition: number;
+  title: string;
+  trigger: ReactNode;
+  children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+};

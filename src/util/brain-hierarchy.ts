@@ -1,6 +1,6 @@
+import { TreeItem } from 'performant-array-to-tree';
 import { Composition, Node } from '@/types/atlas';
 import { BrainRegionURI, CompositionOverridesWorkflowConfig } from '@/types/nexus';
-import { TreeChildren } from '@/components/TreeNavItem';
 
 const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -18,9 +18,9 @@ export type RegionFullPathType = {
  *
  * @returns {RegionFullPathType[]} path - List of path.
  */
-export function getBottomUpPath(hierarchy: TreeChildren[], nodeId: string): RegionFullPathType[] {
+export function getBottomUpPath(hierarchy: TreeItem[], nodeId: string): RegionFullPathType[] {
   // credit https://gist.github.com/sachinpatel88/649f7643010dd9707a2b840a824dc06d
-  function getPaths(nestedObj: TreeChildren[], isObjectSelectedCB: any) {
+  function getPaths(nestedObj: TreeItem[], isObjectSelectedCB: any) {
     if (!nestedObj) return;
 
     const paths: RegionFullPathType[][] = [];
