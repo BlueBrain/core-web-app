@@ -1,4 +1,4 @@
-.feedback-button {
+.feedbackButton {
   position: fixed;
   right: 0;
   top: 50%;
@@ -8,16 +8,20 @@
   transform: translateX(32%) translateY(-50%) rotate(-90deg);
   font-size: 18px;
   height: fit-content;
+  z-index: 100;
+  padding: 4px 15px;
+  border-radius: 6px;
 }
 
-.feedback-modal {
-  position: fixed;
+.feedbackModal {
+  position: fixed !important;
   right: 0;
-  top: calc(50% - 150px);
+  top: calc(50% - 150px) !important;
   height: 200px;
+  z-index: 100;
 }
 
-.feedback-text-area {
+.feedbackTextarea {
   margin-top: 10px;
   min-height: 150px !important;
 }

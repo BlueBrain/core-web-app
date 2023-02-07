@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Form, Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import { useSession } from 'next-auth/react';
 import postIssue from 'src/api/jira';
 import useNotification from '@/hooks/notifications';
@@ -42,9 +42,13 @@ export default function Feedback() {
   return (
     <>
       {!!feedbackButton && (
-        <Button onClick={() => setFeedbackButton(false)} className={styles['feedback-button']}>
+        <button
+          type="button"
+          onClick={() => setFeedbackButton(false)}
+          className={styles.feedbackButton}
+        >
           Feedback
-        </Button>
+        </button>
       )}
 
       <Modal
@@ -52,7 +56,7 @@ export default function Feedback() {
         onCancel={handleCancel}
         onOk={handleSubmit}
         okText="Submit"
-        className={styles['feedback-modal']}
+        className={styles.feedbackModal}
       >
         <div style={{ maxWidth: '95%' }}>
           <Form initialValues={{ remember: false }}>
@@ -69,7 +73,7 @@ export default function Feedback() {
               rules={[{ required: true, message: 'Description required' }]}
             >
               <Input.TextArea
-                className={styles['feedback-text-area']}
+                className={styles.feedbackTextarea}
                 onChange={(v) => setTitle(v.currentTarget.value)}
                 value={description}
               />
