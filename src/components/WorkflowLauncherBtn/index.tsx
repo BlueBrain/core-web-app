@@ -14,6 +14,7 @@ type Props = {
   workflowName?: string;
   onLaunchingChange?: any;
   className?: string;
+  disabled?: boolean;
 };
 
 export default function WorkflowLauncher({
@@ -21,6 +22,7 @@ export default function WorkflowLauncher({
   workflowName = WORKFLOW_TEST_TASK_NAME,
   onLaunchingChange = () => {},
   className = '',
+  disabled = false,
 }: Props) {
   const [launching, setLaunching] = useState(false);
   const { data: session } = useSession();
@@ -47,11 +49,21 @@ export default function WorkflowLauncher({
     setLaunching(false);
   }, [session, workflowName, workflowConfig, onLaunchingChange]);
 
+  const buttonClass = classNames(
+    'flex-auto text-white h-12 px-8',
+    className,
+    disabled ? 'bg-slate-400 cursor-not-allowed' : 'bg-secondary-2'
+  );
+
+  const buttonTooltip = disabled ? 'Select at least one step to build' : 'Build step(s)';
+
   return (
     <button
       onClick={launchBbpWorkflow}
       type="button"
-      className={classNames('flex-auto bg-secondary-2 text-white h-12 px-8', className)}
+      className={buttonClass}
+      disabled={disabled}
+      title={buttonTooltip}
     >
       {launching ? 'Launching...' : buttonText}
     </button>
