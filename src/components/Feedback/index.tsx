@@ -63,18 +63,18 @@ export default function Feedback() {
             <Form.Item
               label="Title"
               name="title"
-              rules={[{ required: true, message: 'Please input the title' }]}
+              rules={[{ required: true, message: 'The title is required.' }]}
             >
-              <Input onChange={(v) => setDescription(v.currentTarget.value)} value={title} />
+              <Input onChange={(v) => setTitle(v.currentTarget.value)} value={title} />
             </Form.Item>
             <Form.Item
               label="Description"
               name="description"
-              rules={[{ required: true, message: 'Description required' }]}
+              rules={[{ required: true, message: 'The description is required.' }]}
             >
               <Input.TextArea
                 className={styles.feedbackTextarea}
-                onChange={(v) => setTitle(v.currentTarget.value)}
+                onChange={(v) => setDescription(v.currentTarget.value)}
                 value={description}
               />
             </Form.Item>
