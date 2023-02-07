@@ -98,23 +98,6 @@ const updatedCompositionAtom = atom<Composition | null>(null);
 
 export const brainRegionIdAtom = atom<string | null>(null);
 
-const nonLeafBrainRegionIdSetAtom = atom<Promise<Set<string> | null>>(async (get) => {
-  const brainRegionFlatList = await get(brainRegionFlatListAtom);
-
-  if (!brainRegionFlatList) return null;
-
-  return new Set(brainRegionFlatList.map((node) => node.parentId).filter(Boolean) as string[]);
-});
-
-export const isLeafNodeAtom = atom<Promise<Boolean | null>>(async (get) => {
-  const brainRegionId = get(brainRegionIdAtom);
-  const nonLeafBrainRegionIdSet = await get(nonLeafBrainRegionIdSetAtom);
-
-  if (!brainRegionId || !nonLeafBrainRegionIdSet) return null;
-
-  return !nonLeafBrainRegionIdSet.has(brainRegionId);
-});
-
 export const setCompositionAtom = atom(null, (get, set, composition: Composition) => {
   const brainRegionId = get(brainRegionIdAtom);
 

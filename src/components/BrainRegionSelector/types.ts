@@ -12,6 +12,28 @@ export type TitleComponentProps = {
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
 
+export type NeuronCompositionItem = {
+  about: string;
+  composition: number;
+  id: string;
+  title?: string;
+  isExpanded: boolean;
+  parentId: string;
+  trigger: ReactNode;
+};
+
+export type CompositionTitleProps = {
+  title?: string;
+  isExpanded: boolean;
+  composition: number;
+  onSliderChange: (value: number | null) => void;
+  max: number;
+  isLocked: boolean;
+  setLockedFunc: () => void;
+  trigger: ReactNode;
+  children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+};
+
 export type CompositionListProps = {
   composition: number;
   title: string;

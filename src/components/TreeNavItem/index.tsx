@@ -1,6 +1,9 @@
+'use client';
+
 import { ReactElement } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
+import _ from 'lodash';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
 import { classNames } from '@/util/utils';
 import styles from './tree-nav-item.module.css';
@@ -34,6 +37,7 @@ export function TreeNavItem({
       {children &&
         children({
           id,
+          value,
           ...props,
           trigger: items?.length ? (
             <Accordion.Trigger
@@ -64,6 +68,7 @@ export function TreeNavItem({
             // children may return another render-prop
             const render = children({
               id: itemId,
+              value,
               items: nestedItems,
               ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
             });
@@ -75,6 +80,7 @@ export function TreeNavItem({
                 items={nestedItems}
                 className={className}
                 value={value?.[itemId] ?? null}
+                isExpanded={value && _.has(value, itemId)}
                 onValueChange={onValueChange}
                 path={[...path, itemId]}
                 {...props} // eslint-disable-line react/jsx-props-no-spreading
@@ -111,7 +117,7 @@ export default function TreeNav({
   value,
   children,
 }: {
-  className: string;
+  className?: string;
   children: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
   items: TreeItem[];
   onValueChange: (newValue: string[], path: string[]) => void;
@@ -132,6 +138,7 @@ export default function TreeNav({
           className={classNames('ml-5', className)}
           path={[id]}
           value={value?.[id] ?? null}
+          isExpanded={value && _.has(value, id)}
           onValueChange={onValueChange}
           {...rest} // eslint-disable-line react/jsx-props-no-spreading
         >
