@@ -26,7 +26,7 @@ export default function Sidebar() {
       </div>
 
       {expanded && (
-        <ul className={styles.obsnav}>
+        <ul className={styles.obsNav}>
           <li>
             <Link href="/simulation-campaigns">
               <h1>Brain & Cells Annotations</h1>
@@ -65,7 +65,7 @@ export default function Sidebar() {
           </li>
         </ul>
       )}
-      <ul className={styles.fixednav}>
+      <ul className={styles.fixedNav}>
         <li>
           <Link href="/">
             <h2>Profile</h2>

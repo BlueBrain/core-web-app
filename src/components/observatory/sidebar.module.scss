@@ -27,7 +27,7 @@
   }
 }
 
-.fixednav {
+.fixedNav {
   @apply absolute bottom-0 left-2;
   li {
     @apply transition;
@@ -47,6 +47,7 @@
   li:nth-last-child(-n + 2) {
     @apply relative right-96;
   }
+  overflow: hidden;
 }
 // Expanded Sidebar styles
 .expanded {
@@ -63,7 +64,7 @@
     }
   }
 
-  .fixednav {
+  .fixedNav {
     @apply mb-0 w-80;
     li:nth-last-child(-n + 2) {
       @apply bg-primary-7 mt-2;
@@ -83,9 +84,10 @@
         @apply w-full grid gap-0 grid-cols-6;
       }
     }
+    overflow: visible;
   }
 
-  .obsnav {
+  .obsNav {
     @apply mt-10;
     li {
       @apply mt-10 w-72 mx-auto;
@@ -130,7 +132,7 @@
         @apply left-[10px];
       }
     }
-    .fixednav {
+    .fixedNav {
       li {
         @apply w-72 ml-1 p-2;
       }
