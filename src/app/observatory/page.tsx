@@ -7,7 +7,7 @@ import { basePath } from '@/config';
 import styles from './observatory.module.scss';
 
 export default function Observatory() {
-  const bgUrl = `url(${basePath}/images/img_3d-interactive-brain_placeholder.jpg)`;
+  const bgUrl = `url(${basePath}/images/img_3d-interactive-brain_placeholder.jpg) no-repeat`;
   return (
     <div className={styles.container}>
       <div className={styles.observatoryheader}>
@@ -47,7 +47,7 @@ export default function Observatory() {
           url="/simulation-campaigns"
         />
       </div>
-      <div className={styles.content} style={{ background: bgUrl }} />
+      <div className={styles.content} style={{ background: bgUrl, backgroundSize: 'cover' }} />
       <div className={`${styles.info} text-sm`} style={{ paddingBottom: 12 }}>
         <h1 className="text-lg">Title</h1>
         <div>

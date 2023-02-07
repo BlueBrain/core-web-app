@@ -8,7 +8,6 @@ import {
 } from '@ant-design/icons';
 import { useState } from 'react';
 import Link from '@/components/Link';
-import { basePath } from '@/config';
 import styles from '@/components/observatory/sidebar.module.scss';
 
 export default function Sidebar() {
@@ -23,13 +22,13 @@ export default function Sidebar() {
           style={{ color: 'white' }}
           icon={expanded ? <MinusOutlined /> : <PlusOutlined />}
         />
-        <Link href={`${basePath}/observatory`}>The Observatory</Link>
+        <Link href="/observatory">The Observatory</Link>
       </div>
 
       {expanded && (
         <ul className={styles.obsnav}>
           <li>
-            <Link href={`${basePath}/simulation-campaigns`}>
+            <Link href="/simulation-campaigns">
               <h1>Brain & Cells Annotations</h1>
               <ArrowRightOutlined />
               <p>
@@ -38,7 +37,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link href={`${basePath}/simulation-campaigns`}>
+            <Link href="/simulation-campaigns">
               <h1>Experimental Data</h1>
               <ArrowRightOutlined />
               <p>
@@ -47,7 +46,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link href={`${basePath}/simulation-campaigns`}>
+            <Link href="/simulation-campaigns">
               <h1>Digital Reconstructions</h1>
               <ArrowRightOutlined />
               <p>
@@ -56,7 +55,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link href={`${basePath}/simulation-campaigns`}>
+            <Link href="/simulation-campaigns">
               <h1>Simulations</h1>
               <ArrowRightOutlined />
               <p>
@@ -80,13 +79,13 @@ export default function Sidebar() {
           </Link>
         </li>
         <li className={styles.hiddenWhenCollapse}>
-          <Link href={`${basePath}/brain-factory/load-brain-config`}>
+          <Link href="/brain-factory/load-brain-config">
             <h2>Brain Factory</h2>
             <ArrowRightOutlined />
           </Link>
         </li>
         <li className={styles.hiddenWhenCollapse}>
-          <Link href={`${basePath}/virtual-lab`}>
+          <Link href="/virtual-lab">
             <h2>Virtual Laboratory</h2>
             <ArrowRightOutlined />
           </Link>
