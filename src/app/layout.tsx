@@ -34,11 +34,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <JotaiProvider>
           <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={5 * 60}>
             <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
-              <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-                <body>{children}</body>
-              </ErrorBoundary>
-              <NotificationProvider />
-              <Feedback />
+              <body>
+                <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>
+
+                <Feedback />
+
+                <NotificationProvider />
+              </body>
             </html>
           </SessionProvider>
         </JotaiProvider>
