@@ -2,7 +2,7 @@ import Icon, { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { useMemo } from 'react';
-import AtlasVisualizationAtom from '@/state/atlas';
+import AtlasVisualizationAtom from '@/state/brain-factory/atlas';
 import LoadingIcon from '@/components/icons/LoadingIcon';
 import { MeshDistribution } from '@/types/atlas';
 

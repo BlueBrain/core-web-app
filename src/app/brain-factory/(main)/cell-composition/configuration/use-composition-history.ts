@@ -3,7 +3,7 @@ import { useAtom, useSetAtom } from 'jotai/react';
 import { atom } from 'jotai/vanilla';
 
 import { Composition } from '@/types/atlas';
-import { setCompositionAtom } from '@/state/brain-regions';
+import { setCompositionAtom } from '@/state/brain-factory/brain-regions';
 
 const compositionHistoryAtom = atom<Composition[]>([]);
 const compositionHistoryIndexAtom = atom<number>(0);

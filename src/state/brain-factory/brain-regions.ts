@@ -1,11 +1,11 @@
 import { atom } from 'jotai/vanilla';
 import { arrayToTree } from 'performant-array-to-tree';
 
-import sessionAtom from './session';
+import sessionAtom from '@/state/session';
 import {
   configPayloadAtom,
   setCompositionOverridesAtom,
-} from '@/state/brain-model-config/cell-composition';
+} from '@/state/brain-factory/brain-model-config/cell-composition';
 import {
   BrainRegion,
   BrainRegionWOComposition,

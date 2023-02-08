@@ -3,7 +3,7 @@
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { useEffect } from 'react';
 import ThreeDeeView from '@/components/ThreeDeeView';
-import AtlasVisualizationAtom from '@/state/atlas';
+import AtlasVisualizationAtom from '@/state/brain-factory/atlas';
 
 export default function InteractiveView() {
   const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);

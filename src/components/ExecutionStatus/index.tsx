@@ -3,8 +3,8 @@ import { Checkbox } from 'antd';
 
 import { useSetAtom } from 'jotai/react';
 import StepItem from '@/components/ExecutionStatus/StepItem';
-import { statusStructure, StatusStructureItem } from '@/state/build-status';
-import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
+import { statusStructure, StatusStructureItem } from '@/state/brain-factory/build-status';
+import { cellCompositionStepsToBuildAtom } from '@/state/brain-factory/brain-model-config/cell-composition';
 
 type UncheckingWarningProps = {
   statusStructureState: StatusStructureItem[];

@@ -17,10 +17,10 @@ import {
   getSimulationTaskFiles,
   getVideoGenerationTaskFiles,
 } from '@/services/bbp-workflow';
-import { GROUPS as EXECUTION_GROUPS } from '@/state/build-status';
-import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
-import { configAtom } from '@/state/brain-model-config';
-import circuitAtom from '@/state/circuit';
+import { GROUPS as EXECUTION_GROUPS } from '@/state/brain-factory/build-status';
+import { cellCompositionStepsToBuildAtom } from '@/state/brain-factory/brain-model-config/cell-composition';
+import { configAtom } from '@/state/brain-factory/brain-model-config';
+import circuitAtom from '@/state/brain-factory/circuit';
 import { BrainModelConfigResource } from '@/types/nexus';
 
 function getCircuitUrl(config: BrainModelConfigResource | null): string {

@@ -1,7 +1,7 @@
 import { atom } from 'jotai/vanilla';
 
 import sessionAtom from '@/state/session';
-import { recentlyUsedConfigIdsAtom } from '@/state/brain-model-config';
+import { recentlyUsedConfigIdsAtom } from '@/state/brain-factory/brain-model-config';
 import { BrainModelConfigResource } from '@/types/nexus';
 import { fetchBrainModelConfigsByIds, queryES } from '@/api/nexus';
 import {

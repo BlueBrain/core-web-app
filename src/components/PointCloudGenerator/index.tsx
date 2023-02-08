@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Color } from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
-import AtlasVisualizationAtom from '@/state/atlas';
+import AtlasVisualizationAtom from '@/state/brain-factory/atlas';
 import { basePath } from '@/config';
 import {
   CELL_API_BASE_PATH,

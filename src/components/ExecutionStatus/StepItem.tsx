@@ -4,7 +4,7 @@ import { Atom } from 'jotai/vanilla';
 import { useAtom } from 'jotai/react';
 import { Spin } from 'antd';
 
-import { STATUS, StatusResponse } from '@/state/build-status';
+import { STATUS, StatusResponse } from '@/state/brain-factory/build-status';
 import { classNames } from '@/util/utils';
 
 type Props = {

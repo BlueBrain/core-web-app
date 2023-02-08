@@ -7,7 +7,7 @@ import { WORKFLOW_CIRCUIT_BUILD_TASK_NAME } from '@/services/bbp-workflow/config
 import { classNames } from '@/util/utils';
 import LauncherModal from '@/components/BuildModelBtn/LauncherModal';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
-import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
+import { cellCompositionStepsToBuildAtom } from '@/state/brain-factory/brain-model-config/cell-composition';
 
 type BuildModelBtnProps = {
   className?: string;

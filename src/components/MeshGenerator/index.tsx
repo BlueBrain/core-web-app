@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai/react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
-import AtlasVisualizationAtom from '@/state/atlas';
+import AtlasVisualizationAtom from '@/state/brain-factory/atlas';
 import BrainRegionMesh from '@/components/BrainRegionMesh';
 
 export default function MeshGenerator() {

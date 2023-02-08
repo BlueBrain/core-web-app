@@ -11,7 +11,11 @@ import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util'
 import { SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import { Composition, CompositionUnit } from '@/types/atlas';
-import { brainRegionAtom, densityOrCountAtom, compositionAtom } from '@/state/brain-regions';
+import {
+  brainRegionAtom,
+  densityOrCountAtom,
+  compositionAtom,
+} from '@/state/brain-factory/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType, formatNumber } from '@/util/common';

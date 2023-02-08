@@ -10,7 +10,7 @@ import { themeAtom, Theme } from '@/state/theme';
 import BrainIcon from '@/components/icons/Brain';
 import AnalysisIcon from '@/components/icons/Analysis';
 import SettingsIcon from '@/components/icons/Settings';
-import { cellCompositionHasChanged } from '@/state/brain-model-config/cell-composition';
+import { cellCompositionHasChanged } from '@/state/brain-factory/brain-model-config/cell-composition';
 
 const COMMON_TAB_CLASSNAME = 'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl';
 

@@ -16,7 +16,7 @@ import {
   compositionAtom,
   densityOrCountAtom,
   setCompositionAtom,
-} from '@/state/brain-regions';
+} from '@/state/brain-factory/brain-regions';
 import { BrainRegionIcon, LockIcon, LockOpenIcon } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
 import { CompositionDataSet } from '@/app/brain-factory/(main)/cell-composition/configuration/types';

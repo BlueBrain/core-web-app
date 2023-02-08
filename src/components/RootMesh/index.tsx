@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai/react';
 import MeshGenerator from '@/components/MeshGenerator';
 import PointCloudGenerator from '@/components/PointCloudGenerator';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
-import AtlasVisualizationAtom from '@/state/atlas';
+import AtlasVisualizationAtom from '@/state/brain-factory/atlas';
 
 export default function RootMesh() {
   // make should be visible meshes a union of both meshes and point clouds

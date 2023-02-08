@@ -9,7 +9,7 @@ import Collapse from './Collapse';
 import BrainConfigEntry from './BrainConfigEntry';
 import FooterLink from './FooterLink';
 import { recentConfigsAtom, publicConfigsAtom, personalConfigsAtom } from './state';
-import { configAtom } from '@/state/brain-model-config';
+import { configAtom } from '@/state/brain-factory/brain-model-config';
 import HomeIcon from '@/components/icons/Home';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';

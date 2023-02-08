@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { classNames } from '@/util/utils';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
-import { brainRegionsAtom, brainRegionIdAtom } from '@/state/brain-regions';
+import { brainRegionsAtom, brainRegionIdAtom } from '@/state/brain-factory/brain-regions';
 
 export default function CollapsedBrainRegionsSidebar({
   setIsRegionSelectorOpen,

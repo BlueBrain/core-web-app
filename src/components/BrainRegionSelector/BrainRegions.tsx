@@ -13,7 +13,7 @@ import {
   brainRegionsAtom,
   setBrainRegionIdAtom,
   meshDistributionsAtom,
-} from '@/state/brain-regions';
+} from '@/state/brain-factory/brain-regions';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';
 import styles from './brain-region-selector.module.css';
 

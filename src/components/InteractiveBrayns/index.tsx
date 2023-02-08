@@ -8,7 +8,7 @@ import BraynsScene from '@/components/BraynsScene';
 import { BraynsSceneController } from '@/components/BraynsScene/types';
 import Spinner from '@/components/Spinner';
 import { SignInButton } from '@/components/LoginButton/buttons';
-import AtlasVisualizationAtom from '@/state/atlas';
+import AtlasVisualizationAtom from '@/state/brain-factory/atlas';
 import styles from './interactive-brayns.module.css';
 
 export default function InteractiveBraynsView() {

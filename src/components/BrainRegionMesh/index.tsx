@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
-import AtlasVisualizationAtom from '@/state/atlas';
+import AtlasVisualizationAtom from '@/state/brain-factory/atlas';
 import { createHeaders } from '@/util/utils';
 import useNotification from '@/hooks/notifications';
 
