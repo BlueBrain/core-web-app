@@ -1,17 +1,12 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { BrainRegionsSidebar, RegionDetailsSidebar } from '@/components/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
-import Tabs from '@/components/BrainFactoryTabs';
-import BuildModelBtn from '@/components/BuildModelBtn';
-import { themeAtom } from '@/state/theme';
-import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import useSessionState from '@/hooks/session';
-import { WORKFLOW_SIMULATION_TASK_NAME } from '@/services/bbp-workflow/config';
+import TopTabs from '@/components/TopTabs';
 import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
@@ -26,10 +21,6 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
   useBrainModelConfigState();
   useSessionState();
   useAuth(true);
-
-  const theme = useAtomValue(themeAtom);
-
-  const bgClassName = theme === 'light' ? styles.bgThemeLight : styles.bgThemeDark;
 
   return (
     <div className={styles.container}>
@@ -51,22 +42,12 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
         </ErrorBoundary>
       </div>
 
-      <div className={`${styles.tabsContainer} ${bgClassName}`}>
-        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <Tabs>
-            <BuildModelBtn className="w-[250px]" />
-            <div className="mt-px w-[250px] flex">
-              <WorkflowLauncherBtn
-                buttonText="New in silico experiment"
-                workflowName={WORKFLOW_SIMULATION_TASK_NAME}
-              />
-            </div>
-          </Tabs>
-        </ErrorBoundary>
+      <div className={styles.tabsContainer}>
+        <TopTabs />
       </div>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className={`${styles.contentContainer} ${bgClassName}`}>{children}</div>
+        <div className={styles.contentContainer}>{children}</div>
       </ErrorBoundary>
     </div>
   );

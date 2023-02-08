@@ -3,7 +3,7 @@
   grid-template-columns: min-content min-content auto;
   grid-template-rows: 3rem calc(100vh - 3rem);
   grid-template-areas:
-    'brain-config-selector brain-region-selector tabs'
+    'brain-config-selector brain-region-selector top-tabs'
     'brain-config-selector brain-region-selector content-container';
 }
 
@@ -14,19 +14,12 @@
 .brainSelectorContainer {
   grid-area: brain-region-selector;
 }
+
 .tabsContainer {
-  grid-area: tabs;
+  grid-area: top-tabs;
 }
 
 .contentContainer {
   grid-area: content-container;
   position: relative;
-}
-
-.bgThemeLight {
-  @apply bg-neutral-1;
-}
-
-.bgThemeDark {
-  background-color: black;
 }
