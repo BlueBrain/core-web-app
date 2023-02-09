@@ -1,4 +1,5 @@
 import { Session } from 'next-auth';
+import { captureException } from '@sentry/nextjs';
 
 import { nexus } from '@/config';
 import {
@@ -10,18 +11,20 @@ import {
 } from '@/util/nexus';
 import {
   BrainModelConfig,
-  FileMetadata,
+  BrainModelConfigResource,
   CellCompositionConfig,
   CellPositionConfig,
-  EntityResource,
-  BrainModelConfigResource,
   Entity,
+  EntityResource,
+  FileMetadata,
+  GeneratorTaskActivityResource,
 } from '@/types/nexus';
 import {
-  getEntitiesByIdsQuery,
-  getPublicBrainModelConfigsQuery,
-  getPersonalBrainModelConfigsQuery,
   getBrainModelConfigsByNameQuery,
+  getEntitiesByIdsQuery,
+  getGeneratorTaskActivityQuery,
+  getPersonalBrainModelConfigsQuery,
+  getPublicBrainModelConfigsQuery,
 } from '@/queries/es';
 import { createHeaders } from '@/util/utils';
 
@@ -197,7 +200,9 @@ async function cloneOrCreateCellPositionConfig(id: string | null, session: Sessi
   }
 
   // create a new one
-  const config = createCellPositionConfig({ id: createId('cellpositionconfig') });
+  const payload = {}; // TODO: replace with a valid default value
+  const payloadMetadata = await createJsonFile(payload, 'cell-position-config.json', session);
+  const config = createCellPositionConfig({ id: createId('cellpositionconfig'), payloadMetadata });
   return createResource(config, session);
 }
 
@@ -301,4 +306,22 @@ export async function checkNameIfUniq(brainModelConfigName: string, session: Ses
   const sameNameConfigs = await queryES<Pick<BrainModelConfigResource, 'name'>>(query, session);
 
   return !sameNameConfigs.length;
+}
+
+export async function fetchGeneratorTaskActivity(
+  configId: string,
+  configRev: number,
+  session: Session
+): Promise<GeneratorTaskActivityResource | null> {
+  const query = getGeneratorTaskActivityQuery(configId, configRev);
+
+  const activities = await queryES<GeneratorTaskActivityResource>(query, session);
+
+  if (activities.length > 1) {
+    captureException(
+      new Error(`Config ${configId}, rev: ${configRev} has multiple generatorTaskActivities`)
+    );
+  }
+
+  return activities[0] ?? null;
 }

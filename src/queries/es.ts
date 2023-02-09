@@ -126,3 +126,15 @@ export const getBrainModelConfigsByNameQuery = (name: string) => ({
     },
   },
 });
+
+export const getGeneratorTaskActivityQuery = (configId: string, configRev: number) => ({
+  query: {
+    bool: {
+      must: [
+        { term: { '@type': 'GeneratorTaskActivity' } },
+        { term: { 'used.@id.keyword': configId } },
+        { term: { used_rev: configRev } },
+      ],
+    },
+  },
+});

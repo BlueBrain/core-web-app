@@ -190,6 +190,112 @@ export type CellCompositionConfigPayload = {
 
 export interface CellPositionConfig extends Entity {
   name: string;
+  generatorName: 'me_type_property';
+  description: string;
+  distribution: {
+    '@type': 'DataDownload';
+    name: string;
+    encodingFormat: string;
+    contentSize: {
+      unitCode: 'bytes';
+      value: number;
+    };
+    contentUrl: string;
+    digest: {
+      algorithm: string;
+      value: string;
+    };
+  };
 }
 
 export interface CellPositionConfigResource extends ResourceMetadata, CellPositionConfig {}
+
+export interface GeneratorTaskActivity extends Entity {
+  generated: {
+    '@id': string;
+    '@type': string | string[];
+  };
+  startedAtTime: string;
+  used: {
+    '@id': string;
+    '@type': string | string[];
+  };
+  used_rev: number;
+  wasInfluencedBy: {
+    '@id': string;
+    '@type': string | string[];
+  };
+}
+
+export interface GeneratorTaskActivityResource extends ResourceMetadata, GeneratorTaskActivity {}
+
+export interface CellComposition extends Entity {
+  about: string[];
+  atlasRelease: {
+    '@id': string;
+    '@type': ['AtlasRelease', 'BrainAtlasRelease'];
+  };
+  atlasSpatialReferenceSystem: {
+    '@id': string;
+    '@type': 'AtlasSpatialReferenceSystem';
+  };
+  brainLocation: {
+    '@type': 'BrainLocation';
+    brainRegion: {
+      '@id': string;
+      label: string;
+    };
+  };
+  cellCompositionSummary: {
+    '@id': string;
+    '@type': 'CellCompositionSummary';
+  }[];
+  cellCompositionVolume: {
+    '@id': string;
+    '@type': 'CellCompositionVolume';
+  };
+  contribution: [
+    {
+      '@type': 'Contribution';
+      agent: {
+        '@id': string;
+        '@type': ['Agent', 'Person'];
+        name: string;
+      };
+    }
+  ];
+  description: string;
+  name: string;
+}
+
+export interface CellCompositionResource extends ResourceMetadata, CellComposition {}
+
+export interface DetailedCircuit extends Entity {
+  atlasRelease: {
+    '@id': string;
+    '@type': ['AtlasRelease', 'BrainAtlasRelease'];
+  };
+  brainLocation: {
+    '@type': 'BrainLocation';
+    brainRegion: {
+      '@id': string;
+      label: string;
+      notation: string;
+    };
+  };
+  circuitConfigPath: {
+    '@type': 'DataDownload';
+    url: string;
+  };
+  name: string;
+  description: string;
+  subject: {
+    '@type': 'Subject';
+    species: {
+      '@id': string;
+      label: string[];
+    };
+  };
+}
+
+export interface DetailedCircuitResource extends ResourceMetadata, DetailedCircuit {}

@@ -130,14 +130,14 @@ export default function BrainRegions() {
       ) : (
         <div className="flex flex-1 flex-col overflow-y-auto px-7 py-6 min-w-[300px]">
           <div className="grid">
-            <div className="flex justify-between mb-7">
+            <div className="flex justify-between mb-7 items-start">
               <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
                 <BrainIcon style={{ height: '1em' }} />
                 <span>Brain region</span>
               </div>
               <Button
-                className="p-2"
                 type="text"
+                size="small"
                 icon={<MinusOutlined style={{ color: 'white' }} />}
                 onClick={() => setIsRegionSelectorOpen(false)}
               />

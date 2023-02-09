@@ -11,11 +11,14 @@ import {
   fetchFileMetadataByUrl,
   updateJsonFileByUrl,
   updateResource,
+  fetchGeneratorTaskActivity,
 } from '@/api/nexus';
 import {
   CellCompositionConfigPayload,
   CellCompositionConfigResource,
+  CellCompositionResource,
   CompositionOverridesWorkflowConfig,
+  GeneratorTaskActivityResource,
 } from '@/types/nexus';
 import { debounce } from '@/util/common';
 import { setRevision } from '@/util/nexus';
@@ -181,17 +184,17 @@ const configPayloadDefaults = {
   INPUTS: [
     {
       name: 'base_composition_summary',
-      type: 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/f5094a3a-5dff-45d7-9b04-5db1a162e01a?rev=1',
+      type: 'Dataset' as 'Dataset',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/81290874-fa53-424b-b5f2-2516f35e24d4',
     },
     {
       name: 'base_density_distribution',
-      type: 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/d6485af7-820c-465b-aacc-e1110b2b8d95?rev=1',
+      type: 'Dataset' as 'Dataset',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/celldensities/760b887c-759a-4ded-98e6-5d2712349eb2',
     },
     {
       name: 'atlas_release',
-      type: 'Dataset',
+      type: 'Dataset' as 'Dataset',
       id: 'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885?rev=2',
     },
   ],
@@ -217,10 +220,14 @@ export const setCompositionOverridesAtom = atom<
   }
 
   updatedConfigPayload[brainRegionUri] = {
-    ...(updatedConfigPayload[brainRegionUri] ?? {
+    // This is to replace inputs with the latest base composition summary and distributions
+    // TODO: revert back when configs are migrated to use the newest input params
+    // ...(updatedConfigPayload[brainRegionUri] ?? {
+    ...{
       variantDefinition: configPayloadDefaults.VARIANT_DEFINITION,
       inputs: configPayloadDefaults.INPUTS,
-    }),
+    },
+    jobConfiguration: {},
     configuration: {
       version: 1,
       base_atlas_density_dataset: configPayloadDefaults.BASE_ATLAS_DENSITY_DATASET,
@@ -239,3 +246,26 @@ export const createGetJobConfigAtom = (entityId: string) => {
 };
 
 export const cellCompositionStepsToBuildAtom = atom<CellCompositionStepGroupValues[]>([]);
+
+const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const config = await get(configAtom);
+
+    if (!session || !config) return null;
+
+    return fetchGeneratorTaskActivity(config['@id'], config._rev, session);
+  }
+);
+
+export const cellCompositionAtom = atom<Promise<CellCompositionResource | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const generatorTaskActivity = await get(generatorTaskActivityAtom);
+
+  if (!session || !generatorTaskActivity) return null;
+
+  return fetchResourceById<CellCompositionResource>(
+    generatorTaskActivity.generated['@id'],
+    session
+  );
+});

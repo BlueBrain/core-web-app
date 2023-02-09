@@ -78,3 +78,8 @@ export const getCellCompositionConfigIdAtom = selectAtom(
   configAtom,
   (config) => config?.configs?.cellCompositionConfig?.['@id'] ?? null
 );
+
+export const getCellPositionConfigIdAtom = selectAtom(
+  configAtom,
+  (config) => config?.configs?.cellPositionConfig?.['@id'] ?? null
+);

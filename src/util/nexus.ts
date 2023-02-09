@@ -123,16 +123,35 @@ export function createCellCompositionConfig({
 interface CreateCellPositionConfigProps {
   id?: string;
   name?: string;
+  payloadMetadata: FileMetadata;
 }
 export function createCellPositionConfig({
   id,
   name = 'Cell position generator configuration',
+  payloadMetadata,
 }: CreateCellPositionConfigProps): PartialBy<CellPositionConfig, '@id'> {
   return {
     '@context': 'https://bbp.neuroshapes.org',
     '@type': ['CellPositionConfig', 'Entity'],
     '@id': id,
     name,
+    generatorName: 'me_type_property',
+    description: '',
+
+    distribution: {
+      '@type': 'DataDownload',
+      name: payloadMetadata._filename,
+      encodingFormat: payloadMetadata._mediaType,
+      contentSize: {
+        unitCode: 'bytes',
+        value: payloadMetadata._bytes,
+      },
+      contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+      digest: {
+        algorithm: payloadMetadata._digest._algorithm,
+        value: payloadMetadata._digest._value,
+      },
+    },
   };
 }
 

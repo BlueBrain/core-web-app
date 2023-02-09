@@ -10,7 +10,9 @@ import BrainConfigEntry from './BrainConfigEntry';
 import FooterLink from './FooterLink';
 import { recentConfigsAtom, publicConfigsAtom, personalConfigsAtom } from './state';
 import { configAtom } from '@/state/brain-model-config';
-import HomeIcon from '@/components/icons/Home';
+import { detailedCircuitAtom } from '@/state/brain-model-config/cell-position';
+import { UserOutlinedIcon, LinkIcon, HomeIcon } from '@/components/icons';
+import CopyTextBtn from '@/components/CopyTextBtn';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 
@@ -40,6 +42,36 @@ function BrainModelConfigName() {
   const brainModelConfig = useAtomValue(configAtom);
 
   return <span>{brainModelConfig?.name}</span>;
+}
+
+function BrainModelConfigDetails() {
+  const brainModelConfig = useAtomValue(configAtom);
+  const detailedCircuit = useAtomValue(detailedCircuitAtom);
+
+  return (
+    <div className="text-sm text-primary-2 mt-3">
+      <div className="flex justify-between">
+        <div>
+          <UserOutlinedIcon className="text-lg inline-block mr-2" />
+          <span className="align-middle">
+            {brainModelConfig?._createdBy?.split('/').reverse()[0]}
+          </span>
+        </div>
+
+        {!!detailedCircuit && (
+          <CopyTextBtn
+            text={detailedCircuit._self}
+            icon={<LinkIcon className="inline-block" />}
+            style={{ width: '110px' }}
+          >
+            Copy circuit URL
+          </CopyTextBtn>
+        )}
+      </div>
+
+      <p className="mt-3">{brainModelConfig?.description}</p>
+    </div>
+  );
 }
 
 type ConfigListProps = {
@@ -133,22 +165,26 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
       )}
 
       {isOpen && (
-        <div className="h-full overflow-y-scroll flex flex-col px-6 pt-4 pb-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl">
+        <div className="h-full overflow-y-scroll flex flex-col p-6">
+          <div className="flex gap-x-2 justify-between items-start">
+            <h2 className="text-xl overflow-hidden text-ellipsis">
               <Suspense fallback={null}>
                 <BrainModelConfigName />
               </Suspense>
             </h2>
             <Button
-              className="p-2"
               type="text"
+              size="small"
               icon={<MinusOutlined className="text-white" />}
               onClick={() => setIsOpen(false)}
             />
           </div>
 
-          <div className="my-8">
+          <Suspense fallback={null}>
+            <BrainModelConfigDetails />
+          </Suspense>
+
+          <div className="my-6">
             <div className="bg-primary-5 h-px" />
           </div>
 
