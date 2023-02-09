@@ -121,9 +121,9 @@ async function launchWorkflow(
     method: 'POST',
     body: data,
     headers,
-  }).catch(() => null);
+  });
   if (!workflowResponse?.ok) {
-    return null;
+    throw new Error(`Error launching workflow (${workflowResponse.status})`);
   }
   const nexusUrl = await workflowResponse.text();
   return nexusUrl;
