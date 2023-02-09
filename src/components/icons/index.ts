@@ -11,6 +11,7 @@ import LockOpenIcon from './LockOpenIcon';
 import ResetIcon from './ResetIcon';
 import UndoIcon from './UndoIcon';
 import UserOutlinedIcon from './UserOutlined';
+import { ZoomInIcon, ZoomOutIcon } from './Zoom';
 
 export {
   AngledArrowIcon,
@@ -26,4 +27,6 @@ export {
   ResetIcon,
   UndoIcon,
   UserOutlinedIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
 };

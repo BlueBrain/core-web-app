@@ -1,14 +1,31 @@
 import * as d3 from 'd3';
 import * as d3Sankey from 'd3-sankey';
+import * as d3Zoom from 'd3-zoom';
 
 function intern(value) {
   return value !== null && typeof value === 'object' ? value.valueOf() : value;
+}
+
+/**
+ * Returns a zoom event callback.
+ * @param {HTMLElement} g - The SVG "group" to apply the zoom to.
+ */
+function getZoomed(g) {
+  return (event) => {
+    const { transform } = event;
+
+    g.attr('transform', transform);
+    g.attr('stroke-width', 1 / transform.k);
+
+    return transform.k;
+  };
 }
 
 // https://observablehq.com/@d3/sankey
 // Modified to use a React.refObject.
 export default function sankey(
   ref,
+  onZoom,
   {
     links, // an iterable of node objects (typically [{id}, …]); implied by links if missing
     nodes, // an iterable of link objects (typically [{source, target}, …])
@@ -110,7 +127,9 @@ export default function sankey(
     .attr('viewBox', [0, 0, width, height])
     .attr('style', 'max-width: 100%; height: auto; height: intrinsic;');
 
-  const node = svg
+  const zoomWrapper = svg.append('g');
+
+  const node = zoomWrapper
     .append('g')
     .attr('stroke', nodeStroke)
     .attr('stroke-width', nodeStrokeWidth)
@@ -127,7 +146,7 @@ export default function sankey(
   if (G) node.attr('fill', ({ index: i }) => color(G[i]));
   if (Tt) node.append('title').text(({ index: i }) => Tt[i]);
 
-  const link = svg
+  const link = zoomWrapper
     .append('g')
     .attr('fill', 'none')
     .attr('stroke-opacity', linkStrokeOpacity)
@@ -173,7 +192,7 @@ export default function sankey(
     .call(Lt ? (path) => path.append('title').text(({ index: i }) => Lt[i]) : () => {});
 
   if (Tl)
-    svg
+    zoomWrapper
       .append('g')
       .attr('font-family', 'sans-serif')
       .attr('font-size', 10)
@@ -186,5 +205,20 @@ export default function sankey(
       .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
       .text(({ index: i }) => Tl[i]);
 
-  return Object.assign(svg.node(), { scales: { color } });
+  const zoomed = getZoomed(zoomWrapper);
+  const zoom = d3Zoom
+    .zoom()
+    .scaleExtent([1, 10])
+    .on('zoom', (x) => {
+      const k = zoomed(x); // Perform zoom, then return the zoom value.
+
+      onZoom(k);
+    });
+
+  svg.call(zoom);
+
+  return Object.assign(svg.node(), {
+    scales: { color },
+    zoom: (value) => svg.transition().call(zoom.scaleTo, value),
+  });
 }

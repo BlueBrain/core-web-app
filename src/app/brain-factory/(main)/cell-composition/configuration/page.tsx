@@ -1,20 +1,30 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, RefObject, Suspense, ReactNode } from 'react';
+import {
+  useCallback,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  RefObject,
+  ReactNode,
+  Suspense,
+} from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom, useAtomValue } from 'jotai/react';
 import { Button, Image, Tabs } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import sankey from './sankey';
 import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util';
+import DensityChart from './DensityChart';
+import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
-import { Composition, CompositionUnit } from '@/types/atlas';
+import { CompositionUnit } from '@/types/atlas';
 import { brainRegionAtom, densityOrCountAtom, compositionAtom } from '@/state/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
-import { switchStateType, formatNumber } from '@/util/common';
+import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
 
 function CellPosition() {
@@ -87,7 +97,7 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
       children: 'Percentage',
       isDisabled: true,
       callback: () => {
-        console.warn('Not implemented yet');
+        console.warn('Not implemented yet'); // eslint-disable-line no-console
       },
     },
     {
@@ -131,34 +141,6 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   );
 }
 
-type DensityChartProps = { className?: string; colorScale?: Function; data: Composition };
-
-function DensityChart({ className = '', colorScale, data }: DensityChartProps) {
-  const ref: RefObject<SVGSVGElement> = useRef(null);
-
-  useEffect(() => {
-    if (ref.current !== null) {
-      ref.current.innerHTML = ''; // Prevent duplication
-
-      const args = [
-        data,
-        {
-          nodeColorScale: colorScale,
-          linkColor: 'source',
-          linkTitle: (d: any) => `${d.source.label} → ${d.target.label}\n${d.source.value}`,
-          nodeGroup: (d: any) => d.id,
-          nodeLabel: (d: any) => `${d.label} (~${formatNumber(d.value)})`,
-          width: 860,
-        },
-      ];
-
-      sankey(ref, ...(args as any));
-    }
-  });
-
-  return <svg className={className} ref={ref} />;
-}
-
 // TODO: There's probaly a nice way to combine the different reducers here...
 // ... Including the sidebar composition reducer as well.
 function CellDensity() {
@@ -175,11 +157,14 @@ function CellDensity() {
     throw new Error(`There is no configuration data for the ${brainRegion?.title}`);
   }
 
+  const [zoom, setZoom] = useState(1);
+
   useEffect(() => {
     if (composition) {
       resetHistory(composition);
+      setZoom(1);
     }
-  }, [brainRegion?.id, resetHistory]);
+  }, [brainRegion?.id, resetHistory, composition]);
 
   const sankeyData = useMemo(
     () =>
@@ -223,11 +208,38 @@ function CellDensity() {
     },
   ];
 
+  // Prevent SVG from rendering whenever zoom changes
+  const ref: RefObject<SVGSVGElement & { zoom: (value: number) => void }> = useRef(null);
+
+  const densityChart = useMemo(
+    () =>
+      ref && (
+        <DensityChart
+          className="w-full"
+          colorScale={colorScale}
+          data={sankeyData}
+          onZoom={setZoom}
+          chartRef={ref}
+        />
+      ),
+    [colorScale, sankeyData, setZoom, ref]
+  );
+
   return (
     <>
       {sankeyData.links.length > 0 && (
-        <DensityChart className="w-full" colorScale={colorScale} data={sankeyData} />
+        <div className="grid gap-5">
+          <ZoomControl
+            onChange={(value: number) => {
+              setZoom(value);
+              ref?.current?.zoom(value);
+            }}
+            zoom={zoom}
+          />
+          {densityChart}
+        </div>
       )}
+      <CellDensityToolbar onReset={handleReset} />
       <Tabs
         // TODO: See whether Ant-D ConfigProvider can be used instead of renderTabBar
         renderTabBar={(props, DefaultTabBar) => (
@@ -235,7 +247,6 @@ function CellDensity() {
         )}
         items={sliderItems}
       />
-      <CellDensityToolbar onReset={handleReset} />
     </>
   );
 }
