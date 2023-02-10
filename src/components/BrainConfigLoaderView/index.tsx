@@ -1,13 +1,14 @@
 'use client';
 
-import { ReactNode, Suspense } from 'react';
+import { ReactNode, Suspense, useState, useCallback } from 'react';
 import { Button, ConfigProvider } from 'antd';
-import { useAtom, useAtomValue } from 'jotai/react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
+import debounce from 'lodash/debounce';
 
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
 import tableTheme from './antd-theme';
-import { searchTypeAtom, brainModelConfigListAtom } from './state';
+import { searchTypeAtom, brainModelConfigListAtom, searchStringAtom } from './state';
 import { CURATED_MODELS } from '@/components/BrainConfigPanel';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
@@ -75,6 +76,20 @@ type BrainConfigLoaderProps = {
 
 export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) {
   const [activeTabId, setActiveTabId] = useAtom(searchTypeAtom);
+  const setSearchString = useSetAtom(searchStringAtom);
+
+  const [searchInputValue, setSearchInputValue] = useState<string>('');
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setSearchStringDebounced = useCallback(
+    debounce((searchStr: string) => setSearchString(searchStr), 300),
+    [setSearchString]
+  );
+
+  const setSearch = (searchStr: string) => {
+    setSearchInputValue(searchStr);
+    setSearchStringDebounced(searchStr);
+  };
 
   return (
     <div className={styles.container}>
@@ -117,7 +132,12 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
                   <BrainModelConfigsCount />
                 </Suspense>
               </small>
-              <input className={styles.searchInput} placeholder="Search brain configuration..." />
+              <input
+                className={styles.searchInput}
+                placeholder="Search brain configuration..."
+                value={searchInputValue}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
 
             <Suspense>

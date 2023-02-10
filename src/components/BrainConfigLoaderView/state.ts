@@ -42,11 +42,11 @@ export const brainModelConfigListAtom = atom<Promise<BrainModelConfigResource[]>
   let query;
 
   if (searchType === 'public') {
-    query = getPublicBrainModelConfigsQuery();
+    query = getPublicBrainModelConfigsQuery(searchString);
   } else if (searchType === 'personal') {
-    query = getPersonalBrainModelConfigsQuery(searchString, session.user.username);
+    query = getPersonalBrainModelConfigsQuery(session.user.username, searchString);
   } else {
-    query = getArchiveBrainModelConfigsQuery();
+    query = getArchiveBrainModelConfigsQuery(searchString);
   }
 
   return queryES<BrainModelConfigResource>(query, session);

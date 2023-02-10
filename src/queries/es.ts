@@ -10,7 +10,36 @@ const idExistsFilter = {
   },
 };
 
-export const getPublicBrainModelConfigsQuery = () => ({
+// This expects a <field>.ngramtext field(s) to be defined in the ES index,
+// which is a custom configuration for the KG `dataset` index.
+function createSearchStringQueryFilter(searchString: string, fields: string[]) {
+  return {
+    bool: {
+      should: [
+        {
+          multi_match: {
+            query: searchString,
+            type: 'most_fields',
+            fields,
+            fuzziness: 'AUTO',
+            operator: 'and',
+            boost: 10,
+          },
+        },
+        {
+          multi_match: {
+            query: searchString,
+            type: 'most_fields',
+            fields: fields.map((field) => `${field}.ngramtext`),
+            fuzziness: 'AUTO',
+          },
+        },
+      ],
+    },
+  };
+}
+
+export const getPublicBrainModelConfigsQuery = (searchString: string = '') => ({
   size: DEFAULT_SIZE,
   query: {
     bool: {
@@ -26,12 +55,13 @@ export const getPublicBrainModelConfigsQuery = () => ({
           },
         },
         idExistsFilter,
-      ],
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
     },
   },
 });
 
-export const getPersonalBrainModelConfigsQuery = (searchString: string, username: string) => ({
+export const getPersonalBrainModelConfigsQuery = (username: string, searchString: string = '') => ({
   size: DEFAULT_SIZE,
   query: {
     bool: {
@@ -54,12 +84,13 @@ export const getPersonalBrainModelConfigsQuery = (searchString: string, username
           },
         },
         idExistsFilter,
-      ],
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
     },
   },
 });
 
-export const getArchiveBrainModelConfigsQuery = () => ({
+export const getArchiveBrainModelConfigsQuery = (searchString: string = '') => ({
   size: DEFAULT_SIZE,
   query: {
     bool: {
@@ -75,7 +106,8 @@ export const getArchiveBrainModelConfigsQuery = () => ({
           },
         },
         idExistsFilter,
-      ],
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
     },
   },
 });
