@@ -1,18 +1,18 @@
 .container {
   display: grid;
-  grid-template-columns: min-content min-content auto;
+  grid-template-columns: min-content min-content min-content auto;
   grid-template-rows: 3rem calc(100vh - 3rem);
   grid-template-areas:
-    'brain-config-selector brain-region-selector top-tabs'
-    'brain-config-selector brain-region-selector content-container';
+    'config-selector region-selector extra-panel top-tabs'
+    'config-selector region-selector extra-panel content-container';
 }
 
 .brainConfigSelectorContainer {
-  grid-area: brain-config-selector;
+  grid-area: config-selector;
 }
 
 .brainSelectorContainer {
-  grid-area: brain-region-selector;
+  grid-area: region-selector;
 }
 
 .tabsContainer {
@@ -22,4 +22,8 @@
 .contentContainer {
   grid-area: content-container;
   position: relative;
+}
+
+.extraPanelContainer {
+  grid-area: extra-panel;
 }

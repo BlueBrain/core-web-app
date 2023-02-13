@@ -1,7 +1,10 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai/react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { loadable } from 'jotai/vanilla/utils';
 
 import { classNames } from '@/util/utils';
 import Link from '@/components/Link';
@@ -11,6 +14,10 @@ import BrainIcon from '@/components/icons/Brain';
 import AnalysisIcon from '@/components/icons/Analysis';
 import SettingsIcon from '@/components/icons/Settings';
 import { cellCompositionHasChanged } from '@/state/brain-model-config/cell-composition';
+import { RegionDetailsSidebar } from '@/components/BrainRegionSelector';
+import { brainRegionAtom } from '@/state/brain-regions';
+import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
+import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 
 const COMMON_TAB_CLASSNAME = 'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl';
 
@@ -60,9 +67,24 @@ export default function CellCompositionLayout({ children }: CellCompositionLayou
   const theme = useAtomValue(themeAtom);
   const compositionHasChanged = useAtomValue(cellCompositionHasChanged);
   const pathname = usePathname();
+  const brainRegionLoadable = useAtomValue(loadable(brainRegionAtom));
+  const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
+
+  const brainRegionDetails = useMemo(() => {
+    if (!extraPanelContainer) return null;
+
+    return createPortal(
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <RegionDetailsSidebar />
+      </ErrorBoundary>,
+      extraPanelContainer
+    );
+  }, [brainRegionLoadable.state, extraPanelContainer]);
 
   return (
     <>
+      {brainRegionDetails}
+
       <div className="absolute right-7 top-7 z-10">
         {tabs.map((tab) =>
           tab.disableOnChange && compositionHasChanged ? null : (

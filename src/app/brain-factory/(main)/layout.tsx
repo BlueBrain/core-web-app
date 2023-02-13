@@ -1,8 +1,10 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
+import { useSetAtom } from 'jotai/react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { BrainRegionsSidebar, RegionDetailsSidebar } from '@/components/BrainRegionSelector';
+
+import { BrainRegionsSidebar } from '@/components/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import useSessionState from '@/hooks/session';
@@ -10,6 +12,7 @@ import TopTabs from '@/components/TopTabs';
 import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
+import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
 
 import styles from './brain-factory-main.module.css';
 
@@ -21,6 +24,12 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
   useBrainModelConfigState();
   useSessionState();
   useAuth(true);
+  const extraPanelRef = useRef(null);
+  const setExtraPanelContainer = useSetAtom(extraPanelContainerAtom);
+
+  useEffect(() => {
+    setExtraPanelContainer(extraPanelRef.current);
+  }, [setExtraPanelContainer]);
 
   return (
     <div className={styles.container}>
@@ -32,15 +41,13 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
 
       <div className={styles.brainSelectorContainer}>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <div className="flex">
-            <DefaultLoadingSuspense>
-              <BrainRegionsSidebar />
-            </DefaultLoadingSuspense>
-
-            <RegionDetailsSidebar />
-          </div>
+          <DefaultLoadingSuspense>
+            <BrainRegionsSidebar />
+          </DefaultLoadingSuspense>
         </ErrorBoundary>
       </div>
+
+      <div className={styles.extraPanelContainer} ref={extraPanelRef} />
 
       <div className={styles.tabsContainer}>
         <TopTabs />
