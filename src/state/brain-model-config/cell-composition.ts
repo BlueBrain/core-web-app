@@ -3,7 +3,7 @@
 import { atom } from 'jotai/vanilla';
 import { selectAtom } from 'jotai/vanilla/utils';
 
-import { getCellCompositionConfigIdAtom } from './index';
+import { cellCompositionConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 import {
   fetchResourceById,
@@ -31,7 +31,7 @@ export const cellCompositionHasChanged = atom<boolean>(false);
 
 const configAtom = atom<Promise<CellCompositionConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
-  const id = await get(getCellCompositionConfigIdAtom);
+  const id = await get(cellCompositionConfigIdAtom);
 
   get(refetchTriggerAtom);
 

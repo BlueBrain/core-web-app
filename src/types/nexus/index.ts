@@ -1,48 +1,6 @@
-export interface Entity {
-  '@id': string;
-  '@type': string | string[];
-  '@context': string | string[];
-}
+import { Entity, Distribution, ResourceMetadata } from './common';
 
-export interface ResourceMetadata {
-  _createdAt: string;
-  _createdBy: string;
-  _deprecated: boolean;
-  _incoming: string;
-  _outgoing: string;
-  _project: string;
-  _rev: number;
-  _self: string;
-  _updatedAt: string;
-  _updatedBy: string;
-}
-
-export interface EntityResource extends ResourceMetadata, Entity {}
-
-export type FileMetadata = {
-  '@id': string;
-  '@type': 'File';
-  _bytes: number;
-  _createdAt: string;
-  _createdBy: string;
-  _deprecated: boolean;
-  _digest: {
-    _algorithm: string;
-    _value: string;
-  };
-  _filename: string;
-  _mediaType: string;
-  _project: string;
-  _rev: number;
-  _self: string;
-  _storage: {
-    '@id': string;
-    '@type': 'DiskStorage';
-    _rev: number;
-  };
-  _updatedAt: string;
-  _updatedBy: string;
-};
+export * from './common';
 
 export interface Circuit extends Entity {
   brainLocation?: {
@@ -99,19 +57,19 @@ export interface BrainModelConfig extends Entity {
   configs: {
     cellCompositionConfig?: {
       '@id': string;
-      '@type': string[];
+      '@type': ['CellCompositionConfig', 'Entity'];
     };
     cellPositionConfig?: {
       '@id': string;
-      '@type': string[];
+      '@type': ['CellPositionConfig', 'Entity'];
     };
     eModelAssignmentConfig?: {
       '@id': string;
-      '@type': string[];
+      '@type': ['EModelAssignmentConfig', 'Entity'];
     };
     morphologyAssignmentConfig?: {
       '@id': string;
-      '@type': string[];
+      '@type': ['MorphologyAssignmentConfig', 'Entity'];
     };
   };
 }
@@ -120,22 +78,10 @@ export interface BrainModelConfigResource extends ResourceMetadata, BrainModelCo
 
 export interface CellCompositionConfig extends Entity {
   name: string;
+  '@type': ['CellCompositionConfig', 'Entity'];
   generatorName: 'cell_composition';
   description: string;
-  distribution: {
-    '@type': 'DataDownload';
-    name: string;
-    encodingFormat: string;
-    contentSize: {
-      unitCode: 'bytes';
-      value: number;
-    };
-    contentUrl: string;
-    digest: {
-      algorithm: string;
-      value: string;
-    };
-  };
+  distribution: Distribution;
 }
 
 export interface CellCompositionConfigResource extends ResourceMetadata, CellCompositionConfig {}
@@ -190,22 +136,10 @@ export type CellCompositionConfigPayload = {
 
 export interface CellPositionConfig extends Entity {
   name: string;
-  generatorName: 'me_type_property';
   description: string;
-  distribution: {
-    '@type': 'DataDownload';
-    name: string;
-    encodingFormat: string;
-    contentSize: {
-      unitCode: 'bytes';
-      value: number;
-    };
-    contentUrl: string;
-    digest: {
-      algorithm: string;
-      value: string;
-    };
-  };
+  '@type': ['CellPositionConfig', 'Entity'];
+  generatorName: 'me_type_property';
+  distribution: Distribution;
 }
 
 export interface CellPositionConfigResource extends ResourceMetadata, CellPositionConfig {}
@@ -299,3 +233,57 @@ export interface DetailedCircuit extends Entity {
 }
 
 export interface DetailedCircuitResource extends ResourceMetadata, DetailedCircuit {}
+
+export interface EModelAssignmentConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': ['EModelAssignmentConfig', 'Entity'];
+  generatorName: 'placeholder';
+  distribution: Distribution;
+}
+
+export interface EModelAssignmentConfigResource extends ResourceMetadata, EModelAssignmentConfig {}
+
+export type EModelAssignmentConfigPayload = {
+  [rootBrainRegionURI: BrainRegionURI]: {
+    variantDefinition: {
+      algorithm: string;
+      version: string;
+    };
+    inputs: {
+      name: string;
+      type: 'Dataset';
+      id: string;
+    }[];
+    configuration: {};
+    jobConfiguration: Record<string, string | number>;
+  };
+};
+
+export interface MorphologyAssignmentConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': ['MorphologyAssignmentConfig', 'Entity'];
+  generatorName: 'placeholder';
+  distribution: Distribution;
+}
+
+export interface MorphologyAssignmentConfigResource
+  extends ResourceMetadata,
+    MorphologyAssignmentConfig {}
+
+export type MorphologyAssignmentConfigPayload = {
+  [rootBrainRegionURI: BrainRegionURI]: {
+    variantDefinition: {
+      algorithm: string;
+      version: string;
+    };
+    inputs: {
+      name: string;
+      type: 'Dataset';
+      id: string;
+    }[];
+    configuration: {};
+    jobConfiguration: Record<string, string | number>;
+  };
+};

@@ -74,12 +74,22 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
   set(updateConfigAtom, updatedConfig);
 });
 
-export const getCellCompositionConfigIdAtom = selectAtom(
+export const cellCompositionConfigIdAtom = selectAtom(
   configAtom,
   (config) => config?.configs?.cellCompositionConfig?.['@id'] ?? null
 );
 
-export const getCellPositionConfigIdAtom = selectAtom(
+export const cellPositionConfigIdAtom = selectAtom(
   configAtom,
   (config) => config?.configs?.cellPositionConfig?.['@id'] ?? null
+);
+
+export const eModelAssignmentConfigIdAtom = selectAtom(
+  configAtom,
+  (config) => config?.configs?.eModelAssignmentConfig?.['@id'] ?? null
+);
+
+export const morphologyAssignmentConfigIdAtom = selectAtom(
+  configAtom,
+  (config) => config?.configs?.morphologyAssignmentConfig?.['@id'] ?? null
 );
