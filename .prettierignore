@@ -2,3 +2,4 @@
 /.next/
 /out/
 .vscode/
+__tests__/**/*.json

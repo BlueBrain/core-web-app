@@ -10,8 +10,8 @@ export default function ArrowDownOutlinedIcon({ className, style }: ArrowDownOut
     <svg
       className={className}
       style={style}
-      width="32"
-      height="32"
+      width="1em"
+      height="1em"
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

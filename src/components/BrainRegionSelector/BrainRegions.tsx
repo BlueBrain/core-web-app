@@ -7,7 +7,7 @@ import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
 import { classNames } from '@/util/utils';
 import ColorBox from '@/components/ColorBox';
-import { BrainIcon, AngledArrowIcon } from '@/components/icons';
+import { BrainIcon } from '@/components/icons';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {
   brainRegionsAtom,
@@ -15,7 +15,6 @@ import {
   meshDistributionsAtom,
 } from '@/state/brain-regions';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';
-import styles from './brain-region-selector.module.css';
 
 function VisualizationTrigger({ colorCode, id }: { colorCode: string; id: string }) {
   const meshDistributions = useAtomValue(meshDistributionsAtom);
@@ -47,63 +46,46 @@ function VisualizationTrigger({ colorCode, id }: { colorCode: string; id: string
   );
 }
 
-function CapitalizedTitle({
+function NavTitle({
+  className,
   colorCode,
   id,
   onClick = () => {},
   title,
-  selectedId,
-  trigger, // The Accordion.Trigger
+  isExpanded,
+  trigger, // A callback that returns the <Accordion.Trigger/>
+  content, // A callback that returns the <Accordion.Content/>
 }: TitleComponentProps) {
   return (
-    <div
-      className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4 flex gap-3 justify-between items-center"
-      role="button"
-      onClick={() => id && onClick(id)}
-      onKeyDown={() => id && onClick(id)}
-      tabIndex={0}
-    >
-      {colorCode ? <ColorBox color={colorCode} /> : null}
-      <AngledArrowIcon
-        className={classNames(styles.accordionArrow, 'flex-none')}
-        style={{ height: '1em' }}
-      />
-      <span className={classNames(selectedId === id && 'text-white', 'capitalize mr-auto')}>
-        {title}
-      </span>
-      {trigger}
-      {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
-    </div>
-  );
-}
+    <>
+      <div className="py-3 flex justify-between items-center">
+        <div className="flex gap-2 justify-between items-center">
+          <Button
+            className="-ml-[15px] h-auto border-none flex font-bold gap-3 justify-end items-center"
+            type="text"
+            onKeyDown={() => id && onClick(id)}
+            onClick={() => id && onClick(id)}
+            icon={colorCode ? <ColorBox color={colorCode} /> : null}
+          >
+            <span
+              className={classNames(
+                className,
+                'hover:bg-primary-8 hover:text-white mr-auto whitespace-pre-wrap text-left',
+                isExpanded ? 'text-white' : 'text-primary-4'
+              )}
+            >
+              {title}
+            </span>
+          </Button>
+        </div>
 
-function UppercaseTitle({
-  colorCode,
-  id,
-  onClick = () => {},
-  title,
-  selectedId,
-  trigger, // The Accordion.Trigger
-}: TitleComponentProps) {
-  return (
-    <div
-      className="font-bold hover:bg-primary-8 hover:text-white py-3 text-primary-4 flex gap-3 justify-end items-center"
-      role="button"
-      onClick={() => id && onClick(id)}
-      onKeyDown={() => id && onClick(id)}
-      tabIndex={0}
-    >
-      {colorCode ? <ColorBox color={colorCode} /> : null}
-      <AngledArrowIcon
-        className={classNames(styles.accordionArrow, 'flex-none')}
-        style={{ height: '1em' }}
-      />
-      <span className={classNames(selectedId === id && 'text-white', 'uppercase text-lg mr-auto')}>
-        {title}
-      </span>
-      {trigger}
-      {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
-    </div>
+        <div className="-mr-[4px] flex gap-2 justify-between items-center">
+          {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
+          {trigger?.()}
+        </div>
+      </div>
+      {content?.({ className: '-mt-3 divide-y divide-primary-6' })}
+    </>
   );
 }
 
@@ -112,7 +94,7 @@ export default function BrainRegions() {
   const setBrainRegionId = useSetAtom(setBrainRegionIdAtom);
 
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
-  const [brainRegionsNavValue, setNavValue] = useState<NavValue>({});
+  const [brainRegionsNavValue, setNavValue] = useState<NavValue>(null);
 
   const onValueChange = useCallback(
     (newValue: string[], path: string[]) => {
@@ -154,33 +136,38 @@ export default function BrainRegions() {
               items={brainRegions}
               onValueChange={onValueChange}
               value={brainRegionsNavValue}
-              className="divide-y divide-primary-6"
             >
-              {({ colorCode, id, title, selectedId, trigger }) => (
-                <UppercaseTitle
+              {({ colorCode, id, isExpanded, title, trigger, content }) => (
+                <NavTitle
+                  className="uppercase text-lg"
                   onClick={setBrainRegionId}
                   colorCode={colorCode}
                   id={id}
                   title={title}
-                  selectedId={selectedId}
+                  isExpanded={isExpanded}
                   trigger={trigger}
+                  content={content}
                 >
                   {({
                     colorCode: nestedColorCode,
                     id: nestedId,
+                    isExpanded: nestedIsExpanded,
                     title: nestedTitle,
                     trigger: nestedTrigger,
+                    content: nestedContent,
                   }) => (
-                    <CapitalizedTitle
+                    <NavTitle
+                      className="capitalize text-base"
                       onClick={setBrainRegionId}
                       colorCode={nestedColorCode}
                       id={nestedId}
                       title={nestedTitle}
-                      selectedId={selectedId}
+                      isExpanded={nestedIsExpanded}
                       trigger={nestedTrigger}
+                      content={nestedContent}
                     />
                   )}
-                </UppercaseTitle>
+                </NavTitle>
               )}
             </TreeNav>
           </div>

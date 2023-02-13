@@ -1,7 +1,0 @@
-[data-state='open'] > .accordionArrow path {
-  @apply fill-white;
-}
-
-.is-active > .accordionArrow path {
-  @apply fill-white;
-}

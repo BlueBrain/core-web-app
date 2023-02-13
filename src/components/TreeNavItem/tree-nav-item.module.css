@@ -2,6 +2,11 @@
   @apply transition-transform;
 }
 
+.accordionTrigger {
+  @apply flex;
+  @apply p-[4px];
+}
+
 .accordionTrigger:hover .accordionChevron path {
   @apply fill-white;
 }

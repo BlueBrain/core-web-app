@@ -44,8 +44,9 @@ function NeuronCompositionParent({
   max,
   isLocked,
   setLockedFunc,
-  trigger,
   isExpanded,
+  trigger, // A callback that returns the <Accordion.Trigger/>
+  content, // A callback that returns the <Accordion.Content/>
 }: CompositionTitleProps) {
   const normalizedComposition = composition ? (
     <span>~&nbsp;{formatNumber(composition)}</span>
@@ -66,7 +67,7 @@ function NeuronCompositionParent({
         <span className="font-bold text-white">{title}</span>
         <IconButton onClick={setLockedFunc}>{lockIcon}</IconButton>
         <span className="ml-auto text-white">{normalizedComposition}</span>
-        {trigger}
+        {trigger?.()}
       </div>
       {isExpanded ? (
         <div className="bg-primary-6 px-[12px] py-2 rounded-[4px]">
@@ -80,6 +81,7 @@ function NeuronCompositionParent({
           />
         </div>
       ) : null}
+      {content?.()}
     </>
   );
 }
@@ -91,7 +93,8 @@ function NeuronCompositionLeaf({
   max,
   isLocked,
   setLockedFunc,
-  trigger,
+  trigger, // A callback that returns the <Accordion.Trigger/>
+  content, // A callback that returns the <Accordion.Content/>
 }: Omit<CompositionTitleProps, 'isExpanded'>) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -103,24 +106,27 @@ function NeuronCompositionLeaf({
   }, [isLocked]);
 
   return (
-    <div onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
-      <div className="flex gap-3 justify-between py-3 text-secondary-4 whitespace-nowrap">
-        <span className="font-bold whitespace-nowrap">{title}</span>
-        <IconButton onClick={setLockedFunc}>{lockIcon}</IconButton>
-        <span className="ml-auto">~&nbsp;{composition && formatNumber(composition)}</span>
+    <>
+      <div onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
+        <div className="flex gap-3 justify-between py-3 text-secondary-4 whitespace-nowrap">
+          <span className="font-bold whitespace-nowrap">{title}</span>
+          <IconButton onClick={setLockedFunc}>{lockIcon}</IconButton>
+          <span className="ml-auto">~&nbsp;{composition && formatNumber(composition)}</span>
+        </div>
+        {isOpen ? (
+          <HorizontalSlider
+            value={composition}
+            color="#95DE64"
+            max={max || 0}
+            step={1}
+            disabled={isLocked}
+            onChange={(newValue) => onSliderChange && onSliderChange(newValue)}
+          />
+        ) : null}
+        {trigger?.()}
       </div>
-      {isOpen ? (
-        <HorizontalSlider
-          value={composition}
-          color="#95DE64"
-          max={max || 0}
-          step={1}
-          disabled={isLocked}
-          onChange={(newValue) => onSliderChange && onSliderChange(newValue)}
-        />
-      ) : null}
-      {trigger}
-    </div>
+      {content?.()}
+    </>
   );
 }
 
@@ -215,6 +221,7 @@ function MeTypeDetails({
         <TreeNav items={neurons} onValueChange={onValueChange} value={meTypeNavValue}>
           {({
             composition: renderedComposition,
+            content,
             title,
             trigger,
             id,
@@ -223,6 +230,7 @@ function MeTypeDetails({
             isExpanded,
           }) => (
             <NeuronCompositionParent
+              content={content}
               title={title}
               trigger={trigger}
               isLocked={lockedNodeIds.includes(id)}
@@ -236,6 +244,7 @@ function MeTypeDetails({
               max={max}
             >
               {({
+                content: nestedContent,
                 composition: nestedComposition,
                 title: nestedTitle,
                 trigger: nestedTrigger,
@@ -248,6 +257,7 @@ function MeTypeDetails({
 
                 return (
                   <NeuronCompositionLeaf
+                    content={nestedContent}
                     onSliderChange={(newValue) => {
                       const node = neuronsToNodes[parentId].items.find(
                         (nestedNode: Node) => nestedNode.id === nestedId
