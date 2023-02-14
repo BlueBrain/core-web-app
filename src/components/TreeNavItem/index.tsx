@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
@@ -70,54 +70,60 @@ export function TreeNavItem({
                   )
                 : null,
               content: items?.length
-                ? (contentProps: {}) => (
-                    <Accordion.Content
-                      {...contentProps} /* eslint-disable-line react/jsx-props-no-spreading */
-                    >
-                      <Accordion.Root
-                        onValueChange={(newValue) => onValueChange(newValue, path)}
-                        type="multiple"
-                        value={value ? Object.keys(value) : []}
-                        asChild
-                      >
-                        <>
-                          {/* eslint-disable-line react/jsx-no-useless-fragment */}
-                          {items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
-                            // children may return another render-prop
-                            const render = children({
-                              id: itemId,
-                              isExpanded,
-                              value,
-                              items: nestedItems,
-                              ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
-                            });
+                ? (contentProps: { renderBefore?: ReactNode; renderAfter?: ReactNode } = {}) => {
+                    const { renderBefore, renderAfter, ...contentPropsRest } = contentProps;
 
-                            return nestedItems ? (
-                              <TreeNavItem
-                                key={itemId}
-                                id={itemId}
-                                items={nestedItems}
-                                className={className}
-                                value={value?.[itemId] ?? null}
-                                isExpanded={typeof value?.[itemId] !== 'undefined'}
-                                onValueChange={onValueChange}
-                                path={[...path, itemId]}
-                                {...props} // eslint-disable-line react/jsx-props-no-spreading
-                                {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
-                              >
-                                {
-                                  /* Pass-down the nested render-prop, if one exists. */
-                                  render?.props?.children ?? children
-                                }
-                              </TreeNavItem>
-                            ) : (
-                              render
-                            );
-                          })}
-                        </>
-                      </Accordion.Root>
-                    </Accordion.Content>
-                  )
+                    return (
+                      <Accordion.Content
+                        {...contentPropsRest} /* eslint-disable-line react/jsx-props-no-spreading */
+                      >
+                        {renderBefore}
+                        <Accordion.Root
+                          onValueChange={(newValue) => onValueChange(newValue, path)}
+                          type="multiple"
+                          value={value ? Object.keys(value) : []}
+                          asChild
+                        >
+                          <>
+                            {/* eslint-disable-line react/jsx-no-useless-fragment */}
+                            {items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
+                              // children may return another render-prop
+                              const render = children({
+                                id: itemId,
+                                isExpanded,
+                                value,
+                                items: nestedItems,
+                                ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
+                              });
+
+                              return nestedItems ? (
+                                <TreeNavItem
+                                  key={itemId}
+                                  id={itemId}
+                                  items={nestedItems}
+                                  className={className}
+                                  value={value?.[itemId] ?? null}
+                                  isExpanded={typeof value?.[itemId] !== 'undefined'}
+                                  onValueChange={onValueChange}
+                                  path={[...path, itemId]}
+                                  {...props} // eslint-disable-line react/jsx-props-no-spreading
+                                  {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
+                                >
+                                  {
+                                    /* Pass-down the nested render-prop, if one exists. */
+                                    render?.props?.children ?? children
+                                  }
+                                </TreeNavItem>
+                              ) : (
+                                render
+                              );
+                            })}
+                          </>
+                        </Accordion.Root>
+                        {renderAfter}
+                      </Accordion.Content>
+                    );
+                  }
                 : null,
               ...props,
             })}
