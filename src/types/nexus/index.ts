@@ -2,28 +2,6 @@ import { Entity, Distribution, ResourceMetadata } from './common';
 
 export * from './common';
 
-export interface Circuit extends Entity {
-  brainLocation?: {
-    brainRegion?: {
-      '@id': string;
-      label: string;
-    };
-  };
-  circuitBase: {
-    '@type': string;
-    url: string;
-  };
-  circuitConfigPath: {
-    '@type': string;
-    url: string;
-  };
-  name: string;
-  description: string;
-  circuitType: string;
-}
-
-export interface CircuitResource extends ResourceMetadata, Circuit {}
-
 export interface Campaign {
   id: string;
   org: string;

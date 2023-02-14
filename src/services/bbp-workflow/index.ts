@@ -8,7 +8,7 @@ import {
   WorkflowFilesType,
   PLACEHOLDERS,
 } from '@/services/bbp-workflow/config';
-import type { CircuitResource } from '@/types/nexus';
+import type { DetailedCircuitResource } from '@/types/nexus';
 
 async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
   // check the pod is active
@@ -57,7 +57,7 @@ function generateFormData(replacedConfigFiles: WorkflowFilesType): FormData {
 
 export function getSimulationTaskFiles(
   workflowFiles: WorkflowFilesType,
-  circuit: CircuitResource | null
+  circuit: DetailedCircuitResource | null
 ): WorkflowFilesType {
   if (!circuit) return workflowFiles;
 
