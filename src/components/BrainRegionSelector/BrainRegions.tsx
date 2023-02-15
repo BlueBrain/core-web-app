@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useCallback, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Button } from 'antd';
@@ -11,8 +13,8 @@ import { BrainIcon } from '@/components/icons';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {
   brainRegionsAtom,
-  setBrainRegionIdAtom,
   meshDistributionsAtom,
+  setSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';
 
@@ -63,8 +65,8 @@ function NavTitle({
           <Button
             className="-ml-[15px] h-auto border-none flex font-bold gap-3 justify-end items-center"
             type="text"
-            onKeyDown={() => id && onClick(id)}
-            onClick={() => id && onClick(id)}
+            onKeyDown={() => id && onClick()}
+            onClick={() => id && onClick()}
             icon={colorCode ? <ColorBox color={colorCode} /> : null}
           >
             <span
@@ -91,8 +93,7 @@ function NavTitle({
 
 export default function BrainRegions() {
   const brainRegions = useAtomValue(brainRegionsAtom);
-  const setBrainRegionId = useSetAtom(setBrainRegionIdAtom);
-
+  const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
   const [brainRegionsNavValue, setNavValue] = useState<NavValue>(null);
 
@@ -137,12 +138,12 @@ export default function BrainRegions() {
               onValueChange={onValueChange}
               value={brainRegionsNavValue}
             >
-              {({ colorCode, id, isExpanded, title, trigger, content }) => (
+              {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
                 <NavTitle
                   className="uppercase text-lg"
-                  onClick={setBrainRegionId}
                   colorCode={colorCode}
                   id={id}
+                  onClick={() => leaves && setSelectedBrainRegion(id, title, leaves)}
                   title={title}
                   isExpanded={isExpanded}
                   trigger={trigger}
@@ -155,10 +156,11 @@ export default function BrainRegions() {
                     title: nestedTitle,
                     trigger: nestedTrigger,
                     content: nestedContent,
+                    leaves: nestedLeaves,
                   }) => (
                     <NavTitle
                       className="capitalize text-base"
-                      onClick={setBrainRegionId}
+                      onClick={() => setSelectedBrainRegion(nestedId, nestedTitle, nestedLeaves)}
                       colorCode={nestedColorCode}
                       id={nestedId}
                       title={nestedTitle}

@@ -9,7 +9,7 @@ export type TitleComponentProps = {
   distributions?: MeshDistribution[] | null;
   id?: string;
   isExpanded: boolean;
-  onClick?: (id: string) => void;
+  onClick?: () => void;
   title?: string;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
@@ -30,11 +30,12 @@ export type CompositionTitleProps = {
   title?: string;
   isExpanded: boolean;
   composition: number;
-  onSliderChange: (value: number | null) => void;
+  onSliderChange: (value: number) => void;
   max: number;
   isLocked: boolean;
   setLockedFunc: () => void;
   trigger: (...args: any[]) => ReactElement;
+  lockIsDisabled: boolean;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
 

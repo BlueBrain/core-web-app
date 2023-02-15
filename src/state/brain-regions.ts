@@ -1,25 +1,19 @@
 import { atom } from 'jotai/vanilla';
 import { arrayToTree } from 'performant-array-to-tree';
-
+import _ from 'lodash';
 import sessionAtom from './session';
-import {
-  configPayloadAtom,
-  setCompositionOverridesAtom,
-} from '@/state/brain-model-config/cell-composition';
 import {
   BrainRegion,
   BrainRegionWOComposition,
-  MeshDistribution,
+  AnalysedComposition,
   Composition,
   CompositionUnit,
+  MeshDistribution,
+  Node,
 } from '@/types/atlas';
-import { getBrainRegionById, getBrainRegions, getDistributions } from '@/api/atlas';
-import {
-  applyCompositionOverrides,
-  brainRegionIdToUri,
-  createCompositionOverridesWorkflowConfig,
-} from '@/util/brain-hierarchy';
-import { sanitizeNodeValues } from '@/app/brain-factory/(main)/cell-composition/configuration/util';
+import { getBrainRegions, getCompositionData, getDistributions } from '@/api/atlas';
+import analyseComposition from '@/util/composition-parser';
+import computeModifiedComposition from '@/util/composition-modifier';
 
 /*
   Atom dependency graph
@@ -30,17 +24,9 @@ import { sanitizeNodeValues } from '@/app/brain-factory/(main)/cell-composition/
  └────────────────────────┘    └─────────────────────────┘    └────────────────────────┘
 
 
- ┌────────────────────────┐    ┌────────────────────────┐
- │ BrainRegionIdAtomAtom  │    │  SetBrainRegionIdAtom  │
- └───────────▲────────────┘    └────────────────────────┘
-             │
- ┌───────────┴────────────┐
- │     BrainRegionAtom    │
- └───────────▲────────────┘
-             │
- ┌───────────┴────────────┐
- │  AtlasCompositionAtom  │
- └───────────▲────────────┘
+ ┌─────────────────────────┐    ┌────────────────────────────┐
+ │ selectedBrainRegionAtom │    │ setSelectedBrainRegionAtom │
+ └───────────▲─────────────┘    └────────────────────────────┘
              │
  ┌───────────┴────────────┐    ┌────────────────────────────────┐
  │ InitialCompositionAtom ├────► CompositionOverridesConfigAtom │
@@ -59,12 +45,11 @@ import { sanitizeNodeValues } from '@/app/brain-factory/(main)/cell-composition/
 
 
    Details:
-   * AtlasCompositionAtom contains composition based on atlas data
    * CompositionOverridesConfigAtom holds a composition overrides to be consumed by the workflow
    * InitialCompositionAtom's contains atlas composition with applied overrides (previously saved by the user)
 */
 
-const ROOT_BRAIN_REGION_URI = 'http://api.brain-map.org/api/v2/data/Structure/997';
+export const densityOrCountAtom = atom<keyof CompositionUnit>('count');
 
 export const brainRegionFlatListAtom = atom<Promise<BrainRegionWOComposition[]> | null>((get) => {
   const session = get(sessionAtom);
@@ -76,7 +61,6 @@ export const brainRegionFlatListAtom = atom<Promise<BrainRegionWOComposition[]> 
 
 export const brainRegionsAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
   const brainRegionFlatList = await get(brainRegionFlatListAtom);
-
   if (!brainRegionFlatList) return null;
 
   return arrayToTree(brainRegionFlatList, {
@@ -96,78 +80,100 @@ export const meshDistributionsAtom = atom<Promise<MeshDistribution[]> | null>((g
 
 const updatedCompositionAtom = atom<Composition | null>(null);
 
-export const brainRegionIdAtom = atom<string | null>(null);
+type SelectedBrainRegion = {
+  id: string;
+  title: string;
+  leaves: string[] | null;
+};
 
-export const setCompositionAtom = atom(null, (get, set, composition: Composition) => {
-  const brainRegionId = get(brainRegionIdAtom);
+export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(null);
 
-  if (!brainRegionId) return;
+export const setSelectedBrainRegionAtom = atom(
+  null,
+  (
+    get,
+    set,
+    selectedBrainRegionId: string,
+    selectedBrainRegionTitle: string,
+    selectedBrainRegionLeaves: string[] | null
+  ) => {
+    set(selectedBrainRegionAtom, {
+      id: selectedBrainRegionId,
+      title: selectedBrainRegionTitle,
+      leaves: selectedBrainRegionLeaves,
+    });
+    set(updatedCompositionAtom, null);
+  }
+);
 
-  set(updatedCompositionAtom, composition);
-
-  const brainRegionURI = brainRegionIdToUri(brainRegionId);
-  set(
-    setCompositionOverridesAtom,
-    ROOT_BRAIN_REGION_URI,
-    createCompositionOverridesWorkflowConfig(brainRegionURI, composition)
-  );
-});
-
-export const setBrainRegionIdAtom = atom(null, (get, set, brainRegionId: string) => {
-  set(brainRegionIdAtom, brainRegionId);
-  set(updatedCompositionAtom, null);
-});
-
-export const brainRegionAtom = atom<Promise<BrainRegion> | null>((get) => {
+const initialCompositionAtom = atom((get) => {
   const session = get(sessionAtom);
-  const brainRegionId = get(brainRegionIdAtom);
 
-  if (!session || !brainRegionId) return null;
+  if (!session) return null;
 
-  return getBrainRegionById(brainRegionId, session.accessToken);
+  return getCompositionData(session.accessToken);
 });
 
-export const atlasCompositionAtom = atom<Promise<Composition | null>>(async (get) => {
-  const brainRegion = await get(brainRegionAtom);
-
-  if (!brainRegion) return null;
-
-  return sanitizeNodeValues(brainRegion.composition);
-});
-
-const initialComposition = atom<Promise<Composition | null>>(async (get) => {
-  const brainRegionId = get(brainRegionIdAtom);
-  const compositionConfigPayload = await get(configPayloadAtom);
-  const atlasComposition = await get(atlasCompositionAtom);
-
-  if (!brainRegionId || !compositionConfigPayload || !atlasComposition) return null;
-
-  const brainRegionURI = brainRegionIdToUri(brainRegionId);
-
-  const compositionOverridesWorkflowConfig =
-    compositionConfigPayload[ROOT_BRAIN_REGION_URI]?.configuration.overrides;
-
-  if (!compositionOverridesWorkflowConfig) return atlasComposition;
-
-  const clonedAtlasComposition = structuredClone(atlasComposition);
-
-  applyCompositionOverrides(
-    brainRegionURI,
-    clonedAtlasComposition,
-    compositionOverridesWorkflowConfig
-  );
-
-  return clonedAtlasComposition;
-});
-
-export const compositionAtom = atom<Promise<Composition | null>>(async (get) => {
+export const compositionAtom = atom<Promise<Composition>>(async (get) => {
   const updatedComposition = get(updatedCompositionAtom);
 
   if (updatedComposition) {
     return updatedComposition;
   }
 
-  return get(initialComposition);
+  return get(initialCompositionAtom);
 });
 
-export const densityOrCountAtom = atom<keyof CompositionUnit>('count');
+export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const selectedBrainRegion = get(selectedBrainRegionAtom);
+  const compositionData = await get(compositionAtom);
+
+  if (!session || !selectedBrainRegion) return null;
+  const leaves =
+    selectedBrainRegion.leaves !== null
+      ? selectedBrainRegion.leaves
+      : [`http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`];
+
+  return analyseComposition(compositionData, leaves);
+});
+
+export const compositionHistoryAtom = atom<Composition[]>([]);
+export const compositionHistoryIndexAtom = atom<number>(0);
+
+export const computeAndSetCompositionAtom = atom(
+  null,
+  async (get, set, modifiedNode: Node, newValue: number, lockedIds: string[]) => {
+    const analysedComposition = await get(analysedCompositionAtom);
+    if (!analysedComposition || !modifiedNode.composition) {
+      return;
+    }
+    const { volumes, composition } = analysedComposition;
+    const densityOrCount = get(densityOrCountAtom);
+
+    const valueDifference = newValue - modifiedNode.composition;
+    const compositionHistory = get(compositionHistoryAtom);
+    const historyIndex = get(compositionHistoryIndexAtom);
+
+    const modifiedComposition = computeModifiedComposition(
+      modifiedNode,
+      valueDifference,
+      modifiedNode.leaves,
+      volumes,
+      composition,
+      lockedIds,
+      densityOrCount
+    );
+    set(updatedCompositionAtom, modifiedComposition);
+
+    // whenever there is a change, we also update the history
+    const compositionClone = _.cloneDeep(modifiedComposition);
+    const newHistory = [...compositionHistory.slice(0, historyIndex + 1), compositionClone];
+    set(compositionHistoryAtom, newHistory);
+    set(compositionHistoryIndexAtom, newHistory.length - 1);
+  }
+);
+
+export const setCompositionAtom = atom(null, (get, set, composition: Composition) => {
+  set(updatedCompositionAtom, composition);
+});

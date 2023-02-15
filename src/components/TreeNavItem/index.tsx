@@ -52,6 +52,7 @@ export function TreeNavItem({
         <>
           {children &&
             children({
+              items,
               id,
               isExpanded,
               value,

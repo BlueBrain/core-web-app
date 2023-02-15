@@ -1,7 +1,7 @@
 import { useEffect, Dispatch, RefObject, SetStateAction } from 'react';
 import sankey from './sankey';
-import { Composition } from '@/types/atlas';
 import { formatNumber } from '@/util/common';
+import { SankeyLinksReducerAcc } from '@/app/brain-factory/(main)/cell-composition/configuration/types';
 
 export default function DensityChart({
   className = '',
@@ -12,7 +12,7 @@ export default function DensityChart({
 }: {
   className?: string;
   colorScale?: Function;
-  data: Composition;
+  data: SankeyLinksReducerAcc;
   onZoom: Dispatch<SetStateAction<number>>;
   chartRef: RefObject<SVGSVGElement>;
 }) {

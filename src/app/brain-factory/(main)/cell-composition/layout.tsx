@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadable } from 'jotai/vanilla/utils';
-
 import { classNames } from '@/util/utils';
 import Link from '@/components/Link';
 import usePathname from '@/hooks/pathname';
@@ -15,7 +14,7 @@ import AnalysisIcon from '@/components/icons/Analysis';
 import SettingsIcon from '@/components/icons/Settings';
 import { cellCompositionHasChanged } from '@/state/brain-model-config/cell-composition';
 import { RegionDetailsSidebar } from '@/components/BrainRegionSelector';
-import { brainRegionAtom } from '@/state/brain-regions';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 
@@ -67,7 +66,7 @@ export default function CellCompositionLayout({ children }: CellCompositionLayou
   const theme = useAtomValue(themeAtom);
   const compositionHasChanged = useAtomValue(cellCompositionHasChanged);
   const pathname = usePathname();
-  const brainRegionLoadable = useAtomValue(loadable(brainRegionAtom));
+  const brainRegionLoadable = useAtomValue(loadable(selectedBrainRegionAtom));
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
 
   const brainRegionDetails = useMemo(() => {

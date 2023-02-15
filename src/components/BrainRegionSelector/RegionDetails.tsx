@@ -12,18 +12,16 @@ import { CompositionUnit, Node } from '@/types/atlas';
 import { formatNumber } from '@/util/common';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {
-  brainRegionAtom,
-  compositionAtom,
+  analysedCompositionAtom,
+  computeAndSetCompositionAtom,
   densityOrCountAtom,
-  setCompositionAtom,
+  selectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import { BrainRegionIcon, LockIcon, LockOpenIcon } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
-import { CompositionDataSet } from '@/app/brain-factory/(main)/cell-composition/configuration/types';
 import IconButton from '@/components/IconButton';
 import HorizontalSlider from '@/components/HorizontalSlider';
-import { recalculateAndGetNewNodes } from '@/app/brain-factory/(main)/cell-composition/configuration/util';
-import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
+import computeSystemLockedIds from '@/components/BrainRegionSelector/locking';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -44,7 +42,7 @@ function NeuronCompositionParent({
   max,
   isLocked,
   setLockedFunc,
-  isExpanded,
+  lockIsDisabled,
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
 }: CompositionTitleProps) {
@@ -65,22 +63,22 @@ function NeuronCompositionParent({
     <>
       <div className="flex gap-3 items-center justify-end py-3 text-left text-primary-3 w-full whitespace-nowrap hover:text-white">
         <span className="font-bold text-white">{title}</span>
-        <IconButton onClick={setLockedFunc}>{lockIcon}</IconButton>
+        <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
+          {lockIcon}
+        </IconButton>
         <span className="ml-auto text-white">{normalizedComposition}</span>
         {trigger?.()}
       </div>
-      {isExpanded ? (
-        <div className="bg-primary-6 px-[12px] py-2 rounded-[4px]">
-          <HorizontalSlider
-            value={composition}
-            color="#FFF"
-            max={max}
-            step={1}
-            disabled={isLocked}
-            onChange={(newValue) => onSliderChange && onSliderChange(newValue)}
-          />
-        </div>
-      ) : null}
+      <div className="bg-primary-6 px-[12px] py-2 rounded-[4px]">
+        <HorizontalSlider
+          value={composition}
+          color="#FFF"
+          max={max}
+          step={1}
+          disabled={isLocked}
+          onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
+        />
+      </div>
       {content?.()}
     </>
   );
@@ -93,6 +91,7 @@ function NeuronCompositionLeaf({
   max,
   isLocked,
   setLockedFunc,
+  lockIsDisabled,
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
 }: Omit<CompositionTitleProps, 'isExpanded'>) {
@@ -110,7 +109,9 @@ function NeuronCompositionLeaf({
       <div onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
         <div className="flex gap-3 justify-between py-3 text-secondary-4 whitespace-nowrap">
           <span className="font-bold whitespace-nowrap">{title}</span>
-          <IconButton onClick={setLockedFunc}>{lockIcon}</IconButton>
+          <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
+            {lockIcon}
+          </IconButton>
           <span className="ml-auto">~&nbsp;{composition && formatNumber(composition)}</span>
         </div>
         {isOpen ? (
@@ -120,7 +121,7 @@ function NeuronCompositionLeaf({
             max={max || 0}
             step={1}
             disabled={isLocked}
-            onChange={(newValue) => onSliderChange && onSliderChange(newValue)}
+            onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
           />
         ) : null}
         {trigger?.()}
@@ -140,12 +141,9 @@ function MeTypeDetails({
   onValueChange: (newValue: string[], path: string[]) => void;
 }) {
   const densityOrCount = useAtomValue(densityOrCountAtom);
-  const composition = useAtomValue(compositionAtom);
-  const setComposition = useSetAtom(setCompositionAtom);
-  const { nodes, links } = composition ?? { nodes: [], links: [] };
-  const [lockedNodeIds, setLockedNodeIds] = useState<string[]>([]);
-  const { appendToHistory } = useCompositionHistory();
-
+  const composition = useAtomValue(analysedCompositionAtom);
+  const [userLockedIds, setUserLockedIds] = useState<string[]>([]);
+  const modifyComposition = useSetAtom(computeAndSetCompositionAtom);
   const neurons =
     composition &&
     arrayToTree(
@@ -168,45 +166,68 @@ function MeTypeDetails({
       }, {})
     : {};
 
+  // get system locked node ids
+  const systemLockedIds = useMemo(
+    () => (composition?.nodes ? computeSystemLockedIds(composition.nodes, userLockedIds) : []),
+    [composition, userLockedIds]
+  );
+
+  const allLockedIds = useMemo(
+    () => [...systemLockedIds, ...userLockedIds],
+    [systemLockedIds, userLockedIds]
+  );
   /**
    * This callback handles the change of a given slider
    */
   const handleSliderChange = useCallback(
-    (about: string, changedNode: Node, value: number | null, parentId: string | null) => {
-      const newComposition = {
-        links,
-        nodes: recalculateAndGetNewNodes(
-          about,
-          changedNode,
-          value,
-          nodes,
-          parentId,
-          densityOrCount,
-          lockedNodeIds
-        ),
-        id: changedNode.id,
-        value,
-      } as CompositionDataSet;
-
-      setComposition(newComposition);
-      appendToHistory(newComposition);
+    (changedNode: Node, value: number) => {
+      modifyComposition(changedNode, value, userLockedIds).then();
     },
-    [densityOrCount, links, nodes, setComposition, appendToHistory, lockedNodeIds]
-  );
-  const max = useMemo(
-    () => (neurons ? neurons.reduce((acc, a) => acc + a.composition, 0) : 0),
-    [neurons]
+    [modifyComposition, userLockedIds]
   );
 
+  // calculating the max value of the unlocked sliders
+  const unlockedMax = useMemo(
+    () =>
+      neurons
+        ? neurons.reduce((acc, a) => {
+            if (!allLockedIds.includes(a.id)) {
+              return acc + a.composition;
+            }
+            return acc;
+          }, 0)
+        : 0,
+    [neurons, allLockedIds]
+  );
+
+  // calculating the max value of the locked sliders
+  const lockedMax = useMemo(
+    () =>
+      neurons
+        ? neurons.reduce((acc, a) => {
+            if (allLockedIds.includes(a.id)) {
+              return acc + a.composition;
+            }
+            return acc;
+          }, 0)
+        : 0,
+    [neurons, allLockedIds]
+  );
+
+  // sets modified the locked ids based on the changed node
   const setLocked = useCallback(
-    (id: string) => {
-      if (lockedNodeIds.includes(id)) {
-        setLockedNodeIds(lockedNodeIds.filter((nodeId) => nodeId !== id));
+    (id: string, childrenNodes: Node[]) => {
+      const childrenIds = childrenNodes.map((childNode) => `${id}__${childNode.id}`);
+
+      if (userLockedIds.includes(id)) {
+        setUserLockedIds(
+          userLockedIds.filter((nodeId) => nodeId !== id && !childrenIds.includes(nodeId))
+        );
       } else {
-        setLockedNodeIds([...lockedNodeIds, id]);
+        setUserLockedIds([...userLockedIds, id]);
       }
     },
-    [lockedNodeIds]
+    [userLockedIds]
   );
 
   return (
@@ -225,50 +246,50 @@ function MeTypeDetails({
             title,
             trigger,
             id,
-            about,
             parentId,
             isExpanded,
+            items,
           }) => (
             <NeuronCompositionParent
               content={content}
               title={title}
               trigger={trigger}
-              isLocked={lockedNodeIds.includes(id)}
-              setLockedFunc={() => setLocked(id)}
+              isLocked={allLockedIds.includes(id)}
+              setLockedFunc={() => setLocked(id, items)}
               composition={renderedComposition}
-              onSliderChange={(newValue) => {
+              onSliderChange={(newValue: number) => {
                 const node = neuronsToNodes[id];
-                handleSliderChange(about, node, newValue, parentId);
+                handleSliderChange(node, newValue);
               }}
+              lockIsDisabled={systemLockedIds.includes(id)}
               isExpanded={isExpanded}
-              max={max}
+              max={allLockedIds.includes(id) ? lockedMax : unlockedMax}
             >
               {({
                 content: nestedContent,
                 composition: nestedComposition,
                 title: nestedTitle,
                 trigger: nestedTrigger,
-                about: nestedAbout,
                 id: nestedId,
                 parentId: nestedParentId,
               }: NeuronCompositionItem) => {
                 const lockId = `${parentId}__${id}`;
-                const isLocked = lockedNodeIds.includes(lockId);
 
                 return (
                   <NeuronCompositionLeaf
                     content={nestedContent}
-                    onSliderChange={(newValue) => {
+                    onSliderChange={(newValue: number) => {
                       const node = neuronsToNodes[parentId].items.find(
                         (nestedNode: Node) => nestedNode.id === nestedId
                       );
-                      handleSliderChange(nestedAbout, node, newValue, node.parentId);
+                      handleSliderChange(node, newValue);
                     }}
                     composition={nestedComposition}
                     title={nestedTitle}
                     trigger={nestedTrigger}
-                    isLocked={isLocked}
-                    setLockedFunc={() => setLocked(lockId)}
+                    isLocked={allLockedIds.includes(lockId)}
+                    lockIsDisabled={systemLockedIds.includes(lockId)}
+                    setLockedFunc={() => setLocked(lockId, [])}
                     max={neuronsToNodes[nestedParentId].composition}
                   />
                 );
@@ -282,11 +303,11 @@ function MeTypeDetails({
 }
 
 export default function RegionDetails() {
-  const brainRegion = useAtomValue(brainRegionAtom);
+  const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
   const [isMeTypeOpen, setisMeTypeOpen] = useState<boolean>(true);
-
   const [meTypeNavValue, setNavValue] = useState<NavValue>({});
+  const composition = useAtomValue(analysedCompositionAtom);
 
   const onValueChange = useCallback(
     (newValue: string[], path: string[]) => {
@@ -335,11 +356,15 @@ export default function RegionDetails() {
                 </div>
               </div>
             </div>
-            <MeTypeDetails
-              neuronComposition={brainRegion.composition.neuronComposition}
-              meTypeNavValue={meTypeNavValue}
-              onValueChange={onValueChange}
-            />
+            {composition ? (
+              <MeTypeDetails
+                neuronComposition={composition.totalComposition.neuron}
+                meTypeNavValue={meTypeNavValue}
+                onValueChange={onValueChange}
+              />
+            ) : (
+              <div>Composition could not be calculated</div>
+            )}
           </div>
         )}
       </div>

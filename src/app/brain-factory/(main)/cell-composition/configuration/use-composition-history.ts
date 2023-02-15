@@ -1,36 +1,15 @@
 import { useCallback, useMemo } from 'react';
 import { useAtom, useSetAtom } from 'jotai/react';
-import { atom } from 'jotai/vanilla';
-
-import { Composition } from '@/types/atlas';
-import { setCompositionAtom } from '@/state/brain-regions';
-
-const compositionHistoryAtom = atom<Composition[]>([]);
-const compositionHistoryIndexAtom = atom<number>(0);
+import {
+  compositionHistoryAtom,
+  compositionHistoryIndexAtom,
+  setCompositionAtom,
+} from '@/state/brain-regions';
 
 export default function useCompositionHistory() {
   const setComposition = useSetAtom(setCompositionAtom);
   const [compositionHistory, setCompositionHistory] = useAtom(compositionHistoryAtom);
   const [historyIndex, setHistoryIndex] = useAtom(compositionHistoryIndexAtom);
-
-  const appendToHistory = useCallback(
-    (newComposition: Composition) => {
-      // We clone the composition to get a completely new object
-      const compositionClone = structuredClone(newComposition);
-      const newHistory = [...compositionHistory.slice(0, historyIndex + 1), compositionClone];
-      setCompositionHistory(newHistory);
-      setHistoryIndex(newHistory.length - 1);
-    },
-    [compositionHistory, setCompositionHistory, setHistoryIndex, historyIndex]
-  );
-
-  const resetHistory = useCallback(
-    (currentComposition: Composition) => {
-      setCompositionHistory([structuredClone(currentComposition)]);
-      setHistoryIndex(0);
-    },
-    [setCompositionHistory, setHistoryIndex]
-  );
 
   const resetComposition = useCallback(() => {
     if (!compositionHistory.length) return;
@@ -70,8 +49,6 @@ export default function useCompositionHistory() {
   );
 
   return {
-    appendToHistory,
-    resetHistory,
     resetComposition,
     undoComposition,
     redoComposition,

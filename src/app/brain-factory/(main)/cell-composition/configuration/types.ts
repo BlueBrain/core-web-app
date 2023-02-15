@@ -6,19 +6,6 @@ export interface AboutNode extends Node {
   value: number;
 }
 
-export type EditorLinksProps = {
-  accNodes: { [about: string]: AboutNode[] };
-  allNodes: Node[];
-  max: number;
-};
-
-export interface CompositionDataSet {
-  links: Link[];
-  nodes: Node[];
-  id: string;
-  value: number;
-}
-
 export type SankeyLinksReducerAcc = {
   links: Link[];
   nodes: Node[];

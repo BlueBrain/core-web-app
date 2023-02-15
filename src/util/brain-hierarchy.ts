@@ -1,5 +1,5 @@
 import { TreeItem } from 'performant-array-to-tree';
-import { Composition, Node } from '@/types/atlas';
+import { AnalysedComposition, Node } from '@/types/atlas';
 import { BrainRegionURI, CompositionOverridesWorkflowConfig } from '@/types/nexus';
 
 const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
@@ -61,7 +61,7 @@ export function getBottomUpPath(hierarchy: TreeItem[], nodeId: string): RegionFu
  */
 export function createCompositionOverridesWorkflowConfig(
   brainRegionURI: BrainRegionURI,
-  composition: Composition
+  composition: AnalysedComposition
 ): CompositionOverridesWorkflowConfig {
   const mtypeNodeIndex: Record<string, Node> = composition.nodes
     .filter((node) => node.about === 'MType')
@@ -105,7 +105,7 @@ export function createCompositionOverridesWorkflowConfig(
  */
 export function applyCompositionOverrides(
   brainRegionURI: BrainRegionURI,
-  composition: Composition,
+  composition: AnalysedComposition,
   workflowConfig: CompositionOverridesWorkflowConfig
 ) {
   if (!workflowConfig) return composition;

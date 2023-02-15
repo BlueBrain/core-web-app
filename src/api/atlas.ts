@@ -1,15 +1,12 @@
-import { fetchAtlasAPI } from '@/util/utils';
+import { createHeaders, fetchAtlasAPI } from '@/util/utils';
 import {
   BrainRegionWOComposition,
   MeshDistribution,
   MeshDistributionRaw,
   BrainRegionRaw,
-  BrainRegion,
 } from '@/types/atlas';
 
 const API_BASE = 'https://bluebrainatlas.kcpdev.bbp.epfl.ch/api/ontologies/brain-regions';
-const CELL_COMPOSITION_ID =
-  'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/54818e46-cf8c-4bd6-9b68-34dffbc8a68c';
 
 const atlasIdUri =
   'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885';
@@ -17,6 +14,8 @@ const atlasIdUri =
 // it is added in order to make the request faster
 const brainRegionsContentUrl =
   'https://bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/f4ded89f-67fb-4d34-831a-a3b317c37c1d';
+
+const NEXUS_URL = 'https://bbp.epfl.ch/nexus/v1';
 
 export async function getBrainRegions(accessToken: string) {
   if (!accessToken) throw new Error('Access token should be defined');
@@ -28,13 +27,14 @@ export async function getBrainRegions(accessToken: string) {
   )
     .then<BrainRegionRaw[]>((response) => response.json())
     .then<BrainRegionWOComposition[]>((brainRegions) =>
-      brainRegions.map(({ color_code: colorCode, id, parentID: parentId, title }) => ({
+      brainRegions.map(({ color_code: colorCode, id, parentID: parentId, title, leaves }) => ({
         colorCode,
         id,
         // Some Atlas endoints (e.g. the current one) return parentId as a string[] with a single id in it.
         // TODO: to investigate (with later fixing API or updating types)
         parentId: (parentId as unknown as string[])?.[0],
         title,
+        leaves,
       }))
     );
 }
@@ -60,47 +60,12 @@ export async function getDistributions(accessToken: string) {
     );
 }
 
-export async function getBrainRegionById(id: string, accessToken: string) {
-  return fetchAtlasAPI(
-    'get',
-    `${API_BASE}/${id}?atlas_id=${atlasIdUri}&cell_composition_id=${CELL_COMPOSITION_ID}`,
-    accessToken
-  )
-    .then<BrainRegionRaw>((response) => response.json())
-    .then<BrainRegion>((brainRegionRaw) => {
-      const {
-        title,
-        color_code: colorCode,
-        composition_details: composition,
-        distribution,
-      } = brainRegionRaw;
+export async function getCompositionData(accessToken: string) {
+  if (!accessToken) throw new Error('Access token should be defined');
 
-      return {
-        id,
-        title,
-        colorCode,
-        composition: {
-          links: composition?.links ?? [],
-          nodes: (composition?.nodes ?? []).map(
-            ({ about, id: brainRegionId, label, neuron_composition, parent_id }) => ({
-              about,
-              id: brainRegionId,
-              label,
-              neuronComposition: neuron_composition,
-              parentId: parent_id,
-            })
-          ),
-          neuronComposition: composition?.neuron_composition,
-        },
-        distribution: distribution
-          ? {
-              name: distribution.name,
-              contentUrl: distribution.content_url,
-              encodingFormat: distribution.encoding_format,
-              contentSize: distribution.content_size,
-              dataSampleModality: distribution.data_sample_modality,
-            }
-          : null,
-      };
-    });
+  const url = `${NEXUS_URL}/files/bbp/atlasdatasetrelease/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F182e8ec7-7b9d-455b-a621-90108623ab76`;
+  return fetch(url, {
+    method: 'GET',
+    headers: createHeaders(accessToken, { Accept: '*/*' }),
+  }).then((response) => response.json());
 }

@@ -4,19 +4,22 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { classNames } from '@/util/utils';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
-import { brainRegionsAtom, brainRegionIdAtom } from '@/state/brain-regions';
+import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export default function CollapsedBrainRegionsSidebar({
   setIsRegionSelectorOpen,
 }: {
   setIsRegionSelectorOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const brainRegionId = useAtomValue(brainRegionIdAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(brainRegionsAtom);
 
   const regionFullPath: RegionFullPathType[] = useMemo(
-    () => (brainRegions && brainRegionId ? getBottomUpPath(brainRegions, brainRegionId) : []),
-    [brainRegionId, brainRegions]
+    () =>
+      brainRegions && selectedBrainRegion
+        ? getBottomUpPath(brainRegions, selectedBrainRegion.id)
+        : [],
+    [selectedBrainRegion, brainRegions]
   );
 
   // remove 'Whole mouse brain'

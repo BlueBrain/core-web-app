@@ -21,7 +21,12 @@ import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import { CompositionUnit } from '@/types/atlas';
-import { brainRegionAtom, densityOrCountAtom, compositionAtom } from '@/state/brain-regions';
+import {
+  densityOrCountAtom,
+  compositionAtom,
+  analysedCompositionAtom,
+  selectedBrainRegionAtom,
+} from '@/state/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
@@ -145,9 +150,9 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
 // ... Including the sidebar composition reducer as well.
 function CellDensity() {
   const [densityOrCount] = useAtom(densityOrCountAtom);
-  const brainRegion = useAtomValue(brainRegionAtom);
-  const composition = useAtomValue(compositionAtom);
-  const { resetHistory, resetComposition } = useCompositionHistory();
+  const brainRegion = useAtomValue(selectedBrainRegionAtom);
+  const composition = useAtomValue(analysedCompositionAtom);
+  const { resetComposition } = useCompositionHistory();
 
   const { nodes, links } = composition ?? { nodes: [], links: [] };
 
@@ -161,17 +166,16 @@ function CellDensity() {
 
   useEffect(() => {
     if (composition) {
-      resetHistory(composition);
       setZoom(1);
     }
-  }, [brainRegion?.id, resetHistory, composition]);
+  }, [brainRegion?.id, composition]);
 
   const sankeyData = useMemo(
     () =>
       ({
         links: getSankeyLinks(links, nodes, 'neuronComposition', densityOrCount),
         nodes: filterOutEmptyNodes(
-          nodes.reduce(sankeyNodesReducer, []),
+          [...nodes].reduce(sankeyNodesReducer, []),
           'neuronComposition',
           densityOrCount
         ),
@@ -210,7 +214,6 @@ function CellDensity() {
 
   // Prevent SVG from rendering whenever zoom changes
   const ref: RefObject<SVGSVGElement & { zoom: (value: number) => void }> = useRef(null);
-
   const densityChart = useMemo(
     () =>
       ref && (
