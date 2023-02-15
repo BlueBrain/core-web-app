@@ -181,9 +181,9 @@ function MeTypeDetails({
    */
   const handleSliderChange = useCallback(
     (changedNode: Node, value: number) => {
-      modifyComposition(changedNode, value, userLockedIds).then();
+      modifyComposition(changedNode, value, allLockedIds).then();
     },
-    [modifyComposition, userLockedIds]
+    [allLockedIds, modifyComposition]
   );
 
   // calculating the max value of the unlocked sliders
