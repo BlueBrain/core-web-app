@@ -1,12 +1,12 @@
 import { ReactElement } from 'react';
-import { MeshDistribution } from '@/types/atlas';
+import { Mesh } from '@/types/ontologies';
 
 export type TitleComponentProps = {
   className?: string;
   content: (...args: any[]) => ReactElement;
   colorCode?: string;
   trigger: (...args: any[]) => ReactElement;
-  distributions?: MeshDistribution[] | null;
+  distributions?: Mesh[] | null;
   id?: string;
   isExpanded: boolean;
   onClick?: () => void;
@@ -36,12 +36,5 @@ export type CompositionTitleProps = {
   setLockedFunc: () => void;
   trigger: (...args: any[]) => ReactElement;
   lockIsDisabled: boolean;
-  children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
-};
-
-export type CompositionListProps = {
-  composition: number;
-  title: string;
-  trigger: (...args: any[]) => ReactElement;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };

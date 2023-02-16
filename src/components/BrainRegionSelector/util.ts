@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { getOr, set } from 'lodash/fp';
 import { NavValue } from '@/components/TreeNavItem';
 import { formatNumber } from '@/util/common';
-import { CompositionUnit } from '@/types/atlas';
+import { CompositionUnit } from '@/types/composition';
 
 /**
  * Calculates the metric to be displayed based on whether count or density is

@@ -159,6 +159,27 @@ export const getBrainModelConfigsByNameQuery = (name: string) => ({
   },
 });
 
+export const getAtlasReleaseMeshesQuery = () => ({
+  size: 10000,
+  query: {
+    bool: {
+      must: [
+        {
+          match: {
+            '@type': 'Mesh',
+          },
+        },
+        {
+          match: {
+            'atlasRelease.@id':
+              'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885',
+          },
+        },
+      ],
+    },
+  },
+});
+
 export const getGeneratorTaskActivityQuery = (configId: string, configRev: number) => ({
   query: {
     bool: {

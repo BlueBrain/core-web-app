@@ -8,7 +8,7 @@ import { MinusOutlined } from '@ant-design/icons';
 import CollapsedRegionDetails from './CollapsedRegionDetails';
 import { getMetric, handleNavValueChange } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
-import { CompositionUnit, Node } from '@/types/atlas';
+import { CompositionUnit, CompositionNode } from '@/types/composition';
 import { formatNumber } from '@/util/common';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {
@@ -180,7 +180,7 @@ function MeTypeDetails({
    * This callback handles the change of a given slider
    */
   const handleSliderChange = useCallback(
-    (changedNode: Node, value: number) => {
+    (changedNode: CompositionNode, value: number) => {
       modifyComposition(changedNode, value, allLockedIds).then();
     },
     [allLockedIds, modifyComposition]
@@ -216,7 +216,7 @@ function MeTypeDetails({
 
   // sets modified the locked ids based on the changed node
   const setLocked = useCallback(
-    (id: string, childrenNodes: Node[]) => {
+    (id: string, childrenNodes: CompositionNode[]) => {
       const childrenIds = childrenNodes.map((childNode) => `${id}__${childNode.id}`);
 
       if (userLockedIds.includes(id)) {
@@ -280,7 +280,7 @@ function MeTypeDetails({
                     content={nestedContent}
                     onSliderChange={(newValue: number) => {
                       const node = neuronsToNodes[parentId].items.find(
-                        (nestedNode: Node) => nestedNode.id === nestedId
+                        (nestedNode: CompositionNode) => nestedNode.id === nestedId
                       );
                       handleSliderChange(node, newValue);
                     }}

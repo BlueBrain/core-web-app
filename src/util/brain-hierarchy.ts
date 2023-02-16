@@ -1,6 +1,7 @@
 import { TreeItem } from 'performant-array-to-tree';
-import { AnalysedComposition, Node } from '@/types/atlas';
 import { BrainRegionURI, CompositionOverridesWorkflowConfig } from '@/types/nexus';
+import { AnalysedComposition } from '@/util/composition/types';
+import { CompositionNode } from '@/types/composition';
 
 const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -63,7 +64,7 @@ export function createCompositionOverridesWorkflowConfig(
   brainRegionURI: BrainRegionURI,
   composition: AnalysedComposition
 ): CompositionOverridesWorkflowConfig {
-  const mtypeNodeIndex: Record<string, Node> = composition.nodes
+  const mtypeNodeIndex: Record<string, CompositionNode> = composition.nodes
     .filter((node) => node.about === 'MType')
     .reduce((indexMap, node) => ({ ...indexMap, [node.id]: node }), {});
 
@@ -111,7 +112,7 @@ export function applyCompositionOverrides(
   if (!workflowConfig) return composition;
 
   // Index composition nodes by id for fast access
-  const nodeIndex: Record<string, Node> = composition.nodes.reduce(
+  const nodeIndex: Record<string, CompositionNode> = composition.nodes.reduce(
     (indexMap, node) => ({ ...indexMap, [node.id]: node }),
     {}
   );

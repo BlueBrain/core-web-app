@@ -4,11 +4,11 @@ import { useAtomValue, useSetAtom } from 'jotai/react';
 import { useMemo } from 'react';
 import AtlasVisualizationAtom from '@/state/atlas';
 import LoadingIcon from '@/components/icons/LoadingIcon';
-import { MeshDistribution } from '@/types/atlas';
+import { Mesh } from '@/types/ontologies';
 
 type BrainRegionVisualizationTriggerProps = {
   regionID: string;
-  distribution: MeshDistribution;
+  distribution: Mesh;
   colorCode: string;
 };
 

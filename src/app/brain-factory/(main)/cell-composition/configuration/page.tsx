@@ -20,7 +20,7 @@ import DensityChart from './DensityChart';
 import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
-import { CompositionUnit } from '@/types/atlas';
+import { CompositionUnit } from '@/types/composition';
 import {
   densityOrCountAtom,
   compositionAtom,

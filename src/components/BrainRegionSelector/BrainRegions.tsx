@@ -12,7 +12,7 @@ import ColorBox from '@/components/ColorBox';
 import { BrainIcon } from '@/components/icons';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {
-  brainRegionsAtom,
+  brainRegionsFilteredTreeAtom,
   meshDistributionsAtom,
   setSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
@@ -25,8 +25,7 @@ function VisualizationTrigger({ colorCode, id }: { colorCode: string; id: string
     return <LoadingOutlined />;
   }
 
-  const meshDistribution =
-    meshDistributions && meshDistributions.find(({ id: distributionId }) => distributionId === id);
+  const meshDistribution = meshDistributions && meshDistributions[id];
 
   if (meshDistribution && colorCode) {
     return (
@@ -92,7 +91,7 @@ function NavTitle({
 }
 
 export default function BrainRegions() {
-  const brainRegions = useAtomValue(brainRegionsAtom);
+  const brainRegionsTree = useAtomValue(brainRegionsFilteredTreeAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
   const [brainRegionsNavValue, setNavValue] = useState<NavValue>(null);
@@ -106,7 +105,7 @@ export default function BrainRegions() {
     [brainRegionsNavValue, setNavValue]
   );
 
-  return brainRegions ? (
+  return brainRegionsTree ? (
     <div className="bg-primary-8 flex flex-1 flex-col h-screen">
       {!isRegionSelectorOpen ? (
         <CollapsedBrainRegionsSidebar setIsRegionSelectorOpen={setIsRegionSelectorOpen} />
@@ -134,7 +133,7 @@ export default function BrainRegions() {
               />
             </div>
             <TreeNav
-              items={brainRegions}
+              items={brainRegionsTree}
               onValueChange={onValueChange}
               value={brainRegionsNavValue}
             >

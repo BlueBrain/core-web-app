@@ -1,7 +1,8 @@
-import { Link, Node } from '@/types/atlas';
+import { CompositionNode } from '@/types/composition';
+import { CompositionLink } from '@/util/composition/types';
 
-export function sankeyNodesReducer(acc: Node[], cur: Node) {
-  const existingNodeIndex = acc.findIndex((node: Node) => node.id === cur.id);
+export function sankeyNodesReducer(acc: CompositionNode[], cur: CompositionNode) {
+  const existingNodeIndex = acc.findIndex((node: CompositionNode) => node.id === cur.id);
   const existingNode = acc[existingNodeIndex];
 
   return existingNode
@@ -19,14 +20,19 @@ export function sankeyNodesReducer(acc: Node[], cur: Node) {
     : [...acc, cur];
 }
 
-export function filterOutEmptyNodes(nodes: Node[], type: string, value: string) {
+export function filterOutEmptyNodes(nodes: CompositionNode[], type: string, value: string) {
   // @ts-ignore
   return nodes.filter((node) => node[type][value] > 0);
 }
 
-export function getSankeyLinks(links: Link[], nodes: Node[], type: string, value: string) {
-  const sankeyLinks: Link[] = [];
-  links.forEach(({ source, target }: Link) => {
+export function getSankeyLinks(
+  links: CompositionLink[],
+  nodes: CompositionNode[],
+  type: string,
+  value: string
+) {
+  const sankeyLinks: CompositionLink[] = [];
+  links.forEach(({ source, target }: CompositionLink) => {
     const linkValue = (nodes.find((node) => node.id === target && node.parentId === source) as any)[
       type
     ][value];

@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { classNames } from '@/util/utils';
 import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
-import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import { brainRegionsFilteredTreeAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export default function CollapsedBrainRegionsSidebar({
   setIsRegionSelectorOpen,
@@ -12,7 +12,7 @@ export default function CollapsedBrainRegionsSidebar({
   setIsRegionSelectorOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const brainRegions = useAtomValue(brainRegionsAtom);
+  const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
 
   const regionFullPath: RegionFullPathType[] = useMemo(
     () =>

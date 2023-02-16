@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Node } from '@/types/atlas';
+import { CompositionNode } from '@/types/composition';
 
 /**
  * Given a parent and its children, it counts the amount of locked children
@@ -7,7 +7,7 @@ import { Node } from '@/types/atlas';
  * @param children the children nodes
  * @param lockedIds the locked ids
  */
-const findUnlockedChildren = (children: Node[], lockedIds: string[]) => {
+const findUnlockedChildren = (children: CompositionNode[], lockedIds: string[]) => {
   let countLocked = 0;
   const unlockedIds: string[] = [];
   children.forEach((neuron) => {
@@ -33,7 +33,7 @@ const findUnlockedChildren = (children: Node[], lockedIds: string[]) => {
  *    locked as well
  *
  */
-const computeSystemLockedIds = (nodes: Node[], userLockedIds: string[]) => {
+const computeSystemLockedIds = (nodes: CompositionNode[], userLockedIds: string[]) => {
   let lockedIds: string[] = [];
   const groupByParent = _.groupBy(nodes, (node) => node.parentId);
   // first iterating over the children whose parent is not null

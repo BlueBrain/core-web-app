@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { LeafNode, Composition, CompositionUnit, Node } from '@/types/atlas';
+import { LeafNode, Composition, CompositionUnit, CompositionNode } from '@/types/composition';
 
 /* eslint-disable no-param-reassign */
 
@@ -17,7 +17,7 @@ const calculateValueSpread = (
   nodeId: string,
   node: LeafNode,
   value: number,
-  modifiedNode: Node,
+  modifiedNode: CompositionNode,
   lockedIds: string[],
   densityOrCount: string
 ): { [key: string]: number } => {
@@ -65,7 +65,7 @@ const calculateValueSpread = (
 export const iterateLeafTree = (
   node: LeafNode,
   nodeId: string,
-  modifiedNode: Node,
+  modifiedNode: CompositionNode,
   isAffected: Boolean,
   modifiedValue: number,
   lockedIds: string[],
@@ -151,7 +151,7 @@ export const iterateLeafTree = (
  * @param densityOrCount whether density or count is currently selected
  */
 const computeModifiedComposition = (
-  modifiedNode: Node,
+  modifiedNode: CompositionNode,
   changedAmount: number,
   affectedLeaves: string[],
   volumes: { [key: string]: number },

@@ -1,14 +1,11 @@
 import _ from 'lodash';
+import { Composition, CompositionPair, LeafNode, CompositionNode } from '@/types/composition';
 import {
+  AnalysedComposition,
   CalculationLink,
   CalculationNode,
-  AnalysedComposition,
-  Composition,
-  CompositionPair,
-  LeafNode,
-  Link,
-  Node,
-} from '@/types/atlas';
+  CompositionLink,
+} from '@/util/composition/types';
 
 /* eslint-disable no-param-reassign */
 
@@ -119,7 +116,7 @@ export default async function calculateCompositions(
     }
   });
 
-  const nodesArray: Node[] = [];
+  const nodesArray: CompositionNode[] = [];
   Object.entries(nodes).forEach(([nodeId, node]) => {
     nodesArray.push({
       about: node.about,
@@ -131,7 +128,7 @@ export default async function calculateCompositions(
     });
   });
 
-  const linksArray: Link[] = [];
+  const linksArray: CompositionLink[] = [];
   Object.values(links).forEach((link) => {
     linksArray.push({
       source: link.source,

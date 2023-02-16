@@ -2,27 +2,20 @@ import { atom } from 'jotai/vanilla';
 import { arrayToTree } from 'performant-array-to-tree';
 import _ from 'lodash';
 import sessionAtom from './session';
-import {
-  BrainRegion,
-  BrainRegionWOComposition,
-  AnalysedComposition,
-  Composition,
-  CompositionUnit,
-  MeshDistribution,
-  Node,
-} from '@/types/atlas';
-import { getBrainRegions, getCompositionData, getDistributions } from '@/api/atlas';
-import analyseComposition from '@/util/composition-parser';
-import computeModifiedComposition from '@/util/composition-modifier';
+import { BrainRegion, Mesh } from '@/types/ontologies';
+import { Composition, CompositionUnit, CompositionNode } from '@/types/composition';
+import analyseComposition from '@/util/composition/composition-parser';
+import computeModifiedComposition from '@/util/composition/composition-modifier';
+import { getBrainRegions, getCompositionData, getDistributions } from '@/api/ontologies';
+import { AnalysedComposition } from '@/util/composition/types';
 
 /*
   Atom dependency graph
 
 
- ┌────────────────────────┐    ┌─────────────────────────┐    ┌────────────────────────┐
- │    BrainRegionsAtom    │    │ BrainRegionFlatListAtom │    │ MeshDistributionsAtom  │
- └────────────────────────┘    └─────────────────────────┘    └────────────────────────┘
-
+ ┌───────────────────────────────────┐    ┌──────────────────────────────┐    ┌─────────────────────┐
+ │    brainRegionsFilteredArrayAtom  ├────► BrainRegionsFilteredTreeAtom ├────►   BrainRegionsAtom  │
+ └───────────────────────────────────┘    └──────────────────────────────┘    └─────────────────────┘
 
  ┌─────────────────────────┐    ┌────────────────────────────┐
  │ selectedBrainRegionAtom │    │ setSelectedBrainRegionAtom │
@@ -51,7 +44,24 @@ import computeModifiedComposition from '@/util/composition-modifier';
 
 export const densityOrCountAtom = atom<keyof CompositionUnit>('count');
 
-export const brainRegionFlatListAtom = atom<Promise<BrainRegionWOComposition[]> | null>((get) => {
+/**
+ * Recursively unravels a brain region tree to an array
+ * @param brainRegion
+ * @param result
+ * @param ancestors
+ */
+const treeToArray = (brainRegion: BrainRegion, result: BrainRegion[], ancestors: string[]) => {
+  brainRegion.items?.forEach((br) => {
+    const newRegion = { ...br };
+    delete newRegion.items;
+    const newAncestors = [...ancestors, brainRegion.id];
+    newRegion.ancestors = newAncestors;
+    result.push(newRegion);
+    treeToArray(br, result, newAncestors);
+  });
+};
+
+export const brainRegionsAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
   const session = get(sessionAtom);
 
   if (!session) return null;
@@ -59,22 +69,50 @@ export const brainRegionFlatListAtom = atom<Promise<BrainRegionWOComposition[]> 
   return getBrainRegions(session.accessToken);
 });
 
-export const brainRegionsAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
-  const brainRegionFlatList = await get(brainRegionFlatListAtom);
-  if (!brainRegionFlatList) return null;
+export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
+  const brainRegions = await get(brainRegionsAtom);
+  if (!brainRegions) return null;
 
-  return arrayToTree(brainRegionFlatList, {
+  const tree = arrayToTree(brainRegions, {
     dataField: null,
     parentId: 'parentId',
     childrenField: 'items',
   }) as BrainRegion[];
+  // if the tree is successfully created, make region 8 the root and flatten it
+  // back to array. This is done in order to remove the brain regions that are
+  // siblings or parents of region 8
+  if (tree.length > 0) {
+    const newRoot = tree[0].items?.find((region: BrainRegion) => region.id === '8');
+    return newRoot ? [newRoot] : null;
+  }
+  return tree;
 });
 
-export const meshDistributionsAtom = atom<Promise<MeshDistribution[]> | null>((get) => {
+/**
+ * This atom returns the filtered brain regions as array
+ */
+export const brainRegionsFilteredArrayAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
+  const tree = await get(brainRegionsFilteredTreeAtom);
+  // if the tree is successfully created, make region 8 the root and flatten it
+  // back to array. This is done in order to remove the brain regions that are
+  // siblings or parents of region 8
+  if (tree) {
+    const root = { ...tree[0] };
+    if (root) {
+      const flattenedRegions: BrainRegion[] = [];
+      treeToArray(root, flattenedRegions, []);
+      delete root.items;
+      root.parentId = null;
+      return flattenedRegions.sort((a, b) => a.id.localeCompare(b.id));
+    }
+  }
+  return tree;
+});
+
+export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>>(async (get) => {
   const session = get(sessionAtom);
 
   if (!session) return null;
-
   return getDistributions(session.accessToken);
 });
 
@@ -130,11 +168,9 @@ export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>
   const compositionData = await get(compositionAtom);
 
   if (!session || !selectedBrainRegion) return null;
-  const leaves =
-    selectedBrainRegion.leaves !== null
-      ? selectedBrainRegion.leaves
-      : [`http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`];
-
+  const leaves = selectedBrainRegion.leaves
+    ? selectedBrainRegion.leaves
+    : [`http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`];
   return analyseComposition(compositionData, leaves);
 });
 
@@ -143,7 +179,7 @@ export const compositionHistoryIndexAtom = atom<number>(0);
 
 export const computeAndSetCompositionAtom = atom(
   null,
-  async (get, set, modifiedNode: Node, newValue: number, lockedIds: string[]) => {
+  async (get, set, modifiedNode: CompositionNode, newValue: number, lockedIds: string[]) => {
     const analysedComposition = await get(analysedCompositionAtom);
     if (!analysedComposition || !modifiedNode.composition) {
       return;
