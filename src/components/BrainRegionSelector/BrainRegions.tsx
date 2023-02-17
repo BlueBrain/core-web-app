@@ -61,13 +61,12 @@ function NavTitle({
     <>
       <div className="py-3 flex justify-between items-center">
         <div className="flex gap-2 justify-between items-center">
-          <Button
-            className="-ml-[15px] h-auto border-none flex font-bold gap-3 justify-end items-center"
-            type="text"
-            onKeyDown={() => id && onClick()}
+          <button
+            type="button"
+            className="h-auto border-none flex font-bold gap-3 justify-end items-center"
             onClick={() => id && onClick()}
-            icon={colorCode ? <ColorBox color={colorCode} /> : null}
           >
+            {colorCode ? <ColorBox color={colorCode} /> : null}
             <span
               className={classNames(
                 className,
@@ -77,7 +76,7 @@ function NavTitle({
             >
               {title}
             </span>
-          </Button>
+          </button>
         </div>
 
         <div className="-mr-[4px] flex gap-2 justify-between items-center">
