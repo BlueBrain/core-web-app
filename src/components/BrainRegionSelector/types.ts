@@ -11,6 +11,8 @@ export type TitleComponentProps = {
   isExpanded: boolean;
   onClick?: () => void;
   title?: string;
+  multi?: boolean;
+  selectedBrainRegionIds?: Set<string>;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
 

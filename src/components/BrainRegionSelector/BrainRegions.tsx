@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
-import { Button } from 'antd';
+import { Button, Checkbox } from 'antd';
 import { MinusOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import { handleNavValueChange } from './util';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
@@ -56,11 +56,18 @@ function NavTitle({
   isExpanded,
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
+  multi = false,
+  selectedBrainRegionIds,
 }: TitleComponentProps) {
+  let checkbox = null;
+  if (multi && !!selectedBrainRegionIds && id)
+    checkbox = <Checkbox checked={selectedBrainRegionIds.has(id)} />;
+
   return (
     <>
       <div className="py-3 flex justify-between items-center">
         <div className="flex gap-2 justify-between items-center">
+          {checkbox}
           <button
             type="button"
             className="h-auto border-none flex font-bold gap-3 justify-end items-center"
@@ -89,12 +96,24 @@ function NavTitle({
   );
 }
 
-export default function BrainRegions() {
-  const brainRegionsTree = useAtomValue(brainRegionsFilteredTreeAtom);
-  const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
-  const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
+export function ExpandedBrainRegionsSidebar({
+  setIsRegionSelectorOpen,
+  setSelectedBrainRegion,
+  header,
+  selectedBrainRegionIds,
+}: {
+  header?: React.ReactNode;
+  selectedBrainRegionIds?: Set<string>;
+  setIsRegionSelectorOpen: (value: boolean) => void;
+  setSelectedBrainRegion: (
+    selectedBrainRegionId: string,
+    selectedBrainRegionTitle: string,
+    selectedBrainRegionLeaves: string[] | null
+  ) => void;
+}) {
+  const multi = !!header;
+  const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
   const [brainRegionsNavValue, setNavValue] = useState<NavValue>(null);
-
   const onValueChange = useCallback(
     (newValue: string[], path: string[]) => {
       const callback = handleNavValueChange(brainRegionsNavValue, setNavValue);
@@ -104,74 +123,93 @@ export default function BrainRegions() {
     [brainRegionsNavValue, setNavValue]
   );
 
+  if (!brainRegions) return null;
+
+  return (
+    <div className="flex flex-1 flex-col overflow-y-auto px-7 py-6 min-w-[300px]">
+      <div className="grid">
+        <div className="flex justify-between mb-7 items-start">
+          <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
+            {header}
+            {!header && (
+              <>
+                <BrainIcon style={{ height: '1em' }} />
+                <span>Brain region</span>
+              </>
+            )}
+          </div>
+          <Button
+            type="text"
+            size="small"
+            icon={<MinusOutlined style={{ color: 'white' }} />}
+            onClick={() => setIsRegionSelectorOpen(false)}
+          />
+        </div>
+        <div className="border-b border-white focus-within:border-primary-2 mb-10">
+          <input
+            type="text"
+            className="block w-full py-3 text-primary-4 placeholder-primary-4 border-0 border-b border-transparent bg-transparent focus:border-primary-4 focus:ring-0"
+            disabled
+            placeholder="Search region..."
+          />
+        </div>
+        <TreeNav items={brainRegions} onValueChange={onValueChange} value={brainRegionsNavValue}>
+          {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
+            <NavTitle
+              className="uppercase text-lg"
+              colorCode={colorCode}
+              id={id}
+              onClick={() => leaves && setSelectedBrainRegion(id, title, leaves)}
+              title={title}
+              isExpanded={isExpanded}
+              trigger={trigger}
+              content={content}
+              multi={multi}
+            >
+              {({
+                colorCode: nestedColorCode,
+                id: nestedId,
+                isExpanded: nestedIsExpanded,
+                title: nestedTitle,
+                trigger: nestedTrigger,
+                content: nestedContent,
+                leaves: nestedLeaves,
+              }) => (
+                <NavTitle
+                  className="capitalize text-base"
+                  onClick={() => setSelectedBrainRegion(nestedId, nestedTitle, nestedLeaves)}
+                  colorCode={nestedColorCode}
+                  id={nestedId}
+                  title={nestedTitle}
+                  isExpanded={nestedIsExpanded}
+                  trigger={nestedTrigger}
+                  content={nestedContent}
+                  multi={multi}
+                  selectedBrainRegionIds={selectedBrainRegionIds}
+                />
+              )}
+            </NavTitle>
+          )}
+        </TreeNav>
+      </div>
+    </div>
+  );
+}
+
+export default function BrainRegions() {
+  const brainRegionsTree = useAtomValue(brainRegionsFilteredTreeAtom);
+  const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
+  const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
+
   return brainRegionsTree ? (
     <div className="bg-primary-8 flex flex-1 flex-col h-screen">
       {!isRegionSelectorOpen ? (
         <CollapsedBrainRegionsSidebar setIsRegionSelectorOpen={setIsRegionSelectorOpen} />
       ) : (
-        <div className="flex flex-1 flex-col overflow-y-auto px-7 py-6 min-w-[300px]">
-          <div className="grid">
-            <div className="flex justify-between mb-7 items-start">
-              <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
-                <BrainIcon style={{ height: '1em' }} />
-                <span>Brain region</span>
-              </div>
-              <Button
-                type="text"
-                size="small"
-                icon={<MinusOutlined style={{ color: 'white' }} />}
-                onClick={() => setIsRegionSelectorOpen(false)}
-              />
-            </div>
-            <div className="border-b border-white focus-within:border-primary-2 mb-10">
-              <input
-                type="text"
-                className="block w-full py-3 text-primary-4 placeholder-primary-4 border-0 border-b border-transparent bg-transparent focus:border-primary-4 focus:ring-0"
-                disabled
-                placeholder="Search region..."
-              />
-            </div>
-            <TreeNav
-              items={brainRegionsTree}
-              onValueChange={onValueChange}
-              value={brainRegionsNavValue}
-            >
-              {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
-                <NavTitle
-                  className="uppercase text-lg"
-                  colorCode={colorCode}
-                  id={id}
-                  onClick={() => leaves && setSelectedBrainRegion(id, title, leaves)}
-                  title={title}
-                  isExpanded={isExpanded}
-                  trigger={trigger}
-                  content={content}
-                >
-                  {({
-                    colorCode: nestedColorCode,
-                    id: nestedId,
-                    isExpanded: nestedIsExpanded,
-                    title: nestedTitle,
-                    trigger: nestedTrigger,
-                    content: nestedContent,
-                    leaves: nestedLeaves,
-                  }) => (
-                    <NavTitle
-                      className="capitalize text-base"
-                      onClick={() => setSelectedBrainRegion(nestedId, nestedTitle, nestedLeaves)}
-                      colorCode={nestedColorCode}
-                      id={nestedId}
-                      title={nestedTitle}
-                      isExpanded={nestedIsExpanded}
-                      trigger={nestedTrigger}
-                      content={nestedContent}
-                    />
-                  )}
-                </NavTitle>
-              )}
-            </TreeNav>
-          </div>
-        </div>
+        <ExpandedBrainRegionsSidebar
+          setIsRegionSelectorOpen={setIsRegionSelectorOpen}
+          setSelectedBrainRegion={setSelectedBrainRegion}
+        />
       )}
     </div>
   ) : (
