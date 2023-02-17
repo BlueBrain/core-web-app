@@ -1,7 +1,5 @@
 import { TreeItem } from 'performant-array-to-tree';
-import { BrainRegionURI, CompositionOverridesWorkflowConfig } from '@/types/nexus';
-import { AnalysedComposition } from '@/util/composition/types';
-import { CompositionNode } from '@/types/composition';
+import { Composition, CompositionOverrideLeafNode } from '@/types/composition';
 
 const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -57,90 +55,24 @@ export function getBottomUpPath(hierarchy: TreeItem[], nodeId: string): RegionFu
 }
 /* eslint-enable consistent-return */
 
-/**
- * Created a composition configuration to be consumed by the workflow
- */
-export function createCompositionOverridesWorkflowConfig(
-  brainRegionURI: BrainRegionURI,
-  composition: AnalysedComposition
-): CompositionOverridesWorkflowConfig {
-  const mtypeNodeIndex: Record<string, CompositionNode> = composition.nodes
-    .filter((node) => node.about === 'MType')
-    .reduce((indexMap, node) => ({ ...indexMap, [node.id]: node }), {});
+export function extendLeafNodeWithOverrideProps(
+  node: CompositionOverrideLeafNode
+): CompositionOverrideLeafNode {
+  if (node.hasPart) {
+    Object.values(node.hasPart).forEach((childNode) => extendLeafNodeWithOverrideProps(childNode));
+  } else {
+    // eslint-disable-next-line no-param-reassign
+    node.density = node.composition.neuron.density;
+  }
 
-  const compositionOverrides = composition.nodes
-    .filter((node) => node.about === 'EType')
-    .reduce<CompositionOverridesWorkflowConfig>((config, etypeNode) => {
-      const mtypeNodeId = etypeNode.parentId as string;
-
-      const mtypeNode = mtypeNodeIndex[mtypeNodeId];
-
-      return {
-        [brainRegionURI]: {
-          label: '',
-          hasPart: {
-            ...config?.[brainRegionURI]?.hasPart,
-            [mtypeNode.id]: {
-              ...config[mtypeNode.id],
-              label: mtypeNode.label,
-              about: mtypeNode.about,
-              hasPart: {
-                [etypeNode.id]: {
-                  label: etypeNode.label,
-                  about: etypeNode.about,
-                  density: etypeNode.neuronComposition.density,
-                  count: etypeNode.neuronComposition.count,
-                },
-              },
-            },
-          },
-        },
-      };
-    }, {});
-
-  return compositionOverrides;
+  return node;
 }
 
 /**
- * Apply densities from the workflow config to the existing composition in place
+ * Extend a composition with a density property on each (etype) leaf.
  */
-export function applyCompositionOverrides(
-  brainRegionURI: BrainRegionURI,
-  composition: AnalysedComposition,
-  workflowConfig: CompositionOverridesWorkflowConfig
-) {
-  if (!workflowConfig) return composition;
-
-  // Index composition nodes by id for fast access
-  const nodeIndex: Record<string, CompositionNode> = composition.nodes.reduce(
-    (indexMap, node) => ({ ...indexMap, [node.id]: node }),
-    {}
-  );
-
-  Object.entries(workflowConfig?.[brainRegionURI]?.hasPart ?? {}).forEach(
-    ([mtypeId, mtypeEntry]) => {
-      // Compute and apply densities and counts for mtypes
-      const mtypeDensity = Object.values(mtypeEntry.hasPart)
-        .map((etypeEntry) => etypeEntry.density)
-        .reduce((totalDensity, density) => totalDensity + density, 0);
-
-      const mtypeCount = Object.values(mtypeEntry.hasPart)
-        .map((etypeEntry) => etypeEntry.count)
-        .reduce((totalCount, count) => totalCount + count, 0);
-
-      nodeIndex[mtypeId].neuronComposition = {
-        density: mtypeDensity,
-        count: mtypeCount,
-      };
-
-      // Apply densities and counts for etypes
-      Object.entries(mtypeEntry.hasPart).forEach(([etypeId, etypeEntry]) => {
-        const { density, count } = etypeEntry;
-
-        nodeIndex[etypeId].neuronComposition = { density, count };
-      });
-    }
-  );
+export function extendCompositionWithOverrideProps(composition: Composition): Composition {
+  Object.values(composition.hasPart).forEach((node) => extendLeafNodeWithOverrideProps(node));
 
   return composition;
 }

@@ -35,3 +35,9 @@ export type LeafNode = {
   hasPart: { [key: string]: LeafNode };
   composition: CompositionPair;
 };
+
+// Workaround to fit current Composition into the workflow config
+// To be refactored/removed
+export type CompositionOverrideLeafNode = LeafNode & {
+  density?: number;
+};

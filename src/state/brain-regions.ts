@@ -1,13 +1,19 @@
 import { atom } from 'jotai/vanilla';
 import { arrayToTree } from 'performant-array-to-tree';
 import _ from 'lodash';
+
 import sessionAtom from './session';
+import {
+  configPayloadAtom,
+  setCompositionPayloadConfigurationAtom,
+} from './brain-model-config/cell-composition';
 import { BrainRegion, Mesh } from '@/types/ontologies';
 import { Composition, CompositionUnit, CompositionNode } from '@/types/composition';
 import analyseComposition from '@/util/composition/composition-parser';
 import computeModifiedComposition from '@/util/composition/composition-modifier';
 import { getBrainRegions, getCompositionData, getDistributions } from '@/api/ontologies';
 import { AnalysedComposition } from '@/util/composition/types';
+import { extendCompositionWithOverrideProps } from '@/util/brain-hierarchy';
 
 /*
   Atom dependency graph
@@ -144,15 +150,31 @@ export const setSelectedBrainRegionAtom = atom(
   }
 );
 
-const initialCompositionAtom = atom((get) => {
+const initialCompositionAtom = atom<Promise<Composition | null>>(async (get) => {
   const session = get(sessionAtom);
 
   if (!session) return null;
 
+  const compositionPayload = await get(configPayloadAtom);
+  if (compositionPayload) {
+    // TODO: create a focus-/selectAtom under cell-composition state to directly contain configuration
+    const config = Object.values(compositionPayload)[0].configuration;
+
+    // This is a safeguard to discard and eventually overwrite configurations of older format.
+    if (config.unitCode) {
+      return {
+        version: config.version,
+        unitCode: config.unitCode,
+        hasPart: config.overrides,
+      } as unknown as Composition;
+      // TODO: add composition converter: internal representation <-> KG format, remove type casting
+    }
+  }
+
   return getCompositionData(session.accessToken);
 });
 
-export const compositionAtom = atom<Promise<Composition>>(async (get) => {
+export const compositionAtom = atom<Promise<Composition | null>>(async (get) => {
   const updatedComposition = get(updatedCompositionAtom);
 
   if (updatedComposition) {
@@ -167,7 +189,8 @@ export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>
   const selectedBrainRegion = get(selectedBrainRegionAtom);
   const compositionData = await get(compositionAtom);
 
-  if (!session || !selectedBrainRegion) return null;
+  if (!session || !selectedBrainRegion || !compositionData) return null;
+
   const leaves = selectedBrainRegion.leaves
     ? selectedBrainRegion.leaves
     : [`http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`];
@@ -202,8 +225,12 @@ export const computeAndSetCompositionAtom = atom(
     );
     set(updatedCompositionAtom, modifiedComposition);
 
-    // whenever there is a change, we also update the history
     const compositionClone = _.cloneDeep(modifiedComposition);
+    extendCompositionWithOverrideProps(compositionClone);
+
+    set(setCompositionPayloadConfigurationAtom, compositionClone);
+
+    // whenever there is a change, we also update the history
     const newHistory = [...compositionHistory.slice(0, historyIndex + 1), compositionClone];
     set(compositionHistoryAtom, newHistory);
     set(compositionHistoryIndexAtom, newHistory.length - 1);

@@ -20,10 +20,12 @@ import {
   CompositionOverridesWorkflowConfig,
   GeneratorTaskActivityResource,
 } from '@/types/nexus';
+import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 import { debounce } from '@/util/common';
 import { setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { CellCompositionStepGroupValues } from '@/state/build-status';
+import { Composition } from '@/types/composition';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
@@ -204,39 +206,38 @@ const configPayloadDefaults = {
   },
 };
 
-type BrainRegionUri = string;
-
-export const setCompositionOverridesAtom = atom<
+export const setCompositionPayloadConfigurationAtom = atom<null, [Composition], void>(
   null,
-  [BrainRegionUri, CompositionOverridesWorkflowConfig],
-  void
->(null, async (get, set, brainRegionUri, compositionOverrides) => {
-  const configPayload = await get(configPayloadAtom);
+  async (get, set, composition) => {
+    const configPayload = await get(configPayloadAtom);
 
-  let updatedConfigPayload: CellCompositionConfigPayload = {};
+    let updatedConfigPayload: CellCompositionConfigPayload = {};
 
-  if (configPayload) {
-    updatedConfigPayload = { ...configPayload };
+    if (configPayload) {
+      updatedConfigPayload = { ...configPayload };
+    }
+
+    updatedConfigPayload[ROOT_BRAIN_REGION_URI] = {
+      // This is to replace inputs with the latest base composition summary and distributions
+      // TODO: revert back when configs are migrated to use the newest input params
+      // TODO: refactor to have separate "focus" atoms for each part of the payload
+      // ...(updatedConfigPayload[brainRegionUri] ?? {
+      ...{
+        variantDefinition: configPayloadDefaults.VARIANT_DEFINITION,
+        inputs: configPayloadDefaults.INPUTS,
+      },
+      jobConfiguration: {},
+      configuration: {
+        version: composition.version,
+        unitCode: composition.unitCode,
+        base_atlas_density_dataset: configPayloadDefaults.BASE_ATLAS_DENSITY_DATASET,
+        overrides: composition.hasPart as unknown as CompositionOverridesWorkflowConfig,
+      },
+    };
+
+    await set(setConfigPayloadAtom, updatedConfigPayload);
   }
-
-  updatedConfigPayload[brainRegionUri] = {
-    // This is to replace inputs with the latest base composition summary and distributions
-    // TODO: revert back when configs are migrated to use the newest input params
-    // ...(updatedConfigPayload[brainRegionUri] ?? {
-    ...{
-      variantDefinition: configPayloadDefaults.VARIANT_DEFINITION,
-      inputs: configPayloadDefaults.INPUTS,
-    },
-    jobConfiguration: {},
-    configuration: {
-      version: 1,
-      base_atlas_density_dataset: configPayloadDefaults.BASE_ATLAS_DENSITY_DATASET,
-      overrides: compositionOverrides,
-    },
-  };
-
-  await set(setConfigPayloadAtom, updatedConfigPayload);
-});
+);
 
 export const createGetJobConfigAtom = (entityId: string) => {
   const selectorFn = (cellCompositionConfigPayload: CellCompositionConfigPayload | null) =>

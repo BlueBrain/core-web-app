@@ -68,7 +68,6 @@ type EtypeWorkflowConfigEntry = {
   label: string;
   about: string;
   density: number;
-  count: number;
 };
 
 type MtypeWorkflowConfigEntry = {
@@ -102,6 +101,9 @@ export type CellCompositionConfigPayload = {
     }[];
     configuration: {
       version: number;
+      unitCode: {
+        density: string;
+      };
       base_atlas_density_dataset: {
         '@id': string;
         _rev: number;
