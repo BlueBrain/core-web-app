@@ -14,6 +14,7 @@ export type CalculationNode = {
   parentId: string | null;
   composition: CompositionPair;
   leaves: Set<string>;
+  relatedNodes: Set<string>;
 };
 // The analysed composition that is produced after recursively analysing the composition
 export type AnalysedComposition = {

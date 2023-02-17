@@ -181,7 +181,7 @@ export const computeAndSetCompositionAtom = atom(
   null,
   async (get, set, modifiedNode: CompositionNode, newValue: number, lockedIds: string[]) => {
     const analysedComposition = await get(analysedCompositionAtom);
-    if (!analysedComposition || !modifiedNode.composition) {
+    if (!analysedComposition || modifiedNode.composition === undefined) {
       return;
     }
     const { volumes, composition } = analysedComposition;

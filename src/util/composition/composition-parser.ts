@@ -37,6 +37,8 @@ function addNode(node: CalculationNode, nodes: { [key: string]: CalculationNode 
     addCompositions(nodes[id].composition, node.composition);
     // @ts-ignore
     nodes[id].leaves = new Set([...nodes[id].leaves, ...node.leaves]);
+    // @ts-ignore
+    nodes[id].relatedNodes = new Set([...nodes[id].relatedNodes, ...node.relatedNodes]);
   } else {
     nodes[id] = node;
   }
@@ -74,6 +76,7 @@ function iterateNode(
         label: childSubtree.label,
         parentId,
         leaves: new Set([leafId]),
+        relatedNodes: new Set(Object.keys(subTree.hasPart)),
       };
       // add the node in the set of nodes
       addNode(node, nodes);
@@ -125,6 +128,7 @@ export default async function calculateCompositions(
       parentId: node.parentId,
       neuronComposition: node.composition.neuron,
       leaves: Array.from(node.leaves),
+      relatedNodes: Array.from(node.relatedNodes),
     });
   });
 

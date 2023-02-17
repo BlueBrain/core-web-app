@@ -12,6 +12,7 @@ export type CompositionNode = {
   leaves: string[];
   composition?: number;
   items?: CompositionNode[];
+  relatedNodes: string[];
 };
 
 // The composition file structure

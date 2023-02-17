@@ -5,6 +5,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
+import _ from 'lodash';
 import CollapsedRegionDetails from './CollapsedRegionDetails';
 import { getMetric, handleNavValueChange } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
@@ -186,34 +187,6 @@ function MeTypeDetails({
     [allLockedIds, modifyComposition]
   );
 
-  // calculating the max value of the unlocked sliders
-  const unlockedMax = useMemo(
-    () =>
-      neurons
-        ? neurons.reduce((acc, a) => {
-            if (!allLockedIds.includes(a.id)) {
-              return acc + a.composition;
-            }
-            return acc;
-          }, 0)
-        : 0,
-    [neurons, allLockedIds]
-  );
-
-  // calculating the max value of the locked sliders
-  const lockedMax = useMemo(
-    () =>
-      neurons
-        ? neurons.reduce((acc, a) => {
-            if (allLockedIds.includes(a.id)) {
-              return acc + a.composition;
-            }
-            return acc;
-          }, 0)
-        : 0,
-    [neurons, allLockedIds]
-  );
-
   // sets modified the locked ids based on the changed node
   const setLocked = useCallback(
     (id: string, childrenNodes: CompositionNode[]) => {
@@ -229,6 +202,28 @@ function MeTypeDetails({
     },
     [userLockedIds]
   );
+
+  /**
+   * Calculates the max value that a neuron composition can take
+   * @param relatedNodes the set of related nodes
+   * @param id the id of the node
+   * @param about the about value of the node
+   */
+  const calculateMax = (relatedNodes: string[], id: string, about: string) => {
+    let max = 0;
+    relatedNodes.forEach((relatedNodeId: string) => {
+      if (
+        relatedNodeId in neuronsToNodes &&
+        neuronsToNodes[relatedNodeId].about === about &&
+        // if both relatedNodeId and id are locked or none of them
+        (_.difference([id, relatedNodeId], allLockedIds).length === 0 ||
+          _.difference([id, relatedNodeId], allLockedIds).length === 2)
+      ) {
+        max += neuronsToNodes[relatedNodeId].composition;
+      }
+    });
+    return max;
+  };
 
   return (
     <>
@@ -249,6 +244,8 @@ function MeTypeDetails({
             parentId,
             isExpanded,
             items,
+            relatedNodes,
+            about,
           }) => (
             <NeuronCompositionParent
               content={content}
@@ -263,7 +260,7 @@ function MeTypeDetails({
               }}
               lockIsDisabled={systemLockedIds.includes(id)}
               isExpanded={isExpanded}
-              max={allLockedIds.includes(id) ? lockedMax : unlockedMax}
+              max={calculateMax(relatedNodes, id, about)}
             >
               {({
                 content: nestedContent,

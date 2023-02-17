@@ -25,6 +25,7 @@ const calculateValueSpread = (
   // is spread between the siblings of the node
   const valueSpread: { [key: string]: number } = {};
   let siblingsSum = 0;
+  let modifiedSiblingsAmount = 0;
   Object.entries(node.hasPart).forEach(([childId, child]) => {
     // if the child is a sibling of the one that is modified and its not locked
     // then we count them as part of the total sum
@@ -33,17 +34,24 @@ const calculateValueSpread = (
       !lockedIds.includes(childId) &&
       !lockedIds.includes(`${nodeId}__${childId}`)
     ) {
+      modifiedSiblingsAmount += 1;
       siblingsSum += child.composition.neuron[densityOrCount as keyof CompositionUnit];
     }
   });
+  siblingsSum = Math.round(siblingsSum * 100) / 100;
   Object.entries(node.hasPart).forEach(([childId, child]) => {
     // if the child is the one that is modified, the value will be the whole change
     if (childId === modifiedNode.id) {
       valueSpread[childId] = value;
+    }
+    // Specific case where all siblings that will spread the value sum to almost 0
+    else if (siblingsSum < 0.1) {
+      valueSpread[childId] = value / modifiedSiblingsAmount;
     } else if (!lockedIds.includes(childId) && !lockedIds.includes(`${nodeId}__${childId}`)) {
       // if its a sibling then the spread is the value*ratio
       const previousValue = child.composition.neuron[densityOrCount as keyof CompositionUnit];
-      valueSpread[childId] = (value * previousValue) / siblingsSum;
+      const ratio = previousValue / siblingsSum;
+      valueSpread[childId] = value * ratio;
     }
   });
   return valueSpread;
@@ -80,11 +88,24 @@ export const iterateLeafTree = (
     if (isAffected && (amountOfSpread > 1 || modifiedNode.id !== nodeId)) {
       // name of the other field from the one selected
       const otherField = densityOrCount === 'count' ? 'density' : 'count';
-      const changePercentage =
-        modifiedValue / node.composition.neuron[densityOrCount as keyof CompositionUnit];
-      node.composition.neuron[densityOrCount as keyof CompositionUnit] += modifiedValue;
+      let previousValue = node.composition.neuron[densityOrCount as keyof CompositionUnit];
+      // hack to avoid division by 0 when a value goes to 0
+      // This issue will probably be avoided in the next implementation based
+      // on multiplication instead of addition
+      if (previousValue === 0) {
+        previousValue = 0.1;
+      }
+      const changePercentage = modifiedValue / previousValue;
+      // case to avoid negative values
+      node.composition.neuron[densityOrCount as keyof CompositionUnit] = Math.max(
+        node.composition.neuron[densityOrCount as keyof CompositionUnit] + modifiedValue,
+        0
+      );
       const densityModifiedValue = node.composition.neuron[otherField] * changePercentage;
-      node.composition.neuron[otherField] += densityModifiedValue;
+      node.composition.neuron[otherField] = Math.max(
+        (node.composition.neuron[otherField] += densityModifiedValue),
+        0
+      );
     }
   }
   // if its not a leaf
@@ -122,7 +143,6 @@ export const iterateLeafTree = (
         if (_.has(node.hasPart, modifiedNode.id) && childId !== modifiedNode.id) {
           childValue *= -1;
         }
-
         iterateLeafTree(
           child,
           childId,
@@ -174,6 +194,7 @@ const computeModifiedComposition = (
       iterateLeafTree(leaf, leafId, modifiedNode, false, leafChange, lockedIds, densityOrCount, 0);
     });
   }
+
   return _.cloneDeep(compositionFile);
 };
 
