@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useAtomValue, useSetAtom } from 'jotai/react';
+import { loadable } from 'jotai/vanilla/utils';
 import { useSession } from 'next-auth/react';
 
 import { brainModelConfigListAtom, triggerRefetchAtom } from './state';
@@ -29,11 +31,22 @@ type ConfigSearchListProps = {
 export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
+
+  const configsLoadable = useAtomValue(loadable(brainModelConfigListAtom));
   const triggerRefetch = useSetAtom(triggerRefetchAtom);
+
+  const [configs, setConfigs] = useState<BrainModelConfigResource[]>(
+    configsLoadable.state === 'hasData' ? configsLoadable.data : []
+  );
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } = useCloneModal();
   const { createModal: createRenameModal, contextHolder: renameContextHolder } = useRenameModal();
+
+  useEffect(() => {
+    if (configsLoadable.state !== 'hasData') return;
+
+    setConfigs(configsLoadable.data);
+  }, [configsLoadable]);
 
   const openCloneModal = (config: BrainModelConfigResource) => {
     createCloneModal(config, (clonedConfig: BrainModelConfigResource) =>
@@ -54,8 +67,9 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
       <Table<BrainModelConfigResource>
         size="small"
         className="mt-6 mb-12"
-        dataSource={brainModelConfigs}
-        pagination={brainModelConfigs.length > 10 ? { defaultPageSize: 10 } : false}
+        loading={configsLoadable.state === 'loading'}
+        dataSource={configs}
+        pagination={configs.length > 10 ? { defaultPageSize: 10 } : false}
         rowKey="@id"
       >
         <Column

@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useAtomValue, useSetAtom } from 'jotai/react';
+import { loadable } from 'jotai/vanilla/utils';
 import { useSession } from 'next-auth/react';
 
 import { recentlyUsedConfigsAtom, triggerRefetchAtom } from './state';
@@ -24,12 +26,23 @@ type RecentConfigListProps = {
 export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const recentlyUsedConfigs = useAtomValue(recentlyUsedConfigsAtom);
+
+  const configsLoadable = useAtomValue(loadable(recentlyUsedConfigsAtom));
   const triggerRefetch = useSetAtom(triggerRefetchAtom);
+
+  const [configs, setConfigs] = useState<BrainModelConfigResource[]>(
+    configsLoadable.state === 'hasData' ? configsLoadable.data : []
+  );
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
     useCloneConfigModal();
   const { createModal: createRenameModal, contextHolder: renameContextHolder } = useRenameModal();
+
+  useEffect(() => {
+    if (configsLoadable.state !== 'hasData') return;
+
+    setConfigs(configsLoadable.data);
+  }, [configsLoadable]);
 
   const openCloneModal = (currentConfig: BrainModelConfigResource) => {
     createCloneModal(currentConfig, (clonedConfig: BrainModelConfigResource) => {
@@ -53,7 +66,8 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
       <Table<BrainModelConfigResource>
         size="small"
         className="mt-6 mb-12"
-        dataSource={recentlyUsedConfigs}
+        dataSource={configs}
+        loading={configsLoadable.state === 'loading'}
         pagination={false}
         rowKey="@id"
       >

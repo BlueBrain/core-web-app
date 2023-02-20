@@ -105,9 +105,7 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
 
       <ConfigProvider theme={tableTheme}>
         <div className={styles.modelListView}>
-          <Suspense>
-            <RecentConfigList baseHref={baseHref} />
-          </Suspense>
+          <RecentConfigList baseHref={baseHref} />
 
           <div>
             {searchTabs.map((tab) => (
@@ -140,9 +138,7 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
               />
             </div>
 
-            <Suspense>
-              <ConfigSearchList baseHref={baseHref} />
-            </Suspense>
+            <ConfigSearchList baseHref={baseHref} />
           </div>
         </div>
       </ConfigProvider>
