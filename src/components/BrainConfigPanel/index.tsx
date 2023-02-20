@@ -60,11 +60,11 @@ function BrainModelConfigDetails() {
 
         {!!detailedCircuit && (
           <CopyTextBtn
-            text={detailedCircuit._self}
+            text={detailedCircuit['@id']}
             icon={<LinkIcon className="inline-block" />}
             style={{ width: '110px' }}
           >
-            Copy circuit URL
+            Copy circuit ID
           </CopyTextBtn>
         )}
       </div>
