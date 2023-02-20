@@ -2,6 +2,7 @@
 
 import { atom } from 'jotai/vanilla';
 import { selectAtom } from 'jotai/vanilla/utils';
+import debounce from 'lodash/debounce';
 
 import { cellCompositionConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
@@ -21,7 +22,6 @@ import {
   GeneratorTaskActivityResource,
 } from '@/types/nexus';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
-import { debounce } from '@/util/common';
 import { setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { CellCompositionStepGroupValues } from '@/state/build-status';
@@ -63,8 +63,6 @@ const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
   return metadata._rev;
 });
 
-const localConfigPayloadAtom = atom<CellCompositionConfigPayload | null>(null);
-
 const remoteConfigPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
   const session = get(sessionAtom);
   const config = await get(configAtom);
@@ -83,21 +81,36 @@ const remoteConfigPayloadAtom = atom<Promise<CellCompositionConfigPayload | null
   return fetchJsonFileByUrl<CellCompositionConfigPayload>(url, session);
 });
 
-export const configPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
-  const localConfig = get(localConfigPayloadAtom);
+// This holds a reference to the localConfigPayload by it's remoteConfigPayload
+const localConfigPayloadWeakMapAtom = atom<
+  WeakMap<CellCompositionConfigPayload, CellCompositionConfigPayload>
+>(new WeakMap());
 
-  if (localConfig) {
-    return localConfig;
+const setLocalConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], Promise<void>>(
+  null,
+  async (get, set, configPayload) => {
+    const remoteConfig = await get(remoteConfigPayloadAtom);
+
+    if (!remoteConfig) return;
+
+    const localConfigPayloadWeakMap = get(localConfigPayloadWeakMapAtom);
+    localConfigPayloadWeakMap.set(remoteConfig, configPayload);
   }
+);
 
+export const configPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
   const remoteConfig = await get(remoteConfigPayloadAtom);
 
-  return remoteConfig;
+  if (!remoteConfig) return null;
+
+  const localConfig = get(localConfigPayloadWeakMapAtom).get(remoteConfig);
+
+  return localConfig ?? remoteConfig;
 });
 
-export const updateConfigPayloadAtom = atom(
+export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], Promise<void>>(
   null,
-  async (get, set, configPayload: CellCompositionConfigPayload) => {
+  async (get, set, configPayload) => {
     const session = get(sessionAtom);
     const rev = await get(configPayloadRevAtom);
     const config = await get(configAtom);
@@ -137,22 +150,20 @@ export const updateConfigPayloadAtom = atom(
   }
 );
 
-const triggerUpdateDebouncedAtom = atom(
+const triggerUpdateDebouncedAtom = atom<null, [CellCompositionConfigPayload], Promise<void>>(
   null,
-  debounce(async (get: any, set: any) => {
-    // TODO: type this function properly
-    const updatedConfig = get(localConfigPayloadAtom);
-
-    set(updateConfigPayloadAtom, updatedConfig);
-  }, autoSaveDebounceInterval)
+  debounce(
+    (get, set, configPayload) => set(updateConfigPayloadAtom, configPayload),
+    autoSaveDebounceInterval
+  )
 );
 
-const setConfigPayloadAtom = atom(
+const setConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], void>(
   null,
-  async (get, set, cellCompositionConfigPayload: CellCompositionConfigPayload) => {
+  (get, set, configPayload: CellCompositionConfigPayload) => {
     set(cellCompositionHasChanged, true);
-    set(localConfigPayloadAtom, cellCompositionConfigPayload);
-    set(triggerUpdateDebouncedAtom);
+    set(setLocalConfigPayloadAtom, configPayload);
+    set(triggerUpdateDebouncedAtom, configPayload);
   }
 );
 

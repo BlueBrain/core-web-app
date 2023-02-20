@@ -223,14 +223,29 @@ const initialCompositionAtom = atom<Promise<Composition | null>>(async (get) => 
   return getCompositionData(session.accessToken);
 });
 
-export const compositionAtom = atom<Promise<Composition | null>>(async (get) => {
-  const updatedComposition = get(updatedCompositionAtom);
+// This holds a weak reference to the updatedComposition by it's initial composition
+// This allows GC to dispose the object once it is no longer used by current components
+const updatedCompositionWeakMapAtom = atom<WeakMap<Composition, Composition>>(new WeakMap());
 
-  if (updatedComposition) {
-    return updatedComposition;
+const setUpdatedCompositionAtom = atom<null, [Composition], Promise<void>>(
+  null,
+  async (get, set, updatedComposition) => {
+    const initialComposition = await get(initialCompositionAtom);
+
+    if (!initialComposition) return;
+
+    set(updatedCompositionWeakMapAtom, new WeakMap().set(initialComposition, updatedComposition));
   }
+);
 
-  return get(initialCompositionAtom);
+export const compositionAtom = atom<Promise<Composition | null>>(async (get) => {
+  const initialComposition = await get(initialCompositionAtom);
+
+  if (!initialComposition) return null;
+
+  const updatedComposition = get(updatedCompositionWeakMapAtom).get(initialComposition);
+
+  return updatedComposition ?? initialComposition;
 });
 
 export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>(async (get) => {
@@ -272,7 +287,7 @@ export const computeAndSetCompositionAtom = atom(
       lockedIds,
       densityOrCount
     );
-    set(updatedCompositionAtom, modifiedComposition);
+    set(setUpdatedCompositionAtom, modifiedComposition);
 
     const compositionClone = _.cloneDeep(modifiedComposition);
     extendCompositionWithOverrideProps(compositionClone);
