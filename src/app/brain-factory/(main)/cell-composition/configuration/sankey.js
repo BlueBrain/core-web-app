@@ -218,6 +218,16 @@ export default function sankey(
   svg.call(zoom);
 
   return Object.assign(svg.node(), {
+    reset: () => {
+      svg
+        .transition()
+        .duration(750)
+        .call(
+          zoom.transform,
+          d3.zoomIdentity,
+          d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
+        );
+    },
     scales: { color },
     zoom: (value) => svg.transition().call(zoom.scaleTo, value),
   });

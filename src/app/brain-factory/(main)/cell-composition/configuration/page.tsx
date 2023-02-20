@@ -213,7 +213,8 @@ function CellDensity() {
   ];
 
   // Prevent SVG from rendering whenever zoom changes
-  const ref: RefObject<SVGSVGElement & { zoom: (value: number) => void }> = useRef(null);
+  const ref: RefObject<SVGSVGElement & { reset: () => void; zoom: (value: number) => void }> =
+    useRef(null);
   const densityChart = useMemo(
     () =>
       ref && (
@@ -238,6 +239,10 @@ function CellDensity() {
               ref?.current?.zoom(value);
             }}
             zoom={zoom}
+            reset={() => {
+              setZoom(1);
+              ref?.current?.reset();
+            }}
           />
           {densityChart}
         </div>
