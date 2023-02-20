@@ -137,10 +137,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
 
   return (
     <div
-      className={classNames(
-        'h-screen bg-primary-9 w-[40px] text-white',
-        isOpen ? 'w-[300px]' : null
-      )}
+      className={classNames('h-screen bg-primary-9 text-white', isOpen ? 'w-[300px]' : 'w-[40px]')}
     >
       {!isOpen && (
         <div className="flex flex-col items-center pt-2">
