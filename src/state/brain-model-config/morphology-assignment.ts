@@ -36,7 +36,7 @@ const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | n
   }
 );
 
-export const detailedCircuitAtom = atom<Promise<DetailedCircuitResource | null>>(async (get) => {
+export const partialCircuitAtom = atom<Promise<DetailedCircuitResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const generatorTaskActivity = await get(generatorTaskActivityAtom);
 

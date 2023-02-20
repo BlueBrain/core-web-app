@@ -57,7 +57,9 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
       <div className={styles.extraPanelContainer} ref={extraPanelRef} />
 
       <div className={styles.tabsContainer}>
-        <TopTabs />
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <TopTabs />
+        </ErrorBoundary>
       </div>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>

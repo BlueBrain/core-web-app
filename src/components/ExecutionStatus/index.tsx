@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Checkbox } from 'antd';
+import { Suspense, useEffect, useState } from 'react';
+import { Checkbox, Spin } from 'antd';
 
 import { useSetAtom } from 'jotai/react';
 import StepItem from '@/components/ExecutionStatus/StepItem';
-import { statusStructure, StatusStructureItem } from '@/state/build-status';
-import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
+import { statusStructure, StatusStructureItem, stepsToBuildAtom } from '@/state/build-status';
 
 type UncheckingWarningProps = {
   statusStructureState: StatusStructureItem[];
@@ -35,7 +34,7 @@ export default function ExecutionStatus() {
   const [statusStructureState, setStatusStructureState] =
     useState<StatusStructureItem[]>(statusStructure);
 
-  const setStepsToBuild = useSetAtom(cellCompositionStepsToBuildAtom);
+  const setStepsToBuild = useSetAtom(stepsToBuildAtom);
 
   const handleChecked = (groupName: string, newCheckedValue: boolean) => {
     setStatusStructureState((groups) => {
@@ -84,7 +83,9 @@ export default function ExecutionStatus() {
           <div className="flex justify-between mt-5 mb-8 ml-[50px]">
             {group.items.map((step) => (
               <div className="w-1/3" key={group.name + step.name}>
-                <StepItem name={step.name} statusAtom={step.status} />
+                <Suspense fallback={<Spin size="small" className="h-8" />}>
+                  <StepItem name={step.name} statusAtom={step.statusAtom} />
+                </Suspense>
               </div>
             ))}
           </div>

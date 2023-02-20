@@ -10,7 +10,7 @@ import BrainConfigEntry from './BrainConfigEntry';
 import FooterLink from './FooterLink';
 import { recentConfigsAtom, publicConfigsAtom, personalConfigsAtom } from './state';
 import { configAtom } from '@/state/brain-model-config';
-import { detailedCircuitAtom } from '@/state/brain-model-config/morphology-assignment';
+import detailedCircuitAtom from '@/state/circuit';
 import { UserOutlinedIcon, LinkIcon, HomeIcon } from '@/components/icons';
 import CopyTextBtn from '@/components/CopyTextBtn';
 import Link from '@/components/Link';

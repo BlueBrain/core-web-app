@@ -1,5 +1,10 @@
 import { atom, Atom } from 'jotai/vanilla';
 
+import { partialCircuitAtom as cellPositionPartialCircuitAtom } from '@/state/brain-model-config/cell-position';
+import { cellCompositionAtom as cellCompositionPartialCircuitAtom } from '@/state/brain-model-config/cell-composition';
+import { partialCircuitAtom as emodelAssignmentPartialCircuitAtom } from '@/state/brain-model-config/emodel-assignment';
+import { partialCircuitAtom as morphologyAssignmentPartialCircuitAtom } from '@/state/brain-model-config/morphology-assignment';
+
 export const STATUS = {
   BUILT: 'Built',
   TO_BUILD: 'To Build',
@@ -28,25 +33,11 @@ export type CellCompositionStepGroupValues = (typeof GROUPS)[keyof typeof GROUPS
 
 export type StatusResponse = typeof STATUS.BUILT | typeof STATUS.TO_BUILD | null;
 
-function fakeStatusFetch(): Promise<StatusResponse> {
-  return new Promise((resolve) => {
-    const statuses = [STATUS.BUILT, STATUS.TO_BUILD];
-    // resolve in different times from 1 to 6 seconds
-    setTimeout(() => {
-      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-      resolve(randomStatus);
-    }, Math.random() * (6000 - 1000) + 1000);
-  });
-}
-
-export const getStatusAtom = (): Atom<Promise<StatusResponse>> =>
-  atom(() => fakeStatusFetch().then((status) => status));
-
 export type StatusStructureItem = {
   name: CellCompositionStepGroupValues;
   items: {
     name: string;
-    status: Atom<Promise<StatusResponse>>;
+    statusAtom: Atom<Promise<any>>;
   }[];
   checked?: boolean;
 };
@@ -57,15 +48,15 @@ export const statusStructure: StatusStructureItem[] = [
     items: [
       {
         name: STEPS.DENSITY,
-        status: getStatusAtom(),
+        statusAtom: cellCompositionPartialCircuitAtom,
       },
       {
         name: STEPS.DISTRIBUTION,
-        status: getStatusAtom(),
+        statusAtom: cellCompositionPartialCircuitAtom,
       },
       {
         name: STEPS.POSITION,
-        status: getStatusAtom(),
+        statusAtom: cellPositionPartialCircuitAtom,
       },
     ],
   },
@@ -73,16 +64,16 @@ export const statusStructure: StatusStructureItem[] = [
     name: GROUPS.CELL_MODEL_ASSIGNMENT,
     items: [
       {
-        name: STEPS.M_MODEL,
-        status: getStatusAtom(),
+        name: STEPS.E_MODEL,
+        statusAtom: emodelAssignmentPartialCircuitAtom,
       },
       {
-        name: STEPS.E_MODEL,
-        status: getStatusAtom(),
+        name: STEPS.M_MODEL,
+        statusAtom: morphologyAssignmentPartialCircuitAtom,
       },
       {
         name: STEPS.ME_MODEL,
-        status: getStatusAtom(),
+        statusAtom: atom(() => Promise.resolve(null)),
       },
     ],
   },
@@ -91,15 +82,15 @@ export const statusStructure: StatusStructureItem[] = [
     items: [
       {
         name: STEPS.MACRO,
-        status: getStatusAtom(),
+        statusAtom: atom(() => Promise.resolve(null)),
       },
       {
         name: STEPS.MESO,
-        status: getStatusAtom(),
+        statusAtom: atom(() => Promise.resolve(null)),
       },
       {
         name: STEPS.MICRO,
-        status: getStatusAtom(),
+        statusAtom: atom(() => Promise.resolve(null)),
       },
     ],
   },
@@ -108,16 +99,18 @@ export const statusStructure: StatusStructureItem[] = [
     items: [
       {
         name: STEPS.MACRO,
-        status: getStatusAtom(),
+        statusAtom: atom(() => Promise.resolve(null)),
       },
       {
         name: STEPS.MESO,
-        status: getStatusAtom(),
+        statusAtom: atom(() => Promise.resolve(null)),
       },
       {
         name: STEPS.MICRO,
-        status: getStatusAtom(),
+        statusAtom: atom(() => Promise.resolve(null)),
       },
     ],
   },
 ];
+
+export const stepsToBuildAtom = atom<CellCompositionStepGroupValues[]>([]);

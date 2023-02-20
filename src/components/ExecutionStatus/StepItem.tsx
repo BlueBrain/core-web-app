@@ -1,47 +1,32 @@
-import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { Atom } from 'jotai/vanilla';
-import { useAtom } from 'jotai/react';
-import { Spin } from 'antd';
+import { useAtomValue } from 'jotai/react';
+import { loadable } from 'jotai/vanilla/utils';
 
-import { STATUS, StatusResponse } from '@/state/build-status';
+import { STATUS } from '@/state/build-status';
 import { classNames } from '@/util/utils';
 
-type Props = {
-  name: string;
-  statusAtom: Atom<Promise<StatusResponse>>;
-};
-
 type StatusProps = {
-  statusAtom: Atom<Promise<StatusResponse>>;
+  wasBuilt: boolean;
 };
 
-function StatusComponent({ statusAtom }: StatusProps) {
-  let statusColor = null;
+function StatusComponent({ wasBuilt }: StatusProps) {
+  let statusColor: string = '';
   let StatusIconComponent = null;
-  const [status] = useAtom(statusAtom);
+  let status = null;
 
-  switch (status) {
-    case STATUS.BUILT:
-      statusColor = 'text-secondary-1';
-      StatusIconComponent = dynamic(() => import('@/components/icons/BuildValidated'), {
-        ssr: false,
-      });
-      break;
-
-    case STATUS.TO_BUILD:
-      statusColor = 'text-orange-500';
-      StatusIconComponent = dynamic(() => import('@/components/icons/BuildModified'), {
-        ssr: false,
-      });
-      break;
-
-    default:
-      statusColor = 'text-neutral-4';
-      StatusIconComponent = dynamic(() => import('@/components/icons/BuildConfigured'), {
-        ssr: false,
-      });
-      break;
+  if (wasBuilt) {
+    statusColor = 'text-secondary-1';
+    StatusIconComponent = dynamic(() => import('@/components/icons/BuildValidated'), {
+      ssr: false,
+    });
+    status = STATUS.BUILT;
+  } else {
+    statusColor = 'text-orange-500';
+    StatusIconComponent = dynamic(() => import('@/components/icons/BuildModified'), {
+      ssr: false,
+    });
+    status = STATUS.TO_BUILD;
   }
 
   return (
@@ -52,14 +37,19 @@ function StatusComponent({ statusAtom }: StatusProps) {
   );
 }
 
+type Props = {
+  name: string;
+  statusAtom: Atom<Promise<any>>;
+};
+
 export default function StepItem({ name, statusAtom }: Props) {
+  const atomLoadable = useAtomValue(loadable(statusAtom));
+  const wasBuilt = atomLoadable.state === 'hasData' && !!atomLoadable.data;
+
   return (
     <>
       <div className="text-lg text-primary-7">{name}</div>
-
-      <Suspense fallback={<Spin size="small" className="h-8" />}>
-        <StatusComponent statusAtom={statusAtom} />
-      </Suspense>
+      <StatusComponent wasBuilt={wasBuilt} />
     </>
   );
 }

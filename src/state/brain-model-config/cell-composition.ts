@@ -24,7 +24,6 @@ import {
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 import { setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
-import { CellCompositionStepGroupValues } from '@/state/build-status';
 import { Composition } from '@/types/composition';
 
 const refetchTriggerAtom = atom<{}>({});
@@ -256,8 +255,6 @@ export const createGetJobConfigAtom = (entityId: string) => {
 
   return selectAtom(configPayloadAtom, selectorFn);
 };
-
-export const cellCompositionStepsToBuildAtom = atom<CellCompositionStepGroupValues[]>([]);
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(
   async (get) => {

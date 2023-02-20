@@ -7,7 +7,7 @@ import { WORKFLOW_CIRCUIT_BUILD_TASK_NAME } from '@/services/bbp-workflow/config
 import { classNames } from '@/util/utils';
 import LauncherModal from '@/components/BuildModelBtn/LauncherModal';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
-import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
+import { stepsToBuildAtom } from '@/state/build-status';
 
 type BuildModelBtnProps = {
   className?: string;
@@ -17,7 +17,7 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const stepsToBuild = useAtomValue(cellCompositionStepsToBuildAtom);
+  const stepsToBuild = useAtomValue(stepsToBuildAtom);
 
   const onLaunchingChange = useCallback((newState: boolean) => {
     setLoading(newState);

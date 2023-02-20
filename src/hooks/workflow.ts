@@ -17,8 +17,7 @@ import {
   getSimulationTaskFiles,
   getVideoGenerationTaskFiles,
 } from '@/services/bbp-workflow';
-import { GROUPS as EXECUTION_GROUPS } from '@/state/build-status';
-import { cellCompositionStepsToBuildAtom } from '@/state/brain-model-config/cell-composition';
+import { GROUPS as EXECUTION_GROUPS, stepsToBuildAtom } from '@/state/build-status';
 import { configAtom } from '@/state/brain-model-config';
 import circuitAtom from '@/state/circuit';
 import { BrainModelConfigResource } from '@/types/nexus';
@@ -30,7 +29,7 @@ function getCircuitUrl(config: BrainModelConfigResource | null): string {
 
 export function useWorkflowConfig(workflowName: string): WorkflowFilesType {
   const circuitInfo = useAtomValue(circuitAtom);
-  const stepsToBuild = useAtomValue(cellCompositionStepsToBuildAtom);
+  const stepsToBuild = useAtomValue(stepsToBuildAtom);
 
   let replacedConfigFiles: WorkflowFilesType = [];
 
