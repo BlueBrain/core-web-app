@@ -1,5 +1,3 @@
-import InteractiveBrayns from '@/components/InteractiveBrayns';
-
 export default function CellModelAssignmentView() {
-  return <InteractiveBrayns />;
+  return <div>Not implemented yet...</div>;
 }

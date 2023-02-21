@@ -195,4 +195,7 @@ dist
 ###  IntelliJ IDE ###
 .idea
 
+### Files coming from merge conflicts
+*.orig
+
 # End of https://www.toptal.com/developers/gitignore/api/node,nextjs,visualstudiocode,cypressio

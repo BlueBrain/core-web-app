@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai/react';
+import { useCallback, useEffect } from 'react';
+import { usePreventParallelism } from '../../hooks/parallelism';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
-import AtlasVisualizationAtom from '@/state/atlas';
+import { useAtlasVisualizationManager } from '@/state/atlas';
 import { createHeaders } from '@/util/utils';
 import useNotification from '@/hooks/notifications';
 
@@ -45,76 +45,47 @@ const fetchMesh = (accessToken: string, distributionID: string) =>
   }).then((response) => response.text());
 
 export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps) {
+  const preventPrallelism = usePreventParallelism();
   const { data: session } = useSession();
-  const atlasVisualizationAtom = useAtomValue(AtlasVisualizationAtom);
-  const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
+  const atlas = useAtlasVisualizationManager();
   const addNotification = useNotification();
-
-  const meshIndex = useMemo(
-    () =>
-      atlasVisualizationAtom.visibleMeshes.findIndex((meshToFind) => meshToFind.contentURL === id),
-    [atlasVisualizationAtom.visibleMeshes, id]
-  );
-
-  /**
-   * Sets the loading state to false
-   */
-  const disableLoadingState = useCallback(() => {
-    if (atlasVisualizationAtom.visibleMeshes[meshIndex].isLoading) {
-      atlasVisualizationAtom.visibleMeshes[meshIndex].isLoading = false;
-      setAtlasVisualizationAtom({
-        ...atlasVisualizationAtom,
-        visibleMeshes: atlasVisualizationAtom.visibleMeshes,
-      });
-    }
-  }, [atlasVisualizationAtom, meshIndex, setAtlasVisualizationAtom]);
-
-  /**
-   * Sets the error state of the object in jotai
-   */
-  const setErrorState = useCallback(
-    (newState: boolean) => {
-      atlasVisualizationAtom.visibleMeshes[meshIndex].hasError = newState;
-      setAtlasVisualizationAtom({
-        ...atlasVisualizationAtom,
-        visibleMeshes: atlasVisualizationAtom.visibleMeshes,
-      });
-    },
-    [atlasVisualizationAtom, meshIndex, setAtlasVisualizationAtom]
-  );
 
   /**
    * Fetches the data from the API
    */
   const fetchDataAPI = useCallback(() => {
-    if (session?.user && session?.accessToken) {
-      fetchMesh(session.accessToken, id)
-        .then((data) => {
+    preventPrallelism(id, async () => {
+      if (session?.user && session?.accessToken) {
+        // Prevent from double loading.
+        if (atlas.findVisibleMesh(id)?.isLoading) return;
+
+        atlas.updateVisibleMesh({ contentURL: id, isLoading: true });
+        try {
+          const data = await fetchMesh(session.accessToken, id);
           const mesh = createMesh(data, { color: colorCode });
           const mc = threeCtxWrapper.getMeshCollection();
           mc.addOrShowMesh(id, mesh, false);
-          disableLoadingState();
-        })
-        .catch(() => {
+          atlas.updateVisibleMesh({ contentURL: id, isLoading: false, hasError: false });
+        } catch (ex) {
           addNotification.error('Something went wrong while fetching brain region mesh');
-          disableLoadingState();
-          setErrorState(true);
-        });
-    }
-  }, [addNotification, colorCode, disableLoadingState, id, session, setErrorState]);
+          atlas.updateVisibleMesh({ contentURL: id, isLoading: false, hasError: true });
+        }
+      }
+    });
+  }, [preventPrallelism, id, session, atlas, colorCode, addNotification]);
 
   useEffect(() => {
-    const meshObject = atlasVisualizationAtom.visibleMeshes[meshIndex];
+    const meshObject = atlas.findVisibleMesh(id);
     if (meshObject?.hasError) return;
+
     const mc = threeCtxWrapper.getMeshCollection();
     // if the mesh already exists in the mesh collection, it is shown. If not, it is fetched
     if (mc.has(id)) {
       mc.show(id);
-      disableLoadingState();
     } else {
       fetchDataAPI();
     }
-  }, [atlasVisualizationAtom.visibleMeshes, disableLoadingState, fetchDataAPI, id, meshIndex]);
+  }, [atlas, fetchDataAPI, id]);
 
   return null;
 }

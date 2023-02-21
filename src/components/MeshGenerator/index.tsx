@@ -1,15 +1,14 @@
-import { useAtomValue } from 'jotai/react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
-import AtlasVisualizationAtom from '@/state/atlas';
+import { useAtlasVisualizationManager } from '@/state/atlas';
 import BrainRegionMesh from '@/components/BrainRegionMesh';
 
 export default function MeshGenerator() {
-  const shouldBeVisibleMeshes = useAtomValue(AtlasVisualizationAtom).visibleMeshes;
-  const shouldBeVisiblePointClouds = useAtomValue(AtlasVisualizationAtom).visiblePointClouds;
-  const allMeshes = [...shouldBeVisibleMeshes, ...shouldBeVisiblePointClouds];
-  const atLeastOneLoading = allMeshes.some((meshToFind) => meshToFind.isLoading);
-
+  const atlas = useAtlasVisualizationManager();
+  const shouldBeVisibleMeshes = atlas.visibleMeshes;
+  const shouldBeVisiblePointClouds = atlas.visiblePointClouds;
+  const allObjects = [...shouldBeVisibleMeshes, ...shouldBeVisiblePointClouds];
+  const atLeastOneLoading = allObjects.some((obj) => obj.isLoading);
   useEffect(() => {
     // hack to make sure the canvas takes all
     window.dispatchEvent(new Event('resize'));

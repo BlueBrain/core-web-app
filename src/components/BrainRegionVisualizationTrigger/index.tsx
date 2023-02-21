@@ -1,9 +1,8 @@
 import Icon, { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { useAtomValue, useSetAtom } from 'jotai/react';
 import { useMemo } from 'react';
-import AtlasVisualizationAtom from '@/state/atlas';
 import LoadingIcon from '@/components/icons/LoadingIcon';
+import { useAtlasVisualizationManager } from '@/state/atlas';
 import { Mesh } from '@/types/ontologies';
 
 type BrainRegionVisualizationTriggerProps = {
@@ -17,22 +16,11 @@ export default function BrainRegionVisualizationTrigger({
   colorCode,
   regionID,
 }: BrainRegionVisualizationTriggerProps) {
-  const atlasVisualizationAtom = useAtomValue(AtlasVisualizationAtom);
-  const isVisible =
-    atlasVisualizationAtom.visibleMeshes.filter(
-      (mesh) => mesh.contentURL === distribution.contentUrl
-    ).length > 0;
-  const setAtlasVisualizationAtom = useSetAtom(AtlasVisualizationAtom);
-  const meshObject = atlasVisualizationAtom.visibleMeshes.find(
-    (meshToFind) => meshToFind.contentURL === distribution.contentUrl
-  );
-  const pointCloudObject = atlasVisualizationAtom.visiblePointClouds.find(
-    (pointCloud) => pointCloud.regionID === regionID
-  );
-  let isLoading = false;
-  if (meshObject && pointCloudObject && (meshObject.isLoading || pointCloudObject.isLoading)) {
-    isLoading = true;
-  }
+  const atlas = useAtlasVisualizationManager();
+  const meshObject = atlas.findVisibleMesh(distribution.contentUrl);
+  const pointCloudObject = atlas.findVisiblePointCloud(regionID);
+  const isVisible = Boolean(meshObject) || Boolean(pointCloudObject);
+  const isLoading = meshObject?.isLoading || pointCloudObject?.isLoading;
 
   /**
    * Handles the eye clicking functionality.
@@ -42,39 +30,27 @@ export default function BrainRegionVisualizationTrigger({
   const onClickEye = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
+    // The eye is not clickable while loading in on.
+    if (isLoading) return;
+
     // if the brain region mesh is already visible, remove it
     if (isVisible) {
-      setAtlasVisualizationAtom({
-        ...atlasVisualizationAtom,
-        visibleMeshes: atlasVisualizationAtom.visibleMeshes.filter(
-          (mesh) => mesh.contentURL !== distribution.contentUrl
-        ),
-        visiblePointClouds: atlasVisualizationAtom.visiblePointClouds.filter(
-          (pointCloud) => pointCloud.regionID !== regionID
-        ),
-      });
+      atlas.removeVisibleObjects(distribution.contentUrl, regionID);
     } else {
-      setAtlasVisualizationAtom({
-        ...atlasVisualizationAtom,
-        visibleMeshes: [
-          ...atlasVisualizationAtom.visibleMeshes,
-          {
-            contentURL: distribution.contentUrl,
-            color: colorCode,
-            isLoading: true,
-            hasError: false,
-          },
-        ],
-        visiblePointClouds: [
-          ...atlasVisualizationAtom.visiblePointClouds,
-          {
-            regionID,
-            color: colorCode,
-            isLoading: true,
-            hasError: false,
-          },
-        ],
-      });
+      atlas.addVisibleObjects(
+        {
+          contentURL: distribution.contentUrl,
+          color: colorCode,
+          isLoading: false,
+          hasError: false,
+        },
+        {
+          regionID,
+          color: colorCode,
+          isLoading: false,
+          hasError: false,
+        }
+      );
     }
   };
 
