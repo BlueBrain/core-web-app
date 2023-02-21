@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, RefObject, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Button, Checkbox } from 'antd';
 import { MinusOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
+import { set } from 'lodash/fp';
 import { handleNavValueChange } from './util';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
+import Search from './Search';
 import { classNames } from '@/util/utils';
 import ColorBox from '@/components/ColorBox';
 import { BrainIcon } from '@/components/icons';
@@ -77,7 +79,7 @@ function NavTitle({
             <span
               className={classNames(
                 className,
-                'hover:bg-primary-8 hover:text-white mr-auto whitespace-pre-wrap text-left',
+                'hover:text-white mr-auto whitespace-pre-wrap text-left',
                 isExpanded ? 'text-white' : 'text-primary-4'
               )}
             >
@@ -114,6 +116,8 @@ export function ExpandedBrainRegionsSidebar({
   const multi = !!header;
   const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
   const [brainRegionsNavValue, setNavValue] = useState<NavValue>(null);
+
+  const brainRegionsRef: RefObject<HTMLDivElement> = useRef(null);
   const onValueChange = useCallback(
     (newValue: string[], path: string[]) => {
       const callback = handleNavValueChange(brainRegionsNavValue, setNavValue);
@@ -145,15 +149,36 @@ export function ExpandedBrainRegionsSidebar({
             onClick={() => setIsRegionSelectorOpen(false)}
           />
         </div>
-        <div className="border-b border-white focus-within:border-primary-2 mb-10">
-          <input
-            type="text"
-            className="block w-full py-3 text-primary-4 placeholder-primary-4 border-0 border-b border-transparent bg-transparent focus:border-primary-4 focus:ring-0"
-            disabled
-            placeholder="Search region..."
-          />
-        </div>
-        <TreeNav items={brainRegions} onValueChange={onValueChange} value={brainRegionsNavValue}>
+        <Search
+          onSelect={(_labeledValue, option) => {
+            const { ancestors, value, label, leaves } = option;
+
+            setNavValue(
+              set(
+                ancestors ?? [],
+                null,
+                brainRegionsNavValue ?? {} // Preserve any already expanded items
+              )
+            );
+
+            setSelectedBrainRegion(value, label, leaves ?? null);
+
+            // This timeout seems to be necessary to "wait" until the nav item has been rendered before attemping to scroll to it.
+            setTimeout(() => {
+              const selectedNavItem = brainRegionsRef?.current?.querySelector(
+                `[data-tree-id="${value}"]`
+              );
+
+              selectedNavItem?.scrollIntoView();
+            }, 500);
+          }}
+        />
+        <TreeNav
+          items={brainRegions}
+          onValueChange={onValueChange}
+          ref={brainRegionsRef}
+          value={brainRegionsNavValue}
+        >
           {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
             <NavTitle
               className="uppercase text-lg"

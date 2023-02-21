@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode, ForwardedRef, forwardRef } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
@@ -46,7 +46,7 @@ export function TreeNavItem({
   ...props
 }: TreeNavItemProps) {
   return (
-    <Accordion.Item value={id} className={className}>
+    <Accordion.Item value={id} className={className} data-tree-id={id}>
       <Accordion.Header asChild>
         {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
         <>
@@ -142,36 +142,40 @@ export function TreeNavItem({
  * @param {(newValue: string[], path: string[]) => void} args.onValueChange - A callback.
  * @param {NavValue} args.value - For controlling the expansion and collapse of nav items.
  */
-export default function TreeNav({
-  className,
-  items: navItems,
-  onValueChange,
-  value,
-  children,
-}: {
-  className?: string;
-  children: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
-  items: TreeItem[];
-  onValueChange: (newValue: string[], path: string[]) => void;
-  value: NavValue;
-}) {
+function TreeNav(
+  {
+    children,
+    className,
+    items: navItems,
+    onValueChange,
+    value,
+  }: {
+    children: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+    className?: string;
+    items: TreeItem[];
+    onValueChange: (newValue: string[], path: string[]) => void;
+    value: NavValue;
+  },
+  ref: ForwardedRef<HTMLDivElement>
+) {
   return (
     <Accordion.Root
-      type="multiple"
       className={classNames('-ml-3', className)}
-      value={value ? Object.keys(value) : []}
       onValueChange={(newValue) => onValueChange(newValue, [])} // Empty path for root
+      ref={ref}
+      type="multiple"
+      value={value ? Object.keys(value) : []}
     >
       {navItems.map(({ id, items, ...rest }) => (
         <TreeNavItem
+          className={classNames('ml-3', className)}
           id={id}
+          isExpanded={typeof value?.[id] !== 'undefined'}
           items={items}
           key={id}
-          className={classNames('ml-3', className)}
+          onValueChange={onValueChange}
           path={[id]}
           value={value?.[id] ?? null}
-          isExpanded={typeof value?.[id] !== 'undefined'}
-          onValueChange={onValueChange}
           {...rest} // eslint-disable-line react/jsx-props-no-spreading
         >
           {children}
@@ -180,3 +184,5 @@ export default function TreeNav({
     </Accordion.Root>
   );
 }
+
+export default forwardRef(TreeNav);

@@ -20,7 +20,7 @@ import { extendCompositionWithOverrideProps } from '@/util/brain-hierarchy';
 
 
  ┌───────────────────────────────────┐    ┌──────────────────────────────┐    ┌─────────────────────┐
- │    brainRegionsFilteredArrayAtom  ├────► BrainRegionsFilteredTreeAtom ├────►   BrainRegionsAtom  │
+ │    brainRegionsFilteredArrayAtom  ├────► brainRegionsFilteredTreeAtom ├────►   brainRegionsAtom  │
  └───────────────────────────────────┘    └──────────────────────────────┘    └─────────────────────┘
 
  ┌─────────────────────────┐    ┌────────────────────────────┐

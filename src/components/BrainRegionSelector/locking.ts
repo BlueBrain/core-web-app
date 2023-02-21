@@ -10,7 +10,7 @@ import { CompositionNode } from '@/types/composition';
 const findUnlockedChildren = (children: CompositionNode[], lockedIds: string[]) => {
   let countLocked = 0;
   const unlockedIds: string[] = [];
-  children.forEach((neuron) => {
+  children?.forEach((neuron) => {
     if (!lockedIds.includes(neuron.id)) {
       unlockedIds.push(neuron.id);
     } else {
@@ -66,7 +66,7 @@ const computeSystemLockedIds = (nodes: CompositionNode[], userLockedIds: string[
   ]);
   // if all the children of the first level are locked but one,
   // then lock the last child as well
-  if (countLocked === nullChildren.length - 1) {
+  if (countLocked === (nullChildren ? nullChildren.length : 0) - 1) {
     lockedIds = [...lockedIds, ...unlockedIds];
   }
 
