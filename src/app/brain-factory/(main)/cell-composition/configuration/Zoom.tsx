@@ -12,7 +12,7 @@ export default function ZoomControl({
   reset: MouseEventHandler<HTMLAnchorElement> & MouseEventHandler<HTMLButtonElement>;
 }) {
   return (
-    <div className="flex gap-2 items-center w-[300px] justify-self-end">
+    <div className="flex gap-2 items-center w-[300px] justify-self-end py-12">
       <ZoomOutIcon className="h-[14px]" />
       <Slider
         className="grow"
