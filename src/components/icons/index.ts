@@ -1,4 +1,5 @@
 import AngledArrowIcon from './AngledArrow';
+import ArrowDownOutlinedIcon from './ArrowDownOutlined';
 import ArrowRightIcon from './ArrowRightIcon';
 import BrainIcon from './Brain';
 import BrainRegionIcon from './BrainRegion';
@@ -16,6 +17,7 @@ import { ZoomInIcon, ZoomOutIcon } from './Zoom';
 export {
   AngledArrowIcon,
   ArrowRightIcon,
+  ArrowDownOutlinedIcon,
   BrainIcon,
   BrainRegionIcon,
   EyeIcon,
