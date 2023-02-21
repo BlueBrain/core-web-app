@@ -1,16 +1,20 @@
 import { useEffect } from 'react';
-import { useSetAtom } from 'jotai/react';
+import { useAtom } from 'jotai/react';
 
 import { useSession } from 'next-auth/react';
 import sessionAtom from '@/state/session';
 
 export default function useSessionState() {
-  const session = useSession();
-  const setSessionAtom = useSetAtom(sessionAtom);
+  const currentSession = useSession();
+  const [session, setSession] = useAtom(sessionAtom);
 
   useEffect(() => {
-    if (session?.status === 'authenticated') {
-      setSessionAtom(session.data);
-    }
-  }, [session, setSessionAtom]);
+    if (
+      currentSession?.status !== 'authenticated' ||
+      currentSession.data.accessToken === session?.accessToken
+    )
+      return;
+
+    setSession(currentSession.data);
+  }, [session?.accessToken, currentSession, setSession]);
 }
