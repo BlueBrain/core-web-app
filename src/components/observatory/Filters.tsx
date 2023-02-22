@@ -1,6 +1,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Switch from '@radix-ui/react-switch';
-import { ChevronIcon, EyeIcon, GripDotsVerticalIcon } from '@/components/icons';
+import * as Checkbox from '@radix-ui/react-checkbox';
+import { CheckIcon, ChevronIcon, EyeIcon, GripDotsVerticalIcon } from '@/components/icons';
 
 function Filters() {
   const expandedStateStyle = `
@@ -12,6 +13,10 @@ function Filters() {
 
 .accordion-trigger[data-state='open'] .chevron {
   transform: rotate(90deg);
+}
+
+.checkbox[data-state='checked'] {
+  background-color: white;
 }
 `;
 
@@ -36,11 +41,14 @@ function Filters() {
               <span className="font-bold text-white">{itemLabel}</span>
               <span className="flex items-center justify-between gap-2">
                 <span className="text-primary-5">{`${value} datasets`}</span>
-                <input
-                  className="bg-transparent border-white rounded"
+                <Checkbox.Root
+                  className="checkbox bg-transparent border border-white h-[14px] rounded w-[14px]"
                   name="e-type"
-                  type="checkbox"
-                />
+                >
+                  <Checkbox.Indicator className="flex items-center justify-center w-full">
+                    <CheckIcon className="check" />
+                  </Checkbox.Indicator>
+                </Checkbox.Root>
               </span>
             </li>
           ))}
@@ -133,7 +141,7 @@ function Conditions() {
 
 export default function ControlPanel() {
   return (
-    <div className="bg-primary-9 flex flex-col space-y-4 px-8 py-10 w-[480px]">
+    <div className="bg-primary-9 flex flex-col space-y-4 pl-8 pr-16 py-10 w-[480px]">
       <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
         Filters<small className="font-light text-base text-primary-3">10 Active Columns</small>
       </span>
