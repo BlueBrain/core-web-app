@@ -5,67 +5,18 @@ import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadable } from 'jotai/vanilla/utils';
-import { classNames } from '@/util/utils';
-import Link from '@/components/Link';
-import usePathname from '@/hooks/pathname';
-import { themeAtom, Theme } from '@/state/theme';
-import BrainIcon from '@/components/icons/Brain';
-import AnalysisIcon from '@/components/icons/Analysis';
-import SettingsIcon from '@/components/icons/Settings';
-import { cellCompositionHasChanged } from '@/state/brain-model-config/cell-composition';
+
 import { RegionDetailsSidebar } from '@/components/BrainRegionSelector';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
-
-const COMMON_TAB_CLASSNAME = 'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl';
-
-type CellCompositionTab = {
-  name: string;
-  href: string;
-  icon: ReactNode;
-  disableOnChange?: boolean;
-};
-
-const tabs: CellCompositionTab[] = [
-  {
-    name: 'Interactive',
-    href: '/brain-factory/cell-composition/interactive',
-    icon: <BrainIcon className="h-4 inline-block mr-2" />,
-  },
-  {
-    name: 'Analysis',
-    href: '/brain-factory/cell-composition/analysis',
-    icon: <AnalysisIcon className="h-4 inline-block mr-2" />,
-    disableOnChange: true,
-  },
-  {
-    name: 'Configuration',
-    href: '/brain-factory/cell-composition/configuration',
-    icon: <SettingsIcon className="h-4 inline-block mr-2" />,
-  },
-];
-
-function getTabClassName(active: boolean, theme: Theme) {
-  let className;
-
-  if (theme === 'light') {
-    className = active ? 'bg-white text-primary-7' : 'bg-primary-7 text-white';
-  } else {
-    className = active ? 'bg-white text-black' : 'bg-black text-white';
-  }
-
-  return classNames(COMMON_TAB_CLASSNAME, className);
-}
+import CellCompositionTabs from '@/components/CellCompositionTabs';
 
 type CellCompositionLayoutProps = {
   children: ReactNode;
 };
 
 export default function CellCompositionLayout({ children }: CellCompositionLayoutProps) {
-  const theme = useAtomValue(themeAtom);
-  const compositionHasChanged = useAtomValue(cellCompositionHasChanged);
-  const pathname = usePathname();
   const brainRegionLoadable = useAtomValue(loadable(selectedBrainRegionAtom));
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
 
@@ -84,20 +35,7 @@ export default function CellCompositionLayout({ children }: CellCompositionLayou
     <>
       {brainRegionDetails}
 
-      <div className="absolute right-7 top-7 z-10">
-        {tabs.map((tab) =>
-          tab.disableOnChange && compositionHasChanged ? null : (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={getTabClassName(!!pathname?.startsWith(tab.href), theme)}
-            >
-              {tab.icon}
-              {tab.name}
-            </Link>
-          )
-        )}
-      </div>
+      <CellCompositionTabs />
 
       {children}
     </>

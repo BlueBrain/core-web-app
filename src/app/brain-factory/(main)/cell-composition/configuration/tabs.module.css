@@ -1,0 +1,11 @@
+.TabTrigger[data-state='active'] {
+  border-bottom: solid 2px;
+  padding-bottom: 5px;
+  @apply font-bold;
+  @apply text-primary-8;
+}
+
+.TabTrigger[data-state='inactive'] {
+  @apply font-normal;
+  @apply text-neutral-4;
+}

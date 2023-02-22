@@ -28,7 +28,6 @@ import { Composition } from '@/types/composition';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
-export const cellCompositionHasChanged = atom<boolean>(false);
 
 const configAtom = atom<Promise<CellCompositionConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -160,7 +159,6 @@ const triggerUpdateDebouncedAtom = atom<null, [CellCompositionConfigPayload], Pr
 const setConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], void>(
   null,
   (get, set, configPayload: CellCompositionConfigPayload) => {
-    set(cellCompositionHasChanged, true);
     set(setLocalConfigPayloadAtom, configPayload);
     set(triggerUpdateDebouncedAtom, configPayload);
   }

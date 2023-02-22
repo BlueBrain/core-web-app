@@ -1,9 +1,11 @@
 import { atom, Atom } from 'jotai/vanilla';
 
-import { partialCircuitAtom as cellPositionPartialCircuitAtom } from '@/state/brain-model-config/cell-position';
-import { cellCompositionAtom as cellCompositionPartialCircuitAtom } from '@/state/brain-model-config/cell-composition';
-import { partialCircuitAtom as emodelAssignmentPartialCircuitAtom } from '@/state/brain-model-config/emodel-assignment';
-import { partialCircuitAtom as morphologyAssignmentPartialCircuitAtom } from '@/state/brain-model-config/morphology-assignment';
+import {
+  cellCompositionWasBuiltAtom,
+  cellPositionWasBuiltAtom,
+  emodelAssignmentWasBuiltAtom,
+  morphologyAssignmentWasBuiltAtom,
+} from './generated-artifacts';
 
 export const STATUS = {
   BUILT: 'Built',
@@ -48,15 +50,15 @@ export const statusStructure: StatusStructureItem[] = [
     items: [
       {
         name: STEPS.DENSITY,
-        statusAtom: cellCompositionPartialCircuitAtom,
+        statusAtom: cellCompositionWasBuiltAtom,
       },
       {
         name: STEPS.DISTRIBUTION,
-        statusAtom: cellCompositionPartialCircuitAtom,
+        statusAtom: cellCompositionWasBuiltAtom,
       },
       {
         name: STEPS.POSITION,
-        statusAtom: cellPositionPartialCircuitAtom,
+        statusAtom: cellPositionWasBuiltAtom,
       },
     ],
   },
@@ -65,11 +67,11 @@ export const statusStructure: StatusStructureItem[] = [
     items: [
       {
         name: STEPS.E_MODEL,
-        statusAtom: emodelAssignmentPartialCircuitAtom,
+        statusAtom: emodelAssignmentWasBuiltAtom,
       },
       {
         name: STEPS.M_MODEL,
-        statusAtom: morphologyAssignmentPartialCircuitAtom,
+        statusAtom: morphologyAssignmentWasBuiltAtom,
       },
       {
         name: STEPS.ME_MODEL,

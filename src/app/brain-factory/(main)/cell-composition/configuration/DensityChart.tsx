@@ -25,12 +25,14 @@ export default function DensityChart({
       const args = [
         data,
         {
-          nodeColorScale: colorScale,
           linkColor: 'source',
           linkTitle: (d: any) => `${d.source.label} → ${d.target.label}\n${d.source.value}`,
+          nodeColorScale: colorScale,
           nodeGroup: (d: any) => d.id,
           nodeLabel: (d: any) => `${d.label} (~${formatNumber(d.value)})`,
+          nodePadding: 4,
           width: 860,
+          height: 425,
         },
       ];
 
@@ -38,9 +40,5 @@ export default function DensityChart({
     }
   });
 
-  return (
-    <div>
-      <svg className={className} ref={chartRef} />
-    </div>
-  );
+  return <svg className={className} ref={chartRef} />;
 }

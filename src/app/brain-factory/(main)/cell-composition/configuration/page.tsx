@@ -12,9 +12,9 @@ import {
 } from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom, useAtomValue } from 'jotai/react';
-import { Button, Image, Tabs } from 'antd';
+import { Button, Image } from 'antd';
+import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
-
 import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util';
 import DensityChart from './DensityChart';
 import ZoomControl from './Zoom';
@@ -31,6 +31,7 @@ import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
+import styles from './tabs.module.css';
 
 function CellPosition() {
   return (
@@ -146,8 +147,6 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   );
 }
 
-// TODO: There's probaly a nice way to combine the different reducers here...
-// ... Including the sidebar composition reducer as well.
 function CellDensity() {
   const [densityOrCount] = useAtom(densityOrCountAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
@@ -199,19 +198,6 @@ function CellDensity() {
     resetComposition();
   }, [resetComposition]);
 
-  const sliderItems = [
-    {
-      label: (
-        <div className="flex gap-4 items-center px-5">
-          <GripDotsVerticalIcon />
-          <span>By MType</span>
-        </div>
-      ),
-      key: 'mtype',
-      children: <div />,
-    },
-  ];
-
   // Prevent SVG from rendering whenever zoom changes
   const ref: RefObject<SVGSVGElement & { reset: () => void; zoom: (value: number) => void }> =
     useRef(null);
@@ -247,14 +233,13 @@ function CellDensity() {
           {densityChart}
         </div>
       )}
-      <CellDensityToolbar onReset={handleReset} />
-      <Tabs
-        // TODO: See whether Ant-D ConfigProvider can be used instead of renderTabBar
-        renderTabBar={(props, DefaultTabBar) => (
-          <DefaultTabBar {...props} className="bg-white" style={{ margin: 0 }} /> // eslint-disable-line react/jsx-props-no-spreading
-        )}
-        items={sliderItems}
-      />
+      <div className="flex absolute bottom-12 justify-between align-center w-full">
+        <div className="bg-[#F0F0F0] rounded flex gap-4 items-center px-5">
+          <GripDotsVerticalIcon />
+          <span className="font-bold text-neutral-5 text-lg">By MType</span>
+        </div>
+        <CellDensityToolbar onReset={handleReset} />
+      </div>
     </>
   );
 }
@@ -269,26 +254,47 @@ function CellDensityWrapper() {
 }
 
 export default function ConfigurationView() {
-  return (
-    <Tabs
-      // TODO: There may be a way to improve this using Ant-D's ConfigProvider
-      renderTabBar={(props, DefaultTabBar) => (
-        <DefaultTabBar {...props} style={{ margin: '0 0 30px 0' }} /> // eslint-disable-line react/jsx-props-no-spreading
-      )}
-      className="mx-4 my-10"
-      items={[
+  const tabItems = useMemo(
+    () =>
+      [
         {
-          label: 'Density',
-          key: 'density',
+          children: 'Density',
+          value: 'density',
+        },
+        { children: 'Distribution', value: 'distribution' },
+        { children: 'Position', value: 'position' },
+      ].map(({ children, value }) => (
+        <Tabs.Trigger className={styles.TabTrigger} key={value} value={value}>
+          {children}
+        </Tabs.Trigger>
+      )),
+    []
+  );
+  const tabContent = useMemo(
+    () =>
+      [
+        {
           children: (
             <Suspense fallback={null}>
               <CellDensityWrapper />
             </Suspense>
           ),
+          value: 'density',
         },
-        { label: 'Distribution', key: 'distribution', children: <CellDistribution /> },
-        { label: 'Position', key: 'position', children: <CellPosition /> },
-      ]}
-    />
+        { children: <CellDistribution />, value: 'distribution' },
+        { children: <CellPosition />, value: 'position' },
+      ].map(({ children, value }) => (
+        <Tabs.Content className="h-full relative" key={value} value={value}>
+          {children}
+        </Tabs.Content>
+      )),
+    []
+  );
+
+  return (
+    <Tabs.Root defaultValue="density" className="h-full overflow-hidden px-4 py-[25px]">
+      <Tabs.List className="items-baseline flex font-bold gap-3 mb-3">{tabItems}</Tabs.List>
+      {tabContent}
+    </Tabs.Root>
   );
 }
