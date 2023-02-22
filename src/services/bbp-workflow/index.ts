@@ -10,6 +10,9 @@ import {
 } from '@/services/bbp-workflow/config';
 import type { DetailedCircuitResource } from '@/types/nexus';
 
+export const workflowInstructions =
+  'https://bbpteam.epfl.ch/project/spaces/display/BBPNSE/Workflow#Workflow-Prerequisites';
+
 async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
   // check the pod is active
   const podResponse = await fetch(BBP_WORKFLOW_PING_TASK.replace(PLACEHOLDERS.USERNAME, username), {
@@ -17,7 +20,7 @@ async function runChecksBeforeLaunching(headers: HeadersInit, username: string) 
     headers,
   }).catch(() => ({ ok: false }));
   if (!podResponse.ok) {
-    throw new Error('Pod is not available. Please run "bbp-workflow version" on your terminal');
+    throw new Error('Pod is not available.');
   }
 
   // set offline token if not there
@@ -26,7 +29,7 @@ async function runChecksBeforeLaunching(headers: HeadersInit, username: string) 
     headers,
   }).catch(() => ({ ok: false }));
   if (!authResponse.ok) {
-    throw new Error('Auth exchange failed. Please run "bbp-workflow version" on your terminal');
+    throw new Error('Auth exchange failed.');
   }
 }
 
