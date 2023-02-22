@@ -29,20 +29,17 @@ export const SIMULATION_FILES: WorkflowFilesType = [
     TYPE: 'file',
     CONTENT: `
       [DEFAULT]
-      kg-base: https://staging.nise.bbp.epfl.ch/nexus/v1
-      kg-org: bbp_test
-      kg-proj: studio_data3
-
+      kg-proj: mmb-point-neuron-framework-model
       account: proj30
-
-      module-archive: unstable
 
       [GenerateSimulationCampaign]
       name: SBO - Sonata Simulation
       circuit-url: ${PLACEHOLDERS.CIRCUIT_URL}
       seed-as-coord: {"low": 100000, "high": 400000, "size": 1}
-      attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/home/\${USER}/sims", "blue_config_template": "simulation_config.tmpl", "user_target": "node_sets.json", "duration": 100ms}
+      attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/project/%(account)s/scratch/\${USER}/workflow-sims", "blue_config_template": "simulation_config.tmpl", "user_target": "node_sets.json", "duration": 100ms}
+      
       [SimulationCampaign]
+      nodes: 50
       simulation-type: CortexNrdmsPySim
     `,
   },
@@ -55,7 +52,8 @@ export const SIMULATION_FILES: WorkflowFilesType = [
         "manifest": {"\\$OUTPUT_DIR": "./reporting"},
         "network": "$circuit_config",
         "node_sets_file": "node_sets.json",
-        "node_set": "test_small",
+        "node_set": "Mosaic",
+        "target_simulator": "CORENEURON",
         "run": {
           "dt": 0.025,
           "forward_skip": 5000,
@@ -64,28 +62,37 @@ export const SIMULATION_FILES: WorkflowFilesType = [
         },
         "output": {
           "output_dir": "\\$OUTPUT_DIR",
-          "spikes_file": "spikes.h5"
+          "spikes_file": "out.h5",
+          "spikes_sort_order": "by_time"
         },
         "reports": {
-          "soma_report": {
-            "cells": "test_small",
+          "soma": {
+            "cells": "Mosaic",
             "variable_name": "v",
             "sections": "soma",
             "type": "compartment",
             "dt": 0.1,
+            "compartments": "center",
             "start_time": 0,
             "end_time": $duration
           }
         },
         "inputs": {
-          "HoldRt": {
-            "module": "noise",
-            "mean_percent": 0,
-            "variance": 0.001,
-            "delay": 0,
-            "duration": $duration,
+          "holding_current": {
+            "module": "linear",
             "input_type": "current_clamp",
-            "node_set": "test_small"
+            "node_set": "Mosaic",
+            "amp_start": -0.03515624999999999,
+            "delay": 0.0,
+            "duration": $duration
+          },
+          "threshold_current": {
+            "module": "linear",
+            "input_type": "current_clamp",
+            "node_set": "Mosaic",
+            "amp_start": 0.35312774458632922,
+            "delay": 10.0,
+            "duration": $duration
           }
         }
       }
@@ -101,24 +108,20 @@ export const SIMULATION_FILES: WorkflowFilesType = [
     TYPE: 'file',
     CONTENT: `
       {
-        "test_small": {
+        "Mosaic": {
+          "population": "root__neurons"
+        },
+        "Mosaic_0": {
+          "population": "root__neurons",
           "node_id": [
-            7,
-            10,
-            11,
-            23,
-            31,
-            38,
-            41,
-            42,
-            56,
-            62,
-            71,
-            73,
-            81,
-            91,
-            110],
-          "population": "S1nonbarrel_neurons"
+            0
+          ]
+        },
+        "selection": {
+          "population": "root__neurons",
+          "node_id": [
+            0, 123, 456, 789, 1234, 5678
+          ]
         }
       }
     `,
