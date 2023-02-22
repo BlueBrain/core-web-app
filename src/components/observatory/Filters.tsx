@@ -34,13 +34,13 @@ function DensityContent() {
   return (
     <div className="flex gap-3 items-center justify-between w-full">
       <input
-        className="bg-transparent border border-primary-4 font-sm p-2 rounded text-primary-4"
+        className="bg-transparent border border-primary-4 font-sm placeholder-primary-4 p-2 rounded text-primary-4"
         placeholder="Enter value..."
         type="number"
       />
       <span className="text-3xl text-white">±</span>
       <input
-        className="bg-transparent border border-primary-4 font-sm p-2 rounded text-primary-4"
+        className="bg-transparent border border-primary-4 font-sm placeholder-primary-4 p-2 rounded text-primary-4"
         placeholder="Enter value..."
         type="number"
       />
