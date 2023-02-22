@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { notification } from 'antd';
 
 import { classNames } from '@/util/utils';
-import { launchWorkflowTask } from '@/services/bbp-workflow';
+import { launchWorkflowTask, workflowInstructions } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME } from '@/services/bbp-workflow/config';
 import { useWorkflowConfig } from '@/hooks/workflow';
 
@@ -42,7 +42,19 @@ export default function WorkflowLauncher({
     } catch (e: any) {
       notification.open({
         message: 'Error launching workflow',
-        description: e.message || '',
+        description: (
+          <div>
+            <div>{e?.message || ''}</div>
+            <div>Please run &quot;bbp-workflow version&quot; on your terminal.</div>
+            <div>
+              Instructions: [
+              <a href={workflowInstructions} target="_blank" rel="noreferrer">
+                here
+              </a>
+              ]
+            </div>
+          </div>
+        ),
       });
     }
     onLaunchingChange(false);
