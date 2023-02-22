@@ -3,6 +3,51 @@ import * as Switch from '@radix-ui/react-switch';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { CheckIcon, ChevronIcon, EyeIcon, GripDotsVerticalIcon } from '@/components/icons';
 
+function ETypeContent() {
+  return (
+    <ul className="divide-y divide-white/20 flex flex-col space-y-3">
+      {[
+        { label: 'L5_NBC', value: 46 },
+        { label: 'L23_LBC', value: 84 },
+        { label: 'L5_MC', value: 78 },
+      ].map(({ label: itemLabel, value }) => (
+        <li className="flex items-center justify-between pt-3" key={itemLabel}>
+          <span className="font-bold text-white">{itemLabel}</span>
+          <span className="flex items-center justify-between gap-2">
+            <span className="text-primary-5">{`${value} datasets`}</span>
+            <Checkbox.Root
+              className="checkbox bg-transparent border border-white h-[14px] rounded w-[14px]"
+              name="e-type"
+            >
+              <Checkbox.Indicator className="flex items-center justify-center w-full">
+                <CheckIcon className="check" />
+              </Checkbox.Indicator>
+            </Checkbox.Root>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function DensityContent() {
+  return (
+    <div className="flex gap-3 items-center justify-between w-full">
+      <input
+        className="bg-transparent border border-primary-4 font-sm p-2 rounded text-primary-4"
+        placeholder="Enter value..."
+        type="number"
+      />
+      <span className="text-3xl text-white">±</span>
+      <input
+        className="bg-transparent border border-primary-4 font-sm p-2 rounded text-primary-4"
+        placeholder="Enter value..."
+        type="number"
+      />
+    </div>
+  );
+}
+
 function Filters() {
   const expandedStateStyle = `
 .accordion-trigger .chevron {
@@ -30,37 +75,18 @@ function Filters() {
     { label: 'contributors' },
     {
       label: 'e-type',
-      content: (
-        <ul className="divide-y divide-white/20 flex flex-col space-y-3">
-          {[
-            { label: 'L5_NBC', value: 46 },
-            { label: 'L23_LBC', value: 84 },
-            { label: 'L5_MC', value: 78 },
-          ].map(({ label: itemLabel, value }) => (
-            <li className="flex items-center justify-between pt-3" key={itemLabel}>
-              <span className="font-bold text-white">{itemLabel}</span>
-              <span className="flex items-center justify-between gap-2">
-                <span className="text-primary-5">{`${value} datasets`}</span>
-                <Checkbox.Root
-                  className="checkbox bg-transparent border border-white h-[14px] rounded w-[14px]"
-                  name="e-type"
-                >
-                  <Checkbox.Indicator className="flex items-center justify-center w-full">
-                    <CheckIcon className="check" />
-                  </Checkbox.Indicator>
-                </Checkbox.Root>
-              </span>
-            </li>
-          ))}
-        </ul>
-      ),
+      content: <ETypeContent />,
+    },
+    {
+      label: 'density',
+      content: <DensityContent />,
     },
   ];
 
   return (
     <Accordion.Root
       className="divide-y divide-primary-7 flex flex-col space-y-5"
-      defaultValue={['e-type']}
+      defaultValue={['e-type', 'density']}
       type="multiple"
     >
       {filters.map(({ label, content }) =>
@@ -99,11 +125,11 @@ function Filters() {
 
 function Conditions() {
   const switchStyle = `
-.SwitchRoot[data-state='checked'] {
+.switch-root[data-state='checked'] {
   background-color: white;
 }
 
-.SwitchThumb[data-state='checked'] {
+.switch-thumb[data-state='checked'] {
   background-color: #003A8C;
   transform: translateX(13px);
 }
@@ -127,9 +153,9 @@ function Conditions() {
             <span>
               <Switch.Root
                 defaultChecked={checked}
-                className="SwitchRoot bg-transparent border border-primary-4 h-[14px] rounded-full w-[27px]"
+                className="switch-root bg-transparent border border-primary-4 h-[14px] rounded-full w-[27px]"
               >
-                <Switch.Thumb className="SwitchThumb bg-primary-4 block h-[10px] rounded-full transition-transform translate-x-[1px] w-[10px] will-change-transform" />
+                <Switch.Thumb className="switch-thumb bg-primary-4 block h-[10px] rounded-full transition-transform translate-x-[1px] w-[10px] will-change-transform" />
               </Switch.Root>
             </span>
           </li>
