@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useRef, RefObject, useState } from 'react';
+import React, { Suspense, useCallback, useRef, RefObject, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Button, Checkbox } from 'antd';
 import { MinusOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -19,6 +19,8 @@ import {
   setSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';
+import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
+import { BrainArea } from '@/state/connectome-editor/sidebar';
 
 function VisualizationTrigger({ colorCode, id }: { colorCode: string; id: string }) {
   const meshDistributions = useAtomValue(meshDistributionsAtom);
@@ -102,10 +104,14 @@ export function ExpandedBrainRegionsSidebar({
   setIsRegionSelectorOpen,
   setSelectedBrainRegion,
   header,
-  selectedBrainRegionIds,
+  area = null,
+  selectedPreBrainRegionIds,
+  selectedPostBrainRegionIds,
 }: {
   header?: React.ReactNode;
-  selectedBrainRegionIds?: Set<string>;
+  area?: BrainArea;
+  selectedPreBrainRegionIds?: Set<string>;
+  selectedPostBrainRegionIds?: Set<string>;
   setIsRegionSelectorOpen: (value: boolean) => void;
   setSelectedBrainRegion: (
     selectedBrainRegionId: string,
@@ -113,7 +119,7 @@ export function ExpandedBrainRegionsSidebar({
     selectedBrainRegionLeaves: string[] | null
   ) => void;
 }) {
-  const multi = !!header;
+  const multi = !!area;
   const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
   const [brainRegionsNavValue, setNavValue] = useState<NavValue>(null);
 
@@ -128,6 +134,10 @@ export function ExpandedBrainRegionsSidebar({
   );
 
   if (!brainRegions) return null;
+
+  let selectedBrainRegionIds: Set<string> | undefined;
+  if (area === 'post') selectedBrainRegionIds = selectedPostBrainRegionIds;
+  if (area === 'pre') selectedBrainRegionIds = selectedPreBrainRegionIds;
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto px-7 py-6 min-w-[300px]">
@@ -149,6 +159,13 @@ export function ExpandedBrainRegionsSidebar({
             onClick={() => setIsRegionSelectorOpen(false)}
           />
         </div>
+
+        {!!area && (
+          <Suspense fallback={null}>
+            <BrainAreaSwitch area={area} />
+          </Suspense>
+        )}
+
         <Search
           onSelect={(_labeledValue, option) => {
             const { ancestors, value, label, leaves } = option;

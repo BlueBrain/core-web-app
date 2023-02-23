@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, Suspense, useEffect, useRef } from 'react';
 import { useSetAtom } from 'jotai/react';
 import { usePathname } from 'next/navigation';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -13,7 +13,7 @@ import TopTabs from '@/components/TopTabs';
 import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
-import BrainRegionSelector from '@/components/ConnectomeEditorSidebar/BrainRegionSelector';
+import ConnectomeEditorSidebar from '@/components/ConnectomeEditorSidebar';
 import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
 
 import styles from './brain-factory-main.module.css';
@@ -51,7 +51,11 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
             </DefaultLoadingSuspense>
           </ErrorBoundary>
         )}
-        {isConnectomeEditor && <BrainRegionSelector />}
+        {isConnectomeEditor && (
+          <Suspense fallback={null}>
+            <ConnectomeEditorSidebar />
+          </Suspense>
+        )}
       </div>
 
       <div className={styles.extraPanelContainer} ref={extraPanelRef} />
