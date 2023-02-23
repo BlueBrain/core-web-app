@@ -32,6 +32,7 @@ export default function ConnectomeEditorSidebar() {
   const [topSelectedPreRegion, topSelectedPostRegion]: [string, string] = useMemo(() => {
     function findTopSelectedRegion(selectedIds: Set<string>) {
       // Finds the selected brain regions closest to the root of the tree
+      if (!selectedIds.size) return '';
 
       const queue = [...(tree ?? [])];
       while (queue.length) {
