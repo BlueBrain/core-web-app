@@ -141,6 +141,7 @@ export function TreeNavItem({
  * @param {TreeItem[]} args.items - The nav items.
  * @param {(newValue: string[], path: string[]) => void} args.onValueChange - A callback.
  * @param {NavValue} args.value - For controlling the expansion and collapse of nav items.
+ * @param {ForwardedRef} ref
  */
 function TreeNav(
   {
@@ -156,7 +157,7 @@ function TreeNav(
     onValueChange: (newValue: string[], path: string[]) => void;
     value: NavValue;
   },
-  ref: ForwardedRef<HTMLDivElement>
+  ref?: ForwardedRef<HTMLDivElement>
 ) {
   return (
     <Accordion.Root
