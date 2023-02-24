@@ -5,6 +5,7 @@ import { CompositionUnit } from '@/types/composition';
  * Calculates the metric to be displayed based on whether count or density is
  * currently selected
  */
+// eslint-disable-next-line import/prefer-default-export
 export function getMetric(composition: CompositionUnit, densityOrCount: keyof CompositionUnit) {
   if (composition && densityOrCount === 'count') {
     return formatNumber(composition.count);

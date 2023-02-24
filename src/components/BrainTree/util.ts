@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { getOr, set } from 'lodash/fp';
 import { NavValue } from '@/components/TreeNavItem';
 
+// eslint-disable-next-line import/prefer-default-export
 export function handleNavValueChange(
   navValue: NavValue,
   setNavValue: Dispatch<SetStateAction<NavValue>>

@@ -10,7 +10,11 @@ import { classNames } from '@/util/utils';
 import ColorBox from '@/components/ColorBox';
 import { BrainIcon } from '@/components/icons';
 import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/BrainTree';
-import { brainRegionsFilteredTreeAtom, setSelectedBrainRegionAtom } from '@/state/brain-regions';
+import {
+  brainRegionsFilteredTreeAtom,
+  selectedBrainRegionAtom,
+  setSelectedBrainRegionAtom,
+} from '@/state/brain-regions';
 import VisualizationTrigger from '@/components/VisualizationTrigger';
 import { NavValue } from '@/components/TreeNavItem';
 
@@ -23,6 +27,7 @@ function NavTitle({
   isExpanded,
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
+  selectedBrainRegion,
 }: TitleComponentProps) {
   return (
     <>
@@ -38,7 +43,7 @@ function NavTitle({
               className={classNames(
                 className,
                 'hover:text-white mr-auto whitespace-pre-wrap text-left',
-                isExpanded ? 'text-white' : 'text-primary-4'
+                isExpanded || selectedBrainRegion?.id === id ? 'text-white' : 'text-primary-4'
               )}
             >
               {title}
@@ -58,6 +63,7 @@ function NavTitle({
 
 export default function BrainRegions() {
   const brainRegionsTree = useAtomValue(brainRegionsFilteredTreeAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [navValue, setNavValue] = useState<NavValue>(null);
@@ -98,6 +104,7 @@ export default function BrainRegions() {
                   isExpanded={isExpanded}
                   trigger={trigger}
                   content={content}
+                  selectedBrainRegion={selectedBrainRegion}
                 >
                   {({
                     colorCode: nestedColorCode,
@@ -117,6 +124,7 @@ export default function BrainRegions() {
                       isExpanded={nestedIsExpanded}
                       trigger={nestedTrigger}
                       content={nestedContent}
+                      selectedBrainRegion={selectedBrainRegion}
                     />
                   )}
                 </NavTitle>

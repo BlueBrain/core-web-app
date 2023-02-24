@@ -1,8 +1,9 @@
-import React, { Suspense, useRef, RefObject, ReactNode, useMemo, useState } from 'react';
+import React, { useRef, RefObject, ReactNode, useMemo, useState } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useSetAtom, useAtomValue } from 'jotai/react';
 import { TitleComponentProps } from './types';
+import { BrainRegion } from '@/types/ontologies';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import { classNames } from '@/util/utils';
 import {
@@ -21,13 +22,13 @@ function NavTitle({
   id,
   onClick = () => {},
   title,
-  isExpanded,
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
   multi = false,
   selectedBrainRegionIds,
 }: TitleComponentProps) {
   let checkbox = null;
+
   if (multi && !!selectedBrainRegionIds && id)
     checkbox = <Checkbox checked={selectedBrainRegionIds.has(id)} />;
 
@@ -43,9 +44,8 @@ function NavTitle({
           >
             <span
               className={classNames(
-                className,
                 'font-bold mr-auto text-left text-white whitespace-pre-wrap',
-                !isExpanded && 'font-light'
+                className
               )}
             >
               {title}
@@ -70,7 +70,7 @@ function Header({ children }: { children: ReactNode }) {
 }
 
 // Finds the selected brain regions closest to the root of the tree
-function findTopSelectedRegion(selectedIds: Set<string>, tree) {
+function findTopSelectedRegion(selectedIds: Set<string>, tree: BrainRegion[] | null) {
   if (!selectedIds.size) return '';
 
   const queue = [...(tree ?? [])];
@@ -142,6 +142,10 @@ export default function ConnectomeEditorSidebar() {
   const [navValue, setNavValue] = useState<NavValue>(null);
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const setArea = useSetAtom(brainAreaAtom);
+  const selectedBrainRegionIds =
+    area === 'post' ? postSynapticBrainRegions : area === 'pre' ? preSynapticBrainRegions : null; // eslint-disable-line no-nested-ternary
+
+  const brainAreaSwitch = useMemo(() => <BrainAreaSwitch area={area} />, [area]);
 
   if (!brainRegions) return null;
 
@@ -169,11 +173,7 @@ export default function ConnectomeEditorSidebar() {
                 onClick={() => setArea('post')}
               />
             </div>
-            {!!area && (
-              <Suspense fallback={null}>
-                <BrainAreaSwitch area={area} />
-              </Suspense>
-            )}
+            {!!area && brainAreaSwitch}
             <BrainTreeSearch
               brainTreeNav={brainTreeNavRef?.current}
               setValue={setNavValue}
@@ -182,19 +182,20 @@ export default function ConnectomeEditorSidebar() {
             <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
               {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
                 <NavTitle
-                  className="uppercase text-lg"
+                  className="font-bold uppercase text-lg"
                   colorCode={colorCode}
                   id={id}
                   onClick={() =>
                     leaves && area === 'post'
-                      ? setSelectedPostBrainRegion(id, title, leaves)
-                      : setSelectedPreBrainRegion(id, title, leaves)
+                      ? setSelectedPostBrainRegion(id)
+                      : setSelectedPreBrainRegion(id)
                   }
                   title={title}
                   isExpanded={isExpanded}
                   trigger={trigger}
                   content={content}
                   multi={!!area}
+                  selectedBrainRegionIds={selectedBrainRegionIds}
                 >
                   {({
                     colorCode: nestedColorCode,
@@ -203,14 +204,17 @@ export default function ConnectomeEditorSidebar() {
                     title: nestedTitle,
                     trigger: nestedTrigger,
                     content: nestedContent,
-                    leaves: nestedLeaves,
                   }) => (
                     <NavTitle
-                      className="capitalize text-base"
+                      className={
+                        !nestedIsExpanded
+                          ? 'capitalize text-base font-light'
+                          : 'capitalize text-base'
+                      }
                       onClick={() =>
                         leaves && area === 'post'
-                          ? setSelectedPostBrainRegion(nestedId, nestedTitle, nestedLeaves)
-                          : setSelectedPreBrainRegion(nestedId, nestedTitle, nestedLeaves)
+                          ? setSelectedPostBrainRegion(nestedId)
+                          : setSelectedPreBrainRegion(nestedId)
                       }
                       colorCode={nestedColorCode}
                       id={nestedId}
@@ -219,13 +223,7 @@ export default function ConnectomeEditorSidebar() {
                       trigger={nestedTrigger}
                       content={nestedContent}
                       multi={!!area}
-                      selectedBrainRegionIds={
-                        area === 'post'
-                          ? postSynapticBrainRegions
-                          : area === 'pre'
-                          ? preSynapticBrainRegions
-                          : null
-                      }
+                      selectedBrainRegionIds={selectedBrainRegionIds}
                     />
                   )}
                 </NavTitle>
