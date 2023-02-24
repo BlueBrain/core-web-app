@@ -170,7 +170,7 @@ export default function ConnectomeEditorSidebar() {
                 type="text"
                 size="small"
                 icon={<MinusOutlined style={{ color: 'white' }} />}
-                onClick={() => setArea('post')}
+                onClick={() => setArea(null)}
               />
             </div>
             {!!area && brainAreaSwitch}
