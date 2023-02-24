@@ -25,19 +25,23 @@ export default function BrainAreaSwitch({ area }: { area: BrainArea }) {
 
   const opposite = useCallback((area_: 'pre' | 'post') => (area_ === 'post' ? 'pre' : 'post'), []);
 
-  return area && (
-    <Button
-      className={classNames(
-        'bg-neutral-7 flex h-auto items-center justify-between p-2 rounded',
-        area === 'pre' ? 'text-highlightPost' : 'text-highlightPre'
-      )}
-      onClick={() => setArea(opposite(area))}
-    >
-      <div className="flex flex-col text-left">
-        <div className="capitalize">{`${opposite(area)}-synaptic`}</div>
-        <div className="flex flex-wrap gap-x-2 items-center justify-start">{displayedRegions}</div>
-      </div>
-      <SwapOutlined />
-    </Button>
+  return (
+    area && (
+      <Button
+        className={classNames(
+          'bg-neutral-7 flex h-auto items-center justify-between p-2 rounded',
+          area === 'pre' ? 'text-highlightPost' : 'text-highlightPre'
+        )}
+        onClick={() => setArea(opposite(area))}
+      >
+        <div className="flex flex-col text-left">
+          <div className="capitalize">{`${opposite(area)}-synaptic`}</div>
+          <div className="flex flex-wrap gap-x-2 items-center justify-start">
+            {displayedRegions}
+          </div>
+        </div>
+        <SwapOutlined />
+      </Button>
+    )
   );
 }

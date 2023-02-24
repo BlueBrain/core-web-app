@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai/react';
 import { Button } from 'antd';
-import { EyeOutlined , LoadingOutlined } from '@ant-design/icons';
+import { EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';
 import { meshDistributionsAtom } from '@/state/brain-regions';
 
