@@ -44,7 +44,9 @@ export default function Search({
           dropdownStyle={{ borderRadius: '4px' }}
           placeholder="Search region..."
           options={options}
-          filterOption={(input, option) => (option?.label ?? '').includes(input)}
+          filterOption={(input, option) =>
+            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+          }
           filterSort={(optionA, optionB) =>
             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
           }
