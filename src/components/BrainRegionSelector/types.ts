@@ -38,5 +38,6 @@ export type CompositionTitleProps = {
   setLockedFunc: () => void;
   trigger: (...args: any[]) => ReactElement;
   lockIsDisabled: boolean;
+  isEditable: boolean;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };

@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadable } from 'jotai/vanilla/utils';
-
+import { usePathname } from 'next/navigation';
 import { RegionDetailsSidebar } from '@/components/BrainRegionSelector';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
@@ -19,17 +19,17 @@ type CellCompositionLayoutProps = {
 export default function CellCompositionLayout({ children }: CellCompositionLayoutProps) {
   const brainRegionLoadable = useAtomValue(loadable(selectedBrainRegionAtom));
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
-
+  const router = usePathname();
   const brainRegionDetails = useMemo(() => {
     if (!extraPanelContainer) return null;
 
     return createPortal(
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <RegionDetailsSidebar />
+        <RegionDetailsSidebar editMode={!!router?.includes('/configuration')} />
       </ErrorBoundary>,
       extraPanelContainer
     );
-  }, [brainRegionLoadable.state, extraPanelContainer]);
+  }, [brainRegionLoadable.state, extraPanelContainer, router]);
 
   return (
     <>
