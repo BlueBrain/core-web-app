@@ -1,0 +1,8 @@
+.more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  button {
+    @apply rounded-3xl bg-primary-8 text-white py-2 px-14 mt-2;
+  }
+}

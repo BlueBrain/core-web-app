@@ -2,33 +2,6 @@ import { Entity, Distribution, ResourceMetadata } from './common';
 
 export * from './common';
 
-export interface Campaign {
-  id: string;
-  org: string;
-  self: string;
-  name: string;
-  project: string;
-  status?: string;
-  description?: string;
-  configuration?: string;
-  dimensions?: string;
-  startedAt?: string;
-  updatedAt?: string;
-  endedAt?: string;
-  createdAt?: string;
-  attributes?: string;
-  updatedBy?: string;
-  tags?: string[];
-}
-
-export interface Dimension {
-  key: string;
-  dimensionValues: string;
-  startedAt: string;
-  endedAt: string;
-  status: string;
-}
-
 export interface BrainModelConfig extends Entity {
   name: string;
   description: string;

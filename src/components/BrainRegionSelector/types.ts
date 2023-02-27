@@ -13,6 +13,7 @@ export type TitleComponentProps = {
   title?: string;
   multi?: boolean;
   selectedBrainRegionIds?: Set<string>;
+  viewId: string;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
 
@@ -38,5 +39,6 @@ export type CompositionTitleProps = {
   setLockedFunc: () => void;
   trigger: (...args: any[]) => ReactElement;
   lockIsDisabled: boolean;
+  isEditable: boolean;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };

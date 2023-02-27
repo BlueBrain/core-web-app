@@ -7,15 +7,18 @@ import { ColumnProps } from 'antd/es/table';
 import { useSession } from 'next-auth/react';
 import moment from 'moment';
 import Sidebar from '@/components/observatory/Sidebar';
-import { Campaign } from '@/types/nexus';
+import { Campaign } from '@/types/observatory';
 import { createHeaders } from '@/util/utils';
-import { basePath } from '@/config';
+import { basePath, nexus } from '@/config';
+import { sorter } from '@/util/common';
 import styles from '@/app/observatory/observatory.module.scss';
 import tableStyles from './table.module.scss';
 
 const { Search } = Input;
 
 const PAGE_SIZE = 10;
+
+const API_SEARCH = `${nexus.url}/search/query`;
 
 const QueryBase = {
   track_total_hits: true,
@@ -78,14 +81,11 @@ export default function Observatory() {
         ? { ...QueryBase, ...paginationQuery, ...searchQuery }
         : { ...QueryBase, ...paginationQuery };
 
-      const simCampaignResponse = await fetch(
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/search/query',
-        {
-          method: 'POST',
-          headers: createHeaders(session.accessToken),
-          body: JSON.stringify(query),
-        }
-      );
+      const simCampaignResponse = await fetch(API_SEARCH, {
+        method: 'POST',
+        headers: createHeaders(session.accessToken),
+        body: JSON.stringify(query),
+      });
 
       const simCampaigns = await simCampaignResponse.json();
       setTotalResults(simCampaigns._shards.total);
@@ -108,12 +108,9 @@ export default function Observatory() {
     fetchSimCampaigns();
   }, [session, searchTerm, searchQuery, paginationQuery]);
 
-  const columHeader = (text: string) => <div className={styles['table-header']}>{text}</div>;
+  const columHeader = (text: string) => <div className={styles.tableHeader}>{text}</div>;
 
   const onSearch = (value: string) => setSearchTerm(value);
-
-  const sorter = (a: any, b: any) =>
-    Number.isNaN(a) && Number.isNaN(b) ? (a || '').localeCompare(b || '') : a - b;
 
   const columns: ColumnProps<Campaign>[] = [
     {
@@ -208,7 +205,6 @@ export default function Observatory() {
           <Table
             className={tableStyles.container}
             dataSource={results}
-            rowClassName={styles['table-row']}
             columns={columns}
             pagination={false}
             onRow={(record) => ({

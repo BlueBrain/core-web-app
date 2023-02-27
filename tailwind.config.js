@@ -17,6 +17,7 @@ const gray = {
   4: '#8C8C8C',
   5: '#434343',
   6: '#141414',
+  7: '#262626',
 };
 const green = {
   1: '#95DE64',
@@ -46,6 +47,8 @@ module.exports = {
         primary: blue,
         secondary: green,
         warning: '#FA8C16',
+        highlightPost: '#FF4D4F',
+        highlightPre: '#40A9FF',
       },
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],

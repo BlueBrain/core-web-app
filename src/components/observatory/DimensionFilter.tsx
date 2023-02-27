@@ -1,7 +1,7 @@
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
-import { Dimension } from '@/types/nexus';
+import { Dimension } from '@/types/observatory';
 import styles from '@/app/observatory/observatory.module.scss';
 
 const columHeader = (text: string) => <div className={styles['table-header']}>{text}</div>;

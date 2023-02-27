@@ -30,13 +30,13 @@ export const SIMULATION_FILES: WorkflowFilesType = [
     CONTENT: `
       [DEFAULT]
       kg-proj: mmb-point-neuron-framework-model
-      account: proj30
+      account: proj134
 
       [GenerateSimulationCampaign]
       name: SBO - Sonata Simulation
       circuit-url: ${PLACEHOLDERS.CIRCUIT_URL}
       seed-as-coord: {"low": 100000, "high": 400000, "size": 1}
-      attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/project/%(account)s/scratch/\${USER}/workflow-sims", "blue_config_template": "simulation_config.tmpl", "user_target": "node_sets.json", "duration": 100ms}
+      attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/project/%(account)s/scratch/\${USER}/workflow-outputs", "blue_config_template": "simulation_config.tmpl", "user_target": "node_sets.json", "duration": 100ms}
       
       [SimulationCampaign]
       nodes: 50

@@ -71,7 +71,8 @@ export default function HorizontalSlider({
           onChange={onSliderChange}
           onAfterChange={onAfterChange}
           range={false}
-          trackStyle={{ backgroundColor: color, width: '100%', height: '3px' }}
+          style={{ height: '8px' }}
+          trackStyle={{ backgroundColor: color, width: '100%', height: '2px' }}
         />
       </div>
     </div>

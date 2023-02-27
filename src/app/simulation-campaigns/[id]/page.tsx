@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import { useSession } from 'next-auth/react';
 import Link from '@/components/Link';
-import { Dimension, Campaign } from '@/types/nexus';
+import { Dimension, Campaign } from '@/types/observatory';
 import CampaignDetails from '@/components/observatory/CampaignDetails';
 import DimensionFilter from '@/components/observatory/DimensionFilter';
 import SpikeRaster from '@/components/observatory/SpikeRaster';

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useRef, RefObject, useState } from 'react';
+import React, { Suspense, useCallback, useRef, RefObject, useState, useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Button, Checkbox } from 'antd';
 import { MinusOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -14,11 +14,19 @@ import ColorBox from '@/components/ColorBox';
 import { BrainIcon } from '@/components/icons';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {
-  brainRegionsFilteredTreeAtom,
-  meshDistributionsAtom,
+  brainRegionOntologyViewsAtom,
+  selectedBrainRegionAtom,
   setSelectedBrainRegionAtom,
+  meshDistributionsAtom,
+  brainRegionsAtom,
+  brainRegionsAlternateTreeAtom,
+  addOrRemoveSelectedAlternateView,
 } from '@/state/brain-regions';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';
+import SelectDropdown from '@/components/SelectDropdown';
+import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
+import { BrainArea } from '@/state/connectome-editor/sidebar';
+import { BrainRegion } from '@/types/ontologies';
 
 function VisualizationTrigger({ colorCode, id }: { colorCode: string; id: string }) {
   const meshDistributions = useAtomValue(meshDistributionsAtom);
@@ -59,11 +67,43 @@ function NavTitle({
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
   multi = false,
+  viewId,
   selectedBrainRegionIds,
 }: TitleComponentProps) {
+  const brainRegionViews = useAtomValue(brainRegionOntologyViewsAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   let checkbox = null;
   if (multi && !!selectedBrainRegionIds && id)
     checkbox = <Checkbox checked={selectedBrainRegionIds.has(id)} />;
+  const changeSelectedViews = useSetAtom(addOrRemoveSelectedAlternateView);
+  const brainRegions = useAtomValue(brainRegionsAtom);
+
+  const selectOptions = brainRegionViews?.map((view) => {
+    const brainRegion = brainRegions?.find((br) => br.id === id);
+    const isDisabled = !!(brainRegion && !brainRegion[view.childrenProperty as keyof BrainRegion]);
+
+    return {
+      value: view.id,
+      label: view.title,
+      // ts-ignore
+      isDisabled,
+    };
+  });
+
+  const defaultViewOption = useMemo(
+    () => selectOptions?.find((view) => view.value === viewId),
+    [selectOptions, viewId]
+  );
+
+  /**
+   * Function to trigger the changing of view
+   * @param newViewId the selected view id
+   */
+  const onChangeViewSelection = (newViewId: string) => {
+    if (id) {
+      changeSelectedViews(newViewId, id);
+    }
+  };
 
   return (
     <>
@@ -88,7 +128,18 @@ function NavTitle({
           </button>
         </div>
 
-        <div className="-mr-[4px] flex gap-2 justify-between items-center">
+        <div className="-mr-[4px] ml-[6px] flex gap-2 justify-between items-center">
+          {id === selectedBrainRegion?.id &&
+          brainRegionViews &&
+          selectOptions &&
+          defaultViewOption ? (
+            <SelectDropdown
+              defaultOption={defaultViewOption}
+              selectOptions={selectOptions}
+              onChangeFunc={onChangeViewSelection}
+            />
+          ) : null}
+
           {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
           {trigger?.()}
         </div>
@@ -102,10 +153,14 @@ export function ExpandedBrainRegionsSidebar({
   setIsRegionSelectorOpen,
   setSelectedBrainRegion,
   header,
-  selectedBrainRegionIds,
+  area = null,
+  selectedPreBrainRegionIds,
+  selectedPostBrainRegionIds,
 }: {
   header?: React.ReactNode;
-  selectedBrainRegionIds?: Set<string>;
+  area?: BrainArea;
+  selectedPreBrainRegionIds?: Set<string>;
+  selectedPostBrainRegionIds?: Set<string>;
   setIsRegionSelectorOpen: (value: boolean) => void;
   setSelectedBrainRegion: (
     selectedBrainRegionId: string,
@@ -113,8 +168,8 @@ export function ExpandedBrainRegionsSidebar({
     selectedBrainRegionLeaves: string[] | null
   ) => void;
 }) {
-  const multi = !!header;
-  const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
+  const multi = !!area;
+  const brainRegions = useAtomValue(brainRegionsAlternateTreeAtom);
   const [brainRegionsNavValue, setNavValue] = useState<NavValue>(null);
 
   const brainRegionsRef: RefObject<HTMLDivElement> = useRef(null);
@@ -128,6 +183,10 @@ export function ExpandedBrainRegionsSidebar({
   );
 
   if (!brainRegions) return null;
+
+  let selectedBrainRegionIds: Set<string> | undefined;
+  if (area === 'post') selectedBrainRegionIds = selectedPostBrainRegionIds;
+  if (area === 'pre') selectedBrainRegionIds = selectedPreBrainRegionIds;
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto px-7 py-6 min-w-[300px]">
@@ -149,6 +208,13 @@ export function ExpandedBrainRegionsSidebar({
             onClick={() => setIsRegionSelectorOpen(false)}
           />
         </div>
+
+        {!!area && (
+          <Suspense fallback={null}>
+            <BrainAreaSwitch area={area} />
+          </Suspense>
+        )}
+
         <Search
           onSelect={(_labeledValue, option) => {
             const { ancestors, value, label, leaves } = option;
@@ -179,7 +245,7 @@ export function ExpandedBrainRegionsSidebar({
           ref={brainRegionsRef}
           value={brainRegionsNavValue}
         >
-          {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
+          {({ colorCode, id, isExpanded, title, leaves, trigger, content, view }) => (
             <NavTitle
               className="uppercase text-lg"
               colorCode={colorCode}
@@ -190,6 +256,7 @@ export function ExpandedBrainRegionsSidebar({
               trigger={trigger}
               content={content}
               multi={multi}
+              viewId={view}
             >
               {({
                 colorCode: nestedColorCode,
@@ -199,6 +266,7 @@ export function ExpandedBrainRegionsSidebar({
                 trigger: nestedTrigger,
                 content: nestedContent,
                 leaves: nestedLeaves,
+                view: nestedView,
               }) => (
                 <NavTitle
                   className="capitalize text-base"
@@ -211,6 +279,7 @@ export function ExpandedBrainRegionsSidebar({
                   content={nestedContent}
                   multi={multi}
                   selectedBrainRegionIds={selectedBrainRegionIds}
+                  viewId={nestedView}
                 />
               )}
             </NavTitle>
@@ -222,7 +291,7 @@ export function ExpandedBrainRegionsSidebar({
 }
 
 export default function BrainRegions() {
-  const brainRegionsTree = useAtomValue(brainRegionsFilteredTreeAtom);
+  const brainRegionsTree = useAtomValue(brainRegionsAlternateTreeAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [isRegionSelectorOpen, setIsRegionSelectorOpen] = useState<boolean>(true);
 
