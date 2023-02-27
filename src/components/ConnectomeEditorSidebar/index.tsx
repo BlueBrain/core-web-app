@@ -1,4 +1,4 @@
-import React, { useRef, RefObject, ReactNode, useMemo, useState } from 'react';
+import React, { useRef, RefObject, ReactNode, useMemo, useState, Suspense } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useSetAtom, useAtomValue } from 'jotai/react';
@@ -13,7 +13,9 @@ import {
   selectedPostBrainRegionIdsAtom,
   brainRegionsFilteredTreeAtom,
 } from '@/state/brain-regions';
-import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
+import BrainAreaSwitch, {
+  BrainAreaSwitchWrapper,
+} from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/components/TreeNavItem';
 import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/BrainTree';
 
@@ -145,8 +147,6 @@ export default function ConnectomeEditorSidebar() {
   const selectedBrainRegionIds =
     area === 'post' ? postSynapticBrainRegions : area === 'pre' ? preSynapticBrainRegions : null; // eslint-disable-line no-nested-ternary
 
-  const brainAreaSwitch = useMemo(() => <BrainAreaSwitch area={area} />, [area]);
-
   if (!brainRegions) return null;
 
   return (
@@ -173,7 +173,11 @@ export default function ConnectomeEditorSidebar() {
                 onClick={() => setArea(null)}
               />
             </div>
-            {!!area && brainAreaSwitch}
+            {!!area && (
+              <Suspense fallback={<BrainAreaSwitchWrapper />}>
+                <BrainAreaSwitch />
+              </Suspense>
+            )}
             <BrainTreeSearch
               brainTreeNav={brainTreeNavRef?.current}
               setValue={setNavValue}
