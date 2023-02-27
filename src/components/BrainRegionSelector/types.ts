@@ -13,6 +13,7 @@ export type TitleComponentProps = {
   title?: string;
   multi?: boolean;
   selectedBrainRegionIds?: Set<string>;
+  viewId: string;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
 

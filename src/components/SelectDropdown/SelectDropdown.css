@@ -1,0 +1,26 @@
+.select-dropdown__menu {
+  margin-left: -5px;
+  padding: 0 5px 3px 5px;
+  border: 1px solid #0050b3;
+  border-top: none;
+  background-color: #003a8c;
+  width: 84px !important;
+  font-weight: normal;
+}
+
+.select-dropdown__indicator {
+  width: 1em;
+}
+
+.select-dropdown__control {
+  min-height: 20px !important;
+}
+
+.select-dropdown__control input {
+  color: transparent !important;
+}
+
+.select-dropdown__option--is-disabled,
+.select-dropdown--is-disabled {
+  color: gray !important;
+}
