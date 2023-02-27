@@ -1,15 +1,12 @@
 .container {
   th:global(.ant-table-cell) {
     background-color: white !important;
-    border: none !important;
 
     &::before {
       background-color: white !important;
     }
   }
-
   td:global(.ant-table-cell) {
-    border: none !important;
     @apply cursor-pointer;
   }
 }

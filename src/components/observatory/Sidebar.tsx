@@ -37,7 +37,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link href="/simulation-campaigns">
+            <Link href="/experimental-data">
               <h1>Experimental Data</h1>
               <ArrowRightOutlined />
               <p>

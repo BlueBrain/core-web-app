@@ -191,3 +191,25 @@ export const getGeneratorTaskActivityQuery = (configId: string, configRev: numbe
     },
   },
 });
+
+export const getEphysDataQuery = (
+  searchString: string = '',
+  size: number = 20,
+  currentPage: number = 1
+) => ({
+  size,
+  sort: [{ createdAt: { order: 'desc' } }],
+  from: (currentPage - 1) * size,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: { term: { '@type.keyword': 'https://neuroshapes.org/Trace' } },
+          },
+        },
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
+    },
+  },
+});

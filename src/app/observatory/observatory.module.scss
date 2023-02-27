@@ -1,12 +1,13 @@
-.table-header {
+.tableHeader {
   color: #8c8c8c;
   text-transform: uppercase;
 }
 
-.table-row {
+.tableRow {
   border: none !important;
   @apply bg-slate-200;
 }
+
 .container {
   height: 100vh;
   width: 100vw;
