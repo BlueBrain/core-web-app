@@ -124,7 +124,7 @@ export const idsToBrainRegionsAtom = atom(async (get) => {
 export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
   const brainRegions = await get(brainRegionsAtom);
   const defaultView = await get(defaultBrainRegionOntologyViewAtom);
-  if (!brainRegions) return null;
+  if (!brainRegions || !defaultView) return null;
 
   const tree = arrayToTree(brainRegions, {
     dataField: null,
