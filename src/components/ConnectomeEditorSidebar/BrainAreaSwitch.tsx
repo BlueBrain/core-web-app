@@ -13,7 +13,7 @@ export function BrainAreaSwitchWrapper({ children }: { children?: React.ReactNod
     <button
       type="button"
       className={classNames(
-        'bg-neutral-7 p-2 r relative ounded w-full',
+        'bg-neutral-7 p-2 relative rounded w-full',
         area === 'pre' ? 'text-highlightPost' : 'text-highlightPre'
       )}
       onClick={() => setArea(opposite(area))}

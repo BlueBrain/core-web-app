@@ -1,4 +1,4 @@
-import React, { useRef, RefObject, ReactNode, useMemo, useState, Suspense } from 'react';
+import React, { useRef, RefObject, ReactNode, useMemo, useState, Suspense, useEffect } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useSetAtom, useAtomValue } from 'jotai/react';
@@ -12,6 +12,8 @@ import {
   selectedPreBrainRegionIdsAtom,
   selectedPostBrainRegionIdsAtom,
   brainRegionsFilteredTreeAtom,
+  selectedPostBrainRegionsAtom,
+  selectedPreBrainRegionsAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch, {
   BrainAreaSwitchWrapper,
@@ -138,14 +140,27 @@ export default function ConnectomeEditorSidebar() {
   const area = useAtomValue(brainAreaAtom);
   const setSelectedPreBrainRegion = useSetAtom(setSelectedPreBrainRegionAtom);
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
-  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionIdsAtom);
-  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionIdsAtom);
+  const preSynapticBrainRegionIds = useAtomValue(selectedPreBrainRegionIdsAtom);
+  const postSynapticBrainRegionIds = useAtomValue(selectedPostBrainRegionIdsAtom);
   const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
   const [navValue, setNavValue] = useState<NavValue>(null);
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const setArea = useSetAtom(brainAreaAtom);
-  const selectedBrainRegionIds =
-    area === 'post' ? postSynapticBrainRegions : area === 'pre' ? preSynapticBrainRegions : null; // eslint-disable-line no-nested-ternary
+  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
+  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+
+  let selectedBrainRegionIds: Set<string> | undefined;
+  if (area === 'post') selectedBrainRegionIds = postSynapticBrainRegionIds;
+  if (area === 'pre') selectedBrainRegionIds = preSynapticBrainRegionIds;
+
+  const [cachedRegions, setCachedRegions] = useState<BrainRegion[]>([]);
+
+  useEffect(() => {
+    if (!area) return;
+    if (area === 'post') setCachedRegions(postSynapticBrainRegions);
+    if (area === 'pre') setCachedRegions(preSynapticBrainRegions);
+    setCachedRegions(preSynapticBrainRegions);
+  }, [selectedBrainRegionIds, area, postSynapticBrainRegions, preSynapticBrainRegions]);
 
   if (!brainRegions) return null;
 
@@ -174,7 +189,13 @@ export default function ConnectomeEditorSidebar() {
               />
             </div>
             {!!area && (
-              <Suspense fallback={<BrainAreaSwitchWrapper />}>
+              <Suspense
+                fallback={
+                  <BrainAreaSwitchWrapper>
+                    {cachedRegions.map((r) => r.title)}
+                  </BrainAreaSwitchWrapper>
+                }
+              >
                 <BrainAreaSwitch />
               </Suspense>
             )}
