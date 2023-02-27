@@ -2,7 +2,7 @@ import { useCallback, useState, ReactElement } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import data from './brain-regions.min.json';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
-import { handleNavValueChange } from '@/components/BrainRegionSelector/util';
+import { handleNavValueChange } from '@/components/BrainTree/util';
 
 /*
   The purpose of this file is to both test the TreeNav component,

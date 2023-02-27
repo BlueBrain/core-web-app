@@ -221,19 +221,21 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
 const updatedCompositionAtom = atom<Composition | null>(null);
 
 export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(null);
-export const selectedPreBrainRegionIdsAtom = atom(new Set<string>());
-export const selectedPostBrainRegionIdsAtom = atom(new Set<string>());
+export const selectedPreBrainRegionsAtomJ = atom(new Set<string>());
+export const selectedPostBrainRegionsAtomJ = atom(new Set<string>());
 
-export const selectedPreBrainRegionsAtom = atom(async (get) => {
-  const set = get(selectedPreBrainRegionIdsAtom);
-  const idsToBrainRegions = await get(idsToBrainRegionsAtom);
-  return Array.from(set).map((id) => idsToBrainRegions[id]);
+type BrainRegionId = { id: string; title: string };
+
+export const selectedPostBrainRegionsAtom = atom((get) => {
+  const selections = get(selectedPostBrainRegionsAtomJ);
+
+  return Array.from(selections).map((r) => JSON.parse(r)) as BrainRegionId[];
 });
 
-export const selectedPostBrainRegionsAtom = atom(async (get) => {
-  const set = get(selectedPostBrainRegionIdsAtom);
-  const idsToBrainRegions = await get(idsToBrainRegionsAtom);
-  return Array.from(set).map((id) => idsToBrainRegions[id]);
+export const selectedPreBrainRegionsAtom = atom((get) => {
+  const selections = get(selectedPreBrainRegionsAtomJ);
+
+  return Array.from(selections).map((r) => JSON.parse(r)) as BrainRegionId[];
 });
 
 export const setSelectedBrainRegionAtom = atom(
@@ -256,25 +258,29 @@ export const setSelectedBrainRegionAtom = atom(
 
 export const setSelectedPreBrainRegionAtom = atom(
   null,
-  (get, set, selectedBrainRegionId: string) => {
-    const newSet = new Set(get(selectedPreBrainRegionIdsAtom));
+  (get, set, selectedBrainRegionId: string, title: string) => {
+    const newSet = new Set(get(selectedPreBrainRegionsAtomJ));
 
-    if (newSet.has(selectedBrainRegionId)) newSet.delete(selectedBrainRegionId);
-    else newSet.add(selectedBrainRegionId);
+    const region = JSON.stringify({ id: selectedBrainRegionId, title });
 
-    set(selectedPreBrainRegionIdsAtom, newSet);
+    if (newSet.has(region)) newSet.delete(region);
+    else newSet.add(region);
+
+    set(selectedPreBrainRegionsAtomJ, newSet);
   }
 );
 
 export const setSelectedPostBrainRegionAtom = atom(
   null,
-  (get, set, selectedBrainRegionId: string) => {
-    const newSet = new Set(get(selectedPostBrainRegionIdsAtom));
+  (get, set, selectedBrainRegionId: string, title: string) => {
+    const newSet = new Set(get(selectedPostBrainRegionsAtomJ));
 
-    if (newSet.has(selectedBrainRegionId)) newSet.delete(selectedBrainRegionId);
-    else newSet.add(selectedBrainRegionId);
+    const region = JSON.stringify({ id: selectedBrainRegionId, title });
 
-    set(selectedPostBrainRegionIdsAtom, newSet);
+    if (newSet.has(region)) newSet.delete(region);
+    else newSet.add(region);
+
+    set(selectedPostBrainRegionsAtomJ, newSet);
   }
 );
 

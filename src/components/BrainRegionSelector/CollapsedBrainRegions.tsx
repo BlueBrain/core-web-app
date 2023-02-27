@@ -7,9 +7,9 @@ import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
 import { brainRegionsFilteredTreeAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export default function CollapsedBrainRegionsSidebar({
-  setIsRegionSelectorOpen,
+  setIsCollapsed,
 }: {
-  setIsRegionSelectorOpen: Dispatch<SetStateAction<boolean>>;
+  setIsCollapsed: Dispatch<SetStateAction<boolean>>;
 }) {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
@@ -55,7 +55,7 @@ export default function CollapsedBrainRegionsSidebar({
         type="text"
         size="small"
         icon={<PlusOutlined style={{ color: 'white' }} />}
-        onClick={() => setIsRegionSelectorOpen(true)}
+        onClick={() => setIsCollapsed(false)}
       />
 
       <div
@@ -66,7 +66,7 @@ export default function CollapsedBrainRegionsSidebar({
           cursor: 'e-resize',
         }}
         role="presentation"
-        onClick={() => setIsRegionSelectorOpen(true)}
+        onClick={() => setIsCollapsed(false)}
       >
         {subRegionElems}
         <div className="text-lg font-bold">Brain region</div>
