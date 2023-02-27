@@ -1,7 +1,10 @@
 import AngledArrowIcon from './AngledArrow';
+import ArrowDownOutlinedIcon from './ArrowDownOutlined';
 import ArrowRightIcon from './ArrowRightIcon';
 import BrainIcon from './Brain';
 import BrainRegionIcon from './BrainRegion';
+import CheckIcon from './Check';
+import ChevronIcon from './Chevron';
 import EyeIcon from './EyeIcon';
 import GripDotsVerticalIcon from './GripDotsVerticalIcon';
 import HomeIcon from './Home';
@@ -16,8 +19,11 @@ import { ZoomInIcon, ZoomOutIcon } from './Zoom';
 export {
   AngledArrowIcon,
   ArrowRightIcon,
+  ArrowDownOutlinedIcon,
   BrainIcon,
   BrainRegionIcon,
+  CheckIcon,
+  ChevronIcon,
   EyeIcon,
   GripDotsVerticalIcon,
   HomeIcon,
