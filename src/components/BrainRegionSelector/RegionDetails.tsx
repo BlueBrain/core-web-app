@@ -7,8 +7,9 @@ import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import CollapsedRegionDetails from './CollapsedRegionDetails';
-import { getMetric, handleNavValueChange } from './util';
+import { getMetric } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
+import { handleNavValueChange } from '@/components/BrainTree/util';
 import { CompositionNode, CompositionUnit } from '@/types/composition';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import {

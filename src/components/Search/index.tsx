@@ -1,23 +1,20 @@
-import { useAtomValue } from 'jotai/react';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/es/select';
-import { brainRegionsFilteredArrayAtom } from '@/state/brain-regions';
+
+type SelectOptions = {
+  label: string;
+  value: string;
+  ancestors?: string[];
+  leaves?: string[];
+};
 
 export default function Search({
   onSelect,
+  options,
 }: {
-  onSelect: SelectProps<
-    unknown,
-    {
-      label: string;
-      value: string;
-      ancestors?: string[];
-      leaves?: string[];
-    }
-  >['onSelect'];
+  onSelect: SelectProps<unknown, SelectOptions>['onSelect'];
+  options: SelectOptions[];
 }) {
-  const brainRegionsFilteredArray = useAtomValue(brainRegionsFilteredArrayAtom);
-
   const css = `
 .ant-select-selector {
   padding: 0 !important;
@@ -46,15 +43,10 @@ export default function Search({
           className="block w-full py-3 text-white"
           dropdownStyle={{ borderRadius: '4px' }}
           placeholder="Search region..."
-          options={
-            brainRegionsFilteredArray?.map(({ title, id, ancestors, leaves }) => ({
-              label: title,
-              value: id,
-              ancestors,
-              leaves,
-            })) ?? []
+          options={options}
+          filterOption={(input, option) =>
+            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
           }
-          filterOption={(input, option) => (option?.label ?? '').includes(input)}
           filterSort={(optionA, optionB) =>
             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
           }
