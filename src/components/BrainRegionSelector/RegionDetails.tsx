@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { RefObject, useCallback, useMemo, useRef, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
@@ -250,6 +250,8 @@ function MeTypeDetails({
     return max;
   };
 
+  const compositionRef: RefObject<HTMLDivElement> = useRef(null);
+
   return (
     <>
       <h2 className="flex font-bold justify-between text-white text-lg">
@@ -259,7 +261,12 @@ function MeTypeDetails({
         </small>
       </h2>
       {neurons && (
-        <TreeNav items={neurons} onValueChange={onValueChange} value={meTypeNavValue}>
+        <TreeNav
+          ref={compositionRef}
+          items={neurons}
+          onValueChange={onValueChange}
+          value={meTypeNavValue}
+        >
           {({
             composition: renderedComposition,
             content,
