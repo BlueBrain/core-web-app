@@ -6,7 +6,7 @@ import Tabs from '@/components/BrainFactoryTabs';
 import BuildModelBtn from '@/components/BuildModelBtn';
 import { themeAtom } from '@/state/theme';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
-import SimulationBtn from '@/components/TopTabs/SimulationBtn';
+import SimulationBtn, { PlaceholderLoadingButton } from '@/components/TopTabs/SimulationBtn';
 
 export default function TopTabs() {
   const theme = useAtomValue(themeAtom);
@@ -17,7 +17,7 @@ export default function TopTabs() {
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <Tabs>
           <BuildModelBtn className="w-[250px]" />
-          <Suspense fallback="Loading...">
+          <Suspense fallback={<PlaceholderLoadingButton />}>
             <SimulationBtn />
           </Suspense>
         </Tabs>
