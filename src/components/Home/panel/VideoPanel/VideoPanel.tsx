@@ -29,7 +29,6 @@ export default function VideoPanel({ className }: VideoPanelProps) {
         <LoginButton />
       </section>
       <div className={styles.version}>Version {process.env.applicationVersion}</div>
-      <pre>{JSON.stringify(process.env, null, '  ')}</pre>
     </div>
   );
 }
