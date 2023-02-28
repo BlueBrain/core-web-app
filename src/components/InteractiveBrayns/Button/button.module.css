@@ -1,0 +1,16 @@
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0 0.5em;
+  height: 2em;
+  color: #fffe;
+  background: #0009;
+  border: 2px solid currentColor;
+  width: 10em;
+  height: 3em;
+  margin: 0.5em 0;
+  cursor: pointer;
+}

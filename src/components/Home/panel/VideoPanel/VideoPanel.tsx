@@ -28,6 +28,8 @@ export default function VideoPanel({ className }: VideoPanelProps) {
         {/* @ts-expect-error Server Component */}
         <LoginButton />
       </section>
+      <div className={styles.version}>Version {process.env.applicationVersion}</div>
+      <pre>{JSON.stringify(process.env, null, '  ')}</pre>
     </div>
   );
 }

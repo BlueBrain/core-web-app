@@ -8,7 +8,19 @@ const SentryWebpackPluginOptions = { silent: true, dryRun: !process.env.NEXT_PUB
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
 
+/**
+ * @returns `1.0.0` in devlopment mode, and `1.0.0 (776dc84)` after CI compiles it.
+ */
+function getVersion() {
+  const version = process.env.npm_package_version;
+  const commit = process.env.CI_COMMIT_SHORT_SHA;
+  return commit ? `${version} (${commit})` : version;
+}
+
 const nextConfig = {
+  env: {
+    applicationVersion: getVersion(),
+  },
   basePath,
   assetPrefix: basePath ?? null,
   reactStrictMode: true,

@@ -1,6 +1,5 @@
 import SimplePanel from './panel/SimplePanel';
 import VideoPanel from './panel/VideoPanel';
-
 import Theme from '@/styles/theme.module.css';
 import styles from './home.module.css';
 
