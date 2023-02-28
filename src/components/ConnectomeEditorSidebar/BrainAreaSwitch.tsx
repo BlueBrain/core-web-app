@@ -38,9 +38,9 @@ export default function BrainAreaSwitch() {
 
   return (
     <BrainAreaSwitchWrapper>
-      {brainRegions.map((br) => (
-        <span className="text-white" key={br.id}>
-          {br.title}
+      {Array.from(brainRegions.entries()).map(([id, title]) => (
+        <span className="text-white" key={id}>
+          {title}
         </span>
       ))}
     </BrainAreaSwitchWrapper>

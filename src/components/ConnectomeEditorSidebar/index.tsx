@@ -9,8 +9,8 @@ import { classNames } from '@/util/utils';
 import {
   setSelectedPostBrainRegionAtom,
   setSelectedPreBrainRegionAtom,
-  selectedPreBrainRegionsAtomJ,
-  selectedPostBrainRegionsAtomJ,
+  selectedPreBrainRegionsAtom,
+  selectedPostBrainRegionsAtom,
   brainRegionsFilteredTreeAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
@@ -29,8 +29,7 @@ function NavTitle({
 }: TitleComponentProps) {
   let checkbox = null;
 
-  if (multi && id)
-    checkbox = <Checkbox checked={selectedBrainRegions.has(JSON.stringify({ id, title }))} />;
+  if (multi && id) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} />;
 
   return (
     <>
@@ -72,15 +71,14 @@ function Header({ children }: { children: ReactNode }) {
 }
 
 // Finds the selected brain regions closest to the root of the tree
-function findTopSelectedRegion(selectedIds: Set<string>, tree: BrainRegion[] | null) {
-  if (!selectedIds.size) return '';
+function findTopSelectedRegion(selectedRegions: Map<string, string>, tree: BrainRegion[] | null) {
+  if (!selectedRegions.size) return '';
 
   const queue = [...(tree ?? [])];
 
   while (queue.length) {
     const region = queue.shift();
-    if (region && selectedIds.has(JSON.stringify({ id: region.id, title: region.title })))
-      return region.title;
+    if (region && selectedRegions.has(region.id)) return region.title;
     region?.items?.forEach((r) => queue.push(r));
   }
 
@@ -88,8 +86,8 @@ function findTopSelectedRegion(selectedIds: Set<string>, tree: BrainRegion[] | n
 }
 
 function CollapsedSidebar() {
-  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtomJ);
-  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtomJ);
+  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
+  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
   const tree = useAtomValue(brainRegionsFilteredTreeAtom);
   const setArea = useSetAtom(brainAreaAtom);
   const [topSelectedPreRegion, topSelectedPostRegion]: [string, string] = useMemo(
@@ -139,13 +137,13 @@ export default function ConnectomeEditorSidebar() {
   const area = useAtomValue(brainAreaAtom);
   const setSelectedPreBrainRegion = useSetAtom(setSelectedPreBrainRegionAtom);
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
-  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtomJ);
-  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtomJ);
+  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
+  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
   const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
   const [navValue, setNavValue] = useState<NavValue>(null);
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const setArea = useSetAtom(brainAreaAtom);
-  let selectedBrainRegions: Set<string> = new Set();
+  let selectedBrainRegions: Map<string, string> = new Map();
   if (area === 'post') selectedBrainRegions = postSynapticBrainRegions;
   if (area === 'pre') selectedBrainRegions = preSynapticBrainRegions;
 
@@ -162,9 +160,9 @@ export default function ConnectomeEditorSidebar() {
               <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
                 <Header>
                   {area === 'post' ? (
-                    <div className="text-[#FF4D4F] text-xl">Post-synaptic area</div>
+                    <div className="text-highlightPost text-xl">Post-synaptic area</div>
                   ) : (
-                    <div className="text-[#40A9FF] text-xl">Pre-synaptic area</div>
+                    <div className="text-highlightPre text-xl">Pre-synaptic area</div>
                   )}
                 </Header>
               </div>

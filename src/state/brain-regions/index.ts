@@ -110,16 +110,6 @@ export const brainRegionsAtom = atom<Promise<BrainRegion[] | null>>(async (get) 
 
   return brainRegionsWithViews;
 });
-export const idsToBrainRegionsAtom = atom(async (get) => {
-  const brainRegionFlatList = (await get(brainRegionsAtom)) || [];
-  const idsToBrainRegions: { [id: string]: BrainRegion } = {};
-
-  brainRegionFlatList.forEach((br) => {
-    idsToBrainRegions[br.id] = br;
-  });
-
-  return idsToBrainRegions;
-});
 
 export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
   const brainRegions = await get(brainRegionsAtom);
@@ -221,22 +211,8 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
 const updatedCompositionAtom = atom<Composition | null>(null);
 
 export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(null);
-export const selectedPreBrainRegionsAtomJ = atom(new Set<string>());
-export const selectedPostBrainRegionsAtomJ = atom(new Set<string>());
-
-type BrainRegionId = { id: string; title: string };
-
-export const selectedPostBrainRegionsAtom = atom((get) => {
-  const selections = get(selectedPostBrainRegionsAtomJ);
-
-  return Array.from(selections).map((r) => JSON.parse(r)) as BrainRegionId[];
-});
-
-export const selectedPreBrainRegionsAtom = atom((get) => {
-  const selections = get(selectedPreBrainRegionsAtomJ);
-
-  return Array.from(selections).map((r) => JSON.parse(r)) as BrainRegionId[];
-});
+export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
+export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
 
 export const setSelectedBrainRegionAtom = atom(
   null,
@@ -256,33 +232,23 @@ export const setSelectedBrainRegionAtom = atom(
   }
 );
 
-export const setSelectedPreBrainRegionAtom = atom(
-  null,
-  (get, set, selectedBrainRegionId: string, title: string) => {
-    const newSet = new Set(get(selectedPreBrainRegionsAtomJ));
+export const setSelectedPreBrainRegionAtom = atom(null, (get, set, id: string, title: string) => {
+  const selections = new Map(get(selectedPreBrainRegionsAtom));
 
-    const region = JSON.stringify({ id: selectedBrainRegionId, title });
+  if (selections.has(id)) selections.delete(id);
+  else selections.set(id, title);
 
-    if (newSet.has(region)) newSet.delete(region);
-    else newSet.add(region);
+  set(selectedPreBrainRegionsAtom, selections);
+});
 
-    set(selectedPreBrainRegionsAtomJ, newSet);
-  }
-);
+export const setSelectedPostBrainRegionAtom = atom(null, (get, set, id: string, title: string) => {
+  const selections = new Map(get(selectedPostBrainRegionsAtom));
 
-export const setSelectedPostBrainRegionAtom = atom(
-  null,
-  (get, set, selectedBrainRegionId: string, title: string) => {
-    const newSet = new Set(get(selectedPostBrainRegionsAtomJ));
+  if (selections.has(id)) selections.delete(id);
+  else selections.set(id, title);
 
-    const region = JSON.stringify({ id: selectedBrainRegionId, title });
-
-    if (newSet.has(region)) newSet.delete(region);
-    else newSet.add(region);
-
-    set(selectedPostBrainRegionsAtomJ, newSet);
-  }
-);
+  set(selectedPostBrainRegionsAtom, selections);
+});
 
 const initialCompositionAtom = atom<Promise<Composition | null>>(async (get) => {
   const session = get(sessionAtom);

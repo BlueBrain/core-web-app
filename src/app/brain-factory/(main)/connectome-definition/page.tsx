@@ -1,33 +1,26 @@
 'use client';
 
-import { Suspense } from 'react';
 import { useAtomValue } from 'jotai/react';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 
-function ConnectomeDefinitionMain() {
+export default function ConnectomeDefinitionView() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+
   return (
     <div className="p-4 flex-col flex">
       <h3>Connectome definition</h3>
 
-      {!!preSynapticBrainRegions.length && (
+      {preSynapticBrainRegions.size !== 0 && (
         <span>
-          Pre-synaptic brain region: {preSynapticBrainRegions.map((r) => r.title).join(', ')}
+          Pre-synaptic brain region: {Array.from(preSynapticBrainRegions.values()).join(', ')}
         </span>
       )}
-      {!!postSynapticBrainRegions.length && (
+      {postSynapticBrainRegions.size !== 0 && (
         <span>
-          Post-synaptic brain region: {postSynapticBrainRegions.map((r) => r.title).join(', ')}
+          Post-synaptic brain region: {Array.from(postSynapticBrainRegions.values()).join(', ')}
         </span>
       )}
     </div>
-  );
-}
-export default function ConnectomeDefinitionView() {
-  return (
-    <Suspense fallback={null}>
-      <ConnectomeDefinitionMain />
-    </Suspense>
   );
 }
