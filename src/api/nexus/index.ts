@@ -291,7 +291,7 @@ export function fetchPublicBrainModels(session: Session): Promise<BrainModelConf
 }
 
 export function fetchPersonalBrainModels(session: Session): Promise<BrainModelConfigResource[]> {
-  const query = getPersonalBrainModelConfigsQuery('', session.user.username);
+  const query = getPersonalBrainModelConfigsQuery(session.user.username);
 
   return queryES<BrainModelConfigResource>(query, session);
 }
