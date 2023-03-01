@@ -74,22 +74,33 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
   set(updateConfigAtom, updatedConfig);
 });
 
-export const cellCompositionConfigIdAtom = selectAtom(
-  configAtom,
-  (config) => config?.configs?.cellCompositionConfig?.['@id'] ?? null
-);
+/*
+  The usage of selectAtom might be beneficial here,
+  but it seems there is an issue with a combination of:
+    * selectAtom derived from an async atom.
+    * loadable used further down the dependency chain.
+  TODO: submit an issue to Jotai, refactor to use selectAtom when fixed.
+*/
+export const cellCompositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
 
-export const cellPositionConfigIdAtom = selectAtom(
-  configAtom,
-  (config) => config?.configs?.cellPositionConfig?.['@id'] ?? null
-);
+  return config?.configs?.cellCompositionConfig?.['@id'] ?? null;
+});
 
-export const eModelAssignmentConfigIdAtom = selectAtom(
-  configAtom,
-  (config) => config?.configs?.eModelAssignmentConfig?.['@id'] ?? null
-);
+export const cellPositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
 
-export const morphologyAssignmentConfigIdAtom = selectAtom(
-  configAtom,
-  (config) => config?.configs?.morphologyAssignmentConfig?.['@id'] ?? null
-);
+  return config?.configs?.cellPositionConfig?.['@id'] ?? null;
+});
+
+export const eModelAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs?.eModelAssignmentConfig?.['@id'] ?? null;
+});
+
+export const morphologyAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs?.morphologyAssignmentConfig?.['@id'] ?? null;
+});
