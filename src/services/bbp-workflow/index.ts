@@ -9,6 +9,12 @@ import {
   PLACEHOLDERS,
 } from '@/services/bbp-workflow/config';
 import type { DetailedCircuitResource } from '@/types/nexus';
+import {
+  UNICORE_JOB_CONFIG,
+  UNICORE_FILES,
+  PLACEHOLDERS as UNICORE_PLACEHOLDERS,
+} from '@/services/unicore/config';
+import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
 
 export const workflowInstructions =
   'https://bbpteam.epfl.ch/project/spaces/display/BBPNSE/Workflow#Workflow-Prerequisites';
@@ -132,6 +138,19 @@ async function launchWorkflow(
   return nexusUrl;
 }
 
+async function launchUnicoreWorkflowSetup(token: string): Promise<true | null> {
+  const tokenFile = UNICORE_FILES.find((f) => f.To === UNICORE_PLACEHOLDERS.TOKEN_TEMP_FILENAME);
+  if (!tokenFile) return null;
+
+  tokenFile.Data = tokenFile.Data.replace(UNICORE_PLACEHOLDERS.TOKEN, token);
+  const jobInfo = await submitJob(UNICORE_JOB_CONFIG, UNICORE_FILES, token);
+  const jobOk = await waitUntilJobDone(jobInfo._links.self.href, token);
+  if (!jobOk) {
+    throw new Error('[Unicore setup]');
+  }
+  return true;
+}
+
 export type WorkflowRunProps = {
   loginInfo: Session;
   workflowName: string;
@@ -149,6 +168,7 @@ export async function launchWorkflowTask({
     Authorization: `Bearer ${loginInfo.accessToken}`,
   });
 
+  await launchUnicoreWorkflowSetup(loginInfo.accessToken);
   await runChecksBeforeLaunching(headers, loginInfo.user.username);
 
   const data = generateFormData(workflowFiles);

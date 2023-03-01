@@ -39,6 +39,9 @@ export default function WorkflowLauncher({
         workflowName,
         workflowFiles: workflowConfig,
       });
+      notification.success({
+        message: 'Workflow launched successfuly',
+      });
     } catch (e: any) {
       notification.open({
         message: 'Error launching workflow',

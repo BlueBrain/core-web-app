@@ -22,22 +22,26 @@ export default function LauncherModal({
 
   const antLoadingIcon = <LoadingOutlined style={{ fontSize: 48 }} spin />;
 
+  const onClose = () => onCloseModal(false);
+
   if (loading) {
     return (
       <Modal
         title={<h1 className="text-primary-7">Building</h1>}
         footer={null}
         open={isOpen}
-        onCancel={() => onCloseModal(false)}
+        onCancel={onClose}
         maskStyle={maskStyle}
       >
-        <span className="text-primary-7">
-          Your model is being built. This can take up to 4 days.
-        </span>
         <div className="flex flex-col items-center">
-          <h4 className="mt-20 mb-10 text-primary-7">148 hours elapsed</h4>
+          <h4 className="mt-20 mb-2 text-primary-7">We are setting up a couple of things...</h4>
+          <h4 className="mt-2 mb-2 text-primary-7">Please wait</h4>
           <Spin indicator={antLoadingIcon} />
-          <button type="button" className="bg-primary-1 text-primary-9 h-12 px-8 mt-10 mb-20">
+          <button
+            type="button"
+            className="bg-primary-1 text-primary-9 h-12 px-8 mt-10 mb-20"
+            onClick={onClose}
+          >
             Cancel
           </button>
         </div>
@@ -47,7 +51,7 @@ export default function LauncherModal({
 
   const footer = (
     <>
-      <button onClick={() => onCloseModal(false)} type="button" className="text-black h-12 px-8">
+      <button onClick={onClose} type="button" className="text-black h-12 px-8">
         Cancel
       </button>
 
