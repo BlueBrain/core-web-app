@@ -2,6 +2,7 @@
 
 import { useAtomValue } from 'jotai/react';
 import Image from 'next/image';
+import { ConfigProvider, theme } from 'antd';
 
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 import {
@@ -18,7 +19,7 @@ import {
 import { basePath } from '@/config';
 import styles from './connectome-definition.module.css';
 
-export default function ConnectomeDefinitionView() {
+function ConnectomeDefinitionMain() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
@@ -56,5 +57,22 @@ export default function ConnectomeDefinitionView() {
         <BrainRegionSelection regions={postSynapticBrainRegions} area="post" />
       </div>
     </div>
+  );
+}
+
+export default function ConnectomeDefinitionView() {
+  return (
+    <ConfigProvider
+      theme={{
+        algorithm: theme.darkAlgorithm,
+        components: {
+          Select: {
+            borderRadius: 0,
+          },
+        },
+      }}
+    >
+      <ConnectomeDefinitionMain />
+    </ConfigProvider>
   );
 }
