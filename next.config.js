@@ -36,8 +36,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/brain-factory',
-        destination: '/brain-factory/cell-composition/interactive',
+        source: '/lab',
+        destination: '/lab/cell-composition/interactive',
         permanent: false,
       },
     ];

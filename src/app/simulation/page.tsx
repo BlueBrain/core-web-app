@@ -10,7 +10,7 @@ export default function VirtualLab() {
     <>
       <Image
         className="mv-1"
-        src={`${basePath}/images/virtual-lab-placeholder.png`}
+        src={`${basePath}/images/brain-simulation-placeholder.png`}
         alt="Virtual lab placeholder image"
         fill
       />

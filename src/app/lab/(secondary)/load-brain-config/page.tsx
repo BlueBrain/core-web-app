@@ -6,5 +6,5 @@ import useSessionState from '@/hooks/session';
 export default function LoadBrainConfigView() {
   useSessionState();
 
-  return <BrainConfigLoaderView baseHref="/brain-factory/cell-composition/interactive" />;
+  return <BrainConfigLoaderView baseHref="/lab/cell-composition/interactive" />;
 }

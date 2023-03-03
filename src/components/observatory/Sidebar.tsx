@@ -79,14 +79,14 @@ export default function Sidebar() {
           </Link>
         </li>
         <li className={styles.hiddenWhenCollapse}>
-          <Link href="/brain-factory/load-brain-config">
+          <Link href="/lab/load-brain-config">
             <h2>Brain Factory</h2>
             <ArrowRightOutlined />
           </Link>
         </li>
         <li className={styles.hiddenWhenCollapse}>
-          <Link href="/virtual-lab">
-            <h2>Virtual Laboratory</h2>
+          <Link href="/simulation">
+            <h2>Brain Simulation</h2>
             <ArrowRightOutlined />
           </Link>
         </li>

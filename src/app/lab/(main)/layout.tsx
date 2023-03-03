@@ -14,9 +14,9 @@ import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import ConnectomeEditorSidebar from '@/components/ConnectomeEditorSidebar';
-import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
+import { extraPanelContainerAtom } from '@/state/lab/layout';
 
-import styles from './brain-factory-main.module.css';
+import styles from './lab-main.module.css';
 
 type BrainFactoryLayoutProps = {
   children: ReactNode;
@@ -39,7 +39,7 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
     <div className={styles.container}>
       <div className={styles.brainConfigSelectorContainer}>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <BrainConfigPanel baseHref="/brain-factory/cell-composition/interactive" />
+          <BrainConfigPanel baseHref="/lab/cell-composition/interactive" />
         </ErrorBoundary>
       </div>
 

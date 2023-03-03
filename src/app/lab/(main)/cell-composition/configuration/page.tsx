@@ -30,13 +30,13 @@ import {
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
-import useCompositionHistory from '@/app/brain-factory/(main)/cell-composition/configuration/use-composition-history';
+import useCompositionHistory from '@/app/lab/(main)/cell-composition/configuration/use-composition-history';
 import styles from './tabs.module.css';
 
 function CellPosition() {
   return (
     <Image
-      src={`${basePath}/images/brain-factory/BBM_ComingSoon_221119.png`} // TODO: Fix this
+      src={`${basePath}/images/lab/BBM_ComingSoon_221119.png`} // TODO: Fix this
       alt="Coming soon"
       className="object-contain"
     />
@@ -46,7 +46,7 @@ function CellPosition() {
 function CellDistribution() {
   return (
     <Image
-      src={`${basePath}/images/brain-factory/BBM_Distribution_V1_221119.png`} // TODO: Fix this
+      src={`${basePath}/images/lab/BBM_Distribution_V1_221119.png`} // TODO: Fix this
       alt="Coming soon"
       className="object-contain"
     />

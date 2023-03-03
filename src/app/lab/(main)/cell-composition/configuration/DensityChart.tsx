@@ -1,7 +1,7 @@
 import { useEffect, Dispatch, RefObject, SetStateAction } from 'react';
 import sankey from './sankey';
 import { formatNumber } from '@/util/common';
-import { SankeyLinksReducerAcc } from '@/app/brain-factory/(main)/cell-composition/configuration/types';
+import { SankeyLinksReducerAcc } from '@/app/lab/(main)/cell-composition/configuration/types';
 
 export default function DensityChart({
   className = '',

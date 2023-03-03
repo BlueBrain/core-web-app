@@ -8,7 +8,7 @@ import { loadable } from 'jotai/vanilla/utils';
 import { usePathname } from 'next/navigation';
 import { RegionDetailsSidebar } from '@/components/BrainRegionSelector';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import { extraPanelContainerAtom } from '@/state/brain-factory/layout';
+import { extraPanelContainerAtom } from '@/state/lab/layout';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import CellCompositionTabs from '@/components/CellCompositionTabs';
 

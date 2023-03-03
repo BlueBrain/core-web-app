@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Suspense } from 'react';
 
-import Tabs from '@/components/BrainFactoryTabs';
+import Tabs from '@/components/LabTabs';
 import BuildModelBtn from '@/components/BuildModelBtn';
 import { themeAtom } from '@/state/theme';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
