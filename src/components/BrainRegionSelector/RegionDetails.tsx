@@ -5,7 +5,6 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
-import _ from 'lodash';
 import CollapsedRegionDetails from './CollapsedRegionDetails';
 import { getMetric } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
@@ -22,9 +21,10 @@ import { BrainRegionIcon, LockIcon, LockOpenIcon } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
 import IconButton from '@/components/IconButton';
 import HorizontalSlider from '@/components/HorizontalSlider';
-import computeSystemLockedIds from '@/components/BrainRegionSelector/locking';
 import { formatNumber } from '@/util/common';
 import CompositionInput from '@/components/BrainRegionSelector/CompositionInput';
+import computeSystemLockedIds from '@/util/composition/locking';
+import { calculateMax } from '@/util/composition/utils';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -184,7 +184,6 @@ function MeTypeDetails({
         childrenField: 'items',
       }
     );
-
   const neuronsToNodes = neurons
     ? neurons.reduce((acc, item) => {
         acc[item.id] = item;
@@ -214,41 +213,15 @@ function MeTypeDetails({
 
   // sets modified the locked ids based on the changed node
   const setLocked = useCallback(
-    (id: string, childrenNodes: CompositionNode[]) => {
-      const childrenIds = childrenNodes.map((childNode) => `${id}__${childNode.id}`);
-
-      if (userLockedIds.includes(id)) {
-        setUserLockedIds(
-          userLockedIds.filter((nodeId) => nodeId !== id && !childrenIds.includes(nodeId))
-        );
+    (extendedNodeId: string) => {
+      if (userLockedIds.includes(extendedNodeId)) {
+        setUserLockedIds(userLockedIds.filter((nodeId) => nodeId !== extendedNodeId));
       } else {
-        setUserLockedIds([...userLockedIds, id]);
+        setUserLockedIds([...userLockedIds, extendedNodeId]);
       }
     },
     [userLockedIds]
   );
-
-  /**
-   * Calculates the max value that a neuron composition can take
-   * @param relatedNodes the set of related nodes
-   * @param id the id of the node
-   * @param about the about value of the node
-   */
-  const calculateMax = (relatedNodes: string[], id: string, about: string) => {
-    let max = 0;
-    relatedNodes.forEach((relatedNodeId: string) => {
-      if (
-        relatedNodeId in neuronsToNodes &&
-        neuronsToNodes[relatedNodeId].about === about &&
-        // if both relatedNodeId and id are locked or none of them
-        (_.difference([id, relatedNodeId], allLockedIds).length === 0 ||
-          _.difference([id, relatedNodeId], allLockedIds).length === 2)
-      ) {
-        max += neuronsToNodes[relatedNodeId].composition;
-      }
-    });
-    return max;
-  };
 
   return (
     <>
@@ -258,6 +231,7 @@ function MeTypeDetails({
           ~ {getMetric(neuronComposition, densityOrCount)}
         </small>
       </h2>
+
       {neurons && (
         <TreeNav items={neurons} onValueChange={onValueChange} value={meTypeNavValue}>
           {({
@@ -268,16 +242,16 @@ function MeTypeDetails({
             id,
             parentId,
             isExpanded,
-            items,
             relatedNodes,
             about,
+            path,
           }) => (
             <NeuronCompositionParent
               content={content}
               title={title}
               trigger={trigger}
-              isLocked={allLockedIds.includes(id)}
-              setLockedFunc={() => setLocked(id, items)}
+              isLocked={allLockedIds.includes(`root__${path.join('__')}`)}
+              setLockedFunc={() => setLocked(`root__${path.join('__')}`)}
               composition={renderedComposition}
               onSliderChange={(newValue: number) => {
                 const node = neuronsToNodes[id];
@@ -285,7 +259,7 @@ function MeTypeDetails({
               }}
               lockIsDisabled={systemLockedIds.includes(id)}
               isExpanded={isExpanded}
-              max={calculateMax(relatedNodes, id, about)}
+              max={calculateMax(relatedNodes, id, about, allLockedIds, neuronsToNodes)}
               isEditable={editMode}
             >
               {({
@@ -295,9 +269,10 @@ function MeTypeDetails({
                 trigger: nestedTrigger,
                 id: nestedId,
                 parentId: nestedParentId,
+                path: nestedPath,
               }: NeuronCompositionItem) => {
                 const lockId = `${parentId}__${id}`;
-
+                const expandedNodeId = `root__${nestedPath?.join('__')}`;
                 return (
                   <NeuronCompositionLeaf
                     content={nestedContent}
@@ -310,9 +285,9 @@ function MeTypeDetails({
                     composition={nestedComposition}
                     title={nestedTitle}
                     trigger={nestedTrigger}
-                    isLocked={allLockedIds.includes(lockId)}
+                    isLocked={allLockedIds.includes(expandedNodeId)}
                     lockIsDisabled={systemLockedIds.includes(lockId)}
-                    setLockedFunc={() => setLocked(lockId, [])}
+                    setLockedFunc={() => setLocked(expandedNodeId)}
                     max={neuronsToNodes[nestedParentId].composition}
                     isEditable={editMode}
                   />

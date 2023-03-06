@@ -29,6 +29,7 @@ export type NeuronCompositionItem = {
   isExpanded: boolean;
   parentId: string;
   trigger: (...args: any[]) => ReactElement;
+  path?: string[];
 };
 
 export type CompositionTitleProps = {

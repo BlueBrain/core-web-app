@@ -1,0 +1,300 @@
+{
+  "http://uri.interlex.org/base/ilx_0383192?rev=34": {
+    "about": "MType",
+    "id": "http://uri.interlex.org/base/ilx_0383192?rev=34",
+    "parentId": null,
+    "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+    "relatedNodes": [
+      "http://uri.interlex.org/base/ilx_0383192?rev=34",
+      "http://uri.interlex.org/base/ilx_0383193?rev=34",
+      "http://uri.interlex.org/base/ilx_0383194?rev=38",
+      "http://uri.interlex.org/base/ilx_0383195?rev=34",
+      "http://uri.interlex.org/base/ilx_0383196?rev=34",
+      "http://uri.interlex.org/base/ilx_0383197?rev=34"
+    ],
+    "composition": 2577,
+    "title": "L1_DAC",
+    "items": [
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738203?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383192?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 1386,
+        "title": "bNAC",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738201?rev=31",
+        "parentId": "http://uri.interlex.org/base/ilx_0383192?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 1191,
+        "title": "cNAC",
+        "items": []
+      }
+    ]
+  },
+  "http://uri.interlex.org/base/ilx_0383193?rev=34": {
+    "about": "MType",
+    "id": "http://uri.interlex.org/base/ilx_0383193?rev=34",
+    "parentId": null,
+    "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+    "relatedNodes": [
+      "http://uri.interlex.org/base/ilx_0383192?rev=34",
+      "http://uri.interlex.org/base/ilx_0383193?rev=34",
+      "http://uri.interlex.org/base/ilx_0383194?rev=38",
+      "http://uri.interlex.org/base/ilx_0383195?rev=34",
+      "http://uri.interlex.org/base/ilx_0383196?rev=34",
+      "http://uri.interlex.org/base/ilx_0383197?rev=34"
+    ],
+    "composition": 1077,
+    "title": "L1_HAC",
+    "items": [
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738203?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383193?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738204?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 359,
+        "title": "bNAC",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738204?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383193?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738204?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 359,
+        "title": "cIR",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738201?rev=31",
+        "parentId": "http://uri.interlex.org/base/ilx_0383193?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738204?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 359,
+        "title": "cNAC",
+        "items": []
+      }
+    ]
+  },
+  "http://uri.interlex.org/base/ilx_0383194?rev=38": {
+    "about": "MType",
+    "id": "http://uri.interlex.org/base/ilx_0383194?rev=38",
+    "parentId": null,
+    "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+    "relatedNodes": [
+      "http://uri.interlex.org/base/ilx_0383192?rev=34",
+      "http://uri.interlex.org/base/ilx_0383193?rev=34",
+      "http://uri.interlex.org/base/ilx_0383194?rev=38",
+      "http://uri.interlex.org/base/ilx_0383195?rev=34",
+      "http://uri.interlex.org/base/ilx_0383196?rev=34",
+      "http://uri.interlex.org/base/ilx_0383197?rev=34"
+    ],
+    "composition": 950,
+    "title": "L1_LAC",
+    "items": [
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738201?rev=31",
+        "parentId": "http://uri.interlex.org/base/ilx_0383194?rev=38",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": ["http://uri.interlex.org/base/ilx_0738201?rev=31"],
+        "composition": 950,
+        "title": "cNAC",
+        "items": []
+      }
+    ]
+  },
+  "http://uri.interlex.org/base/ilx_0383195?rev=34": {
+    "about": "MType",
+    "id": "http://uri.interlex.org/base/ilx_0383195?rev=34",
+    "parentId": null,
+    "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+    "relatedNodes": [
+      "http://uri.interlex.org/base/ilx_0383192?rev=34",
+      "http://uri.interlex.org/base/ilx_0383193?rev=34",
+      "http://uri.interlex.org/base/ilx_0383194?rev=38",
+      "http://uri.interlex.org/base/ilx_0383195?rev=34",
+      "http://uri.interlex.org/base/ilx_0383196?rev=34",
+      "http://uri.interlex.org/base/ilx_0383197?rev=34"
+    ],
+    "composition": 1172,
+    "title": "L1_NGC-DA",
+    "items": [
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738203?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738197?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31",
+          "http://uri.interlex.org/base/ilx_0738198?rev=28"
+        ],
+        "composition": 293,
+        "title": "bNAC",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738197?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738197?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31",
+          "http://uri.interlex.org/base/ilx_0738198?rev=28"
+        ],
+        "composition": 293,
+        "title": "cAC",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738201?rev=31",
+        "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738197?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31",
+          "http://uri.interlex.org/base/ilx_0738198?rev=28"
+        ],
+        "composition": 293,
+        "title": "cNAC",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738198?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738197?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31",
+          "http://uri.interlex.org/base/ilx_0738198?rev=28"
+        ],
+        "composition": 293,
+        "title": "cSTUT",
+        "items": []
+      }
+    ]
+  },
+  "http://uri.interlex.org/base/ilx_0383196?rev=34": {
+    "about": "MType",
+    "id": "http://uri.interlex.org/base/ilx_0383196?rev=34",
+    "parentId": null,
+    "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+    "relatedNodes": [
+      "http://uri.interlex.org/base/ilx_0383192?rev=34",
+      "http://uri.interlex.org/base/ilx_0383193?rev=34",
+      "http://uri.interlex.org/base/ilx_0383194?rev=38",
+      "http://uri.interlex.org/base/ilx_0383195?rev=34",
+      "http://uri.interlex.org/base/ilx_0383196?rev=34",
+      "http://uri.interlex.org/base/ilx_0383197?rev=34"
+    ],
+    "composition": 923,
+    "title": "L1_NGC-SA",
+    "items": [
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738201?rev=31",
+        "parentId": "http://uri.interlex.org/base/ilx_0383196?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": ["http://uri.interlex.org/base/ilx_0738201?rev=31"],
+        "composition": 923,
+        "title": "cNAC",
+        "items": []
+      }
+    ]
+  },
+  "http://uri.interlex.org/base/ilx_0383197?rev=34": {
+    "about": "MType",
+    "id": "http://uri.interlex.org/base/ilx_0383197?rev=34",
+    "parentId": null,
+    "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+    "relatedNodes": [
+      "http://uri.interlex.org/base/ilx_0383192?rev=34",
+      "http://uri.interlex.org/base/ilx_0383193?rev=34",
+      "http://uri.interlex.org/base/ilx_0383194?rev=38",
+      "http://uri.interlex.org/base/ilx_0383195?rev=34",
+      "http://uri.interlex.org/base/ilx_0383196?rev=34",
+      "http://uri.interlex.org/base/ilx_0383197?rev=34"
+    ],
+    "composition": 924,
+    "title": "L1_SAC",
+    "items": [
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738203?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383197?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738197?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 308,
+        "title": "bNAC",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738197?rev=28",
+        "parentId": "http://uri.interlex.org/base/ilx_0383197?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738197?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 308,
+        "title": "cAC",
+        "items": []
+      },
+      {
+        "about": "EType",
+        "id": "http://uri.interlex.org/base/ilx_0738201?rev=31",
+        "parentId": "http://uri.interlex.org/base/ilx_0383197?rev=34",
+        "leaves": ["http://api.brain-map.org/api/v2/data/Structure/897"],
+        "relatedNodes": [
+          "http://uri.interlex.org/base/ilx_0738203?rev=28",
+          "http://uri.interlex.org/base/ilx_0738197?rev=28",
+          "http://uri.interlex.org/base/ilx_0738201?rev=31"
+        ],
+        "composition": 308,
+        "title": "cNAC",
+        "items": []
+      }
+    ]
+  }
+}

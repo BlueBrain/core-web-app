@@ -56,6 +56,7 @@ export function TreeNavItem({
               id,
               isExpanded,
               value,
+              path,
               trigger: items?.length
                 ? (triggerProps: {}) => (
                     <Accordion.Trigger
@@ -94,6 +95,7 @@ export function TreeNavItem({
                                 isExpanded,
                                 value,
                                 items: nestedItems,
+                                path,
                                 ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
                               });
 
