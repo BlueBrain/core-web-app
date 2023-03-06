@@ -208,11 +208,16 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
   return getDistributions(session.accessToken);
 });
 
-const updatedCompositionAtom = atom<Composition | null>(null);
-
 export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(null);
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
+
+// This holds a weak reference to the updatedComposition by it's initial composition
+// This allows GC to dispose the object once it is no longer used by current components
+const updatedCompositionWeakMapAtom = atom<WeakMap<Composition, Composition>>(new WeakMap());
+
+export const compositionHistoryAtom = atom<Composition[]>([]);
+export const compositionHistoryIndexAtom = atom<number>(0);
 
 export const setSelectedBrainRegionAtom = atom(
   null,
@@ -228,7 +233,8 @@ export const setSelectedBrainRegionAtom = atom(
       title: selectedBrainRegionTitle,
       leaves: selectedBrainRegionLeaves,
     });
-    set(updatedCompositionAtom, null);
+    set(compositionHistoryAtom, []);
+    set(compositionHistoryIndexAtom, 0);
   }
 );
 
@@ -274,10 +280,6 @@ const initialCompositionAtom = atom<Promise<Composition | null>>(async (get) => 
   return getCompositionData(session.accessToken);
 });
 
-// This holds a weak reference to the updatedComposition by it's initial composition
-// This allows GC to dispose the object once it is no longer used by current components
-const updatedCompositionWeakMapAtom = atom<WeakMap<Composition, Composition>>(new WeakMap());
-
 const setUpdatedCompositionAtom = atom<null, [Composition], Promise<void>>(
   null,
   async (get, set, updatedComposition) => {
@@ -311,9 +313,6 @@ export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>
     : [`http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`];
   return analyseComposition(compositionData, leaves);
 });
-
-export const compositionHistoryAtom = atom<Composition[]>([]);
-export const compositionHistoryIndexAtom = atom<number>(0);
 
 export const computeAndSetCompositionAtom = atom(
   null,
@@ -353,5 +352,5 @@ export const computeAndSetCompositionAtom = atom(
 );
 
 export const setCompositionAtom = atom(null, (get, set, composition: Composition) => {
-  set(updatedCompositionAtom, composition);
+  set(setUpdatedCompositionAtom, composition);
 });
