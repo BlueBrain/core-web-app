@@ -108,6 +108,11 @@ export default class BackendAllocatorService {
         if (started.length > 0) {
           return true;
         }
+        if (lastStdout !== stdout) {
+          // eslint-disable-next-line no-console
+          console.log(stdout);
+          lastStdout = stdout;
+        }
       }
       const stderr = await this.unicoreService.loadTextFile(jobId, 'stderr.txt');
       if (stderr) {
