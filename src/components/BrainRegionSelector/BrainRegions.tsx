@@ -1,6 +1,6 @@
 'use client';
 
-import React, { RefObject, useRef, useState, useMemo } from 'react';
+import React, { RefObject, useRef, useState, useMemo, useCallback } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai/react';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -60,11 +60,53 @@ function NavTitle({
    * Function to trigger the changing of view
    * @param newViewId the selected view id
    */
-  const onChangeViewSelection = (newViewId: string) => {
-    if (id) {
-      changeSelectedViews(newViewId, id);
+  const onChangeViewSelection = useCallback(
+    (newViewId: string) => {
+      if (id) {
+        changeSelectedViews(newViewId, id);
+      }
+    },
+    [changeSelectedViews, id]
+  );
+
+  // conditionally render the alternate view selector
+  const alternateViewSelector = useMemo(() => {
+    // first count the non disabled options
+    let nonDisabled = 0;
+    selectOptions?.forEach((option) => {
+      if (!option.isDisabled) {
+        nonDisabled += 1;
+      }
+    });
+
+    // if the non-disabled options are less than 2, then render only the label
+    // without the selector
+    if (id === selectedBrainRegion?.id && nonDisabled < 2 && defaultViewOption) {
+      return (
+        <div className="text-neutral-1 font-thin text-[10px] text-left">
+          {defaultViewOption.label}
+        </div>
+      );
     }
-  };
+
+    if (id === selectedBrainRegion?.id && brainRegionViews && selectOptions && defaultViewOption) {
+      return (
+        <SelectDropdown
+          defaultOption={defaultViewOption}
+          selectOptions={selectOptions}
+          onChangeFunc={onChangeViewSelection}
+        />
+      );
+    }
+    return null;
+  }, [
+    brainRegionViews,
+    defaultViewOption,
+    id,
+    onChangeViewSelection,
+    selectOptions,
+    selectedBrainRegion?.id,
+  ]);
 
   return (
     <>
@@ -76,30 +118,22 @@ function NavTitle({
             onClick={() => id && onClick()}
           >
             {colorCode ? <ColorBox color={colorCode} /> : null}
-            <span
-              className={classNames(
-                className,
-                'hover:text-white mr-auto whitespace-pre-wrap text-left',
-                isExpanded || selectedBrainRegion?.id === id ? 'text-white' : 'text-primary-4'
-              )}
-            >
-              {title}
-            </span>
+            <div>
+              <div
+                className={classNames(
+                  'hover:text-white mr-auto whitespace-pre-wrap text-left',
+                  isExpanded || selectedBrainRegion?.id === id ? 'text-white' : 'text-primary-4',
+                  className
+                )}
+              >
+                {title}
+              </div>
+              {alternateViewSelector}
+            </div>
           </button>
         </div>
 
         <div className="-mr-[4px] ml-[6px] flex gap-2 justify-between items-center">
-          {id === selectedBrainRegion?.id &&
-          brainRegionViews &&
-          selectOptions &&
-          defaultViewOption ? (
-            <SelectDropdown
-              defaultOption={defaultViewOption}
-              selectOptions={selectOptions}
-              onChangeFunc={onChangeViewSelection}
-            />
-          ) : null}
-
           {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
           {trigger?.()}
         </div>
