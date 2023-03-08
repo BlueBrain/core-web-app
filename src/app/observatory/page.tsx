@@ -12,7 +12,7 @@ export default function Observatory() {
     <div className={styles.container}>
       <div className={styles.observatoryheader}>
         <Link href="/">
-          <h1>The Observatory</h1>
+          <h1>Brain Observatory</h1>
           <button type="button">
             <ArrowLeftOutlined />
             Back home
