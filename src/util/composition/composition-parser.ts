@@ -31,7 +31,7 @@ export function addCompositions(totalComposition: CompositionPair, toAdd: Compos
  * @param node
  * @param nodes
  */
-function addNode(node: CalculationNode, nodes: { [key: string]: CalculationNode }) {
+export function addNode(node: CalculationNode, nodes: { [key: string]: CalculationNode }) {
   const id = `${node.id}__${node.parentId}`;
   if (id in nodes) {
     addCompositions(nodes[id].composition, node.composition);
@@ -54,7 +54,7 @@ function addNode(node: CalculationNode, nodes: { [key: string]: CalculationNode 
  * @param links the map of total links
  * @param leafId the leaf id we currently iterate into
  */
-function iterateNode(
+export function iterateNode(
   subTree: LeafNode,
   subTreeId: string,
   nodes: { [key: string]: CalculationNode },
