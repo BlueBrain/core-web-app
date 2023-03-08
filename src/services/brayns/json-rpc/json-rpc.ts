@@ -1,4 +1,6 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable class-methods-use-this */
+import Async from '../utils/async';
 import GenericEvent from '../utils/generic-event';
 import Progress, {
   isJsonRpcMessage,
@@ -250,16 +252,29 @@ export default class JsonRpcService {
     return data.success;
   }
 
-  connect(): Promise<void> {
+  async connect(): Promise<void> {
+    for (let maxLoops = 0; maxLoops < 5; maxLoops += 1) {
+      const success = await this.actualConnect();
+      if (success) return;
+      await Async.sleep(300);
+    }
+    throw Error(`Unable to connect to WebSocket service "${this.getWebSocketURL()}"!`);
+  }
+
+  private actualConnect(): Promise<boolean> {
     if (this.ws) {
-      this.ws.close();
+      try {
+        this.ws.close();
+      } catch (ex) {
+        logError(`Unable to close WSS connection to "${this.getWebSocketURL()}"!`);
+      }
       delete this.ws;
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const url = this.getWebSocketURL();
       const handleError = (ex: any) => {
-        logError(`Unable to connect to JsonRpc Service on "${url}"!`, ex);
-        reject(Error(`Unable to connect to JsonRpc Service on "${url}"!`));
+        logError(`Unable to connect to JsonRpc Service on "${url.toString()}"!`, ex);
+        resolve(false);
       };
       const handleConnectionSuccess = () => {
         const { ws } = this;
@@ -267,7 +282,7 @@ export default class JsonRpcService {
 
         ws.removeEventListener('open', handleConnectionSuccess);
         ws.removeEventListener('error', handleError);
-        resolve();
+        resolve(true);
       };
       try {
         const ws = new WebSocket(url);
@@ -283,8 +298,8 @@ export default class JsonRpcService {
         ws.addEventListener('error', handleError);
         ws.addEventListener('open', handleConnectionSuccess);
       } catch (ex) {
-        logError(`Connection failed to ${url}!`, ex);
-        reject(ex);
+        logError(`Connection attempt failed to ${url.toString()}!`, ex);
+        resolve(false);
       }
     });
   }
