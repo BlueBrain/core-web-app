@@ -39,7 +39,7 @@ const serializeBrainRegions = (
 ): BrainRegion[] => {
   const serializedBrainRegions: BrainRegion[] = [];
   brainRegionPayloads.forEach((brainRegionPayload) => {
-    if (typeof brainRegionPayload !== 'string') {
+    if (typeof brainRegionPayload !== 'string' && brainRegionPayload.prefLabel) {
       serializedBrainRegions.push({
         id: sanitizeId(brainRegionPayload['@id']),
         colorCode: `#${
@@ -58,7 +58,9 @@ const serializeBrainRegions = (
   });
   // removing the duplicate ids
   const ids = serializedBrainRegions.map((br) => br.id);
-  return serializedBrainRegions.filter(({ id }, index) => !ids.includes(id, index + 1));
+  return serializedBrainRegions
+    .filter(({ id }, index) => !ids.includes(id, index + 1))
+    .sort((a, b) => a.title.localeCompare(b.title));
 };
 
 /**

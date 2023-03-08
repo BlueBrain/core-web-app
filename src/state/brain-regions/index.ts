@@ -125,7 +125,10 @@ export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(
   // back to array. This is done in order to remove the brain regions that are
   // siblings or parents of region 8
   if (tree.length > 0) {
-    const newRoot = tree[0].items?.find((region: BrainRegion) => region.id === '8');
+    // find the root and select the new root
+    const newRoot = tree
+      .find((region: BrainRegion) => region.id === '997')
+      ?.items?.find((region: BrainRegion) => region.id === '8');
     return newRoot ? [newRoot] : null;
   }
   return tree;
