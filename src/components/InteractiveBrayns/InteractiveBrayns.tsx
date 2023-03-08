@@ -6,7 +6,6 @@
 
 import React from 'react';
 import convertStringColorIntoArrayColor from './convert-string-color-into-array-color';
-import Button from './Button';
 import Spinner from '@/components/Spinner';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import { isString } from '@/util/type-guards';
@@ -23,11 +22,6 @@ export default function InteractiveBrayns({ className, token }: InteractiveBrayn
   const brayns = BraynsService.useBrayns(token);
   const allocationProgress = BraynsService.useAllocationProgress();
   const handleCanvasMount = useCanvasMountHandler(brayns);
-  const handleResetClick = () => {
-    if (!isBraynsService(brayns)) return;
-
-    brayns.reset();
-  };
   React.useEffect(() => {
     if (!isBraynsService(brayns)) return;
 
@@ -46,11 +40,6 @@ export default function InteractiveBrayns({ className, token }: InteractiveBrayn
   return (
     <div className={`${className ?? styles.expand}`}>
       <canvas className={styles.expand} ref={handleCanvasMount} />
-      {brayns && (
-        <Button className={styles.resetButton} onClick={handleResetClick}>
-          Reset
-        </Button>
-      )}
       {brayns === null && (
         <div className={styles.expand}>
           <Spinner>{allocationProgress}</Spinner>

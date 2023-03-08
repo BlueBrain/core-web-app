@@ -77,6 +77,7 @@ export default class BackendAllocatorService {
       const backendIsStarted = await this.waitForBackendToBeUpAndRunning(jobId);
       if (!backendIsStarted) return null;
 
+      opts.onProgress(`Connected to ${status.hostname}.`);
       return { host: status.hostname, port: Settings.SERVICE_PORT };
     } catch (ex) {
       logError('Error during UNICORE step:', ex);
@@ -88,11 +89,19 @@ export default class BackendAllocatorService {
    * @returns `true` if the backend has started successfuly.
    */
   private async waitForBackendToBeUpAndRunning(jobId: string): Promise<boolean> {
-    let loop = 10;
-    while (loop > 0) {
-      await Async.sleep(300);
+    const MAX_WAITING_TIME_IN_SEC = 30;
+    const SLEEP_BETWEEN_ATTEMPTS_IN_SEC = 0.3;
+    const timeToLeave = window.performance.now() + MAX_WAITING_TIME_IN_SEC * 1e3;
+    let lastStdout = '';
+    while (window.performance.now() < timeToLeave) {
+      await Async.sleep(SLEEP_BETWEEN_ATTEMPTS_IN_SEC);
       const stdout = await this.unicoreService.loadTextFile(jobId, 'stdout.txt');
       if (stdout) {
+        if (lastStdout !== stdout) {
+          // eslint-disable-next-line no-console
+          console.log(stdout);
+          lastStdout = stdout;
+        }
         const started = stdout
           .split('\n')
           .filter((line) => line.startsWith('Starting CircuitStudioBackend...'));
@@ -102,8 +111,8 @@ export default class BackendAllocatorService {
       }
       const stderr = await this.unicoreService.loadTextFile(jobId, 'stderr.txt');
       if (stderr) {
-        logError('Error while waiting for Brayns Backend to be up and running:', stderr);
-        loop -= 1;
+        logError('Error while waiting for Brayns Backend to be up and running:', stderr, stdout);
+        return false;
       }
     }
     return false;
