@@ -22,7 +22,7 @@ export default function Sidebar() {
           style={{ color: 'white' }}
           icon={expanded ? <MinusOutlined /> : <PlusOutlined />}
         />
-        <Link href="/observatory">The Observatory</Link>
+        <Link href="/observatory">Brain Observatory</Link>
       </div>
 
       {expanded && (
