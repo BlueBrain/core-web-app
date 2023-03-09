@@ -52,7 +52,7 @@ export default function BrainFactoryLayout({ children }: BrainFactoryLayoutProps
           </ErrorBoundary>
         )}
         {isConnectomeEditor && (
-          <Suspense fallback={null}>
+          <Suspense fallback={<div className="bg-black h-screen w-[40px]" />}>
             <ConnectomeEditorSidebar />
           </Suspense>
         )}

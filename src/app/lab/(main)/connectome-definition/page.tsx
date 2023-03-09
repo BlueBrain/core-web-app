@@ -13,7 +13,6 @@ import {
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,
-  ConnectionProbabilityDropdown,
   BrainRegionSelection,
 } from '@/components/connectome-definition';
 import { basePath } from '@/config';
@@ -49,10 +48,8 @@ function ConnectomeDefinitionMain() {
         <HemisphereDropdown />
         <MatrixModificationHistoryList />
       </div>
-      <div className={styles.leftPanel}>
-        <ConnectionProbabilityDropdown />
-        <BrainRegionSelection regions={preSynapticBrainRegions} area="pre" />
-      </div>
+      <div className={styles.leftPanel} />
+      <BrainRegionSelection regions={preSynapticBrainRegions} area="pre" />
       <div className={styles.footer}>
         <BrainRegionSelection regions={postSynapticBrainRegions} area="post" />
       </div>
@@ -68,6 +65,9 @@ export default function ConnectomeDefinitionView() {
         components: {
           Select: {
             borderRadius: 0,
+          },
+          Tabs: {
+            colorPrimary: 'white',
           },
         },
       }}

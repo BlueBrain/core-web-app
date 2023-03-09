@@ -5,7 +5,6 @@ import MatrixPreviewComponent from './MatrixPreviewComponent';
 import MatrixDisplayDropdown from './MatrixDisplayDropdown';
 import HemisphereDropdown from './HemisphereDropdown';
 import MatrixModificationHistoryList from './MatrixModificationHistoryList';
-import ConnectionProbabilityDropdown from './ConnectionProbabilityDropdown';
 import BrainRegionSelection from './BrainRegionSelection';
 
 export {
@@ -16,6 +15,5 @@ export {
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,
-  ConnectionProbabilityDropdown,
   BrainRegionSelection,
 };
