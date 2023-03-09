@@ -1,11 +1,13 @@
 import _ from 'lodash';
-import gustatoryAreas from './data/gustatory-areas.json';
+import gustatoryAreas from './data/gustatory-areas-composition.json';
+import gracileNucleus from './data/gracile-nucleus-composition.json';
+import cuneateNucleus from './data/cuneate-nucleus-composition.json';
+import { CalculationLink, CalculationNode } from '@/util/composition/types';
 import calculateCompositions, {
   addCompositions,
   addNode,
   iterateNode,
 } from '@/util/composition/composition-parser';
-import { CalculationLink, CalculationNode } from '@/util/composition/types';
 
 describe('Add compositions', () => {
   it('should calculate the correct addition', () => {
@@ -77,13 +79,16 @@ describe('Add nodes', () => {
 
 describe('Composition Parser unit tests for single region', () => {
   const gal1Id = 'http://api.brain-map.org/api/v2/data/Structure/36';
+  const gracileId = 'http://api.brain-map.org/api/v2/data/Structure/1039';
+  const cuneateId = 'http://api.brain-map.org/api/v2/data/Structure/711';
+
   const gustatoryAreasLayer1 = gustatoryAreas.hasPart[gal1Id];
   it('total count is calculated correctly', () => {
     const cloneGAL1 = _.cloneDeep(gustatoryAreasLayer1);
     const nodes = {};
     const links = {};
     // @ts-ignore
-    const composition = iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id);
+    const composition = iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
     expect(composition.neuron.count).toBe(3430);
     expect(composition.neuron.density).toBeCloseTo(17438.83);
   });
@@ -93,7 +98,7 @@ describe('Composition Parser unit tests for single region', () => {
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id);
+    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
     expect(
       nodes['http://uri.interlex.org/base/ilx_0383192?rev=34__null'].composition.neuron.count
     ).toBe(447);
@@ -107,9 +112,35 @@ describe('Composition Parser unit tests for single region', () => {
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id);
+    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
     expect(Object.values(nodes)).toHaveLength(20);
     expect(Object.values(links)).toHaveLength(14);
+  });
+
+  it('composition parser returns correct blocked nodes if blocked', () => {
+    const cloneGracile = _.cloneDeep(gracileNucleus);
+    const nodes: { [key: string]: CalculationNode } = {};
+    const links: { [key: string]: CalculationLink } = {};
+    const blockedNodeIds: string[] = [];
+    // @ts-ignore
+    iterateNode(cloneGracile, gracileId, nodes, links, gracileId, blockedNodeIds, '', false);
+    expect(blockedNodeIds).toHaveLength(2);
+    expect(blockedNodeIds).toContain(
+      'https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6'
+    );
+    expect(blockedNodeIds).toContain(
+      'https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6__https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronEType?rev=6'
+    );
+  });
+
+  it('composition parser returns correct blocked nodes if not blocked', () => {
+    const cloneCuneate = _.cloneDeep(cuneateNucleus);
+    const nodes: { [key: string]: CalculationNode } = {};
+    const links: { [key: string]: CalculationLink } = {};
+    const blockedNodeIds: string[] = [];
+    // @ts-ignore
+    iterateNode(cloneCuneate, cuneateId, nodes, links, cuneateId, blockedNodeIds, '', false);
+    expect(blockedNodeIds).toHaveLength(0);
   });
 });
 

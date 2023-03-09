@@ -1,0 +1,4022 @@
+{
+  "version": 1,
+  "unitCode": {
+    "density": "mm^-3"
+  },
+  "hasPart": {
+    "http://api.brain-map.org/api/v2/data/Structure/36": {
+      "label": "Gustatory areas, layer 1",
+      "about": "BrainRegion",
+      "hasPart": {
+        "http://uri.interlex.org/base/ilx_0383192?rev=34": {
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1271.051795360661,
+                  "count": 250
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1001.5888147442008,
+                  "count": 197
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383193?rev=34": {
+          "label": "L1_HAC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2109.945980298697,
+                  "count": 415
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2140.451223387353,
+                  "count": 421
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1804.8935494121386,
+                  "count": 355
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383194?rev=38": {
+          "label": "L1_LAC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 452.4944391483953,
+                  "count": 89
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383195?rev=34": {
+          "label": "L1_NGC-DA",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1194.7886876390212,
+                  "count": 235
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1072.7677152843978,
+                  "count": 211
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 971.0835716555449,
+                  "count": 191
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 620.2732761360026,
+                  "count": 122
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383196?rev=34": {
+          "label": "L1_NGC-SA",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1062.5993009215126,
+                  "count": 209
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383197?rev=34": {
+          "label": "L1_SAC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1372.7359389895137,
+                  "count": 270
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1408.3253892596122,
+                  "count": 277
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 955.830950111217,
+                  "count": 188
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "http://api.brain-map.org/api/v2/data/Structure/614454308": {
+      "label": "Gustatory areas, layer 2",
+      "about": "BrainRegion",
+      "hasPart": {
+        "http://uri.interlex.org/base/ilx_0383198?rev=34": {
+          "label": "L23_BP",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 167.77883698760724,
+                  "count": 22
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 137.2735938989514,
+                  "count": 18
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 144.89990467111534,
+                  "count": 19
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 83.88941849380362,
+                  "count": 11
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383199?rev=34": {
+          "label": "L23_BTC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 579.5996186844613,
+                  "count": 76
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 320.3050524308865,
+                  "count": 42
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 68.6367969494757,
+                  "count": 9
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 221.163012392755,
+                  "count": 29
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 495.7102001906578,
+                  "count": 65
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 160.15252621544326,
+                  "count": 21
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383200?rev=34": {
+          "label": "L23_ChC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 335.55767397521447,
+                  "count": 44
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 236.41563393708293,
+                  "count": 31
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 76.26310772163966,
+                  "count": 10
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383201?rev=34": {
+          "label": "L23_DBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1113.441372735939,
+                  "count": 146
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1098.1887511916111,
+                  "count": 144
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1212.5834127740707,
+                  "count": 159
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1067.6835081029553,
+                  "count": 140
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1044.8045757864631,
+                  "count": 137
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 991.4204003813156,
+                  "count": 130
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 838.8941849380362,
+                  "count": 110
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383202?rev=34": {
+          "label": "L23_LBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1311.725452812202,
+                  "count": 172
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 190.65776930409913,
+                  "count": 25
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 419.4470924690181,
+                  "count": 55
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 152.5262154432793,
+                  "count": 20
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1670.1620591039086,
+                  "count": 219
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1098.1887511916111,
+                  "count": 144
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 816.0152526215444,
+                  "count": 107
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 160.15252621544326,
+                  "count": 21
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 114.39466158245948,
+                  "count": 15
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 45.75786463298379,
+                  "count": 6
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383203?rev=34": {
+          "label": "L23_MC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1990.467111534795,
+                  "count": 261
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 449.95233555767396,
+                  "count": 59
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1548.141086749285,
+                  "count": 203
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 579.5996186844613,
+                  "count": 76
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1952.3355576739752,
+                  "count": 256
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 106.76835081029552,
+                  "count": 14
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 915.1572926596758,
+                  "count": 120
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 99.14204003813155,
+                  "count": 13
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 312.6787416587226,
+                  "count": 41
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383204?rev=34": {
+          "label": "L23_NBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1166.8255481410868,
+                  "count": 153
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 907.530981887512,
+                  "count": 119
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1052.4308865586272,
+                  "count": 138
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1982.8408007626313,
+                  "count": 260
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1982.8408007626313,
+                  "count": 260
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 808.3889418493803,
+                  "count": 106
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 122.02097235462345,
+                  "count": 16
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 15.252621544327932,
+                  "count": 2
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383206?rev=34": {
+          "label": "L23_SBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1006.6730219256434,
+                  "count": 132
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1159.1992373689227,
+                  "count": 152
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 22.878932316491895,
+                  "count": 3
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383207?rev=37": {
+          "label": "L2_IPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 4796.9494756911345,
+                  "count": 629
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383208?rev=37": {
+          "label": "L2_TPC:A",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 7557.6739752144895,
+                  "count": 991
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381367?rev=37": {
+          "label": "L2_TPC:B",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 46955.19542421353,
+                  "count": 6157
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381366?rev=35": {
+          "label": "L3_TPC:A",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1304.0991420400383,
+                  "count": 171
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381368?rev=34": {
+          "label": "L3_TPC:B",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 350.8102955195424,
+                  "count": 46
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "http://api.brain-map.org/api/v2/data/Structure/614454309": {
+      "label": "Gustatory areas, layer 3",
+      "about": "BrainRegion",
+      "hasPart": {
+        "http://uri.interlex.org/base/ilx_0383198?rev=34": {
+          "label": "L23_BP",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 118.08798939053221,
+                  "count": 32
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 114.39773972207807,
+                  "count": 31
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 66.42449403217437,
+                  "count": 18
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 103.32699071671568,
+                  "count": 28
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 11.070749005362392,
+                  "count": 3
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 11.070749005362392,
+                  "count": 3
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383199?rev=34": {
+          "label": "L23_BTC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 387.47621518768375,
+                  "count": 105
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 298.91022314478465,
+                  "count": 81
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 62.73424436372023,
+                  "count": 17
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 180.82223375425244,
+                  "count": 49
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 431.75921120913335,
+                  "count": 117
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 210.34423110188547,
+                  "count": 57
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 33.21224701608718,
+                  "count": 9
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383200?rev=34": {
+          "label": "L23_ChC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 162.3709854119818,
+                  "count": 44
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 107.0172403851698,
+                  "count": 29
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 62.73424436372023,
+                  "count": 17
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383201?rev=34": {
+          "label": "L23_DBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 786.02317938073,
+                  "count": 213
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 826.6159257337255,
+                  "count": 224
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 734.3596840223721,
+                  "count": 199
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 752.8109323646428,
+                  "count": 204
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 822.9256760652712,
+                  "count": 223
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 638.4131926425647,
+                  "count": 173
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 623.6521939687482,
+                  "count": 169
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383202?rev=34": {
+          "label": "L23_LBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 708.5279363431931,
+                  "count": 192
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 95.94649137980741,
+                  "count": 26
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 335.81271982932594,
+                  "count": 91
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 88.56599204289914,
+                  "count": 24
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1328.4898806434874,
+                  "count": 360
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 361.6444675085049,
+                  "count": 98
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 597.8204462895693,
+                  "count": 162
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 357.9542178400508,
+                  "count": 97
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 302.60047281323875,
+                  "count": 82
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 169.75148474889005,
+                  "count": 46
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383203?rev=34": {
+          "label": "L23_MC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1977.9738222914145,
+                  "count": 536
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 660.5546906532895,
+                  "count": 179
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1468.7193680447442,
+                  "count": 398
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 738.0499336908263,
+                  "count": 200
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1815.6028368794325,
+                  "count": 492
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 269.38822579715156,
+                  "count": 73
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1239.923888600588,
+                  "count": 336
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 247.24672778642682,
+                  "count": 67
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 472.35195756212886,
+                  "count": 128
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383204?rev=34": {
+          "label": "L23_NBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 494.49345557285363,
+                  "count": 134
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 376.4054661823214,
+                  "count": 102
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 22.141498010724785,
+                  "count": 6
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 442.82996021449577,
+                  "count": 120
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1158.7383958945973,
+                  "count": 314
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1387.5338753387534,
+                  "count": 376
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 631.0326933056565,
+                  "count": 171
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 88.56599204289914,
+                  "count": 24
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 125.46848872744046,
+                  "count": 34
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 66.42449403217437,
+                  "count": 18
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383206?rev=34": {
+          "label": "L23_SBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 867.2086720867209,
+                  "count": 235
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 848.7574237444502,
+                  "count": 230
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 136.53923773280286,
+                  "count": 37
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383207?rev=37": {
+          "label": "L2_IPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 51.66349535835784,
+                  "count": 14
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383208?rev=37": {
+          "label": "L2_TPC:A",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 95.94649137980741,
+                  "count": 26
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381367?rev=37": {
+          "label": "L2_TPC:B",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 479.7324568990371,
+                  "count": 130
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381366?rev=35": {
+          "label": "L3_TPC:A",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 47039.61252378482,
+                  "count": 12747
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381368?rev=34": {
+          "label": "L3_TPC:B",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 13576.428530242749,
+                  "count": 3679
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "http://api.brain-map.org/api/v2/data/Structure/148": {
+      "label": "Gustatory areas, layer 4",
+      "about": "BrainRegion",
+      "hasPart": {
+        "http://uri.interlex.org/base/ilx_0383209?rev=34": {
+          "label": "L4_BP",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 81.46812347512464,
+                  "count": 12
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 40.73406173756232,
+                  "count": 6
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 74.67911318553092,
+                  "count": 11
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 88.25713376471836,
+                  "count": 13
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 20.36703086878116,
+                  "count": 3
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 33.945051447968595,
+                  "count": 5
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383210?rev=34": {
+          "label": "L4_BTC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 237.6153601357802,
+                  "count": 35
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 291.92744245253,
+                  "count": 43
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 128.99119550228068,
+                  "count": 19
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383211?rev=34": {
+          "label": "L4_ChC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 244.4043704253739,
+                  "count": 36
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 203.67030868781163,
+                  "count": 30
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 101.83515434390581,
+                  "count": 15
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383212?rev=34": {
+          "label": "L4_DBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 549.9098334570914,
+                  "count": 81
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 570.2768643258726,
+                  "count": 84
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 373.3955659276546,
+                  "count": 55
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 509.175771719529,
+                  "count": 75
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 495.5977511403416,
+                  "count": 73
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 495.5977511403416,
+                  "count": 73
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 536.3318128779039,
+                  "count": 79
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383213?rev=34": {
+          "label": "L4_LBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 814.6812347512465,
+                  "count": 120
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 183.30327781903046,
+                  "count": 27
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 339.45051447968603,
+                  "count": 50
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 122.20218521268696,
+                  "count": 18
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 665.3230083801845,
+                  "count": 98
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 712.8460804073407,
+                  "count": 105
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 651.7449878009971,
+                  "count": 96
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 617.7999363530286,
+                  "count": 91
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 400.5516070860295,
+                  "count": 59
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 420.91863795481066,
+                  "count": 62
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383214?rev=34": {
+          "label": "L4_MC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 699.2680598281532,
+                  "count": 103
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 706.0570701177469,
+                  "count": 104
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 196.88129839821787,
+                  "count": 29
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 678.9010289593721,
+                  "count": 100
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 801.103214172059,
+                  "count": 118
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 305.5054630317174,
+                  "count": 45
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 760.3691524344966,
+                  "count": 112
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 488.8087408507478,
+                  "count": 72
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 502.3867614299353,
+                  "count": 74
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383215?rev=34": {
+          "label": "L4_NBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 706.0570701177469,
+                  "count": 104
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 658.5339980905908,
+                  "count": 97
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 760.3691524344966,
+                  "count": 112
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 631.377956932216,
+                  "count": 93
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 712.8460804073407,
+                  "count": 105
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 685.6900392489658,
+                  "count": 101
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 475.2307202715604,
+                  "count": 70
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 509.175771719529,
+                  "count": 75
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383216?rev=34": {
+          "label": "L4_NGC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 6.78901028959372,
+                  "count": 1
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 6.78901028959372,
+                  "count": 1
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383217?rev=34": {
+          "label": "L4_SBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 210.45931897740533,
+                  "count": 31
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 224.03733955659277,
+                  "count": 33
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 108.62416463349952,
+                  "count": 16
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383218?rev=34": {
+          "label": "L4_SSC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 4915.243449665853,
+                  "count": 724
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383219?rev=37": {
+          "label": "L4_TPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 35723.77214384216,
+                  "count": 5262
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383220?rev=35": {
+          "label": "L4_UPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 14433.43587567625,
+                  "count": 2126
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "http://api.brain-map.org/api/v2/data/Structure/187": {
+      "label": "Gustatory areas, layer 5",
+      "about": "BrainRegion",
+      "hasPart": {
+        "http://uri.interlex.org/base/ilx_0383221?rev=34": {
+          "label": "L5_BP",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 3.6718301778542743,
+                  "count": 2
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 5.507745266781411,
+                  "count": 3
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1.8359150889271372,
+                  "count": 1
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383222?rev=34": {
+          "label": "L5_BTC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 231.32530120481928,
+                  "count": 126
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 189.09925415949513,
+                  "count": 103
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 165.23235800344236,
+                  "count": 90
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383223?rev=34": {
+          "label": "L5_ChC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 130.34997131382673,
+                  "count": 71
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 161.56052782558805,
+                  "count": 88
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 49.5697074010327,
+                  "count": 27
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383224?rev=34": {
+          "label": "L5_DBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 119.3344807802639,
+                  "count": 65
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 99.1394148020654,
+                  "count": 54
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 100.97532989099254,
+                  "count": 55
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 132.18588640275388,
+                  "count": 72
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 126.67814113597245,
+                  "count": 69
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 335.9724612736661,
+                  "count": 183
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 121.17039586919105,
+                  "count": 66
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383225?rev=34": {
+          "label": "L5_LBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1586.2306368330464,
+                  "count": 864
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1630.2925989672979,
+                  "count": 888
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1375.1004016064257,
+                  "count": 749
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1694.5496270797476,
+                  "count": 923
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 89.95983935742973,
+                  "count": 49
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 44.06196213425129,
+                  "count": 24
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1246.5863453815261,
+                  "count": 679
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 859.2082616179001,
+                  "count": 468
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 55.077452667814114,
+                  "count": 30
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 14.687320711417097,
+                  "count": 8
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381369?rev=34": {
+          "label": "L5_MC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1044.635685599541,
+                  "count": 569
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 995.0659781985083,
+                  "count": 542
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 734.3660355708548,
+                  "count": 400
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 960.1835915088927,
+                  "count": 523
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 941.8244406196214,
+                  "count": 513
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 783.9357429718876,
+                  "count": 427
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 912.4497991967872,
+                  "count": 497
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 141.36546184738955,
+                  "count": 77
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 99.1394148020654,
+                  "count": 54
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383226?rev=34": {
+          "label": "L5_NBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1334.7102696500287,
+                  "count": 727
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1248.4222604704532,
+                  "count": 680
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1391.62363740677,
+                  "count": 758
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1371.4285714285716,
+                  "count": 747
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1248.4222604704532,
+                  "count": 680
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 706.8273092369477,
+                  "count": 385
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 484.6815834767642,
+                  "count": 264
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 471.83017785427427,
+                  "count": 257
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383239?rev=10": {
+          "label": "L5_NGC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 132.18588640275388,
+                  "count": 72
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 135.85771658060816,
+                  "count": 74
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 49.5697074010327,
+                  "count": 27
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 29.374641422834195,
+                  "count": 16
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383227?rev=34": {
+          "label": "L5_SBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 469.9942627653471,
+                  "count": 256
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 565.4618473895582,
+                  "count": 308
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 247.84853700516348,
+                  "count": 135
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381365?rev=35": {
+          "label": "L5_TPC:A",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 38137.464142283425,
+                  "count": 20773
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381364?rev=42": {
+          "label": "L5_TPC:B",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 29738.152610441764,
+                  "count": 16198
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381370?rev=35": {
+          "label": "L5_TPC:C",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 5526.104417670683,
+                  "count": 3010
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381371?rev=54": {
+          "label": "L5_UPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 6262.3063683304645,
+                  "count": 3411
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "http://api.brain-map.org/api/v2/data/Structure/638": {
+      "label": "Gustatory areas, layer 6a",
+      "about": "BrainRegion",
+      "hasPart": {
+        "http://uri.interlex.org/base/ilx_0383240?rev=10": {
+          "label": "L6_BP",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2.2801767136953113,
+                  "count": 1
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2.2801767136953113,
+                  "count": 1
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 9.120706854781245,
+                  "count": 4
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2.2801767136953113,
+                  "count": 1
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383228?rev=37": {
+          "label": "L6_BPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 14139.375801624627,
+                  "count": 6201
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383229?rev=34": {
+          "label": "L6_BTC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 221.1771412284452,
+                  "count": 97
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 166.45290009975773,
+                  "count": 73
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 141.3709562491093,
+                  "count": 62
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383230?rev=34": {
+          "label": "L6_ChC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 145.93130967649992,
+                  "count": 64
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 148.21148639019526,
+                  "count": 65
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 22.801767136953114,
+                  "count": 10
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383231?rev=34": {
+          "label": "L6_DBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 70.68547812455465,
+                  "count": 31
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 70.68547812455465,
+                  "count": 31
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 50.16388770129685,
+                  "count": 22
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 77.52600826564058,
+                  "count": 34
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 75.24583155194527,
+                  "count": 33
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 316.9445632036483,
+                  "count": 139
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 57.004417842382786,
+                  "count": 25
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383232?rev=35": {
+          "label": "L6_HPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 12607.097050021377,
+                  "count": 5529
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381373?rev=35": {
+          "label": "L6_IPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 17520.877868034775,
+                  "count": 7684
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383233?rev=34": {
+          "label": "L6_LBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1644.0074105743195,
+                  "count": 721
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1666.8091777112727,
+                  "count": 731
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1422.8302693458743,
+                  "count": 624
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1776.2576599686474,
+                  "count": 779
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 43.323357560210916,
+                  "count": 19
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 36.48282741912498,
+                  "count": 16
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1244.97648567764,
+                  "count": 546
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 750.1781388057575,
+                  "count": 329
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 36.48282741912498,
+                  "count": 16
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381374?rev=34": {
+          "label": "L6_MC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 763.8591990879294,
+                  "count": 335
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 697.7340743907653,
+                  "count": 306
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 681.7728373948981,
+                  "count": 299
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 700.0142511044605,
+                  "count": 307
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 706.8547812455465,
+                  "count": 310
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 677.2124839675075,
+                  "count": 297
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 652.1305401168592,
+                  "count": 286
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 61.5647712697734,
+                  "count": 27
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 45.60353427390623,
+                  "count": 20
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383234?rev=34": {
+          "label": "L6_NBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1340.743907652843,
+                  "count": 588
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1338.4637309391476,
+                  "count": 587
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1527.7183981758587,
+                  "count": 670
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1331.6232007980618,
+                  "count": 584
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1340.743907652843,
+                  "count": 588
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 684.0530141085934,
+                  "count": 300
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 328.34544677212483,
+                  "count": 144
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 319.2247399173436,
+                  "count": 140
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383235?rev=34": {
+          "label": "L6_NGC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 143.6511329628046,
+                  "count": 63
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 164.17272338606242,
+                  "count": 72
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 25.081943850648425,
+                  "count": 11
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 41.043180846515604,
+                  "count": 18
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383236?rev=34": {
+          "label": "L6_SBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 517.6001140088357,
+                  "count": 227
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 515.3199372951403,
+                  "count": 226
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 132.25024939432805,
+                  "count": 58
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381375?rev=35": {
+          "label": "L6_TPC:A",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 14802.907225309962,
+                  "count": 6492
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381376?rev=35": {
+          "label": "L6_TPC:C",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 9941.570471711559,
+                  "count": 4360
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381377?rev=35": {
+          "label": "L6_UPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 7759.441356705145,
+                  "count": 3403
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "http://api.brain-map.org/api/v2/data/Structure/662": {
+      "label": "Gustatory areas, layer 6b",
+      "about": "BrainRegion",
+      "hasPart": {
+        "http://uri.interlex.org/base/ilx_0383240?rev=10": {
+          "label": "L6_BP",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 50.83399523431295,
+                  "count": 2
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383228?rev=37": {
+          "label": "L6_BPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 660.8419380460683,
+                  "count": 26
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383229?rev=34": {
+          "label": "L6_BTC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 279.5869737887212,
+                  "count": 11
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 330.42096902303416,
+                  "count": 13
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 228.7529785544083,
+                  "count": 9
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383230?rev=34": {
+          "label": "L6_ChC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 228.7529785544083,
+                  "count": 9
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 228.7529785544083,
+                  "count": 9
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 50.83399523431295,
+                  "count": 2
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383231?rev=34": {
+          "label": "L6_DBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 76.25099285146942,
+                  "count": 3
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 25.416997617156476,
+                  "count": 1
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 25.416997617156476,
+                  "count": 1
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 76.25099285146942,
+                  "count": 3
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 25.416997617156476,
+                  "count": 1
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 635.4249404289118,
+                  "count": 25
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 25.416997617156476,
+                  "count": 1
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383232?rev=35": {
+          "label": "L6_HPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 559.1739475774424,
+                  "count": 22
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381373?rev=35": {
+          "label": "L6_IPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 559.1739475774424,
+                  "count": 22
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383233?rev=34": {
+          "label": "L6_LBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 3024.62271644162,
+                  "count": 119
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 3177.1247021445593,
+                  "count": 125
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2795.869737887212,
+                  "count": 110
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 3024.62271644162,
+                  "count": 119
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 76.25099285146942,
+                  "count": 3
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 152.50198570293884,
+                  "count": 6
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2338.3637807783957,
+                  "count": 92
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1042.0969023034154,
+                  "count": 41
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 50.83399523431295,
+                  "count": 2
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381374?rev=34": {
+          "label": "L6_MC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1372.5178713264495,
+                  "count": 54
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1474.1858617950754,
+                  "count": 58
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1092.9308975377285,
+                  "count": 43
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1169.1818903891979,
+                  "count": 46
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1169.1818903891979,
+                  "count": 46
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 762.5099285146941,
+                  "count": 30
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1169.1818903891979,
+                  "count": 46
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 76.25099285146942,
+                  "count": 3
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 127.08498808578237,
+                  "count": 5
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383234?rev=34": {
+          "label": "L6_NBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738199?rev=28": {
+              "label": "bAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2567.1167593328037,
+                  "count": 101
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738206?rev=28": {
+              "label": "bIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2897.5377283558378,
+                  "count": 114
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738200?rev=28": {
+              "label": "bSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2694.2017474185864,
+                  "count": 106
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2440.0317712470214,
+                  "count": 96
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738204?rev=28": {
+              "label": "cIR",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 2795.869737887212,
+                  "count": 110
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1067.5138999205717,
+                  "count": 42
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738198?rev=28": {
+              "label": "cSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 406.6719618745036,
+                  "count": 16
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738202?rev=28": {
+              "label": "dSTUT",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 406.6719618745036,
+                  "count": 16
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383235?rev=34": {
+          "label": "L6_NGC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 177.91898332009532,
+                  "count": 7
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 203.3359809372518,
+                  "count": 8
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738201?rev=31": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 50.83399523431295,
+                  "count": 2
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0383236?rev=34": {
+          "label": "L6_SBC",
+          "about": "MType",
+          "hasPart": {
+            "http://uri.interlex.org/base/ilx_0738203?rev=28": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 965.845909451946,
+                  "count": 38
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738197?rev=28": {
+              "label": "cAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1296.26687847498,
+                  "count": 51
+                }
+              }
+            },
+            "http://uri.interlex.org/base/ilx_0738205?rev=28": {
+              "label": "dNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 177.91898332009532,
+                  "count": 7
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381375?rev=35": {
+          "label": "L6_TPC:A",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 508.3399523431295,
+                  "count": 20
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381376?rev=35": {
+          "label": "L6_TPC:C",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 533.7569499602859,
+                  "count": 21
+                }
+              }
+            }
+          }
+        },
+        "http://uri.interlex.org/base/ilx_0381377?rev=35": {
+          "label": "L6_UPC",
+          "about": "MType",
+          "hasPart": {
+            "http://bbp.epfl.ch/neurosciencegraph/ontologies/etypes/cADpyr?rev=34": {
+              "label": "cADpyr",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 305.0039714058777,
+                  "count": 12
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

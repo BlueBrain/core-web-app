@@ -5,6 +5,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
+import _ from 'lodash';
 import CollapsedRegionDetails from './CollapsedRegionDetails';
 import { getMetric } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
@@ -23,8 +24,8 @@ import IconButton from '@/components/IconButton';
 import HorizontalSlider from '@/components/HorizontalSlider';
 import { formatNumber } from '@/util/common';
 import CompositionInput from '@/components/BrainRegionSelector/CompositionInput';
-import computeSystemLockedIds from '@/util/composition/locking';
 import { calculateMax } from '@/util/composition/utils';
+import iterateAndComputeSystemLockedIds from '@/util/composition/locking';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -191,15 +192,30 @@ function MeTypeDetails({
       }, {})
     : {};
 
-  // get system locked node ids
-  const systemLockedIds = useMemo(
-    () => (composition?.nodes ? computeSystemLockedIds(composition.nodes, userLockedIds) : []),
-    [composition, userLockedIds]
+  // blocked node ids are the ones that are blocked by the system since they
+  // are undividable (cannot be split)
+  const blockedNodeIds = useMemo(
+    () => (composition ? composition.blockedNodeIds : []),
+    [composition]
   );
 
+  // system locked ids are the ones that are locked by the system due to changes
+  // by the user
+  const systemLockedIds = useMemo(() => {
+    if (composition?.nodes) {
+      // we calculate the system locks twice so that the second time we will take
+      // into consideration the calculations of the first time
+      const system = iterateAndComputeSystemLockedIds(composition.nodes, [
+        ...userLockedIds,
+        ...blockedNodeIds,
+      ]);
+      return _.difference(system, userLockedIds);
+    }
+    return [];
+  }, [blockedNodeIds, composition?.nodes, userLockedIds]);
   const allLockedIds = useMemo(
-    () => [...systemLockedIds, ...userLockedIds],
-    [systemLockedIds, userLockedIds]
+    () => _.uniq([...systemLockedIds, ...userLockedIds, ...blockedNodeIds]),
+    [blockedNodeIds, systemLockedIds, userLockedIds]
   );
   /**
    * This callback handles the change of a given slider
@@ -250,14 +266,17 @@ function MeTypeDetails({
               content={content}
               title={title}
               trigger={trigger}
-              isLocked={allLockedIds.includes(`root__${path.join('__')}`)}
-              setLockedFunc={() => setLocked(`root__${path.join('__')}`)}
+              isLocked={allLockedIds.includes(path.join('__'))}
+              setLockedFunc={() => setLocked(path.join('__'))}
               composition={renderedComposition}
               onSliderChange={(newValue: number) => {
                 const node = neuronsToNodes[id];
                 handleSliderChange(node, newValue);
               }}
-              lockIsDisabled={systemLockedIds.includes(id)}
+              lockIsDisabled={
+                systemLockedIds.includes(path.join('__')) ||
+                blockedNodeIds.includes(path.join('__'))
+              }
               isExpanded={isExpanded}
               max={calculateMax(relatedNodes, id, about, allLockedIds, neuronsToNodes)}
               isEditable={editMode}
@@ -271,8 +290,10 @@ function MeTypeDetails({
                 parentId: nestedParentId,
                 path: nestedPath,
               }: NeuronCompositionItem) => {
-                const lockId = `${parentId}__${id}`;
-                const expandedNodeId = `root__${nestedPath?.join('__')}`;
+                const expandedNodeId = nestedPath ? nestedPath?.join('__') : '';
+                const isDisabled =
+                  systemLockedIds.includes(expandedNodeId) ||
+                  blockedNodeIds.includes(expandedNodeId);
                 return (
                   <NeuronCompositionLeaf
                     content={nestedContent}
@@ -286,7 +307,7 @@ function MeTypeDetails({
                     title={nestedTitle}
                     trigger={nestedTrigger}
                     isLocked={allLockedIds.includes(expandedNodeId)}
-                    lockIsDisabled={systemLockedIds.includes(lockId)}
+                    lockIsDisabled={isDisabled}
                     setLockedFunc={() => setLocked(expandedNodeId)}
                     max={neuronsToNodes[nestedParentId].composition}
                     isEditable={editMode}

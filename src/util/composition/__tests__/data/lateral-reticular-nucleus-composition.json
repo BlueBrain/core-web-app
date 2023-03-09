@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "unitCode": {
+    "density": "mm^-3"
+  },
+  "hasPart": {
+    "http://api.brain-map.org/api/v2/data/Structure/963": {
+      "label": "Lateral reticular nucleus, parvicellular part",
+      "about": "BrainRegion",
+      "hasPart": {
+        "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6": {
+          "label": "GEN_mtype",
+          "about": "MType",
+          "hasPart": {
+            "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronEType?rev=6": {
+              "label": "GEN_etype",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 25865.64718732933,
+                  "count": 1480
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "http://api.brain-map.org/api/v2/data/Structure/955": {
+      "label": "Lateral reticular nucleus, magnocellular part",
+      "about": "BrainRegion",
+      "hasPart": {
+        "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6": {
+          "label": "GEN_mtype",
+          "about": "MType",
+          "hasPart": {
+            "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronEType?rev=6": {
+              "label": "GEN_etype",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 30785.47693808493,
+                  "count": 15779
+                }
+              }
+            }
+          }
+        },
+        "https://bbp.epfl.ch/ontologies/core/bmo/GenericInhibitoryNeuronMType?rev=6": {
+          "label": "GIN_mtype",
+          "about": "MType",
+          "hasPart": {
+            "https://bbp.epfl.ch/ontologies/core/bmo/GenericInhibitoryNeuronEType?rev=6": {
+              "label": "GIN_etype",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 1627.1682468066945,
+                  "count": 834
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

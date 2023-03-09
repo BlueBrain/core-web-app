@@ -12,9 +12,8 @@ export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: str
   const unlockedIds: string[] = [];
 
   siblings?.forEach((sibling) => {
-    const extendedNodeId = `root__${sibling.id}`;
-    if (!lockedIds.includes(extendedNodeId)) {
-      unlockedIds.push(extendedNodeId);
+    if (!lockedIds.includes(sibling.id)) {
+      unlockedIds.push(sibling.id);
     } else {
       countLocked += 1;
     }
@@ -33,31 +32,33 @@ export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: str
  * 3) if a parent gets locked by the user, its children are locked as well
  *
  */
-const computeSystemLockedIds = (nodes: CompositionNode[], userLockedIds: string[]) => {
+export const computeSystemLockedIds = (
+  nodes: CompositionNode[],
+  userAndBlockedNodeIds: string[]
+) => {
   let lockedIds: string[] = [];
   const groupByParent = _.groupBy(nodes, (node) => node.parentId);
   // first iterating over the children whose parent is not null
   Object.entries(groupByParent).forEach(([parentId, neuronChildren]) => {
-    const parentLockId = `root__${parentId}`;
     // Rule No2: if all the children are locked, lock the parent
     if (
       neuronChildren.every((neuronChild) =>
-        [...lockedIds, ...userLockedIds].includes(`${parentLockId}__${neuronChild.id}`)
+        [...lockedIds, ...userAndBlockedNodeIds].includes(`${parentId}__${neuronChild.id}`)
       )
     ) {
-      lockedIds.push(parentLockId);
+      lockedIds.push(parentId);
     }
 
     // Rule No3: if the parent is locked, lock the children
-    if (userLockedIds.includes(parentLockId)) {
-      const childrenIds = neuronChildren.map((neuronChild) => `${parentLockId}__${neuronChild.id}`);
+    if (userAndBlockedNodeIds.includes(parentId)) {
+      const childrenIds = neuronChildren.map((neuronChild) => `${parentId}__${neuronChild.id}`);
       lockedIds = [...lockedIds, ...childrenIds];
     }
   });
 
   const nullChildren = groupByParent.null;
   const { countLocked, unlockedIds } = findUnlockedSiblings(nullChildren, [
-    ...userLockedIds,
+    ...userAndBlockedNodeIds,
     ...lockedIds,
   ]);
   // if all the children of the first level are locked but one,
@@ -66,7 +67,32 @@ const computeSystemLockedIds = (nodes: CompositionNode[], userLockedIds: string[
     lockedIds = [...lockedIds, ...unlockedIds];
   }
 
-  return lockedIds;
+  return _.uniq(lockedIds);
 };
 
-export default computeSystemLockedIds;
+/**
+ * Iterates and computes the system locked ids. The loop is there so that in the
+ * next iteration it will take into consideration the results of the previous
+ * locking iteration
+ *
+ * @param nodes the nodes list
+ * @param userAndBlockedNodeIds the node ids of user and blocked ids
+ */
+const iterateAndComputeSystemLockedIds = (
+  nodes: CompositionNode[],
+  userAndBlockedNodeIds: string[]
+) => {
+  let systemLockedIds: string[] = [];
+  let allIds = [...userAndBlockedNodeIds];
+  let diff;
+  let newSystemLockedIds;
+  do {
+    newSystemLockedIds = computeSystemLockedIds(nodes, allIds);
+    diff = _.difference(newSystemLockedIds, allIds);
+    systemLockedIds = [...systemLockedIds, ...newSystemLockedIds];
+    allIds = [...allIds, ...newSystemLockedIds];
+  } while (diff.length !== 0);
+  return _.uniq(systemLockedIds);
+};
+
+export default iterateAndComputeSystemLockedIds;

@@ -1,0 +1,22 @@
+{
+  "label": "Gracile nucleus",
+  "about": "BrainRegion",
+  "hasPart": {
+    "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6": {
+      "label": "GEN_mtype",
+      "about": "MType",
+      "hasPart": {
+        "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronEType?rev=6": {
+          "label": "GEN_etype",
+          "about": "EType",
+          "composition": {
+            "neuron": {
+              "density": 73688.07339449541,
+              "count": 6024
+            }
+          }
+        }
+      }
+    }
+  }
+}

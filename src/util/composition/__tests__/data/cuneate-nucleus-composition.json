@@ -1,0 +1,38 @@
+{
+  "label": "Cuneate nucleus",
+  "about": "BrainRegion",
+  "hasPart": {
+    "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6": {
+      "label": "GEN_mtype",
+      "about": "MType",
+      "hasPart": {
+        "https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronEType?rev=6": {
+          "label": "GEN_etype",
+          "about": "EType",
+          "composition": {
+            "neuron": {
+              "density": 33631.33726923438,
+              "count": 11215
+            }
+          }
+        }
+      }
+    },
+    "https://bbp.epfl.ch/ontologies/core/bmo/GenericInhibitoryNeuronMType?rev=6": {
+      "label": "GIN_mtype",
+      "about": "MType",
+      "hasPart": {
+        "https://bbp.epfl.ch/ontologies/core/bmo/GenericInhibitoryNeuronEType?rev=6": {
+          "label": "GIN_etype",
+          "about": "EType",
+          "composition": {
+            "neuron": {
+              "density": 13929.341205135413,
+              "count": 4645
+            }
+          }
+        }
+      }
+    }
+  }
+}

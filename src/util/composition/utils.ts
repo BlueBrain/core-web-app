@@ -25,8 +25,12 @@ export const calculateNewExtendedNodeId = (
   return nodeId;
 };
 
-export const childIsLocked = (lockedIds: string[], extendedNodeId: string, childId: string) =>
-  lockedIds.includes(`${extendedNodeId}__${childId}`);
+export const childIsLocked = (lockedIds: string[], extendedNodeId: string, childId: string) => {
+  if (extendedNodeId) {
+    return lockedIds.includes(`${extendedNodeId}__${childId}`);
+  }
+  return lockedIds.includes(childId);
+};
 /**
  * Calculates the max value that a neuron composition can take
  * @param relatedNodes the set of related nodes

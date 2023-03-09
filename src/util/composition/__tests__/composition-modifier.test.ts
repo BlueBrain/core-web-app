@@ -23,7 +23,7 @@ describe('calculateNewExtendedNodeId', () => {
 
 describe('calculate ratio spread', () => {
   // @ts-ignore
-  const node = gustatory['http://api.brain-map.org/api/v2/data/Structure/36'] as LeafNode;
+  const node = gustatory as LeafNode;
   const modifiedMType = {
     about: 'MType',
     id: 'http://uri.interlex.org/base/ilx_0383192?rev=34',
@@ -34,7 +34,7 @@ describe('calculate ratio spread', () => {
     relatedNodes: [],
   };
   it('should have correct ratio spread', () => {
-    const ratioSpread = calculateRatioSpread(node, 'root', modifiedMType, []);
+    const ratioSpread = calculateRatioSpread(node, '', modifiedMType, []);
     expect(ratioSpread['http://uri.interlex.org/base/ilx_0383192?rev=34']).toBeCloseTo(1);
     expect(ratioSpread['http://uri.interlex.org/base/ilx_0383193?rev=34']).toBeCloseTo(0.3992);
     expect(ratioSpread['http://uri.interlex.org/base/ilx_0383194?rev=38']).toBeCloseTo(0.029);
@@ -44,15 +44,15 @@ describe('calculate ratio spread', () => {
   });
 
   it('should have 0 ratio spread if locked', () => {
-    const ratioSpread = calculateRatioSpread(node, 'root', modifiedMType, [
-      'root__http://uri.interlex.org/base/ilx_0383193?rev=34',
+    const ratioSpread = calculateRatioSpread(node, '', modifiedMType, [
+      'http://uri.interlex.org/base/ilx_0383193?rev=34',
     ]);
     expect(ratioSpread['http://uri.interlex.org/base/ilx_0383193?rev=34']).toBeCloseTo(0);
   });
 
   it('ratio spread is correct if there is locked node on first level', () => {
-    const ratioSpread = calculateRatioSpread(node, 'root', modifiedMType, [
-      'root__http://uri.interlex.org/base/ilx_0383193?rev=34',
+    const ratioSpread = calculateRatioSpread(node, '', modifiedMType, [
+      'http://uri.interlex.org/base/ilx_0383193?rev=34',
     ]);
     expect(ratioSpread['http://uri.interlex.org/base/ilx_0383194?rev=38']).toBeCloseTo(0.049);
     expect(ratioSpread['http://uri.interlex.org/base/ilx_0383195?rev=34']).toBeCloseTo(0.423);
@@ -62,15 +62,13 @@ describe('calculate ratio spread', () => {
 
   it('ratio spread is correct if there is locked node on second level', () => {
     // @ts-ignore
-    const l1DAC = gustatory['http://api.brain-map.org/api/v2/data/Structure/36'].hasPart[
-      'http://uri.interlex.org/base/ilx_0383192?rev=34'
-    ] as LeafNode;
+    const l1DAC = gustatory.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34'] as LeafNode;
     const ratioSpread = calculateRatioSpread(
       l1DAC,
-      'root__http://uri.interlex.org/base/ilx_0383192?rev=34',
+      'http://uri.interlex.org/base/ilx_0383192?rev=34',
       modifiedMType,
       [
-        'root__http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31',
+        'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31',
       ]
     );
     expect(ratioSpread['http://uri.interlex.org/base/ilx_0738203?rev=28']).toBeCloseTo(1);
@@ -87,7 +85,7 @@ describe('calculate ratio spread', () => {
     ].composition.neuron.count = 0;
     const ratioSpread = calculateRatioSpread(
       nodeCopy,
-      'root__http://uri.interlex.org/base/ilx_0383192?rev=34',
+      'http://uri.interlex.org/base/ilx_0383192?rev=34',
       modifiedMType,
       []
     );
@@ -98,9 +96,9 @@ describe('calculate ratio spread', () => {
 
 describe('add composition function', () => {
   // @ts-ignore
-  const bnac = gustatory['http://api.brain-map.org/api/v2/data/Structure/36'].hasPart[
-    'http://uri.interlex.org/base/ilx_0383192?rev=34'
-  ].hasPart['http://uri.interlex.org/base/ilx_0738203?rev=28'] as LeafNode;
+  const bnac = gustatory.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34'].hasPart[
+    'http://uri.interlex.org/base/ilx_0738203?rev=28'
+  ] as LeafNode;
 
   it('should increase count correctly', () => {
     const cloneBnac = _.cloneDeep(bnac);

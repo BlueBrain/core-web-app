@@ -24,4 +24,5 @@ export type AnalysedComposition = {
   composition: Composition;
   volumes: { [key: string]: number };
   leaves?: string[];
+  blockedNodeIds: string[];
 };

@@ -6,6 +6,7 @@ import {
   CalculationNode,
   CompositionLink,
 } from '@/util/composition/types';
+import { calculateNewExtendedNodeId } from '@/util/composition/utils';
 
 /* eslint-disable no-param-reassign */
 
@@ -53,20 +54,46 @@ export function addNode(node: CalculationNode, nodes: { [key: string]: Calculati
  * @param nodes the map of total nodes
  * @param links the map of total links
  * @param leafId the leaf id we currently iterate into
+ * @param blockedNodeIds the node ids that should be blocked
+ * @param extendedNodeId the extended node of the node it currently visits
+ * @param isBlocked
  */
 export function iterateNode(
   subTree: LeafNode,
   subTreeId: string,
   nodes: { [key: string]: CalculationNode },
   links: { [key: string]: CalculationLink },
-  leafId: string
+  leafId: string,
+  blockedNodeIds: string[],
+  extendedNodeId: string,
+  isBlocked: boolean
 ): CompositionPair {
+  if (isBlocked) {
+    blockedNodeIds.push(extendedNodeId);
+  }
   if ('hasPart' in subTree) {
     const totalComposition = initializeComposition();
+
     // for each child of the node
     Object.entries(subTree.hasPart).forEach(([childId, childSubtree]) => {
+      const childExtendedNodeId = calculateNewExtendedNodeId(
+        extendedNodeId,
+        childId,
+        childSubtree.about
+      );
+      const childIsBlocked =
+        isBlocked || (Object.keys(subTree.hasPart).length === 1 && _.has(childSubtree, 'hasPart'));
       // calculate its composition and add it in the total
-      const childComposition = iterateNode(childSubtree, childId, nodes, links, leafId);
+      const childComposition = iterateNode(
+        childSubtree,
+        childId,
+        nodes,
+        links,
+        leafId,
+        blockedNodeIds,
+        childExtendedNodeId,
+        childIsBlocked
+      );
       addCompositions(totalComposition, childComposition);
       const parentId = subTree.about !== 'BrainRegion' ? subTreeId : null;
       const node = {
@@ -110,10 +137,20 @@ export default async function calculateCompositions(
   const links: { [key: string]: CalculationLink } = {};
   const totalComposition = initializeComposition();
   const volumes: { [key: string]: number } = {};
+  const blockedNodeIds: string[] = [];
   leafIDs?.forEach((leafId) => {
     if (leafId in compositionFile.hasPart) {
       const leaf = compositionFile.hasPart[leafId];
-      const leafComposition = iterateNode(leaf, leafId, nodes, links, leafId);
+      const leafComposition = iterateNode(
+        leaf,
+        leafId,
+        nodes,
+        links,
+        leafId,
+        blockedNodeIds,
+        '',
+        false
+      );
       volumes[leafId] = leafComposition.neuron.count / leafComposition.neuron.density;
       addCompositions(totalComposition, leaf.composition);
     }
@@ -146,6 +183,7 @@ export default async function calculateCompositions(
     totalComposition,
     composition: compositionFile,
     volumes,
+    blockedNodeIds: _.uniq(blockedNodeIds),
   };
 }
 /* eslint-enable no-param-reassign */
