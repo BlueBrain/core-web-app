@@ -31,13 +31,14 @@ export const SIMULATION_FILES: WorkflowFilesType = [
       [DEFAULT]
       kg-proj: mmb-point-neuron-framework-model
       account: proj134
+      module-archive: unstable
 
       [GenerateSimulationCampaign]
       name: SBO - Sonata Simulation
       circuit-url: ${PLACEHOLDERS.CIRCUIT_URL}
       seed-as-coord: {"low": 100000, "high": 400000, "size": 1}
       attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/project/%(account)s/scratch/\${USER}/workflow-outputs", "blue_config_template": "simulation_config.tmpl", "user_target": "node_sets.json", "duration": 100ms}
-      
+
       [SimulationCampaign]
       nodes: 50
       simulation-type: CortexNrdmsPySim
@@ -163,10 +164,10 @@ export const VIDEO_GENERATION_FILES: WorkflowFilesType = [
       kg-org: bbp_test
       kg-proj: studio_data3
       account: proj134
-      
+
       [LookupSimulationCampaign]
       url: ${PLACEHOLDERS.SIMULATION_URL}
-      
+
       [VideoTask]
       cpus-per-task: 72
       mem: 0
@@ -175,7 +176,7 @@ export const VIDEO_GENERATION_FILES: WorkflowFilesType = [
       nodes: 3
       module-archive: unstable
       modules: brayns py-brayns ffmpeg
-      
+
       populations: [
               {
                   "name": "S1nonbarrel_neurons",
