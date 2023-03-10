@@ -32,6 +32,7 @@ export default function LauncherModal({
         open={isOpen}
         onCancel={onClose}
         maskStyle={maskStyle}
+        maskClosable={false}
       >
         <div className="flex flex-col items-center">
           <h4 className="mt-20 mb-2 text-primary-7">We are setting up a couple of things...</h4>

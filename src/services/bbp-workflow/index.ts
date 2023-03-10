@@ -19,7 +19,7 @@ import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
 export const workflowInstructions =
   'https://bbpteam.epfl.ch/project/spaces/display/BBPNSE/Workflow#Workflow-Prerequisites';
 
-async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
+export async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
   // check the pod is active
   const podResponse = await fetch(BBP_WORKFLOW_PING_TASK.replace(PLACEHOLDERS.USERNAME, username), {
     method: 'OPTIONS',
@@ -28,15 +28,10 @@ async function runChecksBeforeLaunching(headers: HeadersInit, username: string) 
   if (!podResponse.ok) {
     throw new Error('Pod is not available.');
   }
+}
 
-  // set offline token if not there
-  const authResponse = await fetch(BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username), {
-    method: 'GET',
-    headers,
-  }).catch(() => ({ ok: false }));
-  if (!authResponse.ok) {
-    throw new Error('Auth exchange failed.');
-  }
+export function getWorkflowAuthUrl(username: string) {
+  return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
 }
 
 function replacePlaceholdersInFile(
@@ -138,7 +133,7 @@ async function launchWorkflow(
   return nexusUrl;
 }
 
-async function launchUnicoreWorkflowSetup(token: string): Promise<true | null> {
+export async function launchUnicoreWorkflowSetup(token: string): Promise<true | null> {
   const tokenFile = UNICORE_FILES.find((f) => f.To === UNICORE_PLACEHOLDERS.TOKEN_TEMP_FILENAME);
   if (!tokenFile) return null;
 
@@ -162,14 +157,13 @@ export async function launchWorkflowTask({
   workflowName = WORKFLOW_TEST_TASK_NAME,
   workflowFiles = [],
 }: WorkflowRunProps): Promise<string | null> {
-  const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
-
   const headers = new Headers({
     Authorization: `Bearer ${loginInfo.accessToken}`,
   });
 
-  await launchUnicoreWorkflowSetup(loginInfo.accessToken);
   await runChecksBeforeLaunching(headers, loginInfo.user.username);
+
+  const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
 
   const data = generateFormData(workflowFiles);
   const nexusUrl = await launchWorkflow(url, headers, data);
