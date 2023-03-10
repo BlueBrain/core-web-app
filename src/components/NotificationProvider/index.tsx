@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import notificationsAtom from '@/state/notifications';
 import Notification from '@/components/Notification';
 

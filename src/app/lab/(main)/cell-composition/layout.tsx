@@ -2,9 +2,9 @@
 
 import { ReactNode, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
 import { ErrorBoundary } from 'react-error-boundary';
-import { loadable } from 'jotai/vanilla/utils';
 import { usePathname } from 'next/navigation';
 import { RegionDetailsSidebar } from '@/components/BrainRegionSelector';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';

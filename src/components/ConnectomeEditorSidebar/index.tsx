@@ -1,7 +1,7 @@
 import React, { useRef, RefObject, ReactNode, useMemo, useState } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
-import { useSetAtom, useAtomValue } from 'jotai/react';
+import { useSetAtom, useAtomValue } from 'jotai';
 import { TitleComponentProps } from './types';
 import { BrainRegion } from '@/types/ontologies';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';

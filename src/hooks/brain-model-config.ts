@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useAtom, useSetAtom } from 'jotai/react';
+import { useAtom, useSetAtom } from 'jotai';
 
 import { idAtom, addRecentlyUsedConfigIdAtom } from '@/state/brain-model-config';
 import { expandId } from '@/util/nexus';
@@ -12,7 +12,7 @@ export default function useBrainModelConfig() {
   const addRecentlyUsedConfig = useSetAtom(addRecentlyUsedConfigIdAtom);
 
   const searchParams = useSearchParams();
-  const collapsedId = searchParams.get('brainModelConfigId');
+  const collapsedId = searchParams?.get('brainModelConfigId');
   const id = collapsedId ? expandId(collapsedId) : null;
 
   useEffect(() => {

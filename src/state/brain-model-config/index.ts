@@ -1,7 +1,7 @@
 'use client';
 
-import { atom } from 'jotai/vanilla';
-import { selectAtom, atomWithStorage } from 'jotai/vanilla/utils';
+import { atom } from 'jotai';
+import { selectAtom, atomWithStorage } from 'jotai/utils';
 
 import sessionAtom from '@/state/session';
 import { BrainModelConfigResource } from '@/types/nexus';

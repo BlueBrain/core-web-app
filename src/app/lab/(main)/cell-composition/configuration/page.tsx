@@ -11,7 +11,7 @@ import {
   Suspense,
 } from 'react';
 import { scaleOrdinal, schemeTableau10 } from 'd3';
-import { useAtom, useAtomValue } from 'jotai/react';
+import { useAtom, useAtomValue } from 'jotai';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';

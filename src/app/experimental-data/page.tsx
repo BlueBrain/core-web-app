@@ -1,7 +1,7 @@
 'use client';
 
 import { Table } from 'antd';
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
 import { EphysResource } from '@/types/observatory';

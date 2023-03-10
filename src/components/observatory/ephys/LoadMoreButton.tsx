@@ -1,7 +1,7 @@
-import { useAtom, useAtomValue } from 'jotai/react';
+import { useAtom, useAtomValue } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import { loadable } from 'jotai/vanilla/utils';
+import { loadable } from 'jotai/utils';
 import { dataAtom, pageSizeAtom } from '@/state/ephys';
 import styles from './loadmore-button.module.scss';
 

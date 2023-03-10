@@ -43,6 +43,7 @@ export default function ConnectomeDefinitionTabs() {
           key={tab.href}
           href={tab.href}
           className={classNames(COMMON_TAB_CLASSNAME, 'bg-black text-white')}
+          preserveLocationSearchParams
         >
           {tab.icon}
           {tab.name}

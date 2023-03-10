@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
-import { useAtomValue, useSetAtom } from 'jotai/react';
-import { loadable } from 'jotai/vanilla/utils';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 
 import { brainModelConfigListAtom, triggerRefetchAtom } from './state';
@@ -15,7 +15,6 @@ import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
-import { basePath } from '@/config';
 
 const { Column } = Table;
 
@@ -51,9 +50,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const openCloneModal = (config: BrainModelConfigResource) => {
     createCloneModal(config, (clonedConfig: BrainModelConfigResource) =>
       router.push(
-        `${basePath}${baseHref}?brainModelConfigId=${encodeURIComponent(
-          collapseId(clonedConfig['@id'])
-        )}`
+        `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
       )
     );
   };

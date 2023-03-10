@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import { Button } from 'antd';
 import { EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';

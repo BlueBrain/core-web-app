@@ -1,4 +1,4 @@
-import { atom } from 'jotai/vanilla';
+import { atom } from 'jotai';
 
 import sessionAtom from '@/state/session';
 import { recentlyUsedConfigIdsAtom } from '@/state/brain-model-config';

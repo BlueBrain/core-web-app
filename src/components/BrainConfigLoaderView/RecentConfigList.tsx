@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
-import { useAtomValue, useSetAtom } from 'jotai/react';
-import { loadable } from 'jotai/vanilla/utils';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 
 import { recentlyUsedConfigsAtom, triggerRefetchAtom } from './state';
-import { basePath } from '@/config';
 import useCloneConfigModal from '@/hooks/brain-config-clone-modal';
 import useRenameModal from '@/hooks/brain-config-rename-modal';
 import Link from '@/components/Link';
@@ -48,9 +47,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
     createCloneModal(currentConfig, (clonedConfig: BrainModelConfigResource) => {
       triggerRefetch();
       router.push(
-        `${basePath}${baseHref}?brainModelConfigId=${encodeURIComponent(
-          collapseId(clonedConfig['@id'])
-        )}`
+        `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
       );
     });
   };

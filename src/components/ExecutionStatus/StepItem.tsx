@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic';
-import { Atom } from 'jotai/vanilla';
-import { useAtomValue } from 'jotai/react';
-import { loadable } from 'jotai/vanilla/utils';
+import { Atom, useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
 
 import { STATUS } from '@/state/build-status';
 import { classNames } from '@/util/utils';

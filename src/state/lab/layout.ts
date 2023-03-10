@@ -1,6 +1,6 @@
 'use client';
 
-import { atom } from 'jotai/vanilla';
+import { atom } from 'jotai';
 
 export const extraPanelContainerAtom = atom<HTMLElement | null>(null);
 

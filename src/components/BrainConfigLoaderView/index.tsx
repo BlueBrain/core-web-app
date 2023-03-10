@@ -2,7 +2,7 @@
 
 import { ReactNode, Suspense, useState, useCallback } from 'react';
 import { Button, ConfigProvider } from 'antd';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai/react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
 
 import RecentConfigList from './RecentConfigList';

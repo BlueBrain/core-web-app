@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Suspense } from 'react';
 

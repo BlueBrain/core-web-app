@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { Checkbox, Spin } from 'antd';
 
-import { useSetAtom } from 'jotai/react';
+import { useSetAtom } from 'jotai';
 import StepItem from '@/components/ExecutionStatus/StepItem';
 import { statusStructure, StatusStructureItem, stepsToBuildAtom } from '@/state/build-status';
 

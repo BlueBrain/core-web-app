@@ -1,5 +1,5 @@
 import React, { useMemo, Dispatch, SetStateAction } from 'react';
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { classNames } from '@/util/utils';

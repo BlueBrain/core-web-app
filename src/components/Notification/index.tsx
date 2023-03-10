@@ -6,7 +6,7 @@ import {
   WarningFilled,
 } from '@ant-design/icons';
 import { ReactElement } from 'react';
-import { useSetAtom } from 'jotai/react';
+import { useSetAtom } from 'jotai';
 import notificationsAtom from '@/state/notifications';
 import Styles from './notification.module.css';
 

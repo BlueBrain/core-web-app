@@ -1,4 +1,4 @@
-import { atom } from 'jotai/vanilla';
+import { atom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 import _ from 'lodash';
 import sessionAtom from '../session';

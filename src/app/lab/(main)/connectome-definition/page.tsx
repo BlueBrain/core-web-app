@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import { ConfigProvider, theme } from 'antd';
 

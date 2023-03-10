@@ -1,10 +1,10 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Titillium_Web } from '@next/font/google';
+import { Titillium_Web } from 'next/font/google';
 import { ConfigProvider } from 'antd';
 import { SessionProvider } from 'next-auth/react';
-import { Provider as JotaiProvider } from 'jotai/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 import * as Toast from '@radix-ui/react-toast';
 import commonAntdTheme from '@/theme/antd';

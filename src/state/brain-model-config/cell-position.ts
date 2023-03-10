@@ -1,6 +1,6 @@
 'use client';
 
-import { atom } from 'jotai/vanilla';
+import { atom } from 'jotai';
 import { cellPositionConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 

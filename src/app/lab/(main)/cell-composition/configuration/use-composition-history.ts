@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useAtom, useSetAtom } from 'jotai/react';
+import { useAtom, useSetAtom } from 'jotai';
 import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,

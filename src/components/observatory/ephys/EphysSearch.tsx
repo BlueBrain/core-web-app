@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai/react';
+import { useAtom } from 'jotai';
 import { Input } from 'antd';
 import { searchStringAtom } from '@/state/ephys';
 

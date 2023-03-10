@@ -1,7 +1,7 @@
 'use client';
 
-import { atom } from 'jotai/vanilla';
-import { selectAtom } from 'jotai/vanilla/utils';
+import { atom } from 'jotai';
+import { selectAtom } from 'jotai/utils';
 import debounce from 'lodash/debounce';
 
 import { cellCompositionConfigIdAtom } from './index';

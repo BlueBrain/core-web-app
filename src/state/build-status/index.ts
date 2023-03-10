@@ -1,4 +1,4 @@
-import { atom, Atom } from 'jotai/vanilla';
+import { atom, Atom } from 'jotai';
 
 import {
   cellCompositionWasBuiltAtom,

@@ -6,7 +6,7 @@ import React, {
   forwardRef,
   useCallback,
 } from 'react';
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import { handleNavValueChange } from './util';
 import { brainRegionsAlternateTreeAtom } from '@/state/brain-regions';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';

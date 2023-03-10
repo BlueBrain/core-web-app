@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 
 import { WORKFLOW_CIRCUIT_BUILD_TASK_NAME } from '@/services/bbp-workflow/config';
 import { classNames } from '@/util/utils';

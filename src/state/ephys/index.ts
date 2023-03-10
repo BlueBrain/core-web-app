@@ -1,6 +1,6 @@
 'use client';
 
-import { atom } from 'jotai/vanilla';
+import { atom } from 'jotai';
 
 import sessionAtom from '../session';
 import getEphysData from '@/api/observatory';

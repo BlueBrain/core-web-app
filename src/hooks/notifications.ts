@@ -1,6 +1,6 @@
 'use client';
 
-import { useSetAtom } from 'jotai/react';
+import { useSetAtom } from 'jotai';
 import notificationsAtom from '@/state/notifications';
 
 export default function useNotification() {

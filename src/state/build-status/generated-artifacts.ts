@@ -1,4 +1,4 @@
-import { atom } from 'jotai/vanilla';
+import { atom } from 'jotai';
 
 import { cellCompositionAtom as cellCompositionPartialCircuitAtom } from '@/state/brain-model-config/cell-composition';
 import { partialCircuitAtom as cellPositionPartialCircuitAtom } from '@/state/brain-model-config/cell-position';

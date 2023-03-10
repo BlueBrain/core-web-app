@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, Suspense, useEffect, useRef } from 'react';
-import { useSetAtom } from 'jotai/react';
+import { useSetAtom } from 'jotai';
 import { usePathname } from 'next/navigation';
 import { ErrorBoundary } from 'react-error-boundary';
 

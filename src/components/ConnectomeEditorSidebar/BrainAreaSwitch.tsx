@@ -1,4 +1,4 @@
-import { useAtomValue, useSetAtom } from 'jotai/react';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { SwapOutlined } from '@ant-design/icons';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';

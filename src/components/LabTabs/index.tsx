@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 import * as Popover from '@radix-ui/react-popover';
 
 import usePathname from '@/hooks/pathname';
@@ -65,6 +65,7 @@ export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
           key={tab.href}
           href={tab.href}
           className={getTabClassName(!!pathname?.startsWith(tab.baseHref), theme)}
+          preserveLocationSearchParams
         >
           {tab.name}
         </Link>

@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/react';
+import { useAtomValue } from 'jotai';
 
 import { cellCompositionAtom } from '@/state/brain-model-config/cell-composition';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';

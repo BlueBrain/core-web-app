@@ -1,7 +1,7 @@
 'use client';
 
-import { useAtomValue } from 'jotai/react';
-import { loadable } from 'jotai/vanilla/utils';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
 
 import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai/react';
-import { loadable } from 'jotai/vanilla/utils';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
 
 import { classNames } from '@/util/utils';
 import Link from '@/components/Link';
@@ -66,6 +66,7 @@ export default function CellCompositionTabs() {
             key={tab.href}
             href={tab.href}
             className={getTabClassName(!!pathname?.startsWith(tab.href), theme)}
+            preserveLocationSearchParams
           >
             {tab.icon}
             {tab.name}

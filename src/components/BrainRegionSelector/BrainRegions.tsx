@@ -1,7 +1,7 @@
 'use client';
 
 import React, { RefObject, useRef, useState, useMemo, useCallback } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai/react';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';

@@ -20,7 +20,7 @@ function useCallbackUrl() {
   const url = new URL(window.location.href);
 
   url.pathname = pathname;
-  url.search = searchParams.toString();
+  url.search = searchParams?.toString() ?? '';
 
   return url.toString();
 }
