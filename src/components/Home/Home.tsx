@@ -19,8 +19,7 @@ export default function Home() {
       </SimplePanel>
 
       <SimplePanel className={Theme.colorPrimary7} title="Brain Simulation" link="/simulation">
-        Build your own brain configurations by customizing the cell compositions, assigning neuronal
-        models and configuring the desired connectivity pattern.{' '}
+        Run your own virtual experiments and simulations.
       </SimplePanel>
     </div>
   );
