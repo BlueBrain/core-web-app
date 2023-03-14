@@ -45,6 +45,11 @@ export interface EphysResource {
   createdAt: string;
 }
 
+export interface EphysResponse {
+  hits: EphysResource[];
+  aggs: Aggregations;
+}
+
 export interface Dimension {
   key: string;
   dimensionValues: string;
@@ -213,4 +218,16 @@ export interface StimulusEntity {
 export interface Subject {
   '@type': string;
   species: BrainRegionOrStimulusTypeOrSpecies;
+}
+
+export interface Bucket {
+  key: string;
+  doc_count: number;
+}
+
+export interface Aggregations {
+  [key: string]: {
+    buckets: Bucket[];
+    excludeOwnFilter: { buckets: Bucket[] };
+  };
 }

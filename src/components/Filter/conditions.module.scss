@@ -1,0 +1,8 @@
+.switchRoot[data-state='checked'] {
+  background-color: white;
+}
+
+.switchThumb[data-state='checked'] {
+  background-color: #003a8c;
+  transform: translateX(13px);
+}

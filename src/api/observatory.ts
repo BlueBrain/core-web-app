@@ -1,6 +1,6 @@
 import { createHeaders } from '@/util/utils';
 import { nexus } from '@/config';
-import { EphysRaw } from '@/types/observatory';
+import { EphysRaw, EphysResponse } from '@/types/observatory';
 import { to64 } from '@/util/common';
 
 const API_SEARCH = `${nexus.url}/search/query`;
@@ -19,8 +19,8 @@ export default async function getEphysData(accessToken: string, ephysQuery: obje
     body: JSON.stringify(ephysQuery),
   })
     .then((response) => response.json())
-    .then((ephysData) =>
-      ephysData.hits.hits.map((item: EphysRaw) => ({
+    .then<EphysResponse>((ephysData) => ({
+      hits: ephysData?.hits?.hits?.map((item: EphysRaw) => ({
         key: to64(`${item._source.project.label}!/!${item._id}`),
         name: item._source.name,
         description: item._source.description,
@@ -34,6 +34,7 @@ export default async function getEphysData(accessToken: string, ephysQuery: obje
           : item._source.brainRegion.label,
         subjectSpecies: item._source.subjectSpecies.label,
         contributor: item._source.createdBy.split('/').pop(),
-      }))
-    );
+      })),
+      aggs: ephysData.aggregations,
+    }));
 }

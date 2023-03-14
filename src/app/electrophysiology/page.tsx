@@ -11,6 +11,7 @@ import Sidebar from '@/components/observatory/Sidebar';
 import Link from '@/components/Link';
 import { dataAtom } from '@/state/ephys';
 import EphysSearch from '@/components/observatory/ephys/EphysSearch';
+import ControlPanel from '@/components/observatory/Filters';
 import LoadMoreButton from '@/components/observatory/ephys/LoadMoreButton';
 import { sorter, dateStringToUnix } from '@/util/common';
 import styles from '@/app/observatory/observatory.module.scss';
@@ -107,6 +108,7 @@ export default function EphysList() {
           )}
         </div>
       </section>
+      <ControlPanel />
     </div>
   );
 }
