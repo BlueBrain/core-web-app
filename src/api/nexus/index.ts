@@ -19,6 +19,7 @@ import {
   EntityResource,
   FileMetadata,
   GeneratorTaskActivityResource,
+  MicroConnectomeConfig,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -207,6 +208,24 @@ async function cloneOrCreateCellPositionConfig(id: string | null, session: Sessi
   return createResource(config, session);
 }
 
+async function cloneOrCreateMicroConnectomeConfig(id: string | null, session: Session) {
+  if (id) {
+    // clone existing config
+    const configSource = await fetchResourceSourceById<MicroConnectomeConfig>(id, session);
+    configSource['@id'] = createId('microconnectomeconfig');
+    return createResource(configSource, session);
+  }
+
+  // create a new one
+  const payload = {}; // TODO: replace with a valid default value
+  const payloadMetadata = await createJsonFile(payload, 'microconnectome-config.json', session);
+  const config = createCellPositionConfig({
+    id: createId('microconnectomeconfig'),
+    payloadMetadata,
+  });
+  return createResource(config, session);
+}
+
 export async function cloneBrainModelConfig(
   configId: string,
   name: string,
@@ -228,10 +247,15 @@ export async function cloneBrainModelConfig(
     session
   );
 
-  // await cloneOrCreateMicroConnectomeConfig
+  const microConnectomeConfigId =
+    brainModelConfigSource.configs?.cellCompositionConfig?.['@id'] ?? null;
+  const clonedMicroConnectomeConfigMetadata = await cloneOrCreateMicroConnectomeConfig(
+    microConnectomeConfigId,
+    session
+  );
 
   // cloning BrainModelConfig
-  const clonedModelConfig = {
+  const clonedModelConfig: BrainModelConfig = {
     ...brainModelConfigSource,
     '@id': createId('modelconfiguration'),
     name,
@@ -244,12 +268,14 @@ export async function cloneBrainModelConfig(
       },
       cellPositionConfig: {
         '@id': clonedCellPositionConfigMetadata['@id'],
-        '@type': ['CellCompositionConfig', 'Entity'],
+        '@type': ['CellPositionConfig', 'Entity'],
+      },
+      microConnectomeConfig: {
+        '@id': clonedMicroConnectomeConfigMetadata['@id'],
+        '@type': ['MicroConnectomeConfig', 'Entity'],
       },
     },
   };
-
-  
 
   return createResource<BrainModelConfigResource>(clonedModelConfig, session);
 }

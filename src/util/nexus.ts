@@ -76,7 +76,12 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     .join('');
 }
 
-type IdType = 'file' | 'modelconfiguration' | 'cellcompositionconfig' | 'cellpositionconfig';
+type IdType =
+  | 'file'
+  | 'modelconfiguration'
+  | 'cellcompositionconfig'
+  | 'cellpositionconfig'
+  | 'microconnectomeconfig';
 
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;
