@@ -228,6 +228,8 @@ export async function cloneBrainModelConfig(
     session
   );
 
+  // await cloneOrCreateMicroConnectomeConfig
+
   // cloning BrainModelConfig
   const clonedModelConfig = {
     ...brainModelConfigSource,
@@ -246,6 +248,8 @@ export async function cloneBrainModelConfig(
       },
     },
   };
+
+  
 
   return createResource<BrainModelConfigResource>(clonedModelConfig, session);
 }

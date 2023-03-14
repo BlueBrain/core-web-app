@@ -1,10 +1,16 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
+import { useEffect, useMemo } from 'react';
+import { useAtom, useAtomValue } from 'jotai/react';
 import Image from 'next/image';
 import { ConfigProvider, theme } from 'antd';
 
-import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
+import {
+  brainRegionsFilteredTreeAtom,
+  compositionAtom,
+  selectedPostBrainRegionsAtom,
+  selectedPreBrainRegionsAtom,
+} from '@/state/brain-regions';
 import {
   GranularityTabs,
   ModeSwitch,
@@ -17,13 +23,49 @@ import {
 } from '@/components/connectome-definition';
 import { basePath } from '@/config';
 import styles from './connectome-definition.module.css';
+import { BrainRegion } from '@/types/ontologies';
+import calculateCompositions from '@/util/composition/composition-parser';
+
+function findLeaves(tree: BrainRegion[]) {
+  const leaves: BrainRegion[] = [];
+  const queue = [...(tree ?? [])];
+
+  while (queue.length) {
+    const region = queue.shift();
+    if (region && region?.items?.length === 0) {
+      leaves.push(region);
+    }
+
+    region?.items?.forEach((r) => queue.push(r));
+  }
+
+  return leaves;
+}
 
 function ConnectomeDefinitionMain() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+  const tree = useAtomValue(brainRegionsFilteredTreeAtom);
+  const composition = useAtomValue(compositionAtom);
+  const leaves = useMemo(() => findLeaves(tree || []), [tree]);
+
+  useEffect(() => {
+    const fun = async () => {
+      if (composition)
+        console.log(
+          await calculateCompositions(
+            composition,
+            leaves.map((l) => l.id)
+          )
+        );
+    };
+
+    fun();
+  }, [composition, leaves]);
 
   return (
     <div className={styles.container}>
+      Ï
       <div className={styles.granularityTabs}>
         <GranularityTabs />
       </div>

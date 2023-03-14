@@ -14,6 +14,10 @@ export interface BrainModelConfig extends Entity {
       '@id': string;
       '@type': ['CellPositionConfig', 'Entity'];
     };
+    microConnectomeConfig?: {
+      '@id': string;
+      '@type': ['MicroConnectomeConfig', 'Entity'];
+    };
     eModelAssignmentConfig?: {
       '@id': string;
       '@type': ['EModelAssignmentConfig', 'Entity'];
@@ -36,6 +40,16 @@ export interface CellCompositionConfig extends Entity {
 }
 
 export interface CellCompositionConfigResource extends ResourceMetadata, CellCompositionConfig {}
+
+export interface MicroConnectomeConfig extends Entity {
+  name: string;
+  '@type': ['MicroConnectomeConfig', 'Entity'];
+  generatorName: 'connectome';
+  description: string;
+  distribution: Distribution;
+}
+
+export type MicroConnectomeConfigResource = ResourceMetadata & MicroConnectomeConfig;
 
 type EtypeWorkflowConfigEntry = {
   label: string;
