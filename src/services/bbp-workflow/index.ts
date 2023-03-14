@@ -1,7 +1,6 @@
 import { Session } from 'next-auth';
 
 import {
-  BBP_WORKFLOW_PING_TASK,
   BBP_WORKFLOW_AUTH_URL,
   BBP_WORKFLOW_TASK_PATH,
   WORKFLOW_TEST_TASK_NAME,
@@ -15,20 +14,6 @@ import {
   PLACEHOLDERS as UNICORE_PLACEHOLDERS,
 } from '@/services/unicore/config';
 import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
-
-export const workflowInstructions =
-  'https://bbpteam.epfl.ch/project/spaces/display/BBPNSE/Workflow#Workflow-Prerequisites';
-
-export async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
-  // check the pod is active
-  const podResponse = await fetch(BBP_WORKFLOW_PING_TASK.replace(PLACEHOLDERS.USERNAME, username), {
-    method: 'OPTIONS',
-    headers,
-  }).catch(() => ({ ok: false }));
-  if (!podResponse.ok) {
-    throw new Error('Pod is not available.');
-  }
-}
 
 export function getWorkflowAuthUrl(username: string) {
   return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
@@ -160,8 +145,6 @@ export async function launchWorkflowTask({
   const headers = new Headers({
     Authorization: `Bearer ${loginInfo.accessToken}`,
   });
-
-  await runChecksBeforeLaunching(headers, loginInfo.user.username);
 
   const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
 

@@ -10,8 +10,6 @@ import {
   getWorkflowAuthUrl,
   launchUnicoreWorkflowSetup,
   launchWorkflowTask,
-  runChecksBeforeLaunching,
-  workflowInstructions,
 } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME } from '@/services/bbp-workflow/config';
 import { useWorkflowConfig } from '@/hooks/workflow';
@@ -70,7 +68,13 @@ function useWorkflowAuth() {
         };
 
         if (isLocalhost) {
-          window.open(workflowAuthUrl, '_blank');
+          const authWindow = window.open(workflowAuthUrl, '_blank');
+
+          if (!authWindow) {
+            const msg =
+              'Auth window has been blocked. Please make sure popups are allowed and run again';
+            reject(new Error(msg));
+          }
         } else {
           hiddenIframeEl = document.createElement('iframe');
           hiddenIframeEl.setAttribute('src', workflowAuthUrl);
@@ -132,12 +136,6 @@ export default function WorkflowLauncher({
     try {
       await launchUnicoreWorkflowSetup(session.accessToken);
 
-      const headers = new Headers({
-        Authorization: `Bearer ${session.accessToken}`,
-      });
-
-      await runChecksBeforeLaunching(headers, session.user.username);
-
       // make sure the offline token is set
       await ensureWorkflowAuth(session.user.username);
 
@@ -155,19 +153,8 @@ export default function WorkflowLauncher({
 
       notification.open({
         message: 'Error launching workflow',
-        description: (
-          <div>
-            <div>{e?.message || ''}</div>
-            <div>Please run &quot;bbp-workflow version&quot; on your terminal.</div>
-            <div>
-              Instructions: [
-              <a href={workflowInstructions} target="_blank" rel="noreferrer">
-                here
-              </a>
-              ]
-            </div>
-          </div>
-        ),
+        description: e?.message ?? '',
+        duration: null,
       });
     }
     onLaunchingChange(false);
