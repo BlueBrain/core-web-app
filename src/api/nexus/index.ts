@@ -6,6 +6,7 @@ import {
   composeUrl,
   createCellCompositionConfig,
   createCellPositionConfig,
+  ComposeUrlParams,
   createId,
   expandId,
 } from '@/util/nexus';
@@ -104,8 +105,8 @@ export function updateJsonFileByUrl(url: string, data: any, filename: string, se
   }).then<FileMetadata>((res) => res.json());
 }
 
-export function fetchResourceById<T>(id: string, session: Session) {
-  const url = composeUrl('resource', id);
+export function fetchResourceById<T>(id: string, session: Session, options?: ComposeUrlParams) {
+  const url = composeUrl('resource', id, options);
 
   return fetch(url, {
     headers: createHeaders(session.accessToken),

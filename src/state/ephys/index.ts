@@ -7,11 +7,11 @@ import getEphysData from '@/api/observatory';
 import { EphysResource } from '@/types/observatory';
 import { getEphysDataQuery } from '@/queries/es';
 
-export const pageSizeAtom = atom(10);
+export const pageSizeAtom = atom<number>(10);
 
-export const pageNumberAtom = atom(1);
+export const pageNumberAtom = atom<number>(1);
 
-export const searchStringAtom = atom('');
+export const searchStringAtom = atom<string>('');
 
 export const queryAtom = atom<object>((get) => {
   const searchString = get(searchStringAtom);

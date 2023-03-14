@@ -15,7 +15,7 @@
     display: inline-flex;
     flex-direction: column;
     a {
-      @apply relative -left-[32px] top-20 -rotate-90;
+      @apply relative -left-[38px] top-20 -rotate-90;
     }
     button {
       @apply ml-[2px] flex justify-center;
@@ -53,11 +53,11 @@
 .expanded {
   @apply px-3 w-96;
   > div {
-    @apply flex flex-row-reverse w-72;
+    @apply flex flex-row-reverse w-72 place-content-start;
   }
   div {
     > a {
-      @apply text-2xl relative -left-[60px] self-end rotate-1;
+      @apply text-2xl self-end rotate-1;
     }
     button {
       @apply left-[20px];
@@ -125,9 +125,6 @@
   }
   @media (min-width: 0px) and (max-width: 1600px) {
     > div {
-      > a {
-        @apply text-2xl relative -left-[70px] self-end rotate-1;
-      }
       button {
         @apply left-[10px];
       }

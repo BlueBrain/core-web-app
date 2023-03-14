@@ -1,0 +1,195 @@
+.trace-selector-group.ant-checkbox-wrapper {
+  padding-right: 4px;
+  padding-left: 4px;
+  padding-bottom: 5px;
+  margin-left: 0 !important;
+}
+
+.trace-selector-group .trace-selector-cover {
+  background-color: #eeeeee;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  display: block;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #eeeeee;
+  opacity: 1;
+}
+.trace-selector-group .ant-checkbox-inner {
+  width: 22px;
+  height: 22px;
+}
+
+.trace-selector-group:hover .ant-checkbox .trace-selector-cover {
+  opacity: 0;
+}
+
+.trace-repetitions {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.ephys-container {
+  @apply flex flex-row;
+}
+
+.stimuli-list {
+  margin: 0.5em 0;
+  padding: 1em;
+  border-radius: 0.5em;
+  @apply inline-flex pr-5 mr-20;
+}
+.repetition-list {
+  max-width: 580px;
+  padding: 1em;
+  border-radius: 0.5em;
+}
+
+.trace-block-padding {
+  padding: 2em;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.mb-1em {
+  margin-bottom: 1em;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.p-2em {
+  padding: 2em;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.stimulus-select {
+  width: 200px;
+}
+
+.trace-divider {
+  color: #00000008;
+}
+
+.option-select {
+  margin: 10px;
+  min-width: 260px;
+}
+
+.trace-load-more-btn-container {
+  margin-bottom: 30px;
+}
+
+.ephys-plot-container {
+  display: flex;
+  flex-wrap: wrap;
+  @apply border border-solid border-red-700;
+}
+
+.sweep-selector-container {
+  margin: 10px 6px;
+}
+
+.recording-plot {
+  margin-top: 20px;
+}
+
+.sweep-selector-label {
+  margin-left: 4px;
+}
+
+.sweep-selector-reset-btn {
+  margin-left: 16px;
+}
+
+.sweep-selector-reset-btn > button {
+  margin-top: calc(0.2em - 1px);
+  vertical-align: top;
+}
+
+.interactive-view-btn > .repetition-label {
+  display: none !important;
+}
+
+.trace-type-label {
+  transform: rotate3d(0, 0, 1, -90deg) translate(-50%, -22px);
+  transform-origin: left bottom;
+  display: none;
+  height: 0;
+  margin: 0;
+}
+
+.repetition-list:nth-child(1) .trace-type-label {
+  display: block;
+}
+
+/* ANT Design SM breakpoint */
+@media (max-width: 768px) {
+  .stimuli-list {
+    padding: 0.4em;
+  }
+
+  .repetition-list {
+    padding: 0.4em;
+    flex: 50% 0 0;
+  }
+
+  .interactive-view-btn {
+    display: block !important;
+    width: 100%;
+  }
+
+  .repetition-label {
+    display: none !important;
+  }
+
+  .generic-label {
+    display: none !important;
+  }
+
+  .interactive-view-btn > .repetition-label {
+    display: inline !important;
+  }
+
+  .repetition-list:nth-child(1) .trace-type-label {
+    display: none;
+  }
+}
+
+/* ANT Design SM breakpoint */
+@media (min-width: 576px) {
+  .stimuli-list {
+    padding: 1em;
+  }
+
+  .repetition-list {
+    flex: 33% 0 0;
+  }
+
+  .repetition-list:nth-child(3n + 1) .trace-type-label {
+    display: block;
+  }
+}
+
+/* ANT Design LG breakpoint */
+@media (min-width: 992px) {
+  .repetition-list {
+    flex: 25% 0 0;
+  }
+
+  .repetition-list:nth-child(3n + 1) .trace-type-label {
+    display: none;
+  }
+
+  .repetition-list:nth-child(4n + 1) .trace-type-label {
+    display: block;
+  }
+}

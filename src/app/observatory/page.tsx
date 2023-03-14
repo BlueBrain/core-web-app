@@ -30,7 +30,7 @@ export default function Observatory() {
         <ObservatoryNavItem
           title="Experimental Data"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
-          url="/experimental-data"
+          url="/electrophysiology"
         />
       </div>
       <div className={styles.reconstructions}>

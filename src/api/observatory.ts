@@ -21,7 +21,7 @@ export default async function getEphysData(accessToken: string, ephysQuery: obje
     .then((response) => response.json())
     .then((ephysData) =>
       ephysData.hits.hits.map((item: EphysRaw) => ({
-        key: to64(item._source._self),
+        key: to64(`${item._source.project.label}!/!${item._id}`),
         name: item._source.name,
         description: item._source.description,
         id: item._id,

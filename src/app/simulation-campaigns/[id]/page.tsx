@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 
 import { useSession } from 'next-auth/react';
-import Link from '@/components/Link';
-import { Dimension, Campaign } from '@/types/observatory';
+import { Dimension, Campaign, SideLink } from '@/types/observatory';
 import CampaignDetails from '@/components/observatory/CampaignDetails';
 import DimensionFilter from '@/components/observatory/DimensionFilter';
 import SpikeRaster from '@/components/observatory/SpikeRaster';
@@ -96,7 +95,9 @@ function Observatory() {
       }).then((res) => res.json());
 
       const responses = await Promise.all([reportInfo]);
-      setReportData(responses[0].results.bindings);
+
+      if (responses && responses[0]?.results?.bindings)
+        setReportData(responses[0].results.bindings);
     }
     fetchReportData();
   }, [campaign]);
@@ -160,19 +161,11 @@ function Observatory() {
       status: 'Completed',
     },
   ];
+  const links: Array<SideLink> = [{ url: '/simulation-campaigns', title: 'Simulation Campaigns' }];
 
   return (
     <div className="flex h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar />
-      <div className="bg-primary-8 text-light w-10">
-        <Link
-          href="/simulation-campaigns"
-          className="block text-sm"
-          style={{ transform: 'translate(-37%, 100px) rotate(-90deg)', width: 'max-content' }}
-        >
-          Simulation Campaign
-        </Link>
-      </div>
+      <Sidebar links={links} />
 
       <div className="w-full h-full flex flex-col">
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}

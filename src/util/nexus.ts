@@ -16,7 +16,7 @@ export function expandId(collapsedId: string) {
 
 type ApiGroupType = 'resource' | 'file' | 'view';
 
-type ComposeUrlParams = {
+export type ComposeUrlParams = {
   schema?: string | null;
   rev?: number;
   source?: boolean;

@@ -15,3 +15,5 @@ export const dateStringToUnix = (a: string) => Math.floor(new Date(a).getTime() 
 export const from64 = (str: string): string => Buffer.from(str, 'base64').toString('binary');
 
 export const to64 = (str: string): string => Buffer.from(str, 'binary').toString('base64');
+
+export const isEmpty = (obj: Object) => Object.keys(obj).length === 0;

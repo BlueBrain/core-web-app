@@ -181,7 +181,7 @@ export default function Observatory() {
   ];
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
+    <div className="flex min-h-screen z-0" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <section className="w-full">
         <div className="flex py-8">

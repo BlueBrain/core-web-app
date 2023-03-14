@@ -2,10 +2,13 @@
 
 import { Table } from 'antd';
 import { useAtomValue } from 'jotai';
+import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
+import { basePath } from '@/config';
 import { EphysResource } from '@/types/observatory';
 import Sidebar from '@/components/observatory/Sidebar';
+import Link from '@/components/Link';
 import { dataAtom } from '@/state/ephys';
 import EphysSearch from '@/components/observatory/ephys/EphysSearch';
 import LoadMoreButton from '@/components/observatory/ephys/LoadMoreButton';
@@ -34,6 +37,9 @@ const columns: ColumnProps<EphysResource>[] = [
     dataIndex: 'name',
     key: 'name',
     className: 'text-primary-7 capitalize',
+    render: (text, record) => (
+      <Link href={`${basePath}/electrophysiology/${record.key}`}>{text}</Link>
+    ),
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
@@ -60,8 +66,9 @@ const columns: ColumnProps<EphysResource>[] = [
   },
 ];
 
-export default function ExperimentalDataList() {
+export default function EphysList() {
   const data = useAtomValue(dataAtom);
+  const router = useRouter();
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
@@ -69,7 +76,7 @@ export default function ExperimentalDataList() {
       <section className="w-full">
         <div className="flex py-8">
           <div className="ml-10 text-primary-7 text-2xl font-bold flex-auto w-10/12">
-            Experimental Data
+            Neuron Electrophysiology Data
           </div>
           <div className="mr-10">
             <EphysSearch />
@@ -85,8 +92,15 @@ export default function ExperimentalDataList() {
                 rowKey="key"
                 dataSource={data}
                 columns={columns}
+                rowClassName={styles.tableRow}
                 className={styles.table}
                 pagination={false}
+                onRow={(record) => ({
+                  onClick: (e) => {
+                    e.preventDefault();
+                    router.push(`${basePath}/electrophysiology/${record.key}`);
+                  },
+                })}
               />
               <LoadMoreButton />
             </>
