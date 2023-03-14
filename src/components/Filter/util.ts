@@ -79,6 +79,8 @@ export function getFillOptionsEffect(field: string) {
       field
     );
 
-    setOptions(optionsFromBuckets);
+    if (optionsFromBuckets) {
+      setOptions(optionsFromBuckets);
+    }
   };
 }

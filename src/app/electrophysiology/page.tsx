@@ -78,7 +78,7 @@ function EphysList() {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
+    <>
       <Sidebar />
       <section className="w-full">
         <div className="flex py-8">
@@ -114,20 +114,22 @@ function EphysList() {
           )}
         </div>
       </section>
-      <ControlPanel />
-    </div>
+    </>
   );
 }
 
 function EphysListPage() {
   return (
-    <Suspense
-      fallback={
-        <Spin style={{ display: 'table', width: '100%', height: '100vh' }} indicator={antIcon} />
-      }
-    >
-      <EphysList />
-    </Suspense>
+    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
+      <Suspense
+        fallback={
+          <Spin style={{ display: 'table', width: '100%', height: '100vh' }} indicator={antIcon} />
+        }
+      >
+        <EphysList />
+      </Suspense>
+      <ControlPanel />
+    </div>
   );
 }
 
