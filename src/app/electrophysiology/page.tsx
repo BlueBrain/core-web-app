@@ -78,49 +78,43 @@ function EphysList() {
   const router = useRouter();
 
   return (
-    <>
-      <Sidebar />
-      <section className="w-full">
-        <div className="flex py-8">
-          <div className="ml-10 text-primary-7 text-2xl font-bold flex-auto w-10/12">
-            Neuron Electrophysiology Data
-          </div>
-          <div className="mr-10">
-            <EphysSearch />
-          </div>
+    <section className="w-full">
+      <div className="flex py-8">
+        <div className="ml-10 text-primary-7 text-2xl font-bold flex-auto w-10/12">
+          Neuron Electrophysiology Data
         </div>
-        <div
-          className="bg-white w-full h-80 overflow-scroll"
-          style={{ height: 'calc(100vh - 100px)' }}
-        >
-          {data && (
-            <>
-              <Table
-                rowKey="key"
-                dataSource={data}
-                columns={columns}
-                rowClassName={styles.tableRow}
-                className={styles.table}
-                pagination={false}
-                onRow={(record) => ({
-                  onClick: (e) => {
-                    e.preventDefault();
-                    router.push(`/electrophysiology/${record.key}`);
-                  },
-                })}
-              />
-              <LoadMoreButton />
-            </>
-          )}
+        <div className="mr-10">
+          <EphysSearch />
         </div>
-      </section>
-    </>
+      </div>
+      <div
+        className="bg-white w-full h-80 overflow-scroll"
+        style={{ height: 'calc(100vh - 100px)' }}
+      >
+        <Table
+          rowKey="key"
+          dataSource={data}
+          columns={columns}
+          rowClassName={styles.tableRow}
+          className={styles.table}
+          pagination={false}
+          onRow={(record) => ({
+            onClick: (e) => {
+              e.preventDefault();
+              router.push(`/electrophysiology/${record.key}`);
+            },
+          })}
+        />
+        <LoadMoreButton />
+      </div>
+    </section>
   );
 }
 
 function EphysListPage() {
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
+      <Sidebar />
       <Suspense
         fallback={
           <Spin style={{ display: 'table', width: '100%', height: '100vh' }} indicator={antIcon} />
