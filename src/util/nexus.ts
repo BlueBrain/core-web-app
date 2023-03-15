@@ -1,7 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { nexus } from '@/config';
-import { CellCompositionConfig, CellPositionConfig, FileMetadata } from '@/types/nexus';
+import {
+  CellCompositionConfig,
+  CellPositionConfig,
+  FileMetadata,
+  MicroConnectomeConfig,
+} from '@/types/nexus';
 import { PartialBy } from '@/types/common';
 
 export function collapseId(nexusId: string) {
@@ -141,6 +146,40 @@ export function createCellPositionConfig({
     '@id': id,
     name,
     generatorName: 'me_type_property',
+    description: '',
+
+    distribution: {
+      '@type': 'DataDownload',
+      name: payloadMetadata._filename,
+      encodingFormat: payloadMetadata._mediaType,
+      contentSize: {
+        unitCode: 'bytes',
+        value: payloadMetadata._bytes,
+      },
+      contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+      digest: {
+        algorithm: payloadMetadata._digest._algorithm,
+        value: payloadMetadata._digest._value,
+      },
+    },
+  };
+}
+
+export function createMicroconnectomeConfig({
+  id,
+  name = 'Microconnectome configuration',
+  payloadMetadata,
+}: {
+  id?: string;
+  name?: string;
+  payloadMetadata: FileMetadata;
+}): PartialBy<MicroConnectomeConfig, '@id'> {
+  return {
+    '@context': 'https://bbp.neuroshapes.org',
+    '@type': ['MicroConnectomeConfig', 'Entity'],
+    '@id': id,
+    name,
+    generatorName: 'connectome',
     description: '',
 
     distribution: {
