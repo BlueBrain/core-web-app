@@ -5,26 +5,35 @@ import { CheckboxOption, CheckListFilter, Filter, OptionsData } from './types';
  * Transforms an ElasticSearch aggregation into an array of CheckList options.
  * @param {OptionsData} data - The aggregations object whose buckets will be used as CheckList options.
  * @param {CheckListFilter} filter - The filter object that contains any previously selected options.
- * @param {string} field - Ex. "createdBy", "eType", etc.
  */
 export function createOptionsFromBuckets(
   data: OptionsData,
-  { value: selectedOptions }: CheckListFilter,
-  field: string
+  { value: selectedOptions }: CheckListFilter
 ) {
-  const defaultBuckets = data[field as keyof OptionsData]?.buckets;
-  const withOtherFilters = data[field as keyof OptionsData]?.excludeOwnFilter?.buckets;
+  const defaultBuckets = data?.buckets;
+  const withOtherFilters = data?.excludeOwnFilter?.buckets;
   const buckets = withOtherFilters?.length ? withOtherFilters : defaultBuckets;
 
-  return buckets?.map(({ key, doc_count: count }: { key: string; doc_count: number }) => {
-    const existingIndex = selectedOptions.findIndex((selectedKey) => selectedKey === key);
-
-    return {
-      checked: existingIndex !== -1,
-      count,
+  return buckets?.map(
+    ({
       key,
-    };
-  }) as CheckboxOption[];
+      key_as_string: keyAsString,
+      doc_count: count,
+    }: {
+      key: string;
+      key_as_string: string;
+      doc_count: number;
+    }) => {
+      const existingIndex = selectedOptions.findIndex((selectedKey) => selectedKey === key);
+
+      return {
+        checked: existingIndex !== -1,
+        count,
+        key,
+        keyAsString,
+      };
+    }
+  ) as CheckboxOption[];
 }
 
 /**
@@ -75,8 +84,7 @@ export function getFillOptionsEffect(field: string) {
       data,
       filters.find(
         ({ field: itemField }: { field: string }) => itemField === field
-      ) as CheckListFilter,
-      field
+      ) as CheckListFilter
     );
 
     if (optionsFromBuckets) {

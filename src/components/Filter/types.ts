@@ -21,16 +21,16 @@ export interface CheckboxOption {
   checked: string | boolean;
   count: number | null;
   key: string;
+  keyAsString: string;
 }
 
-type Bucket = {
-  key: string;
+export type Bucket = {
   doc_count: number;
+  key: string;
+  key_as_string: string;
 };
 
 export interface OptionsData {
-  [key: string]: {
-    buckets: Bucket[];
-    excludeOwnFilter: { buckets: Bucket[] };
-  };
+  buckets: Bucket[];
+  excludeOwnFilter: { buckets: Bucket[] };
 }

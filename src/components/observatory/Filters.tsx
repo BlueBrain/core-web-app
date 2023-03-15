@@ -21,9 +21,10 @@ function Filters() {
 
   const createdByContent = ({ filters, setFilters }: FilterProps) => (
     <CheckList
-      data={(aggs.state === 'hasData' && aggs.data ? aggs.data : []) as OptionsData}
+      data={(aggs.state === 'hasData' && aggs.data ? aggs.data.createdBy : []) as OptionsData}
       field="createdBy"
       filters={filters}
+      formatter={({ key }) => key[1]}
       options={contributors}
       setFilters={setFilters}
       setOptions={setContributors}
@@ -32,7 +33,7 @@ function Filters() {
 
   const eTypeContent = ({ filters, setFilters }: FilterProps) => (
     <CheckList
-      data={(aggs.state === 'hasData' && aggs.data ? aggs.data : []) as OptionsData}
+      data={(aggs.state === 'hasData' && aggs.data ? aggs.data.eType : []) as OptionsData}
       field="eType"
       filters={filters}
       options={eTypes}
