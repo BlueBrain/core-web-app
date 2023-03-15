@@ -23,9 +23,16 @@ export default function getEphysDataQuery(
 
   // Used for aggregations
   const createdByTerms = {
-    terms: {
-      field: 'createdBy.keyword',
-      // min_doc_count: 0,
+    multi_terms: {
+      terms: [
+        {
+          field: 'contributors.identifier.keyword',
+        },
+        {
+          field: 'contributors.label.keyword',
+        },
+      ],
+      size: 100,
     },
   };
   // Prepare filter, if one exists.
@@ -42,7 +49,7 @@ export default function getEphysDataQuery(
   const eTypeTerms = {
     terms: {
       field: 'eType.label.keyword',
-      // min_doc_count: 0,
+      size: 100,
     },
   };
   // Prepare filter, if one exists.
