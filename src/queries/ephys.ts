@@ -7,10 +7,10 @@ export default function getEphysDataQuery(
   filters: Filter[],
   searchString: string = ''
 ) {
-  const createdBy = filters.find(({ field }) => field === 'createdBy');
-  const createdByFilter = (createdBy as CheckListFilter).value.length && {
+  const contributor = filters.find(({ field }) => field === 'contributor');
+  const contributorFilter = (contributor as CheckListFilter).value.length && {
     terms: {
-      'createdBy.keyword': createdBy?.value,
+      'contributors.identifier.keyword': contributor?.value, // "contributors" not "contributor"
     },
   };
 
@@ -22,7 +22,7 @@ export default function getEphysDataQuery(
   };
 
   // Used for aggregations
-  const createdByTerms = {
+  const contributorTerms = {
     multi_terms: {
       terms: [
         {
@@ -36,11 +36,11 @@ export default function getEphysDataQuery(
     },
   };
   // Prepare filter, if one exists.
-  const createdByAggs = {
+  const contributorAggs = {
     filter: eTypeFilter,
     aggs: {
       excludeOwnFilter: {
-        ...createdByTerms,
+        ...contributorTerms,
       },
     },
   };
@@ -54,7 +54,7 @@ export default function getEphysDataQuery(
   };
   // Prepare filter, if one exists.
   const eTypeAggs = {
-    filter: createdByFilter,
+    filter: contributorFilter,
     aggs: {
       excludeOwnFilter: {
         ...eTypeTerms,
@@ -89,17 +89,17 @@ export default function getEphysDataQuery(
       },
     },
     aggs: {
-      createdBy: {
-        ...((eType as CheckListFilter).value.length ? createdByAggs : createdByTerms),
+      contributor: {
+        ...((eType as CheckListFilter).value.length ? contributorAggs : contributorTerms),
       },
       eType: {
-        ...((createdBy as CheckListFilter).value.length ? eTypeAggs : eTypeTerms),
+        ...((contributor as CheckListFilter).value.length ? eTypeAggs : eTypeTerms),
       },
     },
-    ...([createdByFilter, eTypeFilter].filter((n) => n).length && {
+    ...([contributorFilter, eTypeFilter].filter((n) => n).length && {
       post_filter: {
         bool: {
-          filter: [createdByFilter, eTypeFilter].filter((n) => n), // Filter out "empty" vals
+          filter: [contributorFilter, eTypeFilter].filter((n) => n), // Filter out "empty" vals
         },
       },
     }),

@@ -21,7 +21,6 @@ export interface CheckboxOption {
   checked: string | boolean;
   count: number | null;
   key: string;
-  keyAsString: string;
 }
 
 export type Bucket = {

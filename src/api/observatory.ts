@@ -32,7 +32,7 @@ export default async function getEphysData(accessToken: string, ephysQuery: obje
         brainRegion: Array.isArray(item._source.brainRegion.label)
           ? item._source.brainRegion.label.join(', ')
           : item._source.brainRegion.label,
-        subjectSpecies: item._source.subjectSpecies.label,
+        subjectSpecies: item._source.subjectSpecies?.label,
         contributor: item._source.createdBy.split('/').pop(),
       })),
       aggs: ephysData.aggregations,

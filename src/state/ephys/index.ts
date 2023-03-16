@@ -15,7 +15,7 @@ export const pageNumberAtom = atom<number>(1);
 export const searchStringAtom = atom<string>('');
 
 export const filtersAtom = atom<Filter[]>([
-  { field: 'createdBy', type: 'checkList', value: [] },
+  { field: 'contributor', type: 'checkList', value: [] },
   { field: 'eType', type: 'checkList', value: [] },
 ]);
 
