@@ -9,6 +9,7 @@ import {
   ComposeUrlParams,
   createId,
   expandId,
+  createMicroconnectomeConfig,
 } from '@/util/nexus';
 import {
   BrainModelConfig,
@@ -219,7 +220,7 @@ async function cloneOrCreateMicroConnectomeConfig(id: string | null, session: Se
   // create a new one
   const payload = {}; // TODO: replace with a valid default value
   const payloadMetadata = await createJsonFile(payload, 'microconnectome-config.json', session);
-  const config = createCellPositionConfig({
+  const config = createMicroconnectomeConfig({
     id: createId('microconnectomeconfig'),
     payloadMetadata,
   });
