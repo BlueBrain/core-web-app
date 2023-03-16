@@ -101,6 +101,8 @@ export type CellCompositionConfigPayload = {
   };
 };
 
+export type MicroConnectomeConfigPayload = {};
+
 export interface CellPositionConfig extends Entity {
   name: string;
   description: string;
