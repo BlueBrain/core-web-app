@@ -225,16 +225,18 @@ export const compositionHistoryIndexAtom = atom<number>(0);
 export const setSelectedBrainRegionAtom = atom(
   null,
   (
-    get,
+    _get,
     set,
     selectedBrainRegionId: string,
     selectedBrainRegionTitle: string,
-    selectedBrainRegionLeaves: string[] | null
+    selectedBrainRegionLeaves: string[] | null,
+    selectedBrainRegionRepresentedInAnnotation: boolean
   ) => {
     set(selectedBrainRegionAtom, {
       id: selectedBrainRegionId,
       title: selectedBrainRegionTitle,
       leaves: selectedBrainRegionLeaves,
+      representedInAnnotation: selectedBrainRegionRepresentedInAnnotation,
     });
     set(compositionHistoryAtom, []);
     set(compositionHistoryIndexAtom, 0);
@@ -354,6 +356,6 @@ export const computeAndSetCompositionAtom = atom(
   }
 );
 
-export const setCompositionAtom = atom(null, (get, set, composition: Composition) => {
+export const setCompositionAtom = atom(null, (_get, set, composition: Composition) => {
   set(setUpdatedCompositionAtom, composition);
 });

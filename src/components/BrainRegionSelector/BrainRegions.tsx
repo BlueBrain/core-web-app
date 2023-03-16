@@ -176,12 +176,24 @@ export default function BrainRegions() {
               value={navValue}
             />
             <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
-              {({ colorCode, id, isExpanded, title, leaves, trigger, content, view }) => (
+              {({
+                colorCode,
+                id,
+                isExpanded,
+                title,
+                leaves,
+                trigger,
+                content,
+                view,
+                representedInAnnotation,
+              }) => (
                 <NavTitle
                   className="uppercase text-lg"
                   colorCode={colorCode}
                   id={id}
-                  onClick={() => leaves && setSelectedBrainRegion(id, title, leaves)}
+                  onClick={() =>
+                    leaves && setSelectedBrainRegion(id, title, leaves, representedInAnnotation)
+                  }
                   title={title}
                   isExpanded={isExpanded}
                   trigger={trigger}
@@ -198,10 +210,18 @@ export default function BrainRegions() {
                     content: nestedContent,
                     leaves: nestedLeaves,
                     view: nestedView,
+                    representedInAnnotation: nestedRepresentedInAnnotation,
                   }) => (
                     <NavTitle
                       className="capitalize text-base"
-                      onClick={() => setSelectedBrainRegion(nestedId, nestedTitle, nestedLeaves)}
+                      onClick={() =>
+                        setSelectedBrainRegion(
+                          nestedId,
+                          nestedTitle,
+                          nestedLeaves,
+                          nestedRepresentedInAnnotation
+                        )
+                      }
                       colorCode={nestedColorCode}
                       id={nestedId}
                       title={nestedTitle}

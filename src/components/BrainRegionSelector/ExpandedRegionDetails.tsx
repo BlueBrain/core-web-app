@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import _ from 'lodash';
-import CollapsedRegionDetails from './CollapsedRegionDetails';
 import { getMetric } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
@@ -18,7 +17,7 @@ import {
   densityOrCountAtom,
   selectedBrainRegionAtom,
 } from '@/state/brain-regions';
-import { BrainRegionIcon, LockIcon, LockOpenIcon } from '@/components/icons';
+import { BrainRegionIcon, LockIcon, LockOpenIcon, MissingData } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
 import IconButton from '@/components/IconButton';
 import HorizontalSlider from '@/components/HorizontalSlider';
@@ -322,12 +321,69 @@ function MeTypeDetails({
   );
 }
 
-export default function RegionDetails({ editMode }: { editMode: boolean }) {
+function Title({ title, onClick }: { title?: string; onClick?: () => void }) {
+  return (
+    <div className="flex justify-between items-start mb-5">
+      <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
+        <BrainRegionIcon style={{ height: '1em' }} />
+        <span className="text-secondary-4">{title}</span>
+      </div>
+      <Button
+        type="text"
+        icon={<MinusOutlined style={{ color: 'white' }} />}
+        onClick={onClick}
+        style={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}
+      />
+    </div>
+  );
+}
+
+function UnitsToggle({
+  isChecked,
+  onChange,
+}: {
+  isChecked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-row gap-2 py-4 border-y border-primary-6">
+        <div className="flex flex-row gap-3">
+          <VerticalSwitch isChecked={isChecked} onChange={onChange} />
+          <div className="flex flex-col gap-1 text-primary-1">
+            <div>Densities [{metricToUnit.density}]</div>
+            <div>Counts [{metricToUnit.count}]</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NoVolumeAnnotations() {
+  return (
+    <div className="flex flex-col gap-3 text-center mt-48">
+      <MissingData className="w-full" style={{ color: '#fff' }} />
+      <h3 className="font-semibold text-base text-white">
+        No volume annotations
+        <br />
+        available for this brain region
+      </h3>
+    </div>
+  );
+}
+
+function ExpandedRegionDetails({
+  editMode,
+  setIsSidebarExpanded,
+}: {
+  editMode: boolean;
+  setIsSidebarExpanded: Dispatch<SetStateAction<boolean>>;
+}) {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
-  const [isMeTypeOpen, setisMeTypeOpen] = useState<boolean>(true);
-  const [meTypeNavValue, setNavValue] = useState<NavValue>({});
   const composition = useAtomValue(analysedCompositionAtom);
+  const [meTypeNavValue, setNavValue] = useState<NavValue>({});
 
   const onValueChange = useCallback(
     (newValue: string[], path: string[]) => {
@@ -338,57 +394,43 @@ export default function RegionDetails({ editMode }: { editMode: boolean }) {
     [meTypeNavValue, setNavValue]
   );
 
-  return (
-    brainRegion && (
-      <div className="bg-primary-7 flex h-screen overflow-hidden">
-        {!isMeTypeOpen && brainRegion && (
-          <CollapsedRegionDetails title={brainRegion?.title} setisMeTypeOpen={setisMeTypeOpen} />
-        )}
-        {isMeTypeOpen && (
-          <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 min-w-[300px]">
-            <div className="flex justify-between mb-5">
-              <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
-                <BrainRegionIcon style={{ height: '1em' }} />
-                <span className="text-secondary-4">{brainRegion?.title}</span>
-              </div>
-              <Button
-                className="p-2"
-                type="text"
-                icon={<MinusOutlined style={{ color: 'white' }} />}
-                onClick={() => setisMeTypeOpen(false)}
-              />
-            </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-row gap-2 py-4 border-y border-primary-6">
-                <div className="flex flex-row gap-3">
-                  <VerticalSwitch
-                    isChecked={densityOrCount === 'count'}
-                    onChange={(checked: boolean) => {
-                      const toSet = checked ? 'count' : 'density';
-                      // @ts-ignore
-                      setDensityOrCount(toSet);
-                    }}
-                  />
-                  <div className="flex flex-col gap-1 text-primary-1">
-                    <div>Densities [{metricToUnit.density}]</div>
-                    <div>Counts [{metricToUnit.count}]</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {composition ? (
-              <MeTypeDetails
-                neuronComposition={composition.totalComposition.neuron}
-                meTypeNavValue={meTypeNavValue}
-                onValueChange={onValueChange}
-                editMode={editMode}
-              />
-            ) : (
-              <div>Composition could not be calculated</div>
-            )}
-          </div>
-        )}
-      </div>
-    )
+  const title = useMemo(
+    () => <Title title={brainRegion?.title} onClick={() => setIsSidebarExpanded(false)} />,
+    [brainRegion?.title, setIsSidebarExpanded]
+  );
+
+  if (!brainRegion) {
+    return null;
+  }
+
+  return brainRegion.representedInAnnotation ? (
+    <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 min-w-[300px]">
+      {title}
+      <UnitsToggle
+        isChecked={densityOrCount === 'count'}
+        onChange={(checked: boolean) => {
+          const toSet = checked ? 'count' : 'density';
+
+          setDensityOrCount(toSet);
+        }}
+      />
+      {composition ? (
+        <MeTypeDetails
+          neuronComposition={composition.totalComposition.neuron}
+          meTypeNavValue={meTypeNavValue}
+          onValueChange={onValueChange}
+          editMode={editMode}
+        />
+      ) : (
+        <div>Composition could not be calculated</div>
+      )}
+    </div>
+  ) : (
+    <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 w-[300px]">
+      {title}
+      <NoVolumeAnnotations />
+    </div>
   );
 }
+
+export default ExpandedRegionDetails;

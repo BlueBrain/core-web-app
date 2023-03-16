@@ -1,13 +1,14 @@
 'use client';
 
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
 import { ErrorBoundary } from 'react-error-boundary';
 import { usePathname } from 'next/navigation';
-import { RegionDetailsSidebar } from '@/components/BrainRegionSelector';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import {
+  CollapsedRegionDetailsSidebar,
+  ExpandedRegionDetailsSidebar,
+} from '@/components/BrainRegionSelector';
 import { extraPanelContainerAtom } from '@/state/lab/layout';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import CellCompositionTabs from '@/components/CellCompositionTabs';
@@ -17,19 +18,28 @@ type CellCompositionLayoutProps = {
 };
 
 export default function CellCompositionLayout({ children }: CellCompositionLayoutProps) {
-  const brainRegionLoadable = useAtomValue(loadable(selectedBrainRegionAtom));
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const router = usePathname();
   const brainRegionDetails = useMemo(() => {
     if (!extraPanelContainer) return null;
 
     return createPortal(
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <RegionDetailsSidebar editMode={!!router?.includes('/configuration')} />
+        <div className="bg-primary-7 flex h-screen overflow-hidden">
+          {!isSidebarExpanded ? (
+            <CollapsedRegionDetailsSidebar setIsSidebarExpanded={setIsSidebarExpanded} />
+          ) : (
+            <ExpandedRegionDetailsSidebar
+              editMode={!!router?.includes('/configuration')}
+              setIsSidebarExpanded={setIsSidebarExpanded}
+            />
+          )}
+        </div>
       </ErrorBoundary>,
       extraPanelContainer
     );
-  }, [brainRegionLoadable.state, extraPanelContainer, router]);
+  }, [extraPanelContainer, isSidebarExpanded, router]);
 
   return (
     <>

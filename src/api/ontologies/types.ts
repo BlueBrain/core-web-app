@@ -14,6 +14,7 @@ export type BrainRegionNexus = {
   hasLeafRegionPart: string[] | string;
   hasLayerPart: string[];
   hasPart: string[];
+  representedInAnnotation: boolean;
 };
 type BrainLocationNexus = {
   brainRegion: BrainRegionNexus;

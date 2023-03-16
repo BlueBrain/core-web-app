@@ -53,6 +53,7 @@ const serializeBrainRegions = (
         hasPart: brainRegionPayload.hasPart,
         title: brainRegionPayload.prefLabel,
         leaves: sanitizeLeaves(brainRegionPayload),
+        representedInAnnotation: brainRegionPayload.representedInAnnotation,
       });
     }
   });
