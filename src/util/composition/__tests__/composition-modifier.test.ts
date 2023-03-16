@@ -1,8 +1,16 @@
 import _ from 'lodash';
 import gustatory from './data/gustatory-layer-1.json';
+import testComposition from './data/test-composition.json';
 import { calculateNewExtendedNodeId } from '@/util/composition/utils';
-import { addComposition, calculateRatioSpread } from '@/util/composition/composition-modifier';
-import { LeafNode } from '@/types/composition';
+import computeModifiedComposition, {
+  calculateDensityRatioChange,
+  calculateRatioSpread,
+  findParentOfAffected,
+  iterateAndApplyDensityChange,
+  calculateAndApplyDensityChange,
+  applyNewDensity,
+} from '@/util/composition/composition-modifier';
+import { Composition, CompositionNode, LeafNode } from '@/types/composition';
 
 describe('calculateNewExtendedNodeId', () => {
   it(`should append the new node id if extended exists`, () => {
@@ -32,6 +40,7 @@ describe('calculate ratio spread', () => {
     neuronComposition: { count: 0, density: 0 },
     leaves: [],
     relatedNodes: [],
+    extendedNodeId: 'http://uri.interlex.org/base/ilx_0383192?rev=34',
   };
   it('should have correct ratio spread', () => {
     const ratioSpread = calculateRatioSpread(node, '', modifiedMType, []);
@@ -94,39 +103,273 @@ describe('calculate ratio spread', () => {
   });
 });
 
-describe('add composition function', () => {
+describe('findParentOfAffected', () => {
   // @ts-ignore
-  const bnac = gustatory.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34'].hasPart[
-    'http://uri.interlex.org/base/ilx_0738203?rev=28'
-  ] as LeafNode;
-
-  it('should increase count correctly', () => {
-    const cloneBnac = _.cloneDeep(bnac);
-    const newBnac = addComposition(cloneBnac, 'count', 200);
-    expect(newBnac.composition.neuron.count).toBeCloseTo(450);
+  const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1) as LeafNode;
+  it('should find the correct node if in the first level of the tree', () => {
+    const node = findParentOfAffected('mtype1', testBrainRegion);
+    expect(node?.label).toBe('Test Brain Region1');
   });
 
-  it('should increase density in a relative way when increasing count', () => {
-    const cloneBnac = _.cloneDeep(bnac);
-    const newBnac = addComposition(cloneBnac, 'count', 250);
-    expect(newBnac.composition.neuron.density).toBeCloseTo(2542.102);
+  it('should find the correct node if in the second level of the tree', () => {
+    const node = findParentOfAffected('mtype1__etype1', testBrainRegion);
+    expect(node?.label).toBe('MTYPE1');
   });
 
-  it('should increase count in a relative way when increasing density', () => {
-    const cloneBnac = _.cloneDeep(bnac);
-    const newBnac = addComposition(cloneBnac, 'density', 1271.051);
-    expect(newBnac.composition.neuron.count).toBeCloseTo(500);
+  it('should find the correct node if in the second level of the tree', () => {
+    const node = findParentOfAffected('mtype1__etype2', testBrainRegion);
+    expect(node?.label).toBe('MTYPE1');
+  });
+});
+
+describe('calculateDensityRatioChange', () => {
+  it('should have correct ratio when increasing the value', () => {
+    const change = calculateDensityRatioChange(300, 600);
+    expect(change).toBe(2);
   });
 
-  it('should have a round count even after adding a not round number', () => {
-    const cloneBnac = _.cloneDeep(bnac);
-    const newBnac = addComposition(cloneBnac, 'count', 200.345);
-    expect(Number.isInteger(newBnac.composition.neuron.count)).toBe(true);
+  it('should have correct ratio when decreasing the value', () => {
+    const change = calculateDensityRatioChange(600, 300);
+    expect(change).toBe(0.5);
   });
 
-  it('should increase density correctly', () => {
-    const cloneBnac = _.cloneDeep(bnac);
-    const newBnac = addComposition(cloneBnac, 'density', 200.345);
-    expect(newBnac.composition.neuron.density).toBeCloseTo(1471.396);
+  it('should have correct ratio when the previous density is 0', () => {
+    const change = calculateDensityRatioChange(0, 300);
+    expect(change).toBe(300);
+  });
+});
+
+describe('applyNewDensity', () => {
+  it('should have correct new density applied', () => {
+    const nodeToModify = {
+      composition: {
+        neuron: {
+          density: 300,
+          count: 500,
+        },
+      },
+    } as LeafNode;
+
+    applyNewDensity(nodeToModify, 0.5, 0.2);
+    expect(nodeToModify.composition.neuron.density).toBeCloseTo(150);
+    expect(nodeToModify.composition.neuron.count).toBeCloseTo(30);
+  });
+
+  it('should have correct new density applied when previous density is 0', () => {
+    const nodeToModify = {
+      composition: {
+        neuron: {
+          density: 0,
+          count: 0,
+        },
+      },
+    } as LeafNode;
+
+    applyNewDensity(nodeToModify, 300, 0.2);
+    expect(nodeToModify.composition.neuron.density).toBeCloseTo(300);
+    expect(nodeToModify.composition.neuron.count).toBeCloseTo(60);
+  });
+});
+
+describe('iterateAndApplyDensityChange', () => {
+  it('should calculate correct density change', () => {
+    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = _.cloneDeep(testBrainRegion);
+    // @ts-ignore
+    const mtype1 = copyTestBR.hasPart.mtype1 as LeafNode;
+    iterateAndApplyDensityChange(mtype1, 0.5, 0.2);
+    expect(mtype1.hasPart.etype1.composition.neuron.density).toBeCloseTo(125);
+    expect(mtype1.hasPart.etype1.composition.neuron.count).toBeCloseTo(25);
+    expect(mtype1.hasPart.etype2.composition.neuron.density).toBeCloseTo(175);
+    expect(mtype1.hasPart.etype2.composition.neuron.count).toBeCloseTo(35);
+  });
+});
+
+describe('calculateAndApplyDensityChange', () => {
+  it('should calculate the correct overall density change when changing first level', () => {
+    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const modifiedNode = {
+      id: 'mtype1',
+      extendedNodeId: 'mtype1',
+      neuronComposition: {
+        density: 600,
+      },
+    } as CompositionNode;
+    // @ts-ignore
+    calculateAndApplyDensityChange(modifiedNode, copyTestBR, 0.5, []);
+    expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(125);
+    expect(copyTestBR.hasPart.mtype1.hasPart.etype2.composition.neuron.density).toBe(175);
+    expect(copyTestBR.hasPart.mtype2.hasPart.etype3.composition.neuron.density).toBe(350);
+    expect(copyTestBR.hasPart.mtype3.hasPart.etype4.composition.neuron.density).toBe(175);
+    expect(copyTestBR.hasPart.mtype3.hasPart.etype5.composition.neuron.density).toBe(175);
+  });
+
+  it('should calculate the correct overall density change when changing second level', () => {
+    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const modifiedNode = {
+      id: 'etype2',
+      extendedNodeId: 'mtype1__etype2',
+      neuronComposition: {
+        density: 350,
+      },
+    } as CompositionNode;
+    // @ts-ignore
+    calculateAndApplyDensityChange(modifiedNode, copyTestBR.hasPart.mtype1, 0.5, []);
+    expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(425);
+    expect(copyTestBR.hasPart.mtype1.hasPart.etype2.composition.neuron.density).toBe(175);
+    expect(copyTestBR.hasPart.mtype2.hasPart.etype3.composition.neuron.density).toBe(200);
+    expect(copyTestBR.hasPart.mtype3.hasPart.etype4.composition.neuron.density).toBe(100);
+    expect(copyTestBR.hasPart.mtype3.hasPart.etype5.composition.neuron.density).toBe(100);
+  });
+
+  it('should calculate the correct overall density change when locked ids of first level', () => {
+    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const modifiedNode = {
+      id: 'mtype1',
+      extendedNodeId: 'mtype1',
+      neuronComposition: {
+        density: 600,
+      },
+    } as CompositionNode;
+    // @ts-ignore
+    calculateAndApplyDensityChange(modifiedNode, copyTestBR, 0.5, ['mtype2']);
+    expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(125);
+    expect(copyTestBR.hasPart.mtype1.hasPart.etype2.composition.neuron.density).toBe(175);
+    expect(copyTestBR.hasPart.mtype2.hasPart.etype3.composition.neuron.density).toBe(200);
+    expect(copyTestBR.hasPart.mtype3.hasPart.etype4.composition.neuron.density).toBe(250);
+    expect(copyTestBR.hasPart.mtype3.hasPart.etype5.composition.neuron.density).toBe(250);
+  });
+});
+
+describe('computeModifiedComposition', () => {
+  it('should calculate the correct overall density change when decreasing value by half', () => {
+    // @ts-ignore
+    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const modifiedNode = {
+      id: 'mtype1',
+      composition: 900,
+      extendedNodeId: 'mtype1',
+    } as CompositionNode;
+    // @ts-ignore
+    computeModifiedComposition(
+      modifiedNode,
+      -450,
+      ['brainregion1', 'brainregion2'],
+      copyComposition,
+      [],
+      'density',
+      { brainregion: 0.2 },
+      'brainregion'
+    );
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype1.composition.neuron.density
+    ).toBeCloseTo(125);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype2.composition.neuron.density
+    ).toBeCloseTo(175);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype2.hasPart.etype3.composition.neuron.density
+    ).toBeCloseTo(350);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype4.composition.neuron.density
+    ).toBeCloseTo(175);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype5.composition.neuron.density
+    ).toBeCloseTo(175);
+    // second brain region
+    expect(
+      copyComposition.hasPart.brainregion2.hasPart.mtype1.hasPart.etype1.composition.neuron.density
+    ).toBeCloseTo(50);
+    expect(
+      copyComposition.hasPart.brainregion2.hasPart.mtype1.hasPart.etype2.composition.neuron.density
+    ).toBeCloseTo(100);
+    expect(
+      copyComposition.hasPart.brainregion2.hasPart.mtype2.hasPart.etype3.composition.neuron.density
+    ).toBeCloseTo(350);
+  });
+
+  it('should calculate the correct overall density change when increasing value', () => {
+    // @ts-ignore
+    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const modifiedNode = {
+      id: 'mtype1',
+      composition: 900,
+      extendedNodeId: 'mtype1',
+    } as CompositionNode;
+    // @ts-ignore
+    computeModifiedComposition(
+      modifiedNode,
+      100,
+      ['brainregion1', 'brainregion2'],
+      copyComposition,
+      [],
+      'density',
+      { brainregion: 0.2 },
+      'brainregion'
+    );
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype1.composition.neuron.density
+    ).toBeCloseTo(277.777);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype2.composition.neuron.density
+    ).toBeCloseTo(388.888);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype2.hasPart.etype3.composition.neuron.density
+    ).toBeCloseTo(166.666);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype4.composition.neuron.density
+    ).toBeCloseTo(83.333);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype5.composition.neuron.density
+    ).toBeCloseTo(83.333);
+    // // second brain region
+    expect(
+      copyComposition.hasPart.brainregion2.hasPart.mtype1.hasPart.etype1.composition.neuron.density
+    ).toBeCloseTo(111.111);
+    expect(
+      copyComposition.hasPart.brainregion2.hasPart.mtype1.hasPart.etype2.composition.neuron.density
+    ).toBeCloseTo(222.222);
+    expect(
+      copyComposition.hasPart.brainregion2.hasPart.mtype2.hasPart.etype3.composition.neuron.density
+    ).toBeCloseTo(166.666);
+  });
+
+  it('should calculate the correct overall density change when decreasing value of second level', () => {
+    // @ts-ignore
+    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const modifiedNode = {
+      id: 'etype2',
+      extendedNodeId: 'mtype1__etype2',
+      composition: 350,
+    } as CompositionNode;
+    // @ts-ignore
+    computeModifiedComposition(
+      modifiedNode,
+      -175,
+      ['brainregion1'],
+      copyComposition,
+      [],
+      'density',
+      { brainregion: 0.2 },
+      'brainregion'
+    );
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype1.composition.neuron.density
+    ).toBeCloseTo(425);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype2.composition.neuron.density
+    ).toBeCloseTo(175);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype2.hasPart.etype3.composition.neuron.density
+    ).toBeCloseTo(200);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype4.composition.neuron.density
+    ).toBeCloseTo(100);
+    expect(
+      copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype5.composition.neuron.density
+    ).toBeCloseTo(100);
   });
 });

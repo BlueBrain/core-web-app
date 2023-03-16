@@ -332,27 +332,31 @@ export const computeAndSetCompositionAtom = atom(
     const valueDifference = newValue - modifiedNode.composition;
     const compositionHistory = get(compositionHistoryAtom);
     const historyIndex = get(compositionHistoryIndexAtom);
+    const selectedBrainRegion = get(selectedBrainRegionAtom);
 
-    const modifiedComposition = computeModifiedComposition(
-      modifiedNode,
-      valueDifference,
-      modifiedNode.leaves,
-      volumes,
-      composition,
-      lockedIds,
-      densityOrCount
-    );
-    set(setUpdatedCompositionAtom, modifiedComposition);
+    if (selectedBrainRegion) {
+      const modifiedComposition = computeModifiedComposition(
+        modifiedNode,
+        valueDifference,
+        modifiedNode.leaves,
+        composition,
+        lockedIds,
+        densityOrCount,
+        volumes,
+        `http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion?.id}`
+      );
+      set(setUpdatedCompositionAtom, modifiedComposition);
 
-    const compositionClone = _.cloneDeep(modifiedComposition);
-    extendCompositionWithOverrideProps(compositionClone);
+      const compositionClone = _.cloneDeep(modifiedComposition);
+      extendCompositionWithOverrideProps(compositionClone);
 
-    set(setCompositionPayloadConfigurationAtom, compositionClone);
+      set(setCompositionPayloadConfigurationAtom, compositionClone);
 
-    // whenever there is a change, we also update the history
-    const newHistory = [...compositionHistory.slice(0, historyIndex + 1), compositionClone];
-    set(compositionHistoryAtom, newHistory);
-    set(compositionHistoryIndexAtom, newHistory.length - 1);
+      // whenever there is a change, we also update the history
+      const newHistory = [...compositionHistory.slice(0, historyIndex + 1), compositionClone];
+      set(compositionHistoryAtom, newHistory);
+      set(compositionHistoryIndexAtom, newHistory.length - 1);
+    }
   }
 );
 

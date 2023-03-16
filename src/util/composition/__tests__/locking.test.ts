@@ -12,7 +12,8 @@ describe('findUnlockedSiblings', () => {
   const nodes = infra as CompositionNode[];
   const groupByParent = _.groupBy(nodes, (node) => node.parentId);
   const nullParent = groupByParent.null;
-  it('', () => {
+
+  it('should have the correct unlocked siblings in the first level', () => {
     const userLockedIds = [
       'http://uri.interlex.org/base/ilx_0383193?rev=34',
       'http://uri.interlex.org/base/ilx_0383194?rev=38',
@@ -23,6 +24,20 @@ describe('findUnlockedSiblings', () => {
     const { countLocked, unlockedIds } = findUnlockedSiblings(nullParent, userLockedIds);
     expect(countLocked).toBe(5);
     expect(unlockedIds).toContain('http://uri.interlex.org/base/ilx_0383192?rev=34');
+  });
+
+  it('should have the correct unlocked siblings in the second level', () => {
+    const userLockedIds = [
+      'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28',
+    ];
+    const { countLocked, unlockedIds } = findUnlockedSiblings(
+      groupByParent['http://uri.interlex.org/base/ilx_0383192?rev=34'],
+      userLockedIds
+    );
+    expect(countLocked).toBe(1);
+    expect(unlockedIds).toContain(
+      'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31'
+    );
   });
 });
 
@@ -48,7 +63,7 @@ describe('Test system locking', () => {
     );
   });
 
-  it(`Test rule No1: If the node has children and all its siblings are locked, it gets locked`, () => {
+  it(`Test rule No1: If all the siblings of a node are locked, it gets locked`, () => {
     const userLockedIds = [
       'http://uri.interlex.org/base/ilx_0383193?rev=34',
       'http://uri.interlex.org/base/ilx_0383194?rev=38',
@@ -58,6 +73,16 @@ describe('Test system locking', () => {
     ];
     const systemLockedIds = computeSystemLockedIds(nodes, userLockedIds);
     expect(systemLockedIds).toContain('http://uri.interlex.org/base/ilx_0383192?rev=34');
+  });
+
+  it(`Test rule No1: If all the siblings of a node in the second level are locked, it gets locked`, () => {
+    const userLockedIds = [
+      'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28',
+    ];
+    const systemLockedIds = computeSystemLockedIds(nodes, userLockedIds);
+    expect(systemLockedIds).toContain(
+      'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31'
+    );
   });
 });
 

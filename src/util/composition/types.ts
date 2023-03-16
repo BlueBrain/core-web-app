@@ -10,6 +10,7 @@ export type CompositionLink = CalculationLink & { value?: number };
 export type CalculationNode = {
   about: string;
   id: string;
+  extendedNodeId: string;
   label: string;
   parentId: string | null;
   composition: CompositionPair;

@@ -12,8 +12,8 @@ export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: str
   const unlockedIds: string[] = [];
 
   siblings?.forEach((sibling) => {
-    if (!lockedIds.includes(sibling.id)) {
-      unlockedIds.push(sibling.id);
+    if (!lockedIds.includes(sibling.extendedNodeId)) {
+      unlockedIds.push(sibling.extendedNodeId);
     } else {
       countLocked += 1;
     }
@@ -27,7 +27,7 @@ export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: str
  *
  * The locking rules are the following:
  *
- * 1) If the node has children and it is an only child or all siblings are locked, it gets locked
+ * 1) If a node is an only child or all siblings are locked, it gets locked
  * 2) If All the children of a node are locked, the parent is locked as well
  * 3) if a parent gets locked by the user, its children are locked as well
  *
@@ -47,6 +47,15 @@ export const computeSystemLockedIds = (
       )
     ) {
       lockedIds.push(parentId);
+    }
+
+    const { countLocked, unlockedIds } = findUnlockedSiblings(neuronChildren, [
+      ...userAndBlockedNodeIds,
+      ...lockedIds,
+    ]);
+
+    if (countLocked === (neuronChildren ? neuronChildren.length : 0) - 1) {
+      lockedIds = [...lockedIds, ...unlockedIds];
     }
 
     // Rule No3: if the parent is locked, lock the children
