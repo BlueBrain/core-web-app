@@ -5,6 +5,7 @@ import { CheckboxOption, CheckListFilter, Filter, OptionsData } from './types';
  * Transforms an ElasticSearch aggregation into an array of CheckList options.
  * @param {OptionsData} data - The aggregations object whose buckets will be used as CheckList options.
  * @param {CheckListFilter} filter - The filter object that contains any previously selected options.
+ * @param {(key: string) => string} formatter - A function which can format a key. Neccessary when using ES multi_terms aggregation.
  */
 export function createOptionsFromBuckets(
   data: OptionsData,
@@ -32,11 +33,9 @@ export function createOptionsFromBuckets(
 /**
  * Higher-Order Function: Returns a useEffect callback. This side effect will be triggered whenever the FiltersAtom updates.
  * @param {string} field - Ex. "createdBy", "eType", etc.
+ * @param {(key: string) => string} formatter - A function which can format a key. Neccessary when using ES multi_terms aggregation.
  */
-export function getFillOptionsEffect(
-  field: string,
-  formatter?: (key: string) => string
-) {
+export function getFillOptionsEffect(field: string, formatter?: (key: string) => string) {
   return (
     data: OptionsData,
     filters: Filter[],
