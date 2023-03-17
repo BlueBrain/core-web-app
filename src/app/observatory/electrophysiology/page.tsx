@@ -46,7 +46,9 @@ const columns: ColumnProps<EphysResource>[] = [
     dataIndex: 'name',
     key: 'name',
     className: 'text-primary-7 capitalize',
-    render: (text, record) => <Link href={`/electrophysiology/${record.key}`}>{text}</Link>,
+    render: (text, record) => (
+      <Link href={`/observatory/electrophysiology/${record.key}`}>{text}</Link>
+    ),
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
@@ -101,7 +103,7 @@ function EphysList() {
           onRow={(record) => ({
             onClick: (e) => {
               e.preventDefault();
-              router.push(`/electrophysiology/${record.key}`);
+              router.push(`/observatory/electrophysiology/${record.key}`);
             },
           })}
         />
