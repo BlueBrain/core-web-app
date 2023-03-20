@@ -240,3 +240,36 @@ export type MorphologyAssignmentConfigPayload = {
     jobConfiguration: Record<string, string | number>;
   };
 };
+
+export interface BbpWorkflowConfigResource extends Entity {
+  '@type': 'BbpWorkflowConfig';
+  distribution: Distribution;
+}
+
+export interface VariantTaskActivity extends Entity {
+  '@type': 'VariantTaskActivity';
+  generated: {
+    '@type': 'DetailedCircuit';
+    '@id': string;
+  };
+  startedAtTime: string;
+  used: {
+    '@type': ['VariantTaskConfig', 'Entity'];
+    '@id': string;
+  };
+  used_rev: number;
+  wasInfluencedBy: {
+    '@type': 'WorkflowExecution';
+    '@id': string;
+  };
+}
+
+export interface VariantTaskActivityResource extends ResourceMetadata, VariantTaskActivity {}
+
+export interface VariantTaskConfig extends Entity {
+  '@type': ['VariantTaskConfig', 'Entity'];
+  name: string;
+  distribution: Distribution;
+}
+
+export interface VariantTaskConfigResource extends ResourceMetadata, VariantTaskConfig {}

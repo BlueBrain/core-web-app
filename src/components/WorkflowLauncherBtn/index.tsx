@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { notification, Modal } from 'antd';
+import { useAtomValue } from 'jotai/react';
 
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
@@ -12,7 +13,10 @@ import {
   launchWorkflowTask,
 } from '@/services/bbp-workflow';
 import { WORKFLOW_TEST_TASK_NAME } from '@/services/bbp-workflow/config';
-import { useWorkflowConfig } from '@/hooks/workflow';
+import generateWorkflowConfig from '@/services/bbp-workflow/placeholderReplacer';
+import { configAtom } from '@/state/brain-model-config';
+import { stepsToBuildAtom } from '@/state/build-status';
+import circuitAtom from '@/state/circuit';
 
 const HIDDEN_IFRAME_AUTO_AUTH_AWAIT_DELAY = 5000;
 
@@ -127,10 +131,22 @@ export default function WorkflowLauncher({
   const { data: session } = useSession();
   const { ensureWorkflowAuth } = useWorkflowAuth();
 
-  const workflowConfig = useWorkflowConfig(workflowName);
+  const circuitInfo = useAtomValue(circuitAtom);
+  const stepsToBuild = useAtomValue(stepsToBuildAtom);
+  const config = useAtomValue(configAtom);
 
-  const launchBbpWorkflow = useCallback(async () => {
+  const launchBbpWorkflow = async () => {
     if (!session?.user) return;
+
+    if (!circuitInfo || !config) return;
+    const workflowConfig = await generateWorkflowConfig(
+      workflowName,
+      circuitInfo,
+      stepsToBuild,
+      config,
+      session
+    );
+
     onLaunchingChange(true);
     setLaunching(true);
     try {
@@ -147,6 +163,19 @@ export default function WorkflowLauncher({
 
       notification.success({
         message: 'Workflow launched successfuly',
+        description: (
+          <span>
+            You can watch the progress of launched tasks in your{' '}
+            <a
+              href={`https://bbp-workflow-${session.user.username}.kcp.bbp.epfl.ch/static/visualiser/index.html#order=4%2Cdesc`}
+              target="_blank"
+            >
+              Workflow dashboard
+            </a>
+            .
+          </span>
+        ),
+        duration: 10,
       });
     } catch (e: any) {
       if (e?.message === 'cancelled') return;
@@ -159,7 +188,7 @@ export default function WorkflowLauncher({
     }
     onLaunchingChange(false);
     setLaunching(false);
-  }, [session, workflowName, workflowConfig, onLaunchingChange]);
+  };
 
   const buttonClass = classNames(
     'flex-auto text-white h-12 px-8',

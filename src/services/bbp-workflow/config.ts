@@ -5,42 +5,70 @@ export const PLACEHOLDERS = {
   CIRCUIT_URL: '{CIRCUIT_URL}',
   CONFIG_URL: '{CONFIG_URL}',
   UUID: '{UUID}',
+  VARIANT_TASK_ACTIVITY: '{VARIANT_TASK_ACTIVITY}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
 
 export const WORKFLOW_CIRCUIT_BUILD_TASK_NAME = 'bbp_workflow.generation.SBOWorkflow/';
-export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.report.GenerateRunReportSimCampaign/';
+export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.sbo.viz.task.RunAllSimCampaignMeta/';
 export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
-export const WORKFLOW_VIDEO_GENERATION_TASK_NAME = 'bbp_workflow.viz.VideoTask/';
+export const WORKFLOW_VIDEO_GENERATION_TASK_NAME =
+  'bbp_workflow.sbo.viz.task.VideoSimCampaignMeta/';
 
 export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
 
-export type WorkflowFilesType = {
+export const workflowMetaConfigs = {
+  GenSimCampaignMeta: {
+    templateUrl:
+      'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/4142eca7-6544-4078-bbc4-0eb5d3ca9b29?rev=2',
+    placeholder: '{GenSimCampaignMeta}',
+  },
+  RunSimCampaignMeta: {
+    templateUrl:
+      'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/_/12a16092-231b-4566-9847-00a1cc4ee7c6?rev=3',
+    placeholder: '{RunSimCampaignMeta}',
+  },
+  ReportSimCampaignMeta: {
+    templateUrl:
+      'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/_/030469ed-07fa-427c-8df1-66437fac6930?rev=1',
+    placeholder: '{ReportSimCampaignMeta}',
+  },
+  VideoSimCampaignMeta: {
+    templateUrl:
+      'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/e87eafbe-1e5c-46ac-9ac1-82eefc1ba02c?rev=2',
+    placeholder: '{VideoSimCampaignMeta}',
+  },
+};
+
+export type WorkflowFile = {
   NAME: string;
   TYPE: string;
   CONTENT: string;
-}[];
+};
 
-export const SIMULATION_FILES: WorkflowFilesType = [
+export const SIMULATION_FILES: WorkflowFile[] = [
   {
     NAME: 'simulation.cfg',
     TYPE: 'file',
     CONTENT: `
       [DEFAULT]
       kg-proj: mmb-point-neuron-framework-model
-      account: proj134
-      module-archive: unstable
 
-      [GenerateSimulationCampaign]
-      name: SBO - Sonata Simulation
-      circuit-url: ${PLACEHOLDERS.CIRCUIT_URL}
-      seed-as-coord: {"low": 100000, "high": 400000, "size": 1}
-      attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/project/%(account)s/scratch/\${USER}/workflow-outputs", "blue_config_template": "simulation_config.tmpl", "user_target": "node_sets.json", "duration": 100ms}
+      [FindDetailedCircuitMeta]
+      config-url: ${PLACEHOLDERS.VARIANT_TASK_ACTIVITY}
 
-      [SimulationCampaign]
-      nodes: 50
-      simulation-type: CortexNrdmsPySim
+      [GenSimCampaignMeta]
+      config-url: ${workflowMetaConfigs.GenSimCampaignMeta.placeholder}
+
+      [RunSimCampaignMeta]
+      config-url: ${workflowMetaConfigs.RunSimCampaignMeta.placeholder}
+
+      [ReportSimCampaignMeta]
+      config-url: ${workflowMetaConfigs.ReportSimCampaignMeta.placeholder}
+
+      [VideoSimCampaignMeta]
+      config-url: ${workflowMetaConfigs.VideoSimCampaignMeta.placeholder}
     `,
   },
   {
@@ -128,7 +156,7 @@ export const SIMULATION_FILES: WorkflowFilesType = [
   },
 ];
 
-export const CIRCUIT_BUILDING_FILES: WorkflowFilesType = [
+export const CIRCUIT_BUILDING_FILES: WorkflowFile[] = [
   {
     NAME: 'circuit_building.cfg',
     TYPE: 'file',
@@ -153,7 +181,7 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFilesType = [
   },
 ];
 
-export const VIDEO_GENERATION_FILES: WorkflowFilesType = [
+export const VIDEO_GENERATION_FILES: WorkflowFile[] = [
   {
     NAME: 'video_generation.cfg',
     TYPE: 'file',
