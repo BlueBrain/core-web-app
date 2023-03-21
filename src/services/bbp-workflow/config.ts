@@ -21,7 +21,7 @@ export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS
 export const workflowMetaConfigs = {
   GenSimCampaignMeta: {
     templateUrl:
-      'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/4142eca7-6544-4078-bbc4-0eb5d3ca9b29?rev=2',
+      'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/4142eca7-6544-4078-bbc4-0eb5d3ca9b29?rev=4',
     placeholder: '{GenSimCampaignMeta}',
   },
   RunSimCampaignMeta: {
