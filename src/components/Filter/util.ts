@@ -16,8 +16,10 @@ export function createOptionsFromBuckets(
   const withOtherFilters = data?.excludeOwnFilter?.buckets;
   const buckets = withOtherFilters?.length ? withOtherFilters : defaultBuckets;
 
+      // console.log(buckets)
+
   return buckets?.map(
-    ({ key, doc_count: count }: { key: string; key_as_string: string; doc_count: number }) => {
+    ({ key, doc_count: count }: { key: string; doc_count: number }) => {
       const value = formatter ? formatter(key) : key;
       const existingIndex = selectedOptions.findIndex((selectedKey) => selectedKey === value);
 

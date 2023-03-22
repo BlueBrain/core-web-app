@@ -23,15 +23,8 @@ export default function getEphysDataQuery(
 
   // Used for aggregations
   const contributorTerms = {
-    multi_terms: {
-      terms: [
-        {
-          field: 'contributors.identifier.keyword',
-        },
-        {
-          field: 'contributors.label.keyword',
-        },
-      ],
+    terms: {
+      field: 'contributors.identifier.keyword',
       size: 100,
     },
   };

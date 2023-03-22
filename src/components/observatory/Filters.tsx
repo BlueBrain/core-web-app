@@ -19,21 +19,18 @@ function Filters() {
   const [contributors, setContributors] = useState<CheckboxOption[]>([]);
   const [eTypes, setETypes] = useState<CheckboxOption[]>([]);
 
-  // These callbacks format the label and value fields.
-  // This is necessary, because of the multi_terms aggregation of the contributors field.
-  const label = useCallback((key: string) => key[1], []); // label
-  const value = useCallback((key: string) => key[0], []); // identifier
+  // const label = useCallback((key: string) => key[1], []); // TODO: fetch the label
 
   const contributorContent = ({ filters, setFilters }: FilterProps) => (
     <CheckList
       data={(aggs.state === 'hasData' && aggs.data ? aggs.data.contributor : []) as OptionsData}
       field="contributor"
       filters={filters}
-      label={label}
+      // label={label}
       options={contributors}
       setFilters={setFilters}
       setOptions={setContributors}
-      value={value}
+      // value={value}
     />
   );
 

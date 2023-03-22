@@ -23,7 +23,7 @@ function CheckListOption({
       <span className="flex items-center justify-between gap-2">
         {!!count && <span className="text-primary-5">{`${count} datasets`}</span>}
         <Checkbox.Root
-          className="bg-transparent border border-white h-[14px] rounded w-[14px]"
+          className="bg-transparent border border-white h-[14px] rounded shrink-0 w-[14px]"
           checked={!!checked}
           onCheckedChange={() => handleCheckedChange(value)}
         >
@@ -55,6 +55,11 @@ export default function CheckList({
   setOptions: Dispatch<SetStateAction<CheckboxOption[]>>;
   value?: (key: string) => string;
 }) {
+  useEffect(() => {
+    // console.log('data', data);
+    // console.log('options', options);
+  });
+
   const fillOptionsFromBuckets = useMemo(() => getFillOptionsEffect(field, value), [field, value]);
 
   // Populate the checkbox list from the aggregations
