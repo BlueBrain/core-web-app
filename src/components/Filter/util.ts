@@ -16,20 +16,16 @@ export function createOptionsFromBuckets(
   const withOtherFilters = data?.excludeOwnFilter?.buckets;
   const buckets = withOtherFilters?.length ? withOtherFilters : defaultBuckets;
 
-      // console.log(buckets)
+  return buckets?.map(({ key, doc_count: count }: { key: string; doc_count: number }) => {
+    const value = formatter ? formatter(key) : key;
+    const existingIndex = selectedOptions.findIndex((selectedKey) => selectedKey === value);
 
-  return buckets?.map(
-    ({ key, doc_count: count }: { key: string; doc_count: number }) => {
-      const value = formatter ? formatter(key) : key;
-      const existingIndex = selectedOptions.findIndex((selectedKey) => selectedKey === value);
-
-      return {
-        checked: existingIndex !== -1,
-        count,
-        key,
-      };
-    }
-  ) as CheckboxOption[];
+    return {
+      checked: existingIndex !== -1,
+      count,
+      key,
+    };
+  }) as CheckboxOption[];
 }
 
 /**

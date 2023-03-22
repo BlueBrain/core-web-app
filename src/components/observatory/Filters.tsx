@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { aggregationsAtom } from '@/state/ephys';
@@ -19,18 +19,14 @@ function Filters() {
   const [contributors, setContributors] = useState<CheckboxOption[]>([]);
   const [eTypes, setETypes] = useState<CheckboxOption[]>([]);
 
-  // const label = useCallback((key: string) => key[1], []); // TODO: fetch the label
-
   const contributorContent = ({ filters, setFilters }: FilterProps) => (
     <CheckList
       data={(aggs.state === 'hasData' && aggs.data ? aggs.data.contributor : []) as OptionsData}
       field="contributor"
       filters={filters}
-      // label={label}
       options={contributors}
       setFilters={setFilters}
       setOptions={setContributors}
-      // value={value}
     />
   );
 
