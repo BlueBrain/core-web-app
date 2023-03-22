@@ -12,9 +12,28 @@ export default function MacroConnectome() {
             x: connectivityMatrix.parcellation,
             y: connectivityMatrix.parcellation,
             type: 'heatmap',
+            colorscale: 'Hot',
           },
         ]}
-        layout={{}}
+        layout={{
+          width: 1200,
+          height: 800,
+          paper_bgcolor: '#000',
+          xaxis: {
+            automargin: true,
+            color: '#DCDCDC',
+            tickfont: {
+              size: 7,
+            },
+          },
+          yaxis: {
+            automargin: true,
+            color: '#DCDCDC',
+            tickfont: {
+              size: 7,
+            },
+          },
+        }}
       />
     </div>
   );
