@@ -22,9 +22,10 @@ import {
   BrainRegionSelection,
 } from '@/components/connectome-definition';
 import { basePath } from '@/config';
-import styles from './connectome-definition.module.css';
 import { BrainRegion } from '@/types/ontologies';
 import calculateCompositions from '@/util/composition/composition-parser';
+import styles from './connectome-definition.module.css';
+import { microconnectomeConfigAtom } from '@/state/brain-model-config/microconnectome';
 
 function findLeaves(tree: BrainRegion[]) {
   const leaves: BrainRegion[] = [];
@@ -48,6 +49,9 @@ function ConnectomeDefinitionMain() {
   const tree = useAtomValue(brainRegionsFilteredTreeAtom);
   const composition = useAtomValue(compositionAtom);
   const leaves = useMemo(() => findLeaves(tree || []), [tree]);
+  const microconnectomeConfig = useAtomValue(microconnectomeConfigAtom);
+
+  console.log('microconnectomeconfig', microconnectomeConfig);
 
   useEffect(() => {
     const fun = async () => {
@@ -65,7 +69,6 @@ function ConnectomeDefinitionMain() {
 
   return (
     <div className={styles.container}>
-      Ï
       <div className={styles.granularityTabs}>
         <GranularityTabs />
       </div>

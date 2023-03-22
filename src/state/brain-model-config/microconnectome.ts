@@ -180,16 +180,20 @@ const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | n
     const session = get(sessionAtom);
     const config = await get(configAtom);
 
+    console.log('generator task activity', config)
+
     if (!session || !config) return null;
 
     return fetchGeneratorTaskActivity(config['@id'], config._rev, session);
   }
 );
 
-export const cellCompositionAtom = atom<Promise<MicroConnectomeConfigResource | null>>(
+export const partialCircuitAtom = atom<Promise<MicroConnectomeConfigResource | null>>(
   async (get) => {
     const session = get(sessionAtom);
     const generatorTaskActivity = await get(generatorTaskActivityAtom);
+
+    console.log('microconnectome config atom', session, generatorTaskActivity)
 
     if (!session || !generatorTaskActivity) return null;
 

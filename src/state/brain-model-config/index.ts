@@ -95,8 +95,7 @@ export const cellPositionConfigIdAtom = atom<Promise<string | null>>(async (get)
 
 export const microconnectomeIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
-
-  return config?.configs?.cellPositionConfig?.['@id'] ?? null;
+  return config?.configs?.microConnectomeConfig?.['@id'] ?? null;
 });
 
 export const eModelAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
