@@ -19,6 +19,10 @@ import {
   EntityResource,
   FileMetadata,
   GeneratorTaskActivityResource,
+  BbpWorkflowConfigResource,
+  DetailedCircuitResource,
+  VariantTaskActivityResource,
+  VariantTaskConfigResource,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -26,6 +30,7 @@ import {
   getGeneratorTaskActivityQuery,
   getPersonalBrainModelConfigsQuery,
   getPublicBrainModelConfigsQuery,
+  getVariantTaskActivityByCircuitIdQuery,
 } from '@/queries/es';
 import { createHeaders } from '@/util/utils';
 
@@ -39,10 +44,18 @@ export function fetchJsonFileById<T>(id: string, session: Session) {
   }).then<T>((res) => res.json());
 }
 
-export function fetchJsonFileByUrl<T>(url: string, session: Session) {
+export function fetchFileByUrl(url: string, session: Session): Promise<Response> {
   return fetch(url, {
     headers: createHeaders(session.accessToken),
-  }).then<T>((res) => res.json());
+  });
+}
+
+export function fetchJsonFileByUrl<T>(url: string, session: Session) {
+  return fetchFileByUrl(url, session).then<T>((res) => res.json());
+}
+
+export function fetchTextFileByUrl(url: string, session: Session): Promise<string> {
+  return fetchFileByUrl(url, session).then((res) => res.text());
 }
 
 export function fetchFileMetadataById(id: string, session: Session) {
@@ -59,11 +72,16 @@ export function fetchFileMetadataByUrl(url: string, session: Session) {
   }).then<FileMetadata>((res) => res.json());
 }
 
-export function createJsonFile(data: any, filename: string, session: Session) {
+export function createFile(
+  data: any,
+  filename: string,
+  contentType: string,
+  session: Session
+): Promise<FileMetadata> {
   const url = composeUrl('file', '');
 
   const formData = new FormData();
-  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const dataBlob = new Blob([data], { type: contentType });
   formData.append('file', dataBlob, filename);
 
   return fetch(url, {
@@ -71,6 +89,17 @@ export function createJsonFile(data: any, filename: string, session: Session) {
     headers: createHeaders(session.accessToken, null),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
+}
+
+export function createJsonFile(rawData: any, filename: string, session: Session) {
+  const data = JSON.stringify(rawData);
+  const contentType = 'application/json';
+  return createFile(data, filename, contentType, session);
+}
+
+export function createTextFile(data: any, filename: string, session: Session) {
+  const contentType = 'text/plain';
+  return createFile(data, filename, contentType, session);
 }
 
 export function updateJsonFileById(
@@ -325,4 +354,59 @@ export async function fetchGeneratorTaskActivity(
   }
 
   return activities[0] ?? null;
+}
+
+export async function cloneWorkflowConfigResource(resourceUrl: string, session: Session) {
+  const workflowConfigresource = await fetchJsonFileByUrl<BbpWorkflowConfigResource>(
+    resourceUrl,
+    session
+  );
+  const originalFileUrl = workflowConfigresource.distribution.contentUrl;
+  const originalFileContent = await fetchTextFileByUrl(originalFileUrl, session);
+  const clonedFile = await createTextFile(
+    originalFileContent,
+    workflowConfigresource.distribution.name,
+    session
+  );
+
+  // TODO: make fileds consistent like update, digest, etc
+  const bbpWorkflowconfig: BbpWorkflowConfigResource = {
+    '@context': workflowConfigresource['@context'],
+    '@type': workflowConfigresource['@type'],
+    '@id': createId('file'),
+    distribution: {
+      '@type': 'DataDownload',
+      name: clonedFile._filename,
+      contentSize: {
+        unitCode: 'bytes',
+        value: clonedFile._bytes,
+      },
+      contentUrl: clonedFile._self,
+      encodingFormat: clonedFile._mediaType,
+      digest: {
+        algorithm: clonedFile._digest._algorithm,
+        value: clonedFile._digest._value,
+      },
+    },
+  };
+
+  const newResource = await createResource(bbpWorkflowconfig, session);
+  return newResource;
+}
+
+export async function getVariantTaskConfigUrlFromCircuit(
+  circuitResource: DetailedCircuitResource,
+  session: Session
+) {
+  const query = getVariantTaskActivityByCircuitIdQuery(circuitResource['@id']);
+
+  const variantTaskActivities = await queryES<VariantTaskActivityResource>(query, session);
+  const variantTaskActivity = variantTaskActivities[0];
+
+  const variantTaskConfig = await fetchResourceById<VariantTaskConfigResource>(
+    variantTaskActivity.used['@id'],
+    session
+  );
+
+  return `${variantTaskConfig._self}?rev=${variantTaskActivity.used_rev}`;
 }

@@ -89,6 +89,7 @@ deploy-dev:
       --build-arg=NEXT_PUBLIC_ENVIRONMENT
       --build-arg=NEXT_PUBLIC_SENTRY_DSN
       --build-arg=SENTRY_AUTH_TOKEN
+      --build-arg=CI_COMMIT_SHORT_SHA
   only:
     - develop
 
@@ -110,6 +111,7 @@ deploy-test:
       --build-arg=NEXT_PUBLIC_ENVIRONMENT
       --build-arg=NEXT_PUBLIC_SENTRY_DSN
       --build-arg=SENTRY_AUTH_TOKEN
+      --build-arg=CI_COMMIT_SHORT_SHA
   except:
     - main
     - develop

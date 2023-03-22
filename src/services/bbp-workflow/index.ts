@@ -4,7 +4,7 @@ import {
   BBP_WORKFLOW_AUTH_URL,
   BBP_WORKFLOW_TASK_PATH,
   WORKFLOW_TEST_TASK_NAME,
-  WorkflowFilesType,
+  WorkflowFile,
   PLACEHOLDERS,
 } from '@/services/bbp-workflow/config';
 import type { DetailedCircuitResource } from '@/types/nexus';
@@ -20,7 +20,7 @@ export function getWorkflowAuthUrl(username: string) {
 }
 
 function replacePlaceholdersInFile(
-  filesList: WorkflowFilesType,
+  filesList: WorkflowFile[],
   fileName: string,
   placeholder: string,
   value: string
@@ -32,7 +32,7 @@ function replacePlaceholdersInFile(
   return filesCopy;
 }
 
-function generateFormData(replacedConfigFiles: WorkflowFilesType): FormData {
+function generateFormData(replacedConfigFiles: WorkflowFile[]): FormData {
   const data = new FormData();
   Object.values(replacedConfigFiles).forEach((file) => {
     if (file.TYPE === 'file') {
@@ -45,24 +45,34 @@ function generateFormData(replacedConfigFiles: WorkflowFilesType): FormData {
 }
 
 export function getSimulationTaskFiles(
-  workflowFiles: WorkflowFilesType,
-  circuit: DetailedCircuitResource | null
-): WorkflowFilesType {
+  workflowFiles: WorkflowFile[],
+  circuit: DetailedCircuitResource | null,
+  variantActivityUrl: string
+): WorkflowFile[] {
   if (!circuit) return workflowFiles;
 
-  return replacePlaceholdersInFile(
+  let replacedFile = replacePlaceholdersInFile(
     workflowFiles,
     'simulation.cfg',
     PLACEHOLDERS.CIRCUIT_URL,
     // eslint-disable-next-line no-underscore-dangle
     circuit._self
   );
+
+  replacedFile = replacePlaceholdersInFile(
+    workflowFiles,
+    'simulation.cfg',
+    PLACEHOLDERS.VARIANT_TASK_ACTIVITY,
+    variantActivityUrl
+  );
+
+  return replacedFile;
 }
 
 export function getCircuitBuildingTaskFiles(
-  workflowFiles: WorkflowFilesType,
+  workflowFiles: WorkflowFile[],
   configUrl: string | null
-): WorkflowFilesType {
+): WorkflowFile[] {
   if (!configUrl) return workflowFiles;
 
   const escapedConfigUrl = configUrl.includes('%') ? configUrl.replaceAll('%', '%%') : configUrl;
@@ -83,9 +93,9 @@ export function getCircuitBuildingTaskFiles(
 }
 
 export function getVideoGenerationTaskFiles(
-  workflowFiles: WorkflowFilesType,
+  workflowFiles: WorkflowFile[],
   simulationConfigUrl: string
-): WorkflowFilesType {
+): WorkflowFile[] {
   return replacePlaceholdersInFile(
     workflowFiles,
     'video_generation.cfg',
@@ -134,7 +144,7 @@ export async function launchUnicoreWorkflowSetup(token: string): Promise<true | 
 export type WorkflowRunProps = {
   loginInfo: Session;
   workflowName: string;
-  workflowFiles: WorkflowFilesType;
+  workflowFiles: WorkflowFile[];
 };
 
 export async function launchWorkflowTask({
