@@ -11,6 +11,7 @@ import DimensionFilter from '@/components/observatory/DimensionFilter';
 import SpikeRaster from '@/components/observatory/SpikeRaster';
 import CampaignVideo from '@/components/observatory/CampaignVideo';
 import Sidebar from '@/components/observatory/Sidebar';
+import { nexus } from '@/config';
 
 import REPORT_SPARQL_QUERY from '@/constants/observatory';
 
@@ -84,7 +85,7 @@ function Observatory() {
     if (!campaign.id || !session?.user) return;
     async function fetchReportData() {
       const analysisSparqlQuery = REPORT_SPARQL_QUERY.replaceAll('{resourceId}', campaign.id);
-      const sparqUrl = `https://staging.nise.bbp.epfl.ch/nexus/v1/views/${campaign.org}/${campaign.project}/graph/sparql`;
+      const sparqUrl = `${nexus.url}/views/${campaign.org}/${campaign.project}/graph/sparql`;
       const reportInfo = fetch(sparqUrl, {
         method: 'POST',
         body: analysisSparqlQuery,
@@ -121,7 +122,7 @@ function Observatory() {
           if (!reportInfo.hasPart.distribution.contentUrl['@id']) return;
 
           const assetUuid = reportInfo.hasPart.distribution.contentUrl['@id'].split('/').pop();
-          const assetUrl = `https://staging.nise.bbp.epfl.ch/nexus/v1/files/${campaign.org}/${campaign.project}/${assetUuid}`;
+          const assetUrl = `${nexus.url}/files/${campaign.org}/${campaign.project}/${assetUuid}`;
 
           const distributionAssetResponse = await fetch(assetUrl, {
             method: 'GET',

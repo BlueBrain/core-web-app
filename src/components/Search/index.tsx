@@ -6,6 +6,7 @@ type SelectOptions = {
   value: string;
   ancestors?: string[];
   leaves?: string[];
+  representedInAnnotation: boolean;
 };
 
 export default function Search({

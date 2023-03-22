@@ -191,3 +191,14 @@ export const getGeneratorTaskActivityQuery = (configId: string, configRev: numbe
     },
   },
 });
+
+export const getVariantTaskActivityByCircuitIdQuery = (circuitId: string) => ({
+  query: {
+    bool: {
+      must: [
+        { term: { '@type': 'VariantTaskActivity' } },
+        { term: { 'generated.@id.keyword': circuitId } },
+      ],
+    },
+  },
+});

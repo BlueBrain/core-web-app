@@ -8,6 +8,7 @@ import calculateCompositions, {
   addNode,
   iterateNode,
 } from '@/util/composition/composition-parser';
+import { LeafNode } from '@/types/composition';
 
 describe('Add compositions', () => {
   it('should calculate the correct addition', () => {
@@ -36,6 +37,7 @@ describe('Add nodes', () => {
       composition: { neuron: { count: 10, density: 30.5 }, glia: { count: 0, density: 0 } },
       leaves: new Set(['leaf1']),
       relatedNodes: new Set(['node1']),
+      extendedNodeId: 'test',
     };
     const totalNodes: { [key: string]: CalculationNode } = {};
     addNode(nodeToAdd, totalNodes);
@@ -53,6 +55,7 @@ describe('Add nodes', () => {
       composition: { neuron: { count: 10, density: 30.5 }, glia: { count: 0, density: 0 } },
       leaves: new Set(['leaf1']),
       relatedNodes: new Set(['node1']),
+      extendedNodeId: 'test',
     };
 
     const existingNode = {
@@ -63,6 +66,7 @@ describe('Add nodes', () => {
       composition: { neuron: { count: 30, density: 50.5 }, glia: { count: 0, density: 0 } },
       leaves: new Set(['leaf2']),
       relatedNodes: new Set(['node2']),
+      extendedNodeId: 'test',
     };
 
     const totalNodes: { [key: string]: CalculationNode } = {};
@@ -105,6 +109,22 @@ describe('Composition Parser unit tests for single region', () => {
     expect(
       nodes['http://uri.interlex.org/base/ilx_0383192?rev=34__null'].composition.neuron.density
     ).toBeCloseTo(2272.64);
+  });
+
+  it('should calculate the correct extended node ids', () => {
+    // @ts-ignore
+    const cloneGAL1 = _.cloneDeep(gustatoryAreasLayer1) as LeafNode;
+    const nodes: { [key: string]: CalculationNode } = {};
+    const links: { [key: string]: CalculationLink } = {};
+    // @ts-ignore
+    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
+    expect(
+      cloneGAL1.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34'].hasPart[
+        'http://uri.interlex.org/base/ilx_0738203?rev=28'
+      ].extendedNodeId
+    ).toBe(
+      'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28'
+    );
   });
 
   it('composition parser returns all nodes and links', () => {

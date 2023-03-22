@@ -15,6 +15,7 @@ import ResetIcon from './ResetIcon';
 import UndoIcon from './UndoIcon';
 import UserOutlinedIcon from './UserOutlined';
 import { ZoomInIcon, ZoomOutIcon } from './Zoom';
+import MissingData from './MissingData';
 
 export {
   AngledArrowIcon,
@@ -35,4 +36,5 @@ export {
   UserOutlinedIcon,
   ZoomInIcon,
   ZoomOutIcon,
+  MissingData,
 };

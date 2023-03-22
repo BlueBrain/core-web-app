@@ -34,7 +34,9 @@ function EphysDetail() {
     });
   }, []);
 
-  const links: Array<SideLink> = [{ url: '/electrophysiology', title: 'Neuron Electrophysiology' }];
+  const links: Array<SideLink> = [
+    { url: '/observatory/electrophysiology', title: 'Neuron Electrophysiology' },
+  ];
 
   return (
     <div className="flex h-screen" style={{ background: '#d1d1d1' }}>

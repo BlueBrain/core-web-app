@@ -125,7 +125,14 @@ export default function sankey(
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', [0, 0, width, height])
-    .attr('style', 'max-width: 100%; height: auto; height: intrinsic;');
+    /*
+      The `will-change: opacity` is applied here to move the SVG element into its own layer
+      in order to fix page flickering in Chrome on devices using Apple silicon,
+      see https://bbpteam.epfl.ch/project/issues/browse/BBPP134-109.
+
+      The root cause is still unknown.
+    */
+    .attr('style', 'max-width: 100%; height: auto; height: intrinsic; will-change: opacity;');
 
   const zoomWrapper = svg.append('g');
 

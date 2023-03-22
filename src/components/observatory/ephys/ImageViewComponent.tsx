@@ -73,11 +73,12 @@ function ImageSetComponent({
                 <Button
                   className="interactive-view-btn hidden"
                   size="small"
+                  style={{ display: 'none' }}
                   icon={<LineChartOutlined />}
                   onClick={onRepetitionClicked(stimulusType, repKey)}
                 >
                   <span className="repetition-label"> Repetition {repKey}</span>
-                  <span className="generic-label"> Interactive View</span>
+                  <span className="generic-label hidden"> Interactive View</span>
                 </Button>
               </div>
               {sweeps.map((imgData: any, index: any) => (

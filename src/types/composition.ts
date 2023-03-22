@@ -13,6 +13,7 @@ export type CompositionNode = {
   composition?: number;
   items?: CompositionNode[];
   relatedNodes: string[];
+  extendedNodeId: string;
 };
 
 // The composition file structure
@@ -34,6 +35,7 @@ export type LeafNode = {
   about: string;
   hasPart: { [key: string]: LeafNode };
   composition: CompositionPair;
+  extendedNodeId: string;
 };
 
 // Workaround to fit current Composition into the workflow config

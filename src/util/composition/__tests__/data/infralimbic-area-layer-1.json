@@ -5,14 +5,15 @@
     "label": "bNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383192?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 3210.323654906858,
+      "count": 482
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28"
   },
   {
     "about": "EType",
@@ -20,14 +21,15 @@
     "label": "cNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383192?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 2590.9043604953686,
+      "count": 389
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31"
   },
   {
     "about": "MType",
@@ -35,8 +37,8 @@
     "label": "L1_DAC",
     "parentId": null,
     "neuronComposition": {
-      "count": 0,
-      "density": 0
+      "count": 871,
+      "density": 5801.228015402226
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -46,7 +48,8 @@
       "http://uri.interlex.org/base/ilx_0383195?rev=34",
       "http://uri.interlex.org/base/ilx_0383196?rev=34",
       "http://uri.interlex.org/base/ilx_0383197?rev=34"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383192?rev=34"
   },
   {
     "about": "EType",
@@ -54,15 +57,16 @@
     "label": "bNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383193?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 5081.902383182433,
+      "count": 763
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738204?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383193?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28"
   },
   {
     "about": "EType",
@@ -70,15 +74,16 @@
     "label": "cIR",
     "parentId": "http://uri.interlex.org/base/ilx_0383193?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 5288.3754813195965,
+      "count": 794
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738204?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383193?rev=34__http://uri.interlex.org/base/ilx_0738204?rev=28"
   },
   {
     "about": "EType",
@@ -86,15 +91,16 @@
     "label": "cNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383193?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 4282.651680715996,
+      "count": 643
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738204?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383193?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31"
   },
   {
     "about": "MType",
@@ -102,8 +108,8 @@
     "label": "L1_HAC",
     "parentId": null,
     "neuronComposition": {
-      "count": 0,
-      "density": 0
+      "count": 2200,
+      "density": 14652.929545218027
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -113,7 +119,8 @@
       "http://uri.interlex.org/base/ilx_0383195?rev=34",
       "http://uri.interlex.org/base/ilx_0383196?rev=34",
       "http://uri.interlex.org/base/ilx_0383197?rev=34"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383193?rev=34"
   },
   {
     "about": "EType",
@@ -121,11 +128,12 @@
     "label": "cNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383194?rev=38",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 965.7612654802788,
+      "count": 145
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
-    "relatedNodes": ["http://uri.interlex.org/base/ilx_0738201?rev=31"]
+    "relatedNodes": ["http://uri.interlex.org/base/ilx_0738201?rev=31"],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383194?rev=38__http://uri.interlex.org/base/ilx_0738201?rev=31"
   },
   {
     "about": "MType",
@@ -133,8 +141,8 @@
     "label": "L1_LAC",
     "parentId": null,
     "neuronComposition": {
-      "count": 0,
-      "density": 0
+      "count": 145,
+      "density": 965.7612654802788
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -144,7 +152,8 @@
       "http://uri.interlex.org/base/ilx_0383195?rev=34",
       "http://uri.interlex.org/base/ilx_0383196?rev=34",
       "http://uri.interlex.org/base/ilx_0383197?rev=34"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383194?rev=38"
   },
   {
     "about": "EType",
@@ -152,8 +161,8 @@
     "label": "bNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 2857.3212613175147,
+      "count": 429
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -161,7 +170,8 @@
       "http://uri.interlex.org/base/ilx_0738197?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31",
       "http://uri.interlex.org/base/ilx_0738198?rev=28"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383195?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28"
   },
   {
     "about": "EType",
@@ -169,8 +179,8 @@
     "label": "cAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 2923.9254865230514,
+      "count": 439
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -178,7 +188,8 @@
       "http://uri.interlex.org/base/ilx_0738197?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31",
       "http://uri.interlex.org/base/ilx_0738198?rev=28"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383195?rev=34__http://uri.interlex.org/base/ilx_0738197?rev=28"
   },
   {
     "about": "EType",
@@ -186,8 +197,8 @@
     "label": "cNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 2197.939431782704,
+      "count": 330
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -195,7 +206,8 @@
       "http://uri.interlex.org/base/ilx_0738197?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31",
       "http://uri.interlex.org/base/ilx_0738198?rev=28"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383195?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31"
   },
   {
     "about": "EType",
@@ -203,8 +215,8 @@
     "label": "cSTUT",
     "parentId": "http://uri.interlex.org/base/ilx_0383195?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 1705.0681652617338,
+      "count": 256
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -212,7 +224,8 @@
       "http://uri.interlex.org/base/ilx_0738197?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31",
       "http://uri.interlex.org/base/ilx_0738198?rev=28"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383195?rev=34__http://uri.interlex.org/base/ilx_0738198?rev=28"
   },
   {
     "about": "MType",
@@ -220,8 +233,8 @@
     "label": "L1_NGC-DA",
     "parentId": null,
     "neuronComposition": {
-      "count": 0,
-      "density": 0
+      "count": 1454,
+      "density": 9684.254344885003
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -231,7 +244,8 @@
       "http://uri.interlex.org/base/ilx_0383195?rev=34",
       "http://uri.interlex.org/base/ilx_0383196?rev=34",
       "http://uri.interlex.org/base/ilx_0383197?rev=34"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383195?rev=34"
   },
   {
     "about": "EType",
@@ -239,11 +253,12 @@
     "label": "cNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383196?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 2657.5085857009053,
+      "count": 399
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
-    "relatedNodes": ["http://uri.interlex.org/base/ilx_0738201?rev=31"]
+    "relatedNodes": ["http://uri.interlex.org/base/ilx_0738201?rev=31"],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383196?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31"
   },
   {
     "about": "MType",
@@ -251,8 +266,8 @@
     "label": "L1_NGC-SA",
     "parentId": null,
     "neuronComposition": {
-      "count": 0,
-      "density": 0
+      "count": 399,
+      "density": 2657.5085857009053
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -262,7 +277,8 @@
       "http://uri.interlex.org/base/ilx_0383195?rev=34",
       "http://uri.interlex.org/base/ilx_0383196?rev=34",
       "http://uri.interlex.org/base/ilx_0383197?rev=34"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383196?rev=34"
   },
   {
     "about": "EType",
@@ -270,15 +286,16 @@
     "label": "bNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383197?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 3170.361119783536,
+      "count": 476
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738197?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383197?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28"
   },
   {
     "about": "EType",
@@ -286,15 +303,16 @@
     "label": "cAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383197?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 3003.850556769695,
+      "count": 451
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738197?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383197?rev=34__http://uri.interlex.org/base/ilx_0738197?rev=28"
   },
   {
     "about": "EType",
@@ -302,15 +320,16 @@
     "label": "cNAC",
     "parentId": "http://uri.interlex.org/base/ilx_0383197?rev=34",
     "neuronComposition": {
-      "density": null,
-      "count": null
+      "density": 2457.695910084296,
+      "count": 369
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
       "http://uri.interlex.org/base/ilx_0738203?rev=28",
       "http://uri.interlex.org/base/ilx_0738197?rev=28",
       "http://uri.interlex.org/base/ilx_0738201?rev=31"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383197?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31"
   },
   {
     "about": "MType",
@@ -318,8 +337,8 @@
     "label": "L1_SAC",
     "parentId": null,
     "neuronComposition": {
-      "count": 0,
-      "density": 0
+      "count": 1296,
+      "density": 8631.907586637528
     },
     "leaves": ["http://api.brain-map.org/api/v2/data/Structure/707"],
     "relatedNodes": [
@@ -329,6 +348,7 @@
       "http://uri.interlex.org/base/ilx_0383195?rev=34",
       "http://uri.interlex.org/base/ilx_0383196?rev=34",
       "http://uri.interlex.org/base/ilx_0383197?rev=34"
-    ]
+    ],
+    "extendedNodeId": "http://uri.interlex.org/base/ilx_0383197?rev=34"
   }
 ]

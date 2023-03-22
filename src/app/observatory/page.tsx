@@ -28,9 +28,9 @@ export default function Observatory() {
       </div>
       <div className={styles.experimental}>
         <ObservatoryNavItem
-          title="Experimental Data"
+          title="Electrophysiology Data"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
-          url="/electrophysiology"
+          url="/observatory/electrophysiology"
         />
       </div>
       <div className={styles.reconstructions}>

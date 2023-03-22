@@ -81,6 +81,7 @@ export function iterateNode(
         childId,
         childSubtree.about
       );
+      childSubtree.extendedNodeId = childExtendedNodeId;
       const childIsBlocked =
         isBlocked || (Object.keys(subTree.hasPart).length === 1 && _.has(childSubtree, 'hasPart'));
       // calculate its composition and add it in the total
@@ -104,7 +105,9 @@ export function iterateNode(
         parentId,
         leaves: new Set([leafId]),
         relatedNodes: new Set(Object.keys(subTree.hasPart)),
+        extendedNodeId: calculateNewExtendedNodeId(extendedNodeId, childId, childSubtree.about),
       };
+
       // add the node in the set of nodes
       addNode(node, nodes);
       if (subTree.about !== 'BrainRegion') {
@@ -166,6 +169,7 @@ export default async function calculateCompositions(
       neuronComposition: node.composition.neuron,
       leaves: Array.from(node.leaves),
       relatedNodes: Array.from(node.relatedNodes),
+      extendedNodeId: node.extendedNodeId,
     });
   });
 

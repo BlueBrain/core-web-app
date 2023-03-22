@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "unitCode": {
+    "density": "mm^-3"
+  },
+  "hasPart": {
+    "brainregion1": {
+      "label": "Test Brain Region1",
+      "about": "BrainRegion",
+      "extendedNodeId": "",
+      "hasPart": {
+        "mtype1": {
+          "extendedNodeId": "mtype1",
+          "label": "MTYPE1",
+          "about": "MType",
+          "hasPart": {
+            "etype1": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 250,
+                  "count": 250
+                }
+              },
+              "extendedNodeId": "mtype1__etype1"
+            },
+            "etype2": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 350,
+                  "count": 350
+                }
+              },
+              "extendedNodeId": "mtype1__etype2"
+            }
+          },
+          "composition": {
+            "neuron": {
+              "count": 600,
+              "density": 600
+            },
+            "glia": {
+              "count": 0,
+              "density": 0
+            }
+          }
+        },
+        "mtype2": {
+          "extendedNodeId": "mtype2",
+          "label": "L2_DAC",
+          "about": "MType",
+          "hasPart": {
+            "etype3": {
+              "label": "bNAC2",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 200,
+                  "count": 200
+                }
+              },
+              "extendedNodeId": "mtype2__etype3"
+            }
+          },
+          "composition": {
+            "neuron": {
+              "count": 200,
+              "density": 200
+            },
+            "glia": {
+              "count": 0,
+              "density": 0
+            }
+          }
+        },
+        "mtype3": {
+          "extendedNodeId": "mtype3",
+          "label": "L3_DAC",
+          "about": "MType",
+          "hasPart": {
+            "etype4": {
+              "label": "bNAC3",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 100,
+                  "count": 100
+                }
+              },
+              "extendedNodeId": "mtype3__etype4"
+            },
+            "etype5": {
+              "label": "bNAC4",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 100,
+                  "count": 100
+                }
+              },
+              "extendedNodeId": "mtype3__etype5"
+            }
+          },
+          "composition": {
+            "neuron": {
+              "count": 200,
+              "density": 200
+            },
+            "glia": {
+              "count": 0,
+              "density": 0
+            }
+          }
+        }
+      },
+      "composition": {
+        "neuron": {
+          "count": 1000,
+          "density": 1000
+        },
+        "glia": {
+          "count": 0,
+          "density": 0
+        }
+      }
+    },
+    "brainregion2": {
+      "label": "Test Brain Region 2",
+      "about": "BrainRegion",
+      "extendedNodeId": "",
+      "hasPart": {
+        "mtype1": {
+          "extendedNodeId": "mtype1",
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "etype1": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 100,
+                  "count": 100
+                }
+              },
+              "extendedNodeId": "mtype1__etype1"
+            },
+            "etype2": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 200,
+                  "count": 200
+                }
+              },
+              "extendedNodeId": "mtype1__etype2"
+            }
+          },
+          "composition": {
+            "neuron": {
+              "count": 300,
+              "density": 300
+            },
+            "glia": {
+              "count": 0,
+              "density": 0
+            }
+          }
+        },
+        "mtype2": {
+          "extendedNodeId": "mtype2",
+          "label": "L2_DAC",
+          "about": "MType",
+          "hasPart": {
+            "etype3": {
+              "label": "bNAC2",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 200,
+                  "count": 200
+                }
+              },
+              "extendedNodeId": "mtype2__etype3"
+            }
+          },
+          "composition": {
+            "neuron": {
+              "count": 200,
+              "density": 200
+            },
+            "glia": {
+              "count": 0,
+              "density": 0
+            }
+          }
+        }
+      },
+      "composition": {
+        "neuron": {
+          "count": 500,
+          "density": 500
+        },
+        "glia": {
+          "count": 0,
+          "density": 0
+        }
+      }
+    }
+  }
+}

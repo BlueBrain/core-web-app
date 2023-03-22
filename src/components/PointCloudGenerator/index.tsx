@@ -2,15 +2,15 @@ import { useCallback, useEffect } from 'react';
 import * as THREE from 'three';
 import { Color } from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
-import { usePreventParallelism } from '../../hooks/parallelism';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
+import { usePreventParallelism } from '@/hooks/parallelism';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import { basePath } from '@/config';
-import {
-  CELL_API_BASE_PATH,
-  CELL_API_INPUT_PATH,
-} from '@/components/PointCloudGenerator/constants';
+import CELL_API_BASE_PATH from '@/components/PointCloudGenerator/constants';
 import useNotification from '@/hooks/notifications';
+import detailedCircuitAtom from '@/state/circuit';
 
 type PointCloudMeshProps = {
   regionID: string;
@@ -26,17 +26,25 @@ type Point = {
   z: number;
 };
 
+const detailedCircuitLoadableAtom = loadable(detailedCircuitAtom);
+
 function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
   const preventParallelism = usePreventParallelism();
   const atlas = useAtlasVisualizationManager();
   const addNotification = useNotification();
+  const detailedCircuit = useAtomValue(detailedCircuitLoadableAtom);
 
   /**
    * Fetches point cloud data from cells API. Returns the data in an array buffer format
    */
   const fetchData = useCallback(async () => {
+    if (detailedCircuit.state !== 'hasData' || !detailedCircuit.data?.circuitConfigPath.url) {
+      throw new Error('Circuit config path is not found in the configuration');
+    }
+
+    const circuitConfigPath = detailedCircuit.data?.circuitConfigPath.url.replace('file://', '');
     const url = `${CELL_API_BASE_PATH}/circuit?input_path=${encodeURIComponent(
-      CELL_API_INPUT_PATH
+      circuitConfigPath
     )}&region=${regionID}&how=arrow`;
     return fetch(url, {
       method: 'get',
@@ -44,7 +52,7 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
         Accept: '*/*',
       }),
     }).then((response) => response.arrayBuffer());
-  }, [regionID]);
+  }, [detailedCircuit, regionID]);
 
   /**
    * Builds the geometry of the point cloud
@@ -81,9 +89,7 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
           const id = index;
           return { id, ...data };
         });
-
         const sprite = new THREE.TextureLoader().load(`${basePath}/images/disc.png`);
-
         const material = new THREE.PointsMaterial({
           color: new Color(color),
           size: 400,
@@ -119,10 +125,10 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
     const mc = threeCtxWrapper.getMeshCollection();
     if (mc.has(regionID)) {
       mc.show(regionID);
-    } else {
+    } else if (detailedCircuit.state !== 'loading') {
       fetchAndShowPointCloud();
     }
-  }, [atlas, fetchAndShowPointCloud, regionID]);
+  }, [atlas, detailedCircuit.state, fetchAndShowPointCloud, regionID]);
 
   return null;
 }

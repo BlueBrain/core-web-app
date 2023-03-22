@@ -8,21 +8,21 @@ import _ from 'lodash';
  * if it is not null, then append it with __ and the the node id
  *
  * @param extendedNodeId
- * @param nodeId
- * @param about
+ * @param childNodeId
+ * @param childAbout
  */
 export const calculateNewExtendedNodeId = (
   extendedNodeId: string,
-  nodeId: string,
-  about: string
+  childNodeId: string,
+  childAbout: string
 ): string => {
-  if (about === 'BrainRegion') {
-    return 'root';
+  if (childAbout === 'BrainRegion') {
+    return '';
   }
   if (extendedNodeId) {
-    return `${extendedNodeId}__${nodeId}`;
+    return `${extendedNodeId}__${childNodeId}`;
   }
-  return nodeId;
+  return childNodeId;
 };
 
 export const childIsLocked = (lockedIds: string[], extendedNodeId: string, childId: string) => {

@@ -1,11 +1,10 @@
 import { Session } from 'next-auth';
 
 import {
-  BBP_WORKFLOW_PING_TASK,
   BBP_WORKFLOW_AUTH_URL,
   BBP_WORKFLOW_TASK_PATH,
   WORKFLOW_TEST_TASK_NAME,
-  WorkflowFilesType,
+  WorkflowFile,
   PLACEHOLDERS,
 } from '@/services/bbp-workflow/config';
 import type { DetailedCircuitResource } from '@/types/nexus';
@@ -16,26 +15,12 @@ import {
 } from '@/services/unicore/config';
 import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
 
-export const workflowInstructions =
-  'https://bbpteam.epfl.ch/project/spaces/display/BBPNSE/Workflow#Workflow-Prerequisites';
-
-export async function runChecksBeforeLaunching(headers: HeadersInit, username: string) {
-  // check the pod is active
-  const podResponse = await fetch(BBP_WORKFLOW_PING_TASK.replace(PLACEHOLDERS.USERNAME, username), {
-    method: 'OPTIONS',
-    headers,
-  }).catch(() => ({ ok: false }));
-  if (!podResponse.ok) {
-    throw new Error('Pod is not available.');
-  }
-}
-
 export function getWorkflowAuthUrl(username: string) {
   return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
 }
 
 function replacePlaceholdersInFile(
-  filesList: WorkflowFilesType,
+  filesList: WorkflowFile[],
   fileName: string,
   placeholder: string,
   value: string
@@ -47,7 +32,7 @@ function replacePlaceholdersInFile(
   return filesCopy;
 }
 
-function generateFormData(replacedConfigFiles: WorkflowFilesType): FormData {
+function generateFormData(replacedConfigFiles: WorkflowFile[]): FormData {
   const data = new FormData();
   Object.values(replacedConfigFiles).forEach((file) => {
     if (file.TYPE === 'file') {
@@ -60,24 +45,34 @@ function generateFormData(replacedConfigFiles: WorkflowFilesType): FormData {
 }
 
 export function getSimulationTaskFiles(
-  workflowFiles: WorkflowFilesType,
-  circuit: DetailedCircuitResource | null
-): WorkflowFilesType {
+  workflowFiles: WorkflowFile[],
+  circuit: DetailedCircuitResource | null,
+  variantActivityUrl: string
+): WorkflowFile[] {
   if (!circuit) return workflowFiles;
 
-  return replacePlaceholdersInFile(
+  let replacedFile = replacePlaceholdersInFile(
     workflowFiles,
     'simulation.cfg',
     PLACEHOLDERS.CIRCUIT_URL,
     // eslint-disable-next-line no-underscore-dangle
     circuit._self
   );
+
+  replacedFile = replacePlaceholdersInFile(
+    workflowFiles,
+    'simulation.cfg',
+    PLACEHOLDERS.VARIANT_TASK_ACTIVITY,
+    variantActivityUrl
+  );
+
+  return replacedFile;
 }
 
 export function getCircuitBuildingTaskFiles(
-  workflowFiles: WorkflowFilesType,
+  workflowFiles: WorkflowFile[],
   configUrl: string | null
-): WorkflowFilesType {
+): WorkflowFile[] {
   if (!configUrl) return workflowFiles;
 
   const escapedConfigUrl = configUrl.includes('%') ? configUrl.replaceAll('%', '%%') : configUrl;
@@ -98,9 +93,9 @@ export function getCircuitBuildingTaskFiles(
 }
 
 export function getVideoGenerationTaskFiles(
-  workflowFiles: WorkflowFilesType,
+  workflowFiles: WorkflowFile[],
   simulationConfigUrl: string
-): WorkflowFilesType {
+): WorkflowFile[] {
   return replacePlaceholdersInFile(
     workflowFiles,
     'video_generation.cfg',
@@ -149,7 +144,7 @@ export async function launchUnicoreWorkflowSetup(token: string): Promise<true | 
 export type WorkflowRunProps = {
   loginInfo: Session;
   workflowName: string;
-  workflowFiles: WorkflowFilesType;
+  workflowFiles: WorkflowFile[];
 };
 
 export async function launchWorkflowTask({
@@ -160,8 +155,6 @@ export async function launchWorkflowTask({
   const headers = new Headers({
     Authorization: `Bearer ${loginInfo.accessToken}`,
   });
-
-  await runChecksBeforeLaunching(headers, loginInfo.user.username);
 
   const url = getWorkflowTaskUrl(loginInfo.user.username, workflowName);
 

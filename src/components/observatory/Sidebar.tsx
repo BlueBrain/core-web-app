@@ -39,7 +39,7 @@ export default function Sidebar({ links }: SideLinkList) {
               </Link>
             </li>
             <li>
-              <Link href="/electrophysiology">
+              <Link href="/observatory/electrophysiology">
                 <h1>Experimental Data</h1>
                 <ArrowRightOutlined />
                 <p>
