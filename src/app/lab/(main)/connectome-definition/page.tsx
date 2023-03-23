@@ -1,7 +1,7 @@
 'use client';
 
+import { useState } from 'react';
 import { useAtomValue } from 'jotai';
-import Image from 'next/image';
 import { ConfigProvider, theme } from 'antd';
 
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
@@ -15,17 +15,18 @@ import {
   MatrixModificationHistoryList,
   BrainRegionSelection,
 } from '@/components/connectome-definition';
-import { basePath } from '@/config';
+import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
 import styles from './connectome-definition.module.css';
 
 function ConnectomeDefinitionMain() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+  const [activeTab, setActiveTab] = useState('macro');
 
   return (
     <div className={styles.container}>
       <div className={styles.granularityTabs}>
-        <GranularityTabs />
+        <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
       </div>
       <div className={styles.modes}>
         <ModeSwitch />
@@ -33,15 +34,7 @@ function ConnectomeDefinitionMain() {
       <div className={styles.viewTabs}>
         <ConnectomeDefinitionTabs />
       </div>
-      <div className={styles.matrixContainer}>
-        <Image
-          className="mv-1"
-          src={`${basePath}/images/connectome-definition-placeholder.png`}
-          alt="Connectome definition placeholder image"
-          fill
-          style={{ objectFit: 'contain' }}
-        />
-      </div>
+      <div className={styles.matrixContainer}>{activeTab === 'macro' && <MacroConnectome />}</div>
       <div className={styles.rightPanel}>
         <MatrixPreviewComponent />
         <MatrixDisplayDropdown />
