@@ -15,18 +15,16 @@ export default function MacroConnectome() {
           },
         ]}
         layout={{
-          width: 900,
-          height: 600,
+          width: 500,
+          height: 500,
           paper_bgcolor: '#000',
           xaxis: {
-            automargin: true,
             color: '#DCDCDC',
             tickfont: {
               size: 7,
             },
           },
           yaxis: {
-            automargin: true,
             color: '#DCDCDC',
             tickfont: {
               size: 7,
