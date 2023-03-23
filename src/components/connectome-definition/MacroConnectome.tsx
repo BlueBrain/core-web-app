@@ -1,6 +1,5 @@
 import Plot from 'react-plotly.js';
-import connectivityMatrix from 'src/connectivity-dummy.json';
-// import styles from './connectome-definition.module.css';
+import connectivityMatrix from './connectivity-dummy.json';
 
 export default function MacroConnectome() {
   return (
@@ -16,8 +15,8 @@ export default function MacroConnectome() {
           },
         ]}
         layout={{
-          width: 1200,
-          height: 800,
+          width: 900,
+          height: 600,
           paper_bgcolor: '#000',
           xaxis: {
             automargin: true,
