@@ -1,10 +1,13 @@
-import { useAtom } from 'jotai';
+import { PrimitiveAtom, useAtom } from 'jotai';
 import { Input } from 'antd';
-import { searchStringAtom } from '@/state/ephys';
 
 const { Search } = Input;
 
-export default function EphysSearch() {
+type ObservatoryNameSearchProps = {
+  searchStringAtom: PrimitiveAtom<string>;
+};
+
+export default function ObservatoryNameSearch({ searchStringAtom }: ObservatoryNameSearchProps) {
   const [searchString, setSearchString] = useAtom(searchStringAtom);
   return (
     <Search

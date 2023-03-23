@@ -2,30 +2,23 @@
 
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
-import { EphysResource } from '@/types/observatory';
 import Sidebar from '@/components/observatory/Sidebar';
-import Link from '@/components/Link';
 import {
   aggregationsAtom,
   dataAtom,
   filtersAtom,
   pageSizeAtom,
   searchStringAtom,
-} from '@/state/observatory/ephys';
-import { sorter, dateStringToUnix } from '@/util/common';
+} from '@/state/observatory/morphology';
+import { ObservatoryResource } from '@/types/observatory';
+import { dateStringToUnix, sorter } from '@/util/common';
+import Link from '@/components/Link';
 import ObservatoryListingView from '@/components/ObservatoryListingView';
 import styles from '@/app/observatory/observatory.module.scss';
 
 const columHeader = (text: string) => <div className={styles.tableHeader}>{text}</div>;
 
-const columns: ColumnProps<EphysResource>[] = [
-  {
-    title: columHeader('Brain Region'),
-    dataIndex: 'brainRegion',
-    key: 'brainRegion',
-    className: 'text-primary-7 capitalize',
-    sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
-  },
+const columns: ColumnProps<ObservatoryResource>[] = [
   {
     title: columHeader('E-Type'),
     dataIndex: 'etype',
@@ -67,12 +60,12 @@ const columns: ColumnProps<EphysResource>[] = [
   },
 ];
 
-function EphysListPage() {
+export default function MorphologyPage() {
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ObservatoryListingView
-        title="Electrophysiology Data"
+        title="Morphology Data"
         columns={columns}
         dataAtom={dataAtom}
         pageSizeAtom={pageSizeAtom}
@@ -83,5 +76,3 @@ function EphysListPage() {
     </div>
   );
 }
-
-export default EphysListPage;

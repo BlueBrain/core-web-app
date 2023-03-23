@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { nexus as nexusConfig } from '@/config';
-import { detailAtom, infoAtom } from '@/state/ephys/detail';
+import { detailAtom, infoAtom } from '@/state/observatory/ephys/detail';
 import DetailHeader from '@/components/observatory/ephys/DetailHeader';
 import Sidebar from '@/components/observatory/Sidebar';
 import EphysViewerContainer from '@/components/observatory/ephys/EphysViewerContainer';

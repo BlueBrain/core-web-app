@@ -31,22 +31,30 @@ export interface Campaign {
   tags?: string[];
 }
 
-export interface EphysResource {
+export interface ObservatoryResource {
   key: React.Key;
   self: string;
   id: string;
   name: string;
   description: string;
-  brainRegion: string;
-  subjectSpecies: string;
+  subjectSpecies?: string;
   etype?: string;
   mtype?: string;
   contributor: string;
   createdAt: string;
 }
 
+export interface EphysResource extends ObservatoryResource {
+  brainRegion: string;
+}
+
 export interface EphysResponse {
   hits: EphysResource[];
+  aggs: Aggregations;
+}
+
+export interface MorphologyResponse {
+  hits: ObservatoryResource[];
   aggs: Aggregations;
 }
 
@@ -61,7 +69,7 @@ export interface Dimension {
 // The interaces below this line are generated for Elastic Search responses for type @trace
 export interface IdLabelEntity {
   identifier: string;
-  label: string;
+  label: string | string[];
 }
 export interface Distribution {
   contentSize: number;
@@ -82,7 +90,7 @@ export interface SubjectAge {
   unit: string;
   value: number | string;
 }
-export interface EphysRaw {
+export interface ESResponseRaw {
   sort?: number[] | null;
   _id: string;
   _index: string;
@@ -92,7 +100,7 @@ export interface EphysRaw {
 export interface Source {
   '@id': string;
   '@type'?: string | string[] | null;
-  brainRegion: IdLabelEntity;
+  brainRegion?: IdLabelEntity;
   createdAt: string;
   createdBy: string;
   deprecated: boolean;
@@ -100,7 +108,7 @@ export interface Source {
   distribution: Distribution;
   name: string;
   project: IdLabelEntity;
-  subjectSpecies: SubjectSpecies;
+  subjectSpecies?: SubjectSpecies;
   updatedAt: string;
   updatedBy: string;
   _self: string;

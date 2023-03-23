@@ -1,18 +1,21 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { useAtomValue, Atom, PrimitiveAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { aggregationsAtom } from '@/state/ephys';
 import { CheckboxOption, Filter, OptionsData } from '@/components/Filter/types';
 import { CheckList, FilterGroup } from '@/components/Filter';
-
-const loadableAggs = loadable(aggregationsAtom);
 
 type FilterProps = {
   filters: Filter[];
   setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
-function Filters() {
+type FiltersProps = {
+  aggregationsAtom: Atom<Promise<any>>;
+  filtersAtom: PrimitiveAtom<Filter[]>;
+};
+
+function Filters({ aggregationsAtom, filtersAtom }: FiltersProps) {
+  const loadableAggs = useMemo(() => loadable(aggregationsAtom), [aggregationsAtom]);
   const aggs = useAtomValue(loadableAggs);
 
   // Option state is defined here to preserve selected state when "collapsing" filters
@@ -52,10 +55,15 @@ function Filters() {
     },
   ];
 
-  return <FilterGroup items={filters} />;
+  return <FilterGroup items={filters} filtersAtom={filtersAtom} />;
 }
 
-export default function ControlPanel() {
+type ControlPanelProps = {
+  aggregationsAtom: Atom<Promise<any>>;
+  filtersAtom: PrimitiveAtom<Filter[]>;
+};
+
+export default function ControlPanel({ aggregationsAtom, filtersAtom }: ControlPanelProps) {
   return (
     <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-10 space-y-4 w-[480px]">
       <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
@@ -67,7 +75,7 @@ export default function ControlPanel() {
         scelerisque.
       </p>
 
-      <Filters />
+      <Filters aggregationsAtom={aggregationsAtom} filtersAtom={filtersAtom} />
     </div>
   );
 }
