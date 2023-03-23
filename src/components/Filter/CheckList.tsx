@@ -55,12 +55,7 @@ export default function CheckList({
   setOptions: Dispatch<SetStateAction<CheckboxOption[]>>;
   value?: (key: string) => string;
 }) {
-  useEffect(() => {
-    // console.log('data', data);
-    // console.log('options', options);
-  });
-
-  const fillOptionsFromBuckets = useMemo(() => getFillOptionsEffect(field, value), [field, value]);
+  const fillOptionsFromBuckets = useMemo(() => getFillOptionsEffect(field), [field]);
 
   // Populate the checkbox list from the aggregations
   useEffect(
