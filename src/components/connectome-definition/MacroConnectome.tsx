@@ -1,3 +1,4 @@
+import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 import { brainRegionsFilteredTreeAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 import { useAtomValue } from 'jotai';
@@ -20,10 +21,28 @@ function findLeaves(tree: BrainRegion[]) {
 }
 
 export default function MacroConnectome() {
+  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
+  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
   const tree = useAtomValue(brainRegionsFilteredTreeAtom) ?? [];
-  const leaves = useMemo(() => findLeaves(tree), tree);
+  const leaves = useMemo(() => new Set(findLeaves(tree)), [tree]);
 
-  console.log(leaves)
+  const preSynapticIds = useMemo(
+    () =>
+      Array.from(preSynapticBrainRegions)
+        .map(([id, _]) => id)
+        .filter((id) => leaves.has(id)),
+    [preSynapticBrainRegions, leaves]
+  );
+
+  const postSynapticIds = useMemo(
+    () =>
+      Array.from(postSynapticBrainRegions)
+        .map(([id, _]) => id)
+        .filter((id) => leaves.has(id)),
+    [postSynapticBrainRegions, leaves]
+  );
+
+  console.log(preSynapticIds, postSynapticIds);
 
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>
