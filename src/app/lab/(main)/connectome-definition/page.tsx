@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { ConfigProvider, theme } from 'antd';
 
@@ -34,7 +34,13 @@ function ConnectomeDefinitionMain() {
       <div className={styles.viewTabs}>
         <ConnectomeDefinitionTabs />
       </div>
-      <div className={styles.matrixContainer}>{activeTab === 'macro' && <MacroConnectome />}</div>
+      <div className={styles.matrixContainer}>
+        {activeTab === 'macro' && (
+          <Suspense fallback={null}>
+            <MacroConnectome />
+          </Suspense>
+        )}
+      </div>
       <div className={styles.rightPanel}>
         <MatrixPreviewComponent />
         <MatrixDisplayDropdown />
