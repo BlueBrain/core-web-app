@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import groupBy from 'lodash/groupBy';
+
 import infra from './data/infralimbic-area-layer-1.json';
 import lateral from './data/lateral-reticular-nucleus-composition.json';
 import { CompositionNode } from '@/types/composition';
@@ -10,7 +11,7 @@ import iterateAndComputeSystemLockedIds, {
 
 describe('findUnlockedSiblings', () => {
   const nodes = infra as CompositionNode[];
-  const groupByParent = _.groupBy(nodes, (node) => node.parentId);
+  const groupByParent = groupBy(nodes, (node) => node.parentId);
   const nullParent = groupByParent.null;
 
   it('should have the correct unlocked siblings in the first level', () => {

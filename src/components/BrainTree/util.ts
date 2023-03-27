@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
-import { getOr, set } from 'lodash/fp';
+import set from 'lodash/fp/set';
+import getOr from 'lodash/fp/getOr';
+
 import { NavValue } from '@/components/TreeNavItem';
 
 // eslint-disable-next-line import/prefer-default-export

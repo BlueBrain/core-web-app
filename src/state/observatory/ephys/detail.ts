@@ -1,7 +1,7 @@
 'use client';
 
 import { atom } from 'jotai';
-import { pick } from 'lodash';
+import pick from 'lodash/pick';
 import sessionAtom from '../../session';
 import { EphysDeltaResource, FetchParams } from '@/types/observatory';
 import { fetchResourceById } from '@/api/nexus';

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import has from 'lodash/has';
 import { createHeaders } from '@/util/utils';
 import { BrainRegion, BrainRegionOntology, BrainRegionOntologyView } from '@/types/ontologies';
 import { BrainRegionNexus, BrainRegionOntologyViewNexus } from '@/api/ontologies/types';
@@ -19,7 +19,7 @@ export const sanitizeId = (id: string) =>
  * @param payload
  */
 const sanitizeLeaves = (payload: BrainRegionNexus): string[] => {
-  if (_.has(payload, 'hasLeafRegionPart')) {
+  if (has(payload, 'hasLeafRegionPart')) {
     if (typeof payload.hasLeafRegionPart === 'string') {
       return [payload.hasLeafRegionPart];
     }

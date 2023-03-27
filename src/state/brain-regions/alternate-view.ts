@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { arrayToTree } from 'performant-array-to-tree';
 import { BrainRegion } from '@/types/ontologies';
 
@@ -17,7 +17,7 @@ export const buildAlternateChildren = (
   brainRegions: BrainRegion[],
   newViewId: string
 ) => {
-  let cleanBrainRegions = _.cloneDeep(brainRegions);
+  let cleanBrainRegions = cloneDeep(brainRegions);
   cleanBrainRegions = cleanBrainRegions
     .filter((br) => br.id !== brainRegionId)
     // @ts-ignore

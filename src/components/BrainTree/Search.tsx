@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { set } from 'lodash/fp';
+import set from 'lodash/fp/set';
 import { brainRegionsFilteredArrayAtom, setSelectedBrainRegionAtom } from '@/state/brain-regions';
 import Search from '@/components/Search';
 import { NavValue } from '@/components/TreeNavItem';

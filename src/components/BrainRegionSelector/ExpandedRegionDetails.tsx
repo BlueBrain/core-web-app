@@ -5,7 +5,9 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
-import _ from 'lodash';
+import difference from 'lodash/difference';
+import uniq from 'lodash/uniq';
+
 import { getMetric } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
@@ -208,12 +210,12 @@ function MeTypeDetails({
         ...userLockedIds,
         ...blockedNodeIds,
       ]);
-      return _.difference(system, userLockedIds);
+      return difference(system, userLockedIds);
     }
     return [];
   }, [blockedNodeIds, composition?.nodes, userLockedIds]);
   const allLockedIds = useMemo(
-    () => _.uniq([...systemLockedIds, ...userLockedIds, ...blockedNodeIds]),
+    () => uniq([...systemLockedIds, ...userLockedIds, ...blockedNodeIds]),
     [blockedNodeIds, systemLockedIds, userLockedIds]
   );
   /**
