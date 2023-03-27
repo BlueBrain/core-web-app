@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+
 import gustatory from './data/gustatory-layer-1.json';
 import testComposition from './data/test-composition.json';
 import { calculateNewExtendedNodeId } from '@/util/composition/utils';
@@ -85,7 +86,7 @@ describe('calculate ratio spread', () => {
   });
 
   it('ratio spread is spread correctly if previous value is 0', () => {
-    const nodeCopy = _.cloneDeep(node.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34']);
+    const nodeCopy = cloneDeep(node.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34']);
     nodeCopy.hasPart[
       'http://uri.interlex.org/base/ilx_0738203?rev=28'
     ].composition.neuron.count = 0;
@@ -105,7 +106,7 @@ describe('calculate ratio spread', () => {
 
 describe('findParentOfAffected', () => {
   // @ts-ignore
-  const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1) as LeafNode;
+  const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1) as LeafNode;
   it('should find the correct node if in the first level of the tree', () => {
     const node = findParentOfAffected('mtype1', testBrainRegion);
     expect(node?.label).toBe('Test Brain Region1');
@@ -173,8 +174,8 @@ describe('applyNewDensity', () => {
 
 describe('iterateAndApplyDensityChange', () => {
   it('should calculate correct density change', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     // @ts-ignore
     const mtype1 = copyTestBR.hasPart.mtype1 as LeafNode;
     iterateAndApplyDensityChange(mtype1, 0.5, 0.2);
@@ -187,8 +188,8 @@ describe('iterateAndApplyDensityChange', () => {
 
 describe('calculateAndApplyDensityChange', () => {
   it('should calculate the correct overall density change when changing first level', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     const modifiedNode = {
       id: 'mtype1',
       extendedNodeId: 'mtype1',
@@ -206,8 +207,8 @@ describe('calculateAndApplyDensityChange', () => {
   });
 
   it('should calculate the correct overall density change when changing second level', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     const modifiedNode = {
       id: 'etype2',
       extendedNodeId: 'mtype1__etype2',
@@ -225,8 +226,8 @@ describe('calculateAndApplyDensityChange', () => {
   });
 
   it('should calculate the correct overall density change when locked ids of first level', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     const modifiedNode = {
       id: 'mtype1',
       extendedNodeId: 'mtype1',
@@ -247,7 +248,7 @@ describe('calculateAndApplyDensityChange', () => {
 describe('computeModifiedComposition', () => {
   it('should calculate the correct overall density change when decreasing value by half', () => {
     // @ts-ignore
-    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const copyComposition = cloneDeep(testComposition) as Composition;
     const modifiedNode = {
       id: 'mtype1',
       composition: 900,
@@ -293,7 +294,7 @@ describe('computeModifiedComposition', () => {
 
   it('should calculate the correct overall density change when increasing value', () => {
     // @ts-ignore
-    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const copyComposition = cloneDeep(testComposition) as Composition;
     const modifiedNode = {
       id: 'mtype1',
       composition: 900,
@@ -339,7 +340,7 @@ describe('computeModifiedComposition', () => {
 
   it('should calculate the correct overall density change when decreasing value of second level', () => {
     // @ts-ignore
-    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const copyComposition = cloneDeep(testComposition) as Composition;
     const modifiedNode = {
       id: 'etype2',
       extendedNodeId: 'mtype1__etype2',

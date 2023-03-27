@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+
 import sessionAtom from '../session';
 import {
   configPayloadAtom,
@@ -143,7 +144,7 @@ export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null |
     const views = await get(brainRegionOntologyViewsAtom);
     const selectedViews = get(selectedAlternateViews);
 
-    const alternateTree = _.cloneDeep(defaultTree);
+    const alternateTree = cloneDeep(defaultTree);
     // iterate over the currently modified views and apply the alternative children
     Object.entries(selectedViews).forEach(([brainRegionId, viewId]) => {
       const view = views?.find((v) => v.id === viewId);
@@ -347,7 +348,7 @@ export const computeAndSetCompositionAtom = atom(
       );
       set(setUpdatedCompositionAtom, modifiedComposition);
 
-      const compositionClone = _.cloneDeep(modifiedComposition);
+      const compositionClone = cloneDeep(modifiedComposition);
       extendCompositionWithOverrideProps(compositionClone);
 
       set(setCompositionPayloadConfigurationAtom, compositionClone);

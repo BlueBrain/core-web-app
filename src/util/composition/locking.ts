@@ -1,4 +1,7 @@
-import _ from 'lodash';
+import groupBy from 'lodash/groupBy';
+import uniq from 'lodash/uniq';
+import difference from 'lodash/difference';
+
 import { CompositionNode } from '@/types/composition';
 
 /**
@@ -37,7 +40,7 @@ export const computeSystemLockedIds = (
   userAndBlockedNodeIds: string[]
 ) => {
   let lockedIds: string[] = [];
-  const groupByParent = _.groupBy(nodes, (node) => node.parentId);
+  const groupByParent = groupBy(nodes, (node) => node.parentId);
   // first iterating over the children whose parent is not null
   Object.entries(groupByParent).forEach(([parentId, neuronChildren]) => {
     // Rule No2: if all the children are locked, lock the parent
@@ -76,7 +79,7 @@ export const computeSystemLockedIds = (
     lockedIds = [...lockedIds, ...unlockedIds];
   }
 
-  return _.uniq(lockedIds);
+  return uniq(lockedIds);
 };
 
 /**
@@ -97,11 +100,11 @@ const iterateAndComputeSystemLockedIds = (
   let newSystemLockedIds;
   do {
     newSystemLockedIds = computeSystemLockedIds(nodes, allIds);
-    diff = _.difference(newSystemLockedIds, allIds);
+    diff = difference(newSystemLockedIds, allIds);
     systemLockedIds = [...systemLockedIds, ...newSystemLockedIds];
     allIds = [...allIds, ...newSystemLockedIds];
   } while (diff.length !== 0);
-  return _.uniq(systemLockedIds);
+  return uniq(systemLockedIds);
 };
 
 export default iterateAndComputeSystemLockedIds;

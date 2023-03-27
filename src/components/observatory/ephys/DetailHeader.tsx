@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { format, parseISO } from 'date-fns';
-import { find } from 'lodash';
-import { detailAtom } from '@/state/ephys/detail';
+import find from 'lodash/find';
+import { detailAtom } from '@/state/observatory/ephys/detail';
 import { EphysDeltaResource, AnnotationEntity } from '@/types/observatory';
 
 const getEtype = (x: EphysDeltaResource) => {

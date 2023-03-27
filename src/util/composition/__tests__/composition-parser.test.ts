@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+
 import gustatoryAreas from './data/gustatory-areas-composition.json';
 import gracileNucleus from './data/gracile-nucleus-composition.json';
 import cuneateNucleus from './data/cuneate-nucleus-composition.json';
@@ -88,7 +89,7 @@ describe('Composition Parser unit tests for single region', () => {
 
   const gustatoryAreasLayer1 = gustatoryAreas.hasPart[gal1Id];
   it('total count is calculated correctly', () => {
-    const cloneGAL1 = _.cloneDeep(gustatoryAreasLayer1);
+    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1);
     const nodes = {};
     const links = {};
     // @ts-ignore
@@ -98,7 +99,7 @@ describe('Composition Parser unit tests for single region', () => {
   });
 
   it('MType counts is calculated correctly', () => {
-    const cloneGAL1 = _.cloneDeep(gustatoryAreasLayer1);
+    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1);
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
@@ -113,7 +114,7 @@ describe('Composition Parser unit tests for single region', () => {
 
   it('should calculate the correct extended node ids', () => {
     // @ts-ignore
-    const cloneGAL1 = _.cloneDeep(gustatoryAreasLayer1) as LeafNode;
+    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1) as LeafNode;
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
@@ -128,7 +129,7 @@ describe('Composition Parser unit tests for single region', () => {
   });
 
   it('composition parser returns all nodes and links', () => {
-    const cloneGAL1 = _.cloneDeep(gustatoryAreasLayer1);
+    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1);
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
@@ -138,7 +139,7 @@ describe('Composition Parser unit tests for single region', () => {
   });
 
   it('composition parser returns correct blocked nodes if blocked', () => {
-    const cloneGracile = _.cloneDeep(gracileNucleus);
+    const cloneGracile = cloneDeep(gracileNucleus);
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     const blockedNodeIds: string[] = [];
@@ -154,7 +155,7 @@ describe('Composition Parser unit tests for single region', () => {
   });
 
   it('composition parser returns correct blocked nodes if not blocked', () => {
-    const cloneCuneate = _.cloneDeep(cuneateNucleus);
+    const cloneCuneate = cloneDeep(cuneateNucleus);
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     const blockedNodeIds: string[] = [];
@@ -171,14 +172,14 @@ describe('Calculate compositions unit tests', () => {
   ];
 
   it('total count is calculated correctly', async () => {
-    const areas = _.cloneDeep(gustatoryAreas);
+    const areas = cloneDeep(gustatoryAreas);
     // @ts-ignore
     const { totalComposition } = await calculateCompositions(areas, leafIds);
     expect(totalComposition.neuron.count).toBe(58137 + 3430);
   });
 
   it('all nodes and links are returned', async () => {
-    const areas = _.cloneDeep(gustatoryAreas);
+    const areas = cloneDeep(gustatoryAreas);
     // @ts-ignore
     const { nodes, links } = await calculateCompositions(areas, leafIds);
     expect(Object.values(nodes)).toHaveLength(87);

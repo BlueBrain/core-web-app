@@ -1,16 +1,14 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { useAtom } from 'jotai/react';
 import * as Accordion from '@radix-ui/react-accordion';
+import { PrimitiveAtom } from 'jotai';
 import CheckList from './CheckList';
 import { Filter } from './types';
 import { ChevronIcon, EyeIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
-import { filtersAtom } from '@/state/ephys';
 import styles from './filters.module.scss';
 
-export function FilterGroup({
-  items,
-}: {
+type FilterGroupProps = {
   items: {
     label: string;
     content: ({
@@ -21,7 +19,10 @@ export function FilterGroup({
       setFilters: Dispatch<SetStateAction<Filter[]>>;
     }) => ReactElement;
   }[];
-}) {
+  filtersAtom: PrimitiveAtom<Filter[]>;
+};
+
+export function FilterGroup({ items, filtersAtom }: FilterGroupProps) {
   const [filters, setFilters] = useAtom(filtersAtom);
 
   return (

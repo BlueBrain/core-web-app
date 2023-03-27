@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+
 import { Composition, CompositionNode, LeafNode } from '@/types/composition';
 import { childIsLocked } from '@/util/composition/utils';
 
@@ -226,7 +227,7 @@ const computeModifiedComposition = (
     });
   }
 
-  return _.cloneDeep(compositionFile);
+  return cloneDeep(compositionFile);
 };
 
 export default computeModifiedComposition;

@@ -1,4 +1,7 @@
-import _ from 'lodash';
+import has from 'lodash/has';
+import cloneDeep from 'lodash/cloneDeep';
+import uniq from 'lodash/uniq';
+
 import { Composition, CompositionPair, LeafNode, CompositionNode } from '@/types/composition';
 import {
   AnalysedComposition,
@@ -83,7 +86,7 @@ export function iterateNode(
       );
       childSubtree.extendedNodeId = childExtendedNodeId;
       const childIsBlocked =
-        isBlocked || (Object.keys(subTree.hasPart).length === 1 && _.has(childSubtree, 'hasPart'));
+        isBlocked || (Object.keys(subTree.hasPart).length === 1 && has(childSubtree, 'hasPart'));
       // calculate its composition and add it in the total
       const childComposition = iterateNode(
         childSubtree,
@@ -122,7 +125,7 @@ export function iterateNode(
     return totalComposition;
   }
   // @ts-ignore
-  return _.cloneDeep(subTree.composition);
+  return cloneDeep(subTree.composition);
 }
 
 /**
@@ -187,7 +190,7 @@ export default async function calculateCompositions(
     totalComposition,
     composition: compositionFile,
     volumes,
-    blockedNodeIds: _.uniq(blockedNodeIds),
+    blockedNodeIds: uniq(blockedNodeIds),
   };
 }
 /* eslint-enable no-param-reassign */
