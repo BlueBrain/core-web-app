@@ -1,4 +1,4 @@
-import React, { useRef, RefObject, ReactNode, useMemo, useState } from 'react';
+import React, { useRef, RefObject, ReactNode, useMemo, useState, useEffect } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useSetAtom, useAtomValue } from 'jotai';
@@ -12,6 +12,7 @@ import {
   selectedPreBrainRegionsAtom,
   selectedPostBrainRegionsAtom,
   brainRegionsFilteredTreeAtom,
+  brainRegionsFilteredArrayAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/components/TreeNavItem';
