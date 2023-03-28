@@ -1,4 +1,4 @@
-import React, { useRef, RefObject, ReactNode, useMemo, useState, useEffect } from 'react';
+import React, { useRef, RefObject, ReactNode, useMemo, useState } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useSetAtom, useAtomValue } from 'jotai';
@@ -12,7 +12,6 @@ import {
   selectedPreBrainRegionsAtom,
   selectedPostBrainRegionsAtom,
   brainRegionsFilteredTreeAtom,
-  brainRegionsFilteredArrayAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/components/TreeNavItem';
@@ -27,10 +26,11 @@ function NavTitle({
   content, // A callback that returns the <Accordion.Content/>
   multi = false,
   selectedBrainRegions,
+  isLeaf,
 }: TitleComponentProps) {
   let checkbox = null;
 
-  if (multi && id) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} />;
+  if (multi && id && isLeaf) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} />;
 
   return (
     <>
@@ -180,7 +180,7 @@ export default function ConnectomeEditorSidebar() {
               value={navValue}
             />
             <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
-              {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
+              {({ colorCode, id, isExpanded, title, leaves, trigger, content, items }) => (
                 <NavTitle
                   className="font-bold uppercase text-lg"
                   colorCode={colorCode}
@@ -196,6 +196,7 @@ export default function ConnectomeEditorSidebar() {
                   content={content}
                   multi={!!area}
                   selectedBrainRegions={selectedBrainRegions}
+                  isLeaf={!items || items.length === 0}
                 >
                   {({
                     colorCode: nestedColorCode,
@@ -204,6 +205,7 @@ export default function ConnectomeEditorSidebar() {
                     title: nestedTitle,
                     trigger: nestedTrigger,
                     content: nestedContent,
+                    items: nestedItems,
                   }) => (
                     <NavTitle
                       className={
@@ -224,6 +226,7 @@ export default function ConnectomeEditorSidebar() {
                       content={nestedContent}
                       multi={!!area}
                       selectedBrainRegions={selectedBrainRegions}
+                      isLeaf={!nestedItems || nestedItems.length === 0}
                     />
                   )}
                 </NavTitle>
