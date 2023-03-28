@@ -3,3 +3,4 @@
 /out/
 .vscode/
 __tests__/**/*.json
+src/components/connectome-definition/connectivity-dummy2.json
