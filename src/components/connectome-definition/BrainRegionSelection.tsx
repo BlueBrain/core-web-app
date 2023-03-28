@@ -14,7 +14,9 @@ export default function BrainRegionSelection({ regions, area }: Props) {
     <div>
       <div className={classNames('text-lg mr-3', textColor)}>{title}</div>
 
-      {regions.size !== 0 && <div>{Array.from(regions.values()).join(', ')}</div>}
+      {regions.size !== 0 && (
+        <div className="overflow-hidden h-5">{Array.from(regions.values()).join(', ')}</div>
+      )}
     </div>
   );
 }

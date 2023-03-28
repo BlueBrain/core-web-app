@@ -1,33 +1,15 @@
-import {
-  brainRegionsFilteredArrayAtom,
-  selectedPostBrainRegionsAtom,
-  selectedPreBrainRegionsAtom,
-} from '@/state/brain-regions';
-import { brainRegionsFilteredTreeAtom } from '@/state/brain-regions';
-import { BrainArea } from '@/state/connectome-editor/sidebar';
-import { BrainRegion } from '@/types/ontologies';
 import { useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import connectivityMatrix from './connectivity-dummy2.json';
-
-function findLeaves(tree: BrainRegion[]) {
-  const leaves: BrainRegion[] = [];
-  const queue = [...tree];
-
-  while (queue.length) {
-    const r = queue.shift();
-    if (!r) continue;
-    if (!r.items || r.items.length === 0) leaves.push(r);
-    r.items?.forEach((r) => queue.push(r));
-  }
-
-  return leaves;
-}
+import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 
 type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
 
-function getDensitiesForNodes(leafNodes: BrainRegion[], connectivity: ConnectivityMatrix) {
+function getDensitiesForNodes(
+  leafNodes: { id: string; title: string }[],
+  connectivity: ConnectivityMatrix
+) {
   const filteredDensities: number[][] = [];
   const notConnectionFoundList: string[] = [];
 
@@ -37,7 +19,7 @@ function getDensitiesForNodes(leafNodes: BrainRegion[], connectivity: Connectivi
     const sourceId = node.id;
     const targetObj = connectivity[sourceId];
 
-    const leafIds = leafNodes.map((node) => node.id);
+    const leafIds = leafNodes.map((n) => n.id);
 
     if (!targetObj) {
       notConnectionFoundList.push(sourceId);
@@ -48,7 +30,7 @@ function getDensitiesForNodes(leafNodes: BrainRegion[], connectivity: Connectivi
     const targetList: number[] = [];
     Object.keys(targetObj).forEach((targetId) => {
       if (leafIds.includes(targetId)) {
-        targetList.push(targetObj[targetId]['d']);
+        targetList.push(targetObj[targetId].d);
       }
     });
     filteredDensities.push(targetList);
@@ -67,27 +49,18 @@ function getDensitiesForNodes(leafNodes: BrainRegion[], connectivity: Connectivi
 
 export default function MacroConnectome() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
-  const tree = useAtomValue(brainRegionsFilteredTreeAtom) ?? [];
-  const brainRegions = useAtomValue(brainRegionsFilteredArrayAtom) ?? [];
-  const leaves = useMemo(() => findLeaves(tree), [tree]);
-  const leafIds = useMemo(() => new Set(leaves.map((l) => l.id)), [leaves]);
-
-  const preSynapticIds = useMemo(
-    () =>
-      Array.from(preSynapticBrainRegions)
-        .map(([id, _]) => id)
-        .filter((id) => leafIds.has(id)),
-    [preSynapticBrainRegions, leafIds]
+  const selectedPreSynapticBrainRegions = useMemo(
+    () => Array.from(preSynapticBrainRegions).map(([id, title]) => ({ id, title })),
+    [preSynapticBrainRegions]
   );
 
-  const selectedRegions = useMemo(
-    () => preSynapticIds.map((id) => brainRegions.find((br) => br.id == id)).filter((br) => !!br),
-    [brainRegions, preSynapticIds]
-  ) as BrainRegion[];
-
   const [filteredDensities, parcellationNames] = useMemo(
-    () => getDensitiesForNodes(selectedRegions, connectivityMatrix as ConnectivityMatrix),
-    [selectedRegions]
+    () =>
+      getDensitiesForNodes(
+        selectedPreSynapticBrainRegions,
+        connectivityMatrix as ConnectivityMatrix
+      ),
+    [selectedPreSynapticBrainRegions]
   );
 
   return (

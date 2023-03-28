@@ -1,4 +1,4 @@
-import React, { useRef, RefObject, ReactNode, useMemo, useState } from 'react';
+import React, { useRef, RefObject, ReactNode, useMemo, useState, useEffect } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useSetAtom, useAtomValue } from 'jotai';
@@ -12,6 +12,7 @@ import {
   selectedPreBrainRegionsAtom,
   selectedPostBrainRegionsAtom,
   brainRegionsFilteredTreeAtom,
+  brainRegionsFilteredArrayAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/components/TreeNavItem';
@@ -134,8 +135,23 @@ function CollapsedSidebar() {
   );
 }
 
+function findLeaves(tree: BrainRegion[]) {
+  const leaves: BrainRegion[] = [];
+  const queue = [...tree];
+
+  while (queue.length) {
+    const r = queue.shift();
+    if (!r) continue; // eslint-disable-line no-continue
+    if (!r.items || r.items.length === 0) leaves.push(r);
+    r.items?.forEach((i) => queue.push(i));
+  }
+
+  return leaves;
+}
+
 export default function ConnectomeEditorSidebar() {
   const area = useAtomValue(brainAreaAtom);
+  const brainRegions = useAtomValue(brainRegionsFilteredArrayAtom);
   const setSelectedPreBrainRegion = useSetAtom(setSelectedPreBrainRegionAtom);
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
@@ -146,6 +162,15 @@ export default function ConnectomeEditorSidebar() {
   let selectedBrainRegions: Map<string, string> = new Map();
   if (area === 'post') selectedBrainRegions = postSynapticBrainRegions;
   if (area === 'pre') selectedBrainRegions = preSynapticBrainRegions;
+
+  useEffect(() => {
+    if (!brainRegions) return;
+    const leaves = findLeaves(brainRegions);
+    leaves.forEach((l) => {
+      setSelectedPreBrainRegion(l.id, l.title);
+      setSelectedPostBrainRegion(l.id, l.title);
+    });
+  }, [brainRegions, setSelectedPostBrainRegion, setSelectedPreBrainRegion]);
 
   return (
     <div className="bg-black flex flex-1 flex-col h-screen">
