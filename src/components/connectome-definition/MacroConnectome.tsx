@@ -1,7 +1,6 @@
 import { useAtomValue } from 'jotai';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
-import connectivityMatrix from './connectivity-dummy2.json';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 
 type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
@@ -37,7 +36,9 @@ function getDensitiesForNodes(
 }
 
 export default function MacroConnectome() {
+  const [connectivityMatrix, setConnectivityMatrix] = useState<ConnectivityMatrix>({});
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
+
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
   const selectedPreSynapticBrainRegions = useMemo(
     () => Array.from(preSynapticBrainRegions).map(([id, title]) => ({ id, title })),
@@ -54,10 +55,20 @@ export default function MacroConnectome() {
       getDensitiesForNodes(
         selectedPreSynapticBrainRegions,
         selectedPostSynapticBrainRegions,
-        connectivityMatrix as ConnectivityMatrix
+        connectivityMatrix
       ),
-    [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions]
+    [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions, connectivityMatrix]
   );
+
+  useEffect(() => {
+    async function fetchConnectivity() {
+      const res = await fetch('/connectivity-dummy.json');
+      const json = await res.json();
+      setConnectivityMatrix(json);
+    }
+
+    fetchConnectivity();
+  }, []);
 
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>
