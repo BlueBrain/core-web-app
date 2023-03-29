@@ -1,6 +1,47 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { arrayToTree } from 'performant-array-to-tree';
 import { BrainRegion } from '@/types/ontologies';
+import { sanitizeId } from '@/api/ontologies/brain-regions';
+
+type BrainRegionAnnotationIndex = {
+  [key: string]: {
+    items?: BrainRegion[];
+    leaves: string[] | undefined;
+    representedInAnnotation: boolean;
+  };
+};
+
+function createAnnotationIndexFromBrainRegions(
+  acc: BrainRegionAnnotationIndex,
+  cur: { hasLayerPart?: string[]; id: string; representedInAnnotation: boolean }
+) {
+  const { hasLayerPart: leaves, representedInAnnotation } = cur;
+
+  return { ...acc, [cur.id]: { leaves, representedInAnnotation } };
+}
+
+function recursivelyCheckLeavesInAnnotation(
+  brainRegionAnnotationIndex: BrainRegionAnnotationIndex,
+  leaves: string[] | undefined,
+  representedInAnnotation: boolean
+): boolean {
+  return leaves?.length
+    ? leaves
+        .flatMap((id) => {
+          const { leaves: nestedLeaves, representedInAnnotation: nestedRepresentedInAnnotation } =
+            brainRegionAnnotationIndex[sanitizeId(id)];
+
+          return nestedLeaves?.length
+            ? recursivelyCheckLeavesInAnnotation(
+                brainRegionAnnotationIndex,
+                nestedLeaves,
+                nestedRepresentedInAnnotation
+              )
+            : nestedRepresentedInAnnotation;
+        })
+        .includes(true)
+    : representedInAnnotation;
+}
 
 /* eslint-disable no-param-reassign */
 
@@ -18,6 +59,7 @@ export const buildAlternateChildren = (
   newViewId: string
 ) => {
   let cleanBrainRegions = cloneDeep(brainRegions);
+
   cleanBrainRegions = cleanBrainRegions
     .filter((br) => br.id !== brainRegionId)
     // @ts-ignore
@@ -25,13 +67,29 @@ export const buildAlternateChildren = (
   cleanBrainRegions.forEach((br) => {
     br.view = newViewId;
   });
-  return arrayToTree(cleanBrainRegions, {
+
+  const brainRegionAnnotationIndex = brainRegions.reduce(createAnnotationIndexFromBrainRegions, {});
+
+  const updatedBrainRegions = cleanBrainRegions.map(
+    ({ hasLayerPart: leaves, representedInAnnotation, ...rest }) => {
+      const leavesInAnnotation = recursivelyCheckLeavesInAnnotation(
+        brainRegionAnnotationIndex,
+        leaves,
+        representedInAnnotation
+      );
+
+      return { ...rest, leaves, leavesInAnnotation, representedInAnnotation };
+    }
+  );
+
+  return arrayToTree(updatedBrainRegions, {
     dataField: null,
     parentId: parentProperty,
     childrenField: 'items',
     rootParentIds: { [brainRegionId]: true },
   }) as BrainRegion[];
 };
+
 /**
  * Builds the alternate tree based on a set of children
  * @param brainRegionRoot the currently visited root

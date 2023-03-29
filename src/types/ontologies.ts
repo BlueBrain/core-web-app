@@ -11,6 +11,7 @@ export type BrainRegion = {
   hasPart: string[];
   view?: string;
   representedInAnnotation: boolean;
+  leavesInAnnotation: boolean;
 };
 export type Mesh = {
   contentUrl: string;

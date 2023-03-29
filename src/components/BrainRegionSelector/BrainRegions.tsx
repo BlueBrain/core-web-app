@@ -98,6 +98,7 @@ function NavTitle({
         />
       );
     }
+
     return null;
   }, [
     brainRegionViews,
@@ -186,6 +187,7 @@ export default function BrainRegions() {
                 content,
                 view,
                 representedInAnnotation,
+                leavesInAnnotation,
               }) => (
                 <NavTitle
                   className="uppercase text-lg"
@@ -196,6 +198,10 @@ export default function BrainRegions() {
                   }
                   title={title}
                   isExpanded={isExpanded}
+                  isHidden={
+                    (leaves != null && !leavesInAnnotation) ||
+                    (leaves == null && !representedInAnnotation)
+                  }
                   trigger={trigger}
                   content={content}
                   selectedBrainRegion={selectedBrainRegion}
@@ -211,6 +217,7 @@ export default function BrainRegions() {
                     leaves: nestedLeaves,
                     view: nestedView,
                     representedInAnnotation: nestedRepresentedInAnnotation,
+                    leavesInAnnotation: nestedLeavesInAnnotation,
                   }) => (
                     <NavTitle
                       className="capitalize text-base"
@@ -226,6 +233,10 @@ export default function BrainRegions() {
                       id={nestedId}
                       title={nestedTitle}
                       isExpanded={nestedIsExpanded}
+                      isHidden={
+                        (nestedLeaves != null && !nestedLeavesInAnnotation) ||
+                        (nestedLeaves == null && !nestedRepresentedInAnnotation)
+                      }
                       trigger={nestedTrigger}
                       content={nestedContent}
                       selectedBrainRegion={selectedBrainRegion}
