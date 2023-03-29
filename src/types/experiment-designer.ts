@@ -21,3 +21,8 @@ export type ExpDesignerRangeParameter = ExpDesignerParameter & {
   type: 'range';
   value: RangeValue;
 };
+
+export type ExpDesignerStringParameter = ExpDesignerParameter & {
+  type: 'string';
+  value: string;
+};

@@ -6,6 +6,7 @@ import { ReactNode } from 'react';
 import ConstantParameter from '@/components/experiment-designer/ConstantParameter';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
 import RangeParameter from '@/components/experiment-designer/RangeParameter';
+import StringParameter from '@/components/experiment-designer/StringParameter';
 
 const defaultPadding = 'py-[12px]'; // to match the collapse padding
 const defaultNAParam = <div className={defaultPadding}>---</div>;
@@ -17,6 +18,11 @@ function ParameterRenderRow({ data }: { data: any }) {
   switch (data.type) {
     case 'number':
       columns.push(<ConstantParameter data={data} />);
+      columns.push(defaultNAParam);
+      break;
+
+    case 'string':
+      columns.push(<StringParameter data={data} className={defaultPadding} />);
       columns.push(defaultNAParam);
       break;
 
