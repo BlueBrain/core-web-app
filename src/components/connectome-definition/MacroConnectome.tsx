@@ -7,7 +7,8 @@ import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/sta
 type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
 
 function getDensitiesForNodes(
-  leafNodes: { id: string; title: string }[],
+  sourceNodes: { id: string; title: string }[],
+  targetNodes: { id: string; title: string }[],
   connectivity: ConnectivityMatrix
 ) {
   const filteredDensities: number[][] = [];
@@ -15,11 +16,11 @@ function getDensitiesForNodes(
 
   const parcellationNames: string[] = [];
 
-  leafNodes.forEach((node) => {
+  sourceNodes.forEach((node) => {
     const sourceId = node.id;
     const targetObj = connectivity[sourceId];
 
-    const leafIds = leafNodes.map((n) => n.id);
+    const targetIds = new Set(targetNodes.map((n) => n.id));
 
     if (!targetObj) {
       notConnectionFoundList.push(sourceId);
@@ -29,7 +30,7 @@ function getDensitiesForNodes(
 
     const targetList: number[] = [];
     Object.keys(targetObj).forEach((targetId) => {
-      if (leafIds.includes(targetId)) {
+      if (targetIds.has(targetId)) {
         targetList.push(targetObj[targetId].d);
       }
     });
@@ -49,19 +50,28 @@ function getDensitiesForNodes(
 
 export default function MacroConnectome() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
+  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
   const selectedPreSynapticBrainRegions = useMemo(
     () => Array.from(preSynapticBrainRegions).map(([id, title]) => ({ id, title })),
     [preSynapticBrainRegions]
+  );
+
+  const selectedPostSynapticBrainRegions = useMemo(
+    () => Array.from(postSynapticBrainRegions).map(([id, title]) => ({ id, title })),
+    [postSynapticBrainRegions]
   );
 
   const [filteredDensities, parcellationNames] = useMemo(
     () =>
       getDensitiesForNodes(
         selectedPreSynapticBrainRegions,
+        selectedPostSynapticBrainRegions,
         connectivityMatrix as ConnectivityMatrix
       ),
-    [selectedPreSynapticBrainRegions]
+    [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions]
   );
+
+  console.log(filteredDensities)
 
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>
