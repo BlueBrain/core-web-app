@@ -189,29 +189,15 @@ export const createGetConfigurationAtom = (entityId: string) => {
 const configPayloadDefaults = {
   VARIANT_DEFINITION: {
     algorithm: 'cell_composition_manipulation',
-    version: 'v0.3.1',
+    version: 'v0.3.3',
   },
   INPUTS: [
     {
-      name: 'base_composition_summary',
+      name: 'base_cell_composition',
       type: 'Dataset' as 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/81290874-fa53-424b-b5f2-2516f35e24d4',
-    },
-    {
-      name: 'base_density_distribution',
-      type: 'Dataset' as 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/celldensities/760b887c-759a-4ded-98e6-5d2712349eb2',
-    },
-    {
-      name: 'atlas_release',
-      type: 'Dataset' as 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885?rev=2',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/fea2f6c6-d09e-4aef-ae9a-6324f01e2467',
     },
   ],
-  BASE_ATLAS_DENSITY_DATASET: {
-    '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/27652d4d-3a6f-42c7-9833-64396104c445',
-    _rev: 10,
-  },
 };
 
 export const setCompositionPayloadConfigurationAtom = atom<null, [Composition], void>(
@@ -238,7 +224,6 @@ export const setCompositionPayloadConfigurationAtom = atom<null, [Composition], 
       configuration: {
         version: composition.version,
         unitCode: composition.unitCode,
-        base_atlas_density_dataset: configPayloadDefaults.BASE_ATLAS_DENSITY_DATASET,
         overrides: composition.hasPart as unknown as CompositionOverridesWorkflowConfig,
       },
     };

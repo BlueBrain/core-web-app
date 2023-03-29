@@ -77,10 +77,6 @@ export type CellCompositionConfigPayload = {
       unitCode: {
         density: string;
       };
-      base_atlas_density_dataset: {
-        '@id': string;
-        _rev: number;
-      };
       overrides: CompositionOverridesWorkflowConfig;
     };
     jobConfiguration: Record<string, string | number>;

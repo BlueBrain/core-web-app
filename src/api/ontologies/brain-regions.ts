@@ -1,7 +1,11 @@
 import has from 'lodash/has';
 import { createHeaders } from '@/util/utils';
 import { BrainRegion, BrainRegionOntology, BrainRegionOntologyView } from '@/types/ontologies';
-import { BrainRegionNexus, BrainRegionOntologyViewNexus } from '@/api/ontologies/types';
+import {
+  BrainRegionAnnotationIndex,
+  BrainRegionNexus,
+  BrainRegionOntologyViewNexus,
+} from '@/api/ontologies/types';
 import { composeUrl } from '@/util/nexus';
 
 /**
@@ -30,6 +34,44 @@ const sanitizeLeaves = (payload: BrainRegionNexus): string[] => {
   return payload.hasLeafRegionPart as string[];
 };
 
+function createAnnotationIndexFromBrainRegions(
+  acc: BrainRegionAnnotationIndex,
+  cur: { '@id': string; representedInAnnotation: boolean }
+) {
+  const { representedInAnnotation } = cur;
+
+  return { ...acc, [sanitizeId(cur['@id'])]: { representedInAnnotation } };
+}
+
+export function recursivelyCheckLeavesInAnnotation(
+  brainRegionAnnotationIndex: BrainRegionAnnotationIndex,
+  leaves: string[] | undefined
+): boolean {
+  return leaves?.length
+    ? leaves
+        .flatMap((id) => {
+          const { leaves: nestedLeaves, representedInAnnotation } =
+            brainRegionAnnotationIndex[sanitizeId(id)];
+
+          return nestedLeaves?.length
+            ? recursivelyCheckLeavesInAnnotation(brainRegionAnnotationIndex, nestedLeaves)
+            : representedInAnnotation;
+        })
+        .includes(true)
+    : false;
+}
+
+export function checkLeavesInAnnotation(
+  brainRegionAnnotationIndex: BrainRegionAnnotationIndex,
+  leaves: string[] | undefined
+) {
+  return leaves?.length
+    ? leaves
+        .map((id) => brainRegionAnnotationIndex[sanitizeId(id)]?.representedInAnnotation)
+        .includes(true)
+    : false;
+}
+
 /**
  * Serializes the brain regions from Nexus format to the local one
  * @param brainRegionPayloads the array of the payloads
@@ -38,7 +80,19 @@ const serializeBrainRegions = (
   brainRegionPayloads: (BrainRegionNexus | string)[]
 ): BrainRegion[] => {
   const serializedBrainRegions: BrainRegion[] = [];
+
+  const brainRegionAnnotationIndex: BrainRegionAnnotationIndex = (
+    brainRegionPayloads as BrainRegionNexus[]
+  ).reduce(createAnnotationIndexFromBrainRegions, {});
+
   brainRegionPayloads.forEach((brainRegionPayload) => {
+    const leaves = sanitizeLeaves(brainRegionPayload as BrainRegionNexus);
+
+    const leavesInAnnotation = recursivelyCheckLeavesInAnnotation(
+      brainRegionAnnotationIndex,
+      leaves
+    );
+
     if (typeof brainRegionPayload !== 'string' && brainRegionPayload.prefLabel) {
       serializedBrainRegions.push({
         id: sanitizeId(brainRegionPayload['@id']),
@@ -52,13 +106,16 @@ const serializeBrainRegions = (
         hasLayerPart: brainRegionPayload.hasLayerPart,
         hasPart: brainRegionPayload.hasPart,
         title: brainRegionPayload.prefLabel,
-        leaves: sanitizeLeaves(brainRegionPayload),
+        leaves,
         representedInAnnotation: brainRegionPayload.representedInAnnotation,
+        leavesInAnnotation,
       });
     }
   });
+
   // removing the duplicate ids
   const ids = serializedBrainRegions.map((br) => br.id);
+
   return serializedBrainRegions
     .filter(({ id }, index) => !ids.includes(id, index + 1))
     .sort((a, b) => a.title.localeCompare(b.title));

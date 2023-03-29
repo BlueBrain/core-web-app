@@ -31,3 +31,7 @@ export type BrainRegionOntologyViewNexus = {
   hasChildrenHierarchyProperty: string;
   label: string;
 };
+
+export type BrainRegionAnnotationIndex = {
+  [key: string]: { leaves?: string[]; representedInAnnotation: boolean };
+};
