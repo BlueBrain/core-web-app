@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
+import { basePath } from '@/config';
 
 type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
 
@@ -63,7 +64,9 @@ export default function MacroConnectome() {
   useEffect(() => {
     async function fetchConnectivity() {
       const protocol = window.location.hostname === 'localhost' ? 'http' : 'https';
-      const res = await fetch(`${protocol}://${window.location.host}/connectivity-dummy.json`);
+      const res = await fetch(
+        `${protocol}://${window.location.host}${basePath && `/${basePath}`}/connectivity-dummy.json`
+      );
       const json = await res.json();
       setConnectivityMatrix(json);
     }
