@@ -40,6 +40,11 @@ const nextConfig = {
         destination: '/lab/cell-composition/interactive',
         permanent: false,
       },
+      {
+        source: '/experiment-designer',
+        destination: '/experiment-designer/experiment-setup',
+        permanent: false,
+      },
     ];
   },
 };
