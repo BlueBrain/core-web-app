@@ -71,7 +71,7 @@ export default function MacroConnectome() {
     [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions]
   );
 
-  console.log(filteredDensities)
+  console.log(filteredDensities);
 
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>
