@@ -12,8 +12,6 @@ function getDensitiesForNodes(
   connectivity: ConnectivityMatrix
 ) {
   const filteredDensities: number[][] = [];
-  const notConnectionFoundList: string[] = [];
-
   const parcellationNames: string[] = [];
 
   sourceNodes.forEach((node) => {
@@ -22,10 +20,8 @@ function getDensitiesForNodes(
 
     const targetIds = new Set(targetNodes.map((n) => n.id));
 
-    if (!targetObj) {
-      notConnectionFoundList.push(sourceId);
-      return;
-    }
+    if (!targetObj) return;
+
     parcellationNames.push(node.title);
 
     const targetList: number[] = [];
@@ -36,14 +32,6 @@ function getDensitiesForNodes(
     });
     filteredDensities.push(targetList);
   });
-
-  console.log('Ids not found in connectivity', notConnectionFoundList.length);
-
-  // check the shape of the matrix is correct
-  const diff = filteredDensities.some(
-    (targetList) => targetList.length !== filteredDensities.length
-  );
-  console.log('Matrix is square', !diff);
 
   return [filteredDensities, parcellationNames];
 }
@@ -70,8 +58,6 @@ export default function MacroConnectome() {
       ),
     [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions]
   );
-
-  console.log(filteredDensities);
 
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>
