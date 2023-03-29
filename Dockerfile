@@ -19,8 +19,6 @@ ARG NEXT_PUBLIC_BASE_PATH
 ARG NEXT_PUBLIC_ENVIRONMENT
 ARG CI_COMMIT_SHORT_SHA
 
-ENV NODE_OPTIONS --max_old_space_size=4096
-
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
