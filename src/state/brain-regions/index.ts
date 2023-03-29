@@ -184,24 +184,32 @@ export const addOrRemoveSelectedAlternateView = atom(
 );
 
 /**
- * This atom returns the filtered brain regions as array
+ * This atom returns the filtered brain regions as array, preserving the original ordering
+ */
+export const brainRegionsUnsortedArrayAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
+  const tree = await get(brainRegionsFilteredTreeAtom);
+  // if the tree is successfully created, make region 8 the root and flatten it
+  // back to array. This is done in order to remove the brain regions that are
+  // siblings or parents of region 8
+  if (tree) {
+    const root = { ...tree[0] };
+    if (root) {
+      const flattenedRegions: BrainRegion[] = [];
+      treeToArray(root, flattenedRegions, []);
+      delete root.items;
+      return flattenedRegions;
+    }
+  }
+  return tree;
+});
+
+/**
+ * This atom returns the filtered brain regions as array sorted by id
  */
 export const brainRegionsFilteredArrayAtom = atom<Promise<BrainRegion[] | null | undefined>>(
   async (get) => {
-    const tree = await get(brainRegionsFilteredTreeAtom);
-    // if the tree is successfully created, make region 8 the root and flatten it
-    // back to array. This is done in order to remove the brain regions that are
-    // siblings or parents of region 8
-    if (tree) {
-      const root = { ...tree[0] };
-      if (root) {
-        const flattenedRegions: BrainRegion[] = [];
-        treeToArray(root, flattenedRegions, []);
-        delete root.items;
-        return flattenedRegions.sort((a, b) => a.id.localeCompare(b.id));
-      }
-    }
-    return tree;
+    const flattenedRegions = await get(brainRegionsUnsortedArrayAtom);
+    return flattenedRegions?.sort((a, b) => a.id.localeCompare(b.id)) ?? null;
   }
 );
 

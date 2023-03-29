@@ -12,7 +12,7 @@ import {
   selectedPreBrainRegionsAtom,
   selectedPostBrainRegionsAtom,
   brainRegionsFilteredTreeAtom,
-  brainRegionsFilteredArrayAtom,
+  brainRegionsUnsortedArrayAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/components/TreeNavItem';
@@ -151,7 +151,7 @@ function findLeaves(tree: BrainRegion[]) {
 
 export default function ConnectomeEditorSidebar() {
   const area = useAtomValue(brainAreaAtom);
-  const brainRegions = useAtomValue(brainRegionsFilteredArrayAtom);
+  const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
   const setSelectedPreBrainRegion = useSetAtom(setSelectedPreBrainRegionAtom);
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
