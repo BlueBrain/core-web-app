@@ -62,7 +62,7 @@ export default function MacroConnectome() {
 
   useEffect(() => {
     async function fetchConnectivity() {
-      const res = await fetch('/connectivity-dummy.json');
+      const res = await fetch(`${process.env.PUBLIC_URL}/connectivity-dummy.json`);
       const json = await res.json();
       setConnectivityMatrix(json);
     }
