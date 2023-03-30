@@ -2,40 +2,68 @@
 
 import { Divider } from 'antd';
 
+import { ReactNode } from 'react';
 import ConstantParameter from '@/components/experiment-designer/ConstantParameter';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
+import RangeParameter from '@/components/experiment-designer/RangeParameter';
 
-function ParameterRenderConstants({ data }: { data: any }) {
-  if (data.type === 'number') {
-    return <ConstantParameter data={data} />;
+const defaultPadding = 'py-[12px]'; // to match the collapse padding
+const defaultNAParam = <div className={defaultPadding}>---</div>;
+const defaultColumnStyle = 'w-1/2 align-baseline px-[16px]';
+
+function ParameterRenderRow({ data }: { data: any }) {
+  const columns: ReactNode[] = [];
+
+  switch (data.type) {
+    case 'number':
+      columns.push(<ConstantParameter data={data} />);
+      columns.push(defaultNAParam);
+      break;
+
+    case 'range':
+      columns.push(defaultNAParam);
+      columns.push(<RangeParameter data={data} />);
+      break;
+
+    default:
+      break;
   }
-  return <div>---</div>;
+
+  return (
+    <tr>
+      <td className={defaultColumnStyle}>{columns[0]}</td>
+      <td className={defaultColumnStyle}>{columns[1]}</td>
+    </tr>
+  );
 }
 
 export default function Params() {
   const { setup } = paramsDummyData;
   return (
-    <div className="h-full p-10">
-      <div className="text-sky-800">
+    <div className="h-full">
+      <div className="text-sky-800 p-6">
         Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
         sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate.
       </div>
 
-      <Divider />
-
-      <div className="flex gap-8">
-        <div className="lg:w-1/2 md:w-full">
-          <h4 className="py-8">CONSTANT PARAMETERS</h4>
-          <div className="flex flex-col">
-            {setup.map((param) => (
-              <ParameterRenderConstants key={param.id} data={param} />
-            ))}
-          </div>
-        </div>
-        <div className="lg:w-1/2 md:w-full">
-          <h4 className="py-8">PARAMETER SWEEPS</h4>
-        </div>
+      <div className="px-6">
+        <Divider />
       </div>
+
+      <table className="w-full">
+        <thead>
+          <tr>
+            <th>CONSTANT PARAMETERS</th>
+            <th>PARAMETER SWEEPS</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {setup.map((param) => (
+            <ParameterRenderRow key={param.id} data={param} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
