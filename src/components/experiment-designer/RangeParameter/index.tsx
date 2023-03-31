@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Slider, Collapse } from 'antd';
 import { ImportOutlined } from '@ant-design/icons';
 import type { SliderMarks } from 'antd/es/slider';
@@ -16,8 +17,10 @@ type Props = {
 };
 
 export default function RangeParameter({ data, className }: Props) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const { min: minStr, max: maxStr, start: startStr, end: endStr, step: stepStr } = data.value;
-  const [min, max, start, end, step] = [
+  const [min, max, defaultStart, defaultEnd, step] = [
     parseFloat(minStr) || 0,
     parseFloat(maxStr) || 100,
     parseFloat(startStr) || 0,
@@ -25,10 +28,18 @@ export default function RangeParameter({ data, className }: Props) {
     parseFloat(stepStr) || 1,
   ];
 
-  const marks: SliderMarks = {
+  const initialMarks: SliderMarks = {
     [min]: min,
     [max]: max,
+    [defaultStart]: defaultStart,
+    [defaultEnd]: defaultEnd,
   };
+  const [marks, setMarks] = useState<SliderMarks>(initialMarks);
+
+  const [[startValue, endValue], setStartEndValues] = useState<[number, number]>([
+    defaultStart,
+    defaultEnd,
+  ]);
 
   const genExtra = () => (
     <ImportOutlined
@@ -39,11 +50,38 @@ export default function RangeParameter({ data, className }: Props) {
     />
   );
 
+  const onSliderChange = ([newStart, newEnd]: [number, number]) => {
+    setMarks({
+      [min]: min,
+      [max]: max,
+      [newStart]: newStart,
+      [newEnd]: newEnd,
+    });
+    setStartEndValues([newStart, newEnd]);
+  };
+
   const borderStyle = 'border-2 border-solid border-gray rounded-md';
+  const titleStyle = 'font-bold text-primary-7';
+
+  const collapseTitle = isExpanded ? (
+    <div className={titleStyle}>{data.name}</div>
+  ) : (
+    <div className="flex items-baseline">
+      <div className={classNames('w-[100px]', titleStyle)}>{data.name}</div>
+      <div className="text-xs text-primary-7">
+        Range {startValue} - {endValue}
+      </div>
+    </div>
+  );
 
   return (
-    <Collapse expandIconPosition="end" ghost className={className} defaultActiveKey={['1']}>
-      <Panel header={data.name} key="1" extra={genExtra()}>
+    <Collapse
+      expandIconPosition="end"
+      ghost
+      className={className}
+      onChange={() => setIsExpanded((old) => !old)}
+    >
+      <Panel header={collapseTitle} key="1" extra={genExtra()}>
         <div className={classNames(borderStyle, 'p-2')}>
           <div>RANGE</div>
           <div className="mb-14">
@@ -52,9 +90,10 @@ export default function RangeParameter({ data, className }: Props) {
               min={min}
               max={max}
               step={step}
-              defaultValue={[start, end]}
+              defaultValue={[startValue, endValue]}
               marks={marks}
-              tooltip={{ open: true, placement: 'bottom' }}
+              onChange={onSliderChange}
+              tooltip={{ open: false }}
             />
           </div>
 
