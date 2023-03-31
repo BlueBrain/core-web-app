@@ -2,9 +2,7 @@
 
 import { ReactNode } from 'react';
 
-import ExperimentDesignerTopTabs from '@/components/experiment-designer/ExperimentDesignerTopTabs';
-import SaveBtn from '@/components/experiment-designer/SaveBtn';
-import SimulateBtn from '@/components/experiment-designer/SimulateBtn';
+import { ExperimentDesignerTopTabs, SaveBtn, SimulateBtn } from '@/components/experiment-designer';
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;

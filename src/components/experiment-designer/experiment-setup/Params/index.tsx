@@ -3,10 +3,12 @@
 import { Divider } from 'antd';
 
 import { ReactNode } from 'react';
-import ConstantParameter from '@/components/experiment-designer/ConstantParameter';
+import {
+  ConstantParameter,
+  RangeParameter,
+  StringParameter,
+} from '@/components/experiment-designer';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
-import RangeParameter from '@/components/experiment-designer/RangeParameter';
-import StringParameter from '@/components/experiment-designer/StringParameter';
 
 const defaultPadding = 'py-[12px]'; // to match the collapse padding
 const defaultNAParam = <div className={defaultPadding}>---</div>;
