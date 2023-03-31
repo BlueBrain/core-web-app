@@ -1,35 +1,37 @@
 import { atom } from 'jotai';
 
-import { cellCompositionAtom as cellCompositionPartialCircuitAtom } from '@/state/brain-model-config/cell-composition';
+import { cellCompositionAtom } from '@/state/brain-model-config/cell-composition';
 import { partialCircuitAtom as cellPositionPartialCircuitAtom } from '@/state/brain-model-config/cell-position';
 import { partialCircuitAtom as emodelAssignmentPartialCircuitAtom } from '@/state/brain-model-config/emodel-assignment';
 import { partialCircuitAtom as morphologyAssignmentPartialCircuitAtom } from '@/state/brain-model-config/morphology-assignment';
+import { partialCircuitAtom as microConnectomePartialCircuitAtom } from '@/state/brain-model-config/micro-connectome';
 
 export const cellCompositionWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
-  const compositionHasLink = await get(cellCompositionPartialCircuitAtom);
+  const cellComposition = await get(cellCompositionAtom);
 
-  return !!compositionHasLink;
+  return !!cellComposition;
 });
 
 export const cellPositionWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
-  const compositionHasLink = await get(cellCompositionWasBuiltAtom);
-  const data = await get(cellPositionPartialCircuitAtom);
+  const circuit = await get(cellPositionPartialCircuitAtom);
 
-  return !!compositionHasLink && !!data;
+  return !!circuit;
 });
 
 export const emodelAssignmentWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
-  const compositionHasLink = await get(cellCompositionWasBuiltAtom);
-  const data = await get(emodelAssignmentPartialCircuitAtom);
+  const circuit = await get(emodelAssignmentPartialCircuitAtom);
 
-  return !!compositionHasLink && !!data;
+  return !!circuit;
 });
 
 export const morphologyAssignmentWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
-  const compositionHasLink = await get(cellCompositionWasBuiltAtom);
-  const data = await get(morphologyAssignmentPartialCircuitAtom);
+  const circuit = await get(morphologyAssignmentPartialCircuitAtom);
 
-  return !!compositionHasLink && !!data;
+  return !!circuit;
 });
 
-export default {};
+export const microConnectomeWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
+  const circuit = await get(microConnectomePartialCircuitAtom);
+
+  return !!circuit;
+});

@@ -4,11 +4,10 @@ import { captureException } from '@sentry/nextjs';
 import { nexus } from '@/config';
 import {
   composeUrl,
-  createCellCompositionConfig,
-  createCellPositionConfig,
   ComposeUrlParams,
   createId,
   expandId,
+  createGeneratorConfig,
 } from '@/util/nexus';
 import {
   BrainModelConfig,
@@ -23,6 +22,9 @@ import {
   DetailedCircuitResource,
   VariantTaskActivityResource,
   VariantTaskConfigResource,
+  EModelAssignmentConfig,
+  MorphologyAssignmentConfig,
+  MicroConnectomeConfig,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -189,51 +191,98 @@ export function queryES<T>(query: Record<string, any>, session: Session) {
 
 // #################################### Non-generic methods ##########################################
 
-async function cloneOrCreateCellCompositionConfig(id: string | null, session: Session) {
-  if (id) {
-    // clone existing config and payload
-    const configSource = await fetchResourceSourceById<CellCompositionConfig>(id, session);
-    const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
-    const clonedPayloadMeta = await createJsonFile(
-      payload,
-      'cell-composition-config.json',
-      session
-    );
+export async function cloneCellCompositionConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<CellCompositionConfig>(id, session);
+  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
-    const clonedConfig: CellCompositionConfig = {
-      ...configSource,
-      '@id': createId('cellcompositionconfig'),
-      distribution: createCellCompositionConfig({ payloadMetadata: clonedPayloadMeta })
-        .distribution,
-    };
+  const clonedPayloadMeta = await createJsonFile(payload, 'cell-composition-config.json', session);
 
-    return createResource(clonedConfig, session);
-  }
+  const clonedConfig: CellCompositionConfig = {
+    ...configSource,
+    '@id': createId('cellcompositionconfig'),
+    distribution: createGeneratorConfig({
+      kgType: 'CellCompositionConfig',
+      payloadMetadata: clonedPayloadMeta,
+    }).distribution,
+  };
 
-  // create new
-  const payload = {};
-  const payloadMetadata = await createJsonFile(payload, 'cell-composition-config.json', session);
-  const config = createCellCompositionConfig({
-    id: createId('cellcompositionconfig'),
-    payloadMetadata,
-  });
-
-  return createResource(config, session);
+  return createResource(clonedConfig, session);
 }
 
-async function cloneOrCreateCellPositionConfig(id: string | null, session: Session) {
-  if (id) {
-    // clone existing config
-    const configSource = await fetchResourceSourceById<CellPositionConfig>(id, session);
-    configSource['@id'] = createId('cellpositionconfig');
-    return createResource(configSource, session);
-  }
+export async function cloneCellPositionConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<CellPositionConfig>(id, session);
+  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
-  // create a new one
-  const payload = {}; // TODO: replace with a valid default value
-  const payloadMetadata = await createJsonFile(payload, 'cell-position-config.json', session);
-  const config = createCellPositionConfig({ id: createId('cellpositionconfig'), payloadMetadata });
-  return createResource(config, session);
+  const clonedPayloadMeta = await createJsonFile(payload, 'cell-position-config.json', session);
+
+  const clonedConfig: CellPositionConfig = {
+    ...configSource,
+    '@id': createId('cellpositionconfig'),
+    distribution: createGeneratorConfig({
+      kgType: 'CellPositionConfig',
+      payloadMetadata: clonedPayloadMeta,
+    }).distribution,
+  };
+
+  return createResource(clonedConfig, session);
+}
+
+export async function cloneEModelAssignmentConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<EModelAssignmentConfig>(id, session);
+  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'emodel-assignment-config.json', session);
+
+  const clonedConfig: EModelAssignmentConfig = {
+    ...configSource,
+    '@id': createId('emodelassignmentconfig'),
+    distribution: createGeneratorConfig({
+      kgType: 'EModelAssignmentConfig',
+      payloadMetadata: clonedPayloadMeta,
+    }).distribution,
+  };
+
+  return createResource(clonedConfig, session);
+}
+
+export async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<MorphologyAssignmentConfig>(id, session);
+  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+
+  const clonedPayloadMeta = await createJsonFile(
+    payload,
+    'morphology-assignment-config.json',
+    session
+  );
+
+  const clonedConfig: MorphologyAssignmentConfig = {
+    ...configSource,
+    '@id': createId('morphologyassignmentconfig'),
+    distribution: createGeneratorConfig({
+      kgType: 'MorphologyAssignmentConfig',
+      payloadMetadata: clonedPayloadMeta,
+    }).distribution,
+  };
+
+  return createResource(clonedConfig, session);
+}
+
+export async function cloneMicroConnectomeConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<MicroConnectomeConfig>(id, session);
+  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'micro-connectome-config.json', session);
+
+  const clonedConfig: MicroConnectomeConfig = {
+    ...configSource,
+    '@id': createId('microconnectomeconfig'),
+    distribution: createGeneratorConfig({
+      kgType: 'MicroConnectomeConfig',
+      payloadMetadata: clonedPayloadMeta,
+    }).distribution,
+  };
+
+  return createResource(clonedConfig, session);
 }
 
 export async function cloneBrainModelConfig(
@@ -244,34 +293,56 @@ export async function cloneBrainModelConfig(
 ) {
   const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
 
-  const cellCompositionConfigId =
-    brainModelConfigSource.configs?.cellCompositionConfig?.['@id'] ?? null;
-  const clonedCellCompositionConfigMetadata = await cloneOrCreateCellCompositionConfig(
-    cellCompositionConfigId,
+  const clonedCellCompositionConfigMetadata = await cloneCellCompositionConfig(
+    brainModelConfigSource.configs?.cellCompositionConfig['@id'],
     session
   );
 
-  const cellPositionConfigId = brainModelConfigSource.configs?.cellPositionConfig?.['@id'] ?? null;
-  const clonedCellPositionConfigMetadata = await cloneOrCreateCellPositionConfig(
-    cellPositionConfigId,
+  const clonedCellPositionConfigMetadata = await cloneCellPositionConfig(
+    brainModelConfigSource.configs.cellPositionConfig['@id'],
     session
   );
 
-  // cloning BrainModelConfig
-  const clonedModelConfig = {
+  const clonedEModelAssignmentConfigMetadata = await cloneEModelAssignmentConfig(
+    brainModelConfigSource.configs.eModelAssignmentConfig['@id'],
+    session
+  );
+
+  const clonedMorphologyAssignmentConfigMetadata = await cloneMorphologyAssignmentConfig(
+    brainModelConfigSource.configs.morphologyAssignmentConfig['@id'],
+    session
+  );
+
+  const clonedMicroConnectomeConfigMetadata = await cloneMicroConnectomeConfig(
+    brainModelConfigSource.configs.morphologyAssignmentConfig['@id'],
+    session
+  );
+
+  const clonedModelConfig: BrainModelConfig = {
     ...brainModelConfigSource,
     '@id': createId('modelconfiguration'),
     name,
     description,
     configs: {
-      ...brainModelConfigSource.configs,
       cellCompositionConfig: {
         '@id': clonedCellCompositionConfigMetadata['@id'],
         '@type': ['CellCompositionConfig', 'Entity'],
       },
       cellPositionConfig: {
         '@id': clonedCellPositionConfigMetadata['@id'],
-        '@type': ['CellCompositionConfig', 'Entity'],
+        '@type': ['CellPositionConfig', 'Entity'],
+      },
+      eModelAssignmentConfig: {
+        '@id': clonedEModelAssignmentConfigMetadata['@id'],
+        '@type': ['EModelAssignmentConfig', 'Entity'],
+      },
+      morphologyAssignmentConfig: {
+        '@id': clonedMorphologyAssignmentConfigMetadata['@id'],
+        '@type': ['MorphologyAssignmentConfig', 'Entity'],
+      },
+      microConnectomeConfig: {
+        '@id': clonedMicroConnectomeConfigMetadata['@id'],
+        '@type': ['MicroConnectomeConfig', 'Entity'],
       },
     },
   };
