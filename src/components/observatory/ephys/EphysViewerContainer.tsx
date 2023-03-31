@@ -1,3 +1,5 @@
+import { Radio, RadioChangeEvent } from 'antd';
+import { FileImageOutlined, LineChartOutlined } from '@ant-design/icons';
 import { NexusClient } from '@bbp/nexus-sdk';
 import React from 'react';
 import { EphysDeltaResource } from '@/types/observatory';
@@ -52,6 +54,10 @@ function EphysViewerContainer({
 
   const [stimulusType, setStimulusType] = React.useState<string>('All');
 
+  const handleViewChange = (e: RadioChangeEvent) => {
+    setView(e.target.value);
+  };
+
   const handleChange = (value: string) => {
     setStimulusType(value);
   };
@@ -63,31 +69,37 @@ function EphysViewerContainer({
   };
 
   return (
-    <div className="ephys-container">
-      <div>
-        {view === VIEWS.IMAGE && (
-          <ImageViewContainer
-            {...{
-              stimulusType,
-              resource,
-              nexus,
-              stimulusTypeMap,
-              onRepetitionClicked: handleRepetitionClicked,
-              onStimulusChange: handleChange,
-            }}
-          />
-        )}
-        {view === VIEWS.CHART && (
-          <GraphViewContainer
-            nexus={nexus}
-            resource={resource}
-            defaultStimulusType={
-              stimulusType === 'None' || stimulusType === 'All' ? undefined : stimulusType
-            }
-            defaultRepetition={selectedRepetition}
-          />
-        )}
-      </div>
+    <div className="flex flex-col gap-6">
+      <Radio.Group onChange={handleViewChange} value={view}>
+        <Radio.Button value={VIEWS.IMAGE}>
+          <FileImageOutlined /> Overview
+        </Radio.Button>
+        <Radio.Button value={VIEWS.CHART}>
+          <LineChartOutlined /> Interactive Details
+        </Radio.Button>
+      </Radio.Group>
+      {view === VIEWS.IMAGE && (
+        <ImageViewContainer
+          {...{
+            stimulusType,
+            resource,
+            nexus,
+            stimulusTypeMap,
+            onRepetitionClicked: handleRepetitionClicked,
+            onStimulusChange: handleChange,
+          }}
+        />
+      )}
+      {view === VIEWS.CHART && (
+        <GraphViewContainer
+          nexus={nexus}
+          resource={resource}
+          defaultStimulusType={
+            stimulusType === 'None' || stimulusType === 'All' ? undefined : stimulusType
+          }
+          defaultRepetition={selectedRepetition}
+        />
+      )}
     </div>
   );
 }

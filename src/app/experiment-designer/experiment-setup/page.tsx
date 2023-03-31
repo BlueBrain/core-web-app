@@ -1,5 +1,4 @@
-import Params from '@/components/experiment-designer/experiment-setup/Params';
-import Visualization from '@/components/experiment-designer/experiment-setup/Visualization';
+import { Params, Visualization } from '@/components/experiment-designer/experiment-setup';
 
 export default function ExperimentSetupView() {
   return (

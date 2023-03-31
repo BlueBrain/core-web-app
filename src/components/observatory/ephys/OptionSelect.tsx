@@ -22,15 +22,17 @@ function OptionSelect({
     return null;
   }
   return (
-    <div className="option-select">
-      <label htmlFor="optionSelect">
-        <b>{title}</b>
-        {numberOfAvailable > 1 && <>&nbsp;({numberOfAvailable} available)</>}
+    <div className="flex flex-col gap-3">
+      <label className="font-bold text-dark" htmlFor="optionSelect">
+        {title}
+        <small className="font-light text-sm">
+          {numberOfAvailable > 1 && <>&nbsp;({numberOfAvailable} available)</>}
+        </small>
       </label>
       {numberOfAvailable > 1 ? (
         <Select
           id="optionSelect"
-          className="w-100"
+          className="w-[222px]"
           value={value}
           placeholder="Please select"
           onChange={handleChange}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Empty, Select } from 'antd';
+import { Empty, Select } from 'antd';
 import { LineChartOutlined } from '@ant-design/icons';
 
 import { RemoteData } from '@/types/observatory/index';
@@ -18,6 +18,7 @@ export type ImageItem = {
     }[];
   };
 };
+
 interface ImageSetComponentProps {
   stimulusType: string;
   repetitions: {
@@ -46,9 +47,18 @@ function ImageSetComponent({
   onRepetitionClicked,
   imagePreview,
 }: ImageSetComponentProps) {
+  const repCount = Object.keys(repetitions).length;
+
   return (
-    <div className="stimuli-list" key={`image-preview-${stimulusType}`}>
-      <div className="trace-repetitions">
+    <div className="divide-neutral-2 divide-y flex flex-col gap-3">
+      <div className="flex font-bold gap-2 items-baseline text-primary-9 text-lg">
+        {stimulusType}
+        <small className="font-light">{`${repCount} ${
+          repCount === 1 ? 'repetition' : 'repetitions'
+        }`}</small>
+      </div>
+
+      <div className="grid grid-cols-4 2xl:grid-cols-6 gap-7 pt-5">
         {Object.keys(repetitions).map((repKey) => {
           const sweeps = repetitions[Number(repKey)]?.sort((a: any, b: any) => {
             const aType = (a.about || a.fileName).toLowerCase().includes('response');
@@ -66,27 +76,26 @@ function ImageSetComponent({
             return 0;
           });
           return (
-            <div className="repetition-list" key={`image-preview-${stimulusType}-${repKey}`}>
-              <div className="mb-1em">
-                <h4 className="repetition-label">Repetition {repKey}</h4>
-                {/* TODO: unhide button and fix styles for interactive mode */}
-                <Button
-                  className="interactive-view-btn hidden"
-                  size="small"
-                  style={{ display: 'none' }}
-                  icon={<LineChartOutlined />}
+            <div className="flex flex-col gap-2" key={`image-preview-${stimulusType}-${repKey}`}>
+              <div className="flex items-center justify-between">
+                <span className="font-light indent-10 text-dark text-lg">Repetition {repKey}</span>
+                <button
+                  className="bg-neutral-1 flex items-center p-3 rounded hover:bg-neutral-2"
                   onClick={onRepetitionClicked(stimulusType, repKey)}
+                  type="button"
                 >
-                  <span className="repetition-label"> Repetition {repKey}</span>
-                  <span className="generic-label hidden"> Interactive View</span>
-                </Button>
+                  <LineChartOutlined className="stroke-primary-8" />
+                </button>
               </div>
+
               {sweeps.map((imgData: any, index: any) => (
                 <div
-                  className="mb-1em trace-image-preview"
+                  className="flex items-center"
                   key={`image-preview-${stimulusType}-${repKey}-${imgData.imageSrc}`}
                 >
-                  <h5 className="trace-type-label">{index === 0 ? 'Stimulus' : 'Recording'}</h5>
+                  <span className="-rotate-90 text-neutral-4">
+                    {index === 0 ? 'Stimulus' : 'Recording'}
+                  </span>
                   {imagePreview({ imageUrl: imgData.imageSrc })}
                 </div>
               ))}
@@ -118,11 +127,10 @@ function ImageViewComponent({
   }, [imageCollectionData]);
 
   return (
-    <div>
+    <div className="flex flex-col gap-10">
       {stimulusTypeMap.size > 1 && (
-        <div className="mb-1em">
+        <div className="flex flex-col gap-2">
           Select Stimulus ({stimulusTypeMap.size} available)
-          <br />
           <Select
             className="stimulus-select"
             placeholder="Select a stimulus"
@@ -138,30 +146,28 @@ function ImageViewComponent({
           </Select>
         </div>
       )}
-      <div>
-        <div>
-          {sortedImageCollectionData.map(([itemStimulusType, { repetitions }]) => (
-            <ImageSetComponent
-              key={itemStimulusType}
-              stimulusType={itemStimulusType}
-              repetitions={repetitions}
-              onRepetitionClicked={onRepetitionClicked}
-              imagePreview={imagePreview}
-            />
-          ))}
-          {imageCollectionData.data?.size === 0 && (
-            <Empty className="p-2em" description="There is no data to show" />
-          )}
-          {imageCollectionData.data?.size !== 0 && imageCollectionData.loading && (
-            <Empty className="p-2em" description="Fetching new stimulus types" />
-          )}
-          {imageCollectionData.error && (
-            <Empty
-              className="p-2em"
-              description={`There was a problem loading the required resources: ${imageCollectionData.error.message}`}
-            />
-          )}
-        </div>
+      <div className="flex flex-col gap-5">
+        {sortedImageCollectionData.map(([itemStimulusType, { repetitions }]) => (
+          <ImageSetComponent
+            key={itemStimulusType}
+            stimulusType={itemStimulusType}
+            repetitions={repetitions}
+            onRepetitionClicked={onRepetitionClicked}
+            imagePreview={imagePreview}
+          />
+        ))}
+        {imageCollectionData.data?.size === 0 && (
+          <Empty className="p-2em" description="There is no data to show" />
+        )}
+        {imageCollectionData.data?.size !== 0 && imageCollectionData.loading && (
+          <Empty className="p-2em" description="Fetching new stimulus types" />
+        )}
+        {imageCollectionData.error && (
+          <Empty
+            className="p-2em"
+            description={`There was a problem loading the required resources: ${imageCollectionData.error.message}`}
+          />
+        )}
       </div>
     </div>
   );

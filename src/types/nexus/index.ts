@@ -6,31 +6,38 @@ export interface BrainModelConfig extends Entity {
   name: string;
   description: string;
   configs: {
-    cellCompositionConfig?: {
+    cellCompositionConfig: {
       '@id': string;
-      '@type': ['CellCompositionConfig', 'Entity'];
+      '@type': [CellCompositionConfigType, 'Entity'];
     };
-    cellPositionConfig?: {
+    cellPositionConfig: {
       '@id': string;
-      '@type': ['CellPositionConfig', 'Entity'];
+      '@type': [CellPositionConfigType, 'Entity'];
     };
-    eModelAssignmentConfig?: {
+    eModelAssignmentConfig: {
       '@id': string;
-      '@type': ['EModelAssignmentConfig', 'Entity'];
+      '@type': [EModelAssignmentConfigType, 'Entity'];
     };
-    morphologyAssignmentConfig?: {
+    morphologyAssignmentConfig: {
       '@id': string;
-      '@type': ['MorphologyAssignmentConfig', 'Entity'];
+      '@type': [MorphologyAssignmentConfigType, 'Entity'];
+    };
+    microConnectomeConfig: {
+      '@id': string;
+      '@type': [MicroConnectomeConfigType, 'Entity'];
     };
   };
 }
 
 export interface BrainModelConfigResource extends ResourceMetadata, BrainModelConfig {}
 
+type CellCompositionGeneratorName = 'cell_composition';
+type CellCompositionConfigType = 'CellCompositionConfig';
+
 export interface CellCompositionConfig extends Entity {
   name: string;
-  '@type': ['CellCompositionConfig', 'Entity'];
-  generatorName: 'cell_composition';
+  '@type': [CellCompositionConfigType, 'Entity'];
+  generatorName: CellCompositionGeneratorName;
   description: string;
   distribution: Distribution;
 }
@@ -83,11 +90,14 @@ export type CellCompositionConfigPayload = {
   };
 };
 
+type CellPositionGeneratorName = 'cell_position';
+type CellPositionConfigType = 'CellPositionConfig';
+
 export interface CellPositionConfig extends Entity {
   name: string;
   description: string;
-  '@type': ['CellPositionConfig', 'Entity'];
-  generatorName: 'me_type_property';
+  '@type': [CellPositionConfigType, 'Entity'];
+  generatorName: CellPositionGeneratorName;
   distribution: Distribution;
 }
 
@@ -183,11 +193,14 @@ export interface DetailedCircuit extends Entity {
 
 export interface DetailedCircuitResource extends ResourceMetadata, DetailedCircuit {}
 
+type PlaceholderGeneratorName = 'placeholder';
+type EModelAssignmentConfigType = 'EModelAssignmentConfig';
+
 export interface EModelAssignmentConfig extends Entity {
   name: string;
   description: string;
-  '@type': ['EModelAssignmentConfig', 'Entity'];
-  generatorName: 'placeholder';
+  '@type': [EModelAssignmentConfigType, 'Entity'];
+  generatorName: PlaceholderGeneratorName;
   distribution: Distribution;
 }
 
@@ -209,11 +222,13 @@ export type EModelAssignmentConfigPayload = {
   };
 };
 
+type MorphologyAssignmentConfigType = 'MorphologyAssignmentConfig';
+
 export interface MorphologyAssignmentConfig extends Entity {
   name: string;
   description: string;
-  '@type': ['MorphologyAssignmentConfig', 'Entity'];
-  generatorName: 'placeholder';
+  '@type': [MorphologyAssignmentConfigType, 'Entity'];
+  generatorName: PlaceholderGeneratorName;
   distribution: Distribution;
 }
 
@@ -236,6 +251,19 @@ export type MorphologyAssignmentConfigPayload = {
     jobConfiguration: Record<string, string | number>;
   };
 };
+
+type MicroConnectomeGeneratorName = 'connectome';
+type MicroConnectomeConfigType = 'MicroConnectomeConfig';
+
+export interface MicroConnectomeConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': [MicroConnectomeConfigType, 'Entity'];
+  generatorName: MicroConnectomeGeneratorName;
+  distribution: Distribution;
+}
+
+export interface MicroConnectomeConfigResource extends ResourceMetadata, MicroConnectomeConfig {}
 
 export interface BbpWorkflowConfigResource extends Entity {
   '@type': 'BbpWorkflowConfig';
@@ -269,3 +297,23 @@ export interface VariantTaskConfig extends Entity {
 }
 
 export interface VariantTaskConfigResource extends ResourceMetadata, VariantTaskConfig {}
+
+export type GeneratorConfig =
+  | CellCompositionConfig
+  | CellPositionConfig
+  | EModelAssignmentConfig
+  | MorphologyAssignmentConfig
+  | MicroConnectomeConfig;
+
+export type GeneratorName =
+  | CellCompositionGeneratorName
+  | CellPositionGeneratorName
+  | PlaceholderGeneratorName
+  | MicroConnectomeGeneratorName;
+
+export type GeneratorConfigType =
+  | CellCompositionConfigType
+  | CellPositionConfigType
+  | EModelAssignmentConfigType
+  | MorphologyAssignmentConfigType
+  | MicroConnectomeConfigType;

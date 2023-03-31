@@ -139,12 +139,12 @@ function useEphysDistribution(resource: EphysDeltaResource, nexus: NexusClient) 
       })
       .then((linksData) => {
         if (linksData) {
-          const { LinksRABIndex, datasets } = linksData;
+          const { RABIndex: linksRABIndex, datasets } = linksData;
           setData({
             error,
             loading: false,
             data: {
-              RABIndex: LinksRABIndex,
+              RABIndex: linksRABIndex,
               datasets,
             },
           });

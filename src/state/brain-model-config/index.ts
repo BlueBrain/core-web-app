@@ -84,23 +84,29 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
 export const cellCompositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.cellCompositionConfig?.['@id'] ?? null;
+  return config?.configs.cellCompositionConfig?.['@id'] ?? null;
 });
 
 export const cellPositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.cellPositionConfig?.['@id'] ?? null;
+  return config?.configs.cellPositionConfig?.['@id'] ?? null;
 });
 
 export const eModelAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.eModelAssignmentConfig?.['@id'] ?? null;
+  return config?.configs.eModelAssignmentConfig?.['@id'] ?? null;
 });
 
 export const morphologyAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.morphologyAssignmentConfig?.['@id'] ?? null;
+  return config?.configs.morphologyAssignmentConfig?.['@id'] ?? null;
+});
+
+export const microConnectomeConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs.microConnectomeConfig?.['@id'] ?? null;
 });

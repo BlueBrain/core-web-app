@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, Button } from 'antd';
+import { Select } from 'antd';
 
 import DistinctColors from 'distinct-colors';
 import StimulusPlot from './StimulusPlot';
@@ -55,7 +55,7 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
     }
 
     return { sweeps: [], colorMapper: {} };
-  }, [selectedDataSet, selectedRepetition, index]);
+  }, [repetitions, selectedDataSet, selectedRepetition, index]);
 
   const selectedMetadata: IndexDataValue | undefined = React.useMemo(
     () => index.data[selectedDataSet],
@@ -89,18 +89,18 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
     setZoomRanges(null);
   };
 
+  const handlePreviewSweep = (value?: string) => {
+    if (!value) {
+      setPreviewItem(undefined);
+    } else if (sweepsOptions.length > 1 && !selectedSweeps.includes(value)) {
+      setPreviewItem(value);
+    }
+  };
+
   const handleRepetitionChange = (value: string) => {
     setSelectedRepetition(value);
     setSelectedSweeps([]);
     setZoomRanges(null);
-  };
-
-  const handlePreviewSweep = (sweep?: string) => {
-    if (!sweep) {
-      setPreviewItem(undefined);
-    } else if (sweepsOptions.length > 1 && !selectedSweeps.includes(sweep)) {
-      setPreviewItem(sweep);
-    }
   };
 
   const sweepObject = {
@@ -111,8 +111,8 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
   };
 
   return (
-    <>
-      <div className="ephys-plot-container">
+    <div className="flex flex-col gap-10">
+      <div className="flex gap-8">
         <OptionSelect
           label={{ title: 'Stimulus', numberOfAvailable: Object.keys(index.data).length }}
           options={dataSetOptions}
@@ -126,11 +126,6 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
           handleChange={handleRepetitionChange}
           hideWhenSingle
         />
-      </div>
-      <div className="sweep-selector-container">
-        <div className="sweep-selector-label">
-          <b>Sweep</b> ({sweeps.length} available)
-        </div>
         <TraceSelectorGroup
           handlePreviewSweep={handlePreviewSweep}
           colorMapper={colorMapper}
@@ -140,29 +135,28 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
           sweepsOptions={sweepsOptions}
         />
         {sweeps.length > 1 && (
-          <span className="sweep-selector-reset-btn">
-            <Button
-              size="small"
-              onClick={() => {
-                setSelectedSweeps([]);
-                setZoomRanges(null);
-              }}
-            >
-              Reset
-            </Button>
-          </span>
+          <button
+            type="button"
+            className="h-[32px] bg-transparant self-end text-dark"
+            onClick={() => {
+              setSelectedSweeps([]);
+              setZoomRanges(null);
+            }}
+          >
+            Reset
+          </button>
         )}
       </div>
-      <StimulusPlot
-        setSelectedSweeps={setSelectedSweeps}
-        metadata={selectedMetadata}
-        sweeps={sweepObject}
-        dataset={selectedDataSet}
-        options={options}
-        zoomRanges={zoomRanges}
-        onZoom={setZoomRanges}
-      />
-      <div className="recording-plot">
+      <div className="flex flex-col 2xl:flex-row gap-10">
+        <StimulusPlot
+          setSelectedSweeps={setSelectedSweeps}
+          metadata={selectedMetadata}
+          sweeps={sweepObject}
+          dataset={selectedDataSet}
+          options={options}
+          zoomRanges={zoomRanges}
+          onZoom={setZoomRanges}
+        />
         <ResponsePlot
           metadata={selectedMetadata}
           sweeps={sweepObject}
@@ -173,7 +167,7 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
           onZoom={setZoomRanges}
         />
       </div>
-    </>
+    </div>
   );
 }
 

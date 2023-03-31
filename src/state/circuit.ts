@@ -1,5 +1,5 @@
 'use client';
 
-import { partialCircuitAtom as detailedCircuitAtom } from './brain-model-config/morphology-assignment';
+import { partialCircuitAtom as detailedCircuitAtom } from './brain-model-config/micro-connectome';
 
 export default detailedCircuitAtom;

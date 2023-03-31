@@ -5,6 +5,7 @@ import {
   cellPositionWasBuiltAtom,
   emodelAssignmentWasBuiltAtom,
   morphologyAssignmentWasBuiltAtom,
+  microConnectomeWasBuiltAtom,
 } from './generated-artifacts';
 
 export const STATUS = {
@@ -92,7 +93,7 @@ export const statusStructure: StatusStructureItem[] = [
       },
       {
         name: STEPS.MICRO,
-        statusAtom: atom(() => Promise.resolve(null)),
+        statusAtom: microConnectomeWasBuiltAtom,
       },
     ],
   },

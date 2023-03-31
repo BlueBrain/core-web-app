@@ -15,10 +15,10 @@ export default function DetailHeader() {
   if (!detail) return <>Not Found</>;
 
   return (
-    <div className="p-7 bg-white">
+    <div>
       <div className="text-xs font-thin text-primary-7">Name</div>
       <div className="font-bold text-xl text-primary-7">{detail.name}</div>
-      <div className="flex justify-between mt-10">
+      <div className="grid grid-cols-5 gap-4 mt-10">
         <div className="flex-1 text-primary-7 text-xs mr-4">
           <div className="uppercase text-neutral-4">Description</div>
           <div className="mt-3 w-2/3 pr-6">{detail.description}</div>
