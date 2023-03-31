@@ -50,8 +50,9 @@
     {
       "id": "simulatedNeurons",
       "name": "Simulated neurons",
-      "type": "string",
+      "type": "dropdown",
       "value": "Hippocampal formation",
+      "options": [],
       "unit": null
     }
   ]

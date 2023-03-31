@@ -26,3 +26,9 @@ export type ExpDesignerStringParameter = ExpDesignerParameter & {
   type: 'string';
   value: string;
 };
+
+export type ExpDesignerDropdownParameter = ExpDesignerParameter & {
+  type: 'dropdown';
+  value: string;
+  options: { label: string; value: string }[];
+};

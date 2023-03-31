@@ -7,6 +7,7 @@ import {
   ConstantParameter,
   RangeParameter,
   StringParameter,
+  DropdownParameter,
 } from '@/components/experiment-designer';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
 
@@ -25,6 +26,11 @@ function ParameterRenderRow({ data }: { data: any }) {
 
     case 'string':
       columns.push(<StringParameter data={data} className={defaultPadding} />);
+      columns.push(defaultNAParam);
+      break;
+
+    case 'dropdown':
+      columns.push(<DropdownParameter data={data} className={defaultPadding} />);
       columns.push(defaultNAParam);
       break;
 
