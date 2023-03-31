@@ -11,16 +11,16 @@ import {
 } from '@/components/experiment-designer';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
 
-const defaultPadding = 'py-[12px]'; // to match the collapse padding
+const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
 const defaultNAParam = <div className={defaultPadding}>---</div>;
-const defaultColumnStyle = 'w-1/2 align-baseline px-[16px]';
+const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
 
 function ParameterRenderRow({ data }: { data: any }) {
   const columns: ReactNode[] = [];
 
   switch (data.type) {
     case 'number':
-      columns.push(<ConstantParameter data={data} />);
+      columns.push(<ConstantParameter data={data} className={defaultPadding} />);
       columns.push(defaultNAParam);
       break;
 
@@ -51,6 +51,8 @@ function ParameterRenderRow({ data }: { data: any }) {
   );
 }
 
+const headerStyle = 'p-[16px] font-light text-left';
+
 export default function Params() {
   const { setup } = paramsDummyData;
   return (
@@ -67,8 +69,8 @@ export default function Params() {
       <table className="w-full">
         <thead>
           <tr>
-            <th>CONSTANT PARAMETERS</th>
-            <th>PARAMETER SWEEPS</th>
+            <th className={headerStyle}>CONSTANT PARAMETERS</th>
+            <th className={headerStyle}>PARAMETER SWEEPS</th>
           </tr>
         </thead>
 

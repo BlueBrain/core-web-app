@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from 'antd';
+import { Input } from 'antd';
 import { ExportOutlined } from '@ant-design/icons';
 
 import type { ExpDesignerStringParameter } from '@/types/experiment-designer';
@@ -12,13 +12,10 @@ type Props = {
 };
 
 export default function StringParameter({ data, className }: Props) {
-  // TODO: add other regions. This will impact the viewer
-  const options = [{ label: data.value, value: data.value }];
-
   return (
-    <div className={classNames('flex gap-3 items-center', className)}>
+    <div className={classNames('flex gap-3 items-center font-bold', className)}>
       <div className="grow">{data.name}</div>
-      <Select defaultValue={[data.value]} size="small" options={options} style={{ width: 200 }} />
+      <Input defaultValue={data.value} size="small" style={{ width: 200 }} />
       <ExportOutlined />
     </div>
   );

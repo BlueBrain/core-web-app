@@ -55,6 +55,7 @@ export default function Stepper({ data, className }: Props) {
         className={classNames('flex gap-1 items-center w-full', isChecked ? selectedStyle : '')}
         id={id}
         onClick={() => onChangeStepper(id)}
+        tabIndex={-1}
       >
         <input
           type="radio"
