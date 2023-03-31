@@ -4,6 +4,7 @@ import { useEffect, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { createNexusClient } from '@bbp/nexus-sdk';
+import { useSession } from 'next-auth/react';
 import { nexus as nexusConfig } from '@/config';
 import { detailAtom, infoAtom } from '@/state/observatory/ephys/detail';
 import DetailHeader from '@/components/observatory/ephys/DetailHeader';
@@ -13,7 +14,8 @@ import { from64 } from '@/util/common';
 import { SideLink } from '@/types/observatory';
 
 function EphysDetail() {
-  const nexus = createNexusClient({ uri: nexusConfig.url });
+  const { data: session } = useSession();
+  const nexus = createNexusClient({ uri: nexusConfig.url, token: session?.accessToken });
   const path = usePathname();
 
   const detail = useAtomValue(detailAtom);
@@ -41,17 +43,9 @@ function EphysDetail() {
   return (
     <div className="flex h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar links={links} />
-      <div className="w-full h-full flex flex-col">
+      <div className="bg-white w-full h-full overflow-scroll flex flex-col p-7 pr-12 gap-7">
         <DetailHeader />
-        <div className="w-full h-full flex-1 bg-white p-4">
-          <h1 className="text-xl font-bold mt-4 text-primary-7">
-            APWaveforms <span className="font-thin text-sm">5 repetitions</span>
-          </h1>
-          <hr className="h-px my-8 bg-neutral-2 border-0" />
-          <div className="flex pt-4">
-            {detail && <EphysViewerContainer resource={detail} nexus={nexus} />}
-          </div>
-        </div>
+        {detail && session && <EphysViewerContainer resource={detail} nexus={nexus} />}
       </div>
     </div>
   );

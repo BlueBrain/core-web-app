@@ -27,11 +27,7 @@ export function NexusImageComponent(props: NexusImageProps) {
     return () => URL.revokeObjectURL(imageUrl);
   }, [imageData]);
 
-  return data ? (
-    <div className="nexus-image-container">
-      <Image width={200} src={data} />
-    </div>
-  ) : null;
+  return data ? <Image className="cursor-pointer" src={data} /> : null;
 }
 
 export function NexusImage(props: NexusImageContainerProps) {
@@ -54,16 +50,14 @@ export function NexusImage(props: NexusImageContainerProps) {
   }, []);
 
   return (
-    <div>
+    <>
       {loading && (
         <Spin spinning={loading}>
-          <div className="nexus-image-container">
-            <Skeleton.Image />
-          </div>
+          <Skeleton.Image />
         </Spin>
       )}
       {image && <NexusImageComponent imageData={image} />}
-    </div>
+    </>
   );
 }
 

@@ -25,6 +25,7 @@ interface ImageViewContainerProps {
   onStimulusChange: (value: string) => void;
   onRepetitionClicked: (stimulusType: string, rep: string) => () => void;
 }
+
 function ImageViewContainer({
   stimulusType,
   resource,
@@ -82,7 +83,7 @@ function ImageViewContainer({
   }, [page, stimulusType, stimulusTypeMap, imageCollectionData]);
 
   const [projectLabel, orgLabel] = resource._project.split('/').reverse();
-  console.log('IMAGE VIEW CONTAINER, fetchin');
+
   return (
     <>
       <ImageViewComponent
@@ -107,17 +108,15 @@ function ImageViewContainer({
         }}
       />
       {isLastPage ? null : (
-        <div className="trace-load-more-btn-container">
-          <Spin spinning={imageCollectionData.loading}>
-            <Button
-              onClick={() => {
-                setPage(page + 1);
-              }}
-            >
-              Load More
-            </Button>
-          </Spin>
-        </div>
+        <Spin spinning={imageCollectionData.loading}>
+          <Button
+            onClick={() => {
+              setPage(page + 1);
+            }}
+          >
+            Load More
+          </Button>
+        </Spin>
       )}
     </>
   );

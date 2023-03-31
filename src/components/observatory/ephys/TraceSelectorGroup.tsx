@@ -1,4 +1,5 @@
-import React from 'react';
+import { ChangeEvent } from 'react';
+import { classNames } from '@/util/utils';
 
 type TraceSelectorGroupProps = {
   selectedSweeps: string[];
@@ -14,61 +15,59 @@ function TraceSelectorGroup({
   selectedSweeps,
   sweepsOptions,
   handlePreviewSweep,
-  colorMapper,
   setSelectedSweeps,
+  colorMapper,
 }: TraceSelectorGroupProps) {
-  const handleChange = ({ target: { value, checked } }: any) => {
-    if (checked) {
-      setSelectedSweeps([...selectedSweeps, value]);
-    } else {
-      setSelectedSweeps(selectedSweeps.filter((sweep) => sweep !== value));
-    }
-    handlePreviewSweep(undefined);
-  };
+  const sweeps = sweepsOptions.map(({ label, value }) => {
+    const isSelected = selectedSweeps.includes(value);
+    const isEmptySelection = !selectedSweeps.length;
+    const isHighlight = isSelected || (isEmptySelection && !previewItem);
+
+    const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+      const { value: checkboxValue, checked } = target;
+
+      if (checked) {
+        setSelectedSweeps([...selectedSweeps, checkboxValue]);
+      } else {
+        setSelectedSweeps(selectedSweeps.filter((sweep) => sweep !== checkboxValue));
+      }
+
+      handlePreviewSweep(undefined);
+    };
+
+    return (
+      <label // eslint-disable-line jsx-a11y/label-has-associated-control
+        className={classNames(
+          'h-[32px] w-[32px] block cursor-pointer flex items-center rounded hover:opacity-75',
+          isSelected ? 'border-[#1890ff]' : 'border-[#1890ff00]'
+        )}
+        style={{
+          background: colorMapper[value] || '#1890ff',
+        }}
+        key={label}
+        onMouseEnter={() => handlePreviewSweep(value)}
+        onMouseLeave={() => handlePreviewSweep(undefined)}
+      >
+        <input
+          id="sweepInput"
+          className="hidden"
+          checked={isSelected}
+          type="checkbox"
+          value={value}
+          onChange={handleChange}
+        />
+        <span style={{ display: isHighlight ? 'none' : undefined }} />
+      </label>
+    );
+  });
 
   return (
-    <>
-      {sweepsOptions.map((sweep) => {
-        const isSelected = selectedSweeps.includes(sweep.value);
-        const isEmptySelection = !selectedSweeps.length;
-        const isHighlight = isSelected || (isEmptySelection && !previewItem);
-
-        return (
-          <label
-            key={sweep.label}
-            onMouseEnter={() => {
-              handlePreviewSweep(sweep.value);
-            }}
-            onMouseLeave={() => handlePreviewSweep(undefined)}
-            className="ant-checkbox-wrapper trace-selector-group"
-            htmlFor="sweepInput"
-          >
-            <span className="ant-checkbox">
-              <input
-                id="sweepInput"
-                className="ant-checkbox-input"
-                checked={isSelected}
-                type="checkbox"
-                value={sweep.label}
-                onChange={handleChange}
-              />
-              <span
-                className="ant-checkbox-inner"
-                style={{
-                  background: colorMapper[sweep.value] || '#1890ff',
-                  borderColor: isSelected ? '#1890ff' : '#1890ff00',
-                }}
-              >
-                <span
-                  className="trace-selector-cover"
-                  style={{ display: isHighlight ? 'none' : undefined }}
-                />
-              </span>
-            </span>
-          </label>
-        );
-      })}
-    </>
+    <div className="flex flex-col gap-3">
+      <span className="font-bold text-dark">
+        Sweep <small className="font-light text-sm">({sweepsOptions.length} available)</small>
+      </span>
+      <div className="flex gap-3 items-center">{sweeps}</div>
+    </div>
   );
 }
 
