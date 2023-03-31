@@ -38,6 +38,8 @@ function getDensitiesForNodes(
 
 export default function MacroConnectome() {
   const [connectivityMatrix, setConnectivityMatrix] = useState<ConnectivityMatrix>({});
+  
+
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
 
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);

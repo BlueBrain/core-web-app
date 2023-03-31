@@ -22,6 +22,9 @@ function ConnectomeDefinitionMain() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
   const [activeTab, setActiveTab] = useState('macro');
+  const [zoom, setZoom] = useState(true);
+  const [select, setSelect] = useState(false);
+  const [unselect, setUnselect] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -29,7 +32,26 @@ function ConnectomeDefinitionMain() {
         <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
       </div>
       <div className={styles.modes}>
-        <ModeSwitch />
+        <ModeSwitch
+          zoom={zoom}
+          select={select}
+          unselect={unselect}
+          setZoom={() => {
+            setZoom(true);
+            setSelect(false);
+            setUnselect(false);
+          }}
+          setSelect={() => {
+            setSelect(true);
+            setUnselect(false);
+            setZoom(false);
+          }}
+          setUnselect={() => {
+            setUnselect(true);
+            setSelect(false);
+            setZoom(false);
+          }}
+        />
       </div>
       <div className={styles.viewTabs}>
         <ConnectomeDefinitionTabs />
