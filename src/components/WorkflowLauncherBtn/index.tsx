@@ -12,7 +12,10 @@ import {
   launchUnicoreWorkflowSetup,
   launchWorkflowTask,
 } from '@/services/bbp-workflow';
-import { WORKFLOW_TEST_TASK_NAME } from '@/services/bbp-workflow/config';
+import {
+  WORKFLOW_TEST_TASK_NAME,
+  WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
+} from '@/services/bbp-workflow/config';
 import generateWorkflowConfig from '@/services/bbp-workflow/placeholderReplacer';
 import { configAtom } from '@/state/brain-model-config';
 import { stepsToBuildAtom } from '@/state/build-status';
@@ -137,8 +140,9 @@ export default function WorkflowLauncher({
 
   const launchBbpWorkflow = async () => {
     if (!session?.user) return;
+    if (!config) return;
+    if (workflowName !== WORKFLOW_CIRCUIT_BUILD_TASK_NAME && !circuitInfo) return;
 
-    if (!circuitInfo || !config) return;
     const workflowConfig = await generateWorkflowConfig(
       workflowName,
       circuitInfo,
