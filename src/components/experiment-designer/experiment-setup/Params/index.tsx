@@ -8,6 +8,7 @@ import {
   RangeParameter,
   StringParameter,
   DropdownParameter,
+  BrainRegionsDropdown,
 } from '@/components/experiment-designer';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
 
@@ -31,6 +32,11 @@ function ParameterRenderRow({ data }: { data: any }) {
 
     case 'dropdown':
       columns.push(<DropdownParameter data={data} className={defaultPadding} />);
+      columns.push(defaultNAParam);
+      break;
+
+    case 'regionDropdown':
+      columns.push(<BrainRegionsDropdown defaultValue={data.value} className={defaultPadding} />);
       columns.push(defaultNAParam);
       break;
 

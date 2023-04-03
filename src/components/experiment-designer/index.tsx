@@ -5,6 +5,7 @@ import RangeParameter from './RangeParameter';
 import SaveBtn from './SaveBtn';
 import SimulateBtn from './SimulateBtn';
 import DropdownParameter from './DropdownParameter';
+import BrainRegionsDropdown from './BrainRegionsDropdown';
 
 export {
   StringParameter,
@@ -14,4 +15,5 @@ export {
   SaveBtn,
   SimulateBtn,
   DropdownParameter,
+  BrainRegionsDropdown,
 };
