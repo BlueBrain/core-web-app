@@ -1,8 +1,9 @@
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Spin, Table } from 'antd';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { LoadingOutlined } from '@ant-design/icons';
+import usePathname from '@/hooks/pathname';
 import { EphysResource, ObservatoryResource } from '@/types/observatory';
 import styles from '@/app/observatory/observatory.module.scss';
 
