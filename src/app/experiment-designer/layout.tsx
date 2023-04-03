@@ -3,12 +3,15 @@
 import { ReactNode } from 'react';
 
 import { ExperimentDesignerTopTabs, SaveBtn, SimulateBtn } from '@/components/experiment-designer';
+import useAuth from '@/hooks/auth';
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;
 };
 
 export default function ExperimentDesignerLayout({ children }: ExperimentDesignerLayoutProps) {
+  useAuth(true);
+
   return (
     <div className="h-screen">
       <ExperimentDesignerTopTabs />
