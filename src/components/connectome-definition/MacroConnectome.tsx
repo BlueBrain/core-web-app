@@ -37,7 +37,14 @@ function getDensitiesForNodes(
 }
 
 interface PlotDiv extends HTMLDivElement {
-  on: (event: string, handler: ({ points }: { points: any }) => void) => void;
+  on: (
+    event: string,
+    handler: ({
+      points,
+    }: {
+      points: { pointIndex: [number, number]; data: { x: number[]; y: number[] } }[];
+    }) => void
+  ) => void;
 }
 
 interface Rect extends Partial<Shape> {
@@ -148,78 +155,111 @@ export default function MacroConnectome({
             size: 7,
           },
         },
+        shapes: shapes.current,
       });
       setPlotInitialized(true);
 
-      container.on(
-        'plotly_click',
-        ({
-          points,
-        }: {
-          points: { pointIndex: [number, number]; data: { x: number[]; y: number[] } }[];
-        }) => {
-          if (unselectRef.current) {
-            const point = { x: points[0].pointIndex[1], y: points[0].pointIndex[0] };
-            const deletedShapes = shapes.current.filter(
-              (s) => point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1
-            );
-            shapes.current = shapes.current.filter(
-              (s) => !(point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1)
-            );
+      container.on('plotly_click', ({ points }) => {
+        if (unselectRef.current) {
+          const point = { x: points[0].pointIndex[1], y: points[0].pointIndex[0] };
+          const deletedShapes = shapes.current.filter(
+            (s) => point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1
+          );
+          shapes.current = shapes.current.filter(
+            (s) => !(point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1)
+          );
 
-            // eslint-disable-next-line no-restricted-syntax
-            for (const s of deletedShapes) {
-              for (let x = s.x0; x <= s.x1; x += 1)
-                for (let y = s.y1; y <= s.y0; y += 1) {
-                  if (x >= s.x0 && x <= s.x1 && y <= s.y0 && y >= s.y1) {
-                    // @ts-ignore
-                    delete selectedShapes.current[[points[0].data.x[x], points[0].data.y[y]]];
-                  }
+          // eslint-disable-next-line no-restricted-syntax
+          for (const s of deletedShapes) {
+            for (let x = s.x0; x <= s.x1; x += 1)
+              for (let y = s.y1; y <= s.y0; y += 1) {
+                if (x >= s.x0 && x <= s.x1 && y <= s.y0 && y >= s.y1) {
+                  // @ts-ignore
+                  delete selectedShapes.current[[points[0].data.x[x], points[0].data.y[y]]];
                 }
-            }
-            Plotly.relayout(container, { shapes: shapes.current });
+              }
           }
-
-          if (!selectRef.current) return;
-          if (!selecting.current) {
-            corner1.current = [points[0].pointIndex[1], points[0].pointIndex[0]];
-            selecting.current = true;
-            return;
-          }
-
-          const c1 = corner1.current;
-          const c2 = corner2.current;
-
-          shapes.current.push({
-            type: 'rect',
-            x0: Math.min(c1[0], c2[0]),
-            y0: Math.max(c1[1], c2[1]),
-            x1: Math.max(c2[0], c1[0]),
-            y1: Math.min(c2[1], c1[1]),
-            opacity: 0.5,
-            fillcolor: 'green',
-            line: {
-              color: 'transparent',
-            },
-          });
-
-          for (let x = c1[0]; x <= c2[0]; x += 1)
-            for (let y = c2[1]; y <= c1[1]; y += 1) {
-              if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1])
-                // @ts-ignore
-                selectedShapes.current[[points[0].data.x[x], points[0].data.y[y]]] = true;
-            }
-
-          Plotly.relayout(container, {
-            shapes: shapes.current,
-          });
-
-          corner1.current = [0, 0];
-          corner2.current = [0, 0];
-
-          selecting.current = false;
+          Plotly.relayout(container, { shapes: shapes.current });
         }
-      );
+
+        if (!selectRef.current) return;
+        if (!selecting.current) {
+          corner1.current = [points[0].pointIndex[1], points[0].pointIndex[0]];
+          selecting.current = true;
+          return;
+        }
+
+        const c1 = corner1.current;
+        const c2 = corner2.current;
+
+        shapes.current.push({
+          type: 'rect',
+          x0: Math.min(c1[0], c2[0]),
+          y0: Math.max(c1[1], c2[1]),
+          x1: Math.max(c2[0], c1[0]),
+          y1: Math.min(c2[1], c1[1]),
+          opacity: 0.5,
+          fillcolor: 'green',
+          line: {
+            color: 'transparent',
+          },
+        });
+
+        for (let x = c1[0]; x <= c2[0]; x += 1)
+          for (let y = c2[1]; y <= c1[1]; y += 1) {
+            if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1])
+              // @ts-ignore
+              selectedShapes.current[[points[0].data.x[x], points[0].data.y[y]]] = true;
+          }
+
+        Plotly.relayout(container, {
+          shapes: shapes.current,
+        });
+
+        corner1.current = [0, 0];
+        corner2.current = [0, 0];
+
+        selecting.current = false;
+      });
+
+      container.on('plotly_hover', ({ points }) => {
+        const point = { x: points[0].pointIndex[1], y: points[0].pointIndex[0] };
+        if (unselectRef.current) {
+          Plotly.relayout(container, {
+            shapes: shapes.current.map((s) => ({
+              ...s,
+              fillcolor:
+                point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1
+                  ? 'red'
+                  : 'green',
+            })),
+          });
+          return;
+        }
+        if (!selecting.current) return;
+
+        corner2.current = [points[0].pointIndex[1], points[0].pointIndex[0]];
+
+        Plotly.update(
+          container,
+          {},
+          {
+            shapes: [
+              ...shapes.current,
+              {
+                type: 'rect',
+                x0: corner1.current[0],
+                y0: corner1.current[1],
+                x1: corner2.current[0],
+                y1: corner2.current[1],
+                line: {
+                  color: 'green',
+                },
+              },
+            ],
+          }
+        );
+      });
 
       return;
     }
@@ -241,6 +281,7 @@ export default function MacroConnectome({
           size: 7,
         },
       },
+      shapes: shapes.current,
     });
   }, [filteredDensities, parcellationNames, plotInitialized, select, unselect]);
 
