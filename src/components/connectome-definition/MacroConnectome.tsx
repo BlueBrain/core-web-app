@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
-import { useEffect, useMemo, useState } from 'react';
-import Plot from 'react-plotly.js';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import Plotly, { PlotType } from 'plotly.js-dist-min';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 import { basePath } from '@/config';
 
@@ -10,7 +10,7 @@ function getDensitiesForNodes(
   sourceNodes: { id: string; title: string }[],
   targetNodes: { id: string; title: string }[],
   connectivity: ConnectivityMatrix
-) {
+): [number[][], string[]] {
   const filteredDensities: number[][] = [];
   const parcellationNames: string[] = [];
 
@@ -37,8 +37,25 @@ function getDensitiesForNodes(
 }
 
 export default function MacroConnectome() {
+  //   {
+  //   zoom,
+  //   select,
+  //   unselect,
+  //   setZoom,
+  //   setSelect,
+  //   setUnselect,
+  // }: {
+  //   zoom: boolean;
+  //   select: boolean;
+  //   unselect: boolean;
+  //   setZoom: () => void;
+  //   setSelect: () => void;
+  //   setUnselect: () => void;
+  // }
+  const plotRef = useRef<HTMLDivElement>(null);
   const [connectivityMatrix, setConnectivityMatrix] = useState<ConnectivityMatrix>({});
-  
+  const [plotInitialized, setPlotInitialized] = useState(false);
+  const [layout, setLayout] = useState();
 
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
 
@@ -76,36 +93,69 @@ export default function MacroConnectome() {
     fetchConnectivity();
   }, []);
 
+  useEffect(() => {
+    if (!plotRef.current) return;
+
+    const data: {
+      z: number[][];
+      x: string[];
+      y: string[];
+      type: PlotType;
+    }[] = [
+      {
+        z: filteredDensities,
+        x: parcellationNames,
+        y: parcellationNames,
+        type: 'heatmap',
+      },
+    ];
+
+    if (!plotInitialized) {
+      Plotly.newPlot(plotRef.current, data, {
+        width: 500,
+        height: 500,
+        paper_bgcolor: '#000',
+        plot_bgcolor: '#000',
+        xaxis: {
+          color: '#DCDCDC',
+          tickfont: {
+            size: 7,
+          },
+        },
+        yaxis: {
+          color: '#DCDCDC',
+          tickfont: {
+            size: 7,
+          },
+        },
+      });
+      setPlotInitialized(true);
+      return;
+    }
+
+    Plotly.react(plotRef.current, data, {
+      width: 500,
+      height: 500,
+      paper_bgcolor: '#000',
+      plot_bgcolor: '#000',
+      xaxis: {
+        color: '#DCDCDC',
+        tickfont: {
+          size: 7,
+        },
+      },
+      yaxis: {
+        color: '#DCDCDC',
+        tickfont: {
+          size: 7,
+        },
+      },
+    });
+  }, [filteredDensities, parcellationNames, plotInitialized]);
+
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>
-      <Plot
-        data={[
-          {
-            z: filteredDensities,
-            x: parcellationNames,
-            y: parcellationNames,
-            type: 'heatmap',
-            colorscale: 'Hot',
-          },
-        ]}
-        layout={{
-          width: 500,
-          height: 500,
-          paper_bgcolor: '#000',
-          xaxis: {
-            color: '#DCDCDC',
-            tickfont: {
-              size: 7,
-            },
-          },
-          yaxis: {
-            color: '#DCDCDC',
-            tickfont: {
-              size: 7,
-            },
-          },
-        }}
-      />
+      <div ref={plotRef} />
     </div>
   );
 }
