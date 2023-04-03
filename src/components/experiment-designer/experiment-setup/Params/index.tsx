@@ -1,27 +1,30 @@
 'use client';
 
 import { Divider } from 'antd';
-
 import { ReactNode } from 'react';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
+
 import {
   ConstantParameter,
   RangeParameter,
   StringParameter,
   DropdownParameter,
-  BrainRegionsDropdown,
 } from '@/components/experiment-designer';
-import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
+import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetRegionSelector';
+import { expDesignerConfigAtom } from '@/state/experiment-designer';
 
-const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
+const defaultPadding = 'py-[12px]'; // to match the collapse padding
 const defaultNAParam = <div className={defaultPadding}>---</div>;
-const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
+const defaultColumnStyle = 'w-1/2 align-baseline px-[16px] text-primary-7';
+const headerStyle = 'p-[16px] font-light text-left';
 
 function ParameterRenderRow({ data }: { data: any }) {
   const columns: ReactNode[] = [];
 
   switch (data.type) {
     case 'number':
-      columns.push(<ConstantParameter data={data} className={defaultPadding} />);
+      columns.push(<ConstantParameter data={data} />);
       columns.push(defaultNAParam);
       break;
 
@@ -36,7 +39,7 @@ function ParameterRenderRow({ data }: { data: any }) {
       break;
 
     case 'regionDropdown':
-      columns.push(<BrainRegionsDropdown defaultValue={data.value} className={defaultPadding} />);
+      columns.push(<TargetRegionSelector data={data} className={defaultPadding} />);
       columns.push(defaultNAParam);
       break;
 
@@ -57,10 +60,14 @@ function ParameterRenderRow({ data }: { data: any }) {
   );
 }
 
-const headerStyle = 'p-[16px] font-light text-left';
+const loadableExpDesignConfigAtom = loadable(expDesignerConfigAtom);
 
 export default function Params() {
-  const { setup } = paramsDummyData;
+  const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);
+
+  const setup =
+    expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.setup : [];
+
   return (
     <div className="h-full">
       <div className="text-sky-800 p-6">
@@ -81,6 +88,12 @@ export default function Params() {
         </thead>
 
         <tbody>
+          {!setup.length && (
+            <tr>
+              <td className={defaultColumnStyle}>Fetching info...</td>
+              <td className={defaultColumnStyle}>Fetching info...</td>
+            </tr>
+          )}
           {setup.map((param) => (
             <ParameterRenderRow key={param.id} data={param} />
           ))}

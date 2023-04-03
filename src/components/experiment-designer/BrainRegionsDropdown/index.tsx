@@ -12,8 +12,10 @@ type Props = {
   className?: string;
 };
 
+const loadableBrainRegionsAtom = loadable(brainRegionsAtom);
+
 export default function BrainRegionsDropdown({ onChange, defaultValue, className }: Props) {
-  const brainRegionsLoadable = useAtomValue(loadable(brainRegionsAtom));
+  const brainRegionsLoadable = useAtomValue(loadableBrainRegionsAtom);
 
   const brainRegions = brainRegionsLoadable.state === 'hasData' ? brainRegionsLoadable.data : [];
 
