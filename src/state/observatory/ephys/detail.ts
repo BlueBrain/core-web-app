@@ -2,7 +2,7 @@
 
 import { atom } from 'jotai';
 import pick from 'lodash/pick';
-import sessionAtom from '../../session';
+import sessionAtom from '@/state/session';
 import { EphysDeltaResource, FetchParams } from '@/types/observatory';
 import { fetchResourceById } from '@/api/nexus';
 

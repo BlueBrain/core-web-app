@@ -1,4 +1,4 @@
-import { GenericEventInterface } from '../utils/generic-event';
+import { GenericEventInterface } from '@/services/brayns/utils/generic-event';
 import {
   isNumber,
   isObject,

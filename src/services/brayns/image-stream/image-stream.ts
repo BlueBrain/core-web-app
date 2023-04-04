@@ -1,6 +1,6 @@
-import GenericEvent from '../utils/generic-event';
-import JsonRpcService from '../json-rpc/json-rpc';
 import { loadImage } from './image-tools';
+import GenericEvent from '@/services/brayns/utils/generic-event';
+import JsonRpcService from '@/services/brayns/json-rpc/json-rpc';
 import {
   assertNumber,
   assertObject,

@@ -2,9 +2,9 @@ import { atom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
 
-import sessionAtom from '../session';
-import { configPayloadAtom } from '../brain-model-config/cell-composition';
-import { setCompositionPayloadConfigurationAtom } from '../brain-model-config/cell-composition/extra';
+import sessionAtom from '@/state/session';
+import { configPayloadAtom } from '@/state/brain-model-config/cell-composition';
+import { setCompositionPayloadConfigurationAtom } from '@/state/brain-model-config/cell-composition/extra';
 import {
   BrainRegion,
   BrainRegionOntology,

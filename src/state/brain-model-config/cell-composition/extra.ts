@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 
-import invalidateConfigAtom from '../util';
 import { configAtom, configPayloadAtom, configPayloadRevAtom, setLocalConfigPayloadAtom } from '.';
+import invalidateConfigAtom from '@/state/brain-model-config/util';
 import sessionAtom from '@/state/session';
 import { CellCompositionConfigPayload, CompositionOverridesWorkflowConfig } from '@/types/nexus';
 import { setRevision } from '@/util/nexus';

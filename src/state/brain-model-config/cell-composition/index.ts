@@ -3,7 +3,7 @@
 import { atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 
-import { cellCompositionConfigIdAtom } from '../index';
+import { cellCompositionConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
 import {
   fetchResourceById,

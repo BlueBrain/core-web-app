@@ -1,4 +1,4 @@
-import JsonRpcService from '../json-rpc/json-rpc';
+import JsonRpcService from '@/services/brayns/json-rpc/json-rpc';
 import { logError } from '@/util/logger';
 import { assertString } from '@/util/type-guards';
 

@@ -1,8 +1,6 @@
 import { Atom, atom } from 'jotai';
 import toLower from 'lodash/toLower';
 
-import sessionAtom from '../session';
-
 import {
   configSourceAtom as cellCompositionConfigSourceAtom,
   cellCompositionAtom as cellCompositionBuildArtefact,
@@ -33,6 +31,7 @@ import {
   configAtom as modelConfigMetaAtom,
   triggerRefetchAtom,
 } from '.';
+import sessionAtom from '@/state/session';
 
 import { createResource, updateResource } from '@/api/nexus';
 import { GeneratorConfig } from '@/types/nexus';

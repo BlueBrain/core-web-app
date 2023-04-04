@@ -2,10 +2,10 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import GenericEvent from '../utils/generic-event';
-import BraynsWrapper from '../wrapper/wrapper';
-import { BraynsMeshOptions, BraynsObjects, BusyEventParams } from '../types';
-import { loadNexusMetadata } from '../utils/nexus';
+import GenericEvent from '@/services/brayns/utils/generic-event';
+import BraynsWrapper from '@/services/brayns/wrapper/wrapper';
+import { BraynsMeshOptions, BraynsObjects, BusyEventParams } from '@/services/brayns/types';
+import { loadNexusMetadata } from '@/services/brayns/utils/nexus';
 import { assertType } from '@/util/type-guards';
 import { logError } from '@/util/logger';
 

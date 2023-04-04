@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { PrimitiveAtom, useAtom } from 'jotai';
-import styles from '../observatory/ephys/loadmore-button.module.scss';
+import styles from '@/components/observatory/ephys/loadmore-button.module.scss';
 
 const antIcon = <LoadingOutlined style={{ float: 'left', fontSize: 24 }} spin />;
 
