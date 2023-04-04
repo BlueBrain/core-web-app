@@ -32,3 +32,12 @@ export type ExpDesignerDropdownParameter = ExpDesignerParameter & {
   value: string;
   options: { label: string; value: string }[];
 };
+
+export type ExpDesignerConfig = {
+  setup: Array<
+    | ExpDesignerNumberParameter
+    | ExpDesignerDropdownParameter
+    | ExpDesignerRangeParameter
+    | ExpDesignerStringParameter
+  >;
+};
