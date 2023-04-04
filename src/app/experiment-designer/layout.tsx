@@ -1,9 +1,11 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import { ExperimentDesignerTopTabs, SaveBtn, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
+import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;
@@ -14,13 +16,19 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
 
   return (
     <div className="h-screen">
-      <ExperimentDesignerTopTabs />
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <ExperimentDesignerTopTabs />
+      </ErrorBoundary>
 
-      <div className="h-full">{children}</div>
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <div className="h-full">{children}</div>
+      </ErrorBoundary>
 
       <div className="absolute bottom-5 right-5 flex gap-5">
-        <SaveBtn />
-        <SimulateBtn />
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <SaveBtn />
+          <SimulateBtn />
+        </ErrorBoundary>
       </div>
     </div>
   );
