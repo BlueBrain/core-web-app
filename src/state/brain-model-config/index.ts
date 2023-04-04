@@ -63,6 +63,8 @@ export const updateConfigAtom = atom(null, async (get, set, config: BrainModelCo
 
 export const getNameAtom = selectAtom(configAtom, (config) => config?.name);
 
+export const getCreatedByAtom = selectAtom(configAtom, (config) => config?._createdBy);
+
 export const updateNameAtom = atom(null, async (get, set, name: string) => {
   const config = await get(configAtom);
 
@@ -83,6 +85,15 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
   const updatedConfig = { ...config, description };
 
   set(updateConfigAtom, updatedConfig);
+});
+
+export const isConfigEditableAtom = atom<Promise<boolean | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const createdBy = await get(getCreatedByAtom);
+
+  if (!session || !createdBy) return null;
+
+  return createdBy.split('/').reverse()[0] === session.user.username;
 });
 
 /*

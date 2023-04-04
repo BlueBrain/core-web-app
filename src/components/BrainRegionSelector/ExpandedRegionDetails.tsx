@@ -27,6 +27,7 @@ import { formatNumber } from '@/util/common';
 import CompositionInput from '@/components/BrainRegionSelector/CompositionInput';
 import { calculateMax } from '@/util/composition/utils';
 import iterateAndComputeSystemLockedIds from '@/util/composition/locking';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -385,6 +386,7 @@ function ExpandedRegionDetails({
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
   const composition = useAtomValue(analysedCompositionAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
   const [meTypeNavValue, setNavValue] = useState<NavValue>({});
 
   const onValueChange = useCallback(
@@ -421,7 +423,7 @@ function ExpandedRegionDetails({
           neuronComposition={composition.totalComposition.neuron}
           meTypeNavValue={meTypeNavValue}
           onValueChange={onValueChange}
-          editMode={editMode}
+          editMode={editMode && !!isConfigEditable}
         />
       ) : (
         <div>Composition could not be calculated</div>
