@@ -4,17 +4,22 @@ import { atom } from 'jotai';
 import { microConnectomeConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 
-import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
+import {
+  fetchResourceById,
+  fetchGeneratorTaskActivity,
+  fetchResourceSourceById,
+} from '@/api/nexus';
 import {
   MicroConnectomeConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
+  MicroConnectomeConfig,
 } from '@/types/nexus';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const configAtom = atom<Promise<MicroConnectomeConfigResource | null>>(async (get) => {
+export const configAtom = atom<Promise<MicroConnectomeConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = await get(microConnectomeConfigIdAtom);
 
@@ -23,6 +28,17 @@ const configAtom = atom<Promise<MicroConnectomeConfigResource | null>>(async (ge
   if (!session || !id) return null;
 
   return fetchResourceById<MicroConnectomeConfigResource>(id, session);
+});
+
+export const configSourceAtom = atom<Promise<MicroConnectomeConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const id = await get(microConnectomeConfigIdAtom);
+
+  get(refetchTriggerAtom);
+
+  if (!session || !id) return null;
+
+  return fetchResourceSourceById<MicroConnectomeConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

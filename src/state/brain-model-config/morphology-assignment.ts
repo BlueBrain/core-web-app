@@ -4,17 +4,22 @@ import { atom } from 'jotai';
 import { morphologyAssignmentConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 
-import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
+import {
+  fetchResourceById,
+  fetchGeneratorTaskActivity,
+  fetchResourceSourceById,
+} from '@/api/nexus';
 import {
   MorphologyAssignmentConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
+  MorphologyAssignmentConfig,
 } from '@/types/nexus';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const configAtom = atom<Promise<MorphologyAssignmentConfigResource | null>>(async (get) => {
+export const configAtom = atom<Promise<MorphologyAssignmentConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = await get(morphologyAssignmentConfigIdAtom);
 
@@ -23,6 +28,17 @@ const configAtom = atom<Promise<MorphologyAssignmentConfigResource | null>>(asyn
   if (!session || !id) return null;
 
   return fetchResourceById<MorphologyAssignmentConfigResource>(id, session);
+});
+
+export const configSourceAtom = atom<Promise<MorphologyAssignmentConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const id = await get(morphologyAssignmentConfigIdAtom);
+
+  get(refetchTriggerAtom);
+
+  if (!session || !id) return null;
+
+  return fetchResourceSourceById<MorphologyAssignmentConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

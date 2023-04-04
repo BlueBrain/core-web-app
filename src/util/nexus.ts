@@ -76,7 +76,7 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     .join('');
 }
 
-type IdType =
+export type IdType =
   | 'file'
   | 'modelconfiguration'
   | 'cellcompositionconfig'

@@ -4,8 +4,13 @@ import { atom } from 'jotai';
 import { cellPositionConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 
-import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
 import {
+  fetchResourceById,
+  fetchGeneratorTaskActivity,
+  fetchResourceSourceById,
+} from '@/api/nexus';
+import {
+  CellPositionConfig,
   CellPositionConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
@@ -14,7 +19,7 @@ import {
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const configAtom = atom<Promise<CellPositionConfigResource | null>>(async (get) => {
+export const configAtom = atom<Promise<CellPositionConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = await get(cellPositionConfigIdAtom);
 
@@ -23,6 +28,17 @@ const configAtom = atom<Promise<CellPositionConfigResource | null>>(async (get) 
   if (!session || !id) return null;
 
   return fetchResourceById<CellPositionConfigResource>(id, session);
+});
+
+export const configSourceAtom = atom<Promise<CellPositionConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const id = await get(cellPositionConfigIdAtom);
+
+  get(refetchTriggerAtom);
+
+  if (!session || !id) return null;
+
+  return fetchResourceSourceById<CellPositionConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(
