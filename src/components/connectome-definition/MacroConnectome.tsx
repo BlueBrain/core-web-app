@@ -128,12 +128,14 @@ export default function MacroConnectome({
       x: string[];
       y: string[];
       type: PlotType;
+      colorscale: string;
     }[] = [
       {
         z: filteredDensities,
         x: parcellationNames,
         y: parcellationNames,
         type: 'heatmap',
+        colorscale: 'Hot',
       },
     ];
 
