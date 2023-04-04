@@ -1,11 +1,12 @@
 'use client';
 
-import React, { RefObject, useRef, useState, useMemo, useCallback } from 'react';
+import React, { RefObject, useRef, useState, useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
+import AlternateViewSelector from './AlternateViewSelector';
 import { classNames } from '@/util/utils';
 import ColorBox from '@/components/ColorBox';
 import { BrainIcon } from '@/components/icons';
@@ -16,12 +17,10 @@ import {
   setSelectedBrainRegionAtom,
   brainRegionsAtom,
   brainRegionsAlternateTreeAtom,
-  addOrRemoveSelectedAlternateView,
 } from '@/state/brain-regions';
 import VisualizationTrigger from '@/components/VisualizationTrigger';
 import { NavValue } from '@/components/TreeNavItem';
 import { BrainRegion } from '@/types/ontologies';
-import SelectDropdown from '@/components/SelectDropdown';
 
 function NavTitle({
   className,
@@ -36,7 +35,6 @@ function NavTitle({
 }: TitleComponentProps) {
   const brainRegionViews = useAtomValue(brainRegionOntologyViewsAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const changeSelectedViews = useSetAtom(addOrRemoveSelectedAlternateView);
   const brainRegions = useAtomValue(brainRegionsAtom);
 
   const selectOptions = brainRegionViews?.map((view) => {
@@ -46,7 +44,6 @@ function NavTitle({
     return {
       value: view.id,
       label: view.title,
-      // ts-ignore
       isDisabled,
     };
   });
@@ -56,85 +53,33 @@ function NavTitle({
     [selectOptions, viewId]
   );
 
-  /**
-   * Function to trigger the changing of view
-   * @param newViewId the selected view id
-   */
-  const onChangeViewSelection = useCallback(
-    (newViewId: string) => {
-      if (id) {
-        changeSelectedViews(newViewId, id);
-      }
-    },
-    [changeSelectedViews, id]
-  );
-
-  // conditionally render the alternate view selector
-  const alternateViewSelector = useMemo(() => {
-    // first count the non disabled options
-    let nonDisabled = 0;
-    selectOptions?.forEach((option) => {
-      if (!option.isDisabled) {
-        nonDisabled += 1;
-      }
-    });
-
-    // if the non-disabled options are less than 2, then render only the label
-    // without the selector
-    if (id === selectedBrainRegion?.id && nonDisabled < 2 && defaultViewOption) {
-      return (
-        <div className="text-neutral-1 font-thin text-[10px] text-left">
-          {defaultViewOption.label}
-        </div>
-      );
-    }
-
-    if (id === selectedBrainRegion?.id && brainRegionViews && selectOptions && defaultViewOption) {
-      return (
-        <SelectDropdown
-          defaultOption={defaultViewOption}
-          selectOptions={selectOptions}
-          onChangeFunc={onChangeViewSelection}
-        />
-      );
-    }
-
-    return null;
-  }, [
-    brainRegionViews,
-    defaultViewOption,
-    id,
-    onChangeViewSelection,
-    selectOptions,
-    selectedBrainRegion?.id,
-  ]);
-
   return (
     <>
-      <div className="py-3 flex justify-between items-center">
-        <div className="flex gap-2 justify-between items-center">
-          <button
-            type="button"
-            className="h-auto border-none flex font-bold gap-3 justify-end items-center"
-            onClick={() => id && onClick()}
+      <div className="py-3 flex items-center justify-between">
+        <button
+          type="button"
+          className="h-auto border-none flex font-bold gap-3 justify-end items-center"
+          onClick={() => id && onClick()}
+        >
+          {colorCode ? <ColorBox color={colorCode} /> : null}
+          <span
+            className={classNames(
+              'hover:text-white mr-auto whitespace-pre-wrap text-left',
+              isExpanded || selectedBrainRegion?.id === id ? 'text-white' : 'text-primary-4',
+              className
+            )}
           >
-            {colorCode ? <ColorBox color={colorCode} /> : null}
-            <div>
-              <div
-                className={classNames(
-                  'hover:text-white mr-auto whitespace-pre-wrap text-left',
-                  isExpanded || selectedBrainRegion?.id === id ? 'text-white' : 'text-primary-4',
-                  className
-                )}
-              >
-                {title}
-              </div>
-              {alternateViewSelector}
-            </div>
-          </button>
-        </div>
-
+            {title}
+          </span>
+        </button>
         <div className="-mr-[4px] ml-[6px] flex gap-2 justify-between items-center">
+          <AlternateViewSelector
+            brainRegionViews={brainRegionViews}
+            defaultViewOption={defaultViewOption}
+            id={id}
+            selectOptions={selectOptions}
+            selectedBrainRegion={selectedBrainRegion?.id}
+          />
           {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
           {trigger?.()}
         </div>

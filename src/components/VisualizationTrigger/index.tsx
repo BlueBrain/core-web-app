@@ -1,5 +1,4 @@
 import { useAtomValue } from 'jotai';
-import { Button } from 'antd';
 import { EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import BrainRegionVisualizationTrigger from '@/components/BrainRegionVisualizationTrigger';
 import { meshDistributionsAtom } from '@/state/brain-regions';
@@ -8,7 +7,7 @@ export default function VisualizationTrigger({ colorCode, id }: { colorCode: str
   const meshDistributions = useAtomValue(meshDistributionsAtom);
 
   if (meshDistributions === undefined) {
-    return <LoadingOutlined />;
+    return <LoadingOutlined style={{ fontSize: '16px' }} />;
   }
 
   const meshDistribution = meshDistributions && meshDistributions[id];
@@ -24,11 +23,12 @@ export default function VisualizationTrigger({ colorCode, id }: { colorCode: str
   }
 
   return (
-    <Button
-      className="border-none items-center justify-center flex"
-      type="text"
+    <button
+      type="button"
+      className="block border-none flex items-center justify-center w-[16px]"
       disabled
-      icon={<EyeOutlined style={{ color: '#F5222D' }} />}
-    />
+    >
+      <EyeOutlined style={{ color: '#F5222D', fontSize: '16px' }} />
+    </button>
   );
 }
