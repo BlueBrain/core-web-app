@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState, useRef } from 'react';
-import Plotly, { PlotType, Shape } from 'plotly.js-dist-min';
+import Plotly, { PlotType, Shape, Layout } from 'plotly.js-dist-min';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 import { basePath } from '@/config';
 
@@ -45,6 +45,7 @@ interface PlotDiv extends HTMLDivElement {
       points: { pointIndex: [number, number]; data: { x: number[]; y: number[] } }[];
     }) => void
   ) => void;
+  layout: Layout;
 }
 
 interface Rect extends Partial<Shape> {
@@ -52,6 +53,15 @@ interface Rect extends Partial<Shape> {
   y0: number;
   x1: number;
   y1: number;
+}
+
+function usePrevious<T>(value: T) {
+  const ref = useRef<T | null>(null);
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+  return ref.current;
 }
 
 export default function MacroConnectome({
@@ -104,6 +114,8 @@ export default function MacroConnectome({
     [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions, connectivityMatrix]
   );
 
+  const prevZoom = usePrevious(zoom);
+
   useEffect(() => {
     async function fetchConnectivity() {
       const protocol = window.location.hostname === 'localhost' ? 'http' : 'https';
@@ -121,7 +133,7 @@ export default function MacroConnectome({
     selectRef.current = select;
     unselectRef.current = unselect;
     const container = plotRef.current;
-    if (!container) return;
+    if (!container || filteredDensities.length === 0) return;
 
     const data: {
       z: number[][];
@@ -276,16 +288,20 @@ export default function MacroConnectome({
         tickfont: {
           size: 7,
         },
+        range: container.layout.xaxis.range,
+        fixedrange: !zoom,
       },
       yaxis: {
         color: '#DCDCDC',
         tickfont: {
           size: 7,
         },
+        range: container.layout.yaxis.range,
+        fixedrange: !zoom,
       },
       shapes: shapes.current,
     });
-  }, [filteredDensities, parcellationNames, plotInitialized, select, unselect]);
+  }, [filteredDensities, parcellationNames, plotInitialized, select, unselect, zoom, prevZoom]);
 
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>

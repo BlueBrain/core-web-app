@@ -59,7 +59,7 @@ function ConnectomeDefinitionMain() {
       <div className={styles.matrixContainer}>
         {activeTab === 'macro' && (
           <Suspense fallback={null}>
-            <MacroConnectome select={select} unselect={unselect} zoom={zoom} />
+            <MacroConnectome select={select} unselect={unselect} zoom={zoom}/>
           </Suspense>
         )}
       </div>
