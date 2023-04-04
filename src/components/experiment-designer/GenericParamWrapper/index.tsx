@@ -4,28 +4,10 @@ import { Divider } from 'antd';
 import { ComponentType } from 'react';
 
 import { ExpDesignerParam } from '@/types/experiment-designer';
-import {
-  ConstantParameter,
-  RangeParameter,
-  StringParameter,
-  DropdownParameter,
-} from '@/components/experiment-designer';
 
 export const defaultPadding = 'py-[12px]'; // to match the collapse padding
-export const defaultNAParam = <div className={defaultPadding}>---</div>;
 export const defaultColumnStyle = 'w-1/2 align-baseline px-[16px] text-primary-7';
 export const headerStyle = 'p-[16px] font-light text-left';
-
-type ParamColumnsType = {
-  [key: string]: [any, any];
-};
-
-export const defaultColumnsMapper: ParamColumnsType = {
-  number: [ConstantParameter, defaultNAParam],
-  string: [StringParameter, defaultNAParam],
-  dropdown: [DropdownParameter, defaultNAParam],
-  range: [defaultNAParam, RangeParameter],
-};
 
 type RowRendererProps = {
   data: any;

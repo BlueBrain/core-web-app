@@ -6,6 +6,7 @@ import SaveBtn from './SaveBtn';
 import SimulateBtn from './SimulateBtn';
 import DropdownParameter from './DropdownParameter';
 import BrainRegionsDropdown from './BrainRegionsDropdown';
+import DefaultEmptyParam from './DefaultEmptyParam';
 
 export {
   StringParameter,
@@ -16,4 +17,5 @@ export {
   SimulateBtn,
   DropdownParameter,
   BrainRegionsDropdown,
+  DefaultEmptyParam,
 };

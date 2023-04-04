@@ -6,20 +6,36 @@ import { loadable } from 'jotai/utils';
 import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetRegionSelector';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
-  defaultColumnsMapper,
   defaultPadding,
-  defaultNAParam,
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
+import {
+  ConstantParameter,
+  RangeParameter,
+  DefaultEmptyParam,
+} from '@/components/experiment-designer';
 
 function ParameterRenderRow({ data }: { data: any }) {
-  let [constantCol, sweepCol] = defaultColumnsMapper[data.type];
+  let constantCol;
+  let sweepCol;
+  switch (data.type) {
+    case 'number':
+      constantCol = <ConstantParameter data={data} />;
+      sweepCol = <DefaultEmptyParam />;
+      break;
 
-  if (!constantCol || !sweepCol) {
-    if (data.type === 'regionDropdown') {
+    case 'range':
+      constantCol = <DefaultEmptyParam />;
+      sweepCol = <RangeParameter data={data} />;
+      break;
+
+    case 'regionDropdown':
       constantCol = <TargetRegionSelector data={data} className={defaultPadding} />;
-      sweepCol = defaultNAParam;
-    }
+      sweepCol = <DefaultEmptyParam />;
+      break;
+
+    default:
+      break;
   }
 
   return (
