@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { nexus } from '@/config';
 import { FileMetadata, GeneratorConfig, GeneratorConfigType, GeneratorName } from '@/types/nexus';
@@ -88,7 +88,7 @@ export type IdType =
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;
 
-  return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? uuidv4()}`;
+  return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? randomUUID()}`;
 }
 
 const generatorNamebyKgType: Record<GeneratorConfigType, GeneratorName> = {
