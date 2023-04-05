@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { ConfigProvider, theme } from 'antd';
 
@@ -25,9 +25,14 @@ function ConnectomeDefinitionMain() {
   const [zoom, setZoom] = useState(true);
   const [select, setSelect] = useState(false);
   const [unselect, setUnselect] = useState(false);
+  const [selected, setSelected] = useState({});
+
+  const someSelected = useMemo(() => !!Array.from(Object.keys(selected)).length, [selected]);
+  console.log(Array.from(Object.keys(selected)).length);
 
   return (
     <div className={styles.container}>
+      {someSelected && <div className={styles.sidePanel}>Modify connection strength</div>}
       <div className={styles.granularityTabs}>
         <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
       </div>
@@ -59,7 +64,13 @@ function ConnectomeDefinitionMain() {
       <div className={styles.matrixContainer}>
         {activeTab === 'macro' && (
           <Suspense fallback={null}>
-            <MacroConnectome select={select} unselect={unselect} zoom={zoom}/>
+            <MacroConnectome
+              select={select}
+              unselect={unselect}
+              zoom={zoom}
+              selected={selected}
+              setSelected={setSelected}
+            />
           </Suspense>
         )}
       </div>

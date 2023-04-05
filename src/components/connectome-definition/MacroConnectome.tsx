@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
 import Plotly, { PlotType, Shape, Layout } from 'plotly.js-dist-min';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 import { basePath } from '@/config';
@@ -55,38 +55,28 @@ interface Rect extends Partial<Shape> {
   y1: number;
 }
 
-function usePrevious<T>(value: T) {
-  const ref = useRef<T | null>(null);
-
-  useEffect(() => {
-    ref.current = value;
-  }, [value]); // Only re-run if value changes
-  return ref.current;
-}
-
 export default function MacroConnectome({
   zoom,
   select,
   unselect,
-  setZoom,
-  setSelect,
-  setUnselect,
+  selected,
+  setSelected,
 }: {
   zoom: boolean;
   select: boolean;
   unselect: boolean;
-  setZoom: () => void;
-  setSelect: () => void;
-  setUnselect: () => void;
+  selected: {};
+  setSelected: React.Dispatch<SetStateAction<{}>>;
 }) {
   const plotRef = useRef<PlotDiv>(null);
   const shapes = useRef<Rect[]>([]);
-  const selectedShapes = useRef<{ [index: string]: Rect }>({});
+
   const selecting = useRef(false);
   const corner1 = useRef<[number, number]>([0, 0]);
   const corner2 = useRef<[number, number]>([0, 0]);
   const selectRef = useRef(false);
   const unselectRef = useRef(false);
+  const selectedRef = useRef({});
 
   const [connectivityMatrix, setConnectivityMatrix] = useState<ConnectivityMatrix>({});
   const [plotInitialized, setPlotInitialized] = useState(false);
@@ -114,8 +104,6 @@ export default function MacroConnectome({
     [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions, connectivityMatrix]
   );
 
-  const prevZoom = usePrevious(zoom);
-
   useEffect(() => {
     async function fetchConnectivity() {
       const protocol = window.location.hostname === 'localhost' ? 'http' : 'https';
@@ -132,6 +120,7 @@ export default function MacroConnectome({
   useEffect(() => {
     selectRef.current = select;
     unselectRef.current = unselect;
+    selectedRef.current = selected;
     const container = plotRef.current;
     if (!container || filteredDensities.length === 0) return;
 
@@ -183,16 +172,18 @@ export default function MacroConnectome({
             (s) => !(point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1)
           );
 
+          const selectedCopy = { ...selectedRef.current };
           // eslint-disable-next-line no-restricted-syntax
           for (const s of deletedShapes) {
             for (let x = s.x0; x <= s.x1; x += 1)
               for (let y = s.y1; y <= s.y0; y += 1) {
                 if (x >= s.x0 && x <= s.x1 && y <= s.y0 && y >= s.y1) {
                   // @ts-ignore
-                  delete selectedShapes.current[[points[0].data.x[x], points[0].data.y[y]]];
+                  delete selectedCopy[[points[0].data.x[x], points[0].data.y[y]]];
                 }
               }
           }
+          setSelected(selectedCopy);
           Plotly.relayout(container, { shapes: shapes.current });
         }
 
@@ -219,12 +210,17 @@ export default function MacroConnectome({
           },
         });
 
-        for (let x = c1[0]; x <= c2[0]; x += 1)
+        const selectedCopy = { ...selectedRef.current };
+        for (let x = c1[0]; x <= c2[0]; x += 1) {
           for (let y = c2[1]; y <= c1[1]; y += 1) {
-            if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1])
+            if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1]) {
               // @ts-ignore
-              selectedShapes.current[[points[0].data.x[x], points[0].data.y[y]]] = true;
+              selectedCopy[[points[0].data.x[x], points[0].data.y[y]]] = true;
+            }
           }
+        }
+
+        setSelected(selectedCopy);
 
         Plotly.relayout(container, {
           shapes: shapes.current,
@@ -301,7 +297,16 @@ export default function MacroConnectome({
       },
       shapes: shapes.current,
     });
-  }, [filteredDensities, parcellationNames, plotInitialized, select, unselect, zoom, prevZoom]);
+  }, [
+    filteredDensities,
+    parcellationNames,
+    plotInitialized,
+    select,
+    unselect,
+    zoom,
+    selected,
+    setSelected,
+  ]);
 
   return (
     <div style={{ gridArea: 'matrix-container', position: 'relative' }}>
