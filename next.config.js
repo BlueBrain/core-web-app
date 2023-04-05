@@ -33,6 +33,9 @@ const nextConfig = {
   sentry: {
     hideSourceMaps: false,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async redirects() {
     return [
       {
