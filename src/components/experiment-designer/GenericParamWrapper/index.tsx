@@ -15,11 +15,11 @@ type RowRendererProps = {
 
 type Props = {
   description: string;
-  paramList: ExpDesignerParam;
+  paramList: ExpDesignerParam[];
   RowRenderer: ComponentType<RowRendererProps>;
 };
 
-function isEmpty(data: ExpDesignerParam) {
+function isEmpty(data: ExpDesignerParam[]) {
   if (typeof data !== 'object') return true;
   return !data.length;
 }

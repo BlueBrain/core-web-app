@@ -33,13 +33,18 @@ export type ExpDesignerDropdownParameter = ExpDesignerBaseParameter & {
   options: { label: string; value: string }[];
 };
 
-export type ExpDesignerParam = Array<
+export type ExpDesignerRegionParameter = ExpDesignerBaseParameter & {
+  type: 'regionDropdown';
+  value: string;
+};
+
+export type ExpDesignerParam =
   | ExpDesignerNumberParameter
   | ExpDesignerDropdownParameter
   | ExpDesignerRangeParameter
   | ExpDesignerStringParameter
->;
+  | ExpDesignerRegionParameter;
 
 export type ExpDesignerConfig = {
-  [key: string]: ExpDesignerParam;
+  [key: string]: ExpDesignerParam[];
 };
