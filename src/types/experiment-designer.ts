@@ -45,6 +45,11 @@ export type ExpDesignerParam =
   | ExpDesignerStringParameter
   | ExpDesignerRegionParameter;
 
+export type ExpDesignerListParam = {
+  id: string;
+  value: ExpDesignerParam[];
+};
+
 export type ExpDesignerConfig = {
-  [key: string]: ExpDesignerParam[];
+  [key: string]: ExpDesignerParam[] | ExpDesignerListParam[];
 };

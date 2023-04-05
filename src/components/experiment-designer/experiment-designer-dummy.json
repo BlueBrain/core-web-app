@@ -53,5 +53,33 @@
       "type": "regionDropdown",
       "value": "Hippocampal formation"
     }
+  ],
+  "input": [
+    {
+      "id": "input1",
+      "value": [
+        {
+          "id": "spikes",
+          "name": "Spikes",
+          "type": "dropdown",
+          "value": "Whiskers stimulus",
+          "unit": "ms",
+          "options": []
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": "4000",
+          "unit": "ms"
+        },
+        {
+          "id": "targetInputRegion",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    }
   ]
 }

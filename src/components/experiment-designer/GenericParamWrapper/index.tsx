@@ -1,9 +1,9 @@
 'use client';
 
 import { Divider } from 'antd';
-import { ComponentType } from 'react';
+import { ComponentType, ReactNode } from 'react';
 
-import { ExpDesignerParam } from '@/types/experiment-designer';
+import { ExpDesignerParam, ExpDesignerListParam } from '@/types/experiment-designer';
 
 export const defaultPadding = 'py-[12px]'; // to match the collapse padding
 export const defaultColumnStyle = 'w-1/2 align-baseline px-[16px] text-primary-7';
@@ -15,16 +15,22 @@ type RowRendererProps = {
 
 type Props = {
   description: string;
-  paramList: ExpDesignerParam[];
+  paramList: ExpDesignerParam[] | ExpDesignerListParam[];
   RowRenderer: ComponentType<RowRendererProps>;
+  children?: ReactNode;
 };
 
-function isEmpty(data: ExpDesignerParam[]) {
+function isEmpty(data: ExpDesignerParam[] | ExpDesignerListParam[]) {
   if (typeof data !== 'object') return true;
   return !data.length;
 }
 
-export default function GenericParamWrapper({ description, paramList, RowRenderer }: Props) {
+export default function GenericParamWrapper({
+  description,
+  paramList,
+  RowRenderer,
+  children,
+}: Props) {
   const paramEmpty = isEmpty(paramList);
   return (
     <div className="h-full">
@@ -52,6 +58,8 @@ export default function GenericParamWrapper({ description, paramList, RowRendere
           {!paramEmpty && paramList.map((param) => <RowRenderer key={param.id} data={param} />)}
         </tbody>
       </table>
+
+      {children}
     </div>
   );
 }
