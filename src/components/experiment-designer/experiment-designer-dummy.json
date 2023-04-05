@@ -108,5 +108,32 @@
         }
       ]
     }
+  ],
+  "recording": [
+    {
+      "id": "recording1",
+      "value": [
+        {
+          "id": "variableType",
+          "name": "Variable",
+          "type": "dropdown",
+          "value": "Soma voltage",
+          "options": []
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": "4000",
+          "unit": "ms"
+        },
+        {
+          "id": "recordingRegion",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    }
   ]
 }

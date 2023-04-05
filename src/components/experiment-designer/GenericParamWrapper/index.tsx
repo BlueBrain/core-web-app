@@ -18,6 +18,7 @@ type Props = {
   paramList: ExpDesignerParam[] | ExpDesignerListParam[];
   RowRenderer: ComponentType<RowRendererProps>;
   children?: ReactNode;
+  showHeader?: boolean;
 };
 
 function isEmpty(data: ExpDesignerParam[] | ExpDesignerListParam[]) {
@@ -30,6 +31,7 @@ export default function GenericParamWrapper({
   paramList,
   RowRenderer,
   children,
+  showHeader = true,
 }: Props) {
   const paramEmpty = isEmpty(paramList);
   return (
@@ -41,12 +43,14 @@ export default function GenericParamWrapper({
       </div>
 
       <table className="w-full">
-        <thead>
-          <tr>
-            <th className={headerStyle}>CONSTANT PARAMETERS</th>
-            <th className={headerStyle}>PARAMETER SWEEPS</th>
-          </tr>
-        </thead>
+        {showHeader && (
+          <thead>
+            <tr>
+              <th className={headerStyle}>CONSTANT PARAMETERS</th>
+              <th className={headerStyle}>PARAMETER SWEEPS</th>
+            </tr>
+          </thead>
+        )}
 
         <tbody>
           {paramEmpty && (
