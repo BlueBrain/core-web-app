@@ -17,7 +17,7 @@ const tabs: Tab[] = [
   {
     name: 'Experiment Setup',
     href: '/experiment-designer/experiment-setup',
-    baseHref: '/experiment-designer',
+    baseHref: '/experiment-designer/experiment-setup',
   },
   {
     name: 'Sensory Input',

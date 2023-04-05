@@ -20,13 +20,13 @@ function ParameterRenderRow({ data }: { data: any }) {
   let sweepCol;
   switch (data.type) {
     case 'number':
-      constantCol = <ConstantParameter data={data} />;
+      constantCol = <ConstantParameter data={data} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 
     case 'range':
       constantCol = <DefaultEmptyParam />;
-      sweepCol = <RangeParameter data={data} />;
+      sweepCol = <RangeParameter data={data} className={defaultPadding} />;
       break;
 
     case 'regionDropdown':
