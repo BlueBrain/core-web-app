@@ -7,6 +7,8 @@ import SimulateBtn from './SimulateBtn';
 import DropdownParameter from './DropdownParameter';
 import BrainRegionsDropdown from './BrainRegionsDropdown';
 import DefaultEmptyParam from './DefaultEmptyParam';
+import CoordinatesViewer from './CoordinatesViewer';
+import RadioButtonParameter from './RadioButtonParameter';
 
 export {
   StringParameter,
@@ -18,4 +20,6 @@ export {
   DropdownParameter,
   BrainRegionsDropdown,
   DefaultEmptyParam,
+  CoordinatesViewer,
+  RadioButtonParameter,
 };

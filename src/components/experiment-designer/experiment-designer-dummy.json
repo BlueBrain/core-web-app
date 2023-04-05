@@ -135,5 +135,25 @@
         }
       ]
     }
+  ],
+  "imaging": [
+    {
+      "id": "cameraPos",
+      "name": "Camera position",
+      "type": "position",
+      "value": [100, 200, 300]
+    },
+    {
+      "id": "neuronDisplay",
+      "name": "Neuron Display",
+      "type": "radioButton",
+      "value": ["Soma", "Desndrites", "Axon + Dendrites"]
+    },
+    {
+      "id": "display",
+      "name": "Display",
+      "type": "radioButton",
+      "value": ["Spikes", "Voltage"]
+    }
   ]
 }
