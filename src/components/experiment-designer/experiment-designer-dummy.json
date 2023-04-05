@@ -81,5 +81,32 @@
         }
       ]
     }
+  ],
+  "stimuli": [
+    {
+      "id": "stimulus1",
+      "value": [
+        {
+          "id": "stimType",
+          "name": "Type",
+          "type": "dropdown",
+          "value": "Current",
+          "options": []
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": "4000",
+          "unit": "ms"
+        },
+        {
+          "id": "targetInputRegion",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    }
   ]
 }
