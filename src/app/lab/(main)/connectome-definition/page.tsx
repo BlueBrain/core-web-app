@@ -1,10 +1,14 @@
 'use client';
 
-import { Suspense, useState, useMemo } from 'react';
+import { Suspense, useState, useEffect, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, theme, InputNumber } from 'antd';
 
-import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
+import {
+  brainRegionsUnsortedArrayAtom,
+  selectedPostBrainRegionsAtom,
+  selectedPreBrainRegionsAtom,
+} from '@/state/brain-regions';
 import {
   GranularityTabs,
   ModeSwitch,
@@ -16,7 +20,10 @@ import {
   BrainRegionSelection,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
+import { basePath } from '@/config';
 import styles from './connectome-definition.module.css';
+
+export type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
 
 function ConnectomeDefinitionMain() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
@@ -25,14 +32,68 @@ function ConnectomeDefinitionMain() {
   const [zoom, setZoom] = useState(true);
   const [select, setSelect] = useState(false);
   const [unselect, setUnselect] = useState(false);
-  const [selected, setSelected] = useState({});
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [connectivityMatrix, setConnectivityMatrix] = useState<ConnectivityMatrix>({});
+  const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
 
-  const someSelected = useMemo(() => !!Array.from(Object.keys(selected)).length, [selected]);
-  console.log(Array.from(Object.keys(selected)).length);
+  const brainRegionIdByTitle = useMemo(() => {
+    const res: { [title: string]: string } = {};
+    brainRegions?.forEach((br) => {
+      res[br.title] = br.id;
+    });
+    return res;
+  }, [brainRegions]);
+
+  const selectedIds = useMemo(
+    () =>
+      Array.from(selected).map((s) => {
+        const pair = JSON.parse(s);
+        console.log(pair, [brainRegionIdByTitle[pair[0]], brainRegionIdByTitle[pair[1]]]);
+        return [brainRegionIdByTitle[pair[0]], brainRegionIdByTitle[pair[1]]];
+      }),
+    [selected, brainRegionIdByTitle]
+  );
+
+  useEffect(() => {
+    async function fetchConnectivity() {
+      const protocol = window.location.hostname === 'localhost' ? 'http' : 'https';
+      const res = await fetch(
+        `${protocol}://${window.location.host}${basePath && `/${basePath}`}/connectivity-dummy.json`
+      );
+      const json = await res.json();
+      setConnectivityMatrix(json);
+    }
+
+    fetchConnectivity();
+  }, []);
+
+  const onChange = (value: number | null) => {
+    if (value === null) return;
+    const matrix = { ...connectivityMatrix };
+    selectedIds.forEach(([s, d]) => {
+      if (!matrix[s]) return;
+      if (!matrix[s][d]) return;
+      matrix[s][d].d = value;
+    });
+
+    setConnectivityMatrix(matrix);
+  };
 
   return (
     <div className={styles.container}>
-      {someSelected && <div className={styles.sidePanel}>Modify connection strength</div>}
+      {selected.size > 0 && (
+        <div className={styles.sidePanel}>
+          Modify connection density
+          <InputNumber
+            style={{ width: 200 }}
+            defaultValue={0}
+            min={0}
+            max={1}
+            step={0.00000000000001}
+            onChange={onChange}
+          />
+        </div>
+      )}
       <div className={styles.granularityTabs}>
         <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
       </div>
@@ -70,6 +131,7 @@ function ConnectomeDefinitionMain() {
               zoom={zoom}
               selected={selected}
               setSelected={setSelected}
+              connectivityMatrix={connectivityMatrix}
             />
           </Suspense>
         )}
@@ -104,7 +166,9 @@ export default function ConnectomeDefinitionView() {
         },
       }}
     >
-      <ConnectomeDefinitionMain />
+      <Suspense fallback={null}>
+        <ConnectomeDefinitionMain />
+      </Suspense>
     </ConfigProvider>
   );
 }

@@ -2,9 +2,8 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
 import Plotly, { PlotType, Shape, Layout } from 'plotly.js-dist-min';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
-import { basePath } from '@/config';
 
-type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
+export type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
 
 function getDensitiesForNodes(
   sourceNodes: { id: string; title: string }[],
@@ -61,12 +60,14 @@ export default function MacroConnectome({
   unselect,
   selected,
   setSelected,
+  connectivityMatrix,
 }: {
   zoom: boolean;
   select: boolean;
   unselect: boolean;
-  selected: {};
-  setSelected: React.Dispatch<SetStateAction<{}>>;
+  selected: Set<string>;
+  setSelected: React.Dispatch<SetStateAction<Set<string>>>;
+  connectivityMatrix: ConnectivityMatrix;
 }) {
   const plotRef = useRef<PlotDiv>(null);
   const shapes = useRef<Rect[]>([]);
@@ -76,9 +77,8 @@ export default function MacroConnectome({
   const corner2 = useRef<[number, number]>([0, 0]);
   const selectRef = useRef(false);
   const unselectRef = useRef(false);
-  const selectedRef = useRef({});
+  const selectedRef = useRef(new Set<string>());
 
-  const [connectivityMatrix, setConnectivityMatrix] = useState<ConnectivityMatrix>({});
   const [plotInitialized, setPlotInitialized] = useState(false);
 
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
@@ -103,19 +103,6 @@ export default function MacroConnectome({
       ),
     [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions, connectivityMatrix]
   );
-
-  useEffect(() => {
-    async function fetchConnectivity() {
-      const protocol = window.location.hostname === 'localhost' ? 'http' : 'https';
-      const res = await fetch(
-        `${protocol}://${window.location.host}${basePath && `/${basePath}`}/connectivity-dummy.json`
-      );
-      const json = await res.json();
-      setConnectivityMatrix(json);
-    }
-
-    fetchConnectivity();
-  }, []);
 
   useEffect(() => {
     selectRef.current = select;
@@ -172,14 +159,13 @@ export default function MacroConnectome({
             (s) => !(point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1)
           );
 
-          const selectedCopy = { ...selectedRef.current };
+          const selectedCopy = new Set(selectedRef.current);
           // eslint-disable-next-line no-restricted-syntax
           for (const s of deletedShapes) {
             for (let x = s.x0; x <= s.x1; x += 1)
               for (let y = s.y1; y <= s.y0; y += 1) {
                 if (x >= s.x0 && x <= s.x1 && y <= s.y0 && y >= s.y1) {
-                  // @ts-ignore
-                  delete selectedCopy[[points[0].data.x[x], points[0].data.y[y]]];
+                  selectedCopy.delete(JSON.stringify([points[0].data.x[x], points[0].data.y[y]]));
                 }
               }
           }
@@ -210,12 +196,11 @@ export default function MacroConnectome({
           },
         });
 
-        const selectedCopy = { ...selectedRef.current };
+        const selectedCopy = new Set(selectedRef.current);
         for (let x = c1[0]; x <= c2[0]; x += 1) {
           for (let y = c2[1]; y <= c1[1]; y += 1) {
             if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1]) {
-              // @ts-ignore
-              selectedCopy[[points[0].data.x[x], points[0].data.y[y]]] = true;
+              selectedCopy.add(JSON.stringify([points[0].data.x[x], points[0].data.y[y]]));
             }
           }
         }
