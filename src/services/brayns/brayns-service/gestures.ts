@@ -1,5 +1,5 @@
-import { Vector2 } from '../utils/calc';
-import GenericEvent from '../utils/generic-event';
+import { Vector2 } from '@/services/brayns/utils/calc';
+import GenericEvent from '@/services/brayns/utils/generic-event';
 
 interface PointerStart {
   startX: number;

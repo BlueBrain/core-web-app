@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
-import { usePreventParallelism } from '../../hooks/parallelism';
+import { usePreventParallelism } from '@/hooks/parallelism';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
 import { useAtlasVisualizationManager } from '@/state/atlas';

@@ -1,10 +1,10 @@
 /* eslint-disable no-await-in-loop */
-import Settings from '../settings';
-import Async from '../utils/async';
-import Events from '../utils/events';
-import { JsonRpcServiceAddress } from '../json-rpc/types';
 import UnicoreService, { JobStatus } from './unicore-service';
 import { BackendAllocationOptions } from './types';
+import Settings from '@/services/brayns/settings';
+import Async from '@/services/brayns/utils/async';
+import Events from '@/services/brayns/utils/events';
+import { JsonRpcServiceAddress } from '@/services/brayns/json-rpc/types';
 import { logError } from '@/util/logger';
 
 export default class BackendAllocatorService {

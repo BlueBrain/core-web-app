@@ -6,38 +6,45 @@ type RangeValue = {
   step: string;
 };
 
-type ExpDesignerParameter = {
+type ExpDesignerBaseParameter = {
   id: string;
   name: string;
 };
 
-export type ExpDesignerNumberParameter = ExpDesignerParameter & {
+export type ExpDesignerNumberParameter = ExpDesignerBaseParameter & {
   type: 'number';
   value: string;
   unit: string | null;
 };
 
-export type ExpDesignerRangeParameter = ExpDesignerParameter & {
+export type ExpDesignerRangeParameter = ExpDesignerBaseParameter & {
   type: 'range';
   value: RangeValue;
 };
 
-export type ExpDesignerStringParameter = ExpDesignerParameter & {
+export type ExpDesignerStringParameter = ExpDesignerBaseParameter & {
   type: 'string';
   value: string;
 };
 
-export type ExpDesignerDropdownParameter = ExpDesignerParameter & {
+export type ExpDesignerDropdownParameter = ExpDesignerBaseParameter & {
   type: 'dropdown';
   value: string;
   options: { label: string; value: string }[];
 };
 
+export type ExpDesignerRegionParameter = ExpDesignerBaseParameter & {
+  type: 'regionDropdown';
+  value: string;
+};
+
+export type ExpDesignerParam =
+  | ExpDesignerNumberParameter
+  | ExpDesignerDropdownParameter
+  | ExpDesignerRangeParameter
+  | ExpDesignerStringParameter
+  | ExpDesignerRegionParameter;
+
 export type ExpDesignerConfig = {
-  setup: Array<
-    | ExpDesignerNumberParameter
-    | ExpDesignerDropdownParameter
-    | ExpDesignerRangeParameter
-    | ExpDesignerStringParameter
-  >;
+  [key: string]: ExpDesignerParam[];
 };

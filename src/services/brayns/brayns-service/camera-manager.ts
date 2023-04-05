@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Vector3, half, clamp } from '../utils/calc';
-import GenericEvent from '../utils/generic-event';
-import BraynsWrapper from '../wrapper/wrapper';
+import { Vector3, half, clamp } from '@/services/brayns/utils/calc';
+import GenericEvent from '@/services/brayns/utils/generic-event';
+import BraynsWrapper from '@/services/brayns/wrapper/wrapper';
 import { logError } from '@/util/logger';
 
 export interface CameraSettings {

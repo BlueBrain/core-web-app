@@ -1,12 +1,12 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { Vector3 } from '../utils/calc';
-import GenericEvent from '../utils/generic-event';
-import ImageStream from '../image-stream/image-stream';
-import JsonRpcService from '../json-rpc/json-rpc';
 import Mesh from './mesh';
 import Storage from './storage';
 import Light from './light';
+import { Vector3 } from '@/services/brayns/utils/calc';
+import GenericEvent from '@/services/brayns/utils/generic-event';
+import ImageStream from '@/services/brayns/image-stream/image-stream';
+import JsonRpcService from '@/services/brayns/json-rpc/json-rpc';
 import { logError } from '@/util/logger';
 
 const MINIMAL_VIEWPORT_SIZE = 16;

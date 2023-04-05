@@ -4,8 +4,8 @@ import { atom } from 'jotai';
 import { selectAtom, atomWithStorage } from 'jotai/utils';
 
 import sessionAtom from '@/state/session';
-import { BrainModelConfigResource } from '@/types/nexus';
-import { fetchResourceById, updateResource } from '@/api/nexus';
+import { BrainModelConfig, BrainModelConfigResource } from '@/types/nexus';
+import { fetchResourceById, fetchResourceSourceById, updateResource } from '@/api/nexus';
 
 const RECENTLY_USED_SIZE = 5;
 
@@ -38,6 +38,17 @@ export const configAtom = atom<Promise<BrainModelConfigResource | null>>(async (
   return fetchResourceById<BrainModelConfigResource>(id, session);
 });
 
+export const configSourceAtom = atom<Promise<BrainModelConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const id = get(idAtom);
+
+  get(refetchTriggerAtom);
+
+  if (!session || !id) return null;
+
+  return fetchResourceSourceById<BrainModelConfigResource>(id, session);
+});
+
 export const updateConfigAtom = atom(null, async (get, set, config: BrainModelConfigResource) => {
   const session = get(sessionAtom);
 
@@ -51,6 +62,8 @@ export const updateConfigAtom = atom(null, async (get, set, config: BrainModelCo
 });
 
 export const getNameAtom = selectAtom(configAtom, (config) => config?.name);
+
+export const getCreatedByAtom = selectAtom(configAtom, (config) => config?._createdBy);
 
 export const updateNameAtom = atom(null, async (get, set, name: string) => {
   const config = await get(configAtom);
@@ -72,6 +85,15 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
   const updatedConfig = { ...config, description };
 
   set(updateConfigAtom, updatedConfig);
+});
+
+export const isConfigEditableAtom = atom<Promise<boolean | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const createdBy = await get(getCreatedByAtom);
+
+  if (!session || !createdBy) return null;
+
+  return createdBy.split('/').reverse()[0] === session.user.username;
 });
 
 /*

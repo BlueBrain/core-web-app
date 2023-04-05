@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Slider } from 'antd';
 import round from '@/services/distribution-sliders/round';
+import { classNames } from '@/util/utils';
 
 interface HorizontalSliderProps {
+  className?: string;
   color: string;
   disabled?: boolean;
   max: number;
@@ -48,6 +50,7 @@ function useDeferredSlider(
 }
 
 export default function HorizontalSlider({
+  className,
   color,
   disabled = false,
   max,
@@ -58,23 +61,21 @@ export default function HorizontalSlider({
   const { sliderValue, onSliderChange, onAfterChange } = useDeferredSlider(value, step, onChange);
 
   return (
-    <div className="flex justify-between">
-      <div className="flex grow items-center w-full">
-        <Slider
-          className="grow"
-          disabled={disabled}
-          tooltip={{ open: false }}
-          min={0}
-          max={max}
-          step={step}
-          value={sliderValue}
-          onChange={onSliderChange}
-          onAfterChange={onAfterChange}
-          range={false}
-          style={{ height: '8px' }}
-          trackStyle={{ backgroundColor: color, width: '100%', height: '2px' }}
-        />
-      </div>
+    <div className={classNames('flex grow items-center justify-between w-full', className)}>
+      <Slider
+        className="grow"
+        disabled={disabled}
+        tooltip={{ open: false }}
+        min={0}
+        max={max}
+        step={step}
+        value={sliderValue}
+        onChange={onSliderChange}
+        onAfterChange={onAfterChange}
+        range={false}
+        style={{ height: '8px' }}
+        trackStyle={{ backgroundColor: color, width: '100%', height: '2px' }}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { JsonRpcServiceAddress } from '../json-rpc/types';
+import { JsonRpcServiceAddress } from '@/services/brayns/json-rpc/types';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 

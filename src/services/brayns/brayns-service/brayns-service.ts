@@ -1,11 +1,11 @@
-import Async from '../utils/async';
-import GenericEvent from '../utils/generic-event';
-import { BraynsObjects, BraynsServiceInterface, BusyEventParams } from '../types';
-import { Vector2 } from '../utils/calc';
-import BraynsWrapper from '../wrapper/wrapper';
 import ModelsManager from './models-manager';
 import CameraManager from './camera-manager';
 import Gestures from './gestures';
+import Async from '@/services/brayns/utils/async';
+import GenericEvent from '@/services/brayns/utils/generic-event';
+import { BraynsObjects, BraynsServiceInterface, BusyEventParams } from '@/services/brayns/types';
+import { Vector2 } from '@/services/brayns/utils/calc';
+import BraynsWrapper from '@/services/brayns/wrapper/wrapper';
 
 // const BRAIN_MESH_URL =
 //   'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b';

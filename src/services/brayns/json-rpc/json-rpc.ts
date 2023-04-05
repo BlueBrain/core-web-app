@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-import GenericEvent from '../utils/generic-event';
 import Progress, {
   isJsonRpcMessage,
   JsonRpcQueryFailure,
@@ -11,6 +10,7 @@ import Progress, {
   SerializableData,
 } from './types';
 import { makeDebugToggler } from './trace';
+import GenericEvent from '@/services/brayns/utils/generic-event';
 import { isArrayBuffer, isNumber, isObject, isString, isStringArray } from '@/util/type-guards';
 import { logError } from '@/util/logger';
 

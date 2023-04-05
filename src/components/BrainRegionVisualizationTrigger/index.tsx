@@ -1,5 +1,4 @@
 import Icon, { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
 import { useMemo } from 'react';
 import LoadingIcon from '@/components/icons/LoadingIcon';
 import { useAtlasVisualizationManager } from '@/state/atlas';
@@ -57,20 +56,23 @@ export default function BrainRegionVisualizationTrigger({
   // returns the icon to be rendered based on the current state of the button
   const icon = useMemo(() => {
     if (isLoading) {
-      return <Icon spin component={LoadingIcon} />;
+      return <Icon spin component={LoadingIcon} style={{ fontSize: '16px' }} />;
     }
+
     if (isVisible) {
-      return <EyeOutlined style={{ color: 'white' }} />;
+      return <EyeOutlined style={{ color: 'white', fontSize: '16px' }} />;
     }
-    return <EyeInvisibleOutlined style={{ color: '#91D5FF' }} />;
+
+    return <EyeInvisibleOutlined style={{ color: '#91D5FF', fontSize: '16px' }} />;
   }, [isLoading, isVisible]);
 
   return (
-    <Button
-      className="border-none rounded-sm items-center text-primary-1 bg-transparent justify-center flex"
-      type="text"
+    <button
+      type="button"
+      className="block border-none flex items-center justify-center w-[16px]"
       onClick={onClickEye}
-      icon={icon}
-    />
+    >
+      {icon}
+    </button>
   );
 }

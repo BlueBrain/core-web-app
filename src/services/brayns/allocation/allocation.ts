@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import Events from '../utils/events';
-import JsonRpcService from '../json-rpc/json-rpc';
-import Settings from '../settings';
-import BraynsWrapper from '../wrapper/wrapper';
 import BackendAllocatorService from './backend-allocator-service';
 import Persistence from './persistence';
+import Events from '@/services/brayns/utils/events';
+import JsonRpcService from '@/services/brayns/json-rpc/json-rpc';
+import Settings from '@/services/brayns/settings';
+import BraynsWrapper from '@/services/brayns/wrapper/wrapper';
 import { assertType } from '@/util/type-guards';
 
 /**

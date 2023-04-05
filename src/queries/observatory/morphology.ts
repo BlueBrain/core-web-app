@@ -1,4 +1,4 @@
-import { createSearchStringQueryFilter } from '../es';
+import { createSearchStringQueryFilter } from '@/queries/es';
 import { Filter } from '@/components/Filter/types';
 import buildAggregations from '@/queries/observatory/aggregations';
 

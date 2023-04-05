@@ -1,6 +1,6 @@
-import JsonRpcService from '../json-rpc/json-rpc';
-import { BraynsColorOpaque } from '../types';
 import { assertBraynsModel } from './types';
+import JsonRpcService from '@/services/brayns/json-rpc/json-rpc';
+import { BraynsColorOpaque } from '@/services/brayns/types';
 
 export default class Light {
   constructor(private readonly renderer: JsonRpcService) {}

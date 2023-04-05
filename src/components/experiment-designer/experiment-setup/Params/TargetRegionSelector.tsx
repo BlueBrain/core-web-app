@@ -5,11 +5,11 @@ import { ExportOutlined } from '@ant-design/icons';
 
 import { expDesignerSimulateRegions } from '@/state/experiment-designer';
 import { BrainRegionsDropdown } from '@/components/experiment-designer';
-import { ExpDesignerDropdownParameter } from '@/types/experiment-designer';
+import { ExpDesignerRegionParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 
 type Props = {
-  data: ExpDesignerDropdownParameter;
+  data: ExpDesignerRegionParameter;
   className?: string;
 };
 

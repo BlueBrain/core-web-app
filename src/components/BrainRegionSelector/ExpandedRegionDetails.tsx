@@ -27,6 +27,7 @@ import { formatNumber } from '@/util/common';
 import CompositionInput from '@/components/BrainRegionSelector/CompositionInput';
 import { calculateMax } from '@/util/composition/utils';
 import iterateAndComputeSystemLockedIds from '@/util/composition/locking';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -61,7 +62,7 @@ function NeuronCompositionParent({
 
   return (
     <>
-      <div className="flex gap-2 items-center justify-between  py-3 text-left text-primary-3 w-full whitespace-nowrap hover:text-white">
+      <div className="flex gap-2 items-center justify-between py-3 text-left text-primary-3 w-full whitespace-nowrap hover:text-white">
         <div className="flex items-center gap-3">
           <span className="font-bold text-white">{title}</span>
           <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
@@ -82,19 +83,18 @@ function NeuronCompositionParent({
           {trigger?.()}
         </div>
       </div>
-      <div className="bg-primary-6 px-[12px] rounded-[4px]">
-        {isEditable ? (
-          <HorizontalSlider
-            value={composition}
-            color="#FFF"
-            max={max}
-            step={1}
-            disabled={isLocked}
-            onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
-          />
-        ) : null}
-      </div>
-      {content?.()}
+      {isEditable ? (
+        <HorizontalSlider
+          className="bg-primary-6 px-[12px] rounded-[4px]"
+          value={composition}
+          color="#FFF"
+          max={max}
+          step={1}
+          disabled={isLocked}
+          onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
+        />
+      ) : null}
+      {content?.({ className: '-mt-3' })}
     </>
   );
 }
@@ -385,6 +385,7 @@ function ExpandedRegionDetails({
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
   const composition = useAtomValue(analysedCompositionAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
   const [meTypeNavValue, setNavValue] = useState<NavValue>({});
 
   const onValueChange = useCallback(
@@ -421,7 +422,7 @@ function ExpandedRegionDetails({
           neuronComposition={composition.totalComposition.neuron}
           meTypeNavValue={meTypeNavValue}
           onValueChange={onValueChange}
-          editMode={editMode}
+          editMode={editMode && !!isConfigEditable}
         />
       ) : (
         <div>Composition could not be calculated</div>

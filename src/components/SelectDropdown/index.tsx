@@ -1,4 +1,4 @@
-import Select, { DropdownIndicatorProps, components } from 'react-select';
+import Select, { DropdownIndicatorProps, SingleValue, MultiValue, components } from 'react-select';
 import React from 'react';
 import './SelectDropdown.css';
 import ChevronRightIcon from '@/components/icons/ChevronRightIcon';
@@ -13,7 +13,7 @@ type SelectOption = {
 type SelectDropdownProps = {
   selectOptions: SelectOption[];
   defaultOption: SelectOption;
-  onChangeFunc: (viewId: string) => void;
+  onChangeFunc: (viewId: string | undefined) => void;
 };
 
 function DropdownIndicator(props: DropdownIndicatorProps<SelectOption>) {
@@ -34,8 +34,9 @@ export default function SelectDropdown({
   return (
     <Select
       hideSelectedOptions
-      // @ts-ignore
-      onChange={(sel: SelectOption) => onChangeFunc(sel?.value)}
+      onChange={(sel: SingleValue<SelectOption> | MultiValue<SelectOption>) =>
+        onChangeFunc((sel as SingleValue<SelectOption>)?.value)
+      }
       unstyled
       components={{ DropdownIndicator }}
       defaultValue={defaultOption}
