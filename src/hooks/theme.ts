@@ -6,7 +6,7 @@ import { useSetAtom } from 'jotai';
 import usePathname from '@/hooks/pathname';
 import { themeAtom } from '@/state/theme';
 
-const DARK_THEME_PATHNAMES = ['/lab/cell-composition/interactive'];
+const DARK_THEME_PATHNAMES = ['/build/cell-composition/interactive'];
 
 export default function useTheme() {
   const pathname = usePathname();

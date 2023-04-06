@@ -6,12 +6,12 @@ import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { useSession } from 'next-auth/react';
 import moment from 'moment';
-import Sidebar from '@/components/observatory/Sidebar';
-import { Campaign } from '@/types/observatory';
+import Sidebar from '@/components/explore-section/Sidebar';
+import { Campaign } from '@/types/explore-section';
 import { createHeaders } from '@/util/utils';
 import { nexus } from '@/config';
 import { sorter } from '@/util/common';
-import styles from '@/app/observatory/observatory.module.scss';
+import styles from '@/app/explore/explore.module.scss';
 import tableStyles from './table.module.scss';
 
 const { Search } = Input;
@@ -44,7 +44,7 @@ const QueryBase = {
   },
 };
 
-export default function Observatory() {
+export default function SimulationCampaignsPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const [results, setResults] = useState([]);

@@ -223,13 +223,13 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
               <HomeIcon />
             </FooterLink>
 
-            <FooterLink className="bg-primary-8" href="/simulation">
-              <span>Simulation</span>
+            <FooterLink className="bg-primary-8" href="/simulate">
+              <span>Simulate</span>
               <RightOutlined />
             </FooterLink>
 
-            <FooterLink className="bg-primary-8" href="/observatory">
-              <span>Observatory</span>
+            <FooterLink className="bg-primary-8" href="/explore">
+              <span>Explore</span>
               <RightOutlined />
             </FooterLink>
           </footer>
