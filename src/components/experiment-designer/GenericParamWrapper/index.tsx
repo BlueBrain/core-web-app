@@ -8,6 +8,7 @@ import { ExpDesignerParam, ExpDesignerListParam } from '@/types/experiment-desig
 export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
 export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
 export const headerStyle = 'p-[16px] font-light text-left';
+export const subheaderStyle = `${defaultPadding} uppercase text-gray-400`;
 
 type RowRendererProps = {
   data: any;
@@ -20,6 +21,9 @@ type Props = {
   children?: ReactNode;
   showHeader?: boolean;
 };
+
+export const generateId = (param1: string, param2: string) =>
+  `${param1.replaceAll(' ', '')}${param2.replaceAll(' ', '')}`;
 
 function isEmpty(data: ExpDesignerParam[] | ExpDesignerListParam[]) {
   if (typeof data !== 'object') return true;

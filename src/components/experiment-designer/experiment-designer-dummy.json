@@ -155,5 +155,90 @@
       "type": "radioButton",
       "value": ["Spikes", "Voltage"]
     }
+  ],
+  "analysis": [
+    {
+      "id": "raster",
+      "name": "Spike Raster",
+      "type": "regionDropdownGroup",
+      "value": [
+        {
+          "id": "rasterRegion1",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    },
+    {
+      "id": "psth",
+      "name": "PSTH",
+      "type": "regionDropdownGroup",
+      "value": [
+        {
+          "id": "psthRegion1",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    },
+    {
+      "id": "voltage",
+      "name": "Voltage Report",
+      "type": "regionDropdownGroup",
+      "value": [
+        {
+          "id": "voltageRegion1",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    },
+    {
+      "id": "localFieldPotential",
+      "name": "Local Field Potential",
+      "type": "group",
+      "value": [
+        {
+          "id": "lfpRegion1",
+          "name": "Population",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        },
+        {
+          "id": "plots",
+          "name": "Plots",
+          "type": "checkboxGroup",
+          "value": [
+            {
+              "id": "spectrum",
+              "name": "Spectrum",
+              "type": "checkbox"
+            },
+            {
+              "id": "trace",
+              "name": "Trace",
+              "type": "checkbox"
+            }
+          ]
+        },
+        {
+          "id": "start",
+          "name": "Start time",
+          "type": "number",
+          "value": "0",
+          "unit": "ms"
+        },
+        {
+          "id": "end",
+          "name": "End time",
+          "type": "number",
+          "value": "300",
+          "unit": "ms"
+        }
+      ]
+    }
   ]
 }

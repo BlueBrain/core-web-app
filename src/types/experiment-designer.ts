@@ -48,6 +48,25 @@ export type ExpDesignerRadioBtnParameter = ExpDesignerBaseParameter & {
   value: string[];
 };
 
+export type ExpDesignerRegionDropdownGroupParameter = ExpDesignerBaseParameter & {
+  type: 'regionDropdownGroup';
+  value: ExpDesignerRegionParameter[];
+};
+
+export type ExpDesignerCheckboxParameter = ExpDesignerBaseParameter & {
+  type: 'checkbox';
+};
+
+export type ExpDesignerCheckboxGroupParameter = ExpDesignerBaseParameter & {
+  type: 'checkboxGroup';
+  value: ExpDesignerCheckboxParameter[];
+};
+
+export type ExpDesignerGroupParameter = ExpDesignerBaseParameter & {
+  type: 'group';
+  value: ExpDesignerParam[];
+};
+
 export type ExpDesignerParam =
   | ExpDesignerNumberParameter
   | ExpDesignerDropdownParameter
@@ -55,7 +74,11 @@ export type ExpDesignerParam =
   | ExpDesignerStringParameter
   | ExpDesignerRegionParameter
   | ExpDesignerPositionParameter
-  | ExpDesignerRadioBtnParameter;
+  | ExpDesignerRadioBtnParameter
+  | ExpDesignerRegionDropdownGroupParameter
+  | ExpDesignerCheckboxParameter
+  | ExpDesignerCheckboxGroupParameter
+  | ExpDesignerGroupParameter;
 
 export type ExpDesignerListParam = {
   id: string;
