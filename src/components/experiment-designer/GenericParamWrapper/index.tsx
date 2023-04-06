@@ -5,8 +5,8 @@ import { ComponentType, ReactNode } from 'react';
 
 import { ExpDesignerParam, ExpDesignerListParam } from '@/types/experiment-designer';
 
-export const defaultPadding = 'py-[12px]'; // to match the collapse padding
-export const defaultColumnStyle = 'w-1/2 align-baseline px-[16px] text-primary-7';
+export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
+export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
 export const headerStyle = 'p-[16px] font-light text-left';
 
 type RowRendererProps = {

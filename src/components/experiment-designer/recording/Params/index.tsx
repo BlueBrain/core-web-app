@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Divider } from 'antd';
 
-import InputTargetRegionSelector from './RecordingTargetRegionSelector';
+import RecordingTargetRegionSelector from './RecordingTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
 import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
@@ -22,15 +22,19 @@ function RecordingBlock({ row }: { row: ExpDesignerParam }) {
   let constantCol;
   switch (row.type) {
     case 'number':
-      constantCol = <ConstantParameter data={row} className={defaultPadding} />;
+      constantCol = (
+        <ConstantParameter data={row} className={defaultPadding} showSwitcher={false} />
+      );
       break;
 
     case 'dropdown':
-      constantCol = <DropdownParameter data={row} className={defaultPadding} />;
+      constantCol = (
+        <DropdownParameter data={row} className={defaultPadding} showSwitcher={false} />
+      );
       break;
 
     case 'regionDropdown':
-      constantCol = <InputTargetRegionSelector data={row} className={defaultPadding} />;
+      constantCol = <RecordingTargetRegionSelector data={row} className={defaultPadding} />;
       break;
 
     default:

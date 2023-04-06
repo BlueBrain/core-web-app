@@ -22,7 +22,7 @@ import type {
   ExpDesignerConfig,
 } from '@/types/experiment-designer';
 
-function InputBlock({ row }: { row: ExpDesignerParam }) {
+function StimulationBlock({ row }: { row: ExpDesignerParam }) {
   let constantCol;
   let sweepCol;
   switch (row.type) {
@@ -57,7 +57,7 @@ function ParameterRenderRow({ data }: { data: ExpDesignerListParam }) {
   return (
     <>
       {data.value.map((row) => (
-        <InputBlock row={row} key={data.id + row.id} />
+        <StimulationBlock row={row} key={data.id + row.id} />
       ))}
       <tr>
         <td>
@@ -90,7 +90,6 @@ export default function Params() {
     expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.stimuli : [];
 
   const onAddInput = () => {
-    // @ts-ignore
     setExpDesignConfigLoadable((prevConfig: ExpDesignerConfig): ExpDesignerConfig => {
       const onlyStimuli = prevConfig.input as ExpDesignerListParam[];
       const newStimuli = addNewStimulus(onlyStimuli);

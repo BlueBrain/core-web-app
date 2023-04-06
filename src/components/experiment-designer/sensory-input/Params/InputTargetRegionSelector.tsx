@@ -19,11 +19,7 @@ export default function InputTargetRegionSelector({ data, className }: Props) {
   return (
     <div className={classNames('flex gap-3 items-center font-bold', className)}>
       <div className="grow">Target</div>
-      <BrainRegionsDropdown
-        onChange={setSimulateRegions}
-        defaultValue={data.value}
-        className={className}
-      />
+      <BrainRegionsDropdown onChange={setSimulateRegions} defaultValue={data.value} />
       <ExportOutlined />
     </div>
   );

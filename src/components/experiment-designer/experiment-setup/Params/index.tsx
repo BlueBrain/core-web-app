@@ -27,7 +27,7 @@ function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
 
     case 'range':
       constantCol = <DefaultEmptyParam />;
-      sweepCol = <RangeParameter data={data} className={defaultPadding} />;
+      sweepCol = <RangeParameter data={data} />;
       break;
 
     case 'regionDropdown':

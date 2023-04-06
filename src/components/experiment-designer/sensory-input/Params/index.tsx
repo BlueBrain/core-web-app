@@ -90,7 +90,6 @@ export default function Params() {
     expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.input : [];
 
   const onAddInput = () => {
-    // @ts-ignore
     setExpDesignConfigLoadable((prevConfig: ExpDesignerConfig): ExpDesignerConfig => {
       const onlyInput = prevConfig.input as ExpDesignerListParam[];
       const newInputs = addNewInput(onlyInput);

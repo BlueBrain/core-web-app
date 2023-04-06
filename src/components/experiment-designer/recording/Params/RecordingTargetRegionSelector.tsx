@@ -1,7 +1,6 @@
 'use client';
 
 import { useSetAtom } from 'jotai';
-import { ExportOutlined } from '@ant-design/icons';
 
 import { expDesignerSimulateRegions } from '@/state/experiment-designer';
 import { BrainRegionsDropdown } from '@/components/experiment-designer';
@@ -19,12 +18,7 @@ export default function RecordingTargetRegionSelector({ data, className }: Props
   return (
     <div className={classNames('flex gap-3 items-center font-bold', className)}>
       <div className="grow">Target</div>
-      <BrainRegionsDropdown
-        onChange={setRecordingRegions}
-        defaultValue={data.value}
-        className={className}
-      />
-      <ExportOutlined />
+      <BrainRegionsDropdown onChange={setRecordingRegions} defaultValue={data.value} />
     </div>
   );
 }
