@@ -8,6 +8,10 @@
   @apply cursor-pointer;
 }
 
+.themeBlack {
+  @apply bg-black;
+}
+
 .container {
   height: 100vh;
   width: 100vw;
@@ -63,6 +67,7 @@
   @apply bg-primary-5;
 }
 
+.themeBlack,
 .info,
 .exploreHeader,
 .experimental,
@@ -70,12 +75,13 @@
 .braincells,
 .reconstructions {
   @apply px-14 py-8 text-white;
+  > div > span,
   > a > div > span {
     float: right;
-    @apply text-xl;
+    @apply text-xl cursor-pointer;
   }
   h1 {
-    @apply text-xl font-bold inline;
+    @apply text-xl font-bold inline cursor-pointer;
   }
   button {
     font-size: clamp(1rem, 0.5vw + 5px, 3rem);

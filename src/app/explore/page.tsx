@@ -1,13 +1,15 @@
 'use client';
 
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import ExploreNavItem from '@/components/ExploreSectionNavItem';
+import { useState } from 'react';
+import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { ExploreNavItem, ExploreGroupNav } from '@/components/ExploreSectionNavItem';
 import Link from '@/components/Link';
 import { basePath } from '@/config';
 import styles from './explore.module.scss';
 
-export default function ExplorePage() {
+export default function Explore() {
   const bgUrl = `url(${basePath}/images/img_3d-interactive-brain_placeholder.jpg) no-repeat`;
+  const [open, setOpen] = useState<boolean>(false);
   return (
     <div className={styles.container}>
       <div className={styles.exploreHeader}>
@@ -19,7 +21,7 @@ export default function ExplorePage() {
           </button>
         </Link>
       </div>
-      <div className={styles.braincells}>
+      <div className={open ? styles.themeBlack : styles.braincells}>
         <ExploreNavItem
           title="Brain & cells annotations"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
@@ -27,20 +29,27 @@ export default function ExplorePage() {
         />
       </div>
       <div className={styles.experimental}>
-        <ExploreNavItem
-          title="Electrophysiology Data"
-          text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
-          url="/explore/electrophysiology"
-        />
+        <div
+          onClick={() => setOpen(!open)}
+          role="menuitem"
+          tabIndex={0}
+          onKeyDown={() => setOpen(!open)}
+        >
+          <h1>Experimental Data</h1>
+          <ArrowRightOutlined />
+        </div>
+        <div style={{ visibility: open ? 'visible' : 'hidden' }}>
+          <ExploreGroupNav />
+        </div>
       </div>
-      <div className={styles.reconstructions}>
+      <div className={open ? styles.themeBlack : styles.reconstructions}>
         <ExploreNavItem
           title="Digital reconstructions"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
           url="/simulation-campaigns"
         />
       </div>
-      <div className={styles.simulations}>
+      <div className={open ? styles.themeBlack : styles.simulations}>
         <ExploreNavItem
           title="Simulations"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
