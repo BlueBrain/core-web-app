@@ -314,7 +314,7 @@ export async function cloneBrainModelConfig(
   );
 
   const clonedMicroConnectomeConfigMetadata = await cloneMicroConnectomeConfig(
-    brainModelConfigSource.configs.morphologyAssignmentConfig['@id'],
+    brainModelConfigSource.configs.microConnectomeConfig['@id'],
     session
   );
 
