@@ -8,7 +8,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { BrainRegionsSidebar } from '@/components/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
-import useSessionState from '@/hooks/session';
 import TopTabs from '@/components/TopTabs';
 import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
@@ -24,7 +23,6 @@ type BuildSectionLayoutProps = {
 
 export default function BuildSectionLayout({ children }: BuildSectionLayoutProps) {
   useBrainModelConfigState();
-  useSessionState();
   useAuth(true);
   const extraPanelRef = useRef(null);
   const setExtraPanelContainer = useSetAtom(extraPanelContainerAtom);
