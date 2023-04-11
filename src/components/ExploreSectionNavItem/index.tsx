@@ -25,7 +25,7 @@ export function ExploreGroupNav() {
   return (
     <div className={styles.containerSub}>
       <div className={styles.ephys}>
-        <Link href="/observatory/electrophysiology">
+        <Link href="/explore/electrophysiology">
           <div>
             <h1>Neuron electrophysiology</h1>
             <PlusOutlined />
@@ -33,7 +33,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.morph}>
-        <Link href="/observatory/morphology">
+        <Link href="/explore/morphology">
           <div>
             <h1>Neuron morphologies</h1>
             <PlusOutlined />
@@ -41,7 +41,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.bouton}>
-        <Link href="/observatory/bouton-density">
+        <Link href="/explore/bouton-density">
           <div>
             <h1>Bouton density</h1>
             <PlusOutlined />
@@ -49,7 +49,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.neuron}>
-        <Link href="/observatory/neuron-density">
+        <Link href="/explore/neuron-density">
           <div>
             <h1>Neuron density</h1>
             <PlusOutlined />
@@ -57,7 +57,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.layer}>
-        <Link href="/observatory/layer-thickness">
+        <Link href="/explore/layer-thickness">
           <div>
             <h1>Layer thickness</h1>
             <PlusOutlined />
@@ -65,7 +65,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.pair}>
-        <Link href="/observatory/pair-recording">
+        <Link href="/explore/pair-recording">
           <div>
             <h1>Pair recording</h1>
             <PlusOutlined />
