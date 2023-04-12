@@ -5,7 +5,7 @@ import { ComponentType, ReactNode, useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 import { Atom, useAtomValue } from 'jotai';
 
-import { ExpDesignerParam } from '@/types/experiment-designer';
+import { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
 import { getFocusedAtom } from '@/components/experiment-designer/utils';
 
 export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
@@ -23,10 +23,36 @@ type Props = {
   sectionName: string;
   children?: ReactNode;
   showHeader?: boolean;
+  isGroup?: boolean;
 };
 
 export const generateId = (param1: string, param2: string) =>
   `${param1.replaceAll(' ', '')}${param2.replaceAll(' ', '')}`;
+
+type GroupRendererProps = RowRendererProps & {
+  RowRenderer: ComponentType<RowRendererProps>;
+};
+
+function GroupRenderer({ paramAtom, RowRenderer }: GroupRendererProps) {
+  const paramAtomTyped = paramAtom as Atom<ExpDesignerGroupParameter>;
+  const param = useAtomValue<ExpDesignerGroupParameter>(paramAtomTyped);
+
+  return (
+    <>
+      {param.value.map((row) => (
+        <RowRenderer paramAtom={paramAtom} key={param.id + row.id} />
+      ))}
+      <tr>
+        <td>
+          <Divider />
+        </td>
+        <td>
+          <Divider />
+        </td>
+      </tr>
+    </>
+  );
+}
 
 export default function GenericParamWrapper({
   description,
@@ -34,10 +60,26 @@ export default function GenericParamWrapper({
   children,
   showHeader = true,
   sectionName,
+  isGroup = false,
 }: Props) {
   const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
   const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
   const listAtoms = useAtomValue(atoms);
+
+  let rows;
+  if (listAtoms.length) {
+    if (isGroup) {
+      rows = listAtoms.map((paramAtom) => (
+        <GroupRenderer key={paramAtom.toString()} paramAtom={paramAtom} RowRenderer={RowRenderer} />
+      ));
+    } else {
+      rows = listAtoms.map((paramAtom) => (
+        <RowRenderer key={paramAtom.toString()} paramAtom={paramAtom} />
+      ));
+    }
+  } else {
+    rows = null;
+  }
 
   return (
     <div className="h-full">
@@ -65,10 +107,7 @@ export default function GenericParamWrapper({
             </tr>
           )}
 
-          {listAtoms.length &&
-            listAtoms.map((paramAtom) => (
-              <RowRenderer key={paramAtom.toString()} paramAtom={paramAtom} />
-            ))}
+          {rows}
         </tbody>
       </table>
 

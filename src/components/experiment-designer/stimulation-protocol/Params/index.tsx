@@ -1,7 +1,6 @@
 'use client';
 
 import { Atom, useAtom, useSetAtom } from 'jotai';
-import { Divider } from 'antd';
 
 import InputTargetRegionSelector from './StimulationTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
@@ -48,27 +47,6 @@ function StimulationBlock({ row }: { row: ExpDesignerParam }) {
   );
 }
 
-function ParameterRenderRow({ paramAtom }: { paramAtom: any }) {
-  const paramAtomParsed = paramAtom as Atom<ExpDesignerGroupParameter>;
-  const [param] = useAtom<ExpDesignerGroupParameter>(paramAtomParsed);
-
-  return (
-    <>
-      {param.value.map((row) => (
-        <StimulationBlock row={row} key={param.id + row.id} />
-      ))}
-      <tr>
-        <td>
-          <Divider />
-        </td>
-        <td>
-          <Divider />
-        </td>
-      </tr>
-    </>
-  );
-}
-
 export default function Params() {
   const sectionName = 'stimuli';
   const sectionAtom = getFocusedAtom(sectionName);
@@ -83,7 +61,8 @@ export default function Params() {
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
       sectionName={sectionName}
-      RowRenderer={ParameterRenderRow}
+      RowRenderer={StimulationBlock}
+      isGroup
     >
       <GenericAddButton onClick={addNew} title="Add Stimulation Protocol" />
     </GenericParamWrapper>
