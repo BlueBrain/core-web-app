@@ -8,7 +8,7 @@ Navigation.useSearchParams = jest.fn(() => new URLSearchParams());
 
 test('Home page', async () => {
   render(
-    <SimplePanel title="Observatory" link="/observatory">
+    <SimplePanel title="Explore" link="/explore">
       Text
     </SimplePanel>
   );

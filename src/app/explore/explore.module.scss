@@ -1,0 +1,123 @@
+.tableHeader {
+  color: #8c8c8c;
+  text-transform: uppercase;
+}
+
+.tableRow {
+  border: none !important;
+  @apply cursor-pointer;
+}
+
+.themeBlack {
+  @apply bg-black;
+}
+
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  grid-template-rows: auto repeat(4, 1fr);
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    'explore-header content'
+    'braincells content'
+    'experimental content'
+    'reconstructions content'
+    'simulations info';
+}
+
+.content {
+  grid-area: content;
+  background-color: black;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+}
+
+.exploreHeader {
+  min-height: 0;
+  grid-area: explore-header;
+  @apply bg-primary-9;
+  min-height: 20%;
+}
+
+.braincells {
+  min-height: 0;
+  grid-area: braincells;
+  @apply bg-primary-8;
+}
+
+.experimental {
+  min-height: 0;
+  grid-area: experimental;
+  @apply bg-primary-7;
+}
+
+.reconstructions {
+  min-height: 0;
+  grid-area: reconstructions;
+  @apply bg-primary-6;
+}
+.simulations {
+  min-height: 0;
+  grid-area: simulations;
+  @apply bg-primary-5;
+}
+
+.themeBlack,
+.info,
+.exploreHeader,
+.experimental,
+.simulations,
+.braincells,
+.reconstructions {
+  @apply px-14 py-8 text-white;
+  > div > span,
+  > a > div > span {
+    float: right;
+    @apply text-xl cursor-pointer;
+  }
+  h1 {
+    @apply text-xl font-bold inline cursor-pointer;
+  }
+  button {
+    font-size: clamp(1rem, 0.5vw + 5px, 3rem);
+    @apply border border-white px-4 py-2 mt-4;
+  }
+  p {
+    font-size: clamp(1rem, 0.4vw + 5px, 3rem);
+    @apply mt-2 font-thin;
+  }
+}
+
+.exploreHeader {
+  h1 {
+    @apply font-bold uppercase block;
+    font-size: clamp(1rem, 2.5vw, 5rem);
+    line-height: 0.8;
+    word-spacing: 100vw;
+  }
+  button {
+    @apply border border-primary-4 text-primary-4;
+    > span {
+      @apply mr-5;
+    }
+  }
+}
+.info {
+  min-height: 0;
+  background-color: black;
+  @apply text-white py-0;
+  h1 {
+    @apply text-xl;
+  }
+  p {
+    @apply w-8/12;
+  }
+  button {
+    @apply text-black bg-white;
+  }
+}

@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
 import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetRegionSelector';
-import { expDesignerConfigAtom } from '@/state/experiment-designer';
+import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
@@ -14,8 +14,9 @@ import {
   RangeParameter,
   DefaultEmptyParam,
 } from '@/components/experiment-designer';
+import type { ExpDesignerParam } from '@/types/experiment-designer';
 
-function ParameterRenderRow({ data }: { data: any }) {
+function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
   let constantCol;
   let sweepCol;
   switch (data.type) {
@@ -26,7 +27,7 @@ function ParameterRenderRow({ data }: { data: any }) {
 
     case 'range':
       constantCol = <DefaultEmptyParam />;
-      sweepCol = <RangeParameter data={data} className={defaultPadding} />;
+      sweepCol = <RangeParameter data={data} />;
       break;
 
     case 'regionDropdown':
@@ -46,7 +47,7 @@ function ParameterRenderRow({ data }: { data: any }) {
   );
 }
 
-const loadableExpDesignConfigAtom = loadable(expDesignerConfigAtom);
+const loadableExpDesignConfigAtom = loadable(asyncExpDesignerConfigAtom);
 
 export default function Params() {
   const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);

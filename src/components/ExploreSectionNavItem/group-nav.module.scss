@@ -1,0 +1,60 @@
+.containerSub {
+  display: grid;
+  position: absolute;
+  top: 0;
+  left: 35%;
+  height: 100vh;
+  width: 33vw;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    'ephys'
+    'morph'
+    'bouton'
+    'neuron'
+    'layer'
+    'pair';
+}
+
+.ephys,
+.morph,
+.bouton,
+.neuron,
+.layer,
+.pair {
+  @apply px-14 py-8 text-white border-none;
+  > a > div > span[role='img'] {
+    float: right;
+  }
+}
+.ephys {
+  grid-area: ephys;
+  @apply border h-full w-full bg-primary-9;
+}
+
+.morph {
+  grid-area: morph;
+  @apply border h-full w-full bg-primary-8;
+}
+
+.bouton {
+  grid-area: bouton;
+  @apply border h-full w-full bg-primary-7;
+}
+
+.neuron {
+  grid-area: neuron;
+  @apply border h-full w-full bg-primary-6;
+}
+
+.layer {
+  grid-area: layer;
+  @apply border h-full w-full bg-primary-5;
+}
+
+.pair {
+  grid-area: pair;
+  @apply border h-full w-full bg-primary-4;
+}

@@ -1,3 +1,5 @@
+'use client';
+
 import { useAtomValue } from 'jotai';
 import notificationsAtom from '@/state/notifications';
 import Notification from '@/components/Notification';

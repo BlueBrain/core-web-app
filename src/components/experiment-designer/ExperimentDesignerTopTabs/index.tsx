@@ -26,8 +26,8 @@ const tabs: Tab[] = [
   },
   {
     name: 'Simulation Protocol',
-    href: '/experiment-designer/simulation-protocol',
-    baseHref: '/experiment-designer/simulation-protocol',
+    href: '/experiment-designer/stimulation-protocol',
+    baseHref: '/experiment-designer/stimulation-protocol',
   },
   {
     name: 'Recording',

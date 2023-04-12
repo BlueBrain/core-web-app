@@ -53,5 +53,192 @@
       "type": "regionDropdown",
       "value": "Hippocampal formation"
     }
+  ],
+  "input": [
+    {
+      "id": "input1",
+      "value": [
+        {
+          "id": "spikes",
+          "name": "Spikes",
+          "type": "dropdown",
+          "value": "Whiskers stimulus",
+          "unit": "ms",
+          "options": []
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": "4000",
+          "unit": "ms"
+        },
+        {
+          "id": "targetInputRegion",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    }
+  ],
+  "stimuli": [
+    {
+      "id": "stimulus1",
+      "value": [
+        {
+          "id": "stimType",
+          "name": "Type",
+          "type": "dropdown",
+          "value": "Current",
+          "options": []
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": "4000",
+          "unit": "ms"
+        },
+        {
+          "id": "targetInputRegion",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    }
+  ],
+  "recording": [
+    {
+      "id": "recording1",
+      "value": [
+        {
+          "id": "variableType",
+          "name": "Variable",
+          "type": "dropdown",
+          "value": "Soma voltage",
+          "options": []
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": "4000",
+          "unit": "ms"
+        },
+        {
+          "id": "recordingRegion",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    }
+  ],
+  "imaging": [
+    {
+      "id": "cameraPos",
+      "name": "Camera position",
+      "type": "position",
+      "value": [100, 200, 300]
+    },
+    {
+      "id": "neuronDisplay",
+      "name": "Neuron Display",
+      "type": "radioButton",
+      "value": ["Soma", "Desndrites", "Axon + Dendrites"]
+    },
+    {
+      "id": "display",
+      "name": "Display",
+      "type": "radioButton",
+      "value": ["Spikes", "Voltage"]
+    }
+  ],
+  "analysis": [
+    {
+      "id": "raster",
+      "name": "Spike Raster",
+      "type": "regionDropdownGroup",
+      "value": [
+        {
+          "id": "rasterRegion1",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    },
+    {
+      "id": "psth",
+      "name": "PSTH",
+      "type": "regionDropdownGroup",
+      "value": [
+        {
+          "id": "psthRegion1",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    },
+    {
+      "id": "voltage",
+      "name": "Voltage Report",
+      "type": "regionDropdownGroup",
+      "value": [
+        {
+          "id": "voltageRegion1",
+          "name": "Target",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        }
+      ]
+    },
+    {
+      "id": "localFieldPotential",
+      "name": "Local Field Potential",
+      "type": "group",
+      "value": [
+        {
+          "id": "lfpRegion1",
+          "name": "Population",
+          "type": "regionDropdown",
+          "value": "Hippocampus CA1"
+        },
+        {
+          "id": "plots",
+          "name": "Plots",
+          "type": "checkboxGroup",
+          "value": [
+            {
+              "id": "spectrum",
+              "name": "Spectrum",
+              "type": "checkbox"
+            },
+            {
+              "id": "trace",
+              "name": "Trace",
+              "type": "checkbox"
+            }
+          ]
+        },
+        {
+          "id": "start",
+          "name": "Start time",
+          "type": "number",
+          "value": "0",
+          "unit": "ms"
+        },
+        {
+          "id": "end",
+          "name": "End time",
+          "type": "number",
+          "value": "300",
+          "unit": "ms"
+        }
+      ]
+    }
   ]
 }

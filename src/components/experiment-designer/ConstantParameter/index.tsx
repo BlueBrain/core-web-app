@@ -9,9 +9,10 @@ import { classNames } from '@/util/utils';
 type Props = {
   data: ExpDesignerNumberParameter;
   className?: string;
+  showSwitcher?: boolean;
 };
 
-export default function ConstantParameter({ data, className }: Props) {
+export default function ConstantParameter({ data, className, showSwitcher = true }: Props) {
   return (
     <div className={classNames('flex gap-3', className)}>
       <div className="grow font-bold">{data.name}</div>
@@ -21,7 +22,7 @@ export default function ConstantParameter({ data, className }: Props) {
         size="small"
         style={{ width: 100 }}
       />
-      <ExportOutlined />
+      {showSwitcher && <ExportOutlined />}
     </div>
   );
 }

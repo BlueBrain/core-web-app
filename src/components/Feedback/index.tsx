@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Form, Input, Modal } from 'antd';
 import { useSession } from 'next-auth/react';
