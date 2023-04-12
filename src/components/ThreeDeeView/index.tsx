@@ -13,8 +13,10 @@ export default function ThreeDeeView() {
   const threeDeeDiv = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    threeCtxWrapper.init(threeDeeDiv.current);
-    isReady(true);
+    if (threeDeeDiv.current) {
+      threeCtxWrapper.init({ targetDiv: threeDeeDiv.current });
+      isReady(true);
+    }
   }, [threeDeeDiv]);
 
   return (

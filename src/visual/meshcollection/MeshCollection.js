@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import MorphologyHybrid from './morphologyGeneration/MorphologyHybrid';
-import AtlasMesh from './AtlasMesh';
 
 /**
  * Events expected:
@@ -42,8 +40,7 @@ class MeshCollection {
    * @param {boolean} focusOn - OPTIONAL focus the camera on this mesh (default: false)
    */
   addMesh(mesh, id, focusOn = false) {
-    const currentMesh = mesh;
-    currentMesh.name = id;
+    mesh.name = id;
     this.collection[id] = mesh;
     this.container.add(mesh);
     if (focusOn) {
