@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
-import { ConfigProvider, theme, InputNumber } from 'antd';
+import { ConfigProvider, theme, InputNumber, Button } from 'antd';
 
 import {
   brainRegionsUnsortedArrayAtom,
@@ -28,6 +28,8 @@ export type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d:
 function ConnectomeDefinitionMain() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+  const [offset, setOffset] = useState(0);
+  const [multiplier, setMultiplier] = useState(1);
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
   const [select, setSelect] = useState(false);
@@ -66,32 +68,51 @@ function ConnectomeDefinitionMain() {
     fetchConnectivity();
   }, []);
 
-  const onChange = (value: number | null) => {
-    if (value === null) return;
+  const onClick = () => {
     const matrix = { ...connectivityMatrix };
 
     selectedIds.forEach(([d, s]) => {
       if (!matrix[s]) return;
       if (!matrix[s][d]) return;
-      matrix[s][d].d = value;
+      const current = matrix[s][d].d;
+      matrix[s][d].d = current * multiplier + offset;
     });
 
     setConnectivityMatrix(matrix);
+    setOffset(0);
+    setMultiplier(1);
+    setSelected(new Set());
   };
 
   return (
     <div className={styles.container}>
       {selected.size > 0 && (
         <div className={styles.sidePanel}>
-          Modify connection density
-          <InputNumber
-            style={{ width: 200 }}
-            defaultValue={0}
-            min={0}
-            max={1}
-            step={0.00000000000001}
-            onChange={onChange}
-          />
+          <span className="font-bold text-lg">Modify connection density</span>
+          <div className="flex justify-between mb-3 mt-3">
+            Offset:
+            <InputNumber
+              value={offset}
+              step={0.01}
+              onChange={(value) => {
+                if (!value) return;
+                setOffset(value);
+              }}
+            />
+          </div>
+          <div className="flex justify-between">
+            Multiplier:
+            <InputNumber
+              value={multiplier}
+              step={0.01}
+              onChange={(value) => {
+                if (!value) return;
+                setMultiplier(value);
+              }}
+            />
+          </div>
+
+          <Button onClick={onClick}>Save</Button>
         </div>
       )}
       <div className={styles.granularityTabs}>

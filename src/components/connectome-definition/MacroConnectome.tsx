@@ -107,13 +107,16 @@ export default function MacroConnectome({
     [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions, connectivityMatrix]
   );
 
-  console.log(filteredDensities, parcellationNames);
-
   useEffect(() => {
     selectRef.current = select;
     unselectRef.current = unselect;
     selectedRef.current = selected;
     const container = plotRef.current;
+
+    if (selected.size === 0) {
+      shapes.current = [];
+    }
+
     if (!container || filteredDensities.length === 0) return;
 
     const data: Data[] = [
@@ -123,8 +126,6 @@ export default function MacroConnectome({
         y: parcellationNames,
         type: 'heatmap',
         colorscale: 'Hot',
-        zmin: 0,
-        zmax: 1,
       },
     ];
 
