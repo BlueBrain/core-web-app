@@ -1,7 +1,5 @@
-import { useAtomValue } from 'jotai';
 import { format, parseISO } from 'date-fns';
 import find from 'lodash/find';
-import { detailAtom } from '@/state/explore-section/ephys/detail';
 import { EphysDeltaResource, AnnotationEntity } from '@/types/explore-section';
 
 const getEtype = (x: EphysDeltaResource) => {
@@ -9,9 +7,7 @@ const getEtype = (x: EphysDeltaResource) => {
   return entity ? entity.hasBody.label : 'no EType';
 };
 
-export default function DetailHeader() {
-  const detail = useAtomValue(detailAtom);
-
+export default function DetailHeader({ detail }: { detail: EphysDeltaResource | null }) {
   if (!detail) return <>Not Found</>;
 
   return (

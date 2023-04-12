@@ -6,14 +6,14 @@ import { createNexusClient } from '@bbp/nexus-sdk';
 import { useSession } from 'next-auth/react';
 import usePathname from '@/hooks/pathname';
 import { nexus as nexusConfig } from '@/config';
-import { detailAtom, infoAtom } from '@/state/explore-section/ephys/detail';
+import { detailAtom, infoAtom } from '@/state/explore-section/morphology/detail';
 import DetailHeader from '@/components/explore-section/DetailHeader';
 import Sidebar from '@/components/explore-section/Sidebar';
-import EphysViewerContainer from '@/components/explore-section/ephys/EphysViewerContainer';
+import MorphoViewerContainer from '@/components/Morphology/MorphoViewerContainer';
 import { SideLink } from '@/types/explore-section';
 import { setInfoWithPath } from '@/util/explore-section/detail-view';
 
-function EphysDetail() {
+function MorphologyDetail() {
   const { data: session } = useSession();
   const nexus = createNexusClient({ uri: nexusConfig.url, token: session?.accessToken });
   const path = usePathname();
@@ -24,27 +24,25 @@ function EphysDetail() {
 
   useEffect(() => setInfoWithPath(path, setInfo), [path, setInfo]);
 
-  const links: Array<SideLink> = [
-    { url: '/explore/electrophysiology', title: 'Neuron Electrophysiology' },
-  ];
+  const links: Array<SideLink> = [{ url: '/observatory/morphology', title: 'Neuron Morphology' }];
 
   return (
     <div className="flex h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar links={links} />
       <div className="bg-white w-full h-full overflow-scroll flex flex-col p-7 pr-12 gap-7">
         <DetailHeader detail={detail} />
-        {detail && session && <EphysViewerContainer resource={detail} nexus={nexus} />}
+        {detail && session && <MorphoViewerContainer resource={detail} nexus={nexus} />}
       </div>
     </div>
   );
 }
 
-function EphysDetailPage() {
+function MorphologyDetailPage() {
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
-      <EphysDetail />
+      <MorphologyDetail />
     </Suspense>
   );
 }
 
-export default EphysDetailPage;
+export default MorphologyDetailPage;

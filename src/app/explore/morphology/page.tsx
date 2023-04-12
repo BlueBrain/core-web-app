@@ -31,7 +31,7 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     dataIndex: 'name',
     key: 'name',
     className: 'text-primary-7 ',
-    render: (text, record) => <Link href={`/explore/electrophysiology/${record.key}`}>{text}</Link>,
+    render: (text, record) => <Link href={`/explore/morphology/${record.key}`}>{text}</Link>,
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
