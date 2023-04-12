@@ -4,19 +4,21 @@ import { useState } from 'react';
 import { Slider, Collapse } from 'antd';
 import { ImportOutlined } from '@ant-design/icons';
 import type { SliderMarks } from 'antd/es/slider';
+import { Atom, useAtomValue } from 'jotai';
 
 import Stepper from './Stepper';
-import type { ExpDesignerRangeParameter } from '@/types/experiment-designer';
+import type { ExpDesignerParam, ExpDesignerRangeParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 
 const { Panel } = Collapse;
 
 type Props = {
-  data: ExpDesignerRangeParameter;
+  paramAtom: Atom<ExpDesignerParam>;
   className?: string;
 };
 
-export default function RangeParameter({ data, className }: Props) {
+export default function RangeParameter({ paramAtom, className }: Props) {
+  const data = useAtomValue(paramAtom as Atom<ExpDesignerRangeParameter>);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { min, max, start, end, step } = data.value;

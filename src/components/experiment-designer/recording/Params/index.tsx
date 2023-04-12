@@ -1,6 +1,6 @@
 'use client';
 
-import { Atom, useAtom, useSetAtom } from 'jotai';
+import { Atom, useAtomValue, useSetAtom } from 'jotai';
 
 import RecordingTargetRegionSelector from './RecordingTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
@@ -9,26 +9,30 @@ import GenericParamWrapper, {
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
 import { ConstantParameter, DropdownParameter } from '@/components/experiment-designer';
-import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
+import type { ExpDesignerParam } from '@/types/experiment-designer';
 import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
 
-function RecordingBlock({ row }: { row: ExpDesignerParam }) {
+function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const param = useAtomValue<ExpDesignerParam>(paramAtom);
+
   let constantCol;
-  switch (row.type) {
+  switch (param.type) {
     case 'number':
       constantCol = (
-        <ConstantParameter data={row} className={defaultPadding} showSwitcher={false} />
+        <ConstantParameter paramAtom={paramAtom} className={defaultPadding} showSwitcher={false} />
       );
       break;
 
     case 'dropdown':
       constantCol = (
-        <DropdownParameter data={row} className={defaultPadding} showSwitcher={false} />
+        <DropdownParameter paramAtom={paramAtom} className={defaultPadding} showSwitcher={false} />
       );
       break;
 
     case 'regionDropdown':
-      constantCol = <RecordingTargetRegionSelector data={row} className={defaultPadding} />;
+      constantCol = (
+        <RecordingTargetRegionSelector paramAtom={paramAtom} className={defaultPadding} />
+      );
       break;
 
     default:

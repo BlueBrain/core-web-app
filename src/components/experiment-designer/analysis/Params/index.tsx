@@ -12,14 +12,15 @@ import type { ExpDesignerParam } from '@/types/experiment-designer';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
+
   let constantCol;
   switch (param.type) {
     case 'regionDropdownGroup':
-      constantCol = <RegionDropdownGroup data={param} className={defaultPadding} />;
+      constantCol = <RegionDropdownGroup paramAtom={paramAtom} className={defaultPadding} />;
       break;
 
     case 'group':
-      constantCol = <ParamGroup data={param} />;
+      constantCol = <ParamGroup paramAtom={paramAtom} />;
       break;
 
     default:

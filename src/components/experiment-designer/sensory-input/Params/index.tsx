@@ -1,6 +1,6 @@
 'use client';
 
-import { Atom, useAtom, useSetAtom } from 'jotai';
+import { Atom, useAtomValue, useSetAtom } from 'jotai';
 
 import InputTargetRegionSelector from './InputTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
@@ -13,25 +13,27 @@ import {
   DropdownParameter,
   DefaultEmptyParam,
 } from '@/components/experiment-designer';
-import type { ExpDesignerParam, ExpDesignerGroupParameter } from '@/types/experiment-designer';
+import type { ExpDesignerParam } from '@/types/experiment-designer';
 import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
 
-function InputBlock({ row }: { row: ExpDesignerParam }) {
+function InputBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const param = useAtomValue<ExpDesignerParam>(paramAtom);
+
   let constantCol;
   let sweepCol;
-  switch (row.type) {
+  switch (param.type) {
     case 'number':
-      constantCol = <ConstantParameter data={row} className={defaultPadding} />;
+      constantCol = <ConstantParameter paramAtom={paramAtom} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 
     case 'dropdown':
-      constantCol = <DropdownParameter data={row} className={defaultPadding} />;
+      constantCol = <DropdownParameter paramAtom={paramAtom} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 
     case 'regionDropdown':
-      constantCol = <InputTargetRegionSelector data={row} className={defaultPadding} />;
+      constantCol = <InputTargetRegionSelector paramAtom={paramAtom} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 

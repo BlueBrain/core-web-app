@@ -14,11 +14,11 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
   let constantCol;
   switch (param.type) {
     case 'position':
-      constantCol = <CoordinatesViewer data={param} className={defaultPadding} />;
+      constantCol = <CoordinatesViewer paramAtom={paramAtom} className={defaultPadding} />;
       break;
 
     case 'radioButton':
-      constantCol = <RadioButtonParameter data={param} className={defaultPadding} />;
+      constantCol = <RadioButtonParameter paramAtom={paramAtom} className={defaultPadding} />;
       break;
 
     default:

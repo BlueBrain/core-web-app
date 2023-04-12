@@ -2,17 +2,19 @@
 
 import { Select } from 'antd';
 import { ExportOutlined } from '@ant-design/icons';
+import { Atom, useAtomValue } from 'jotai';
 
-import type { ExpDesignerDropdownParameter } from '@/types/experiment-designer';
+import type { ExpDesignerDropdownParameter, ExpDesignerParam } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 
 type Props = {
-  data: ExpDesignerDropdownParameter;
+  paramAtom: Atom<ExpDesignerParam>;
   className?: string;
   showSwitcher?: boolean;
 };
 
-export default function DropdownParameter({ data, className, showSwitcher = true }: Props) {
+export default function DropdownParameter({ paramAtom, className, showSwitcher = true }: Props) {
+  const data = useAtomValue(paramAtom as Atom<ExpDesignerDropdownParameter>);
   const options = data.options?.length ? data.options : [{ label: data.value, value: data.value }];
 
   return (

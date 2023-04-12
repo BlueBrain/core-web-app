@@ -1,3 +1,5 @@
+import { Atom, useAtomValue } from 'jotai';
+
 import TargetRegionSelector from './PopulationRegionSelector';
 import CheckboxGroup from './CheckboxGroup';
 import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
@@ -8,24 +10,22 @@ import {
   generateId,
 } from '@/components/experiment-designer/GenericParamWrapper';
 
-type Props = {
-  data: ExpDesignerGroupParameter;
-};
+function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const data = useAtomValue(paramAtom);
 
-function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
   let constantCol;
   switch (data.type) {
     case 'regionDropdown':
-      constantCol = <TargetRegionSelector data={data} className={defaultPadding} />;
+      constantCol = <TargetRegionSelector paramAtom={paramAtom} className={defaultPadding} />;
       break;
 
     case 'checkboxGroup':
-      constantCol = <CheckboxGroup data={data} className={defaultPadding} />;
+      constantCol = <CheckboxGroup paramAtom={paramAtom} className={defaultPadding} />;
       break;
 
     case 'number':
       constantCol = (
-        <ConstantParameter data={data} className={defaultPadding} showSwitcher={false} />
+        <ConstantParameter paramAtom={paramAtom} className={defaultPadding} showSwitcher={false} />
       );
       break;
 
@@ -36,13 +36,15 @@ function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
   return <div>{constantCol}</div>;
 }
 
-export default function ParamGroup({ data }: Props) {
+export default function ParamGroup({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const data = useAtomValue(paramAtom as Atom<ExpDesignerGroupParameter>);
+
   return (
     <>
       <div className={subheaderStyle}>{data.name}</div>
 
       {data.value.map((item) => (
-        <ParameterRenderRow data={item} key={generateId(data.id, item.id)} />
+        <ParameterRenderRow paramAtom={paramAtom} key={generateId(data.id, item.id)} />
       ))}
     </>
   );

@@ -21,17 +21,17 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
   let sweepCol;
   switch (param.type) {
     case 'number':
-      constantCol = <ConstantParameter data={param} className={defaultPadding} />;
+      constantCol = <ConstantParameter paramAtom={paramAtom} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 
     case 'range':
       constantCol = <DefaultEmptyParam />;
-      sweepCol = <RangeParameter data={param} />;
+      sweepCol = <RangeParameter paramAtom={paramAtom} />;
       break;
 
     case 'regionDropdown':
-      constantCol = <TargetRegionSelector data={param} className={defaultPadding} />;
+      constantCol = <TargetRegionSelector paramAtom={paramAtom} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 

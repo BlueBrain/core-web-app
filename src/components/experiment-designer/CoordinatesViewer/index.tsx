@@ -1,14 +1,18 @@
-import { ExpDesignerPositionParameter } from '@/types/experiment-designer';
+import { Atom, useAtomValue } from 'jotai';
+
+import { ExpDesignerParam, ExpDesignerPositionParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 
 type Props = {
-  data: ExpDesignerPositionParameter;
+  paramAtom: Atom<ExpDesignerParam>;
   className?: string;
 };
 
 const coordinateStyle = 'text-gray-400 mx-2';
 
-export default function CoordinatesViewer({ data, className }: Props) {
+export default function CoordinatesViewer({ paramAtom, className }: Props) {
+  const data = useAtomValue(paramAtom as Atom<ExpDesignerPositionParameter>);
+
   return (
     <div className={classNames('flex gap-3', className)}>
       <div className="grow font-bold">{data.name}</div>
