@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import TrackballControls from './thirdparty/TrackballControls';
 import OrbitControls from './thirdparty/OrbitControls';
-import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 
 /* eslint no-use-before-define: "off" */
 /* eslint no-shadow: "off" */
@@ -22,7 +21,7 @@ import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
  * An event can be associated to a ThreeContext instance: `raycast` with the method
  * `.on("raycast", function(hits){...})` where `hits` is the object list being raycasted.
  */
-export class ThreeContext {
+class ThreeContext {
   /**
    * Constuctor
    * @param {DOMObject} div - the div object as a DOM element.
@@ -139,9 +138,7 @@ export class ThreeContext {
 
     // when the 3D container resizes, calls the resize function to re-calculate the width
     const resizeObserver = new ResizeObserver(() => {
-      if (threeCtxWrapper.threeContext !== null) {
-        this.resize();
-      }
+      this.resize();
     });
 
     resizeObserver.observe(this._renderer.domElement.parentElement);

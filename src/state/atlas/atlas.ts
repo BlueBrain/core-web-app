@@ -40,12 +40,11 @@ let atlasVisualizationManager: null | AtlasVisualizationManager = null;
 
 export function useAtlasVisualizationManager() {
   const [atlas, setAtlas] = useAtom(AtlasVisualizationAtom);
-  const manager = React.useMemo(() => {
+  return React.useMemo(() => {
     if (!atlasVisualizationManager)
       atlasVisualizationManager = new AtlasVisualizationManager(atlas, setAtlas);
     return atlasVisualizationManager;
   }, [atlas, setAtlas]);
-  return manager;
 }
 
 export class AtlasVisualizationManager {
