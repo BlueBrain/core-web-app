@@ -1,9 +1,9 @@
 type RangeValue = {
-  min: string;
-  max: string;
-  start: string;
-  end: string;
-  step: string;
+  min: number;
+  max: number;
+  start: number;
+  end: number;
+  step: number;
 };
 
 type ExpDesignerBaseParameter = {
@@ -13,7 +13,7 @@ type ExpDesignerBaseParameter = {
 
 export type ExpDesignerNumberParameter = ExpDesignerBaseParameter & {
   type: 'number';
-  value: string;
+  value: number;
   unit: string | null;
 };
 
