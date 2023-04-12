@@ -10,7 +10,10 @@ export default function SimulationPreview() {
 
   useEffect(() => {
     if (threeDeeDiv.current) {
-      threeCtxWrapper.init({ targetDiv: threeDeeDiv.current });
+      threeCtxWrapper.init({
+        targetDiv: threeDeeDiv.current,
+        cameraPositionXYZ: [-17970.783508199806, -17086.701412939885, -19588.70241470358],
+      });
       isReady(true);
     }
   }, [threeDeeDiv]);
