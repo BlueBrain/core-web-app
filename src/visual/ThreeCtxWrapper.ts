@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import ThreeContext from './threecontext/ThreeContext';
 import MeshCollection from './meshcollection/MeshCollection';
+import OrbitControls from '@/visual/threecontext/thirdparty/OrbitControls';
 
 interface ThreeCtxWrapperInitParams {
   targetDiv: HTMLDivElement;
-  cameraPosition?: [number, number, number];
-  cameraLookAt?: [number, number, number];
+  cameraPositionXYZ?: [number, number, number];
+  cameraLookAtXYZ?: [number, number, number];
 }
 
 class ThreeCtxWrapper {
@@ -15,17 +16,14 @@ class ThreeCtxWrapper {
 
   init({
     targetDiv,
-    cameraPosition = [37984.948, 3938.164, 5712.791],
-    cameraLookAt = [6612.504, 3938.164, 5712.791],
+    cameraPositionXYZ = [37984.948, 3938.164, 5712.791],
+    cameraLookAtXYZ = [6612.504, 3938.164, 5712.791],
   }: ThreeCtxWrapperInitParams) {
     // this is a way to avoid double renderings (e.g. from strict mode on development mode)
     if (targetDiv.childNodes.length > 0 && this.threeContext) {
       this.threeContext.needRender = true;
       return;
     }
-
-    const camPos = new THREE.Vector3(...cameraPosition);
-    const camLookat = new THREE.Vector3(...cameraLookAt);
 
     // The option object, you don't have to provide this one
     const options = {
@@ -36,8 +34,8 @@ class ThreeCtxWrapper {
       showAxisHelper: false, // shows the axis helper at (0, 0, 0) when true (default: false)
       axisHelperSize: 100, // length of the 3 axes of the helper (default: 100)
       controlType: 'orbit', // 'trackball',    // 'orbit': locked poles or 'trackball': free rotations (default: 'trackball')
-      cameraPosition: camPos, // inits position of the camera (default: {x: 0, y: 0, z: 100})
-      cameraLookAt: camLookat, // inits position to look at (default: {x: 0, y: 0, z: 0})
+      cameraPosition: new THREE.Vector3(...cameraPositionXYZ),
+      cameraLookAt: new THREE.Vector3(...cameraLookAtXYZ),
       raycastOnDoubleClick: true, // performs a raycast when double-clicking (default: `true`).
       // If some object from the scene are raycasted, the event 'raycast'
       // is emitted with the list of intersected object from the scene as argument.
