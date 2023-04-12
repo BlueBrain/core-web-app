@@ -2,10 +2,11 @@ import { createSearchStringQueryFilter } from '@/queries/es';
 import { Filter } from '@/components/Filter/types';
 import buildAggregations from '@/queries/explore-section/aggregations';
 
-export default function getEphysDataQuery(
+export default function getDataQuery(
   size: number,
   currentPage: number,
   filters: Filter[],
+  type: string,
   searchString: string = ''
 ) {
   const { aggregations, createdByFilter, eTypeFilter } = buildAggregations(filters);
@@ -14,12 +15,13 @@ export default function getEphysDataQuery(
     size,
     sort: [{ createdAt: { order: 'desc' } }],
     from: (currentPage - 1) * size,
+    track_total_hits: true,
     query: {
       bool: {
         filter: [
           {
             term: {
-              '@type.keyword': 'https://neuroshapes.org/Trace',
+              '@type.keyword': type,
             },
           },
           searchString

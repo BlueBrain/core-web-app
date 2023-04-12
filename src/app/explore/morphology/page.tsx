@@ -9,8 +9,9 @@ import {
   filtersAtom,
   pageSizeAtom,
   searchStringAtom,
+  totalAtom,
 } from '@/state/explore-section/morphology';
-import { ExploreSectionResource } from '@/types/explore-section';
+import { MorphologyResource } from '@/types/explore-section';
 import { dateStringToUnix, sorter } from '@/util/common';
 import Link from '@/components/Link';
 import ExploreSectionListingView from '@/components/ExploreSectionListingView';
@@ -18,13 +19,20 @@ import styles from '@/app/explore/explore.module.scss';
 
 const columHeader = (text: string) => <div className={styles.tableHeader}>{text}</div>;
 
-const columns: ColumnProps<ExploreSectionResource>[] = [
+const columns: ColumnProps<MorphologyResource>[] = [
   {
-    title: columHeader('E-Type'),
-    dataIndex: 'etype',
-    key: 'etype',
+    title: columHeader('Brain Region'),
+    dataIndex: 'brainRegion',
+    key: 'brainRegion',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.etype, b.etype),
+    sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
+  },
+  {
+    title: columHeader('M-Type'),
+    dataIndex: 'mtype',
+    key: 'mtype',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.mtype, b.mtype),
   },
   {
     title: columHeader('Data'),
@@ -63,7 +71,8 @@ export default function MorphologyPage() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Morphology Data"
+        title="Neuron Morphologies"
+        totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}
         pageSizeAtom={pageSizeAtom}
