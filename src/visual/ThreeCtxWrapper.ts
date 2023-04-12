@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import ThreeContext from './threecontext/ThreeContext';
 import MeshCollection from './meshcollection/MeshCollection';
-import OrbitControls from '@/visual/threecontext/thirdparty/OrbitControls';
 
 interface ThreeCtxWrapperInitParams {
   targetDiv: HTMLDivElement;
