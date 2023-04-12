@@ -48,7 +48,6 @@ function ConnectomeDefinitionMain() {
     () =>
       Array.from(selected).map((s) => {
         const pair = JSON.parse(s);
-        console.log(pair, [brainRegionIdByTitle[pair[0]], brainRegionIdByTitle[pair[1]]]);
         return [brainRegionIdByTitle[pair[0]], brainRegionIdByTitle[pair[1]]];
       }),
     [selected, brainRegionIdByTitle]
@@ -70,7 +69,8 @@ function ConnectomeDefinitionMain() {
   const onChange = (value: number | null) => {
     if (value === null) return;
     const matrix = { ...connectivityMatrix };
-    selectedIds.forEach(([s, d]) => {
+
+    selectedIds.forEach(([d, s]) => {
       if (!matrix[s]) return;
       if (!matrix[s][d]) return;
       matrix[s][d].d = value;

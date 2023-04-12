@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
-import Plotly, { PlotType, Shape, Layout } from 'plotly.js-dist-min';
+import Plotly, { Shape, Layout, Data } from 'plotly.js-dist-min';
 import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 
 export type ConnectivityMatrix = { [id: string]: { [id: string]: { s: number; d: number } } };
@@ -12,6 +12,9 @@ function getDensitiesForNodes(
 ): [number[][], string[]] {
   const filteredDensities: number[][] = [];
   const parcellationNames: string[] = [];
+
+  sourceNodes.sort((a, b) => Number(a.id) - Number(b.id));
+  targetNodes.sort((a, b) => Number(a.id) - Number(b.id));
 
   sourceNodes.forEach((node) => {
     const sourceId = node.id;
@@ -104,6 +107,8 @@ export default function MacroConnectome({
     [selectedPreSynapticBrainRegions, selectedPostSynapticBrainRegions, connectivityMatrix]
   );
 
+  console.log(filteredDensities, parcellationNames);
+
   useEffect(() => {
     selectRef.current = select;
     unselectRef.current = unselect;
@@ -111,19 +116,15 @@ export default function MacroConnectome({
     const container = plotRef.current;
     if (!container || filteredDensities.length === 0) return;
 
-    const data: {
-      z: number[][];
-      x: string[];
-      y: string[];
-      type: PlotType;
-      colorscale: string;
-    }[] = [
+    const data: Data[] = [
       {
         z: filteredDensities,
         x: parcellationNames,
         y: parcellationNames,
         type: 'heatmap',
         colorscale: 'Hot',
+        zmin: 0,
+        zmax: 1,
       },
     ];
 
