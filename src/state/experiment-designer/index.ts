@@ -6,7 +6,7 @@ import { BrainRegion } from '@/types/ontologies';
 import { ExpDesignerConfig } from '@/types/experiment-designer';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
 
-const expDesignerConfigAtom = atom<ExpDesignerConfig>(paramsDummyData as ExpDesignerConfig);
+export const expDesignerConfigAtom = atom<ExpDesignerConfig>(paramsDummyData as ExpDesignerConfig);
 
 export const asyncExpDesignerConfigAtom = atom<
   Promise<ExpDesignerConfig>,

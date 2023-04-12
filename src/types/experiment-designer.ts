@@ -80,11 +80,6 @@ export type ExpDesignerParam =
   | ExpDesignerCheckboxGroupParameter
   | ExpDesignerGroupParameter;
 
-export type ExpDesignerListParam = {
-  id: string;
-  value: ExpDesignerParam[];
-};
-
 export type ExpDesignerConfig = {
-  [key: string]: ExpDesignerParam[] | ExpDesignerListParam[];
+  [key: string]: ExpDesignerParam[];
 };

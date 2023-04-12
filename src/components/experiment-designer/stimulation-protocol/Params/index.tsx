@@ -1,12 +1,10 @@
 'use client';
 
-import { useAtomValue, useSetAtom } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { Atom, useAtom, useSetAtom } from 'jotai';
 import { Divider } from 'antd';
 
 import InputTargetRegionSelector from './StimulationTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
-import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
@@ -16,11 +14,8 @@ import {
   DropdownParameter,
   DefaultEmptyParam,
 } from '@/components/experiment-designer';
-import type {
-  ExpDesignerListParam,
-  ExpDesignerParam,
-  ExpDesignerConfig,
-} from '@/types/experiment-designer';
+import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
+import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
 
 function StimulationBlock({ row }: { row: ExpDesignerParam }) {
   let constantCol;
@@ -53,11 +48,14 @@ function StimulationBlock({ row }: { row: ExpDesignerParam }) {
   );
 }
 
-function ParameterRenderRow({ data }: { data: ExpDesignerListParam }) {
+function ParameterRenderRow({ paramAtom }: { paramAtom: any }) {
+  const paramAtomParsed = paramAtom as Atom<ExpDesignerGroupParameter>;
+  const [param] = useAtom<ExpDesignerGroupParameter>(paramAtomParsed);
+
   return (
     <>
-      {data.value.map((row) => (
-        <StimulationBlock row={row} key={data.id + row.id} />
+      {param.value.map((row) => (
+        <StimulationBlock row={row} key={param.id + row.id} />
       ))}
       <tr>
         <td>
@@ -71,40 +69,23 @@ function ParameterRenderRow({ data }: { data: ExpDesignerListParam }) {
   );
 }
 
-function addNewStimulus(stimuli: ExpDesignerListParam[]): ExpDesignerListParam[] {
-  if (!stimuli.length) return [];
-
-  const lastItemClone = structuredClone(stimuli.slice(-1)[0]) as ExpDesignerListParam;
-  lastItemClone.id = crypto.randomUUID();
-  stimuli.push(lastItemClone);
-  return stimuli;
-}
-
-const loadableExpDesignConfigAtom = loadable(asyncExpDesignerConfigAtom);
-
 export default function Params() {
-  const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);
-  const setExpDesignConfigLoadable = useSetAtom(asyncExpDesignerConfigAtom);
+  const sectionName = 'stimuli';
+  const sectionAtom = getFocusedAtom(sectionName);
+  const setSectionConfig = useSetAtom(sectionAtom);
 
-  const stimuli =
-    expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.stimuli : [];
-
-  const onAddInput = () => {
-    setExpDesignConfigLoadable((prevConfig: ExpDesignerConfig): ExpDesignerConfig => {
-      const onlyStimuli = prevConfig.input as ExpDesignerListParam[];
-      const newStimuli = addNewStimulus(onlyStimuli);
-      return { ...prevConfig, stimuli: newStimuli };
-    });
+  const addNew = () => {
+    cloneLastAndAdd(setSectionConfig);
   };
 
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      paramList={stimuli}
+      sectionName={sectionName}
       RowRenderer={ParameterRenderRow}
     >
-      <GenericAddButton onClick={onAddInput} title="Add Stimulation Protocol" />
+      <GenericAddButton onClick={addNew} title="Add Stimulation Protocol" />
     </GenericParamWrapper>
   );
 }

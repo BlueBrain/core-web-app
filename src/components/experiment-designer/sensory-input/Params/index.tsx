@@ -1,12 +1,10 @@
 'use client';
 
-import { useAtomValue, useSetAtom } from 'jotai';
-import { loadable } from 'jotai/utils';
-
+import { Atom, useAtom, useSetAtom } from 'jotai';
 import { Divider } from 'antd';
+
 import InputTargetRegionSelector from './InputTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
-import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
@@ -16,11 +14,8 @@ import {
   DropdownParameter,
   DefaultEmptyParam,
 } from '@/components/experiment-designer';
-import type {
-  ExpDesignerListParam,
-  ExpDesignerParam,
-  ExpDesignerConfig,
-} from '@/types/experiment-designer';
+import type { ExpDesignerParam, ExpDesignerGroupParameter } from '@/types/experiment-designer';
+import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
 
 function InputBlock({ row }: { row: ExpDesignerParam }) {
   let constantCol;
@@ -53,11 +48,13 @@ function InputBlock({ row }: { row: ExpDesignerParam }) {
   );
 }
 
-function ParameterRenderRow({ data }: { data: ExpDesignerListParam }) {
+function ParameterRenderRow({ paramAtom }: { paramAtom: any }) {
+  const paramAtomParsed = paramAtom as Atom<ExpDesignerGroupParameter>;
+  const [param] = useAtom<ExpDesignerGroupParameter>(paramAtomParsed);
   return (
     <>
-      {data.value.map((row) => (
-        <InputBlock row={row} key={data.id + row.id} />
+      {param.value.map((row) => (
+        <InputBlock row={row} key={param.id + row.id} />
       ))}
       <tr>
         <td>
@@ -71,40 +68,23 @@ function ParameterRenderRow({ data }: { data: ExpDesignerListParam }) {
   );
 }
 
-function addNewInput(input: ExpDesignerListParam[]): ExpDesignerListParam[] {
-  if (!input.length) return [];
-
-  const lastItemClone = structuredClone(input).pop() as ExpDesignerListParam;
-  lastItemClone.id = crypto.randomUUID();
-  input.push(lastItemClone);
-  return input;
-}
-
-const loadableExpDesignConfigAtom = loadable(asyncExpDesignerConfigAtom);
-
 export default function Params() {
-  const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);
-  const setExpDesignConfigLoadable = useSetAtom(asyncExpDesignerConfigAtom);
+  const sectionName = 'input';
+  const sectionAtom = getFocusedAtom(sectionName);
+  const setSectionConfig = useSetAtom(sectionAtom);
 
-  const input =
-    expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.input : [];
-
-  const onAddInput = () => {
-    setExpDesignConfigLoadable((prevConfig: ExpDesignerConfig): ExpDesignerConfig => {
-      const onlyInput = prevConfig.input as ExpDesignerListParam[];
-      const newInputs = addNewInput(onlyInput);
-      return { ...prevConfig, input: newInputs };
-    });
+  const addNew = () => {
+    cloneLastAndAdd(setSectionConfig);
   };
 
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      paramList={input}
+      sectionName={sectionName}
       RowRenderer={ParameterRenderRow}
     >
-      <GenericAddButton onClick={onAddInput} title="Add Sensory Input" />
+      <GenericAddButton onClick={addNew} title="Add Sensory Input" />
     </GenericParamWrapper>
   );
 }

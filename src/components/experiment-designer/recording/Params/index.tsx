@@ -1,22 +1,17 @@
 'use client';
 
-import { useAtomValue, useSetAtom } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { Atom, useAtom, useSetAtom } from 'jotai';
 import { Divider } from 'antd';
 
 import RecordingTargetRegionSelector from './RecordingTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
-import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
 import { ConstantParameter, DropdownParameter } from '@/components/experiment-designer';
-import type {
-  ExpDesignerListParam,
-  ExpDesignerParam,
-  ExpDesignerConfig,
-} from '@/types/experiment-designer';
+import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
+import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
 
 function RecordingBlock({ row }: { row: ExpDesignerParam }) {
   let constantCol;
@@ -48,11 +43,13 @@ function RecordingBlock({ row }: { row: ExpDesignerParam }) {
   );
 }
 
-function ParameterRenderRow({ data }: { data: ExpDesignerListParam }) {
+function ParameterRenderRow({ paramAtom }: { paramAtom: any }) {
+  const paramAtomParsed = paramAtom as Atom<ExpDesignerGroupParameter>;
+  const [param] = useAtom<ExpDesignerGroupParameter>(paramAtomParsed);
   return (
     <>
-      {data.value.map((row) => (
-        <RecordingBlock row={row} key={data.id + row.id} />
+      {param.value.map((row) => (
+        <RecordingBlock row={row} key={param.id + row.id} />
       ))}
       <tr>
         <td>
@@ -66,41 +63,24 @@ function ParameterRenderRow({ data }: { data: ExpDesignerListParam }) {
   );
 }
 
-function addNewRecording(input: ExpDesignerListParam[]): ExpDesignerListParam[] {
-  if (!input.length) return [];
-
-  const lastItemClone = structuredClone(input).pop() as ExpDesignerListParam;
-  lastItemClone.id = crypto.randomUUID();
-  input.push(lastItemClone);
-  return input;
-}
-
-const loadableExpDesignConfigAtom = loadable(asyncExpDesignerConfigAtom);
-
 export default function Params() {
-  const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);
-  const setExpDesignConfig = useSetAtom(asyncExpDesignerConfigAtom);
+  const sectionName = 'recording';
+  const sectionAtom = getFocusedAtom(sectionName);
+  const setSectionConfig = useSetAtom(sectionAtom);
 
-  const recording =
-    expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.recording : [];
-
-  const onAddInput = () => {
-    setExpDesignConfig((prevConfig: ExpDesignerConfig): ExpDesignerConfig => {
-      const onlyRecording = prevConfig.recording as ExpDesignerListParam[];
-      const newRecordings = addNewRecording(onlyRecording);
-      return { ...prevConfig, recording: newRecordings };
-    });
+  const addNew = () => {
+    cloneLastAndAdd(setSectionConfig);
   };
 
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      paramList={recording}
+      sectionName={sectionName}
       RowRenderer={ParameterRenderRow}
       showHeader={false}
     >
-      <GenericAddButton onClick={onAddInput} title="Add Recording" />
+      <GenericAddButton onClick={addNew} title="Add Recording" />
     </GenericParamWrapper>
   );
 }

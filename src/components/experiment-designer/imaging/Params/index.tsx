@@ -1,9 +1,7 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { Atom, useAtom } from 'jotai';
 
-import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
@@ -11,15 +9,16 @@ import GenericParamWrapper, {
 import { CoordinatesViewer, RadioButtonParameter } from '@/components/experiment-designer';
 import type { ExpDesignerParam } from '@/types/experiment-designer';
 
-function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
+function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const [param] = useAtom<ExpDesignerParam>(paramAtom);
   let constantCol;
-  switch (data.type) {
+  switch (param.type) {
     case 'position':
-      constantCol = <CoordinatesViewer data={data} className={defaultPadding} />;
+      constantCol = <CoordinatesViewer data={param} className={defaultPadding} />;
       break;
 
     case 'radioButton':
-      constantCol = <RadioButtonParameter data={data} className={defaultPadding} />;
+      constantCol = <RadioButtonParameter data={param} className={defaultPadding} />;
       break;
 
     default:
@@ -34,19 +33,12 @@ function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
   );
 }
 
-const loadableExpDesignConfigAtom = loadable(asyncExpDesignerConfigAtom);
-
 export default function Params() {
-  const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);
-
-  const imaging =
-    expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.imaging : [];
-
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      paramList={imaging}
+      sectionName="imaging"
       RowRenderer={ParameterRenderRow}
       showHeader={false}
     />
