@@ -4,21 +4,21 @@
       "id": "duration",
       "name": "Duration",
       "type": "number",
-      "value": "4000",
+      "value": 4000,
       "unit": "ms"
     },
     {
       "id": "timeStep",
       "name": "Time step",
       "type": "number",
-      "value": "0.1",
+      "value": 0.1,
       "unit": "ms"
     },
     {
       "id": "forwardSkip",
       "name": "Forward skip",
       "type": "number",
-      "value": "5000.0",
+      "value": 50000,
       "unit": "ms"
     },
     {
@@ -26,11 +26,11 @@
       "name": "Seed",
       "type": "range",
       "value": {
-        "min": "1",
-        "max": "10",
-        "start": "1",
-        "end": "5",
-        "step": "1"
+        "min": 1,
+        "max": 10,
+        "start": 1,
+        "end": 5,
+        "step": 1
       }
     },
     {
@@ -38,11 +38,11 @@
       "name": "Calcium concentration",
       "type": "range",
       "value": {
-        "min": "0",
-        "max": "2",
-        "start": "0.8",
-        "end": "1.1",
-        "step": "0.1"
+        "min": 0,
+        "max": 2,
+        "start": 0.8,
+        "end": 1.1,
+        "step": 0.1
       }
     },
     {
@@ -69,7 +69,7 @@
           "id": "duration",
           "name": "Duration",
           "type": "number",
-          "value": "4000",
+          "value": 4000,
           "unit": "ms"
         },
         {
@@ -98,7 +98,7 @@
           "id": "duration",
           "name": "Duration",
           "type": "number",
-          "value": "4000",
+          "value": 4000,
           "unit": "ms"
         },
         {
@@ -127,7 +127,7 @@
           "id": "duration",
           "name": "Duration",
           "type": "number",
-          "value": "4000",
+          "value": 4000,
           "unit": "ms"
         },
         {
@@ -231,14 +231,14 @@
           "id": "start",
           "name": "Start time",
           "type": "number",
-          "value": "0",
+          "value": 0,
           "unit": "ms"
         },
         {
           "id": "end",
           "name": "End time",
           "type": "number",
-          "value": "300",
+          "value": 300,
           "unit": "ms"
         }
       ]

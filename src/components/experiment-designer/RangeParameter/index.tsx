@@ -19,27 +19,17 @@ type Props = {
 export default function RangeParameter({ data, className }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { min: minStr, max: maxStr, start: startStr, end: endStr, step: stepStr } = data.value;
-  const [min, max, defaultStart, defaultEnd, step] = [
-    parseFloat(minStr) || 0,
-    parseFloat(maxStr) || 100,
-    parseFloat(startStr) || 0,
-    parseFloat(endStr) || 100,
-    parseFloat(stepStr) || 1,
-  ];
+  const { min, max, start, end, step } = data.value;
 
   const initialMarks: SliderMarks = {
     [min]: min,
     [max]: max,
-    [defaultStart]: defaultStart,
-    [defaultEnd]: defaultEnd,
+    [start]: start,
+    [end]: end,
   };
   const [marks, setMarks] = useState<SliderMarks>(initialMarks);
 
-  const [[startValue, endValue], setStartEndValues] = useState<[number, number]>([
-    defaultStart,
-    defaultEnd,
-  ]);
+  const [[startValue, endValue], setStartEndValues] = useState<[number, number]>([start, end]);
 
   const genExtra = () => (
     <ImportOutlined
