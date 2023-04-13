@@ -47,6 +47,7 @@ export async function getMorphologyData(accessToken: string, morphologyQuery: ob
         subjectSpecies: item._source.subjectSpecies ? item._source.subjectSpecies.label : undefined,
         contributor: item._source.createdBy.split('/').pop(),
       })),
+      total: morphoData?.hits?.total,
       aggs: morphoData.aggregations,
     }));
 }
@@ -79,6 +80,7 @@ export async function getEphysData(accessToken: string, ephysQuery: object) {
         subjectSpecies: item._source.subjectSpecies ? item._source.subjectSpecies.label : undefined,
         contributor: item._source.createdBy.split('/').pop(),
       })),
+      total: ephysData?.hits?.total,
       aggs: ephysData.aggregations,
     }));
 }

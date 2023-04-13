@@ -1,11 +1,18 @@
 'use client';
 
 import { atom } from 'jotai';
-import { Aggregations, MorphologyResponse, ExploreSectionResource } from '@/types/explore-section';
+import {
+  Aggregations,
+  MorphologyResponse,
+  TotalHits,
+  MorphologyResource,
+} from '@/types/explore-section';
 import { Filter } from '@/components/Filter/types';
-import getMorphologyDataQuery from '@/queries/explore-section/morphology';
+import getDataQuery from '@/queries/explore-section/data';
 import { getMorphologyData } from '@/api/explore-section';
 import sessionAtom from '@/state/session';
+
+const TYPE = 'https://neuroshapes.org/NeuronMorphology';
 
 export const pageSizeAtom = atom<number>(10);
 
@@ -23,7 +30,7 @@ export const queryAtom = atom<object>((get) => {
   const pageNumber = get(pageNumberAtom);
   const pageSize = get(pageSizeAtom);
   const filters = get(filtersAtom);
-  return getMorphologyDataQuery(pageSize, pageNumber, filters, searchString);
+  return getDataQuery(pageSize, pageNumber, filters, TYPE, searchString);
 });
 
 const queryResponseAtom = atom<Promise<MorphologyResponse> | null>((get) => {
@@ -35,10 +42,16 @@ const queryResponseAtom = atom<Promise<MorphologyResponse> | null>((get) => {
   return getMorphologyData(session.accessToken, query);
 });
 
-export const dataAtom = atom<Promise<ExploreSectionResource[] | undefined>>(async (get) => {
+export const dataAtom = atom<Promise<MorphologyResource[] | undefined>>(async (get) => {
   const { hits } = (await get(queryResponseAtom)) ?? {};
 
   return hits;
+});
+
+export const totalAtom = atom<Promise<TotalHits | undefined>>(async (get) => {
+  const { total } = (await get(queryResponseAtom)) ?? { total: { relation: 'eq', value: 0 } };
+
+  return total;
 });
 
 export const aggregationsAtom = atom<Promise<Aggregations | undefined>>(async (get) => {

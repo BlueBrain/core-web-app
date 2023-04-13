@@ -23,7 +23,6 @@ export type AnalysedComposition = {
   links: CompositionLink[];
   totalComposition: CompositionPair;
   composition: Composition;
-  volumes: { [key: string]: number };
   leaves?: string[];
   blockedNodeIds: string[];
 };

@@ -1,10 +1,8 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { Atom, useAtom } from 'jotai';
 
 import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetRegionSelector';
-import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
@@ -16,22 +14,24 @@ import {
 } from '@/components/experiment-designer';
 import type { ExpDesignerParam } from '@/types/experiment-designer';
 
-function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
+function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const [param] = useAtom<ExpDesignerParam>(paramAtom);
+
   let constantCol;
   let sweepCol;
-  switch (data.type) {
+  switch (param.type) {
     case 'number':
-      constantCol = <ConstantParameter data={data} className={defaultPadding} />;
+      constantCol = <ConstantParameter data={param} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 
     case 'range':
       constantCol = <DefaultEmptyParam />;
-      sweepCol = <RangeParameter data={data} />;
+      sweepCol = <RangeParameter data={param} />;
       break;
 
     case 'regionDropdown':
-      constantCol = <TargetRegionSelector data={data} className={defaultPadding} />;
+      constantCol = <TargetRegionSelector data={param} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
 
@@ -47,19 +47,12 @@ function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
   );
 }
 
-const loadableExpDesignConfigAtom = loadable(asyncExpDesignerConfigAtom);
-
 export default function Params() {
-  const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);
-
-  const setup =
-    expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.setup : [];
-
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      paramList={setup}
+      sectionName="setup"
       RowRenderer={ParameterRenderRow}
     />
   );

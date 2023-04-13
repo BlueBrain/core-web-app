@@ -1,9 +1,12 @@
 'use client';
 
 import { Divider } from 'antd';
-import { ComponentType, ReactNode } from 'react';
+import { ComponentType, ReactNode, useMemo } from 'react';
+import { splitAtom } from 'jotai/utils';
+import { Atom, useAtomValue } from 'jotai';
 
-import { ExpDesignerParam, ExpDesignerListParam } from '@/types/experiment-designer';
+import { ExpDesignerParam } from '@/types/experiment-designer';
+import { getFocusedAtom } from '@/components/experiment-designer/utils';
 
 export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
 export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
@@ -11,13 +14,13 @@ export const headerStyle = 'p-[16px] font-light text-left';
 export const subheaderStyle = `${defaultPadding} uppercase text-gray-400`;
 
 type RowRendererProps = {
-  data: any;
+  paramAtom: Atom<ExpDesignerParam>;
 };
 
 type Props = {
   description: string;
-  paramList: ExpDesignerParam[] | ExpDesignerListParam[];
   RowRenderer: ComponentType<RowRendererProps>;
+  sectionName: string;
   children?: ReactNode;
   showHeader?: boolean;
 };
@@ -25,19 +28,17 @@ type Props = {
 export const generateId = (param1: string, param2: string) =>
   `${param1.replaceAll(' ', '')}${param2.replaceAll(' ', '')}`;
 
-function isEmpty(data: ExpDesignerParam[] | ExpDesignerListParam[]) {
-  if (typeof data !== 'object') return true;
-  return !data.length;
-}
-
 export default function GenericParamWrapper({
   description,
-  paramList,
   RowRenderer,
   children,
   showHeader = true,
+  sectionName,
 }: Props) {
-  const paramEmpty = isEmpty(paramList);
+  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
+  const listAtoms = useAtomValue(atoms);
+
   return (
     <div className="h-full">
       <div className="text-sky-800 p-6">{description}</div>
@@ -57,13 +58,17 @@ export default function GenericParamWrapper({
         )}
 
         <tbody>
-          {paramEmpty && (
+          {!listAtoms.length && (
             <tr>
               <td className={defaultColumnStyle}>Fetching info...</td>
               <td className={defaultColumnStyle}>Fetching info...</td>
             </tr>
           )}
-          {!paramEmpty && paramList.map((param) => <RowRenderer key={param.id} data={param} />)}
+
+          {listAtoms.length &&
+            listAtoms.map((paramAtom) => (
+              <RowRenderer key={paramAtom.toString()} paramAtom={paramAtom} />
+            ))}
         </tbody>
       </table>
 

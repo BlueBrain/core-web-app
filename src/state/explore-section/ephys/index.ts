@@ -3,9 +3,11 @@
 import { atom } from 'jotai';
 import sessionAtom from '@/state/session';
 import { getEphysData } from '@/api/explore-section';
-import { Aggregations, EphysResource, EphysResponse } from '@/types/explore-section';
+import { Aggregations, EphysResource, TotalHits, EphysResponse } from '@/types/explore-section';
 import { Filter } from '@/components/Filter/types';
-import getEphysDataQuery from '@/queries/explore-section/ephys';
+import getDataQuery from '@/queries/explore-section/data';
+
+const TYPE = 'https://neuroshapes.org/Trace';
 
 export const pageSizeAtom = atom<number>(10);
 
@@ -23,7 +25,7 @@ export const queryAtom = atom<object>((get) => {
   const pageNumber = get(pageNumberAtom);
   const pageSize = get(pageSizeAtom);
   const filters = get(filtersAtom);
-  return getEphysDataQuery(pageSize, pageNumber, filters, searchString);
+  return getDataQuery(pageSize, pageNumber, filters, TYPE, searchString);
 });
 
 const queryResponseAtom = atom<Promise<EphysResponse> | null>((get) => {
@@ -39,6 +41,12 @@ export const dataAtom = atom<Promise<EphysResource[] | undefined>>(async (get) =
   const { hits } = (await get(queryResponseAtom)) ?? {};
 
   return hits;
+});
+
+export const totalAtom = atom<Promise<TotalHits | undefined>>(async (get) => {
+  const { total } = (await get(queryResponseAtom)) ?? { total: { relation: 'eq', value: 0 } };
+
+  return total;
 });
 
 export const aggregationsAtom = atom<Promise<Aggregations | undefined>>(async (get) => {

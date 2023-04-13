@@ -38,24 +38,35 @@ export interface ExploreSectionResource {
   name: string;
   description: string;
   subjectSpecies?: string;
-  etype?: string;
-  mtype?: string;
   contributor: string;
   createdAt: string;
+}
+export interface MorphologyResource extends ExploreSectionResource {
+  brainRegion: string;
+  mtype: string;
+  etype?: string;
 }
 
 export interface EphysResource extends ExploreSectionResource {
   brainRegion: string;
+  etype: string;
+  mtype?: string;
 }
 
+export interface TotalHits {
+  relation: string;
+  value: number;
+}
 export interface EphysResponse {
   hits: EphysResource[];
   aggs: Aggregations;
+  total: TotalHits;
 }
 
 export interface MorphologyResponse {
-  hits: ExploreSectionResource[];
+  hits: MorphologyResource[];
   aggs: Aggregations;
+  total: TotalHits;
 }
 
 export interface Dimension {

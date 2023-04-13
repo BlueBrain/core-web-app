@@ -11,6 +11,7 @@ import {
   filtersAtom,
   pageSizeAtom,
   searchStringAtom,
+  totalAtom,
 } from '@/state/explore-section/ephys';
 import { sorter, dateStringToUnix } from '@/util/common';
 import ExploreSectionListingView from '@/components/ExploreSectionListingView';
@@ -70,7 +71,8 @@ function EphysListPage() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Electrophysiology Data"
+        title="Electrophysiology Recording"
+        totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}
         pageSizeAtom={pageSizeAtom}

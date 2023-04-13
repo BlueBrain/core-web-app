@@ -1,9 +1,17 @@
+import { BrainRegion } from '@/types/ontologies';
+
 type MeshDistributionNexus = {
   contentUrl: string;
 };
 export type MeshSourceNexus = {
   _source: MeshNexusSource;
 };
+
+type RegionVolume = {
+  unitCode: string;
+  value: number;
+};
+
 export type BrainRegionNexus = {
   '@id': string;
   color_hex_triplet: string;
@@ -15,6 +23,7 @@ export type BrainRegionNexus = {
   hasLayerPart: string[];
   hasPart: string[];
   representedInAnnotation: boolean;
+  regionVolume?: RegionVolume;
 };
 type BrainLocationNexus = {
   brainRegion: BrainRegionNexus;
@@ -34,4 +43,9 @@ export type BrainRegionOntologyViewNexus = {
 
 export type BrainRegionAnnotationIndex = {
   [key: string]: { leaves?: string[]; representedInAnnotation: boolean };
+};
+
+export type SerializedBrainRegionsAndVolumesResponse = {
+  brainRegions: BrainRegion[];
+  volumes: { [key: string]: number };
 };

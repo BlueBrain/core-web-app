@@ -1,26 +1,25 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { Atom, useAtom } from 'jotai';
 
 import RegionDropdownGroup from './RegionDropdownGroup';
 import ParamGroup from './ParamGroup';
-import { asyncExpDesignerConfigAtom } from '@/state/experiment-designer';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
 import type { ExpDesignerParam } from '@/types/experiment-designer';
 
-function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
+function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const [param] = useAtom<ExpDesignerParam>(paramAtom);
   let constantCol;
-  switch (data.type) {
+  switch (param.type) {
     case 'regionDropdownGroup':
-      constantCol = <RegionDropdownGroup data={data} className={defaultPadding} />;
+      constantCol = <RegionDropdownGroup data={param} className={defaultPadding} />;
       break;
 
     case 'group':
-      constantCol = <ParamGroup data={data} />;
+      constantCol = <ParamGroup data={param} />;
       break;
 
     default:
@@ -35,19 +34,12 @@ function ParameterRenderRow({ data }: { data: ExpDesignerParam }) {
   );
 }
 
-const loadableExpDesignConfigAtom = loadable(asyncExpDesignerConfigAtom);
-
 export default function Params() {
-  const expDesignConfigLoadable = useAtomValue(loadableExpDesignConfigAtom);
-
-  const analysis =
-    expDesignConfigLoadable.state === 'hasData' ? expDesignConfigLoadable.data.analysis : [];
-
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      paramList={analysis}
+      sectionName="analysis"
       RowRenderer={ParameterRenderRow}
       showHeader={false}
     />
