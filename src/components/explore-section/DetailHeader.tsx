@@ -34,7 +34,9 @@ export default function DetailHeader({ detail }: { detail: EphysDeltaResource | 
         </div>
         <div className="text-primary-7 text-xs mr-4">
           <div className="text-xs uppercase text-neutral-4">Added</div>
-          <div className="mt-3">{format(parseISO(detail?._createdAt), 'dd.MM.yyyy')}</div>
+          {detail?._createdAt && (
+            <div className="mt-3">{format(parseISO(detail?._createdAt), 'dd.MM.yyyy')}</div>
+          )}
         </div>
       </div>
     </div>
