@@ -1,8 +1,9 @@
 'use client';
 
-import { Suspense, useState, useEffect, useMemo } from 'react';
+import { Suspense, useState, useEffect, useMemo, useRef } from 'react';
 import { useAtomValue } from 'jotai';
 import { ConfigProvider, theme, InputNumber, Button } from 'antd';
+import Plotly from 'plotly.js-dist-min';
 
 import {
   brainRegionsUnsortedArrayAtom,
@@ -37,6 +38,8 @@ function ConnectomeDefinitionMain() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [connectivityMatrix, setConnectivityMatrix] = useState<ConnectivityMatrix>({});
   const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
+  const histogramRef = useRef<HTMLDivElement>(null);
+  const [histogramInitialized, setHistogramInitialized] = useState(false);
 
   const brainRegionIdByTitle = useMemo(() => {
     const res: { [title: string]: string } = {};
@@ -67,6 +70,42 @@ function ConnectomeDefinitionMain() {
 
     fetchConnectivity();
   }, []);
+
+  const histogram = useMemo(() => {
+    const x: number[] = [];
+
+    Array.from(preSynapticBrainRegions).forEach((r) => {
+      const id = r[0];
+      Object.entries(connectivityMatrix[id] ?? []).forEach(([targetId, value]) => {
+        if (!postSynapticBrainRegions.has(targetId)) return;
+        x.push(value.d);
+      });
+    });
+
+    x.sort();
+    return x;
+  }, [preSynapticBrainRegions, postSynapticBrainRegions, connectivityMatrix]);
+
+  useEffect(() => {
+    if (!histogramRef.current) return;
+    if (!histogramInitialized) {
+      Plotly.newPlot(histogramRef.current, [], {});
+      setHistogramInitialized(true);
+      return;
+    }
+    Plotly.react(
+      histogramRef.current,
+      [
+        {
+          x: histogram,
+          type: 'histogram',
+          xbins: { start: 0, end: 'auto', size: 0.1 },
+          marker: { color: 'rgba(0, 0, 0, 1)' },
+        },
+      ],
+      { bargroupgap: 0.3 }
+    );
+  }, [histogram, histogramInitialized, selected.size]);
 
   const onClick = () => {
     const matrix = { ...connectivityMatrix };
@@ -111,6 +150,8 @@ function ConnectomeDefinitionMain() {
               }}
             />
           </div>
+
+          <div ref={histogramRef} />
 
           <Button onClick={onClick}>Save</Button>
         </div>
