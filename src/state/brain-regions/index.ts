@@ -88,6 +88,16 @@ export const brainRegionOntologyViewsAtom = atom<Promise<BrainRegionOntologyView
   }
 );
 
+export const brainRegionOntologyVolumesAtom = atom<Promise<{ [key: string]: number } | null>>(
+  async (get) => {
+    const brainRegionOntology = await get(brainRegionOntologyAtom);
+    if (!brainRegionOntology) {
+      return null;
+    }
+    return brainRegionOntology.volumes;
+  }
+);
+
 export const defaultBrainRegionOntologyViewAtom = atom<
   Promise<BrainRegionOntologyView | null | undefined>
 >(async (get) => {
@@ -322,10 +332,11 @@ export const computeAndSetCompositionAtom = atom(
   null,
   async (get, set, modifiedNode: CompositionNode, newValue: number, lockedIds: string[]) => {
     const analysedComposition = await get(analysedCompositionAtom);
+    const volumes = await get(brainRegionOntologyVolumesAtom);
     if (!analysedComposition || modifiedNode.composition === undefined) {
       return;
     }
-    const { volumes, composition } = analysedComposition;
+    const { composition } = analysedComposition;
     const densityOrCount = get(densityOrCountAtom);
 
     const valueDifference = newValue - modifiedNode.composition;
@@ -333,7 +344,7 @@ export const computeAndSetCompositionAtom = atom(
     const historyIndex = get(compositionHistoryIndexAtom);
     const selectedBrainRegion = get(selectedBrainRegionAtom);
 
-    if (selectedBrainRegion) {
+    if (selectedBrainRegion && volumes) {
       const modifiedComposition = computeModifiedComposition(
         modifiedNode,
         valueDifference,

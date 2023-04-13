@@ -27,4 +27,5 @@ export type BrainRegionOntologyView = {
 export type BrainRegionOntology = {
   brainRegions: BrainRegion[];
   views: BrainRegionOntologyView[] | null;
+  volumes: { [key: string]: number };
 };

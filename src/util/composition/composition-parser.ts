@@ -142,22 +142,11 @@ export default async function calculateCompositions(
   const nodes: { [key: string]: CalculationNode } = {};
   const links: { [key: string]: CalculationLink } = {};
   const totalComposition = initializeComposition();
-  const volumes: { [key: string]: number } = {};
   const blockedNodeIds: string[] = [];
   leafIDs?.forEach((leafId) => {
     if (leafId in compositionFile.hasPart) {
       const leaf = compositionFile.hasPart[leafId];
-      const leafComposition = iterateNode(
-        leaf,
-        leafId,
-        nodes,
-        links,
-        leafId,
-        blockedNodeIds,
-        '',
-        false
-      );
-      volumes[leafId] = leafComposition.neuron.count / leafComposition.neuron.density;
+      iterateNode(leaf, leafId, nodes, links, leafId, blockedNodeIds, '', false);
       addCompositions(totalComposition, leaf.composition);
     }
   });
@@ -189,7 +178,6 @@ export default async function calculateCompositions(
     links: linksArray,
     totalComposition,
     composition: compositionFile,
-    volumes,
     blockedNodeIds: uniq(blockedNodeIds),
   };
 }

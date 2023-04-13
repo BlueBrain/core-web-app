@@ -5,6 +5,7 @@ import {
   BrainRegionAnnotationIndex,
   BrainRegionNexus,
   BrainRegionOntologyViewNexus,
+  SerializedBrainRegionsAndVolumesResponse,
 } from '@/api/ontologies/types';
 import { composeUrl } from '@/util/nexus';
 
@@ -76,10 +77,11 @@ export function checkLeavesInAnnotation(
  * Serializes the brain regions from Nexus format to the local one
  * @param brainRegionPayloads the array of the payloads
  */
-const serializeBrainRegions = (
+const serializeBrainRegionsAndVolumes = (
   brainRegionPayloads: (BrainRegionNexus | string)[]
-): BrainRegion[] => {
+): SerializedBrainRegionsAndVolumesResponse => {
   const serializedBrainRegions: BrainRegion[] = [];
+  const volumes: { [key: string]: number } = {};
 
   const brainRegionAnnotationIndex: BrainRegionAnnotationIndex = (
     brainRegionPayloads as BrainRegionNexus[]
@@ -110,15 +112,22 @@ const serializeBrainRegions = (
         representedInAnnotation: brainRegionPayload.representedInAnnotation,
         leavesInAnnotation,
       });
+      if (brainRegionPayload.regionVolume) {
+        // retrieving region volume and converting it from cubic micrometer to cubic millimeter
+        volumes[brainRegionPayload['@id']] = brainRegionPayload.regionVolume.value * 10 ** -9;
+      }
     }
   });
 
   // removing the duplicate ids
   const ids = serializedBrainRegions.map((br) => br.id);
 
-  return serializedBrainRegions
-    .filter(({ id }, index) => !ids.includes(id, index + 1))
-    .sort((a, b) => a.title.localeCompare(b.title));
+  return {
+    brainRegions: serializedBrainRegions
+      .filter(({ id }, index) => !ids.includes(id, index + 1))
+      .sort((a, b) => a.title.localeCompare(b.title)),
+    volumes,
+  };
 };
 
 /**
@@ -150,13 +159,17 @@ const getBrainRegionOntology = async (accessToken: string): Promise<BrainRegionO
   );
   return fetch(url, { headers: createHeaders(accessToken) })
     .then((r) => r.json())
-    .then((response) => ({
-      brainRegions: serializeBrainRegions(response.defines),
-      views:
-        'hasHierarchyView' in response
-          ? serializeBrainRegionOntologyViews(response.hasHierarchyView)
-          : null,
-    }));
+    .then((response) => {
+      const brainRegionsResponse = serializeBrainRegionsAndVolumes(response.defines);
+      return {
+        brainRegions: brainRegionsResponse.brainRegions,
+        views:
+          'hasHierarchyView' in response
+            ? serializeBrainRegionOntologyViews(response.hasHierarchyView)
+            : null,
+        volumes: brainRegionsResponse.volumes,
+      };
+    });
 };
 
 export default getBrainRegionOntology;
