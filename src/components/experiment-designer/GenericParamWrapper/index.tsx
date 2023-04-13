@@ -3,10 +3,10 @@
 import { Divider } from 'antd';
 import { ComponentType, ReactNode, useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
-import { Atom, useAtomValue } from 'jotai';
+import { Atom, useAtom } from 'jotai';
 
 import { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
-import { getFocusedAtom } from '@/components/experiment-designer/utils';
+import { getSubGroupFocusedAtom } from '@/components/experiment-designer/utils';
 
 export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
 export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
@@ -20,7 +20,7 @@ type RowRendererProps = {
 type Props = {
   description: string;
   RowRenderer: ComponentType<RowRendererProps>;
-  sectionName: string;
+  listAtoms: Atom<ExpDesignerParam>[];
   children?: ReactNode;
   showHeader?: boolean;
   isGroup?: boolean;
@@ -29,18 +29,20 @@ type Props = {
 export const generateId = (param1: string, param2: string) =>
   `${param1.replaceAll(' ', '')}${param2.replaceAll(' ', '')}`;
 
-type GroupRendererProps = RowRendererProps & {
+type GroupRendererProps = {
+  paramAtom: Atom<ExpDesignerGroupParameter>;
   RowRenderer: ComponentType<RowRendererProps>;
 };
 
 function GroupRenderer({ paramAtom, RowRenderer }: GroupRendererProps) {
-  const paramAtomTyped = paramAtom as Atom<ExpDesignerGroupParameter>;
-  const param = useAtomValue<ExpDesignerGroupParameter>(paramAtomTyped);
+  const focusedAtom = useMemo(() => getSubGroupFocusedAtom(paramAtom), [paramAtom]);
+  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
+  const [listAtoms] = useAtom(atoms);
 
   return (
     <>
-      {param.value.map((row) => (
-        <RowRenderer paramAtom={paramAtom} key={param.id + row.id} />
+      {listAtoms.map((rowAtom) => (
+        <RowRenderer paramAtom={rowAtom} key={paramAtom.toString() + rowAtom.toString()} />
       ))}
       <tr>
         <td>
@@ -59,19 +61,22 @@ export default function GenericParamWrapper({
   RowRenderer,
   children,
   showHeader = true,
-  sectionName,
+  listAtoms,
   isGroup = false,
 }: Props) {
-  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
-  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
-  const listAtoms = useAtomValue(atoms);
-
   let rows;
   if (listAtoms.length) {
     if (isGroup) {
-      rows = listAtoms.map((paramAtom) => (
-        <GroupRenderer key={paramAtom.toString()} paramAtom={paramAtom} RowRenderer={RowRenderer} />
-      ));
+      rows = listAtoms.map((paramAtom) => {
+        const paramAtomTyped = paramAtom as Atom<ExpDesignerGroupParameter>;
+        return (
+          <GroupRenderer
+            key={paramAtom.toString()}
+            paramAtom={paramAtomTyped}
+            RowRenderer={RowRenderer}
+          />
+        );
+      });
     } else {
       rows = listAtoms.map((paramAtom) => (
         <RowRenderer key={paramAtom.toString()} paramAtom={paramAtom} />

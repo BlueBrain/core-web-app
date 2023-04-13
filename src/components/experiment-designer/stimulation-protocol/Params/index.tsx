@@ -1,6 +1,8 @@
 'use client';
 
-import { Atom, useAtomValue, useSetAtom } from 'jotai';
+import { Atom, useAtom, useAtomValue } from 'jotai';
+import { useMemo } from 'react';
+import { splitAtom } from 'jotai/utils';
 
 import InputTargetRegionSelector from './StimulationTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
@@ -13,8 +15,8 @@ import {
   DropdownParameter,
   DefaultEmptyParam,
 } from '@/components/experiment-designer';
-import type { ExpDesignerParam } from '@/types/experiment-designer';
-import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
+import type { ExpDesignerParam, ExpDesignerNumberParameter } from '@/types/experiment-designer';
+import { getFocusedAtom } from '@/components/experiment-designer/utils';
 
 function StimulationBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const param = useAtomValue<ExpDesignerParam>(paramAtom);
@@ -23,10 +25,12 @@ function StimulationBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) 
   let sweepCol;
 
   switch (param.type) {
-    case 'number':
-      constantCol = <ConstantParameter paramAtom={paramAtom} className={defaultPadding} />;
+    case 'number': {
+      const paramAtomTyped = paramAtom as Atom<ExpDesignerNumberParameter>;
+      constantCol = <ConstantParameter paramAtom={paramAtomTyped} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
+    }
 
     case 'dropdown':
       constantCol = <DropdownParameter paramAtom={paramAtom} className={defaultPadding} />;
@@ -52,18 +56,17 @@ function StimulationBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) 
 
 export default function Params() {
   const sectionName = 'stimuli';
-  const sectionAtom = getFocusedAtom(sectionName);
-  const setSectionConfig = useSetAtom(sectionAtom);
+  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
+  const [listAtoms] = useAtom(atoms);
 
-  const addNew = () => {
-    cloneLastAndAdd(setSectionConfig);
-  };
+  const addNew = () => {};
 
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      sectionName={sectionName}
+      listAtoms={listAtoms}
       RowRenderer={StimulationBlock}
       isGroup
     >
