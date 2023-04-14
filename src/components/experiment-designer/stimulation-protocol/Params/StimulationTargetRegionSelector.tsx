@@ -1,20 +1,27 @@
 'use client';
 
-import { useSetAtom } from 'jotai';
+import { PrimitiveAtom, useAtom } from 'jotai';
 import { ExportOutlined } from '@ant-design/icons';
 
-import { expDesignerSimulateRegions } from '@/state/experiment-designer';
 import { BrainRegionsDropdown } from '@/components/experiment-designer';
 import { ExpDesignerRegionParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
+import { BrainRegion } from '@/types/ontologies';
 
 type Props = {
-  data: ExpDesignerRegionParameter;
+  paramAtom: PrimitiveAtom<ExpDesignerRegionParameter>;
   className?: string;
 };
 
-export default function StimulationTargetRegionSelector({ data, className }: Props) {
-  const setSimulateRegions = useSetAtom(expDesignerSimulateRegions);
+export default function StimulationTargetRegionSelector({ paramAtom, className }: Props) {
+  const [data, setData] = useAtom(paramAtom);
+
+  const setSimulateRegions = (newBrainRegion: BrainRegion) => {
+    setData((oldAtomData) => ({
+      ...oldAtomData,
+      value: newBrainRegion.title,
+    }));
+  };
 
   return (
     <div className={classNames('flex gap-3 items-center font-bold', className)}>

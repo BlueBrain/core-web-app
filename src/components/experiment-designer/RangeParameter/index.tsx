@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Slider, Collapse } from 'antd';
 import { ImportOutlined } from '@ant-design/icons';
 import type { SliderMarks } from 'antd/es/slider';
+import { PrimitiveAtom, useAtom } from 'jotai';
 
 import Stepper from './Stepper';
 import type { ExpDesignerRangeParameter } from '@/types/experiment-designer';
@@ -12,11 +13,12 @@ import { classNames } from '@/util/utils';
 const { Panel } = Collapse;
 
 type Props = {
-  data: ExpDesignerRangeParameter;
+  paramAtom: PrimitiveAtom<ExpDesignerRangeParameter>;
   className?: string;
 };
 
-export default function RangeParameter({ data, className }: Props) {
+export default function RangeParameter({ paramAtom, className }: Props) {
+  const [data, setData] = useAtom(paramAtom);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { min, max, start, end, step } = data.value;
@@ -48,6 +50,14 @@ export default function RangeParameter({ data, className }: Props) {
       [newEnd]: newEnd,
     });
     setStartEndValues([newStart, newEnd]);
+    setData((oldAtomData) => ({
+      ...oldAtomData,
+      value: {
+        ...oldAtomData.value,
+        start,
+        end,
+      },
+    }));
   };
 
   const borderStyle = 'border-2 border-solid border-gray rounded-md';

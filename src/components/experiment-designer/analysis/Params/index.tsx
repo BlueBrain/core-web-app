@@ -1,6 +1,8 @@
 'use client';
 
-import { Atom, useAtom } from 'jotai';
+import { Atom, PrimitiveAtom, useAtom } from 'jotai';
+import { useMemo } from 'react';
+import { splitAtom } from 'jotai/utils';
 
 import RegionDropdownGroup from './RegionDropdownGroup';
 import ParamGroup from './ParamGroup';
@@ -8,19 +10,23 @@ import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
-import type { ExpDesignerParam } from '@/types/experiment-designer';
+import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
+import { getFocusedAtom } from '@/components/experiment-designer/utils';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
+
   let constantCol;
   switch (param.type) {
     case 'regionDropdownGroup':
-      constantCol = <RegionDropdownGroup data={param} className={defaultPadding} />;
+      constantCol = <RegionDropdownGroup paramAtom={paramAtom} className={defaultPadding} />;
       break;
 
-    case 'group':
-      constantCol = <ParamGroup data={param} />;
+    case 'group': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerGroupParameter>;
+      constantCol = <ParamGroup paramAtom={paramAtomTyped} />;
       break;
+    }
 
     default:
       break;
@@ -35,11 +41,16 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
 }
 
 export default function Params() {
+  const sectionName = 'analysis';
+  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
+  const [listAtoms] = useAtom(atoms);
+
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      sectionName="analysis"
+      listAtoms={listAtoms}
       RowRenderer={ParameterRenderRow}
       showHeader={false}
     />

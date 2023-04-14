@@ -1,7 +1,8 @@
 'use client';
 
-import { Atom, useAtom, useSetAtom } from 'jotai';
-import { Divider } from 'antd';
+import { Atom, PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
+import { useMemo } from 'react';
+import { splitAtom } from 'jotai/utils';
 
 import InputTargetRegionSelector from './StimulationTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
@@ -14,27 +15,44 @@ import {
   DropdownParameter,
   DefaultEmptyParam,
 } from '@/components/experiment-designer';
-import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
-import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
+import type {
+  ExpDesignerParam,
+  ExpDesignerNumberParameter,
+  ExpDesignerRegionParameter,
+  ExpDesignerDropdownParameter,
+} from '@/types/experiment-designer';
+import { getFocusedAtom } from '@/components/experiment-designer/utils';
+import { getNewStimulusObj } from '@/components/experiment-designer/defaultNewObject';
 
-function StimulationBlock({ row }: { row: ExpDesignerParam }) {
+function StimulationBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const param = useAtomValue<ExpDesignerParam>(paramAtom);
+
   let constantCol;
   let sweepCol;
-  switch (row.type) {
-    case 'number':
-      constantCol = <ConstantParameter data={row} className={defaultPadding} />;
-      sweepCol = <DefaultEmptyParam />;
-      break;
 
-    case 'dropdown':
-      constantCol = <DropdownParameter data={row} className={defaultPadding} />;
+  switch (param.type) {
+    case 'number': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerNumberParameter>;
+      constantCol = <ConstantParameter paramAtom={paramAtomTyped} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
+    }
 
-    case 'regionDropdown':
-      constantCol = <InputTargetRegionSelector data={row} className={defaultPadding} />;
+    case 'dropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerDropdownParameter>;
+      constantCol = <DropdownParameter paramAtom={paramAtomTyped} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
+    }
+
+    case 'regionDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
+      constantCol = (
+        <InputTargetRegionSelector paramAtom={paramAtomTyped} className={defaultPadding} />
+      );
+      sweepCol = <DefaultEmptyParam />;
+      break;
+    }
 
     default:
       break;
@@ -48,42 +66,23 @@ function StimulationBlock({ row }: { row: ExpDesignerParam }) {
   );
 }
 
-function ParameterRenderRow({ paramAtom }: { paramAtom: any }) {
-  const paramAtomParsed = paramAtom as Atom<ExpDesignerGroupParameter>;
-  const [param] = useAtom<ExpDesignerGroupParameter>(paramAtomParsed);
-
-  return (
-    <>
-      {param.value.map((row) => (
-        <StimulationBlock row={row} key={param.id + row.id} />
-      ))}
-      <tr>
-        <td>
-          <Divider />
-        </td>
-        <td>
-          <Divider />
-        </td>
-      </tr>
-    </>
-  );
-}
-
 export default function Params() {
   const sectionName = 'stimuli';
-  const sectionAtom = getFocusedAtom(sectionName);
-  const setSectionConfig = useSetAtom(sectionAtom);
+  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
+  const [listAtoms, dispatch] = useAtom(atoms);
 
   const addNew = () => {
-    cloneLastAndAdd(setSectionConfig);
+    dispatch({ type: 'insert', value: getNewStimulusObj() });
   };
 
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      sectionName={sectionName}
-      RowRenderer={ParameterRenderRow}
+      listAtoms={listAtoms}
+      RowRenderer={StimulationBlock}
+      isGroup
     >
       <GenericAddButton onClick={addNew} title="Add Stimulation Protocol" />
     </GenericParamWrapper>

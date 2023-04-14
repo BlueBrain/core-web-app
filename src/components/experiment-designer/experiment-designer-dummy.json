@@ -18,7 +18,7 @@
       "id": "forwardSkip",
       "name": "Forward skip",
       "type": "number",
-      "value": 50000,
+      "value": 5000,
       "unit": "ms"
     },
     {
