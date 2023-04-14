@@ -20,6 +20,7 @@ export default function InputTargetRegionSelector({ paramAtom, className }: Prop
     setData((oldAtomData) => ({
       ...oldAtomData,
       value: newBrainRegion.title,
+      brainRegionId: parseInt(newBrainRegion.id, 10),
     }));
   };
 

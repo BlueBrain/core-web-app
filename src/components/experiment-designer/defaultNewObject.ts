@@ -23,7 +23,8 @@ export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
       id: 'targetInputRegion',
       name: 'Target',
       type: 'regionDropdown',
-      value: 'Hippocampus CA1',
+      brainRegionId: 382,
+      value: 'Field CA1',
     },
   ],
 });
@@ -51,7 +52,8 @@ export const getNewRecordingObj = (): ExpDesignerGroupParameter => ({
       id: 'recordingRegion',
       name: 'Target',
       type: 'regionDropdown',
-      value: 'Hippocampus CA1',
+      brainRegionId: 382,
+      value: 'Field CA1',
     },
   ],
 });
@@ -79,7 +81,8 @@ export const getNewSensoryInputObj = (): ExpDesignerGroupParameter => ({
       id: 'targetInputRegion',
       name: 'Target',
       type: 'regionDropdown',
-      value: 'Hippocampus CA1',
+      brainRegionId: 382,
+      value: 'Field CA1',
     },
   ],
 });

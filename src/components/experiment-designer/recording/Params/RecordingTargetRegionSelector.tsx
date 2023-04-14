@@ -19,6 +19,7 @@ export default function RecordingTargetRegionSelector({ paramAtom, className }: 
     setData((oldAtomData) => ({
       ...oldAtomData,
       value: newBrainRegion.title,
+      brainRegionId: parseInt(newBrainRegion.id, 10),
     }));
   };
 
