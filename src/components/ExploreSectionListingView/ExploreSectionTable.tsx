@@ -4,11 +4,11 @@ import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { LoadingOutlined } from '@ant-design/icons';
 import usePathname from '@/hooks/pathname';
-import { EphysResource, ExploreSectionResource } from '@/types/explore-section';
+import { ExploreSectionResource } from '@/types/explore-section';
 import styles from '@/app/explore/explore.module.scss';
 
 type ExploreSectionTableProps = {
-  loadableData: Loadable<Promise<readonly (ExploreSectionResource | EphysResource)[] | undefined>>;
+  loadableData: Loadable<Promise<readonly ExploreSectionResource[] | undefined>>;
   columns: ColumnProps<any>[];
 };
 

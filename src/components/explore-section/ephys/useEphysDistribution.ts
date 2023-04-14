@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NexusClient } from '@bbp/nexus-sdk';
 import useLazyCache from './useLazyCache';
-import { EphysDeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section';
 import { Distribution } from '@/types/nexus/common';
 import { RemoteData, DataSets, RABIndex, TraceData } from '@/types/explore-section/index';
 import RandomAccessBuffer from '@/util/explore-section/random-access-buffer';
@@ -88,7 +88,7 @@ function processRABDistro(
   });
 }
 
-function useEphysDistribution(resource: EphysDeltaResource, nexus: NexusClient) {
+function useEphysDistribution(resource: DeltaResource, nexus: NexusClient) {
   const [{ loading, data, error }, setData] = React.useState<
     RemoteData<{
       RABIndex: RABIndex;

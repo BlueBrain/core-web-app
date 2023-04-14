@@ -2,24 +2,24 @@
 
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
-import { EphysResource } from '@/types/explore-section';
+import { ExploreSectionResource } from '@/types/explore-section';
 import Sidebar from '@/components/explore-section/Sidebar';
 import Link from '@/components/Link';
-import {
-  aggregationsAtom,
-  dataAtom,
-  filtersAtom,
-  pageSizeAtom,
-  searchStringAtom,
-  totalAtom,
-} from '@/state/explore-section/ephys';
 import { sorter, dateStringToUnix } from '@/util/common';
 import ExploreSectionListingView from '@/components/ExploreSectionListingView';
+import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import styles from '@/app/explore/explore.module.scss';
+
+const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+
+const { pageSizeAtom, searchStringAtom, filtersAtom, dataAtom, totalAtom, aggregationsAtom } =
+  createListViewAtoms({
+    type: TYPE,
+  });
 
 const columHeader = (text: string) => <div className={styles.tableHeader}>{text}</div>;
 
-const columns: ColumnProps<EphysResource>[] = [
+const columns: ColumnProps<ExploreSectionResource>[] = [
   {
     title: columHeader('Brain Region'),
     dataIndex: 'brainRegion',

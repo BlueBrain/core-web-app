@@ -1,13 +1,13 @@
 import { format, parseISO } from 'date-fns';
 import find from 'lodash/find';
-import { EphysDeltaResource, AnnotationEntity } from '@/types/explore-section';
+import { DeltaResource, AnnotationEntity } from '@/types/explore-section';
 
-const getEtype = (x: EphysDeltaResource) => {
+const getEtype = (x: DeltaResource) => {
   const entity = find(x.annotation, (o: AnnotationEntity) => o.name === 'E-type Annotation');
   return entity ? entity.hasBody.label : 'no EType';
 };
 
-export default function DetailHeader({ detail }: { detail: EphysDeltaResource | null }) {
+export default function DetailHeader({ detail }: { detail: DeltaResource | null }) {
   if (!detail) return <>Not Found</>;
 
   return (

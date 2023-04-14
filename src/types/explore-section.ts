@@ -40,31 +40,17 @@ export interface ExploreSectionResource {
   subjectSpecies?: string;
   contributor: string;
   createdAt: string;
-}
-export interface MorphologyResource extends ExploreSectionResource {
   brainRegion: string;
-  mtype: string;
-  etype?: string;
-}
-
-export interface EphysResource extends ExploreSectionResource {
-  brainRegion: string;
-  etype: string;
   mtype?: string;
+  etype?: string;
 }
 
 export interface TotalHits {
   relation: string;
   value: number;
 }
-export interface EphysResponse {
-  hits: EphysResource[];
-  aggs: Aggregations;
-  total: TotalHits;
-}
-
-export interface MorphologyResponse {
-  hits: MorphologyResource[];
+export interface ExploreSectionResponse {
+  hits: ExploreSectionResource[];
   aggs: Aggregations;
   total: TotalHits;
 }
@@ -132,7 +118,7 @@ export interface Source {
 }
 
 // Below is the delta response interface definitions
-export declare type EphysDeltaResource<
+export type DeltaResource<
   T = {
     [key: string]: any;
   }

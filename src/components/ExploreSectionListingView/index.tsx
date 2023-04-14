@@ -7,13 +7,13 @@ import LoadMoreButton from '@/components/ExploreSectionListingView/LoadMoreButto
 import ExploreSectionTable from '@/components/ExploreSectionListingView/ExploreSectionTable';
 import ControlPanel from '@/components/explore-section/Filters';
 import { Filter } from '@/components/Filter/types';
-import { EphysResource, ExploreSectionResource, TotalHits } from '@/types/explore-section';
+import { ExploreSectionResource, TotalHits } from '@/types/explore-section';
 import { formatNumber } from '@/util/common';
 
 type ExploreSectionPageProps = {
   title: string;
   totalAtom: Atom<Promise<TotalHits | undefined>>;
-  dataAtom: Atom<Promise<ExploreSectionResource[] | EphysResource[] | undefined>>;
+  dataAtom: Atom<Promise<ExploreSectionResource[] | undefined>>;
   searchStringAtom: PrimitiveAtom<string>;
   pageSizeAtom: PrimitiveAtom<number>;
   columns: ColumnProps<any>[];

@@ -78,8 +78,8 @@ export default function Sidebar({ links }: SideLinkList) {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/explore/pair-recording">
-                    Pair recording <ArrowRightOutlined />
+                  <Link href="/explore/synapse-per-connection">
+                    Synapse per connection <ArrowRightOutlined />
                   </Link>
                 </li>
               </ul>

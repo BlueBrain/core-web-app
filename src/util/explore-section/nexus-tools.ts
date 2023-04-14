@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import { EphysDeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section';
 
 import { Distribution } from '@/types/nexus/common';
 
@@ -126,7 +126,7 @@ export const distributionFormatLabel = (distribution: Distribution): string =>
   ENCODING_FORMAT_LABEL[distribution.encodingFormat] ||
   distribution.encodingFormat.split('/').slice(-1)[0];
 
-export const propAsArray = <T>(resource: EphysDeltaResource, key: string): [T] =>
+export const propAsArray = <T>(resource: DeltaResource, key: string): [T] =>
   Array.isArray(resource[key]) ? resource[key] : [resource[key]];
 
 // For getting the last part of a uri path as a title or label

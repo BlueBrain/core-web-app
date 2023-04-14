@@ -10,7 +10,7 @@ import ExploreSectionListingView from '@/components/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import styles from '@/app/explore/explore.module.scss';
 
-const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+const TYPE = 'https://neuroshapes.org/LayerThickness';
 
 const { pageSizeAtom, searchStringAtom, filtersAtom, dataAtom, totalAtom, aggregationsAtom } =
   createListViewAtoms({
@@ -39,7 +39,7 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     dataIndex: 'name',
     key: 'name',
     className: 'text-primary-7 ',
-    render: (text, record) => <Link href={`/explore/morphology/${record.key}`}>{text}</Link>,
+    render: (text, record) => <Link href={`/explore/layer-thickness/${record.key}`}>{text}</Link>,
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
@@ -66,12 +66,12 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
   },
 ];
 
-export default function MorphologyPage() {
+export default function LayerThickness() {
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Neuron Morphologies"
+        title="Layer Thickness"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}
