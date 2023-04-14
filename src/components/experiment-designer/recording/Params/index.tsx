@@ -17,7 +17,7 @@ import type {
   ExpDesignerParam,
   ExpDesignerRegionParameter,
 } from '@/types/experiment-designer';
-import { getFocusedAtom } from '@/components/experiment-designer/utils';
+
 import { getNewRecordingObj } from '@/components/experiment-designer/defaultNewObject';
 
 function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
@@ -68,9 +68,11 @@ function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   );
 }
 
-export default function Params() {
-  const sectionName = 'recording';
-  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+type Props = {
+  focusedAtom: PrimitiveAtom<ExpDesignerParam[]>;
+};
+
+export default function Params({ focusedAtom }: Props) {
   const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
   const [listAtoms, dispatch] = useAtom(atoms);
 

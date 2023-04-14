@@ -21,7 +21,7 @@ import type {
   ExpDesignerRegionParameter,
   ExpDesignerDropdownParameter,
 } from '@/types/experiment-designer';
-import { getFocusedAtom } from '@/components/experiment-designer/utils';
+
 import { getNewStimulusObj } from '@/components/experiment-designer/defaultNewObject';
 
 function StimulationBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
@@ -66,9 +66,11 @@ function StimulationBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) 
   );
 }
 
-export default function Params() {
-  const sectionName = 'stimuli';
-  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+type Props = {
+  focusedAtom: PrimitiveAtom<ExpDesignerParam[]>;
+};
+
+export default function Params({ focusedAtom }: Props) {
   const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
   const [listAtoms, dispatch] = useAtom(atoms);
 

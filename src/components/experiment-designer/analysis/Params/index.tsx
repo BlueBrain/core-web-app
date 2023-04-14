@@ -11,7 +11,6 @@ import GenericParamWrapper, {
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
 import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
-import { getFocusedAtom } from '@/components/experiment-designer/utils';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
@@ -40,9 +39,11 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
   );
 }
 
-export default function Params() {
-  const sectionName = 'analysis';
-  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+type Props = {
+  focusedAtom: PrimitiveAtom<ExpDesignerParam[]>;
+};
+
+export default function Params({ focusedAtom }: Props) {
   const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
   const [listAtoms] = useAtom(atoms);
 
