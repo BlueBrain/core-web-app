@@ -21,16 +21,12 @@ import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import { CompositionUnit } from '@/types/composition';
-import {
-  densityOrCountAtom,
-  compositionAtom,
-  analysedCompositionAtom,
-  selectedBrainRegionAtom,
-} from '@/state/brain-regions';
+import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
+import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
 import styles from './tabs.module.css';
 
 function CellPosition() {

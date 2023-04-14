@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
+import { setCompositionAtom } from '@/state/build-composition';
 import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
-  setCompositionAtom,
-} from '@/state/brain-regions';
+} from '@/state/build-composition/composition-history';
 
 export default function useCompositionHistory() {
   const setComposition = useSetAtom(setCompositionAtom);

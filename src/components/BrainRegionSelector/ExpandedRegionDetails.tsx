@@ -13,12 +13,7 @@ import { CompositionTitleProps, NeuronCompositionItem } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
 import { CompositionNode, CompositionUnit } from '@/types/composition';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
-import {
-  analysedCompositionAtom,
-  computeAndSetCompositionAtom,
-  densityOrCountAtom,
-  selectedBrainRegionAtom,
-} from '@/state/brain-regions';
+import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BrainRegionIcon, LockIcon, LockOpenIcon, MissingData } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
 import IconButton from '@/components/IconButton';
@@ -28,6 +23,7 @@ import CompositionInput from '@/components/BrainRegionSelector/CompositionInput'
 import { calculateMax } from '@/util/composition/utils';
 import iterateAndComputeSystemLockedIds from '@/util/composition/locking';
 import { isConfigEditableAtom } from '@/state/brain-model-config';
+import { analysedCompositionAtom, computeAndSetCompositionAtom } from '@/state/build-composition';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
