@@ -15,13 +15,13 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   useAuth(true);
 
   return (
-    <div className="h-screen">
+    <div className="h-screen flex flex-col">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <ExperimentDesignerTopTabs />
       </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="h-full">{children}</div>
+        <div className="grow flex">{children}</div>
       </ErrorBoundary>
 
       <div className="absolute bottom-5 right-5 flex gap-5">

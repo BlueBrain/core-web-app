@@ -10,7 +10,7 @@ export default function SensoryInputPage() {
   const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
 
   return (
-    <div className="columns-2 h-full">
+    <div className="grid grid-cols-2">
       <Params focusedAtom={focusedAtom} />
       <Visualization focusedAtom={focusedAtom} />
     </div>

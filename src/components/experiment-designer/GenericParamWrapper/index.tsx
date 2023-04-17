@@ -12,6 +12,7 @@ export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse pa
 export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
 export const headerStyle = 'p-[16px] font-light text-left';
 export const subheaderStyle = `${defaultPadding} uppercase text-gray-400`;
+const overflowStyle = 'max-h-[92vh] overflow-y-auto';
 
 type RowRendererProps = {
   paramAtom: Atom<ExpDesignerParam>;
@@ -86,7 +87,7 @@ export default function GenericParamWrapper({
   }
 
   return (
-    <div className="h-full">
+    <div className={overflowStyle}>
       <div className="text-sky-800 p-6">{description}</div>
 
       <div className="px-6">

@@ -25,7 +25,7 @@ const tabs: Tab[] = [
     baseHref: '/experiment-designer/sensory-input',
   },
   {
-    name: 'Simulation Protocol',
+    name: 'Stimulation Protocol',
     href: '/experiment-designer/stimulation-protocol',
     baseHref: '/experiment-designer/stimulation-protocol',
   },

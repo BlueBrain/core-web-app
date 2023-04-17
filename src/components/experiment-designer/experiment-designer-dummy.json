@@ -154,7 +154,7 @@
       "id": "neuronDisplay",
       "name": "Neuron Display",
       "type": "radioButton",
-      "value": ["Soma", "Desndrites", "Axon + Dendrites"]
+      "value": ["Soma", "Dendrites", "Axon + Dendrites"]
     },
     {
       "id": "display",
