@@ -61,9 +61,11 @@ function NeuronCompositionParent({
       <div className="flex gap-2 items-center justify-between py-3 text-left text-primary-3 w-full whitespace-nowrap hover:text-white">
         <div className="flex items-center gap-3">
           <span className="font-bold text-white">{title}</span>
-          <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
-            {lockIcon}
-          </IconButton>
+          {isEditable && (
+            <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
+              {lockIcon}
+            </IconButton>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {isEditable ? (
@@ -79,7 +81,7 @@ function NeuronCompositionParent({
           {trigger?.()}
         </div>
       </div>
-      {isEditable ? (
+      {isEditable && (
         <HorizontalSlider
           className="bg-primary-6 px-[12px] rounded-[4px]"
           value={composition}
@@ -89,7 +91,7 @@ function NeuronCompositionParent({
           disabled={isLocked}
           onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
         />
-      ) : null}
+      )}
       {content?.({ className: '-mt-3' })}
     </>
   );
@@ -119,9 +121,11 @@ function NeuronCompositionLeaf({
       <div className="flex gap-3 items-center justify-between pt-3 pb-0 text-secondary-4 whitespace-nowrap">
         <div className="flex items-center gap-3">
           <span className="font-bold whitespace-nowrap">{title}</span>
-          <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
-            {lockIcon}
-          </IconButton>
+          {isEditable && (
+            <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
+              {lockIcon}
+            </IconButton>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {isEditable ? (
@@ -136,7 +140,7 @@ function NeuronCompositionLeaf({
           )}
         </div>
       </div>
-      {isEditable ? (
+      {isEditable && (
         <HorizontalSlider
           value={composition}
           color="#95DE64"
@@ -145,8 +149,7 @@ function NeuronCompositionLeaf({
           disabled={isLocked}
           onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
         />
-      ) : null}
-
+      )}
       {trigger?.()}
       {content?.()}
     </>
