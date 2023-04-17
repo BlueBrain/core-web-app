@@ -35,7 +35,6 @@ export default function ExploreSectionListingView({
   const loadableTotal = useMemo(() => loadable(totalAtom), [totalAtom]);
   const data = useAtomValue(loadableData);
   const total = useAtomValue(loadableTotal);
-
   const value =
     total.state === 'hasData' && total.data?.value ? formatNumber(total.data?.value) : 0;
 
@@ -58,7 +57,7 @@ export default function ExploreSectionListingView({
           style={{ height: 'calc(100vh - 100px)' }}
         >
           <ExploreSectionTable loadableData={data} columns={columns} />
-          <LoadMoreButton isLoadedState={data.state} pageSizeAtom={pageSizeAtom} />
+          <LoadMoreButton dataState={data} pageSizeAtom={pageSizeAtom} totalState={total} />
         </div>
       </section>
       <ControlPanel aggregationsAtom={aggregationsAtom} filtersAtom={filtersAtom} />
