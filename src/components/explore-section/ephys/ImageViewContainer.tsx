@@ -3,7 +3,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import { Button, Spin } from 'antd';
 import { NexusImage } from './NexusImage';
 import ImageViewComponent, { ImageItem } from './ImageViewComponent';
-import { EphysDeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section';
 import {
   EPhysImageItem,
   useImageCollectionDistribution,
@@ -18,7 +18,7 @@ const getStimulusTypeString = (image: EPhysImageItem) => {
 };
 
 interface ImageViewContainerProps {
-  resource: EphysDeltaResource;
+  resource: DeltaResource;
   nexus: NexusClient;
   stimulusTypeMap: Map<string, number>;
   stimulusType: string;

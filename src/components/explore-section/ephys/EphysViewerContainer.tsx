@@ -2,7 +2,7 @@ import { Radio, RadioChangeEvent } from 'antd';
 import { FileImageOutlined, LineChartOutlined } from '@ant-design/icons';
 import { NexusClient } from '@bbp/nexus-sdk';
 import React from 'react';
-import { EphysDeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section';
 
 import { EPhysImageItem } from '@/components/explore-section/ephys/useImageCollectionDistribution';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
@@ -25,7 +25,7 @@ function EphysViewerContainer({
   resource,
   nexus,
 }: {
-  resource: EphysDeltaResource;
+  resource: DeltaResource;
   nexus: NexusClient;
 }) {
   const [view, setView] = React.useState<VIEWS>(VIEWS.IMAGE);

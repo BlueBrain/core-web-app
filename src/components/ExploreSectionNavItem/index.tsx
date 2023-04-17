@@ -65,9 +65,9 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.pair}>
-        <Link href="/explore/pair-recording">
+        <Link href="/explore/synapse-per-connection">
           <div>
-            <h1>Pair recording</h1>
+            <h1>Synapse per connection</h1>
             <PlusOutlined />
           </div>
         </Link>

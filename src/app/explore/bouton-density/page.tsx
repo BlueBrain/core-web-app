@@ -10,7 +10,7 @@ import ExploreSectionListingView from '@/components/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import styles from '@/app/explore/explore.module.scss';
 
-const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+const TYPE = 'https://neuroshapes.org/BoutonDensity';
 
 const { pageSizeAtom, searchStringAtom, filtersAtom, dataAtom, totalAtom, aggregationsAtom } =
   createListViewAtoms({
@@ -21,13 +21,6 @@ const columHeader = (text: string) => <div className={styles.tableHeader}>{text}
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
-    title: columHeader('Brain Region'),
-    dataIndex: 'brainRegion',
-    key: 'brainRegion',
-    className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
-  },
-  {
     title: columHeader('M-Type'),
     dataIndex: 'mtype',
     key: 'mtype',
@@ -35,11 +28,11 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     sorter: (a, b) => sorter(a.mtype, b.mtype),
   },
   {
-    title: columHeader('Data'),
+    title: columHeader('Name'),
     dataIndex: 'name',
     key: 'name',
     className: 'text-primary-7 ',
-    render: (text, record) => <Link href={`/explore/morphology/${record.key}`}>{text}</Link>,
+    render: (text, record) => <Link href={`/explore/bouton-density/${record.key}`}>{text}</Link>,
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
@@ -66,12 +59,12 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
   },
 ];
 
-export default function MorphologyPage() {
+export default function BoutonDensity() {
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Neuron Morphologies"
+        title="Bouton Density"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

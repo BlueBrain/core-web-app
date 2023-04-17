@@ -6,12 +6,14 @@ import { createNexusClient } from '@bbp/nexus-sdk';
 import { useSession } from 'next-auth/react';
 import usePathname from '@/hooks/pathname';
 import { nexus as nexusConfig } from '@/config';
-import { detailAtom, infoAtom } from '@/state/explore-section/ephys/detail';
 import DetailHeader from '@/components/explore-section/DetailHeader';
 import Sidebar from '@/components/explore-section/Sidebar';
 import EphysViewerContainer from '@/components/explore-section/ephys/EphysViewerContainer';
 import { SideLink } from '@/types/explore-section';
 import { setInfoWithPath } from '@/util/explore-section/detail-view';
+import createDetailAtoms from '@/state/explore-section/detail-atoms-constructor';
+
+const { infoAtom, detailAtom } = createDetailAtoms();
 
 function EphysDetail() {
   const { data: session } = useSession();

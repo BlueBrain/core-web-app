@@ -1,6 +1,8 @@
 'use client';
 
-import { Atom, useAtom } from 'jotai';
+import { Atom, PrimitiveAtom, useAtom } from 'jotai';
+import { useMemo } from 'react';
+import { splitAtom } from 'jotai/utils';
 
 import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetRegionSelector';
 import GenericParamWrapper, {
@@ -12,7 +14,12 @@ import {
   RangeParameter,
   DefaultEmptyParam,
 } from '@/components/experiment-designer';
-import type { ExpDesignerParam } from '@/types/experiment-designer';
+import type {
+  ExpDesignerNumberParameter,
+  ExpDesignerParam,
+  ExpDesignerRangeParameter,
+  ExpDesignerRegionParameter,
+} from '@/types/experiment-designer';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
@@ -20,20 +27,26 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
   let constantCol;
   let sweepCol;
   switch (param.type) {
-    case 'number':
-      constantCol = <ConstantParameter data={param} className={defaultPadding} />;
+    case 'number': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerNumberParameter>;
+      constantCol = <ConstantParameter paramAtom={paramAtomTyped} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
+    }
 
-    case 'range':
+    case 'range': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRangeParameter>;
       constantCol = <DefaultEmptyParam />;
-      sweepCol = <RangeParameter data={param} />;
+      sweepCol = <RangeParameter paramAtom={paramAtomTyped} />;
       break;
+    }
 
-    case 'regionDropdown':
-      constantCol = <TargetRegionSelector data={param} className={defaultPadding} />;
+    case 'regionDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
+      constantCol = <TargetRegionSelector paramAtom={paramAtomTyped} className={defaultPadding} />;
       sweepCol = <DefaultEmptyParam />;
       break;
+    }
 
     default:
       break;
@@ -47,12 +60,19 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
   );
 }
 
-export default function Params() {
+type Props = {
+  focusedAtom: PrimitiveAtom<ExpDesignerParam[]>;
+};
+
+export default function Params({ focusedAtom }: Props) {
+  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
+  const [listAtoms] = useAtom(atoms);
+
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      sectionName="setup"
+      listAtoms={listAtoms}
       RowRenderer={ParameterRenderRow}
     />
   );

@@ -18,7 +18,7 @@
       "id": "forwardSkip",
       "name": "Forward skip",
       "type": "number",
-      "value": 50000,
+      "value": 5000,
       "unit": "ms"
     },
     {
@@ -49,6 +49,7 @@
       "id": "simulatedNeurons",
       "name": "Simulated neurons",
       "type": "regionDropdown",
+      "brainRegionId": 1089,
       "value": "Hippocampal formation"
     }
   ],
@@ -76,7 +77,8 @@
           "id": "targetInputRegion",
           "name": "Target",
           "type": "regionDropdown",
-          "value": "Hippocampus CA1"
+          "brainRegionId": 382,
+          "value": "Field CA1"
         }
       ]
     }
@@ -105,7 +107,8 @@
           "id": "targetInputRegion",
           "name": "Target",
           "type": "regionDropdown",
-          "value": "Hippocampus CA1"
+          "brainRegionId": 382,
+          "value": "Field CA1"
         }
       ]
     }
@@ -134,7 +137,8 @@
           "id": "recordingRegion",
           "name": "Target",
           "type": "regionDropdown",
-          "value": "Hippocampus CA1"
+          "brainRegionId": 382,
+          "value": "Field CA1"
         }
       ]
     }
@@ -169,7 +173,8 @@
           "id": "rasterRegion1",
           "name": "Target",
           "type": "regionDropdown",
-          "value": "Hippocampus CA1"
+          "brainRegionId": 382,
+          "value": "Field CA1"
         }
       ]
     },
@@ -182,7 +187,8 @@
           "id": "psthRegion1",
           "name": "Target",
           "type": "regionDropdown",
-          "value": "Hippocampus CA1"
+          "brainRegionId": 382,
+          "value": "Field CA1"
         }
       ]
     },
@@ -195,7 +201,8 @@
           "id": "voltageRegion1",
           "name": "Target",
           "type": "regionDropdown",
-          "value": "Hippocampus CA1"
+          "brainRegionId": 382,
+          "value": "Field CA1"
         }
       ]
     },
@@ -208,7 +215,8 @@
           "id": "lfpRegion1",
           "name": "Population",
           "type": "regionDropdown",
-          "value": "Hippocampus CA1"
+          "brainRegionId": 382,
+          "value": "Field CA1"
         },
         {
           "id": "plots",

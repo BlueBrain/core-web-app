@@ -1,5 +1,7 @@
 'use client';
 
+import { PrimitiveAtom, useAtomValue } from 'jotai';
+
 import type {
   ExpDesignerCheckboxParameter,
   ExpDesignerCheckboxGroupParameter,
@@ -8,7 +10,7 @@ import { classNames } from '@/util/utils';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
 
 type Props = {
-  data: ExpDesignerCheckboxGroupParameter;
+  paramAtom: PrimitiveAtom<ExpDesignerCheckboxGroupParameter>;
   className?: string;
 };
 
@@ -28,7 +30,9 @@ function Checkboxes({ data }: { data: ExpDesignerCheckboxParameter[] }) {
   );
 }
 
-export default function CheckboxGroup({ data, className }: Props) {
+export default function CheckboxGroup({ paramAtom, className }: Props) {
+  const data = useAtomValue(paramAtom);
+
   return (
     <div className={classNames('flex gap-3', className)}>
       <div className="grow font-bold">{data.name}</div>

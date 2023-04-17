@@ -1,7 +1,8 @@
 'use client';
 
-import { Atom, useAtom, useSetAtom } from 'jotai';
-import { Divider } from 'antd';
+import { Atom, PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
+import { useMemo } from 'react';
+import { splitAtom } from 'jotai/utils';
 
 import RecordingTargetRegionSelector from './RecordingTargetRegionSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
@@ -10,27 +11,51 @@ import GenericParamWrapper, {
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
 import { ConstantParameter, DropdownParameter } from '@/components/experiment-designer';
-import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
-import { getFocusedAtom, cloneLastAndAdd } from '@/components/experiment-designer/utils';
+import type {
+  ExpDesignerDropdownParameter,
+  ExpDesignerNumberParameter,
+  ExpDesignerParam,
+  ExpDesignerRegionParameter,
+} from '@/types/experiment-designer';
 
-function RecordingBlock({ row }: { row: ExpDesignerParam }) {
+import { getNewRecordingObj } from '@/components/experiment-designer/defaultNewObject';
+
+function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+  const param = useAtomValue<ExpDesignerParam>(paramAtom);
+
   let constantCol;
-  switch (row.type) {
-    case 'number':
+  switch (param.type) {
+    case 'number': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerNumberParameter>;
       constantCol = (
-        <ConstantParameter data={row} className={defaultPadding} showSwitcher={false} />
+        <ConstantParameter
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          showSwitcher={false}
+        />
       );
       break;
+    }
 
-    case 'dropdown':
+    case 'dropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerDropdownParameter>;
       constantCol = (
-        <DropdownParameter data={row} className={defaultPadding} showSwitcher={false} />
+        <DropdownParameter
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          showSwitcher={false}
+        />
       );
       break;
+    }
 
-    case 'regionDropdown':
-      constantCol = <RecordingTargetRegionSelector data={row} className={defaultPadding} />;
+    case 'regionDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
+      constantCol = (
+        <RecordingTargetRegionSelector paramAtom={paramAtomTyped} className={defaultPadding} />
+      );
       break;
+    }
 
     default:
       break;
@@ -43,42 +68,26 @@ function RecordingBlock({ row }: { row: ExpDesignerParam }) {
   );
 }
 
-function ParameterRenderRow({ paramAtom }: { paramAtom: any }) {
-  const paramAtomParsed = paramAtom as Atom<ExpDesignerGroupParameter>;
-  const [param] = useAtom<ExpDesignerGroupParameter>(paramAtomParsed);
-  return (
-    <>
-      {param.value.map((row) => (
-        <RecordingBlock row={row} key={param.id + row.id} />
-      ))}
-      <tr>
-        <td>
-          <Divider />
-        </td>
-        <td>
-          <Divider />
-        </td>
-      </tr>
-    </>
-  );
-}
+type Props = {
+  focusedAtom: PrimitiveAtom<ExpDesignerParam[]>;
+};
 
-export default function Params() {
-  const sectionName = 'recording';
-  const sectionAtom = getFocusedAtom(sectionName);
-  const setSectionConfig = useSetAtom(sectionAtom);
+export default function Params({ focusedAtom }: Props) {
+  const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
+  const [listAtoms, dispatch] = useAtom(atoms);
 
   const addNew = () => {
-    cloneLastAndAdd(setSectionConfig);
+    dispatch({ type: 'insert', value: getNewRecordingObj() });
   };
 
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
-      sectionName={sectionName}
-      RowRenderer={ParameterRenderRow}
+      listAtoms={listAtoms}
+      RowRenderer={RecordingBlock}
       showHeader={false}
+      isGroup
     >
       <GenericAddButton onClick={addNew} title="Add Recording" />
     </GenericParamWrapper>

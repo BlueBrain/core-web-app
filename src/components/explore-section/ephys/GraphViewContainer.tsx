@@ -1,11 +1,11 @@
 import { NexusClient } from '@bbp/nexus-sdk';
 import GraphViewComponent from './GraphViewComponent';
-import { EphysDeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section';
 
 import ephysDistribution from '@/components/explore-section/ephys/useEphysDistribution';
 
 interface GraphViewContainerProps {
-  resource: EphysDeltaResource;
+  resource: DeltaResource;
   nexus: NexusClient;
   defaultStimulusType?: string;
   defaultRepetition?: string;

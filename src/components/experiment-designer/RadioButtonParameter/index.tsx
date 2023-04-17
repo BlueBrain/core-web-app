@@ -1,13 +1,17 @@
+import { PrimitiveAtom, useAtom } from 'jotai';
+
 import { ExpDesignerRadioBtnParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 import { subheaderStyle, generateId } from '@/components/experiment-designer/GenericParamWrapper';
 
 type Props = {
-  data: ExpDesignerRadioBtnParameter;
+  paramAtom: PrimitiveAtom<ExpDesignerRadioBtnParameter>;
   className?: string;
 };
 
-export default function RadioButtonParameter({ data, className }: Props) {
+export default function RadioButtonParameter({ paramAtom, className }: Props) {
+  const [data] = useAtom(paramAtom);
+
   return (
     <>
       <div className={subheaderStyle}>{data.name}</div>

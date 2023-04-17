@@ -121,7 +121,6 @@ const serializeBrainRegionsAndVolumes = (
 
   // removing the duplicate ids
   const ids = serializedBrainRegions.map((br) => br.id);
-
   return {
     brainRegions: serializedBrainRegions
       .filter(({ id }, index) => !ids.includes(id, index + 1))

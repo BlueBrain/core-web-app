@@ -1,5 +1,8 @@
+import { Atom, useAtomValue } from 'jotai';
+
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
 import type {
+  ExpDesignerParam,
   ExpDesignerRegionDropdownGroupParameter,
   ExpDesignerRegionParameter,
 } from '@/types/experiment-designer';
@@ -8,11 +11,13 @@ import { BrainRegionsDropdown } from '@/components/experiment-designer';
 import { subheaderStyle } from '@/components/experiment-designer/GenericParamWrapper';
 
 type Props = {
-  data: ExpDesignerRegionDropdownGroupParameter;
+  paramAtom: Atom<ExpDesignerParam>;
   className?: string;
 };
 
-export default function RegionDropdownGroup({ data, className }: Props) {
+export default function RegionDropdownGroup({ paramAtom, className }: Props) {
+  const data = useAtomValue(paramAtom as Atom<ExpDesignerRegionDropdownGroupParameter>);
+
   return (
     <>
       <div className={subheaderStyle}>{data.name}</div>

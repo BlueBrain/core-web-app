@@ -3,7 +3,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import matches from 'lodash/matches';
 import MorphoWrapper from './MorphoWrapper';
 import { MorphoViewerOptions } from './MorphologyViewer';
-import { EphysDeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section';
 
 const SHAPE = {
   '@type': 'DataDownload',
@@ -14,7 +14,7 @@ function MorphoViewerContainer({
   resource,
   nexus,
 }: {
-  resource: EphysDeltaResource;
+  resource: DeltaResource;
   nexus: NexusClient;
 }) {
   const [{ loading, error, data }, setData] = useState<{

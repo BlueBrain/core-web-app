@@ -36,6 +36,7 @@ export type ExpDesignerDropdownParameter = ExpDesignerBaseParameter & {
 export type ExpDesignerRegionParameter = ExpDesignerBaseParameter & {
   type: 'regionDropdown';
   value: string;
+  brainRegionId: number;
 };
 
 export type ExpDesignerPositionParameter = ExpDesignerBaseParameter & {

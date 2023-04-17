@@ -1,19 +1,27 @@
 'use client';
 
-import { useSetAtom } from 'jotai';
+import { PrimitiveAtom, useAtom } from 'jotai';
 
-import { expDesignerSimulateRegions } from '@/state/experiment-designer';
 import { BrainRegionsDropdown } from '@/components/experiment-designer';
 import { ExpDesignerRegionParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
+import { BrainRegion } from '@/types/ontologies';
 
 type Props = {
-  data: ExpDesignerRegionParameter;
+  paramAtom: PrimitiveAtom<ExpDesignerRegionParameter>;
   className?: string;
 };
 
-export default function RecordingTargetRegionSelector({ data, className }: Props) {
-  const setRecordingRegions = useSetAtom(expDesignerSimulateRegions);
+export default function RecordingTargetRegionSelector({ paramAtom, className }: Props) {
+  const [data, setData] = useAtom(paramAtom);
+
+  const setRecordingRegions = (newBrainRegion: BrainRegion) => {
+    setData((oldAtomData) => ({
+      ...oldAtomData,
+      value: newBrainRegion.title,
+      brainRegionId: parseInt(newBrainRegion.id, 10),
+    }));
+  };
 
   return (
     <div className={classNames('flex gap-3 items-center font-bold', className)}>

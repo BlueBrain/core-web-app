@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NexusClient, NexusFile } from '@bbp/nexus-sdk';
-import { EphysDeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section';
 import { RemoteData } from '@/types/explore-section/index';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
 import { chainPredicates, isFile, hasImage, not } from '@/util/explore-section/nexus-maybe';
@@ -28,7 +28,7 @@ export type EPhysImageItem = {
  */
 
 export function useImageCollectionDistribution(
-  resource: EphysDeltaResource,
+  resource: DeltaResource,
   nexus: NexusClient,
   opt?: {
     imageFilterPredicate?: (imageItem: EPhysImageItem) => boolean;
