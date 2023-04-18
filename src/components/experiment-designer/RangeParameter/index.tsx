@@ -83,8 +83,11 @@ export default function RangeParameter({ paramAtom, className }: Props) {
     >
       <Panel header={collapseTitle} key="1" extra={genExtra()}>
         <div className={classNames(borderStyle, 'p-2')}>
-          <div>RANGE</div>
-          <div className="mb-14">
+          <div>
+            RANGE
+            <span className="text-gray-400 px-2">{data.unit}</span>
+          </div>
+          <div className="mb-14 mx-3">
             <Slider
               range
               min={min}

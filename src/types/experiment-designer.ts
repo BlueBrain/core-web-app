@@ -14,12 +14,13 @@ type ExpDesignerBaseParameter = {
 export type ExpDesignerNumberParameter = ExpDesignerBaseParameter & {
   type: 'number';
   value: number;
-  unit: string | null;
+  unit: string;
 };
 
 export type ExpDesignerRangeParameter = ExpDesignerBaseParameter & {
   type: 'range';
   value: RangeValue;
+  unit: string;
 };
 
 export type ExpDesignerStringParameter = ExpDesignerBaseParameter & {
