@@ -20,6 +20,10 @@ const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => 
 
   const pageNumberAtom = atom<number>(1);
 
+  const sortFieldAtom = atom<string>('createdAt');
+
+  const sortDirectionAtom = atom<'asc' | 'desc'>('desc');
+
   const searchStringAtom = atom<string>('');
 
   const filtersAtom = atom<Filter[]>([
@@ -33,7 +37,18 @@ const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => 
     const pageNumber = get(pageNumberAtom);
     const pageSize = get(pageSizeAtom);
     const filters = get(filtersAtom);
-    return getDataQuery(pageSize, pageNumber, filters, type, searchString);
+    const sortField = get(sortFieldAtom);
+    const sortDirection = get(sortDirectionAtom);
+
+    return getDataQuery(
+      pageSize,
+      pageNumber,
+      filters,
+      type,
+      searchString,
+      sortField,
+      sortDirection
+    );
   });
 
   const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => {

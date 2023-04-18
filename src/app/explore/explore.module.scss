@@ -121,3 +121,31 @@
     @apply text-black bg-white;
   }
 }
+
+// Table sort option custom required to trigger sort against all of ES
+
+.sortBy {
+  display: block;
+  width: 100%;
+  padding-right: 18px;
+  position: relative;
+}
+a.sortBy:before,
+a.sortBy:after {
+  border: 4px solid transparent;
+  content: '';
+  display: block;
+  height: 0;
+  right: 5px;
+  top: 50%;
+  position: absolute;
+  width: 0;
+}
+a.sortBy:before {
+  border-bottom-color: #666;
+  margin-top: -9px;
+}
+a.sortBy:after {
+  border-top-color: #666;
+  margin-top: 1px;
+}

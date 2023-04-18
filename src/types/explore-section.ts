@@ -12,6 +12,13 @@ export interface FetchParams {
   project?: string;
   org?: string;
 }
+
+export interface ElasticsearchSort {
+  [field: string]: {
+    order: 'asc' | 'desc';
+  };
+}
+
 export interface Campaign {
   id: string;
   org: string;

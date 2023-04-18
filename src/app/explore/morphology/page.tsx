@@ -17,7 +17,13 @@ const { pageSizeAtom, searchStringAtom, filtersAtom, dataAtom, totalAtom, aggreg
     type: TYPE,
   });
 
-const columHeader = (text: string) => <div className={styles.tableHeader}>{text}</div>;
+const columHeader = (text: string) => (
+  <div className={styles.tableHeader}>
+    <a href='#' className={styles.sortBy}>
+      {text}
+    </a>
+  </div>
+);
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
@@ -25,14 +31,16 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     dataIndex: 'brainRegion',
     key: 'brainRegion',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
+    showSorterTooltip: false,
+    // sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
   },
   {
     title: columHeader('M-Type'),
     dataIndex: 'mtype',
     key: 'mtype',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.mtype, b.mtype),
+    showSorterTooltip: false,
+    // sorter: (a, b) => sorter(a.mtype, b.mtype),
   },
   {
     title: columHeader('Data'),
@@ -66,12 +74,12 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
   },
 ];
 
-export default function MorphologyPage() {
+export default function MorphologyPage () {
   return (
-    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
+    <div className='flex min-h-screen' style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Neuron Morphologies"
+        title='Neuron Morphologies'
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}
