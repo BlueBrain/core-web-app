@@ -49,8 +49,7 @@ class ThreeCtxWrapper {
     (camera as THREE.PerspectiveCamera).far = 1000000;
     camera.up.set(0, -1, 0);
 
-    // @ts-ignore
-    camera.updateProjectionMatrix();
+    (camera as THREE.PerspectiveCamera).updateProjectionMatrix();
     camera.updateMatrix();
 
     // to be restored later (change of atlas or so)

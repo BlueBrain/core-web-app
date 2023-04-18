@@ -21,7 +21,7 @@ export default function SimulationPreview() {
   return (
     <>
       <div className="flex h-full w-full" ref={threeDeeDiv} />
-      {ready ? <PreviewMesh /> : null}
+      {ready && <PreviewMesh />}
     </>
   );
 }
