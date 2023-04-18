@@ -8,23 +8,18 @@ export interface BrainModelConfig extends Entity {
   configs: {
     cellCompositionConfig: {
       '@id': string;
-      '@type': [CellCompositionConfigType, 'Entity'];
     };
     cellPositionConfig: {
       '@id': string;
-      '@type': [CellPositionConfigType, 'Entity'];
     };
     eModelAssignmentConfig: {
       '@id': string;
-      '@type': [EModelAssignmentConfigType, 'Entity'];
     };
     morphologyAssignmentConfig: {
       '@id': string;
-      '@type': [MorphologyAssignmentConfigType, 'Entity'];
     };
     microConnectomeConfig: {
       '@id': string;
-      '@type': [MicroConnectomeConfigType, 'Entity'];
     };
   };
 }

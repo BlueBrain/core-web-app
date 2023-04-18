@@ -326,23 +326,18 @@ export async function cloneBrainModelConfig(
     configs: {
       cellCompositionConfig: {
         '@id': clonedCellCompositionConfigMetadata['@id'],
-        '@type': ['CellCompositionConfig', 'Entity'],
       },
       cellPositionConfig: {
         '@id': clonedCellPositionConfigMetadata['@id'],
-        '@type': ['CellPositionConfig', 'Entity'],
       },
       eModelAssignmentConfig: {
         '@id': clonedEModelAssignmentConfigMetadata['@id'],
-        '@type': ['EModelAssignmentConfig', 'Entity'],
       },
       morphologyAssignmentConfig: {
         '@id': clonedMorphologyAssignmentConfigMetadata['@id'],
-        '@type': ['MorphologyAssignmentConfig', 'Entity'],
       },
       microConnectomeConfig: {
         '@id': clonedMicroConnectomeConfigMetadata['@id'],
-        '@type': ['MicroConnectomeConfig', 'Entity'],
       },
     },
   };
