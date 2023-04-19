@@ -298,6 +298,16 @@ export interface VariantTaskConfig extends Entity {
 
 export interface VariantTaskConfigResource extends ResourceMetadata, VariantTaskConfig {}
 
+export interface WholeBrainConnectomeStrength extends Entity {
+  '@type': ['WholeBrainConnectomeStrength', 'Dataset', 'Entity'];
+  name: string;
+  distribution: Distribution;
+}
+
+export interface WholeBrainConnectomeStrengthResource
+  extends ResourceMetadata,
+    WholeBrainConnectomeStrength {}
+
 export type GeneratorConfig =
   | CellCompositionConfig
   | CellPositionConfig

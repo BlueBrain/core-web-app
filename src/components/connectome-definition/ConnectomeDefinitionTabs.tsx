@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from 'react';
 
 import Link from '@/components/Link';
@@ -10,27 +12,27 @@ import SettingsIcon from '@/components/icons/Settings';
 const COMMON_TAB_CLASSNAME =
   'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl last:bg-white last:text-black';
 
-type CellCompositionTab = {
+type ConnectomeDefinitionTab = {
   name: string;
   href: string;
   icon: ReactNode;
   disableOnChange?: boolean;
 };
 
-const tabs: CellCompositionTab[] = [
+const tabs: ConnectomeDefinitionTab[] = [
   {
     name: 'Interactive',
-    href: '/connectome-definition/interactive',
+    href: '/build/connectome-definition/interactive',
     icon: <BrainIcon className="h-4 inline-block mr-2" />,
   },
   {
     name: 'Analysis',
-    href: '/connectome-definition/analysis',
+    href: '/build/connectome-definition/analysis',
     icon: <AnalysisIcon className="h-4 inline-block mr-2" />,
   },
   {
     name: 'Configuration',
-    href: '/connectome-definition/configuration',
+    href: '/build/connectome-definition/configuration',
     icon: <SettingsIcon className="h-4 inline-block mr-2" />,
   },
 ];

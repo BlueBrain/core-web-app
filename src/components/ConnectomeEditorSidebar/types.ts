@@ -11,5 +11,6 @@ export type TitleComponentProps = {
   title: string;
   multi?: boolean;
   selectedBrainRegions: Map<string, string>;
+  isLeaf: boolean;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };

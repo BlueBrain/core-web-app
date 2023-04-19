@@ -1,4 +1,4 @@
-import React, { useRef, RefObject, ReactNode, useMemo, useState } from 'react';
+import React, { useRef, RefObject, ReactNode, useMemo, useState, useEffect } from 'react';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useSetAtom, useAtomValue } from 'jotai';
@@ -12,6 +12,7 @@ import {
   selectedPreBrainRegionsAtom,
   selectedPostBrainRegionsAtom,
   brainRegionsFilteredTreeAtom,
+  brainRegionsUnsortedArrayAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/components/TreeNavItem';
@@ -26,10 +27,11 @@ function NavTitle({
   content, // A callback that returns the <Accordion.Content/>
   multi = false,
   selectedBrainRegions,
+  isLeaf,
 }: TitleComponentProps) {
   let checkbox = null;
 
-  if (multi && id) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} />;
+  if (multi && id && isLeaf) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} />;
 
   return (
     <>
@@ -133,8 +135,23 @@ function CollapsedSidebar() {
   );
 }
 
+function findLeaves(tree: BrainRegion[]) {
+  const leaves: BrainRegion[] = [];
+  const queue = [...tree];
+
+  while (queue.length) {
+    const r = queue.shift();
+    if (!r) continue; // eslint-disable-line no-continue
+    if (!r.items || r.items.length === 0) leaves.push(r);
+    r.items?.forEach((i) => queue.push(i));
+  }
+
+  return leaves;
+}
+
 export default function ConnectomeEditorSidebar() {
   const area = useAtomValue(brainAreaAtom);
+  const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
   const setSelectedPreBrainRegion = useSetAtom(setSelectedPreBrainRegionAtom);
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
@@ -145,6 +162,15 @@ export default function ConnectomeEditorSidebar() {
   let selectedBrainRegions: Map<string, string> = new Map();
   if (area === 'post') selectedBrainRegions = postSynapticBrainRegions;
   if (area === 'pre') selectedBrainRegions = preSynapticBrainRegions;
+
+  useEffect(() => {
+    if (!brainRegions) return;
+    const leaves = findLeaves(brainRegions);
+    leaves.forEach((l) => {
+      setSelectedPreBrainRegion(l.id, l.title);
+      setSelectedPostBrainRegion(l.id, l.title);
+    });
+  }, [brainRegions, setSelectedPostBrainRegion, setSelectedPreBrainRegion]);
 
   return (
     <div className="bg-black flex flex-1 flex-col h-screen">
@@ -179,7 +205,7 @@ export default function ConnectomeEditorSidebar() {
               value={navValue}
             />
             <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
-              {({ colorCode, id, isExpanded, title, leaves, trigger, content }) => (
+              {({ colorCode, id, isExpanded, title, leaves, trigger, content, items }) => (
                 <NavTitle
                   className="font-bold uppercase text-lg"
                   colorCode={colorCode}
@@ -195,6 +221,7 @@ export default function ConnectomeEditorSidebar() {
                   content={content}
                   multi={!!area}
                   selectedBrainRegions={selectedBrainRegions}
+                  isLeaf={!items || items.length === 0}
                 >
                   {({
                     colorCode: nestedColorCode,
@@ -203,6 +230,7 @@ export default function ConnectomeEditorSidebar() {
                     title: nestedTitle,
                     trigger: nestedTrigger,
                     content: nestedContent,
+                    items: nestedItems,
                   }) => (
                     <NavTitle
                       className={
@@ -223,6 +251,7 @@ export default function ConnectomeEditorSidebar() {
                       content={nestedContent}
                       multi={!!area}
                       selectedBrainRegions={selectedBrainRegions}
+                      isLeaf={!nestedItems || nestedItems.length === 0}
                     />
                   )}
                 </NavTitle>

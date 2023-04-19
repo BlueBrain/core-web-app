@@ -3,6 +3,7 @@ export type BrainRegion = {
   isPartOf: string | null;
   isLayerPartOf: string | null;
   title: string;
+  notation: string;
   colorCode: string;
   items?: BrainRegion[];
   leaves?: string[];

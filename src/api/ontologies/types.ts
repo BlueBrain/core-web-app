@@ -18,6 +18,7 @@ export type BrainRegionNexus = {
   isPartOf: string;
   isLayerPartOf: string;
   label: string;
+  notation: string;
   prefLabel: string;
   hasLeafRegionPart: string[] | string;
   hasLayerPart: string[];

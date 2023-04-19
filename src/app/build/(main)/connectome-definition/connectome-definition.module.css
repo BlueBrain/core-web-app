@@ -1,4 +1,5 @@
 .container {
+  position: relative;
   color: white;
   background-color: black;
   height: 100%;
@@ -54,4 +55,17 @@
 
 .footer {
   grid-area: footer;
+}
+
+.sidePanel {
+  position: absolute;
+  right: 0;
+  height: 90%;
+  top: 5%;
+  background: white;
+  width: 33%;
+  z-index: 11;
+  border-radius: 8px 0px 0px 8px;
+  padding: 20px;
+  color: black;
 }

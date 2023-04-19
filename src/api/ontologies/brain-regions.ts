@@ -108,6 +108,7 @@ const serializeBrainRegionsAndVolumes = (
         hasLayerPart: brainRegionPayload.hasLayerPart,
         hasPart: brainRegionPayload.hasPart,
         title: brainRegionPayload.prefLabel,
+        notation: brainRegionPayload.notation,
         leaves,
         representedInAnnotation: brainRegionPayload.representedInAnnotation,
         leavesInAnnotation,

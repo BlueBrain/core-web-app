@@ -44,6 +44,11 @@ const nextConfig = {
         permanent: false,
       },
       {
+        source: '/build/connectome-definition',
+        destination: '/build/connectome-definition/configuration',
+        permanent: false,
+      },
+      {
         source: '/experiment-designer',
         destination: '/experiment-designer/experiment-setup',
         permanent: false,

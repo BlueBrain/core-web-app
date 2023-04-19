@@ -28,7 +28,7 @@ const tabs: Tab[] = [
   },
   {
     name: 'Connectome definition',
-    href: '/build/connectome-definition',
+    href: '/build/connectome-definition/configuration',
     baseHref: '/build/connectome-definition',
   },
   {
