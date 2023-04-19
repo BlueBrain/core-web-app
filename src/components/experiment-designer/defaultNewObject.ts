@@ -18,6 +18,8 @@ export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
       type: 'number',
       value: 4000,
       unit: 'ms',
+      min: 0,
+      max: 20000,
     },
     {
       id: 'targetInputRegion',
@@ -47,6 +49,8 @@ export const getNewRecordingObj = (): ExpDesignerGroupParameter => ({
       type: 'number',
       value: 4000,
       unit: 'ms',
+      min: 0,
+      max: 20000,
     },
     {
       id: 'recordingRegion',
@@ -76,6 +80,8 @@ export const getNewSensoryInputObj = (): ExpDesignerGroupParameter => ({
       type: 'number',
       value: 4000,
       unit: 'ms',
+      min: 0,
+      max: 20000,
     },
     {
       id: 'targetInputRegion',

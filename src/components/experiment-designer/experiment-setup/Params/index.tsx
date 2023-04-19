@@ -1,6 +1,6 @@
 'use client';
 
-import { Atom, PrimitiveAtom, useAtom } from 'jotai';
+import { PrimitiveAtom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
@@ -20,16 +20,30 @@ import type {
   ExpDesignerRangeParameter,
   ExpDesignerRegionParameter,
 } from '@/types/experiment-designer';
+import { applySwapFunction } from '@/components/experiment-designer/utils';
 
-function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
-  const [param] = useAtom<ExpDesignerParam>(paramAtom);
+function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
+  const [param, setParam] = useAtom(paramAtom);
+
+  const changed = () => {
+    const newSwapParam = applySwapFunction(param);
+    if (!newSwapParam) return;
+
+    setParam(newSwapParam);
+  };
 
   let constantCol;
   let sweepCol;
   switch (param.type) {
     case 'number': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerNumberParameter>;
-      constantCol = <ConstantParameter paramAtom={paramAtomTyped} className={defaultPadding} />;
+      constantCol = (
+        <ConstantParameter
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
+      );
       sweepCol = <DefaultEmptyParam />;
       break;
     }

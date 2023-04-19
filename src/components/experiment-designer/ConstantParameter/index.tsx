@@ -11,9 +11,15 @@ type Props = {
   paramAtom: PrimitiveAtom<ExpDesignerNumberParameter>;
   className?: string;
   showSwitcher?: boolean;
+  onChangeParamType?: () => void;
 };
 
-export default function ConstantParameter({ paramAtom, className, showSwitcher = true }: Props) {
+export default function ConstantParameter({
+  paramAtom,
+  className,
+  showSwitcher = true,
+  onChangeParamType,
+}: Props) {
   const [data, setData] = useAtom(paramAtom);
 
   const changed = (inputNumberValue: number | null) => {
@@ -36,7 +42,7 @@ export default function ConstantParameter({ paramAtom, className, showSwitcher =
         controls={false}
         onChange={changed}
       />
-      {showSwitcher && <ExportOutlined />}
+      {showSwitcher && <ExportOutlined onClick={onChangeParamType} />}
     </div>
   );
 }

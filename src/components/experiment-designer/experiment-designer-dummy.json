@@ -5,21 +5,27 @@
       "name": "Duration",
       "type": "number",
       "value": 4000,
-      "unit": "ms"
+      "unit": "ms",
+      "min": 0,
+      "max": 20000
     },
     {
       "id": "timeStep",
       "name": "Time step",
       "type": "number",
       "value": 0.1,
-      "unit": "ms"
+      "unit": "ms",
+      "min": 0,
+      "max": 10
     },
     {
       "id": "forwardSkip",
       "name": "Forward skip",
       "type": "number",
       "value": 5000,
-      "unit": "ms"
+      "unit": "ms",
+      "min": 0,
+      "max": 20000
     },
     {
       "id": "seed",
@@ -73,7 +79,9 @@
           "name": "Duration",
           "type": "number",
           "value": 4000,
-          "unit": "ms"
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
         },
         {
           "id": "targetInputRegion",
@@ -103,7 +111,9 @@
           "name": "Duration",
           "type": "number",
           "value": 4000,
-          "unit": "ms"
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
         },
         {
           "id": "targetInputRegion",
@@ -133,7 +143,9 @@
           "name": "Duration",
           "type": "number",
           "value": 4000,
-          "unit": "ms"
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
         },
         {
           "id": "recordingRegion",
@@ -242,14 +254,18 @@
           "name": "Start time",
           "type": "number",
           "value": 0,
-          "unit": "ms"
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
         },
         {
           "id": "end",
           "name": "End time",
           "type": "number",
           "value": 300,
-          "unit": "ms"
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
         }
       ]
     }

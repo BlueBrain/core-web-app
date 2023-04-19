@@ -15,6 +15,8 @@ export type ExpDesignerNumberParameter = ExpDesignerBaseParameter & {
   type: 'number';
   value: number;
   unit: string;
+  min: number;
+  max: number;
 };
 
 export type ExpDesignerRangeParameter = ExpDesignerBaseParameter & {

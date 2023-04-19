@@ -3,7 +3,7 @@
 import { Divider } from 'antd';
 import { ComponentType, ReactNode, useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
-import { Atom, PrimitiveAtom, useAtom } from 'jotai';
+import { PrimitiveAtom, useAtom } from 'jotai';
 
 import { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
 import { getSubGroupFocusedAtom } from '@/components/experiment-designer/utils';
@@ -15,13 +15,13 @@ export const subheaderStyle = `${defaultPadding} uppercase text-gray-400`;
 const overflowStyle = 'max-h-[92vh] overflow-y-auto';
 
 type RowRendererProps = {
-  paramAtom: Atom<ExpDesignerParam>;
+  paramAtom: PrimitiveAtom<ExpDesignerParam>;
 };
 
 type Props = {
   description: string;
   RowRenderer: ComponentType<RowRendererProps>;
-  listAtoms: Atom<ExpDesignerParam>[] | undefined;
+  listAtoms: PrimitiveAtom<ExpDesignerParam>[] | undefined;
   children?: ReactNode;
   showHeader?: boolean;
   isGroup?: boolean;
