@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
-import Plotly, { Shape, Layout, Data } from 'plotly.js-dist-min';
+import Plotly, { Shape, Layout, Data, ColorScale } from 'plotly.js-dist-min';
 
 import { WholeBrainConnectivityMatrix } from '@/types/connectome';
 import {
@@ -9,6 +9,21 @@ import {
   selectedPreBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
+
+const PICNIC_W_ZERO_CUTOFF: ColorScale = [
+  [0, 'rgb(0,0,0)'],
+  [0.0001, 'rgb(0,0,255)'],
+  [0.1, 'rgb(51,153,255)'],
+  [0.2, 'rgb(102,204,255)'],
+  [0.3, 'rgb(153,204,255)'],
+  [0.4, 'rgb(204,204,255)'],
+  [0.5, 'rgb(255,255,255)'],
+  [0.6, 'rgb(255,204,255)'],
+  [0.7, 'rgb(255,153,255)'],
+  [0.8, 'rgb(255,102,204)'],
+  [0.9, 'rgb(255,102,102)'],
+  [1, 'rgb(255,0,0)'],
+];
 
 function getDensitiesForNodes(
   srcNodes: Map<string, string>,
@@ -117,7 +132,7 @@ export default function MacroConnectome({
         x: dstLabels,
         y: srcLabels,
         type: 'heatmap',
-        colorscale: 'Hot',
+        colorscale: PICNIC_W_ZERO_CUTOFF,
       },
     ];
 
