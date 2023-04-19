@@ -243,7 +243,10 @@ export const brainRegionLeavesUnsortedArrayAtom = atom<Promise<BrainRegion[] | n
 export const brainRegionsFilteredArrayAtom = atom<Promise<BrainRegion[] | null | undefined>>(
   async (get) => {
     const flattenedRegions = await get(brainRegionsUnsortedArrayAtom);
-    return flattenedRegions?.sort((a, b) => a.id.localeCompare(b.id)) ?? null;
+
+    if (!flattenedRegions) return null;
+
+    return [...flattenedRegions].sort((a, b) => a.id.localeCompare(b.id));
   }
 );
 
