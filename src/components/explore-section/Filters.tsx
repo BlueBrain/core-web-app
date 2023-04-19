@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useAtomValue, Atom, PrimitiveAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { CloseOutlined } from '@ant-design/icons';
 import { CheckboxOption, Filter, OptionsData } from '@/components/Filter/types';
 import { CheckList, FilterGroup } from '@/components/Filter';
 
@@ -61,11 +62,19 @@ function Filters({ aggregationsAtom, filtersAtom }: FiltersProps) {
 type ControlPanelProps = {
   aggregationsAtom: Atom<Promise<any>>;
   filtersAtom: PrimitiveAtom<Filter[]>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ControlPanel({ aggregationsAtom, filtersAtom }: ControlPanelProps) {
+export default function ControlPanel({
+  aggregationsAtom,
+  filtersAtom,
+  setOpen,
+}: ControlPanelProps) {
   return (
     <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-10 space-y-4 w-[480px]">
+      <button type="button" onClick={() => setOpen(false)} className="text-white text-right">
+        <CloseOutlined />
+      </button>
       <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
         Filters<small className="font-light text-base text-primary-3">6 Active Columns</small>
       </span>

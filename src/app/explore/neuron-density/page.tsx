@@ -2,9 +2,10 @@
 
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
+import isNumber from 'lodash/isNumber';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { ExploreSectionResource } from '@/types/explore-section';
-import { dateStringToUnix, sorter } from '@/util/common';
+import { dateStringToUnix, sorter, formatNumber } from '@/util/common';
 import Link from '@/components/Link';
 import ExploreSectionListingView from '@/components/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
@@ -21,18 +22,33 @@ const columHeader = (text: string) => <div className={styles.tableHeader}>{text}
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
-    title: columHeader('Name'),
-    dataIndex: 'name',
-    key: 'name',
+    title: columHeader('Brain Region'),
+    dataIndex: 'brainRegion',
+    key: 'brainRegion',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.name, b.name),
+    sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
   },
   {
-    title: columHeader('Description'),
-    dataIndex: 'description',
-    key: 'description',
+    title: columHeader('Mean ± STD (Neurons / MM³'),
+    dataIndex: 'neuronDensity',
+    key: 'neuronDensity',
+    className: 'text-primary-7',
+    render: (data) => <span>{isNumber(data?.value) ? formatNumber(data?.value) : ''}</span>,
+    sorter: (a, b) => sorter(a.neuronDensity?.value, b.neuronDensity?.value),
+  },
+  {
+    title: columHeader('M-Type'),
+    dataIndex: 'mtype',
+    key: 'mtype',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.description, b.description),
+    sorter: (a, b) => sorter(a.mtype, b.mtype),
+  },
+  {
+    title: columHeader('E-Type'),
+    dataIndex: 'etype',
+    key: 'etype',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.etype, b.etype),
   },
   {
     title: columHeader('Data'),
@@ -43,7 +59,7 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
-    title: columHeader('Species'),
+    title: columHeader('Specie'),
     dataIndex: 'subjectSpecies',
     key: 'subjectSpecies',
     className: 'text-primary-7 ',

@@ -43,7 +43,7 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
-    title: columHeader('Species'),
+    title: columHeader('Specie'),
     dataIndex: 'subjectSpecies',
     key: 'subjectSpecies',
     className: 'text-primary-7 ',

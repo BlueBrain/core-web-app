@@ -5,6 +5,7 @@ import {
   HomeOutlined,
   MinusOutlined,
   ArrowRightOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 import { useState } from 'react';
 import Link from '@/components/Link';
@@ -18,13 +19,13 @@ export default function Sidebar({ links }: SideLinkList) {
     <>
       <div className={expanded ? styles.expanded : styles.side}>
         <div>
+          <Link href="/explore">Explore</Link>
           <Button
             type="text"
             onClick={() => setExpanded((isExapanded) => !isExapanded)}
             style={{ color: 'white' }}
             icon={expanded ? <MinusOutlined /> : <PlusOutlined />}
           />
-          <Link href="/explore">Explore</Link>
         </div>
 
         {expanded && (
@@ -46,12 +47,12 @@ export default function Sidebar({ links }: SideLinkList) {
                 onKeyDown={() => setOpenExp(!openExp)}
               >
                 <h1>Experimental Data</h1>
-                <PlusOutlined />
+                {openExp ? <DownOutlined /> : <PlusOutlined />}
                 <p>
                   Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet.
                 </p>
               </span>
-              <ul className={styles.obsNavSubNav} style={{ display: openExp ? 'block' : 'none' }}>
+              <ul style={{ display: openExp ? 'block' : 'none' }}>
                 <li>
                   <Link href="/explore/electrophysiology">
                     Neuron electrophysiology <ArrowRightOutlined />

@@ -2,9 +2,10 @@
 
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
+import isNumber from 'lodash/isNumber';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { ExploreSectionResource } from '@/types/explore-section';
-import { dateStringToUnix, sorter } from '@/util/common';
+import { dateStringToUnix, sorter, formatNumber } from '@/util/common';
 import Link from '@/components/Link';
 import ExploreSectionListingView from '@/components/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
@@ -21,33 +22,41 @@ const columHeader = (text: string) => <div className={styles.tableHeader}>{text}
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
+    title: <div className={styles.headerText}>LAYER THICKNESS {String.fromCharCode(956)}m</div>,
+    dataIndex: 'layerThickness',
+    key: 'layerThickness',
+    className: 'text-primary-7 ',
+    render: (data) => <span>{isNumber(data) ? formatNumber(data) : ''}</span>,
+    sorter: (a, b) => sorter(a.layerThickness, b.layerThickness),
+  },
+  {
     title: columHeader('Brain Region'),
     dataIndex: 'brainRegion',
     key: 'brainRegion',
     className: 'text-primary-7 ',
+    render: (text, record) => <Link href={`/explore/layer-thickness/${record.key}`}>{text}</Link>,
     sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
   },
   {
-    title: columHeader('M-Type'),
-    dataIndex: 'mtype',
-    key: 'mtype',
+    title: columHeader('Description'),
+    dataIndex: 'description',
+    key: 'description',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.mtype, b.mtype),
+    sorter: (a, b) => sorter(a.description, b.description),
   },
   {
-    title: columHeader('Data'),
-    dataIndex: 'name',
-    key: 'name',
-    className: 'text-primary-7 ',
-    render: (text, record) => <Link href={`/explore/layer-thickness/${record.key}`}>{text}</Link>,
-    sorter: (a, b) => sorter(a.name, b.name),
-  },
-  {
-    title: columHeader('Species'),
+    title: columHeader('Specie'),
     dataIndex: 'subjectSpecies',
     key: 'subjectSpecies',
     className: 'text-primary-7 ',
     sorter: (a, b) => sorter(a.subjectSpecies, b.subjectSpecies),
+  },
+  {
+    title: columHeader('Subject Age'),
+    dataIndex: 'subjectAge',
+    key: 'subjectAge',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.subjectAge, b.subjectAge),
   },
   {
     title: columHeader('Contributor'),

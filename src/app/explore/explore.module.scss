@@ -1,8 +1,11 @@
+.headerText,
 .tableHeader {
   color: #8c8c8c;
-  text-transform: uppercase;
 }
 
+.tableHeader {
+  text-transform: uppercase;
+}
 .tableRow {
   border: none !important;
   @apply cursor-pointer;

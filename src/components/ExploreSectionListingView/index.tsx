@@ -1,7 +1,7 @@
 import { ColumnProps } from 'antd/es/table';
 import { Atom, PrimitiveAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import ExploreSectionNameSearch from '@/components/explore-section/ephys/ExploreSectionNameSearch';
 import LoadMoreButton from '@/components/ExploreSectionListingView/LoadMoreButton';
 import ExploreSectionTable from '@/components/ExploreSectionListingView/ExploreSectionTable';
@@ -9,6 +9,7 @@ import ControlPanel from '@/components/explore-section/Filters';
 import { Filter } from '@/components/Filter/types';
 import { ExploreSectionResource, TotalHits } from '@/types/explore-section';
 import { formatNumber } from '@/util/common';
+import styles from '@/components/explore-section/filters.module.scss';
 
 type ExploreSectionPageProps = {
   title: string;
@@ -31,6 +32,7 @@ export default function ExploreSectionListingView({
   aggregationsAtom,
   filtersAtom,
 }: ExploreSectionPageProps) {
+  const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
   const loadableData = useMemo(() => loadable(dataAtom), [dataAtom]);
   const loadableTotal = useMemo(() => loadable(totalAtom), [totalAtom]);
   const data = useAtomValue(loadableData);
@@ -48,8 +50,19 @@ export default function ExploreSectionListingView({
               Total: {value}
             </span>
           </div>
-          <div className="mr-10">
+          <div className="mr-5 flex items-center space-between">
             <ExploreSectionNameSearch searchStringAtom={searchStringAtom} />
+          </div>
+          <div className="mr-5 items-center">
+            {!openFiltersSidebar && (
+              <button
+                type="button"
+                className={styles.filterButton}
+                onClick={() => setOpenFiltersSidebar(!openFiltersSidebar)}
+              >
+                {} Filters <span className={styles.active}> 6 active columns</span>
+              </button>
+            )}
           </div>
         </div>
         <div
@@ -60,7 +73,13 @@ export default function ExploreSectionListingView({
           <LoadMoreButton dataState={data} pageSizeAtom={pageSizeAtom} totalState={total} />
         </div>
       </section>
-      <ControlPanel aggregationsAtom={aggregationsAtom} filtersAtom={filtersAtom} />
+      {openFiltersSidebar && (
+        <ControlPanel
+          aggregationsAtom={aggregationsAtom}
+          filtersAtom={filtersAtom}
+          setOpen={setOpenFiltersSidebar}
+        />
+      )}
     </>
   );
 }

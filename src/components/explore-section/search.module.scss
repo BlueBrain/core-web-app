@@ -1,0 +1,15 @@
+.search {
+  @apply bg-primary-7 border-none bg-transparent rounded-none;
+  button:global(.ant-input-search-button) {
+    @apply text-white bg-primary-7;
+    &:hover {
+      @apply bg-primary-6;
+    }
+    &:focus {
+      @apply border-primary-6;
+    }
+  }
+}
+.searchButton {
+  @apply rounded-none border-primary-4 text-primary-8 pt-0;
+}

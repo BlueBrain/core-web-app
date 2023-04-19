@@ -15,10 +15,10 @@
     display: inline-flex;
     flex-direction: column;
     a {
-      @apply relative -left-[8px] top-10 -rotate-90;
+      @apply relative -left-[8px] top-20 -rotate-90;
     }
     button {
-      @apply ml-[2px] flex justify-center;
+      @apply relative bottom-[28px] ml-[2px] justify-center;
     }
   }
 
@@ -51,16 +51,16 @@
 }
 // Expanded Sidebar styles
 .expanded {
-  @apply pl-3 w-96;
+  @apply pl-3;
   > div {
-    @apply flex flex-row-reverse w-72 place-content-start;
+    @apply pr-2 pt-3 flex items-center justify-between;
+    button {
+      @apply mt-0;
+    }
   }
   div {
     > a {
-      @apply text-2xl self-end rotate-1;
-    }
-    button {
-      @apply left-[60px];
+      @apply text-2xl;
     }
   }
 
@@ -88,9 +88,9 @@
   }
 
   .obsNav {
-    @apply mt-10 pr-4;
+    @apply mt-10 pr-2;
     > li {
-      @apply mt-10 w-72 mx-auto;
+      @apply mt-10 w-72 mx-auto pr-2;
     }
     a,
     span {

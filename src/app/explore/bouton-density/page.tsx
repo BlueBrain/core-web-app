@@ -2,9 +2,10 @@
 
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
+import isNumber from 'lodash/isNumber';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { ExploreSectionResource } from '@/types/explore-section';
-import { dateStringToUnix, sorter } from '@/util/common';
+import { dateStringToUnix, sorter, formatNumber } from '@/util/common';
 import Link from '@/components/Link';
 import ExploreSectionListingView from '@/components/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
@@ -28,26 +29,50 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     sorter: (a, b) => sorter(a.mtype, b.mtype),
   },
   {
-    title: columHeader('Name'),
-    dataIndex: 'name',
-    key: 'name',
+    title: columHeader('Region'),
+    dataIndex: 'region',
+    key: 'region',
     className: 'text-primary-7 ',
     render: (text, record) => <Link href={`/explore/bouton-density/${record.key}`}>{text}</Link>,
-    sorter: (a, b) => sorter(a.name, b.name),
+    sorter: (a, b) => sorter(a.region, b.region),
   },
   {
-    title: columHeader('Species'),
+    title: (
+      <div className={styles.headerText}>MEAN ± STD (boutons / {String.fromCharCode(956)}m)</div>
+    ),
+    dataIndex: 'boutonDensity',
+    key: 'boutonDensity',
+    className: 'text-primary-7',
+    render: (data) => <span>{isNumber(data?.value) ? formatNumber(data?.value) : ''}</span>,
+    sorter: (a, b) => sorter(a.boutonDensity?.value, b.boutonDensity?.value),
+  },
+  {
+    title: columHeader('SEM'),
+    dataIndex: 'sem',
+    key: 'sem',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.sem, b.sem),
+  },
+  {
+    title: columHeader('Nº of cells'),
+    dataIndex: 'ncells',
+    key: 'ncells',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.ncells, b.ncells),
+  },
+  {
+    title: columHeader('Specie'),
     dataIndex: 'subjectSpecies',
     key: 'subjectSpecies',
     className: 'text-primary-7 ',
     sorter: (a, b) => sorter(a.subjectSpecies, b.subjectSpecies),
   },
   {
-    title: columHeader('Contributor'),
-    dataIndex: 'contributor',
-    key: 'contributor',
+    title: columHeader('Weight'),
+    dataIndex: 'weight',
+    key: 'weight',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.contributor, b.contributor),
+    sorter: (a, b) => sorter(a.weight, b.weight),
   },
   {
     title: columHeader('Date'),

@@ -31,7 +31,7 @@ export interface Campaign {
   tags?: string[];
 }
 
-export interface ExploreSectionResource {
+export interface ExploreSectionResource extends OptionalExploreSectionFields {
   key: React.Key;
   self: string;
   id: string;
@@ -43,6 +43,17 @@ export interface ExploreSectionResource {
   brainRegion: string;
   mtype?: string;
   etype?: string;
+}
+
+export interface OptionalExploreSectionFields {
+  neuronDensity?: NValueEntity;
+  layerThickness?: NValueEntity;
+  boutonDensity?: NumericEntity;
+  subjectAge?: SubjectAge;
+  sem?: number;
+  weight?: string | number;
+  region?: string;
+  ncells?: number;
 }
 
 export interface TotalHits {
@@ -81,12 +92,20 @@ export interface ContributorsEntity {
   identifier?: string | string[] | null;
   label?: string | string[] | null;
 }
-export interface SubjectAge {
+export interface NumericEntity {
   label: string;
-  period: string;
   unit: string;
   value: number | string;
 }
+export interface SubjectAge extends NumericEntity {
+  value: number | string;
+  period?: number | string;
+}
+
+export interface NValueEntity extends NumericEntity {
+  nValue: number;
+}
+
 export interface ESResponseRaw {
   sort?: number[] | null;
   _id: string;
@@ -94,7 +113,7 @@ export interface ESResponseRaw {
   _source: Source;
   _type: string;
 }
-export interface Source {
+export interface Source extends OptionalExploreSectionFields {
   '@id': string;
   '@type'?: string | string[] | null;
   brainRegion?: IdLabelEntity;
@@ -110,7 +129,6 @@ export interface Source {
   updatedBy: string;
   _self: string;
   contributors?: ContributorsEntity[] | null;
-  subjectAge?: SubjectAge | null;
   license?: IdLabelEntity | null;
   organizations?: IdLabelEntity[] | null;
   eType?: IdLabelEntity | null;
