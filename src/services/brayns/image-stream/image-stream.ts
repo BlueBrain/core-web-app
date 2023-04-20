@@ -1,15 +1,15 @@
+import { JsonRpcServiceInterface } from '../json-rpc/types';
+import GenericEvent from '../utils/generic-event';
 import { loadImage } from './image-tools';
-import GenericEvent from '@/services/brayns/utils/generic-event';
-import JsonRpcService from '@/services/brayns/json-rpc/json-rpc';
-import {
-  assertNumber,
-  assertObject,
-  assertOptionalArrayBuffer,
-  isBoolean,
-} from '@/util/type-guards';
 import { logError } from '@/util/logger';
+import { assertNumber, assertObject, assertOptionalArrayBuffer } from '@/util/type-guards';
 
 const MINIMAL_VIEWPORT_SIZE = 64;
+
+interface Frame {
+  timestamp: number;
+  sizeInBytes: number;
+}
 
 export interface RendererResult {
   frame?: HTMLImageElement;
@@ -24,12 +24,12 @@ export interface RendererResultOption {
 export default class ImageStream {
   public readonly eventNewImage: GenericEvent<ImageStream>;
 
+  private readonly eventWaitingForImage: GenericEvent<boolean>;
+
   /**
    * We don't want to start a **transaction** while there is a pending
    * request for a frame.
    */
-  private readonly eventWaitingForImage: GenericEvent<boolean>;
-
   private _waitingForImage = false;
 
   private lastReceivedImage = new Image();
@@ -40,18 +40,24 @@ export default class ImageStream {
 
   private needAnotherImage = false;
 
-  // Reduced quality is faster and suited for interactive camera manipulation.
-  private needReducedQuality = false;
-
-  private previousFrameWasInReducedQuality = true;
-
-  private firstImage = true;
-
   private viewportWidth = 1;
 
   private viewportHeight = 1;
 
-  constructor(private readonly renderer: JsonRpcService) {
+  private readonly framesForStats: Frame[] = [];
+
+  /**
+   * For performance reasons, we don't dispatch a stats event every time we get
+   * a new image. We do this only if the current time is beyond `nextTimeWeCanDispatchStats`.
+   */
+  private nextTimeWeCanDispatchStats = 0;
+
+  /**
+   * Timestamp of the last stats event dispatch.
+   */
+  private lastStatsDispatchTime = 0;
+
+  constructor(private readonly renderer: JsonRpcServiceInterface) {
     this.eventNewImage = new GenericEvent();
     this.eventWaitingForImage = new GenericEvent();
     this.askForNextFrame();
@@ -76,23 +82,7 @@ export default class ImageStream {
     });
   }
 
-  private async controlRendererQuality() {
-    if (this.needReducedQuality === this.previousFrameWasInReducedQuality) {
-      // Nothing has changed regarding the image quality.
-      return;
-    }
-    const width = this.viewportWidth;
-    const height = this.viewportHeight;
-    if (this.needReducedQuality) {
-      // eslint-disable-next-line no-bitwise
-      await this.internalSetViewport(width >> 2, height >> 2);
-    } else {
-      await this.internalSetViewport(width, height);
-    }
-  }
-
-  readonly askForNextFrame = async (reduceQuality?: boolean): Promise<void> => {
-    if (isBoolean(reduceQuality)) this.needReducedQuality = reduceQuality;
+  readonly askForNextFrame = async (renderEvenIfNothingHasChanged = false): Promise<void> => {
     if (this.waitingForImage || this.transactionDepth > 0) {
       this.needAnotherImage = true;
       return;
@@ -100,13 +90,10 @@ export default class ImageStream {
     this.needAnotherImage = false;
     this.waitingForImage = true;
     try {
-      await this.controlRendererQuality();
       const result = await this.trigger({
-        renderEvenIfNothingHasChanged: this.firstImage,
+        renderEvenIfNothingHasChanged,
         prepareImageWithoutSendingIt: false,
       });
-      this.previousFrameWasInReducedQuality = this.needReducedQuality;
-      this.firstImage = false;
       this._accumulationProgress = result.progress;
       if (result.frame) {
         this.image = result.frame;
@@ -114,7 +101,7 @@ export default class ImageStream {
       if (this.shouldAskForNextAccumulationFrame(result.progress)) {
         // There are other accumulations available,
         // we ask for them after the throttling delay.
-        window.setTimeout(() => this.askForNextFrame(), 10);
+        window.setTimeout(() => this.askForNextFrame(), 1);
       }
     } finally {
       this.waitingForImage = false;
@@ -124,7 +111,7 @@ export default class ImageStream {
   /**
    * Prevent Brayns from rendering new images during the execution time of `action()`.
    */
-  async transaction<T>(action: () => Promise<T>, reduceQuality = false): Promise<T> {
+  async transaction<T>(action: () => Promise<T>): Promise<T> {
     this.transactionDepth += 1;
     try {
       await this.waitUntilCurrentRequestIsDone();
@@ -136,7 +123,7 @@ export default class ImageStream {
     } finally {
       this.transactionDepth -= 1;
       if (this.transactionDepth <= 0) {
-        this.askForNextFrame(reduceQuality);
+        this.askForNextFrame();
       }
     }
   }
@@ -156,7 +143,7 @@ export default class ImageStream {
    */
   private shouldAskForNextAccumulationFrame(progress: number): boolean {
     if (progress >= 1) return false;
-    return this.needAnotherImage && this.transactionDepth <= 0;
+    return this.transactionDepth <= 0;
   }
 
   private get waitingForImage() {
@@ -190,7 +177,7 @@ export default class ImageStream {
   private async trigger(options: RendererResultOption): Promise<RendererResult> {
     const send = !options.prepareImageWithoutSendingIt;
     const force = options.renderEvenIfNothingHasChanged;
-    const data = await this.renderer.exec('render-image', { send, force });
+    const data = await this.renderer.exec('render-image', { send, force, format: 'jpg' });
     assertObject(data);
     assertNumber(data.accumulation, 'data.accumulation');
     assertNumber(data.max_accumulation, 'data.max_accumulation');

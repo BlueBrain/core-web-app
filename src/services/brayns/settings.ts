@@ -3,8 +3,8 @@ const Settings = {
   UNICORE_ACCOUNT: 'proj134',
   UNICORE_PARTITION: 'prod',
   UNICORE_MEMORY: '96G',
-  RENDERER_VERSION: 7,
-  SERVICE_PORT: 5000,
+  BRAYNS_BACKEND_PORT: 8000,
+  BRAYNS_RENDERER_PORT: 5000,
 };
 
 export default Settings;

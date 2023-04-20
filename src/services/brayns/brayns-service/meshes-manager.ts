@@ -11,6 +11,10 @@ import { logError } from '@/util/logger';
 
 const MODELS_PER_MESH_STORAGE_KEY = 'ModelsManager/modelsPerMesh';
 
+interface Task {
+  objects: BraynsObjects;
+}
+
 /**
  * We need to display a set of models at the time.
  * And since loading a model can take time, we want
@@ -30,12 +34,12 @@ export default class ModelsManager {
 
   private modelsPerMeshNeedsInitialization = true;
 
-  private readonly tasks: BraynsObjects[] = [];
+  private readonly tasks: Task[] = [];
 
   public constructor(private readonly wrapper: BraynsWrapper, private readonly token: string) {}
 
-  showOnly(objects: BraynsObjects): void {
-    this.tasks.push(objects);
+  showMeshes(objects: BraynsObjects): void {
+    this.tasks.push({ objects });
     if (!this.busy) this.processTasks();
   }
 
@@ -54,7 +58,7 @@ export default class ModelsManager {
 
       try {
         await this.wrapper.hide(this.getAllModelIds());
-        for (const obj of task) {
+        for (const obj of task.objects) {
           switch (obj.type) {
             case 'mesh':
               await this.addMesh(obj);
@@ -83,7 +87,7 @@ export default class ModelsManager {
       const data = await this.wrapper.storage.get(MODELS_PER_MESH_STORAGE_KEY);
       if (!data) return;
 
-      assetStoredModelsPerMesh(data);
+      assertStoredModelsPerMesh(data);
       this.modelsPerMesh = {};
       for (const key of Object.keys(data)) {
         const value = data[key];
@@ -121,31 +125,31 @@ export default class ModelsManager {
     return modelIds;
   }
 
-  private async addMesh({ url, color }: BraynsMeshOptions): Promise<number[]> {
+  private async addMesh(task: BraynsMeshOptions): Promise<number[]> {
     this.eventBusy.dispatch({
       type: 'mesh',
-      id: url,
+      id: task.url,
       isLoading: true,
     });
     try {
-      const modelIdsFromCache = this.modelsPerMesh[url];
+      const modelIdsFromCache = this.modelsPerMesh[task.url];
       if (modelIdsFromCache) {
         await this.wrapper.show(modelIdsFromCache);
         return modelIdsFromCache;
       }
 
-      const metadata = await loadNexusMetadata(url, this.token);
+      const metadata = await loadNexusMetadata(task.url, this.token);
       if (!metadata) return [];
 
       const modelIds = await this.wrapper.mesh.add(metadata._location);
-      await this.wrapper.mesh.setColor(color, ...modelIds);
-      this.modelsPerMesh[url] = modelIds;
+      await this.wrapper.mesh.setColor(task.color, ...modelIds);
+      this.modelsPerMesh[task.url] = modelIds;
       this.saveModelsPerMesh(); // Don't need to wait this function.
       return modelIds;
     } finally {
       this.eventBusy.dispatch({
         type: 'mesh',
-        id: url,
+        id: task.url,
         isLoading: false,
       });
     }
@@ -156,6 +160,12 @@ interface StoredModelsPerMesh {
   [url: string]: number[];
 }
 
-function assetStoredModelsPerMesh(data: unknown): asserts data is StoredModelsPerMesh {
-  assertType(data, ['map', ['array', 'number']], 'StoredModelsPerMesh');
+function assertStoredModelsPerMesh(data: unknown): asserts data is StoredModelsPerMesh {
+  try {
+    assertType(data, ['map', ['array', 'number']], 'StoredModelsPerMesh');
+  } catch (ex) {
+    logError('Invalid StoredModelsPerMesh data:', ex);
+    logError('We got:', data);
+    throw ex;
+  }
 }

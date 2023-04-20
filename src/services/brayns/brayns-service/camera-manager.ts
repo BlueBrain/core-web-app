@@ -1,51 +1,54 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Vector3, half, clamp } from '@/services/brayns/utils/calc';
-import GenericEvent from '@/services/brayns/utils/generic-event';
-import BraynsWrapper from '@/services/brayns/wrapper/wrapper';
+import Calc, { Vector3, half } from '../utils/calc';
+import GenericEvent from '../utils/generic-event';
+import BraynsWrapper from '../wrapper/wrapper';
 import { logError } from '@/util/logger';
 
-export interface CameraSettings {
+export interface CameraEulerSettings {
   latitude: number;
   longitude: number;
+  tilt: number;
   target: Vector3;
   distance: number;
 }
 
 export default class CameraManager {
-  public readonly eventChange = new GenericEvent<CameraSettings>();
+  public readonly eventChange = new GenericEvent<CameraEulerSettings>();
 
   private busyRefreshing = false;
 
   private refreshHasBeenScheduled = false;
 
-  private settings: CameraSettings = {
+  private settings: CameraEulerSettings = {
     latitude: 0,
     longitude: 0,
+    tilt: 0,
     target: [6587, 3849, 5687],
-    distance: 18837 - 5687,
+    distance: 13150,
   };
 
   constructor(private readonly wrapper: BraynsWrapper) {
-    this.update({});
+    this.updateEulerSettings({});
   }
 
-  get(): CameraSettings {
-    const { latitude, longitude, target, distance } = this.settings;
+  getEulerSettings(): CameraEulerSettings {
+    const { latitude, longitude, tilt, target, distance } = this.settings;
     return {
       latitude,
       longitude,
+      tilt,
       distance,
       target: [...target],
     };
   }
 
-  update(settings: Partial<CameraSettings>) {
+  updateEulerSettings(settings: Partial<CameraEulerSettings>) {
     this.settings = {
       ...this.settings,
       ...settings,
     };
     const halfPi = half(Math.PI) - 1e-5;
-    this.settings.latitude = clamp(this.settings.latitude, -halfPi, halfPi);
+    this.settings.latitude = Calc.clamp(this.settings.latitude, -halfPi, halfPi);
     this.refresh();
     this.dispatch();
   }
@@ -89,6 +92,6 @@ export default class CameraManager {
   }
 
   dispatch() {
-    this.eventChange.dispatch(this.get());
+    this.eventChange.dispatch(this.getEulerSettings());
   }
 }

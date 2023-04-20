@@ -1,8 +1,12 @@
+'use client';
+
 import React from 'react';
+
+import useNotification from '../../hooks/notifications';
 import Allocation from './allocation';
 import BraynsService from './brayns-service/brayns-service';
-import Events from './utils/events';
 import { BraynsServiceInterface } from './types';
+import Events from './utils/events';
 import { logError } from '@/util/logger';
 
 export type { BraynsServiceInterface } from './types';
@@ -13,11 +17,12 @@ const EXPORTS = {
    * @returns A string if an error occured, `null` until the allocation is done.
    */
   useBrayns(token: string | undefined): null | BraynsServiceInterface | string {
+    const notif = useNotification();
     const [braynsService, setBraynsService] = React.useState<
       null | BraynsServiceInterface | string
     >(null);
     React.useEffect(() => {
-      if (!token) return;
+      if (!token || braynsService) return;
 
       Allocation.allocate(token)
         .then((wrapper) => {
@@ -26,8 +31,9 @@ const EXPORTS = {
         .catch((ex) => {
           logError('Unable to allocate a node for Brayns!', ex);
           setBraynsService(ex instanceof Error ? ex.message : JSON.stringify(ex));
+          notif.error('Unable to start Brayns in a node!');
         });
-    }, [token]);
+    }, [token, notif, braynsService]);
     return braynsService;
   },
 

@@ -1,33 +1,27 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import Events from '../utils/events';
+import JsonRpcService from '../json-rpc/json-rpc';
+import BraynsWrapper from '../wrapper/wrapper';
+import JsonRpcSerializerService from '../json-rpc/json-rpc-serializer';
 import BackendAllocatorService from './backend-allocator-service';
 import Persistence from './persistence';
-import Events from '@/services/brayns/utils/events';
-import JsonRpcService from '@/services/brayns/json-rpc/json-rpc';
-import Settings from '@/services/brayns/settings';
-import BraynsWrapper from '@/services/brayns/wrapper/wrapper';
-import { assertType } from '@/util/type-guards';
-
-/**
- * Set this to `null` to get the renderer address from the service.
- * Or set a specific address if you need to debug a specific feature
- * in Brayns Renderer.
- */
-const DEBUG_BRAYNS_ADDRESS = null; // '128.178.97.151:5000';
+import { logError } from '@/util/logger';
 
 const Allocate = {
   async allocate(token: string): Promise<BraynsWrapper> {
-    const promisedService = await getPromisedService(token);
-    const wrapper = await promisedService;
-    wrapper.repaint();
-    return wrapper;
+    try {
+      const promisedService = await getPromisedService(token);
+      const wrapper = await promisedService;
+      wrapper.repaint();
+      return wrapper;
+    } catch (ex) {
+      logError('Unable to allocate:', ex);
+      throw ex;
+    }
   },
 };
 
 export default Allocate;
-
-function assertRendererPort(data: unknown): asserts data is { port: number } {
-  assertType(data, { port: 'number' });
-}
 
 const cacheForPromisedServices = new Map<string, Promise<BraynsWrapper>>();
 
@@ -43,9 +37,9 @@ function getPromisedService(token: string): Promise<BraynsWrapper> {
     const getServiceAddress = async () => {
       Events.allocationProgress.dispatch('Allocating a node on BB5...');
       const currentAllocation = Persistence.getAllocatedServiceAddress();
+      const allocator = new BackendAllocatorService(token);
       if (currentAllocation) return currentAllocation;
 
-      const allocator = new BackendAllocatorService(token);
       const serviceAddress = await allocator.allocate();
       if (!serviceAddress) {
         Persistence.clearAllocatedServiceAddress();
@@ -57,24 +51,23 @@ function getPromisedService(token: string): Promise<BraynsWrapper> {
     };
     const action = async () => {
       const serviceAddress = await getServiceAddress();
-      const serviceAddressAsString = `${serviceAddress.host}:${serviceAddress.port}`;
-      Events.allocationProgress.dispatch(`Connecting the Service on ${serviceAddressAsString}...`);
-      const service = new JsonRpcService(serviceAddressAsString, true);
-      await service.connect();
-      Events.allocationProgress.dispatch('Starting the Renderer...');
-      const rendererAddress = await service.exec('brayns-address', {
-        version: Settings.RENDERER_VERSION,
-      });
-      assertRendererPort(rendererAddress);
-      const rendererAddressAsString =
-        DEBUG_BRAYNS_ADDRESS ?? `${serviceAddress.host}:${rendererAddress.port}`;
+      const backendAddressAsString = `${serviceAddress.host}:${serviceAddress.backendPort}`;
       Events.allocationProgress.dispatch(
-        `Connecting the Renderer on ${rendererAddressAsString}...`
+        `Connecting Brayns Backend on ${backendAddressAsString}...`
       );
-      const renderer = new JsonRpcService(rendererAddressAsString, true);
+      const backend = new JsonRpcService(backendAddressAsString);
+      await backend.connect();
+      console.log('Connected to', backendAddressAsString);
+      const rendererAddressAsString = `${serviceAddress.host}:${serviceAddress.rendererPort}`;
+      Events.allocationProgress.dispatch(
+        `Connecting Brayns Renderer on ${rendererAddressAsString}...`
+      );
+      const renderer = new JsonRpcService(rendererAddressAsString, { trace: false });
       await renderer.connect();
-      const wrapper = new BraynsWrapper(service, renderer);
-      Events.allocationProgress.dispatch('Initializing renderer...');
+      renderer.recording = true;
+      console.log('Connected to', rendererAddressAsString);
+      const wrapper = new BraynsWrapper(backend, new JsonRpcSerializerService(renderer));
+      Events.allocationProgress.dispatch('Initializing Brayns...');
       await wrapper.initialize();
       return wrapper;
     };

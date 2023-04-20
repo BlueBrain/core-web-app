@@ -87,11 +87,10 @@ export function assertOptionalArrayBuffer(
 export type TypeDef =
   | 'boolean'
   | 'null'
-  | 'undefined'
-  | 'string'
   | 'number'
+  | 'string'
+  | 'undefined'
   | 'unknown'
-  | ['string', { min?: number; max?: number }]
   | ['number', { min?: number; max?: number }]
   | ['|', ...TypeDef[]]
   | ['?', TypeDef]
@@ -103,6 +102,12 @@ export type TypeDef =
 export function assertType<T>(data: unknown, type: TypeDef, prefix = 'data'): asserts data is T {
   if (type === 'unknown') return;
 
+  if (type === 'null') {
+    if (data !== null) {
+      throw Error(`Expected ${prefix} to be null and not a ${typeof data}!`);
+    }
+    return;
+  }
   if (typeof type === 'string') {
     if (typeof data !== type) {
       throw Error(`Expected ${prefix} to be a string and not a ${typeof data}!`);
