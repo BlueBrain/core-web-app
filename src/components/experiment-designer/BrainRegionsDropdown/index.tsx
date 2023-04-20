@@ -5,6 +5,7 @@ import { loadable } from 'jotai/utils';
 import { Select } from 'antd';
 
 import { brainRegionsAtom } from '@/state/brain-regions';
+import { BrainRegion } from '@/types/ontologies';
 
 type Props = {
   onChange?: any;
@@ -14,7 +15,11 @@ type Props = {
 
 const loadableBrainRegionsAtom = loadable(brainRegionsAtom);
 
-export default function BrainRegionsDropdown({ onChange, defaultValue, className }: Props) {
+export default function BrainRegionsDropdown({
+  onChange,
+  defaultValue = 'SELECT',
+  className,
+}: Props) {
   const brainRegionsLoadable = useAtomValue(loadableBrainRegionsAtom);
 
   const brainRegions = brainRegionsLoadable.state === 'hasData' ? brainRegionsLoadable.data : [];
@@ -22,12 +27,12 @@ export default function BrainRegionsDropdown({ onChange, defaultValue, className
   const options = brainRegions?.map((region) => ({
     value: region.id,
     label: region.title,
+    region,
   }));
 
-  const onSelect = (regionId: string | undefined) => {
+  const onSelect = (regionId: string, { region }: { region: BrainRegion }) => {
     if (!regionId) return;
-    const newSelectedBrainRegion = brainRegions?.find((br) => br.id === regionId);
-    onChange(newSelectedBrainRegion);
+    onChange(region);
   };
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { Atom, PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
+import { PrimitiveAtom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
@@ -14,42 +14,105 @@ import {
   ConstantParameter,
   DropdownParameter,
   DefaultEmptyParam,
+  RangeParameter,
+  MultiBrainRegionDropdown,
+  MultiDropdown,
 } from '@/components/experiment-designer';
 import type {
   ExpDesignerDropdownParameter,
+  ExpDesignerMultipleDropdownParameter,
   ExpDesignerNumberParameter,
   ExpDesignerParam,
+  ExpDesignerRangeParameter,
+  ExpDesignerRegionDropdownGroupParameter,
   ExpDesignerRegionParameter,
 } from '@/types/experiment-designer';
-
 import { getNewSensoryInputObj } from '@/components/experiment-designer/defaultNewObject';
+import { applySwapFunction } from '@/components/experiment-designer/utils';
 
-function InputBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
-  const param = useAtomValue<ExpDesignerParam>(paramAtom);
+function InputBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
+  const [param, setParam] = useAtom(paramAtom);
+
+  const changed = () => {
+    const newSwapParam = applySwapFunction(param);
+    if (!newSwapParam) return;
+
+    setParam(newSwapParam);
+  };
 
   let constantCol;
   let sweepCol;
   switch (param.type) {
     case 'number': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerNumberParameter>;
-      constantCol = <ConstantParameter paramAtom={paramAtomTyped} className={defaultPadding} />;
+      constantCol = (
+        <ConstantParameter
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
+      );
       sweepCol = <DefaultEmptyParam />;
+      break;
+    }
+
+    case 'range': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRangeParameter>;
+      constantCol = <DefaultEmptyParam />;
+      sweepCol = <RangeParameter paramAtom={paramAtomTyped} onChangeParamType={changed} />;
       break;
     }
 
     case 'dropdown': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerDropdownParameter>;
-      constantCol = <DropdownParameter paramAtom={paramAtomTyped} className={defaultPadding} />;
+      constantCol = (
+        <DropdownParameter
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
+      );
       sweepCol = <DefaultEmptyParam />;
+      break;
+    }
+
+    case 'multipleDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerMultipleDropdownParameter>;
+      constantCol = <DefaultEmptyParam />;
+      sweepCol = (
+        <MultiDropdown
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
+      );
+
       break;
     }
 
     case 'regionDropdown': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
       constantCol = (
-        <InputTargetRegionSelector paramAtom={paramAtomTyped} className={defaultPadding} />
+        <InputTargetRegionSelector
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
       );
       sweepCol = <DefaultEmptyParam />;
+      break;
+    }
+
+    case 'regionDropdownGroup': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionDropdownGroupParameter>;
+      constantCol = <DefaultEmptyParam />;
+      sweepCol = (
+        <MultiBrainRegionDropdown
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
+      );
       break;
     }
 

@@ -1,4 +1,8 @@
-import { ExpDesignerGroupParameter } from '@/types/experiment-designer';
+import {
+  ExpDesignerGroupParameter,
+  ExpDesignerMultipleDropdownParameter,
+  ExpDesignerRegionParameter,
+} from '@/types/experiment-designer';
 
 export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
   id: crypto.randomUUID(),
@@ -91,4 +95,20 @@ export const getNewSensoryInputObj = (): ExpDesignerGroupParameter => ({
       value: 'Field CA1',
     },
   ],
+});
+
+export const getNewTargetObj = (): ExpDesignerRegionParameter => ({
+  id: crypto.randomUUID(),
+  name: 'name',
+  type: 'regionDropdown',
+  value: 'Field CA1',
+  brainRegionId: 382,
+});
+
+export const getNewMultiDropdown = (): ExpDesignerMultipleDropdownParameter => ({
+  id: crypto.randomUUID(),
+  name: 'name',
+  type: 'multipleDropdown',
+  value: [],
+  options: [],
 });

@@ -11,9 +11,14 @@ import { BrainRegion } from '@/types/ontologies';
 type Props = {
   paramAtom: PrimitiveAtom<ExpDesignerRegionParameter>;
   className?: string;
+  onChangeParamType?: () => void;
 };
 
-export default function StimulationTargetRegionSelector({ paramAtom, className }: Props) {
+export default function StimulationTargetRegionSelector({
+  paramAtom,
+  className,
+  onChangeParamType,
+}: Props) {
   const [data, setData] = useAtom(paramAtom);
 
   const setSimulateRegions = (newBrainRegion: BrainRegion) => {
@@ -28,7 +33,7 @@ export default function StimulationTargetRegionSelector({ paramAtom, className }
     <div className={classNames('flex gap-3 items-center font-bold', className)}>
       <div className="grow">Target</div>
       <BrainRegionsDropdown onChange={setSimulateRegions} defaultValue={data.value} />
-      <ExportOutlined />
+      <ExportOutlined onClick={onChangeParamType} />
     </div>
   );
 }

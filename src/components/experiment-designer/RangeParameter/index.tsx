@@ -15,9 +15,10 @@ const { Panel } = Collapse;
 type Props = {
   paramAtom: PrimitiveAtom<ExpDesignerRangeParameter>;
   className?: string;
+  onChangeParamType?: () => void;
 };
 
-export default function RangeParameter({ paramAtom, className }: Props) {
+export default function RangeParameter({ paramAtom, className, onChangeParamType }: Props) {
   const [data, setData] = useAtom(paramAtom);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -33,14 +34,7 @@ export default function RangeParameter({ paramAtom, className }: Props) {
 
   const [[startValue, endValue], setStartEndValues] = useState<[number, number]>([start, end]);
 
-  const genExtra = () => (
-    <ImportOutlined
-      onClick={(event) => {
-        // If you don't want click extra trigger collapse, you can prevent this:
-        event.stopPropagation();
-      }}
-    />
-  );
+  const genExtra = () => <ImportOutlined onClick={onChangeParamType} />;
 
   const onSliderChange = ([newStart, newEnd]: [number, number]) => {
     setMarks({
@@ -54,8 +48,8 @@ export default function RangeParameter({ paramAtom, className }: Props) {
       ...oldAtomData,
       value: {
         ...oldAtomData.value,
-        start,
-        end,
+        start: newStart,
+        end: newEnd,
       },
     }));
   };

@@ -2,6 +2,7 @@ import { focusAtom } from 'jotai-optics';
 import { OpticFor } from 'optics-ts';
 import { PrimitiveAtom } from 'jotai';
 
+import { getNewTargetObj } from './defaultNewObject';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
 import type {
   ExpDesignerConfig,
@@ -9,6 +10,10 @@ import type {
   ExpDesignerNumberParameter,
   ExpDesignerParam,
   ExpDesignerRangeParameter,
+  ExpDesignerRegionParameter,
+  ExpDesignerRegionDropdownGroupParameter,
+  ExpDesignerMultipleDropdownParameter,
+  ExpDesignerDropdownParameter,
 } from '@/types/experiment-designer';
 
 export function getFocusedAtom(name: string) {
@@ -58,11 +63,102 @@ function changeNumberToRange(numberParam: ExpDesignerNumberParameter): ExpDesign
   };
 }
 
+function changeRangeToNumber(rangeParam: ExpDesignerRangeParameter): ExpDesignerNumberParameter {
+  return {
+    ...rangeParam,
+    type: 'number',
+    value: rangeParam.value.start,
+    min: rangeParam.value.min,
+    max: rangeParam.value.max,
+  };
+}
+
+function changeTargetToTargetList(
+  targetParam: ExpDesignerRegionParameter
+): ExpDesignerRegionDropdownGroupParameter {
+  const newTarget = getNewTargetObj();
+  newTarget.brainRegionId = targetParam.brainRegionId;
+  newTarget.value = targetParam.value;
+
+  return {
+    id: targetParam.id,
+    name: targetParam.name,
+    type: 'regionDropdownGroup',
+    value: [newTarget],
+  };
+}
+
+function changeTargetListToTarget(
+  targetListParam: ExpDesignerRegionDropdownGroupParameter
+): ExpDesignerRegionParameter {
+  let singleTarget: ExpDesignerRegionParameter;
+
+  if (targetListParam.value.length) {
+    const [firstItem] = targetListParam.value;
+    singleTarget = {
+      ...targetListParam,
+      type: 'regionDropdown',
+      value: firstItem.value,
+      brainRegionId: firstItem.brainRegionId,
+    };
+  } else {
+    singleTarget = getNewTargetObj();
+    singleTarget.name = targetListParam.name;
+  }
+
+  return {
+    ...singleTarget,
+  };
+}
+
+function changeDropdownToDropdownList(
+  dropdown: ExpDesignerDropdownParameter
+): ExpDesignerMultipleDropdownParameter {
+  return {
+    ...dropdown,
+    type: 'multipleDropdown',
+    value: [dropdown.value],
+  };
+}
+
+function changeMultiDropdownToDropdown(
+  multiDropdown: ExpDesignerMultipleDropdownParameter
+): ExpDesignerDropdownParameter {
+  const singleValue = multiDropdown.value.length
+    ? multiDropdown.value[0]
+    : multiDropdown.options[0].value;
+  return {
+    ...multiDropdown,
+    type: 'dropdown',
+    value: singleValue,
+  };
+}
+
 export function applySwapFunction(param: ExpDesignerParam): ExpDesignerParam | undefined {
   let newSwapParam;
   switch (param.type) {
     case 'number':
       newSwapParam = changeNumberToRange(param);
+      break;
+
+    case 'range':
+      newSwapParam = changeRangeToNumber(param);
+      break;
+
+    case 'regionDropdown':
+      newSwapParam = changeTargetToTargetList(param);
+      break;
+
+    case 'regionDropdownGroup':
+      newSwapParam = changeTargetListToTarget(param);
+      break;
+
+    case 'dropdown':
+      newSwapParam = changeDropdownToDropdownList(param);
+      break;
+
+    case 'multipleDropdown':
+      newSwapParam = changeMultiDropdownToDropdown(param);
       break;
 
     default:

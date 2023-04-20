@@ -11,9 +11,15 @@ type Props = {
   paramAtom: PrimitiveAtom<ExpDesignerDropdownParameter>;
   className?: string;
   showSwitcher?: boolean;
+  onChangeParamType?: () => void;
 };
 
-export default function DropdownParameter({ paramAtom, className, showSwitcher = true }: Props) {
+export default function DropdownParameter({
+  paramAtom,
+  className,
+  showSwitcher = true,
+  onChangeParamType,
+}: Props) {
   const [data, setData] = useAtom(paramAtom);
   const options = data.options?.length ? data.options : [{ label: data.value, value: data.value }];
 
@@ -34,7 +40,7 @@ export default function DropdownParameter({ paramAtom, className, showSwitcher =
         style={{ width: 200 }}
         onSelect={selected}
       />
-      {showSwitcher && <ExportOutlined />}
+      {showSwitcher && <ExportOutlined onClick={onChangeParamType} />}
     </div>
   );
 }

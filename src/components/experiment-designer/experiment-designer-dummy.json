@@ -72,7 +72,7 @@
           "name": "Spikes",
           "type": "dropdown",
           "value": "Whiskers stimulus",
-          "options": []
+          "options": [{ "label": "Whiskers stimulus", "value": "Whiskers stimulus" }]
         },
         {
           "id": "duration",
@@ -104,7 +104,7 @@
           "name": "Type",
           "type": "dropdown",
           "value": "Current",
-          "options": []
+          "options": [{ "label": "Current", "value": "Current" }]
         },
         {
           "id": "duration",
@@ -136,7 +136,7 @@
           "name": "Variable",
           "type": "dropdown",
           "value": "Soma voltage",
-          "options": []
+          "options": [{ "label": "Soma voltage", "value": "Soma voltage" }]
         },
         {
           "id": "duration",

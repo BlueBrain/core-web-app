@@ -18,9 +18,11 @@ import type {
   ExpDesignerNumberParameter,
   ExpDesignerParam,
   ExpDesignerRangeParameter,
+  ExpDesignerRegionDropdownGroupParameter,
   ExpDesignerRegionParameter,
 } from '@/types/experiment-designer';
 import { applySwapFunction } from '@/components/experiment-designer/utils';
+import MultiBrainRegionDropdown from '@/components/experiment-designer/MultiBrainRegionDropdown';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
   const [param, setParam] = useAtom(paramAtom);
@@ -51,14 +53,33 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesigne
     case 'range': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRangeParameter>;
       constantCol = <DefaultEmptyParam />;
-      sweepCol = <RangeParameter paramAtom={paramAtomTyped} />;
+      sweepCol = <RangeParameter paramAtom={paramAtomTyped} onChangeParamType={changed} />;
       break;
     }
 
     case 'regionDropdown': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
-      constantCol = <TargetRegionSelector paramAtom={paramAtomTyped} className={defaultPadding} />;
+      constantCol = (
+        <TargetRegionSelector
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
+      );
       sweepCol = <DefaultEmptyParam />;
+      break;
+    }
+
+    case 'regionDropdownGroup': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionDropdownGroupParameter>;
+      constantCol = <DefaultEmptyParam />;
+      sweepCol = (
+        <MultiBrainRegionDropdown
+          paramAtom={paramAtomTyped}
+          className={defaultPadding}
+          onChangeParamType={changed}
+        />
+      );
       break;
     }
 

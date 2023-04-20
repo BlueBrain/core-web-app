@@ -9,6 +9,8 @@ import BrainRegionsDropdown from './BrainRegionsDropdown';
 import DefaultEmptyParam from './DefaultEmptyParam';
 import CoordinatesViewer from './CoordinatesViewer';
 import RadioButtonParameter from './RadioButtonParameter';
+import MultiBrainRegionDropdown from './MultiBrainRegionDropdown';
+import MultiDropdown from './MultiDropdown';
 
 export {
   StringParameter,
@@ -22,4 +24,6 @@ export {
   DefaultEmptyParam,
   CoordinatesViewer,
   RadioButtonParameter,
+  MultiBrainRegionDropdown,
+  MultiDropdown,
 };
