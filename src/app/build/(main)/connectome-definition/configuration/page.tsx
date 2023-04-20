@@ -1,10 +1,11 @@
 'use client';
 
-import { Suspense, useState, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import { ConfigProvider, theme, InputNumber, Button } from 'antd';
 import Plotly from 'plotly.js-dist-min';
 import set from 'lodash/set';
+import debounce from 'lodash/debounce';
 
 import {
   brainRegionIdByNotationMapAtom,
@@ -44,6 +45,8 @@ function ConnectomeDefinitionMain() {
   const [connectivityMatrix, setConnectivityMatrix] = useState<WholeBrainConnectivityMatrix>({});
   const histogramRef = useRef<HTMLDivElement>(null);
   const [histogramInitialized, setHistogramInitialized] = useState(false);
+  const lineChartRef = useRef<HTMLDivElement>(null);
+  const [lineChartInitialized, setLineChartInitialized] = useState(false);
 
   const selectedIds = useMemo(() => {
     if (!brainRegionIdByNotationMap) return [];
@@ -74,6 +77,17 @@ function ConnectomeDefinitionMain() {
     setConnectivityMatrix(currentConnectivityMatrix);
   }, [initialConnectivityStrengthTable, brainRegionIdByNotationMap, hemisphereDirection]);
 
+  const modifiedConnectivityMatrix = useMemo(() => {
+    const matrix = { ...connectivityMatrix };
+    selectedIds.forEach(([d, s]) => {
+      if (!matrix[s]) return;
+      if (!matrix[s][d]) return;
+      const current = matrix[s][d];
+      matrix[s][d] = current * multiplier + offset;
+    });
+    return matrix;
+  }, [connectivityMatrix, multiplier, offset, selectedIds]);
+
   const histogram = useMemo(() => {
     const x: number[] = [];
 
@@ -89,10 +103,25 @@ function ConnectomeDefinitionMain() {
     return x;
   }, [preSynapticBrainRegions, postSynapticBrainRegions, connectivityMatrix]);
 
+  const newHistogram = useMemo(() => {
+    const x: number[] = [];
+
+    Array.from(preSynapticBrainRegions).forEach((r) => {
+      const id = r[0];
+      Object.entries(modifiedConnectivityMatrix[id] ?? []).forEach(([targetId, value]) => {
+        if (!postSynapticBrainRegions.has(targetId)) return;
+        x.push(value);
+      });
+    });
+
+    x.sort();
+    return x;
+  }, [preSynapticBrainRegions, postSynapticBrainRegions, modifiedConnectivityMatrix]);
+
   useEffect(() => {
     if (!histogramRef.current) return;
     if (!histogramInitialized) {
-      Plotly.newPlot(histogramRef.current, [], {});
+      Plotly.newPlot(histogramRef.current, [], {}, { displayModeBar: false });
       setHistogramInitialized(true);
       return;
     }
@@ -105,24 +134,89 @@ function ConnectomeDefinitionMain() {
           xbins: { start: 0, end: 'auto', size: 0.1 },
           marker: { color: 'rgba(0, 0, 0, 1)' },
         },
+        {
+          x: newHistogram,
+          type: 'histogram',
+          xbins: { start: 0, end: 'auto', size: 0.1 },
+          marker: { color: 'rgb(8, 143, 143, 1)' },
+        },
       ],
-      { bargroupgap: 0.3 }
+      {
+        xaxis: { showgrid: false },
+        yaxis: { showgrid: false },
+        bargroupgap: 0.3,
+        showlegend: false,
+        width: 150,
+        height: 150,
+        margin: {
+          l: 0,
+          r: 0,
+          t: 0,
+          b: 0,
+          pad: 0,
+        },
+      }
     );
-  }, [histogram, histogramInitialized, selected.size]);
+  }, [histogram, histogramInitialized, selected.size, newHistogram]);
+
+  useEffect(() => {
+    if (!lineChartRef.current) return;
+    if (!lineChartInitialized) {
+      Plotly.newPlot(lineChartRef.current, [], {}, { displayModeBar: false });
+      setLineChartInitialized(true);
+      return;
+    }
+    Plotly.react(
+      lineChartRef.current,
+      [
+        {
+          x: [0, 1],
+          y: [0, 1],
+        },
+        {
+          x: [0, 1],
+          y: [0 + offset, multiplier + offset],
+        },
+      ],
+      {
+        xaxis: { showgrid: false },
+        yaxis: { showgrid: false },
+        showlegend: false,
+        width: 150,
+        height: 150,
+        margin: {
+          l: 0,
+          r: 0,
+          t: 0,
+          b: 0,
+          pad: 0,
+        },
+      }
+    );
+  }, [selected.size, lineChartInitialized, multiplier, offset]);
 
   const onClick = () => {
-    const matrix = { ...connectivityMatrix };
-
-    selectedIds.forEach(([d, s]) => {
-      const currentValue = matrix[s]?.[d] ?? 0;
-      set(matrix, `${s}.${d}`, currentValue * multiplier + offset);
-    });
-
-    setConnectivityMatrix(matrix);
+    setConnectivityMatrix(modifiedConnectivityMatrix);
     setOffset(0);
     setMultiplier(1);
     setSelected(new Set());
   };
+
+  const handleOffsetChange = useCallback(
+    debounce((value) => {
+      if (value === null) return;
+      setOffset(value);
+    }, 300),
+    []
+  );
+
+  const handleMultiplierChange = useCallback(
+    debounce((value) => {
+      if (value === null) return;
+      setMultiplier(value);
+    }, 300),
+    []
+  );
 
   return (
     <>
@@ -131,28 +225,17 @@ function ConnectomeDefinitionMain() {
           <span className="font-bold text-lg">Modify connection density</span>
           <div className="flex justify-between mb-3 mt-3">
             Offset:
-            <InputNumber
-              value={offset}
-              step={0.01}
-              onChange={(value) => {
-                if (!value) return;
-                setOffset(value);
-              }}
-            />
+            <InputNumber value={offset} step={0.01} onChange={handleOffsetChange} />
           </div>
           <div className="flex justify-between">
             Multiplier:
-            <InputNumber
-              value={multiplier}
-              step={0.01}
-              onChange={(value) => {
-                if (!value) return;
-                setMultiplier(value);
-              }}
-            />
+            <InputNumber value={multiplier} step={0.01} onChange={handleMultiplierChange} />
           </div>
 
-          <div ref={histogramRef} />
+          <div className="flex" style={{ marginTop: 10, marginBottom: 10 }}>
+            <div ref={histogramRef} />
+            <div ref={lineChartRef} style={{ marginTop: 11, marginLeft: 20 }} />
+          </div>
 
           <Button onClick={onClick}>Save</Button>
         </div>

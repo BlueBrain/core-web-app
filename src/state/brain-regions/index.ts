@@ -224,6 +224,19 @@ export const brainRegionsUnsortedArrayAtom = atom<Promise<BrainRegion[] | null>>
   return tree;
 });
 
+export const leafIdsByRegionIdAtom = atom<Promise<{ [id: string]: string[] }>>(async (get) => {
+  const brainRegions = (await get(brainRegionsUnsortedArrayAtom)) ?? [];
+  const map: { [id: string]: string[] } = {};
+  brainRegions.forEach((br) => {
+    map[br.id] =
+      br.leaves?.map((id) => {
+        const substr = id.split('/');
+        return substr[substr.length - 1];
+      }) ?? [];
+  });
+  return map;
+});
+
 /**
  * This atom returns the filtered brain region leaves as an array, preserving the original ordering
  */

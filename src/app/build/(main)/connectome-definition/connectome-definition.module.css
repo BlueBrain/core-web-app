@@ -61,6 +61,7 @@
   position: absolute;
   right: 0;
   height: 90%;
+  overflow: scroll;
   top: 5%;
   background: white;
   width: 33%;
