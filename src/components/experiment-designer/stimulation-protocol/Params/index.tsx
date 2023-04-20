@@ -122,10 +122,10 @@ function StimulationBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerP
   }
 
   return (
-    <tr>
-      <td className={defaultColumnStyle}>{constantCol}</td>
-      <td className={defaultColumnStyle}>{sweepCol}</td>
-    </tr>
+    <div className="flex">
+      <div className={defaultColumnStyle}>{constantCol}</div>
+      <div className={defaultColumnStyle}>{sweepCol}</div>
+    </div>
   );
 }
 

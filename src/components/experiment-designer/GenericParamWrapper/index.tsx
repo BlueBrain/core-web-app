@@ -10,7 +10,7 @@ import { getSubGroupFocusedAtom } from '@/components/experiment-designer/utils';
 
 export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
 export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
-export const headerStyle = 'p-[16px] font-light text-left';
+export const headerStyle = 'w-1/2 p-[16px] font-light text-left';
 export const subheaderStyle = `${defaultPadding} uppercase text-gray-400`;
 const overflowStyle = 'max-h-[92vh] overflow-y-auto';
 
@@ -45,14 +45,7 @@ function GroupRenderer({ paramAtom, RowRenderer }: GroupRendererProps) {
       {listAtoms.map((rowAtom) => (
         <RowRenderer paramAtom={rowAtom} key={paramAtom.toString() + rowAtom.toString()} />
       ))}
-      <tr>
-        <td>
-          <Divider />
-        </td>
-        <td>
-          <Divider />
-        </td>
-      </tr>
+      <Divider />
     </>
   );
 }
@@ -94,27 +87,23 @@ export default function GenericParamWrapper({
         <Divider />
       </div>
 
-      <table className="w-full">
+      <div className="w-full">
         {showHeader && (
-          <thead>
-            <tr>
-              <th className={headerStyle}>CONSTANT PARAMETERS</th>
-              <th className={headerStyle}>PARAMETER SWEEPS</th>
-            </tr>
-          </thead>
+          <div className="flex">
+            <div className={headerStyle}>CONSTANT PARAMETERS</div>
+            <div className={headerStyle}>PARAMETER SWEEPS</div>
+          </div>
         )}
 
-        <tbody>
-          {!listAtoms?.length && (
-            <tr>
-              <td className={defaultColumnStyle}>Fetching info...</td>
-              <td className={defaultColumnStyle}>Fetching info...</td>
-            </tr>
-          )}
+        {!listAtoms?.length && (
+          <div className="flex">
+            <div className={defaultColumnStyle}>Fetching info...</div>
+            <div className={defaultColumnStyle}>Fetching info...</div>
+          </div>
+        )}
 
-          {rows}
-        </tbody>
-      </table>
+        {rows}
+      </div>
 
       {children}
     </div>

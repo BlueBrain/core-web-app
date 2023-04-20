@@ -61,11 +61,7 @@ function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
       break;
   }
 
-  return (
-    <tr>
-      <td className={defaultColumnStyle}>{constantCol}</td>
-    </tr>
-  );
+  return <div className={defaultColumnStyle}>{constantCol}</div>;
 }
 
 type Props = {

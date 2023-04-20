@@ -31,12 +31,7 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
       break;
   }
 
-  return (
-    <tr>
-      <td className={defaultColumnStyle}>{constantCol}</td>
-      <td />
-    </tr>
-  );
+  return <div className={defaultColumnStyle}>{constantCol}</div>;
 }
 
 type Props = {
