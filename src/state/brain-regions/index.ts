@@ -250,6 +250,32 @@ export const brainRegionLeavesUnsortedArrayAtom = atom<Promise<BrainRegion[] | n
   }
 );
 
+export const brainRegionLeaveIdxByNotationMapAtom = atom<
+  Promise<Map<BrainRegionId, number> | null>
+>(async (get) => {
+  const brainRegionLeaves = await get(brainRegionLeavesUnsortedArrayAtom);
+
+  if (!brainRegionLeaves) return null;
+
+  return brainRegionLeaves.reduce(
+    (idxByNotationMap, brainRegion, idx) => idxByNotationMap.set(brainRegion.notation, idx),
+    new Map()
+  );
+});
+
+export const brainRegionLeaveIdxByIdAtom = atom<Promise<Record<BrainRegionId, number> | null>>(
+  async (get) => {
+    const brainRegionLeaves = await get(brainRegionLeavesUnsortedArrayAtom);
+
+    if (!brainRegionLeaves) return null;
+
+    return brainRegionLeaves.reduce(
+      (idxByNotation, brainRegion, idx) => Object.assign(idxByNotation, { [brainRegion.id]: idx }),
+      {}
+    );
+  }
+);
+
 /**
  * This atom returns the filtered brain regions as array sorted by id
  */

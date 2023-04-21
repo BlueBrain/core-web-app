@@ -2,8 +2,10 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
 import Plotly, { Shape, Layout, Data, ColorScale } from 'plotly.js-dist-min';
 
-import { WholeBrainConnectivityMatrix } from '@/types/connectome';
+import { WholeBrainConnectivityMatrix, HemisphereDirection } from '@/types/connectome';
 import {
+  brainRegionLeaveIdxByIdAtom,
+  brainRegionLeaveIdxByNotationMapAtom,
   brainRegionLeavesUnsortedArrayAtom,
   selectedPostBrainRegionsAtom,
   selectedPreBrainRegionsAtom,
@@ -25,29 +27,45 @@ const PICNIC_W_ZERO_CUTOFF: ColorScale = [
   [1, 'rgb(255,0,0)'],
 ];
 
+function getFlatArrayValueIdx (totalLeaves: number, srcIdx: number, dstIdx: number) {
+  return (srcIdx * totalLeaves) + dstIdx;
+};
+
 function getDensitiesForNodes(
   srcNodes: Map<string, string>,
   dstNodes: Map<string, string>,
   brainRegionLeaves: BrainRegion[],
-  connectivity: WholeBrainConnectivityMatrix
+  idxByIdMap: Record<string, number> | null,
+  connectivityFlatArray: Float64Array,
 ): [number[][], string[], string[]] {
+  if (!idxByIdMap) return [[], [], []];
+
+  console.time('createChartData');
+
   const filteredDensities: number[][] = [];
 
   const srcBrainRegions = brainRegionLeaves.filter((brainRegion) => srcNodes.has(brainRegion.id));
   const dstBrainRegions = brainRegionLeaves.filter((brainRegion) => dstNodes.has(brainRegion.id));
 
-  srcBrainRegions.forEach((srcBrainRegion) => {
-    const targetObj = connectivity[srcBrainRegion.id];
+  const totalLeaves = brainRegionLeaves.length;
 
-    const values = targetObj
-      ? dstBrainRegions.map((dstBrainRegion) => targetObj?.[dstBrainRegion.id] ?? 0)
-      : new Array(dstBrainRegions.length).fill(0);
+  srcBrainRegions.forEach((srcBrainRegion) => {
+    const srcIdx = idxByIdMap[srcBrainRegion.id] as number;
+    const values = new Array(dstBrainRegions.length);
+
+    dstBrainRegions.forEach((dstBrainRegion, targetIdx) => {
+      const dstIdx = idxByIdMap[dstBrainRegion.id] as number;
+      const valueIdx = getFlatArrayValueIdx(totalLeaves, srcIdx, dstIdx);
+      values[targetIdx] = connectivityFlatArray[valueIdx];
+    });
 
     filteredDensities.push(values);
   });
 
   const srcLabels = srcBrainRegions.map((brainRegion) => brainRegion.notation);
   const dstLabels = dstBrainRegions.map((brainRegion) => brainRegion.notation);
+
+  console.timeEnd('createChartData');
 
   return [filteredDensities, srcLabels, dstLabels];
 }
@@ -77,14 +95,14 @@ export default function MacroConnectome({
   unselect,
   selected,
   setSelected,
-  connectivityMatrix,
+  connectivityFlatArray
 }: {
   zoom: boolean;
   select: boolean;
   unselect: boolean;
   selected: Set<string>;
   setSelected: React.Dispatch<SetStateAction<Set<string>>>;
-  connectivityMatrix: WholeBrainConnectivityMatrix;
+  connectivityFlatArray: Float64Array;
 }) {
   const plotRef = useRef<PlotDiv>(null);
   const shapes = useRef<Rect[]>([]);
@@ -99,6 +117,7 @@ export default function MacroConnectome({
   const [plotInitialized, setPlotInitialized] = useState(false);
 
   const brainRegionLeaves = useAtomValue(brainRegionLeavesUnsortedArrayAtom);
+  const brainRegionLeaveIdxById = useAtomValue(brainRegionLeaveIdxByIdAtom);
 
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
@@ -109,9 +128,10 @@ export default function MacroConnectome({
         preSynapticBrainRegions,
         postSynapticBrainRegions,
         brainRegionLeaves || [],
-        connectivityMatrix
+        brainRegionLeaveIdxById,
+        connectivityFlatArray
       ),
-    [preSynapticBrainRegions, postSynapticBrainRegions, connectivityMatrix, brainRegionLeaves]
+    [preSynapticBrainRegions, postSynapticBrainRegions, brainRegionLeaves, brainRegionLeaveIdxById, connectivityFlatArray]
   );
 
   useEffect(() => {
@@ -149,13 +169,13 @@ export default function MacroConnectome({
           xaxis: {
             color: '#DCDCDC',
             tickfont: {
-              size: 7,
+              size: 8,
             },
           },
           yaxis: {
             color: '#DCDCDC',
             tickfont: {
-              size: 7,
+              size: 8,
             },
           },
           shapes: shapes.current,
@@ -288,17 +308,17 @@ export default function MacroConnectome({
         xaxis: {
           color: '#DCDCDC',
           tickfont: {
-            size: 7,
+            size: 8,
           },
-          range: container.layout.xaxis.range,
+          // range: container.layout.xaxis.range,
           fixedrange: !zoom,
         },
         yaxis: {
           color: '#DCDCDC',
           tickfont: {
-            size: 7,
+            size: 8,
           },
-          range: container.layout.yaxis.range,
+          // range: container.layout.yaxis.range,
           fixedrange: !zoom,
         },
         shapes: shapes.current,
