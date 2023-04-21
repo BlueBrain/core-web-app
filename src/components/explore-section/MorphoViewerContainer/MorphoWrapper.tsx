@@ -18,18 +18,17 @@ function MorphoWrapper({
   onPolylineClick: VoidFunction;
 }) {
   return (
-    <div className={loading ? 'morpho-wrapper loading' : 'morpho-wrapper'}>
-      {error && <p>{error.message}</p>}
-      {data && !error && (
-        <>
-          <div className="actions">
-            <Button size="small" disabled={loading} onClick={onPolylineClick}>
-              {options.asPolyline ? 'Show as Geometry' : 'Show as Lines'}
-            </Button>
-          </div>
-          <MorphologyViewer data={data} options={options} />
-        </>
-      )}
+    <div className="flex flex-col h-full">
+      <div className="flex flex-col gap-3">
+        <h1 className="font-bold text-primary-9 text-lg">Morphology 3D Viewer</h1>
+        <Button className="w-fit" size="small" disabled={loading} onClick={onPolylineClick}>
+          {options.asPolyline ? 'Show as Geometry' : 'Show as Lines'}
+        </Button>
+      </div>
+      <div className={loading ? 'morpho-wrapper loading' : 'morpho-wrapper'}>
+        {error && <p>{error.message}</p>}
+        {data && !error && <MorphologyViewer data={data} options={options} />}
+      </div>
     </div>
   );
 }
