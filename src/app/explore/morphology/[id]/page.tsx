@@ -4,16 +4,58 @@ import { useEffect, Suspense } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { useSession } from 'next-auth/react';
+import { format, parseISO } from 'date-fns';
+import find from 'lodash/find';
 import usePathname from '@/hooks/pathname';
 import { nexus as nexusConfig } from '@/config';
-import DetailHeader from '@/components/explore-section/DetailHeader';
 import Sidebar from '@/components/explore-section/Sidebar';
-import MorphoViewerContainer from '@/components/Morphology/MorphoViewerContainer';
-import { SideLink } from '@/types/explore-section';
+import { AnnotationEntity, DeltaResource, SideLink } from '@/types/explore-section';
 import { setInfoWithPath } from '@/util/explore-section/detail-view';
 import createDetailAtoms from '@/state/explore-section/detail-atoms-constructor';
+import ExploreSectionDetailField from '@/components/explore-section/ExploreSectionDetailField';
+import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
+import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
 
 const { infoAtom, detailAtom } = createDetailAtoms();
+
+function MorphologyDetailHeader({ detail }: { detail: DeltaResource | null }) {
+  if (!detail) return <>Not Found</>;
+
+  const getMtype = (x: DeltaResource) => {
+    const entity = find(x.annotation, (o: AnnotationEntity) => o.name === 'M-type Annotation');
+    return entity ? entity.hasBody.label : 'no MType';
+  };
+
+  return (
+    <div className="w-2/3">
+      <DetailHeaderName detail={detail} />
+      <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-10">
+        <ExploreSectionDetailField
+          title="Description"
+          field={detail?.description}
+          className={['col-span-2', 'row-span-2']}
+        />
+        <ExploreSectionDetailField title="M-Type" field={getMtype(detail)} />
+        <ExploreSectionDetailField
+          title="Brain Location"
+          field={detail?.brainLocation?.brainRegion?.label}
+        />
+        <ExploreSectionDetailField
+          title="Contributor"
+          field={detail?._createdBy?.split('/')?.pop()}
+        />
+        <ExploreSectionDetailField
+          title="Added"
+          field={
+            detail?._createdAt && (
+              <div className="mt-3">{format(parseISO(detail?._createdAt), 'dd.MM.yyyy')}</div>
+            )
+          }
+        />
+      </div>
+    </div>
+  );
+}
 
 function MorphologyDetail() {
   const { data: session } = useSession();
@@ -32,7 +74,7 @@ function MorphologyDetail() {
     <div className="flex h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar links={links} />
       <div className="bg-white w-full h-full overflow-scroll flex flex-col p-7 pr-12 gap-7">
-        <DetailHeader detail={detail} />
+        <MorphologyDetailHeader detail={detail} />
         {detail && session && <MorphoViewerContainer resource={detail} nexus={nexus} />}
       </div>
     </div>

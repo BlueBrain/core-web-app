@@ -4,7 +4,7 @@ import { PrimitiveAtom, useAtom } from 'jotai';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { useMemo } from 'react';
 import { ExploreSectionResource, TotalHits } from '@/types/explore-section';
-import styles from '@/components/explore-section/ephys/loadmore-button.module.scss';
+import styles from '@/components/explore-section/EphysViewerContainer/styles/loadmore-button.module.scss';
 
 const antIcon = <LoadingOutlined style={{ float: 'left', fontSize: 24 }} spin />;
 

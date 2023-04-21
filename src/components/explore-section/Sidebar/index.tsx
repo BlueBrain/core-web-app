@@ -10,7 +10,7 @@ import {
 import { useState } from 'react';
 import Link from '@/components/Link';
 import { SideLinkList } from '@/types/explore-section';
-import styles from '@/components/explore-section/sidebar.module.scss';
+import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
 export default function Sidebar({ links }: SideLinkList) {
   const [expanded, setExpanded] = useState(false);

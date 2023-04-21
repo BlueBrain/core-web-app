@@ -2,7 +2,7 @@ import { Button } from 'antd';
 
 import MorphologyViewer, { MorphoViewerOptions } from './MorphologyViewer';
 
-import './morpho-wrapper.css';
+import './styles/morpho-wrapper.css';
 
 function MorphoWrapper({
   loading,

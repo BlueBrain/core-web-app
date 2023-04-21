@@ -1,4 +1,4 @@
-import './morpho-legend.css';
+import './styles/morpho-legend.css';
 
 function MorphoLegend({
   isInterneuron,

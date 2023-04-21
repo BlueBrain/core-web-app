@@ -7,7 +7,7 @@ import Sidebar from '@/components/explore-section/Sidebar';
 import { ExploreSectionResource } from '@/types/explore-section';
 import { dateStringToUnix, sorter, formatNumber } from '@/util/common';
 import Link from '@/components/Link';
-import ExploreSectionListingView from '@/components/ExploreSectionListingView';
+import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import styles from '@/app/explore/explore.module.scss';
 

@@ -2,7 +2,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import GraphViewComponent from './GraphViewComponent';
 import { DeltaResource } from '@/types/explore-section';
 
-import ephysDistribution from '@/components/explore-section/ephys/useEphysDistribution';
+import ephysDistribution from '@/components/explore-section/EphysViewerContainer/hooks/useEphysDistribution';
 
 interface GraphViewContainerProps {
   resource: DeltaResource;

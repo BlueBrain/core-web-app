@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Select } from 'antd';
-
 import DistinctColors from 'distinct-colors';
 import StimulusPlot from './StimulusPlot';
 import ResponsePlot from './ResponsePlot';
-import OptionSelect from '@/components/explore-section/ephys/OptionSelect';
-import TraceSelectorGroup from '@/components/explore-section/ephys/TraceSelectorGroup';
+import OptionSelect from '@/components/explore-section/EphysViewerContainer/OptionSelect';
+import TraceSelectorGroup from '@/components/explore-section/EphysViewerContainer/TraceSelectorGroup';
 import {
   ZoomRanges,
   DataSets,
