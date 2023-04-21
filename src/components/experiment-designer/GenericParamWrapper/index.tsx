@@ -3,16 +3,18 @@
 import { Divider } from 'antd';
 import { ComponentType, ReactNode, useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
-import { PrimitiveAtom, useAtom } from 'jotai';
+import { PrimitiveAtom, useAtomValue } from 'jotai';
 
+import DeleteGroupBtn from './DeleteGroupBtn';
 import { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
 import { getSubGroupFocusedAtom } from '@/components/experiment-designer/utils';
 
-export const defaultPadding = 'py-[12px] px-[16px]'; // to match the collapse padding
+export const defaultPadding = 'py-[12px] px-[14px]'; // to match the collapse padding
 export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
 export const headerStyle = 'w-1/2 p-[16px] font-light text-left';
 export const subheaderStyle = `${defaultPadding} uppercase text-gray-400`;
 const overflowStyle = 'max-h-[92vh] overflow-y-auto';
+const groupBorderStyle = 'border border-transparent group-hover:border-gray-400';
 
 type RowRendererProps = {
   paramAtom: PrimitiveAtom<ExpDesignerParam>;
@@ -24,6 +26,7 @@ type Props = {
   listAtoms: PrimitiveAtom<ExpDesignerParam>[] | undefined;
   children?: ReactNode;
   showHeader?: boolean;
+  onRemoveGroup?: (atom: PrimitiveAtom<ExpDesignerParam> | null) => void;
   isGroup?: boolean;
 };
 
@@ -33,20 +36,23 @@ export const generateId = (param1: string, param2: string) =>
 type GroupRendererProps = {
   paramAtom: PrimitiveAtom<ExpDesignerGroupParameter>;
   RowRenderer: ComponentType<RowRendererProps>;
+  onRemoveGroup: () => void;
 };
 
-function GroupRenderer({ paramAtom, RowRenderer }: GroupRendererProps) {
+function GroupRenderer({ paramAtom, RowRenderer, onRemoveGroup }: GroupRendererProps) {
   const focusedAtom = useMemo(() => getSubGroupFocusedAtom(paramAtom), [paramAtom]);
   const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
-  const [listAtoms] = useAtom(atoms);
+  const listAtoms = useAtomValue(atoms);
 
   return (
-    <>
-      {listAtoms.map((rowAtom) => (
-        <RowRenderer paramAtom={rowAtom} key={paramAtom.toString() + rowAtom.toString()} />
-      ))}
-      <Divider />
-    </>
+    <div className="group flex flex-col">
+      <DeleteGroupBtn className={groupBorderStyle} onDelete={onRemoveGroup} />
+      <div className={groupBorderStyle}>
+        {listAtoms.map((rowAtom) => (
+          <RowRenderer paramAtom={rowAtom} key={paramAtom.toString() + rowAtom.toString()} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -56,6 +62,7 @@ export default function GenericParamWrapper({
   children,
   showHeader = true,
   listAtoms,
+  onRemoveGroup,
   isGroup = false,
 }: Props) {
   let rows = null;
@@ -69,6 +76,7 @@ export default function GenericParamWrapper({
             key={paramAtom.toString()}
             paramAtom={paramAtomTyped}
             RowRenderer={RowRenderer}
+            onRemoveGroup={() => (onRemoveGroup ? onRemoveGroup(paramAtom) : null)}
           />
         );
       });
@@ -95,7 +103,7 @@ export default function GenericParamWrapper({
           </div>
         )}
 
-        {!listAtoms?.length && (
+        {!listAtoms && (
           <div className="flex">
             <div className={defaultColumnStyle}>Fetching info...</div>
             <div className={defaultColumnStyle}>Fetching info...</div>
