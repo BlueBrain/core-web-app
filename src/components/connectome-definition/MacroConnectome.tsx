@@ -11,6 +11,7 @@ import {
   selectedPreBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
+import usePrevious from '@/hooks/hooks';
 
 const PICNIC_W_ZERO_CUTOFF: ColorScale = [
   [0, 'rgb(0,0,0)'],
@@ -27,16 +28,16 @@ const PICNIC_W_ZERO_CUTOFF: ColorScale = [
   [1, 'rgb(255,0,0)'],
 ];
 
-function getFlatArrayValueIdx (totalLeaves: number, srcIdx: number, dstIdx: number) {
-  return (srcIdx * totalLeaves) + dstIdx;
-};
+function getFlatArrayValueIdx(totalLeaves: number, srcIdx: number, dstIdx: number) {
+  return srcIdx * totalLeaves + dstIdx;
+}
 
 function getDensitiesForNodes(
   srcNodes: Map<string, string>,
   dstNodes: Map<string, string>,
   brainRegionLeaves: BrainRegion[],
   idxByIdMap: Record<string, number> | null,
-  connectivityFlatArray: Float64Array,
+  connectivityFlatArray: Float64Array
 ): [number[][], string[], string[]] {
   if (!idxByIdMap) return [[], [], []];
 
@@ -95,7 +96,7 @@ export default function MacroConnectome({
   unselect,
   selected,
   setSelected,
-  connectivityFlatArray
+  connectivityFlatArray,
 }: {
   zoom: boolean;
   select: boolean;
@@ -131,14 +132,25 @@ export default function MacroConnectome({
         brainRegionLeaveIdxById,
         connectivityFlatArray
       ),
-    [preSynapticBrainRegions, postSynapticBrainRegions, brainRegionLeaves, brainRegionLeaveIdxById, connectivityFlatArray]
+    [
+      preSynapticBrainRegions,
+      postSynapticBrainRegions,
+      brainRegionLeaves,
+      brainRegionLeaveIdxById,
+      connectivityFlatArray,
+    ]
   );
+
+  const prevsrcLabels = usePrevious(srcLabels);
+  const prevdstLabels = usePrevious(dstLabels);
 
   useEffect(() => {
     selectRef.current = select;
     unselectRef.current = unselect;
     selectedRef.current = selected;
     const container = plotRef.current;
+
+    const userChangedRegions = prevsrcLabels !== srcLabels || prevdstLabels !== dstLabels;
 
     if (selected.size === 0) {
       shapes.current = [];
@@ -310,7 +322,7 @@ export default function MacroConnectome({
           tickfont: {
             size: 8,
           },
-          // range: container.layout.xaxis.range,
+          range: userChangedRegions ? undefined : container.layout.xaxis.range,
           fixedrange: !zoom,
         },
         yaxis: {
@@ -318,7 +330,7 @@ export default function MacroConnectome({
           tickfont: {
             size: 8,
           },
-          // range: container.layout.yaxis.range,
+          range: userChangedRegions ? undefined : container.layout.yaxis.range,
           fixedrange: !zoom,
         },
         shapes: shapes.current,
@@ -335,6 +347,8 @@ export default function MacroConnectome({
     zoom,
     selected,
     setSelected,
+    prevdstLabels,
+    prevsrcLabels,
   ]);
 
   return (
