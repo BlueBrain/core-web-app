@@ -12,7 +12,7 @@ import {
   selectedPreBrainRegionsAtom,
   selectedPostBrainRegionsAtom,
   brainRegionsFilteredTreeAtom,
-  brainRegionsUnsortedArrayAtom,
+  brainRegionLeavesUnsortedArrayAtom,
   leafIdsByRegionIdAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
@@ -150,23 +150,9 @@ function CollapsedSidebar() {
   );
 }
 
-function findLeaves(tree: BrainRegion[]) {
-  const leaves: BrainRegion[] = [];
-  const queue = [...tree];
-
-  while (queue.length) {
-    const r = queue.shift();
-    if (!r) continue; // eslint-disable-line no-continue
-    if (!r.items || r.items.length === 0) leaves.push(r);
-    r.items?.forEach((i) => queue.push(i));
-  }
-
-  return leaves;
-}
-
 export default function ConnectomeEditorSidebar() {
   const area = useAtomValue(brainAreaAtom);
-  const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
+  const brainRegions = useAtomValue(brainRegionLeavesUnsortedArrayAtom);
   const leafIdsByRegionId = useAtomValue(leafIdsByRegionIdAtom);
   const setSelectedPreBrainRegion = useSetAtom(setSelectedPreBrainRegionAtom);
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
@@ -181,8 +167,8 @@ export default function ConnectomeEditorSidebar() {
 
   useEffect(() => {
     if (!brainRegions) return;
-    const leaves = findLeaves(brainRegions);
-    leaves.forEach((l) => {
+
+    brainRegions.forEach((l) => {
       setSelectedPreBrainRegion(l.id, l.title);
       setSelectedPostBrainRegion(l.id, l.title);
     });
