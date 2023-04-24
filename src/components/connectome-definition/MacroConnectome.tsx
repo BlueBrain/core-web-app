@@ -2,10 +2,8 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
 import Plotly, { Shape, Layout, Data, ColorScale } from 'plotly.js-dist-min';
 
-import { WholeBrainConnectivityMatrix, HemisphereDirection } from '@/types/connectome';
 import {
   brainRegionLeaveIdxByIdAtom,
-  brainRegionLeaveIdxByNotationMapAtom,
   brainRegionLeavesUnsortedArrayAtom,
   selectedPostBrainRegionsAtom,
   selectedPreBrainRegionsAtom,
@@ -156,7 +154,7 @@ export default function MacroConnectome({
       shapes.current = [];
     }
 
-    if (!container || filteredDensities.length === 0) return;
+    if (!container) return;
 
     const data: Data[] = [
       {

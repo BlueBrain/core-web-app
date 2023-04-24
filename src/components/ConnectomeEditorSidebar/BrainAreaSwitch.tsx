@@ -32,8 +32,6 @@ export default function BrainAreaSwitch() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
-  console.log(preSynapticBrainRegions)
-
   if (!area) return null;
 
   const brainRegions = area === 'pre' ? postSynapticBrainRegions : preSynapticBrainRegions;
