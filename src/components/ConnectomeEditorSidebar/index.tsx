@@ -152,7 +152,7 @@ function CollapsedSidebar() {
 
 export default function ConnectomeEditorSidebar() {
   const area = useAtomValue(brainAreaAtom);
-  const brainRegions = useAtomValue(brainRegionLeavesUnsortedArrayAtom);
+  const brainRegionLeaves = useAtomValue(brainRegionLeavesUnsortedArrayAtom);
   const leafIdsByRegionId = useAtomValue(leafIdsByRegionIdAtom);
   const setSelectedPreBrainRegion = useSetAtom(setSelectedPreBrainRegionAtom);
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
@@ -166,12 +166,20 @@ export default function ConnectomeEditorSidebar() {
   if (area === 'pre') selectedBrainRegions = preSynapticBrainRegions;
 
   useEffect(() => {
-    if (!brainRegions) return;
-    brainRegions.forEach((l) => {
+    if (!brainRegionLeaves) return;
+    brainRegionLeaves.forEach((l) => {
       setSelectedPreBrainRegion(l.id, l.title);
       setSelectedPostBrainRegion(l.id, l.title);
     });
-  }, [brainRegions, setSelectedPostBrainRegion, setSelectedPreBrainRegion]);
+  }, [brainRegionLeaves, setSelectedPostBrainRegion, setSelectedPreBrainRegion]);
+
+  const leafTitleById = useMemo(() => {
+    const map: { [id: string]: string } = {};
+    brainRegionLeaves?.forEach((l) => {
+      map[l.id] = l.title;
+    });
+    return map;
+  }, [brainRegionLeaves]);
 
   return (
     <div className="bg-black flex flex-1 flex-col h-screen">
@@ -247,7 +255,6 @@ export default function ConnectomeEditorSidebar() {
                               : 'capitalize text-base'
                           }
                           onClick={() => {
-                            console.log('nested');
                             const setFun =
                               area === 'post'
                                 ? setSelectedPostBrainRegion
@@ -258,9 +265,10 @@ export default function ConnectomeEditorSidebar() {
                               const leafIds = leafIdsByRegionId[nestedId] ?? [];
                               const some = leafIds.some((rId) => selectedBrainRegions.has(rId));
                               leafIds.forEach((lid) => {
+                                const leafTitle = leafTitleById[lid];
                                 if (some) {
-                                  if (selectedBrainRegions.has(lid)) setFun(lid, nestedTitle); // Delete selected
-                                } else setFun(lid, nestedTitle); // Select everything
+                                  if (selectedBrainRegions.has(lid)) setFun(lid, leafTitle); // Delete selected
+                                } else setFun(lid, leafTitle); // Select everything
                               });
                             }
                           }}
