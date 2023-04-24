@@ -166,8 +166,7 @@ export default function ConnectomeEditorSidebar() {
   if (area === 'pre') selectedBrainRegions = preSynapticBrainRegions;
 
   useEffect(() => {
-    if (!brainRegionLeaves) return;
-    brainRegionLeaves.forEach((l) => {
+    brainRegionLeaves?.forEach((l) => {
       setSelectedPreBrainRegion(l.id, l.title);
       setSelectedPostBrainRegion(l.id, l.title);
     });
@@ -264,6 +263,7 @@ export default function ConnectomeEditorSidebar() {
                             else {
                               const leafIds = leafIdsByRegionId[nestedId] ?? [];
                               const some = leafIds.some((rId) => selectedBrainRegions.has(rId));
+
                               leafIds.forEach((lid) => {
                                 const leafTitle = leafTitleById[lid];
                                 if (some) {
