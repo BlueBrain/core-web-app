@@ -25,13 +25,15 @@ import {
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
 import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import { initialConnectivityStrengthTableAtom } from '@/state/brain-model-config/macro-connectome';
+import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import styles from '../connectome-definition.module.css';
 
-function getFlatArrayValueIdx (totalLeaves: number, srcIdx: number, dstIdx: number) {
-  return (srcIdx * totalLeaves) + dstIdx;
-};
+function getFlatArrayValueIdx(totalLeaves: number, srcIdx: number, dstIdx: number) {
+  return srcIdx * totalLeaves + dstIdx;
+}
 
 function ConnectomeDefinitionMain() {
+  const area = useAtomValue(brainAreaAtom);
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
@@ -74,26 +76,23 @@ function ConnectomeDefinitionMain() {
     const flatArraySize = totalLeaves * totalLeaves;
 
     const matrix: Record<HemisphereDirection, Float64Array> = {
-      'LL': new Float64Array(flatArraySize),
-      'LR': new Float64Array(flatArraySize),
-      'RL': new Float64Array(flatArraySize),
-      'RR': new Float64Array(flatArraySize),
-    }
+      LL: new Float64Array(flatArraySize),
+      LR: new Float64Array(flatArraySize),
+      RL: new Float64Array(flatArraySize),
+      RR: new Float64Array(flatArraySize),
+    };
 
-    initialConnectivityStrengthTable
-      .toArray()
-      .forEach((record) => {
-        const srcIdx = brainRegionLeaveIdxByNotationMap.get(record.src) as number;
-        const dstIdx = brainRegionLeaveIdxByNotationMap.get(record.dst) as number;
+    initialConnectivityStrengthTable.toArray().forEach((record) => {
+      const srcIdx = brainRegionLeaveIdxByNotationMap.get(record.src) as number;
+      const dstIdx = brainRegionLeaveIdxByNotationMap.get(record.dst) as number;
 
-        const idx = getFlatArrayValueIdx(totalLeaves, srcIdx, dstIdx);
+      const idx = getFlatArrayValueIdx(totalLeaves, srcIdx, dstIdx);
 
-        matrix[record.side as HemisphereDirection][idx] = record.value;
-      });
+      matrix[record.side as HemisphereDirection][idx] = record.value;
+    });
 
     setConnectivityMatrix(matrix);
   }, [initialConnectivityStrengthTable, brainRegionLeaveIdxByNotationMap]);
-
 
   // const newHistogram = useMemo(() => {
   //   const x: number[] = [];
@@ -277,10 +276,14 @@ function ConnectomeDefinitionMain() {
       </div>
 
       <div className={styles.rightPanel}>
-        <MatrixPreviewComponent />
-        <MatrixDisplayDropdown />
-        <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-        <MatrixModificationHistoryList />
+        {area === null && (
+          <>
+            <MatrixPreviewComponent />
+            <MatrixDisplayDropdown />
+            <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
+            <MatrixModificationHistoryList />
+          </>
+        )}
       </div>
 
       <div className={styles.leftPanel} />

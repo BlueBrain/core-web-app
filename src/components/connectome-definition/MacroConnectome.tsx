@@ -141,14 +141,13 @@ export default function MacroConnectome({
 
   const prevsrcLabels = usePrevious(srcLabels);
   const prevdstLabels = usePrevious(dstLabels);
+  const userChangedRegions = prevsrcLabels !== srcLabels || prevdstLabels !== dstLabels;
 
   useEffect(() => {
     selectRef.current = select;
     unselectRef.current = unselect;
     selectedRef.current = selected;
     const container = plotRef.current;
-
-    const userChangedRegions = prevsrcLabels !== srcLabels || prevdstLabels !== dstLabels;
 
     if (selected.size === 0) {
       shapes.current = [];
@@ -345,8 +344,7 @@ export default function MacroConnectome({
     zoom,
     selected,
     setSelected,
-    prevdstLabels,
-    prevsrcLabels,
+    userChangedRegions,
   ]);
 
   return (
