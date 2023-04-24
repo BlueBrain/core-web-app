@@ -8,7 +8,7 @@ type Props = {
   url: string;
 };
 
-export function ExploreNavItem({ title, text, url }: Props) {
+export function ExploreNavItem ({ title, text, url }: Props) {
   return (
     <Link href={url}>
       <div>
@@ -20,11 +20,11 @@ export function ExploreNavItem({ title, text, url }: Props) {
   );
 }
 
-export function ExploreGroupNav() {
+export function ExploreGroupNav () {
   return (
     <div className={styles.containerSub}>
       <div className={styles.ephys}>
-        <Link href="/explore/electrophysiology">
+        <Link href='/explore/electrophysiology'>
           <div>
             <h1>Neuron electrophysiology</h1>
             <PlusOutlined />
@@ -32,7 +32,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.morph}>
-        <Link href="/explore/morphology">
+        <Link href='/explore/morphology'>
           <div>
             <h1>Neuron morphology</h1>
             <PlusOutlined />
@@ -40,7 +40,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.bouton}>
-        <Link href="/explore/bouton-density">
+        <Link href='/explore/bouton-density'>
           <div>
             <h1>Bouton density</h1>
             <PlusOutlined />
@@ -48,7 +48,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.neuron}>
-        <Link href="/explore/neuron-density">
+        <Link href='/explore/neuron-density'>
           <div>
             <h1>Neuron density</h1>
             <PlusOutlined />
@@ -56,7 +56,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.layer}>
-        <Link href="/explore/layer-thickness">
+        <Link href='/explore/layer-thickness'>
           <div>
             <h1>Layer thickness</h1>
             <PlusOutlined />
@@ -64,7 +64,7 @@ export function ExploreGroupNav() {
         </Link>
       </div>
       <div className={styles.pair}>
-        <Link href="/explore/synapse-per-connection">
+        <Link href='/explore/synapse-per-connection'>
           <div>
             <h1>Synapse per connection</h1>
             <PlusOutlined />

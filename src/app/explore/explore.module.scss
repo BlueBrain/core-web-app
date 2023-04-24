@@ -40,7 +40,7 @@
   width: 100vw;
   display: grid;
   grid-template-columns: 0.7fr 1.3fr;
-  grid-template-rows: auto repeat(4, 1fr);
+  grid-template-rows: 1.3fr repeat(4, 1fr);
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
@@ -48,7 +48,7 @@
     'braincells content'
     'experimental content'
     'reconstructions content'
-    'simulations info';
+    'simulations content';
 }
 
 .content {
@@ -58,12 +58,6 @@
   -moz-background-size: contain;
   -o-background-size: contain;
   background-size: contain;
-}
-
-.exploreHeader {
-  min-height: 0;
-  grid-area: explore-header;
-  min-height: 20%;
 }
 
 .braincells {
@@ -90,7 +84,6 @@
 }
 
 .themeBlack,
-.info,
 .exploreHeader,
 .experimental,
 .simulations,
@@ -103,11 +96,7 @@
     @apply text-xl;
   }
   h1 {
-    @apply text-xl font-bold inline;
-  }
-  button {
-    font-size: clamp(1rem, 0.5vw + 5px, 3rem);
-    @apply border border-white px-4 py-2 mt-4;
+    @apply text-xl font-bold inline cursor-pointer;
   }
   p {
     font-size: clamp(1rem, 0.4vw + 5px, 3rem);
@@ -116,11 +105,17 @@
 }
 
 .exploreHeader {
+  grid-area: explore-header;
+  @apply flex bg-primary-9;
   h1 {
     @apply font-bold uppercase block;
     font-size: clamp(1rem, 2.5vw, 5rem);
     line-height: 0.8;
     word-spacing: 100vw;
+  }
+  p {
+    font-size: clamp(1rem, 0.4vw + 5px, 3rem);
+    @apply pt-2 font-thin text-primary-2;
   }
   button {
     @apply border border-primary-4 text-primary-4;
@@ -129,6 +124,7 @@
     }
   }
 }
+
 .info {
   min-height: 0;
   background-color: black;
