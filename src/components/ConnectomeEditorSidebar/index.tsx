@@ -22,7 +22,7 @@ import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/Bra
 function NavTitle({
   className,
   id,
-  onClick = () => {},
+  onClick,
   title,
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
@@ -56,7 +56,7 @@ function NavTitle({
           <button
             type="button"
             className="h-auto border-none flex gap-3 justify-end items-center"
-            onClick={() => id && onClick()}
+            onClick={onClick}
           >
             <span
               className={classNames(
@@ -167,7 +167,6 @@ export default function ConnectomeEditorSidebar() {
 
   useEffect(() => {
     if (!brainRegions) return;
-
     brainRegions.forEach((l) => {
       setSelectedPreBrainRegion(l.id, l.title);
       setSelectedPostBrainRegion(l.id, l.title);
@@ -207,75 +206,79 @@ export default function ConnectomeEditorSidebar() {
               value={navValue}
             />
             <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
-              {({ colorCode, id, isExpanded, title, trigger, content, items }) => (
-                <NavTitle
-                  className="font-bold uppercase text-lg"
-                  colorCode={colorCode}
-                  id={id}
-                  onClick={() => {
-                    const setFun =
-                      area === 'post' ? setSelectedPostBrainRegion : setSelectedPreBrainRegion;
-                    if (!items || items.length === 0) setFun(id, title);
-                    else {
-                      const leafIds = leafIdsByRegionId[id] ?? [];
-                      const some = leafIds.some((rId) => selectedBrainRegions.has(rId));
-                      leafIds.forEach((lid) => {
-                        if (some && selectedBrainRegions.has(id))
-                          setFun(lid, title); // Delete selected
-                        else setFun(id, title); // Select everything
-                      });
-                    }
-                  }}
-                  title={title}
-                  isExpanded={isExpanded}
-                  trigger={trigger}
-                  content={content}
-                  multi={!!area}
-                  selectedBrainRegions={selectedBrainRegions}
-                  isLeaf={!items || items.length === 0}
-                >
-                  {({
-                    colorCode: nestedColorCode,
-                    id: nestedId,
-                    isExpanded: nestedIsExpanded,
-                    title: nestedTitle,
-                    trigger: nestedTrigger,
-                    content: nestedContent,
-                    items: nestedItems,
-                  }) => (
-                    <NavTitle
-                      className={
-                        !nestedIsExpanded
-                          ? 'capitalize text-base font-light'
-                          : 'capitalize text-base'
-                      }
-                      onClick={() => {
-                        const setFun =
-                          area === 'post' ? setSelectedPostBrainRegion : setSelectedPreBrainRegion;
-                        if (!nestedItems || nestedItems.length === 0) setFun(nestedId, nestedTitle);
-                        else {
-                          const leafIds = leafIdsByRegionId[nestedId] ?? [];
-                          const some = leafIds.some((rId) => selectedBrainRegions.has(rId));
-                          leafIds.forEach((lid) => {
-                            if (some) {
-                              if (selectedBrainRegions.has(lid)) setFun(lid, nestedTitle); // Delete selected
-                            } else setFun(lid, nestedTitle); // Select everything
-                          });
-                        }
-                      }}
-                      colorCode={nestedColorCode}
-                      id={nestedId}
-                      title={nestedTitle}
-                      isExpanded={nestedIsExpanded}
-                      trigger={nestedTrigger}
-                      content={nestedContent}
-                      multi={!!area}
-                      selectedBrainRegions={selectedBrainRegions}
-                      isLeaf={!nestedItems || nestedItems.length === 0}
-                    />
-                  )}
-                </NavTitle>
-              )}
+              {({
+                colorCode,
+                id,
+                isExpanded,
+                title,
+                trigger,
+                content,
+                items,
+                // eslint-disable-next-line arrow-body-style
+              }) => {
+                return (
+                  <NavTitle
+                    className="font-bold uppercase text-lg"
+                    colorCode={colorCode}
+                    id={id}
+                    title={title}
+                    isExpanded={isExpanded}
+                    trigger={trigger}
+                    content={content}
+                    multi={!!area}
+                    selectedBrainRegions={selectedBrainRegions}
+                    isLeaf={!items || items.length === 0}
+                  >
+                    {({
+                      colorCode: nestedColorCode,
+                      id: nestedId,
+                      isExpanded: nestedIsExpanded,
+                      title: nestedTitle,
+                      trigger: nestedTrigger,
+                      content: nestedContent,
+                      items: nestedItems,
+                      // eslint-disable-next-line arrow-body-style
+                    }) => {
+                      return (
+                        <NavTitle
+                          className={
+                            !nestedIsExpanded
+                              ? 'capitalize text-base font-light'
+                              : 'capitalize text-base'
+                          }
+                          onClick={() => {
+                            console.log('nested');
+                            const setFun =
+                              area === 'post'
+                                ? setSelectedPostBrainRegion
+                                : setSelectedPreBrainRegion;
+                            if (!nestedItems || nestedItems.length === 0)
+                              setFun(nestedId, nestedTitle);
+                            else {
+                              const leafIds = leafIdsByRegionId[nestedId] ?? [];
+                              const some = leafIds.some((rId) => selectedBrainRegions.has(rId));
+                              leafIds.forEach((lid) => {
+                                if (some) {
+                                  if (selectedBrainRegions.has(lid)) setFun(lid, nestedTitle); // Delete selected
+                                } else setFun(lid, nestedTitle); // Select everything
+                              });
+                            }
+                          }}
+                          colorCode={nestedColorCode}
+                          id={nestedId}
+                          title={nestedTitle}
+                          isExpanded={nestedIsExpanded}
+                          trigger={nestedTrigger}
+                          content={nestedContent}
+                          multi={!!area}
+                          selectedBrainRegions={selectedBrainRegions}
+                          isLeaf={!nestedItems || nestedItems.length === 0}
+                        />
+                      );
+                    }}
+                  </NavTitle>
+                );
+              }}
             </BrainTreeNav>
           </div>
         </div>
