@@ -84,7 +84,7 @@ function EphysDetail() {
   useEffect(() => setInfoWithPath(path, setInfo, rev), [path, rev, setInfo]);
 
   const links: Array<SideLink> = [
-    { url: '/observatory/electrophysiology', title: 'Neuron Morphology' },
+    { url: '/explore/electrophysiology', title: 'Neuron Morphology' },
   ];
 
   if (detail.state === 'hasError') {

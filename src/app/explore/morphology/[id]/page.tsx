@@ -80,7 +80,7 @@ function MorphologyDetail() {
 
   useEffect(() => setInfoWithPath(path, setInfo, rev), [path, rev, setInfo]);
 
-  const links: Array<SideLink> = [{ url: '/observatory/morphology', title: 'Neuron Morphology' }];
+  const links: Array<SideLink> = [{ url: '/explore/morphology', title: 'Neuron Morphology' }];
 
   if (detail.state === 'hasError') {
     return <Error statusCode={400} title="Something went wrong while fetching the data" />;
