@@ -16,6 +16,7 @@ import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
+import { itemsInAnnotationReducer } from '@/util/brain-hierarchy';
 
 /*
   Atom dependency graph
@@ -156,16 +157,25 @@ export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(
   return tree;
 });
 
+const brainRegionsTreeWithRepresentationAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
+  const brainRegionsTree = await get(brainRegionsFilteredTreeAtom);
+
+  if (!brainRegionsTree) return null;
+
+  return brainRegionsTree.reduce(itemsInAnnotationReducer, []);
+});
+
 export const selectedAlternateViews = atom<{ [id: string]: string }>({});
 
 export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null | undefined>>(
   async (get) => {
     const brainRegions = await get(brainRegionsAtom);
-    const defaultTree = await get(brainRegionsFilteredTreeAtom);
+    const defaultTree = await get(brainRegionsTreeWithRepresentationAtom);
     const views = await get(brainRegionOntologyViewsAtom);
     const selectedViews = get(selectedAlternateViews);
 
     const alternateTree = cloneDeep(defaultTree);
+
     // iterate over the currently modified views and apply the alternative children
     Object.entries(selectedViews).forEach(([brainRegionId, viewId]) => {
       const view = views?.find((v) => v.id === viewId);
@@ -177,11 +187,22 @@ export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null |
           brainRegions,
           viewId
         );
+
         // then replace the children of the changed node with the new ones
         buildAlternateTree(alternateTree[0], brainRegionId, alternateChildren, viewId);
       }
     });
     return alternateTree;
+  }
+);
+
+export const alternateTreeWithRepresentationAtom = atom<Promise<BrainRegion[] | null>>(
+  async (get) => {
+    const alternateTree = await get(brainRegionsAlternateTreeAtom);
+
+    if (!alternateTree) return null;
+
+    return alternateTree.reduce(itemsInAnnotationReducer, []);
   }
 );
 

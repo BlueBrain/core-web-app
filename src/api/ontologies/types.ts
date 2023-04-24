@@ -42,10 +42,6 @@ export type BrainRegionOntologyViewNexus = {
   label: string;
 };
 
-export type BrainRegionAnnotationIndex = {
-  [key: string]: { leaves?: string[]; representedInAnnotation: boolean };
-};
-
 export type SerializedBrainRegionsAndVolumesResponse = {
   brainRegions: BrainRegion[];
   volumes: { [key: string]: number };
