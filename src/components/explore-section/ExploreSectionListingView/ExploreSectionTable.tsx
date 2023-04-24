@@ -1,10 +1,10 @@
 import { Loadable } from 'jotai/vanilla/utils/loadable';
-import { Spin, Table } from 'antd';
+import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
-import { LoadingOutlined } from '@ant-design/icons';
 import usePathname from '@/hooks/pathname';
 import { ExploreSectionResource } from '@/types/explore-section';
+import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import styles from '@/app/explore/explore.module.scss';
 
 type ExploreSectionTableProps = {
@@ -17,22 +17,7 @@ export default function ExploreSectionTable({ loadableData, columns }: ExploreSe
   const pathname = usePathname();
 
   if (loadableData.state === 'loading') {
-    return (
-      <Spin
-        style={{ display: 'table', width: '100%', height: '100vh' }}
-        indicator={
-          <LoadingOutlined
-            style={{
-              fontSize: 54,
-              display: 'table-cell',
-              verticalAlign: 'middle',
-              textAlign: 'center',
-            }}
-            spin
-          />
-        }
-      />
-    );
+    return <CentralLoadingSpinner />;
   }
 
   if (loadableData.state === 'hasData') {

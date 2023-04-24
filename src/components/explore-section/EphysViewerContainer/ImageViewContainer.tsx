@@ -7,7 +7,7 @@ import { DeltaResource } from '@/types/explore-section';
 import {
   EPhysImageItem,
   useImageCollectionDistribution,
-} from '@/components/explore-section/ephys/useImageCollectionDistribution';
+} from '@/components/explore-section/EphysViewerContainer/hooks/useImageCollectionDistribution';
 
 // Only fetch three traces at a time.
 const PAGINATION_OFFSET = 5;

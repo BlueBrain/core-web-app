@@ -6,11 +6,11 @@ import { ExploreSectionResource } from '@/types/explore-section';
 import Sidebar from '@/components/explore-section/Sidebar';
 import Link from '@/components/Link';
 import { sorter, dateStringToUnix } from '@/util/common';
-import ExploreSectionListingView from '@/components/ExploreSectionListingView';
+import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import styles from '@/app/explore/explore.module.scss';
 
-const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+const TYPE = 'https://neuroshapes.org/Trace';
 
 const { pageSizeAtom, searchStringAtom, filtersAtom, dataAtom, totalAtom, aggregationsAtom } =
   createListViewAtoms({

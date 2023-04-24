@@ -5,7 +5,7 @@ import { Radio } from 'antd';
 
 import { convertAmperes, Amperes } from '@/util/explore-section/plotHelpers';
 import optimizePlotData from '@/util/explore-section/optimizeTrace';
-import useConfig from '@/components/explore-section/ephys/useConfig';
+import useConfig from '@/components/explore-section/EphysViewerContainer/hooks/useConfig';
 import { PlotProps } from '@/types/explore-section/index';
 
 const Plot = createPlotlyComponent(Plotly);

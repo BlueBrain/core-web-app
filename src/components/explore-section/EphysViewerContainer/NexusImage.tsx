@@ -4,7 +4,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 
 import { parseUrl } from '@/util/explore-section/nexus-tools';
 
-import './nexus-image.scss';
+import './styles/nexus-image.scss';
 
 export interface NexusImageContainerProps {
   imageUrl: string; // nexus selfUrl, if org ond project will be treated as nexus id

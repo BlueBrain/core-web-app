@@ -2,14 +2,14 @@ import { ColumnProps } from 'antd/es/table';
 import { Atom, PrimitiveAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useMemo, useState } from 'react';
-import ExploreSectionNameSearch from '@/components/explore-section/ephys/ExploreSectionNameSearch';
-import LoadMoreButton from '@/components/ExploreSectionListingView/LoadMoreButton';
-import ExploreSectionTable from '@/components/ExploreSectionListingView/ExploreSectionTable';
-import ControlPanel from '@/components/explore-section/Filters';
+import ExploreSectionNameSearch from '@/components/explore-section/EphysViewerContainer/ExploreSectionNameSearch';
+import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
+import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
+import ControlPanel from '@/components/explore-section/ControlPanel';
 import { Filter } from '@/components/Filter/types';
 import { ExploreSectionResource, TotalHits } from '@/types/explore-section';
 import { formatNumber } from '@/util/common';
-import styles from '@/components/explore-section/filters.module.scss';
+import styles from '@/components/explore-section/ControlPanel/filters.module.scss';
 
 type ExploreSectionPageProps = {
   title: string;

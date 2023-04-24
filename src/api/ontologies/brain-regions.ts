@@ -2,19 +2,12 @@ import has from 'lodash/has';
 import { createHeaders } from '@/util/utils';
 import { BrainRegion, BrainRegionOntology, BrainRegionOntologyView } from '@/types/ontologies';
 import {
-  BrainRegionAnnotationIndex,
   BrainRegionNexus,
   BrainRegionOntologyViewNexus,
   SerializedBrainRegionsAndVolumesResponse,
 } from '@/api/ontologies/types';
 import { composeUrl } from '@/util/nexus';
-
-/**
- * Sanitizes the ID in order to be in a single numeric format
- * @param id
- */
-export const sanitizeId = (id: string) =>
-  id.replace('mba:', '').replace('http://api.brain-map.org/api/v2/data/Structure/', '');
+import { sanitizeId } from '@/util/brain-hierarchy';
 
 /**
  * Sanitizes the leaves in order to be in a uniform format. Leaves sometimes are
@@ -35,65 +28,18 @@ const sanitizeLeaves = (payload: BrainRegionNexus): string[] => {
   return payload.hasLeafRegionPart as string[];
 };
 
-function createAnnotationIndexFromBrainRegions(
-  acc: BrainRegionAnnotationIndex,
-  cur: { '@id': string; representedInAnnotation: boolean }
-) {
-  const { representedInAnnotation } = cur;
-
-  return { ...acc, [sanitizeId(cur['@id'])]: { representedInAnnotation } };
-}
-
-export function recursivelyCheckLeavesInAnnotation(
-  brainRegionAnnotationIndex: BrainRegionAnnotationIndex,
-  leaves: string[] | undefined
-): boolean {
-  return leaves?.length
-    ? leaves
-        .flatMap((id) => {
-          const { leaves: nestedLeaves, representedInAnnotation } =
-            brainRegionAnnotationIndex[sanitizeId(id)];
-
-          return nestedLeaves?.length
-            ? recursivelyCheckLeavesInAnnotation(brainRegionAnnotationIndex, nestedLeaves)
-            : representedInAnnotation;
-        })
-        .includes(true)
-    : false;
-}
-
-export function checkLeavesInAnnotation(
-  brainRegionAnnotationIndex: BrainRegionAnnotationIndex,
-  leaves: string[] | undefined
-) {
-  return leaves?.length
-    ? leaves
-        .map((id) => brainRegionAnnotationIndex[sanitizeId(id)]?.representedInAnnotation)
-        .includes(true)
-    : false;
-}
-
 /**
  * Serializes the brain regions from Nexus format to the local one
  * @param brainRegionPayloads the array of the payloads
  */
-const serializeBrainRegionsAndVolumes = (
+export const serializeBrainRegionsAndVolumes = (
   brainRegionPayloads: (BrainRegionNexus | string)[]
 ): SerializedBrainRegionsAndVolumesResponse => {
   const serializedBrainRegions: BrainRegion[] = [];
   const volumes: { [key: string]: number } = {};
 
-  const brainRegionAnnotationIndex: BrainRegionAnnotationIndex = (
-    brainRegionPayloads as BrainRegionNexus[]
-  ).reduce(createAnnotationIndexFromBrainRegions, {});
-
   brainRegionPayloads.forEach((brainRegionPayload) => {
     const leaves = sanitizeLeaves(brainRegionPayload as BrainRegionNexus);
-
-    const leavesInAnnotation = recursivelyCheckLeavesInAnnotation(
-      brainRegionAnnotationIndex,
-      leaves
-    );
 
     if (typeof brainRegionPayload !== 'string' && brainRegionPayload.prefLabel) {
       serializedBrainRegions.push({
@@ -111,7 +57,6 @@ const serializeBrainRegionsAndVolumes = (
         notation: brainRegionPayload.notation,
         leaves,
         representedInAnnotation: brainRegionPayload.representedInAnnotation,
-        leavesInAnnotation,
       });
       if (brainRegionPayload.regionVolume) {
         // retrieving region volume and converting it from cubic micrometer to cubic millimeter
@@ -136,7 +81,7 @@ const serializeBrainRegionsAndVolumes = (
  * Checks for array because Delta sometimes returns it as object
  * @param nexusViews
  */
-const serializeBrainRegionOntologyViews = (
+export const serializeBrainRegionOntologyViews = (
   nexusViews: BrainRegionOntologyViewNexus[]
 ): BrainRegionOntologyView[] =>
   nexusViews.map((nexusView) => ({

@@ -1,7 +1,6 @@
 import { Empty, Spin } from 'antd';
-
-import EphysPlot from './EphysPlot';
 import { DataSets, RABIndex } from '@/types/explore-section/index';
+import EphysPlot from '@/components/explore-section/EphysViewerContainer/EphysPlot';
 
 interface GraphViewComponentProps {
   defaultStimulusType?: string;

@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { NexusClient, NexusFile } from '@bbp/nexus-sdk';
-import { DeltaResource } from '@/types/explore-section';
 import { RemoteData } from '@/types/explore-section/index';
+import { DeltaResource } from '@/types/explore-section';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
 import { chainPredicates, isFile, hasImage, not } from '@/util/explore-section/nexus-maybe';
 import uniqueArrayOfObjectsByKey from '@/util/explore-section/arrays';
-import { ImageCollection, ImageItem } from '@/components/explore-section/ephys/ImageViewComponent';
+import {
+  ImageCollection,
+  ImageItem,
+} from '@/components/explore-section/EphysViewerContainer/ImageViewComponent';
 
 const MAX_BYTES_TO_PREVIEW = 3000000;
 

@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
-import { ExploreNavItem, ExploreGroupNav } from '@/components/ExploreSectionNavItem';
+import {
+  ExploreNavItem,
+  ExploreGroupNav,
+} from '@/components/explore-section/ExploreSectionNavItem';
 import Link from '@/components/Link';
 import { basePath } from '@/config';
 import styles from './explore.module.scss';

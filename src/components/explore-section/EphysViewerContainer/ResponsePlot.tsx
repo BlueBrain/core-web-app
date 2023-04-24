@@ -2,7 +2,7 @@ import React from 'react';
 import Plotly, { PlotData } from 'plotly.js-dist-min';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { convertVolts } from '@/util/explore-section/plotHelpers';
-import useConfig from '@/components/explore-section/ephys/useConfig';
+import useConfig from '@/components/explore-section/EphysViewerContainer/hooks/useConfig';
 import optimizePlotData from '@/util/explore-section/optimizeTrace';
 import { PlotProps } from '@/types/explore-section/index';
 

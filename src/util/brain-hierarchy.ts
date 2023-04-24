@@ -1,5 +1,6 @@
 import { TreeItem } from 'performant-array-to-tree';
 import { Composition, CompositionOverrideLeafNode } from '@/types/composition';
+import { BrainRegion } from '@/types/ontologies';
 
 const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -91,4 +92,45 @@ export function brainRegionIdToUri(brainRegionId: string) {
  */
 export function brainRegionIdFromUri(brainRegionUri: string) {
   return brainRegionUri.match(/.*\/(\d+)$/)?.[1];
+}
+
+/**
+ * Sanitizes the ID in order to be in a single numeric format
+ * @param id
+ */
+export const sanitizeId = (id: string) =>
+  id.replace('mba:', '').replace('http://api.brain-map.org/api/v2/data/Structure/', '');
+
+/**
+ * Adds the itemsInAnnotation property to every brain region in a tree.
+ * @param {BrainRegion[]} accBrainRegions
+ * @param {BrainRegion} curBrainRegion
+ */
+export function itemsInAnnotationReducer(
+  accBrainRegions: BrainRegion[],
+  curBrainRegion: BrainRegion
+): BrainRegion[] {
+  const { items } = curBrainRegion;
+  // NOT a leaf
+  if (items && items?.length !== 0) {
+    const reducedItems = items.reduce(itemsInAnnotationReducer, []); // First add itemsInAnnotation to any descendents.
+
+    const itemsInAnnotation: boolean = reducedItems
+      .flatMap(
+        ({
+          items: nestedItems,
+          itemsInAnnotation: nestedItemsInAnnotation,
+          representedInAnnotation: nestedRepresentedInAnnotation,
+        }) =>
+          nestedItems?.length !== 0 && nestedItemsInAnnotation
+            ? nestedItemsInAnnotation
+            : nestedRepresentedInAnnotation
+      )
+      .includes(true); // Is it true for at least one of the descendents?
+
+    return [...accBrainRegions, { ...curBrainRegion, items: reducedItems, itemsInAnnotation }];
+  }
+
+  // LEAF
+  return [...accBrainRegions, { ...curBrainRegion, itemsInAnnotation: false }]; // No items? Then no items in annotation.
 }

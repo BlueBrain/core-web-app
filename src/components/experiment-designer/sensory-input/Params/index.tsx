@@ -140,12 +140,18 @@ export default function Params({ focusedAtom }: Props) {
     dispatch({ type: 'insert', value: getNewSensoryInputObj() });
   };
 
+  const removeGroup = (groupAtom: PrimitiveAtom<ExpDesignerParam> | null) => {
+    if (!groupAtom) return;
+    dispatch({ type: 'remove', atom: groupAtom });
+  };
+
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
       sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
       listAtoms={listAtoms}
       RowRenderer={InputBlock}
+      onRemoveGroup={removeGroup}
       isGroup
     >
       <GenericAddButton onClick={addNew} title="Add Sensory Input" />

@@ -3,13 +3,12 @@ import { FileImageOutlined, LineChartOutlined } from '@ant-design/icons';
 import { NexusClient } from '@bbp/nexus-sdk';
 import React from 'react';
 import { DeltaResource } from '@/types/explore-section';
-
-import { EPhysImageItem } from '@/components/explore-section/ephys/useImageCollectionDistribution';
+import { EPhysImageItem } from '@/components/explore-section/EphysViewerContainer/hooks/useImageCollectionDistribution';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
-import ImageViewContainer from '@/components/explore-section/ephys/ImageViewContainer';
-import GraphViewContainer from '@/components/explore-section/ephys/GraphViewContainer';
+import ImageViewContainer from '@/components/explore-section/EphysViewerContainer/ImageViewContainer';
+import GraphViewContainer from '@/components/explore-section/EphysViewerContainer/GraphViewContainer';
 
-import './ephys-plugin-styles.scss';
+import './styles/ephys-plugin-styles.scss';
 
 enum VIEWS {
   IMAGE = 'image',

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, ReactNode, ForwardedRef, forwardRef } from 'react';
+import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
@@ -47,18 +47,6 @@ export function TreeNavItem({
   path,
   ...props
 }: TreeNavItemProps) {
-  const trigger = items?.length
-    ? (triggerProps: {}) => (
-        <Accordion.Trigger
-          className={styles.accordionTrigger}
-          data-disabled={!items || items.length === 0}
-          {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
-        >
-          <ArrowDownOutlinedIcon className={styles.accordionChevron} style={{ height: '13px' }} />
-        </Accordion.Trigger>
-      )
-    : null;
-
   const renderedItems = items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
     // children may return another render-prop
     const childRender = children({
@@ -96,6 +84,25 @@ export function TreeNavItem({
       childRender
     );
   });
+
+  const trigger = useMemo(
+    () =>
+      items?.length && renderedItems?.some((item) => item !== null) // Any non-hidden children?
+        ? (triggerProps: {}) => (
+            <Accordion.Trigger
+              className={styles.accordionTrigger}
+              data-disabled={!items || items.length === 0}
+              {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
+            >
+              <ArrowDownOutlinedIcon
+                className={styles.accordionChevron}
+                style={{ height: '13px' }}
+              />
+            </Accordion.Trigger>
+          )
+        : null,
+    [items, renderedItems]
+  );
 
   const content =
     items?.length && renderedItems?.filter((item) => item)?.length

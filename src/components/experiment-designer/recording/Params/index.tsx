@@ -76,6 +76,11 @@ export default function Params({ focusedAtom }: Props) {
     dispatch({ type: 'insert', value: getNewRecordingObj() });
   };
 
+  const removeGroup = (groupAtom: PrimitiveAtom<ExpDesignerParam> | null) => {
+    if (!groupAtom) return;
+    dispatch({ type: 'remove', atom: groupAtom });
+  };
+
   return (
     <GenericParamWrapper
       description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
@@ -83,6 +88,7 @@ export default function Params({ focusedAtom }: Props) {
       listAtoms={listAtoms}
       RowRenderer={RecordingBlock}
       showHeader={false}
+      onRemoveGroup={removeGroup}
       isGroup
     >
       <GenericAddButton onClick={addNew} title="Add Recording" />

@@ -7,7 +7,7 @@ import OrientationViewer from './libs/OrientationViewer';
 import ScaleViewer from './libs/ScaleViewer';
 import MorphoLegend from './MorphoLegend';
 
-import './morpho-viewer.css';
+import './styles/morpho-viewer.css';
 
 export type MorphoViewerOptions = {
   asPolyline?: boolean;

@@ -15,11 +15,27 @@ const createDetailAtoms = () => {
 
     if (!session || !info.id || !info.org || !info.project) return null;
 
-    return fetchResourceById(info.id, session, pick(info, ['org', 'project']));
+    return fetchResourceById(info.id, session, pick(info, ['org', 'project', 'rev']));
   });
+
+  const latestRevisionAtom = atom<Promise<number | null>>(async (get) => {
+    const session = get(sessionAtom);
+    const info = get(infoAtom);
+
+    if (!session || !info.id || !info.org || !info.project) return null;
+
+    const latestRevision: DeltaResource = await fetchResourceById(
+      info.id,
+      session,
+      pick(info, ['org', 'project'])
+    );
+    return latestRevision._rev;
+  });
+
   return {
     infoAtom,
     detailAtom,
+    latestRevisionAtom,
   };
 };
 

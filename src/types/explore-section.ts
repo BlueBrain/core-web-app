@@ -144,6 +144,7 @@ export type DeltaResource<
   '@context'?: string[] | null;
   '@id': string;
   '@type'?: string[] | null;
+  reason?: string;
   annotation?: AnnotationEntity[] | null;
   atlasRelease: AtlasSpatialReferenceSystemOrAtlasRelease;
   brainLocation: BrainLocation;
