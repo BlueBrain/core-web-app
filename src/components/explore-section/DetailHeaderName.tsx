@@ -1,9 +1,9 @@
 import { Button, Dropdown, MenuProps } from 'antd';
 import range from 'lodash/range';
-import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { DeltaResource } from '@/types/explore-section';
+import Link from '@/components/Link';
 
 export default function DetailHeaderName({
   detail,
@@ -14,21 +14,20 @@ export default function DetailHeaderName({
   url?: string | null;
   latestRevision: number | null;
 }) {
-  const router = useRouter();
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
     if (latestRevision) {
       return range(latestRevision, 0).map((revision: number) => ({
         key: revision,
         label: (
-          <a style={{ color: '#0050B3' }} rel="noopener noreferrer" href={`${url}?rev=${revision}`}>
+          <Link style={{ color: '#0050B3' }} href={`${url}?rev=${revision}`}>
             Revision {revision} {latestRevision === revision ? '(latest)' : ''}
-          </a>
+          </Link>
         ),
       }));
     }
     return [];
-  }, [latestRevision, router, url]);
+  }, [latestRevision, url]);
 
   return (
     <>
