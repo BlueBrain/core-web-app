@@ -10,7 +10,7 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import styles from '@/app/explore/explore.module.scss';
 
-const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+const TYPE = 'https://neuroshapes.org/Trace';
 
 const { pageSizeAtom, searchStringAtom, filtersAtom, dataAtom, totalAtom, aggregationsAtom } =
   createListViewAtoms({
