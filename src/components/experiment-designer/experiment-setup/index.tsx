@@ -1,4 +1,4 @@
-import TargetRegionSelector from './Params/TargetRegionSelector';
+import TargetRegionSelector from './Params/TargetSelector';
 import Params from './Params';
 import Visualization from './Visualization';
 

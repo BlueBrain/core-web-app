@@ -1,4 +1,4 @@
-import TargetRegionSelector from './Params/InputTargetRegionSelector';
+import TargetRegionSelector from './Params/InputTargetSelector';
 import Params from './Params';
 // Just reuse the placeholder
 import Visualization from '@/components/experiment-designer/experiment-setup/Visualization';

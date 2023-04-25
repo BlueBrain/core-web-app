@@ -4,7 +4,7 @@ import { Atom, PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
-import RecordingTargetRegionSelector from './RecordingTargetRegionSelector';
+import RecordingTargetSelector from './RecordingTargetSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
 import GenericParamWrapper, {
   defaultPadding,
@@ -52,7 +52,7 @@ function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
     case 'regionDropdown': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
       constantCol = (
-        <RecordingTargetRegionSelector paramAtom={paramAtomTyped} className={defaultPadding} />
+        <RecordingTargetSelector paramAtom={paramAtomTyped} className={defaultPadding} />
       );
       break;
     }

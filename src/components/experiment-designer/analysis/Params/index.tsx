@@ -4,7 +4,7 @@ import { Atom, PrimitiveAtom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
-import RegionDropdownGroup from './RegionDropdownGroup';
+import RegionDropdownGroup from './TargetDropdownGroup';
 import ParamGroup from './ParamGroup';
 import GenericParamWrapper, {
   defaultPadding,

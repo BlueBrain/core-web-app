@@ -7,7 +7,7 @@ import type {
   ExpDesignerRegionParameter,
 } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
-import { BrainRegionsDropdown } from '@/components/experiment-designer';
+import { TargetsDropdown } from '@/components/experiment-designer';
 import { subheaderStyle } from '@/components/experiment-designer/GenericParamWrapper';
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
   className?: string;
 };
 
-export default function RegionDropdownGroup({ paramAtom, className }: Props) {
+export default function TargetDropdownGroup({ paramAtom, className }: Props) {
   const data = useAtomValue(paramAtom as Atom<ExpDesignerRegionDropdownGroupParameter>);
 
   return (
@@ -25,7 +25,7 @@ export default function RegionDropdownGroup({ paramAtom, className }: Props) {
       {data.value.map((regionDropdownElement: ExpDesignerRegionParameter) => (
         <div className={classNames('flex gap-3', className)} key={regionDropdownElement.id}>
           <div className="grow font-bold">{regionDropdownElement.name}</div>
-          <BrainRegionsDropdown defaultValue={regionDropdownElement.value} />
+          <TargetsDropdown defaultValue={regionDropdownElement.value} />
         </div>
       ))}
 

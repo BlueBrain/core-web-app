@@ -5,11 +5,11 @@ import RangeParameter from './RangeParameter';
 import SaveBtn from './SaveBtn';
 import SimulateBtn from './SimulateBtn';
 import DropdownParameter from './DropdownParameter';
-import BrainRegionsDropdown from './BrainRegionsDropdown';
+import TargetsDropdown from './TargetsDropdown';
 import DefaultEmptyParam from './DefaultEmptyParam';
 import CoordinatesViewer from './CoordinatesViewer';
 import RadioButtonParameter from './RadioButtonParameter';
-import MultiBrainRegionDropdown from './MultiBrainRegionDropdown';
+import MultiTargetDropdown from './MultiTargetDropdown';
 import MultiDropdown from './MultiDropdown';
 
 export {
@@ -20,10 +20,10 @@ export {
   SaveBtn,
   SimulateBtn,
   DropdownParameter,
-  BrainRegionsDropdown,
+  TargetsDropdown,
   DefaultEmptyParam,
   CoordinatesViewer,
   RadioButtonParameter,
-  MultiBrainRegionDropdown,
+  MultiTargetDropdown,
   MultiDropdown,
 };

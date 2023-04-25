@@ -21,7 +21,7 @@ type Props = {
 
 const loadableBrainRegionsAtom = loadable(brainRegionsAtom);
 
-export default function MultiBrainRegionDropdown({
+export default function MultiTargetDropdown({
   paramAtom,
   className,
   showSwitcher = true,

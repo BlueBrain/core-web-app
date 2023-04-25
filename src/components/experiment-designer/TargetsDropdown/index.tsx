@@ -15,11 +15,7 @@ type Props = {
 
 const loadableBrainRegionsAtom = loadable(brainRegionsAtom);
 
-export default function BrainRegionsDropdown({
-  onChange,
-  defaultValue = 'SELECT',
-  className,
-}: Props) {
+export default function TargetsDropdown({ onChange, defaultValue = 'SELECT', className }: Props) {
   const brainRegionsLoadable = useAtomValue(loadableBrainRegionsAtom);
 
   const brainRegions = brainRegionsLoadable.state === 'hasData' ? brainRegionsLoadable.data : [];

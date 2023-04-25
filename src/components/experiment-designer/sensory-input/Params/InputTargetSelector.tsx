@@ -3,7 +3,7 @@
 import { PrimitiveAtom, useAtom } from 'jotai';
 import { ExportOutlined } from '@ant-design/icons';
 
-import { BrainRegionsDropdown } from '@/components/experiment-designer';
+import { TargetsDropdown } from '@/components/experiment-designer';
 import { ExpDesignerRegionParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 import { BrainRegion } from '@/types/ontologies';
@@ -14,11 +14,7 @@ type Props = {
   onChangeParamType?: () => void;
 };
 
-export default function StimulationTargetRegionSelector({
-  paramAtom,
-  className,
-  onChangeParamType,
-}: Props) {
+export default function InputTargetSelector({ paramAtom, className, onChangeParamType }: Props) {
   const [data, setData] = useAtom(paramAtom);
 
   const setSimulateRegions = (newBrainRegion: BrainRegion) => {
@@ -32,7 +28,7 @@ export default function StimulationTargetRegionSelector({
   return (
     <div className={classNames('flex gap-3 items-center font-bold', className)}>
       <div className="grow">Target</div>
-      <BrainRegionsDropdown onChange={setSimulateRegions} defaultValue={data.value} />
+      <TargetsDropdown onChange={setSimulateRegions} defaultValue={data.value} />
       <ExportOutlined onClick={onChangeParamType} />
     </div>
   );

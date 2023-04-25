@@ -4,7 +4,7 @@ import { PrimitiveAtom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
-import InputTargetRegionSelector from './InputTargetRegionSelector';
+import InputTargetSelector from './InputTargetSelector';
 import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
 import GenericParamWrapper, {
   defaultPadding,
@@ -15,7 +15,7 @@ import {
   DropdownParameter,
   DefaultEmptyParam,
   RangeParameter,
-  MultiBrainRegionDropdown,
+  MultiTargetDropdown,
   MultiDropdown,
 } from '@/components/experiment-designer';
 import type {
@@ -93,7 +93,7 @@ function InputBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> 
     case 'regionDropdown': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
       constantCol = (
-        <InputTargetRegionSelector
+        <InputTargetSelector
           paramAtom={paramAtomTyped}
           className={defaultPadding}
           onChangeParamType={changed}
@@ -107,7 +107,7 @@ function InputBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> 
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionDropdownGroupParameter>;
       constantCol = <DefaultEmptyParam />;
       sweepCol = (
-        <MultiBrainRegionDropdown
+        <MultiTargetDropdown
           paramAtom={paramAtomTyped}
           className={defaultPadding}
           onChangeParamType={changed}

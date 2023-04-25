@@ -4,7 +4,7 @@ import { PrimitiveAtom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
-import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetRegionSelector';
+import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetSelector';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
@@ -22,7 +22,7 @@ import type {
   ExpDesignerRegionParameter,
 } from '@/types/experiment-designer';
 import { applySwapFunction } from '@/components/experiment-designer/utils';
-import MultiBrainRegionDropdown from '@/components/experiment-designer/MultiBrainRegionDropdown';
+import MultiTargetDropdown from '@/components/experiment-designer/MultiTargetDropdown';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
   const [param, setParam] = useAtom(paramAtom);
@@ -74,7 +74,7 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesigne
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionDropdownGroupParameter>;
       constantCol = <DefaultEmptyParam />;
       sweepCol = (
-        <MultiBrainRegionDropdown
+        <MultiTargetDropdown
           paramAtom={paramAtomTyped}
           className={defaultPadding}
           onChangeParamType={changed}
