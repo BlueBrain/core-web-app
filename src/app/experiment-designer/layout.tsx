@@ -6,6 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ExperimentDesignerTopTabs, SaveBtn, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import useBrainModelConfigState from '@/hooks/brain-model-config';
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;
@@ -13,6 +14,7 @@ type ExperimentDesignerLayoutProps = {
 
 export default function ExperimentDesignerLayout({ children }: ExperimentDesignerLayoutProps) {
   useAuth(true);
+  useBrainModelConfigState();
 
   return (
     <div className="h-screen flex flex-col">

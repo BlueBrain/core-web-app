@@ -2,14 +2,14 @@ import { Atom, PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
-import TargetRegionSelector from './PopulationRegionSelector';
+import TargetSelector from './PopulationRegionSelector';
 import CheckboxGroup from './CheckboxGroup';
 import type {
   ExpDesignerCheckboxGroupParameter,
   ExpDesignerGroupParameter,
   ExpDesignerNumberParameter,
   ExpDesignerParam,
-  ExpDesignerRegionParameter,
+  ExpDesignerTargetParameter,
 } from '@/types/experiment-designer';
 import { ConstantParameter } from '@/components/experiment-designer';
 import {
@@ -24,9 +24,9 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
 
   let constantCol;
   switch (data.type) {
-    case 'regionDropdown': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
-      constantCol = <TargetRegionSelector paramAtom={paramAtomTyped} className={defaultPadding} />;
+    case 'targetDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetParameter>;
+      constantCol = <TargetSelector paramAtom={paramAtomTyped} className={defaultPadding} />;
       break;
     }
 

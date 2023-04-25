@@ -4,12 +4,12 @@ import { PrimitiveAtom, useAtom } from 'jotai';
 import { ExportOutlined } from '@ant-design/icons';
 
 import { TargetsDropdown } from '@/components/experiment-designer';
-import { ExpDesignerRegionParameter } from '@/types/experiment-designer';
+import { ExpDesignerTargetParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 import { BrainRegion } from '@/types/ontologies';
 
 type Props = {
-  paramAtom: PrimitiveAtom<ExpDesignerRegionParameter>;
+  paramAtom: PrimitiveAtom<ExpDesignerTargetParameter>;
   className?: string;
   onChangeParamType?: () => void;
 };

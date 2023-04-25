@@ -56,9 +56,8 @@
     {
       "id": "simulatedNeurons",
       "name": "Simulated neurons",
-      "type": "regionDropdown",
-      "brainRegionId": 1089,
-      "value": "Hippocampal formation"
+      "type": "targetDropdown",
+      "value": "AAA"
     }
   ],
   "input": [
@@ -84,11 +83,10 @@
           "max": 20000
         },
         {
-          "id": "targetInputRegion",
+          "id": "targetInput",
           "name": "Target",
-          "type": "regionDropdown",
-          "brainRegionId": 382,
-          "value": "Field CA1"
+          "type": "targetDropdown",
+          "value": "AAA"
         }
       ]
     }
@@ -116,11 +114,10 @@
           "max": 20000
         },
         {
-          "id": "targetInputRegion",
+          "id": "targetInput",
           "name": "Target",
-          "type": "regionDropdown",
-          "brainRegionId": 382,
-          "value": "Field CA1"
+          "type": "targetDropdown",
+          "value": "AAA"
         }
       ]
     }
@@ -148,11 +145,10 @@
           "max": 20000
         },
         {
-          "id": "recordingRegion",
+          "id": "recordingTarget",
           "name": "Target",
-          "type": "regionDropdown",
-          "brainRegionId": 382,
-          "value": "Field CA1"
+          "type": "targetDropdown",
+          "value": "AAA"
         }
       ]
     }
@@ -181,44 +177,20 @@
     {
       "id": "raster",
       "name": "Spike Raster",
-      "type": "regionDropdownGroup",
-      "value": [
-        {
-          "id": "rasterRegion1",
-          "name": "Target",
-          "type": "regionDropdown",
-          "brainRegionId": 382,
-          "value": "Field CA1"
-        }
-      ]
+      "type": "targetDropdownGroup",
+      "value": ["AAA"]
     },
     {
       "id": "psth",
       "name": "PSTH",
-      "type": "regionDropdownGroup",
-      "value": [
-        {
-          "id": "psthRegion1",
-          "name": "Target",
-          "type": "regionDropdown",
-          "brainRegionId": 382,
-          "value": "Field CA1"
-        }
-      ]
+      "type": "targetDropdownGroup",
+      "value": ["AAA"]
     },
     {
       "id": "voltage",
       "name": "Voltage Report",
-      "type": "regionDropdownGroup",
-      "value": [
-        {
-          "id": "voltageRegion1",
-          "name": "Target",
-          "type": "regionDropdown",
-          "brainRegionId": 382,
-          "value": "Field CA1"
-        }
-      ]
+      "type": "targetDropdownGroup",
+      "value": ["AAA"]
     },
     {
       "id": "localFieldPotential",
@@ -226,11 +198,10 @@
       "type": "group",
       "value": [
         {
-          "id": "lfpRegion1",
+          "id": "lfpTarget1",
           "name": "Population",
-          "type": "regionDropdown",
-          "brainRegionId": 382,
-          "value": "Field CA1"
+          "type": "targetDropdown",
+          "value": "AAA"
         },
         {
           "id": "plots",

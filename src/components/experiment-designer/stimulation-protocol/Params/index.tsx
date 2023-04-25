@@ -21,9 +21,9 @@ import {
 import type {
   ExpDesignerParam,
   ExpDesignerNumberParameter,
-  ExpDesignerRegionParameter,
+  ExpDesignerTargetParameter,
   ExpDesignerDropdownParameter,
-  ExpDesignerRegionDropdownGroupParameter,
+  ExpDesignerTargetDropdownGroupParameter,
   ExpDesignerMultipleDropdownParameter,
   ExpDesignerRangeParameter,
 } from '@/types/experiment-designer';
@@ -91,8 +91,8 @@ function StimulationBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerP
       break;
     }
 
-    case 'regionDropdown': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
+    case 'targetDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetParameter>;
       constantCol = (
         <InputTargetSelector
           paramAtom={paramAtomTyped}
@@ -104,8 +104,8 @@ function StimulationBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerP
       break;
     }
 
-    case 'regionDropdownGroup': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionDropdownGroupParameter>;
+    case 'targetDropdownGroup': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetDropdownGroupParameter>;
       constantCol = <DefaultEmptyParam />;
       sweepCol = (
         <MultiTargetDropdown

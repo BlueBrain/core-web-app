@@ -24,8 +24,8 @@ import type {
   ExpDesignerNumberParameter,
   ExpDesignerParam,
   ExpDesignerRangeParameter,
-  ExpDesignerRegionDropdownGroupParameter,
-  ExpDesignerRegionParameter,
+  ExpDesignerTargetDropdownGroupParameter,
+  ExpDesignerTargetParameter,
 } from '@/types/experiment-designer';
 import { getNewSensoryInputObj } from '@/components/experiment-designer/defaultNewObject';
 import { applySwapFunction } from '@/components/experiment-designer/utils';
@@ -90,8 +90,8 @@ function InputBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> 
       break;
     }
 
-    case 'regionDropdown': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
+    case 'targetDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetParameter>;
       constantCol = (
         <InputTargetSelector
           paramAtom={paramAtomTyped}
@@ -103,8 +103,8 @@ function InputBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> 
       break;
     }
 
-    case 'regionDropdownGroup': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionDropdownGroupParameter>;
+    case 'targetDropdownGroup': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetDropdownGroupParameter>;
       constantCol = <DefaultEmptyParam />;
       sweepCol = (
         <MultiTargetDropdown

@@ -1,10 +1,10 @@
 'use client';
 
-import { Atom, PrimitiveAtom, useAtom } from 'jotai';
+import { PrimitiveAtom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
-import RegionDropdownGroup from './TargetDropdownGroup';
+import TargetDropdownGroup from './TargetDropdownGroup';
 import ParamGroup from './ParamGroup';
 import GenericParamWrapper, {
   defaultPadding,
@@ -12,13 +12,13 @@ import GenericParamWrapper, {
 } from '@/components/experiment-designer/GenericParamWrapper';
 import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
 
-function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
+function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
 
   let constantCol;
   switch (param.type) {
-    case 'regionDropdownGroup':
-      constantCol = <RegionDropdownGroup paramAtom={paramAtom} className={defaultPadding} />;
+    case 'targetDropdownGroup':
+      constantCol = <TargetDropdownGroup paramAtom={paramAtom} className={defaultPadding} />;
       break;
 
     case 'group': {

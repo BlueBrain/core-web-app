@@ -3,30 +3,28 @@
 import { PrimitiveAtom, useAtom } from 'jotai';
 
 import { TargetsDropdown } from '@/components/experiment-designer';
-import { ExpDesignerRegionParameter } from '@/types/experiment-designer';
+import { ExpDesignerTargetParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
-import { BrainRegion } from '@/types/ontologies';
 
 type Props = {
-  paramAtom: PrimitiveAtom<ExpDesignerRegionParameter>;
+  paramAtom: PrimitiveAtom<ExpDesignerTargetParameter>;
   className?: string;
 };
 
 export default function RecordingTargetSelector({ paramAtom, className }: Props) {
   const [data, setData] = useAtom(paramAtom);
 
-  const setRecordingRegions = (newBrainRegion: BrainRegion) => {
+  const setRecordingTarget = (target: string) => {
     setData((oldAtomData) => ({
       ...oldAtomData,
-      value: newBrainRegion.title,
-      brainRegionId: parseInt(newBrainRegion.id, 10),
+      value: target,
     }));
   };
 
   return (
     <div className={classNames('flex gap-3 items-center font-bold', className)}>
       <div className="grow">Target</div>
-      <TargetsDropdown onChange={setRecordingRegions} defaultValue={data.value} />
+      <TargetsDropdown onChange={setRecordingTarget} defaultValue={data.value} />
     </div>
   );
 }

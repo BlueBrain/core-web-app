@@ -10,8 +10,8 @@ import type {
   ExpDesignerNumberParameter,
   ExpDesignerParam,
   ExpDesignerRangeParameter,
-  ExpDesignerRegionParameter,
-  ExpDesignerRegionDropdownGroupParameter,
+  ExpDesignerTargetParameter,
+  ExpDesignerTargetDropdownGroupParameter,
   ExpDesignerMultipleDropdownParameter,
   ExpDesignerDropdownParameter,
 } from '@/types/experiment-designer';
@@ -74,32 +74,30 @@ function changeRangeToNumber(rangeParam: ExpDesignerRangeParameter): ExpDesigner
 }
 
 function changeTargetToTargetList(
-  targetParam: ExpDesignerRegionParameter
-): ExpDesignerRegionDropdownGroupParameter {
+  targetParam: ExpDesignerTargetParameter
+): ExpDesignerTargetDropdownGroupParameter {
   const newTarget = getNewTargetObj();
-  newTarget.brainRegionId = targetParam.brainRegionId;
   newTarget.value = targetParam.value;
 
   return {
     id: targetParam.id,
     name: targetParam.name,
-    type: 'regionDropdownGroup',
-    value: [newTarget],
+    type: 'targetDropdownGroup',
+    value: [newTarget.value],
   };
 }
 
 function changeTargetListToTarget(
-  targetListParam: ExpDesignerRegionDropdownGroupParameter
-): ExpDesignerRegionParameter {
-  let singleTarget: ExpDesignerRegionParameter;
+  targetListParam: ExpDesignerTargetDropdownGroupParameter
+): ExpDesignerTargetParameter {
+  let singleTarget: ExpDesignerTargetParameter;
 
   if (targetListParam.value.length) {
     const [firstItem] = targetListParam.value;
     singleTarget = {
       ...targetListParam,
-      type: 'regionDropdown',
-      value: firstItem.value,
-      brainRegionId: firstItem.brainRegionId,
+      type: 'targetDropdown',
+      value: firstItem,
     };
   } else {
     singleTarget = getNewTargetObj();
@@ -145,11 +143,11 @@ export function applySwapFunction(param: ExpDesignerParam): ExpDesignerParam | u
       newSwapParam = changeRangeToNumber(param);
       break;
 
-    case 'regionDropdown':
+    case 'targetDropdown':
       newSwapParam = changeTargetToTargetList(param);
       break;
 
-    case 'regionDropdownGroup':
+    case 'targetDropdownGroup':
       newSwapParam = changeTargetListToTarget(param);
       break;
 

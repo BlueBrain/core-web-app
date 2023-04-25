@@ -44,15 +44,14 @@ export type ExpDesignerMultipleDropdownParameter = ExpDesignerBaseParameter & {
   options: DropdownOptionsType;
 };
 
-export type ExpDesignerRegionParameter = ExpDesignerBaseParameter & {
-  type: 'regionDropdown';
+export type ExpDesignerTargetParameter = ExpDesignerBaseParameter & {
+  type: 'targetDropdown';
   value: string;
-  brainRegionId: number;
 };
 
-export type ExpDesignerRegionDropdownGroupParameter = ExpDesignerBaseParameter & {
-  type: 'regionDropdownGroup';
-  value: ExpDesignerRegionParameter[];
+export type ExpDesignerTargetDropdownGroupParameter = ExpDesignerBaseParameter & {
+  type: 'targetDropdownGroup';
+  value: string[];
 };
 
 export type ExpDesignerPositionParameter = ExpDesignerBaseParameter & {
@@ -85,10 +84,10 @@ export type ExpDesignerParam =
   | ExpDesignerMultipleDropdownParameter
   | ExpDesignerRangeParameter
   | ExpDesignerStringParameter
-  | ExpDesignerRegionParameter
+  | ExpDesignerTargetParameter
   | ExpDesignerPositionParameter
   | ExpDesignerRadioBtnParameter
-  | ExpDesignerRegionDropdownGroupParameter
+  | ExpDesignerTargetDropdownGroupParameter
   | ExpDesignerCheckboxParameter
   | ExpDesignerCheckboxGroupParameter
   | ExpDesignerGroupParameter;

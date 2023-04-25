@@ -4,7 +4,7 @@ import { PrimitiveAtom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { splitAtom } from 'jotai/utils';
 
-import TargetRegionSelector from '@/components/experiment-designer/experiment-setup/Params/TargetSelector';
+import TargetSelector from '@/components/experiment-designer/experiment-setup/Params/TargetSelector';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
@@ -18,8 +18,8 @@ import type {
   ExpDesignerNumberParameter,
   ExpDesignerParam,
   ExpDesignerRangeParameter,
-  ExpDesignerRegionDropdownGroupParameter,
-  ExpDesignerRegionParameter,
+  ExpDesignerTargetDropdownGroupParameter,
+  ExpDesignerTargetParameter,
 } from '@/types/experiment-designer';
 import { applySwapFunction } from '@/components/experiment-designer/utils';
 import MultiTargetDropdown from '@/components/experiment-designer/MultiTargetDropdown';
@@ -57,10 +57,10 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesigne
       break;
     }
 
-    case 'regionDropdown': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
+    case 'targetDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetParameter>;
       constantCol = (
-        <TargetRegionSelector
+        <TargetSelector
           paramAtom={paramAtomTyped}
           className={defaultPadding}
           onChangeParamType={changed}
@@ -70,8 +70,8 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesigne
       break;
     }
 
-    case 'regionDropdownGroup': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionDropdownGroupParameter>;
+    case 'targetDropdownGroup': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetDropdownGroupParameter>;
       constantCol = <DefaultEmptyParam />;
       sweepCol = (
         <MultiTargetDropdown

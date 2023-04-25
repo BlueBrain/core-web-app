@@ -15,7 +15,7 @@ import type {
   ExpDesignerDropdownParameter,
   ExpDesignerNumberParameter,
   ExpDesignerParam,
-  ExpDesignerRegionParameter,
+  ExpDesignerTargetParameter,
 } from '@/types/experiment-designer';
 
 import { getNewRecordingObj } from '@/components/experiment-designer/defaultNewObject';
@@ -49,8 +49,8 @@ function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
       break;
     }
 
-    case 'regionDropdown': {
-      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerRegionParameter>;
+    case 'targetDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetParameter>;
       constantCol = (
         <RecordingTargetSelector paramAtom={paramAtomTyped} className={defaultPadding} />
       );

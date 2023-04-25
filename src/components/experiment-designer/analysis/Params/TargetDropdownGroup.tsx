@@ -1,35 +1,31 @@
-import { Atom, useAtomValue } from 'jotai';
+import { PrimitiveAtom, useAtomValue } from 'jotai';
 
-import GenericAddButton from '@/components/experiment-designer/GenericAddButton';
 import type {
   ExpDesignerParam,
-  ExpDesignerRegionDropdownGroupParameter,
-  ExpDesignerRegionParameter,
+  ExpDesignerTargetDropdownGroupParameter,
 } from '@/types/experiment-designer';
-import { classNames } from '@/util/utils';
-import { TargetsDropdown } from '@/components/experiment-designer';
+import { MultiTargetDropdown } from '@/components/experiment-designer';
 import { subheaderStyle } from '@/components/experiment-designer/GenericParamWrapper';
 
 type Props = {
-  paramAtom: Atom<ExpDesignerParam>;
+  paramAtom: PrimitiveAtom<ExpDesignerParam>;
   className?: string;
 };
 
 export default function TargetDropdownGroup({ paramAtom, className }: Props) {
-  const data = useAtomValue(paramAtom as Atom<ExpDesignerRegionDropdownGroupParameter>);
+  const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetDropdownGroupParameter>;
+  const data = useAtomValue(paramAtomTyped);
 
   return (
     <>
       <div className={subheaderStyle}>{data.name}</div>
 
-      {data.value.map((regionDropdownElement: ExpDesignerRegionParameter) => (
-        <div className={classNames('flex gap-3', className)} key={regionDropdownElement.id}>
-          <div className="grow font-bold">{regionDropdownElement.name}</div>
-          <TargetsDropdown defaultValue={regionDropdownElement.value} />
-        </div>
-      ))}
-
-      <GenericAddButton onClick={() => {}} title="Add Recording" />
+      <MultiTargetDropdown
+        paramAtom={paramAtomTyped}
+        className={className}
+        showSwitcher={false}
+        showTitle={false}
+      />
     </>
   );
 }

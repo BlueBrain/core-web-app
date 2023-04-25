@@ -1,7 +1,7 @@
 import {
   ExpDesignerGroupParameter,
   ExpDesignerMultipleDropdownParameter,
-  ExpDesignerRegionParameter,
+  ExpDesignerTargetParameter,
 } from '@/types/experiment-designer';
 
 export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
@@ -26,11 +26,10 @@ export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
       max: 20000,
     },
     {
-      id: 'targetInputRegion',
+      id: 'targetInput',
       name: 'Target',
-      type: 'regionDropdown',
-      brainRegionId: 382,
-      value: 'Field CA1',
+      type: 'targetDropdown',
+      value: 'AAA',
     },
   ],
 });
@@ -57,11 +56,10 @@ export const getNewRecordingObj = (): ExpDesignerGroupParameter => ({
       max: 20000,
     },
     {
-      id: 'recordingRegion',
+      id: 'recording',
       name: 'Target',
-      type: 'regionDropdown',
-      brainRegionId: 382,
-      value: 'Field CA1',
+      type: 'targetDropdown',
+      value: 'AAA',
     },
   ],
 });
@@ -88,21 +86,19 @@ export const getNewSensoryInputObj = (): ExpDesignerGroupParameter => ({
       max: 20000,
     },
     {
-      id: 'targetInputRegion',
+      id: 'targetInput',
       name: 'Target',
-      type: 'regionDropdown',
-      brainRegionId: 382,
-      value: 'Field CA1',
+      type: 'targetDropdown',
+      value: 'AAA',
     },
   ],
 });
 
-export const getNewTargetObj = (): ExpDesignerRegionParameter => ({
+export const getNewTargetObj = (): ExpDesignerTargetParameter => ({
   id: crypto.randomUUID(),
   name: 'name',
-  type: 'regionDropdown',
-  value: 'Field CA1',
-  brainRegionId: 382,
+  type: 'targetDropdown',
+  value: 'AAA',
 });
 
 export const getNewMultiDropdown = (): ExpDesignerMultipleDropdownParameter => ({
