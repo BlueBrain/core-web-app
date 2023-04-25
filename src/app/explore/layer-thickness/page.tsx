@@ -22,12 +22,10 @@ const columHeader = (text: string) => <div className={styles.tableHeader}>{text}
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
-    title: <div className={styles.headerText}>LAYER THICKNESS {String.fromCharCode(956)}m</div>,
-    dataIndex: 'layerThickness',
-    key: 'layerThickness',
-    className: 'text-primary-7 ',
-    render: (data) => <span>{isNumber(data) ? formatNumber(data) : ''}</span>,
-    sorter: (a, b) => sorter(a.layerThickness, b.layerThickness),
+    title: columHeader('#'),
+    key: 'index',
+    className: 'text-primary-7',
+    render: (text: string, record: any, index: number) => index + 1,
   },
   {
     title: columHeader('Brain Region'),
@@ -38,25 +36,27 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
   },
   {
-    title: columHeader('Description'),
-    dataIndex: 'description',
-    key: 'description',
+    title: <div className={styles.headerText}>THICKNESS {String.fromCharCode(956)}m</div>,
+    dataIndex: 'layerThickness',
+    key: 'layerThickness',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.description, b.description),
+    render: (data) => <span>{isNumber(data) ? formatNumber(data) : ''}</span>,
+    sorter: (a, b) => sorter(a.layerThickness, b.layerThickness),
   },
   {
-    title: columHeader('Specie'),
+    title: columHeader('Conditions'),
+    dataIndex: 'conditions',
+    key: 'conditions',
+    className: 'text-primary-7 ',
+    render: (text, record) => <Link href={`/explore/layer-thickness/${record.key}`}>{text}</Link>,
+    sorter: (a, b) => sorter(a.conditions, b.conditions),
+  },
+  {
+    title: columHeader('Species'),
     dataIndex: 'subjectSpecies',
     key: 'subjectSpecies',
     className: 'text-primary-7 ',
     sorter: (a, b) => sorter(a.subjectSpecies, b.subjectSpecies),
-  },
-  {
-    title: columHeader('Subject Age'),
-    dataIndex: 'subjectAge',
-    key: 'subjectAge',
-    className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.subjectAge, b.subjectAge),
   },
   {
     title: columHeader('Contributor'),
@@ -73,6 +73,13 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     render: (text) => <>{format(parseISO(text), 'dd.MM.yyyy')}</>,
     sorter: (a, b) => sorter(dateStringToUnix(a.createdAt), dateStringToUnix(b.createdAt)),
   },
+  {
+    title: columHeader('Reference'),
+    dataIndex: 'reference',
+    key: 'reference',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.reference, b.reference),
+  },
 ];
 
 export default function LayerThickness() {
@@ -80,7 +87,7 @@ export default function LayerThickness() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Layer Thickness"
+        title="Layer thickness"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

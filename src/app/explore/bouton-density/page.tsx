@@ -22,19 +22,25 @@ const columHeader = (text: string) => <div className={styles.tableHeader}>{text}
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
+    title: columHeader('#'),
+    key: 'index',
+    className: 'text-primary-7',
+    render: (text: string, record: any, index: number) => index + 1,
+  },
+  {
+    title: columHeader('Brain region'),
+    dataIndex: 'brainRegion',
+    key: 'brainRegion',
+    className: 'text-primary-7 ',
+    render: (text, record) => <Link href={`/explore/bouton-density/${record.key}`}>{text}</Link>,
+    sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
+  },
+  {
     title: columHeader('M-Type'),
     dataIndex: 'mtype',
     key: 'mtype',
     className: 'text-primary-7 ',
     sorter: (a, b) => sorter(a.mtype, b.mtype),
-  },
-  {
-    title: columHeader('Region'),
-    dataIndex: 'region',
-    key: 'region',
-    className: 'text-primary-7 ',
-    render: (text, record) => <Link href={`/explore/bouton-density/${record.key}`}>{text}</Link>,
-    sorter: (a, b) => sorter(a.region, b.region),
   },
   {
     title: (
@@ -61,18 +67,18 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     sorter: (a, b) => sorter(a.ncells, b.ncells),
   },
   {
-    title: columHeader('Specie'),
+    title: columHeader('Species'),
     dataIndex: 'subjectSpecies',
     key: 'subjectSpecies',
     className: 'text-primary-7 ',
     sorter: (a, b) => sorter(a.subjectSpecies, b.subjectSpecies),
   },
   {
-    title: columHeader('Weight'),
-    dataIndex: 'weight',
-    key: 'weight',
+    title: columHeader('Contributor'),
+    dataIndex: 'contributor',
+    key: 'contributor',
     className: 'text-primary-7 ',
-    sorter: (a, b) => sorter(a.weight, b.weight),
+    sorter: (a, b) => sorter(a.contributor, b.contributor),
   },
   {
     title: columHeader('Date'),
@@ -82,6 +88,13 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     render: (text) => <>{format(parseISO(text), 'dd.MM.yyyy')}</>,
     sorter: (a, b) => sorter(dateStringToUnix(a.createdAt), dateStringToUnix(b.createdAt)),
   },
+  {
+    title: columHeader('Reference'),
+    dataIndex: 'reference',
+    key: 'reference',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.reference, b.reference),
+  },
 ];
 
 export default function BoutonDensity() {
@@ -89,7 +102,7 @@ export default function BoutonDensity() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Bouton Density"
+        title="Bouton densities"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

@@ -21,6 +21,12 @@ const columHeader = (text: string) => <div className={styles.tableHeader}>{text}
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
+    title: columHeader('#'),
+    key: 'index',
+    className: 'text-primary-7',
+    render: (text: string, record: any, index: number) => index + 1,
+  },
+  {
     title: columHeader('Brain Region'),
     dataIndex: 'brainRegion',
     key: 'brainRegion',
@@ -63,6 +69,13 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     className: 'text-primary-7 ',
     render: (text) => <>{format(parseISO(text), 'dd.MM.yyyy')}</>,
     sorter: (a, b) => sorter(dateStringToUnix(a.createdAt), dateStringToUnix(b.createdAt)),
+  },
+  {
+    title: columHeader('Reference'),
+    dataIndex: 'reference',
+    key: 'reference',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.reference, b.reference),
   },
 ];
 

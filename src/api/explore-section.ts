@@ -32,7 +32,6 @@ async function getData(accessToken: string, dataQuery: object) {
       hits: data?.hits?.hits?.map((item: ESResponseRaw) => ({
         key: to64(`${item._source.project.label}!/!${item._id}`),
         name: item._source.name,
-        region: item._source.region,
         weight: item._source.weight,
         ncells: item._source.ncells,
         sem: item._source.sem,
@@ -40,6 +39,8 @@ async function getData(accessToken: string, dataQuery: object) {
         id: item._id,
         self: item._source._self,
         createdAt: item._source.createdAt,
+        reference: 'Data Unavailable',
+        conditions: 'Data Unavailable',
         etype: item._source.eType?.label,
         mtype: item._source.mType?.label,
         neuronDensity: item._source.neuronDensity,

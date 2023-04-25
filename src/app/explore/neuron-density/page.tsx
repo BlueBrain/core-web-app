@@ -2,10 +2,9 @@
 
 import { ColumnProps } from 'antd/es/table';
 import { format, parseISO } from 'date-fns';
-import isNumber from 'lodash/isNumber';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { ExploreSectionResource } from '@/types/explore-section';
-import { dateStringToUnix, sorter, formatNumber } from '@/util/common';
+import { dateStringToUnix, sorter } from '@/util/common';
 import Link from '@/components/Link';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
@@ -22,19 +21,17 @@ const columHeader = (text: string) => <div className={styles.tableHeader}>{text}
 
 const columns: ColumnProps<ExploreSectionResource>[] = [
   {
+    title: columHeader('#'),
+    key: 'index',
+    className: 'text-primary-7',
+    render: (text: string, record: any, index: number) => index + 1,
+  },
+  {
     title: columHeader('Brain Region'),
     dataIndex: 'brainRegion',
     key: 'brainRegion',
     className: 'text-primary-7 ',
     sorter: (a, b) => sorter(a.brainRegion, b.brainRegion),
-  },
-  {
-    title: columHeader('Mean ± STD (Neurons / MM³'),
-    dataIndex: 'neuronDensity',
-    key: 'neuronDensity',
-    className: 'text-primary-7',
-    render: (data) => <span>{isNumber(data?.value) ? formatNumber(data?.value) : ''}</span>,
-    sorter: (a, b) => sorter(a.neuronDensity?.value, b.neuronDensity?.value),
   },
   {
     title: columHeader('M-Type'),
@@ -59,7 +56,15 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     sorter: (a, b) => sorter(a.name, b.name),
   },
   {
-    title: columHeader('Specie'),
+    title: columHeader('Conditions'),
+    dataIndex: 'conditions',
+    key: 'conditions',
+    className: 'text-primary-7 ',
+    render: (text, record) => <Link href={`/explore/morphology/${record.key}`}>{text}</Link>,
+    sorter: (a, b) => sorter(a.conditions, b.conditions),
+  },
+  {
+    title: columHeader('Species'),
     dataIndex: 'subjectSpecies',
     key: 'subjectSpecies',
     className: 'text-primary-7 ',
@@ -79,6 +84,13 @@ const columns: ColumnProps<ExploreSectionResource>[] = [
     className: 'text-primary-7 ',
     render: (text) => <>{format(parseISO(text), 'dd.MM.yyyy')}</>,
     sorter: (a, b) => sorter(dateStringToUnix(a.createdAt), dateStringToUnix(b.createdAt)),
+  },
+  {
+    title: columHeader('Reference'),
+    dataIndex: 'reference',
+    key: 'reference',
+    className: 'text-primary-7 ',
+    sorter: (a, b) => sorter(a.reference, b.reference),
   },
 ];
 

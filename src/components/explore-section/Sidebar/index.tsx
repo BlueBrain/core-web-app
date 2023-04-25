@@ -65,12 +65,12 @@ export default function Sidebar({ links }: SideLinkList) {
                 </li>
                 <li>
                   <Link href="/explore/bouton-density">
-                    Bouton density <ArrowRightOutlined />
+                    Bouton densities <ArrowRightOutlined />
                   </Link>
                 </li>
                 <li>
                   <Link href="/explore/neuron-density">
-                    Neuron density <ArrowRightOutlined />
+                    Neuron densities <ArrowRightOutlined />
                   </Link>
                 </li>
                 <li>

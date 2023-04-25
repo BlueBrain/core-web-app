@@ -46,13 +46,14 @@ export interface ExploreSectionResource extends OptionalExploreSectionFields {
 }
 
 export interface OptionalExploreSectionFields {
+  reference?: string;
+  conditions?: string;
   neuronDensity?: NValueEntity;
   layerThickness?: NValueEntity;
   boutonDensity?: NumericEntity;
   subjectAge?: SubjectAge;
   sem?: number;
   weight?: string | number;
-  region?: string;
   ncells?: number;
 }
 
