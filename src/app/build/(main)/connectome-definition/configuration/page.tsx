@@ -57,17 +57,10 @@ function ConnectomeDefinitionMain() {
   const lineChartRef = useRef<HTMLDivElement>(null);
   const [lineChartInitialized, setLineChartInitialized] = useState(false);
 
-  // const selectedIds = useMemo(() => {
-  //   if (!brainRegionIdByNotationMap) return [];
-
-  //   return Array.from(selected).map((s) => {
-  //     const pair = JSON.parse(s);
-  //     return [
-  //       brainRegionIdByNotationMap.get(pair[0]) as string,
-  //       brainRegionIdByNotationMap.get(pair[1]) as string,
-  //     ];
-  //   });
-  // }, [selected, brainRegionIdByNotationMap]);
+  const selectedVals: [string, string, number][] = useMemo(
+    () => Array.from(selected).map((s) => JSON.parse(s)),
+    [selected]
+  );
 
   useEffect(() => {
     if (!initialConnectivityStrengthTable || !brainRegionLeaveIdxByNotationMap) return;
@@ -94,60 +87,53 @@ function ConnectomeDefinitionMain() {
     setConnectivityMatrix(matrix);
   }, [initialConnectivityStrengthTable, brainRegionLeaveIdxByNotationMap]);
 
-  // const newHistogram = useMemo(() => {
-  //   const x: number[] = [];
+  const histogram = useMemo(() => selectedVals.map((v) => v[2]), [selectedVals]);
 
-  //   Array.from(preSynapticBrainRegions).forEach((r) => {
-  //     const id = r[0];
-  //     Object.entries(modifiedConnectivityMatrix[id] ?? []).forEach(([targetId, value]) => {
-  //       if (!postSynapticBrainRegions.has(targetId)) return;
-  //       x.push(value);
-  //     });
-  //   });
+  const newHistogram = useMemo(
+    () => histogram.map((v) => v * multiplier + offset),
+    [histogram, multiplier, offset]
+  );
 
-  //   return x;
-  // }, [preSynapticBrainRegions, postSynapticBrainRegions, modifiedConnectivityMatrix]);
-
-  // useEffect(() => {
-  //   if (!histogramRef.current) return;
-  //   if (!histogramInitialized) {
-  //     Plotly.newPlot(histogramRef.current, [], {}, { displayModeBar: false });
-  //     setHistogramInitialized(true);
-  //     return;
-  //   }
-  //   Plotly.react(
-  //     histogramRef.current,
-  //     [
-  //       {
-  //         x: connectivityMatrix,
-  //         type: 'histogram',
-  //         xbins: { start: 0, end: 'auto', size: 0.1 },
-  //         marker: { color: 'rgba(0, 0, 0, 1)' },
-  //       },
-  //       {
-  //         x: newHistogram,
-  //         type: 'histogram',
-  //         xbins: { start: 0, end: 'auto', size: 0.1 },
-  //         marker: { color: 'rgb(8, 143, 143, 1)' },
-  //       },
-  //     ],
-  //     {
-  //       xaxis: { showgrid: false },
-  //       yaxis: { showgrid: false },
-  //       bargroupgap: 0.3,
-  //       showlegend: false,
-  //       width: 150,
-  //       height: 150,
-  //       margin: {
-  //         l: 0,
-  //         r: 0,
-  //         t: 0,
-  //         b: 0,
-  //         pad: 0,
-  //       },
-  //     }
-  //   );
-  // }, [histogram, histogramInitialized, selected.size, newHistogram]);
+  useEffect(() => {
+    if (!histogramRef.current) return;
+    if (!histogramInitialized) {
+      Plotly.newPlot(histogramRef.current, [], {}, { displayModeBar: false });
+      setHistogramInitialized(true);
+      return;
+    }
+    Plotly.react(
+      histogramRef.current,
+      [
+        {
+          x: histogram,
+          type: 'histogram',
+          xbins: { start: 0, end: 'auto', size: 0.001 },
+          marker: { color: 'rgba(0, 0, 0, 1)' },
+        },
+        {
+          x: newHistogram,
+          type: 'histogram',
+          xbins: { start: 0, end: 'auto', size: 0.001 },
+          marker: { color: 'rgb(8, 143, 143, 1)' },
+        },
+      ],
+      {
+        xaxis: { showgrid: false },
+        yaxis: { showgrid: false },
+        bargroupgap: 0.3,
+        showlegend: false,
+        width: 150,
+        height: 150,
+        margin: {
+          l: 0,
+          r: 0,
+          t: 0,
+          b: 0,
+          pad: 0,
+        },
+      }
+    );
+  }, [histogram, histogramInitialized, selected.size, newHistogram]);
 
   // useEffect(() => {
   //   if (!lineChartRef.current) return;
