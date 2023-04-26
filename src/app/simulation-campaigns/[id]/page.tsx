@@ -12,7 +12,7 @@ import CampaignVideo from '@/components/explore-section/CampaignVideo';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { nexus } from '@/config';
 
-import REPORT_SPARQL_QUERY from '@/constants/explore-section';
+import { REPORT_SPARQL_QUERY } from '@/constants/explore-section';
 
 function SimulationCampaignPage() {
   const [campaign, setCampaign] = useState<Campaign>({

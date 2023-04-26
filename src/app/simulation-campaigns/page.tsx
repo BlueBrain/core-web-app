@@ -9,16 +9,14 @@ import moment from 'moment';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { Campaign } from '@/types/explore-section';
 import { createHeaders } from '@/util/utils';
-import { nexus } from '@/config';
 import { sorter } from '@/util/common';
+import { API_SEARCH } from '@/constants/explore-section';
 import styles from '@/app/explore/explore.module.scss';
 import tableStyles from './table.module.scss';
 
 const { Search } = Input;
 
 const PAGE_SIZE = 10;
-
-const API_SEARCH = `${nexus.url}/search/query`;
 
 const QueryBase = {
   track_total_hits: true,

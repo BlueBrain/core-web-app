@@ -1,9 +1,7 @@
 import { createHeaders } from '@/util/utils';
-import { nexus } from '@/config';
+import { API_SEARCH } from '@/constants/explore-section';
 import { ESResponseRaw, IdLabelEntity, ExploreSectionResponse } from '@/types/explore-section';
 import { to64 } from '@/util/common';
-
-const API_SEARCH = `${nexus.url}/search/query`;
 
 /**
  * Serializes a brain region based on its format
