@@ -90,7 +90,7 @@ interface Rect extends Partial<Shape> {
 
 export default function MacroConnectome({
   zoom,
-  select,
+  select: selectProp,
   unselect,
   selected,
   setSelected,
@@ -120,6 +120,8 @@ export default function MacroConnectome({
 
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+
+  const select = selectProp && shapes.current.length === 0;
 
   const [filteredDensities, srcLabels, dstLabels] = useMemo(
     () =>
