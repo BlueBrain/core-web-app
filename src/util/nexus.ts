@@ -1,5 +1,5 @@
 import { nexus } from '@/config';
-import { FileMetadata, GeneratorConfig, GeneratorConfigType, GeneratorName } from '@/types/nexus';
+import { Distribution, FileMetadata, GeneratorConfig, GeneratorConfigType, GeneratorName } from '@/types/nexus';
 import { PartialBy } from '@/types/common';
 
 export function collapseId(nexusId: string) {
@@ -81,7 +81,9 @@ export type IdType =
   | 'cellpositionconfig'
   | 'emodelassignmentconfig'
   | 'morphologyassignmentconfig'
-  | 'microconnectomeconfig';
+  | 'microconnectomeconfig'
+  | 'macroconnectomeconfig'
+  | 'wholebrainconnectomestrength';
 
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;
@@ -95,7 +97,25 @@ const generatorNamebyKgType: Record<GeneratorConfigType, GeneratorName> = {
   EModelAssignmentConfig: 'placeholder',
   MorphologyAssignmentConfig: 'placeholder',
   MicroConnectomeConfig: 'connectome',
+  MacroConnectomeConfig: 'connectome',
 };
+
+export function createDistribution(payloadMetadata: FileMetadata): Distribution {
+  return {
+    '@type': 'DataDownload',
+    name: payloadMetadata._filename,
+    contentSize: {
+      unitCode: 'bytes',
+      value: payloadMetadata._bytes,
+    },
+    contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+    encodingFormat: payloadMetadata._mediaType,
+    digest: {
+      algorithm: payloadMetadata._digest._algorithm,
+      value: payloadMetadata._digest._value,
+    },
+  }
+}
 
 interface CreateGeneratorConfigProps {
   id?: string;
@@ -119,20 +139,7 @@ export function createGeneratorConfig({
     name,
     description,
     generatorName: generatorNamebyKgType[kgType],
-    distribution: {
-      '@type': 'DataDownload',
-      name: payloadMetadata._filename,
-      contentSize: {
-        unitCode: 'bytes',
-        value: payloadMetadata._bytes,
-      },
-      contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
-      encodingFormat: payloadMetadata._mediaType,
-      digest: {
-        algorithm: payloadMetadata._digest._algorithm,
-        value: payloadMetadata._digest._value,
-      },
-    },
+    distribution: createDistribution(payloadMetadata),
   };
 }
 

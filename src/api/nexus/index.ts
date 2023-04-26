@@ -8,6 +8,7 @@ import {
   createId,
   expandId,
   createGeneratorConfig,
+  createDistribution,
 } from '@/util/nexus';
 import {
   BrainModelConfig,
@@ -25,6 +26,9 @@ import {
   EModelAssignmentConfig,
   MorphologyAssignmentConfig,
   MicroConnectomeConfig,
+  MacroConnectomeConfig,
+  MacroConnectomeConfigPayload,
+  WholeBrainConnectomeStrength,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -144,8 +148,12 @@ export function fetchResourceById<T>(id: string, session: Session, options?: Com
   }).then<T>((res) => res.json());
 }
 
-export function fetchResourceSourceById<T>(id: string, session: Session) {
-  const url = composeUrl('resource', id, { source: true });
+export function fetchResourceSourceById<T>(
+  id: string,
+  session: Session,
+  options?: ComposeUrlParams
+) {
+  const url = composeUrl('resource', id, { ...options, source: true });
 
   return fetch(url, {
     headers: createHeaders(session.accessToken),
@@ -285,6 +293,51 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
+export async function cloneMacroConnectomeConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<MacroConnectomeConfig>(id, session);
+  const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
+    configSource.distribution.contentUrl,
+    session
+  );
+
+  const overridesEntity = await fetchResourceSourceById<WholeBrainConnectomeStrength>(
+    payload.overrides.connection_strength.id,
+    session,
+    { rev: payload.overrides.connection_strength.rev }
+  );
+  const overridesPayloadBuffer = await fetchFileByUrl(
+    overridesEntity.distribution.contentUrl,
+    session
+  ).then((res) => res.arrayBuffer);
+
+  const clonedOverridesPayloadMeta = await createFile(
+    overridesPayloadBuffer,
+    'overrides.arrow',
+    'application/arrow',
+    session
+  );
+  const clonedOverridesEntity: WholeBrainConnectomeStrength = {
+    ...overridesEntity,
+    '@id': createId('wholebrainconnectomestrength'),
+    distribution: createDistribution(clonedOverridesPayloadMeta),
+  };
+
+  await createResource(clonedOverridesEntity, session);
+
+  payload.overrides.connection_strength.id = clonedOverridesEntity['@id'];
+  payload.overrides.connection_strength.rev = 1;
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
+
+  const clonedConfig: MacroConnectomeConfig = {
+    ...configSource,
+    '@id': createId('macroconnectomeconfig'),
+    distribution: createDistribution(clonedPayloadMeta),
+  };
+
+  return createResource(clonedConfig, session);
+}
+
 export async function cloneBrainModelConfig(
   configId: string,
   name: string,
@@ -318,6 +371,11 @@ export async function cloneBrainModelConfig(
     session
   );
 
+  const clonedMacroConnectomeConfigMetadata = await cloneMacroConnectomeConfig(
+    brainModelConfigSource.configs.macroConnectomeConfig['@id'],
+    session
+  );
+
   const clonedModelConfig: BrainModelConfig = {
     ...brainModelConfigSource,
     '@id': createId('modelconfiguration'),
@@ -343,6 +401,10 @@ export async function cloneBrainModelConfig(
       microConnectomeConfig: {
         '@id': clonedMicroConnectomeConfigMetadata['@id'],
         '@type': ['MicroConnectomeConfig', 'Entity'],
+      },
+      macroConnectomeConfig: {
+        '@id': clonedMacroConnectomeConfigMetadata['@id'],
+        '@type': ['MacroConnectomeConfig', 'Entity'],
       },
     },
   };

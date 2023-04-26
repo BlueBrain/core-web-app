@@ -132,3 +132,9 @@ export const microConnectomeConfigIdAtom = atom<Promise<string | null>>(async (g
 
   return config?.configs.microConnectomeConfig?.['@id'] ?? null;
 });
+
+export const macroConnectomeConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs.macroConnectomeConfig?.['@id'] ?? null;
+});
