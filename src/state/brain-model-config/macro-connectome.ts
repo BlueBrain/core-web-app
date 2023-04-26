@@ -107,7 +107,7 @@ const connectivityStrengthOverridesTableAtom = atom<Promise<Table | null>>(async
   );
 });
 
-const remoteConnectivityStrengthMatrix = atom<Promise<WholeBrainConnectivityMatrix | null>>(
+const remoteConnectivityStrengthMatrixAtom = atom<Promise<WholeBrainConnectivityMatrix | null>>(
   async (get) => {
     const brainRegionLeaveIdxByNotationMap = await get(brainRegionLeaveIdxByNotationMapAtom);
     const initialConnectivityStrengthTable = await get(initialConnectivityStrengthTableAtom);
@@ -158,7 +158,7 @@ const localConnectivityStrengthMatrixAtom = atom<
 
 export const connectivityStrengthMatrixAtom = atom<Promise<WholeBrainConnectivityMatrix | null>>(
   async (get) => {
-    const remoteMatrix = await get(remoteConnectivityStrengthMatrix);
+    const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
 
     if (!remoteMatrix) return null;
 
@@ -168,7 +168,31 @@ export const connectivityStrengthMatrixAtom = atom<Promise<WholeBrainConnectivit
   }
 );
 
+export const setConnectivityStrengthMatrixAtom = atom<null, [WholeBrainConnectivityMatrix], Promise<void>>(null, async (get, set, matrix) => {
+  const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
+
+  if (!remoteMatrix) {
+    throw new Error('Trying to set connectivity matrix while it has not been initialized');
+  }
+
+  set(localConnectivityStrengthMatrixAtom, new WeakMap().set(remoteMatrix, matrix));
+});
+
 export const editsAtom = selectAtom(configPayloadAtom, (configPayload) => configPayload?.editHistory);
+
+function applyEdit(matrix: WholeBrainConnectivityMatrix, edit: MacroConnectomeEditEntry) {
+  const flatArray = matrix[edit.hemisphereDirection];
+  const matrixSize = Math.sqrt(flatArray.length);
+
+  edit.target.src.forEach(srcIdx => {
+    edit.target.dst.forEach(dstIdx => {
+      const idx = getFlatArrayValueIdx(matrixSize, srcIdx, dstIdx);
+      const value = flatArray[idx];
+      // eslint-disable-next-line no-param-reassign
+      flatArray[idx] = value * edit.multiplier + edit.offset;
+    });
+  });
+}
 
 export const addEdit = atom<null, [MacroConnectomeEditEntry], Promise<void>>(null, async (get, set, edit) => {
   const matrix = await get(connectivityStrengthMatrixAtom);
@@ -176,15 +200,32 @@ export const addEdit = atom<null, [MacroConnectomeEditEntry], Promise<void>>(nul
 
   if (!matrix || edits) return;
 
-  const flatArray = matrix[edit.hemisphereDirection];
+  applyEdit(matrix, edit);
 
-  edit.target.src.forEach(srcIdx => {
-    edit.target.dst.forEach(dstIdx => {
-
-    });
-  });
+  set(setConnectivityStrengthMatrixAtom, { ...matrix });
 });
 
-export const deleteEdit = atom<null, [number], Promise<void>>(null, async (get, set, editIdx) => {});
+export const deleteEdit = atom<null, [number], Promise<void>>(null, async (get, set, editIdx) => {
+  const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
+  const edits = await get(editsAtom);
+
+  if (!remoteMatrix || !edits) {
+    throw new Error('Trying to set connectivity matrix edits while the state has not been initialized');
+  }
+
+  if (!edits[editIdx]) {
+    throw new Error(`Index is out of range`);
+  }
+
+  const updatedEdits = edits.filter((edit, idx) => idx !== editIdx);
+
+  // TODO clone matrix if no local version exists and re-apply edits
+
+  // TODO set new matrix
+
+  // TODO add setEditsAtom
+
+  set(setEditsAtom, updatedEdits);
+});
 
 export const revertToEdit = atom<null, [number], Promise<void>>(null, async (get, set, editIdx) => {});
