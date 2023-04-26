@@ -13,8 +13,12 @@ import {
   WholeBrainConnectomeStrengthResource,
 } from '@/types/nexus';
 import { fetchResourceById, fetchFileByUrl, fetchJsonFileByUrl } from '@/api/nexus';
-import { HemisphereDirection, MacroConnectomeEditEntry, WholeBrainConnectivityMatrix } from '@/types/connectome';
-import { getFlatArrayValueIdx } from '@/util/connectome';
+import {
+  HemisphereDirection,
+  MacroConnectomeEditEntry,
+  WholeBrainConnectivityMatrix,
+} from '@/types/connectome';
+import { getFlatArrayValueIdx, applyConnectivityMatrixEdit as applyEdit } from '@/util/connectome';
 
 const refetchTriggerAtom = atom<number>(0);
 export const triggerRefetchAtom = atom(null, (get, set) =>
@@ -34,30 +38,32 @@ export const configAtom = atom<Promise<MacroConnectomeConfigResource | null>>(as
 
 const configPayloadUrlAtom = selectAtom(configAtom, (config) => config?.distribution.contentUrl);
 
-export const remoteConfigPayloadAtom = atom<Promise<MacroConnectomeConfigPayload | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const configPayloadUrl = await get(configPayloadUrlAtom);
-
-  if (!session || !configPayloadUrl) {
-    return null;
-  }
-
-  return fetchJsonFileByUrl<MacroConnectomeConfigPayload>(configPayloadUrl, session);
-});
-
-const localConfigPayloadAtom = atom<WeakMap<MacroConnectomeConfigPayload, MacroConnectomeConfigPayload>>(new WeakMap());
-
-const configPayloadAtom = atom<Promise<MacroConnectomeConfigPayload | null>>(
+const remoteConfigPayloadAtom = atom<Promise<MacroConnectomeConfigPayload | null>>(
   async (get) => {
-    const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+    const session = get(sessionAtom);
+    const configPayloadUrl = await get(configPayloadUrlAtom);
 
-    if (!remoteConfigPayload) return null;
+    if (!session || !configPayloadUrl) {
+      return null;
+    }
 
-    const localConfigPayload = get(localConfigPayloadAtom).get(remoteConfigPayload);
-
-    return localConfigPayload ?? remoteConfigPayload;
+    return fetchJsonFileByUrl<MacroConnectomeConfigPayload>(configPayloadUrl, session);
   }
 );
+
+const localConfigPayloadAtom = atom<
+  WeakMap<MacroConnectomeConfigPayload, MacroConnectomeConfigPayload>
+>(new WeakMap());
+
+const configPayloadAtom = atom<Promise<MacroConnectomeConfigPayload | null>>(async (get) => {
+  const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+
+  if (!remoteConfigPayload) return null;
+
+  const localConfigPayload = get(localConfigPayloadAtom).get(remoteConfigPayload);
+
+  return localConfigPayload ?? remoteConfigPayload;
+});
 
 const initialConnectivityStrengthEntityAtom = atom<
   Promise<WholeBrainConnectomeStrengthResource | null>
@@ -168,7 +174,11 @@ export const connectivityStrengthMatrixAtom = atom<Promise<WholeBrainConnectivit
   }
 );
 
-export const setConnectivityStrengthMatrixAtom = atom<null, [WholeBrainConnectivityMatrix], Promise<void>>(null, async (get, set, matrix) => {
+const setConnectivityStrengthMatrixAtom = atom<
+  null,
+  [WholeBrainConnectivityMatrix],
+  Promise<void>
+>(null, async (get, set, matrix) => {
   const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
 
   if (!remoteMatrix) {
@@ -178,54 +188,68 @@ export const setConnectivityStrengthMatrixAtom = atom<null, [WholeBrainConnectiv
   set(localConnectivityStrengthMatrixAtom, new WeakMap().set(remoteMatrix, matrix));
 });
 
-export const editsAtom = selectAtom(configPayloadAtom, (configPayload) => configPayload?.editHistory);
+export const editsAtom = selectAtom(
+  configPayloadAtom,
+  (configPayload) => configPayload?.editHistory
+);
 
-function applyEdit(matrix: WholeBrainConnectivityMatrix, edit: MacroConnectomeEditEntry) {
-  const flatArray = matrix[edit.hemisphereDirection];
-  const matrixSize = Math.sqrt(flatArray.length);
+const setEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<void>>(
+  null,
+  async (get, set, edits) => {
+    const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+    const configPayload = await get(configPayloadAtom);
 
-  edit.target.src.forEach(srcIdx => {
-    edit.target.dst.forEach(dstIdx => {
-      const idx = getFlatArrayValueIdx(matrixSize, srcIdx, dstIdx);
-      const value = flatArray[idx];
-      // eslint-disable-next-line no-param-reassign
-      flatArray[idx] = value * edit.multiplier + edit.offset;
-    });
-  });
-}
+    if (!configPayload || !remoteConfigPayload) {
+      throw new Error('Trying to set edits while the state has not been initialized');
+    }
 
-export const addEdit = atom<null, [MacroConnectomeEditEntry], Promise<void>>(null, async (get, set, edit) => {
-  const matrix = await get(connectivityStrengthMatrixAtom);
-  const edits = await get(editsAtom);
+    const updatedConfigPayload = { ...configPayload, editHistory: edits };
 
-  if (!matrix || edits) return;
-
-  applyEdit(matrix, edit);
-
-  set(setConnectivityStrengthMatrixAtom, { ...matrix });
-});
-
-export const deleteEdit = atom<null, [number], Promise<void>>(null, async (get, set, editIdx) => {
-  const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
-  const edits = await get(editsAtom);
-
-  if (!remoteMatrix || !edits) {
-    throw new Error('Trying to set connectivity matrix edits while the state has not been initialized');
+    set(localConfigPayloadAtom, new WeakMap().set(remoteConfigPayload, updatedConfigPayload));
   }
+);
 
-  if (!edits[editIdx]) {
-    throw new Error(`Index is out of range`);
+export const addEdit = atom<null, [MacroConnectomeEditEntry], Promise<void>>(
+  null,
+  async (get, set, edit) => {
+    const currentMatrix = await get(connectivityStrengthMatrixAtom);
+    const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
+    const edits = await get(editsAtom);
+
+    if (!currentMatrix || !remoteMatrix || edits) return;
+
+    const matrix = currentMatrix === remoteMatrix ? structuredClone(currentMatrix) : currentMatrix;
+
+    applyEdit(matrix, edit);
+
+    set(setConnectivityStrengthMatrixAtom, { ...matrix });
   }
+);
 
-  const updatedEdits = edits.filter((edit, idx) => idx !== editIdx);
+export const deleteEdits = atom<null, [number[]], Promise<void>>(
+  null,
+  async (get, set, editIdxs) => {
+    const currentMatrix = await get(connectivityStrengthMatrixAtom);
+    const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
+    const edits = await get(editsAtom);
 
-  // TODO clone matrix if no local version exists and re-apply edits
+    if (!currentMatrix || !remoteMatrix || !edits) {
+      throw new Error(
+        'Trying to set connectivity matrix edits while the state has not been initialized'
+      );
+    }
 
-  // TODO set new matrix
+    if (editIdxs.some((idx) => edits[idx])) {
+      throw new Error(`Index is out of range`);
+    }
 
-  // TODO add setEditsAtom
+    const updatedEdits = edits.filter((edit, idx) => !editIdxs.includes(idx));
 
-  set(setEditsAtom, updatedEdits);
-});
+    const matrix = currentMatrix === remoteMatrix ? structuredClone(currentMatrix) : currentMatrix;
 
-export const revertToEdit = atom<null, [number], Promise<void>>(null, async (get, set, editIdx) => {});
+    updatedEdits.forEach((edit) => applyEdit(matrix, edit));
+
+    set(setConnectivityStrengthMatrixAtom, { ...matrix });
+    set(setEditsAtom, updatedEdits);
+  }
+);
