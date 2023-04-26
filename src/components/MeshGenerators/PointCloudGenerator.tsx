@@ -7,7 +7,6 @@ import { loadable } from 'jotai/utils';
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import { basePath } from '@/config';
-import CELL_API_BASE_PATH from '@/components/PointCloudGenerator/constants';
 import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
@@ -27,6 +26,8 @@ type Point = {
   y: number;
   z: number;
 };
+
+const CELL_API_BASE_PATH = 'https://cells.sbo.kcp.bbp.epfl.ch';
 
 const detailedCircuitLoadableAtom = loadable(detailedCircuitAtom);
 
@@ -118,8 +119,8 @@ function PointCloudMesh({
         });
         const geometry = buildGeometry(points);
         const mesh = new THREE.Points(geometry, material);
-        const mc = threeContextWrapper.getMeshCollection();
-        mc.addOrShowMesh(regionID, mesh);
+        const meshCollection = threeContextWrapper.getMeshCollection();
+        meshCollection.addOrShowMesh(regionID, mesh);
         atlas.updateVisiblePointCloud({
           regionID,
           isLoading: false,
@@ -140,9 +141,9 @@ function PointCloudMesh({
     const pcObject = atlas.findVisiblePointCloud(regionID);
     if (!pcObject || pcObject.hasError) return;
 
-    const mc = threeContextWrapper.getMeshCollection();
-    if (mc.has(regionID)) {
-      mc.show(regionID);
+    const meshCollection = threeContextWrapper.getMeshCollection();
+    if (meshCollection.has(regionID)) {
+      meshCollection.show(regionID);
     } else if (detailedCircuit.state !== 'loading') {
       fetchAndShowPointCloud();
     }

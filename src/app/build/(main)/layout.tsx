@@ -5,7 +5,7 @@ import { useSetAtom } from 'jotai';
 import { usePathname } from 'next/navigation';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { BrainRegionsSidebar } from '@/components/BrainRegionSelector';
+import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import TopTabs from '@/components/TopTabs';

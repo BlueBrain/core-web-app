@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 import {
   CollapsedRegionDetailsSidebar,
   ExpandedRegionDetailsSidebar,
-} from '@/components/BrainRegionSelector';
+} from '@/components/build-section/BrainRegionSelector';
 import { extraPanelContainerAtom } from '@/state/build-section/layout';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import CellCompositionTabs from '@/components/CellCompositionTabs';

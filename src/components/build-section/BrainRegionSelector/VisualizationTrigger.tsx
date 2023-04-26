@@ -1,8 +1,10 @@
-import Icon, { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { useAtomValue } from 'jotai';
+import Icon, { EyeInvisibleOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useMemo } from 'react';
-import LoadingIcon from '@/components/icons/LoadingIcon';
-import { useAtlasVisualizationManager } from '@/state/atlas';
+import { meshDistributionsAtom } from '@/state/brain-regions';
 import { Mesh } from '@/types/ontologies';
+import { useAtlasVisualizationManager } from '@/state/atlas';
+import LoadingIcon from '@/components/icons/LoadingIcon';
 
 type BrainRegionVisualizationTriggerProps = {
   regionID: string;
@@ -10,7 +12,7 @@ type BrainRegionVisualizationTriggerProps = {
   colorCode: string;
 };
 
-export default function BrainRegionVisualizationTrigger({
+function BrainRegionVisualizationTrigger({
   distribution,
   colorCode,
   regionID,
@@ -73,6 +75,35 @@ export default function BrainRegionVisualizationTrigger({
       onClick={onClickEye}
     >
       {icon}
+    </button>
+  );
+}
+export default function VisualizationTrigger({ colorCode, id }: { colorCode: string; id: string }) {
+  const meshDistributions = useAtomValue(meshDistributionsAtom);
+
+  if (meshDistributions === undefined) {
+    return <LoadingOutlined style={{ fontSize: '16px' }} />;
+  }
+
+  const meshDistribution = meshDistributions && meshDistributions[id];
+
+  if (meshDistribution && colorCode) {
+    return (
+      <BrainRegionVisualizationTrigger
+        regionID={id}
+        distribution={meshDistribution}
+        colorCode={colorCode}
+      />
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className="block border-none flex items-center justify-center w-[16px]"
+      disabled
+    >
+      <EyeOutlined style={{ color: '#F5222D', fontSize: '16px' }} />
     </button>
   );
 }

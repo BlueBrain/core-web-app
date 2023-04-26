@@ -17,9 +17,9 @@ import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regio
 import { BrainRegionIcon, LockIcon, LockOpenIcon, MissingData } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
 import IconButton from '@/components/IconButton';
-import HorizontalSlider from '@/components/HorizontalSlider';
+import HorizontalSlider from '@/components/build-section/BrainRegionSelector/HorizontalSlider';
 import { formatNumber } from '@/util/common';
-import CompositionInput from '@/components/BrainRegionSelector/CompositionInput';
+import CompositionInput from '@/components/build-section/BrainRegionSelector/CompositionInput';
 import { calculateMax } from '@/util/composition/utils';
 import iterateAndComputeSystemLockedIds from '@/util/composition/locking';
 import { isConfigEditableAtom } from '@/state/brain-model-config';

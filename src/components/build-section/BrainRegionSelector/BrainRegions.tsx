@@ -8,7 +8,6 @@ import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
 import AlternateViewSelector from './AlternateViewSelector';
 import { classNames } from '@/util/utils';
-import ColorBox from '@/components/ColorBox';
 import { BrainIcon } from '@/components/icons';
 import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/BrainTree';
 import {
@@ -18,9 +17,10 @@ import {
   brainRegionsAtom,
   brainRegionsAlternateTreeAtom,
 } from '@/state/brain-regions';
-import VisualizationTrigger from '@/components/VisualizationTrigger';
 import { NavValue } from '@/components/TreeNavItem';
 import { BrainRegion } from '@/types/ontologies';
+import ColorBox from '@/components/build-section/BrainRegionSelector/ColorBox';
+import VisualizationTrigger from '@/components/build-section/BrainRegionSelector/VisualizationTrigger';
 
 function NavTitle({
   className,
@@ -61,7 +61,7 @@ function NavTitle({
           className="h-auto border-none flex font-bold gap-3 justify-end items-center"
           onClick={() => id && onClick()}
         >
-          {colorCode ? <ColorBox color={colorCode} /> : null}
+          {colorCode && <ColorBox color={colorCode} />}
           <span
             className={classNames(
               'hover:text-white mr-auto whitespace-pre-wrap text-left',
