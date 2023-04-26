@@ -135,41 +135,41 @@ function ConnectomeDefinitionMain() {
     );
   }, [histogram, histogramInitialized, selected.size, newHistogram]);
 
-  // useEffect(() => {
-  //   if (!lineChartRef.current) return;
-  //   if (!lineChartInitialized) {
-  //     Plotly.newPlot(lineChartRef.current, [], {}, { displayModeBar: false });
-  //     setLineChartInitialized(true);
-  //     return;
-  //   }
-  //   Plotly.react(
-  //     lineChartRef.current,
-  //     [
-  //       {
-  //         x: [0, 1],
-  //         y: [0, 1],
-  //       },
-  //       {
-  //         x: [0, 1],
-  //         y: [0 + offset, multiplier + offset],
-  //       },
-  //     ],
-  //     {
-  //       xaxis: { showgrid: false },
-  //       yaxis: { showgrid: false },
-  //       showlegend: false,
-  //       width: 150,
-  //       height: 150,
-  //       margin: {
-  //         l: 0,
-  //         r: 0,
-  //         t: 0,
-  //         b: 0,
-  //         pad: 0,
-  //       },
-  //     }
-  //   );
-  // }, [selected.size, lineChartInitialized, multiplier, offset]);
+  useEffect(() => {
+    if (!lineChartRef.current) return;
+    if (!lineChartInitialized) {
+      Plotly.newPlot(lineChartRef.current, [], {}, { displayModeBar: false });
+      setLineChartInitialized(true);
+      return;
+    }
+    Plotly.react(
+      lineChartRef.current,
+      [
+        {
+          x: [-1, 0, 1],
+          y: [-1, 0, 1],
+        },
+        {
+          x: [-1, 0, 1],
+          y: [-1, 0, 1].map((v) => v * multiplier + offset),
+        },
+      ],
+      {
+        xaxis: { showgrid: false },
+        yaxis: { showgrid: false },
+        showlegend: false,
+        width: 150,
+        height: 150,
+        margin: {
+          l: 0,
+          r: 0,
+          t: 0,
+          b: 0,
+          pad: 0,
+        },
+      }
+    );
+  }, [selected.size, lineChartInitialized, multiplier, offset]);
 
   const onClick = () => {
     // setConnectivityMatrix(modifiedConnectivityMatrix);
