@@ -255,6 +255,8 @@ function ConnectomeDefinitionMain() {
                 selected={selected}
                 setSelected={setSelected}
                 connectivityFlatArray={connectivityMatrix[hemisphereDirection]}
+                setMultiplier={setMultiplier}
+                setOffset={setOffset}
               />
             )}
           </Suspense>

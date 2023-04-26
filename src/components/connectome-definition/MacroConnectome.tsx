@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
+import { useEffect, useMemo, useState, useRef, SetStateAction, Dispatch } from 'react';
 import Plotly, { Shape, Layout, Data, ColorScale } from 'plotly.js-dist-min';
 
 import {
@@ -95,13 +95,17 @@ export default function MacroConnectome({
   selected,
   setSelected,
   connectivityFlatArray,
+  setMultiplier,
+  setOffset,
 }: {
   zoom: boolean;
   select: boolean;
   unselect: boolean;
   selected: Set<string>;
-  setSelected: React.Dispatch<SetStateAction<Set<string>>>;
+  setSelected: Dispatch<SetStateAction<Set<string>>>;
   connectivityFlatArray: Float64Array;
+  setMultiplier: Dispatch<SetStateAction<number>>;
+  setOffset: Dispatch<SetStateAction<number>>;
 }) {
   const plotRef = useRef<PlotDiv>(null);
   const shapes = useRef<Rect[]>([]);
@@ -122,8 +126,6 @@ export default function MacroConnectome({
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
   const select = selectProp && shapes.current.length === 0;
-
-  console.log(selected);
 
   const [filteredDensities, srcLabels, dstLabels] = useMemo(
     () =>
@@ -226,6 +228,8 @@ export default function MacroConnectome({
               }
           }
           setSelected(selectedCopy);
+          setMultiplier(1);
+          setOffset(0);
           Plotly.relayout(container, { shapes: shapes.current });
         }
 
