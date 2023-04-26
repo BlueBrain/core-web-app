@@ -75,7 +75,7 @@ interface PlotDiv extends HTMLDivElement {
     handler: ({
       points,
     }: {
-      points: { pointIndex: [number, number]; data: { x: number[]; y: number[] } }[];
+      points: { pointIndex: [number, number]; data: { x: number[]; y: number[]; z: number[][] } }[];
     }) => void
   ) => void;
   layout: Layout;
@@ -122,6 +122,8 @@ export default function MacroConnectome({
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
   const select = selectProp && shapes.current.length === 0;
+
+  console.log(selected);
 
   const [filteredDensities, srcLabels, dstLabels] = useMemo(
     () =>
@@ -213,7 +215,13 @@ export default function MacroConnectome({
             for (let x = s.x0; x <= s.x1; x += 1)
               for (let y = s.y1; y <= s.y0; y += 1) {
                 if (x >= s.x0 && x <= s.x1 && y <= s.y0 && y >= s.y1) {
-                  selectedCopy.delete(JSON.stringify([points[0].data.x[x], points[0].data.y[y]]));
+                  selectedCopy.delete(
+                    JSON.stringify([
+                      points[0].data.x[x],
+                      points[0].data.y[y],
+                      points[0].data.z[y][x],
+                    ])
+                  );
                 }
               }
           }
@@ -248,7 +256,9 @@ export default function MacroConnectome({
         for (let x = c1[0]; x <= c2[0]; x += 1) {
           for (let y = c2[1]; y <= c1[1]; y += 1) {
             if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1]) {
-              selectedCopy.add(JSON.stringify([points[0].data.x[x], points[0].data.y[y]]));
+              selectedCopy.add(
+                JSON.stringify([points[0].data.x[x], points[0].data.y[y], points[0].data.z[y][x]])
+              );
             }
           }
         }
