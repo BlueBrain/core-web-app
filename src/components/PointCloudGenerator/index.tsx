@@ -5,16 +5,18 @@ import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { usePreventParallelism } from '@/hooks/parallelism';
-import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import { basePath } from '@/config';
 import CELL_API_BASE_PATH from '@/components/PointCloudGenerator/constants';
 import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
+import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 
 type PointCloudMeshProps = {
   regionID: string;
   color: string;
+  circuitConfigPathOverride?: string;
+  threeContextWrapper: ThreeCtxWrapper;
 };
 
 type Point = {
@@ -28,7 +30,12 @@ type Point = {
 
 const detailedCircuitLoadableAtom = loadable(detailedCircuitAtom);
 
-function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
+function PointCloudMesh({
+  regionID,
+  color,
+  circuitConfigPathOverride,
+  threeContextWrapper,
+}: PointCloudMeshProps) {
   const preventParallelism = usePreventParallelism();
   const atlas = useAtlasVisualizationManager();
   const addNotification = useNotification();
@@ -38,11 +45,22 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
    * Fetches point cloud data from cells API. Returns the data in an array buffer format
    */
   const fetchData = useCallback(async () => {
-    if (detailedCircuit.state !== 'hasData' || !detailedCircuit.data?.circuitConfigPath.url) {
+    const detailedCircuitHasData =
+      detailedCircuit.state === 'hasData' && detailedCircuit.data?.circuitConfigPath.url;
+
+    if (!circuitConfigPathOverride && !detailedCircuitHasData) {
       throw new Error('Circuit config path is not found in the configuration');
     }
 
-    const circuitConfigPath = detailedCircuit.data?.circuitConfigPath.url.replace('file://', '');
+    const detailedCircuitConfigPath = detailedCircuitHasData
+      ? detailedCircuit.data?.circuitConfigPath.url.replace('file://', '') || ''
+      : '';
+
+    const circuitConfigPath =
+      typeof circuitConfigPathOverride !== 'undefined'
+        ? circuitConfigPathOverride
+        : detailedCircuitConfigPath;
+
     const url = `${CELL_API_BASE_PATH}/circuit?input_path=${encodeURIComponent(
       circuitConfigPath
     )}&region=${regionID}&how=arrow`;
@@ -52,7 +70,7 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
         Accept: '*/*',
       }),
     }).then((response) => response.arrayBuffer());
-  }, [detailedCircuit, regionID]);
+  }, [circuitConfigPathOverride, detailedCircuit, regionID]);
 
   /**
    * Builds the geometry of the point cloud
@@ -100,7 +118,7 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
         });
         const geometry = buildGeometry(points);
         const mesh = new THREE.Points(geometry, material);
-        const mc = threeCtxWrapper.getMeshCollection();
+        const mc = threeContextWrapper.getMeshCollection();
         mc.addOrShowMesh(regionID, mesh);
         atlas.updateVisiblePointCloud({
           regionID,
@@ -122,18 +140,26 @@ function PointCloudMesh({ regionID, color }: PointCloudMeshProps) {
     const pcObject = atlas.findVisiblePointCloud(regionID);
     if (!pcObject || pcObject.hasError) return;
 
-    const mc = threeCtxWrapper.getMeshCollection();
+    const mc = threeContextWrapper.getMeshCollection();
     if (mc.has(regionID)) {
       mc.show(regionID);
     } else if (detailedCircuit.state !== 'loading') {
       fetchAndShowPointCloud();
     }
-  }, [atlas, detailedCircuit.state, fetchAndShowPointCloud, regionID]);
+  }, [atlas, detailedCircuit.state, fetchAndShowPointCloud, regionID, threeContextWrapper]);
 
   return null;
 }
 
-export default function PointCloudGenerator() {
+interface PointCloudGeneratorProps {
+  circuitConfigPathOverride?: string;
+  threeContextWrapper: ThreeCtxWrapper;
+}
+
+export default function PointCloudGenerator({
+  circuitConfigPathOverride,
+  threeContextWrapper,
+}: PointCloudGeneratorProps) {
   const { visiblePointClouds } = useAtlasVisualizationManager();
   return (
     <>
@@ -142,6 +168,8 @@ export default function PointCloudGenerator() {
           key={pointCloud.regionID}
           color={pointCloud.color}
           regionID={pointCloud.regionID}
+          circuitConfigPathOverride={circuitConfigPathOverride}
+          threeContextWrapper={threeContextWrapper}
         />
       ))}
     </>

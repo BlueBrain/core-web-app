@@ -1,14 +1,14 @@
 import * as THREE from 'three';
-import ThreeContext from './threecontext/ThreeContext';
+import ThreeContext, { ThreeContextOptions } from './threecontext/ThreeContext';
 import MeshCollection from './meshcollection/MeshCollection';
 
-interface ThreeCtxWrapperInitParams {
+export interface ThreeCtxWrapperInitParams {
   targetDiv: HTMLDivElement;
   cameraPositionXYZ?: [number, number, number];
   cameraLookAtXYZ?: [number, number, number];
 }
 
-class ThreeCtxWrapper {
+export class ThreeCtxWrapper {
   threeContext: ThreeContext | null = null;
 
   meshCollection: MeshCollection | null = null;
@@ -25,17 +25,17 @@ class ThreeCtxWrapper {
     }
 
     // The option object, you don't have to provide this one
-    const options = {
-      webgl2: true, // enable WebGL2 if `true` (default: false)
-      embedLight: true, // embeds the light into the camera if true (default: false)
-      antialias: false, // enables antialias if true (default: true)
-      preserveDrawingBuffer: true, // enable if willing to take screenshots
-      showAxisHelper: false, // shows the axis helper at (0, 0, 0) when true (default: false)
-      axisHelperSize: 100, // length of the 3 axes of the helper (default: 100)
-      controlType: 'orbit', // 'trackball',    // 'orbit': locked poles or 'trackball': free rotations (default: 'trackball')
+    const options: ThreeContextOptions = {
+      webgl2: true,
+      embedLight: true,
+      antialias: false,
+      preserveDrawingBuffer: true,
+      showAxisHelper: false,
+      axisHelperSize: 100,
+      controlType: 'orbit',
       cameraPosition: new THREE.Vector3(...cameraPositionXYZ),
       cameraLookAt: new THREE.Vector3(...cameraLookAtXYZ),
-      raycastOnDoubleClick: true, // performs a raycast when double-clicking (default: `true`).
+      raycastOnDoubleClick: true,
       // If some object from the scene are raycasted, the event 'raycast'
       // is emitted with the list of intersected object from the scene as argument.
     };

@@ -2,17 +2,18 @@ import * as THREE from 'three';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
 import { usePreventParallelism } from '@/hooks/parallelism';
-import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import { createHeaders } from '@/util/utils';
 import useNotification from '@/hooks/notifications';
+import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 
 const parseWFObj = require('wavefront-obj-parser');
 
 type BrainRegionMeshProps = {
   id: string;
   colorCode: string;
+  threeContextWrapper: ThreeCtxWrapper;
 };
 
 /**
@@ -44,8 +45,12 @@ const fetchMesh = (accessToken: string, distributionID: string) =>
     headers: createHeaders(accessToken),
   }).then((response) => response.text());
 
-export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps) {
-  const preventPrallelism = usePreventParallelism();
+export default function BrainRegionMesh({
+  id,
+  colorCode,
+  threeContextWrapper,
+}: BrainRegionMeshProps) {
+  const preventParallelism = usePreventParallelism();
   const { data: session } = useSession();
   const atlas = useAtlasVisualizationManager();
   const addNotification = useNotification();
@@ -54,7 +59,7 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
    * Fetches the data from the API
    */
   const fetchDataAPI = useCallback(() => {
-    preventPrallelism(id, async () => {
+    preventParallelism(id, async () => {
       if (session?.user && session?.accessToken) {
         // Prevent from double loading.
         if (atlas.findVisibleMesh(id)?.isLoading) return;
@@ -63,7 +68,7 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
         try {
           const data = await fetchMesh(session.accessToken, id);
           const mesh = createMesh(data, { color: colorCode });
-          const mc = threeCtxWrapper.getMeshCollection();
+          const mc = threeContextWrapper.getMeshCollection();
           mc.addOrShowMesh(id, mesh, false);
           atlas.updateVisibleMesh({ contentURL: id, isLoading: false, hasError: false });
         } catch (ex) {
@@ -72,20 +77,29 @@ export default function BrainRegionMesh({ id, colorCode }: BrainRegionMeshProps)
         }
       }
     });
-  }, [preventPrallelism, id, session, atlas, colorCode, addNotification]);
+  }, [
+    preventParallelism,
+    id,
+    session?.user,
+    session?.accessToken,
+    atlas,
+    colorCode,
+    threeContextWrapper,
+    addNotification,
+  ]);
 
   useEffect(() => {
     const meshObject = atlas.findVisibleMesh(id);
     if (meshObject?.hasError) return;
 
-    const mc = threeCtxWrapper.getMeshCollection();
+    const mc = threeContextWrapper.getMeshCollection();
     // if the mesh already exists in the mesh collection, it is shown. If not, it is fetched
     if (mc.has(id)) {
       mc.show(id);
     } else {
       fetchDataAPI();
     }
-  }, [atlas, fetchDataAPI, id]);
+  }, [atlas, fetchDataAPI, id, threeContextWrapper]);
 
   return null;
 }

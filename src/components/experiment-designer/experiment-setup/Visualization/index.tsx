@@ -7,6 +7,8 @@ type Props = {
   focusedAtom: PrimitiveAtom<ExpDesignerParam[]>;
 };
 
+//
+
 export default function Visualization({ focusedAtom }: Props) {
   // TODO: consume this data by VizTeam
   /* eslint-disable-next-line */

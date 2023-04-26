@@ -21,8 +21,8 @@ export default function RootMesh() {
 
   return (
     <>
-      <MeshGenerator />
-      <PointCloudGenerator />
+      <MeshGenerator threeContextWrapper={threeCtxWrapper} />
+      <PointCloudGenerator threeContextWrapper={threeCtxWrapper} />
     </>
   );
 }
