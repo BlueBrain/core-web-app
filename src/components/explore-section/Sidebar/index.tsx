@@ -32,7 +32,7 @@ export default function Sidebar({ links }: SideLinkList) {
           <ul className={styles.obsNav}>
             <li>
               <Link href="/explore/simulation-campaigns">
-                <h1>Brain & Cells Annotations</h1>
+                <h1>Brain & cells annotations</h1>
                 <ArrowRightOutlined />
                 <p>
                   Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet.
@@ -55,7 +55,7 @@ export default function Sidebar({ links }: SideLinkList) {
               <ul style={{ display: openExp ? 'block' : 'none' }}>
                 <li>
                   <Link href="/explore/electrophysiology">
-                    Neuron electrophysiology <ArrowRightOutlined />
+                    Neuron electrophysiologies <ArrowRightOutlined />
                   </Link>
                 </li>
                 <li>
@@ -87,7 +87,7 @@ export default function Sidebar({ links }: SideLinkList) {
             </li>
             <li>
               <Link href="/simulation-campaigns">
-                <h1>Digital Reconstructions</h1>
+                <h1>Brain models</h1>
                 <ArrowRightOutlined />
                 <p>
                   Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet.
@@ -108,25 +108,25 @@ export default function Sidebar({ links }: SideLinkList) {
         <ul className={styles.fixedNav}>
           <li>
             <Link href="/">
-              <h2>Profile</h2>
-              <UserOutlined />
-            </Link>
-          </li>
-          <li>
-            <Link href="/">
               <h2>Home</h2>
               <HomeOutlined />
             </Link>
           </li>
+          <li>
+            <Link href="/">
+              <h2>User</h2>
+              <UserOutlined />
+            </Link>
+          </li>
           <li className={styles.hiddenWhenCollapse}>
             <Link href="/build/load-brain-config">
-              <h2>Build</h2>
+              <h2>Brain lab</h2>
               <ArrowRightOutlined />
             </Link>
           </li>
           <li className={styles.hiddenWhenCollapse}>
             <Link href="/simulate">
-              <h2>Simulate</h2>
+              <h2>Brain simulation</h2>
               <ArrowRightOutlined />
             </Link>
           </li>

@@ -84,7 +84,7 @@ function EphysListPage() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Electrophysiology Recording"
+        title="Neuron electrophysiologies"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

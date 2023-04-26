@@ -18,6 +18,9 @@ export default function Explore() {
       <div className={styles.exploreHeader}>
         <Link href="/">
           <h1>Explore</h1>
+          <p className="leading-5 text-primary-2">
+            Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet
+          </p>
           <button type="button">
             <ArrowLeftOutlined />
             Back home
@@ -38,7 +41,8 @@ export default function Explore() {
           tabIndex={0}
           onKeyDown={() => setOpen(!open)}
         >
-          <h1>Experimental Data</h1>
+          <h1>Experimental data</h1>
+          <p>Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet</p>
           <ArrowRightOutlined />
         </div>
         <div style={{ visibility: open ? 'visible' : 'hidden' }}>
@@ -47,7 +51,7 @@ export default function Explore() {
       </div>
       <div className={open ? styles.themeBlack : styles.reconstructions}>
         <ExploreNavItem
-          title="Digital reconstructions"
+          title="Brain models"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
           url="/simulation-campaigns"
         />
