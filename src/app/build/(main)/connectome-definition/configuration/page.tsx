@@ -2,9 +2,10 @@
 
 import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
-import { ConfigProvider, theme, InputNumber, Button } from 'antd';
+import { ConfigProvider, theme, InputNumber, Button, Input } from 'antd';
 import Plotly from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
+import uniq from 'lodash/uniq';
 
 import {
   brainRegionIdByNotationMapAtom,
@@ -23,7 +24,7 @@ import {
   BrainRegionSelection,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
-import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
+import { HemisphereDirection, WholeBrainConnectivityMatrix, Edit } from '@/types/connectome';
 import { initialConnectivityStrengthTableAtom } from '@/state/brain-model-config/macro-connectome';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import styles from '../connectome-definition.module.css';
@@ -46,6 +47,8 @@ function ConnectomeDefinitionMain() {
 
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
+  const [editName, setEditName] = useState('');
+
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
   const [select, setSelect] = useState(false);
@@ -56,6 +59,7 @@ function ConnectomeDefinitionMain() {
   const [histogramInitialized, setHistogramInitialized] = useState(false);
   const lineChartRef = useRef<HTMLDivElement>(null);
   const [lineChartInitialized, setLineChartInitialized] = useState(false);
+  const [edits, setEdits] = useState<Edit[]>([]); // Use local state for now, will be replaced by atom
 
   const selectedVals: [string, string, number][] = useMemo(
     () => Array.from(selected).map((s) => JSON.parse(s)),
@@ -172,10 +176,20 @@ function ConnectomeDefinitionMain() {
   }, [selected.size, lineChartInitialized, multiplier, offset]);
 
   const onClick = () => {
-    // setConnectivityMatrix(modifiedConnectivityMatrix);
-    // setOffset(0);
-    // setMultiplier(1);
-    // setSelected(new Set());
+    setEdits([
+      ...edits,
+      {
+        name: editName,
+        hemisphereDirection,
+        offset,
+        multiplier,
+        selection: [uniq(selectedVals.map((v) => v[0])), uniq(selectedVals.map((v) => v[1]))],
+      },
+    ]);
+    setOffset(0);
+    setMultiplier(1);
+    setEditName('');
+    setSelected(new Set());
   };
 
   const handleOffsetChange = useCallback(
@@ -199,6 +213,7 @@ function ConnectomeDefinitionMain() {
       {selected.size > 0 && (
         <div className={styles.sidePanel}>
           <span className="font-bold text-lg">Modify connection density</span>
+          <Input value={editName} onChange={(e) => setEditName(e.currentTarget.value)} />
           <div className="flex justify-between mb-3 mt-3">
             Offset:
             <InputNumber value={offset} step={0.01} onChange={handleOffsetChange} />
@@ -213,7 +228,9 @@ function ConnectomeDefinitionMain() {
             <div ref={lineChartRef} style={{ marginTop: 11, marginLeft: 20 }} />
           </div>
 
-          <Button onClick={onClick}>Save</Button>
+          <button onClick={onClick} disabled={editName === ''} type="button">
+            Save
+          </button>
         </div>
       )}
 
@@ -269,7 +286,7 @@ function ConnectomeDefinitionMain() {
             <MatrixPreviewComponent />
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList />
+            <MatrixModificationHistoryList edits={edits} />
           </>
         )}
       </div>
