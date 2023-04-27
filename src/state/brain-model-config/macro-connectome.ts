@@ -19,6 +19,7 @@ import {
   WholeBrainConnectivityMatrix,
 } from '@/types/connectome';
 import { getFlatArrayValueIdx, applyConnectivityMatrixEdit as applyEdit } from '@/util/connectome';
+import { BrainRegionIdx } from '@/types/common';
 
 const refetchTriggerAtom = atom<number>(0);
 export const triggerRefetchAtom = atom(null, (get, set) =>
@@ -226,7 +227,7 @@ export const addEdit = atom<null, [MacroConnectomeEditEntry], Promise<void>>(
   }
 );
 
-export const deleteEdits = atom<null, [number[]], Promise<void>>(
+export const deleteEdits = atom<null, [BrainRegionIdx[]], Promise<void>>(
   null,
   async (get, set, editIdxs) => {
     const currentMatrix = await get(connectivityStrengthMatrixAtom);
