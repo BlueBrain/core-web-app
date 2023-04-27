@@ -26,10 +26,7 @@ import {
 import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import { getFlatArrayValueIdx } from '@/util/connectome';
 
-const refetchCounterAtom = atom<number>(0);
-export const triggerRefetchAtom = atom(null, (get, set) =>
-  set(refetchCounterAtom, (counter) => counter + 1)
-);
+export const refetchCounterAtom = atom<number>(0);
 
 export const configAtom = atom<Promise<MacroConnectomeConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
