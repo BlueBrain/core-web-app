@@ -108,17 +108,18 @@ export function createTextFile(data: any, filename: string, session: Session) {
   return createFile(data, filename, contentType, session);
 }
 
-export function updateJsonFileById(
+export function updateFileById(
   id: string,
   data: any,
   filename: string,
+  contentType: string,
   rev: number,
   session: Session
 ) {
   const url = composeUrl('file', id, { rev });
 
   const formData = new FormData();
-  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const dataBlob = new Blob([JSON.stringify(data)], { type: contentType });
   formData.append('file', dataBlob, filename);
 
   return fetch(url, {
@@ -128,9 +129,25 @@ export function updateJsonFileById(
   }).then<FileMetadata>((res) => res.json());
 }
 
-export function updateJsonFileByUrl(url: string, data: any, filename: string, session: Session) {
+export function updateJsonFileById(
+  id: string,
+  data: any,
+  filename: string,
+  rev: number,
+  session: Session
+) {
+  return updateFileById(id, data, filename, 'application/json', rev, session);
+}
+
+export function updateFileByUrl(
+  url: string,
+  data: any,
+  filename: string,
+  contentType: string,
+  session: Session
+) {
   const formData = new FormData();
-  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const dataBlob = new Blob([data], { type: contentType });
   formData.append('file', dataBlob, filename);
 
   return fetch(url, {
@@ -138,6 +155,10 @@ export function updateJsonFileByUrl(url: string, data: any, filename: string, se
     headers: createHeaders(session.accessToken, null),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
+}
+
+export function updateJsonFileByUrl(url: string, data: any, filename: string, session: Session) {
+  return updateFileByUrl(url, JSON.stringify(data), filename, 'application/json', session);
 }
 
 export function fetchResourceById<T>(id: string, session: Session, options?: ComposeUrlParams) {
