@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
-import { ConfigProvider, theme, InputNumber, Button, Input } from 'antd';
+import { ConfigProvider, theme, InputNumber, Input } from 'antd';
 import Plotly from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
