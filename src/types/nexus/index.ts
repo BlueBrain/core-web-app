@@ -298,7 +298,9 @@ export interface MacroConnectomeConfigPayload {
       rev: number;
     };
   };
-  editHistory: MacroConnectomeEditEntry[];
+  _ui_data?: {
+    editHistory?: MacroConnectomeEditEntry[];
+  }
 }
 
 export interface BbpWorkflowConfigResource extends Entity {

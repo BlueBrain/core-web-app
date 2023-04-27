@@ -8,6 +8,9 @@ import { macroConnectomeConfigIdAtom } from '..';
 import { brainRegionLeaveIdxByNotationMapAtom } from '@/state/brain-regions';
 import sessionAtom from '@/state/session';
 import {
+  DetailedCircuitResource,
+  GeneratorTaskActivityResource,
+  MacroConnectomeConfig,
   MacroConnectomeConfigPayload,
   MacroConnectomeConfigResource,
   WholeBrainConnectomeStrengthResource,
@@ -17,6 +20,8 @@ import {
   fetchFileByUrl,
   fetchJsonFileByUrl,
   fetchFileMetadataByUrl,
+  fetchResourceSourceById,
+  fetchGeneratorTaskActivity,
 } from '@/api/nexus';
 import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import { getFlatArrayValueIdx } from '@/util/connectome';
@@ -37,7 +42,18 @@ export const configAtom = atom<Promise<MacroConnectomeConfigResource | null>>(as
   return fetchResourceById<MacroConnectomeConfigResource>(id, session);
 });
 
-const configPayloadUrlAtom = selectAtom(configAtom, (config) => config?.distribution.contentUrl);
+export const configSourceAtom = atom<Promise<MacroConnectomeConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const id = await get(macroConnectomeConfigIdAtom);
+
+  get(refetchCounterAtom);
+
+  if (!session || !id) return null;
+
+  return fetchResourceSourceById<MacroConnectomeConfig>(id, session);
+});
+
+export const configPayloadUrlAtom = selectAtom(configAtom, (config) => config?.distribution.contentUrl);
 
 export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -116,10 +132,23 @@ const connectivityStrengthOverridesEntityAtom = atom<
   return fetchResourceById(id, session, { rev });
 });
 
-export const connectivityStrengthOverridesPayloadUrl = selectAtom(
+export const connectivityStrengthOverridesPayloadUrlAtom = selectAtom(
   connectivityStrengthOverridesEntityAtom,
   (entity) => entity?.distribution.contentUrl
 );
+
+export const connectivityStrengthOverridesPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const connectivityStrengthOverridesPayloadUrl = await get(connectivityStrengthOverridesPayloadUrlAtom);
+
+  get(refetchCounterAtom);
+
+  if (!session || !connectivityStrengthOverridesPayloadUrl) return null;
+
+  const metadata = await fetchFileMetadataByUrl(connectivityStrengthOverridesPayloadUrl, session);
+
+  return metadata._rev;
+});
 
 const connectivityStrengthOverridesTableAtom = atom<Promise<Table | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -195,5 +224,28 @@ export const connectivityStrengthMatrixAtom = atom<Promise<WholeBrainConnectivit
 
 export const editsAtom = selectAtom(
   configPayloadAtom,
-  (configPayload) => configPayload?.editHistory
+  (configPayload) => configPayload?._ui_data?.editHistory ?? []
 );
+
+const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const config = await get(configAtom);
+
+    if (!session || !config) return null;
+
+    return fetchGeneratorTaskActivity(config['@id'], config._rev, session);
+  }
+);
+
+export const partialCircuitAtom = atom<Promise<DetailedCircuitResource | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const generatorTaskActivity = await get(generatorTaskActivityAtom);
+
+  if (!session || !generatorTaskActivity) return null;
+
+  return fetchResourceById<DetailedCircuitResource>(
+    generatorTaskActivity.generated['@id'],
+    session
+  );
+});

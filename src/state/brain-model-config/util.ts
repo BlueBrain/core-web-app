@@ -27,6 +27,11 @@ import {
 } from './micro-connectome';
 
 import {
+  configSourceAtom as macroConnectomeConfigSourceAtom,
+  partialCircuitAtom as macroConnectomeBuildArtefact,
+} from './macro-connectome/base';
+
+import {
   configSourceAtom as modelConfigSourceAtom,
   configAtom as modelConfigMetaAtom,
   triggerRefetchAtom,
@@ -42,7 +47,8 @@ type BuildStepName =
   | 'cellPosition'
   | 'eModelAssignment'
   | 'morphologyAssignment'
-  | 'microConnectome';
+  | 'microConnectome'
+  | 'macroConnectome';
 
 type BuildStep = {
   name: BuildStepName;
@@ -75,6 +81,11 @@ const buildSteps: BuildStep[] = [
     name: 'microConnectome',
     configSourceAtom: microConnectomeConfigSourceAtom,
     buildArtefactAtom: microConnectomeBuildArtefact,
+  },
+  {
+    name: 'macroConnectome',
+    configSourceAtom: macroConnectomeConfigSourceAtom,
+    buildArtefactAtom: macroConnectomeBuildArtefact,
   },
 ];
 
