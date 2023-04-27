@@ -29,7 +29,7 @@ import {
 import {
   configSourceAtom as macroConnectomeConfigSourceAtom,
   partialCircuitAtom as macroConnectomeBuildArtefact,
-} from './macro-connectome/base';
+} from './macro-connectome';
 
 import {
   configSourceAtom as modelConfigSourceAtom,

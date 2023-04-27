@@ -19,7 +19,7 @@ import {
   connectivityStrengthOverridesPayloadRevAtom,
   configPayloadUrlAtom,
   configPayloadRevAtom,
-} from './base';
+} from '.';
 import { setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { BrainRegionIdx } from '@/types/common';
