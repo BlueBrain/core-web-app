@@ -1,13 +1,14 @@
 export default class WebWorker {
-  _nextTaskId = 0;
+  private taskId: number = 0;
 
-  worker = null;
+  public worker: Worker;
 
-  busy = false;
+  public busy: boolean = false;
 
-  onTaskDone = () => {};
+  // eslint-disable-next-line class-methods-use-this
+  public onTaskDone: Function = () => {};
 
-  constructor(workerFactory) {
+  constructor(workerFactory: () => Worker) {
     this.worker = workerFactory();
   }
 
@@ -16,6 +17,9 @@ export default class WebWorker {
   }
 
   nextTaskId() {
-    return this._nextTaskId++;
+    const currentTaskId = this.taskId;
+    this.taskId += 1;
+
+    return currentTaskId;
   }
 }

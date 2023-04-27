@@ -1,14 +1,14 @@
-import { $transferable } from "./constants";
+import { $transferable } from './constants';
 
-function isTransferable(thing: unknown)  {
+function isTransferable(thing: unknown) {
   return thing && typeof thing === 'object';
 }
 
-export function expose(moduleObj: { [moduleName: string]: Function}) {
+export function expose(moduleObj: { [moduleName: string]: Function }) {
   window.addEventListener('message', async (e) => {
     const { args, module, taskId } = e.data;
 
-    if(!moduleObj[module]) {
+    if (!moduleObj[module]) {
       postMessage({ taskId, error: `Module ${module} is not available` });
       return;
     }
