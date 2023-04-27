@@ -7,6 +7,7 @@ import { tableToIPC } from '@apache-arrow/es5-cjs';
 
 import invalidateConfigAtom from '../util';
 import {
+  refetchCounterAtom,
   configPayloadAtom,
   remoteConfigPayloadAtom,
   localConfigPayloadAtom,
@@ -31,6 +32,10 @@ import sessionAtom from '@/state/session';
 import { brainRegionLeavesUnsortedArrayAtom } from '@/state/brain-regions';
 import { updateFileByUrl, updateJsonFileByUrl } from '@/api/nexus';
 import { MacroConnectomeConfigPayload } from '@/types/nexus';
+
+export const triggerRefetchAtom = atom(null, (get, set) =>
+  set(refetchCounterAtom, (counter) => counter + 1)
+);
 
 const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const session = get(sessionAtom);
