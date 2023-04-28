@@ -11,5 +11,12 @@
   }
 }
 .searchButton {
-  @apply rounded-none border-primary-4 text-primary-8 pt-0;
+  @apply rounded-none border-primary-3 text-primary-8;
+}
+
+.search,
+.searchButton {
+  span:global(.anticon) {
+    @apply flex justify-center;
+  }
 }

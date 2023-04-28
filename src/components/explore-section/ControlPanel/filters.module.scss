@@ -1,18 +1,26 @@
 .filterButton {
   color: white;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
   padding: 16px;
-
-  width: 260px;
-  height: 56px;
-
   background: #003a8c;
   box-shadow: 0px 20px 16px -16px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   .active {
     @apply text-primary-3;
+  }
+
+  span {
+    @apply self-center;
+
+    &:first {
+      @apply flex-none;
+    }
+    &:nth-child(2) {
+      @apply flex-1 mx-2 font-bold;
+    }
+    &:last-child {
+      @apply flex-auto ml-5;
+    }
   }
 }

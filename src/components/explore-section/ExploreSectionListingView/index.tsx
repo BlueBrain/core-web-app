@@ -9,6 +9,9 @@ import ControlPanel from '@/components/explore-section/ControlPanel';
 import { Filter } from '@/components/Filter/types';
 import { ExploreSectionResource, TotalHits } from '@/types/explore-section';
 import { formatNumber } from '@/util/common';
+
+import SettingsIcon from '@/components/icons/Settings';
+
 import styles from '@/components/explore-section/ControlPanel/filters.module.scss';
 
 type ExploreSectionPageProps = {
@@ -43,8 +46,8 @@ export default function ExploreSectionListingView({
   return (
     <>
       <section className="w-full bg-white">
-        <div className="flex py-8">
-          <div className="ml-10 text-primary-7 text-2xl font-bold flex-auto w-10/12">
+        <div className="flex items-center py-8">
+          <div className="ml-10 text-primary-7 text-2xl font-bold flex-auto">
             {title}
             <span className="text-sm whitespace-pre font-thin text-slate-400 pl-2">
               Total: {value}
@@ -53,14 +56,21 @@ export default function ExploreSectionListingView({
           <div className="mr-5 flex items-center space-between">
             <ExploreSectionNameSearch searchStringAtom={searchStringAtom} />
           </div>
-          <div className="mr-5 items-center">
+          <div className="mr-5">
             {!openFiltersSidebar && (
               <button
                 type="button"
                 className={styles.filterButton}
                 onClick={() => setOpenFiltersSidebar(!openFiltersSidebar)}
               >
-                {} Filters <span className={styles.active}> 6 active columns</span>
+                <span className="bg-primary-1 text-primary-1 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
+                  0
+                </span>
+                <span>Filters</span>
+                <span className={styles.active}> 6 active columns</span>
+                <span>
+                  <SettingsIcon className="rotate-90" />
+                </span>
               </button>
             )}
           </div>
