@@ -81,7 +81,8 @@ export type IdType =
   | 'cellpositionconfig'
   | 'emodelassignmentconfig'
   | 'morphologyassignmentconfig'
-  | 'microconnectomeconfig';
+  | 'microconnectomeconfig'
+  | 'synapseeditorconfig';
 
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;
@@ -95,6 +96,7 @@ const generatorNamebyKgType: Record<GeneratorConfigType, GeneratorName> = {
   EModelAssignmentConfig: 'placeholder',
   MorphologyAssignmentConfig: 'placeholder',
   MicroConnectomeConfig: 'connectome',
+  SynapseEditorConfig: 'connectome_filtering',
 };
 
 interface CreateGeneratorConfigProps {

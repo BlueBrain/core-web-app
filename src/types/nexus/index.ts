@@ -26,6 +26,10 @@ export interface BrainModelConfig extends Entity {
       '@id': string;
       '@type': [MicroConnectomeConfigType, 'Entity'];
     };
+    synapseEditorConfig: {
+      '@id': string;
+      '@type': [SynapseEditorConfigType, 'Entity'];
+    };
   };
 }
 
@@ -265,6 +269,19 @@ export interface MicroConnectomeConfig extends Entity {
 
 export interface MicroConnectomeConfigResource extends ResourceMetadata, MicroConnectomeConfig {}
 
+type SynapseEditorGeneratorName = 'connectome_filtering';
+type SynapseEditorConfigType = 'SynapseEditorConfig';
+
+export interface SynapseEditorConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': [SynapseEditorConfigType, 'Entity'];
+  generatorName: SynapseEditorGeneratorName;
+  distribution: Distribution;
+}
+
+export interface SynapseEditorConfigResource extends ResourceMetadata, SynapseEditorConfig {}
+
 export interface BbpWorkflowConfigResource extends Entity {
   '@type': 'BbpWorkflowConfig';
   distribution: Distribution;
@@ -313,17 +330,20 @@ export type GeneratorConfig =
   | CellPositionConfig
   | EModelAssignmentConfig
   | MorphologyAssignmentConfig
-  | MicroConnectomeConfig;
+  | MicroConnectomeConfig
+  | SynapseEditorConfig;
 
 export type GeneratorName =
   | CellCompositionGeneratorName
   | CellPositionGeneratorName
   | PlaceholderGeneratorName
-  | MicroConnectomeGeneratorName;
+  | MicroConnectomeGeneratorName
+  | SynapseEditorGeneratorName;
 
 export type GeneratorConfigType =
   | CellCompositionConfigType
   | CellPositionConfigType
   | EModelAssignmentConfigType
   | MorphologyAssignmentConfigType
-  | MicroConnectomeConfigType;
+  | MicroConnectomeConfigType
+  | SynapseEditorConfigType;

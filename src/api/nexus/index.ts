@@ -25,6 +25,7 @@ import {
   EModelAssignmentConfig,
   MorphologyAssignmentConfig,
   MicroConnectomeConfig,
+  SynapseEditorConfig,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -285,6 +286,24 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
+export async function cloneSynapseEditorConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<SynapseEditorConfig>(id, session);
+  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'synapse-editor-config.json', session);
+
+  const clonedConfig: SynapseEditorConfig = {
+    ...configSource,
+    '@id': createId('synapseeditorconfig'),
+    distribution: createGeneratorConfig({
+      kgType: 'SynapseEditorConfig',
+      payloadMetadata: clonedPayloadMeta,
+    }).distribution,
+  };
+
+  return createResource(clonedConfig, session);
+}
+
 export async function cloneBrainModelConfig(
   configId: string,
   name: string,
@@ -318,6 +337,11 @@ export async function cloneBrainModelConfig(
     session
   );
 
+  const clonedSynapseEditorConfigMetadata = await cloneSynapseEditorConfig(
+    brainModelConfigSource.configs.synapseEditorConfig['@id'],
+    session
+  );
+
   const clonedModelConfig: BrainModelConfig = {
     ...brainModelConfigSource,
     '@id': createId('modelconfiguration'),
@@ -343,6 +367,10 @@ export async function cloneBrainModelConfig(
       microConnectomeConfig: {
         '@id': clonedMicroConnectomeConfigMetadata['@id'],
         '@type': ['MicroConnectomeConfig', 'Entity'],
+      },
+      synapseEditorConfig: {
+        '@id': clonedSynapseEditorConfigMetadata['@id'],
+        '@type': ['SynapseEditorConfig', 'Entity'],
       },
     },
   };
