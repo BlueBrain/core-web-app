@@ -7,6 +7,7 @@ import { ExperimentDesignerTopTabs, SaveBtn, SimulateBtn } from '@/components/ex
 import useAuth from '@/hooks/auth';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
+import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;
@@ -17,20 +18,26 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   useBrainModelConfigState();
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen grid grid-cols-[minmax(40px,auto)_1fr]">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <ExperimentDesignerTopTabs />
+        <ExperimentDesignerPanel />
       </ErrorBoundary>
 
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="grow flex">{children}</div>
-      </ErrorBoundary>
-
-      <div className="absolute bottom-5 right-5 flex gap-5">
+      <div className="flex flex-col">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <SaveBtn />
-          <SimulateBtn />
+          <ExperimentDesignerTopTabs />
         </ErrorBoundary>
+
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+          <div className="grow">{children}</div>
+        </ErrorBoundary>
+
+        <div className="absolute bottom-5 right-5 flex gap-5">
+          <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+            <SaveBtn />
+            <SimulateBtn />
+          </ErrorBoundary>
+        </div>
       </div>
     </div>
   );

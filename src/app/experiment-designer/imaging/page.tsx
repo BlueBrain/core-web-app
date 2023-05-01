@@ -10,7 +10,7 @@ export default function ImagingPage() {
   const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
 
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-2 h-full">
       <Params focusedAtom={focusedAtom} />
       <Visualization focusedAtom={focusedAtom} />
     </div>

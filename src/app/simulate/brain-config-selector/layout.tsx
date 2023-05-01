@@ -3,15 +3,20 @@
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { useAtom } from 'jotai';
 
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
 import Link from '@/components/Link';
+import { campaignNameAtom, campaignDescriptionAtom } from '@/state/experiment-designer';
 
 type Props = {
   children: ReactNode;
 };
 
 export default function BrainConfigSelectorLayout({ children }: Props) {
+  const [name, setName] = useAtom(campaignNameAtom);
+  const [description, setDescription] = useAtom(campaignDescriptionAtom);
+
   return (
     <div className="min-h-screen flex bg-primary-9 text-white p-8 gap-20">
       <div className="flex flex-col">
@@ -31,6 +36,8 @@ export default function BrainConfigSelectorLayout({ children }: Props) {
           <div className="mb-14">
             <span className="block text-xl font-bold mb-2">Campaign Name</span>
             <input
+              defaultValue={name}
+              onChange={(e) => setName(e.target.value)}
               type="text"
               placeholder="My campaign name..."
               className="block border-b border-b-primary-1 placeholder-primary-3 bg-primary-9 h-7 py-5 w-full"
@@ -39,6 +46,8 @@ export default function BrainConfigSelectorLayout({ children }: Props) {
           <div className="mb-14">
             <span className="block text-xl font-bold mb-2">Campaign Description</span>
             <textarea
+              defaultValue={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Simulation campaign description..."
               className="block w-full min-h-10 p-3 text-black"
               rows={4}
