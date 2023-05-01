@@ -3,7 +3,7 @@ import { useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
 
 import ConfigList from './ConfigList';
-import { searchStringAtom } from '@/components/BrainConfigLoaderView/state';
+import { searchConfigListStringAtom } from '@/state/brain-model-config-list';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 import { BrainModelConfigResource } from '@/types/nexus';
@@ -11,7 +11,7 @@ import { BrainModelConfigResource } from '@/types/nexus';
 const expDesBaseUrl = '/experiment-designer/experiment-setup';
 
 export default function BrainConfigSelector() {
-  const setSearchString = useSetAtom(searchStringAtom);
+  const setSearchString = useSetAtom(searchConfigListStringAtom);
   const [searchInputValue, setSearchInputValue] = useState('');
   const [expDesUrl, setExpDesUrl] = useState('');
 
