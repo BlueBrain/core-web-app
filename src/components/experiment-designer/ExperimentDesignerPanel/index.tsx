@@ -16,7 +16,7 @@ import { campaignNameAtom, campaignDescriptionAtom } from '@/state/experiment-de
 const configAtomLoadable = loadable(configAtom);
 
 export default function ExperimentDesignerPanel() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const simCampName = useAtomValue(campaignNameAtom);
   const simCampDescription = useAtomValue(campaignDescriptionAtom);
   const loadableConfig = useAtomValue(configAtomLoadable);
@@ -45,25 +45,25 @@ export default function ExperimentDesignerPanel() {
       )}
 
       {isOpen && (
-        <div className="h-full overflow-y-scroll flex flex-col p-6">
+        <div className="h-full overflow-y-auto flex flex-col p-6">
           <div className="flex gap-x-2 justify-between items-start">
             <div className="text-3xl overflow-hidden text-ellipsis font-bold">{simCampName}</div>
             <Button
               type="text"
               size="small"
-              icon={<MinusOutlined className="text-white" />}
+              icon={<MinusOutlined style={{ color: 'white' }} />}
               onClick={() => setIsOpen(false)}
             />
           </div>
 
-          <div>{simCampDescription}</div>
+          <div className="text-primary-3 mt-3">{simCampDescription}</div>
 
           <div className="my-6">
             <div className="bg-primary-5 h-px" />
           </div>
 
-          <div>Circuit used</div>
-          <div>{circuitInfo?.name}</div>
+          <div className="text-primary-3">Circuit used</div>
+          <div className="font-bold mt-2">{circuitInfo?.name}</div>
 
           <footer className="space-y-2 mt-auto">
             <FooterLink href="/">
