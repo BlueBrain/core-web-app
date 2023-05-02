@@ -25,7 +25,7 @@ import {
   EModelAssignmentConfig,
   MorphologyAssignmentConfig,
   MicroConnectomeConfig,
-  SynapseEditorConfig,
+  SynapseConfig,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -292,17 +292,17 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
-export async function cloneSynapseEditorConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<SynapseEditorConfig>(id, session);
+export async function cloneSynapseConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<SynapseConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
-  const clonedPayloadMeta = await createJsonFile(payload, 'synapse-editor-config.json', session);
+  const clonedPayloadMeta = await createJsonFile(payload, 'synapse-config.json', session);
 
-  const clonedConfig: SynapseEditorConfig = {
+  const clonedConfig: SynapseConfig = {
     ...configSource,
-    '@id': createId('synapseeditorconfig'),
+    '@id': createId('synapseconfig'),
     distribution: createGeneratorConfig({
-      kgType: 'SynapseEditorConfig',
+      kgType: 'SynapseConfig',
       payloadMetadata: clonedPayloadMeta,
     }).distribution,
   };
@@ -343,8 +343,8 @@ export async function cloneBrainModelConfig(
     session
   );
 
-  const clonedSynapseEditorConfigMetadata = await cloneSynapseEditorConfig(
-    brainModelConfigSource.configs.synapseEditorConfig['@id'],
+  const clonedSynapseConfigMetadata = await cloneSynapseConfig(
+    brainModelConfigSource.configs.synapseConfig['@id'],
     session
   );
 
@@ -374,9 +374,9 @@ export async function cloneBrainModelConfig(
         '@id': clonedMicroConnectomeConfigMetadata['@id'],
         '@type': ['MicroConnectomeConfig', 'Entity'],
       },
-      synapseEditorConfig: {
-        '@id': clonedSynapseEditorConfigMetadata['@id'],
-        '@type': ['SynapseEditorConfig', 'Entity'],
+      synapseConfig: {
+        '@id': clonedSynapseConfigMetadata['@id'],
+        '@type': ['SynapseConfig', 'Entity'],
       },
     },
   };

@@ -1,7 +1,7 @@
 'use client';
 
 import { atom } from 'jotai';
-import { synapseEditorConfigIdAtom } from './index';
+import { synapseConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 
 import {
@@ -10,35 +10,35 @@ import {
   fetchResourceSourceById,
 } from '@/api/nexus';
 import {
-  SynapseEditorConfigResource,
+  SynapseConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
-  SynapseEditorConfig,
+  SynapseConfig,
 } from '@/types/nexus';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-export const configAtom = atom<Promise<SynapseEditorConfigResource | null>>(async (get) => {
+export const configAtom = atom<Promise<SynapseConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
-  const id = await get(synapseEditorConfigIdAtom);
+  const id = await get(synapseConfigIdAtom);
 
   get(refetchTriggerAtom);
 
   if (!session || !id) return null;
 
-  return fetchResourceById<SynapseEditorConfigResource>(id, session);
+  return fetchResourceById<SynapseConfigResource>(id, session);
 });
 
-export const configSourceAtom = atom<Promise<SynapseEditorConfig | null>>(async (get) => {
+export const configSourceAtom = atom<Promise<SynapseConfig | null>>(async (get) => {
   const session = get(sessionAtom);
-  const id = await get(synapseEditorConfigIdAtom);
+  const id = await get(synapseConfigIdAtom);
 
   get(refetchTriggerAtom);
 
   if (!session || !id) return null;
 
-  return fetchResourceSourceById<SynapseEditorConfig>(id, session);
+  return fetchResourceSourceById<SynapseConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

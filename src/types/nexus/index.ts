@@ -26,9 +26,9 @@ export interface BrainModelConfig extends Entity {
       '@id': string;
       '@type': [MicroConnectomeConfigType, 'Entity'];
     };
-    synapseEditorConfig: {
+    synapseConfig: {
       '@id': string;
-      '@type': [SynapseEditorConfigType, 'Entity'];
+      '@type': [SynapseConfigType, 'Entity'];
     };
   };
 }
@@ -269,18 +269,18 @@ export interface MicroConnectomeConfig extends Entity {
 
 export interface MicroConnectomeConfigResource extends ResourceMetadata, MicroConnectomeConfig {}
 
-type SynapseEditorGeneratorName = 'connectome_filtering';
-type SynapseEditorConfigType = 'SynapseEditorConfig';
+type SynapseGeneratorName = 'connectome_filtering';
+type SynapseConfigType = 'SynapseConfig';
 
-export interface SynapseEditorConfig extends Entity {
+export interface SynapseConfig extends Entity {
   name: string;
   description: string;
-  '@type': [SynapseEditorConfigType, 'Entity'];
-  generatorName: SynapseEditorGeneratorName;
+  '@type': [SynapseConfigType, 'Entity'];
+  generatorName: SynapseGeneratorName;
   distribution: Distribution;
 }
 
-export interface SynapseEditorConfigResource extends ResourceMetadata, SynapseEditorConfig {}
+export interface SynapseConfigResource extends ResourceMetadata, SynapseConfig {}
 
 export interface BbpWorkflowConfigResource extends Entity {
   '@type': 'BbpWorkflowConfig';
@@ -331,14 +331,14 @@ export type GeneratorConfig =
   | EModelAssignmentConfig
   | MorphologyAssignmentConfig
   | MicroConnectomeConfig
-  | SynapseEditorConfig;
+  | SynapseConfig;
 
 export type GeneratorName =
   | CellCompositionGeneratorName
   | CellPositionGeneratorName
   | PlaceholderGeneratorName
   | MicroConnectomeGeneratorName
-  | SynapseEditorGeneratorName;
+  | SynapseGeneratorName;
 
 export type GeneratorConfigType =
   | CellCompositionConfigType
@@ -346,4 +346,4 @@ export type GeneratorConfigType =
   | EModelAssignmentConfigType
   | MorphologyAssignmentConfigType
   | MicroConnectomeConfigType
-  | SynapseEditorConfigType;
+  | SynapseConfigType;
