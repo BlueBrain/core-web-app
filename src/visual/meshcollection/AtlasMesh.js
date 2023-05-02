@@ -19,7 +19,6 @@ export default class AtlasMesh extends THREE.Object3D {
     const color = 'color' in options ? new THREE.Color(options.color) : new THREE.Color('#FFFFFF');
 
     const vertexShader = `
-    #version 300 es
     precision highp float;
 
     uniform float uHalfOpacityDistance;
@@ -64,17 +63,16 @@ export default class AtlasMesh extends THREE.Object3D {
     `.trim();
 
     const fragmentShader = `
-    #version 300 es
     precision highp float;
     uniform vec3 uColor;
     uniform float uAlpha;
 
     varying float intensity;
-    out vec4 out_FragColor;
+
     void main()
     {
       vec3 glow = uColor * intensity;
-      out_FragColor = vec4( glow, intensity * uAlpha);
+      gl_FragColor = vec4( glow, intensity * uAlpha);
     }
     `.trim();
 

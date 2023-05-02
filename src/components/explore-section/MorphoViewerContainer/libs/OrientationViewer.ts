@@ -24,8 +24,9 @@ const createOrientationHelper = (): THREE.Object3D => {
     const color = colors[i];
     const position = new THREE.Vector3(positions[i][0], positions[i][1], positions[i][2]);
 
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(position, new THREE.Vector3(0, 0, 0));
+    const geometry = new THREE.BufferGeometry();
+    const points = [position, new THREE.Vector3(0, 0, 0)];
+    geometry.setFromPoints(points);
     const material = new THREE.LineBasicMaterial({
       color,
       linewidth: 1,

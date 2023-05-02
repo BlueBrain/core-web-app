@@ -139,8 +139,7 @@ class ThreeContext {
     if (this.raycaster.params.Points) {
       this.raycaster.params.Points.threshold = 50; // distance in micron
     }
-    this.raycaster.linePrecision = 50; // (older version, to remove when updating ThreeJs version)
-    this.raycaster.params.Line.threshold = 50; // distance in micron
+    if (this.raycaster.params.Line) this.raycaster.params.Line.threshold = 50; // distance in micron
     this.raycastMouse = new THREE.Vector2();
 
     let windowRect = this.renderer.domElement.getBoundingClientRect();
@@ -229,7 +228,8 @@ class ThreeContext {
     // look up the size the canvas is being displayed
     this.renderer.setSize(width, height, true);
     if (this.camera.type === 'PerspectiveCamera') {
-      this.camera.aspect = width / height;
+      const cam = this.camera as THREE.PerspectiveCamera;
+      cam.aspect = width / height;
     }
     this.camera.updateProjectionMatrix();
   }
@@ -316,8 +316,9 @@ class ThreeContext {
   setCameraFieldOfView(fov: number) {
     if (this.camera.type === 'PerspectiveCamera') {
       this.needRender = true;
-      this.camera.fov = fov;
-      this.camera.updateProjectionMatrix();
+      const cam = this.camera as THREE.PerspectiveCamera;
+      cam.fov = fov;
+      cam.updateProjectionMatrix();
     }
   }
 
@@ -349,11 +350,13 @@ class ThreeContext {
   }
 
   switchToOrthographicCamera() {
-    this.camera.type = 'OrthographicCamera';
+    const cam = this.camera as { type: string };
+    cam.type = 'OrthographicCamera';
   }
 
   switchToPerspectiveCamera() {
-    this.camera.type = 'PerspectiveCamera';
+    const cam = this.camera as { type: string };
+    cam.type = 'PerspectiveCamera';
   }
 }
 
