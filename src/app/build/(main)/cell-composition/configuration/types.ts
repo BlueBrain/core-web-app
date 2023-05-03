@@ -1,7 +1,6 @@
-import { CompositionNode } from '@/types/composition';
-import { CompositionLink } from '@/util/composition/types';
+import { CalculatedCompositionNode, CompositionLink } from '@/types/composition/calculation';
 
-export interface AboutNode extends CompositionNode {
+export interface AboutNode extends CalculatedCompositionNode {
   nodes: AboutNode[];
   max: number;
   value: number;
@@ -9,7 +8,7 @@ export interface AboutNode extends CompositionNode {
 
 export type SankeyLinksReducerAcc = {
   links: CompositionLink[];
-  nodes: CompositionNode[];
+  nodes: CalculatedCompositionNode[];
   type: string;
   value: string;
 };

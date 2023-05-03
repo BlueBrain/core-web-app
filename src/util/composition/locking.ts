@@ -1,8 +1,7 @@
 import groupBy from 'lodash/groupBy';
 import uniq from 'lodash/uniq';
 import difference from 'lodash/difference';
-
-import { CompositionNode } from '@/types/composition';
+import { CalculatedCompositionNode } from '@/types/composition/calculation';
 
 /**
  *  Given some sibling nodes, it counts the amount of locked siblings
@@ -10,7 +9,10 @@ import { CompositionNode } from '@/types/composition';
  * @param siblings the sibling nodes
  * @param lockedIds the locked ids
  */
-export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: string[]) => {
+export const findUnlockedSiblings = (
+  siblings: CalculatedCompositionNode[],
+  lockedIds: string[]
+) => {
   let countLocked = 0;
   const unlockedIds: string[] = [];
 
@@ -36,7 +38,7 @@ export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: str
  *
  */
 export const computeSystemLockedIds = (
-  nodes: CompositionNode[],
+  nodes: CalculatedCompositionNode[],
   userAndBlockedNodeIds: string[]
 ) => {
   let lockedIds: string[] = [];
@@ -91,7 +93,7 @@ export const computeSystemLockedIds = (
  * @param userAndBlockedNodeIds the node ids of user and blocked ids
  */
 const iterateAndComputeSystemLockedIds = (
-  nodes: CompositionNode[],
+  nodes: CalculatedCompositionNode[],
   userAndBlockedNodeIds: string[]
 ) => {
   let systemLockedIds: string[] = [];

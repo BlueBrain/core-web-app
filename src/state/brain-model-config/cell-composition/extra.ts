@@ -8,8 +8,8 @@ import { CellCompositionConfigPayload, CompositionOverridesWorkflowConfig } from
 import { createGeneratorConfig, setRevision } from '@/util/nexus';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { autoSaveDebounceInterval } from '@/config';
-import { Composition } from '@/types/composition';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
+import { OriginalComposition } from '@/types/composition/original';
 
 // TODO: move to a separate module
 const configPayloadDefaults = {
@@ -83,7 +83,7 @@ const setConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], void>(
   }
 );
 
-export const setCompositionPayloadConfigurationAtom = atom<null, [Composition], void>(
+export const setCompositionPayloadConfigurationAtom = atom<null, [OriginalComposition], void>(
   null,
   async (get, set, composition) => {
     const configPayload = await get(configPayloadAtom);

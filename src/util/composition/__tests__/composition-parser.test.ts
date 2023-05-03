@@ -1,188 +1,218 @@
-import cloneDeep from 'lodash/cloneDeep';
-
-import gustatoryAreas from './data/gustatory-areas-composition.json';
-import gracileNucleus from './data/gracile-nucleus-composition.json';
-import cuneateNucleus from './data/cuneate-nucleus-composition.json';
-import { CalculationLink, CalculationNode } from '@/util/composition/types';
+import multipleCompositions from './data/multiple-compositions.json';
 import calculateCompositions, {
-  addCompositions,
+  addCountPairs,
   addNode,
+  convertCompositionToCountPair,
+  convertCountPairToComposition,
   iterateNode,
 } from '@/util/composition/composition-parser';
-import { LeafNode } from '@/types/composition';
+import { CalculationLink, CalculationNode, CountPair } from '@/types/composition/calculation';
+import { OriginalCompositionPair } from '@/types/composition/original';
 
-describe('Add compositions', () => {
+describe('count pair to composition converter', () => {
+  it('should convert the count pair correctly', () => {
+    const countPair: CountPair = { neuron: 500, glia: 0 };
+    const composition = convertCountPairToComposition(countPair, 2);
+    expect(composition.neuron.density).toBe(250);
+    expect(composition.glia.density).toBe(0);
+  });
+
+  it('should convert the count pair correctly', () => {
+    const countPair: CountPair = { neuron: 0, glia: 100 };
+    const composition = convertCountPairToComposition(countPair, 2);
+    expect(composition.neuron.density).toBe(0);
+    expect(composition.glia.density).toBe(50);
+  });
+});
+
+describe('densityToTotalCount converter', () => {
+  it('should convert the correct number if neuron value', () => {
+    const composition: OriginalCompositionPair = {
+      neuron: { density: 10 },
+      glia: { density: 0 },
+    };
+    const totalCount = convertCompositionToCountPair(composition, 0.5);
+    expect(totalCount.neuron).toBe(5);
+    expect(totalCount.glia).toBe(0);
+  });
+
+  it('should convert the correct number if glia value', () => {
+    const composition = {
+      neuron: { density: 0, count: 0 },
+      glia: { density: 20, count: 0 },
+    };
+    const totalCount = convertCompositionToCountPair(composition, 0.5);
+    expect(totalCount.neuron).toBe(0);
+    expect(totalCount.glia).toBe(10);
+  });
+});
+
+describe('addCountPairs', () => {
   it('should calculate the correct addition', () => {
-    const totalComposition = {
-      neuron: { count: 10, density: 125.6 },
-      glia: { count: 0, density: 0 },
+    const totalCountPair = {
+      neuron: 10,
+      glia: 0,
     };
 
     const toAdd = {
-      neuron: { count: 25, density: 40.3 },
-      glia: { count: 0, density: 0 },
+      neuron: 20,
+      glia: 0,
     };
-    addCompositions(totalComposition, toAdd);
-    expect(totalComposition.neuron.count).toBe(35);
-    expect(totalComposition.neuron.density).toBeCloseTo(165.9);
+    const calculatedCountPair = addCountPairs(totalCountPair, toAdd);
+    expect(calculatedCountPair.neuron).toBe(30);
+    expect(calculatedCountPair.glia).toBeCloseTo(0);
   });
 });
 
 describe('Add nodes', () => {
   it('should calculate the correct node addition if node does not exist', () => {
-    const nodeToAdd = {
+    const nodeToAdd: CalculationNode = {
       about: 'MType',
       id: 'test',
+      extendedNodeId: 'test',
       label: 'Test',
       parentId: 'parentId',
-      composition: { neuron: { count: 10, density: 30.5 }, glia: { count: 0, density: 0 } },
-      leaves: new Set(['leaf1']),
-      relatedNodes: new Set(['node1']),
-      extendedNodeId: 'test',
+      countPair: { neuron: 10, glia: 0 },
+      leaves: ['leaf1'],
+      relatedNodes: ['node1'],
     };
     const totalNodes: { [key: string]: CalculationNode } = {};
     addNode(nodeToAdd, totalNodes);
-    expect(totalNodes.test__parentId).not.toBe(undefined);
-    expect(totalNodes.test__parentId.composition.neuron.count).toBe(10);
-    expect(totalNodes.test__parentId.composition.neuron.density).toBe(30.5);
+    expect(totalNodes.parentId__test).not.toBe(undefined);
+    expect(totalNodes.parentId__test.countPair.neuron).toBe(10);
   });
 
   it('should calculate the correct node addition if node already exist', () => {
-    const nodeToAdd = {
+    const nodeToAdd: CalculationNode = {
       about: 'MType',
       id: 'test',
+      extendedNodeId: 'test',
       label: 'Test',
       parentId: 'parentId',
-      composition: { neuron: { count: 10, density: 30.5 }, glia: { count: 0, density: 0 } },
-      leaves: new Set(['leaf1']),
-      relatedNodes: new Set(['node1']),
-      extendedNodeId: 'test',
+      countPair: { neuron: 10, glia: 0 },
+      leaves: ['leaf1'],
+      relatedNodes: ['node1'],
     };
 
-    const existingNode = {
+    const existingNode: CalculationNode = {
       about: 'MType',
       id: 'test',
+      extendedNodeId: 'test',
       label: 'Test',
       parentId: 'parentId',
-      composition: { neuron: { count: 30, density: 50.5 }, glia: { count: 0, density: 0 } },
-      leaves: new Set(['leaf2']),
-      relatedNodes: new Set(['node2']),
-      extendedNodeId: 'test',
+      countPair: { neuron: 30, glia: 0 },
+      leaves: ['leaf2'],
+      relatedNodes: ['node2'],
     };
 
     const totalNodes: { [key: string]: CalculationNode } = {};
     addNode(existingNode, totalNodes);
     addNode(nodeToAdd, totalNodes);
-    expect(totalNodes.test__parentId.composition.neuron.count).toBe(40);
-    expect(totalNodes.test__parentId.composition.neuron.density).toBe(81);
-    expect(totalNodes.test__parentId.leaves).toContain('leaf1');
-    expect(totalNodes.test__parentId.leaves).toContain('leaf2');
-    expect(totalNodes.test__parentId.relatedNodes).toContain('node1');
-    expect(totalNodes.test__parentId.relatedNodes).toContain('node2');
+    expect(totalNodes.parentId__test.countPair.neuron).toBe(40);
+    expect(totalNodes.parentId__test.leaves).toContain('leaf1');
+    expect(totalNodes.parentId__test.leaves).toContain('leaf2');
+    expect(totalNodes.parentId__test.relatedNodes).toContain('node1');
+    expect(totalNodes.parentId__test.relatedNodes).toContain('node2');
   });
 });
 
 describe('Composition Parser unit tests for single region', () => {
-  const gal1Id = 'http://api.brain-map.org/api/v2/data/Structure/36';
-  const gracileId = 'http://api.brain-map.org/api/v2/data/Structure/1039';
-  const cuneateId = 'http://api.brain-map.org/api/v2/data/Structure/711';
+  const singleCompId = 'http://api.brain-map.org/api/v2/data/Structure/36';
+  const compToTest = multipleCompositions.hasPart['36'];
 
-  const gustatoryAreasLayer1 = gustatoryAreas.hasPart[gal1Id];
   it('total count is calculated correctly', () => {
-    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1);
     const nodes = {};
     const links = {};
-    // @ts-ignore
-    const composition = iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
-    expect(composition.neuron.count).toBe(3430);
-    expect(composition.neuron.density).toBeCloseTo(17438.83);
+    const composition = iterateNode(
+      // @ts-ignore
+      compToTest,
+      singleCompId,
+      nodes,
+      links,
+      singleCompId,
+      [],
+      '',
+      false,
+      0.5
+    );
+    expect(composition.neuron).toBeCloseTo(105);
   });
 
   it('MType counts is calculated correctly', () => {
-    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1);
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
-    expect(
-      nodes['http://uri.interlex.org/base/ilx_0383192?rev=34__null'].composition.neuron.count
-    ).toBe(447);
-    expect(
-      nodes['http://uri.interlex.org/base/ilx_0383192?rev=34__null'].composition.neuron.density
-    ).toBeCloseTo(2272.64);
+    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, [], '', false, 0.5);
+    expect(nodes.A.countPair.neuron).toBe(15);
+    expect(nodes.C__I.countPair.neuron).toBe(30);
   });
 
   it('should calculate the correct extended node ids', () => {
     // @ts-ignore
-    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1) as LeafNode;
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
-    expect(
-      cloneGAL1.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34'].hasPart[
-        'http://uri.interlex.org/base/ilx_0738203?rev=28'
-      ].extendedNodeId
-    ).toBe(
-      'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28'
-    );
+    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, [], '', false, 0.5);
+    expect(nodes.A__D.extendedNodeId).toBe('A__D');
   });
 
   it('composition parser returns all nodes and links', () => {
-    const cloneGAL1 = cloneDeep(gustatoryAreasLayer1);
+    // @ts-ignore
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(cloneGAL1, gal1Id, nodes, links, gal1Id, [], '', false);
-    expect(Object.values(nodes)).toHaveLength(20);
-    expect(Object.values(links)).toHaveLength(14);
+    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, [], '', false, 0.5);
+    expect(Object.values(nodes)).toHaveLength(9);
+    expect(Object.values(links)).toHaveLength(6);
   });
 
   it('composition parser returns correct blocked nodes if blocked', () => {
-    const cloneGracile = cloneDeep(gracileNucleus);
+    const blockedRegion = multipleCompositions.hasPart['21'];
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     const blockedNodeIds: string[] = [];
     // @ts-ignore
-    iterateNode(cloneGracile, gracileId, nodes, links, gracileId, blockedNodeIds, '', false);
+    iterateNode(blockedRegion, '21', nodes, links, '21', blockedNodeIds, '', false);
     expect(blockedNodeIds).toHaveLength(2);
-    expect(blockedNodeIds).toContain(
-      'https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6'
-    );
-    expect(blockedNodeIds).toContain(
-      'https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType?rev=6__https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronEType?rev=6'
-    );
+    expect(blockedNodeIds).toContain('A');
+    expect(blockedNodeIds).toContain('A__D');
   });
 
   it('composition parser returns correct blocked nodes if not blocked', () => {
-    const cloneCuneate = cloneDeep(cuneateNucleus);
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     const blockedNodeIds: string[] = [];
     // @ts-ignore
-    iterateNode(cloneCuneate, cuneateId, nodes, links, cuneateId, blockedNodeIds, '', false);
+    iterateNode(compToTest, '36', nodes, links, '36', blockedNodeIds, '', false);
     expect(blockedNodeIds).toHaveLength(0);
   });
 });
 
 describe('Calculate compositions unit tests', () => {
-  const leafIds = [
-    'http://api.brain-map.org/api/v2/data/Structure/36',
-    'http://api.brain-map.org/api/v2/data/Structure/187',
-  ];
+  const leafIds = ['36', '10'];
+  const volumes = { '5': 0.75, '36': 0.5, '10': 0.25 };
 
   it('total count is calculated correctly', async () => {
-    const areas = cloneDeep(gustatoryAreas);
-    // @ts-ignore
-    const { totalComposition } = await calculateCompositions(areas, leafIds);
-    expect(totalComposition.neuron.count).toBe(58137 + 3430);
+    const { totalComposition } = await calculateCompositions(
+      // @ts-ignore
+      multipleCompositions,
+      '5',
+      leafIds,
+      volumes
+    );
+    expect(totalComposition.neuron?.count).toBe(131);
+    expect(totalComposition.neuron?.density).toBeCloseTo(174.666);
   });
 
   it('all nodes and links are returned', async () => {
-    const areas = cloneDeep(gustatoryAreas);
-    // @ts-ignore
-    const { nodes, links } = await calculateCompositions(areas, leafIds);
-    expect(Object.values(nodes)).toHaveLength(87);
-    expect(Object.values(links)).toHaveLength(68);
+    const { nodes, links } = await calculateCompositions(
+      // @ts-ignore
+      multipleCompositions,
+      '5',
+      leafIds,
+      volumes
+    );
+    expect(Object.values(nodes)).toHaveLength(11);
+    expect(Object.values(links)).toHaveLength(8);
   });
 });

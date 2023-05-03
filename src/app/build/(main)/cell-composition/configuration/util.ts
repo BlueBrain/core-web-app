@@ -1,8 +1,10 @@
-import { CompositionNode } from '@/types/composition';
-import { CompositionLink } from '@/util/composition/types';
+import { CalculatedCompositionNode, CompositionLink } from '@/types/composition/calculation';
 
-export function sankeyNodesReducer(acc: CompositionNode[], cur: CompositionNode) {
-  const existingNodeIndex = acc.findIndex((node: CompositionNode) => node.id === cur.id);
+export function sankeyNodesReducer(
+  acc: CalculatedCompositionNode[],
+  cur: CalculatedCompositionNode
+) {
+  const existingNodeIndex = acc.findIndex((node: CalculatedCompositionNode) => node.id === cur.id);
   const existingNode = acc[existingNodeIndex];
 
   return existingNode
@@ -20,14 +22,18 @@ export function sankeyNodesReducer(acc: CompositionNode[], cur: CompositionNode)
     : [...acc, cur];
 }
 
-export function filterOutEmptyNodes(nodes: CompositionNode[], type: string, value: string) {
+export function filterOutEmptyNodes(
+  nodes: CalculatedCompositionNode[],
+  type: string,
+  value: string
+) {
   // @ts-ignore
   return nodes.filter((node) => node[type][value] > 0);
 }
 
 export function getSankeyLinks(
   links: CompositionLink[],
-  nodes: CompositionNode[],
+  nodes: CalculatedCompositionNode[],
   type: string,
   value: string
 ) {

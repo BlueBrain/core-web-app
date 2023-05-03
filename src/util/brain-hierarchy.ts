@@ -1,5 +1,5 @@
 import { TreeItem } from 'performant-array-to-tree';
-import { Composition, CompositionOverrideLeafNode } from '@/types/composition';
+import { OriginalComposition, CompositionOverrideLeafNode } from '@/types/composition/original';
 import { BrainRegion } from '@/types/ontologies';
 
 const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
@@ -63,7 +63,7 @@ export function extendLeafNodeWithOverrideProps(
     Object.values(node.hasPart).forEach((childNode) => extendLeafNodeWithOverrideProps(childNode));
   } else {
     // eslint-disable-next-line no-param-reassign
-    node.density = node.composition.neuron.density;
+    node.density = node.composition.neuron?.density;
   }
 
   return node;
@@ -72,7 +72,9 @@ export function extendLeafNodeWithOverrideProps(
 /**
  * Extend a composition with a density property on each (etype) leaf.
  */
-export function extendCompositionWithOverrideProps(composition: Composition): Composition {
+export function extendCompositionWithOverrideProps(
+  composition: OriginalComposition
+): OriginalComposition {
   Object.values(composition.hasPart).forEach((node) => extendLeafNodeWithOverrideProps(node));
 
   return composition;

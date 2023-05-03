@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { Composition } from '@/types/composition';
+import { OriginalComposition } from '@/types/composition/original';
 
-export const compositionHistoryAtom = atom<Composition[]>([]);
+export const compositionHistoryAtom = atom<OriginalComposition[]>([]);
 export const compositionHistoryIndexAtom = atom<number>(0);

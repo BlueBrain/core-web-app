@@ -1,9 +1,7 @@
 import { atom } from 'jotai';
 import cloneDeep from 'lodash/cloneDeep';
-import { Composition, CompositionNode } from '@/types/composition';
-import { AnalysedComposition } from '@/util/composition/types';
 import sessionAtom from '@/state/session';
-import analyseComposition from '@/util/composition/composition-parser';
+import calculateCompositions from '@/util/composition/composition-parser';
 import computeModifiedComposition from '@/util/composition/composition-modifier';
 import { extendCompositionWithOverrideProps } from '@/util/brain-hierarchy';
 import { setCompositionPayloadConfigurationAtom } from '@/state/brain-model-config/cell-composition/extra';
@@ -18,12 +16,16 @@ import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
+import { OriginalComposition } from '@/types/composition/original';
+import { AnalysedComposition, CalculatedCompositionNode } from '@/types/composition/calculation';
 
 // This holds a weak reference to the updatedComposition by it's initial composition
 // This allows GC to dispose the object once it is no longer used by current components
-const updatedCompositionWeakMapAtom = atom<WeakMap<Composition, Composition>>(new WeakMap());
+const updatedCompositionWeakMapAtom = atom<WeakMap<OriginalComposition, OriginalComposition>>(
+  new WeakMap()
+);
 
-const initialCompositionAtom = atom<Promise<Composition | null>>(async (get) => {
+const initialCompositionAtom = atom<Promise<OriginalComposition | null>>(async (get) => {
   const session = get(sessionAtom);
 
   if (!session) return null;
@@ -39,7 +41,7 @@ const initialCompositionAtom = atom<Promise<Composition | null>>(async (get) => 
         version: config.version,
         unitCode: config.unitCode,
         hasPart: config.overrides,
-      } as unknown as Composition;
+      } as unknown as OriginalComposition;
       // TODO: add composition converter: internal representation <-> KG format, remove type casting
     }
   }
@@ -47,7 +49,7 @@ const initialCompositionAtom = atom<Promise<Composition | null>>(async (get) => 
   return getCompositionData(session.accessToken);
 });
 
-const setUpdatedCompositionAtom = atom<null, [Composition], Promise<void>>(
+const setUpdatedCompositionAtom = atom<null, [OriginalComposition], Promise<void>>(
   null,
   async (get, set, updatedComposition) => {
     const initialComposition = await get(initialCompositionAtom);
@@ -58,7 +60,7 @@ const setUpdatedCompositionAtom = atom<null, [Composition], Promise<void>>(
   }
 );
 
-export const compositionAtom = atom<Promise<Composition | null>>(async (get) => {
+export const compositionAtom = atom<Promise<OriginalComposition | null>>(async (get) => {
   const initialComposition = await get(initialCompositionAtom);
 
   if (!initialComposition) return null;
@@ -72,18 +74,30 @@ export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>
   const session = get(sessionAtom);
   const selectedBrainRegion = get(selectedBrainRegionAtom);
   const compositionData = await get(compositionAtom);
+  const volumes = await get(brainRegionOntologyVolumesAtom);
 
-  if (!session || !selectedBrainRegion || !compositionData) return null;
-
+  if (!session || !selectedBrainRegion || !compositionData || !volumes) return null;
+  // TODO: the leaf IDS retrieved from BMO are incorrect. Change the implementation to calculate them here
   const leaves = selectedBrainRegion.leaves
     ? selectedBrainRegion.leaves
     : [`http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`];
-  return analyseComposition(compositionData, leaves);
+  return calculateCompositions(
+    compositionData,
+    `http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`,
+    leaves,
+    volumes
+  );
 });
 
 export const computeAndSetCompositionAtom = atom(
   null,
-  async (get, set, modifiedNode: CompositionNode, newValue: number, lockedIds: string[]) => {
+  async (
+    get,
+    set,
+    modifiedNode: CalculatedCompositionNode,
+    newValue: number,
+    lockedIds: string[]
+  ) => {
     const analysedComposition = await get(analysedCompositionAtom);
     const volumes = await get(brainRegionOntologyVolumesAtom);
     if (!analysedComposition || modifiedNode.composition === undefined) {
@@ -123,6 +137,6 @@ export const computeAndSetCompositionAtom = atom(
   }
 );
 
-export const setCompositionAtom = atom(null, (_get, set, composition: Composition) => {
+export const setCompositionAtom = atom(null, (_get, set, composition: OriginalComposition) => {
   set(setUpdatedCompositionAtom, composition);
 });

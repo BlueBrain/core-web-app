@@ -20,13 +20,13 @@ import DensityChart from './DensityChart';
 import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
 import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
-import { CompositionUnit } from '@/types/composition';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
+import { OriginalCompositionUnit } from '@/types/composition/original';
 import styles from './tabs.module.css';
 
 function CellPosition() {
@@ -70,7 +70,7 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
       setDensityOrCount((prev) => {
         const nextState =
           prev === switchStateType.DENSITY ? switchStateType.COUNT : switchStateType.DENSITY;
-        return nextState as keyof CompositionUnit;
+        return nextState as keyof OriginalCompositionUnit;
       }),
     [setDensityOrCount]
   );

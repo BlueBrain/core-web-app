@@ -11,7 +11,6 @@ import uniq from 'lodash/uniq';
 import { getMetric } from './util';
 import { CompositionTitleProps, NeuronCompositionItem } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
-import { CompositionNode, CompositionUnit } from '@/types/composition';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BrainRegionIcon, LockIcon, LockOpenIcon, MissingData } from '@/components/icons';
@@ -24,6 +23,10 @@ import { calculateMax } from '@/util/composition/utils';
 import iterateAndComputeSystemLockedIds from '@/util/composition/locking';
 import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { analysedCompositionAtom, computeAndSetCompositionAtom } from '@/state/build-composition';
+import {
+  CalculatedCompositionNeuronGlia,
+  CalculatedCompositionNode,
+} from '@/types/composition/calculation';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -162,7 +165,7 @@ function MeTypeDetails({
   onValueChange,
   editMode,
 }: {
-  neuronComposition: CompositionUnit;
+  neuronComposition: CalculatedCompositionNeuronGlia;
   meTypeNavValue: NavValue;
   onValueChange: (newValue: string[], path: string[]) => void;
   editMode: boolean;
@@ -191,7 +194,6 @@ function MeTypeDetails({
         return acc;
       }, {})
     : {};
-
   // blocked node ids are the ones that are blocked by the system since they
   // are undividable (cannot be split)
   const blockedNodeIds = useMemo(
@@ -221,7 +223,7 @@ function MeTypeDetails({
    * This callback handles the change of a given slider
    */
   const handleSliderChange = useCallback(
-    (changedNode: CompositionNode, value: number) => {
+    (changedNode: CalculatedCompositionNode, value: number) => {
       modifyComposition(changedNode, value, allLockedIds).then();
     },
     [allLockedIds, modifyComposition]
@@ -244,7 +246,7 @@ function MeTypeDetails({
       <h2 className="flex font-bold justify-between text-white text-lg">
         <span className="justify-self-start">NEURONS [{metricToUnit[densityOrCount]}]</span>
         <small className="font-normal text-base">
-          ~ {getMetric(neuronComposition, densityOrCount)}
+          ~ {getMetric(neuronComposition.neuron, densityOrCount)}
         </small>
       </h2>
 
@@ -299,7 +301,7 @@ function MeTypeDetails({
                     content={nestedContent}
                     onSliderChange={(newValue: number) => {
                       const node = neuronsToNodes[parentId].items.find(
-                        (nestedNode: CompositionNode) => nestedNode.id === nestedId
+                        (nestedNode: CalculatedCompositionNode) => nestedNode.id === nestedId
                       );
                       handleSliderChange(node, newValue);
                     }}
@@ -405,20 +407,19 @@ function ExpandedRegionDetails({
     return null;
   }
 
-  return brainRegion.representedInAnnotation ? (
+  return brainRegion.representedInAnnotation && composition?.totalComposition.neuron ? (
     <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 min-w-[300px]">
       {title}
       <UnitsToggle
         isChecked={densityOrCount === 'count'}
         onChange={(checked: boolean) => {
           const toSet = checked ? 'count' : 'density';
-
           setDensityOrCount(toSet);
         }}
       />
       {composition ? (
         <MeTypeDetails
-          neuronComposition={composition.totalComposition.neuron}
+          neuronComposition={composition.totalComposition}
           meTypeNavValue={meTypeNavValue}
           onValueChange={onValueChange}
           editMode={editMode && !!isConfigEditable}

@@ -8,7 +8,6 @@ import {
   BrainRegionOntologyView,
   Mesh,
 } from '@/types/ontologies';
-import { CompositionUnit } from '@/types/composition';
 import { getBrainRegionOntology, getDistributions } from '@/api/ontologies';
 import { buildAlternateChildren, buildAlternateTree } from '@/state/brain-regions/alternate-view';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
@@ -51,7 +50,7 @@ import { itemsInAnnotationReducer } from '@/util/brain-hierarchy';
    * InitialCompositionAtom's contains atlas composition with applied overrides (previously saved by the user)
 */
 
-export const densityOrCountAtom = atom<keyof CompositionUnit>('count');
+export const densityOrCountAtom = atom<'density' | 'count'>('count');
 
 /**
  * Recursively unravels a brain region tree to an array
