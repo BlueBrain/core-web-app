@@ -145,6 +145,12 @@ export function fetchResourceById<T>(id: string, session: Session, options?: Com
   }).then<T>((res) => res.json());
 }
 
+export function fetchResourceByUrl<T>(url: string, session: Session) {
+  return fetch(url, {
+    headers: createHeaders(session.accessToken),
+  }).then<T>((res) => res.json());
+}
+
 export function fetchResourceSourceById<T>(id: string, session: Session) {
   const url = composeUrl('resource', id, { source: true });
 

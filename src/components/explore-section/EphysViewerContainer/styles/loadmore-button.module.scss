@@ -3,6 +3,6 @@
   align-items: center;
   justify-content: center;
   button {
-    @apply rounded-3xl bg-primary-8 text-white py-2 px-14 mt-2;
+    @apply rounded-3xl bg-primary-8 font-semibold text-white px-14 py-4 mt-2;
   }
 }

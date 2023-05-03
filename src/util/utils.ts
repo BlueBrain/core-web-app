@@ -14,10 +14,3 @@ export function createHeaders(
 export function classNames(...classes: Array<string | null | undefined | boolean>) {
   return classes.filter(Boolean).join(' ');
 }
-
-export function fetchAtlasAPI(method: string, url: string, accessToken: string) {
-  return fetch(url, {
-    method,
-    headers: createHeaders(accessToken, { Accept: '*/*' }),
-  });
-}

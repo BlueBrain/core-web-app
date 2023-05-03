@@ -45,6 +45,7 @@ export default function MorphologyPage() {
         searchStringAtom={searchStringAtom}
         aggregationsAtom={aggregationsAtom}
         filtersAtom={filtersAtom}
+        enableDownload
       />
     </div>
   );

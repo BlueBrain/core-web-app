@@ -23,6 +23,7 @@ type ExploreSectionPageProps = {
   columns: ColumnProps<any>[];
   aggregationsAtom: Atom<Promise<any>>;
   filtersAtom: PrimitiveAtom<Filter[]>;
+  enableDownload?: boolean;
 };
 
 export default function ExploreSectionListingView({
@@ -34,6 +35,7 @@ export default function ExploreSectionListingView({
   pageSizeAtom,
   aggregationsAtom,
   filtersAtom,
+  enableDownload,
 }: ExploreSectionPageProps) {
   const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
   const loadableData = useMemo(() => loadable(dataAtom), [dataAtom]);
@@ -45,18 +47,17 @@ export default function ExploreSectionListingView({
 
   return (
     <>
-      <section className="w-full bg-white">
-        <div className="flex items-center py-8">
-          <div className="ml-10 text-primary-7 text-2xl font-bold flex-auto">
+      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pb-12 pl-10 pr-16 overflow-scroll relative">
+        <div className="flex items-center justify-between">
+          <div className="text-primary-7 text-2xl font-bold flex-auto w-10/12">
             {title}
             <span className="text-sm whitespace-pre font-thin text-slate-400 pl-2">
               Total: {value}
             </span>
           </div>
-          <div className="mr-5 flex items-center space-between">
+
+          <div className="flex items-center gap-5 justify-between">
             <ExploreSectionNameSearch searchStringAtom={searchStringAtom} />
-          </div>
-          <div className="mr-5">
             {!openFiltersSidebar && (
               <button
                 type="button"
@@ -75,13 +76,12 @@ export default function ExploreSectionListingView({
             )}
           </div>
         </div>
-        <div
-          className="bg-white w-full h-80 overflow-scroll"
-          style={{ height: 'calc(100vh - 100px)' }}
-        >
-          <ExploreSectionTable loadableData={data} columns={columns} />
-          <LoadMoreButton dataState={data} pageSizeAtom={pageSizeAtom} totalState={total} />
-        </div>
+        <ExploreSectionTable
+          loadableData={data}
+          columns={columns}
+          enableDownload={enableDownload}
+        />
+        <LoadMoreButton dataState={data} pageSizeAtom={pageSizeAtom} totalState={total} />
       </section>
       {openFiltersSidebar && (
         <ControlPanel

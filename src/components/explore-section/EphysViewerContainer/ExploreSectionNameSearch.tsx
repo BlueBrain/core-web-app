@@ -1,6 +1,6 @@
 import { PrimitiveAtom, useAtom } from 'jotai';
 import { useState, useEffect } from 'react';
-import { Button, Input } from 'antd';
+import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import style from '@/components/explore-section/search.module.scss';
 
@@ -28,24 +28,22 @@ export default function ExploreSectionNameSearch({
     };
   }, [openSearchInput]);
 
-  return (
-    <div>
-      {openSearchInput ? (
-        <Search
-          allowClear
-          size="large"
-          placeholder={searchString}
-          onSearch={(value: string) => setSearchString(value)}
-          className={style.search}
-          enterButton={<SearchOutlined />}
-        />
-      ) : (
-        <Button
-          className={style.searchButton}
-          onClick={() => setOpenSearchInputOpen(!openSearchInput)}
-          icon={<SearchOutlined />}
-        />
-      )}
-    </div>
+  return openSearchInput ? (
+    <Search
+      allowClear
+      size="large"
+      placeholder={searchString}
+      onSearch={(value: string) => setSearchString(value)}
+      className={style.search}
+      enterButton={<SearchOutlined />}
+    />
+  ) : (
+    <button
+      type="button"
+      className={style.searchButton}
+      onClick={() => setOpenSearchInputOpen(!openSearchInput)}
+    >
+      <SearchOutlined />
+    </button>
   );
 }

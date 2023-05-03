@@ -6,6 +6,8 @@
   background: #003a8c;
   box-shadow: 0px 20px 16px -16px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
+  white-space: pre;
+
   .active {
     @apply text-primary-3;
   }

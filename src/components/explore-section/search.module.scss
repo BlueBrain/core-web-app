@@ -11,7 +11,7 @@
   }
 }
 .searchButton {
-  @apply rounded-none border-primary-3 text-primary-8;
+  @apply border border-primary-6 hover:border-primary-7 flex items-center rounded-none border-primary-4 text-primary-8 p-3;
 }
 
 .search,

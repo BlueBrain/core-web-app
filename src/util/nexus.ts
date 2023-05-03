@@ -154,3 +154,7 @@ export function setRevision<T extends string | undefined>(url?: T, rev?: number 
 
   return urlObj.toString() as T extends string ? string : undefined;
 }
+
+export function ensureArray<T>(value: T | T[]) {
+  return Array.isArray(value) ? value : [value];
+}
