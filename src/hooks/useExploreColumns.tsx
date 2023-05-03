@@ -1,0 +1,88 @@
+'use client';
+
+import { ColumnProps, ColumnType } from 'antd/lib/table';
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { useAtom, PrimitiveAtom } from 'jotai';
+import { format, parseISO } from 'date-fns';
+import { ES_TERMS } from '@/constants/explore-section';
+import Link from '@/components/Link';
+import { ExploreSectionResource, SortState } from '@/types/explore-section';
+import styles from '@/app/explore/explore.module.scss';
+
+const useExploreColumns = (
+  keys: string[],
+  sortStateAtom: PrimitiveAtom<SortState>,
+  url: string
+): ColumnProps<ExploreSectionResource>[] => {
+  const [sortState, setSortState] = useAtom(sortStateAtom);
+
+  const sorterES = (column: ColumnType<ExploreSectionResource>) => {
+    const field = column.key;
+    if (field) {
+      const toggled = sortState.order === 'asc' ? 'desc' : 'asc';
+      const order = sortState.field === field ? toggled : 'asc';
+      setSortState({ field, order });
+    }
+  };
+
+  const getHeaderColumn = (key: string) => {
+    const term = ES_TERMS[key as keyof typeof ES_TERMS];
+
+    if (!term) {
+      return <div className={styles.tableHeader}>{key}</div>;
+    }
+
+    const isSorted = key === sortState.field;
+
+    const iconDirection =
+      sortState.order === 'asc' ? (
+        <CaretDownOutlined className="ml-5" />
+      ) : (
+        <CaretUpOutlined className="ml-5" />
+      );
+
+    const icon = isSorted ? iconDirection : null;
+
+    return (
+      <div className={styles.tableHeader}>
+        {term.title}
+        {icon}
+      </div>
+    );
+  };
+
+  const getRender = (text: string, record: any) =>
+    record.key === 'createdAt' ? (
+      format(parseISO(text), 'dd.MM.yyyy')
+    ) : (
+      <Link href={`/explore/${url}/${record.key}`}>{text}</Link>
+    );
+
+  const columns: ColumnProps<ExploreSectionResource>[] = [
+    {
+      title: getHeaderColumn('#'),
+      key: 'index',
+      className: 'text-primary-7',
+      render: (text: string, record: ExploreSectionResource, index: number) => index + 1,
+    },
+  ];
+
+  keys.forEach((key) => {
+    const column: ColumnProps<ExploreSectionResource> = {
+      title: getHeaderColumn(key),
+      dataIndex: key,
+      key,
+      className: 'text-primary-7 cursor-pointer',
+      sorter: false,
+      render: getRender,
+      onHeaderCell: (cell) => ({
+        onClick: () => sorterES(cell),
+      }),
+    };
+    columns.push(column);
+  });
+
+  return columns;
+};
+
+export default useExploreColumns;

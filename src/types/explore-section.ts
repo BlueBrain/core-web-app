@@ -32,17 +32,17 @@ export interface Campaign {
 }
 
 export interface ExploreSectionResource extends OptionalExploreSectionFields {
-  key: React.Key;
+  key: React.Key | string;
   self: string;
   id: string;
   name: string;
   description: string;
   subjectSpecies?: string;
-  contributor: string;
+  contributors: string;
   createdAt: string;
   brainRegion: string;
-  mtype?: string;
-  etype?: string;
+  mType?: string;
+  eType?: string;
 }
 
 export interface OptionalExploreSectionFields {
@@ -255,4 +255,8 @@ export interface Aggregations {
     buckets: Bucket[];
     excludeOwnFilter: { buckets: Bucket[] };
   };
+}
+export interface SortState {
+  field: string | React.Key;
+  order: 'asc' | 'desc';
 }

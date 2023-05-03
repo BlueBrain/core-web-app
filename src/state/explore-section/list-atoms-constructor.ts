@@ -4,6 +4,7 @@ import {
   TotalHits,
   ExploreSectionResponse,
   ExploreSectionResource,
+  SortState,
 } from '@/types/explore-section';
 import { Filter } from '@/components/Filter/types';
 import getDataQuery from '@/queries/explore-section/data';
@@ -16,11 +17,13 @@ interface DataQueryParams {
 }
 
 const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => {
-  const pageSizeAtom = atom<number>(10);
+  const pageSizeAtom = atom<number>(30);
 
   const pageNumberAtom = atom<number>(1);
 
   const searchStringAtom = atom<string>('');
+
+  const sortStateAtom = atom<SortState>({ field: 'createdAt', order: 'asc' });
 
   const filtersAtom = atom<Filter[]>([
     { field: 'createdBy', type: 'checkList', value: [] },
@@ -32,8 +35,9 @@ const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => 
     const searchString = get(searchStringAtom);
     const pageNumber = get(pageNumberAtom);
     const pageSize = get(pageSizeAtom);
+    const sortState = get(sortStateAtom);
     const filters = get(filtersAtom);
-    return getDataQuery(pageSize, pageNumber, filters, type, searchString);
+    return getDataQuery(pageSize, pageNumber, filters, type, sortState, searchString);
   });
 
   const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => {
@@ -70,6 +74,7 @@ const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => 
     dataAtom,
     totalAtom,
     aggregationsAtom,
+    sortStateAtom,
   };
 };
 

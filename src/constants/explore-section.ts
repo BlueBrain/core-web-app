@@ -50,3 +50,62 @@ WHERE {
   }
 }
 LIMIT 1000`;
+
+export const ES_TERMS: { [key: string]: { term: string; title: string } } = {
+  brainRegion: {
+    term: 'brainRegion.label.keyword',
+    title: 'Brain region',
+  },
+  eType: {
+    term: 'eType.label.keyword',
+    title: 'E-Type',
+  },
+  mType: {
+    term: 'mType.label.keyword',
+    title: 'M-Type',
+  },
+  name: {
+    term: 'name.keyword',
+    title: 'Data',
+  },
+  subjectSpecies: {
+    term: 'subjectSpecies.label.keyword',
+    title: 'Species',
+  },
+  contributors: {
+    term: 'contributors.label.keyword',
+    title: 'Contributor(s)',
+  },
+  neuronDensity: {
+    term: 'neuronDensity.label.keyword',
+    title: 'Neuron density',
+  },
+  boutonDensity: {
+    term: 'boutonDensity.label.keyword',
+    title: 'Bouton density',
+  },
+  layerThickness: {
+    term: 'layerThickness.label.keyword',
+    title: 'Layer thickness',
+  },
+  circuitType: {
+    term: 'circuitType.keyword',
+    title: 'Circuit type',
+  },
+  createdAt: {
+    term: 'createdAt',
+    title: 'Created at',
+  },
+  updatedAt: {
+    term: 'updatedAt',
+    title: 'Updated at',
+  },
+  reference: {
+    term: 'reference.keyword',
+    title: 'Reference',
+  },
+  conditions: {
+    term: 'conditions.keyword',
+    title: 'Conditions',
+  },
+};

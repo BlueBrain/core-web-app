@@ -1,4 +1,5 @@
 import { CheckListFilter, Filter } from '@/components/Filter/types';
+import { ES_TERMS } from '@/constants/explore-section';
 
 export default function buildAggregations(filters: Filter[]) {
   const createdBy = filters.find(({ field }) => field === 'createdBy');
@@ -11,7 +12,7 @@ export default function buildAggregations(filters: Filter[]) {
   const eType = filters.find(({ field }) => field === 'eType');
   const eTypeFilter = (eType as CheckListFilter).value.length && {
     terms: {
-      'eType.label.keyword': eType?.value,
+      [ES_TERMS.eType.term]: eType?.value,
     },
   };
 
