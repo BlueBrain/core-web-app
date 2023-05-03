@@ -3,7 +3,7 @@
 import { ColumnProps, ColumnType } from 'antd/lib/table';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import { useAtom, PrimitiveAtom } from 'jotai';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import { ES_TERMS } from '@/constants/explore-section';
 import Link from '@/components/Link';
 import { ExploreSectionResource, SortState } from '@/types/explore-section';
@@ -52,7 +52,7 @@ const useExploreColumns = (
   };
 
   const getRender = (text: string, record: any) =>
-    record.key === 'createdAt' ? (
+    isValid(parseISO(text)) ? (
       format(parseISO(text), 'dd.MM.yyyy')
     ) : (
       <Link href={`/explore/${url}/${record.key}`}>{text}</Link>
