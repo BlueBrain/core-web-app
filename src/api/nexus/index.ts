@@ -347,7 +347,7 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
   const overridesPayloadBuffer = await fetchFileByUrl(
     overridesEntity.distribution.contentUrl,
     session
-  ).then((res) => res.arrayBuffer);
+  ).then((res) => res.arrayBuffer());
 
   const clonedOverridesPayloadMeta = await createFile(
     overridesPayloadBuffer,
