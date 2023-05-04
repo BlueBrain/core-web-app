@@ -1,47 +1,71 @@
 import { useAtomValue } from 'jotai';
-import { useEffect, useMemo, useState, useRef, SetStateAction } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+  SetStateAction,
+  Dispatch,
+  MutableRefObject,
+} from 'react';
 import Plotly, { Shape, Layout, Data, ColorScale } from 'plotly.js-dist-min';
 
-import { WholeBrainConnectivityMatrix } from '@/types/connectome';
+import { getFlatArrayValueIdx } from '@/util/connectome';
 import {
+  brainRegionLeaveIdxByIdAtom,
   brainRegionLeavesUnsortedArrayAtom,
   selectedPostBrainRegionsAtom,
   selectedPreBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
+import usePrevious from '@/hooks/hooks';
 
-const PICNIC_W_ZERO_CUTOFF: ColorScale = [
-  [0, 'rgb(0,0,0)'],
-  [0.0001, 'rgb(0,0,255)'],
-  [0.1, 'rgb(51,153,255)'],
-  [0.2, 'rgb(102,204,255)'],
-  [0.3, 'rgb(153,204,255)'],
-  [0.4, 'rgb(204,204,255)'],
-  [0.5, 'rgb(255,255,255)'],
-  [0.6, 'rgb(255,204,255)'],
-  [0.7, 'rgb(255,153,255)'],
-  [0.8, 'rgb(255,102,204)'],
-  [0.9, 'rgb(255,102,102)'],
-  [1, 'rgb(255,0,0)'],
+const VIRIDIS_W_ZERO_CUTOFF: ColorScale = [
+  [0, '#000000'],
+  [0.0001, '#440154'],
+  [0.06274509803921569, '#48186a'],
+  [0.12549019607843137, '#472d7b'],
+  [0.18823529411764706, '#424086'],
+  [0.25098039215686274, '#3b528b'],
+  [0.3137254901960784, '#33638d'],
+  [0.3764705882352941, '#2c728e'],
+  [0.4392156862745098, '#26828e'],
+  [0.5019607843137255, '#21918c'],
+  [0.5647058823529412, '#1fa088'],
+  [0.6274509803921569, '#28ae80'],
+  [0.6901960784313725, '#3fbc73'],
+  [0.7529411764705882, '#5ec962'],
+  [0.8156862745098039, '#84d44b'],
+  [0.8784313725490196, '#addc30'],
+  [0.9411764705882353, '#d8e219'],
+  [1, '#fde725'],
 ];
 
 function getDensitiesForNodes(
   srcNodes: Map<string, string>,
   dstNodes: Map<string, string>,
   brainRegionLeaves: BrainRegion[],
-  connectivity: WholeBrainConnectivityMatrix
+  idxByIdMap: Record<string, number> | null,
+  connectivityFlatArray: Float64Array
 ): [number[][], string[], string[]] {
+  if (!idxByIdMap) return [[], [], []];
+
   const filteredDensities: number[][] = [];
 
   const srcBrainRegions = brainRegionLeaves.filter((brainRegion) => srcNodes.has(brainRegion.id));
   const dstBrainRegions = brainRegionLeaves.filter((brainRegion) => dstNodes.has(brainRegion.id));
 
-  srcBrainRegions.forEach((srcBrainRegion) => {
-    const targetObj = connectivity[srcBrainRegion.id];
+  const totalLeaves = brainRegionLeaves.length;
 
-    const values = targetObj
-      ? dstBrainRegions.map((dstBrainRegion) => targetObj?.[dstBrainRegion.id] ?? 0)
-      : new Array(dstBrainRegions.length).fill(0);
+  srcBrainRegions.forEach((srcBrainRegion) => {
+    const srcIdx = idxByIdMap[srcBrainRegion.id] as number;
+    const values = new Array(dstBrainRegions.length);
+
+    dstBrainRegions.forEach((dstBrainRegion, targetIdx) => {
+      const dstIdx = idxByIdMap[dstBrainRegion.id] as number;
+      const valueIdx = getFlatArrayValueIdx(totalLeaves, srcIdx, dstIdx);
+      values[targetIdx] = connectivityFlatArray[valueIdx];
+    });
 
     filteredDensities.push(values);
   });
@@ -58,7 +82,7 @@ interface PlotDiv extends HTMLDivElement {
     handler: ({
       points,
     }: {
-      points: { pointIndex: [number, number]; data: { x: number[]; y: number[] } }[];
+      points: { pointIndex: [number, number]; data: { x: number[]; y: number[]; z: number[][] } }[];
     }) => void
   ) => void;
   layout: Layout;
@@ -73,21 +97,26 @@ interface Rect extends Partial<Shape> {
 
 export default function MacroConnectome({
   zoom,
-  select,
+  select: selectProp,
   unselect,
   selected,
   setSelected,
-  connectivityMatrix,
+  connectivityFlatArray,
+  setMultiplier,
+  setOffset,
+  shapes,
 }: {
   zoom: boolean;
   select: boolean;
   unselect: boolean;
   selected: Set<string>;
-  setSelected: React.Dispatch<SetStateAction<Set<string>>>;
-  connectivityMatrix: WholeBrainConnectivityMatrix;
+  setSelected: Dispatch<SetStateAction<Set<string>>>;
+  connectivityFlatArray: Float64Array;
+  setMultiplier: Dispatch<SetStateAction<number>>;
+  setOffset: Dispatch<SetStateAction<number>>;
+  shapes: MutableRefObject<Rect[]>;
 }) {
   const plotRef = useRef<PlotDiv>(null);
-  const shapes = useRef<Rect[]>([]);
 
   const selecting = useRef(false);
   const corner1 = useRef<[number, number]>([0, 0]);
@@ -99,9 +128,12 @@ export default function MacroConnectome({
   const [plotInitialized, setPlotInitialized] = useState(false);
 
   const brainRegionLeaves = useAtomValue(brainRegionLeavesUnsortedArrayAtom);
+  const brainRegionLeaveIdxById = useAtomValue(brainRegionLeaveIdxByIdAtom);
 
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+
+  const select = selectProp && shapes.current.length === 0;
 
   const [filteredDensities, srcLabels, dstLabels] = useMemo(
     () =>
@@ -109,10 +141,22 @@ export default function MacroConnectome({
         preSynapticBrainRegions,
         postSynapticBrainRegions,
         brainRegionLeaves || [],
-        connectivityMatrix
+        brainRegionLeaveIdxById,
+        connectivityFlatArray
       ),
-    [preSynapticBrainRegions, postSynapticBrainRegions, connectivityMatrix, brainRegionLeaves]
+    [
+      preSynapticBrainRegions,
+      postSynapticBrainRegions,
+      brainRegionLeaves,
+      brainRegionLeaveIdxById,
+      connectivityFlatArray,
+    ]
   );
+
+  const prevSrcLabels = usePrevious(srcLabels);
+  const prevDstLabels = usePrevious(dstLabels);
+  const userChangedRegions =
+    prevSrcLabels?.length !== srcLabels.length || prevDstLabels?.length !== dstLabels.length;
 
   useEffect(() => {
     selectRef.current = select;
@@ -120,11 +164,7 @@ export default function MacroConnectome({
     selectedRef.current = selected;
     const container = plotRef.current;
 
-    if (selected.size === 0) {
-      shapes.current = [];
-    }
-
-    if (!container || filteredDensities.length === 0) return;
+    if (!container) return;
 
     const data: Data[] = [
       {
@@ -132,7 +172,7 @@ export default function MacroConnectome({
         x: dstLabels,
         y: srcLabels,
         type: 'heatmap',
-        colorscale: PICNIC_W_ZERO_CUTOFF,
+        colorscale: VIRIDIS_W_ZERO_CUTOFF,
       },
     ];
 
@@ -149,13 +189,13 @@ export default function MacroConnectome({
           xaxis: {
             color: '#DCDCDC',
             tickfont: {
-              size: 7,
+              size: 8,
             },
           },
           yaxis: {
             color: '#DCDCDC',
             tickfont: {
-              size: 7,
+              size: 8,
             },
           },
           shapes: shapes.current,
@@ -172,6 +212,7 @@ export default function MacroConnectome({
           const deletedShapes = shapes.current.filter(
             (s) => point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1
           );
+          // eslint-disable-next-line no-param-reassign
           shapes.current = shapes.current.filter(
             (s) => !(point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1)
           );
@@ -182,11 +223,19 @@ export default function MacroConnectome({
             for (let x = s.x0; x <= s.x1; x += 1)
               for (let y = s.y1; y <= s.y0; y += 1) {
                 if (x >= s.x0 && x <= s.x1 && y <= s.y0 && y >= s.y1) {
-                  selectedCopy.delete(JSON.stringify([points[0].data.x[x], points[0].data.y[y]]));
+                  selectedCopy.delete(
+                    JSON.stringify([
+                      points[0].data.x[x],
+                      points[0].data.y[y],
+                      points[0].data.z[y][x],
+                    ])
+                  );
                 }
               }
           }
           setSelected(selectedCopy);
+          setMultiplier(1);
+          setOffset(0);
           Plotly.relayout(container, { shapes: shapes.current });
         }
 
@@ -217,7 +266,9 @@ export default function MacroConnectome({
         for (let x = c1[0]; x <= c2[0]; x += 1) {
           for (let y = c2[1]; y <= c1[1]; y += 1) {
             if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1]) {
-              selectedCopy.add(JSON.stringify([points[0].data.x[x], points[0].data.y[y]]));
+              selectedCopy.add(
+                JSON.stringify([points[0].data.x[x], points[0].data.y[y], points[0].data.z[y][x]])
+              );
             }
           }
         }
@@ -288,17 +339,17 @@ export default function MacroConnectome({
         xaxis: {
           color: '#DCDCDC',
           tickfont: {
-            size: 7,
+            size: 8,
           },
-          range: container.layout.xaxis.range,
+          range: userChangedRegions ? undefined : container.layout.xaxis.range,
           fixedrange: !zoom,
         },
         yaxis: {
           color: '#DCDCDC',
           tickfont: {
-            size: 7,
+            size: 8,
           },
-          range: container.layout.yaxis.range,
+          range: userChangedRegions ? undefined : container.layout.yaxis.range,
           fixedrange: !zoom,
         },
         shapes: shapes.current,
@@ -315,6 +366,10 @@ export default function MacroConnectome({
     zoom,
     selected,
     setSelected,
+    userChangedRegions,
+    setMultiplier,
+    setOffset,
+    shapes,
   ]);
 
   return (

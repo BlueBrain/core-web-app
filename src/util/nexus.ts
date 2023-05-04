@@ -1,5 +1,11 @@
 import { nexus } from '@/config';
-import { FileMetadata, GeneratorConfig, GeneratorConfigType, GeneratorName } from '@/types/nexus';
+import {
+  Distribution,
+  FileMetadata,
+  GeneratorConfig,
+  GeneratorConfigType,
+  GeneratorName,
+} from '@/types/nexus';
 import { PartialBy } from '@/types/common';
 
 export function collapseId(nexusId: string) {
@@ -82,7 +88,9 @@ export type IdType =
   | 'emodelassignmentconfig'
   | 'morphologyassignmentconfig'
   | 'microconnectomeconfig'
-  | 'synapseconfig';
+  | 'synapseconfig'
+  | 'macroconnectomeconfig'
+  | 'wholebrainconnectomestrength';
 
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;
@@ -90,14 +98,32 @@ export function createId(type: IdType, id?: string) {
   return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? crypto.randomUUID()}`;
 }
 
-const generatorNamebyKgType: Record<GeneratorConfigType, GeneratorName> = {
+const generatorNameByKgType: Record<GeneratorConfigType, GeneratorName> = {
   CellCompositionConfig: 'cell_composition',
   CellPositionConfig: 'cell_position',
   EModelAssignmentConfig: 'placeholder',
   MorphologyAssignmentConfig: 'placeholder',
   MicroConnectomeConfig: 'connectome',
   SynapseConfig: 'connectome_filtering',
+  MacroConnectomeConfig: 'connectome',
 };
+
+export function createDistribution(payloadMetadata: FileMetadata): Distribution {
+  return {
+    '@type': 'DataDownload',
+    name: payloadMetadata._filename,
+    contentSize: {
+      unitCode: 'bytes',
+      value: payloadMetadata._bytes,
+    },
+    contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+    encodingFormat: payloadMetadata._mediaType,
+    digest: {
+      algorithm: payloadMetadata._digest._algorithm,
+      value: payloadMetadata._digest._value,
+    },
+  };
+}
 
 interface CreateGeneratorConfigProps {
   id?: string;
@@ -120,21 +146,8 @@ export function createGeneratorConfig({
     '@id': id,
     name,
     description,
-    generatorName: generatorNamebyKgType[kgType],
-    distribution: {
-      '@type': 'DataDownload',
-      name: payloadMetadata._filename,
-      contentSize: {
-        unitCode: 'bytes',
-        value: payloadMetadata._bytes,
-      },
-      contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
-      encodingFormat: payloadMetadata._mediaType,
-      digest: {
-        algorithm: payloadMetadata._digest._algorithm,
-        value: payloadMetadata._digest._value,
-      },
-    },
+    generatorName: generatorNameByKgType[kgType],
+    distribution: createDistribution(payloadMetadata),
   };
 }
 

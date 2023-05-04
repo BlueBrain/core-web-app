@@ -2,14 +2,14 @@ import { Select } from 'antd';
 
 import { HemisphereDirection } from '@/types/connectome';
 
-export const direction: Record<HemisphereDirection, string> = {
+export const DIRECTION_LABEL: Record<HemisphereDirection, string> = {
   LL: 'Left to left',
   LR: 'Left to right',
   RL: 'Right to left',
   RR: 'Right to right',
 };
 
-const selectOptions = Object.entries(direction).map(([value, label]) => ({ label, value }));
+const selectOptions = Object.entries(DIRECTION_LABEL).map(([value, label]) => ({ label, value }));
 
 type HemisphereDropdownProps = {
   value?: HemisphereDirection;

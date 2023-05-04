@@ -1,14 +1,14 @@
 'use client';
 
 import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useAtomValue } from 'jotai';
-import { ConfigProvider, theme, InputNumber, Button } from 'antd';
-import Plotly from 'plotly.js-dist-min';
-import set from 'lodash/set';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { ConfigProvider, theme, InputNumber, Input, Button } from 'antd';
+import Plotly, { Shape } from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
-
+import uniq from 'lodash/uniq';
+import { CloseOutlined } from '@ant-design/icons';
 import {
-  brainRegionIdByNotationMapAtom,
+  brainRegionLeaveIdxByNotationMapAtom,
   selectedPostBrainRegionsAtom,
   selectedPreBrainRegionsAtom,
 } from '@/state/brain-regions';
@@ -22,101 +22,61 @@ import {
   BrainRegionSelection,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
-import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
-import { initialConnectivityStrengthTableAtom } from '@/state/brain-model-config/macro-connectome';
+import { HemisphereDirection } from '@/types/connectome';
+import {
+  connectivityStrengthMatrixAtom,
+  editsAtom,
+} from '@/state/brain-model-config/macro-connectome';
+import { addEdit as addEditAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import brainAreaAtom from '@/state/connectome-editor/sidebar';
+
 import styles from '../connectome-definition.module.css';
 
+interface Rect extends Partial<Shape> {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+}
+
 function ConnectomeDefinitionMain() {
+  const area = useAtomValue(brainAreaAtom);
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
-  const initialConnectivityStrengthTable = useAtomValue(initialConnectivityStrengthTableAtom);
-  const brainRegionIdByNotationMap = useAtomValue(brainRegionIdByNotationMapAtom);
+  const connectivityMatrix = useAtomValue(connectivityStrengthMatrixAtom);
+  const edits = useAtomValue(editsAtom);
+  const addEdit = useSetAtom(addEditAtom);
 
+  const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
+  const [editName, setEditName] = useState('');
+
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
   const [select, setSelect] = useState(false);
   const [unselect, setUnselect] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [connectivityMatrix, setConnectivityMatrix] = useState<WholeBrainConnectivityMatrix>({});
   const histogramRef = useRef<HTMLDivElement>(null);
   const [histogramInitialized, setHistogramInitialized] = useState(false);
   const lineChartRef = useRef<HTMLDivElement>(null);
   const [lineChartInitialized, setLineChartInitialized] = useState(false);
+  const shapes = useRef<Rect[]>([]);
 
-  const selectedIds = useMemo(() => {
-    if (!brainRegionIdByNotationMap) return [];
+  const selectedVals: [string, string, number][] = useMemo(
+    () => Array.from(selected).map((s) => JSON.parse(s)),
+    [selected]
+  );
 
-    return Array.from(selected).map((s) => {
-      const pair = JSON.parse(s);
-      return [
-        brainRegionIdByNotationMap.get(pair[0]) as string,
-        brainRegionIdByNotationMap.get(pair[1]) as string,
-      ];
-    });
-  }, [selected, brainRegionIdByNotationMap]);
+  const histogram = useMemo(() => selectedVals.map((v) => v[2]), [selectedVals]);
 
-  useEffect(() => {
-    if (!initialConnectivityStrengthTable || !brainRegionIdByNotationMap) return;
-
-    const currentConnectivityMatrix = initialConnectivityStrengthTable
-      .toArray()
-      .reduce((matrix, record) => {
-        if (record.side !== hemisphereDirection) return matrix;
-
-        const srcBrainRegionId = brainRegionIdByNotationMap.get(record.src);
-        const dstBrainRegionId = brainRegionIdByNotationMap.get(record.dst);
-
-        return set(matrix, `${srcBrainRegionId}.${dstBrainRegionId}`, record.value);
-      }, {});
-
-    setConnectivityMatrix(currentConnectivityMatrix);
-  }, [initialConnectivityStrengthTable, brainRegionIdByNotationMap, hemisphereDirection]);
-
-  const modifiedConnectivityMatrix = useMemo(() => {
-    const matrix = { ...connectivityMatrix };
-    selectedIds.forEach(([d, s]) => {
-      if (!matrix[s]) return;
-      if (!matrix[s][d]) return;
-      const current = matrix[s][d];
-      matrix[s][d] = current * multiplier + offset;
-    });
-    return matrix;
-  }, [connectivityMatrix, multiplier, offset, selectedIds]);
-
-  const histogram = useMemo(() => {
-    const x: number[] = [];
-
-    Array.from(preSynapticBrainRegions).forEach((r) => {
-      const id = r[0];
-      Object.entries(connectivityMatrix[id] ?? []).forEach(([targetId, value]) => {
-        if (!postSynapticBrainRegions.has(targetId)) return;
-        x.push(value);
-      });
-    });
-
-    x.sort();
-    return x;
-  }, [preSynapticBrainRegions, postSynapticBrainRegions, connectivityMatrix]);
-
-  const newHistogram = useMemo(() => {
-    const x: number[] = [];
-
-    Array.from(preSynapticBrainRegions).forEach((r) => {
-      const id = r[0];
-      Object.entries(modifiedConnectivityMatrix[id] ?? []).forEach(([targetId, value]) => {
-        if (!postSynapticBrainRegions.has(targetId)) return;
-        x.push(value);
-      });
-    });
-
-    x.sort();
-    return x;
-  }, [preSynapticBrainRegions, postSynapticBrainRegions, modifiedConnectivityMatrix]);
+  const newHistogram = useMemo(
+    () => histogram.map((v) => v * multiplier + offset),
+    [histogram, multiplier, offset]
+  );
 
   useEffect(() => {
     if (!histogramRef.current) return;
@@ -131,13 +91,13 @@ function ConnectomeDefinitionMain() {
         {
           x: histogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.1 },
+          xbins: { start: 0, end: 'auto', size: 0.001 },
           marker: { color: 'rgba(0, 0, 0, 1)' },
         },
         {
           x: newHistogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.1 },
+          xbins: { start: 0, end: 'auto', size: 0.001 },
           marker: { color: 'rgb(8, 143, 143, 1)' },
         },
       ],
@@ -170,12 +130,12 @@ function ConnectomeDefinitionMain() {
       lineChartRef.current,
       [
         {
-          x: [0, 1],
-          y: [0, 1],
+          x: [-1, 0, 1],
+          y: [-1, 0, 1],
         },
         {
-          x: [0, 1],
-          y: [0 + offset, multiplier + offset],
+          x: [-1, 0, 1],
+          y: [-1, 0, 1].map((v) => v * multiplier + offset),
         },
       ],
       {
@@ -196,10 +156,23 @@ function ConnectomeDefinitionMain() {
   }, [selected.size, lineChartInitialized, multiplier, offset]);
 
   const onClick = () => {
-    setConnectivityMatrix(modifiedConnectivityMatrix);
+    if (!brainRegionLeaveIdxByNotationMap) return;
+
+    addEdit({
+      name: editName,
+      hemisphereDirection,
+      offset,
+      multiplier,
+      target: {
+        src: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[1]) as number)),
+        dst: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[0]) as number)),
+      },
+    });
     setOffset(0);
     setMultiplier(1);
+    setEditName('');
     setSelected(new Set());
+    shapes.current = [];
   };
 
   const handleOffsetChange = useCallback(
@@ -221,24 +194,41 @@ function ConnectomeDefinitionMain() {
   return (
     <>
       {selected.size > 0 && (
-        <div className={styles.sidePanel}>
-          <span className="font-bold text-lg">Modify connection density</span>
-          <div className="flex justify-between mb-3 mt-3">
-            Offset:
-            <InputNumber value={offset} step={0.01} onChange={handleOffsetChange} />
-          </div>
-          <div className="flex justify-between">
-            Multiplier:
-            <InputNumber value={multiplier} step={0.01} onChange={handleMultiplierChange} />
-          </div>
+        <ConfigProvider
+          theme={{
+            algorithm: theme.defaultAlgorithm,
+          }}
+        >
+          <div className={styles.sidePanel}>
+            <span className="font-bold text-lg">Custom name for this modified connection</span>
+            <CloseOutlined
+              className="float-right"
+              onClick={() => {
+                setSelected(new Set());
+                shapes.current = [];
+              }}
+            />
 
-          <div className="flex" style={{ marginTop: 10, marginBottom: 10 }}>
-            <div ref={histogramRef} />
-            <div ref={lineChartRef} style={{ marginTop: 11, marginLeft: 20 }} />
-          </div>
+            <Input value={editName} onChange={(e) => setEditName(e.currentTarget.value)} />
+            <div className="flex justify-between mb-3 mt-3">
+              Offset:
+              <InputNumber value={offset} step={0.01} onChange={handleOffsetChange} />
+            </div>
+            <div className="flex justify-between">
+              Multiplier:
+              <InputNumber value={multiplier} step={0.01} onChange={handleMultiplierChange} />
+            </div>
 
-          <Button onClick={onClick}>Save</Button>
-        </div>
+            <div className="flex" style={{ marginTop: 10, marginBottom: 10 }}>
+              <div ref={histogramRef} />
+              <div ref={lineChartRef} style={{ marginTop: 11, marginLeft: 20 }} />
+            </div>
+
+            <Button onClick={onClick} disabled={editName === ''} className="w-11/12" type="primary">
+              Save
+            </Button>
+          </div>
+        </ConfigProvider>
       )}
 
       <div className={styles.granularityTabs}>
@@ -271,23 +261,32 @@ function ConnectomeDefinitionMain() {
       <div className={styles.matrixContainer}>
         {activeTab === 'macro' && (
           <Suspense fallback={null}>
-            <MacroConnectome
-              select={select}
-              unselect={unselect}
-              zoom={zoom}
-              selected={selected}
-              setSelected={setSelected}
-              connectivityMatrix={connectivityMatrix}
-            />
+            {connectivityMatrix && (
+              <MacroConnectome
+                select={select}
+                unselect={unselect}
+                zoom={zoom}
+                selected={selected}
+                setSelected={setSelected}
+                connectivityFlatArray={connectivityMatrix[hemisphereDirection]}
+                setMultiplier={setMultiplier}
+                setOffset={setOffset}
+                shapes={shapes}
+              />
+            )}
           </Suspense>
         )}
       </div>
 
       <div className={styles.rightPanel}>
-        <MatrixPreviewComponent />
-        <MatrixDisplayDropdown />
-        <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-        <MatrixModificationHistoryList />
+        {area === null && (
+          <>
+            <MatrixPreviewComponent />
+            <MatrixDisplayDropdown />
+            <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
+            <MatrixModificationHistoryList edits={edits} />
+          </>
+        )}
       </div>
 
       <div className={styles.leftPanel} />

@@ -8,6 +8,7 @@ import {
   createId,
   expandId,
   createGeneratorConfig,
+  createDistribution,
 } from '@/util/nexus';
 import {
   BrainModelConfig,
@@ -26,6 +27,9 @@ import {
   MorphologyAssignmentConfig,
   MicroConnectomeConfig,
   SynapseConfig,
+  MacroConnectomeConfig,
+  MacroConnectomeConfigPayload,
+  WholeBrainConnectomeStrength,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -105,29 +109,15 @@ export function createTextFile(data: any, filename: string, session: Session) {
   return createFile(data, filename, contentType, session);
 }
 
-export function updateJsonFileById(
-  id: string,
+export function updateFileByUrl(
+  url: string,
   data: any,
   filename: string,
-  rev: number,
+  contentType: string,
   session: Session
 ) {
-  const url = composeUrl('file', id, { rev });
-
   const formData = new FormData();
-  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-  formData.append('file', dataBlob, filename);
-
-  return fetch(url, {
-    method: 'PUT',
-    headers: createHeaders(session.accessToken),
-    body: formData,
-  }).then<FileMetadata>((res) => res.json());
-}
-
-export function updateJsonFileByUrl(url: string, data: any, filename: string, session: Session) {
-  const formData = new FormData();
-  const dataBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const dataBlob = new Blob([data], { type: contentType });
   formData.append('file', dataBlob, filename);
 
   return fetch(url, {
@@ -135,6 +125,34 @@ export function updateJsonFileByUrl(url: string, data: any, filename: string, se
     headers: createHeaders(session.accessToken, null),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
+}
+
+export function updateFileById(
+  id: string,
+  data: any,
+  filename: string,
+  contentType: string,
+  rev: number,
+  session: Session
+) {
+  const url = composeUrl('file', id, { rev });
+
+  return updateFileByUrl(url, data, filename, contentType, session);
+}
+
+export function updateJsonFileById(
+  id: string,
+  rawData: any,
+  filename: string,
+  rev: number,
+  session: Session
+) {
+  const data = JSON.stringify(rawData);
+  return updateFileById(id, data, filename, 'application/json', rev, session);
+}
+
+export function updateJsonFileByUrl(url: string, data: any, filename: string, session: Session) {
+  return updateFileByUrl(url, JSON.stringify(data), filename, 'application/json', session);
 }
 
 export function fetchResourceById<T>(id: string, session: Session, options?: ComposeUrlParams) {
@@ -151,8 +169,12 @@ export function fetchResourceByUrl<T>(url: string, session: Session) {
   }).then<T>((res) => res.json());
 }
 
-export function fetchResourceSourceById<T>(id: string, session: Session) {
-  const url = composeUrl('resource', id, { source: true });
+export function fetchResourceSourceById<T>(
+  id: string,
+  session: Session,
+  options?: ComposeUrlParams
+) {
+  const url = composeUrl('resource', id, { ...options, source: true });
 
   return fetch(url, {
     headers: createHeaders(session.accessToken),
@@ -310,6 +332,51 @@ export async function cloneSynapseConfig(id: string, session: Session) {
   return createResource(clonedConfig, session);
 }
 
+export async function cloneMacroConnectomeConfig(id: string, session: Session) {
+  const configSource = await fetchResourceSourceById<MacroConnectomeConfig>(id, session);
+  const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
+    configSource.distribution.contentUrl,
+    session
+  );
+
+  const overridesEntity = await fetchResourceSourceById<WholeBrainConnectomeStrength>(
+    payload.overrides.connection_strength.id,
+    session,
+    { rev: payload.overrides.connection_strength.rev }
+  );
+  const overridesPayloadBuffer = await fetchFileByUrl(
+    overridesEntity.distribution.contentUrl,
+    session
+  ).then((res) => res.arrayBuffer);
+
+  const clonedOverridesPayloadMeta = await createFile(
+    overridesPayloadBuffer,
+    'overrides.arrow',
+    'application/arrow',
+    session
+  );
+  const clonedOverridesEntity: WholeBrainConnectomeStrength = {
+    ...overridesEntity,
+    '@id': createId('wholebrainconnectomestrength'),
+    distribution: createDistribution(clonedOverridesPayloadMeta),
+  };
+
+  await createResource(clonedOverridesEntity, session);
+
+  payload.overrides.connection_strength.id = clonedOverridesEntity['@id'];
+  payload.overrides.connection_strength.rev = 1;
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
+
+  const clonedConfig: MacroConnectomeConfig = {
+    ...configSource,
+    '@id': createId('macroconnectomeconfig'),
+    distribution: createDistribution(clonedPayloadMeta),
+  };
+
+  return createResource(clonedConfig, session);
+}
+
 export async function cloneBrainModelConfig(
   configId: string,
   name: string,
@@ -348,6 +415,11 @@ export async function cloneBrainModelConfig(
     session
   );
 
+  const clonedMacroConnectomeConfigMetadata = await cloneMacroConnectomeConfig(
+    brainModelConfigSource.configs.macroConnectomeConfig['@id'],
+    session
+  );
+
   const clonedModelConfig: BrainModelConfig = {
     ...brainModelConfigSource,
     '@id': createId('modelconfiguration'),
@@ -377,6 +449,10 @@ export async function cloneBrainModelConfig(
       synapseConfig: {
         '@id': clonedSynapseConfigMetadata['@id'],
         '@type': ['SynapseConfig', 'Entity'],
+      },
+      macroConnectomeConfig: {
+        '@id': clonedMacroConnectomeConfigMetadata['@id'],
+        '@type': ['MacroConnectomeConfig', 'Entity'],
       },
     },
   };

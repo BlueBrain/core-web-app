@@ -13,3 +13,7 @@ export type ErrorComponentProps = {
   error: Error;
   reset: () => void;
 };
+
+export type BrainRegionId = string;
+
+export type BrainRegionIdx = number;

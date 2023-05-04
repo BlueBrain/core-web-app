@@ -138,3 +138,9 @@ export const synapseConfigIdAtom = atom<Promise<string | null>>(async (get) => {
 
   return config?.configs.synapseConfig?.['@id'] ?? null;
 });
+
+export const macroConnectomeConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs.macroConnectomeConfig?.['@id'] ?? null;
+});

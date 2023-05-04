@@ -1,4 +1,5 @@
 import { Entity, Distribution, ResourceMetadata } from './common';
+import { MacroConnectomeEditEntry } from '@/types/connectome';
 
 export * from './common';
 
@@ -29,6 +30,10 @@ export interface BrainModelConfig extends Entity {
     synapseConfig: {
       '@id': string;
       '@type': [SynapseConfigType, 'Entity'];
+    };
+    macroConnectomeConfig: {
+      '@id': string;
+      '@type': [MacroConnectomeConfigType, 'Entity'];
     };
   };
 }
@@ -282,6 +287,39 @@ export interface SynapseConfig extends Entity {
 
 export interface SynapseConfigResource extends ResourceMetadata, SynapseConfig {}
 
+type MacroConnectomeGeneratorName = 'connectome';
+type MacroConnectomeConfigType = 'MacroConnectomeConfig';
+
+export interface MacroConnectomeConfig extends Entity {
+  name: string;
+  description: string;
+  type: [MacroConnectomeConfigType, 'Entity'];
+  generatorName: MacroConnectomeGeneratorName;
+  distribution: Distribution;
+}
+
+export interface MacroConnectomeConfigResource extends ResourceMetadata, MacroConnectomeConfig {}
+
+export interface MacroConnectomeConfigPayload {
+  bases: {
+    connection_strength: {
+      id: string;
+      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      rev: number;
+    };
+  };
+  overrides: {
+    connection_strength: {
+      id: string;
+      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      rev: number;
+    };
+  };
+  _ui_data?: {
+    editHistory?: MacroConnectomeEditEntry[];
+  };
+}
+
 export interface BbpWorkflowConfigResource extends Entity {
   '@type': 'BbpWorkflowConfig';
   distribution: Distribution;
@@ -331,14 +369,16 @@ export type GeneratorConfig =
   | EModelAssignmentConfig
   | MorphologyAssignmentConfig
   | MicroConnectomeConfig
-  | SynapseConfig;
+  | SynapseConfig
+  | MacroConnectomeConfig;
 
 export type GeneratorName =
   | CellCompositionGeneratorName
   | CellPositionGeneratorName
   | PlaceholderGeneratorName
   | MicroConnectomeGeneratorName
-  | SynapseGeneratorName;
+  | SynapseGeneratorName
+  | MacroConnectomeGeneratorName;
 
 export type GeneratorConfigType =
   | CellCompositionConfigType
@@ -346,4 +386,5 @@ export type GeneratorConfigType =
   | EModelAssignmentConfigType
   | MorphologyAssignmentConfigType
   | MicroConnectomeConfigType
-  | SynapseConfigType;
+  | SynapseConfigType
+  | MacroConnectomeConfigType;

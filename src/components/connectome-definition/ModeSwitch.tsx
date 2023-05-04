@@ -29,7 +29,7 @@ export default function ModeSwitch({
         onClick={setZoom}
       >
         <DragOutlined />
-        Move
+        Zoom / Pan
       </button>
       <button
         className={classNames(baseClasses, select && highlightedClass)}
