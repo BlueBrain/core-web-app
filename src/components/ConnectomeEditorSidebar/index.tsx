@@ -44,8 +44,8 @@ function NavTitle({
   let checkbox = null;
 
   if (multi && id && id !== '8') {
-    if (isLeaf) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} />;
-    else checkbox = <Checkbox checked={checked} indeterminate={indeterminate} />;
+    if (isLeaf) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} onClick={onClick} />;
+    else checkbox = <Checkbox checked={checked} indeterminate={indeterminate} onClick={onClick} />;
   }
 
   return (
@@ -53,20 +53,14 @@ function NavTitle({
       <div className="py-3 flex justify-between items-center">
         <div className="flex gap-2 justify-between items-center">
           {checkbox}
-          <button
-            type="button"
-            className="h-auto border-none flex gap-3 justify-end items-center"
-            onClick={onClick}
+          <span
+            className={classNames(
+              'font-bold mr-auto text-left text-white whitespace-pre-wrap',
+              className
+            )}
           >
-            <span
-              className={classNames(
-                'font-bold mr-auto text-left text-white whitespace-pre-wrap',
-                className
-              )}
-            >
-              {title}
-            </span>
-          </button>
+            {title}
+          </span>
         </div>
 
         <div className="-mr-[4px] flex gap-2 justify-between items-center">
