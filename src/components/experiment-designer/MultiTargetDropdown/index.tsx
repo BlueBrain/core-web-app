@@ -35,7 +35,7 @@ export default function MultiTargetDropdown({
     label: target,
   }));
 
-  const initialTarget = data.value[0]?.toString();
+  const initialTarget = [...data.value];
 
   const onAdd = (target: string) => {
     if (!target) return;
