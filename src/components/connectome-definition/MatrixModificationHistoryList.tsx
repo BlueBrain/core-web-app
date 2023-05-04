@@ -22,7 +22,7 @@ export default function MatrixModificationHistoryList({ edits }: { edits: Edit[]
       {edits.length > 0 &&
         edits.map((edit, i) => {
           const deletedEdits: number[] = [];
-          for (let j = i; j < edits.length; j += 1) {
+          for (let j = i + 1; j < edits.length; j += 1) {
             deletedEdits.push(j);
           }
 
@@ -30,7 +30,10 @@ export default function MatrixModificationHistoryList({ edits }: { edits: Edit[]
             // eslint-disable-next-line react/no-array-index-key
             <div key={i}>
               {edit.name}
-              <RollbackOutlined className="float-right" onClick={() => deleteEdits(deletedEdits)} />
+              <RollbackOutlined
+                className="float-right"
+                onClick={() => deletedEdits.length > 0 && deleteEdits(deletedEdits)}
+              />
             </div>
           );
         })}
