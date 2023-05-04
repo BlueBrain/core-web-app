@@ -15,7 +15,6 @@ import {
 import {
   GranularityTabs,
   ModeSwitch,
-  MatrixPreviewComponent,
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,
@@ -27,7 +26,10 @@ import {
   connectivityStrengthMatrixAtom,
   editsAtom,
 } from '@/state/brain-model-config/macro-connectome';
-import { addEdit as addEditAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import {
+  addEdit as addEditAtom,
+  deleteEdits as deleteEditsAtom,
+} from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 
 import styles from '../connectome-definition.module.css';
@@ -54,6 +56,8 @@ function ConnectomeDefinitionMain() {
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [editName, setEditName] = useState('');
+  const [currentEdit, setCurrentEdit] = useState<number | null>(null);
+  const deleteEdits = useSetAtom(deleteEditsAtom);
 
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
@@ -231,6 +235,41 @@ function ConnectomeDefinitionMain() {
         </ConfigProvider>
       )}
 
+      {currentEdit !== null && (
+        <ConfigProvider
+          theme={{
+            algorithm: theme.defaultAlgorithm,
+          }}
+        >
+          <div className={styles.sidePanel}>
+            <span className="font-bold text-lg">{edits[currentEdit].name}</span>
+            <CloseOutlined className="float-right" onClick={() => setCurrentEdit(null)} />
+
+            <div className="flex justify-between mb-3 mt-3">
+              Offset: {edits[currentEdit].offset}
+            </div>
+            <div className="flex justify-between">Multiplier: {edits[currentEdit].multiplier}</div>
+
+            <Button
+              onClick={() => {
+                const deletedEdits: number[] = [];
+                for (let j = currentEdit + 1; j < edits.length; j += 1) {
+                  deletedEdits.push(j);
+                }
+
+                if (deletedEdits.length === 0) return;
+                setCurrentEdit(null);
+                deleteEdits(deletedEdits);
+              }}
+              className="w-11/12"
+              type="primary"
+            >
+              Restore
+            </Button>
+          </div>
+        </ConfigProvider>
+      )}
+
       <div className={styles.granularityTabs}>
         <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
       </div>
@@ -281,10 +320,9 @@ function ConnectomeDefinitionMain() {
       <div className={styles.rightPanel}>
         {area === null && (
           <>
-            <MatrixPreviewComponent />
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList edits={edits} />
+            <MatrixModificationHistoryList edits={edits} setCurrentEdit={setCurrentEdit} />
           </>
         )}
       </div>

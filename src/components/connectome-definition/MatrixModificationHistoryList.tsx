@@ -4,7 +4,13 @@ import { MacroConnectomeEditEntry as Edit } from '@/types/connectome';
 
 import { deleteEdits as deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
 
-export default function MatrixModificationHistoryList({ edits }: { edits: Edit[] }) {
+export default function MatrixModificationHistoryList({
+  edits,
+  setCurrentEdit,
+}: {
+  edits: Edit[];
+  setCurrentEdit: (i: number) => void;
+}) {
   const deleteEdits = useSetAtom(deleteEditsAtom);
 
   return (
@@ -28,8 +34,10 @@ export default function MatrixModificationHistoryList({ edits }: { edits: Edit[]
 
           return (
             // eslint-disable-next-line react/no-array-index-key
-            <div key={i}>
-              {edit.name}
+            <div key={i} className="flex justify-between">
+              <button onClick={() => setCurrentEdit(i)} type="button">
+                {edit.name}
+              </button>
               <RollbackOutlined
                 className="float-right"
                 onClick={() => deletedEdits.length > 0 && deleteEdits(deletedEdits)}
