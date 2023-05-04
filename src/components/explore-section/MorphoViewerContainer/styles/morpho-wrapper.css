@@ -1,0 +1,28 @@
+:root {
+  --soma: #000;
+  --axon: #1111ff;
+  --basal-dendrites: #ff1111;
+  --apical-dendrites: #f442ad;
+}
+
+.morpho-wrapper {
+  width: 100%;
+  min-width: 200px;
+  height: 100%;
+  min-height: 400px;
+  position: relative;
+}
+
+.zoom-control {
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.zoom-input {
+  margin-left: 10px;
+}
+
+.morpho-wrapper > .actions {
+  position: relative;
+  z-index: 2;
+}

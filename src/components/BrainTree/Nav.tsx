@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useAtomValue } from 'jotai';
 import { handleNavValueChange } from './util';
-import { brainRegionsAlternateTreeAtom } from '@/state/brain-regions';
+import { alternateTreeWithRepresentationAtom } from '@/state/brain-regions';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 
 /**
@@ -30,7 +30,7 @@ function Nav(
   },
   ref?: ForwardedRef<HTMLDivElement>
 ) {
-  const brainRegions = useAtomValue(brainRegionsAlternateTreeAtom);
+  const brainRegions = useAtomValue(alternateTreeWithRepresentationAtom);
   const onValueChange = useCallback(
     (newValue: string[], path: string[]) => {
       const callback = handleNavValueChange(value, setValue);

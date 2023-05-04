@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "unitCode": {
+    "density": "mm^-3"
+  },
+  "hasPart": {
+    "36": {
+      "label": "Gustatory areas, layer 1",
+      "about": "BrainRegion",
+      "hasPart": {
+        "A": {
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "D": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 10
+                }
+              }
+            },
+            "E": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 20
+                }
+              }
+            }
+          }
+        },
+        "B": {
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "F": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 30
+                }
+              }
+            }
+          }
+        },
+        "C": {
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "G": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 40
+                }
+              }
+            },
+            "H": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 50
+                }
+              }
+            },
+            "I": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 60
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "10": {
+      "label": "Gustatory areas, layer 2",
+      "about": "BrainRegion",
+      "hasPart": {
+        "A": {
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "D": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 30
+                }
+              }
+            },
+            "G": {
+              "label": "cNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 10
+                }
+              }
+            }
+          }
+        },
+        "B": {
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "F": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 20
+                }
+              }
+            },
+            "G": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 40
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "21": {
+      "label": "Gustatory areas, layer 2",
+      "about": "BrainRegion",
+      "hasPart": {
+        "A": {
+          "label": "L1_DAC",
+          "about": "MType",
+          "hasPart": {
+            "D": {
+              "label": "bNAC",
+              "about": "EType",
+              "composition": {
+                "neuron": {
+                  "density": 30
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { NODE_STARTUP_SCRIPT } from './startup-scripts';
 import { logError } from '@/util/logger';
 import { assertType, isString } from '@/util/type-guards';
 
@@ -17,14 +18,8 @@ export interface JobOptions {
 export interface JobStatus {
   hostname: string;
   status: 'RUNNING' | 'WAITING' | 'ERROR';
-  /**
-   * Estimated time of arrival.
-   * When we think the allocation will be available (in seconds from now).
-   */
-  eta: number;
+  startTime: Date | null;
 }
-
-const BACKEND_PATH = '/gpfs/bbp.cscs.ch/home/petitjea/circuit-studio-backend';
 
 export default class UnicoreService {
   constructor(private readonly options: UnicoreserviceOptions) {}
@@ -35,7 +30,7 @@ export default class UnicoreService {
   async createJob({ account }: JobOptions): Promise<string> {
     const response = await this.post('jobs', {
       Name: 'BCS-Backend',
-      Executable: `echo $(hostname -f):5000 > hostname && ${BACKEND_PATH}/start-secure.sh 5000 > stdout.txt 2> stderr.txt`,
+      Executable: NODE_STARTUP_SCRIPT,
       Project: account,
       Partition: 'prod',
       Resources: {
@@ -43,11 +38,6 @@ export default class UnicoreService {
         Runtime: '2h',
         Memory: 0,
         Exclusive: 'true',
-        /**
-         * This is for the certificate files:
-         * - $TMPDIR/$HOSTNAME.crt
-         * - $TMPDIR/$HOSTNAME.key
-         */
         Comment: 'certs',
       },
     });
@@ -69,7 +59,7 @@ export default class UnicoreService {
     const jobStatus: JobStatus = {
       hostname: '?',
       status: 'WAITING',
-      eta: 0,
+      startTime: null,
     };
     let previousJobDetails = '';
     try {
@@ -77,6 +67,9 @@ export default class UnicoreService {
       const currentJobDetails = JSON.stringify(data);
       if (previousJobDetails !== currentJobDetails) {
         previousJobDetails = currentJobDetails;
+        // Show the current job details for diagnostics.
+        // eslint-disable-next-line no-console
+        console.log(JSON.stringify(data, null, '    '));
       }
       assertJobDetails(data);
       return parseJobDetails(data);
@@ -155,6 +148,8 @@ function assertJobDetails(data: unknown): asserts data is Record<string, string>
   assertType(data, ['map', 'string'], 'JobDetails');
 }
 
+const REGEX_NODE_NAME = /[a-z0-9]+/;
+
 function parseJobDetails(data: Record<string, string>): JobStatus {
   const { rawDetailsData } = data;
   if (isString(rawDetailsData)) return parseJobDetailsOldVersion(rawDetailsData);
@@ -162,8 +157,13 @@ function parseJobDetails(data: Record<string, string>): JobStatus {
   const jobStatus: JobStatus = {
     hostname: '',
     status: 'WAITING',
-    eta: 0,
+    startTime: null,
   };
+  if (data.StartTime) {
+    // Try to get the estimate time of allocation.
+    const eta = new Date(data.StartTime);
+    if (!Number.isNaN(eta.valueOf())) jobStatus.startTime = eta;
+  }
   switch (data.JobState) {
     case 'RUNNING':
       jobStatus.status = 'RUNNING';
@@ -174,9 +174,12 @@ function parseJobDetails(data: Record<string, string>): JobStatus {
     default:
       jobStatus.status = 'WAITING';
   }
-  if (data.NodeList) jobStatus.hostname = data.NodeList;
-  if (data.LastSchedEval) {
-    jobStatus.eta = Math.ceil(Date.parse(data.LastSchedEval) - Date.now());
+  if (data.NodeList) {
+    let hostname: string = data.NodeList;
+    if (REGEX_NODE_NAME.test(hostname)) {
+      hostname = `${hostname}.bbp.epfl.ch`;
+    }
+    jobStatus.hostname = hostname;
   }
 
   return jobStatus;
@@ -186,7 +189,7 @@ function parseJobDetailsOldVersion(rawDetailsData: string): JobStatus {
   const jobStatus: JobStatus = {
     hostname: '',
     status: 'WAITING',
-    eta: 0,
+    startTime: null,
   };
   const items: Record<string, string> = {};
   for (const rawLine of rawDetailsData.split('\n')) {
@@ -209,25 +212,25 @@ function parseJobDetailsOldVersion(rawDetailsData: string): JobStatus {
             jobStatus.status = 'ERROR';
             break;
           default:
-            jobStatus.status = 'WAITING';
+          // Just waiting for the next valid status.
         }
         break;
       default:
-      // Just ignore this parameter.
+      // Just waiting for the next valid status.
     }
     items[name] = value;
   }
   return jobStatus;
 }
 
-function joinPath(...pathes: string[]): string {
+export function joinPath(...pathes: string[]): string {
   const end = pathes.length - 1;
   return pathes
-    .map((path, index) => {
-      let newPath = path;
-      if (index > 0 && path.charAt(0) === '/') newPath = path.substring(1);
-      if (index < end && path.endsWith('/')) newPath = path.substring(0, path.length - 1);
-      return newPath;
+    .map((originalPath, index) => {
+      let path = originalPath;
+      if (index > 0 && path.charAt(0) === '/') path = path.substring(1);
+      if (index < end && path.endsWith('/')) path = path.substring(0, path.length - 1);
+      return path;
     })
     .join('/');
 }

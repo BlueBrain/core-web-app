@@ -4,7 +4,7 @@
 export default function convertStringColorIntoArrayColor(
   color: string
 ): [red: number, green: number, blue: number, alpha: number] {
-  const alpha = 0.0667;
+  const alpha = 0.02;
   if (color.charAt(0) !== '#') return [1, 1, 1, alpha];
 
   if (color.length < '#FFFFFF'.length) {

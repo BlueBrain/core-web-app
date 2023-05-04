@@ -21,12 +21,28 @@ export interface BraynsServiceInterface {
    */
   canvas: HTMLCanvasElement | null;
 
+  /**
+   * Export a python file to replay the recorded queries.
+   */
+  exportQueries(): void;
+
+  /**
+   * Write down in the console the stdout and stderr of the UNICORE job.
+   */
+  downloadLogs(): void;
+
   reset(): Promise<void>;
 
   /**
-   * Add a list of objects to the current scene, but remove everything else.
+   * Add a list of meshes to the current scene, but remove any other mesh.
    */
-  showOnly(objects: BraynsObjects): void;
+  showMeshes(objects: BraynsObjects): void;
+
+  /**
+   * Show the morphologies of the selected region.
+   * Any other region will be hidden.
+   */
+  showRegion(circuitPath: string, region: { id: string }): void;
 }
 
 export interface BusyEventParams {

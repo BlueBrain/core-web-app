@@ -1,11 +1,14 @@
 import Async from '../utils/async';
 import GenericEvent from '../utils/generic-event';
 import { BraynsObjects, BraynsServiceInterface, BusyEventParams } from '../types';
-import { Vector2 } from '../utils/calc';
+import Calc, { Vector2 } from '../utils/calc';
+import BackendAllocatorService from '../allocation/backend-allocator-service';
 import BraynsWrapper from '../wrapper/wrapper';
-import ModelsManager from './models-manager';
+import MeshesManager from './meshes-manager';
 import CameraManager from './camera-manager';
 import Gestures from './gestures';
+import { exportPythonScriptForBraynsRecordedQueries } from './exporter/python';
+import MorphologiesManager from './morphologies-manager';
 
 // const BRAIN_MESH_URL =
 //   'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b';
@@ -17,7 +20,9 @@ export default class BraynsService implements BraynsServiceInterface {
 
   private readonly observer: ResizeObserver;
 
-  private readonly modelsManager: ModelsManager;
+  private readonly meshesManager: MeshesManager;
+
+  private readonly morphologiesManager: MorphologiesManager;
 
   private readonly gestures = new Gestures();
 
@@ -26,10 +31,26 @@ export default class BraynsService implements BraynsServiceInterface {
   constructor(private readonly wrapper: BraynsWrapper, private readonly token: string) {
     this.observer = new ResizeObserver(this.handleResize);
     wrapper.eventNewImage.addListener(this.handleNewImage);
-    this.modelsManager = new ModelsManager(wrapper, token);
-    this.eventBusy = this.modelsManager.eventBusy;
+    this.meshesManager = new MeshesManager(wrapper, token);
+    this.morphologiesManager = new MorphologiesManager(wrapper);
+    this.eventBusy = this.meshesManager.eventBusy;
     this.camera = new CameraManager(wrapper);
     this.gestures.eventDrag.addListener(this.handlePointerDrag);
+    this.gestures.eventZoom.addListener(this.handleZoom);
+  }
+
+  showRegion(circuitPath: string, region: { id: string }): void {
+    this.morphologiesManager.showRegion(circuitPath, region);
+  }
+
+  exportQueries(): void {
+    const queries = this.wrapper.purgeRecordedQueries();
+    exportPythonScriptForBraynsRecordedQueries(queries);
+  }
+
+  downloadLogs(): void {
+    const allocator = new BackendAllocatorService(this.token);
+    allocator.logStandardOutputAndError(false);
   }
 
   get canvas() {
@@ -47,15 +68,15 @@ export default class BraynsService implements BraynsServiceInterface {
       this.handleResize();
       this.initialize();
       this.gestures.attach(canvas);
-      this.camera.update({});
+      this.camera.updateEulerSettings({});
     }
   }
 
   /**
    * Show the given objects and only those.
    */
-  showOnly(objects: BraynsObjects): void {
-    this.modelsManager.showOnly(objects);
+  showMeshes(objects: BraynsObjects): void {
+    this.meshesManager.showMeshes(objects);
   }
 
   async initialize() {
@@ -63,17 +84,25 @@ export default class BraynsService implements BraynsServiceInterface {
   }
 
   async reset() {
-    this.modelsManager.clear();
+    this.meshesManager.clear();
     this.initialize();
   }
+
+  private readonly handleZoom = (direction: number) => {
+    const { camera } = this;
+    const factor = direction > 0 ? 1.1 : 0.9;
+    const distance = Calc.clamp(camera.getEulerSettings().distance * factor, 1000, 15000);
+    console.log('🚀 [brayns-service] factor, distance = ', factor, distance); // @FIXME: Remove this line written on 2023-04-14 at 14:30
+    camera.updateEulerSettings({ distance });
+  };
 
   private readonly handlePointerDrag = ([deltaX, deltaY]: Vector2) => {
     /* Scaling is used to mitigate the mouse speed */
     const scaleX = 5;
     const scaleY = 5;
     const { camera } = this;
-    const { latitude, longitude } = camera.get();
-    camera.update({
+    const { latitude, longitude } = camera.getEulerSettings();
+    camera.updateEulerSettings({
       longitude: deltaX * scaleX + longitude,
       latitude: deltaY * scaleY + latitude,
     });

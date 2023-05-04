@@ -28,10 +28,11 @@ export function isTracable(
  */
 export function makeDebugToggler(
   criteria: boolean | string | string[] | ((method: string) => boolean)
-): (prefix: string, method: string, data: unknown) => void {
-  return (prefix: string, method: string, data: unknown) => {
+): (prefix: string, method: string, ...data: unknown[]) => void {
+  return (prefix: string, method: string, ...data: unknown[]) => {
     if (!isTracable(method, criteria)) return;
+
     // eslint-disable-next-line no-console
-    console.log(prefix, method, data);
+    console.log(prefix, method, ...data);
   };
 }

@@ -28,7 +28,7 @@ function getCircuitUrl(config: BrainModelConfigResource | null): string {
 
 async function generateWorkflowConfig(
   workflowName: string,
-  circuitInfo: DetailedCircuitResource,
+  circuitInfo: DetailedCircuitResource | null,
   stepsToBuild: CellCompositionStepGroupValues[],
   config: BrainModelConfigResource,
   session: Session
@@ -40,7 +40,7 @@ async function generateWorkflowConfig(
   switch (workflowName) {
     case WORKFLOW_SIMULATION_TASK_NAME: {
       const variantActivityConfigUrl = await getVariantTaskConfigUrlFromCircuit(
-        circuitInfo,
+        circuitInfo as DetailedCircuitResource,
         session
       );
       replacedConfigFiles = getSimulationTaskFiles(

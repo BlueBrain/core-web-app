@@ -1,2 +1,2 @@
 // eslint-disable-next-line import/prefer-default-export
-export { useAtlasVisualizationManager } from './atlas';
+export { useAtlasVisualizationManager, useVisibleMeshes } from './atlas';

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import JsonRpcService from '../json-rpc/json-rpc';
+import { JsonRpcServiceInterface } from '../json-rpc/types';
 import { BraynsColorTransparent } from '../types';
 import { assertBraynsModelArray } from './types';
 
 export default class Mesh {
-  constructor(private readonly renderer: JsonRpcService) {}
+  constructor(private readonly renderer: JsonRpcServiceInterface) {}
 
   /**
    * @param path Path of the OBJ mesh file.

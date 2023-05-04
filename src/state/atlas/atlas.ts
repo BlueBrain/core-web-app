@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
+import { selectAtom } from 'jotai/utils';
 import React from 'react';
 
 type MeshType = {
@@ -36,16 +37,26 @@ const defaultCollection: AtlasVisualizationType = {
 
 const AtlasVisualizationAtom = atom<AtlasVisualizationType>(defaultCollection);
 
+const VisibleMeshesAtom = selectAtom(
+  AtlasVisualizationAtom,
+  (atlas) => atlas.visibleMeshes,
+  (a: MeshType[], b: MeshType[]) =>
+    a.map((item) => item.contentURL).join('\n') === b.map((item) => item.contentURL).join('\n')
+);
+
 let atlasVisualizationManager: null | AtlasVisualizationManager = null;
+
+export function useVisibleMeshes(): MeshType[] {
+  return useAtomValue(VisibleMeshesAtom);
+}
 
 export function useAtlasVisualizationManager() {
   const [atlas, setAtlas] = useAtom(AtlasVisualizationAtom);
-  const manager = React.useMemo(() => {
+  return React.useMemo(() => {
     if (!atlasVisualizationManager)
       atlasVisualizationManager = new AtlasVisualizationManager(atlas, setAtlas);
     return atlasVisualizationManager;
   }, [atlas, setAtlas]);
-  return manager;
 }
 
 export class AtlasVisualizationManager {

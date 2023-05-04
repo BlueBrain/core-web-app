@@ -1,8 +1,6 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { arrayToTree } from 'performant-array-to-tree';
 import { BrainRegion } from '@/types/ontologies';
-
-/* eslint-disable no-param-reassign */
 
 /**
  * Builds the alternate children of a given selected view
@@ -17,14 +15,15 @@ export const buildAlternateChildren = (
   brainRegions: BrainRegion[],
   newViewId: string
 ) => {
-  let cleanBrainRegions = _.cloneDeep(brainRegions);
+  let cleanBrainRegions = cloneDeep(brainRegions);
+
   cleanBrainRegions = cleanBrainRegions
     .filter((br) => br.id !== brainRegionId)
-    // @ts-ignore
-    .filter((br) => br[parentProperty] !== null);
+    .filter((br) => br[parentProperty as keyof BrainRegion] !== null);
   cleanBrainRegions.forEach((br) => {
-    br.view = newViewId;
+    br.view = newViewId; // eslint-disable-line no-param-reassign
   });
+
   return arrayToTree(cleanBrainRegions, {
     dataField: null,
     parentId: parentProperty,
@@ -32,6 +31,7 @@ export const buildAlternateChildren = (
     rootParentIds: { [brainRegionId]: true },
   }) as BrainRegion[];
 };
+
 /**
  * Builds the alternate tree based on a set of children
  * @param brainRegionRoot the currently visited root
@@ -47,8 +47,8 @@ export const buildAlternateTree = (
 ) => {
   // if the currently visited region is the one whose children we want to replace
   if (brainRegionRoot.id === alternatedRegionId) {
-    brainRegionRoot.items = alternateChildren;
-    brainRegionRoot.view = newViewId;
+    brainRegionRoot.items = alternateChildren; // eslint-disable-line no-param-reassign
+    brainRegionRoot.view = newViewId; // eslint-disable-line no-param-reassign
   } else {
     brainRegionRoot.items?.forEach((br) => {
       // iterate over each child

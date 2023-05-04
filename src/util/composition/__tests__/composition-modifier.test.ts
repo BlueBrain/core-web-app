@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+
 import gustatory from './data/gustatory-layer-1.json';
 import testComposition from './data/test-composition.json';
 import { calculateNewExtendedNodeId } from '@/util/composition/utils';
@@ -10,7 +11,8 @@ import computeModifiedComposition, {
   calculateAndApplyDensityChange,
   applyNewDensity,
 } from '@/util/composition/composition-modifier';
-import { Composition, CompositionNode, LeafNode } from '@/types/composition';
+import { OriginalComposition, OriginalCompositionNode } from '@/types/composition/original';
+import { CalculatedCompositionNode } from '@/types/composition/calculation';
 
 describe('calculateNewExtendedNodeId', () => {
   it(`should append the new node id if extended exists`, () => {
@@ -31,7 +33,7 @@ describe('calculateNewExtendedNodeId', () => {
 
 describe('calculate ratio spread', () => {
   // @ts-ignore
-  const node = gustatory as LeafNode;
+  const node = gustatory as OriginalCompositionNode;
   const modifiedMType = {
     about: 'MType',
     id: 'http://uri.interlex.org/base/ilx_0383192?rev=34',
@@ -71,7 +73,9 @@ describe('calculate ratio spread', () => {
 
   it('ratio spread is correct if there is locked node on second level', () => {
     // @ts-ignore
-    const l1DAC = gustatory.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34'] as LeafNode;
+    const l1DAC = gustatory.hasPart[
+      'http://uri.interlex.org/base/ilx_0383192?rev=34'
+    ] as OriginalCompositionNode;
     const ratioSpread = calculateRatioSpread(
       l1DAC,
       'http://uri.interlex.org/base/ilx_0383192?rev=34',
@@ -85,27 +89,23 @@ describe('calculate ratio spread', () => {
   });
 
   it('ratio spread is spread correctly if previous value is 0', () => {
-    const nodeCopy = _.cloneDeep(node.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34']);
-    nodeCopy.hasPart[
-      'http://uri.interlex.org/base/ilx_0738203?rev=28'
-    ].composition.neuron.count = 0;
-    nodeCopy.hasPart[
-      'http://uri.interlex.org/base/ilx_0738201?rev=31'
-    ].composition.neuron.count = 0;
+    const nodeCopy = cloneDeep(node.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34']);
     const ratioSpread = calculateRatioSpread(
       nodeCopy,
       'http://uri.interlex.org/base/ilx_0383192?rev=34',
       modifiedMType,
       []
     );
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738203?rev=28']).toBeCloseTo(0.5);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738201?rev=31']).toBeCloseTo(0.5);
+    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738203?rev=28']).toBeCloseTo(0.5592);
+    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738201?rev=31']).toBeCloseTo(0.44);
   });
 });
 
 describe('findParentOfAffected', () => {
   // @ts-ignore
-  const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1) as LeafNode;
+  const testBrainRegion = cloneDeep(
+    testComposition.hasPart.brainregion1
+  ) as OriginalCompositionNode;
   it('should find the correct node if in the first level of the tree', () => {
     const node = findParentOfAffected('mtype1', testBrainRegion);
     expect(node?.label).toBe('Test Brain Region1');
@@ -145,14 +145,12 @@ describe('applyNewDensity', () => {
       composition: {
         neuron: {
           density: 300,
-          count: 500,
         },
       },
-    } as LeafNode;
+    } as OriginalCompositionNode;
 
-    applyNewDensity(nodeToModify, 0.5, 0.2);
+    applyNewDensity(nodeToModify, 0.5);
     expect(nodeToModify.composition.neuron.density).toBeCloseTo(150);
-    expect(nodeToModify.composition.neuron.count).toBeCloseTo(30);
   });
 
   it('should have correct new density applied when previous density is 0', () => {
@@ -160,42 +158,38 @@ describe('applyNewDensity', () => {
       composition: {
         neuron: {
           density: 0,
-          count: 0,
         },
       },
-    } as LeafNode;
+    } as OriginalCompositionNode;
 
-    applyNewDensity(nodeToModify, 300, 0.2);
+    applyNewDensity(nodeToModify, 300);
     expect(nodeToModify.composition.neuron.density).toBeCloseTo(300);
-    expect(nodeToModify.composition.neuron.count).toBeCloseTo(60);
   });
 });
 
 describe('iterateAndApplyDensityChange', () => {
   it('should calculate correct density change', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     // @ts-ignore
-    const mtype1 = copyTestBR.hasPart.mtype1 as LeafNode;
+    const mtype1 = copyTestBR.hasPart.mtype1 as OriginalCompositionNode;
     iterateAndApplyDensityChange(mtype1, 0.5, 0.2);
     expect(mtype1.hasPart.etype1.composition.neuron.density).toBeCloseTo(125);
-    expect(mtype1.hasPart.etype1.composition.neuron.count).toBeCloseTo(25);
     expect(mtype1.hasPart.etype2.composition.neuron.density).toBeCloseTo(175);
-    expect(mtype1.hasPart.etype2.composition.neuron.count).toBeCloseTo(35);
   });
 });
 
 describe('calculateAndApplyDensityChange', () => {
   it('should calculate the correct overall density change when changing first level', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     const modifiedNode = {
       id: 'mtype1',
       extendedNodeId: 'mtype1',
       neuronComposition: {
         density: 600,
       },
-    } as CompositionNode;
+    } as CalculatedCompositionNode;
     // @ts-ignore
     calculateAndApplyDensityChange(modifiedNode, copyTestBR, 0.5, []);
     expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(125);
@@ -206,15 +200,15 @@ describe('calculateAndApplyDensityChange', () => {
   });
 
   it('should calculate the correct overall density change when changing second level', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     const modifiedNode = {
       id: 'etype2',
       extendedNodeId: 'mtype1__etype2',
       neuronComposition: {
         density: 350,
       },
-    } as CompositionNode;
+    } as CalculatedCompositionNode;
     // @ts-ignore
     calculateAndApplyDensityChange(modifiedNode, copyTestBR.hasPart.mtype1, 0.5, []);
     expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(425);
@@ -225,15 +219,15 @@ describe('calculateAndApplyDensityChange', () => {
   });
 
   it('should calculate the correct overall density change when locked ids of first level', () => {
-    const testBrainRegion = _.cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = _.cloneDeep(testBrainRegion);
+    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
+    const copyTestBR = cloneDeep(testBrainRegion);
     const modifiedNode = {
       id: 'mtype1',
       extendedNodeId: 'mtype1',
       neuronComposition: {
         density: 600,
       },
-    } as CompositionNode;
+    } as CalculatedCompositionNode;
     // @ts-ignore
     calculateAndApplyDensityChange(modifiedNode, copyTestBR, 0.5, ['mtype2']);
     expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(125);
@@ -247,12 +241,12 @@ describe('calculateAndApplyDensityChange', () => {
 describe('computeModifiedComposition', () => {
   it('should calculate the correct overall density change when decreasing value by half', () => {
     // @ts-ignore
-    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const copyComposition = cloneDeep(testComposition) as OriginalComposition;
     const modifiedNode = {
       id: 'mtype1',
       composition: 900,
       extendedNodeId: 'mtype1',
-    } as CompositionNode;
+    } as CalculatedCompositionNode;
     // @ts-ignore
     computeModifiedComposition(
       modifiedNode,
@@ -293,12 +287,12 @@ describe('computeModifiedComposition', () => {
 
   it('should calculate the correct overall density change when increasing value', () => {
     // @ts-ignore
-    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const copyComposition = cloneDeep(testComposition) as OriginalComposition;
     const modifiedNode = {
       id: 'mtype1',
       composition: 900,
       extendedNodeId: 'mtype1',
-    } as CompositionNode;
+    } as CalculatedCompositionNode;
     // @ts-ignore
     computeModifiedComposition(
       modifiedNode,
@@ -339,12 +333,12 @@ describe('computeModifiedComposition', () => {
 
   it('should calculate the correct overall density change when decreasing value of second level', () => {
     // @ts-ignore
-    const copyComposition = _.cloneDeep(testComposition) as Composition;
+    const copyComposition = cloneDeep(testComposition) as OriginalComposition;
     const modifiedNode = {
       id: 'etype2',
       extendedNodeId: 'mtype1__etype2',
       composition: 350,
-    } as CompositionNode;
+    } as CalculatedCompositionNode;
     // @ts-ignore
     computeModifiedComposition(
       modifiedNode,

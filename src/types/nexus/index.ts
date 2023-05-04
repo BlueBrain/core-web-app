@@ -1,4 +1,5 @@
 import { Entity, Distribution, ResourceMetadata } from './common';
+import { MacroConnectomeEditEntry } from '@/types/connectome';
 
 export * from './common';
 
@@ -6,31 +7,46 @@ export interface BrainModelConfig extends Entity {
   name: string;
   description: string;
   configs: {
-    cellCompositionConfig?: {
+    cellCompositionConfig: {
       '@id': string;
-      '@type': ['CellCompositionConfig', 'Entity'];
+      '@type': [CellCompositionConfigType, 'Entity'];
     };
-    cellPositionConfig?: {
+    cellPositionConfig: {
       '@id': string;
-      '@type': ['CellPositionConfig', 'Entity'];
+      '@type': [CellPositionConfigType, 'Entity'];
     };
-    eModelAssignmentConfig?: {
+    eModelAssignmentConfig: {
       '@id': string;
-      '@type': ['EModelAssignmentConfig', 'Entity'];
+      '@type': [EModelAssignmentConfigType, 'Entity'];
     };
-    morphologyAssignmentConfig?: {
+    morphologyAssignmentConfig: {
       '@id': string;
-      '@type': ['MorphologyAssignmentConfig', 'Entity'];
+      '@type': [MorphologyAssignmentConfigType, 'Entity'];
+    };
+    microConnectomeConfig: {
+      '@id': string;
+      '@type': [MicroConnectomeConfigType, 'Entity'];
+    };
+    synapseConfig: {
+      '@id': string;
+      '@type': [SynapseConfigType, 'Entity'];
+    };
+    macroConnectomeConfig: {
+      '@id': string;
+      '@type': [MacroConnectomeConfigType, 'Entity'];
     };
   };
 }
 
 export interface BrainModelConfigResource extends ResourceMetadata, BrainModelConfig {}
 
+type CellCompositionGeneratorName = 'cell_composition';
+type CellCompositionConfigType = 'CellCompositionConfig';
+
 export interface CellCompositionConfig extends Entity {
   name: string;
-  '@type': ['CellCompositionConfig', 'Entity'];
-  generatorName: 'cell_composition';
+  '@type': [CellCompositionConfigType, 'Entity'];
+  generatorName: CellCompositionGeneratorName;
   description: string;
   distribution: Distribution;
 }
@@ -77,21 +93,20 @@ export type CellCompositionConfigPayload = {
       unitCode: {
         density: string;
       };
-      base_atlas_density_dataset: {
-        '@id': string;
-        _rev: number;
-      };
       overrides: CompositionOverridesWorkflowConfig;
     };
     jobConfiguration: Record<string, string | number>;
   };
 };
 
+type CellPositionGeneratorName = 'cell_position';
+type CellPositionConfigType = 'CellPositionConfig';
+
 export interface CellPositionConfig extends Entity {
   name: string;
   description: string;
-  '@type': ['CellPositionConfig', 'Entity'];
-  generatorName: 'me_type_property';
+  '@type': [CellPositionConfigType, 'Entity'];
+  generatorName: CellPositionGeneratorName;
   distribution: Distribution;
 }
 
@@ -187,11 +202,14 @@ export interface DetailedCircuit extends Entity {
 
 export interface DetailedCircuitResource extends ResourceMetadata, DetailedCircuit {}
 
+type PlaceholderGeneratorName = 'placeholder';
+type EModelAssignmentConfigType = 'EModelAssignmentConfig';
+
 export interface EModelAssignmentConfig extends Entity {
   name: string;
   description: string;
-  '@type': ['EModelAssignmentConfig', 'Entity'];
-  generatorName: 'placeholder';
+  '@type': [EModelAssignmentConfigType, 'Entity'];
+  generatorName: PlaceholderGeneratorName;
   distribution: Distribution;
 }
 
@@ -213,11 +231,13 @@ export type EModelAssignmentConfigPayload = {
   };
 };
 
+type MorphologyAssignmentConfigType = 'MorphologyAssignmentConfig';
+
 export interface MorphologyAssignmentConfig extends Entity {
   name: string;
   description: string;
-  '@type': ['MorphologyAssignmentConfig', 'Entity'];
-  generatorName: 'placeholder';
+  '@type': [MorphologyAssignmentConfigType, 'Entity'];
+  generatorName: PlaceholderGeneratorName;
   distribution: Distribution;
 }
 
@@ -240,6 +260,65 @@ export type MorphologyAssignmentConfigPayload = {
     jobConfiguration: Record<string, string | number>;
   };
 };
+
+type MicroConnectomeGeneratorName = 'connectome';
+type MicroConnectomeConfigType = 'MicroConnectomeConfig';
+
+export interface MicroConnectomeConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': [MicroConnectomeConfigType, 'Entity'];
+  generatorName: MicroConnectomeGeneratorName;
+  distribution: Distribution;
+}
+
+export interface MicroConnectomeConfigResource extends ResourceMetadata, MicroConnectomeConfig {}
+
+type SynapseGeneratorName = 'connectome_filtering';
+type SynapseConfigType = 'SynapseConfig';
+
+export interface SynapseConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': [SynapseConfigType, 'Entity'];
+  generatorName: SynapseGeneratorName;
+  distribution: Distribution;
+}
+
+export interface SynapseConfigResource extends ResourceMetadata, SynapseConfig {}
+
+type MacroConnectomeGeneratorName = 'connectome';
+type MacroConnectomeConfigType = 'MacroConnectomeConfig';
+
+export interface MacroConnectomeConfig extends Entity {
+  name: string;
+  description: string;
+  type: [MacroConnectomeConfigType, 'Entity'];
+  generatorName: MacroConnectomeGeneratorName;
+  distribution: Distribution;
+}
+
+export interface MacroConnectomeConfigResource extends ResourceMetadata, MacroConnectomeConfig {}
+
+export interface MacroConnectomeConfigPayload {
+  bases: {
+    connection_strength: {
+      id: string;
+      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      rev: number;
+    };
+  };
+  overrides: {
+    connection_strength: {
+      id: string;
+      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      rev: number;
+    };
+  };
+  _ui_data?: {
+    editHistory?: MacroConnectomeEditEntry[];
+  };
+}
 
 export interface BbpWorkflowConfigResource extends Entity {
   '@type': 'BbpWorkflowConfig';
@@ -273,3 +352,39 @@ export interface VariantTaskConfig extends Entity {
 }
 
 export interface VariantTaskConfigResource extends ResourceMetadata, VariantTaskConfig {}
+
+export interface WholeBrainConnectomeStrength extends Entity {
+  '@type': ['WholeBrainConnectomeStrength', 'Dataset', 'Entity'];
+  name: string;
+  distribution: Distribution;
+}
+
+export interface WholeBrainConnectomeStrengthResource
+  extends ResourceMetadata,
+    WholeBrainConnectomeStrength {}
+
+export type GeneratorConfig =
+  | CellCompositionConfig
+  | CellPositionConfig
+  | EModelAssignmentConfig
+  | MorphologyAssignmentConfig
+  | MicroConnectomeConfig
+  | SynapseConfig
+  | MacroConnectomeConfig;
+
+export type GeneratorName =
+  | CellCompositionGeneratorName
+  | CellPositionGeneratorName
+  | PlaceholderGeneratorName
+  | MicroConnectomeGeneratorName
+  | SynapseGeneratorName
+  | MacroConnectomeGeneratorName;
+
+export type GeneratorConfigType =
+  | CellCompositionConfigType
+  | CellPositionConfigType
+  | EModelAssignmentConfigType
+  | MorphologyAssignmentConfigType
+  | MicroConnectomeConfigType
+  | SynapseConfigType
+  | MacroConnectomeConfigType;

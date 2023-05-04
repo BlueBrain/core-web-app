@@ -1,6 +1,6 @@
 import { composeUrl } from '@/util/nexus';
 import { createHeaders } from '@/util/utils';
-import { sanitizeId } from '@/api/ontologies/brain-regions';
+import { sanitizeId } from '@/util/brain-hierarchy';
 import { MeshSourceNexus } from '@/api/ontologies/types';
 import { Mesh } from '@/types/ontologies';
 import { getAtlasReleaseMeshesQuery } from '@/queries/es';

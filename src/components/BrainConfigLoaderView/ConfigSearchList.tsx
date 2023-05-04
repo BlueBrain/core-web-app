@@ -7,7 +7,8 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 
-import { brainModelConfigListAtom, triggerRefetchAtom } from './state';
+import { triggerRefetchAtom } from './state';
+import { configListAtom } from '@/state/brain-model-config-list';
 import useCloneModal from '@/hooks/brain-config-clone-modal';
 import useRenameModal from '@/hooks/brain-config-rename-modal';
 import { collapseId } from '@/util/nexus';
@@ -31,7 +32,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const configsLoadable = useAtomValue(loadable(brainModelConfigListAtom));
+  const configsLoadable = useAtomValue(loadable(configListAtom));
   const triggerRefetch = useSetAtom(triggerRefetchAtom);
 
   const [configs, setConfigs] = useState<BrainModelConfigResource[]>(

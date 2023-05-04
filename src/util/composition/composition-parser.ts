@@ -1,29 +1,65 @@
-import _ from 'lodash';
-import { Composition, CompositionPair, LeafNode, CompositionNode } from '@/types/composition';
+import has from 'lodash/has';
+import uniq from 'lodash/uniq';
+import {
+  OriginalComposition,
+  OriginalCompositionNode,
+  OriginalCompositionPair,
+} from '@/types/composition/original';
 import {
   AnalysedComposition,
+  CalculatedCompositionNode,
   CalculationLink,
   CalculationNode,
   CompositionLink,
-} from '@/util/composition/types';
+  CountPair,
+} from '@/types/composition/calculation';
 import { calculateNewExtendedNodeId } from '@/util/composition/utils';
 
 /* eslint-disable no-param-reassign */
 
-const initializeComposition = (): CompositionPair => ({
-  neuron: { count: 0, density: 0 },
-  glia: { count: 0, density: 0 },
-});
+/**
+ * Converts a composition object to a pair of counts
+ * @param composition the original composition
+ * @param regionVolume the volume of the region
+ */
+export function convertCompositionToCountPair(
+  composition: OriginalCompositionPair,
+  regionVolume: number
+): CountPair {
+  const countPair = { neuron: 0, glia: 0 };
+  if (composition.neuron) {
+    countPair.neuron = Math.round(composition.neuron.density * regionVolume);
+  }
+  if (composition.glia) {
+    countPair.glia = Math.round(composition.glia.density * regionVolume);
+  }
+  return countPair;
+}
 
 /**
- * Re-calculate the composition between two composition pairs
- * @param totalComposition
- * @param toAdd
+ * Converts a count pair to a composition object
+ * @param countPair the pair of counts
+ * @param regionVolume the volume of the region
  */
-export function addCompositions(totalComposition: CompositionPair, toAdd: CompositionPair) {
-  const keyToAdd = 'neuron' in toAdd ? 'neuron' : 'glia';
-  totalComposition[keyToAdd].count += toAdd[keyToAdd].count;
-  totalComposition[keyToAdd].density += toAdd[keyToAdd].density;
+export function convertCountPairToComposition(
+  countPair: CountPair,
+  regionVolume: number
+): OriginalCompositionPair {
+  return {
+    neuron: { density: countPair.neuron / regionVolume },
+    glia: { density: countPair.glia / regionVolume },
+  };
+}
+
+export function addCountPairs(nodeCountPair: CountPair, toAddCountPair: CountPair) {
+  return {
+    neuron: nodeCountPair.neuron + toAddCountPair.neuron,
+    glia: nodeCountPair.glia + toAddCountPair.glia,
+  };
+}
+
+function initializeCountPair() {
+  return { neuron: 0, glia: 0 };
 }
 
 /**
@@ -33,13 +69,11 @@ export function addCompositions(totalComposition: CompositionPair, toAdd: Compos
  * @param nodes
  */
 export function addNode(node: CalculationNode, nodes: { [key: string]: CalculationNode }) {
-  const id = `${node.id}__${node.parentId}`;
+  const id = node.parentId ? `${node.parentId}__${node.id}` : node.id;
   if (id in nodes) {
-    addCompositions(nodes[id].composition, node.composition);
-    // @ts-ignore
-    nodes[id].leaves = new Set([...nodes[id].leaves, ...node.leaves]);
-    // @ts-ignore
-    nodes[id].relatedNodes = new Set([...nodes[id].relatedNodes, ...node.relatedNodes]);
+    nodes[id].leaves = [...nodes[id].leaves, ...node.leaves];
+    nodes[id].relatedNodes = [...nodes[id].relatedNodes, ...node.relatedNodes];
+    nodes[id].countPair = addCountPairs(nodes[id].countPair, node.countPair);
   } else {
     nodes[id] = node;
   }
@@ -57,22 +91,24 @@ export function addNode(node: CalculationNode, nodes: { [key: string]: Calculati
  * @param blockedNodeIds the node ids that should be blocked
  * @param extendedNodeId the extended node of the node it currently visits
  * @param isBlocked
+ * @param regionVolume
  */
 export function iterateNode(
-  subTree: LeafNode,
+  subTree: OriginalCompositionNode,
   subTreeId: string,
   nodes: { [key: string]: CalculationNode },
   links: { [key: string]: CalculationLink },
   leafId: string,
   blockedNodeIds: string[],
   extendedNodeId: string,
-  isBlocked: boolean
-): CompositionPair {
+  isBlocked: boolean,
+  regionVolume: number
+): CountPair {
   if (isBlocked) {
     blockedNodeIds.push(extendedNodeId);
   }
   if ('hasPart' in subTree) {
-    const totalComposition = initializeComposition();
+    let totalCountPair = initializeCountPair();
 
     // for each child of the node
     Object.entries(subTree.hasPart).forEach(([childId, childSubtree]) => {
@@ -83,9 +119,9 @@ export function iterateNode(
       );
       childSubtree.extendedNodeId = childExtendedNodeId;
       const childIsBlocked =
-        isBlocked || (Object.keys(subTree.hasPart).length === 1 && _.has(childSubtree, 'hasPart'));
+        isBlocked || (Object.keys(subTree.hasPart).length === 1 && has(childSubtree, 'hasPart'));
       // calculate its composition and add it in the total
-      const childComposition = iterateNode(
+      const childCountPair = iterateNode(
         childSubtree,
         childId,
         nodes,
@@ -93,21 +129,21 @@ export function iterateNode(
         leafId,
         blockedNodeIds,
         childExtendedNodeId,
-        childIsBlocked
+        childIsBlocked,
+        regionVolume
       );
-      addCompositions(totalComposition, childComposition);
+      totalCountPair = addCountPairs(totalCountPair, childCountPair);
       const parentId = subTree.about !== 'BrainRegion' ? subTreeId : null;
-      const node = {
+      const node: CalculationNode = {
         about: childSubtree.about,
-        composition: childComposition,
+        countPair: childCountPair,
         id: childId,
         label: childSubtree.label,
         parentId,
-        leaves: new Set([leafId]),
-        relatedNodes: new Set(Object.keys(subTree.hasPart)),
+        leaves: [leafId],
+        relatedNodes: Object.keys(subTree.hasPart),
         extendedNodeId: calculateNewExtendedNodeId(extendedNodeId, childId, childSubtree.about),
       };
-
       // add the node in the set of nodes
       addNode(node, nodes);
       if (subTree.about !== 'BrainRegion') {
@@ -117,12 +153,11 @@ export function iterateNode(
         };
       }
     });
-
-    subTree.composition = totalComposition;
-    return totalComposition;
+    subTree.composition = convertCountPairToComposition(totalCountPair, regionVolume);
+    return totalCountPair;
   }
   // @ts-ignore
-  return _.cloneDeep(subTree.composition);
+  return convertCompositionToCountPair(subTree.composition, regionVolume);
 }
 
 /**
@@ -130,21 +165,26 @@ export function iterateNode(
  * used in order to build the MType/EType tree and the sankey diagram
  *
  * @param compositionFile the composition file in its original format
+ * @param selectedRegionId
  * @param leafIDs the IDs of the leaves
+ * @param volumes
  */
 export default async function calculateCompositions(
-  compositionFile: Composition,
-  leafIDs: string[] | undefined
+  compositionFile: OriginalComposition,
+  selectedRegionId: string,
+  leafIDs: string[] | undefined,
+  volumes: { [key: string]: number }
 ): Promise<AnalysedComposition> {
   const nodes: { [key: string]: CalculationNode } = {};
   const links: { [key: string]: CalculationLink } = {};
-  const totalComposition = initializeComposition();
-  const volumes: { [key: string]: number } = {};
+  let totalCountPair = initializeCountPair();
   const blockedNodeIds: string[] = [];
   leafIDs?.forEach((leafId) => {
-    if (leafId in compositionFile.hasPart) {
+    if (leafId in compositionFile.hasPart && leafId in volumes) {
       const leaf = compositionFile.hasPart[leafId];
-      const leafComposition = iterateNode(
+      const regionVolume = volumes[leafId];
+
+      const rootCountPair = iterateNode(
         leaf,
         leafId,
         nodes,
@@ -152,23 +192,25 @@ export default async function calculateCompositions(
         leafId,
         blockedNodeIds,
         '',
-        false
+        false,
+        regionVolume
       );
-      volumes[leafId] = leafComposition.neuron.count / leafComposition.neuron.density;
-      addCompositions(totalComposition, leaf.composition);
+      totalCountPair = addCountPairs(totalCountPair, rootCountPair);
     }
   });
-
-  const nodesArray: CompositionNode[] = [];
+  const nodesArray: CalculatedCompositionNode[] = [];
   Object.entries(nodes).forEach(([nodeId, node]) => {
     nodesArray.push({
       about: node.about,
-      id: nodeId.split('__')[0],
+      id: nodeId.split('__').reverse()[0],
       label: node.label,
       parentId: node.parentId,
-      neuronComposition: node.composition.neuron,
-      leaves: Array.from(node.leaves),
-      relatedNodes: Array.from(node.relatedNodes),
+      neuronComposition: {
+        density: node.countPair.neuron / volumes[selectedRegionId],
+        count: node.countPair.neuron,
+      },
+      leaves: uniq(node.leaves),
+      relatedNodes: uniq(node.relatedNodes),
       extendedNodeId: node.extendedNodeId,
     });
   });
@@ -180,14 +222,18 @@ export default async function calculateCompositions(
       target: link.target,
     });
   });
-
   return {
     nodes: nodesArray,
     links: linksArray,
-    totalComposition,
+    totalComposition: {
+      neuron: {
+        density: totalCountPair.neuron / volumes[selectedRegionId],
+        count: totalCountPair.neuron,
+      },
+      glia: { density: 0, count: 0 },
+    },
     composition: compositionFile,
-    volumes,
-    blockedNodeIds: _.uniq(blockedNodeIds),
+    blockedNodeIds: uniq(blockedNodeIds),
   };
 }
 /* eslint-enable no-param-reassign */

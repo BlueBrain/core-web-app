@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { JsonRpcServiceAddress } from '../json-rpc/types';
+import { JsonRpcServiceAddress } from '@/services/brayns/json-rpc/types';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 
@@ -51,17 +51,24 @@ interface Persistence extends JsonRpcServiceAddress {
 
 const DEFAULT_PERSISTENCE: Persistence = {
   host: '',
-  port: 0,
+  backendPort: 0,
+  rendererPort: 0,
   expiration: 0,
 };
 
 function isPersistence(data: unknown): data is Persistence {
   if (!data) return false;
   try {
-    assertType(data, { host: 'string', port: 'number', expiration: 'number' });
+    assertType(data, {
+      host: 'string',
+      backendPort: 'number',
+      rendererPort: 'number',
+      expiration: 'number',
+    });
     return true;
   } catch (ex) {
     logError(`Session item "${STORAGE_ITEM}" has been compromised!`, ex);
+    logError(data);
     return false;
   }
 }

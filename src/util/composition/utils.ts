@@ -1,5 +1,5 @@
 import { TreeItem } from 'performant-array-to-tree';
-import _ from 'lodash';
+import difference from 'lodash/difference';
 
 /**
  * Calculates the new extended node id
@@ -55,8 +55,8 @@ export const calculateMax = (
       relatedNodeId in neuronsToNodes &&
       neuronsToNodes[relatedNodeId].about === about &&
       // if both relatedNodeId and id are locked or none of them
-      (_.difference([id, relatedNodeId], simpleIds).length === 0 ||
-        _.difference([id, relatedNodeId], simpleIds).length === 2)
+      (difference([id, relatedNodeId], simpleIds).length === 0 ||
+        difference([id, relatedNodeId], simpleIds).length === 2)
     ) {
       max += neuronsToNodes[relatedNodeId].composition;
     }

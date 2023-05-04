@@ -9,7 +9,7 @@ export interface Region {
 }
 
 class RegionsInfo {
-  private readonly regions = new Map<number, Region>();
+  private readonly regions = new Map<string, Region>();
 
   constructor() {
     try {
@@ -20,7 +20,7 @@ class RegionsInfo {
     }
   }
 
-  get(regionID: number): Region | undefined {
+  get(regionID: string): Region | undefined {
     return this.regions.get(regionID);
   }
 }
@@ -29,7 +29,7 @@ const regionsInfo = new RegionsInfo();
 
 export default regionsInfo;
 
-function fillRegionMap(regions: Map<number, Region>, nodes: unknown[], prefix = 'msg') {
+function fillRegionMap(regions: Map<string, Region>, nodes: unknown[], prefix = 'msg') {
   let index = 0;
   for (const node of nodes) {
     assertType<HierarchyNode>(
@@ -41,7 +41,7 @@ function fillRegionMap(regions: Map<number, Region>, nodes: unknown[], prefix = 
       },
       `${prefix}[${index}]`
     );
-    regions.set(node.id, { acronym: node.acronym });
+    regions.set(`${node.id}`, { acronym: node.acronym });
     if (node.children) fillRegionMap(regions, node.children, `${prefix}[${index}].children`);
     index += 1;
   }

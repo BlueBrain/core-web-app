@@ -1,5 +1,7 @@
-import _ from 'lodash';
-import { CompositionNode } from '@/types/composition';
+import groupBy from 'lodash/groupBy';
+import uniq from 'lodash/uniq';
+import difference from 'lodash/difference';
+import { CalculatedCompositionNode } from '@/types/composition/calculation';
 
 /**
  *  Given some sibling nodes, it counts the amount of locked siblings
@@ -7,7 +9,10 @@ import { CompositionNode } from '@/types/composition';
  * @param siblings the sibling nodes
  * @param lockedIds the locked ids
  */
-export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: string[]) => {
+export const findUnlockedSiblings = (
+  siblings: CalculatedCompositionNode[],
+  lockedIds: string[]
+) => {
   let countLocked = 0;
   const unlockedIds: string[] = [];
 
@@ -33,11 +38,11 @@ export const findUnlockedSiblings = (siblings: CompositionNode[], lockedIds: str
  *
  */
 export const computeSystemLockedIds = (
-  nodes: CompositionNode[],
+  nodes: CalculatedCompositionNode[],
   userAndBlockedNodeIds: string[]
 ) => {
   let lockedIds: string[] = [];
-  const groupByParent = _.groupBy(nodes, (node) => node.parentId);
+  const groupByParent = groupBy(nodes, (node) => node.parentId);
   // first iterating over the children whose parent is not null
   Object.entries(groupByParent).forEach(([parentId, neuronChildren]) => {
     // Rule No2: if all the children are locked, lock the parent
@@ -76,7 +81,7 @@ export const computeSystemLockedIds = (
     lockedIds = [...lockedIds, ...unlockedIds];
   }
 
-  return _.uniq(lockedIds);
+  return uniq(lockedIds);
 };
 
 /**
@@ -88,7 +93,7 @@ export const computeSystemLockedIds = (
  * @param userAndBlockedNodeIds the node ids of user and blocked ids
  */
 const iterateAndComputeSystemLockedIds = (
-  nodes: CompositionNode[],
+  nodes: CalculatedCompositionNode[],
   userAndBlockedNodeIds: string[]
 ) => {
   let systemLockedIds: string[] = [];
@@ -97,11 +102,11 @@ const iterateAndComputeSystemLockedIds = (
   let newSystemLockedIds;
   do {
     newSystemLockedIds = computeSystemLockedIds(nodes, allIds);
-    diff = _.difference(newSystemLockedIds, allIds);
+    diff = difference(newSystemLockedIds, allIds);
     systemLockedIds = [...systemLockedIds, ...newSystemLockedIds];
     allIds = [...allIds, ...newSystemLockedIds];
   } while (diff.length !== 0);
-  return _.uniq(systemLockedIds);
+  return uniq(systemLockedIds);
 };
 
 export default iterateAndComputeSystemLockedIds;

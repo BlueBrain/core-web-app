@@ -33,11 +33,24 @@ const nextConfig = {
   sentry: {
     hideSourceMaps: false,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async redirects() {
     return [
       {
-        source: '/lab',
-        destination: '/lab/cell-composition/interactive',
+        source: '/build',
+        destination: '/build/cell-composition/interactive',
+        permanent: false,
+      },
+      {
+        source: '/build/connectome-definition',
+        destination: '/build/connectome-definition/configuration',
+        permanent: false,
+      },
+      {
+        source: '/experiment-designer',
+        destination: '/experiment-designer/experiment-setup',
         permanent: false,
       },
     ];

@@ -1,0 +1,150 @@
+// Side bar menu styles
+.side,
+.expanded {
+  @apply transition-transform ease-in-out bg-primary-9 text-light;
+  a {
+    @apply transition-transform ease-in-out font-bold block w-max;
+  }
+  button {
+    @apply mt-4 bg-transparent border-none text-white;
+  }
+}
+.side {
+  @apply w-10;
+  > div {
+    display: inline-flex;
+    flex-direction: column;
+    a {
+      @apply relative -left-[8px] top-20 -rotate-90;
+    }
+    button {
+      @apply relative bottom-[28px] ml-[2px] justify-center;
+    }
+  }
+
+  .hiddenWhenCollapse {
+    @apply h-3;
+  }
+}
+
+.fixedNav {
+  @apply absolute bottom-0 left-2;
+  li {
+    @apply transition;
+    a {
+      @apply font-normal;
+    }
+  }
+  li:nth-child(-n + 2) {
+    @apply relative right-16 w-max mt-0;
+    a {
+      @apply inline-flex;
+      h2 {
+        @apply mr-5 w-12;
+      }
+    }
+  }
+  li:nth-last-child(-n + 2) {
+    @apply relative right-96;
+  }
+  overflow: hidden;
+}
+// Expanded Sidebar styles
+.expanded {
+  @apply pl-3;
+  > div {
+    @apply pr-2 pt-3 flex items-center justify-between;
+    button {
+      @apply mt-0;
+    }
+  }
+  div {
+    > a {
+      @apply text-2xl;
+    }
+  }
+
+  .fixedNav {
+    @apply mb-0 pr-6 w-80;
+    li:nth-last-child(-n + 2) {
+      @apply bg-primary-7 mt-2;
+    }
+    li {
+      transition-property: padding, margin, position, bottom, right;
+      transition-timing-function: ease-in-out;
+      @apply w-72 mx-auto p-2 relative bottom-10 right-0;
+
+      a {
+        h2 {
+          @apply text-left col-start-1 col-end-5;
+        }
+        span {
+          @apply col-span-1 col-end-7 justify-end;
+        }
+        @apply w-full grid gap-0 grid-cols-6;
+      }
+    }
+    overflow: visible;
+  }
+
+  .obsNav {
+    @apply mt-10 pr-2;
+    > li {
+      @apply mt-10 w-72 mx-auto pr-2;
+    }
+    a,
+    span {
+      @apply mx-auto w-72 gap-0 grid grid-cols-12 cursor-pointer;
+    }
+    h1 {
+      @apply col-start-1 col-end-10 text-xl font-bold;
+    }
+    span {
+      @apply col-span-1 col-end-13 justify-end;
+    }
+    p {
+      @apply pt-1 col-span-12 font-thin text-sm text-primary-4;
+    }
+    @media (min-height: 750px) and (max-height: 875px) {
+      @apply mt-1;
+      li {
+        @apply mt-1;
+      }
+      p {
+        @apply pt-0;
+      }
+    }
+    @media (min-height: 0px) and (max-height: 750px) {
+      @apply mt-1;
+      > li {
+        @apply mt-1;
+      }
+      p {
+        @apply hidden;
+      }
+    }
+
+    ul {
+      @apply mt-2;
+      li:hover,
+      li > a:hover {
+        @apply text-primary-2;
+      }
+      li {
+        a {
+          @apply relative font-medium mx-0 px-0 w-full inline-flex mt-2 pb-2 border-b border-primary-7;
+          span {
+            @apply text-primary-4 flex w-10 absolute right-0 self-center;
+          }
+        }
+      }
+    }
+  }
+  @media (min-width: 0px) and (max-width: 1600px) {
+    .fixedNav {
+      li {
+        @apply w-72 ml-1 p-2;
+      }
+    }
+  }
+}

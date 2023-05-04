@@ -1,0 +1,244 @@
+{
+  "setup": [
+    {
+      "id": "duration",
+      "name": "Duration",
+      "type": "number",
+      "value": 4000,
+      "unit": "ms",
+      "min": 0,
+      "max": 20000
+    },
+    {
+      "id": "timeStep",
+      "name": "Time step",
+      "type": "number",
+      "value": 0.1,
+      "unit": "ms",
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "forwardSkip",
+      "name": "Forward skip",
+      "type": "number",
+      "value": 5000,
+      "unit": "ms",
+      "min": 0,
+      "max": 20000
+    },
+    {
+      "id": "seed",
+      "name": "Seed",
+      "type": "range",
+      "value": {
+        "min": 1,
+        "max": 10,
+        "start": 1,
+        "end": 5,
+        "step": 1
+      },
+      "unit": "#"
+    },
+    {
+      "id": "calciumConcentration",
+      "name": "Calcium concentration",
+      "type": "range",
+      "value": {
+        "min": 0,
+        "max": 2,
+        "start": 0.8,
+        "end": 1.1,
+        "step": 0.1
+      },
+      "unit": "mmol"
+    },
+    {
+      "id": "simulatedNeurons",
+      "name": "Simulated neurons",
+      "type": "targetDropdown",
+      "value": "AAA"
+    }
+  ],
+  "input": [
+    {
+      "id": "input1",
+      "name": "input1",
+      "type": "group",
+      "value": [
+        {
+          "id": "spikes",
+          "name": "Spikes",
+          "type": "dropdown",
+          "value": "Whiskers stimulus",
+          "options": [{ "label": "Whiskers stimulus", "value": "Whiskers stimulus" }]
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": 4000,
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
+        },
+        {
+          "id": "targetInput",
+          "name": "Target",
+          "type": "targetDropdown",
+          "value": "AAA"
+        }
+      ]
+    }
+  ],
+  "stimuli": [
+    {
+      "id": "stimulus1",
+      "name": "stimulus1",
+      "type": "group",
+      "value": [
+        {
+          "id": "stimType",
+          "name": "Type",
+          "type": "dropdown",
+          "value": "Current",
+          "options": [{ "label": "Current", "value": "Current" }]
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": 4000,
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
+        },
+        {
+          "id": "targetInput",
+          "name": "Target",
+          "type": "targetDropdown",
+          "value": "AAA"
+        }
+      ]
+    }
+  ],
+  "recording": [
+    {
+      "id": "recording1",
+      "name": "recording1",
+      "type": "group",
+      "value": [
+        {
+          "id": "variableType",
+          "name": "Variable",
+          "type": "dropdown",
+          "value": "Soma voltage",
+          "options": [{ "label": "Soma voltage", "value": "Soma voltage" }]
+        },
+        {
+          "id": "duration",
+          "name": "Duration",
+          "type": "number",
+          "value": 4000,
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
+        },
+        {
+          "id": "recordingTarget",
+          "name": "Target",
+          "type": "targetDropdown",
+          "value": "AAA"
+        }
+      ]
+    }
+  ],
+  "imaging": [
+    {
+      "id": "cameraPos",
+      "name": "Camera position",
+      "type": "position",
+      "value": [100, 200, 300]
+    },
+    {
+      "id": "neuronDisplay",
+      "name": "Neuron Display",
+      "type": "radioButton",
+      "value": ["Soma", "Dendrites", "Axon + Dendrites"]
+    },
+    {
+      "id": "display",
+      "name": "Display",
+      "type": "radioButton",
+      "value": ["Spikes", "Voltage"]
+    }
+  ],
+  "analysis": [
+    {
+      "id": "raster",
+      "name": "Spike Raster",
+      "type": "targetDropdownGroup",
+      "value": ["AAA"]
+    },
+    {
+      "id": "psth",
+      "name": "PSTH",
+      "type": "targetDropdownGroup",
+      "value": ["AAA"]
+    },
+    {
+      "id": "voltage",
+      "name": "Voltage Report",
+      "type": "targetDropdownGroup",
+      "value": ["AAA"]
+    },
+    {
+      "id": "localFieldPotential",
+      "name": "Local Field Potential",
+      "type": "group",
+      "value": [
+        {
+          "id": "lfpTarget1",
+          "name": "Population",
+          "type": "targetDropdown",
+          "value": "AAA"
+        },
+        {
+          "id": "plots",
+          "name": "Plots",
+          "type": "checkboxGroup",
+          "value": [
+            {
+              "id": "spectrum",
+              "name": "Spectrum",
+              "type": "checkbox"
+            },
+            {
+              "id": "trace",
+              "name": "Trace",
+              "type": "checkbox"
+            }
+          ]
+        },
+        {
+          "id": "start",
+          "name": "Start time",
+          "type": "number",
+          "value": 0,
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
+        },
+        {
+          "id": "end",
+          "name": "End time",
+          "type": "number",
+          "value": 300,
+          "unit": "ms",
+          "min": 0,
+          "max": 20000
+        }
+      ]
+    }
+  ]
+}

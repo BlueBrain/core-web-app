@@ -18,23 +18,23 @@ type Tab = {
 const tabs: Tab[] = [
   {
     name: 'Cell composition',
-    href: '/lab/cell-composition/interactive',
-    baseHref: '/lab/cell-composition',
+    href: '/build/cell-composition/interactive',
+    baseHref: '/build/cell-composition',
   },
   {
     name: 'Cell model assignment',
-    href: '/lab/cell-model-assignment',
-    baseHref: '/lab/cell-model-assignment',
+    href: '/build/cell-model-assignment',
+    baseHref: '/build/cell-model-assignment',
   },
   {
     name: 'Connectome definition',
-    href: '/lab/connectome-definition',
-    baseHref: '/lab/connectome-definition',
+    href: '/build/connectome-definition/configuration',
+    baseHref: '/build/connectome-definition',
   },
   {
     name: 'Connection model assignment',
-    href: '/lab/connectome-model-assignment',
-    baseHref: '/lab/connectome-model-assignment',
+    href: '/build/connectome-model-assignment',
+    baseHref: '/build/connectome-model-assignment',
   },
 ];
 

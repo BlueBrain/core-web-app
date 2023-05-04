@@ -1,6 +1,7 @@
-import _ from 'lodash';
-import { Composition, CompositionNode, LeafNode } from '@/types/composition';
+import cloneDeep from 'lodash/cloneDeep';
+import { OriginalComposition, OriginalCompositionNode } from '@/types/composition/original';
 import { childIsLocked } from '@/util/composition/utils';
+import { CalculatedCompositionNode } from '@/types/composition/calculation';
 
 /* eslint-disable no-param-reassign */
 
@@ -13,9 +14,9 @@ import { childIsLocked } from '@/util/composition/utils';
  * @param lockedIds the array of IDs that are locked
  */
 export const calculateRatioSpread = (
-  node: LeafNode,
+  node: OriginalCompositionNode,
   extendedNodeId: string,
-  modifiedNode: CompositionNode,
+  modifiedNode: CalculatedCompositionNode,
   lockedIds: string[]
 ): { [key: string]: number } => {
   // if the modifiedNodeId is part of the children then the value
@@ -28,7 +29,7 @@ export const calculateRatioSpread = (
     // then we count them as part of the total sum
     if (childId !== modifiedNode.id && !childIsLocked(lockedIds, extendedNodeId, childId)) {
       modifiedSiblingsAmount += 1;
-      siblingsSum += child.composition.neuron.count;
+      siblingsSum += child.composition.neuron.density;
     }
   });
   siblingsSum = Math.round(siblingsSum * 100) / 100;
@@ -42,12 +43,12 @@ export const calculateRatioSpread = (
       valueSpread[childId] = 1 / modifiedSiblingsAmount;
     } else if (
       childIsLocked(lockedIds, extendedNodeId, childId) ||
-      child.composition.neuron.count < 2
+      child.composition.neuron.density < 2
     ) {
       valueSpread[childId] = 0;
     } else if (!childIsLocked(lockedIds, extendedNodeId, childId)) {
       // if its a sibling then the spread is the value/sum
-      valueSpread[childId] = child.composition.neuron.count / siblingsSum;
+      valueSpread[childId] = child.composition.neuron.density / siblingsSum;
     }
   });
   return valueSpread;
@@ -74,9 +75,8 @@ export const calculateDensityRatioChange = (
  * Applies a new density to an existing leafnode
  * @param nodeToModify the node to apply the new density
  * @param ratioChange the ratio to change it by
- * @param volume the volume of the brain region
  */
-export const applyNewDensity = (nodeToModify: LeafNode, ratioChange: number, volume: number) => {
+export const applyNewDensity = (nodeToModify: OriginalCompositionNode, ratioChange: number) => {
   if (nodeToModify.composition.neuron.density !== 0) {
     nodeToModify.composition.neuron.density = Math.max(
       nodeToModify.composition.neuron.density * ratioChange,
@@ -87,9 +87,6 @@ export const applyNewDensity = (nodeToModify: LeafNode, ratioChange: number, vol
     // since multiplication by 0 would lead to 0
     nodeToModify.composition.neuron.density = Math.max(ratioChange, 0);
   }
-  nodeToModify.composition.neuron.count = Math.round(
-    nodeToModify.composition.neuron.density * volume
-  );
 };
 
 /**
@@ -100,7 +97,7 @@ export const applyNewDensity = (nodeToModify: LeafNode, ratioChange: number, vol
  * @param volume
  */
 export const iterateAndApplyDensityChange = (
-  node: LeafNode,
+  node: OriginalCompositionNode,
   ratioChange: number,
   volume: number
 ) => {
@@ -109,7 +106,7 @@ export const iterateAndApplyDensityChange = (
       iterateAndApplyDensityChange(child, ratioChange, volume);
     });
   } else {
-    applyNewDensity(node, ratioChange, volume);
+    applyNewDensity(node, ratioChange);
   }
 };
 
@@ -124,8 +121,8 @@ export const iterateAndApplyDensityChange = (
  * @param volume
  */
 export const calculateAndApplyDensityChange = (
-  modifiedNode: CompositionNode,
-  parentNode: LeafNode,
+  modifiedNode: CalculatedCompositionNode,
+  parentNode: OriginalCompositionNode,
   densityChangeRatio: number,
   lockedIds: string[],
   volume: number
@@ -162,8 +159,8 @@ export const calculateAndApplyDensityChange = (
  * @param extendedNodeId
  * @param node the node that is currently visited
  */
-export const findParentOfAffected = (extendedNodeId: string, node: LeafNode) => {
-  let foundNode: LeafNode | null = null;
+export const findParentOfAffected = (extendedNodeId: string, node: OriginalCompositionNode) => {
+  let foundNode: OriginalCompositionNode | null = null;
   if (node.hasPart) {
     if (Object.values(node.hasPart).find((child) => child.extendedNodeId === extendedNodeId)) {
       return node;
@@ -191,10 +188,10 @@ export const findParentOfAffected = (extendedNodeId: string, node: LeafNode) => 
  * @param selectedBrainRegionId the id of the selected brain region
  */
 const computeModifiedComposition = (
-  modifiedNode: CompositionNode,
+  modifiedNode: CalculatedCompositionNode,
   changedAmount: number,
   affectedLeaves: string[],
-  compositionFile: Composition,
+  compositionFile: OriginalComposition,
   lockedIds: string[],
   densityOrCount: string,
   volumes: { [key: string]: number },
@@ -226,7 +223,7 @@ const computeModifiedComposition = (
     });
   }
 
-  return _.cloneDeep(compositionFile);
+  return cloneDeep(compositionFile);
 };
 
 export default computeModifiedComposition;

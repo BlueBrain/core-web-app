@@ -23,18 +23,18 @@ type CellCompositionTab = {
 const tabs: CellCompositionTab[] = [
   {
     name: 'Interactive',
-    href: '/lab/cell-composition/interactive',
+    href: '/build/cell-composition/interactive',
     icon: <BrainIcon className="h-4 inline-block mr-2" />,
   },
   {
     name: 'Analysis',
-    href: '/lab/cell-composition/analysis',
+    href: '/build/cell-composition/analysis',
     icon: <AnalysisIcon className="h-4 inline-block mr-2" />,
     disableOnChange: true,
   },
   {
     name: 'Configuration',
-    href: '/lab/cell-composition/configuration',
+    href: '/build/cell-composition/configuration',
     icon: <SettingsIcon className="h-4 inline-block mr-2" />,
   },
 ];

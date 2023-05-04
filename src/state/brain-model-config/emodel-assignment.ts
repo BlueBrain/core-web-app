@@ -4,17 +4,22 @@ import { atom } from 'jotai';
 import { eModelAssignmentConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 
-import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
+import {
+  fetchResourceById,
+  fetchGeneratorTaskActivity,
+  fetchResourceSourceById,
+} from '@/api/nexus';
 import {
   EModelAssignmentConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
+  EModelAssignmentConfig,
 } from '@/types/nexus';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const configAtom = atom<Promise<EModelAssignmentConfigResource | null>>(async (get) => {
+export const configAtom = atom<Promise<EModelAssignmentConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = await get(eModelAssignmentConfigIdAtom);
 
@@ -23,6 +28,17 @@ const configAtom = atom<Promise<EModelAssignmentConfigResource | null>>(async (g
   if (!session || !id) return null;
 
   return fetchResourceById<EModelAssignmentConfigResource>(id, session);
+});
+
+export const configSourceAtom = atom<Promise<EModelAssignmentConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const id = await get(eModelAssignmentConfigIdAtom);
+
+  get(refetchTriggerAtom);
+
+  if (!session || !id) return null;
+
+  return fetchResourceSourceById<EModelAssignmentConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

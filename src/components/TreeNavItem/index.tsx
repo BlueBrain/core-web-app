@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, ReactNode, ForwardedRef, forwardRef } from 'react';
+import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
 import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
@@ -15,7 +15,9 @@ type TreeNavItemProps = {
   value: NavValue;
   onValueChange: (newValue: string[], path: string[]) => void;
   path: string[];
-  children: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+  children: (
+    ...args: any[]
+  ) => ReactElement<{ children?: (...args: any[]) => ReactElement; isHidden?: boolean }>;
   items?: TreeItem[];
   // All other props - https://stackoverflow.com/questions/40032592/typescript-workaround-for-rest-props-in-react
   [x: string]: any;
@@ -45,95 +47,110 @@ export function TreeNavItem({
   path,
   ...props
 }: TreeNavItemProps) {
-  return (
+  const renderedItems = items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
+    // children may return another render-prop
+    const childRender = children({
+      id: itemId,
+      isExpanded,
+      value,
+      items: nestedItems,
+      path,
+      ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
+    });
+
+    if (childRender?.props?.isHidden) {
+      return null;
+    }
+
+    return nestedItems ? (
+      <TreeNavItem
+        key={itemId}
+        id={itemId}
+        items={nestedItems}
+        className={className}
+        value={value?.[itemId] ?? null}
+        isExpanded={typeof value?.[itemId] !== 'undefined'}
+        onValueChange={onValueChange}
+        path={[...path, itemId]}
+        {...props} // eslint-disable-line react/jsx-props-no-spreading
+        {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
+      >
+        {
+          /* Pass-down the nested render-prop, if one exists. */
+          childRender?.props?.children ?? children
+        }
+      </TreeNavItem>
+    ) : (
+      childRender
+    );
+  });
+
+  const trigger = useMemo(
+    () =>
+      items?.length && renderedItems?.some((item) => item !== null) // Any non-hidden children?
+        ? (triggerProps: {}) => (
+            <Accordion.Trigger
+              className={styles.accordionTrigger}
+              data-disabled={!items || items.length === 0}
+              {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
+            >
+              <ArrowDownOutlinedIcon
+                className={styles.accordionChevron}
+                style={{ height: '13px' }}
+              />
+            </Accordion.Trigger>
+          )
+        : null,
+    [items, renderedItems]
+  );
+
+  const content =
+    items?.length && renderedItems?.filter((item) => item)?.length
+      ? (contentProps: { renderBefore?: ReactNode; renderAfter?: ReactNode } = {}) => {
+          const { renderBefore, renderAfter, ...contentPropsRest } = contentProps;
+
+          return (
+            <Accordion.Content
+              {...contentPropsRest} /* eslint-disable-line react/jsx-props-no-spreading */
+            >
+              {renderBefore}
+              <Accordion.Root
+                onValueChange={(newValue) => onValueChange(newValue, path)}
+                type="multiple"
+                value={value ? Object.keys(value) : []}
+                asChild
+              >
+                <>
+                  {/* eslint-disable-line react/jsx-no-useless-fragment */}
+                  {renderedItems}
+                </>
+              </Accordion.Root>
+              {renderAfter}
+            </Accordion.Content>
+          );
+        }
+      : null;
+
+  const render =
+    children &&
+    children({
+      items,
+      id,
+      value,
+      path,
+      trigger,
+      content,
+      ...props,
+    });
+
+  return !render.props.isHidden ? (
     <Accordion.Item value={id} className={className} data-tree-id={id}>
       <Accordion.Header asChild>
         {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
-        <>
-          {children &&
-            children({
-              items,
-              id,
-              isExpanded,
-              value,
-              path,
-              trigger: items?.length
-                ? (triggerProps: {}) => (
-                    <Accordion.Trigger
-                      className={styles.accordionTrigger}
-                      data-disabled={!items || items.length === 0}
-                      {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
-                    >
-                      <ArrowDownOutlinedIcon
-                        className={styles.accordionChevron}
-                        style={{ height: '13px' }}
-                      />
-                    </Accordion.Trigger>
-                  )
-                : null,
-              content: items?.length
-                ? (contentProps: { renderBefore?: ReactNode; renderAfter?: ReactNode } = {}) => {
-                    const { renderBefore, renderAfter, ...contentPropsRest } = contentProps;
-
-                    return (
-                      <Accordion.Content
-                        {...contentPropsRest} /* eslint-disable-line react/jsx-props-no-spreading */
-                      >
-                        {renderBefore}
-                        <Accordion.Root
-                          onValueChange={(newValue) => onValueChange(newValue, path)}
-                          type="multiple"
-                          value={value ? Object.keys(value) : []}
-                          asChild
-                        >
-                          <>
-                            {/* eslint-disable-line react/jsx-no-useless-fragment */}
-                            {items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
-                              // children may return another render-prop
-                              const render = children({
-                                id: itemId,
-                                isExpanded,
-                                value,
-                                items: nestedItems,
-                                path,
-                                ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
-                              });
-
-                              return nestedItems ? (
-                                <TreeNavItem
-                                  key={itemId}
-                                  id={itemId}
-                                  items={nestedItems}
-                                  className={className}
-                                  value={value?.[itemId] ?? null}
-                                  isExpanded={typeof value?.[itemId] !== 'undefined'}
-                                  onValueChange={onValueChange}
-                                  path={[...path, itemId]}
-                                  {...props} // eslint-disable-line react/jsx-props-no-spreading
-                                  {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
-                                >
-                                  {
-                                    /* Pass-down the nested render-prop, if one exists. */
-                                    render?.props?.children ?? children
-                                  }
-                                </TreeNavItem>
-                              ) : (
-                                render
-                              );
-                            })}
-                          </>
-                        </Accordion.Root>
-                        {renderAfter}
-                      </Accordion.Content>
-                    );
-                  }
-                : null,
-              ...props,
-            })}
-        </>
+        <>{render}</>
       </Accordion.Header>
     </Accordion.Item>
-  );
+  ) : null;
 }
 
 /**

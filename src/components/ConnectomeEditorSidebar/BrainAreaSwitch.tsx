@@ -18,7 +18,7 @@ export function BrainAreaSwitchWrapper({ children }: { children?: React.ReactNod
       )}
       onClick={() => setArea(opposite(area))}
     >
-      <div className="flex flex-col text-left">
+      <div className="flex flex-col text-left max-h-48 overflow-scroll">
         <div className="capitalize">{`${opposite(area)}-synaptic`}</div>
         <div className="flex flex-wrap gap-x-2 items-center justify-start">{children}</div>
       </div>

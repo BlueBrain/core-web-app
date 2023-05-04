@@ -3,19 +3,18 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-
 import { useSession } from 'next-auth/react';
-import { Dimension, Campaign, SideLink } from '@/types/observatory';
-import CampaignDetails from '@/components/observatory/CampaignDetails';
-import DimensionFilter from '@/components/observatory/DimensionFilter';
-import SpikeRaster from '@/components/observatory/SpikeRaster';
-import CampaignVideo from '@/components/observatory/CampaignVideo';
-import Sidebar from '@/components/observatory/Sidebar';
+import { Dimension, Campaign, SideLink } from '@/types/explore-section';
+import CampaignDetails from '@/components/explore-section/CampaignDetails';
+import DimensionFilter from '@/components/explore-section/DimensionFilter';
+import SpikeRaster from '@/components/explore-section/SpikeRaster';
+import CampaignVideo from '@/components/explore-section/CampaignVideo';
+import Sidebar from '@/components/explore-section/Sidebar';
 import { nexus } from '@/config';
 
-import REPORT_SPARQL_QUERY from '@/constants/observatory';
+import { REPORT_SPARQL_QUERY } from '@/constants/explore-section';
 
-function Observatory() {
+function SimulationCampaignPage() {
   const [campaign, setCampaign] = useState<Campaign>({
     id: '',
     self: '',
@@ -193,4 +192,4 @@ function Observatory() {
   );
 }
 
-export default Observatory;
+export default SimulationCampaignPage;

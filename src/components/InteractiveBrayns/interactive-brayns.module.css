@@ -11,10 +11,15 @@
   color: #fffe;
 }
 
-.resetButton {
+.debugButtons {
   position: absolute;
   right: 1em;
   bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 .busy {

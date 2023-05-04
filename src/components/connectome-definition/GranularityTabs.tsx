@@ -3,17 +3,26 @@ import type { TabsProps } from 'antd';
 
 const items: TabsProps['items'] = [
   {
-    key: '1',
+    key: 'macro',
     label: 'Macro',
     children: null,
   },
   {
-    key: '2',
+    key: 'micro',
     label: 'Micro',
     children: null,
   },
 ];
 
-export default function GranularityTabs() {
-  return <Tabs defaultActiveKey="1" items={items} moreIcon={null} size="small" animated={false} />;
+export default function GranularityTabs({ handleChange }: { handleChange: (key: string) => void }) {
+  return (
+    <Tabs
+      defaultActiveKey="macro"
+      items={items}
+      moreIcon={null}
+      size="small"
+      animated={false}
+      onChange={handleChange}
+    />
+  );
 }

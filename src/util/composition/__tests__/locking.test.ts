@@ -1,16 +1,17 @@
-import _ from 'lodash';
+import groupBy from 'lodash/groupBy';
+
 import infra from './data/infralimbic-area-layer-1.json';
 import lateral from './data/lateral-reticular-nucleus-composition.json';
-import { CompositionNode } from '@/types/composition';
-import analyseComposition from '@/util/composition/composition-parser';
+import calculateCompositions from '@/util/composition/composition-parser';
 import iterateAndComputeSystemLockedIds, {
   computeSystemLockedIds,
   findUnlockedSiblings,
 } from '@/util/composition/locking';
+import { CalculatedCompositionNode } from '@/types/composition/calculation';
 
 describe('findUnlockedSiblings', () => {
-  const nodes = infra as CompositionNode[];
-  const groupByParent = _.groupBy(nodes, (node) => node.parentId);
+  const nodes = infra as CalculatedCompositionNode[];
+  const groupByParent = groupBy(nodes, (node) => node.parentId);
   const nullParent = groupByParent.null;
 
   it('should have the correct unlocked siblings in the first level', () => {
@@ -42,7 +43,7 @@ describe('findUnlockedSiblings', () => {
 });
 
 describe('Test system locking', () => {
-  const nodes = infra as CompositionNode[];
+  const nodes = infra as CalculatedCompositionNode[];
   it(`Test rule No2: If All the children of a node are locked, the parent is locked as well`, () => {
     const userLockedIds = [
       'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738203?rev=28',
@@ -88,11 +89,19 @@ describe('Test system locking', () => {
 
 describe('Test iterative locking', () => {
   it('should return correct amount of locked nodes', async () => {
-    // @ts-ignore
-    const { nodes, blockedNodeIds } = await analyseComposition(lateral, [
-      'http://api.brain-map.org/api/v2/data/Structure/963',
-      'http://api.brain-map.org/api/v2/data/Structure/955',
-    ]);
+    const { nodes, blockedNodeIds } = await calculateCompositions(
+      // @ts-ignore
+      lateral,
+      'test',
+      [
+        'http://api.brain-map.org/api/v2/data/Structure/963',
+        'http://api.brain-map.org/api/v2/data/Structure/955',
+      ],
+      {
+        'http://api.brain-map.org/api/v2/data/Structure/963': 0.5,
+        'http://api.brain-map.org/api/v2/data/Structure/955': 0.3,
+      }
+    );
     const systemLockedIds = iterateAndComputeSystemLockedIds(nodes, [...blockedNodeIds]);
     expect(systemLockedIds).toHaveLength(4);
   });

@@ -4,8 +4,8 @@ import { atom } from 'jotai';
 import { selectAtom, atomWithStorage } from 'jotai/utils';
 
 import sessionAtom from '@/state/session';
-import { BrainModelConfigResource } from '@/types/nexus';
-import { fetchResourceById, updateResource } from '@/api/nexus';
+import { BrainModelConfig, BrainModelConfigResource } from '@/types/nexus';
+import { fetchResourceById, fetchResourceSourceById, updateResource } from '@/api/nexus';
 
 const RECENTLY_USED_SIZE = 5;
 
@@ -38,6 +38,17 @@ export const configAtom = atom<Promise<BrainModelConfigResource | null>>(async (
   return fetchResourceById<BrainModelConfigResource>(id, session);
 });
 
+export const configSourceAtom = atom<Promise<BrainModelConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const id = get(idAtom);
+
+  get(refetchTriggerAtom);
+
+  if (!session || !id) return null;
+
+  return fetchResourceSourceById<BrainModelConfigResource>(id, session);
+});
+
 export const updateConfigAtom = atom(null, async (get, set, config: BrainModelConfigResource) => {
   const session = get(sessionAtom);
 
@@ -51,6 +62,8 @@ export const updateConfigAtom = atom(null, async (get, set, config: BrainModelCo
 });
 
 export const getNameAtom = selectAtom(configAtom, (config) => config?.name);
+
+export const getCreatedByAtom = selectAtom(configAtom, (config) => config?._createdBy);
 
 export const updateNameAtom = atom(null, async (get, set, name: string) => {
   const config = await get(configAtom);
@@ -74,6 +87,15 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
   set(updateConfigAtom, updatedConfig);
 });
 
+export const isConfigEditableAtom = atom<Promise<boolean | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const createdBy = await get(getCreatedByAtom);
+
+  if (!session || !createdBy) return null;
+
+  return createdBy.split('/').reverse()[0] === session.user.username;
+});
+
 /*
   The usage of selectAtom might be beneficial here,
   but it seems there is an issue with a combination of:
@@ -84,23 +106,41 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
 export const cellCompositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.cellCompositionConfig?.['@id'] ?? null;
+  return config?.configs.cellCompositionConfig?.['@id'] ?? null;
 });
 
 export const cellPositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.cellPositionConfig?.['@id'] ?? null;
+  return config?.configs.cellPositionConfig?.['@id'] ?? null;
 });
 
 export const eModelAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.eModelAssignmentConfig?.['@id'] ?? null;
+  return config?.configs.eModelAssignmentConfig?.['@id'] ?? null;
 });
 
 export const morphologyAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs?.morphologyAssignmentConfig?.['@id'] ?? null;
+  return config?.configs.morphologyAssignmentConfig?.['@id'] ?? null;
+});
+
+export const microConnectomeConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs.microConnectomeConfig?.['@id'] ?? null;
+});
+
+export const synapseConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs.synapseConfig?.['@id'] ?? null;
+});
+
+export const macroConnectomeConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs.macroConnectomeConfig?.['@id'] ?? null;
 });

@@ -1,5 +1,5 @@
-import { Vector2 } from '../utils/calc';
-import GenericEvent from '../utils/generic-event';
+import { Vector2 } from '@/services/brayns/utils/calc';
+import GenericEvent from '@/services/brayns/utils/generic-event';
 
 interface PointerStart {
   startX: number;
@@ -10,19 +10,28 @@ interface PointerStart {
 export default class Gestures {
   public eventDrag = new GenericEvent<Vector2>();
 
+  public eventZoom = new GenericEvent<number>();
+
   private pointer: PointerStart | null = null;
 
   attach(canvas: HTMLCanvasElement) {
     canvas.addEventListener('pointerdown', this.handlePointerDown);
     canvas.addEventListener('pointerup', this.handlePointerUp);
     canvas.addEventListener('pointermove', this.handlePointerMove);
+    canvas.addEventListener('wheel', this.handleWheel);
   }
 
   detach(canvas: HTMLElement) {
     canvas.removeEventListener('pointerdown', this.handlePointerDown);
     canvas.removeEventListener('pointerup', this.handlePointerUp);
     canvas.removeEventListener('pointermove', this.handlePointerMove);
+    canvas.removeEventListener('wheel', this.handleWheel);
   }
+
+  private readonly handleWheel = (evt: WheelEvent) => {
+    const zoom = evt.deltaY > 0 ? +1 : -1;
+    this.eventZoom.dispatch(zoom);
+  };
 
   private readonly handlePointerDown = (evt: PointerEvent) => {
     const canvas = evt.target as null | HTMLElement;

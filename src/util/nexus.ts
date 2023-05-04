@@ -1,7 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { nexus } from '@/config';
-import { CellCompositionConfig, CellPositionConfig, FileMetadata } from '@/types/nexus';
+import {
+  Distribution,
+  FileMetadata,
+  GeneratorConfig,
+  GeneratorConfigType,
+  GeneratorName,
+} from '@/types/nexus';
 import { PartialBy } from '@/types/common';
 
 export function collapseId(nexusId: string) {
@@ -76,82 +80,74 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     .join('');
 }
 
-type IdType = 'file' | 'modelconfiguration' | 'cellcompositionconfig' | 'cellpositionconfig';
+export type IdType =
+  | 'file'
+  | 'modelconfiguration'
+  | 'cellcompositionconfig'
+  | 'cellpositionconfig'
+  | 'emodelassignmentconfig'
+  | 'morphologyassignmentconfig'
+  | 'microconnectomeconfig'
+  | 'synapseconfig'
+  | 'macroconnectomeconfig'
+  | 'wholebrainconnectomestrength';
 
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;
 
-  return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? uuidv4()}`;
+  return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? crypto.randomUUID()}`;
 }
 
-interface CreateCellCompositionConfigProps {
-  id?: string;
-  name?: string;
-  description?: string;
-  payloadMetadata: FileMetadata;
-}
-export function createCellCompositionConfig({
-  id,
-  name = 'Cell composition generator configuration',
-  description = 'NA',
-  payloadMetadata,
-}: CreateCellCompositionConfigProps): PartialBy<CellCompositionConfig, '@id'> {
+const generatorNameByKgType: Record<GeneratorConfigType, GeneratorName> = {
+  CellCompositionConfig: 'cell_composition',
+  CellPositionConfig: 'cell_position',
+  EModelAssignmentConfig: 'placeholder',
+  MorphologyAssignmentConfig: 'placeholder',
+  MicroConnectomeConfig: 'connectome',
+  SynapseConfig: 'connectome_filtering',
+  MacroConnectomeConfig: 'connectome',
+};
+
+export function createDistribution(payloadMetadata: FileMetadata): Distribution {
   return {
-    '@context': 'https://bbp.neuroshapes.org',
-    '@type': ['CellCompositionConfig', 'Entity'],
-    '@id': id,
-    name,
-    description,
-    generatorName: 'cell_composition',
-    distribution: {
-      '@type': 'DataDownload',
-      name: payloadMetadata._filename,
-      contentSize: {
-        unitCode: 'bytes',
-        value: payloadMetadata._bytes,
-      },
-      contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
-      encodingFormat: payloadMetadata._mediaType,
-      digest: {
-        algorithm: payloadMetadata._digest._algorithm,
-        value: payloadMetadata._digest._value,
-      },
+    '@type': 'DataDownload',
+    name: payloadMetadata._filename,
+    contentSize: {
+      unitCode: 'bytes',
+      value: payloadMetadata._bytes,
+    },
+    contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
+    encodingFormat: payloadMetadata._mediaType,
+    digest: {
+      algorithm: payloadMetadata._digest._algorithm,
+      value: payloadMetadata._digest._value,
     },
   };
 }
 
-interface CreateCellPositionConfigProps {
+interface CreateGeneratorConfigProps {
   id?: string;
   name?: string;
+  description?: string;
+  kgType: GeneratorConfigType;
   payloadMetadata: FileMetadata;
 }
-export function createCellPositionConfig({
+
+export function createGeneratorConfig({
   id,
-  name = 'Cell position generator configuration',
+  name = 'Generator configuration',
+  description = 'NA',
+  kgType,
   payloadMetadata,
-}: CreateCellPositionConfigProps): PartialBy<CellPositionConfig, '@id'> {
+}: CreateGeneratorConfigProps): PartialBy<GeneratorConfig, '@id'> {
   return {
     '@context': 'https://bbp.neuroshapes.org',
-    '@type': ['CellPositionConfig', 'Entity'],
+    '@type': [kgType, 'Entity'],
     '@id': id,
     name,
-    generatorName: 'me_type_property',
-    description: '',
-
-    distribution: {
-      '@type': 'DataDownload',
-      name: payloadMetadata._filename,
-      encodingFormat: payloadMetadata._mediaType,
-      contentSize: {
-        unitCode: 'bytes',
-        value: payloadMetadata._bytes,
-      },
-      contentUrl: composeUrl('file', payloadMetadata['@id'], { rev: payloadMetadata._rev }),
-      digest: {
-        algorithm: payloadMetadata._digest._algorithm,
-        value: payloadMetadata._digest._value,
-      },
-    },
+    description,
+    generatorName: generatorNameByKgType[kgType],
+    distribution: createDistribution(payloadMetadata),
   };
 }
 
@@ -170,4 +166,8 @@ export function setRevision<T extends string | undefined>(url?: T, rev?: number 
   }
 
   return urlObj.toString() as T extends string ? string : undefined;
+}
+
+export function ensureArray<T>(value: T | T[]) {
+  return Array.isArray(value) ? value : [value];
 }

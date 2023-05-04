@@ -8,7 +8,11 @@ import debounce from 'lodash/debounce';
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
 import tableTheme from './antd-theme';
-import { searchTypeAtom, brainModelConfigListAtom, searchStringAtom } from './state';
+import {
+  searchConfigListTypeAtom,
+  searchConfigListStringAtom,
+  configListAtom,
+} from '@/state/brain-model-config-list';
 import { CURATED_MODELS } from '@/components/BrainConfigPanel';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
@@ -65,7 +69,7 @@ const searchTabs: SearchTab[] = [
 ];
 
 function BrainModelConfigsCount() {
-  const brainModelConfigs = useAtomValue(brainModelConfigListAtom);
+  const brainModelConfigs = useAtomValue(configListAtom);
 
   return <span>{brainModelConfigs.length}</span>;
 }
@@ -75,8 +79,8 @@ type BrainConfigLoaderProps = {
 };
 
 export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) {
-  const [activeTabId, setActiveTabId] = useAtom(searchTypeAtom);
-  const setSearchString = useSetAtom(searchStringAtom);
+  const [activeTabId, setActiveTabId] = useAtom(searchConfigListTypeAtom);
+  const setSearchString = useSetAtom(searchConfigListStringAtom);
 
   const [searchInputValue, setSearchInputValue] = useState<string>('');
 
