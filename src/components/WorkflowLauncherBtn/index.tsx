@@ -197,7 +197,7 @@ export default function WorkflowLauncher({
   const buttonClass = classNames(
     'flex-auto text-white h-12 px-8',
     className,
-    disabled ? 'bg-slate-400 cursor-not-allowed' : 'bg-secondary-2'
+    disabled || launching ? 'bg-slate-400 cursor-not-allowed pointer-events-none' : 'bg-secondary-2'
   );
 
   const buttonTooltip = disabled ? 'Select at least one step to build' : 'Build step(s)';
