@@ -22,12 +22,9 @@ import {
   BrainRegionSelection,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
-import { HemisphereDirection } from '@/types/connectome';
-import {
-  connectivityStrengthMatrixAtom,
-  editsAtom,
-} from '@/state/brain-model-config/macro-connectome';
-import { addEdit as addEditAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
+import { connectivityStrengthMatrixLoadableAtom } from '@/state/brain-model-config/macro-connectome';
+import { addEditAtom } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 
 import styles from '../connectome-definition.module.css';
@@ -44,11 +41,19 @@ function ConnectomeDefinitionMain() {
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
-  const connectivityMatrix = useAtomValue(connectivityStrengthMatrixAtom);
-  const edits = useAtomValue(editsAtom);
+  const connectivityMatrixLoadable = useAtomValue(connectivityStrengthMatrixLoadableAtom);
   const addEdit = useSetAtom(addEditAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
+
+  const [connectivityMatrix, setConnectivityMatrix] = useState<WholeBrainConnectivityMatrix>();
+
+  useEffect(() => {
+    if (connectivityMatrixLoadable.state !== 'hasData' || !connectivityMatrixLoadable.data) return;
+
+    setConnectivityMatrix(connectivityMatrixLoadable.data);
+  }, [connectivityMatrixLoadable]);
+
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
   const [offset, setOffset] = useState(0);
@@ -60,6 +65,7 @@ function ConnectomeDefinitionMain() {
   const [select, setSelect] = useState(false);
   const [unselect, setUnselect] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+
   const histogramRef = useRef<HTMLDivElement>(null);
   const [histogramInitialized, setHistogramInitialized] = useState(false);
   const lineChartRef = useRef<HTMLDivElement>(null);
@@ -284,7 +290,7 @@ function ConnectomeDefinitionMain() {
             <MatrixPreviewComponent />
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList edits={edits} />
+            <MatrixModificationHistoryList />
           </>
         )}
       </div>

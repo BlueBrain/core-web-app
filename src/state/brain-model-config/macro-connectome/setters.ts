@@ -11,6 +11,8 @@ import {
   configPayloadAtom,
   remoteConfigPayloadAtom,
   localConfigPayloadAtom,
+  connectivityStrengthOverridesEntityAtom,
+  connectivityStrengthOverridesEntitySourceAtom,
   editsAtom,
   connectivityStrengthMatrixAtom,
   remoteConnectivityStrengthMatrixAtom,
@@ -19,8 +21,12 @@ import {
   connectivityStrengthOverridesPayloadRevAtom,
   configPayloadUrlAtom,
   configPayloadRevAtom,
+  configAtom,
+  configSourceAtom,
+  connectivityStrengthOverridesEntityRevAtom,
+  initialConnectivityStrengthMatrixAtom,
 } from '.';
-import { setRevision } from '@/util/nexus';
+import { createDistribution, setRevision } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { MacroConnectomeEditEntry, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import {
@@ -29,7 +35,7 @@ import {
 } from '@/util/connectome';
 import sessionAtom from '@/state/session';
 import { brainRegionLeavesUnsortedArrayAtom } from '@/state/brain-regions';
-import { updateFileByUrl, updateJsonFileByUrl } from '@/api/nexus';
+import { updateFileByUrl, updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { MacroConnectomeConfigPayload } from '@/types/nexus';
 
 export const triggerRefetchAtom = atom(null, (get, set) =>
@@ -38,6 +44,9 @@ export const triggerRefetchAtom = atom(null, (get, set) =>
 
 const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const session = get(sessionAtom);
+
+  const config = await get(configAtom);
+  const configSource = await get(configSourceAtom);
 
   const remoteConnectivityStrengthMatrix = await get(remoteConnectivityStrengthMatrixAtom);
   const connectivityStrengthMatrix = await get(connectivityStrengthMatrixAtom);
@@ -50,12 +59,21 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const configPayloadUrl = await get(configPayloadUrlAtom);
   const configPayloadRev = await get(configPayloadRevAtom);
 
+  const overridesEntity = await get(connectivityStrengthOverridesEntityAtom);
+  const overridesEntitySource = await get(connectivityStrengthOverridesEntitySourceAtom);
+  const overridesEntityRev = await get(connectivityStrengthOverridesEntityRevAtom);
+
   const overridesPayloadUrl = await get(connectivityStrengthOverridesPayloadUrlAtom);
   const overridesPayloadRevAtom = await get(connectivityStrengthOverridesPayloadRevAtom);
 
   if (
     !session ||
+    !config ||
+    !configSource ||
     !brainRegionLeaves ||
+    !overridesEntity ||
+    !overridesEntitySource ||
+    !overridesEntityRev ||
     !remoteConnectivityStrengthMatrix ||
     !connectivityStrengthMatrix ||
     !remoteConfigPayload ||
@@ -79,7 +97,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
 
   const overridesPayloadUpdateUrl = setRevision(overridesPayloadUrl, overridesPayloadRevAtom);
 
-  await updateFileByUrl(
+  const updatedOverridesPayloadMeta = await updateFileByUrl(
     overridesPayloadUpdateUrl,
     overridesBuffer,
     'overrides.arrow',
@@ -87,14 +105,28 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     session
   );
 
+  overridesEntitySource.distribution = createDistribution(updatedOverridesPayloadMeta);
+
+  const updatedOverridesEntityMeta = await updateResource(
+    overridesEntitySource,
+    overridesEntityRev,
+    session
+  );
+
+  configPayload.overrides.connection_strength.rev = updatedOverridesEntityMeta._rev;
+
   const configPayloadUpdateUrl = setRevision(configPayloadUrl, configPayloadRev);
 
-  await updateJsonFileByUrl(
+  const updatedConfigPayloadMeta = await updateJsonFileByUrl(
     configPayloadUpdateUrl,
     configPayload,
     'macroconnectome-config.json',
     session
   );
+
+  configSource.distribution = createDistribution(updatedConfigPayloadMeta);
+
+  await updateResource(configSource, config._rev, session);
 
   await set(invalidateConfigAtom, 'macroConnectome');
 });
@@ -141,7 +173,7 @@ const setEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<void>>(
   }
 );
 
-export const addEdit = atom<null, [MacroConnectomeEditEntry], Promise<void>>(
+export const addEditAtom = atom<null, [MacroConnectomeEditEntry], Promise<void>>(
   null,
   async (get, set, edit) => {
     const currentMatrix = await get(connectivityStrengthMatrixAtom);
@@ -159,14 +191,13 @@ export const addEdit = atom<null, [MacroConnectomeEditEntry], Promise<void>>(
   }
 );
 
-export const deleteEdits = atom<null, [number[]], Promise<void>>(
+export const deleteEditsAtom = atom<null, [number[]], Promise<void>>(
   null,
   async (get, set, editIdxs) => {
-    const currentMatrix = await get(connectivityStrengthMatrixAtom);
-    const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
+    const initialMatrix = await get(initialConnectivityStrengthMatrixAtom);
     const edits = await get(editsAtom);
 
-    if (!currentMatrix || !remoteMatrix || !edits) {
+    if (!initialMatrix || !edits) {
       throw new Error(
         'Trying to set connectivity matrix edits while the state has not been initialized'
       );
@@ -178,7 +209,7 @@ export const deleteEdits = atom<null, [number[]], Promise<void>>(
 
     const updatedEdits = edits.filter((edit, idx) => !editIdxs.includes(idx));
 
-    const matrix = currentMatrix === remoteMatrix ? structuredClone(currentMatrix) : currentMatrix;
+    const matrix = structuredClone(initialMatrix);
 
     updatedEdits.forEach((edit) => applyEdit(matrix, edit));
 

@@ -194,16 +194,20 @@ export function createResource<T extends EntityResource>(
   }).then<T>((res) => res.json());
 }
 
-export async function updateResource(resource: Entity, rev: number, session: Session) {
+export function updateResource(
+  resource: Entity,
+  rev: number,
+  session: Session
+): Promise<EntityResource> {
   const id = resource['@id'];
 
   const url = composeUrl('resource', id, { rev, sync: true });
 
-  await fetch(url, {
+  return fetch(url, {
     method: 'PUT',
     headers: createHeaders(session.accessToken),
     body: JSON.stringify(resource),
-  });
+  }).then((res) => res.json());
 }
 
 export function queryES<T>(query: Record<string, any>, session: Session) {
