@@ -53,14 +53,20 @@ function NavTitle({
       <div className="py-3 flex justify-between items-center">
         <div className="flex gap-2 justify-between items-center">
           {checkbox}
-          <span
-            className={classNames(
-              'font-bold mr-auto text-left text-white whitespace-pre-wrap',
-              className
-            )}
+          <button
+            type="button"
+            className="h-auto border-none flex gap-3 justify-end items-center"
+            onClick={onClick}
           >
-            {title}
-          </span>
+            <span
+              className={classNames(
+                'font-bold mr-auto text-left text-white whitespace-pre-wrap',
+                className
+              )}
+            >
+              {title}
+            </span>
+          </button>
         </div>
 
         <div className="-mr-[4px] flex gap-2 justify-between items-center">
