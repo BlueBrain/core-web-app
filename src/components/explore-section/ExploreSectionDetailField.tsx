@@ -4,7 +4,6 @@ import { classNames } from '@/util/utils';
 export type ExploreSectionDetailFieldProps = {
   title: string | React.ReactElement;
   field?: string | string[] | number | React.ReactElement | null;
-  textAfterField?: string;
   className?: string;
 };
 
@@ -18,7 +17,6 @@ const serializeField = (field: string | string[] | number | React.ReactElement) 
 export default function ExploreSectionDetailField({
   title,
   field,
-  textAfterField,
   className,
 }: ExploreSectionDetailFieldProps) {
   return (
@@ -26,7 +24,6 @@ export default function ExploreSectionDetailField({
       <div className="text-xs uppercase text-neutral-4">{title}</div>
       <div className="mt-3">
         <span>{field && serializeField(field)}</span>
-        {field && textAfterField && <span className="text-neutral-4"> {textAfterField}</span>}
       </div>
     </div>
   );

@@ -1,19 +1,27 @@
 import { Session } from 'next-auth';
+import template from 'lodash/template';
 
+import {
+  convertExpDesConfigToSimVariables,
+  cloneWorkflowMetaConfigs,
+  customRangeDelimeter,
+} from './simulationHelper';
 import {
   BBP_WORKFLOW_AUTH_URL,
   BBP_WORKFLOW_TASK_PATH,
   WORKFLOW_TEST_TASK_NAME,
   WorkflowFile,
   PLACEHOLDERS,
+  SimulationPlaceholders,
 } from '@/services/bbp-workflow/config';
-import type { DetailedCircuitResource } from '@/types/nexus';
 import {
   UNICORE_JOB_CONFIG,
   UNICORE_FILES,
   PLACEHOLDERS as UNICORE_PLACEHOLDERS,
 } from '@/services/unicore/config';
 import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
+import { DetailedCircuitResource } from '@/types/nexus';
+import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
 
 export function getWorkflowAuthUrl(username: string) {
   return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
@@ -44,29 +52,38 @@ function generateFormData(replacedConfigFiles: WorkflowFile[]): FormData {
   return data;
 }
 
-export function getSimulationTaskFiles(
+export async function getSimulationTaskFiles(
   workflowFiles: WorkflowFile[],
-  circuit: DetailedCircuitResource | null,
-  variantActivityUrl: string
-): WorkflowFile[] {
-  if (!circuit) return workflowFiles;
-
-  let replacedFile = replacePlaceholdersInFile(
-    workflowFiles,
-    'simulation.cfg',
-    PLACEHOLDERS.CIRCUIT_URL,
-    // eslint-disable-next-line no-underscore-dangle
-    circuit._self
+  circuitInfo: DetailedCircuitResource | null,
+  extraVariablesToReplace: Record<string, any>,
+  session: Session
+): Promise<WorkflowFile[]> {
+  const variantActivityConfigUrl = await getVariantTaskConfigUrlFromCircuit(
+    circuitInfo as DetailedCircuitResource,
+    session
   );
 
-  replacedFile = replacePlaceholdersInFile(
-    workflowFiles,
-    'simulation.cfg',
-    PLACEHOLDERS.VARIANT_TASK_ACTIVITY,
-    variantActivityUrl
-  );
+  let extraVariables = structuredClone(extraVariablesToReplace);
 
-  return replacedFile;
+  extraVariables[SimulationPlaceholders.VARIANT_TASK_ACTIVITY] = variantActivityConfigUrl;
+
+  extraVariables = { ...convertExpDesConfigToSimVariables(extraVariables) };
+
+  // workaround to remove the string on the placeholders to be SONATA compatible
+  const templateReplaceRegexp = new RegExp(`"${customRangeDelimeter}(.+?)"`, 'gm');
+
+  extraVariables = {
+    ...(await cloneWorkflowMetaConfigs(extraVariables, templateReplaceRegexp, session)),
+  };
+
+  const replacedFiles = structuredClone(workflowFiles).map((file) => {
+    const modifiedFile = file;
+    modifiedFile.CONTENT = template(modifiedFile.CONTENT)(extraVariables);
+    modifiedFile.CONTENT = modifiedFile.CONTENT.replace(templateReplaceRegexp, '$1');
+    return modifiedFile;
+  });
+
+  return replacedFiles;
 }
 
 export function getCircuitBuildingTaskFiles(

@@ -11,9 +11,15 @@ type Props = {
   paramAtom: PrimitiveAtom<ExpDesignerTargetParameter>;
   className?: string;
   onChangeParamType?: () => void;
+  showSwitcher?: boolean;
 };
 
-export default function TargetSelector({ paramAtom, className, onChangeParamType }: Props) {
+export default function TargetSelector({
+  paramAtom,
+  className,
+  onChangeParamType,
+  showSwitcher = true,
+}: Props) {
   const [data, setData] = useAtom(paramAtom);
 
   const setSimulateTarget = (target: string) => {
@@ -27,7 +33,7 @@ export default function TargetSelector({ paramAtom, className, onChangeParamType
     <div className={classNames('flex gap-3 items-center font-bold', className)}>
       <div className="grow">Simulated Neurons</div>
       <TargetsDropdown onChange={setSimulateTarget} defaultValue={data.value} />
-      <ExportOutlined onClick={onChangeParamType} />
+      {showSwitcher && <ExportOutlined onClick={onChangeParamType} />}
     </div>
   );
 }

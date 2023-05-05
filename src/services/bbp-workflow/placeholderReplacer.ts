@@ -2,7 +2,6 @@
 
 import { Session } from 'next-auth';
 
-import cloneWorkflowMetaConfigsAndReplace from './clone-workflow-configs';
 import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
   WORKFLOW_SIMULATION_TASK_NAME,
@@ -19,7 +18,6 @@ import {
 } from '@/services/bbp-workflow';
 import { GROUPS as EXECUTION_GROUPS, CellCompositionStepGroupValues } from '@/state/build-status';
 import { BrainModelConfigResource, DetailedCircuitResource } from '@/types/nexus';
-import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
 
 function getCircuitUrl(config: BrainModelConfigResource | null): string {
   if (!config?._self) return '';
@@ -31,7 +29,8 @@ async function generateWorkflowConfig(
   circuitInfo: DetailedCircuitResource | null,
   stepsToBuild: CellCompositionStepGroupValues[],
   config: BrainModelConfigResource,
-  session: Session
+  session: Session,
+  extraVariablesToReplace: Record<string, any>
 ): Promise<WorkflowFile[]> {
   let replacedConfigFiles: WorkflowFile[] = [];
 
@@ -39,17 +38,10 @@ async function generateWorkflowConfig(
 
   switch (workflowName) {
     case WORKFLOW_SIMULATION_TASK_NAME: {
-      const variantActivityConfigUrl = await getVariantTaskConfigUrlFromCircuit(
-        circuitInfo as DetailedCircuitResource,
-        session
-      );
-      replacedConfigFiles = getSimulationTaskFiles(
+      replacedConfigFiles = await getSimulationTaskFiles(
         SIMULATION_FILES,
         circuitInfo,
-        variantActivityConfigUrl
-      );
-      replacedConfigFiles[0].CONTENT = await cloneWorkflowMetaConfigsAndReplace(
-        replacedConfigFiles[0].CONTENT,
+        extraVariablesToReplace,
         session
       );
       break;

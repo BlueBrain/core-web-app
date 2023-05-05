@@ -3,7 +3,6 @@
 import { Key, Suspense, useEffect } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { useSession } from 'next-auth/react';
-import { format, parseISO } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 import Error from 'next/error';
 import { loadable } from 'jotai/utils';
@@ -18,6 +17,7 @@ import ExploreSectionDetailField, {
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { ensureArray } from '@/util/nexus';
+import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 
 const { infoAtom, detailAtom, latestRevisionAtom } = createDetailAtoms();
 
@@ -30,17 +30,8 @@ function LayerThicknessDetailHeader({
   url?: string | null;
   latestRevision: number | null;
 }) {
-  if (!detail) return <>Not Found</>;
-
-  const thickness = detail?.series?.find(
-    ({ statistic }: { statistic: string }) => statistic === 'mean'
-  );
-  const thicknessField = {
-    className: 'col-span-2',
-    title: 'Thickness',
-    field: thickness?.value,
-    textAfterField: thickness?.unitCode,
-  };
+  const { description, brainRegion, species, creationDate, thickness } =
+    useExploreSerializedFields(detail);
 
   const contributors = ensureArray(detail?.contribution).reduce(
     (acc, cur) => [...acc, cur?.agent?.['@id']],
@@ -62,24 +53,26 @@ function LayerThicknessDetailHeader({
     [
       {
         title: 'Description',
-        field: detail?.description,
+        field: description,
         className: 'col-span-2 row-span-2',
       },
       {
         title: 'Brain Region',
-        field: detail?.brainLocation?.brainRegion?.label,
+        field: brainRegion,
       },
       {
         title: 'Species',
-        field: detail?.subject?.species?.label,
+        field: species,
       },
-      thicknessField,
+      {
+        className: 'col-span-2',
+        title: 'Thickness',
+        field: thickness,
+      },
       contributionField,
       {
         title: 'Added',
-        field: detail?._createdAt && (
-          <div className="mt-3">{format(parseISO(detail?._createdAt), 'dd.MM.yyyy')}</div>
-        ),
+        field: creationDate,
       },
       {
         title: 'Licence',
@@ -92,7 +85,6 @@ function LayerThicknessDetailHeader({
       className={field.className}
       title={field.title}
       field={field.field}
-      textAfterField={field.textAfterField}
     />
   ));
 
