@@ -32,6 +32,7 @@ import { applySwapFunction } from '@/components/experiment-designer/utils';
 
 function StimulationBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
   const [param, setParam] = useAtom(paramAtom);
+  const columnStyle = `${defaultColumnStyle} w-1/2`;
 
   const changed = () => {
     const newSwapParam = applySwapFunction(param);
@@ -123,8 +124,8 @@ function StimulationBlock({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerP
 
   return (
     <div className="flex">
-      <div className={defaultColumnStyle}>{constantCol}</div>
-      <div className={defaultColumnStyle}>{sweepCol}</div>
+      <div className={columnStyle}>{constantCol}</div>
+      <div className={columnStyle}>{sweepCol}</div>
     </div>
   );
 }

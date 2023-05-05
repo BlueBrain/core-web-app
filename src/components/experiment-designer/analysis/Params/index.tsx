@@ -14,6 +14,7 @@ import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experi
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
+  const columnStyle = `${defaultColumnStyle} w-full`;
 
   let constantCol;
   switch (param.type) {
@@ -31,7 +32,7 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesigne
       break;
   }
 
-  return <div className={defaultColumnStyle}>{constantCol}</div>;
+  return <div className={columnStyle}>{constantCol}</div>;
 }
 
 type Props = {

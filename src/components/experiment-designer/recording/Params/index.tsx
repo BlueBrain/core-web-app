@@ -22,6 +22,7 @@ import { getNewRecordingObj } from '@/components/experiment-designer/defaultNewO
 
 function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const param = useAtomValue<ExpDesignerParam>(paramAtom);
+  const columnStyle = `${defaultColumnStyle} w-full`;
 
   let constantCol;
   switch (param.type) {
@@ -61,7 +62,7 @@ function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
       break;
   }
 
-  return <div className={defaultColumnStyle}>{constantCol}</div>;
+  return <div className={columnStyle}>{constantCol}</div>;
 }
 
 type Props = {
