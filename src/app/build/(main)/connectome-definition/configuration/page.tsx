@@ -16,14 +16,14 @@ import {
   MatrixModificationHistoryList,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
-import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
+import { HemisphereDirection } from '@/types/connectome';
 import {
   connectivityStrengthMatrixLoadableAtom,
-  editsAtom,
+  editsLoadableAtom,
 } from '@/state/brain-model-config/macro-connectome';
 import { addEditAtom, deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
-
+import useLoadable from '@/components/connectome-definition/hooks';
 import styles from '../connectome-definition.module.css';
 
 interface Rect extends Partial<Shape> {
@@ -39,21 +39,14 @@ function ConnectomeDefinitionMain() {
   const addEdit = useSetAtom(addEditAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
-
-  const [connectivityMatrix, setConnectivityMatrix] = useState<WholeBrainConnectivityMatrix>();
-
-  useEffect(() => {
-    if (connectivityMatrixLoadable.state !== 'hasData' || !connectivityMatrixLoadable.data) return;
-
-    setConnectivityMatrix(connectivityMatrixLoadable.data);
-  }, [connectivityMatrixLoadable]);
+  const connectivityMatrix = useLoadable(connectivityMatrixLoadable, null);
 
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [editName, setEditName] = useState('');
-  const edits = useAtomValue(editsAtom);
+  const edits = useLoadable(useAtomValue(editsLoadableAtom), []);
   const [currentEdit, setCurrentEdit] = useState<number | null>(null);
   const deleteEdits = useSetAtom(deleteEditsAtom);
 
