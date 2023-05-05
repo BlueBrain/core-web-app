@@ -19,7 +19,7 @@ import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util'
 import DensityChart from './DensityChart';
 import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
-import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';

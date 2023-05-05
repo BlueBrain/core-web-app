@@ -5,7 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import { ExperimentDesignerTopTabs, SaveBtn, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
-import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
 

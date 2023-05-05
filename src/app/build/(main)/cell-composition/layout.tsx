@@ -10,7 +10,7 @@ import {
   ExpandedRegionDetailsSidebar,
 } from '@/components/build-section/BrainRegionSelector';
 import { extraPanelContainerAtom } from '@/state/build-section/layout';
-import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import CellCompositionTabs from '@/components/CellCompositionTabs';
 
 type CellCompositionLayoutProps = {

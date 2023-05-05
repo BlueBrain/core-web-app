@@ -5,7 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
 
-import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import Link from '@/components/Link';
 import { campaignNameAtom, campaignDescriptionAtom } from '@/state/experiment-designer';
 
