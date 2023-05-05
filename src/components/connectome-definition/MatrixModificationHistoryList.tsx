@@ -1,17 +1,26 @@
+import { useEffect, useState } from 'react';
 import { RollbackOutlined } from '@ant-design/icons';
-import { useSetAtom } from 'jotai';
-import { MacroConnectomeEditEntry as Edit } from '@/types/connectome';
+import { useSetAtom, useAtomValue } from 'jotai';
 
-import { deleteEdits as deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import { MacroConnectomeEditEntry as Edit } from '@/types/connectome';
+import { deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import { editsLoadableAtom } from '@/state/brain-model-config/macro-connectome';
 
 export default function MatrixModificationHistoryList({
-  edits,
   setCurrentEdit,
 }: {
-  edits: Edit[];
   setCurrentEdit: (i: number) => void;
 }) {
+  const editsLoadable = useAtomValue(editsLoadableAtom);
   const deleteEdits = useSetAtom(deleteEditsAtom);
+
+  const [edits, setEdits] = useState<Edit[]>([]);
+
+  useEffect(() => {
+    if (editsLoadable.state !== 'hasData' || !editsLoadable.data) return;
+
+    setEdits(editsLoadable.data);
+  }, [editsLoadable]);
 
   return (
     <div>

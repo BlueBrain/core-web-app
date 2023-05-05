@@ -2,7 +2,7 @@
 
 import { WarningOutlined } from '@ant-design/icons';
 
-export function SimpleErrorComponent({ error }: { error: Error }) {
+function SimpleErrorComponent({ error }: { error: Error }) {
   return (
     <div className="h-full w-full flex flex-col gap-5 items-center p-4 justify-center">
       <div className="text-2xl flex gap-2">

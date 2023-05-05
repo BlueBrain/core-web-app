@@ -10,7 +10,7 @@ import BrainConfigPanel from '@/components/BrainConfigPanel';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import TopTabs from '@/components/TopTabs';
 import useAuth from '@/hooks/auth';
-import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import ConnectomeEditorSidebar from '@/components/ConnectomeEditorSidebar';
 import { extraPanelContainerAtom } from '@/state/build-section/layout';

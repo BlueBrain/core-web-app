@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import useAuth from '@/hooks/auth';
-import { SimpleErrorComponent } from '@/components/GenericErrorFallback';
+import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 type GenericLayoutProps = {
   children: ReactNode;

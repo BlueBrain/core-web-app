@@ -7,9 +7,9 @@ import {
   SortState,
 } from '@/types/explore-section';
 import { Filter } from '@/components/Filter/types';
-import getDataQuery from '@/queries/explore-section/data';
+import fetchDataQuery from '@/queries/explore-section/data';
 import sessionAtom from '@/state/session';
-import getData from '@/api/explore-section';
+import fetchEsResourcesByType from '@/api/explore-section';
 
 interface DataQueryParams {
   type: string;
@@ -37,7 +37,7 @@ const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => 
     const pageSize = get(pageSizeAtom);
     const sortState = get(sortStateAtom);
     const filters = get(filtersAtom);
-    return getDataQuery(pageSize, pageNumber, filters, type, sortState, searchString);
+    return fetchDataQuery(pageSize, pageNumber, filters, type, sortState, searchString);
   });
 
   const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => {
@@ -46,12 +46,11 @@ const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => 
 
     if (!session) return null;
 
-    return getData(session.accessToken, query);
+    return fetchEsResourcesByType(session.accessToken, query);
   });
 
   const dataAtom = atom<Promise<ExploreSectionResource[] | undefined>>(async (get) => {
     const { hits } = (await get(queryResponseAtom)) ?? {};
-
     return hits;
   });
 

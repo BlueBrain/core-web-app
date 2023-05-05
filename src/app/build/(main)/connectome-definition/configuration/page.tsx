@@ -16,15 +16,12 @@ import {
   MatrixModificationHistoryList,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
-import { HemisphereDirection } from '@/types/connectome';
+import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import {
-  connectivityStrengthMatrixAtom,
+  connectivityStrengthMatrixLoadableAtom,
   editsAtom,
 } from '@/state/brain-model-config/macro-connectome';
-import {
-  addEdit as addEditAtom,
-  deleteEdits as deleteEditsAtom,
-} from '@/state/brain-model-config/macro-connectome/setters';
+import { addEditAtom, deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 
 import styles from '../connectome-definition.module.css';
@@ -38,16 +35,25 @@ interface Rect extends Partial<Shape> {
 
 function ConnectomeDefinitionMain() {
   const area = useAtomValue(brainAreaAtom);
-  const connectivityMatrix = useAtomValue(connectivityStrengthMatrixAtom);
-  const edits = useAtomValue(editsAtom);
+  const connectivityMatrixLoadable = useAtomValue(connectivityStrengthMatrixLoadableAtom);
   const addEdit = useSetAtom(addEditAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
+
+  const [connectivityMatrix, setConnectivityMatrix] = useState<WholeBrainConnectivityMatrix>();
+
+  useEffect(() => {
+    if (connectivityMatrixLoadable.state !== 'hasData' || !connectivityMatrixLoadable.data) return;
+
+    setConnectivityMatrix(connectivityMatrixLoadable.data);
+  }, [connectivityMatrixLoadable]);
+
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [editName, setEditName] = useState('');
+  const edits = useAtomValue(editsAtom);
   const [currentEdit, setCurrentEdit] = useState<number | null>(null);
   const deleteEdits = useSetAtom(deleteEditsAtom);
 
@@ -56,6 +62,7 @@ function ConnectomeDefinitionMain() {
   const [select, setSelect] = useState(false);
   const [unselect, setUnselect] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+
   const histogramRef = useRef<HTMLDivElement>(null);
   const [histogramInitialized, setHistogramInitialized] = useState(false);
   const lineChartRef = useRef<HTMLDivElement>(null);
@@ -314,7 +321,7 @@ function ConnectomeDefinitionMain() {
           <>
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList edits={edits} setCurrentEdit={setCurrentEdit} />
+            <MatrixModificationHistoryList setCurrentEdit={setCurrentEdit} />
           </>
         )}
       </div>

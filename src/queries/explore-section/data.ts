@@ -3,7 +3,7 @@ import { createSearchStringQueryFilter } from '@/queries/es';
 import { Filter } from '@/components/Filter/types';
 import buildAggregations from '@/queries/explore-section/aggregations';
 
-export default function getDataQuery(
+export default function fetchDataQuery(
   size: number,
   currentPage: number,
   filters: Filter[],

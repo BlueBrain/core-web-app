@@ -94,7 +94,7 @@ export const ES_TERMS: { [key: string]: { term: string; title: string } } = {
   },
   createdAt: {
     term: 'createdAt',
-    title: 'Created at',
+    title: 'Created on',
   },
   updatedAt: {
     term: 'updatedAt',

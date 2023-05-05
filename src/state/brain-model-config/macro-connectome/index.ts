@@ -1,7 +1,7 @@
 'use client';
 
 import { atom } from 'jotai';
-import { selectAtom } from 'jotai/utils';
+import { loadable, selectAtom } from 'jotai/utils';
 import { tableFromIPC, Table } from '@apache-arrow/es5-cjs';
 
 import { macroConnectomeConfigIdAtom } from '..';
@@ -25,6 +25,7 @@ import {
 } from '@/api/nexus';
 import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import { getFlatArrayValueIdx } from '@/util/connectome';
+import { setRevision } from '@/util/nexus';
 
 export const refetchCounterAtom = atom<number>(0);
 
@@ -63,7 +64,9 @@ export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => 
 
   if (!session || !configPayloadUrl) return null;
 
-  const metadata = await fetchFileMetadataByUrl(configPayloadUrl, session);
+  const configPayloadBaseUrl = setRevision(configPayloadUrl, null);
+
+  const metadata = await fetchFileMetadataByUrl(configPayloadBaseUrl, session);
 
   return metadata._rev;
 });
@@ -119,7 +122,7 @@ export const initialConnectivityStrengthTableAtom = atom<Promise<Table | null>>(
   );
 });
 
-const connectivityStrengthOverridesEntityAtom = atom<
+export const connectivityStrengthOverridesEntityAtom = atom<
   Promise<WholeBrainConnectomeStrengthResource | null>
 >(async (get) => {
   const session = get(sessionAtom);
@@ -130,6 +133,37 @@ const connectivityStrengthOverridesEntityAtom = atom<
   const { id, rev } = configPayload.overrides.connection_strength;
 
   return fetchResourceById(id, session, { rev });
+});
+
+export const connectivityStrengthOverridesEntityRevAtom = atom<Promise<number | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const connectivityStrengthOverridesEntity = await get(connectivityStrengthOverridesEntityAtom);
+
+    get(refetchCounterAtom);
+
+    if (!session || !connectivityStrengthOverridesEntity) return null;
+
+    const metadata = await fetchResourceById<WholeBrainConnectomeStrengthResource>(
+      connectivityStrengthOverridesEntity['@id'],
+      session
+    );
+
+    return metadata._rev;
+  }
+);
+
+export const connectivityStrengthOverridesEntitySourceAtom = atom<
+  Promise<WholeBrainConnectomeStrengthResource | null>
+>(async (get) => {
+  const session = get(sessionAtom);
+  const configPayload = await get(remoteConfigPayloadAtom);
+
+  if (!session || !configPayload) return null;
+
+  const { id, rev } = configPayload.overrides.connection_strength;
+
+  return fetchResourceSourceById(id, session, { rev });
 });
 
 export const connectivityStrengthOverridesPayloadUrlAtom = selectAtom(
@@ -148,7 +182,9 @@ export const connectivityStrengthOverridesPayloadRevAtom = atom<Promise<number |
 
     if (!session || !connectivityStrengthOverridesPayloadUrl) return null;
 
-    const metadata = await fetchFileMetadataByUrl(connectivityStrengthOverridesPayloadUrl, session);
+    const payloadBaseUrl = setRevision(connectivityStrengthOverridesPayloadUrl);
+
+    const metadata = await fetchFileMetadataByUrl(payloadBaseUrl, session);
 
     return metadata._rev;
   }
@@ -165,7 +201,7 @@ const connectivityStrengthOverridesTableAtom = atom<Promise<Table | null>>(async
   );
 });
 
-export const remoteConnectivityStrengthMatrixAtom = atom<
+export const initialConnectivityStrengthMatrixAtom = atom<
   Promise<WholeBrainConnectivityMatrix | null>
 >(async (get) => {
   const brainRegionLeaveIdxByNotationMap = await get(brainRegionLeaveIdxByNotationMapAtom);
@@ -198,6 +234,30 @@ export const remoteConnectivityStrengthMatrixAtom = atom<
     matrix[record.side as HemisphereDirection][idx] = record.value;
   });
 
+  return matrix;
+});
+
+export const remoteConnectivityStrengthMatrixAtom = atom<
+  Promise<WholeBrainConnectivityMatrix | null>
+>(async (get) => {
+  const brainRegionLeaveIdxByNotationMap = await get(brainRegionLeaveIdxByNotationMapAtom);
+  const initialConnectivityStrengthTable = await get(initialConnectivityStrengthTableAtom);
+  const connectivityStrengthOverridesTable = await get(connectivityStrengthOverridesTableAtom);
+
+  const initialMatrix = await get(initialConnectivityStrengthMatrixAtom);
+
+  if (
+    !initialMatrix ||
+    !brainRegionLeaveIdxByNotationMap ||
+    !initialConnectivityStrengthTable ||
+    !connectivityStrengthOverridesTable
+  )
+    return null;
+
+  const totalLeaves = brainRegionLeaveIdxByNotationMap.size;
+
+  const matrix = structuredClone(initialMatrix);
+
   connectivityStrengthOverridesTable.toArray().forEach((record) => {
     const srcIdx = brainRegionLeaveIdxByNotationMap.get(record.source_region) as number;
     const dstIdx = brainRegionLeaveIdxByNotationMap.get(record.target_region) as number;
@@ -226,10 +286,14 @@ export const connectivityStrengthMatrixAtom = atom<Promise<WholeBrainConnectivit
   }
 );
 
+export const connectivityStrengthMatrixLoadableAtom = loadable(connectivityStrengthMatrixAtom);
+
 export const editsAtom = selectAtom(
   configPayloadAtom,
   (configPayload) => configPayload?._ui_data?.editHistory ?? []
 );
+
+export const editsLoadableAtom = loadable(editsAtom);
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(
   async (get) => {

@@ -18,7 +18,7 @@ function MorphoWrapper({
   onPolylineClick: VoidFunction;
 }) {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full gap-3">
       <div className="flex flex-col gap-3">
         <h1 className="font-bold text-primary-9 text-lg">Morphology 3D Viewer</h1>
         <Button className="w-fit" size="small" disabled={loading} onClick={onPolylineClick}>

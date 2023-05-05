@@ -22,7 +22,6 @@ const {
 const columnKeys = [
   'brainRegion',
   'mType',
-  'boutonDensity',
   'sem',
   'ncells',
   'subjectSpecies',
