@@ -6,7 +6,6 @@ import { createNexusClient } from '@bbp/nexus-sdk';
 import { useSession } from 'next-auth/react';
 import { format, parseISO } from 'date-fns';
 import find from 'lodash/find';
-import { useSearchParams } from 'next/navigation';
 import { loadable } from 'jotai/utils';
 import Error from 'next/error';
 import usePathname from '@/hooks/pathname';
@@ -102,15 +101,13 @@ function EphysDetail() {
   const loadableDetails = useMemo(() => loadable(detailAtom), []);
   const detail = useAtomValue(loadableDetails);
   const setInfo = useSetAtom(infoAtom);
-  const params = useSearchParams();
-  const rev = params?.get('rev');
 
   const latestRevision = useAtomValue(latestRevisionAtom);
 
-  useEffect(() => setInfoWithPath(path, setInfo, rev), [path, rev, setInfo]);
+  useEffect(() => setInfoWithPath(path, setInfo), [path, setInfo]);
 
   const links: Array<SideLink> = [
-    { url: '/explore/electrophysiology', title: 'Neuron Morphology' },
+    { url: '/explore/electrophysiology', title: 'Neuron Electrophysiology' },
   ];
 
   if (detail.state === 'hasError') {

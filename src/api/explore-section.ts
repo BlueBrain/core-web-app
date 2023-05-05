@@ -36,7 +36,7 @@ const serializeContributors = (contributors: ContributorsEntity[] | null | undef
   return contributors[0].label;
 };
 
-async function getData(accessToken: string, dataQuery: object) {
+export default async function fetchEsResourcesByType(accessToken: string, dataQuery: object) {
   if (!accessToken) throw new Error('Access token should be defined');
 
   return fetch(API_SEARCH, {
@@ -72,4 +72,3 @@ async function getData(accessToken: string, dataQuery: object) {
       aggs: data.aggregations,
     }));
 }
-export default getData;

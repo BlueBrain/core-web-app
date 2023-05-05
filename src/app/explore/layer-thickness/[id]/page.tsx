@@ -38,8 +38,8 @@ function LayerThicknessDetailHeader({
   const thicknessField = {
     className: 'col-span-2',
     title: 'Thickness',
-    field: thickness.value,
-    textAfterField: thickness.unitCode,
+    field: thickness?.value,
+    textAfterField: thickness?.unitCode,
   };
 
   const contributors = ensureArray(detail?.contribution).reduce(

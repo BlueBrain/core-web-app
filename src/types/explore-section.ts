@@ -31,6 +31,12 @@ export interface Campaign {
   tags?: string[];
 }
 
+interface LabelUnitValue {
+  label: string;
+  unit: string;
+  value: number;
+}
+
 export interface ExploreSectionResource extends OptionalExploreSectionFields {
   key: React.Key | string;
   self: string;
@@ -41,9 +47,17 @@ export interface ExploreSectionResource extends OptionalExploreSectionFields {
   contributors: string;
   createdAt: string;
   brainRegion: string;
-  mType?: string;
-  eType?: string;
+  mtype?: string;
+  etype?: string;
+  boutonDensity?: LabelUnitValue;
+  image?: ImageEntity[] | null;
 }
+
+type Series = {
+  statistic: string;
+  unitCode: string;
+  value: number;
+};
 
 export interface OptionalExploreSectionFields {
   reference?: string;
@@ -145,20 +159,21 @@ export type DeltaResource<
   '@context'?: string[] | null;
   '@id': string;
   '@type'?: string[] | null;
-  reason?: string;
-  annotation?: AnnotationEntity[] | null;
   atlasRelease: AtlasSpatialReferenceSystemOrAtlasRelease;
   brainLocation: BrainLocation;
-  contribution?: ContributionEntity[] | null;
   description: string;
   distribution: Distribution;
-  image?: ImageEntity[] | null;
   isPartOf: AgentOrIsPartOfOrLicense;
   license: AgentOrIsPartOfOrLicense;
   name: string;
   objectOfStudy: ObjectOfStudy;
-  stimulus?: StimulusEntity[] | null;
   subject: Subject;
+  contribution?: ContributionEntity[] | null;
+  annotation?: AnnotationEntity[] | null;
+  stimulus?: StimulusEntity[] | null;
+  image?: ImageEntity[] | null;
+  series?: Series[];
+  reason?: string;
   _constrainedBy: string;
   _createdAt: string;
   _createdBy: string;
@@ -172,6 +187,12 @@ export type DeltaResource<
   _updatedAt: string;
   _updatedBy: string;
 };
+
+interface Weight {
+  maxValue: number;
+  minValue: number;
+  unitCode: string;
+}
 
 export interface AnnotationEntity {
   '@type'?: string[] | null;
@@ -243,8 +264,8 @@ export interface StimulusEntity {
 export interface Subject {
   '@type': string;
   species: BrainRegionOrStimulusTypeOrSpecies;
+  weight?: Weight;
 }
-
 export interface Bucket {
   key: string;
   doc_count: number;

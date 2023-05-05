@@ -36,7 +36,10 @@ export default function DetailHeaderName({
       <div className="flex gap-5 items-center">
         <div className="font-bold text-xl text-primary-7">{detail?.name}</div>
         <Dropdown menu={{ items }} placement="bottom" trigger={['click']}>
-          <Button className="flex gap-2 items-center text-primary-7" type="ghost">
+          <Button
+            className="flex gap-2 items-center text-primary-7 border px-4 py-2 rounded-none border-solid border-primary-7"
+            type="ghost"
+          >
             <span className="text-primary-7">
               Revision {detail._rev} {latestRevision === detail._rev ? '(latest)' : ''}
             </span>

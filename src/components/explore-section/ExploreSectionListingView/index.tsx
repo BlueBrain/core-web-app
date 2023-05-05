@@ -64,7 +64,7 @@ export default function ExploreSectionListingView({
                 className={styles.filterButton}
                 onClick={() => setOpenFiltersSidebar(!openFiltersSidebar)}
               >
-                <span className="bg-primary-1 text-primary-1 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
+                <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
                   0
                 </span>
                 <span>Filters</span>

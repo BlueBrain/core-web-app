@@ -25,7 +25,7 @@ export default function ExploreSectionDetailField({
     <div className={classNames('text-primary-7 text-xs mr-10', className)}>
       <div className="text-xs uppercase text-neutral-4">{title}</div>
       <div className="mt-3">
-        <span className="capitalize">{field && serializeField(field)}</span>
+        <span>{field && serializeField(field)}</span>
         {field && textAfterField && <span className="text-neutral-4"> {textAfterField}</span>}
       </div>
     </div>
