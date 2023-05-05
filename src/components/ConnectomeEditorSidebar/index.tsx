@@ -44,8 +44,8 @@ function NavTitle({
   let checkbox = null;
 
   if (multi && id && id !== '8') {
-    if (isLeaf) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} />;
-    else checkbox = <Checkbox checked={checked} indeterminate={indeterminate} />;
+    if (isLeaf) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} onClick={onClick} />;
+    else checkbox = <Checkbox checked={checked} indeterminate={indeterminate} onClick={onClick} />;
   }
 
   return (

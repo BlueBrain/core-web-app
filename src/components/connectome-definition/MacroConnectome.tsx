@@ -249,12 +249,17 @@ export default function MacroConnectome({
         const c1 = corner1.current;
         const c2 = corner2.current;
 
+        const x0 = Math.min(c1[0], c2[0]);
+        const y0 = Math.max(c1[1], c2[1]);
+        const x1 = Math.max(c2[0], c1[0]);
+        const y1 = Math.min(c2[1], c1[1]);
+
         shapes.current.push({
           type: 'rect',
-          x0: Math.min(c1[0], c2[0]),
-          y0: Math.max(c1[1], c2[1]),
-          x1: Math.max(c2[0], c1[0]),
-          y1: Math.min(c2[1], c1[1]),
+          x0,
+          y0,
+          x1,
+          y1,
           opacity: 0.5,
           fillcolor: 'green',
           line: {
@@ -263,9 +268,9 @@ export default function MacroConnectome({
         });
 
         const selectedCopy = new Set(selectedRef.current);
-        for (let x = c1[0]; x <= c2[0]; x += 1) {
-          for (let y = c2[1]; y <= c1[1]; y += 1) {
-            if (x >= c1[0] && x <= c2[0] && y <= c1[1] && y >= c2[1]) {
+        for (let x = x0; x <= x1; x += 1) {
+          for (let y = y0; y <= y1; y += 1) {
+            if (x >= x0 && x <= x1 && y <= y1 && y >= y0) {
               selectedCopy.add(
                 JSON.stringify([points[0].data.x[x], points[0].data.y[y], points[0].data.z[y][x]])
               );
@@ -342,7 +347,6 @@ export default function MacroConnectome({
             size: 8,
           },
           range: userChangedRegions ? undefined : container.layout.xaxis.range,
-          fixedrange: !zoom,
         },
         yaxis: {
           color: '#DCDCDC',
@@ -350,7 +354,6 @@ export default function MacroConnectome({
             size: 8,
           },
           range: userChangedRegions ? undefined : container.layout.yaxis.range,
-          fixedrange: !zoom,
         },
         shapes: shapes.current,
       },

@@ -7,24 +7,21 @@ import Plotly, { Shape } from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
 import { CloseOutlined } from '@ant-design/icons';
-import {
-  brainRegionLeaveIdxByNotationMapAtom,
-  selectedPostBrainRegionsAtom,
-  selectedPreBrainRegionsAtom,
-} from '@/state/brain-regions';
+import { brainRegionLeaveIdxByNotationMapAtom } from '@/state/brain-regions';
 import {
   GranularityTabs,
   ModeSwitch,
-  MatrixPreviewComponent,
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,
-  BrainRegionSelection,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
 import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
-import { connectivityStrengthMatrixLoadableAtom } from '@/state/brain-model-config/macro-connectome';
-import { addEditAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import {
+  connectivityStrengthMatrixLoadableAtom,
+  editsAtom,
+} from '@/state/brain-model-config/macro-connectome';
+import { addEditAtom, deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 
 import styles from '../connectome-definition.module.css';
@@ -38,9 +35,6 @@ interface Rect extends Partial<Shape> {
 
 function ConnectomeDefinitionMain() {
   const area = useAtomValue(brainAreaAtom);
-  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
-  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
-
   const connectivityMatrixLoadable = useAtomValue(connectivityStrengthMatrixLoadableAtom);
   const addEdit = useSetAtom(addEditAtom);
 
@@ -59,6 +53,9 @@ function ConnectomeDefinitionMain() {
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [editName, setEditName] = useState('');
+  const edits = useAtomValue(editsAtom);
+  const [currentEdit, setCurrentEdit] = useState<number | null>(null);
+  const deleteEdits = useSetAtom(deleteEditsAtom);
 
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
@@ -237,6 +234,41 @@ function ConnectomeDefinitionMain() {
         </ConfigProvider>
       )}
 
+      {currentEdit !== null && (
+        <ConfigProvider
+          theme={{
+            algorithm: theme.defaultAlgorithm,
+          }}
+        >
+          <div className={styles.sidePanel}>
+            <span className="font-bold text-lg">{edits[currentEdit].name}</span>
+            <CloseOutlined className="float-right" onClick={() => setCurrentEdit(null)} />
+
+            <div className="flex justify-between mb-3 mt-3">
+              Offset: {edits[currentEdit].offset}
+            </div>
+            <div className="flex justify-between">Multiplier: {edits[currentEdit].multiplier}</div>
+
+            <Button
+              onClick={() => {
+                const deletedEdits: number[] = [];
+                for (let j = currentEdit + 1; j < edits.length; j += 1) {
+                  deletedEdits.push(j);
+                }
+
+                if (deletedEdits.length === 0) return;
+                setCurrentEdit(null);
+                deleteEdits(deletedEdits);
+              }}
+              className="w-11/12"
+              type="primary"
+            >
+              Restore
+            </Button>
+          </div>
+        </ConfigProvider>
+      )}
+
       <div className={styles.granularityTabs}>
         <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
       </div>
@@ -287,21 +319,14 @@ function ConnectomeDefinitionMain() {
       <div className={styles.rightPanel}>
         {area === null && (
           <>
-            <MatrixPreviewComponent />
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList />
+            <MatrixModificationHistoryList setCurrentEdit={setCurrentEdit} />
           </>
         )}
       </div>
 
       <div className={styles.leftPanel} />
-
-      <BrainRegionSelection regions={preSynapticBrainRegions} area="pre" />
-
-      <div className={styles.footer}>
-        <BrainRegionSelection regions={postSynapticBrainRegions} area="post" />
-      </div>
     </>
   );
 }
