@@ -7,18 +7,13 @@ import Plotly, { Shape } from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
 import { CloseOutlined } from '@ant-design/icons';
-import {
-  brainRegionLeaveIdxByNotationMapAtom,
-  selectedPostBrainRegionsAtom,
-  selectedPreBrainRegionsAtom,
-} from '@/state/brain-regions';
+import { brainRegionLeaveIdxByNotationMapAtom } from '@/state/brain-regions';
 import {
   GranularityTabs,
   ModeSwitch,
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,
-  BrainRegionSelection,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
 import { HemisphereDirection } from '@/types/connectome';
@@ -43,9 +38,6 @@ interface Rect extends Partial<Shape> {
 
 function ConnectomeDefinitionMain() {
   const area = useAtomValue(brainAreaAtom);
-  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
-  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
-
   const connectivityMatrix = useAtomValue(connectivityStrengthMatrixAtom);
   const edits = useAtomValue(editsAtom);
   const addEdit = useSetAtom(addEditAtom);
@@ -328,12 +320,6 @@ function ConnectomeDefinitionMain() {
       </div>
 
       <div className={styles.leftPanel} />
-
-      <BrainRegionSelection regions={preSynapticBrainRegions} area="pre" />
-
-      <div className={styles.footer}>
-        <BrainRegionSelection regions={postSynapticBrainRegions} area="post" />
-      </div>
     </>
   );
 }
