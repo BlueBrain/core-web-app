@@ -61,11 +61,11 @@
 .sidePanel {
   position: absolute;
   right: 0;
-  height: 90%;
+  height: 98%;
   overflow: scroll;
-  top: 5%;
+  top: 0;
   background: white;
-  width: 20%;
+  width: 300px;
   z-index: 11;
   border-radius: 8px 0px 0px 8px;
   padding: 20px;

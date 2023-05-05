@@ -222,14 +222,31 @@ function ConnectomeDefinitionMain() {
               <InputNumber value={multiplier} step={0.01} onChange={handleMultiplierChange} />
             </div>
 
-            <div className="flex" style={{ marginTop: 10, marginBottom: 10 }}>
+            <div style={{ marginTop: 10, marginBottom: 10 }}>
               <div ref={histogramRef} />
-              <div ref={lineChartRef} style={{ marginTop: 11, marginLeft: 20 }} />
+              <div ref={lineChartRef} style={{ marginTop: 10 }} />
             </div>
 
-            <Button onClick={onClick} disabled={editName === ''} className="w-11/12" type="primary">
-              Save
-            </Button>
+            <div className="mt-3">
+              <Button
+                onClick={onClick}
+                disabled={editName === ''}
+                className="w-5/12"
+                type="primary"
+              >
+                Save
+              </Button>
+              <Button
+                onClick={() => {
+                  setSelected(new Set());
+                  shapes.current = [];
+                }}
+                className="w-5/12 ml-2"
+                type="primary"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </ConfigProvider>
       )}
