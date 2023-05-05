@@ -134,11 +134,14 @@ export default function Sidebar({ links }: SideLinkList) {
       </div>
       {links &&
         links.map((link) => (
-          <div key={link.url} className="bg-primary-8 text-light w-10 h-full">
+          <div
+            key={link.url}
+            className="bg-primary-8 text-light w-10 h-full flex items-start justify-center"
+          >
             <Link
               href={link.url}
-              className="block text-sm"
-              style={{ transform: 'translate(-37%, 100px) rotate(-90deg)', width: 'max-content' }}
+              className="whitespace-pre text-sm rotate-180 mt-7"
+              style={{ writingMode: 'vertical-rl' }}
             >
               {link.title}
             </Link>
