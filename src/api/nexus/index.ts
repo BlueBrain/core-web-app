@@ -541,15 +541,18 @@ export async function fetchGeneratorTaskActivity(
   return activities[0] ?? null;
 }
 
-export async function cloneWorkflowConfigResource(resourceUrl: string, session: Session) {
+export async function createWorkflowConfigResource(
+  resourceUrl: string,
+  fileContent: string,
+  session: Session
+) {
   const workflowConfigresource = await fetchJsonFileByUrl<BbpWorkflowConfigResource>(
     resourceUrl,
     session
   );
-  const originalFileUrl = workflowConfigresource.distribution.contentUrl;
-  const originalFileContent = await fetchTextFileByUrl(originalFileUrl, session);
+
   const clonedFile = await createTextFile(
-    originalFileContent,
+    fileContent,
     workflowConfigresource.distribution.name,
     session
   );

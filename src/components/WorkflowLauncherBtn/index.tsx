@@ -121,6 +121,7 @@ type Props = {
   onLaunchingChange?: any;
   className?: string;
   disabled?: boolean;
+  extraVariablesToReplace?: Record<string, any>;
 };
 
 export default function WorkflowLauncher({
@@ -129,6 +130,7 @@ export default function WorkflowLauncher({
   onLaunchingChange = () => {},
   className = '',
   disabled = false,
+  extraVariablesToReplace = {},
 }: Props) {
   const [launching, setLaunching] = useState(false);
   const { data: session } = useSession();
@@ -143,16 +145,18 @@ export default function WorkflowLauncher({
     if (!config) return;
     if (workflowName !== WORKFLOW_CIRCUIT_BUILD_TASK_NAME && !circuitInfo) return;
 
+    onLaunchingChange(true);
+    setLaunching(true);
+
     const workflowConfig = await generateWorkflowConfig(
       workflowName,
       circuitInfo,
       stepsToBuild,
       config,
-      session
+      session,
+      extraVariablesToReplace
     );
 
-    onLaunchingChange(true);
-    setLaunching(true);
     try {
       await launchUnicoreWorkflowSetup(session.accessToken);
 

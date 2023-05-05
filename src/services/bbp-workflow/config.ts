@@ -2,10 +2,8 @@ export const PLACEHOLDERS = {
   USERNAME: '{USERNAME}',
   TASK_NAME: '{TASK_NAME}',
   SIMULATION_URL: '{SIMULATION_URL}',
-  CIRCUIT_URL: '{CIRCUIT_URL}',
   CONFIG_URL: '{CONFIG_URL}',
   UUID: '{UUID}',
-  VARIANT_TASK_ACTIVITY: '{VARIANT_TASK_ACTIVITY}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
@@ -18,26 +16,110 @@ export const WORKFLOW_VIDEO_GENERATION_TASK_NAME =
 
 export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
 
-export const workflowMetaConfigs = {
+export enum SimulationPlaceholders {
+  VARIANT_TASK_ACTIVITY = 'VARIANT_TASK_ACTIVITY',
+  NODE_SETS = 'NODE_SETS',
+  SIMULATED_TARGET = 'SIMULATED_TARGET',
+  TIME_STEP = 'TIME_STEP',
+  FORWARD_SKIP = 'FORWARD_SKIP',
+  SEED = 'SEED',
+  DURATION = 'DURATION',
+  CALCIUM_CONCENTRATION = 'CALCIUM_CONCENTRATION',
+  REPORTS = 'REPORTS',
+  INPUTS = 'INPUTS',
+  GEN_SIM_CAMPAIGN_COORDS = 'GEN_SIM_CAMPAIGN_COORDS',
+  SIM_CAMPAIGN_NAME = 'SIM_CAMPAIGN_NAME',
+  SIM_CAMPAIGN_DESCRIPTION = 'SIM_CAMPAIGN_DESCRIPTION',
+}
+
+type WorkflowMetaConfigPlaceholders = Record<
+  string,
+  {
+    templateResourceUrl: string;
+    templateFile: string;
+    placeholder: string;
+  }
+>;
+
+export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
   GenSimCampaignMeta: {
-    templateUrl:
+    templateResourceUrl:
       'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/4142eca7-6544-4078-bbc4-0eb5d3ca9b29?rev=4',
-    placeholder: '{GenSimCampaignMeta}',
+    templateFile: `
+      [DEFAULT]
+      account: proj134
+
+      [GenSimCampaign]
+      name: <%= ${SimulationPlaceholders.SIM_CAMPAIGN_NAME} %>
+      description: <%= ${SimulationPlaceholders.SIM_CAMPAIGN_DESCRIPTION} %>
+
+      attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/project/%(account)s/scratch/sims",
+              "blue_config_template": "simulation_config.tmpl",
+              "user_target": "node_sets.json"}
+
+      seed-as-coord: {"low": 100000, "high": 400000, "size": 1}
+
+      coords: <%= ${SimulationPlaceholders.GEN_SIM_CAMPAIGN_COORDS} %>
+    `,
+    placeholder: 'GenSimCampaignMeta',
   },
   RunSimCampaignMeta: {
-    templateUrl:
+    templateResourceUrl:
       'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/_/12a16092-231b-4566-9847-00a1cc4ee7c6?rev=3',
-    placeholder: '{RunSimCampaignMeta}',
+    templateFile: `
+      [DEFAULT]
+      account: proj134
+
+      [RunSimCampaign]
+      simulation-type: CortexNrdmsPySim
+      nodes: 50
+
+      [CortexNrdmsPySim]
+      module-archive: unstable
+    `,
+    placeholder: 'RunSimCampaignMeta',
   },
   ReportSimCampaignMeta: {
-    templateUrl:
+    templateResourceUrl:
       'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/_/030469ed-07fa-427c-8df1-66437fac6930?rev=1',
-    placeholder: '{ReportSimCampaignMeta}',
+    templateFile: `
+      [DEFAULT]
+      account: proj134
+      
+      [ReportSimCampaign]
+      exclusive: True
+      mem: 0
+    `,
+    placeholder: 'ReportSimCampaignMeta',
   },
   VideoSimCampaignMeta: {
-    templateUrl:
+    templateResourceUrl:
       'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/e87eafbe-1e5c-46ac-9ac1-82eefc1ba02c?rev=2',
-    placeholder: '{VideoSimCampaignMeta}',
+    templateFile: `
+      [DEFAULT]
+      account: proj134
+
+      [VideoSimCampaign]
+      nodes: 20
+      populations: [{
+          "name": "root__neurons",
+          "report_type": "compartment",
+          "report_name": "soma",
+          "density": 0.01,
+          "radius_multiplier": 10,
+          "load_soma": true,
+          "load_dendrites": false,
+          "load_axon": false }]
+      resolution: [1920, 1080]
+      camera-type: perspective
+      camera-view: front
+      background-color: [1, 1, 1, 0]
+      fps: 25
+      slowing-factor: 100
+      start_frame: 0
+      end_frame: -1
+    `,
+    placeholder: 'VideoSimCampaignMeta',
   },
 };
 
@@ -47,6 +129,7 @@ export type WorkflowFile = {
   CONTENT: string;
 };
 
+// Modified based on https://bbpteam.epfl.ch/project/issues/browse/BBPP134-288
 export const SIMULATION_FILES: WorkflowFile[] = [
   {
     NAME: 'simulation.cfg',
@@ -56,19 +139,19 @@ export const SIMULATION_FILES: WorkflowFile[] = [
       kg-proj: mmb-point-neuron-framework-model
 
       [FindDetailedCircuitMeta]
-      config-url: ${PLACEHOLDERS.VARIANT_TASK_ACTIVITY}
+      config-url: <%= ${SimulationPlaceholders.VARIANT_TASK_ACTIVITY} %>
 
       [GenSimCampaignMeta]
-      config-url: ${workflowMetaConfigs.GenSimCampaignMeta.placeholder}
+      config-url: <%= ${workflowMetaConfigs.GenSimCampaignMeta.placeholder} %>
 
       [RunSimCampaignMeta]
-      config-url: ${workflowMetaConfigs.RunSimCampaignMeta.placeholder}
+      config-url: <%= ${workflowMetaConfigs.RunSimCampaignMeta.placeholder} %>
 
       [ReportSimCampaignMeta]
-      config-url: ${workflowMetaConfigs.ReportSimCampaignMeta.placeholder}
+      config-url: <%= ${workflowMetaConfigs.ReportSimCampaignMeta.placeholder} %>
 
       [VideoSimCampaignMeta]
-      config-url: ${workflowMetaConfigs.VideoSimCampaignMeta.placeholder}
+      config-url: <%= ${workflowMetaConfigs.VideoSimCampaignMeta.placeholder} %>
     `,
   },
   {
@@ -77,52 +160,24 @@ export const SIMULATION_FILES: WorkflowFile[] = [
     CONTENT: `
       {
         "version": 1,
-        "manifest": {"\\$OUTPUT_DIR": "./reporting"},
         "network": "$circuit_config",
-        "node_sets_file": "node_sets.json",
-        "node_set": "Mosaic",
+        "node_set": "<%= ${SimulationPlaceholders.SIMULATED_TARGET} %>",
         "target_simulator": "CORENEURON",
         "run": {
-          "dt": 0.025,
-          "forward_skip": 5000,
-          "random_seed": 0,
-          "tstop": $duration
+          "dt": <%= ${SimulationPlaceholders.TIME_STEP} %>,
+          "forward_skip": <%= ${SimulationPlaceholders.FORWARD_SKIP} %>,
+          "random_seed": <%= ${SimulationPlaceholders.SEED} %>,
+          "tstop": <%= ${SimulationPlaceholders.DURATION} %>
+        },
+        "conditions": {
+          "extracellular_calcium": <%= ${SimulationPlaceholders.CALCIUM_CONCENTRATION} %>
         },
         "output": {
-          "output_dir": "\\$OUTPUT_DIR",
-          "spikes_file": "out.h5",
-          "spikes_sort_order": "by_time"
+          "output_dir": "reporting",
+          "spikes_file": "spikes.h5"
         },
-        "reports": {
-          "soma": {
-            "cells": "Mosaic",
-            "variable_name": "v",
-            "sections": "soma",
-            "type": "compartment",
-            "dt": 0.1,
-            "compartments": "center",
-            "start_time": 0,
-            "end_time": $duration
-          }
-        },
-        "inputs": {
-          "holding_current": {
-            "module": "linear",
-            "input_type": "current_clamp",
-            "node_set": "Mosaic",
-            "amp_start": -0.03515624999999999,
-            "delay": 0.0,
-            "duration": $duration
-          },
-          "threshold_current": {
-            "module": "linear",
-            "input_type": "current_clamp",
-            "node_set": "Mosaic",
-            "amp_start": 0.35312774458632922,
-            "delay": 10.0,
-            "duration": $duration
-          }
-        }
+        "reports": <%= ${SimulationPlaceholders.REPORTS} %>,
+        "inputs": <%= ${SimulationPlaceholders.INPUTS} %>
       }
     `,
   },
@@ -134,25 +189,7 @@ export const SIMULATION_FILES: WorkflowFile[] = [
   {
     NAME: 'node_sets.json',
     TYPE: 'file',
-    CONTENT: `
-      {
-        "Mosaic": {
-          "population": "root__neurons"
-        },
-        "Mosaic_0": {
-          "population": "root__neurons",
-          "node_id": [
-            0
-          ]
-        },
-        "selection": {
-          "population": "root__neurons",
-          "node_id": [
-            0, 123, 456, 789, 1234, 5678
-          ]
-        }
-      }
-    `,
+    CONTENT: `<%= ${SimulationPlaceholders.NODE_SETS} %>`,
   },
 ];
 

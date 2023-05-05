@@ -52,7 +52,7 @@ export const targetListAtom = atom<Promise<string[]>>(async (get) => {
   return fetchTargetsByCircuit(detailedCircuit, session);
 });
 
-export const campaignNameAtom = atom<string>('My simulation campaign');
-export const campaignDescriptionAtom = atom<string>('Simulation campaign description');
+export const campaignNameAtom = atom('');
+export const campaignDescriptionAtom = atom('');
 
 export default expDesignerConfigAtom;
