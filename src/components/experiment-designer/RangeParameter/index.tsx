@@ -5,6 +5,7 @@ import { Slider, Collapse } from 'antd';
 import { ImportOutlined } from '@ant-design/icons';
 import type { SliderMarks } from 'antd/es/slider';
 import { PrimitiveAtom, useAtom } from 'jotai';
+import round from 'lodash/round';
 
 import Stepper from './Stepper';
 import type { ExpDesignerRangeParameter } from '@/types/experiment-designer';
@@ -37,9 +38,11 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
   const genExtra = () => <ImportOutlined onClick={onChangeParamType} />;
 
   const onSliderChange = ([newStart, newEnd]: [number, number]) => {
+    // increase max when end reaches max value
+    const newMax = newEnd === max ? round(max * 1.5, 2) : max;
     setMarks({
       [min]: min,
-      [max]: max,
+      [max]: newMax,
       [newStart]: newStart,
       [newEnd]: newEnd,
     });
@@ -50,6 +53,7 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
         ...oldAtomData.value,
         start: newStart,
         end: newEnd,
+        max: newMax,
       },
     }));
   };
