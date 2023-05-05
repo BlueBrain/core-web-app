@@ -342,7 +342,6 @@ export default function MacroConnectome({
             size: 8,
           },
           range: userChangedRegions ? undefined : container.layout.xaxis.range,
-          fixedrange: !zoom,
         },
         yaxis: {
           color: '#DCDCDC',
@@ -350,7 +349,6 @@ export default function MacroConnectome({
             size: 8,
           },
           range: userChangedRegions ? undefined : container.layout.yaxis.range,
-          fixedrange: !zoom,
         },
         shapes: shapes.current,
       },

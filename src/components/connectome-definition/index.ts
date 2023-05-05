@@ -5,7 +5,6 @@ import MatrixPreviewComponent from './MatrixPreviewComponent';
 import MatrixDisplayDropdown from './MatrixDisplayDropdown';
 import HemisphereDropdown from './HemisphereDropdown';
 import MatrixModificationHistoryList from './MatrixModificationHistoryList';
-import BrainRegionSelection from './BrainRegionSelection';
 
 export {
   GranularityTabs,
@@ -15,5 +14,4 @@ export {
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,
-  BrainRegionSelection,
 };
