@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { format, parseISO } from 'date-fns';
 import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 import Error from 'next/error';
@@ -16,6 +15,7 @@ import ExploreSectionDetailField from '@/components/explore-section/ExploreSecti
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
+import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 
 const { infoAtom, detailAtom, latestRevisionAtom } = createDetailAtoms();
 
@@ -28,23 +28,33 @@ function BoutonDensityHeader({
   url?: string | null;
   latestRevision: number | null;
 }) {
-  if (!detail) return <>Not Found</>;
+  const {
+    description,
+    mType,
+    brainRegion,
+    species,
+    meanPlusMinusStd,
+    creationDate,
+    createdBy,
+    sem,
+    weight,
+    numberOfMeasurement,
+  } = useExploreSerializedFields(detail);
+
   const infoFields = [
     {
       title: 'Description',
-      field: detail?.description,
+      field: description,
       className: 'col-span-3 row-span-2',
     },
     {
       title: 'Contributor',
-      field: detail?._createdBy?.split('/')?.pop(),
+      field: createdBy,
       className: 'col-span-1',
     },
     {
       title: 'Created on',
-      field: detail?._createdAt && (
-        <div className="mt-3">{format(parseISO(detail?._createdAt), 'dd.MM.yyyy')}</div>
-      ),
+      field: creationDate,
       className: 'col-span-1',
     },
     {
@@ -64,38 +74,37 @@ function BoutonDensityHeader({
   const metricFields = [
     {
       title: 'Brain region',
-      field: detail?.brainRegion?.label,
+      field: brainRegion,
       className: 'col-span-1',
     },
     {
       title: 'Mean ± STD',
-      field: detail?.boutonDensity?.value,
-      textAfterField: 'boutons / μm',
+      field: meanPlusMinusStd,
       className: 'col-span-1',
     },
     {
       title: 'Species',
-      field: detail?.subject?.species?.label,
+      field: species,
       className: 'col-span-1',
     },
     {
       title: 'M-Type',
-      field: detail?.mType?.label,
+      field: mType,
       className: 'col-span-1',
     },
     {
       title: 'SEM',
-      field: 'Not indexed',
+      field: sem,
       className: 'col-span-1',
     },
     {
       title: 'Weight',
-      field: 'Not indexed',
+      field: weight,
       className: 'col-span-1',
     },
     {
       title: 'N˚ of cells',
-      field: 'Not indexed',
+      field: numberOfMeasurement,
       className: 'col-span-1',
     },
   ].map((field) => (

@@ -53,12 +53,6 @@ export interface ExploreSectionResource extends OptionalExploreSectionFields {
   image?: ImageEntity[] | null;
 }
 
-type Series = {
-  statistic: string;
-  unitCode: string;
-  value: number;
-};
-
 export interface OptionalExploreSectionFields {
   reference?: string;
   conditions?: string;
@@ -115,6 +109,7 @@ export interface NumericEntity {
 export interface SubjectAge extends NumericEntity {
   value: number | string;
   period?: number | string;
+  unitCode?: string;
 }
 
 export interface NValueEntity extends NumericEntity {
@@ -150,6 +145,12 @@ export interface Source extends OptionalExploreSectionFields {
   mType?: IdLabelEntity | null;
 }
 
+export type Series = {
+  statistic: string;
+  unitCode: string;
+  value: number;
+};
+
 // Below is the delta response interface definitions
 export type DeltaResource<
   T = {
@@ -172,7 +173,7 @@ export type DeltaResource<
   annotation?: AnnotationEntity[] | null;
   stimulus?: StimulusEntity[] | null;
   image?: ImageEntity[] | null;
-  series?: Series[];
+  series?: Series[] | Series;
   reason?: string;
   _constrainedBy: string;
   _createdAt: string;
@@ -264,6 +265,7 @@ export interface StimulusEntity {
 export interface Subject {
   '@type': string;
   species: BrainRegionOrStimulusTypeOrSpecies;
+  age?: SubjectAge;
   weight?: Weight;
 }
 export interface Bucket {

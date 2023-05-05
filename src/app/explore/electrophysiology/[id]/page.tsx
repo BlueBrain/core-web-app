@@ -4,15 +4,13 @@ import { Key, Suspense, useEffect, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { useSession } from 'next-auth/react';
-import { format, parseISO } from 'date-fns';
-import find from 'lodash/find';
 import { loadable } from 'jotai/utils';
 import Error from 'next/error';
 import usePathname from '@/hooks/pathname';
 import { nexus as nexusConfig } from '@/config';
 import Sidebar from '@/components/explore-section/Sidebar';
 import EphysViewerContainer from '@/components/explore-section/EphysViewerContainer';
-import { AnnotationEntity, DeltaResource, SideLink } from '@/types/explore-section';
+import { DeltaResource, SideLink } from '@/types/explore-section';
 import { setInfoWithPath } from '@/util/explore-section/detail-view';
 import createDetailAtoms from '@/state/explore-section/detail-atoms-constructor';
 import ExploreSectionDetailField, {
@@ -20,7 +18,7 @@ import ExploreSectionDetailField, {
 } from '@/components/explore-section/ExploreSectionDetailField';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import { ensureArray } from '@/util/nexus';
+import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 
 const { infoAtom, detailAtom, latestRevisionAtom } = createDetailAtoms();
 
@@ -33,48 +31,28 @@ function EphysDetailHeader({
   url?: string | null;
   latestRevision: number | null;
 }) {
-  if (!detail) return <>Not Found</>;
-
-  const getEtype = (x: DeltaResource): string => {
-    const entity = find(x.annotation, (o: AnnotationEntity) => o.name === 'E-type Annotation');
-    return entity ? entity.hasBody.label : 'no EType';
-  };
-
-  const contributors = ensureArray(detail?.contribution).reduce(
-    (acc, cur) => [...acc, cur?.agent?.['@id']],
-    [] as any
-  ) as string[];
-
-  const contributionField = {
-    title: contributors.length === 1 ? 'Contributor' : 'Contributors',
-    field: (
-      <ul>
-        {contributors?.map((contributor) => (
-          <li key={contributor}>{contributor}</li>
-        ))}
-      </ul>
-    ),
-  };
+  const { description, eType, brainRegion, creationDate, contributors } =
+    useExploreSerializedFields(detail);
 
   const fields = (
     [
       {
         title: 'Description',
-        field: detail?.description,
+        field: description,
         className: 'col-span-2 row-span-2',
       },
       {
         title: 'E-Type',
-        field: getEtype(detail),
+        field: eType,
       },
       {
         title: 'Brain Region',
-        field: detail?.brainLocation?.brainRegion?.label,
+        field: brainRegion,
       },
-      contributionField,
+      { title: 'Contributors', field: contributors },
       {
         title: 'Created On',
-        field: detail?._createdAt && format(parseISO(detail?._createdAt), 'dd.MM.yyyy'),
+        field: creationDate,
       },
     ] as ExploreSectionDetailFieldProps[]
   ).map((field) => (
