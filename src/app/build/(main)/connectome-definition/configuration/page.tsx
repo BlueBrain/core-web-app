@@ -35,18 +35,17 @@ interface Rect extends Partial<Shape> {
 
 function ConnectomeDefinitionMain() {
   const area = useAtomValue(brainAreaAtom);
-  const connectivityMatrixLoadable = useAtomValue(connectivityStrengthMatrixLoadableAtom);
   const addEdit = useSetAtom(addEditAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
-  const connectivityMatrix = useLoadable(connectivityMatrixLoadable, null);
+  const connectivityMatrix = useLoadable(connectivityStrengthMatrixLoadableAtom, null);
 
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [editName, setEditName] = useState('');
-  const edits = useLoadable(useAtomValue(editsLoadableAtom), []);
+  const edits = useLoadable(editsLoadableAtom, []);
   const [currentEdit, setCurrentEdit] = useState<number | null>(null);
   const deleteEdits = useSetAtom(deleteEditsAtom);
 

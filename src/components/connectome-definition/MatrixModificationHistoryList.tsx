@@ -1,5 +1,5 @@
 import { RollbackOutlined } from '@ant-design/icons';
-import { useSetAtom, useAtomValue } from 'jotai';
+import { useSetAtom } from 'jotai';
 import useLoadable from './hooks';
 
 import { deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
@@ -10,10 +10,8 @@ export default function MatrixModificationHistoryList({
 }: {
   setCurrentEdit: (i: number) => void;
 }) {
-  const editsLoadable = useAtomValue(editsLoadableAtom);
   const deleteEdits = useSetAtom(deleteEditsAtom);
-
-  const edits = useLoadable(editsLoadable, []);
+  const edits = useLoadable(editsLoadableAtom, []);
 
   return (
     <div>
