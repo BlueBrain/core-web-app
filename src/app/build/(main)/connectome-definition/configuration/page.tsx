@@ -16,14 +16,14 @@ import {
   MatrixModificationHistoryList,
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
-import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
+import { HemisphereDirection } from '@/types/connectome';
 import {
   connectivityStrengthMatrixLoadableAtom,
-  editsAtom,
+  editsLoadableAtom,
 } from '@/state/brain-model-config/macro-connectome';
 import { addEditAtom, deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
-
+import { useLoadable } from '@/hooks/hooks';
 import styles from '../connectome-definition.module.css';
 
 interface Rect extends Partial<Shape> {
@@ -35,25 +35,17 @@ interface Rect extends Partial<Shape> {
 
 function ConnectomeDefinitionMain() {
   const area = useAtomValue(brainAreaAtom);
-  const connectivityMatrixLoadable = useAtomValue(connectivityStrengthMatrixLoadableAtom);
   const addEdit = useSetAtom(addEditAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
-
-  const [connectivityMatrix, setConnectivityMatrix] = useState<WholeBrainConnectivityMatrix>();
-
-  useEffect(() => {
-    if (connectivityMatrixLoadable.state !== 'hasData' || !connectivityMatrixLoadable.data) return;
-
-    setConnectivityMatrix(connectivityMatrixLoadable.data);
-  }, [connectivityMatrixLoadable]);
+  const connectivityMatrix = useLoadable(connectivityStrengthMatrixLoadableAtom, null);
 
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [editName, setEditName] = useState('');
-  const edits = useAtomValue(editsAtom);
+  const edits = useLoadable(editsLoadableAtom, []);
   const [currentEdit, setCurrentEdit] = useState<number | null>(null);
   const deleteEdits = useSetAtom(deleteEditsAtom);
 
@@ -222,14 +214,31 @@ function ConnectomeDefinitionMain() {
               <InputNumber value={multiplier} step={0.01} onChange={handleMultiplierChange} />
             </div>
 
-            <div className="flex" style={{ marginTop: 10, marginBottom: 10 }}>
+            <div style={{ marginTop: 10, marginBottom: 10 }}>
               <div ref={histogramRef} />
-              <div ref={lineChartRef} style={{ marginTop: 11, marginLeft: 20 }} />
+              <div ref={lineChartRef} style={{ marginTop: 10 }} />
             </div>
 
-            <Button onClick={onClick} disabled={editName === ''} className="w-11/12" type="primary">
-              Save
-            </Button>
+            <div className="mt-3">
+              <Button
+                onClick={onClick}
+                disabled={editName === ''}
+                className="w-5/12"
+                type="primary"
+              >
+                Save
+              </Button>
+              <Button
+                onClick={() => {
+                  setSelected(new Set());
+                  shapes.current = [];
+                }}
+                className="w-5/12 ml-2"
+                type="primary"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </ConfigProvider>
       )}

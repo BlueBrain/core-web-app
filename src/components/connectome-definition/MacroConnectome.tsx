@@ -18,7 +18,7 @@ import {
   selectedPreBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
-import usePrevious from '@/hooks/hooks';
+import { usePrevious } from '@/hooks/hooks';
 
 const VIRIDIS_W_ZERO_CUTOFF: ColorScale = [
   [0, '#000000'],
@@ -173,6 +173,7 @@ export default function MacroConnectome({
         y: srcLabels,
         type: 'heatmap',
         colorscale: VIRIDIS_W_ZERO_CUTOFF,
+        hovertemplate: 'Post-synaptic: %{x} <br>Pre-synaptic: %{y} <br>Connection strength: %{z}',
       },
     ];
 
@@ -268,9 +269,10 @@ export default function MacroConnectome({
         });
 
         const selectedCopy = new Set(selectedRef.current);
+
         for (let x = x0; x <= x1; x += 1) {
-          for (let y = y0; y <= y1; y += 1) {
-            if (x >= x0 && x <= x1 && y <= y1 && y >= y0) {
+          for (let y = y1; y <= y0; y += 1) {
+            if (x >= x0 && x <= x1 && y <= y0 && y >= y1) {
               selectedCopy.add(
                 JSON.stringify([points[0].data.x[x], points[0].data.y[y], points[0].data.z[y][x]])
               );
