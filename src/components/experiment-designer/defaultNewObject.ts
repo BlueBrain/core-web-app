@@ -24,6 +24,7 @@ export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
       unit: 'ms',
       min: 0,
       max: 20000,
+      step: 1000,
     },
     {
       id: 'targetInput',
@@ -54,6 +55,7 @@ export const getNewRecordingObj = (): ExpDesignerGroupParameter => ({
       unit: 'ms',
       min: 0,
       max: 20000,
+      step: 1000,
     },
     {
       id: 'recording',
@@ -84,6 +86,7 @@ export const getNewSensoryInputObj = (): ExpDesignerGroupParameter => ({
       unit: 'ms',
       min: 0,
       max: 20000,
+      step: 1000,
     },
     {
       id: 'targetInput',

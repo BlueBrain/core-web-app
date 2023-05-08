@@ -70,6 +70,7 @@ function changeRangeToNumber(rangeParam: ExpDesignerRangeParameter): ExpDesigner
     value: rangeParam.value.start,
     min: rangeParam.value.min,
     max: rangeParam.value.max,
+    step: rangeParam.value.step,
   };
 }
 

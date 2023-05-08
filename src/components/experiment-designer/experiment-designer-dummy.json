@@ -7,7 +7,8 @@
       "value": 4000,
       "unit": "ms",
       "min": 0,
-      "max": 20000
+      "max": 20000,
+      "step": 1000
     },
     {
       "id": "timeStep",
@@ -16,7 +17,8 @@
       "value": 0.1,
       "unit": "ms",
       "min": 0,
-      "max": 10
+      "max": 10,
+      "step": 0.1
     },
     {
       "id": "forwardSkip",
@@ -25,7 +27,8 @@
       "value": 5000,
       "unit": "ms",
       "min": 0,
-      "max": 20000
+      "max": 20000,
+      "step": 1000
     },
     {
       "id": "seed",
@@ -77,7 +80,8 @@
           "value": 4000,
           "unit": "ms",
           "min": 0,
-          "max": 20000
+          "max": 20000,
+          "step": 1000
         },
         {
           "id": "targetInput",
@@ -108,7 +112,8 @@
           "value": 4000,
           "unit": "ms",
           "min": 0,
-          "max": 20000
+          "max": 20000,
+          "step": 1000
         },
         {
           "id": "targetInput",
@@ -139,7 +144,8 @@
           "value": 4000,
           "unit": "ms",
           "min": 0,
-          "max": 20000
+          "max": 20000,
+          "step": 1000
         },
         {
           "id": "recordingTarget",
@@ -224,7 +230,8 @@
           "value": 0,
           "unit": "ms",
           "min": 0,
-          "max": 20000
+          "max": 20000,
+          "step": 1000
         },
         {
           "id": "end",
@@ -233,7 +240,8 @@
           "value": 300,
           "unit": "ms",
           "min": 0,
-          "max": 20000
+          "max": 20000,
+          "step": 100
         }
       ]
     }

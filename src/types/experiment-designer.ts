@@ -17,6 +17,7 @@ export type ExpDesignerNumberParameter = ExpDesignerBaseParameter & {
   unit: string;
   min: number;
   max: number;
+  step: number;
 };
 
 export type ExpDesignerRangeParameter = ExpDesignerBaseParameter & {
