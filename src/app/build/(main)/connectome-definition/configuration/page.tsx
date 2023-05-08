@@ -23,7 +23,7 @@ import {
 } from '@/state/brain-model-config/macro-connectome';
 import { addEditAtom, deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
-import useLoadable from '@/components/connectome-definition/hooks';
+import { useLoadable } from '@/hooks/hooks';
 import styles from '../connectome-definition.module.css';
 
 interface Rect extends Partial<Shape> {

@@ -18,7 +18,7 @@ import {
   selectedPreBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
-import usePrevious from '@/hooks/hooks';
+import { usePrevious } from '@/hooks/hooks';
 
 const VIRIDIS_W_ZERO_CUTOFF: ColorScale = [
   [0, '#000000'],

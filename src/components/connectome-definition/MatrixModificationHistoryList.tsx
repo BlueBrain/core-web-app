@@ -1,6 +1,6 @@
 import { RollbackOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
-import useLoadable from './hooks';
+import { useLoadable } from '@/hooks/hooks';
 
 import { deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
 import { editsLoadableAtom } from '@/state/brain-model-config/macro-connectome';
