@@ -73,9 +73,6 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
       [RunSimCampaign]
       simulation-type: CortexNrdmsPySim
       nodes: 50
-
-      [CortexNrdmsPySim]
-      module-archive: unstable
     `,
     placeholder: 'RunSimCampaignMeta',
   },
