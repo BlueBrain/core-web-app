@@ -148,14 +148,24 @@ export default function WorkflowLauncher({
     onLaunchingChange(true);
     setLaunching(true);
 
-    const workflowConfig = await generateWorkflowConfig(
-      workflowName,
-      circuitInfo,
-      stepsToBuild,
-      config,
-      session,
-      extraVariablesToReplace
-    );
+    let workflowConfig;
+    try {
+      workflowConfig = await generateWorkflowConfig(
+        workflowName,
+        circuitInfo,
+        stepsToBuild,
+        config,
+        session,
+        extraVariablesToReplace
+      );
+    } catch (e: any) {
+      notification.error({
+        message: e.message,
+      });
+      onLaunchingChange(false);
+      setLaunching(false);
+      return;
+    }
 
     try {
       await launchUnicoreWorkflowSetup(session.accessToken);

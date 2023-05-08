@@ -143,6 +143,9 @@ export function convertExpDesConfigToSimVariables(
     variablesToReplaceCopy[placeholder] = result;
     coords = { ...coords, ...coordDict };
   });
+  if (!Object.keys(coords).length) {
+    throw new Error('No range param was set. Please select at least one range.');
+  }
 
   const recordings = (expDesignerConfig.recording as ExpDesignerGroupParameter[]).reduce(
     (acc: Record<string, any>, recordingItem) => {
