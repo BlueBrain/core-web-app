@@ -1,6 +1,3 @@
-/* eslint-disable lodash/import-scope */
-
-import { round } from 'lodash';
 import { PrimitiveAtom, useAtomValue } from 'jotai';
 
 import { ExpDesignerPositionParameter } from '@/types/experiment-designer';
@@ -21,11 +18,11 @@ export default function CoordinatesViewer({ paramAtom, className }: Props) {
       <div className="grow font-bold">{data.name}</div>
       <div>
         <span className={coordinateStyle}>X</span>
-        <span>{round(data.value[0])}</span>
+        <span>{Math.round(data.value[0])}</span>
         <span className={coordinateStyle}>Y</span>
-        <span>{round(data.value[1])}</span>
+        <span>{Math.round(data.value[1])}</span>
         <span className={coordinateStyle}>Z</span>
-        <span>{round(data.value[2])}</span>
+        <span>{Math.round(data.value[2])}</span>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-
 import { ErrorBoundary } from 'react-error-boundary';
+
 import { Params, Visualization } from '@/components/experiment-designer/sensory-input';
 import { getFocusedAtom } from '@/components/experiment-designer/utils';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
