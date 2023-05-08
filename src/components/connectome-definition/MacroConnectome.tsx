@@ -104,7 +104,7 @@ export default function MacroConnectome({
   connectivityFlatArray,
   setMultiplier,
   setOffset,
-  shapes,
+  selectionShapes,
 }: {
   zoom: boolean;
   select: boolean;
@@ -114,7 +114,7 @@ export default function MacroConnectome({
   connectivityFlatArray: Float64Array;
   setMultiplier: Dispatch<SetStateAction<number>>;
   setOffset: Dispatch<SetStateAction<number>>;
-  shapes: MutableRefObject<Rect[]>;
+  selectionShapes: MutableRefObject<Rect[]>;
 }) {
   const plotRef = useRef<PlotDiv>(null);
 
@@ -133,7 +133,7 @@ export default function MacroConnectome({
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
 
-  const select = selectProp && shapes.current.length === 0;
+  const select = selectProp && selectionShapes.current.length === 0;
 
   const [filteredDensities, srcLabels, dstLabels] = useMemo(
     () =>
@@ -199,7 +199,7 @@ export default function MacroConnectome({
               size: 8,
             },
           },
-          shapes: shapes.current,
+          shapes: selectionShapes.current,
         },
         {
           responsive: true,
@@ -210,11 +210,11 @@ export default function MacroConnectome({
       container.on('plotly_click', ({ points }) => {
         if (unselectRef.current) {
           const point = { x: points[0].pointIndex[1], y: points[0].pointIndex[0] };
-          const deletedShapes = shapes.current.filter(
+          const deletedShapes = selectionShapes.current.filter(
             (s) => point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1
           );
           // eslint-disable-next-line no-param-reassign
-          shapes.current = shapes.current.filter(
+          selectionShapes.current = selectionShapes.current.filter(
             (s) => !(point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1)
           );
 
@@ -237,7 +237,7 @@ export default function MacroConnectome({
           setSelected(selectedCopy);
           setMultiplier(1);
           setOffset(0);
-          Plotly.relayout(container, { shapes: shapes.current });
+          Plotly.relayout(container, { shapes: selectionShapes.current });
         }
 
         if (!selectRef.current) return;
@@ -255,7 +255,7 @@ export default function MacroConnectome({
         const x1 = Math.max(c2[0], c1[0]);
         const y1 = Math.min(c2[1], c1[1]);
 
-        shapes.current.push({
+        selectionShapes.current.push({
           type: 'rect',
           x0,
           y0,
@@ -283,7 +283,7 @@ export default function MacroConnectome({
         setSelected(selectedCopy);
 
         Plotly.relayout(container, {
-          shapes: shapes.current,
+          shapes: selectionShapes.current,
         });
 
         corner1.current = [0, 0];
@@ -296,7 +296,7 @@ export default function MacroConnectome({
         const point = { x: points[0].pointIndex[1], y: points[0].pointIndex[0] };
         if (unselectRef.current) {
           Plotly.relayout(container, {
-            shapes: shapes.current.map((s) => ({
+            shapes: selectionShapes.current.map((s) => ({
               ...s,
               fillcolor:
                 point.x >= s.x0 && point.x <= s.x1 && point.y <= s.y0 && point.y >= s.y1
@@ -315,7 +315,7 @@ export default function MacroConnectome({
           {},
           {
             shapes: [
-              ...shapes.current,
+              ...selectionShapes.current,
               {
                 type: 'rect',
                 x0: corner1.current[0],
@@ -357,7 +357,7 @@ export default function MacroConnectome({
           },
           range: userChangedRegions ? undefined : container.layout.yaxis.range,
         },
-        shapes: shapes.current,
+        shapes: selectionShapes.current,
       },
       { responsive: true }
     );
@@ -374,7 +374,7 @@ export default function MacroConnectome({
     userChangedRegions,
     setMultiplier,
     setOffset,
-    shapes,
+    selectionShapes,
   ]);
 
   return (
