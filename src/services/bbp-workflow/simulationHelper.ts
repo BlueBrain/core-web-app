@@ -9,6 +9,8 @@ import {
   ExpDesignerGroupParameter,
   ExpDesignerNumberParameter,
   ExpDesignerTargetParameter,
+  ExpDesignerRadioBtnParameter,
+  ExpDesignerPositionParameter,
 } from '@/types/experiment-designer';
 import { createWorkflowConfigResource } from '@/api/nexus';
 
@@ -199,6 +201,27 @@ export function convertExpDesConfigToSimVariables(
   variablesToReplaceCopy[SimulationPlaceholders.NODE_SETS] = JSON.stringify({});
 
   variablesToReplaceCopy[SimulationPlaceholders.GEN_SIM_CAMPAIGN_COORDS] = JSON.stringify(coords);
+
+  const { imaging } = expDesignerConfig;
+  const neuronDisplay = imaging.find(
+    (param) => param.id === 'neuronDisplay'
+  ) as ExpDesignerRadioBtnParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_SOMA] = JSON.stringify(
+    neuronDisplay.value === 'As point' ? 'true' : 'false'
+  );
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_DENDRITES] = JSON.stringify(
+    neuronDisplay.value === 'Dendrites' ? 'true' : 'false'
+  );
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_AXON] = JSON.stringify(
+    neuronDisplay.value === 'Axon + Dendrites' ? 'true' : 'false'
+  );
+
+  const cameraPosition = imaging.find(
+    (param) => param.id === 'cameraPos'
+  ) as ExpDesignerPositionParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_POSITION] = JSON.stringify(
+    cameraPosition.value
+  );
 
   return variablesToReplaceCopy;
 }

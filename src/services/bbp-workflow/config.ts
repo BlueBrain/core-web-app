@@ -11,8 +11,6 @@ export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl
 export const WORKFLOW_CIRCUIT_BUILD_TASK_NAME = 'bbp_workflow.generation.SBOWorkflow/';
 export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.sbo.viz.task.RunAllSimCampaignMeta/';
 export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
-export const WORKFLOW_VIDEO_GENERATION_TASK_NAME =
-  'bbp_workflow.sbo.viz.task.VideoSimCampaignMeta/';
 
 export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
 
@@ -30,6 +28,10 @@ export enum SimulationPlaceholders {
   GEN_SIM_CAMPAIGN_COORDS = 'GEN_SIM_CAMPAIGN_COORDS',
   SIM_CAMPAIGN_NAME = 'SIM_CAMPAIGN_NAME',
   SIM_CAMPAIGN_DESCRIPTION = 'SIM_CAMPAIGN_DESCRIPTION',
+  VIZ_DISPLAY_SOMA = 'VIZ_DISPLAY_SOMA',
+  VIZ_DISPLAY_DENDRITES = 'VIZ_DISPLAY_DENDRITES',
+  VIZ_DISPLAY_AXON = 'VIZ_DISPLAY_AXON',
+  VIZ_CAMERA_POSITION = 'VIZ_CAMERA_POSITION',
 }
 
 type WorkflowMetaConfigPlaceholders = Record<
@@ -104,13 +106,14 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
           "report_name": "soma",
           "density": 0.01,
           "radius_multiplier": 10,
-          "load_soma": true,
-          "load_dendrites": false,
-          "load_axon": false }]
+          "load_soma": <%= ${SimulationPlaceholders.VIZ_DISPLAY_SOMA} %>,
+          "load_dendrites": <%= ${SimulationPlaceholders.VIZ_DISPLAY_DENDRITES} %>,
+          "load_axon": <%= ${SimulationPlaceholders.VIZ_DISPLAY_AXON} %> }]
       resolution: [1920, 1080]
       camera-type: perspective
       camera-view: front
       background-color: [1, 1, 1, 0]
+      camera-position: <%= ${SimulationPlaceholders.VIZ_CAMERA_POSITION} %>
       fps: 25
       slowing-factor: 100
       start_frame: 0
@@ -212,57 +215,5 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFile[] = [
     NAME: 'cfg_name',
     TYPE: 'string',
     CONTENT: 'circuit_building.cfg',
-  },
-];
-
-export const VIDEO_GENERATION_FILES: WorkflowFile[] = [
-  {
-    NAME: 'video_generation.cfg',
-    TYPE: 'file',
-    CONTENT: `
-      [DEFAULT]
-      kg-base: https://staging.nise.bbp.epfl.ch/nexus/v1
-      kg-org: bbp_test
-      kg-proj: studio_data3
-      account: proj134
-
-      [LookupSimulationCampaign]
-      url: ${PLACEHOLDERS.SIMULATION_URL}
-
-      [VideoTask]
-      cpus-per-task: 72
-      mem: 0
-      exclusive: True
-      time: 8:00:00
-      nodes: 3
-      module-archive: unstable
-      modules: brayns py-brayns ffmpeg
-
-      populations: [
-              {
-                  "name": "S1nonbarrel_neurons",
-                  "report_type": "compartment",
-                  "report_name": "soma_report",
-                  "density": 0.01,
-                  "radius_multiplier": 10,
-                  "load_soma": true,
-                  "load_dendrites": false,
-                  "load_axon": false
-              }
-          ]
-      resolution: [1920, 1080]
-      camera-type: perspective
-      camera-view: front
-      background-color: [1, 1, 1, 0]
-      fps: 1
-      slowing-factor: 100
-      start_frame: 0
-      end_frame: -1
-    `,
-  },
-  {
-    NAME: 'cfg_name',
-    TYPE: 'string',
-    CONTENT: 'video_generation.cfg',
   },
 ];

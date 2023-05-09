@@ -167,13 +167,16 @@
       "id": "neuronDisplay",
       "name": "Neuron Display",
       "type": "radioButton",
-      "value": ["As point", "Dendrites", "Axon + Dendrites"]
+
+      "options": ["As point", "Dendrites", "Axon + Dendrites"],
+      "value": "As point"
     },
     {
       "id": "neuronActivity",
       "name": "Activity",
       "type": "radioButton",
-      "value": ["Spikes", "Voltage"]
+      "options": ["Spikes", "Voltage"],
+      "value": "Spikes"
     }
   ],
   "analysis": [

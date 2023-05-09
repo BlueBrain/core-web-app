@@ -109,18 +109,6 @@ export function getCircuitBuildingTaskFiles(
   return withUuid;
 }
 
-export function getVideoGenerationTaskFiles(
-  workflowFiles: WorkflowFile[],
-  simulationConfigUrl: string
-): WorkflowFile[] {
-  return replacePlaceholdersInFile(
-    workflowFiles,
-    'video_generation.cfg',
-    PLACEHOLDERS.SIMULATION_URL,
-    simulationConfigUrl
-  );
-}
-
 function getWorkflowTaskUrl(username: string, workflowName: string): string {
   return BBP_WORKFLOW_TASK_PATH.replace(PLACEHOLDERS.USERNAME, username).replace(
     PLACEHOLDERS.TASK_NAME,

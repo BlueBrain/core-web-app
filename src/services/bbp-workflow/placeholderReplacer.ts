@@ -5,17 +5,11 @@ import { Session } from 'next-auth';
 import {
   WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
   WORKFLOW_SIMULATION_TASK_NAME,
-  WORKFLOW_VIDEO_GENERATION_TASK_NAME,
   CIRCUIT_BUILDING_FILES,
   SIMULATION_FILES,
-  VIDEO_GENERATION_FILES,
   WorkflowFile,
 } from '@/services/bbp-workflow/config';
-import {
-  getCircuitBuildingTaskFiles,
-  getSimulationTaskFiles,
-  getVideoGenerationTaskFiles,
-} from '@/services/bbp-workflow';
+import { getCircuitBuildingTaskFiles, getSimulationTaskFiles } from '@/services/bbp-workflow';
 import { GROUPS as EXECUTION_GROUPS, CellCompositionStepGroupValues } from '@/state/build-status';
 import { BrainModelConfigResource, DetailedCircuitResource } from '@/types/nexus';
 
@@ -51,11 +45,6 @@ async function generateWorkflowConfig(
       if (stepsToBuild.includes(EXECUTION_GROUPS.CELL_COMPOSITION)) {
         replacedConfigFiles = getCircuitBuildingTaskFiles(CIRCUIT_BUILDING_FILES, configUrl);
       }
-      break;
-
-    case WORKFLOW_VIDEO_GENERATION_TASK_NAME:
-      // TODO: use getSimulationCampaignConfiguration
-      replacedConfigFiles = getVideoGenerationTaskFiles(VIDEO_GENERATION_FILES, '');
       break;
 
     default:

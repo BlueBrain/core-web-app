@@ -10,17 +10,30 @@ type Props = {
 };
 
 export default function RadioButtonParameter({ paramAtom, className }: Props) {
-  const [data] = useAtom(paramAtom);
+  const [data, setData] = useAtom(paramAtom);
+
+  const change = (selectedOption: string) => {
+    setData((oldAtomData) => ({
+      ...oldAtomData,
+      value: selectedOption,
+    }));
+  };
 
   return (
     <>
       <div className={subheaderStyle}>{data.name}</div>
-      {data.value.map((option) => (
+      {data.options.map((option) => (
         <div className={classNames('flex gap-3', className)} key={option}>
           <label className="grow font-bold" htmlFor={generateId(data.name, option)}>
             {option}
           </label>
-          <input type="radio" name={data.name} id={generateId(data.name, option)} />
+          <input
+            type="radio"
+            name={data.name}
+            id={generateId(data.name, option)}
+            onChange={() => change(option)}
+            checked={option === data.value}
+          />
         </div>
       ))}
     </>

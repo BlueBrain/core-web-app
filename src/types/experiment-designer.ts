@@ -62,7 +62,8 @@ export type ExpDesignerPositionParameter = ExpDesignerBaseParameter & {
 
 export type ExpDesignerRadioBtnParameter = ExpDesignerBaseParameter & {
   type: 'radioButton';
-  value: string[];
+  value: string;
+  options: string[];
 };
 
 export type ExpDesignerCheckboxParameter = ExpDesignerBaseParameter & {
