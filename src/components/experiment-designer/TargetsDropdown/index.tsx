@@ -2,7 +2,7 @@
 
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { Select } from 'antd';
+import { Select, Spin } from 'antd';
 
 import { targetListAtom } from '@/state/experiment-designer';
 
@@ -19,6 +19,9 @@ export default function TargetsDropdown({ onChange, defaultValue = 'SELECT', cla
 
   const targets = targetsLoadable.state === 'hasData' ? targetsLoadable.data : [];
 
+  const isLoading = targetsLoadable.state === 'loading';
+  const isEmpty = !isLoading && !targets.length;
+
   const options = targets?.map((target) => ({
     value: target,
     label: target,
@@ -30,17 +33,23 @@ export default function TargetsDropdown({ onChange, defaultValue = 'SELECT', cla
   };
 
   return (
-    <Select
-      defaultValue={[defaultValue]}
-      size="small"
-      options={options}
-      onSelect={onSelect}
-      style={{ width: 200 }}
-      className={className}
-      showSearch
-      filterOption={(input, option) =>
-        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-      }
-    />
+    <>
+      {isLoading && <Spin />}
+      {!isLoading && isEmpty && 'Not node_sets were found'}
+      {!isLoading && !isEmpty && (
+        <Select
+          defaultValue={[defaultValue]}
+          size="small"
+          options={options}
+          onSelect={onSelect}
+          style={{ width: 200 }}
+          className={className}
+          showSearch
+          filterOption={(input, option) =>
+            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+          }
+        />
+      )}
+    </>
   );
 }

@@ -12,15 +12,19 @@ import {
   campaignDescriptionAtom,
   expDesignerConfigAtom,
 } from '@/state/experiment-designer';
+import circuitAtom from '@/state/circuit';
 
 const loadableExpDesAtom = loadable(expDesignerConfigAtom);
+const loadableCircuitAtom = loadable(circuitAtom);
 
 export default function SimulateBtn() {
   const expDesLoadable = useAtomValue(loadableExpDesAtom);
   const simCampName = useAtomValue(campaignNameAtom);
   const simCampDescription = useAtomValue(campaignDescriptionAtom);
+  const circuitInfoLodable = useAtomValue(loadableCircuitAtom);
 
   const expDesignerConfig = expDesLoadable.state === 'hasData' ? expDesLoadable.data : [];
+  const circuitInfo = circuitInfoLodable.state === 'hasData' ? circuitInfoLodable.data : null;
 
   const extraVariablesToReplace = {
     expDesignerConfig,
@@ -31,10 +35,11 @@ export default function SimulateBtn() {
   return (
     <DefaultLoadingSuspense>
       <WorkflowLauncherBtn
-        buttonText="Simulate"
+        buttonText={circuitInfo ? 'Simulate' : 'Circuit was not built'}
         workflowName={WORKFLOW_SIMULATION_TASK_NAME}
         className="px-12"
         extraVariablesToReplace={extraVariablesToReplace}
+        disabled={!circuitInfo}
       />
     </DefaultLoadingSuspense>
   );

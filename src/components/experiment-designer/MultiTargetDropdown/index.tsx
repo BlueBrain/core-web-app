@@ -1,8 +1,8 @@
 import { PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
 import { ImportOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
+import { Select, Spin } from 'antd';
 
-import { Select } from 'antd';
 import type { ExpDesignerTargetDropdownGroupParameter } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 import { targetListAtom } from '@/state/experiment-designer';
@@ -29,6 +29,9 @@ export default function MultiTargetDropdown({
   const targetListLoadable = useAtomValue(loadableTargetListAtom);
 
   const targetList = targetListLoadable.state === 'hasData' ? targetListLoadable.data : [];
+
+  const isLoading = targetListLoadable.state === 'loading';
+  const isEmpty = !isLoading && !targetList.length;
 
   const options = targetList?.map((target) => ({
     value: target,
@@ -59,8 +62,9 @@ export default function MultiTargetDropdown({
     <div className={classNames('flex gap-3', className)}>
       {showTitle && <div className="grow font-bold">{data.name}</div>}
 
-      {!options?.length && 'Loading...'}
-      {options?.length && (
+      {isLoading && <Spin />}
+      {!isLoading && isEmpty && 'Not node_sets were found'}
+      {!isLoading && !isEmpty && (
         <Select
           mode="multiple"
           defaultValue={initialTarget}
