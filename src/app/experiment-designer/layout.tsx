@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { ExperimentDesignerTopTabs, SaveBtn, SimulateBtn } from '@/components/experiment-designer';
+import { ExperimentDesignerTopTabs, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
@@ -34,7 +34,6 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
 
         <div className="absolute bottom-5 right-5 flex gap-5">
           <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-            <SaveBtn />
             <SimulateBtn />
           </ErrorBoundary>
         </div>

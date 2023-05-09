@@ -33,7 +33,7 @@ export default function SimulateBtn() {
       <WorkflowLauncherBtn
         buttonText="Simulate"
         workflowName={WORKFLOW_SIMULATION_TASK_NAME}
-        className="h-auto"
+        className="px-12"
         extraVariablesToReplace={extraVariablesToReplace}
       />
     </DefaultLoadingSuspense>
