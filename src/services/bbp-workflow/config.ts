@@ -32,6 +32,8 @@ export enum SimulationPlaceholders {
   VIZ_DISPLAY_DENDRITES = 'VIZ_DISPLAY_DENDRITES',
   VIZ_DISPLAY_AXON = 'VIZ_DISPLAY_AXON',
   VIZ_CAMERA_POSITION = 'VIZ_CAMERA_POSITION',
+  VIZ_REPORT_TYPE = 'VIZ_REPORT_TYPE',
+  VIZ_REPORT_NAME = 'VIZ_REPORT_NAME',
 }
 
 type WorkflowMetaConfigPlaceholders = Record<
@@ -102,8 +104,8 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
       nodes: 20
       populations: [{
           "name": "root__neurons",
-          "report_type": "compartment",
-          "report_name": "soma",
+          "report_type": <%= ${SimulationPlaceholders.VIZ_REPORT_TYPE} %>,
+          "report_name": <%= ${SimulationPlaceholders.VIZ_REPORT_NAME} %>,
           "density": 0.01,
           "radius_multiplier": 10,
           "load_soma": <%= ${SimulationPlaceholders.VIZ_DISPLAY_SOMA} %>,

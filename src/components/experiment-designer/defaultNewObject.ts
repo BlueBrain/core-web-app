@@ -58,7 +58,7 @@ export const getNewRecordingObj = (): ExpDesignerGroupParameter => ({
       step: 1000,
     },
     {
-      id: 'recording',
+      id: 'recordingTarget',
       name: 'Target',
       type: 'targetDropdown',
       value: 'AAA',

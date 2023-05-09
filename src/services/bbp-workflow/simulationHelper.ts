@@ -223,5 +223,22 @@ export function convertExpDesConfigToSimVariables(
     cameraPosition.value
   );
 
+  const reportType = imaging.find(
+    (param) => param.id === 'neuronActivity'
+  ) as ExpDesignerRadioBtnParameter;
+  const isSpikes = reportType.value === 'Spikes';
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_REPORT_TYPE] = JSON.stringify(
+    isSpikes ? 'spikes' : 'compartment'
+  );
+
+  const recordingKeys = Object.keys(recordings);
+  if (!isSpikes && !recordingKeys.length) {
+    throw new Error('No recording was added. Please add at least one for Voltage report');
+  }
+
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_REPORT_NAME] = JSON.stringify(
+    recordingKeys?.length ? recordingKeys[0] : ''
+  );
+
   return variablesToReplaceCopy;
 }
