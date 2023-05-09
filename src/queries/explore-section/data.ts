@@ -27,9 +27,7 @@ export default function fetchDataQuery(
               '@type.keyword': type,
             },
           },
-          searchString
-            ? createSearchStringQueryFilter(searchString, ['name', 'description'])
-            : null,
+          searchString ? createSearchStringQueryFilter(searchString, ['*']) : null,
         ].filter(Boolean),
         must: [
           {

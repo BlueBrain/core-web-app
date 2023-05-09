@@ -22,8 +22,9 @@ const {
 const columnKeys = [
   'brainRegion',
   'mType',
+  'mean ± STD',
   'sem',
-  'ncells',
+  'n° of Cells',
   'subjectSpecies',
   'contributors',
   'createdAt',
