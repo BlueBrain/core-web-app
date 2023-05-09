@@ -33,10 +33,9 @@ export type NeuronCompositionItem = {
   path?: string[];
 };
 
-export type CompositionTitleProps = {
+export type NeuronCompositionEditorProps = {
   content: (...args: any[]) => ReactElement;
   title?: string;
-  isExpanded: boolean;
   composition: number;
   onSliderChange: (value: number) => void;
   max: number;
@@ -45,5 +44,6 @@ export type CompositionTitleProps = {
   trigger: (...args: any[]) => ReactElement;
   lockIsDisabled: boolean;
   isEditable: boolean;
+  isLeaf: boolean;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };

@@ -13,10 +13,10 @@ export default function CompositionInput({
   isDisabled,
   compositionChangeFunc,
 }: CompositionInputProps) {
-  const [inputCompositionValue, setInputCompositionValue] = useState<number>(composition);
+  const [value, setValue] = useState<number>(composition);
 
   useEffect(() => {
-    setInputCompositionValue(composition);
+    setValue(composition);
   }, [composition]);
 
   return (
@@ -26,19 +26,19 @@ export default function CompositionInput({
       type="number"
       max={max}
       min={0}
-      value={inputCompositionValue}
-      onChange={(value) => {
-        const numericValue = Number.isNaN(value.target.valueAsNumber)
+      value={value}
+      onChange={(event) => {
+        const numericValue = Number.isNaN(event.target.valueAsNumber)
           ? 0
-          : value.target.valueAsNumber;
-        setInputCompositionValue(numericValue);
+          : event.target.valueAsNumber;
+        setValue(numericValue);
       }}
       onKeyUp={(action) => {
         if (action.key === 'Enter') {
-          compositionChangeFunc(inputCompositionValue);
+          compositionChangeFunc(value);
         }
       }}
-      onBlur={() => compositionChangeFunc(inputCompositionValue)}
+      onBlur={() => compositionChangeFunc(value)}
     />
   );
 }

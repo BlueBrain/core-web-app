@@ -1,15 +1,14 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import difference from 'lodash/difference';
 import uniq from 'lodash/uniq';
-
 import { getMetric } from './util';
-import { CompositionTitleProps, NeuronCompositionItem } from './types';
+import { NeuronCompositionEditorProps, NeuronCompositionItem } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -40,7 +39,7 @@ const metricToUnit = {
   count: <span>N</span>,
 };
 
-function NeuronCompositionParent({
+function NeuronCompositionEditor({
   composition,
   title,
   onSliderChange,
@@ -51,7 +50,14 @@ function NeuronCompositionParent({
   trigger, // A callback that returns the <Accordion.Trigger/>
   content, // A callback that returns the <Accordion.Content/>
   isEditable,
-}: CompositionTitleProps) {
+  isLeaf,
+}: NeuronCompositionEditorProps) {
+  const [compositionValue, setCompositionValue] = useState<number>(composition);
+
+  useEffect(() => {
+    setCompositionValue(composition);
+  }, [composition]);
+
   const lockIcon = useMemo(() => {
     if (isLocked) {
       return <LockIcon fill="#91D5FF" />;
@@ -59,21 +65,31 @@ function NeuronCompositionParent({
     return <LockOpenIcon fill="#91D5FF" />;
   }, [isLocked]);
 
+  // different container classes based on whether its leaf or not
+  const containerClasses = useMemo(() => {
+    const baseClasses = 'flex items-center justify-between whitespace-nowrap';
+    return isLeaf
+      ? `${baseClasses} gap-3 mt-5 pb-0 text-secondary-4`
+      : `${baseClasses} gap-2 py-3 text-left text-primary-3 w-full hover:text-white`;
+  }, [isLeaf]);
+
   return (
     <>
-      <div className="flex gap-2 items-center justify-between py-3 text-left text-primary-3 w-full whitespace-nowrap hover:text-white">
+      <div className={containerClasses}>
         <div className="flex items-center gap-3">
-          <span className="font-bold text-white">{title}</span>
+          <span className={`font-bold ${isLeaf ? 'whitespace-nowrap' : 'text-white'}`}>
+            {title}
+          </span>
           {isEditable && (
             <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
               {lockIcon}
             </IconButton>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className={`flex items-center ${isLeaf ? 'gap-3' : 'gap-2'}`}>
           {isEditable ? (
             <CompositionInput
-              composition={composition}
+              composition={compositionValue}
               compositionChangeFunc={onSliderChange}
               max={max}
               isDisabled={isLocked}
@@ -81,80 +97,23 @@ function NeuronCompositionParent({
           ) : (
             <span className="ml-auto text-white">{formatNumber(composition)}</span>
           )}
-          {trigger?.()}
+          {!isLeaf && trigger?.()}
         </div>
       </div>
       {isEditable && (
         <HorizontalSlider
-          className="bg-primary-6 px-[12px] rounded-[4px]"
-          value={composition}
-          color="#FFF"
-          max={max}
+          className={!isLeaf ? 'bg-primary-6 px-[12px] rounded-[4px]' : ''}
+          value={compositionValue}
+          color={isLeaf ? '#95DE64' : '#FFF'}
+          max={isLeaf ? max || 0 : max}
           step={1}
           disabled={isLocked}
-          onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
+          onSliding={(newValue) => newValue && setCompositionValue(newValue)}
+          onAfterSliding={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
         />
       )}
-      {content?.({ className: '-mt-3' })}
-    </>
-  );
-}
-
-function NeuronCompositionLeaf({
-  composition,
-  title,
-  onSliderChange,
-  max,
-  isLocked,
-  setLockedFunc,
-  lockIsDisabled,
-  trigger, // A callback that returns the <Accordion.Trigger/>
-  content, // A callback that returns the <Accordion.Content/>
-  isEditable,
-}: Omit<CompositionTitleProps, 'isExpanded'>) {
-  const lockIcon = useMemo(() => {
-    if (isLocked) {
-      return <LockIcon fill="#91D5FF" />;
-    }
-    return <LockOpenIcon fill="#91D5FF" />;
-  }, [isLocked]);
-
-  return (
-    <>
-      <div className="flex gap-3 items-center justify-between pt-3 pb-0 text-secondary-4 whitespace-nowrap">
-        <div className="flex items-center gap-3">
-          <span className="font-bold whitespace-nowrap">{title}</span>
-          {isEditable && (
-            <IconButton disabled={lockIsDisabled} onClick={setLockedFunc}>
-              {lockIcon}
-            </IconButton>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          {isEditable ? (
-            <CompositionInput
-              composition={composition}
-              compositionChangeFunc={onSliderChange}
-              max={max}
-              isDisabled={isLocked}
-            />
-          ) : (
-            <span className="ml-auto text-white">{formatNumber(composition)}</span>
-          )}
-        </div>
-      </div>
-      {isEditable && (
-        <HorizontalSlider
-          value={composition}
-          color="#95DE64"
-          max={max || 0}
-          step={1}
-          disabled={isLocked}
-          onChange={(newValue) => onSliderChange && newValue && onSliderChange(newValue)}
-        />
-      )}
-      {trigger?.()}
-      {content?.()}
+      {isLeaf && trigger?.()}
+      {isLeaf ? content?.() : content?.({ className: '-mt-3' })}
     </>
   );
 }
@@ -259,12 +218,11 @@ function MeTypeDetails({
             trigger,
             id,
             parentId,
-            isExpanded,
             relatedNodes,
             about,
             path,
           }) => (
-            <NeuronCompositionParent
+            <NeuronCompositionEditor
               content={content}
               title={title}
               trigger={trigger}
@@ -279,9 +237,9 @@ function MeTypeDetails({
                 systemLockedIds.includes(path.join('__')) ||
                 blockedNodeIds.includes(path.join('__'))
               }
-              isExpanded={isExpanded}
               max={calculateMax(relatedNodes, id, about, allLockedIds, neuronsToNodes)}
               isEditable={editMode}
+              isLeaf={false}
             >
               {({
                 content: nestedContent,
@@ -297,7 +255,7 @@ function MeTypeDetails({
                   systemLockedIds.includes(expandedNodeId) ||
                   blockedNodeIds.includes(expandedNodeId);
                 return (
-                  <NeuronCompositionLeaf
+                  <NeuronCompositionEditor
                     content={nestedContent}
                     onSliderChange={(newValue: number) => {
                       const node = neuronsToNodes[parentId].items.find(
@@ -313,10 +271,11 @@ function MeTypeDetails({
                     setLockedFunc={() => setLocked(expandedNodeId)}
                     max={neuronsToNodes[nestedParentId].composition}
                     isEditable={editMode}
+                    isLeaf
                   />
                 );
               }}
-            </NeuronCompositionParent>
+            </NeuronCompositionEditor>
           )}
         </TreeNav>
       )}
