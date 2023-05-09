@@ -225,6 +225,11 @@ export interface ContributionEntity {
 export interface AgentOrIsPartOfOrLicense {
   '@id': string;
   '@type': string;
+  email?: string;
+  name?: string;
+  givenName?: string;
+  familyName?: string;
+  preferred_username?: string;
 }
 export interface AtLocation {
   '@type': string;
