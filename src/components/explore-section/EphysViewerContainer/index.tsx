@@ -1,6 +1,5 @@
 import { Radio, RadioChangeEvent } from 'antd';
 import { FileImageOutlined, LineChartOutlined } from '@ant-design/icons';
-import { NexusClient } from '@bbp/nexus-sdk';
 import React from 'react';
 import { DeltaResource } from '@/types/explore-section';
 import { EPhysImageItem } from '@/components/explore-section/EphysViewerContainer/hooks/useImageCollectionDistribution';
@@ -20,13 +19,7 @@ const getStimulusTypeString = (image: EPhysImageItem) => {
   return typeString[typeString.length - 1];
 };
 
-function EphysViewerContainer({
-  resource,
-  nexus,
-}: {
-  resource: DeltaResource;
-  nexus: NexusClient;
-}) {
+function EphysViewerContainer({ resource }: { resource: DeltaResource }) {
   const [view, setView] = React.useState<VIEWS>(VIEWS.IMAGE);
   const [selectedRepetition, setSelectedRepetition] = React.useState<string>();
   const stimulusTypes = resource.image
@@ -82,7 +75,6 @@ function EphysViewerContainer({
           {...{
             stimulusType,
             resource,
-            nexus,
             stimulusTypeMap,
             onRepetitionClicked: handleRepetitionClicked,
             onStimulusChange: handleChange,
@@ -91,7 +83,6 @@ function EphysViewerContainer({
       )}
       {view === VIEWS.CHART && (
         <GraphViewContainer
-          nexus={nexus}
           resource={resource}
           defaultStimulusType={
             stimulusType === 'None' || stimulusType === 'All' ? undefined : stimulusType

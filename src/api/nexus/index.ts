@@ -155,11 +155,16 @@ export function updateJsonFileByUrl(url: string, data: any, filename: string, se
   return updateFileByUrl(url, JSON.stringify(data), filename, 'application/json', session);
 }
 
-export function fetchResourceById<T>(id: string, session: Session, options?: ComposeUrlParams) {
+export function fetchResourceById<T>(
+  id: string,
+  session: Session,
+  options?: ComposeUrlParams,
+  headerExtraOptions?: Record<string, string> | null
+) {
   const url = composeUrl('resource', id, options);
 
   return fetch(url, {
-    headers: createHeaders(session.accessToken),
+    headers: createHeaders(session.accessToken, headerExtraOptions),
   }).then<T>((res) => res.json());
 }
 
@@ -177,6 +182,18 @@ export function fetchResourceSourceById<T>(
   const url = composeUrl('resource', id, { ...options, source: true });
 
   return fetch(url, {
+    headers: createHeaders(session.accessToken),
+  }).then<T>((res) => res.json());
+}
+
+export function listResourceLinksById<T>(
+  id: string,
+  session: Session,
+  direction: 'incoming' | 'outgoing',
+  options?: ComposeUrlParams
+) {
+  const url = composeUrl('resource', id, { ...options });
+  return fetch(`${url}/${direction}`, {
     headers: createHeaders(session.accessToken),
   }).then<T>((res) => res.json());
 }

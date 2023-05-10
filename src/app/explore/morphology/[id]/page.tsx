@@ -1,12 +1,9 @@
 'use client';
 
 import { Suspense } from 'react';
-import { createNexusClient } from '@bbp/nexus-sdk';
-import { useSession } from 'next-auth/react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps, ListField } from '@/components/explore-section/Detail';
 import { DeltaResource } from '@/types/explore-section';
-import { nexus as nexusConfig } from '@/config';
 import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
 
 const fields = [
@@ -47,13 +44,10 @@ const fields = [
 ] as DetailProps[];
 
 export default function MorphologyDetailPage() {
-  const { data: session } = useSession();
-  const nexus = createNexusClient({ uri: nexusConfig.url, token: session?.accessToken });
-
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields}>
-        {(detail: DeltaResource) => <MorphoViewerContainer resource={detail} nexus={nexus} />}
+        {(detail: DeltaResource) => <MorphoViewerContainer resource={detail} />}
       </Detail>
     </Suspense>
   );

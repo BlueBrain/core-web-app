@@ -28,6 +28,7 @@ export type ComposeUrlParams = {
   project?: string;
   viewType?: 'es' | 'sparql';
   sync?: boolean;
+  idExpand?: boolean;
 };
 
 const ViewTypeMap = {
@@ -47,9 +48,10 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     project = nexus.project,
     viewType,
     sync = false,
+    idExpand = true,
   } = params ?? {};
 
-  const uriEncodedId = encodeURIComponent(expandId(id));
+  const uriEncodedId = encodeURIComponent(idExpand ? expandId(id) : id);
 
   const pathname = [
     `${apiGroupType}s`,

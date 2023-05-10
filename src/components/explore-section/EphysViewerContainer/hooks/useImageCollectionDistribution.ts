@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NexusClient, NexusFile } from '@bbp/nexus-sdk';
+import { useAtomValue } from 'jotai';
 import { RemoteData } from '@/types/explore-section/index';
 import { DeltaResource } from '@/types/explore-section';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
@@ -9,6 +9,9 @@ import {
   ImageCollection,
   ImageItem,
 } from '@/components/explore-section/EphysViewerContainer/ImageViewComponent';
+import { fetchResourceById } from '@/api/nexus';
+import sessionAtom from '@/state/session';
+import { FileMetadata } from '@/types/nexus';
 
 const MAX_BYTES_TO_PREVIEW = 3000000;
 
@@ -26,19 +29,18 @@ export type EPhysImageItem = {
  * image resources are fetched and the ordered/mapped based on their stimulus type and repetition they belong to.
  *
  * @param resource
- * @param nexus
  * @param opt
  */
 
 export function useImageCollectionDistribution(
   resource: DeltaResource,
-  nexus: NexusClient,
   opt?: {
     imageFilterPredicate?: (imageItem: EPhysImageItem) => boolean;
     resultsFilterPredicate?: (imageItem: ImageItem) => boolean;
   }
 ) {
   const { imageFilterPredicate = () => true, resultsFilterPredicate = () => true } = opt || {};
+  const session = useAtomValue(sessionAtom);
 
   const [{ loading, error, data }, setData] = React.useState<RemoteData<ImageCollection>>({
     loading: true,
@@ -47,16 +49,15 @@ export function useImageCollectionDistribution(
   });
 
   const resourceId = resource['@id'];
-
   const [projectLabel, orgLabel] = resource._project.split('/').reverse();
-
-  const imageCollection = React.useMemo(() => new Map<string, ImageItem>(), [resourceId]);
+  const imageCollection = React.useMemo(() => new Map<string, ImageItem>(), []);
 
   React.useEffect(() => {
     try {
       if (!resource.image && !resource.distribution) {
         throw new Error('No Image Collection Property Found');
       }
+      if (!session) return;
 
       const processImageCollection = async ({
         stimulusType,
@@ -64,28 +65,30 @@ export function useImageCollectionDistribution(
         repetition,
         about,
       }: EPhysImageItem) => {
-        const ImageResourceMaybe = (await nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(id)
-        )) as NexusFile;
-
-        if (chainPredicates([not(isFile), not(hasImage)])(ImageResourceMaybe)) {
+        const imageResourceMaybe = (await fetchResourceById(
+          id,
+          session,
+          {
+            org: orgLabel,
+            project: projectLabel,
+          },
+          { Accept: 'application/json' }
+        )) as FileMetadata;
+        if (chainPredicates([not(isFile), not(hasImage)])(imageResourceMaybe)) {
           return;
         }
-
         if (
-          !ImageResourceMaybe._mediaType.includes('image') &&
-          ImageResourceMaybe._bytes <= MAX_BYTES_TO_PREVIEW
+          !imageResourceMaybe._mediaType.includes('image') &&
+          imageResourceMaybe._bytes <= MAX_BYTES_TO_PREVIEW
         ) {
-          console.warn(`not previewing ${ImageResourceMaybe['@id']} because image is too large`);
+          console.warn(`not previewing ${imageResourceMaybe['@id']} because image is too large`);
           return;
         }
 
         const imageSrc = id;
 
         const [stimulusTypeKey] = stimulusType['@id'].split('/').reverse();
-        const fileName = ImageResourceMaybe._filename;
+        const fileName = imageResourceMaybe._filename;
 
         const stimulusCollection = imageCollection.get(stimulusTypeKey);
         if (stimulusCollection) {

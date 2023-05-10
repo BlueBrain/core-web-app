@@ -1,28 +1,29 @@
 import * as React from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { useAtomValue } from 'jotai';
+import { Session } from 'next-auth';
 import useLazyCache from './useLazyCache';
 import { DeltaResource } from '@/types/explore-section';
 import { RemoteData, DataSets, RABIndex, TraceData } from '@/types/explore-section/index';
-import { Distribution } from '@/types/nexus/common';
+import { Distribution, Entity } from '@/types/nexus/common';
 import RandomAccessBuffer from '@/util/explore-section/random-access-buffer';
+import { fetchFileByUrl, fetchResourceById, listResourceLinksById } from '@/api/nexus';
+import sessionAtom from '@/state/session';
+import { composeUrl } from '@/util/nexus';
 
 /**
  *
- * @param setTraceDataSets
- * @param setIndex
- * @param setLoading
  * @param RABDistro
- * @param nexus
  * @param orgLabel
  * @param projectLabel
  *
  * Process RAB blob Data. Parse and set Index and Data Sets.
+ * @param session
  */
 function processRABDistro(
   RABDistro: Distribution,
-  nexus: NexusClient,
   orgLabel: string,
-  projectLabel: string
+  projectLabel: string,
+  session: Session
 ): Promise<{
   RABIndex: RABIndex;
   datasets: DataSets;
@@ -80,15 +81,19 @@ function processRABDistro(
       });
     };
 
-    nexus.File.get(orgLabel, projectLabel, encodeURIComponent(cacheKey), {
-      as: 'blob',
-    }).then((value) => {
-      fileReader.readAsArrayBuffer(value as Blob);
+    const url = composeUrl('file', cacheKey, {
+      org: orgLabel,
+      project: projectLabel,
+      idExpand: false,
     });
+
+    fetchFileByUrl(url, session)
+      .then((res) => res.blob())
+      .then((value) => fileReader.readAsArrayBuffer(value as Blob));
   });
 }
 
-function useEphysDistribution(resource: DeltaResource, nexus: NexusClient) {
+function useEphysDistribution(resource: DeltaResource) {
   const [{ loading, data, error }, setData] = React.useState<
     RemoteData<{
       RABIndex: RABIndex;
@@ -100,12 +105,12 @@ function useEphysDistribution(resource: DeltaResource, nexus: NexusClient) {
     data: null,
   });
 
+  const session = useAtomValue(sessionAtom);
   const resourceID = resource['@id'];
-
   const [projectLabel, orgLabel] = resource._project.split('/').reverse();
 
   React.useEffect(() => {
-    if (!resource.distribution) {
+    if (!resource.distribution || !session) {
       return;
     }
 
@@ -115,13 +120,14 @@ function useEphysDistribution(resource: DeltaResource, nexus: NexusClient) {
       loading: true,
     });
 
-    nexus.Resource.links(orgLabel, projectLabel, encodeURIComponent(resourceID), 'incoming')
-      .then(({ _results }) => {
-        const traces = _results.filter((link) =>
+    listResourceLinksById(resourceID, session, 'incoming', { org: orgLabel, project: projectLabel })
+      .then((response: any) => {
+        const results = response._results;
+        const traces = results.filter((link: Entity) =>
           link['@type']?.includes('https://neuroshapes.org/Trace')
         );
-        const promises = traces.map((trace) =>
-          nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(trace['@id']))
+        const promises = traces.map((trace: Entity) =>
+          fetchResourceById(trace['@id'], session, { org: orgLabel, project: projectLabel })
         );
         return Promise.all(promises);
       })
@@ -133,7 +139,7 @@ function useEphysDistribution(resource: DeltaResource, nexus: NexusClient) {
           return false;
         });
         if (rabTrace) {
-          return processRABDistro(rabTrace.distribution, nexus, orgLabel, projectLabel);
+          return processRABDistro(rabTrace.distribution, orgLabel, projectLabel, session);
         }
         return rabTrace;
       })

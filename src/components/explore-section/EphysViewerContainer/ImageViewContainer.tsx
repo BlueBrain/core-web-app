@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
 import { Button, Spin } from 'antd';
 import { NexusImage } from './NexusImage';
 import ImageViewComponent, { ImageItem } from './ImageViewComponent';
@@ -19,7 +18,6 @@ const getStimulusTypeString = (image: EPhysImageItem) => {
 
 interface ImageViewContainerProps {
   resource: DeltaResource;
-  nexus: NexusClient;
   stimulusTypeMap: Map<string, number>;
   stimulusType: string;
   onStimulusChange: (value: string) => void;
@@ -29,7 +27,6 @@ interface ImageViewContainerProps {
 function ImageViewContainer({
   stimulusType,
   resource,
-  nexus,
   stimulusTypeMap,
   onRepetitionClicked,
   onStimulusChange,
@@ -66,7 +63,7 @@ function ImageViewContainer({
     [stimulusType]
   );
 
-  const imageCollectionData = useImageCollectionDistribution(resource, nexus, {
+  const imageCollectionData = useImageCollectionDistribution(resource, {
     imageFilterPredicate,
     resultsFilterPredicate,
   });
@@ -98,7 +95,6 @@ function ImageViewContainer({
             // We need to put this as a prop because it contains effects (container, not component)
             <NexusImage
               {...{
-                nexus,
                 imageUrl,
                 org: orgLabel,
                 project: projectLabel,

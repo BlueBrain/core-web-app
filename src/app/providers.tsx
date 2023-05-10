@@ -17,7 +17,6 @@ type ProvidersProps = {
 
 export default function Providers({ children }: ProvidersProps) {
   useTheme();
-
   return (
     <Toast.Provider swipeDirection="right">
       <ConfigProvider theme={commonAntdTheme}>

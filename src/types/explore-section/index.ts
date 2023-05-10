@@ -1,5 +1,3 @@
-import { Resource, NexusClient } from '@bbp/nexus-sdk';
-
 export type TraceData = {
   y: any;
   name: string;
@@ -75,16 +73,3 @@ export type RemoteData<T> = {
   error: Error | null;
   data: T | null;
 };
-
-// Plugin related types
-
-export type CallbackFn = () => void;
-
-export type NexusPluginProps<R> = {
-  ref: HTMLDivElement;
-  nexusClient: NexusClient;
-  resource: Resource<R>;
-  goToResource?: (selfUrl: string) => void;
-};
-
-export type NexusPlugin<R = any> = (pluginProps: NexusPluginProps<R>) => CallbackFn | void;

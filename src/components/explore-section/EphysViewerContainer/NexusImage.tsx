@@ -1,54 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Skeleton, Spin, Image } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk';
-
-import { parseUrl } from '@/util/explore-section/nexus-tools';
-
 import './styles/nexus-image.scss';
+import { useAtomValue } from 'jotai';
+import { fetchFileByUrl } from '@/api/nexus';
+import sessionAtom from '@/state/session';
+import { composeUrl } from '@/util/nexus';
 
 export interface NexusImageContainerProps {
   imageUrl: string; // nexus selfUrl, if org ond project will be treated as nexus id
-  nexus: NexusClient;
   org?: string;
   project?: string;
 }
 
-interface NexusImageProps {
-  imageData: any;
-}
-
-export function NexusImageComponent(props: NexusImageProps) {
-  const [data, setData] = useState<string>();
-  const { imageData } = props;
-
-  useEffect(() => {
-    const imageUrl = URL.createObjectURL(imageData);
-    setData(imageUrl);
-    return () => URL.revokeObjectURL(imageUrl);
-  }, [imageData]);
-
-  return data ? <Image className="cursor-pointer" src={data} /> : null;
-}
-
 export function NexusImage(props: NexusImageContainerProps) {
-  const { imageUrl, nexus, org, project } = props;
-
+  const { imageUrl, org, project } = props;
+  const session = useAtomValue(sessionAtom);
   const [loading, setLoading] = React.useState(true);
-  const [image, setImage] = React.useState<string | null>(null);
-
-  const { org: imageOrg, project: imageProject } =
-    org && project ? { org, project } : parseUrl(imageUrl);
+  const [imageData, setImageData] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    // TODO: We can implement a caching layer here based on file revision
-    nexus.File.get(imageOrg, imageProject, encodeURIComponent(imageUrl), {
-      as: 'blob',
-    })
-      .then((imageResponse) => setImage(imageResponse as string))
+    if (!session) return;
+    const url = composeUrl('file', imageUrl, { org, project });
+    fetchFileByUrl(url, session)
+      .then((res) => res.blob())
+      .then((imageResponse) => {
+        const data = URL.createObjectURL(imageResponse);
+        setImageData(data);
+        return () => URL.revokeObjectURL(data);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
-
+  }, [imageUrl, org, project, session]);
   return (
     <>
       {loading && (
@@ -56,7 +38,7 @@ export function NexusImage(props: NexusImageContainerProps) {
           <Skeleton.Image />
         </Spin>
       )}
-      {image && <NexusImageComponent imageData={image} />}
+      {imageData && <Image className="cursor-pointer" src={imageData} />}
     </>
   );
 }

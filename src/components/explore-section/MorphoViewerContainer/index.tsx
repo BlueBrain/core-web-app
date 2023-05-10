@@ -1,22 +1,21 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
 import matches from 'lodash/matches';
+import { useAtomValue } from 'jotai';
 import MorphoWrapper from './MorphoWrapper';
 import { MorphoViewerOptions } from './MorphologyViewer';
 import { DeltaResource } from '@/types/explore-section';
+import { composeUrl } from '@/util/nexus';
+import { fetchFileByUrl } from '@/api/nexus';
+import sessionAtom from '@/state/session';
 
 const SHAPE = {
   '@type': 'DataDownload',
   encodingFormat: 'application/swc',
 };
 
-function MorphoViewerContainer({
-  resource,
-  nexus,
-}: {
-  resource: DeltaResource;
-  nexus: NexusClient;
-}) {
+function MorphoViewerContainer({ resource }: { resource: DeltaResource }) {
   const [{ loading, error, data }, setData] = useState<{
     loading: boolean;
     error: Error | null;
@@ -27,6 +26,8 @@ function MorphoViewerContainer({
     data: null,
   });
 
+  const session = useAtomValue(sessionAtom);
+
   const [options, setOptions] = useState<MorphoViewerOptions>({
     asPolyline: false,
     focusOn: true,
@@ -34,6 +35,7 @@ function MorphoViewerContainer({
   });
 
   useEffect(() => {
+    if (!session) return;
     if (!resource.distribution) {
       setData({
         loading: false,
@@ -61,10 +63,14 @@ function MorphoViewerContainer({
     }
 
     const [projectLabel, orgLabel] = resource._project.split('/').reverse();
-
     const [id] = traceDistro.contentUrl.split('/').reverse();
-
-    nexus.File.get(orgLabel, projectLabel, id, { as: 'text' })
+    const url = composeUrl('file', decodeURIComponent(id), {
+      org: orgLabel,
+      project: projectLabel,
+      idExpand: false,
+    });
+    fetchFileByUrl(url, session)
+      .then((resp) => resp.text())
       .then((fetchedData) => {
         setData({
           data: fetchedData,
@@ -79,7 +85,7 @@ function MorphoViewerContainer({
           loading: false,
         });
       });
-  }, [resource['@id']]);
+  }, [resource, session]);
 
   const handleAsPolyline = () => {
     setOptions({
