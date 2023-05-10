@@ -20,6 +20,7 @@ import {
 import { BrainRegion } from '@/types/ontologies';
 import { usePrevious } from '@/hooks/hooks';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VIRIDIS_W_ZERO_CUTOFF: ColorScale = [
   [0, '#000000'],
   [0.0001, '#440154'],
@@ -39,6 +40,25 @@ const VIRIDIS_W_ZERO_CUTOFF: ColorScale = [
   [0.8784313725490196, '#addc30'],
   [0.9411764705882353, '#d8e219'],
   [1, '#fde725'],
+];
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const ELECTRIC: ColorScale = [
+  [0, 'rgb(0,0,0)'],
+  [0.0001, 'rgb(30,0,100)'],
+  [0.001, 'rgb(120,0,100)'],
+  [0.2, 'rgb(160,90,0)'],
+  [0.5, 'rgb(230,200,0)'],
+  [1, 'rgb(255,250,220)'],
+];
+
+const ELECTRIC_SHARP: ColorScale = [
+  [0, 'rgb(0,0,0)'],
+  [0.0001, 'rgb(40,0,132)'],
+  [0.001, 'rgb(161,0,132)'],
+  [0.2, 'rgb(232,126,0)'],
+  [0.5, 'rgb(255,253,0)'],
+  [1, 'rgb(255,255,255)'],
 ];
 
 function getDensitiesForNodes(
@@ -172,7 +192,7 @@ export default function MacroConnectome({
         x: dstLabels,
         y: srcLabels,
         type: 'heatmap',
-        colorscale: VIRIDIS_W_ZERO_CUTOFF,
+        colorscale: ELECTRIC_SHARP,
         hovertemplate: 'Post-synaptic: %{x} <br>Pre-synaptic: %{y} <br>Connection strength: %{z}',
       },
     ];
