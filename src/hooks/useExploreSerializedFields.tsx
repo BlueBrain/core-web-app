@@ -1,13 +1,20 @@
 import { useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import find from 'lodash/find';
-import { AnnotationEntity, DeltaResource, Series } from '@/types/explore-section';
+import {
+  AnnotationEntity,
+  DeltaResource,
+  Series,
+  SerializedDeltaResource,
+} from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
 
-export default function useExploreSerializedFields(detail: DeltaResource) {
-  const seriesArray: Series[] | undefined = detail.series && ensureArray(detail.series);
+export default function useExploreSerializedFields(
+  detail: DeltaResource | null
+): SerializedDeltaResource {
+  const seriesArray: Series[] | undefined = detail?.series && ensureArray(detail.series);
   const annotationArray: AnnotationEntity[] | undefined | null =
-    detail.annotation && ensureArray(detail.annotation);
+    detail?.annotation && ensureArray(detail.annotation);
   const contributorsArray = ensureArray(detail?.contribution).reduce(
     (acc, cur) => [...acc, `${cur?.agent?.givenName} ${cur?.agent?.familyName}`],
     [] as any
@@ -25,8 +32,8 @@ export default function useExploreSerializedFields(detail: DeltaResource) {
 
   // renders the species age
   const serializeSubjectAge = () =>
-    detail.subject.age &&
-    `${detail.subject.age.value} ${detail.subject.age.unitCode} ${detail.subject.age.period}`;
+    detail?.subject?.age &&
+    `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
 
   // renders mean +- std field. If std is not present, renders only the mean
   const serializeMeanPlusMinusStd = () => {
@@ -41,15 +48,6 @@ export default function useExploreSerializedFields(detail: DeltaResource) {
       </>
     );
   };
-
-  // renders list of contributors
-  const serializeContributors = () => (
-    <ul>
-      {contributorsArray?.map((contributor) => (
-        <li key={contributor}>{contributor}</li>
-      ))}
-    </ul>
-  );
 
   // renders standard error of the mean if present
   const serializeSem = () =>
@@ -78,18 +76,18 @@ export default function useExploreSerializedFields(detail: DeltaResource) {
   // renders creation day in a dd.MM.yyyy format
   const serializeCreationDate = () =>
     detail?._createdAt && (
-      <div className="mt-3">{format(parseISO(detail?._createdAt), 'dd.MM.yyyy')}</div>
+      <div className="mt-3">{format(parseISO(detail._createdAt), 'dd.MM.yyyy')}</div>
     );
 
   // renders weight in a min - max format
   const serializeWeight = () =>
-    detail.subject.weight &&
-    `${detail?.subject?.weight?.minValue} - ${detail?.subject?.weight?.maxValue}`;
+    detail?.subject?.weight &&
+    `${detail.subject?.weight?.minValue} - ${detail.subject?.weight?.maxValue}`;
 
   return {
-    description: detail.description,
-    species: detail.subject?.species?.label,
-    brainRegion: detail.brainLocation?.brainRegion?.label,
+    description: detail?.description,
+    species: detail?.subject?.species.label,
+    brainRegion: detail?.brainLocation?.brainRegion?.label,
     numberOfMeasurement: seriesArray?.find((s) => s.statistic === 'N')?.value,
     createdBy: detail?._createdBy?.split('/')?.pop(),
     subjectAge: serializeSubjectAge(),
@@ -98,8 +96,9 @@ export default function useExploreSerializedFields(detail: DeltaResource) {
     creationDate: serializeCreationDate(),
     thickness: serializeThickness(),
     eType: serializeEType(),
-    contributors: serializeContributors(),
+    contributors: contributorsArray,
     sem: serializeSem(),
     weight: serializeWeight(),
+    license: detail?.license?.['@id'],
   };
 }

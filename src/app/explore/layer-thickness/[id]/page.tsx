@@ -1,144 +1,51 @@
 'use client';
 
-import { Key, Suspense, useEffect } from 'react';
-import { useSetAtom, useAtomValue } from 'jotai';
-import { useSession } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
-import Error from 'next/error';
-import { loadable } from 'jotai/utils';
-import usePathname from '@/hooks/pathname';
-import Sidebar from '@/components/explore-section/Sidebar';
-import { DeltaResource, SideLink } from '@/types/explore-section';
-import { setInfoWithPath } from '@/util/explore-section/detail-view';
-import createDetailAtoms from '@/state/explore-section/detail-atoms-constructor';
-import ExploreSectionDetailField, {
-  ExploreSectionDetailFieldProps,
-} from '@/components/explore-section/ExploreSectionDetailField';
-import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
+import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import { ensureArray } from '@/util/nexus';
-import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
+import Detail, { DetailProps, ListField } from '@/components/explore-section/Detail';
 
-const { infoAtom, detailAtom, latestRevisionAtom } = createDetailAtoms();
-
-function LayerThicknessDetailHeader({
-  detail,
-  url,
-  latestRevision,
-}: {
-  detail: DeltaResource;
-  url?: string | null;
-  latestRevision: number | null;
-}) {
-  const { description, brainRegion, species, creationDate, thickness } =
-    useExploreSerializedFields(detail);
-
-  const contributors = ensureArray(detail?.contribution).reduce(
-    (acc, cur) => [...acc, cur?.agent?.['@id']],
-    [] as any
-  ) as string[];
-
-  const contributionField = {
-    title: contributors.length === 1 ? 'Contributor' : 'Contributors',
-    field: (
-      <ul>
-        {contributors?.map((contributor) => (
-          <li key={contributor}>{contributor}</li>
-        ))}
-      </ul>
-    ),
-  };
-
-  const fields = (
-    [
-      {
-        title: 'Description',
-        field: description,
-        className: 'col-span-2 row-span-2',
-      },
-      {
-        title: 'Brain Region',
-        field: brainRegion,
-      },
-      {
-        title: 'Species',
-        field: species,
-      },
-      {
-        className: 'col-span-2',
-        title: 'Thickness',
-        field: thickness,
-      },
-      contributionField,
-      {
-        title: 'Added',
-        field: creationDate,
-      },
-      {
-        title: 'Licence',
-        field: detail?.license?.['@id'],
-      },
-    ] as ExploreSectionDetailFieldProps[]
-  ).map((field) => (
-    <ExploreSectionDetailField
-      key={field.title as Key}
-      className={field.className}
-      title={field.title}
-      field={field.field}
-    />
-  ));
-
-  return (
-    <div className="max-w-screen-lg">
-      <DetailHeaderName detail={detail} url={url} latestRevision={latestRevision} />
-      <div className="grid grid-cols-4 gap-4 mt-10">{fields}</div>
-    </div>
-  );
-}
-
-function LayerThicknessDetail() {
-  const { data: session } = useSession();
-  const path = usePathname();
-  const params = useSearchParams();
-  const rev = params?.get('rev');
-  const detail = useAtomValue(loadable(detailAtom));
-  const latestRevision = useAtomValue(latestRevisionAtom);
-  const setInfo = useSetAtom(infoAtom);
-
-  useEffect(() => setInfoWithPath(path, setInfo, rev), [path, rev, setInfo]);
-
-  const links: Array<SideLink> = [{ url: '/explore/layer-thickness', title: 'Layer thickness' }];
-
-  if (detail.state === 'hasError') {
-    return <Error statusCode={400} title="Something went wrong while fetching the data" />;
-  }
-
-  if (detail.state === 'loading' || !session || !detail.data) {
-    return <CentralLoadingSpinner />;
-  }
-
-  if (detail?.data?.reason) {
-    return <Error statusCode={404} title={detail?.data?.reason} />;
-  }
-
-  return (
-    <div className="flex h-screen">
-      <Sidebar links={links} />
-      <div className="bg-white w-full h-full overflow-scroll p-7 pr-12">
-        <LayerThicknessDetailHeader
-          detail={detail.data}
-          url={path}
-          latestRevision={latestRevision}
-        />
-      </div>
-    </div>
-  );
-}
+const fields = [
+  {
+    title: 'Description',
+    field: ({ description }) => description,
+    className: 'col-span-3 row-span-2',
+  },
+  {
+    title: 'Brain Region',
+    field: ({ brainRegion }) => brainRegion,
+  },
+  {
+    title: 'Species',
+    field: ({ species }) => species,
+    className: 'col-span-2',
+  },
+  {
+    title: 'Thickness',
+    field: ({ thickness }) => thickness,
+  },
+  {
+    title: 'Age',
+    field: ({ subjectAge }) => subjectAge,
+    className: 'col-span-2',
+  },
+  {
+    title: ({ contributors }) => (contributors?.length === 1 ? 'Contributor' : 'Contributors'),
+    field: ({ contributors }) => <ListField items={contributors} />,
+  },
+  {
+    title: 'Created On',
+    field: ({ creationDate }) => creationDate,
+  },
+  {
+    title: 'Licence',
+    field: ({ license }) => license,
+  },
+] as DetailProps[];
 
 export default function LayerThicknessDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <LayerThicknessDetail />
+      <Detail fields={fields} />
     </Suspense>
   );
 }

@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface SideLinkList {
   links?: Array<SideLink>;
 }
@@ -288,3 +290,21 @@ export interface SortState {
   field: string | React.Key;
   order: 'asc' | 'desc';
 }
+
+export type SerializedDeltaResource = {
+  description?: string;
+  species?: string;
+  brainRegion?: string;
+  numberOfMeasurement?: number;
+  createdBy?: string;
+  subjectAge?: string;
+  mType?: string;
+  meanPlusMinusStd?: ReactNode | null;
+  creationDate?: ReactNode;
+  thickness?: ReactNode;
+  eType?: string;
+  contributors: string[];
+  sem?: number;
+  weight?: string;
+  license?: string;
+};

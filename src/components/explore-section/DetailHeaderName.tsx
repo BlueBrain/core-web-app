@@ -1,4 +1,4 @@
-import { Button, Dropdown, MenuProps } from 'antd';
+import { Dropdown, MenuProps } from 'antd';
 import range from 'lodash/range';
 import { useMemo } from 'react';
 import { DownOutlined } from '@ant-design/icons';
@@ -31,22 +31,22 @@ export default function DetailHeaderName({
   }, [latestRevision, url]);
 
   return (
-    <>
-      <div className="text-xs font-thin text-primary-7">Name</div>
-      <div className="flex gap-5 items-center">
-        <div className="font-bold text-xl text-primary-7">{detail?.name}</div>
+    <div className="flex flex-col text-primary-7">
+      <div className="font-thin text-xs">Name</div>
+      <div className="flex items-center gap-5">
+        <div className="font-bold text-xl">{detail?.name}</div>
         <Dropdown menu={{ items }} placement="bottom" trigger={['click']}>
-          <Button
-            className="flex gap-2 items-center text-primary-7 border px-4 py-2 rounded-none border-solid border-primary-7"
-            type="ghost"
+          <button
+            type="button"
+            className="border border-primary-7 flex gap-2 items-center px-4 py-2 w-fit"
           >
-            <span className="text-primary-7">
+            <span>
               Revision {detail._rev} {latestRevision === detail._rev ? '(latest)' : ''}
             </span>
             <DownOutlined />
-          </Button>
+          </button>
         </Dropdown>
       </div>
-    </>
+    </div>
   );
 }
