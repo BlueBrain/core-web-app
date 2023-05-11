@@ -7,8 +7,7 @@ class SimPreviewThreeCtxWrapper extends ThreeCtxWrapper {
 
   private cameraLine: THREE.Line = new THREE.Line();
 
-  drawCameraLookAtSymbol(customPosition: [number, number, number] | null = null) {
-    console.debug('drawCameraSymbol', customPosition, this.threeContext);
+  drawCameraLookAtSymbol() {
     const targetPoint = new THREE.Vector3(...DEFAULT_CAMERA_LOOK_AT);
 
     const drawLookAtSphere = () => {
@@ -49,6 +48,11 @@ class SimPreviewThreeCtxWrapper extends ThreeCtxWrapper {
 
     drawCameraSphere();
     drawCameraLine();
+  }
+
+  removeCameraSymbol() {
+    this.threeContext?.scene.remove(this.cameraSymbolMesh);
+    this.threeContext?.scene.remove(this.cameraLine);
   }
 }
 

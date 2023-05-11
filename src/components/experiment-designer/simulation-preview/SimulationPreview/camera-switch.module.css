@@ -1,0 +1,23 @@
+.CameraSwitchRoot {
+  @apply rotate-180;
+  border: 1px solid;
+  @apply border-neutral-3;
+  @apply rounded-full;
+  @apply my-[2px];
+  @apply px-[2px];
+}
+
+.CameraSwitchThumb {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  @apply rounded-full;
+  transition: transform 100ms;
+  will-change: transform;
+  transform: translateY(12px);
+}
+
+.CameraSwitchThumb[data-state='checked'] {
+  transform: translateY(-12px);
+}

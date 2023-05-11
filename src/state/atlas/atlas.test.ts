@@ -8,6 +8,7 @@ class FakeManager extends AtlasVisualizationManager {
       {
         visibleMeshes: [],
         visiblePointClouds: [],
+        visibleNodeSets: [],
       },
       () => {
         this._triggerCount += 1;

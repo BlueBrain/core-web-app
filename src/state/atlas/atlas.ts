@@ -17,9 +17,17 @@ type PointCloudType = {
   hasError: boolean;
 };
 
+type NodeSetType = {
+  nodeSetName: string;
+  color: string;
+  isLoading: boolean;
+  hasError: boolean;
+};
+
 type AtlasVisualizationType = {
   visibleMeshes: MeshType[];
   visiblePointClouds: PointCloudType[];
+  visibleNodeSets: NodeSetType[];
 };
 
 const defaultCollection: AtlasVisualizationType = {
@@ -33,6 +41,7 @@ const defaultCollection: AtlasVisualizationType = {
     },
   ],
   visiblePointClouds: [],
+  visibleNodeSets: [],
 };
 
 const AtlasVisualizationAtom = atom<AtlasVisualizationType>(defaultCollection);
@@ -64,15 +73,20 @@ export class AtlasVisualizationManager {
 
   private _visiblePointClouds: PointCloudType[];
 
+  private _visibleNodeSets: NodeSetType[];
+
   private readonly trigger: () => void;
 
   constructor(atlas: AtlasVisualizationType, setAtlas: (atlas: AtlasVisualizationType) => void) {
     this._visibleMeshes = atlas.visibleMeshes;
     this._visiblePointClouds = atlas.visiblePointClouds;
+    this._visibleNodeSets = atlas.visibleNodeSets;
+
     this.trigger = () => {
       const newAtlas = {
         visibleMeshes: this.visibleMeshes,
         visiblePointClouds: this.visiblePointClouds,
+        visibleNodeSets: this.visibleNodeSets,
       };
       setAtlas(newAtlas);
     };
@@ -86,25 +100,45 @@ export class AtlasVisualizationManager {
     return [...this._visiblePointClouds];
   }
 
+  get visibleNodeSets() {
+    return [...this._visibleNodeSets];
+  }
+
   /**
    * Add `meshes` and/or `pointClouds` to the list of visible ones, unless there is
    * already a mesh/pointCloud with that `contentURL`/`regionId`.
    */
-  addVisibleObjects(...objects: Array<MeshType | PointCloudType>): void {
+  addVisibleObjects(...objectsToAdd: Array<MeshType | PointCloudType | NodeSetType>): void {
     let visibleMeshes = this._visibleMeshes;
     let visiblePointClouds = this._visiblePointClouds;
-    objects.forEach((obj) => {
+    let visibleNodeSets = this._visibleNodeSets;
+
+    objectsToAdd.forEach((obj) => {
       if (isMeshType(obj)) {
         if (!visibleMeshes.find((mesh) => mesh.contentURL === obj.contentURL)) {
           visibleMeshes = [...visibleMeshes, { ...obj }];
         }
-      } else if (!visiblePointClouds.find((pointCloud) => pointCloud.regionID === obj.regionID)) {
+      } else if (
+        isPointCloudType(obj) &&
+        !visiblePointClouds.find((pointCloud) => pointCloud.regionID === obj.regionID)
+      ) {
         visiblePointClouds = [...visiblePointClouds, { ...obj }];
+      } else if (
+        isNodeSetType(obj) &&
+        !visibleNodeSets.find((nodeSet) => nodeSet.nodeSetName === obj.nodeSetName)
+      ) {
+        visibleNodeSets = [...visibleNodeSets, { ...obj }];
       }
     });
-    if (visibleMeshes !== this._visibleMeshes || visiblePointClouds !== this._visiblePointClouds) {
+
+    if (
+      visibleMeshes !== this._visibleMeshes ||
+      visiblePointClouds !== this._visiblePointClouds ||
+      visibleNodeSets !== this._visibleNodeSets
+    ) {
       this._visibleMeshes = visibleMeshes;
       this._visiblePointClouds = visiblePointClouds;
+      this._visibleNodeSets = visibleNodeSets;
       this.trigger();
     }
   }
@@ -116,24 +150,45 @@ export class AtlasVisualizationManager {
   removeVisibleObjects(...ids: string[]): void {
     let visibleMeshes = this._visibleMeshes;
     let visiblePointClouds = this._visiblePointClouds;
+    let visibleNodeSets = this._visibleNodeSets;
+
     ids.forEach((id) => {
+      // Filter out matching meshes
       const newVisibleMeshes = visibleMeshes.filter((mesh) => mesh.contentURL !== id);
       if (newVisibleMeshes.length < visibleMeshes.length) {
         visibleMeshes = newVisibleMeshes;
         return;
       }
+
+      // Filter out matching point clouds
       const newVisiblePointClouds = visiblePointClouds.filter(
         (pointCloud) => pointCloud.regionID !== id
       );
       if (newVisiblePointClouds.length < visiblePointClouds.length) {
         visiblePointClouds = newVisiblePointClouds;
       }
+
+      // Filter out matching node sets
+      const newVisibleNodeSets = visibleNodeSets.filter((nodeSet) => nodeSet.nodeSetName !== id);
+      if (newVisibleNodeSets.length < visibleNodeSets.length) {
+        visibleNodeSets = newVisibleNodeSets;
+      }
     });
-    if (visibleMeshes !== this._visibleMeshes || visiblePointClouds !== this._visiblePointClouds) {
+
+    if (
+      visibleMeshes !== this._visibleMeshes ||
+      visiblePointClouds !== this._visiblePointClouds ||
+      visibleNodeSets !== this._visibleNodeSets
+    ) {
       this._visibleMeshes = visibleMeshes;
       this._visiblePointClouds = visiblePointClouds;
+      this._visibleNodeSets = visibleNodeSets;
       this.trigger();
     }
+  }
+
+  removeAllNodeSetMeshes() {
+    this.removeVisibleObjects(...this.visibleNodeSets.map((nodeSet) => nodeSet.nodeSetName));
   }
 
   /**
@@ -194,6 +249,13 @@ export class AtlasVisualizationManager {
   }
 
   /**
+   * @returns A NodeSet with `nodeSetName` or `undefined`.
+   */
+  findVisibleNodeSet(nodeSetName: string): NodeSetType | undefined {
+    return this._visibleNodeSets.find((nodeSet) => nodeSet.nodeSetName === nodeSetName);
+  }
+
+  /**
    * Remove all the pointCloudes, and update the state if there was at
    * least one pointCloud to remove.
    * @returns `true` if the list was not empty before the call.
@@ -224,6 +286,23 @@ export class AtlasVisualizationManager {
   }
 
   /**
+   * Update the nodeSet with the given `nodeSetName`.
+   * If such nodeSet exists, the state will be updated.
+   * @returns `true` is such nodeSet has been found and updated.
+   */
+  updateVisibleNodeSets(update: Partial<NodeSetType> & { nodeSetName: string }) {
+    const nodeSet = this.findVisibleNodeSet(update.nodeSetName);
+    if (!nodeSet) return false;
+
+    this._visibleNodeSets = [
+      { ...nodeSet, ...update },
+      ...this._visibleNodeSets.filter(({ nodeSetName }) => nodeSetName !== update.nodeSetName),
+    ];
+    this.trigger();
+    return true;
+  }
+
+  /**
    * Update each pointCloud of the list with the given attributes.
    * Can be usefull to set `isLoading: false` to every mesh.
    * @returns `true` if the list was not empty.
@@ -240,7 +319,15 @@ export class AtlasVisualizationManager {
   }
 }
 
-function isMeshType(obj: MeshType | PointCloudType): obj is MeshType {
+function isMeshType(obj: MeshType | PointCloudType | NodeSetType): obj is MeshType {
   const data = obj as Record<string, unknown>;
   return typeof data.contentURL === 'string';
+}
+
+function isPointCloudType(obj: MeshType | PointCloudType | NodeSetType): obj is PointCloudType {
+  return Object.hasOwn(obj, 'regionID');
+}
+
+function isNodeSetType(obj: MeshType | PointCloudType | NodeSetType): obj is NodeSetType {
+  return Object.hasOwn(obj, 'nodeSetName');
 }
