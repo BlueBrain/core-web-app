@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ConfigProvider, theme, InputNumber, Input, Button } from 'antd';
 import Plotly, { Shape } from 'plotly.js-dist-min';
@@ -298,22 +298,18 @@ export default function ConnectomeConfigurationView() {
       </div>
 
       <div className={styles.matrixContainer}>
-        {activeTab === 'macro' && (
-          <Suspense fallback={null}>
-            {connectivityMatrix && (
-              <MacroConnectome
-                select={select}
-                unselect={unselect}
-                zoom={zoom}
-                selected={selected}
-                setSelected={setSelected}
-                connectivityFlatArray={connectivityMatrix[hemisphereDirection]}
-                setMultiplier={setMultiplier}
-                setOffset={setOffset}
-                selectionShapes={selectionShapes}
-              />
-            )}
-          </Suspense>
+        {activeTab === 'macro' && connectivityMatrix && (
+          <MacroConnectome
+            select={select}
+            unselect={unselect}
+            zoom={zoom}
+            selected={selected}
+            setSelected={setSelected}
+            connectivityFlatArray={connectivityMatrix[hemisphereDirection]}
+            setMultiplier={setMultiplier}
+            setOffset={setOffset}
+            selectionShapes={selectionShapes}
+          />
         )}
       </div>
 
