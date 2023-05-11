@@ -78,6 +78,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     !connectivityStrengthMatrix ||
     !remoteConfigPayload ||
     !configPayload ||
+    !configPayloadUrl ||
     !overridesPayloadUrl ||
     !overridesPayloadRevAtom
   ) {
