@@ -1,7 +1,7 @@
 'use client';
 
 import { atom } from 'jotai';
-import { loadable, selectAtom } from 'jotai/utils';
+import { loadable } from 'jotai/utils';
 import { tableFromIPC, Table } from '@apache-arrow/es5-cjs';
 
 import { macroConnectomeConfigIdAtom } from '..';
@@ -23,7 +23,11 @@ import {
   fetchResourceSourceById,
   fetchGeneratorTaskActivity,
 } from '@/api/nexus';
-import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
+import {
+  HemisphereDirection,
+  MacroConnectomeEditEntry,
+  WholeBrainConnectivityMatrix,
+} from '@/types/connectome';
 import { getFlatArrayValueIdx } from '@/util/connectome';
 import { setRevision } from '@/util/nexus';
 
@@ -51,10 +55,12 @@ export const configSourceAtom = atom<Promise<MacroConnectomeConfig | null>>(asyn
   return fetchResourceSourceById<MacroConnectomeConfig>(id, session);
 });
 
-export const configPayloadUrlAtom = selectAtom(
-  configAtom,
-  (config) => config?.distribution.contentUrl
-);
+export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+  if (!config) return null;
+
+  return config.distribution.contentUrl;
+});
 
 export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -166,9 +172,13 @@ export const connectivityStrengthOverridesEntitySourceAtom = atom<
   return fetchResourceSourceById(id, session, { rev });
 });
 
-export const connectivityStrengthOverridesPayloadUrlAtom = selectAtom(
-  connectivityStrengthOverridesEntityAtom,
-  (entity) => entity?.distribution.contentUrl
+export const connectivityStrengthOverridesPayloadUrlAtom = atom<Promise<string | null>>(
+  async (get) => {
+    const entity = await get(connectivityStrengthOverridesEntityAtom);
+    if (!entity) return null;
+
+    return entity.distribution.contentUrl;
+  }
 );
 
 export const connectivityStrengthOverridesPayloadRevAtom = atom<Promise<number | null>>(
@@ -288,10 +298,11 @@ export const connectivityStrengthMatrixAtom = atom<Promise<WholeBrainConnectivit
 
 export const connectivityStrengthMatrixLoadableAtom = loadable(connectivityStrengthMatrixAtom);
 
-export const editsAtom = selectAtom(
-  configPayloadAtom,
-  (configPayload) => configPayload?._ui_data?.editHistory ?? []
-);
+export const editsAtom = atom<Promise<MacroConnectomeEditEntry[]>>(async (get) => {
+  const configPayload = await get(configPayloadAtom);
+
+  return configPayload?._ui_data?.editHistory ?? [];
+});
 
 export const editsLoadableAtom = loadable(editsAtom);
 
