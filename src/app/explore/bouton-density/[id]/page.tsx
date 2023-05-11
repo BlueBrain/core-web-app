@@ -56,7 +56,10 @@ const fields = [
 export default function BoutonDensityDetails() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} />
+      <Detail
+        fields={fields}
+        links={[{ url: '/explore/bouton-density', title: 'Bouton density' }]}
+      />
     </Suspense>
   );
 }

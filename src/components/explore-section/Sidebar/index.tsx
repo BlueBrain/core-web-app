@@ -55,22 +55,22 @@ export default function Sidebar({ links }: SideLinkList) {
               <ul style={{ display: openExp ? 'block' : 'none' }}>
                 <li>
                   <Link href="/explore/electrophysiology">
-                    Neuron electrophysiologies <ArrowRightOutlined />
+                    Neuron electrophysiology <ArrowRightOutlined />
                   </Link>
                 </li>
                 <li>
                   <Link href="/explore/morphology">
-                    Neuron morphologies <ArrowRightOutlined />
+                    Neuron morphology <ArrowRightOutlined />
                   </Link>
                 </li>
                 <li>
                   <Link href="/explore/bouton-density">
-                    Bouton densities <ArrowRightOutlined />
+                    Bouton density <ArrowRightOutlined />
                   </Link>
                 </li>
                 <li>
                   <Link href="/explore/neuron-density">
-                    Neuron densities <ArrowRightOutlined />
+                    Neuron density <ArrowRightOutlined />
                   </Link>
                 </li>
                 <li>

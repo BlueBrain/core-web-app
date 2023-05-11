@@ -36,7 +36,9 @@ export function ListField({ items }: { items: string[] }) {
   return (
     <ul>
       {items?.map((item) => (
-        <li key={item}>{item}</li>
+        <li key={item} className="break-words">
+          {item}
+        </li>
       ))}
     </ul>
   );
@@ -48,9 +50,11 @@ const detailAtomLoadable = loadable(detailAtom);
 export default function Detail({
   fields,
   children,
+  links,
 }: {
   fields: DetailProps[];
   children?: (detail: DeltaResource) => ReactNode;
+  links: Array<SideLink>;
 }) {
   const { data: session } = useSession();
   const path = usePathname();
@@ -65,8 +69,6 @@ export default function Detail({
   const serializedFields = useExploreSerializedFields(
     detail.state === 'hasData' ? detail?.data : null
   );
-
-  const links: Array<SideLink> = [{ url: '/explore/layer-thickness', title: 'Layer thickness' }];
 
   if (detail.state === 'loading' || !session) {
     return <CentralLoadingSpinner />;

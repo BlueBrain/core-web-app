@@ -41,7 +41,10 @@ const fields = [
 export default function NeuronDensityDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} />
+      <Detail
+        fields={fields}
+        links={[{ url: '/explore/neuron-density', title: 'Neuron density' }]}
+      />
     </Suspense>
   );
 }

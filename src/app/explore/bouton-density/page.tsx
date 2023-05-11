@@ -38,7 +38,7 @@ export default function BoutonDensity() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Bouton densities"
+        title="Bouton density"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

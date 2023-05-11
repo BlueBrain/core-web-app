@@ -46,7 +46,7 @@ const fields = [
 export default function MorphologyDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields}>
+      <Detail fields={fields} links={[{ url: '/explore/morphology', title: 'Neuron morphology' }]}>
         {(detail: DeltaResource) => <MorphoViewerContainer resource={detail} />}
       </Detail>
     </Suspense>

@@ -46,7 +46,10 @@ const fields = [
 export default function EphysDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields}>
+      <Detail
+        fields={fields}
+        links={[{ url: '/explore/electrophysiology', title: 'Neuron electrophysiology' }]}
+      >
         {(detail: DeltaResource) => <EphysViewerContainer resource={detail} />}
       </Detail>
     </Suspense>
