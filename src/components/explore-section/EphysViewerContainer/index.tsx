@@ -1,12 +1,11 @@
 import { Radio, RadioChangeEvent } from 'antd';
 import { FileImageOutlined, LineChartOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DeltaResource } from '@/types/explore-section';
-import { EPhysImageItem } from '@/components/explore-section/EphysViewerContainer/hooks/useImageCollectionDistribution';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
 import ImageViewContainer from '@/components/explore-section/EphysViewerContainer/ImageViewContainer';
 import GraphViewContainer from '@/components/explore-section/EphysViewerContainer/GraphViewContainer';
-
+import { EPhysImageItem } from '@/types/explore-section/index';
 import './styles/ephys-plugin-styles.scss';
 
 enum VIEWS {
@@ -22,12 +21,16 @@ const getStimulusTypeString = (image: EPhysImageItem) => {
 function EphysViewerContainer({ resource }: { resource: DeltaResource }) {
   const [view, setView] = React.useState<VIEWS>(VIEWS.IMAGE);
   const [selectedRepetition, setSelectedRepetition] = React.useState<string>();
-  const stimulusTypes = resource.image
-    ? propAsArray<EPhysImageItem>(resource, 'image')
-        .filter((image) => image.about.match(/stimulation/i))
-        .map(getStimulusTypeString)
-        .sort()
-    : [];
+  const stimulusTypes = useMemo(
+    () =>
+      resource.image
+        ? propAsArray<EPhysImageItem>(resource, 'image')
+            .filter((image) => image.about.match(/stimulation/i))
+            .map(getStimulusTypeString)
+            .sort()
+        : [],
+    [resource]
+  );
 
   const stimulusTypeMap = React.useMemo(() => {
     const typeToNumbers = new Map<string, number>();
@@ -42,7 +45,7 @@ function EphysViewerContainer({ resource }: { resource: DeltaResource }) {
     });
 
     return typeToNumbers;
-  }, [resource, stimulusTypes]);
+  }, [stimulusTypes]);
 
   const [stimulusType, setStimulusType] = React.useState<string>('All');
 

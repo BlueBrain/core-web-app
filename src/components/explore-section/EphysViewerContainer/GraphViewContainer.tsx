@@ -1,12 +1,10 @@
 import GraphViewComponent from './GraphViewComponent';
 import { DeltaResource } from '@/types/explore-section';
 
-import ephysDistribution from '@/components/explore-section/EphysViewerContainer/hooks/useEphysDistribution';
-
 interface GraphViewContainerProps {
-  resource: DeltaResource;
   defaultStimulusType?: string;
   defaultRepetition?: string;
+  resource: DeltaResource;
 }
 
 function GraphViewContainer({
@@ -14,13 +12,12 @@ function GraphViewContainer({
   defaultStimulusType,
   defaultRepetition,
 }: GraphViewContainerProps) {
-  const traceCollectionData = ephysDistribution(resource);
   return (
     <GraphViewComponent
       {...{
-        traceCollectionData,
         defaultRepetition,
         defaultStimulusType,
+        resource,
       }}
     />
   );

@@ -1,48 +1,48 @@
 import { Empty, Spin } from 'antd';
-import { DataSets, RABIndex } from '@/types/explore-section/index';
+import { useMemo } from 'react';
+import { loadable } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
 import EphysPlot from '@/components/explore-section/EphysViewerContainer/EphysPlot';
+import { DeltaResource } from '@/types/explore-section';
+import createDistributionDataAtom from '@/components/explore-section/EphysViewerContainer/state/DistributionDataAtom';
 
 interface GraphViewComponentProps {
   defaultStimulusType?: string;
   defaultRepetition?: string;
-  traceCollectionData: {
-    loading: boolean;
-    error: Error | null;
-    data: {
-      RABIndex: RABIndex;
-      datasets: DataSets;
-    } | null;
-  };
+  resource: DeltaResource;
 }
 function GraphViewComponent({
-  traceCollectionData,
   defaultStimulusType,
   defaultRepetition,
+  resource,
 }: GraphViewComponentProps) {
+  const loadableDataFetcher = useMemo(() => {
+    const resourceID = resource['@id'];
+    const [project, org] = resource._project.split('/').reverse();
+    return loadable(createDistributionDataAtom(resourceID, org, project));
+  }, [resource]);
+  const dataAtom = useAtomValue(loadableDataFetcher);
+
+  if (dataAtom.state === 'loading') {
+    return <Spin />;
+  }
+
+  if (dataAtom.state === 'hasError') {
+    return (
+      <Empty className="p-2em" description="There was a problem loading the required resources" />
+    );
+  }
+
   return (
     <div>
-      <Spin spinning={traceCollectionData.loading}>
-        {!!traceCollectionData.data && (
-          <EphysPlot
-            options={traceCollectionData.data.datasets}
-            index={traceCollectionData.data.RABIndex}
-            defaultRepetition={defaultRepetition}
-            defaultStimulusType={defaultStimulusType}
-          />
-        )}
-        {!traceCollectionData.data && traceCollectionData.loading && (
-          <Empty className="p-2em" description="Fetching new data" />
-        )}
-        {!traceCollectionData.data && !traceCollectionData.loading && (
-          <Empty className="p-2em" description="No data/ No RAB available" />
-        )}
-        {traceCollectionData.error && (
-          <Empty
-            className="p-2em"
-            description={`There was a problem loading the required resources: ${traceCollectionData.error.message}`}
-          />
-        )}
-      </Spin>
+      {dataAtom.data && (
+        <EphysPlot
+          options={dataAtom.data.datasets}
+          index={dataAtom.data.RABIndex}
+          defaultRepetition={defaultRepetition}
+          defaultStimulusType={defaultStimulusType}
+        />
+      )}
     </div>
   );
 }

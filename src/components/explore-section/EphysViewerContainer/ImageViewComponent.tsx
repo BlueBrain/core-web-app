@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { Empty, Select } from 'antd';
+import { Select } from 'antd';
 import { LineChartOutlined } from '@ant-design/icons';
-
-import { RemoteData } from '@/types/explore-section/index';
 
 const { Option } = Select;
 
@@ -35,7 +33,7 @@ interface ImageSetComponentProps {
 interface ImageViewComponentProps {
   stimulusTypeMap: Map<string, number>;
   stimulusType: string;
-  imageCollectionData: RemoteData<ImageCollection>;
+  imageCollectionData: ImageCollection;
   imagePreview: React.FC<{ imageUrl: string }>;
   onStimulusChange: (value: string) => void;
   onRepetitionClicked: (stimulusType: string, rep: string) => () => void;
@@ -116,7 +114,7 @@ function ImageViewComponent({
   onRepetitionClicked,
 }: ImageViewComponentProps) {
   const sortedImageCollectionData = React.useMemo(() => {
-    const entries = Array.from(imageCollectionData.data?.entries() || []);
+    const entries = Array.from(imageCollectionData.entries() || []);
 
     return entries.sort(([stimulusTypeA], [stimulusTypeB]) => {
       const textA = stimulusTypeA.toUpperCase();
@@ -156,18 +154,6 @@ function ImageViewComponent({
             imagePreview={imagePreview}
           />
         ))}
-        {imageCollectionData.data?.size === 0 && (
-          <Empty className="p-2em" description="There is no data to show" />
-        )}
-        {imageCollectionData.data?.size !== 0 && imageCollectionData.loading && (
-          <Empty className="p-2em" description="Fetching new stimulus types" />
-        )}
-        {imageCollectionData.error && (
-          <Empty
-            className="p-2em"
-            description={`There was a problem loading the required resources: ${imageCollectionData.error.message}`}
-          />
-        )}
       </div>
     </div>
   );

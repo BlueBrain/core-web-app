@@ -1,46 +1,35 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Skeleton, Spin, Image } from 'antd';
 import './styles/nexus-image.scss';
+import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
-import { fetchFileByUrl } from '@/api/nexus';
-import sessionAtom from '@/state/session';
-import { composeUrl } from '@/util/nexus';
+import createNexusImageDataAtom from '@/components/explore-section/EphysViewerContainer/state/NexusImageDataAtom';
 
 export interface NexusImageContainerProps {
   imageUrl: string; // nexus selfUrl, if org ond project will be treated as nexus id
-  org?: string;
-  project?: string;
+  org: string;
+  project: string;
 }
 
 export function NexusImage(props: NexusImageContainerProps) {
   const { imageUrl, org, project } = props;
-  const session = useAtomValue(sessionAtom);
-  const [loading, setLoading] = React.useState(true);
-  const [imageData, setImageData] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (!session) return;
-    const url = composeUrl('file', imageUrl, { org, project });
-    fetchFileByUrl(url, session)
-      .then((res) => res.blob())
-      .then((imageResponse) => {
-        const data = URL.createObjectURL(imageResponse);
-        setImageData(data);
-        return () => URL.revokeObjectURL(data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [imageUrl, org, project, session]);
-  return (
-    <>
-      {loading && (
-        <Spin spinning={loading}>
-          <Skeleton.Image />
-        </Spin>
-      )}
-      {imageData && <Image className="cursor-pointer" src={imageData} />}
-    </>
+  const loadableDataFetcher = useMemo(
+    () => loadable(createNexusImageDataAtom(imageUrl, org, project)),
+    [imageUrl, org, project]
   );
+  const dataAtom = useAtomValue(loadableDataFetcher);
+
+  if (dataAtom.state === 'loading') {
+    return (
+      <Spin spinning>
+        <Skeleton.Image />
+      </Spin>
+    );
+  }
+  if (dataAtom.state === 'hasError') {
+    return <div>Image with url {imageUrl} could not be fetched</div>;
+  }
+  return dataAtom.data ? <Image className="cursor-pointer" src={dataAtom.data} /> : null;
 }
 
 export default NexusImage;

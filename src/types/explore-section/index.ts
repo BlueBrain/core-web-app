@@ -68,8 +68,11 @@ export type PlotProps = {
   onZoom: (zoomRanges: ZoomRanges) => void;
 };
 
-export type RemoteData<T> = {
-  loading: boolean;
-  error: Error | null;
-  data: T | null;
+export type EPhysImageItem = {
+  '@id': string;
+  repetition: number;
+  about: string;
+  stimulusType: {
+    '@id': string;
+  };
 };

@@ -1,14 +1,12 @@
-import * as React from 'react';
-import { useAtomValue } from 'jotai';
 import { Session } from 'next-auth';
-import useLazyCache from './useLazyCache';
-import { DeltaResource } from '@/types/explore-section';
-import { RemoteData, DataSets, RABIndex, TraceData } from '@/types/explore-section/index';
-import { Distribution, Entity } from '@/types/nexus/common';
+import { atom, Atom } from 'jotai';
+import { Distribution, Entity } from '@/types/nexus';
+import { DataSets, RABIndex } from '@/types/explore-section/index';
 import RandomAccessBuffer from '@/util/explore-section/random-access-buffer';
+import useLazyCache from '@/components/explore-section/EphysViewerContainer/hooks/useLazyCache';
+import { composeUrl } from '@/util/nexus';
 import { fetchFileByUrl, fetchResourceById, listResourceLinksById } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { composeUrl } from '@/util/nexus';
 
 /**
  *
@@ -45,11 +43,10 @@ function processRABDistro(
         const dataSet = randomAccessBuffer.getDataset(dataSets[i]) as RABIndex;
         const y = dataSet.data.numericalData;
         const label: string = dataSets[i].trim();
-        const data: TraceData = {
+        nameToDataSetMap[label] = {
           y,
           name: label.slice(0, label.length - 2).trim(),
         };
-        nameToDataSetMap[label] = data;
         i += 1;
       }
       return { nameToDataSetMap, index };
@@ -93,41 +90,27 @@ function processRABDistro(
   });
 }
 
-function useEphysDistribution(resource: DeltaResource) {
-  const [{ loading, data, error }, setData] = React.useState<
-    RemoteData<{
-      RABIndex: RABIndex;
-      datasets: DataSets;
-    }>
-  >({
-    loading: true,
-    error: null,
-    data: null,
-  });
+type RABResponse = { RABIndex: RABIndex; datasets: DataSets };
 
-  const session = useAtomValue(sessionAtom);
-  const resourceID = resource['@id'];
-  const [projectLabel, orgLabel] = resource._project.split('/').reverse();
-
-  React.useEffect(() => {
-    if (!resource.distribution || !session) {
-      return;
-    }
-
-    setData({
-      error: null,
-      data: null,
-      loading: true,
-    });
-
-    listResourceLinksById(resourceID, session, 'incoming', { org: orgLabel, project: projectLabel })
+export default function createDistributionDataAtom(
+  resourceID: string,
+  org: string,
+  project: string
+): Atom<Promise<RABResponse | { RABIndex: any; datasets: any }> | null> {
+  return atom((get) => {
+    const session = get(sessionAtom);
+    if (!session) return null;
+    return listResourceLinksById(resourceID, session, 'incoming', {
+      org,
+      project,
+    })
       .then((response: any) => {
         const results = response._results;
         const traces = results.filter((link: Entity) =>
           link['@type']?.includes('https://neuroshapes.org/Trace')
         );
         const promises = traces.map((trace: Entity) =>
-          fetchResourceById(trace['@id'], session, { org: orgLabel, project: projectLabel })
+          fetchResourceById(trace['@id'], session, { org, project })
         );
         return Promise.all(promises);
       })
@@ -139,39 +122,16 @@ function useEphysDistribution(resource: DeltaResource) {
           return false;
         });
         if (rabTrace) {
-          return processRABDistro(rabTrace.distribution, orgLabel, projectLabel, session);
+          return processRABDistro(rabTrace.distribution, org, project, session);
         }
         return rabTrace;
       })
       .then((linksData) => {
-        if (linksData) {
-          const { RABIndex: linksRABIndex, datasets } = linksData;
-          setData({
-            error,
-            loading: false,
-            data: {
-              RABIndex: linksRABIndex,
-              datasets,
-            },
-          });
-        } else {
-          setData({
-            error,
-            loading: false,
-            data: null, // No RAB available.
-          });
-        }
-      })
-      .catch((linksError) => {
-        setData({
-          error: linksError,
-          data,
-          loading: false,
-        });
+        const { RABIndex: linksRABIndex, datasets } = linksData;
+        return {
+          RABIndex: linksRABIndex,
+          datasets,
+        };
       });
-  }, [resourceID]);
-
-  return { loading, error, data };
+  });
 }
-
-export default useEphysDistribution;

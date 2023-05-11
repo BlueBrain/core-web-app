@@ -1,33 +1,46 @@
 import { Button } from 'antd';
-
-import MorphologyViewer, { MorphoViewerOptions } from './MorphologyViewer';
-
 import './styles/morpho-wrapper.css';
+import { useMemo } from 'react';
+import { loadable } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
+import MorphologyViewer, { MorphoViewerOptions } from './MorphologyViewer';
+import createMorphologyDataAtom from '@/components/explore-section/MorphoViewerContainer/state/MorphologyDataAtom';
+import { DeltaResource } from '@/types/explore-section';
 
 function MorphoWrapper({
-  loading,
-  error,
-  data,
   options,
   onPolylineClick,
+  resource,
 }: {
-  loading: boolean;
-  error: Error | null;
-  data: any;
   options: MorphoViewerOptions;
   onPolylineClick: VoidFunction;
+  resource: DeltaResource;
 }) {
+  const morphologyDataAtom = useMemo(
+    () => loadable(createMorphologyDataAtom(resource)),
+    [resource]
+  );
+  const morphologyData = useAtomValue(morphologyDataAtom);
+
   return (
     <div className="flex flex-col h-full gap-3">
       <div className="flex flex-col gap-3">
         <h1 className="font-bold text-primary-9 text-lg">Morphology 3D Viewer</h1>
-        <Button className="w-fit" size="small" disabled={loading} onClick={onPolylineClick}>
+        <Button
+          className="w-fit"
+          size="small"
+          disabled={morphologyData.state === 'loading'}
+          onClick={onPolylineClick}
+        >
           {options.asPolyline ? 'Show as Geometry' : 'Show as Lines'}
         </Button>
       </div>
-      <div className={loading ? 'morpho-wrapper loading' : 'morpho-wrapper'}>
-        {error && <p>{error.message}</p>}
-        {data && !error && <MorphologyViewer data={data} options={options} />}
+      <div
+        className={morphologyData.state === 'loading' ? 'morpho-wrapper loading' : 'morpho-wrapper'}
+      >
+        {morphologyData.state === 'hasData' && (
+          <MorphologyViewer data={morphologyData.data} options={options} />
+        )}
       </div>
     </div>
   );
