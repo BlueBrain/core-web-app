@@ -86,7 +86,7 @@ export default function useExploreSerializedFields(
 
   return {
     description: detail?.description,
-    species: detail?.subject?.species.label,
+    species: detail?.subject?.species?.label,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
     numberOfMeasurement: seriesArray?.find((s) => s.statistic === 'N')?.value,
     createdBy: detail?._createdBy?.split('/')?.pop(),

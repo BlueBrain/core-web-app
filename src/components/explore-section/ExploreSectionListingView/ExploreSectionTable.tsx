@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
-import { ColumnProps } from 'antd/es/table';
+import { ColumnProps, ColumnGroupType } from 'antd/es/table';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
 import { ExploreSectionResource } from '@/types/explore-section';
@@ -37,13 +37,26 @@ export default function ExploreSectionTable({
     return <CentralLoadingSpinner />;
   }
 
+  const onCellRouteHandler = {
+    onCell: (record: ColumnProps<any> | ColumnGroupType<any>) => ({
+      onClick: (e: MouseEvent<HTMLInputElement>) => {
+        e.preventDefault();
+
+        router.push(`${pathname}/${record.key}`);
+      },
+    }),
+  };
+
   if (loadableData.state === 'hasData') {
     return (
       <>
         <Table
           rowKey="key"
           dataSource={loadableData.data}
-          columns={columns}
+          columns={columns.map((col, i) => ({
+            ...col,
+            ...(!(enableDownload && i === 0) && onCellRouteHandler),
+          }))}
           rowClassName={styles.tableRow}
           rowSelection={
             enableDownload
@@ -56,12 +69,6 @@ export default function ExploreSectionTable({
           }
           className={styles.table}
           pagination={false}
-          onRow={(record) => ({
-            onClick: (e) => {
-              e.preventDefault();
-              router.push(`${pathname}/${record.key}`);
-            },
-          })}
         />
         {session && selectedRows.length > 0 && (
           <div className="sticky bottom-0 flex justify-end">
