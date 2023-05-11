@@ -38,7 +38,7 @@ export default function NeuronDensity() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Neuron densities"
+        title="Neuron density"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

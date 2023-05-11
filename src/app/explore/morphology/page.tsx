@@ -37,7 +37,7 @@ export default function MorphologyPage() {
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <Sidebar />
       <ExploreSectionListingView
-        title="Neuron morphologies"
+        title="Neuron morphology"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}
