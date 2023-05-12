@@ -3,8 +3,8 @@
 /* eslint-disable no-restricted-syntax */
 import { JsonRpcServiceInterface } from '../json-rpc/types';
 import { Vector4 } from '../utils/calc';
+import Settings from '../settings';
 import { BraynsWrapperInterface, CircuitLoaderOptions } from './types';
-
 import { assertType } from '@/util/type-guards';
 
 export interface Region {
@@ -23,18 +23,14 @@ export default class Circuit {
    * In most scenarii we will use the region acronym as unique nodeset.
    */
   async load(path: string, options: CircuitLoaderOptions): Promise<number> {
-    // We need to wait for the Backend to fix this entrypoint.
-    // And we will use it to know haw many cells are available
-    // for display.
-    // const info = await this.backend.exec('ci-get-general-info', { path });
-    // console.log('🚀 [circuit] info = ', info); // @FIXME: Remove this line written on 2023-03-21 at 15:10
     const params = {
       loader_name: 'SONATA loader',
       loader_properties: {
         node_population_settings: [
           {
             node_population: 'root__neurons',
-            node_percentage: 0.04,
+            node_percentage: 1, // 100%, because we use the next attribute (node_count_limit).
+            node_count_limit: Settings.NODE_COUNT_LIMIT,
             report_type: 'none',
             neuron_morphology_parameters: {
               load_axon: false,
@@ -64,14 +60,15 @@ export default class Circuit {
     const models = data.filter((model) => model.model_type === 'neurons');
     const [model] = models;
     const modelId = model.model_id;
+    await this.colorModel(modelId, options.color);
     return modelId;
   }
 
-  async colorModel(id: number, method: string, values: Record<string, Vector4>) {
+  async colorModel(id: number, color: Vector4) {
     await this.renderer.exec('color-model', {
       id,
-      method,
-      values,
+      method: 'solid',
+      values: { color },
     });
   }
 

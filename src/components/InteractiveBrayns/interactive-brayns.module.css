@@ -7,8 +7,18 @@
   height: 100%;
   display: grid;
   place-items: center;
-  background: #000;
-  color: #fffe;
+  background: #0c1840;
+  color: #fffd;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  margin: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .debugButtons {
@@ -29,4 +39,47 @@
   color: #fffe;
   width: 2rem;
   height: 2rem;
+  pointer-events: none;
+}
+
+.showBusyMesh {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  opacity: 1;
+  transition: all 0.1s;
+}
+
+.hideBusyMesh {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: all 1s;
+}
+
+.gizmo {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.opacitySlider {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 120px;
+}
+
+.spinners {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  pointer-events: none;
 }

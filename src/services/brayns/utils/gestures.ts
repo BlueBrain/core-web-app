@@ -1,24 +1,35 @@
-import { Vector2 } from '@/services/brayns/utils/calc';
-import GenericEvent from '@/services/brayns/utils/generic-event';
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import GenericEvent from './generic-event';
 
 interface PointerStart {
   startX: number;
   startY: number;
   factor: number;
+  button: number;
 }
 
 export default class Gestures {
-  public eventDrag = new GenericEvent<Vector2>();
+  public eventDrag = new GenericEvent<{
+    deltaX: number;
+    deltaY: number;
+    button: number;
+    isKeyPressed: (key: string) => boolean;
+  }>();
 
   public eventZoom = new GenericEvent<number>();
 
   private pointer: PointerStart | null = null;
+
+  private keysPressed = new Set<string>();
 
   attach(canvas: HTMLCanvasElement) {
     canvas.addEventListener('pointerdown', this.handlePointerDown);
     canvas.addEventListener('pointerup', this.handlePointerUp);
     canvas.addEventListener('pointermove', this.handlePointerMove);
     canvas.addEventListener('wheel', this.handleWheel);
+    canvas.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
   }
 
   detach(canvas: HTMLElement) {
@@ -26,7 +37,20 @@ export default class Gestures {
     canvas.removeEventListener('pointerup', this.handlePointerUp);
     canvas.removeEventListener('pointermove', this.handlePointerMove);
     canvas.removeEventListener('wheel', this.handleWheel);
+    canvas.removeEventListener('contextmenu', handleContextMenu);
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keyup', this.handleKeyUp);
   }
+
+  private readonly handleKeyDown = (evt: KeyboardEvent) => {
+    this.keysPressed.add(evt.key);
+  };
+
+  private readonly handleKeyUp = (evt: KeyboardEvent) => {
+    this.keysPressed.delete(evt.key);
+  };
+
+  private readonly isKeyPressed = (key: string) => this.keysPressed.has(key);
 
   private readonly handleWheel = (evt: WheelEvent) => {
     const zoom = evt.deltaY > 0 ? +1 : -1;
@@ -43,6 +67,7 @@ export default class Gestures {
       startX: evt.clientX,
       startY: evt.clientY,
       factor: 1 / Math.min(rect.width, rect.height),
+      button: evt.button,
     };
   };
 
@@ -50,8 +75,13 @@ export default class Gestures {
     const { pointer } = this;
     if (!pointer) return;
 
-    const { factor, startX, startY } = pointer;
-    this.eventDrag.dispatch([(evt.clientX - startX) * factor, (evt.clientY - startY) * factor]);
+    const { factor, startX, startY, button } = pointer;
+    this.eventDrag.dispatch({
+      deltaX: (evt.clientX - startX) * factor,
+      deltaY: (evt.clientY - startY) * factor,
+      button,
+      isKeyPressed: this.isKeyPressed,
+    });
     pointer.startX = evt.clientX;
     pointer.startY = evt.clientY;
   };
@@ -64,4 +94,13 @@ export default class Gestures {
 
     canvas.releasePointerCapture(evt.pointerId);
   };
+}
+
+/**
+ * We don't wnat the context menu to popup when we are dragging the meshes.
+ */
+function handleContextMenu(evt: MouseEvent) {
+  evt.preventDefault();
+  evt.stopPropagation();
+  evt.stopImmediatePropagation();
 }

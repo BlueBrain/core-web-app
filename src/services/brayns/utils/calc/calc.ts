@@ -1,17 +1,10 @@
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable import/no-anonymous-default-export */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import {
-  Euler as ThreeEuler,
-  Quaternion as ThreeQuaternion,
-  Vector3 as ThreeVector3,
-  Matrix4 as ThreeMatrix4,
-} from 'three';
+import * as Math3D from '@math.gl/core';
+import { Quaternion as ThreeQuaternion } from 'three';
 
 import CalcInterface, {
   Axis,
   BoundingBox,
-  EulerAngles,
   Quaternion,
   Size,
   SizeAndPos,
@@ -23,7 +16,15 @@ import CalcInterface, {
 /* eslint-disable class-methods-use-this */
 
 const EPSILON = 1e-9;
+const COLUMN_X = 0;
+const COLUMN_Y = 1;
+const COLUMN_Z = 2;
+
 const HALF = 0.5;
+
+function half(value: number) {
+  return value * HALF;
+}
 
 /**
  * Quaternion in Brayns Renderer are expressed as a 4 dimensional vector:
@@ -34,12 +35,6 @@ class Calc extends CalcInterface {
    * Small value used to compare floats.
    */
   public static EPSILON = EPSILON;
-
-  clamp(value: number, min: number, max: number): number {
-    if (value < min) return min;
-    if (value > max) return max;
-    return value;
-  }
 
   bezierCubic<T extends number[]>(p0: T, p1: T, p2: T, p3: T, t: number): T {
     const w = 1 - t;
@@ -120,78 +115,13 @@ class Calc extends CalcInterface {
     };
   }
 
-  rotateVectorWithQuaternion([vx, vy, vz]: Vector3, [qx, qy, qz, qw]: Vector4): Vector3 {
-    const quaternion = new ThreeQuaternion(qx, qy, qz, qw);
-    const vector = new ThreeVector3(vx, vy, vz);
-    vector.applyQuaternion(quaternion);
-    return [vector.x, vector.y, vector.z];
-  }
-
-  getQuaternionFromAxis({ x: axisX, y: axisY, y: axisZ }: Axis): Vector4 {
-    const quaternion = new ThreeQuaternion();
-    const matrix = new ThreeMatrix4();
-    const [n11, n21, n31] = axisX;
-    const [n12, n22, n32] = axisY;
-    const [n13, n23, n33] = axisZ;
-    // prettier-ignore
-    matrix.set(
-      n11, n12, n13, 0,
-      n21, n22, n23, 0,
-      n31, n32, n33, 0,
-      0,     0,   0, 1
-    );
-    quaternion.setFromRotationMatrix(matrix);
-    return [quaternion.x, quaternion.y, quaternion.z, quaternion.w];
-  }
-
-  // getQuaternionFromAxis(axis: Axis): Quaternion {
-  //   throw Error('Calc.getQuaternionFromAxis() is not implemented yet!');
-  //   // const mtx = new Math3D.Matrix3();
-  //   // mtx.setColumn(COLUMN_X, axis.x);
-  //   // mtx.setColumn(COLUMN_Y, axis.y);
-  //   // mtx.setColumn(COLUMN_Z, axis.z);
-  //   // const quat = new Math3D.Quaternion().fromMatrix3(mtx).normalize();
-  //   // return [quat.x, quat.y, quat.z, quat.w];
-  // }
-
-  /**
-   * __Warning!__ This function is not working yet.
-   */
-  getQuaternionFromEulerAngles({
-    yaw: longitude,
-    pitch: latitude,
-    roll: tilt,
-  }: EulerAngles): Quaternion {
-    // @see https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Euler_angles_to_quaternion_conversion
-    const halfYaw = half(longitude);
-    const halfPitch = half(latitude);
-    const halfRoll = half(tilt);
-    const cy = Math.cos(halfYaw);
-    const sy = Math.sin(halfYaw);
-    const cp = Math.cos(halfPitch);
-    const sp = Math.sin(halfPitch);
-    const cr = Math.cos(halfRoll);
-    const sr = Math.sin(halfRoll);
-    const qw = cr * cp * cy + sr * sp * sy;
-    const qx = sr * cp * cy - cr * sp * sy;
-    const qy = cr * sp * cy + sr * cp * sy;
-    const qz = cr * cp * sy - sr * sp * cy;
-    return [qx, qy, qz, qw];
-  }
-
-  /**
-   * __Warning!__ This function is not working yet.
-   */
-  getEulerAnglesFromQuaternion(quaternion: Vector4): EulerAngles {
-    const threeQuaternion = new ThreeQuaternion(...quaternion);
-    const ORDER = 'XZY';
-    const vectorEuler = new ThreeEuler(0, 0, 0, ORDER);
-    vectorEuler.setFromQuaternion(threeQuaternion, ORDER);
-    return {
-      roll: vectorEuler.x,
-      pitch: vectorEuler.y,
-      yaw: vectorEuler.z,
-    };
+  getQuaternionFromAxis(axis: Axis): Quaternion {
+    const mtx = new Math3D.Matrix3();
+    mtx.setColumn(COLUMN_X, axis.x);
+    mtx.setColumn(COLUMN_Y, axis.y);
+    mtx.setColumn(COLUMN_Z, axis.z);
+    const quat = new Math3D.Quaternion().fromMatrix3(mtx).normalize();
+    return [quat.x, quat.y, quat.z, quat.w];
   }
 
   getQuaternionAsAxisRotation(angle: number, axis: Vector3): Quaternion {
@@ -288,6 +218,12 @@ class Calc extends CalcInterface {
     return this.length(this.subVectors(pointB, pointA));
   }
 
+  rotateVectorWithQuaternion(vec: Vector3, quat: Quaternion): Vector3 {
+    const v = new Math3D.Vector3(vec);
+    v.transformByQuaternion(quat);
+    return [v.x, v.y, v.z];
+  }
+
   fitToCover(sourceSize: Size, targetSize: Size, alignement = HALF): SizeAndPos {
     if (sourceSize.width <= 0 || sourceSize.height <= 0) {
       return { x: 0, y: 0, width: 0, height: 0 };
@@ -349,9 +285,6 @@ class Calc extends CalcInterface {
     }) as T;
   }
 
-  /**
-   * Quaternion interpolation.
-   */
   slerp(q1: Vector4, q2: Vector4, t: number): Quaternion {
     const q = new ThreeQuaternion(...q1);
     const r = q.slerp(new ThreeQuaternion(...q2), t);
@@ -360,14 +293,6 @@ class Calc extends CalcInterface {
   }
 }
 
-export function half(value: number): number {
-  return value * HALF;
-}
+const instance = new Calc();
 
-export function double(value: number): number {
-  return value + value;
-}
-
-const calc = new Calc();
-
-export default calc;
+export default instance;

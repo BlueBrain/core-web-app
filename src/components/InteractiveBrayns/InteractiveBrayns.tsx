@@ -1,49 +1,42 @@
+'use client';
+
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
-'use client';
-
+import { useSession } from 'next-auth/react';
 import { useAtomValue } from 'jotai';
 import React from 'react';
+import { Button } from 'antd';
 import useNotification from '../../hooks/notifications';
-import Button from './Button';
-import convertStringColorIntoArrayColor from './convert-string-color-into-array-color';
+import AxisGizmo from './AxisGizmo';
+import Settings from './Settings';
 import Spinner from '@/components/Spinner';
 import BraynsService, { BraynsServiceInterface } from '@/services/brayns';
-import { useCurrentCircuitPath } from '@/services/brayns/hooks/circuit';
-import { useVisibleMeshes } from '@/state/atlas';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { isString } from '@/util/type-guards';
 import styles from './interactive-brayns.module.css';
 
 interface InteractiveBraynsProps {
   className?: string;
-  token: string | undefined;
+  token: string;
 }
 
-export default function InteractiveBrayns({ className, token }: InteractiveBraynsProps) {
-  const notification = useNotification();
-  const circuitPath = useCurrentCircuitPath();
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const visibleMeshes = useVisibleMeshes();
-  const brayns = BraynsService.useBrayns(token);
-  const allocationProgress = BraynsService.useAllocationProgress();
-  const handleCanvasMount = useCanvasMountHandler(brayns);
-  React.useEffect(() => {
-    if (!isBraynsService(brayns)) return;
+export default function InteractiveBrayns() {
+  const token = useAccessToken();
+  return token ? <InteractiveBraynsWithToken token={token} /> : null;
+}
 
-    const action = async () => {
-      brayns.showMeshes(
-        visibleMeshes.map((mesh) => ({
-          type: 'mesh',
-          url: mesh.contentURL,
-          color: convertStringColorIntoArrayColor(mesh.color),
-        }))
-      );
-    };
-    action();
-  }, [visibleMeshes, brayns]);
+function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps) {
+  const [overlayOpacity, setOverlayOpacity] = React.useState(1);
+  const notification = useNotification();
+  const circuitPath = BraynsService.useCurrentCircuitPath();
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const brayns = BraynsService.useBraynsService(token);
+  const { handleOverlayCanvasMount } = BraynsService.useOverlay(token);
+  const allocationProgress = BraynsService.State.progress.allocation.useValue();
+  const handleSceneCanvasMount = useCanvasMountHandler(brayns);
+  const busyMesh = BraynsService.State.progress.loadingMeshes.useValue();
+  const busyMorpho = BraynsService.State.progress.loadingMorphologies.useValue();
   React.useEffect(() => {
     if (!isBraynsService(brayns)) return;
 
@@ -67,12 +60,18 @@ export default function InteractiveBrayns({ className, token }: InteractiveBrayn
   };
   return (
     <div className={`${className ?? styles.expand}`}>
-      <canvas className={styles.expand} ref={handleCanvasMount} />
-      {brayns === null && (
-        <div className={styles.expand}>
-          <Spinner>{allocationProgress}</Spinner>
-        </div>
-      )}
+      <canvas className={styles.expand} ref={handleSceneCanvasMount} />
+      <canvas
+        className={styles.overlay}
+        ref={handleOverlayCanvasMount}
+        style={{ opacity: 0.1 + 0.9 * overlayOpacity }}
+      />
+      <AxisGizmo className={styles.gizmo} camera={BraynsService.CameraTransform} />
+      <div className={styles.spinners}>
+        {brayns === null && <Spinner>{allocationProgress}</Spinner>}
+        {busyMesh > 0 && <Spinner>Loading mesh...</Spinner>}
+        {busyMorpho && <Spinner>Loading morphologies...</Spinner>}
+      </div>
       {isString(brayns) && (
         <div className="error">
           <h1>Allocation failed!</h1>
@@ -83,6 +82,7 @@ export default function InteractiveBrayns({ className, token }: InteractiveBrayn
         <Button onClick={handleDisplayLogs}>Display Logs</Button>
         <Button onClick={handleExportQueries}>Export queries</Button>
       </div>
+      <Settings opacity={overlayOpacity} onOpacityChange={setOverlayOpacity} />
     </div>
   );
 }
@@ -107,4 +107,9 @@ function useCanvasMountHandler(brayns: AllocationResult) {
     brayns.canvas = canvas;
   }, [brayns, canvas]);
   return setCanvas;
+}
+
+function useAccessToken(): string | undefined {
+  const { data: session } = useSession();
+  return session?.accessToken;
 }

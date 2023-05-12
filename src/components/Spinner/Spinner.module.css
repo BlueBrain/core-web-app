@@ -1,14 +1,24 @@
 .Spinner {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-around;
   align-items: center;
   gap: 1em;
+  padding: 1em;
+  border-radius: 1em;
+  backdrop-filter: blur(5px);
+  background-color: #0006;
+  font-size: 200%;
+}
+
+.Spinner > * {
+  flex: 1 1 auto;
 }
 
 .Spinner > svg {
-  width: 5em;
-  height: 5em;
+  flex: 0 0 auto;
+  width: 2em;
+  height: 2em;
   animation: rotation-animation linear 1.5s infinite;
   stroke: currentColor;
   fill: currentColor;

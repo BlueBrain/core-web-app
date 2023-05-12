@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import Events from '../utils/events';
+import State from '../state';
 import JsonRpcService from '../json-rpc/json-rpc';
 import BraynsWrapper from '../wrapper/wrapper';
 import JsonRpcSerializerService from '../json-rpc/json-rpc-serializer';
@@ -35,7 +35,7 @@ function getPromisedService(token: string): Promise<BraynsWrapper> {
 
   const promisedService = new Promise<BraynsWrapper>((resolve, reject) => {
     const getServiceAddress = async () => {
-      Events.allocationProgress.dispatch('Allocating a node on BB5...');
+      State.progress.allocation.value = 'Allocating a node on BB5...';
       const currentAllocation = Persistence.getAllocatedServiceAddress();
       const allocator = new BackendAllocatorService(token);
       if (currentAllocation) return currentAllocation;
@@ -52,22 +52,18 @@ function getPromisedService(token: string): Promise<BraynsWrapper> {
     const action = async () => {
       const serviceAddress = await getServiceAddress();
       const backendAddressAsString = `${serviceAddress.host}:${serviceAddress.backendPort}`;
-      Events.allocationProgress.dispatch(
-        `Connecting Brayns Backend on ${backendAddressAsString}...`
-      );
+      State.progress.allocation.value = `Connecting Brayns Backend on ${backendAddressAsString}...`;
       const backend = new JsonRpcService(backendAddressAsString);
       await backend.connect();
       console.log('Connected to', backendAddressAsString);
       const rendererAddressAsString = `${serviceAddress.host}:${serviceAddress.rendererPort}`;
-      Events.allocationProgress.dispatch(
-        `Connecting Brayns Renderer on ${rendererAddressAsString}...`
-      );
+      State.progress.allocation.value = `Connecting Brayns Renderer on ${rendererAddressAsString}...`;
       const renderer = new JsonRpcService(rendererAddressAsString, { trace: false });
       await renderer.connect();
       renderer.recording = true;
       console.log('Connected to', rendererAddressAsString);
       const wrapper = new BraynsWrapper(backend, new JsonRpcSerializerService(renderer));
-      Events.allocationProgress.dispatch('Initializing Brayns...');
+      State.progress.allocation.value = 'Initializing Brayns...';
       await wrapper.initialize();
       return wrapper;
     };

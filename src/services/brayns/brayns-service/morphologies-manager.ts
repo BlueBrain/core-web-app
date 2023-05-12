@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-await-in-loop */
+import Color from '../utils/color';
+import State from '../state';
 import { BraynsWrapperInterface } from '../wrapper/types';
+import { Vector4 } from '../utils/calc';
 import regionsInfo from './regions/regions';
 import { logError } from '@/util/logger';
 
@@ -55,6 +59,7 @@ export default class MorphologiesManager {
 
   private async processTask(initialTask: Task) {
     this.busyLoadingCircuit = true;
+    State.progress.loadingMorphologies.value = true;
     let task: Task | null = initialTask;
     try {
       while (task) {
@@ -65,7 +70,7 @@ export default class MorphologiesManager {
             await this.clear();
           } else {
             // We need to hide the currently shown region.
-            this.hideCurrentDisplayedRegion();
+            await this.hideCurrentDisplayedRegion();
           }
           if (this.modelIdPerRegion.has(task.region.id)) {
             await this.showCurrentDisplayedRegion(task.region.id);
@@ -74,10 +79,12 @@ export default class MorphologiesManager {
           }
         }
         task = this.nextTask;
+        this.nextTask = null;
       }
     } finally {
       this.busyLoadingCircuit = false;
       this.wrapper.repaint();
+      State.progress.loadingMorphologies.value = false;
     }
   }
 
@@ -88,6 +95,7 @@ export default class MorphologiesManager {
 
       const modelId = await this.wrapper.circuit.load(this.currentCircuitPath, {
         nodeSets: [region.acronym],
+        color: convertHexaColorsToVector4(region.color),
       });
       this.modelIdPerRegion.set(regionId, modelId);
       this.currentDisplayedRegionId = regionId;
@@ -101,6 +109,7 @@ export default class MorphologiesManager {
     if (typeof modelId !== 'number') return;
 
     await this.wrapper.show([modelId]);
+    this.currentDisplayedRegionId = regionId;
   }
 
   private async hideCurrentDisplayedRegion() {
@@ -116,9 +125,12 @@ export default class MorphologiesManager {
   }
 
   private async clear() {
-    const modelIds = Array.from(this.modelIdPerRegion.values());
     this.modelIdPerRegion.clear();
     this.currentDisplayedRegionId = null;
-    await this.wrapper.removeModels(modelIds);
+    await this.wrapper.clearModels();
   }
+}
+
+function convertHexaColorsToVector4(color: string): Vector4 {
+  return new Color(`#${color}`).toArrayRGBA();
 }

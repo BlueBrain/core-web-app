@@ -1,3 +1,6 @@
+import { logError } from '@/util/logger';
+
+/* eslint-disable @typescript-eslint/no-use-before-define */
 export type Vector2 = [number, number];
 export type Vector3 = [number, number, number];
 export type Vector4 = [number, number, number, number];
@@ -45,12 +48,14 @@ export interface EulerAngles {
   pitch: number;
 }
 
-export default abstract class CalcInterface {
-  /**
-   * Ensure `value` is between `min` and `max`.
-   */
-  abstract clamp(value: number, min: number, max: number): number;
+export function ensureCalcInterface(data: unknown): CalcInterface {
+  if (data instanceof CalcInterface) return data;
 
+  logError('Expected SceneManagerInterface but got:', data);
+  throw Error('Service is not of type CalcInterface!');
+}
+
+export default abstract class CalcInterface {
   /**
    * @returns A point on a Bezier Cubic curve
    * @param p0 First point
@@ -120,10 +125,6 @@ export default abstract class CalcInterface {
    * @param longitude Longitude in radians.
    * @param tilt Tilt in radians.
    */
-  abstract getQuaternionFromEulerAngles(eulerAngles: EulerAngles): Quaternion;
-
-  abstract getEulerAnglesFromQuaternion(quaternion: Quaternion): EulerAngles;
-
   abstract rotateVectorWithQuaternion(vec: Vector3, quat: Quaternion): Vector3;
 
   /**

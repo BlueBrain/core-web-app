@@ -1,0 +1,108 @@
+.Settings {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  transition: transform 0.2s;
+  background-color: #003a8caa;
+  backdrop-filter: blur(4px);
+  margin: 0;
+  color: #fffe;
+  box-sizing: border-box;
+}
+
+.show {
+  transform: translateX(0);
+}
+
+.hide {
+  transform: translateX(-100%);
+}
+
+.Settings > main {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1em;
+  overflow: auto;
+}
+
+.Settings > nav {
+  position: absolute;
+  top: 0;
+  right: -5rem;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 0 0 50% 0;
+  background-color: #003a8caa;
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.Settings > nav svg {
+  width: 4rem;
+  height: 4rem;
+  color: #fffe;
+  fill: currentColor;
+  transition: all 1s;
+}
+
+.show nav svg {
+  transform: rotate(180deg);
+}
+
+.grid {
+  display: grid;
+  gap: 0.5em;
+  grid-template-columns: auto 180px;
+  place-items: center start;
+}
+
+.grid > *:nth-child(2n),
+.grid > *:nth-child(2n) > div {
+  width: 100%;
+  margin: 0;
+}
+
+.Settings main hr {
+  border: none;
+  height: 1px;
+  background-image: linear-gradient(to left, transparent, currentColor, transparent);
+  margin: 1em 0;
+}
+
+.Settings main code {
+  font-family: monospace;
+  font-weight: bolder;
+  padding: 0 0.25em;
+  margin: 0 0.5em;
+  color: #000d;
+  background-color: #ddd;
+  box-shadow: 0 0.125em #888;
+}
+
+.Settings main ul {
+  padding: 0 0 0 0.5em;
+}
+
+.Settings main li {
+  list-style: disc;
+}
+
+.center {
+  margin: 1em;
+  display: grid;
+  place-items: center;
+}
+
+.threeColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  place-items: center;
+  margin: 1em 0;
+}

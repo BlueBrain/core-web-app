@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-await-in-loop */
-import UnicoreService, { JobStatus } from './unicore-service';
+import Settings from '../settings';
+import Async from '../utils/async';
+import State from '../state';
+import { JsonRpcServiceAddress } from '../json-rpc/types';
 import { BackendAllocationOptions } from './types';
-import Settings from '@/services/brayns/settings';
-import Async from '@/services/brayns/utils/async';
-import Events from '@/services/brayns/utils/events';
-import { JsonRpcServiceAddress } from '@/services/brayns/json-rpc/types';
+import UnicoreService, { JobStatus } from './unicore-service';
 import { logError } from '@/util/logger';
 
 const JOBID_STORAGE_KEY = 'BackendAllocatorService/JobId';
@@ -52,7 +52,7 @@ export default class BackendAllocatorService {
       partition: Settings.UNICORE_PARTITION,
       memory: Settings.UNICORE_MEMORY,
       onProgress(message) {
-        Events.allocationProgress.dispatch(message);
+        State.progress.allocation.value = message;
       },
     };
 

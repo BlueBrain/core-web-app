@@ -11,6 +11,7 @@ import Light from './light';
 import Circuit from './circuit';
 import Camera from './camera';
 import { BraynsWrapperInterface } from './types';
+import { assertType } from '@/util/type-guards';
 import { logError } from '@/util/logger';
 
 const MINIMAL_VIEWPORT_SIZE = 64;
@@ -58,9 +59,9 @@ export default class BraynsWrapper implements BraynsWrapperInterface {
       await renderer.exec('set-renderer-interactive', {
         ao_samples: 0,
         enable_shadows: true,
-        max_ray_bounces: 2,
+        max_ray_bounces: 1,
         samples_per_pixel: 4,
-        background_color: [0.004, 0.016, 0.102, 0],
+        background_color: [0.002, 0.008, 0.051, 0],
       });
       try {
         await renderer.exec('set-framebuffer-progressive', { scale: 6 });
@@ -122,8 +123,20 @@ export default class BraynsWrapper implements BraynsWrapperInterface {
   }
 
   async clearModels() {
-    await this.renderer.exec('clear-models');
-    this.repaint();
+    const scene = await this.renderer.exec('get-scene');
+    assertType<{ models: Array<{ model_id: number; model_type: string }> }>(scene, {
+      models: [
+        'array',
+        {
+          model_id: 'number',
+          model_type: 'string',
+        },
+      ],
+    });
+    const modelIds = scene.models
+      .filter((model) => model.model_type !== 'light')
+      .map((model) => model.model_id);
+    await this.removeModels(modelIds);
   }
 
   async removeModels(modelIds: number[]) {

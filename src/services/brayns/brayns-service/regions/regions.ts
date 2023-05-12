@@ -6,6 +6,7 @@ import { logError } from '@/util/logger';
 
 export interface Region {
   acronym: string;
+  color: string;
 }
 
 class RegionsInfo {
@@ -37,11 +38,12 @@ function fillRegionMap(regions: Map<string, Region>, nodes: unknown[], prefix = 
       {
         id: 'number',
         acronym: 'string',
+        color_hex_triplet: 'string',
         children: ['?', ['array', 'unknown']],
       },
       `${prefix}[${index}]`
     );
-    regions.set(`${node.id}`, { acronym: node.acronym });
+    regions.set(`${node.id}`, { acronym: node.acronym, color: node.color_hex_triplet });
     if (node.children) fillRegionMap(regions, node.children, `${prefix}[${index}].children`);
     index += 1;
   }
@@ -51,4 +53,5 @@ interface HierarchyNode {
   id: number;
   acronym: string;
   children?: unknown[];
+  color_hex_triplet: string;
 }

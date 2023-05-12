@@ -1,4 +1,4 @@
-import { Vector3 } from '../utils/calc';
+import { Vector3, Vector4 } from '../utils/calc';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 
@@ -8,6 +8,7 @@ export interface CircuitLoaderOptions {
    * Usually, we use only one node set: the region acronym.
    */
   nodeSets: string[];
+  color: Vector4;
 }
 
 export interface BraynsBounds {
