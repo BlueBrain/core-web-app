@@ -19,6 +19,7 @@ import {
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 import { usePrevious } from '@/hooks/hooks';
+import { HemisphereDirection, WholeBrainConnectivityMatrix } from '@/types/connectome';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VIRIDIS_W_ZERO_CUTOFF: ColorScale = [
@@ -121,7 +122,8 @@ export default function MacroConnectome({
   unselect,
   selected,
   setSelected,
-  connectivityFlatArray,
+  connectivityMatrix,
+  hemisphereDirection,
   setMultiplier,
   setOffset,
   selectionShapes,
@@ -131,7 +133,8 @@ export default function MacroConnectome({
   unselect: boolean;
   selected: Set<string>;
   setSelected: Dispatch<SetStateAction<Set<string>>>;
-  connectivityFlatArray: Float64Array;
+  connectivityMatrix: WholeBrainConnectivityMatrix;
+  hemisphereDirection: HemisphereDirection;
   setMultiplier: Dispatch<SetStateAction<number>>;
   setOffset: Dispatch<SetStateAction<number>>;
   selectionShapes: MutableRefObject<Rect[]>;
@@ -162,14 +165,15 @@ export default function MacroConnectome({
         postSynapticBrainRegions,
         brainRegionLeaves || [],
         brainRegionLeaveIdxById,
-        connectivityFlatArray
+        connectivityMatrix[hemisphereDirection]
       ),
     [
       preSynapticBrainRegions,
       postSynapticBrainRegions,
       brainRegionLeaves,
       brainRegionLeaveIdxById,
-      connectivityFlatArray,
+      connectivityMatrix,
+      hemisphereDirection,
     ]
   );
 

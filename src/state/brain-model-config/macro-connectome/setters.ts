@@ -48,7 +48,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const config = await get(configAtom);
   const configSource = await get(configSourceAtom);
 
-  const remoteConnectivityStrengthMatrix = await get(remoteConnectivityStrengthMatrixAtom);
+  const initialConnectivityStrengthMatrix = await get(initialConnectivityStrengthMatrixAtom);
   const connectivityStrengthMatrix = await get(connectivityStrengthMatrixAtom);
 
   const brainRegionLeaves = await get(brainRegionLeavesUnsortedArrayAtom);
@@ -74,7 +74,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     !overridesEntity ||
     !overridesEntitySource ||
     !overridesEntityRev ||
-    !remoteConnectivityStrengthMatrix ||
+    !initialConnectivityStrengthMatrix ||
     !connectivityStrengthMatrix ||
     !remoteConfigPayload ||
     !configPayload ||
@@ -90,7 +90,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
 
   const overridesTable = createMacroConnectomeOverridesTable(
     brainRegionLeaves,
-    remoteConnectivityStrengthMatrix,
+    initialConnectivityStrengthMatrix,
     connectivityStrengthMatrix
   );
 

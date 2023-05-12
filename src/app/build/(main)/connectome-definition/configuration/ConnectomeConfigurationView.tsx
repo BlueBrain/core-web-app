@@ -305,7 +305,8 @@ export default function ConnectomeConfigurationView() {
             zoom={zoom}
             selected={selected}
             setSelected={setSelected}
-            connectivityFlatArray={connectivityMatrix[hemisphereDirection]}
+            connectivityMatrix={connectivityMatrix}
+            hemisphereDirection={hemisphereDirection}
             setMultiplier={setMultiplier}
             setOffset={setOffset}
             selectionShapes={selectionShapes}
