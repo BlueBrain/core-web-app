@@ -61,8 +61,6 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
               "blue_config_template": "simulation_config.tmpl",
               "user_target": "node_sets.json"}
 
-      seed-as-coord: {"low": 100000, "high": 400000, "size": 1}
-
       coords: <%= ${SimulationPlaceholders.GEN_SIM_CAMPAIGN_COORDS} %>
     `,
     placeholder: 'GenSimCampaignMeta',

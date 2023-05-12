@@ -41,6 +41,7 @@ export default function ConstantParameter({
         style={{ width: 90 }}
         controls={false}
         onChange={changed}
+        step={data.step}
       />
       {showSwitcher && <ExportOutlined onClick={onChangeParamType} />}
     </div>

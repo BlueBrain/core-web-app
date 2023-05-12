@@ -106,8 +106,35 @@
           "id": "stimType",
           "name": "Type",
           "type": "dropdown",
-          "value": "Current",
-          "options": [{ "label": "Current", "value": "Current" }]
+          "value": "current_clamp",
+          "options": [{ "label": "Current clamp", "value": "current_clamp" }]
+        },
+        {
+          "id": "stimModule",
+          "name": "Module",
+          "type": "dropdown",
+          "value": "linear",
+          "options": [{ "label": "Linear", "value": "linear" }]
+        },
+        {
+          "id": "ampStart",
+          "name": "AmpStart",
+          "type": "number",
+          "value": -0.0351,
+          "unit": "nA",
+          "min": -100,
+          "max": 200,
+          "step": 0.01
+        },
+        {
+          "id": "delay",
+          "name": "Delay",
+          "type": "number",
+          "value": 0,
+          "unit": "ms",
+          "min": 0,
+          "max": 2000,
+          "step": 100
         },
         {
           "id": "duration",
@@ -138,8 +165,32 @@
           "id": "variableType",
           "name": "Variable",
           "type": "dropdown",
-          "value": "Soma voltage",
-          "options": [{ "label": "Soma voltage", "value": "Soma voltage" }]
+          "value": "v",
+          "options": [{ "label": "Soma voltage", "value": "v" }]
+        },
+        {
+          "id": "sections",
+          "name": "Sections",
+          "type": "dropdown",
+          "value": "soma",
+          "options": [{ "label": "Soma", "value": "soma" }]
+        },
+        {
+          "id": "reportType",
+          "name": "Type",
+          "type": "dropdown",
+          "value": "compartment",
+          "options": [{ "label": "Compartment", "value": "compartment" }]
+        },
+        {
+          "id": "startTime",
+          "name": "Start time",
+          "type": "number",
+          "value": 0,
+          "unit": "ms",
+          "min": 0,
+          "max": 20000,
+          "step": 500
         },
         {
           "id": "duration",
@@ -150,6 +201,16 @@
           "min": 0,
           "max": 20000,
           "step": 1000
+        },
+        {
+          "id": "dt",
+          "name": "Dt",
+          "type": "number",
+          "value": 0.1,
+          "unit": "ms",
+          "min": 0,
+          "max": 100,
+          "step": 0.1
         },
         {
           "id": "recordingTarget",

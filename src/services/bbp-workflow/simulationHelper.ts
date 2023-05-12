@@ -10,6 +10,7 @@ import {
   ExpDesignerTargetParameter,
   ExpDesignerRadioBtnParameter,
   ExpDesignerPositionParameter,
+  ExpDesignerDropdownParameter,
 } from '@/types/experiment-designer';
 import { createWorkflowConfigResource } from '@/api/nexus';
 import { calculateRangeOutput } from '@/components/experiment-designer/utils';
@@ -23,8 +24,9 @@ export const customRangeDelimeter = '@@';
 
 function getValueOrPlaceholder(
   section: ExpDesignerParam[],
-  variableName: string
-): { result: string; coordDict: Record<string, any> } {
+  variableName: string,
+  isString: boolean = false
+): { result: string | number; coordDict: Record<string, any> } {
   /*
     This function will return an object where result is either a number
     or string if the value is single value or a placeholder like $duration
@@ -42,6 +44,8 @@ function getValueOrPlaceholder(
 
   switch (parameter.type) {
     case 'number':
+      if (isString) throw new Error(`Parameter ${parameter.name} marked as string but is number`);
+
       finalValue = parameter.value;
       break;
 
@@ -54,7 +58,7 @@ function getValueOrPlaceholder(
     }
 
     case 'targetDropdown':
-      finalValue = `${customRangeDelimeter}${parameter.value}`;
+      finalValue = isString ? `${parameter.value}` : parameter.value;
       break;
 
     case 'targetDropdownGroup': {
@@ -66,12 +70,16 @@ function getValueOrPlaceholder(
       break;
     }
 
+    case 'dropdown':
+      finalValue = isString ? `${parameter.value}` : parameter.value;
+      break;
+
     default:
-      throw new Error(`${variableName} has unknown type`);
+      throw new Error(`${variableName} has unknown type [${parameter.type}]`);
   }
 
   return {
-    result: JSON.stringify(finalValue),
+    result: finalValue,
     coordDict: coords,
   };
 }
@@ -103,6 +111,11 @@ export async function cloneWorkflowMetaConfigs(
 
   await Promise.all(clonedCfgsPromises);
   return variablesToReplaceCopy;
+}
+
+function getParamById<T>(group: ExpDesignerGroupParameter, id: string) {
+  const result = group.value.find((param) => param.id === id);
+  return <T>result;
 }
 
 export function convertExpDesConfigToSimVariables(
@@ -146,27 +159,27 @@ export function convertExpDesConfigToSimVariables(
     variablesToReplaceCopy[placeholder] = result;
     coords = { ...coords, ...coordDict };
   });
-  if (!Object.keys(coords).length) {
-    throw new Error('No range param was set. Please select at least one range.');
-  }
 
   const recordings = (expDesignerConfig.recording as ExpDesignerGroupParameter[]).reduce(
     (acc: Record<string, any>, recordingItem) => {
-      const target = recordingItem.value.find(
-        (param) => param.id === 'recordingTarget'
-      ) as ExpDesignerTargetParameter;
-      const duration = recordingItem.value.find(
-        (param) => param.id === 'duration'
-      ) as ExpDesignerNumberParameter;
+      const target = getParamById<ExpDesignerTargetParameter>(recordingItem, 'recordingTarget');
+      const duration = getParamById<ExpDesignerNumberParameter>(recordingItem, 'duration');
+      const dt = getParamById<ExpDesignerNumberParameter>(recordingItem, 'dt');
+      const startTime = getParamById<ExpDesignerNumberParameter>(recordingItem, 'startTime');
+      const variableType = getParamById<ExpDesignerDropdownParameter>(
+        recordingItem,
+        'variableType'
+      );
+      const sections = getParamById<ExpDesignerDropdownParameter>(recordingItem, 'sections');
+      const reportType = getParamById<ExpDesignerDropdownParameter>(recordingItem, 'reportType');
 
-      // TODO: add sections and dt
       acc[recordingItem.name] = {
         cells: target.value,
-        variable_name: 'v',
-        sections: 'soma',
-        type: 'compartment',
-        dt: 0.1,
-        start_time: 0,
+        variable_name: variableType.value,
+        sections: sections.value,
+        type: reportType.value,
+        dt: dt.value,
+        start_time: startTime.value,
         end_time: duration.value,
       };
       return acc;
@@ -175,28 +188,33 @@ export function convertExpDesConfigToSimVariables(
   );
   variablesToReplaceCopy[SimulationPlaceholders.REPORTS] = JSON.stringify(recordings);
 
+  const areStringList = ['targetInput', 'stimType', 'stimModule'];
   const stimuli = (expDesignerConfig.stimuli as ExpDesignerGroupParameter[]).reduce(
     (acc: Record<string, any>, stimulusItem) => {
-      const target = stimulusItem.value.find(
-        (param) => param.id === 'targetInput'
-      ) as ExpDesignerTargetParameter;
-      const duration = stimulusItem.value.find(
-        (param) => param.id === 'duration'
-      ) as ExpDesignerNumberParameter;
-
-      // TODO: add module and amp_start on UI
-      acc[stimulusItem.name] = {
-        module: 'linear',
-        input_type: 'current_clamp',
-        node_set: target.value,
-        amp_start: -0.03515624999999999,
-        delay: 0.0,
-        duration: duration.value,
-      };
+      const stimItem: Record<string, any> = {};
+      [
+        ['node_set', 'targetInput'],
+        ['duration', 'duration'],
+        ['amp_start', 'ampStart'],
+        ['delay', 'delay'],
+        ['input_type', 'stimType'],
+        ['module', 'stimModule'],
+      ].forEach(([key, param]) => {
+        const isString = areStringList.includes(param);
+        const { result, coordDict } = getValueOrPlaceholder(stimulusItem.value, param, isString);
+        stimItem[key] = result;
+        coords = { ...coords, ...coordDict };
+      });
+      acc[stimulusItem.name] = stimItem;
       return acc;
     },
     {}
   );
+
+  if (!Object.keys(coords).length) {
+    throw new Error('No range param was set. Please select at least one range.');
+  }
+
   variablesToReplaceCopy[SimulationPlaceholders.INPUTS] = JSON.stringify(stimuli);
 
   variablesToReplaceCopy[SimulationPlaceholders.NODE_SETS] = JSON.stringify({});

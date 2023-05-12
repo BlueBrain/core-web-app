@@ -70,7 +70,7 @@ export async function getSimulationTaskFiles(
   extraVariables = { ...convertExpDesConfigToSimVariables(extraVariables) };
 
   // workaround to remove the string on the placeholders to be SONATA compatible
-  const templateReplaceRegexp = new RegExp(`"${customRangeDelimeter}(.+?)"`, 'gm');
+  const templateReplaceRegexp = new RegExp(`"?${customRangeDelimeter}(\\$?[^"]+)"?`, 'gm');
 
   extraVariables = {
     ...(await cloneWorkflowMetaConfigs(extraVariables, templateReplaceRegexp, session)),
