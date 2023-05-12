@@ -66,6 +66,8 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const overridesPayloadUrl = await get(connectivityStrengthOverridesPayloadUrlAtom);
   const overridesPayloadRevAtom = await get(connectivityStrengthOverridesPayloadRevAtom);
 
+  const edits = await get(editsAtom);
+
   if (
     !session ||
     !config ||
@@ -88,10 +90,14 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   if (isEqual(remoteConfigPayload?._ui_data?.editHistory, configPayload?._ui_data?.editHistory))
     return;
 
+  const modifiedMatrix = structuredClone(remoteConnectivityStrengthMatrix);
+
+  edits.forEach((edit) => applyEdit(modifiedMatrix, edit));
+
   const overridesTable = createMacroConnectomeOverridesTable(
     brainRegionLeaves,
     remoteConnectivityStrengthMatrix,
-    connectivityStrengthMatrix
+    modifiedMatrix
   );
 
   const overridesBuffer = tableToIPC(overridesTable, 'file').buffer;
@@ -183,7 +189,7 @@ export const addEditAtom = atom<null, [MacroConnectomeEditEntry], Promise<void>>
 
     if (!currentMatrix || !remoteMatrix) return;
 
-    const matrix = currentMatrix === remoteMatrix ? structuredClone(currentMatrix) : currentMatrix;
+    const matrix = structuredClone(currentMatrix);
 
     applyEdit(matrix, edit);
 
