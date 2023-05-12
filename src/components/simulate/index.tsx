@@ -1,5 +1,6 @@
 import BrainConfigSelector from './BrainConfigSelector';
+import ConfirmBtn from './BrainConfigSelector/ConfirmBtn';
 
-export { BrainConfigSelector };
+export { BrainConfigSelector, ConfirmBtn };
 
 export default {};

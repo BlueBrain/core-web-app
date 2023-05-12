@@ -2,25 +2,20 @@
 
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAtom } from 'jotai';
-import { useState } from 'react';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { campaignNameAtom, campaignDescriptionAtom } from '@/state/experiment-designer';
-import { BrainConfigSelector } from '@/components/simulate';
+import { BrainConfigSelector, ConfirmBtn } from '@/components/simulate';
 import { BrainModelConfigResource } from '@/types/nexus';
-import { classNames } from '@/util/utils';
-import Link from '@/components/Link';
-
-const expDesBaseUrl = '/experiment-designer/experiment-setup';
+import { idAtom as brainModelConfigId } from '@/state/brain-model-config';
 
 export default function BrainConfigSelectorPage() {
   const [campaignName, setCampaignName] = useAtom(campaignNameAtom);
   const [campaignDescription, setCampaignDescription] = useAtom(campaignDescriptionAtom);
-  const [expDesUrl, setExpDesUrl] = useState('');
+  const [currentId, setId] = useAtom(brainModelConfigId);
 
   const onCircuitSelect = (selectedConfig: BrainModelConfigResource) => {
-    const id = selectedConfig['@id'].split('/').pop();
-    setExpDesUrl(`${expDesBaseUrl}?brainModelConfigId=${id}`);
+    setId(selectedConfig['@id']);
   };
 
   return (
@@ -54,15 +49,7 @@ export default function BrainConfigSelectorPage() {
         </div>
       </ErrorBoundary>
 
-      <Link
-        href={expDesUrl}
-        className={classNames(
-          expDesUrl ? 'bg-secondary-2 ' : 'bg-slate-400 cursor-not-allowed',
-          'flex text-white h-12 px-8 fixed bottom-4 right-4 items-center'
-        )}
-      >
-        Confirm
-      </Link>
+      <ConfirmBtn brainModelConfigId={currentId} />
     </div>
   );
 }
