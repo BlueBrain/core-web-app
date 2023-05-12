@@ -4,18 +4,17 @@ import debounce from 'lodash/debounce';
 
 import ConfigList from './ConfigList';
 import { searchConfigListStringAtom } from '@/state/brain-model-config-list';
-import Link from '@/components/Link';
-import { classNames } from '@/util/utils';
 import { BrainModelConfigResource } from '@/types/nexus';
 
-const expDesBaseUrl = '/experiment-designer/experiment-setup';
+type Props = {
+  onSelect: (modelConfig: BrainModelConfigResource) => void;
+};
 
-export default function BrainConfigSelector() {
+export default function BrainConfigSelector({ onSelect }: Props) {
   const setSearchString = useSetAtom(searchConfigListStringAtom);
   const [searchInputValue, setSearchInputValue] = useState('');
-  const [expDesUrl, setExpDesUrl] = useState('');
 
-  // eslintssss-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const setSearchStringDebounced = useCallback(
     debounce((searchStr: string) => setSearchString(searchStr), 300),
     [setSearchString]
@@ -24,11 +23,6 @@ export default function BrainConfigSelector() {
   const setSearch = (searchStr: string) => {
     setSearchInputValue(searchStr);
     setSearchStringDebounced(searchStr);
-  };
-
-  const onSelect = (selectedConfig: BrainModelConfigResource) => {
-    const id = selectedConfig['@id'].split('/').pop();
-    setExpDesUrl(`${expDesBaseUrl}?brainModelConfigId=${id}`);
   };
 
   return (
@@ -44,16 +38,6 @@ export default function BrainConfigSelector() {
         />
       </div>
       <ConfigList onSelect={onSelect} />
-
-      <Link
-        href={expDesUrl}
-        className={classNames(
-          expDesUrl ? 'bg-secondary-2 ' : 'bg-slate-400 cursor-not-allowed',
-          'flex text-white h-12 px-8 fixed bottom-4 right-4 items-center'
-        )}
-      >
-        Confirm
-      </Link>
     </>
   );
 }
