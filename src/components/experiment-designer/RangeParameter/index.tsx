@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Slider, Collapse } from 'antd';
 import { ImportOutlined } from '@ant-design/icons';
 import type { SliderMarks } from 'antd/es/slider';
@@ -8,8 +8,9 @@ import { PrimitiveAtom, useAtom } from 'jotai';
 import round from 'lodash/round';
 
 import Stepper from './Stepper';
-import type { ExpDesignerRangeParameter } from '@/types/experiment-designer';
+import type { ExpDesignerRangeParameter, StepperType } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
+import { calculateRangeOutput } from '@/components/experiment-designer/utils';
 
 const { Panel } = Collapse;
 
@@ -18,6 +19,29 @@ type Props = {
   className?: string;
   onChangeParamType?: () => void;
 };
+
+type RangeLiveProps = {
+  start: number;
+  end: number;
+  stepper: StepperType;
+};
+
+function ShowRangeResultsLive({ start, end, stepper }: RangeLiveProps) {
+  const values: number[] = calculateRangeOutput(start, end, stepper);
+
+  return (
+    <div>
+      <span className="text-gray-400">Steps used ({values.length})</span>
+      <div className="flex flex-wrap gap-2">
+        {values.map((step) => (
+          <div key={step} className="px-2 py-1 border text-gray-400 rounded text-center">
+            {round(step, 2)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function RangeParameter({ paramAtom, className, onChangeParamType }: Props) {
   const [data, setData] = useAtom(paramAtom);
@@ -57,6 +81,19 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
       },
     }));
   };
+
+  const onStepperChange = useCallback(
+    (newStepper: StepperType) => {
+      setData((oldAtomData) => ({
+        ...oldAtomData,
+        value: {
+          ...oldAtomData.value,
+          stepper: newStepper,
+        },
+      }));
+    },
+    [setData]
+  );
 
   const borderStyle = 'border-2 border-solid border-gray rounded-md';
   const titleStyle = 'font-bold text-primary-7';
@@ -98,8 +135,10 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
             />
           </div>
 
-          <div>STEPPER</div>
-          <Stepper data={data} className={borderStyle} />
+          <ShowRangeResultsLive start={start} end={end} stepper={data.value.stepper} />
+
+          <div className="mt-5">STEPPER</div>
+          <Stepper data={data} onChange={onStepperChange} />
         </div>
       </Panel>
     </Collapse>

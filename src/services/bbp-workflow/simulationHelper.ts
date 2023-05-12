@@ -1,5 +1,4 @@
 import template from 'lodash/template';
-import range from 'lodash/range';
 import { Session } from 'next-auth';
 
 import { SimulationPlaceholders, workflowMetaConfigs } from '@/services/bbp-workflow/config';
@@ -13,6 +12,7 @@ import {
   ExpDesignerPositionParameter,
 } from '@/types/experiment-designer';
 import { createWorkflowConfigResource } from '@/api/nexus';
+import { calculateRangeOutput } from '@/components/experiment-designer/utils';
 
 function getNotFoundMsg(variable: any, name?: string): string {
   const variableName = Object.keys({ variable })[0];
@@ -46,8 +46,9 @@ function getValueOrPlaceholder(
       break;
 
     case 'range': {
-      const { start, end, step } = parameter.value;
-      coords[`${variableName}`] = range(start, end, step); // eslint-disable-line no-param-reassign
+      const { start, end, stepper } = parameter.value;
+      const values: number[] = calculateRangeOutput(start, end, stepper);
+      coords[`${variableName}`] = values; // eslint-disable-line no-param-reassign
       finalValue = `${customRangeDelimeter}$${variableName}`;
       break;
     }

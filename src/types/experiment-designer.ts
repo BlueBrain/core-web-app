@@ -1,9 +1,17 @@
+export type StepperTypeName = 'Number of steps' | 'Step size';
+
+export type StepperType = {
+  name: StepperTypeName;
+  value: number;
+};
+
 type RangeValue = {
   min: number;
   max: number;
   start: number;
   end: number;
   step: number;
+  stepper: StepperType;
 };
 
 type ExpDesignerBaseParameter = {

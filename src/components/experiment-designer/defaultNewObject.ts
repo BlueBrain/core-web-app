@@ -2,6 +2,7 @@ import {
   ExpDesignerGroupParameter,
   ExpDesignerMultipleDropdownParameter,
   ExpDesignerTargetParameter,
+  StepperType,
 } from '@/types/experiment-designer';
 
 export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
@@ -110,4 +111,9 @@ export const getNewMultiDropdown = (): ExpDesignerMultipleDropdownParameter => (
   type: 'multipleDropdown',
   value: [],
   options: [],
+});
+
+export const getNewStepper = (): StepperType => ({
+  name: 'Number of steps',
+  value: 2,
 });

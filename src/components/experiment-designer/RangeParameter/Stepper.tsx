@@ -1,79 +1,66 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { classNames } from '@/util/utils';
-import type { ExpDesignerRangeParameter } from '@/types/experiment-designer';
+import { NumberOfStepsInput, StepSizeInput } from './CustomInputStepper';
+import StepperRow from './StepperRow';
+import type { ExpDesignerRangeParameter, StepperType } from '@/types/experiment-designer';
+import { getNewStepper } from '@/components/experiment-designer/defaultNewObject';
 
 type Props = {
   data: ExpDesignerRangeParameter;
-  className?: string;
+  onChange: (stepper: StepperType) => void;
 };
 
-type StepString = 'Number of steps' | 'Step size';
-
-type StepperType = {
-  name: StepString;
-  value: number;
-};
-
-const stepOptions: StepString[] = ['Number of steps', 'Step size'];
-const selectedStyle = 'text-primary-7 font-bold';
-const defaultInputValue = 1;
-
-function generateInputElementId(name1: string, name2: string) {
-  return `${name1.replaceAll(' ', '')}${name2.replaceAll(' ', '')}`;
-}
-
-export default function Stepper({ data, className }: Props) {
-  const [stepper, setStepper] = useState<StepperType>({
-    name: 'Number of steps',
-    value: defaultInputValue,
+export default function Stepper({ data, onChange }: Props) {
+  const [numberOfStepStepper, setNumberOfStepStepper] = useState<StepperType>(getNewStepper());
+  const [stepSizeStepper, setStepSizeStepper] = useState<StepperType>({
+    name: 'Step size',
+    value: data.value.step,
   });
+  const selectedStepperName = data.value.stepper.name;
 
-  const onChangeStepper = (id: string) => {
-    const parentElem = document.getElementById(id);
-    const radioElem = parentElem?.querySelector('input[type="radio"]');
-    const numInputElem = parentElem?.querySelector('input[type="number"]');
+  useEffect(() => {
+    if (numberOfStepStepper.name === selectedStepperName) {
+      onChange(numberOfStepStepper);
+    } else if (stepSizeStepper.name === selectedStepperName) {
+      onChange(stepSizeStepper);
+    }
+  }, [numberOfStepStepper, stepSizeStepper, selectedStepperName, onChange]);
 
-    const inputValue = numInputElem
-      ? parseFloat((numInputElem as HTMLInputElement).value)
-      : defaultInputValue;
-    const selectedStepperName = radioElem ? (radioElem as HTMLInputElement).value : stepOptions[0];
-
-    setStepper({
-      name: selectedStepperName as StepString,
-      value: inputValue,
-    });
-  };
-
-  const radioButtons = stepOptions.map((stepperName: string) => {
-    const isChecked = stepperName === stepper.name;
-    const id = generateInputElementId(data.name, stepperName);
-    return (
-      <button
-        type="button"
-        key={stepperName}
-        className={classNames('flex gap-1 items-center w-full', isChecked ? selectedStyle : '')}
-        id={id}
-        onClick={() => onChangeStepper(id)}
-        tabIndex={-1}
+  return (
+    <>
+      <StepperRow
+        isChecked={numberOfStepStepper.name === selectedStepperName}
+        onRadioSelect={() => onChange(numberOfStepStepper)}
+        stepperName={numberOfStepStepper.name}
       >
-        <input
-          type="radio"
-          value={stepperName}
-          onChange={() => onChangeStepper(id)}
-          name={`${data.name}stepper`}
-          checked={isChecked}
+        <NumberOfStepsInput
+          data={data}
+          onChange={(value: number) => {
+            setNumberOfStepStepper((oldAtomData: StepperType) => ({
+              ...oldAtomData,
+              value,
+            }));
+          }}
+          isChecked={numberOfStepStepper.name === selectedStepperName}
         />
-        <span className="text-left grow">{stepperName}</span>
-        <input
-          type="number"
-          defaultValue={stepper.value}
-          className={classNames(className, 'w-[30px] px-1 text-right')}
-          onChange={isChecked ? () => onChangeStepper(id) : () => {}}
-        />
-      </button>
-    );
-  });
+      </StepperRow>
 
-  return <div>{radioButtons}</div>;
+      <StepperRow
+        isChecked={stepSizeStepper.name === selectedStepperName}
+        onRadioSelect={() => onChange(stepSizeStepper)}
+        stepperName={stepSizeStepper.name}
+      >
+        <StepSizeInput
+          data={data}
+          onChange={(value: number) => {
+            setStepSizeStepper((oldAtomData: StepperType) => ({
+              ...oldAtomData,
+              value,
+            }));
+          }}
+          isChecked={stepSizeStepper.name === selectedStepperName}
+        />
+      </StepperRow>
+    </>
+  );
 }

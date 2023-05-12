@@ -1,8 +1,10 @@
 import { focusAtom } from 'jotai-optics';
 import { OpticFor } from 'optics-ts';
 import { PrimitiveAtom } from 'jotai';
+import range from 'lodash/range';
+import round from 'lodash/round';
 
-import { getNewTargetObj } from './defaultNewObject';
+import { getNewStepper, getNewTargetObj } from './defaultNewObject';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
 import type {
   ExpDesignerConfig,
@@ -14,6 +16,7 @@ import type {
   ExpDesignerTargetDropdownGroupParameter,
   ExpDesignerMultipleDropdownParameter,
   ExpDesignerDropdownParameter,
+  StepperType,
 } from '@/types/experiment-designer';
 
 export function getFocusedAtom(name: string) {
@@ -59,6 +62,7 @@ function changeNumberToRange(numberParam: ExpDesignerNumberParameter): ExpDesign
       start: numberParam.value,
       end: newEnd,
       step: newStep,
+      stepper: getNewStepper(),
     },
   };
 }
@@ -164,6 +168,17 @@ export function applySwapFunction(param: ExpDesignerParam): ExpDesignerParam | u
       break;
   }
   return newSwapParam;
+}
+
+export function calculateRangeOutput(start: number, end: number, stepper: StepperType) {
+  let values: number[];
+  if (stepper.name === 'Number of steps') {
+    const steps = (end - start) / stepper.value;
+    values = range(start, end, steps);
+  } else {
+    values = range(start, end, stepper.value);
+  }
+  return values.map((v) => round(v, 2));
 }
 
 export default getFocusedAtom;
