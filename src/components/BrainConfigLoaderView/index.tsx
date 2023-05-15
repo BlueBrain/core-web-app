@@ -1,9 +1,8 @@
 'use client';
 
-import { ReactNode, Suspense, useState, useCallback } from 'react';
+import { ReactNode, Suspense, useState } from 'react';
 import { Button, ConfigProvider } from 'antd';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import debounce from 'lodash/debounce';
 
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
@@ -84,15 +83,9 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
 
   const [searchInputValue, setSearchInputValue] = useState<string>('');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const setSearchStringDebounced = useCallback(
-    debounce((searchStr: string) => setSearchString(searchStr), 300),
-    [setSearchString]
-  );
-
   const setSearch = (searchStr: string) => {
     setSearchInputValue(searchStr);
-    setSearchStringDebounced(searchStr);
+    setSearchString(searchStr);
   };
 
   return (
