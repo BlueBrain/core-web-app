@@ -8,7 +8,7 @@ import {
 } from '@/components/explore-section/ExploreSectionNavItem';
 import Link from '@/components/Link';
 import { basePath } from '@/config';
-import styles from './explore.module.scss';
+import styles from '@/app/explore/explore.module.scss';
 
 export default function Explore() {
   const bgUrl = `url(${basePath}/images/img_3d-interactive-brain_placeholder.jpg) no-repeat`;

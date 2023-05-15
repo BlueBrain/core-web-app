@@ -1,11 +1,10 @@
 'use client';
 
-import Sidebar from '@/components/explore-section/Sidebar';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import useExploreColumns from '@/hooks/useExploreColumns';
 
-const TYPE = 'https://neuroshapes.org/SynapsePerConnection';
+const TYPE = 'https://neuroshapes.org/BoutonDensity';
 
 const {
   pageSizeAtom,
@@ -19,16 +18,25 @@ const {
   type: TYPE,
 });
 
-const columnKeys = ['brainRegion', 'mType', 'name', 'subjectSpecies', 'contributors', 'createdAt'];
+const columnKeys = [
+  'brainRegion',
+  'mType',
+  'mean ± STD',
+  'sem',
+  'n° of Cells',
+  'subjectSpecies',
+  'contributors',
+  'createdAt',
+  'reference',
+];
 
-export default function SynapsePerConnection() {
-  const columns = useExploreColumns(columnKeys, sortStateAtom, 'layer-thickness');
+export default function BoutonDensityPage() {
+  const columns = useExploreColumns(columnKeys, sortStateAtom, 'bouton-density');
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar />
       <ExploreSectionListingView
-        title="Synapse per connection"
+        title="Bouton density"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

@@ -1,6 +1,5 @@
 'use client';
 
-import Sidebar from '@/components/explore-section/Sidebar';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import useExploreColumns from '@/hooks/useExploreColumns';
@@ -29,12 +28,11 @@ const columnKeys = [
   'reference',
 ];
 
-function EphysListPage() {
+export default function EphyListPage() {
   const columns = useExploreColumns(columnKeys, sortStateAtom, 'electrophysiology');
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar />
       <ExploreSectionListingView
         title="Neuron electrophysiology"
         totalAtom={totalAtom}
@@ -48,5 +46,3 @@ function EphysListPage() {
     </div>
   );
 }
-
-export default EphysListPage;

@@ -1,11 +1,10 @@
 'use client';
 
-import Sidebar from '@/components/explore-section/Sidebar';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import useExploreColumns from '@/hooks/useExploreColumns';
 
-const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+const TYPE = 'https://neuroshapes.org/LayerThickness';
 
 const {
   pageSizeAtom,
@@ -21,23 +20,21 @@ const {
 
 const columnKeys = [
   'brainRegion',
-  'mType',
-  'name',
+  'layerThickness',
   'conditions',
-  'reference',
   'subjectSpecies',
   'contributors',
   'createdAt',
+  'reference',
 ];
 
-export default function MorphologyPage() {
-  const columns = useExploreColumns(columnKeys, sortStateAtom, 'morphology');
+export default function LayerThicknessPage() {
+  const columns = useExploreColumns(columnKeys, sortStateAtom, 'layer-thickness');
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar />
       <ExploreSectionListingView
-        title="Neuron morphology"
+        title="Layer thickness"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}
@@ -45,7 +42,6 @@ export default function MorphologyPage() {
         searchStringAtom={searchStringAtom}
         aggregationsAtom={aggregationsAtom}
         filtersAtom={filtersAtom}
-        enableDownload
       />
     </div>
   );

@@ -1,11 +1,10 @@
 'use client';
 
-import Sidebar from '@/components/explore-section/Sidebar';
+import useExploreColumns from '@/hooks/useExploreColumns';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
-import useExploreColumns from '@/hooks/useExploreColumns';
 
-const TYPE = 'https://neuroshapes.org/BoutonDensity';
+const TYPE = 'https://neuroshapes.org/NeuronDensity';
 
 const {
   pageSizeAtom,
@@ -22,23 +21,22 @@ const {
 const columnKeys = [
   'brainRegion',
   'mType',
-  'mean ± STD',
-  'sem',
-  'n° of Cells',
+  'eType',
+  'name',
+  'conditions',
   'subjectSpecies',
   'contributors',
   'createdAt',
   'reference',
 ];
 
-export default function BoutonDensity() {
-  const columns = useExploreColumns(columnKeys, sortStateAtom, 'bouton-density');
+export default function NeuronDensityPage() {
+  const columns = useExploreColumns(columnKeys, sortStateAtom, 'neuron-density');
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar />
       <ExploreSectionListingView
-        title="Bouton density"
+        title="Neuron density"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

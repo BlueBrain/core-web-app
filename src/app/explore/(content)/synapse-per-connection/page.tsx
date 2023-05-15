@@ -1,11 +1,10 @@
 'use client';
 
-import Sidebar from '@/components/explore-section/Sidebar';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import useExploreColumns from '@/hooks/useExploreColumns';
 
-const TYPE = 'https://neuroshapes.org/LayerThickness';
+const TYPE = 'https://neuroshapes.org/SynapsePerConnection';
 
 const {
   pageSizeAtom,
@@ -19,24 +18,15 @@ const {
   type: TYPE,
 });
 
-const columnKeys = [
-  'brainRegion',
-  'layerThickness',
-  'conditions',
-  'subjectSpecies',
-  'contributors',
-  'createdAt',
-  'reference',
-];
+const columnKeys = ['brainRegion', 'mType', 'name', 'subjectSpecies', 'contributors', 'createdAt'];
 
-export default function LayerThickness() {
+export default function SynapsePerConnectionPage() {
   const columns = useExploreColumns(columnKeys, sortStateAtom, 'layer-thickness');
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar />
       <ExploreSectionListingView
-        title="Layer thickness"
+        title="Synapse per connection"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}

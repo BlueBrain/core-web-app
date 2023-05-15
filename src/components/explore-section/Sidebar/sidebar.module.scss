@@ -1,7 +1,15 @@
+// Wrapper style
+.wrapper {
+  @apply flex;
+  main {
+    @apply w-full;
+  }
+}
+
 // Side bar menu styles
 .side,
 .expanded {
-  @apply transition-transform ease-in-out bg-primary-9 text-light;
+  @apply h-screen transition-transform ease-in-out bg-primary-9 text-light;
   a {
     @apply transition-transform ease-in-out font-bold block w-max;
   }

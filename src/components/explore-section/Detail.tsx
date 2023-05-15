@@ -4,7 +4,7 @@ import Error from 'next/error';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { loadable } from 'jotai/utils';
-import Sidebar from '@/components/explore-section/Sidebar';
+import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import createDetailAtoms from '@/state/explore-section/detail-atoms-constructor';
 import usePathname from '@/hooks/pathname';
 import { setInfoWithPath } from '@/util/explore-section/detail-view';
@@ -88,7 +88,7 @@ export default function Detail({
 
   return (
     <div className="flex h-screen">
-      <Sidebar links={links} />
+      <DetailsPageSideBackLink links={links} />
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <div className="flex flex-col gap-10 max-w-screen-2xl">
           <DetailHeaderName detail={detail.data} url={path} latestRevision={latestRevision} />

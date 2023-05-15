@@ -1,11 +1,10 @@
 'use client';
 
-import Sidebar from '@/components/explore-section/Sidebar';
-import useExploreColumns from '@/hooks/useExploreColumns';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
+import useExploreColumns from '@/hooks/useExploreColumns';
 
-const TYPE = 'https://neuroshapes.org/NeuronDensity';
+const TYPE = 'https://neuroshapes.org/NeuronMorphology';
 
 const {
   pageSizeAtom,
@@ -22,23 +21,21 @@ const {
 const columnKeys = [
   'brainRegion',
   'mType',
-  'eType',
   'name',
   'conditions',
+  'reference',
   'subjectSpecies',
   'contributors',
   'createdAt',
-  'reference',
 ];
 
-export default function NeuronDensity() {
-  const columns = useExploreColumns(columnKeys, sortStateAtom, 'neuron-density');
+export default function MorphologyPage() {
+  const columns = useExploreColumns(columnKeys, sortStateAtom, 'morphology');
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar />
       <ExploreSectionListingView
-        title="Neuron density"
+        title="Neuron morphology"
         totalAtom={totalAtom}
         columns={columns}
         dataAtom={dataAtom}
@@ -46,6 +43,7 @@ export default function NeuronDensity() {
         searchStringAtom={searchStringAtom}
         aggregationsAtom={aggregationsAtom}
         filtersAtom={filtersAtom}
+        enableDownload
       />
     </div>
   );

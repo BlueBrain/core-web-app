@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
-import { Dimension, Campaign, SideLink } from '@/types/explore-section';
+import { Dimension, Campaign } from '@/types/explore-section';
 import CampaignDetails from '@/components/explore-section/CampaignDetails';
 import DimensionFilter from '@/components/explore-section/DimensionFilter';
 import SpikeRaster from '@/components/explore-section/SpikeRaster';
@@ -161,11 +161,10 @@ function SimulationCampaignPage() {
       status: 'Completed',
     },
   ];
-  const links: Array<SideLink> = [{ url: '/simulation-campaigns', title: 'Simulation Campaigns' }];
 
   return (
     <div className="flex h-screen" style={{ background: '#d1d1d1' }}>
-      <Sidebar links={links} />
+      <Sidebar />
 
       <div className="w-full h-full flex flex-col">
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
