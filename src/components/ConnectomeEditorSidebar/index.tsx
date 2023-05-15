@@ -164,13 +164,23 @@ export default function ConnectomeEditorSidebar() {
   let selectedBrainRegions: Map<string, string> = new Map();
   if (area === 'post') selectedBrainRegions = postSynapticBrainRegions;
   if (area === 'pre') selectedBrainRegions = preSynapticBrainRegions;
+  const [brainRegionsLoaded, setBrainRegionsLoaded] = useState(false);
 
   useEffect(() => {
-    brainRegionLeaves?.forEach((l) => {
+    if (brainRegionsLoaded || brainRegionLeaves === null) return;
+
+    brainRegionLeaves.forEach((l) => {
       setSelectedPreBrainRegion(l.id, l.title);
       setSelectedPostBrainRegion(l.id, l.title);
     });
-  }, [brainRegionLeaves, setSelectedPostBrainRegion, setSelectedPreBrainRegion]);
+
+    setBrainRegionsLoaded(true);
+  }, [
+    brainRegionLeaves,
+    brainRegionsLoaded,
+    setSelectedPostBrainRegion,
+    setSelectedPreBrainRegion,
+  ]);
 
   const leafTitleById = useMemo(() => {
     const map: { [id: string]: string } = {};

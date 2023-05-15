@@ -141,9 +141,8 @@ export default function MacroConnectome({
 }) {
   const plotRef = useRef<PlotDiv>(null);
 
-  const selecting = useRef(false);
-  const corner1 = useRef<[number, number]>([0, 0]);
-  const corner2 = useRef<[number, number]>([0, 0]);
+  const corner1 = useRef<[number, number] | null>(null);
+  const corner2 = useRef<[number, number] | null>(null);
   const selectRef = useRef(false);
   const unselectRef = useRef(false);
   const selectedRef = useRef(new Set<string>());
@@ -265,11 +264,12 @@ export default function MacroConnectome({
         }
 
         if (!selectRef.current) return;
-        if (!selecting.current) {
+        if (corner1.current === null) {
           corner1.current = [points[0].pointIndex[1], points[0].pointIndex[0]];
-          selecting.current = true;
           return;
         }
+
+        if (corner2.current === null) return;
 
         const c1 = corner1.current;
         const c2 = corner2.current;
@@ -310,10 +310,8 @@ export default function MacroConnectome({
           shapes: selectionShapes.current,
         });
 
-        corner1.current = [0, 0];
-        corner2.current = [0, 0];
-
-        selecting.current = false;
+        corner1.current = null;
+        corner2.current = null;
       });
 
       container.on('plotly_hover', ({ points }) => {
@@ -330,7 +328,7 @@ export default function MacroConnectome({
           });
           return;
         }
-        if (!selecting.current) return;
+        if (corner1.current === null) return;
 
         corner2.current = [points[0].pointIndex[1], points[0].pointIndex[0]];
 
@@ -373,6 +371,7 @@ export default function MacroConnectome({
             size: 8,
           },
           range: userChangedRegions ? undefined : container.layout.xaxis.range,
+          fixedrange: !zoom,
         },
         yaxis: {
           color: '#DCDCDC',
@@ -380,6 +379,7 @@ export default function MacroConnectome({
             size: 8,
           },
           range: userChangedRegions ? undefined : container.layout.yaxis.range,
+          fixedrange: !zoom,
         },
         shapes: selectionShapes.current,
       },

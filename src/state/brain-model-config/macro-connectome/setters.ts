@@ -1,7 +1,6 @@
 'use client';
 
 import { atom } from 'jotai';
-import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import { tableToIPC } from '@apache-arrow/es5-cjs';
 
@@ -27,7 +26,6 @@ import {
   initialConnectivityStrengthMatrixAtom,
 } from '.';
 import { createDistribution, setRevision } from '@/util/nexus';
-import { autoSaveDebounceInterval } from '@/config';
 import { MacroConnectomeEditEntry, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import {
   applyConnectivityMatrixEdit as applyEdit,
@@ -37,6 +35,8 @@ import sessionAtom from '@/state/session';
 import { brainRegionLeavesUnsortedArrayAtom } from '@/state/brain-regions';
 import { updateFileByUrl, updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { MacroConnectomeConfigPayload } from '@/types/nexus';
+
+export const writingConfigAtom = atom(false);
 
 export const triggerRefetchAtom = atom(null, (get, set) =>
   set(refetchCounterAtom, (counter) => counter + 1)
@@ -88,6 +88,8 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   if (isEqual(remoteConfigPayload?._ui_data?.editHistory, configPayload?._ui_data?.editHistory))
     return;
 
+  set(writingConfigAtom, true);
+
   const overridesTable = createMacroConnectomeOverridesTable(
     brainRegionLeaves,
     initialConnectivityStrengthMatrix,
@@ -130,12 +132,8 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   await updateResource(configSource, config._rev, session);
 
   await set(invalidateConfigAtom, 'macroConnectome');
+  set(writingConfigAtom, false);
 });
-
-const persistConfigDebounced = atom<null, [], Promise<void>>(
-  null,
-  debounce((get, set) => set(persistConfig), autoSaveDebounceInterval)
-);
 
 const setConnectivityStrengthMatrixAtom = atom<null, [WholeBrainConnectivityMatrix], Promise<void>>(
   null,
@@ -170,7 +168,7 @@ const setEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<void>>(
 
     set(localConfigPayloadAtom, new WeakMap().set(remoteConfigPayload, updatedConfigPayload));
 
-    set(persistConfigDebounced);
+    set(persistConfig);
   }
 );
 

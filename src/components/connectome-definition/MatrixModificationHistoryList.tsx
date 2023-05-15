@@ -1,8 +1,11 @@
-import { RollbackOutlined } from '@ant-design/icons';
-import { useSetAtom } from 'jotai';
+import { RollbackOutlined, DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useLoadable } from '@/hooks/hooks';
 
-import { deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import {
+  deleteEditsAtom,
+  writingConfigAtom,
+} from '@/state/brain-model-config/macro-connectome/setters';
 import { editsLoadableAtom } from '@/state/brain-model-config/macro-connectome';
 
 export default function MatrixModificationHistoryList({
@@ -12,6 +15,7 @@ export default function MatrixModificationHistoryList({
 }) {
   const deleteEdits = useSetAtom(deleteEditsAtom);
   const edits = useLoadable(editsLoadableAtom, []);
+  const writingConfig = useAtomValue(writingConfigAtom);
 
   return (
     <div>
@@ -38,10 +42,25 @@ export default function MatrixModificationHistoryList({
               <button onClick={() => setCurrentEdit(i)} type="button">
                 {edit.name}
               </button>
-              <RollbackOutlined
-                className="float-right"
-                onClick={() => deletedEdits.length > 0 && deleteEdits(deletedEdits)}
-              />
+              <div>
+                {writingConfig && <LoadingOutlined className="mr-5" />}
+                {i < edits.length - 1 && !writingConfig && (
+                  <RollbackOutlined
+                    className="mr-3"
+                    onClick={() => deletedEdits.length > 0 && deleteEdits(deletedEdits)}
+                  />
+                )}
+
+                {!writingConfig && (
+                  <DeleteOutlined
+                    className="mr-5"
+                    onClick={() => {
+                      deletedEdits.unshift(i);
+                      deleteEdits(deletedEdits);
+                    }}
+                  />
+                )}
+              </div>
             </div>
           );
         })}

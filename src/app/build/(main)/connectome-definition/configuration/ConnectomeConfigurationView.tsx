@@ -22,7 +22,11 @@ import {
   connectivityStrengthMatrixLoadableAtom,
   editsLoadableAtom,
 } from '@/state/brain-model-config/macro-connectome';
-import { addEditAtom, deleteEditsAtom } from '@/state/brain-model-config/macro-connectome/setters';
+import {
+  addEditAtom,
+  deleteEditsAtom,
+  writingConfigAtom,
+} from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import { useLoadable } from '@/hooks/hooks';
 import styles from '../connectome-definition.module.css';
@@ -52,6 +56,7 @@ const STAT_CHART_DEFAULT_LAYOUT = {
 export default function ConnectomeConfigurationView() {
   const area = useAtomValue(brainAreaAtom);
   const addEdit = useSetAtom(addEditAtom);
+  const writingConfig = useAtomValue(writingConfigAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
   const connectivityMatrix = useLoadable(connectivityStrengthMatrixLoadableAtom, null);
@@ -214,7 +219,8 @@ export default function ConnectomeConfigurationView() {
             <div className="mt-3">
               <Button
                 onClick={onClick}
-                disabled={editName === ''}
+                disabled={editName === '' || writingConfig}
+                loading={writingConfig}
                 className="w-5/12"
                 type="primary"
               >
