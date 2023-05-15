@@ -23,7 +23,7 @@ export default function SimulateBtn() {
   const simCampDescription = useAtomValue(campaignDescriptionAtom);
   const circuitInfoLodable = useAtomValue(loadableCircuitAtom);
 
-  const expDesignerConfig = expDesLoadable.state === 'hasData' ? expDesLoadable.data : [];
+  const expDesignerConfig = expDesLoadable.state === 'hasData' ? expDesLoadable.data : {};
   const circuitInfo = circuitInfoLodable.state === 'hasData' ? circuitInfoLodable.data : null;
 
   const extraVariablesToReplace = {

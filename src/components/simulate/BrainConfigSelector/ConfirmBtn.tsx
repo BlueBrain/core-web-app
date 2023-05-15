@@ -26,7 +26,6 @@ export default function ConfirmBtn({
   campaignName,
   campaignDescription,
 }: Props) {
-  const [expDesUrl, setExpDesUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [allowed, setAllowed] = useState(false);
   const circuitInfoLodable = useAtomValue(loadableCircuitAtom);
@@ -40,8 +39,6 @@ export default function ConfirmBtn({
   }, [circuitInfoLodable.state]);
 
   useEffect(() => {
-    if (!brainModelConfigId) return;
-
     if (!circuitInfo) {
       notification.error({
         message: 'Circuit was not built',
@@ -50,29 +47,32 @@ export default function ConfirmBtn({
       return;
     }
 
-    const id = brainModelConfigId.split('/').pop();
-    setExpDesUrl(`${expDesBaseUrl}?brainModelConfigId=${id}`);
-
     setAllowed(true);
-  }, [brainModelConfigId, circuitInfo]);
+  }, [circuitInfo]);
 
   const createSimCamUiConfig = async () => {
-    if (!circuitInfo || !session) return;
+    if (!circuitInfo || !session || !brainModelConfigId) return;
 
     setLoading(true);
-    await createSimulationCampaignUIConfig(
+    const simCampUiConfigResource = await createSimulationCampaignUIConfig(
       campaignName,
       campaignDescription,
       circuitInfo,
       structuredClone(paramsDummyData as ExpDesignerConfig),
       session
     ).catch((e) => {
+      const msg = `Error creating simulation entity: ${e.message}`;
       notification.error({
-        message: `Error creating simulation entity: ${e.message}`,
+        message: msg,
       });
+      throw new Error(msg);
     });
+    const brainModelCfgPart = `brainModelConfigId=${brainModelConfigId.split('/').pop()}`;
+    const simUICfgPart = `simulationCampaignUIConfigId=${simCampUiConfigResource['@id']
+      .split('/')
+      .pop()}`;
+    router.push(`${expDesBaseUrl}?${brainModelCfgPart}&${simUICfgPart}`);
     setLoading(false);
-    router.push(expDesUrl);
   };
 
   return (

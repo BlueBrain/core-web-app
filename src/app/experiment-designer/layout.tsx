@@ -1,21 +1,40 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { loadable } from 'jotai/utils';
 
 import { ExperimentDesignerTopTabs, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
+import useSimulationCampaignUIConfig from '@/hooks/simulation-campaign-ui-config';
+import { expDesignerConfigAtom, remoteConfigPayloadAtom } from '@/state/experiment-designer';
+
+const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;
 };
 
 export default function ExperimentDesignerLayout({ children }: ExperimentDesignerLayoutProps) {
+  const setConfig = useSetAtom(expDesignerConfigAtom);
+  const remoteConfigLoadable = useAtomValue(loadableRemoteConfigAtom);
+
   useAuth(true);
   useBrainModelConfigState();
+  useSimulationCampaignUIConfig();
+
+  useEffect(() => {
+    if (remoteConfigLoadable.state !== 'hasData') return;
+
+    if (!remoteConfigLoadable.data || !Object.keys(remoteConfigLoadable.data || {}).length) return;
+
+    // overwrite the default config with the saved remote config
+    setConfig(remoteConfigLoadable.data);
+  }, [setConfig, remoteConfigLoadable]);
 
   return (
     <div className="h-screen grid grid-cols-[minmax(40px,auto)_1fr]">
