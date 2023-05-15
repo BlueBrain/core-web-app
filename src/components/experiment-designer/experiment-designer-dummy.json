@@ -120,10 +120,10 @@
           "id": "ampStart",
           "name": "AmpStart",
           "type": "number",
-          "value": -0.0351,
+          "value": 0.0351,
           "unit": "nA",
-          "min": -100,
-          "max": 200,
+          "min": 0,
+          "max": 2,
           "step": 0.01
         },
         {
