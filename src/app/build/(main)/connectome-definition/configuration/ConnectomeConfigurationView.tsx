@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ConfigProvider, theme, InputNumber, Input, Button } from 'antd';
 import Plotly, { Shape } from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { brainRegionLeaveIdxByNotationMapAtom } from '@/state/brain-regions';
 import {
@@ -18,9 +18,16 @@ import {
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
 import { HemisphereDirection } from '@/types/connectome';
-import { connectivityStrengthMatrixLoadableAtom } from '@/state/brain-model-config/macro-connectome';
 import {
-  addEditAtom,
+  connectivityStrengthMatrixLoadableAtom,
+  editNameAtom,
+  offsetAtom,
+  multiplierAtom,
+  currentEditAtom,
+  editsAtom,
+} from '@/state/brain-model-config/macro-connectome';
+import {
+  setEditsAtom,
   writingConfigAtom,
 } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
@@ -51,7 +58,6 @@ const STAT_CHART_DEFAULT_LAYOUT = {
 
 export default function ConnectomeConfigurationView() {
   const area = useAtomValue(brainAreaAtom);
-  const addEdit = useSetAtom(addEditAtom);
   const writingConfig = useAtomValue(writingConfigAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
@@ -59,9 +65,12 @@ export default function ConnectomeConfigurationView() {
 
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
-  const [offset, setOffset] = useState(0);
-  const [multiplier, setMultiplier] = useState(1);
-  const [editName, setEditName] = useState('');
+  const [offset, setOffset] = useAtom(offsetAtom);
+  const [multiplier, setMultiplier] = useAtom(multiplierAtom);
+  const [editName, setEditName] = useAtom(editNameAtom);
+  const [currentEdit, setCurrentEdit] = useAtom(currentEditAtom);
+  const edits = useAtomValue(editsAtom);
+  const setEdits = useSetAtom(setEditsAtom);
 
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
@@ -143,21 +152,27 @@ export default function ConnectomeConfigurationView() {
   const onClick = () => {
     if (!brainRegionLeaveIdxByNotationMap) return;
 
-    addEdit({
-      name: editName,
-      hemisphereDirection,
-      offset,
-      multiplier,
-      target: {
-        src: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[1]) as number)),
-        dst: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[0]) as number)),
+    const updatedEdits = [
+      ...edits,
+      {
+        name: editName,
+        hemisphereDirection,
+        offset,
+        multiplier,
+        target: {
+          src: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[1]) as number)),
+          dst: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[0]) as number)),
+        },
+        selected: Array.from(selected),
       },
-      selected: Array.from(selected),
-    });
+    ];
+
+    setEdits(updatedEdits);
     setOffset(0);
     setMultiplier(1);
     setEditName('');
     setSelected(new Set());
+    setCurrentEdit(null);
     selectionShapes.current = [];
   };
 
@@ -263,6 +278,7 @@ export default function ConnectomeConfigurationView() {
       </div>
 
       <div className={styles.matrixContainer}>
+        {!connectivityMatrix && <LoadingOutlined className="text-4xl" />}
         {activeTab === 'macro' && connectivityMatrix && (
           <MacroConnectome
             select={select}
