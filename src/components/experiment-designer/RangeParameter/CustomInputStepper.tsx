@@ -20,12 +20,15 @@ export function NumberOfStepsInput({ data, onChange, isChecked }: CustomInputTyp
   const [isValid, setIsValid] = useState(true);
 
   const min = 2;
-  const max = 1_000;
+  const max = 50;
   const stepSize = 1;
 
   const onInput = (e: FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.valueAsNumber;
-    setIsValid(checkValidity(min, max, value));
+    const validity = checkValidity(min, max, value);
+    setIsValid(validity);
+    if (!validity) return;
+
     onChange(value);
   };
 
@@ -47,13 +50,15 @@ export function StepSizeInput({ data, isChecked, onChange }: CustomInputTypeProp
 
   if (!data) return null;
 
-  const min = data.value.step;
+  const { min } = data.value;
   const max = data.value.end - data.value.start;
-  const stepSize = data.value.step;
 
   const onInput = (e: FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.valueAsNumber;
-    setIsValid(checkValidity(min, max, value));
+    const validity = checkValidity(min, max, value);
+    setIsValid(validity);
+    if (!validity) return;
+
     onChange(value);
   };
 
@@ -62,7 +67,7 @@ export function StepSizeInput({ data, isChecked, onChange }: CustomInputTypeProp
       isValid={isValid}
       min={min}
       max={max}
-      stepSize={stepSize}
+      stepSize={data.value.step}
       onInput={onInput}
       isChecked={isChecked}
       defaultValue={data.value.stepper.value}
