@@ -203,7 +203,7 @@ export default function ConnectomeConfigurationView() {
 
             <Input value={editName} onChange={(e) => setEditName(e.currentTarget.value)} />
             <div className="flex justify-between mb-3 mt-3">
-              Offset:
+              Offset, synapses/μm³:
               <InputNumber value={offset} step={0.01} onChange={handleOffsetChange} />
             </div>
             <div className="flex justify-between">
@@ -252,7 +252,7 @@ export default function ConnectomeConfigurationView() {
             <CloseOutlined className="float-right" onClick={() => setCurrentEdit(null)} />
 
             <div className="flex justify-between mb-3 mt-3">
-              Offset: {edits[currentEdit].offset}
+              Offset, synapses/μm³: {edits[currentEdit].offset}
             </div>
             <div className="flex justify-between">Multiplier: {edits[currentEdit].multiplier}</div>
 

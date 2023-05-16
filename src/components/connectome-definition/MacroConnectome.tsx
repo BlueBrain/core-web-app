@@ -196,7 +196,8 @@ export default function MacroConnectome({
         y: srcLabels,
         type: 'heatmap',
         colorscale: ELECTRIC_SHARP,
-        hovertemplate: 'Post-synaptic: %{x} <br>Pre-synaptic: %{y} <br>Connection strength: %{z}',
+        hovertemplate:
+          'Post-synaptic: %{x} <br>Pre-synaptic: %{y} <br>Connection strength: %{z} synapses/μm³ <extra></extra>',
       },
     ];
 
