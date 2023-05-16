@@ -18,13 +18,9 @@ import {
 } from '@/components/connectome-definition';
 import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
 import { HemisphereDirection } from '@/types/connectome';
-import {
-  connectivityStrengthMatrixLoadableAtom,
-  editsLoadableAtom,
-} from '@/state/brain-model-config/macro-connectome';
+import { connectivityStrengthMatrixLoadableAtom } from '@/state/brain-model-config/macro-connectome';
 import {
   addEditAtom,
-  deleteEditsAtom,
   writingConfigAtom,
 } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
@@ -66,9 +62,6 @@ export default function ConnectomeConfigurationView() {
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [editName, setEditName] = useState('');
-  const edits = useLoadable(editsLoadableAtom, []);
-  const [currentEdit, setCurrentEdit] = useState<number | null>(null);
-  const deleteEdits = useSetAtom(deleteEditsAtom);
 
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
@@ -159,6 +152,7 @@ export default function ConnectomeConfigurationView() {
         src: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[1]) as number)),
         dst: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[0]) as number)),
       },
+      selected: Array.from(selected),
     });
     setOffset(0);
     setMultiplier(1);
@@ -241,41 +235,6 @@ export default function ConnectomeConfigurationView() {
         </ConfigProvider>
       )}
 
-      {currentEdit !== null && (
-        <ConfigProvider
-          theme={{
-            algorithm: theme.defaultAlgorithm,
-          }}
-        >
-          <div className={styles.sidePanel}>
-            <span className="font-bold text-lg">{edits[currentEdit].name}</span>
-            <CloseOutlined className="float-right" onClick={() => setCurrentEdit(null)} />
-
-            <div className="flex justify-between mb-3 mt-3">
-              Offset, synapses/μm³: {edits[currentEdit].offset}
-            </div>
-            <div className="flex justify-between">Multiplier: {edits[currentEdit].multiplier}</div>
-
-            <Button
-              onClick={() => {
-                const deletedEdits: number[] = [];
-                for (let j = currentEdit + 1; j < edits.length; j += 1) {
-                  deletedEdits.push(j);
-                }
-
-                if (deletedEdits.length === 0) return;
-                setCurrentEdit(null);
-                deleteEdits(deletedEdits);
-              }}
-              className="w-11/12"
-              type="primary"
-            >
-              Restore
-            </Button>
-          </div>
-        </ConfigProvider>
-      )}
-
       <div className={styles.granularityTabs}>
         <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
       </div>
@@ -325,7 +284,7 @@ export default function ConnectomeConfigurationView() {
           <>
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList setCurrentEdit={setCurrentEdit} />
+            <MatrixModificationHistoryList setSelected={setSelected} />
           </>
         )}
       </div>

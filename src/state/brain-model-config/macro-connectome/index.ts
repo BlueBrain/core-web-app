@@ -300,7 +300,6 @@ export const connectivityStrengthMatrixLoadableAtom = loadable(connectivityStren
 
 export const editsAtom = atom<Promise<MacroConnectomeEditEntry[]>>(async (get) => {
   const configPayload = await get(configPayloadAtom);
-
   return configPayload?._ui_data?.editHistory ?? [];
 });
 

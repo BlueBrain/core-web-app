@@ -9,9 +9,9 @@ import {
 import { editsLoadableAtom } from '@/state/brain-model-config/macro-connectome';
 
 export default function MatrixModificationHistoryList({
-  setCurrentEdit,
+  setSelected,
 }: {
-  setCurrentEdit: (i: number) => void;
+  setSelected: (selected: Set<string>) => void;
 }) {
   const deleteEdits = useSetAtom(deleteEditsAtom);
   const edits = useLoadable(editsLoadableAtom, []);
@@ -39,7 +39,7 @@ export default function MatrixModificationHistoryList({
           return (
             // eslint-disable-next-line react/no-array-index-key
             <div key={i} className="flex justify-between">
-              <button onClick={() => setCurrentEdit(i)} type="button">
+              <button onClick={() => setSelected(new Set(edit.selected))} type="button">
                 {edit.name}
               </button>
               <div>
