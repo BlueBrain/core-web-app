@@ -92,7 +92,8 @@ export type IdType =
   | 'microconnectomeconfig'
   | 'synapseconfig'
   | 'macroconnectomeconfig'
-  | 'wholebrainconnectomestrength';
+  | 'wholebrainconnectomestrength'
+  | 'simulationcampaignuiconfig';
 
 export function createId(type: IdType, id?: string) {
   const typePath = type === 'file' ? '' : `/${type}s`;

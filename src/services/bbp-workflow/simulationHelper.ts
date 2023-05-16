@@ -12,8 +12,14 @@ import {
   ExpDesignerPositionParameter,
   ExpDesignerDropdownParameter,
 } from '@/types/experiment-designer';
-import { createWorkflowConfigResource } from '@/api/nexus';
+import { createWorkflowConfigResource, createJsonFile, createResource } from '@/api/nexus';
 import { calculateRangeOutput } from '@/components/experiment-designer/utils';
+import {
+  DetailedCircuit,
+  SimulationCampaignUIConfig,
+  SimulationCampaignUIConfigResource,
+} from '@/types/nexus';
+import { createDistribution, createId } from '@/util/nexus';
 
 function getNotFoundMsg(variable: any, name?: string): string {
   const variableName = Object.keys({ variable })[0];
@@ -260,4 +266,29 @@ export function convertExpDesConfigToSimVariables(
   );
 
   return variablesToReplaceCopy;
+}
+
+export async function createSimulationCampaignUIConfig(
+  name: string,
+  description: string,
+  detailedCircuit: DetailedCircuit,
+  payload: ExpDesignerConfig,
+  session: Session
+) {
+  const configFile = await createJsonFile(payload, 'sim-campaing-ui-config.json', session);
+
+  const uiConfig: SimulationCampaignUIConfig = {
+    '@id': createId('simulationcampaignuiconfig'),
+    '@context': 'https://bbp.neuroshapes.org',
+    '@type': ['Entity', 'SimulationCampaignUIConfig'],
+    name,
+    description,
+    used: {
+      '@type': 'DetailedCircuit',
+      '@id': detailedCircuit['@id'],
+    },
+    distribution: createDistribution(configFile),
+  };
+
+  return createResource<SimulationCampaignUIConfigResource>(uiConfig, session);
 }

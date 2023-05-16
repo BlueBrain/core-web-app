@@ -388,3 +388,22 @@ export type GeneratorConfigType =
   | MicroConnectomeConfigType
   | SynapseConfigType
   | MacroConnectomeConfigType;
+
+export interface SimulationCampaignUIConfig extends Entity {
+  '@type': ['Entity', 'SimulationCampaignUIConfig'];
+  name: string;
+  description: string;
+  used: {
+    '@type': 'DetailedCircuit';
+    '@id': string;
+  };
+  distribution: Distribution;
+  generated?: {
+    '@type': 'WorkflowExecution';
+    '@id': string;
+  };
+}
+
+export interface SimulationCampaignUIConfigResource
+  extends ResourceMetadata,
+    SimulationCampaignUIConfig {}

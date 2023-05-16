@@ -49,7 +49,11 @@ export default function BrainConfigSelectorPage() {
         </div>
       </ErrorBoundary>
 
-      <ConfirmBtn brainModelConfigId={currentId} />
+      <ConfirmBtn
+        brainModelConfigId={currentId}
+        campaignName={campaignName}
+        campaignDescription={campaignDescription}
+      />
     </div>
   );
 }
