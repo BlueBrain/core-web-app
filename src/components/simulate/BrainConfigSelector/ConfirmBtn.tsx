@@ -26,7 +26,7 @@ export default function ConfirmBtn({
   campaignName,
   campaignDescription,
 }: Props) {
-  const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [allowed, setAllowed] = useState(false);
   const circuitInfoLodable = useAtomValue(loadableCircuitAtom);
   const router = useRouter();
@@ -35,10 +35,8 @@ export default function ConfirmBtn({
   const circuitInfo = circuitInfoLodable.state === 'hasData' ? circuitInfoLodable.data : null;
 
   useEffect(() => {
-    setLoading(circuitInfoLodable.state === 'loading');
-  }, [circuitInfoLodable.state]);
+    if (!brainModelConfigId || circuitInfoLodable.state !== 'hasData') return;
 
-  useEffect(() => {
     if (!circuitInfo) {
       notification.error({
         message: 'Circuit was not built',
@@ -48,12 +46,13 @@ export default function ConfirmBtn({
     }
 
     setAllowed(true);
-  }, [circuitInfo]);
+  }, [circuitInfo, brainModelConfigId, circuitInfoLodable.state]);
 
   const createSimCamUiConfig = async () => {
     if (!circuitInfo || !session || !brainModelConfigId) return;
 
-    setLoading(true);
+    setProcessing(true);
+    setAllowed(false);
     const simCampUiConfigResource = await createSimulationCampaignUIConfig(
       campaignName,
       campaignDescription,
@@ -72,7 +71,8 @@ export default function ConfirmBtn({
       .split('/')
       .pop()}`;
     router.push(`${expDesBaseUrl}?${brainModelCfgPart}&${simUICfgPart}`);
-    setLoading(false);
+    setProcessing(false);
+    setAllowed(true);
   };
 
   return (
@@ -84,7 +84,7 @@ export default function ConfirmBtn({
         'flex text-white h-12 px-8 fixed bottom-4 right-4 items-center'
       )}
     >
-      {loading ? 'Loading...' : 'Confirm'}
+      {processing ? 'Processing' : 'Confirm'}
     </button>
   );
 }
