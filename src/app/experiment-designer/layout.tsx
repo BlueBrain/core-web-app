@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Spin } from 'antd';
 
@@ -12,7 +12,12 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
 import useSimulationCampaignUIConfig from '@/hooks/simulation-campaign-ui-config';
-import { expDesignerConfigAtom, remoteConfigPayloadAtom } from '@/state/experiment-designer';
+import {
+  expDesignerConfigAtom,
+  remoteConfigPayloadAtom,
+  setConfigPayloadAtom,
+  savedConfigAtom,
+} from '@/state/experiment-designer';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
 
@@ -21,10 +26,12 @@ type ExperimentDesignerLayoutProps = {
 };
 
 export default function ExperimentDesignerLayout({ children }: ExperimentDesignerLayoutProps) {
-  const setConfig = useSetAtom(expDesignerConfigAtom);
+  const [localConfig, setLocalConfig] = useAtom(expDesignerConfigAtom);
   const remoteConfigLoadable = useAtomValue(loadableRemoteConfigAtom);
   // show only once while app starts
   const [isLoading, setIsLoading] = useState(true);
+  const saveConfigDebounced = useSetAtom(setConfigPayloadAtom);
+  const setSavedConfig = useSetAtom(savedConfigAtom);
 
   useAuth(true);
   useBrainModelConfigState();
@@ -36,11 +43,16 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
     if (!Object.keys(remoteConfigLoadable.data).length) return;
 
     // overwrite the default config with the saved remote config
-    setConfig(remoteConfigLoadable.data);
+    setLocalConfig(remoteConfigLoadable.data);
+    setSavedConfig(remoteConfigLoadable.data);
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
-  }, [setConfig, remoteConfigLoadable]);
+  }, [setLocalConfig, remoteConfigLoadable, setSavedConfig]);
+
+  useEffect(() => {
+    saveConfigDebounced();
+  }, [localConfig, saveConfigDebounced]);
 
   return (
     <Spin spinning={isLoading}>

@@ -4,6 +4,7 @@ import { atom } from 'jotai';
 import { Session } from 'next-auth';
 import { selectAtom } from 'jotai/utils';
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 
 import { ExpDesignerConfig } from '@/types/experiment-designer';
 import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
@@ -53,45 +54,50 @@ export const remoteConfigPayloadAtom = atom<Promise<ExpDesignerConfig | null>>(a
     return null;
   }
 
-  return fetchJsonFileByUrl<ExpDesignerConfig>(configPayloadUrl, session);
+  const savedConfig = await fetchJsonFileByUrl<ExpDesignerConfig>(configPayloadUrl, session);
+  if (!Object.keys(savedConfig).length) {
+    throw new Error('Remote simulation campaign ui config empty');
+  }
+
+  return savedConfig;
 });
 
-const updateConfigPayloadAtom = atom<null, [ExpDesignerConfig], Promise<void>>(
-  null,
-  async (get, set, configPayload) => {
-    const session = get(sessionAtom);
-    const configResource = await get(configResourceAtom);
+export const savedConfigAtom = atom<ExpDesignerConfig | null>(null);
 
-    if (!session) {
-      throw new Error('No auth session found in the state');
-    }
+const updateConfigPayloadAtom = atom<null, [], Promise<void>>(null, async (get, set) => {
+  const localConfigPayload = get(expDesignerConfigAtom);
+  const savedConfigPayload = get(savedConfigAtom);
 
-    if (!configResource) return;
+  if (isEqual(localConfigPayload, savedConfigPayload)) return;
 
-    const updatedFile = await updateJsonFileByUrl(
-      configResource?.distribution.contentUrl,
-      configPayload,
-      'sim-campaing-ui-config.json',
-      session
-    );
+  const session = get(sessionAtom);
+  const configResource = await get(configResourceAtom);
 
-    configResource.distribution = createDistribution(updatedFile);
-    await updateResource(configResource, configResource?._rev, session);
-    set(triggerRefetchAtom);
+  if (!session) {
+    throw new Error('No auth session found in the state');
   }
-);
 
-const triggerUpdateDebouncedAtom = atom<null, [ExpDesignerConfig], Promise<void>>(
+  if (!configResource) return;
+
+  const updatedFile = await updateJsonFileByUrl(
+    configResource?.distribution.contentUrl,
+    localConfigPayload,
+    'sim-campaing-ui-config.json',
+    session
+  );
+
+  configResource.distribution = createDistribution(updatedFile);
+  await updateResource(configResource, configResource?._rev, session);
+  set(triggerRefetchAtom);
+});
+
+const triggerUpdateDebouncedAtom = atom<null, [], Promise<void>>(
   null,
-  debounce(
-    (get, set, configPayload) => set(updateConfigPayloadAtom, configPayload),
-    autoSaveDebounceInterval
-  )
+  debounce((get, set) => set(updateConfigPayloadAtom), autoSaveDebounceInterval)
 );
 
 export const setConfigPayloadAtom = atom<null, [], void>(null, (get, set) => {
-  const configPayload = get(expDesignerConfigAtom);
-  set(triggerUpdateDebouncedAtom, configPayload);
+  set(triggerUpdateDebouncedAtom);
 });
 
 type NodeSetsResponseType = {
