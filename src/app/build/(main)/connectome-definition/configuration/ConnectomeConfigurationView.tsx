@@ -24,7 +24,7 @@ import {
   offsetAtom,
   multiplierAtom,
   currentEditAtom,
-  editsAtom,
+  editsLoadableAtom,
 } from '@/state/brain-model-config/macro-connectome';
 import {
   setEditsAtom,
@@ -69,7 +69,7 @@ export default function ConnectomeConfigurationView() {
   const [multiplier, setMultiplier] = useAtom(multiplierAtom);
   const [editName, setEditName] = useAtom(editNameAtom);
   const [currentEdit, setCurrentEdit] = useAtom(currentEditAtom);
-  const edits = useAtomValue(editsAtom);
+  const edits = useLoadable(editsLoadableAtom, []);
   const setEdits = useSetAtom(setEditsAtom);
 
   const [activeTab, setActiveTab] = useState('macro');
