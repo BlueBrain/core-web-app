@@ -110,13 +110,11 @@ export default function ConnectomeConfigurationView() {
           x: histogram,
           type: 'histogram',
           xbins: { start: 0, end: 'auto', size: 0.001 },
-          marker: { color: 'rgba(0, 0, 0, 1)' },
         },
         {
           x: newHistogram,
           type: 'histogram',
           xbins: { start: 0, end: 'auto', size: 0.001 },
-          marker: { color: 'rgb(8, 143, 143, 1)' },
         },
       ],
       {
@@ -237,7 +235,11 @@ export default function ConnectomeConfigurationView() {
               </Button>
               <Button
                 onClick={() => {
+                  setOffset(0);
+                  setMultiplier(1);
+                  setEditName('');
                   setSelected(new Set());
+                  setCurrentEdit(null);
                   selectionShapes.current = [];
                 }}
                 className="w-5/12 ml-2"
