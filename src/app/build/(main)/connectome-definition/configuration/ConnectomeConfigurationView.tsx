@@ -123,14 +123,10 @@ export default function ConnectomeConfigurationView() {
     [selected]
   );
 
-  const histogram = useMemo(() => {
-    const vals = selectedVals.map((v) => v[2]).filter((v) => v > 0);
-    const max = Math.max(...vals);
-    const min = Math.min(...vals);
-    const lowBoundary = min + (max - min) * 0.05;
-    const highBoundary = min + (max - min) * 0.95;
-    return vals.filter((v) => v < highBoundary && v > lowBoundary);
-  }, [selectedVals]);
+  const histogram = useMemo(
+    () => selectedVals.map((v) => v[2]).filter((v) => v > 0),
+    [selectedVals]
+  );
 
   const newHistogram = useMemo(
     () => histogram.map((v) => v * multiplier + offset),
