@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ConfigProvider, theme, InputNumber, Input, Button } from 'antd';
-import Plotly, { Shape } from 'plotly.js-dist-min';
+import Plotly, { Layout, Shape } from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -42,12 +42,12 @@ interface Rect extends Partial<Shape> {
   y1: number;
 }
 
-const STAT_CHART_DEFAULT_LAYOUT = {
-  xaxis: { showgrid: false },
-  yaxis: { showgrid: false },
+const STAT_CHART_DEFAULT_LAYOUT: Partial<Layout> = {
+  xaxis: { fixedrange: true, showgrid: false, zeroline: false },
+  yaxis: { fixedrange: true, showgrid: false, zeroline: false },
   showlegend: false,
-  width: 150,
-  height: 150,
+  width: 245,
+  height: 170,
   margin: {
     l: 0,
     r: 0,
@@ -121,7 +121,11 @@ export default function ConnectomeConfigurationView() {
     [selected]
   );
 
-  const histogram = useMemo(() => selectedVals.map((v) => v[2]), [selectedVals]);
+  const histogram = useMemo(() => {
+    const vals = selectedVals.map((v) => v[2]).filter((v) => v > 0);
+    const max = Math.max(...vals);
+    return vals.filter((v) => v < max * 0.95 && v > max * 0.05);
+  }, [selectedVals]);
 
   const newHistogram = useMemo(
     () => histogram.map((v) => v * multiplier + offset),
@@ -129,7 +133,7 @@ export default function ConnectomeConfigurationView() {
   );
 
   useEffect(() => {
-    if (!histogramRef.current) return;
+    if (!histogramRef.current || histogram.length === 0) return;
     if (!histogramInitialized) {
       Plotly.newPlot(histogramRef.current, [], {}, { displayModeBar: false });
       setHistogramInitialized(true);
@@ -141,12 +145,12 @@ export default function ConnectomeConfigurationView() {
         {
           x: histogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.001 },
+          xbins: { start: 0, end: 'auto', size: 0.003 },
         },
         {
           x: newHistogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.001 },
+          xbins: { start: 0, end: 'auto', size: 0.003 },
         },
       ],
       {
