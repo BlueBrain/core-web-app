@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { useLoadable } from '@/hooks/hooks';
 
 import {
-  setEditsAtom,
+  applyEditsAtom,
   writingConfigAtom,
 } from '@/state/brain-model-config/macro-connectome/setters';
 import {
@@ -11,17 +11,17 @@ import {
   editNameAtom,
   offsetAtom,
   multiplierAtom,
-  currentEditAtom,
+  currentEditIdxAtom,
 } from '@/state/brain-model-config/macro-connectome';
 
 export default function MatrixModificationHistoryList() {
-  const setEdits = useSetAtom(setEditsAtom);
+  const applyEdits = useSetAtom(applyEditsAtom);
   const edits = useLoadable(editsLoadableAtom, []);
   const writingConfig = useAtomValue(writingConfigAtom);
   const setEditName = useSetAtom(editNameAtom);
   const setOffset = useSetAtom(offsetAtom);
   const setMultiplier = useSetAtom(multiplierAtom);
-  const setCurrentEdit = useSetAtom(currentEditAtom);
+  const setCurrentEdit = useSetAtom(currentEditIdxAtom);
 
   return (
     <div>
@@ -58,13 +58,7 @@ export default function MatrixModificationHistoryList() {
                 {!writingConfig && (
                   <DeleteOutlined
                     className="mr-5"
-                    onClick={() => {
-                      const updatedEdits = [
-                        ...edits.slice(0, i),
-                        ...edits.slice(i + 1, edits.length),
-                      ];
-                      setEdits(updatedEdits);
-                    }}
+                    onClick={() => applyEdits(edits.filter((_, idx) => idx !== i))}
                   />
                 )}
               </div>

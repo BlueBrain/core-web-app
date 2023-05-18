@@ -12,6 +12,7 @@ import {
   localConfigPayloadAtom,
   connectivityStrengthOverridesEntityAtom,
   connectivityStrengthOverridesEntitySourceAtom,
+  editsAtom,
   connectivityStrengthMatrixAtom,
   remoteConnectivityStrengthMatrixAtom,
   localConnectivityStrengthMatrixAtom,
@@ -147,14 +148,13 @@ const setConnectivityStrengthMatrixAtom = atom<null, [WholeBrainConnectivityMatr
   }
 );
 
-export const setEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<void>>(
+const setEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<void>>(
   null,
   async (get, set, edits) => {
     const remoteConfigPayload = await get(remoteConfigPayloadAtom);
     const configPayload = await get(configPayloadAtom);
-    const initialConnectivityStrengthMatrix = await get(initialConnectivityStrengthMatrixAtom);
 
-    if (!configPayload || !remoteConfigPayload || !initialConnectivityStrengthMatrix) {
+    if (!configPayload || !remoteConfigPayload) {
       throw new Error('Trying to set edits while the state has not been initialized');
     }
 
@@ -168,10 +168,40 @@ export const setEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<voi
 
     set(localConfigPayloadAtom, new WeakMap().set(remoteConfigPayload, updatedConfigPayload));
 
-    const matrix = structuredClone(initialConnectivityStrengthMatrix);
-    edits.forEach((edit) => applyEdit(matrix, edit));
-    set(setConnectivityStrengthMatrixAtom, { ...matrix });
-
     set(persistConfig);
+  }
+);
+
+export const addEditAtom = atom<null, [MacroConnectomeEditEntry], Promise<void>>(
+  null,
+  async (get, set, edit) => {
+    const currentMatrix = await get(connectivityStrengthMatrixAtom);
+    const remoteMatrix = await get(remoteConnectivityStrengthMatrixAtom);
+    const edits = await get(editsAtom);
+
+    if (!currentMatrix || !remoteMatrix) return;
+
+    const matrix = currentMatrix === remoteMatrix ? structuredClone(currentMatrix) : currentMatrix;
+
+    applyEdit(matrix, edit);
+
+    set(setConnectivityStrengthMatrixAtom, { ...matrix });
+    set(setEditsAtom, [...edits, edit]);
+  }
+);
+
+export const applyEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<void>>(
+  null,
+  async (get, set, edits) => {
+    const initialMatrix = await get(initialConnectivityStrengthMatrixAtom);
+
+    if (!initialMatrix) return;
+
+    const matrix = structuredClone(initialMatrix);
+
+    edits.forEach((e) => applyEdit(matrix, e));
+
+    set(setConnectivityStrengthMatrixAtom, matrix);
+    set(setEditsAtom, edits);
   }
 );

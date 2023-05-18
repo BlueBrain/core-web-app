@@ -23,11 +23,12 @@ import {
   editNameAtom,
   offsetAtom,
   multiplierAtom,
-  currentEditAtom,
+  currentEditIdxAtom,
   editsLoadableAtom,
 } from '@/state/brain-model-config/macro-connectome';
 import {
-  setEditsAtom,
+  addEditAtom,
+  applyEditsAtom,
   writingConfigAtom,
 } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
@@ -69,9 +70,10 @@ export default function ConnectomeConfigurationView() {
   const [offset, setOffset] = useAtom(offsetAtom);
   const [multiplier, setMultiplier] = useAtom(multiplierAtom);
   const [editName, setEditName] = useAtom(editNameAtom);
-  const [currentEdit, setCurrentEdit] = useAtom(currentEditAtom);
+  const [currentEditIdx, setCurrentEditIdx] = useAtom(currentEditIdxAtom);
   const edits = useLoadable(editsLoadableAtom, []);
-  const setEdits = useSetAtom(setEditsAtom);
+  const addEdit = useSetAtom(addEditAtom);
+  const applyEdits = useSetAtom(applyEditsAtom);
 
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
@@ -86,8 +88,8 @@ export default function ConnectomeConfigurationView() {
   const selectionShapes = useRef<Rect[]>([]);
 
   useEffect(() => {
-    if (currentEdit === null || !connectivityMatrix) return;
-    const edit = edits[currentEdit];
+    if (currentEditIdx === null || !connectivityMatrix) return;
+    const edit = edits[currentEditIdx];
     if (!edit) return;
     setOffset(edit.offset);
     setMultiplier(edit.multiplier);
@@ -107,7 +109,7 @@ export default function ConnectomeConfigurationView() {
     });
     setSelected(selections);
   }, [
-    currentEdit,
+    currentEditIdx,
     edits,
     setOffset,
     setMultiplier,
@@ -208,17 +210,15 @@ export default function ConnectomeConfigurationView() {
       },
     };
 
-    const updatedEdits =
-      currentEdit === null
-        ? [...edits, newEdit]
-        : [...edits.slice(0, currentEdit), newEdit, ...edits.slice(currentEdit + 1, edits.length)];
+    if (currentEditIdx === null) addEdit(newEdit);
+    else
+      applyEdits([...edits.slice(0, currentEditIdx), newEdit, ...edits.slice(currentEditIdx + 1)]);
 
-    setEdits(updatedEdits);
     setOffset(0);
     setMultiplier(1);
     setEditName('');
     setSelected(new Set());
-    setCurrentEdit(null);
+    setCurrentEditIdx(null);
     selectionShapes.current = [];
   };
 
@@ -287,7 +287,7 @@ export default function ConnectomeConfigurationView() {
                   setMultiplier(1);
                   setEditName('');
                   setSelected(new Set());
-                  setCurrentEdit(null);
+                  setCurrentEditIdx(null);
                   selectionShapes.current = [];
                 }}
                 className="w-5/12 ml-2"

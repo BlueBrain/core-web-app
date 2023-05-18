@@ -331,4 +331,4 @@ export const partialCircuitAtom = atom<Promise<DetailedCircuitResource | null>>(
 export const editNameAtom = atom('');
 export const offsetAtom = atom(0);
 export const multiplierAtom = atom(1);
-export const currentEditAtom = atom<number | null>(null);
+export const currentEditIdxAtom = atom<number | null>(null);
