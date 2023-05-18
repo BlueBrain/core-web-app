@@ -116,7 +116,7 @@ export default function ConnectomeConfigurationView() {
     hemisphereDirection,
   ]);
 
-  const selectedVals: [string, string, number][] | [number, number, number] = useMemo(
+  const selectedVals: [string, string, number][] | [number, number, number][] = useMemo(
     () => Array.from(selected).map((s) => JSON.parse(s)),
     [selected]
   );
@@ -181,29 +181,30 @@ export default function ConnectomeConfigurationView() {
 
   const onClick = () => {
     if (!brainRegionLeaveIdxByNotationMap) return;
-    const hasIdx = typeof selectedVals[0]?.[0] === 'number';
 
-    const updatedEdits = [
-      ...edits,
-      {
-        name: editName,
-        hemisphereDirection,
-        offset,
-        multiplier,
-        target: {
-          src: uniq(
-            selectedVals.map(
-              (v) => (hasIdx ? v[1] : brainRegionLeaveIdxByNotationMap.get(v[1])) as number
-            )
-          ),
-          dst: uniq(
-            selectedVals.map(
-              (v) => (hasIdx ? v[0] : brainRegionLeaveIdxByNotationMap.get(v[0])) as number
-            )
-          ),
-        },
+    const newEdit = {
+      name: editName,
+      hemisphereDirection,
+      offset,
+      multiplier,
+      target: {
+        src: uniq(
+          selectedVals.map((v) =>
+            typeof v[1] === 'number' ? v[1] : (brainRegionLeaveIdxByNotationMap.get(v[1]) as number)
+          )
+        ),
+        dst: uniq(
+          selectedVals.map((v) =>
+            typeof v[0] === 'number' ? v[0] : (brainRegionLeaveIdxByNotationMap.get(v[0]) as number)
+          )
+        ),
       },
-    ];
+    };
+
+    const updatedEdits =
+      currentEdit === null
+        ? [...edits, newEdit]
+        : [...edits.slice(0, currentEdit), newEdit, ...edits.slice(currentEdit + 1, edits.length)];
 
     setEdits(updatedEdits);
     setOffset(0);
