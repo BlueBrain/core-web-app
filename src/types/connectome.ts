@@ -14,5 +14,4 @@ export interface MacroConnectomeEditEntry {
     src: BrainRegionIdx[];
     dst: BrainRegionIdx[];
   };
-  selected: string[];
 }

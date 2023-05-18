@@ -32,6 +32,7 @@ import {
 } from '@/state/brain-model-config/macro-connectome/setters';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import { useLoadable } from '@/hooks/hooks';
+import { getFlatArrayValueIdx } from '@/util/connectome';
 import styles from '../connectome-definition.module.css';
 
 interface Rect extends Partial<Shape> {
@@ -84,7 +85,38 @@ export default function ConnectomeConfigurationView() {
   const [lineChartInitialized, setLineChartInitialized] = useState(false);
   const selectionShapes = useRef<Rect[]>([]);
 
-  const selectedVals: [string, string, number][] = useMemo(
+  useEffect(() => {
+    if (currentEdit === null || !connectivityMatrix) return;
+    const edit = edits[currentEdit];
+    if (!edit) return;
+    setOffset(edit.offset);
+    setMultiplier(edit.multiplier);
+    setEditName(edit.name);
+
+    const flatArray = connectivityMatrix[edit.hemisphereDirection];
+    const matrixSize = Math.sqrt(flatArray.length);
+
+    const selections = new Set<string>();
+
+    edit.target.src.forEach((srcIdx) => {
+      edit.target.dst.forEach((dstIdx) => {
+        const idx = getFlatArrayValueIdx(matrixSize, srcIdx, dstIdx);
+        const value = flatArray[idx];
+        selections.add(JSON.stringify([dstIdx, srcIdx, value]));
+      });
+    });
+    setSelected(selections);
+  }, [
+    currentEdit,
+    edits,
+    setOffset,
+    setMultiplier,
+    setEditName,
+    connectivityMatrix,
+    hemisphereDirection,
+  ]);
+
+  const selectedVals: [string, string, number][] | [number, number, number] = useMemo(
     () => Array.from(selected).map((s) => JSON.parse(s)),
     [selected]
   );
@@ -149,6 +181,7 @@ export default function ConnectomeConfigurationView() {
 
   const onClick = () => {
     if (!brainRegionLeaveIdxByNotationMap) return;
+    const hasIdx = typeof selectedVals[0]?.[0] === 'number';
 
     const updatedEdits = [
       ...edits,
@@ -158,10 +191,17 @@ export default function ConnectomeConfigurationView() {
         offset,
         multiplier,
         target: {
-          src: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[1]) as number)),
-          dst: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[0]) as number)),
+          src: uniq(
+            selectedVals.map(
+              (v) => (hasIdx ? v[1] : brainRegionLeaveIdxByNotationMap.get(v[1])) as number
+            )
+          ),
+          dst: uniq(
+            selectedVals.map(
+              (v) => (hasIdx ? v[0] : brainRegionLeaveIdxByNotationMap.get(v[0])) as number
+            )
+          ),
         },
-        selected: Array.from(selected),
       },
     ];
 
@@ -302,7 +342,7 @@ export default function ConnectomeConfigurationView() {
           <>
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList setSelected={setSelected} />
+            <MatrixModificationHistoryList />
           </>
         )}
       </div>

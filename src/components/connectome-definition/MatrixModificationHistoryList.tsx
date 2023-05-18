@@ -14,11 +14,7 @@ import {
   currentEditAtom,
 } from '@/state/brain-model-config/macro-connectome';
 
-export default function MatrixModificationHistoryList({
-  setSelected,
-}: {
-  setSelected: (selected: Set<string>) => void;
-}) {
+export default function MatrixModificationHistoryList() {
   const setEdits = useSetAtom(setEditsAtom);
   const edits = useLoadable(editsLoadableAtom, []);
   const writingConfig = useAtomValue(writingConfigAtom);
@@ -47,7 +43,6 @@ export default function MatrixModificationHistoryList({
             <div key={i} className="flex justify-between">
               <button
                 onClick={() => {
-                  setSelected(new Set(edit.selected));
                   setEditName(edit.name);
                   setOffset(edit.offset);
                   setMultiplier(edit.multiplier);
