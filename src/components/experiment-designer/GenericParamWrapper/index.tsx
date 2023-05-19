@@ -6,6 +6,7 @@ import { splitAtom } from 'jotai/utils';
 import { PrimitiveAtom, useAtomValue } from 'jotai';
 
 import DeleteGroupBtn from './DeleteGroupBtn';
+import NameGroupEditor from './NameGroupEditor';
 import { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
 import { getSubGroupFocusedAtom } from '@/components/experiment-designer/utils';
 
@@ -48,10 +49,12 @@ function GroupRenderer({ paramAtom, RowRenderer, onRemoveGroup }: GroupRendererP
     <div className="group flex flex-col">
       <DeleteGroupBtn className={groupBorderStyle} onDelete={onRemoveGroup} />
       <div className={groupBorderStyle}>
+        <NameGroupEditor paramAtom={paramAtom} />
         {listAtoms.map((rowAtom) => (
           <RowRenderer paramAtom={rowAtom} key={paramAtom.toString() + rowAtom.toString()} />
         ))}
       </div>
+      <Divider />
     </div>
   );
 }
