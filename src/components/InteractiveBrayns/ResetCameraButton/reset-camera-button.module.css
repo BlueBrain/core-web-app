@@ -1,0 +1,21 @@
+.resetCameraButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+  border: 1px solid #fff0;
+  color: #fff;
+  background-color: none;
+  line-height: 2em;
+  border-radius: 1em;
+  transition: all 0.2s;
+  padding: 0 1em;
+  cursor: pointer;
+}
+
+.resetCameraButton:hover {
+  color: #013;
+  background-color: #fffd;
+  backdrop-filter: blur(4px);
+  border: 1px solid #fff9;
+}

@@ -45,15 +45,6 @@ export default function AxisGizmoView({ className, camera }: AxisGizmoViewProps)
       <canvas ref={refCanvas} width={GIZMO_SIZE} height={GIZMO_SIZE} />
       <Icon className="icon left" name="turn-left" onClick={() => rotate(+1)} />
       <Icon className="icon right" name="turn-right" onClick={() => rotate(-1)} />
-      <button
-        className={Style.resetButton}
-        onClick={() => {
-          camera.reset();
-        }}
-        type="button"
-      >
-        Reset
-      </button>
     </div>
   );
 }

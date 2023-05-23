@@ -60,10 +60,15 @@
   transition: all 1s;
 }
 
-.gizmo {
+.gizmoContainer {
   position: absolute;
   right: 0;
-  top: 0;
+  top: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .opacitySlider {

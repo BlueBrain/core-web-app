@@ -126,7 +126,7 @@ function handlePointerDrag({
       CameraTransform.rotateAroundZ(deltaX * scaleX);
     } else {
       if (!isKeyPressed('y')) CameraTransform.rotateAroundX(deltaY * scaleY);
-      if (!isKeyPressed('x')) CameraTransform.rotateAroundY(deltaX * scaleX);
+      if (!isKeyPressed('x')) CameraTransform.rotateAroundY(-deltaX * scaleX);
     }
     return;
   }

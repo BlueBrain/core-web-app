@@ -1,14 +1,18 @@
-.Settings {
+.settings {
+  --top: 3.5rem;
+  --header-height: 3rem;
   position: absolute;
-  left: 0;
-  top: 0;
+  right: 0;
+  top: var(--top);
   width: 300px;
-  height: 100%;
+  height: 740px;
+  max-height: calc(90% - var(--top));
   transition: transform 0.2s;
-  background-color: #003a8caa;
+  background-color: #fffd;
   backdrop-filter: blur(4px);
   margin: 0;
-  color: #fffe;
+  color: #000e;
+  border-radius: 1em 0 0 1em;
   box-sizing: border-box;
 }
 
@@ -17,80 +21,50 @@
 }
 
 .hide {
-  transform: translateX(-100%);
+  transform: translateX(100%);
 }
 
-.Settings > main {
+.settings > main {
   position: absolute;
   left: 0;
-  top: 0;
+  top: var(--header-height);
   right: 0;
   bottom: 0;
   padding: 1em;
   overflow: auto;
 }
 
-.Settings > nav {
-  position: absolute;
-  top: 0;
-  right: -5rem;
-  width: 5rem;
-  height: 5rem;
-  border-radius: 0 0 50% 0;
-  background-color: #003a8caa;
-  backdrop-filter: blur(4px);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-.Settings > nav svg {
-  width: 4rem;
-  height: 4rem;
-  color: #fffe;
-  fill: currentColor;
-  transition: all 1s;
-}
-
-.show nav svg {
-  transform: rotate(180deg);
-}
-
-.grid {
-  display: grid;
+.opacity {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
   gap: 0.5em;
-  grid-template-columns: auto 180px;
-  place-items: center start;
 }
 
-.grid > *:nth-child(2n),
-.grid > *:nth-child(2n) > div {
-  width: 100%;
-  margin: 0;
+.opacity > label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.Settings main hr {
+.opacity > label > div:last-child {
+  opacity: 0.5;
+}
+
+.settings main hr {
   border: none;
   height: 1px;
   background-image: linear-gradient(to left, transparent, currentColor, transparent);
   margin: 1em 0;
+  opacity: 0.25;
 }
 
-.Settings main code {
-  font-family: monospace;
-  font-weight: bolder;
-  padding: 0 0.25em;
-  margin: 0 0.5em;
-  color: #000d;
-  background-color: #ddd;
-  box-shadow: 0 0.125em #888;
+.settings main ul {
+  padding: 0 0 0 1.5em;
 }
 
-.Settings main ul {
-  padding: 0 0 0 0.5em;
-}
-
-.Settings main li {
+.settings main li {
   list-style: disc;
 }
 
@@ -105,4 +79,20 @@
   grid-template-columns: 1fr 1fr 1fr;
   place-items: center;
   margin: 1em 0;
+}
+
+.closeButton {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: var(--header-height);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.closeButton > svg {
+  max-height: 2em;
 }

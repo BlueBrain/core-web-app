@@ -1,0 +1,17 @@
+.howToUse {
+  border: 1px solid #fff9;
+  color: #fff;
+  background-color: #fff1;
+  backdrop-filter: blur(4px);
+  line-height: 2em;
+  border-radius: 1em;
+  transition: all 0.2s;
+  padding: 0 1em;
+  cursor: pointer;
+}
+
+.howToUse:hover {
+  color: #013;
+  background-color: #fffd;
+  border-radius: 0;
+}
