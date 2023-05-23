@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { Modal, Form, Input, Button, ConfigProvider } from 'antd';
@@ -38,14 +38,23 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   console.log('formValidity.name', formValidity.name);
   console.log('formValidity.description', formValidity.description);
 
-  const onValuesChange = (changedValues: { name: string } | { description: string }) => {
-    const changedProp = Object.keys(changedValues)[0];
+  const onValuesChange = useCallback(
+    (changedValues: { name: string } | { description: string }) => {
+      const changedProp = Object.keys(changedValues)[0];
 
-    form
-      .validateFields([changedProp])
-      .then(() => setFormValidity({ ...formValidity, [changedProp]: true }))
-      .catch(() => setFormValidity({ ...formValidity, [changedProp]: false }));
-  };
+      form
+        .validateFields([changedProp])
+        .then(() => {
+          console.log('validator passed');
+          setFormValidity({ ...formValidity, [changedProp]: true });
+        })
+        .catch(() => {
+          console.log('validator changed');
+          setFormValidity({ ...formValidity, [changedProp]: false });
+        });
+    },
+    [formValidity, form]
+  );
 
   const cloneConfig = async () => {
     setCloning(true);
