@@ -39,25 +39,27 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   console.log(form.getFieldsValue());
   console.log('formValidity.description', formValidity.description);
 
-  const onValuesChange = useCallback(
-    (changedValues: { name: string } | { description: string }) => {
-      const changedProp = Object.keys(changedValues)[0];
+  const onValuesChange = (changedValues: { name: string } | { description: string }) => {
+    const changedProp = Object.keys(changedValues)[0];
 
-      console.log('changed', changedValues);
+    console.log('changedValues', changedValues);
 
-      form
-        .validateFields([changedProp])
-        .then(() => {
-          console.log('validator passed');
-          setFormValidity({ ...formValidity, [changedProp]: true });
-        })
-        .catch(() => {
-          console.log('validator failed');
-          setFormValidity({ ...formValidity, [changedProp]: false });
-        });
-    },
-    [formValidity, form]
-  );
+    form
+      .validateFields([changedProp])
+      .then(() => {
+        setFormValidity({ ...formValidity, [changedProp]: true });
+      })
+      .catch((e) => {
+        const errorName = e?.errorFields?.[0]?.errors?.[0];
+        if (
+          errorName !== 'Name should be unique' ||
+          errorName !== 'Please define a description' ||
+          errorName !== 'Please define a name'
+        )
+          return;
+        setFormValidity({ ...formValidity, [changedProp]: false });
+      });
+  };
 
   const cloneConfig = async () => {
     setCloning(true);
