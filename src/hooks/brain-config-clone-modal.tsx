@@ -49,7 +49,7 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
           setFormValidity({ ...formValidity, [changedProp]: true });
         })
         .catch(() => {
-          console.log('validator changed');
+          console.log('validator failed');
           setFormValidity({ ...formValidity, [changedProp]: false });
         });
     },
@@ -75,6 +75,8 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
     if (isUniq) {
       return name;
     }
+
+    console.log('name validator failed', isUniq)
 
     throw new Error('Name should be unique');
   };
