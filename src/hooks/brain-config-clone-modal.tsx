@@ -36,14 +36,14 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
 
   const formValid = formValidity.name && formValidity.description;
   console.log('formValidity.name', formValidity.name);
-  console.log(config.name);
+  console.log(form.getFieldsValue());
   console.log('formValidity.description', formValidity.description);
 
   const onValuesChange = useCallback(
     (changedValues: { name: string } | { description: string }) => {
       const changedProp = Object.keys(changedValues)[0];
 
-      console.log(changedValues);
+      console.log('changed', changedValues);
 
       form
         .validateFields([changedProp])
