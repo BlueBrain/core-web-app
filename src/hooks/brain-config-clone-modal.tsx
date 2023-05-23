@@ -35,9 +35,10 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   });
 
   const formValid = formValidity.name && formValidity.description;
+  console.log('formValidity.name', formValidity.name);
+  console.log('formValidity.description', formValidity.description);
 
   const onValuesChange = (changedValues: { name: string } | { description: string }) => {
-    console.log('onValuesChange called');
     const changedProp = Object.keys(changedValues)[0];
 
     form
@@ -60,7 +61,6 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   };
 
   const nameValidatorFn = async (_: any, name: string) => {
-    console.log('name validator called');
     const isUniq = await checkNameIfUniq(name.trim(), session as Session);
 
     if (isUniq) {
