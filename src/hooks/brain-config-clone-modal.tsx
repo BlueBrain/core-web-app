@@ -36,11 +36,14 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
 
   const formValid = formValidity.name && formValidity.description;
   console.log('formValidity.name', formValidity.name);
+  console.log(config.name);
   console.log('formValidity.description', formValidity.description);
 
   const onValuesChange = useCallback(
     (changedValues: { name: string } | { description: string }) => {
       const changedProp = Object.keys(changedValues)[0];
+
+      console.log(changedValues);
 
       form
         .validateFields([changedProp])
@@ -76,7 +79,7 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
       return name;
     }
 
-    console.log('name validator failed', isUniq)
+    console.log('name validator failed', isUniq);
 
     throw new Error('Name should be unique');
   };
