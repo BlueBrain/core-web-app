@@ -41,27 +41,12 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
     debounce((changedValues: { name: string } | { description: string }) => {
       const changedProp = Object.keys(changedValues)[0];
 
-      if (changedProp === 'name') {
-        console.log('name changed');
-      }
-
       form
         .validateFields([changedProp])
         .then(() => {
-          if (changedProp === 'name') console.log('formValidity', formValidity);
           setFormValidity({ ...formValidity, [changedProp]: true });
         })
-        .catch((e) => {
-          const errorName = e?.errorFields?.[0]?.errors?.[0];
-          if (
-            errorName !== 'Name should be unique' ||
-            errorName !== 'Please define a description' ||
-            errorName !== 'Please define a name'
-          ) {
-            return;
-          }
-
-          console.log('error', errorName, e);
+        .catch(() => {
           setFormValidity({ ...formValidity, [changedProp]: false });
         });
     }),
@@ -82,18 +67,11 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   };
 
   const nameValidatorFn = async (_: any, name: string) => {
-    let isUniq = false;
-    try {
-      isUniq = await checkNameIfUniq(name.trim(), session as Session);
-    } catch (e) {
-      console.log('error', e);
-    }
+    const isUniq = await checkNameIfUniq(name.trim(), session as Session);
 
     if (isUniq) {
       return name;
     }
-
-    console.log('name validator failed');
 
     throw new Error('Name should be unique');
   };
