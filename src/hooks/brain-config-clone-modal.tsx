@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { Modal, Form, Input, Button, ConfigProvider } from 'antd';
 
 import { checkNameIfUniq, cloneBrainModelConfig } from '@/api/nexus';
 import { BrainModelConfigResource } from '@/types/nexus';
+import { debounce } from 'lodash';
 
 const modalTheme = {
   token: {
@@ -78,6 +79,7 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   };
 
   const nameValidatorFn = async (_: any, name: string) => {
+    console.log('name');
     const isUniq = await checkNameIfUniq(name.trim(), session as Session);
 
     if (isUniq) {
@@ -88,6 +90,8 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
 
     throw new Error('Name should be unique');
   };
+
+  const nameValidatorFnDebounced = useCallback(debounce(nameValidatorFn, 500), []);
 
   useEffect(() => {
     form.validateFields();
@@ -112,7 +116,7 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
         label="Name"
         rules={[
           { required: true, message: 'Please define a name' },
-          { validator: nameValidatorFn },
+          { validator: nameValidatorFnDebounced },
         ]}
       >
         <Input className="mt-2" placeholder="Name" />
