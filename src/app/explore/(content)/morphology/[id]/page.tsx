@@ -30,7 +30,7 @@ const fields = [
   },
   {
     title: 'Conditions',
-    field: () => '', // TODO: What is conditions field?
+    field: () => 'Data unaivalable', // TODO: What is conditions field?
     className: 'col-span-2',
   },
   {
@@ -46,7 +46,7 @@ const fields = [
 export default function MorphologyDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} links={[{ url: '/explore/morphology', title: 'Neuron morphology' }]}>
+      <Detail fields={fields} links={[{ url: '/explore/morphology' }]}>
         {(detail: DeltaResource) => <MorphoViewerContainer resource={detail} />}
       </Detail>
     </Suspense>

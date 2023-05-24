@@ -17,7 +17,10 @@ const fields = [
   {
     title: 'Species',
     field: ({ species }) => species,
-    className: 'col-span-2',
+  },
+  {
+    title: 'Reference',
+    field: 'Data unavailable', // TODO: What is reference field?
   },
   {
     title: 'Number of Measurement',
@@ -35,16 +38,18 @@ const fields = [
   {
     title: 'Created On',
     field: ({ creationDate }) => creationDate,
+    className: 'col-span-3',
+  },
+  {
+    title: 'Conditions',
+    field: () => 'Data unavailable', // TODO: What is conditions field?
   },
 ] as DetailProps[];
 
 export default function NeuronDensityDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail
-        fields={fields}
-        links={[{ url: '/explore/neuron-density', title: 'Neuron density' }]}
-      />
+      <Detail fields={fields} links={[{ url: '/explore/neuron-density' }]} />
     </Suspense>
   );
 }

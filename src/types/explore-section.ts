@@ -6,7 +6,6 @@ export interface SideLinkList {
 
 export interface SideLink {
   url: string;
-  title: string;
 }
 
 export interface FetchParams {
@@ -152,6 +151,10 @@ export type Series = {
   unitCode: string;
   value: number;
 };
+
+export interface DetailAtomResource extends DeltaResource {
+  contributors: string[] | null;
+}
 
 // Below is the delta response interface definitions
 export type DeltaResource<

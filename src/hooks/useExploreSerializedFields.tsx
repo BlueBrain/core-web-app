@@ -6,7 +6,6 @@ import {
   DeltaResource,
   Series,
   SerializedDeltaResource,
-  ContributionEntity,
 } from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
 
@@ -16,25 +15,6 @@ export default function useExploreSerializedFields(
   const seriesArray: Series[] | undefined = detail?.series && ensureArray(detail.series);
   const annotationArray: AnnotationEntity[] | undefined | null =
     detail?.annotation && ensureArray(detail.annotation);
-
-  // shows contributor name or id if no name fields are available
-  const formatContributors = (contributor: ContributionEntity | null | undefined) => {
-    const { agent } = contributor || {};
-    if (agent) {
-      if (agent.name) return agent.name;
-
-      if (agent.familyName && agent.givenName) return `${agent.givenName} ${agent.familyName}`;
-
-      if (agent['@id']) return agent['@id'];
-    }
-
-    return 'no contributor information available';
-  };
-
-  const contributorsArray = ensureArray(detail?.contribution).reduce(
-    (acc, cur) => [...acc, formatContributors(cur)],
-    [] as any
-  ) as string[];
 
   const mean = useMemo(
     () => seriesArray && seriesArray.find((s) => s.statistic === 'mean'),
@@ -112,7 +92,7 @@ export default function useExploreSerializedFields(
     creationDate: serializeCreationDate(),
     thickness: serializeThickness(),
     eType: serializeEType(),
-    contributors: contributorsArray,
+    contributors: detail?.contributors,
     sem: serializeSem(),
     weight: serializeWeight(),
     license: detail?.license?.['@id'],

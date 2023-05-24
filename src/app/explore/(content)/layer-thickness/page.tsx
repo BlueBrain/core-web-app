@@ -20,6 +20,7 @@ const {
 
 const columnKeys = [
   'brainRegion',
+  'layer',
   'layerThickness',
   'conditions',
   'subjectSpecies',

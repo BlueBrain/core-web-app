@@ -45,10 +45,7 @@ const fields = [
 export default function LayerThicknessDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail
-        fields={fields}
-        links={[{ url: '/explore/layer-thickness', title: 'Layer thickness' }]}
-      />
+      <Detail fields={fields} links={[{ url: '/explore/layer-thickness' }]} />
     </Suspense>
   );
 }

@@ -54,51 +54,55 @@ LIMIT 1000`;
 export const ES_TERMS: { [key: string]: { term: string; title: string } } = {
   brainRegion: {
     term: 'brainRegion.label.keyword',
-    title: 'Brain region',
+    title: 'BRAIN REGION',
   },
   eType: {
     term: 'eType.label.keyword',
-    title: 'E-Type',
+    title: 'E-TYPE',
   },
   mType: {
     term: 'mType.label.keyword',
-    title: 'M-Type',
+    title: 'M-TYPE',
   },
   name: {
     term: 'name.keyword',
-    title: 'Data',
+    title: 'DATA',
   },
   subjectSpecies: {
     term: 'subjectSpecies.label.keyword',
-    title: 'Species',
+    title: 'SPECIES',
   },
   contributors: {
     term: 'contributors.label.keyword',
-    title: 'Contributor(s)',
+    title: 'CONTRIBUTOR(S)',
   },
   neuronDensity: {
     term: 'neuronDensity.label.keyword',
-    title: 'Neuron density',
+    title: 'NEURON DENSITY',
   },
   boutonDensity: {
     term: 'boutonDensity.label.keyword',
-    title: 'Bouton density',
+    title: 'BOUTON DENSITY',
+  },
+  layer: {
+    term: 'layer.label.keyword',
+    title: 'LAYER',
   },
   layerThickness: {
     term: 'layerThickness.label.keyword',
-    title: 'Layer thickness',
+    title: 'THICKNESS (µM)',
   },
   circuitType: {
     term: 'circuitType.keyword',
-    title: 'Circuit type',
+    title: 'CIRCUIT TYPE',
   },
   createdAt: {
     term: 'createdAt',
-    title: 'Created on',
+    title: 'CREATED ON',
   },
   updatedAt: {
     term: 'updatedAt',
-    title: 'Updated at',
+    title: 'UPDATED AT',
   },
   reference: {
     term: 'reference.keyword',
