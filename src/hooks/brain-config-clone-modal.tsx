@@ -39,12 +39,11 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   const onValuesChange = (changedValues: { name: string } | { description: string }) => {
     const changedProp = Object.keys(changedValues)[0];
 
-    if (changedProp === 'name') console.log('changedValues', changedProp, changedValues);
-
     form
       .validateFields([changedProp])
       .then(() => {
-        if (changedProp === 'name') console.log('changedProp', changedProp);
+        console.log(changedProp);
+        console.log(formValidity);
         setFormValidity({ ...formValidity, [changedProp]: true });
       })
       .catch((e) => {
