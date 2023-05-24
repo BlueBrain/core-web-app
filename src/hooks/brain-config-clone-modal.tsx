@@ -42,8 +42,8 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
     form
       .validateFields([changedProp])
       .then(() => {
-        console.log(changedProp);
-        console.log(formValidity);
+        if (changedProp === 'name')
+        console.log('formValidity', formValidity);
         setFormValidity({ ...formValidity, [changedProp]: true });
       })
       .catch((e) => {
