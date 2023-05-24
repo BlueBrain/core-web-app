@@ -37,33 +37,36 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
 
   const formValid = formValidity.name && formValidity.description;
 
-  const onValuesChange = (changedValues: { name: string } | { description: string }) => {
-    const changedProp = Object.keys(changedValues)[0];
+  const onValuesChange = useCallback(
+    debounce((changedValues: { name: string } | { description: string }) => {
+      const changedProp = Object.keys(changedValues)[0];
 
-    if (changedProp === 'name') {
-      console.log('name changed');
-    }
+      if (changedProp === 'name') {
+        console.log('name changed');
+      }
 
-    form
-      .validateFields([changedProp])
-      .then(() => {
-        if (changedProp === 'name') console.log('formValidity', formValidity);
-        setFormValidity({ ...formValidity, [changedProp]: true });
-      })
-      .catch((e) => {
-        const errorName = e?.errorFields?.[0]?.errors?.[0];
-        if (
-          errorName !== 'Name should be unique' ||
-          errorName !== 'Please define a description' ||
-          errorName !== 'Please define a name'
-        ) {
-          return;
-        }
+      form
+        .validateFields([changedProp])
+        .then(() => {
+          if (changedProp === 'name') console.log('formValidity', formValidity);
+          setFormValidity({ ...formValidity, [changedProp]: true });
+        })
+        .catch((e) => {
+          const errorName = e?.errorFields?.[0]?.errors?.[0];
+          if (
+            errorName !== 'Name should be unique' ||
+            errorName !== 'Please define a description' ||
+            errorName !== 'Please define a name'
+          ) {
+            return;
+          }
 
-        console.log('error', errorName, e);
-        setFormValidity({ ...formValidity, [changedProp]: false });
-      });
-  };
+          console.log('error', errorName, e);
+          setFormValidity({ ...formValidity, [changedProp]: false });
+        });
+    },),
+    []
+  );
 
   const cloneConfig = async () => {
     setCloning(true);
