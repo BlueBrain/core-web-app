@@ -79,19 +79,21 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   };
 
   const nameValidatorFn = async (_: any, name: string) => {
-    console.log('name');
-    const isUniq = await checkNameIfUniq(name.trim(), session as Session);
+    let isUniq = false;
+    try {
+      isUniq = await checkNameIfUniq(name.trim(), session as Session);
+    } catch (e) {
+      console.log('error', e);
+    }
 
     if (isUniq) {
       return name;
     }
 
-    console.log('name validator failed', isUniq);
+    console.log('name validator failed');
 
     throw new Error('Name should be unique');
   };
-
-  const nameValidatorFnDebounced = useCallback(debounce(nameValidatorFn, 500), []);
 
   useEffect(() => {
     form.validateFields();
@@ -116,7 +118,7 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
         label="Name"
         rules={[
           { required: true, message: 'Please define a name' },
-          { validator: nameValidatorFnDebounced },
+          { validator: nameValidatorFn },
         ]}
       >
         <Input className="mt-2" placeholder="Name" />

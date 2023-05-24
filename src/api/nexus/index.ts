@@ -535,9 +535,8 @@ export async function checkNameIfUniq(brainModelConfigName: string, session: Ses
     size: 1,
   };
 
-  console.log(brainModelConfigName)
+  console.log('backend called');
   const sameNameConfigs = await queryES<Pick<BrainModelConfigResource, 'name'>>(query, session);
-  console.log()
 
   return !sameNameConfigs.length;
 }
