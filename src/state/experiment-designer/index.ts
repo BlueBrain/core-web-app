@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 
 import { ExpDesignerConfig } from '@/types/experiment-designer';
-import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
+import expDesParamsDefaults from '@/components/experiment-designer/experiment-designer-defaults';
 import detailedCircuitAtom from '@/state/circuit';
 import sessionAtom from '@/state/session';
 import { DetailedCircuitResource, SimulationCampaignUIConfigResource } from '@/types/nexus';
@@ -23,7 +23,7 @@ import { autoSaveDebounceInterval } from '@/config';
 
 const nodeSetsAPIUrl = 'https://cells.sbo.kcp.bbp.epfl.ch/circuit/node_sets?input_path=';
 
-export const expDesignerConfigAtom = atom<ExpDesignerConfig>(paramsDummyData as ExpDesignerConfig);
+export const expDesignerConfigAtom = atom<ExpDesignerConfig>(expDesParamsDefaults);
 
 export const idAtom = atom<string | null>(null);
 

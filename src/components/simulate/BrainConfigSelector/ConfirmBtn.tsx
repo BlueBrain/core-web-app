@@ -8,8 +8,7 @@ import { useSession } from 'next-auth/react';
 import circuitAtom from '@/state/circuit';
 import { classNames } from '@/util/utils';
 import { createSimulationCampaignUIConfig } from '@/services/bbp-workflow/simulationHelper';
-import paramsDummyData from '@/components/experiment-designer/experiment-designer-dummy.json';
-import { ExpDesignerConfig } from '@/types/experiment-designer';
+import expDesParamsDefaults from '@/components/experiment-designer/experiment-designer-defaults';
 
 const expDesBaseUrl = '/experiment-designer/experiment-setup';
 
@@ -57,7 +56,7 @@ export default function ConfirmBtn({
       campaignName,
       campaignDescription,
       circuitInfo,
-      structuredClone(paramsDummyData as ExpDesignerConfig),
+      structuredClone(expDesParamsDefaults),
       session
     ).catch((e) => {
       const msg = `Error creating simulation entity: ${e.message}`;
