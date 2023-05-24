@@ -275,6 +275,7 @@ const config: ExpDesignerConfig = {
           name: 'Population',
           type: 'targetDropdown',
           value: 'AAA',
+          disabled: true,
         },
         {
           id: 'plots',
@@ -292,6 +293,7 @@ const config: ExpDesignerConfig = {
               type: 'checkbox',
             },
           ],
+          disabled: true,
         },
         {
           id: 'start',
@@ -302,6 +304,7 @@ const config: ExpDesignerConfig = {
           min: 0,
           max: 20000,
           step: 1000,
+          disabled: true,
         },
         {
           id: 'end',
@@ -312,6 +315,7 @@ const config: ExpDesignerConfig = {
           min: 0,
           max: 20000,
           step: 100,
+          disabled: true,
         },
       ],
     },
