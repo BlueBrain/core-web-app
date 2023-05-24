@@ -35,14 +35,9 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
   });
 
   const formValid = formValidity.name && formValidity.description;
-  console.log('formValidity.name', formValidity.name);
-  console.log(form.getFieldsValue());
-  console.log('formValidity.description', formValidity.description);
 
   const onValuesChange = (changedValues: { name: string } | { description: string }) => {
     const changedProp = Object.keys(changedValues)[0];
-
-    console.log('changedValues', changedValues);
 
     form
       .validateFields([changedProp])
@@ -56,7 +51,7 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
           errorName !== 'Please define a description' ||
           errorName !== 'Please define a name'
         )
-          return;
+          console.log('Selenium error', errorName, e);
         setFormValidity({ ...formValidity, [changedProp]: false });
       });
   };
