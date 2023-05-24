@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
+import debounce from 'lodash/debounce';
 import { Modal, Form, Input, Button, ConfigProvider } from 'antd';
 
 import { checkNameIfUniq, cloneBrainModelConfig } from '@/api/nexus';
 import { BrainModelConfigResource } from '@/types/nexus';
-import { debounce } from 'lodash';
 
 const modalTheme = {
   token: {
@@ -64,7 +64,7 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
           console.log('error', errorName, e);
           setFormValidity({ ...formValidity, [changedProp]: false });
         });
-    },),
+    }),
     []
   );
 
