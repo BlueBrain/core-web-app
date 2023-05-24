@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import find from 'lodash/find';
+import { Tag } from 'antd';
 import {
   AnnotationEntity,
   DeltaResource,
@@ -8,6 +9,7 @@ import {
   SerializedDeltaResource,
 } from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
+import timeElapsedFromToday from '@/util/date';
 
 export default function useExploreSerializedFields(
   detail: DeltaResource | null
@@ -80,6 +82,29 @@ export default function useExploreSerializedFields(
     detail?.subject?.weight &&
     `${detail.subject?.weight?.minValue} - ${detail.subject?.weight?.maxValue}`;
 
+  const formatTags = () =>
+    detail?.tags &&
+    detail?.tags?.map((tag) => (
+      <Tag
+        key={tag}
+        className="text-primary-7 rounded-full border-transparent py-1 px-4 mb-2"
+        style={{ backgroundColor: '#E6F7FF' }}
+      >
+        {tag}
+      </Tag>
+    ));
+
+  const formatDimensions = () => (
+    <ul>
+      {detail?.dimensions &&
+        detail.dimensions.map((dimension) => (
+          <li key={dimension.label} className="mb-2">
+            {dimension.label}
+          </li>
+        ))}
+    </ul>
+  );
+
   return {
     description: detail?.description,
     species: detail?.subject?.species?.label,
@@ -96,5 +121,11 @@ export default function useExploreSerializedFields(
     sem: serializeSem(),
     weight: serializeWeight(),
     license: detail?.license?.['@id'],
+    brainConfiguration: detail?.brainConfiguration,
+    attribute: detail?.attribute,
+    status: detail?.status,
+    tags: formatTags(),
+    updatedAt: timeElapsedFromToday(detail?._updatedAt),
+    dimensions: formatDimensions(),
   };
 }

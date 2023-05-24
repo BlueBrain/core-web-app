@@ -76,14 +76,6 @@ export interface ExploreSectionResponse {
   total: TotalHits;
 }
 
-export interface Dimension {
-  key: string;
-  dimensionValues: string;
-  startedAt: string;
-  endedAt: string;
-  status: string;
-}
-
 // The interaces below this line are generated for Elastic Search responses for type @trace
 export interface IdLabelEntity {
   identifier: string;
@@ -156,6 +148,24 @@ export interface DetailAtomResource extends DeltaResource {
   contributors: string[] | null;
 }
 
+// TODO: dimension is a mock type
+export type Dimension = {
+  id: string;
+  label: string;
+  value: number[];
+};
+
+export type SimulationStatus = 'running' | 'successful' | 'failed';
+
+// TODO: simulation is a mock type
+export type Simulation = {
+  id: string;
+  dimensions: string[];
+  status: SimulationStatus;
+  startedAt: string;
+  completedAt?: string;
+};
+
 // Below is the delta response interface definitions
 export type DeltaResource<
   T = {
@@ -180,6 +190,12 @@ export type DeltaResource<
   image?: ImageEntity[] | null;
   series?: Series[] | Series;
   reason?: string;
+  brainConfiguration?: string;
+  attribute?: string;
+  status?: string;
+  tags?: string[];
+  dimensions?: Dimension[];
+  simulations?: Simulation[];
   _constrainedBy: string;
   _createdAt: string;
   _createdBy: string;
@@ -310,4 +326,15 @@ export type SerializedDeltaResource = {
   sem?: number;
   weight?: string;
   license?: string;
+  brainConfiguration?: string;
+  attribute?: string;
+  status?: string;
+  tags?: ReactNode;
+  updatedAt?: string | null;
+  dimensions?: ReactNode;
+};
+
+export type AxesState = {
+  xAxis?: string;
+  yAxis?: string;
 };
