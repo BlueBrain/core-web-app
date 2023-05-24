@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { Modal, Form, Input, Button, ConfigProvider } from 'antd';
@@ -50,8 +50,11 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
           errorName !== 'Name should be unique' ||
           errorName !== 'Please define a description' ||
           errorName !== 'Please define a name'
-        )
-          console.log('Selenium error', errorName, e);
+        ) {
+          return;
+        }
+
+        console.log('error', errorName, e);
         setFormValidity({ ...formValidity, [changedProp]: false });
       });
   };
