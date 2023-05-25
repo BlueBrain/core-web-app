@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { Modal, Form, Input, Button, ConfigProvider } from 'antd';
+import debounce from 'lodash/debounce';
 
 import { checkNameIfUniq, cloneBrainModelConfig } from '@/api/nexus';
 import { BrainModelConfigResource } from '@/types/nexus';
@@ -36,14 +37,17 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
 
   const formValid = formValidity.name && formValidity.description;
 
-  const onValuesChange = (changedValues: { name: string } | { description: string }) => {
-    const changedProp = Object.keys(changedValues)[0];
-
-    form
-      .validateFields([changedProp])
-      .then(() => setFormValidity({ ...formValidity, [changedProp]: true }))
-      .catch(() => setFormValidity({ ...formValidity, [changedProp]: false }));
-  };
+  const onValuesChange = useMemo(
+    () =>
+      debounce((changedValues: { name: string } | { description: string }) => {
+        const changedProp = Object.keys(changedValues)[0];
+        form
+          .validateFields([changedProp])
+          .then(() => setFormValidity({ ...formValidity, [changedProp]: true }))
+          .catch(() => setFormValidity({ ...formValidity, [changedProp]: false }));
+      }, 300),
+    [form, formValidity]
+  );
 
   const cloneConfig = async () => {
     setCloning(true);
