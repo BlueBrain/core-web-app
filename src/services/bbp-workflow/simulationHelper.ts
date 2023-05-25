@@ -90,26 +90,21 @@ function getValueOrPlaceholder(
   };
 }
 
-export async function cloneWorkflowMetaConfigs(
+export async function createWorkflowMetaConfigs(
   variablesToReplace: Record<string, any>,
   templateReplaceRegexp: RegExp,
   session: Session
 ) {
   /*
-    This function will take the meta configs and clone them.
-    Later will create new files based on template and
-    associate them with the meta config respective.
+    This function will create new files based on replaced content and
+    later associate it with the meta config respective.
   */
   const variablesToReplaceCopy: Record<string, any> = { ...variablesToReplace };
   const clonedCfgsPromises = Object.entries(workflowMetaConfigs).map(
-    async ([, { templateResourceUrl, templateFile, placeholder }]) => {
+    async ([, { fileName, templateFile, placeholder }]) => {
       let replacedContent = template(templateFile)(variablesToReplaceCopy);
       replacedContent = replacedContent.replace(templateReplaceRegexp, '$1');
-      const newResource = await createWorkflowConfigResource(
-        templateResourceUrl,
-        replacedContent,
-        session
-      );
+      const newResource = await createWorkflowConfigResource(fileName, replacedContent, session);
       const urlWithRev = `${newResource._self}?rev=${newResource._rev}`;
       variablesToReplaceCopy[placeholder] = urlWithRev;
     }
@@ -135,6 +130,11 @@ export function convertExpDesConfigToSimVariables(
   const variablesToReplaceCopy: Record<string, any> = { ...extraVariablesToReplace };
 
   const expDesignerConfig = variablesToReplaceCopy.expDesignerConfig as ExpDesignerConfig;
+
+  // --------------------------------------
+  // --------------- Setup ----------------
+  // --------------------------------------
+
   const { setup } = expDesignerConfig;
   const simulatedNeurons = setup.find((param) => param.id === 'simulatedNeurons');
   if (!simulatedNeurons) {
@@ -166,6 +166,10 @@ export function convertExpDesConfigToSimVariables(
     coords = { ...coords, ...coordDict };
   });
 
+  // ------------------------------------------
+  // --------------- Recording ----------------
+  // ------------------------------------------
+
   const recordings = (expDesignerConfig.recording as ExpDesignerGroupParameter[]).reduce(
     (acc: Record<string, any>, recordingItem) => {
       const target = getParamById<ExpDesignerTargetParameter>(recordingItem, 'recordingTarget');
@@ -193,6 +197,10 @@ export function convertExpDesConfigToSimVariables(
     {}
   );
   variablesToReplaceCopy[SimulationPlaceholders.REPORTS] = JSON.stringify(recordings);
+
+  // ----------------------------------------
+  // --------------- Stimuli ----------------
+  // ----------------------------------------
 
   const areStringList = ['targetInput', 'stimType', 'stimModule'];
   const stimuli = (expDesignerConfig.stimuli as ExpDesignerGroupParameter[]).reduce(
@@ -223,9 +231,11 @@ export function convertExpDesConfigToSimVariables(
 
   variablesToReplaceCopy[SimulationPlaceholders.INPUTS] = JSON.stringify(stimuli);
 
-  variablesToReplaceCopy[SimulationPlaceholders.NODE_SETS] = JSON.stringify({});
-
   variablesToReplaceCopy[SimulationPlaceholders.GEN_SIM_CAMPAIGN_COORDS] = JSON.stringify(coords);
+
+  // ----------------------------------------
+  // --------------- Imaging ----------------
+  // ----------------------------------------
 
   const { imaging } = expDesignerConfig;
   const neuronDisplay = imaging.find(

@@ -39,7 +39,7 @@ export enum SimulationPlaceholders {
 type WorkflowMetaConfigPlaceholders = Record<
   string,
   {
-    templateResourceUrl: string;
+    fileName: string;
     templateFile: string;
     placeholder: string;
   }
@@ -47,8 +47,7 @@ type WorkflowMetaConfigPlaceholders = Record<
 
 export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
   GenSimCampaignMeta: {
-    templateResourceUrl:
-      'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/4142eca7-6544-4078-bbc4-0eb5d3ca9b29?rev=4',
+    fileName: 'GenSimCampaignMeta',
     templateFile: `
       [DEFAULT]
       account: proj134
@@ -58,16 +57,14 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
       description: <%= ${SimulationPlaceholders.SIM_CAMPAIGN_DESCRIPTION} %>
 
       attrs: {"path_prefix": "/gpfs/bbp.cscs.ch/project/%(account)s/scratch/sims",
-              "blue_config_template": "simulation_config.tmpl",
-              "user_target": "node_sets.json"}
+              "blue_config_template": "simulation_config.tmpl"}
 
       coords: <%= ${SimulationPlaceholders.GEN_SIM_CAMPAIGN_COORDS} %>
     `,
     placeholder: 'GenSimCampaignMeta',
   },
   RunSimCampaignMeta: {
-    templateResourceUrl:
-      'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/_/12a16092-231b-4566-9847-00a1cc4ee7c6?rev=3',
+    fileName: 'RunSimCampaignMeta',
     templateFile: `
       [DEFAULT]
       account: proj134
@@ -79,8 +76,7 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
     placeholder: 'RunSimCampaignMeta',
   },
   ReportSimCampaignMeta: {
-    templateResourceUrl:
-      'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/_/030469ed-07fa-427c-8df1-66437fac6930?rev=1',
+    fileName: 'ReportSimCampaignMeta',
     templateFile: `
       [DEFAULT]
       account: proj134
@@ -92,8 +88,7 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
     placeholder: 'ReportSimCampaignMeta',
   },
   VideoSimCampaignMeta: {
-    templateResourceUrl:
-      'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/e87eafbe-1e5c-46ac-9ac1-82eefc1ba02c?rev=2',
+    fileName: 'VideoSimCampaignMeta',
     templateFile: `
       [DEFAULT]
       account: proj134
@@ -185,11 +180,6 @@ export const SIMULATION_FILES: WorkflowFile[] = [
     NAME: 'cfg_name',
     TYPE: 'string',
     CONTENT: 'simulation.cfg',
-  },
-  {
-    NAME: 'node_sets.json',
-    TYPE: 'file',
-    CONTENT: `<%= ${SimulationPlaceholders.NODE_SETS} %>`,
   },
 ];
 

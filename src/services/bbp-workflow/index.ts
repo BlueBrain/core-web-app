@@ -3,7 +3,7 @@ import template from 'lodash/template';
 
 import {
   convertExpDesConfigToSimVariables,
-  cloneWorkflowMetaConfigs,
+  createWorkflowMetaConfigs,
   customRangeDelimeter,
 } from './simulationHelper';
 import {
@@ -73,7 +73,7 @@ export async function getSimulationTaskFiles(
   const templateReplaceRegexp = new RegExp(`"?${customRangeDelimeter}(\\$?[^"]+)"?`, 'gm');
 
   extraVariables = {
-    ...(await cloneWorkflowMetaConfigs(extraVariables, templateReplaceRegexp, session)),
+    ...(await createWorkflowMetaConfigs(extraVariables, templateReplaceRegexp, session)),
   };
 
   const replacedFiles = structuredClone(workflowFiles).map((file) => {

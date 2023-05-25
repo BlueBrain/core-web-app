@@ -559,38 +559,28 @@ export async function fetchGeneratorTaskActivity(
 }
 
 export async function createWorkflowConfigResource(
-  resourceUrl: string,
+  fileName: string,
   fileContent: string,
   session: Session
 ) {
-  const workflowConfigresource = await fetchJsonFileByUrl<BbpWorkflowConfigResource>(
-    resourceUrl,
-    session
-  );
+  const createdFile = await createTextFile(fileContent, fileName, session);
 
-  const clonedFile = await createTextFile(
-    fileContent,
-    workflowConfigresource.distribution.name,
-    session
-  );
-
-  // TODO: make fileds consistent like update, digest, etc
   const bbpWorkflowconfig: BbpWorkflowConfigResource = {
-    '@context': workflowConfigresource['@context'],
-    '@type': workflowConfigresource['@type'],
+    '@context': ['https://bbp.neuroshapes.org'],
+    '@type': 'BbpWorkflowConfig',
     '@id': createId('file'),
     distribution: {
       '@type': 'DataDownload',
-      name: clonedFile._filename,
+      name: createdFile._filename,
       contentSize: {
         unitCode: 'bytes',
-        value: clonedFile._bytes,
+        value: createdFile._bytes,
       },
-      contentUrl: clonedFile._self,
-      encodingFormat: clonedFile._mediaType,
+      contentUrl: createdFile._self,
+      encodingFormat: createdFile._mediaType,
       digest: {
-        algorithm: clonedFile._digest._algorithm,
-        value: clonedFile._digest._value,
+        algorithm: createdFile._digest._algorithm,
+        value: createdFile._digest._value,
       },
     },
   };
