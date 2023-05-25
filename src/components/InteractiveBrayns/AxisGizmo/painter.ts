@@ -34,7 +34,10 @@ export default class Painter {
 
   private readonly uniCamera: WebGLUniformLocation;
 
-  constructor(canvas: HTMLCanvasElement, private readonly onTipClick: (name: string) => void) {
+  constructor(
+    private readonly canvas: HTMLCanvasElement,
+    private readonly onTipClick: (name: string) => void
+  ) {
     const gl = canvas.getContext('webgl2', {
       alpha: true,
       antialias: true,
@@ -46,7 +49,11 @@ export default class Painter {
     this.prg = createProgram(gl);
     this.uniCamera = getUniformLocation(gl, this.prg, 'uniCamera');
     this.vao = createVAO(gl, this.prg);
-    canvas.addEventListener('pointerdown', this.handlePointerDown);
+    canvas.addEventListener('pointerup', this.handlePointerUp);
+  }
+
+  detach() {
+    this.canvas.removeEventListener('pointerup', this.handlePointerUp);
   }
 
   updateCamera(quaternion: Quaternion) {
@@ -81,7 +88,7 @@ export default class Painter {
     gl.bindVertexArray(null);
   }
 
-  private readonly handlePointerDown = (evt: PointerEvent) => {
+  private readonly handlePointerUp = (evt: PointerEvent) => {
     const { gl } = this;
     const radius = 0.2;
     const squaredRadius = radius * radius;
@@ -102,6 +109,8 @@ export default class Painter {
       }
     }
     if (bestTip) {
+      evt.preventDefault();
+      evt.stopPropagation();
       this.onTipClick(bestTip);
     }
   };

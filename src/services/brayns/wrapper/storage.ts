@@ -19,7 +19,6 @@ export default class Storage {
 
       const data = await this.service.exec('storage-session-get', { key });
       this.alreadyLoadedOnce.add(key);
-      console.log('🚀 [storage] data = ', data); // @FIXME: Remove this line written on 2023-03-20 at 10:43
       assertType<{ value: string | null }>(
         data,
         { value: ['|', 'string', 'null'] },

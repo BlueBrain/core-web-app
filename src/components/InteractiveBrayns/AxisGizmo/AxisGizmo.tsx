@@ -52,12 +52,12 @@ export default function AxisGizmoView({ className, camera }: AxisGizmoViewProps)
 type Quaternion = [x: number, y: number, z: number, w: number];
 const RADIUS = 0.5 * Math.sqrt(2);
 const ORIENTATIONS: { [key: string]: Quaternion } = {
-  'X+': [0, RADIUS, 0, RADIUS],
-  'X-': [0, RADIUS, 0, -RADIUS],
+  'X+': [RADIUS, 0, RADIUS, 0],
+  'X-': [RADIUS, 0, -RADIUS, 0],
   'Y+': [-RADIUS, 0, 0, RADIUS],
   'Y-': [-RADIUS, 0, 0, -RADIUS],
-  'Z+': [0, 0, 0, 1],
-  'Z-': [0, 1, 0, 0],
+  'Z+': [0, 0, 1, 0],
+  'Z-': [1, 0, 0, 0],
 };
 const BACK: { [name: string]: string } = {
   'X+': 'X-',
@@ -87,6 +87,7 @@ function initCanvas(canvas: HTMLCanvasElement, camera: CameraTransformInteface):
   return () => {
     camera.removeChangeListener(paint);
     observer.unobserve(canvas);
+    painter.detach();
   };
 }
 
