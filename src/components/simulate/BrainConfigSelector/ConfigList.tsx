@@ -3,7 +3,7 @@ import { Table, ConfigProvider } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
-import { configListAtom } from '@/state/brain-model-config-list';
+import { builtConfigListAtom } from '@/state/brain-model-config-list';
 import { BrainModelConfigResource } from '@/types/nexus';
 import tableTheme from '@/components/BrainConfigLoaderView/antd-theme';
 
@@ -18,14 +18,12 @@ type Props = {
   onSelect: (selection: BrainModelConfigResource) => void;
 };
 
-const loadableconfigListAtom = loadable(configListAtom);
+const loadableconfigListAtom = loadable(builtConfigListAtom);
 
 export default function ConfigList({ onSelect }: Props) {
   const configsLoadable = useAtomValue(loadableconfigListAtom);
 
-  const [configs, setConfigs] = useState<BrainModelConfigResource[]>(
-    configsLoadable.state === 'hasData' ? configsLoadable.data : []
-  );
+  const [configs, setConfigs] = useState<BrainModelConfigResource[]>([]);
 
   useEffect(() => {
     if (configsLoadable.state !== 'hasData') return;

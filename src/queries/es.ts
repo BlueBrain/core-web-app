@@ -202,3 +202,45 @@ export const getVariantTaskActivityByCircuitIdQuery = (circuitId: string) => ({
     },
   },
 });
+
+export const getGeneratorTaskActivitiesQuery = () => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'GeneratorTaskActivity' } },
+            ],
+          },
+        },
+      ],
+    },
+  },
+});
+
+export const getBuiltBrainModelConfigsQuery = (
+  searchString: string,
+  synapseConfigIds: string[]
+) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'ModelBuildingConfig' } },
+              { terms: { 'configs.synapseConfig.@id.keyword': synapseConfigIds } },
+            ],
+          },
+        },
+        idExistsFilter,
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
+    },
+  },
+});

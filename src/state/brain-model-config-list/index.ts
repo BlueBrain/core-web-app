@@ -4,10 +4,12 @@ import {
   getPublicBrainModelConfigsQuery,
   getPersonalBrainModelConfigsQuery,
   getArchiveBrainModelConfigsQuery,
+  getBuiltBrainModelConfigsQuery,
+  getGeneratorTaskActivitiesQuery,
 } from '@/queries/es';
 import { queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { BrainModelConfigResource } from '@/types/nexus';
+import { BrainModelConfigResource, GeneratorTaskActivityResource } from '@/types/nexus';
 
 type SearchType = 'public' | 'personal' | 'archive';
 
@@ -37,4 +39,27 @@ export const configListAtom = atom<Promise<BrainModelConfigResource[]>>(async (g
   }
 
   return queryES<BrainModelConfigResource>(query, session);
+});
+
+export const builtConfigListAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
+  const session = get(sessionAtom);
+  const searchString = get(searchConfigListStringAtom);
+
+  get(refetchTriggerAtom);
+
+  if (!session) return [];
+  const generatorQuery = getGeneratorTaskActivitiesQuery();
+  const generatorTaskActivities = await queryES<GeneratorTaskActivityResource>(
+    generatorQuery,
+    session
+  );
+  const synapseConfigsUsedByGenerators = generatorTaskActivities
+    .filter((gta) => gta.used['@id'].includes('/synapseconfigs/'))
+    .map((gta) => gta.used['@id']);
+
+  const brainModelConfigQuery = getBuiltBrainModelConfigsQuery(
+    searchString,
+    synapseConfigsUsedByGenerators
+  );
+  return queryES<BrainModelConfigResource>(brainModelConfigQuery, session);
 });
