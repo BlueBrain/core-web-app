@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ContributionEntity, AgentOrIsPartOfOrLicense } from '@/types/nexus';
 
 export interface SideLinkList {
   links?: Array<SideLink>;
@@ -238,19 +239,6 @@ export interface BrainLocation {
 export interface BrainRegionOrStimulusTypeOrSpecies {
   '@id': string;
   label: string;
-}
-export interface ContributionEntity {
-  '@type': string;
-  agent: AgentOrIsPartOfOrLicense;
-}
-export interface AgentOrIsPartOfOrLicense {
-  '@id': string;
-  '@type': string;
-  email?: string;
-  name?: string;
-  givenName?: string;
-  familyName?: string;
-  preferred_username?: string;
 }
 export interface AtLocation {
   '@type': string;

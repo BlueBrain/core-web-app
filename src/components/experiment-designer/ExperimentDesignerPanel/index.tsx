@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from 'antd';
-import { PlusOutlined, MinusOutlined, RightOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusOutlined, RightOutlined, UserOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
@@ -11,9 +11,14 @@ import { HomeIcon } from '@/components/icons';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 import FooterLink from '@/components/BrainConfigPanel/FooterLink';
-import { campaignNameAtom, campaignDescriptionAtom } from '@/state/experiment-designer';
+import {
+  campaignNameAtom,
+  campaignDescriptionAtom,
+  simCampaignUserAtom,
+} from '@/state/experiment-designer';
 
 const configAtomLoadable = loadable(configAtom);
+const campaignUserAtomLoadable = loadable(simCampaignUserAtom);
 
 export default function ExperimentDesignerPanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +26,18 @@ export default function ExperimentDesignerPanel() {
   const simCampDescription = useAtomValue(campaignDescriptionAtom);
   const loadableConfig = useAtomValue(configAtomLoadable);
   const circuitInfo = loadableConfig.state === 'hasData' ? loadableConfig.data : null;
+  const loadableCampaingnUser = useAtomValue(campaignUserAtomLoadable);
+
+  const campaignCreatorUsername = useMemo(() => {
+    switch (loadableCampaingnUser.state) {
+      case 'hasData':
+        return loadableCampaingnUser.data;
+      case 'loading':
+        return 'Loading...';
+      default:
+        return 'Unknown - error fetching creator';
+    }
+  }, [loadableCampaingnUser]);
 
   return (
     <div
@@ -57,6 +74,11 @@ export default function ExperimentDesignerPanel() {
           </div>
 
           <div className="text-primary-3 mt-3">{simCampDescription}</div>
+
+          <div className="text-primary-3 mt-3">
+            <UserOutlined />
+            <span className="ml-3">{campaignCreatorUsername || 'Loading...'}</span>
+          </div>
 
           <div className="my-6">
             <div className="bg-primary-5 h-px" />

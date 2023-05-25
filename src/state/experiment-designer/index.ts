@@ -46,6 +46,17 @@ const configPayloadUrlAtom = selectAtom(
   (config) => config?.distribution.contentUrl
 );
 
+export const simCampaignUserAtom = atom<Promise<string | null>>(async (get) => {
+  const configResource = await get(configResourceAtom);
+  if (!configResource) return null;
+
+  const { contribution } = configResource;
+  if (Array.isArray(contribution)) {
+    return contribution.map((c) => c.agent.name).join(', ');
+  }
+  return contribution.agent.name || 'Unknown';
+});
+
 export const remoteConfigPayloadAtom = atom<Promise<ExpDesignerConfig | null>>(async (get) => {
   const session = get(sessionAtom);
   const configPayloadUrl = await get(configPayloadUrlAtom);

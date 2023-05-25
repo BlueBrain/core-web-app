@@ -275,6 +275,11 @@ export async function createSimulationCampaignUIConfig(
   payload: ExpDesignerConfig,
   session: Session
 ) {
+  const { email: userEmail, name: fullName, username } = session.user;
+  if (!userEmail || !fullName) {
+    throw new Error('User information not provided');
+  }
+
   const configFile = await createJsonFile(payload, 'sim-campaing-ui-config.json', session);
 
   const uiConfig: SimulationCampaignUIConfig = {
@@ -288,6 +293,18 @@ export async function createSimulationCampaignUIConfig(
       '@id': detailedCircuit['@id'],
     },
     distribution: createDistribution(configFile),
+    contribution: [
+      {
+        '@type': 'Contribution',
+        agent: {
+          '@id': '',
+          '@type': 'Person',
+          email: userEmail,
+          name: fullName,
+          preferred_username: username,
+        },
+      },
+    ],
   };
 
   return createResource<SimulationCampaignUIConfigResource>(uiConfig, session);

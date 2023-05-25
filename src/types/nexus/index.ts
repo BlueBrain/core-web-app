@@ -156,16 +156,7 @@ export interface CellComposition extends Entity {
     '@id': string;
     '@type': 'CellCompositionVolume';
   };
-  contribution: [
-    {
-      '@type': 'Contribution';
-      agent: {
-        '@id': string;
-        '@type': ['Agent', 'Person'];
-        name: string;
-      };
-    }
-  ];
+  contribution: ContributionEntity[];
   description: string;
   name: string;
 }
@@ -402,8 +393,24 @@ export interface SimulationCampaignUIConfig extends Entity {
     '@type': 'WorkflowExecution';
     '@id': string;
   };
+  contribution: ContributionEntity | ContributionEntity[];
 }
 
 export interface SimulationCampaignUIConfigResource
   extends ResourceMetadata,
     SimulationCampaignUIConfig {}
+
+export interface ContributionEntity {
+  '@type': string;
+  agent: AgentOrIsPartOfOrLicense;
+}
+
+export interface AgentOrIsPartOfOrLicense {
+  '@id': string;
+  '@type': string;
+  email?: string;
+  name?: string;
+  givenName?: string;
+  familyName?: string;
+  preferred_username?: string;
+}
