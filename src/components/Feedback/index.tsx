@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Form, Input, Modal } from 'antd';
 import { useSession } from 'next-auth/react';
+import { useForm } from 'antd/es/form/Form';
 import postIssue from 'src/api/jira';
 import useNotification from '@/hooks/notifications';
 
@@ -15,10 +16,13 @@ export default function Feedback() {
   const notify = useNotification();
   const { data: session } = useSession();
 
+  const [form] = useForm();
+
   const handleCancel = () => {
     setFeedbackButton(true);
     setDescription('');
     setTitle('');
+    form.resetFields();
   };
 
   const handleSubmit = async () => {
@@ -61,7 +65,7 @@ export default function Feedback() {
         className={styles.feedbackModal}
       >
         <div style={{ maxWidth: '95%' }}>
-          <Form initialValues={{ remember: false }}>
+          <Form form={form}>
             <Form.Item
               label="Title"
               name="title"
