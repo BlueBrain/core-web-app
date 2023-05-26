@@ -1,5 +1,7 @@
 import { ExpDesignerConfig } from '@/types/experiment-designer';
 
+const defaultTarget = 'AAA';
+
 const config: ExpDesignerConfig = {
   setup: [
     {
@@ -63,7 +65,7 @@ const config: ExpDesignerConfig = {
       id: 'simulatedNeurons',
       name: 'Simulated neurons',
       type: 'targetDropdown',
-      value: 'AAA',
+      value: defaultTarget,
     },
   ],
   input: [
@@ -93,7 +95,7 @@ const config: ExpDesignerConfig = {
           id: 'targetInput',
           name: 'Target',
           type: 'targetDropdown',
-          value: 'AAA',
+          value: defaultTarget,
         },
       ],
     },
@@ -152,7 +154,7 @@ const config: ExpDesignerConfig = {
           id: 'targetInput',
           name: 'Target',
           type: 'targetDropdown',
-          value: 'AAA',
+          value: defaultTarget,
         },
       ],
     },
@@ -218,7 +220,7 @@ const config: ExpDesignerConfig = {
           id: 'recordingTarget',
           name: 'Target',
           type: 'targetDropdown',
-          value: 'AAA',
+          value: defaultTarget,
         },
       ],
     },
@@ -251,19 +253,19 @@ const config: ExpDesignerConfig = {
       id: 'raster',
       name: 'Spike Raster',
       type: 'targetDropdownGroup',
-      value: ['AAA'],
+      value: [defaultTarget],
     },
     {
       id: 'psth',
       name: 'PSTH',
       type: 'targetDropdownGroup',
-      value: ['AAA'],
+      value: [defaultTarget],
     },
     {
       id: 'voltage',
       name: 'Voltage Report',
       type: 'targetDropdownGroup',
-      value: ['AAA'],
+      value: [defaultTarget],
     },
     {
       id: 'localFieldPotential',
@@ -274,7 +276,7 @@ const config: ExpDesignerConfig = {
           id: 'lfpTarget1',
           name: 'Population',
           type: 'targetDropdown',
-          value: 'AAA',
+          value: defaultTarget,
           disabled: true,
         },
         {
