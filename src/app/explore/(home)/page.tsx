@@ -16,7 +16,7 @@ export default function Explore() {
   return (
     <div className={styles.container}>
       <div className={styles.exploreHeader}>
-        <Link href="/">
+        <Link href="/explore">
           <h1>Explore</h1>
           <p className="leading-5 text-primary-2">
             Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet
@@ -31,7 +31,7 @@ export default function Explore() {
         <ExploreNavItem
           title="Brain & cells annotations"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
-          url="/simulation-campaigns"
+          url="/explore/simulation-campaigns"
         />
       </div>
       <div className={styles.experimental}>
@@ -53,14 +53,14 @@ export default function Explore() {
         <ExploreNavItem
           title="Brain models"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
-          url="/simulation-campaigns"
+          url="/explore/simulation-campaigns"
         />
       </div>
       <div className={open ? styles.themeBlack : styles.simulations}>
         <ExploreNavItem
           title="Simulations"
           text="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
-          url="/simulation-campaigns"
+          url="/explore/simulation-campaigns"
         />
       </div>
       <div className={styles.content} style={{ background: bgUrl, backgroundSize: 'cover' }} />
