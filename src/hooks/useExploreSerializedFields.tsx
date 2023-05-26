@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import find from 'lodash/find';
+import { Tag } from 'antd';
 import {
   AnnotationEntity,
   DeltaResource,
   Series,
   SerializedDeltaResource,
-  ContributionEntity,
 } from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
+import timeElapsedFromToday from '@/util/date';
 
 export default function useExploreSerializedFields(
   detail: DeltaResource | null
@@ -16,25 +17,6 @@ export default function useExploreSerializedFields(
   const seriesArray: Series[] | undefined = detail?.series && ensureArray(detail.series);
   const annotationArray: AnnotationEntity[] | undefined | null =
     detail?.annotation && ensureArray(detail.annotation);
-
-  // shows contributor name or id if no name fields are available
-  const formatContributors = (contributor: ContributionEntity | null | undefined) => {
-    const { agent } = contributor || {};
-    if (agent) {
-      if (agent.name) return agent.name;
-
-      if (agent.familyName && agent.givenName) return `${agent.givenName} ${agent.familyName}`;
-
-      if (agent['@id']) return agent['@id'];
-    }
-
-    return 'no contributor information available';
-  };
-
-  const contributorsArray = ensureArray(detail?.contribution).reduce(
-    (acc, cur) => [...acc, formatContributors(cur)],
-    [] as any
-  ) as string[];
 
   const mean = useMemo(
     () => seriesArray && seriesArray.find((s) => s.statistic === 'mean'),
@@ -100,6 +82,29 @@ export default function useExploreSerializedFields(
     detail?.subject?.weight &&
     `${detail.subject?.weight?.minValue} - ${detail.subject?.weight?.maxValue}`;
 
+  const formatTags = () =>
+    detail?.tags &&
+    detail?.tags?.map((tag) => (
+      <Tag
+        key={tag}
+        className="text-primary-7 rounded-full border-transparent py-1 px-4 mb-2"
+        style={{ backgroundColor: '#E6F7FF' }}
+      >
+        {tag}
+      </Tag>
+    ));
+
+  const formatDimensions = () => (
+    <ul>
+      {detail?.dimensions &&
+        detail.dimensions.map((dimension) => (
+          <li key={dimension.label} className="mb-2">
+            {dimension.label}
+          </li>
+        ))}
+    </ul>
+  );
+
   return {
     description: detail?.description,
     species: detail?.subject?.species?.label,
@@ -112,9 +117,15 @@ export default function useExploreSerializedFields(
     creationDate: serializeCreationDate(),
     thickness: serializeThickness(),
     eType: serializeEType(),
-    contributors: contributorsArray,
+    contributors: detail?.contributors,
     sem: serializeSem(),
     weight: serializeWeight(),
     license: detail?.license?.['@id'],
+    brainConfiguration: detail?.brainConfiguration,
+    attribute: detail?.attribute,
+    status: detail?.status,
+    tags: formatTags(),
+    updatedAt: timeElapsedFromToday(detail?._updatedAt),
+    dimensions: formatDimensions(),
   };
 }

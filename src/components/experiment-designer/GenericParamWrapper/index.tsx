@@ -6,6 +6,7 @@ import { splitAtom } from 'jotai/utils';
 import { PrimitiveAtom, useAtomValue } from 'jotai';
 
 import DeleteGroupBtn from './DeleteGroupBtn';
+import NameGroupEditor from './NameGroupEditor';
 import { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
 import { getSubGroupFocusedAtom } from '@/components/experiment-designer/utils';
 
@@ -13,6 +14,7 @@ export const defaultPadding = 'py-[12px] px-[14px]'; // to match the collapse pa
 export const defaultColumnStyle = 'w-1/2 align-baseline text-primary-7';
 export const headerStyle = 'w-1/2 p-[16px] font-light text-left';
 export const subheaderStyle = `${defaultPadding} uppercase text-gray-400`;
+export const disabledParamStyle = 'opacity-30 cursor-not-allowed pointer-events-none';
 const overflowStyle = 'max-h-[92vh] overflow-y-auto';
 const groupBorderStyle = 'border border-transparent group-hover:border-gray-400';
 
@@ -48,10 +50,12 @@ function GroupRenderer({ paramAtom, RowRenderer, onRemoveGroup }: GroupRendererP
     <div className="group flex flex-col">
       <DeleteGroupBtn className={groupBorderStyle} onDelete={onRemoveGroup} />
       <div className={groupBorderStyle}>
+        <NameGroupEditor paramAtom={paramAtom} />
         {listAtoms.map((rowAtom) => (
           <RowRenderer paramAtom={rowAtom} key={paramAtom.toString() + rowAtom.toString()} />
         ))}
       </div>
+      <Divider />
     </div>
   );
 }

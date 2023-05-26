@@ -22,6 +22,7 @@ const columnKeys = [
   'brainRegion',
   'eType',
   'name',
+  'conditions',
   'subjectSpecies',
   'contributors',
   'createdAt',

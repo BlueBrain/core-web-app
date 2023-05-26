@@ -17,6 +17,7 @@ type RangeValue = {
 type ExpDesignerBaseParameter = {
   id: string;
   name: string;
+  disabled?: boolean;
 };
 
 export type ExpDesignerNumberParameter = ExpDesignerBaseParameter & {

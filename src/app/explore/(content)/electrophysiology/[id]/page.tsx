@@ -22,7 +22,7 @@ const fields = [
   },
   {
     title: 'Reference',
-    field: '', // TODO: What is reference field?
+    field: 'Data unavailable', // TODO: What is reference field?
   },
   {
     title: 'Brain Region',
@@ -30,7 +30,7 @@ const fields = [
   },
   {
     title: 'Conditions',
-    field: '', // TODO: What is conditions field?
+    field: 'Data unavailable', // TODO: What is conditions field?
     className: 'col-span-2',
   },
   {
@@ -46,10 +46,7 @@ const fields = [
 export default function EphysDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail
-        fields={fields}
-        links={[{ url: '/explore/electrophysiology', title: 'Neuron electrophysiology' }]}
-      >
+      <Detail fields={fields} links={[{ url: '/explore/electrophysiology' }]}>
         {(detail: DeltaResource) => <EphysViewerContainer resource={detail} />}
       </Detail>
     </Suspense>

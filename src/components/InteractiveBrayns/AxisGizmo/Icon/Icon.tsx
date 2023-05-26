@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
+import { classNames } from '@/util/utils';
 import Styles from './icon.module.css';
 
 const ICONS = {
@@ -22,7 +23,7 @@ export default function Icon({ className, name, onClick }: IconProps) {
   };
   return (
     <span
-      className={getClassName(className)}
+      className={classNames(Styles.Icon, className)}
       tabIndex={0}
       role="button"
       onPointerDown={onClick}
@@ -33,10 +34,4 @@ export default function Icon({ className, name, onClick }: IconProps) {
       </svg>
     </span>
   );
-}
-
-function getClassName(className?: string) {
-  const classes = [Styles.Icon];
-  if (className) classes.push(className);
-  return classes.join(' ');
 }

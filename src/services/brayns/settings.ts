@@ -13,8 +13,8 @@ const Settings = {
    */
   CAMERA: {
     target: [6587.5015, 3849.2866, 5687.4893],
-    distance: 8248.43,
-    orientation: [0.0, 0.707107, 0.0, -0.707107],
+    distance: 10000,
+    orientation: [0.707107, 0.0, -0.707107, 0],
   } as CameraParams,
 };
 

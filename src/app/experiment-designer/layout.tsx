@@ -1,9 +1,10 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { Spin } from 'antd';
 
 import { ExperimentDesignerTopTabs, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
@@ -11,7 +12,12 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
 import useSimulationCampaignUIConfig from '@/hooks/simulation-campaign-ui-config';
-import { expDesignerConfigAtom, remoteConfigPayloadAtom } from '@/state/experiment-designer';
+import {
+  expDesignerConfigAtom,
+  remoteConfigPayloadAtom,
+  setConfigPayloadAtom,
+  savedConfigAtom,
+} from '@/state/experiment-designer';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
 
@@ -20,8 +26,12 @@ type ExperimentDesignerLayoutProps = {
 };
 
 export default function ExperimentDesignerLayout({ children }: ExperimentDesignerLayoutProps) {
-  const setConfig = useSetAtom(expDesignerConfigAtom);
+  const [localConfig, setLocalConfig] = useAtom(expDesignerConfigAtom);
   const remoteConfigLoadable = useAtomValue(loadableRemoteConfigAtom);
+  // show only once while app starts
+  const [isLoading, setIsLoading] = useState(true);
+  const saveConfigDebounced = useSetAtom(setConfigPayloadAtom);
+  const setSavedConfig = useSetAtom(savedConfigAtom);
 
   useAuth(true);
   useBrainModelConfigState();
@@ -29,34 +39,44 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
 
   useEffect(() => {
     if (remoteConfigLoadable.state !== 'hasData') return;
-
-    if (!remoteConfigLoadable.data || !Object.keys(remoteConfigLoadable.data || {}).length) return;
+    if (!remoteConfigLoadable.data) return;
+    if (!Object.keys(remoteConfigLoadable.data).length) return;
 
     // overwrite the default config with the saved remote config
-    setConfig(remoteConfigLoadable.data);
-  }, [setConfig, remoteConfigLoadable]);
+    setLocalConfig(remoteConfigLoadable.data);
+    setSavedConfig(remoteConfigLoadable.data);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, [setLocalConfig, remoteConfigLoadable, setSavedConfig]);
+
+  useEffect(() => {
+    saveConfigDebounced();
+  }, [localConfig, saveConfigDebounced]);
 
   return (
-    <div className="h-screen grid grid-cols-[minmax(40px,auto)_1fr]">
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <ExperimentDesignerPanel />
-      </ErrorBoundary>
-
-      <div className="flex flex-col">
+    <Spin spinning={isLoading}>
+      <div className="h-screen grid grid-cols-[minmax(40px,auto)_1fr]">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <ExperimentDesignerTopTabs />
+          <ExperimentDesignerPanel />
         </ErrorBoundary>
 
-        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <div className="grow">{children}</div>
-        </ErrorBoundary>
-
-        <div className="absolute bottom-5 right-5 flex gap-5">
+        <div className="flex flex-col">
           <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-            <SimulateBtn />
+            <ExperimentDesignerTopTabs />
           </ErrorBoundary>
+
+          <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+            <div className="grow">{children}</div>
+          </ErrorBoundary>
+
+          <div className="absolute bottom-5 right-5 flex gap-5">
+            <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+              <SimulateBtn />
+            </ErrorBoundary>
+          </div>
         </div>
       </div>
-    </div>
+    </Spin>
   );
 }

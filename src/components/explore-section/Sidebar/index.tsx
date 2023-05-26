@@ -19,14 +19,15 @@ export function DetailsPageSideBackLink({ links }: SideLinkList) {
         links.map((link) => (
           <div
             key={link.url}
-            className="bg-primary-8 text-light w-10 h-full flex items-start justify-center"
+            className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center"
           >
             <Link
               href={link.url}
               className="whitespace-pre text-sm rotate-180 mt-7"
               style={{ writingMode: 'vertical-rl' }}
             >
-              {link.title}
+              Back to list
+              <ArrowRightOutlined className="mt-6" />
             </Link>
           </div>
         ))}

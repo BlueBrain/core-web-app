@@ -16,23 +16,25 @@ import {
   subheaderStyle,
   defaultPadding,
   generateId,
+  disabledParamStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
 import { getSubGroupFocusedAtom } from '@/components/experiment-designer/utils';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const data = useAtomValue(paramAtom);
+  const defaultStyle = `${defaultPadding} ${data.disabled ? disabledParamStyle : ''}`;
 
   let constantCol;
   switch (data.type) {
     case 'targetDropdown': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerTargetParameter>;
-      constantCol = <TargetSelector paramAtom={paramAtomTyped} className={defaultPadding} />;
+      constantCol = <TargetSelector paramAtom={paramAtomTyped} className={defaultStyle} />;
       break;
     }
 
     case 'checkboxGroup': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerCheckboxGroupParameter>;
-      constantCol = <CheckboxGroup paramAtom={paramAtomTyped} className={defaultPadding} />;
+      constantCol = <CheckboxGroup paramAtom={paramAtomTyped} className={defaultStyle} />;
       break;
     }
 
@@ -41,7 +43,7 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }
       constantCol = (
         <ConstantParameter
           paramAtom={paramAtomTyped}
-          className={defaultPadding}
+          className={defaultStyle}
           showSwitcher={false}
         />
       );

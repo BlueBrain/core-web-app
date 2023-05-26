@@ -10,6 +10,8 @@ import { Button } from 'antd';
 import useNotification from '../../hooks/notifications';
 import AxisGizmo from './AxisGizmo';
 import Settings from './Settings';
+import HowToUseButton from './HowToUseButton';
+import ResetCameraButton from './ResetCameraButton';
 import Spinner from '@/components/Spinner';
 import BraynsService, { BraynsServiceInterface } from '@/services/brayns';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -27,6 +29,7 @@ export default function InteractiveBrayns() {
 }
 
 function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps) {
+  const [howToUsePanelVisible, setHowToUsePanelVisible] = React.useState(false);
   const [overlayOpacity, setOverlayOpacity] = React.useState(1);
   const notification = useNotification();
   const circuitPath = BraynsService.useCurrentCircuitPath();
@@ -66,7 +69,11 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
         ref={handleOverlayCanvasMount}
         style={{ opacity: 0.1 + 0.9 * overlayOpacity }}
       />
-      <AxisGizmo className={styles.gizmo} camera={BraynsService.CameraTransform} />
+      <div className={styles.gizmoContainer}>
+        <AxisGizmo className={styles.gizmo} camera={BraynsService.CameraTransform} />
+        <HowToUseButton onClick={() => setHowToUsePanelVisible(!howToUsePanelVisible)} />
+        <ResetCameraButton onClick={() => BraynsService.CameraTransform.reset()} />
+      </div>
       <div className={styles.spinners}>
         {brayns === null && <Spinner>{allocationProgress}</Spinner>}
         {busyMesh > 0 && <Spinner>Loading mesh...</Spinner>}
@@ -82,7 +89,12 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
         <Button onClick={handleDisplayLogs}>Display Logs</Button>
         <Button onClick={handleExportQueries}>Export queries</Button>
       </div>
-      <Settings opacity={overlayOpacity} onOpacityChange={setOverlayOpacity} />
+      <Settings
+        opacity={overlayOpacity}
+        onOpacityChange={setOverlayOpacity}
+        visible={howToUsePanelVisible}
+        onVisibleChange={setHowToUsePanelVisible}
+      />
     </div>
   );
 }

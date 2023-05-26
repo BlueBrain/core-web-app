@@ -45,13 +45,7 @@ export function cloneLastAndAdd(setSectionConfig: any) {
 function changeNumberToRange(numberParam: ExpDesignerNumberParameter): ExpDesignerRangeParameter {
   const { value } = numberParam;
 
-  let newEnd: number = Math.round(value + (value * 50) / 100);
-  let newStep: number = 1;
-
-  if (value < 1) {
-    newEnd = 1 + value;
-    newStep = 0.1;
-  }
+  const newEnd: number = Math.round(value + (value * 50) / 100);
 
   return {
     ...numberParam,
@@ -61,7 +55,7 @@ function changeNumberToRange(numberParam: ExpDesignerNumberParameter): ExpDesign
       max: numberParam.max,
       start: numberParam.value,
       end: newEnd,
-      step: newStep,
+      step: numberParam.step,
       stepper: getNewStepper(),
     },
   };
@@ -171,12 +165,17 @@ export function applySwapFunction(param: ExpDesignerParam): ExpDesignerParam | u
 }
 
 export function calculateRangeOutput(start: number, end: number, stepper: StepperType) {
+  if (stepper.value <= 0) return [];
   let values: number[];
   if (stepper.name === 'Number of steps') {
-    const steps = (end - start) / stepper.value;
-    values = range(start, end, steps);
+    if (stepper.value === 2) {
+      values = [start, end];
+    } else {
+      const steps = (end - start) / (stepper.value - 1);
+      values = [...range(start, end, steps), end];
+    }
   } else {
-    values = range(start, end, stepper.value);
+    values = [...range(start, end, stepper.value), end];
   }
   return values.map((v) => round(v, 2));
 }
