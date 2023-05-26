@@ -4,12 +4,15 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { AxesState, DeltaResource } from '@/types/explore-section';
 import DisplayDropdown from '@/components/explore-section/Simulations/DisplayDropdown';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
-import RasterDisplay from '@/components/explore-section/Simulations/RasterDisplay';
+import AnalysisReportGrid from '@/components/explore-section/Simulations/AnalysisReportGrid';
 import CenteredMessage from '@/components/CenteredMessage';
 import JobStatus from '@/components/explore-section/Simulations/JobStatus';
+import rasterImage from '@/components/explore-section/Simulations/raster.jpg';
+import imageryImage from '@/components/explore-section/Simulations/imagery.jpg';
+import voltageImage from '@/components/explore-section/Simulations/voltage.jpg';
 
 export default function Simulations({ resource }: { resource: DeltaResource }) {
-  const [selectedDisplay, setSelectedDisplay] = useState('status');
+  const [selectedDisplay, setSelectedDisplay] = useState('raster');
   const [axes, setAxes] = useState<AxesState>({
     xAxis: undefined,
     yAxis: undefined,
@@ -24,13 +27,37 @@ export default function Simulations({ resource }: { resource: DeltaResource }) {
         return (
           <>
             <DimensionSelector resource={resource} axes={axes} setAxes={setAxes} />
-            <RasterDisplay xDimension={selectedXAxis} yDimension={selectedYAxis} />
+            <AnalysisReportGrid
+              xDimension={selectedXAxis}
+              yDimension={selectedYAxis}
+              image={<img src={rasterImage.src} alt="Displays a raster graph" />}
+            />
           </>
         );
-
       case 'status':
         return <JobStatus resource={resource} />;
-
+      case 'voltage':
+        return (
+          <>
+            <DimensionSelector resource={resource} axes={axes} setAxes={setAxes} />
+            <AnalysisReportGrid
+              xDimension={selectedXAxis}
+              yDimension={selectedYAxis}
+              image={<img src={voltageImage.src} alt="Displays a voltage analysis" />}
+            />
+          </>
+        );
+      case 'imagery':
+        return (
+          <>
+            <DimensionSelector resource={resource} axes={axes} setAxes={setAxes} />
+            <AnalysisReportGrid
+              xDimension={selectedXAxis}
+              yDimension={selectedYAxis}
+              image={<img src={imageryImage.src} alt="Displays an imagery report" />}
+            />
+          </>
+        );
       default:
         return (
           <CenteredMessage

@@ -4,7 +4,7 @@ import { ClockCircleFilled } from '@ant-design/icons';
 import { useMemo, useState } from 'react';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import intersection from 'lodash/intersection';
-import { DeltaResource, Dimension, Simulation, SimulationStatus } from '@/types/explore-section';
+import { DeltaResource, Simulation, SimulationStatus } from '@/types/explore-section';
 import timeElapsedFromToday from '@/util/date';
 import InlineDimension from '@/components/explore-section/Simulations/JobStatus/InlineDimension';
 import EllipseIcon from '@/components/icons/Ellipse';
@@ -35,7 +35,7 @@ export default function JobStatus({ resource }: JobStatusProps) {
       resource.simulations
         ?.filter((sim) => intersection(sim.dimensions, showDimensions).length > 0)
         .filter((sim) => showOnly.includes(sim.status))
-        .map((obj, idx) => ({ ...obj, key: idx })),
+        .map((obj, idx) => ({ ...obj, key: idx })) || [],
     [resource.simulations, showDimensions, showOnly]
   );
 
@@ -80,36 +80,43 @@ export default function JobStatus({ resource }: JobStatusProps) {
     }
   };
 
+  // enrich table rows with the values of the dimensions
+  const tableRows = useMemo(
+    () =>
+      filteredResults.map((simulation) => {
+        const dimensions: { [key: string]: number[] | undefined } = {};
+        resource.dimensions?.forEach((dim) => {
+          if (simulation.dimensions.includes(dim.id)) {
+            dimensions[dim.label] = dim.value;
+          } else {
+            dimensions[dim.label] = undefined;
+          }
+        });
+        return { ...dimensions, ...simulation };
+      }),
+    [filteredResults, resource.dimensions]
+  );
+
+  // build extra dimension columns
+  const dimensionColumns: ColumnsType<Simulation> = useMemo(
+    () =>
+      resource.dimensions?.map((dim) => ({
+        title: dim.label,
+        dataIndex: dim.label,
+        key: dim.label,
+        className: 'text-sm',
+        render: (value: number[], simulation: Simulation) =>
+          value && <InlineDimension value={value} status={simulation.status} />,
+      })) || [],
+    [resource.dimensions]
+  );
+
   const columns: ColumnsType<Simulation> = [
-    {
-      title: 'DIMENSIONS',
-      dataIndex: 'dimensions',
-      key: 'dimensions',
-      className: 'text-sm',
-      render: (dimensions: string[], simulation: Simulation) => (
-        <div className={`grid grid-cols-${dimensions.length} gap-5`}>
-          {dimensions.map((dimensionId: string) => {
-            const dimension: Dimension | undefined = resource.dimensions?.find(
-              (dim) => dim.id === dimensionId
-            );
-            return (
-              dimension && (
-                <InlineDimension
-                  key={dimensionId}
-                  dimension={dimension}
-                  status={simulation.status}
-                />
-              )
-            );
-          })}
-        </div>
-      ),
-    },
+    ...dimensionColumns,
     {
       title: 'STATUS',
       dataIndex: 'status',
       key: 'status',
-      align: 'center',
       className: 'text-sm',
       render: (status: string, simulation: Simulation) => (
         <div className="flex flex-row gap-2 items-center justify-center">
@@ -122,7 +129,6 @@ export default function JobStatus({ resource }: JobStatusProps) {
       title: 'STARTED',
       dataIndex: 'startedAt',
       key: 'startedAt',
-      align: 'center',
       className: 'text-sm',
       render: (startedAt: string) => timeElapsedFromToday(startedAt),
       width: 100,
@@ -131,7 +137,6 @@ export default function JobStatus({ resource }: JobStatusProps) {
       title: 'COMPLETED AT',
       dataIndex: 'completedAt',
       key: 'completedAt',
-      align: 'center',
       className: 'text-sm',
       render: (completedAt: string) => (completedAt ? timeElapsedFromToday(completedAt) : '-'),
       width: 100,
@@ -170,7 +175,7 @@ export default function JobStatus({ resource }: JobStatusProps) {
       <Table
         id="simulation-job-status-table"
         rowClassName={renderRowClassName}
-        dataSource={filteredResults}
+        dataSource={tableRows}
         columns={columns}
       />
     </div>

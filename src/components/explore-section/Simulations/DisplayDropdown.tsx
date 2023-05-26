@@ -33,7 +33,7 @@ export default function DisplayDropdown({
     },
     {
       label: 'Imagery',
-      value: 'Imagery',
+      value: 'imagery',
     },
   ];
 

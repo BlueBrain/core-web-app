@@ -1,11 +1,11 @@
-import { Dimension, SimulationStatus } from '@/types/explore-section';
+import { SimulationStatus } from '@/types/explore-section';
 
 type InlineDimensionsProps = {
-  dimension: Dimension;
+  value: number[];
   status: SimulationStatus;
 };
 
-export default function InlineDimension({ dimension, status }: InlineDimensionsProps) {
+export default function InlineDimension({ value, status }: InlineDimensionsProps) {
   const renderBackgroundColor = () => {
     switch (status) {
       case 'successful':
@@ -19,9 +19,8 @@ export default function InlineDimension({ dimension, status }: InlineDimensionsP
 
   return (
     <div className="flex">
-      <span className="truncate flex-1">{dimension.label}</span>
-      <span className={`ml-2 h-min w-min px-2 py-1 font-bold ${renderBackgroundColor()}`}>
-        {dimension.value.join(',')}
+      <span className={`h-min w-min px-2 py-1 font-bold ${renderBackgroundColor()}`}>
+        {value.join(',')}
       </span>
     </div>
   );

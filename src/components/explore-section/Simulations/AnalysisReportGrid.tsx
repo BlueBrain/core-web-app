@@ -1,14 +1,14 @@
-import { CSSProperties, useMemo } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import range from 'lodash/range';
-import rasterImage from './raster.jpg';
 import { Dimension } from '@/types/explore-section';
 import CenteredMessage from '@/components/CenteredMessage';
 
-type RasterDisplayProps = {
+type AnalysisReportGridProps = {
   xDimension?: Dimension;
   yDimension?: Dimension;
+  image: ReactNode;
 };
 
 type DimensionHeaderProps = {
@@ -41,7 +41,11 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
   );
 }
 
-export default function RasterDisplay({ xDimension, yDimension }: RasterDisplayProps) {
+export default function AnalysisReportGrid({
+  xDimension,
+  yDimension,
+  image,
+}: AnalysisReportGridProps) {
   const dataColSpan = useMemo(() => {
     if (!xDimension) {
       return undefined;
@@ -98,8 +102,8 @@ export default function RasterDisplay({ xDimension, yDimension }: RasterDisplayP
               );
             }
             return (
-              <Col key={x} span={dataColSpan}>
-                <img src={rasterImage.src} alt="Displays a raster graph" />
+              <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
+                {image}
               </Col>
             );
           })}
