@@ -9,8 +9,12 @@ export default function BrainIcon({ className, style }: BrainIconProps) {
   return (
     <svg
       className={className}
-      style={style}
-      height="100%"
+      style={{
+        ...style,
+        height: '1em',
+      }}
+      height="15"
+      width="15"
       viewBox="0 0 15 15"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

@@ -16,6 +16,11 @@ import UndoIcon from './UndoIcon';
 import UserOutlinedIcon from './UserOutlined';
 import { ZoomInIcon, ZoomOutIcon } from './Zoom';
 import MissingData from './MissingData';
+import IconPlus from './Plus';
+import SettingsIcon from './Settings';
+import RangeIcon from './Range';
+import InteractiveViewIcon from './InteractiveView';
+import VirtualLabIcon from './VirtualLab';
 
 export {
   AngledArrowIcon,
@@ -37,4 +42,9 @@ export {
   ZoomInIcon,
   ZoomOutIcon,
   MissingData,
+  IconPlus as PlusIcon,
+  SettingsIcon,
+  RangeIcon,
+  InteractiveViewIcon,
+  VirtualLabIcon,
 };

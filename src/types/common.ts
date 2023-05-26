@@ -9,6 +9,10 @@
  */
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
+export type PartialRecord<K extends keyof any, T> = {
+  [P in K]?: T;
+};
+
 export type ErrorComponentProps = {
   error: Error;
   reset: () => void;

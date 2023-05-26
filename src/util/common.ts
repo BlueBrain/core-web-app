@@ -17,3 +17,11 @@ export const from64 = (str: string): string => Buffer.from(str, 'base64').toStri
 export const to64 = (str: string): string => Buffer.from(str, 'binary').toString('base64');
 
 export const isEmpty = (obj: Object) => Object.keys(obj).length === 0;
+
+export function isNumeric(str: string) {
+  if (typeof str !== 'string') return false; // we only process strings!
+  return (
+    !Number.isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+    !Number.isNaN(parseFloat(str))
+  ); // ...and ensure strings of whitespace fail
+}
