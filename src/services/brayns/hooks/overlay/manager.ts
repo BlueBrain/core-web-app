@@ -123,7 +123,7 @@ function handlePointerDrag({
   if (button === 0) {
     // Left mouse button: Orbiting.
     if (isKeyPressed('z')) {
-      CameraTransform.rotateAroundZ(deltaX * scaleX);
+      CameraTransform.rotateAroundZ(-deltaX * scaleX);
     } else {
       if (!isKeyPressed('y')) CameraTransform.rotateAroundX(deltaY * scaleY);
       if (!isKeyPressed('x')) CameraTransform.rotateAroundY(-deltaX * scaleX);
