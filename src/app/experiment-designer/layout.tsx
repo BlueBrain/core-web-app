@@ -17,6 +17,7 @@ import {
   remoteConfigPayloadAtom,
   setConfigPayloadAtom,
   savedConfigAtom,
+  setWorkflowExecutionAtom,
 } from '@/state/experiment-designer';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
@@ -32,6 +33,8 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   const [isLoading, setIsLoading] = useState(true);
   const saveConfigDebounced = useSetAtom(setConfigPayloadAtom);
   const setSavedConfig = useSetAtom(savedConfigAtom);
+
+  const setWorkflowExecution = useSetAtom(setWorkflowExecutionAtom);
 
   useAuth(true);
   useBrainModelConfigState();
@@ -54,6 +57,12 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
     saveConfigDebounced();
   }, [localConfig, saveConfigDebounced]);
 
+  const onLaunched = (nexusUrl: string) => {
+    if (!nexusUrl) return;
+
+    setWorkflowExecution(nexusUrl);
+  };
+
   return (
     <Spin spinning={isLoading}>
       <div className="h-screen grid grid-cols-[minmax(40px,auto)_1fr]">
@@ -72,7 +81,7 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
 
           <div className="absolute bottom-5 right-5 flex gap-5">
             <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-              <SimulateBtn />
+              <SimulateBtn onLaunched={onLaunched} />
             </ErrorBoundary>
           </div>
         </div>

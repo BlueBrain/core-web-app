@@ -118,7 +118,7 @@ function useWorkflowAuth() {
 type Props = {
   buttonText?: string;
   workflowName?: string;
-  onLaunchingChange?: any;
+  onLaunchingChange?: (isLoading: boolean, url: string | null) => void;
   className?: string;
   disabled?: boolean;
   extraVariablesToReplace?: Record<string, any>;
@@ -145,7 +145,8 @@ export default function WorkflowLauncher({
     if (!config) return;
     if (workflowName !== WORKFLOW_CIRCUIT_BUILD_TASK_NAME && !circuitInfo) return;
 
-    onLaunchingChange(true);
+    let workflowExecutionUrl = null;
+    onLaunchingChange(true, workflowExecutionUrl);
     setLaunching(true);
 
     let workflowConfig;
@@ -162,7 +163,7 @@ export default function WorkflowLauncher({
       notification.error({
         message: e.message,
       });
-      onLaunchingChange(false);
+      onLaunchingChange(false, workflowExecutionUrl);
       setLaunching(false);
       return;
     }
@@ -173,7 +174,7 @@ export default function WorkflowLauncher({
       // make sure the offline token is set
       await ensureWorkflowAuth(session.user.username);
 
-      await launchWorkflowTask({
+      workflowExecutionUrl = await launchWorkflowTask({
         loginInfo: session,
         workflowName,
         workflowFiles: workflowConfig,
@@ -204,7 +205,7 @@ export default function WorkflowLauncher({
         duration: null,
       });
     }
-    onLaunchingChange(false);
+    onLaunchingChange(false, workflowExecutionUrl);
     setLaunching(false);
   };
 

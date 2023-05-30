@@ -10,11 +10,16 @@ import { ExpDesignerConfig } from '@/types/experiment-designer';
 import expDesParamsDefaults from '@/components/experiment-designer/experiment-designer-defaults';
 import detailedCircuitAtom from '@/state/circuit';
 import sessionAtom from '@/state/session';
-import { DetailedCircuitResource, SimulationCampaignUIConfigResource } from '@/types/nexus';
+import {
+  DetailedCircuitResource,
+  SimulationCampaignUIConfigResource,
+  WorkflowExecution,
+} from '@/types/nexus';
 import { createHeaders } from '@/util/utils';
 import {
   fetchJsonFileByUrl,
   fetchResourceById,
+  fetchResourceByUrl,
   updateJsonFileByUrl,
   updateResource,
 } from '@/api/nexus';
@@ -138,5 +143,35 @@ export const targetListAtom = atom<Promise<string[]>>(async (get) => {
 
 export const campaignNameAtom = atom('');
 export const campaignDescriptionAtom = atom('');
+
+export const setWorkflowExecutionAtom = atom<null, [string], Promise<void>>(
+  null,
+  async (get, set, workflowExecutionUrl) => {
+    const session = get(sessionAtom);
+    const configResource = await get(configResourceAtom);
+
+    if (!session) {
+      throw new Error('No auth session found in the state');
+    }
+
+    if (!configResource || !workflowExecutionUrl) return;
+
+    const workflowExecutionResource = await fetchResourceByUrl<WorkflowExecution>(
+      workflowExecutionUrl,
+      session
+    );
+
+    const updatedResource: SimulationCampaignUIConfigResource = {
+      ...configResource,
+      wasInfluencedBy: {
+        '@type': 'WorkflowExecution',
+        '@id': workflowExecutionResource['@id'],
+      },
+    };
+
+    await updateResource(updatedResource, updatedResource?._rev, session);
+    set(triggerRefetchAtom);
+  }
+);
 
 export default expDesignerConfigAtom;

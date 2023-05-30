@@ -17,7 +17,11 @@ import circuitAtom from '@/state/circuit';
 const loadableExpDesAtom = loadable(expDesignerConfigAtom);
 const loadableCircuitAtom = loadable(circuitAtom);
 
-export default function SimulateBtn() {
+type Props = {
+  onLaunched: (nexusUrl: string) => void;
+};
+
+export default function SimulateBtn({ onLaunched }: Props) {
   const expDesLoadable = useAtomValue(loadableExpDesAtom);
   const simCampName = useAtomValue(campaignNameAtom);
   const simCampDescription = useAtomValue(campaignDescriptionAtom);
@@ -32,6 +36,12 @@ export default function SimulateBtn() {
     [SimulationPlaceholders.SIM_CAMPAIGN_DESCRIPTION]: simCampDescription,
   };
 
+  const onLaunchingChange = (isLoading: boolean, nexusUrl: string | null) => {
+    if (isLoading || !nexusUrl) return;
+
+    onLaunched(nexusUrl);
+  };
+
   return (
     <DefaultLoadingSuspense>
       <WorkflowLauncherBtn
@@ -40,6 +50,7 @@ export default function SimulateBtn() {
         className="px-12"
         extraVariablesToReplace={extraVariablesToReplace}
         disabled={!circuitInfo}
+        onLaunchingChange={onLaunchingChange}
       />
     </DefaultLoadingSuspense>
   );

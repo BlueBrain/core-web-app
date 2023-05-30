@@ -389,7 +389,7 @@ export interface SimulationCampaignUIConfig extends Entity {
     '@id': string;
   };
   distribution: Distribution;
-  generated?: {
+  wasInfluencedBy?: {
     '@type': 'WorkflowExecution';
     '@id': string;
   };
@@ -399,6 +399,20 @@ export interface SimulationCampaignUIConfig extends Entity {
 export interface SimulationCampaignUIConfigResource
   extends ResourceMetadata,
     SimulationCampaignUIConfig {}
+
+export interface WorkflowExecution extends Entity {
+  '@type': ['Entity', 'WorkflowExecution'];
+  configFileName: string;
+  distribution: Distribution;
+  endedAtTime: string;
+  module: string;
+  name: string;
+  parameters: string;
+  startedAtTime: string;
+  status: string;
+  task: string;
+  version: string;
+}
 
 export interface ContributionEntity {
   '@type': string;
