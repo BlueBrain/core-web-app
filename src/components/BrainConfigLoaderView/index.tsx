@@ -1,13 +1,13 @@
 'use client';
 
-import { ReactNode, Suspense, useState, useCallback } from 'react';
+import { ReactNode, Suspense, useState, useCallback, useEffect } from 'react';
 import { Button, ConfigProvider } from 'antd';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
 
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
-import tableTheme from './antd-theme';
+import tableTheme from '@/components/ConfigList/antd-theme';
 import {
   searchConfigListTypeAtom,
   searchConfigListStringAtom,
@@ -94,6 +94,10 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
     setSearchInputValue(searchStr);
     setSearchStringDebounced(searchStr);
   };
+
+  useEffect(() => {
+    setSearchString('');
+  }, []);
 
   return (
     <div className={styles.container}>

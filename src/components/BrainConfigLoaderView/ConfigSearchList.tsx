@@ -16,23 +16,21 @@ import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
+import ConfigList from '@/components/ConfigList';
 
 const { Column } = Table;
-
-function getSorterFn(sortProp: 'name' | 'description' | '_createdBy') {
-  return (a: BrainModelConfigResource, b: BrainModelConfigResource) =>
-    a[sortProp] < b[sortProp] ? 1 : -1;
-}
 
 type ConfigSearchListProps = {
   baseHref: string;
 };
 
+const loadableConfigAtom = loadable(configListAtom);
+
 export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const configsLoadable = useAtomValue(loadable(configListAtom));
+  const configsLoadable = useAtomValue(loadableConfigAtom);
   const triggerRefetch = useSetAtom(triggerRefetchAtom);
 
   const [configs, setConfigs] = useState<BrainModelConfigResource[]>(
@@ -60,42 +58,19 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
     createRenameModal(config, triggerRefetch);
   };
 
+  const nameRenderFn = (name: string, conf: BrainModelConfigResource) => (
+    <Link href={`${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(conf['@id']))}`}>
+      {name}
+    </Link>
+  );
+
   return (
     <>
-      <Table<BrainModelConfigResource>
-        size="small"
-        className="mt-6 mb-12"
-        loading={configsLoadable.state === 'loading'}
-        dataSource={configs}
-        pagination={configs.length > 10 ? { defaultPageSize: 10 } : false}
-        rowKey="@id"
+      <ConfigList
+        isLoading={configsLoadable.state === 'loading'}
+        configs={configs}
+        nameRenderFn={nameRenderFn}
       >
-        <Column
-          title="NAME"
-          dataIndex="name"
-          key="name"
-          sorter={getSorterFn('name')}
-          render={(name, conf: BrainModelConfigResource) => (
-            <Link
-              href={`${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(conf['@id']))}`}
-            >
-              {name}
-            </Link>
-          )}
-        />
-        <Column
-          title="DESCRIPTION"
-          dataIndex="description"
-          key="description"
-          sorter={getSorterFn('description')}
-        />
-        <Column
-          title="CREATED BY"
-          dataIndex="_createdBy"
-          key="createdBy"
-          sorter={getSorterFn('_createdBy')}
-          render={(createdBy) => createdBy.split('/').reverse()[0]}
-        />
         <Column
           title=""
           key="actions"
@@ -118,7 +93,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
             </>
           )}
         />
-      </Table>
+      </ConfigList>
 
       {cloneContextHolder}
       {renameContextHolder}

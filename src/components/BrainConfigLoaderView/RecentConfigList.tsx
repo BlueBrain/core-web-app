@@ -15,6 +15,7 @@ import EditIcon from '@/components/icons/Edit';
 import CloneIcon from '@/components/icons/Clone';
 import { BrainModelConfigResource } from '@/types/nexus';
 import { collapseId } from '@/util/nexus';
+import ConfigList from '@/components/ConfigList';
 
 const { Column } = Table;
 
@@ -56,39 +57,21 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
     createRenameModal(config, triggerRefetch);
   };
 
+  const nameRenderFn = (name: string, config: BrainModelConfigResource) => (
+    <Link href={`${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(config['@id']))}`}>
+      {name}
+    </Link>
+  );
+
   return (
     <>
       <h3 className="text-xl">Recently used configurations</h3>
 
-      <Table<BrainModelConfigResource>
-        size="small"
-        className="mt-6 mb-12"
-        dataSource={configs}
-        loading={configsLoadable.state === 'loading'}
-        pagination={false}
-        rowKey="@id"
+      <ConfigList
+        isLoading={configsLoadable.state === 'loading'}
+        configs={configs}
+        nameRenderFn={nameRenderFn}
       >
-        <Column
-          title="NAME"
-          dataIndex="name"
-          key="name"
-          render={(name, config: BrainModelConfigResource) => (
-            <Link
-              href={`${baseHref}?brainModelConfigId=${encodeURIComponent(
-                collapseId(config['@id'])
-              )}`}
-            >
-              {name}
-            </Link>
-          )}
-        />
-        <Column title="DESCRIPTION" dataIndex="description" key="description" />
-        <Column
-          title="CREATED BY"
-          dataIndex="_createdBy"
-          key="createdBy"
-          render={(createdBy) => createdBy.split('/').reverse()[0]}
-        />
         <Column
           title=""
           key="actions"
@@ -116,7 +99,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
             </>
           )}
         />
-      </Table>
+      </ConfigList>
 
       {cloneContextHolder}
       {renameContextHolder}

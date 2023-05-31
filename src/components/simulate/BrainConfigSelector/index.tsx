@@ -1,14 +1,17 @@
-import { useState, useCallback } from 'react';
-import { useSetAtom } from 'jotai';
+import { useState, useCallback, useEffect } from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
+import { loadable } from 'jotai/utils';
 
-import ConfigList from './ConfigList';
-import { searchConfigListStringAtom } from '@/state/brain-model-config-list';
+import ConfigList from '@/components/ConfigList';
+import { builtConfigListAtom, searchConfigListStringAtom } from '@/state/brain-model-config-list';
 import { BrainModelConfigResource } from '@/types/nexus';
 
 type Props = {
   onSelect: (modelConfig: BrainModelConfigResource) => void;
 };
+
+const loadableConfigListAtom = loadable(builtConfigListAtom);
 
 export default function BrainConfigSelector({ onSelect }: Props) {
   const setSearchString = useSetAtom(searchConfigListStringAtom);
@@ -25,6 +28,20 @@ export default function BrainConfigSelector({ onSelect }: Props) {
     setSearchStringDebounced(searchStr);
   };
 
+  useEffect(() => {
+    setSearchString('');
+  }, []);
+
+  const configsLoadable = useAtomValue(loadableConfigListAtom);
+
+  const [configs, setConfigs] = useState<BrainModelConfigResource[]>([]);
+
+  useEffect(() => {
+    if (configsLoadable.state !== 'hasData') return;
+
+    setConfigs(configsLoadable.data);
+  }, [configsLoadable]);
+
   return (
     <>
       <div className="flex items-end">
@@ -37,7 +54,15 @@ export default function BrainConfigSelector({ onSelect }: Props) {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <ConfigList onSelect={onSelect} />
+
+      <ConfigList
+        configs={configs}
+        isLoading={configsLoadable.state === 'loading'}
+        rowSelection={{
+          type: 'radio',
+          onSelect,
+        }}
+      />
     </>
   );
 }

@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
 import { Table, ConfigProvider } from 'antd';
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
 
-import { builtConfigListAtom } from '@/state/brain-model-config-list';
+import { TableRowSelection } from 'antd/lib/table/interface';
+import { ReactNode } from 'react';
+import tableTheme from './antd-theme';
 import { BrainModelConfigResource } from '@/types/nexus';
-import tableTheme from '@/components/BrainConfigLoaderView/antd-theme';
 
 const { Column } = Table;
 
@@ -14,38 +12,39 @@ function getSorterFn(sortProp: 'name' | 'description' | '_createdBy') {
     a[sortProp] < b[sortProp] ? 1 : -1;
 }
 
-type Props = {
-  onSelect: (selection: BrainModelConfigResource) => void;
+type ConfigListProps = {
+  configs: BrainModelConfigResource[];
+  isLoading?: boolean;
+  rowSelection?: TableRowSelection<BrainModelConfigResource>;
+  nameRenderFn?: (name: string, config: BrainModelConfigResource) => ReactNode;
+  children?: ReactNode;
 };
 
-const loadableconfigListAtom = loadable(builtConfigListAtom);
-
-export default function ConfigList({ onSelect }: Props) {
-  const configsLoadable = useAtomValue(loadableconfigListAtom);
-
-  const [configs, setConfigs] = useState<BrainModelConfigResource[]>([]);
-
-  useEffect(() => {
-    if (configsLoadable.state !== 'hasData') return;
-
-    setConfigs(configsLoadable.data);
-  }, [configsLoadable]);
-
+export default function ConfigList({
+  configs,
+  isLoading = true,
+  rowSelection,
+  nameRenderFn = (name) => name,
+  children,
+}: ConfigListProps) {
   return (
     <ConfigProvider theme={tableTheme}>
       <Table<BrainModelConfigResource>
         size="small"
         className="mt-6 mb-12"
-        loading={configsLoadable.state === 'loading'}
+        loading={isLoading}
         dataSource={configs}
         pagination={configs.length > 10 ? { defaultPageSize: 10 } : false}
         rowKey="@id"
-        rowSelection={{
-          type: 'radio',
-          onSelect,
-        }}
+        rowSelection={rowSelection}
       >
-        <Column title="NAME" dataIndex="name" key="name" sorter={getSorterFn('name')} />
+        <Column
+          title="NAME"
+          dataIndex="name"
+          key="name"
+          sorter={getSorterFn('name')}
+          render={nameRenderFn}
+        />
         <Column
           title="DESCRIPTION"
           dataIndex="description"
@@ -59,6 +58,7 @@ export default function ConfigList({ onSelect }: Props) {
           sorter={getSorterFn('_createdBy')}
           render={(createdBy) => createdBy.split('/').reverse()[0]}
         />
+        {children}
       </Table>
     </ConfigProvider>
   );
