@@ -32,7 +32,7 @@ function Field({ title, field, className }: FieldProps) {
   );
 }
 
-export function ListField({ items }: { items: string[] }) {
+export function ListField({ items }: { items: string[] | undefined }) {
   return (
     <ul>
       {items?.map((item) => (

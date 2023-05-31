@@ -30,7 +30,6 @@ const fields = [
   },
   {
     title: 'Conditions',
-    field: () => 'Data unaivalable', // TODO: What is conditions field?
     className: 'col-span-2',
   },
   {

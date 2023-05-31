@@ -42,7 +42,6 @@ const fields = [
   },
   {
     title: 'Conditions',
-    field: () => 'Data unavailable', // TODO: What is conditions field?
   },
 ] as DetailProps[];
 

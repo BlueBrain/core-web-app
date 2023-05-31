@@ -33,12 +33,6 @@ export interface Campaign {
   tags?: string[];
 }
 
-interface LabelUnitValue {
-  label: string;
-  unit: string;
-  value: number;
-}
-
 export interface ExploreSectionResource extends OptionalExploreSectionFields {
   key: React.Key | string;
   self: string;
@@ -49,22 +43,26 @@ export interface ExploreSectionResource extends OptionalExploreSectionFields {
   contributors: string;
   createdAt: string;
   brainRegion: string;
-  mtype?: string;
-  etype?: string;
-  boutonDensity?: LabelUnitValue;
-  image?: ImageEntity[] | null;
 }
 
-export interface OptionalExploreSectionFields {
+export interface OptionalExploreSectionSerializedFields {
+  meanstd?: string | number;
+  mean?: string | number;
+  standardDeviation: string | number;
+  sem?: string | number;
+  series?: Series[];
+  numberOfCells: string | number;
+  weight?: string | number;
+}
+
+export interface OptionalExploreSectionFields extends OptionalExploreSectionSerializedFields {
   reference?: string;
   conditions?: string;
   neuronDensity?: NValueEntity;
   layerThickness?: NValueEntity;
   boutonDensity?: NumericEntity;
   subjectAge?: SubjectAge;
-  sem?: number;
-  weight?: string | number;
-  ncells?: number;
+  image?: ImageEntity[] | null;
 }
 
 export interface TotalHits {
@@ -117,6 +115,7 @@ export interface ESResponseRaw {
   _source: Source;
   _type: string;
 }
+
 export interface Source extends OptionalExploreSectionFields {
   '@id': string;
   '@type'?: string | string[] | null;
@@ -132,11 +131,11 @@ export interface Source extends OptionalExploreSectionFields {
   updatedAt: string;
   updatedBy: string;
   _self: string;
+  mType: IdLabelEntity | null;
+  eType: IdLabelEntity | null;
   contributors?: ContributorsEntity[] | null;
   license?: IdLabelEntity | null;
   organizations?: IdLabelEntity[] | null;
-  eType?: IdLabelEntity | null;
-  mType?: IdLabelEntity | null;
 }
 
 export type Series = {
@@ -298,29 +297,27 @@ export interface SortState {
   order: 'asc' | 'desc';
 }
 
-export type SerializedDeltaResource = {
+export interface SerializedDeltaResource extends OptionalExploreSectionSerializedFields {
   description?: string;
   species?: string;
   brainRegion?: string;
   numberOfMeasurement?: number;
   createdBy?: string;
   subjectAge?: string;
-  mType?: string;
   meanPlusMinusStd?: ReactNode | null;
   creationDate?: ReactNode;
   thickness?: ReactNode;
-  eType?: string;
-  contributors: string[];
-  sem?: number;
-  weight?: string;
   license?: string;
   brainConfiguration?: string;
+  mType?: string;
+  eType?: string;
   attribute?: string;
   status?: string;
   tags?: ReactNode;
   updatedAt?: string | null;
   dimensions?: ReactNode;
-};
+  contributors?: string[];
+}
 
 export type AxesState = {
   xAxis?: string;

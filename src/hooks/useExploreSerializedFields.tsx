@@ -10,6 +10,8 @@ import {
 } from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
 import timeElapsedFromToday from '@/util/date';
+import { NO_DATA_STRING } from '@/constants/explore-section';
+import { formatNumber } from '@/util/common';
 
 export default function useExploreSerializedFields(
   detail: DeltaResource | null
@@ -28,11 +30,6 @@ export default function useExploreSerializedFields(
     [seriesArray]
   );
 
-  // renders the species age
-  const serializeSubjectAge = () =>
-    detail?.subject?.age &&
-    `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
-
   // renders mean +- std field. If std is not present, renders only the mean
   const serializeMeanPlusMinusStd = () => {
     if (!mean) return null;
@@ -47,9 +44,22 @@ export default function useExploreSerializedFields(
     );
   };
 
-  // renders standard error of the mean if present
-  const serializeSem = () =>
-    seriesArray?.find((series) => series.statistic === 'standard error of the mean')?.value;
+  /**
+   * Serializes a series array based on its format and string targetting specific statistic
+   * @param series @param field
+   */
+  const serializeStatisticFields = (field: string): string | number => {
+    if (!detail?.series) return NO_DATA_STRING;
+
+    const found = ensureArray(detail?.series).find((el: Series) => el.statistic === field);
+
+    return found ? formatNumber(found.value) : NO_DATA_STRING;
+  };
+
+  // renders the species age
+  const serializeSubjectAge = () =>
+    detail?.subject?.age &&
+    `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
 
   // renders thickness
   const serializeThickness = () =>
@@ -109,16 +119,18 @@ export default function useExploreSerializedFields(
     description: detail?.description,
     species: detail?.subject?.species?.label,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
-    numberOfMeasurement: seriesArray?.find((s) => s.statistic === 'N')?.value,
+    numberOfMeasurement: detail?.numberOfCells,
     createdBy: detail?._createdBy?.split('/')?.pop(),
     subjectAge: serializeSubjectAge(),
     mType: serializeMType(),
     meanPlusMinusStd: serializeMeanPlusMinusStd(),
+    numberOfCells: serializeStatisticFields('N'),
+    sem: serializeStatisticFields('standard error of the mean'),
+    standardDeviation: serializeStatisticFields('standard deviation'),
     creationDate: serializeCreationDate(),
     thickness: serializeThickness(),
     eType: serializeEType(),
     contributors: detail?.contributors,
-    sem: serializeSem(),
     weight: serializeWeight(),
     license: detail?.license?.['@id'],
     brainConfiguration: detail?.brainConfiguration,

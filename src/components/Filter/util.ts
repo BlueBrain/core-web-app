@@ -31,22 +31,23 @@ export function createOptionsFromBuckets(
  * Higher-Order Function: Returns an event handler.
  * @param {Filter[]} filters - The FiltersAtom.
  * @param {Dispatch<SetStateAction<Filter[]>>} setFilters - Sets the FiltersAtom.
- * @param {string} field - Ex. "createdBy", "eType", etc.
+ * @param {Filter} filter - Ex. a single element from the filters array
  */
 export function getCheckedChangeHandler(
   filters: Filter[],
   setFilters: Dispatch<SetStateAction<Filter[]>>,
-  field: string
+  filter: Filter
 ) {
   return (key: string) => {
-    const filterIndex = filters.findIndex((filter) => filter.field === field);
+    const filterIndex = filters.findIndex((f) => f.field === filter.field);
     const otherCheckedOptions = (filters[filterIndex] as CheckListFilter).value;
     const existingIndex = otherCheckedOptions.findIndex((optionKey: string) => optionKey === key);
 
     setFilters([
       ...filters.slice(0, filterIndex),
       {
-        field,
+        field: filter.field,
+        title: filter.title,
         type: 'checkList',
         value:
           existingIndex !== -1

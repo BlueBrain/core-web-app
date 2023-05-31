@@ -8,7 +8,7 @@ import { ChevronIcon, EyeIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import styles from './filters.module.scss';
 
-type FilterGroupProps = {
+export type FilterGroupProps = {
   items: {
     label: string;
     content: ({
@@ -42,11 +42,7 @@ export function FilterGroup({ items, filtersAtom }: FilterGroupProps) {
             >
               <div className="flex gap-3 items-center justify-between text-lg text-white">
                 <EyeIcon fill="white" />
-                <span className="font-bold">
-                  {label.replace(/^_*(.)|_+(.)/g, (_s, c, d) =>
-                    c ? c.toUpperCase() : ` ${d.toUpperCase()}`
-                  )}
-                </span>
+                <span className="font-bold">{label}</span>
               </div>
               <ChevronIcon className={styles.chevron} />
             </Accordion.Trigger>
@@ -57,11 +53,7 @@ export function FilterGroup({ items, filtersAtom }: FilterGroupProps) {
         ) : (
           <div className="flex gap-3 items-center pt-5 text-lg text-white" key={label}>
             <EyeIcon fill="white" />
-            <span className="font-bold">
-              {label.replace(/^_*(.)|_+(.)/g, (_s, c, d) =>
-                c ? c.toUpperCase() : ` ${d.toUpperCase()}`
-              )}
-            </span>
+            <span className="font-bold">{label}</span>
           </div>
         )
       )}

@@ -2,61 +2,48 @@ import { CheckListFilter, Filter } from '@/components/Filter/types';
 import { ES_TERMS } from '@/constants/explore-section';
 
 export default function buildAggregations(filters: Filter[]) {
-  const createdBy = filters.find(({ field }) => field === 'createdBy');
-  const createdByFilter = (createdBy as CheckListFilter).value.length && {
-    terms: {
-      'createdBy.keyword': createdBy?.value,
-    },
-  };
+  const filtersObject: { [key: string]: any } = {};
+  const termsObject: { [key: string]: any } = {};
+  const aggregations: { [key: string]: any } = {};
 
-  const eType = filters.find(({ field }) => field === 'eType');
-  const eTypeFilter = (eType as CheckListFilter).value.length && {
-    terms: {
-      [ES_TERMS.eType.term]: eType?.value,
-    },
-  };
+  // Loop through each filter in the filters array
+  filters.forEach((filter) => {
+    const term = ES_TERMS[filter.field]?.term as string;
 
-  // Used for aggregations
-  const createdByTerms = {
-    terms: {
-      field: 'createdBy.keyword',
-    },
-  };
-  // Prepare filter, if one exists.
-  const createdByAggs = {
-    filter: eTypeFilter,
-    aggs: {
-      excludeOwnFilter: {
-        ...createdByTerms,
+    // If term doesn't exist, skip this filter
+    if (!term) return;
+
+    // Create filter object if it has values
+    const filterValues = (filter as CheckListFilter).value;
+    if (filterValues.length) {
+      filtersObject[filter.field] = {
+        terms: { [term]: filterValues },
+      };
+    }
+
+    // Terms for used for aggregations
+    termsObject[filter.field] = {
+      terms: {
+        field: `${term}`,
+        size: 100,
       },
-    },
-  };
+    };
 
-  // Used for aggregations
-  const eTypeTerms = {
-    terms: {
-      field: 'eType.label.keyword',
-      // min_doc_count: 0,
-    },
-  };
-  // Prepare filter, if one exists.
-  const eTypeAggs = {
-    filter: createdByFilter,
-    aggs: {
-      excludeOwnFilter: {
-        ...eTypeTerms,
+    // Final step of aggregation query
+    const filterAggs = {
+      filter: filtersObject[filter.field],
+      aggs: {
+        excludeOwnFilter: {
+          ...termsObject[filter.field],
+        },
       },
-    },
-  };
+    };
 
-  const aggregations = {
-    createdBy: {
-      ...((eType as CheckListFilter).value.length ? createdByAggs : createdByTerms),
-    },
-    eType: {
-      ...((createdBy as CheckListFilter).value.length ? eTypeAggs : eTypeTerms),
-    },
-  };
+    // Combine all aggregation queries for return to query execution
+    aggregations[filter.field] = {
+      ...((filter as CheckListFilter).value.length ? filterAggs : termsObject[filter.field]),
+    };
+  });
 
-  return { aggregations, createdByFilter, eTypeFilter };
+  return { aggregations, ...filtersObject };
 }

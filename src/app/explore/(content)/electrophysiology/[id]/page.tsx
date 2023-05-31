@@ -22,7 +22,6 @@ const fields = [
   },
   {
     title: 'Reference',
-    field: 'Data unavailable', // TODO: What is reference field?
   },
   {
     title: 'Brain Region',
@@ -30,7 +29,6 @@ const fields = [
   },
   {
     title: 'Conditions',
-    field: 'Data unavailable', // TODO: What is conditions field?
     className: 'col-span-2',
   },
   {

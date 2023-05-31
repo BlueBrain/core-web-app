@@ -11,7 +11,7 @@ export default function fetchDataQuery(
   sortState: any,
   searchString: string = ''
 ) {
-  const { aggregations, createdByFilter, eTypeFilter } = buildAggregations(filters);
+  const { aggregations, ...filtersObject } = buildAggregations(filters);
   const sortQuery = buildElasticsearchSort(sortState);
 
   return {
@@ -39,10 +39,10 @@ export default function fetchDataQuery(
       },
     },
     aggs: aggregations,
-    ...([createdByFilter, eTypeFilter].filter((n) => n).length && {
+    ...(Object.values(filtersObject).filter(Boolean).length && {
       post_filter: {
         bool: {
-          filter: [createdByFilter, eTypeFilter].filter((n) => n), // Filter out "empty" vals
+          filter: Object.values(filtersObject).filter(Boolean),
         },
       },
     }),

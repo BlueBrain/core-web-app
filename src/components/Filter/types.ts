@@ -1,5 +1,6 @@
 interface BaseFilter {
   field: string;
+  title: string;
 }
 
 interface DateRangeFilter extends BaseFilter {

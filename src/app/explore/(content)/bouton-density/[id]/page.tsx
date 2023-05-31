@@ -44,7 +44,6 @@ const fields = [
   },
   {
     title: 'Reference',
-    field: () => 'Data unavailable', // TODO: What is reference field?
   },
   {
     title: 'N˚ of cells',

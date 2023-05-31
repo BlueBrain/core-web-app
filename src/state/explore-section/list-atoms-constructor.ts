@@ -8,15 +8,15 @@ import {
 } from '@/types/explore-section';
 import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
+import { TYPE_FILTER_MAPPING, DEFAULT_FILTERS } from '@/constants/explore-section';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section';
 
 interface DataQueryParams {
   type: string;
-  defaultFilters?: Filter[];
 }
 
-const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => {
+const createListViewAtoms = ({ type }: DataQueryParams) => {
   const pageSizeAtom = atom<number>(30);
 
   const pageNumberAtom = atom<number>(1);
@@ -26,10 +26,9 @@ const createListViewAtoms = ({ type, defaultFilters = [] }: DataQueryParams) => 
   const sortStateAtom = atom<SortState>({ field: 'createdAt', order: 'asc' });
 
   const filtersAtom = atom<Filter[]>([
-    { field: 'createdBy', type: 'checkList', value: [] },
-    { field: 'eType', type: 'checkList', value: [] },
-    ...defaultFilters,
-  ]);
+    ...DEFAULT_FILTERS,
+    ...TYPE_FILTER_MAPPING[type],
+  ] as Filter[]);
 
   const queryAtom = atom<object>((get) => {
     const searchString = get(searchStringAtom);

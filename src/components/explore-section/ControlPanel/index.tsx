@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { SetStateAction, Dispatch, useMemo, useState } from 'react';
 import { useAtomValue, Atom, PrimitiveAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { CloseOutlined } from '@ant-design/icons';
 import { CheckboxOption, Filter, OptionsData } from '@/components/Filter/types';
-import { CheckList, FilterGroup } from '@/components/Filter';
+import { CheckList, FilterGroup, FilterGroupProps } from '@/components/Filter';
 
 type FilterProps = {
   filters: Filter[];
@@ -15,48 +15,34 @@ type FiltersProps = {
   filtersAtom: PrimitiveAtom<Filter[]>;
 };
 
+function createFilterItemComponent(filter: Filter, aggregationsAtom: Atom<Promise<any>>) {
+  return function FilterItemComponent({ filters, setFilters }: FilterProps) {
+    const [options, setOptions] = useState<CheckboxOption[]>([]);
+    const loadableAggs = useMemo(() => loadable(aggregationsAtom), []);
+    const aggs = useAtomValue(loadableAggs);
+
+    return (
+      <CheckList
+        data={(aggs.state === 'hasData' && aggs.data ? aggs.data : []) as OptionsData}
+        filter={filter}
+        filters={filters}
+        options={options}
+        setFilters={setFilters}
+        setOptions={setOptions}
+      />
+    );
+  };
+}
+
 function Filters({ aggregationsAtom, filtersAtom }: FiltersProps) {
-  const loadableAggs = useMemo(() => loadable(aggregationsAtom), [aggregationsAtom]);
-  const aggs = useAtomValue(loadableAggs);
+  const filters = useAtomValue(filtersAtom);
 
-  // Option state is defined here to preserve selected state when "collapsing" filters
-  const [contributors, setContributors] = useState<CheckboxOption[]>([]);
-  const [eTypes, setETypes] = useState<CheckboxOption[]>([]);
+  const filterItems: FilterGroupProps['items'] = filters.map((filter) => ({
+    label: filter.title,
+    content: createFilterItemComponent(filter, aggregationsAtom),
+  }));
 
-  const createdByContent = ({ filters, setFilters }: FilterProps) => (
-    <CheckList
-      data={(aggs.state === 'hasData' && aggs.data ? aggs.data : []) as OptionsData}
-      field="createdBy"
-      filters={filters}
-      options={contributors}
-      setFilters={setFilters}
-      setOptions={setContributors}
-    />
-  );
-
-  const eTypeContent = ({ filters, setFilters }: FilterProps) => (
-    <CheckList
-      data={(aggs.state === 'hasData' && aggs.data ? aggs.data : []) as OptionsData}
-      field="eType"
-      filters={filters}
-      options={eTypes}
-      setFilters={setFilters}
-      setOptions={setETypes}
-    />
-  );
-
-  const filters = [
-    {
-      content: createdByContent,
-      label: 'contributor',
-    },
-    {
-      content: eTypeContent,
-      label: 'eType',
-    },
-  ];
-
-  return <FilterGroup items={filters} filtersAtom={filtersAtom} />;
+  return <FilterGroup items={filterItems} filtersAtom={filtersAtom} />;
 }
 
 type ControlPanelProps = {
@@ -71,7 +57,7 @@ export default function ControlPanel({
   setOpen,
 }: ControlPanelProps) {
   return (
-    <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-10 space-y-4 w-[480px]">
+    <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll px-8 py-6 space-y-4 w-[480px]">
       <button type="button" onClick={() => setOpen(false)} className="text-white text-right">
         <CloseOutlined />
       </button>

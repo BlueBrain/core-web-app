@@ -1,4 +1,5 @@
 import { nexus } from '@/config';
+import { Filter } from '@/components/Filter/types';
 
 export const API_SEARCH = `${nexus.url}/search/query/suite/sbo`;
 
@@ -51,7 +52,7 @@ WHERE {
 }
 LIMIT 1000`;
 
-export const ES_TERMS: { [key: string]: { term: string; title: string } } = {
+export const ES_TERMS: { [key: string]: { term: string | string[]; title: string } } = {
   brainRegion: {
     term: 'brainRegion.label.keyword',
     title: 'BRAIN REGION',
@@ -66,7 +67,7 @@ export const ES_TERMS: { [key: string]: { term: string; title: string } } = {
   },
   name: {
     term: 'name.keyword',
-    title: 'DATA',
+    title: 'NAME',
   },
   subjectSpecies: {
     term: 'subjectSpecies.label.keyword',
@@ -74,7 +75,7 @@ export const ES_TERMS: { [key: string]: { term: string; title: string } } = {
   },
   contributors: {
     term: 'contributors.label.keyword',
-    title: 'CONTRIBUTOR(S)',
+    title: 'CONTRIBUTORS',
   },
   neuronDensity: {
     term: 'neuronDensity.label.keyword',
@@ -100,16 +101,80 @@ export const ES_TERMS: { [key: string]: { term: string; title: string } } = {
     term: 'createdAt',
     title: 'CREATED ON',
   },
+  createdBy: {
+    term: 'createdBy.keyword',
+    title: 'CREATED BY',
+  },
   updatedAt: {
     term: 'updatedAt',
     title: 'UPDATED AT',
   },
   reference: {
     term: 'reference.keyword',
-    title: 'Reference',
+    title: 'REFERENCE',
   },
   conditions: {
     term: 'conditions.keyword',
-    title: 'Conditions',
+    title: 'CONDITIONS',
+  },
+  meanstd: {
+    term: 'createdAt',
+    title: 'MEAN ± STD',
+  },
+  sem: {
+    term: 'createdAt',
+    title: 'SEM',
+  },
+  numberOfCells: {
+    term: 'createdAt',
+    title: 'N° Of CELLS',
   },
 };
+
+export const DEFAULT_FILTERS = [
+  { field: 'name', type: 'checkList', value: [], title: 'Name' },
+  { field: 'contributors', type: 'checkList', value: [], title: 'Contributors' },
+  { field: 'description', type: 'checkList', value: [], title: 'Description' },
+  { field: 'updatedAt', type: 'checkList', value: [], title: 'Updated At' },
+  { field: 'createdBy', type: 'checkList', value: [], title: 'Created By' },
+];
+
+export const TYPE_FILTER_MAPPING: { [key: string]: Filter[] } = {
+  'https://neuroshapes.org/BoutonDensity': [
+    { field: 'mType', type: 'checkList', value: [], title: 'M-Type' },
+    { field: 'brainRegion', type: 'checkList', value: [], title: 'Brain Region' },
+    { field: 'boutonDensity', type: 'checkList', value: [], title: 'Bouton Density' },
+    { field: 'conditions', type: 'checkList', value: [], title: 'Conditions' },
+  ],
+  'https://neuroshapes.org/Trace': [
+    { field: 'eType', type: 'checkList', value: [], title: 'E-Type' },
+    { field: 'brainRegion', type: 'checkList', value: [], title: 'Brain Region' },
+    { field: 'conditions', type: 'checkList', value: [], title: 'Conditions' },
+  ],
+  'https://neuroshapes.org/LayerThickness': [
+    { field: 'brainRegion', type: 'checkList', value: [], title: 'Brain Region' },
+    { field: 'conditions', type: 'checkList', value: [], title: 'Conditions' },
+  ],
+  'https://neuroshapes.org/NeuronMorphology': [
+    { field: 'mType', type: 'checkList', value: [], title: 'M-Type' },
+    { field: 'brainRegion', type: 'checkList', value: [], title: 'Brain Region' },
+    { field: 'conditions', type: 'checkList', value: [], title: 'Conditions' },
+  ],
+  'https://neuroshapes.org/NeuronDensity': [
+    { field: 'eType', type: 'checkList', value: [], title: 'E-Type' },
+    { field: 'mType', type: 'checkList', value: [], title: 'M-Type' },
+    { field: 'brainRegion', type: 'checkList', value: [], title: 'Brain Region' },
+    { field: 'neuronDensity', type: 'checkList', value: [], title: 'Density' },
+    { field: 'conditions', type: 'checkList', value: [], title: 'Conditions' },
+  ],
+  'https://neuroshapes.org/SynapsePerConnection': [
+    { field: 'eType', type: 'checkList', value: [], title: 'E-Type' },
+    { field: 'mType', type: 'checkList', value: [], title: 'M-Type' },
+    { field: 'brainRegion', type: 'checkList', value: [], title: 'Brain Region' },
+    { field: 'neuronDensity', type: 'checkList', value: [], title: 'Density' },
+    { field: 'boutonDensity', type: 'checkList', value: [], title: 'Bouton Density' },
+    { field: 'conditions', type: 'checkList', value: [], title: 'Conditions' },
+  ],
+};
+
+export const NO_DATA_STRING: string = 'N/A';

@@ -9,7 +9,7 @@ function buildElasticsearchSort({
   field: string;
   order: 'asc' | 'desc';
 }): ElasticsearchSort {
-  return [{ [ES_TERMS[field as keyof typeof ES_TERMS].term]: { order } }];
+  return [{ [ES_TERMS[field as keyof typeof ES_TERMS].term as string]: { order } }];
 }
 
 export default buildElasticsearchSort;
