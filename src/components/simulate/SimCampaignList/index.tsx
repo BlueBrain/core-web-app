@@ -1,26 +1,56 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { Table, Button } from 'antd';
+import { useSession } from 'next-auth/react';
 
 import SearchInput from './SearchInput';
 import { SimulationCampaignUIConfigResource } from '@/types/nexus';
-import { simCampaingListAtom } from '@/state/experiment-designer';
+import { simCampaingListAtom, triggerRefetchAtom } from '@/state/experiment-designer';
 import ConfigList from '@/components/ConfigList';
+import CloneIcon from '@/components/icons/Clone';
+import EditIcon from '@/components/icons/Edit';
+import useCloneConfigModal from '@/hooks/config-clone-modal';
+import useRenameModal from '@/hooks/config-rename-modal';
+import {
+  cloneSimCampUIConfig,
+  renameSimCampUIConfig,
+} from '@/services/bbp-workflow/simulationHelper';
+
+const { Column } = Table;
 
 const loadableSimCampaignListAtom = loadable(simCampaingListAtom);
 
 export default function SimCampaignList() {
+  const { data: session } = useSession();
+
   const simCampaignsLoadable = useAtomValue(loadableSimCampaignListAtom);
+  const triggerRefetch = useSetAtom(triggerRefetchAtom);
 
   const [configs, setConfigs] = useState<SimulationCampaignUIConfigResource[]>([]);
+
+  const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
+    useCloneConfigModal<SimulationCampaignUIConfigResource>(cloneSimCampUIConfig);
+  const { createModal: createRenameModal, contextHolder: renameContextHolder } =
+    useRenameModal<SimulationCampaignUIConfigResource>(renameSimCampUIConfig);
 
   useEffect(() => {
     if (simCampaignsLoadable.state !== 'hasData') return;
 
     setConfigs(simCampaignsLoadable.data);
   }, [simCampaignsLoadable]);
+
+  const openCloneModal = (currentConfig: SimulationCampaignUIConfigResource) => {
+    createCloneModal(currentConfig, () => {
+      triggerRefetch();
+    });
+  };
+
+  const openRenameModal = (config: SimulationCampaignUIConfigResource) => {
+    createRenameModal(config, triggerRefetch);
+  };
 
   return (
     <>
@@ -31,7 +61,38 @@ export default function SimCampaignList() {
       <ConfigList<SimulationCampaignUIConfigResource>
         isLoading={simCampaignsLoadable.state === 'loading'}
         configs={configs}
-      />
+      >
+        <Column
+          title=""
+          key="actions"
+          width={86}
+          render={(config) => (
+            <>
+              <Button
+                size="small"
+                type="text"
+                className="inline-block mr-2"
+                disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
+                onClick={() => openRenameModal(config)}
+              >
+                <EditIcon />
+              </Button>
+
+              <Button
+                size="small"
+                type="text"
+                className="inline-block"
+                onClick={() => openCloneModal(config)}
+              >
+                <CloneIcon />
+              </Button>
+            </>
+          )}
+        />
+      </ConfigList>
+
+      {renameContextHolder}
+      {cloneContextHolder}
     </>
   );
 }

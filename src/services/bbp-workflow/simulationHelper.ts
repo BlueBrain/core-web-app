@@ -12,7 +12,14 @@ import {
   ExpDesignerPositionParameter,
   ExpDesignerDropdownParameter,
 } from '@/types/experiment-designer';
-import { createWorkflowConfigResource, createJsonFile, createResource } from '@/api/nexus';
+import {
+  createWorkflowConfigResource,
+  createJsonFile,
+  createResource,
+  fetchResourceSourceById,
+  fetchJsonFileByUrl,
+  updateResource,
+} from '@/api/nexus';
 import { calculateRangeOutput } from '@/components/experiment-designer/utils';
 import {
   DetailedCircuit,
@@ -318,4 +325,53 @@ export async function createSimulationCampaignUIConfig(
   };
 
   return createResource<SimulationCampaignUIConfigResource>(uiConfig, session);
+}
+
+export async function cloneSimCampUIConfig(
+  configId: string,
+  name: string,
+  description: string,
+  session: Session
+) {
+  const simCampUIConfigSource = await fetchResourceSourceById<SimulationCampaignUIConfigResource>(
+    configId,
+    session
+  );
+
+  const payload = await fetchJsonFileByUrl(simCampUIConfigSource.distribution.contentUrl, session);
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'sim-campaing-ui-config.json', session);
+
+  const clonedConfig: SimulationCampaignUIConfigResource = {
+    ...simCampUIConfigSource,
+    '@id': createId('simulationcampaignuiconfig'),
+    distribution: createDistribution(clonedPayloadMeta),
+    name,
+    description,
+  };
+
+  return createResource<SimulationCampaignUIConfigResource>(clonedConfig, session);
+}
+
+export async function renameSimCampUIConfig(
+  config: SimulationCampaignUIConfigResource,
+  name: string,
+  description: string,
+  session: Session
+) {
+  const configId = config['@id'];
+  const rev = config._rev;
+
+  const simCampUIConfigSource = await fetchResourceSourceById<SimulationCampaignUIConfigResource>(
+    configId,
+    session
+  );
+
+  const renamedConfig = {
+    ...simCampUIConfigSource,
+    name,
+    description,
+  };
+
+  return updateResource(renamedConfig, rev, session);
 }

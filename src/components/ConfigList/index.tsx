@@ -3,11 +3,9 @@ import { Table, ConfigProvider } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { ReactNode } from 'react';
 import tableTheme from './antd-theme';
-import { BrainModelConfigResource, SimulationCampaignUIConfigResource } from '@/types/nexus';
+import { SupportedConfigListTypes } from '@/types/nexus';
 
 const { Column } = Table;
-
-type SupportedConfigListTypes = BrainModelConfigResource | SimulationCampaignUIConfigResource;
 
 function getSorterFn<T extends SupportedConfigListTypes>(
   sortProp: 'name' | 'description' | '_createdBy'

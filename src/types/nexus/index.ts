@@ -428,3 +428,7 @@ export interface AgentOrIsPartOfOrLicense {
   familyName?: string;
   preferred_username?: string;
 }
+
+export type SupportedConfigListTypes =
+  | BrainModelConfigResource
+  | SimulationCampaignUIConfigResource;

@@ -9,14 +9,15 @@ import { useSession } from 'next-auth/react';
 
 import { triggerRefetchAtom } from './state';
 import { configListAtom } from '@/state/brain-model-config-list';
-import useCloneModal from '@/hooks/brain-config-clone-modal';
-import useRenameModal from '@/hooks/brain-config-rename-modal';
+import useCloneModal from '@/hooks/config-clone-modal';
+import useRenameModal from '@/hooks/config-rename-modal';
 import { collapseId } from '@/util/nexus';
 import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
 import ConfigList from '@/components/ConfigList';
+import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
 
 const { Column } = Table;
 
@@ -37,8 +38,10 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
     configsLoadable.state === 'hasData' ? configsLoadable.data : []
   );
 
-  const { createModal: createCloneModal, contextHolder: cloneContextHolder } = useCloneModal();
-  const { createModal: createRenameModal, contextHolder: renameContextHolder } = useRenameModal();
+  const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
+    useCloneModal<BrainModelConfigResource>(cloneBrainModelConfig);
+  const { createModal: createRenameModal, contextHolder: renameContextHolder } =
+    useRenameModal<BrainModelConfigResource>(renameBrainModelConfig);
 
   useEffect(() => {
     if (configsLoadable.state !== 'hasData') return;

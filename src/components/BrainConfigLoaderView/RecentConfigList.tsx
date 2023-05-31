@@ -8,14 +8,15 @@ import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 
 import { recentlyUsedConfigsAtom, triggerRefetchAtom } from './state';
-import useCloneConfigModal from '@/hooks/brain-config-clone-modal';
-import useRenameModal from '@/hooks/brain-config-rename-modal';
+import useCloneConfigModal from '@/hooks/config-clone-modal';
+import useRenameModal from '@/hooks/config-rename-modal';
 import Link from '@/components/Link';
 import EditIcon from '@/components/icons/Edit';
 import CloneIcon from '@/components/icons/Clone';
 import { BrainModelConfigResource } from '@/types/nexus';
 import { collapseId } from '@/util/nexus';
 import ConfigList from '@/components/ConfigList';
+import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
 
 const { Column } = Table;
 
@@ -35,8 +36,9 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
   );
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
-    useCloneConfigModal();
-  const { createModal: createRenameModal, contextHolder: renameContextHolder } = useRenameModal();
+    useCloneConfigModal<BrainModelConfigResource>(cloneBrainModelConfig);
+  const { createModal: createRenameModal, contextHolder: renameContextHolder } =
+    useRenameModal<BrainModelConfigResource>(renameBrainModelConfig);
 
   useEffect(() => {
     if (configsLoadable.state !== 'hasData') return;

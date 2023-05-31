@@ -7,8 +7,9 @@ import { triggerRefetchAllAtom } from './state';
 import { BrainModelConfigResource } from '@/types/nexus';
 import Link from '@/components/Link';
 import { collapseId } from '@/util/nexus';
-import useCloneConfigModal from '@/hooks/brain-config-clone-modal';
-import useRenameConfigModal from '@/hooks/brain-config-rename-modal';
+import useCloneConfigModal from '@/hooks/config-clone-modal';
+import useRenameConfigModal from '@/hooks/config-rename-modal';
+import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
 
 type BrainConfigEntryProps = {
   config: BrainModelConfigResource;
@@ -19,9 +20,9 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
   const { data: session } = useSession();
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
-    useCloneConfigModal();
+    useCloneConfigModal<BrainModelConfigResource>(cloneBrainModelConfig);
   const { createModal: createRenameModal, contextHolder: renameContextHolder } =
-    useRenameConfigModal();
+    useRenameConfigModal<BrainModelConfigResource>(renameBrainModelConfig);
   const triggerRefetchAll = useSetAtom(triggerRefetchAllAtom);
 
   const uriEncodedId = encodeURIComponent(collapseId(config['@id']));

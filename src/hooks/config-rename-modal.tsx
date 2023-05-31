@@ -1,11 +1,10 @@
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { Modal, Form, Input, Button, ConfigProvider } from 'antd';
-import debounce from 'lodash/debounce';
 
-import { checkNameIfUniq, cloneBrainModelConfig } from '@/api/nexus';
-import { BrainModelConfigResource } from '@/types/nexus';
+import { checkNameIfUniq } from '@/api/nexus';
+import { EntityResource, SupportedConfigListTypes } from '@/types/nexus';
 
 const modalTheme = {
   token: {
@@ -19,17 +18,30 @@ type FormValidity = {
   description: boolean;
 };
 
-interface CloneConfigFormProps {
-  config: BrainModelConfigResource;
-  onCloneSuccess: (clonedConfig: BrainModelConfigResource) => void;
+type RenameConfigFnType<T> = (
+  config: T,
+  name: string,
+  description: string,
+  session: Session
+) => Promise<EntityResource>;
+
+interface RenameConfigFormProps<T> {
+  config: T;
+  onRenameSuccess: () => void;
   onClose: () => void;
+  renameConfigFn: RenameConfigFnType<T>;
 }
 
-function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormProps) {
+function RenameConfigForm<T extends SupportedConfigListTypes>({
+  config,
+  onRenameSuccess,
+  onClose,
+  renameConfigFn,
+}: RenameConfigFormProps<T>) {
   const { data: session } = useSession();
   const [form] = Form.useForm();
 
-  const [cloning, setCloning] = useState<boolean>(false);
+  const [renaming, setRenaming] = useState<boolean>(false);
   const [formValidity, setFormValidity] = useState<FormValidity>({
     name: false,
     description: !!config.description,
@@ -37,29 +49,21 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
 
   const formValid = formValidity.name && formValidity.description;
 
-  const onValuesChange = useMemo(
-    () =>
-      debounce((changedValues: { name: string } | { description: string }) => {
-        const changedProp = Object.keys(changedValues)[0];
-        form
-          .validateFields([changedProp])
-          .then(() => setFormValidity({ ...formValidity, [changedProp]: true }))
-          .catch(() => setFormValidity({ ...formValidity, [changedProp]: false }));
-      }, 300),
-    [form, formValidity]
-  );
+  const onValuesChange = (changedValues: { name: string } | { description: string }) => {
+    const changedProp = Object.keys(changedValues)[0];
 
-  const cloneConfig = async () => {
-    setCloning(true);
+    form
+      .validateFields([changedProp])
+      .then(() => setFormValidity({ ...formValidity, [changedProp]: true }))
+      .catch(() => setFormValidity({ ...formValidity, [changedProp]: false }));
+  };
+
+  const renameConfig = async () => {
+    setRenaming(true);
     const { name, description } = form.getFieldsValue();
-    const clonedConfig = await cloneBrainModelConfig(
-      config['@id'],
-      name,
-      description,
-      session as Session
-    );
+    await renameConfigFn(config, name.trim(), description.trim(), session as Session);
     onClose();
-    onCloneSuccess(clonedConfig);
+    onRenameSuccess();
   };
 
   const nameValidatorFn = async (_: any, name: string) => {
@@ -70,6 +74,12 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
     }
 
     throw new Error('Name should be unique');
+  };
+
+  const newNameValidatorFn = async (_: any, name: string) => {
+    if (name.trim() !== config.name) return name;
+
+    throw new Error('Name should be different from the original');
   };
 
   useEffect(() => {
@@ -93,8 +103,10 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
       <Form.Item
         name="name"
         label="Name"
+        validateFirst
         rules={[
           { required: true, message: 'Please define a name' },
+          { validator: newNameValidatorFn },
           { validator: nameValidatorFn },
         ]}
       >
@@ -114,42 +126,39 @@ function CloneConfigForm({ config, onCloneSuccess, onClose }: CloneConfigFormPro
           type="primary"
           className="ml-2"
           disabled={!formValid}
-          onClick={cloneConfig}
-          loading={cloning}
+          onClick={renameConfig}
+          loading={renaming}
         >
-          Start editing
+          Rename
         </Button>
       </div>
     </Form>
   );
 }
 
-export default function useCloneConfigModal() {
+export default function useRenameConfigModal<T extends SupportedConfigListTypes>(
+  renameConfigFn: RenameConfigFnType<T>
+) {
   const [modal, contextHolder] = Modal.useModal();
   const destroyRef = useRef<() => void>();
 
   const onClose = () => destroyRef?.current?.();
 
-  const createModal = (
-    config: BrainModelConfigResource,
-    onCloneSuccess: (clonedConfig: BrainModelConfigResource) => void
-  ) => {
+  const createModal = (config: T, onRenameSuccess: () => void) => {
     const { destroy } = modal.confirm({
-      title: 'Edit configuration',
+      title: 'Rename configuration',
       icon: null,
       closable: true,
       maskClosable: true,
       footer: null,
       width: 480,
       content: (
-        <>
-          <p className="mt-8">
-            Duplicate the original configuration. Give it a new name and start working on your own
-            configuration.
-          </p>
-
-          <CloneConfigForm config={config} onClose={onClose} onCloneSuccess={onCloneSuccess} />
-        </>
+        <RenameConfigForm<T>
+          config={config}
+          onClose={onClose}
+          onRenameSuccess={onRenameSuccess}
+          renameConfigFn={renameConfigFn}
+        />
       ),
     });
 
