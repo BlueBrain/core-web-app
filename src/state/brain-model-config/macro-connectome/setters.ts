@@ -190,29 +190,18 @@ export const addEditAtom = atom<null, [MacroConnectomeEditEntry], Promise<void>>
   }
 );
 
-export const deleteEditsAtom = atom<null, [number[]], Promise<void>>(
+export const applyEditsAtom = atom<null, [MacroConnectomeEditEntry[]], Promise<void>>(
   null,
-  async (get, set, editIdxs) => {
+  async (get, set, edits) => {
     const initialMatrix = await get(initialConnectivityStrengthMatrixAtom);
-    const edits = await get(editsAtom);
 
-    if (!initialMatrix || !edits) {
-      throw new Error(
-        'Trying to set connectivity matrix edits while the state has not been initialized'
-      );
-    }
-
-    if (editIdxs.some((idx) => !edits[idx])) {
-      throw new Error(`Index is out of range`);
-    }
-
-    const updatedEdits = edits.filter((edit, idx) => !editIdxs.includes(idx));
+    if (!initialMatrix) return;
 
     const matrix = structuredClone(initialMatrix);
 
-    updatedEdits.forEach((edit) => applyEdit(matrix, edit));
+    edits.forEach((e) => applyEdit(matrix, e));
 
-    set(setConnectivityStrengthMatrixAtom, { ...matrix });
-    set(setEditsAtom, updatedEdits);
+    set(setConnectivityStrengthMatrixAtom, matrix);
+    set(setEditsAtom, edits);
   }
 );

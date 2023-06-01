@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ConfigProvider, theme, InputNumber, Input, Button } from 'antd';
-import Plotly, { Shape } from 'plotly.js-dist-min';
+import Plotly, { Layout, Shape } from 'plotly.js-dist-min';
 import debounce from 'lodash/debounce';
 import uniq from 'lodash/uniq';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { brainRegionLeaveIdxByNotationMapAtom } from '@/state/brain-regions';
 import {
@@ -24,11 +24,18 @@ import {
 } from '@/state/brain-model-config/macro-connectome';
 import {
   addEditAtom,
-  deleteEditsAtom,
+  applyEditsAtom,
   writingConfigAtom,
 } from '@/state/brain-model-config/macro-connectome/setters';
+import {
+  editNameAtom,
+  offsetAtom,
+  multiplierAtom,
+  currentEditIdxAtom,
+} from '@/components/connectome-definition/state';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import { useLoadable } from '@/hooks/hooks';
+import { getFlatArrayValueIdx } from '@/util/connectome';
 import styles from '../connectome-definition.module.css';
 
 interface Rect extends Partial<Shape> {
@@ -38,12 +45,12 @@ interface Rect extends Partial<Shape> {
   y1: number;
 }
 
-const STAT_CHART_DEFAULT_LAYOUT = {
-  xaxis: { showgrid: false },
-  yaxis: { showgrid: false },
+const STAT_CHART_DEFAULT_LAYOUT: Partial<Layout> = {
+  xaxis: { fixedrange: true, showgrid: false, zeroline: false },
+  yaxis: { fixedrange: true, showgrid: false, zeroline: false },
   showlegend: false,
-  width: 150,
-  height: 150,
+  width: 245,
+  height: 170,
   margin: {
     l: 0,
     r: 0,
@@ -55,7 +62,6 @@ const STAT_CHART_DEFAULT_LAYOUT = {
 
 export default function ConnectomeConfigurationView() {
   const area = useAtomValue(brainAreaAtom);
-  const addEdit = useSetAtom(addEditAtom);
   const writingConfig = useAtomValue(writingConfigAtom);
 
   const brainRegionLeaveIdxByNotationMap = useAtomValue(brainRegionLeaveIdxByNotationMapAtom);
@@ -63,12 +69,13 @@ export default function ConnectomeConfigurationView() {
 
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
-  const [offset, setOffset] = useState(0);
-  const [multiplier, setMultiplier] = useState(1);
-  const [editName, setEditName] = useState('');
+  const [offset, setOffset] = useAtom(offsetAtom);
+  const [multiplier, setMultiplier] = useAtom(multiplierAtom);
+  const [editName, setEditName] = useAtom(editNameAtom);
+  const [currentEditIdx, setCurrentEditIdx] = useAtom(currentEditIdxAtom);
   const edits = useLoadable(editsLoadableAtom, []);
-  const [currentEdit, setCurrentEdit] = useState<number | null>(null);
-  const deleteEdits = useSetAtom(deleteEditsAtom);
+  const addEdit = useSetAtom(addEditAtom);
+  const applyEdits = useSetAtom(applyEditsAtom);
 
   const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
@@ -82,12 +89,46 @@ export default function ConnectomeConfigurationView() {
   const [lineChartInitialized, setLineChartInitialized] = useState(false);
   const selectionShapes = useRef<Rect[]>([]);
 
-  const selectedVals: [string, string, number][] = useMemo(
+  useEffect(() => {
+    if (currentEditIdx === null || !connectivityMatrix) return;
+    const edit = edits[currentEditIdx];
+    if (!edit) return;
+    setOffset(edit.offset);
+    setMultiplier(edit.multiplier);
+    setEditName(edit.name);
+
+    const flatArray = connectivityMatrix[edit.hemisphereDirection];
+    const matrixSize = Math.sqrt(flatArray.length);
+
+    const selections = new Set<string>();
+
+    edit.target.src.forEach((srcIdx) => {
+      edit.target.dst.forEach((dstIdx) => {
+        const idx = getFlatArrayValueIdx(matrixSize, srcIdx, dstIdx);
+        const value = flatArray[idx];
+        selections.add(JSON.stringify([dstIdx, srcIdx, value]));
+      });
+    });
+    setSelected(selections);
+  }, [
+    currentEditIdx,
+    edits,
+    setOffset,
+    setMultiplier,
+    setEditName,
+    connectivityMatrix,
+    hemisphereDirection,
+  ]);
+
+  const selectedVals: [string, string, number][] | [number, number, number][] = useMemo(
     () => Array.from(selected).map((s) => JSON.parse(s)),
     [selected]
   );
 
-  const histogram = useMemo(() => selectedVals.map((v) => v[2]), [selectedVals]);
+  const histogram = useMemo(
+    () => selectedVals.map((v) => v[2]).filter((v) => v > 0),
+    [selectedVals]
+  );
 
   const newHistogram = useMemo(
     () => histogram.map((v) => v * multiplier + offset),
@@ -95,7 +136,7 @@ export default function ConnectomeConfigurationView() {
   );
 
   useEffect(() => {
-    if (!histogramRef.current) return;
+    if (!histogramRef.current || histogram.length === 0) return;
     if (!histogramInitialized) {
       Plotly.newPlot(histogramRef.current, [], {}, { displayModeBar: false });
       setHistogramInitialized(true);
@@ -107,14 +148,12 @@ export default function ConnectomeConfigurationView() {
         {
           x: histogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.001 },
-          marker: { color: 'rgba(0, 0, 0, 1)' },
+          xbins: { start: 0, end: 'auto', size: 0.003 },
         },
         {
           x: newHistogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.001 },
-          marker: { color: 'rgb(8, 143, 143, 1)' },
+          xbins: { start: 0, end: 'auto', size: 0.003 },
         },
       ],
       {
@@ -150,37 +189,53 @@ export default function ConnectomeConfigurationView() {
   const onClick = () => {
     if (!brainRegionLeaveIdxByNotationMap) return;
 
-    addEdit({
+    const newEdit = {
       name: editName,
       hemisphereDirection,
       offset,
       multiplier,
       target: {
-        src: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[1]) as number)),
-        dst: uniq(selectedVals.map((v) => brainRegionLeaveIdxByNotationMap.get(v[0]) as number)),
+        src: uniq(
+          selectedVals.map((v) =>
+            typeof v[1] === 'number' ? v[1] : (brainRegionLeaveIdxByNotationMap.get(v[1]) as number)
+          )
+        ),
+        dst: uniq(
+          selectedVals.map((v) =>
+            typeof v[0] === 'number' ? v[0] : (brainRegionLeaveIdxByNotationMap.get(v[0]) as number)
+          )
+        ),
       },
-    });
+    };
+
+    if (currentEditIdx === null) addEdit(newEdit);
+    else
+      applyEdits([...edits.slice(0, currentEditIdx), newEdit, ...edits.slice(currentEditIdx + 1)]);
+
     setOffset(0);
     setMultiplier(1);
     setEditName('');
     setSelected(new Set());
+    setCurrentEditIdx(null);
     selectionShapes.current = [];
   };
 
-  const handleOffsetChange = useCallback(
-    debounce((value) => {
-      if (value === null) return;
-      setOffset(value);
-    }, 300),
-    []
+  const handleOffsetChange = useMemo(
+    () =>
+      debounce((value) => {
+        if (value === null) return;
+        setOffset(value);
+      }, 300),
+    [setOffset]
   );
 
-  const handleMultiplierChange = useCallback(
-    debounce((value) => {
-      if (value === null) return;
-      setMultiplier(value);
-    }, 300),
-    []
+  const handleMultiplierChange = useMemo(
+    () =>
+      debounce((value) => {
+        if (value === null) return;
+        setMultiplier(value);
+      }, 300),
+    [setMultiplier]
   );
 
   return (
@@ -196,7 +251,11 @@ export default function ConnectomeConfigurationView() {
             <CloseOutlined
               className="float-right"
               onClick={() => {
+                setOffset(0);
+                setMultiplier(1);
+                setEditName('');
                 setSelected(new Set());
+                setCurrentEditIdx(null);
                 selectionShapes.current = [];
               }}
             />
@@ -228,7 +287,11 @@ export default function ConnectomeConfigurationView() {
               </Button>
               <Button
                 onClick={() => {
+                  setOffset(0);
+                  setMultiplier(1);
+                  setEditName('');
                   setSelected(new Set());
+                  setCurrentEditIdx(null);
                   selectionShapes.current = [];
                 }}
                 className="w-5/12 ml-2"
@@ -237,41 +300,6 @@ export default function ConnectomeConfigurationView() {
                 Cancel
               </Button>
             </div>
-          </div>
-        </ConfigProvider>
-      )}
-
-      {currentEdit !== null && (
-        <ConfigProvider
-          theme={{
-            algorithm: theme.defaultAlgorithm,
-          }}
-        >
-          <div className={styles.sidePanel}>
-            <span className="font-bold text-lg">{edits[currentEdit].name}</span>
-            <CloseOutlined className="float-right" onClick={() => setCurrentEdit(null)} />
-
-            <div className="flex justify-between mb-3 mt-3">
-              Offset, synapses/μm³: {edits[currentEdit].offset}
-            </div>
-            <div className="flex justify-between">Multiplier: {edits[currentEdit].multiplier}</div>
-
-            <Button
-              onClick={() => {
-                const deletedEdits: number[] = [];
-                for (let j = currentEdit + 1; j < edits.length; j += 1) {
-                  deletedEdits.push(j);
-                }
-
-                if (deletedEdits.length === 0) return;
-                setCurrentEdit(null);
-                deleteEdits(deletedEdits);
-              }}
-              className="w-11/12"
-              type="primary"
-            >
-              Restore
-            </Button>
           </div>
         </ConfigProvider>
       )}
@@ -304,6 +332,7 @@ export default function ConnectomeConfigurationView() {
       </div>
 
       <div className={styles.matrixContainer}>
+        {!connectivityMatrix && <LoadingOutlined className="text-4xl" />}
         {activeTab === 'macro' && connectivityMatrix && (
           <MacroConnectome
             select={select}
@@ -325,7 +354,7 @@ export default function ConnectomeConfigurationView() {
           <>
             <MatrixDisplayDropdown />
             <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-            <MatrixModificationHistoryList setCurrentEdit={setCurrentEdit} />
+            <MatrixModificationHistoryList />
           </>
         )}
       </div>

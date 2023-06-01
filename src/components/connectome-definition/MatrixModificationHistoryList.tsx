@@ -1,21 +1,27 @@
-import { RollbackOutlined, DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
+import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useLoadable } from '@/hooks/hooks';
 
 import {
-  deleteEditsAtom,
+  applyEditsAtom,
   writingConfigAtom,
 } from '@/state/brain-model-config/macro-connectome/setters';
 import { editsLoadableAtom } from '@/state/brain-model-config/macro-connectome';
+import {
+  editNameAtom,
+  offsetAtom,
+  multiplierAtom,
+  currentEditIdxAtom,
+} from '@/components/connectome-definition/state';
 
-export default function MatrixModificationHistoryList({
-  setCurrentEdit,
-}: {
-  setCurrentEdit: (i: number) => void;
-}) {
-  const deleteEdits = useSetAtom(deleteEditsAtom);
+export default function MatrixModificationHistoryList() {
+  const applyEdits = useSetAtom(applyEditsAtom);
   const edits = useLoadable(editsLoadableAtom, []);
   const writingConfig = useAtomValue(writingConfigAtom);
+  const setEditName = useSetAtom(editNameAtom);
+  const setOffset = useSetAtom(offsetAtom);
+  const setMultiplier = useSetAtom(multiplierAtom);
+  const setCurrentEdit = useSetAtom(currentEditIdxAtom);
 
   return (
     <div>
@@ -30,34 +36,29 @@ export default function MatrixModificationHistoryList({
       {edits.length === 0 && <div>(No modification saved yet)</div>}
 
       {edits.length > 0 &&
+        // eslint-disable-next-line arrow-body-style
         edits.map((edit, i) => {
-          const deletedEdits: number[] = [];
-          for (let j = i + 1; j < edits.length; j += 1) {
-            deletedEdits.push(j);
-          }
-
           return (
             // eslint-disable-next-line react/no-array-index-key
             <div key={i} className="flex justify-between">
-              <button onClick={() => setCurrentEdit(i)} type="button">
+              <button
+                onClick={() => {
+                  setEditName(edit.name);
+                  setOffset(edit.offset);
+                  setMultiplier(edit.multiplier);
+                  setCurrentEdit(i);
+                }}
+                type="button"
+              >
                 {edit.name}
               </button>
               <div>
                 {writingConfig && <LoadingOutlined className="mr-5" />}
-                {i < edits.length - 1 && !writingConfig && (
-                  <RollbackOutlined
-                    className="mr-3"
-                    onClick={() => deletedEdits.length > 0 && deleteEdits(deletedEdits)}
-                  />
-                )}
 
                 {!writingConfig && (
                   <DeleteOutlined
                     className="mr-5"
-                    onClick={() => {
-                      deletedEdits.unshift(i);
-                      deleteEdits(deletedEdits);
-                    }}
+                    onClick={() => applyEdits(edits.filter((_, idx) => idx !== i))}
                   />
                 )}
               </div>

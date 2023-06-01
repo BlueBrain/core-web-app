@@ -1,10 +1,9 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { SwapOutlined } from '@ant-design/icons';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
-import { selectedPostBrainRegionsAtom, selectedPreBrainRegionsAtom } from '@/state/brain-regions';
 import { classNames } from '@/util/utils';
 
-export function BrainAreaSwitchWrapper({ children }: { children?: React.ReactNode }) {
+export default function BrainAreaSwitch() {
   const setArea = useSetAtom(brainAreaAtom);
   const area = useAtomValue(brainAreaAtom);
   if (!area) return null;
@@ -19,30 +18,10 @@ export function BrainAreaSwitchWrapper({ children }: { children?: React.ReactNod
       onClick={() => setArea(opposite(area))}
     >
       <div className="flex flex-col text-left max-h-48 overflow-scroll">
-        <div className="capitalize">{`${opposite(area)}-synaptic`}</div>
-        <div className="flex flex-wrap gap-x-2 items-center justify-start">{children}</div>
+        <div className="text-white">Switch to the </div>
+        <div className="capitalize">{`${opposite(area)}-synaptic area`}</div>
       </div>
       <SwapOutlined className="absolute top-3 right-3" />
     </button>
-  );
-}
-
-export default function BrainAreaSwitch() {
-  const area = useAtomValue(brainAreaAtom);
-  const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
-  const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
-
-  if (!area) return null;
-
-  const brainRegions = area === 'pre' ? postSynapticBrainRegions : preSynapticBrainRegions;
-
-  return (
-    <BrainAreaSwitchWrapper>
-      {Array.from(brainRegions.entries()).map(([id, title]) => (
-        <span className="text-white" key={id}>
-          {title}
-        </span>
-      ))}
-    </BrainAreaSwitchWrapper>
   );
 }
