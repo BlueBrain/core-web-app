@@ -244,3 +244,23 @@ export const getBuiltBrainModelConfigsQuery = (
     },
   },
 });
+
+export const getSimCampConfigsQuery = (searchString: string) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'SimulationCampaignUIConfig' } },
+            ],
+          },
+        },
+        idExistsFilter,
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
+    },
+  },
+});

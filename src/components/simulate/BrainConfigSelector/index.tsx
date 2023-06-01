@@ -55,7 +55,7 @@ export default function BrainConfigSelector({ onSelect }: Props) {
         />
       </div>
 
-      <ConfigList
+      <ConfigList<BrainModelConfigResource>
         configs={configs}
         isLoading={configsLoadable.state === 'loading'}
         rowSelection={{

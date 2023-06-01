@@ -66,7 +66,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
 
   return (
     <>
-      <ConfigList
+      <ConfigList<BrainModelConfigResource>
         isLoading={configsLoadable.state === 'loading'}
         configs={configs}
         nameRenderFn={nameRenderFn}

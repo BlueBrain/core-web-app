@@ -20,11 +20,13 @@ import {
   fetchJsonFileByUrl,
   fetchResourceById,
   fetchResourceByUrl,
+  queryES,
   updateJsonFileByUrl,
   updateResource,
 } from '@/api/nexus';
 import { createDistribution } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
+import { getSimCampConfigsQuery } from '@/queries/es';
 
 const nodeSetsAPIUrl = 'https://cells.sbo.kcp.bbp.epfl.ch/circuit/node_sets?input_path=';
 
@@ -174,4 +176,18 @@ export const setWorkflowExecutionAtom = atom<null, [string], Promise<void>>(
   }
 );
 
-export default expDesignerConfigAtom;
+export const searchSimCampUIConfigListStringAtom = atom<string>('');
+
+export const simCampaingListAtom = atom<Promise<SimulationCampaignUIConfigResource[]>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const searchString = get(searchSimCampUIConfigListStringAtom);
+
+    get(refetchTriggerAtom);
+
+    if (!session) return [];
+
+    const query = getSimCampConfigsQuery(searchString);
+    return queryES<SimulationCampaignUIConfigResource>(query, session);
+  }
+);

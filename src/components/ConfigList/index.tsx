@@ -3,33 +3,36 @@ import { Table, ConfigProvider } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { ReactNode } from 'react';
 import tableTheme from './antd-theme';
-import { BrainModelConfigResource } from '@/types/nexus';
+import { BrainModelConfigResource, SimulationCampaignUIConfigResource } from '@/types/nexus';
 
 const { Column } = Table;
 
-function getSorterFn(sortProp: 'name' | 'description' | '_createdBy') {
-  return (a: BrainModelConfigResource, b: BrainModelConfigResource) =>
-    a[sortProp] < b[sortProp] ? 1 : -1;
+type SupportedConfigListTypes = BrainModelConfigResource | SimulationCampaignUIConfigResource;
+
+function getSorterFn<T extends SupportedConfigListTypes>(
+  sortProp: 'name' | 'description' | '_createdBy'
+) {
+  return (a: T, b: T) => (a[sortProp] < b[sortProp] ? 1 : -1);
 }
 
-type ConfigListProps = {
-  configs: BrainModelConfigResource[];
+type ConfigListProps<T> = {
+  configs: T[];
   isLoading?: boolean;
-  rowSelection?: TableRowSelection<BrainModelConfigResource>;
-  nameRenderFn?: (name: string, config: BrainModelConfigResource) => ReactNode;
+  rowSelection?: TableRowSelection<T>;
+  nameRenderFn?: (name: string, config: T) => ReactNode;
   children?: ReactNode;
 };
 
-export default function ConfigList({
+export default function ConfigList<T extends SupportedConfigListTypes>({
   configs,
   isLoading = true,
   rowSelection,
   nameRenderFn = (name) => name,
   children,
-}: ConfigListProps) {
+}: ConfigListProps<T>) {
   return (
     <ConfigProvider theme={tableTheme}>
-      <Table<BrainModelConfigResource>
+      <Table<T>
         size="small"
         className="mt-6 mb-12"
         loading={isLoading}

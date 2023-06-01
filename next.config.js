@@ -53,6 +53,11 @@ const nextConfig = {
         destination: '/experiment-designer/experiment-setup',
         permanent: false,
       },
+      {
+        source: '/simulate',
+        destination: '/simulate/sim-campaign-selector',
+        permanent: true,
+      },
     ];
   },
 };

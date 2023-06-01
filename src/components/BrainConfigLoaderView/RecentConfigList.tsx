@@ -67,7 +67,7 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
     <>
       <h3 className="text-xl">Recently used configurations</h3>
 
-      <ConfigList
+      <ConfigList<BrainModelConfigResource>
         isLoading={configsLoadable.state === 'loading'}
         configs={configs}
         nameRenderFn={nameRenderFn}
