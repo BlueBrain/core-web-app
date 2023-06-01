@@ -1,4 +1,13 @@
-import { Utf8, Utf8Builder, Float64, Float64Builder, Table } from '@apache-arrow/es5-cjs';
+import {
+  Utf8,
+  Uint8,
+  Uint16,
+  Dictionary,
+  DictionaryBuilder,
+  Float64,
+  Float64Builder,
+  Table,
+} from '@apache-arrow/es5-cjs';
 
 import { MacroConnectomeEditEntry, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import { BrainRegion } from '@/types/ontologies';
@@ -36,9 +45,17 @@ export function createMacroConnectomeOverridesTable(
 ) {
   const totalLeaves = brainRegionLeaves.length;
 
-  const sideBuilder = new Utf8Builder({ type: new Utf8() });
-  const sourceRegionBuilder = new Utf8Builder({ type: new Utf8() });
-  const targetRegionBuilder = new Utf8Builder({ type: new Utf8() });
+  const sideBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  const sourceRegionBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint16()),
+  });
+
+  const targetRegionBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint16()),
+  });
 
   const valueBuilder = new Float64Builder({ type: new Float64() });
 
