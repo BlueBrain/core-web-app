@@ -8,7 +8,7 @@ import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import createDetailAtoms from '@/state/explore-section/detail-atoms-constructor';
 import usePathname from '@/hooks/pathname';
 import { setInfoWithPath } from '@/util/explore-section/detail-view';
-import { DeltaResource, SideLink, SerializedDeltaResource } from '@/types/explore-section';
+import { DeltaResource, SideLink, SerializedDeltaResource, IdLabel } from '@/types/explore-section';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
@@ -32,19 +32,20 @@ function Field({ title, field, className }: FieldProps) {
   );
 }
 
-export function ListField({ items }: { items: string[] | undefined }) {
+export function ListField({ items }: { items: IdLabel[] | undefined }) {
+  if (!items) return null;
   return (
     <ul>
       {items?.map((item) => (
-        <li key={item} className="break-words">
-          {item}
+        <li key={item.id} className="break-words">
+          {item.label}
         </li>
       ))}
     </ul>
   );
 }
 
-const { infoAtom, detailAtom, latestRevisionAtom } = createDetailAtoms();
+const { infoAtom, detailAtom } = createDetailAtoms();
 const detailAtomLoadable = loadable(detailAtom);
 
 export default function Detail({
@@ -61,7 +62,7 @@ export default function Detail({
   const params = useSearchParams();
   const rev = params?.get('rev');
   const detail = useAtomValue(detailAtomLoadable);
-  const latestRevision = useAtomValue(latestRevisionAtom);
+
   const setInfo = useSetAtom(infoAtom);
 
   useEffect(() => setInfoWithPath(path, setInfo, rev), [path, rev, setInfo]);
@@ -91,7 +92,11 @@ export default function Detail({
       <DetailsPageSideBackLink links={links} />
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <div className="flex flex-col gap-10 max-w-screen-2xl">
-          <DetailHeaderName detail={detail.data} url={path} latestRevision={latestRevision} />
+          <DetailHeaderName
+            detail={detail.data}
+            url={path}
+            latestRevision={detail.data?.latestRevision}
+          />
           <div className="grid gap-4 grid-cols-6">
             {fields.map(
               ({ className, field, title }) =>

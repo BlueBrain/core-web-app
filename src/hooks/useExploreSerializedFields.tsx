@@ -1,13 +1,7 @@
 import { useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
-import find from 'lodash/find';
 import { Tag } from 'antd';
-import {
-  AnnotationEntity,
-  DeltaResource,
-  Series,
-  SerializedDeltaResource,
-} from '@/types/explore-section';
+import { DeltaResource, Series, SerializedDeltaResource } from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
 import timeElapsedFromToday from '@/util/date';
 import { NO_DATA_STRING } from '@/constants/explore-section';
@@ -17,8 +11,6 @@ export default function useExploreSerializedFields(
   detail: DeltaResource | null
 ): SerializedDeltaResource {
   const seriesArray: Series[] | undefined = detail?.series && ensureArray(detail.series);
-  const annotationArray: AnnotationEntity[] | undefined | null =
-    detail?.annotation && ensureArray(detail.annotation);
 
   const mean = useMemo(
     () => seriesArray && seriesArray.find((s) => s.statistic === 'mean'),
@@ -56,11 +48,6 @@ export default function useExploreSerializedFields(
     return found ? formatNumber(found.value) : NO_DATA_STRING;
   };
 
-  // renders the species age
-  const serializeSubjectAge = () =>
-    detail?.subject?.age &&
-    `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
-
   // renders thickness
   const serializeThickness = () =>
     mean && (
@@ -69,28 +56,11 @@ export default function useExploreSerializedFields(
       </>
     );
 
-  // renders mtype or 'no MType text if not present
-  const serializeMType = () => {
-    const entity = find(annotationArray, (o: AnnotationEntity) => o.name === 'M-type Annotation');
-    return entity ? entity.hasBody?.label : 'no MType';
-  };
-
-  // renders etype or 'no EType' text if not present
-  const serializeEType = () => {
-    const entity = find(annotationArray, (o: AnnotationEntity) => o.name === 'E-type Annotation');
-    return entity ? entity.hasBody?.label : 'no EType';
-  };
-
   // renders creation day in a dd.MM.yyyy format
   const serializeCreationDate = () =>
     detail?._createdAt && (
       <div className="mt-3">{format(parseISO(detail._createdAt), 'dd.MM.yyyy')}</div>
     );
-
-  // renders weight in a min - max format
-  const serializeWeight = () =>
-    detail?.subject?.weight &&
-    `${detail.subject?.weight?.minValue} - ${detail.subject?.weight?.maxValue}`;
 
   const formatTags = () =>
     detail?.tags &&
@@ -119,19 +89,20 @@ export default function useExploreSerializedFields(
     description: detail?.description,
     species: detail?.subject?.species?.label,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
-    numberOfMeasurement: detail?.numberOfCells,
-    createdBy: detail?._createdBy?.split('/')?.pop(),
-    subjectAge: serializeSubjectAge(),
-    mType: serializeMType(),
+    numberOfMeasurement: detail?.numberOfMeasurement,
+    subjectSpecies: detail?.subjectSpecies,
+    mType: detail?.mType,
+    createdBy: detail?.createdBy,
+    subjectAge: detail?.subjectAge,
     meanPlusMinusStd: serializeMeanPlusMinusStd(),
     numberOfCells: serializeStatisticFields('N'),
     sem: serializeStatisticFields('standard error of the mean'),
     standardDeviation: serializeStatisticFields('standard deviation'),
     creationDate: serializeCreationDate(),
     thickness: serializeThickness(),
-    eType: serializeEType(),
+    eType: detail?.eType,
     contributors: detail?.contributors,
-    weight: serializeWeight(),
+    weight: detail?.weight,
     license: detail?.license?.['@id'],
     brainConfiguration: detail?.brainConfiguration,
     attribute: detail?.attribute,

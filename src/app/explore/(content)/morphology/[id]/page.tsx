@@ -3,8 +3,8 @@
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps, ListField } from '@/components/explore-section/Detail';
-import { DeltaResource } from '@/types/explore-section';
 import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
+import { DeltaResource } from '@/types/explore-section';
 
 const fields = [
   {
@@ -22,7 +22,6 @@ const fields = [
   },
   {
     title: 'Reference',
-    field: () => '', // TODO: What is reference field?
   },
   {
     title: 'Brain Region',

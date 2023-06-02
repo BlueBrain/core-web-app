@@ -73,6 +73,18 @@ export const ES_TERMS: { [key: string]: { term: string | string[]; title: string
     term: 'subjectSpecies.label.keyword',
     title: 'SPECIES',
   },
+  sem: {
+    term: 'sem.label.keyword',
+    title: 'SEM',
+  },
+  weight: {
+    term: 'weight.label.keyword',
+    title: 'WEIGHT',
+  },
+  subjectAge: {
+    term: 'subjectAge.label.keyword',
+    title: 'AGE',
+  },
   contributors: {
     term: 'contributors.label.keyword',
     title: 'CONTRIBUTORS',
@@ -120,10 +132,6 @@ export const ES_TERMS: { [key: string]: { term: string | string[]; title: string
   meanstd: {
     term: 'createdAt',
     title: 'MEAN ± STD',
-  },
-  sem: {
-    term: 'createdAt',
-    title: 'SEM',
   },
   numberOfCells: {
     term: 'createdAt',

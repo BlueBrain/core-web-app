@@ -3,7 +3,7 @@
 import { Key, ReactNode, Suspense } from 'react';
 import mockData from './mock-data.json';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import { DetailProps } from '@/components/explore-section/Detail';
+import { DetailProps, ListField } from '@/components/explore-section/Detail';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import { DeltaResource } from '@/types/explore-section';
 import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
@@ -59,42 +59,42 @@ function SimulationCampaignDetail({
   );
 }
 
-export default function SimulationCampaignDetailPage() {
-  const fields: DetailProps[] = [
-    {
-      title: 'Description',
-      field: ({ description }) => description,
-    },
-    {
-      title: 'Brain Configuration',
-      field: ({ brainConfiguration }) => brainConfiguration,
-    },
-    {
-      title: 'Dimensions',
-      field: ({ dimensions }) => dimensions,
-    },
-    {
-      title: 'Attribute',
-      field: ({ attribute }) => attribute,
-    },
-    {
-      title: 'Tags',
-      field: ({ tags }) => tags,
-    },
-    {
-      title: 'Status',
-      field: ({ status }) => status,
-    },
-    {
-      title: 'Contributors',
-      field: ({ contributors }) => contributors,
-    },
-    {
-      title: 'Updated At',
-      field: ({ updatedAt }) => updatedAt,
-    },
-  ];
+const fields: DetailProps[] = [
+  {
+    title: 'Description',
+    field: ({ description }) => description,
+  },
+  {
+    title: 'Brain Configuration',
+    field: ({ brainConfiguration }) => brainConfiguration,
+  },
+  {
+    title: 'Dimensions',
+    field: ({ dimensions }) => dimensions,
+  },
+  {
+    title: 'Attribute',
+    field: ({ attribute }) => attribute,
+  },
+  {
+    title: 'Tags',
+    field: ({ tags }) => tags,
+  },
+  {
+    title: 'Status',
+    field: ({ status }) => status,
+  },
+  {
+    title: ({ contributors }) => (contributors?.length === 1 ? 'Contributor' : 'Contributors'),
+    field: ({ contributors }) => <ListField items={contributors} />,
+  },
+  {
+    title: 'Updated At',
+    field: ({ updatedAt }) => updatedAt,
+  },
+];
 
+export default function SimulationCampaignDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <SimulationCampaignDetail fields={fields}>

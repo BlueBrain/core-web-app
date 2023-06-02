@@ -196,6 +196,7 @@ export type DeltaResource<
   tags?: string[];
   dimensions?: Dimension[];
   simulations?: Simulation[];
+  latestRevision?: number | null | undefined;
   _constrainedBy: string;
   _createdAt: string;
   _createdBy: string;
@@ -302,6 +303,7 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   species?: string;
   brainRegion?: string;
   numberOfMeasurement?: number;
+  subjectSpecies?: string;
   createdBy?: string;
   subjectAge?: string;
   meanPlusMinusStd?: ReactNode | null;
@@ -316,10 +318,20 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   tags?: ReactNode;
   updatedAt?: string | null;
   dimensions?: ReactNode;
-  contributors?: string[];
+  contributors?: IdLabel[];
 }
 
+export type DetailResource = SerializedDeltaResource & DeltaResource;
 export type AxesState = {
   xAxis?: string;
   yAxis?: string;
+};
+
+export type IdLabel<
+  T = {
+    [key: string]: string;
+  }
+> = T & {
+  id?: string;
+  label?: string;
 };
