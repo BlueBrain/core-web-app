@@ -127,6 +127,7 @@ export interface Source extends OptionalExploreSectionFields {
   distribution: Distribution;
   name: string;
   project: IdLabelEntity;
+  layer?: IdLabelEntity;
   subjectSpecies?: SubjectSpecies;
   updatedAt: string;
   updatedBy: string;

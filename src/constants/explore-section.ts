@@ -79,7 +79,7 @@ export const ES_TERMS: { [key: string]: { term: string | string[]; title: string
   },
   neuronDensity: {
     term: 'neuronDensity.label.keyword',
-    title: 'NEURON DENSITY',
+    title: 'NEURON DENSITY (neurons/mm³)',
   },
   boutonDensity: {
     term: 'boutonDensity.label.keyword',
