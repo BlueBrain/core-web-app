@@ -2,14 +2,25 @@
 
 import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useAtomValue } from 'jotai';
 
 import { Params, Visualization } from '@/components/experiment-designer/sensory-input';
-import { getFocusedAtom } from '@/components/experiment-designer/utils';
+import {
+  extractTargetNamesFromSection,
+  getFocusedAtom,
+} from '@/components/experiment-designer/utils';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
+const SECTION_NAME = 'input';
+
 export default function SensoryInputPage() {
-  const sectionName = 'input';
-  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+  const focusedAtom = useMemo(() => getFocusedAtom(SECTION_NAME), []);
+  const inputSectionParams = useAtomValue(focusedAtom);
+
+  const targetsToDisplay = useMemo(
+    () => extractTargetNamesFromSection(inputSectionParams),
+    [inputSectionParams]
+  );
 
   return (
     <div className="grid grid-cols-2 h-full">
@@ -18,7 +29,7 @@ export default function SensoryInputPage() {
       </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <Visualization focusedAtom={focusedAtom} />
+        <Visualization targetsToDisplay={targetsToDisplay} />
       </ErrorBoundary>
     </div>
   );

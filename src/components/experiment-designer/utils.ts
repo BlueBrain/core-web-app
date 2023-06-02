@@ -3,6 +3,8 @@ import { OpticFor } from 'optics-ts';
 import { PrimitiveAtom } from 'jotai';
 import range from 'lodash/range';
 import round from 'lodash/round';
+import filter from 'lodash/filter';
+import find from 'lodash/find';
 
 import { getNewStepper, getNewTargetObj } from './defaultNewObject';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
@@ -178,6 +180,43 @@ export function calculateRangeOutput(start: number, end: number, stepper: Steppe
     values = [...range(start, end, stepper.value), end];
   }
   return values.map((v) => round(v, 2));
+}
+
+function addTargetNamesFromInput(targetInput: ExpDesignerTargetParameter, targetSet: Set<string>) {
+  const inputValue = (targetInput as ExpDesignerTargetParameter).value;
+  if (Array.isArray(inputValue)) {
+    inputValue.forEach(targetSet.add, targetSet);
+  } else {
+    targetSet.add(inputValue);
+  }
+}
+
+export function extractTargetNamesFromSection(inputSectionParams: ExpDesignerParam[]): string[] {
+  const inputSections = filter(inputSectionParams, {
+    type: 'group',
+  }) as ExpDesignerGroupParameter[];
+  const targetValuesSet: Set<string> = new Set();
+
+  inputSections.forEach((section) => {
+    const targetInput = find(
+      section.value,
+      (item) => item.type === 'targetDropdown' || item.type === 'targetDropdownGroup'
+    );
+
+    if (targetInput) {
+      addTargetNamesFromInput(targetInput as ExpDesignerTargetParameter, targetValuesSet);
+    }
+  });
+
+  const targetDirectInputs = filter(
+    inputSectionParams,
+    (item) => item.type === 'targetDropdown' || item.type === 'targetDropdownGroup'
+  );
+  targetDirectInputs.forEach((targetInput) => {
+    addTargetNamesFromInput(targetInput as ExpDesignerTargetParameter, targetValuesSet);
+  });
+
+  return Array.from(targetValuesSet);
 }
 
 export default getFocusedAtom;

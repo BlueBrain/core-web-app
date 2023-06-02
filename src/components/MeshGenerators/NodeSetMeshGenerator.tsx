@@ -10,6 +10,7 @@ import { basePath } from '@/config';
 import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
+import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 
 type NodeSetMeshProps = {
   nodeSetName: string;
@@ -64,7 +65,7 @@ function NodeSetMesh({
 
     const url = `${CELL_API_BASE_PATH}/circuit?input_path=${encodeURIComponent(
       circuitConfigPath
-    )}&node_set=${nodeSetName}&how=arrow&use_cache=False&sampling_ratio=0.01`;
+    )}&node_set=${nodeSetName}&how=arrow&use_cache=True&sampling_ratio=0.01`;
 
     return fetch(url, {
       method: 'get',
@@ -94,6 +95,8 @@ function NodeSetMesh({
     // Prevent double loading.
     preventParallelism(nodeSetName, async () => {
       if (atlas.findVisibleNodeSet(nodeSetName)?.isLoading) return;
+
+      console.debug('fetchAndShowNodeSets', nodeSetName);
 
       atlas.updateVisibleNodeSets({
         nodeSetName,
@@ -149,15 +152,25 @@ function NodeSetMesh({
 
   useEffect(() => {
     const nodeSetObject = atlas.findVisibleNodeSet(nodeSetName);
-    if (!nodeSetObject || nodeSetObject.hasError) return;
+    if (!nodeSetObject || nodeSetObject.hasError || !nodeSetName) return;
 
     const meshCollection = threeContextWrapper.getMeshCollection();
+
     if (meshCollection.has(nodeSetName)) {
       meshCollection.show(nodeSetName);
     } else if (detailedCircuit.state !== 'loading') {
       fetchAndShowNodeSets();
     }
   }, [atlas, detailedCircuit.state, fetchAndShowNodeSets, nodeSetName, threeContextWrapper]);
+
+  useEffect(() => {
+    const meshCollection = threeContextWrapper.getMeshCollection();
+    // @ts-ignore
+    const collection = meshCollection.collection[nodeSetName]; // todo fix it when MeshCollection.js is typed
+    if (collection && color) {
+      collection.material.color = new Color(color);
+    }
+  }, [color, fetchAndShowNodeSets, nodeSetName, threeContextWrapper]);
 
   return null;
 }
@@ -171,11 +184,11 @@ export default function NodeSetMeshGenerator({
   circuitConfigPathOverride,
   threeContextWrapper,
 }: NodeSetMeshGeneratorProps) {
-  const { visibleNodeSets } = useAtlasVisualizationManager();
+  const atlasVisualization = useAtomValue(atlasVisualizationAtom);
 
   return (
     <>
-      {visibleNodeSets.map((nodeSet) => (
+      {atlasVisualization.visibleNodeSets.map((nodeSet) => (
         <NodeSetMesh
           key={nodeSet.nodeSetName}
           color={nodeSet.color}

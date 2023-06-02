@@ -106,3 +106,5 @@ export type ExpDesignerParam =
 export type ExpDesignerConfig = {
   [key: string]: ExpDesignerParam[];
 };
+
+export type TargetList = string[];

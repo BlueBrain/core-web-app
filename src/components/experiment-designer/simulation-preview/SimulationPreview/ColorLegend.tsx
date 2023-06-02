@@ -1,8 +1,9 @@
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import sortBy from 'lodash/sortBy';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { getFocusedAtom } from '@/components/experiment-designer/utils';
-import getSimulatedNeurons from '@/components/experiment-designer/simulation-preview/get-simulated-neurons';
 import { nodeSetsPaletteAtom } from '@/components/experiment-designer/simulation-preview/atoms';
+import { TargetList } from '@/types/experiment-designer';
 
 const setupAtom = getFocusedAtom('setup');
 
@@ -14,38 +15,75 @@ interface LegendItem {
 interface LegendItemBoxProps {
   label: string;
   colorHex: string;
+  onColorChange(newColor: string): void;
 }
 
-function LegendItemBox({ label, colorHex }: LegendItemBoxProps) {
+interface ColorLegendProps {
+  targetsToDisplay: TargetList;
+}
+
+function LegendItemBox({ label, colorHex, onColorChange }: LegendItemBoxProps) {
+  const handleColorChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      onColorChange(event.target.value);
+    },
+    [onColorChange]
+  );
+
   return (
-    <div key={label} className="flex flex-row gap-2">
-      <div className="w-[20px]" style={{ backgroundColor: colorHex }} />
+    <div key={label} className="flex flex-row items-center gap-2">
+      <div className="w-[10px] h-[10px] relative">
+        <div
+          className="w-[10px] h-[10px] rounded-full p-0 border-0 absolute left-0 top-0"
+          style={{ backgroundColor: colorHex }}
+        />
+        <input
+          type="color"
+          onChange={handleColorChange}
+          className="absolute left-0 top-0 opacity-0"
+          value={colorHex}
+        />
+      </div>
       {label}
     </div>
   );
 }
 
-export default function ColorLegend() {
+export default function ColorLegend({ targetsToDisplay }: ColorLegendProps) {
   const [setup] = useAtom(setupAtom);
-  const [palette] = useAtom(nodeSetsPaletteAtom);
+  const [palette, setPalette] = useAtom(nodeSetsPaletteAtom);
   const [legendItems, setLegendItems] = useState<LegendItem[]>([]);
 
+  const handleColorChange = useCallback(
+    (label: string, newColor: string) => {
+      setPalette((prev) => ({ ...prev, [label]: newColor }));
+    },
+    [setPalette]
+  );
+
   useEffect(() => {
-    const nodeSets = getSimulatedNeurons(setup);
-    setLegendItems(
-      nodeSets.map((nodeSetName) => ({
-        label: nodeSetName,
-        colorHex: palette[nodeSetName],
-      }))
+    const newLegendItems = sortBy(
+      targetsToDisplay.map((targetName) => ({
+        label: targetName,
+        colorHex: palette[targetName],
+      })),
+      'label'
     );
-  }, [palette, setup]);
+    setLegendItems(newLegendItems);
+  }, [targetsToDisplay, palette, setup]);
 
   return legendItems.length ? (
-    <div className="flex flex-col gap-2">
-      <div className="opacity-50">Simulated Neurons:</div>
-      {legendItems.map(({ label, colorHex }) => (
-        <LegendItemBox key={label} label={label} colorHex={colorHex} />
-      ))}
+    <div className="flex flex-col gap-2 text-white">
+      {legendItems.map(({ label, colorHex }) =>
+        colorHex ? (
+          <LegendItemBox
+            key={label}
+            label={label}
+            colorHex={colorHex}
+            onColorChange={(color) => handleColorChange(label, color)}
+          />
+        ) : null
+      )}
     </div>
   ) : null;
 }

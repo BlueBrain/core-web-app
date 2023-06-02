@@ -3,16 +3,16 @@ import { useAtom } from 'jotai';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import MeshGenerators from '@/components/MeshGenerators';
 import simPreviewThreeCtxWrapper from '@/components/experiment-designer/simulation-preview/SimulationPreview/SimPreviewThreeCtxWrapper';
-import { getFocusedAtom } from '@/components/experiment-designer/utils';
 import generateRandomColor from '@/components/experiment-designer/simulation-preview/PreviewMesh/generate-random-color';
-import getSimulatedNeurons from '@/components/experiment-designer/simulation-preview/get-simulated-neurons';
 import { nodeSetsPaletteAtom } from '@/components/experiment-designer/simulation-preview/atoms';
+import { TargetList } from '@/types/experiment-designer';
 
-const setupAtom = getFocusedAtom('setup');
+interface PreviewMeshProps {
+  targetsToDisplay: TargetList;
+}
 
-export default function PreviewMesh() {
+export default function PreviewMesh({ targetsToDisplay }: PreviewMeshProps) {
   const atlas = useAtlasVisualizationManager();
-  const [setup] = useAtom(setupAtom);
   const [nodeSetsPalette, setNodeSetsPalette] = useAtom(nodeSetsPaletteAtom);
 
   // make should be visible meshes a union of both meshes and point clouds
@@ -43,16 +43,18 @@ export default function PreviewMesh() {
   );
 
   useEffect(() => {
-    const nodeSetsToAdd = getSimulatedNeurons(setup);
-    const visibleObjectsToAdd = nodeSetsToAdd.map((nodeSetName: string) => ({
-      nodeSetName,
-      color: getNodeSetColor(nodeSetName),
+    const visibleObjectsToAdd = targetsToDisplay.map((targetName: string) => ({
+      nodeSetName: targetName,
+      color: getNodeSetColor(targetName),
       isLoading: false,
       hasError: false,
     }));
     atlas.removeAllNodeSetMeshes();
     atlas.addVisibleObjects(...visibleObjectsToAdd);
-  }, [atlas, getNodeSetColor, setup]);
+    return () => {
+      atlas.removeAllNodeSetMeshes();
+    };
+  }, [atlas, getNodeSetColor, targetsToDisplay]);
 
   return (
     <MeshGenerators

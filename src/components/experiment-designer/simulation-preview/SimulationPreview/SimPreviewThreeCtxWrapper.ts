@@ -1,11 +1,69 @@
 import * as THREE from 'three';
-import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
+import { ThreeCtxWrapper, ThreeCtxWrapperInitParams } from '@/visual/ThreeCtxWrapper';
 import { DEFAULT_CAMERA_LOOK_AT } from '@/state/experiment-designer/visualization';
+import { ExpDesignerVisualizationConfig } from '@/types/experiment-designer-visualization';
 
 class SimPreviewThreeCtxWrapper extends ThreeCtxWrapper {
   private cameraSymbolMesh: THREE.Mesh = new THREE.Mesh();
 
   private cameraLine: THREE.Line = new THREE.Line();
+
+  private overviewCamera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
+
+  private movieCamera: THREE.OrthographicCamera = new THREE.OrthographicCamera();
+
+  init({
+    targetDiv,
+    cameraPositionXYZ = [37984.948, 3938.164, 5712.791],
+    cameraLookAtXYZ = [6612.504, 3938.164, 5712.791],
+  }: ThreeCtxWrapperInitParams) {
+    super.init({
+      targetDiv,
+      cameraPositionXYZ,
+      cameraLookAtXYZ,
+    });
+
+    this.overviewCamera = this.threeContext?.getCamera() as THREE.PerspectiveCamera;
+
+    const movieCameraWidth = 1920;
+    const movieCameraHeight = 1080;
+    const movieCameraScaleFactor = 5;
+    this.movieCamera = new THREE.OrthographicCamera(
+      -movieCameraWidth * movieCameraScaleFactor,
+      +movieCameraWidth * movieCameraScaleFactor,
+      +movieCameraHeight * movieCameraScaleFactor,
+      -movieCameraHeight * movieCameraScaleFactor,
+      0.1,
+      1e6
+    );
+    this.movieCamera.position.set(...(cameraPositionXYZ ?? [0, 0, 0]));
+    this.movieCamera.up.set(0, -1, 0);
+    this.movieCamera.lookAt(6612.504, 3938.164, 5712.791);
+    this.movieCamera.updateProjectionMatrix();
+    this.movieCamera.updateMatrix();
+  }
+
+  syncWithCameraState(cameraConfig: ExpDesignerVisualizationConfig) {
+    const activeCameraKey = cameraConfig.activeCamera;
+    const activeCameraConfig = cameraConfig[activeCameraKey];
+    const cameraPosition = activeCameraConfig.position;
+    const cameraLookAt = activeCameraConfig.lookAt;
+    let cameraAspect: number | undefined;
+
+    if (activeCameraKey === 'movieCamera') {
+      this.threeContext?.activateCamera(this.movieCamera);
+      this.removeCameraSymbol();
+      cameraAspect =
+        cameraConfig.movieCamera.resolution.width / cameraConfig.movieCamera.resolution.height;
+    } else {
+      this.threeContext?.activateCamera(this.overviewCamera);
+      this.drawCameraSymbol(cameraConfig.movieCamera.position);
+    }
+
+    this.threeContext?.resize(cameraAspect);
+    this.threeContext?.setCameraPosition(cameraPosition);
+    this.threeContext?.lookAt(new THREE.Vector3(...cameraLookAt));
+  }
 
   drawCameraLookAtSymbol() {
     const targetPoint = new THREE.Vector3(...DEFAULT_CAMERA_LOOK_AT);

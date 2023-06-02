@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import * as THREE from 'three';
+import { useAtomValue } from 'jotai';
 import { Color } from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
-import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
@@ -10,6 +10,7 @@ import { basePath } from '@/config';
 import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
+import { atlasVisualizationAtom, PointCloudType } from '@/state/atlas/atlas';
 
 type PointCloudMeshProps = {
   regionID: string;
@@ -161,10 +162,11 @@ export default function PointCloudGenerator({
   circuitConfigPathOverride,
   threeContextWrapper,
 }: PointCloudGeneratorProps) {
-  const { visiblePointClouds } = useAtlasVisualizationManager();
+  const atlasVisualization = useAtomValue(atlasVisualizationAtom);
+
   return (
     <>
-      {visiblePointClouds.map((pointCloud) => (
+      {atlasVisualization.visiblePointClouds.map((pointCloud: PointCloudType) => (
         <PointCloudMesh
           key={pointCloud.regionID}
           color={pointCloud.color}

@@ -13,8 +13,18 @@ interface PerspectiveCameraConfig extends CameraConfig {
   far: number;
 }
 
+interface Size {
+  width: number;
+  height: number;
+}
+
+export interface MovieCameraConfig extends CameraConfig {
+  resolution: Size; // Final movie resolution (pixels)
+  projection: Size; // Projection size (real world)
+}
+
 export interface ExpDesignerVisualizationConfig {
   activeCamera: ExpDesignerCameraType;
   overviewCamera: PerspectiveCameraConfig;
-  movieCamera: CameraConfig;
+  movieCamera: MovieCameraConfig;
 }

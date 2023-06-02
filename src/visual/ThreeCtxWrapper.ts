@@ -53,7 +53,7 @@ export class ThreeCtxWrapper {
     camera.updateMatrix();
 
     // to be restored later (change of atlas or so)
-    this.threeContext.saveCameraSpatialSettings();
+    // this.threeContext.saveCameraSpatialSettings();
 
     // Optionally, you can show a torus knot, simply to make sure your context is properly setup
     // this._threeContext.addSampleShape()

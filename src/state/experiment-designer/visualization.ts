@@ -6,7 +6,7 @@ export const DEFAULT_OVERVIEW_CAMERA_POSITION: [number, number, number] = [
 ];
 
 export const DEFAULT_MOVIE_CAMERA_POSITION: [number, number, number] = [
-  138.15359705517585, 3678.3225960866785, 5686.667844909167,
+  -17970.783508199806, -17086.701412939885, -19588.70241470358,
 ];
 
 export const DEFAULT_CAMERA_LOOK_AT: [number, number, number] = [6612.504, 3938.164, 5712.791];
@@ -21,9 +21,11 @@ export const cameraConfigAtom = atom<ExpDesignerVisualizationConfig>({
     far: 1000000,
   },
   movieCamera: {
-    type: 'perspective',
+    type: 'orthographic',
     position: [...DEFAULT_MOVIE_CAMERA_POSITION],
     up: [0, 0, 0],
     lookAt: [...DEFAULT_CAMERA_LOOK_AT],
+    projection: { width: 19200, height: 10800 },
+    resolution: { width: 1920, height: 1080 },
   },
 } as ExpDesignerVisualizationConfig);

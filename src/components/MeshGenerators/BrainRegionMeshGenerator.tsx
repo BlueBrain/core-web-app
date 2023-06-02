@@ -1,5 +1,5 @@
-import { LoadingOutlined } from '@ant-design/icons';
 import * as THREE from 'three';
+import { useAtomValue } from 'jotai';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
 import { usePreventParallelism } from '@/hooks/parallelism';
@@ -8,6 +8,7 @@ import { useAtlasVisualizationManager } from '@/state/atlas';
 import { createHeaders } from '@/util/utils';
 import useNotification from '@/hooks/notifications';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
+import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 
 const parseWFObj = require('wavefront-obj-parser');
 
@@ -106,19 +107,11 @@ function BrainRegionMesh({ id, colorCode, threeContextWrapper }: BrainRegionMesh
 }
 
 export default function BrainRegionMeshGenerator({ threeContextWrapper }: MeshGeneratorProps) {
-  const atlas = useAtlasVisualizationManager();
-  const shouldBeVisibleMeshes = atlas.visibleMeshes;
-  const shouldBeVisiblePointClouds = atlas.visiblePointClouds;
-  const allObjects = [...shouldBeVisibleMeshes, ...shouldBeVisiblePointClouds];
-  const atLeastOneLoading = allObjects.some((obj) => obj.isLoading);
-  useEffect(() => {
-    // hack to make sure the canvas takes all
-    window.dispatchEvent(new Event('resize'));
-  }, [atLeastOneLoading]);
+  const atlasVisualization = useAtomValue(atlasVisualizationAtom);
 
   return (
     <>
-      {shouldBeVisibleMeshes.map((mesh) => (
+      {atlasVisualization.visibleMeshes.map((mesh) => (
         <BrainRegionMesh
           key={mesh.contentURL}
           id={mesh.contentURL}
@@ -126,11 +119,6 @@ export default function BrainRegionMeshGenerator({ threeContextWrapper }: MeshGe
           threeContextWrapper={threeContextWrapper}
         />
       ))}
-      {atLeastOneLoading && (
-        <div className="z-50 text-neutral-1 text-4xl absolute inset-1/2">
-          <LoadingOutlined />
-        </div>
-      )}
     </>
   );
 }

@@ -1,13 +1,7 @@
 import * as THREE from 'three';
-import OrbitControls from './thirdparty/OrbitControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 type ControlType = 'orbit' | 'trackball';
-
-interface CameraSpatialSettings {
-  lookat: THREE.Vector3;
-  up: THREE.Vector3;
-  position: THREE.Vector3;
-}
 
 export interface ThreeContextOptions {
   webgl2: boolean; // enable WebGL2 if `true` (default: false)
@@ -35,7 +29,9 @@ class ThreeContext {
 
   public readonly scene: THREE.Scene;
 
-  private readonly camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+  private readonly defaultCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+
+  public activeCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera | undefined;
 
   private renderer: THREE.WebGLRenderer;
 
@@ -45,11 +41,11 @@ class ThreeContext {
 
   private defaultRaycastParent: THREE.Scene | THREE.Object3D;
 
-  private controls: OrbitControls;
+  private controls: OrbitControls | undefined;
 
-  private cameraSpatialSettings: CameraSpatialSettings;
+  private controlsChangeCallback: (event: THREE.Event) => void;
 
-  private readonly ambientLight: THREE.AmbientLight;
+  // private cameraSpatialSettings: CameraSpatialSettings;
 
   private readonly axesHelper: THREE.AxesHelper;
 
@@ -57,6 +53,8 @@ class ThreeContext {
     if (!div) {
       throw new Error('The ThreeContext needs a div object');
     }
+
+    this.controlsChangeCallback = () => {};
 
     this.needRender = true;
 
@@ -70,31 +68,18 @@ class ThreeContext {
     // init scene
     this.scene = new THREE.Scene();
 
-    // init camera
-    this.camera = new THREE.PerspectiveCamera(27, div.clientWidth / div.clientHeight, 1, 50000);
+    // todo don't rely on the client width but on the projection size / final resolution
+    this.defaultCamera = new THREE.PerspectiveCamera(
+      27,
+      div.clientWidth / div.clientHeight,
+      1,
+      50000
+    );
     const cameraPosition: [number, number, number] =
       'cameraPosition' in options
         ? (options.cameraPosition.clone().toArray() as [number, number, number])
         : [0, 0, 0];
-    this.camera.position.set(...cameraPosition);
-
-    this.scene.add(this.camera);
-    this.camera.updateMatrix();
-    this.cameraSpatialSettings = {
-      lookat: new THREE.Vector3(0, 0, 0),
-      up: new THREE.Vector3(0, 0, 0),
-      position: new THREE.Vector3(0, 0, 0),
-    };
-
-    // adding some light
-    this.ambientLight = new THREE.AmbientLight(0x444444);
-    this.scene.add(this.ambientLight);
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    if (options.embedLight) {
-      this.camera.add(pointLight);
-    } else {
-      this.scene.add(pointLight);
-    }
+    this.defaultCamera.position.set(...cameraPosition);
 
     // add some axis helper
     this.axesHelper = new THREE.AxesHelper(
@@ -105,7 +90,6 @@ class ThreeContext {
     }
 
     // init the renderer
-    // this.renderer = null;
     if ('webgl2' in options ? options.webgl2 : true) {
       const canvas = document.createElement('canvas');
       canvas.style.cssText = 'width:100%;';
@@ -129,10 +113,15 @@ class ThreeContext {
       });
     }
 
+    this.renderer.domElement.style.boxShadow = `0 0 150px rgba(255, 255, 255, 0.4)`;
+
     this.renderer.setClearColor(0xffffff, 0);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(div.clientWidth, div.clientHeight);
     div.appendChild(this.renderer.domElement);
+
+    // Set up the default camera as active
+    this.activateCamera(this.defaultCamera);
 
     // all the necessary for raycasting
     this.raycaster = new THREE.Raycaster();
@@ -158,27 +147,19 @@ class ThreeContext {
 
     // when the 3D container resizes, calls the resize function to re-calculate the width
     const resizeObserver = new ResizeObserver(() => {
-      this.resize();
+      let aspectRatio: number | undefined;
+      if (this.activeCamera?.type === 'OrthographicCamera') {
+        const orthographicCamera = this.activeCamera as THREE.OrthographicCamera;
+        const cameraWidth = Math.abs(orthographicCamera.left) + Math.abs(orthographicCamera.right);
+        const cameraHeight = Math.abs(orthographicCamera.top) + Math.abs(orthographicCamera.bottom);
+        aspectRatio = cameraWidth / cameraHeight;
+      }
+      this.resize(aspectRatio);
     });
 
     resizeObserver.observe(this.renderer.domElement.parentElement as HTMLElement);
 
     this.defaultRaycastParent = this.scene;
-
-    // todo this is probably to be removed
-    if ('raycastOnDoubleClick' in options ? options.raycastOnDoubleClick : false) {
-      /* empty */
-    }
-
-    // mouse controls
-    const controlType = 'controlType' in options ? options.controlType : 'orbit';
-
-    if (controlType === 'orbit') {
-      this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-      this.controls.rotateSpeed *= -1;
-    } else {
-      throw new Error('Invalid ControlType provided');
-    }
 
     const cameraLookAt =
       'cameraLookAt' in options ? options.cameraLookAt : new THREE.Vector3(0, 0, 0);
@@ -189,26 +170,16 @@ class ThreeContext {
       () => {
         windowRect = this.renderer.domElement.getBoundingClientRect();
 
-        // @ts-ignore
-        this.camera.aspect = div.clientWidth / div.clientHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(div.clientWidth, div.clientHeight);
-
-        // this actually applies only to trackball control
-        try {
-          // @ts-ignore
-          this.controls.handleResize();
-        } catch (e) {
-          /* empty */
+        if (this.activeCamera?.type === 'PerspectiveCamera') {
+          (this.activeCamera as THREE.PerspectiveCamera).aspect =
+            div.clientWidth / div.clientHeight;
         }
+
+        this.activeCamera?.updateProjectionMatrix();
+        this.renderer.setSize(div.clientWidth, div.clientHeight);
       },
       false
     );
-
-    // @ts-ignore
-    this.controls.addEventListener('change', () => {
-      this.needRender = true;
-    });
 
     this._animate();
   }
@@ -219,50 +190,17 @@ class ThreeContext {
 
   /**
    * Resize the 3d render container to match a given width
-   * @param width the width to match
+   * @param aspectRatio
    */
-  resize() {
+  resize(aspectRatio?: number) {
     const canvas = this.renderer.domElement;
     const width = canvas.parentElement?.clientWidth ?? 600;
-    const height = canvas.parentElement?.clientHeight ?? 600;
-    // look up the size the canvas is being displayed
+    const height = aspectRatio ? width / aspectRatio : canvas.parentElement?.clientHeight ?? 600;
     this.renderer.setSize(width, height, true);
-    if (this.camera.type === 'PerspectiveCamera') {
-      const cam = this.camera as THREE.PerspectiveCamera;
-      cam.aspect = width / height;
+    if (this.activeCamera?.type === 'PerspectiveCamera') {
+      (this.activeCamera as THREE.PerspectiveCamera).aspect = aspectRatio ?? width / height;
     }
-    this.camera.updateProjectionMatrix();
-  }
-
-  saveCameraSpatialSettings() {
-    this.cameraSpatialSettings.position = this.camera.position.clone();
-    this.cameraSpatialSettings.up = this.camera.up.clone();
-    this.cameraSpatialSettings.lookat = this.getLookAt().clone();
-    // this._cameraSpatialSettings.rotation = this._camera.rotation.clone()
-    // this._cameraSpatialSettings.quaternion = this._camera.quaternion.clone()
-  }
-
-  resetCameraSpatialSettings() {
-    this.needRender = true;
-    this.camera.position.copy(this.cameraSpatialSettings.position);
-    this.camera.up.copy(this.cameraSpatialSettings.up);
-    this.lookAt(this.cameraSpatialSettings.lookat);
-  }
-
-  /**
-   * Get the default AmbientLight
-   * @return {THREE.AmbientLight}
-   */
-  getAmbientLight() {
-    return this.ambientLight;
-  }
-
-  /**
-   * Get the axes helper
-   * @return {THREE.Mesh}
-   */
-  getAxesHelper() {
-    return this.axesHelper;
+    this.activeCamera?.updateProjectionMatrix();
   }
 
   /**
@@ -278,7 +216,35 @@ class ThreeContext {
    * @return {THREE.Camera}
    */
   getCamera() {
-    return this.camera;
+    return this.defaultCamera;
+  }
+
+  setControlsChangeCallback(callback: (event: THREE.Event) => void) {
+    this.controlsChangeCallback = callback;
+  }
+
+  activateCamera(newCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera) {
+    if (this.activeCamera) {
+      this.scene.remove(this.activeCamera);
+    }
+    this.activeCamera = newCamera;
+    this.scene.add(newCamera);
+    this.reassignControlsToActiveCamera();
+    this.activeCamera.updateMatrix();
+    this.activeCamera.updateProjectionMatrix();
+    this.needRender = true;
+  }
+
+  reassignControlsToActiveCamera() {
+    this.controls?.dispose();
+    this.controls = new OrbitControls(this.activeCamera as THREE.Camera, this.renderer.domElement);
+    this.controls.rotateSpeed *= 1;
+
+    // @ts-ignore
+    this.controls.addEventListener('change', (event: THREE.Event) => {
+      this.controlsChangeCallback(event.target);
+      this.needRender = true;
+    });
   }
 
   /**
@@ -287,39 +253,7 @@ class ThreeContext {
    */
   lookAt(pos: THREE.Vector3) {
     this.needRender = true;
-    this.controls.target.set(pos.x, pos.y, pos.z);
-  }
-
-  getLookAt() {
-    return this.controls.target.clone();
-  }
-
-  lookAtXYZ(x: number, y: number, z: number) {
-    this.needRender = true;
-    this.controls.target.set(x, y, z);
-  }
-
-  /**
-   * Get the field of view angle of the camera, in degrees
-   * @return {Number}
-   */
-  getCameraFieldOfView() {
-    return this.camera.type === 'PerspectiveCamera'
-      ? (this.camera as THREE.PerspectiveCamera).fov
-      : null;
-  }
-
-  /**
-   * Define the camera field of view, in degrees
-   * @param {Number} fov - the fov
-   */
-  setCameraFieldOfView(fov: number) {
-    if (this.camera.type === 'PerspectiveCamera') {
-      this.needRender = true;
-      const cam = this.camera as THREE.PerspectiveCamera;
-      cam.fov = fov;
-      cam.updateProjectionMatrix();
-    }
+    this.controls?.target.set(pos.x, pos.y, pos.z);
   }
 
   /**
@@ -330,33 +264,15 @@ class ThreeContext {
     this.requestFrameId = requestAnimationFrame(this._animate);
     this.controls?.update();
 
-    if (this.needRender) {
-      this.renderer?.render(this.scene, this.camera);
+    if (this.needRender && this.activeCamera) {
+      this.renderer?.render(this.scene, this.activeCamera);
       this.needRender = false;
     }
   };
 
-  /**
-   * Get the png image data as base64, in order to later display it in a <img> markup
-   */
-  getScreenshot() {
-    const strMime = 'image/png';
-    return this.renderer?.domElement.toDataURL(strMime);
-  }
-
   setCameraPosition(newPosition: [number, number, number]) {
     this.needRender = true;
-    this.camera.position.set(...newPosition);
-  }
-
-  switchToOrthographicCamera() {
-    const cam = this.camera as { type: string };
-    cam.type = 'OrthographicCamera';
-  }
-
-  switchToPerspectiveCamera() {
-    const cam = this.camera as { type: string };
-    cam.type = 'PerspectiveCamera';
+    this.activeCamera?.position.set(...newPosition);
   }
 }
 

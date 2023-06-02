@@ -1,9 +1,16 @@
+/**
+ * TODO NEXT
+ *
+ * - probably the zoom in orbitcontrols is configured for the orthographic camera, so we must
+ * calculate somehow the zoom to viewport height/width in pixels OR modify the orbitcontrols
+ * so that it doesn't touch zoom
+ */
+
 'use client';
 
 /* eslint-disable lodash/import-scope */
 
-import * as THREE from 'three';
-import { findIndex, isEqual } from 'lodash';
+import { debounce, findIndex, isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import PreviewMesh from '@/components/experiment-designer/simulation-preview/PreviewMesh';
@@ -15,20 +22,23 @@ import {
 } from '@/state/experiment-designer/visualization';
 import { ExpDesignerCameraType } from '@/types/experiment-designer-visualization';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
-import { ExpDesignerPositionParameter } from '@/types/experiment-designer';
+import { ExpDesignerPositionParameter, TargetList } from '@/types/experiment-designer';
 import simPreviewThreeCtxWrapper from '@/components/experiment-designer/simulation-preview/SimulationPreview/SimPreviewThreeCtxWrapper';
 import CameraSwitch from '@/components/experiment-designer/simulation-preview/SimulationPreview/CameraSwitch';
 import ResetViewButton from '@/components/experiment-designer/simulation-preview/SimulationPreview/ResetViewButton';
 import ColorLegend from '@/components/experiment-designer/simulation-preview/SimulationPreview/ColorLegend';
 
-export default function SimulationPreview() {
-  const [ready, isReady] = useState(false);
-  const threeDeeDiv = useRef<HTMLDivElement>(null);
+interface SimulationPreviewProps {
+  targetsToDisplay: TargetList;
+}
 
+export default function SimulationPreview({ targetsToDisplay }: SimulationPreviewProps) {
+  const [isReady, setIsReady] = useState(false);
+  const threeDeeDiv = useRef<HTMLDivElement>(null);
   const [expDesignerConfig, setExpDesignerConfig] = useAtom(expDesignerConfigAtom);
   const [cameraConfig, setCameraConfig] = useAtom(cameraConfigAtom);
 
-  const updateCameraAtom = useCallback(
+  const updateExpDesignerCameraAtom = useCallback(
     (newPosition: [number, number, number]) => {
       const cameraPosIndex = findIndex(expDesignerConfig.imaging, { id: 'cameraPos' });
       const newImagingSection = [...expDesignerConfig.imaging];
@@ -37,61 +47,59 @@ export default function SimulationPreview() {
         value: newPosition,
       };
       const newExpDesignerConfig = { ...expDesignerConfig, imaging: newImagingSection };
-      console.debug('newImagingSection', {
-        newImagingSection,
-        cameraPosIndex,
-        newExpDesignerConfig,
-      });
       setExpDesignerConfig(newExpDesignerConfig);
     },
     [expDesignerConfig, setExpDesignerConfig]
   );
 
-  useEffect(() => {
-    const handleCameraChange = (event: THREE.Event) => {
+  const handleCameraControlsChange = useCallback(
+    (target: any) => {
       if (!simPreviewThreeCtxWrapper.threeContext) {
         return;
       }
-      simPreviewThreeCtxWrapper.threeContext.needRender = true;
-      const { x, y, z } = event.target.object.position;
+
+      const { x, y, z } = target.object.position;
       const newPosition = [x, y, z] as [number, number, number];
       const activeCameraKey = cameraConfig.activeCamera;
-      setCameraConfig({
-        ...cameraConfig,
-        [activeCameraKey]: { ...cameraConfig[activeCameraKey], position: newPosition },
-      });
-      if (activeCameraKey === 'movieCamera') {
-        updateCameraAtom(newPosition);
-      }
-    };
+      const oldPosition = cameraConfig[activeCameraKey].position;
 
+      if (!isEqual(newPosition, oldPosition)) {
+        simPreviewThreeCtxWrapper.threeContext.needRender = true;
+        setCameraConfig({
+          ...cameraConfig,
+          [activeCameraKey]: { ...cameraConfig[activeCameraKey], position: newPosition },
+        });
+
+        if (activeCameraKey === 'movieCamera') {
+          updateExpDesignerCameraAtom(newPosition);
+        }
+      }
+    },
+    [cameraConfig, setCameraConfig, updateExpDesignerCameraAtom]
+  );
+
+  const controlsChangeDebounced = useMemo(
+    () => debounce(handleCameraControlsChange, 500),
+    [handleCameraControlsChange]
+  );
+
+  useEffect(() => {
     if (threeDeeDiv.current) {
       simPreviewThreeCtxWrapper.init({
         targetDiv: threeDeeDiv.current,
-        cameraPositionXYZ: [...DEFAULT_OVERVIEW_CAMERA_POSITION],
+        cameraPositionXYZ: cameraConfig[cameraConfig.activeCamera].position,
+        cameraLookAtXYZ: cameraConfig[cameraConfig.activeCamera].lookAt,
       });
-      isReady(true);
+      setIsReady(true);
 
-      // @ts-ignore
-      simPreviewThreeCtxWrapper.threeContext.controls.addEventListener(
-        'change',
-        handleCameraChange
-      );
+      simPreviewThreeCtxWrapper.threeContext?.setControlsChangeCallback(controlsChangeDebounced);
 
       simPreviewThreeCtxWrapper.drawCameraLookAtSymbol();
       if (cameraConfig.activeCamera === 'overviewCamera') {
         simPreviewThreeCtxWrapper.drawCameraSymbol(cameraConfig.movieCamera.position);
       }
     }
-
-    return () => {
-      // @ts-ignore
-      simPreviewThreeCtxWrapper.threeContext.controls.removeEventListener(
-        'change',
-        handleCameraChange
-      );
-    };
-  }, [cameraConfig, setCameraConfig, threeDeeDiv, updateCameraAtom]);
+  }, [cameraConfig, controlsChangeDebounced]);
 
   const switchCamera = useCallback(
     (isMovieCameraChecked?: boolean) => {
@@ -102,18 +110,7 @@ export default function SimulationPreview() {
         newActiveCamera =
           cameraConfig.activeCamera === 'overviewCamera' ? 'movieCamera' : 'overviewCamera';
       }
-
-      const cameraPosition = cameraConfig[newActiveCamera].position;
       setCameraConfig({ ...cameraConfig, activeCamera: newActiveCamera });
-
-      simPreviewThreeCtxWrapper.threeContext?.setCameraPosition(cameraPosition);
-      if (newActiveCamera === 'movieCamera') {
-        simPreviewThreeCtxWrapper.threeContext?.switchToOrthographicCamera();
-        simPreviewThreeCtxWrapper.removeCameraSymbol();
-      } else {
-        simPreviewThreeCtxWrapper.threeContext?.switchToPerspectiveCamera();
-        simPreviewThreeCtxWrapper.drawCameraSymbol(cameraConfig.movieCamera.position);
-      }
     },
     [cameraConfig, setCameraConfig]
   );
@@ -136,8 +133,6 @@ export default function SimulationPreview() {
       },
     };
     setCameraConfig(newConfig);
-    simPreviewThreeCtxWrapper.threeContext?.setCameraPosition(defaultCameraPosition);
-    simPreviewThreeCtxWrapper.threeContext?.lookAt(new THREE.Vector3(...DEFAULT_CAMERA_LOOK_AT));
   }, [cameraConfig, defaultCameraPosition, setCameraConfig]);
 
   const isResetViewButtonDisabled = useMemo(
@@ -150,16 +145,21 @@ export default function SimulationPreview() {
     [cameraConfig.activeCamera]
   );
 
+  useEffect(() => {
+    simPreviewThreeCtxWrapper.syncWithCameraState(cameraConfig);
+  }, [cameraConfig]);
+
   return (
-    <div className="relative w-full h-full flex">
-      <div className="flex h-full w-full" ref={threeDeeDiv} />
-      {ready && <PreviewMesh />}
+    <div className="relative w-full h-full flex items-center">
+      <div className="flex items-center w-full h-full overflow-hidden" ref={threeDeeDiv} />
+      {isReady && <PreviewMesh targetsToDisplay={targetsToDisplay} />}
 
       <div className="absolute left-0 top-0 text-white px-6 py-5">
         <CameraSwitch onChange={switchCamera} isChecked={isMovieCameraActive} />
-        <div className="mt-10 mb-5">
-          <ColorLegend />
-        </div>
+      </div>
+
+      <div className="absolute left-0 bottom-0 py-5 px-6">
+        <ColorLegend targetsToDisplay={targetsToDisplay} />
       </div>
 
       <div className="absolute right-0 top-0 text-white px-6 py-5">

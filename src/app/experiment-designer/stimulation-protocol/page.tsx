@@ -2,14 +2,25 @@
 
 import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useAtomValue } from 'jotai/index';
 
 import { Params, Visualization } from '@/components/experiment-designer/stimulation-protocol';
-import { getFocusedAtom } from '@/components/experiment-designer/utils';
+import {
+  extractTargetNamesFromSection,
+  getFocusedAtom,
+} from '@/components/experiment-designer/utils';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
+const SECTION_NAME = 'stimuli';
+
 export default function StimulationProtocolPage() {
-  const sectionName = 'stimuli';
-  const focusedAtom = useMemo(() => getFocusedAtom(sectionName), [sectionName]);
+  const focusedAtom = useMemo(() => getFocusedAtom(SECTION_NAME), []);
+  const inputSectionParams = useAtomValue(focusedAtom);
+
+  const targetsToDisplay = useMemo(
+    () => extractTargetNamesFromSection(inputSectionParams),
+    [inputSectionParams]
+  );
 
   return (
     <div className="grid grid-cols-2 h-full">
@@ -18,7 +29,7 @@ export default function StimulationProtocolPage() {
       </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <Visualization focusedAtom={focusedAtom} />
+        <Visualization targetsToDisplay={targetsToDisplay} />
       </ErrorBoundary>
     </div>
   );
