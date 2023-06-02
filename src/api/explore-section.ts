@@ -104,9 +104,7 @@ export default async function fetchEsResourcesByType(accessToken: string, dataQu
   })
     .then((response) => response.json())
     .then<ExploreSectionResponse>((data) => ({
-      hits: data?.hits?.hits?.map((item: ESResponseRaw) => {
-        if(item._source.series) console.log(item._source.series);
-        return {
+      hits: data?.hits?.hits?.map((item: ESResponseRaw) => ({
         key: to64(`${item._source.project.label}!/!${item._id}`),
         name: item._source.name,
         weight: item._source.weight,
@@ -130,7 +128,7 @@ export default async function fetchEsResourcesByType(accessToken: string, dataQu
         subjectAge: item._source.subjectAge?.label,
         layerThickness: item._source.layerThickness?.value,
         contributors: serializeContributors(item._source.contributors),
-      }}),
+      })),
       total: data?.hits?.total,
       aggs: data.aggregations,
     }));
