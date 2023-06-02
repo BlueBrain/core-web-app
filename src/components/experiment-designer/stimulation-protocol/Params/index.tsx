@@ -155,6 +155,7 @@ export default function Params({ focusedAtom }: Props) {
       RowRenderer={StimulationBlock}
       onRemoveGroup={removeGroup}
       isGroup
+      namePrefix="stimulus"
     >
       <GenericAddButton onClick={addNew} title="Add Stimulation Protocol" />
     </GenericParamWrapper>

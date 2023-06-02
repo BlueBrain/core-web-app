@@ -91,6 +91,7 @@ export default function Params({ focusedAtom }: Props) {
       showHeader={false}
       onRemoveGroup={removeGroup}
       isGroup
+      namePrefix="recording"
     >
       <GenericAddButton onClick={addNew} title="Add Recording" />
     </GenericParamWrapper>

@@ -154,6 +154,7 @@ export default function Params({ focusedAtom }: Props) {
       RowRenderer={InputBlock}
       onRemoveGroup={removeGroup}
       isGroup
+      namePrefix="input"
     >
       <GenericAddButton onClick={addNew} title="Add Sensory Input" />
     </GenericParamWrapper>

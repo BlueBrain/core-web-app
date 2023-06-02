@@ -30,6 +30,7 @@ type Props = {
   showHeader?: boolean;
   onRemoveGroup?: (atom: PrimitiveAtom<ExpDesignerParam> | null) => void;
   isGroup?: boolean;
+  namePrefix?: string;
 };
 
 export const generateId = (param1: string, param2: string) =>
@@ -39,9 +40,17 @@ type GroupRendererProps = {
   paramAtom: PrimitiveAtom<ExpDesignerGroupParameter>;
   RowRenderer: ComponentType<RowRendererProps>;
   onRemoveGroup: () => void;
+  groupIndex: number;
+  namePrefix: string;
 };
 
-function GroupRenderer({ paramAtom, RowRenderer, onRemoveGroup }: GroupRendererProps) {
+function GroupRenderer({
+  paramAtom,
+  RowRenderer,
+  onRemoveGroup,
+  groupIndex,
+  namePrefix,
+}: GroupRendererProps) {
   const focusedAtom = useMemo(() => getSubGroupFocusedAtom(paramAtom), [paramAtom]);
   const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
   const listAtoms = useAtomValue(atoms);
@@ -50,7 +59,7 @@ function GroupRenderer({ paramAtom, RowRenderer, onRemoveGroup }: GroupRendererP
     <div className="group flex flex-col">
       <DeleteGroupBtn className={groupBorderStyle} onDelete={onRemoveGroup} />
       <div className={groupBorderStyle}>
-        <NameGroupEditor paramAtom={paramAtom} />
+        <NameGroupEditor paramAtom={paramAtom} namePrefix={namePrefix} groupIndex={groupIndex} />
         {listAtoms.map((rowAtom) => (
           <RowRenderer paramAtom={rowAtom} key={paramAtom.toString() + rowAtom.toString()} />
         ))}
@@ -68,12 +77,13 @@ export default function GenericParamWrapper({
   listAtoms,
   onRemoveGroup,
   isGroup = false,
+  namePrefix = '',
 }: Props) {
   let rows = null;
 
   if (listAtoms?.length) {
     if (isGroup) {
-      rows = listAtoms.map((paramAtom) => {
+      rows = listAtoms.map((paramAtom, index) => {
         const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerGroupParameter>;
         return (
           <GroupRenderer
@@ -81,6 +91,8 @@ export default function GenericParamWrapper({
             paramAtom={paramAtomTyped}
             RowRenderer={RowRenderer}
             onRemoveGroup={() => (onRemoveGroup ? onRemoveGroup(paramAtom) : null)}
+            groupIndex={index}
+            namePrefix={namePrefix}
           />
         );
       });

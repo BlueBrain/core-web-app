@@ -7,7 +7,7 @@ import {
 
 export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
   id: crypto.randomUUID(),
-  name: crypto.randomUUID(),
+  name: '',
   type: 'group',
   value: [
     {
@@ -65,7 +65,7 @@ export const getNewStimulusObj = (): ExpDesignerGroupParameter => ({
 
 export const getNewRecordingObj = (): ExpDesignerGroupParameter => ({
   id: crypto.randomUUID(),
-  name: crypto.randomUUID(),
+  name: '',
   type: 'group',
   value: [
     {
@@ -129,8 +129,8 @@ export const getNewRecordingObj = (): ExpDesignerGroupParameter => ({
 });
 
 export const getNewSensoryInputObj = (): ExpDesignerGroupParameter => ({
-  id: 'input1',
-  name: 'input1',
+  id: crypto.randomUUID(),
+  name: '',
   type: 'group',
   value: [
     {
@@ -161,14 +161,14 @@ export const getNewSensoryInputObj = (): ExpDesignerGroupParameter => ({
 
 export const getNewTargetObj = (): ExpDesignerTargetParameter => ({
   id: crypto.randomUUID(),
-  name: 'name',
+  name: '',
   type: 'targetDropdown',
   value: 'AAA',
 });
 
 export const getNewMultiDropdown = (): ExpDesignerMultipleDropdownParameter => ({
   id: crypto.randomUUID(),
-  name: 'name',
+  name: '',
   type: 'multipleDropdown',
   value: [],
   options: [],
