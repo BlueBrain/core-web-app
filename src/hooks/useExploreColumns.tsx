@@ -74,6 +74,7 @@ const useExploreColumns = (
       key,
       className: 'text-primary-7 cursor-pointer',
       sorter: false,
+      ellipsis: true,
       render: getRender,
       onHeaderCell: (cell) => ({
         onClick: () => sorterES(cell),

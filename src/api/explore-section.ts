@@ -7,6 +7,7 @@ import {
   ContributorsEntity,
 } from '@/types/explore-section';
 import { to64 } from '@/util/common';
+import { ensureArray } from '@/util/nexus';
 
 /**
  * Serializes a brain region based on its format
@@ -30,10 +31,9 @@ const serializeContributors = (contributors: ContributorsEntity[] | null | undef
   if (!contributors || contributors.length < 1) {
     return undefined;
   }
-  if (Array.isArray(contributors[0].label)) {
-    return contributors[0].label.join(', ');
-  }
-  return contributors[0].label;
+  return ensureArray(contributors)
+    .map((c) => c.label)
+    .join(', ');
 };
 
 export default async function fetchEsResourcesByType(accessToken: string, dataQuery: object) {

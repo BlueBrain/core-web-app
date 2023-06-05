@@ -37,13 +37,13 @@ const createDetailAtoms = () => {
     return resource;
   });
 
-  const contributorsDataAtom = atom<Promise<DeltaResource[] | []>>(async (get) => {
+  const contributorsDataAtom = atom<Promise<DeltaResource[] | null>>(async (get) => {
     const session = get(sessionAtom);
     const info = get(infoAtom);
     const detail = await get(rawDetailAtom);
 
     if (!session || !info.id || !info.org || !info.project || !detail || !detail.contribution)
-      return [];
+      return null;
 
     const contributions = ensureArray(detail.contribution);
 
@@ -60,6 +60,23 @@ const createDetailAtoms = () => {
     return contributors;
   });
 
+  const licenseDataAtom = atom<Promise<DeltaResource | null>>(async (get) => {
+    const session = get(sessionAtom);
+    const info = get(infoAtom);
+    const detail = await get(rawDetailAtom);
+
+    if (!session || !info.id || !info.org || !info.project || !detail || !detail.license)
+      return null;
+
+    const license: DeltaResource | null = await fetchResourceById<DeltaResource>(
+      detail.license['@id'],
+      session,
+      pick(info, ['org', 'project'])
+    );
+
+    return license;
+  });
+
   const latestRevisionAtom = atom<Promise<number | null>>(async (get) => {
     const session = get(sessionAtom);
     const info = get(infoAtom);
@@ -72,6 +89,29 @@ const createDetailAtoms = () => {
       pick(info, ['org', 'project'])
     );
     return latestRevision._rev;
+  });
+
+  const speciesDataAtom = atom<Promise<string | null>>(async (get) => {
+    const session = get(sessionAtom);
+    const info = get(infoAtom);
+    const detail = await get(rawDetailAtom);
+
+    if (!session || !info.id || !info.org || !info.project || !detail || !detail.subject)
+      return null;
+
+    if (detail.subject?.species?.label) return detail.subject.species.label;
+
+    if (detail.subject['@id']) {
+      const subject: DeltaResource | null = await fetchResourceById<DeltaResource>(
+        detail.subject['@id'],
+        session,
+        pick(info, ['org', 'project'])
+      );
+
+      return subject ? subject.species.label : null;
+    }
+
+    return null;
   });
 
   const contributorsAtom = selectAtom(contributorsDataAtom, contributorSelectorFn);
@@ -99,6 +139,8 @@ const createDetailAtoms = () => {
       eType: selectDetail(rawDetail, 'eType', eTypeSelectorFn),
       latestRevision: await get(latestRevisionAtom),
       contributors: await get(contributorsAtom),
+      license: await get(licenseDataAtom),
+      species: await get(speciesDataAtom),
       sem: selectDetail(rawDetail, 'sem', semSelectorFn),
     });
   });

@@ -48,16 +48,16 @@ export interface ExploreSectionResource extends OptionalExploreSectionFields {
 export interface OptionalExploreSectionSerializedFields {
   meanstd?: string | number;
   mean?: string | number;
-  standardDeviation: string | number;
+  standardDeviation?: string | number;
   sem?: string | number;
   series?: Series[];
-  numberOfCells: string | number;
+  numberOfCells?: string | number;
   weight?: string | number;
+  conditions?: string;
 }
 
 export interface OptionalExploreSectionFields extends OptionalExploreSectionSerializedFields {
   reference?: string;
-  conditions?: string;
   neuronDensity?: NValueEntity;
   layerThickness?: NValueEntity;
   boutonDensity?: NumericEntity;
@@ -235,6 +235,7 @@ export interface BrainLocation {
   '@type': string;
   atlasSpatialReferenceSystem: AtlasSpatialReferenceSystemOrAtlasRelease;
   brainRegion: BrainRegionOrStimulusTypeOrSpecies;
+  layer?: HasBody;
 }
 export interface BrainRegionOrStimulusTypeOrSpecies {
   '@id': string;
@@ -278,6 +279,7 @@ export interface StimulusEntity {
 }
 export interface Subject {
   '@type': string;
+  '@id'?: string;
   species: BrainRegionOrStimulusTypeOrSpecies;
   age?: SubjectAge;
   weight?: Weight;
@@ -309,7 +311,6 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   meanPlusMinusStd?: ReactNode | null;
   creationDate?: ReactNode;
   thickness?: ReactNode;
-  license?: string;
   brainConfiguration?: string;
   mType?: string;
   eType?: string;
@@ -319,6 +320,8 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   updatedAt?: string | null;
   dimensions?: ReactNode;
   contributors?: IdLabel[];
+  layer?: string;
+  license?: string;
 }
 
 export type DetailResource = SerializedDeltaResource & DeltaResource;

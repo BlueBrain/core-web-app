@@ -87,7 +87,7 @@ export default function useExploreSerializedFields(
 
   return {
     description: detail?.description,
-    species: detail?.subject?.species?.label,
+    species: detail?.species,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
     numberOfMeasurement: detail?.numberOfMeasurement,
     subjectSpecies: detail?.subjectSpecies,
@@ -103,9 +103,11 @@ export default function useExploreSerializedFields(
     eType: detail?.eType,
     contributors: detail?.contributors,
     weight: detail?.weight,
-    license: detail?.license?.['@id'],
+    license: detail?.license?.name,
+    layer: detail?.brainLocation?.layer?.label,
     brainConfiguration: detail?.brainConfiguration,
     attribute: detail?.attribute,
+    conditions: detail?.conditions,
     status: detail?.status,
     tags: formatTags(),
     updatedAt: timeElapsedFromToday(detail?._updatedAt),

@@ -28,11 +28,12 @@ export const formatContributors = (contributor: DeltaResource | null): IdLabel =
  * Takes array of contributor Delta resources and returns an array of names
  * @param {import("./types/explore-section").DeltaResource[]} contributors
  */
-export const contributorSelectorFn = (contributors: DeltaResource[]) => {
-  if (!contributors) return [];
-  return contributors
+export const contributorSelectorFn = (contributors: DeltaResource[] | null) => {
+  if (!contributors) return null;
+  const result = contributors
     .map((contributor) => formatContributors(contributor as DeltaResource))
-    .filter((contributor) => contributor.name !== '');
+    .filter((contributor) => contributor.name !== '' && contributor.name);
+  return result.length > 0 ? result : null;
 };
 
 /**
