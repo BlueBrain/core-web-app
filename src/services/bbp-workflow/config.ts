@@ -47,11 +47,8 @@ type WorkflowMetaConfigPlaceholders = Record<
 
 export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
   GenSimCampaignMeta: {
-    fileName: 'GenSimCampaignMeta',
+    fileName: 'GenSimCampaignMeta.cfg',
     templateFile: `
-      [DEFAULT]
-      account: proj134
-
       [GenSimCampaign]
       name: <%= ${SimulationPlaceholders.SIM_CAMPAIGN_NAME} %>
       description: <%= ${SimulationPlaceholders.SIM_CAMPAIGN_DESCRIPTION} %>
@@ -64,19 +61,16 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
     placeholder: 'GenSimCampaignMeta',
   },
   RunSimCampaignMeta: {
-    fileName: 'RunSimCampaignMeta',
+    fileName: 'RunSimCampaignMeta.cfg',
     templateFile: `
-      [DEFAULT]
-      account: proj134
-
       [RunSimCampaign]
       simulation-type: CortexNrdmsPySim
-      nodes: 50
+      nodes: 5
     `,
     placeholder: 'RunSimCampaignMeta',
   },
   ReportSimCampaignMeta: {
-    fileName: 'ReportSimCampaignMeta',
+    fileName: 'ReportSimCampaignMeta.cfg',
     templateFile: `
       [DEFAULT]
       account: proj134
@@ -88,11 +82,8 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
     placeholder: 'ReportSimCampaignMeta',
   },
   VideoSimCampaignMeta: {
-    fileName: 'VideoSimCampaignMeta',
+    fileName: 'VideoSimCampaignMeta.cfg',
     templateFile: `
-      [DEFAULT]
-      account: proj134
-
       [VideoSimCampaign]
       nodes: 20
       populations: [{
@@ -132,6 +123,7 @@ export const SIMULATION_FILES: WorkflowFile[] = [
     CONTENT: `
       [DEFAULT]
       kg-proj: mmb-point-neuron-framework-model
+      account: proj134
 
       [FindDetailedCircuitMeta]
       config-url: <%= ${SimulationPlaceholders.VARIANT_TASK_ACTIVITY} %>

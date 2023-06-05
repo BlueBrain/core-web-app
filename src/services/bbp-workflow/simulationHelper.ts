@@ -35,6 +35,10 @@ function getNotFoundMsg(variable: any, name?: string): string {
 
 export const customRangeDelimeter = '@@';
 
+function createNonStringPlaceholder(value: string | boolean) {
+  return `${customRangeDelimeter}$${value}`;
+}
+
 function getValueOrPlaceholder(
   section: ExpDesignerParam[],
   variableName: string,
@@ -66,7 +70,7 @@ function getValueOrPlaceholder(
       const { start, end, stepper } = parameter.value;
       const values: number[] = calculateRangeOutput(start, end, stepper);
       coords[`${variableName}`] = values; // eslint-disable-line no-param-reassign
-      finalValue = `${customRangeDelimeter}$${variableName}`;
+      finalValue = createNonStringPlaceholder(variableName);
       break;
     }
 
@@ -79,7 +83,7 @@ function getValueOrPlaceholder(
         (target: string) => `${customRangeDelimeter}${target}`
       );
       coords[`${variableName}`] = selectionList; // eslint-disable-line no-param-reassign
-      finalValue = `${customRangeDelimeter}$${variableName}`;
+      finalValue = createNonStringPlaceholder(variableName);
       break;
     }
 
@@ -249,13 +253,19 @@ export function convertExpDesConfigToSimVariables(
     (param) => param.id === 'neuronDisplay'
   ) as ExpDesignerRadioBtnParameter;
   variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_SOMA] = JSON.stringify(
-    neuronDisplay.value === 'As point' ? 'true' : 'false'
+    neuronDisplay.value === 'As point'
+      ? createNonStringPlaceholder(true)
+      : createNonStringPlaceholder(false)
   );
   variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_DENDRITES] = JSON.stringify(
-    neuronDisplay.value === 'Dendrites' ? 'true' : 'false'
+    neuronDisplay.value === 'Dendrites'
+      ? createNonStringPlaceholder(true)
+      : createNonStringPlaceholder(false)
   );
   variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_AXON] = JSON.stringify(
-    neuronDisplay.value === 'Axon + Dendrites' ? 'true' : 'false'
+    neuronDisplay.value === 'Axon + Dendrites'
+      ? createNonStringPlaceholder(true)
+      : createNonStringPlaceholder(false)
   );
 
   const cameraPosition = imaging.find(
