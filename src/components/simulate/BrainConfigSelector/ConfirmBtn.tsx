@@ -65,11 +65,10 @@ export default function ConfirmBtn({
       });
       throw new Error(msg);
     });
-    const brainModelCfgPart = `brainModelConfigId=${brainModelConfigId.split('/').pop()}`;
     const simUICfgPart = `simulationCampaignUIConfigId=${simCampUiConfigResource['@id']
       .split('/')
       .pop()}`;
-    router.push(`${expDesBaseUrl}?${brainModelCfgPart}&${simUICfgPart}`);
+    router.push(`${expDesBaseUrl}?${simUICfgPart}`);
     setProcessing(false);
     setAllowed(true);
   };

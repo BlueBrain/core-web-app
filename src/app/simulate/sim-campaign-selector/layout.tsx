@@ -29,7 +29,7 @@ export default function SimulationCampaignSelectorLayout({ children }: Props) {
         </Link>
 
         <div className="text-l mt-10 text-primary-3 cursor-not-allowed">All</div>
-        <div className="text-l mt-2">Recently created simulation campaigns</div>
+        <div className="text-l mt-2">Public simulation campaigns</div>
         <div className="text-l mt-2 text-primary-3 cursor-not-allowed">My simulation campaigns</div>
       </div>
 

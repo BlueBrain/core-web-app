@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Table, Button } from 'antd';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 import SearchInput from './SearchInput';
@@ -18,12 +19,14 @@ import {
   cloneSimCampUIConfig,
   renameSimCampUIConfig,
 } from '@/services/bbp-workflow/simulationHelper';
+import Link from '@/components/Link';
 
 const { Column } = Table;
 
 const loadableSimCampaignListAtom = loadable(simCampaingListAtom);
 
 export default function SimCampaignList() {
+  const router = useRouter();
   const { data: session } = useSession();
 
   const simCampaignsLoadable = useAtomValue(loadableSimCampaignListAtom);
@@ -42,15 +45,26 @@ export default function SimCampaignList() {
     setConfigs(simCampaignsLoadable.data);
   }, [simCampaignsLoadable]);
 
+  const generateRedirectUrl = (config: SimulationCampaignUIConfigResource) => {
+    const baseHref = '/experiment-designer/experiment-setup';
+    const collapsedId: string = encodeURIComponent(config['@id'].split('/').pop() || '');
+    return `${baseHref}?simulationCampaignUIConfigId=${collapsedId}`;
+  };
+
   const openCloneModal = (currentConfig: SimulationCampaignUIConfigResource) => {
-    createCloneModal(currentConfig, () => {
+    createCloneModal(currentConfig, (clonedConfig: SimulationCampaignUIConfigResource) => {
       triggerRefetch();
+      router.push(generateRedirectUrl(clonedConfig));
     });
   };
 
   const openRenameModal = (config: SimulationCampaignUIConfigResource) => {
     createRenameModal(config, triggerRefetch);
   };
+
+  const nameRenderFn = (name: string, config: SimulationCampaignUIConfigResource) => (
+    <Link href={generateRedirectUrl(config)}>{name}</Link>
+  );
 
   return (
     <>
@@ -61,6 +75,7 @@ export default function SimCampaignList() {
       <ConfigList<SimulationCampaignUIConfigResource>
         isLoading={simCampaignsLoadable.state === 'loading'}
         configs={configs}
+        nameRenderFn={nameRenderFn}
       >
         <Column
           title=""

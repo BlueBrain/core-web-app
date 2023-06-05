@@ -264,3 +264,22 @@ export const getSimCampConfigsQuery = (searchString: string) => ({
     },
   },
 });
+
+export const getGeneratorTaskActivityByCircuitIdQuery = (detailedCircuitId: string) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'GeneratorTaskActivity' } },
+              { term: { 'generated.@id.keyword': detailedCircuitId } },
+            ],
+          },
+        },
+      ],
+    },
+  },
+});

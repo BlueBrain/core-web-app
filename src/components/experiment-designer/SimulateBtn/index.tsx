@@ -30,6 +30,22 @@ export default function SimulateBtn({ onLaunched }: Props) {
   const expDesignerConfig = expDesLoadable.state === 'hasData' ? expDesLoadable.data : {};
   const circuitInfo = circuitInfoLodable.state === 'hasData' ? circuitInfoLodable.data : null;
 
+  const getButtonText = () => {
+    switch (circuitInfoLodable.state) {
+      case 'loading':
+        return 'Loading...';
+
+      case 'hasData':
+        return circuitInfo ? 'Simulate' : 'Circuit was not built';
+
+      case 'hasError':
+        return 'Error';
+
+      default:
+        return 'Circuit was not built';
+    }
+  };
+
   const extraVariablesToReplace = {
     expDesignerConfig,
     [SimulationPlaceholders.SIM_CAMPAIGN_NAME]: simCampName,
@@ -45,7 +61,7 @@ export default function SimulateBtn({ onLaunched }: Props) {
   return (
     <DefaultLoadingSuspense>
       <WorkflowLauncherBtn
-        buttonText={circuitInfo ? 'Simulate' : 'Circuit was not built'}
+        buttonText={getButtonText()}
         workflowName={WORKFLOW_SIMULATION_TASK_NAME}
         className="px-12"
         extraVariablesToReplace={extraVariablesToReplace}

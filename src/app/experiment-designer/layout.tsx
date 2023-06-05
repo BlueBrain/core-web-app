@@ -9,7 +9,6 @@ import { Spin } from 'antd';
 import { ExperimentDesignerTopTabs, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import useBrainModelConfigState from '@/hooks/brain-model-config';
 import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
 import useSimulationCampaignUIConfig from '@/hooks/simulation-campaign-ui-config';
 import {
@@ -18,9 +17,12 @@ import {
   setConfigPayloadAtom,
   savedConfigAtom,
   setWorkflowExecutionAtom,
+  brainModelConfigIdFromSimCampUIConfigIdAtom,
 } from '@/state/experiment-designer';
+import { idAtom as brainModelConfigId } from '@/state/brain-model-config';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
+const loadableDerivedBrainModelConfigIdAtom = loadable(brainModelConfigIdFromSimCampUIConfigIdAtom);
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;
@@ -33,11 +35,11 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   const [isLoading, setIsLoading] = useState(true);
   const saveConfigDebounced = useSetAtom(setConfigPayloadAtom);
   const setSavedConfig = useSetAtom(savedConfigAtom);
-
   const setWorkflowExecution = useSetAtom(setWorkflowExecutionAtom);
+  const derivedBrainModelConfigIdLoadable = useAtomValue(loadableDerivedBrainModelConfigIdAtom);
+  const setBrainModelConfigId = useSetAtom(brainModelConfigId);
 
   useAuth(true);
-  useBrainModelConfigState();
   useSimulationCampaignUIConfig();
 
   useEffect(() => {
@@ -56,6 +58,14 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   useEffect(() => {
     saveConfigDebounced();
   }, [localConfig, saveConfigDebounced]);
+
+  useEffect(() => {
+    if (derivedBrainModelConfigIdLoadable.state !== 'hasData') return;
+    if (!derivedBrainModelConfigIdLoadable.data) return;
+
+    // setting the brainModelConfig from simCampUIConfig query param
+    setBrainModelConfigId(derivedBrainModelConfigIdLoadable.data);
+  }, [derivedBrainModelConfigIdLoadable]);
 
   const onLaunched = (nexusUrl: string) => {
     if (!nexusUrl) return;

@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAtom } from 'jotai';
 
-import { idAtom } from '@/state/experiment-designer';
+import { idAtom as simCampUIConfigId } from '@/state/experiment-designer';
 import { createId } from '@/util/nexus';
 
 export default function useSimulationCampaignUIConfig() {
-  const [currentId, setId] = useAtom(idAtom);
+  const [currentSimCampUIConfigId, setSimCampUIConfigId] = useAtom(simCampUIConfigId);
 
   const searchParams = useSearchParams();
   const collapsedId = searchParams?.get('simulationCampaignUIConfigId');
@@ -18,8 +18,8 @@ export default function useSimulationCampaignUIConfig() {
 
     const id = createId('simulationcampaignuiconfig', collapsedId);
 
-    if (currentId === id) return;
+    if (currentSimCampUIConfigId === id) return;
 
-    setId(id);
-  }, [collapsedId, currentId, setId]);
+    setSimCampUIConfigId(id);
+  }, [collapsedId, currentSimCampUIConfigId, setSimCampUIConfigId]);
 }

@@ -11,7 +11,9 @@ import expDesParamsDefaults from '@/components/experiment-designer/experiment-de
 import detailedCircuitAtom from '@/state/circuit';
 import sessionAtom from '@/state/session';
 import {
+  BrainModelConfigResource,
   DetailedCircuitResource,
+  GeneratorTaskActivity,
   SimulationCampaignUIConfigResource,
   WorkflowExecution,
 } from '@/types/nexus';
@@ -26,7 +28,11 @@ import {
 } from '@/api/nexus';
 import { createDistribution } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
-import { getSimCampConfigsQuery } from '@/queries/es';
+import {
+  getBuiltBrainModelConfigsQuery,
+  getGeneratorTaskActivityByCircuitIdQuery,
+  getSimCampConfigsQuery,
+} from '@/queries/es';
 
 const nodeSetsAPIUrl = 'https://cells.sbo.kcp.bbp.epfl.ch/circuit/node_sets?input_path=';
 
@@ -189,5 +195,35 @@ export const simCampaingListAtom = atom<Promise<SimulationCampaignUIConfigResour
 
     const query = getSimCampConfigsQuery(searchString);
     return queryES<SimulationCampaignUIConfigResource>(query, session);
+  }
+);
+
+export const brainModelConfigIdFromSimCampUIConfigIdAtom = atom<Promise<string | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const simCampUIConfigResource = await get(configResourceAtom);
+
+    if (!session || !simCampUIConfigResource) return null;
+
+    const detailedCircuitId = simCampUIConfigResource.used['@id'];
+
+    const queryGeneratorTaskActivity = getGeneratorTaskActivityByCircuitIdQuery(detailedCircuitId);
+    const generatorTaskActivities = await queryES<GeneratorTaskActivity>(
+      queryGeneratorTaskActivity,
+      session
+    );
+
+    const generatorTaskActivityResource = generatorTaskActivities[0];
+    const synpaseConfigId = generatorTaskActivityResource.used['@id'];
+
+    const brainModelConfigQuery = getBuiltBrainModelConfigsQuery('', [synpaseConfigId]);
+    const brainModelConfigs = await queryES<BrainModelConfigResource>(
+      brainModelConfigQuery,
+      session
+    );
+
+    if (!brainModelConfigs.length) return null;
+
+    return brainModelConfigs[0]['@id'];
   }
 );
