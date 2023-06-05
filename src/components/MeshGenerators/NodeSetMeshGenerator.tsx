@@ -1,31 +1,23 @@
-import { useCallback, useEffect } from 'react';
-import * as THREE from 'three';
+import { useCallback, useEffect, useState } from 'react';
 import { Color } from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
-import { basePath } from '@/config';
 import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
+import { loadNodeSetsAsPoints, loadNodeSetsAsSpheres } from '@/components/MeshGenerators/utils';
+import { CameraType } from '@/types/experiment-designer-visualization';
 
 type NodeSetMeshProps = {
   nodeSetName: string;
   color: string;
   circuitConfigPathOverride?: string;
   threeContextWrapper: ThreeCtxWrapper;
-};
-
-type Point = {
-  id: number;
-  mtype: string;
-  region: string;
-  x: number;
-  y: number;
-  z: number;
+  cameraType?: CameraType;
 };
 
 const CELL_API_BASE_PATH = 'https://cells.sbo.kcp.bbp.epfl.ch';
@@ -37,11 +29,14 @@ function NodeSetMesh({
   color,
   circuitConfigPathOverride,
   threeContextWrapper,
+  cameraType,
 }: NodeSetMeshProps) {
   const preventParallelism = usePreventParallelism();
   const atlas = useAtlasVisualizationManager();
   const addNotification = useNotification();
   const detailedCircuit = useAtomValue(detailedCircuitLoadableAtom);
+
+  const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer | null>(null);
 
   /**
    * Fetches point cloud data from cells API. Returns the data in an array buffer format
@@ -75,22 +70,6 @@ function NodeSetMesh({
     }).then((response) => response.arrayBuffer());
   }, [circuitConfigPathOverride, detailedCircuit, nodeSetName]);
 
-  /**
-   * Builds the geometry of the point cloud
-   * @param points
-   */
-  const buildGeometry = (points: Point[]) => {
-    const geometry = new THREE.BufferGeometry();
-    const vertices: number[] = [];
-    points.forEach((elem) => {
-      const { x, y, z } = elem;
-      vertices.push(x, y, z);
-    });
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.computeBoundingSphere();
-    return geometry;
-  };
-
   const fetchAndShowNodeSets = useCallback(() => {
     // Prevent double loading.
     preventParallelism(nodeSetName, async () => {
@@ -105,32 +84,9 @@ function NodeSetMesh({
       });
 
       try {
-        const arrayBuffer = await fetchData();
-        const table = tableFromIPC(arrayBuffer);
-        const points = table.toArray().map((elem, index) => {
-          const dataStr = elem.toString();
-          const data = JSON.parse(dataStr);
-          const id = index;
-          return { id, ...data };
-        });
-        const sprite = new THREE.TextureLoader().load(`${basePath}/images/disc.png`);
-        const material = new THREE.PointsMaterial({
-          color: new Color(color),
-          size: 400,
-          map: sprite,
-          sizeAttenuation: true,
-          alphaTest: 0.5,
-          transparent: true,
-        });
-        const geometry = buildGeometry(points);
-        const mesh = new THREE.Points(geometry, material);
-        const meshCollection = threeContextWrapper.getMeshCollection();
-        meshCollection.addOrShowMesh(nodeSetName, mesh);
-        atlas.updateVisibleNodeSets({
-          nodeSetName,
-          isLoading: false,
-          hasError: false,
-        });
+        const arrayBufferData = await fetchData();
+        setArrayBuffer(arrayBufferData);
+        //
       } catch (ex) {
         atlas.updateVisibleNodeSets({
           nodeSetName,
@@ -140,15 +96,33 @@ function NodeSetMesh({
         addNotification.error('Something went wrong while fetching point cloud mesh');
       }
     });
-  }, [
-    preventParallelism,
-    nodeSetName,
-    atlas,
-    fetchData,
-    color,
-    threeContextWrapper,
-    addNotification,
-  ]);
+  }, [preventParallelism, nodeSetName, atlas, fetchData, addNotification]);
+
+  useEffect(() => {
+    if (arrayBuffer !== null) {
+      const isPerspectiveCameraActive = cameraType !== 'orthographic';
+      const table = tableFromIPC(arrayBuffer);
+      const points = table.toArray().map((elem, index) => {
+        const dataStr = elem.toString();
+        const data = JSON.parse(dataStr);
+        const id = index;
+        return { id, ...data };
+      });
+
+      const mesh = isPerspectiveCameraActive
+        ? loadNodeSetsAsPoints(points, color)
+        : loadNodeSetsAsSpheres(points, color);
+
+      const meshCollection = threeContextWrapper.getMeshCollection();
+      meshCollection.detach(nodeSetName);
+      meshCollection.addOrShowMesh(nodeSetName, mesh);
+      atlas.updateVisibleNodeSets({
+        nodeSetName,
+        isLoading: false,
+        hasError: false,
+      });
+    }
+  }, [arrayBuffer, atlas, cameraType, color, nodeSetName, threeContextWrapper]);
 
   useEffect(() => {
     const nodeSetObject = atlas.findVisibleNodeSet(nodeSetName);
@@ -167,7 +141,7 @@ function NodeSetMesh({
     const meshCollection = threeContextWrapper.getMeshCollection();
     // @ts-ignore
     const collection = meshCollection.collection[nodeSetName]; // todo fix it when MeshCollection.js is typed
-    if (collection && color) {
+    if (collection && collection.material && color) {
       collection.material.color = new Color(color);
     }
   }, [color, fetchAndShowNodeSets, nodeSetName, threeContextWrapper]);
@@ -178,11 +152,13 @@ function NodeSetMesh({
 interface NodeSetMeshGeneratorProps {
   circuitConfigPathOverride?: string;
   threeContextWrapper: ThreeCtxWrapper;
+  cameraType?: CameraType;
 }
 
 export default function NodeSetMeshGenerator({
   circuitConfigPathOverride,
   threeContextWrapper,
+  cameraType,
 }: NodeSetMeshGeneratorProps) {
   const atlasVisualization = useAtomValue(atlasVisualizationAtom);
 
@@ -195,6 +171,7 @@ export default function NodeSetMeshGenerator({
           nodeSetName={nodeSet.nodeSetName}
           circuitConfigPathOverride={circuitConfigPathOverride}
           threeContextWrapper={threeContextWrapper}
+          cameraType={cameraType}
         />
       ))}
     </>

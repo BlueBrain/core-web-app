@@ -11,21 +11,13 @@ import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 import { atlasVisualizationAtom, PointCloudType } from '@/state/atlas/atlas';
+import { buildGeometry } from '@/components/MeshGenerators/utils';
 
 type PointCloudMeshProps = {
   regionID: string;
   color: string;
   circuitConfigPathOverride?: string;
   threeContextWrapper: ThreeCtxWrapper;
-};
-
-type Point = {
-  id: number;
-  mtype: string;
-  region: string;
-  x: number;
-  y: number;
-  z: number;
 };
 
 const CELL_API_BASE_PATH = 'https://cells.sbo.kcp.bbp.epfl.ch';
@@ -74,22 +66,6 @@ function PointCloudMesh({
     }).then((response) => response.arrayBuffer());
   }, [circuitConfigPathOverride, detailedCircuit, regionID]);
 
-  /**
-   * Builds the geometry of the point cloud
-   * @param points
-   */
-  const buildGeometry = (points: Point[]) => {
-    const geometry = new THREE.BufferGeometry();
-    const vertices: number[] = [];
-    points.forEach((elem) => {
-      const { x, y, z } = elem;
-      vertices.push(x, y, z);
-    });
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.computeBoundingSphere();
-    return geometry;
-  };
-
   const fetchAndShowPointCloud = useCallback(() => {
     // Prevent double loading.
     preventParallelism(regionID, async () => {
@@ -136,7 +112,7 @@ function PointCloudMesh({
         addNotification.error('Something went wrong while fetching point cloud mesh');
       }
     });
-  }, [preventParallelism, regionID, atlas, fetchData, color, addNotification]);
+  }, [preventParallelism, regionID, atlas, fetchData, color, threeContextWrapper, addNotification]);
 
   useEffect(() => {
     const pcObject = atlas.findVisiblePointCloud(regionID);

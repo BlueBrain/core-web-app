@@ -1,11 +1,12 @@
 import { useCallback, useEffect } from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import MeshGenerators from '@/components/MeshGenerators';
 import simPreviewThreeCtxWrapper from '@/components/experiment-designer/simulation-preview/SimulationPreview/SimPreviewThreeCtxWrapper';
 import generateRandomColor from '@/components/experiment-designer/simulation-preview/PreviewMesh/generate-random-color';
 import { nodeSetsPaletteAtom } from '@/components/experiment-designer/simulation-preview/atoms';
 import { TargetList } from '@/types/experiment-designer';
+import { cameraConfigAtom } from '@/state/experiment-designer/visualization';
 
 interface PreviewMeshProps {
   targetsToDisplay: TargetList;
@@ -13,6 +14,7 @@ interface PreviewMeshProps {
 
 export default function PreviewMesh({ targetsToDisplay }: PreviewMeshProps) {
   const atlas = useAtlasVisualizationManager();
+  const cameraConfig = useAtomValue(cameraConfigAtom);
   const [nodeSetsPalette, setNodeSetsPalette] = useAtom(nodeSetsPaletteAtom);
 
   // make should be visible meshes a union of both meshes and point clouds
@@ -60,6 +62,7 @@ export default function PreviewMesh({ targetsToDisplay }: PreviewMeshProps) {
     <MeshGenerators
       threeContextWrapper={simPreviewThreeCtxWrapper}
       circuitConfigPathOverride="/gpfs/bbp.cscs.ch/project/proj134/workflow-outputs/31f221e1-33e0-4a0b-a570-e192c95c1674/morphologyAssignmentConfig/root/circuit_config.json"
+      cameraType={cameraConfig[cameraConfig.activeCamera].type}
     />
   );
 }

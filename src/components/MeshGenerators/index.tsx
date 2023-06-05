@@ -6,15 +6,18 @@ import BrainRegionMeshGenerator from '@/components/MeshGenerators/BrainRegionMes
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 import NodeSetMeshGenerator from '@/components/MeshGenerators/NodeSetMeshGenerator';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
+import { CameraType } from '@/types/experiment-designer-visualization';
 
 interface MeshGeneratorsProps {
   threeContextWrapper: ThreeCtxWrapper;
   circuitConfigPathOverride?: string;
+  cameraType?: CameraType;
 }
 
 export default function MeshGenerators({
   threeContextWrapper,
   circuitConfigPathOverride,
+  cameraType,
 }: MeshGeneratorsProps) {
   const [atlasVisualization] = useAtom(atlasVisualizationAtom);
 
@@ -46,6 +49,7 @@ export default function MeshGenerators({
       <NodeSetMeshGenerator
         threeContextWrapper={threeContextWrapper}
         circuitConfigPathOverride={circuitConfigPathOverride}
+        cameraType={cameraType}
       />
       {atLeastOneLoading && (
         <div className="z-50 text-neutral-1 text-4xl absolute inset-1/2">
