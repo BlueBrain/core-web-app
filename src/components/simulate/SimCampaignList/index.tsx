@@ -21,6 +21,7 @@ import {
   renameSimCampUIConfig,
 } from '@/services/bbp-workflow/simulationHelper';
 import Link from '@/components/Link';
+import { EyeIcon } from '@/components/icons';
 
 const { Column } = Table;
 
@@ -83,7 +84,7 @@ export default function SimCampaignList() {
         <Column
           title=""
           key="actions"
-          width={86}
+          width={120}
           render={(config) => (
             <>
               <Button
@@ -99,11 +100,17 @@ export default function SimCampaignList() {
               <Button
                 size="small"
                 type="text"
-                className="inline-block"
+                className="inline-block mr-2"
                 onClick={() => openCloneModal(config)}
               >
                 <CloneIcon />
               </Button>
+
+              <Link href={generateRedirectUrl(config)} className="inline-block">
+                <Button size="small" type="text">
+                  <EyeIcon fill="#FFF" />
+                </Button>
+              </Link>
             </>
           )}
         />
