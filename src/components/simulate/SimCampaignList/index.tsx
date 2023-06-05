@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 import SearchInput from './SearchInput';
+import ListTypeSelector from './ListTypeSelector';
 import { SimulationCampaignUIConfigResource } from '@/types/nexus';
 import { simCampaingListAtom, triggerRefetchAtom } from '@/state/experiment-designer';
 import ConfigList from '@/components/ConfigList';
@@ -68,6 +69,8 @@ export default function SimCampaignList() {
 
   return (
     <>
+      <ListTypeSelector />
+
       <div className="flex justify-end mb-3">
         <SearchInput />
       </div>

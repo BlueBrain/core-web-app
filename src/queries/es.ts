@@ -265,6 +265,27 @@ export const getSimCampConfigsQuery = (searchString: string) => ({
   },
 });
 
+export const getPersonalSimCampConfigsQuery = (username: string, searchString: string = '') => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'SimulationCampaignUIConfig' } },
+              { term: { _createdBy: `https://bbp.epfl.ch/nexus/v1/realms/bbp/users/${username}` } },
+            ],
+          },
+        },
+        idExistsFilter,
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
+    },
+  },
+});
+
 export const getGeneratorTaskActivityByCircuitIdQuery = (detailedCircuitId: string) => ({
   size: DEFAULT_SIZE,
   query: {

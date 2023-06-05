@@ -31,6 +31,7 @@ import { autoSaveDebounceInterval } from '@/config';
 import {
   getBuiltBrainModelConfigsQuery,
   getGeneratorTaskActivityByCircuitIdQuery,
+  getPersonalSimCampConfigsQuery,
   getSimCampConfigsQuery,
 } from '@/queries/es';
 
@@ -184,16 +185,30 @@ export const setWorkflowExecutionAtom = atom<null, [string], Promise<void>>(
 
 export const searchSimCampUIConfigListStringAtom = atom<string>('');
 
+type SearchType = 'public' | 'personal';
+
+export const searchConfigListTypeAtom = atom<SearchType>('public');
+
 export const simCampaingListAtom = atom<Promise<SimulationCampaignUIConfigResource[]>>(
   async (get) => {
     const session = get(sessionAtom);
+    const searchType = get(searchConfigListTypeAtom);
     const searchString = get(searchSimCampUIConfigListStringAtom);
 
     get(refetchTriggerAtom);
 
     if (!session) return [];
 
-    const query = getSimCampConfigsQuery(searchString);
+    let query;
+
+    if (searchType === 'public') {
+      query = getSimCampConfigsQuery(searchString);
+    } else if (searchType === 'personal') {
+      query = getPersonalSimCampConfigsQuery(session.user.username, searchString);
+    } else {
+      throw new Error('SearchType is not supported');
+    }
+
     return queryES<SimulationCampaignUIConfigResource>(query, session);
   }
 );
