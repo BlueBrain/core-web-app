@@ -26,7 +26,7 @@ export function ExploreGroupNav() {
       <div className={styles.ephys}>
         <Link href="/explore/electrophysiology">
           <div>
-            <h1>Neuron electrophysiologies</h1>
+            <h1>Neuron electrophysiology</h1>
             <PlusOutlined />
           </div>
         </Link>
@@ -34,7 +34,7 @@ export function ExploreGroupNav() {
       <div className={styles.morph}>
         <Link href="/explore/morphology">
           <div>
-            <h1>Neuron morphologies</h1>
+            <h1>Neuron morphology</h1>
             <PlusOutlined />
           </div>
         </Link>
@@ -42,7 +42,7 @@ export function ExploreGroupNav() {
       <div className={styles.bouton}>
         <Link href="/explore/bouton-density">
           <div>
-            <h1>Bouton densities</h1>
+            <h1>Bouton density</h1>
             <PlusOutlined />
           </div>
         </Link>
@@ -50,7 +50,7 @@ export function ExploreGroupNav() {
       <div className={styles.neuron}>
         <Link href="/explore/neuron-density">
           <div>
-            <h1>Neuron densities</h1>
+            <h1>Neuron density</h1>
             <PlusOutlined />
           </div>
         </Link>
