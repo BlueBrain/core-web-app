@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { useAtom } from 'jotai';
 
-import { Button } from 'antd';
 import { searchConfigListTypeAtom } from '@/state/experiment-designer';
 import { SettingsIcon } from '@/components/icons';
 import UserIcon from '@/components/icons/User';
@@ -34,19 +33,20 @@ export default function ListTypeSelector() {
   return (
     <div className="flex gap-6 mt-6 mb-3">
       {searchTabs.map((tab) => (
-        <Button
+        <button
           key={tab.id}
-          type="text"
+          type="button"
           className={classNames(
-            'text-primary-4 text-2xl flex pl-0 gap-2 items-center',
-            'hover:bg-[#ffffffe0] hover:text-white',
+            'h-10 py-2 px-6 rounded-md',
+            'text-primary-4 text-2xl flex gap-2 items-center',
+            'hover:bg-[#ffffff0f] hover:text-white',
             activeTabId === tab.id ? 'text-white' : null
           )}
-          icon={tab.icon}
           onClick={() => setActiveTabId(tab.id)}
         >
+          {tab.icon}
           {tab.name}
-        </Button>
+        </button>
       ))}
     </div>
   );
