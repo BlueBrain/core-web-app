@@ -1,8 +1,11 @@
 'use client';
 
+import { useMemo } from 'react';
+import { loadable } from 'jotai/utils';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import useExploreColumns from '@/hooks/useExploreColumns';
+import { useListViewAtoms, useSetListViewAtoms } from '@/hooks/useListViewAtoms';
 
 const TYPE = 'https://neuroshapes.org/Trace';
 
@@ -30,19 +33,43 @@ const columnKeys = [
 ];
 
 export default function EphyListPage() {
-  const columns = useExploreColumns(columnKeys, sortStateAtom, 'electrophysiology');
+  const atomValues = useListViewAtoms({
+    aggregations: useMemo(() => loadable(aggregationsAtom), []),
+    data: useMemo(() => loadable(dataAtom), []),
+    filters: filtersAtom,
+    pageSize: pageSizeAtom,
+    searchString: searchStringAtom,
+    sortState: sortStateAtom,
+    total: useMemo(() => loadable(totalAtom), []),
+  });
+
+  const atomSetters = useSetListViewAtoms({
+    setFilters: filtersAtom,
+    setSearchString: searchStringAtom,
+    setSortState: sortStateAtom,
+    setPageSize: pageSizeAtom,
+  });
+
+  const { setFilters, setSearchString, setSortState, setPageSize } = atomSetters;
+
+  const columns = useExploreColumns(
+    columnKeys,
+    atomValues.sortState,
+    setSortState,
+    'electrophysiology'
+  );
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <ExploreSectionListingView
-        title="Neuron electrophysiology"
-        totalAtom={totalAtom}
+        atomValues={atomValues}
         columns={columns}
-        dataAtom={dataAtom}
-        pageSizeAtom={pageSizeAtom}
-        searchStringAtom={searchStringAtom}
-        aggregationsAtom={aggregationsAtom}
-        filtersAtom={filtersAtom}
+        onLoadMore={() => {
+          setPageSize(atomValues.pageSize + 30);
+        }}
+        setFilters={setFilters}
+        setSearchString={setSearchString}
+        title="Neuron electrophysiology"
       />
     </div>
   );

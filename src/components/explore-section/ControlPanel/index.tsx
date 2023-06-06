@@ -1,29 +1,37 @@
-import { SetStateAction, Dispatch, useMemo, useState } from 'react';
-import { useAtomValue, Atom, PrimitiveAtom } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined } from '@ant-design/icons';
+import { Aggregations } from '@/types/explore-section';
 import { CheckboxOption, Filter, OptionsData } from '@/components/Filter/types';
 import { CheckList, FilterGroup, FilterGroupProps } from '@/components/Filter';
 
-type FilterProps = {
+type FiltersProps = {
+  aggregations: Loadable<Aggregations | undefined>;
   filters: Filter[];
   setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
-type FiltersProps = {
-  aggregationsAtom: Atom<Promise<any>>;
-  filtersAtom: PrimitiveAtom<Filter[]>;
+type ControlPanelProps = {
+  aggregations: Loadable<any>;
+  filters: Filter[];
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
-function createFilterItemComponent(filter: Filter, aggregationsAtom: Atom<Promise<any>>) {
-  return function FilterItemComponent({ filters, setFilters }: FilterProps) {
+function createFilterItemComponent(
+  filter: Filter,
+  aggregations: Loadable<Aggregations | undefined>
+) {
+  return function FilterItemComponent({ filters, setFilters }: Omit<FiltersProps, 'aggregations'>) {
     const [options, setOptions] = useState<CheckboxOption[]>([]);
-    const loadableAggs = useMemo(() => loadable(aggregationsAtom), []);
-    const aggs = useAtomValue(loadableAggs);
 
     return (
       <CheckList
-        data={(aggs.state === 'hasData' && aggs.data ? aggs.data : []) as OptionsData}
+        data={
+          (aggregations.state === 'hasData' && aggregations.data
+            ? aggregations.data
+            : []) as OptionsData
+        }
         filter={filter}
         filters={filters}
         options={options}
@@ -34,26 +42,19 @@ function createFilterItemComponent(filter: Filter, aggregationsAtom: Atom<Promis
   };
 }
 
-function Filters({ aggregationsAtom, filtersAtom }: FiltersProps) {
-  const filters = useAtomValue(filtersAtom);
-
+function Filters({ aggregations, filters, setFilters }: FiltersProps) {
   const filterItems: FilterGroupProps['items'] = filters.map((filter) => ({
     label: filter.title,
-    content: createFilterItemComponent(filter, aggregationsAtom),
+    content: createFilterItemComponent(filter, aggregations),
   }));
 
-  return <FilterGroup items={filterItems} filtersAtom={filtersAtom} />;
+  return <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />;
 }
 
-type ControlPanelProps = {
-  aggregationsAtom: Atom<Promise<any>>;
-  filtersAtom: PrimitiveAtom<Filter[]>;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
 export default function ControlPanel({
-  aggregationsAtom,
-  filtersAtom,
+  aggregations,
+  filters,
+  setFilters,
   setOpen,
 }: ControlPanelProps) {
   return (
@@ -70,7 +71,7 @@ export default function ControlPanel({
         scelerisque.
       </p>
 
-      <Filters aggregationsAtom={aggregationsAtom} filtersAtom={filtersAtom} />
+      <Filters aggregations={aggregations} filters={filters} setFilters={setFilters} />
     </div>
   );
 }

@@ -1,47 +1,40 @@
 import { ColumnProps } from 'antd/es/table';
-import { Atom, PrimitiveAtom, useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
-import { useMemo, useState } from 'react';
+import { Dispatch, useState } from 'react';
+import { SetStateAction } from 'jotai';
 import ExploreSectionNameSearch from '@/components/explore-section/EphysViewerContainer/ExploreSectionNameSearch';
 import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import ControlPanel from '@/components/explore-section/ControlPanel';
-import { Filter } from '@/components/Filter/types';
-import { ExploreSectionResource, TotalHits } from '@/types/explore-section';
 import { formatNumber } from '@/util/common';
+import { ListViewAtomValues } from '@/types/explore-section';
 
 import SettingsIcon from '@/components/icons/Settings';
 
+import { Filter } from '@/components/Filter/types';
 import styles from '@/components/explore-section/ControlPanel/filters.module.scss';
 
 type ExploreSectionPageProps = {
-  title: string;
-  totalAtom: Atom<Promise<TotalHits | undefined>>;
-  dataAtom: Atom<Promise<ExploreSectionResource[] | undefined>>;
-  searchStringAtom: PrimitiveAtom<string>;
-  pageSizeAtom: PrimitiveAtom<number>;
+  atomValues: ListViewAtomValues;
   columns: ColumnProps<any>[];
-  aggregationsAtom: Atom<Promise<any>>;
-  filtersAtom: PrimitiveAtom<Filter[]>;
+  onLoadMore: () => void;
+  setFilters: Dispatch<SetStateAction<Filter[]>>;
+  setSearchString: Dispatch<SetStateAction<string>>;
+  title: string;
   enableDownload?: boolean;
 };
 
 export default function ExploreSectionListingView({
-  title,
-  totalAtom,
-  dataAtom,
+  atomValues,
   columns,
-  searchStringAtom,
-  pageSizeAtom,
-  aggregationsAtom,
-  filtersAtom,
+  onLoadMore,
+  setFilters,
+  setSearchString,
+  title,
   enableDownload,
 }: ExploreSectionPageProps) {
   const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
-  const loadableData = useMemo(() => loadable(dataAtom), [dataAtom]);
-  const loadableTotal = useMemo(() => loadable(totalAtom), [totalAtom]);
-  const data = useAtomValue(loadableData);
-  const total = useAtomValue(loadableTotal);
+  const { aggregations, data, filters, searchString, total } = atomValues;
+
   const value =
     total.state === 'hasData' && total.data?.value ? formatNumber(total.data?.value) : 0;
 
@@ -57,7 +50,10 @@ export default function ExploreSectionListingView({
           </div>
 
           <div className="flex items-center gap-5 justify-between">
-            <ExploreSectionNameSearch searchStringAtom={searchStringAtom} />
+            <ExploreSectionNameSearch
+              searchString={searchString}
+              setSearchString={setSearchString}
+            />
             {!openFiltersSidebar && (
               <button
                 type="button"
@@ -76,17 +72,14 @@ export default function ExploreSectionListingView({
             )}
           </div>
         </div>
-        <ExploreSectionTable
-          loadableData={data}
-          columns={columns}
-          enableDownload={enableDownload}
-        />
-        <LoadMoreButton dataState={data} pageSizeAtom={pageSizeAtom} totalState={total} />
+        <ExploreSectionTable columns={columns} enableDownload={enableDownload} data={data} />
+        <LoadMoreButton data={data} onClick={onLoadMore} total={total} />
       </section>
       {openFiltersSidebar && (
         <ControlPanel
-          aggregationsAtom={aggregationsAtom}
-          filtersAtom={filtersAtom}
+          aggregations={aggregations}
+          filters={filters}
+          setFilters={setFilters}
           setOpen={setOpenFiltersSidebar}
         />
       )}

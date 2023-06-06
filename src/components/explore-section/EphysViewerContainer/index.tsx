@@ -1,11 +1,10 @@
 import { Radio, RadioChangeEvent } from 'antd';
 import { FileImageOutlined, LineChartOutlined } from '@ant-design/icons';
 import React, { useMemo } from 'react';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource, EPhysImageItem } from '@/types/explore-section';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
 import ImageViewContainer from '@/components/explore-section/EphysViewerContainer/ImageViewContainer';
 import GraphViewContainer from '@/components/explore-section/EphysViewerContainer/GraphViewContainer';
-import { EPhysImageItem } from '@/types/explore-section/index';
 import './styles/ephys-plugin-styles.scss';
 
 enum VIEWS {

@@ -1,5 +1,5 @@
-import { PrimitiveAtom, useAtom } from 'jotai';
-import { useState, useEffect } from 'react';
+import { Dispatch, useState, useEffect } from 'react';
+import { SetStateAction } from 'jotai';
 import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import style from '@/components/explore-section/search.module.scss';
@@ -7,13 +7,14 @@ import style from '@/components/explore-section/search.module.scss';
 const { Search } = Input;
 
 type ExploreSectionNameSearchProps = {
-  searchStringAtom: PrimitiveAtom<string>;
+  searchString: string;
+  setSearchString: Dispatch<SetStateAction<string>>;
 };
 
 export default function ExploreSectionNameSearch({
-  searchStringAtom,
+  searchString,
+  setSearchString,
 }: ExploreSectionNameSearchProps) {
-  const [searchString, setSearchString] = useAtom(searchStringAtom);
   const [openSearchInput, setOpenSearchInputOpen] = useState<boolean>(false);
 
   useEffect(() => {

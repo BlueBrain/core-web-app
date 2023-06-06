@@ -1,5 +1,86 @@
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { ContributionEntity, AgentOrIsPartOfOrLicense } from '@/types/nexus';
+import { Filter } from '@/components/Filter/types';
+
+export type TraceData = {
+  y: any;
+  name: string;
+  x?: any;
+};
+
+export type ZoomRanges = {
+  x: [number | undefined, number | undefined];
+  y: [number | undefined, number | undefined];
+};
+
+export type DataSets = {
+  [key: string]: TraceData;
+};
+
+export type Sweep = {
+  [key: string]: {
+    i: string;
+    v: string;
+  };
+};
+
+export type Repetition = {
+  [key: string]: {
+    sweeps: string[];
+  };
+};
+
+export type IndexDataValue = {
+  dt: number;
+  dur: number;
+  i_unit: string;
+  name: string;
+  repetitions: Repetition;
+  sweeps: Sweep;
+  t_unit: string;
+  v_unit: string;
+};
+
+export type RABIndexData = {
+  [key: string]: IndexDataValue;
+};
+
+export type RABIndex = {
+  data: RABIndexData;
+  metadata: {
+    [key: string]: string;
+  };
+};
+
+export type ZoomRange = {
+  x: number[];
+  y: number[];
+};
+
+export type PlotProps = {
+  setSelectedSweeps: (sweeps: string[]) => void;
+  metadata?: IndexDataValue;
+  sweeps: {
+    selectedSweeps: string[];
+    previewSweep?: string;
+    allSweeps: string[];
+    colorMapper: { [key: string]: string };
+  };
+  dataset: string;
+  options: any;
+  zoomRanges: ZoomRanges | null;
+  onZoom: (zoomRanges: ZoomRanges) => void;
+};
+
+export type EPhysImageItem = {
+  '@id': string;
+  repetition: number;
+  about: string;
+  stimulusType: {
+    '@id': string;
+  };
+};
 
 export interface SideLinkList {
   links?: Array<SideLink>;
@@ -14,6 +95,7 @@ export interface FetchParams {
   project?: string;
   org?: string;
 }
+
 export interface Campaign {
   id: string;
   org: string;
@@ -69,6 +151,7 @@ export interface TotalHits {
   relation: string;
   value: number;
 }
+
 export interface ExploreSectionResponse {
   hits: ExploreSectionResource[];
   aggs: Aggregations;
@@ -80,24 +163,29 @@ export interface IdLabelEntity {
   identifier: string;
   label: string | string[];
 }
+
 export interface Distribution {
   contentSize: number;
   encodingFormat: string;
   label: string;
 }
+
 export interface SubjectSpecies {
   identifier: string;
   label?: string | string[] | null;
 }
+
 export interface ContributorsEntity {
   identifier?: string | string[] | null;
   label?: string | string[] | null;
 }
+
 export interface NumericEntity {
   label: string;
   unit: string;
   value: number | string;
 }
+
 export interface SubjectAge extends NumericEntity {
   value: number | string;
   period?: number | string;
@@ -222,61 +310,74 @@ export interface AnnotationEntity {
   hasBody: HasBody;
   name: string;
 }
+
 export interface HasBody {
   '@id': string;
   '@type'?: string[] | null;
   label: string;
 }
+
 export interface AtlasSpatialReferenceSystemOrAtlasRelease {
   '@id': string;
   '@type'?: string[] | null;
 }
+
 export interface BrainLocation {
   '@type': string;
   atlasSpatialReferenceSystem: AtlasSpatialReferenceSystemOrAtlasRelease;
   brainRegion: BrainRegionOrStimulusTypeOrSpecies;
   layer?: HasBody;
 }
+
 export interface BrainRegionOrStimulusTypeOrSpecies {
   '@id': string;
   label: string;
 }
+
 export interface AtLocation {
   '@type': string;
   location: string;
   store: Store;
 }
+
 export interface Store {
   '@id': string;
   '@type': string;
   _rev: number;
 }
+
 export interface ContentSize {
   unitCode: string;
   value: number;
 }
+
 export interface Digest {
   algorithm: string;
   value: string;
 }
+
 export interface ImageEntity {
   '@id': string;
   about: string;
   repetition: number;
   stimulusType: StimulusType;
 }
+
 export interface StimulusType {
   '@id': string;
 }
+
 export interface ObjectOfStudy {
   '@id': string;
   '@type': string;
   label: string;
 }
+
 export interface StimulusEntity {
   '@type': string;
   stimulusType: BrainRegionOrStimulusTypeOrSpecies;
 }
+
 export interface Subject {
   '@type': string;
   '@id'?: string;
@@ -284,6 +385,7 @@ export interface Subject {
   age?: SubjectAge;
   weight?: Weight;
 }
+
 export interface Bucket {
   key: string;
   doc_count: number;
@@ -295,6 +397,7 @@ export interface Aggregations {
     excludeOwnFilter: { buckets: Bucket[] };
   };
 }
+
 export interface SortState {
   field: string | React.Key;
   order: 'asc' | 'desc';
@@ -325,6 +428,7 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
 }
 
 export type DetailResource = SerializedDeltaResource & DeltaResource;
+
 export type AxesState = {
   xAxis?: string;
   yAxis?: string;
@@ -337,4 +441,21 @@ export type IdLabel<
 > = T & {
   id?: string;
   label?: string;
+};
+
+export type ListViewAtomValues = {
+  aggregations: Loadable<Aggregations | undefined>;
+  data: Loadable<ExploreSectionResource[] | undefined>;
+  filters: Filter[];
+  pageSize: number;
+  searchString: string;
+  sortState: SortState;
+  total: Loadable<TotalHits | undefined>;
+};
+
+export type ListViewAtomSetters = {
+  setFilters: Dispatch<SetStateAction<ListViewAtomValues['filters']>>;
+  setSearchString: Dispatch<SetStateAction<ListViewAtomValues['searchString']>>;
+  setSortState: Dispatch<SetStateAction<ListViewAtomValues['sortState']>>;
+  setPageSize: Dispatch<SetStateAction<ListViewAtomValues['pageSize']>>;
 };

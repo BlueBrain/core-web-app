@@ -1,8 +1,9 @@
 'use client';
 
+import { Dispatch } from 'react';
+import { SetStateAction } from 'jotai';
 import { ColumnProps, ColumnType } from 'antd/lib/table';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
-import { useAtom, PrimitiveAtom } from 'jotai';
 import { format, parseISO, isValid } from 'date-fns';
 import { ES_TERMS } from '@/constants/explore-section';
 import Link from '@/components/Link';
@@ -11,11 +12,10 @@ import styles from '@/app/explore/explore.module.scss';
 
 const useExploreColumns = (
   keys: string[],
-  sortStateAtom: PrimitiveAtom<SortState>,
+  sortState: SortState,
+  setSortState: Dispatch<SetStateAction<SortState>>,
   url: string
 ): ColumnProps<ExploreSectionResource>[] => {
-  const [sortState, setSortState] = useAtom(sortStateAtom);
-
   const sorterES = (column: ColumnType<ExploreSectionResource>) => {
     const field = column.key;
     if (field) {
@@ -63,7 +63,7 @@ const useExploreColumns = (
       title: getHeaderColumn('#'),
       key: 'index',
       className: 'text-primary-7',
-      render: (text: string, record: ExploreSectionResource, index: number) => index + 1,
+      render: (_text: string, _record: ExploreSectionResource, index: number) => index + 1,
     },
   ];
 

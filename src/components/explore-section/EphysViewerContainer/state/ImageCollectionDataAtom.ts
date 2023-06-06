@@ -9,8 +9,7 @@ import { FileMetadata } from '@/types/nexus';
 import { chainPredicates, hasImage, isFile, not } from '@/util/explore-section/nexus-maybe';
 import uniqueArrayOfObjectsByKey from '@/util/explore-section/arrays';
 import { propAsArray } from '@/util/explore-section/nexus-tools';
-import { DeltaResource } from '@/types/explore-section';
-import { EPhysImageItem } from '@/types/explore-section/index';
+import { DeltaResource, EPhysImageItem } from '@/types/explore-section';
 
 const MAX_BYTES_TO_PREVIEW = 3000000;
 

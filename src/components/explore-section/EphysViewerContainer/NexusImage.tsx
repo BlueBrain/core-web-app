@@ -26,10 +26,14 @@ export function NexusImage(props: NexusImageContainerProps) {
       </Spin>
     );
   }
+
   if (dataAtom.state === 'hasError') {
     return <div>Image with url {imageUrl} could not be fetched</div>;
   }
-  return dataAtom.data ? <Image className="cursor-pointer" src={dataAtom.data} /> : null;
+
+  return dataAtom.data ? (
+    <Image alt={`${org}-${project}`} className="cursor-pointer" src={dataAtom.data} />
+  ) : null;
 }
 
 export default NexusImage;

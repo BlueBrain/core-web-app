@@ -1,7 +1,5 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
-import { useAtom } from 'jotai/react';
 import * as Accordion from '@radix-ui/react-accordion';
-import { PrimitiveAtom } from 'jotai';
 import CheckList from './CheckList';
 import { Filter } from './types';
 import { ChevronIcon, EyeIcon } from '@/components/icons';
@@ -19,12 +17,11 @@ export type FilterGroupProps = {
       setFilters: Dispatch<SetStateAction<Filter[]>>;
     }) => ReactElement;
   }[];
-  filtersAtom: PrimitiveAtom<Filter[]>;
+  filters: Filter[];
+  setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
-export function FilterGroup({ items, filtersAtom }: FilterGroupProps) {
-  const [filters, setFilters] = useAtom(filtersAtom);
-
+export function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
   return (
     <Accordion.Root
       className="divide-y divide-primary-7 flex flex-col space-y-5"
