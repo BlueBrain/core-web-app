@@ -35,6 +35,10 @@ export default function ConfirmBtn({
 
   useEffect(() => {
     if (!brainModelConfigId || circuitInfoLodable.state !== 'hasData') return;
+    if (!campaignName || !campaignDescription) {
+      setAllowed(false);
+      return;
+    }
 
     if (!circuitInfo) {
       notification.error({
@@ -45,7 +49,13 @@ export default function ConfirmBtn({
     }
 
     setAllowed(true);
-  }, [circuitInfo, brainModelConfigId, circuitInfoLodable.state]);
+  }, [
+    circuitInfo,
+    brainModelConfigId,
+    circuitInfoLodable.state,
+    campaignName,
+    campaignDescription,
+  ]);
 
   const createSimCamUiConfig = async () => {
     if (!circuitInfo || !session || !brainModelConfigId) return;

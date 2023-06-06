@@ -65,7 +65,7 @@ export default function SimCampaignList() {
   };
 
   const nameRenderFn = (name: string, config: SimulationCampaignUIConfigResource) => (
-    <Link href={generateRedirectUrl(config)}>{name}</Link>
+    <Link href={generateRedirectUrl(config)}>{name || 'unnamed'}</Link>
   );
 
   return (
