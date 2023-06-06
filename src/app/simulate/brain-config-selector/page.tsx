@@ -9,12 +9,9 @@ import { BrainConfigSelector, ConfirmBtn } from '@/components/simulate';
 import { BrainModelConfigResource } from '@/types/nexus';
 import { idAtom as brainModelConfigId } from '@/state/brain-model-config';
 
-function RequiredMessage({ text }: { text: string }) {
-  return (
-    <div className="text-[#F46060] text-sm py-1 h-6">
-      {text.length ? '' : 'This field is required'}
-    </div>
-  );
+function RequiredMessage({ text, fieldName }: { text: string; fieldName: string }) {
+  const message = `This field is required. Please enter the campaign ${fieldName}`;
+  return <div className="text-[#F46060] text-sm py-1 h-6">{text.length ? '' : message}</div>;
 }
 
 export default function BrainConfigSelectorPage() {
@@ -38,7 +35,7 @@ export default function BrainConfigSelectorPage() {
             placeholder="My campaign name..."
             className="block border-b border-b-primary-1 placeholder-primary-3 bg-primary-9 h-7 py-5 w-full"
           />
-          <RequiredMessage text={campaignName} />
+          <RequiredMessage text={campaignName} fieldName="name" />
         </div>
         <div className="mb-14">
           <span className="block text-xl font-bold mb-2">Campaign Description</span>
@@ -49,7 +46,7 @@ export default function BrainConfigSelectorPage() {
             className="block w-full min-h-10 p-3 text-black"
             rows={4}
           />
-          <RequiredMessage text={campaignDescription} />
+          <RequiredMessage text={campaignDescription} fieldName="description" />
         </div>
       </div>
 
