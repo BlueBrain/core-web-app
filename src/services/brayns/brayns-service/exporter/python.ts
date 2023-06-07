@@ -23,7 +23,6 @@ process([
       .join(',\n    ')}
 ])
 `;
-  console.log(code);
   const file = new File([code], filename, {
     type: 'application/python',
   });

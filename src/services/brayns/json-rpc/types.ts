@@ -68,9 +68,8 @@ export interface JsonRpcUpdate {
 }
 
 export interface JsonRpcServiceAddress {
-  host: string;
-  backendPort: number;
-  rendererPort: number;
+  backendHost: string;
+  rendererHost: string;
 }
 
 export function assertJsonRpcServiceAddress(data: unknown): asserts data is JsonRpcServiceAddress {

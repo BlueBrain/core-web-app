@@ -5,6 +5,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-plusplus */
 import React from 'react';
+import { logError } from '@/util/logger';
 
 export interface AtomicStateStorageOptions<T> {
   id: string;
@@ -147,7 +148,7 @@ export default class AtomicState<T> {
 
       this.currentValue = data;
     } catch (ex) {
-      console.error(`Unable to retrieve AtomicState "${storage.id}":`, ex);
+      logError(`Unable to retrieve AtomicState "${storage.id}":`, ex);
     }
   }
 
@@ -166,7 +167,7 @@ export default class AtomicState<T> {
     const hash = content.substring(0, 16);
     const text = content.substring(16);
     if (computeHash(text) !== hash) {
-      console.error('Atomic state has been corrupted!', this.sessionId);
+      logError('Atomic state has been corrupted!', this.sessionId);
       return;
     }
 
@@ -174,7 +175,7 @@ export default class AtomicState<T> {
       const data = JSON.parse(text) as T;
       this.value = data;
     } catch (ex) {
-      console.error('Atomic state is an invalid JSON!', this.sessionId);
+      logError('Atomic state is an invalid JSON!', this.sessionId);
     }
   }
 }

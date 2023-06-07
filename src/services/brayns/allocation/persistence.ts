@@ -11,7 +11,7 @@ const PersistenceInstance = {
   setAllocatedServiceAddress(address: JsonRpcServiceAddress) {
     const now = Date.now();
     const persistence = storageGet();
-    if (persistence.host === address.host && persistence.expiration < now) return;
+    if (persistence.rendererHost === address.rendererHost && persistence.expiration < now) return;
 
     storageSet({
       ...address,
@@ -49,9 +49,8 @@ interface Persistence extends JsonRpcServiceAddress {
 }
 
 const DEFAULT_PERSISTENCE: Persistence = {
-  host: '',
-  backendPort: 0,
-  rendererPort: 0,
+  backendHost: '',
+  rendererHost: '',
   expiration: 0,
 };
 
@@ -59,9 +58,8 @@ function isPersistence(data: unknown): data is Persistence {
   if (!data) return false;
   try {
     assertType(data, {
-      host: 'string',
-      backendPort: 'number',
-      rendererPort: 'number',
+      backendHost: 'string',
+      rendererHost: 'string',
       expiration: 'number',
     });
     return true;

@@ -1,7 +1,9 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import Settings from '../settings';
 import { NODE_STARTUP_SCRIPT } from './startup-scripts';
+import { JobAllocatorServiceInterface, JobStatus } from './types';
 import { logError } from '@/util/logger';
 import { assertType, isString } from '@/util/type-guards';
 
@@ -15,23 +17,17 @@ export interface JobOptions {
   account: string;
 }
 
-export interface JobStatus {
-  hostname: string;
-  status: 'RUNNING' | 'WAITING' | 'ERROR';
-  startTime: Date | null;
-}
-
-export default class UnicoreService {
+export default class UnicoreService implements JobAllocatorServiceInterface {
   constructor(private readonly options: UnicoreserviceOptions) {}
 
   /**
    * @returns Job ID.
    */
-  async createJob({ account }: JobOptions): Promise<string> {
+  async createJob(): Promise<string> {
     const response = await this.post('jobs', {
       Name: 'BCS-Backend',
       Executable: NODE_STARTUP_SCRIPT,
-      Project: account,
+      Project: Settings.UNICORE_ACCOUNT,
       Partition: 'prod',
       Resources: {
         Nodes: 1,
@@ -223,9 +219,9 @@ function parseJobDetailsOldVersion(rawDetailsData: string): JobStatus {
   return jobStatus;
 }
 
-export function joinPath(...pathes: string[]): string {
-  const end = pathes.length - 1;
-  return pathes
+export function joinPath(...paths: string[]): string {
+  const end = paths.length - 1;
+  return paths
     .map((originalPath, index) => {
       let path = originalPath;
       if (index > 0 && path.charAt(0) === '/') path = path.substring(1);

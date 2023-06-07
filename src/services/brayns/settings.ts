@@ -1,6 +1,8 @@
 import { CameraParams } from './types';
 
 const Settings = {
+  PROXY_MASTER_URL: 'https://vsm.kcp.bbp.epfl.ch/',
+  PROXY_SLAVE_URL: 'https://vsm-proxy.kcp.bbp.epfl.ch/',
   UNICORE_URL: 'https://unicore.bbp.epfl.ch:8080/BB5-CSCS/rest/core',
   UNICORE_ACCOUNT: 'proj134',
   UNICORE_PARTITION: 'prod',

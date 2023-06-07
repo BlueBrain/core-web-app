@@ -12,9 +12,9 @@ export function GizmoIcon() {
     >
       <g
         style={{ font: 'bold 12px sans-serif' }}
-        text-anchor="middle"
-        dominant-baseline="middle"
-        stroke-width="2"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        strokeWidth="2"
       >
         <circle cx="0" cy="0" r="64" fill="#fffd" stroke="none" />
         <circle cx="0" cy="0" r="18" fill="#f33" stroke="none" />

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-await-in-loop */
@@ -5,18 +6,18 @@ import Settings from '../settings';
 import Async from '../utils/async';
 import State from '../state';
 import { JsonRpcServiceAddress } from '../json-rpc/types';
-import { BackendAllocationOptions } from './types';
-import UnicoreService, { JobStatus } from './unicore-service';
+import { BackendAllocationOptions, JobAllocatorServiceInterface, JobStatus } from './types';
+import ProxyService from './proxy-service';
 import { logError } from '@/util/logger';
 
 const JOBID_STORAGE_KEY = 'BackendAllocatorService/JobId';
 export default class BackendAllocatorService {
-  private readonly unicoreService: UnicoreService;
+  private readonly jobAllocationService: JobAllocatorServiceInterface;
 
   constructor(token: string) {
-    this.unicoreService = new UnicoreService({
+    this.jobAllocationService = new ProxyService({
       token,
-      url: Settings.UNICORE_URL,
+      url: Settings.PROXY_MASTER_URL,
     });
   }
 
@@ -57,11 +58,10 @@ export default class BackendAllocatorService {
     };
 
     try {
-      opts.onProgress('Contacting UNICORE...');
-      this.jobId = await this.unicoreService.createJob({
-        account: opts.account,
-      });
-      opts.onProgress('Waiting for an available node on BB5...');
+      opts.onProgress('Contacting node allocation service...');
+      this.jobId = await this.jobAllocationService.createJob();
+      opts.onProgress('Waiting for an available node...');
+      await Async.sleep(2000);
       let status: JobStatus = {
         hostname: '?',
         status: 'WAITING',
@@ -69,8 +69,8 @@ export default class BackendAllocatorService {
       };
       let lastDisplayedStatus = '';
       do {
-        await Async.sleep(300);
-        status = await this.unicoreService.getJobStatus(this.jobId);
+        await Async.sleep(1000);
+        status = await this.jobAllocationService.getJobStatus(this.jobId);
         if (status.status !== lastDisplayedStatus) {
           lastDisplayedStatus = status.status;
           const { startTime } = status;
@@ -86,56 +86,18 @@ export default class BackendAllocatorService {
           }
         }
       } while (status.status === 'WAITING');
-      if (status.status === 'ERROR') throw Error('Unable to allocate a node on BB5!');
+      if (status.status === 'ERROR') throw Error('Unable to allocate a node!');
 
-      opts.onProgress('Brayns services are starting...');
-      const backendIsStarted = await this.waitForBraynsServicesToBeUpAndRunning();
-      if (!backendIsStarted) return null;
-
-      opts.onProgress(`Connected to ${status.hostname}.`);
+      opts.onProgress(`Connecting to ${status.hostname}.`);
       return {
-        host: status.hostname,
-        backendPort: Settings.BRAYNS_BACKEND_PORT,
-        rendererPort: Settings.BRAYNS_RENDERER_PORT,
+        backendHost: sanitizeHostname(status.hostname, 'backend'),
+        rendererHost: sanitizeHostname(status.hostname, 'renderer'),
       };
     } catch (ex) {
       logError('Error during UNICORE step:', ex);
       this.logStandardOutputAndError();
       return null;
     }
-  }
-
-  /**
-   * @returns `true` if the backend and Brayns have started successfuly.
-   */
-  private async waitForBraynsServicesToBeUpAndRunning(): Promise<boolean> {
-    const { jobId } = this;
-    let stdout = '';
-    let stderr = '';
-    let backendIsStarted = false;
-    let braynsIsStarted = false;
-    let loop = 60;
-    while (loop > 0) {
-      loop -= 1;
-      await sleep(1000);
-      stdout = await this.loadStdout(jobId);
-      if (!braynsIsStarted && includesLine(stdout, 'Brayns service started.')) {
-        braynsIsStarted = true;
-        console.log('Brayns Renderer has started!');
-      }
-      stderr = await this.loadStderr(jobId);
-      if (!backendIsStarted && includesLine(stderr, 'BCS Server is listening')) {
-        backendIsStarted = true;
-        console.log('Brayns Backend has started!');
-      }
-      if (braynsIsStarted && backendIsStarted) {
-        return true;
-      }
-    }
-    // If the connection is not established after 60 seconds,
-    // we display the content of stdout and stderr for diagnostic.
-    this.logStandardOutputAndError();
-    return false;
   }
 
   readonly logStandardOutputAndError = async (tailing = true) => {
@@ -149,7 +111,7 @@ export default class BackendAllocatorService {
 
   private async loadStdout(jobId: string): Promise<string> {
     try {
-      return (await this.unicoreService.loadTextFile(jobId, 'stdout')) ?? '';
+      return (await this.jobAllocationService.loadTextFile(jobId, 'stdout')) ?? '';
     } catch (ex) {
       return '<Empty StdOut>';
     }
@@ -157,21 +119,11 @@ export default class BackendAllocatorService {
 
   private async loadStderr(jobId: string): Promise<string> {
     try {
-      return (await this.unicoreService.loadTextFile(jobId, 'stderr')) ?? '';
+      return (await this.jobAllocationService.loadTextFile(jobId, 'stderr')) ?? '';
     } catch (ex) {
       return '<Empty StdErr>';
     }
   }
-}
-
-async function sleep(timeout: number): Promise<void> {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, timeout);
-  });
-}
-
-function includesLine(content: string, stringToFind: string): boolean {
-  return content.split('\n').filter((line) => line.includes(stringToFind)).length > 0;
 }
 
 function cssBackground(color: string) {
@@ -190,4 +142,15 @@ function tail(text: string, limit = 25): string {
     }
   }
   return text;
+}
+
+function sanitizeHostname(host: string, target: 'backend' | 'renderer'): string {
+  const PREFIXES_TO_REMOVE = ['https://', 'http://'];
+  const prefixedHostName = host.replace('[SERVER]', target);
+  for (const prefixToRemove of PREFIXES_TO_REMOVE) {
+    if (prefixedHostName.startsWith(prefixToRemove)) {
+      return prefixedHostName.substring(prefixToRemove.length);
+    }
+  }
+  return prefixedHostName;
 }

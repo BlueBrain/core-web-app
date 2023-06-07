@@ -64,7 +64,7 @@ export default class BraynsWrapper implements BraynsWrapperInterface {
         background_color: [0.002, 0.008, 0.051, 0],
       });
       try {
-        await renderer.exec('set-framebuffer-progressive', { scale: 6 });
+        await renderer.exec('set-framebuffer-progressive', { scale: 8 });
       } catch (ex) {
         logError('Progressive FrameBuffer setting failed!', ex);
       }
@@ -99,6 +99,8 @@ export default class BraynsWrapper implements BraynsWrapperInterface {
         color: [0.5, 0.5, 1],
         intensity: 1,
       });
+      const version = await renderer.exec('get-version');
+      console.log('Brayns has been started with this version:', version);
     } catch (ex) {
       logError('Unable to initialize BraynsWrapper:', ex);
       const bas = new BackendAllocatorService('');

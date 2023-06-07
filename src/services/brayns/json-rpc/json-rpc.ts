@@ -244,7 +244,6 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
   }
 
   async connect(): Promise<void> {
-    console.log('%c%s', 'font-size:200%', 'Connecting', this.getWebSocketURL());
     for (let maxLoops = 0; maxLoops < 5; maxLoops += 1) {
       const success = await this.actualConnect();
       if (success) return;
@@ -357,7 +356,9 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
 
   private getWebSocketURL() {
     const { host, port } = this;
-    return `${this.secure ? 'wss' : 'ws'}://${getFullQualifiedName(host)}:${port}`;
+    return `${this.secure ? 'wss' : 'ws'}://${getFullQualifiedName(host)}${
+      port > 0 ? `:${port}` : ''
+    }`;
   }
 
   private readonly handleMessage = (event: MessageEvent) => {
@@ -478,7 +479,6 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
       const query = pendingQueries.get(key);
       if (!query) continue;
 
-      console.log('###', query.entryPointName, query.param);
       query.resolve({
         entrypoint: query.entryPointName,
         code: 666,
@@ -553,7 +553,7 @@ function getDuration(query: PendingQuery) {
 const RX_BB5_NODE = /^r[0-9]+i[0-9]+n[0-9]+$/gu;
 
 /**
- * Host o type `r2i7n31` will be converted in `r2i7n31.bbp.epfl.ch`.
+ * Host of type `r2i7n31` will be converted in `r2i7n31.bbp.epfl.ch`.
  */
 function getFullQualifiedName(host: string): string {
   RX_BB5_NODE.lastIndex = -1;
@@ -565,5 +565,6 @@ function getFullQualifiedName(host: string): string {
 
 function extractHostAndPort(hostAndPort: string): [host: string, port: number] {
   const [host, tail] = hostAndPort.split(':');
-  return [host, parseInt(tail, 10)];
+  const port = parseInt(tail, 10);
+  return [host, Number.isNaN(port) ? 0 : port];
 }

@@ -24,7 +24,20 @@ export default class Camera {
         this.nextQueryParams = null;
         const height = Calc.distance(params.position, params.target);
         await this.renderer.exec('set-camera-orthographic', { height });
-        await this.renderer.exec('set-camera-view', params);
+        /**
+         * We set the position far away to avoid clipping from the near plane.
+         */
+        const position = Calc.addVectors(
+          params.target,
+          Calc.scaleVector(
+            Calc.normalizeVector(Calc.subVectors(params.position, params.target)),
+            1e6
+          )
+        );
+        await this.renderer.exec('set-camera-view', {
+          ...params,
+          position,
+        });
       } while (this.nextQueryParams);
     } finally {
       this.queryInProgress = false;
