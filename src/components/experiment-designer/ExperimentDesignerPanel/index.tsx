@@ -11,11 +11,8 @@ import { HomeIcon } from '@/components/icons';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 import FooterLink from '@/components/BrainConfigPanel/FooterLink';
-import {
-  campaignNameAtom,
-  campaignDescriptionAtom,
-  simCampaignUserAtom,
-} from '@/state/experiment-designer';
+import { campaignNameAtom, campaignDescriptionAtom } from '@/state/simulate';
+import { simCampaignUserAtom } from '@/state/experiment-designer';
 
 const configAtomLoadable = loadable(configAtom);
 const campaignUserAtomLoadable = loadable(simCampaignUserAtom);

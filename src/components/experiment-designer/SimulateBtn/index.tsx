@@ -7,11 +7,8 @@ import {
   SimulationPlaceholders,
 } from '@/services/bbp-workflow/config';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
-import {
-  campaignNameAtom,
-  campaignDescriptionAtom,
-  expDesignerConfigAtom,
-} from '@/state/experiment-designer';
+import { campaignNameAtom, campaignDescriptionAtom } from '@/state/simulate';
+import { expDesignerConfigAtom } from '@/state/experiment-designer';
 import circuitAtom from '@/state/circuit';
 
 const loadableExpDesAtom = loadable(expDesignerConfigAtom);

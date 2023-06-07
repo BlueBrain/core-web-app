@@ -4,7 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useAtom } from 'jotai';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import { campaignNameAtom, campaignDescriptionAtom } from '@/state/experiment-designer';
+import { campaignNameAtom, campaignDescriptionAtom } from '@/state/simulate';
 import { BrainConfigSelector, ConfirmBtn } from '@/components/simulate';
 import { BrainModelConfigResource } from '@/types/nexus';
 import { idAtom as brainModelConfigId } from '@/state/brain-model-config';

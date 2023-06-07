@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { useAtom } from 'jotai';
 
-import { searchConfigListTypeAtom } from '@/state/experiment-designer';
+import { searchConfigListTypeAtom } from '@/state/simulate';
 import { SettingsIcon } from '@/components/icons';
 import UserIcon from '@/components/icons/User';
 import { classNames } from '@/util/utils';

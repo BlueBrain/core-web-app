@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
 
-import { searchSimCampUIConfigListStringAtom } from '@/state/experiment-designer';
+import { searchSimCampUIConfigListStringAtom } from '@/state/simulate';
 
 export default function SearchInput() {
   const setSearchString = useSetAtom(searchSimCampUIConfigListStringAtom);

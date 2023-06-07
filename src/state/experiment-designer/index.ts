@@ -31,8 +31,6 @@ import { autoSaveDebounceInterval } from '@/config';
 import {
   getBuiltBrainModelConfigsQuery,
   getGeneratorTaskActivityByCircuitIdQuery,
-  getPersonalSimCampConfigsQuery,
-  getSimCampConfigsQuery,
 } from '@/queries/es';
 
 const nodeSetsAPIUrl = 'https://cells.sbo.kcp.bbp.epfl.ch/circuit/node_sets?input_path=';
@@ -150,9 +148,6 @@ export const targetListAtom = atom<Promise<string[]>>(async (get) => {
   return fetchTargetsByCircuit(detailedCircuit, session);
 });
 
-export const campaignNameAtom = atom('');
-export const campaignDescriptionAtom = atom('');
-
 export const setWorkflowExecutionAtom = atom<null, [string], Promise<void>>(
   null,
   async (get, set, workflowExecutionUrl) => {
@@ -180,36 +175,6 @@ export const setWorkflowExecutionAtom = atom<null, [string], Promise<void>>(
 
     await updateResource(updatedResource, updatedResource?._rev, session);
     set(triggerRefetchAtom);
-  }
-);
-
-export const searchSimCampUIConfigListStringAtom = atom<string>('');
-
-type SearchType = 'public' | 'personal';
-
-export const searchConfigListTypeAtom = atom<SearchType>('public');
-
-export const simCampaingListAtom = atom<Promise<SimulationCampaignUIConfigResource[]>>(
-  async (get) => {
-    const session = get(sessionAtom);
-    const searchType = get(searchConfigListTypeAtom);
-    const searchString = get(searchSimCampUIConfigListStringAtom);
-
-    get(refetchTriggerAtom);
-
-    if (!session) return [];
-
-    let query;
-
-    if (searchType === 'public') {
-      query = getSimCampConfigsQuery(searchString);
-    } else if (searchType === 'personal') {
-      query = getPersonalSimCampConfigsQuery(session.user.username, searchString);
-    } else {
-      throw new Error('SearchType is not supported');
-    }
-
-    return queryES<SimulationCampaignUIConfigResource>(query, session);
   }
 );
 
