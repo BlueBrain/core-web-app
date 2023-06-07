@@ -4,8 +4,10 @@ export interface Entity {
   '@context': string | string[];
 }
 
+export type DateISOString = string;
+
 export interface ResourceMetadata {
-  _createdAt: string;
+  _createdAt: DateISOString;
   _createdBy: string;
   _deprecated: boolean;
   _incoming: string;
@@ -13,7 +15,7 @@ export interface ResourceMetadata {
   _project: string;
   _rev: number;
   _self: string;
-  _updatedAt: string;
+  _updatedAt: DateISOString;
   _updatedBy: string;
 }
 
@@ -23,7 +25,7 @@ export type FileMetadata = {
   '@id': string;
   '@type': 'File';
   _bytes: number;
-  _createdAt: string;
+  _createdAt: DateISOString;
   _createdBy: string;
   _deprecated: boolean;
   _digest: {

@@ -1,6 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
-import { ContributionEntity, AgentOrIsPartOfOrLicense } from '@/types/nexus';
+import { ContributionEntity, AgentOrIsPartOfOrLicense, DateISOString } from '@/types/nexus';
 import { Filter } from '@/components/Filter/types';
 
 export type TraceData = {
@@ -286,7 +286,7 @@ export type DeltaResource<
   simulations?: Simulation[];
   latestRevision?: number | null | undefined;
   _constrainedBy: string;
-  _createdAt: string;
+  _createdAt: DateISOString;
   _createdBy: string;
   _deprecated: boolean;
   _incoming: string;

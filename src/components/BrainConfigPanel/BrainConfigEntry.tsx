@@ -1,5 +1,4 @@
 import { CopyOutlined, EditOutlined, ArrowRightOutlined } from '@ant-design/icons';
-import moment from 'moment';
 import { useSetAtom } from 'jotai';
 import { useSession } from 'next-auth/react';
 
@@ -10,6 +9,7 @@ import { collapseId } from '@/util/nexus';
 import useCloneConfigModal from '@/hooks/config-clone-modal';
 import useRenameConfigModal from '@/hooks/config-rename-modal';
 import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
+import timeElapsedFromToday from '@/util/date';
 
 type BrainConfigEntryProps = {
   config: BrainModelConfigResource;
@@ -28,7 +28,7 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
   const uriEncodedId = encodeURIComponent(collapseId(config['@id']));
   const href = `${baseHref}?brainModelConfigId=${uriEncodedId}`;
 
-  const createdAtFormatted = moment(config._createdAt).fromNow();
+  const createdAtFormatted = timeElapsedFromToday(config._createdAt);
 
   const openCloneModal = () => {
     createCloneModal(config, triggerRefetchAll);

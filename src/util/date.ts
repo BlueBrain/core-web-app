@@ -1,9 +1,10 @@
+import { DateISOString } from '@/types/nexus';
 /**
  * Calculate time elapsed from today to the given day
  *
  * @param stringDate the given date in string format
  */
-export default function timeElapsedFromToday(stringDate?: string) {
+export default function timeElapsedFromToday(stringDate?: DateISOString) {
   if (!stringDate) return null;
   const date = new Date(stringDate);
   const today = new Date();

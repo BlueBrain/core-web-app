@@ -221,6 +221,8 @@ export const getGeneratorTaskActivitiesQuery = () => ({
   },
 });
 
+const defaultCreationDateSort = { _createdAt: 'desc' };
+
 export const getBuiltBrainModelConfigsQuery = (
   searchString: string,
   synapseConfigIds: string[]
@@ -243,6 +245,7 @@ export const getBuiltBrainModelConfigsQuery = (
       ].filter(Boolean),
     },
   },
+  sort: [defaultCreationDateSort],
 });
 
 export const getSimCampConfigsQuery = (searchString: string) => ({
@@ -263,6 +266,7 @@ export const getSimCampConfigsQuery = (searchString: string) => ({
       ].filter(Boolean),
     },
   },
+  sort: [defaultCreationDateSort],
 });
 
 export const getPersonalSimCampConfigsQuery = (username: string, searchString: string = '') => ({
@@ -284,6 +288,7 @@ export const getPersonalSimCampConfigsQuery = (username: string, searchString: s
       ].filter(Boolean),
     },
   },
+  sort: [defaultCreationDateSort],
 });
 
 export const getGeneratorTaskActivityByCircuitIdQuery = (detailedCircuitId: string) => ({
