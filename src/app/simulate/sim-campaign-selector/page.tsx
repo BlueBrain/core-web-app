@@ -4,6 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 
 import Link from '@/components/Link';
 import SimCampaignList from '@/components/simulate/SimCampaignList';
+import LaunchedSimCampaignList from '@/components/simulate/LaunchedSimCampaignList';
 
 export default function SimulationCampaignSelectorPage() {
   return (
@@ -18,6 +19,7 @@ export default function SimulationCampaignSelectorPage() {
         </button>
       </Link>
 
+      <LaunchedSimCampaignList />
       <SimCampaignList />
     </>
   );

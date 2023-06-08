@@ -21,6 +21,7 @@ type ConfigListProps<T> = {
   nameRenderFn?: (name: string, config: T) => ReactNode;
   children?: ReactNode;
   showCreationDate?: boolean;
+  rowClassName?: ((config: T) => string) | undefined | string;
 };
 
 const dateRenderer = (createdAtStr: DateISOString) => {
@@ -37,6 +38,7 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
   nameRenderFn = (name) => name,
   children,
   showCreationDate = true,
+  rowClassName = undefined,
 }: ConfigListProps<T>) {
   return (
     <ConfigProvider theme={tableTheme}>
@@ -48,6 +50,7 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
         pagination={configs.length > 10 ? { defaultPageSize: 10 } : false}
         rowKey="@id"
         rowSelection={rowSelection}
+        rowClassName={rowClassName}
       >
         <Column
           title="NAME"
