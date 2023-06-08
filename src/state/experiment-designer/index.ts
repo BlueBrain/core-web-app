@@ -110,6 +110,7 @@ const updateConfigPayloadAtom = atom<null, [], Promise<void>>(null, async (get, 
   );
 
   configResource.distribution = createDistribution(updatedFile);
+  delete configResource.wasInfluencedBy;
   await updateResource(configResource, configResource?._rev, session);
   set(triggerRefetchAtom);
 });
