@@ -2,7 +2,12 @@
 
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import Detail, { DetailProps, ListField } from '@/components/explore-section/Detail';
+import Detail, { DetailProps } from '@/components/explore-section/Detail';
+import useDetailPage from '@/hooks/useDetailPage';
+import usePathname from '@/hooks/pathname';
+import Contributors from '@/components/explore-section/Contributors';
+import License from '@/components/explore-section/License';
+import Species from '@/components/explore-section/Species';
 
 const fields = [
   {
@@ -16,7 +21,7 @@ const fields = [
   },
   {
     title: 'Species',
-    field: ({ species }) => species,
+    field: <Species />,
   },
   {
     title: 'Reference',
@@ -32,7 +37,7 @@ const fields = [
   },
   {
     title: ({ contributors }) => (contributors?.length === 1 ? 'Contributor' : 'Contributors'),
-    field: ({ contributors }) => <ListField items={contributors} />,
+    field: <Contributors />,
   },
   {
     title: 'Created On',
@@ -40,7 +45,7 @@ const fields = [
   },
   {
     title: 'License',
-    field: ({ license }) => license,
+    field: <License />,
   },
   {
     title: 'Thickness',
@@ -53,6 +58,8 @@ const fields = [
 ] as DetailProps[];
 
 export default function LayerThicknessDetailPage() {
+  useDetailPage(usePathname());
+
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields} links={[{ url: '/explore/layer-thickness' }]} />

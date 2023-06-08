@@ -2,6 +2,7 @@
 
 import { Dispatch } from 'react';
 import { SetStateAction } from 'jotai';
+import { Tooltip } from 'antd';
 import { ColumnProps, ColumnType } from 'antd/lib/table';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import { format, parseISO, isValid } from 'date-fns';
@@ -45,8 +46,8 @@ const useExploreColumns = (
 
     return (
       <div className={styles.tableHeader}>
-        {term.title}
         {icon}
+        <Tooltip title={term.title}>{term.title}</Tooltip>
       </div>
     );
   };

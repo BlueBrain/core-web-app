@@ -1,40 +1,11 @@
 import find from 'lodash/find';
-import { AnnotationEntity, DeltaResource, Series, IdLabel } from '@/types/explore-section';
+import { AnnotationEntity, DeltaResource, Series } from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
 
 const seriesArrayFunc = (series: Series | Series[] | undefined) => series && ensureArray(series);
 
 const annotationArrayFunc = (annotation: AnnotationEntity[] | undefined | null) =>
   annotation && ensureArray(annotation);
-
-/**
- * DeltaResource is the raw data interface recived from a reequest to nexus
- * DetailAtomResource used by the detailAtom variable extends DeltaResource using response from formatContributors
- * @param {import("./types/explore-section").DeltaResource} contributor
- */
-export const formatContributors = (contributor: DeltaResource | null): IdLabel => {
-  if (!contributor) return {};
-
-  const { name, familyName, givenName, '@id': id, '@type': type } = contributor;
-
-  if (type && type.includes('Organization')) return {};
-  if (name) return { id, label: name };
-  if (familyName && givenName) return { id, label: `${givenName} ${familyName}` };
-
-  return { id };
-};
-
-/**
- * Takes array of contributor Delta resources and returns an array of names
- * @param {import("./types/explore-section").DeltaResource[]} contributors
- */
-export const contributorSelectorFn = (contributors: DeltaResource[] | null) => {
-  if (!contributors) return null;
-  const result = contributors
-    .map((contributor) => formatContributors(contributor as DeltaResource))
-    .filter((contributor) => contributor.name !== '' && contributor.name);
-  return result.length > 0 ? result : null;
-};
 
 /**
  * Takes delta resource and extracts subject age

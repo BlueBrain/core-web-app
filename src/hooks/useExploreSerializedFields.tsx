@@ -6,6 +6,13 @@ import { ensureArray } from '@/util/nexus';
 import timeElapsedFromToday from '@/util/date';
 import { NO_DATA_STRING } from '@/constants/explore-section';
 import { formatNumber } from '@/util/common';
+import {
+  subjectAgeSelectorFn,
+  weightSelectorFn,
+  eTypeSelectorFn,
+  mTypeSelectorFn,
+  semSelectorFn,
+} from '@/state/explore-section/selector-functions';
 
 export default function useExploreSerializedFields(
   detail: DeltaResource | null
@@ -87,23 +94,14 @@ export default function useExploreSerializedFields(
 
   return {
     description: detail?.description,
-    species: detail?.species,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
     numberOfMeasurement: detail?.numberOfMeasurement,
-    subjectSpecies: detail?.subjectSpecies,
-    mType: detail?.mType,
     createdBy: detail?.createdBy,
-    subjectAge: detail?.subjectAge,
     meanPlusMinusStd: serializeMeanPlusMinusStd(),
     numberOfCells: serializeStatisticFields('N'),
-    sem: serializeStatisticFields('standard error of the mean'),
     standardDeviation: serializeStatisticFields('standard deviation'),
     creationDate: serializeCreationDate(),
     thickness: serializeThickness(),
-    eType: detail?.eType,
-    contributors: detail?.contributors,
-    weight: detail?.weight,
-    license: detail?.license?.name,
     layer: detail?.brainLocation?.layer?.label,
     brainConfiguration: detail?.brainConfiguration,
     attribute: detail?.attribute,
@@ -112,5 +110,10 @@ export default function useExploreSerializedFields(
     tags: formatTags(),
     updatedAt: timeElapsedFromToday(detail?._updatedAt),
     dimensions: formatDimensions(),
+    subjectAge: subjectAgeSelectorFn(detail),
+    weight: weightSelectorFn(detail),
+    mType: mTypeSelectorFn(detail),
+    eType: eTypeSelectorFn(detail),
+    sem: semSelectorFn(detail),
   };
 }

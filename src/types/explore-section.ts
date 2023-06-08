@@ -131,10 +131,10 @@ export interface OptionalExploreSectionSerializedFields {
   meanstd?: string | number;
   mean?: string | number;
   standardDeviation?: string | number;
-  sem?: string | number;
+  sem?: string | number | void;
   series?: Series[];
   numberOfCells?: string | number;
-  weight?: string | number;
+  weight?: string | number | void;
   conditions?: string;
 }
 
@@ -405,26 +405,26 @@ export interface SortState {
 
 export interface SerializedDeltaResource extends OptionalExploreSectionSerializedFields {
   description?: string;
-  species?: string;
+  speciesLabel?: string | null;
   brainRegion?: string;
   numberOfMeasurement?: number;
   subjectSpecies?: string;
   createdBy?: string;
-  subjectAge?: string;
   meanPlusMinusStd?: ReactNode | null;
   creationDate?: ReactNode;
   thickness?: ReactNode;
   brainConfiguration?: string;
-  mType?: string;
-  eType?: string;
+  subjectAge?: string | void;
+  mType?: string | void;
+  eType?: string | void;
   attribute?: string;
   status?: string;
   tags?: ReactNode;
   updatedAt?: string | null;
   dimensions?: ReactNode;
-  contributors?: IdLabel[];
+  contributors?: IdLabel[] | null;
   layer?: string;
-  license?: string;
+  license?: string | null;
 }
 
 export type DetailResource = SerializedDeltaResource & DeltaResource;

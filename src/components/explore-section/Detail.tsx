@@ -1,13 +1,11 @@
-import { Key, useEffect, ReactNode } from 'react';
-import { useSetAtom, useAtomValue } from 'jotai';
+import { Key, ReactNode } from 'react';
+import { useAtomValue } from 'jotai';
 import Error from 'next/error';
 import { useSession } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
 import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
-import createDetailAtoms from '@/state/explore-section/detail-atoms-constructor';
+import { detailAtom } from '@/state/explore-section/detail-atoms-constructor';
 import usePathname from '@/hooks/pathname';
-import { setInfoWithPath } from '@/util/explore-section/detail-view';
 import { DeltaResource, SideLink, SerializedDeltaResource, IdLabel } from '@/types/explore-section';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
@@ -32,7 +30,7 @@ function Field({ title, field, className }: FieldProps) {
   );
 }
 
-export function ListField({ items }: { items: IdLabel[] | undefined }) {
+export function ListField({ items }: { items: IdLabel[] | undefined | null }) {
   if (!items) return null;
   return (
     <ul>
@@ -45,7 +43,6 @@ export function ListField({ items }: { items: IdLabel[] | undefined }) {
   );
 }
 
-const { infoAtom, detailAtom } = createDetailAtoms();
 const detailAtomLoadable = loadable(detailAtom);
 
 export default function Detail({
@@ -59,13 +56,7 @@ export default function Detail({
 }) {
   const { data: session } = useSession();
   const path = usePathname();
-  const params = useSearchParams();
-  const rev = params?.get('rev');
   const detail = useAtomValue(detailAtomLoadable);
-
-  const setInfo = useSetAtom(infoAtom);
-
-  useEffect(() => setInfoWithPath(path, setInfo, rev), [path, rev, setInfo]);
 
   const serializedFields = useExploreSerializedFields(
     detail.state === 'hasData' ? detail?.data : null
@@ -92,11 +83,7 @@ export default function Detail({
       <DetailsPageSideBackLink links={links} />
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <div className="flex flex-col gap-10 max-w-screen-2xl">
-          <DetailHeaderName
-            detail={detail.data}
-            url={path}
-            latestRevision={detail.data?.latestRevision}
-          />
+          <DetailHeaderName detail={detail.data} url={path} />
           <div className="grid gap-4 grid-cols-6">
             {fields.map(
               ({ className, field, title }) =>
