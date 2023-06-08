@@ -22,3 +22,25 @@ export default function timeElapsedFromToday(stringDate?: DateISOString) {
   // if its more than a year, return amount of years
   return rtf.format(-yearsElapsed, 'year');
 }
+
+const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  hour12: false,
+};
+
+export function dateColumnInfoToRender(createdAtStr: DateISOString) {
+  if (!createdAtStr) return null;
+
+  const createdAt = new Date(createdAtStr);
+  const tooltip = new Intl.DateTimeFormat('en-GB', dateTimeFormatOptions).format(createdAt);
+  const text = timeElapsedFromToday(createdAtStr);
+  return {
+    tooltip,
+    text,
+  };
+}
