@@ -309,3 +309,44 @@ export const getGeneratorTaskActivityByCircuitIdQuery = (detailedCircuitId: stri
     },
   },
 });
+
+export const getLaunchedSimCampQuery = (searchString: string) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'SimulationCampaignUIConfig' } },
+              { exists: { field: 'wasInfluencedBy.@id' } },
+            ],
+          },
+        },
+        idExistsFilter,
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
+    },
+  },
+});
+
+export const getWorkflowExecutionsQuery = (filterIds: string[] = []) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'WorkflowExecution' } },
+              { terms: { '@id': filterIds } },
+            ],
+          },
+        },
+      ],
+    },
+  },
+  sort: [{ startedAtTime: 'desc' }],
+});
