@@ -74,7 +74,7 @@ export default function CheckList({
   const handleCheckedChange = getCheckedChangeHandler(filters, setFilters, filter);
 
   return (
-    <ul className="divide-y divide-white/20 flex flex-col space-y-3 max-h-52 overflow-y-scroll">
+    <ul className="divide-y divide-white/20 flex flex-col space-y-3">
       {options?.map(({ checked, count, key }) => (
         <CheckListOption
           checked={checked}

@@ -1,7 +1,7 @@
 import buildElasticsearchSort from './sorters';
 import { createSearchStringQueryFilter } from '@/queries/es';
 import { Filter } from '@/components/Filter/types';
-import buildAggregations from '@/queries/explore-section/aggregations';
+import buildAggsAndFilter from '@/queries/explore-section/aggregations';
 
 export default function fetchDataQuery(
   size: number,
@@ -11,7 +11,6 @@ export default function fetchDataQuery(
   sortState: any,
   searchString: string = ''
 ) {
-  const { aggregations, ...filtersObject } = buildAggregations(filters);
   const sortQuery = buildElasticsearchSort(sortState);
 
   return {
@@ -38,13 +37,6 @@ export default function fetchDataQuery(
         ],
       },
     },
-    aggs: aggregations,
-    ...(Object.values(filtersObject).filter(Boolean).length && {
-      post_filter: {
-        bool: {
-          filter: Object.values(filtersObject).filter(Boolean),
-        },
-      },
-    }),
+    ...buildAggsAndFilter(filters),
   };
 }
