@@ -31,6 +31,7 @@ import {
   MacroConnectomeConfigPayload,
   WholeBrainConnectomeStrength,
   SimulationCampaignUIConfigResource,
+  SimulationCampaignUIConfig,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -613,19 +614,22 @@ export async function cloneSimCampUIConfig(
   description: string,
   session: Session
 ) {
-  const simCampUIConfigSource = await fetchResourceSourceById<SimulationCampaignUIConfigResource>(
+  const simCampUIConfig = await fetchResourceSourceById<SimulationCampaignUIConfig>(
     configId,
     session
   );
 
-  const payload = await fetchJsonFileByUrl(simCampUIConfigSource.distribution.contentUrl, session);
+  const payload = await fetchJsonFileByUrl(simCampUIConfig.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'sim-campaign-ui-config.json', session);
 
-  const clonedConfig: SimulationCampaignUIConfigResource = {
-    ...simCampUIConfigSource,
+  const clonedConfig: SimulationCampaignUIConfig = {
+    '@context': simCampUIConfig['@context'],
+    '@type': simCampUIConfig['@type'],
     '@id': createId('simulationcampaignuiconfig'),
     distribution: createDistribution(clonedPayloadMeta),
+    used: simCampUIConfig.used,
+    contribution: simCampUIConfig.contribution,
     name,
     description,
   };

@@ -5,6 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Spin } from 'antd';
+import { useRouter } from 'next/navigation';
 
 import { ExperimentDesignerTopTabs, SimulateBtn } from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
@@ -16,10 +17,10 @@ import {
   remoteConfigPayloadAtom,
   setConfigPayloadAtom,
   savedConfigAtom,
-  setWorkflowExecutionAtom,
+  setWorkflowExecutionAndCloneAtom,
   brainModelConfigIdFromSimCampUIConfigIdAtom,
 } from '@/state/experiment-designer';
-import { idAtom as brainModelConfigId } from '@/state/brain-model-config';
+import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
 const loadableDerivedBrainModelConfigIdAtom = loadable(brainModelConfigIdFromSimCampUIConfigIdAtom);
@@ -35,9 +36,10 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   const [isLoading, setIsLoading] = useState(true);
   const saveConfigDebounced = useSetAtom(setConfigPayloadAtom);
   const setSavedConfig = useSetAtom(savedConfigAtom);
-  const setWorkflowExecution = useSetAtom(setWorkflowExecutionAtom);
+  const setWorkflowExecutionAndClone = useSetAtom(setWorkflowExecutionAndCloneAtom);
   const derivedBrainModelConfigIdLoadable = useAtomValue(loadableDerivedBrainModelConfigIdAtom);
-  const setBrainModelConfigId = useSetAtom(brainModelConfigId);
+  const setBrainModelConfigId = useSetAtom(brainModelConfigIdAtom);
+  const router = useRouter();
 
   useAuth(true);
   useSimulationCampaignUIConfig();
@@ -67,10 +69,24 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
     setBrainModelConfigId(derivedBrainModelConfigIdLoadable.data);
   }, [derivedBrainModelConfigIdLoadable, setBrainModelConfigId]);
 
+  const replaceConfigQueryParam = (clonedConfigId: string) => {
+    const collapsedSimCampUIConfigInAtom = clonedConfigId?.split('/').pop();
+    if (!collapsedSimCampUIConfigInAtom) return;
+
+    const newSearchParams = new URLSearchParams();
+    newSearchParams.set('simulationCampaignUIConfigId', collapsedSimCampUIConfigInAtom);
+    const seachParamsStr = newSearchParams.toString();
+    const baseUrl = window.location.origin + window.location.pathname;
+    const newUrl = `${baseUrl}?${seachParamsStr}`;
+    router.replace(newUrl);
+  };
+
   const onLaunched = (nexusUrl: string) => {
     if (!nexusUrl) return;
 
-    setWorkflowExecution(nexusUrl);
+    setWorkflowExecutionAndClone(nexusUrl, (clonedConfigId: string) => {
+      replaceConfigQueryParam(clonedConfigId);
+    });
   };
 
   return (
