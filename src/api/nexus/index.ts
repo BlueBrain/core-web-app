@@ -30,6 +30,7 @@ import {
   MacroConnectomeConfig,
   MacroConnectomeConfigPayload,
   WholeBrainConnectomeStrength,
+  SimulationCampaignUIConfigResource,
 } from '@/types/nexus';
 import {
   getBrainModelConfigsByNameQuery,
@@ -604,4 +605,53 @@ export async function getVariantTaskConfigUrlFromCircuit(
   );
 
   return `${variantTaskConfig._self}?rev=${variantTaskActivity.used_rev}`;
+}
+
+export async function cloneSimCampUIConfig(
+  configId: string,
+  name: string,
+  description: string,
+  session: Session
+) {
+  const simCampUIConfigSource = await fetchResourceSourceById<SimulationCampaignUIConfigResource>(
+    configId,
+    session
+  );
+
+  const payload = await fetchJsonFileByUrl(simCampUIConfigSource.distribution.contentUrl, session);
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'sim-campaign-ui-config.json', session);
+
+  const clonedConfig: SimulationCampaignUIConfigResource = {
+    ...simCampUIConfigSource,
+    '@id': createId('simulationcampaignuiconfig'),
+    distribution: createDistribution(clonedPayloadMeta),
+    name,
+    description,
+  };
+
+  return createResource<SimulationCampaignUIConfigResource>(clonedConfig, session);
+}
+
+export async function renameSimCampUIConfig(
+  config: SimulationCampaignUIConfigResource,
+  name: string,
+  description: string,
+  session: Session
+) {
+  const configId = config['@id'];
+  const rev = config._rev;
+
+  const simCampUIConfigSource = await fetchResourceSourceById<SimulationCampaignUIConfigResource>(
+    configId,
+    session
+  );
+
+  const renamedConfig = {
+    ...simCampUIConfigSource,
+    name,
+    description,
+  };
+
+  return updateResource(renamedConfig, rev, session);
 }

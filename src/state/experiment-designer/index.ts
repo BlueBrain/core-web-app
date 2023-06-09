@@ -105,7 +105,7 @@ const updateConfigPayloadAtom = atom<null, [], Promise<void>>(null, async (get, 
   const updatedFile = await updateJsonFileByUrl(
     configResource?.distribution.contentUrl,
     localConfigPayload,
-    'sim-campaing-ui-config.json',
+    'sim-campaign-ui-config.json',
     session
   );
 

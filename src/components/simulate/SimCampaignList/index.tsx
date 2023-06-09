@@ -17,10 +17,7 @@ import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
 import useCloneConfigModal from '@/hooks/config-clone-modal';
 import useRenameModal from '@/hooks/config-rename-modal';
-import {
-  cloneSimCampUIConfig,
-  renameSimCampUIConfig,
-} from '@/services/bbp-workflow/simulationHelper';
+import { cloneSimCampUIConfig, renameSimCampUIConfig } from '@/api/nexus';
 import Link from '@/components/Link';
 import { EyeIcon } from '@/components/icons';
 
