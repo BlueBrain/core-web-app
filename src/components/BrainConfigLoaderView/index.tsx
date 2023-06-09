@@ -97,7 +97,7 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
 
   useEffect(() => {
     setSearchString('');
-  }, []);
+  }, [setSearchString]);
 
   return (
     <div className={styles.container}>

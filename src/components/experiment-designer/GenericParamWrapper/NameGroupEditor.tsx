@@ -38,7 +38,7 @@ export default function NameGroupEditor({ paramAtom, namePrefix, groupIndex }: P
       return namePrefix + base1Index;
     }
     return groupInfo.name;
-  }, [groupInfo.name]);
+  }, [groupInfo.name, groupIndex]);
 
   useEffect(() => {
     if (groupInfo.name === groupName) return;
@@ -47,7 +47,7 @@ export default function NameGroupEditor({ paramAtom, namePrefix, groupIndex }: P
       ...oldAtomData,
       name: groupName,
     }));
-  }, [groupName, groupInfo.name]);
+  }, [groupName, groupInfo.name, setGroupInfo]);
 
   return (
     <div className="flex w-1/2">

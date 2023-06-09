@@ -30,7 +30,7 @@ export default function BrainConfigSelector({ onSelect }: Props) {
 
   useEffect(() => {
     setSearchString('');
-  }, []);
+  }, [setSearchString]);
 
   const configsLoadable = useAtomValue(loadableConfigListAtom);
 

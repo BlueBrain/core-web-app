@@ -65,7 +65,7 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
 
     // setting the brainModelConfig from simCampUIConfig query param
     setBrainModelConfigId(derivedBrainModelConfigIdLoadable.data);
-  }, [derivedBrainModelConfigIdLoadable]);
+  }, [derivedBrainModelConfigIdLoadable, setBrainModelConfigId]);
 
   const onLaunched = (nexusUrl: string) => {
     if (!nexusUrl) return;

@@ -21,7 +21,7 @@ export default function SearchInput() {
 
   useEffect(() => {
     setSearchString('');
-  }, []);
+  }, [setSearchString]);
 
   return (
     <input
