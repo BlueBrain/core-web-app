@@ -1,6 +1,7 @@
 import { ExpDesignerConfig } from '@/types/experiment-designer';
 
 const defaultTarget = 'AAA';
+const defaultDuration = 4000;
 
 const config: ExpDesignerConfig = {
   setup: [
@@ -8,7 +9,7 @@ const config: ExpDesignerConfig = {
       id: 'duration',
       name: 'Duration',
       type: 'number',
-      value: 4000,
+      value: defaultDuration,
       unit: 'ms',
       min: 0,
       max: 20000,
@@ -85,7 +86,7 @@ const config: ExpDesignerConfig = {
           id: 'duration',
           name: 'Duration',
           type: 'number',
-          value: 4000,
+          value: defaultDuration,
           unit: 'ms',
           min: 0,
           max: 20000,
@@ -144,7 +145,7 @@ const config: ExpDesignerConfig = {
           id: 'duration',
           name: 'Duration',
           type: 'number',
-          value: 4000,
+          value: defaultDuration,
           unit: 'ms',
           min: 0,
           max: 20000,
@@ -200,7 +201,7 @@ const config: ExpDesignerConfig = {
           id: 'duration',
           name: 'Duration',
           type: 'number',
-          value: 4000,
+          value: defaultDuration,
           unit: 'ms',
           min: 0,
           max: 20000,
