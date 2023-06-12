@@ -38,7 +38,7 @@ export default function NameGroupEditor({ paramAtom, namePrefix, groupIndex }: P
       return namePrefix + base1Index;
     }
     return groupInfo.name;
-  }, [groupInfo.name, groupIndex]);
+  }, [groupInfo.name, groupIndex, namePrefix]);
 
   useEffect(() => {
     if (groupInfo.name === groupName) return;
