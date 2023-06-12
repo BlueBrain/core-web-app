@@ -7,6 +7,17 @@
 .headerText,
 .tableHeader {
   color: #8c8c8c;
+  @apply flex items-center;
+}
+
+.sortIcons > span {
+  @apply text-gray-200 flex flex-col mr-2;
+  &:first-child {
+    margin-bottom: -0.2rem;
+  }
+  &:last-child {
+    margin-top: -0.2rem;
+  }
 }
 
 .tableRow {

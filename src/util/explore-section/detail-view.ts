@@ -13,7 +13,7 @@ import { FetchParams } from '@/types/explore-section';
 // eslint-disable-next-line import/prefer-default-export
 export function setInfoWithPath(
   path: string | null | undefined,
-  callback: Dispatch<SetStateAction<FetchParams>>,
+  callback: Dispatch<SetStateAction<FetchParams | null>>,
   revision?: string | null
 ) {
   if (path) {

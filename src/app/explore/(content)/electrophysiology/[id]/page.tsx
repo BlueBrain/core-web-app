@@ -4,11 +4,11 @@ import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
 import { DeltaResource } from '@/types/explore-section';
-import useDetailPage from '@/hooks/useDetailPage';
-import usePathname from '@/hooks/pathname';
 import EphysViewerContainer from '@/components/explore-section/EphysViewerContainer';
 import Contributors from '@/components/explore-section/Contributors';
 import Species from '@/components/explore-section/Species';
+import useDetailPage from '@/hooks/useDetailPage';
+import usePathname from '@/hooks/pathname';
 
 const fields = [
   {
@@ -47,7 +47,6 @@ const fields = [
 
 export default function EphysDetailPage() {
   useDetailPage(usePathname());
-
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields} links={[{ url: '/explore/electrophysiology' }]}>

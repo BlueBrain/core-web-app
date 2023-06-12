@@ -52,7 +52,9 @@ WHERE {
 }
 LIMIT 1000`;
 
-export const ES_TERMS: { [key: string]: { term: string | string[]; title: string } } = {
+export const ES_TERMS: {
+  [key: string]: { term: string | string[]; title: string; description?: string };
+} = {
   brainRegion: {
     term: 'brainRegion.label.keyword',
     title: 'BRAIN REGION',
@@ -76,6 +78,7 @@ export const ES_TERMS: { [key: string]: { term: string | string[]; title: string
   sem: {
     term: 'sem.label.keyword',
     title: 'SEM',
+    description: 'Standard error of the mean',
   },
   weight: {
     term: 'weight.label.keyword',

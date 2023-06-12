@@ -3,10 +3,10 @@
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
-import useDetailPage from '@/hooks/useDetailPage';
-import usePathname from '@/hooks/pathname';
 import Contributors from '@/components/explore-section/Contributors';
 import Species from '@/components/explore-section/Species';
+import useDetailPage from '@/hooks/useDetailPage';
+import usePathname from '@/hooks/pathname';
 
 const fields = [
   {
@@ -50,7 +50,6 @@ const fields = [
 
 export default function NeuronDensityDetailPage() {
   useDetailPage(usePathname());
-
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields} links={[{ url: '/explore/neuron-density' }]} />

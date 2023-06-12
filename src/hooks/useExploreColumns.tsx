@@ -37,17 +37,24 @@ const useExploreColumns = (
 
     const iconDirection =
       sortState.order === 'asc' ? (
-        <CaretDownOutlined className="ml-5" />
+        <CaretDownOutlined className="flex mr-2" />
       ) : (
-        <CaretUpOutlined className="ml-5" />
+        <CaretUpOutlined className="flex mr-2" />
       );
 
-    const icon = isSorted ? iconDirection : null;
+    const icon = isSorted ? (
+      iconDirection
+    ) : (
+      <div className={styles.sortIcons}>
+        <CaretUpOutlined />
+        <CaretDownOutlined />
+      </div>
+    );
 
     return (
       <div className={styles.tableHeader}>
         {icon}
-        <Tooltip title={term.title}>{term.title}</Tooltip>
+        <Tooltip title={term.description ? term.description : term.title}>{term.title}</Tooltip>
       </div>
     );
   };
@@ -64,6 +71,7 @@ const useExploreColumns = (
       title: getHeaderColumn('#'),
       key: 'index',
       className: 'text-primary-7',
+      width: 50,
       render: (_text: string, _record: ExploreSectionResource, index: number) => index + 1,
     },
   ];

@@ -91,9 +91,9 @@ export interface SideLink {
 }
 
 export interface FetchParams {
-  id?: string;
-  project?: string;
-  org?: string;
+  id: string;
+  project: string;
+  org: string;
 }
 
 export interface Campaign {

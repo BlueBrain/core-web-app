@@ -7,13 +7,19 @@ import { fetchResourceById } from '@/api/nexus';
 import { DeltaResource, FetchParams } from '@/types/explore-section';
 import { ensureArray } from '@/util/nexus';
 
-export const infoAtom = atom<FetchParams>({});
+export const infoAtom = atom<FetchParams | null>(null);
 
-export const detailAtom = atom<Promise<DeltaResource | null>>(async (get) => {
+export const sessionAndInfoAtom = atom((get) => {
   const session = get(sessionAtom);
   const info = get(infoAtom);
 
-  if (!session || !info.id || !info.org || !info.project) return null;
+  if (!session || !info) throw Error('Session or Info is invalid');
+
+  return { session, info };
+});
+
+export const detailAtom = atom<Promise<DeltaResource | null>>(async (get) => {
+  const { session, info } = get(sessionAndInfoAtom);
 
   const resource: DeltaResource = await fetchResourceById(
     info.id,
@@ -25,12 +31,10 @@ export const detailAtom = atom<Promise<DeltaResource | null>>(async (get) => {
 });
 
 export const contributorsDataAtom = atom<Promise<DeltaResource[] | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const info = get(infoAtom);
+  const { session, info } = get(sessionAndInfoAtom);
   const detail = await get(detailAtom);
 
-  if (!session || !info.id || !info.org || !info.project || !detail || !detail.contribution)
-    return null;
+  if (!detail || !detail.contribution) return null;
 
   const contributions = ensureArray(detail.contribution);
 
@@ -48,11 +52,10 @@ export const contributorsDataAtom = atom<Promise<DeltaResource[] | null>>(async 
 });
 
 export const licenseDataAtom = atom<Promise<DeltaResource | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const info = get(infoAtom);
+  const { session, info } = get(sessionAndInfoAtom);
   const detail = await get(detailAtom);
 
-  if (!session || !info.id || !info.org || !info.project || !detail || !detail.license) return null;
+  if (!detail || !detail.license) return null;
 
   const license: DeltaResource = await fetchResourceById<DeltaResource>(
     detail.license['@id'],
@@ -64,10 +67,7 @@ export const licenseDataAtom = atom<Promise<DeltaResource | null>>(async (get) =
 });
 
 export const latestRevisionAtom = atom<Promise<number | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const info = get(infoAtom);
-
-  if (!session || !info.id || !info.org || !info.project) return null;
+  const { session, info } = get(sessionAndInfoAtom);
 
   const latestRevision: DeltaResource = await fetchResourceById(
     info.id,
@@ -78,11 +78,10 @@ export const latestRevisionAtom = atom<Promise<number | null>>(async (get) => {
 });
 
 export const speciesDataAtom = atom<Promise<DeltaResource | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const info = get(infoAtom);
+  const { session, info } = get(sessionAndInfoAtom);
   const detail = await get(detailAtom);
 
-  if (!session || !info.id || !info.org || !info.project || !detail || !detail.subject) return null;
+  if (!detail || !detail.subject) return null;
 
   if (detail.subject?.species?.label) return detail;
 
