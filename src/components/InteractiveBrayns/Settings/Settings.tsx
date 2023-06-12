@@ -2,9 +2,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import { Slider } from 'antd';
-import { LeftMouseButtonIcon } from './LeftMouseButtonIcon';
-import { MiddleMouseButtonIcon } from './MiddleMouseButtonIcon';
-import { RightMouseButtonIcon } from './RightMouseButtonIcon';
+import LeftMouseButtonIcon from '../Icons/LeftMouseButtonIcon';
+import MiddleMouseButtonIcon from '../Icons/MiddleMouseButtonIcon';
+import RightMouseButtonIcon from '../Icons/RightMouseButtonIcon';
+import Tutorial from '../Tutorial';
+import ShiftIcon from '../Icons/ShiftIcon';
 import { GizmoIcon } from './GizmoIcon';
 import Styles from './settings.module.css';
 
@@ -53,20 +55,13 @@ export default function Settings({
           <div>Zoom</div>
           <div>Translate</div>
         </div>
-        <p>Use the mouse wheel to zoom in and out.</p>
+        <Tutorial />
+        <div className={Styles.shiftIcon}>
+          <ShiftIcon />
+          <p>Hold down Shift to slow down the movement.</p>
+        </div>
         <hr />
-        <p>Left mouse drag to orbit the camera.</p>
-        <ul>
-          <li>Hold Shift to slow down the movement.</li>
-          <li>Hold X, Y or Z to constraint orbiting around a fixed axis.</li>
-        </ul>
-        <hr />
-        Right mouse drag to translate the camera.
-        <ul>
-          <li>Hold Shift to slow down the movement.</li>
-        </ul>
-        <hr />
-        <p>Click on the gizmo to face any axis, or reset the view.</p>
+        <p>Click on the gizmo to select an axis, or reset the view.</p>
         <div className={Styles.center}>
           <GizmoIcon />
         </div>

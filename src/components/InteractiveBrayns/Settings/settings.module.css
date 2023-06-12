@@ -4,16 +4,18 @@
   position: absolute;
   right: 0;
   top: var(--top);
-  width: 300px;
-  height: 740px;
-  max-height: calc(90% - var(--top));
+  width: 360px;
+  height: 820px;
+  max-height: calc(95% - var(--top));
   transition: transform 0.2s;
   background-color: #fffd;
   backdrop-filter: blur(4px);
   margin: 0;
-  color: #000e;
+  color: #038e;
   border-radius: 1em 0 0 1em;
   box-sizing: border-box;
+  /* Just above the "Feedback" button. */
+  z-index: 101;
 }
 
 .show {
@@ -95,4 +97,20 @@
 
 .closeButton > svg {
   max-height: 2em;
+}
+
+.shiftIcon {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.5em;
+}
+
+.shiftIcon > svg {
+  width: 3em;
+  height: 2em;
+}
+
+.shiftIcon > p {
+  flex: 1 1 auto;
 }

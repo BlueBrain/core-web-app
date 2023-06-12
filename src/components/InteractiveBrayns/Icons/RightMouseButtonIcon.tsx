@@ -1,7 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-import React from 'react';
-
-export function RightMouseButtonIcon() {
+export default function RightMouseButtonIcon() {
   return (
     <svg width="45" height="67" viewBox="0 0 45 67" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
