@@ -46,18 +46,23 @@ interface Rect extends Partial<Shape> {
 }
 
 const STAT_CHART_DEFAULT_LAYOUT: Partial<Layout> = {
-  xaxis: { fixedrange: true, showgrid: false, zeroline: false },
-  yaxis: { fixedrange: true, showgrid: false, zeroline: false },
-  showlegend: false,
-  width: 245,
-  height: 170,
-  margin: {
-    l: 0,
-    r: 0,
-    t: 0,
-    b: 0,
-    pad: 0,
+  xaxis: {
+    automargin: true,
+    fixedrange: true,
+    zeroline: false,
+    title: { text: 'synapses/µ³ ', font: { size: 12 }, standoff: 6 },
   },
+  yaxis: {
+    automargin: true,
+    fixedrange: true,
+    zeroline: false,
+    title: { text: 'Number of pathways', font: { size: 12 }, standoff: 6 },
+  },
+  legend: { orientation: 'h', xanchor: 'center', x: 0.5, y: 1.2, font: { size: 10 } },
+
+  width: 245,
+  height: 200,
+  margin: { t: 0, r: 0, b: 0, l: 20 },
 };
 
 export default function ConnectomeConfigurationView() {
@@ -85,8 +90,6 @@ export default function ConnectomeConfigurationView() {
 
   const histogramRef = useRef<HTMLDivElement>(null);
   const [histogramInitialized, setHistogramInitialized] = useState(false);
-  const lineChartRef = useRef<HTMLDivElement>(null);
-  const [lineChartInitialized, setLineChartInitialized] = useState(false);
   const selectionShapes = useRef<Rect[]>([]);
 
   useEffect(() => {
@@ -148,43 +151,19 @@ export default function ConnectomeConfigurationView() {
         {
           x: histogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.003 },
+          name: 'Initial values',
         },
         {
           x: newHistogram,
           type: 'histogram',
-          xbins: { start: 0, end: 'auto', size: 0.003 },
+          name: 'Modified values',
         },
       ],
       {
         ...STAT_CHART_DEFAULT_LAYOUT,
-        bargroupgap: 0.3,
       }
     );
   }, [histogram, histogramInitialized, selected.size, newHistogram]);
-
-  useEffect(() => {
-    if (!lineChartRef.current) return;
-    if (!lineChartInitialized) {
-      Plotly.newPlot(lineChartRef.current, [], {}, { displayModeBar: false });
-      setLineChartInitialized(true);
-      return;
-    }
-    Plotly.react(
-      lineChartRef.current,
-      [
-        {
-          x: [-1, 0, 1],
-          y: [-1, 0, 1],
-        },
-        {
-          x: [-1, 0, 1],
-          y: [-1, 0, 1].map((v) => v * multiplier + offset),
-        },
-      ],
-      STAT_CHART_DEFAULT_LAYOUT
-    );
-  }, [selected.size, lineChartInitialized, multiplier, offset]);
 
   const onClick = () => {
     if (!brainRegionLeaveIdxByNotationMap) return;
@@ -270,9 +249,8 @@ export default function ConnectomeConfigurationView() {
               <InputNumber value={multiplier} step={0.01} onChange={handleMultiplierChange} />
             </div>
 
-            <div style={{ marginTop: 10, marginBottom: 10 }}>
+            <div className="my-10">
               <div ref={histogramRef} />
-              <div ref={lineChartRef} style={{ marginTop: 10 }} />
             </div>
 
             <div className="mt-3">
