@@ -309,3 +309,45 @@ export const getGeneratorTaskActivityByCircuitIdQuery = (detailedCircuitId: stri
     },
   },
 });
+
+export const getLaunchedSimCampQuery = (username: string, searchString: string) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'SimulationCampaignUIConfig' } },
+              { term: { _createdBy: `https://bbp.epfl.ch/nexus/v1/realms/bbp/users/${username}` } },
+              { exists: { field: 'wasInfluencedBy.@id' } },
+            ],
+          },
+        },
+        idExistsFilter,
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
+    },
+  },
+});
+
+export const getWorkflowExecutionsQuery = (ids: string[] = []) => ({
+  size: 5,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'WorkflowExecution' } },
+              { terms: { '@id': ids } },
+            ],
+          },
+        },
+      ],
+    },
+  },
+  sort: [{ startedAtTime: 'desc' }],
+});
