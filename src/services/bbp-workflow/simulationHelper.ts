@@ -245,21 +245,12 @@ export function convertExpDesConfigToSimVariables(
   const neuronDisplay = imaging.find(
     (param) => param.id === 'neuronDisplay'
   ) as ExpDesignerRadioBtnParameter;
-  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_SOMA] = JSON.stringify(
-    neuronDisplay.value === 'As point'
-      ? createNonStringPlaceholder(true)
-      : createNonStringPlaceholder(false)
-  );
-  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_DENDRITES] = JSON.stringify(
-    neuronDisplay.value === 'Dendrites'
-      ? createNonStringPlaceholder(true)
-      : createNonStringPlaceholder(false)
-  );
-  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_AXON] = JSON.stringify(
-    neuronDisplay.value === 'Axon + Dendrites'
-      ? createNonStringPlaceholder(true)
-      : createNonStringPlaceholder(false)
-  );
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_SOMA] =
+    neuronDisplay.value === 'As point';
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_DENDRITES] =
+    neuronDisplay.value === 'Dendrites';
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_DISPLAY_AXON] =
+    neuronDisplay.value === 'Axon + Dendrites';
 
   const cameraPosition = imaging.find(
     (param) => param.id === 'cameraPos'
