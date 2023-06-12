@@ -5,7 +5,7 @@ import { DateISOString } from '@/types/nexus';
  * @param stringDate the given date in string format
  */
 export default function timeElapsedFromToday(stringDate?: DateISOString) {
-  if (!stringDate) return null;
+  if (!stringDate) return '-';
   const date = new Date(stringDate);
   const today = new Date();
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds

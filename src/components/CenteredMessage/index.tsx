@@ -7,7 +7,7 @@ type CenteredMessageProps = {
 
 export default function CenteredMessage({ message, icon }: CenteredMessageProps) {
   return (
-    <div className="flex items-center justify-center h-80">
+    <div className="flex items-center justify-center h-40">
       <div className="text-center">
         {icon && icon}
         <div className="mt-4">{message}</div>

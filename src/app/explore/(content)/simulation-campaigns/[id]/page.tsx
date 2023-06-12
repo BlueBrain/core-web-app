@@ -1,14 +1,14 @@
 'use client';
 
-import { Key, ReactNode, Suspense } from 'react';
-import mockData from './mock-data.json';
-import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
+import { Key, ReactNode } from 'react';
+import { useAtomValue } from 'jotai';
 import { DetailProps, ListField } from '@/components/explore-section/Detail';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource, SimulationCampaignResource } from '@/types/explore-section';
 import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 import { classNames } from '@/util/utils';
 import Simulations from '@/components/explore-section/Simulations';
+import { simulationCampaignResourceAtom } from '@/state/explore-section/simulation-campaign';
 
 type FieldPropKeys = 'title' | 'field';
 
@@ -31,9 +31,9 @@ function SimulationCampaignDetail({
   children?: (detail: DeltaResource) => ReactNode;
 }) {
   // @ts-ignore
-  const detail = mockData as DeltaResource;
+  const detail = useAtomValue(simulationCampaignResourceAtom) as DeltaResource;
   // @ts-ignore
-  const serializedFields = useExploreSerializedFields(mockData);
+  const serializedFields = useExploreSerializedFields(detail);
   return (
     <div className="flex h-screen">
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
@@ -70,11 +70,11 @@ const fields: DetailProps[] = [
   },
   {
     title: 'Dimensions',
-    field: ({ dimensions }) => dimensions,
+    field: ({ dimensions }) => <ListField items={dimensions} />,
   },
   {
     title: 'Attribute',
-    field: ({ attribute }) => attribute,
+    field: ({ attrs }) => <ListField items={attrs} />,
   },
   {
     title: 'Tags',
@@ -96,15 +96,13 @@ const fields: DetailProps[] = [
 
 export default function SimulationCampaignDetailPage() {
   return (
-    <Suspense fallback={<CentralLoadingSpinner />}>
-      <SimulationCampaignDetail fields={fields}>
-        {(detail: DeltaResource) => (
-          <div>
-            <hr />
-            <Simulations resource={detail} />
-          </div>
-        )}
-      </SimulationCampaignDetail>
-    </Suspense>
+    <SimulationCampaignDetail fields={fields}>
+      {(detail: DeltaResource) => (
+        <div>
+          <hr />
+          <Simulations resource={detail as SimulationCampaignResource} />
+        </div>
+      )}
+    </SimulationCampaignDetail>
   );
 }

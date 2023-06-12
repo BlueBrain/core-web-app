@@ -56,3 +56,19 @@ export const numberOfMeasurementSelectorFn = (detail: DeltaResource | null) => {
   const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);
   return seriesArray?.find((s) => s.statistic === 'N')?.value;
 };
+
+export const attrsSelectorFn = (detail: DeltaResource | null) => {
+  if (!detail?.attrs) return [];
+  return Object.keys(detail?.attrs).map((attr) => ({
+    id: attr,
+    label: attr,
+  }));
+};
+
+export const dimensionsSelectorFn = (detail: DeltaResource | null) => {
+  if (!detail?.coords) return [];
+  return Object.keys(detail?.coords).map((dimension) => ({
+    id: dimension,
+    label: dimension,
+  }));
+};

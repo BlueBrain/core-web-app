@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from 'react';
-import { Dimension } from '@/types/explore-section';
 
 export type Status = 'initial' | 'selection';
 
@@ -19,11 +18,13 @@ export type UnassignedDimensionBoxProps = {
   setStatus: Dispatch<SetStateAction<Status>>;
 };
 
+export type DimensionBoxEditFormProps = {
+  dimension: Dimension;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+};
+
 export type AssignedDimensionBoxProps = {
   dimension: Dimension;
-  dismissible: boolean;
-  dismissFunc?: () => void;
-  hovered: boolean;
 };
 
 export type DimensionTitleProps = {
@@ -31,4 +32,20 @@ export type DimensionTitleProps = {
   dismissible: boolean;
   dismissFunc?: () => void;
   setStatus: Dispatch<SetStateAction<Status>>;
+};
+
+export type DimensionValue = {
+  type: 'value';
+  value: string;
+};
+
+export type DimensionRange = {
+  type: 'range';
+  minValue: string;
+  maxValue: string;
+};
+
+export type Dimension = {
+  id: string;
+  value: DimensionValue | DimensionRange;
 };

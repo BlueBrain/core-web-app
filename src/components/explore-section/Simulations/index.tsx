@@ -1,73 +1,19 @@
 import { Space } from 'antd';
-import { useState } from 'react';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { AxesState, DeltaResource } from '@/types/explore-section';
+import { useEffect, useState } from 'react';
+import { useSetAtom } from 'jotai';
+import { SimulationCampaignResource } from '@/types/explore-section';
 import DisplayDropdown from '@/components/explore-section/Simulations/DisplayDropdown';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
-import AnalysisReportGrid from '@/components/explore-section/Simulations/AnalysisReportGrid';
-import CenteredMessage from '@/components/CenteredMessage';
-import JobStatus from '@/components/explore-section/Simulations/JobStatus';
-import rasterImage from '@/components/explore-section/Simulations/raster.jpg';
-import imageryImage from '@/components/explore-section/Simulations/imagery.jpg';
-import voltageImage from '@/components/explore-section/Simulations/voltage.jpg';
+import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
+import { initializeDimensionsAtom } from '@/components/explore-section/Simulations/state';
 
-export default function Simulations({ resource }: { resource: DeltaResource }) {
+export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
   const [selectedDisplay, setSelectedDisplay] = useState('raster');
-  const [axes, setAxes] = useState<AxesState>({
-    xAxis: undefined,
-    yAxis: undefined,
-  });
+  const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
 
-  const selectedXAxis = resource.dimensions?.find((dim) => dim.label === axes.xAxis);
-  const selectedYAxis = resource.dimensions?.find((dim) => dim.label === axes.yAxis);
-
-  const renderDisplay = () => {
-    switch (selectedDisplay) {
-      case 'raster':
-        return (
-          <>
-            <DimensionSelector resource={resource} axes={axes} setAxes={setAxes} />
-            <AnalysisReportGrid
-              xDimension={selectedXAxis}
-              yDimension={selectedYAxis}
-              image={<img src={rasterImage.src} alt="Displays a raster graph" />}
-            />
-          </>
-        );
-      case 'status':
-        return <JobStatus resource={resource} />;
-      case 'voltage':
-        return (
-          <>
-            <DimensionSelector resource={resource} axes={axes} setAxes={setAxes} />
-            <AnalysisReportGrid
-              xDimension={selectedXAxis}
-              yDimension={selectedYAxis}
-              image={<img src={voltageImage.src} alt="Displays a voltage analysis" />}
-            />
-          </>
-        );
-      case 'imagery':
-        return (
-          <>
-            <DimensionSelector resource={resource} axes={axes} setAxes={setAxes} />
-            <AnalysisReportGrid
-              xDimension={selectedXAxis}
-              yDimension={selectedYAxis}
-              image={<img src={imageryImage.src} alt="Displays an imagery report" />}
-            />
-          </>
-        );
-      default:
-        return (
-          <CenteredMessage
-            message="This display is not implemented yet"
-            icon={<InfoCircleOutlined className="text-7xl" />}
-          />
-        );
-    }
-  };
-
+  useEffect(() => {
+    setDefaultDimensions();
+  }, [resource, setDefaultDimensions]);
   return (
     <div className="mt-5">
       <div className="grid grid-cols-2">
@@ -87,7 +33,10 @@ export default function Simulations({ resource }: { resource: DeltaResource }) {
           </Space>
         </div>
       </div>
-      <div className="mt-4">{renderDisplay()}</div>
+      <DimensionSelector />
+      <div className="mt-4">
+        <SimulationsDisplayGrid display={selectedDisplay} />
+      </div>
     </div>
   );
 }

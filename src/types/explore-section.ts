@@ -243,8 +243,6 @@ export type Dimension = {
   value: number[];
 };
 
-export type SimulationStatus = 'running' | 'successful' | 'failed';
-
 // TODO: simulation is a mock type
 export type Simulation = {
   id: string;
@@ -284,6 +282,8 @@ export type DeltaResource<
   tags?: string[];
   dimensions?: Dimension[];
   simulations?: Simulation[];
+  coords: { [key: string]: string };
+  attrs: { [key: string]: number[] };
   latestRevision?: number | null | undefined;
   _constrainedBy: string;
   _createdAt: DateISOString;
@@ -297,6 +297,24 @@ export type DeltaResource<
   _self: string;
   _updatedAt: string;
   _updatedBy: string;
+};
+
+export type SimulationStatus = 'running' | 'done' | 'failed' | 'cancelled';
+
+export type SimulationCampaignResource = DeltaResource & {
+  brainConfiguration: string;
+  status: string;
+  tags: string[];
+  coords: { [key: string]: string };
+  attrs: { [key: string]: number[] };
+};
+
+export type SimulationResource = DeltaResource & {
+  campaign: string;
+  coords: { [key: string]: number };
+  status: SimulationStatus;
+  startedAt: string;
+  completedAt?: string;
 };
 
 interface Weight {
@@ -421,10 +439,11 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   status?: string;
   tags?: ReactNode;
   updatedAt?: string | null;
-  dimensions?: ReactNode;
+  dimensions?: IdLabel[] | null;
   contributors?: IdLabel[] | null;
   layer?: string;
   license?: string | null;
+  attrs?: IdLabel[] | null;
 }
 
 export type DetailResource = SerializedDeltaResource & DeltaResource;

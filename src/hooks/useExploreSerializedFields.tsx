@@ -12,6 +12,8 @@ import {
   eTypeSelectorFn,
   mTypeSelectorFn,
   semSelectorFn,
+  attrsSelectorFn,
+  dimensionsSelectorFn,
 } from '@/state/explore-section/selector-functions';
 
 export default function useExploreSerializedFields(
@@ -81,17 +83,6 @@ export default function useExploreSerializedFields(
       </Tag>
     ));
 
-  const formatDimensions = () => (
-    <ul>
-      {detail?.dimensions &&
-        detail.dimensions.map((dimension) => (
-          <li key={dimension.label} className="mb-2">
-            {dimension.label}
-          </li>
-        ))}
-    </ul>
-  );
-
   return {
     description: detail?.description,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
@@ -109,11 +100,12 @@ export default function useExploreSerializedFields(
     status: detail?.status,
     tags: formatTags(),
     updatedAt: timeElapsedFromToday(detail?._updatedAt),
-    dimensions: formatDimensions(),
+    dimensions: dimensionsSelectorFn(detail),
     subjectAge: subjectAgeSelectorFn(detail),
     weight: weightSelectorFn(detail),
     mType: mTypeSelectorFn(detail),
     eType: eTypeSelectorFn(detail),
     sem: semSelectorFn(detail),
+    attrs: attrsSelectorFn(detail),
   };
 }

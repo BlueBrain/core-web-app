@@ -1,35 +1,24 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
 import { SwapOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { AxesState, DeltaResource } from '@/types/explore-section';
+import { useAtom, useAtomValue } from 'jotai';
+import {
+  axesAtom,
+  otherDimensionsAtom,
+  selectedXDimensionAtom,
+  selectedYDimensionAtom,
+} from '@/components/explore-section/Simulations/state';
 import DimensionBox from '@/components/explore-section/Simulations/DimensionBox';
 
-type DimensionsProps = {
-  resource: DeltaResource;
-  axes: AxesState;
-  setAxes: Dispatch<SetStateAction<AxesState>>;
-};
-
-export default function DimensionSelector({ resource, axes, setAxes }: DimensionsProps) {
-  const xAxisDimension = useMemo(
-    () => resource.dimensions?.find((dim) => dim.label === axes.xAxis),
-    [axes.xAxis, resource.dimensions]
-  );
-  const yAxisDimension = useMemo(
-    () => resource.dimensions?.find((dim) => dim.label === axes.yAxis),
-    [axes.yAxis, resource.dimensions]
-  );
-
-  const otherDimensions = useMemo(
-    () =>
-      resource.dimensions?.filter((dim) => dim.label !== axes.xAxis && dim.label !== axes.yAxis),
-    [axes.xAxis, axes.yAxis, resource.dimensions]
-  );
+export default function DimensionSelector() {
+  const xAxisDimension = useAtomValue(selectedXDimensionAtom);
+  const yAxisDimension = useAtomValue(selectedYDimensionAtom);
+  const otherDimensions = useAtomValue(otherDimensionsAtom);
+  const [axes, setAxes] = useAtom(axesAtom);
 
   const dimensionOptions = otherDimensions
     ? otherDimensions.map((dim) => ({
-        value: dim.label,
-        label: dim.label,
+        value: dim.id,
+        label: dim.id,
       }))
     : [];
 
@@ -38,11 +27,10 @@ export default function DimensionSelector({ resource, axes, setAxes }: Dimension
   };
 
   const swapVisible = axes.xAxis && axes.yAxis;
-
   return (
     <>
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row gap-4 h-fit">
           <div className="flex-1">
             <DimensionBox
               dimension={xAxisDimension}
@@ -55,7 +43,7 @@ export default function DimensionSelector({ resource, axes, setAxes }: Dimension
           </div>
           {swapVisible && (
             <Button
-              className="flex-none top-1/2"
+              className="flex-none top-1/2 h-auto"
               type="link"
               icon={<SwapOutlined />}
               onClick={swapAxes}
@@ -75,7 +63,7 @@ export default function DimensionSelector({ resource, axes, setAxes }: Dimension
         <div className="grid grid-cols-2 gap-2">
           {otherDimensions &&
             otherDimensions.map((dim, idx) => (
-              <div key={dim.label}>
+              <div key={dim.id}>
                 <DimensionBox
                   dimension={dim}
                   title={idx === 0 ? 'Other Dimensions' : undefined}
