@@ -70,7 +70,11 @@ export default function SimCampaignList() {
     <>
       <ListTypeSelector />
 
-      <div className="flex justify-end mb-3">
+      <div className="flex mb-3 justify-between">
+        <small className="self-center">
+          <span className="text-primary-4">Total configurations: </span>
+          <span className="font-bold">{configs.length}</span>
+        </small>
         <SearchInput />
       </div>
 
