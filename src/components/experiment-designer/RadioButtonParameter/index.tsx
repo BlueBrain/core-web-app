@@ -23,7 +23,10 @@ export default function RadioButtonParameter({ paramAtom, className }: Props) {
     <>
       <div className={subheaderStyle}>{data.name}</div>
       {data.options.map((option) => (
-        <div className={classNames('flex gap-3', className)} key={option}>
+        <div
+          className={classNames('flex gap-3', className, data.hidden ? 'hidden' : '')}
+          key={option}
+        >
           <label className="grow font-bold" htmlFor={generateId(data.name, option)}>
             {option}
           </label>

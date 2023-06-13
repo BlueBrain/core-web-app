@@ -32,7 +32,7 @@ export default function ConstantParameter({
   };
 
   return (
-    <div className={classNames('flex gap-3', className)}>
+    <div className={classNames('flex gap-3', className, data.hidden ? 'hidden' : '')}>
       <div className="grow font-bold">{data.name}</div>
       <InputNumber
         value={data.value}

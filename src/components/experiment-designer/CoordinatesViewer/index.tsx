@@ -14,7 +14,7 @@ export default function CoordinatesViewer({ paramAtom, className }: Props) {
   const data = useAtomValue(paramAtom);
 
   return (
-    <div className={classNames('flex gap-3', className)}>
+    <div className={classNames('flex gap-3', className, data.hidden ? 'hidden' : '')}>
       <div className="grow font-bold">{data.name}</div>
       <div>
         <span className={coordinateStyle}>X</span>

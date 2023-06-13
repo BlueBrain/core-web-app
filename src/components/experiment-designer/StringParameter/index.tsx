@@ -13,7 +13,13 @@ type Props = {
 
 export default function StringParameter({ data, className }: Props) {
   return (
-    <div className={classNames('flex gap-3 items-center font-bold', className)}>
+    <div
+      className={classNames(
+        'flex gap-3 items-center font-bold',
+        className,
+        data.hidden ? 'hidden' : ''
+      )}
+    >
       <div className="grow">{data.name}</div>
       <Input defaultValue={data.value} size="small" style={{ width: 200 }} />
       <ExportOutlined />
