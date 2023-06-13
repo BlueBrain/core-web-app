@@ -17,12 +17,12 @@ type SearchTab = {
 const searchTabs: SearchTab[] = [
   {
     id: 'public',
-    name: 'Public simulation campaigns',
+    name: 'Public simulation campaign configurations',
     icon: <SettingsIcon />,
   },
   {
     id: 'personal',
-    name: 'My simulation campaigns',
+    name: 'My simulation campaign configurations',
     icon: <UserIcon />,
   },
 ];

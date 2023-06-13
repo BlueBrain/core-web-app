@@ -23,18 +23,18 @@ export default function ExperimentDesignerPanel() {
   const simCampDescription = useAtomValue(campaignDescriptionAtom);
   const loadableConfig = useAtomValue(configAtomLoadable);
   const circuitInfo = loadableConfig.state === 'hasData' ? loadableConfig.data : null;
-  const loadableCampaingnUser = useAtomValue(campaignUserAtomLoadable);
+  const loadableCampaignUser = useAtomValue(campaignUserAtomLoadable);
 
   const campaignCreatorUsername = useMemo(() => {
-    switch (loadableCampaingnUser.state) {
+    switch (loadableCampaignUser.state) {
       case 'hasData':
-        return loadableCampaingnUser.data;
+        return loadableCampaignUser.data;
       case 'loading':
         return 'Loading...';
       default:
         return 'Unknown - error fetching creator';
     }
-  }, [loadableCampaingnUser]);
+  }, [loadableCampaignUser]);
 
   return (
     <div

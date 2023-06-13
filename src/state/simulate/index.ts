@@ -26,7 +26,7 @@ type SearchType = 'public' | 'personal';
 
 export const searchConfigListTypeAtom = atom<SearchType>('public');
 
-export const simCampaingListAtom = atom<Promise<SimulationCampaignUIConfigResource[]>>(
+export const simCampaignListAtom = atom<Promise<SimulationCampaignUIConfigResource[]>>(
   async (get) => {
     const session = get(sessionAtom);
     const searchType = get(searchConfigListTypeAtom);

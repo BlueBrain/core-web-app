@@ -11,7 +11,7 @@ import SearchInput from './SearchInput';
 import ListTypeSelector from './ListTypeSelector';
 import { SimulationCampaignUIConfigResource } from '@/types/nexus';
 import { triggerRefetchAtom } from '@/state/experiment-designer';
-import { simCampaingListAtom } from '@/state/simulate';
+import { simCampaignListAtom } from '@/state/simulate';
 import ConfigList from '@/components/ConfigList';
 import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
@@ -23,7 +23,7 @@ import { EyeIcon } from '@/components/icons';
 
 const { Column } = Table;
 
-const loadableSimCampaignListAtom = loadable(simCampaingListAtom);
+const loadableSimCampaignListAtom = loadable(simCampaignListAtom);
 
 export default function SimCampaignList() {
   const router = useRouter();

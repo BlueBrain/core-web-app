@@ -74,7 +74,7 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
         />
         {showCreationDate && (
           <Column
-            title="CREATED AT"
+            title="DATE CREATED"
             dataIndex="_createdAt"
             key="createdAt"
             width={140}
