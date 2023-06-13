@@ -221,6 +221,8 @@ export interface Source extends OptionalExploreSectionFields {
   _self: string;
   mType: IdLabelEntity | null;
   eType: IdLabelEntity | null;
+  layer?: IdLabelEntity[];
+  layerThickness?: NValueEntity;
   contributors?: ContributorsEntity[] | null;
   license?: IdLabelEntity | null;
   organizations?: IdLabelEntity[] | null;
