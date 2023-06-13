@@ -3,6 +3,7 @@ import { Session } from 'next-auth';
 
 import {
   SimulationPlaceholders,
+  AnalysisPlaceholders,
   workflowMetaConfigs,
   customRangeDelimeter,
 } from '@/services/bbp-workflow/config';
@@ -15,6 +16,7 @@ import {
   ExpDesignerRadioBtnParameter,
   ExpDesignerPositionParameter,
   ExpDesignerDropdownParameter,
+  ExpDesignerTargetDropdownGroupParameter,
 } from '@/types/experiment-designer';
 import { createWorkflowConfigResource, createJsonFile, createResource } from '@/api/nexus';
 import {
@@ -125,6 +127,13 @@ export async function createWorkflowMetaConfigs(
 function getParamById<T>(group: ExpDesignerGroupParameter, id: string) {
   const result = group.value.find((param) => param.id === id);
   return <T>result;
+}
+
+function getSectionTargetsById(section: ExpDesignerParam[], id: string) {
+  const targetObj = section.find((param) => param.id === id);
+  if (!targetObj) return [];
+
+  return (targetObj as ExpDesignerTargetDropdownGroupParameter).value;
 }
 
 export function convertExpDesConfigToSimVariables(
@@ -279,6 +288,19 @@ export function convertExpDesConfigToSimVariables(
   variablesToReplaceCopy[SimulationPlaceholders.VIZ_REPORT_NAME] = JSON.stringify(
     recordingKeys?.length ? recordingKeys[0] : ''
   );
+
+  // ----------------------------------------
+  // --------------- Analysis ---------------
+  // ----------------------------------------
+
+  const { analysis } = expDesignerConfig;
+  const rasterTargets = getSectionTargetsById(analysis, 'raster');
+  const psthTargets = getSectionTargetsById(analysis, 'psth');
+  const voltageTargets = getSectionTargetsById(analysis, 'voltage');
+
+  variablesToReplaceCopy[AnalysisPlaceholders.RASTER_TARGETS] = JSON.stringify(rasterTargets);
+  variablesToReplaceCopy[AnalysisPlaceholders.PSTH_TARGETS] = JSON.stringify(psthTargets);
+  variablesToReplaceCopy[AnalysisPlaceholders.VOLTAGE_TARGETS] = JSON.stringify(voltageTargets);
 
   return variablesToReplaceCopy;
 }

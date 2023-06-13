@@ -38,6 +38,12 @@ export enum SimulationPlaceholders {
   VIZ_REPORT_NAME = 'VIZ_REPORT_NAME',
 }
 
+export enum AnalysisPlaceholders {
+  RASTER_TARGETS = 'RASTER_TARGETS',
+  PSTH_TARGETS = 'PSTH_TARGETS',
+  VOLTAGE_TARGETS = 'VOLTAGE_TARGETS',
+}
+
 type WorkflowMetaConfigPlaceholders = Record<
   string,
   {
@@ -71,17 +77,18 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
     `,
     placeholder: 'RunSimCampaignMeta',
   },
-  ReportSimCampaignMeta: {
-    fileName: 'ReportSimCampaignMeta.cfg',
+  ReportsSimCampaignMeta: {
+    fileName: 'ReportsSimCampaignMeta.cfg',
     templateFile: `
       [DEFAULT]
-      account: proj134
-      
-      [ReportSimCampaign]
-      exclusive: True
-      mem: 0
+      module-archive: unstable
+
+      [ReportsSimCampaign]
+      reports: {"spikes": {"raster": {"node_sets": <%= ${AnalysisPlaceholders.RASTER_TARGETS} %>},
+                           "firing_rate_histogram": {"node_sets": <%= ${AnalysisPlaceholders.PSTH_TARGETS} %>}},
+                <%= ${SimulationPlaceholders.VIZ_REPORT_NAME} %>: {"trace": {"node_sets": <%= ${AnalysisPlaceholders.VOLTAGE_TARGETS} %>}}}
     `,
-    placeholder: 'ReportSimCampaignMeta',
+    placeholder: 'ReportsSimCampaignMeta',
   },
   VideoSimCampaignMeta: {
     fileName: 'VideoSimCampaignMeta.cfg',
@@ -136,8 +143,8 @@ export const SIMULATION_FILES: WorkflowFile[] = [
       [RunSimCampaignMeta]
       config-url: <%= ${workflowMetaConfigs.RunSimCampaignMeta.placeholder} %>
 
-      [ReportSimCampaignMeta]
-      config-url: <%= ${workflowMetaConfigs.ReportSimCampaignMeta.placeholder} %>
+      [ReportsSimCampaignMeta]
+      config-url: <%= ${workflowMetaConfigs.ReportsSimCampaignMeta.placeholder} %>
 
       [VideoSimCampaignMeta]
       config-url: <%= ${workflowMetaConfigs.VideoSimCampaignMeta.placeholder} %>
