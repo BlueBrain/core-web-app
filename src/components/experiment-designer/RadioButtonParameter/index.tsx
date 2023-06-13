@@ -11,6 +11,7 @@ type Props = {
 
 export default function RadioButtonParameter({ paramAtom, className }: Props) {
   const [data, setData] = useAtom(paramAtom);
+  if (data.hidden) return null;
 
   const change = (selectedOption: string) => {
     setData((oldAtomData) => ({

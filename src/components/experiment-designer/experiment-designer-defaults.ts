@@ -289,6 +289,7 @@ const config: ExpDesignerConfig = {
       name: 'Camera position',
       type: 'position',
       value: [100, 200, 300],
+      hidden: true,
     },
     {
       id: 'neuronDisplay',
