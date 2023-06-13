@@ -14,6 +14,8 @@ export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
 
 export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
 
+export const customRangeDelimeter = '@@';
+
 export enum SimulationPlaceholders {
   VARIANT_TASK_ACTIVITY = 'VARIANT_TASK_ACTIVITY',
   NODE_SETS = 'NODE_SETS',

@@ -1,11 +1,7 @@
 import { Session } from 'next-auth';
 import template from 'lodash/template';
 
-import {
-  convertExpDesConfigToSimVariables,
-  createWorkflowMetaConfigs,
-  customRangeDelimeter,
-} from './simulationHelper';
+import { convertExpDesConfigToSimVariables, createWorkflowMetaConfigs } from './simulationHelper';
 import {
   BBP_WORKFLOW_AUTH_URL,
   BBP_WORKFLOW_TASK_PATH,
@@ -22,6 +18,7 @@ import {
 import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
 import { DetailedCircuitResource } from '@/types/nexus';
 import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
+import { replaceCustomBbpWorkflowPlaceholders } from '@/components/experiment-designer/utils';
 
 export function getWorkflowAuthUrl(username: string) {
   return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
@@ -69,17 +66,14 @@ export async function getSimulationTaskFiles(
 
   extraVariables = { ...convertExpDesConfigToSimVariables(extraVariables) };
 
-  // workaround to remove the string on the placeholders to be SONATA compatible
-  const templateReplaceRegexp = new RegExp(`"?${customRangeDelimeter}(\\$?[^"]+)"?`, 'gm');
-
   extraVariables = {
-    ...(await createWorkflowMetaConfigs(extraVariables, templateReplaceRegexp, session)),
+    ...(await createWorkflowMetaConfigs(extraVariables, session)),
   };
 
   const replacedFiles = structuredClone(workflowFiles).map((file) => {
     const modifiedFile = file;
     modifiedFile.CONTENT = template(modifiedFile.CONTENT)(extraVariables);
-    modifiedFile.CONTENT = modifiedFile.CONTENT.replace(templateReplaceRegexp, '$1');
+    modifiedFile.CONTENT = replaceCustomBbpWorkflowPlaceholders(modifiedFile.CONTENT);
     return modifiedFile;
   });
 
