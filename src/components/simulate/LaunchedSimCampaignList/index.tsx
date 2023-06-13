@@ -18,6 +18,8 @@ const { Column } = Table;
 
 const loadableLaunchedSimCampaignListAtom = loadable(launchedSimCampaignListAtom);
 
+const expDesBaseUrl = '/experiment-designer/experiment-setup';
+
 const dateRenderer = (createdAtStr: DateISOString) => {
   const dateColumnInfo = dateColumnInfoToRender(createdAtStr);
   if (!dateColumnInfo) return null;
@@ -29,6 +31,10 @@ function getSorterFn<T extends LaunchedSimCampUIConfigType>(
   sortProp: 'status' | 'startedAtTime' | 'endedAtTime'
 ) {
   return (a: T, b: T) => (a[sortProp] < b[sortProp] ? 1 : -1);
+}
+
+function extractId(config: LaunchedSimCampUIConfigType) {
+  return config['@id'].split('/').pop();
 }
 
 export default function LaunchedSimCampaignList() {
@@ -106,14 +112,11 @@ export default function LaunchedSimCampaignList() {
                   </Link>
                 )}
 
-                <Button
-                  size="small"
-                  type="text"
-                  className={classNames(defaultActionStyle, 'cursor-not-allowed')}
-                  title="Not implemented yet"
-                >
-                  <SettingsIcon fill={iconFillStyle} />
-                </Button>
+                <Link href={`${expDesBaseUrl}?simulationCampaignUIConfigId=${extractId(config)}`}>
+                  <Button size="small" type="text" className={defaultActionStyle}>
+                    <SettingsIcon fill={iconFillStyle} />
+                  </Button>
+                </Link>
               </>
             );
           }}
