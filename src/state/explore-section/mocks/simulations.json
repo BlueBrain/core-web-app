@@ -6,8 +6,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.2,
       "depol_stdev_mean_ratio": 0.2,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -20,8 +20,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.2,
       "depol_stdev_mean_ratio": 0.3,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -34,8 +34,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.2,
       "depol_stdev_mean_ratio": 0.4,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "failed",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -48,8 +48,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.3,
       "depol_stdev_mean_ratio": 0.2,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -62,8 +62,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.3,
       "depol_stdev_mean_ratio": 0.3,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "done",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -76,8 +76,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.3,
       "depol_stdev_mean_ratio": 0.4,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "done",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -90,8 +90,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.4,
       "depol_stdev_mean_ratio": 0.2,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "done",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -104,8 +104,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.4,
       "depol_stdev_mean_ratio": 0.3,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
@@ -118,8 +118,8 @@
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.4,
       "depol_stdev_mean_ratio": 0.4,
-      "vpm_pct": 0.2,
-      "extracellular_calcium": 0.4
+      "vpm_pct": 0.4,
+      "extracellular_calcium": 0.3
     },
     "status": "cancelled",
     "startedAt": "2023-05-15T13:48:23.217Z",

@@ -307,7 +307,7 @@ export type SimulationCampaignResource = DeltaResource & {
   brainConfiguration: string;
   status: string;
   tags: string[];
-  coords: { [key: string]: string };
+  coords: { [key: string]: number[] };
   attrs: { [key: string]: number[] };
 };
 

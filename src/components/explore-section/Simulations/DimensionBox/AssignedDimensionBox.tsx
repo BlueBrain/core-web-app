@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { AssignedDimensionBoxProps } from '@/components/explore-section/Simulations/types';
-import DimensionBoxEditForm from '@/components/explore-section/Simulations/DimensionBox/DimensionBoxEditForm';
+import DimensionBoxEditForm from '@/components/explore-section/Simulations/DimensionBoxEditForm';
 
-export default function AssignedDimensionBox({ dimension }: AssignedDimensionBoxProps) {
+export default function AssignedDimensionBox({ dimension, isAxis }: AssignedDimensionBoxProps) {
   const [editMode, setEditMode] = useState<boolean>(false);
 
   const dimensionValue = () => {
@@ -29,7 +29,7 @@ export default function AssignedDimensionBox({ dimension }: AssignedDimensionBox
         <div>{dimension?.id}</div>
       </div>
       {editMode ? (
-        <DimensionBoxEditForm dimension={dimension} setEditMode={setEditMode} />
+        <DimensionBoxEditForm dimension={dimension} setEditMode={setEditMode} isAxis={isAxis} />
       ) : (
         <div className="mt-3 h-min w-fit px-2 py-1 bg-sky-100 font-bold">{dimensionValue()}</div>
       )}

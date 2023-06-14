@@ -1,18 +1,21 @@
 import { SwapOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   axesAtom,
+  modifyDimensionValue,
   otherDimensionsAtom,
   selectedXDimensionAtom,
   selectedYDimensionAtom,
 } from '@/components/explore-section/Simulations/state';
 import DimensionBox from '@/components/explore-section/Simulations/DimensionBox';
+import { Dimension } from '@/components/explore-section/Simulations/types';
 
 export default function DimensionSelector() {
   const xAxisDimension = useAtomValue(selectedXDimensionAtom);
   const yAxisDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);
+  const dimensionModifier = useSetAtom(modifyDimensionValue);
   const [axes, setAxes] = useAtom(axesAtom);
 
   const dimensionOptions = otherDimensions
@@ -26,6 +29,43 @@ export default function DimensionSelector() {
     setAxes({ xAxis: axes.yAxis, yAxis: axes.xAxis });
   };
 
+  /**
+   * Function that modifies the dimension value.
+   *
+   * If the currently selected dimension value is a range, sets the value to be the min value
+   * If the currently selected dimension value is a comma-separated value, sets the value to be the first element
+   * @param dimension
+   */
+  const modifyValue = (dimension: Dimension) => {
+    let newValue: string = '';
+    if (dimension.value.type === 'range') {
+      newValue = dimension.value.minValue;
+    } else if (dimension.value.type === 'value') {
+      [newValue] = dimension.value.value.split(',');
+    }
+    dimensionModifier(dimension.id, {
+      type: 'value',
+      value: newValue,
+    });
+  };
+
+  /**
+   * Function to dismiss the axis dimension. Before dismissing it, it changes the value
+   * to a single value since the dimension will belong to "other dimension" which
+   * requires single value
+   *
+   * @param dismissedAxis x or y axis that changes
+   */
+  const dismissAxisDimension = (dismissedAxis: 'x' | 'y') => {
+    if (dismissedAxis === 'x' && xAxisDimension) {
+      modifyValue(xAxisDimension);
+      setAxes({ ...axes, xAxis: undefined });
+    } else if (dismissedAxis === 'y' && yAxisDimension) {
+      modifyValue(yAxisDimension);
+      setAxes({ ...axes, yAxis: undefined });
+    }
+  };
+
   const swapVisible = axes.xAxis && axes.yAxis;
   return (
     <>
@@ -37,8 +77,9 @@ export default function DimensionSelector() {
               title="Axis X"
               dimensionOptions={dimensionOptions}
               setAxis={(value: string) => setAxes({ ...axes, xAxis: value })}
-              dismissFunc={() => setAxes({ ...axes, xAxis: undefined })}
+              dismissFunc={() => dismissAxisDimension('x')}
               dismissible
+              isAxis
             />
           </div>
           {swapVisible && (
@@ -55,8 +96,9 @@ export default function DimensionSelector() {
               title="Axis Y"
               dimensionOptions={dimensionOptions}
               setAxis={(value: string) => setAxes({ ...axes, yAxis: value })}
-              dismissFunc={() => setAxes({ ...axes, yAxis: undefined })}
+              dismissFunc={() => dismissAxisDimension('y')}
               dismissible
+              isAxis
             />
           </div>
         </div>
@@ -69,6 +111,7 @@ export default function DimensionSelector() {
                   title={idx === 0 ? 'Other Dimensions' : undefined}
                   dimensionOptions={dimensionOptions}
                   dismissible={false}
+                  isAxis={false}
                 />
               </div>
             ))}
