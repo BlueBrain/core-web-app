@@ -107,5 +107,8 @@ export default function useExploreSerializedFields(
     eType: eTypeSelectorFn(detail),
     sem: semSelectorFn(detail),
     attrs: attrsSelectorFn(detail),
+    campaign: detail?.campaign,
+    startedAt: timeElapsedFromToday(detail?.startedAt),
+    completedAt: timeElapsedFromToday(detail?.completedAt),
   };
 }

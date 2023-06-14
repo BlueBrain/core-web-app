@@ -1,0 +1,14 @@
+{
+  "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+  "@type": ["Simulation"],
+  "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
+  "coords": {
+    "desired_connected_proportion_of_invivo_frs": 0.2,
+    "depol_stdev_mean_ratio": 0.2,
+    "vpm_pct": 0.2,
+    "extracellular_calcium": 0.4
+  },
+  "status": "running",
+  "startedAt": "2023-05-15T13:48:23.217Z",
+  "completedAt": ""
+}

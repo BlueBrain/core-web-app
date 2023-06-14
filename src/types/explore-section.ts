@@ -245,15 +245,6 @@ export type Dimension = {
   value: number[];
 };
 
-// TODO: simulation is a mock type
-export type Simulation = {
-  id: string;
-  dimensions: string[];
-  status: SimulationStatus;
-  startedAt: string;
-  completedAt?: string;
-};
-
 // Below is the delta response interface definitions
 export type DeltaResource<
   T = {
@@ -283,10 +274,12 @@ export type DeltaResource<
   status?: string;
   tags?: string[];
   dimensions?: Dimension[];
-  simulations?: Simulation[];
   coords: { [key: string]: string };
   attrs: { [key: string]: number[] };
   latestRevision?: number | null | undefined;
+  campaign?: string;
+  startedAt?: string;
+  completedAt?: string;
   _constrainedBy: string;
   _createdAt: DateISOString;
   _createdBy: string;
@@ -446,6 +439,9 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   layer?: string;
   license?: string | null;
   attrs?: IdLabel[] | null;
+  campaign?: string;
+  startedAt?: string;
+  completedAt?: string;
 }
 
 export type DetailResource = SerializedDeltaResource & DeltaResource;
