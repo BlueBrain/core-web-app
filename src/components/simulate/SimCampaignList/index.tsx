@@ -20,6 +20,7 @@ import useRenameModal from '@/hooks/config-rename-modal';
 import { cloneSimCampUIConfig, renameSimCampUIConfig } from '@/api/nexus';
 import Link from '@/components/Link';
 import { EyeIcon } from '@/components/icons';
+import { getSimCampUIConfigsByNameQuery } from '@/queries/es';
 
 const { Column } = Table;
 
@@ -35,9 +36,15 @@ export default function SimCampaignList() {
   const [configs, setConfigs] = useState<SimulationCampaignUIConfigResource[]>([]);
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
-    useCloneConfigModal<SimulationCampaignUIConfigResource>(cloneSimCampUIConfig);
+    useCloneConfigModal<SimulationCampaignUIConfigResource>(
+      cloneSimCampUIConfig,
+      getSimCampUIConfigsByNameQuery
+    );
   const { createModal: createRenameModal, contextHolder: renameContextHolder } =
-    useRenameModal<SimulationCampaignUIConfigResource>(renameSimCampUIConfig);
+    useRenameModal<SimulationCampaignUIConfigResource>(
+      renameSimCampUIConfig,
+      getSimCampUIConfigsByNameQuery
+    );
 
   useEffect(() => {
     if (simCampaignsLoadable.state !== 'hasData') return;

@@ -25,11 +25,14 @@ type RenameConfigFnType<T> = (
   session: Session
 ) => Promise<EntityResource>;
 
+type GetConfigsByNameQueryFnType = (name: string) => Object;
+
 interface RenameConfigFormProps<T> {
   config: T;
   onRenameSuccess: () => void;
   onClose: () => void;
   renameConfigFn: RenameConfigFnType<T>;
+  getConfigsByNameQueryFn: GetConfigsByNameQueryFnType;
 }
 
 function RenameConfigForm<T extends SupportedConfigListTypes>({
@@ -37,6 +40,7 @@ function RenameConfigForm<T extends SupportedConfigListTypes>({
   onRenameSuccess,
   onClose,
   renameConfigFn,
+  getConfigsByNameQueryFn,
 }: RenameConfigFormProps<T>) {
   const { data: session } = useSession();
   const [form] = Form.useForm();
@@ -67,7 +71,7 @@ function RenameConfigForm<T extends SupportedConfigListTypes>({
   };
 
   const nameValidatorFn = async (_: any, name: string) => {
-    const isUniq = await checkNameIfUniq(name.trim(), session as Session);
+    const isUniq = await checkNameIfUniq(getConfigsByNameQueryFn, name.trim(), session as Session);
 
     if (isUniq) {
       return name;
@@ -137,7 +141,8 @@ function RenameConfigForm<T extends SupportedConfigListTypes>({
 }
 
 export default function useRenameConfigModal<T extends SupportedConfigListTypes>(
-  renameConfigFn: RenameConfigFnType<T>
+  renameConfigFn: RenameConfigFnType<T>,
+  getConfigsByNameQueryFn: GetConfigsByNameQueryFnType
 ) {
   const [modal, contextHolder] = Modal.useModal();
   const destroyRef = useRef<() => void>();
@@ -158,6 +163,7 @@ export default function useRenameConfigModal<T extends SupportedConfigListTypes>
           onClose={onClose}
           onRenameSuccess={onRenameSuccess}
           renameConfigFn={renameConfigFn}
+          getConfigsByNameQueryFn={getConfigsByNameQueryFn}
         />
       ),
     });

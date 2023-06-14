@@ -10,6 +10,7 @@ import useCloneConfigModal from '@/hooks/config-clone-modal';
 import useRenameConfigModal from '@/hooks/config-rename-modal';
 import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
 import timeElapsedFromToday from '@/util/date';
+import { getBrainModelConfigsByNameQuery } from '@/queries/es';
 
 type BrainConfigEntryProps = {
   config: BrainModelConfigResource;
@@ -20,9 +21,15 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
   const { data: session } = useSession();
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
-    useCloneConfigModal<BrainModelConfigResource>(cloneBrainModelConfig);
+    useCloneConfigModal<BrainModelConfigResource>(
+      cloneBrainModelConfig,
+      getBrainModelConfigsByNameQuery
+    );
   const { createModal: createRenameModal, contextHolder: renameContextHolder } =
-    useRenameConfigModal<BrainModelConfigResource>(renameBrainModelConfig);
+    useRenameConfigModal<BrainModelConfigResource>(
+      renameBrainModelConfig,
+      getBrainModelConfigsByNameQuery
+    );
   const triggerRefetchAll = useSetAtom(triggerRefetchAllAtom);
 
   const uriEncodedId = encodeURIComponent(collapseId(config['@id']));

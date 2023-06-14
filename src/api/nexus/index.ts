@@ -32,9 +32,9 @@ import {
   WholeBrainConnectomeStrength,
   SimulationCampaignUIConfigResource,
   SimulationCampaignUIConfig,
+  SupportedConfigListTypes,
 } from '@/types/nexus';
 import {
-  getBrainModelConfigsByNameQuery,
   getEntitiesByIdsQuery,
   getGeneratorTaskActivityQuery,
   getPersonalBrainModelConfigsQuery,
@@ -530,14 +530,20 @@ export function fetchPersonalBrainModels(session: Session): Promise<BrainModelCo
   return queryES<BrainModelConfigResource>(query, session);
 }
 
-export async function checkNameIfUniq(brainModelConfigName: string, session: Session) {
+type GetConfigByNameQueryFnType = (configName: string) => Object;
+
+export async function checkNameIfUniq(
+  getConfigsByNameQuery: GetConfigByNameQueryFnType,
+  configName: string,
+  session: Session
+) {
   const query = {
-    ...getBrainModelConfigsByNameQuery(brainModelConfigName),
+    ...getConfigsByNameQuery(configName),
     fields: ['name'],
     size: 1,
   };
 
-  const sameNameConfigs = await queryES<Pick<BrainModelConfigResource, 'name'>>(query, session);
+  const sameNameConfigs = await queryES<Pick<SupportedConfigListTypes, 'name'>>(query, session);
 
   return !sameNameConfigs.length;
 }

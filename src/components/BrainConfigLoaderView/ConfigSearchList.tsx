@@ -18,6 +18,7 @@ import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
 import ConfigList from '@/components/ConfigList';
 import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
+import { getBrainModelConfigsByNameQuery } from '@/queries/es';
 
 const { Column } = Table;
 
@@ -39,9 +40,12 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
   );
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
-    useCloneModal<BrainModelConfigResource>(cloneBrainModelConfig);
+    useCloneModal<BrainModelConfigResource>(cloneBrainModelConfig, getBrainModelConfigsByNameQuery);
   const { createModal: createRenameModal, contextHolder: renameContextHolder } =
-    useRenameModal<BrainModelConfigResource>(renameBrainModelConfig);
+    useRenameModal<BrainModelConfigResource>(
+      renameBrainModelConfig,
+      getBrainModelConfigsByNameQuery
+    );
 
   useEffect(() => {
     if (configsLoadable.state !== 'hasData') return;

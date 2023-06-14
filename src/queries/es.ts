@@ -291,6 +291,26 @@ export const getPersonalSimCampConfigsQuery = (username: string, searchString: s
   sort: [defaultCreationDateSort],
 });
 
+export const getSimCampUIConfigsByNameQuery = (name: string) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'SimulationCampaignUIConfig' } },
+              { term: { 'name.keyword': name } },
+            ],
+          },
+        },
+        idExistsFilter,
+      ],
+    },
+  },
+});
+
 export const getGeneratorTaskActivityByCircuitIdQuery = (detailedCircuitId: string) => ({
   size: DEFAULT_SIZE,
   query: {

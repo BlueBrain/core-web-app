@@ -26,11 +26,14 @@ type CloneConfigFnType<T> = (
   session: Session
 ) => Promise<T>;
 
+type GetConfigByNameQueryFnType = (name: string) => Object;
+
 interface CloneConfigFormProps<T extends SupportedConfigListTypes> {
   config: T;
   onCloneSuccess: (clonedConfig: T) => void;
   onClose: () => void;
   cloneConfigFn: CloneConfigFnType<T>;
+  getConfigByNameQueryFn: GetConfigByNameQueryFnType;
 }
 
 function CloneConfigForm<T extends SupportedConfigListTypes>({
@@ -38,6 +41,7 @@ function CloneConfigForm<T extends SupportedConfigListTypes>({
   onCloneSuccess,
   onClose,
   cloneConfigFn,
+  getConfigByNameQueryFn,
 }: CloneConfigFormProps<T>) {
   const { data: session } = useSession();
   const [form] = Form.useForm();
@@ -71,7 +75,7 @@ function CloneConfigForm<T extends SupportedConfigListTypes>({
   };
 
   const nameValidatorFn = async (_: any, name: string) => {
-    const isUniq = await checkNameIfUniq(name.trim(), session as Session);
+    const isUniq = await checkNameIfUniq(getConfigByNameQueryFn, name.trim(), session as Session);
 
     if (isUniq) {
       return name;
@@ -133,7 +137,8 @@ function CloneConfigForm<T extends SupportedConfigListTypes>({
 }
 
 export default function useCloneConfigModal<T extends SupportedConfigListTypes>(
-  cloneConfigFn: CloneConfigFnType<T>
+  cloneConfigFn: CloneConfigFnType<T>,
+  getConfigByNameQueryFn: GetConfigByNameQueryFnType
 ) {
   const [modal, contextHolder] = Modal.useModal();
   const destroyRef = useRef<() => void>();
@@ -160,6 +165,7 @@ export default function useCloneConfigModal<T extends SupportedConfigListTypes>(
             onClose={onClose}
             onCloneSuccess={onCloneSuccess}
             cloneConfigFn={cloneConfigFn}
+            getConfigByNameQueryFn={getConfigByNameQueryFn}
           />
         </>
       ),

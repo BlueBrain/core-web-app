@@ -17,6 +17,7 @@ import { BrainModelConfigResource } from '@/types/nexus';
 import { collapseId } from '@/util/nexus';
 import ConfigList from '@/components/ConfigList';
 import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
+import { getBrainModelConfigsByNameQuery } from '@/queries/es';
 
 const { Column } = Table;
 
@@ -36,9 +37,15 @@ export default function RecentConfigList({ baseHref }: RecentConfigListProps) {
   );
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
-    useCloneConfigModal<BrainModelConfigResource>(cloneBrainModelConfig);
+    useCloneConfigModal<BrainModelConfigResource>(
+      cloneBrainModelConfig,
+      getBrainModelConfigsByNameQuery
+    );
   const { createModal: createRenameModal, contextHolder: renameContextHolder } =
-    useRenameModal<BrainModelConfigResource>(renameBrainModelConfig);
+    useRenameModal<BrainModelConfigResource>(
+      renameBrainModelConfig,
+      getBrainModelConfigsByNameQuery
+    );
 
   useEffect(() => {
     if (configsLoadable.state !== 'hasData') return;
