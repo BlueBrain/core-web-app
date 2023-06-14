@@ -16,6 +16,10 @@ class SimPreviewThreeCtxWrapper extends ThreeCtxWrapper {
     targetDiv,
     cameraPositionXYZ = [37984.948, 3938.164, 5712.791],
     cameraLookAtXYZ = [6612.504, 3938.164, 5712.791],
+    movieCameraLookAtXYZ = [6612.504, 3938.164, 5712.791],
+    movieCameraHeight = 1920 * 5,
+    movieCameraAspect = 16 / 9,
+    movieCameraUp = [0, -1, 0],
   }: ThreeCtxWrapperInitParams) {
     super.init({
       targetDiv,
@@ -25,20 +29,19 @@ class SimPreviewThreeCtxWrapper extends ThreeCtxWrapper {
 
     this.overviewCamera = this.threeContext?.getCamera() as THREE.PerspectiveCamera;
 
-    const movieCameraWidth = 1920;
-    const movieCameraHeight = 1080;
-    const movieCameraScaleFactor = 5;
+    // Movie camera settings
+    const movieCameraWidth = (movieCameraHeight ?? 1080) * movieCameraAspect;
     this.movieCamera = new THREE.OrthographicCamera(
-      -movieCameraWidth * movieCameraScaleFactor,
-      +movieCameraWidth * movieCameraScaleFactor,
-      +movieCameraHeight * movieCameraScaleFactor,
-      -movieCameraHeight * movieCameraScaleFactor,
+      -movieCameraWidth / 2,
+      +movieCameraWidth / 2,
+      +movieCameraHeight / 2,
+      -movieCameraHeight / 2,
       0.1,
       1e6
     );
     this.movieCamera.position.set(...(cameraPositionXYZ ?? [0, 0, 0]));
-    this.movieCamera.up.set(0, -1, 0);
-    this.movieCamera.lookAt(6612.504, 3938.164, 5712.791);
+    this.movieCamera.up.set(...movieCameraUp);
+    this.movieCamera.lookAt(...movieCameraLookAtXYZ);
     this.movieCamera.updateProjectionMatrix();
     this.movieCamera.updateMatrix();
   }

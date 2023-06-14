@@ -109,3 +109,11 @@ export type ExpDesignerConfig = {
 };
 
 export type TargetList = string[];
+
+export type ExpDesignerSectionName =
+  | 'setup'
+  | 'imaging'
+  | 'recording'
+  | 'input'
+  | 'stimuli'
+  | 'analysis';

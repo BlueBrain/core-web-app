@@ -2,26 +2,17 @@
 
 import { useMemo } from 'react';
 import { Col, Row } from 'antd';
-import { useAtomValue } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 
+import { ExpDesignerSectionName } from '@/types/experiment-designer';
 import { Params, Visualization } from '@/components/experiment-designer/imaging';
-import {
-  extractTargetNamesFromSection,
-  getFocusedAtom,
-} from '@/components/experiment-designer/utils';
+import { getFocusedAtom } from '@/components/experiment-designer/utils';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
-const SECTION_NAME = 'imaging';
+const SECTION_NAME: ExpDesignerSectionName = 'imaging';
 
 export default function ImagingPage() {
   const focusedAtom = useMemo(() => getFocusedAtom(SECTION_NAME), []);
-  const inputSectionParams = useAtomValue(focusedAtom);
-
-  const targetsToDisplay = useMemo(
-    () => extractTargetNamesFromSection(inputSectionParams),
-    [inputSectionParams]
-  );
 
   return (
     <Row className="h-full">
@@ -32,7 +23,7 @@ export default function ImagingPage() {
       </Col>
       <Col span={16}>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <Visualization targetsToDisplay={targetsToDisplay} />
+          <Visualization sectionName={SECTION_NAME} />
         </ErrorBoundary>
       </Col>
     </Row>

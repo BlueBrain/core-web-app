@@ -292,6 +292,28 @@ const config: ExpDesignerConfig = {
       hidden: true,
     },
     {
+      id: 'cameraTarget',
+      name: 'Camera target',
+      type: 'position',
+      value: [100, 200, 300],
+    },
+    {
+      id: 'cameraUp',
+      name: 'Camera up vector',
+      type: 'position',
+      value: [0, 0, 1],
+    },
+    {
+      id: 'cameraHeight',
+      name: 'Camera viewport height',
+      type: 'number',
+      value: 1080,
+      min: 10,
+      max: 10000,
+      unit: '',
+      step: 10,
+    },
+    {
       id: 'neuronDisplay',
       name: 'Neuron Display',
       type: 'radioButton',

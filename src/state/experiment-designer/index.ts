@@ -41,6 +41,7 @@ export const expDesignerConfigAtom = atom<ExpDesignerConfig>(expDesParamsDefault
 export const idAtom = atom<string | null>(null);
 
 export const refetchTriggerAtom = atom<{}>({});
+
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
 const configResourceAtom = atom<Promise<SimulationCampaignUIConfigResource | null>>(async (get) => {
