@@ -167,6 +167,11 @@ export default class MorphologiesManager {
     const modelId = this.modelIdPerRegion.get(regionID);
     if (!modelId) return false;
 
+    this.atlas.updateVisibleCell({
+      type: 'cell',
+      regionID,
+      isLoading: true,
+    });
     await this.wrapper.show([modelId]);
     return true;
   }
