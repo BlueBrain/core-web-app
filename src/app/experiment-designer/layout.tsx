@@ -4,10 +4,14 @@ import { ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { Spin } from 'antd';
-import { useRouter } from 'next/navigation';
+import { Spin, message } from 'antd';
 
-import { ExperimentDesignerTopTabs, SimulateBtn } from '@/components/experiment-designer';
+import {
+  ExperimentDesignerTopTabs,
+  SimulateBtn,
+  DuplicateConfigBtn,
+  ViewResultsBtn,
+} from '@/components/experiment-designer';
 import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
@@ -19,15 +23,55 @@ import {
   savedConfigAtom,
   setWorkflowExecutionAndCloneAtom,
   brainModelConfigIdFromSimCampUIConfigIdAtom,
+  isConfigUsedInSimAtom,
 } from '@/state/experiment-designer';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
+import { classNames } from '@/util/utils';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
 const loadableDerivedBrainModelConfigIdAtom = loadable(brainModelConfigIdFromSimCampUIConfigIdAtom);
+const loadableIsConfigUsedInSimAtom = loadable(isConfigUsedInSimAtom);
 
 type ExperimentDesignerLayoutProps = {
   children: ReactNode;
 };
+
+type ActionButtonProps = {
+  isConfigUsedInSim: boolean;
+  isLoading: boolean;
+};
+
+function ActionButtons({ isConfigUsedInSim, isLoading }: ActionButtonProps) {
+  const setWorkflowExecutionAndClone = useSetAtom(setWorkflowExecutionAndCloneAtom);
+
+  const onLaunched = (nexusUrl: string) => {
+    if (!nexusUrl) return;
+
+    setWorkflowExecutionAndClone(nexusUrl);
+  };
+
+  const defaultButtonStyle = 'flex h-12 px-8 items-center';
+
+  if (isLoading) {
+    return (
+      <div className={classNames(defaultButtonStyle, 'bg-slate-400')}>
+        <span>Loading...</span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {isConfigUsedInSim && (
+        <>
+          <ViewResultsBtn className={defaultButtonStyle} />
+          <DuplicateConfigBtn className={defaultButtonStyle} />
+        </>
+      )}
+      {!isConfigUsedInSim && <SimulateBtn onLaunched={onLaunched} />}
+    </>
+  );
+}
 
 export default function ExperimentDesignerLayout({ children }: ExperimentDesignerLayoutProps) {
   const [localConfig, setLocalConfig] = useAtom(expDesignerConfigAtom);
@@ -36,10 +80,15 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   const [isLoading, setIsLoading] = useState(true);
   const saveConfigDebounced = useSetAtom(setConfigPayloadAtom);
   const setSavedConfig = useSetAtom(savedConfigAtom);
-  const setWorkflowExecutionAndClone = useSetAtom(setWorkflowExecutionAndCloneAtom);
+
   const derivedBrainModelConfigIdLoadable = useAtomValue(loadableDerivedBrainModelConfigIdAtom);
   const setBrainModelConfigId = useSetAtom(brainModelConfigIdAtom);
-  const router = useRouter();
+
+  const isConfigUsedInSimLoadable = useAtomValue(loadableIsConfigUsedInSimAtom);
+  const isConfigUsedInSim =
+    isConfigUsedInSimLoadable.state === 'hasData' ? isConfigUsedInSimLoadable.data : false;
+
+  const [messageApi, messageContextHolder] = message.useMessage();
 
   useAuth(true);
   useSimulationCampaignUIConfig();
@@ -58,8 +107,17 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   }, [setLocalConfig, remoteConfigLoadable, setSavedConfig]);
 
   useEffect(() => {
+    // skip changing config if sim was launched with it.
+    if (isConfigUsedInSim) {
+      messageApi.open({
+        type: 'error',
+        content: 'Config used in simulation. It cannot be modified. Please Duplicate it',
+      });
+      return;
+    }
+
     saveConfigDebounced();
-  }, [localConfig, saveConfigDebounced]);
+  }, [localConfig, saveConfigDebounced, isConfigUsedInSim, messageApi]);
 
   useEffect(() => {
     if (derivedBrainModelConfigIdLoadable.state !== 'hasData') return;
@@ -68,26 +126,6 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
     // setting the brainModelConfig from simCampUIConfig query param
     setBrainModelConfigId(derivedBrainModelConfigIdLoadable.data);
   }, [derivedBrainModelConfigIdLoadable, setBrainModelConfigId]);
-
-  const replaceConfigQueryParam = (clonedConfigId: string) => {
-    const collapsedSimCampUIConfigInAtom = clonedConfigId?.split('/').pop();
-    if (!collapsedSimCampUIConfigInAtom) return;
-
-    const newSearchParams = new URLSearchParams();
-    newSearchParams.set('simulationCampaignUIConfigId', collapsedSimCampUIConfigInAtom);
-    const seachParamsStr = newSearchParams.toString();
-    const baseUrl = window.location.origin + window.location.pathname;
-    const newUrl = `${baseUrl}?${seachParamsStr}`;
-    router.replace(newUrl);
-  };
-
-  const onLaunched = (nexusUrl: string) => {
-    if (!nexusUrl) return;
-
-    setWorkflowExecutionAndClone(nexusUrl, (clonedConfigId: string) => {
-      replaceConfigQueryParam(clonedConfigId);
-    });
-  };
 
   return (
     <Spin spinning={isLoading}>
@@ -107,11 +145,15 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
 
           <div className="absolute bottom-5 right-5 flex gap-5">
             <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-              <SimulateBtn onLaunched={onLaunched} />
+              <ActionButtons
+                isConfigUsedInSim={isConfigUsedInSim}
+                isLoading={isConfigUsedInSimLoadable.state === 'loading'}
+              />
             </ErrorBoundary>
           </div>
         </div>
       </div>
+      {messageContextHolder}
     </Spin>
   );
 }
