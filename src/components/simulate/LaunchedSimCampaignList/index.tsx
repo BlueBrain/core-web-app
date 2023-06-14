@@ -63,6 +63,7 @@ export default function LaunchedSimCampaignList() {
         isLoading={launchedSimCampaignsLoadable.state === 'loading'}
         configs={configs}
         showCreationDate={false}
+        showCreatedBy={false}
         rowClassName={rowClassFn}
       >
         <Column title="STATUS" dataIndex="status" key="status" sorter={getSorterFn('status')} />
@@ -99,6 +100,12 @@ export default function LaunchedSimCampaignList() {
                   <FileIcon fill={iconFillStyle} />
                 </Button>
 
+                <Link href={`${expDesBaseUrl}?simulationCampaignUIConfigId=${extractId(config)}`}>
+                  <Button size="small" type="text" className={defaultActionStyle}>
+                    <SettingsIcon fill={iconFillStyle} />
+                  </Button>
+                </Link>
+
                 {config.status === 'Done' && (
                   <Link href="/explore/simulation-campaigns" className="inline-block">
                     <Button
@@ -111,12 +118,6 @@ export default function LaunchedSimCampaignList() {
                     </Button>
                   </Link>
                 )}
-
-                <Link href={`${expDesBaseUrl}?simulationCampaignUIConfigId=${extractId(config)}`}>
-                  <Button size="small" type="text" className={defaultActionStyle}>
-                    <SettingsIcon fill={iconFillStyle} />
-                  </Button>
-                </Link>
               </>
             );
           }}

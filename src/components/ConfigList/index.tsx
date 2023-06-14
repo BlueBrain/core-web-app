@@ -21,6 +21,7 @@ type ConfigListProps<T> = {
   nameRenderFn?: (name: string, config: T) => ReactNode;
   children?: ReactNode;
   showCreationDate?: boolean;
+  showCreatedBy?: boolean;
   rowClassName?: ((config: T) => string) | undefined | string;
 };
 
@@ -38,6 +39,7 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
   nameRenderFn = (name) => name,
   children,
   showCreationDate = true,
+  showCreatedBy = true,
   rowClassName = undefined,
 }: ConfigListProps<T>) {
   return (
@@ -65,13 +67,15 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
           key="description"
           sorter={getSorterFn('description')}
         />
-        <Column
-          title="CREATED BY"
-          dataIndex="_createdBy"
-          key="createdBy"
-          sorter={getSorterFn('_createdBy')}
-          render={(createdBy) => createdBy.split('/').reverse()[0]}
-        />
+        {showCreatedBy && (
+          <Column
+            title="CREATED BY"
+            dataIndex="_createdBy"
+            key="createdBy"
+            sorter={getSorterFn('_createdBy')}
+            render={(createdBy) => createdBy.split('/').reverse()[0]}
+          />
+        )}
         {showCreationDate && (
           <Column
             title="DATE CREATED"
