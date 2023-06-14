@@ -36,6 +36,7 @@ export default function DimensionBox({
   setAxis,
   dismissFunc,
   dismissible,
+  isAxis,
 }: DimensionBoxProps) {
   const [status, setStatus] = useState<Status>('initial');
 
@@ -61,7 +62,7 @@ export default function DimensionBox({
         className={`gap-1 h-28 border rounded border-primary-1 py-2.5 px-3.5 text-primary-7 ${renderMargin()}`}
       >
         {dimension ? (
-          <AssignedDimensionBox dimension={dimension} />
+          <AssignedDimensionBox dimension={dimension} isAxis={isAxis} />
         ) : (
           <UnassignedDimensionBox
             dimensionOptions={dimensionOptions}

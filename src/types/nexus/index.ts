@@ -1,4 +1,4 @@
-import { Entity, Distribution, ResourceMetadata } from './common';
+import { Entity, Distribution, ResourceMetadata, DateISOString } from './common';
 import { MacroConnectomeEditEntry } from '@/types/connectome';
 
 export * from './common';
@@ -400,16 +400,18 @@ export interface SimulationCampaignUIConfigResource
   extends ResourceMetadata,
     SimulationCampaignUIConfig {}
 
+type WorkflowExecutionStatusType = 'Done' | 'Running' | 'Failed';
+
 export interface WorkflowExecution extends Entity {
   '@type': ['Entity', 'WorkflowExecution'];
   configFileName: string;
   distribution: Distribution;
-  endedAtTime: string;
+  endedAtTime: DateISOString;
   module: string;
   name: string;
   parameters: string;
-  startedAtTime: string;
-  status: string;
+  startedAtTime: DateISOString;
+  status: WorkflowExecutionStatusType;
   task: string;
   version: string;
 }
@@ -431,4 +433,11 @@ export interface AgentOrIsPartOfOrLicense {
 
 export type SupportedConfigListTypes =
   | BrainModelConfigResource
-  | SimulationCampaignUIConfigResource;
+  | SimulationCampaignUIConfigResource
+  | LaunchedSimCampUIConfigType;
+
+export type LaunchedSimCampUIConfigType = SimulationCampaignUIConfigResource & {
+  endedAtTime: DateISOString;
+  startedAtTime: DateISOString;
+  status: WorkflowExecutionStatusType;
+};

@@ -18,6 +18,7 @@ type ExpDesignerBaseParameter = {
   id: string;
   name: string;
   disabled?: boolean;
+  hidden?: boolean;
 };
 
 export type ExpDesignerNumberParameter = ExpDesignerBaseParameter & {
@@ -108,3 +109,11 @@ export type ExpDesignerConfig = {
 };
 
 export type TargetList = string[];
+
+export type ExpDesignerSectionName =
+  | 'setup'
+  | 'imaging'
+  | 'recording'
+  | 'input'
+  | 'stimuli'
+  | 'analysis';

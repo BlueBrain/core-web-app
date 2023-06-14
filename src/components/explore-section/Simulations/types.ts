@@ -9,6 +9,7 @@ export type DimensionBoxProps = {
   setAxis?: (value: string) => void;
   dismissFunc?: () => void;
   dismissible: boolean;
+  isAxis: boolean;
 };
 
 export type UnassignedDimensionBoxProps = {
@@ -18,13 +19,25 @@ export type UnassignedDimensionBoxProps = {
   setStatus: Dispatch<SetStateAction<Status>>;
 };
 
+export type AxisDimensionBoxEditFormProps = {
+  dimension: Dimension;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+};
+
 export type DimensionBoxEditFormProps = {
+  dimension: Dimension;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+  isAxis: boolean;
+};
+
+export type OtherDimensionBoxEditFormProps = {
   dimension: Dimension;
   setEditMode: Dispatch<SetStateAction<boolean>>;
 };
 
 export type AssignedDimensionBoxProps = {
   dimension: Dimension;
+  isAxis: boolean;
 };
 
 export type DimensionTitleProps = {

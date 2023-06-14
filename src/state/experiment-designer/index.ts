@@ -25,7 +25,6 @@ import {
   queryES,
   updateJsonFileByUrl,
   updateResource,
-  cloneSimCampUIConfig,
 } from '@/api/nexus';
 import { createDistribution } from '@/util/nexus';
 import { autoSaveDebounceInterval } from '@/config';
@@ -41,22 +40,30 @@ export const expDesignerConfigAtom = atom<ExpDesignerConfig>(expDesParamsDefault
 export const idAtom = atom<string | null>(null);
 
 export const refetchTriggerAtom = atom<{}>({});
+
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const configResourceAtom = atom<Promise<SimulationCampaignUIConfigResource | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = get(idAtom);
+export const configResourceAtom = atom<Promise<SimulationCampaignUIConfigResource | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const id = get(idAtom);
 
-  get(refetchTriggerAtom);
+    get(refetchTriggerAtom);
 
-  if (!session || !id) return null;
+    if (!session || !id) return null;
 
-  return fetchResourceById<SimulationCampaignUIConfigResource>(id, session);
-});
+    return fetchResourceById<SimulationCampaignUIConfigResource>(id, session);
+  }
+);
 
 const configPayloadUrlAtom = selectAtom(
   configResourceAtom,
   (config) => config?.distribution.contentUrl
+);
+
+export const isConfigUsedInSimAtom = selectAtom(
+  configResourceAtom,
+  (config) => !!config?.wasInfluencedBy?.['@id']
 );
 
 export const simCampaignUserAtom = atom<Promise<string | null>>(async (get) => {
@@ -149,42 +156,34 @@ export const targetListAtom = atom<Promise<string[]>>(async (get) => {
   return fetchTargetsByCircuit(detailedCircuit, session);
 });
 
-export const setWorkflowExecutionAndCloneAtom = atom<
+export const setWorkflowExecutionAndCloneAtom = atom<null, [string], Promise<void>>(
   null,
-  [string, (clonedId: string) => void],
-  Promise<void>
->(null, async (get, set, workflowExecutionUrl, callbackFn) => {
-  const session = get(sessionAtom);
-  const configResource = await get(configResourceAtom);
+  async (get, set, workflowExecutionUrl) => {
+    const session = get(sessionAtom);
+    const configResource = await get(configResourceAtom);
 
-  if (!session) {
-    throw new Error('No auth session found in the state');
+    if (!session) {
+      throw new Error('No auth session found in the state');
+    }
+
+    if (!configResource || !workflowExecutionUrl) return;
+
+    const workflowExecutionResource = await fetchResourceByUrl<WorkflowExecution>(
+      workflowExecutionUrl,
+      session
+    );
+
+    const updatedResource: SimulationCampaignUIConfigResource = {
+      ...configResource,
+      wasInfluencedBy: {
+        '@type': 'WorkflowExecution',
+        '@id': workflowExecutionResource['@id'],
+      },
+    };
+
+    await updateResource(updatedResource, updatedResource?._rev, session);
   }
-
-  if (!configResource || !workflowExecutionUrl) return;
-
-  const workflowExecutionResource = await fetchResourceByUrl<WorkflowExecution>(
-    workflowExecutionUrl,
-    session
-  );
-
-  const updatedResource: SimulationCampaignUIConfigResource = {
-    ...configResource,
-    wasInfluencedBy: {
-      '@type': 'WorkflowExecution',
-      '@id': workflowExecutionResource['@id'],
-    },
-  };
-
-  await updateResource(updatedResource, updatedResource?._rev, session);
-  const clonedSimCampUIConfig = await cloneSimCampUIConfig(
-    configResource['@id'],
-    configResource.name,
-    configResource.description,
-    session
-  );
-  callbackFn(clonedSimCampUIConfig['@id']);
-});
+);
 
 export const brainModelConfigIdFromSimCampUIConfigIdAtom = atom<Promise<string | null>>(
   async (get) => {

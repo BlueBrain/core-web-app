@@ -13,6 +13,7 @@ import {
 } from '@/components/explore-section/Simulations/state';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
+import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
 
 type SimulationDisplayGridProps = {
   display: string;
@@ -135,10 +136,7 @@ export default function SimulationsDisplayGrid({ display }: SimulationDisplayGri
                     yDimension={yDimension.id}
                   />
                 ) : (
-                  <CenteredMessage
-                    message="There is no simulation for this combination of dimensions"
-                    icon={<InfoCircleOutlined className="text-5xl" />}
-                  />
+                  <NoSimulationFoundCard />
                 )}
               </Col>
             );

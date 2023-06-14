@@ -1,7 +1,12 @@
 import template from 'lodash/template';
 import { Session } from 'next-auth';
 
-import { SimulationPlaceholders, workflowMetaConfigs } from '@/services/bbp-workflow/config';
+import {
+  SimulationPlaceholders,
+  AnalysisPlaceholders,
+  workflowMetaConfigs,
+  customRangeDelimeter,
+} from '@/services/bbp-workflow/config';
 import {
   ExpDesignerConfig,
   ExpDesignerParam,
@@ -11,9 +16,13 @@ import {
   ExpDesignerRadioBtnParameter,
   ExpDesignerPositionParameter,
   ExpDesignerDropdownParameter,
+  ExpDesignerTargetDropdownGroupParameter,
 } from '@/types/experiment-designer';
 import { createWorkflowConfigResource, createJsonFile, createResource } from '@/api/nexus';
-import { calculateRangeOutput } from '@/components/experiment-designer/utils';
+import {
+  calculateRangeOutput,
+  replaceCustomBbpWorkflowPlaceholders,
+} from '@/components/experiment-designer/utils';
 import {
   DetailedCircuit,
   SimulationCampaignUIConfig,
@@ -25,8 +34,6 @@ function getNotFoundMsg(variable: any, name?: string): string {
   const variableName = Object.keys({ variable })[0];
   return `${variableName} ${name || ''} not in experiment designer config`;
 }
-
-export const customRangeDelimeter = '@@';
 
 function createNonStringPlaceholder(value: string | boolean) {
   return `${customRangeDelimeter}$${value}`;
@@ -96,7 +103,6 @@ function getValueOrPlaceholder(
 
 export async function createWorkflowMetaConfigs(
   variablesToReplace: Record<string, any>,
-  templateReplaceRegexp: RegExp,
   session: Session
 ) {
   /*
@@ -107,7 +113,7 @@ export async function createWorkflowMetaConfigs(
   const clonedCfgsPromises = Object.entries(workflowMetaConfigs).map(
     async ([, { fileName, templateFile, placeholder }]) => {
       let replacedContent = template(templateFile)(variablesToReplaceCopy);
-      replacedContent = replacedContent.replace(templateReplaceRegexp, '$1');
+      replacedContent = replaceCustomBbpWorkflowPlaceholders(replacedContent);
       const newResource = await createWorkflowConfigResource(fileName, replacedContent, session);
       const urlWithRev = `${newResource._self}?rev=${newResource._rev}`;
       variablesToReplaceCopy[placeholder] = urlWithRev;
@@ -121,6 +127,13 @@ export async function createWorkflowMetaConfigs(
 function getParamById<T>(group: ExpDesignerGroupParameter, id: string) {
   const result = group.value.find((param) => param.id === id);
   return <T>result;
+}
+
+function getSectionTargetsById(section: ExpDesignerParam[], id: string) {
+  const targetObj = section.find((param) => param.id === id);
+  if (!targetObj) return [];
+
+  return (targetObj as ExpDesignerTargetDropdownGroupParameter).value;
 }
 
 export function convertExpDesConfigToSimVariables(
@@ -275,6 +288,19 @@ export function convertExpDesConfigToSimVariables(
   variablesToReplaceCopy[SimulationPlaceholders.VIZ_REPORT_NAME] = JSON.stringify(
     recordingKeys?.length ? recordingKeys[0] : ''
   );
+
+  // ----------------------------------------
+  // --------------- Analysis ---------------
+  // ----------------------------------------
+
+  const { analysis } = expDesignerConfig;
+  const rasterTargets = getSectionTargetsById(analysis, 'raster');
+  const psthTargets = getSectionTargetsById(analysis, 'psth');
+  const voltageTargets = getSectionTargetsById(analysis, 'voltage');
+
+  variablesToReplaceCopy[AnalysisPlaceholders.RASTER_TARGETS] = JSON.stringify(rasterTargets);
+  variablesToReplaceCopy[AnalysisPlaceholders.PSTH_TARGETS] = JSON.stringify(psthTargets);
+  variablesToReplaceCopy[AnalysisPlaceholders.VOLTAGE_TARGETS] = JSON.stringify(voltageTargets);
 
   return variablesToReplaceCopy;
 }

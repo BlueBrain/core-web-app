@@ -17,12 +17,12 @@ type SearchTab = {
 const searchTabs: SearchTab[] = [
   {
     id: 'public',
-    name: 'Public simulation campaigns',
+    name: 'Public simulation campaign configurations',
     icon: <SettingsIcon />,
   },
   {
     id: 'personal',
-    name: 'My simulation campaigns',
+    name: 'My simulation campaign configurations',
     icon: <UserIcon />,
   },
 ];
@@ -37,7 +37,7 @@ export default function ListTypeSelector() {
           key={tab.id}
           type="button"
           className={classNames(
-            'h-10 py-2 px-6 rounded-md',
+            'h-10 py-2 px-6 rounded-md font-bold mt-4',
             'text-primary-4 text-2xl flex gap-2 items-center',
             'hover:bg-[#ffffff0f] hover:text-white',
             activeTabId === tab.id ? 'text-white' : null

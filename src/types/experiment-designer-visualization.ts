@@ -21,6 +21,7 @@ interface Size {
 export interface MovieCameraConfig extends CameraConfig {
   resolution: Size; // Final movie resolution (pixels)
   projection: Size; // Projection size (real world)
+  rotation: [number, number, number]; // Camera rotation vector
 }
 
 export interface ExpDesignerVisualizationConfig {

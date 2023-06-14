@@ -11,13 +11,13 @@ import { simulationCampaignResourceAtom } from '@/state/explore-section/simulati
 // Dimensions atoms
 
 function buildDefaultDimensions(resource: SimulationCampaignResource) {
-  return Object.keys(resource.coords).map(
-    (dimension) =>
-      ({
-        id: dimension,
-        value: { type: 'range', minValue: '0.2', maxValue: '0.4' },
-      } as Dimension)
-  );
+  return Object.entries(resource.coords).map(([id, values]) => {
+    const value: number = values[0];
+    return {
+      id,
+      value: { type: 'value', value: value.toString() },
+    } as Dimension;
+  });
 }
 
 export const dimensionsAtom = atom<Dimension[]>([]);

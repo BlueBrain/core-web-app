@@ -11,7 +11,7 @@ import SearchInput from './SearchInput';
 import ListTypeSelector from './ListTypeSelector';
 import { SimulationCampaignUIConfigResource } from '@/types/nexus';
 import { triggerRefetchAtom } from '@/state/experiment-designer';
-import { simCampaingListAtom } from '@/state/simulate';
+import { simCampaignListAtom } from '@/state/simulate';
 import ConfigList from '@/components/ConfigList';
 import CloneIcon from '@/components/icons/Clone';
 import EditIcon from '@/components/icons/Edit';
@@ -20,10 +20,11 @@ import useRenameModal from '@/hooks/config-rename-modal';
 import { cloneSimCampUIConfig, renameSimCampUIConfig } from '@/api/nexus';
 import Link from '@/components/Link';
 import { EyeIcon } from '@/components/icons';
+import { getSimCampUIConfigsByNameQuery } from '@/queries/es';
 
 const { Column } = Table;
 
-const loadableSimCampaignListAtom = loadable(simCampaingListAtom);
+const loadableSimCampaignListAtom = loadable(simCampaignListAtom);
 
 export default function SimCampaignList() {
   const router = useRouter();
@@ -35,9 +36,15 @@ export default function SimCampaignList() {
   const [configs, setConfigs] = useState<SimulationCampaignUIConfigResource[]>([]);
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
-    useCloneConfigModal<SimulationCampaignUIConfigResource>(cloneSimCampUIConfig);
+    useCloneConfigModal<SimulationCampaignUIConfigResource>(
+      cloneSimCampUIConfig,
+      getSimCampUIConfigsByNameQuery
+    );
   const { createModal: createRenameModal, contextHolder: renameContextHolder } =
-    useRenameModal<SimulationCampaignUIConfigResource>(renameSimCampUIConfig);
+    useRenameModal<SimulationCampaignUIConfigResource>(
+      renameSimCampUIConfig,
+      getSimCampUIConfigsByNameQuery
+    );
 
   useEffect(() => {
     if (simCampaignsLoadable.state !== 'hasData') return;
@@ -70,7 +77,11 @@ export default function SimCampaignList() {
     <>
       <ListTypeSelector />
 
-      <div className="flex justify-end mb-3">
+      <div className="flex mb-3 justify-between">
+        <small className="self-center">
+          <span className="text-primary-4">Total configurations: </span>
+          <span className="font-bold">{configs.length}</span>
+        </small>
         <SearchInput />
       </div>
 

@@ -3,25 +3,16 @@
 import { useMemo } from 'react';
 import { Col, Row } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useAtomValue } from 'jotai';
 
+import { ExpDesignerSectionName } from '@/types/experiment-designer';
 import { Params, Visualization } from '@/components/experiment-designer/analysis';
-import {
-  extractTargetNamesFromSection,
-  getFocusedAtom,
-} from '@/components/experiment-designer/utils';
+import { getFocusedAtom } from '@/components/experiment-designer/utils';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
-const SECTION_NAME = 'analysis';
+const SECTION_NAME: ExpDesignerSectionName = 'analysis';
 
 export default function AnalysisPage() {
   const focusedAtom = useMemo(() => getFocusedAtom(SECTION_NAME), []);
-  const inputSectionParams = useAtomValue(focusedAtom);
-
-  const targetsToDisplay = useMemo(
-    () => extractTargetNamesFromSection(inputSectionParams),
-    [inputSectionParams]
-  );
 
   return (
     <Row className="h-full">
@@ -32,7 +23,7 @@ export default function AnalysisPage() {
       </Col>
       <Col span={16}>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <Visualization targetsToDisplay={targetsToDisplay} />
+          <Visualization sectionName={SECTION_NAME} />
         </ErrorBoundary>
       </Col>
     </Row>

@@ -12,6 +12,7 @@ const coordinateStyle = 'text-gray-400 mx-2';
 
 export default function CoordinatesViewer({ paramAtom, className }: Props) {
   const data = useAtomValue(paramAtom);
+  if (data.hidden) return null;
 
   return (
     <div className={classNames('flex gap-3', className)}>

@@ -21,6 +21,7 @@ import SettingsIcon from './Settings';
 import RangeIcon from './Range';
 import InteractiveViewIcon from './InteractiveView';
 import VirtualLabIcon from './VirtualLab';
+import FileIcon from './File';
 
 export {
   AngledArrowIcon,
@@ -31,6 +32,7 @@ export {
   CheckIcon,
   ChevronIcon,
   EyeIcon,
+  FileIcon,
   GripDotsVerticalIcon,
   HomeIcon,
   LinkIcon,

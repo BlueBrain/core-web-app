@@ -75,8 +75,6 @@ function NodeSetMesh({
     preventParallelism(nodeSetName, async () => {
       if (atlas.findVisibleNodeSet(nodeSetName)?.isLoading) return;
 
-      console.debug('fetchAndShowNodeSets', nodeSetName);
-
       atlas.updateVisibleNodeSets({
         nodeSetName,
         isLoading: true,

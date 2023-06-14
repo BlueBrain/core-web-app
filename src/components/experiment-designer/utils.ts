@@ -20,6 +20,7 @@ import type {
   ExpDesignerDropdownParameter,
   StepperType,
 } from '@/types/experiment-designer';
+import { customRangeDelimeter } from '@/services/bbp-workflow/config';
 
 export function getFocusedAtom(name: string) {
   return focusAtom(expDesignerConfigAtom, (optic: OpticFor<ExpDesignerConfig>) => optic.prop(name));
@@ -217,6 +218,14 @@ export function extractTargetNamesFromSection(inputSectionParams: ExpDesignerPar
   });
 
   return Array.from(targetValuesSet);
+}
+
+// workaround to remove the string on the placeholders to be SONATA compatible
+const templateReplaceRegexp = new RegExp(`"?${customRangeDelimeter}(\\$?[^"},]+)"?`, 'gm');
+
+export function replaceCustomBbpWorkflowPlaceholders(text: string) {
+  const replaced = text.replace(templateReplaceRegexp, '$1');
+  return replaced;
 }
 
 export default getFocusedAtom;

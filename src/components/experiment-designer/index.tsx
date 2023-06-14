@@ -10,6 +10,8 @@ import CoordinatesViewer from './CoordinatesViewer';
 import RadioButtonParameter from './RadioButtonParameter';
 import MultiTargetDropdown from './MultiTargetDropdown';
 import MultiDropdown from './MultiDropdown';
+import DuplicateConfigBtn from './DuplicateConfigBtn';
+import ViewResultsBtn from './ViewResultsBtn';
 
 export {
   StringParameter,
@@ -24,4 +26,6 @@ export {
   RadioButtonParameter,
   MultiTargetDropdown,
   MultiDropdown,
+  DuplicateConfigBtn,
+  ViewResultsBtn,
 };

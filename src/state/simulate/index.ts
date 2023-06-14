@@ -1,9 +1,18 @@
 import { atom } from 'jotai';
 
 import sessionAtom from '@/state/session';
-import { SimulationCampaignUIConfigResource } from '@/types/nexus';
+import {
+  SimulationCampaignUIConfigResource,
+  WorkflowExecution,
+  LaunchedSimCampUIConfigType,
+} from '@/types/nexus';
 import { queryES } from '@/api/nexus';
-import { getPersonalSimCampConfigsQuery, getSimCampConfigsQuery } from '@/queries/es';
+import {
+  getLaunchedSimCampQuery,
+  getPersonalSimCampConfigsQuery,
+  getSimCampConfigsQuery,
+  getWorkflowExecutionsQuery,
+} from '@/queries/es';
 
 export const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
@@ -17,7 +26,7 @@ type SearchType = 'public' | 'personal';
 
 export const searchConfigListTypeAtom = atom<SearchType>('public');
 
-export const simCampaingListAtom = atom<Promise<SimulationCampaignUIConfigResource[]>>(
+export const simCampaignListAtom = atom<Promise<SimulationCampaignUIConfigResource[]>>(
   async (get) => {
     const session = get(sessionAtom);
     const searchType = get(searchConfigListTypeAtom);
@@ -38,5 +47,59 @@ export const simCampaingListAtom = atom<Promise<SimulationCampaignUIConfigResour
     }
 
     return queryES<SimulationCampaignUIConfigResource>(query, session);
+  }
+);
+
+export const searchLaunchedSimCampStringAtom = atom<string>('');
+export const refetchLaunchedSimCampTriggerAtom = atom<{}>({});
+export const triggerLaunchedSimCampRefetchAtom = atom(null, (get, set) =>
+  set(refetchLaunchedSimCampTriggerAtom, {})
+);
+
+const createLaunchedSimCampObj = (
+  simCampUIConfig: SimulationCampaignUIConfigResource,
+  workflowExecutionEntity: WorkflowExecution
+): LaunchedSimCampUIConfigType => ({
+  ...simCampUIConfig,
+  startedAtTime: workflowExecutionEntity.startedAtTime,
+  endedAtTime: workflowExecutionEntity.endedAtTime,
+  status: workflowExecutionEntity.status,
+});
+
+export const launchedSimCampaignListAtom = atom<Promise<LaunchedSimCampUIConfigType[]>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const searchString = get(searchLaunchedSimCampStringAtom);
+
+    get(refetchLaunchedSimCampTriggerAtom);
+
+    if (!session) return [];
+
+    const launchedSimCampQuery = getLaunchedSimCampQuery(session.user.username, searchString);
+    const launchedSimCampUIConfigs = await queryES<SimulationCampaignUIConfigResource>(
+      launchedSimCampQuery,
+      session
+    );
+
+    const workflowExecutionIds = launchedSimCampUIConfigs
+      .map((simCampUIConfig) => simCampUIConfig.wasInfluencedBy?.['@id'])
+      .filter(Boolean) as string[];
+
+    const workflowExecutionsQuery = getWorkflowExecutionsQuery(workflowExecutionIds);
+    const workflowExecutionEntities = await queryES<WorkflowExecution>(
+      workflowExecutionsQuery,
+      session
+    );
+
+    return workflowExecutionEntities.map((workflowExecutionEntity) => {
+      const simCampUIConfig = launchedSimCampUIConfigs.find(
+        (simCamp) => simCamp.wasInfluencedBy?.['@id'] === workflowExecutionEntity['@id']
+      );
+      if (!simCampUIConfig) {
+        throw new Error('Simulation campaign UI config not found for WorkflowExecution');
+      }
+
+      return createLaunchedSimCampObj(simCampUIConfig, workflowExecutionEntity);
+    });
   }
 );

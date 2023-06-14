@@ -6,6 +6,10 @@ export interface ThreeCtxWrapperInitParams {
   targetDiv: HTMLDivElement;
   cameraPositionXYZ?: [number, number, number];
   cameraLookAtXYZ?: [number, number, number];
+  movieCameraHeight?: number;
+  movieCameraAspect?: number;
+  movieCameraUp?: [number, number, number];
+  movieCameraLookAtXYZ?: [number, number, number];
 }
 
 export class ThreeCtxWrapper {

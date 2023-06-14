@@ -21,6 +21,8 @@ type ConfigListProps<T> = {
   nameRenderFn?: (name: string, config: T) => ReactNode;
   children?: ReactNode;
   showCreationDate?: boolean;
+  showCreatedBy?: boolean;
+  rowClassName?: ((config: T) => string) | undefined | string;
 };
 
 const dateRenderer = (createdAtStr: DateISOString) => {
@@ -37,6 +39,8 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
   nameRenderFn = (name) => name,
   children,
   showCreationDate = true,
+  showCreatedBy = true,
+  rowClassName = undefined,
 }: ConfigListProps<T>) {
   return (
     <ConfigProvider theme={tableTheme}>
@@ -48,6 +52,7 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
         pagination={configs.length > 10 ? { defaultPageSize: 10 } : false}
         rowKey="@id"
         rowSelection={rowSelection}
+        rowClassName={rowClassName}
       >
         <Column
           title="NAME"
@@ -62,16 +67,18 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
           key="description"
           sorter={getSorterFn('description')}
         />
-        <Column
-          title="CREATED BY"
-          dataIndex="_createdBy"
-          key="createdBy"
-          sorter={getSorterFn('_createdBy')}
-          render={(createdBy) => createdBy.split('/').reverse()[0]}
-        />
+        {showCreatedBy && (
+          <Column
+            title="CREATED BY"
+            dataIndex="_createdBy"
+            key="createdBy"
+            sorter={getSorterFn('_createdBy')}
+            render={(createdBy) => createdBy.split('/').reverse()[0]}
+          />
+        )}
         {showCreationDate && (
           <Column
-            title="CREATED AT"
+            title="DATE CREATED"
             dataIndex="_createdAt"
             key="createdAt"
             width={140}

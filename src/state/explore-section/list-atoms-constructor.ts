@@ -10,7 +10,7 @@ import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
 import { TYPE_FILTER_MAPPING, DEFAULT_FILTERS } from '@/constants/explore-section';
 import sessionAtom from '@/state/session';
-import fetchEsResourcesByType from '@/api/explore-section';
+import fetchEsResourcesByType from '@/api/explore-section/resources';
 
 interface DataQueryParams {
   type: string;

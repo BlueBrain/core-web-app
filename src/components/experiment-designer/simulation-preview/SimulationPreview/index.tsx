@@ -1,28 +1,30 @@
-/**
- * TODO NEXT
- *
- * - probably the zoom in orbitcontrols is configured for the orthographic camera, so we must
- * calculate somehow the zoom to viewport height/width in pixels OR modify the orbitcontrols
- * so that it doesn't touch zoom
- */
-
 'use client';
 
-/* eslint-disable lodash/import-scope */
-
-import { debounce, findIndex, isEqual } from 'lodash';
+import { Vector3, Euler, Camera } from 'three';
+import round from 'lodash/round';
+import debounce from 'lodash/debounce';
+import findIndex from 'lodash/findIndex';
+import isEqual from 'lodash/isEqual';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import PreviewMesh from '@/components/experiment-designer/simulation-preview/PreviewMesh';
 import {
   cameraConfigAtom,
   DEFAULT_CAMERA_LOOK_AT,
+  DEFAULT_MOVIE_CAMERA_LOOK_AT,
   DEFAULT_MOVIE_CAMERA_POSITION,
   DEFAULT_OVERVIEW_CAMERA_POSITION,
 } from '@/state/experiment-designer/visualization';
-import { ExpDesignerCameraType } from '@/types/experiment-designer-visualization';
+import {
+  ExpDesignerCameraType,
+  MovieCameraConfig,
+} from '@/types/experiment-designer-visualization';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
-import { ExpDesignerPositionParameter, TargetList } from '@/types/experiment-designer';
+import {
+  ExpDesignerNumberParameter,
+  ExpDesignerPositionParameter,
+  TargetList,
+} from '@/types/experiment-designer';
 import simPreviewThreeCtxWrapper from '@/components/experiment-designer/simulation-preview/SimulationPreview/SimPreviewThreeCtxWrapper';
 import CameraSwitch from '@/components/experiment-designer/simulation-preview/SimulationPreview/CameraSwitch';
 import ResetViewButton from '@/components/experiment-designer/simulation-preview/SimulationPreview/ResetViewButton';
@@ -32,6 +34,20 @@ interface SimulationPreviewProps {
   targetsToDisplay: TargetList;
 }
 
+function getCameraLookAtPosition(camera: Camera, distance: number): Vector3 {
+  const cameraPosition = camera.position.clone();
+  const cameraRotation = camera.rotation.clone();
+  const direction = new Vector3(0, 0, -1);
+  direction.applyEuler(cameraRotation);
+  direction.normalize().multiplyScalar(distance);
+
+  return new Vector3().addVectors(cameraPosition, direction);
+}
+
+function calculateDistance(pointA: Vector3, pointB: Vector3) {
+  return pointA.distanceTo(pointB);
+}
+
 export default function SimulationPreview({ targetsToDisplay }: SimulationPreviewProps) {
   const [isReady, setIsReady] = useState(false);
   const threeDeeDiv = useRef<HTMLDivElement>(null);
@@ -39,14 +55,37 @@ export default function SimulationPreview({ targetsToDisplay }: SimulationPrevie
   const [cameraConfig, setCameraConfig] = useAtom(cameraConfigAtom);
 
   const updateExpDesignerCameraAtom = useCallback(
-    (newPosition: [number, number, number]) => {
-      const cameraPosIndex = findIndex(expDesignerConfig.imaging, { id: 'cameraPos' });
-      const newImagingSection = [...expDesignerConfig.imaging];
-      newImagingSection[cameraPosIndex] = {
-        ...(newImagingSection[cameraPosIndex] as ExpDesignerPositionParameter),
-        value: newPosition,
+    (newCameraConfig: MovieCameraConfig) => {
+      const cameraPositionIndex = findIndex(expDesignerConfig.imaging, { id: 'cameraPos' });
+      const imaging = [...expDesignerConfig.imaging];
+
+      imaging[cameraPositionIndex] = {
+        ...(imaging[cameraPositionIndex] as ExpDesignerPositionParameter),
+        value: newCameraConfig.position,
       };
-      const newExpDesignerConfig = { ...expDesignerConfig, imaging: newImagingSection };
+
+      const viewportHeightIndex = findIndex(expDesignerConfig.imaging, { id: 'viewportHeight' });
+      imaging[viewportHeightIndex] = {
+        ...(imaging[viewportHeightIndex] as ExpDesignerNumberParameter),
+        value: newCameraConfig.projection.height,
+      };
+
+      const cameraTargetIndex = findIndex(expDesignerConfig.imaging, { id: 'cameraTarget' });
+      imaging[cameraTargetIndex] = {
+        ...(imaging[cameraTargetIndex] as ExpDesignerPositionParameter),
+        value: newCameraConfig.lookAt,
+      };
+
+      const cameraUpVector = new Vector3(...newCameraConfig.up).applyEuler(
+        new Euler(...newCameraConfig.rotation)
+      );
+      const cameraUpIndex = findIndex(expDesignerConfig.imaging, { id: 'cameraUp' });
+      imaging[cameraUpIndex] = {
+        ...(imaging[cameraUpIndex] as ExpDesignerPositionParameter),
+        value: [cameraUpVector.x, -cameraUpVector.y, cameraUpVector.z],
+      };
+
+      const newExpDesignerConfig = { ...expDesignerConfig, imaging };
       setExpDesignerConfig(newExpDesignerConfig);
     },
     [expDesignerConfig, setExpDesignerConfig]
@@ -58,20 +97,56 @@ export default function SimulationPreview({ targetsToDisplay }: SimulationPrevie
         return;
       }
 
-      const { x, y, z } = target.object.position;
-      const newPosition = [x, y, z] as [number, number, number];
+      const cameraObject = target.object;
       const activeCameraKey = cameraConfig.activeCamera;
-      const oldPosition = cameraConfig[activeCameraKey].position;
+      const { x, y, z } = cameraObject.position;
 
-      if (!isEqual(newPosition, oldPosition)) {
+      const oldPosition = cameraConfig[activeCameraKey].position;
+      const newPosition = [round(x, 8), round(y, 8), round(z, 8)] as [number, number, number];
+
+      const newViewportHeight =
+        (Math.abs(cameraObject.top) + Math.abs(cameraObject.bottom)) / cameraObject.zoom;
+      const newConfig = { ...cameraConfig[activeCameraKey], position: newPosition };
+      const aspect = 16 / 9;
+
+      if (activeCameraKey === 'movieCamera') {
+        (newConfig as MovieCameraConfig).projection = {
+          height: newViewportHeight,
+          width: newViewportHeight * aspect,
+        };
+        (newConfig as MovieCameraConfig).up = cameraObject.up;
+        const cameraDistanceToCenter = calculateDistance(
+          new Vector3(...newPosition),
+          new Vector3(...DEFAULT_MOVIE_CAMERA_LOOK_AT)
+        );
+        const lookAt = getCameraLookAtPosition(cameraObject, cameraDistanceToCenter);
+        (newConfig as MovieCameraConfig).lookAt = [lookAt.x, lookAt.y, lookAt.z];
+
+        const cameraUpVector = new Vector3(0, -1, 0);
+        (newConfig as MovieCameraConfig).up = [
+          cameraUpVector.x,
+          cameraUpVector.y,
+          cameraUpVector.z,
+        ];
+
+        const cameraRotation = cameraObject.rotation as Euler;
+        (newConfig as MovieCameraConfig).rotation = [
+          cameraRotation.x,
+          cameraRotation.y,
+          cameraRotation.z,
+        ];
+      }
+
+      if (!isEqual(newPosition, oldPosition) || cameraObject.zoom !== 1) {
         simPreviewThreeCtxWrapper.threeContext.needRender = true;
+
         setCameraConfig({
           ...cameraConfig,
-          [activeCameraKey]: { ...cameraConfig[activeCameraKey], position: newPosition },
+          [activeCameraKey]: newConfig,
         });
 
         if (activeCameraKey === 'movieCamera') {
-          updateExpDesignerCameraAtom(newPosition);
+          updateExpDesignerCameraAtom(newConfig as MovieCameraConfig);
         }
       }
     },
@@ -89,6 +164,9 @@ export default function SimulationPreview({ targetsToDisplay }: SimulationPrevie
         targetDiv: threeDeeDiv.current,
         cameraPositionXYZ: cameraConfig[cameraConfig.activeCamera].position,
         cameraLookAtXYZ: cameraConfig[cameraConfig.activeCamera].lookAt,
+        movieCameraHeight: cameraConfig.movieCamera.projection.height,
+        movieCameraUp: cameraConfig.movieCamera.up,
+        movieCameraLookAtXYZ: cameraConfig.movieCamera.lookAt,
       });
       setIsReady(true);
 
