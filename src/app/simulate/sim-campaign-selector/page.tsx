@@ -3,8 +3,11 @@
 import { PlusOutlined } from '@ant-design/icons';
 
 import Link from '@/components/Link';
-import SimCampaignList from '@/components/simulate/SimCampaignList';
-import LaunchedSimCampaignList from '@/components/simulate/LaunchedSimCampaignList';
+import {
+  SimCampaignList,
+  LaunchedSimCampaignList,
+  SimCampUIConfigTemplateGrid,
+} from '@/components/simulate';
 
 export default function SimulationCampaignSelectorPage() {
   return (
@@ -19,6 +22,7 @@ export default function SimulationCampaignSelectorPage() {
         </button>
       </Link>
 
+      <SimCampUIConfigTemplateGrid />
       <LaunchedSimCampaignList />
       <SimCampaignList />
     </>
