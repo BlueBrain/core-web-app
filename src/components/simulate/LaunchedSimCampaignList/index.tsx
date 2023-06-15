@@ -19,6 +19,7 @@ const { Column } = Table;
 const loadableLaunchedSimCampaignListAtom = loadable(launchedSimCampaignListAtom);
 
 const expDesBaseUrl = '/experiment-designer/experiment-setup';
+const exploreSimCampBaseUrl = '/explore/simulation-campaigns/test';
 
 const dateRenderer = (createdAtStr: DateISOString) => {
   const dateColumnInfo = dateColumnInfoToRender(createdAtStr);
@@ -107,13 +108,11 @@ export default function LaunchedSimCampaignList() {
                 </Link>
 
                 {config.status === 'Done' && (
-                  <Link href="/explore/simulation-campaigns" className="inline-block">
-                    <Button
-                      size="small"
-                      type="text"
-                      className={classNames(defaultActionStyle, 'cursor-not-allowed')}
-                      title="Not implemented yet"
-                    >
+                  <Link
+                    href={`${exploreSimCampBaseUrl}?simCampId=${extractId(config)}`}
+                    className="inline-block"
+                  >
+                    <Button size="small" type="text" className={defaultActionStyle}>
                       <EyeIcon fill={iconFillStyle} />
                     </Button>
                   </Link>
