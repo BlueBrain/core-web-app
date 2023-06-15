@@ -32,6 +32,7 @@ export default function findSimulation(
   xDimension: Dimension,
   yDimension: Dimension,
   simulations: SimulationResource[],
+  showStatus: string,
   otherDimensions?: Dimension[]
 ) {
   if (xDimension && yDimension && otherDimensions) {
@@ -39,10 +40,12 @@ export default function findSimulation(
       (sim: SimulationResource) =>
         sim.coords[xDimension.id] === x && sim.coords[yDimension.id] === y
     );
-    if (simulation) {
-      if (simulationIncludesAllDimensions(simulation, otherDimensions)) {
-        return simulation;
-      }
+    if (
+      simulation &&
+      (simulation.status === showStatus || showStatus === 'all') &&
+      simulationIncludesAllDimensions(simulation, otherDimensions)
+    ) {
+      return simulation;
     }
   }
   return undefined;

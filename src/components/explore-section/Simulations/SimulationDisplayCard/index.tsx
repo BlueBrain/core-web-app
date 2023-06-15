@@ -5,6 +5,7 @@ import imagery from './imagery.jpg';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationCard from '@/components/explore-section/Simulations/SimulationDisplayCard/SimulationCard';
 import { SimulationResource } from '@/types/explore-section/resources';
+import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
 
 type SimulationDisplayCardProps = {
   display: string;
@@ -21,11 +22,11 @@ export default function SimulationDisplayCard({
 }: SimulationDisplayCardProps) {
   switch (display) {
     case 'raster':
-      return <img src={raster.src} />;
+      return <AnalysisReportImage src={raster.src} />;
     case 'voltage':
-      return <img src={voltage.src} />;
+      return <AnalysisReportImage src={voltage.src} />;
     case 'imagery':
-      return <img src={imagery.src} />;
+      return <AnalysisReportImage src={imagery.src} />;
     case 'status':
       return (
         <SimulationCard simulation={simulation} xDimension={xDimension} yDimension={yDimension} />

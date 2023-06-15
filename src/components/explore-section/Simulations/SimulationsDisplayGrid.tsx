@@ -17,6 +17,7 @@ import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSi
 
 type SimulationDisplayGridProps = {
   display: string;
+  showStatus: string;
 };
 
 type DimensionHeaderProps = {
@@ -49,7 +50,10 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
   );
 }
 
-export default function SimulationsDisplayGrid({ display }: SimulationDisplayGridProps) {
+export default function SimulationsDisplayGrid({
+  display,
+  showStatus,
+}: SimulationDisplayGridProps) {
   const simulations = useAtomValue(simulationsAtom);
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
@@ -124,6 +128,7 @@ export default function SimulationsDisplayGrid({ display }: SimulationDisplayGri
               xDimension,
               yDimension,
               simulations,
+              showStatus,
               otherDimensions
             );
             return (

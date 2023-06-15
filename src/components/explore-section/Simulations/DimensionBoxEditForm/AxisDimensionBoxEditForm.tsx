@@ -1,5 +1,5 @@
 import { useForm } from 'antd/es/form/Form';
-import { useAtomValue, useSetAtom } from 'jotai/index';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 import { Form, Input, Radio } from 'antd';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
