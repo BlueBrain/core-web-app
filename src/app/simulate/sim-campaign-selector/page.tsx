@@ -22,9 +22,20 @@ export default function SimulationCampaignSelectorPage() {
         </button>
       </Link>
 
-      <SimCampUIConfigTemplateGrid />
-      <LaunchedSimCampaignList />
-      <SimCampaignList />
+      <span id="simulate-templates">
+        <SimCampUIConfigTemplateGrid />
+      </span>
+
+      <span id="simulate-runs">
+        <LaunchedSimCampaignList />
+      </span>
+
+      <span id="simulate-public">
+        {/* adding another one to scroll to this section or public and personal */}
+        <span id="simulate-personal">
+          <SimCampaignList />
+        </span>
+      </span>
     </>
   );
 }
