@@ -289,19 +289,20 @@ const config: ExpDesignerConfig = {
       name: 'Camera position',
       type: 'position',
       value: [100, 200, 300],
-      hidden: true,
     },
     {
       id: 'cameraTarget',
       name: 'Camera target',
       type: 'position',
       value: [100, 200, 300],
+      hidden: true,
     },
     {
       id: 'cameraUp',
       name: 'Camera up vector',
       type: 'position',
       value: [0, 0, 1],
+      hidden: true,
     },
     {
       id: 'cameraHeight',
@@ -312,6 +313,7 @@ const config: ExpDesignerConfig = {
       max: 10000,
       unit: '',
       step: 10,
+      hidden: true,
     },
     {
       id: 'neuronDisplay',
