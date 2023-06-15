@@ -1,7 +1,7 @@
 import { Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSetAtom } from 'jotai';
-import { SimulationCampaignResource } from '@/types/explore-section';
+import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import DisplayDropdown from '@/components/explore-section/Simulations/DisplayDropdown';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';

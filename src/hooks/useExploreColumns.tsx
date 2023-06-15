@@ -8,7 +8,8 @@ import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import { format, parseISO, isValid } from 'date-fns';
 import { ES_TERMS } from '@/constants/explore-section';
 import Link from '@/components/Link';
-import { ExploreSectionResource, SortState } from '@/types/explore-section';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { SortState } from '@/types/explore-section/application';
 import styles from '@/app/explore/explore.module.scss';
 
 const useExploreColumns = (

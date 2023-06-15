@@ -1,13 +1,7 @@
 import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section';
-import {
-  ESResponseRaw,
-  IdLabelEntity,
-  ExploreSectionResponse,
-  ContributorsEntity,
-  Source,
-  NValueEntity,
-} from '@/types/explore-section';
+import { ESResponseRaw, ExploreSectionResponse, Source } from '@/types/explore-section/resources';
+import { ContributorsEntity, IdLabelEntity, NValueEntity } from '@/types/explore-section/fields';
 import { to64, formatNumber } from '@/util/common';
 import { ensureArray } from '@/util/nexus';
 

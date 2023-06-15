@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined } from '@ant-design/icons';
-import { Aggregations } from '@/types/explore-section';
+import { Aggregations } from '@/types/explore-section/fields';
 import { CheckboxOption, Filter, OptionsData } from '@/components/Filter/types';
 import { CheckList, FilterGroup, FilterGroupProps } from '@/components/Filter';
 

@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { atom, Atom } from 'jotai';
 import { Distribution, Entity } from '@/types/nexus';
-import { DataSets, RABIndex } from '@/types/explore-section';
+import { DataSets, RABIndex } from '@/types/explore-section/fields';
 import RandomAccessBuffer from '@/util/explore-section/random-access-buffer';
 import useLazyCache from '@/components/explore-section/EphysViewerContainer/hooks/useLazyCache';
 import { composeUrl } from '@/util/nexus';

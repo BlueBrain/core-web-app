@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { from64 } from '@/util/common';
-import { FetchParams } from '@/types/explore-section';
+import { FetchParams } from '@/types/explore-section/application';
 
 /**
  * Returns a FetchParams object that it constructs from a URL path.

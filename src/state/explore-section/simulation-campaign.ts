@@ -3,7 +3,7 @@ import { selectAtom } from 'jotai/utils';
 import simulations from './mocks/simulations.json';
 import simulationCampaignMock from './mocks/simulation-campaign.json';
 import simulation from './mocks/simulation.json';
-import { SimulationCampaignResource, SimulationResource } from '@/types/explore-section';
+import { SimulationCampaignResource, SimulationResource } from '@/types/explore-section/resources';
 
 export const simulationCampaignResourceAtom = atom<SimulationCampaignResource | undefined>(
   // @ts-ignore

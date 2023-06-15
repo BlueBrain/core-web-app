@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { ListViewAtomValues, ListViewAtomSetters } from '@/types/explore-section';
+import { ListViewAtomValues, ListViewAtomSetters } from '@/types/explore-section/application';
 
 export function useListViewAtoms({ ...atoms }) {
   return Object.entries(atoms).reduce((acc, [key, atom]) => {

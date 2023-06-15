@@ -6,7 +6,7 @@ import { ColumnProps, ColumnGroupType } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
-import { ExploreSectionResource } from '@/types/explore-section';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 import fetchArchive from '@/api/archive';
 import Spinner from '@/components/Spinner';
 import styles from '@/app/explore/explore.module.scss';

@@ -4,7 +4,7 @@ import voltage from './voltage.jpg';
 import imagery from './imagery.jpg';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationCard from '@/components/explore-section/Simulations/SimulationDisplayCard/SimulationCard';
-import { SimulationResource } from '@/types/explore-section';
+import { SimulationResource } from '@/types/explore-section/resources';
 
 type SimulationDisplayCardProps = {
   display: string;

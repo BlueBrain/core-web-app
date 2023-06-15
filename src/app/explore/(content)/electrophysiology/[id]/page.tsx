@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 import EphysViewerContainer from '@/components/explore-section/EphysViewerContainer';
 import Contributors from '@/components/explore-section/Contributors';
 import Species from '@/components/explore-section/Species';

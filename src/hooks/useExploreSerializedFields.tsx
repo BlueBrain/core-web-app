@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import { Tag } from 'antd';
-import { DeltaResource, Series, SerializedDeltaResource } from '@/types/explore-section';
+import { DeltaResource, SerializedDeltaResource } from '@/types/explore-section/resources';
+import { Series } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import timeElapsedFromToday from '@/util/date';
 import { NO_DATA_STRING } from '@/constants/explore-section';

@@ -1,11 +1,7 @@
 import { atom } from 'jotai';
-import {
-  Aggregations,
-  TotalHits,
-  ExploreSectionResponse,
-  ExploreSectionResource,
-  SortState,
-} from '@/types/explore-section';
+import { ExploreSectionResponse, ExploreSectionResource } from '@/types/explore-section/resources';
+import { TotalHits, Aggregations } from '@/types/explore-section/fields';
+import { SortState } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
 import { TYPE_FILTER_MAPPING, DEFAULT_FILTERS } from '@/constants/explore-section';

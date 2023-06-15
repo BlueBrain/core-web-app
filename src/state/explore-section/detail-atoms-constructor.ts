@@ -4,7 +4,8 @@ import { atom } from 'jotai';
 import pick from 'lodash/pick';
 import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
-import { DeltaResource, FetchParams } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
+import { FetchParams } from '@/types/explore-section/application';
 import { ensureArray } from '@/util/nexus';
 
 export const infoAtom = atom<FetchParams | null>(null);

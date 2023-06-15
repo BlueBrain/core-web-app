@@ -6,7 +6,7 @@ import LoadMoreButton from '@/components/explore-section/ExploreSectionListingVi
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import ControlPanel from '@/components/explore-section/ControlPanel';
 import { formatNumber } from '@/util/common';
-import { ListViewAtomValues } from '@/types/explore-section';
+import { ListViewAtomValues } from '@/types/explore-section/application';
 
 import SettingsIcon from '@/components/icons/Settings';
 

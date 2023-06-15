@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { useState } from 'react';
 import Link from '@/components/Link';
-import { SideLinkList } from '@/types/explore-section';
+import { SideLinkList } from '@/types/explore-section/fields';
 import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
 export function DetailsPageSideBackLink({ links }: SideLinkList) {

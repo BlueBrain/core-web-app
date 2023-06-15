@@ -1,5 +1,5 @@
 import GraphViewComponent from './GraphViewComponent';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 
 interface GraphViewContainerProps {
   defaultStimulusType?: string;

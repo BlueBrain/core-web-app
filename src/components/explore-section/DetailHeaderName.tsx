@@ -5,7 +5,7 @@ import range from 'lodash/range';
 import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
 import { latestRevisionAtom } from '@/state/explore-section/detail-atoms-constructor';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 import Link from '@/components/Link';
 
 const latestRevisionLoadableAtom = loadable(latestRevisionAtom);

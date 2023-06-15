@@ -1,6 +1,6 @@
 import every from 'lodash/every';
 import { Dimension } from '@/components/explore-section/Simulations/types';
-import { SimulationResource } from '@/types/explore-section';
+import { SimulationResource } from '@/types/explore-section/resources';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 
 /**

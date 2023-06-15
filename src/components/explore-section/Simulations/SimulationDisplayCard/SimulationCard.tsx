@@ -1,5 +1,5 @@
 import { EyeOutlined, FileTextOutlined } from '@ant-design/icons';
-import { SimulationResource } from '@/types/explore-section';
+import { SimulationResource } from '@/types/explore-section/resources';
 import InlineDimension from '@/components/explore-section/Simulations/SimulationDisplayCard/InlineDimension';
 import timeElapsedFromToday from '@/util/date';
 

@@ -4,7 +4,7 @@ import { Key, ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
 import { DetailProps, ListField } from '@/components/explore-section/Detail';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
-import { DeltaResource, SimulationCampaignResource } from '@/types/explore-section';
+import { DeltaResource, SimulationCampaignResource } from '@/types/explore-section/resources';
 import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 import { classNames } from '@/util/utils';
 import Simulations from '@/components/explore-section/Simulations';

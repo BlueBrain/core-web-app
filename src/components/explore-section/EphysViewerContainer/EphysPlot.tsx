@@ -11,7 +11,7 @@ import {
   Repetition,
   IndexDataValue,
   RABIndex,
-} from '@/types/explore-section';
+} from '@/types/explore-section/fields';
 
 interface EphysPlotProps {
   options: DataSets;

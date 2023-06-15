@@ -1,4 +1,4 @@
-import { SimulationStatus } from '@/types/explore-section';
+import { SimulationStatus } from '@/types/explore-section/fields';
 
 type InlineDimensionsProps = {
   value: number;

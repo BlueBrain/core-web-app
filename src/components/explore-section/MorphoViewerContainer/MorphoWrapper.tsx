@@ -5,7 +5,7 @@ import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import MorphologyViewer, { MorphoViewerOptions } from './MorphologyViewer';
 import createMorphologyDataAtom from '@/components/explore-section/MorphoViewerContainer/state/MorphologyDataAtom';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 
 function MorphoWrapper({
   options,

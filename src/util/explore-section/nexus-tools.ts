@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 
 import { Distribution } from '@/types/nexus/common';
 
