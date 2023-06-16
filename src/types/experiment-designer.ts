@@ -105,7 +105,7 @@ export type ExpDesignerParam =
   | ExpDesignerGroupParameter;
 
 export type ExpDesignerConfig = {
-  [key: string]: ExpDesignerParam[];
+  [key in ExpDesignerSectionName]: ExpDesignerParam[];
 };
 
 export type TargetList = string[];
