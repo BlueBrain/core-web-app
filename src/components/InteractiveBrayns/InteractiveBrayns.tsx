@@ -6,8 +6,6 @@
 import { useSession } from 'next-auth/react';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { Button } from 'antd';
-import useNotification from '../../hooks/notifications';
 import AxisGizmo from './AxisGizmo';
 import Settings from './Settings';
 import HowToUseButton from './HowToUseButton';
@@ -31,7 +29,6 @@ export default function InteractiveBrayns() {
 function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps) {
   const [howToUsePanelVisible, setHowToUsePanelVisible] = React.useState(false);
   const [overlayOpacity, setOverlayOpacity] = React.useState(1);
-  const notification = useNotification();
   const circuitPath = BraynsService.useCurrentCircuitPath();
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brayns = BraynsService.useBraynsService(token);
@@ -50,17 +47,6 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
     };
     action();
   }, [selectedBrainRegion, circuitPath, brayns]);
-  const handleDisplayLogs = () => {
-    if (!brayns || typeof brayns === 'string') return;
-
-    notification.info('The stdout and stderr will be logged in the console.');
-    brayns.downloadLogs();
-  };
-  const handleExportQueries = () => {
-    if (!brayns || typeof brayns === 'string') return;
-
-    brayns.exportQueries();
-  };
   return (
     <div className={`${className ?? styles.expand}`}>
       <canvas className={styles.expand} ref={handleSceneCanvasMount} />
@@ -85,10 +71,6 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
           <pre>{brayns}</pre>
         </div>
       )}
-      <div className={styles.debugButtons}>
-        <Button onClick={handleDisplayLogs}>Display Logs</Button>
-        <Button onClick={handleExportQueries}>Export queries</Button>
-      </div>
       <Settings
         opacity={overlayOpacity}
         onOpacityChange={setOverlayOpacity}

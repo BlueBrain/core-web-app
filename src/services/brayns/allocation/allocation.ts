@@ -38,10 +38,7 @@ function getPromisedService(token: string): Promise<BraynsWrapper> {
       State.progress.allocation.value = 'Allocating a node...';
       const currentAllocation = Persistence.getAllocatedServiceAddress();
       const allocator = new BackendAllocatorService(token);
-      if (currentAllocation) {
-        console.log('🚀 [allocation] currentAllocation = ', currentAllocation); // @FIXME: Remove this line written on 2023-06-01 at 10:47
-        return currentAllocation;
-      }
+      if (currentAllocation) return currentAllocation;
 
       const serviceAddress = await allocator.allocate();
       if (!serviceAddress) {
@@ -54,18 +51,15 @@ function getPromisedService(token: string): Promise<BraynsWrapper> {
     };
     const action = async () => {
       const serviceAddress = await getServiceAddress();
-      console.log('🚀 [allocation] serviceAddress = ', serviceAddress); // @FIXME: Remove this line written on 2023-05-31 at 17:22
       const backendAddressAsString = serviceAddress.backendHost;
       State.progress.allocation.value = `Connecting Brayns Backend...`;
       const backend = new JsonRpcService(backendAddressAsString);
       await backend.connect();
-      console.log('Connected to', backendAddressAsString);
       const rendererAddressAsString = serviceAddress.rendererHost;
       State.progress.allocation.value = `Connecting Brayns Renderer...`;
       const renderer = new JsonRpcService(rendererAddressAsString, { trace: false });
       await renderer.connect();
       renderer.recording = true;
-      console.log('Connected to', rendererAddressAsString);
       const wrapper = new BraynsWrapper(backend, new JsonRpcSerializerService(renderer));
       State.progress.allocation.value = 'Initializing Brayns...';
       await wrapper.initialize();

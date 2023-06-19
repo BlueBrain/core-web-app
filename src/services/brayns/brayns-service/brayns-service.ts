@@ -6,9 +6,7 @@ import BraynsWrapper from '../wrapper/wrapper';
 import CameraWatcher from './camera-watcher';
 import { exportPythonScriptForBraynsRecordedQueries } from './exporter/python';
 import MorphologiesManager from './morphologies-manager';
-
-// const BRAIN_MESH_URL =
-//   'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b';
+import { AtlasVisualizationManager } from '@/state/atlas/atlas';
 
 export default class BraynsService implements BraynsServiceInterface {
   private canvasValue: HTMLCanvasElement | null = null;
@@ -19,10 +17,14 @@ export default class BraynsService implements BraynsServiceInterface {
 
   public readonly camera: CameraWatcher;
 
-  constructor(private readonly wrapper: BraynsWrapper, private readonly token: string) {
+  constructor(
+    private readonly wrapper: BraynsWrapper,
+    private readonly token: string,
+    atlas: AtlasVisualizationManager
+  ) {
     this.observer = new ResizeObserver(this.handleResize);
     wrapper.eventNewImage.addListener(this.handleNewImage);
-    this.morphologiesManager = new MorphologiesManager(wrapper);
+    this.morphologiesManager = new MorphologiesManager(wrapper, atlas);
     this.camera = new CameraWatcher(wrapper);
   }
 

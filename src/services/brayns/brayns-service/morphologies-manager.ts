@@ -6,6 +6,7 @@ import { BraynsWrapperInterface } from '../wrapper/types';
 import { Vector4 } from '../utils/calc';
 import regionsInfo from './regions/regions';
 import { logError } from '@/util/logger';
+import { AtlasVisualizationManager } from '@/state/atlas/atlas';
 
 interface Task {
   circuitPath: string;
@@ -42,7 +43,10 @@ export default class MorphologiesManager {
 
   private busyLoadingCircuit = false;
 
-  constructor(private readonly wrapper: BraynsWrapperInterface) {}
+  constructor(
+    private readonly wrapper: BraynsWrapperInterface,
+    private readonly atlas: AtlasVisualizationManager
+  ) {}
 
   /**
    * This function schedules the display of the morphologies of a region
@@ -104,12 +108,22 @@ export default class MorphologiesManager {
     }
   }
 
-  private async showCurrentDisplayedRegion(regionId: string) {
-    const modelId = this.modelIdPerRegion.get(regionId);
+  private async showCurrentDisplayedRegion(regionID: string) {
+    const modelId = this.modelIdPerRegion.get(regionID);
     if (typeof modelId !== 'number') return;
 
+    this.atlas.updateVisibleCell({
+      type: 'cell',
+      regionID,
+      isLoading: true,
+    });
     await this.wrapper.show([modelId]);
-    this.currentDisplayedRegionId = regionId;
+    this.atlas.updateVisibleCell({
+      type: 'cell',
+      regionID,
+      isLoading: false,
+    });
+    this.currentDisplayedRegionId = regionID;
   }
 
   private async hideCurrentDisplayedRegion() {

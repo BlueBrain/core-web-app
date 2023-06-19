@@ -2,49 +2,60 @@ import { atom, useAtom, useAtomValue } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import { SetStateAction, useMemo } from 'react';
 
-export type MeshType = {
+interface AtlasItemType {
+  type: 'mesh' | 'pointCloud' | 'nodeSet' | 'cell';
+  color: string;
+  isLoading: boolean;
+  hasError: boolean;
+}
+
+export interface MeshType extends AtlasItemType {
+  type: 'mesh';
   contentURL: string;
-  color: string;
-  isLoading: boolean;
-  hasError: boolean;
-};
+}
 
-export type PointCloudType = {
+export interface PointCloudType extends AtlasItemType {
+  type: 'pointCloud';
   regionID: string;
-  color: string;
-  isLoading: boolean;
-  hasError: boolean;
-};
+}
 
-export type NodeSetType = {
+export interface NodeSetType extends AtlasItemType {
+  type: 'nodeSet';
   nodeSetName: string;
-  color: string;
-  isLoading: boolean;
-  hasError: boolean;
-};
+}
+
+export interface CellType extends AtlasItemType {
+  type: 'cell';
+  regionID: string;
+}
 
 export type AtlasVisualizationType = {
   visibleMeshes: MeshType[];
   visiblePointClouds: PointCloudType[];
   visibleNodeSets: NodeSetType[];
+  visibleCells: CellType[];
 };
 
-function isMeshType(obj: MeshType | PointCloudType | NodeSetType): obj is MeshType {
-  const data = obj as Record<string, unknown>;
-  return typeof data.contentURL === 'string';
+function isMeshType(obj: AtlasItemType): obj is MeshType {
+  return obj.type === 'mesh';
 }
 
-function isPointCloudType(obj: MeshType | PointCloudType | NodeSetType): obj is PointCloudType {
-  return Object.hasOwn(obj, 'regionID');
+function isPointCloudType(obj: AtlasItemType): obj is PointCloudType {
+  return obj.type === 'pointCloud';
 }
 
-function isNodeSetType(obj: MeshType | PointCloudType | NodeSetType): obj is NodeSetType {
-  return Object.hasOwn(obj, 'nodeSetName');
+function isNodeSetType(obj: AtlasItemType): obj is NodeSetType {
+  return obj.type === 'nodeSet';
+}
+
+function isCellType(obj: AtlasItemType): obj is CellType {
+  return obj.type === 'cell';
 }
 
 const defaultCollection: AtlasVisualizationType = {
   visibleMeshes: [
     {
+      type: 'mesh',
       contentURL:
         'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b',
       color: '#FFF',
@@ -54,6 +65,7 @@ const defaultCollection: AtlasVisualizationType = {
   ],
   visiblePointClouds: [],
   visibleNodeSets: [],
+  visibleCells: [],
 };
 
 export const atlasVisualizationAtom = atom<AtlasVisualizationType>(defaultCollection);
@@ -85,6 +97,10 @@ export class AtlasVisualizationManager {
     this.setAtlasValue = setAtlas;
   }
 
+  get visibleCells() {
+    return this.atlasValue.visibleCells;
+  }
+
   get visibleMeshes() {
     return this.atlasValue.visibleMeshes;
   }
@@ -106,11 +122,14 @@ export class AtlasVisualizationManager {
    * Add `meshes` and/or `pointClouds` to the list of visible ones, unless there is
    * already a mesh/pointCloud with that `contentURL`/`regionId`.
    */
-  addVisibleObjects(...objectsToAdd: Array<MeshType | PointCloudType | NodeSetType>): void {
+  addVisibleObjects(
+    ...objectsToAdd: Array<MeshType | PointCloudType | NodeSetType | CellType>
+  ): void {
     this.setAtlasValue((currentAtlasValue: AtlasVisualizationType) => {
       let visibleMeshes = [...currentAtlasValue.visibleMeshes];
       let visiblePointClouds = [...currentAtlasValue.visiblePointClouds];
       let visibleNodeSets = [...currentAtlasValue.visibleNodeSets];
+      let visibleCells = [...currentAtlasValue.visibleCells];
 
       objectsToAdd.forEach((obj) => {
         if (isMeshType(obj)) {
@@ -131,6 +150,11 @@ export class AtlasVisualizationManager {
           )
         ) {
           visibleNodeSets = [...visibleNodeSets, { ...obj }];
+        } else if (
+          isCellType(obj) &&
+          !currentAtlasValue.visibleCells.find((cell) => cell.regionID === obj.regionID)
+        ) {
+          visibleCells = [...visibleCells, { ...obj }];
         }
       });
 
@@ -138,6 +162,7 @@ export class AtlasVisualizationManager {
         visibleMeshes,
         visiblePointClouds,
         visibleNodeSets,
+        visibleCells,
       };
     });
   }
@@ -146,7 +171,7 @@ export class AtlasVisualizationManager {
    * Remove the meshes/pointClouds with the given `ids`.
    * If such mesh exists, the state will be updated.
    */
-  removeVisibleObjects(...ids: string[]): void {
+  removeVisibleMeshesOrPointClouds(...ids: string[]): void {
     this.setAtlasValue((currentAtlasValue) => {
       let newVisibleMeshes = [...currentAtlasValue.visibleMeshes];
       let newVisiblePointClouds = [...currentAtlasValue.visiblePointClouds];
@@ -165,6 +190,18 @@ export class AtlasVisualizationManager {
         visibleMeshes: newVisibleMeshes,
         visiblePointClouds: newVisiblePointClouds,
         visibleNodeSets: newVisibleNodeSets,
+      };
+    });
+  }
+
+  removeVisibleCells(...regionIDs: string[]): void {
+    this.setAtlasValue((currentAtlasValue) => {
+      const regionSet = new Set(regionIDs);
+      return {
+        ...currentAtlasValue,
+        visibleCells: currentAtlasValue.visibleCells.filter(
+          (cell) => !regionSet.has(cell.regionID)
+        ),
       };
     });
   }
@@ -206,6 +243,26 @@ export class AtlasVisualizationManager {
   }
 
   /**
+   * Update the mesh with the given `regionID`.
+   * If such mesh exists, the state will be updated.
+   * @returns `true` is such mesh has been found and updated.
+   */
+  updateVisibleCell(update: Partial<CellType> & { regionID: string }) {
+    const cell = this.findVisibleCell(update.regionID);
+    if (!cell) return false;
+
+    this.setAtlasValue((currentAtlasValue) => ({
+      ...currentAtlasValue,
+      visibleCells: [
+        { ...cell, ...update },
+        ...currentAtlasValue.visibleCells.filter(({ regionID }) => regionID !== update.regionID),
+      ],
+    }));
+
+    return true;
+  }
+
+  /**
    * @returns A PointCloud with `regionID` or `undefined`.
    */
   findVisiblePointCloud(regionID: string): PointCloudType | undefined {
@@ -219,6 +276,13 @@ export class AtlasVisualizationManager {
    */
   findVisibleNodeSet(nodeSetName: string): NodeSetType | undefined {
     return this.atlasValue.visibleNodeSets.find((nodeSet) => nodeSet.nodeSetName === nodeSetName);
+  }
+
+  /**
+   * @returns A Cell with `regionID` or `undefined`.
+   */
+  findVisibleCell(regionID: string): CellType | undefined {
+    return this.atlasValue.visibleCells.find((cell) => cell.regionID === regionID);
   }
 
   /**

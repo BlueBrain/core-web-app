@@ -7,6 +7,7 @@ import generateRandomColor from '@/components/experiment-designer/simulation-pre
 import { nodeSetsPaletteAtom } from '@/components/experiment-designer/simulation-preview/atoms';
 import { TargetList } from '@/types/experiment-designer';
 import { cameraConfigAtom } from '@/state/experiment-designer/visualization';
+import { NodeSetType } from '@/state/atlas/atlas';
 
 interface PreviewMeshProps {
   targetsToDisplay: TargetList;
@@ -45,12 +46,16 @@ export default function PreviewMesh({ targetsToDisplay }: PreviewMeshProps) {
   );
 
   useEffect(() => {
-    const visibleObjectsToAdd = targetsToDisplay.map((targetName: string) => ({
-      nodeSetName: targetName,
-      color: getNodeSetColor(targetName),
-      isLoading: false,
-      hasError: false,
-    }));
+    const visibleObjectsToAdd = targetsToDisplay.map((targetName: string) => {
+      const nodeSet: NodeSetType = {
+        type: 'nodeSet',
+        nodeSetName: targetName,
+        color: getNodeSetColor(targetName),
+        isLoading: false,
+        hasError: false,
+      };
+      return nodeSet;
+    });
     atlas.removeAllNodeSetMeshes();
     atlas.addVisibleObjects(...visibleObjectsToAdd);
     return () => {

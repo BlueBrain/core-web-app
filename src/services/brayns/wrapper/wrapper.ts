@@ -100,7 +100,14 @@ export default class BraynsWrapper implements BraynsWrapperInterface {
         intensity: 1,
       });
       const version = await renderer.exec('get-version');
-      console.log('Brayns has been started with this version:', version);
+      /*
+       * To reach Brayns, we have to throught two servers.
+       * That's why it is important to be able to quickly
+       * check the version we have. So we can know if
+       * everything is up to date on the line.
+       */
+      // eslint-disable-next-line no-console
+      console.log('Brayns has been started:', version);
     } catch (ex) {
       logError('Unable to initialize BraynsWrapper:', ex);
       const bas = new BackendAllocatorService('');

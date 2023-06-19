@@ -2,7 +2,7 @@ import Settings from '../settings';
 
 // const MODULE_ARCHIVE = 'archive/2023-04';
 const MODULE_ARCHIVE = 'unstable';
-const MODULE_BRAYNS = 'brayns/3.1.2';
+const MODULE_BRAYNS = 'brayns/3.2.0';
 
 const BRAYNS_STARTUP_SCRIPT = `echo
 echo Loading ${MODULE_BRAYNS} from ${MODULE_ARCHIVE}...
