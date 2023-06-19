@@ -38,6 +38,20 @@ export default function ExploreSectionListingView({
   const value =
     total.state === 'hasData' && total.data?.value ? formatNumber(total.data?.value) : 0;
 
+  /**
+   * Checks whether the filter has a value assigned
+   *
+   * @param filter the filter to check
+   */
+  const filterHasValue = (filter: Filter) => {
+    if (Array.isArray(filter.value)) {
+      return filter.value.length !== 0;
+    }
+    return filter.value.gte && filter.value.lte;
+  };
+
+  const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
+
   return (
     <>
       <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pb-12 pl-10 pr-16 overflow-scroll relative">
@@ -61,7 +75,7 @@ export default function ExploreSectionListingView({
                 onClick={() => setOpenFiltersSidebar(!openFiltersSidebar)}
               >
                 <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
-                  0
+                  {selectedFiltersCount}
                 </span>
                 <span>Filters</span>
                 <span className={styles.active}> 6 active columns</span>
