@@ -5,6 +5,9 @@ import {
   ExpDesignerNumberParameter,
   StimulusTypeDropdown,
   StimulusModuleDropdown,
+  RecordingVariableNameDropdown,
+  RecordingTypeDropdown,
+  RecordingModuleDropdown,
 } from '@/types/experiment-designer';
 
 type ConditionalStimulusParamsTypes = {
@@ -430,3 +433,41 @@ export const conditionalStimulusParams: ConditionalStimulusParamsTypes = {
 };
 
 export const stimulusParamsToKeep = ['delay', 'input_type', 'module', 'duration', 'node_set'];
+
+export const recordingVariableNameParams: RecordingVariableNameDropdown = {
+  id: 'variable_name',
+  name: 'Variable',
+  type: 'dropdown',
+  value: 'v',
+  options: [
+    { label: 'Soma voltage', value: 'v' },
+    { label: 'Membrane current', value: 'i_membrane' },
+    { label: 'Current clamp', value: 'IClamp' },
+  ],
+};
+
+export const recordingTypeParams: RecordingTypeDropdown = {
+  id: 'type',
+  name: 'Type',
+  type: 'dropdown',
+  value: 'compartment',
+  options: [
+    { label: 'Compartment', value: 'compartment' },
+    { label: 'Summation', value: 'summation' },
+    { label: 'Synapse', value: 'synapse' },
+  ],
+};
+
+export const recordingSectionParams: RecordingModuleDropdown = {
+  id: 'sections',
+  name: 'Sections',
+  type: 'dropdown',
+  value: 'soma',
+  options: [
+    { label: 'Soma', value: 'soma' },
+    { label: 'Axon', value: 'axon' },
+    { label: 'Dend', value: 'dend' },
+    { label: 'Apic', value: 'apic' },
+    { label: 'All', value: 'all' },
+  ],
+};

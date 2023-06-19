@@ -1,4 +1,10 @@
-import { stimulusTypeParams, stimulusModuleParams } from '@/constants/experiment-designer';
+import {
+  stimulusTypeParams,
+  stimulusModuleParams,
+  recordingVariableNameParams,
+  recordingTypeParams,
+  recordingSectionParams,
+} from '@/constants/experiment-designer';
 import { ExpDesignerConfig } from '@/types/experiment-designer';
 
 const defaultTarget = 'AAA';
@@ -220,29 +226,11 @@ const config: ExpDesignerConfig = {
       name: 'recording1',
       type: 'group',
       value: [
+        structuredClone(recordingVariableNameParams),
+        structuredClone(recordingSectionParams),
+        structuredClone(recordingTypeParams),
         {
-          id: 'variableType',
-          name: 'Variable',
-          type: 'dropdown',
-          value: 'v',
-          options: [{ label: 'Soma voltage', value: 'v' }],
-        },
-        {
-          id: 'sections',
-          name: 'Sections',
-          type: 'dropdown',
-          value: 'soma',
-          options: [{ label: 'Soma', value: 'soma' }],
-        },
-        {
-          id: 'reportType',
-          name: 'Type',
-          type: 'dropdown',
-          value: 'compartment',
-          options: [{ label: 'Compartment', value: 'compartment' }],
-        },
-        {
-          id: 'startTime',
+          id: 'start_time',
           name: 'Start time',
           type: 'number',
           value: 0,
@@ -252,7 +240,7 @@ const config: ExpDesignerConfig = {
           step: 500,
         },
         {
-          id: 'duration',
+          id: 'end_time',
           name: 'Duration',
           type: 'number',
           value: defaultDuration,
@@ -272,7 +260,7 @@ const config: ExpDesignerConfig = {
           step: 0.1,
         },
         {
-          id: 'recordingTarget',
+          id: 'cells',
           name: 'Target',
           type: 'targetDropdown',
           value: defaultTarget,

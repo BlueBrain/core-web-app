@@ -54,6 +54,11 @@ export const expDesignerConfigAtom = atom<ExpDesignerConfig, [ExpDesignerConfig?
         newConfig[sectionName] = stimuliConfig; // eslint-disable-line no-param-reassign
         return newConfig;
       }
+      if (sectionName === 'recording') {
+        const recordingConfig = structuredClone(params[sectionName]);
+        newConfig[sectionName] = recordingConfig; // eslint-disable-line no-param-reassign
+        return newConfig;
+      }
       newConfig[sectionName] = structuredClone(params[sectionName]); // eslint-disable-line no-param-reassign
       return newConfig;
     }, {} as ExpDesignerConfig);

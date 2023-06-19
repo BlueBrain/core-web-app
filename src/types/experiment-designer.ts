@@ -113,6 +113,7 @@ type ExpDesignerConfigBaseType = {
 
 export type ExpDesignerConfig = ExpDesignerConfigBaseType & {
   stimuli: ExpDesignerStimulusParameter[];
+  recording: ExpDesignerRecordingParameter[];
 };
 
 export type TargetList = string[];
@@ -177,4 +178,54 @@ export type ExpDesignerStimulusValueParameterType =
 export interface ExpDesignerStimulusParameter extends ExpDesignerBaseParameter {
   type: 'group';
   value: ExpDesignerStimulusValueParameterType[];
+}
+
+// RECORDING SPECIFIC TYPES
+
+type RecordingSections = 'soma' | 'axon' | 'dend' | 'apic' | 'all';
+
+type RecordingType = 'compartment' | 'summation' | 'synapse';
+
+type RecordingVariableName = 'v' | 'i_membrane' | 'IClamp';
+
+export interface RecordingTypeDropdownOptionType {
+  label: string;
+  value: RecordingType;
+}
+
+export interface RecordingTypeDropdown extends ExpDesignerDropdownParameter {
+  id: 'type';
+  options: RecordingTypeDropdownOptionType[];
+}
+
+export interface RecordingVariableNameDropdownOptionType {
+  label: string;
+  value: RecordingVariableName;
+}
+
+export interface RecordingVariableNameDropdown extends ExpDesignerDropdownParameter {
+  id: 'variable_name';
+  options: RecordingVariableNameDropdownOptionType[];
+}
+
+export interface RecordingSectionDropdownOptionType {
+  label: string;
+  value: RecordingSections;
+}
+
+export interface RecordingModuleDropdown extends ExpDesignerDropdownParameter {
+  id: 'sections';
+  options: RecordingSectionDropdownOptionType[];
+}
+
+export type ExpDesignerRecordingValueParameterType =
+  | RecordingTypeDropdown
+  | RecordingVariableNameDropdown
+  | RecordingModuleDropdown
+  | ExpDesignerNumberParameter
+  | ExpDesignerTargetParameter;
+
+export interface ExpDesignerRecordingParameter extends ExpDesignerBaseParameter {
+  type: 'group';
+  value: ExpDesignerRecordingValueParameterType[];
 }
