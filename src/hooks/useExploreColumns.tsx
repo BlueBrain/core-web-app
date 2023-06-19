@@ -72,7 +72,7 @@ const useExploreColumns = (
       title: getHeaderColumn('#'),
       key: 'index',
       className: 'text-primary-7',
-      width: 50,
+      width: 100,
       render: (_text: string, _record: ExploreSectionResource, index: number) => index + 1,
     },
   ];
