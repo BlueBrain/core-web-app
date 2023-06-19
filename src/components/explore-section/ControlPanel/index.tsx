@@ -2,8 +2,8 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined } from '@ant-design/icons';
 import { Aggregations } from '@/types/explore-section/fields';
-import { CheckboxOption, Filter, OptionsData } from '@/components/Filter/types';
-import { CheckList, FilterGroup, FilterGroupProps } from '@/components/Filter';
+import { CheckboxOption, Filter, OptionsData, RangeFilter } from '@/components/Filter/types';
+import { CheckList, DateRange, FilterGroup, FilterGroupProps } from '@/components/Filter';
 
 type FiltersProps = {
   aggregations: Loadable<Aggregations | undefined>;
@@ -18,27 +18,57 @@ type ControlPanelProps = {
   setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
+function CheckListWrapper({
+  aggregations,
+  filter,
+  filters,
+  setFilters,
+}: {
+  aggregations: Loadable<Aggregations | undefined>;
+  filter: Filter;
+  filters: Filter[];
+  setFilters: Dispatch<SetStateAction<Filter[]>>;
+}) {
+  const [options, setOptions] = useState<CheckboxOption[]>([]);
+
+  return (
+    <CheckList
+      data={
+        (aggregations.state === 'hasData' && aggregations.data
+          ? aggregations.data
+          : []) as OptionsData
+      }
+      filter={filter}
+      filters={filters}
+      options={options}
+      setFilters={setFilters}
+      setOptions={setOptions}
+    />
+  );
+}
+
 function createFilterItemComponent(
   filter: Filter,
   aggregations: Loadable<Aggregations | undefined>
 ) {
   return function FilterItemComponent({ filters, setFilters }: Omit<FiltersProps, 'aggregations'>) {
-    const [options, setOptions] = useState<CheckboxOption[]>([]);
+    const { type } = filter;
 
-    return (
-      <CheckList
-        data={
-          (aggregations.state === 'hasData' && aggregations.data
-            ? aggregations.data
-            : []) as OptionsData
-        }
-        filter={filter}
-        filters={filters}
-        options={options}
-        setFilters={setFilters}
-        setOptions={setOptions}
-      />
-    );
+    switch (type) {
+      case 'dateRange':
+        return (
+          <DateRange filter={filter as RangeFilter} filters={filters} setFilters={setFilters} />
+        );
+      default:
+        return (
+          <CheckListWrapper
+            aggregations={aggregations}
+            filter={filter}
+            filters={filters}
+            setFilters={setFilters}
+          />
+        );
+    }
   };
 }
 

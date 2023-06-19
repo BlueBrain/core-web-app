@@ -147,7 +147,7 @@ export const DEFAULT_FILTERS = [
   { field: 'name', type: 'checkList', value: [], title: 'Name' },
   { field: 'description', type: 'checkList', value: [], title: 'Description' },
   { field: 'contributors', type: 'checkList', value: [], title: 'Contributors' },
-  { field: 'updatedAt', type: 'checkList', value: [], title: 'Updated At' },
+  { field: 'createdAt', type: 'dateRange', value: [], title: 'Created At' },
   { field: 'conditions', type: 'checkList', value: [], title: 'Conditions' },
 ];
 

@@ -3,11 +3,11 @@ interface BaseFilter {
   title: string;
 }
 
-interface DateRangeFilter extends BaseFilter {
-  type: 'dateRange';
+export interface RangeFilter extends BaseFilter {
+  type: 'dateRange' | 'valueRange';
   value: {
-    gte: string | null;
-    lte: string | null;
+    gte: Date | null;
+    lte: Date | null;
   };
 }
 
@@ -16,22 +16,34 @@ export interface CheckListFilter extends BaseFilter {
   value: string[];
 }
 
-export type Filter = DateRangeFilter | CheckListFilter;
+export type Filter = CheckListFilter | RangeFilter;
 
-export interface CheckboxOption {
+export type CheckboxOption = {
   checked: string | boolean;
   count: number | null;
   key: string;
-}
-
-type Bucket = {
-  key: string;
-  doc_count: number;
 };
 
-export interface OptionsData {
+export type RangeField =
+  | {
+      max: Date;
+      min: Date;
+      defaultValue?: {
+        gte: Date;
+        lte: Date;
+      };
+    }
+  | undefined;
+
+export type Bucket = {
+  doc_count: number;
+  key: string | number;
+  key_as_string?: string;
+};
+
+export type OptionsData = {
   [key: string]: {
     buckets: Bucket[];
     excludeOwnFilter: { buckets: Bucket[] };
   };
-}
+};

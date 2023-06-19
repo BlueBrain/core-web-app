@@ -1,11 +1,18 @@
 import set from 'lodash/fp/set';
-
-import { CheckListFilter, Filter } from '@/components/Filter/types';
+import { format } from 'date-fns';
+import { CheckListFilter, Filter, RangeFilter } from '@/components/Filter/types';
 import { ES_TERMS } from '@/constants/explore-section';
 
-type FilterTerm = {
-  [key: string]: string;
+type RangeValue = {
+  gte: string;
+  lte: string;
 };
+
+type FilterTerm = {
+  [key: string]: string | RangeValue;
+};
+
+type TermWithType = Partial<Record<'terms' | 'range', FilterTerm>>;
 
 type ESAggs = {
   aggs: {
@@ -38,7 +45,7 @@ type ESFilter = {
   // Only applied if filters are enabled.
   post_filter?: {
     bool: {
-      filter: FilterTerm[];
+      must: FilterTerm[];
     };
   };
 };
@@ -49,22 +56,51 @@ type ESAggsAndFilter = ESAggs & ESFilter;
 function getChecklistTerm({ field, value }: Omit<CheckListFilter, 'title' | 'type'>) {
   return value.length
     ? {
-        [field]: value,
+        terms: {
+          [field]: value,
+        },
       }
     : undefined;
 }
 
-function getESTerm(field: string) {
-  return ES_TERMS[field]?.term as string; // TODO: Check this coersion
+function getRangeTerm({ field, value }: { field: string; value: RangeValue }) {
+  const { gte, lte } = value;
+
+  return gte || lte
+    ? ({
+        range: {
+          [field]: {
+            ...(gte ? { gte } : undefined),
+            ...(lte ? { lte } : undefined),
+          },
+        },
+      } as TermWithType)
+    : undefined;
 }
 
-function getFilterTerm(esTerm: string, type: string, value: Filter['value']) {
+function getESTerm(field: string) {
+  return ES_TERMS[field]?.term as string;
+}
+
+function getFilterTerm(esTerm: string, type: Filter['type'], value: Filter['value']) {
   let filterTerm;
 
-  // TODO: Add more cases for other filter types.
   switch (type) {
     case 'checkList':
       filterTerm = getChecklistTerm({ field: esTerm, value: value as CheckListFilter['value'] });
+      break;
+    case 'dateRange':
+      filterTerm =
+        Object.values(value).every((el) => el !== undefined) &&
+        getRangeTerm({
+          field: esTerm,
+          value: Object.fromEntries(
+            Object.entries(value as RangeFilter['value']).map(([termName, dateValue]) => [
+              termName,
+              dateValue ? format(dateValue, 'yyyy-MM-dd') : null, // Convert date to string for ES query.
+            ])
+          ) as RangeValue,
+        });
       break;
     default:
       filterTerm = undefined;
@@ -75,11 +111,11 @@ function getFilterTerm(esTerm: string, type: string, value: Filter['value']) {
 
 function getFilter(post_filter: ESFilter['post_filter'], filterTerm?: FilterTerm) {
   return {
-    ...(filterTerm // TODO: Handle different filter types
+    ...(filterTerm
       ? {
           post_filter: set(
-            'bool.filter',
-            [...(post_filter?.bool?.filter ?? []), { terms: filterTerm }],
+            'bool.must',
+            [...(post_filter?.bool?.must ?? []), filterTerm],
             post_filter ?? {}
           ),
         }
@@ -87,11 +123,29 @@ function getFilter(post_filter: ESFilter['post_filter'], filterTerm?: FilterTerm
   };
 }
 
+/* Compiles an array of filter terms from the filter state of all filters (except the current one). */
+function applyOtherFieldsTerms(
+  termsWithType: TermWithType[],
+  [termType, terms]: [string, FilterTerm]
+) {
+  return Object.entries(terms).reduce(
+    (innerTermsWithType: TermWithType[], [termLabel, termValue]: [string, any]) => [
+      ...innerTermsWithType,
+      {
+        [termType]: {
+          [termLabel]: termValue,
+        },
+      } as TermWithType,
+    ],
+    termsWithType
+  );
+}
+
 function getAggs(
   aggs: ESAggs['aggs'],
   field: string,
   esTerm: string,
-  otherFieldsTerms: FilterTerm
+  otherFieldsTerms: TermWithType
 ) {
   return {
     aggs: {
@@ -106,7 +160,13 @@ function getAggs(
                         terms: {
                           field: esTerm,
                           size: 100,
+                          // ...(value.length && { include: value, min_doc_count: 0 }), // Preserve any selected fields.
                         },
+                      },
+                    },
+                    filter: {
+                      bool: {
+                        must: Object.entries(otherFieldsTerms).reduce(applyOtherFieldsTerms, []),
                       },
                     },
                   }
@@ -116,17 +176,6 @@ function getAggs(
                       size: 100,
                     },
                   }),
-              ...(Object.keys(otherFieldsTerms).length && {
-                filter: {
-                  bool: {
-                    filter: Object.entries(otherFieldsTerms).map(([key, term]) => ({
-                      terms: {
-                        [key]: term,
-                      },
-                    })),
-                  },
-                },
-              }),
             },
           }
         : undefined),
@@ -141,7 +190,7 @@ function reduceAggsAndTerms(
   arr: Filter[]
 ) {
   const esTerm = getESTerm(field);
-  const filterTerm = getFilterTerm(esTerm as string, type, value); // TODO: Check this coersion
+  const filterTerm = getFilterTerm(esTerm, type, value);
 
   // Get all other filter terms.
   const otherFieldsTerms = arr

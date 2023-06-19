@@ -1,6 +1,7 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import CheckList from './CheckList';
+import DateRange from './DateRange';
 import { Filter } from './types';
 import { ChevronIcon, EyeIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
@@ -58,4 +59,4 @@ export function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
   );
 }
 
-export { CheckList };
+export { CheckList, DateRange };

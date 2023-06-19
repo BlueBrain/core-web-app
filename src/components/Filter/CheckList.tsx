@@ -63,13 +63,13 @@ export default function CheckList({
   setFilters: Dispatch<SetStateAction<Filter[]>>;
   setOptions: Dispatch<SetStateAction<CheckboxOption[]>>;
 }) {
-  const fillOptionsFromBuckets = useMemo(() => getFillOptionsEffect(filter.field), [filter]);
+  const fillOptionsFromBuckets = useMemo(
+    () => getFillOptionsEffect(filter.field, data, filters, setOptions),
+    [data, filter.field, filters, setOptions]
+  );
 
   // Populate the checkbox list from the aggregations
-  useEffect(
-    () => fillOptionsFromBuckets(data, filters, setOptions),
-    [data, filters, setOptions, fillOptionsFromBuckets]
-  );
+  useEffect(() => fillOptionsFromBuckets(), [fillOptionsFromBuckets]);
 
   const handleCheckedChange = getCheckedChangeHandler(filters, setFilters, filter);
 
