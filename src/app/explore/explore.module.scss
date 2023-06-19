@@ -95,10 +95,10 @@
   > div > span,
   > a > div > span {
     float: right;
-    @apply text-xl cursor-pointer;
+    @apply text-xl;
   }
   h1 {
-    @apply text-xl font-bold inline cursor-pointer;
+    @apply text-xl font-bold inline;
   }
   button {
     font-size: clamp(1rem, 0.5vw + 5px, 3rem);

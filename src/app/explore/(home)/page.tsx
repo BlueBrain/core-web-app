@@ -16,11 +16,11 @@ export default function Explore() {
   return (
     <div className={styles.container}>
       <div className={styles.exploreHeader}>
-        <Link href="/explore">
-          <h1>Explore</h1>
-          <p className="leading-5 text-primary-2">
-            Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet
-          </p>
+        <h1>Explore</h1>
+        <p className="leading-5 text-primary-2">
+          Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet
+        </p>
+        <Link href="/">
           <button type="button">
             <ArrowLeftOutlined />
             Back home
