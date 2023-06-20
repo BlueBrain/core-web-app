@@ -1,4 +1,4 @@
-import { ES_TERMS } from '@/constants/explore-section';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
 type ElasticsearchSort = Array<{ [field: string]: { order: 'asc' | 'desc' } }>;
 
@@ -9,7 +9,7 @@ function buildElasticsearchSort({
   field: string;
   order: 'asc' | 'desc';
 }): ElasticsearchSort {
-  return [{ [ES_TERMS[field as keyof typeof ES_TERMS].term as string]: { order } }];
+  return [{ [LISTING_CONFIG[field as keyof typeof LISTING_CONFIG].term as string]: { order } }];
 }
 
 export default buildElasticsearchSort;

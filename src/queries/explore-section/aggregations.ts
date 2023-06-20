@@ -1,7 +1,7 @@
 import set from 'lodash/fp/set';
 import { format } from 'date-fns';
 import { CheckListFilter, Filter, RangeFilter } from '@/components/Filter/types';
-import { ES_TERMS } from '@/constants/explore-section';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
 type RangeValue = {
   gte: string;
@@ -79,7 +79,7 @@ function getRangeTerm({ field, value }: { field: string; value: RangeValue }) {
 }
 
 function getESTerm(field: string) {
-  return ES_TERMS[field]?.term as string;
+  return LISTING_CONFIG[field]?.term as string;
 }
 
 function getFilterTerm(esTerm: string, type: Filter['type'], value: Filter['value']) {

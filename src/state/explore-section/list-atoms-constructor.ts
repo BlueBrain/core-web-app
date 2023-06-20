@@ -4,7 +4,7 @@ import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
-import { TYPE_FILTER_MAPPING, DEFAULT_FILTERS } from '@/constants/explore-section';
+import { TYPE_FILTER_MAPPING, DEFAULT_FILTERS } from '@/constants/explore-section/filters';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
 

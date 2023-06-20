@@ -4,7 +4,7 @@ import { Key, ReactNode, Suspense } from 'react';
 import { useAtomValue } from 'jotai';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { DetailProps, ListField } from '@/components/explore-section/Detail';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 import { classNames } from '@/util/utils';
 import SimulationReports from '@/components/explore-section/Simulations/SimulationReports';

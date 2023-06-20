@@ -5,7 +5,7 @@ import { DeltaResource, SerializedDeltaResource } from '@/types/explore-section/
 import { Series } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import timeElapsedFromToday from '@/util/date';
-import { NO_DATA_STRING } from '@/constants/explore-section';
+import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
 import {
   subjectAgeSelectorFn,

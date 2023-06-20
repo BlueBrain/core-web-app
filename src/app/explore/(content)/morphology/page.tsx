@@ -26,10 +26,10 @@ const columnKeys = [
   'mType',
   'name',
   'conditions',
-  'reference',
   'subjectSpecies',
   'contributors',
   'createdAt',
+  'reference',
 ];
 
 export default function MorphologyPage() {
@@ -52,7 +52,7 @@ export default function MorphologyPage() {
 
   const { setFilters, setSearchString, setSortState, setPageSize } = atomSetters;
 
-  const columns = useExploreColumns(columnKeys, atomValues.sortState, setSortState, 'morphology');
+  const columns = useExploreColumns(columnKeys, atomValues.sortState, setSortState);
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>

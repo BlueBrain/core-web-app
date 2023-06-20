@@ -90,6 +90,7 @@ export interface ESResponseRaw {
 }
 
 export interface Source extends OptionalExploreSectionFields {
+  [key: string]: any;
   '@id': string;
   '@type'?: string | string[] | null;
   brainRegion?: IdLabelEntity;
@@ -221,8 +222,8 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   license?: string | null;
   attrs?: IdLabel[] | null;
   campaign?: string;
-  startedAt?: string;
-  completedAt?: string;
+  startedAt?: string | null;
+  completedAt?: string | null;
 }
 
 export type EPhysImageItem = {

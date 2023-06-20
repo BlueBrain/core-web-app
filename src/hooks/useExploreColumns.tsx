@@ -5,9 +5,7 @@ import { SetStateAction } from 'jotai';
 import { Tooltip } from 'antd';
 import { ColumnProps, ColumnType } from 'antd/lib/table';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
-import { format, parseISO, isValid } from 'date-fns';
-import { ES_TERMS } from '@/constants/explore-section';
-import Link from '@/components/Link';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { SortState } from '@/types/explore-section/application';
 import styles from '@/app/explore/explore.module.scss';
@@ -15,8 +13,7 @@ import styles from '@/app/explore/explore.module.scss';
 const useExploreColumns = (
   keys: string[],
   sortState: SortState,
-  setSortState: Dispatch<SetStateAction<SortState>>,
-  url: string
+  setSortState: Dispatch<SetStateAction<SortState>>
 ): ColumnProps<ExploreSectionResource>[] => {
   const sorterES = (column: ColumnType<ExploreSectionResource>) => {
     const field = column.key;
@@ -28,7 +25,7 @@ const useExploreColumns = (
   };
 
   const getHeaderColumn = (key: string) => {
-    const term = ES_TERMS[key as keyof typeof ES_TERMS];
+    const term = LISTING_CONFIG[key as keyof typeof LISTING_CONFIG];
 
     if (!term) {
       return <div className={styles.tableHeader}>{key}</div>;
@@ -38,9 +35,9 @@ const useExploreColumns = (
 
     const iconDirection =
       sortState.order === 'asc' ? (
-        <CaretDownOutlined className="flex mr-2" />
-      ) : (
         <CaretUpOutlined className="flex mr-2" />
+      ) : (
+        <CaretDownOutlined className="flex mr-2" />
       );
 
     const icon = isSorted ? (
@@ -60,13 +57,6 @@ const useExploreColumns = (
     );
   };
 
-  const getRender = (text: string, record: any) =>
-    isValid(parseISO(text)) ? (
-      format(parseISO(text), 'dd.MM.yyyy')
-    ) : (
-      <Link href={`/explore/${url}/${record.key}`}>{text}</Link>
-    );
-
   const columns: ColumnProps<ExploreSectionResource>[] = [
     {
       title: getHeaderColumn('#'),
@@ -78,14 +68,12 @@ const useExploreColumns = (
   ];
 
   keys.forEach((key) => {
-    const column: ColumnProps<ExploreSectionResource> = {
+    const column: ColumnProps<any> = {
       title: getHeaderColumn(key),
-      dataIndex: key,
-      key,
       className: 'text-primary-7 cursor-pointer',
       sorter: false,
       ellipsis: true,
-      render: getRender,
+      render: LISTING_CONFIG[key as keyof typeof LISTING_CONFIG]?.renderFn,
       onHeaderCell: (cell) => ({
         onClick: () => sorterES(cell),
       }),

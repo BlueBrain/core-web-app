@@ -53,12 +53,7 @@ export default function NeuronDensityPage() {
 
   const { setFilters, setSearchString, setSortState, setPageSize } = atomSetters;
 
-  const columns = useExploreColumns(
-    columnKeys,
-    atomValues.sortState,
-    setSortState,
-    'neuron-density'
-  );
+  const columns = useExploreColumns(columnKeys, atomValues.sortState, setSortState);
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>

@@ -52,12 +52,7 @@ export default function LayerThicknessPage() {
 
   const { setFilters, setSearchString, setSortState, setPageSize } = atomSetters;
 
-  const columns = useExploreColumns(
-    columnKeys,
-    atomValues.sortState,
-    setSortState,
-    'layer-thickness'
-  );
+  const columns = useExploreColumns(columnKeys, atomValues.sortState, setSortState);
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
