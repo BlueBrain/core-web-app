@@ -31,7 +31,10 @@ export default function DropdownParameter({
   };
 
   return (
-    <div className={classNames('flex gap-3 items-center font-bold', className)}>
+    <div
+      className={classNames('flex gap-3 items-center font-bold', className)}
+      aria-label="dropdown-param"
+    >
       <div className="grow">{data.name}</div>
       <Select
         defaultValue={[data.value]}

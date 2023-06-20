@@ -30,7 +30,10 @@ export default function TargetSelector({
   };
 
   return (
-    <div className={classNames('flex gap-3 items-center font-bold', className)}>
+    <div
+      className={classNames('flex gap-3 items-center font-bold', className)}
+      aria-label="target-dropdown"
+    >
       <div className="grow">Simulated Neurons</div>
       <TargetsDropdown onChange={setSimulateTarget} defaultValue={data.value} />
       {showSwitcher && <ExportOutlined onClick={onChangeParamType} />}

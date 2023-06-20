@@ -99,6 +99,7 @@ const updateConfigPayloadAtom = atom<null, [], Promise<void>>(null, async (get, 
   const localConfigPayload = get(expDesignerConfigAtom);
   const savedConfigPayload = get(savedConfigAtom);
 
+  if (!localConfigPayload || !savedConfigPayload) return;
   if (isEqual(localConfigPayload, savedConfigPayload)) return;
 
   const session = get(sessionAtom);

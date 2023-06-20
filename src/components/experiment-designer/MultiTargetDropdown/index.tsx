@@ -59,7 +59,7 @@ export default function MultiTargetDropdown({
   };
 
   return (
-    <div className={classNames('flex gap-3', className)}>
+    <div className={classNames('flex gap-3', className)} aria-label="target-dropdown">
       {showTitle && <div className="grow font-bold">{data.name}</div>}
 
       {isLoading && <Spin />}

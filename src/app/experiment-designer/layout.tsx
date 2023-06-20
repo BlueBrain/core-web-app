@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { Spin, message } from 'antd';
+import { Spin, Alert } from 'antd';
 
 import {
   ExperimentDesignerTopTabs,
@@ -27,6 +27,7 @@ import {
 } from '@/state/experiment-designer';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { classNames } from '@/util/utils';
+import styles from './exp-des.module.css';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
 const loadableDerivedBrainModelConfigIdAtom = loadable(brainModelConfigIdFromSimCampUIConfigIdAtom);
@@ -88,8 +89,6 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   const isConfigUsedInSim =
     isConfigUsedInSimLoadable.state === 'hasData' ? isConfigUsedInSimLoadable.data : false;
 
-  const [messageApi, messageContextHolder] = message.useMessage();
-
   useAuth(true);
   useSimulationCampaignUIConfig();
 
@@ -107,17 +106,16 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   }, [setLocalConfig, remoteConfigLoadable, setSavedConfig]);
 
   useEffect(() => {
+    // make sure all the info is there to avoid calling undesired saveConfigDebounced
+    if (remoteConfigLoadable.state !== 'hasData') return;
+    if (!remoteConfigLoadable.data) return;
+
+    if (isConfigUsedInSimLoadable.state !== 'hasData') return;
     // skip changing config if sim was launched with it.
-    if (isConfigUsedInSim) {
-      messageApi.open({
-        type: 'error',
-        content: 'Config used in simulation. It cannot be modified. Please Duplicate it',
-      });
-      return;
-    }
+    if (isConfigUsedInSimLoadable.data) return;
 
     saveConfigDebounced();
-  }, [localConfig, saveConfigDebounced, isConfigUsedInSim, messageApi]);
+  }, [localConfig, saveConfigDebounced, isConfigUsedInSimLoadable, remoteConfigLoadable]);
 
   useEffect(() => {
     if (derivedBrainModelConfigIdLoadable.state !== 'hasData') return;
@@ -140,7 +138,17 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
           </ErrorBoundary>
 
           <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-            <div className="grow">{children}</div>
+            {isConfigUsedInSim && (
+              <Alert
+                message="Config in read-only mode"
+                description="This config was used for a simulation. Any modification won't be saved"
+                type="warning"
+                showIcon
+              />
+            )}
+            <div className={classNames('grow', isConfigUsedInSim ? styles.notAllowed : '')}>
+              {children}
+            </div>
           </ErrorBoundary>
 
           <div className="absolute bottom-5 right-5 flex gap-5">
@@ -153,7 +161,6 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
           </div>
         </div>
       </div>
-      {messageContextHolder}
     </Spin>
   );
 }
