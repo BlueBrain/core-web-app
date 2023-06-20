@@ -39,7 +39,7 @@ function SimulationDetail({
     <div className="flex h-screen">
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <div className="flex flex-col gap-10 max-w-screen-2xl">
-          <div className="grid gap-4 grid-cols-6">
+          <div className="grid gap-4 grid-cols-6 break-words">
             {fields.map(
               ({ className, field, title }) =>
                 serializedFields && (

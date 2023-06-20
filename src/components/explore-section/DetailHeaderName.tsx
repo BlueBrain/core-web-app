@@ -21,7 +21,7 @@ export default function DetailHeaderName({
 
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
-    if (latestRevision.state === 'hasData' && latestRevision.data === 500 && url) {
+    if (latestRevision.state === 'hasData' && latestRevision.data && url) {
       return range(latestRevision.data, 0).map((revision: number) => ({
         key: revision,
         label: (
