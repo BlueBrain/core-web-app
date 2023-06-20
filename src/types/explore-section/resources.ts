@@ -59,6 +59,7 @@ export interface OptionalExploreSectionSerializedFields {
   meanstd?: string | number;
   mean?: string | number;
   standardDeviation?: string | number;
+  density?: string | number;
   sem?: string | number | void;
   series?: Series[];
   numberOfCells?: string | number;

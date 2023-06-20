@@ -15,8 +15,8 @@ const fields = [
     className: 'col-span-3 row-span-2',
   },
   {
-    title: 'Mean ± STD',
-    field: ({ meanPlusMinusStd }) => meanPlusMinusStd,
+    title: 'Brain Region',
+    field: ({ brainRegion }) => brainRegion,
   },
   {
     title: 'Species',
@@ -37,14 +37,29 @@ const fields = [
   {
     title: ({ contributors }) => (contributors?.length === 1 ? 'Contributor' : 'Contributors'),
     field: <Contributors />,
+    className: 'row-span-3',
   },
   {
-    title: 'Created On',
+    title: 'Creation Date',
     field: ({ creationDate }) => creationDate,
-    className: 'col-span-3',
+    className: 'col-span-2 row-span-3',
+  },
+  {
+    title: 'M-Type',
+    field: ({ mType }) => mType,
   },
   {
     title: 'Conditions',
+    className: 'col-span-2',
+  },
+  {
+    title: 'E-Type',
+    field: ({ eType }) => eType,
+    className: 'col-span-3',
+  },
+  {
+    title: 'Density',
+    field: ({ density }) => density,
   },
 ] as DetailProps[];
 

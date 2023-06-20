@@ -51,4 +51,4 @@ WHERE {
 }
 LIMIT 1000`;
 
-export const NO_DATA_STRING: string = 'N/A';
+export const NO_DATA_STRING: string = '';

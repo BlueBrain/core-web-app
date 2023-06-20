@@ -48,14 +48,15 @@ export default function useExploreSerializedFields(
 
   /**
    * Serializes a series array based on its format and string targetting specific statistic
-   * @param series @param field
+   * @param field the field of series to render
+   * @param withUnits whether to render units
    */
-  const serializeStatisticFields = (field: string): string | number => {
+  const serializeStatisticFields = (field: string, withUnits: boolean = false): string | number => {
     if (!detail?.series) return NO_DATA_STRING;
 
     const found = ensureArray(detail?.series).find((el: Series) => el.statistic === field);
-
-    return found ? formatNumber(found.value) : NO_DATA_STRING;
+    const units = withUnits && found ? found.unitCode : '';
+    return found ? `${formatNumber(found.value)} ${units}` : NO_DATA_STRING;
   };
 
   // renders thickness
@@ -83,7 +84,6 @@ export default function useExploreSerializedFields(
         {tag}
       </Tag>
     ));
-
   return {
     description: detail?.description,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
@@ -92,6 +92,7 @@ export default function useExploreSerializedFields(
     meanPlusMinusStd: serializeMeanPlusMinusStd(),
     numberOfCells: serializeStatisticFields('N'),
     standardDeviation: serializeStatisticFields('standard deviation'),
+    density: serializeStatisticFields('data point', true),
     creationDate: serializeCreationDate(),
     thickness: serializeThickness(),
     layer: detail?.brainLocation?.layer?.label,
