@@ -76,7 +76,7 @@ export default function LaunchedSimCampaignList() {
           sorter={getSorterFn('startedAtTime')}
         />
         <Column
-          title="COMPLETED AT"
+          title="COMPLETED"
           dataIndex="endedAtTime"
           key="endedAtTime"
           render={dateRenderer}
