@@ -88,7 +88,10 @@ export default function ControlPanel({
   setOpen,
 }: ControlPanelProps) {
   return (
-    <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
+    <div
+      className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]"
+      style={{ zIndex: 101 }}
+    >
       <button type="button" onClick={() => setOpen(false)} className="text-white text-right">
         <CloseOutlined />
       </button>
