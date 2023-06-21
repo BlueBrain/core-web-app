@@ -1,8 +1,11 @@
 // Wrapper style
 .wrapper {
   @apply flex;
+  aside {
+    @apply fixed z-50;
+  }
   main {
-    @apply w-full;
+    @apply w-full ml-5;
   }
 }
 
@@ -59,6 +62,7 @@
 }
 // Expanded Sidebar styles
 .expanded {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   @apply pl-3;
   > div {
     @apply pr-2 pt-3 flex items-center justify-between;
