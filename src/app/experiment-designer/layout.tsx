@@ -140,8 +140,8 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
           <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
             {isConfigUsedInSim && (
               <Alert
-                message="Config in read-only mode"
-                description="This config was used for a simulation. Any modification won't be saved"
+                message="This configuration is in read-only mode"
+                description="To make changes please click on 'Duplicate' or clone a 'public configuration'."
                 type="warning"
                 showIcon
               />
