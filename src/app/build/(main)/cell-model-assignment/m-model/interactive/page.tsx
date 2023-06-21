@@ -1,7 +1,5 @@
-'use client';
-
 import InteractiveBrayns from '@/components/InteractiveBrayns';
 
-export default function CellModelAssignmentView() {
+export default function InteractivePage() {
   return <InteractiveBrayns />;
 }
