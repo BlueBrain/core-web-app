@@ -2,7 +2,6 @@
 
 import { atom } from 'jotai';
 import { Session } from 'next-auth';
-import { selectAtom } from 'jotai/utils';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 
@@ -56,15 +55,19 @@ export const configResourceAtom = atom<Promise<SimulationCampaignUIConfigResourc
   }
 );
 
-const configPayloadUrlAtom = selectAtom(
-  configResourceAtom,
-  (config) => config?.distribution.contentUrl
-);
+const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
+  const configResource = await get(configResourceAtom);
+  if (!configResource) return null;
 
-export const isConfigUsedInSimAtom = selectAtom(
-  configResourceAtom,
-  (config) => !!config?.wasInfluencedBy?.['@id']
-);
+  return configResource.distribution.contentUrl;
+});
+
+export const isConfigUsedInSimAtom = atom<Promise<boolean | null>>(async (get) => {
+  const configResource = await get(configResourceAtom);
+  if (!configResource) return null;
+
+  return !!configResource?.wasInfluencedBy?.['@id'];
+});
 
 export const simCampaignUserAtom = atom<Promise<string | null>>(async (get) => {
   const configResource = await get(configResourceAtom);

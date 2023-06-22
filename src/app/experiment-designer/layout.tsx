@@ -38,7 +38,7 @@ type ExperimentDesignerLayoutProps = {
 };
 
 type ActionButtonProps = {
-  isConfigUsedInSim: boolean;
+  isConfigUsedInSim: boolean | null;
   isLoading: boolean;
 };
 
@@ -69,7 +69,7 @@ function ActionButtons({ isConfigUsedInSim, isLoading }: ActionButtonProps) {
           <DuplicateConfigBtn className={defaultButtonStyle} />
         </>
       )}
-      {!isConfigUsedInSim && <SimulateBtn onLaunched={onLaunched} />}
+      {isConfigUsedInSim === false && <SimulateBtn onLaunched={onLaunched} />}
     </>
   );
 }
