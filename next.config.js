@@ -50,7 +50,7 @@ const nextConfig = {
       },
       {
         source: '/build/cell-model-assignment',
-        destination: '/build/cell-model-assignment/m-model/interactive',
+        destination: '/build/cell-model-assignment/m-model/configuration',
         permanent: false,
       },
       {

@@ -11,15 +11,13 @@ type ModeTabsType = {
   disabled?: boolean;
 };
 
-const defaultStyle = 'ml-5';
-
 export default function SubsectionTabs() {
   const pathname = usePathname();
 
   const modeTabs: ModeTabsType[] = [
-    { name: 'M-Model', href: `${baseHref}/m-model/interactive` },
-    { name: 'E-Model', href: `${baseHref}/e-model/interactive`, disabled: true },
-    { name: 'ME-Model', href: `${baseHref}/me-model/interactive`, disabled: true },
+    { name: 'M-Model', href: `${baseHref}/m-model` },
+    { name: 'E-Model', href: `${baseHref}/e-model`, disabled: true },
+    { name: 'ME-Model', href: `${baseHref}/me-model`, disabled: true },
   ];
 
   const getTabClassName = (tab: ModeTabsType) => {
@@ -27,13 +25,12 @@ export default function SubsectionTabs() {
     const active = !!pathname?.startsWith(tab.href);
     return classNames(
       isDisabled ? 'pointer-events-none' : '',
-      active ? 'font-bold text-primary-8 border-b-2 border-primary-8' : 'text-gray-600',
-      defaultStyle
+      active ? 'font-bold text-primary-8 border-b-2 border-primary-8' : 'text-gray-600'
     );
   };
 
   return (
-    <div>
+    <div className="flex justify-start items-center shrink-0 gap-4">
       {modeTabs.map((tab) => (
         <Link
           key={tab.href}

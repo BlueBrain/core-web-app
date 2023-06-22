@@ -9,7 +9,7 @@ import BrainIcon from '@/components/icons/Brain';
 import AnalysisIcon from '@/components/icons/Analysis';
 import SettingsIcon from '@/components/icons/Settings';
 
-const COMMON_TAB_CLASSNAME = 'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl';
+const COMMON_TAB_CLASSNAME = 'text-center py-2 px-8 rounded-3xl flex gap-2 items-center';
 
 type CellModelAssignmentTab = {
   name: string;
@@ -22,17 +22,17 @@ const tabs: CellModelAssignmentTab[] = [
   {
     name: 'Interactive',
     href: '/build/cell-model-assignment/m-model/interactive',
-    icon: <BrainIcon className="h-4 inline-block mr-2" />,
+    icon: <BrainIcon className="h-4" />,
   },
   {
     name: 'Analysis',
     href: '/build/cell-model-assignment/m-model/analysis',
-    icon: <AnalysisIcon className="h-4 inline-block mr-2" />,
+    icon: <AnalysisIcon className="h-4" />,
   },
   {
     name: 'Configuration',
     href: '/build/cell-model-assignment/m-model/configuration',
-    icon: <SettingsIcon className="h-4 inline-block mr-2" />,
+    icon: <SettingsIcon className="h-4" />,
   },
 ];
 
@@ -40,9 +40,9 @@ function getTabClassName(active: boolean, theme: Theme) {
   let className;
 
   if (theme === 'light') {
-    className = active ? 'bg-white text-primary-7' : 'bg-primary-7 text-white';
+    className = active ? 'bg-primary-7 text-white' : 'bg-white text-primary-7';
   } else {
-    className = active ? 'bg-white text-black' : 'bg-black text-white';
+    className = active ? 'bg-black text-white' : 'bg-white text-black';
   }
 
   return classNames(COMMON_TAB_CLASSNAME, className);
@@ -53,7 +53,7 @@ export default function ModeTabs() {
   const pathname = usePathname();
 
   return (
-    <div>
+    <div className="flex gap-2 flex-wrap justify-end shrink">
       {tabs.map((tab) => (
         <Link
           key={tab.href}

@@ -14,7 +14,7 @@ type Props = {
 export default function CellModelAssignmentLayout({ children }: Props) {
   return (
     <>
-      <div className="flex justify-between my-4">
+      <div className="flex justify-between m-4">
         <SubsectionTabs />
         <ModeTabs />
       </div>
