@@ -186,11 +186,28 @@ export interface Bucket {
   doc_count: number;
 }
 
+interface BucketAggregation {
+  buckets: Bucket[];
+  excludeOwnFilter: { buckets: Bucket[] };
+}
+
+interface StatsAggregationWithFilters {
+  [key: string]: Stats;
+}
+
+interface Stats {
+  avg: number;
+  count: number;
+  max: number;
+  min: number;
+  sum: number;
+  doc_count: number;
+}
+
+export type StatsAggregation = StatsAggregationWithFilters | Stats;
+
 export interface Aggregations {
-  [key: string]: {
-    buckets: Bucket[];
-    excludeOwnFilter: { buckets: Bucket[] };
-  };
+  [key: string]: BucketAggregation | StatsAggregation;
 }
 
 export type IdLabel<

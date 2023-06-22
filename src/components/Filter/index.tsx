@@ -10,13 +10,13 @@ import styles from './filters.module.scss';
 
 export type FilterGroupProps = {
   items: {
-    content: ({
+    content?: ({
       filters,
       setFilters,
     }: {
       filters: Filter[];
       setFilters: Dispatch<SetStateAction<Filter[]>>;
-    }) => ReactElement;
+    }) => null | ReactElement;
     display?: boolean;
     label: string;
     toggleFunc?: () => void;
@@ -39,7 +39,7 @@ export function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
               {display ? (
                 <EyeOutlined onClick={toggleFunc} style={{ color: 'white' }} />
               ) : (
-                <EyeInvisibleOutlined onClick={toggleFunc} style={{ color: 'white' }} />
+                <EyeInvisibleOutlined onClick={toggleFunc} style={{ color: '#69C0FF' }} />
               )}
               <Accordion.Trigger
                 className={classNames(

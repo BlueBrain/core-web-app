@@ -22,6 +22,7 @@ export default function DateRange({
       setFilters([
         ...filters.slice(0, filterIndex),
         {
+          ...filter,
           field: filter.field,
           title: filter.title,
           type: 'dateRange',
@@ -33,16 +34,17 @@ export default function DateRange({
         ...filters.slice(filterIndex + 1),
       ]);
   }, [filter, filters, setFilters]);
-
   const memoizedRender = useMemo(
     () => (
       <DateRangePicker.RangePicker
+        allowClear
         allowEmpty={[true, true]}
+        defaultValue={[filter.value.gte as Date, filter.value.lte as Date]}
         className="bg-transparent border border-primary-4 font-sm placeholder-primary-4 p-2 rounded text-primary-4"
         onChange={handleRangeChange}
       />
     ),
-    [handleRangeChange]
+    [filter.value.gte, filter.value.lte, handleRangeChange]
   );
 
   return (

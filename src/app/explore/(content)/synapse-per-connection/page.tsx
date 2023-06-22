@@ -9,6 +9,8 @@ import { useListViewAtoms, useSetListViewAtoms } from '@/hooks/useListViewAtoms'
 
 const TYPE = 'https://neuroshapes.org/SynapsePerConnection';
 
+const columnKeys = ['brainRegion', 'mType', 'name', 'subjectSpecies', 'contributors', 'createdAt'];
+
 const {
   pageSizeAtom,
   searchStringAtom,
@@ -19,9 +21,8 @@ const {
   sortStateAtom,
 } = createListViewAtoms({
   type: TYPE,
+  columns: columnKeys,
 });
-
-const columnKeys = ['brainRegion', 'mType', 'name', 'subjectSpecies', 'contributors', 'createdAt'];
 
 export default function SynapsePerConnectionPage() {
   const atomValues = useListViewAtoms({

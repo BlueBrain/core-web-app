@@ -1,12 +1,14 @@
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
-import { CloseOutlined } from '@ant-design/icons';
-import { Aggregations } from '@/types/explore-section/fields';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
+import { Aggregations, StatsAggregation } from '@/types/explore-section/fields';
 import { CheckboxOption, Filter, OptionsData, RangeFilter } from '@/components/Filter/types';
 import { CheckList, DateRange, FilterGroup, FilterGroupProps } from '@/components/Filter';
+import ValueRange from '@/components/Filter/ValueRange';
 
 type FiltersProps = {
-  aggregations: Loadable<Aggregations | undefined>;
+  aggregations: Loadable<Aggregations>;
   filters: Filter[];
   setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
@@ -15,7 +17,7 @@ type ControlPanelProps = {
   aggregations: Loadable<any>;
   children?: ReactNode;
   filters: Filter[];
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
@@ -25,7 +27,7 @@ function CheckListWrapper({
   filters,
   setFilters,
 }: {
-  aggregations: Loadable<Aggregations | undefined>;
+  aggregations: Loadable<Aggregations>;
   filter: Filter;
   filters: Filter[];
   setFilters: Dispatch<SetStateAction<Filter[]>>;
@@ -48,36 +50,54 @@ function CheckListWrapper({
   );
 }
 
-function createFilterItemComponent(
-  filter: Filter,
-  aggregations: Loadable<Aggregations | undefined>
-) {
+function createFilterItemComponent(filter: Filter, aggregations: Loadable<Aggregations>) {
   return function FilterItemComponent({ filters, setFilters }: Omit<FiltersProps, 'aggregations'>) {
     const { type } = filter;
-
-    switch (type) {
-      case 'dateRange':
-        return (
-          <DateRange filter={filter as RangeFilter} filters={filters} setFilters={setFilters} />
-        );
-      default:
-        return (
-          <CheckListWrapper
-            aggregations={aggregations}
-            filter={filter}
-            filters={filters}
-            setFilters={setFilters}
-          />
-        );
+    if (aggregations.state === 'loading') {
+      return (
+        <div className="flex items-center justify-center">
+          <Spin indicator={<LoadingOutlined />} />
+        </div>
+      );
     }
+    if (aggregations.state === 'hasData' && aggregations.data) {
+      switch (type) {
+        case 'dateRange':
+          return (
+            <DateRange filter={filter as RangeFilter} filters={filters} setFilters={setFilters} />
+          );
+        case 'valueRange':
+          return (
+            <ValueRange
+              filter={filter as RangeFilter}
+              filters={filters}
+              setFilters={setFilters}
+              aggregation={aggregations.data[filter.field] as StatsAggregation}
+            />
+          );
+        case 'checkList':
+          return (
+            <CheckListWrapper
+              aggregations={aggregations}
+              filter={filter}
+              filters={filters}
+              setFilters={setFilters}
+            />
+          );
+        default:
+          return null;
+      }
+    }
+    return <div />;
   };
 }
 
 function Filters({ aggregations, filters, setFilters }: FiltersProps) {
-  const filterItems: FilterGroupProps['items'] = filters.map((filter) => ({
+  const filterItems = filters.map((filter) => ({
     label: filter.title,
-    content: createFilterItemComponent(filter, aggregations),
-  }));
+    type: filter.type,
+    content: filter.type && createFilterItemComponent(filter, aggregations),
+  })) as FilterGroupProps['items'];
 
   return <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />;
 }

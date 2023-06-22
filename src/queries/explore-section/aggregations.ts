@@ -1,11 +1,17 @@
 import set from 'lodash/fp/set';
 import { format } from 'date-fns';
-import { CheckListFilter, Filter, RangeFilter } from '@/components/Filter/types';
+import {
+  AggregationType,
+  CheckListFilter,
+  Filter,
+  GteLteValue,
+  RangeFilter,
+} from '@/components/Filter/types';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
 type RangeValue = {
-  gte: string;
-  lte: string;
+  gte: string | number;
+  lte: string | number;
 };
 
 type FilterTerm = {
@@ -53,7 +59,10 @@ type ESFilter = {
 type ESAggsAndFilter = ESAggs & ESFilter;
 
 /* Returns a ChecklistFilter-specific ES filter term object */
-function getChecklistTerm({ field, value }: Omit<CheckListFilter, 'title' | 'type'>) {
+function getChecklistTerm({
+  field,
+  value,
+}: Omit<CheckListFilter, 'title' | 'type' | 'aggregationType'>) {
   return value.length
     ? {
         terms: {
@@ -91,7 +100,7 @@ function getFilterTerm(esTerm: string, type: Filter['type'], value: Filter['valu
       break;
     case 'dateRange':
       filterTerm =
-        Object.values(value as RangeFilter['value']).every((el) => el !== undefined) &&
+        Object.values(value as GteLteValue).every((el) => el !== undefined) &&
         getRangeTerm({
           field: esTerm,
           value: Object.fromEntries(
@@ -101,6 +110,12 @@ function getFilterTerm(esTerm: string, type: Filter['type'], value: Filter['valu
             ])
           ) as RangeValue,
         });
+      break;
+    case 'valueRange':
+      filterTerm = getRangeTerm({
+        field: esTerm,
+        value: value as RangeValue,
+      });
       break;
     default:
       filterTerm = undefined;
@@ -141,43 +156,84 @@ function applyOtherFieldsTerms(
   );
 }
 
+function buildAggregation(
+  field: string,
+  esTerm: string,
+  aggregationType: AggregationType,
+  otherFieldsTerms: TermWithType
+) {
+  switch (aggregationType) {
+    case 'buckets':
+      return {
+        [field]: {
+          ...(Object.keys(otherFieldsTerms).length
+            ? {
+                aggs: {
+                  excludeOwnFilter: {
+                    terms: {
+                      field: esTerm,
+                      size: 100,
+                      // ...(value.length && { include: value, min_doc_count: 0 }), // Preserve any selected fields.
+                    },
+                  },
+                },
+                filter: {
+                  bool: {
+                    must: Object.entries(otherFieldsTerms).reduce(applyOtherFieldsTerms, []),
+                  },
+                },
+              }
+            : {
+                terms: {
+                  field: esTerm,
+                  size: 100,
+                },
+              }),
+        },
+      };
+    case 'stats':
+      if (Object.keys(otherFieldsTerms).length) {
+        return {
+          [field]: {
+            aggs: {
+              [field]: {
+                stats: {
+                  field: esTerm,
+                },
+              },
+            },
+            filter: {
+              bool: {
+                must: Object.entries(otherFieldsTerms).reduce(applyOtherFieldsTerms, []),
+              },
+            },
+          },
+        };
+      }
+      return {
+        [field]: {
+          stats: {
+            field: esTerm,
+          },
+        },
+      };
+    default:
+      return undefined;
+  }
+}
+
 function getAggs(
   aggs: ESAggs['aggs'],
   field: string,
   esTerm: string,
+  aggregationType: AggregationType,
   otherFieldsTerms: TermWithType
 ) {
   return {
     aggs: {
       ...aggs,
       ...(esTerm !== undefined
-        ? {
-            [field]: {
-              ...(Object.keys(otherFieldsTerms).length
-                ? {
-                    aggs: {
-                      excludeOwnFilter: {
-                        terms: {
-                          field: esTerm,
-                          size: 100,
-                          // ...(value.length && { include: value, min_doc_count: 0 }), // Preserve any selected fields.
-                        },
-                      },
-                    },
-                    filter: {
-                      bool: {
-                        must: Object.entries(otherFieldsTerms).reduce(applyOtherFieldsTerms, []),
-                      },
-                    },
-                  }
-                : {
-                    terms: {
-                      field: esTerm,
-                      size: 100,
-                    },
-                  }),
-            },
-          }
+        ? buildAggregation(field, esTerm, aggregationType, otherFieldsTerms)
         : undefined),
     },
   };
@@ -185,7 +241,7 @@ function getAggs(
 
 function reduceAggsAndTerms(
   { aggs, post_filter }: ESAggsAndFilter,
-  { field, type, value }: Filter,
+  { field, type, value, aggregationType }: Filter,
   _i: number,
   arr: Filter[]
 ) {
@@ -204,7 +260,7 @@ function reduceAggsAndTerms(
     );
 
   return {
-    ...(getAggs(aggs, field, esTerm, otherFieldsTerms) as ESAggs),
+    ...(getAggs(aggs, field, esTerm, aggregationType, otherFieldsTerms) as ESAggs),
     ...(getFilter(post_filter, filterTerm) as ESFilter),
   };
 }

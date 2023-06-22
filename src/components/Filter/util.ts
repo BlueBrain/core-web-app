@@ -17,6 +17,7 @@ export function getCheckedChangeHandler(
     setFilters([
       ...filters.slice(0, filterIndex),
       {
+        ...filter,
         field: filter.field,
         title: filter.title,
         type: 'checkList',
@@ -77,16 +78,14 @@ export function getFillOptionsEffect(
  * @param filter the filter to check
  */
 export function filterHasValue(filter: Filter) {
-  if (Array.isArray(filter.value)) {
-    return filter.value.length !== 0;
+  switch (filter.type) {
+    case 'checkList':
+      return filter.value.length !== 0;
+    case 'dateRange':
+      return filter.value.gte || filter.value.lte;
+    case 'valueRange':
+      return filter.value.gte || filter.value.lte;
+    default:
+      return !!filter.value;
   }
-
-  if (
-    Object.prototype.hasOwnProperty.call(filter.value, 'gte') ||
-    Object.prototype.hasOwnProperty.call(filter.value, 'lte')
-  ) {
-    return true;
-  }
-
-  return !!filter.value;
 }

@@ -21,7 +21,7 @@ export interface SortState {
   order: 'asc' | 'desc';
 }
 export type ListViewAtomValues = {
-  aggregations: Loadable<Aggregations | undefined>;
+  aggregations: Loadable<Aggregations>;
   data: Loadable<ExploreSectionResource[] | undefined>;
   filters: Filter[];
   pageSize: number;

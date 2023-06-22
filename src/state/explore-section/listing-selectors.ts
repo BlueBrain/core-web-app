@@ -94,6 +94,15 @@ export const selectorFnDate = (date: string) =>
   isValid(parseISO(date)) ? format(parseISO(date), 'dd.MM.yyyy') : '';
 
 /**
+ * Formats an nValue entity with units
+ * @param nValueEntity the nValue
+ */
+export const selectorFnValueWithUnit = (nValueEntity?: NValueEntity) => {
+  const unit = nValueEntity && nValueEntity.unit ? nValueEntity.unit : '';
+  return nValueEntity ? `${nValueEntity.value} ${unit}` : '';
+};
+
+/**
  * Renders the text value
  * @param {string} text - The text value to render.
  * @returns {string} - The rendered text value.

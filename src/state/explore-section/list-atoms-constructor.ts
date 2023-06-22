@@ -4,15 +4,55 @@ import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
-import { TYPE_FILTER_MAPPING, DEFAULT_FILTERS } from '@/constants/explore-section/filters';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
 interface DataQueryParams {
   type: string;
+  columns: string[];
 }
 
-const createListViewAtoms = ({ type }: DataQueryParams) => {
+const columnKeyToFilter = (key: string): Filter => {
+  const fieldConfig = LISTING_CONFIG[key];
+  switch (fieldConfig.filter) {
+    case 'checkList':
+      return {
+        field: key,
+        type: 'checkList',
+        value: [],
+        aggregationType: 'buckets',
+        title: LISTING_CONFIG[key].title,
+      };
+    case 'dateRange':
+      return {
+        field: key,
+        type: 'dateRange',
+        value: { gte: null, lte: null },
+        aggregationType: 'stats',
+        title: LISTING_CONFIG[key].title,
+      };
+    case 'valueRange':
+      return {
+        field: key,
+        type: 'valueRange',
+        value: { gte: null, lte: null },
+        aggregationType: 'stats',
+        title: LISTING_CONFIG[key].title,
+        unit: LISTING_CONFIG[key].unit,
+      };
+    default:
+      return {
+        field: key,
+        title: LISTING_CONFIG[key].title,
+        aggregationType: null,
+        type: null,
+        value: null,
+      };
+  }
+};
+
+const createListViewAtoms = ({ type, columns }: DataQueryParams) => {
   const pageSizeAtom = atom<number>(30);
 
   const pageNumberAtom = atom<number>(1);
@@ -21,10 +61,7 @@ const createListViewAtoms = ({ type }: DataQueryParams) => {
 
   const sortStateAtom = atom<SortState>({ field: 'createdAt', order: 'asc' });
 
-  const filtersAtom = atom<Filter[]>([
-    ...DEFAULT_FILTERS,
-    ...TYPE_FILTER_MAPPING[type],
-  ] as Filter[]);
+  const filtersAtom = atom<Filter[]>(columns.map((colKey) => columnKeyToFilter(colKey)));
 
   const queryAtom = atom<object>((get) => {
     const searchString = get(searchStringAtom);
@@ -32,6 +69,7 @@ const createListViewAtoms = ({ type }: DataQueryParams) => {
     const pageSize = get(pageSizeAtom);
     const sortState = get(sortStateAtom);
     const filters = get(filtersAtom);
+
     return fetchDataQuery(pageSize, pageNumber, filters, type, sortState, searchString);
   });
 

@@ -7,9 +7,7 @@ import ExploreSectionTable from '@/components/explore-section/ExploreSectionList
 import ControlPanel from '@/components/explore-section/ControlPanel';
 import { formatNumber } from '@/util/common';
 import { ListViewAtomValues } from '@/types/explore-section/application';
-
 import SettingsIcon from '@/components/icons/Settings';
-
 import { Filter } from '@/components/Filter/types';
 import { filterHasValue } from '@/components/Filter/util';
 import styles from '@/components/explore-section/ControlPanel/filters.module.scss';

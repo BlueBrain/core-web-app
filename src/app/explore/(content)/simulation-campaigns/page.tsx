@@ -56,18 +56,6 @@ function FirstColumnContent(text: string) {
 
 const TYPE = 'https://neuroshapes.org/SimulationCampaign'; // TODO: Check whether this type actually exists.
 
-const {
-  pageSizeAtom,
-  searchStringAtom,
-  filtersAtom,
-  dataAtom,
-  totalAtom,
-  aggregationsAtom,
-  sortStateAtom,
-} = createListViewAtoms({
-  type: TYPE,
-});
-
 const defaultColumns = [
   { dataIndex: 'name', key: 'name', label: 'name', render: FirstColumnContent },
   { dataIndex: 'brainConfiguration', key: 'configuration', label: 'configuration' },
@@ -81,6 +69,19 @@ const defaultColumns = [
   // { dataIndex: 'startDelay', key: 'startDelay', label: 'start_delay' },
   { dataIndex: 'startedAt', key: 'startedAt', label: 'started_at' },
 ];
+
+const {
+  pageSizeAtom,
+  searchStringAtom,
+  filtersAtom,
+  dataAtom,
+  totalAtom,
+  aggregationsAtom,
+  sortStateAtom,
+} = createListViewAtoms({
+  type: TYPE,
+  columns: defaultColumns.map((col) => col.dataIndex),
+});
 
 const otherColumns = [
   {

@@ -70,7 +70,7 @@ const useExploreColumns = (
   keys.forEach((key) => {
     const column: ColumnProps<any> = {
       key,
-      title: getHeaderColumn(key),
+      title: <div className="uppercase">{getHeaderColumn(key)}</div>,
       className: 'text-primary-7 cursor-pointer',
       sorter: false,
       ellipsis: true,

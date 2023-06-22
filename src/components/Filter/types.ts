@@ -1,27 +1,37 @@
+export type AggregationType = 'buckets' | 'stats' | null;
+
+export interface GteLteValue {
+  gte: Date | number | null;
+  lte: Date | number | null;
+}
+
 interface BaseFilter {
   field: string;
   title: string;
+  aggregationType: AggregationType;
+  type: null;
+  value: null;
 }
 
-export interface CheckListFilter extends BaseFilter {
+export interface CheckListFilter extends Omit<BaseFilter, 'type' | 'value'> {
   type: 'checkList';
   value: string[];
 }
 
-export interface RangeFilter extends BaseFilter {
+export interface RangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
   type: 'dateRange' | 'valueRange';
-  value: {
-    gte: Date | null;
-    lte: Date | null;
-  };
+  value: GteLteValue;
+  unit?: string;
 }
 
-export interface ValueFilter extends BaseFilter {
+export interface ValueFilter extends Omit<BaseFilter, 'type' | 'value'> {
   type: 'value';
   value: number | string | null;
 }
 
-export type Filter = CheckListFilter | RangeFilter | ValueFilter;
+export type Filter = CheckListFilter | RangeFilter | ValueFilter | BaseFilter;
+
+export type FilterType = 'checkList' | 'dateRange' | 'valueRange' | null;
 
 export type CheckboxOption = {
   checked: string | boolean;

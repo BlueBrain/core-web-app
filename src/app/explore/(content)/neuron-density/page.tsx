@@ -9,6 +9,19 @@ import { useListViewAtoms, useSetListViewAtoms } from '@/hooks/useListViewAtoms'
 
 const TYPE = 'https://neuroshapes.org/NeuronDensity';
 
+const columnKeys = [
+  'brainRegion',
+  'mType',
+  'eType',
+  'neuronDensity',
+  'name',
+  'conditions',
+  'subjectSpecies',
+  'contributors',
+  'createdAt',
+  'reference',
+];
+
 const {
   pageSizeAtom,
   searchStringAtom,
@@ -19,19 +32,8 @@ const {
   sortStateAtom,
 } = createListViewAtoms({
   type: TYPE,
+  columns: columnKeys,
 });
-
-const columnKeys = [
-  'brainRegion',
-  'mType',
-  'eType',
-  'name',
-  'conditions',
-  'subjectSpecies',
-  'contributors',
-  'createdAt',
-  'reference',
-];
 
 export default function NeuronDensityPage() {
   const atomValues = useListViewAtoms({

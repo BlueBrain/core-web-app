@@ -9,18 +9,6 @@ import { useListViewAtoms, useSetListViewAtoms } from '@/hooks/useListViewAtoms'
 
 const TYPE = 'https://neuroshapes.org/NeuronMorphology';
 
-const {
-  pageSizeAtom,
-  searchStringAtom,
-  filtersAtom,
-  dataAtom,
-  totalAtom,
-  aggregationsAtom,
-  sortStateAtom,
-} = createListViewAtoms({
-  type: TYPE,
-});
-
 const columnKeys = [
   'brainRegion',
   'mType',
@@ -31,6 +19,19 @@ const columnKeys = [
   'createdAt',
   'reference',
 ];
+
+const {
+  pageSizeAtom,
+  searchStringAtom,
+  filtersAtom,
+  dataAtom,
+  totalAtom,
+  aggregationsAtom,
+  sortStateAtom,
+} = createListViewAtoms({
+  type: TYPE,
+  columns: columnKeys,
+});
 
 export default function MorphologyPage() {
   const atomValues = useListViewAtoms({
