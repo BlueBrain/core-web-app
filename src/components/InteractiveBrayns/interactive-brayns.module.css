@@ -63,7 +63,7 @@
 .gizmoContainer {
   position: absolute;
   right: 0;
-  top: 1em;
+  top: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
