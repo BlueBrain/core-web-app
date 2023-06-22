@@ -1,6 +1,5 @@
 import Settings from '../settings';
 
-// const MODULE_ARCHIVE = 'archive/2023-04';
 const MODULE_ARCHIVE = 'unstable';
 const MODULE_BRAYNS = 'brayns/3.2.0';
 

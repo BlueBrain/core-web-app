@@ -459,7 +459,6 @@ export default class OrbitControls extends THREE.EventDispatcher {
       event.preventDefault();
       event.stopPropagation();
 
-      // console.log( 'handleTouchMoveDolly' );
       const dx = event.touches[0].pageX - event.touches[1].pageX;
       const dy = event.touches[0].pageY - event.touches[1].pageY;
 

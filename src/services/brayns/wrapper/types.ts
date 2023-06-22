@@ -90,4 +90,11 @@ export interface BraynsWrapperInterface {
    * Hide models whose Ids are given.
    */
   hide(modelIds: number[]): Promise<void>;
+
+  /**
+   * List all the models of the current scene.
+   * This function is used for debugging today.
+   * That's why we just return an `unknown` type.
+   */
+  listModels(): Promise<unknown>;
 }

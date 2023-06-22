@@ -70,6 +70,9 @@ const defaultCollection: AtlasVisualizationType = {
 
 export const atlasVisualizationAtom = atom<AtlasVisualizationType>(defaultCollection);
 
+// Singleton.
+let atlasVisualizationManager: null | AtlasVisualizationManager = null;
+
 const visibleMeshesAtom = selectAtom(
   atlasVisualizationAtom,
   (atlas) => atlas.visibleMeshes,
@@ -77,10 +80,19 @@ const visibleMeshesAtom = selectAtom(
     a.map((item) => item.contentURL).join('\n') === b.map((item) => item.contentURL).join('\n')
 );
 
-let atlasVisualizationManager: null | AtlasVisualizationManager = null;
-
 export function useVisibleMeshes(): MeshType[] {
   return useAtomValue(visibleMeshesAtom);
+}
+
+const visibleCellsAtom = selectAtom(
+  atlasVisualizationAtom,
+  (atlas) => atlas.visibleCells,
+  (a: CellType[], b: CellType[]) =>
+    a.map((item) => item.regionID).join('\n') === b.map((item) => item.regionID).join('\n')
+);
+
+export function useVisibleCells(): CellType[] {
+  return useAtomValue(visibleCellsAtom);
 }
 
 type SetAtom<Args extends any[], Result> = (...args: Args) => Result;

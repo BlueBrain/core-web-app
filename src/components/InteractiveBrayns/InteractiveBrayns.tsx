@@ -4,7 +4,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useSession } from 'next-auth/react';
-import { useAtomValue } from 'jotai';
 import React from 'react';
 import AxisGizmo from './AxisGizmo';
 import Settings from './Settings';
@@ -12,8 +11,8 @@ import HowToUseButton from './HowToUseButton';
 import ResetCameraButton from './ResetCameraButton';
 import Spinner from '@/components/Spinner';
 import BraynsService, { BraynsServiceInterface } from '@/services/brayns';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { isString } from '@/util/type-guards';
+import { useVisibleCells } from '@/state/atlas';
 import styles from './interactive-brayns.module.css';
 
 interface InteractiveBraynsProps {
@@ -30,7 +29,7 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
   const [howToUsePanelVisible, setHowToUsePanelVisible] = React.useState(false);
   const [overlayOpacity, setOverlayOpacity] = React.useState(1);
   const circuitPath = BraynsService.useCurrentCircuitPath();
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const selectedBrainRegions = useVisibleCells();
   const brayns = BraynsService.useBraynsService(token);
   const { handleOverlayCanvasMount } = BraynsService.useOverlay(token);
   const allocationProgress = BraynsService.State.progress.allocation.useValue();
@@ -41,12 +40,12 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
     if (!isBraynsService(brayns)) return;
 
     const action = async () => {
-      if (!circuitPath || !selectedBrainRegion) return;
+      if (!circuitPath) return;
 
-      brayns.showRegion(circuitPath, { id: selectedBrainRegion.id });
+      brayns.showCellsForRegions(circuitPath, selectedBrainRegions);
     };
     action();
-  }, [selectedBrainRegion, circuitPath, brayns]);
+  }, [selectedBrainRegions, circuitPath, brayns]);
   return (
     <div className={`${className ?? styles.expand}`}>
       <canvas className={styles.expand} ref={handleSceneCanvasMount} />

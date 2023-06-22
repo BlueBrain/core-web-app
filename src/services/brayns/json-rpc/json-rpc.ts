@@ -501,11 +501,17 @@ function convertErrorObject(error: {
   code: number;
   message?: string;
   name?: string;
-  data?: { message: string } | null;
+  data?: { message: string } | string[] | null;
 }): { code: number; message: string; data?: unknown } {
+  let { message } = error;
+  if (Array.isArray(error.data)) {
+    message = error.data.join('\n');
+  } else {
+    message ??= error.data?.message;
+  }
   return {
     code: error.code,
-    message: error.message ?? error.data?.message ?? `Unknown error #${error.code}`,
+    message: message ?? `Unknown error #${error.code}`,
   };
 }
 

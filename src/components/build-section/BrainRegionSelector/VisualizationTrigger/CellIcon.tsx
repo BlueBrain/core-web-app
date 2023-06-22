@@ -11,6 +11,7 @@ const COLOR_FOR_UNSELECTED_ICON = '#69C0FF';
 export function CellIcon({ selected, onClick }: CellIconProps) {
   return (
     <svg
+      className="cursor-pointer"
       viewBox="0 0 13 12"
       fill={selected ? COLOR_FOR_SELECTED_ICON : COLOR_FOR_UNSELECTED_ICON}
       xmlns="http://www.w3.org/2000/svg"

@@ -10,8 +10,7 @@ import { logError } from '@/util/logger';
 const Allocate = {
   async allocate(token: string): Promise<BraynsWrapper> {
     try {
-      const promisedService = await getPromisedService(token);
-      const wrapper = await promisedService;
+      const wrapper = await getPromisedService(token);
       wrapper.repaint();
       return wrapper;
     } catch (ex) {

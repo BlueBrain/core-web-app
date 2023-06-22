@@ -16,6 +16,9 @@ import { logError } from '@/util/logger';
 
 const MINIMAL_VIEWPORT_SIZE = 64;
 
+// A light with neutral color.
+const LIGHT_COLOR: Vector3 = [0.8, 0.8, 0.8];
+
 export default class BraynsWrapper implements BraynsWrapperInterface {
   private readonly stream: ImageStream;
 
@@ -42,6 +45,11 @@ export default class BraynsWrapper implements BraynsWrapperInterface {
     this.light = new Light(renderer);
     this.storage = new Storage(backend);
     this.camera = new Camera(renderer);
+  }
+
+  async listModels(): Promise<unknown> {
+    const data = await this.renderer.exec('get-scene');
+    return data;
   }
 
   async initialize() {
@@ -71,32 +79,32 @@ export default class BraynsWrapper implements BraynsWrapperInterface {
       await this.light.clear();
       await this.light.addDirectional({
         direction: [1, 0, 0],
-        color: [1, 0.5, 0.5],
+        color: LIGHT_COLOR,
         intensity: 2.5,
       });
       await this.light.addDirectional({
         direction: [0, 1, 0],
-        color: [0.5, 1, 0.5],
+        color: LIGHT_COLOR,
         intensity: 2.5,
       });
       await this.light.addDirectional({
         direction: [0, 0, 1],
-        color: [0.5, 0.5, 1],
+        color: LIGHT_COLOR,
         intensity: 2.5,
       });
       await this.light.addDirectional({
         direction: [-1, 0, 0],
-        color: [1, 0.5, 0.5],
+        color: LIGHT_COLOR,
         intensity: 1,
       });
       await this.light.addDirectional({
         direction: [0, -1, 0],
-        color: [0.5, 1, 0.5],
+        color: LIGHT_COLOR,
         intensity: 1,
       });
       await this.light.addDirectional({
         direction: [0, 0, -1],
-        color: [0.5, 0.5, 1],
+        color: LIGHT_COLOR,
         intensity: 1,
       });
       const version = await renderer.exec('get-version');
