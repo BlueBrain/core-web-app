@@ -19,7 +19,7 @@ export function DetailsPageSideBackLink({ links }: SideLinkList) {
         links.map((link) => (
           <div
             key={link.url}
-            className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center"
+            className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center ml-5"
           >
             <Link
               href={link.url}
