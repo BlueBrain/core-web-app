@@ -3,8 +3,9 @@ import { ConfigProvider, Table } from 'antd';
 import { isNumeric } from '@/util/common';
 
 type Column = {
-  id: string;
+  dataIndex: string | string[];
   label: string;
+  key: string;
   render?: (text: string, record: any, index: number) => ReactNode;
 };
 
@@ -16,10 +17,10 @@ function ColumnContent(text: string) {
   );
 }
 
-function formatColumn({ id, label, render }: Column) {
+function formatColumn({ dataIndex, label, key, render }: Column) {
   return {
-    dataIndex: id,
-    key: id,
+    dataIndex: typeof dataIndex === 'string' ? dataIndex.split('.') : dataIndex,
+    key,
     sorter: true,
     title: label,
     render: render || ColumnContent,

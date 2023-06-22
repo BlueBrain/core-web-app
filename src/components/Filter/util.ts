@@ -70,3 +70,23 @@ export function getFillOptionsEffect(
       : undefined;
   };
 }
+
+/**
+ * Checks whether the filter has a value assigned
+ *
+ * @param filter the filter to check
+ */
+export function filterHasValue(filter: Filter) {
+  if (Array.isArray(filter.value)) {
+    return filter.value.length !== 0;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(filter.value, 'gte') ||
+    Object.prototype.hasOwnProperty.call(filter.value, 'lte')
+  ) {
+    return true;
+  }
+
+  return !!filter.value;
+}

@@ -91,7 +91,7 @@ function getFilterTerm(esTerm: string, type: Filter['type'], value: Filter['valu
       break;
     case 'dateRange':
       filterTerm =
-        Object.values(value).every((el) => el !== undefined) &&
+        Object.values(value as RangeFilter['value']).every((el) => el !== undefined) &&
         getRangeTerm({
           field: esTerm,
           value: Object.fromEntries(

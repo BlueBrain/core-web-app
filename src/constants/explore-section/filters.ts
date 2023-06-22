@@ -40,6 +40,10 @@ export const TYPE_FILTER_MAPPING: { [key: string]: Filter[] } = {
     { field: 'subjectSpecies', type: 'checkList', value: [], title: 'Subject Species' },
     { field: 'reference', type: 'checkList', value: [], title: 'Reference' },
   ],
+  'https://neuroshapes.org/SimulationCampaign': [
+    { field: 'mType', type: 'checkList', value: [], title: 'M-Type' },
+    { field: 'subjectSpecies', type: 'checkList', value: [], title: 'Subject Species' },
+  ],
   'https://neuroshapes.org/SynapsePerConnection': [
     { field: 'mType', type: 'checkList', value: [], title: 'M-Type' },
     { field: 'subjectSpecies', type: 'checkList', value: [], title: 'Subject Species' },

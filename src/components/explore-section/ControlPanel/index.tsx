@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined } from '@ant-design/icons';
 import { Aggregations } from '@/types/explore-section/fields';
@@ -13,6 +13,7 @@ type FiltersProps = {
 
 type ControlPanelProps = {
   aggregations: Loadable<any>;
+  children?: ReactNode;
   filters: Filter[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setFilters: Dispatch<SetStateAction<Filter[]>>;
@@ -83,15 +84,13 @@ function Filters({ aggregations, filters, setFilters }: FiltersProps) {
 
 export default function ControlPanel({
   aggregations,
+  children,
   filters,
   setFilters,
   setOpen,
 }: ControlPanelProps) {
   return (
-    <div
-      className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]"
-      style={{ zIndex: 101 }}
-    >
+    <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
       <button type="button" onClick={() => setOpen(false)} className="text-white text-right">
         <CloseOutlined />
       </button>
@@ -104,7 +103,10 @@ export default function ControlPanel({
         scelerisque.
       </p>
 
-      <Filters aggregations={aggregations} filters={filters} setFilters={setFilters} />
+      <div className="flex flex-col gap-12">
+        <Filters aggregations={aggregations} filters={filters} setFilters={setFilters} />
+        {children}
+      </div>
     </div>
   );
 }

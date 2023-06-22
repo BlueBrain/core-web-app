@@ -3,6 +3,11 @@ interface BaseFilter {
   title: string;
 }
 
+export interface CheckListFilter extends BaseFilter {
+  type: 'checkList';
+  value: string[];
+}
+
 export interface RangeFilter extends BaseFilter {
   type: 'dateRange' | 'valueRange';
   value: {
@@ -11,12 +16,12 @@ export interface RangeFilter extends BaseFilter {
   };
 }
 
-export interface CheckListFilter extends BaseFilter {
-  type: 'checkList';
-  value: string[];
+export interface ValueFilter extends BaseFilter {
+  type: 'value';
+  value: number | string | null;
 }
 
-export type Filter = CheckListFilter | RangeFilter;
+export type Filter = CheckListFilter | RangeFilter | ValueFilter;
 
 export type CheckboxOption = {
   checked: string | boolean;

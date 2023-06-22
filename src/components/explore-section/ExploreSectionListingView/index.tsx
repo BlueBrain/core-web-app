@@ -11,6 +11,7 @@ import { ListViewAtomValues } from '@/types/explore-section/application';
 import SettingsIcon from '@/components/icons/Settings';
 
 import { Filter } from '@/components/Filter/types';
+import { filterHasValue } from '@/components/Filter/util';
 import styles from '@/components/explore-section/ControlPanel/filters.module.scss';
 
 type ExploreSectionPageProps = {
@@ -38,23 +39,11 @@ export default function ExploreSectionListingView({
   const value =
     total.state === 'hasData' && total.data?.value ? formatNumber(total.data?.value) : 0;
 
-  /**
-   * Checks whether the filter has a value assigned
-   *
-   * @param filter the filter to check
-   */
-  const filterHasValue = (filter: Filter) => {
-    if (Array.isArray(filter.value)) {
-      return filter.value.length !== 0;
-    }
-    return filter.value.gte && filter.value.lte;
-  };
-
   const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
 
   return (
     <>
-      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pb-12 pl-10 pr-16 overflow-scroll relative">
+      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pb-12 pl-7 pr-16 overflow-scroll relative">
         <div className="flex items-center justify-between">
           <div className="text-primary-7 text-2xl font-bold flex-auto w-10/12">
             {title}
