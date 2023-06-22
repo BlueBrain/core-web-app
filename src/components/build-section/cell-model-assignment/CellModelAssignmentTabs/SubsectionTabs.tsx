@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { usePathname } from 'next/navigation';
 
 import Link from '@/components/Link';
