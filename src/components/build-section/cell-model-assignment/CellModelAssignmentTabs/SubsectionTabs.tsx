@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { usePathname } from 'next/navigation';
 
 import Link from '@/components/Link';
@@ -11,7 +12,11 @@ type ModeTabsType = {
   disabled?: boolean;
 };
 
-export default function SubsectionTabs() {
+type Props = {
+  className?: string;
+};
+
+export default function SubsectionTabs({ className }: Props) {
   const pathname = usePathname();
 
   const modeTabs: ModeTabsType[] = [
@@ -23,9 +28,11 @@ export default function SubsectionTabs() {
   const getTabClassName = (tab: ModeTabsType) => {
     const isDisabled = tab.disabled;
     const active = !!pathname?.startsWith(tab.href);
+
     return classNames(
       isDisabled ? 'pointer-events-none' : '',
-      active ? 'font-bold text-primary-8 border-b-2 border-primary-8' : 'text-gray-600'
+      active ? 'font-bold border-b-2' : '',
+      className
     );
   };
 
