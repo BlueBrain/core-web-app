@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+
 import MModelListItem from './MModelListItem';
 
 const mModelItems: { name: string; annotation?: string }[] = [

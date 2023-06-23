@@ -13,6 +13,7 @@ import {
   MModelPanelCollapsed,
 } from '@/components/build-section/cell-model-assignment/MModelPanel';
 import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
+import useMModelQueryParam from '@/hooks/m-model-editor';
 
 const MMODEL_QUERY_PARAM_KEY = 'mModel';
 
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export default function MModelLayout({ children }: Props) {
+  useMModelQueryParam();
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const selectedMModelName = useAtomValue(selectedMModelNameAtom);
@@ -28,11 +30,11 @@ export default function MModelLayout({ children }: Props) {
 
   useEffect(() => {
     if (selectedMModelName !== null) {
-      const baseUrl = window.location.pathname;
+      const baseUrl = '/build/cell-model-assignment/m-model/configuration';
       const urlSearchParams = new URLSearchParams(window.location.search);
       urlSearchParams.set(MMODEL_QUERY_PARAM_KEY, selectedMModelName);
       const updatedQueryParams = urlSearchParams.toString();
-      router.push(`${baseUrl}?${updatedQueryParams}`);
+      router.replace(`${baseUrl}?${updatedQueryParams}`);
     }
   }, [router, selectedMModelName]);
 
