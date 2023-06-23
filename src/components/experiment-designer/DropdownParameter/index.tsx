@@ -37,7 +37,7 @@ export default function DropdownParameter({
     >
       <div className="grow">{data.name}</div>
       <Select
-        defaultValue={[data.value]}
+        value={data.value}
         size="small"
         options={options}
         style={{ width: 200 }}

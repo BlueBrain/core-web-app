@@ -219,21 +219,14 @@ export function convertExpDesConfigToSimVariables(
   // --------------- Stimuli ----------------
   // ----------------------------------------
 
-  const areStringList = ['targetInput', 'stimType', 'stimModule'];
+  const areStringList = ['node_set', 'input_type', 'module'];
   const stimuli = (expDesignerConfig.stimuli as ExpDesignerGroupParameter[]).reduce(
     (acc: Record<string, any>, stimulusItem) => {
       const stimItem: Record<string, any> = {};
-      [
-        ['node_set', 'targetInput'],
-        ['duration', 'duration'],
-        ['amp_start', 'ampStart'],
-        ['delay', 'delay'],
-        ['input_type', 'stimType'],
-        ['module', 'stimModule'],
-      ].forEach(([key, param]) => {
-        const isString = areStringList.includes(param);
-        const { result, coordDict } = getValueOrPlaceholder(stimulusItem.value, param, isString);
-        stimItem[key] = result;
+      stimulusItem.value.forEach((param) => {
+        const isString = areStringList.includes(param.id);
+        const { result, coordDict } = getValueOrPlaceholder(stimulusItem.value, param.id, isString);
+        stimItem[param.id] = result;
         coords = { ...coords, ...coordDict };
       });
       acc[stimulusItem.name] = stimItem;

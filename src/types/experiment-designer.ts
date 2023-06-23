@@ -154,7 +154,7 @@ export interface StimulusTypeDropdownOptionType {
 }
 
 export interface StimulusTypeDropdown extends ExpDesignerDropdownParameter {
-  id: 'type';
+  id: 'input_type';
   options: StimulusTypeDropdownOptionType[];
 }
 
