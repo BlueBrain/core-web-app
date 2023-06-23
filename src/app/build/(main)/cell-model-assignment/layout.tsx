@@ -13,13 +13,13 @@ type Props = {
 
 export default function CellModelAssignmentLayout({ children }: Props) {
   return (
-    <>
-      <div className="flex justify-between m-4">
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between py-4 flex-initial bg-dark">
         <SubsectionTabs />
         <ModeTabs />
       </div>
 
-      {children}
-    </>
+      <div className="relative flex-1">{children}</div>
+    </div>
   );
 }
