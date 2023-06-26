@@ -8,7 +8,7 @@ import {
 } from '@/types/explore-section/fields';
 
 import { ExploreSectionResource } from '@/types/explore-section/resources';
-import { Filter } from '@/components/Filter/types';
+import { Filter, GteLteValue } from '@/components/Filter/types';
 
 export interface FetchParams {
   id: string;
@@ -50,4 +50,8 @@ export type PlotProps = {
   options: any;
   zoomRanges: ZoomRanges | null;
   onZoom: (zoomRanges: ZoomRanges) => void;
+};
+
+export type FilterValues = {
+  [field: string]: string | number | string[] | GteLteValue | null;
 };

@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
-import { CheckboxOption, Filter, OptionsData } from './types';
+import { Filter, OptionsData } from './types';
 import { CheckIcon } from '@/components/icons';
-import { getCheckedChangeHandler, getFillOptionsEffect } from '@/components/Filter/util';
+import { FilterValues } from '@/types/explore-section/application';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {
@@ -51,27 +51,41 @@ function CheckListOption({
 export default function CheckList({
   data,
   filter,
-  filters,
-  options,
-  setFilters,
-  setOptions,
+  values,
+  setFilterValues,
 }: {
   data: OptionsData;
   filter: Filter;
-  filters: Filter[];
-  options: CheckboxOption[];
-  setFilters: Dispatch<SetStateAction<Filter[]>>;
-  setOptions: Dispatch<SetStateAction<CheckboxOption[]>>;
+  values: string[];
+  setFilterValues: Dispatch<SetStateAction<FilterValues>>;
 }) {
-  const fillOptionsFromBuckets = useMemo(
-    () => getFillOptionsEffect(filter.field, data, filters, setOptions),
-    [data, filter.field, filters, setOptions]
-  );
+  const options = useMemo(() => {
+    const agg = data[filter.field];
+    const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
+    return buckets
+      ? buckets?.map(({ key, doc_count: count }) => ({
+          checked: values.includes(key as string),
+          key,
+          count,
+        }))
+      : undefined;
+  }, [data, filter.field, values]);
 
-  // Populate the checkbox list from the aggregations
-  useEffect(() => fillOptionsFromBuckets(), [fillOptionsFromBuckets]);
+  const handleCheckedChange = (value: string) => {
+    setFilterValues((prevState) => {
+      let newValues = [...values];
+      if (values.includes(value)) {
+        newValues = values.filter((val) => val !== value);
+      } else {
+        newValues.push(value);
+      }
 
-  const handleCheckedChange = getCheckedChangeHandler(filters, setFilters, filter);
+      return {
+        ...prevState,
+        [filter.field]: newValues,
+      };
+    });
+  };
 
   return (
     <ul className="divide-y divide-white/20 flex flex-col space-y-3">
@@ -81,7 +95,7 @@ export default function CheckList({
           count={count}
           key={key}
           handleCheckedChange={handleCheckedChange}
-          id={key}
+          id={key as string}
           filterField={filter.field}
         />
       ))}

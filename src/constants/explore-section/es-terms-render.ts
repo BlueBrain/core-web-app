@@ -14,13 +14,20 @@ import { FilterType } from '@/components/Filter/types';
 
 type TermsRenderProps = {
   [key: string]: {
-    term: string | string[];
+    term: string;
+    nestedField?: NestedFieldConfig;
     title: string;
     description?: string;
     filter: FilterType;
     unit?: string;
     renderFn?: (value: any, record: any, index: number) => ReactNode | any;
   };
+};
+
+type NestedFieldConfig = {
+  extendedField: string;
+  field: string;
+  nestField: string;
 };
 
 const LISTING_CONFIG: TermsRenderProps = {
@@ -55,10 +62,15 @@ const LISTING_CONFIG: TermsRenderProps = {
     renderFn: (t, r) => selectorFnBasic(r._source?.subjectSpecies?.label),
   },
   sem: {
-    term: 'sem.label.keyword',
+    term: 'series.statistic.standard error of the mean.keyword',
+    nestedField: {
+      extendedField: 'series.statistic.keyword',
+      field: 'standard error of the mean',
+      nestField: 'series',
+    },
     title: 'Sem',
     description: 'Standard error of the mean',
-    filter: 'checkList',
+    filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
   },
   weight: {
@@ -139,13 +151,23 @@ const LISTING_CONFIG: TermsRenderProps = {
     renderFn: (t, r) => selectorFnBasic(r._source?.conditions),
   },
   meanstd: {
-    term: 'mean.value',
+    term: 'series.statistic.mean.keyword',
+    nestedField: {
+      extendedField: 'series.statistic.keyword',
+      field: 'mean',
+      nestField: 'series',
+    },
     title: 'Mean ± Std',
     filter: 'valueRange',
     renderFn: selectorFnMeanStd,
   },
   numberOfCells: {
-    term: 'nValue',
+    term: 'series.statistic.N.keyword',
+    nestedField: {
+      extendedField: 'series.statistic.keyword',
+      field: 'N',
+      nestField: 'series',
+    },
     title: 'N° Of Cells',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),

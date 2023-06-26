@@ -1,51 +1,30 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'antd/es/form/Form';
 import { ConfigProvider, Form, InputNumber } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
-import { Filter, RangeFilter } from '@/components/Filter/types';
-import { StatsAggregation } from '@/types/explore-section/fields';
+import { RangeFilter } from '@/components/Filter/types';
+import { FilterValues } from '@/types/explore-section/application';
+import { Statistics } from '@/types/explore-section/fields';
 
 export default function ValueRange({
   filter,
-  filters,
-  setFilters,
   aggregation,
+  setFilterValues,
 }: {
   filter: RangeFilter;
-  filters: Filter[];
-  setFilters: Dispatch<SetStateAction<Filter[]>>;
-  aggregation: StatsAggregation;
+  aggregation: Statistics;
+  setFilterValues: Dispatch<SetStateAction<FilterValues>>;
 }) {
   const [form] = useForm();
-  const [min, max] = useMemo(() => {
-    if ('min' in aggregation && 'max' in aggregation) {
-      return [aggregation.min as number, aggregation.max as number];
-    }
-    if (filter.field in aggregation) {
-      return [aggregation[filter.field].min, aggregation[filter.field].max];
-    }
-    return [undefined, undefined];
-  }, [aggregation, filter.field]);
 
   const submitForm = () => {
     const minValue = form.getFieldValue('min-range');
     const maxValue = form.getFieldValue('max-range');
-    const filterIndex = filters.findIndex((f) => f.field === filter.field);
 
-    setFilters([
-      ...filters.slice(0, filterIndex),
-      {
-        ...filter,
-        field: filter.field,
-        title: filter.title,
-        type: 'valueRange',
-        value: {
-          gte: minValue ?? null,
-          lte: maxValue ?? null,
-        },
-      },
-      ...filters.slice(filterIndex + 1),
-    ]);
+    setFilterValues((prevState) => ({
+      ...prevState,
+      [filter.field]: { gte: minValue ?? null, lte: maxValue ?? null },
+    }));
   };
 
   return (
@@ -71,9 +50,9 @@ export default function ValueRange({
               className="text-neutral-2 w-32"
               placeholder="From"
               type="number"
-              min={min}
-              max={max}
-              onPressEnter={submitForm}
+              min={aggregation.min}
+              max={aggregation.max}
+              onChange={submitForm}
             />
           </Form.Item>
           <SwapOutlined className="text-neutral-2 mx-2" />
@@ -82,9 +61,9 @@ export default function ValueRange({
               className="text-neutral-2 w-32"
               placeholder="To"
               type="number"
-              min={min}
-              max={max}
-              onPressEnter={submitForm}
+              min={aggregation.min}
+              max={aggregation.max}
+              onChange={submitForm}
             />
           </Form.Item>
           <div className="text-neutral-2 ml-2">{filter.unit}</div>
@@ -92,10 +71,10 @@ export default function ValueRange({
       </ConfigProvider>
       <div className="text-neutral-2 mt-3 gap-2 flex flex-col">
         <div>
-          <strong>Minimum value:</strong> {min || 'N/A'}
+          <strong>Minimum value:</strong> {aggregation.min || 'N/A'}
         </div>
         <div>
-          <strong>Maximum value:</strong> {max || 'N/A'}
+          <strong>Maximum value:</strong> {aggregation.max || 'N/A'}
         </div>
       </div>
     </div>

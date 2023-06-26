@@ -2,38 +2,27 @@ import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ConfigProvider, DatePicker } from 'antd';
 import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns'; // eslint-disable-line import/no-extraneous-dependencies
 import { RangeValue } from 'rc-picker/lib/interface'; // eslint-disable-line import/no-extraneous-dependencies
-import { Filter, RangeFilter } from './types';
+import { RangeFilter } from './types';
+import { FilterValues } from '@/types/explore-section/application';
 
 const DateRangePicker = DatePicker.generatePicker<Date>(dateFnsGenerateConfig);
 
 export default function DateRange({
   filter,
-  filters,
-  setFilters,
+  setFilterValues,
 }: {
   filter: RangeFilter;
-  filters: Filter[];
-  setFilters: Dispatch<SetStateAction<Filter[]>>;
+  setFilterValues: Dispatch<SetStateAction<FilterValues>>;
 }) {
-  const handleRangeChange = useMemo(() => {
-    const filterIndex = filters.findIndex((f) => f.field === filter.field);
-
-    return (newValues: RangeValue<Date>) =>
-      setFilters([
-        ...filters.slice(0, filterIndex),
-        {
-          ...filter,
-          field: filter.field,
-          title: filter.title,
-          type: 'dateRange',
-          value: {
-            gte: newValues?.[0] ?? null,
-            lte: newValues?.[1] ?? null,
-          },
-        },
-        ...filters.slice(filterIndex + 1),
-      ]);
-  }, [filter, filters, setFilters]);
+  const handleRangeChange = useMemo(
+    () => (newValues: RangeValue<Date>) => {
+      setFilterValues((prevState) => ({
+        ...prevState,
+        [filter.field]: { gte: newValues?.[0] ?? null, lte: newValues?.[1] ?? null },
+      }));
+    },
+    [filter.field, setFilterValues]
+  );
   const memoizedRender = useMemo(
     () => (
       <DateRangePicker.RangePicker
