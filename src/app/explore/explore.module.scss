@@ -6,17 +6,28 @@
 }
 .headerText,
 .tableHeader {
-  color: #8c8c8c;
-  @apply flex items-center;
+  @apply flex items-center justify-between text-left text-gray-500 gap-2;
+  border-right: none;
+  button {
+    @apply text-lg font-medium text-left pl-0 text-gray-500;
+  }
 }
 
-.sortIcons > span {
-  @apply text-gray-200 flex flex-col mr-2;
-  &:first-child {
-    margin-bottom: -0.2rem;
-  }
-  &:last-child {
-    margin-top: -0.2rem;
+.dragIcons {
+  font-size: '16px';
+  @apply text-gray-300;
+  cursor: grab;
+}
+
+.sortIcons {
+  @apply text-gray-300 flex flex-col;
+  > span {
+    &:first-child {
+      margin-bottom: -0.15rem;
+    }
+    &:last-child {
+      margin-top: -0.15rem;
+    }
   }
 }
 

@@ -99,7 +99,7 @@ export const selectorFnDate = (date: string) =>
  */
 export const selectorFnValueWithUnit = (nValueEntity?: NValueEntity) => {
   const unit = nValueEntity && nValueEntity.unit ? nValueEntity.unit : '';
-  return nValueEntity ? `${nValueEntity.value} ${unit}` : '';
+  return nValueEntity ? `${formatNumber(Number(nValueEntity.value))} ${unit}` : '';
 };
 
 /**

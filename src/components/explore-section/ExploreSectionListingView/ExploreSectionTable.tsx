@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState, ReactNode, CSSProperties } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -17,6 +17,19 @@ type ExploreSectionTableProps = {
   columns: ColumnProps<any>[];
   enableDownload?: boolean;
 };
+
+function CustomTH({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
+  const modifiedStyle = {
+    ...style,
+    padding: '16px 0 16px 16px',
+  };
+
+  return (
+    <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
+      {children}
+    </th>
+  );
+}
 
 export default function ExploreSectionTable({
   data,
@@ -76,6 +89,11 @@ export default function ExploreSectionTable({
             : undefined
         }
         pagination={false}
+        components={{
+          header: {
+            cell: CustomTH,
+          },
+        }}
       />
       {session && selectedRows.length > 0 && (
         <div className="sticky bottom-0 flex justify-end">

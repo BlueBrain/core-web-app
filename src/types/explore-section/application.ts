@@ -17,7 +17,7 @@ export interface FetchParams {
 }
 
 export interface SortState {
-  field: string | React.Key;
+  field: string;
   order: 'asc' | 'desc';
 }
 export type ListViewAtomValues = {
