@@ -139,7 +139,6 @@ export type StimulusModule =
   | 'linear'
   | 'relative_linear'
   | 'pulse'
-  | 'subthreshold'
   | 'hyperpolarizing'
   | 'seclamp'
   | 'noise'
