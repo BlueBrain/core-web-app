@@ -14,6 +14,7 @@ import {
 } from '@/components/build-section/cell-model-assignment/MModelPanel';
 import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
 import useMModelQueryParam from '@/hooks/m-model-editor';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 const MMODEL_QUERY_PARAM_KEY = 'mModel';
 
@@ -26,6 +27,7 @@ export default function MModelLayout({ children }: Props) {
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const selectedMModelName = useAtomValue(selectedMModelNameAtom);
+  const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const router = useRouter();
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function MModelLayout({ children }: Props) {
   }, [router, selectedMModelName]);
 
   const brainRegionDetails = useMemo(() => {
-    if (!extraPanelContainer) return null;
+    if (!extraPanelContainer || !brainRegion) return null;
 
     return createPortal(
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -53,7 +55,7 @@ export default function MModelLayout({ children }: Props) {
       </ErrorBoundary>,
       extraPanelContainer
     );
-  }, [extraPanelContainer, isSidebarExpanded]);
+  }, [brainRegion, extraPanelContainer, isSidebarExpanded]);
 
   return (
     <>

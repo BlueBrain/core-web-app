@@ -30,7 +30,7 @@ export default function MModelPanelCollapsed({ setIsSidebarExpanded }: MModelPan
         role="presentation"
         onClick={() => setIsSidebarExpanded(true)}
       >
-        <div className="text-lg text-secondary-4 font-bold">{title}</div>
+        <div className="text-lg font-semibold">{title}</div>
       </div>
     </div>
   );
