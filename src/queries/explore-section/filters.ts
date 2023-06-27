@@ -60,8 +60,8 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
 
 export default function buildFilters(type: string, filters: Filter[], searchString?: string) {
   const filtersQuery = new esb.BoolQuery();
-  filtersQuery.filter(esb.termQuery('@type.keyword', type));
-  filtersQuery.filter(esb.termQuery('deprecated', false));
+  filtersQuery.must(esb.termQuery('@type.keyword', type));
+  filtersQuery.must(esb.termQuery('deprecated', false));
   if (searchString) {
     filtersQuery.should([
       esb
@@ -72,11 +72,12 @@ export default function buildFilters(type: string, filters: Filter[], searchStri
         .boost(10),
       esb.multiMatchQuery(['*.ngramtext'], searchString).type('most_fields').fuzziness('AUTO'),
     ]);
+    filtersQuery.minimumShouldMatch(1);
   }
   filters.forEach((filter: Filter) => {
     const esBuilder = getFilterESBuilder(filter);
     if (esBuilder && filterHasValue(filter)) {
-      filtersQuery.filter(esBuilder);
+      filtersQuery.must(esBuilder);
     }
   });
   return filtersQuery;

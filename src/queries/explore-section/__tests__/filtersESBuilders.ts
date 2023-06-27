@@ -132,7 +132,7 @@ describe('test buildFilters functionality', () => {
     ]);
     expect(builder?.toJSON()).toEqual({
       bool: {
-        filter: [
+        must: [
           {
             term: {
               '@type.keyword': 'https://neuroshapes.org/BoutonDensity',

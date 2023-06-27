@@ -1,6 +1,8 @@
 import { ColumnProps } from 'antd/es/table';
 import { Dispatch, useState } from 'react';
 import { SetStateAction } from 'jotai';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import ExploreSectionNameSearch from '@/components/explore-section/EphysViewerContainer/ExploreSectionNameSearch';
 import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
@@ -34,8 +36,15 @@ export default function ExploreSectionListingView({
   const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
   const { aggregations, data, filters, searchString, total } = atomValues;
 
-  const value =
-    total.state === 'hasData' && total.data?.value ? formatNumber(total.data?.value) : 0;
+  const renderTotal = () => {
+    if (total.state === 'loading') {
+      return <Spin className="ml-3" indicator={<LoadingOutlined />} />;
+    }
+    if (total.state === 'hasData' && total.data?.value) {
+      return formatNumber(total.data?.value);
+    }
+    return 0;
+  };
 
   const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
 
@@ -46,7 +55,7 @@ export default function ExploreSectionListingView({
           <div className="text-primary-7 text-2xl font-bold flex-auto w-10/12">
             {title}
             <span className="text-sm whitespace-pre font-thin text-slate-400 pl-2">
-              Total: {value}
+              Total: {renderTotal()}
             </span>
           </div>
 

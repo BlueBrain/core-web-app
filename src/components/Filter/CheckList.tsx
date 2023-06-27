@@ -1,9 +1,11 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
+import { InfoCircleFilled } from '@ant-design/icons';
 import { Filter, OptionsData } from './types';
 import { CheckIcon } from '@/components/icons';
 import { FilterValues } from '@/types/explore-section/application';
+import CenteredMessage from '@/components/CenteredMessage';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {
@@ -89,16 +91,25 @@ export default function CheckList({
 
   return (
     <ul className="divide-y divide-white/20 flex flex-col space-y-3">
-      {options?.map(({ checked, count, key }) => (
-        <CheckListOption
-          checked={checked}
-          count={count}
-          key={key}
-          handleCheckedChange={handleCheckedChange}
-          id={key as string}
-          filterField={filter.field}
-        />
-      ))}
+      {options && options.length > 0 ? (
+        options?.map(({ checked, count, key }) => (
+          <CheckListOption
+            checked={checked}
+            count={count}
+            key={key}
+            handleCheckedChange={handleCheckedChange}
+            id={key as string}
+            filterField={filter.field}
+          />
+        ))
+      ) : (
+        <div className="text-neutral-1">
+          <CenteredMessage
+            icon={<InfoCircleFilled style={{ fontSize: '2rem' }} />}
+            message="We could not find any data that matches your selected filters. Please modify your selection to narrow down and retrieve the relevant information"
+          />
+        </div>
+      )}
     </ul>
   );
 }

@@ -25,31 +25,6 @@ type ControlPanelProps = {
   setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
-function CheckListWrapper({
-  aggregations,
-  filter,
-  setFilterValues,
-  values,
-}: {
-  aggregations: Loadable<Aggregations>;
-  filter: Filter;
-  values: string[];
-  setFilterValues: Dispatch<SetStateAction<FilterValues>>;
-}) {
-  return (
-    <CheckList
-      data={
-        (aggregations.state === 'hasData' && aggregations.data
-          ? aggregations.data
-          : []) as OptionsData
-      }
-      filter={filter}
-      values={values}
-      setFilterValues={setFilterValues}
-    />
-  );
-}
-
 function createFilterItemComponent(
   filter: Filter,
   aggregations: Loadable<Aggregations>,
@@ -87,11 +62,11 @@ function createFilterItemComponent(
           );
         case 'checkList':
           return (
-            <CheckListWrapper
-              aggregations={aggregations}
+            <CheckList
+              data={aggregations.data as OptionsData}
               filter={filter}
-              setFilterValues={setFilterValues}
               values={filterValues[filter.field] as string[]}
+              setFilterValues={setFilterValues}
             />
           );
         default:

@@ -68,7 +68,7 @@ const LISTING_CONFIG: TermsRenderProps = {
       field: 'standard error of the mean',
       nestField: 'series',
     },
-    title: 'Sem',
+    title: 'SEM',
     description: 'Standard error of the mean',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),

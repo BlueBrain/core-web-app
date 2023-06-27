@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState, ReactNode, CSSProperties } from 'react';
+import { MouseEvent, useState, ReactNode, CSSProperties, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -45,12 +45,12 @@ export default function ExploreSectionTable({
     setSelectedRows([]);
   };
   const session = useAtomValue(sessionAtom);
-  const [dataSource, setDataSource] = useState<ExploreSectionResource[] | undefined>();
 
-  useEffect(() => {
-    if (data.state === 'hasData') {
-      setDataSource(data.data);
+  const dataSource = useMemo(() => {
+    if (data.state === 'hasData' && data.data) {
+      return data.data;
     }
+    return [];
   }, [data]);
 
   const onCellRouteHandler = {

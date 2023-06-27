@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'antd/es/form/Form';
 import { ConfigProvider, Form, InputNumber } from 'antd';
-import { SwapOutlined } from '@ant-design/icons';
 import { RangeFilter } from '@/components/Filter/types';
 import { FilterValues } from '@/types/explore-section/application';
 import { Statistics } from '@/types/explore-section/fields';
+import ArrowLeftRightIcon from '@/components/icons/ArrowLeftRight';
 
 export default function ValueRange({
   filter,
@@ -27,6 +27,8 @@ export default function ValueRange({
     }));
   };
 
+  // if there is no min and max value, then the field should be disabled
+  const disabled = !aggregation.min && !aggregation.max;
   return (
     <div>
       <ConfigProvider
@@ -47,20 +49,26 @@ export default function ValueRange({
         >
           <Form.Item name="min-range" className="mb-0">
             <InputNumber
+              disabled={disabled}
               className="text-neutral-2 w-32"
               placeholder="From"
               type="number"
               min={aggregation.min}
+              step={0.1}
               max={aggregation.max}
               onChange={submitForm}
             />
           </Form.Item>
-          <SwapOutlined className="text-neutral-2 mx-2" />
+          <div className="w-min mx-2 mt-auto">
+            <ArrowLeftRightIcon />
+          </div>
           <Form.Item name="max-range" className="mb-0">
             <InputNumber
+              disabled={disabled}
               className="text-neutral-2 w-32"
               placeholder="To"
               type="number"
+              step={0.1}
               min={aggregation.min}
               max={aggregation.max}
               onChange={submitForm}
