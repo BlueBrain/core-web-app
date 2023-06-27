@@ -23,7 +23,7 @@ type RowRendererProps = {
 };
 
 type Props = {
-  description: string;
+  description: string | ReactNode;
   RowRenderer: ComponentType<RowRendererProps>;
   listAtoms: PrimitiveAtom<ExpDesignerParam>[] | undefined;
   children?: ReactNode;
