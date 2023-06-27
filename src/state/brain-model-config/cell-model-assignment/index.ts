@@ -1,3 +1,3 @@
-import { selectedMModelNameAtom } from './m-model';
+import { selectedMModelNameAtom, mModelConfigAtom } from './m-model';
 
-export { selectedMModelNameAtom };
+export { selectedMModelNameAtom, mModelConfigAtom };
