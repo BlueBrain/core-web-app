@@ -99,7 +99,10 @@ const createListViewAtoms = ({ type, columns }: DataQueryParams) => {
     return response?.aggs;
   });
 
+  const activeColumnsAtom = atom<string[]>([]);
+
   return {
+    activeColumnsAtom,
     pageSizeAtom,
     searchStringAtom,
     filtersAtom,

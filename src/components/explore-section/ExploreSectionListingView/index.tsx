@@ -14,27 +14,32 @@ import { Filter } from '@/components/Filter/types';
 import { filterHasValue } from '@/components/Filter/util';
 import styles from '@/components/explore-section/ControlPanel/filters.module.scss';
 
-type ExploreSectionPageProps = {
-  atomValues: ListViewAtomValues;
+interface ExploreSectionPageProps extends Omit<ListViewAtomValues, 'pageSize' | 'sortState'> {
   columns: ColumnProps<any>[];
   onLoadMore: () => void;
+  onToggleActive: (key: string) => void;
   setFilters: Dispatch<SetStateAction<Filter[]>>;
   setSearchString: Dispatch<SetStateAction<string>>;
   title: string;
   enableDownload?: boolean;
-};
+}
 
 export default function ExploreSectionListingView({
-  atomValues,
+  activeColumns,
+  aggregations,
+  data,
+  filters,
+  searchString,
+  total,
   columns,
   onLoadMore,
+  onToggleActive,
   setFilters,
   setSearchString,
   title,
   enableDownload,
 }: ExploreSectionPageProps) {
   const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
-  const { aggregations, data, filters, searchString, total } = atomValues;
 
   const renderTotal = () => {
     if (total.state === 'loading') {
@@ -47,6 +52,11 @@ export default function ExploreSectionListingView({
   };
 
   const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
+
+  const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
+  const activeColumnsText = `${activeColumnsLength} active ${
+    activeColumnsLength === 1 ? 'column' : 'columns'
+  }`;
 
   return (
     <>
@@ -74,7 +84,7 @@ export default function ExploreSectionListingView({
                   {selectedFiltersCount}
                 </span>
                 <span>Filters</span>
-                <span className={styles.active}> 6 active columns</span>
+                <span className={styles.active}>{activeColumnsText}</span>
                 <span>
                   <SettingsIcon className="rotate-90" />
                 </span>
@@ -87,8 +97,10 @@ export default function ExploreSectionListingView({
       </section>
       {openFiltersSidebar && (
         <ControlPanel
+          activeColumns={activeColumns}
           aggregations={aggregations}
           filters={filters}
+          onToggleActive={onToggleActive}
           setFilters={setFilters}
           setOpen={setOpenFiltersSidebar}
         />

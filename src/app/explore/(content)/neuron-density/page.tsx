@@ -1,11 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { loadable } from 'jotai/utils';
-import useExploreColumns from '@/hooks/useExploreColumns';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
-import { useListViewAtoms, useSetListViewAtoms } from '@/hooks/useListViewAtoms';
+import useExploreColumns from '@/hooks/useExploreColumns';
+import { useListViewAtoms } from '@/hooks/useListViewAtoms';
 
 const TYPE = 'https://neuroshapes.org/NeuronDensity';
 
@@ -23,20 +23,22 @@ const columnKeys = [
 ];
 
 const {
+  activeColumnsAtom,
+  aggregationsAtom,
+  dataAtom,
+  filtersAtom,
   pageSizeAtom,
   searchStringAtom,
-  filtersAtom,
-  dataAtom,
-  totalAtom,
-  aggregationsAtom,
   sortStateAtom,
+  totalAtom,
 } = createListViewAtoms({
   type: TYPE,
   columns: columnKeys,
 });
 
-export default function NeuronDensityPage() {
-  const atomValues = useListViewAtoms({
+export default function MorphologyPage() {
+  const atoms = useListViewAtoms({
+    activeColumns: activeColumnsAtom,
     aggregations: useMemo(() => loadable(aggregationsAtom), []),
     data: useMemo(() => loadable(dataAtom), []),
     filters: filtersAtom,
@@ -46,28 +48,54 @@ export default function NeuronDensityPage() {
     total: useMemo(() => loadable(totalAtom), []),
   });
 
-  const atomSetters = useSetListViewAtoms({
-    setFilters: filtersAtom,
-    setSearchString: searchStringAtom,
-    setSortState: sortStateAtom,
-    setPageSize: pageSizeAtom,
-  });
+  const {
+    activeColumns: [activeColumns, setActiveColumns],
+    aggregations: [aggregations],
+    data: [data],
+    filters: [filters, setFilters],
+    searchString: [searchString, setSearchString],
+    sortState: [sortState, setSortState],
+    pageSize: [pageSize, setPageSize],
+    total: [total],
+  } = atoms;
 
-  const { setFilters, setSearchString, setSortState, setPageSize } = atomSetters;
+  const columns = useExploreColumns(columnKeys, sortState, setSortState);
 
-  const columns = useExploreColumns(columnKeys, atomValues.sortState, setSortState);
+  // Display all columns by default.
+  useEffect(() => () => setActiveColumns(['index', ...columnKeys]), [setActiveColumns]);
+
+  const onToggleActive = useCallback(
+    (key: string) => {
+      const existingIndex = activeColumns.findIndex((existingKey) => existingKey === key);
+
+      return existingIndex === -1
+        ? setActiveColumns([...activeColumns, key])
+        : setActiveColumns([
+            ...activeColumns.slice(0, existingIndex),
+            ...activeColumns.slice(existingIndex + 1),
+          ]);
+    },
+    [activeColumns, setActiveColumns]
+  );
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <ExploreSectionListingView
-        atomValues={atomValues}
-        columns={columns}
+        activeColumns={activeColumns}
+        aggregations={aggregations}
+        columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
+        data={data}
+        enableDownload
+        filters={filters}
         onLoadMore={() => {
-          setPageSize(atomValues.pageSize + 30);
+          setPageSize(pageSize + 30);
         }}
+        onToggleActive={onToggleActive}
+        searchString={searchString}
         setFilters={setFilters}
         setSearchString={setSearchString}
         title="Neuron density"
+        total={total}
       />
     </div>
   );

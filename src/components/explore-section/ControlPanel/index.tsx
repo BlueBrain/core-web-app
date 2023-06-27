@@ -10,19 +10,23 @@ import { FilterValues } from '@/types/explore-section/application';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
 type FiltersProps = {
+  activeColumns: string[];
   aggregations: Loadable<Aggregations>;
   filters: Filter[];
-  setFilters: Dispatch<SetStateAction<Filter[]>>;
   filterValues: FilterValues;
+  onToggleActive?: (key: string) => void;
+  setFilters: Dispatch<SetStateAction<Filter[]>>;
   setFilterValues: Dispatch<SetStateAction<FilterValues>>;
 };
 
-type ControlPanelProps = {
+export type ControlPanelProps = {
+  activeColumns: string[];
   aggregations: Loadable<any>;
   children?: ReactNode;
   filters: Filter[];
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  onToggleActive?: (key: string) => void;
   setFilters: Dispatch<SetStateAction<Filter[]>>;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 function createFilterItemComponent(
@@ -78,26 +82,32 @@ function createFilterItemComponent(
 }
 
 function Filters({
+  activeColumns,
   aggregations,
   filters,
-  setFilters,
   filterValues,
+  onToggleActive,
+  setFilters,
   setFilterValues,
 }: FiltersProps) {
   const filterItems = filters.map((filter) => ({
-    label: filter.title,
-    type: filter.type,
     content:
       filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
+    display: activeColumns.includes(filter.field),
+    label: filter.title,
+    type: filter.type,
+    toggleFunc: () => onToggleActive && onToggleActive(filter.field),
   })) as FilterGroupProps['items'];
 
   return <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />;
 }
 
 export default function ControlPanel({
+  activeColumns,
   aggregations,
   children,
   filters,
+  onToggleActive,
   setFilters,
   setOpen,
 }: ControlPanelProps) {
@@ -115,13 +125,19 @@ export default function ControlPanel({
     setFilters(filters.map((fil) => ({ ...fil, value: filterValues[fil.field] } as Filter)));
   };
 
+  const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
+  const activeColumnsText = `${activeColumnsLength} active ${
+    activeColumnsLength === 1 ? 'column' : 'columns'
+  }`;
+
   return (
     <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
       <button type="button" onClick={() => setOpen(false)} className="text-white text-right">
         <CloseOutlined />
       </button>
       <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
-        Filters<small className="font-light text-base text-primary-3">6 Active Columns</small>
+        Filters
+        <small className="font-light text-base text-primary-3">{activeColumnsText}</small>
       </span>
 
       <p className="text-white">
@@ -131,10 +147,12 @@ export default function ControlPanel({
 
       <div className="flex flex-col gap-12">
         <Filters
+          activeColumns={activeColumns}
           aggregations={aggregations}
           filters={filters}
-          setFilters={setFilters}
           filterValues={filterValues}
+          onToggleActive={onToggleActive}
+          setFilters={setFilters}
           setFilterValues={setFilterValues}
         />
         {children}

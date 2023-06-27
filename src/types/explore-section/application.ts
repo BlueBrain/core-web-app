@@ -20,7 +20,9 @@ export interface SortState {
   field: string;
   order: 'asc' | 'desc';
 }
+
 export type ListViewAtomValues = {
+  activeColumns: string[];
   aggregations: Loadable<Aggregations>;
   data: Loadable<ExploreSectionResource[] | undefined>;
   filters: Filter[];
@@ -30,11 +32,30 @@ export type ListViewAtomValues = {
   total: Loadable<TotalHits | undefined>;
 };
 
-export type ListViewAtomSetters = {
-  setFilters: Dispatch<SetStateAction<ListViewAtomValues['filters']>>;
-  setSearchString: Dispatch<SetStateAction<ListViewAtomValues['searchString']>>;
-  setSortState: Dispatch<SetStateAction<ListViewAtomValues['sortState']>>;
-  setPageSize: Dispatch<SetStateAction<ListViewAtomValues['pageSize']>>;
+export type ListViewAtoms = {
+  activeColumns: [
+    ListViewAtomValues['activeColumns'],
+    Dispatch<SetStateAction<ListViewAtomValues['activeColumns']>>
+  ];
+  aggregations: [
+    ListViewAtomValues['aggregations'],
+    Dispatch<SetStateAction<ListViewAtomValues['aggregations']>>
+  ];
+  data: [ListViewAtomValues['data'], Dispatch<SetStateAction<ListViewAtomValues['data']>>];
+  filters: [ListViewAtomValues['filters'], Dispatch<SetStateAction<ListViewAtomValues['filters']>>];
+  pageSize: [
+    ListViewAtomValues['pageSize'],
+    Dispatch<SetStateAction<ListViewAtomValues['pageSize']>>
+  ];
+  searchString: [
+    ListViewAtomValues['searchString'],
+    Dispatch<SetStateAction<ListViewAtomValues['searchString']>>
+  ];
+  sortState: [
+    ListViewAtomValues['sortState'],
+    Dispatch<SetStateAction<ListViewAtomValues['sortState']>>
+  ];
+  total: [ListViewAtomValues['total'], Dispatch<SetStateAction<ListViewAtomValues['total']>>];
 };
 
 export type PlotProps = {

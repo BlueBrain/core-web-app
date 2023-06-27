@@ -32,15 +32,17 @@ export function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
       defaultValue={['contributor', 'eType']}
       type="multiple"
     >
-      {items.map(({ content, display = true, label, toggleFunc }) =>
-        content ? (
+      {items.map(({ content, display, label, toggleFunc }) => {
+        const displayTrigger = display ? (
+          <EyeOutlined onClick={toggleFunc} style={{ color: 'white' }} />
+        ) : (
+          <EyeInvisibleOutlined onClick={toggleFunc} style={{ color: '#69C0FF' }} />
+        );
+
+        return content ? (
           <Accordion.Item className="pt-5" value={label} key={label}>
             <div className="flex gap-3 items-center ">
-              {display ? (
-                <EyeOutlined onClick={toggleFunc} style={{ color: 'white' }} />
-              ) : (
-                <EyeInvisibleOutlined onClick={toggleFunc} style={{ color: '#69C0FF' }} />
-              )}
+              {displayTrigger}
               <Accordion.Trigger
                 className={classNames(
                   styles.accordionTrigger,
@@ -57,11 +59,11 @@ export function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
           </Accordion.Item>
         ) : (
           <div className="flex gap-3 items-center pt-5 text-lg text-white" key={label}>
-            <EyeOutlined onClick={toggleFunc} style={{ color: 'white' }} />
+            {displayTrigger}
             <span className="font-bold">{label}</span>
           </div>
-        )
-      )}
+        );
+      })}
     </Accordion.Root>
   );
 }

@@ -1,15 +1,14 @@
 'use client';
 
-import { Dispatch, HTMLProps, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, HTMLProps, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { SearchOutlined } from '@ant-design/icons';
 import { BrainIcon, InteractiveViewIcon, SettingsIcon, VirtualLabIcon } from '@/components/icons';
-import ControlPanel from '@/components/explore-section/ControlPanel';
+import ControlPanel, { ControlPanelProps } from '@/components/explore-section/ControlPanel';
 import { useFilterList } from '@/hooks';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
-import { useListViewAtoms, useSetListViewAtoms } from '@/hooks/useListViewAtoms';
-import { ListViewAtomValues } from '@/types/explore-section/application';
+import { useListViewAtoms } from '@/hooks/useListViewAtoms';
 import { FilterMethods, FilterType, FilterValues, createFilterValues } from '@/hooks/useFilterList';
 import ListTable from '@/components/ListTable';
 import { filterHasValue } from '@/components/Filter/util';
@@ -71,13 +70,14 @@ const defaultColumns = [
 ];
 
 const {
+  activeColumnsAtom,
+  aggregationsAtom,
+  dataAtom,
+  filtersAtom,
   pageSizeAtom,
   searchStringAtom,
-  filtersAtom,
-  dataAtom,
-  totalAtom,
-  aggregationsAtom,
   sortStateAtom,
+  totalAtom,
 } = createListViewAtoms({
   type: TYPE,
   columns: defaultColumns.map((col) => col.dataIndex),
@@ -142,31 +142,29 @@ function getFilterListItem({
 }
 
 function ControlPanelWithDimensions({
-  atomValues,
+  activeColumns,
+  aggregations,
+  filters,
   getValues,
   getMethods,
   options,
-  setOpenFiltersSidebar,
-}: {
-  atomValues: ListViewAtomValues;
+  // setActiveColumns,
+  setFilters,
+  setOpen,
+}: Omit<ControlPanelProps, 'setActiveColumns'> & {
   getValues: (id: string) => FilterValues;
   getMethods: (id: string) => FilterMethods;
   options: FilterType[];
-  setOpenFiltersSidebar: Dispatch<SetStateAction<boolean>>;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const atomSetters = useSetListViewAtoms({
-    setFilters: filtersAtom,
-    setSearchString: searchStringAtom,
-    setSortState: sortStateAtom,
-    setPageSize: pageSizeAtom,
-  });
-
   return (
     <ControlPanel
-      aggregations={atomValues.aggregations}
-      filters={atomValues.filters}
-      setFilters={atomSetters.setFilters}
-      setOpen={setOpenFiltersSidebar}
+      activeColumns={activeColumns}
+      aggregations={aggregations}
+      filters={filters}
+      // setActiveColumns={setActiveColumns}
+      setFilters={setFilters}
+      setOpen={setOpen}
     >
       <div>
         <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
@@ -179,8 +177,8 @@ function ControlPanelWithDimensions({
         </p>
         <div className="divide-neutral-3 divide-y flex flex-col gap-7">
           <FilterGroup
-            filters={atomValues.filters}
-            setFilters={atomSetters.setFilters}
+            filters={filters}
+            setFilters={setFilters}
             items={otherColumns.map(({ key, label }) => {
               const { checked, range, type, value } = getValues(key);
               const { toggleColumn, onRadioChange, onRangeChange, onValueChange } = getMethods(key);
@@ -209,7 +207,8 @@ function ControlPanelWithDimensions({
 export default function SimulationCampaignPage() {
   const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
 
-  const atomValues = useListViewAtoms({
+  const atoms = useListViewAtoms({
+    activeColumns: activeColumnsAtom,
     aggregations: useMemo(() => loadable(aggregationsAtom), []),
     data: useMemo(() => loadable(dataAtom), []),
     filters: filtersAtom,
@@ -219,6 +218,18 @@ export default function SimulationCampaignPage() {
     total: useMemo(() => loadable(totalAtom), []),
   });
 
+  const {
+    activeColumns: [activeColumns, setActiveColumns],
+    aggregations: [aggregations],
+    filters: [filters, setFilters],
+  } = atoms;
+
+  // Display all columns by default.
+  useEffect(
+    () => () => setActiveColumns(['index', ...defaultColumns.map((col) => col.dataIndex)]),
+    [setActiveColumns]
+  );
+
   const mockDataSource = useAtomValue(simulationsAtom);
 
   const defaultFilterState = otherColumns.map(({ key }) => createFilterValues({ id: key }));
@@ -226,7 +237,7 @@ export default function SimulationCampaignPage() {
   const { checkForActiveFilters, getValues, getMethods, options } =
     useFilterList(defaultFilterState);
 
-  const selectedFiltersCount = atomValues.filters.filter((filter) => filterHasValue(filter)).length;
+  const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
 
   return (
     <div className="flex">
@@ -253,11 +264,14 @@ export default function SimulationCampaignPage() {
       </div>
       {openFiltersSidebar && (
         <ControlPanelWithDimensions
-          atomValues={atomValues}
+          activeColumns={activeColumns}
+          aggregations={aggregations}
+          filters={filters}
           getValues={getValues}
           getMethods={getMethods}
           options={options}
-          setOpenFiltersSidebar={setOpenFiltersSidebar}
+          setFilters={setFilters}
+          setOpen={setOpenFiltersSidebar}
         />
       )}
     </div>
