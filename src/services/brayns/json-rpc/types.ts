@@ -124,9 +124,12 @@ export function isJsonRpcMessage(data: any): data is {
     code: number;
     message?: string;
     name?: string;
-    data?: null | {
-      message: string;
-    };
+    data?:
+      | null
+      | {
+          message: string;
+        }
+      | string[];
   };
 } {
   try {
@@ -142,13 +145,17 @@ export function isJsonRpcMessage(data: any): data is {
           message: ['?', 'string'],
           name: ['?', 'string'],
           data: [
-            '|',
-            'null',
+            '?',
             [
-              '?',
-              {
-                message: 'string',
-              },
+              '|',
+              'null',
+              [
+                '?',
+                {
+                  message: 'string',
+                },
+              ],
+              ['array', 'string'],
             ],
           ],
         },

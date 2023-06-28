@@ -7,6 +7,7 @@ import { BraynsMeshOptions } from '../../types';
 import { loadMeshFromNexus } from '../../utils/nexus';
 import Gestures from '../../utils/gestures';
 import { logError } from '@/util/logger';
+import { AtlasVisualizationManager } from '@/state/atlas/atlas';
 
 export default class OverlayManager {
   private requestAnimationFrameId = 0;
@@ -21,7 +22,11 @@ export default class OverlayManager {
 
   private busy = false;
 
-  constructor(private readonly canvas: HTMLCanvasElement, private readonly token: string) {
+  constructor(
+    private readonly canvas: HTMLCanvasElement,
+    private readonly token: string,
+    private readonly atlas: AtlasVisualizationManager
+  ) {
     this.painter = new OverlayPainter(canvas);
     this.gestures.attach(canvas);
     this.gestures.eventDrag.addListener(handlePointerDrag);
@@ -59,12 +64,21 @@ export default class OverlayManager {
       if (!mesh) break;
 
       try {
+        this.atlas.updateVisibleMesh({
+          contentURL: mesh.url,
+          isLoading: true,
+        });
         const content = await loadMeshFromNexus(mesh.url, this.token);
         this.keysOfDisplayedMeshes.add(mesh.url);
         this.painter.addMesh(mesh.url, content, mesh.color);
         this.painter.paint(true);
       } catch (ex) {
         logError('Unable to load a mesh:', ex);
+      } finally {
+        this.atlas.updateVisibleMesh({
+          contentURL: mesh.url,
+          isLoading: false,
+        });
       }
     }
     this.busy = false;
@@ -86,6 +100,10 @@ export default class OverlayManager {
       if (!keysOfMeshesToDisplay.has(id)) {
         this.keysOfDisplayedMeshes.delete(id);
         this.painter.removeMesh(id);
+        this.atlas.updateVisibleMesh({
+          contentURL: id,
+          isLoading: false,
+        });
       }
     });
   }

@@ -6,7 +6,8 @@ import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailAtom } from '@/state/explore-section/detail-atoms-constructor';
 import usePathname from '@/hooks/pathname';
-import { DeltaResource, SideLink, SerializedDeltaResource, IdLabel } from '@/types/explore-section';
+import { SideLink, IdLabel } from '@/types/explore-section/fields';
+import { SerializedDeltaResource, DeltaResource } from '@/types/explore-section/resources';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
@@ -84,7 +85,7 @@ export default function Detail({
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <div className="flex flex-col gap-10 max-w-screen-2xl">
           <DetailHeaderName detail={detail.data} url={path} />
-          <div className="grid gap-4 grid-cols-6">
+          <div className="grid gap-4 grid-cols-6 break-words">
             {fields.map(
               ({ className, field, title }) =>
                 serializedFields && (

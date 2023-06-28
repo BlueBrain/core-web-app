@@ -1,42 +1,24 @@
-import buildElasticsearchSort from './sorters';
-import { createSearchStringQueryFilter } from '@/queries/es';
+import buildESSort from './sorters';
 import { Filter } from '@/components/Filter/types';
-import buildAggsAndFilter from '@/queries/explore-section/aggregations';
+import { SortState } from '@/types/explore-section/application';
+import buildFilters from '@/queries/explore-section/filters';
+import buildAggs from '@/queries/explore-section/aggs';
 
 export default function fetchDataQuery(
   size: number,
   currentPage: number,
   filters: Filter[],
   type: string,
-  sortState: any,
+  sortState: SortState,
   searchString: string = ''
 ) {
-  const sortQuery = buildElasticsearchSort(sortState);
-
+  const sortQuery = buildESSort(sortState);
   return {
     size,
     sort: sortQuery,
     from: (currentPage - 1) * size,
     track_total_hits: true,
-    query: {
-      bool: {
-        filter: [
-          {
-            term: {
-              '@type.keyword': type,
-            },
-          },
-          searchString ? createSearchStringQueryFilter(searchString, ['*']) : null,
-        ].filter(Boolean),
-        must: [
-          {
-            match: {
-              deprecated: false,
-            },
-          },
-        ],
-      },
-    },
-    ...buildAggsAndFilter(filters),
+    query: buildFilters(type, filters, searchString).toJSON(),
+    ...buildAggs(filters).toJSON(),
   };
 }

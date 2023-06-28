@@ -11,12 +11,10 @@ import {
   ExpDesignerConfig,
   ExpDesignerParam,
   ExpDesignerGroupParameter,
-  ExpDesignerNumberParameter,
-  ExpDesignerTargetParameter,
   ExpDesignerRadioBtnParameter,
   ExpDesignerPositionParameter,
-  ExpDesignerDropdownParameter,
   ExpDesignerTargetDropdownGroupParameter,
+  ExpDesignerRecordingParameter,
 } from '@/types/experiment-designer';
 import { createWorkflowConfigResource, createJsonFile, createResource } from '@/api/nexus';
 import {
@@ -124,11 +122,6 @@ export async function createWorkflowMetaConfigs(
   return variablesToReplaceCopy;
 }
 
-function getParamById<T>(group: ExpDesignerGroupParameter, id: string) {
-  const result = group.value.find((param) => param.id === id);
-  return <T>result;
-}
-
 function getSectionTargetsById(section: ExpDesignerParam[], id: string) {
   const targetObj = section.find((param) => param.id === id);
   if (!targetObj) return [];
@@ -187,28 +180,13 @@ export function convertExpDesConfigToSimVariables(
   // --------------- Recording ----------------
   // ------------------------------------------
 
-  const recordings = (expDesignerConfig.recording as ExpDesignerGroupParameter[]).reduce(
+  const recordings = (expDesignerConfig.recording as ExpDesignerRecordingParameter[]).reduce(
     (acc: Record<string, any>, recordingItem) => {
-      const target = getParamById<ExpDesignerTargetParameter>(recordingItem, 'recordingTarget');
-      const duration = getParamById<ExpDesignerNumberParameter>(recordingItem, 'duration');
-      const dt = getParamById<ExpDesignerNumberParameter>(recordingItem, 'dt');
-      const startTime = getParamById<ExpDesignerNumberParameter>(recordingItem, 'startTime');
-      const variableType = getParamById<ExpDesignerDropdownParameter>(
-        recordingItem,
-        'variableType'
-      );
-      const sections = getParamById<ExpDesignerDropdownParameter>(recordingItem, 'sections');
-      const reportType = getParamById<ExpDesignerDropdownParameter>(recordingItem, 'reportType');
-
-      acc[recordingItem.name] = {
-        cells: target.value,
-        variable_name: variableType.value,
-        sections: sections.value,
-        type: reportType.value,
-        dt: dt.value,
-        start_time: startTime.value,
-        end_time: duration.value,
-      };
+      const recordItem: Record<string, any> = {};
+      recordingItem.value.forEach((param) => {
+        recordItem[param.id] = param.value;
+      });
+      acc[recordingItem.name] = recordItem;
       return acc;
     },
     {}
@@ -219,21 +197,14 @@ export function convertExpDesConfigToSimVariables(
   // --------------- Stimuli ----------------
   // ----------------------------------------
 
-  const areStringList = ['targetInput', 'stimType', 'stimModule'];
+  const areStringList = ['node_set', 'input_type', 'module'];
   const stimuli = (expDesignerConfig.stimuli as ExpDesignerGroupParameter[]).reduce(
     (acc: Record<string, any>, stimulusItem) => {
       const stimItem: Record<string, any> = {};
-      [
-        ['node_set', 'targetInput'],
-        ['duration', 'duration'],
-        ['amp_start', 'ampStart'],
-        ['delay', 'delay'],
-        ['input_type', 'stimType'],
-        ['module', 'stimModule'],
-      ].forEach(([key, param]) => {
-        const isString = areStringList.includes(param);
-        const { result, coordDict } = getValueOrPlaceholder(stimulusItem.value, param, isString);
-        stimItem[key] = result;
+      stimulusItem.value.forEach((param) => {
+        const isString = areStringList.includes(param.id);
+        const { result, coordDict } = getValueOrPlaceholder(stimulusItem.value, param.id, isString);
+        stimItem[param.id] = result;
         coords = { ...coords, ...coordDict };
       });
       acc[stimulusItem.name] = stimItem;

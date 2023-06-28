@@ -5,7 +5,8 @@ import {
   DimensionRange,
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
-import { AxesState, SimulationCampaignResource } from '@/types/explore-section';
+import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { AxesState } from '@/types/explore-section/fields';
 import { simulationCampaignResourceAtom } from '@/state/explore-section/simulation-campaign';
 
 // Dimensions atoms

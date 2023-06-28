@@ -4,7 +4,7 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import { convertVolts } from '@/util/explore-section/plotHelpers';
 import useConfig from '@/components/explore-section/EphysViewerContainer/hooks/useConfig';
 import optimizePlotData from '@/util/explore-section/optimizeTrace';
-import { PlotProps } from '@/types/explore-section';
+import { PlotProps } from '@/types/explore-section/application';
 
 const Plot = createPlotlyComponent(Plotly);
 

@@ -6,6 +6,7 @@ import BraynsService from '../brayns-service';
 import { BraynsServiceInterface } from '../types';
 import useNotification from '@/hooks/notifications';
 import { logError } from '@/util/logger';
+import { useAtlasVisualizationManager } from '@/state/atlas';
 
 /**
  * @param token Keycloak authentication token.
@@ -14,6 +15,7 @@ import { logError } from '@/util/logger';
 export function useBraynsService(
   token: string | undefined
 ): null | BraynsServiceInterface | string {
+  const atlas = useAtlasVisualizationManager();
   const notif = useNotification();
   const [braynsService, setBraynsService] = React.useState<null | BraynsServiceInterface | string>(
     null
@@ -23,7 +25,7 @@ export function useBraynsService(
 
     Allocation.allocate(token)
       .then((wrapper) => {
-        setBraynsService(new BraynsService(wrapper, token));
+        setBraynsService(new BraynsService(wrapper, token, atlas));
         CameraTransform.reset();
       })
       .catch((ex) => {
@@ -31,6 +33,6 @@ export function useBraynsService(
         setBraynsService(ex instanceof Error ? ex.message : JSON.stringify(ex));
         notif.error('Unable to start Brayns in a node!');
       });
-  }, [token, notif, braynsService]);
+  }, [token, notif, braynsService, atlas]);
   return braynsService;
 }

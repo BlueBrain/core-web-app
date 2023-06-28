@@ -1,6 +1,8 @@
 import find from 'lodash/find';
-import { AnnotationEntity, DeltaResource, Series } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
+import { AnnotationEntity, Series } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
+import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 
 const seriesArrayFunc = (series: Series | Series[] | undefined) => series && ensureArray(series);
 
@@ -9,7 +11,7 @@ const annotationArrayFunc = (annotation: AnnotationEntity[] | undefined | null) 
 
 /**
  * Takes delta resource and extracts subject age
- * @param {import("./types/explore-section").DeltaResource} detail
+ * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
 export const subjectAgeSelectorFn = (detail: DeltaResource | null) =>
   detail?.subject?.age &&
@@ -17,7 +19,7 @@ export const subjectAgeSelectorFn = (detail: DeltaResource | null) =>
 
 /**
  * Takes delta resource and extracts subject species
- * @param {import("./types/explore-section").DeltaResource} detail
+ * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
 export const subjectSpeciesSelectorFn = (detail: DeltaResource | null) =>
   detail?.subject?.species?.label;
@@ -28,7 +30,7 @@ export const mTypeSelectorFn = (detail: DeltaResource | null) => {
     annotationArrayFunc(detail?.annotation),
     (o: AnnotationEntity) => o.name === 'M-type Annotation'
   );
-  return entity ? entity.hasBody?.label : 'N/A';
+  return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
 
 // renders etype or 'no EType' text if not present
@@ -37,7 +39,7 @@ export const eTypeSelectorFn = (detail: DeltaResource | null) => {
     annotationArrayFunc(detail?.annotation),
     (o: AnnotationEntity) => o.name === 'E-type Annotation'
   );
-  return entity ? entity.hasBody?.label : 'N/A';
+  return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
 
 // renders weight in a min - max format

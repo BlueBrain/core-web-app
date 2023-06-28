@@ -4,18 +4,15 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useSession } from 'next-auth/react';
-import { useAtomValue } from 'jotai';
 import React from 'react';
-import { Button } from 'antd';
-import useNotification from '../../hooks/notifications';
 import AxisGizmo from './AxisGizmo';
 import Settings from './Settings';
 import HowToUseButton from './HowToUseButton';
 import ResetCameraButton from './ResetCameraButton';
 import Spinner from '@/components/Spinner';
 import BraynsService, { BraynsServiceInterface } from '@/services/brayns';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { isString } from '@/util/type-guards';
+import { useVisibleCells } from '@/state/atlas';
 import styles from './interactive-brayns.module.css';
 
 interface InteractiveBraynsProps {
@@ -31,9 +28,8 @@ export default function InteractiveBrayns() {
 function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps) {
   const [howToUsePanelVisible, setHowToUsePanelVisible] = React.useState(false);
   const [overlayOpacity, setOverlayOpacity] = React.useState(1);
-  const notification = useNotification();
   const circuitPath = BraynsService.useCurrentCircuitPath();
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const selectedBrainRegions = useVisibleCells();
   const brayns = BraynsService.useBraynsService(token);
   const { handleOverlayCanvasMount } = BraynsService.useOverlay(token);
   const allocationProgress = BraynsService.State.progress.allocation.useValue();
@@ -44,23 +40,12 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
     if (!isBraynsService(brayns)) return;
 
     const action = async () => {
-      if (!circuitPath || !selectedBrainRegion) return;
+      if (!circuitPath) return;
 
-      brayns.showRegion(circuitPath, { id: selectedBrainRegion.id });
+      brayns.showCellsForRegions(circuitPath, selectedBrainRegions);
     };
     action();
-  }, [selectedBrainRegion, circuitPath, brayns]);
-  const handleDisplayLogs = () => {
-    if (!brayns || typeof brayns === 'string') return;
-
-    notification.info('The stdout and stderr will be logged in the console.');
-    brayns.downloadLogs();
-  };
-  const handleExportQueries = () => {
-    if (!brayns || typeof brayns === 'string') return;
-
-    brayns.exportQueries();
-  };
+  }, [selectedBrainRegions, circuitPath, brayns]);
   return (
     <div className={`${className ?? styles.expand}`}>
       <canvas className={styles.expand} ref={handleSceneCanvasMount} />
@@ -85,10 +70,6 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
           <pre>{brayns}</pre>
         </div>
       )}
-      <div className={styles.debugButtons}>
-        <Button onClick={handleDisplayLogs}>Display Logs</Button>
-        <Button onClick={handleExportQueries}>Export queries</Button>
-      </div>
       <Settings
         opacity={overlayOpacity}
         onOpacityChange={setOverlayOpacity}

@@ -1,22 +1,30 @@
 'use client';
 
+import { Dispatch, HTMLProps, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
 import { SearchOutlined } from '@ant-design/icons';
-import mockDataSource from './mockData';
 import { BrainIcon, InteractiveViewIcon, SettingsIcon, VirtualLabIcon } from '@/components/icons';
-import { useSearchBtn, useFilterList } from '@/hooks';
-import { createFilterValues } from '@/hooks/useFilterList';
-import InputButton from '@/components/InputButton';
+import ControlPanel, { ControlPanelProps } from '@/components/explore-section/ControlPanel';
+import { useFilterList } from '@/hooks';
+import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
+import { useListViewAtoms } from '@/hooks/useListViewAtoms';
+import { FilterMethods, FilterType, FilterValues, createFilterValues } from '@/hooks/useFilterList';
 import ListTable from '@/components/ListTable';
-import FilterList from '@/components/FilterList';
+import { filterHasValue } from '@/components/Filter/util';
+import FilterListItem from '@/components/FilterList';
+import { FilterGroup } from '@/components/Filter';
+import { simulationsAtom } from '@/state/explore-section/simulation-campaign';
 
-function FilterBtn() {
+function FilterBtn({ onClick, value }: HTMLProps<HTMLButtonElement>) {
   return (
     <button
-      type="button"
       className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5"
+      onClick={onClick}
+      type="button"
     >
       <div className="flex gap-3 items-center">
-        <span className="bg-white rounded-md px-2 py-1 text-neutral-3 text-sm">0</span>
+        <span className="bg-white rounded-md px-2 py-1 text-neutral-3 text-sm">{value}</span>
         <span className="font-bold text-white">Filters</span>
         <span className="text-primary-3 text-sm"> 6 active columns</span>
       </div>
@@ -45,68 +53,225 @@ function FirstColumnContent(text: string) {
   );
 }
 
+const TYPE = 'https://neuroshapes.org/SimulationCampaign'; // TODO: Check whether this type actually exists.
+
 const defaultColumns = [
-  { id: 'name', label: 'name', render: FirstColumnContent },
-  { id: 'configuration', label: 'configuration' },
-  { id: 'ca', label: 'ca' },
-  { id: 'vpmPct', label: 'vpm_pct' },
-  { id: 'startDelay', label: 'start_delay' },
-  { id: 'date', label: 'date' },
+  { dataIndex: 'name', key: 'name', label: 'name', render: FirstColumnContent },
+  { dataIndex: 'brainConfiguration', key: 'configuration', label: 'configuration' },
+  { dataIndex: 'coords.vpm_pct', key: 'vpmPct', label: 'vpm_pct' },
+  {
+    dataIndex: 'coords.extracellular_calcium',
+    key: 'extracellularCalcium',
+    label: 'extracellular_calcium',
+  },
+  { dataIndex: 'coords.celsius', key: 'celsius', label: 'celsius' },
+  // { dataIndex: 'startDelay', key: 'startDelay', label: 'start_delay' },
+  { dataIndex: 'startedAt', key: 'startedAt', label: 'started_at' },
 ];
+
+const {
+  activeColumnsAtom,
+  aggregationsAtom,
+  dataAtom,
+  filtersAtom,
+  pageSizeAtom,
+  searchStringAtom,
+  sortStateAtom,
+  totalAtom,
+} = createListViewAtoms({
+  type: TYPE,
+  columns: defaultColumns.map((col) => col.dataIndex),
+});
 
 const otherColumns = [
   {
-    id: 'desiredConnectedProportionOfInvivoFrs',
+    dataIndex: 'coords.desired_connected_proportion_of_invivo_frs',
+    key: 'desired_connected_proportion_of_invivo_frs',
     label: 'desired_connected_proportion_of_invivo_frs',
   },
   {
-    id: 'deplStdevMeanRatio',
+    dataIndex: 'coords.depol_stdev_mean_ratio',
     label: 'depol_stdev_mean_ratio',
+    key: 'deplStdevMeanRatio',
   },
 ];
 
-export default function SimulationCampaignPage() {
-  const defaultFilterState = otherColumns.map(({ id }) => createFilterValues({ id }));
+function getFilterListItem({
+  checked,
+  key,
+  label,
+  onRadioChange,
+  onRangeChange,
+  onValueChange,
+  options,
+  range,
+  toggleFunc,
+  type,
+  value,
+}: {
+  checked: boolean;
+  key: string;
+  label: string;
+  onRadioChange: FilterMethods['onRadioChange'];
+  onRangeChange: FilterMethods['onRangeChange'];
+  onValueChange: FilterMethods['onValueChange'];
+  options: FilterType[];
+  range: FilterValues['range'];
+  toggleFunc?: () => void;
+  type: FilterValues['type'];
+  value: FilterValues['value'];
+}) {
+  return {
+    display: checked,
+    content: () => (
+      <FilterListItem
+        id={key}
+        key={key}
+        onRadioChange={onRadioChange}
+        onRangeChange={onRangeChange}
+        onValueChange={onValueChange}
+        options={options}
+        range={range}
+        type={type}
+        value={value}
+      />
+    ),
+    label,
+    toggleFunc,
+  };
+}
 
-  const { applyActiveFilters, checkForActiveFilters, getValues, getMethods, options } =
+function ControlPanelWithDimensions({
+  activeColumns,
+  aggregations,
+  filters,
+  getValues,
+  getMethods,
+  options,
+  setFilters,
+  setOpen,
+}: Omit<ControlPanelProps, 'setActiveColumns'> & {
+  getValues: (id: string) => FilterValues;
+  getMethods: (id: string) => FilterMethods;
+  options: FilterType[];
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) {
+  return (
+    <ControlPanel
+      activeColumns={activeColumns}
+      aggregations={aggregations}
+      filters={filters}
+      setFilters={setFilters}
+      setOpen={setOpen}
+    >
+      <div>
+        <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
+          Dimensions
+          <small className="font-light text-base text-primary-3">({otherColumns.length})</small>
+        </span>
+        <p className="text-white">
+          Sed risus pretium quam vulputate dignissim. Sollicitudin aliquam ultrices sagittis orci a
+          scelerisque.
+        </p>
+        <div className="divide-neutral-3 divide-y flex flex-col gap-7">
+          <FilterGroup
+            filters={filters}
+            setFilters={setFilters}
+            items={otherColumns.map(({ key, label }) => {
+              const { checked, range, type, value } = getValues(key);
+              const { toggleColumn, onRadioChange, onRangeChange, onValueChange } = getMethods(key);
+
+              return getFilterListItem({
+                checked,
+                key,
+                label,
+                onRadioChange,
+                onRangeChange,
+                onValueChange,
+                options,
+                range,
+                toggleFunc: () => toggleColumn(key),
+                type,
+                value,
+              });
+            })}
+          />
+        </div>
+      </div>
+    </ControlPanel>
+  );
+}
+
+export default function SimulationCampaignPage() {
+  const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
+
+  const atoms = useListViewAtoms({
+    activeColumns: activeColumnsAtom,
+    aggregations: useMemo(() => loadable(aggregationsAtom), []),
+    data: useMemo(() => loadable(dataAtom), []),
+    filters: filtersAtom,
+    pageSize: pageSizeAtom,
+    searchString: searchStringAtom,
+    sortState: sortStateAtom,
+    total: useMemo(() => loadable(totalAtom), []),
+  });
+
+  const {
+    activeColumns: [activeColumns, setActiveColumns],
+    aggregations: [aggregations],
+    filters: [filters, setFilters],
+  } = atoms;
+
+  // Display all columns by default.
+  useEffect(
+    () => () => setActiveColumns(['index', ...defaultColumns.map((col) => col.dataIndex)]),
+    [setActiveColumns]
+  );
+
+  const mockDataSource = useAtomValue(simulationsAtom);
+
+  const defaultFilterState = otherColumns.map(({ key }) => createFilterValues({ id: key }));
+
+  const { checkForActiveFilters, getValues, getMethods, options } =
     useFilterList(defaultFilterState);
 
-  const { focused, onBlur, onClick, onInput, value: inputValue } = useSearchBtn('');
+  const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
 
   return (
-    <div className="flex flex-col gap-10 h-screen overflow-scroll pt-10 w-full">
-      <h1 className="font-bold pl-7 pr-16 text-primary-7 text-2xl">Simulation Campaigns</h1>
-      <div className="bg-neutral-1 flex flex-col grow gap-10 pl-7 pr-16 pt-10">
-        <h2 className="font-bold text-primary-7">Public Campaigns</h2>
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-primary-7">{`Total: ${3200} campaigns`}</span>
-          <div className="flex gap-4 items-center">
-            <span className="text-neutral-4">Clear filters</span>
-            <SearchOutlined className="border border-primary-3 p-2 text-primary-7" />
-            <InputButton
-              focused={focused}
-              onBlur={onBlur}
-              onClick={onClick}
-              onInput={onInput}
-              value={inputValue}
-              type="text"
-            />
-            <FilterBtn />
+    <div className="flex">
+      <div className="flex flex-col gap-10 h-screen overflow-scroll pt-10 w-full">
+        <h1 className="font-bold pl-7 pr-16 text-primary-7 text-2xl">Simulation Campaigns</h1>
+        <div className="bg-neutral-1 flex flex-col grow gap-10 pl-7 pr-16 pt-10">
+          <h2 className="font-bold text-primary-7">Public Campaigns</h2>
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-primary-7">{`Total: ${3200} campaigns`}</span>
+            <div className="flex gap-4 items-center">
+              <span className="text-neutral-4">Clear filters</span>
+              <SearchOutlined className="border border-primary-3 p-2 text-primary-7" />
+              <FilterBtn
+                onClick={() => setOpenFiltersSidebar(!openFiltersSidebar)}
+                value={selectedFiltersCount}
+              />
+            </div>
           </div>
+          <ListTable
+            columns={[...defaultColumns, ...otherColumns.filter(checkForActiveFilters)]}
+            dataSource={mockDataSource.map(({ id, ...rest }) => ({ ...rest, id, key: id }))} // Add a "key" for each row.
+          />
         </div>
-        <FilterList
-          getMethods={getMethods}
-          getValues={getValues}
-          items={
-            otherColumns.filter(({ label }) => label.includes(inputValue)) // TODO: Replace this with something smarter (and case-sensitive).
-          }
-          options={options}
-        />
-        <ListTable
-          columns={[...defaultColumns, ...otherColumns.filter(checkForActiveFilters)]}
-          dataSource={mockDataSource.filter(applyActiveFilters)}
-        />
       </div>
+      {openFiltersSidebar && (
+        <ControlPanelWithDimensions
+          activeColumns={activeColumns}
+          aggregations={aggregations}
+          filters={filters}
+          getValues={getValues}
+          getMethods={getMethods}
+          options={options}
+          setFilters={setFilters}
+          setOpen={setOpenFiltersSidebar}
+        />
+      )}
     </div>
   );
 }

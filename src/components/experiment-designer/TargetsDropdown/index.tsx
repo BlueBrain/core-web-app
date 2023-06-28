@@ -33,7 +33,7 @@ export default function TargetsDropdown({ onChange, defaultValue = 'SELECT', cla
   };
 
   return (
-    <>
+    <div aria-label="target-dropdown">
       {isLoading && <Spin />}
       {!isLoading && isEmpty && 'Not node_sets were found'}
       {!isLoading && !isEmpty && (
@@ -50,6 +50,6 @@ export default function TargetsDropdown({ onChange, defaultValue = 'SELECT', cla
           }
         />
       )}
-    </>
+    </div>
   );
 }

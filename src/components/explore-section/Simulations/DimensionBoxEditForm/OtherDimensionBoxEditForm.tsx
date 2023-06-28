@@ -1,13 +1,13 @@
 import { useForm } from 'antd/es/form/Form';
-import { Form, Select } from 'antd';
-import { useAtomValue, useSetAtom } from 'jotai/index';
+import { ConfigProvider, Form, Select } from 'antd';
+import { useAtomValue, useSetAtom } from 'jotai';
 import {
   DimensionValue,
   OtherDimensionBoxEditFormProps,
 } from '@/components/explore-section/Simulations/types';
 import { simulationCampaignDimensionsAtom } from '@/state/explore-section/simulation-campaign';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
-import './styles.scss';
+import selectorTheme from '@/components/explore-section/Simulations/DimensionBoxEditForm/antd-theme';
 
 export default function OtherDimensionBoxEditForm({
   dimension,
@@ -46,26 +46,23 @@ export default function OtherDimensionBoxEditForm({
 
   return (
     <div className="mt-3">
-      <Form
-        form={form}
-        id="other-dimension-box-edit-form"
-        initialValues={{ 'input-value': buildInitialValue() }}
-      >
-        <Form.Item className="flex-1 w-20" name="input-value">
-          <Select
-            className="bg-primary-5"
-            value={form.getFieldValue('input-value')}
-            onChange={submitForm}
-            dropdownStyle={{ backgroundColor: '#E6F7FF', borderRadius: 0 }}
-          >
-            {dimensionConfig.map((val) => (
-              <Option key={val} value={val} style={{ color: '#0050B3', fontWeight: 'bold' }}>
-                {val}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Form>
+      <ConfigProvider theme={selectorTheme}>
+        <Form
+          form={form}
+          id="other-dimension-box-edit-form"
+          initialValues={{ 'input-value': buildInitialValue() }}
+        >
+          <Form.Item className="flex-1 w-20" name="input-value">
+            <Select value={form.getFieldValue('input-value')} onChange={submitForm}>
+              {dimensionConfig.map((val) => (
+                <Option key={val} value={val}>
+                  {val}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </ConfigProvider>
     </div>
   );
 }

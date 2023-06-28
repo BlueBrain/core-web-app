@@ -49,6 +49,11 @@ const nextConfig = {
         permanent: false,
       },
       {
+        source: '/build/cell-model-assignment',
+        destination: '/build/cell-model-assignment/m-model/configuration',
+        permanent: false,
+      },
+      {
         source: '/experiment-designer',
         destination: '/experiment-designer/experiment-setup',
         permanent: false,

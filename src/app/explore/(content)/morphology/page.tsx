@@ -1,39 +1,42 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { loadable } from 'jotai/utils';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import createListViewAtoms from '@/state/explore-section/list-atoms-constructor';
 import useExploreColumns from '@/hooks/useExploreColumns';
-import { useListViewAtoms, useSetListViewAtoms } from '@/hooks/useListViewAtoms';
+import { useListViewAtoms } from '@/hooks/useListViewAtoms';
 
 const TYPE = 'https://neuroshapes.org/NeuronMorphology';
-
-const {
-  pageSizeAtom,
-  searchStringAtom,
-  filtersAtom,
-  dataAtom,
-  totalAtom,
-  aggregationsAtom,
-  sortStateAtom,
-} = createListViewAtoms({
-  type: TYPE,
-});
 
 const columnKeys = [
   'brainRegion',
   'mType',
   'name',
   'conditions',
-  'reference',
   'subjectSpecies',
   'contributors',
   'createdAt',
+  'reference',
 ];
 
+const {
+  activeColumnsAtom,
+  aggregationsAtom,
+  dataAtom,
+  filtersAtom,
+  pageSizeAtom,
+  searchStringAtom,
+  sortStateAtom,
+  totalAtom,
+} = createListViewAtoms({
+  type: TYPE,
+  columns: columnKeys,
+});
+
 export default function MorphologyPage() {
-  const atomValues = useListViewAtoms({
+  const atoms = useListViewAtoms({
+    activeColumns: activeColumnsAtom,
     aggregations: useMemo(() => loadable(aggregationsAtom), []),
     data: useMemo(() => loadable(dataAtom), []),
     filters: filtersAtom,
@@ -43,29 +46,54 @@ export default function MorphologyPage() {
     total: useMemo(() => loadable(totalAtom), []),
   });
 
-  const atomSetters = useSetListViewAtoms({
-    setFilters: filtersAtom,
-    setSearchString: searchStringAtom,
-    setSortState: sortStateAtom,
-    setPageSize: pageSizeAtom,
-  });
+  const {
+    activeColumns: [activeColumns, setActiveColumns],
+    aggregations: [aggregations],
+    data: [data],
+    filters: [filters, setFilters],
+    searchString: [searchString, setSearchString],
+    sortState: [sortState, setSortState],
+    pageSize: [pageSize, setPageSize],
+    total: [total],
+  } = atoms;
 
-  const { setFilters, setSearchString, setSortState, setPageSize } = atomSetters;
+  const columns = useExploreColumns(columnKeys, sortState, setSortState);
 
-  const columns = useExploreColumns(columnKeys, atomValues.sortState, setSortState, 'morphology');
+  // Display all columns by default.
+  useEffect(() => setActiveColumns(['index', ...columnKeys]), [setActiveColumns]);
+
+  const onToggleActive = useCallback(
+    (key: string) => {
+      const existingIndex = activeColumns.findIndex((existingKey) => existingKey === key);
+
+      return existingIndex === -1
+        ? setActiveColumns([...activeColumns, key])
+        : setActiveColumns([
+            ...activeColumns.slice(0, existingIndex),
+            ...activeColumns.slice(existingIndex + 1),
+          ]);
+    },
+    [activeColumns, setActiveColumns]
+  );
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <ExploreSectionListingView
-        atomValues={atomValues}
-        columns={columns}
+        activeColumns={activeColumns}
+        aggregations={aggregations}
+        columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
+        data={data}
         enableDownload
+        filters={filters}
         onLoadMore={() => {
-          setPageSize(atomValues.pageSize + 30);
+          setPageSize(pageSize + 30);
         }}
+        onToggleActive={onToggleActive}
+        searchString={searchString}
         setFilters={setFilters}
         setSearchString={setSearchString}
         title="Neuron morphology"
+        total={total}
       />
     </div>
   );

@@ -1,37 +1,64 @@
+export type AggregationType = 'buckets' | 'stats' | null;
+
+export interface GteLteValue {
+  gte: Date | number | null;
+  lte: Date | number | null;
+}
+
 interface BaseFilter {
   field: string;
   title: string;
+  aggregationType: AggregationType;
+  type: null;
+  value: null;
 }
 
-interface DateRangeFilter extends BaseFilter {
-  type: 'dateRange';
-  value: {
-    gte: string | null;
-    lte: string | null;
-  };
-}
-
-export interface CheckListFilter extends BaseFilter {
+export interface CheckListFilter extends Omit<BaseFilter, 'type' | 'value'> {
   type: 'checkList';
   value: string[];
 }
 
-export type Filter = DateRangeFilter | CheckListFilter;
+export interface RangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
+  type: 'dateRange' | 'valueRange';
+  value: GteLteValue;
+  unit?: string;
+}
 
-export interface CheckboxOption {
+export interface ValueFilter extends Omit<BaseFilter, 'type' | 'value'> {
+  type: 'value';
+  value: number | string | null;
+}
+
+export type Filter = CheckListFilter | RangeFilter | ValueFilter | BaseFilter;
+
+export type FilterType = 'checkList' | 'dateRange' | 'valueRange' | null;
+
+export type CheckboxOption = {
   checked: string | boolean;
   count: number | null;
   key: string;
-}
-
-type Bucket = {
-  key: string;
-  doc_count: number;
 };
 
-export interface OptionsData {
+export type RangeField =
+  | {
+      max: Date;
+      min: Date;
+      defaultValue?: {
+        gte: Date;
+        lte: Date;
+      };
+    }
+  | undefined;
+
+export type Bucket = {
+  doc_count: number;
+  key: string | number;
+  key_as_string?: string;
+};
+
+export type OptionsData = {
   [key: string]: {
     buckets: Bucket[];
     excludeOwnFilter: { buckets: Bucket[] };
   };
-}
+};

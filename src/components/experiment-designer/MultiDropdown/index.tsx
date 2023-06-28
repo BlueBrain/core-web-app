@@ -5,7 +5,7 @@ import { ImportOutlined } from '@ant-design/icons';
 import { PrimitiveAtom, useAtom } from 'jotai';
 
 import type {
-  DropdownOptionsType,
+  DropdownOptionType,
   ExpDesignerMultipleDropdownParameter,
 } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
@@ -24,7 +24,7 @@ export default function MultiDropdown({
   onChangeParamType,
 }: Props) {
   const [data, setData] = useAtom(paramAtom);
-  let options: DropdownOptionsType = [];
+  let options: DropdownOptionType[] = [];
   if (data.options.length) {
     options = data.options;
   } else if (data.value.length) {

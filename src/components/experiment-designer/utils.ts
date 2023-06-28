@@ -19,10 +19,11 @@ import type {
   ExpDesignerMultipleDropdownParameter,
   ExpDesignerDropdownParameter,
   StepperType,
+  ExpDesignerSectionName,
 } from '@/types/experiment-designer';
 import { customRangeDelimeter } from '@/services/bbp-workflow/config';
 
-export function getFocusedAtom(name: string) {
+export function getFocusedAtom(name: ExpDesignerSectionName) {
   return focusAtom(expDesignerConfigAtom, (optic: OpticFor<ExpDesignerConfig>) => optic.prop(name));
 }
 

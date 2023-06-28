@@ -50,7 +50,7 @@ const STAT_CHART_DEFAULT_LAYOUT: Partial<Layout> = {
     automargin: true,
     fixedrange: true,
     zeroline: false,
-    title: { text: 'synapses/µ³ ', font: { size: 12 }, standoff: 6 },
+    title: { text: 'synapses/µm³ ', font: { size: 12 }, standoff: 6 },
   },
   yaxis: {
     automargin: true,

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import EphysPlot from '@/components/explore-section/EphysViewerContainer/EphysPlot';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 import createDistributionDataAtom from '@/components/explore-section/EphysViewerContainer/state/DistributionDataAtom';
 
 interface GraphViewComponentProps {

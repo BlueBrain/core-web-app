@@ -1,0 +1,10 @@
+.notAllowed input,
+.notAllowed span[aria-label='export'],
+.notAllowed span[aria-label='edit'],
+.notAllowed span[aria-label='delete'],
+.notAllowed button,
+.notAllowed div[aria-label='dropdown-param'],
+.notAllowed div[aria-label='target-dropdown'] {
+  cursor: not-allowed;
+  pointer-events: none;
+}

@@ -1,15 +1,18 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-await-in-loop */
 import Color from '../utils/color';
 import State from '../state';
 import { BraynsWrapperInterface } from '../wrapper/types';
 import { Vector4 } from '../utils/calc';
+import { compareSets } from '../utils/set';
 import regionsInfo from './regions/regions';
 import { logError } from '@/util/logger';
+import { AtlasVisualizationManager, CellType } from '@/state/atlas';
 
 interface Task {
   circuitPath: string;
-  region: { id: string };
+  regions: CellType[];
 }
 
 export default class MorphologiesManager {
@@ -30,9 +33,9 @@ export default class MorphologiesManager {
   private readonly modelIdPerRegion = new Map<string, number>();
 
   /**
-   * The id of the region currently displayed. Or null if no region is displayed.
+   * The ids of the regions currently displayed.
    */
-  private currentDisplayedRegionId: string | null = null;
+  private displayedRegionIds = new Set<string>();
 
   /**
    * Next task to perform.
@@ -42,44 +45,73 @@ export default class MorphologiesManager {
 
   private busyLoadingCircuit = false;
 
-  constructor(private readonly wrapper: BraynsWrapperInterface) {}
+  constructor(
+    private readonly wrapper: BraynsWrapperInterface,
+    private readonly atlas: AtlasVisualizationManager
+  ) {}
 
   /**
    * This function schedules the display of the morphologies of a region
    * for a given circuit.
-   *
    */
-  showRegion(circuitPath: string, region: { id: string }): void {
-    if (this.busyLoadingCircuit) {
-      this.nextTask = { circuitPath, region };
-    } else {
-      this.processTask({ circuitPath, region });
+  showRegions(circuitPath: string, regions: CellType[]): void {
+    this.nextTask = { circuitPath, regions: [...regions] };
+    if (!this.busyLoadingCircuit) {
+      this.processNextTask();
     }
   }
 
-  private async processTask(initialTask: Task) {
+  /**
+   * We first compare the list of what is already displayed
+   * with what we want to display. That gives us a list of
+   * regions to hide and a list of regions to load.
+   *
+   * Loading can take around 5 seconds for each region.
+   * That's why, everytime we have loaded one region,
+   * we check if there is a new waiting task.
+   * If so, we start the comparaison again from scratch.
+   *
+   * To optimize the process, regions are not unloaded
+   * from Brayns, but just hidden. This way, we can
+   * show them again very quickly.
+
+   * But as soon as we use another circuit, every region
+   * from the previous one are unloaded.
+   */
+  private async processNextTask() {
     this.busyLoadingCircuit = true;
     State.progress.loadingMorphologies.value = true;
-    let task: Task | null = initialTask;
+    let task: Task | null = this.nextTask;
     try {
       while (task) {
-        if (task.region.id !== this.currentDisplayedRegionId) {
-          if (task.circuitPath !== this.currentCircuitPath) {
-            // That's a new circuit: let's make a clear scene.
-            this.currentCircuitPath = task.circuitPath;
-            await this.clear();
-          } else {
-            // We need to hide the currently shown region.
-            await this.hideCurrentDisplayedRegion();
-          }
-          if (this.modelIdPerRegion.has(task.region.id)) {
-            await this.showCurrentDisplayedRegion(task.region.id);
-          } else {
-            await this.addCurrentDisplayedRegion(task.region.id);
+        if (task.circuitPath !== this.currentCircuitPath) {
+          // That's a new circuit: let's make a clear scene.
+          this.currentCircuitPath = task.circuitPath;
+          await this.clear();
+        }
+        const { onlyInA: regionIdsToAdd, onlyInB: regionIdsToHide } = compareSets(
+          extractRegionIds(task.regions),
+          this.displayedRegionIds
+        );
+        for (const regionId of regionIdsToHide) {
+          await this.hideRegion(regionId);
+        }
+        const regionsToAdd = task.regions.filter(({ regionID }) =>
+          regionIdsToAdd.includes(regionID)
+        );
+        let hasBeenInteruptedByAnotherTask = false;
+        for (const region of regionsToAdd) {
+          await this.showRegion(region);
+          if (task !== this.nextTask) {
+            // A new task is waiting for processing.
+            // So we stop what we are doing to take
+            // the new order.
+            task = this.nextTask;
+            hasBeenInteruptedByAnotherTask = true;
+            break;
           }
         }
-        task = this.nextTask;
-        this.nextTask = null;
+        if (!hasBeenInteruptedByAnotherTask) break;
       }
     } finally {
       this.busyLoadingCircuit = false;
@@ -88,49 +120,91 @@ export default class MorphologiesManager {
     }
   }
 
-  private async addCurrentDisplayedRegion(regionId: string) {
+  /**
+   * If the region already exists, we just unhide it.
+   */
+  private async showRegion(region: CellType) {
+    this.atlas.updateVisibleCell({
+      regionID: region.regionID,
+      isLoading: true,
+    });
     try {
-      const region = regionsInfo.get(regionId);
-      if (!region) throw Error(`Cannot find this region!`);
+      if (this.displayedRegionIds.has(region.regionID)) {
+        // This region is already displayed.
+        return;
+      }
+
+      this.displayedRegionIds.add(region.regionID);
+      if (await this.unhideIfAlreadyLoaded(region.regionID)) return;
+
+      const regionInfo = regionsInfo.get(region.regionID);
+      if (!regionInfo) throw Error(`Cannot find this region!`);
 
       const modelId = await this.wrapper.circuit.load(this.currentCircuitPath, {
-        nodeSets: [region.acronym],
-        color: convertHexaColorsToVector4(region.color),
+        nodeSets: [regionInfo.acronym],
+        color: convertHexaColorsToVector4(regionInfo.color),
       });
-      this.modelIdPerRegion.set(regionId, modelId);
-      this.currentDisplayedRegionId = regionId;
+      this.wrapper.repaint();
+      this.modelIdPerRegion.set(region.regionID, modelId);
     } catch (ex) {
-      logError(`Unable to load region #${regionId}:`, ex);
+      logError(`Unable to load region #${region.regionID}:`, ex);
+    } finally {
+      this.atlas.updateVisibleCell({
+        regionID: region.regionID,
+        isLoading: false,
+      });
     }
   }
 
-  private async showCurrentDisplayedRegion(regionId: string) {
-    const modelId = this.modelIdPerRegion.get(regionId);
-    if (typeof modelId !== 'number') return;
+  /**
+   * When a region is unselected, we don't unload it, but just hide it.
+   * This function is called when we want to show a region, and it
+   * tries to unhide it if it has already been loaded.
+   * @returns `true` if the region was already loaded and has then been unhidden.
+   * `false` if the region has not yet been loaded.
+   */
+  private async unhideIfAlreadyLoaded(regionID: string): Promise<boolean> {
+    const modelId = this.modelIdPerRegion.get(regionID);
+    if (!modelId) return false;
 
+    this.atlas.updateVisibleCell({
+      type: 'cell',
+      regionID,
+      isLoading: true,
+    });
     await this.wrapper.show([modelId]);
-    this.currentDisplayedRegionId = regionId;
+    return true;
   }
 
-  private async hideCurrentDisplayedRegion() {
-    if (this.currentDisplayedRegionId === null) return;
+  private async hideRegion(regionId: string) {
+    if (!this.displayedRegionIds.has(regionId)) {
+      // The region is not currently displayed.
+      return;
+    }
 
-    const modelId = this.modelIdPerRegion.get(this.currentDisplayedRegionId);
+    this.displayedRegionIds.delete(regionId);
+    const modelId = this.modelIdPerRegion.get(regionId);
     if (typeof modelId !== 'number') {
       // the model has already been removed.
       return;
     }
     await this.wrapper.hide([modelId]);
-    this.currentDisplayedRegionId = null;
   }
 
+  /**
+   * Unload all previously loaded regions.
+   */
   private async clear() {
     this.modelIdPerRegion.clear();
-    this.currentDisplayedRegionId = null;
+    this.displayedRegionIds.clear();
     await this.wrapper.clearModels();
   }
 }
 
 function convertHexaColorsToVector4(color: string): Vector4 {
   return new Color(`#${color}`).toArrayRGBA();
+}
+
+function extractRegionIds(regions: CellType[]): string[] {
+  return regions.map((region) => region.regionID);
 }

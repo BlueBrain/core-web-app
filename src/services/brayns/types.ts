@@ -1,4 +1,5 @@
 import { Quaternion, Vector3 } from './utils/calc';
+import { CellType } from '@/state/atlas/atlas';
 
 export type BraynsColorOpaque = [red: number, green: number, blue: number];
 export type BraynsColorTransparent = [red: number, green: number, blue: number, alpha: number];
@@ -31,10 +32,10 @@ export interface BraynsServiceInterface {
   reset(): Promise<void>;
 
   /**
-   * Show the morphologies of the selected region.
+   * Show the morphologies of the selected regions.
    * Any other region will be hidden.
    */
-  showRegion(circuitPath: string, region: { id: string }): void;
+  showCellsForRegions(circuitPath: string, regions: CellType[]): void;
 }
 
 export interface BusyEventParams {

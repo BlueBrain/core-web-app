@@ -19,6 +19,7 @@ import type {
 } from '@/types/experiment-designer';
 
 import { getNewRecordingObj } from '@/components/experiment-designer/defaultNewObject';
+import DocumentationIcon from '@/components/icons/Documentation';
 
 function RecordingBlock({ paramAtom }: { paramAtom: Atom<ExpDesignerParam> }) {
   const param = useAtomValue<ExpDesignerParam>(paramAtom);
@@ -69,6 +70,22 @@ type Props = {
   focusedAtom: PrimitiveAtom<ExpDesignerParam[]>;
 };
 
+const getDescription = () => (
+  <div>
+    <div>
+      To get more information about recording options read Sonata documentation provided below:{' '}
+    </div>
+    <a href="https://sonata-extension.readthedocs.io/en/latest/sonata_simulation.html#reports">
+      <button
+        type="button"
+        className="bg-neutral-1 text-primary-8 flex items-center p-2 gap-2 mt-2"
+      >
+        <DocumentationIcon />A guide to Sonata
+      </button>
+    </a>
+  </div>
+);
+
 export default function Params({ focusedAtom }: Props) {
   const atoms = useMemo(() => splitAtom(focusedAtom), [focusedAtom]);
   const [listAtoms, dispatch] = useAtom(atoms);
@@ -84,8 +101,7 @@ export default function Params({ focusedAtom }: Props) {
 
   return (
     <GenericParamWrapper
-      description="Blandit volutpat maecenas volutpat blandit aliquam etiam erat velit. Gravida in fermentum et
-      sollicitudin ac orci phasellus egestas tellus. Diam ut venenatis tellus in metus vulputate."
+      description={getDescription()}
       listAtoms={listAtoms}
       RowRenderer={RecordingBlock}
       showHeader={false}

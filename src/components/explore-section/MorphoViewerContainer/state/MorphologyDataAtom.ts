@@ -3,7 +3,7 @@ import matches from 'lodash/matches';
 import { composeUrl } from '@/util/nexus';
 import { fetchFileByUrl } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 
 const SHAPE = {
   '@type': 'DataDownload',

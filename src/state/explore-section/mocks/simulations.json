@@ -2,124 +2,151 @@
   {
     "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
     "@type": ["Simulation"],
+    "name": "Campaign name number one",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/1",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.2,
       "depol_stdev_mean_ratio": 0.2,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": ""
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/2",
     "@type": ["Simulation"],
+    "name": "Campaign name number two",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/2",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.2,
       "depol_stdev_mean_ratio": 0.3,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": ""
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/3",
     "@type": ["Simulation"],
+    "name": "Campaign name number three",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/3",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.2,
       "depol_stdev_mean_ratio": 0.4,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "failed",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": "2023-05-18T13:48:23.217Z"
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/4",
     "@type": ["Simulation"],
+    "name": "Campaign name number four",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/4",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.3,
       "depol_stdev_mean_ratio": 0.2,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": ""
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/5",
     "@type": ["Simulation"],
+    "name": "Campaign name number five",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/5",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.3,
       "depol_stdev_mean_ratio": 0.3,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "done",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": "2023-05-18T13:48:23.217Z"
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/6",
     "@type": ["Simulation"],
+    "name": "Campaign name number six",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/6",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.3,
       "depol_stdev_mean_ratio": 0.4,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "done",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": "2023-05-18T13:48:23.217Z"
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/7",
     "@type": ["Simulation"],
+    "name": "Campaign name number seven",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/7",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.4,
       "depol_stdev_mean_ratio": 0.2,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "done",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": "2023-05-18T13:48:23.217Z"
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/8",
     "@type": ["Simulation"],
+    "name": "Campaign name number eight",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/8",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.4,
       "depol_stdev_mean_ratio": 0.3,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "running",
     "startedAt": "2023-05-15T13:48:23.217Z",
     "completedAt": ""
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
+    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/9",
     "@type": ["Simulation"],
+    "name": "Campaign name number nine",
+    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/9",
     "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
     "coords": {
       "desired_connected_proportion_of_invivo_frs": 0.4,
       "depol_stdev_mean_ratio": 0.4,
       "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3
+      "extracellular_calcium": 0.3,
+      "celsius": [34, 35]
     },
     "status": "cancelled",
     "startedAt": "2023-05-15T13:48:23.217Z",

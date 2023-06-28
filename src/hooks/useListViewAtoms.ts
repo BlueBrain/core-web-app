@@ -1,18 +1,12 @@
-import { useAtomValue, useSetAtom } from 'jotai';
-import { ListViewAtomValues, ListViewAtomSetters } from '@/types/explore-section';
+import { useAtom } from 'jotai';
+import { ListViewAtoms } from '@/types/explore-section/application';
 
 export function useListViewAtoms({ ...atoms }) {
-  return Object.entries(atoms).reduce((acc, [key, atom]) => {
-    const atomValue = useAtomValue(atom); // eslint-disable-line react-hooks/rules-of-hooks
-
-    return { ...acc, [key]: atomValue };
-  }, {} as ListViewAtomValues);
-}
-
-export function useSetListViewAtoms({ ...atoms }) {
-  return Object.entries(atoms).reduce((acc, [key, atom]) => {
-    const setAtom = useSetAtom(atom); // eslint-disable-line react-hooks/rules-of-hooks
-
-    return { ...acc, [key]: setAtom };
-  }, {} as ListViewAtomSetters);
+  return Object.entries(atoms).reduce(
+    (acc, [key, atom]) => ({
+      ...acc,
+      [key]: useAtom(atom), // eslint-disable-line react-hooks/rules-of-hooks
+    }),
+    {} as ListViewAtoms
+  );
 }

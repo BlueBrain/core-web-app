@@ -1,5 +1,5 @@
 import { Tag } from 'antd';
-import { Campaign } from '@/types/explore-section';
+import { Campaign } from '@/types/explore-section/resources';
 
 export default function CampaignDetails(campaign: Campaign) {
   const currentCampaign = campaign;

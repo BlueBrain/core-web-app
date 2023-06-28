@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import MorphoWrapper from './MorphoWrapper';
 import { MorphoViewerOptions } from './MorphologyViewer';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 
 function MorphoViewerContainer({ resource }: { resource: DeltaResource }) {
   const [options, setOptions] = useState<MorphoViewerOptions>({

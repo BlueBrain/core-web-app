@@ -6,9 +6,7 @@ import BraynsWrapper from '../wrapper/wrapper';
 import CameraWatcher from './camera-watcher';
 import { exportPythonScriptForBraynsRecordedQueries } from './exporter/python';
 import MorphologiesManager from './morphologies-manager';
-
-// const BRAIN_MESH_URL =
-//   'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b';
+import { AtlasVisualizationManager, CellType } from '@/state/atlas';
 
 export default class BraynsService implements BraynsServiceInterface {
   private canvasValue: HTMLCanvasElement | null = null;
@@ -19,15 +17,27 @@ export default class BraynsService implements BraynsServiceInterface {
 
   public readonly camera: CameraWatcher;
 
-  constructor(private readonly wrapper: BraynsWrapper, private readonly token: string) {
+  constructor(
+    private readonly wrapper: BraynsWrapper,
+    private readonly token: string,
+    atlas: AtlasVisualizationManager
+  ) {
     this.observer = new ResizeObserver(this.handleResize);
     wrapper.eventNewImage.addListener(this.handleNewImage);
-    this.morphologiesManager = new MorphologiesManager(wrapper);
+    this.morphologiesManager = new MorphologiesManager(wrapper, atlas);
     this.camera = new CameraWatcher(wrapper);
   }
 
-  showRegion(circuitPath: string, region: { id: string }): void {
-    this.morphologiesManager.showRegion(circuitPath, region);
+  /**
+   * Ask Brayns to display all the selected regions.
+   * Everything that is not selected must be hidden.
+   * This function only schedules for the described
+   * task. It will not occur immediatly and may also
+   * not occur at all if another call is made before
+   * the previous one if over.
+   */
+  showCellsForRegions(circuitPath: string, regions: CellType[]): void {
+    this.morphologiesManager.showRegions(circuitPath, regions);
   }
 
   exportQueries(): void {

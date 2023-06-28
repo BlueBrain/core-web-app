@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Spin } from 'antd';
-import { ExploreSectionResource, TotalHits } from '@/types/explore-section';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { TotalHits } from '@/types/explore-section/fields';
 import styles from '@/components/explore-section/EphysViewerContainer/styles/loadmore-button.module.scss';
 
 const antIcon = <LoadingOutlined style={{ float: 'left', fontSize: 24 }} spin />;

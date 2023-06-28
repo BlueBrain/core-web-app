@@ -1,12 +1,13 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useState, ReactNode, CSSProperties, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
-import { ColumnProps, ColumnGroupType } from 'antd/es/table';
+import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
-import { ExploreSectionResource } from '@/types/explore-section';
+import { to64 } from '@/util/common';
+import { ExploreSectionResource, ESResponseRaw } from '@/types/explore-section/resources';
 import fetchArchive from '@/api/archive';
 import Spinner from '@/components/Spinner';
 import styles from '@/app/explore/explore.module.scss';
@@ -16,6 +17,19 @@ type ExploreSectionTableProps = {
   columns: ColumnProps<any>[];
   enableDownload?: boolean;
 };
+
+function CustomTH({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
+  const modifiedStyle = {
+    ...style,
+    padding: '16px 0 16px 16px',
+  };
+
+  return (
+    <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
+      {children}
+    </th>
+  );
+}
 
 export default function ExploreSectionTable({
   data,
@@ -31,20 +45,20 @@ export default function ExploreSectionTable({
     setSelectedRows([]);
   };
   const session = useAtomValue(sessionAtom);
-  const [dataSource, setDataSource] = useState<ExploreSectionResource[] | undefined>();
 
-  useEffect(() => {
-    if (data.state === 'hasData') {
-      setDataSource(data.data);
+  const dataSource = useMemo(() => {
+    if (data.state === 'hasData' && data.data) {
+      return data.data;
     }
+    return [];
   }, [data]);
 
   const onCellRouteHandler = {
-    onCell: (record: ColumnProps<any> | ColumnGroupType<any>) => ({
+    onCell: (record: ESResponseRaw | ESResponseRaw) => ({
       onClick: (e: MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
 
-        router.push(`${pathname}/${record.key}`);
+        router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`);
       },
     }),
   };
@@ -64,7 +78,7 @@ export default function ExploreSectionTable({
         dataSource={dataSource}
         loading={data.state === 'loading'}
         rowClassName={styles.tableRow}
-        rowKey="key"
+        rowKey="_id"
         rowSelection={
           enableDownload
             ? {
@@ -75,6 +89,11 @@ export default function ExploreSectionTable({
             : undefined
         }
         pagination={false}
+        components={{
+          header: {
+            cell: CustomTH,
+          },
+        }}
       />
       {session && selectedRows.length > 0 && (
         <div className="sticky bottom-0 flex justify-end">

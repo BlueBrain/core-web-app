@@ -5,7 +5,7 @@ import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { NexusImage } from './NexusImage';
 import ImageViewComponent from './ImageViewComponent';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 import createImageCollectionDataAtom from '@/components/explore-section/EphysViewerContainer/state/ImageCollectionDataAtom';
 
 // Only fetch three traces at a time.

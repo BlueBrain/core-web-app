@@ -1,87 +1,19 @@
-import { Dispatch, SetStateAction } from 'react';
-import { CheckboxOption, CheckListFilter, Filter, OptionsData } from './types';
+import { Filter } from './types';
 
 /**
- * Transforms an ElasticSearch aggregation into an array of CheckList options.
- * @param {OptionsData} data - The aggregations object whose buckets will be used as CheckList options.
- * @param {CheckListFilter} filter - The filter object that contains any previously selected options.
- * @param {string} field - Ex. "createdBy", "eType", etc.
+ * Checks whether the filter has a value assigned
+ *
+ * @param filter the filter to check
  */
-export function createOptionsFromBuckets(
-  data: OptionsData,
-  { value: selectedOptions }: CheckListFilter,
-  field: string
-) {
-  const defaultBuckets = data[field as keyof OptionsData]?.buckets;
-  const withOtherFilters = data[field as keyof OptionsData]?.excludeOwnFilter?.buckets;
-  const buckets = withOtherFilters?.length ? withOtherFilters : defaultBuckets;
-
-  return buckets?.map(({ key, doc_count: count }: { key: string; doc_count: number }) => {
-    const existingIndex = selectedOptions.findIndex((selectedKey) => selectedKey === key);
-
-    return {
-      checked: existingIndex !== -1,
-      count,
-      key,
-    };
-  }) as CheckboxOption[];
-}
-
-/**
- * Higher-Order Function: Returns an event handler.
- * @param {Filter[]} filters - The FiltersAtom.
- * @param {Dispatch<SetStateAction<Filter[]>>} setFilters - Sets the FiltersAtom.
- * @param {Filter} filter - Ex. a single element from the filters array
- */
-export function getCheckedChangeHandler(
-  filters: Filter[],
-  setFilters: Dispatch<SetStateAction<Filter[]>>,
-  filter: Filter
-) {
-  return (key: string) => {
-    const filterIndex = filters.findIndex((f) => f.field === filter.field);
-    const otherCheckedOptions = (filters[filterIndex] as CheckListFilter).value;
-    const existingIndex = otherCheckedOptions.findIndex((optionKey: string) => optionKey === key);
-
-    setFilters([
-      ...filters.slice(0, filterIndex),
-      {
-        field: filter.field,
-        title: filter.title,
-        type: 'checkList',
-        value:
-          existingIndex !== -1
-            ? [
-                ...otherCheckedOptions.slice(0, existingIndex),
-                ...otherCheckedOptions.slice(existingIndex + 1),
-              ]
-            : [...otherCheckedOptions, key],
-      },
-      ...filters.slice(filterIndex + 1),
-    ]);
-  };
-}
-
-/**
- * Higher-Order Function: Returns a useEffect callback. This side effect will be triggered whenever the FiltersAtom updates.
- * @param {string} field - Ex. "createdBy", "eType", etc.
- */
-export function getFillOptionsEffect(field: string) {
-  return (
-    data: OptionsData,
-    filters: Filter[],
-    setOptions: Dispatch<SetStateAction<CheckboxOption[]>>
-  ) => {
-    const optionsFromBuckets = createOptionsFromBuckets(
-      data,
-      filters.find(
-        ({ field: itemField }: { field: string }) => itemField === field
-      ) as CheckListFilter,
-      field
-    );
-
-    if (optionsFromBuckets) {
-      setOptions(optionsFromBuckets);
-    }
-  };
+export function filterHasValue(filter: Filter) {
+  switch (filter.type) {
+    case 'checkList':
+      return filter.value.length !== 0;
+    case 'dateRange':
+      return filter.value.gte || filter.value.lte;
+    case 'valueRange':
+      return filter.value.gte || filter.value.lte;
+    default:
+      return !!filter.value;
+  }
 }

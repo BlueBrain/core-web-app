@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
 import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
-import { DeltaResource } from '@/types/explore-section';
+import { DeltaResource } from '@/types/explore-section/resources';
 import Contributors from '@/components/explore-section/Contributors';
 import License from '@/components/explore-section/License';
 import Species from '@/components/explore-section/Species';

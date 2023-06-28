@@ -1,8 +1,9 @@
-import { ChangeEvent, useCallback, useMemo, useReducer } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 import compose from 'lodash/fp/compose';
 import { PartialRecord } from '@/types/common';
 
 export type FilterType = 'all' | 'value' | 'range';
+
 export type FilterValues = {
   checked: boolean;
   id: string;
@@ -10,14 +11,16 @@ export type FilterValues = {
   type: FilterType | undefined; // undefined before selected
   value?: string;
 };
+
 export type FilterMethods = {
-  onCheckboxChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  toggleColumn: (key: string) => void;
   onRadioChange: (value: number, id: string) => void;
   onRangeChange: (type: 'max' | 'min', value?: number) => void;
   onValueChange: (value: string) => void;
 };
 
 type FiltersState = FilterValues[];
+
 type FiltersAction = {
   type: 'filter-toggle' | 'filter-range-update' | 'filter-type-update' | 'filter-value-update';
   payload: PartialRecord<keyof FilterValues, any>; // TODO: Update ANY to be more specific.
@@ -119,9 +122,9 @@ export default function useFilterList(defaultState: FiltersState) {
     return !appliedFilters.includes(false);
   }
 
-  function checkForActiveFilters({ id }: { id: string }) {
+  function checkForActiveFilters({ key }: { key: string }) {
     const matchInState = state.findIndex(
-      ({ checked, id: idInState }) => idInState === id && checked === true
+      ({ checked, id: idInState }) => idInState === key && checked === true
     );
 
     return matchInState > -1;
@@ -149,9 +152,9 @@ export default function useFilterList(defaultState: FiltersState) {
 
   const getValues = useCallback((id: string) => getFilterValuesFromId(id), [getFilterValuesFromId]);
 
-  const onCheckboxChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const config = getFilterValuesFromId(e.target.value);
+  const toggleColumn = useCallback(
+    (key: string) => {
+      const config = getFilterValuesFromId(key);
 
       return dispatch({ type: 'filter-toggle', payload: config });
     },
@@ -192,12 +195,12 @@ export default function useFilterList(defaultState: FiltersState) {
 
   const getMethods = useCallback(
     (id: string): FilterMethods => ({
-      onCheckboxChange,
+      toggleColumn,
       onRadioChange: getOnRadioChange(id),
       onRangeChange: getOnRangeChange(id),
       onValueChange: getOnValueChange(id),
     }),
-    [getOnRadioChange, getOnRangeChange, getOnValueChange, onCheckboxChange]
+    [getOnRadioChange, getOnRangeChange, getOnValueChange, toggleColumn]
   );
 
   return {

@@ -37,6 +37,7 @@
     "date-fns": "^2.30.0",
     "distinct-colors": "^3.0.0",
     "downsample": "^1.4.0",
+    "elastic-builder": "^2.20.0",
     "file-saver": "^2.0.5",
     "jotai": "^2.1.0",
     "jotai-optics": "^0.3.0",

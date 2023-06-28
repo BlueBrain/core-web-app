@@ -7,6 +7,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import Link from '@/components/Link';
+import SectionLinks from '@/components/simulate/SectionLinks';
 
 type Props = {
   children: ReactNode;
@@ -28,9 +29,7 @@ export default function SimulationCampaignSelectorLayout({ children }: Props) {
           <span className="ml-4">Back home</span>
         </Link>
 
-        <div className="text-l mt-10 text-primary-3 cursor-not-allowed">All</div>
-        <div className="text-l mt-2">Public simulation campaigns</div>
-        <div className="text-l mt-2 text-primary-3 cursor-not-allowed">My simulation campaigns</div>
+        <SectionLinks />
       </div>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>

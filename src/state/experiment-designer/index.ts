@@ -2,11 +2,10 @@
 
 import { atom } from 'jotai';
 import { Session } from 'next-auth';
-import { selectAtom } from 'jotai/utils';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 
-import { ExpDesignerConfig } from '@/types/experiment-designer';
+import { ExpDesignerConfig, ExpDesignerSectionName } from '@/types/experiment-designer';
 import expDesParamsDefaults from '@/components/experiment-designer/experiment-designer-defaults';
 import detailedCircuitAtom from '@/state/circuit';
 import sessionAtom from '@/state/session';
@@ -32,10 +31,44 @@ import {
   getBuiltBrainModelConfigsQuery,
   getGeneratorTaskActivityByCircuitIdQuery,
 } from '@/queries/es';
+import {
+  processStimuliAllowedModules,
+  processStimulationConditionalParams,
+} from '@/util/experiment-designer';
 
 const nodeSetsAPIUrl = 'https://cells.sbo.kcp.bbp.epfl.ch/circuit/node_sets?input_path=';
 
-export const expDesignerConfigAtom = atom<ExpDesignerConfig>(expDesParamsDefaults);
+export const expDesignerConfigAtomBase = atom<ExpDesignerConfig>(expDesParamsDefaults);
+
+/* this is a derivated atom that will modify the params of the config based on
+   some user input in the stimulus section */
+export const expDesignerConfigAtom = atom<ExpDesignerConfig, [ExpDesignerConfig?], void>(
+  (get) => {
+    const params = get(expDesignerConfigAtomBase);
+    const sectionNames = Object.keys(params) as ExpDesignerSectionName[];
+    const processedConfig = sectionNames.reduce((newConfig, sectionName) => {
+      if (sectionName === 'stimuli') {
+        let stimuliConfig = structuredClone(params[sectionName]);
+        stimuliConfig = processStimuliAllowedModules(stimuliConfig);
+        stimuliConfig = processStimulationConditionalParams(stimuliConfig);
+        newConfig[sectionName] = stimuliConfig; // eslint-disable-line no-param-reassign
+        return newConfig;
+      }
+      if (sectionName === 'recording') {
+        const recordingConfig = structuredClone(params[sectionName]);
+        newConfig[sectionName] = recordingConfig; // eslint-disable-line no-param-reassign
+        return newConfig;
+      }
+      newConfig[sectionName] = structuredClone(params[sectionName]); // eslint-disable-line no-param-reassign
+      return newConfig;
+    }, {} as ExpDesignerConfig);
+    return processedConfig;
+  },
+  (get, set, config) => {
+    if (!config) return;
+    set(expDesignerConfigAtomBase, config);
+  }
+);
 
 export const idAtom = atom<string | null>(null);
 
@@ -56,15 +89,19 @@ export const configResourceAtom = atom<Promise<SimulationCampaignUIConfigResourc
   }
 );
 
-const configPayloadUrlAtom = selectAtom(
-  configResourceAtom,
-  (config) => config?.distribution.contentUrl
-);
+const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
+  const configResource = await get(configResourceAtom);
+  if (!configResource) return null;
 
-export const isConfigUsedInSimAtom = selectAtom(
-  configResourceAtom,
-  (config) => !!config?.wasInfluencedBy?.['@id']
-);
+  return configResource.distribution.contentUrl;
+});
+
+export const isConfigUsedInSimAtom = atom<Promise<boolean | null>>(async (get) => {
+  const configResource = await get(configResourceAtom);
+  if (!configResource) return null;
+
+  return !!configResource?.wasInfluencedBy?.['@id'];
+});
 
 export const simCampaignUserAtom = atom<Promise<string | null>>(async (get) => {
   const configResource = await get(configResourceAtom);
@@ -99,6 +136,7 @@ const updateConfigPayloadAtom = atom<null, [], Promise<void>>(null, async (get, 
   const localConfigPayload = get(expDesignerConfigAtom);
   const savedConfigPayload = get(savedConfigAtom);
 
+  if (!localConfigPayload || !savedConfigPayload) return;
   if (isEqual(localConfigPayload, savedConfigPayload)) return;
 
   const session = get(sessionAtom);

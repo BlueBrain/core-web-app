@@ -42,6 +42,7 @@
     "lodash/chaining": "off",
     "lodash/prefer-constant": "off",
     "lodash/prop-shorthand": "off",
-    "lodash/matches-prop-shorthand": "off"
+    "lodash/matches-prop-shorthand": "off",
+    "import/prefer-default-export": "off"
   }
 }

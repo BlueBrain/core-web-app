@@ -4,7 +4,7 @@ import { Key, ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
 import { DetailProps, ListField } from '@/components/explore-section/Detail';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
-import { DeltaResource, SimulationCampaignResource } from '@/types/explore-section';
+import { DeltaResource, SimulationCampaignResource } from '@/types/explore-section/resources';
 import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 import { classNames } from '@/util/utils';
 import Simulations from '@/components/explore-section/Simulations';
@@ -39,7 +39,7 @@ function SimulationCampaignDetail({
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <div className="flex flex-col gap-10 max-w-screen-2xl">
           <DetailHeaderName detail={detail} url="/simulation-campaigns/test" />
-          <div className="grid gap-4 grid-cols-6">
+          <div className="grid gap-4 grid-cols-6 break-words">
             {fields.map(
               ({ className, field, title }) =>
                 serializedFields && (
@@ -89,7 +89,7 @@ const fields: DetailProps[] = [
     field: ({ contributors }) => <ListField items={contributors} />,
   },
   {
-    title: 'Updated At',
+    title: 'Updated',
     field: ({ updatedAt }) => updatedAt,
   },
 ];

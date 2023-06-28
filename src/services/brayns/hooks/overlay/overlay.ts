@@ -1,14 +1,15 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/prefer-default-export */
 import React from 'react';
-import { useVisibleMeshes } from '../../../../state/atlas';
 import State from '../../state';
 import { BraynsMeshOptions } from '../../types';
 import OverlayManager from './manager';
+import { useAtlasVisualizationManager, useVisibleMeshes } from '@/state/atlas';
 
 export function useOverlay(token?: string): {
   handleOverlayCanvasMount: (canvas: HTMLCanvasElement | null) => void;
 } {
+  const atlas = useAtlasVisualizationManager();
   const refMeshes = React.useRef<BraynsMeshOptions[]>([]);
   const refManager = React.useRef<OverlayManager | null>(null);
   const visibleMeshes = useVisibleMeshes();
@@ -40,10 +41,10 @@ export function useOverlay(token?: string): {
       (canvas: HTMLCanvasElement | null) => {
         if (!canvas || !token) return;
 
-        refManager.current = new OverlayManager(canvas, token);
+        refManager.current = new OverlayManager(canvas, token, atlas);
         refManager.current.showMeshes(refMeshes.current);
       },
-      [token]
+      [token, atlas]
     ),
   };
 }
