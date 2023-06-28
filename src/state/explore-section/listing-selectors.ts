@@ -97,10 +97,8 @@ export const selectorFnDate = (date: string) =>
  * Formats an nValue entity with units
  * @param nValueEntity the nValue
  */
-export const selectorFnValueWithUnit = (nValueEntity?: NValueEntity) => {
-  const unit = nValueEntity && nValueEntity.unit ? nValueEntity.unit : '';
-  return nValueEntity ? `${formatNumber(Number(nValueEntity.value))} ${unit}` : '';
-};
+export const selectorFnValue = (nValueEntity?: NValueEntity) =>
+  nValueEntity ? formatNumber(Number(nValueEntity.value)) : '';
 
 /**
  * Renders the text value
