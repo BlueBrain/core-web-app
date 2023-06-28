@@ -70,6 +70,10 @@ const defaultCollection: AtlasVisualizationType = {
 
 export const atlasVisualizationAtom = atom<AtlasVisualizationType>(defaultCollection);
 
+export const resetAtlasVisualizationAtom = atom(null, (get, set) =>
+  set(atlasVisualizationAtom, defaultCollection)
+);
+
 // Singleton.
 let atlasVisualizationManager: null | AtlasVisualizationManager = null;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { RefObject, useRef, useState, useMemo } from 'react';
+import React, { RefObject, useRef, useState, useMemo, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -21,6 +21,8 @@ import { NavValue } from '@/components/TreeNavItem';
 import { BrainRegion } from '@/types/ontologies';
 import ColorBox from '@/components/build-section/BrainRegionSelector/ColorBox';
 import VisualizationTrigger from '@/components/build-section/BrainRegionSelector/VisualizationTrigger';
+import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
+import { resetAtlasVisualizationAtom } from '@/state/atlas/atlas';
 
 function NavTitle({
   className,
@@ -92,10 +94,24 @@ function NavTitle({
 export default function BrainRegions() {
   const brainRegionsTree = useAtomValue(brainRegionsAlternateTreeAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const resetBrainRegion = useSetAtom(selectedBrainRegionAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [navValue, setNavValue] = useState<NavValue>(null);
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
+  const brainModelConfigId = useAtomValue(brainModelConfigIdAtom);
+  const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
+  const setResetAtlasVisualization = useSetAtom(resetAtlasVisualizationAtom);
+
+  useEffect(() => {
+    if (!brainModelConfigId) return;
+    if (brainModelConfigId === localSelectedBrainModelConfigId) return;
+
+    setLocalSelectedBrainModelConfigId(brainModelConfigId);
+    setNavValue(null); // reset tree
+    resetBrainRegion(null); // reset brain region
+    setResetAtlasVisualization(); // reset meshes
+  }, [brainModelConfigId, localSelectedBrainModelConfigId]);
 
   return brainRegionsTree ? (
     <div className="bg-primary-8 flex flex-1 flex-col h-screen">
