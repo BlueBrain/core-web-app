@@ -11,8 +11,8 @@ export default function ArrowLeftRightIcon({ className, style }: ArrowLeftRightI
       className={className}
       style={style}
       width="26"
-      height="18"
-      viewBox="0 0 26 18"
+      height="8"
+      viewBox="0 0 26 8"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >

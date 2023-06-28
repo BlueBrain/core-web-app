@@ -60,7 +60,7 @@ export default function MorphologyPage() {
   const columns = useExploreColumns(columnKeys, sortState, setSortState);
 
   // Display all columns by default.
-  useEffect(() => () => setActiveColumns(['index', ...columnKeys]), [setActiveColumns]);
+  useEffect(() => setActiveColumns(['index', ...columnKeys]), [setActiveColumns]);
 
   const onToggleActive = useCallback(
     (key: string) => {

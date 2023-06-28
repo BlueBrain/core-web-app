@@ -47,7 +47,7 @@ export default function ValueRange({
           initialValues={{ 'min-range': filter.value.gte, 'max-range': filter.value.lte }}
           form={form}
         >
-          <Form.Item name="min-range" className="mb-0">
+          <Form.Item name="min-range" noStyle>
             <InputNumber
               disabled={disabled}
               className="text-neutral-2 w-32"
@@ -59,10 +59,10 @@ export default function ValueRange({
               onChange={submitForm}
             />
           </Form.Item>
-          <div className="w-min mx-2 mt-auto">
+          <div className="w-min mx-2">
             <ArrowLeftRightIcon />
           </div>
-          <Form.Item name="max-range" className="mb-0">
+          <Form.Item name="max-range" noStyle>
             <InputNumber
               disabled={disabled}
               className="text-neutral-2 w-32"

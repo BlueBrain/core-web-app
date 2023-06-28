@@ -148,7 +148,6 @@ function ControlPanelWithDimensions({
   getValues,
   getMethods,
   options,
-  // setActiveColumns,
   setFilters,
   setOpen,
 }: Omit<ControlPanelProps, 'setActiveColumns'> & {
@@ -162,7 +161,6 @@ function ControlPanelWithDimensions({
       activeColumns={activeColumns}
       aggregations={aggregations}
       filters={filters}
-      // setActiveColumns={setActiveColumns}
       setFilters={setFilters}
       setOpen={setOpen}
     >
