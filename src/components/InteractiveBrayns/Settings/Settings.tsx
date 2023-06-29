@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react';
+import { useId } from 'react';
+
 import { Slider } from 'antd';
 import LeftMouseButtonIcon from '../Icons/LeftMouseButtonIcon';
 import MiddleMouseButtonIcon from '../Icons/MiddleMouseButtonIcon';
@@ -23,7 +24,7 @@ export default function Settings({
   opacity,
   onOpacityChange,
 }: SettingsProps) {
-  const opacityId = React.useId();
+  const opacityId = useId();
   return (
     <div className={`${Styles.settings} ${visible ? Styles.show : Styles.hide}`}>
       <div className={Styles.closeButton}>

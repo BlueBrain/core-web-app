@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+
 import { logError } from '../../../util/logger';
 import Painter from './painter';
 import Icon from './Icon';
@@ -22,8 +23,8 @@ export interface AxisGizmoViewProps {
 }
 
 export default function AxisGizmoView({ className, camera }: AxisGizmoViewProps) {
-  const refCanvas = React.useRef<null | HTMLCanvasElement>(null);
-  React.useEffect((): (() => void) | undefined => {
+  const refCanvas = useRef<null | HTMLCanvasElement>(null);
+  useEffect((): (() => void) | undefined => {
     const canvas = refCanvas.current;
     if (!canvas) return undefined;
 
@@ -34,7 +35,7 @@ export default function AxisGizmoView({ className, camera }: AxisGizmoViewProps)
       return undefined;
     }
   }, [camera]);
-  const rotate = React.useCallback(
+  const rotate = useCallback(
     (direction: number) => {
       camera.rotateAroundZ(-direction * 0.5 * Math.PI);
     },

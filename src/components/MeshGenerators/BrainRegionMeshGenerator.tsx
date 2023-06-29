@@ -1,7 +1,11 @@
-import * as THREE from 'three';
+import {
+  BufferAttribute as ThreeBufferAttribute,
+  BufferGeometry as ThreeBufferGeometry,
+} from 'three';
 import { useAtomValue } from 'jotai';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
+
 import { usePreventParallelism } from '@/hooks/parallelism';
 import AtlasMesh from '@/visual/meshcollection/AtlasMesh';
 import { useAtlasVisualizationManager } from '@/state/atlas';
@@ -38,9 +42,9 @@ function BrainRegionMesh({ id, colorCode, threeContextWrapper }: BrainRegionMesh
     // the lib leaves room for 4-vertices faces by adding -1
     const indices = new Uint32Array(meshData.vertexPositionIndices.filter((v: number) => v >= 0));
     const positions = new Float32Array(meshData.vertexPositions);
-    const geometry = new THREE.BufferGeometry();
-    geometry.setIndex(new THREE.BufferAttribute(indices, 1));
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const geometry = new ThreeBufferGeometry();
+    geometry.setIndex(new ThreeBufferAttribute(indices, 1));
+    geometry.setAttribute('position', new ThreeBufferAttribute(positions, 3));
     geometry.computeBoundingSphere();
     geometry.computeVertexNormals();
     return new AtlasMesh(geometry, options);

@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
-import React, { SyntheticEvent } from 'react';
+import { SyntheticEvent, useCallback, useRef, useState } from 'react';
+
 import LeftMouseButtonIcon from '../Icons/LeftMouseButtonIcon';
 import MiddleMouseButtonIcon from '../Icons/MiddleMouseButtonIcon';
 import RightMouseButtonIcon from '../Icons/RightMouseButtonIcon';
@@ -55,10 +56,10 @@ const SUBTITLES: Array<[time: number, content: React.ReactNode]> = [
 const PLAYBACK_RATE = 0.5;
 
 export default function Tutorial() {
-  const refVideoTop = React.useRef<HTMLVideoElement | null>(null);
-  const refVideoBottom = React.useRef<HTMLVideoElement | null>(null);
-  const [subtitle, setSubtitle] = React.useState<React.ReactNode>('');
-  const handleTimeUpdate = React.useCallback((evt: SyntheticEvent<HTMLVideoElement>) => {
+  const refVideoTop = useRef<HTMLVideoElement | null>(null);
+  const refVideoBottom = useRef<HTMLVideoElement | null>(null);
+  const [subtitle, setSubtitle] = useState<React.ReactNode>('');
+  const handleTimeUpdate = useCallback((evt: SyntheticEvent<HTMLVideoElement>) => {
     const video = evt.target as HTMLVideoElement;
     let value: React.ReactNode = '';
     for (const [time, text] of SUBTITLES) {

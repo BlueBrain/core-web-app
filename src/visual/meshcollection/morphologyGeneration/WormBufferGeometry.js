@@ -2,9 +2,15 @@
 // but instead of following a path with a fixed sampling and fixed radius, we follow a list
 // of positions (Vector3D) and a list of radius.
 
-import * as THREE from 'three';
+import {
+  BufferGeometry as ThreeBufferGeometry,
+  Vector2 as ThreeVector2,
+  Vector3 as ThreeVector3,
+  Matrix4 as ThreeMatrix4,
+  Float32BufferAttribute as ThreeFloat32BufferAttribute,
+} from 'three';
 
-export default class WormBufferGeometry extends THREE.BufferGeometry {
+export default class WormBufferGeometry extends ThreeBufferGeometry {
   constructor(positions, radii, radialSegments = 32) {
     super();
     this.type = 'WormBufferGeometry';
@@ -18,10 +24,10 @@ export default class WormBufferGeometry extends THREE.BufferGeometry {
     this.binormals = frames.binormals;
 
     // helper variables
-    const vertex = new THREE.Vector3();
-    const normal = new THREE.Vector3();
-    const uv = new THREE.Vector2();
-    let P = new THREE.Vector3();
+    const vertex = new ThreeVector3();
+    const normal = new ThreeVector3();
+    const uv = new ThreeVector2();
+    let P = new ThreeVector3();
 
     // buffer
     const vertices = [];
@@ -104,17 +110,17 @@ export default class WormBufferGeometry extends THREE.BufferGeometry {
 
     // build geometry
     this.setIndex(indices);
-    // this.addAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
-    // this.addAttribute('normal', new THREE.Float32BufferAttribute(normals, 3))
-    // this.addAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
-    this.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    this.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-    this.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    // this.addAttribute('position', new ThreeFloat32BufferAttribute(vertices, 3))
+    // this.addAttribute('normal', new ThreeFloat32BufferAttribute(normals, 3))
+    // this.addAttribute('uv', new ThreeFloat32BufferAttribute(uvs, 2))
+    this.setAttribute('position', new ThreeFloat32BufferAttribute(vertices, 3));
+    this.setAttribute('normal', new ThreeFloat32BufferAttribute(normals, 3));
+    this.setAttribute('uv', new ThreeFloat32BufferAttribute(uvs, 2));
   } // end constructor
 
   static computeFrenetFrames(positions) {
-    const normals = [new THREE.Vector3()];
-    const binormals = [new THREE.Vector3()];
+    const normals = [new ThreeVector3()];
+    const binormals = [new ThreeVector3()];
 
     const tangents = positions.map((pos, i) => {
       // general cases
@@ -132,15 +138,15 @@ export default class WormBufferGeometry extends THREE.BufferGeometry {
 
       const p1 = positions[p1i];
       const p2 = positions[p2i];
-      const tangent = new THREE.Vector3();
+      const tangent = new ThreeVector3();
       tangent.copy(p2).sub(p1).normalize();
       return tangent;
     });
 
     // some temporary data holders
-    const normal = new THREE.Vector3();
-    const vec = new THREE.Vector3();
-    const mat = new THREE.Matrix4();
+    const normal = new ThreeVector3();
+    const vec = new ThreeVector3();
+    const mat = new ThreeMatrix4();
 
     // the first point has a special treatment
     let min = Number.MAX_VALUE;

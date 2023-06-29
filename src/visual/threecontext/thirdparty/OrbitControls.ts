@@ -1,4 +1,14 @@
-import * as THREE from 'three';
+import {
+  Camera as ThreeCamera,
+  OrthographicCamera as ThreeOrthographicCamera,
+  PerspectiveCamera as ThreePerspectiveCamera,
+  EventDispatcher as ThreeEventDispatcher,
+  Vector2 as ThreeVector2,
+  Vector3 as ThreeVector3,
+  Quaternion as ThreeQuaternion,
+  Spherical as ThreeSpherical,
+  MOUSE as ThreeMOUSE,
+} from 'three';
 
 const STATE = {
   NONE: -1,
@@ -15,12 +25,12 @@ const START_EVENT = { type: 'start' };
 const END_EVENT = { type: 'end' };
 const EPS = 0.000001;
 
-function checkPerspectiveCamera(camera: THREE.Camera): camera is THREE.PerspectiveCamera {
-  return (camera as THREE.PerspectiveCamera).isPerspectiveCamera;
+function checkPerspectiveCamera(camera: ThreeCamera): camera is ThreePerspectiveCamera {
+  return (camera as ThreePerspectiveCamera).isPerspectiveCamera;
 }
 
-function checkOrthographicCamera(camera: THREE.Camera): camera is THREE.OrthographicCamera {
-  return (camera as THREE.OrthographicCamera).isOrthographicCamera;
+function checkOrthographicCamera(camera: ThreeCamera): camera is ThreeOrthographicCamera {
+  return (camera as ThreeOrthographicCamera).isOrthographicCamera;
 }
 
 /**
@@ -37,8 +47,8 @@ function checkOrthographicCamera(camera: THREE.Camera): camera is THREE.Orthogra
  *    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
  *    Pan - right mouse, or arrow keys / touch: three finger swipe
  */
-export default class OrbitControls extends THREE.EventDispatcher {
-  object: THREE.Camera;
+export default class OrbitControls extends ThreeEventDispatcher {
+  object: ThreeCamera;
 
   domElement: HTMLElement | Document;
 
@@ -47,7 +57,7 @@ export default class OrbitControls extends THREE.EventDispatcher {
   // API
   enabled: boolean;
 
-  target: THREE.Vector3;
+  target: ThreeVector3;
 
   enableZoom: boolean;
 
@@ -85,63 +95,63 @@ export default class OrbitControls extends THREE.EventDispatcher {
 
   keys: { LEFT: number; UP: number; RIGHT: number; BOTTOM: number };
 
-  mouseButtons: { ORBIT: THREE.MOUSE; ZOOM: THREE.MOUSE; PAN: THREE.MOUSE };
+  mouseButtons: { ORBIT: ThreeMOUSE; ZOOM: ThreeMOUSE; PAN: ThreeMOUSE };
 
   enableDamping: boolean;
 
   dampingFactor: number;
 
-  private readonly spherical: THREE.Spherical;
+  private readonly spherical: ThreeSpherical;
 
-  private sphericalDelta: THREE.Spherical;
+  private sphericalDelta: ThreeSpherical;
 
   private scale: number;
 
-  private readonly target0: THREE.Vector3;
+  private readonly target0: ThreeVector3;
 
-  private readonly position0: THREE.Vector3;
+  private readonly position0: ThreeVector3;
 
   private zoom0: any;
 
   private state: number;
 
-  private readonly panOffset: THREE.Vector3;
+  private readonly panOffset: ThreeVector3;
 
   private zoomChanged: boolean;
 
-  private readonly rotateStart: THREE.Vector2;
+  private readonly rotateStart: ThreeVector2;
 
-  private readonly rotateEnd: THREE.Vector2;
+  private readonly rotateEnd: ThreeVector2;
 
-  private rotateDelta: THREE.Vector2;
+  private rotateDelta: ThreeVector2;
 
-  private readonly panStart: THREE.Vector2;
+  private readonly panStart: ThreeVector2;
 
-  private readonly panEnd: THREE.Vector2;
+  private readonly panEnd: ThreeVector2;
 
-  private panDelta: THREE.Vector2;
+  private panDelta: ThreeVector2;
 
-  private readonly dollyStart: THREE.Vector2;
+  private readonly dollyStart: ThreeVector2;
 
-  private readonly dollyEnd: THREE.Vector2;
+  private readonly dollyEnd: ThreeVector2;
 
-  private dollyDelta: THREE.Vector2;
+  private dollyDelta: ThreeVector2;
 
-  private updateLastPosition: THREE.Vector3;
+  private updateLastPosition: ThreeVector3;
 
-  private readonly updateOffset: THREE.Vector3;
+  private readonly updateOffset: ThreeVector3;
 
-  private readonly updateQuat: THREE.Quaternion;
+  private readonly updateQuat: ThreeQuaternion;
 
-  private updateLastQuaternion: THREE.Quaternion;
+  private updateLastQuaternion: ThreeQuaternion;
 
-  private readonly updateQuatInverse: THREE.Quaternion;
+  private readonly updateQuatInverse: ThreeQuaternion;
 
-  private readonly panLeftV: THREE.Vector3;
+  private readonly panLeftV: ThreeVector3;
 
-  private readonly panUpV: THREE.Vector3;
+  private readonly panUpV: ThreeVector3;
 
-  private panInternalOffset: THREE.Vector3;
+  private panInternalOffset: ThreeVector3;
 
   private readonly onContextMenu: EventListener;
 
@@ -163,7 +173,7 @@ export default class OrbitControls extends THREE.EventDispatcher {
 
   private readonly applyRotation: () => void;
 
-  constructor(object: THREE.Camera, domElement?: HTMLElement, domWindow?: Window) {
+  constructor(object: ThreeCamera, domElement?: HTMLElement, domWindow?: Window) {
     super();
     this.object = object;
 
@@ -174,7 +184,7 @@ export default class OrbitControls extends THREE.EventDispatcher {
     this.enabled = true;
 
     // "target" sets the location of focus, where the object orbits around
-    this.target = new THREE.Vector3();
+    this.target = new ThreeVector3();
 
     // How far you can dolly in and out ( PerspectiveCamera only )
     this.minDistance = 0;
@@ -225,9 +235,9 @@ export default class OrbitControls extends THREE.EventDispatcher {
 
     // Mouse buttons
     this.mouseButtons = {
-      ORBIT: THREE.MOUSE.LEFT,
-      ZOOM: THREE.MOUSE.MIDDLE,
-      PAN: THREE.MOUSE.RIGHT,
+      ORBIT: ThreeMOUSE.LEFT,
+      ZOOM: ThreeMOUSE.MIDDLE,
+      PAN: ThreeMOUSE.RIGHT,
     };
 
     // for reset
@@ -236,41 +246,41 @@ export default class OrbitControls extends THREE.EventDispatcher {
     this.zoom0 = (this.object as any).zoom;
 
     // for update speedup
-    this.updateOffset = new THREE.Vector3();
+    this.updateOffset = new ThreeVector3();
     // so camera.up is the orbit axis
-    this.updateQuat = new THREE.Quaternion().setFromUnitVectors(
+    this.updateQuat = new ThreeQuaternion().setFromUnitVectors(
       object.up,
-      new THREE.Vector3(0, 1, 0)
+      new ThreeVector3(0, 1, 0)
     );
-    this.updateQuatInverse = new THREE.Quaternion().copy(this.updateQuat).invert();
-    this.updateLastPosition = new THREE.Vector3();
-    this.updateLastQuaternion = new THREE.Quaternion();
+    this.updateQuatInverse = new ThreeQuaternion().copy(this.updateQuat).invert();
+    this.updateLastPosition = new ThreeVector3();
+    this.updateLastQuaternion = new ThreeQuaternion();
 
     this.state = STATE.NONE;
     this.scale = 1;
 
     // current position in spherical coordinates
-    this.spherical = new THREE.Spherical();
-    this.sphericalDelta = new THREE.Spherical();
+    this.spherical = new ThreeSpherical();
+    this.sphericalDelta = new ThreeSpherical();
 
-    this.panOffset = new THREE.Vector3();
+    this.panOffset = new ThreeVector3();
     this.zoomChanged = false;
 
-    this.rotateStart = new THREE.Vector2();
-    this.rotateEnd = new THREE.Vector2();
-    this.rotateDelta = new THREE.Vector2();
+    this.rotateStart = new ThreeVector2();
+    this.rotateEnd = new ThreeVector2();
+    this.rotateDelta = new ThreeVector2();
 
-    this.panStart = new THREE.Vector2();
-    this.panEnd = new THREE.Vector2();
-    this.panDelta = new THREE.Vector2();
+    this.panStart = new ThreeVector2();
+    this.panEnd = new ThreeVector2();
+    this.panDelta = new ThreeVector2();
 
-    this.dollyStart = new THREE.Vector2();
-    this.dollyEnd = new THREE.Vector2();
-    this.dollyDelta = new THREE.Vector2();
+    this.dollyStart = new ThreeVector2();
+    this.dollyEnd = new ThreeVector2();
+    this.dollyDelta = new ThreeVector2();
 
-    this.panLeftV = new THREE.Vector3();
-    this.panUpV = new THREE.Vector3();
-    this.panInternalOffset = new THREE.Vector3();
+    this.panLeftV = new ThreeVector3();
+    this.panUpV = new ThreeVector3();
+    this.panInternalOffset = new ThreeVector3();
 
     // event handlers - FSM: listen for events and reset state
 
@@ -762,18 +772,18 @@ export default class OrbitControls extends THREE.EventDispatcher {
   }
 
   // backward compatibility
-  get center(): THREE.Vector3 {
-    console.warn('THREE.OrbitControls: .center has been renamed to .target');
+  get center(): ThreeVector3 {
+    console.warn('ThreeOrbitControls: .center has been renamed to .target');
     return this.target;
   }
 
   get noZoom(): boolean {
-    console.warn('THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
+    console.warn('ThreeOrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
     return !this.enableZoom;
   }
 
   set noZoom(value: boolean) {
-    console.warn('THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
+    console.warn('ThreeOrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
     this.enableZoom = !value;
   }
 }
@@ -782,7 +792,7 @@ interface ThreeEvent extends Event {
   clientX: number;
   clientY: number;
   deltaY: number;
-  button: THREE.MOUSE;
+  button: ThreeMOUSE;
   touches: Array<any>;
   keyCode: number;
 }

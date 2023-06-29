@@ -3,6 +3,7 @@ import { Color } from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import useNotification from '@/hooks/notifications';

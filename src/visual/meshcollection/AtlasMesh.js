@@ -1,4 +1,15 @@
-import * as THREE from 'three';
+import {
+  Color as ThreeColor,
+  Object3D as ThreeObject3D,
+  ShaderMaterial as ThreeShaderMaterial,
+  MeshPhongMaterial as ThreeMeshPhongMaterial,
+  MeshNormalMaterial as ThreeMeshNormalMaterial,
+  MeshBasicMaterial as ThreeMeshBasicMaterial,
+  Mesh as ThreeMesh,
+  FrontSide as ThreeFrontSide,
+  AdditiveBlending as ThreeAdditiveBlending,
+} from 'three';
+
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 
 const USE_MATERIAL_CASE = {
@@ -10,13 +21,13 @@ const USE_MATERIAL_CASE = {
 
 export { USE_MATERIAL_CASE };
 
-export default class AtlasMesh extends THREE.Object3D {
+export default class AtlasMesh extends ThreeObject3D {
   static generateGhostMateral(options = {}) {
     const halfOpacityDistance =
       'halfOpacityDistance' in options ? options.halfOpacityDistance : 12000;
     const fade = 'fade' in options ? options.fade : true;
     const alpha = 'alpha' in options ? options.alpha : 0.75;
-    const color = 'color' in options ? new THREE.Color(options.color) : new THREE.Color('#FFFFFF');
+    const color = 'color' in options ? new ThreeColor(options.color) : new ThreeColor('#FFFFFF');
 
     const vertexShader = `
     precision highp float;
@@ -76,7 +87,7 @@ export default class AtlasMesh extends THREE.Object3D {
     }
     `.trim();
 
-    const ghostMaterial = new THREE.ShaderMaterial({
+    const ghostMaterial = new ThreeShaderMaterial({
       uniforms: {
         uHalfOpacityDistance: { type: 'f', value: halfOpacityDistance },
         uFade: { value: fade },
@@ -85,8 +96,8 @@ export default class AtlasMesh extends THREE.Object3D {
       },
       vertexShader,
       fragmentShader,
-      side: THREE.FrontSide,
-      blending: THREE.AdditiveBlending,
+      side: ThreeFrontSide,
+      blending: ThreeAdditiveBlending,
       transparent: true,
 
       // depthTest: false,
@@ -121,12 +132,12 @@ export default class AtlasMesh extends THREE.Object3D {
     this.fade = 'fade' in options ? options.fade : true;
     this.useMaterialCase = USE_MATERIAL_CASE.GHOST;
 
-    this.solidMaterial = new THREE.MeshPhongMaterial({
+    this.solidMaterial = new ThreeMeshPhongMaterial({
       color: this.color,
     });
 
-    this.normalMaterial = new THREE.MeshNormalMaterial();
-    this.wireframeMaterial = new THREE.MeshBasicMaterial({
+    this.normalMaterial = new ThreeMeshNormalMaterial();
+    this.wireframeMaterial = new ThreeMeshBasicMaterial({
       color: this.color,
       wireframe: true,
     });
@@ -138,7 +149,7 @@ export default class AtlasMesh extends THREE.Object3D {
       alpha: this.alpha,
     });
 
-    this.mesh = new THREE.Mesh(this.geometry, this.ghostMaterial);
+    this.mesh = new ThreeMesh(this.geometry, this.ghostMaterial);
 
     if (options.makeVisible === false) {
       this.mesh.visible = false;
@@ -159,7 +170,7 @@ export default class AtlasMesh extends THREE.Object3D {
 
   setColor(c) {
     this.color = c;
-    const rgbColor = new THREE.Color(this.color);
+    const rgbColor = new ThreeColor(this.color);
     this.solidMaterial.color = rgbColor;
     this.wireframeMaterial.color = rgbColor;
     this.ghostMaterial.uniforms.uColor = { value: rgbColor };

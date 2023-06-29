@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as Three from 'three';
+import {
+  Color as ThreeColor,
+  ShaderMaterial as ThreeShaderMaterial,
+  FrontSide as ThreeFrontSide,
+  CustomBlending as ThreeCustomBlending,
+  SrcAlphaFactor as ThreeSrcAlphaFactor,
+  OneMinusSrcAlphaFactor as ThreeOneMinusSrcAlphaFactor,
+  AddEquation as ThreeAddEquation,
+} from 'three';
+
 import VERT from './material.vert';
 import FRAG from './material.frag';
 
@@ -25,11 +34,11 @@ export function generateGhostMaterial(
   thickness: number
 ) {
   const alpha = opacity;
-  const color = new Three.Color(hexaColor);
+  const color = new ThreeColor(hexaColor);
   const vertexShader = VERT.trim();
   const fragmentShader = FRAG.trim();
 
-  const ghostMaterial = new Three.ShaderMaterial({
+  const ghostMaterial = new ThreeShaderMaterial({
     uniforms: {
       uAlpha: { value: applyModifierForOpacity(alpha) },
       uBright: { value: applyModifierForBrightness(brightness) },
@@ -38,14 +47,14 @@ export function generateGhostMaterial(
     },
     vertexShader,
     fragmentShader,
-    side: Three.FrontSide,
-    blending: Three.CustomBlending,
-    blendSrc: Three.SrcAlphaFactor,
-    blendDst: Three.OneMinusSrcAlphaFactor,
-    blendEquation: Three.AddEquation,
-    blendSrcAlpha: Three.SrcAlphaFactor,
-    blendDstAlpha: Three.OneMinusSrcAlphaFactor,
-    blendEquationAlpha: Three.AddEquation,
+    side: ThreeFrontSide,
+    blending: ThreeCustomBlending,
+    blendSrc: ThreeSrcAlphaFactor,
+    blendDst: ThreeOneMinusSrcAlphaFactor,
+    blendEquation: ThreeAddEquation,
+    blendSrcAlpha: ThreeSrcAlphaFactor,
+    blendDstAlpha: ThreeOneMinusSrcAlphaFactor,
+    blendEquationAlpha: ThreeAddEquation,
     transparent: true,
     depthTest: false,
     depthWrite: false,

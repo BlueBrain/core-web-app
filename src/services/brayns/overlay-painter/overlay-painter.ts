@@ -1,8 +1,15 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable import/extensions */
-import * as Three from 'three';
+import {
+  Scene as ThreeScene,
+  OrthographicCamera as ThreeOrthographicCamera,
+  WebGLRenderer as ThreeWebGLRenderer,
+  Group as ThreeGroup,
+  Mesh as ThreeMesh,
+} from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+
 import State from '../state';
 import Calc from '../utils/calc';
 import {
@@ -19,20 +26,20 @@ import {
 const MESH_NAME = 'Mesh';
 
 export default class OverlayPainter {
-  private readonly scene: Three.Scene;
+  private readonly scene: ThreeScene;
 
-  private readonly camera: Three.OrthographicCamera;
+  private readonly camera: ThreeOrthographicCamera;
 
-  private readonly renderer: Three.WebGLRenderer;
+  private readonly renderer: ThreeWebGLRenderer;
 
-  private readonly meshes = new Map<string, Three.Group>();
+  private readonly meshes = new Map<string, ThreeGroup>();
 
   private loader = new OBJLoader();
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     const cameraHalfHeight = State.camera.value.distance / 2;
-    const scene = new Three.Scene();
-    const camera = new Three.OrthographicCamera(
+    const scene = new ThreeScene();
+    const camera = new ThreeOrthographicCamera(
       -cameraHalfHeight,
       +cameraHalfHeight,
       +cameraHalfHeight,
@@ -40,7 +47,7 @@ export default class OverlayPainter {
       0.1,
       1e6
     );
-    const renderer = new Three.WebGLRenderer({
+    const renderer = new ThreeWebGLRenderer({
       alpha: true,
       preserveDrawingBuffer: false,
       premultipliedAlpha: true,
@@ -70,7 +77,7 @@ export default class OverlayPainter {
       State.overlay.meshes.thickness.value
     );
     group.traverse((obj) => {
-      if (obj instanceof Three.Mesh) {
+      if (obj instanceof ThreeMesh) {
         obj.material = material;
       }
     });
@@ -112,7 +119,7 @@ export default class OverlayPainter {
       .filter((g) => g.name === MESH_NAME)
       .forEach((group) => {
         group.traverse((obj) => {
-          if (obj instanceof Three.Mesh) {
+          if (obj instanceof ThreeMesh) {
             const mesh = obj as unknown as MeshWithMaterial;
             const { uAlpha, uBright, uThick } = mesh.material.uniforms;
             if (!uAlpha) throw Error('Missing uniform uAlpha!');

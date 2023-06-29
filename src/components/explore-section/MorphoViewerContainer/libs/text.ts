@@ -1,4 +1,10 @@
-import * as THREE from 'three';
+import {
+  Sprite as ThreeSprite,
+  Texture as ThreeTexture,
+  SpriteMaterial as ThreeSpriteMaterial,
+  NearestFilter as ThreeNearestFilter,
+  Object3D as ThreeObject3D,
+} from 'three';
 
 export type TextProps = {
   apparentFontSize?: number;
@@ -61,13 +67,13 @@ export const makeText = (text: string, textProps: TextProps) => {
     console.warn('no canvas found when making text');
     return;
   }
-  const texture = new THREE.Texture(canvas);
-  texture.magFilter = THREE.NearestFilter;
+  const texture = new ThreeTexture(canvas);
+  texture.magFilter = ThreeNearestFilter;
   texture.needsUpdate = true;
-  const material = new THREE.SpriteMaterial({ map: texture });
-  const sprite = new THREE.Sprite(material);
+  const material = new ThreeSpriteMaterial({ map: texture });
+  const sprite = new ThreeSprite(material);
 
-  const textObject = new THREE.Object3D();
+  const textObject = new ThreeObject3D();
 
   sprite.scale.set((canvas.width / canvas.height) * apparentFontSize, apparentFontSize, 1);
 

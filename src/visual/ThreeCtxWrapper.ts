@@ -1,4 +1,5 @@
-import * as THREE from 'three';
+import { Vector3 as ThreeVector3 } from 'three';
+
 import ThreeContext, { ThreeContextOptions } from './threecontext/ThreeContext';
 import MeshCollection from './meshcollection/MeshCollection';
 
@@ -37,8 +38,8 @@ export class ThreeCtxWrapper {
       showAxisHelper: false,
       axisHelperSize: 100,
       controlType: 'orbit',
-      cameraPosition: new THREE.Vector3(...cameraPositionXYZ),
-      cameraLookAt: new THREE.Vector3(...cameraLookAtXYZ),
+      cameraPosition: new ThreeVector3(...cameraPositionXYZ),
+      cameraLookAt: new ThreeVector3(...cameraLookAtXYZ),
       raycastOnDoubleClick: true,
       // If some object from the scene are raycasted, the event 'raycast'
       // is emitted with the list of intersected object from the scene as argument.

@@ -1,10 +1,10 @@
-import * as THREE from 'three';
+import { Object3D as ThreeObject3D, Color as ThreeColor } from 'three';
 
 /**
  * Events expected:
  *
  * - 'meshLoaded': whenever a mesh is loaded. the callback of this event is called with the arg:
- *    @param {THREE.Mesh} mesh - mesh object
+ *    @param {ThreeMesh} mesh - mesh object
  *    @param {string} id - id of the mesh (as used within this collection)
  *
  * - 'onMeshLoadingProgress': when the loading status is updated. The callback arguments are:
@@ -26,7 +26,7 @@ class MeshCollection {
   constructor(threeContext = null) {
     this.threeContext = threeContext;
 
-    this.container = new THREE.Object3D();
+    this.container = new ThreeObject3D();
     this.container.name = 'meshContainer';
     this.threeContext.getScene().add(this.container);
     this.threeContext.setDefaultRaycastParent(this.container);
@@ -35,7 +35,7 @@ class MeshCollection {
 
   /**
    * Add a mesh to the collection (and scene). The mesh object must already be constructed
-   * @param {THREE.Mesh} mesh - the mesh to add
+   * @param {ThreeMesh} mesh - the mesh to add
    * @param {string} id - id to give to this mesh
    * @param {boolean} focusOn - OPTIONAL focus the camera on this mesh (default: false)
    */
@@ -167,7 +167,7 @@ class MeshCollection {
    * Detach the mesh instance from the collection (and from the container).
    * Thought, the mesh instance is not destroyed and is returned.
    * @param {string} id - if of the mesh to detach
-   * @return {THREE.Mesh|THREE.Object3D|null} the detached mesh or null if there was nothing to detach
+   * @return {ThreeMesh|ThreeObject3D|null} the detached mesh or null if there was nothing to detach
    */
   detach(id) {
     if (id in this.collection) {
@@ -195,7 +195,7 @@ class MeshCollection {
    */
   updateColor(id, color) {
     if (id in this.collection) {
-      this.collection[id].material.uniforms.color.value = new THREE.Color(color);
+      this.collection[id].material.uniforms.color.value = new ThreeColor(color);
       this.threeContext.needRender = true;
     }
   }

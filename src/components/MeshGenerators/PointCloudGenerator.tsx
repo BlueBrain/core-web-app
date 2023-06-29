@@ -1,9 +1,14 @@
 import { useCallback, useEffect } from 'react';
-import * as THREE from 'three';
 import { useAtomValue } from 'jotai';
-import { Color } from 'three';
+import {
+  Color as Threecolor,
+  Points as ThreePoints,
+  PointsMaterial as ThreePointsMaterial,
+  TextureLoader as ThreeTextureLoader,
+} from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import { loadable } from 'jotai/utils';
+
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import { basePath } from '@/config';
@@ -85,9 +90,9 @@ function PointCloudMesh({
           const id = index;
           return { id, ...data };
         });
-        const sprite = new THREE.TextureLoader().load(`${basePath}/images/disc.png`);
-        const material = new THREE.PointsMaterial({
-          color: new Color(color),
+        const sprite = new ThreeTextureLoader().load(`${basePath}/images/disc.png`);
+        const material = new ThreePointsMaterial({
+          color: new Threecolor(color),
           size: 400,
           map: sprite,
           sizeAttenuation: true,
@@ -95,7 +100,7 @@ function PointCloudMesh({
           transparent: true,
         });
         const geometry = buildGeometry(points);
-        const mesh = new THREE.Points(geometry, material);
+        const mesh = new ThreePoints(geometry, material);
         const meshCollection = threeContextWrapper.getMeshCollection();
         meshCollection.addOrShowMesh(regionID, mesh);
         atlas.updateVisiblePointCloud({

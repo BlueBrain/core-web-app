@@ -1,5 +1,16 @@
-import * as THREE from 'three';
-import { Color } from 'three';
+import {
+  Color as ThreeColor,
+  BufferGeometry as ThreeBufferGeometry,
+  Float32BufferAttribute as ThreeFloat32BufferAttribute,
+  TextureLoader as ThreeTextureLoader,
+  PointsMaterial as ThreePointsMaterial,
+  Points as ThreePoints,
+  MeshBasicMaterial as ThreeMeshBasicMaterial,
+  SphereGeometry as ThreeSphereGeometry,
+  Group as ThreeGroup,
+  Mesh as ThreeMesh,
+} from 'three';
+
 import { Point } from '@/components/MeshGenerators/types';
 import { basePath } from '@/config';
 
@@ -8,21 +19,21 @@ import { basePath } from '@/config';
  * @param points
  */
 export function buildGeometry(points: Point[]) {
-  const geometry = new THREE.BufferGeometry();
+  const geometry = new ThreeBufferGeometry();
   const vertices: number[] = [];
   points.forEach((elem) => {
     const { x, y, z } = elem;
     vertices.push(x, y, z);
   });
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute('position', new ThreeFloat32BufferAttribute(vertices, 3));
   geometry.computeBoundingSphere();
   return geometry;
 }
 
 export function loadNodeSetsAsPoints(points: any[], color: string) {
-  const sprite = new THREE.TextureLoader().load(`${basePath}/images/disc.png`);
-  const material = new THREE.PointsMaterial({
-    color: new Color(color),
+  const sprite = new ThreeTextureLoader().load(`${basePath}/images/disc.png`);
+  const material = new ThreePointsMaterial({
+    color: new ThreeColor(color),
     size: 400,
     map: sprite,
     sizeAttenuation: true,
@@ -30,7 +41,7 @@ export function loadNodeSetsAsPoints(points: any[], color: string) {
     transparent: true,
   });
   const geometry = buildGeometry(points);
-  return new THREE.Points(geometry, material);
+  return new ThreePoints(geometry, material);
 }
 
 function randomlyPickObjects(list: any[], numberOfObjects: number): any[] {
@@ -52,19 +63,19 @@ function randomlyPickObjects(list: any[], numberOfObjects: number): any[] {
 const MAX_POINTS_AS_SPHERES = 500;
 
 export function loadNodeSetsAsSpheres(points: any[], color: string) {
-  const material = new THREE.MeshBasicMaterial({
-    color: new THREE.Color(color),
+  const material = new ThreeMeshBasicMaterial({
+    color: new ThreeColor(color),
     alphaTest: 0.5,
     transparent: true,
   });
 
-  const group = new THREE.Group();
+  const group = new ThreeGroup();
 
   const pointsBatch = randomlyPickObjects(points, MAX_POINTS_AS_SPHERES);
 
   pointsBatch.forEach((point) => {
-    const sphereGeometry = new THREE.SphereGeometry(40, 6, 6); // Adjust the size of the sphere here
-    const sphere = new THREE.Mesh(sphereGeometry, material);
+    const sphereGeometry = new ThreeSphereGeometry(40, 6, 6); // Adjust the size of the sphere here
+    const sphere = new ThreeMesh(sphereGeometry, material);
     sphere.position.set(point.x, point.y, point.z); // Set the position of the sphere based on the point coordinates
     group.add(sphere);
   });

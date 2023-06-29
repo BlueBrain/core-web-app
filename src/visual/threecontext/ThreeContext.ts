@@ -1,4 +1,17 @@
-import * as THREE from 'three';
+import {
+  Vector2 as ThreeVector2,
+  Vector3 as ThreeVector3,
+  Scene as ThreeScene,
+  WebGLRenderer as ThreeWebGLRenderer,
+  Raycaster as ThreeRaycaster,
+  Camera as ThreeCamera,
+  PerspectiveCamera as ThreePerspectiveCamera,
+  OrthographicCamera as ThreeOrthographicCamera,
+  Event as ThreeEvent,
+  AxesHelper as ThreeAxesHelper,
+  Object3D as ThreeObject3D,
+} from 'three';
+
 import OrbitControls from './thirdparty/OrbitControls';
 
 type ControlType = 'orbit' | 'trackball';
@@ -11,8 +24,8 @@ export interface ThreeContextOptions {
   showAxisHelper: boolean; // shows the axis helper at (0, 0, 0) when true (default: false)
   axisHelperSize: number; // length of the 3 axes of the helper (default: 100)
   controlType: ControlType; // 'trackball',    // 'orbit': locked poles or 'trackball': free rotations (default: 'trackball')
-  cameraPosition: THREE.Vector3;
-  cameraLookAt: THREE.Vector3;
+  cameraPosition: ThreeVector3;
+  cameraLookAt: ThreeVector3;
   raycastOnDoubleClick: boolean; // performs a raycast when double-clicking (default: `true`).
 }
 
@@ -27,27 +40,27 @@ class ThreeContext {
 
   private requestFrameId: number | null;
 
-  public readonly scene: THREE.Scene;
+  public readonly scene: ThreeScene;
 
-  private readonly defaultCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+  private readonly defaultCamera: ThreePerspectiveCamera | ThreeOrthographicCamera;
 
-  public activeCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera | undefined;
+  public activeCamera: ThreePerspectiveCamera | ThreeOrthographicCamera | undefined;
 
-  private renderer: THREE.WebGLRenderer;
+  private renderer: ThreeWebGLRenderer;
 
-  private readonly raycaster: THREE.Raycaster;
+  private readonly raycaster: ThreeRaycaster;
 
-  private readonly raycastMouse: THREE.Vector2;
+  private readonly raycastMouse: ThreeVector2;
 
-  private defaultRaycastParent: THREE.Scene | THREE.Object3D;
+  private defaultRaycastParent: ThreeScene | ThreeObject3D;
 
   private controls: OrbitControls | undefined;
 
-  private controlsChangeCallback: (event: THREE.Event) => void;
+  private controlsChangeCallback: (event: ThreeEvent) => void;
 
   // private cameraSpatialSettings: CameraSpatialSettings;
 
-  private readonly axesHelper: THREE.AxesHelper;
+  private readonly axesHelper: ThreeAxesHelper;
 
   constructor(div: HTMLDivElement, options: ThreeContextOptions) {
     if (!div) {
@@ -66,10 +79,10 @@ class ThreeContext {
     this.requestFrameId = null;
 
     // init scene
-    this.scene = new THREE.Scene();
+    this.scene = new ThreeScene();
 
     // todo don't rely on the client width but on the projection size / final resolution
-    this.defaultCamera = new THREE.PerspectiveCamera(
+    this.defaultCamera = new ThreePerspectiveCamera(
       27,
       div.clientWidth / div.clientHeight,
       1,
@@ -82,7 +95,7 @@ class ThreeContext {
     this.defaultCamera.position.set(...cameraPosition);
 
     // add some axis helper
-    this.axesHelper = new THREE.AxesHelper(
+    this.axesHelper = new ThreeAxesHelper(
       'axisHelperSize' in options ? options.axisHelperSize : 100
     );
     if (options.showAxisHelper) {
@@ -101,12 +114,12 @@ class ThreeContext {
         antialias: 'antialias' in options ? options.antialias : true,
       }) as WebGL2RenderingContext;
 
-      this.renderer = new THREE.WebGLRenderer({
+      this.renderer = new ThreeWebGLRenderer({
         canvas,
         context,
       });
     } else {
-      this.renderer = new THREE.WebGLRenderer({
+      this.renderer = new ThreeWebGLRenderer({
         antialias: 'antialias' in options ? options.antialias : true,
         alpha: true,
         preserveDrawingBuffer: true,
@@ -124,12 +137,12 @@ class ThreeContext {
     this.activateCamera(this.defaultCamera);
 
     // all the necessary for raycasting
-    this.raycaster = new THREE.Raycaster();
+    this.raycaster = new ThreeRaycaster();
     if (this.raycaster.params.Points) {
       this.raycaster.params.Points.threshold = 50; // distance in micron
     }
     if (this.raycaster.params.Line) this.raycaster.params.Line.threshold = 50; // distance in micron
-    this.raycastMouse = new THREE.Vector2();
+    this.raycastMouse = new ThreeVector2();
 
     let windowRect = this.renderer.domElement.getBoundingClientRect();
 
@@ -149,7 +162,7 @@ class ThreeContext {
     const resizeObserver = new ResizeObserver(() => {
       let aspectRatio: number | undefined;
       if (this.activeCamera?.type === 'OrthographicCamera') {
-        const orthographicCamera = this.activeCamera as THREE.OrthographicCamera;
+        const orthographicCamera = this.activeCamera as ThreeOrthographicCamera;
         const cameraWidth = Math.abs(orthographicCamera.left) + Math.abs(orthographicCamera.right);
         const cameraHeight = Math.abs(orthographicCamera.top) + Math.abs(orthographicCamera.bottom);
         aspectRatio = cameraWidth / cameraHeight;
@@ -162,7 +175,7 @@ class ThreeContext {
     this.defaultRaycastParent = this.scene;
 
     const cameraLookAt =
-      'cameraLookAt' in options ? options.cameraLookAt : new THREE.Vector3(0, 0, 0);
+      'cameraLookAt' in options ? options.cameraLookAt : new ThreeVector3(0, 0, 0);
     this.lookAt(cameraLookAt);
 
     window.addEventListener(
@@ -171,8 +184,7 @@ class ThreeContext {
         windowRect = this.renderer.domElement.getBoundingClientRect();
 
         if (this.activeCamera?.type === 'PerspectiveCamera') {
-          (this.activeCamera as THREE.PerspectiveCamera).aspect =
-            div.clientWidth / div.clientHeight;
+          (this.activeCamera as ThreePerspectiveCamera).aspect = div.clientWidth / div.clientHeight;
         }
 
         this.activeCamera?.updateProjectionMatrix();
@@ -184,7 +196,7 @@ class ThreeContext {
     this._animate();
   }
 
-  setDefaultRaycastParent(obj: THREE.Scene | THREE.Object3D) {
+  setDefaultRaycastParent(obj: ThreeScene | ThreeObject3D) {
     this.defaultRaycastParent = obj;
   }
 
@@ -198,14 +210,14 @@ class ThreeContext {
     const height = aspectRatio ? width / aspectRatio : canvas.parentElement?.clientHeight ?? 600;
     this.renderer.setSize(width, height, true);
     if (this.activeCamera?.type === 'PerspectiveCamera') {
-      (this.activeCamera as THREE.PerspectiveCamera).aspect = aspectRatio ?? width / height;
+      (this.activeCamera as ThreePerspectiveCamera).aspect = aspectRatio ?? width / height;
     }
     this.activeCamera?.updateProjectionMatrix();
   }
 
   /**
    * Get the scene, mainly so that we can externalize things from this file
-   * @return {THREE.Scene}
+   * @return {ThreeScene}
    */
   getScene() {
     return this.scene;
@@ -213,17 +225,17 @@ class ThreeContext {
 
   /**
    * Get the camera
-   * @return {THREE.Camera}
+   * @return {ThreeCamera}
    */
   getCamera() {
     return this.defaultCamera;
   }
 
-  setControlsChangeCallback(callback: (event: THREE.Event) => void) {
+  setControlsChangeCallback(callback: (event: ThreeEvent) => void) {
     this.controlsChangeCallback = callback;
   }
 
-  activateCamera(newCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera) {
+  activateCamera(newCamera: ThreePerspectiveCamera | ThreeOrthographicCamera) {
     if (this.activeCamera) {
       this.scene.remove(this.activeCamera);
     }
@@ -237,11 +249,11 @@ class ThreeContext {
 
   reassignControlsToActiveCamera() {
     this.controls?.dispose();
-    this.controls = new OrbitControls(this.activeCamera as THREE.Camera, this.renderer.domElement);
+    this.controls = new OrbitControls(this.activeCamera as ThreeCamera, this.renderer.domElement);
     this.controls.rotateSpeed *= 1;
 
     // @ts-ignore
-    this.controls.addEventListener('change', (event: THREE.Event) => {
+    this.controls.addEventListener('change', (event: ThreeEvent) => {
       this.controlsChangeCallback(event.target);
       this.needRender = true;
     });
@@ -249,9 +261,9 @@ class ThreeContext {
 
   /**
    * Since we are using Controls, applying the lookat just on the camera in not enough
-   * @param {THREE.Vector3} pos - a position to look at
+   * @param {ThreeVector3} pos - a position to look at
    */
-  lookAt(pos: THREE.Vector3) {
+  lookAt(pos: ThreeVector3) {
     this.needRender = true;
     this.controls?.target.set(pos.x, pos.y, pos.z);
   }

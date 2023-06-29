@@ -1,5 +1,9 @@
-import * as THREE from 'three';
+import {
+  BufferAttribute as ThreeBufferAttribute,
+  BufferGeometry as ThreeBufferGeometry,
+} from 'three';
 import parseWFObj from 'wavefront-obj-parser';
+
 import constants from '@/visual/constants';
 
 const MESH_FORMAT_LOOKUP = {
@@ -15,9 +19,9 @@ class MeshParser {
     const meshData = parseWFObj(data);
     const indices = new Uint32Array(meshData.vertexPositionIndices.filter((v) => v >= 0)); // the lib leaves room for 4-vertices faces by adding -1
     const positions = new Float32Array(meshData.vertexPositions);
-    const geometry = new THREE.BufferGeometry();
-    geometry.setIndex(new THREE.BufferAttribute(indices, 1));
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const geometry = new ThreeBufferGeometry();
+    geometry.setIndex(new ThreeBufferAttribute(indices, 1));
+    geometry.setAttribute('position', new ThreeBufferAttribute(positions, 3));
     geometry.computeBoundingSphere();
     geometry.computeVertexNormals();
 

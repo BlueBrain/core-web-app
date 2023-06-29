@@ -1,4 +1,13 @@
-import * as THREE from 'three';
+import {
+  Object3D as ThreeObject3D,
+  Color as ThreeColor,
+  MeshPhongMaterial as ThreeMeshPhongMaterial,
+  DoubleSide as ThreeDoubleSide,
+  Box3 as ThreeBox3,
+  Sphere as ThreeSphere,
+  Vector3 as ThreeVector3,
+} from 'three';
+
 import { ConvexBufferGeometry } from './ConvexGeometry';
 import WormBufferGeometry from './WormBufferGeometry';
 import simplify from './simplify';
@@ -13,7 +22,7 @@ import simplify from './simplify';
  * This is the base class for `MorphologyPolyline` and `MorphologyPolycylinder`.
  * It handles the common features, mainly related to soma creation
  */
-export default class MorphologyHybrid extends THREE.Object3D {
+export default class MorphologyHybrid extends ThreeObject3D {
   /**
    * @constructor
    * Builds a moprho as a polyline
@@ -26,9 +35,9 @@ export default class MorphologyHybrid extends THREE.Object3D {
   constructor(morpho, options = {}) {
     super();
 
-    this._smoothSections = new THREE.Object3D();
-    this._polylineSections = new THREE.Object3D();
-    this._polylineSimpleSections = new THREE.Object3D();
+    this._smoothSections = new ThreeObject3D();
+    this._polylineSections = new ThreeObject3D();
+    this._polylineSimpleSections = new ThreeObject3D();
     this._boundingSphere = null;
 
     this.add(this._polylineSections);
@@ -44,36 +53,36 @@ export default class MorphologyHybrid extends THREE.Object3D {
 
     // simple color lookup, so that every section type is shown in a different color
     this._sectionColors = {
-      soma: new THREE.Color(color || 0x888888),
-      axon: new THREE.Color(color || 0x1111ff),
-      basal_dendrite: new THREE.Color(color || 0xff1111),
-      apical_dendrite: new THREE.Color(color || 0xf442ad),
+      soma: new ThreeColor(color || 0x888888),
+      axon: new ThreeColor(color || 0x1111ff),
+      basal_dendrite: new ThreeColor(color || 0xff1111),
+      apical_dendrite: new ThreeColor(color || 0xf442ad),
     };
 
     const shininess = 100;
     this._sectionTubeMaterials = {
-      soma: new THREE.MeshPhongMaterial({
+      soma: new ThreeMeshPhongMaterial({
         color: this._sectionColors.soma,
         transparent: true,
-        side: THREE.DoubleSide,
+        side: ThreeDoubleSide,
         shininess,
       }),
-      axon: new THREE.MeshPhongMaterial({
+      axon: new ThreeMeshPhongMaterial({
         color: this._sectionColors.axon,
         transparent: true,
-        side: THREE.DoubleSide,
+        side: ThreeDoubleSide,
         shininess,
       }),
-      basal_dendrite: new THREE.MeshPhongMaterial({
+      basal_dendrite: new ThreeMeshPhongMaterial({
         color: this._sectionColors.basal_dendrite,
         transparent: true,
-        side: THREE.DoubleSide,
+        side: ThreeDoubleSide,
         shininess,
       }),
-      apical_dendrite: new THREE.MeshPhongMaterial({
+      apical_dendrite: new ThreeMeshPhongMaterial({
         color: this._sectionColors.apical_dendrite,
         transparent: true,
-        side: THREE.DoubleSide,
+        side: ThreeDoubleSide,
         shininess,
       }),
     };
@@ -97,7 +106,7 @@ export default class MorphologyHybrid extends THREE.Object3D {
     }
 
     // compute the bounding box, useful for further camera targeting
-    this.box = new THREE.Box3().setFromObject(this);
+    this.box = new ThreeBox3().setFromObject(this);
   }
 
   get boundingSphere() {
@@ -113,7 +122,7 @@ export default class MorphologyHybrid extends THREE.Object3D {
     }
     const maxDistance = this._morpho.getRadiusFromSoma();
 
-    this._boundingSphere = new THREE.Sphere(new THREE.Vector3(...somaCenter), maxDistance);
+    this._boundingSphere = new ThreeSphere(new ThreeVector3(...somaCenter), maxDistance);
     return this._boundingSphere;
   }
 
@@ -168,7 +177,7 @@ export default class MorphologyHybrid extends THREE.Object3D {
    * @private
    * The method to build a soma mesh using the 'default' way, aka using simply the
    * data from the soma.
-   * @return {THREE.Mesh} the soma mesh
+   * @return {ThreeMesh} the soma mesh
    */
   _buildSomaFromModel() {
     const soma = this._morpho.getSoma();
@@ -176,9 +185,9 @@ export default class MorphologyHybrid extends THREE.Object3D {
 
     // case when soma is a single point
     if (somaPoints.length === 1) {
-      const somaSphere = new THREE.Mesh(
-        new THREE.SphereGeometry(soma.getRadius(), 32, 32),
-        new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 })
+      const somaSphere = new ThreeMesh(
+        new ThreeSphereGeometry(soma.getRadius(), 32, 32),
+        new ThreeMeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 })
       );
 
       somaSphere.position.set(somaPoints[0][0], somaPoints[0][1], somaPoints[0][2]);
@@ -187,9 +196,9 @@ export default class MorphologyHybrid extends THREE.Object3D {
       // this is a 3-point soma, probably colinear
     }
     if (somaPoints.length === 3) {
-      const somaSphere = new THREE.Mesh(
-        new THREE.SphereGeometry(soma.getRadius(), 32, 32),
-        new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 })
+      const somaSphere = new ThreeMesh(
+        new ThreeSphereGeometry(soma.getRadius(), 32, 32),
+        new ThreeMeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 })
       );
 
       somaSphere.position.set(somaPoints[0][0], somaPoints[0][1], somaPoints[0][2]);
@@ -200,29 +209,29 @@ export default class MorphologyHybrid extends THREE.Object3D {
     if (somaPoints.length > 1) {
       // compute the average of the points
       const center = soma.getCenter();
-      const centerV = new THREE.Vector3(center[0], center[1], center[2]);
-      const geometry = new THREE.Geometry();
+      const centerV = new ThreeVector3(center[0], center[1], center[2]);
+      const geometry = new ThreeGeometry();
 
       for (let i = 0; i < somaPoints.length; i += 1) {
         geometry.vertices.push(
-          new THREE.Vector3(somaPoints[i][0], somaPoints[i][1], somaPoints[i][2]),
-          new THREE.Vector3(
+          new ThreeVector3(somaPoints[i][0], somaPoints[i][1], somaPoints[i][2]),
+          new ThreeVector3(
             somaPoints[(i + 1) % somaPoints.length][0],
             somaPoints[(i + 1) % somaPoints.length][1],
             somaPoints[(i + 1) % somaPoints.length][2]
           ),
           centerV
         );
-        geometry.faces.push(new THREE.Face3(3 * i, 3 * i + 1, 3 * i + 2));
+        geometry.faces.push(new ThreeFace3(3 * i, 3 * i + 1, 3 * i + 2));
       }
 
-      const somaMesh = new THREE.Mesh(
+      const somaMesh = new ThreeMesh(
         geometry,
-        new THREE.MeshBasicMaterial({
+        new ThreeMeshBasicMaterial({
           color: 0x000000,
           transparent: true,
           opacity: 0.3,
-          side: THREE.DoubleSide,
+          side: ThreeDoubleSide,
         })
       );
       return somaMesh;
@@ -235,28 +244,28 @@ export default class MorphologyHybrid extends THREE.Object3D {
    * @private
    * Here we build a soma convex polygon based on the 1st points of the orphan
    * sections + the points available in the soma description
-   * @return {THREE.Mesh} the soma mesh
+   * @return {ThreeMesh} the soma mesh
    */
   _buildSomaFromOrphanSections() {
     const somaPoints = this._morpho.getSoma().getPoints();
     let somaMesh = null;
 
     try {
-      const somaPolygonPoints = this._morpho.getNeuriteStarts().map((p) => new THREE.Vector3(...p));
+      const somaPolygonPoints = this._morpho.getNeuriteStarts().map((p) => new ThreeVector3(...p));
 
       // adding the points of the soma (adds values mostly if we a soma polygon)
       for (let i = 0; i < somaPoints.length; i += 1) {
-        somaPolygonPoints.push(new THREE.Vector3(...somaPoints[i]));
+        somaPolygonPoints.push(new ThreeVector3(...somaPoints[i]));
       }
 
       const geometry = new ConvexBufferGeometry(somaPolygonPoints);
-      const material = new THREE.MeshPhongMaterial({
+      const material = new ThreeMeshPhongMaterial({
         color: 0x555555,
         transparent: true,
         opacity: 0.7,
-        side: THREE.DoubleSide,
+        side: ThreeDoubleSide,
       });
-      somaMesh = new THREE.Mesh(geometry, material);
+      somaMesh = new ThreeMesh(geometry, material);
       return somaMesh;
     } catch (e) {
       return null;
@@ -272,16 +281,16 @@ export default class MorphologyHybrid extends THREE.Object3D {
   getTargetPoint() {
     if (this._pointToTarget) {
       // rotate this because Allen needs it (just like the sections)
-      const lookat = new THREE.Vector3(
+      const lookat = new ThreeVector3(
         this._pointToTarget[0],
         this._pointToTarget[1],
         this._pointToTarget[2]
       );
-      lookat.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
-      lookat.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+      lookat.applyAxisAngle(new ThreeVector3(1, 0, 0), Math.PI);
+      lookat.applyAxisAngle(new ThreeVector3(0, 1, 0), Math.PI);
       return lookat;
     }
-    const center = new THREE.Vector3();
+    const center = new ThreeVector3();
     this.box.getCenter(center);
     return center;
   }
@@ -302,7 +311,7 @@ export default class MorphologyHybrid extends THREE.Object3D {
 
     if (sectionPoints.length - startIndex < 2) return null;
 
-    const positions = sectionPoints.map((arr) => new THREE.Vector3(arr[0], arr[1], arr[2]));
+    const positions = sectionPoints.map((arr) => new ThreeVector3(arr[0], arr[1], arr[2]));
 
     const parentSection = section.getParent();
 
@@ -313,13 +322,13 @@ export default class MorphologyHybrid extends THREE.Object3D {
         const parentSectionRadiuses = parentSection.getRadiuses();
         const lastRadius = parentSectionRadiuses[parentSectionRadiuses.length - 2];
 
-        positions.unshift(new THREE.Vector3(...lastPoint));
+        positions.unshift(new ThreeVector3(...lastPoint));
         sectionRadius.unshift(lastRadius);
       }
     }
 
     const sectionGeom = new WormBufferGeometry(positions, sectionRadius);
-    const sectionMesh = new THREE.Mesh(sectionGeom, material);
+    const sectionMesh = new ThreeMesh(sectionGeom, material);
 
     // adding some metadata as it can be useful for raycasting
     sectionMesh.name = section.getId();
@@ -333,7 +342,7 @@ export default class MorphologyHybrid extends THREE.Object3D {
   _buildLineSection(section, options = {}) {
     const mustSimplify = 'simplify' in options ? !!options.simplify : false;
     const sectionColor = this._sectionColors[section.getTypename()];
-    const material = new THREE.LineBasicMaterial({
+    const material = new ThreeLineBasicMaterial({
       color: 0xffffff,
       vertexColors: true,
     });
@@ -344,7 +353,7 @@ export default class MorphologyHybrid extends THREE.Object3D {
 
     if (sectionPoints.length < 2) return null;
 
-    const geometry = new THREE.BufferGeometry();
+    const geometry = new ThreeBufferGeometry();
     const vertices = [];
     const colors = [];
     const neuriteColors = [];
@@ -359,14 +368,14 @@ export default class MorphologyHybrid extends THREE.Object3D {
       neuriteColors.push(sectionColor.r, sectionColor.g, sectionColor.b);
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3));
+    geometry.setAttribute('position', new ThreeBufferAttribute(new Float32Array(vertices), 3));
+    geometry.setAttribute('color', new ThreeBufferAttribute(new Float32Array(colors), 3));
     geometry.setAttribute(
       'neuriteColors',
-      new THREE.BufferAttribute(new Float32Array(neuriteColors), 3)
+      new ThreeBufferAttribute(new Float32Array(neuriteColors), 3)
     );
 
-    const line = new THREE.Line(geometry, material);
+    const line = new ThreeLine(geometry, material);
 
     // adding some metadata as it can be useful for raycasting
     line.name = section.getId();

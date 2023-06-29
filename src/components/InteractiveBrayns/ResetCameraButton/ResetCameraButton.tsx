@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
 import { classNames } from '@/util/utils';
 import Styles from './reset-camera-button.module.css';
 

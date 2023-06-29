@@ -1,5 +1,4 @@
 // @ts-nocheck
-import * as THREE from 'three';
 import { Object3D } from 'three';
 
 const CAMERA_DISTANCE_OFFSET = 1;

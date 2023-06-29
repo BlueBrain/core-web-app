@@ -1,11 +1,22 @@
-import * as THREE from 'three';
+import {
+  Object3D as ThreeObject3D,
+  Vector3 as ThreeVector3,
+  BufferGeometry as ThreeBufferGeometry,
+  LineSegments as ThreeLineSegments,
+  LineBasicMaterial as ThreeLineBasicMaterial,
+  Scene as ThreeScene,
+  WebGLRenderer as ThreeWebGLRenderer,
+  Camera as ThreeCamera,
+  PerspectiveCamera as ThreePerspectiveCamera,
+} from 'three';
+
 import { removeChildren } from './dom';
 import { makeText } from './text';
 
 const AXES_HELPER_SCALE = 15;
 
-const createOrientationHelper = (): THREE.Object3D => {
-  const orientationHelper = new THREE.Object3D();
+const createOrientationHelper = (): ThreeObject3D => {
+  const orientationHelper = new ThreeObject3D();
 
   const colors = ['red', 'green', 'blue'];
   const axes = ['X', 'Z', 'Y'];
@@ -22,16 +33,16 @@ const createOrientationHelper = (): THREE.Object3D => {
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i <= 2; i++) {
     const color = colors[i];
-    const position = new THREE.Vector3(positions[i][0], positions[i][1], positions[i][2]);
+    const position = new ThreeVector3(positions[i][0], positions[i][1], positions[i][2]);
 
-    const geometry = new THREE.BufferGeometry();
-    const points = [position, new THREE.Vector3(0, 0, 0)];
+    const geometry = new ThreeBufferGeometry();
+    const points = [position, new ThreeVector3(0, 0, 0)];
     geometry.setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({
+    const material = new ThreeLineBasicMaterial({
       color,
       linewidth: 1,
     });
-    const line = new THREE.LineSegments(geometry, material);
+    const line = new ThreeLineSegments(geometry, material);
 
     const label = axes[i];
     const axisLabel = makeText(label, { color });
@@ -46,17 +57,17 @@ const createOrientationHelper = (): THREE.Object3D => {
 };
 
 export default class OrientationViewer {
-  private renderer: THREE.WebGLRenderer | null;
+  private renderer: ThreeWebGLRenderer | null;
 
-  private scene: THREE.Scene | null;
+  private scene: ThreeScene | null;
 
-  private camera: THREE.Camera | null;
+  private camera: ThreeCamera | null;
 
-  private orientationHelper: THREE.Object3D;
+  private orientationHelper: ThreeObject3D;
 
   private requestedAnimationFrameID: number = 0;
 
-  public followCamera: THREE.Camera | null = null;
+  public followCamera: ThreeCamera | null = null;
 
   handleResize() {
     const { clientHeight, clientWidth } = this.renderer?.domElement.parentNode as HTMLDivElement;
@@ -73,7 +84,7 @@ export default class OrientationViewer {
       antialias: true,
     });
 
-    this.renderer = new THREE.WebGLRenderer({
+    this.renderer = new ThreeWebGLRenderer({
       canvas,
       context: context || undefined,
       alpha: true,
@@ -82,10 +93,10 @@ export default class OrientationViewer {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(div.clientWidth, div.clientHeight);
 
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(27, div.clientWidth / div.clientHeight, 1, 50000);
+    this.scene = new ThreeScene();
+    this.camera = new ThreePerspectiveCamera(27, div.clientWidth / div.clientHeight, 1, 50000);
     const camPos = { x: 0, y: 0, z: 100 };
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.camera.lookAt(new ThreeVector3(0, 0, 0));
     this.camera.position.x = camPos.x;
     this.camera.position.y = camPos.y;
     this.camera.position.z = camPos.z;
@@ -99,7 +110,7 @@ export default class OrientationViewer {
     this.animate();
   }
 
-  setFollowCamera(camera: THREE.Camera) {
+  setFollowCamera(camera: ThreeCamera) {
     this.followCamera = camera;
   }
 

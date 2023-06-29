@@ -5,7 +5,12 @@
  * @author Luca Antiga   / http://lantiga.github.io
  */
 
-import * as THREE from 'three';
+import {
+  Vector2 as ThreeVector2,
+  Vector3 as ThreeVector3,
+  Quaternion as ThreeQuaternion,
+  EventDispatcher as ThreeEventDispatcher,
+} from 'three';
 
 /* eslint no-use-before-define: "off" */
 /* eslint no-shadow: "off" */
@@ -61,37 +66,37 @@ const TrackballControls = function (object, domElement) {
 
   // internals
 
-  this.target = new THREE.Vector3();
+  this.target = new ThreeVector3();
 
   const EPS = 0.000001;
 
-  const lastPosition = new THREE.Vector3();
+  const lastPosition = new ThreeVector3();
 
   let _state = STATE.NONE;
 
   let _prevState = STATE.NONE;
 
-  const _eye = new THREE.Vector3();
+  const _eye = new ThreeVector3();
 
-  const _movePrev = new THREE.Vector2();
+  const _movePrev = new ThreeVector2();
 
-  const _moveCurr = new THREE.Vector2();
+  const _moveCurr = new ThreeVector2();
 
-  const _lastAxis = new THREE.Vector3();
+  const _lastAxis = new ThreeVector3();
 
   let _lastAngle = 0;
 
-  const _zoomStart = new THREE.Vector2();
+  const _zoomStart = new ThreeVector2();
 
-  const _zoomEnd = new THREE.Vector2();
+  const _zoomEnd = new ThreeVector2();
 
   let _touchZoomDistanceStart = 0;
 
   let _touchZoomDistanceEnd = 0;
 
-  const _panStart = new THREE.Vector2();
+  const _panStart = new ThreeVector2();
 
-  const _panEnd = new THREE.Vector2();
+  const _panEnd = new ThreeVector2();
 
   // for reset
 
@@ -125,7 +130,7 @@ const TrackballControls = function (object, domElement) {
   };
 
   const getMouseOnScreen = (function () {
-    const vector = new THREE.Vector2();
+    const vector = new ThreeVector2();
 
     return function getMouseOnScreen(pageX, pageY) {
       vector.set(
@@ -138,7 +143,7 @@ const TrackballControls = function (object, domElement) {
   })();
 
   const getMouseOnCircle = (function () {
-    const vector = new THREE.Vector2();
+    const vector = new ThreeVector2();
 
     return function getMouseOnCircle(pageX, pageY) {
       vector.set(
@@ -151,17 +156,17 @@ const TrackballControls = function (object, domElement) {
   })();
 
   this.rotateCamera = (function () {
-    const axis = new THREE.Vector3();
+    const axis = new ThreeVector3();
 
-    const quaternion = new THREE.Quaternion();
+    const quaternion = new ThreeQuaternion();
 
-    const eyeDirection = new THREE.Vector3();
+    const eyeDirection = new ThreeVector3();
 
-    const objectUpDirection = new THREE.Vector3();
+    const objectUpDirection = new ThreeVector3();
 
-    const objectSidewaysDirection = new THREE.Vector3();
+    const objectSidewaysDirection = new ThreeVector3();
 
-    const moveDirection = new THREE.Vector3();
+    const moveDirection = new ThreeVector3();
 
     let angle;
 
@@ -236,11 +241,11 @@ const TrackballControls = function (object, domElement) {
   };
 
   this.panCamera = (function () {
-    const mouseChange = new THREE.Vector2();
+    const mouseChange = new ThreeVector2();
 
-    const objectUp = new THREE.Vector3();
+    const objectUp = new ThreeVector3();
 
-    const pan = new THREE.Vector3();
+    const pan = new ThreeVector3();
 
     return function panCamera() {
       mouseChange.copy(_panEnd).sub(_panStart);
@@ -542,7 +547,7 @@ const TrackballControls = function (object, domElement) {
   this.update();
 };
 
-TrackballControls.prototype = Object.create(THREE.EventDispatcher.prototype);
-// TrackballControls.prototype.constructor = THREE.TrackballControls;
+TrackballControls.prototype = Object.create(ThreeEventDispatcher.prototype);
+// TrackballControls.prototype.constructor = ThreeTrackballControls;
 
 export default TrackballControls;

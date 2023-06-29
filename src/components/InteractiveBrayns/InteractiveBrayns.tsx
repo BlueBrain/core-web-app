@@ -4,7 +4,8 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useSession } from 'next-auth/react';
-import React from 'react';
+import { useEffect, useState } from 'react';
+
 import AxisGizmo from './AxisGizmo';
 import Settings from './Settings';
 import HowToUseButton from './HowToUseButton';
@@ -26,8 +27,8 @@ export default function InteractiveBrayns() {
 }
 
 function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps) {
-  const [howToUsePanelVisible, setHowToUsePanelVisible] = React.useState(false);
-  const [overlayOpacity, setOverlayOpacity] = React.useState(1);
+  const [howToUsePanelVisible, setHowToUsePanelVisible] = useState(false);
+  const [overlayOpacity, setOverlayOpacity] = useState(1);
   const circuitPath = BraynsService.useCurrentCircuitPath();
   const selectedBrainRegions = useVisibleCells();
   const brayns = BraynsService.useBraynsService(token);
@@ -36,7 +37,7 @@ function InteractiveBraynsWithToken({ className, token }: InteractiveBraynsProps
   const handleSceneCanvasMount = useCanvasMountHandler(brayns);
   const busyMesh = BraynsService.State.progress.loadingMeshes.useValue();
   const busyMorpho = BraynsService.State.progress.loadingMorphologies.useValue();
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isBraynsService(brayns)) return;
 
     const action = async () => {
@@ -92,8 +93,8 @@ function isBraynsService(data: AllocationResult): data is BraynsServiceInterface
  * and brayns service will be initialized.
  */
 function useCanvasMountHandler(brayns: AllocationResult) {
-  const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null);
-  React.useEffect(() => {
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
+  useEffect(() => {
     if (!isBraynsService(brayns)) return;
 
     // eslint-disable-next-line no-param-reassign
