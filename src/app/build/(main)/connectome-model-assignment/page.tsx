@@ -36,15 +36,27 @@ function SynapticRuleItem({ ruleDef }: { ruleDef: SynapticRule }) {
 }
 
 function ConnectomeModelAssignmentView() {
-  const initialRules = useAtomValue(initialRulesAtom);
-
   return (
-    <div className="p-4 bg-black h-full overflow-scroll">
-      <h1 className="text-white text-xl p-4 font-bold">Synapse Assignment Rules</h1>
-      <div className="mt-4 w-1/2">
-        {initialRules?.map((r, i) => (
-          <SynapticRuleItem ruleDef={r} key={i} />
-        ))}
+    <div className="bg-black h-full">
+      <div className="text-white p-8" style={{ height: '40%' }}>
+        <h1 className="text-white font-bold">Default synapse model assignments</h1>
+      </div>
+      <div className="text-white bg-white" style={{ height: '60%' }}>
+        <div className="flex" style={{ height: '50px' }}>
+          <div className="bg-black inline-block" style={{ height: '50px', width: '30px' }} />
+          <div
+            className="text-primary-8 bg-white inline-flex justify-center items-center font-bold text-primary-8 text-sm"
+            style={{ height: '50px', width: '300px' }}
+          >
+            User defined synapse model assignments
+          </div>
+          <div
+            className="text-white bg-black inline-flex justify-center items-center text-sm"
+            style={{ height: '50px', width: '300px' }}
+          >
+            Synapse Type editor
+          </div>
+        </div>
       </div>
     </div>
   );
