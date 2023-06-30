@@ -28,7 +28,6 @@ export default function ValueRange({
   };
 
   // if there is no min and max value, then the field should be disabled
-  const disabled = !aggregation.min && !aggregation.max;
   return (
     <div>
       <ConfigProvider
@@ -49,13 +48,10 @@ export default function ValueRange({
         >
           <Form.Item name="min-range" noStyle>
             <InputNumber
-              disabled={disabled}
               className="text-neutral-2 w-32"
               placeholder="From"
               type="number"
-              min={aggregation.min}
               step={0.1}
-              max={aggregation.max}
               onChange={submitForm}
             />
           </Form.Item>
@@ -64,13 +60,10 @@ export default function ValueRange({
           </div>
           <Form.Item name="max-range" noStyle>
             <InputNumber
-              disabled={disabled}
               className="text-neutral-2 w-32"
               placeholder="To"
               type="number"
               step={0.1}
-              min={aggregation.min}
-              max={aggregation.max}
               onChange={submitForm}
             />
           </Form.Item>
