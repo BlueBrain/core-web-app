@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { ExploreSectionResponse, ExploreSectionResource } from '@/types/explore-section/resources';
+import { ExploreSectionResponse, ESResponseRaw } from '@/types/explore-section/resources';
 import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
@@ -112,7 +112,7 @@ const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => 
   return fetchEsResourcesByType(session.accessToken, query);
 });
 
-export const dataAtom = atom<Promise<ExploreSectionResource[] | undefined>>(async (get) => {
+export const dataAtom = atom<Promise<ESResponseRaw[] | undefined>>(async (get) => {
   const { hits } = (await get(queryResponseAtom)) ?? {};
   return hits;
 });

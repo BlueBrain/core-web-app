@@ -1,6 +1,6 @@
 'use client';
 
-import { MouseEvent, useState, ReactNode, CSSProperties, useMemo } from 'react';
+import { MouseEvent, useState, ReactNode, CSSProperties, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -9,13 +9,13 @@ import { Loadable } from 'jotai/vanilla/utils/loadable';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
-import { ExploreSectionResource, ESResponseRaw } from '@/types/explore-section/resources';
+import { ESResponseRaw } from '@/types/explore-section/resources';
 import fetchArchive from '@/api/archive';
 import Spinner from '@/components/Spinner';
 import styles from '@/app/explore/explore.module.scss';
 
 type ExploreSectionTableProps = {
-  data: Loadable<ExploreSectionResource[] | undefined>;
+  data: Loadable<ESResponseRaw[] | undefined>;
   columns: ColumnProps<any>[];
   enableDownload?: boolean;
 };
@@ -42,21 +42,22 @@ export default function ExploreSectionTable({
   const pathname = usePathname();
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>();
+
   const clearSelectedRows = () => {
     setFetching(false);
     setSelectedRows([]);
   };
   const session = useAtomValue(sessionAtom);
 
-  const dataSource = useMemo(() => {
-    if (data.state === 'hasData' && data.data) {
-      return data.data;
+  useEffect(() => {
+    if (data.state === 'hasData') {
+      setDataSource(data.data);
     }
-    return [];
   }, [data]);
 
   const onCellRouteHandler = {
-    onCell: (record: ESResponseRaw | ESResponseRaw) => ({
+    onCell: (record: ESResponseRaw) => ({
       onClick: (e: MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
 
@@ -80,7 +81,7 @@ export default function ExploreSectionTable({
         dataSource={dataSource}
         loading={data.state === 'loading'}
         rowClassName={styles.tableRow}
-        rowKey="_id"
+        rowKey={(row) => row._source._self}
         rowSelection={
           enableDownload
             ? {

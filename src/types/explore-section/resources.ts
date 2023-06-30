@@ -77,7 +77,7 @@ export interface OptionalExploreSectionFields extends OptionalExploreSectionSeri
 }
 
 export interface ExploreSectionResponse {
-  hits: ExploreSectionResource[];
+  hits: ESResponseRaw[];
   aggs: Aggregations;
   total: TotalHits;
 }
