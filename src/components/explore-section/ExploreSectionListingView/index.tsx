@@ -3,7 +3,8 @@ import { Dispatch, useState } from 'react';
 import { SetStateAction } from 'jotai';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import ExploreSectionNameSearch from '@/components/explore-section/EphysViewerContainer/ExploreSectionNameSearch';
+import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
+import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import ControlPanel from '@/components/explore-section/ControlPanel';
@@ -60,16 +61,17 @@ export default function ExploreSectionListingView({
 
   return (
     <>
-      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pb-12 pl-7 pr-16 overflow-scroll relative">
-        <div className="flex items-center justify-between">
-          <div className="text-primary-7 text-2xl font-bold flex-auto w-10/12">
+      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pl-7 pr-14 overflow-scroll relative">
+        <div className="flex items-center justify-between ml-5">
+          <div className="text-primary-7 text-2xl font-bold flex-auto w-6/12">
             {title}
             <span className="text-sm whitespace-pre font-thin text-slate-400 pl-2">
               Total: {renderTotal()}
             </span>
           </div>
 
-          <div className="flex items-center gap-5 justify-between">
+          <div className="flex items-center gap-5 justify-between w-auto">
+            <ClearFilters filters={filters} setFilters={setFilters} />
             <ExploreSectionNameSearch
               searchString={searchString}
               setSearchString={setSearchString}

@@ -13,7 +13,7 @@ interface DataQueryParams {
   columns: string[];
 }
 
-const columnKeyToFilter = (key: string): Filter => {
+export const columnKeyToFilter = (key: string): Filter => {
   const fieldConfig = LISTING_CONFIG[key];
   switch (fieldConfig.filter) {
     case 'checkList':
