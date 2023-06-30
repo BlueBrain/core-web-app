@@ -75,7 +75,11 @@ const getDescription = () => (
     <div>
       To get more information about recording options read Sonata documentation provided below:{' '}
     </div>
-    <a href="https://sonata-extension.readthedocs.io/en/latest/sonata_simulation.html#reports">
+    <a
+      href="https://sonata-extension.readthedocs.io/en/latest/sonata_simulation.html#reports"
+      target="_blank"
+      rel="noreferrer"
+    >
       <button
         type="button"
         className="bg-neutral-1 text-primary-8 flex items-center p-2 gap-2 mt-2"
