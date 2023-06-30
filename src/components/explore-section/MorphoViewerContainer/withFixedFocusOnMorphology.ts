@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Object3D } from 'three';
+import * as THREE from 'three';
 
 const CAMERA_DISTANCE_OFFSET = 1;
 
@@ -35,22 +35,23 @@ const withFixedFocusOnMorphology = (morphoViewer) => {
     return !morphoMesh.children.find((child) => child?.userData?.typename === 'apical_dendrite');
   };
 
-  viewer._threeContext.getSomaChildren = function getSomaChildren(): Object3D[] {
+  viewer._threeContext.getSomaChildren = function getSomaChildren(): THREE.Object3D[] {
     const morphoMesh = this.getMorphoFromCollection();
-    return (morphoMesh.children as Object3D[]).filter(
+    return (morphoMesh.children as THREE.Object3D[]).filter(
       (object) => object.userData.typename === 'soma'
     );
   };
 
-  viewer._threeContext.getOrphanedSomaChildren = function getOrphanedSomaChildren(): Object3D {
-    // it looks like the orphaned soma construction doesn't have a name
-    // we can use that to reliably get the orphaned soma
-    const morphoMesh = this.getMorphoFromCollection();
-    return (morphoMesh.children as Object3D[]).filter((object) => object.name === '')[0];
-  };
+  viewer._threeContext.getOrphanedSomaChildren =
+    function getOrphanedSomaChildren(): THREE.Object3D {
+      // it looks like the orphaned soma construction doesn't have a name
+      // we can use that to reliably get the orphaned soma
+      const morphoMesh = this.getMorphoFromCollection();
+      return (morphoMesh.children as THREE.Object3D[]).filter((object) => object.name === '')[0];
+    };
 
   viewer._threeContext.removeOrphanedSomaChildren =
-    function removeOrphanedSomaChildren(): Object3D {
+    function removeOrphanedSomaChildren(): THREE.Object3D {
       // it looks like the orphaned soma construction doesn't have a name
       // we can use that to reliably get the orphaned soma
       const morphoMesh = this.getMorphoFromCollection();
