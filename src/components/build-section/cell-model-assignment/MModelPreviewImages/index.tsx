@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { basePath } from '@/config';
+
 type Props = {
   className?: string;
 };
 
 const titleStyle = 'ml-8 font-bold text-primary-8 text-xl';
-const imgBase = '/images/build-section/m-model';
+const imgBase = `${basePath}/images/build-section/m-model`;
 
 export default function MModelPreviewImages({ className }: Props) {
   return (

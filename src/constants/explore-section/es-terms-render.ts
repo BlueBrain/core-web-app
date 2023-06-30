@@ -8,7 +8,7 @@ import {
   selectorFnBasic,
   selectorFnDate,
   selectorFnStatistic,
-  selectorFnValueWithUnit,
+  selectorFnValue,
 } from '@/state/explore-section/listing-selectors';
 import { FilterType } from '@/components/Filter/types';
 
@@ -96,7 +96,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Neuron density',
     filter: 'valueRange',
     unit: 'neurons/mm³',
-    renderFn: (t, r) => selectorFnValueWithUnit(r._source?.neuronDensity),
+    renderFn: (t, r) => selectorFnValue(r._source?.neuronDensity),
   },
   boutonDensity: {
     term: 'boutonDensity.label.keyword',
@@ -148,6 +148,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'conditions.keyword',
     title: 'Conditions',
     filter: 'checkList',
+    unit: 'Cº',
     renderFn: (t, r) => selectorFnBasic(r._source?.conditions),
   },
   meanstd: {
