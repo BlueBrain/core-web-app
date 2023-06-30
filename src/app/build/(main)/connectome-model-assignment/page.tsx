@@ -64,7 +64,7 @@ function ConnectomeModelAssignmentView() {
 export default function ConnectomeModelAssignment() {
   return (
     <Suspense fallback={null}>
-      <ConnectomeModelAssignmentView />;
+      <ConnectomeModelAssignmentView />
     </Suspense>
   );
 }
