@@ -8,6 +8,8 @@ import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
+// TODO: this is a deprecated file and functions. We keep it because the sim campaign listing view still uses it. It should be removed as soon as the sim camp starts using real data
+
 interface DataQueryParams {
   type: string;
   columns: string[];

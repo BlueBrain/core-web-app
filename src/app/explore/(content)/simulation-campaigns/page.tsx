@@ -1,7 +1,7 @@
 'use client';
 
 import { Dispatch, HTMLProps, SetStateAction, useEffect, useMemo, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { SearchOutlined } from '@ant-design/icons';
 import { BrainIcon, InteractiveViewIcon, SettingsIcon, VirtualLabIcon } from '@/components/icons';
@@ -143,12 +143,9 @@ function getFilterListItem({
 
 function ControlPanelWithDimensions({
   activeColumns,
-  aggregations,
-  filters,
   getValues,
   getMethods,
   options,
-  setFilters,
   setOpen,
 }: Omit<ControlPanelProps, 'setActiveColumns'> & {
   getValues: (id: string) => FilterValues;
@@ -156,14 +153,10 @@ function ControlPanelWithDimensions({
   options: FilterType[];
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const [filters, setFilters] = useAtom(filtersAtom);
+
   return (
-    <ControlPanel
-      activeColumns={activeColumns}
-      aggregations={aggregations}
-      filters={filters}
-      setFilters={setFilters}
-      setOpen={setOpen}
-    >
+    <ControlPanel activeColumns={activeColumns} setOpen={setOpen}>
       <div>
         <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
           Dimensions
@@ -204,6 +197,7 @@ function ControlPanelWithDimensions({
 
 export default function SimulationCampaignPage() {
   const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
+  const filters = useAtomValue(filtersAtom);
 
   const atoms = useListViewAtoms({
     activeColumns: activeColumnsAtom,
@@ -218,8 +212,6 @@ export default function SimulationCampaignPage() {
 
   const {
     activeColumns: [activeColumns, setActiveColumns],
-    aggregations: [aggregations],
-    filters: [filters, setFilters],
   } = atoms;
 
   // Display all columns by default.
@@ -263,12 +255,9 @@ export default function SimulationCampaignPage() {
       {openFiltersSidebar && (
         <ControlPanelWithDimensions
           activeColumns={activeColumns}
-          aggregations={aggregations}
-          filters={filters}
           getValues={getValues}
           getMethods={getMethods}
           options={options}
-          setFilters={setFilters}
           setOpen={setOpenFiltersSidebar}
         />
       )}

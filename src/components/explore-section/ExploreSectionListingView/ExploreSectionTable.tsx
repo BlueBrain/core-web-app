@@ -1,3 +1,5 @@
+'use client';
+
 import { MouseEvent, useState, ReactNode, CSSProperties, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
@@ -82,8 +84,8 @@ export default function ExploreSectionTable({
         rowSelection={
           enableDownload
             ? {
-                selectedRowKeys: selectedRows.map(({ key }) => key),
-                onChange: (_keys, rows) => setSelectedRows([...rows]),
+                selectedRowKeys: selectedRows.map(({ _id }) => _id),
+                onChange: (_keys, rows) => setSelectedRows(rows),
                 type: 'checkbox',
               }
             : undefined
@@ -103,7 +105,7 @@ export default function ExploreSectionTable({
               setFetching(true);
 
               fetchArchive(
-                selectedRows.map((x) => x.self),
+                selectedRows.map((x) => x._source._self),
                 session,
                 clearSelectedRows
               );

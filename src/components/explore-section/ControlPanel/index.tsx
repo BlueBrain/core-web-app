@@ -2,36 +2,28 @@ import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+import { loadable } from 'jotai/utils';
+import { useAtom, useAtomValue } from 'jotai';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import { Filter, OptionsData, RangeFilter } from '@/components/Filter/types';
 import { CheckList, DateRange, FilterGroup, FilterGroupProps } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import { FilterValues } from '@/types/explore-section/application';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
-
-type FiltersProps = {
-  activeColumns: string[];
-  aggregations: Loadable<Aggregations>;
-  filters: Filter[];
-  filterValues: FilterValues;
-  onToggleActive?: (key: string) => void;
-  setFilters: Dispatch<SetStateAction<Filter[]>>;
-  setFilterValues: Dispatch<SetStateAction<FilterValues>>;
-};
+import { aggregationsAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
 
 export type ControlPanelProps = {
   activeColumns: string[];
-  aggregations: Loadable<any>;
   children?: ReactNode;
-  filters: Filter[];
   onToggleActive?: (key: string) => void;
-  setFilters: Dispatch<SetStateAction<Filter[]>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
+const aggregationsLoadable = loadable(aggregationsAtom);
+
 function createFilterItemComponent(
   filter: Filter,
-  aggregations: Loadable<Aggregations>,
+  aggregations: Loadable<Aggregations | undefined>,
   filterValues: FilterValues,
   setFilterValues: Dispatch<SetStateAction<FilterValues>>
 ) {
@@ -81,15 +73,35 @@ function createFilterItemComponent(
   };
 }
 
-function Filters({
+export default function ControlPanel({
   activeColumns,
-  aggregations,
-  filters,
-  filterValues,
+  children,
   onToggleActive,
-  setFilters,
-  setFilterValues,
-}: FiltersProps) {
+  setOpen,
+}: ControlPanelProps) {
+  const [filterValues, setFilterValues] = useState<FilterValues>({});
+  const aggregations = useAtomValue(aggregationsLoadable);
+  const [filters, setFilters] = useAtom(filtersAtom);
+
+  useEffect(() => {
+    const values: FilterValues = {};
+    filters.forEach((filter: Filter) => {
+      values[filter.field as string] = filter.value;
+    });
+    setFilterValues(values);
+  }, [filters]);
+
+  const submitValues = () => {
+    setFilters(
+      filters.map((fil: Filter) => ({ ...fil, value: filterValues[fil.field] } as Filter))
+    );
+  };
+
+  const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
+  const activeColumnsText = `${activeColumnsLength} active ${
+    activeColumnsLength === 1 ? 'column' : 'columns'
+  }`;
+
   const filterItems = filters.map((filter) => ({
     content:
       filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
@@ -98,37 +110,6 @@ function Filters({
     type: filter.type,
     toggleFunc: () => onToggleActive && onToggleActive(filter.field),
   })) as FilterGroupProps['items'];
-
-  return <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />;
-}
-
-export default function ControlPanel({
-  activeColumns,
-  aggregations,
-  children,
-  filters,
-  onToggleActive,
-  setFilters,
-  setOpen,
-}: ControlPanelProps) {
-  const [filterValues, setFilterValues] = useState<FilterValues>({});
-
-  useEffect(() => {
-    const values: FilterValues = {};
-    filters.forEach((filter) => {
-      values[filter.field as string] = filter.value;
-    });
-    setFilterValues(values);
-  }, [filters]);
-
-  const submitValues = () => {
-    setFilters(filters.map((fil) => ({ ...fil, value: filterValues[fil.field] } as Filter)));
-  };
-
-  const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
-  const activeColumnsText = `${activeColumnsLength} active ${
-    activeColumnsLength === 1 ? 'column' : 'columns'
-  }`;
 
   return (
     <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
@@ -146,15 +127,7 @@ export default function ControlPanel({
       </p>
 
       <div className="flex flex-col gap-12">
-        <Filters
-          activeColumns={activeColumns}
-          aggregations={aggregations}
-          filters={filters}
-          filterValues={filterValues}
-          onToggleActive={onToggleActive}
-          setFilters={setFilters}
-          setFilterValues={setFilterValues}
-        />
+        <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
         {children}
       </div>
       <div className="w-full">

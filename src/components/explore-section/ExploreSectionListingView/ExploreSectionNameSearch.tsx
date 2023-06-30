@@ -1,21 +1,15 @@
-import { Dispatch, useState, useEffect } from 'react';
-import { SetStateAction } from 'jotai';
+import { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
 import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { searchStringAtom } from '@/state/explore-section/list-view-atoms';
 import style from '@/components/explore-section/search.module.scss';
 
 const { Search } = Input;
 
-type ExploreSectionNameSearchProps = {
-  searchString: string;
-  setSearchString: Dispatch<SetStateAction<string>>;
-};
-
-export default function ExploreSectionNameSearch({
-  searchString,
-  setSearchString,
-}: ExploreSectionNameSearchProps) {
+export default function ExploreSectionNameSearch() {
   const [openSearchInput, setOpenSearchInputOpen] = useState<boolean>(false);
+  const [searchString, setSearchString] = useAtom(searchStringAtom);
 
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
