@@ -4,7 +4,7 @@ export type SynapticRule = {
   fromMType: string | null;
   fromRegion: string | null;
   fromSClass: string | null;
-  synapticType: string | null;
+  synapticType: string
   toEType: string | null;
   toHemisphere: string | null;
   toMType: string | null;
