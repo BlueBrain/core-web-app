@@ -4,10 +4,11 @@ import { Dispatch, useState, useEffect } from 'react';
 import { SetStateAction } from 'jotai';
 import { Tooltip } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
-import { CaretDownOutlined, CaretUpOutlined, VerticalLeftOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, CaretUpOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { SortState } from '@/types/explore-section/application';
+import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
 
 const COL_SIZING = {
@@ -59,13 +60,17 @@ const useExploreColumns = (
 
     return (
       <div className={styles.tableHeader}>
-        {icon}
-        <Tooltip className="grow" title={term.description ? term.description : term.title}>
-          <button onClick={() => sorterES(key)} type="button">
-            {term.title}
-          </button>
+        <button onClick={() => sorterES(key)} type="button">
+          {icon}
+        </button>
+        <Tooltip
+          className={classNames(styles.tableHeaderTitle, 'grow')}
+          title={term.description ? term.description : term.title}
+        >
+          <div>{term.title}</div>
+          {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
         </Tooltip>
-        <VerticalLeftOutlined
+        <VerticalAlignMiddleOutlined
           className={styles.dragIcons}
           onMouseDown={(e) => onMouseDown(e, columnIndex)}
         />
