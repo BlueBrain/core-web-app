@@ -102,7 +102,7 @@ export default function SynapticAssignementRulesTable({
   );
 }
 
-const COLUMNS: ColumnsType<SynapticAssignementRule> = [
+const COLUMNS = [
   makeCol('', 'fromHemisphere'),
   makeCol('Region', 'fromRegion'),
   makeCol('SClass', 'fromSClass'),
@@ -116,14 +116,16 @@ const COLUMNS: ColumnsType<SynapticAssignementRule> = [
   makeCol('Synapse Type', 'synapticType'),
 ];
 
-function makeCol(title: ColumnTitle<SynapticAssignementRule>, key: keyof SynapticAssignementRule) {
+function makeCol(
+  title: ColumnTitle<SynapticAssignementRule>,
+  key: keyof SynapticAssignementRule
+): ColumnType<SynapticAssignementRule> & { editable: boolean } {
   return {
     title,
     editable: true,
     key,
     dataIndex: key,
-    sorter: (a: SynapticAssignementRule, b: SynapticAssignementRule) =>
-      (a[key] ?? '').toLowerCase() < (b[key] ?? '').toLowerCase() ? -1 : +1,
+    onFilter: (value, record) => true,
   };
 }
 

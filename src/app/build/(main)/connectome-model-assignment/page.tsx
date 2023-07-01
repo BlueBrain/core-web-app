@@ -2,12 +2,13 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownCircleTwoTone, DownOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { initialRulesAtom } from './state';
 import { SynapticAssignementRule } from '@/components/SynapticAssignementRulesTable/types';
 import SynapticAssignementRulesTable from '@/components/SynapticAssignementRulesTable';
 import { classNames } from '@/util/utils';
 import styles from './connectome-model-assignment.module.scss';
+import { SettingsIcon } from '@/components/icons';
 
 function ConnectomeModelAssignmentView() {
   const [defaultRules, userRules, setUserRules] = useRules();
@@ -19,7 +20,7 @@ function ConnectomeModelAssignmentView() {
     'text-white bg-black inline-flex justify-center items-center text-sm';
 
   return (
-    <div className="bg-black h-full">
+    <div className="bg-black h-full mr-7">
       <div className="text-white" style={{ height: '40%' }}>
         <h1 className="text-white font-bold p-4">Default synapse model assignments</h1>
         <div className="h-[calc(100%-30px)] p-4 overflow-scroll">
@@ -53,11 +54,30 @@ function ConnectomeModelAssignmentView() {
         </div>
         <div className="h-[calc(100%-50px)] p-4 overflow-scroll">
           {rulesTabActive && (
-            <SynapticAssignementRulesTable
-              rules={userRules}
-              onRulesChange={setUserRules}
-              editable
-            />
+            <>
+              <div className="mb-1 flex text-primary-8 w-full justify-between">
+                <div className="flex">
+                  <SettingsIcon
+                    className="rotate-90 inline-block "
+                    style={{ width: 12, height: 12 }}
+                  />
+                  <div className="-mt-1 ml-1 text-sm">Filter</div>
+                </div>
+                <div>
+                  <div className="text-sm inline-block">Total: {userRules.length} rules</div>
+                  <DownOutlined className="text-xs ml-2" />
+                </div>
+              </div>
+              <div className="flex text-primary-8 text-sm mb-2">
+                <div className="text-xs">Show me pathways with</div>
+              </div>
+
+              <SynapticAssignementRulesTable
+                rules={userRules}
+                onRulesChange={setUserRules}
+                editable
+              />
+            </>
           )}
         </div>
       </div>
