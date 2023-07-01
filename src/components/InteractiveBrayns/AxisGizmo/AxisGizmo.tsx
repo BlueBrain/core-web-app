@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import React from 'react';
 import { logError } from '../../../util/logger';
 import Painter from './painter';

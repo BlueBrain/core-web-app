@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 'use client';
 
 import { saveAs } from 'file-saver';

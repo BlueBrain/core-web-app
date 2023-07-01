@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { classNames } from '@/util/utils';
 import Styles from './icon.module.css';

@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useState } from 'react';
 import { ConfigProvider, Table, theme } from 'antd';
 import { ColumnType, ColumnsType } from 'antd/es/table';

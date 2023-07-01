@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 // import { useAtomValue } from 'jotai';
 // import { selectAtom } from 'jotai/utils';
 // import detailedCircuitAtom from '@/state/circuit';

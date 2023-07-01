@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import Async from '../utils/async';
 import { BraynsServiceInterface } from '../types';
 import BackendAllocatorService from '../allocation/backend-allocator-service';

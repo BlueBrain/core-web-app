@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as Three from 'three';
 import VERT from './material.vert';
 import FRAG from './material.frag';

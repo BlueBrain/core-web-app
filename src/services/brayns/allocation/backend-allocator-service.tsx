@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-use-before-define */
+
 /* eslint-disable no-await-in-loop */
 import Settings from '../settings';
 import Async from '../utils/async';

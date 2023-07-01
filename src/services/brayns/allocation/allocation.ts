@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import State from '../state';
 import JsonRpcService from '../json-rpc/json-rpc';
 import BraynsWrapper from '../wrapper/wrapper';

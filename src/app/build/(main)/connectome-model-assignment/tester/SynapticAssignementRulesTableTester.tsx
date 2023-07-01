@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useState } from 'react';
 import SynapticAssignementRulesTable from '@/components/SynapticAssignementRulesTable';
 import { useSynapticAssignementRules } from '@/components/SynapticAssignementRulesTable/hooks/synaptic-assignement-rules';

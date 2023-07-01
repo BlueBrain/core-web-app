@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import State from '../state';
 import { LimitedStringCacheMap } from './cache-map';
 import { logError } from '@/util/logger';

@@ -1,5 +1,4 @@
 /* eslint-disable lodash/import-scope */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */

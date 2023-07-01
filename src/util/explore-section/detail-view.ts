@@ -10,7 +10,6 @@ import { FetchParams } from '@/types/explore-section/application';
  * @param {Dispatch<SetStateAction<FetchParams>>} callback - The Atom setter.
  *
  */
-// eslint-disable-next-line import/prefer-default-export
 export function setInfoWithPath(
   path: string | null | undefined,
   callback: Dispatch<SetStateAction<FetchParams | null>>,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import State from '../state';
 import Calc, { Vector3 } from '../utils/calc';
 import BraynsWrapper from '../wrapper/wrapper';

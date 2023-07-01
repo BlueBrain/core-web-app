@@ -1,6 +1,5 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import Settings from '../settings';
 import { NODE_STARTUP_SCRIPT } from './startup-scripts';
 import { JobAllocatorServiceInterface, JobStatus } from './types';

@@ -1,8 +1,6 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { Suspense, useEffect, useState } from 'react';
-import { ConfigProvider, theme } from 'antd';
 import { useAtom } from 'jotai';
 import { initialRulesAtom } from './state';
 import { SynapticAssignementRule } from '@/components/SynapticAssignementRulesTable/types';
@@ -19,20 +17,14 @@ function ConnectomeModelAssignmentView() {
 
   return (
     <div className="bg-black h-full">
-      <div className="text-white overflow-scroll" style={{ height: '40%' }}>
+      <div className="text-white" style={{ height: '40%' }}>
         <h1 className="text-white font-bold p-4">Default synapse model assignments</h1>
         <div className="h-[calc(100%-30px)] p-4 overflow-scroll">
-          <ConfigProvider
-            theme={{
-              algorithm: theme.darkAlgorithm,
-            }}
-          >
-            <SynapticAssignementRulesTable
-              rules={defaultRules}
-              onRulesChange={() => {}}
-              mode="dark"
-            />
-          </ConfigProvider>
+          <SynapticAssignementRulesTable
+            rules={defaultRules}
+            onRulesChange={() => {}}
+            mode="dark"
+          />
         </div>
       </div>
       <div className="text-white bg-white" style={{ height: '60%' }}>

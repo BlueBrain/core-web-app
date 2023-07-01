@@ -1,6 +1,5 @@
 import { logError } from '@/util/logger';
 
-// eslint-disable-next-line import/prefer-default-export
 export async function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve) => {
     const img = new Image();

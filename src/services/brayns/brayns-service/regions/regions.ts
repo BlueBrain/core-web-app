@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import Hierarchy from './hierarchy.json';
 import { assertType } from '@/util/type-guards';
 import { logError } from '@/util/logger';

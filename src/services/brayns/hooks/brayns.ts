@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import React from 'react';
 import CameraTransform from '../utils/camera-transform';
 import Allocation from '../allocation';
