@@ -2,9 +2,12 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
+import { EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { initialRulesAtom } from './state';
 import { SynapticAssignementRule } from '@/components/SynapticAssignementRulesTable/types';
 import SynapticAssignementRulesTable from '@/components/SynapticAssignementRulesTable';
+import { classNames } from '@/util/utils';
+import styles from './connectome-model-assignment.module.scss';
 
 function ConnectomeModelAssignmentView() {
   const [defaultRules, userRules, setUserRules] = useRules();
@@ -49,8 +52,24 @@ function ConnectomeModelAssignmentView() {
           <div className="flex-1 bg-black" />
         </div>
         <div className="h-[calc(100%-50px)] p-4 overflow-scroll">
-          <SynapticAssignementRulesTable rules={userRules} onRulesChange={setUserRules} editable />
+          {rulesTabActive && (
+            <SynapticAssignementRulesTable
+              rules={userRules}
+              onRulesChange={setUserRules}
+              editable
+            />
+          )}
         </div>
+      </div>
+      <div className="absolute bottom-4 right-4">
+        <button type="button" className={classNames(styles.button, 'bg-primary-8')}>
+          <PlusOutlined />
+          &nbsp;&nbsp;Add pathway
+        </button>
+        <button type="button" className={classNames(styles.button, 'bg-black')}>
+          <EyeOutlined />
+          &nbsp;&nbsp;Preview on Matrix
+        </button>
       </div>
     </div>
   );
