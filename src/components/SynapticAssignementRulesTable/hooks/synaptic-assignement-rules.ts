@@ -1,21 +1,15 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useState } from 'react';
+import { useMemo } from 'react';
+import { SynapticAssignementRule } from '../types';
 
-import SynapticAssignementRulesTable, {
-  SynapticAssignementRule,
-} from '../SynapticAssignementRulesTable';
-
-export default function SynapticAssignementRulesTableTester() {
-  const [rules, setRules] = useState(data);
-  return (
-    <>
-      <SynapticAssignementRulesTable rules={rules.slice(0, 4)} onRulesChange={setRules} />
-      <SynapticAssignementRulesTable editable rules={rules.slice(4)} onRulesChange={setRules} />
-    </>
-  );
+export function useSynapticAssignementRules(readonly: boolean) {
+  return useMemo(() => {
+    if (readonly) return DATA.slice(0, 4);
+    return DATA.slice(4);
+  }, [readonly]);
 }
 
-const data: SynapticAssignementRule[] = [
+const DATA: SynapticAssignementRule[] = [
   {
     fromSClass: 'EXC',
     toSClass: 'EXC',
