@@ -1,15 +1,15 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { Suspense, useEffect, useState } from 'react';
 import { ConfigProvider, theme } from 'antd';
-import { useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 import { initialRulesAtom } from './state';
-import SynapticAssignementRulesTable from '@/components/SynapticAssignementRulesTable/SynapticAssignementRulesTable';
-// import RightHemisphere from '@/components/right-hemisphere';
-// import LeftHemisphere from '@/components/left-hemisphere';
+import { SynapticAssignementRule } from '@/components/SynapticAssignementRulesTable/types';
+import SynapticAssignementRulesTable from '@/components/SynapticAssignementRulesTable';
 
 function ConnectomeModelAssignmentView() {
-  const rules = useAtomValue(initialRulesAtom);
+  const [defaultRules, userRules, setUserRules] = useRules();
   const [rulesTabActive, setRulesTabActive] = useState(true);
 
   const activeTabClassName =
@@ -17,7 +17,6 @@ function ConnectomeModelAssignmentView() {
   const nonActiveTabClassName =
     'text-white bg-black inline-flex justify-center items-center text-sm';
 
-  if (!rules) return null;
   return (
     <div className="bg-black h-full">
       <div className="text-white overflow-scroll" style={{ height: '40%' }}>
@@ -28,7 +27,11 @@ function ConnectomeModelAssignmentView() {
               algorithm: theme.darkAlgorithm,
             }}
           >
-            <SynapticAssignementRulesTable rules={rules.slice(0, 4)} onRulesChange={() => null} />
+            <SynapticAssignementRulesTable
+              rules={defaultRules}
+              onRulesChange={() => {}}
+              mode="dark"
+            />
           </ConfigProvider>
         </div>
       </div>
@@ -54,7 +57,7 @@ function ConnectomeModelAssignmentView() {
           <div className="flex-1 bg-black" />
         </div>
         <div className="h-[calc(100%-50px)] p-4 overflow-scroll">
-          <SynapticAssignementRulesTable rules={rules.slice(4)} onRulesChange={() => null} />
+          <SynapticAssignementRulesTable rules={userRules} onRulesChange={setUserRules} editable />
         </div>
       </div>
     </div>
@@ -67,4 +70,21 @@ export default function ConnectomeModelAssignment() {
       <ConnectomeModelAssignmentView />;
     </Suspense>
   );
+}
+
+function useRules(): [
+  defaultRules: SynapticAssignementRule[],
+  userRules: SynapticAssignementRule[],
+  setUserRules: (rules: SynapticAssignementRule[]) => void
+] {
+  const [rules] = useAtom(initialRulesAtom);
+  const [defaultRules, setDefaultRules] = useState<SynapticAssignementRule[]>([]);
+  const [userRules, setUserRules] = useState<SynapticAssignementRule[]>([]);
+  useEffect(() => {
+    if (!rules) return;
+
+    setDefaultRules(rules.slice(0, 4));
+    setUserRules(rules.slice(4));
+  }, [rules]);
+  return [defaultRules, userRules, setUserRules];
 }
