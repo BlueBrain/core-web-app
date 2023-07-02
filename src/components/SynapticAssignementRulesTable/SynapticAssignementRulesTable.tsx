@@ -125,7 +125,6 @@ function makeCol(
     editable: true,
     key,
     dataIndex: key,
-    onFilter: (value, record) => true,
   };
 }
 
