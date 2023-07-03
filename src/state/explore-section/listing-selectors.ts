@@ -57,7 +57,13 @@ export const selectorFnStatistic = (source: Source, statistic: string) => {
 export const selectorFnMeanStd = (text: string, record: ESResponseRaw) => {
   const mean = selectorFnStatistic(record._source, 'mean');
   const std = selectorFnStatistic(record._source, 'standard deviation');
-  return mean && std ? `${mean} ± ${std}` : '';
+  if (mean && std) {
+    return `${mean} ± ${std}`;
+  }
+  if (mean) {
+    return mean;
+  }
+  return '';
 };
 
 /**

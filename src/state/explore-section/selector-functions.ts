@@ -53,12 +53,6 @@ export const semSelectorFn = (detail: DeltaResource | null) => {
   return seriesArray?.find((series) => series.statistic === 'standard error of the mean')?.value;
 };
 
-// renders number of measurement data if present
-export const numberOfMeasurementSelectorFn = (detail: DeltaResource | null) => {
-  const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);
-  return seriesArray?.find((s) => s.statistic === 'N')?.value;
-};
-
 export const attrsSelectorFn = (detail: DeltaResource | null) => {
   if (!detail?.attrs) return [];
   return Object.keys(detail?.attrs).map((attr) => ({

@@ -26,8 +26,8 @@ const fields = [
     title: 'Reference',
   },
   {
-    title: 'Number of Measurement',
-    field: ({ numberOfMeasurement }) => numberOfMeasurement,
+    title: 'Number of Measurements',
+    field: ({ numberOfMeasurements }) => numberOfMeasurements,
   },
   {
     title: 'Age',

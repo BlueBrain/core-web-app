@@ -62,7 +62,7 @@ export interface OptionalExploreSectionSerializedFields {
   density?: string | number;
   sem?: string | number | void;
   series?: Series[];
-  numberOfCells?: string | number;
+  numberOfMeasurements?: string | number;
   weight?: string | number | void;
   conditions?: string;
 }
@@ -203,7 +203,6 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   description?: string;
   speciesLabel?: string | null;
   brainRegion?: string;
-  numberOfMeasurement?: number;
   subjectSpecies?: string;
   createdBy?: string;
   meanPlusMinusStd?: ReactNode | null;

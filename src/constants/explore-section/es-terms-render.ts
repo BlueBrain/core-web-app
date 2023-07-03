@@ -238,6 +238,7 @@ const LISTING_CONFIG: TermsRenderProps = {
       field: 'mean',
       nestField: 'series',
     },
+    unit: 'boutons/μm',
     title: 'Mean ± std',
     filter: 'valueRange',
     renderFn: selectorFnMeanStd,
@@ -246,14 +247,14 @@ const LISTING_CONFIG: TermsRenderProps = {
       singular: 'Value',
     },
   },
-  numberOfCells: {
+  numberOfMeasurements: {
     term: 'series.statistic.N.keyword',
     nestedField: {
       extendedField: 'series.statistic.keyword',
       field: 'N',
       nestField: 'series',
     },
-    title: 'N° of cells',
+    title: 'N° of measurements',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {

@@ -37,11 +37,12 @@ export default function useExploreSerializedFields(
     if (!mean) return null;
     return std ? (
       <>
-        {mean.value} ± {std.value} <span className="text-neutral-4"> {mean.unitCode}</span>
+        {formatNumber(mean.value)} ± {formatNumber(std.value)}{' '}
+        <span className="text-neutral-4"> {mean.unitCode}</span>
       </>
     ) : (
       <>
-        {mean.value} <span className="text-neutral-4"> {mean.unitCode}</span>
+        {formatNumber(mean.value)} <span className="text-neutral-4"> {mean.unitCode}</span>
       </>
     );
   };
@@ -63,7 +64,7 @@ export default function useExploreSerializedFields(
   const serializeThickness = () =>
     mean && (
       <>
-        {mean.value} <span className="text-neutral-4"> {mean.unitCode}</span>
+        {formatNumber(mean.value)} <span className="text-neutral-4"> {mean.unitCode}</span>
       </>
     );
 
@@ -87,10 +88,9 @@ export default function useExploreSerializedFields(
   return {
     description: detail?.description,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
-    numberOfMeasurement: detail?.numberOfMeasurement,
     createdBy: detail?.createdBy,
     meanPlusMinusStd: serializeMeanPlusMinusStd(),
-    numberOfCells: serializeStatisticFields('N'),
+    numberOfMeasurements: serializeStatisticFields('N'),
     standardDeviation: serializeStatisticFields('standard deviation'),
     density: serializeStatisticFields('data point', true),
     creationDate: serializeCreationDate(),
