@@ -2,7 +2,13 @@
 
 import { Suspense, useEffect, useState, useMemo } from 'react';
 import { useAtom } from 'jotai';
-import { DownCircleTwoTone, DownOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DownCircleTwoTone,
+  DownOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import { initialRulesAtom } from './state';
 import { SynapticAssignementRule } from '@/components/SynapticAssignementRulesTable/types';
 import SynapticAssignementRulesTable from '@/components/SynapticAssignementRulesTable';
@@ -18,9 +24,7 @@ function ConnectomeModelAssignmentView() {
 
   const getFieldsOptions = useGetFieldsOptions();
 
-  const [filters, setFilters] = useState<{ col: string; value: string }[]>([
-    { col: '', value: '' },
-  ]);
+  const [filters, setFilters] = useState<{ col: string; value: string }[]>([]);
 
   const filteredUserRules = useMemo(
     () =>
@@ -93,61 +97,75 @@ function ConnectomeModelAssignmentView() {
                   <div className="text-sm inline-block">
                     Total: {filteredUserRules.length} rules
                   </div>
-                  <DownOutlined className="text-xs ml-2" />
+                  {filters.length >= 1 && (
+                    <RightOutlined className="text-xs ml-2" onClick={() => setFilters([])} />
+                  )}
+                  {filters.length === 0 && (
+                    <DownOutlined
+                      className="text-xs ml-2"
+                      onClick={() => setFilters([{ col: '', value: '' }])}
+                    />
+                  )}
                 </div>
               </div>
-              <div className="flex text-primary-8 text-sm mb-2">
-                <div className="text-xs">Show me pathways with</div>
-                {filters.map((f, i) => (
-                  <div key={i}>
-                    <Select
-                      style={{ width: 120 }}
-                      onChange={(value) =>
-                        setFilters([
-                          ...filters.slice(0, i),
-                          { col: value, value: '' },
-                          ...filters.slice(i, filters.length - 1),
-                        ])
-                      }
-                      options={Array.from(cols).map((col) => ({ value: col, label: col }))}
-                    />
-                    {!!f.col && (
+              {filters.length >= 1 && (
+                <div className="flex text-primary-8 text-sm mb-2">
+                  <div className="text-xs mt-1">Show me pathways with</div>
+                  {filters.map((f, i) => (
+                    <div key={i}>
                       <Select
-                        style={{ width: 120 }}
-                        showSearch
+                        size="small"
+                        style={{ width: 120, marginLeft: 5 }}
                         onChange={(value) =>
                           setFilters([
                             ...filters.slice(0, i),
-                            { col: f.col, value },
+                            { col: value, value: '' },
                             ...filters.slice(i, filters.length - 1),
                           ])
                         }
-                        options={getFieldsOptions(f.col).map((opt) => ({
-                          value: opt,
-                          label: opt,
-                        }))}
+                        options={Array.from(cols).map((col) => ({ value: col, label: col }))}
                       />
-                    )}
-                  </div>
-                ))}
+                      {!!f.col && (
+                        <Select
+                          style={{ width: 120, marginLeft: 5 }}
+                          size="small"
+                          showSearch
+                          onChange={(value) =>
+                            setFilters([
+                              ...filters.slice(0, i),
+                              { col: f.col, value },
+                              ...filters.slice(i, filters.length - 1),
+                            ])
+                          }
+                          options={getFieldsOptions(f.col).map((opt) => ({
+                            value: opt,
+                            label: opt,
+                          }))}
+                        />
+                      )}
+                    </div>
+                  ))}
 
-                {filters.every((f) => f.col && f.value) && (
-                  <button
-                    type="button"
-                    onClick={() => setFilters([...filters, { col: '', value: '' }])}
-                  >
-                    Add new filter
-                  </button>
-                )}
-                {filters.length >= 2 && (
-                  <button
-                    type="button"
-                    onClick={() => setFilters(filters.slice(0, filters.length - 1))}
-                  >
-                    Remove filter
-                  </button>
-                )}
-              </div>
+                  {filters.every((f) => f.col && f.value) && (
+                    <button
+                      className="ml-2"
+                      type="button"
+                      onClick={() => setFilters([...filters, { col: '', value: '' }])}
+                    >
+                      Add new filter
+                    </button>
+                  )}
+                  {filters.length >= 2 && (
+                    <button
+                      className="ml-2"
+                      type="button"
+                      onClick={() => setFilters(filters.slice(0, filters.length - 1))}
+                    >
+                      Remove filter
+                    </button>
+                  )}
+                </div>
+              )}
 
               <SynapticAssignementRulesTable
                 rules={filteredUserRules}
