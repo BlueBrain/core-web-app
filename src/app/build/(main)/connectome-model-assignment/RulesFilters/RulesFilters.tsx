@@ -19,10 +19,7 @@ export interface RulesFiltersProps {
 export default function RulesFilters({ rules, onFilterChange }: RulesFiltersProps) {
   const [filterItems, setFilterItems] = useState<FilterItemType[]>([]);
   const [filter, setFilter] = useState<Filter>(new Filter([]));
-  useEffect(() => {
-    console.log('🚀 [RulesFilters] filter = ', filter); // @FIXME: Remove this line written on 2023-07-03 at 16:34
-    onFilterChange(filter);
-  }, [filter, onFilterChange]);
+  useEffect(() => onFilterChange(filter), [filter, onFilterChange]);
   const filteredRulesCount = useFilteredRulesCount(rules, filter);
   useFilterUpdate(filterItems, setFilter);
   const handleAdd = useAddHandler(filterItems, setFilterItems);

@@ -173,8 +173,6 @@ function useFilteredRules(
     }));
     if (typeof filter !== 'function') return indexedRules;
 
-    const filteredIndexedRules = indexedRules.filter(filter);
-    console.log('🚀 [SynapticAssignementRulesTable] filteredIndexedRules = ', filteredIndexedRules); // @FIXME: Remove this line written on 2023-07-03 at 16:32
-    return filteredIndexedRules;
+    return indexedRules.filter(filter);
   }, [rules, filter]);
 }
