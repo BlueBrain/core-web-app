@@ -25,18 +25,24 @@ export default function BrainTreeSearch({
 
   return (
     <Search
-      onSelect={(_labeledValue, option) => {
+      className="mb-10"
+      handleSelect={(_labeledValue, option) => {
         const { ancestors, value: optionValue, label, leaves, representedInAnnotation } = option;
 
         setValue?.(
           set(
-            ancestors ?? [],
+            (ancestors as string) ?? [],
             null,
             value ?? {} // Preserve any already expanded items
           )
         );
 
-        setSelectedBrainRegion(optionValue, label, leaves ?? null, representedInAnnotation);
+        setSelectedBrainRegion(
+          optionValue as string,
+          label as string,
+          leaves ?? null,
+          representedInAnnotation
+        );
 
         // This timeout seems to be necessary to "wait" until the nav item has been rendered before attemping to scroll to it.
         setTimeout(() => {
@@ -56,6 +62,7 @@ export default function BrainTreeSearch({
           })
         ) ?? []
       }
+      placeholder="Search region..."
     />
   );
 }

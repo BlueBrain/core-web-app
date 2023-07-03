@@ -7,7 +7,6 @@ export interface GteLteValue {
 
 interface BaseFilter {
   field: string;
-  title: string;
   aggregationType: AggregationType;
   type: null;
   value: null;
@@ -21,7 +20,6 @@ export interface CheckListFilter extends Omit<BaseFilter, 'type' | 'value'> {
 export interface RangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
   type: 'dateRange' | 'valueRange';
   value: GteLteValue;
-  unit?: string;
 }
 
 export interface ValueFilter extends Omit<BaseFilter, 'type' | 'value'> {

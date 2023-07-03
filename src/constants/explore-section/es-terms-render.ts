@@ -21,6 +21,10 @@ type TermsRenderProps = {
     filter: FilterType;
     unit?: string;
     renderFn?: (value: any, record: any, index: number) => ReactNode | any;
+    vocabulary: {
+      plural: string;
+      singular: string;
+    };
   };
 };
 
@@ -36,30 +40,50 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Brain Region',
     filter: 'checkList',
     renderFn: selectorFnBrainRegion,
+    vocabulary: {
+      plural: 'Brain Regions',
+      singular: 'Brain Region',
+    },
   },
   eType: {
     term: 'eType.label.keyword',
     title: 'E-Type',
     filter: 'checkList',
     renderFn: (t, r) => selectorFnBasic(r._source?.eType?.label),
+    vocabulary: {
+      plural: 'E-Types',
+      singular: 'E-Type',
+    },
   },
   mType: {
     term: 'mType.label.keyword',
     title: 'M-Type',
     filter: 'checkList',
     renderFn: (t, r) => selectorFnBasic(r._source?.mType?.label),
+    vocabulary: {
+      plural: 'M-Types',
+      singular: 'M-Type',
+    },
   },
   name: {
     term: 'name.keyword',
     title: 'Name',
     filter: null,
     renderFn: (t, r) => selectorFnBasic(r._source?.name),
+    vocabulary: {
+      plural: 'Names',
+      singular: 'Name',
+    },
   },
   subjectSpecies: {
     term: 'subjectSpecies.label.keyword',
     title: 'Species',
     filter: 'checkList',
     renderFn: (t, r) => selectorFnBasic(r._source?.subjectSpecies?.label),
+    vocabulary: {
+      plural: 'Species',
+      singular: 'Species',
+    },
   },
   sem: {
     term: 'series.statistic.standard error of the mean.keyword',
@@ -72,24 +96,40 @@ const LISTING_CONFIG: TermsRenderProps = {
     description: 'Standard error of the mean',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
   },
   weight: {
     term: 'weight.label.keyword',
     title: 'Weight',
     filter: 'checkList',
     renderFn: (t, r) => selectorFnBasic(r._source?.weight),
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
   },
   subjectAge: {
     term: 'subjectAge.label.keyword',
     title: 'Age',
     filter: 'checkList',
     renderFn: (t, r) => selectorFnBasic(r._source?.subjectAge?.label),
+    vocabulary: {
+      plural: 'Ages',
+      singular: 'Age',
+    },
   },
   contributors: {
     term: 'contributors.label.keyword',
     title: 'Contributors',
     filter: 'checkList',
     renderFn: selectorFnContributors,
+    vocabulary: {
+      plural: 'Contributors',
+      singular: 'Contributor',
+    },
   },
   neuronDensity: {
     term: 'neuronDensity.value',
@@ -97,52 +137,88 @@ const LISTING_CONFIG: TermsRenderProps = {
     filter: 'valueRange',
     unit: 'neurons/mm³',
     renderFn: (t, r) => selectorFnValue(r._source?.neuronDensity),
+    vocabulary: {
+      plural: 'Neuron Densities',
+      singular: 'Neuron Density',
+    },
   },
   boutonDensity: {
     term: 'boutonDensity.label.keyword',
     title: 'Bouton density',
     filter: 'checkList',
     renderFn: (t, r) => selectorFnBasic(r._source?.boutonDensity?.value),
+    vocabulary: {
+      plural: 'Bouton Densities',
+      singular: 'Bouton Density',
+    },
   },
   layer: {
     term: 'layer.label.keyword',
     title: 'Layer',
     filter: 'checkList',
     renderFn: selectorFnLayer,
+    vocabulary: {
+      plural: 'Layers',
+      singular: 'Layer',
+    },
   },
   layerThickness: {
     term: 'layerThickness.value',
     title: 'Thickness (µM)',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnLayerThickness(r._source?.layerThickness),
+    vocabulary: {
+      plural: 'Thicknesses',
+      singular: 'Thickness',
+    },
   },
   circuitType: {
     term: 'circuitType.keyword',
     title: 'Circuit type',
     filter: 'checkList',
+    vocabulary: {
+      plural: 'Circuit Types',
+      singular: 'Circuit Type',
+    },
   },
   createdAt: {
     term: 'createdAt',
     title: 'Creation date',
     filter: 'dateRange',
     renderFn: (t, r) => selectorFnDate(r._source?.createdAt),
+    vocabulary: {
+      plural: 'Dates',
+      singular: 'Date',
+    },
   },
   createdBy: {
     term: 'createdBy.keyword',
     title: 'Created by',
     filter: 'checkList',
+    vocabulary: {
+      plural: 'Users',
+      singular: 'User',
+    },
   },
   updatedAt: {
     term: 'updatedAt',
     title: 'Updated at',
     filter: 'dateRange',
     renderFn: (t, r) => selectorFnDate(r._source?.updatedAt),
+    vocabulary: {
+      plural: 'Dates',
+      singular: 'Date',
+    },
   },
   reference: {
     term: 'reference.keyword',
     title: 'Reference',
     filter: 'checkList',
     renderFn: (t, r) => selectorFnBasic(r._source?.reference),
+    vocabulary: {
+      plural: 'References',
+      singular: 'Reference',
+    },
   },
   conditions: {
     term: 'conditions.keyword',
@@ -150,6 +226,10 @@ const LISTING_CONFIG: TermsRenderProps = {
     filter: 'checkList',
     unit: 'Cº',
     renderFn: (t, r) => selectorFnBasic(r._source?.conditions),
+    vocabulary: {
+      plural: 'Conditions',
+      singular: 'Condition',
+    },
   },
   meanstd: {
     term: 'series.statistic.mean.keyword',
@@ -161,6 +241,10 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Mean ± std',
     filter: 'valueRange',
     renderFn: selectorFnMeanStd,
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
   },
   numberOfCells: {
     term: 'series.statistic.N.keyword',
@@ -172,36 +256,60 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'N° of cells',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
   },
   brainConfiguration: {
     term: 'nValue',
     title: 'Brain Configuration',
     filter: null,
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    vocabulary: {
+      plural: 'Brain Configurations',
+      singular: 'Brain Configuration',
+    },
   },
   'coords.vpm_pct': {
     term: 'nValue',
     title: 'vpm_pct',
     filter: null,
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
   },
   'coords.extracellular_calcium': {
     term: 'nValue',
     title: 'extracellular_calcium',
     filter: null,
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
   },
   'coords.celsius': {
     term: 'nValue',
     title: 'celcius',
     filter: null,
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
   },
   startedAt: {
     term: 'nValue',
     title: 'started at',
     filter: null,
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    vocabulary: {
+      plural: 'Dates',
+      singular: 'Date',
+    },
   },
 };
 

@@ -106,7 +106,7 @@ export default function ControlPanel({
     content:
       filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
     display: activeColumns.includes(filter.field),
-    label: filter.title,
+    label: LISTING_CONFIG[filter.field].title,
     type: filter.type,
     toggleFunc: () => onToggleActive && onToggleActive(filter.field),
   })) as FilterGroupProps['items'];

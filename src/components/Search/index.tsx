@@ -1,61 +1,78 @@
-import { Select } from 'antd';
+import { ReactElement, JSXElementConstructor } from 'react';
+import { ConfigProvider, Select } from 'antd';
 import { SelectProps } from 'antd/es/select';
+import { classNames } from '@/util/utils';
 
 type SelectOptions = {
   label: string;
   value: string;
-  ancestors?: string[];
-  leaves?: string[];
-  representedInAnnotation: boolean;
 };
 
 export default function Search({
-  onSelect,
+  className,
+  colorBgContainer = '#003A8C',
+  onClear,
+  handleSelect,
+  mode,
   options,
+  placeholder = 'Search',
+  tagRender,
+  value,
 }: {
-  onSelect: SelectProps<unknown, SelectOptions>['onSelect'];
+  className?: string;
+  colorBgContainer?: string;
+  onClear?: () => void;
+  handleSelect: SelectProps['onSelect'];
+  mode?: 'multiple' | 'tags';
   options: SelectOptions[];
+  placeholder?: string;
+  tagRender?: (props: any) => ReactElement<any, string | JSXElementConstructor<any>>;
+  value?: string[];
 }) {
-  const css = `
-.ant-select-selector {
-  padding: 0 !important;
-}
-.ant-select-selection-search {
-  inset-inline-start: 0 !important;
-  inset-inline-end: 0 !important;
-}
-.ant-select-selection-search-input {
-  color:white !important;
-}
-.ant-select-selection-placeholder {
-  color:#69C0FF !important;
-}
-.ant-select-selection-item {
-  color:white !important;
-}
-`;
-
   return (
-    <>
-      <style>{css}</style>
-      <div className="border-b border-white mb-10">
+    <div className={classNames('border-b border-white', className)}>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorBgContainer,
+            colorBgElevated: '#003A8C', // Drop down list bg
+            colorBorder: colorBgContainer, // Makes it "transparent"
+            colorPrimary: 'white', // Seleced dropdown items color
+            colorText: 'white', // Input value text
+            colorTextSecondary: 'white', // Control item check mark
+            colorTextTertiary: 'white', // Clear icon hover
+            colorTextQuaternary: 'white', // Drop-down icon
+            colorTextPlaceholder: '#69C0FF', // Input placeholder text
+            controlItemBgActive: '#0050B3', // Selected dropdown items bg
+            controlItemBgHover: '#096DD9',
+          },
+        }}
+      >
         <Select
-          bordered={false}
-          className="block w-full py-3 text-white"
+          allowClear
+          autoClearSearchValue
+          className="block pl-0 py-3 w-full"
           dropdownStyle={{ borderRadius: '4px' }}
-          placeholder="Search region..."
+          placeholder={placeholder}
+          onClear={onClear}
+          onDeselect={handleSelect}
+          onSelect={handleSelect}
           options={options}
           filterOption={(input, option) =>
-            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            ((option?.label as string)?.toLowerCase() ?? '').includes(input.toLowerCase())
           }
           filterSort={(optionA, optionB) =>
-            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+            ((optionA?.label as string).toLowerCase() ?? '').localeCompare(
+              (optionB?.label as string).toLowerCase() ?? ''
+            )
           }
-          showSearch
+          mode={mode}
           optionFilterProp="label"
-          onSelect={onSelect}
+          showSearch
+          tagRender={tagRender}
+          value={value}
         />
-      </div>
-    </>
+      </ConfigProvider>
+    </div>
   );
 }

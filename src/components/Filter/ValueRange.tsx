@@ -5,6 +5,7 @@ import { RangeFilter } from '@/components/Filter/types';
 import { FilterValues } from '@/types/explore-section/application';
 import { Statistics } from '@/types/explore-section/fields';
 import ArrowLeftRightIcon from '@/components/icons/ArrowLeftRight';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { formatNumber } from '@/util/common';
 
 export default function ValueRange({
@@ -68,7 +69,7 @@ export default function ValueRange({
               onChange={submitForm}
             />
           </Form.Item>
-          <div className="text-neutral-2 ml-2">{filter.unit}</div>
+          <div className="text-neutral-2 ml-2">{LISTING_CONFIG[filter.field].unit}</div>
         </Form>
       </ConfigProvider>
       <div className="text-neutral-2 mt-3 gap-2 flex flex-col">

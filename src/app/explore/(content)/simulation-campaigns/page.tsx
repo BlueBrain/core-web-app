@@ -233,7 +233,7 @@ export default function SimulationCampaignPage() {
     <div className="flex">
       <div className="flex flex-col gap-10 h-screen overflow-scroll pt-10 w-full">
         <h1 className="font-bold pl-7 pr-16 text-primary-7 text-2xl">Simulation Campaigns</h1>
-        <div className="bg-neutral-1 flex flex-col grow gap-10 pl-7 pr-16 pt-10">
+        <div className="bg-neutral-1 flex flex-col grow gap-10 pl-7 pr-3 pt-10">
           <h2 className="font-bold text-primary-7">Public Campaigns</h2>
           <div className="flex items-center justify-between">
             <span className="font-bold text-primary-7">{`Total: ${3200} campaigns`}</span>

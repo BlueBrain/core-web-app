@@ -1,11 +1,15 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
-import { InfoCircleFilled } from '@ant-design/icons';
+import { CloseOutlined, InfoCircleFilled } from '@ant-design/icons';
+import { Tag } from 'antd';
+import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { Filter, OptionsData } from './types';
 import { CheckIcon } from '@/components/icons';
-import { FilterValues } from '@/types/explore-section/application';
+import Search from '@/components/Search';
 import CenteredMessage from '@/components/CenteredMessage';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import { FilterValues } from '@/types/explore-section/application';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {
@@ -64,6 +68,7 @@ export default function CheckList({
   const options = useMemo(() => {
     const agg = data[filter.field];
     const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
+
     return buckets
       ? buckets?.map(({ key, doc_count: count }) => ({
           checked: values.includes(key as string),
@@ -73,26 +78,102 @@ export default function CheckList({
       : undefined;
   }, [data, filter.field, values]);
 
-  const handleCheckedChange = (value: string) => {
-    setFilterValues((prevState) => {
-      let newValues = [...values];
-      if (values.includes(value)) {
-        newValues = values.filter((val) => val !== value);
-      } else {
-        newValues.push(value);
-      }
+  const handleCheckedChange = useCallback(
+    (value: string) => {
+      setFilterValues((prevState) => {
+        let newValues = [...values];
 
-      return {
-        ...prevState,
-        [filter.field]: newValues,
-      };
-    });
+        if (values.includes(value)) {
+          newValues = values.filter((val) => val !== value);
+        } else {
+          newValues.push(value);
+        }
+
+        return {
+          ...prevState,
+          [filter.field]: newValues,
+        };
+      });
+    },
+    [filter.field, setFilterValues, values]
+  );
+
+  const onClear = useCallback(() => {
+    setFilterValues((prevState) => ({
+      ...prevState,
+      [filter.field]: [],
+    }));
+  }, [filter.field, setFilterValues]);
+
+  const defaultRenderLength = 8;
+  const [renderLength, setRenderLength] = useState<number>(defaultRenderLength);
+  const loadMoreLength = 5;
+  const remainingLength = (options?.length ?? 0) - renderLength;
+  const adjustedLoadMoreLength =
+    remainingLength >= loadMoreLength ? loadMoreLength : remainingLength;
+
+  const fieldLabel =
+    remainingLength === 1
+      ? LISTING_CONFIG[filter.field].vocabulary.singular
+      : LISTING_CONFIG[filter.field].vocabulary.plural;
+
+  const loadMoreBtn = () =>
+    !!remainingLength &&
+    remainingLength > 0 && (
+      <button
+        className="bg-primary-8 ml-auto py-3 px-8 rounded text-white w-fit"
+        type="button"
+        onClick={() => setRenderLength(renderLength + adjustedLoadMoreLength)}
+      >
+        {`Load ${adjustedLoadMoreLength} more ${fieldLabel} (${remainingLength} remaining)`}
+      </button>
+    );
+
+  const tagRender = (tagProps: CustomTagProps) => {
+    const { label, closable, onClose } = tagProps;
+
+    return (
+      <Tag
+        className="bg-primary-8 border-none font-bold m-1 py-2 px-4 rounded-md text-left text-white"
+        closable={closable}
+        closeIcon={<CloseOutlined className="text-primary-3" />}
+        onClose={onClose}
+      >
+        {label}
+      </Tag>
+    );
   };
 
-  return (
-    <ul className="divide-y divide-white/20 flex flex-col space-y-3">
-      {options && options.length > 0 ? (
-        options?.map(({ checked, count, key }) => (
+  const search = () => (
+    <Search
+      colorBgContainer="#002766"
+      onClear={onClear}
+      handleSelect={(value) => {
+        handleCheckedChange(value as string);
+      }}
+      options={
+        options?.map(({ key }) => ({
+          label: key as string,
+          value: key as string,
+        })) ?? []
+      }
+      mode="tags"
+      placeholder={`Search for ${LISTING_CONFIG[filter.field].vocabulary.plural}`}
+      tagRender={tagRender}
+      value={options?.reduce(
+        (acc, { checked, key }) => (checked ? [...acc, key as string] : acc),
+        [] as string[]
+      )}
+    />
+  );
+
+  const list = () => (
+    <>
+      {
+        options && options.length > defaultRenderLength && search() // Only render for the longer lists
+      }
+      <ul className="divide-y divide-white/20 flex flex-col space-y-3">
+        {options?.slice(0, renderLength)?.map(({ checked, count, key }) => (
           <CheckListOption
             checked={checked}
             count={count}
@@ -101,7 +182,18 @@ export default function CheckList({
             id={key as string}
             filterField={filter.field}
           />
-        ))
+        ))}
+      </ul>
+      {
+        options && options.length > defaultRenderLength && loadMoreBtn() // Only render for the longer lists
+      }
+    </>
+  );
+
+  return (
+    <div className="flex flex-col gap-4">
+      {options && options.length > 0 ? (
+        list()
       ) : (
         <div className="text-neutral-1">
           <CenteredMessage
@@ -110,6 +202,6 @@ export default function CheckList({
           />
         </div>
       )}
-    </ul>
+    </div>
   );
 }

@@ -25,7 +25,7 @@ export type FilterGroupProps = {
   setFilters: Dispatch<SetStateAction<Filter[]>>;
 };
 
-export function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
+function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
   return (
     <Accordion.Root
       className="divide-y divide-primary-7 flex flex-col space-y-5"
@@ -68,4 +68,4 @@ export function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
   );
 }
 
-export { CheckList, DateRange };
+export { CheckList, DateRange, FilterGroup };

@@ -8,7 +8,6 @@ import ClearFilters from '@/components/explore-section/ExploreSectionListingView
 import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import ControlPanel from '@/components/explore-section/ControlPanel';
-import { formatNumber } from '@/util/common';
 import SettingsIcon from '@/components/icons/Settings';
 import { filterHasValue } from '@/components/Filter/util';
 import useExploreColumns from '@/hooks/useExploreColumns';
@@ -62,7 +61,7 @@ export default function ExploreSectionListingView({
       return <Spin className="ml-3" indicator={<LoadingOutlined />} />;
     }
     if (total.state === 'hasData' && total.data?.value) {
-      return formatNumber(total.data?.value);
+      return Number(total.data.value).toLocaleString('en-US');
     }
     return 0;
   };
@@ -91,7 +90,7 @@ export default function ExploreSectionListingView({
 
   return (
     <>
-      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pl-7 pr-14 overflow-scroll relative">
+      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pl-7 pr-3 overflow-scroll relative">
         <div className="flex items-center justify-between ml-5">
           <div className="text-primary-7 text-2xl font-bold flex-auto w-6/12">
             {title}

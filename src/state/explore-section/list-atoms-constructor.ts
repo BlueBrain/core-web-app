@@ -17,6 +17,7 @@ interface DataQueryParams {
 
 export const columnKeyToFilter = (key: string): Filter => {
   const fieldConfig = LISTING_CONFIG[key];
+
   switch (fieldConfig.filter) {
     case 'checkList':
       return {
@@ -24,7 +25,6 @@ export const columnKeyToFilter = (key: string): Filter => {
         type: 'checkList',
         value: [],
         aggregationType: 'buckets',
-        title: LISTING_CONFIG[key].title,
       };
     case 'dateRange':
       return {
@@ -32,7 +32,6 @@ export const columnKeyToFilter = (key: string): Filter => {
         type: 'dateRange',
         value: { gte: null, lte: null },
         aggregationType: 'stats',
-        title: LISTING_CONFIG[key].title,
       };
     case 'valueRange':
       return {
@@ -40,13 +39,10 @@ export const columnKeyToFilter = (key: string): Filter => {
         type: 'valueRange',
         value: { gte: null, lte: null },
         aggregationType: 'stats',
-        title: LISTING_CONFIG[key].title,
-        unit: LISTING_CONFIG[key].unit,
       };
     default:
       return {
         field: key,
-        title: LISTING_CONFIG[key].title,
         aggregationType: null,
         type: null,
         value: null,
