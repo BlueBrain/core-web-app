@@ -1,31 +1,28 @@
 import { Button } from 'antd';
 import { CopyOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
-import { SynapticAssignementRule } from '../types';
 import Styles from './actions.module.css';
 
 export interface ActionsProps {
-  rule: SynapticAssignementRule;
   ruleIndex: number;
   editing: boolean;
-  rules: SynapticAssignementRule[];
-  onRulesChange(rules: SynapticAssignementRule[]): void;
+  onDuplicate(ruleIndex: number): void;
+  onDelete(ruleIndex: number): void;
   onStartEditing(ruleIndex: number): void;
-  onValidateEdition(ruleIndex: number): void;
+  onValidateEdition(): void;
 }
 
 export default function Actions({
-  rule,
   ruleIndex,
   editing,
-  rules,
-  onRulesChange,
+  onDuplicate,
+  onDelete,
   onStartEditing,
   onValidateEdition,
 }: ActionsProps) {
   if (editing) {
     return (
-      <Button type="primary" onClick={() => onValidateEdition(ruleIndex)}>
+      <Button type="primary" onClick={() => onValidateEdition()}>
         Confirm
       </Button>
     );
@@ -33,15 +30,9 @@ export default function Actions({
 
   return (
     <div className={Styles.actions}>
-      <CopyOutlined
-        onClick={() =>
-          onRulesChange([...rules.slice(0, ruleIndex), rule, ...rules.slice(ruleIndex)])
-        }
-      />
+      <CopyOutlined onClick={() => onDuplicate(ruleIndex)} />
       <EditOutlined onClick={() => onStartEditing(ruleIndex)} />
-      <DeleteOutlined
-        onClick={() => onRulesChange(rules.filter((_rule, index) => ruleIndex !== index))}
-      />
+      <DeleteOutlined onClick={() => onDelete(ruleIndex)} />
     </div>
   );
 }

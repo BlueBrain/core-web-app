@@ -1,49 +1,23 @@
 'use client';
 
-import { Suspense, useEffect, useState, useMemo } from 'react';
+/* eslint-disable no-restricted-syntax */
+
+import { Suspense, useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import {
-  DownCircleTwoTone,
-  DownOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import { EyeOutlined, PlusOutlined } from '@ant-design/icons';
+
 import { initialRulesAtom } from './state';
+import RulesFilters from './RulesFilters';
+import Filter from './RulesFilters/filter';
 import { SynapticAssignementRule } from '@/components/SynapticAssignementRulesTable/types';
 import SynapticAssignementRulesTable from '@/components/SynapticAssignementRulesTable';
 import { classNames } from '@/util/utils';
 import styles from './connectome-model-assignment.module.scss';
-import { SettingsIcon } from '@/components/icons';
-import { Select } from 'antd';
-import { useGetFieldsOptions } from '@/components/SynapticAssignementRulesTable/hooks/get-fields-options';
 
 function ConnectomeModelAssignmentView() {
   const [defaultRules, userRules, setUserRules] = useRules();
+  const [userRulesFilter, setUserRulesFilter] = useState(new Filter([]));
   const [rulesTabActive, setRulesTabActive] = useState(true);
-
-  const getFieldsOptions = useGetFieldsOptions();
-
-  const [filters, setFilters] = useState<{ col: string; value: string }[]>([]);
-
-  const filteredUserRules = useMemo(
-    () =>
-      userRules.filter((r) => {
-        for (const filter of filters) {
-          if (!filter.col || !filter.value) continue;
-          if (r[filter.col] !== filter.value) return false;
-        }
-        return true;
-      }),
-    [userRules, filters]
-  );
-
-  const cols = useMemo(() => {
-    if (!defaultRules[0]) return new Set();
-    const selectedCols = filters.filter((f) => f.col !== '');
-    return Object.keys(defaultRules[0]).filter((v) => !selectedCols.map((c) => c.col).includes(v));
-  }, [defaultRules, filters]);
-
   const activeTabClassName =
     'text-primary-8 bg-white inline-flex justify-center items-center font-bold text-primary-8 text-sm';
   const nonActiveTabClassName =
@@ -85,90 +59,10 @@ function ConnectomeModelAssignmentView() {
         <div className="h-[calc(100%-50px)] p-4 overflow-scroll">
           {rulesTabActive && (
             <>
-              <div className="mb-1 flex text-primary-8 w-full justify-between">
-                <div className="flex">
-                  <SettingsIcon
-                    className="rotate-90 inline-block "
-                    style={{ width: 12, height: 12 }}
-                  />
-                  <div className="-mt-1 ml-1 text-sm">Filter</div>
-                </div>
-                <div>
-                  <div className="text-sm inline-block">
-                    Total: {filteredUserRules.length} rules
-                  </div>
-                  {filters.length >= 1 && (
-                    <RightOutlined className="text-xs ml-2" onClick={() => setFilters([])} />
-                  )}
-                  {filters.length === 0 && (
-                    <DownOutlined
-                      className="text-xs ml-2"
-                      onClick={() => setFilters([{ col: '', value: '' }])}
-                    />
-                  )}
-                </div>
-              </div>
-              {filters.length >= 1 && (
-                <div className="flex text-primary-8 text-sm mb-2">
-                  <div className="text-xs mt-1">Show me pathways with</div>
-                  {filters.map((f, i) => (
-                    <div key={i}>
-                      <Select
-                        size="small"
-                        style={{ width: 120, marginLeft: 5 }}
-                        onChange={(value) =>
-                          setFilters([
-                            ...filters.slice(0, i),
-                            { col: value, value: '' },
-                            ...filters.slice(i, filters.length - 1),
-                          ])
-                        }
-                        options={Array.from(cols).map((col) => ({ value: col, label: col }))}
-                      />
-                      {!!f.col && (
-                        <Select
-                          style={{ width: 120, marginLeft: 5 }}
-                          size="small"
-                          showSearch
-                          onChange={(value) =>
-                            setFilters([
-                              ...filters.slice(0, i),
-                              { col: f.col, value },
-                              ...filters.slice(i, filters.length - 1),
-                            ])
-                          }
-                          options={getFieldsOptions(f.col).map((opt) => ({
-                            value: opt,
-                            label: opt,
-                          }))}
-                        />
-                      )}
-                    </div>
-                  ))}
-
-                  {filters.every((f) => f.col && f.value) && (
-                    <button
-                      className="ml-2"
-                      type="button"
-                      onClick={() => setFilters([...filters, { col: '', value: '' }])}
-                    >
-                      Add new filter
-                    </button>
-                  )}
-                  {filters.length >= 2 && (
-                    <button
-                      className="ml-2"
-                      type="button"
-                      onClick={() => setFilters(filters.slice(0, filters.length - 1))}
-                    >
-                      Remove filter
-                    </button>
-                  )}
-                </div>
-              )}
-
+              <RulesFilters rules={userRules} onFilterChange={setUserRulesFilter} />
               <SynapticAssignementRulesTable
-                rules={filteredUserRules}
+                rules={userRules}
+                filter={userRulesFilter.exec}
                 onRulesChange={setUserRules}
                 editable
               />

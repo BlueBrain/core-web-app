@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ConfigProvider, Table, theme } from 'antd';
 import { ColumnType, ColumnsType } from 'antd/es/table';
 import { ColumnTitle } from 'antd/es/table/interface';
 
-import { EditingSynapticAssignementRule, SynapticAssignementRule } from './types';
+import { IndexedSynapticAssignementRule, SynapticAssignementRule } from './types';
 import EditableHemisphereCell from './EditableHemisphereCell';
 import EditableTextCell from './EditableTextCell';
 import Actions from './Actions';
@@ -15,6 +15,7 @@ import { assertString } from '@/util/type-guards';
 export interface SynapticAssignementRulesTableProps {
   editable?: boolean;
   rules: SynapticAssignementRule[];
+  filter?(rule: SynapticAssignementRule): boolean;
   mode?: 'dark' | 'light';
   onRulesChange(rules: SynapticAssignementRule[]): void;
 }
@@ -22,16 +23,19 @@ export interface SynapticAssignementRulesTableProps {
 export default function SynapticAssignementRulesTable({
   editable = false,
   rules,
+  filter,
   mode = 'light',
   onRulesChange,
 }: SynapticAssignementRulesTableProps) {
+  const filteredRules = useFilteredRules(rules, filter);
   const getFieldsOptions = useGetFieldsOptions();
-  const [editingRule, setEditingRule] = useState<null | EditingSynapticAssignementRule>(null);
-  const columns: ColumnsType<SynapticAssignementRule> = COLUMNS.map((col) => {
+  const [editingRule, setEditingRule] = useState<null | IndexedSynapticAssignementRule>(null);
+  const columns: ColumnsType<IndexedSynapticAssignementRule> = COLUMNS.map((col) => {
     const key = ensureString(col.key, 'column.key');
-    const newCol: ColumnType<SynapticAssignementRule> = {
+    const newCol: ColumnType<IndexedSynapticAssignementRule> = {
       ...col,
-      render: (value: any, _rule: SynapticAssignementRule, index: number) => {
+      render: (value: any, rule: IndexedSynapticAssignementRule) => {
+        const { index } = rule;
         const editing = Boolean(editingRule && editingRule.index === index);
         switch (key) {
           case 'fromHemisphere':
@@ -61,24 +65,31 @@ export default function SynapticAssignementRulesTable({
   });
   if (editable)
     columns.push({
-      render: (_, rule: SynapticAssignementRule, ruleIndex: number) => (
+      render: (_, rule: IndexedSynapticAssignementRule) => (
         <Actions
-          rule={rule}
-          ruleIndex={ruleIndex}
-          editing={Boolean(editingRule && editingRule.index === ruleIndex)}
-          rules={rules}
-          onRulesChange={onRulesChange}
+          ruleIndex={rule.index}
+          editing={Boolean(editingRule && editingRule.index === rule.index)}
+          onDuplicate={(index) => {
+            const newRules = [...rules];
+            newRules.splice(index, 0, { ...rules[index] });
+            onRulesChange(newRules);
+          }}
+          onDelete={(index) => {
+            const newRules = [...rules];
+            newRules.splice(index, 1);
+            onRulesChange(newRules);
+          }}
           onStartEditing={(index) => {
             const ruleToEdit = rules[index];
             if (!ruleToEdit) return;
 
             setEditingRule({ ...ruleToEdit, index });
           }}
-          onValidateEdition={async (index) => {
+          onValidateEdition={async () => {
             if (!editingRule) return;
 
             const newRules = [...rules];
-            newRules[index] = editingRule;
+            newRules[editingRule.index] = editingRule;
             setEditingRule(null);
             onRulesChange(newRules);
           }}
@@ -92,10 +103,10 @@ export default function SynapticAssignementRulesTable({
       }}
     >
       <Table
-        dataSource={rules}
+        dataSource={filteredRules}
         columns={columns}
         bordered
-        pagination={rules.length > 10 ? { position: ['bottomRight'] } : false}
+        pagination={filteredRules.length > 10 ? { position: ['bottomRight'] } : false}
         size={editable ? 'middle' : 'small'}
       />
     </ConfigProvider>
@@ -117,9 +128,9 @@ const COLUMNS = [
 ];
 
 function makeCol(
-  title: ColumnTitle<SynapticAssignementRule>,
+  title: ColumnTitle<IndexedSynapticAssignementRule>,
   key: keyof SynapticAssignementRule
-): ColumnType<SynapticAssignementRule> & { editable: boolean } {
+): ColumnType<IndexedSynapticAssignementRule> & { editable: boolean } {
   return {
     title,
     editable: true,
@@ -131,4 +142,39 @@ function makeCol(
 function ensureString(data: unknown, message: string): keyof SynapticAssignementRule {
   assertString(data, message);
   return data as keyof SynapticAssignementRule;
+}
+
+/**
+ * Filter the rules and add the index on the original list.
+ * For instance, the following list of rules
+ * ```ts
+ * [
+ *   {toHemisphere: "left", ...},
+ *   {toHemisphere: "right", ...},
+ *   {toHemisphere: "left", ...}
+ * ]
+ * ```
+ * after being filtered with `(rule) => rule.toHemisphere === "left"` will become:
+ * ```ts
+ * [
+ *   {index: 0, toHemisphere: "left", ...},
+ *   {index: 2, toHemisphere: "left", ...}
+ * ]
+ * ```
+ */
+function useFilteredRules(
+  rules: SynapticAssignementRule[],
+  filter?: (rule: SynapticAssignementRule) => boolean
+): IndexedSynapticAssignementRule[] {
+  return useMemo(() => {
+    const indexedRules: IndexedSynapticAssignementRule[] = rules.map((rule, index) => ({
+      ...rule,
+      index,
+    }));
+    if (typeof filter !== 'function') return indexedRules;
+
+    const filteredIndexedRules = indexedRules.filter(filter);
+    console.log('🚀 [SynapticAssignementRulesTable] filteredIndexedRules = ', filteredIndexedRules); // @FIXME: Remove this line written on 2023-07-03 at 16:32
+    return filteredIndexedRules;
+  }, [rules, filter]);
 }

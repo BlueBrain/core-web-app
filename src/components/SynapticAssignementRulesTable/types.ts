@@ -12,6 +12,6 @@ export interface SynapticAssignementRule {
   fromEType: null | string;
 }
 
-export interface EditingSynapticAssignementRule extends SynapticAssignementRule {
+export interface IndexedSynapticAssignementRule extends SynapticAssignementRule {
   index: number;
 }
