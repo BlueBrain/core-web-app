@@ -5,6 +5,7 @@ import { RangeFilter } from '@/components/Filter/types';
 import { FilterValues } from '@/types/explore-section/application';
 import { Statistics } from '@/types/explore-section/fields';
 import ArrowLeftRightIcon from '@/components/icons/ArrowLeftRight';
+import { formatNumber } from '@/util/common';
 
 export default function ValueRange({
   filter,
@@ -72,10 +73,10 @@ export default function ValueRange({
       </ConfigProvider>
       <div className="text-neutral-2 mt-3 gap-2 flex flex-col">
         <div>
-          <strong>Minimum value:</strong> {aggregation.min || 'N/A'}
+          <strong>Minimum value:</strong> {formatNumber(aggregation.min) || 'N/A'}
         </div>
         <div>
-          <strong>Maximum value:</strong> {aggregation.max || 'N/A'}
+          <strong>Maximum value:</strong> {formatNumber(aggregation.max) || 'N/A'}
         </div>
       </div>
     </div>
