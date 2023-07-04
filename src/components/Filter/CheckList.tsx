@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
 import { CloseOutlined, InfoCircleFilled } from '@ant-design/icons';
-import { Tag } from 'antd';
+import { ConfigProvider, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { Filter, OptionsData } from './types';
 import { CheckIcon } from '@/components/icons';
@@ -133,14 +133,26 @@ export default function CheckList({
     const { label, closable, onClose } = tagProps;
 
     return (
-      <Tag
-        className="bg-primary-8 border-none font-bold m-1 py-2 px-4 rounded-md text-left text-white"
-        closable={closable}
-        closeIcon={<CloseOutlined className="text-primary-3" />}
-        onClose={onClose}
+      <ConfigProvider
+        theme={{
+          token: {
+            colorFillQuaternary: '#003A8C',
+            colorPrimary: 'white',
+            lineHeightSM: 3,
+            paddingXXS: 10,
+          },
+        }}
       >
-        {label}
-      </Tag>
+        <Tag
+          className="font-bold"
+          closable={closable}
+          closeIcon={<CloseOutlined className="text-primary-3" />}
+          onClose={onClose}
+          style={{ margin: '0.125rem 0.125rem 0.125rem auto' }}
+        >
+          {label}
+        </Tag>
+      </ConfigProvider>
     );
   };
 
