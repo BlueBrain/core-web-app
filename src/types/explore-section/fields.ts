@@ -196,12 +196,12 @@ export interface NestedStatsAggregation {
 }
 
 export interface Statistics {
-  avg: number;
+  avg?: number;
   count: number;
-  max: number;
-  min: number;
+  max?: number;
+  min?: number;
   sum: number;
-  doc_count: number;
+  doc_count?: number;
 }
 
 export type StatsAggregation = NestedStatsAggregation | Statistics;

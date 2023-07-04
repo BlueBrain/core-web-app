@@ -74,10 +74,10 @@ export default function ValueRange({
       </ConfigProvider>
       <div className="text-neutral-2 mt-3 gap-2 flex flex-col">
         <div>
-          <strong>Minimum value:</strong> {formatNumber(aggregation.min) || 'N/A'}
+          <strong>Minimum:</strong> {aggregation.min ? formatNumber(aggregation.min) : 'N/A'}
         </div>
         <div>
-          <strong>Maximum value:</strong> {formatNumber(aggregation.max) || 'N/A'}
+          <strong>Maximum:</strong> {aggregation.max ? formatNumber(aggregation.max) : 'N/A'}
         </div>
       </div>
     </div>
