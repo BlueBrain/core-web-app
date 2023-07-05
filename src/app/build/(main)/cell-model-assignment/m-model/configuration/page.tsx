@@ -26,7 +26,7 @@ export default function ConfigurationPage() {
     <div className="m-5 flex">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <ParameterSliders />
-        <MModelPreviewImages className="ml-5 flex-grow flex h-screen overflow-scroll" />
+        <MModelPreviewImages className="ml-5 flex-grow flex h-[80vh] overflow-y-auto relative" />
       </ErrorBoundary>
     </div>
   );

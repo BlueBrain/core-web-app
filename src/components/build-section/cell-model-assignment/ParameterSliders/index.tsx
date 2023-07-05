@@ -1,13 +1,15 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { Slider } from 'antd';
+import set from 'lodash/set';
 
 import { mModelConfigAtom } from '@/state/brain-model-config/cell-model-assignment';
 import { MModelParamConfig, NeuriteType, RequiredParamRawNames } from '@/types/m-model';
 import { SettingsIcon } from '@/components/icons';
+import { mModelPreviewConfigAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 const loadableMModelConfigAtom = loadable(mModelConfigAtom);
 
@@ -30,6 +32,7 @@ type ParameterProps = {
 
 function ParameterComponent({ paramRawName, config }: ParameterProps) {
   const [paramValue, setParamValue] = useState<number | null>();
+  const setMModelPreviewConfig = useSetAtom(mModelPreviewConfigAtom);
 
   useEffect(() => {
     const requiredParamValues = config[mockNeuriteType];
@@ -44,11 +47,38 @@ function ParameterComponent({ paramRawName, config }: ParameterProps) {
 
   const onChange = (newValue: number) => {
     setParamValue(newValue);
+    setMModelPreviewConfig((oldAtomValue) => {
+      set(oldAtomValue, `overrides.${mockNeuriteType}.${paramRawName}`, newValue);
+      return { ...oldAtomValue };
+    });
   };
 
-  const sanitize = (changedValue: any) => (typeof changedValue === 'number' ? changedValue : 0);
+  const sanitize = (changedValue: any, max: number) => {
+    if (typeof changedValue === 'number') {
+      if (changedValue > max) {
+        return max;
+      }
+      return changedValue;
+    }
+    return 0;
+  };
 
   if (typeof paramValue !== 'number') return null;
+
+  let max: number;
+  switch (paramRawName) {
+    case 'randomness':
+      max = 1;
+      break;
+
+    case 'radius':
+      max = 2;
+      break;
+
+    default:
+      max = 10;
+      break;
+  }
 
   return (
     <div>
@@ -57,12 +87,19 @@ function ParameterComponent({ paramRawName, config }: ParameterProps) {
         <input
           type="number"
           className="font-bold text-primary-8 w-[40px] text-end border rounded"
-          value={sanitize(paramValue)}
+          value={sanitize(paramValue, max)}
           step={0.1}
-          onChange={(e) => onChange(sanitize(e.target.valueAsNumber))}
+          onChange={(e) => onChange(sanitize(e.target.valueAsNumber, max))}
         />
       </div>
-      <Slider min={0} onChange={onChange} value={sanitize(paramValue)} />
+      <Slider
+        max={max}
+        min={0}
+        step={0.1}
+        tooltip={{ open: false }}
+        onChange={onChange}
+        value={sanitize(paramValue, max)}
+      />
     </div>
   );
 }

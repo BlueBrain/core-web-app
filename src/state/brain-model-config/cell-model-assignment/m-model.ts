@@ -1,12 +1,22 @@
 import { atom } from 'jotai';
 
-import { MModelParamConfig } from '@/types/m-model';
+import { MModelParamConfig, MModelPreviewInterface } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export const selectedMModelNameAtom = atom<string | null>(null);
 
+// TODO: replace this for proper brain - Mtype from nexus
 const mockParamsUrl =
   'https://raw.githubusercontent.com/BlueBrain/NeuroTS/main/tests/data/bio_path_params.json';
+
+const paramsAndDistResources = {
+  resources: {
+    parameters_id:
+      'https://bbp.epfl.ch/neurosciencegraph/data/16d47353-41e9-483d-90b8-522e430f4278',
+    distributions_id:
+      'https://bbp.epfl.ch/neurosciencegraph/data/8391281e-9cbf-4424-a41b-d31774475753',
+  },
+};
 
 export const mModelConfigAtom = atom<Promise<MModelParamConfig | null>>(async (get) => {
   const brainRegion = get(selectedBrainRegionAtom);
@@ -36,4 +46,9 @@ export const mModelConfigAtom = atom<Promise<MModelParamConfig | null>>(async (g
     return processedParams;
   }, {} as MModelParamConfig);
   return processed;
+});
+
+export const mModelPreviewConfigAtom = atom<MModelPreviewInterface>({
+  ...paramsAndDistResources,
+  overrides: {},
 });

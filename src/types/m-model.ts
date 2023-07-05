@@ -41,3 +41,20 @@ export interface MModelParamConfig extends MModelParamConfigBase {
     method: 'default';
   };
 }
+
+export interface MModelPreviewInterface {
+  resources: {
+    parameters_id: string;
+    distributions_id: string;
+  };
+  overrides: MModelParamConfigBase | {};
+}
+
+export type PreviewApiPlotNames = 'barcode' | 'diagram' | 'image' | 'synthesis';
+
+export type PreviewApiPlotResponse = Record<
+  PreviewApiPlotNames,
+  {
+    src: string;
+  }
+>;

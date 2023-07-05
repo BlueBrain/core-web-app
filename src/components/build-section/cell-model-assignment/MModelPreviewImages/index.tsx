@@ -1,52 +1,83 @@
-/* eslint-disable @next/next/no-img-element */
+'use client';
 
-import { basePath } from '@/config';
+import { useCallback, useEffect, useState } from 'react';
+import debounce from 'lodash/debounce';
+import { useAtomValue } from 'jotai';
+
+import PlotRenderer from './PlotRenderer';
+import { mModelPreviewConfigAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import sessionAtom from '@/state/session';
+import { MModelPreviewInterface, PreviewApiPlotResponse } from '@/types/m-model';
+import { classNames } from '@/util/utils';
 
 type Props = {
   className?: string;
 };
 
-const titleStyle = 'ml-8 font-bold text-primary-8 text-xl';
-const imgBase = `${basePath}/images/build-section/m-model`;
+const apiUrl = 'https://synthesis.sbo.kcp.bbp.epfl.ch/synthesis-with-resources';
+
+async function getImages(config: MModelPreviewInterface, token: string) {
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Nexus-Token': token,
+    },
+    body: JSON.stringify(config),
+  });
+
+  if (!response.ok) {
+    throw new Error('failed to fetch preview images');
+  }
+
+  return response.json();
+}
 
 export default function MModelPreviewImages({ className }: Props) {
+  const session = useAtomValue(sessionAtom);
+  const mModelPreviewConfig = useAtomValue(mModelPreviewConfigAtom);
+  const [imgSources, setImgSources] = useState<PreviewApiPlotResponse>();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getImagesDebounced = useCallback(
+    debounce(async (config: MModelPreviewInterface, token: string) => {
+      const imgs = await getImages(config, token);
+      setImgSources({
+        barcode: { src: imgs.barcode },
+        diagram: { src: imgs.diagram },
+        image: { src: imgs.image },
+        synthesis: { src: imgs.synthesis },
+      });
+      setIsLoading(false);
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    if (!mModelPreviewConfig || !session) return;
+    setIsLoading(true);
+    getImagesDebounced(mModelPreviewConfig, session.accessToken);
+  }, [mModelPreviewConfig, session]);
+
+  const isLoadingStyle = isLoading ? 'opacity-50' : '';
+
   return (
     <div className={className}>
-      <div className="flex flex-col w-1/2">
-        <div>
-          <h2 className={titleStyle}>Persistence barcode</h2>
-          <img
-            style={{ objectFit: 'contain' }}
-            src={`${imgBase}/Persistence-barcode.png`}
-            alt="Persistence barcode"
-          />
-        </div>
-        <div>
-          <h2 className={titleStyle}>Persistence diagram</h2>
-          <img
-            style={{ objectFit: 'contain' }}
-            src={`${imgBase}/Persistence-diagram.png`}
-            alt="Persistence diagram"
-          />
-        </div>
-        <div>
-          <h2 className={titleStyle}>Persistence image</h2>
-          <img
-            style={{ objectFit: 'contain' }}
-            src={`${imgBase}/Persistence-image.png`}
-            alt="Persistence plot"
-          />
-        </div>
+      <div className={classNames('flex flex-col w-1/2', isLoadingStyle)}>
+        <PlotRenderer plotResponse={imgSources} plotName="barcode" title="Persistence barcode" />
+        <PlotRenderer plotResponse={imgSources} plotName="diagram" title="Persistence diagram" />
+        <PlotRenderer plotResponse={imgSources} plotName="image" title="Persistence image" />
       </div>
 
-      <div className="w-1/2">
-        <h2 className={titleStyle}>Synthesis / test h5</h2>
-        <img
-          style={{ objectFit: 'contain' }}
-          src={`${imgBase}/Synthesis_test_h5.png`}
-          alt="Synthesis / test h5"
-        />
+      <div className={classNames('w-1/2', isLoadingStyle)}>
+        <PlotRenderer plotResponse={imgSources} plotName="synthesis" title="Synthesis / test h5" />
       </div>
+      {isLoading && (
+        <div className="absolute flex w-full h-full items-center justify-center text-primary-8 text-2xl">
+          Fetching data...
+        </div>
+      )}
     </div>
   );
 }
