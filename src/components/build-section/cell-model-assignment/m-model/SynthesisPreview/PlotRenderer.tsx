@@ -1,10 +1,10 @@
-import { PreviewApiPlotNames, PreviewApiPlotResponse } from '@/types/m-model';
+import { SynthesisPreviewApiPlotNames, SynthesisPreviewApiPlotResponse } from '@/types/m-model';
 
 const titleStyle = 'ml-8 font-bold text-primary-8 text-xl';
 
 type PlotRendererProps = {
-  plotResponse: PreviewApiPlotResponse | undefined;
-  plotName: PreviewApiPlotNames;
+  plotResponse: SynthesisPreviewApiPlotResponse | undefined;
+  plotName: SynthesisPreviewApiPlotNames;
   title: string;
 };
 

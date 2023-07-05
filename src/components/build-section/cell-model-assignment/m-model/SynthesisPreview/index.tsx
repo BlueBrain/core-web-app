@@ -7,7 +7,7 @@ import { useAtomValue } from 'jotai';
 import PlotRenderer from './PlotRenderer';
 import { mModelPreviewConfigAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import sessionAtom from '@/state/session';
-import { MModelPreviewInterface, PreviewApiPlotResponse } from '@/types/m-model';
+import { SynthesisPreviewInterface, SynthesisPreviewApiPlotResponse } from '@/types/m-model';
 import { classNames } from '@/util/utils';
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 
 const apiUrl = 'https://synthesis.sbo.kcp.bbp.epfl.ch/synthesis-with-resources';
 
-async function getImages(config: MModelPreviewInterface, token: string) {
+async function getImages(config: SynthesisPreviewInterface, token: string) {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers: {
@@ -34,14 +34,14 @@ async function getImages(config: MModelPreviewInterface, token: string) {
   return response.json();
 }
 
-export default function MModelPreviewImages({ className }: Props) {
+export default function SynthesisPreview({ className }: Props) {
   const session = useAtomValue(sessionAtom);
   const mModelPreviewConfig = useAtomValue(mModelPreviewConfigAtom);
-  const [imgSources, setImgSources] = useState<PreviewApiPlotResponse>();
+  const [imgSources, setImgSources] = useState<SynthesisPreviewApiPlotResponse>();
   const [isLoading, setIsLoading] = useState(false);
 
   const getImagesDebounced = useCallback(
-    debounce(async (config: MModelPreviewInterface, token: string) => {
+    debounce(async (config: SynthesisPreviewInterface, token: string) => {
       const imgs = await getImages(config, token);
       setImgSources({
         barcode: { src: imgs.barcode },
@@ -58,7 +58,7 @@ export default function MModelPreviewImages({ className }: Props) {
     if (!mModelPreviewConfig || !session) return;
     setIsLoading(true);
     getImagesDebounced(mModelPreviewConfig, session.accessToken);
-  }, [mModelPreviewConfig, session]);
+  }, [mModelPreviewConfig, session, getImagesDebounced]);
 
   const isLoadingStyle = isLoading ? 'opacity-50' : '';
 

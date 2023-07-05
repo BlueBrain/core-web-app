@@ -4,11 +4,11 @@ import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
-interface MModelPanelCollapsedProps {
+interface PanelCollapsedProps {
   setIsSidebarExpanded: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function MModelPanelCollapsed({ setIsSidebarExpanded }: MModelPanelCollapsedProps) {
+export default function PanelCollapsed({ setIsSidebarExpanded }: PanelCollapsedProps) {
   const { title } = useAtomValue(selectedBrainRegionAtom) ?? { title: '' };
 
   return (

@@ -5,9 +5,9 @@ import { useAtomValue } from 'jotai';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import {
-  MModelPreviewImages,
-  ParameterSliders,
-} from '@/components/build-section/cell-model-assignment/';
+  SynthesisPreview,
+  ParametersContainer,
+} from '@/components/build-section/cell-model-assignment/m-model';
 import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
@@ -25,8 +25,8 @@ export default function ConfigurationPage() {
   return (
     <div className="m-5 flex">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <ParameterSliders />
-        <MModelPreviewImages className="ml-5 flex-grow flex h-[80vh] overflow-y-auto relative" />
+        <ParametersContainer />
+        <SynthesisPreview className="ml-5 flex-grow flex h-[80vh] overflow-y-auto relative" />
       </ErrorBoundary>
     </div>
   );

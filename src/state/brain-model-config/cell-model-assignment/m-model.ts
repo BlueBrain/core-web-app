@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-import { MModelParamConfig, MModelPreviewInterface } from '@/types/m-model';
+import { ParamConfig, SynthesisPreviewInterface } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export const selectedMModelNameAtom = atom<string | null>(null);
@@ -18,16 +18,16 @@ const paramsAndDistResources = {
   },
 };
 
-export const mModelConfigAtom = atom<Promise<MModelParamConfig | null>>(async (get) => {
+export const mModelConfigAtom = atom<Promise<ParamConfig | null>>(async (get) => {
   const brainRegion = get(selectedBrainRegionAtom);
   const mType = get(selectedMModelNameAtom);
 
   // TODO: remove this line when we actually do something with these
   console.log(`Fetching M-Model config for (${brainRegion?.title}) - (${mType})...`);
   const paramsResponse = await fetch(mockParamsUrl);
-  const params = (await paramsResponse.json()) as MModelParamConfig;
+  const params = (await paramsResponse.json()) as ParamConfig;
 
-  const configKeys = Object.keys(params) as (keyof MModelParamConfig)[];
+  const configKeys = Object.keys(params) as (keyof ParamConfig)[];
   const processed = configKeys.reduce((processedParams, configKey) => {
     if (configKey === 'apical_dendrite' || configKey === 'basal_dendrite') {
       const cloned = structuredClone(params[configKey]);
@@ -44,11 +44,11 @@ export const mModelConfigAtom = atom<Promise<MModelParamConfig | null>>(async (g
     // eslint-disable-next-line no-param-reassign
     processedParams[configKey] = cloned;
     return processedParams;
-  }, {} as MModelParamConfig);
+  }, {} as ParamConfig);
   return processed;
 });
 
-export const mModelPreviewConfigAtom = atom<MModelPreviewInterface>({
+export const mModelPreviewConfigAtom = atom<SynthesisPreviewInterface>({
   ...paramsAndDistResources,
   overrides: {},
 });

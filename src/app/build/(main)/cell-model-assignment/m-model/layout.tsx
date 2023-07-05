@@ -9,9 +9,9 @@ import { useRouter } from 'next/navigation';
 import { extraPanelContainerAtom } from '@/state/build-section/layout';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import {
-  MModelPanelExpanded,
-  MModelPanelCollapsed,
-} from '@/components/build-section/cell-model-assignment/MModelPanel';
+  PanelExpanded,
+  PanelCollapsed,
+} from '@/components/build-section/cell-model-assignment/m-model/Panel';
 import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
 import useMModelQueryParam from '@/hooks/m-model-editor';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -47,9 +47,9 @@ export default function MModelLayout({ children }: Props) {
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="bg-primary-7 flex h-screen overflow-hidden">
           {!isSidebarExpanded ? (
-            <MModelPanelCollapsed setIsSidebarExpanded={setIsSidebarExpanded} />
+            <PanelCollapsed setIsSidebarExpanded={setIsSidebarExpanded} />
           ) : (
-            <MModelPanelExpanded setIsSidebarExpanded={setIsSidebarExpanded} />
+            <PanelExpanded setIsSidebarExpanded={setIsSidebarExpanded} />
           )}
         </div>
       </ErrorBoundary>,

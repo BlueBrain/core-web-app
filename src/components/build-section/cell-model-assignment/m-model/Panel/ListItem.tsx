@@ -7,7 +7,7 @@ interface MTypeListItemProps {
   annotation?: string;
 }
 
-export default function MModelListItem({ label, annotation }: MTypeListItemProps) {
+export default function ListItem({ label, annotation }: MTypeListItemProps) {
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
 
   const handleClick = useCallback(() => {

@@ -32,9 +32,9 @@ export interface BasicParams
 
 export type NeuriteType = 'basal_dendrite' | 'apical_dendrite' | 'axon';
 
-type MModelParamConfigBase = Record<NeuriteType, BasicParams>;
+type ParamConfigBase = Record<NeuriteType, BasicParams>;
 
-export interface MModelParamConfig extends MModelParamConfigBase {
+export interface ParamConfig extends ParamConfigBase {
   origin: number[];
   grow_types: string[];
   diameter_params: {
@@ -42,19 +42,33 @@ export interface MModelParamConfig extends MModelParamConfigBase {
   };
 }
 
-export interface MModelPreviewInterface {
+export interface SynthesisPreviewInterface {
   resources: {
     parameters_id: string;
     distributions_id: string;
   };
-  overrides: MModelParamConfigBase | {};
+  overrides: ParamConfigBase | {};
 }
 
-export type PreviewApiPlotNames = 'barcode' | 'diagram' | 'image' | 'synthesis';
+export type SynthesisPreviewApiPlotNames = 'barcode' | 'diagram' | 'image' | 'synthesis';
 
-export type PreviewApiPlotResponse = Record<
-  PreviewApiPlotNames,
+export type SynthesisPreviewApiPlotResponse = Record<
+  SynthesisPreviewApiPlotNames,
   {
     src: string;
   }
 >;
+
+export interface ParamInfo {
+  displayName: string;
+  min: number;
+  max: number;
+  step: number;
+}
+
+export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo> & {
+  orientation: {
+    displayName: string;
+    value: [number, number, number];
+  };
+};

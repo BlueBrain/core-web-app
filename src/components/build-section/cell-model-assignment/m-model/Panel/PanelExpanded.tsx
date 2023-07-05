@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import MModelList from '@/components/build-section/cell-model-assignment/MModelPanel/MModelList';
+import List from '@/components/build-section/cell-model-assignment/m-model/Panel/List';
 import { BrainRegionIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 
@@ -31,11 +31,11 @@ function PanelTitle({ title, onClick, className }: PanelTitleProps) {
   );
 }
 
-interface MModelPanelExpandedProps {
+interface PanelExpandedProps {
   setIsSidebarExpanded: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function MModelPanelExpanded({ setIsSidebarExpanded }: MModelPanelExpandedProps) {
+export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedProps) {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
 
   const handleClick = useCallback(() => setIsSidebarExpanded(false), [setIsSidebarExpanded]);
@@ -44,7 +44,7 @@ export default function MModelPanelExpanded({ setIsSidebarExpanded }: MModelPane
     <div className="flex flex-1 flex-col overflow-y-auto py-6 min-w-[300px]">
       <PanelTitle title={brainRegion?.title} onClick={handleClick} className="px-7" />
 
-      <MModelList />
+      <List />
     </div>
   );
 }
