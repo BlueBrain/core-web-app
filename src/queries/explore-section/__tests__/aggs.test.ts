@@ -6,7 +6,6 @@ const checklistFilter: Filter = {
   type: 'checkList',
   value: ['brainRegion1'],
   aggregationType: 'buckets',
-  title: 'Brain Region',
 };
 
 const valueRangeFilter: Filter = {
@@ -17,7 +16,6 @@ const valueRangeFilter: Filter = {
     lte: 5,
   },
   aggregationType: 'stats',
-  title: 'Neuron Density',
 };
 
 describe('getFilterESBuilder tests', () => {
@@ -53,7 +51,6 @@ describe('getFilterESBuilder tests', () => {
         lte: 5,
       },
       aggregationType: 'stats',
-      title: 'Mean std',
     };
 
     const aggBuilder = getAggESBuilder(nestedValueRangeFilter);

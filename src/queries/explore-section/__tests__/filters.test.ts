@@ -6,7 +6,6 @@ const checklistFilter: Filter = {
   type: 'checkList',
   value: ['brainRegion1'],
   aggregationType: 'buckets',
-  title: 'Brain Region',
 };
 
 const valueRangeFilter: Filter = {
@@ -17,7 +16,6 @@ const valueRangeFilter: Filter = {
     lte: 5,
   },
   aggregationType: 'stats',
-  title: 'Neuron Density',
 };
 
 describe('Filters elastic builder', () => {
@@ -71,7 +69,6 @@ describe('Filters elastic builder', () => {
         lte: 5,
       },
       aggregationType: 'stats',
-      title: 'Mean std',
     };
 
     const builder = getFilterESBuilder(nestedValueRangeFilter);
@@ -110,7 +107,6 @@ describe('Filters elastic builder', () => {
         lte: new Date('1994-04-15'),
       },
       aggregationType: 'stats',
-      title: 'Created At',
     };
     const builder = getFilterESBuilder(dateRangeFilter);
     expect(builder?.toJSON()).toEqual({
