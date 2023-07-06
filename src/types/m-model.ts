@@ -9,7 +9,7 @@ export type ParamsRawNames =
   | 'modify'
   | 'tree_type';
 
-interface StepSizeInterface {
+export interface StepSizeInterface {
   norm: {
     mean: number;
     std: number;

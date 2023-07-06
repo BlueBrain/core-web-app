@@ -5,6 +5,7 @@ import set from 'lodash/set';
 import NumberParam from './NumberParam';
 import { mockNeuriteType, paramsToDisplay } from './constants';
 import OrientationParam from './OrientationParam';
+import StepSizeParam from './StepSizeParam';
 import {
   mModelPreviewConfigAtom,
   mModelLocalConfigAtom,
@@ -14,6 +15,7 @@ import {
   ParamInfo,
   OrientationToDisplay,
   OrientationInterface,
+  StepSizeInterface,
 } from '@/types/m-model';
 
 type ParameterProps = {
@@ -45,20 +47,26 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
     });
   };
 
-  const onNumberChange = (newValue: number) => {
-    setParamValue(newValue);
+  const setPreview = (newValue: number | OrientationInterface | StepSizeInterface) => {
     setMModelPreviewConfig((oldAtomValue) => {
       set(oldAtomValue, `overrides.${mockNeuriteType}.${paramRawName}`, newValue);
       return { ...oldAtomValue };
     });
   };
 
+  const onNumberChange = (newValue: number) => {
+    setParamValue(newValue);
+    setPreview(newValue);
+  };
+
   const onOrientationChange = (newValue: OrientationInterface) => {
     setParamValue([newValue]);
-    setMModelPreviewConfig((oldAtomValue) => {
-      set(oldAtomValue, `overrides.${mockNeuriteType}.${paramRawName}`, newValue);
-      return { ...oldAtomValue };
-    });
+    setPreview(newValue);
+  };
+
+  const onStepSizeChange = (newValue: StepSizeInterface) => {
+    setParamValue(newValue);
+    setPreview(newValue);
   };
 
   let component;
@@ -80,6 +88,16 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
           paramValue={paramValue as number}
           paramInfo={paramInfo as ParamInfo}
           onChange={onNumberChange}
+        />
+      );
+      break;
+
+    case 'Step size':
+      component = (
+        <StepSizeParam
+          paramValue={paramValue as StepSizeInterface}
+          paramInfo={paramInfo as ParamInfo}
+          onChange={onStepSizeChange}
         />
       );
       break;
