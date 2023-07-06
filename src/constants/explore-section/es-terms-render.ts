@@ -133,13 +133,13 @@ const LISTING_CONFIG: TermsRenderProps = {
   },
   neuronDensity: {
     term: 'neuronDensity.value',
-    title: 'Neuron density',
+    title: 'Density',
     filter: 'valueRange',
     unit: 'neurons/mm³',
     renderFn: (t, r) => selectorFnValue(r._source?.neuronDensity),
     vocabulary: {
-      plural: 'Neuron Densities',
-      singular: 'Neuron Density',
+      plural: 'Densities',
+      singular: 'Density',
     },
   },
   boutonDensity: {
@@ -247,14 +247,14 @@ const LISTING_CONFIG: TermsRenderProps = {
       singular: 'Value',
     },
   },
-  numberOfMeasurements: {
+  numberOfCells: {
     term: 'series.statistic.N.keyword',
     nestedField: {
       extendedField: 'series.statistic.keyword',
       field: 'N',
       nestField: 'series',
     },
-    title: 'N° of measurements',
+    title: 'N° of Cells',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {

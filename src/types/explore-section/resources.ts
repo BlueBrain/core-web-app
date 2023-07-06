@@ -62,7 +62,7 @@ export interface OptionalExploreSectionSerializedFields {
   density?: string | number;
   sem?: string | number | void;
   series?: Series[];
-  numberOfMeasurements?: string | number;
+  numberOfCells?: string | number;
   weight?: string | number | void;
   conditions?: string;
 }
