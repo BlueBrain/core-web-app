@@ -21,4 +21,7 @@ export const paramsToDisplay: ParamsToDisplay = {
     max: 10,
     step: 0.1,
   },
+  orientation: {
+    displayName: 'Orientation',
+  },
 };

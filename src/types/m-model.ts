@@ -1,10 +1,9 @@
-export type RequiredParamRawNames = 'radius' | 'randomness' | 'step_size';
-export type RequiredParamDisplayNames = 'Radius' | 'Randomness' | 'Step size';
+export type RequiredParamRawNames = 'radius' | 'randomness' | 'step_size' | 'orientation';
+export type RequiredParamDisplayNames = 'Radius' | 'Randomness' | 'Step size' | 'Orientation';
 
 export type ParamsRawNames =
   | (RequiredParamRawNames & 'targeting')
   | 'metric'
-  | 'orientation'
   | 'growth_method'
   | 'branching_method'
   | 'modify'
@@ -17,13 +16,19 @@ interface StepSizeInterface {
   };
 }
 
-export interface BasicParams
-  extends Record<ParamsRawNames, string | number | null | StepSizeInterface> {
+export type OrientationInterface = [number, number, number];
+
+type BaseParamsType = Record<
+  ParamsRawNames,
+  number | string | null | OrientationInterface[] | StepSizeInterface
+>;
+
+export interface BasicParams extends BaseParamsType {
   metric: string;
   randomness: number;
   targeting: number;
   radius: number;
-  orientation: null;
+  orientation: OrientationInterface[];
   growth_method: string;
   branching_method: string;
   modify: null;
@@ -67,4 +72,8 @@ export interface ParamInfo {
   step: number;
 }
 
-export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo>;
+export interface OrientationToDisplay {
+  displayName: RequiredParamDisplayNames;
+}
+
+export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo | OrientationToDisplay>;
