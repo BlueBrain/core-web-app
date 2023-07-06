@@ -1,0 +1,19 @@
+.model-select__control {
+  @apply bg-none border border-white border-opacity-40 w-full rounded-none p-2;
+}
+.model-select__menu {
+  @apply p-0 bg-primary-8 border border-primary-8;
+  @apply w-full font-normal;
+}
+
+.model-select__indicator {
+  @apply w-[1rem];
+}
+
+.model-select__option {
+  @apply p-2;
+}
+
+.model-select__option:hover {
+  @apply bg-primary-9;
+}

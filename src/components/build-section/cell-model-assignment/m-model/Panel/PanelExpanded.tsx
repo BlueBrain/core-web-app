@@ -7,6 +7,7 @@ import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import List from '@/components/build-section/cell-model-assignment/m-model/Panel/List';
 import { BrainRegionIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
+import ApplyToAllMTypesPanel from '@/components/build-section/cell-model-assignment/m-model/Panel/ApplyToAllMTypesPanel';
 
 interface PanelTitleProps {
   title?: string;
@@ -43,6 +44,8 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
   return (
     <div className="flex flex-1 flex-col overflow-y-auto py-6 min-w-[300px]">
       <PanelTitle title={brainRegion?.title} onClick={handleClick} className="px-7" />
+
+      <ApplyToAllMTypesPanel />
 
       <List />
     </div>

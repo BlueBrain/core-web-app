@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import filter from 'lodash/filter';
 
-import MModelListItem from './ListItem';
+import ListItem from './ListItem';
 import { analysedCompositionAtom } from '@/state/build-composition';
 
 interface MModelMenuItem {
@@ -30,7 +30,7 @@ export default function List() {
     () => (
       <>
         {mModelItems.map((item) => (
-          <MModelListItem
+          <ListItem
             key={item.label}
             label={item.label}
             annotation={item.annotation}
