@@ -86,7 +86,7 @@ export default function ExploreSectionListingView({
     activeColumnsLength === 1 ? 'column' : 'columns'
   }`;
 
-  const columns = useExploreColumns(columnKeys, sortState, setSortState);
+  const columns = useExploreColumns(columnKeys, setSortState, sortState);
 
   return (
     <>

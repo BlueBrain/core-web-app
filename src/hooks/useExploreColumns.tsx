@@ -1,15 +1,11 @@
 'use client';
 
-import { Dispatch, useState, useEffect } from 'react';
+import { Dispatch, useCallback, useEffect, useState } from 'react';
 import { SetStateAction } from 'jotai';
-import { Tooltip } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
-import { CaretDownOutlined, CaretUpOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { SortState } from '@/types/explore-section/application';
-import { classNames } from '@/util/utils';
-import styles from '@/app/explore/explore.module.scss';
 
 const COL_SIZING = {
   min: 75,
@@ -17,132 +13,147 @@ const COL_SIZING = {
 };
 const useExploreColumns = (
   keys: string[],
-  sortState: SortState,
-  setSortState: Dispatch<SetStateAction<SortState>>
+  setSortState: Dispatch<SetStateAction<SortState | undefined>>,
+  sortState?: SortState
 ): ColumnProps<ExploreSectionResource>[] => {
-  const [resizingState, setResizingState] = useState<{ index: number; start: number } | null>(null);
-  const [columns, setColumns] = useState<ColumnProps<ExploreSectionResource>[]>([]);
+  const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>([]);
 
-  const onMouseDown = (e: React.MouseEvent<HTMLElement>, index: number) => {
-    setResizingState({
-      start: e.clientX,
-      index,
-    });
-  };
+  useEffect(
+    () =>
+      setColumnWidths(
+        keys.map((key) => ({
+          key,
+          width: COL_SIZING.default,
+        }))
+      ),
+    [keys]
+  );
 
-  const sorterES = (field: string) => {
-    if (field) {
-      const toggled = sortState.order === 'asc' ? 'desc' : 'asc';
-      const order = sortState.field === field ? toggled : 'asc';
+  const [resizingState, setResizingState] = useState<{
+    key: string | null;
+    start: number | null;
+  }>({ key: null, start: null });
+
+  const sorterES = useCallback(
+    (field: string) => {
+      let order: 'asc' | 'desc' | null;
+
+      switch (sortState?.order) {
+        case 'asc':
+          order = field === sortState.field ? 'desc' : 'asc';
+          break;
+        case 'desc':
+          order = field === sortState.field ? null : 'asc';
+          break;
+        default:
+          order = 'asc';
+      }
+
       setSortState({ field, order });
-    }
-  };
+    },
+    [setSortState, sortState]
+  );
 
-  const getHeaderColumn = (key: string, columnIndex: number) => {
-    const term = LISTING_CONFIG[key as keyof typeof LISTING_CONFIG];
+  const onMouseDown = (e: React.MouseEvent<HTMLElement>, key: string) =>
+    setResizingState({
+      key,
+      start: e.clientX,
+    });
 
-    if (!term) {
-      return <div className={styles.tableHeader}>{key}</div>;
-    }
+  const onMouseUp = useCallback(() => {
+    setResizingState({
+      key: null,
+      start: null,
+    });
+  }, [setResizingState]);
 
-    const isSorted = key === sortState.field;
+  const onMouseMove = useCallback(
+    (e: MouseEvent) => {
+      const { clientX } = e;
+      const { key, start } = resizingState;
+      const delta = start ? clientX - start : 0; // No start? No delta.
+      const existingColIndex = columnWidths.findIndex(({ key: colKey }) => colKey === key);
 
-    const iconDirection = sortState.order === 'asc' ? <CaretUpOutlined /> : <CaretDownOutlined />;
-
-    const icon = isSorted ? (
-      iconDirection
-    ) : (
-      <div className={styles.sortIcons}>
-        <CaretUpOutlined />
-        <CaretDownOutlined />
-      </div>
-    );
-
-    return (
-      <div className={styles.tableHeader}>
-        <button onClick={() => sorterES(key)} type="button">
-          {icon}
-        </button>
-        <Tooltip
-          className={classNames(styles.tableHeaderTitle, 'grow')}
-          title={term.description ? term.description : term.title}
-        >
-          <div>{term.title}</div>
-          {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
-        </Tooltip>
-        <VerticalAlignMiddleOutlined
-          className={styles.dragIcons}
-          onMouseDown={(e) => onMouseDown(e, columnIndex)}
-        />
-      </div>
-    );
-  };
-
-  // UseEffect hooks for setting columns properties and events for resizing
-  useEffect(() => {
-    const onMouseMove = (e: MouseEvent) => {
-      if (!resizingState) return;
-
-      const delta = e.clientX - resizingState.start;
-
-      setColumns((cols) => {
-        const newColumns = [...cols];
-        newColumns[resizingState.index] = {
-          ...newColumns[resizingState.index],
-          width: Math.max(
-            COL_SIZING.min,
-            (Number(newColumns[resizingState.index].width) || COL_SIZING.default) + delta
-          ),
+      if (existingColIndex !== -1) {
+        const updatedWidth = {
+          key: key as string,
+          width: Math.max(columnWidths[existingColIndex].width + delta, COL_SIZING.min),
         };
-        return newColumns;
-      });
+
+        setColumnWidths([
+          ...columnWidths.slice(0, existingColIndex),
+          updatedWidth,
+          ...columnWidths.slice(existingColIndex + 1),
+        ]);
+      }
+
       setResizingState({
-        start: e.clientX,
-        index: resizingState.index,
+        key,
+        start: clientX,
       });
-    };
+    },
+    [columnWidths, resizingState]
+  );
 
+  useEffect(() => {
     window.addEventListener('mousemove', onMouseMove);
+
     return () => window.removeEventListener('mousemove', onMouseMove);
-  }, [resizingState]);
+  }, [onMouseMove]);
 
   useEffect(() => {
-    const onMouseUp = () => {
-      setResizingState(null);
-    };
-
     window.addEventListener('mouseup', onMouseUp);
-    return () => window.removeEventListener('mouseup', onMouseUp);
-  }, []);
 
-  useEffect(() => {
-    const initialColumns: ColumnProps<ExploreSectionResource>[] = [
+    return () => window.removeEventListener('mouseup', onMouseUp);
+  }, [onMouseUp]);
+
+  // Translates ES terminology to AntD terminology.
+  const getSortOrder = (key: string) => {
+    switch (sortState?.order) {
+      case 'asc':
+        return sortState?.field === key ? 'ascend' : null;
+      case 'desc':
+        return sortState?.field === key ? 'descend' : null;
+      default:
+        return null;
+    }
+  };
+
+  return keys.reduce(
+    (acc, key) => {
+      const term = LISTING_CONFIG[key as keyof typeof LISTING_CONFIG];
+
+      return [
+        ...acc,
+        {
+          key,
+          title: LISTING_CONFIG[key].title,
+          className: 'text-primary-7 cursor-pointer',
+          sorter: true,
+          ellipsis: true,
+          width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
+          render: term?.renderFn,
+          onHeaderCell: () => ({
+            onClick: () => sorterES(key),
+            showsortertooltip: {
+              title: term.description ? term.description : term.title,
+            },
+            handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
+          }),
+          sortOrder: getSortOrder(key),
+        },
+      ];
+    },
+    [
       {
-        title: getHeaderColumn('#', 0),
+        title: '#',
         key: 'index',
         className: 'text-primary-7',
         width: COL_SIZING.min,
         render: (_text: string, _record: ExploreSectionResource, index: number) => index + 1,
       },
-    ];
-
-    keys.forEach((key, columnIndex) => {
-      const column: ColumnProps<any> = {
-        key,
-        title: getHeaderColumn(key, columnIndex + 1),
-        className: 'text-primary-7 cursor-pointer',
-        sorter: false,
-        ellipsis: true,
-        width: COL_SIZING.default,
-        render: LISTING_CONFIG[key as keyof typeof LISTING_CONFIG]?.renderFn,
-      };
-      initialColumns.push(column);
-    });
-
-    setColumns(initialColumns);
-  }, [keys, sortState]);
-
-  return columns;
+    ] as ColumnProps<ExploreSectionResource>[]
+  );
 };
 
 export default useExploreColumns;

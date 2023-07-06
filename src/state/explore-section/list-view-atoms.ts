@@ -49,7 +49,7 @@ export const pageNumberAtom = atom<number>(1);
 
 export const searchStringAtom = atom<string>('');
 
-export const sortStateAtom = atom<SortState>({ field: 'createdAt', order: 'asc' });
+export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', order: 'desc' });
 
 export const typeAtom = atom<string | undefined>(undefined);
 

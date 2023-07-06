@@ -18,7 +18,7 @@ export interface FetchParams {
 
 export interface SortState {
   field: string;
-  order: 'asc' | 'desc';
+  order: 'asc' | 'desc' | null;
 }
 
 export type ListViewAtomValues = {

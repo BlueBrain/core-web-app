@@ -6,6 +6,7 @@ import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
+import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
@@ -20,15 +21,32 @@ type ExploreSectionTableProps = {
   enableDownload?: boolean;
 };
 
-function CustomTH({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
+function CustomTH({
+  children,
+  style,
+  onClick,
+  handleResizing,
+  ...props
+}: {
+  children: ReactNode;
+  style: CSSProperties;
+  onClick: () => void;
+  handleResizing: () => void;
+}) {
   const modifiedStyle = {
     ...style,
-    padding: '16px 0 16px 16px',
+    fontWeight: '500',
+    color: '#434343',
   };
 
   return (
     <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
-      {children}
+      <div className="flex">
+        <button onClick={onClick} type="button">
+          {children}
+        </button>
+        <VerticalAlignMiddleOutlined className={styles.dragIcons} onMouseDown={handleResizing} />
+      </div>
     </th>
   );
 }

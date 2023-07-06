@@ -9,10 +9,11 @@ export default function fetchDataQuery(
   currentPage: number,
   filters: Filter[],
   type: string,
-  sortState: SortState,
+  sortState?: SortState,
   searchString: string = ''
 ) {
-  const sortQuery = buildESSort(sortState);
+  const sortQuery = sortState && buildESSort(sortState);
+
   return {
     size,
     sort: sortQuery,

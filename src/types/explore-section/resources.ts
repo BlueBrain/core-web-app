@@ -53,6 +53,7 @@ export interface ExploreSectionResource extends OptionalExploreSectionFields {
   contributors: string;
   createdAt: string;
   brainRegion: string;
+  sortOrder: 'ascend' | 'descend' | null;
 }
 
 export interface OptionalExploreSectionSerializedFields {
