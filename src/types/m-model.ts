@@ -1,4 +1,5 @@
 export type RequiredParamRawNames = 'radius' | 'randomness' | 'step_size';
+export type RequiredParamDisplayNames = 'Radius' | 'Randomness' | 'Step size';
 
 export type ParamsRawNames =
   | (RequiredParamRawNames & 'targeting')
@@ -27,7 +28,7 @@ export interface BasicParams
   branching_method: string;
   modify: null;
   tree_type: number;
-  step_size: StepSizeInterface | number;
+  step_size: StepSizeInterface;
 }
 
 export type NeuriteType = 'basal_dendrite' | 'apical_dendrite' | 'axon';
@@ -60,15 +61,10 @@ export type SynthesisPreviewApiPlotResponse = Record<
 >;
 
 export interface ParamInfo {
-  displayName: string;
+  displayName: RequiredParamDisplayNames;
   min: number;
   max: number;
   step: number;
 }
 
-export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo> & {
-  orientation: {
-    displayName: string;
-    value: [number, number, number];
-  };
-};
+export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo>;

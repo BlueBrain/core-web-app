@@ -1,29 +1,42 @@
-import { useSetAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useMemo } from 'react';
 import set from 'lodash/set';
 
 import NumberParam from './NumberParam';
 import { mockNeuriteType, paramsToDisplay } from './constants';
-import { mModelPreviewConfigAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
-import { ParamConfig, RequiredParamRawNames } from '@/types/m-model';
+import {
+  mModelPreviewConfigAtom,
+  mModelLocalConfigAtom,
+} from '@/state/brain-model-config/cell-model-assignment';
+import { RequiredParamRawNames } from '@/types/m-model';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;
-  config: ParamConfig;
 };
 
-export default function ParameterItem({ paramRawName, config }: ParameterProps) {
-  const [paramValue, setParamValue] = useState<number | null>();
+export default function ParameterItem({ paramRawName }: ParameterProps) {
+  const [mModelLocalConfig, setMModelLocalConfig] = useAtom(mModelLocalConfigAtom);
   const setMModelPreviewConfig = useSetAtom(mModelPreviewConfigAtom);
 
-  useEffect(() => {
-    const requiredParamValues = config[mockNeuriteType];
-    if (!requiredParamValues || !Object.keys(requiredParamValues).length) return;
+  const paramValue = useMemo(() => {
+    if (!mModelLocalConfig) return null;
+
+    const requiredParamValues = mModelLocalConfig[mockNeuriteType];
+    if (!requiredParamValues || !Object.keys(requiredParamValues).length) return null;
 
     const value = requiredParamValues[paramRawName];
-    if (typeof value !== 'number') return;
-    setParamValue(value ?? null);
-  }, [config, paramRawName]);
+    return value;
+  }, [mModelLocalConfig]);
+
+  const setParamValue = (newValue: unknown) => {
+    setMModelLocalConfig((oldConfigAtomValue) => {
+      if (!oldConfigAtomValue) return null;
+
+      const cloned = structuredClone(oldConfigAtomValue);
+      set(cloned, `${mockNeuriteType}.${paramRawName}`, newValue);
+      return cloned;
+    });
+  };
 
   const onNumberChange = (newValue: number) => {
     setParamValue(newValue);
