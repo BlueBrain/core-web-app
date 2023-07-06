@@ -1,9 +1,9 @@
 .model-select__control {
   @apply bg-none border border-white border-opacity-40 w-full rounded-none p-2;
 }
+
 .model-select__menu {
-  @apply p-0 bg-primary-8 border border-primary-8;
-  @apply w-full font-normal;
+  @apply p-0 bg-primary-8 border border-primary-8 w-full font-normal;
 }
 
 .model-select__indicator {
@@ -11,9 +11,30 @@
 }
 
 .model-select__option {
-  @apply p-2;
+  @apply p-2 text-white;
 }
 
 .model-select__option:hover {
+  @apply bg-primary-9;
+}
+
+.compact-model-select__control {
+  @apply bg-none border-none w-full rounded-none p-0 whitespace-nowrap text-left;
+  min-height: 0 !important;
+}
+
+.compact-model-select__menu {
+  @apply p-0 bg-primary-8 border border-primary-8 text-left w-full font-normal whitespace-nowrap;
+}
+
+.compact-model-select__indicator {
+  @apply w-[1rem];
+}
+
+.compact-model-select__option {
+  @apply p-2 text-white;
+}
+
+.compact-model-select__option:hover {
   @apply bg-primary-9;
 }

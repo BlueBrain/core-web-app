@@ -30,12 +30,7 @@ export default function List() {
     () => (
       <>
         {mModelItems.map((item) => (
-          <ListItem
-            key={item.label}
-            label={item.label}
-            annotation={item.annotation}
-            id={item.id}
-          />
+          <ListItem key={item.label} label={item.label} id={item.id} />
         ))}
       </>
     ),

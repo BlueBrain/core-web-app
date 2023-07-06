@@ -1,1 +1,1 @@
-export type ModelChoice = 'canonical' | 'placeholder';
+export type ModelChoice = 'canonical' | 'placeholder' | string;
