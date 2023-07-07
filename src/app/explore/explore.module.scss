@@ -14,7 +14,7 @@
 }
 
 .tableHeaderUnits {
-  @apply absolute bottom-0 text-sm font-thin text-left pl-0 text-gray-500;
+  @apply text-sm font-thin text-left pl-0 text-gray-500;
 }
 
 .dragIcons {
@@ -22,16 +22,8 @@
   opacity: 0;
 }
 
-.sortIcons {
-  @apply text-gray-300 flex flex-col;
-  > span {
-    &:first-child {
-      margin-bottom: -0.15rem;
-    }
-    &:last-child {
-      margin-top: -0.15rem;
-    }
-  }
+.alignmentHack > div {
+  align-items: normal !important;
 }
 
 .tableRow {

@@ -92,6 +92,7 @@ const LISTING_CONFIG: TermsRenderProps = {
       field: 'standard error of the mean',
       nestField: 'series',
     },
+    unit: 'boutons/μm',
     title: 'SEM',
     description: 'Standard error of the mean',
     filter: 'valueRange',
@@ -105,6 +106,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'weight.label.keyword',
     title: 'Weight',
     filter: 'checkList',
+    unit: 'gramms',
     renderFn: (t, r) => selectorFnBasic(r._source?.weight),
     vocabulary: {
       plural: 'Values',
@@ -115,6 +117,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'subjectAge.label.keyword',
     title: 'Age',
     filter: 'checkList',
+    unit: 'days',
     renderFn: (t, r) => selectorFnBasic(r._source?.subjectAge?.label),
     vocabulary: {
       plural: 'Ages',
@@ -135,7 +138,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'neuronDensity.value',
     title: 'Density',
     filter: 'valueRange',
-    unit: 'neurons/mm³',
+    unit: 'n/mm³',
     renderFn: (t, r) => selectorFnValue(r._source?.neuronDensity),
     vocabulary: {
       plural: 'Densities',
@@ -166,6 +169,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'layerThickness.value',
     title: 'Thickness (µM)',
     filter: 'valueRange',
+    unit: 'μm',
     renderFn: (t, r) => selectorFnLayerThickness(r._source?.layerThickness),
     vocabulary: {
       plural: 'Thicknesses',

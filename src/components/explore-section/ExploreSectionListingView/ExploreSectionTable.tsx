@@ -13,6 +13,7 @@ import { to64 } from '@/util/common';
 import { ESResponseRaw } from '@/types/explore-section/resources';
 import fetchArchive from '@/api/archive';
 import Spinner from '@/components/Spinner';
+import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
 
 type ExploreSectionTableProps = {
@@ -37,16 +38,25 @@ function CustomTH({
     ...style,
     fontWeight: '500',
     color: '#434343',
+    verticalAlign: 'baseline',
   };
 
-  return (
+  return handleResizing ? (
     <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
       <div className="flex">
-        <button onClick={onClick} type="button">
+        <button
+          className={classNames('flex items-top', styles.alignmentHack)}
+          onClick={onClick}
+          type="button"
+        >
           {children}
         </button>
         <VerticalAlignMiddleOutlined className={styles.dragIcons} onMouseDown={handleResizing} />
       </div>
+    </th>
+  ) : (
+    <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
+      {children}
     </th>
   );
 }

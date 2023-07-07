@@ -6,6 +6,7 @@ import { ColumnProps } from 'antd/lib/table';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { SortState } from '@/types/explore-section/application';
+import styles from '@/app/explore/explore.module.scss';
 
 const COL_SIZING = {
   min: 75,
@@ -127,18 +128,23 @@ const useExploreColumns = (
         ...acc,
         {
           key,
-          title: LISTING_CONFIG[key].title,
+          title: (
+            <span className="flex flex-col gap-0.5 text-left" style={{ marginTop: '-2px' }}>
+              <span>{term.title}</span>
+              {term.unit && <span className={styles.tableHeaderUnits}>[{term?.unit}]</span>}
+            </span>
+          ),
           className: 'text-primary-7 cursor-pointer',
           sorter: true,
           ellipsis: true,
           width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
           render: term?.renderFn,
           onHeaderCell: () => ({
+            handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
             onClick: () => sorterES(key),
             showsortertooltip: {
               title: term.description ? term.description : term.title,
             },
-            handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
           }),
           sortOrder: getSortOrder(key),
         },
@@ -149,8 +155,8 @@ const useExploreColumns = (
         title: '#',
         key: 'index',
         className: 'text-primary-7',
-        width: COL_SIZING.min,
         render: (_text: string, _record: ExploreSectionResource, index: number) => index + 1,
+        width: 70,
       },
     ] as ColumnProps<ExploreSectionResource>[]
   );
