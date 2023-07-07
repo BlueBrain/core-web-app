@@ -113,7 +113,7 @@ export default function ExploreSectionTable({
         rowSelection={
           enableDownload
             ? {
-                selectedRowKeys: selectedRows.map(({ _id }) => _id),
+                selectedRowKeys: selectedRows.map(({ _source }) => _source._self),
                 onChange: (_keys, rows) => setSelectedRows(rows),
                 type: 'checkbox',
               }
@@ -141,7 +141,9 @@ export default function ExploreSectionTable({
             }}
             type="button"
           >
-            <span>Download Resources ({selectedRows.length})</span>
+            <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
+              selectedRows.length
+            })`}</span>
             {fetching && <Spinner className="h-6 w-6" />}
           </button>
         </div>
