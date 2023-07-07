@@ -3,13 +3,13 @@ import { useCallback, useMemo } from 'react';
 import Select, { OptionsOrGroups, SingleValue } from 'react-select';
 
 import './ModelSelect.css';
-import { ModelChoice } from '@/components/build-section/cell-model-assignment/types';
+import { ModelChoice } from '@/types/m-model';
 
 interface ModelSelectProps {
   value: ModelChoice;
   onChange: (newModelChoice: ModelChoice) => void;
   options?: OptionsOrGroups<ModelChoice, any>;
-  compact: boolean;
+  compact?: boolean;
 }
 
 const defaultOptions: OptionsOrGroups<ModelChoice, any> = [
@@ -21,7 +21,7 @@ export default function ModelSelect({
   value,
   onChange,
   options: userOptions,
-  compact,
+  compact = false,
 }: ModelSelectProps) {
   const handleSelectChange = useCallback(
     (newValue: SingleValue<any>) => {

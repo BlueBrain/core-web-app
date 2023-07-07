@@ -77,3 +77,5 @@ export interface OrientationToDisplay {
 }
 
 export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo | OrientationToDisplay>;
+
+export type ModelChoice = 'canonical' | 'placeholder' | string;

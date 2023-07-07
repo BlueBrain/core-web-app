@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import ReloadIcon from '@/components/icons/Reload';
 import ModelSelect from '@/components/build-section/cell-model-assignment/m-model/Panel/ModelSelect';
-import { ModelChoice } from '@/components/build-section/cell-model-assignment/types';
+import { ModelChoice } from '@/types/m-model';
 
 function Separator() {
   return <hr className="bg-primary-4 h-px w-full border-0" />;
