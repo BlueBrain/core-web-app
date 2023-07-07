@@ -167,7 +167,7 @@ const LISTING_CONFIG: TermsRenderProps = {
   },
   layerThickness: {
     term: 'layerThickness.value',
-    title: 'Thickness (µM)',
+    title: 'Thickness',
     filter: 'valueRange',
     unit: 'μm',
     renderFn: (t, r) => selectorFnLayerThickness(r._source?.layerThickness),
