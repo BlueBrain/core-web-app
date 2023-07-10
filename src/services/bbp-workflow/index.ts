@@ -9,6 +9,7 @@ import {
   WorkflowFile,
   PLACEHOLDERS,
   SimulationPlaceholders,
+  BuildingPlaceholders,
 } from '@/services/bbp-workflow/config';
 import {
   UNICORE_JOB_CONFIG,
@@ -19,22 +20,10 @@ import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
 import { DetailedCircuitResource } from '@/types/nexus';
 import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
 import { replaceCustomBbpWorkflowPlaceholders } from '@/components/experiment-designer/utils';
+import { getCurrentDate } from '@/util/utils';
 
 export function getWorkflowAuthUrl(username: string) {
   return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
-}
-
-function replacePlaceholdersInFile(
-  filesList: WorkflowFile[],
-  fileName: string,
-  placeholder: string,
-  value: string
-) {
-  const filesCopy = [...filesList];
-  const fileToChange = filesCopy.find((file) => file.NAME === fileName);
-  if (!fileToChange) return filesCopy;
-  fileToChange.CONTENT = fileToChange.CONTENT.replace(placeholder, value);
-  return filesCopy;
 }
 
 function generateFormData(replacedConfigFiles: WorkflowFile[]): FormData {
@@ -88,19 +77,17 @@ export function getCircuitBuildingTaskFiles(
 
   const escapedConfigUrl = configUrl.includes('%') ? configUrl.replaceAll('%', '%%') : configUrl;
 
-  const withConfig = replacePlaceholdersInFile(
-    workflowFiles,
-    'circuit_building.cfg',
-    PLACEHOLDERS.CONFIG_URL,
-    escapedConfigUrl
-  );
-  const withUuid = replacePlaceholdersInFile(
-    withConfig,
-    'circuit_building.cfg',
-    PLACEHOLDERS.UUID,
-    crypto.randomUUID()
-  );
-  return withUuid;
+  const circuitBuildingConfigFile = workflowFiles.find((f) => f.NAME === 'circuit_building.cfg');
+  if (!circuitBuildingConfigFile) return workflowFiles;
+
+  const variables = {
+    [BuildingPlaceholders.CONFIG_URL]: escapedConfigUrl,
+    [BuildingPlaceholders.DATE]: getCurrentDate(''),
+    [BuildingPlaceholders.UUID]: crypto.randomUUID(),
+  };
+
+  circuitBuildingConfigFile.CONTENT = template(circuitBuildingConfigFile.CONTENT)(variables);
+  return workflowFiles;
 }
 
 function getWorkflowTaskUrl(username: string, workflowName: string): string {

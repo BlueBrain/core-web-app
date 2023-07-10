@@ -2,8 +2,6 @@ export const PLACEHOLDERS = {
   USERNAME: '{USERNAME}',
   TASK_NAME: '{TASK_NAME}',
   SIMULATION_URL: '{SIMULATION_URL}',
-  CONFIG_URL: '{CONFIG_URL}',
-  UUID: '{UUID}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
@@ -15,6 +13,12 @@ export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
 export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
 
 export const customRangeDelimeter = '@@';
+
+export enum BuildingPlaceholders {
+  CONFIG_URL = 'CONFIG_URL',
+  UUID = 'UUID',
+  DATE = 'DATE',
+}
 
 export enum SimulationPlaceholders {
   VARIANT_TASK_ACTIVITY = 'VARIANT_TASK_ACTIVITY',
@@ -196,10 +200,10 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFile[] = [
       kg-proj: mmb-point-neuron-framework-model
 
       [SBOWorkflow]
-      config-url: ${PLACEHOLDERS.CONFIG_URL}
+      config-url: <%= ${BuildingPlaceholders.CONFIG_URL} %>
       host: bbpv1.epfl.ch
       account: proj134
-      output-dir: /gpfs/bbp.cscs.ch/project/proj134/workflow-outputs/${PLACEHOLDERS.UUID}
+      output-dir: /gpfs/bbp.cscs.ch/project/proj134/workflow-outputs/<%= ${BuildingPlaceholders.DATE} %>-<%= ${BuildingPlaceholders.UUID} %>
     `,
   },
   {
