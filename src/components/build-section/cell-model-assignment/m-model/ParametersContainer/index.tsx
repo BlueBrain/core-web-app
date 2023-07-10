@@ -1,10 +1,13 @@
 'use client';
 
+import { useAtomValue } from 'jotai';
+
 import { paramsToDisplay } from './constants';
 import ParameterItem from './ParamItem';
 import { RequiredParamRawNames } from '@/types/m-model';
 import { SettingsIcon } from '@/components/icons';
 import { useFetchMModelConfig } from '@/hooks/m-model-editor';
+import { mModelRemoteConfigLoadedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 type Props = {
   className?: string;
@@ -12,14 +15,17 @@ type Props = {
 
 export default function ParametersContainer({ className }: Props) {
   useFetchMModelConfig();
+  const remoteWasFetched = useAtomValue(mModelRemoteConfigLoadedAtom);
 
   const paramRawNames = Object.keys(paramsToDisplay) as RequiredParamRawNames[];
-  const body = (
+  const body = remoteWasFetched ? (
     <div className="flex flex-col gap-y-8">
       {paramRawNames.map((paramRawName) => (
         <ParameterItem key={paramRawName} paramRawName={paramRawName} />
       ))}
     </div>
+  ) : (
+    <div>Loading...</div>
   );
 
   return (

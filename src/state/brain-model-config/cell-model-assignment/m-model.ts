@@ -19,6 +19,7 @@ const paramsAndDistResources = {
 };
 
 export const mModelLocalConfigAtom = atom<ParamConfig | null>(null);
+export const mModelRemoteConfigLoadedAtom = atom(false);
 
 export const mModelGetRemoteConfigAtom = atom<null, [], Promise<ParamConfig | null>>(
   null,
@@ -31,6 +32,7 @@ export const mModelGetRemoteConfigAtom = atom<null, [], Promise<ParamConfig | nu
     const paramsResponse = await fetch(mockParamsUrl);
     const params = (await paramsResponse.json()) as ParamConfig;
     set(mModelLocalConfigAtom, params);
+    set(mModelRemoteConfigLoadedAtom, true);
     return params;
   }
 );
