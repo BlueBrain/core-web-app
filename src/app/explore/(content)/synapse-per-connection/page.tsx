@@ -14,7 +14,7 @@ export default function SynapsePerConnectionListingPage() {
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <ExploreSectionListingView enableDownload title="Synapse per connection" />
+      <ExploreSectionListingView title="Synapse per connection" />
     </div>
   );
 }

@@ -14,7 +14,7 @@ export default function BoutonDensityListingPage() {
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <ExploreSectionListingView enableDownload title="Bouton density" />
+      <ExploreSectionListingView title="Bouton density" />
     </div>
   );
 }

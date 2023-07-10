@@ -14,7 +14,7 @@ export default function LayerThicknessListingPage() {
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <ExploreSectionListingView enableDownload title="Layer Thickness" />
+      <ExploreSectionListingView title="Layer Thickness" />
     </div>
   );
 }
