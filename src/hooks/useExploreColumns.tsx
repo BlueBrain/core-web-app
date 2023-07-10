@@ -3,15 +3,22 @@
 import { Dispatch, useCallback, useEffect, useState } from 'react';
 import { SetStateAction } from 'jotai';
 import { ColumnProps } from 'antd/lib/table';
+import throttle from 'lodash/throttle';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { SortState } from '@/types/explore-section/application';
 import styles from '@/app/explore/explore.module.scss';
 
+type ResizeInit = {
+  key: string | null;
+  start: number | null;
+};
+
 const COL_SIZING = {
   min: 75,
   default: 125,
 };
+
 const useExploreColumns = (
   keys: string[],
   setSortState: Dispatch<SetStateAction<SortState | undefined>>,
@@ -29,11 +36,6 @@ const useExploreColumns = (
       ),
     [keys]
   );
-
-  const [resizingState, setResizingState] = useState<{
-    key: string | null;
-    start: number | null;
-  }>({ key: null, start: null });
 
   const sorterES = useCallback(
     (field: string) => {
@@ -55,58 +57,43 @@ const useExploreColumns = (
     [setSortState, sortState]
   );
 
-  const onMouseDown = (e: React.MouseEvent<HTMLElement>, key: string) =>
-    setResizingState({
+  const updateColumnWidths = (resizeInit: ResizeInit, clientX: number) => {
+    const { key, start } = resizeInit;
+
+    const delta = start ? clientX - start : 0; // No start? No delta.
+    const colWidthIndex = columnWidths.findIndex(({ key: colKey }) => colKey === key);
+
+    const updatedWidth = {
+      key: key as string,
+      width: Math.max(columnWidths[colWidthIndex].width + delta, COL_SIZING.min),
+    };
+
+    setColumnWidths([
+      ...columnWidths.slice(0, colWidthIndex),
+      updatedWidth,
+      ...columnWidths.slice(colWidthIndex + 1),
+    ]);
+  };
+
+  const onMouseDown = (mouseDownEvent: React.MouseEvent<HTMLElement>, key: string) => {
+    const { clientX } = mouseDownEvent;
+    const resizeInit = {
       key,
-      start: e.clientX,
-    });
+      start: clientX,
+    };
 
-  const onMouseUp = useCallback(() => {
-    setResizingState({
-      key: null,
-      start: null,
-    });
-  }, [setResizingState]);
+    const handleMouseMove = throttle(
+      (moveEvent: MouseEvent) => updateColumnWidths(resizeInit, moveEvent.clientX),
+      200
+    );
 
-  const onMouseMove = useCallback(
-    (e: MouseEvent) => {
-      const { clientX } = e;
-      const { key, start } = resizingState;
-      const delta = start ? clientX - start : 0; // No start? No delta.
-      const existingColIndex = columnWidths.findIndex(({ key: colKey }) => colKey === key);
-
-      if (existingColIndex !== -1) {
-        const updatedWidth = {
-          key: key as string,
-          width: Math.max(columnWidths[existingColIndex].width + delta, COL_SIZING.min),
-        };
-
-        setColumnWidths([
-          ...columnWidths.slice(0, existingColIndex),
-          updatedWidth,
-          ...columnWidths.slice(existingColIndex + 1),
-        ]);
-      }
-
-      setResizingState({
-        key,
-        start: clientX,
-      });
-    },
-    [columnWidths, resizingState]
-  );
-
-  useEffect(() => {
-    window.addEventListener('mousemove', onMouseMove);
-
-    return () => window.removeEventListener('mousemove', onMouseMove);
-  }, [onMouseMove]);
-
-  useEffect(() => {
-    window.addEventListener('mouseup', onMouseUp);
-
-    return () => window.removeEventListener('mouseup', onMouseUp);
-  }, [onMouseUp]);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener(
+      'mouseup',
+      () => window.removeEventListener('mousemove', handleMouseMove),
+      { once: true } // Auto-removeEventListener
+    );
+  };
 
   // Translates ES terminology to AntD terminology.
   const getSortOrder = (key: string) => {
