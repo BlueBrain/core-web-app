@@ -1,5 +1,3 @@
-'use client';
-
 import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
