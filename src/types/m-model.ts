@@ -78,4 +78,13 @@ export interface OrientationToDisplay {
 
 export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo | OrientationToDisplay>;
 
+export type MModelWorkflowOverrides = {
+  [brainRegionId: string]: {
+    [mTypeId: string]: {
+      id: string;
+      overrides: ParamConfig | {};
+    };
+  };
+};
+
 export type ModelChoice = 'canonical' | 'placeholder' | string;

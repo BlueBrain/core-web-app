@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import merge from 'lodash/merge';
 
 import { ParamConfig, SynthesisPreviewInterface } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -19,24 +20,41 @@ const paramsAndDistResources = {
   },
 };
 
-export const mModelLocalConfigAtom = atom<ParamConfig | null>(null);
-export const mModelRemoteConfigLoadedAtom = atom(false);
+export const mModelRemoteOverridesAtom = atom<ParamConfig | null>(null);
 
-export const mModelGetRemoteConfigAtom = atom<null, [], Promise<ParamConfig | null>>(
+export const mModelOverridesAtom = atom<ParamConfig | {}>({});
+
+export const mModelRemoteOverridesLoadedAtom = atom(false);
+
+export const getMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig | null>>(
   null,
   async (get, set) => {
     const brainRegion = get(selectedBrainRegionAtom);
     const mType = get(selectedMModelNameAtom);
 
     // TODO: remove this line when we actually do something with these
+    // eslint-disable-next-line no-console
     console.log(`Fetching M-Model config for (${brainRegion?.title}) - (${mType})...`);
     const paramsResponse = await fetch(mockParamsUrl);
     const params = (await paramsResponse.json()) as ParamConfig;
-    set(mModelLocalConfigAtom, params);
-    set(mModelRemoteConfigLoadedAtom, true);
+
+    set(mModelRemoteOverridesAtom, params);
+    set(mModelRemoteOverridesLoadedAtom, true);
     return params;
   }
 );
+
+export const getMModelLocalOverridesAtom = atom<ParamConfig | null>((get) => {
+  const remoteOverrides = get(mModelRemoteOverridesAtom);
+
+  if (!remoteOverrides) return null;
+
+  const localOverrides = get(mModelOverridesAtom);
+
+  const localConfig = {} as ParamConfig;
+  merge(localConfig, remoteOverrides, localOverrides);
+  return localConfig;
+});
 
 export const mModelPreviewConfigAtom = atom<SynthesisPreviewInterface>({
   ...paramsAndDistResources,

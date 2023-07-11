@@ -1,5 +1,6 @@
 import { Entity, Distribution, ResourceMetadata, DateISOString } from './common';
 import { MacroConnectomeEditEntry } from '@/types/connectome';
+import { MModelWorkflowOverrides } from '@/types/m-model';
 
 export * from './common';
 
@@ -223,12 +224,13 @@ export type EModelAssignmentConfigPayload = {
 };
 
 type MorphologyAssignmentConfigType = 'MorphologyAssignmentConfig';
+type MModelGeneratorName = 'mmodel';
 
 export interface MorphologyAssignmentConfig extends Entity {
   name: string;
   description: string;
   '@type': [MorphologyAssignmentConfigType, 'Entity'];
-  generatorName: PlaceholderGeneratorName;
+  generatorName: MModelGeneratorName;
   distribution: Distribution;
 }
 
@@ -237,18 +239,30 @@ export interface MorphologyAssignmentConfigResource
     MorphologyAssignmentConfig {}
 
 export type MorphologyAssignmentConfigPayload = {
-  [rootBrainRegionURI: BrainRegionURI]: {
-    variantDefinition: {
+  variantDefinition: {
+    topological_synthesis: {
       algorithm: string;
       version: string;
     };
-    inputs: {
-      name: string;
-      type: 'Dataset';
+    placeholder_assignment: {
+      algorithm: string;
+      version: string;
+    };
+  };
+  defaults: {
+    topological_synthesis: {
       id: string;
-    }[];
-    configuration: {};
-    jobConfiguration: Record<string, string | number>;
+      type: ['CanonicalMorphologyModelConfig', 'Entity'];
+      rev: number;
+    };
+    placeholder_assignment: {
+      id: string;
+      type: ['PlaceholderMorphologyConfig', 'Entity'];
+      rev: number;
+    };
+  };
+  configuration: {
+    topological_synthesis: MModelWorkflowOverrides;
   };
 };
 
@@ -381,7 +395,8 @@ export type GeneratorName =
   | PlaceholderGeneratorName
   | MicroConnectomeGeneratorName
   | SynapseGeneratorName
-  | MacroConnectomeGeneratorName;
+  | MacroConnectomeGeneratorName
+  | MModelGeneratorName;
 
 export type GeneratorConfigType =
   | CellCompositionConfigType

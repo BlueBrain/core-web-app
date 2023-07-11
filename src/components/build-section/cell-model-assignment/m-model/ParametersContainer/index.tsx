@@ -7,7 +7,7 @@ import ParameterItem from './ParamItem';
 import { RequiredParamRawNames } from '@/types/m-model';
 import { SettingsIcon } from '@/components/icons';
 import { useFetchMModelConfig } from '@/hooks/m-model-editor';
-import { mModelRemoteConfigLoadedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import { mModelRemoteOverridesLoadedAtom } from '@/state/brain-model-config/cell-model-assignment';
 
 type Props = {
   className?: string;
@@ -15,7 +15,7 @@ type Props = {
 
 export default function ParametersContainer({ className }: Props) {
   useFetchMModelConfig();
-  const remoteWasFetched = useAtomValue(mModelRemoteConfigLoadedAtom);
+  const remoteWasFetched = useAtomValue(mModelRemoteOverridesLoadedAtom);
 
   const paramRawNames = Object.keys(paramsToDisplay) as RequiredParamRawNames[];
   const body = remoteWasFetched ? (

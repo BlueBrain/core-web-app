@@ -6,7 +6,7 @@ import { useAtom, useSetAtom } from 'jotai';
 
 import {
   selectedMModelNameAtom,
-  mModelGetRemoteConfigAtom,
+  getMModelRemoteOverridesAtom,
 } from '@/state/brain-model-config/cell-model-assignment';
 
 export default function useMModelQueryParam() {
@@ -24,6 +24,6 @@ export default function useMModelQueryParam() {
 }
 
 export function useFetchMModelConfig() {
-  const mModelGetRemoteConfig = useSetAtom(mModelGetRemoteConfigAtom);
+  const mModelGetRemoteConfig = useSetAtom(getMModelRemoteOverridesAtom);
   mModelGetRemoteConfig();
 }

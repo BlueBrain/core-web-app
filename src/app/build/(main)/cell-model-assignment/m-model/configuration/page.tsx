@@ -8,14 +8,14 @@ import {
   SynthesisPreview,
   ParametersContainer,
 } from '@/components/build-section/cell-model-assignment/m-model';
-import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
+import { selectedMModelIdAtom } from '@/state/brain-model-config/cell-model-assignment';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export default function ConfigurationPage() {
-  const mModelSelectedName = useAtomValue(selectedMModelNameAtom);
+  const setSelectedMModelId = useAtomValue(selectedMModelIdAtom);
   const selectedRegion = useAtomValue(selectedBrainRegionAtom);
 
-  if (!mModelSelectedName || !selectedRegion)
+  if (!setSelectedMModelId || !selectedRegion)
     return (
       <div className="flex h-screen items-center justify-center text-4xl">
         Select region and M-Type

@@ -1,15 +1,19 @@
 import {
   selectedMModelNameAtom,
-  mModelGetRemoteConfigAtom,
-  mModelLocalConfigAtom,
   mModelPreviewConfigAtom,
+  mModelOverridesAtom,
+  getMModelLocalOverridesAtom,
+  mModelRemoteOverridesLoadedAtom,
+  getMModelRemoteOverridesAtom,
   selectedMModelIdAtom,
 } from './m-model';
 
 export {
   selectedMModelNameAtom,
-  mModelGetRemoteConfigAtom,
-  mModelLocalConfigAtom,
   mModelPreviewConfigAtom,
+  mModelOverridesAtom,
+  getMModelLocalOverridesAtom,
+  mModelRemoteOverridesLoadedAtom,
+  getMModelRemoteOverridesAtom,
   selectedMModelIdAtom,
 };

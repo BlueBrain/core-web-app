@@ -105,7 +105,7 @@ const generatorNameByKgType: Record<GeneratorConfigType, GeneratorName> = {
   CellCompositionConfig: 'cell_composition',
   CellPositionConfig: 'cell_position',
   EModelAssignmentConfig: 'placeholder',
-  MorphologyAssignmentConfig: 'placeholder',
+  MorphologyAssignmentConfig: 'mmodel',
   MicroConnectomeConfig: 'connectome',
   SynapseConfig: 'connectome_filtering',
   MacroConnectomeConfig: 'connectome',

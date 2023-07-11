@@ -33,6 +33,7 @@ import {
   SimulationCampaignUIConfigResource,
   SimulationCampaignUIConfig,
   SupportedConfigListTypes,
+  MorphologyAssignmentConfigPayload,
 } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -299,7 +300,10 @@ export async function cloneEModelAssignmentConfig(id: string, session: Session) 
 
 export async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
   const configSource = await fetchResourceSourceById<MorphologyAssignmentConfig>(id, session);
-  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+  const payload: MorphologyAssignmentConfigPayload = await fetchJsonFileByUrl(
+    configSource.distribution.contentUrl,
+    session
+  );
 
   const clonedPayloadMeta = await createJsonFile(
     payload,

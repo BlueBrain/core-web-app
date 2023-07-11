@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 import set from 'lodash/set';
 
@@ -8,7 +8,8 @@ import OrientationParam from './OrientationParam';
 import StepSizeParam from './StepSizeParam';
 import {
   mModelPreviewConfigAtom,
-  mModelLocalConfigAtom,
+  mModelOverridesAtom,
+  getMModelLocalOverridesAtom,
 } from '@/state/brain-model-config/cell-model-assignment';
 import {
   RequiredParamRawNames,
@@ -16,35 +17,39 @@ import {
   OrientationToDisplay,
   OrientationInterface,
   StepSizeInterface,
+  ParamConfig,
 } from '@/types/m-model';
+import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/morphology-assignment';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;
 };
 
 export default function ParameterItem({ paramRawName }: ParameterProps) {
-  const [mModelLocalConfig, setMModelLocalConfig] = useAtom(mModelLocalConfigAtom);
+  const setMModelOverrides = useSetAtom(mModelOverridesAtom);
+  const mModelLocalOverrides = useAtomValue(getMModelLocalOverridesAtom);
   const setMModelPreviewConfig = useSetAtom(mModelPreviewConfigAtom);
+  const setMorphAssConfigPayload = useSetAtom(setMorphologyAssignmentConfigPayloadAtom);
 
   const paramInfo = paramsToDisplay[paramRawName];
   const paramValue = useMemo(() => {
-    if (!mModelLocalConfig) return null;
+    if (!mModelLocalOverrides) return null;
+    if (!Object.keys(mModelLocalOverrides).length) return null;
 
-    const requiredParamValues = mModelLocalConfig[mockNeuriteType];
+    const requiredParamValues = (mModelLocalOverrides as ParamConfig)[mockNeuriteType];
     if (!requiredParamValues || !Object.keys(requiredParamValues).length) return null;
 
     const value = requiredParamValues[paramRawName];
     return value;
-  }, [mModelLocalConfig, paramRawName]);
+  }, [mModelLocalOverrides, paramRawName]);
 
   const setParamValue = (newValue: unknown) => {
-    setMModelLocalConfig((oldConfigAtomValue) => {
-      if (!oldConfigAtomValue) return null;
-
-      const cloned = structuredClone(oldConfigAtomValue);
+    setMModelOverrides((oldAtomData) => {
+      const cloned = structuredClone(oldAtomData);
       set(cloned, `${mockNeuriteType}.${paramRawName}`, newValue);
       return cloned;
     });
+    setMorphAssConfigPayload();
   };
 
   const setPreview = (newValue: number | OrientationInterface | StepSizeInterface) => {
