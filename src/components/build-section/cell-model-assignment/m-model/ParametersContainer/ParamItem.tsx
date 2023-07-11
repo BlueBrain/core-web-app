@@ -19,7 +19,7 @@ import {
   StepSizeInterface,
   ParamConfig,
 } from '@/types/m-model';
-import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/morphology-assignment';
+import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;

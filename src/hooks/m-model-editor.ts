@@ -4,10 +4,8 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAtom, useSetAtom } from 'jotai';
 
-import {
-  selectedMModelNameAtom,
-  getMModelRemoteOverridesAtom,
-} from '@/state/brain-model-config/cell-model-assignment';
+import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
+import { fetchMModelRemoteOverridesAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 export default function useMModelQueryParam() {
   const [currentMModelName, setMModelName] = useAtom(selectedMModelNameAtom);
@@ -24,6 +22,6 @@ export default function useMModelQueryParam() {
 }
 
 export function useFetchMModelConfig() {
-  const mModelGetRemoteConfig = useSetAtom(getMModelRemoteOverridesAtom);
+  const mModelGetRemoteConfig = useSetAtom(fetchMModelRemoteOverridesAtom);
   mModelGetRemoteConfig();
 }

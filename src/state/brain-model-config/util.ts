@@ -19,7 +19,7 @@ import {
 import {
   configSourceAtom as morphologyAssignmentConfigSourceAtom,
   partialCircuitAtom as morphologyAssignmentBuildArtefact,
-} from './morphology-assignment';
+} from './cell-model-assignment/m-model';
 
 import {
   configSourceAtom as microConnectomeConfigSourceAtom,

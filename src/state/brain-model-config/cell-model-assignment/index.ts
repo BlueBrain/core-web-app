@@ -4,7 +4,6 @@ import {
   mModelOverridesAtom,
   getMModelLocalOverridesAtom,
   mModelRemoteOverridesLoadedAtom,
-  getMModelRemoteOverridesAtom,
   selectedMModelIdAtom,
 } from './m-model';
 
@@ -14,6 +13,5 @@ export {
   mModelOverridesAtom,
   getMModelLocalOverridesAtom,
   mModelRemoteOverridesLoadedAtom,
-  getMModelRemoteOverridesAtom,
   selectedMModelIdAtom,
 };
