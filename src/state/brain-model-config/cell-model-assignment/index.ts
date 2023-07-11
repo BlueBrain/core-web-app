@@ -3,6 +3,7 @@ import {
   mModelGetRemoteConfigAtom,
   mModelLocalConfigAtom,
   mModelPreviewConfigAtom,
+  selectedMModelIdAtom,
 } from './m-model';
 
 export {
@@ -10,4 +11,5 @@ export {
   mModelGetRemoteConfigAtom,
   mModelLocalConfigAtom,
   mModelPreviewConfigAtom,
+  selectedMModelIdAtom,
 };

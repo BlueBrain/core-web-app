@@ -4,6 +4,7 @@ import { ParamConfig, SynthesisPreviewInterface } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export const selectedMModelNameAtom = atom<string | null>(null);
+export const selectedMModelIdAtom = atom<string | null>(null);
 
 // TODO: replace this for proper brain - Mtype from nexus
 const mockParamsUrl =

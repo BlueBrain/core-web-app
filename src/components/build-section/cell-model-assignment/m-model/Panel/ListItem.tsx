@@ -1,18 +1,24 @@
-import { useAtom } from 'jotai';
-import { useCallback, useMemo } from 'react';
-import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
+import { useAtom, useSetAtom } from 'jotai';
+import { useMemo } from 'react';
+import {
+  selectedMModelNameAtom,
+  selectedMModelIdAtom,
+} from '@/state/brain-model-config/cell-model-assignment';
 
 interface MTypeListItemProps {
   label: string;
   annotation?: string;
+  id: string;
 }
 
-export default function ListItem({ label, annotation }: MTypeListItemProps) {
+export default function ListItem({ label, annotation, id }: MTypeListItemProps) {
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
+  const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     setSelectedMModelName(label);
-  }, [label, setSelectedMModelName]);
+    setSelectedMModelId(id);
+  };
 
   const isActive = useMemo(() => label === selectedMModelName, [label, selectedMModelName]);
 

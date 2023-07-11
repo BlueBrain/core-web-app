@@ -8,6 +8,7 @@ import { analysedCompositionAtom } from '@/state/build-composition';
 interface MModelMenuItem {
   label: string;
   annotation?: string;
+  id: string;
 }
 
 export default function List() {
@@ -19,6 +20,7 @@ export default function List() {
         ? filter(composition.nodes, { about: 'MType' }).map((node) => ({
             label: node.label,
             annotation: `Canonical ${node.label}`,
+            id: node.id,
           }))
         : [],
     [composition]
@@ -28,7 +30,12 @@ export default function List() {
     () => (
       <>
         {mModelItems.map((item) => (
-          <MModelListItem key={item.label} label={item.label} annotation={item.annotation} />
+          <MModelListItem
+            key={item.label}
+            label={item.label}
+            annotation={item.annotation}
+            id={item.id}
+          />
         ))}
       </>
     ),
