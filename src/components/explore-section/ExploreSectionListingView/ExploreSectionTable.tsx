@@ -1,6 +1,6 @@
 'use client';
 
-import { MouseEvent, useState, ReactNode, CSSProperties, useEffect } from 'react';
+import { useState, ReactNode, CSSProperties, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -84,16 +84,6 @@ export default function ExploreSectionTable({
     }
   }, [data]);
 
-  const onCellRouteHandler = {
-    onCell: (record: ESResponseRaw) => ({
-      onClick: (e: MouseEvent<HTMLInputElement>) => {
-        e.preventDefault();
-
-        router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`);
-      },
-    }),
-  };
-
   if (data.state === 'hasError') {
     return <div>Something went wrong</div>;
   }
@@ -102,10 +92,7 @@ export default function ExploreSectionTable({
     <>
       <Table
         className={styles.table}
-        columns={columns.map((col, i) => ({
-          ...col,
-          ...(!(enableDownload && i === 0) && onCellRouteHandler),
-        }))}
+        columns={columns}
         dataSource={dataSource}
         loading={data.state === 'loading'}
         rowClassName={styles.tableRow}
@@ -119,6 +106,16 @@ export default function ExploreSectionTable({
               }
             : undefined
         }
+        onRow={(record, index) => ({
+          onClick: (e) => {
+            e.preventDefault();
+
+            return (
+              index !== 0 && // Don't attach route to checkbox selectors
+              router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`)
+            );
+          },
+        })}
         pagination={false}
         components={{
           header: {
