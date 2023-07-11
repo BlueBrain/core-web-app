@@ -13,10 +13,12 @@ import {
   DEFAULT_CAMERA_LOOK_AT,
   DEFAULT_MOVIE_CAMERA_LOOK_AT,
   DEFAULT_MOVIE_CAMERA_POSITION,
+  DEFAULT_MOVIE_CAMERA_PROJECTION,
   DEFAULT_OVERVIEW_CAMERA_POSITION,
 } from '@/state/experiment-designer/visualization';
 import {
   ExpDesignerCameraType,
+  ExpDesignerVisualizationConfig,
   MovieCameraConfig,
 } from '@/types/experiment-designer-visualization';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
@@ -202,12 +204,15 @@ export default function SimulationPreview({ targetsToDisplay }: SimulationPrevie
   );
 
   const resetCamera = useCallback(() => {
-    const newConfig = {
+    const newConfig: ExpDesignerVisualizationConfig = {
       ...cameraConfig,
       [cameraConfig.activeCamera]: {
         ...cameraConfig[cameraConfig.activeCamera],
         position: defaultCameraPosition,
         lookAt: DEFAULT_CAMERA_LOOK_AT,
+        ...(cameraConfig.activeCamera === 'movieCamera'
+          ? { projection: { ...DEFAULT_MOVIE_CAMERA_PROJECTION } }
+          : {}),
       },
     };
     setCameraConfig(newConfig);

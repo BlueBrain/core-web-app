@@ -17,6 +17,11 @@ export const DEFAULT_MOVIE_CAMERA_LOOK_AT: [number, number, number] = [
 
 const DEFAULT_MOVIE_PROJECTION_MULTIPLIER = 10;
 
+export const DEFAULT_MOVIE_CAMERA_PROJECTION = {
+  width: 1920 * DEFAULT_MOVIE_PROJECTION_MULTIPLIER,
+  height: 1080 * DEFAULT_MOVIE_PROJECTION_MULTIPLIER,
+};
+
 export const cameraConfigAtom = atom<ExpDesignerVisualizationConfig>({
   activeCamera: 'overviewCamera',
   overviewCamera: {
@@ -31,10 +36,7 @@ export const cameraConfigAtom = atom<ExpDesignerVisualizationConfig>({
     position: [...DEFAULT_MOVIE_CAMERA_POSITION],
     up: [0, -1, 0],
     lookAt: [...DEFAULT_CAMERA_LOOK_AT],
-    projection: {
-      width: 1920 * DEFAULT_MOVIE_PROJECTION_MULTIPLIER,
-      height: 1080 * DEFAULT_MOVIE_PROJECTION_MULTIPLIER,
-    },
+    projection: { ...DEFAULT_MOVIE_CAMERA_PROJECTION },
     rotation: [0, 1, 0],
     resolution: { width: 1920, height: 1080 },
   },
