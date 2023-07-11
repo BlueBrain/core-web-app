@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, ReactNode, CSSProperties, useEffect } from 'react';
+import { ReactNode, CSSProperties, useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
@@ -84,6 +84,21 @@ export default function ExploreSectionTable({
     }
   }, [data]);
 
+  const searchParams = useSearchParams();
+  const scrollToRow = Number(searchParams?.get('row'));
+  const tableRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const scrollToRowSelector = `[data-row-index="${scrollToRow}"]`;
+    const scrollToTarget = tableRef?.current?.querySelector(scrollToRowSelector);
+
+    console.log(scrollToTarget);
+
+    if (data.state === 'hasData') {
+      scrollToTarget?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [data.state, scrollToRow, tableRef]);
+
   if (data.state === 'hasError') {
     return <div>Something went wrong</div>;
   }
@@ -95,6 +110,7 @@ export default function ExploreSectionTable({
         columns={columns}
         dataSource={dataSource}
         loading={data.state === 'loading'}
+        ref={tableRef}
         rowClassName={styles.tableRow}
         rowKey={(row) => row._source._self}
         rowSelection={
@@ -112,9 +128,14 @@ export default function ExploreSectionTable({
 
             return (
               index !== 0 && // Don't attach route to checkbox selectors
-              router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`)
+              router.push(
+                `${pathname}/${to64(
+                  `${record._source.project.label}!/!${record._id}`
+                )}?row=${index}`
+              )
             );
           },
+          'data-row-index': index,
         })}
         pagination={false}
         components={{
