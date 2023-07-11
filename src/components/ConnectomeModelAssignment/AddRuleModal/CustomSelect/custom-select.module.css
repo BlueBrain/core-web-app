@@ -1,0 +1,11 @@
+.customSelect {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  border-bottom: 1px solid rgb(12, 88, 182);
+}
+
+.customSelect label {
+  padding-left: 1em;
+}

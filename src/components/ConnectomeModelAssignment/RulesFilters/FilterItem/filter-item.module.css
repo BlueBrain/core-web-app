@@ -1,0 +1,30 @@
+.filterItem {
+  display: flex;
+  gap: 0;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.filterItem :global(div.ant-select-selector) {
+  margin: 0;
+  border-radius: 0 0.5em 0.5em 0;
+  min-width: 13em;
+}
+
+.filterItem :global(div.ant-select:first-child) > :global(div.ant-select-selector) {
+  border-radius: 0.5em 0 0 0.5em;
+  margin-right: -1px;
+  min-width: 10em;
+}
+
+div.deleteIcon {
+  display: none;
+  color: #000;
+  font-size: 150%;
+  margin-left: 0.5em;
+  margin-right: 1em;
+}
+
+.filterItem:hover div.deleteIcon {
+  display: block;
+}

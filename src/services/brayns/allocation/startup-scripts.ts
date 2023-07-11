@@ -25,7 +25,6 @@ python \${BACKEND_DIR}src/main.py \\
     --private-key-file=$UNICORE_PRIVATE_KEY_FILEPATH \\
     --port=$BACKEND_PORT`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const NODE_STARTUP_SCRIPT = `
 #!/bin/bash
 

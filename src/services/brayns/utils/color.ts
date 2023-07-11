@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { logError } from '@/util/logger';
 
 const LUMINANCE_THRESHOLD = 0.62;

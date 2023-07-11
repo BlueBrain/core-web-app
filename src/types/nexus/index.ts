@@ -277,6 +277,18 @@ export interface SynapseConfig extends Entity {
 }
 
 export interface SynapseConfigResource extends ResourceMetadata, SynapseConfig {}
+export interface SynapseConfigPayload {
+  synaptic_assignment: {
+    id: string;
+    type: ['Entity', 'Dataset', 'SynapticParameterAssignment'];
+    rev: number;
+  };
+  synaptic_parameters: {
+    id: string;
+    type: ['Entity', 'Dataset', 'SynapticParameter'];
+    rev: number;
+  };
+}
 
 type MacroConnectomeGeneratorName = 'connectome';
 type MacroConnectomeConfigType = 'MacroConnectomeConfig';

@@ -1,6 +1,5 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import VERT from './painter.vert';
 import FRAG from './painter.frag';
 

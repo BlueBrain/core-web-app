@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable import/prefer-default-export */
 import React from 'react';
 import State from '../../state';
 import { BraynsMeshOptions } from '../../types';

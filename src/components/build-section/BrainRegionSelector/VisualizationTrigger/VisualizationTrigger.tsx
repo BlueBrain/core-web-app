@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useAtomValue } from 'jotai';
 import { EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 

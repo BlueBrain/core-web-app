@@ -4,7 +4,6 @@ import getOr from 'lodash/fp/getOr';
 
 import { NavValue } from '@/components/TreeNavItem';
 
-// eslint-disable-next-line import/prefer-default-export
 export function handleNavValueChange(
   navValue: NavValue,
   setNavValue: Dispatch<SetStateAction<NavValue>>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useId } from 'react';
 

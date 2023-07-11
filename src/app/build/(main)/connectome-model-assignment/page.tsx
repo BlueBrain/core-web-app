@@ -1,7 +1,13 @@
-export default function ConnectomeModelAssignmentView() {
+'use client';
+
+import { Suspense } from 'react';
+
+import ConnectomeModelAssignmentView from '@/components/ConnectomeModelAssignment';
+
+export default function ConnectomeModelAssignmentPage() {
   return (
-    <div className="p-4">
-      <h3>Connectome model assignment</h3>
-    </div>
+    <Suspense fallback={null}>
+      <ConnectomeModelAssignmentView />
+    </Suspense>
   );
 }

@@ -1,0 +1,32 @@
+button.selected,
+button.unselected {
+  cursor: pointer;
+  border: none;
+  border-radius: 0.25em;
+  padding: 0;
+  width: 2em;
+  height: 2.5em;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+.selected {
+  color: #08f;
+}
+
+.selected > * {
+  opacity: 1;
+}
+
+.unselected > * {
+  opacity: 0.5;
+  font-size: 80%;
+}
+
+.editableHemisphereCell {
+  display: flex;
+  gap: 0.25em;
+  justify-content: center;
+  align-items: center;
+}

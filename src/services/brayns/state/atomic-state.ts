@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-plusplus */

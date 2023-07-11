@@ -1,6 +1,5 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 export function isObject(data: unknown): data is Record<string, unknown> {
   if (!data) return false;
   if (Array.isArray(data)) return false;

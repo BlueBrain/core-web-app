@@ -28,6 +28,7 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
   const setExtraPanelContainer = useSetAtom(extraPanelContainerAtom);
   const path = usePathname();
   const isConnectomeEditor = !!path?.includes('connectome-definition');
+  const isSynapseEditor = !!path?.includes('connectome-model-assignment');
 
   useEffect(() => {
     setExtraPanelContainer(extraPanelRef.current);
@@ -42,7 +43,7 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
       </div>
 
       <div className={styles.brainSelectorContainer}>
-        {!isConnectomeEditor && (
+        {!isConnectomeEditor && !isSynapseEditor && (
           <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
             <DefaultLoadingSuspense>
               <BrainRegionsSidebar />
