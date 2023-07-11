@@ -2,7 +2,7 @@ import { TreeItem } from 'performant-array-to-tree';
 import { OriginalComposition, CompositionOverrideLeafNode } from '@/types/composition/original';
 import { BrainRegion } from '@/types/ontologies';
 
-const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
+export const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
 export type RegionFullPathType = {
   id: string;

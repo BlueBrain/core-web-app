@@ -26,6 +26,7 @@ import { autoSaveDebounceInterval } from '@/config';
 import { createGeneratorConfig, setRevision } from '@/util/nexus';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { MModelWorkflowOverrides } from '@/types/m-model';
+import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
@@ -189,9 +190,10 @@ export const getMModelLocalTopologicalSynthesisParamsAtom = atom<MModelWorkflowO
     throw new Error('Brain Region and m-type must be selected');
 
   const overrides = get(mModelOverridesAtom);
+  const fullBrainRegionId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
 
   return {
-    [selectedBrainRegion.id]: {
+    [fullBrainRegionId]: {
       [selectedMTypeId]: {
         // TODO: use proper CanonicalMorphologyModel from nexus
         id: 'https://bbp.epfl.ch/neurosciencegraph/data/b5a28383-82d2-47c8-a803-8b3707cdb44a',
