@@ -1,3 +1,4 @@
+import { useSearchParams } from 'next/navigation';
 import { Button } from 'antd';
 import {
   PlusOutlined,
@@ -13,6 +14,9 @@ import { SideLinkList } from '@/types/explore-section/fields';
 import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
 export function DetailsPageSideBackLink({ links }: SideLinkList) {
+  const searchParams = useSearchParams();
+  const row = searchParams?.get('row');
+
   return (
     <div>
       {links &&
@@ -22,7 +26,7 @@ export function DetailsPageSideBackLink({ links }: SideLinkList) {
             className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center ml-5"
           >
             <Link
-              href={link.url}
+              href={`${link.url}?row=${row}`}
               className="whitespace-pre text-sm rotate-180 mt-7"
               style={{ writingMode: 'vertical-rl' }}
             >
