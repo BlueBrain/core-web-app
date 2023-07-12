@@ -1,13 +1,14 @@
 'use client';
 
 import { ReactNode, CSSProperties, useEffect, useRef, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { Table } from 'antd';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import sessionAtom from '@/state/session';
+import { scrollToRowAtom } from '@/state/explore-section/list-view-atoms';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
 import { ESResponseRaw } from '@/types/explore-section/resources';
@@ -84,20 +85,21 @@ export default function ExploreSectionTable({
     }
   }, [data]);
 
-  const searchParams = useSearchParams();
-  const scrollToRow = Number(searchParams?.get('row'));
+  const [scrollToRow, setScrollToRow] = useAtom(scrollToRowAtom);
   const tableRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    console.log(scrollToRow); // why is this effect running after the click event....
+
     const scrollToRowSelector = `[data-row-index="${scrollToRow}"]`;
     const scrollToTarget = tableRef?.current?.querySelector(scrollToRowSelector);
 
-    console.log(scrollToTarget);
-
-    if (data.state === 'hasData') {
+    if (scrollToTarget) {
       scrollToTarget?.scrollIntoView({ behavior: 'smooth' });
+
+      setScrollToRow(null);
     }
-  }, [data.state, scrollToRow, tableRef]);
+  }, [setScrollToRow, scrollToRow, tableRef]);
 
   if (data.state === 'hasError') {
     return <div>Something went wrong</div>;
@@ -126,14 +128,12 @@ export default function ExploreSectionTable({
           onClick: (e) => {
             e.preventDefault();
 
-            return (
-              index !== 0 && // Don't attach route to checkbox selectors
-              router.push(
-                `${pathname}/${to64(
-                  `${record._source.project.label}!/!${record._id}`
-                )}?row=${index}`
-              )
-            );
+            // Don't link checkbox selectors to detail view
+            if (index !== 0) {
+              setScrollToRow(index as number); // Preserve clicked row index for scrollTo feature
+
+              router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`);
+            }
           },
           'data-row-index': index,
         })}

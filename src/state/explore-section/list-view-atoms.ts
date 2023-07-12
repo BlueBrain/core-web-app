@@ -123,3 +123,5 @@ export const aggregationsAtom = atom<Promise<Aggregations | undefined>>(async (g
 
   return response?.aggs;
 });
+
+export const scrollToRowAtom = atom<number | null>(null);
