@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -27,6 +27,7 @@ import styles from '@/components/explore-section/ControlPanel/filters.module.scs
 interface ExploreSectionPageProps {
   title: string;
   enableDownload?: boolean;
+  tableRef?: RefObject<HTMLDivElement>;
 }
 
 const totalLoadable = loadable(totalAtom);
@@ -35,6 +36,7 @@ const dataLoadable = loadable(dataAtom);
 export default function ExploreSectionListingView({
   title,
   enableDownload,
+  tableRef,
 }: ExploreSectionPageProps) {
   const [openFiltersSidebar, setOpenFiltersSidebar] = useState(false);
   const columnKeys = useAtomValue(columnKeysAtom);
@@ -124,6 +126,7 @@ export default function ExploreSectionListingView({
           columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
           enableDownload={enableDownload}
           data={data}
+          tableRef={tableRef}
         />
         <LoadMoreButton
           onClick={onLoadMore}

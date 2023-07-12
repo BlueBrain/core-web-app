@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactNode, CSSProperties, useEffect, useRef, useState } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { CSSProperties, ReactNode, RefObject, useEffect, useState } from 'react';
+import { useSetAtom, useAtomValue } from 'jotai';
 import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
@@ -18,9 +18,10 @@ import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
 
 type ExploreSectionTableProps = {
-  data: Loadable<ESResponseRaw[] | undefined>;
   columns: ColumnProps<any>[];
+  data: Loadable<ESResponseRaw[] | undefined>;
   enableDownload?: boolean;
+  tableRef?: RefObject<HTMLDivElement>;
 };
 
 function CustomTH({
@@ -63,9 +64,10 @@ function CustomTH({
 }
 
 export default function ExploreSectionTable({
-  data,
   columns,
+  data,
   enableDownload,
+  tableRef,
 }: ExploreSectionTableProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -85,21 +87,7 @@ export default function ExploreSectionTable({
     }
   }, [data]);
 
-  const [scrollToRow, setScrollToRow] = useAtom(scrollToRowAtom);
-  const tableRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    console.log(scrollToRow); // why is this effect running after the click event....
-
-    const scrollToRowSelector = `[data-row-index="${scrollToRow}"]`;
-    const scrollToTarget = tableRef?.current?.querySelector(scrollToRowSelector);
-
-    if (scrollToTarget) {
-      scrollToTarget?.scrollIntoView({ behavior: 'smooth' });
-
-      setScrollToRow(null);
-    }
-  }, [setScrollToRow, scrollToRow, tableRef]);
+  const setScrollToRow = useSetAtom(scrollToRowAtom);
 
   if (data.state === 'hasError') {
     return <div>Something went wrong</div>;
@@ -130,7 +118,9 @@ export default function ExploreSectionTable({
 
             // Don't link checkbox selectors to detail view
             if (index !== 0) {
-              setScrollToRow(index as number); // Preserve clicked row index for scrollTo feature
+              const scrollToRowSelector = `[data-row-index="${index}"]`;
+
+              setScrollToRow(scrollToRowSelector); // Preserve clicked row index for scrollTo feature
 
               router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`);
             }
