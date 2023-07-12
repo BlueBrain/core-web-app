@@ -1,28 +1,46 @@
-import { Tabs } from 'antd';
-import type { TabsProps } from 'antd';
+import { useCallback, useMemo } from 'react';
+import findIndex from 'lodash/findIndex';
 
-const items: TabsProps['items'] = [
+import { MenuItem } from '@/components/TopNavigation/types';
+import TopNavigation from '@/components/TopNavigation';
+
+interface GranularityTabsProps {
+  activeTabId: string;
+  handleChange: (key: string) => void;
+}
+
+const items: MenuItem[] = [
   {
-    key: 'macro',
+    id: 'macro',
     label: 'Macro',
-    children: null,
   },
   {
-    key: 'micro',
+    id: 'micro',
     label: 'Micro',
-    children: null,
   },
 ];
 
-export default function GranularityTabs({ handleChange }: { handleChange: (key: string) => void }) {
+export default function GranularityTabs({ activeTabId, handleChange }: GranularityTabsProps) {
+  const activeItemIndex = useMemo(() => {
+    const index = findIndex(items, (item) => item.id === (activeTabId ?? 'macro'));
+    if (index === -1) {
+      return 0;
+    }
+    return index;
+  }, [activeTabId]);
+
+  const handleActiveItemChange = useCallback(
+    (itemIndex: number) => {
+      handleChange(items[itemIndex].id ?? 'macro');
+    },
+    [handleChange]
+  );
+
   return (
-    <Tabs
-      defaultActiveKey="macro"
+    <TopNavigation.PillNav
       items={items}
-      moreIcon={null}
-      size="small"
-      animated={false}
-      onChange={handleChange}
+      activeItemIndex={activeItemIndex}
+      onChange={handleActiveItemChange}
     />
   );
 }

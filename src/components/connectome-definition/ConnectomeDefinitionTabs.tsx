@@ -1,56 +1,27 @@
-'use client';
-
-import { ReactNode } from 'react';
-
-import Link from '@/components/Link';
-import { classNames } from '@/util/utils';
 import BrainIcon from '@/components/icons/Brain';
 import AnalysisIcon from '@/components/icons/Analysis';
 import SettingsIcon from '@/components/icons/Settings';
+import { MenuItem } from '@/components/TopNavigation/types';
+import TopNavigation from '@/components/TopNavigation';
 
-// TODO: use common features as CellCompositionTabs
-const COMMON_TAB_CLASSNAME =
-  'text-center py-2 px-8 ml-2 first:ml-0 rounded-3xl last:bg-white last:text-black';
-
-type ConnectomeDefinitionTab = {
-  name: string;
-  href: string;
-  icon: ReactNode;
-  disableOnChange?: boolean;
-};
-
-const tabs: ConnectomeDefinitionTab[] = [
+const tabs: MenuItem[] = [
   {
-    name: 'Interactive',
+    label: 'Interactive',
     href: '/build/connectome-definition/interactive',
-    icon: <BrainIcon className="h-4 inline-block mr-2" />,
+    icon: <BrainIcon className="h-4" />,
   },
   {
-    name: 'Analysis',
+    label: 'Analysis',
     href: '/build/connectome-definition/analysis',
-    icon: <AnalysisIcon className="h-4 inline-block mr-2" />,
+    icon: <AnalysisIcon className="h-4" />,
   },
   {
-    name: 'Configuration',
+    label: 'Configuration',
     href: '/build/connectome-definition/configuration',
-    icon: <SettingsIcon className="h-4 inline-block mr-2" />,
+    icon: <SettingsIcon className="h-4" />,
   },
 ];
 
 export default function ConnectomeDefinitionTabs() {
-  return (
-    <div className="absolute right-7 top-7 z-10">
-      {tabs.map((tab) => (
-        <Link
-          key={tab.href}
-          href={tab.href}
-          className={classNames(COMMON_TAB_CLASSNAME, 'bg-black text-white')}
-          preserveLocationSearchParams
-        >
-          {tab.icon}
-          {tab.name}
-        </Link>
-      ))}
-    </div>
-  );
+  return <TopNavigation.SecondaryDropdown items={tabs} />;
 }
