@@ -147,3 +147,6 @@ export const selectedCanonicalMapAtom = atom<Map<string, boolean>>((get) => {
   });
   return selectedCanonicalMap;
 });
+
+// serves as 'cache' so we don't have to re-fetch params
+export const fetchedRemoteOverridesMapAtom = atom<Map<string, ParamConfig>>(new Map());

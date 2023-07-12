@@ -98,3 +98,5 @@ export type MModelWorkflowOverrides = {
 };
 
 export type ModelChoice = 'canonical' | 'placeholder' | string;
+
+export type ChangeModelAction = 'add' | 'remove';

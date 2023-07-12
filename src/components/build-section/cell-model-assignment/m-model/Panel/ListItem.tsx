@@ -1,5 +1,4 @@
 import { useAtom, useSetAtom } from 'jotai';
-import { useCallback, useMemo } from 'react';
 import { OptionsOrGroups } from 'react-select';
 
 import {
@@ -13,10 +12,12 @@ interface MTypeListItemProps {
   label: string;
   id: string;
   activeModel: ModelChoice;
+  onModelChange: (mTypeId: string, newValue: ModelChoice) => void;
 }
 
-export default function ListItem({ label, id, activeModel }: MTypeListItemProps) {
+export default function ListItem({ label, id, activeModel, onModelChange }: MTypeListItemProps) {
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
+
   const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
 
   const handleClick = () => {
@@ -24,14 +25,11 @@ export default function ListItem({ label, id, activeModel }: MTypeListItemProps)
     setSelectedMModelId(id);
   };
 
-  const isActive = useMemo(() => label === selectedMModelName, [label, selectedMModelName]);
+  const isActive = label === selectedMModelName;
 
-  const handleModelChange = useCallback(
-    (newModelChoice: ModelChoice) => {
-      console.warn(`Not implemented: Model changed for ${label} to ${newModelChoice}`);
-    },
-    [label]
-  );
+  const handleModelChange = (newModelChoice: ModelChoice) => {
+    onModelChange(id, newModelChoice);
+  };
 
   const options: OptionsOrGroups<ModelChoice, any> = [
     { label: 'Placeholder', value: 'placeholder' },
