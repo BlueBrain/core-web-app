@@ -116,10 +116,10 @@ const useExploreColumns = (
         {
           key,
           title: (
-            <span className="flex flex-col gap-0.5 text-left" style={{ marginTop: '-2px' }}>
-              <span>{term.title}</span>
-              {term.unit && <span className={styles.tableHeaderUnits}>[{term?.unit}]</span>}
-            </span>
+            <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
+              <div>{term.title}</div>
+              {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
+            </div>
           ),
           className: 'text-primary-7 cursor-pointer',
           sorter: true,

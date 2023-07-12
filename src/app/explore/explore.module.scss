@@ -14,13 +14,11 @@
 }
 
 .tableHeaderUnits {
-  @apply absolute bottom-0 text-sm font-thin text-left pl-0 text-gray-500;
+  @apply text-sm font-thin text-left pl-0 text-gray-500;
 }
 
 .dragIcons {
-  font-size: 2em;
-  @apply text-gray-700 rotate-90 cursor-col-resize absolute;
-  right: -0.5em;
+  @apply font-light text-2xl text-neutral-3 rotate-90 cursor-col-resize ml-auto absolute -right-1.5;
   opacity: 0;
 }
 

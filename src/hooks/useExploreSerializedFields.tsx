@@ -90,7 +90,7 @@ export default function useExploreSerializedFields(
     brainRegion: detail?.brainLocation?.brainRegion?.label,
     createdBy: detail?.createdBy,
     meanPlusMinusStd: serializeMeanPlusMinusStd(),
-    numberOfCells: serializeStatisticFields('N'),
+    numberOfMeasurements: serializeStatisticFields('N'),
     standardDeviation: serializeStatisticFields('standard deviation'),
     density: serializeStatisticFields('mean', true),
     creationDate: serializeCreationDate(),

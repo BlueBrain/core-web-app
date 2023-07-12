@@ -251,14 +251,14 @@ const LISTING_CONFIG: TermsRenderProps = {
       singular: 'Value',
     },
   },
-  numberOfCells: {
+  numberOfMeasurements: {
     term: 'series.statistic.N.keyword',
     nestedField: {
       extendedField: 'series.statistic.keyword',
       field: 'N',
       nestField: 'series',
     },
-    title: 'N° of Cells',
+    title: 'N° of Measurements',
     filter: 'valueRange',
     renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {

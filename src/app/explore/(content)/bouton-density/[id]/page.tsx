@@ -50,8 +50,8 @@ const fields = [
     title: 'Reference',
   },
   {
-    title: 'N˚ of Cells',
-    field: ({ numberOfCells }) => numberOfCells,
+    title: 'N˚ of Measurements',
+    field: ({ numberOfMeasurements }) => numberOfMeasurements,
     className: 'col-span-2 col-start-5',
   },
 ] as DetailProps[];
