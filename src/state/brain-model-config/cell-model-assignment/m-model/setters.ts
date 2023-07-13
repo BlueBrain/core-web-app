@@ -1,16 +1,18 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
+import lodashSet from 'lodash/set';
+import lodashGet from 'lodash/get';
 
 import {
   mModelRemoteOverridesAtom,
   mModelRemoteOverridesLoadedAtom,
-  selectedMModelNameAtom,
   refetchTriggerAtom,
   configPayloadRevAtom,
   configAtom,
   initialMorphologyAssigmentConfigPayloadAtom,
-  getMModelLocalTopologicalSynthesisParamsAtom,
   mModelOverridesAtom,
+  selectedMModelIdAtom,
+  accumulativeLocalTopologicalSynthesisParamsAtom,
 } from '.';
 import { ParamConfig } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -21,6 +23,7 @@ import { autoSaveDebounceInterval } from '@/config';
 import { createGeneratorConfig, setRevision } from '@/util/nexus';
 import { mockParamsUrl } from '@/constants/cell-model-assignment/m-model';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
+import { generateBrainMTypePairPath } from '@/util/cell-model-assignment';
 
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
@@ -84,26 +87,64 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
   null,
   async (get, set) => {
     const brainRegion = get(selectedBrainRegionAtom);
-    const mType = get(selectedMModelNameAtom);
+    const mTypeId = get(selectedMModelIdAtom);
+
+    if (!brainRegion || !mTypeId) throw new Error('Brain Region and m-type must be selected');
 
     // TODO: remove this line when we actually do something with these
     // eslint-disable-next-line no-console
-    console.debug(`Fetching M-Model config for (${brainRegion?.title}) - (${mType})...`);
+    console.debug(`Fetching M-Model config for (${brainRegion?.title}) - (${mTypeId})...`);
     const paramsResponse = await fetch(mockParamsUrl);
     const params = (await paramsResponse.json()) as ParamConfig;
 
+    const accumulative = get(accumulativeLocalTopologicalSynthesisParamsAtom);
+
     set(mModelRemoteOverridesAtom, params);
     set(mModelRemoteOverridesLoadedAtom, true);
-    set(mModelOverridesAtom, {});
+
+    const path = [...generateBrainMTypePairPath(brainRegion?.id, mTypeId), 'overrides'];
+    const localOverrides = lodashGet(accumulative, path);
+
+    set(mModelOverridesAtom, localOverrides ?? {});
+
     return params;
+  }
+);
+
+export const setMModelLocalTopologicalSynthesisParamsAtom = atom<null, [], void>(
+  null,
+  (get, set) => {
+    const selectedBrainRegion = get(selectedBrainRegionAtom);
+    const selectedMTypeId = get(selectedMModelIdAtom);
+
+    if (!selectedBrainRegion || !selectedMTypeId)
+      throw new Error('Brain Region and m-type must be selected');
+
+    set(setAccumulativeTopologicalSynthesisAtom, selectedBrainRegion.id, selectedMTypeId);
+  }
+);
+
+export const setAccumulativeTopologicalSynthesisAtom = atom<null, [string, string], void>(
+  null,
+  (get, set, brainRegionId, mTypeId) => {
+    const overrides = get(mModelOverridesAtom);
+    const accumulative = structuredClone(get(accumulativeLocalTopologicalSynthesisParamsAtom));
+
+    lodashSet(accumulative, generateBrainMTypePairPath(brainRegionId, mTypeId), {
+      // TODO: use proper CanonicalMorphologyModel from nexus
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/b5a28383-82d2-47c8-a803-8b3707cdb44a',
+      overrides,
+    });
+    set(accumulativeLocalTopologicalSynthesisParamsAtom, accumulative);
   }
 );
 
 export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   null,
   async (get, set) => {
+    set(setMModelLocalTopologicalSynthesisParamsAtom);
     const initialConfigPayload = get(initialMorphologyAssigmentConfigPayloadAtom);
-    const localTopologicalSynthesisParams = get(getMModelLocalTopologicalSynthesisParamsAtom);
+    const localTopologicalSynthesisParams = get(accumulativeLocalTopologicalSynthesisParamsAtom);
 
     const updatedConfigPayload: MorphologyAssignmentConfigPayload = {
       ...initialConfigPayload,

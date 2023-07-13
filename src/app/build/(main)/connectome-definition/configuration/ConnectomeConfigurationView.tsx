@@ -283,7 +283,7 @@ export default function ConnectomeConfigurationView() {
       )}
 
       <div className={styles.granularityTabs}>
-        <GranularityTabs handleChange={(k: string) => setActiveTab(k)} />
+        <GranularityTabs activeTabId={activeTab} handleChange={(k: string) => setActiveTab(k)} />
       </div>
 
       <div className={styles.modes}>

@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useRouter } from 'next/navigation';
 
@@ -12,7 +12,10 @@ import {
   PanelExpanded,
   PanelCollapsed,
 } from '@/components/build-section/cell-model-assignment/m-model/Panel';
-import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
+import {
+  selectedMModelNameAtom,
+  selectedMModelIdAtom,
+} from '@/state/brain-model-config/cell-model-assignment';
 import useMModelQueryParam from '@/hooks/m-model-editor';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
@@ -26,7 +29,8 @@ export default function MModelLayout({ children }: Props) {
   useMModelQueryParam();
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
-  const selectedMModelName = useAtomValue(selectedMModelNameAtom);
+  const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
+  const [, setSelectedMModelId] = useAtom(selectedMModelIdAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const router = useRouter();
 
@@ -39,6 +43,12 @@ export default function MModelLayout({ children }: Props) {
       router.replace(`${baseUrl}?${updatedQueryParams}`);
     }
   }, [router, selectedMModelName]);
+
+  useEffect(() => {
+    // resetting the m-type selection when brain region changes
+    setSelectedMModelName(null);
+    setSelectedMModelId(null);
+  }, [brainRegion, setSelectedMModelName, setSelectedMModelId]);
 
   const brainRegionDetails = useMemo(() => {
     if (!extraPanelContainer || !brainRegion) return null;

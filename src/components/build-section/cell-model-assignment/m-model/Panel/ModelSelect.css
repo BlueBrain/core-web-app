@@ -19,7 +19,7 @@
 }
 
 .compact-model-select__control {
-  @apply bg-none border-none w-full rounded-none p-0 whitespace-nowrap text-left;
+  @apply bg-none border-none w-full rounded-none p-0 whitespace-nowrap text-right;
   min-height: 0 !important;
 }
 
