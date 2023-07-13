@@ -9,6 +9,7 @@ import { MenuItem } from '@/components/TopNavigation/types';
 import { themeAtom } from '@/state/theme';
 import { secondaryDropdownAtom } from '@/components/TopNavigation/atoms';
 import usePathname from '@/hooks/pathname';
+import ChevronDownIcon from '@/components/icons/ChevronDownIcon';
 
 interface SecondaryDropdownProps {
   activeItem?: MenuItem;
@@ -69,12 +70,15 @@ export default function SecondaryDropdown({
           <button
             type="button"
             onClick={(e) => e.preventDefault()}
-            className={`flex flex-row gap-2 min-w-[190px] h-full items-center justify-center px-10 font-bold outline-none ${
+            className={`flex flex-row gap-2 min-w-[190px] h-full items-center justify-between px-5 font-bold outline-none ${
               isLightThemeActive ? `text-primary-9 bg-white` : `bg-black text-white`
             }`}
           >
-            {activeItem?.icon}
-            {activeItem?.label}
+            <div className="flex flex-row flex-grow gap-x-2 justify-center items-center">
+              {activeItem?.icon}
+              {activeItem?.label}
+            </div>
+            <ChevronDownIcon className="scale-[200%] origin-center" />
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
