@@ -22,7 +22,7 @@ export function DetailsPageSideBackLink({ links }: SideLinkList) {
             className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center ml-5"
           >
             <Link
-              href={`${link.url}`}
+              href={link.url}
               className="whitespace-pre text-sm rotate-180 mt-7"
               style={{ writingMode: 'vertical-rl' }}
             >
