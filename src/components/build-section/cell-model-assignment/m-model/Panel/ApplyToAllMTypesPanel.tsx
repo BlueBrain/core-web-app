@@ -8,7 +8,7 @@ function Separator() {
 }
 
 export default function ApplyToAllMTypesPanel() {
-  const [activeModel, setActiveModel] = useState<ModelChoice>('canonical');
+  const [activeModel, setActiveModel] = useState<ModelChoice>('placeholder');
   const handleModelSelectChange = useCallback((newModelChoice: ModelChoice) => {
     if (newModelChoice !== null) {
       setActiveModel(newModelChoice);

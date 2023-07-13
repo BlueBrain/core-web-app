@@ -13,8 +13,8 @@ interface ModelSelectProps {
 }
 
 const defaultOptions: OptionsOrGroups<ModelChoice, any> = [
-  { label: 'Canonical', value: 'canonical' },
   { label: 'Placeholder', value: 'placeholder' },
+  { label: 'Canonical', value: 'canonical' },
 ];
 
 export default function ModelSelect({

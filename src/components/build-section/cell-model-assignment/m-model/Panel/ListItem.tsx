@@ -1,5 +1,5 @@
 import { useAtom, useSetAtom } from 'jotai';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { OptionsOrGroups } from 'react-select';
 
 import {
@@ -12,12 +12,12 @@ import { ModelChoice } from '@/types/m-model';
 interface MTypeListItemProps {
   label: string;
   id: string;
+  activeModel: ModelChoice;
 }
 
-export default function ListItem({ label, id }: MTypeListItemProps) {
+export default function ListItem({ label, id, activeModel }: MTypeListItemProps) {
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
   const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
-  const [activeModel, setActiveModel] = useState<ModelChoice>(`canonical_${label}`);
 
   const handleClick = () => {
     setSelectedMModelName(label);
@@ -29,14 +29,13 @@ export default function ListItem({ label, id }: MTypeListItemProps) {
   const handleModelChange = useCallback(
     (newModelChoice: ModelChoice) => {
       console.warn(`Not implemented: Model changed for ${label} to ${newModelChoice}`);
-      setActiveModel(newModelChoice);
     },
     [label]
   );
 
   const options: OptionsOrGroups<ModelChoice, any> = [
-    { label: `Canonical ${label}`, value: `canonical_${label}` },
     { label: 'Placeholder', value: 'placeholder' },
+    { label: `Canonical ${label}`, value: `canonical_${label}` },
   ];
 
   return (

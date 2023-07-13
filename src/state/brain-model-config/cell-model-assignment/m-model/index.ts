@@ -2,7 +2,6 @@ import { atom } from 'jotai';
 import merge from 'lodash/merge';
 
 import { ParamConfig, SynthesisPreviewInterface, MModelWorkflowOverrides } from '@/types/m-model';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { morphologyAssignmentConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
 import {
@@ -19,7 +18,6 @@ import {
   MorphologyAssignmentConfigPayload,
 } from '@/types/nexus';
 import { setRevision } from '@/util/nexus';
-import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 import {
   initialMorphologyAssigmentConfigPayload,
   paramsAndDistResources,
@@ -131,23 +129,17 @@ export const initialMorphologyAssigmentConfigPayloadAtom = atom<MorphologyAssign
   initialMorphologyAssigmentConfigPayload
 );
 
-export const getMModelLocalTopologicalSynthesisParamsAtom = atom<MModelWorkflowOverrides>((get) => {
-  const selectedBrainRegion = get(selectedBrainRegionAtom);
-  const selectedMTypeId = get(selectedMModelIdAtom);
+export const accumulativeLocalTopologicalSynthesisParamsAtom = atom<MModelWorkflowOverrides>({});
 
-  if (!selectedBrainRegion || !selectedMTypeId)
-    throw new Error('Brain Region and m-type must be selected');
-
-  const overrides = get(mModelOverridesAtom);
-  const fullBrainRegionId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
-
-  return {
-    [fullBrainRegionId]: {
-      [selectedMTypeId]: {
-        // TODO: use proper CanonicalMorphologyModel from nexus
-        id: 'https://bbp.epfl.ch/neurosciencegraph/data/b5a28383-82d2-47c8-a803-8b3707cdb44a',
-        overrides,
-      },
-    },
-  };
+export const selectedCanonicalMapAtom = atom<Map<string, boolean>>((get) => {
+  const accumulativeTopologicalSynthesis = get(accumulativeLocalTopologicalSynthesisParamsAtom);
+  const brainRegionIds = Object.keys(accumulativeTopologicalSynthesis);
+  const selectedCanonicalMap = new Map();
+  brainRegionIds.forEach((brainRegionId) => {
+    const mTypeIds = Object.keys(accumulativeTopologicalSynthesis[brainRegionId]);
+    mTypeIds.forEach((mTypeId) => {
+      selectedCanonicalMap.set(`${brainRegionId}<>${mTypeId}`, true);
+    });
+  });
+  return selectedCanonicalMap;
 });
