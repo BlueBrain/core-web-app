@@ -23,7 +23,7 @@ export function DetailsPageSideBackLink({ links }: SideLinkList) {
           >
             <Link
               href={link.url}
-              className="whitespace-pre text-sm rotate-180 mt-7"
+              className="whitespace-pre text-sm rotate-180 mt-5"
               style={{ writingMode: 'vertical-rl' }}
             >
               Back to list
