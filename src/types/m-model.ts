@@ -1,5 +1,15 @@
-export type RequiredParamRawNames = 'radius' | 'randomness' | 'step_size' | 'orientation';
-export type RequiredParamDisplayNames = 'Radius' | 'Randomness' | 'Step size' | 'Orientation';
+export type RequiredParamRawNames =
+  | 'radius'
+  | 'randomness'
+  | 'step_size'
+  | 'orientation'
+  | 'targeting';
+export type RequiredParamDisplayNames =
+  | 'Radius'
+  | 'Randomness'
+  | 'Step size'
+  | 'Orientation'
+  | 'Targeting';
 
 export type ParamsRawNames =
   | (RequiredParamRawNames & 'targeting')

@@ -2,8 +2,8 @@
 
 import { useAtomValue } from 'jotai';
 
-import { paramsToDisplay } from './constants';
 import ParameterItem from './ParamItem';
+import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
 import { RequiredParamRawNames } from '@/types/m-model';
 import { SettingsIcon } from '@/components/icons';
 import { useFetchMModelConfig } from '@/hooks/m-model-editor';

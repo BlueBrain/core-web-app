@@ -9,15 +9,14 @@ import { mModelPreviewConfigAtom } from '@/state/brain-model-config/cell-model-a
 import sessionAtom from '@/state/session';
 import { SynthesisPreviewInterface, SynthesisPreviewApiPlotResponse } from '@/types/m-model';
 import { classNames } from '@/util/utils';
+import { synthesisPreviewApiUrl } from '@/constants/cell-model-assignment/m-model';
 
 type Props = {
   className?: string;
 };
 
-const apiUrl = 'https://synthesis.sbo.kcp.bbp.epfl.ch/synthesis-with-resources';
-
 async function getImages(config: SynthesisPreviewInterface, token: string) {
-  const response = await fetch(apiUrl, {
+  const response = await fetch(synthesisPreviewApiUrl, {
     method: 'POST',
     headers: {
       Accept: 'application/json',

@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import set from 'lodash/set';
 
 import NumberParam from './NumberParam';
-import { mockNeuriteType, paramsToDisplay } from './constants';
 import OrientationParam from './OrientationParam';
 import StepSizeParam from './StepSizeParam';
 import {
@@ -20,6 +19,7 @@ import {
   ParamConfig,
 } from '@/types/m-model';
 import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
+import { neuriteTypes, paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;
@@ -36,7 +36,7 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
     if (!mModelLocalOverrides) return null;
     if (!Object.keys(mModelLocalOverrides).length) return null;
 
-    const requiredParamValues = (mModelLocalOverrides as ParamConfig)[mockNeuriteType];
+    const requiredParamValues = (mModelLocalOverrides as ParamConfig)[neuriteTypes.apical_dendrite];
     if (!requiredParamValues || !Object.keys(requiredParamValues).length) return null;
 
     const value = requiredParamValues[paramRawName];
@@ -46,7 +46,8 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
   const setParamValue = (newValue: unknown) => {
     setMModelOverrides((oldAtomData) => {
       const cloned = structuredClone(oldAtomData);
-      set(cloned, `${mockNeuriteType}.${paramRawName}`, newValue);
+      set(cloned, `${neuriteTypes.apical_dendrite}.${paramRawName}`, newValue);
+      set(cloned, `${neuriteTypes.basal_dendrite}.${paramRawName}`, newValue);
       return cloned;
     });
     setMorphAssConfigPayload();
@@ -54,7 +55,7 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
 
   const setPreview = (newValue: number | OrientationInterface | StepSizeInterface) => {
     setMModelPreviewConfig((oldAtomValue) => {
-      set(oldAtomValue, `overrides.${mockNeuriteType}.${paramRawName}`, newValue);
+      set(oldAtomValue, `overrides.${neuriteTypes.apical_dendrite}.${paramRawName}`, newValue);
       return { ...oldAtomValue };
     });
   };
@@ -88,6 +89,7 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
 
     case 'Radius':
     case 'Randomness':
+    case 'Targeting':
       component = (
         <NumberParam
           paramValue={paramValue as number}
