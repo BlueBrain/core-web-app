@@ -46,9 +46,12 @@ export const getMModelLocalOverridesAtom = atom<ParamConfig | null>((get) => {
   return localConfig;
 });
 
-export const mModelPreviewConfigAtom = atom<SynthesisPreviewInterface>({
-  ...paramsAndDistResources,
-  overrides: {},
+export const mModelPreviewConfigAtom = atom<SynthesisPreviewInterface>((get) => {
+  const localOverrides = get(mModelOverridesAtom);
+  return {
+    ...paramsAndDistResources,
+    overrides: localOverrides,
+  };
 });
 
 export const refetchTriggerAtom = atom<{}>({});

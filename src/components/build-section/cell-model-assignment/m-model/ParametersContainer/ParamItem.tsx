@@ -6,7 +6,6 @@ import NumberParam from './NumberParam';
 import OrientationParam from './OrientationParam';
 import StepSizeParam from './StepSizeParam';
 import {
-  mModelPreviewConfigAtom,
   mModelOverridesAtom,
   getMModelLocalOverridesAtom,
 } from '@/state/brain-model-config/cell-model-assignment';
@@ -28,7 +27,6 @@ type ParameterProps = {
 export default function ParameterItem({ paramRawName }: ParameterProps) {
   const setMModelOverrides = useSetAtom(mModelOverridesAtom);
   const mModelLocalOverrides = useAtomValue(getMModelLocalOverridesAtom);
-  const setMModelPreviewConfig = useSetAtom(mModelPreviewConfigAtom);
   const setMorphAssConfigPayload = useSetAtom(setMorphologyAssignmentConfigPayloadAtom);
 
   const paramInfo = paramsToDisplay[paramRawName];
@@ -53,26 +51,16 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
     setMorphAssConfigPayload();
   };
 
-  const setPreview = (newValue: number | OrientationInterface | StepSizeInterface) => {
-    setMModelPreviewConfig((oldAtomValue) => {
-      set(oldAtomValue, `overrides.${neuriteTypes.apical_dendrite}.${paramRawName}`, newValue);
-      return { ...oldAtomValue };
-    });
-  };
-
   const onNumberChange = (newValue: number) => {
     setParamValue(newValue);
-    setPreview(newValue);
   };
 
   const onOrientationChange = (newValue: OrientationInterface) => {
     setParamValue([newValue]);
-    setPreview(newValue);
   };
 
   const onStepSizeChange = (newValue: StepSizeInterface) => {
     setParamValue(newValue);
-    setPreview(newValue);
   };
 
   let component;
