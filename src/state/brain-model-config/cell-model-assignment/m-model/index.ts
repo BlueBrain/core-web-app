@@ -9,6 +9,7 @@ import {
   fetchGeneratorTaskActivity,
   fetchResourceSourceById,
   fetchFileMetadataByUrl,
+  fetchJsonFileByUrl,
 } from '@/api/nexus';
 import {
   MorphologyAssignmentConfigResource,
@@ -129,6 +130,25 @@ export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => 
   return metadata._rev;
 });
 
+export const remoteConfigPayloadAtom = atom<Promise<MorphologyAssignmentConfigPayload | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const configPayloadUrl = await get(configPayloadUrlAtom);
+
+    if (!session || !configPayloadUrl) {
+      return null;
+    }
+
+    const url = configPayloadUrl;
+
+    if (!url) {
+      return null;
+    }
+
+    return fetchJsonFileByUrl<MorphologyAssignmentConfigPayload>(url, session);
+  }
+);
+
 export const initialMorphologyAssigmentConfigPayloadAtom = atom<MorphologyAssignmentConfigPayload>(
   initialMorphologyAssigmentConfigPayload
 );
@@ -150,3 +170,12 @@ export const selectedCanonicalMapAtom = atom<Map<string, boolean>>((get) => {
 
 // serves as 'cache' so we don't have to re-fetch params
 export const fetchedRemoteOverridesMapAtom = atom<Map<string, ParamConfig>>(new Map());
+
+export const canonicalMorphologyModelConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+
+  if (!remoteConfigPayload) return null;
+
+  const { id } = remoteConfigPayload.defaults.topological_synthesis;
+  return id;
+});
