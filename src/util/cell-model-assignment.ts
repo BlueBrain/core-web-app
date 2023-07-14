@@ -11,3 +11,10 @@ export function generateBrainMTypePairPath(brainRegionId: string, mTypeId: strin
   }
   return [expandBrainRegionId(brainRegionId), mTypeId];
 }
+
+export function generateBrainMTypeMapKey(brainRegionId: string, mTypeId: string) {
+  if (brainRegionId.startsWith('http')) {
+    return `${brainRegionId}<>${mTypeId}`;
+  }
+  return `${expandBrainRegionId(brainRegionId)}<>${mTypeId}`;
+}

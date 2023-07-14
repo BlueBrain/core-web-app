@@ -6,7 +6,7 @@ import ListItem from './ListItem';
 import { analysedCompositionAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { selectedCanonicalMapAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
-import { expandBrainRegionId } from '@/util/cell-model-assignment';
+import { expandBrainRegionId, generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
 
 interface MModelMenuItem {
   label: string;
@@ -37,7 +37,9 @@ export default function List() {
     listItems = (
       <>
         {mModelItems.map((item) => {
-          const isCanonical = selectedCanonicalMap.get(`${expandedBrainRegionId}<>${item.id}`);
+          const isCanonical = selectedCanonicalMap.get(
+            generateBrainMTypeMapKey(expandedBrainRegionId, item.id)
+          );
           const activeModel = isCanonical ? `canonical_${item.label}` : 'placeholder';
           return (
             <ListItem key={item.label} label={item.label} id={item.id} activeModel={activeModel} />

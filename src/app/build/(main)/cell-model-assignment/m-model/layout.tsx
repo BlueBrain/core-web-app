@@ -15,6 +15,7 @@ import {
 import {
   selectedMModelNameAtom,
   selectedMModelIdAtom,
+  mModelRemoteOverridesLoadedAtom,
 } from '@/state/brain-model-config/cell-model-assignment';
 import useMModelQueryParam from '@/hooks/m-model-editor';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -31,6 +32,7 @@ export default function MModelLayout({ children }: Props) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
   const [, setSelectedMModelId] = useAtom(selectedMModelIdAtom);
+  const [, setMModelRemoteOverridesLoaded] = useAtom(mModelRemoteOverridesLoadedAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const router = useRouter();
 
@@ -48,7 +50,8 @@ export default function MModelLayout({ children }: Props) {
     // resetting the m-type selection when brain region changes
     setSelectedMModelName(null);
     setSelectedMModelId(null);
-  }, [brainRegion, setSelectedMModelName, setSelectedMModelId]);
+    setMModelRemoteOverridesLoaded(false);
+  }, [brainRegion, setSelectedMModelName, setSelectedMModelId, setMModelRemoteOverridesLoaded]);
 
   const brainRegionDetails = useMemo(() => {
     if (!extraPanelContainer || !brainRegion) return null;

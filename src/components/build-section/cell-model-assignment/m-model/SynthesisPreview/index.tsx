@@ -9,15 +9,15 @@ import { mModelPreviewConfigAtom } from '@/state/brain-model-config/cell-model-a
 import sessionAtom from '@/state/session';
 import { SynthesisPreviewInterface, SynthesisPreviewApiPlotResponse } from '@/types/m-model';
 import { classNames } from '@/util/utils';
+import { selectedMModelIdAtom } from '@/state/brain-model-config/cell-model-assignment';
+import { synthesisPreviewApiUrl } from '@/constants/cell-model-assignment/m-model';
 
 type Props = {
   className?: string;
 };
 
-const apiUrl = 'https://synthesis.sbo.kcp.bbp.epfl.ch/synthesis-with-resources';
-
 async function getImages(config: SynthesisPreviewInterface, token: string) {
-  const response = await fetch(apiUrl, {
+  const response = await fetch(synthesisPreviewApiUrl, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -39,6 +39,7 @@ export default function SynthesisPreview({ className }: Props) {
   const mModelPreviewConfig = useAtomValue(mModelPreviewConfigAtom);
   const [imgSources, setImgSources] = useState<SynthesisPreviewApiPlotResponse>();
   const [isLoading, setIsLoading] = useState(false);
+  const selectedMModelId = useAtomValue(selectedMModelIdAtom);
 
   const getImagesDebounced = useCallback(
     debounce(async (config: SynthesisPreviewInterface, token: string) => {
@@ -58,7 +59,7 @@ export default function SynthesisPreview({ className }: Props) {
     if (!mModelPreviewConfig || !session) return;
     setIsLoading(true);
     getImagesDebounced(mModelPreviewConfig, session.accessToken);
-  }, [mModelPreviewConfig, session, getImagesDebounced]);
+  }, [mModelPreviewConfig, session, getImagesDebounced, selectedMModelId]);
 
   const isLoadingStyle = isLoading ? 'opacity-50' : '';
 
