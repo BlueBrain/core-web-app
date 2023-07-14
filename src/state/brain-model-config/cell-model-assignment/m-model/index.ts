@@ -22,6 +22,7 @@ import {
   initialMorphologyAssigmentConfigPayload,
   paramsAndDistResources,
 } from '@/constants/cell-model-assignment/m-model';
+import { generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
 
 export const selectedMModelNameAtom = atom<string | null>(null);
 
@@ -138,7 +139,7 @@ export const selectedCanonicalMapAtom = atom<Map<string, boolean>>((get) => {
   brainRegionIds.forEach((brainRegionId) => {
     const mTypeIds = Object.keys(accumulativeTopologicalSynthesis[brainRegionId]);
     mTypeIds.forEach((mTypeId) => {
-      selectedCanonicalMap.set(`${brainRegionId}<>${mTypeId}`, true);
+      selectedCanonicalMap.set(generateBrainMTypeMapKey(brainRegionId, mTypeId), true);
     });
   });
   return selectedCanonicalMap;

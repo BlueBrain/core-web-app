@@ -1,7 +1,8 @@
 'use client';
 
 import { ErrorBoundary } from 'react-error-boundary';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import {
@@ -10,12 +11,20 @@ import {
 } from '@/components/build-section/cell-model-assignment/m-model';
 import { selectedMModelIdAtom } from '@/state/brain-model-config/cell-model-assignment';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { fetchMModelRemoteOverridesAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 export default function ConfigurationPage() {
-  const setSelectedMModelId = useAtomValue(selectedMModelIdAtom);
+  const selectedMModelId = useAtomValue(selectedMModelIdAtom);
   const selectedRegion = useAtomValue(selectedBrainRegionAtom);
+  const mModelGetRemoteConfig = useSetAtom(fetchMModelRemoteOverridesAtom);
 
-  if (!setSelectedMModelId || !selectedRegion)
+  useEffect(() => {
+    if (!selectedRegion || !selectedMModelId) return;
+
+    mModelGetRemoteConfig();
+  }, [selectedRegion, selectedMModelId, mModelGetRemoteConfig]);
+
+  if (!selectedMModelId || !selectedRegion)
     return (
       <div className="flex h-screen items-center justify-center text-4xl">
         Select region and M-Type

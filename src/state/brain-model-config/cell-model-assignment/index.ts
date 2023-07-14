@@ -5,6 +5,7 @@ import {
   getMModelLocalOverridesAtom,
   mModelRemoteOverridesLoadedAtom,
   selectedMModelIdAtom,
+  selectedCanonicalMapAtom,
 } from './m-model';
 
 export {
@@ -14,4 +15,5 @@ export {
   getMModelLocalOverridesAtom,
   mModelRemoteOverridesLoadedAtom,
   selectedMModelIdAtom,
+  selectedCanonicalMapAtom,
 };
