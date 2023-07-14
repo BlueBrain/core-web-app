@@ -25,7 +25,6 @@ export default function VideoPanel({ className }: VideoPanelProps) {
           <br />
           Observatory
         </h1>
-        {/* @ts-expect-error Server Component */}
         <LoginButton />
       </section>
       <div className={styles.version}>Version {process.env.applicationVersion}</div>
