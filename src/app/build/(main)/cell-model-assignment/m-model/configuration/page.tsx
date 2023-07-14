@@ -31,7 +31,7 @@ export default function ConfigurationPage() {
 
   if (!selectedMModelId || !selectedRegion || !selectedCanonicalMap)
     return (
-      <div className="flex h-screen items-center justify-center text-4xl">
+      <div className="flex h-full items-center justify-center text-4xl">
         Select region and M-Type
       </div>
     );
@@ -41,7 +41,7 @@ export default function ConfigurationPage() {
   );
   if (!isCanonical)
     return (
-      <div className="flex h-screen items-center justify-center text-4xl">Placeholder model</div>
+      <div className="flex h-full items-center justify-center text-4xl">Placeholder model</div>
     );
 
   return (
