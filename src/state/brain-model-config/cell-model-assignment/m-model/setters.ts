@@ -14,12 +14,17 @@ import {
   selectedMModelIdAtom,
   accumulativeLocalTopologicalSynthesisParamsAtom,
   fetchedRemoteOverridesMapAtom,
+  canonicalMorphologyModelConfigPayloadAtom,
+  remoteCanonicalMorphologyModelConfigPayloadAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import sessionAtom from '@/state/session';
-import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
-import { MorphologyAssignmentConfigPayload } from '@/types/nexus';
+import { fetchResourceByUrl, updateJsonFileByUrl, updateResource } from '@/api/nexus';
+import {
+  CanonicalMorphologyModelConfigPayload,
+  MorphologyAssignmentConfigPayload,
+} from '@/types/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { createGeneratorConfig, setRevision } from '@/util/nexus';
 import { mockParamsUrl } from '@/constants/cell-model-assignment/m-model';
@@ -170,5 +175,25 @@ export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
     };
 
     await set(setConfigPayloadAtom, updatedConfigPayload);
+  }
+);
+
+export const fetchCanonicalMorphologyModelConfigPayloadAtom = atom<null, [], void>(
+  null,
+  async (get, set) => {
+    const session = get(sessionAtom);
+    const remoteCanonicalMorphologyModelConfigPayload = await get(
+      remoteCanonicalMorphologyModelConfigPayloadAtom
+    );
+
+    if (!session || !remoteCanonicalMorphologyModelConfigPayload) return;
+
+    const payloadUrl = remoteCanonicalMorphologyModelConfigPayload.distribution.contentUrl;
+    const payload = await fetchResourceByUrl<CanonicalMorphologyModelConfigPayload>(
+      payloadUrl,
+      session
+    );
+
+    set(canonicalMorphologyModelConfigPayloadAtom, payload);
   }
 );

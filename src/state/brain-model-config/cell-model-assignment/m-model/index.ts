@@ -17,6 +17,8 @@ import {
   GeneratorTaskActivityResource,
   MorphologyAssignmentConfig,
   MorphologyAssignmentConfigPayload,
+  CanonicalMorphologyModelConfigPayload,
+  CanonicalMorphologyModelConfig,
 } from '@/types/nexus';
 import { setRevision } from '@/util/nexus';
 import {
@@ -178,4 +180,45 @@ export const canonicalMorphologyModelConfigIdAtom = atom<Promise<string | null>>
 
   const { id } = remoteConfigPayload.defaults.topological_synthesis;
   return id;
+});
+
+export const remoteCanonicalMorphologyModelConfigPayloadAtom = atom<
+  Promise<CanonicalMorphologyModelConfig | null>
+>(async (get) => {
+  const session = get(sessionAtom);
+  const canonicalMorphologyModelConfigId = await get(canonicalMorphologyModelConfigIdAtom);
+
+  if (!session || !canonicalMorphologyModelConfigId) return null;
+
+  return fetchResourceById<CanonicalMorphologyModelConfig>(
+    canonicalMorphologyModelConfigId,
+    session
+  );
+});
+
+export const canonicalMorphologyModelConfigPayloadAtom =
+  atom<CanonicalMorphologyModelConfigPayload | null>(null);
+
+export const canonicalBrainRegionIdsAtom = atom<string[]>((get) => {
+  const canonicalMorphologyModelConfig = get(canonicalMorphologyModelConfigPayloadAtom);
+
+  if (!canonicalMorphologyModelConfig) return [];
+
+  return Object.keys(canonicalMorphologyModelConfig.hasPart);
+});
+
+export const canonicalMapAtom = atom<Map<string, boolean>>((get) => {
+  const canonicalBrainRegionIds = get(canonicalBrainRegionIdsAtom);
+  const canonicalMorphologyModelConfig = get(canonicalMorphologyModelConfigPayloadAtom);
+
+  const canonicalMap = new Map();
+  if (!canonicalBrainRegionIds.length || !canonicalMorphologyModelConfig) return canonicalMap;
+
+  canonicalBrainRegionIds.forEach((brainRegionId) => {
+    const mTypeIds = Object.keys(canonicalMorphologyModelConfig.hasPart[brainRegionId].hasPart);
+    mTypeIds.forEach((mTypeId) => {
+      canonicalMap.set(generateBrainMTypeMapKey(brainRegionId, mTypeId), true);
+    });
+  });
+  return canonicalMap;
 });

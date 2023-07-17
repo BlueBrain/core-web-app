@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useRouter } from 'next/navigation';
 
@@ -19,6 +19,7 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment';
 import useMModelQueryParam from '@/hooks/m-model-editor';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { fetchCanonicalMorphologyModelConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 const MMODEL_QUERY_PARAM_KEY = 'mModel';
 
@@ -31,10 +32,13 @@ export default function MModelLayout({ children }: Props) {
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
-  const [, setSelectedMModelId] = useAtom(selectedMModelIdAtom);
-  const [, setMModelRemoteOverridesLoaded] = useAtom(mModelRemoteOverridesLoadedAtom);
+  const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
+  const setMModelRemoteOverridesLoaded = useSetAtom(mModelRemoteOverridesLoadedAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const router = useRouter();
+  const fetchCanonicalMorphologyModelConfigPayload = useSetAtom(
+    fetchCanonicalMorphologyModelConfigPayloadAtom
+  );
 
   useEffect(() => {
     if (selectedMModelName !== null) {
@@ -52,6 +56,10 @@ export default function MModelLayout({ children }: Props) {
     setSelectedMModelId(null);
     setMModelRemoteOverridesLoaded(false);
   }, [brainRegion, setSelectedMModelName, setSelectedMModelId, setMModelRemoteOverridesLoaded]);
+
+  useEffect(() => {
+    fetchCanonicalMorphologyModelConfigPayload();
+  }, [fetchCanonicalMorphologyModelConfigPayload]);
 
   const brainRegionDetails = useMemo(() => {
     if (!extraPanelContainer || !brainRegion) return null;
