@@ -468,3 +468,86 @@ export type LaunchedSimCampUIConfigType = SimulationCampaignUIConfigResource & {
   startedAtTime: DateISOString;
   status: WorkflowExecutionStatusType;
 };
+
+type NeuronMorphologyModelDistributionType = 'NeuronMorphologyModelDistribution';
+
+export interface NeuronMorphologyModelDistribution extends Entity {
+  name: string;
+  description: string;
+  '@type': [NeuronMorphologyModelDistributionType, 'Entity'];
+  distribution: Distribution;
+}
+
+export interface NeuronMorphologyModelDistributionResource
+  extends ResourceMetadata,
+    NeuronMorphologyModelDistribution {}
+
+type NeuronMorphologyModelParameterType = 'NeuronMorphologyModelParameter';
+
+export interface NeuronMorphologyModelParameter extends Entity {
+  name: string;
+  description: string;
+  '@type': [NeuronMorphologyModelParameterType, 'Entity'];
+  distribution: Distribution;
+}
+
+export interface NeuronMorphologyModelParameterResource
+  extends ResourceMetadata,
+    NeuronMorphologyModelParameter {}
+
+type CanonicalMorphologyModelType = 'CanonicalMorphologyModel';
+
+export interface CanonicalMorphologyModel extends Entity {
+  name: string;
+  description: string;
+  about: 'NeuronMorphology';
+  '@type': [CanonicalMorphologyModelType, 'Entity'];
+  morphologyModelDistribution: {
+    '@id': string;
+    '@type': [NeuronMorphologyModelDistributionType, 'Entity'];
+    rev: number;
+  };
+  morphologyModelParameter: {
+    '@id': string;
+    '@type': [NeuronMorphologyModelParameterType, 'Entity'];
+    rev: number;
+  };
+}
+
+export interface CanonicalMorphologyModelResource
+  extends ResourceMetadata,
+    CanonicalMorphologyModel {}
+
+type CanonicalMorphologyModelConfigType = 'CanonicalMorphologyModelConfig';
+
+export interface CanonicalMorphologyModelConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': [CanonicalMorphologyModelConfigType, 'Entity'];
+  distribution: Distribution;
+}
+
+export interface CanonicalMorphologyModelConfigResource
+  extends ResourceMetadata,
+    CanonicalMorphologyModelConfig {}
+
+export type CanonicalMorphologyModelConfigPayload = {
+  hasPart: {
+    [brainRegionId: string]: {
+      about: 'BrainRegion';
+      rev: number;
+      hasPart: {
+        [mTypeId: string]: {
+          rev: number;
+          about: 'NeuronMorphologicalType';
+          hasPart: {
+            [canonicalMorphologyModelId: string]: {
+              about: CanonicalMorphologyModelType;
+              rev: number;
+            };
+          };
+        };
+      };
+    };
+  };
+};
