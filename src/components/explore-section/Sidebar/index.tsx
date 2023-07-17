@@ -8,11 +8,14 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from '@/components/Link';
 import { SideLinkList } from '@/types/explore-section/fields';
 import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
 export function DetailsPageSideBackLink({ links }: SideLinkList) {
+  const router = useRouter();
+
   return (
     <div>
       {links &&
@@ -21,14 +24,15 @@ export function DetailsPageSideBackLink({ links }: SideLinkList) {
             key={link.url}
             className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center ml-5"
           >
-            <Link
-              href={link.url}
+            <button
               className="whitespace-pre text-sm rotate-180 mt-5"
+              onClick={() => router.back()}
               style={{ writingMode: 'vertical-rl' }}
+              type="button"
             >
               Back to list
               <ArrowRightOutlined className="mt-6" />
-            </Link>
+            </button>
           </div>
         ))}
     </div>
