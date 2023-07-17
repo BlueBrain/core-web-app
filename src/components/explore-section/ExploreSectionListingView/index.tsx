@@ -90,7 +90,7 @@ export default function ExploreSectionListingView({
 
   return (
     <>
-      <section className="w-full h-screen flex flex-col gap-5 bg-white pt-8 pl-7 pr-3 overflow-scroll relative">
+      <section className="w-full min-h-screen flex flex-col gap-5 bg-white pt-8 pl-7 pr-3 overflow-scroll relative">
         <div className="flex items-center justify-between ml-5">
           <div className="text-primary-7 text-2xl font-bold flex-auto w-6/12">
             {title}

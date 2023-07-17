@@ -70,7 +70,9 @@ export default function ExploreSectionTable({
   const pathname = usePathname();
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>();
+  const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>(
+    data.state === 'hasData' ? data.data : undefined
+  );
 
   const clearSelectedRows = () => {
     setFetching(false);
