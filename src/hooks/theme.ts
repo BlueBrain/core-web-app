@@ -1,12 +1,14 @@
-'use client';
-
 import { useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 
 import usePathname from '@/hooks/pathname';
 import { themeAtom } from '@/state/theme';
+import { checkMatchPatterns } from '@/util/pattern-matching';
 
-const DARK_THEME_PATHNAMES = ['/build/cell-composition/interactive'];
+const DARK_THEME_PATH_PATTERNS = [
+  /^\/build\/cell-composition\/interactive\//,
+  /^\/build\/connectome-definition\//,
+];
 
 export default function useTheme() {
   const pathname = usePathname();
@@ -15,7 +17,7 @@ export default function useTheme() {
 
   useEffect(() => {
     if (!pathname) return;
-
-    setTheme(DARK_THEME_PATHNAMES.includes(pathname) ? 'dark' : 'light');
+    const activateDark = checkMatchPatterns(pathname, DARK_THEME_PATH_PATTERNS);
+    setTheme(activateDark ? 'dark' : 'light');
   }, [setTheme, pathname]);
 }
