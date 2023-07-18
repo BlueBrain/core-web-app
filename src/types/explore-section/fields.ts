@@ -36,14 +36,6 @@ export type ZoomRange = {
   y: number[];
 };
 
-export interface SideLinkList {
-  links?: Array<SideLink>;
-}
-
-export interface SideLink {
-  url: string;
-}
-
 export interface TotalHits {
   relation: string;
   value: number;

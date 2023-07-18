@@ -67,7 +67,7 @@ export default function NeuronDensityDetailPage() {
   useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} links={[{ url: '/explore/neuron-density' }]} />
+      <Detail fields={fields} />
     </Suspense>
   );
 }

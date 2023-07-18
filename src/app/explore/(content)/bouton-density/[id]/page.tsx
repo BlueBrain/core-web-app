@@ -60,7 +60,7 @@ export default function BoutonDensityDetails() {
   useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} links={[{ url: '/explore/bouton-density' }]} />
+      <Detail fields={fields} />
     </Suspense>
   );
 }

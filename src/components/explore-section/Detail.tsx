@@ -6,7 +6,7 @@ import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailAtom } from '@/state/explore-section/detail-atoms-constructor';
 import usePathname from '@/hooks/pathname';
-import { SideLink, IdLabel } from '@/types/explore-section/fields';
+import { IdLabel } from '@/types/explore-section/fields';
 import { SerializedDeltaResource, DeltaResource } from '@/types/explore-section/resources';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
@@ -49,11 +49,9 @@ const detailAtomLoadable = loadable(detailAtom);
 export default function Detail({
   fields,
   children,
-  links,
 }: {
   fields: DetailProps[];
   children?: (detail: DeltaResource) => ReactNode;
-  links: Array<SideLink>;
 }) {
   const { data: session } = useSession();
   const path = usePathname();
@@ -81,7 +79,7 @@ export default function Detail({
 
   return (
     <div className="flex h-screen">
-      <DetailsPageSideBackLink links={links} />
+      <DetailsPageSideBackLink />
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <div className="flex flex-col gap-10 max-w-screen-2xl">
           <DetailHeaderName detail={detail.data} url={path} />

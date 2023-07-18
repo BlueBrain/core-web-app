@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from 'antd';
 import {
   PlusOutlined,
@@ -7,40 +8,34 @@ import {
   ArrowRightOutlined,
   DownOutlined,
 } from '@ant-design/icons';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import usePathname from '@/hooks/pathname';
 import Link from '@/components/Link';
-import { SideLinkList } from '@/types/explore-section/fields';
 import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
-export function DetailsPageSideBackLink({ links }: SideLinkList) {
-  const router = useRouter();
+export function DetailsPageSideBackLink() {
+  const pathName = usePathname();
+  const prevPath = pathName?.substring(0, pathName.lastIndexOf('/'));
 
   return (
-    <div>
-      {links &&
-        links.map((link) => (
-          <div
-            key={link.url}
-            className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center ml-5"
-          >
-            <button
-              className="whitespace-pre text-sm rotate-180 mt-5"
-              onClick={() => router.back()}
-              style={{ writingMode: 'vertical-rl' }}
-              type="button"
-            >
-              Back to list
-              <ArrowRightOutlined className="mt-6" />
-            </button>
-          </div>
-        ))}
-    </div>
+    prevPath && (
+      <div className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center ml-5">
+        <Link
+          className="whitespace-pre text-sm rotate-180 mt-5"
+          href={prevPath}
+          style={{ writingMode: 'vertical-rl' }}
+        >
+          Back to list
+          <ArrowRightOutlined className="mt-6" />
+        </Link>
+      </div>
+    )
   );
 }
+
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(false);
   const [openExp, setOpenExp] = useState<boolean>(false);
+
   return (
     <div className={expanded ? styles.expanded : styles.side}>
       <div>

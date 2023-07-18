@@ -61,7 +61,7 @@ export default function LayerThicknessDetailPage() {
   useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} links={[{ url: '/explore/layer-thickness' }]} />
+      <Detail fields={fields} />
     </Suspense>
   );
 }

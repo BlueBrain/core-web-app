@@ -49,7 +49,7 @@ export default function EphysDetailPage() {
   useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} links={[{ url: '/explore/electrophysiology' }]}>
+      <Detail fields={fields}>
         {(detail: DeltaResource) => <EphysViewerContainer resource={detail} />}
       </Detail>
     </Suspense>

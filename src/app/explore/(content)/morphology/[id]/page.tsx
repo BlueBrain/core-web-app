@@ -54,7 +54,7 @@ export default function MorphologyDetailPage() {
   useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields} links={[{ url: '/explore/morphology' }]}>
+      <Detail fields={fields}>
         {(detail: DeltaResource) => <MorphoViewerContainer resource={detail} />}
       </Detail>
     </Suspense>
