@@ -13,9 +13,16 @@ interface MTypeListItemProps {
   id: string;
   activeModel: ModelChoice;
   onModelChange: (mTypeId: string, newValue: ModelChoice) => void;
+  onlyPlaceholder: boolean;
 }
 
-export default function ListItem({ label, id, activeModel, onModelChange }: MTypeListItemProps) {
+export default function ListItem({
+  label,
+  id,
+  activeModel,
+  onModelChange,
+  onlyPlaceholder,
+}: MTypeListItemProps) {
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
 
   const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
@@ -45,7 +52,15 @@ export default function ListItem({ label, id, activeModel, onModelChange }: MTyp
       >
         <div className="font-bold min-w-[130px] text-left">{label}</div>
         <div className="text-xs font-light flex-grow">
-          <ModelSelect value={activeModel} onChange={handleModelChange} options={options} compact />
+          {onlyPlaceholder && <div className="text-end">Placeholder</div>}
+          {!onlyPlaceholder && (
+            <ModelSelect
+              value={activeModel}
+              onChange={handleModelChange}
+              options={options}
+              compact
+            />
+          )}
         </div>
       </div>
     </button>
