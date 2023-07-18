@@ -22,8 +22,10 @@ import RangeIcon from './Range';
 import InteractiveViewIcon from './InteractiveView';
 import VirtualLabIcon from './VirtualLab';
 import FileIcon from './File';
+import AddIcon from './AddIcon';
 
 export {
+  AddIcon,
   AngledArrowIcon,
   ArrowRightIcon,
   ArrowDownOutlinedIcon,

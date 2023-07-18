@@ -54,6 +54,10 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],
       },
+      transitionProperty: {
+        padding: 'padding',
+        transform: 'transform',
+      },
     },
   },
   plugins: [],
