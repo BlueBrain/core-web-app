@@ -8,6 +8,8 @@ import List from '@/components/build-section/cell-model-assignment/m-model/Panel
 import { BrainRegionIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import ApplyToAllMTypesPanel from '@/components/build-section/cell-model-assignment/m-model/Panel/ApplyToAllMTypesPanel';
+import { canonicalBrainRegionIdsAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import { expandBrainRegionId } from '@/util/cell-model-assignment';
 
 interface PanelTitleProps {
   title?: string;
@@ -38,16 +40,32 @@ interface PanelExpandedProps {
 
 export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedProps) {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
+  const canonicalBrainRegionIds = useAtomValue(canonicalBrainRegionIdsAtom);
+
+  const isLeafNode = brainRegion?.id
+    ? canonicalBrainRegionIds.includes(expandBrainRegionId(brainRegion.id))
+    : false;
 
   const handleClick = useCallback(() => setIsSidebarExpanded(false), [setIsSidebarExpanded]);
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto py-6 min-w-[300px]">
-      <PanelTitle title={brainRegion?.title} onClick={handleClick} className="px-7" />
+      {isLeafNode && (
+        <>
+          <PanelTitle title={brainRegion?.title} onClick={handleClick} className="px-7" />
 
-      <ApplyToAllMTypesPanel />
+          <ApplyToAllMTypesPanel />
 
-      <List />
+          <List />
+        </>
+      )}
+
+      {!isLeafNode && (
+        <div className="self-center flex flex-col justify-center gap-10 w-[90%] text-white h-1/2">
+          <div className="text-3xl">Not a leaf Brain Region</div>
+          <div className="text-xl">To display the M-Types, select a leaf Brain Region</div>
+        </div>
+      )}
     </div>
   );
 }
