@@ -27,6 +27,12 @@ export default function ConnectomeModelAssignmentView() {
       <div className="bg-black mr-7 flex flex-col relative">
         <div className="text-white flex-initial">
           <h1 className="text-white font-bold p-4">Default synapse model assignments</h1>
+          <div style={{ width: '90%' }}>
+            <div className="w-1/2 flex justify-between" style={{ marginLeft: 16 }}>
+              <div>From ⭢</div>
+              <div>⭢ To</div>
+            </div>
+          </div>
           <div className="h-[calc(100%-30px)] p-4 overflow-scroll">
             <SynapticAssignmentRulesTable
               rules={defaultRules}
@@ -41,7 +47,7 @@ export default function ConnectomeModelAssignmentView() {
             <button
               type="button"
               className={rulesTabActive ? ACTIVE_TAB_CLASSNAME : INACTIVE_TAB_CLASSNAME}
-              style={{ height: '50px', width: '300px' }}
+              style={{ height: '50px', width: '250px' }}
               onClick={() => setRulesTabActive(true)}
             >
               User defined synapse model assignments
@@ -49,7 +55,7 @@ export default function ConnectomeModelAssignmentView() {
             <button
               type="button"
               className={rulesTabActive ? INACTIVE_TAB_CLASSNAME : ACTIVE_TAB_CLASSNAME}
-              style={{ height: '50px', width: '300px' }}
+              style={{ height: '50px', width: '150px' }}
               onClick={() => setRulesTabActive(false)}
             >
               Synapse Type editor
@@ -60,6 +66,12 @@ export default function ConnectomeModelAssignmentView() {
             {rulesTabActive && (
               <>
                 <RulesFilters rules={userRules} onFilterChange={setUserRulesFilter} />
+                <div className="text-primary-8 mb-5" style={{ width: '90%' }}>
+                  <div className="w-1/2 flex justify-between" style={{ marginLeft: 8 }}>
+                    <div>From ⭢</div>
+                    <div>⭢ To</div>
+                  </div>
+                </div>
                 <SynapticAssignmentRulesTable
                   rules={userRules}
                   filter={userRulesFilter.exec}
@@ -70,7 +82,7 @@ export default function ConnectomeModelAssignmentView() {
             )}
           </div>
         </div>
-        <div className="absolute right-4" style={{ bottom: '.5em' }}>
+        <div className="fixed" style={{ right: 35, bottom: 8 }}>
           <button
             type="button"
             className={classNames(styles.button, 'bg-primary-8')}

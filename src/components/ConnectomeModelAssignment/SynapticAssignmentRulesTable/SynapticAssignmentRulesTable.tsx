@@ -50,7 +50,7 @@ export default function SynapticAssignmentRulesTable({
       const columnKey = ensureString(col.key, 'column.key');
       const newCol: ColumnType<IndexedSynapticAssignmentRule> = {
         ...col,
-        render: (value: any, rule: IndexedSynapticAssignmentRule) => {
+        render: (value: string | null, rule: IndexedSynapticAssignmentRule) => {
           const editing = editingRule?.key === rule.key;
           switch (columnKey) {
             case 'fromHemisphere':
@@ -174,16 +174,16 @@ export default function SynapticAssignmentRulesTable({
 
 const COLUMNS = [
   makeCol('', 'fromHemisphere', { width: '3em' }),
-  makeCol('Region', 'fromRegion'),
-  makeCol('SClass', 'fromSClass'),
-  makeCol('M-Type', 'fromMType'),
-  makeCol('E-Type', 'fromEType'),
+  makeCol('REGION', 'fromRegion'),
+  makeCol('SCLASS', 'fromSClass'),
+  makeCol('M-TYPE', 'fromMType'),
+  makeCol('E-TYPE', 'fromEType'),
   makeCol('', 'toHemisphere', { width: '3em' }),
-  makeCol('Region', 'toRegion'),
-  makeCol('SClass', 'toSClass'),
-  makeCol('M-Type', 'toMType'),
-  makeCol('E-Type', 'toEType'),
-  makeCol('Synapse Type', 'synapticType'),
+  makeCol('REGION', 'toRegion'),
+  makeCol('SCLASS', 'toSClass'),
+  makeCol('M-TYPE', 'toMType'),
+  makeCol('E-TYPE', 'toEType'),
+  makeCol('SYNAPSE TYPE', 'synapticType'),
 ];
 
 function makeCol(
