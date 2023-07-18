@@ -6,8 +6,8 @@ import { themeAtom } from '@/state/theme';
 import { checkMatchPatterns } from '@/util/pattern-matching';
 
 const DARK_THEME_PATH_PATTERNS = [
-  /^\/build\/cell-composition\/interactive\//,
-  /^\/build\/connectome-definition\//,
+  /^\/build\/cell-composition\/interactive/,
+  /^\/build\/connectome-definition/,
 ];
 
 export default function useTheme() {
