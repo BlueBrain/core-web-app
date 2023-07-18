@@ -3,20 +3,12 @@ import { useMemo } from 'react';
 import set from 'lodash/set';
 
 import NumberParam from './NumberParam';
-import OrientationParam from './OrientationParam';
 import StepSizeParam from './StepSizeParam';
 import {
   mModelOverridesAtom,
   getMModelLocalOverridesAtom,
 } from '@/state/brain-model-config/cell-model-assignment';
-import {
-  RequiredParamRawNames,
-  ParamInfo,
-  OrientationToDisplay,
-  OrientationInterface,
-  StepSizeInterface,
-  ParamConfig,
-} from '@/types/m-model';
+import { RequiredParamRawNames, ParamInfo, StepSizeInterface, ParamConfig } from '@/types/m-model';
 import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 import { neuriteTypes, paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
 
@@ -55,26 +47,12 @@ export default function ParameterItem({ paramRawName }: ParameterProps) {
     setParamValue(newValue);
   };
 
-  const onOrientationChange = (newValue: OrientationInterface) => {
-    setParamValue([newValue]);
-  };
-
   const onStepSizeChange = (newValue: StepSizeInterface) => {
     setParamValue(newValue);
   };
 
   let component;
   switch (paramInfo.displayName) {
-    case 'Orientation':
-      component = (
-        <OrientationParam
-          paramValue={(paramValue as OrientationInterface[])[0]}
-          paramInfo={paramInfo as OrientationToDisplay}
-          onChange={onOrientationChange}
-        />
-      );
-      break;
-
     case 'Radius':
     case 'Randomness':
     case 'Targeting':
