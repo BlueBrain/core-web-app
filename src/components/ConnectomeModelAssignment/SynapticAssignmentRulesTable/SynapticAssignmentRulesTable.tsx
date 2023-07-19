@@ -114,7 +114,7 @@ export default function SynapticAssignmentRulesTable({
 
             setEditingRule({ ...ruleToEdit });
           }}
-          onValidateEdition={async () => {
+          onValidateEdition={() => {
             if (!editingRule) return;
 
             const newRules = [...rules];

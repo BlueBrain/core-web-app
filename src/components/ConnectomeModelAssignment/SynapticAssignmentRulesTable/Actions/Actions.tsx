@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { CopyOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-
+import { useAtomValue } from 'jotai';
+import { loadingAtom } from '@/components/ConnectomeModelAssignment/state';
 import Styles from './actions.module.css';
 
 export interface ActionsProps {
@@ -22,6 +23,9 @@ export default function Actions({
   onStartEditing,
   onValidateEdition,
 }: ActionsProps) {
+  const loading = useAtomValue(loadingAtom);
+  if (loading) return null;
+
   if (!editingRuleKey) {
     return (
       <div className={Styles.actions}>
@@ -34,7 +38,7 @@ export default function Actions({
 
   if (editingRuleKey === ruleKey) {
     return (
-      <Button type="primary" onClick={() => onValidateEdition()}>
+      <Button type="primary" onClick={onValidateEdition}>
         Confirm
       </Button>
     );

@@ -291,6 +291,9 @@ export interface SynapseConfig extends Entity {
 }
 
 export interface SynapseConfigResource extends ResourceMetadata, SynapseConfig {}
+export interface RulesResource extends ResourceMetadata, Entity {
+  distribution: Distribution;
+}
 export interface SynapseConfigPayload {
   synaptic_assignment: {
     id: string;

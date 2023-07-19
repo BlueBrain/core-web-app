@@ -343,7 +343,19 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
 
 export async function cloneSynapseConfig(id: string, session: Session) {
   const configSource = await fetchResourceSourceById<SynapseConfig>(id, session);
-  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+  const payload = {
+    synaptic_assignment: {
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/synapticassignment/2ea6bc6a-ff1e-401e-9d2e-cd221f3ff275',
+      type: ['Entity', 'Dataset', 'SynapticParameterAssignment'],
+      rev: 1,
+    },
+    synaptic_parameters: {
+      '@id':
+        'https://bbp.epfl.ch/neurosciencegraph/data/synapticparameters/ba7a6b67-0713-4481-b853-1a903e441f56',
+      type: ['Entity', 'Dataset', 'SynapticParameter'],
+      rev: 1,
+    },
+  };
 
   const clonedPayloadMeta = await createJsonFile(payload, 'synapse-config.json', session);
 

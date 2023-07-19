@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal } from 'antd';
+import { useAtom } from 'jotai';
+import { loadingAtom } from '../state';
 import CustomSelect from './CustomSelect';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
 import Style from './add-rule-modal.module.css';
@@ -27,6 +29,8 @@ const INITIAL_RULE: SynapticAssignmentRule = {
 export default function AddRuleModal({ open, onValidate, onCancel }: AddRuleModalProps) {
   const [isOpen, setIsOpen] = useState(open);
   const [rule, setRule] = useState<SynapticAssignmentRule>({ ...INITIAL_RULE });
+  const [loading] = useAtom(loadingAtom);
+
   useEffect(() => {
     setRule({ ...INITIAL_RULE });
     setIsOpen(open);
@@ -51,7 +55,7 @@ export default function AddRuleModal({ open, onValidate, onCancel }: AddRuleModa
             <Button type="text" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button type="primary" onClick={handleValidate}>
+            <Button type="primary" onClick={handleValidate} loading={loading}>
               Confirm
             </Button>
           </div>

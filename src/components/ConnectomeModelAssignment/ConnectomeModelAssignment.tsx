@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { EyeOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { useAtom } from 'jotai';
 
 import AddRuleModal from './AddRuleModal';
 import RulesFilters from './RulesFilters';
 import Filter from './RulesFilters/filter';
-import { useRules } from './hooks';
+import { useDefaultRules, useFetchRules, useSetRules } from './hooks';
 import SynapticAssignmentRulesTable from './SynapticAssignmentRulesTable';
+import { loadingAtom } from './state';
 import { classNames } from '@/util/utils';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
 import styles from './connectome-model-assignment.module.scss';
@@ -19,9 +21,13 @@ const INACTIVE_TAB_CLASSNAME =
 
 export default function ConnectomeModelAssignmentView() {
   const [addRuleModalOpen, setAddRuleModalOpen] = useState(false);
-  const [defaultRules, userRules, setUserRules] = useRules();
+  const userRules = useFetchRules();
+  const defaultRules = useDefaultRules();
+  const setUserRules = useSetRules();
   const [userRulesFilter, setUserRulesFilter] = useState(new Filter([]));
   const [rulesTabActive, setRulesTabActive] = useState(true);
+  const [loading] = useAtom(loadingAtom);
+
   return (
     <>
       <div className="bg-black mr-7 flex flex-col relative">
@@ -87,8 +93,10 @@ export default function ConnectomeModelAssignmentView() {
             type="button"
             className={classNames(styles.button, 'bg-primary-8')}
             onClick={() => setAddRuleModalOpen(true)}
+            disabled={loading}
           >
-            <PlusOutlined />
+            {!loading && <PlusOutlined />}
+            {loading && <LoadingOutlined />}
             &nbsp;&nbsp;Add synapse assignment rule
           </button>
           <button type="button" className={classNames(styles.button, 'bg-black')}>
