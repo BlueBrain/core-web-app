@@ -1,43 +1,35 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useMemo } from 'react';
 import set from 'lodash/set';
 
 import NumberParam from './NumberParam';
 import StepSizeParam from './StepSizeParam';
+import { mModelOverridesAtom } from '@/state/brain-model-config/cell-model-assignment';
 import {
-  mModelOverridesAtom,
-  getMModelLocalOverridesAtom,
-} from '@/state/brain-model-config/cell-model-assignment';
-import { RequiredParamRawNames, ParamInfo, StepSizeInterface, ParamConfig } from '@/types/m-model';
+  RequiredParamRawNames,
+  ParamInfo,
+  StepSizeInterface,
+  OrientationInterface,
+} from '@/types/m-model';
 import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
-import { neuriteTypes, paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
+import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
+import { mModelNeuriteTypeSelectedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;
+  paramValue: number | StepSizeInterface | OrientationInterface[];
 };
 
-export default function ParameterItem({ paramRawName }: ParameterProps) {
+export default function ParameterItem({ paramRawName, paramValue }: ParameterProps) {
   const setMModelOverrides = useSetAtom(mModelOverridesAtom);
-  const mModelLocalOverrides = useAtomValue(getMModelLocalOverridesAtom);
   const setMorphAssConfigPayload = useSetAtom(setMorphologyAssignmentConfigPayloadAtom);
+  const neuriteTypeSelected = useAtomValue(mModelNeuriteTypeSelectedAtom);
 
   const paramInfo = paramsToDisplay[paramRawName];
-  const paramValue = useMemo(() => {
-    if (!mModelLocalOverrides) return null;
-    if (!Object.keys(mModelLocalOverrides).length) return null;
-
-    const requiredParamValues = (mModelLocalOverrides as ParamConfig)[neuriteTypes.apical_dendrite];
-    if (!requiredParamValues || !Object.keys(requiredParamValues).length) return null;
-
-    const value = requiredParamValues[paramRawName];
-    return value;
-  }, [mModelLocalOverrides, paramRawName]);
 
   const setParamValue = (newValue: unknown) => {
     setMModelOverrides((oldAtomData) => {
       const cloned = structuredClone(oldAtomData);
-      set(cloned, `${neuriteTypes.apical_dendrite}.${paramRawName}`, newValue);
-      set(cloned, `${neuriteTypes.basal_dendrite}.${paramRawName}`, newValue);
+      set(cloned, `${neuriteTypeSelected}.${paramRawName}`, newValue);
       return cloned;
     });
     setMorphAssConfigPayload();

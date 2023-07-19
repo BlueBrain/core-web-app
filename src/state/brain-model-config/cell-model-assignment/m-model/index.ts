@@ -2,7 +2,12 @@ import { atom } from 'jotai';
 import merge from 'lodash/merge';
 import lodashGet from 'lodash/get';
 
-import { ParamConfig, SynthesisPreviewInterface, MModelWorkflowOverrides } from '@/types/m-model';
+import {
+  ParamConfig,
+  SynthesisPreviewInterface,
+  MModelWorkflowOverrides,
+  NeuriteType,
+} from '@/types/m-model';
 import { morphologyAssignmentConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
 import {
@@ -38,6 +43,8 @@ export const mModelRemoteOverridesAtom = atom<ParamConfig | null>(null);
 export const mModelOverridesAtom = atom<ParamConfig | {}>({});
 
 export const mModelRemoteOverridesLoadedAtom = atom(false);
+
+export const mModelNeuriteTypeSelectedAtom = atom<NeuriteType>('apical_dendrite');
 
 export const getMModelLocalOverridesAtom = atom<ParamConfig | null>((get) => {
   const remoteOverrides = get(mModelRemoteOverridesAtom);

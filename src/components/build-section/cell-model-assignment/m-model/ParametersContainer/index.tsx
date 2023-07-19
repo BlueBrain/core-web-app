@@ -2,9 +2,8 @@
 
 import { useAtomValue } from 'jotai';
 
-import ParameterItem from './ParamItem';
-import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
-import { RequiredParamRawNames } from '@/types/m-model';
+import NeuriteTypeDropdown from './NeuriteTypeDropdown';
+import ParametersWrapper from './ParametersWrapper';
 import { SettingsIcon } from '@/components/icons';
 import { mModelRemoteOverridesLoadedAtom } from '@/state/brain-model-config/cell-model-assignment';
 
@@ -14,13 +13,11 @@ type Props = {
 
 export default function ParametersContainer({ className }: Props) {
   const remoteWasFetched = useAtomValue(mModelRemoteOverridesLoadedAtom);
-
-  const paramRawNames = Object.keys(paramsToDisplay) as RequiredParamRawNames[];
   const body = remoteWasFetched ? (
     <div className="flex flex-col gap-y-8">
-      {paramRawNames.map((paramRawName) => (
-        <ParameterItem key={paramRawName} paramRawName={paramRawName} />
-      ))}
+      <span>You are modifying the m-model based on this neurite type</span>
+      <NeuriteTypeDropdown />
+      <ParametersWrapper />
     </div>
   ) : (
     <div>Loading...</div>
