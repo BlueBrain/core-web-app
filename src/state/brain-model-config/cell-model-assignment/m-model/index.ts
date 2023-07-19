@@ -246,8 +246,7 @@ export const canonicalMapAtom = atom<Promise<Map<string, boolean>>>(async (get) 
   return canonicalMap;
 });
 
-export const canonicalModelParametersAtom = atom<Promise<ParamConfig | null>>(async (get) => {
-  const session = get(sessionAtom);
+export const canonicalMorphologyModelIdAtom = atom<Promise<string | null>>(async (get) => {
   const brainRegion = get(selectedBrainRegionAtom);
   const mTypeId = get(selectedMModelIdAtom);
 
@@ -265,6 +264,13 @@ export const canonicalModelParametersAtom = atom<Promise<ParamConfig | null>>(as
   const canonicalMorphologyModelId = Object.keys(
     canonicalMorphologyModelConfigPayload.hasPart[expandedBrainRegionId].hasPart[mTypeId].hasPart
   )[0];
+
+  return canonicalMorphologyModelId;
+});
+
+export const canonicalModelParametersAtom = atom<Promise<ParamConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
 
   if (!session || !canonicalMorphologyModelId) return null;
 

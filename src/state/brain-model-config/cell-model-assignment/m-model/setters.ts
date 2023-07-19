@@ -16,6 +16,7 @@ import {
   canonicalModelParametersAtom,
   remoteOverridesAtom,
   accumulativeTopologicalSynthesisParamsAtom,
+  canonicalMorphologyModelIdAtom,
   remoteConfigPayloadAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
@@ -153,9 +154,9 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
     return;
   }
 
+  const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
   lodashSet(accumulative, generateBrainMTypePairPath(brainRegionId, mTypeId), {
-    // TODO: use proper CanonicalMorphologyModel from nexus
-    id: 'https://bbp.epfl.ch/neurosciencegraph/data/b5a28383-82d2-47c8-a803-8b3707cdb44a',
+    id: canonicalMorphologyModelId,
     overrides,
   });
   set(accumulativeLocalTopologicalSynthesisParamsAtom, accumulative);
