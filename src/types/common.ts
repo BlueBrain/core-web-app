@@ -21,3 +21,9 @@ export type ErrorComponentProps = {
 export type BrainRegionId = string;
 
 export type BrainRegionIdx = number;
+
+export type SelectOption = {
+  value: string;
+  label: string;
+  isDisabled?: boolean;
+};

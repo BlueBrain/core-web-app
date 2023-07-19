@@ -3,12 +3,7 @@ import React from 'react';
 import './SelectDropdown.css';
 import ChevronRightIcon from '@/components/icons/ChevronRightIcon';
 import ChevronDownIcon from '@/components/icons/ChevronDownIcon';
-
-type SelectOption = {
-  value: string;
-  label: string;
-  isDisabled: boolean;
-};
+import { SelectOption } from '@/types/common';
 
 type SelectDropdownProps = {
   selectOptions: SelectOption[];
