@@ -1,10 +1,6 @@
 import { MorphologyAssignmentConfigPayload } from '@/types/nexus';
 import { NeuriteType, ParamsToDisplay } from '@/types/m-model';
 
-// TODO: replace this for proper brain - Mtype from nexus
-export const mockParamsUrl =
-  'https://raw.githubusercontent.com/BlueBrain/NeuroTS/main/tests/data/bio_path_params.json';
-
 export const paramsAndDistResources = {
   resources: {
     parameters_id:

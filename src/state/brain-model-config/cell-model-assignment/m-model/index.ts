@@ -10,6 +10,7 @@ import {
   fetchResourceSourceById,
   fetchFileMetadataByUrl,
   fetchJsonFileByUrl,
+  fetchResourceByUrl,
 } from '@/api/nexus';
 import {
   MorphologyAssignmentConfigResource,
@@ -19,13 +20,16 @@ import {
   MorphologyAssignmentConfigPayload,
   CanonicalMorphologyModelConfigPayload,
   CanonicalMorphologyModelConfig,
+  CanonicalMorphologyModel,
+  NeuronMorphologyModelParameter,
 } from '@/types/nexus';
 import { setRevision } from '@/util/nexus';
 import {
   initialMorphologyAssigmentConfigPayload,
   paramsAndDistResources,
 } from '@/constants/cell-model-assignment/m-model';
-import { generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
+import { expandBrainRegionId, generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export const selectedMModelNameAtom = atom<string | null>(null);
 
@@ -196,20 +200,17 @@ export const remoteCanonicalMorphologyModelConfigPayloadAtom = atom<
   );
 });
 
-export const canonicalMorphologyModelConfigPayloadAtom =
-  atom<CanonicalMorphologyModelConfigPayload | null>(null);
-
-export const canonicalBrainRegionIdsAtom = atom<string[]>((get) => {
-  const canonicalMorphologyModelConfig = get(canonicalMorphologyModelConfigPayloadAtom);
+export const canonicalBrainRegionIdsAtom = atom<Promise<string[]>>(async (get) => {
+  const canonicalMorphologyModelConfig = await get(canonicalMorphologyModelConfigPayloadAtom);
 
   if (!canonicalMorphologyModelConfig) return [];
 
   return Object.keys(canonicalMorphologyModelConfig.hasPart);
 });
 
-export const canonicalMapAtom = atom<Map<string, boolean>>((get) => {
-  const canonicalBrainRegionIds = get(canonicalBrainRegionIdsAtom);
-  const canonicalMorphologyModelConfig = get(canonicalMorphologyModelConfigPayloadAtom);
+export const canonicalMapAtom = atom<Promise<Map<string, boolean>>>(async (get) => {
+  const canonicalBrainRegionIds = await get(canonicalBrainRegionIdsAtom);
+  const canonicalMorphologyModelConfig = await get(canonicalMorphologyModelConfigPayloadAtom);
 
   const canonicalMap = new Map();
   if (!canonicalBrainRegionIds.length || !canonicalMorphologyModelConfig) return canonicalMap;
@@ -221,4 +222,74 @@ export const canonicalMapAtom = atom<Map<string, boolean>>((get) => {
     });
   });
   return canonicalMap;
+});
+
+export const canonicalModelParametersAtom = atom<Promise<ParamConfig | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const brainRegion = get(selectedBrainRegionAtom);
+  const mTypeId = get(selectedMModelIdAtom);
+
+  if (!brainRegion || !mTypeId) return null;
+
+  if (brainRegion.leaves || !brainRegion.representedInAnnotation) return null;
+
+  const expandedBrainRegionId = expandBrainRegionId(brainRegion.id);
+
+  const canonicalMorphologyModelConfigPayload = await get(
+    canonicalMorphologyModelConfigPayloadAtom
+  );
+  if (!canonicalMorphologyModelConfigPayload) throw new Error('No canonical payload');
+
+  const canonicalMorphologyModelId = Object.keys(
+    canonicalMorphologyModelConfigPayload.hasPart[expandedBrainRegionId].hasPart[mTypeId].hasPart
+  )[0];
+
+  if (!session || !canonicalMorphologyModelId) return null;
+
+  const canonicalMorphologyModel = await fetchResourceById<CanonicalMorphologyModel>(
+    canonicalMorphologyModelId,
+    session
+  );
+
+  const neuronMorphologyModelParameter = await fetchResourceById<NeuronMorphologyModelParameter>(
+    canonicalMorphologyModel.morphologyModelParameter['@id'],
+    session
+  );
+
+  const distributionUrl = neuronMorphologyModelParameter.distribution.contentUrl;
+
+  return fetchJsonFileByUrl<ParamConfig>(distributionUrl, session);
+});
+
+export const canonicalMorphologyModelConfigPayloadAtom = atom<
+  Promise<CanonicalMorphologyModelConfigPayload | null>
+>(async (get) => {
+  const session = get(sessionAtom);
+  const remoteCanonicalMorphologyModelConfigPayload = await get(
+    remoteCanonicalMorphologyModelConfigPayloadAtom
+  );
+
+  if (!session || !remoteCanonicalMorphologyModelConfigPayload) return null;
+
+  const payloadUrl = remoteCanonicalMorphologyModelConfigPayload.distribution.contentUrl;
+  const payload = await fetchResourceByUrl<CanonicalMorphologyModelConfigPayload>(
+    payloadUrl,
+    session
+  );
+
+  // process data to have revision also in the url (hack until the m-type is fixed in composition)
+  // https://bbpteam.epfl.ch/project/issues/browse/BBPP134-616
+  const processedPayload: CanonicalMorphologyModelConfigPayload = structuredClone(payload);
+  const brainRegionIds = Object.keys(processedPayload.hasPart);
+  brainRegionIds.forEach((brainRegionId) => {
+    const mTypeParentDict = processedPayload.hasPart[brainRegionId].hasPart;
+    const mTypeIds = Object.keys(mTypeParentDict);
+    mTypeIds.forEach((mTypeId) => {
+      const data = mTypeParentDict[mTypeId];
+      mTypeParentDict[`${mTypeId}?rev=${data.rev}`] = data;
+      delete mTypeParentDict[mTypeId];
+    });
+  });
+
+  return processedPayload;
 });

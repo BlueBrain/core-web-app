@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import filter from 'lodash/filter';
+import { loadable } from 'jotai/utils';
 
 import ListItem from './ListItem';
 import { analysedCompositionAtom } from '@/state/build-composition';
@@ -13,6 +14,8 @@ import { expandBrainRegionId, generateBrainMTypeMapKey } from '@/util/cell-model
 import { ModelChoice } from '@/types/m-model';
 import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
+const canonicalMapAtomLoadable = loadable(canonicalMapAtom);
+
 interface MModelMenuItem {
   label: string;
   annotation?: string;
@@ -24,7 +27,8 @@ export default function List() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const selectedCanonicalMap = useAtomValue(selectedCanonicalMapAtom);
   const setAccumulativeTopologicalSynthesis = useSetAtom(setAccumulativeTopologicalSynthesisAtom);
-  const canonicalMap = useAtomValue(canonicalMapAtom);
+  const loadableCanonicalMap = useAtomValue(canonicalMapAtomLoadable);
+  const canonicalMap = loadableCanonicalMap.state === 'hasData' ? loadableCanonicalMap.data : null;
 
   const mModelItems: MModelMenuItem[] = useMemo(
     () =>
@@ -39,7 +43,7 @@ export default function List() {
 
   let listItems = null;
 
-  if (selectedBrainRegion) {
+  if (selectedBrainRegion && canonicalMap) {
     const expandedBrainRegionId = expandBrainRegionId(selectedBrainRegion.id);
 
     const onModelChange = (mTypeId: string, modelChoice: ModelChoice) => {

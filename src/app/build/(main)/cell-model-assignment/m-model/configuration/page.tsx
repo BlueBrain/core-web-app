@@ -1,8 +1,7 @@
 'use client';
 
 import { ErrorBoundary } from 'react-error-boundary';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useAtomValue } from 'jotai';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import {
@@ -15,19 +14,11 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
-import { fetchMModelRemoteOverridesAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 export default function ConfigurationPage() {
   const selectedMModelId = useAtomValue(selectedMModelIdAtom);
   const selectedRegion = useAtomValue(selectedBrainRegionAtom);
   const selectedCanonicalMap = useAtomValue(selectedCanonicalMapAtom);
-  const mModelGetRemoteConfig = useSetAtom(fetchMModelRemoteOverridesAtom);
-
-  useEffect(() => {
-    if (!selectedRegion || !selectedMModelId) return;
-
-    mModelGetRemoteConfig();
-  }, [selectedRegion, selectedMModelId, mModelGetRemoteConfig]);
 
   if (!selectedMModelId || !selectedRegion || !selectedCanonicalMap)
     return (

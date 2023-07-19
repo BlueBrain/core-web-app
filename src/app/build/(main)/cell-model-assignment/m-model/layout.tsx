@@ -19,7 +19,7 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment';
 import useMModelQueryParam from '@/hooks/m-model-editor';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import { fetchCanonicalMorphologyModelConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
+import { fetchMModelRemoteOverridesAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 const MMODEL_QUERY_PARAM_KEY = 'mModel';
 
@@ -36,9 +36,7 @@ export default function MModelLayout({ children }: Props) {
   const setMModelRemoteOverridesLoaded = useSetAtom(mModelRemoteOverridesLoadedAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const router = useRouter();
-  const fetchCanonicalMorphologyModelConfigPayload = useSetAtom(
-    fetchCanonicalMorphologyModelConfigPayloadAtom
-  );
+  const mModelGetRemoteConfig = useSetAtom(fetchMModelRemoteOverridesAtom);
 
   useEffect(() => {
     if (selectedMModelName !== null) {
@@ -58,8 +56,8 @@ export default function MModelLayout({ children }: Props) {
   }, [brainRegion, setSelectedMModelName, setSelectedMModelId, setMModelRemoteOverridesLoaded]);
 
   useEffect(() => {
-    fetchCanonicalMorphologyModelConfigPayload();
-  }, [fetchCanonicalMorphologyModelConfigPayload]);
+    mModelGetRemoteConfig();
+  }, [mModelGetRemoteConfig, brainRegion, selectedMModelName]);
 
   const brainRegionDetails = useMemo(() => {
     if (!extraPanelContainer || !brainRegion) return null;

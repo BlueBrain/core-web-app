@@ -14,20 +14,15 @@ import {
   selectedMModelIdAtom,
   accumulativeLocalTopologicalSynthesisParamsAtom,
   fetchedRemoteOverridesMapAtom,
-  canonicalMorphologyModelConfigPayloadAtom,
-  remoteCanonicalMorphologyModelConfigPayloadAtom,
+  canonicalModelParametersAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import sessionAtom from '@/state/session';
-import { fetchResourceByUrl, updateJsonFileByUrl, updateResource } from '@/api/nexus';
-import {
-  CanonicalMorphologyModelConfigPayload,
-  MorphologyAssignmentConfigPayload,
-} from '@/types/nexus';
+import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
+import { MorphologyAssignmentConfigPayload } from '@/types/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { createGeneratorConfig, setRevision } from '@/util/nexus';
-import { mockParamsUrl } from '@/constants/cell-model-assignment/m-model';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import { generateBrainMTypeMapKey, generateBrainMTypePairPath } from '@/util/cell-model-assignment';
 
@@ -114,8 +109,8 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
       return fetchedInfo;
     }
 
-    const paramsResponse = await fetch(mockParamsUrl);
-    const params = (await paramsResponse.json()) as ParamConfig;
+    const params = await get(canonicalModelParametersAtom);
+    if (!params) throw new Error('No canonical parameters were found');
 
     set(mModelOverridesAtom, {});
     set(mModelRemoteOverridesAtom, params);
@@ -178,39 +173,5 @@ export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
     };
 
     await set(setConfigPayloadAtom, updatedConfigPayload);
-  }
-);
-
-export const fetchCanonicalMorphologyModelConfigPayloadAtom = atom<null, [], void>(
-  null,
-  async (get, set) => {
-    const session = get(sessionAtom);
-    const remoteCanonicalMorphologyModelConfigPayload = await get(
-      remoteCanonicalMorphologyModelConfigPayloadAtom
-    );
-
-    if (!session || !remoteCanonicalMorphologyModelConfigPayload) return;
-
-    const payloadUrl = remoteCanonicalMorphologyModelConfigPayload.distribution.contentUrl;
-    const payload = await fetchResourceByUrl<CanonicalMorphologyModelConfigPayload>(
-      payloadUrl,
-      session
-    );
-
-    // process data to have revision also in the url (hack until the m-type is fixed in composition)
-    // https://bbpteam.epfl.ch/project/issues/browse/BBPP134-616
-    const processedPayload: CanonicalMorphologyModelConfigPayload = structuredClone(payload);
-    const brainRegionIds = Object.keys(processedPayload.hasPart);
-    brainRegionIds.forEach((brainRegionId) => {
-      const mTypeParentDict = processedPayload.hasPart[brainRegionId].hasPart;
-      const mTypeIds = Object.keys(mTypeParentDict);
-      mTypeIds.forEach((mTypeId) => {
-        const data = mTypeParentDict[mTypeId];
-        mTypeParentDict[`${mTypeId}?rev=${data.rev}`] = data;
-        delete mTypeParentDict[mTypeId];
-      });
-    });
-
-    set(canonicalMorphologyModelConfigPayloadAtom, processedPayload);
   }
 );
