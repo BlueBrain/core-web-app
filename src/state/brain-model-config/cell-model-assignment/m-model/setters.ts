@@ -9,7 +9,6 @@ import {
   refetchTriggerAtom,
   configPayloadRevAtom,
   configAtom,
-  initialMorphologyAssigmentConfigPayloadAtom,
   mModelOverridesAtom,
   selectedMModelIdAtom,
   accumulativeLocalTopologicalSynthesisParamsAtom,
@@ -17,6 +16,7 @@ import {
   canonicalModelParametersAtom,
   remoteOverridesAtom,
   accumulativeTopologicalSynthesisParamsAtom,
+  remoteConfigPayloadAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -165,11 +165,13 @@ export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   null,
   async (get, set) => {
     set(setMModelLocalTopologicalSynthesisParamsAtom);
-    const initialConfigPayload = get(initialMorphologyAssigmentConfigPayloadAtom);
+    const remoteConfigPayload = await get(remoteConfigPayloadAtom);
     const topologicalSynthesisParams = await get(accumulativeTopologicalSynthesisParamsAtom);
 
+    if (!remoteConfigPayload || !topologicalSynthesisParams) return;
+
     const updatedConfigPayload: MorphologyAssignmentConfigPayload = {
-      ...initialConfigPayload,
+      ...remoteConfigPayload,
     };
 
     updatedConfigPayload.configuration.topological_synthesis = {

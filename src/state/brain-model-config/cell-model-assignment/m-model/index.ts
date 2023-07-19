@@ -25,10 +25,7 @@ import {
   NeuronMorphologyModelParameter,
 } from '@/types/nexus';
 import { setRevision } from '@/util/nexus';
-import {
-  initialMorphologyAssigmentConfigPayload,
-  paramsAndDistResources,
-} from '@/constants/cell-model-assignment/m-model';
+import { paramsAndDistResources } from '@/constants/cell-model-assignment/m-model';
 import { expandBrainRegionId, generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
@@ -156,10 +153,6 @@ export const remoteConfigPayloadAtom = atom<Promise<MorphologyAssignmentConfigPa
   }
 );
 
-export const initialMorphologyAssigmentConfigPayloadAtom = atom<MorphologyAssignmentConfigPayload>(
-  initialMorphologyAssigmentConfigPayload
-);
-
 export const accumulativeLocalTopologicalSynthesisParamsAtom = atom<MModelWorkflowOverrides>({});
 
 export const accumulativeTopologicalSynthesisParamsAtom = atom<Promise<MModelWorkflowOverrides>>(
@@ -215,7 +208,7 @@ export const remoteOverridesAtom = atom<Promise<ParamConfig | {}>>(async (get) =
   return brainMTypeOverrides || {};
 });
 
-export const remoteCanonicalMorphologyModelConfigPayloadAtom = atom<
+export const remoteCanonicalMorphologyModelConfigAtom = atom<
   Promise<CanonicalMorphologyModelConfig | null>
 >(async (get) => {
   const session = get(sessionAtom);
@@ -295,7 +288,7 @@ export const canonicalMorphologyModelConfigPayloadAtom = atom<
 >(async (get) => {
   const session = get(sessionAtom);
   const remoteCanonicalMorphologyModelConfigPayload = await get(
-    remoteCanonicalMorphologyModelConfigPayloadAtom
+    remoteCanonicalMorphologyModelConfigAtom
   );
 
   if (!session || !remoteCanonicalMorphologyModelConfigPayload) return null;
