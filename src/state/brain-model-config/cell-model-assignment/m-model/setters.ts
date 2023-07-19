@@ -16,6 +16,7 @@ import {
   fetchedRemoteOverridesMapAtom,
   canonicalModelParametersAtom,
   remoteOverridesAtom,
+  accumulativeTopologicalSynthesisParamsAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -101,7 +102,7 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
     const fetchedInfo = fetchedOverridesMap?.get(brainMTypeMapKey);
 
     if (fetchedInfo) {
-      const accumulative = get(accumulativeLocalTopologicalSynthesisParamsAtom);
+      const accumulative = await get(accumulativeTopologicalSynthesisParamsAtom);
       const path = [...generateBrainMTypePairPath(brainRegion.id, mTypeId), 'overrides'];
       const localOverrides = lodashGet(accumulative, path);
 
@@ -142,9 +143,9 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
   null,
   [string, string, ChangeModelAction],
   void
->(null, (get, set, brainRegionId, mTypeId, action) => {
+>(null, async (get, set, brainRegionId, mTypeId, action) => {
   const overrides = get(mModelOverridesAtom);
-  const accumulative = structuredClone(get(accumulativeLocalTopologicalSynthesisParamsAtom));
+  const accumulative = structuredClone(await get(accumulativeTopologicalSynthesisParamsAtom));
 
   if (action === 'remove') {
     delete accumulative[brainRegionId][mTypeId];
@@ -165,14 +166,14 @@ export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   async (get, set) => {
     set(setMModelLocalTopologicalSynthesisParamsAtom);
     const initialConfigPayload = get(initialMorphologyAssigmentConfigPayloadAtom);
-    const localTopologicalSynthesisParams = get(accumulativeLocalTopologicalSynthesisParamsAtom);
+    const topologicalSynthesisParams = await get(accumulativeTopologicalSynthesisParamsAtom);
 
     const updatedConfigPayload: MorphologyAssignmentConfigPayload = {
       ...initialConfigPayload,
     };
 
     updatedConfigPayload.configuration.topological_synthesis = {
-      ...localTopologicalSynthesisParams,
+      ...topologicalSynthesisParams,
     };
 
     await set(setConfigPayloadAtom, updatedConfigPayload);

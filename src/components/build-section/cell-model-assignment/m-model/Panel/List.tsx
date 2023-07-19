@@ -15,6 +15,7 @@ import { ModelChoice } from '@/types/m-model';
 import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 const canonicalMapAtomLoadable = loadable(canonicalMapAtom);
+const selectedCanonicalMapAtomLoadable = loadable(selectedCanonicalMapAtom);
 
 interface MModelMenuItem {
   label: string;
@@ -25,7 +26,9 @@ interface MModelMenuItem {
 export default function List() {
   const composition = useAtomValue(analysedCompositionAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const selectedCanonicalMap = useAtomValue(selectedCanonicalMapAtom);
+  const loadableSelectedCanonicalMap = useAtomValue(selectedCanonicalMapAtomLoadable);
+  const selectedCanonicalMap =
+    loadableSelectedCanonicalMap.state === 'hasData' ? loadableSelectedCanonicalMap.data : null;
   const setAccumulativeTopologicalSynthesis = useSetAtom(setAccumulativeTopologicalSynthesisAtom);
   const loadableCanonicalMap = useAtomValue(canonicalMapAtomLoadable);
   const canonicalMap = loadableCanonicalMap.state === 'hasData' ? loadableCanonicalMap.data : null;
@@ -43,7 +46,7 @@ export default function List() {
 
   let listItems = null;
 
-  if (selectedBrainRegion && canonicalMap) {
+  if (selectedBrainRegion && canonicalMap && selectedCanonicalMap) {
     const expandedBrainRegionId = expandBrainRegionId(selectedBrainRegion.id);
 
     const onModelChange = (mTypeId: string, modelChoice: ModelChoice) => {

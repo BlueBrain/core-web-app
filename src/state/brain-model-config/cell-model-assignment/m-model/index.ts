@@ -162,8 +162,17 @@ export const initialMorphologyAssigmentConfigPayloadAtom = atom<MorphologyAssign
 
 export const accumulativeLocalTopologicalSynthesisParamsAtom = atom<MModelWorkflowOverrides>({});
 
-export const selectedCanonicalMapAtom = atom<Map<string, boolean>>((get) => {
-  const accumulativeTopologicalSynthesis = get(accumulativeLocalTopologicalSynthesisParamsAtom);
+export const accumulativeTopologicalSynthesisParamsAtom = atom<Promise<MModelWorkflowOverrides>>(
+  async (get) => {
+    const local = get(accumulativeLocalTopologicalSynthesisParamsAtom);
+    const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+    const remote = remoteConfigPayload?.configuration.topological_synthesis;
+    return { ...remote, ...local };
+  }
+);
+
+export const selectedCanonicalMapAtom = atom<Promise<Map<string, boolean>>>(async (get) => {
+  const accumulativeTopologicalSynthesis = await get(accumulativeTopologicalSynthesisParamsAtom);
   const brainRegionIds = Object.keys(accumulativeTopologicalSynthesis);
   const selectedCanonicalMap = new Map();
   brainRegionIds.forEach((brainRegionId) => {
