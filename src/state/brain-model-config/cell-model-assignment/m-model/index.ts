@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import merge from 'lodash/merge';
+import lodashGet from 'lodash/get';
 
 import { ParamConfig, SynthesisPreviewInterface, MModelWorkflowOverrides } from '@/types/m-model';
 import { morphologyAssignmentConfigIdAtom } from '@/state/brain-model-config';
@@ -184,6 +185,25 @@ export const canonicalMorphologyModelConfigIdAtom = atom<Promise<string | null>>
 
   const { id } = remoteConfigPayload.defaults.topological_synthesis;
   return id;
+});
+
+export const remoteOverridesAtom = atom<Promise<ParamConfig | {}>>(async (get) => {
+  const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+  const brainRegion = get(selectedBrainRegionAtom);
+  const mTypeId = get(selectedMModelIdAtom);
+
+  if (!brainRegion || !mTypeId) return {};
+
+  if (brainRegion.leaves || !brainRegion.representedInAnnotation) return {};
+
+  const expandedBrainRegionId = expandBrainRegionId(brainRegion.id);
+
+  if (!remoteConfigPayload) return {};
+
+  const workflowOverrides = remoteConfigPayload.configuration.topological_synthesis;
+  const path = [expandedBrainRegionId, mTypeId, 'overrides'];
+  const brainMTypeOverrides = lodashGet(workflowOverrides, path);
+  return brainMTypeOverrides || {};
 });
 
 export const remoteCanonicalMorphologyModelConfigPayloadAtom = atom<

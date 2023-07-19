@@ -15,6 +15,7 @@ import {
   accumulativeLocalTopologicalSynthesisParamsAtom,
   fetchedRemoteOverridesMapAtom,
   canonicalModelParametersAtom,
+  remoteOverridesAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -67,6 +68,7 @@ export const updateConfigPayloadAtom = atom<
 
   await updateResource(config, config?._rev, session);
   await set(invalidateConfigAtom, 'morphologyAssignment');
+  set(triggerRefetchAtom);
 });
 
 const triggerUpdateDebouncedAtom = atom<null, [MorphologyAssignmentConfigPayload], Promise<void>>(
@@ -112,7 +114,8 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
     const params = await get(canonicalModelParametersAtom);
     if (!params) throw new Error('No canonical parameters were found');
 
-    set(mModelOverridesAtom, {});
+    const remoteOverrides = await get(remoteOverridesAtom);
+    set(mModelOverridesAtom, remoteOverrides);
     set(mModelRemoteOverridesAtom, params);
     fetchedOverridesMap.set(brainMTypeMapKey, params);
     set(fetchedRemoteOverridesMapAtom, fetchedOverridesMap);
