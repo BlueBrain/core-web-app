@@ -95,7 +95,9 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
     const brainRegion = get(selectedBrainRegionAtom);
     const mTypeId = get(selectedMModelIdAtom);
 
-    if (!brainRegion || !mTypeId) throw new Error('Brain Region and m-type must be selected');
+    if (!brainRegion || !mTypeId) return null;
+
+    if (brainRegion.leaves || !brainRegion.representedInAnnotation) return null;
 
     const fetchedOverridesMap = get(fetchedRemoteOverridesMapAtom);
     const brainMTypeMapKey = generateBrainMTypeMapKey(brainRegion.id, mTypeId);
@@ -130,8 +132,9 @@ export const setMModelLocalTopologicalSynthesisParamsAtom = atom<null, [], void>
     const selectedBrainRegion = get(selectedBrainRegionAtom);
     const selectedMTypeId = get(selectedMModelIdAtom);
 
-    if (!selectedBrainRegion || !selectedMTypeId)
-      throw new Error('Brain Region and m-type must be selected');
+    if (!selectedBrainRegion || !selectedMTypeId) return;
+
+    if (selectedBrainRegion.leaves || !selectedBrainRegion.representedInAnnotation) return;
 
     set(setAccumulativeTopologicalSynthesisAtom, selectedBrainRegion.id, selectedMTypeId, 'add');
   }
