@@ -175,3 +175,71 @@ export function useGetHigherLevelNodes() {
       .sort(brainRegionNotationSorterFn);
   };
 }
+
+/**
+ * A hook to detect if nodes represented by their labels are siblings.
+ *
+ * Label format: `${brainRegionNotation}.${mtype}`, with m-type part being optional.
+ */
+export function useAreSiblings() {
+  const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
+
+  return useCallback(
+    (labels: string[]): boolean => {
+      if (!brainRegionByNotationMap) {
+        throw new Error('No brainRegionByNotationMap present');
+      }
+
+      const parsedLabels = labels.map((label) => label.split('.'));
+
+      const brainRegionNotations = parsedLabels.map(([brainRegionNotation]) => brainRegionNotation);
+      const mtypes = parsedLabels.map(([, mtype]) => mtype);
+
+      const nMtypeLevelNodes = mtypes.filter(Boolean).length;
+
+      // Not siblings if nodes belong to different levels (brain region, mtype).
+      if (nMtypeLevelNodes > 0 && nMtypeLevelNodes < parsedLabels.length) return false;
+
+      const nUniqBrainRegions = new Set(brainRegionNotations).size;
+
+      // Not siblings if all nodes are of the mtype level and they do not share a common brain region.
+      if (nMtypeLevelNodes === parsedLabels.length && nUniqBrainRegions !== 1) return false;
+
+      const parentBrainRegionIds = brainRegionNotations
+        .map(
+          (brainRegionNotation) => brainRegionByNotationMap?.get(brainRegionNotation) as BrainRegion
+        )
+        .map((brainRegion) => brainRegion.isPartOf);
+
+      const nUniqParentBrainRegions = new Set(parentBrainRegionIds).size;
+
+      // Not siblings if all nodes are of the brain region level and they do not share a common parent brain region.
+      if (nMtypeLevelNodes === 0 && nUniqParentBrainRegions !== 1) return false;
+
+      return true;
+    },
+    [brainRegionByNotationMap]
+  );
+}
+
+export function useAreTopLevelNodes() {
+  const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
+
+  return useCallback(
+    (labels: string[]): boolean => {
+      const parsedLabels = labels.map((label) => label.split('.'));
+      const brainRegionNotations = parsedLabels.map(([brainRegionNotation]) => brainRegionNotation);
+      const parentBrainRegionIds = brainRegionNotations
+        .map(
+          (brainRegionNotation) => brainRegionByNotationMap?.get(brainRegionNotation) as BrainRegion
+        )
+        .map((brainRegion) => brainRegion.isPartOf);
+
+      const nUniqParentBrainRegions = new Set(parentBrainRegionIds).size;
+
+      // TODO create a constant for the Whole Brain region id, replace all hardcoded occurences across the app.
+      return nUniqParentBrainRegions === 1 && parentBrainRegionIds[0] === '8';
+    },
+    [brainRegionByNotationMap]
+  );
+}

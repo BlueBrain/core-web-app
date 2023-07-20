@@ -7,6 +7,8 @@ import ViewSelector from './ViewSelector';
 import { createVariantColorMap } from './utils';
 import { AggregatedParamViewEntry, AggregatedVariantViewEntry } from './micro-connectome-worker';
 import {
+  useAreSiblings,
+  useAreTopLevelNodes,
   useCreateLabelDescriptionMap,
   useGetChildNotations,
   useGetHigherLevelNodes,
@@ -45,6 +47,10 @@ type PlotDataBase = {
   dstLabels: string[];
   labelDescriptionMap: Map<string, string>;
   labelColorMap: Map<string, string>;
+  navUpDisabled: {
+    src: boolean;
+    dst: boolean;
+  };
 };
 
 type VariantPlotData = {
@@ -85,6 +91,8 @@ export default function MicroConnectomeConfigView() {
   const getLeafNodesReduceFn = useGetLeafNodesReduceFn();
   const getChildNotations = useGetChildNotations();
   const getHigherLevelNodes = useGetHigherLevelNodes();
+  const areSiblings = useAreSiblings();
+  const areTopLevelNodes = useAreTopLevelNodes();
 
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
@@ -162,6 +170,11 @@ export default function MicroConnectomeConfigView() {
           dstMap
         );
 
+        const navUpDisabled = {
+          src: !areSiblings(srcLabels) || areTopLevelNodes(srcLabels),
+          dst: !areSiblings(dstLabels) || areTopLevelNodes(dstLabels),
+        };
+
         // TODO implement filtering instead of deleting of already aggregated data
         variantExcludeSet.forEach((excludedVariant) =>
           viewData.forEach((viewEntry) => {
@@ -189,6 +202,7 @@ export default function MicroConnectomeConfigView() {
           type: 'variant',
           srcLabels,
           dstLabels,
+          navUpDisabled,
           labelDescriptionMap,
           viewData,
           colorScale,
@@ -207,6 +221,11 @@ export default function MicroConnectomeConfigView() {
         srcMap,
         dstMap
       );
+
+      const navUpDisabled = {
+        src: !areSiblings(srcLabels) || areTopLevelNodes(srcLabels),
+        dst: !areSiblings(dstLabels) || areTopLevelNodes(dstLabels),
+      };
 
       const uniqLabels = Array.from(new Set(srcLabels.concat(dstLabels)));
 
@@ -235,6 +254,7 @@ export default function MicroConnectomeConfigView() {
         type: 'param',
         srcLabels,
         dstLabels,
+        navUpDisabled,
         labelDescriptionMap,
         viewData,
         colorScale,
@@ -266,6 +286,8 @@ export default function MicroConnectomeConfigView() {
     currentViewSelection.src,
     currentViewSelection.dst,
     getLeafNodesReduceFn,
+    areSiblings,
+    areTopLevelNodes,
   ]);
 
   const onLabelClick = (srcLabel: string | null, dstLabel: string | null) => {
@@ -378,6 +400,7 @@ export default function MicroConnectomeConfigView() {
               // @ts-ignore-next-line
               colorScale={plotData.colorScale}
               onEntryClick={onLabelClick}
+              navUpDisabled={plotData.navUpDisabled}
               onNavUpClick={onNavUpClick}
               labelColorMap={plotData.labelColorMap}
             />

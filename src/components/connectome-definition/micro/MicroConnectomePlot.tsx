@@ -33,6 +33,7 @@ type MicroConnectomePlotBaseProps = {
   dstLabels: string[];
   labelDescriptionMap: Map<string, string>;
   onEntryClick: (srcLabel: string | null, dstLabel: string | null) => void;
+  navUpDisabled: { src: boolean; dst: boolean };
   onNavUpClick: (src: boolean, dst: boolean) => void;
   colorScale: (value: number) => string;
   labelColorMap: Map<string, string>;
@@ -135,6 +136,7 @@ function createPlotAxis(
   plotBase: Selection<SVGGElement, unknown, null, undefined>,
   srcLabels: string[],
   dstLabels: string[],
+  navUpDisabled: { src: boolean; dst: boolean },
   labelDescriptionMap: Map<string, string>,
   onEntryClick: (srcLabel: string | null, dstLabel: string | null) => void,
   onNavUpClick: (src: boolean, dst: boolean) => void,
@@ -148,6 +150,15 @@ function createPlotAxis(
   // Build X scales and axis:
   const y = scaleBand().range([height, 0]).domain(srcLabels).padding(0.01);
 
+  const srcDstNavUpDisabled = navUpDisabled.src || navUpDisabled.dst;
+
+  const onNavUpClickLocal = (src: boolean, dst: boolean) => {
+    // Do not propagate action if navUp is disabled for a given direction (src and/or dst).
+    if ((src && navUpDisabled.src) || (dst && navUpDisabled.dst)) return;
+
+    onNavUpClick(src, dst);
+  };
+
   if (!plotBase.select('.srcDstBackBar').node()) {
     const srcDstBackBar = plotBase.append('g').attr('class', 'srcDstBackBar');
 
@@ -159,14 +170,16 @@ function createPlotAxis(
       .attr('height', 68)
       .style('fill', 'grey')
       .style('opacity', 0.5)
-      .style('cursor', 'pointer')
+      .style('cursor', () => (!srcDstNavUpDisabled ? 'pointer' : 'not-allowed'))
       .on('mouseover', function mouseOverHandler() {
+        if (srcDstNavUpDisabled) return;
         this.style.opacity = '1';
       })
       .on('mouseleave', function mouseLeaveHandler() {
+        if (srcDstNavUpDisabled) return;
         this.style.opacity = '0.5';
       })
-      .on('click', () => onNavUpClick(true, true))
+      .on('click', () => onNavUpClickLocal(true, true))
       .append('title')
       .text(
         'Navigate one level of the brain hierarchy up for both: pre-synaptic and post-synaptic selections'
@@ -174,7 +187,7 @@ function createPlotAxis(
 
     srcDstBackBar
       .append('text')
-      .style('fill', 'white')
+      .style('fill', () => (!srcDstNavUpDisabled ? 'white' : 'darkgray'))
       .attr('x', -44)
       .attr('y', height + 44)
       .style('pointer-events', 'none')
@@ -192,20 +205,22 @@ function createPlotAxis(
       .attr('height', height - 6)
       .style('fill', 'grey')
       .style('opacity', 0.5)
-      .style('cursor', 'pointer')
+      .style('cursor', () => (!navUpDisabled.src ? 'pointer' : 'not-allowed'))
       .on('mouseover', function mouseOverHandler() {
+        if (navUpDisabled.src) return;
         this.style.opacity = '1';
       })
       .on('mouseleave', function mouseLeaveHandler() {
+        if (navUpDisabled.src) return;
         this.style.opacity = '0.5';
       })
-      .on('click', () => onNavUpClick(true, false))
+      .on('click', () => onNavUpClickLocal(true, false))
       .append('title')
       .text('Navigate one level of the brain hierarchy up for the pre-synaptic selection');
 
     srcBackBar
       .append('text')
-      .style('fill', 'white')
+      .style('fill', () => (!navUpDisabled.src ? 'white' : 'darkgray'))
       .attr('x', -70)
       .attr('y', height / 2)
       .style('pointer-events', 'none')
@@ -223,20 +238,22 @@ function createPlotAxis(
       .attr('height', 20)
       .style('fill', 'grey')
       .style('opacity', 0.5)
-      .style('cursor', 'pointer')
+      .style('cursor', () => (!navUpDisabled.dst ? 'pointer' : 'not-allowed'))
       .on('mouseover', function mouseOverHandler() {
+        if (navUpDisabled.dst) return;
         this.style.opacity = '1';
       })
       .on('mouseleave', function mouseLeaveHandler() {
+        if (navUpDisabled.dst) return;
         this.style.opacity = '0.5';
       })
-      .on('click', () => onNavUpClick(false, true))
+      .on('click', () => onNavUpClickLocal(false, true))
       .append('title')
       .text('Navigate one level of the brain hierarchy up for the post-synaptic selection');
 
     dstBackBar
       .append('text')
-      .style('fill', 'white')
+      .style('fill', () => (!navUpDisabled.dst ? 'white' : 'darkgray'))
       .attr('x', width / 2)
       .attr('y', height + 66)
       .style('pointer-events', 'none')
@@ -705,6 +722,7 @@ function renderVariantPlot({
   container,
   srcLabels,
   dstLabels,
+  navUpDisabled,
   labelDescriptionMap,
   viewData,
   colorScale,
@@ -719,6 +737,7 @@ function renderVariantPlot({
     plotBase,
     srcLabels,
     dstLabels,
+    navUpDisabled,
     labelDescriptionMap,
     onEntryClick,
     onNavUpClick,
@@ -775,6 +794,7 @@ export default function MicroConnectomePlot({
   type,
   srcLabels,
   dstLabels,
+  navUpDisabled,
   labelDescriptionMap,
   viewData,
   colorScale,
@@ -793,6 +813,7 @@ export default function MicroConnectomePlot({
       container,
       srcLabels,
       dstLabels,
+      navUpDisabled,
       labelDescriptionMap,
       viewData,
       colorScale,
