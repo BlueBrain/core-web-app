@@ -10,13 +10,12 @@ import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { brainRegionLeaveIdxByNotationMapAtom } from '@/state/brain-regions';
 import {
-  GranularityTabs,
   ModeSwitch,
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,
 } from '@/components/connectome-definition';
-import MacroConnectome from '@/components/connectome-definition/MacroConnectome';
+import MacroConnectome from '@/components/connectome-definition/macro/MacroConnectome';
 import { HemisphereDirection } from '@/types/connectome';
 import {
   connectivityStrengthMatrixLoadableAtom,
@@ -32,11 +31,11 @@ import {
   offsetAtom,
   multiplierAtom,
   currentEditIdxAtom,
-} from '@/components/connectome-definition/state';
+} from '@/components/connectome-definition/macro/state';
 import brainAreaAtom from '@/state/connectome-editor/sidebar';
 import { useLoadable } from '@/hooks/hooks';
 import { getFlatArrayValueIdx } from '@/util/connectome';
-import styles from '../connectome-definition.module.css';
+import styles from '../connectome-definition-view.module.scss';
 
 interface Rect extends Partial<Shape> {
   x0: number;
@@ -59,7 +58,6 @@ const STAT_CHART_DEFAULT_LAYOUT: Partial<Layout> = {
     title: { text: 'Number of pathways', font: { size: 12 }, standoff: 6 },
   },
   legend: { orientation: 'h', xanchor: 'center', x: 0.5, y: 1.2, font: { size: 10 } },
-
   width: 245,
   height: 200,
   margin: { t: 0, r: 0, b: 0, l: 20 },
@@ -82,7 +80,6 @@ export default function ConnectomeConfigurationView() {
   const addEdit = useSetAtom(addEditAtom);
   const applyEdits = useSetAtom(applyEditsAtom);
 
-  const [activeTab, setActiveTab] = useState('macro');
   const [zoom, setZoom] = useState(true);
   const [select, setSelect] = useState(false);
   const [unselect, setUnselect] = useState(false);
@@ -282,36 +279,9 @@ export default function ConnectomeConfigurationView() {
         </ConfigProvider>
       )}
 
-      <div className={styles.granularityTabs}>
-        <GranularityTabs activeTabId={activeTab} handleChange={(k: string) => setActiveTab(k)} />
-      </div>
-
-      <div className={styles.modes}>
-        <ModeSwitch
-          zoom={zoom}
-          select={select}
-          unselect={unselect}
-          setZoom={() => {
-            setZoom(true);
-            setSelect(false);
-            setUnselect(false);
-          }}
-          setSelect={() => {
-            setSelect(true);
-            setUnselect(false);
-            setZoom(false);
-          }}
-          setUnselect={() => {
-            setUnselect(true);
-            setSelect(false);
-            setZoom(false);
-          }}
-        />
-      </div>
-
       <div className={styles.matrixContainer}>
         {!connectivityMatrix && <LoadingOutlined className="text-4xl" />}
-        {activeTab === 'macro' && connectivityMatrix && (
+        {connectivityMatrix && (
           <MacroConnectome
             select={select}
             unselect={unselect}
@@ -337,7 +307,28 @@ export default function ConnectomeConfigurationView() {
         )}
       </div>
 
-      <div className={styles.leftPanel} />
+      <div className={styles.leftPanel}>
+        <ModeSwitch
+          zoom={zoom}
+          select={select}
+          unselect={unselect}
+          setZoom={() => {
+            setZoom(true);
+            setSelect(false);
+            setUnselect(false);
+          }}
+          setSelect={() => {
+            setSelect(true);
+            setUnselect(false);
+            setZoom(false);
+          }}
+          setUnselect={() => {
+            setUnselect(true);
+            setSelect(false);
+            setZoom(false);
+          }}
+        />
+      </div>
     </>
   );
 }

@@ -279,6 +279,83 @@ export interface MicroConnectomeConfig extends Entity {
 
 export interface MicroConnectomeConfigResource extends ResourceMetadata, MicroConnectomeConfig {}
 
+export type IdRev = {
+  id: string;
+  rev: number;
+};
+
+export interface MicroConnectomeConfigPayload {
+  variants: {
+    [variantName: string]: {
+      algorithm: string;
+      version: string;
+      params: {
+        [paramKey: string]: {
+          type: 'float32';
+          unitCode: string;
+          default: number;
+        };
+      };
+    };
+  };
+  initial: {
+    variants: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeVariantSelection'] };
+  } & {
+    [variantName: string]: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeData'] };
+  };
+  overrides: {
+    variants: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeVariantSelectionOverrides'] };
+  } & {
+    [variantName: string]: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeDataOverrides'] };
+  };
+}
+
+export interface MicroConnectomeEntryBase {
+  atlasRelease: {
+    '@id': string;
+    '@type': ['BrainAtlasRelease', 'AtlasRelease'];
+  };
+  brainLocation: {
+    '@type': 'BrainLocation';
+    brainRegion: {
+      '@id': string;
+      label: string;
+    };
+  };
+  name: string;
+  distribution: Distribution;
+}
+
+export interface MicroConnectomeVariantSelection extends MicroConnectomeEntryBase, Entity {
+  '@type': ['Entity', 'Dataset', 'MicroConnectomeVariantSelection'];
+}
+
+export interface MicroConnectomeVariantSelectionResource
+  extends ResourceMetadata,
+    MicroConnectomeVariantSelection {}
+
+export interface MicroConnectomeVariantSelectionOverrides extends MicroConnectomeEntryBase, Entity {
+  '@type': ['Entity', 'Dataset', 'MicroConnectomeVariantSelectionOverrides'];
+}
+
+export interface MicroConnectomeVariantSelectionOverridesResource
+  extends ResourceMetadata,
+    MicroConnectomeVariantSelectionOverrides {}
+
+export interface MicroConnectomeData extends MicroConnectomeEntryBase, Entity {
+  '@type': ['Entity', 'Dataset', 'MicroConnectomeData'];
+}
+
+export interface MicroConnectomeDataResource extends ResourceMetadata, MicroConnectomeData {}
+
+export interface MicroConnectomeDataOverrides extends MicroConnectomeEntryBase, Entity {
+  '@type': ['Entity', 'Dataset', 'MicroConnectomeDataOverrides'];
+}
+
+export interface MicroConnectomeDataOverridesResource
+  extends ResourceMetadata,
+    MicroConnectomeDataOverrides {}
+
 type SynapseGeneratorName = 'connectome_filtering';
 type SynapseConfigType = 'SynapseConfig';
 

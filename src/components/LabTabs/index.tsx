@@ -40,7 +40,7 @@ export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
           },
           {
             label: 'Connectome definition',
-            href: '/build/connectome-definition/configuration',
+            href: '/build/connectome-definition/configuration/macro',
             baseHref: '/build/connectome-definition',
           },
           {

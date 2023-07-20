@@ -133,6 +133,45 @@ export const brainRegionIdByNotationMapAtom = atom<
   );
 });
 
+export const brainRegionByNotationMapAtom = atom<
+  Promise<Map<BrainRegionNotation, BrainRegion> | null>
+>(async (get) => {
+  const brainRegions = await get(brainRegionsAtom);
+
+  if (!brainRegions) return null;
+
+  return brainRegions.reduce(
+    (map, brainRegion) => map.set(brainRegion.notation, brainRegion),
+    new Map()
+  );
+});
+
+export const brainRegionNotationByIdMapAtom = atom<
+  Promise<Map<BrainRegionId, BrainRegionNotation> | null>
+>(async (get) => {
+  const brainRegions = await get(brainRegionsAtom);
+
+  if (!brainRegions) return null;
+
+  return brainRegions.reduce(
+    (map, brainRegion) => map.set(brainRegion.id, brainRegion.notation),
+    new Map()
+  );
+});
+
+export const brainRegionByIdMapAtom = atom<Promise<Map<BrainRegionNotation, BrainRegion> | null>>(
+  async (get) => {
+    const brainRegions = await get(brainRegionsAtom);
+
+    if (!brainRegions) return null;
+
+    return brainRegions.reduce(
+      (map, brainRegion) => map.set(brainRegion.id, brainRegion),
+      new Map()
+    );
+  }
+);
+
 export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
   const brainRegions = await get(brainRegionsAtom);
   const defaultView = await get(defaultBrainRegionOntologyViewAtom);
@@ -243,6 +282,19 @@ export const brainRegionsUnsortedArrayAtom = atom<Promise<BrainRegion[] | null>>
   }
   return tree;
 });
+
+export const brainRegionIdxByNotationMapAtom = atom<Promise<Map<BrainRegionId, number> | null>>(
+  async (get) => {
+    const brainRegionsUnsorted = await get(brainRegionsUnsortedArrayAtom);
+
+    if (!brainRegionsUnsorted) return null;
+
+    return brainRegionsUnsorted.reduce(
+      (idxByNotationMap, brainRegion, idx) => idxByNotationMap.set(brainRegion.notation, idx),
+      new Map()
+    );
+  }
+);
 
 export const leafIdsByRegionIdAtom = atom<Promise<{ [id: string]: string[] }>>(async (get) => {
   const brainRegions = (await get(brainRegionsUnsortedArrayAtom)) ?? [];

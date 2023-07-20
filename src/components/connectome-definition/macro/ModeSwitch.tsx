@@ -21,7 +21,7 @@ export default function ModeSwitch({
   const highlightedClass = 'bg-slate-700 font-semibold';
 
   return (
-    <>
+    <div>
       <button
         className={classNames(baseClasses, zoom && highlightedClass)}
         type="button"
@@ -49,6 +49,6 @@ export default function ModeSwitch({
         <ExpandOutlined />
         Unselect
       </button>
-    </>
+    </div>
   );
 }

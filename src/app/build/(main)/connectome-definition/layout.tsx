@@ -1,8 +1,8 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 
-import { ConnectomeDefinitionTabs } from '@/components/connectome-definition';
+import { ConnectomeDefinitionTabs, GranularityTabs } from '@/components/connectome-definition';
 
 import styles from './connectome-definition.module.css';
 
@@ -13,11 +13,13 @@ type ConnectomeDefinitionLayoutProps = {
 export default function ConnectomeDefinitionLayout({ children }: ConnectomeDefinitionLayoutProps) {
   return (
     <div className={styles.container}>
+      <GranularityTabs />
+
       <div className={styles.viewTabs}>
         <ConnectomeDefinitionTabs />
       </div>
 
-      {children}
+      <Suspense fallback={null}>{children}</Suspense>
     </div>
   );
 }

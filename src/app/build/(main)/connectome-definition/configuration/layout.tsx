@@ -1,14 +1,13 @@
 'use client';
 
-import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
+import { ReactNode, Suspense } from 'react';
 import { ConfigProvider, theme } from 'antd';
 
-const ConnectomeConfigurationView = dynamic(() => import('./ConnectomeConfigurationView'), {
-  ssr: false,
-});
+type ConnectomeConfigLayoutProps = {
+  children: ReactNode;
+};
 
-export default function ConfigurationPage() {
+export default function ConnectomeConfigLayout({ children }: ConnectomeConfigLayoutProps) {
   return (
     <ConfigProvider
       theme={{
@@ -23,9 +22,7 @@ export default function ConfigurationPage() {
         },
       }}
     >
-      <Suspense fallback={null}>
-        <ConnectomeConfigurationView />
-      </Suspense>
+      <Suspense fallback={null}>{children}</Suspense>
     </ConfigProvider>
   );
 }

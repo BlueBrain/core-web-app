@@ -17,7 +17,7 @@ const tabs: MenuItem[] = [
   },
   {
     label: 'Configuration',
-    href: '/build/connectome-definition/configuration',
+    href: '/build/connectome-definition/configuration/macro',
     icon: <SettingsIcon className="h-4" />,
   },
 ];

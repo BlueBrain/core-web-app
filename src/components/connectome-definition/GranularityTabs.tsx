@@ -1,46 +1,29 @@
-import { useCallback, useMemo } from 'react';
-import findIndex from 'lodash/findIndex';
+import { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 
 import { MenuItem } from '@/components/TopNavigation/types';
 import TopNavigation from '@/components/TopNavigation';
-
-interface GranularityTabsProps {
-  activeTabId: string;
-  handleChange: (key: string) => void;
-}
 
 const items: MenuItem[] = [
   {
     id: 'macro',
     label: 'Macro',
+    href: '/build/connectome-definition/configuration/macro',
   },
   {
     id: 'micro',
     label: 'Micro',
+    href: '/build/connectome-definition/configuration/micro',
   },
 ];
 
-export default function GranularityTabs({ activeTabId, handleChange }: GranularityTabsProps) {
-  const activeItemIndex = useMemo(() => {
-    const index = findIndex(items, (item) => item.id === (activeTabId ?? 'macro'));
-    if (index === -1) {
-      return 0;
-    }
-    return index;
-  }, [activeTabId]);
+export default function GranularityTabs() {
+  const pathname = usePathname();
 
-  const handleActiveItemChange = useCallback(
-    (itemIndex: number) => {
-      handleChange(items[itemIndex].id ?? 'macro');
-    },
-    [handleChange]
+  const activeItemIndex = useMemo(
+    () => items.findIndex((item) => !!pathname?.includes(item.href ?? '')),
+    [pathname]
   );
 
-  return (
-    <TopNavigation.PillNav
-      items={items}
-      activeItemIndex={activeItemIndex}
-      onChange={handleActiveItemChange}
-    />
-  );
+  return <TopNavigation.PillNav items={items} activeItemIndex={activeItemIndex} />;
 }

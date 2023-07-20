@@ -1,0 +1,52 @@
+.container {
+  position: relative;
+  color: white;
+  background-color: black;
+  height: 100%;
+  display: grid;
+  padding-top: 2rem;
+  grid-template-columns: 300px auto 300px;
+  grid-template-rows: auto 65px;
+  grid-gap: 20px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    'left-panel matrix-container right-panel'
+    '. footer .';
+}
+
+.matrixContainer {
+  grid-area: matrix-container;
+  position: relative;
+}
+
+.rightPanel {
+  grid-area: right-panel;
+  display: flex;
+  flex-direction: column;
+  grid-gap: 40px;
+  padding-right: 30px;
+}
+
+.leftPanel {
+  grid-area: left-panel;
+  padding: 10px 20px;
+  min-height: 250px;
+}
+
+.footer {
+  grid-area: footer;
+}
+
+.sidePanel {
+  position: absolute;
+  right: 0;
+  height: 98%;
+  overflow: scroll;
+  top: 0;
+  background: white;
+  width: 300px;
+  z-index: 11;
+  border-radius: 8px 0px 0px 8px;
+  padding: 20px;
+  color: black;
+}

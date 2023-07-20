@@ -158,6 +158,7 @@ export default function ConnectomeEditorSidebar() {
   const setSelectedPostBrainRegion = useSetAtom(setSelectedPostBrainRegionAtom);
   const preSynapticBrainRegions = useAtomValue(selectedPreBrainRegionsAtom);
   const postSynapticBrainRegions = useAtomValue(selectedPostBrainRegionsAtom);
+
   const [navValue, setNavValue] = useState<NavValue>(null);
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const setArea = useSetAtom(brainAreaAtom);

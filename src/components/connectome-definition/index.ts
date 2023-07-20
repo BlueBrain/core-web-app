@@ -1,16 +1,14 @@
 import GranularityTabs from './GranularityTabs';
-import ModeSwitch from './ModeSwitch';
+import ModeSwitch from './macro/ModeSwitch';
 import ConnectomeDefinitionTabs from './ConnectomeDefinitionTabs';
-import MatrixPreviewComponent from './MatrixPreviewComponent';
-import MatrixDisplayDropdown from './MatrixDisplayDropdown';
+import MatrixDisplayDropdown from './macro/MatrixDisplayDropdown';
 import HemisphereDropdown from './HemisphereDropdown';
-import MatrixModificationHistoryList from './MatrixModificationHistoryList';
+import MatrixModificationHistoryList from './macro/MatrixModificationHistoryList';
 
 export {
   GranularityTabs,
   ModeSwitch,
   ConnectomeDefinitionTabs,
-  MatrixPreviewComponent,
   MatrixDisplayDropdown,
   HemisphereDropdown,
   MatrixModificationHistoryList,

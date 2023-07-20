@@ -12,7 +12,7 @@ import {
   offsetAtom,
   multiplierAtom,
   currentEditIdxAtom,
-} from '@/components/connectome-definition/state';
+} from '@/components/connectome-definition/macro/state';
 
 export default function MatrixModificationHistoryList() {
   const applyEdits = useSetAtom(applyEditsAtom);
