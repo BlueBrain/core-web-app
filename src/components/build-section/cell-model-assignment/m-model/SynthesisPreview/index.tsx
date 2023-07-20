@@ -16,7 +16,9 @@ type Props = {
   className?: string;
 };
 
-async function getImages(config: SynthesisPreviewInterface, token: string) {
+const debounceDelay = 500;
+
+async function getImages(config: SynthesisPreviewInterface, token: string, fetchOptions = {}) {
   const response = await fetch(synthesisPreviewApiUrl, {
     method: 'POST',
     headers: {
@@ -25,6 +27,7 @@ async function getImages(config: SynthesisPreviewInterface, token: string) {
       'Nexus-Token': token,
     },
     body: JSON.stringify(config),
+    ...fetchOptions,
   });
 
   if (!response.ok) {
@@ -41,25 +44,42 @@ export default function SynthesisPreview({ className }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const selectedMModelId = useAtomValue(selectedMModelIdAtom);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getImagesDebounced = useCallback(
-    debounce(async (config: SynthesisPreviewInterface, token: string) => {
-      const imgs = await getImages(config, token);
-      setImgSources({
-        barcode: { src: imgs.barcode },
-        diagram: { src: imgs.diagram },
-        image: { src: imgs.image },
-        synthesis: { src: imgs.synthesis },
-      });
-      setIsLoading(false);
-    }, 500),
+    (abortController: AbortController, config: SynthesisPreviewInterface, token: string) =>
+      debounce(async () => {
+        setIsLoading(true);
+        try {
+          const imgs = await getImages(config, token, {
+            signal: abortController.signal,
+          });
+          setImgSources({
+            barcode: { src: imgs.barcode },
+            diagram: { src: imgs.diagram },
+            image: { src: imgs.image },
+            synthesis: { src: imgs.synthesis },
+          });
+        } catch (err) {
+          if (err instanceof Error && err.name !== 'AbortError') {
+            // Handle any error not caused by the Abort Controller aborting the request
+            throw new Error(`Error using preview synthesis API ${err}`);
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      }, debounceDelay)(),
     []
   );
 
   useEffect(() => {
-    if (!mModelPreviewConfig || !session) return;
+    if (!mModelPreviewConfig || !session) return undefined;
+
     setIsLoading(true);
-    getImagesDebounced(mModelPreviewConfig, session.accessToken);
+    const abortController = new AbortController();
+    getImagesDebounced(abortController, mModelPreviewConfig, session.accessToken);
+
+    return () => {
+      abortController.abort();
+    };
   }, [mModelPreviewConfig, session, getImagesDebounced, selectedMModelId]);
 
   const isLoadingStyle = isLoading ? 'opacity-50' : '';
