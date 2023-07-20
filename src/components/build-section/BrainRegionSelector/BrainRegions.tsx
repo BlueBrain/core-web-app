@@ -111,6 +111,7 @@ export default function BrainRegions() {
     setNavValue(null); // reset tree
     resetBrainRegion(null); // reset brain region
     setResetAtlasVisualization(); // reset meshes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brainModelConfigId, localSelectedBrainModelConfigId]);
 
   return brainRegionsTree ? (

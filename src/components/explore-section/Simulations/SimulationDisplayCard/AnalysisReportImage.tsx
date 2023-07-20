@@ -33,6 +33,7 @@ export default function AnalysisReportImage({ src }: AnalysisReportImageProps) {
           view simulation detail <ArrowRightOutlined className="ml-3" />
         </button>
       </div>
+      {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
       <img width="425px" height="260px" src={src} />
       <div className="flex text-primary-7 mt-3 justify-between items-center">
         <div className="flex gap-3">

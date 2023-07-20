@@ -64,6 +64,7 @@ export const makeText = (text: string, textProps: TextProps) => {
   const { apparentFontSize = 5 } = textProps;
   const canvas = createTextCanvas(text, textProps);
   if (!canvas) {
+    // eslint-disable-next-line no-console
     console.warn('no canvas found when making text');
     return;
   }

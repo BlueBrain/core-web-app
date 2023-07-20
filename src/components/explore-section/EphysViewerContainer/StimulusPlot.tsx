@@ -55,6 +55,7 @@ function StimulusPlot({
 
   const selectedResponse: Partial<PlotData>[] = React.useMemo(
     () => rawData?.filter((data) => selectedSweeps.includes(data.sweepName)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [options, dataset, selectedSweeps, metadata, stimulusUnit]
   );
 
@@ -67,6 +68,7 @@ function StimulusPlot({
 
         return { ...data, opacity };
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [previewSweep]
   );
 

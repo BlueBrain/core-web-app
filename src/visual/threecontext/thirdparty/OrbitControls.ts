@@ -416,6 +416,7 @@ export default class OrbitControls extends ThreeEventDispatcher {
           this.update();
           break;
         default:
+          // eslint-disable-next-line no-console
           console.warn(`Unhandled key code: ${event.keyCode}`);
           break;
       }
@@ -668,6 +669,7 @@ export default class OrbitControls extends ThreeEventDispatcher {
       );
     } else {
       // camera neither orthographic nor perspective
+      // eslint-disable-next-line no-console
       console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
       this.enablePan = false;
     }
@@ -684,6 +686,7 @@ export default class OrbitControls extends ThreeEventDispatcher {
       this.object.updateProjectionMatrix();
       this.zoomChanged = true;
     } else {
+      // eslint-disable-next-line no-console
       console.warn(
         'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.'
       );
@@ -702,6 +705,7 @@ export default class OrbitControls extends ThreeEventDispatcher {
       this.object.updateProjectionMatrix();
       this.zoomChanged = true;
     } else {
+      // eslint-disable-next-line no-console
       console.warn(
         'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.'
       );
@@ -773,16 +777,19 @@ export default class OrbitControls extends ThreeEventDispatcher {
 
   // backward compatibility
   get center(): ThreeVector3 {
+    // eslint-disable-next-line no-console
     console.warn('ThreeOrbitControls: .center has been renamed to .target');
     return this.target;
   }
 
   get noZoom(): boolean {
+    // eslint-disable-next-line no-console
     console.warn('ThreeOrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
     return !this.enableZoom;
   }
 
   set noZoom(value: boolean) {
+    // eslint-disable-next-line no-console
     console.warn('ThreeOrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
     this.enableZoom = !value;
   }

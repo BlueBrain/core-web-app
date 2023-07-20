@@ -58,6 +58,7 @@ export default function MorphologyViewer({
       mv._threeContext._render();
     }
     // @ts-ignore
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mv && mv._threeContext]);
 
   React.useEffect(() => {
@@ -112,6 +113,7 @@ export default function MorphologyViewer({
       orientationViewer?.destroy();
       setOrientationViewer(null);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orientationRef, mv, options]);
 
   // Scale Axis Operations
@@ -140,6 +142,7 @@ export default function MorphologyViewer({
       // @ts-ignore
       mv?._threeContext?._controls?.removeEventListener('change', controlEventListenerChangedEvent);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scaleRef, mv, options]);
 
   const handleOrientationClick = () => {

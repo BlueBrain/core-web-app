@@ -48,6 +48,7 @@ function ResponsePlot({
 
   const selectedResponse: Partial<PlotData>[] = React.useMemo(
     () => rawData?.filter((data) => selectedSweeps.includes(data.sweepName)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [options, dataset, selectedSweeps, metadata]
   );
 
@@ -62,6 +63,7 @@ function ResponsePlot({
           opacity,
         };
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [previewSweep]
   );
 

@@ -15,6 +15,7 @@ export default function PlotRenderer({ plotResponse, plotName, title }: PlotRend
       <h2 className={titleStyle}>{title}</h2>
       {!plotBase64Src && <div className="ml-8 my-4 text-primary-8">Loading...</div>}
       {plotBase64Src && (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           style={{ objectFit: 'contain' }}
           src={`data:image/png;base64, ${plotBase64Src}`}

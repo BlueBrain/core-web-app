@@ -85,6 +85,7 @@ export default function createImageCollectionDataAtom(
         !imageResourceMaybe._mediaType.includes('image') &&
         imageResourceMaybe._bytes <= MAX_BYTES_TO_PREVIEW
       ) {
+        // eslint-disable-next-line no-console
         console.warn(`not previewing ${imageResourceMaybe['@id']} because image is too large`);
         return;
       }

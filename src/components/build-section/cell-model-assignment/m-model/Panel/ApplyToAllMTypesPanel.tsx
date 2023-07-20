@@ -17,10 +17,12 @@ export default function ApplyToAllMTypesPanel() {
   }, []);
 
   const applyActiveModelToAll = useCallback(() => {
+    // eslint-disable-next-line no-console
     console.warn(`Not implemented: Apply ${activeModel}`);
   }, [activeModel]);
 
   const resetToDefault = useCallback(() => {
+    // eslint-disable-next-line no-console
     console.warn('Not implemented: Reset to default');
   }, []);
 

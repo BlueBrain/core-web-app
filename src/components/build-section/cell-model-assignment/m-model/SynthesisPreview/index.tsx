@@ -41,6 +41,7 @@ export default function SynthesisPreview({ className }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const selectedMModelId = useAtomValue(selectedMModelIdAtom);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getImagesDebounced = useCallback(
     debounce(async (config: SynthesisPreviewInterface, token: string) => {
       const imgs = await getImages(config, token);
