@@ -47,8 +47,6 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
     if (isLeafNode) {
       body = (
         <>
-          <PanelTitle title={brainRegion?.title} onClick={handleClick} className="px-7" />
-
           <ApplyToAllMTypesPanel />
 
           <List />
@@ -64,5 +62,10 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
     }
   }
 
-  return <div className="flex flex-1 flex-col overflow-y-auto py-6 min-w-[300px]">{body}</div>;
+  return (
+    <div className="flex flex-1 flex-col overflow-y-auto py-6 min-w-[300px]">
+      <PanelTitle title={brainRegion?.title} onClick={handleClick} className="px-7" />
+      {body}
+    </div>
+  );
 }
