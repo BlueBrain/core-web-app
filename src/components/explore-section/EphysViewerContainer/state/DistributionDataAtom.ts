@@ -4,7 +4,6 @@ import { Distribution, Entity } from '@/types/nexus';
 import { DataSets, RABIndex } from '@/types/explore-section/fields';
 import RandomAccessBuffer from '@/util/explore-section/random-access-buffer';
 import useLazyCache from '@/components/explore-section/EphysViewerContainer/hooks/useLazyCache';
-import { composeUrl } from '@/util/nexus';
 import { fetchFileByUrl, fetchResourceById, listResourceLinksById } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 
@@ -19,15 +18,13 @@ import sessionAtom from '@/state/session';
  */
 function processRABDistro(
   RABDistro: Distribution,
-  orgLabel: string,
-  projectLabel: string,
   session: Session
 ): Promise<{
   RABIndex: RABIndex;
   datasets: DataSets;
 }> {
   return new Promise((resolve) => {
-    const resourceIds = RABDistro.contentUrl.split('/');
+    const { contentUrl } = RABDistro;
     const fileReader = new FileReader();
 
     function parseRABData() {
@@ -56,8 +53,7 @@ function processRABDistro(
       RABIndex: RABIndex;
       datasets: DataSets;
     }>();
-    const cacheKey = resourceIds[resourceIds.length - 1];
-    const cacheMatch = cacheGet(cacheKey);
+    const cacheMatch = cacheGet(contentUrl);
 
     if (cacheMatch) {
       resolve(cacheMatch);
@@ -67,7 +63,7 @@ function processRABDistro(
     fileReader.onload = () => {
       const { nameToDataSetMap, index }: { nameToDataSetMap: DataSets; index: RABIndex } =
         parseRABData();
-      cacheAdd(cacheKey, {
+      cacheAdd(contentUrl, {
         RABIndex: index,
         datasets: nameToDataSetMap,
       });
@@ -78,13 +74,7 @@ function processRABDistro(
       });
     };
 
-    const url = composeUrl('file', cacheKey, {
-      org: orgLabel,
-      project: projectLabel,
-      idExpand: false,
-    });
-
-    fetchFileByUrl(url, session)
+    fetchFileByUrl(contentUrl, session)
       .then((res) => res.blob())
       .then((value) => fileReader.readAsArrayBuffer(value as Blob));
   });
@@ -107,7 +97,7 @@ export default function createDistributionDataAtom(
       .then((response: any) => {
         const results = response._results;
         const traces = results.filter((link: Entity) =>
-          link['@type']?.includes('https://neuroshapes.org/Trace')
+          link['@type']?.includes('https://bbp.epfl.ch/ontologies/core/bmo/TraceWebDataContainer')
         );
         const promises = traces.map((trace: Entity) =>
           fetchResourceById(trace['@id'], session, { org, project })
@@ -122,7 +112,7 @@ export default function createDistributionDataAtom(
           return false;
         });
         if (rabTrace) {
-          return processRABDistro(rabTrace.distribution, org, project, session);
+          return processRABDistro(rabTrace.distribution, session);
         }
         return rabTrace;
       })
