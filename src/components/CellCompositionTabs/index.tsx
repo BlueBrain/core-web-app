@@ -22,7 +22,7 @@ const DEFAULT_TABS: MenuItem[] = [
   },
   {
     label: 'Configuration',
-    href: '/build/cell-composition/configuration/macro',
+    href: '/build/cell-composition/configuration',
     icon: <SettingsIcon className="h-4" />,
   },
 ];
