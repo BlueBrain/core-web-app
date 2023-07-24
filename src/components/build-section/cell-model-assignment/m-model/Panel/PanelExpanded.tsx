@@ -8,6 +8,7 @@ import List from '@/components/build-section/cell-model-assignment/m-model/Panel
 import { BrainRegionIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import ApplyToAllMTypesPanel from '@/components/build-section/cell-model-assignment/m-model/Panel/ApplyToAllMTypesPanel';
+import { SelectedBrainRegion } from '@/state/brain-regions/types';
 
 interface PanelTitleProps {
   title?: string;
@@ -32,6 +33,10 @@ function PanelTitle({ title, onClick, className }: PanelTitleProps) {
   );
 }
 
+function isLeafNode(brainRegion: SelectedBrainRegion) {
+  return !brainRegion.leaves && brainRegion.representedInAnnotation;
+}
+
 interface PanelExpandedProps {
   setIsSidebarExpanded: Dispatch<SetStateAction<boolean>>;
 }
@@ -43,8 +48,7 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
 
   let body = null;
   if (brainRegion) {
-    const isLeafNode = !brainRegion.leaves && brainRegion.representedInAnnotation;
-    if (isLeafNode) {
+    if (isLeafNode(brainRegion)) {
       body = (
         <>
           <ApplyToAllMTypesPanel />

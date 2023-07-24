@@ -8,6 +8,7 @@ import { checkMatchPatterns } from '@/util/pattern-matching';
 const DARK_THEME_PATH_PATTERNS = [
   /^\/build\/cell-composition\/interactive/,
   /^\/build\/connectome-definition/,
+  /^\/build\/connectome-model-assignment\/configuration/,
 ];
 
 export default function useTheme() {

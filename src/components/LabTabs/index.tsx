@@ -45,7 +45,7 @@ export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
           },
           {
             label: 'Connection model assignment',
-            href: '/build/connectome-model-assignment',
+            href: '/build/connectome-model-assignment/configuration',
             baseHref: '/build/connectome-model-assignment',
           },
         ]}
