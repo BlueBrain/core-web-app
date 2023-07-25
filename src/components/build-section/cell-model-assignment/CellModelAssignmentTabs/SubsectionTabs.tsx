@@ -26,7 +26,7 @@ export default function SubsectionTabs({ className }: Props) {
 
   const getTabClassName = (tab: ModeTabsType) => {
     const isDisabled = tab.disabled;
-    const active = !!pathname?.startsWith(tab.href);
+    const active = !!pathname?.includes(tab.href);
 
     return classNames(
       isDisabled ? 'pointer-events-none' : '',

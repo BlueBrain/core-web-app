@@ -93,7 +93,7 @@ export default function SynthesisPreview({ className }: Props) {
       </div>
 
       <div className={classNames('w-1/2', isLoadingStyle)}>
-        <PlotRenderer plotResponse={imgSources} plotName="synthesis" title="Synthesis / test h5" />
+        <PlotRenderer plotResponse={imgSources} plotName="synthesis" title="Synthesized neuron" />
       </div>
       {isLoading && (
         <div className="absolute flex w-full h-full items-center justify-center text-primary-8 text-2xl">
