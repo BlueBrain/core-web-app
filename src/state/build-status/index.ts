@@ -29,7 +29,7 @@ export const GROUPS = {
   CELL_COMPOSITION: 'Cell composition',
   CELL_MODEL_ASSIGNMENT: 'Cell model assignment',
   CONNECTOME_DEFINITION: 'Connectome definition',
-  CONNECTION_MODEL_ASSIGNMENT: 'Connection model assignment',
+  CONNECTOME_MODEL_ASSIGNMENT: 'Connectome model assignment',
 } as const;
 
 export type CellCompositionStepGroupValues = (typeof GROUPS)[keyof typeof GROUPS];
@@ -98,7 +98,7 @@ export const statusStructure: StatusStructureItem[] = [
     ],
   },
   {
-    name: GROUPS.CONNECTION_MODEL_ASSIGNMENT,
+    name: GROUPS.CONNECTOME_MODEL_ASSIGNMENT,
     items: [
       {
         name: STEPS.MACRO,
