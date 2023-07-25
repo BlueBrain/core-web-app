@@ -1,0 +1,1 @@
+export { WideButton } from './WideButton';

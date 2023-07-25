@@ -7,8 +7,6 @@ import { Table, Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
-import SearchInput from './SearchInput';
-import ListTypeSelector from './ListTypeSelector';
 import { SimulationCampaignUIConfigResource } from '@/types/nexus';
 import { triggerRefetchAtom } from '@/state/experiment-designer';
 import { simCampaignListAtom } from '@/state/simulate';
@@ -74,15 +72,9 @@ export default function SimCampaignList() {
   );
 
   return (
-    <>
-      <ListTypeSelector />
-
-      <div className="flex mb-3 justify-between">
-        <small className="self-center">
-          <span className="text-primary-4">Total configurations: </span>
-          <span className="font-bold">{configs.length}</span>
-        </small>
-        <SearchInput />
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-1">
+        <h3 className="text-2xl font-bold">My simulation configurations</h3>
       </div>
 
       <ConfigList<SimulationCampaignUIConfigResource>
@@ -127,6 +119,6 @@ export default function SimCampaignList() {
 
       {renameContextHolder}
       {cloneContextHolder}
-    </>
+    </div>
   );
 }

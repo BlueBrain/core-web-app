@@ -5,7 +5,6 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Table, Button } from 'antd';
 
-import SearchInput from './SearchInput';
 import { DateISOString, LaunchedSimCampUIConfigType } from '@/types/nexus';
 import { launchedSimCampaignListAtom } from '@/state/simulate';
 import ConfigList from '@/components/ConfigList';
@@ -54,10 +53,19 @@ export default function LaunchedSimCampaignList() {
 
   return (
     <>
-      <div className="text-2xl h-10 py-2 px-6 mt-7 font-bold">Simulation Campaigns Run Status</div>
+      <div className="text-2xl h-10 py-2 mt-7 font-bold">My simulation configurations</div>
 
-      <div className="flex justify-end mb-3">
-        <SearchInput />
+      <div className="flex flex-row justify-between mt-2">
+        <div className="flex flex-row gap-5">
+          <small className="flex flex-row gap-1 self-center">
+            <span className="text-primary-4">Simulations running</span>
+            <span className="font-bold">n/a</span>
+          </small>
+          <small className="flex flex-row gap-1 self-center">
+            <span className="text-primary-4">Simulations done</span>
+            <span className="font-bold">n/a</span>
+          </small>
+        </div>
       </div>
 
       <ConfigList<LaunchedSimCampUIConfigType>

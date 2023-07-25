@@ -3,38 +3,41 @@
 import { PlusOutlined } from '@ant-design/icons';
 
 import Link from '@/components/Link';
-import {
-  SimCampaignList,
-  LaunchedSimCampaignList,
-  SimCampUIConfigTemplateGrid,
-} from '@/components/simulate';
+import { LaunchedSimCampaignList, SimCampUIConfigTemplateGrid } from '@/components/simulate';
+import { WideButton } from '@/components/simulate/sim-campaign-selector';
+import { EyeIcon } from '@/components/icons';
 
 export default function SimulationCampaignSelectorPage() {
   return (
     <>
-      <Link href="/simulate/brain-config-selector">
-        <button type="button" className="flex justify-between items-center p-8 bg-primary-8">
-          <div className="mr-9 items-start flex-col flex">
-            <div className="font-bold text-2xl">Create new simulation campaign configuration</div>
-            <div className="mt-3 text-primary-3">Description</div>
-          </div>
-          <PlusOutlined />
-        </button>
-      </Link>
+      <div className="flex flex-col gap-6">
+        <Link href="/explore/simulation-campaigns">
+          <WideButton
+            title="Browse simulation experiments"
+            description="Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            icon={<EyeIcon fill="#fff" />}
+            className="bg-primary-7"
+          />
+        </Link>
 
-      <span id="simulate-templates">
+        <Link href="/simulate/brain-config-selector">
+          <WideButton
+            title="Create new simulation experiment"
+            description="Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            icon={<PlusOutlined />}
+            className="bg-primary-8"
+          />
+        </Link>
+      </div>
+
+      <div className="py-5 text-primary-2 text-lg">Or use one of our template:</div>
+
+      <div id="simulate-templates">
         <SimCampUIConfigTemplateGrid />
-      </span>
+      </div>
 
       <span id="simulate-runs">
         <LaunchedSimCampaignList />
-      </span>
-
-      <span id="simulate-public">
-        {/* adding another one to scroll to this section or public and personal */}
-        <span id="simulate-personal">
-          <SimCampaignList />
-        </span>
       </span>
     </>
   );
