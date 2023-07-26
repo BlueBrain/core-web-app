@@ -9,6 +9,7 @@ import {
   expandId,
   createGeneratorConfig,
   createDistribution,
+  removeMetadata,
 } from '@/util/nexus';
 import {
   BrainModelConfig,
@@ -204,13 +205,15 @@ export function listResourceLinksById<T>(
 export function createResource<T extends EntityResource>(
   resource: Record<string, any>,
   session: Session
-) {
+): Promise<T> {
   const createResourceApiUrl = composeUrl('resource', '', { sync: true, schema: null });
+  // TODO: remove this while all entities do not have metadata in source
+  const sanitizedResource = removeMetadata(resource);
 
   return fetch(createResourceApiUrl, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
-    body: JSON.stringify(resource),
+    body: JSON.stringify(sanitizedResource),
   }).then<T>((res) => res.json());
 }
 
@@ -220,13 +223,15 @@ export function updateResource(
   session: Session
 ): Promise<EntityResource> {
   const id = resource['@id'];
+  // TODO: remove this while all entities do not have metadata in source
+  const sanitizedResource = removeMetadata(resource);
 
   const url = composeUrl('resource', id, { rev, sync: true });
 
   return fetch(url, {
     method: 'PUT',
     headers: createHeaders(session.accessToken),
-    body: JSON.stringify(resource),
+    body: JSON.stringify(sanitizedResource),
   }).then((res) => res.json());
 }
 

@@ -1,3 +1,5 @@
+import pickBy from 'lodash/pickBy';
+
 import { nexus } from '@/config';
 import {
   Distribution,
@@ -7,6 +9,7 @@ import {
   GeneratorName,
 } from '@/types/nexus';
 import { PartialBy } from '@/types/common';
+import { metadataKeys } from '@/constants/nexus';
 
 export function collapseId(nexusId: string) {
   return nexusId?.replace(`${nexus.defaultIdBaseUrl}/`, '') ?? '';
@@ -173,4 +176,8 @@ export function setRevision<T extends string | undefined>(url?: T, rev?: number 
 
 export function ensureArray<T>(value: T | T[]) {
   return Array.isArray(value) ? value : [value];
+}
+
+export function removeMetadata(resource: Record<string, any>) {
+  return pickBy(resource, (value, key) => !metadataKeys.includes(key));
 }
