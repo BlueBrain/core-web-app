@@ -56,7 +56,15 @@ export function fetchJsonFileById<T>(id: string, session: Session) {
 }
 
 export function fetchFileByUrl(url: string, session: Session): Promise<Response> {
-  return fetch(url, {
+  // TODO refactor when KG id resolution is finalised.
+  const urlWithExpandedId = url.split('/').at(-1)?.includes('http')
+    ? url
+    : url.replace(
+        /[a-z|0-9|-]*$/,
+        encodeURIComponent(`https://bbp.epfl.ch/neurosciencegraph/data/${url.split('/').at(-1)}`)
+      );
+
+  return fetch(urlWithExpandedId, {
     headers: createHeaders(session.accessToken),
   });
 }
