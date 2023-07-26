@@ -10,7 +10,7 @@ import {
   canonicalMapAtom,
   selectedCanonicalMapAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
-import { expandBrainRegionId, generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
+import { expandBrainRegionId, generateBrainRegionMTypeMapKey } from '@/util/cell-model-assignment';
 import { ModelChoice } from '@/types/m-model';
 import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
@@ -60,7 +60,7 @@ export default function List() {
     listItems = (
       <>
         {mModelItems.map((item) => {
-          const regionMTypeKey = generateBrainMTypeMapKey(expandedBrainRegionId, item.id);
+          const regionMTypeKey = generateBrainRegionMTypeMapKey(expandedBrainRegionId, item.id);
           const hasCanonical = canonicalMap.get(regionMTypeKey);
           const isCanonical = hasCanonical && !!selectedCanonicalMap.get(regionMTypeKey);
           const activeModel = isCanonical ? `canonical_${item.label}` : 'placeholder';

@@ -5,14 +5,14 @@ export function expandBrainRegionId(brainRegionId: string) {
   return fullBrainRegionId;
 }
 
-export function generateBrainMTypePairPath(brainRegionId: string, mTypeId: string) {
+export function generateBrainRegionMTypeArray(brainRegionId: string, mTypeId: string) {
   if (brainRegionId.startsWith('http')) {
     return [brainRegionId, mTypeId];
   }
   return [expandBrainRegionId(brainRegionId), mTypeId];
 }
 
-export function generateBrainMTypeMapKey(brainRegionId: string, mTypeId: string) {
+export function generateBrainRegionMTypeMapKey(brainRegionId: string, mTypeId: string) {
   if (brainRegionId.startsWith('http')) {
     return `${brainRegionId}<>${mTypeId}`;
   }

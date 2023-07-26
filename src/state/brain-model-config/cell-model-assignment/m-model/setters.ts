@@ -10,7 +10,6 @@ import {
   configPayloadRevAtom,
   configAtom,
   mModelOverridesAtom,
-  selectedMModelIdAtom,
   accumulativeLocalTopologicalSynthesisParamsAtom,
   fetchedRemoteOverridesMapAtom,
   canonicalModelParametersAtom,
@@ -18,16 +17,19 @@ import {
   accumulativeTopologicalSynthesisParamsAtom,
   canonicalMorphologyModelIdAtom,
   remoteConfigPayloadAtom,
+  brainRegionMTypeArrayAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import sessionAtom from '@/state/session';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { MorphologyAssignmentConfigPayload } from '@/types/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { createGeneratorConfig, setRevision } from '@/util/nexus';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
-import { generateBrainMTypeMapKey, generateBrainMTypePairPath } from '@/util/cell-model-assignment';
+import {
+  generateBrainRegionMTypeMapKey,
+  generateBrainRegionMTypeArray,
+} from '@/util/cell-model-assignment';
 
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
@@ -91,20 +93,19 @@ const setConfigPayloadAtom = atom<null, [MorphologyAssignmentConfigPayload], voi
 export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig | null>>(
   null,
   async (get, set) => {
-    const brainRegion = get(selectedBrainRegionAtom);
-    const mTypeId = get(selectedMModelIdAtom);
+    const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
 
-    if (!brainRegion || !mTypeId) return null;
+    if (!brainRegionMTypeArray) return null;
 
-    if (brainRegion.leaves || !brainRegion.representedInAnnotation) return null;
+    const [brainRegionId, mTypeId] = brainRegionMTypeArray;
 
     const fetchedOverridesMap = get(fetchedRemoteOverridesMapAtom);
-    const brainMTypeMapKey = generateBrainMTypeMapKey(brainRegion.id, mTypeId);
+    const brainMTypeMapKey = generateBrainRegionMTypeMapKey(brainRegionId, mTypeId);
     const fetchedInfo = fetchedOverridesMap?.get(brainMTypeMapKey);
 
     if (fetchedInfo) {
       const accumulative = await get(accumulativeTopologicalSynthesisParamsAtom);
-      const path = [...generateBrainMTypePairPath(brainRegion.id, mTypeId), 'overrides'];
+      const path = [...brainRegionMTypeArray, 'overrides'];
       const localOverrides = lodashGet(accumulative, path);
 
       set(mModelOverridesAtom, localOverrides || {});
@@ -129,14 +130,13 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
 export const setMModelLocalTopologicalSynthesisParamsAtom = atom<null, [], void>(
   null,
   (get, set) => {
-    const selectedBrainRegion = get(selectedBrainRegionAtom);
-    const selectedMTypeId = get(selectedMModelIdAtom);
+    const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
 
-    if (!selectedBrainRegion || !selectedMTypeId) return;
+    if (!brainRegionMTypeArray) return;
 
-    if (selectedBrainRegion.leaves || !selectedBrainRegion.representedInAnnotation) return;
+    const [brainRegionId, mTypeId] = brainRegionMTypeArray;
 
-    set(setAccumulativeTopologicalSynthesisAtom, selectedBrainRegion.id, selectedMTypeId, 'add');
+    set(setAccumulativeTopologicalSynthesisAtom, brainRegionId, mTypeId, 'add');
   }
 );
 
@@ -155,7 +155,7 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
   }
 
   const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
-  lodashSet(accumulative, generateBrainMTypePairPath(brainRegionId, mTypeId), {
+  lodashSet(accumulative, generateBrainRegionMTypeArray(brainRegionId, mTypeId), {
     id: canonicalMorphologyModelId,
     overrides,
   });

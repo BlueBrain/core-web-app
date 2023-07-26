@@ -14,7 +14,7 @@ import {
   selectedCanonicalMapAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import { generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
+import { generateBrainRegionMTypeMapKey } from '@/util/cell-model-assignment';
 
 const selectedCanonicalMapAtomLoadable = loadable(selectedCanonicalMapAtom);
 const baseBannerStyle = 'flex h-full items-center justify-center text-4xl';
@@ -35,7 +35,7 @@ export default function ConfigurationPage() {
     body = <div className={baseBannerStyle}>Select region and M-Type</div>;
   } else {
     const isCanonical = selectedCanonicalMap.get(
-      generateBrainMTypeMapKey(selectedRegion.id, selectedMModelId)
+      generateBrainRegionMTypeMapKey(selectedRegion.id, selectedMModelId)
     );
 
     if (!isCanonical) {
