@@ -16,7 +16,7 @@ import {
   selectedMModelNameAtom,
   selectedMModelIdAtom,
   mModelRemoteOverridesLoadedAtom,
-} from '@/state/brain-model-config/cell-model-assignment';
+} from '@/state/brain-model-config/cell-model-assignment/m-model';
 import useMModelQueryParam from '@/hooks/m-model-editor';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { fetchMModelRemoteOverridesAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';

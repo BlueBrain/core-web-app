@@ -4,7 +4,7 @@ import { OptionsOrGroups } from 'react-select';
 import {
   selectedMModelNameAtom,
   selectedMModelIdAtom,
-} from '@/state/brain-model-config/cell-model-assignment';
+} from '@/state/brain-model-config/cell-model-assignment/m-model';
 import ModelSelect from '@/components/build-section/cell-model-assignment/m-model/Panel/ModelSelect';
 import { ModelChoice } from '@/types/m-model';
 

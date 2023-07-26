@@ -12,7 +12,7 @@ import {
 import {
   selectedMModelIdAtom,
   selectedCanonicalMapAtom,
-} from '@/state/brain-model-config/cell-model-assignment';
+} from '@/state/brain-model-config/cell-model-assignment/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { generateBrainMTypeMapKey } from '@/util/cell-model-assignment';
 

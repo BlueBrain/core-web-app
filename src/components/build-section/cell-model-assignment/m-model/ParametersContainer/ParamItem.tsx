@@ -3,7 +3,10 @@ import set from 'lodash/set';
 
 import NumberParam from './NumberParam';
 import StepSizeParam from './StepSizeParam';
-import { mModelOverridesAtom } from '@/state/brain-model-config/cell-model-assignment';
+import {
+  mModelOverridesAtom,
+  mModelNeuriteTypeSelectedAtom,
+} from '@/state/brain-model-config/cell-model-assignment/m-model';
 import {
   RequiredParamRawNames,
   ParamInfo,
@@ -12,7 +15,6 @@ import {
 } from '@/types/m-model';
 import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
-import { mModelNeuriteTypeSelectedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;

@@ -5,11 +5,13 @@ import debounce from 'lodash/debounce';
 import { useAtomValue } from 'jotai';
 
 import PlotRenderer from './PlotRenderer';
-import { mModelPreviewConfigAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import {
+  mModelPreviewConfigAtom,
+  selectedMModelIdAtom,
+} from '@/state/brain-model-config/cell-model-assignment/m-model';
 import sessionAtom from '@/state/session';
 import { SynthesisPreviewInterface, SynthesisPreviewApiPlotResponse } from '@/types/m-model';
 import { classNames } from '@/util/utils';
-import { selectedMModelIdAtom } from '@/state/brain-model-config/cell-model-assignment';
 import { synthesisPreviewApiUrl } from '@/constants/cell-model-assignment/m-model';
 
 type Props = {

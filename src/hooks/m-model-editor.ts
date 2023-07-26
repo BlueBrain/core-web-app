@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAtom } from 'jotai';
 
-import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment';
+import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 export default function useMModelQueryParam() {
   const [currentMModelName, setMModelName] = useAtom(selectedMModelNameAtom);

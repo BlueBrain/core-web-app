@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 import NeuriteTypeDropdown from './NeuriteTypeDropdown';
 import ParametersWrapper from './ParametersWrapper';
 import { SettingsIcon } from '@/components/icons';
-import { mModelRemoteOverridesLoadedAtom } from '@/state/brain-model-config/cell-model-assignment';
+import { mModelRemoteOverridesLoadedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 type Props = {
   className?: string;

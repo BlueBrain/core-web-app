@@ -3,8 +3,10 @@ import { useAtomValue } from 'jotai';
 import ParameterItem from './ParamItem';
 import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
 import { RequiredParamRawNames } from '@/types/m-model';
-import { getMModelLocalOverridesAtom } from '@/state/brain-model-config/cell-model-assignment';
-import { mModelNeuriteTypeSelectedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import {
+  mModelNeuriteTypeSelectedAtom,
+  getMModelLocalOverridesAtom,
+} from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 type Props = {
   className?: string;
