@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Slider, Collapse } from 'antd';
+import { Slider, Collapse, CollapseProps } from 'antd';
 import { ImportOutlined } from '@ant-design/icons';
 import type { SliderMarks } from 'antd/es/slider';
 import { PrimitiveAtom, useAtom } from 'jotai';
@@ -11,8 +11,6 @@ import Stepper from './Stepper';
 import type { ExpDesignerRangeParameter, StepperType } from '@/types/experiment-designer';
 import { classNames } from '@/util/utils';
 import { calculateRangeOutput } from '@/components/experiment-designer/utils';
-
-const { Panel } = Collapse;
 
 type Props = {
   paramAtom: PrimitiveAtom<ExpDesignerRangeParameter>;
@@ -109,14 +107,12 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
     </div>
   );
 
-  return (
-    <Collapse
-      expandIconPosition="end"
-      ghost
-      className={className}
-      onChange={() => setIsExpanded((old) => !old)}
-    >
-      <Panel header={collapseTitle} key="1" extra={genExtra()}>
+  const items: CollapseProps['items'] = [
+    {
+      key: '1',
+      label: collapseTitle,
+      extra: genExtra(),
+      children: (
         <div className={classNames(borderStyle, 'p-2')}>
           <div>
             RANGE
@@ -140,7 +136,17 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
           <div className="mt-5">STEPPER</div>
           <Stepper data={data} onChange={onStepperChange} />
         </div>
-      </Panel>
-    </Collapse>
+      ),
+    },
+  ];
+
+  return (
+    <Collapse
+      expandIconPosition="end"
+      ghost
+      className={className}
+      onChange={() => setIsExpanded((old) => !old)}
+      items={items}
+    />
   );
 }
