@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function HomeHeader({ title, description }: { title: string; description: string }) {
   return (
-    <div className="fixed top-0 left-0 w-1/3 h-full flex flex-col p-6">
+    <div className="fixed z-10 top-0 left-0 w-1/3 h-full flex flex-col p-6">
       <div className="flex flex-col">
         <h1 className="text-white text-5xl font-bold inline">{title}</h1>
         <p className="mt-2 font-thin leading-5 text-primary-2 w-2/3">{description}</p>

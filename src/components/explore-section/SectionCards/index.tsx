@@ -1,84 +1,145 @@
-'use client';
-
 import Link from 'next/link';
-import { useState } from 'react';
-import { EyeIcon, AddIcon } from '@/components/icons';
+import React, { useState, Dispatch, SetStateAction } from 'react';
+import dynamic from 'next/dynamic';
+import { SubsectionCard } from './SubsectionCard';
+import { EyeIcon } from '@/components/icons';
+import { classNames } from '@/util/utils';
 
-// TYPE
+const DOpenCloseIconButton = dynamic(() => import('@/components/IconButton/OpenCloseIconButton'), {
+  ssr: false,
+});
 
-type SectionCardsProps = {
-  content: any;
-  cardIndex: number;
-};
+// TYPES ---------
 
-type SubSectionProps = {
+type Items = {
   name: string;
-  subtitle: string;
+  type: string;
   url: string;
 };
 
-export default function SectionCards({ content, cardIndex }: SectionCardsProps) {
+type Content = {
+  name: string;
+  description: string;
+  url: string;
+  icon: string;
+  image: string;
+  items?: Items[] | null;
+};
+
+type SectionCard = {
+  content: Content;
+  cardIndex: number;
+  setCurrentImageBackground: Dispatch<SetStateAction<string>>;
+};
+
+//---------------
+
+export default function SectionCards({
+  content,
+  cardIndex,
+  setCurrentImageBackground,
+}: SectionCard) {
   const [sectionStatus, setSectionStatus] = useState<boolean>(false);
+  const [mouseOver, setMouseOver] = useState<boolean>(false);
 
   const backgroundColor = cardIndex <= 1 ? 'bg-primary-7' : 'bg-primary-8';
 
+  const handleMouseOver = () => {
+    setMouseOver(true);
+    setCurrentImageBackground(content.image);
+  };
+
   return content.icon === 'eye' ? (
+    // IF LINK
     <Link
       href={content.url}
-      className={`w-full ${backgroundColor} p-8 flex flex-row justify-between items-center transition-padding ease-in-out duration-300 hover:py-12`}
+      className={classNames(
+        'relative w-full h-15vh p-8 2xl:p-14 flex flex-row justify-between items-center',
+        backgroundColor
+      )}
+      onMouseOver={handleMouseOver}
+      onMouseOut={() => setMouseOver(false)}
     >
       <div className="flex flex-col justify-start">
-        <h2 className="text-2xl font-bold text-white">{content.name}</h2>
-        <p className="text-sm font-light text-blue-200">{content.description}</p>
+        <h2
+          className={classNames(
+            'relative text-2xl 2xl:text-4xl font-bold text-white transition-top ease-in-out duration-500',
+            mouseOver ? '-top-1' : 'top-2'
+          )}
+        >
+          {content.name}
+        </h2>
+        <p
+          className={classNames(
+            'relative text-sm 2xl:text-lg font-light text-blue-200 transition-all ease-in-out duration-500',
+            mouseOver ? 'opacity-100 -top-1' : 'opacity-0 -top-6'
+          )}
+        >
+          {content.description}
+        </p>
       </div>
 
-      {content.icon === 'eye' ? (
-        <EyeIcon fill="white" className="w-auto h-3" />
-      ) : (
-        <AddIcon fill="white" className="w-auto h-4" />
-      )}
+      <EyeIcon fill="white" className="w-auto h-3 2xl:h-5" />
     </Link>
   ) : (
-    <div className="w-full flex flex-col">
+    // IF BUTTON HAS CHILDREN ITEMS
+    <div
+      className={classNames(
+        'relative w-full flex flex-col items-start justify-start transition-height ease-in-out duration-500 overflow-hidden',
+        backgroundColor
+      )}
+      style={{
+        height: sectionStatus
+          ? `${!!content.items && (content.items.length + 1.3) * 11}vh`
+          : '15vh',
+      }}
+    >
       <button
         type="button"
-        className={`w-full ${backgroundColor} p-8 flex flex-row items-center justify-between transition-padding ease-in-out duration-300 ${
-          sectionStatus ? 'hover:py-8' : 'hover:py-12'
-        } hover:py-12}`}
+        className="relative w-full h-15vh py-8 pl-8 pr-6 2xl:pl-14 2xl:pr-10 flex flex-row justify-between items-center active:outline-none focus:outline-none"
         onClick={() => setSectionStatus(!sectionStatus)}
+        onMouseOver={handleMouseOver}
+        onFocus={handleMouseOver}
+        onMouseOut={() => setMouseOver(false)}
+        onBlur={() => setMouseOver(false)}
       >
-        <div className="flex flex-col items-start">
-          <h2 className="text-2xl font-bold text-white">{content.name}</h2>
-          <p className="text-sm font-light text-blue-200">{content.description}</p>
+        <div className="relative flex flex-col items-start text-left">
+          <h2
+            className={classNames(
+              'relative text-2xl 2xl:text-4xl font-bold transition-top ease-in-out duration-500',
+              mouseOver || sectionStatus ? '-top-1' : 'top-2',
+              sectionStatus ? 'text-primary-4' : 'text-white'
+            )}
+          >
+            {content.name}
+          </h2>
+          <p
+            className={classNames(
+              'relative transition-all ease-in-out duration-500 text-sm 2xl:text-lg font-light',
+              mouseOver || sectionStatus ? 'opacity-100 -top-0.5' : 'opacity-0 -top-6',
+              sectionStatus ? 'text-primary-4' : 'text-blue-200'
+            )}
+          >
+            {content.description}
+          </p>
         </div>
 
-        {content.icon === 'eye' ? (
-          <EyeIcon fill="white" className="w-auto h-3" />
-        ) : (
-          <AddIcon
-            fill="white"
-            className={`w-auto h-4 transition-transform ease-in-out duration-300 origin-center ${
-              sectionStatus ? 'rotate-45' : 'rotate-0'
-            }`}
-          />
-        )}
+        <DOpenCloseIconButton status={sectionStatus} backgroundColor="bg-white" />
       </button>
+
+      {/* ITEMS SECTION */}
       {sectionStatus && (
-        <div className="w-full flex flex-col justify-start px-8">
-          {content.children.map((subsection: SubSectionProps, index: number) => (
-            <Link
-              href={subsection.url}
-              key={`explore-section-card-${subsection.name}`}
-              className={`w-full py-4 flex flex-col justify-start leading-tight ${
-                index + 1 !== content.children.length
-                  ? 'border-b border-b-primary-7 border-solid'
-                  : ''
-              } transition-padding ease-linear duration-150 hover:py-7`}
-            >
-              <h3 className="text-2xl text-white font-bold">{subsection.name}</h3>
-              <div className="text-sm text-blue-200 font-light">{subsection.subtitle}</div>
-            </Link>
-          ))}
+        <div
+          className={classNames('w-full flex-col justify-start', sectionStatus ? 'flex' : 'hidden')}
+        >
+          {!!content.items &&
+            content.items.map((subsection: Items, index: number) => (
+              <SubsectionCard
+                subsection={subsection}
+                cardIndex={index}
+                key={`explore-section-card-${subsection.name}`}
+              />
+            ))}
         </div>
       )}
     </div>

@@ -50,6 +50,8 @@ module.exports = {
         warning: '#FA8C16',
         highlightPost: '#FF4D4F',
         highlightPre: '#40A9FF',
+        transparentWhite: 'rgba(255, 255, 255, 0.3)',
+        transparentBlack: 'rgba(0, 0, 0, 0.3)',
       },
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],
@@ -57,6 +59,16 @@ module.exports = {
       transitionProperty: {
         padding: 'padding',
         transform: 'transform',
+        rounded: 'border-radius',
+        top: 'top',
+        height: 'height',
+        background: 'background',
+      },
+      height: {
+        '10vh': '10vh',
+        '15vh': '15vh',
+        '20vh': '20vh',
+        '25vh': '25vh',
       },
     },
   },

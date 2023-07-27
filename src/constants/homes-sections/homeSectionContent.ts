@@ -5,7 +5,8 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '/explore/brain-models',
     icon: 'eye',
-    children: null,
+    image: '/images/explore/explore_home_bgImg-01.jpg',
+    items: null,
   },
   {
     name: 'Simulations',
@@ -13,43 +14,44 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '/explore/simulation-campaigns',
     icon: 'eye',
-    children: null,
+    image: '/images/explore/explore_home_bgImg-02.jpg',
+    items: null,
   },
   {
     name: 'Experimental Data',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    description: 'A set of experimental data to build models',
     url: '#',
     icon: 'plus',
-    children: [
+    image: '/images/explore/explore_home_bgImg-03.jpg',
+    items: [
       {
         name: 'Neuron Electrophysiology',
-        subtitle: '3,450 dataset',
+        type: 'https://neuroshapes.org/Trace',
         url: '/explore/electrophysiology',
       },
       {
         name: 'Neuron Morphology',
-        subtitle: '3,450 dataset',
+        type: 'https://neuroshapes.org/NeuronMorphology',
         url: '/explore/morphology',
       },
       {
         name: 'Bouton density',
-        subtitle: '3,450 dataset',
+        type: 'https://neuroshapes.org/BoutonDensity',
         url: '/explore/bouton-density',
       },
       {
         name: 'Neuron density',
-        subtitle: '3,450 dataset',
+        type: 'https://neuroshapes.org/NeuronDensity',
         url: '/explore/neuron-density',
       },
       {
         name: 'Layer Thickness',
-        subtitle: '3,450 dataset',
+        type: 'https://neuroshapes.org/LayerThickness',
         url: '/explore/layer-thickness',
       },
       {
         name: 'Synapse per connection',
-        subtitle: '3,450 dataset',
+        type: 'https://neuroshapes.org/SynapsePerConnection',
         url: '/explore/synapse-per-connection',
       },
     ],
@@ -60,20 +62,21 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '#',
     icon: 'plus',
-    children: [
+    image: '/images/explore/explore_home_bgImg-04.jpg',
+    items: [
       {
         name: 'My portal number one',
-        subtitle: '3,450 dataset',
+        type: '3,450 dataset',
         url: '#',
       },
       {
         name: 'My portal number two',
-        subtitle: '3,450 dataset',
+        type: '3,450 dataset',
         url: '#',
       },
       {
         name: 'My portal number three',
-        subtitle: '3,450 dataset',
+        type: '3,450 dataset',
         url: '#',
       },
     ],
@@ -84,20 +87,21 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '#',
     icon: 'plus',
-    children: [
+    image: '/images/explore/explore_home_bgImg-05.jpg',
+    items: [
       {
         name: 'My gallery number one',
-        subtitle: '3,450 dataset',
+        type: '3,450 dataset',
         url: '#',
       },
       {
         name: 'My gallery number two',
-        subtitle: '3,450 dataset',
+        type: '3,450 dataset',
         url: '#',
       },
       {
         name: 'My gallery number three',
-        subtitle: '3,450 dataset',
+        type: '3,450 dataset',
         url: '#',
       },
     ],
@@ -108,6 +112,7 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '#',
     icon: 'eye',
-    children: null,
+    image: '/images/explore/explore_home_bgImg-06.jpg',
+    items: null,
   },
 ];
