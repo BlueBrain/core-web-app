@@ -4,7 +4,7 @@ import set from 'lodash/set';
 import NumberParam from './NumberParam';
 import StepSizeParam from './StepSizeParam';
 import {
-  mModelOverridesAtom,
+  mModelLocalParamsAtom,
   mModelNeuriteTypeSelectedAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import {
@@ -22,7 +22,7 @@ type ParameterProps = {
 };
 
 export default function ParameterItem({ paramRawName, paramValue }: ParameterProps) {
-  const setMModelOverrides = useSetAtom(mModelOverridesAtom);
+  const setMModelOverrides = useSetAtom(mModelLocalParamsAtom);
   const setMorphAssConfigPayload = useSetAtom(setMorphologyAssignmentConfigPayloadAtom);
   const neuriteTypeSelected = useAtomValue(mModelNeuriteTypeSelectedAtom);
 

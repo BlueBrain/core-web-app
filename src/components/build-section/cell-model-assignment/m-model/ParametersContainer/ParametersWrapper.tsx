@@ -5,7 +5,7 @@ import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
 import { RequiredParamRawNames } from '@/types/m-model';
 import {
   mModelNeuriteTypeSelectedAtom,
-  getMModelLocalOverridesAtom,
+  getMModelLocalParamsAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function ParametersWrapper({ className }: Props) {
-  const mModelLocalOverrides = useAtomValue(getMModelLocalOverridesAtom);
+  const mModelLocalOverrides = useAtomValue(getMModelLocalParamsAtom);
   const neuriteTypeSelected = useAtomValue(mModelNeuriteTypeSelectedAtom);
 
   const requiredParamValues = mModelLocalOverrides?.[neuriteTypeSelected];

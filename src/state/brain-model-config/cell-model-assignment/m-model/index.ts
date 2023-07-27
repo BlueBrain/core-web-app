@@ -41,28 +41,28 @@ export const selectedMModelNameAtom = atom<string | null>(null);
 
 export const selectedMModelIdAtom = atom<string | null>(null);
 
-export const mModelRemoteOverridesAtom = atom<ParamConfig | null>(null);
+export const mModelRemoteParamsAtom = atom<ParamConfig | null>(null);
 
-export const mModelOverridesAtom = atom<ParamConfig | {}>({});
+export const mModelLocalParamsAtom = atom<ParamConfig | {}>({});
 
-export const mModelRemoteOverridesLoadedAtom = atom(false);
+export const mModelRemoteParamsLoadedAtom = atom(false);
 
 export const mModelNeuriteTypeSelectedAtom = atom<NeuriteType>('apical_dendrite');
 
-export const getMModelLocalOverridesAtom = atom<ParamConfig | null>((get) => {
-  const remoteOverrides = get(mModelRemoteOverridesAtom);
+export const getMModelLocalParamsAtom = atom<ParamConfig | null>((get) => {
+  const remoteParams = get(mModelRemoteParamsAtom);
 
-  if (!remoteOverrides) return null;
+  if (!remoteParams) return null;
 
-  const localOverrides = get(mModelOverridesAtom);
+  const localParams = get(mModelLocalParamsAtom);
 
   const localConfig = {} as ParamConfig;
-  merge(localConfig, remoteOverrides, localOverrides);
+  merge(localConfig, remoteParams, localParams);
   return localConfig;
 });
 
 export const mModelPreviewConfigAtom = atom<SynthesisPreviewInterface>((get) => {
-  const localOverrides = get(mModelOverridesAtom);
+  const localOverrides = get(mModelLocalParamsAtom);
   return {
     ...paramsAndDistResources,
     overrides: localOverrides,
@@ -174,23 +174,21 @@ export const brainRegionMTypeArrayAtom = atom<string[] | null>((get) => {
   return generateBrainRegionMTypeArray(selectedBrainRegion.id, selectedMTypeId);
 });
 
-export const accumulativeLocalTopologicalSynthesisParamsAtom = atom<MModelWorkflowOverrides>({});
+export const localMModelWorkflowOverridesAtom = atom<MModelWorkflowOverrides>({});
 
-export const accumulativeTopologicalSynthesisParamsAtom = atom<Promise<MModelWorkflowOverrides>>(
-  async (get) => {
-    const local = get(accumulativeLocalTopologicalSynthesisParamsAtom);
-    const remoteConfigPayload = await get(remoteConfigPayloadAtom);
-    const remote = remoteConfigPayload?.configuration.topological_synthesis;
-    return { ...remote, ...local };
-  }
-);
+export const mModelWorkflowOverridesAtom = atom<Promise<MModelWorkflowOverrides>>(async (get) => {
+  const local = get(localMModelWorkflowOverridesAtom);
+  const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+  const remote = remoteConfigPayload?.configuration.topological_synthesis;
+  return { ...remote, ...local };
+});
 
 export const selectedCanonicalMapAtom = atom<Promise<Map<string, boolean>>>(async (get) => {
-  const accumulativeTopologicalSynthesis = await get(accumulativeTopologicalSynthesisParamsAtom);
-  const brainRegionIds = Object.keys(accumulativeTopologicalSynthesis);
+  const mModelWorkflowOverrides = await get(mModelWorkflowOverridesAtom);
+  const brainRegionIds = Object.keys(mModelWorkflowOverrides);
   const selectedCanonicalMap = new Map();
   brainRegionIds.forEach((brainRegionId) => {
-    const mTypeIds = Object.keys(accumulativeTopologicalSynthesis[brainRegionId]);
+    const mTypeIds = Object.keys(mModelWorkflowOverrides[brainRegionId]);
     mTypeIds.forEach((mTypeId) => {
       selectedCanonicalMap.set(generateBrainRegionMTypeMapKey(brainRegionId, mTypeId), true);
     });
@@ -199,7 +197,7 @@ export const selectedCanonicalMapAtom = atom<Promise<Map<string, boolean>>>(asyn
 });
 
 // serves as 'cache' so we don't have to re-fetch params
-export const fetchedRemoteOverridesMapAtom = atom<Map<string, ParamConfig>>(new Map());
+export const cachedDefaultParamsMapAtom = atom<Map<string, ParamConfig>>(new Map());
 
 export const canonicalMorphologyModelConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const remoteConfigPayload = await get(remoteConfigPayloadAtom);
@@ -210,7 +208,7 @@ export const canonicalMorphologyModelConfigIdAtom = atom<Promise<string | null>>
   return id;
 });
 
-export const remoteOverridesAtom = atom<Promise<ParamConfig | {}>>(async (get) => {
+export const remoteParamsAtom = atom<Promise<ParamConfig | {}>>(async (get) => {
   const remoteConfigPayload = await get(remoteConfigPayloadAtom);
   const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
 
@@ -218,8 +216,8 @@ export const remoteOverridesAtom = atom<Promise<ParamConfig | {}>>(async (get) =
 
   const workflowOverrides = remoteConfigPayload.configuration.topological_synthesis;
   const path = [...brainRegionMTypeArray, 'overrides'];
-  const brainMTypeOverrides = lodashGet(workflowOverrides, path);
-  return brainMTypeOverrides || {};
+  const brainMTypeParams = lodashGet(workflowOverrides, path);
+  return brainMTypeParams || {};
 });
 
 export const remoteCanonicalMorphologyModelConfigAtom = atom<
@@ -244,7 +242,7 @@ export const canonicalBrainRegionIdsAtom = atom<Promise<string[]>>(async (get) =
   return Object.keys(canonicalMorphologyModelConfig.hasPart);
 });
 
-export const canonicalMapAtom = atom<Promise<Map<string, boolean>>>(async (get) => {
+export const canonicalBrainRegionMTypeMapAtom = atom<Promise<Map<string, boolean>>>(async (get) => {
   const canonicalBrainRegionIds = await get(canonicalBrainRegionIdsAtom);
   const canonicalMorphologyModelConfig = await get(canonicalMorphologyModelConfigPayloadAtom);
 

@@ -7,14 +7,14 @@ import ListItem from './ListItem';
 import { analysedCompositionAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import {
-  canonicalMapAtom,
+  canonicalBrainRegionMTypeMapAtom,
   selectedCanonicalMapAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import { expandBrainRegionId, generateBrainRegionMTypeMapKey } from '@/util/cell-model-assignment';
 import { ModelChoice } from '@/types/m-model';
 import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
-const canonicalMapAtomLoadable = loadable(canonicalMapAtom);
+const canonicalMapAtomLoadable = loadable(canonicalBrainRegionMTypeMapAtom);
 const selectedCanonicalMapAtomLoadable = loadable(selectedCanonicalMapAtom);
 
 interface MModelMenuItem {

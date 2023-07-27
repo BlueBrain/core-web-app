@@ -15,11 +15,11 @@ import {
 import {
   selectedMModelNameAtom,
   selectedMModelIdAtom,
-  mModelRemoteOverridesLoadedAtom,
+  mModelRemoteParamsLoadedAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import useMModelQueryParam from '@/hooks/m-model-editor';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import { fetchMModelRemoteOverridesAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
+import { fetchMModelRemoteParamsAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 
 const MMODEL_QUERY_PARAM_KEY = 'mModel';
 
@@ -33,10 +33,10 @@ export default function MModelLayout({ children }: Props) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
   const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
-  const setMModelRemoteOverridesLoaded = useSetAtom(mModelRemoteOverridesLoadedAtom);
+  const setMModelRemoteOverridesLoaded = useSetAtom(mModelRemoteParamsLoadedAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const router = useRouter();
-  const mModelGetRemoteConfig = useSetAtom(fetchMModelRemoteOverridesAtom);
+  const mModelGetRemoteConfig = useSetAtom(fetchMModelRemoteParamsAtom);
 
   useEffect(() => {
     if (selectedMModelName !== null) {

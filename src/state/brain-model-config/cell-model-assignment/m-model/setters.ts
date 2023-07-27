@@ -4,17 +4,17 @@ import lodashSet from 'lodash/set';
 import lodashGet from 'lodash/get';
 
 import {
-  mModelRemoteOverridesAtom,
-  mModelRemoteOverridesLoadedAtom,
+  mModelRemoteParamsAtom,
+  mModelRemoteParamsLoadedAtom,
   refetchTriggerAtom,
   configPayloadRevAtom,
   configAtom,
-  mModelOverridesAtom,
-  accumulativeLocalTopologicalSynthesisParamsAtom,
-  fetchedRemoteOverridesMapAtom,
+  mModelLocalParamsAtom,
+  localMModelWorkflowOverridesAtom,
+  cachedDefaultParamsMapAtom,
   canonicalModelParametersAtom,
-  remoteOverridesAtom,
-  accumulativeTopologicalSynthesisParamsAtom,
+  remoteParamsAtom,
+  mModelWorkflowOverridesAtom,
   canonicalMorphologyModelIdAtom,
   remoteConfigPayloadAtom,
   brainRegionMTypeArrayAtom,
@@ -90,7 +90,7 @@ const setConfigPayloadAtom = atom<null, [MorphologyAssignmentConfigPayload], voi
   }
 );
 
-export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig | null>>(
+export const fetchMModelRemoteParamsAtom = atom<null, [], Promise<ParamConfig | null>>(
   null,
   async (get, set) => {
     const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
@@ -99,30 +99,30 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
 
     const [brainRegionId, mTypeId] = brainRegionMTypeArray;
 
-    const fetchedOverridesMap = get(fetchedRemoteOverridesMapAtom);
+    const cachedDefaultParamsMap = get(cachedDefaultParamsMapAtom);
     const brainMTypeMapKey = generateBrainRegionMTypeMapKey(brainRegionId, mTypeId);
-    const fetchedInfo = fetchedOverridesMap?.get(brainMTypeMapKey);
+    const fetchedInfo = cachedDefaultParamsMap?.get(brainMTypeMapKey);
 
     if (fetchedInfo) {
-      const accumulative = await get(accumulativeTopologicalSynthesisParamsAtom);
+      const accumulative = await get(mModelWorkflowOverridesAtom);
       const path = [...brainRegionMTypeArray, 'overrides'];
       const localOverrides = lodashGet(accumulative, path);
 
-      set(mModelOverridesAtom, localOverrides || {});
-      set(mModelRemoteOverridesAtom, fetchedInfo);
-      set(mModelRemoteOverridesLoadedAtom, true);
+      set(mModelLocalParamsAtom, localOverrides || {});
+      set(mModelRemoteParamsAtom, fetchedInfo);
+      set(mModelRemoteParamsLoadedAtom, true);
       return fetchedInfo;
     }
 
     const params = await get(canonicalModelParametersAtom);
     if (!params) throw new Error('No canonical parameters were found');
 
-    const remoteOverrides = await get(remoteOverridesAtom);
-    set(mModelOverridesAtom, remoteOverrides);
-    set(mModelRemoteOverridesAtom, params);
-    fetchedOverridesMap.set(brainMTypeMapKey, params);
-    set(fetchedRemoteOverridesMapAtom, fetchedOverridesMap);
-    set(mModelRemoteOverridesLoadedAtom, true);
+    const remoteOverrides = await get(remoteParamsAtom);
+    set(mModelLocalParamsAtom, remoteOverrides);
+    set(mModelRemoteParamsAtom, params);
+    cachedDefaultParamsMap.set(brainMTypeMapKey, params);
+    set(cachedDefaultParamsMapAtom, cachedDefaultParamsMap);
+    set(mModelRemoteParamsLoadedAtom, true);
     return params;
   }
 );
@@ -145,12 +145,12 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
   [string, string, ChangeModelAction],
   void
 >(null, async (get, set, brainRegionId, mTypeId, action) => {
-  const overrides = get(mModelOverridesAtom);
-  const accumulative = structuredClone(await get(accumulativeTopologicalSynthesisParamsAtom));
+  const overrides = get(mModelLocalParamsAtom);
+  const accumulative = structuredClone(await get(mModelWorkflowOverridesAtom));
 
   if (action === 'remove') {
     delete accumulative[brainRegionId][mTypeId];
-    set(accumulativeLocalTopologicalSynthesisParamsAtom, accumulative);
+    set(localMModelWorkflowOverridesAtom, accumulative);
     return;
   }
 
@@ -159,7 +159,7 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
     id: canonicalMorphologyModelId,
     overrides,
   });
-  set(accumulativeLocalTopologicalSynthesisParamsAtom, accumulative);
+  set(localMModelWorkflowOverridesAtom, accumulative);
 });
 
 export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
@@ -167,7 +167,7 @@ export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   async (get, set) => {
     await set(setMModelLocalTopologicalSynthesisParamsAtom);
     const remoteConfigPayload = await get(remoteConfigPayloadAtom);
-    const topologicalSynthesisParams = await get(accumulativeTopologicalSynthesisParamsAtom);
+    const topologicalSynthesisParams = await get(mModelWorkflowOverridesAtom);
 
     if (!remoteConfigPayload || !topologicalSynthesisParams) return;
 

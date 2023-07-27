@@ -5,14 +5,14 @@ import { useAtomValue } from 'jotai';
 import NeuriteTypeDropdown from './NeuriteTypeDropdown';
 import ParametersWrapper from './ParametersWrapper';
 import { SettingsIcon } from '@/components/icons';
-import { mModelRemoteOverridesLoadedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import { mModelRemoteParamsLoadedAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 
 type Props = {
   className?: string;
 };
 
 export default function ParametersContainer({ className }: Props) {
-  const remoteWasFetched = useAtomValue(mModelRemoteOverridesLoadedAtom);
+  const remoteWasFetched = useAtomValue(mModelRemoteParamsLoadedAtom);
   const body = remoteWasFetched ? (
     <div className="flex flex-col gap-y-8">
       <span>You are modifying the m-model based on this neurite type</span>
