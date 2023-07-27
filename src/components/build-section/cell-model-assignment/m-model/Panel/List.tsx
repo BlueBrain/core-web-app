@@ -1,10 +1,8 @@
-import { useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import filter from 'lodash/filter';
 import { loadable } from 'jotai/utils';
 
 import ListItem from './ListItem';
-import { analysedCompositionAtom } from '@/state/build-composition';
+import { analysedMTypesAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import {
   canonicalBrainRegionMTypeMapAtom,
@@ -17,14 +15,8 @@ import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-con
 const canonicalMapAtomLoadable = loadable(canonicalBrainRegionMTypeMapAtom);
 const selectedCanonicalMapAtomLoadable = loadable(selectedCanonicalMapAtom);
 
-interface MModelMenuItem {
-  label: string;
-  annotation?: string;
-  id: string;
-}
-
 export default function List() {
-  const composition = useAtomValue(analysedCompositionAtom);
+  const mModelItems = useAtomValue(analysedMTypesAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const loadableSelectedCanonicalMap = useAtomValue(selectedCanonicalMapAtomLoadable);
   const selectedCanonicalMap =
@@ -32,17 +24,6 @@ export default function List() {
   const setAccumulativeTopologicalSynthesis = useSetAtom(setAccumulativeTopologicalSynthesisAtom);
   const loadableCanonicalMap = useAtomValue(canonicalMapAtomLoadable);
   const canonicalMap = loadableCanonicalMap.state === 'hasData' ? loadableCanonicalMap.data : null;
-
-  const mModelItems: MModelMenuItem[] = useMemo(
-    () =>
-      composition !== null
-        ? filter(composition.nodes, { about: 'MType' }).map((node) => ({
-            label: node.label,
-            id: node.id,
-          }))
-        : [],
-    [composition]
-  );
 
   let listItems = null;
 

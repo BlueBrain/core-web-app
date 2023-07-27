@@ -1,5 +1,7 @@
 import { atom } from 'jotai';
 import cloneDeep from 'lodash/cloneDeep';
+import filter from 'lodash/filter';
+
 import sessionAtom from '@/state/session';
 import calculateCompositions from '@/util/composition/composition-parser';
 import computeModifiedComposition from '@/util/composition/composition-modifier';
@@ -18,6 +20,7 @@ import {
 } from '@/state/build-composition/composition-history';
 import { OriginalComposition } from '@/types/composition/original';
 import { AnalysedComposition, CalculatedCompositionNode } from '@/types/composition/calculation';
+import { MModelMenuItem } from '@/types/m-model';
 
 // This holds a weak reference to the updatedComposition by it's initial composition
 // This allows GC to dispose the object once it is no longer used by current components
@@ -87,6 +90,16 @@ export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>
     leaves,
     volumes
   );
+});
+
+export const analysedMTypesAtom = atom<Promise<MModelMenuItem[]>>(async (get) => {
+  const composition = await get(analysedCompositionAtom);
+  return composition !== null
+    ? filter(composition.nodes, { about: 'MType' }).map((node) => ({
+        label: node.label,
+        id: node.id,
+      }))
+    : [];
 });
 
 export const computeAndSetCompositionAtom = atom(

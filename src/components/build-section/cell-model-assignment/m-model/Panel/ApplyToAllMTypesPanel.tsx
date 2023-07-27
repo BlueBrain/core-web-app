@@ -1,14 +1,23 @@
 import { useCallback, useState } from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import ReloadIcon from '@/components/icons/Reload';
 import ModelSelect from '@/components/build-section/cell-model-assignment/m-model/Panel/ModelSelect';
-import { ModelChoice } from '@/types/m-model';
+import { ChangeModelAction, ModelChoice } from '@/types/m-model';
+import { analysedMTypesAtom } from '@/state/build-composition';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
+import { expandBrainRegionId } from '@/util/cell-model-assignment';
 
 function Separator() {
   return <hr className="bg-primary-4 h-px w-full border-0" />;
 }
 
 export default function ApplyToAllMTypesPanel() {
+  const mModelItems = useAtomValue(analysedMTypesAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+
+  const setAccumulativeTopologicalSynthesis = useSetAtom(setAccumulativeTopologicalSynthesisAtom);
   const [activeModel, setActiveModel] = useState<ModelChoice>('placeholder');
   const handleModelSelectChange = useCallback((newModelChoice: ModelChoice) => {
     if (newModelChoice !== null) {
@@ -17,9 +26,18 @@ export default function ApplyToAllMTypesPanel() {
   }, []);
 
   const applyActiveModelToAll = useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.warn(`Not implemented: Apply ${activeModel}`);
-  }, [activeModel]);
+    if (selectedBrainRegion) {
+      const expandedBrainRegionId = expandBrainRegionId(selectedBrainRegion.id);
+      const action: ChangeModelAction = activeModel === 'canonical' ? 'add' : 'remove';
+
+      mModelItems.forEach((mModelItem) => {
+        const selectedMTypeId = mModelItem.id;
+        setTimeout(() =>
+          setAccumulativeTopologicalSynthesis(expandedBrainRegionId, selectedMTypeId, action)
+        );
+      });
+    }
+  }, [activeModel, mModelItems, selectedBrainRegion, setAccumulativeTopologicalSynthesis]);
 
   const resetToDefault = useCallback(() => {
     // eslint-disable-next-line no-console

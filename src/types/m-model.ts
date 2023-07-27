@@ -100,3 +100,9 @@ export type MModelWorkflowOverrides = {
 export type ModelChoice = 'canonical' | 'placeholder' | string;
 
 export type ChangeModelAction = 'add' | 'remove';
+
+export interface MModelMenuItem {
+  label: string;
+  annotation?: string;
+  id: string;
+}
