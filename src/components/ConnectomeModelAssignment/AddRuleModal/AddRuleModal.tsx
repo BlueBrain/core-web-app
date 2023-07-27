@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Button, Modal } from 'antd';
 import { useAtom } from 'jotai';
 import { loadingAtom } from '../state';
+import { useFieldsOptionsProvider } from '../hooks';
 import CustomSelect from './CustomSelect';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
 import Style from './add-rule-modal.module.css';
@@ -12,29 +13,32 @@ export interface AddRuleModalProps {
   onCancel(): void;
 }
 
-const INITIAL_RULE: SynapticAssignmentRule = {
-  fromEType: null,
-  fromHemisphere: 'left',
-  fromMType: null,
-  fromRegion: null,
-  fromSClass: null,
-  synapticType: null,
-  toEType: null,
-  toHemisphere: 'left',
-  toMType: null,
-  toRegion: null,
-  toSClass: null,
-};
-
 export default function AddRuleModal({ open, onValidate, onCancel }: AddRuleModalProps) {
   const [isOpen, setIsOpen] = useState(open);
-  const [rule, setRule] = useState<SynapticAssignmentRule>({ ...INITIAL_RULE });
+  const options = useFieldsOptionsProvider();
+  const initialRule = useMemo(
+    () => ({
+      fromEType: null,
+      fromHemisphere: 'left',
+      fromMType: null,
+      fromRegion: null,
+      fromSClass: null,
+      synapticType: options('synapticType')[0],
+      toEType: null,
+      toHemisphere: 'left',
+      toMType: null,
+      toRegion: null,
+      toSClass: null,
+    }),
+    [options]
+  );
+  const [rule, setRule] = useState<SynapticAssignmentRule>({ ...initialRule });
   const [loading] = useAtom(loadingAtom);
 
   useEffect(() => {
-    setRule({ ...INITIAL_RULE });
+    setRule({ ...initialRule });
     setIsOpen(open);
-  }, [open]);
+  }, [open, initialRule]);
   const handleCancel = () => {
     setIsOpen(false);
     onCancel();

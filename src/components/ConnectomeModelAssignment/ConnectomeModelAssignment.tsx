@@ -41,6 +41,7 @@ export default function ConnectomeModelAssignmentView() {
           </div>
           <div className="h-[calc(100%-30px)] p-4 overflow-scroll">
             <SynapticAssignmentRulesTable
+              className={styles.table}
               rules={defaultRules}
               onRulesChange={() => {}}
               mode="dark"
@@ -79,6 +80,7 @@ export default function ConnectomeModelAssignmentView() {
                   </div>
                 </div>
                 <SynapticAssignmentRulesTable
+                  className={styles.table}
                   rules={userRules}
                   filter={userRulesFilter.exec}
                   onRulesChange={setUserRules}

@@ -6,3 +6,7 @@
   font-size: small;
   box-sizing: border-box;
 }
+
+.table :global(.ant-table-placeholder) {
+  z-index: 0 !important;
+}

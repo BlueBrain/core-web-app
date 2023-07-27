@@ -9,5 +9,5 @@ export interface SynapticAssignmentRule {
   toMType: null | string;
   toEType: null | string;
   fromEType: null | string;
-  synapticType: null | string;
+  synapticType: string;
 }

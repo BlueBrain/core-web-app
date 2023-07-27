@@ -23,6 +23,7 @@ export default function FilterItem({ item, onChange, onDelete }: FilterItemProps
         onChange={(ruleField) => onChange({ ...item, ruleField })}
       />
       <Select
+        showSearch={options.length >= 3}
         options={options}
         value={item.value}
         onChange={(value) => onChange({ ...item, value })}
