@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Table, Button } from 'antd';
@@ -51,6 +51,16 @@ export default function LaunchedSimCampaignList() {
   const rowClassFn = (config: LaunchedSimCampUIConfigType) =>
     config.status === 'Done' ? 'text-green-400' : '';
 
+  const doneSimulationCount = useMemo(
+    () => configs.filter((config) => config.status === 'Done').length,
+    [configs]
+  );
+
+  const runningSimulationCount = useMemo(
+    () => configs.filter((config) => config.status === 'Running').length,
+    [configs]
+  );
+
   return (
     <>
       <div className="text-2xl h-10 py-2 mt-7 font-bold">My simulation configurations</div>
@@ -59,11 +69,11 @@ export default function LaunchedSimCampaignList() {
         <div className="flex flex-row gap-5">
           <small className="flex flex-row gap-1 self-center">
             <span className="text-primary-4">Simulations running</span>
-            <span className="font-bold">n/a</span>
+            <span className="font-bold">{runningSimulationCount}</span>
           </small>
           <small className="flex flex-row gap-1 self-center">
             <span className="text-primary-4">Simulations done</span>
-            <span className="font-bold">n/a</span>
+            <span className="font-bold">{doneSimulationCount}</span>
           </small>
         </div>
       </div>
