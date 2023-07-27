@@ -129,14 +129,14 @@ export const fetchMModelRemoteOverridesAtom = atom<null, [], Promise<ParamConfig
 
 export const setMModelLocalTopologicalSynthesisParamsAtom = atom<null, [], void>(
   null,
-  (get, set) => {
+  async (get, set) => {
     const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
 
     if (!brainRegionMTypeArray) return;
 
     const [brainRegionId, mTypeId] = brainRegionMTypeArray;
 
-    set(setAccumulativeTopologicalSynthesisAtom, brainRegionId, mTypeId, 'add');
+    await set(setAccumulativeTopologicalSynthesisAtom, brainRegionId, mTypeId, 'add');
   }
 );
 
@@ -165,7 +165,7 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
 export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   null,
   async (get, set) => {
-    set(setMModelLocalTopologicalSynthesisParamsAtom);
+    await set(setMModelLocalTopologicalSynthesisParamsAtom);
     const remoteConfigPayload = await get(remoteConfigPayloadAtom);
     const topologicalSynthesisParams = await get(accumulativeTopologicalSynthesisParamsAtom);
 
