@@ -97,14 +97,16 @@ export function createFile(
   contentType: string,
   session: Session
 ): Promise<FileMetadata> {
-  const url = composeUrl('file', '');
+  // we need to pass id to make self == id
+  const id = createId('file');
+  const url = composeUrl('file', id);
 
   const formData = new FormData();
   const dataBlob = new Blob([data], { type: contentType });
   formData.append('file', dataBlob, filename);
 
   return fetch(url, {
-    method: 'POST',
+    method: 'PUT',
     headers: createHeaders(session.accessToken, null),
     body: formData,
   }).then<FileMetadata>((res) => res.json());
