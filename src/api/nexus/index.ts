@@ -605,25 +605,11 @@ export async function createWorkflowConfigResource(
   const bbpWorkflowconfig: BbpWorkflowConfigResource = {
     '@context': nexus.defaultContext,
     '@type': 'BbpWorkflowConfig',
-    '@id': createId('file'),
-    distribution: {
-      '@type': 'DataDownload',
-      name: createdFile._filename,
-      contentSize: {
-        unitCode: 'bytes',
-        value: createdFile._bytes,
-      },
-      contentUrl: createdFile._self,
-      encodingFormat: createdFile._mediaType,
-      digest: {
-        algorithm: createdFile._digest._algorithm,
-        value: createdFile._digest._value,
-      },
-    },
+    '@id': createId('bbpworkflowconfig'),
+    distribution: createDistribution(createdFile),
   };
 
-  const newResource = await createResource(bbpWorkflowconfig, session);
-  return newResource;
+  return createResource(bbpWorkflowconfig, session);
 }
 
 export async function getVariantTaskConfigUrlFromCircuit(

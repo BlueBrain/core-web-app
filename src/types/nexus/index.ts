@@ -15,7 +15,8 @@ export type IdType =
   | 'synapseconfig'
   | 'macroconnectomeconfig'
   | 'wholebrainconnectomestrength'
-  | 'simulationcampaignuiconfig';
+  | 'simulationcampaignuiconfig'
+  | 'bbpworkflowconfig';
 
 export interface BrainModelConfig extends Entity {
   name: string;
