@@ -39,8 +39,8 @@ import {
 import sessionAtom from '@/state/session';
 
 import { createResource, updateResource } from '@/api/nexus';
-import { GeneratorConfig } from '@/types/nexus';
-import { createId, IdType } from '@/util/nexus';
+import { GeneratorConfig, IdType } from '@/types/nexus';
+import { createId } from '@/util/nexus';
 
 type BuildStepName =
   | 'cellComposition'

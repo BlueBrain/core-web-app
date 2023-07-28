@@ -603,7 +603,7 @@ export async function createWorkflowConfigResource(
   const createdFile = await createTextFile(fileContent, fileName, session);
 
   const bbpWorkflowconfig: BbpWorkflowConfigResource = {
-    '@context': ['https://bbp.neuroshapes.org'],
+    '@context': nexus.defaultContext,
     '@type': 'BbpWorkflowConfig',
     '@id': createId('file'),
     distribution: {

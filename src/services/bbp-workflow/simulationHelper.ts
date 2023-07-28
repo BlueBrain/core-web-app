@@ -27,6 +27,7 @@ import {
   SimulationCampaignUIConfigResource,
 } from '@/types/nexus';
 import { createDistribution, createId } from '@/util/nexus';
+import { nexus } from '@/config';
 
 function getNotFoundMsg(variable: any, name?: string): string {
   const variableName = Object.keys({ variable })[0];
@@ -292,7 +293,7 @@ export async function createSimulationCampaignUIConfig(
 
   const uiConfig: SimulationCampaignUIConfig = {
     '@id': createId('simulationcampaignuiconfig'),
-    '@context': 'https://bbp.neuroshapes.org',
+    '@context': nexus.defaultContext,
     '@type': ['Entity', 'SimulationCampaignUIConfig'],
     name,
     description,

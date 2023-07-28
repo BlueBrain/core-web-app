@@ -4,6 +4,19 @@ import { MModelWorkflowOverrides } from '@/types/m-model';
 
 export * from './common';
 
+export type IdType =
+  | 'file'
+  | 'modelconfiguration'
+  | 'cellcompositionconfig'
+  | 'cellpositionconfig'
+  | 'emodelassignmentconfig'
+  | 'morphologyassignmentconfig'
+  | 'microconnectomeconfig'
+  | 'synapseconfig'
+  | 'macroconnectomeconfig'
+  | 'wholebrainconnectomestrength'
+  | 'simulationcampaignuiconfig';
+
 export interface BrainModelConfig extends Entity {
   name: string;
   description: string;
@@ -230,6 +243,7 @@ export interface MorphologyAssignmentConfig extends Entity {
   name: string;
   description: string;
   '@type': [MorphologyAssignmentConfigType, 'Entity'];
+  '@context': 'https://bbp.neuroshapes.org';
   generatorName: MModelGeneratorName;
   distribution: Distribution;
 }

@@ -16,6 +16,7 @@ export const nexus = {
   project: 'mmb-point-neuron-framework-model',
   defaultIdBaseUrl: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations',
   defaultESIndexId: 'https://bbp.epfl.ch/neurosciencegraph/data/views/es/dataset',
+  defaultContext: 'https://bbp.neuroshapes.org',
 };
 
 export const autoSaveDebounceInterval = 10000;

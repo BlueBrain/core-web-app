@@ -7,9 +7,10 @@ import {
   GeneratorConfig,
   GeneratorConfigType,
   GeneratorName,
+  IdType,
 } from '@/types/nexus';
 import { PartialBy } from '@/types/common';
-import { metadataKeys } from '@/constants/nexus';
+import { metadataKeys, schemas } from '@/constants/nexus';
 
 export function collapseId(nexusId: string) {
   return nexusId?.replace(`${nexus.defaultIdBaseUrl}/`, '') ?? '';
@@ -85,23 +86,18 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     .join('');
 }
 
-export type IdType =
-  | 'file'
-  | 'modelconfiguration'
-  | 'cellcompositionconfig'
-  | 'cellpositionconfig'
-  | 'emodelassignmentconfig'
-  | 'morphologyassignmentconfig'
-  | 'microconnectomeconfig'
-  | 'synapseconfig'
-  | 'macroconnectomeconfig'
-  | 'wholebrainconnectomestrength'
-  | 'simulationcampaignuiconfig';
-
 export function createId(type: IdType, id?: string) {
-  const typePath = type === 'file' ? '' : `/${type}s`;
-
-  return `https://bbp.epfl.ch/neurosciencegraph/data${typePath}/${id ?? crypto.randomUUID()}`;
+  const isFile = type === 'file';
+  return [
+    nexus.url,
+    isFile ? 'files' : 'resources',
+    nexus.org,
+    nexus.project,
+    isFile ? '' : schemas[type] || '_',
+    id ?? crypto.randomUUID(),
+  ]
+    .filter((item) => !!item)
+    .join('/');
 }
 
 const generatorNameByKgType: Record<GeneratorConfigType, GeneratorName> = {
