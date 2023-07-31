@@ -1,15 +1,9 @@
 'use client';
 
 import { sectionContent } from '@/constants/homes-sections/homeSectionContent';
-
+import type { TypeSingleCard } from '@/constants/homes-sections/homeSectionContent';
 import SectionCards from '@/components/explore-section/SectionCards';
 import HomeHeader from '@/components/Global/HomeHeader';
-
-type TypeSingleCard = {
-  name: string;
-  description: string;
-  url: string;
-};
 
 export default function Explore() {
   const content = sectionContent;

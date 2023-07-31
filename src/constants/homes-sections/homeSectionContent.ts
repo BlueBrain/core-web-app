@@ -1,11 +1,22 @@
-export const sectionContent = [
+export type TypeSingleCard = {
+  name: string;
+  description: string;
+  url: string;
+  icon: string;
+  children?: {
+    name: string;
+    subtitle: string;
+    url: string;
+  }[],
+};
+
+export const sectionContent: TypeSingleCard[] = [
   {
     name: 'Brain Models',
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '/explore/brain-models',
     icon: 'eye',
-    children: null,
   },
   {
     name: 'Simulations',
@@ -13,7 +24,6 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '/explore/simulation-campaigns',
     icon: 'eye',
-    children: null,
   },
   {
     name: 'Experimental Data',
@@ -106,8 +116,7 @@ export const sectionContent = [
     name: 'Literature',
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    url: '#',
+    url: '/explore/literature',
     icon: 'eye',
-    children: null,
   },
 ];
