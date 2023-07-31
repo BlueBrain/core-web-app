@@ -1,5 +1,6 @@
 const { fontFamily } = require('tailwindcss/defaultTheme');
 const blue = {
+  0: '#E8F7FF',
   1: '#BAE7FF',
   2: '#91D5FF',
   3: '#69C0FF',
