@@ -1,4 +1,7 @@
-export const sectionContent = [
+import { SingleCard } from "@/types/explore-section/application";
+
+
+export const sectionContent: SingleCard[] = [
   {
     name: 'Brain Models',
     description:
@@ -110,7 +113,7 @@ export const sectionContent = [
     name: 'Literature',
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    url: '#',
+    url: '/explore/literature',
     icon: 'eye',
     image: 'images/explore/explore_home_bgImg-06.jpg',
     items: null,
