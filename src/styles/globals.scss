@@ -26,3 +26,33 @@ input[type='number'] {
   -moz-appearance: textfield;
   margin: 0;
 }
+
+@layer utilities {
+  @variants responsive {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+  
+    .primary-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      margin-right: 5px;
+    }
+    .primary-scrollbar::-webkit-scrollbar-track {
+      @apply bg-white;
+      border-radius: 4px;
+    }
+    .primary-scrollbar::-webkit-scrollbar-thumb {
+      @apply bg-primary-4;
+      border-radius: 5px;
+    }
+    .primary-scrollbar::-webkit-scrollbar-thumb:hover {
+      @apply bg-primary-8;
+    }
+  }
+}
