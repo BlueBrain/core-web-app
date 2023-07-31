@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 
-import ReloadIcon from '@/components/icons/Reload';
 import ModelSelect from '@/components/build-section/cell-model-assignment/m-model/Panel/ModelSelect';
 import { ChangeModelAction, ModelChoice } from '@/types/m-model';
 import { analysedMTypesAtom } from '@/state/build-composition';
@@ -39,11 +38,6 @@ export default function ApplyToAllMTypesPanel() {
     }
   }, [activeModel, mModelItems, selectedBrainRegion, setAccumulativeTopologicalSynthesis]);
 
-  const resetToDefault = useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.warn('Not implemented: Reset to default');
-  }, []);
-
   return (
     <div className="px-7 flex flex-col gap-5 my-3">
       <Separator />
@@ -55,15 +49,7 @@ export default function ApplyToAllMTypesPanel() {
         </div>
       </div>
 
-      <div className="flex flex-row justify-between items-center gap-3">
-        <button
-          type="button"
-          className="bg-none text-primary-2 font-semibold flex flex-row items-center gap-2"
-          onClick={resetToDefault}
-        >
-          Reset to default
-          <ReloadIcon className="text-primary-2" />
-        </button>
+      <div className="flex flex-row justify-end items-center gap-3">
         <button
           type="button"
           className="bg-primary-1 text-primary-7 font-semibold p-1 px-6"
