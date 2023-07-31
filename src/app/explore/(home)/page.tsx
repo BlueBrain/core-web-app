@@ -8,25 +8,8 @@ import { basePath } from '@/config';
 import SectionCards from '@/components/explore-section/SectionCards';
 import HomeHeader from '@/components/Global/HomeHeader';
 import { classNames } from '@/util/utils';
+import { SingleCard } from '@/types/explore-section/application';
 
-// TYPES ---------
-
-type Items = {
-  name: string;
-  type: string;
-  url: string;
-};
-
-type SingleCard = {
-  name: string;
-  description: string;
-  url: string;
-  icon: string;
-  image: string;
-  items?: Items[] | null;
-};
-
-//---------------
 
 export default function Explore() {
   const content = sectionContent;
@@ -36,13 +19,13 @@ export default function Explore() {
   );
 
   return (
-    <div className="relative w-screen min-h-screen flex flex-row-reverse justify-start flex-nowrap bg-primary-9">
+    <div className="relative flex flex-row-reverse justify-start w-screen min-h-screen flex-nowrap bg-primary-9">
       <HomeHeader
         title="Explore"
         description="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
       />
 
-      <div className="relative z-10 w-2/3 flex flex-col p-8 gap-y-1">
+      <div className="relative z-10 flex flex-col w-2/3 p-8 gap-y-1">
         {content.map((singleCard: SingleCard, index: number) => (
           <SectionCards
             content={singleCard}
@@ -53,7 +36,7 @@ export default function Explore() {
         ))}
       </div>
 
-      <div className="w-screen max-w-screen h-screen fixed bottom-0 left-0 z-0">
+      <div className="fixed bottom-0 left-0 z-0 w-screen h-screen max-w-screen">
         {content.map((singleImage: SingleCard) => (
           <Image
             src={`${basePath}/${singleImage.image}`}
