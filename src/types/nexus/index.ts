@@ -521,7 +521,7 @@ export interface SimulationCampaignUIConfigResource
   extends ResourceMetadata,
     SimulationCampaignUIConfig {}
 
-type WorkflowExecutionStatusType = 'Done' | 'Running' | 'Failed';
+export type WorkflowExecutionStatusType = 'Done' | 'Running' | 'Failed';
 
 export interface WorkflowExecution extends Entity {
   '@type': ['Entity', 'WorkflowExecution'];

@@ -1,17 +1,24 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Table, Button } from 'antd';
 
-import { DateISOString, LaunchedSimCampUIConfigType } from '@/types/nexus';
+import {
+  DateISOString,
+  LaunchedSimCampUIConfigType,
+  WorkflowExecutionStatusType,
+} from '@/types/nexus';
 import { launchedSimCampaignListAtom } from '@/state/simulate';
 import ConfigList from '@/components/ConfigList';
 import Link from '@/components/Link';
 import { EyeIcon, SettingsIcon, FileIcon } from '@/components/icons';
 import { dateColumnInfoToRender } from '@/util/date';
 import { classNames } from '@/util/utils';
+import ClockIcon from '@/components/icons/Clock';
+import FullCircleIcon from '@/components/icons/FullCircle';
+import EmptyCircleIcon from '@/components/icons/EmptyCircle';
 
 const { Column } = Table;
 
@@ -35,6 +42,19 @@ function getSorterFn<T extends LaunchedSimCampUIConfigType>(
 
 function extractId(config: LaunchedSimCampUIConfigType) {
   return config['@id'].split('/').pop();
+}
+
+function getStatusIcon(status: WorkflowExecutionStatusType): ReactNode {
+  switch (status) {
+    case 'Running':
+      return <ClockIcon />;
+    case 'Done':
+      return <FullCircleIcon />;
+    case 'Failed':
+      return <EmptyCircleIcon />;
+    default:
+      return <EmptyCircleIcon />;
+  }
 }
 
 export default function LaunchedSimCampaignList() {
@@ -85,7 +105,17 @@ export default function LaunchedSimCampaignList() {
         showCreatedBy={false}
         rowClassName={rowClassFn}
       >
-        <Column title="STATUS" dataIndex="status" key="status" sorter={getSorterFn('status')} />
+        <Column
+          title="STATUS"
+          dataIndex="status"
+          key="status"
+          sorter={getSorterFn('status')}
+          render={(status: WorkflowExecutionStatusType) => (
+            <div className="flex flex-row gap-3 items-center justify-start">
+              {getStatusIcon(status)} {status}
+            </div>
+          )}
+        />
         <Column
           title="STARTED"
           dataIndex="startedAtTime"
