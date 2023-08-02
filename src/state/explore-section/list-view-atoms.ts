@@ -64,7 +64,9 @@ export const typeAtom = atom<string | undefined>(undefined);
 
 export const columnKeysAtom = atom<string[]>((get) => {
   const type = get(typeAtom);
+
   if (!type) return [];
+
   return typeToColumns[type as string];
 });
 
@@ -72,6 +74,7 @@ export const activeColumnsAtom = atom<string[]>([]);
 
 export const initializeActiveColumnsAtom = atom(null, (get, set) => {
   const columnKeys = get(columnKeysAtom);
+
   if (columnKeys.length === 0) return;
 
   const activeColumns = ['index', ...columnKeys];
@@ -85,6 +88,7 @@ export const filtersAtom = atom<Filter[]>([]);
 
 export const initializeFiltersAtom = atom(null, (get, set) => {
   const columnsKeys = get(columnKeysAtom);
+
   if (!columnsKeys) {
     set(filtersAtom, []);
   }

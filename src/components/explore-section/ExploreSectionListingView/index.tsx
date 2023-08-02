@@ -15,6 +15,7 @@ import { filterHasValue } from '@/components/Filter/util';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import {
   activeColumnsAtom,
+  columnKeysAtom,
   dataAtom,
   filtersAtom,
   initializeActiveColumnsAtom,
@@ -80,13 +81,14 @@ function Header({ title }: { title: string }) {
 function ExploreSectionListingView({ title, children }: { title: string; children: ReactNode }) {
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
+  const columnKeys = useAtomValue(columnKeysAtom);
   const initializeActiveColumns = useSetAtom(initializeActiveColumnsAtom);
   const initializeFilters = useSetAtom(initializeFiltersAtom);
 
   useEffect(() => {
     initializeActiveColumns();
     initializeFilters();
-  }, [initializeActiveColumns, initializeFilters]);
+  }, [initializeActiveColumns, initializeFilters, columnKeys]);
 
   return (
     <>
@@ -141,7 +143,7 @@ export default function DefaultListView({
 }
 
 export function SimulationCampaignView({ title }: { title: string }) {
-  const columns = useExploreColumns([]);
+  const columns = useExploreColumns();
 
   const activeColumns = useAtomValue(activeColumnsAtom);
   const data = useAtomValue(dataLoadable);

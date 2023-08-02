@@ -109,7 +109,7 @@ const useExploreColumns = (
   };
 
   return keys.reduce((acc, key) => {
-    const term = LISTING_CONFIG[key as keyof typeof LISTING_CONFIG];
+    const term = LISTING_CONFIG[key];
 
     return [
       ...acc,
