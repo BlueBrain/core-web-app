@@ -1,12 +1,12 @@
 'use client';
 
-import { Dispatch, useCallback, useEffect, useState } from 'react';
-import { SetStateAction } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
-import { SortState } from '@/types/explore-section/application';
+import { columnKeysAtom, sortStateAtom } from '@/state/explore-section/list-view-atoms';
 import styles from '@/app/explore/explore.module.scss';
 
 type ResizeInit = {
@@ -20,11 +20,12 @@ const COL_SIZING = {
 };
 
 const useExploreColumns = (
-  keys: string[],
-  setSortState: Dispatch<SetStateAction<SortState | undefined>>,
-  sortState?: SortState
+  initialColumns?: ColumnProps<ExploreSectionResource>[]
 ): ColumnProps<ExploreSectionResource>[] => {
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>([]);
+
+  const keys = useAtomValue(columnKeysAtom);
+  const [sortState, setSortState] = useAtom(sortStateAtom);
 
   useEffect(
     () =>
@@ -107,46 +108,35 @@ const useExploreColumns = (
     }
   };
 
-  return keys.reduce(
-    (acc, key) => {
-      const term = LISTING_CONFIG[key as keyof typeof LISTING_CONFIG];
+  return keys.reduce((acc, key) => {
+    const term = LISTING_CONFIG[key as keyof typeof LISTING_CONFIG];
 
-      return [
-        ...acc,
-        {
-          key,
-          title: (
-            <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
-              <div>{term.title}</div>
-              {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
-            </div>
-          ),
-          className: 'text-primary-7 cursor-pointer',
-          sorter: true,
-          ellipsis: true,
-          width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
-          render: term?.renderFn,
-          onHeaderCell: () => ({
-            handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
-            onClick: () => sorterES(key),
-            showsortertooltip: {
-              title: term.description ? term.description : term.title,
-            },
-          }),
-          sortOrder: getSortOrder(key),
-        },
-      ];
-    },
-    [
+    return [
+      ...acc,
       {
-        title: '#',
-        key: 'index',
-        className: 'text-primary-7',
-        render: (_text: string, _record: ExploreSectionResource, index: number) => index + 1,
-        width: 70,
+        key,
+        title: (
+          <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
+            <div>{term.title}</div>
+            {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
+          </div>
+        ),
+        className: 'text-primary-7 cursor-pointer',
+        sorter: true,
+        ellipsis: true,
+        width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
+        render: term?.renderFn,
+        onHeaderCell: () => ({
+          handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
+          onClick: () => sorterES(key),
+          showsortertooltip: {
+            title: term.description ? term.description : term.title,
+          },
+        }),
+        sortOrder: getSortOrder(key),
       },
-    ] as ColumnProps<ExploreSectionResource>[]
-  );
+    ];
+  }, initialColumns ?? []);
 };
 
 export default useExploreColumns;

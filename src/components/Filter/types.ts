@@ -27,9 +27,14 @@ export interface ValueFilter extends Omit<BaseFilter, 'type' | 'value'> {
   value: number | string | null;
 }
 
-export type Filter = CheckListFilter | RangeFilter | ValueFilter | BaseFilter;
+export interface ValueOrRangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
+  type: 'valueOrRange';
+  value: number | GteLteValue | null; // "value" | "range" | "all"
+}
 
-export type FilterType = 'checkList' | 'dateRange' | 'valueRange' | null;
+export type Filter = CheckListFilter | RangeFilter | ValueFilter | ValueOrRangeFilter | BaseFilter;
+
+export type FilterType = 'checkList' | 'dateRange' | 'valueRange' | 'valueOrRange' | null;
 
 export type CheckboxOption = {
   checked: string | boolean;

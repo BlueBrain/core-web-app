@@ -68,16 +68,13 @@ export default function ExploreSectionTable({
 }: ExploreSectionTableProps) {
   const router = useRouter();
   const pathname = usePathname();
+
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>(
     data.state === 'hasData' ? data.data : undefined
   );
 
-  const clearSelectedRows = () => {
-    setFetching(false);
-    setSelectedRows([]);
-  };
   const session = useAtomValue(sessionAtom);
 
   useEffect(() => {
@@ -85,6 +82,11 @@ export default function ExploreSectionTable({
       setDataSource(data.data);
     }
   }, [data]);
+
+  const clearSelectedRows = () => {
+    setFetching(false);
+    setSelectedRows([]);
+  };
 
   const onCellRouteHandler = {
     onCell: (record: ESResponseRaw) => ({

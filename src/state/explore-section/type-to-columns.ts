@@ -45,6 +45,15 @@ export const typeToColumns: { [id: string]: string[] } = {
     'contributors',
     'createdAt',
   ],
+  'https://neuroshapes.org/SimulationCampaign': [
+    'simCampName',
+    'brainConfiguration',
+    'parameter.coords.seed',
+    'parameter.coords.vpm_pct',
+    'parameter.coords.extracellular_calcium',
+    'parameter.coords.celsius',
+    'createdAt',
+  ],
   'https://neuroshapes.org/SynapsePerConnection': [
     'brainRegion',
     'mType',

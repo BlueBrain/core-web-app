@@ -1,44 +1,87 @@
-import { useState, useEffect } from 'react';
-import { useAtom } from 'jotai';
-import { Input } from 'antd';
+import {
+  ForwardedRef,
+  HTMLProps,
+  MouseEventHandler,
+  ReactNode,
+  RefObject,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { useSetAtom } from 'jotai';
+import debounce from 'lodash/debounce';
 import { SearchOutlined } from '@ant-design/icons';
 import { searchStringAtom } from '@/state/explore-section/list-view-atoms';
-import style from '@/components/explore-section/search.module.scss';
+import useForwardRef from '@/hooks/useForwardRef';
 
-const { Search } = Input;
+const Input = forwardRef(
+  (
+    { onBlur, onInput, placeholder = 'Search', type, value }: HTMLProps<HTMLInputElement>,
+    forwardedRef: ForwardedRef<HTMLInputElement>
+  ) => {
+    const ref = useForwardRef<HTMLInputElement>(forwardedRef);
+
+    useEffect(() => ref?.current?.focus(), [ref]); // Auto-focus on render
+
+    return (
+      <div className="border border-primary-3 flex items-center">
+        <input
+          className="bg-transparent placeholder:text-neutral-3 text-primary-7 hover:text-primary-5 h-[56] p-3"
+          onBlur={onBlur}
+          onInput={onInput}
+          ref={ref}
+          placeholder={placeholder}
+          type={type}
+          value={value}
+        />
+        <SearchOutlined className="p-3" />
+      </div>
+    );
+  }
+);
+
+Input.displayName = 'Input';
+
+function Button({
+  onClick,
+  children,
+}: {
+  children: ReactNode;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}) {
+  return (
+    <button
+      className="bg-transparent border border-primary-3 flex items-center p-3 text-primary-7"
+      onClick={onClick}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function ExploreSectionNameSearch() {
-  const [openSearchInput, setOpenSearchInputOpen] = useState<boolean>(false);
-  const [searchString, setSearchString] = useAtom(searchStringAtom);
+  const setSearchString = useSetAtom(searchStringAtom);
 
-  useEffect(() => {
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && openSearchInput) {
-        setOpenSearchInputOpen(false);
-      }
-    };
-    document.addEventListener('keydown', handleEscapeKey);
-    return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, [openSearchInput]);
+  const searchInput: RefObject<HTMLInputElement> = useRef(null);
+  const [openSearchInput, setOpenSearchInputOpen] = useState<boolean>(false);
+  const [value, setValue] = useState<string>('');
+
+  useEffect(() => debounce(() => setSearchString(value), 250), [setSearchString, value]);
 
   return openSearchInput ? (
-    <Search
-      allowClear
-      size="large"
-      placeholder={searchString}
-      onSearch={(value: string) => setSearchString(value)}
-      className={style.search}
-      enterButton={<SearchOutlined />}
+    <Input
+      onBlur={() => setOpenSearchInputOpen(false)}
+      onInput={(e) => setValue((e.target as HTMLInputElement).value)}
+      ref={searchInput}
+      placeholder="Type your search..."
+      type="text"
+      value={value}
     />
   ) : (
-    <button
-      type="button"
-      className={style.searchButton}
-      onClick={() => setOpenSearchInputOpen(!openSearchInput)}
-    >
+    <Button onClick={() => setOpenSearchInputOpen(true)}>
       <SearchOutlined />
-    </button>
+    </Button>
   );
 }

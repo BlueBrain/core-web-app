@@ -1,155 +1,83 @@
 [
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/1",
-    "@type": ["Simulation"],
-    "name": "Campaign name number one",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/1",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.2,
-      "depol_stdev_mean_ratio": 0.2,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "running",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": ""
+    "sort": [1689766284510],
+    "_id": "https://bbp.epfl.ch/neurosciencegraph/data/26e32980-f045-49bc-9be7-d6c81db162dc",
+    "_index": "nexus_search_bbe1b45f-05d0-4a31-97b5-2b7f62d950e0_0246e1b4-4c01-4584-90ff-d94399a95bcd_12",
+    "_source": {
+      "@id": "https://bbp.epfl.ch/neurosciencegraph/data/26e32980-f045-49bc-9be7-d6c81db162dc",
+      "@type": "https://neuroshapes.org/SimulationCampaign",
+      "config": {
+        "@id": "https://bbp.epfl.ch/neurosciencegraph/data/47cbfba9-5818-4653-bd75-adbc0ac92b2e",
+        "identifier": "https://bbp.epfl.ch/neurosciencegraph/data/47cbfba9-5818-4653-bd75-adbc0ac92b2e",
+        "name": "SBO SimCampaign test 2"
+      },
+      "createdAt": "2023-07-19T11:31:24.510Z",
+      "createdBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska",
+      "deprecated": false,
+      "description": "SBO SimCampaign test 2",
+      "name": "SBO SimCampaign test 2",
+      "parameter": {
+        "attrs": {
+          "blue_config_template": "sbo_simulation.tmpl",
+          "circuit_config": "/gpfs/bbp.cscs.ch/project/proj12/NSE/cwl-registry/data/20230625/synapseEditorConfig/circuit_config.json",
+          "duration": 1000,
+          "path_prefix": "/gpfs/bbp.cscs.ch/home/ivaska/sims",
+          "user_target": "sbo_node_sets.json"
+        },
+        "coords": {
+          "seed": [173635, 232471]
+        }
+      },
+      "project": {
+        "identifier": "https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp_test/studio_data3",
+        "label": "bbp_test/studio_data3"
+      },
+      "status": "Done",
+      "updatedAt": "2023-07-19T11:31:24.510Z",
+      "updatedBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska",
+      "_self": "https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/26e32980-f045-49bc-9be7-d6c81db162dc"
+    }
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/2",
-    "@type": ["Simulation"],
-    "name": "Campaign name number two",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/2",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.2,
-      "depol_stdev_mean_ratio": 0.3,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "running",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": ""
+    "sort": [1689764403409],
+    "_id": "https://bbp.epfl.ch/neurosciencegraph/data/6caf55bc-4bd8-411d-b1fc-e37939e1e2e9",
+    "_index": "nexus_search_bbe1b45f-05d0-4a31-97b5-2b7f62d950e0_0246e1b4-4c01-4584-90ff-d94399a95bcd_12",
+    "_source": {
+      "@id": "https://bbp.epfl.ch/neurosciencegraph/data/6caf55bc-4bd8-411d-b1fc-e37939e1e2e9",
+      "@type": "https://neuroshapes.org/SimulationCampaign",
+      "createdAt": "2023-07-19T11:00:03.409Z",
+      "createdBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska",
+      "deprecated": false,
+      "description": "SBO SimCampaign test 6",
+      "name": "SBO SimCampaign test 6",
+      "project": {
+        "identifier": "https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp_test/studio_data3",
+        "label": "bbp_test/studio_data3"
+      },
+      "updatedAt": "2023-07-19T11:00:03.409Z",
+      "updatedBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska",
+      "_self": "https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/6caf55bc-4bd8-411d-b1fc-e37939e1e2e9"
+    }
   },
   {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/3",
-    "@type": ["Simulation"],
-    "name": "Campaign name number three",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/3",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.2,
-      "depol_stdev_mean_ratio": 0.4,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "failed",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": "2023-05-18T13:48:23.217Z"
-  },
-  {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/4",
-    "@type": ["Simulation"],
-    "name": "Campaign name number four",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/4",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.3,
-      "depol_stdev_mean_ratio": 0.2,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "running",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": ""
-  },
-  {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/5",
-    "@type": ["Simulation"],
-    "name": "Campaign name number five",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/5",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.3,
-      "depol_stdev_mean_ratio": 0.3,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "done",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": "2023-05-18T13:48:23.217Z"
-  },
-  {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/6",
-    "@type": ["Simulation"],
-    "name": "Campaign name number six",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/6",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.3,
-      "depol_stdev_mean_ratio": 0.4,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "done",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": "2023-05-18T13:48:23.217Z"
-  },
-  {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/7",
-    "@type": ["Simulation"],
-    "name": "Campaign name number seven",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/7",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.4,
-      "depol_stdev_mean_ratio": 0.2,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "done",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": "2023-05-18T13:48:23.217Z"
-  },
-  {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/8",
-    "@type": ["Simulation"],
-    "name": "Campaign name number eight",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/8",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.4,
-      "depol_stdev_mean_ratio": 0.3,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "running",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": ""
-  },
-  {
-    "id": "https://bbp.epfl.ch/neurosciencegraph/simulation/9",
-    "@type": ["Simulation"],
-    "name": "Campaign name number nine",
-    "brainConfiguration": "https://bbp.epfl.ch/neurosciencegraph/brainconfig/9",
-    "campaign": "https://bbp.epfl.ch/neurosciencegraph/campaign/1",
-    "coords": {
-      "desired_connected_proportion_of_invivo_frs": 0.4,
-      "depol_stdev_mean_ratio": 0.4,
-      "vpm_pct": 0.4,
-      "extracellular_calcium": 0.3,
-      "celsius": [34, 35]
-    },
-    "status": "cancelled",
-    "startedAt": "2023-05-15T13:48:23.217Z",
-    "completedAt": "2023-05-18T13:48:23.217Z"
+    "sort": [1689685180586],
+    "_id": "https://bbp.epfl.ch/neurosciencegraph/data/9adf65e5-a7ee-4ca3-aa14-6002629c5772",
+    "_index": "nexus_search_bbe1b45f-05d0-4a31-97b5-2b7f62d950e0_0246e1b4-4c01-4584-90ff-d94399a95bcd_12",
+    "_source": {
+      "@id": "https://bbp.epfl.ch/neurosciencegraph/data/9adf65e5-a7ee-4ca3-aa14-6002629c5772",
+      "@type": "https://neuroshapes.org/SimulationCampaign",
+      "createdAt": "2023-07-18T12:59:40.586Z",
+      "createdBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska",
+      "deprecated": false,
+      "description": "SBO SimCampaign test 5",
+      "name": "SBO SimCampaign test 5",
+      "project": {
+        "identifier": "https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp_test/studio_data3",
+        "label": "bbp_test/studio_data3"
+      },
+      "updatedAt": "2023-07-18T12:59:40.586Z",
+      "updatedBy": "https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/ivaska",
+      "_self": "https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp_test/studio_data3/_/9adf65e5-a7ee-4ca3-aa14-6002629c5772"
+    }
   }
 ]

@@ -1,22 +1,15 @@
 .search {
-  @apply bg-primary-7 border-none bg-transparent rounded-none;
+  @apply border-none bg-transparent rounded-none;
+
   button:global(.ant-input-search-button) {
     @apply text-white bg-primary-7;
+
     &:hover {
       @apply bg-primary-6;
     }
+
     &:focus {
       @apply border-primary-6;
     }
-  }
-}
-.searchButton {
-  @apply border border-primary-6 hover:border-primary-7 flex items-center rounded-none border-primary-4 text-primary-8 p-3;
-}
-
-.search,
-.searchButton {
-  span:global(.anticon) {
-    @apply flex justify-center;
   }
 }

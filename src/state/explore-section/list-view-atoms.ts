@@ -1,6 +1,5 @@
 import { atom } from 'jotai';
 import isEqual from 'lodash/isEqual';
-
 import { ExploreSectionResponse, ESResponseRaw } from '@/types/explore-section/resources';
 import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
@@ -11,8 +10,9 @@ import fetchEsResourcesByType from '@/api/explore-section/resources';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 
-const columnKeyToFilter = (key: string): Filter => {
+export const columnKeyToFilter = (key: string): Filter => {
   const fieldConfig = LISTING_CONFIG[key];
+
   switch (fieldConfig.filter) {
     case 'checkList':
       return {
@@ -34,6 +34,13 @@ const columnKeyToFilter = (key: string): Filter => {
         type: 'valueRange',
         value: { gte: null, lte: null },
         aggregationType: 'stats',
+      };
+    case 'valueOrRange':
+      return {
+        field: key,
+        type: 'valueOrRange',
+        value: null,
+        aggregationType: 'buckets',
       };
     default:
       return {
@@ -104,11 +111,11 @@ export const queryAtom = atom<object>((get) => {
 
 const refetchCounterAtom = atom<number>(0);
 
-export const triggerRefetchAtom = atom(null, async (get, set) => {
+export const triggerRefetchAtom = atom(null, async (_get, set) => {
   set(refetchCounterAtom, (counter) => counter + 1);
 });
 
-const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => {
+export const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => {
   const session = get(sessionAtom);
   const query = get(queryAtom);
 
@@ -119,10 +126,9 @@ const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => 
   return fetchEsResourcesByType(session.accessToken, query);
 });
 
-export const dataAtom = atom<Promise<ESResponseRaw[] | undefined>>(async (get) => {
-  const { hits } = (await get(queryResponseAtom)) ?? {};
-  return hits;
-});
+export const dataAtom = atom<Promise<ESResponseRaw[]>>(
+  async (get) => (await get(queryResponseAtom))?.hits ?? []
+);
 
 export const totalAtom = atom<Promise<TotalHits | undefined>>(async (get) => {
   const { total } = (await get(queryResponseAtom)) ?? { total: { relation: 'eq', value: 0 } };

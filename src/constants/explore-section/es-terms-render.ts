@@ -11,6 +11,7 @@ import {
   selectorFnValue,
 } from '@/state/explore-section/listing-selectors';
 import { FilterType } from '@/components/Filter/types';
+import { IndexColContent, ValueArray } from '@/components/ListTable';
 
 type TermsRenderProps = {
   [key: string]: {
@@ -49,7 +50,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'eType.label.keyword',
     title: 'E-Type',
     filter: 'checkList',
-    renderFn: (t, r) => selectorFnBasic(r._source?.eType?.label),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
     vocabulary: {
       plural: 'E-Types',
       singular: 'E-Type',
@@ -59,7 +60,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'mType.label.keyword',
     title: 'M-Type',
     filter: 'checkList',
-    renderFn: (t, r) => selectorFnBasic(r._source?.mType?.label),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
     vocabulary: {
       plural: 'M-Types',
       singular: 'M-Type',
@@ -69,7 +70,17 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'name.keyword',
     title: 'Name',
     filter: null,
-    renderFn: (t, r) => selectorFnBasic(r._source?.name),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.name),
+    vocabulary: {
+      plural: 'Names',
+      singular: 'Name',
+    },
+  },
+  simCampName: {
+    term: 'name.keyword',
+    title: 'Name',
+    filter: null,
+    renderFn: (_t, r) => IndexColContent({ text: r._source?.name }),
     vocabulary: {
       plural: 'Names',
       singular: 'Name',
@@ -79,7 +90,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'subjectSpecies.label.keyword',
     title: 'Species',
     filter: 'checkList',
-    renderFn: (t, r) => selectorFnBasic(r._source?.subjectSpecies?.label),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.subjectSpecies?.label),
     vocabulary: {
       plural: 'Species',
       singular: 'Species',
@@ -96,7 +107,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'SEM',
     description: 'Standard error of the mean',
     filter: 'valueRange',
-    renderFn: (t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
     vocabulary: {
       plural: 'Values',
       singular: 'Value',
@@ -107,7 +118,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Weight',
     filter: 'checkList',
     unit: 'gramms',
-    renderFn: (t, r) => selectorFnBasic(r._source?.weight),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.weight),
     vocabulary: {
       plural: 'Values',
       singular: 'Value',
@@ -118,7 +129,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Age',
     filter: 'checkList',
     unit: 'days',
-    renderFn: (t, r) => selectorFnBasic(r._source?.subjectAge?.label),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.subjectAge?.label),
     vocabulary: {
       plural: 'Ages',
       singular: 'Age',
@@ -139,7 +150,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Density',
     filter: 'valueRange',
     unit: 'n/mm³',
-    renderFn: (t, r) => selectorFnValue(r._source?.neuronDensity),
+    renderFn: (_t, r) => selectorFnValue(r._source?.neuronDensity),
     vocabulary: {
       plural: 'Densities',
       singular: 'Density',
@@ -149,7 +160,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'boutonDensity.label.keyword',
     title: 'Bouton density',
     filter: 'checkList',
-    renderFn: (t, r) => selectorFnBasic(r._source?.boutonDensity?.value),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.boutonDensity?.value),
     vocabulary: {
       plural: 'Bouton Densities',
       singular: 'Bouton Density',
@@ -170,7 +181,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Thickness',
     filter: 'valueRange',
     unit: 'μm',
-    renderFn: (t, r) => selectorFnLayerThickness(r._source?.layerThickness),
+    renderFn: (_t, r) => selectorFnLayerThickness(r._source?.layerThickness),
     vocabulary: {
       plural: 'Thicknesses',
       singular: 'Thickness',
@@ -189,7 +200,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'createdAt',
     title: 'Creation date',
     filter: 'dateRange',
-    renderFn: (t, r) => selectorFnDate(r._source?.createdAt),
+    renderFn: (_t, r) => selectorFnDate(r._source?.createdAt),
     vocabulary: {
       plural: 'Dates',
       singular: 'Date',
@@ -208,7 +219,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'updatedAt',
     title: 'Updated at',
     filter: 'dateRange',
-    renderFn: (t, r) => selectorFnDate(r._source?.updatedAt),
+    renderFn: (_t, r) => selectorFnDate(r._source?.updatedAt),
     vocabulary: {
       plural: 'Dates',
       singular: 'Date',
@@ -218,7 +229,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'reference.keyword',
     title: 'Reference',
     filter: 'checkList',
-    renderFn: (t, r) => selectorFnBasic(r._source?.reference),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.reference),
     vocabulary: {
       plural: 'References',
       singular: 'Reference',
@@ -229,7 +240,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     title: 'Conditions',
     filter: 'checkList',
     unit: 'Cº',
-    renderFn: (t, r) => selectorFnBasic(r._source?.conditions),
+    renderFn: (_t, r) => selectorFnBasic(r._source?.conditions),
     vocabulary: {
       plural: 'Conditions',
       singular: 'Condition',
@@ -260,7 +271,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     },
     title: 'N° of Measurements',
     filter: 'valueRange',
-    renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {
       plural: 'Values',
       singular: 'Value',
@@ -270,37 +281,51 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'nValue',
     title: 'Brain Configuration',
     filter: null,
-    renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {
       plural: 'Brain Configurations',
       singular: 'Brain Configuration',
     },
   },
-  'coords.vpm_pct': {
+  'parameter.coords.vpm_pct': {
     term: 'nValue',
     title: 'vpm_pct',
-    filter: null,
-    renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    filter: 'valueOrRange',
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {
       plural: 'Values',
       singular: 'Value',
     },
   },
-  'coords.extracellular_calcium': {
+  'parameter.coords.extracellular_calcium': {
     term: 'nValue',
     title: 'extracellular_calcium',
-    filter: null,
-    renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    filter: 'valueOrRange',
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {
       plural: 'Values',
       singular: 'Value',
     },
   },
-  'coords.celsius': {
+  'parameter.coords.celsius': {
     term: 'nValue',
     title: 'celcius',
-    filter: null,
-    renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    filter: 'valueOrRange',
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
+    vocabulary: {
+      plural: 'Values',
+      singular: 'Value',
+    },
+  },
+  'parameter.coords.seed': {
+    term: 'parameter.coords.seed',
+    title: 'Seed',
+    unit: 'unit xxxx',
+    filter: 'valueOrRange',
+    renderFn: (_t, r) =>
+      ValueArray({
+        value: r._source?.parameter?.coords?.seed?.map((label: string) => label),
+      }),
     vocabulary: {
       plural: 'Values',
       singular: 'Value',
@@ -310,7 +335,7 @@ const LISTING_CONFIG: TermsRenderProps = {
     term: 'nValue',
     title: 'started at',
     filter: null,
-    renderFn: (t, r) => selectorFnStatistic(r._source, 'N'),
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
     vocabulary: {
       plural: 'Dates',
       singular: 'Date',

@@ -5,18 +5,21 @@ import { Spin } from 'antd';
 import { loadable } from 'jotai/utils';
 import { useAtom, useAtomValue } from 'jotai';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
-import { Filter, OptionsData, RangeFilter } from '@/components/Filter/types';
+import { Filter, OptionsData, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
 import { CheckList, DateRange, FilterGroup, FilterGroupProps } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
+import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
-import { aggregationsAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
+import {
+  activeColumnsAtom,
+  aggregationsAtom,
+  filtersAtom,
+} from '@/state/explore-section/list-view-atoms';
 
 export type ControlPanelProps = {
-  activeColumns: string[];
   children?: ReactNode;
-  onToggleActive?: (key: string) => void;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  toggleDisplay: () => void;
 };
 
 const aggregationsLoadable = loadable(aggregationsAtom);
@@ -30,7 +33,9 @@ function createFilterItemComponent(
   return function FilterItemComponent() {
     const { type } = filter;
     const { nestedField } = LISTING_CONFIG[filter.field];
+
     let agg;
+
     if (aggregations.state === 'loading') {
       return (
         <div className="flex items-center justify-center">
@@ -38,56 +43,79 @@ function createFilterItemComponent(
         </div>
       );
     }
-    if (aggregations.state === 'hasData' && aggregations.data) {
-      switch (type) {
-        case 'dateRange':
-          return <DateRange filter={filter as RangeFilter} setFilterValues={setFilterValues} />;
-        case 'valueRange':
-          if (nestedField) {
-            const nestedAgg = aggregations.data[filter.field] as NestedStatsAggregation;
-            agg = nestedAgg[filter.field][nestedField.field] as Statistics;
-          } else {
-            agg = aggregations.data[filter.field] as Statistics;
-          }
-          return (
-            <ValueRange
-              filter={filter as RangeFilter}
-              aggregation={agg}
-              setFilterValues={setFilterValues}
-            />
-          );
-        case 'checkList':
-          return (
-            <CheckList
-              data={aggregations.data as OptionsData}
-              filter={filter}
-              values={filterValues[filter.field] as string[]}
-              setFilterValues={setFilterValues}
-            />
-          );
-        default:
-          return null;
-      }
+
+    if (aggregations.state !== 'hasData' || !aggregations?.data) return null;
+
+    switch (type) {
+      case 'dateRange':
+        return <DateRange filter={filter as RangeFilter} setFilterValues={setFilterValues} />;
+
+      case 'valueRange':
+        if (nestedField) {
+          const nestedAgg = aggregations.data[filter.field] as NestedStatsAggregation;
+          agg = nestedAgg[filter.field][nestedField.field] as Statistics;
+        } else {
+          agg = aggregations.data[filter.field] as Statistics;
+        }
+
+        return (
+          <ValueRange
+            filter={filter as RangeFilter}
+            aggregation={agg}
+            setFilterValues={setFilterValues}
+          />
+        );
+
+      case 'checkList':
+        return (
+          <CheckList
+            data={aggregations.data as OptionsData}
+            filter={filter}
+            values={filterValues[filter.field] as string[]}
+            setFilterValues={setFilterValues}
+          />
+        );
+
+      case 'valueOrRange':
+        return (
+          <ValueOrRange
+            filter={filter as ValueOrRangeFilter}
+            setFilter={(value: ValueOrRangeFilter['value']) =>
+              setFilterValues({ ...filterValues, [filter.field]: value })
+            }
+          />
+        );
+
+      default:
+        return null;
     }
-    return <div />;
   };
 }
 
-export default function ControlPanel({
-  activeColumns,
-  children,
-  onToggleActive,
-  setOpen,
-}: ControlPanelProps) {
-  const [filterValues, setFilterValues] = useState<FilterValues>({});
+export default function ControlPanel({ children, toggleDisplay }: ControlPanelProps) {
+  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom);
   const aggregations = useAtomValue(aggregationsLoadable);
   const [filters, setFilters] = useAtom(filtersAtom);
+
+  const [filterValues, setFilterValues] = useState<FilterValues>({});
+
+  const onToggleActive = (key: string) => {
+    const existingIndex = activeColumns.findIndex((existingKey) => existingKey === key);
+
+    return existingIndex === -1
+      ? setActiveColumns([...activeColumns, key])
+      : setActiveColumns([
+          ...activeColumns.slice(0, existingIndex),
+          ...activeColumns.slice(existingIndex + 1),
+        ]);
+  };
 
   useEffect(() => {
     const values: FilterValues = {};
     filters.forEach((filter: Filter) => {
       values[filter.field as string] = filter.value;
     });
+
     setFilterValues(values);
   }, [filters]);
 
@@ -113,7 +141,7 @@ export default function ControlPanel({
 
   return (
     <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
-      <button type="button" onClick={() => setOpen(false)} className="text-white text-right">
+      <button type="button" onClick={toggleDisplay} className="text-white text-right">
         <CloseOutlined />
       </button>
       <span className="flex font-bold gap-2 items-baseline text-2xl text-white">

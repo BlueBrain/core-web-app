@@ -1,7 +1,6 @@
 import { useAtom } from 'jotai';
 import ReloadIcon from '@/components/icons/Reload';
-import { filtersAtom } from '@/state/explore-section/list-view-atoms';
-import { columnKeyToFilter } from '@/state/explore-section/list-atoms-constructor';
+import { columnKeyToFilter, filtersAtom } from '@/state/explore-section/list-view-atoms';
 import style from '@/components/explore-section/clearfilters.module.scss';
 
 export default function ClearFilters() {
