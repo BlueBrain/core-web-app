@@ -341,6 +341,51 @@ const LISTING_CONFIG: ListingConfigProps = {
       singular: 'Date',
     },
   },
+  categories: {
+    term: 'categories',
+    title: 'Category',
+    filter: 'search',
+    vocabulary: {
+      plural: 'Categories',
+      singular: 'Category',
+    },
+  },
+  articleType: {
+    term: 'articleType',
+    title: 'Article type',
+    filter: 'search',
+    vocabulary: {
+      plural: 'Article types',
+      singular: 'Article type',
+    },
+  },
+  journal: {
+    term: 'journal',
+    title: 'Journal',
+    filter: 'search',
+    vocabulary: {
+      plural: 'Journals',
+      singular: 'Journal',
+    },
+  },
+  authors: {
+    term: 'authors',
+    title: 'Authors',
+    filter: 'search',
+    vocabulary: {
+      plural: 'Authors',
+      singular: 'Author',
+    },
+  },
+  publicationDate: {
+    term: 'publicationDate',
+    title: 'Publication date',
+    filter: 'dateRange',
+    vocabulary: {
+      plural: 'Publication dates',
+      singular: 'Publication date',
+    },
+  },
 };
 
 export default LISTING_CONFIG;

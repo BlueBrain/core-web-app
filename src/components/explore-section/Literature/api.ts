@@ -1,4 +1,4 @@
-import { GenerativeQAResponse, ReturnGetGenerativeQA } from './types';
+import { GenerativeQAResponse, ReturnGetGenerativeQA } from '../../../types/literature';
 import { generativeQADTO } from './utils/DTOs';
 import * as LiteratureErrors from './errors';
 import { nexus } from '@/config';

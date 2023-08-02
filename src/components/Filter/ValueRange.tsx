@@ -1,8 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'antd/es/form/Form';
 import { ConfigProvider, Form, InputNumber } from 'antd';
-import { RangeFilter } from '@/components/Filter/types';
-import { FilterValues } from '@/types/explore-section/application';
+import { GteLteValue, RangeFilter } from '@/components/Filter/types';
 import { Statistics } from '@/types/explore-section/fields';
 import ArrowLeftRightIcon from '@/components/icons/ArrowLeftRight';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
@@ -11,11 +9,11 @@ import { formatNumber } from '@/util/common';
 export default function ValueRange({
   filter,
   aggregation,
-  setFilterValues,
+  onChange,
 }: {
   filter: RangeFilter;
   aggregation: Statistics;
-  setFilterValues: Dispatch<SetStateAction<FilterValues>>;
+  onChange: (value: GteLteValue) => void;
 }) {
   const [form] = useForm();
 
@@ -23,10 +21,7 @@ export default function ValueRange({
     const minValue = form.getFieldValue('min-range');
     const maxValue = form.getFieldValue('max-range');
 
-    setFilterValues((prevState) => ({
-      ...prevState,
-      [filter.field]: { gte: minValue ?? null, lte: maxValue ?? null },
-    }));
+    onChange({ gte: minValue ?? null, lte: maxValue ?? null });
   };
 
   // if there is no min and max value, then the field should be disabled

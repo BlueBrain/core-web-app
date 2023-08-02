@@ -1,6 +1,7 @@
 import { Session } from 'next-auth';
 
-import * as LiteratureErrors from './errors';
+import * as LiteratureErrors from '../components/explore-section/Literature/errors';
+import { Filter } from '@/components/Filter/types';
 
 export type HighlightHit = {
   start: number;
@@ -16,6 +17,9 @@ export type GArticle = {
   paragraph: string;
   section: string;
   abstract: string | string[];
+  categories?: string[];
+  articleType?: string;
+  publicationDate?: string; // format "%Y-%m-%d"
 };
 
 export type GenerativeQAMetadata = {
@@ -50,6 +54,24 @@ export type GetGenerativeQAInput = {
   question: string;
   size?: number;
 };
+
 export type ReturnGetGenerativeQA = (
   input: GetGenerativeQAInput
 ) => Promise<GenerativeQA | LiteratureErrors.LiteratureValidationError | null>;
+
+export const FilterFields = [
+  'categories',
+  'publicationDate',
+  'articleType',
+  'journal',
+  'authors',
+] as const;
+
+export type FilterFieldsType = (typeof FilterFields)[number];
+
+export type FilterValues = Partial<{ [key in FilterFieldsType]: Filter['value'] }>;
+
+export type MLFilter = Filter & {
+  field: FilterFieldsType;
+  hasOptions: boolean;
+};

@@ -4,7 +4,7 @@ import { FormEvent, useTransition } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
-import { GenerativeQA } from '../types';
+import { GenerativeQA } from '../../../../types/literature';
 import { getGenerativeQA } from '../api';
 import { LiteratureValidationError } from '../errors';
 import { scrollToBottom } from '../utils';

@@ -1,4 +1,4 @@
-import { HighlightHit } from '../types';
+import { HighlightHit } from '../../../../types/literature';
 
 const charsBeforeStart = 50;
 const charsAfterEnd = 200;
