@@ -52,7 +52,7 @@ export default function SectionCards({
   return content.icon === 'eye' ? (
     // IF LINK
     <Link
-      id='explore-section-card-1'
+      id="explore-section-card-1"
       href={content.url}
       className={classNames(
         'relative w-full h-15vh p-8 2xl:p-14 flex flex-row justify-between items-center',
