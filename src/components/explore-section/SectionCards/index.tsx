@@ -18,8 +18,6 @@ type SubSectionProps = {
   url: string;
 };
 
-
-
 export default function SectionCards({ content, cardIndex, expanded }: SectionCardsProps) {
   const [sectionStatus, setSectionStatus] = useState<boolean>(false);
 
@@ -27,48 +25,56 @@ export default function SectionCards({ content, cardIndex, expanded }: SectionCa
 
   return content.icon === 'eye' ? (
     <Link
-      id='explore-section-card-1'
+      id="explore-section-card-1"
       href={content.url}
-      className={`w-full ${backgroundColor} ${expanded ? 'p-4 hover:py-7' : 'p-8'} flex flex-row justify-between items-center transition-padding ease-in-out duration-300 hover:py-12`}
+      className={`w-full ${backgroundColor} ${
+        expanded ? 'p-3 hover:py-7' : 'p-8'
+      } flex flex-row justify-between items-center transition-padding ease-in-out duration-300 hover:py-12`}
     >
       <div className="flex flex-col justify-start">
-        <h2 className="text-2xl font-bold text-white">{content.name}</h2>
-        <p className={`text-sm font-light text-blue-200 ${expanded && 'line-clamp-2  text-left'}`}>{content.description}</p>
+        <h2 className={`${expanded ? 'text-lg' : 'text-2xl'} font-bold text-white`}>
+          {content.name}
+        </h2>
+        {!expanded && <p className="text-sm font-light text-blue-200">{content.description}</p>}
       </div>
 
       {content.icon === 'eye' ? (
-        <EyeIcon fill="white" className={`w-auto ${expanded ? 'h-5' : 'h-3'}`} />
+        <EyeIcon fill="white" className="w-auto h-3" />
       ) : (
-        <AddIcon fill="white" className={`w-auto ${expanded ? 'h-6' : 'h-4'}`} />
+        <AddIcon fill="white" className="w-auto h-4" />
       )}
     </Link>
   ) : (
-    <div className="w-full flex flex-col">
+    <div className="flex flex-col w-full">
       <button
         type="button"
-        className={`w-full ${backgroundColor} ${expanded ? 'p-4 hover:py-7' : 'p-8'} flex flex-row items-center justify-between transition-padding ease-in-out duration-300 ${
+        className={`w-full ${backgroundColor} ${
+          expanded ? 'p-3 hover:py-7' : 'p-8'
+        } flex flex-row items-center justify-between transition-padding ease-in-out duration-300 ${
           sectionStatus ? 'hover:py-8' : 'hover:py-12'
         } hover:py-12}`}
         onClick={() => setSectionStatus(!sectionStatus)}
       >
         <div className="flex flex-col items-start">
-          <h2 className="text-2xl font-bold text-white">{content.name}</h2>
-          <p className={`text-sm font-light text-blue-200 ${expanded && 'line-clamp-2 text-left'}`}>{content.description}</p>
+          <h2 className={`${expanded ? 'text-lg' : 'text-2xl'} font-bold text-white`}>
+            {content.name}
+          </h2>
+          {!expanded && <p className="text-sm font-light text-blue-200">{content.description}</p>}
         </div>
 
         {content.icon === 'eye' ? (
-          <EyeIcon fill="white" className={`w-auto ${expanded ? 'h-5' : 'h-3'}`} />
+          <EyeIcon fill="white" className="w-auto h-3" />
         ) : (
           <AddIcon
             fill="white"
-            className={`w-auto ${expanded ? 'h-6' : 'h-4'} transition-transform ease-in-out duration-300 origin-center ${
+            className={`w-auto h-4 transition-transform ease-in-out duration-300 origin-center ${
               sectionStatus ? 'rotate-45' : 'rotate-0'
             }`}
           />
         )}
       </button>
       {sectionStatus && (
-        <div className="w-full flex flex-col justify-start px-8">
+        <div className="flex flex-col justify-start w-full px-8">
           {content.children.map((subsection: SubSectionProps, index: number) => (
             <Link
               href={subsection.url}
@@ -79,8 +85,12 @@ export default function SectionCards({ content, cardIndex, expanded }: SectionCa
                   : ''
               } transition-padding ease-linear duration-150 hover:py-7`}
             >
-              <h3 className="text-2xl text-white font-bold">{subsection.name}</h3>
-              <div className={`text-sm font-light text-blue-200 ${expanded && 'line-clamp-2 text-left'}`}>{subsection.subtitle}</div>
+              <h3 className={`${expanded ? 'text-lg' : 'text-2xl'} font-bold text-white`}>
+                {subsection.name}
+              </h3>
+              {!expanded && (
+                <div className="text-sm font-light text-blue-200 ">{subsection.subtitle}</div>
+              )}
             </Link>
           ))}
         </div>

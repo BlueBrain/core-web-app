@@ -7,7 +7,7 @@ export type TypeSingleCard = {
     name: string;
     subtitle: string;
     url: string;
-  }[],
+  }[];
 };
 
 export const sectionContent: TypeSingleCard[] = [
