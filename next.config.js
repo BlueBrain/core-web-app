@@ -30,6 +30,7 @@ const nextConfig = {
   output: 'standalone',
   experimental: {
     appDir: true,
+    serverActions: true,
   },
   // sentry: {
   //   hideSourceMaps: false,
