@@ -6,7 +6,14 @@ import { loadable } from 'jotai/utils';
 import { useAtom, useAtomValue } from 'jotai';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import { Filter, OptionsData, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
-import { CheckList, DateRange, FilterGroup, FilterGroupProps } from '@/components/Filter';
+import {
+  CheckList,
+  DateRange,
+  FilterGroup,
+  FilterGroupProps,
+  defaultList,
+  listWithInference,
+} from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
@@ -65,7 +72,17 @@ function createFilterItemComponent(
             setFilterValues={setFilterValues}
           />
         );
-
+      case 'checkListInference':
+        return (
+          <CheckList
+            data={aggregations.data as OptionsData}
+            filter={filter}
+            values={filterValues[filter.field] as string[]}
+            setFilterValues={setFilterValues}
+          >
+            {listWithInference}
+          </CheckList>
+        );
       case 'checkList':
         return (
           <CheckList
@@ -73,7 +90,9 @@ function createFilterItemComponent(
             filter={filter}
             values={filterValues[filter.field] as string[]}
             setFilterValues={setFilterValues}
-          />
+          >
+            {defaultList}
+          </CheckList>
         );
 
       case 'valueOrRange':

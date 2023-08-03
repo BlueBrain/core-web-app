@@ -76,3 +76,17 @@ export type PlotProps = {
 export type FilterValues = {
   [field: string]: string | number | string[] | GteLteValue | null;
 };
+
+export type CheckListProps = {
+  options: {
+    checked: string | boolean;
+    count: number | null;
+    key: string;
+  }[];
+  renderLength: number;
+  handleCheckedChange: (value: string) => void;
+  filterField: Filter['field'];
+  search: () => JSX.Element;
+  loadMoreBtn: () => JSX.Element | null | false;
+  defaultRenderLength: number; // Added defaultRenderLength as a prop
+};

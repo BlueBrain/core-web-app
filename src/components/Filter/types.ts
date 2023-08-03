@@ -17,6 +17,11 @@ export interface CheckListFilter extends Omit<BaseFilter, 'type' | 'value'> {
   value: string[];
 }
 
+export interface CheckListInferenceFilter extends Omit<BaseFilter, 'type' | 'value'> {
+  type: 'checkListInference';
+  value: string[];
+}
+
 export interface RangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
   type: 'dateRange' | 'valueRange';
   value: GteLteValue;
@@ -32,9 +37,21 @@ export interface ValueOrRangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
   value: number | GteLteValue | null; // "value" | "range" | "all"
 }
 
-export type Filter = CheckListFilter | RangeFilter | ValueFilter | ValueOrRangeFilter | BaseFilter;
+export type Filter =
+  | CheckListFilter
+  | RangeFilter
+  | ValueFilter
+  | ValueOrRangeFilter
+  | CheckListInferenceFilter
+  | BaseFilter;
 
-export type FilterType = 'checkList' | 'dateRange' | 'valueRange' | 'valueOrRange' | null;
+export type FilterType =
+  | 'checkList'
+  | 'dateRange'
+  | 'valueRange'
+  | 'checkListInference'
+  | 'valueOrRange'
+  | null;
 
 export type CheckboxOption = {
   checked: string | boolean;

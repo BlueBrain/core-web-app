@@ -13,7 +13,7 @@ import {
 import { FilterType } from '@/components/Filter/types';
 import { IndexColContent, ValueArray } from '@/components/ListTable';
 
-type TermsRenderProps = {
+type ListingConfigProps = {
   [key: string]: {
     term: string;
     nestedField?: NestedFieldConfig;
@@ -35,11 +35,11 @@ type NestedFieldConfig = {
   nestField: string;
 };
 
-const LISTING_CONFIG: TermsRenderProps = {
+const LISTING_CONFIG: ListingConfigProps = {
   brainRegion: {
     term: 'brainRegion.label.keyword',
     title: 'Brain Region',
-    filter: 'checkList',
+    filter: 'checkListInference',
     renderFn: selectorFnBrainRegion,
     vocabulary: {
       plural: 'Brain Regions',

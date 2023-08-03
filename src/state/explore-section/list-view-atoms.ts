@@ -5,10 +5,12 @@ import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
+import { fetchRules } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
+import { RuleOuput } from '@/types/explore-section/kg-inference';
 
 export const columnKeyToFilter = (key: string): Filter => {
   const fieldConfig = LISTING_CONFIG[key];
@@ -18,6 +20,13 @@ export const columnKeyToFilter = (key: string): Filter => {
       return {
         field: key,
         type: 'checkList',
+        value: [],
+        aggregationType: 'buckets',
+      };
+    case 'checkListInference':
+      return {
+        field: key,
+        type: 'checkListInference',
         value: [],
         aggregationType: 'buckets',
       };
@@ -144,4 +153,12 @@ export const aggregationsAtom = atom<Promise<Aggregations | undefined>>(async (g
   const response = await get(queryResponseAtom);
 
   return response?.aggs;
+});
+
+export const rulesResponseAtom = atom<Promise<RuleOuput[]> | null>((get) => {
+  const session = get(sessionAtom);
+
+  if (!session) return null;
+
+  return fetchRules(session);
 });

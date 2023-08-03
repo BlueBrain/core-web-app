@@ -10,6 +10,7 @@ import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
+import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
 import { ESResponseRaw } from '@/types/explore-section/resources';
 import fetchArchive from '@/api/archive';
 import Spinner from '@/components/Spinner';
@@ -61,6 +62,28 @@ function CustomTH({
   );
 }
 
+function CustomCell({
+  children,
+  style,
+  onClick,
+  ...props
+}: {
+  children: ReactNode;
+  style: CSSProperties;
+  onClick: () => void;
+}) {
+  const modifiedStyle = {
+    ...style,
+    backgroundColor: 'white',
+  };
+
+  return (
+    <td {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
+      {children}
+    </td>
+  );
+}
+
 export default function ExploreSectionTable({
   data,
   columns,
@@ -102,6 +125,8 @@ export default function ExploreSectionTable({
     return <div>Something went wrong</div>;
   }
 
+  const expandedRowRender = () => <GeneralizationRules />;
+
   return (
     <>
       <Table
@@ -128,7 +153,11 @@ export default function ExploreSectionTable({
           header: {
             cell: CustomTH,
           },
+          body: {
+            cell: CustomCell,
+          },
         }}
+        expandable={{ expandedRowRender }}
       />
       {session && selectedRows.length > 0 && (
         <div className="sticky bottom-0 flex justify-end">

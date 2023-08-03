@@ -1,15 +1,16 @@
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
-import { CloseOutlined, InfoCircleFilled } from '@ant-design/icons';
+import { ReactNode, useMemo, useState, useCallback } from 'react';
 import { ConfigProvider, Tag } from 'antd';
+import { CloseOutlined, InfoCircleFilled } from '@ant-design/icons';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
+import sortBy from 'lodash/sortBy';
 import { Filter, OptionsData } from './types';
 import { CheckIcon } from '@/components/icons';
+import { CheckListProps, FilterValues } from '@/types/explore-section/application';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import Search from '@/components/Search';
 import CenteredMessage from '@/components/CenteredMessage';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
-import { FilterValues } from '@/types/explore-section/application';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {
@@ -22,7 +23,7 @@ const DisplayLabel = (filterField: string, key: string): string | null => {
   }
 };
 
-function CheckListOption({
+export function CheckListOption({
   checked,
   count,
   handleCheckedChange,
@@ -55,15 +56,17 @@ function CheckListOption({
 }
 
 export default function CheckList({
+  children,
   data,
   filter,
   values,
   setFilterValues,
 }: {
+  children: (props: CheckListProps) => ReactNode;
   data: OptionsData;
   filter: Filter;
   values: string[];
-  setFilterValues: Dispatch<SetStateAction<FilterValues>>;
+  setFilterValues: React.Dispatch<React.SetStateAction<FilterValues>>;
 }) {
   const options = useMemo(() => {
     const agg = data[filter.field];
@@ -72,7 +75,7 @@ export default function CheckList({
     return buckets
       ? buckets?.map(({ key, doc_count: count }) => ({
           checked: values.includes(key as string),
-          key,
+          key: key as string,
           count,
         }))
       : undefined;
@@ -179,33 +182,21 @@ export default function CheckList({
     />
   );
 
-  const list = () => (
-    <>
-      {
-        options && options.length > defaultRenderLength && search() // Only render for the longer lists
-      }
-      <ul className="divide-y divide-white/20 flex flex-col space-y-3">
-        {options?.slice(0, renderLength)?.map(({ checked, count, key }) => (
-          <CheckListOption
-            checked={checked}
-            count={count}
-            key={key}
-            handleCheckedChange={handleCheckedChange}
-            id={key as string}
-            filterField={filter.field}
-          />
-        ))}
-      </ul>
-      {
-        options && options.length > defaultRenderLength && loadMoreBtn() // Only render for the longer lists
-      }
-    </>
-  );
+  // Sort the options array by the checked property using Lodash's sortBy function
+  const sortedOptions = useMemo(() => sortBy(options, { checked: false }), [options]);
 
   return (
     <div className="flex flex-col gap-4">
-      {options && options.length > 0 ? (
-        list()
+      {sortedOptions && sortedOptions.length > 0 ? (
+        children({
+          options: sortedOptions,
+          renderLength,
+          handleCheckedChange,
+          filterField: filter.field,
+          search, // Pass the search function to the ListComponent
+          loadMoreBtn, // Pass the loadMoreBtn function to the ListComponent
+          defaultRenderLength, // Pass the defaultRenderLength as a prop
+        })
       ) : (
         <div className="text-neutral-1">
           <CenteredMessage
@@ -217,3 +208,30 @@ export default function CheckList({
     </div>
   );
 }
+
+export const defaultList = ({
+  options,
+  renderLength,
+  handleCheckedChange,
+  filterField,
+  search,
+  loadMoreBtn,
+  defaultRenderLength,
+}: CheckListProps) => (
+  <>
+    {options && options.length > defaultRenderLength && search()}
+    <ul className="divide-y divide-white/20 flex flex-col space-y-3">
+      {options?.slice(0, renderLength)?.map(({ checked, count, key }) => (
+        <CheckListOption
+          checked={checked}
+          count={count}
+          key={key}
+          handleCheckedChange={handleCheckedChange}
+          id={key}
+          filterField={filterField}
+        />
+      ))}
+    </ul>
+    {options && options.length > defaultRenderLength && loadMoreBtn()}
+  </>
+);
