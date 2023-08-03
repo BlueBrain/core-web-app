@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { sectionContent } from '@/constants/homes-sections/homeSectionContent';
+import { basePath } from '@/config';
 
 import SectionCards from '@/components/explore-section/SectionCards';
 import HomeHeader from '@/components/Global/HomeHeader';
@@ -55,7 +56,7 @@ export default function Explore() {
       <div className="w-screen max-w-screen h-screen fixed bottom-0 left-0 z-0">
         {content.map((singleImage: SingleCard) => (
           <Image
-            src={singleImage.image}
+            src={`${basePath}/${singleImage.image}`}
             width={1920}
             height={1080}
             alt="Explore background image"

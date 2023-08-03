@@ -5,7 +5,7 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '/explore/brain-models',
     icon: 'eye',
-    image: '/images/explore/explore_home_bgImg-01.jpg',
+    image: 'images/explore/explore_home_bgImg-01.jpg',
     items: null,
   },
   {
@@ -14,7 +14,7 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '/explore/simulation-campaigns',
     icon: 'eye',
-    image: '/images/explore/explore_home_bgImg-02.jpg',
+    image: 'images/explore/explore_home_bgImg-02.jpg',
     items: null,
   },
   {
@@ -22,15 +22,15 @@ export const sectionContent = [
     description: 'A set of experimental data to build models',
     url: '#',
     icon: 'plus',
-    image: '/images/explore/explore_home_bgImg-03.jpg',
+    image: 'images/explore/explore_home_bgImg-03.jpg',
     items: [
       {
-        name: 'Neuron Electrophysiology',
+        name: 'Neuron electrophysiology',
         type: 'https://neuroshapes.org/Trace',
         url: '/explore/electrophysiology',
       },
       {
-        name: 'Neuron Morphology',
+        name: 'Neuron morphology',
         type: 'https://neuroshapes.org/NeuronMorphology',
         url: '/explore/morphology',
       },
@@ -45,7 +45,7 @@ export const sectionContent = [
         url: '/explore/neuron-density',
       },
       {
-        name: 'Layer Thickness',
+        name: 'Layer thickness',
         type: 'https://neuroshapes.org/LayerThickness',
         url: '/explore/layer-thickness',
       },
@@ -62,7 +62,7 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '#',
     icon: 'plus',
-    image: '/images/explore/explore_home_bgImg-04.jpg',
+    image: 'images/explore/explore_home_bgImg-04.jpg',
     items: [
       {
         name: 'My portal number one',
@@ -87,7 +87,7 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '#',
     icon: 'plus',
-    image: '/images/explore/explore_home_bgImg-05.jpg',
+    image: 'images/explore/explore_home_bgImg-05.jpg',
     items: [
       {
         name: 'My gallery number one',
@@ -112,7 +112,7 @@ export const sectionContent = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     url: '#',
     icon: 'eye',
-    image: '/images/explore/explore_home_bgImg-06.jpg',
+    image: 'images/explore/explore_home_bgImg-06.jpg',
     items: null,
   },
 ];

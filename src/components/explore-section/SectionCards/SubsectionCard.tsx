@@ -31,9 +31,11 @@ export function SubsectionCard({ subsection, cardIndex }: SectionCardsProps) {
     if (total.state === 'hasError') {
       return `Error: ${total.error}`;
     }
+
     return total.data;
   };
 
+  const dataset = getTotalDataset();
   return (
     <Link
       href={subsection.url}
@@ -45,7 +47,7 @@ export function SubsectionCard({ subsection, cardIndex }: SectionCardsProps) {
     >
       <div className="flex flex-col text-white transition-colors ease-linear duration-300">
         <h3 className="text-2xl font-bold">{subsection.name}</h3>
-        <div className="text-sm font-light">{getTotalDataset()} datasets</div>
+        {dataset && <div className="text-sm font-light">{dataset} datasets</div>}
       </div>
 
       <div className="block">

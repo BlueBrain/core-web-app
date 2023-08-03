@@ -10,5 +10,5 @@ export const getTotalByType = (type: string) =>
 
     const query = fetchDataQuery(0, 0, [], type);
     const response = await fetchEsResourcesByType(session.accessToken, query);
-    return response.total.value;
+    return response?.total?.value;
   });
