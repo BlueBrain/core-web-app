@@ -21,6 +21,7 @@ import {
 import { OriginalComposition } from '@/types/composition/original';
 import { AnalysedComposition, CalculatedCompositionNode } from '@/types/composition/calculation';
 import { MModelMenuItem } from '@/types/m-model';
+import { EModelMenuItem } from '@/types/e-model';
 
 // This holds a weak reference to the updatedComposition by it's initial composition
 // This allows GC to dispose the object once it is no longer used by current components
@@ -100,6 +101,26 @@ export const analysedMTypesAtom = atom<Promise<MModelMenuItem[]>>(async (get) =>
         id: node.id,
       }))
     : [];
+});
+
+export const analysedETypesAtom = atom<Promise<EModelMenuItem[]>>(async (get) => {
+  const analysedMTypes = await get(analysedMTypesAtom);
+
+  // transform the mType info into a map for easier access
+  const mTypesMap = new Map();
+  analysedMTypes.forEach((mType) => {
+    mTypesMap.set(mType.id, mType);
+  });
+
+  const composition = await get(analysedCompositionAtom);
+  if (!composition) return [];
+
+  return filter(composition.nodes, { about: 'EType' }).map((node) => ({
+    uuid: crypto.randomUUID(),
+    label: node.label,
+    id: node.id,
+    mType: mTypesMap.get(node.parentId),
+  }));
 });
 
 export const computeAndSetCompositionAtom = atom(

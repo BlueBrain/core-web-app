@@ -11,18 +11,20 @@ type ModeTabsType = {
   disabled?: boolean;
 };
 
+const modeTabs: ModeTabsType[] = [
+  { name: 'M-Model', href: `${baseHref}/m-model` },
+  { name: 'E-Model', href: `${baseHref}/e-model` },
+  { name: 'ME-Model', href: `${baseHref}/me-model`, disabled: true },
+];
+
+const defaultRedirectPage = 'configuration';
+
 type Props = {
   className?: string;
 };
 
 export default function SubsectionTabs({ className }: Props) {
   const pathname = usePathname();
-
-  const modeTabs: ModeTabsType[] = [
-    { name: 'M-Model', href: `${baseHref}/m-model` },
-    { name: 'E-Model', href: `${baseHref}/e-model`, disabled: true },
-    { name: 'ME-Model', href: `${baseHref}/me-model`, disabled: true },
-  ];
 
   const getTabClassName = (tab: ModeTabsType) => {
     const isDisabled = tab.disabled;
@@ -40,7 +42,7 @@ export default function SubsectionTabs({ className }: Props) {
       {modeTabs.map((tab) => (
         <Link
           key={tab.href}
-          href={tab.href}
+          href={`${tab.href}/${defaultRedirectPage}`}
           className={getTabClassName(tab)}
           preserveLocationSearchParams
         >

@@ -14,7 +14,11 @@ export function generateBrainRegionMTypeArray(brainRegionId: string, mTypeId: st
 
 export function generateBrainRegionMTypeMapKey(brainRegionId: string, mTypeId: string) {
   if (brainRegionId.startsWith('http')) {
-    return `${brainRegionId}<>${mTypeId}`;
+    return generateMapKey(brainRegionId, mTypeId);
   }
-  return `${expandBrainRegionId(brainRegionId)}<>${mTypeId}`;
+  return generateMapKey(expandBrainRegionId(brainRegionId), mTypeId);
+}
+
+export function generateMapKey(str1: string, str2: string) {
+  return `${str1}<>${str2}`;
 }
