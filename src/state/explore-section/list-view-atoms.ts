@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import isEqual from 'lodash/isEqual';
+import { atomWithDefault } from 'jotai/utils';
 import { ExploreSectionResponse, ESResponseRaw } from '@/types/explore-section/resources';
 import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
@@ -79,33 +79,14 @@ export const columnKeysAtom = atom<string[]>((get) => {
   return typeToColumns[type as string];
 });
 
-export const activeColumnsAtom = atom<string[]>([]);
+export const activeColumnsAtom = atomWithDefault(
+  (get) => ['index', ...get(columnKeysAtom)] // TODO: There is no 'index' for Simulation Campaigns
+);
 
-export const initializeActiveColumnsAtom = atom(null, (get, set) => {
-  const columnKeys = get(columnKeysAtom);
-
-  if (columnKeys.length === 0) return;
-
-  const activeColumns = ['index', ...columnKeys];
-
-  if (isEqual(activeColumns, get(activeColumnsAtom))) return;
-
-  set(activeColumnsAtom, activeColumns);
-});
-
-export const filtersAtom = atom<Filter[]>([]);
-
-export const initializeFiltersAtom = atom(null, (get, set) => {
+export const filtersAtom = atomWithDefault((get) => {
   const columnsKeys = get(columnKeysAtom);
 
-  if (!columnsKeys) {
-    set(filtersAtom, []);
-  }
-
-  const filters = columnsKeys.map((colKey) => columnKeyToFilter(colKey));
-  if (isEqual(filters, get(filtersAtom))) return;
-
-  set(filtersAtom, filters);
+  return columnsKeys.map((colKey) => columnKeyToFilter(colKey));
 });
 
 export const queryAtom = atom<object>((get) => {

@@ -1,5 +1,5 @@
 import { HTMLProps, ReactNode, useEffect, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
@@ -15,11 +15,8 @@ import { filterHasValue } from '@/components/Filter/util';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import {
   activeColumnsAtom,
-  columnKeysAtom,
   dataAtom,
   filtersAtom,
-  initializeActiveColumnsAtom,
-  initializeFiltersAtom,
   totalAtom,
 } from '@/state/explore-section/list-view-atoms';
 
@@ -80,15 +77,6 @@ function Header({ title }: { title: string }) {
 
 function ExploreSectionListingView({ title, children }: { title: string; children: ReactNode }) {
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
-
-  const columnKeys = useAtomValue(columnKeysAtom);
-  const initializeActiveColumns = useSetAtom(initializeActiveColumnsAtom);
-  const initializeFilters = useSetAtom(initializeFiltersAtom);
-
-  useEffect(() => {
-    initializeActiveColumns();
-    initializeFilters();
-  }, [initializeActiveColumns, initializeFilters, columnKeys]);
 
   return (
     <>
