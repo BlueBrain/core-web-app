@@ -15,7 +15,7 @@ function GeneraliztionOptions({ rule }: { rule: RuleOuput | undefined }) {
 
   const inferenceOptions = find(rule.inputParameters, { name: 'IgnoreModelsParameter' })?.payload
     ?.values;
-  console.log(inferenceOptions);
+
   return (
     <div className="space-y-2 pl-6 pr-12">
       {inferenceOptions &&
