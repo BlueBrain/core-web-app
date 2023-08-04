@@ -30,7 +30,7 @@ export default function SimulationCampaignSelectorPage() {
         </Link>
       </div>
 
-      <div className="py-5 text-primary-2 text-lg">Or use one of our template:</div>
+      <div className="py-5 text-primary-2 text-lg">Or use one of our templates:</div>
 
       <div id="simulate-templates">
         <SimCampUIConfigTemplateGrid />
