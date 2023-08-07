@@ -11,6 +11,7 @@ import { TGenerativeQA } from '../types';
 import ArticlesTimeLine from './ArticlesTimeLine';
 import BrainLight from '@/components/icons/BrainLight';
 import { ChevronIcon } from '@/components/icons';
+import { classNames } from '@/util/utils';
 
 export type TGenerativeQASingleResultProps = Omit<TGenerativeQA, 'sources' | 'paragraphs'>;
 function GenerativeQASingleResult({
@@ -48,7 +49,11 @@ function GenerativeQASingleResult({
   }, [expandArticles]);
 
   return (
-    <div id={id} className={`w-full mt-3 ${collpaseQuestion ? 'mb-6' : 'mb-28'}`} ref={answerRef}>
+    <div
+      id={id}
+      className={classNames('w-full mt-3', collpaseQuestion ? 'mb-6' : 'mb-28')}
+      ref={answerRef}
+    >
       <div className="inline-flex items-center w-full gap-2">
         <div className="w-auto h-px bg-neutral-3 flex-[1_1]" />
         <span className="pl-2 text-sm w-max text-neutral-4">

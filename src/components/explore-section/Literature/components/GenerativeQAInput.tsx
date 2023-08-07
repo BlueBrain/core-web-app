@@ -9,6 +9,7 @@ import { LiteratureValidationError } from '../errors';
 import { getGenerativeQAAction } from '../actions';
 import { scrollToBottom } from '../utils';
 import SendIcon from '@/components/icons/SendIcon';
+import { classNames } from '@/util/utils';
 
 type TFormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -57,16 +58,18 @@ function GenerativeQAInputBar() {
             onGenerativeQAFinished(response);
           });
         }}
-        className={`bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto ${
+        className={classNames(
+          'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto',
           isChatBarMustSlideInDown
             ? 'transition-all duration-300 ease-out-expo fixed bottom-0  rounded-b-none pb-0'
             : ''
-        }`}
+        )}
       >
         <div
-          className={`inline-flex flex-col items-start justify-start w-full px-6 py-8  bg-primary-0 ${
+          className={classNames(
+            'inline-flex flex-col items-start justify-start w-full px-6 py-8  bg-primary-0',
             isChatBarMustSlideInDown ? 'rounded-b-none' : 'rounded-lg'
-          }`}
+          )}
         >
           <div className="pb-1.5 border-b border-sky-400 justify-between items-center gap-2.5 inline-flex w-full">
             <input
