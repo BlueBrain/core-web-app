@@ -4,12 +4,12 @@ import { useTransition } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
-import { useLiteratureAtom, literatureAtom, literatureResultAtom } from '../state';
 import { TGenerativeQA } from '../types';
 import { LiteratureValidationError } from '../errors';
 import { getGenerativeQAAction } from '../actions';
 import { scrollToBottom } from '../utils';
 import { classNames } from '@/util/utils';
+import { literatureAtom, literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 
 type TFormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
