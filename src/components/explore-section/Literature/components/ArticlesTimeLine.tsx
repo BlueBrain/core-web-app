@@ -1,8 +1,8 @@
 import React from 'react';
-import type { TGenerativeQASingleResultProps } from './GenerativeQAResults';
+import type { TQASingleResultProps } from './QASingleResult';
 import Article from './Article';
 
-type TGenerativeQAResultsProps = Pick<TGenerativeQASingleResultProps, 'articles'> & {
+type TGenerativeQAResultsProps = Pick<TQASingleResultProps, 'articles'> & {
   collapseAll: boolean;
 };
 
