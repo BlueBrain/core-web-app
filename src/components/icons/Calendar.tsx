@@ -1,23 +1,26 @@
-import * as React from 'react';
 import { CSSProperties } from 'react';
 
-type TCalendarIconProps = {
+type Props = {
   className?: string;
   style?: CSSProperties;
 };
-export default function CalendarIcon({ className, style }: TCalendarIconProps) {
+export default function CalendarIcon({ className, style }: Props) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={style?.width ?? 16}
       height={style?.height ?? 16}
-      fill="none"
+      fill="currentColor"
+      fillRule="evenodd"
       className={className}
       style={style}
     >
-      <circle cx={8} cy={8} r={7.5} stroke="#003A8C" />
+      <circle cx={8} cy={8} r={7.5}
+        fill="currentColor"
+        fillRule="evenodd"
+      />
       <path
-        fill="#003A8C"
+        fill="currentColor"
         fillRule="evenodd"
         d="M7.1 5.3a.3.3 0 0 0-.6 0v.152a4.705 4.705 0 0 0-.397.02c-.216.022-.412.07-.586.191a1.196 1.196 0 0 0-.304.304c-.12.174-.169.37-.191.585-.02.19-.022.421-.022.698V9.07c0 .406 0 .741.036 1.006.037.279.119.524.316.721.196.197.442.279.72.316.266.036.6.036 1.007.036H8.92c.406 0 .741 0 1.006-.036.279-.037.525-.119.722-.316.196-.197.278-.442.315-.72.036-.266.036-.6.036-1.007V7.25c0-.277-.002-.508-.022-.698-.022-.215-.07-.411-.191-.585a1.195 1.195 0 0 0-.304-.304c-.174-.12-.37-.169-.586-.191a4.705 4.705 0 0 0-.397-.02V5.3a.3.3 0 1 0-.6 0v.15H7.1V5.3Zm3.3 1.95c0-.281-.002-.48-.019-.635-.017-.167-.048-.25-.088-.306a.605.605 0 0 0-.152-.153c-.057-.039-.14-.07-.306-.088a3.907 3.907 0 0 0-.335-.016V6.2a.3.3 0 1 1-.6 0v-.15H7.1v.15a.3.3 0 0 1-.6 0v-.148a3.907 3.907 0 0 0-.335.016c-.167.018-.25.05-.306.088a.605.605 0 0 0-.152.153c-.04.057-.071.14-.089.306a6.704 6.704 0 0 0-.018.635h4.8Zm-4.8.6v1.2c0 .433 0 .727.03.947.029.212.079.31.146.377.067.067.165.117.377.146.22.029.514.03.947.03h1.8c.433 0 .727-.001.947-.03.212-.03.31-.08.377-.146.067-.067.117-.165.146-.377.03-.22.03-.514.03-.947v-1.2H5.6Z"
         clipRule="evenodd"
