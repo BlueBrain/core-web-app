@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import delay from 'lodash/delay';
+import React, { useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import type { TArticle } from '../types';
@@ -10,7 +9,7 @@ import JournalIcon from '@/components/icons/Journal';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
 import QuoteOutline from '@/components/icons/QuoteOutline';
 import CopyIcon from '@/components/icons/CopyIcon';
-import { copyToClipord } from '@/util/utils';
+import useClipboard from '@/hooks/useClipboard';
 
 function ArticlePreview({ title, icon }: { title: string; icon: JSX.Element }) {
   return (
@@ -57,14 +56,9 @@ export default function Article({
   collapseAll,
 }: TArticleProps) {
   const [readmore, setReadmore] = useState(() => collapseAll);
-  const [DOIcopied, setDOIcopied] = useState(false);
   const onReadMore = () => setReadmore((state) => !state);
-
-  const onCopy = useCallback(() => {
-    copyToClipord(doi);
-    setDOIcopied(true);
-    delay(() => setDOIcopied(false), 1000);
-  }, [doi]);
+  const { copy, copied: DOIcopied } = useClipboard();
+  const onCopy = () => copy(doi);
 
   useEffect(() => {
     if (collapseAll) setReadmore(false);
@@ -90,7 +84,7 @@ export default function Article({
               title={DOIcopied ? 'copied' : 'Copy DOI'}
               icon={DOIcopied ? <CheckCircleOutlined className="text-teal-600" /> : <CopyIcon />}
             />
-            <ArticleAction key="quote" onClick={() => { }} title="Quote" icon={<QuoteOutline />} />
+            <ArticleAction key="quote" onClick={() => {}} title="Quote" icon={<QuoteOutline />} />
           </div>
         </div>
       </div>
@@ -122,10 +116,11 @@ export default function Article({
       </div>
       <article className="bg-[#F5F5F5] mb-4 p-7">
         <div
-          className={`mb-2 text-base font-normal text-gray-500 ${readmore
+          className={`mb-2 text-base font-normal text-gray-500 ${
+            readmore
               ? 'transition-all delay-75 ease-out'
               : 'line-clamp-2 transition-all delay-75 ease-in'
-            }`}
+          }`}
         >
           {abstract}
         </div>

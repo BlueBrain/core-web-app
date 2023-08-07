@@ -1,15 +1,19 @@
 'use client';
 
 import React, { useTransition } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { useLiteratureAtom, literatureAtom, literatureResultAtom } from '../state';
+import {
+  useLiteratureAtom,
+  literatureAtom,
+  literatureResultAtom,
+  useLiteratureResultsAtom,
+} from '../state';
 import { TGenerativeQA } from '../types';
 import { LiteratureValidationError } from '../errors';
 import { getGenerativeQAAction } from '../actions';
 import { classNames, classNames as cn } from '@/util/utils';
 import SendIcon from '@/components/icons/SendIcon';
-
 
 type TFormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -31,7 +35,8 @@ function FormButton({ icon, type, ...props }: TFormButtonProps) {
 function GenerativeQAInputBar() {
   const update = useLiteratureAtom();
   const { query } = useAtomValue(literatureAtom);
-  const [QAs, updateResult] = useAtom(literatureResultAtom);
+  const QAs = useAtomValue(literatureResultAtom);
+  const { update: updateResults } = useLiteratureResultsAtom();
   const [isGQAPending, startGenerativeQATransition] = useTransition();
 
   const isChatBarMustSlideInDown = Boolean(QAs.length);
@@ -42,17 +47,21 @@ function GenerativeQAInputBar() {
     generativeQA: TGenerativeQA | LiteratureValidationError | null
   ) => {
     if (generativeQA && !(generativeQA instanceof LiteratureValidationError)) {
-      updateResult([...QAs, generativeQA]);
+      updateResults(generativeQA);
       update('activeQuestionId', generativeQA.id);
     }
     update('query', '');
   };
 
   return (
-    <div className={classNames(
-      ' flex flex-col items-center justify-center w-full',
-      isChatBarMustSlideInDown ? 'absolute bottom-0 left-0 right-0': 'fixed top-1/2 -translate-y-1/2'
-    )}>
+    <div
+      className={classNames(
+        ' flex flex-col items-center justify-center w-full pr-4',
+        isChatBarMustSlideInDown
+          ? 'absolute bottom-0 left-0 right-0'
+          : 'fixed top-1/2 -translate-y-1/2'
+      )}
+    >
       <form
         name="qa-form"
         action={async (data: FormData) => {
@@ -63,12 +72,15 @@ function GenerativeQAInputBar() {
         }}
         className={cn(
           'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto',
-          isChatBarMustSlideInDown ? 'transition-all duration-300 ease-out-expo rounded-b-none pb-0' : ''
+          isChatBarMustSlideInDown
+            ? 'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
+            : ''
         )}
       >
         <div
-          className={`inline-flex relative flex-col items-start justify-start w-full px-6 py-8  bg-primary-0 ${isChatBarMustSlideInDown ? 'rounded-b-none' : 'rounded-lg'
-            }`}
+          className={`inline-flex relative flex-col items-start justify-start w-full px-6 py-8  bg-primary-0 ${
+            isChatBarMustSlideInDown ? 'rounded-b-none' : 'rounded-lg'
+          }`}
         >
           <div className="pb-1.5 border-b border-sky-400 justify-between items-center gap-2.5 inline-flex w-full">
             <input
