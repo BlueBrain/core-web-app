@@ -61,10 +61,40 @@ module.exports = {
         height: 'height',
         spacing: 'margin, padding',
         slideDown: 'height, opacity',
+        sideOut: 'slide-out',
       },
       transitionTimingFunction: {
         'in-expo': 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
         'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
+      },
+      animation: {
+        'slide-out': 'slide-out 1s ease-in-out',
+      },
+      keyframes: {
+        'slide-out': {
+          '0%': {
+            left: 0,
+            'backgroud-color': 'bg-gray-300',
+          },
+          '75%': {
+            left: '2000px',
+            'max-height': '10rem',
+            'padding-top': '1rem',
+            'padding-bottom': '1rem',
+            'border-width': '1px',
+            overflow: 'hidden',
+            'backgroud-color': 'bg-gray-300',
+          },
+          '100%': {
+            left: '2000px',
+            'max-height': 0,
+            'padding-top': 0,
+            'padding-bottom': 0,
+            'border-width': 0,
+            overflow: 'hidden',
+            'backgroud-color': 'bg-gray-300',
+          },
+        },
       },
     },
   },
