@@ -387,15 +387,17 @@ export interface RulesResource extends ResourceMetadata, Entity {
   distribution: Distribution;
 }
 export interface SynapseConfigPayload {
-  synaptic_assignment: {
-    id: string;
-    type: ['Entity', 'Dataset', 'SynapticParameterAssignment'];
-    rev: number;
-  };
-  synaptic_parameters: {
-    id: string;
-    type: ['Entity', 'Dataset', 'SynapticParameter'];
-    rev: number;
+  configuration: {
+    synapse_properties: {
+      id: string;
+      type: ['Entity', 'Dataset', 'SynapticParameterAssignment'];
+      rev: number;
+    };
+    synapses_classification: {
+      id: string;
+      type: ['Entity', 'Dataset', 'SynapticParameter'];
+      rev: number;
+    };
   };
 }
 

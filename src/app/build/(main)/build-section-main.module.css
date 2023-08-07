@@ -1,7 +1,7 @@
 .container {
   display: grid;
   grid-template-columns: min-content min-content min-content auto;
-  grid-template-rows: 40px calc(100vh - 40px);
+  grid-template-rows: 40px auto;
   grid-template-areas:
     'config-selector region-selector extra-panel top-tabs'
     'config-selector region-selector extra-panel content-container';

@@ -5,11 +5,12 @@ import uniq from 'lodash/uniq';
 import { Session } from 'next-auth';
 import {
   RulesData,
-  initialParamsAtom,
+  initialTypesAtom,
   initialRulesAtom,
   loadingAtom,
   rulesDataAtom,
   userRulesAtom,
+  userTypesAtom,
 } from './state';
 import { compositionAtom } from '@/state/build-composition';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
@@ -31,7 +32,7 @@ import { createDistribution, setRevision } from '@/util/nexus';
  */
 export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule) => string[] {
   const composition = useAtomValue(compositionAtom);
-  const synapseTypes = useAtomValue(initialParamsAtom);
+  const synapseTypes = useAtomValue(initialTypesAtom);
 
   const arrays = useMemo(() => {
     const brainRegions: string[] = [];
@@ -103,7 +104,7 @@ async function fetchRules(
     session
   );
 
-  const { id } = configPayload.synaptic_assignment;
+  const { id } = configPayload.configuration.synapse_properties;
   const rulesEntity = await fetchResourceById<RulesResource>(id, session);
 
   const rules = await fetchJsonFileByUrl<SynapticAssignmentRule[]>(
@@ -128,13 +129,17 @@ const useOnFetchSuccess = () => {
   const setRulesData = useSetAtom(rulesDataAtom);
   const initialRules = useAtomValue(initialRulesAtom);
   const setUserRules = useSetAtom(userRulesAtom);
+  const initialTypes = useAtomValue(initialTypesAtom);
+  const setUserTypes = useSetAtom(userTypesAtom);
+
   return (rulesData: RulesData) => {
-    if (!initialRules) {
+    if (!initialRules || !initialTypes) {
       throw new Error('Initial rules not loaded');
     }
     setRulesData(rulesData);
     const rules = rulesData.rules.length > 4 ? rulesData.rules.slice(4) : initialRules.slice(4);
     setUserRules(rules);
+    setUserTypes(Array.from(Object.keys(initialTypes)).map((k) => [k, initialTypes[k]]));
   };
 };
 
@@ -207,7 +212,7 @@ export async function updateRules(
 
   await updateResource(rulesData.rulesEntity, rulesData.rulesEntity._rev, session);
 
-  rulesData.configPayload.synaptic_assignment.rev = parseRevfromUrl(
+  rulesData.configPayload.configuration.synapse_properties.rev = parseRevfromUrl(
     rulesData.rulesEntity.distribution.contentUrl
   );
 
@@ -227,4 +232,23 @@ function parseRevfromUrl(url: string) {
   const urlObj = new URL(url);
   const rev = urlObj.searchParams.get('rev') || '1';
   return parseInt(rev, 10);
+}
+
+export function useSynapseTypeUseCount() {
+  const [userRules] = useAtom(userRulesAtom);
+  const defaultRules = useDefaultRules();
+
+  return useMemo(() => {
+    const usedTypes = [...defaultRules, ...userRules].map((r) => r.synapticType);
+    return usedTypes.reduce((acc: { [key: string]: number }, str: string | null) => {
+      if (str !== null) {
+        if (str in acc) {
+          acc[str] += 1;
+        } else {
+          acc[str] = 1;
+        }
+      }
+      return acc;
+    }, {});
+  }, [defaultRules, userRules]);
 }

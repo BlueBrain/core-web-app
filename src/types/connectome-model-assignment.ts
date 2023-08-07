@@ -11,3 +11,20 @@ export interface SynapticAssignmentRule {
   fromEType: null | string;
   synapticType: string;
 }
+
+export interface SynapticType {
+  gsyn: number;
+  gsynSD: number;
+  nrrp: number;
+  dtc: number;
+  dtcSD: number;
+  u: number;
+  uSD: number;
+  d: number;
+  dSD: number;
+  f: number;
+  fSD: number;
+  gsynSRSF: number;
+  uHillCoefficient: number;
+  synapticModel?: string;
+}

@@ -1,14 +1,14 @@
 import { atom } from 'jotai';
-import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
+import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
 import sessionAtom from '@/state/session';
-import { fetchJsonFileByUrl } from '@/api/nexus';
+import { fetchJsonFileByUrl, queryES } from '@/api/nexus';
 import { RulesResource, SynapseConfigPayload, SynapseConfigResource } from '@/types/nexus';
 
 const INTIAL_RULES_URL =
-  'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/28b58ddd-cd0b-4704-ad91-843775fa3743';
+  'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F7e2f41a0-3d84-4142-a38e-734117acb33d';
 
 const INITIAL_PARAMETERS_URL =
-  'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/2924ab22-086e-42d5-96ee-f9ce46ccf4b4';
+  'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F2924ab22-086e-42d5-96ee-f9ce46ccf4b4';
 
 export const initialRulesAtom = atom(async (get) => {
   const session = get(sessionAtom);
@@ -20,17 +20,44 @@ export const initialRulesAtom = atom(async (get) => {
   return fetchJsonFileByUrl<SynapticAssignmentRule[]>(INTIAL_RULES_URL, session);
 });
 
-export const initialParamsAtom = atom(async (get) => {
+export const synapticModelsAtom = atom(async (get) => {
+  const session = get(sessionAtom);
+  if (!session) return [];
+  const q = {
+    query: {
+      bool: {
+        filter: [
+          {
+            bool: {
+              must: { term: { _deprecated: false } },
+            },
+          },
+          {
+            bool: {
+              must: { term: { '@type': 'SynapsePhysiologyModel' } },
+            },
+          },
+        ],
+      },
+    },
+  };
+
+  const r = await queryES<{ name: string }>(q, session);
+  return r.map((model) => model.name);
+});
+
+export const initialTypesAtom = atom(async (get) => {
   const session = get(sessionAtom);
 
   if (!session) {
     return null;
   }
 
-  return fetchJsonFileByUrl<SynapticAssignmentRule[]>(INITIAL_PARAMETERS_URL, session);
+  return fetchJsonFileByUrl<{ [type: string]: SynapticType }>(INITIAL_PARAMETERS_URL, session);
 });
 
 export const userRulesAtom = atom<SynapticAssignmentRule[]>([]);
+export const userTypesAtom = atom<[string, SynapticType][]>([]);
 export const loadingAtom = atom(false);
 
 export type RulesData = {

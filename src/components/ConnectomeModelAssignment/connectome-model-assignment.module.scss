@@ -7,6 +7,41 @@
   box-sizing: border-box;
 }
 
+.synapseType {
+  font-size: 12px;
+  & > * {
+    flex: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 5px;
+    border-bottom: 1px solid #f5f5f5;
+  }
+}
+
+.icon {
+  font-size: 15px;
+  margin: 0 2px;
+}
+
+.select :global(.ant-select-selection-item) {
+  font-size: 10px;
+}
+
+.input {
+  width: 55px;
+  font-size: 10px;
+  background-color: #f0f8ff;
+  border: none;
+}
+
+.modalParam {
+  margin-top: 3px;
+  display: flex;
+  & > * {
+    flex: 1;
+  }
+}
+
 .table :global(.ant-table-placeholder) {
   z-index: 0 !important;
 }

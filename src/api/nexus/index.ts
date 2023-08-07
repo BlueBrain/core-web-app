@@ -35,6 +35,7 @@ import {
   SimulationCampaignUIConfig,
   SupportedConfigListTypes,
   MorphologyAssignmentConfigPayload,
+  SynapseConfigPayload,
 } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -355,33 +356,99 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
 }
 
 export async function cloneSynapseConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<SynapseConfig>(id, session);
-  const payload = {
-    synaptic_assignment: {
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/synapticassignment/2ea6bc6a-ff1e-401e-9d2e-cd221f3ff275',
-      type: ['Entity', 'Dataset', 'SynapticParameterAssignment'],
-      rev: 1,
+  const configSource = await fetchResourceById<SynapseConfig>(id, session);
+  const payload = await fetchJsonFileByUrl<SynapseConfigPayload>(
+    configSource.distribution.contentUrl,
+    session
+  );
+
+  const synapticAssignmentResource = await fetchResourceByUrl<SynapseConfig>(
+    payload.configuration.synapse_properties.id,
+    session
+  );
+
+  const synapticParametersResource = await fetchResourceByUrl<SynapseConfig>(
+    payload.configuration.synapses_classification.id,
+    session
+  );
+
+  const synapticRulesPayload = await fetchJsonFileByUrl(
+    synapticAssignmentResource.distribution.contentUrl,
+    session
+  );
+  const synapticTypesPayload = await fetchJsonFileByUrl(
+    synapticParametersResource.distribution.contentUrl,
+    session
+  );
+
+  const rulesFileMetadata = await createJsonFile(
+    synapticRulesPayload,
+    'synaptic_assignment.json',
+    session
+  );
+  const typesFileMetadata = await createJsonFile(
+    synapticTypesPayload,
+    'synaptic_parameters.json',
+    session
+  );
+
+  const rulesEntity = await createResource(
+    {
+      '@context': ['https://bbp.neuroshapes.org'],
+      '@type': ['Entitiy', 'Dataset', 'SynapticParameterAssignment'],
+      distribution: createDistribution(rulesFileMetadata),
     },
-    synaptic_parameters: {
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/synapticparameters/ba7a6b67-0713-4481-b853-1a903e441f56',
-      type: ['Entity', 'Dataset', 'SynapticParameter'],
-      rev: 1,
+    session
+  );
+
+  const typesEntity = await createResource(
+    {
+      '@context': ['https://bbp.neuroshapes.org'],
+      '@type': ['Entitiy', 'Dataset', 'SynapticParameter'],
+      distribution: createDistribution(typesFileMetadata),
+    },
+    session
+  );
+
+  const configPayload = {
+    defaults: {
+      synapse_properties: {
+        id: 'https://bbp.epfl.ch/neurosciencegraph/data/synapticassignment/d57536aa-d576-4b3b-a89b-b7888f24eb21',
+        type: ['Dataset', 'SynapticParameterAssignment'],
+        rev: 9,
+      },
+      synapses_classification: {
+        id: 'https://bbp.epfl.ch/neurosciencegraph/data/synapticparameters/cf25c2bf-e6e4-4367-acd8-94004bfcfe49',
+        type: ['Dataset', 'SynapticParameter'],
+        rev: 6,
+      },
+    },
+    configuration: {
+      synapse_properties: {
+        id: rulesEntity['@id'],
+        type: ['Dataset', 'SynapticParameterAssignment'],
+        rev: rulesEntity._rev,
+      },
+      synapses_classification: {
+        id: typesEntity['@id'],
+        type: ['Dataset', 'SynapticParameter'],
+        rev: typesEntity._rev,
+      },
     },
   };
 
-  const clonedPayloadMeta = await createJsonFile(payload, 'synapse-config.json', session);
+  const configMetadata = await createJsonFile(configPayload, 'synapse-config.json', session);
 
-  const clonedConfig: SynapseConfig = {
+  const config: SynapseConfig = {
     ...configSource,
     '@id': createId('synapseconfig'),
     distribution: createGeneratorConfig({
       kgType: 'SynapseConfig',
-      payloadMetadata: clonedPayloadMeta,
+      payloadMetadata: configMetadata,
     }).distribution,
   };
 
-  return createResource(clonedConfig, session);
+  return createResource(config, session);
 }
 
 export async function cloneMacroConnectomeConfig(id: string, session: Session) {
