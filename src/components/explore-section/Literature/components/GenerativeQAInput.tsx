@@ -95,7 +95,10 @@ function GenerativeQAInputBar() {
                   onClick={onQuestionClear}
                 />
               )}
-              <FormButton type="submit" icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8" />} />
+              <FormButton
+                type="submit"
+                icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8" />}
+              />
             </div>
           </div>
         </div>
