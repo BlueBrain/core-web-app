@@ -1,4 +1,4 @@
-import { atom, useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { TBrainRegion, TGenerativeQA } from './types';
 
@@ -43,5 +43,16 @@ function useLiteratureAtom() {
   };
   return update;
 }
+function useLiteratureResultsAtom() {
+  const [QAs, updateResult] = useAtom(literatureResultAtom);
+  const update = (newValue: TGenerativeQA) => {
+    updateResult([...QAs, newValue]);
+  };
 
-export { literatureAtom, literatureResultAtom, useLiteratureAtom };
+  const remove = (id: string) => {
+    updateResult(QAs.filter((item) => item.id !== id));
+  };
+  return { QAs, update, remove };
+}
+
+export { literatureAtom, literatureResultAtom, useLiteratureAtom, useLiteratureResultsAtom };
