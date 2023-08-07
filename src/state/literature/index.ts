@@ -1,6 +1,7 @@
 import { atom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { TGenerativeQA } from './types';
+
+import { TGenerativeQA } from '@/components/explore-section/Literature/types';
 
 export type TBrainRegion = { id: string; title: string };
 type TSingleGenerativeQAFilters = {

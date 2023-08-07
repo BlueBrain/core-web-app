@@ -6,13 +6,13 @@ import trim from 'lodash/trim';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
 
-import { literatureResultAtom, useLiteratureAtom } from '../state';
 import { scrollToBottom } from '../utils';
 import { TGenerativeQA } from '../types';
 import ArticlesTimeLine from './ArticlesTimeLine';
 import BrainLight from '@/components/icons/BrainLight';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
+import { literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 
 export type TGenerativeQASingleResultProps = Omit<TGenerativeQA, 'sources' | 'paragraphs'>;
 function GenerativeQASingleResult({

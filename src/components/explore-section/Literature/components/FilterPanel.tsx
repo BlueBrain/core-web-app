@@ -3,7 +3,7 @@
 import Drawer from 'antd/lib/drawer';
 import { useAtomValue } from 'jotai';
 
-import { useLiteratureAtom, literatureAtom } from '../state';
+import { literatureAtom, useLiteratureAtom } from '@/state/literature';
 
 export default function FilterPanel() {
   const { isFilterPanelOpen } = useAtomValue(literatureAtom);
