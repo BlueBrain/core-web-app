@@ -1,2 +1,1 @@
-export { default as GenerativeQABuilder } from './GenerativeQABuilder';
-export { default as GenerativeQAResultList } from './GenerativeQAResults';
+export { default as GenerativeQAContainer } from './QAContainer';
