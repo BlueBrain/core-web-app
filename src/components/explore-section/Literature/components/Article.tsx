@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
+
 import { copyClipboard } from '../utils';
 import type { TArticle } from '../types';
 import PersonIcon from '@/components/icons/Person';

@@ -5,6 +5,7 @@ import { FilterOutlined } from '@ant-design/icons';
 import trim from 'lodash/trim';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
+
 import { literatureResultAtom, useLiteratureAtom } from '../state';
 import { scrollToBottom } from '../utils';
 import { TGenerativeQA } from '../types';

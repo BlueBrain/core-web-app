@@ -1,4 +1,3 @@
-import React from 'react';
 import type { TGenerativeQASingleResultProps } from './GenerativeQAResults';
 import Article from './Article';
 

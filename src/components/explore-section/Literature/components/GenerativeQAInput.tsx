@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useTransition } from 'react';
+import { useTransition } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
+
 import { useLiteratureAtom, literatureAtom, literatureResultAtom } from '../state';
 import { TGenerativeQA } from '../types';
 import { LiteratureValidationError } from '../errors';

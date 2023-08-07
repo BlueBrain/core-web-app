@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import LiteratureSidebar from '@/components/explore-section/Literature/components/LiteratureSideBar';
 
