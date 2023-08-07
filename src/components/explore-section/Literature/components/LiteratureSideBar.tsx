@@ -11,9 +11,9 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import SectionCards from '@/components/explore-section/SectionCards';
-import { sectionContent } from '@/constants/homes-sections/homeSectionContent';
-import type { TypeSingleCard } from '@/constants/homes-sections/homeSectionContent';
+import { sectionContent } from '@/constants/home-sections/homeSectionContent';
 import { classNames } from '@/util/utils';
+import { ExplorerSingleCard } from '@/types/explore-section/application';
 
 function LiteratureSidebar() {
   const [expanded, setExpanded] = useState(false);
@@ -51,7 +51,7 @@ function LiteratureSidebar() {
       </div>
       {expanded && (
         <div className="flex flex-col w-full h-full px-4 overflow-y-auto primary-scrollbar gap-y-3">
-          {sectionContent.map((singleCard: TypeSingleCard, index: number) => (
+          {sectionContent.map((singleCard: ExplorerSingleCard, index: number) => (
             <SectionCards
               content={singleCard}
               cardIndex={index}
