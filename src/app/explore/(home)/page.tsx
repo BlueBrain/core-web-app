@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { sectionContent } from '@/constants/homes-sections/homeSectionContent';
+import { sectionContent } from '@/constants/home-sections/homeSectionContent';
 import { basePath } from '@/config';
 
 import SectionCards from '@/components/explore-section/SectionCards';
