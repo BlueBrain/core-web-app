@@ -16,10 +16,7 @@ export default function JournalIcon({ className, style }: Props) {
       className={className}
       style={style}
     >
-      <circle 
-        cx={8} cy={8} r={7.5}
-        stroke="currentColor"
-      />
+      <circle cx={8} cy={8} r={7.5} stroke="currentColor" />
       <path
         fill="currentColor"
         fillRule="evenodd"

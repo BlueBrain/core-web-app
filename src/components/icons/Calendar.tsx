@@ -15,10 +15,7 @@ export default function CalendarIcon({ className, style }: Props) {
       className={className}
       style={style}
     >
-      <circle cx={8} cy={8} r={7.5}
-        fill="currentColor"
-        fillRule="evenodd"
-      />
+      <circle cx={8} cy={8} r={7.5} fill="currentColor" fillRule="evenodd" />
       <path
         fill="currentColor"
         fillRule="evenodd"
