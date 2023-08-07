@@ -12,7 +12,7 @@ type LiteratureLayoutProps = {
 export default function GenericLayout({ children }: LiteratureLayoutProps) {
   return (
     <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-      <div className='h-full overflow-hidden'>
+      <div className="h-full overflow-hidden">
         <LiteratureSidebar />
         {children}
       </div>
