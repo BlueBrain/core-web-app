@@ -51,7 +51,7 @@ function QAResultListScrollable() {
   }, [QAs.length]);
   
   return (
-    <div className='w-full max-h-screen overflow-y-scroll no-scrollbar scroll-smooth' ref={qaResultsRef}>
+    <div className='w-full max-h-screen overflow-y-scroll scroll-smooth' ref={qaResultsRef}>
       <QAResultList />
     </div>
   );

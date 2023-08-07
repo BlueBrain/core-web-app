@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { TGenerativeQAResponse, TReturnGetGenerativeQA } from './types';
-import { generativeQADTO } from './utils/DTOs';
+import { generativeQADTO } from './DTOs';
 import * as LiteratureErrors from './errors';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { nexus } from '@/config';
