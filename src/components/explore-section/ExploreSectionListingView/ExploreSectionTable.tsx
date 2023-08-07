@@ -62,16 +62,7 @@ function CustomTH({
   );
 }
 
-function CustomCell({
-  children,
-  style,
-  onClick,
-  ...props
-}: {
-  children: ReactNode;
-  style: CSSProperties;
-  onClick: () => void;
-}) {
+function CustomCell({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
   const modifiedStyle = {
     ...style,
     backgroundColor: 'white',
