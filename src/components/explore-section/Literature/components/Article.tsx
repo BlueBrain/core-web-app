@@ -10,6 +10,7 @@ import JournalIcon from '@/components/icons/Journal';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
 import QuoteOutline from '@/components/icons/QuoteOutline';
 import CopyIcon from '@/components/icons/CopyIcon';
+import { classNames } from '@/util/utils';
 
 function ArticlePreview({ title, icon }: { title: string; icon: JSX.Element }) {
   return (
@@ -121,11 +122,12 @@ export default function Article({
       </div>
       <article className="bg-[#F5F5F5] mb-4 p-7">
         <div
-          className={`mb-2 text-base font-normal text-gray-500 ${
+          className={classNames(
+            'mb-2 text-base font-normal text-gray-500',
             readmore
               ? 'transition-all delay-75 ease-out'
               : 'line-clamp-2 transition-all delay-75 ease-in'
-          }`}
+          )}
         >
           {abstract}
         </div>
