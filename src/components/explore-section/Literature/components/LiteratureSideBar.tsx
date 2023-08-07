@@ -13,6 +13,7 @@ import {
 import SectionCards from '@/components/explore-section/SectionCards';
 import { sectionContent } from '@/constants/homes-sections/homeSectionContent';
 import type { TypeSingleCard } from '@/constants/homes-sections/homeSectionContent';
+import { classNames } from '@/util/utils';
 
 function LiteratureSidebar() {
   const [expanded, setExpanded] = useState(false);
@@ -20,16 +21,18 @@ function LiteratureSidebar() {
 
   return (
     <div
-      className={`fixed top-0 z-50 py-4 inline-flex flex-col items-center justify-start h-screen ${
+      className={classNames(
+        'fixed top-0 z-50 py-4 inline-flex flex-col items-center justify-start h-screen transition-transform ease-in-out will-change-auto bg-primary-9 text-light',
         expanded ? 'w-80' : 'w-10'
-      } transition-transform ease-in-out will-change-auto bg-primary-9 text-light`}
+      )}
     >
       <div
-        className={`inline-flex w-full ${
+        className={classNames(
+          'inline-flex w-full',
           expanded
             ? 'flex-row-reverse items-center justify-between px-4 mb-4'
             : ' flex-col items-center justify-center gap-6 mb-auto'
-        }`}
+        )}
       >
         <Button
           type="text"
@@ -39,9 +42,10 @@ function LiteratureSidebar() {
           icon={expanded ? <MinusOutlined /> : <PlusOutlined />}
         />
         <span
-          className={`relative order-2 p-0 text-white ${
+          className={classNames(
+            'relative order-2 p-0 text-white ',
             expanded ? 'font-bold text-2xl' : '-rotate-90 font-semibold'
-          }`}
+          )}
         >
           Literature
         </span>
@@ -60,24 +64,26 @@ function LiteratureSidebar() {
       )}
       <div className="relative bottom-0 w-full mt-auto h-max">
         <ul
-          className={`w-full ${
-            expanded
-              ? 'px-4 py-4'
-              : 'flex flex-col items-center justify-center gap-2 absolute bottom-4'
-          }`}
+          className={
+            classNames(
+              'w-full',
+              expanded
+                ? 'px-4 py-4'
+                : 'flex flex-col items-center justify-center gap-2 absolute bottom-4'
+            )
+          }
         >
           <li
-            className={`${
+            className={classNames(
               expanded
                 ? 'border-b border-primary-7 w-full flex items-center justify-between py-2'
                 : ''
-            }`}
+            )}
           >
             <Link
               href="/"
-              className={`${
-                expanded ? 'font-semibold w-full flex items-center justify-between' : ''
-              }`}
+              className={`${expanded ? 'font-semibold w-full flex items-center justify-between' : ''
+                }`}
             >
               {expanded && 'Home'}
               <HomeOutlined />
@@ -86,9 +92,8 @@ function LiteratureSidebar() {
           <li className={`${expanded ? 'w-full flex items-center justify-between py-2' : ''} `}>
             <Link
               href="/"
-              className={`${
-                expanded ? 'font-semibold w-full flex items-center justify-between' : ''
-              }`}
+              className={`${expanded ? 'font-semibold w-full flex items-center justify-between' : ''
+                }`}
             >
               {expanded && 'User'}
               <UserOutlined />
