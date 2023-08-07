@@ -2,13 +2,12 @@
 
 import React, { useTransition } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import { useLiteratureAtom, literatureAtom, literatureResultAtom } from '../state';
 import { TGenerativeQA } from '../types';
 import { LiteratureValidationError } from '../errors';
 import { getGenerativeQAAction } from '../actions';
 import { scrollToBottom } from '../utils';
-import SendIcon from '@/components/icons/SendIcon';
 import { classNames } from '@/util/utils';
 
 type TFormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -96,7 +95,7 @@ function GenerativeQAInputBar() {
                   onClick={onQuestionClear}
                 />
               )}
-              <FormButton type="submit" icon={<SendIcon className="text-base text-primary-8" />} />
+              <FormButton type="submit" icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8" />} />
             </div>
           </div>
         </div>
