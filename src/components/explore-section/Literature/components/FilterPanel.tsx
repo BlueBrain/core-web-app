@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
 import Drawer from 'antd/lib/drawer';
 import { useAtomValue } from 'jotai';
+
 import { useLiteratureAtom, literatureAtom } from '../state';
 
 export default function FilterPanel() {

@@ -1,4 +1,5 @@
 import { CloseOutlined } from '@ant-design/icons';
+
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
 
 function ArticleCategory({

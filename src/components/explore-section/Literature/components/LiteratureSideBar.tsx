@@ -10,6 +10,7 @@ import {
   PlusOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+
 import SectionCards from '@/components/explore-section/SectionCards';
 import { sectionContent } from '@/constants/home-sections/homeSectionContent';
 import { classNames } from '@/util/utils';
