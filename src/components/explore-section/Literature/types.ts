@@ -1,5 +1,6 @@
 import * as LiteratureErrors from './errors';
 
+export type TBrainRegion = { id: string; title: string };
 type THighlightHits = {
   start: number;
   end: number;
@@ -40,6 +41,7 @@ type TGenerativeQA = {
   answer: string;
   rawAnswer: string;
   articles: TArticle[];
+  brainRegion?: TBrainRegion;
 };
 
 type TGetGenerativeQAInput = {

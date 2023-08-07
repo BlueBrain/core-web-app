@@ -1,8 +1,7 @@
 import { atom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { TGenerativeQA } from './types';
+import { TBrainRegion, TGenerativeQA } from './types';
 
-export type TBrainRegion = { id: string; title: string };
 type TSingleGenerativeQAFilters = {
   categories: string[];
   publicationVerb: 'year' | 'before' | 'after' | 'range';
@@ -13,10 +12,12 @@ type TSingleGenerativeQAFilters = {
 };
 export type TLiteratureAtom = {
   query: string;
-  // the selectedQuestionForFilter is the question that the user has selected to filter the results
   selectedQuestionForFilter?: string;
   isFilterPanelOpen: boolean;
   filters?: TSingleGenerativeQAFilters;
+  activeQuestionId?: string;
+  selectedBrainRegion?: TBrainRegion;
+  selectAllQuestions: boolean;
 };
 
 export type TLiteratureOptions = keyof TLiteratureAtom;
@@ -25,6 +26,8 @@ const literatureAtom = atom<TLiteratureAtom>({
   query: '',
   selectedQuestionForFilter: undefined,
   isFilterPanelOpen: false,
+  activeQuestionId: undefined,
+  selectAllQuestions: false,
 });
 
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
