@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { CSSProperties } from 'react';
 
-type TPersonIconProps = {
+type Props = {
   className?: string;
   style?: CSSProperties;
 };
-export default function PersonIcon({ className, style }: TPersonIconProps) {
+export default function PersonIcon({ className, style }: Props) {
   return (
     <svg
       className={className}
@@ -18,8 +18,8 @@ export default function PersonIcon({ className, style }: TPersonIconProps) {
       <path
         fill="currentColor"
         fillRule="evenodd"
-        d="M10 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM8 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
         clipRule="evenodd"
+        d="M10 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM8 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
       />
       <path
         fill="currentColor"
