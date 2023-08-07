@@ -1,6 +1,6 @@
 'use server';
 
-import { getGenerativeQA } from './net';
+import { getGenerativeQA } from './api';
 
 export async function getGenerativeQAAction(data: FormData) {
   const question = data.get('gqa-question') as string;

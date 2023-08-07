@@ -5,6 +5,7 @@ type Props = {
   className?: string;
   style?: CSSProperties;
 };
+
 export default function PersonIcon({ className, style }: Props) {
   return (
     <svg

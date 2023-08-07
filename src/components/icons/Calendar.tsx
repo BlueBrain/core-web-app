@@ -4,6 +4,7 @@ type Props = {
   className?: string;
   style?: CSSProperties;
 };
+
 export default function CalendarIcon({ className, style }: Props) {
   return (
     <svg
