@@ -1,10 +1,10 @@
-import * as React from 'react';
 import { CSSProperties } from 'react';
 
 type Props = {
   className?: string;
   style?: CSSProperties;
 };
+
 export default function InfoIcon({ className, style }: Props) {
   return (
     <svg

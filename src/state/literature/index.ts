@@ -3,7 +3,8 @@ import { atomWithStorage } from 'jotai/utils';
 
 import { GenerativeQA } from '@/components/explore-section/Literature/types';
 
-export type TBrainRegion = { id: string; title: string };
+export type BrainRegion = { id: string; title: string };
+
 type SingleGenerativeQAFilters = {
   categories: string[];
   publicationVerb: 'year' | 'before' | 'after' | 'range';
@@ -12,6 +13,7 @@ type SingleGenerativeQAFilters = {
   journal: string;
   authors: string[];
 };
+
 export type LiteratureAtom = {
   query: string;
   // the selectedQuestionForFilter is the question that the user has selected to filter the results

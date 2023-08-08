@@ -15,6 +15,7 @@ import { classNames } from '@/util/utils';
 import { literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 
 export type GenerativeQASingleResultProps = Omit<GenerativeQA, 'sources' | 'paragraphs'>;
+
 function GenerativeQASingleResult({
   id,
   question,
