@@ -91,7 +91,7 @@ export type CheckListProps = {
   defaultRenderLength: number; // Added defaultRenderLength as a prop
 };
 
-type Items = {
+export type SubSectionCardItem = {
   name: string;
   type: string;
   url: string;
@@ -103,5 +103,5 @@ export type SingleCard = {
   url: string;
   icon: string;
   image: string;
-  items?: Items[] | null;
+  items?: SubSectionCardItem[] | null;
 };

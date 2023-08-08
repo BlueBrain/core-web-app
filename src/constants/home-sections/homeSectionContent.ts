@@ -1,5 +1,4 @@
-import { SingleCard } from "@/types/explore-section/application";
-
+import { SingleCard } from '@/types/explore-section/application';
 
 export const sectionContent: SingleCard[] = [
   {

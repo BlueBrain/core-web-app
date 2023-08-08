@@ -5,17 +5,12 @@ import Link from 'next/link';
 
 import { EyeIcon, AddIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
+import { SingleCard, SubSectionCardItem } from '@/types/explore-section/application';
 
 type SectionCardsProps = {
-  content: any;
+  content: SingleCard;
   cardIndex: number;
   expanded?: boolean;
-};
-
-type SubSectionProps = {
-  name: string;
-  subtitle: string;
-  url: string;
 };
 
 export default function SectionCards({ content, cardIndex, expanded }: SectionCardsProps) {
@@ -77,15 +72,15 @@ export default function SectionCards({ content, cardIndex, expanded }: SectionCa
           />
         )}
       </button>
-      {sectionStatus && (
+      {sectionStatus && Boolean(content.items?.length) && (
         <div className="flex flex-col justify-start w-full px-8">
-          {content.children.map((subsection: SubSectionProps, index: number) => (
+          {content.items?.map((subsection: SubSectionCardItem, index: number) => (
             <Link
               href={subsection.url}
               key={`explore-section-card-${subsection.name}`}
               className={classNames(
                 'w-full py-4 flex flex-col justify-start leading-tighttransition-padding ease-linear duration-150 hover:py-7',
-                index + 1 !== content.children.length
+                index + 1 !== content.items?.length
                   ? 'border-b border-b-primary-7 border-solid'
                   : ''
               )}
@@ -93,9 +88,6 @@ export default function SectionCards({ content, cardIndex, expanded }: SectionCa
               <h3 className={`${expanded ? 'text-lg' : 'text-2xl'} font-bold text-white`}>
                 {subsection.name}
               </h3>
-              {!expanded && (
-                <div className="text-sm font-light text-blue-200 ">{subsection.subtitle}</div>
-              )}
             </Link>
           ))}
         </div>
