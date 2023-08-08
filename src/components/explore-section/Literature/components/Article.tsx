@@ -5,7 +5,7 @@ import { Tooltip } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
 import { copyClipboard } from '../utils';
-import type { TArticle } from '../types';
+import type { GArticle } from '../types';
 import PersonIcon from '@/components/icons/Person';
 import JournalIcon from '@/components/icons/Journal';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
@@ -45,7 +45,7 @@ function ArticleAction({
   );
 }
 
-type TArticleProps = TArticle & {
+type ArticleProps = GArticle & {
   collapseAll: boolean;
 };
 export default function Article({
@@ -55,7 +55,7 @@ export default function Article({
   journal,
   abstract,
   collapseAll,
-}: TArticleProps) {
+}: ArticleProps) {
   const [readmore, setReadmore] = useState(() => collapseAll);
   const [DOIcopied, setDOIcopied] = useState(false);
   const onReadMore = () => setReadmore((state) => !state);

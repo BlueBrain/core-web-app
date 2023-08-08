@@ -1,10 +1,10 @@
 import { atom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-import { TGenerativeQA } from '@/components/explore-section/Literature/types';
+import { GenerativeQA } from '@/components/explore-section/Literature/types';
 
 export type TBrainRegion = { id: string; title: string };
-type TSingleGenerativeQAFilters = {
+type SingleGenerativeQAFilters = {
   categories: string[];
   publicationVerb: 'year' | 'before' | 'after' | 'range';
   publicationDate: string[];
@@ -12,28 +12,28 @@ type TSingleGenerativeQAFilters = {
   journal: string;
   authors: string[];
 };
-export type TLiteratureAtom = {
+export type LiteratureAtom = {
   query: string;
   // the selectedQuestionForFilter is the question that the user has selected to filter the results
   selectedQuestionForFilter?: string;
   isFilterPanelOpen: boolean;
-  filters?: TSingleGenerativeQAFilters;
+  filters?: SingleGenerativeQAFilters;
 };
 
-export type TLiteratureOptions = keyof TLiteratureAtom;
+export type LiteratureOptions = keyof LiteratureAtom;
 
-const literatureAtom = atom<TLiteratureAtom>({
+const literatureAtom = atom<LiteratureAtom>({
   query: '',
   selectedQuestionForFilter: undefined,
   isFilterPanelOpen: false,
 });
 
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
-const literatureResultAtom = atomWithStorage<TGenerativeQA[]>(GENERATIVE_QA_HISTORY_CACHE_KEY, []);
+const literatureResultAtom = atomWithStorage<GenerativeQA[]>(GENERATIVE_QA_HISTORY_CACHE_KEY, []);
 
 function useLiteratureAtom() {
   const setLiteratureState = useSetAtom(literatureAtom);
-  const update = (key: TLiteratureOptions, value: string | boolean) => {
+  const update = (key: LiteratureOptions, value: string | boolean) => {
     setLiteratureState((prev) => ({
       ...prev,
       [key]: value,

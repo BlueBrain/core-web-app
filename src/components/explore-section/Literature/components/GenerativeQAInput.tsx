@@ -4,19 +4,19 @@ import { useTransition } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
-import { TGenerativeQA } from '../types';
+import { GenerativeQA } from '../types';
 import { LiteratureValidationError } from '../errors';
 import { getGenerativeQAAction } from '../actions';
 import { scrollToBottom } from '../utils';
 import { classNames } from '@/util/utils';
 import { literatureAtom, literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 
-type TFormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
   type: 'submit' | 'button';
 };
 
-function FormButton({ icon, type, ...props }: TFormButtonProps) {
+function FormButton({ icon, type, ...props }: FormButtonProps) {
   return (
     <button
       onClick={props.onClick}
@@ -39,7 +39,7 @@ function GenerativeQAInputBar() {
     update('query', value);
   const onQuestionClear = () => update('query', '');
   const onGenerativeQAFinished = (
-    generativeQA: TGenerativeQA | LiteratureValidationError | null
+    generativeQA: GenerativeQA | LiteratureValidationError | null
   ) => {
     if (generativeQA && !(generativeQA instanceof LiteratureValidationError)) {
       updateResult([...QAs, generativeQA]);
