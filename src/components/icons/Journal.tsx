@@ -12,7 +12,7 @@ export default function JournalIcon({ className, style }: Props) {
       xmlns="http://www.w3.org/2000/svg"
       width={style?.width ?? 16}
       height={style?.height ?? 16}
-      fill="currentColor"
+      fill="#fff"
       fillRule="evenodd"
       className={className}
       style={style}
