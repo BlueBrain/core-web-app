@@ -7,14 +7,14 @@ import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
 
 import { scrollToBottom } from '../utils';
-import { TGenerativeQA } from '../types';
+import { GenerativeQA } from '../types';
 import ArticlesTimeLine from './ArticlesTimeLine';
 import BrainLight from '@/components/icons/BrainLight';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import { literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 
-export type TGenerativeQASingleResultProps = Omit<TGenerativeQA, 'sources' | 'paragraphs'>;
+export type GenerativeQASingleResultProps = Omit<GenerativeQA, 'sources' | 'paragraphs'>;
 function GenerativeQASingleResult({
   id,
   question,
@@ -22,7 +22,7 @@ function GenerativeQASingleResult({
   answer,
   rawAnswer,
   articles,
-}: TGenerativeQASingleResultProps) {
+}: GenerativeQASingleResultProps) {
   const [expandArticles, setExpandArticles] = useState(false);
   const [collpaseQuestion, setCollpaseQuestion] = useState(false);
   const update = useLiteratureAtom();

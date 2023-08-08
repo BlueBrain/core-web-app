@@ -1,11 +1,11 @@
 import * as LiteratureErrors from './errors';
 
-type THighlightHits = {
+type HighlightHit = {
   start: number;
   end: number;
 };
 
-type TArticle = {
+type GArticle = {
   id: string;
   doi: string;
   title: string;
@@ -16,7 +16,7 @@ type TArticle = {
   abstract: string | string[];
 };
 
-type TGenerativeQAMetadata = {
+type GenerativeQAMetadata = {
   article_id: string;
   article_doi: string;
   article_title: string;
@@ -26,35 +26,35 @@ type TGenerativeQAMetadata = {
   paragraph: string;
 };
 
-type TGenerativeQAResponse = {
+type GenerativeQAResponse = {
   answer: string;
   raw_answer: string;
   paragraphs: string[];
-  metadata: TGenerativeQAMetadata[];
+  metadata: GenerativeQAMetadata[];
 };
 
-type TGenerativeQA = {
+type GenerativeQA = {
   id: string;
   askedAt: Date;
   question: string;
   answer: string;
   rawAnswer: string;
-  articles: TArticle[];
+  articles: GArticle[];
 };
 
-type TGetGenerativeQAInput = {
+type GetGenerativeQAInput = {
   question: string;
   size?: number;
 };
-type TReturnGetGenerativeQA = (
-  input: TGetGenerativeQAInput
-) => Promise<TGenerativeQA | LiteratureErrors.LiteratureValidationError | null>;
+type ReturnGetGenerativeQA = (
+  input: GetGenerativeQAInput
+) => Promise<GenerativeQA | LiteratureErrors.LiteratureValidationError | null>;
 
 export type {
-  THighlightHits,
-  TArticle,
-  TGenerativeQAResponse,
-  TGenerativeQA,
-  TReturnGetGenerativeQA,
-  TGetGenerativeQAInput,
+  HighlightHit,
+  GArticle,
+  GenerativeQAResponse,
+  GenerativeQA,
+  ReturnGetGenerativeQA,
+  GetGenerativeQAInput,
 };

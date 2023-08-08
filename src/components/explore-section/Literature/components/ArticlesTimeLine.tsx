@@ -1,11 +1,11 @@
-import type { TGenerativeQASingleResultProps } from './GenerativeQAResults';
+import type { GenerativeQASingleResultProps } from './GenerativeQAResults';
 import Article from './Article';
 
-type TGenerativeQAResultsProps = Pick<TGenerativeQASingleResultProps, 'articles'> & {
+type GenerativeQAResultsProps = Pick<GenerativeQASingleResultProps, 'articles'> & {
   collapseAll: boolean;
 };
 
-function ArticlesTimeLine({ articles, collapseAll }: TGenerativeQAResultsProps) {
+function ArticlesTimeLine({ articles, collapseAll }: GenerativeQAResultsProps) {
   return (
     <ol className="relative border-l border-gray-200 dark:border-gray-700">
       {articles.map(({ id, title, doi, authors, journal, abstract, paragraph, section }) => (

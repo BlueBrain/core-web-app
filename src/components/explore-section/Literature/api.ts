@@ -1,12 +1,12 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { TGenerativeQAResponse, TReturnGetGenerativeQA } from './types';
+import { GenerativeQAResponse, ReturnGetGenerativeQA } from './types';
 import { generativeQADTO } from './utils/DTOs';
 import * as LiteratureErrors from './errors';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { nexus } from '@/config';
 
-const getGenerativeQA: TReturnGetGenerativeQA = async ({ question }) => {
+const getGenerativeQA: ReturnGetGenerativeQA = async ({ question }) => {
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect('/api/auth/signin');
@@ -23,7 +23,7 @@ const getGenerativeQA: TReturnGetGenerativeQA = async ({ question }) => {
         query: question,
       }),
     });
-    const generativeQAResponse = (await response.json()) as TGenerativeQAResponse;
+    const generativeQAResponse = (await response.json()) as GenerativeQAResponse;
     return generativeQADTO({ question, generativeQAResponse });
   } catch (error: unknown) {
     if (error instanceof LiteratureErrors.LiteratureValidationError) {
