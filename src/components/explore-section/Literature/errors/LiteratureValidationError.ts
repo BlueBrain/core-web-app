@@ -1,13 +1,13 @@
-type TCostumError = {
+type CostumError = {
   loc: string[];
   msg: string;
   type: string;
 };
 
 class LiteratureValidationError extends Error {
-  detail: TCostumError;
+  detail: CostumError;
 
-  constructor(detail: TCostumError) {
+  constructor(detail: CostumError) {
     super(detail.msg, { cause: detail });
     this.name = 'LiteratureValidationError';
     this.detail = detail;

@@ -24,6 +24,7 @@ function ArticlePreview({ title, icon }: { title: string; icon: JSX.Element }) {
     </button>
   );
 }
+
 function ArticleAction({
   title,
   icon,
@@ -48,6 +49,7 @@ function ArticleAction({
 type ArticleProps = GArticle & {
   collapseAll: boolean;
 };
+
 export default function Article({
   title,
   doi,
