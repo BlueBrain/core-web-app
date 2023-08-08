@@ -1,8 +1,8 @@
-import { THighlightHits } from '../types';
+import { HighlightHit } from '../types';
 
 const charsBeforeStart = 50;
 const charsAfterEnd = 200;
-const highlightHits = ({ description, hits }: { description: string; hits: THighlightHits[] }) => {
+const highlightHits = ({ description, hits }: { description: string; hits: HighlightHit[] }) => {
   // Sort the highlights array based on the start position to handle overlaps correctly
   hits.sort((a, b) => a.start - b.start);
   let highlightedText = '';
