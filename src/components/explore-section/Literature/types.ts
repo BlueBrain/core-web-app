@@ -1,11 +1,11 @@
 import * as LiteratureErrors from './errors';
 
-type HighlightHit = {
+export type HighlightHit = {
   start: number;
   end: number;
 };
 
-type GArticle = {
+export type GArticle = {
   id: string;
   doi: string;
   title: string;
@@ -16,7 +16,7 @@ type GArticle = {
   abstract: string | string[];
 };
 
-type GenerativeQAMetadata = {
+export type GenerativeQAMetadata = {
   article_id: string;
   article_doi: string;
   article_title: string;
@@ -26,14 +26,14 @@ type GenerativeQAMetadata = {
   paragraph: string;
 };
 
-type GenerativeQAResponse = {
+export type GenerativeQAResponse = {
   answer: string;
   raw_answer: string;
   paragraphs: string[];
   metadata: GenerativeQAMetadata[];
 };
 
-type GenerativeQA = {
+export type GenerativeQA = {
   id: string;
   askedAt: Date;
   question: string;
@@ -42,19 +42,10 @@ type GenerativeQA = {
   articles: GArticle[];
 };
 
-type GetGenerativeQAInput = {
+export type GetGenerativeQAInput = {
   question: string;
   size?: number;
 };
-type ReturnGetGenerativeQA = (
+export type ReturnGetGenerativeQA = (
   input: GetGenerativeQAInput
 ) => Promise<GenerativeQA | LiteratureErrors.LiteratureValidationError | null>;
-
-export type {
-  HighlightHit,
-  GArticle,
-  GenerativeQAResponse,
-  GenerativeQA,
-  ReturnGetGenerativeQA,
-  GetGenerativeQAInput,
-};
