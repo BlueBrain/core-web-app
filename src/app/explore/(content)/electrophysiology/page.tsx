@@ -1,20 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useSetAtom } from 'jotai';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { typeAtom, triggerRefetchAtom } from '@/state/explore-section/list-view-atoms';
+import { typeAtom, triggerRefetchAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
+import useListPage from '@/hooks/useListPage';
 
 const TYPE = 'https://neuroshapes.org/Trace';
 
 export default function EphysPage() {
-  const setType = useSetAtom(typeAtom);
-  const refetch = useSetAtom(triggerRefetchAtom);
-
-  useEffect(() => {
-    setType(TYPE);
-    refetch();
-  }, [setType, refetch]);
+  useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>

@@ -83,7 +83,7 @@ export const activeColumnsAtom = atomWithDefault(
   (get) => ['index', ...get(columnKeysAtom)] // TODO: There is no 'index' for Simulation Campaigns
 );
 
-export const filtersAtom = atomWithDefault((get) => {
+export const filtersAtom = atomWithDefault<Filter[]>((get) => {
   const columnsKeys = get(columnKeysAtom);
 
   return columnsKeys.map((colKey) => columnKeyToFilter(colKey));
