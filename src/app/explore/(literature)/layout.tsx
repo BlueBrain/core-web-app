@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import LiteratureSidebar from '@/components/explore-section/Literature/components/LiteratureSideBar';
+import Sidebar from '@/components/explore-section/Literature/components/SideBar';
 
 type LiteratureLayoutProps = {
   children: ReactNode;
@@ -13,7 +13,7 @@ type LiteratureLayoutProps = {
 export default function GenericLayout({ children }: LiteratureLayoutProps) {
   return (
     <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-      <LiteratureSidebar />
+      <Sidebar />
       {children}
     </ErrorBoundary>
   );
