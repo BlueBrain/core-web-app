@@ -1,12 +1,12 @@
 import kebabCase from 'lodash/kebabCase';
-import { TGenerativeQA, TGenerativeQAResponse } from '../types';
+import { GenerativeQA, GenerativeQAResponse } from '../types';
 
-type TGenerativeQADTO = {
+type GenerativeQADTO = {
   question: string;
-  generativeQAResponse: TGenerativeQAResponse;
+  generativeQAResponse: GenerativeQAResponse;
 };
 
-const generativeQADTO = ({ question, generativeQAResponse }: TGenerativeQADTO): TGenerativeQA => {
+const generativeQADTO = ({ question, generativeQAResponse }: GenerativeQADTO): GenerativeQA => {
   const askedAt = new Date();
   return {
     question,
