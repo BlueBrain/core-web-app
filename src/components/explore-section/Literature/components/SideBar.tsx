@@ -11,10 +11,10 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 
-import SectionCards from '@/components/explore-section/SectionCards';
+import SectionCards from './SideBarMenu';
 import { sectionContent } from '@/constants/home-sections/homeSectionContent';
 import { classNames } from '@/util/utils';
-import { ExplorerSingleCard } from '@/types/explore-section/application';
+import { SingleCard } from '@/types/explore-section/application';
 
 function LiteratureSidebar() {
   const [expanded, setExpanded] = useState(false);
@@ -52,7 +52,7 @@ function LiteratureSidebar() {
       </div>
       {expanded && (
         <div className="flex flex-col w-full h-full px-4 overflow-y-auto primary-scrollbar gap-y-3">
-          {sectionContent.map((singleCard: ExplorerSingleCard, index: number) => (
+          {sectionContent.map((singleCard: SingleCard, index: number) => (
             <SectionCards
               content={singleCard}
               cardIndex={index}

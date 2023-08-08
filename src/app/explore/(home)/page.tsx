@@ -10,7 +10,6 @@ import HomeHeader from '@/components/Global/HomeHeader';
 import { classNames } from '@/util/utils';
 import { SingleCard } from '@/types/explore-section/application';
 
-
 export default function Explore() {
   const content = sectionContent;
 
