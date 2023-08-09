@@ -6,6 +6,7 @@ import {
   spikeShapeFeatures,
   voltageFeatures,
 } from '@/constants/cell-model-assignment/e-model';
+import { NexusEntityType } from '@/types/nexus/common';
 
 export interface EModelMenuItem {
   label: string;
@@ -42,7 +43,7 @@ export interface ExperimentalTracesDataType {
 export type EModelType = 'EModel';
 
 export interface EModel extends EModelCommonProps {
-  '@type': ['Entity', EModelType];
+  '@type': NexusEntityType<EModelType>;
   description: string;
   distribution: Distribution[];
   generation: {
@@ -92,7 +93,7 @@ interface EModelObjectOfStudy {
 export type EModelWorkflowType = 'EModelWorkflow';
 
 export interface EModelWorkflow extends EModelCommonProps {
-  '@type': ['Entity', EModelWorkflowType];
+  '@type': NexusEntityType<EModelWorkflowType>;
   hasPart: [
     {
       '@id': string;
@@ -118,7 +119,7 @@ export interface EModelWorkflowResource extends ResourceMetadata, EModelWorkflow
 export type EModelConfigurationType = 'EModelConfiguration';
 
 export interface EModelConfiguration extends EModelCommonProps {
-  '@type': ['Entity', EModelConfigurationType];
+  '@type': NexusEntityType<EModelConfigurationType>;
   uses: {
     '@id': string;
     '@type': NeuronMorphologyType | SubCellularModelScriptType;
@@ -172,7 +173,7 @@ export interface EModelConfigurationPayload {
 export type EModelPipelineSettingsType = 'EModelPipelineSettings';
 
 export interface EModelPipelineSettings extends EModelCommonProps {
-  '@type': ['Entity', EModelPipelineSettingsType];
+  '@type': NexusEntityType<EModelPipelineSettingsType>;
   distribution: Distribution;
 }
 
@@ -183,7 +184,7 @@ export interface EModelPipelineSettingsResource extends ResourceMetadata, EModel
 export type ExtractionTargetsConfigurationType = 'ExtractionTargetsConfiguration';
 
 export interface ExtractionTargetsConfiguration extends EModelCommonProps {
-  '@type': ['Entity', ExtractionTargetsConfigurationType];
+  '@type': NexusEntityType<ExtractionTargetsConfigurationType>;
   uses: {
     '@id': string;
     '@type': TraceType;
@@ -241,7 +242,7 @@ export type ECode = (typeof eCodes)[number];
 export type TraceType = 'Trace';
 
 export interface Trace extends Entity {
-  '@type': ['Entity', TraceType, 'Dataset'];
+  '@type': NexusEntityType<TraceType>;
   annotation: {
     '@type': ['QualityAnnotation', 'Annotation'];
     hasBody: {
@@ -312,7 +313,7 @@ export interface TraceResource extends ResourceMetadata, Trace {}
 export type NeuronMorphologyType = 'NeuronMorphology';
 
 export interface NeuronMorphology extends Entity {
-  '@type': ['Entity', NeuronMorphologyType, 'ReconstructedCell'];
+  '@type': NexusEntityType<NeuronMorphologyType>;
   contribution: ContributionEntity;
   distribution: Distribution;
   objectOfStudy: EModelObjectOfStudy;
@@ -326,7 +327,7 @@ export interface NeuronMorphologyResource extends ResourceMetadata, NeuronMorpho
 export type SubCellularModelScriptType = 'SubCellularModelScript';
 
 export interface SubCellularModelScript extends Entity {
-  '@type': ['Entity', SubCellularModelScriptType, 'Dataset'];
+  '@type': NexusEntityType<SubCellularModelScriptType>;
   contribution: ContributionEntity;
   distribution: Distribution;
   description: string;

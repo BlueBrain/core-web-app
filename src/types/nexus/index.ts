@@ -1,4 +1,4 @@
-import { Entity, Distribution, ResourceMetadata, DateISOString } from './common';
+import { Entity, Distribution, ResourceMetadata, DateISOString, NexusEntityType } from './common';
 import { MacroConnectomeEditEntry } from '@/types/connectome';
 import { MModelWorkflowOverrides } from '@/types/m-model';
 
@@ -24,31 +24,31 @@ export interface BrainModelConfig extends Entity {
   configs: {
     cellCompositionConfig: {
       '@id': string;
-      '@type': [CellCompositionConfigType, 'Entity'];
+      '@type': NexusEntityType<CellCompositionConfigType>;
     };
     cellPositionConfig: {
       '@id': string;
-      '@type': [CellPositionConfigType, 'Entity'];
+      '@type': NexusEntityType<CellPositionConfigType>;
     };
     eModelAssignmentConfig: {
       '@id': string;
-      '@type': [EModelAssignmentConfigType, 'Entity'];
+      '@type': NexusEntityType<EModelAssignmentConfigType>;
     };
     morphologyAssignmentConfig: {
       '@id': string;
-      '@type': [MorphologyAssignmentConfigType, 'Entity'];
+      '@type': NexusEntityType<MorphologyAssignmentConfigType>;
     };
     microConnectomeConfig: {
       '@id': string;
-      '@type': [MicroConnectomeConfigType, 'Entity'];
+      '@type': NexusEntityType<MicroConnectomeConfigType>;
     };
     synapseConfig: {
       '@id': string;
-      '@type': [SynapseConfigType, 'Entity'];
+      '@type': NexusEntityType<SynapseConfigType>;
     };
     macroConnectomeConfig: {
       '@id': string;
-      '@type': [MacroConnectomeConfigType, 'Entity'];
+      '@type': NexusEntityType<MacroConnectomeConfigType>;
     };
   };
 }
@@ -60,7 +60,7 @@ type CellCompositionConfigType = 'CellCompositionConfig';
 
 export interface CellCompositionConfig extends Entity {
   name: string;
-  '@type': [CellCompositionConfigType, 'Entity'];
+  '@type': NexusEntityType<CellCompositionConfigType>;
   generatorName: CellCompositionGeneratorName;
   description: string;
   distribution: Distribution;
@@ -120,7 +120,7 @@ type CellPositionConfigType = 'CellPositionConfig';
 export interface CellPositionConfig extends Entity {
   name: string;
   description: string;
-  '@type': [CellPositionConfigType, 'Entity'];
+  '@type': NexusEntityType<CellPositionConfigType>;
   generatorName: CellPositionGeneratorName;
   distribution: Distribution;
 }
@@ -214,7 +214,7 @@ type EModelAssignmentConfigType = 'EModelAssignmentConfig';
 export interface EModelAssignmentConfig extends Entity {
   name: string;
   description: string;
-  '@type': [EModelAssignmentConfigType, 'Entity'];
+  '@type': NexusEntityType<EModelAssignmentConfigType>;
   generatorName: PlaceholderGeneratorName;
   distribution: Distribution;
 }
@@ -243,7 +243,7 @@ type MModelGeneratorName = 'mmodel';
 export interface MorphologyAssignmentConfig extends Entity {
   name: string;
   description: string;
-  '@type': [MorphologyAssignmentConfigType, 'Entity'];
+  '@type': NexusEntityType<MorphologyAssignmentConfigType>;
   '@context': 'https://bbp.neuroshapes.org';
   generatorName: MModelGeneratorName;
   distribution: Distribution;
@@ -267,12 +267,12 @@ export type MorphologyAssignmentConfigPayload = {
   defaults: {
     topological_synthesis: {
       id: string;
-      type: ['CanonicalMorphologyModelConfig', 'Entity'];
+      type: NexusEntityType<'CanonicalMorphologyModelConfig'>;
       rev: number;
     };
     placeholder_assignment: {
       id: string;
-      type: ['PlaceholderMorphologyConfig', 'Entity'];
+      type: NexusEntityType<'PlaceholderMorphologyConfig'>;
       rev: number;
     };
   };
@@ -287,7 +287,7 @@ type MicroConnectomeConfigType = 'MicroConnectomeConfig';
 export interface MicroConnectomeConfig extends Entity {
   name: string;
   description: string;
-  '@type': [MicroConnectomeConfigType, 'Entity'];
+  '@type': NexusEntityType<MicroConnectomeConfigType>;
   generatorName: MicroConnectomeGeneratorName;
   distribution: Distribution;
 }
@@ -314,14 +314,14 @@ export interface MicroConnectomeConfigPayload {
     };
   };
   initial: {
-    variants: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeVariantSelection'] };
+    variants: IdRev & { type: NexusEntityType<'MicroConnectomeVariantSelection'> };
   } & {
-    [variantName: string]: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeData'] };
+    [variantName: string]: IdRev & { type: NexusEntityType<'MicroConnectomeData'> };
   };
   overrides: {
-    variants: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeVariantSelectionOverrides'] };
+    variants: IdRev & { type: NexusEntityType<'MicroConnectomeVariantSelectionOverrides'> };
   } & {
-    [variantName: string]: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeDataOverrides'] };
+    [variantName: string]: IdRev & { type: NexusEntityType<'MicroConnectomeDataOverrides'> };
   };
 }
 
@@ -342,7 +342,7 @@ export interface MicroConnectomeEntryBase {
 }
 
 export interface MicroConnectomeVariantSelection extends MicroConnectomeEntryBase, Entity {
-  '@type': ['Entity', 'Dataset', 'MicroConnectomeVariantSelection'];
+  '@type': NexusEntityType<'MicroConnectomeVariantSelection'>;
 }
 
 export interface MicroConnectomeVariantSelectionResource
@@ -350,7 +350,7 @@ export interface MicroConnectomeVariantSelectionResource
     MicroConnectomeVariantSelection {}
 
 export interface MicroConnectomeVariantSelectionOverrides extends MicroConnectomeEntryBase, Entity {
-  '@type': ['Entity', 'Dataset', 'MicroConnectomeVariantSelectionOverrides'];
+  '@type': NexusEntityType<'MicroConnectomeVariantSelectionOverrides'>;
 }
 
 export interface MicroConnectomeVariantSelectionOverridesResource
@@ -358,13 +358,13 @@ export interface MicroConnectomeVariantSelectionOverridesResource
     MicroConnectomeVariantSelectionOverrides {}
 
 export interface MicroConnectomeData extends MicroConnectomeEntryBase, Entity {
-  '@type': ['Entity', 'Dataset', 'MicroConnectomeData'];
+  '@type': NexusEntityType<'MicroConnectomeData'>;
 }
 
 export interface MicroConnectomeDataResource extends ResourceMetadata, MicroConnectomeData {}
 
 export interface MicroConnectomeDataOverrides extends MicroConnectomeEntryBase, Entity {
-  '@type': ['Entity', 'Dataset', 'MicroConnectomeDataOverrides'];
+  '@type': NexusEntityType<'MicroConnectomeDataOverrides'>;
 }
 
 export interface MicroConnectomeDataOverridesResource
@@ -377,7 +377,7 @@ type SynapseConfigType = 'SynapseConfig';
 export interface SynapseConfig extends Entity {
   name: string;
   description: string;
-  '@type': [SynapseConfigType, 'Entity'];
+  '@type': NexusEntityType<SynapseConfigType>;
   generatorName: SynapseGeneratorName;
   distribution: Distribution;
 }
@@ -392,12 +392,12 @@ export interface SynapseConfigPayload {
   configuration: {
     synapse_properties: {
       id: string;
-      type: ['Entity', 'Dataset', 'SynapticParameterAssignment'];
+      type: NexusEntityType<'SynapticParameterAssignment'>;
       rev: number;
     };
     synapses_classification: {
       id: string;
-      type: ['Entity', 'Dataset', 'SynapticParameter'];
+      type: NexusEntityType<'SynapticParameter'>;
       rev: number;
     };
   };
@@ -409,7 +409,7 @@ type MacroConnectomeConfigType = 'MacroConnectomeConfig';
 export interface MacroConnectomeConfig extends Entity {
   name: string;
   description: string;
-  type: [MacroConnectomeConfigType, 'Entity'];
+  type: NexusEntityType<MacroConnectomeConfigType>;
   generatorName: MacroConnectomeGeneratorName;
   distribution: Distribution;
 }
@@ -420,14 +420,14 @@ export interface MacroConnectomeConfigPayload {
   bases: {
     connection_strength: {
       id: string;
-      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      type: NexusEntityType<'WholeBrainConnectomeStrength'>;
       rev: number;
     };
   };
   overrides: {
     connection_strength: {
       id: string;
-      type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
+      type: NexusEntityType<'WholeBrainConnectomeStrength'>;
       rev: number;
     };
   };
@@ -449,7 +449,7 @@ export interface VariantTaskActivity extends Entity {
   };
   startedAtTime: string;
   used: {
-    '@type': ['VariantTaskConfig', 'Entity'];
+    '@type': NexusEntityType<'VariantTaskConfig'>;
     '@id': string;
   };
   used_rev: number;
@@ -462,7 +462,7 @@ export interface VariantTaskActivity extends Entity {
 export interface VariantTaskActivityResource extends ResourceMetadata, VariantTaskActivity {}
 
 export interface VariantTaskConfig extends Entity {
-  '@type': ['VariantTaskConfig', 'Entity'];
+  '@type': NexusEntityType<'VariantTaskConfig'>;
   name: string;
   distribution: Distribution;
 }
@@ -470,7 +470,7 @@ export interface VariantTaskConfig extends Entity {
 export interface VariantTaskConfigResource extends ResourceMetadata, VariantTaskConfig {}
 
 export interface WholeBrainConnectomeStrength extends Entity {
-  '@type': ['WholeBrainConnectomeStrength', 'Dataset', 'Entity'];
+  '@type': NexusEntityType<'WholeBrainConnectomeStrength'>;
   name: string;
   distribution: Distribution;
 }
@@ -507,7 +507,7 @@ export type GeneratorConfigType =
   | MacroConnectomeConfigType;
 
 export interface SimulationCampaignUIConfig extends Entity {
-  '@type': ['Entity', 'SimulationCampaignUIConfig'];
+  '@type': NexusEntityType<'SimulationCampaignUIConfig'>;
   name: string;
   description: string;
   used: {
@@ -529,7 +529,7 @@ export interface SimulationCampaignUIConfigResource
 export type WorkflowExecutionStatusType = 'Done' | 'Running' | 'Failed';
 
 export interface WorkflowExecution extends Entity {
-  '@type': ['Entity', 'WorkflowExecution'];
+  '@type': NexusEntityType<'WorkflowExecution'>;
   configFileName: string;
   distribution: Distribution;
   endedAtTime: DateISOString;
@@ -578,7 +578,7 @@ type NeuronMorphologyModelDistributionType = 'NeuronMorphologyModelDistribution'
 export interface NeuronMorphologyModelDistribution extends Entity {
   name: string;
   description: string;
-  '@type': [NeuronMorphologyModelDistributionType, 'Entity'];
+  '@type': NexusEntityType<NeuronMorphologyModelDistributionType>;
   distribution: Distribution;
 }
 
@@ -591,7 +591,7 @@ type NeuronMorphologyModelParameterType = 'NeuronMorphologyModelParameter';
 export interface NeuronMorphologyModelParameter extends Entity {
   name: string;
   description: string;
-  '@type': [NeuronMorphologyModelParameterType, 'Entity'];
+  '@type': NexusEntityType<NeuronMorphologyModelParameterType>;
   distribution: Distribution;
 }
 
@@ -605,15 +605,15 @@ export interface CanonicalMorphologyModel extends Entity {
   name: string;
   description: string;
   about: 'NeuronMorphology';
-  '@type': [CanonicalMorphologyModelType, 'Entity'];
+  '@type': NexusEntityType<CanonicalMorphologyModelType>;
   morphologyModelDistribution: {
     '@id': string;
-    '@type': [NeuronMorphologyModelDistributionType, 'Entity'];
+    '@type': NexusEntityType<NeuronMorphologyModelDistributionType>;
     rev: number;
   };
   morphologyModelParameter: {
     '@id': string;
-    '@type': [NeuronMorphologyModelParameterType, 'Entity'];
+    '@type': NexusEntityType<NeuronMorphologyModelParameterType>;
     rev: number;
   };
 }
@@ -627,7 +627,7 @@ type CanonicalMorphologyModelConfigType = 'CanonicalMorphologyModelConfig';
 export interface CanonicalMorphologyModelConfig extends Entity {
   name: string;
   description: string;
-  '@type': [CanonicalMorphologyModelConfigType, 'Entity'];
+  '@type': NexusEntityType<CanonicalMorphologyModelConfigType>;
   distribution: Distribution;
 }
 

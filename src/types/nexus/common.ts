@@ -60,3 +60,11 @@ export interface Distribution {
     value: string;
   };
 }
+
+/* as the types in nexus could be only a string or an array with probably some Entity on it
+   this type will validate if the type is alone or with some Entity on it. If you pass an array it will
+   work literally with it.
+*/
+export type NexusEntityType<T extends string | string[]> = T extends string[]
+  ? T
+  : T | ('Entity' | T)[];
