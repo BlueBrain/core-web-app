@@ -1,5 +1,6 @@
 import { MModelMenuItem } from './m-model';
 import { ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
+import { NexusEntityType } from '@/types/nexus/common';
 
 export interface EModelMenuItem {
   label: string;
@@ -60,7 +61,7 @@ export interface ExperimentalTracesDataType {
 export type EModelType = 'EModel';
 
 export interface EModel extends EModelCommonProps {
-  '@type': ['Entity', EModelType];
+  '@type': NexusEntityType<EModelType>;
   description: string;
   distribution: Distribution[];
   generation: {
@@ -108,7 +109,7 @@ interface EModelCommonProps extends Entity {
 export type EModelWorkflowType = 'EModelWorkflow';
 
 export interface EModelWorkflow extends EModelCommonProps {
-  '@type': ['Entity', EModelWorkflowType];
+  '@type': NexusEntityType<EModelWorkflowType>;
   hasPart: [
     {
       '@id': string;
@@ -134,7 +135,7 @@ export interface EModelWorkflowResource extends ResourceMetadata, EModelWorkflow
 export type EModelConfigurationType = 'EModelConfiguration';
 
 export interface EModelConfiguration extends EModelCommonProps {
-  '@type': ['Entity', EModelConfigurationType];
+  '@type': NexusEntityType<EModelConfigurationType>;
   uses: {
     '@id': string;
     '@type': 'NeuronMorphology' | 'SubCellularModelScript';
@@ -188,7 +189,7 @@ export interface EModelConfigurationPayload {
 export type EModelPipelineSettingsType = 'EModelPipelineSettings';
 
 export interface EModelPipelineSettings extends EModelCommonProps {
-  '@type': ['Entity', EModelPipelineSettingsType];
+  '@type': NexusEntityType<EModelPipelineSettingsType>;
   distribution: Distribution;
 }
 
@@ -199,7 +200,7 @@ export interface EModelPipelineSettingsResource extends ResourceMetadata, EModel
 export type ExtractionTargetsConfigurationType = 'ExtractionTargetsConfiguration';
 
 export interface ExtractionTargetsConfiguration extends EModelCommonProps {
-  '@type': ['Entity', ExtractionTargetsConfigurationType];
+  '@type': NexusEntityType<ExtractionTargetsConfigurationType>;
   uses: {
     '@id': string;
     '@type': TraceType;
@@ -216,7 +217,7 @@ export interface ExtractionTargetsConfigurationResource
 export type TraceType = 'Trace';
 
 export interface Trace extends Entity {
-  '@type': ['Entity', TraceType, 'Dataset'];
+  '@type': NexusEntityType<TraceType>;
   annotation: {
     '@type': ['QualityAnnotation', 'Annotation'];
     hasBody: {
