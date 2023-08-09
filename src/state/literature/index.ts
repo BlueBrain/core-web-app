@@ -1,4 +1,4 @@
-import { atom, useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 import { GenerativeQA, FilterFieldsType, FilterValues } from '@/types/literature';
@@ -6,27 +6,32 @@ import { Filter } from '@/components/Filter/types';
 
 export type BrainRegion = { id: string; title: string };
 
+const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
+
 export type LiteratureAtom = {
   query: string;
   // the selectedQuestionForFilter is the question that the user has selected to filter the results
   selectedQuestionForFilter?: string;
+  activeQuestionId?: string;
   isFilterPanelOpen: boolean;
   filterValues: FilterValues | null;
 };
 
 export type LiteratureOptions = keyof LiteratureAtom;
 
-const literatureAtom = atom<LiteratureAtom>({
+export const literatureAtom = atom<LiteratureAtom>({
   query: '',
   selectedQuestionForFilter: undefined,
   isFilterPanelOpen: false,
   filterValues: null,
 });
 
-const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
-const literatureResultAtom = atomWithStorage<GenerativeQA[]>(GENERATIVE_QA_HISTORY_CACHE_KEY, []);
+export const literatureResultAtom = atomWithStorage<GenerativeQA[]>(
+  GENERATIVE_QA_HISTORY_CACHE_KEY,
+  []
+);
 
-function useLiteratureAtom() {
+export function useLiteratureAtom() {
   const setLiteratureState = useSetAtom(literatureAtom);
   const update = (key: LiteratureOptions, value: string | boolean | null | undefined) => {
     setLiteratureState((prev) => ({
@@ -34,6 +39,7 @@ function useLiteratureAtom() {
       [key]: value,
     }));
   };
+
   return update;
 }
 
@@ -50,4 +56,16 @@ export function useLiteratureFilter() {
     }));
 }
 
-export { literatureAtom, literatureResultAtom, useLiteratureAtom };
+export function useLiteratureResultsAtom() {
+  const [QAs, updateResult] = useAtom(literatureResultAtom);
+  const update = (newValue: GenerativeQA) => {
+    updateResult([...QAs, newValue]);
+  };
+
+  const remove = (id: string) => {
+    updateResult(QAs.filter((item) => item.id !== id));
+  };
+
+  return { QAs, update, remove };
+}
+
