@@ -8,6 +8,7 @@ import InferenceRow from './InferenceRow';
 import { findTitleAndCollectParentBrainRegions } from '@/components/Filter/util';
 import { brainRegionsFilteredTreeAtom } from '@/state/brain-regions';
 import useNotification from '@/hooks/notifications';
+import { SIMILARITY_MODELS } from '@/constants/explore-section/kg-inference';
 
 type InferenceTableProps = {
   brainRegionTitle: string;
@@ -69,7 +70,7 @@ function InferenceTable({ brainRegionTitle }: InferenceTableProps) {
           <InferenceRow
             label="Similarity:"
             placeholder="Select model.."
-            options={parentBrainRegions}
+            options={SIMILARITY_MODELS}
           />
         </>
       )}

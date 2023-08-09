@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Select, ConfigProvider } from 'antd';
 import { BrainRegion } from '@/types/ontologies';
+import { SimalirityModelsProps } from '@/constants/explore-section/kg-inference';
 
 const { Option } = Select;
 
 type InferenceRowProps = {
   label: string;
   placeholder: string;
-  options?: BrainRegion[] | null;
+  options?: BrainRegion[] | SimalirityModelsProps[] | null;
 };
 
 function InferenceRow({ label, placeholder, options }: InferenceRowProps) {
