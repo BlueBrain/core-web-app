@@ -102,7 +102,7 @@ function GenerativeQASingleResult({
                     {articles.length}
                   </span>
                 </div>
-                <div className="text-base font-normal leading-snug text-blue-900">articles</div>
+                <div className="text-base font-normal leading-snug text-blue-900">paragraphs</div>
               </div>
               <ChevronIcon
                 fill="#003A8C"
