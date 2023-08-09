@@ -1,3 +1,5 @@
+import { Session } from 'next-auth';
+
 import * as LiteratureErrors from './errors';
 
 export type HighlightHit = {
@@ -43,6 +45,7 @@ export type GenerativeQA = {
 };
 
 export type GetGenerativeQAInput = {
+  session: Session | null;
   question: string;
   size?: number;
 };
