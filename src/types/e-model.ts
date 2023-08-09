@@ -123,6 +123,7 @@ export interface EModelWorkflow extends EModelCommonProps {
       '@type': EModelConfigurationType;
     }
   ];
+  distribution: Distribution;
   state: string;
 }
 
@@ -138,9 +139,49 @@ export interface EModelConfiguration extends EModelCommonProps {
     '@id': string;
     '@type': 'NeuronMorphology' | 'SubCellularModelScript';
   }[];
+  distribution: Distribution;
 }
 
 export interface EModelConfigurationResource extends ResourceMetadata, EModelConfiguration {}
+
+export interface EModelConfigurationMechanism {
+  name: string;
+  stochastic: boolean;
+  location: string;
+  version: null;
+}
+
+export interface EModelConfigurationDistribution {
+  name: string;
+  function: string | null;
+  soma_ref_location: number;
+  parameters?: string[];
+}
+
+export interface EModelConfigurationParameter {
+  name: string;
+  value: number | number[];
+  location: string;
+  mechanism?: string;
+  distribution?: string;
+}
+
+export interface EModelConfigurationMorphology {
+  name: string;
+  format: 'asc' | 'swc';
+  path: string;
+  seclist_names: null;
+  secarray_names: null;
+  section_index: null;
+}
+
+export interface EModelConfigurationPayload {
+  mechanisms: EModelConfigurationMechanism[];
+  distributions: EModelConfigurationDistribution[];
+  parameters: EModelConfigurationParameter[];
+  morphology: EModelConfigurationMorphology;
+  morph_modifiers: null;
+}
 
 /* ------------------------- EModelPipelineSettings ------------------------- */
 
@@ -148,6 +189,7 @@ export type EModelPipelineSettingsType = 'EModelPipelineSettings';
 
 export interface EModelPipelineSettings extends EModelCommonProps {
   '@type': ['Entity', EModelPipelineSettingsType];
+  distribution: Distribution;
 }
 
 export interface EModelPipelineSettingsResource extends ResourceMetadata, EModelPipelineSettings {}
@@ -158,11 +200,11 @@ export type ExtractionTargetsConfigurationType = 'ExtractionTargetsConfiguration
 
 export interface ExtractionTargetsConfiguration extends EModelCommonProps {
   '@type': ['Entity', ExtractionTargetsConfigurationType];
-  distribution: Distribution[];
   uses: {
     '@id': string;
     '@type': TraceType;
   }[];
+  distribution: Distribution[];
 }
 
 export interface ExtractionTargetsConfigurationResource
