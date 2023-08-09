@@ -3,14 +3,15 @@ import { generativeQADTO } from './utils/DTOs';
 import * as LiteratureErrors from './errors';
 import { nexus } from '@/config';
 
-const getGenerativeQA: ReturnGetGenerativeQA = async ({ question }) => {
+const getGenerativeQA: ReturnGetGenerativeQA = async ({ question, session }) => {
   try {
     const response = await fetch(`${nexus.aiUrl}/generative_qa`, {
       method: 'POST',
-      headers: {
+      headers: new Headers({
         accept: 'application/json',
         'Content-Type': 'application/json',
-      },
+        Authorization: `Bearer ${session?.accessToken}`,
+      }),
       body: JSON.stringify({
         query: question,
       }),
