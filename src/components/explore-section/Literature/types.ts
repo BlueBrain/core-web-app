@@ -24,6 +24,7 @@ export type GenerativeQAMetadata = {
   article_title: string;
   article_authors: string[];
   article_abstract: string | string[];
+  article_journal: string;
   section: string;
   paragraph: string;
 };

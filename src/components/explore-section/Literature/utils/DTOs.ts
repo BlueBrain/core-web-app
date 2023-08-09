@@ -19,7 +19,7 @@ const generativeQADTO = ({ question, generativeQAResponse }: GenerativeQADTO): G
       doi: article.article_doi,
       title: article.article_title,
       authors: article.article_authors,
-      journal: article.article_doi,
+      journal: article.article_journal,
       section: article.section,
       paragraph: article.paragraph,
       abstract: article.article_abstract,

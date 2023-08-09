@@ -121,7 +121,7 @@ export default function Article({
             <ArticlePreview title={authors.at(0)!} icon={<PersonIcon />} />
           </div>
         </Tooltip>
-        <ArticlePreview title={journal} icon={<JournalIcon />} />
+        <ArticlePreview title={journal ?? 'Article Journal'} icon={<JournalIcon />} />
       </div>
       <article className="bg-[#F5F5F5] mb-4 p-7">
         <div
