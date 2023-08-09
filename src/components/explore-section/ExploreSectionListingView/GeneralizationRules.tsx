@@ -1,4 +1,3 @@
-import React from 'react';
 import { Spin, Checkbox } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
