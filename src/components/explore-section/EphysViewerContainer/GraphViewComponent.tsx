@@ -11,6 +11,7 @@ interface GraphViewComponentProps {
   defaultRepetition?: string;
   resource: DeltaResource;
 }
+
 function GraphViewComponent({
   defaultStimulusType,
   defaultRepetition,

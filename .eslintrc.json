@@ -34,6 +34,10 @@
         ]
       }
     ],
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "*", "next": "function" }
+    ],
     "lodash/import-scope": [2, "method"],
     "lodash/prefer-lodash-method": "off",
     "lodash/prefer-lodash-typecheck": "off",

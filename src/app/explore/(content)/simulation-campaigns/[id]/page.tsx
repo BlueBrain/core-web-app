@@ -13,6 +13,7 @@ import { simulationCampaignResourceAtom } from '@/state/explore-section/simulati
 type FieldPropKeys = 'title' | 'field';
 
 type FieldProps = Record<FieldPropKeys, ReactNode> & { className?: string };
+
 function Field({ title, field, className }: FieldProps) {
   return (
     <div className={classNames('text-primary-7 text-xs mr-10', className)}>

@@ -69,6 +69,7 @@ export default function Tutorial() {
     }
     setSubtitle(value);
   }, []);
+
   function handleCanPlay(): void {
     const videoTop = refVideoTop.current;
     const videoBottom = refVideoBottom.current;

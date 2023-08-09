@@ -19,6 +19,7 @@ interface EphysPlotProps {
   defaultStimulusType?: string;
   defaultRepetition?: string;
 }
+
 function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: EphysPlotProps) {
   const [zoomRanges, setZoomRanges] = React.useState<ZoomRanges | null>(null);
 
