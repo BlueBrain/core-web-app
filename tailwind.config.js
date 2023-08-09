@@ -78,6 +78,35 @@ module.exports = {
         'in-expo': 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
         'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
       },
+      animation: {
+        'slide-out': 'slide-out 1s ease-in-out',
+      },
+      keyframes: {
+        'slide-out': {
+          '0%': {
+            left: 0,
+            backgroudColor: 'bg-gray-300',
+          },
+          '75%': {
+            left: '2000px',
+            maxHeight: '10rem',
+            paddingTop: '1rem',
+            paddingBottom: '1rem',
+            borderWidth: '1px',
+            overflow: 'hidden',
+            backgroudColor: 'bg-gay-300',
+          },
+          '100%': {
+            left: '2000px',
+            maxHeight: 0,
+            paddingTop: 0,
+            paddingBottom: 0,
+            borderWidth: 0,
+            overflow: 'hidden',
+            backgroudColor: 'bg-gray-300',
+          },
+        },
+      },
     },
   },
   plugins: [],
