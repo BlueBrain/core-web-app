@@ -2,7 +2,12 @@ import { atom } from 'jotai';
 import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
 import sessionAtom from '@/state/session';
 import { fetchJsonFileByUrl, queryES } from '@/api/nexus';
-import { RulesResource, SynapseConfigPayload, SynapseConfigResource } from '@/types/nexus';
+import {
+  RulesResource,
+  SynapseConfigPayload,
+  SynapseConfigResource,
+  TypesResource,
+} from '@/types/nexus';
 
 const INTIAL_RULES_URL =
   'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F7e2f41a0-3d84-4142-a38e-734117acb33d';
@@ -60,11 +65,11 @@ export const userRulesAtom = atom<SynapticAssignmentRule[]>([]);
 export const userTypesAtom = atom<[string, SynapticType][]>([]);
 export const loadingAtom = atom(false);
 
-export type RulesData = {
+export type SynapseEditorData = {
   configResource: SynapseConfigResource;
   configPayload: SynapseConfigPayload;
   rulesEntity: RulesResource;
-  rules: SynapticAssignmentRule[];
+  typesEntity: TypesResource;
 };
 
-export const rulesDataAtom = atom<Omit<RulesData, 'rules'> | null>(null);
+export const rulesDataAtom = atom<SynapseEditorData | null>(null);

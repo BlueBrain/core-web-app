@@ -11,15 +11,22 @@ import {
   LoadingOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { atom, useAtom, useSetAtom } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Select, InputNumber, Input, Modal, Button } from 'antd';
 
 import AddRuleModal from './AddRuleModal';
 import RulesFilters from './RulesFilters';
 import Filter from './RulesFilters/filter';
-import { useDefaultRules, useFetchRules, useSetRules, useSynapseTypeUseCount } from './hooks';
+import {
+  useDefaultRules,
+  useFetch,
+  useSetRules,
+  useSetTypes,
+  useSynapseTypeUseCount,
+  useTypeNameCount,
+} from './hooks';
 import SynapticAssignmentRulesTable from './SynapticAssignmentRulesTable';
-import { loadingAtom, synapticModelsAtom, userTypesAtom } from './state';
+import { loadingAtom, synapticModelsAtom, userRulesAtom, userTypesAtom } from './state';
 import { classNames } from '@/util/utils';
 import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
 import styles from './connectome-model-assignment.module.scss';
@@ -49,22 +56,25 @@ const emptyType: SynapticType & { name: string } = {
 };
 
 export default function ConnectomeModelAssignmentView() {
+  useFetch();
   const [addRuleModalOpen, setAddRuleModalOpen] = useState(false);
-  const userRules = useFetchRules();
+  const userRules = useAtomValue(userRulesAtom);
   const defaultRules = useDefaultRules();
+  const types = useAtomValue(userTypesAtom);
   const setUserRules = useSetRules();
+  const setTypes = useSetTypes();
+
   const [userRulesFilter, setUserRulesFilter] = useState(new Filter([]));
   const [rulesTabActive, setRulesTabActive] = useState(true);
   const [loading] = useAtom(loadingAtom);
-  const [types, setTypes] = useAtom(userTypesAtom);
   const [selectedTypeIdx, setSelectedTypeIdx] = useAtom(selectedTypeIdxAtom);
   const [typeUsedinRules, setTypeUsedInRules] = useAtom(typeUsedInRulesAtom);
   const [addTypeModalOpen, setAddTypeModalOpen] = useState(false);
   const [newType, setNewType] = useState(emptyType);
   const [models] = useAtom(synapticModelsAtom);
   const [typeSearch, setTypeSearch] = useState('');
-  const nVisible = useMemo(
-    () => types.filter(([t]) => t.toLowerCase().includes(typeSearch)).length,
+  const visibleTypesCount = useMemo(
+    () => Object.entries(types).filter(([t]) => t.toLowerCase().includes(typeSearch)).length,
     [types, typeSearch]
   );
 
@@ -133,7 +143,7 @@ export default function ConnectomeModelAssignmentView() {
               <>
                 <div className="sticky top-0 bg-white py-4">
                   <div className="flex justify-between">
-                    <div className="font-bold text-primary-8">Total: {nVisible} types</div>
+                    <div className="font-bold text-primary-8">Total: {visibleTypesCount} types</div>
                     <Input.Search
                       placeholder="Search for type"
                       className="w-48 mb-2 text-xs"
@@ -242,6 +252,7 @@ export default function ConnectomeModelAssignmentView() {
         </Button>
       </Modal>
       <Modal
+        confirmLoading={loading}
         open={selectedTypeIdx !== null}
         onOk={() => {
           setTypes([
@@ -264,6 +275,7 @@ export default function ConnectomeModelAssignmentView() {
         </div>
       </Modal>
       <Modal
+        confirmLoading={loading}
         open={addTypeModalOpen}
         onOk={() => {
           setTypes([...types, [newType.name, newType]]);
@@ -433,11 +445,14 @@ function SynapticTypeRow({
   type: SynapticType;
   visible?: boolean;
 }) {
-  const [types, setTypes] = useAtom(userTypesAtom);
+  const [types] = useAtom(userTypesAtom);
+  const typeNameCount = useTypeNameCount();
+  const setTypes = useSetTypes();
   const [models] = useAtom(synapticModelsAtom);
   const [localType, setLocalType] = useState<SynapticType>(type);
   const [editing, setEditing] = useState(false);
   const usedSynapseTypes = useSynapseTypeUseCount();
+  const loading = useAtomValue(loadingAtom);
 
   const setSelectedTypeIdx = useSetAtom(selectedTypeIdxAtom);
   const setTypeUsedInRules = useSetAtom(typeUsedInRulesAtom);
@@ -463,23 +478,32 @@ function SynapticTypeRow({
         <div>{type.gsynSRSF}</div>
         <div>{type.uHillCoefficient}</div>
         <div style={{ flex: 1.1 }}>
-          <CopyOutlined
-            className={styles.icon}
-            onClick={() =>
-              setTypes([...types.slice(0, i), [name, { ...type }], ...types.slice(i, types.length)])
-            }
-          />
-          <EditOutlined className={styles.icon} onClick={() => setEditing(true)} />
-          <DeleteOutlined
-            className={styles.icon}
-            onClick={() => {
-              if (name in usedSynapseTypes) {
-                setTypeUsedInRules(usedSynapseTypes[name]);
-                return;
-              }
-              setSelectedTypeIdx(i);
-            }}
-          />
+          {!loading && (
+            <>
+              <CopyOutlined
+                className={styles.icon}
+                onClick={() => {
+                  const baseName = name.includes('__') ? name.split('__')[0] : name;
+                  setTypes([
+                    ...types.slice(0, i + 1),
+                    [`${baseName}__${typeNameCount[baseName]}`, { ...type }],
+                    ...types.slice(i + 1, types.length),
+                  ]);
+                }}
+              />
+              <EditOutlined className={styles.icon} onClick={() => setEditing(true)} />
+              <DeleteOutlined
+                className={styles.icon}
+                onClick={() => {
+                  if (name in usedSynapseTypes) {
+                    setTypeUsedInRules(usedSynapseTypes[name]);
+                    return;
+                  }
+                  setSelectedTypeIdx(i);
+                }}
+              />
+            </>
+          )}
         </div>
       </div>
     );
@@ -589,19 +613,19 @@ function SynapticTypeRow({
         <CheckCircleOutlined
           className={styles.icon}
           onClick={() => {
+            setEditing(false);
             setTypes([
               ...types.slice(0, i),
               [name, { ...localType }],
               ...types.slice(i + 1, types.length),
             ]);
-            setEditing(false);
           }}
         />
         <CloseCircleOutlined
           className={styles.icon}
           onClick={() => {
-            setLocalType(type);
             setEditing(false);
+            setLocalType(type);
           }}
         />
       </div>

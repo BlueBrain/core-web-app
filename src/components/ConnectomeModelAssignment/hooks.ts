@@ -4,7 +4,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import uniq from 'lodash/uniq';
 import { Session } from 'next-auth';
 import {
-  RulesData,
+  SynapseEditorData,
   initialTypesAtom,
   initialRulesAtom,
   loadingAtom,
@@ -13,10 +13,15 @@ import {
   userTypesAtom,
 } from './state';
 import { compositionAtom } from '@/state/build-composition';
-import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
+import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
 import sessionAtom from '@/state/session';
 import { synapseConfigIdAtom } from '@/state/brain-model-config';
-import { RulesResource, SynapseConfigPayload, SynapseConfigResource } from 'src/types/nexus';
+import {
+  RulesResource,
+  SynapseConfigPayload,
+  SynapseConfigResource,
+  TypesResource,
+} from 'src/types/nexus';
 import {
   fetchJsonFileByUrl,
   fetchResourceById,
@@ -96,7 +101,11 @@ const LABELS: { [key: string]: string } = {
 async function fetchRules(
   synapseConfigId: string,
   session: Session,
-  onSuccess: (data: RulesData) => void
+  onSuccess: (
+    data: SynapseEditorData,
+    rules: SynapticAssignmentRule[],
+    types: { [type: string]: SynapticType }
+  ) => void
 ) {
   const configResource = await fetchResourceById<SynapseConfigResource>(synapseConfigId, session);
   const configPayload = await fetchJsonFileByUrl<SynapseConfigPayload>(
@@ -104,20 +113,35 @@ async function fetchRules(
     session
   );
 
-  const { id } = configPayload.configuration.synapse_properties;
-  const rulesEntity = await fetchResourceById<RulesResource>(id, session);
+  const rulesEntity = await fetchResourceById<RulesResource>(
+    configPayload.configuration.synapse_properties.id,
+    session
+  );
+  const typesEntity = await fetchResourceById<TypesResource>(
+    configPayload.configuration.synapses_classification.id,
+    session
+  );
 
   const rules = await fetchJsonFileByUrl<SynapticAssignmentRule[]>(
     setRevision(rulesEntity.distribution.contentUrl, null),
     session
   );
 
-  onSuccess({
-    configResource,
-    configPayload,
-    rulesEntity,
+  const types = await fetchJsonFileByUrl<{ [type: string]: SynapticType }>(
+    setRevision(typesEntity.distribution.contentUrl, null),
+    session
+  );
+
+  onSuccess(
+    {
+      configResource,
+      configPayload,
+      rulesEntity,
+      typesEntity,
+    },
     rules,
-  });
+    types
+  );
 }
 
 export function useDefaultRules(): SynapticAssignmentRule[] {
@@ -132,24 +156,30 @@ const useOnFetchSuccess = () => {
   const initialTypes = useAtomValue(initialTypesAtom);
   const setUserTypes = useSetAtom(userTypesAtom);
 
-  return (rulesData: RulesData) => {
+  return (
+    rulesData: SynapseEditorData,
+    rules: SynapticAssignmentRule[],
+    types: { [type: string]: SynapticType }
+  ) => {
     if (!initialRules || !initialTypes) {
       throw new Error('Initial rules not loaded');
     }
     setRulesData(rulesData);
-    const rules = rulesData.rules.length > 4 ? rulesData.rules.slice(4) : initialRules.slice(4);
-    setUserRules(rules);
-    setUserTypes(Array.from(Object.keys(initialTypes)).map((k) => [k, initialTypes[k]]));
+    const userRules = rules.length > 4 ? rules.slice(4) : initialRules.slice(4);
+    setUserRules(userRules);
+    const userTypes = Array.from(Object.keys(types)).length > 0 ? types : initialTypes;
+    setUserTypes(Array.from(Object.entries(userTypes)));
   };
 };
 
-export function useFetchRules(): SynapticAssignmentRule[] {
+export function useFetch() {
   const session = useAtomValue(sessionAtom);
   const synapseConfigId = useAtomValue(synapseConfigIdAtom);
   const prevSynapseConfigId = usePrevious(synapseConfigId);
   const initialRules = useAtomValue(initialRulesAtom);
   const setRulesData = useSetAtom(rulesDataAtom);
-  const [userRules, setUserRules] = useAtom(userRulesAtom);
+  const setUserRules = useSetAtom(userRulesAtom);
+  const setTypes = useSetAtom(userTypesAtom);
   const onFetchSuccess = useOnFetchSuccess();
 
   useEffect(() => {
@@ -158,6 +188,7 @@ export function useFetchRules(): SynapticAssignmentRule[] {
 
     setRulesData(null);
     setUserRules([]);
+    setTypes([]);
     fetchRules(synapseConfigId, session, onFetchSuccess);
   }, [
     session,
@@ -165,11 +196,10 @@ export function useFetchRules(): SynapticAssignmentRule[] {
     prevSynapseConfigId,
     setRulesData,
     setUserRules,
+    setTypes,
     initialRules,
     onFetchSuccess,
   ]);
-
-  return userRules;
 }
 
 export function useSetRules() {
@@ -186,7 +216,7 @@ export function useSetRules() {
 
     if (defaultRules.length < 4) throw new Error('Incomplete default rules');
 
-    if (!synapseConfigId || !session || loading || defaultRules.length < 4) return;
+    if (!synapseConfigId || !session || loading || defaultRules.length < 4 || !rulesData) return;
     setLoading(true);
     await updateRules(rulesData, [...defaultRules, ...rules], session);
     await fetchRules(synapseConfigId, session, onFetchSuccess);
@@ -194,13 +224,31 @@ export function useSetRules() {
   };
 }
 
-export async function updateRules(
-  rulesData: Omit<RulesData, 'rules'> | null,
-  rules: SynapticAssignmentRule[],
-  session: Session | null
-) {
-  if (!rulesData || !session) return;
+export function useSetTypes() {
+  const setUserTypes = useSetAtom(userTypesAtom);
+  const data = useAtomValue(rulesDataAtom);
+  const session = useAtomValue(sessionAtom);
+  const synapseConfigId = useAtomValue(synapseConfigIdAtom);
+  const onFetchSuccess = useOnFetchSuccess();
+  const [loading, setLoading] = useAtom(loadingAtom);
 
+  return async (types: [string, SynapticType][]) => {
+    setUserTypes(types);
+
+    if (!synapseConfigId || !session || loading || !data) return;
+    setLoading(true);
+
+    await updateTypes(data, Object.fromEntries(types), session);
+    await fetchRules(synapseConfigId, session, onFetchSuccess);
+    setLoading(false);
+  };
+}
+
+export async function updateRules(
+  rulesData: SynapseEditorData,
+  rules: SynapticAssignmentRule[],
+  session: Session
+) {
   const fileMeta = await updateJsonFileByUrl(
     rulesData.rulesEntity.distribution.contentUrl,
     rules,
@@ -228,6 +276,38 @@ export async function updateRules(
   await updateResource(rulesData.configResource, rulesData.configResource._rev, session);
 }
 
+export async function updateTypes(
+  data: SynapseEditorData,
+  types: { [type: string]: SynapticType },
+  session: Session
+) {
+  const fileMeta = await updateJsonFileByUrl(
+    data.typesEntity.distribution.contentUrl,
+    types,
+    'synaptic_parameters.json',
+    session
+  );
+
+  data.typesEntity.distribution = createDistribution(fileMeta);
+
+  await updateResource(data.typesEntity, data.typesEntity._rev, session);
+
+  data.configPayload.configuration.synapses_classification.rev = parseRevfromUrl(
+    data.typesEntity.distribution.contentUrl
+  );
+
+  const updatedConfigPayloadMeta = await updateJsonFileByUrl(
+    data.configResource.distribution.contentUrl,
+    data.configPayload,
+    'synaptic_assignment.json',
+    session
+  );
+
+  data.configResource.distribution = createDistribution(updatedConfigPayloadMeta);
+
+  await updateResource(data.configResource, data.configResource._rev, session);
+}
+
 function parseRevfromUrl(url: string) {
   const urlObj = new URL(url);
   const rev = urlObj.searchParams.get('rev') || '1';
@@ -240,15 +320,22 @@ export function useSynapseTypeUseCount() {
 
   return useMemo(() => {
     const usedTypes = [...defaultRules, ...userRules].map((r) => r.synapticType);
-    return usedTypes.reduce((acc: { [key: string]: number }, str: string | null) => {
-      if (str !== null) {
-        if (str in acc) {
-          acc[str] += 1;
-        } else {
-          acc[str] = 1;
-        }
-      }
-      return acc;
+    return usedTypes.reduce((counts: { [type: string]: number }, type) => {
+      counts[type] = (counts[type] || 0) + 1;
+      return counts;
     }, {});
   }, [defaultRules, userRules]);
+}
+
+export function useTypeNameCount() {
+  const types = useAtomValue(userTypesAtom);
+  return useMemo(
+    () =>
+      types.reduce((counts: { [typeName: string]: number }, [type]) => {
+        const baseName = type.includes('__') ? type.split('__')[0] : type;
+        counts[baseName] = (counts[baseName] || 0) + 1;
+        return counts;
+      }, {}),
+    [types]
+  );
 }

@@ -386,6 +386,8 @@ export interface SynapseConfigResource extends ResourceMetadata, SynapseConfig {
 export interface RulesResource extends ResourceMetadata, Entity {
   distribution: Distribution;
 }
+
+export type TypesResource = RulesResource;
 export interface SynapseConfigPayload {
   configuration: {
     synapse_properties: {
