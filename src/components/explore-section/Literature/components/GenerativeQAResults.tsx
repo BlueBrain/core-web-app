@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FilterOutlined } from '@ant-design/icons';
-import trim from 'lodash/trim';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
+import trim from 'lodash/trim';
 
-import { scrollToBottom } from '../utils';
+
 import ArticlesTimeLine from './ArticlesTimeLine';
 import { FilterFns } from './FilterPanel';
 import { GenerativeQA, FilterFieldsType } from '@/types/literature';
@@ -165,30 +165,40 @@ function GenerativeQASingleResult({
   );
 }
 
-function GenerativeQAResultList() {
+function QAResultList() {
+  const qaResultsRef = useRef<HTMLDivElement>(null);
   const QAs = useAtomValue(literatureResultAtom);
+
   useEffect(() => {
-    if (QAs.length > 0) {
-      scrollToBottom();
+    if (qaResultsRef.current) {
+      qaResultsRef.current.scrollTo({
+        behavior: 'smooth',
+        top: qaResultsRef.current.scrollHeight,
+      });
     }
   }, [QAs.length]);
+
   return (
-    <div className="w-full max-w-4xl mx-auto mb-36">
-      {QAs.map(({ id, question, answer, rawAnswer, articles, askedAt }) => (
-        <GenerativeQASingleResult
-          key={id}
-          {...{
-            id,
-            askedAt,
-            question,
-            answer,
-            rawAnswer,
-            articles,
-          }}
-        />
-      ))}
+    <div className="w-full h-full max-h-screen">
+      <div className="flex-1 w-full h-full overflow-auto scroll-smooth" ref={qaResultsRef}>
+        <ul className="flex flex-col items-center justify-start max-w-4xl p-4 mx-auto list-none">
+          {QAs.map(({ id, question, answer, rawAnswer, articles, askedAt }) => (
+            <GenerativeQASingleResult
+              key={id}
+              {...{
+                id,
+                askedAt,
+                question,
+                answer,
+                rawAnswer,
+                articles,
+              }}
+            />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
 
-export default GenerativeQAResultList;
+export default QAResultList;

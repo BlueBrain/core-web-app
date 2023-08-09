@@ -1,16 +1,15 @@
 'use client';
 
 import { FormEvent, useTransition } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
 import { GenerativeQA } from '../../../../types/literature';
 import { getGenerativeQA } from '../api';
 import { LiteratureValidationError } from '../errors';
-import { scrollToBottom } from '../utils';
-import { classNames } from '@/util/utils';
-import { literatureAtom, literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 import sessionAtom from '@/state/session';
+import { classNames } from '@/util/utils';
+import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom} from '@/state/literature';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -32,7 +31,7 @@ function FormButton({ icon, type, ...props }: FormButtonProps) {
 function GenerativeQAInputBar() {
   const update = useLiteratureAtom();
   const { query } = useAtomValue(literatureAtom);
-  const [QAs, updateResult] = useAtom(literatureResultAtom);
+  const { update: updateResults, QAs } = useLiteratureResultsAtom();
   const [isGQAPending, startGenerativeQATransition] = useTransition();
   const session = useAtomValue(sessionAtom);
 
@@ -44,10 +43,10 @@ function GenerativeQAInputBar() {
     generativeQA: GenerativeQA | LiteratureValidationError | null
   ) => {
     if (generativeQA && !(generativeQA instanceof LiteratureValidationError)) {
-      updateResult([...QAs, generativeQA]);
+      update('activeQuestionId', generativeQA.id);
+      updateResults(generativeQA);
     }
     update('query', '');
-    scrollToBottom();
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -60,13 +59,20 @@ function GenerativeQAInputBar() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div
+      className={classNames(
+        ' flex flex-col items-center justify-center w-full pr-4',
+        isChatBarMustSlideInDown
+          ? 'absolute bottom-0 left-0 right-0'
+          : 'fixed top-1/2 -translate-y-1/2'
+      )}
+    >
       <form
         name="qa-form"
         className={classNames(
           'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto',
           isChatBarMustSlideInDown
-            ? 'transition-all duration-300 ease-out-expo fixed bottom-0  rounded-b-none pb-0'
+            ? 'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
             : ''
         )}
         onSubmit={handleSubmit}
