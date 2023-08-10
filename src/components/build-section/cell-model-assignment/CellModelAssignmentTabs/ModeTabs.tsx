@@ -1,3 +1,5 @@
+import { ReadOutlined } from '@ant-design/icons';
+
 import BrainIcon from '@/components/icons/Brain';
 import AnalysisIcon from '@/components/icons/Analysis';
 import SettingsIcon from '@/components/icons/Settings';
@@ -19,6 +21,11 @@ const tabs: MenuItem[] = [
     label: 'Configuration',
     href: '/build/cell-model-assignment/m-model/configuration',
     icon: <SettingsIcon className="h-4" />,
+  },
+  {
+    label: 'Literature',
+    href: '/build/literature',
+    icon: <ReadOutlined className="w-5 text-lg" />,
   },
 ];
 

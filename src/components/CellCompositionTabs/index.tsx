@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { ReadOutlined } from '@ant-design/icons';
 
 import BrainIcon from '@/components/icons/Brain';
 import AnalysisIcon from '@/components/icons/Analysis';
@@ -24,6 +25,11 @@ const DEFAULT_TABS: MenuItem[] = [
     label: 'Configuration',
     href: '/build/cell-composition/configuration',
     icon: <SettingsIcon className="h-4" />,
+  },
+  {
+    label: 'Literature',
+    href: '/build/literature',
+    icon: <ReadOutlined className="w-5 text-lg" />,
   },
 ];
 
