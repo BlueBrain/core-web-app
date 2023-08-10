@@ -79,20 +79,31 @@ function QAHistoryNavigation() {
   const QAs = useAtomValue(literatureResultAtom);
   const update = useLiteratureAtom();
   const showNavigation = QAs.length > 1;
-  const firstRender = useRef(false);
+  const firstRenderRef = useRef(false);
+  const qaNavigationRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     // set the active question to the last question just in the first reneder
-    if (QAs.length > 0 && !firstRender.current) {
+    if (QAs.length > 0 && !firstRenderRef.current) {
       update('activeQuestionId', QAs[QAs.length - 1].id);
-      firstRender.current = true;
+      firstRenderRef.current = true;
     }
-  }, [QAs, update, firstRender]);
+  }, [QAs, update, firstRenderRef]);
+
+  useEffect(() => {
+    if (qaNavigationRef.current) {
+      qaNavigationRef.current.scrollTo({
+        behavior: 'smooth',
+        top: qaNavigationRef.current.scrollHeight,
+      });
+    }
+  }, [QAs.length]);
 
   if (!showNavigation) return null;
 
   return (
     <nav
+      ref={qaNavigationRef}
       id="gqa-navigation"
       className="flex flex-col h-full py-10 overflow-x-hidden no-scrollbar scroll-smooth"
     >
