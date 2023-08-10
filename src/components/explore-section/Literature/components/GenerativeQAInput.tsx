@@ -1,15 +1,16 @@
 'use client';
 
-import { useTransition } from 'react';
+import { FormEvent, useTransition } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
 import { GenerativeQA } from '../types';
+import { getGenerativeQA } from '../api';
 import { LiteratureValidationError } from '../errors';
-import { getGenerativeQAAction } from '../actions';
 import { scrollToBottom } from '../utils';
 import { classNames } from '@/util/utils';
 import { literatureAtom, literatureResultAtom, useLiteratureAtom } from '@/state/literature';
+import sessionAtom from '@/state/session';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -33,6 +34,7 @@ function GenerativeQAInputBar() {
   const { query } = useAtomValue(literatureAtom);
   const [QAs, updateResult] = useAtom(literatureResultAtom);
   const [isGQAPending, startGenerativeQATransition] = useTransition();
+  const session = useAtomValue(sessionAtom);
 
   const isChatBarMustSlideInDown = Boolean(QAs.length);
   const onChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
@@ -48,22 +50,26 @@ function GenerativeQAInputBar() {
     scrollToBottom();
   };
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    startGenerativeQATransition(async () => {
+      const question = event.currentTarget['gqa-question'].value as string;
+      const generativeQA = await getGenerativeQA({ question, session });
+      onGenerativeQAFinished(generativeQA);
+    });
+  };
+
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <form
         name="qa-form"
-        action={async (data: FormData) => {
-          startGenerativeQATransition(async () => {
-            const response = await getGenerativeQAAction(data);
-            onGenerativeQAFinished(response);
-          });
-        }}
         className={classNames(
           'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto',
           isChatBarMustSlideInDown
             ? 'transition-all duration-300 ease-out-expo fixed bottom-0  rounded-b-none pb-0'
             : ''
         )}
+        onSubmit={handleSubmit}
       >
         <div
           className={classNames(
