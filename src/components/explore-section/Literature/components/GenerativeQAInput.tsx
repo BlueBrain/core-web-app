@@ -9,7 +9,7 @@ import { getGenerativeQA } from '../api';
 import { LiteratureValidationError } from '../errors';
 import sessionAtom from '@/state/session';
 import { classNames } from '@/util/utils';
-import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom} from '@/state/literature';
+import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -93,6 +93,7 @@ function GenerativeQAInputBar() {
               placeholder="Send your question"
               onChange={onChange}
               value={query}
+              disabled={isGQAPending}
             />
             <div className="inline-flex items-center justify-center gap-2">
               {(isGQAPending || !!query.length) && (
@@ -109,6 +110,7 @@ function GenerativeQAInputBar() {
                 />
               )}
               <FormButton
+                disabled={isGQAPending}
                 type="submit"
                 icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8" />}
               />
