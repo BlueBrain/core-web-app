@@ -40,7 +40,7 @@ export const literatureResultAtom = atomWithStorage<GenerativeQA[]>(
 
 export function useLiteratureAtom() {
   const setLiteratureState = useSetAtom(literatureAtom);
-  const update = (key: LiteratureOptions, value: string | boolean) => {
+  const update = (key: LiteratureOptions, value: string | boolean | null | undefined) => {
     setLiteratureState((prev) => ({
       ...prev,
       [key]: value,
