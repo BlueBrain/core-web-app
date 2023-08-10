@@ -8,7 +8,34 @@ import { RuleOuput } from '@/types/explore-section/kg-inference';
 import { rulesResponseAtom } from '@/state/explore-section/list-view-atoms';
 import useNotification from '@/hooks/notifications';
 
-type CheckboxState = {[rule: string]: { [key: string]: boolean }};
+type InferenceOptionsState = { [key: string]: boolean };
+type CheckboxState = { [rule: string]: InferenceOptionsState };
+
+const extractFalseKeys = (obj: CheckboxState, prefix = ''): string[] => {
+  const falseKeys: string[] = [];
+
+  const extract = (currentObj: InferenceOptionsState, currentPrefix: string) => {
+    for (const key in currentObj) {
+      if (typeof currentObj[key] === 'boolean') {
+        if (!currentObj[key]) {
+          falseKeys.push(`${currentPrefix}${key}`);
+        }
+      } else if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
+        extract(currentObj[key], `${currentPrefix}${key}/`);
+      }
+    }
+  };
+
+  for (const rule in obj) {
+    if (typeof obj[rule] === 'object' && obj[rule] !== null) {
+      extract(obj[rule], `${prefix}${rule}/`);
+    }
+  }
+
+  return falseKeys;
+};
+
+
 interface GeneralizationOptionsProps {
   rule: RuleOuput;
   onCheckboxChange: (key: string, inferenceOptions: CheckboxState) => void;
@@ -56,7 +83,7 @@ function GeneralizationOptions({ rule, onCheckboxChange }: GeneralizationOptions
   };
   
 
-  console.log("CHECKBOX STATE OUTSIDE THE USE EFFECT", checkboxState);
+  // console.log("CHECKBOX STATE OUTSIDE THE USE EFFECT", checkboxState);
 
   return (
     <div className='space-y-2 pl-6 pr-12'>
@@ -78,6 +105,7 @@ function GeneralizationOptions({ rule, onCheckboxChange }: GeneralizationOptions
     </div>
   );
 }
+
 
 const rulesLoadableAtom = loadable(rulesResponseAtom);
 
@@ -103,26 +131,27 @@ function GeneralizationRules ({ resourceId }: {resourceId: string}) {
       ...prevState,
       [key]: inferenceOptions,
     }));
-    // console.log("handlge checkbox change", checkboxState, key, inferenceOptions);
+    // console.log("HANDLE CHECKBOX CHANGE", checkboxState, key, inferenceOptions);
   };
 
   const handleInferButtonClick = () => {
     
-    const selectedIgnoreModels = Object.keys(checkboxState).filter((key) => checkboxState[key]);
-    const selectedShapeBasedRule = checkboxState['Shape-based'] ? shapeBased?.id || '' : '';
+    const selectedIgnoreModels = extractFalseKeys(checkboxState);
+
+    const rulesArray: string[] = Object.keys(checkboxState);
+    
+    console.log("selectedIgnoreModels", selectedIgnoreModels)
     
     // Construct the request using the updated checkbox state
-    // console.log("handle infer button click checkbox state",checkboxState);
-    
     const request = {
-      rules: selectedShapeBasedRule ? [{ id: selectedShapeBasedRule }] : [],
+      rules: rulesArray,
       inputFilter: {
         TargetResourceParameter: resourceId,
         IgnoreModelsParameter: selectedIgnoreModels,
       },
     };
   
-    console.log('GENERALIZE OPTIONS, request', request);
+    console.log('GENERALIZE OPTIONS, request, rules', request, rulesArray);
   };
 
 
@@ -136,10 +165,10 @@ function GeneralizationRules ({ resourceId }: {resourceId: string}) {
           <h1 className='font-semibold text-lg'>{shapeBased?.name}</h1>
           {shapeBased && <GeneralizationOptions rule={shapeBased} onCheckboxChange={handleCheckboxChange}/>}
         </div>
-        {/* <div className='flex-initial w-1/4 flex-col space-y-2'>
+        <div className='flex-initial w-1/4 flex-col space-y-2'>
           <h1 className='font-semibold text-lg'>{locationBased?.name}</h1>
           {locationBased && <GeneralizationOptions rule={locationBased} onCheckboxChange={handleCheckboxChange}/> }
-        </div> */}
+        </div>
 
         <div className='flex flex-col space-y-2 place-self-center'>
           <label htmlFor='number-of-results' className='font-semibold'>
