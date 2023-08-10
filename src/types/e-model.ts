@@ -11,7 +11,7 @@ export interface EModelMenuItem extends EModel {
   uuid: string;
 }
 
-export type SimulationParameterKeys = 'Temperature' | 'Ra' | 'Calcium' | 'XXXX';
+export type SimulationParameterKeys = 'Temperature (°C)' | 'Ra' | 'Calcium' | 'XXXX';
 export type SimulationParameter = Record<SimulationParameterKeys, number>;
 
 export type FeaturesCategories = 'Spike shape' | 'Spike event' | 'Voltage';

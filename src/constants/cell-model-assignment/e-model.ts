@@ -21,7 +21,7 @@ export const mockEModelAssignedMap: Record<string, string> = {
 };
 
 export const mockSimulationParameterList: SimulationParameter = {
-  Temperature: 36.0,
+  'Temperature (°C)': 36.0,
   Calcium: 36.0,
   Ra: 270.0,
   XXXX: 10,
