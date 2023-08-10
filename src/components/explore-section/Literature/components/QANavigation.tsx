@@ -23,7 +23,7 @@ type QAHistoryNavigationItemProps = Pick<GenerativeQA, 'id' | 'question' | 'aske
 function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { activeQuestionId } = useAtomValue(literatureAtom);
-  const { remove, QAs } = useLiteratureResultsAtom();
+  const { remove } = useLiteratureResultsAtom();
   const update = useLiteratureAtom();
 
   const isActive = activeQuestionId === id;
@@ -32,9 +32,9 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
   const onDelete = () => {
     setIsDeleting(true);
     delay(() => {
-      remove(id);
+      const newQAs = remove(id);
       setIsDeleting(false);
-      update('activeQuestionId', QAs ? last(QAs)?.id : null);
+      update('activeQuestionId', newQAs ? last(newQAs)?.id : null);
     }, 1000);
   };
 
