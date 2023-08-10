@@ -116,7 +116,7 @@ export default function ExploreSectionTable({
     return <div>Something went wrong</div>;
   }
 
-  const expandedRowRender = () => <GeneralizationRules />;
+  const expandedRowRender = (resource: ESResponseRaw) => <GeneralizationRules resourceId={resource._source['@id']} />;
 
   return (
     <>
