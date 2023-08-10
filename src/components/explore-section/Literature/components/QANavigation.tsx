@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import delay from 'lodash/delay';
 
@@ -38,7 +37,10 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
   };
 
   return (
-    <li
+    <a
+      href={`#${id}`}
+      role='button'
+      onClick={onClick}
       className={classNames(
         'relative inline-flex items-center w-full pl-16 mb-2 list-none gqa-nav-item text-neutral-8',
         isDeleting ? 'animate-slide-out' : ''
@@ -49,13 +51,9 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
       )}
       <div className="flex flex-col items-start justify-start w-full">
         <div className="inline-flex items-center justify-between w-full gap-2">
-          <a
-            href={`#${id}`}
-            onClick={onClick}
-            className="text-sm font-medium capitalize text-neutral-3"
-          >
+          <div className="text-sm font-medium capitalize text-neutral-3">
             question {index}
-          </a>
+          </div>
           <DeleteOutlined
             className="text-sm transition-all transform scale-110 text-neutral-3 hover:text-primary-8"
             onClick={onDelete}
@@ -71,7 +69,7 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
           {question}
         </div>
       </div>
-    </li>
+    </a>
   );
 }
 
@@ -107,10 +105,6 @@ function QAHistoryNavigation() {
       id="gqa-navigation"
       className="flex flex-col h-full py-10 overflow-x-hidden no-scrollbar scroll-smooth"
     >
-      <div className="pl-16 my-2 mb-10">
-        <Switch size="small" className="mr-2" />
-        <span className="font-semibold text-primary-8">Show all questions</span>
-      </div>
       {QAs.map((qa, index) => (
         <QAHistoryNavigationItem
           key={`history-nav-item-${qa.id}`}
