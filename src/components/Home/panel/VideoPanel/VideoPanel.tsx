@@ -8,7 +8,7 @@ export type VideoPanelProps = {
 };
 
 function getClassName(className?: string) {
-  const classes = [styles.videoPanel, theme.colorPrimary6, "mb-4"];
+  const classes = [styles.videoPanel, theme.colorPrimary6, 'mb-4'];
   if (className) classes.push(className);
   return classes.join(' ');
 }

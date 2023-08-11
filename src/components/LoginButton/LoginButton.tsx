@@ -9,7 +9,7 @@ export default async function LoginButton() {
   const sessionValid = session?.user && !session.error;
 
   return !sessionValid ? (
-      <SignInButton />
+    <SignInButton />
   ) : (
     <div>
       <div className="mt-6">
