@@ -1,5 +1,7 @@
 import { atom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
+import filter from 'lodash/filter';
+import find from 'lodash/find';
 import { ExploreSectionResponse, ESResponseRaw } from '@/types/explore-section/resources';
 import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
@@ -12,6 +14,21 @@ import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOuput } from '@/types/explore-section/kg-inference';
+
+type InferenceOptionsState = { [key: string]: boolean };
+type CheckboxState = { [rule: string]: InferenceOptionsState };
+
+const RELEVANT_RULES: string[] = ['Shape-based morphology recommendation','Location-based morphology recommendation'];
+
+// Function to generate the initial state for a given rule and inference options
+function generateInitialState(rule: any, inferenceOptions: any): InferenceOptionsState {
+  const initialState: InferenceOptionsState = {};
+  Object.keys(inferenceOptions).forEach((key: string) => {
+    initialState[key] = false;
+  });
+  return initialState;
+}
+
 
 export const columnKeyToFilter = (key: string): Filter => {
   const fieldConfig = LISTING_CONFIG[key];
@@ -144,4 +161,29 @@ export const rulesResponseAtom = atom<Promise<RuleOuput[]> | null>((get) => {
   if (!session) return null;
 
   return fetchRules(session);
+});
+
+export const resourceBasedRulesInitialStateAtom = atom<any | null>(async (get) => {
+  const session = get(sessionAtom);
+
+  if (!session) return null;
+  
+  const rules = await get(rulesResponseAtom)
+  
+  if (!session || !rules) return null;
+
+  const ruleBasedInitialState: CheckboxState = {};
+
+  // Filter rules based on the specified names
+  const relevantRules = filter(rules, (rule) => RELEVANT_RULES.includes(rule.name));
+
+  console.log("rules initial state atom relevant rules", relevantRules);
+  // Generate initial state for the relevant rules
+  relevantRules.forEach((rule) => {
+    const inferenceOptions = find(rule.inputParameters, { name: 'IgnoreModelsParameter' })?.payload?.values;
+    ruleBasedInitialState[rule.id] = generateInitialState(rule, inferenceOptions);
+  });
+  console.log("rule based initial state return - ruleBasedInitialState", ruleBasedInitialState);
+
+  return ruleBasedInitialState;
 });

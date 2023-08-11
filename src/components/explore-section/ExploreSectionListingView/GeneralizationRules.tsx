@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { Spin, Checkbox } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach'
 import isObject from 'lodash/isObject'
 import isBoolean from 'lodash/isBoolean'
 import { RuleOuput } from '@/types/explore-section/kg-inference';
-import { rulesResponseAtom } from '@/state/explore-section/list-view-atoms';
+import { rulesResponseAtom, resourceBasedRulesInitialStateAtom } from '@/state/explore-section/list-view-atoms';
 import useNotification from '@/hooks/notifications';
 
 type InferenceOptionsState = { [key: string]: boolean };
@@ -79,7 +79,7 @@ function GeneralizationOptions({ rule, onCheckboxChange }: GeneralizationOptions
     // Update the state and call the callback
     setCheckboxState(newCheckboxState);
     onCheckboxChange(rule.id, newCheckboxState);
-    console.log("HANDLE CHECKBOX CHANGE NEW CHECKBOX STATE", newCheckboxState);
+    // console.log("HANDLE CHECKBOX CHANGE NEW CHECKBOX STATE", newCheckboxState);
   };
   
 
@@ -108,9 +108,13 @@ function GeneralizationOptions({ rule, onCheckboxChange }: GeneralizationOptions
 
 
 const rulesLoadableAtom = loadable(rulesResponseAtom);
+const resourceBasedRulesInitialStateLoadableAtom = loadable(resourceBasedRulesInitialStateAtom);
 
 function GeneralizationRules ({ resourceId }: {resourceId: string}) {
   const rules = useAtomValue(rulesLoadableAtom);
+  
+  const [resourceBasedRulesInitialState] = useAtom(resourceBasedRulesInitialStateLoadableAtom);
+  
   const notify = useNotification();
 
   const [checkboxState, setCheckboxState] = useState<CheckboxState>({});
@@ -124,6 +128,9 @@ function GeneralizationRules ({ resourceId }: {resourceId: string}) {
 
   if (!rules?.data) return <Spin indicator={<LoadingOutlined />} />;
 
+  if(resourceBasedRulesInitialState.state==='hasData') {
+    console.log("resourceBasedRulesInitialStateAtom",resourceBasedRulesInitialStateAtom);
+  }
 
   const handleCheckboxChange = (key: string, inferenceOptions: any) => {
     // Update the local checkbox state
@@ -151,7 +158,7 @@ function GeneralizationRules ({ resourceId }: {resourceId: string}) {
       },
     };
   
-    console.log('GENERALIZE OPTIONS, request, rules', request, rulesArray);
+    // console.log('GENERALIZE OPTIONS, request, rules', request, rulesArray);
   };
 
 
