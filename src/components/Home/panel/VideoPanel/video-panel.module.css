@@ -20,14 +20,14 @@
   background: linear-gradient(160deg, #003a8cff, #003a8c00);
 }
 
-.videoPanel > section > h1 {
+/* .videoPanel > section > h1 {
   margin: 0;
   padding: 0;
   font-size: 5vw;
   text-transform: uppercase;
   color: #1890ff;
   line-height: 1;
-}
+} */
 
 .version {
   position: absolute;

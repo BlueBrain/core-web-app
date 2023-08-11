@@ -9,13 +9,13 @@ export default async function LoginButton() {
   const sessionValid = session?.user && !session.error;
 
   return !sessionValid ? (
-    <SignInButton />
+      <SignInButton />
   ) : (
     <div>
-      <SignOutButton />
-      <div>
+      <div className="mt-6">
         {session.user.name} ({session.user.username})
       </div>
+      <SignOutButton />
     </div>
   );
 }

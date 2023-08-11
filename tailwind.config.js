@@ -56,6 +56,12 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-titillium-web)', ...fontFamily.sans],
       },
+      fontSize: {
+        '3.5vw': '3.5vw',
+        '4vw': '4vw',
+        '4.5vw': '4.5vw',
+        '5vw': '5vw',
+      },
       transitionProperty: {
         padding: 'padding',
         transform: 'transform',
@@ -70,6 +76,11 @@ module.exports = {
         '20vh': '20vh',
         '25vh': '25vh',
       },
+      lineHeight:{
+        '0.7': '0.7',
+        '0.8': '0.8',
+        '0.9': '0.9'
+      }
     },
   },
   plugins: [],
