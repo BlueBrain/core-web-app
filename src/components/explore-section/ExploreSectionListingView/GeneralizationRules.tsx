@@ -4,6 +4,9 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import find from 'lodash/find';
+import forEach from 'lodash/forEach'
+import isObject from 'lodash/isObject'
+import isBoolean from 'lodash/isBoolean'
 import { RuleOuput } from '@/types/explore-section/kg-inference';
 import { rulesResponseAtom } from '@/state/explore-section/list-view-atoms';
 import useNotification from '@/hooks/notifications';
@@ -14,27 +17,24 @@ type CheckboxState = { [rule: string]: InferenceOptionsState };
 const extractFalseKeys = (obj: CheckboxState, prefix = ''): string[] => {
   const falseKeys: string[] = [];
 
-  const extract = (currentObj: InferenceOptionsState, currentPrefix: string) => {
-    for (const key in currentObj) {
-      if (typeof currentObj[key] === 'boolean') {
-        if (!currentObj[key]) {
-          falseKeys.push(`${currentPrefix}${key}`);
-        }
-      } else if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
-        extract(currentObj[key], `${currentPrefix}${key}/`);
+  const extract = (currentObj: InferenceOptionsState) => {
+    forEach(currentObj, (value, key) => {
+      if (isBoolean(value) && !value) {
+        falseKeys.push(key);
+      } else if (isObject(value) && value !== null) {
+        extract(value);
       }
-    }
+    });
   };
 
-  for (const rule in obj) {
-    if (typeof obj[rule] === 'object' && obj[rule] !== null) {
-      extract(obj[rule], `${prefix}${rule}/`);
+  forEach(obj, (ruleValue) => {
+    if (isObject(ruleValue) && ruleValue !== null) {
+      extract(ruleValue);
     }
-  }
+  });
 
-  return falseKeys;
+  return falseKeys.map((key) => `${prefix}${key}`);
 };
-
 
 interface GeneralizationOptionsProps {
   rule: RuleOuput;
