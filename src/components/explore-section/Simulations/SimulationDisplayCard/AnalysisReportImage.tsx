@@ -1,40 +1,46 @@
+import Image from 'next/image';
 import {
   ArrowRightOutlined,
   CalendarOutlined,
   DownloadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Checkbox } from 'antd';
+import FileSaver from 'file-saver';
+import Link from '@/components/Link';
+import { to64 } from '@/util/common';
+import usePathname from '@/hooks/pathname';
 
 type AnalysisReportImageProps = {
-  src: string;
+  id: string;
+  project: string;
+  blob: Blob;
 };
 
-export default function AnalysisReportImage({ src }: AnalysisReportImageProps) {
+export default function AnalysisReportImage({ id, project, blob }: AnalysisReportImageProps) {
   const [showDimensionValue, setShowDimensionValue] = useState<boolean>(false);
-  const router = useRouter();
+
+  const pathname = usePathname();
+
+  const [proj, org] = project.split('/').reverse();
+  const simulationPath = to64(`${org}/${proj}!/!${id}`);
+
   return (
     <div className="mt-4">
       <div className="flex mb-3 justify-between items-center text-primary-7">
         <Checkbox
-          onChange={(value) => setShowDimensionValue(value.target.value)}
-          value={showDimensionValue}
+          onChange={() => setShowDimensionValue(!showDimensionValue)}
+          checked={showDimensionValue}
           className="font-semibold text-primary-7"
         >
           Dimension values
         </Checkbox>
-        <button
-          onClick={() => router.replace('/explore/simulation-campaigns/test/simulations/test')}
-          type="submit"
-          className="border radius-none w-max px-2 py-1"
-        >
+        <Link className="border radius-none w-max px-2 py-1" href={`${pathname}/${simulationPath}`}>
           view simulation detail <ArrowRightOutlined className="ml-3" />
-        </button>
+        </Link>
       </div>
-      {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
-      <img width="425px" height="260px" src={src} />
+      <Image alt={id} src={URL.createObjectURL(blob)} height={260} width={425} />
       <div className="flex text-primary-7 mt-3 justify-between items-center">
         <div className="flex gap-3">
           <div>
@@ -45,7 +51,11 @@ export default function AnalysisReportImage({ src }: AnalysisReportImageProps) {
             <CalendarOutlined /> 6 days ago
           </div>
         </div>
-        <button type="submit" className="border-2 radius-none w-max p-2">
+        <button
+          type="button"
+          className="border-2 radius-none w-max p-2"
+          onClick={() => FileSaver.saveAs(blob)}
+        >
           <DownloadOutlined />
         </button>
       </div>

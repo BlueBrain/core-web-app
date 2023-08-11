@@ -85,10 +85,11 @@ export default function useExploreSerializedFields(
         {tag}
       </Tag>
     ));
+
   return {
     description: detail?.description,
     brainRegion: detail?.brainLocation?.brainRegion?.label,
-    createdBy: detail?.createdBy,
+    createdBy: detail?._createdBy,
     meanPlusMinusStd: serializeMeanPlusMinusStd(),
     numberOfMeasurements: serializeStatisticFields('N'),
     standardDeviation: serializeStatisticFields('standard deviation'),
@@ -111,6 +112,9 @@ export default function useExploreSerializedFields(
     attrs: attrsSelectorFn(detail),
     campaign: detail?.campaign,
     startedAt: timeElapsedFromToday(detail?.startedAt),
+    startedAtTime: timeElapsedFromToday(detail?.startedAtTime),
     completedAt: timeElapsedFromToday(detail?.completedAt),
+    parameter: detail?.parameter,
+    wasGeneratedBy: detail?.wasGeneratedBy?.['@id'], // TODO: Fetch the "name" property of this resource
   };
 }

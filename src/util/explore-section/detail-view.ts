@@ -17,10 +17,15 @@ export function setInfoWithPath(
 ) {
   if (path) {
     const parts = path.split('/');
+
     const key = from64(parts[parts.length - 1]);
+
     const data = key.split('!/!');
+
     const id = data[data.length - 1];
-    const [org, project] = data[0].split('/');
+
+    const [org, project] = data[0].split('/'); // TODO: Why data[0], not data[1]?
+
     const info = {
       id,
       org,

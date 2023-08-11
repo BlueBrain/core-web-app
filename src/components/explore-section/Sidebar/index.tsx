@@ -16,20 +16,18 @@ export function DetailsPageSideBackLink() {
   const pathName = usePathname();
   const prevPath = pathName?.substring(0, pathName.lastIndexOf('/'));
 
-  return (
-    prevPath && (
-      <div className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center ml-5">
-        <Link
-          className="whitespace-pre text-sm rotate-180 mt-5"
-          href={prevPath}
-          style={{ writingMode: 'vertical-rl' }}
-        >
-          Back to list
-          <ArrowRightOutlined className="mt-6" />
-        </Link>
-      </div>
-    )
-  );
+  return prevPath ? (
+    <div className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center">
+      <Link
+        className="whitespace-pre text-sm rotate-180 mt-5"
+        href={prevPath}
+        style={{ writingMode: 'vertical-rl' }}
+      >
+        Back to list
+        <ArrowRightOutlined className="mt-6" />
+      </Link>
+    </div>
+  ) : null;
 }
 
 export default function Sidebar() {

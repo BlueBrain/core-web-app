@@ -17,7 +17,7 @@ import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSi
 
 type SimulationDisplayGridProps = {
   display: string;
-  showStatus: string;
+  status: string;
 };
 
 type DimensionHeaderProps = {
@@ -50,10 +50,7 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
   );
 }
 
-export default function SimulationsDisplayGrid({
-  display,
-  showStatus,
-}: SimulationDisplayGridProps) {
+export default function SimulationsDisplayGrid({ display, status }: SimulationDisplayGridProps) {
   const simulations = useAtomValue(simulationsAtom);
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
@@ -63,6 +60,7 @@ export default function SimulationsDisplayGrid({
     if (xDimension) {
       return calculateDimensionValues(xDimension.value);
     }
+
     return [];
   }, [xDimension]);
 
@@ -70,27 +68,34 @@ export default function SimulationsDisplayGrid({
     if (yDimension) {
       return calculateDimensionValues(yDimension.value);
     }
+
     return [];
   }, [yDimension]);
+
   const dataColSpan = useMemo(() => {
     // specific case where the x dimension has only one column
     // in that case we hardcode he first column span to 8 in order to be centered
     if (xDimensionValues.length === 1) {
       return 8;
     }
+
     const nums = range(22, 2, -1);
     const highest = nums.find((num) => num % xDimensionValues.length === 0);
+
     return highest ? highest / xDimensionValues.length : undefined;
   }, [xDimensionValues.length]);
+
   const firstColSpan = useMemo(() => {
     if (!dataColSpan) {
       return undefined;
     }
+
     // specific case where the x dimension has only one column
     // in that case we hardcode he first column span to 2
     if (xDimensionValues.length === 1) {
       return 2;
     }
+
     return 24 - dataColSpan * xDimensionValues.length;
   }, [dataColSpan, xDimensionValues.length]);
 
@@ -102,6 +107,7 @@ export default function SimulationsDisplayGrid({
       />
     );
   }
+
   return (
     <div className="mt-7">
       <Row gutter={[16, 24]}>
@@ -122,15 +128,11 @@ export default function SimulationsDisplayGrid({
                 </Col>
               );
             }
-            const simulation = findSimulation(
-              x,
-              y,
-              xDimension,
-              yDimension,
-              simulations,
-              showStatus,
-              otherDimensions
-            );
+
+            const simulation =
+              simulations &&
+              findSimulation(x, y, xDimension, yDimension, simulations, status, otherDimensions);
+
             return (
               <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
                 {simulation ? (

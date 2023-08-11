@@ -54,7 +54,7 @@ export default function OtherDimensionBoxEditForm({
         >
           <Form.Item className="flex-1 w-20" name="input-value">
             <Select value={form.getFieldValue('input-value')} onChange={submitForm}>
-              {dimensionConfig.map((val) => (
+              {dimensionConfig.map((val: string) => (
                 <Option key={val} value={val}>
                   {val}
                 </Option>

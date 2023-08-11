@@ -80,7 +80,12 @@ const LISTING_CONFIG: ListingConfigProps = {
     term: 'name.keyword',
     title: 'Name',
     filter: null,
-    renderFn: (_t, r) => IndexColContent({ text: r._source?.name }),
+    renderFn: (_t, r) =>
+      IndexColContent({
+        id: r._source['@id'],
+        project: r._source?.project.label,
+        text: r._source?.name,
+      }),
     vocabulary: {
       plural: 'Names',
       singular: 'Name',

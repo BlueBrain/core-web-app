@@ -1,10 +1,10 @@
 import { EyeOutlined, FileTextOutlined } from '@ant-design/icons';
-import { SimulationResource } from '@/types/explore-section/resources';
+import { Simulation } from '@/types/explore-section/resources';
 import InlineDimension from '@/components/explore-section/Simulations/SimulationDisplayCard/InlineDimension';
 import timeElapsedFromToday from '@/util/date';
 
 type SimulationCardProps = {
-  simulation: SimulationResource;
+  simulation: Simulation;
   xDimension: string;
   yDimension: string;
 };
@@ -59,7 +59,7 @@ export default function SimulationCard({
   };
 
   const renderOtherDimensions = () =>
-    Object.entries(simulation.coords).map(([key, value]) => {
+    Object.entries(simulation.dimensions).map(([key, value]) => {
       if (key !== xDimension && key !== yDimension) {
         return (
           <div key={key} className="mr-4 flex-2">

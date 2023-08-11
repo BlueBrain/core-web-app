@@ -2,10 +2,12 @@ import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { ConfigProvider, Table } from 'antd';
 import { ColumnProps } from 'antd/es/table';
-import { isNumeric } from '@/util/common';
+import { isNumeric, to64 } from '@/util/common';
 import { ESResponseRaw } from '@/types/explore-section/resources';
+import usePathname from '@/hooks/pathname';
 import { BrainIcon, InteractiveViewIcon, VirtualLabIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
+import Link from '@/components/Link';
 import styles from '@/components/ListTable/list-table.module.scss';
 
 type Column = {
@@ -41,7 +43,16 @@ function CustomTable({ children, style, ...props }: { children: ReactNode; style
   );
 }
 
-function CustomTH({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
+function CustomTH({
+  children,
+  handleResizing, // Removes unwanted prop from props
+  style,
+  ...props
+}: {
+  children: ReactNode;
+  handleResizing: () => void;
+  style: CSSProperties;
+}) {
   return (
     <th
       style={{
@@ -87,10 +98,22 @@ function CustomTD({
   );
 }
 
-export function IndexColContent({ text }: { text: string }) {
+export function IndexColContent({
+  id,
+  project,
+  text,
+}: {
+  id: string;
+  project: string;
+  text: string;
+}) {
+  const pathname = usePathname();
+
   return (
     <div className="flex flex-col gap-5">
-      <span className="font-bold">{text}</span>
+      <span className="font-bold">
+        <Link href={`${pathname}/${to64(`${project}!/!${id}`)}`}>{text}</Link>
+      </span>
       <div className="flex items-center gap-3">
         <span className="text-neutral-4 text-sm uppercase">Open in</span>
         <span className="border border-neutral-4 p-2 text-primary-7">

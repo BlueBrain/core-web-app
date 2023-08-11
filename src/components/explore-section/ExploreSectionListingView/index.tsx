@@ -80,7 +80,7 @@ function ExploreSectionListingView({ title, children }: { title: string; childre
 
   return (
     <>
-      <section className="w-full min-h-screen flex flex-col gap-5 bg-white pb-12 pl-7 pr-3 pt-8 overflow-scroll relative">
+      <section className="w-full h-screen flex flex-col gap-5 bg-white pb-12 pl-7 pr-3 pt-8 overflow-scroll relative">
         <div className="flex items-center justify-between ml-5">
           <Header title={title} />
           <div className="flex items-center gap-5 justify-between w-auto">

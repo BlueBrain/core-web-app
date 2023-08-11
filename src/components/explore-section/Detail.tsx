@@ -33,6 +33,7 @@ function Field({ title, field, className }: FieldProps) {
 
 export function ListField({ items }: { items: IdLabel[] | undefined | null }) {
   if (!items) return null;
+
   return (
     <ul>
       {items?.map((item) => (

@@ -17,7 +17,7 @@ import {
   NValueEntity,
   ImageEntity,
   SubjectAge,
-  Dimension,
+  // Dimension,
   TotalHits,
   IdLabel,
   Series,
@@ -120,13 +120,9 @@ export interface DetailAtomResource extends DeltaResource {
   contributors: string[] | null;
 }
 
-// TODO: simulation is a mock type
-export type Simulation = {
-  id: string;
-  dimensions: string[];
-  status: SimulationStatus;
-  startedAt: string;
-  completedAt?: string;
+type IdType = {
+  '@id': string;
+  type: string;
 };
 
 // Below is the delta response interface definitions
@@ -153,15 +149,13 @@ export type DeltaResource<
   image?: ImageEntity[] | null;
   series?: Series[] | Series;
   reason?: string;
-  brainConfiguration?: string;
   attribute?: string;
-  status?: string;
   tags?: string[];
-  dimensions?: Dimension[];
-  simulations?: Simulation[];
-  coords: { [key: string]: string };
-  attrs: { [key: string]: number[] };
+  simulations?: {
+    contentUrl: string;
+  };
   latestRevision?: number | null | undefined;
+  wasGeneratedBy?: IdType;
   _constrainedBy: string;
   _createdAt: DateISOString;
   _createdBy: string;
@@ -184,12 +178,32 @@ export interface Subject {
   weight?: Weight;
 }
 
+export type SimulationCampaignsResponse = {
+  attrs: Record<string, string>;
+  coords: { [key: string]: { [key: string]: number[] | string[] } };
+  data: string[][][];
+  dims: Record<number, string>;
+  name: string;
+};
+
 export type SimulationCampaignResource = DeltaResource & {
   brainConfiguration: string;
   status: string;
   tags: string[];
-  coords: { [key: string]: number[] };
-  attrs: { [key: string]: number[] };
+  parameter?: {
+    coords: { [key: string]: number[] };
+    attrs: { [key: string]: number[] };
+  };
+};
+
+export type Simulation = {
+  completedAt: string;
+  dimensions: Record<string, number>;
+  // dimensions?: Dimension[];
+  id: string;
+  project: string;
+  startedAt: string;
+  status: SimulationStatus;
 };
 
 export type SimulationResource = DeltaResource & {
@@ -198,6 +212,7 @@ export type SimulationResource = DeltaResource & {
   status: SimulationStatus;
   startedAt: string;
   completedAt?: string;
+  distribution: { contentUrl: string }[];
 };
 
 export interface SerializedDeltaResource extends OptionalExploreSectionSerializedFields {
@@ -218,13 +233,21 @@ export interface SerializedDeltaResource extends OptionalExploreSectionSerialize
   tags?: ReactNode;
   updatedAt?: string | null;
   dimensions?: IdLabel[] | null;
+  coords?: { [key: string]: number };
   contributors?: IdLabel[] | null;
   layer?: string;
   license?: string | null;
   attrs?: IdLabel[] | null;
   campaign?: string;
   startedAt?: string | null;
+  startedAtTime?: string | null;
   completedAt?: string | null;
+  parameter?: {
+    coords: { [key: string]: number[] };
+    attrs: { [key: string]: number[] };
+  };
+  name?: string;
+  wasGeneratedBy?: string;
 }
 
 export type EPhysImageItem = {
