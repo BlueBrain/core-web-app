@@ -52,6 +52,7 @@ export default function SectionCards({
   return content.icon === 'eye' ? (
     // IF LINK
     <Link
+      id="explore-section-card-1"
       href={content.url}
       className={classNames(
         'relative w-full h-15vh p-8 2xl:p-14 flex flex-row justify-between items-center',
@@ -96,7 +97,7 @@ export default function SectionCards({
     >
       <button
         type="button"
-        className="relative w-full h-15vh py-8 pl-8 pr-6 2xl:pl-14 2xl:pr-10 flex flex-row justify-between items-center active:outline-none focus:outline-none"
+        className="relative flex flex-row items-center justify-between w-full py-8 pl-8 pr-6 h-15vh 2xl:pl-14 2xl:pr-10 active:outline-none focus:outline-none"
         onClick={() => setSectionStatus(!sectionStatus)}
         onMouseOver={handleMouseOver}
         onFocus={handleMouseOver}

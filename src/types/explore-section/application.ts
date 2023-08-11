@@ -90,3 +90,18 @@ export type CheckListProps = {
   loadMoreBtn: () => JSX.Element | null | false;
   defaultRenderLength: number; // Added defaultRenderLength as a prop
 };
+
+export type SubSectionCardItem = {
+  name: string;
+  type: string;
+  url: string;
+};
+
+export type SingleCard = {
+  name: string;
+  description: string;
+  url: string;
+  icon: string;
+  image: string;
+  items?: SubSectionCardItem[] | null;
+};

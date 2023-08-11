@@ -1,5 +1,6 @@
 const { fontFamily } = require('tailwindcss/defaultTheme');
 const blue = {
+  0: '#E8F7FF',
   1: '#BAE7FF',
   2: '#91D5FF',
   3: '#69C0FF',
@@ -63,12 +64,19 @@ module.exports = {
         top: 'top',
         height: 'height',
         background: 'background',
+        height: 'height',
+        spacing: 'margin, padding',
+        slideDown: 'height, opacity',
       },
       height: {
         '10vh': '10vh',
         '15vh': '15vh',
         '20vh': '20vh',
         '25vh': '25vh',
+      },
+      transitionTimingFunction: {
+        'in-expo': 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+        'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
       },
     },
   },
