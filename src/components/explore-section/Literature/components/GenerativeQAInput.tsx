@@ -4,12 +4,12 @@ import { FormEvent, useTransition } from 'react';
 import { useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
-import { GenerativeQA } from '../../../../types/literature';
 import { getGenerativeQA } from '../api';
 import { LiteratureValidationError } from '../errors';
 import sessionAtom from '@/state/session';
 import { classNames } from '@/util/utils';
 import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
+import { GenerativeQA } from '@/types/literature';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;

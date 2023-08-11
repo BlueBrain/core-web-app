@@ -6,7 +6,6 @@ import { DeleteOutlined } from '@ant-design/icons';
 import delay from 'lodash/delay';
 import last from 'lodash/last';
 
-import { GenerativeQA } from '../types';
 import { classNames } from '@/util/utils';
 import {
   literatureAtom,
@@ -14,6 +13,7 @@ import {
   useLiteratureAtom,
   useLiteratureResultsAtom,
 } from '@/state/literature';
+import { GenerativeQA } from '@/types/literature';
 
 type QAHistoryNavigationItemProps = Pick<GenerativeQA, 'id' | 'question' | 'askedAt'> & {
   index: number;
@@ -22,7 +22,7 @@ type QAHistoryNavigationItemProps = Pick<GenerativeQA, 'id' | 'question' | 'aske
 function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { activeQuestionId } = useAtomValue(literatureAtom);
-  const { remove, QAs } = useLiteratureResultsAtom();
+  const { remove } = useLiteratureResultsAtom();
   const update = useLiteratureAtom();
 
   const isActive = activeQuestionId === id;
@@ -31,9 +31,9 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
   const onDelete = () => {
     setIsDeleting(true);
     delay(() => {
-      remove(id);
+      const newQAs = remove(id);
       setIsDeleting(false);
-      update('activeQuestionId', QAs ? last(QAs)?.id : null);
+      update('activeQuestionId', newQAs ? last(newQAs)?.id : null);
     }, 1000);
   };
 

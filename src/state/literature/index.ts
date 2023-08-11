@@ -63,9 +63,11 @@ export function useLiteratureResultsAtom() {
   };
 
   const remove = (id: string) => {
-    updateResult(QAs.filter((item) => item.id !== id));
+    const newQAs = QAs.filter((item) => item.id !== id);
+    updateResult(newQAs);
+
+    return newQAs;
   };
 
   return { QAs, update, remove };
 }
-

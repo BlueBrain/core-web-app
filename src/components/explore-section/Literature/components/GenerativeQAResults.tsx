@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FilterOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
 import trim from 'lodash/trim';
-
 
 import ArticlesTimeLine from './ArticlesTimeLine';
 import { FilterFns } from './FilterPanel';
@@ -27,7 +26,7 @@ function GenerativeQASingleResult({
 }: GenerativeQASingleResultProps) {
   const [expandArticles, setExpandArticles] = useState(false);
   const [collpaseQuestion, setCollpaseQuestion] = useState(false);
-  const answerRef = React.useRef<HTMLDivElement>(null);
+  const answerRef = useRef<HTMLDivElement>(null);
   const toggleExpandArticles = () => setExpandArticles((state) => !state);
   const toggleCollapseQuestion = () => setCollpaseQuestion((state) => !state);
   const updateLiterature = useLiteratureAtom();

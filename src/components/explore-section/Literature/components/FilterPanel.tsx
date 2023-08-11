@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Drawer from 'antd/lib/drawer';
 import { CloseOutlined } from '@ant-design/icons';
-import isNil from 'lodash/isNil';
 import { useAtomValue } from 'jotai';
+import Drawer from 'antd/lib/drawer';
+import isNil from 'lodash/isNil';
 import get from 'lodash/get';
 
 import {
@@ -118,20 +118,20 @@ export default function FilterPanel() {
           display: true,
         }))}
       />
-      <div className="w-full flex justify-between">
+      <div className="flex justify-between w-full">
         <button
           type="button"
           onClick={() => updateLiterature('filterValues', null)}
-          className="flex justify-center items-center"
+          className="flex items-center justify-center"
         >
-          <span className="text-primary-2 mr-1">Clear filters</span>
+          <span className="mr-1 text-primary-2">Clear filters</span>
           <ReloadIcon className="text-primary-2" />
         </button>
 
         <button
           type="submit"
           onClick={onApplyFilters}
-          className="mt-4 float-right bg-primary-2 py-3 px-8 text-primary-9"
+          className="float-right px-8 py-3 mt-4 bg-primary-2 text-primary-9"
         >
           Apply
         </button>

@@ -5,13 +5,13 @@ import { Tooltip } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
 import { copyClipboard } from '../utils';
-import type { GArticle } from '../../../../types/literature';
 import PersonIcon from '@/components/icons/Person';
 import JournalIcon from '@/components/icons/Journal';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
 import QuoteOutline from '@/components/icons/QuoteOutline';
 import CopyIcon from '@/components/icons/CopyIcon';
 import { classNames } from '@/util/utils';
+import { GArticle } from '@/types/literature';
 
 function ArticlePreview({ title, icon }: { title: string; icon: JSX.Element }) {
   return (
