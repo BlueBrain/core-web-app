@@ -79,7 +79,6 @@ function GeneralizationOptions ({
   );
 }
 
-
 function GeneralizationRules ({ resourceId }: { resourceId: string }) {
   const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom);
 

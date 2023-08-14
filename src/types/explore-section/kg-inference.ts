@@ -24,5 +24,10 @@ export interface Payload {
   values: PayLoadValues;
 }
 
-export interface InferenceOptionsState { [key: string]: boolean };
-export interface RuleWithOptionsProps { [rule: string]: InferenceOptionsState };
+export interface InferenceOptionsState {
+  [key: string]: boolean;
+}
+
+export interface RuleWithOptionsProps {
+  [rule: string]: InferenceOptionsState;
+}

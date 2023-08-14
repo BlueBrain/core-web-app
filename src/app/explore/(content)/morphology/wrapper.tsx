@@ -12,8 +12,6 @@ export default function MorphologyListingPage({rulesWithOptions}: RuleWithOption
   useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
     
   const setResourceBasedRules = useSetAtom(resourceBasedRulesAtom);
-
-  console.log(rulesWithOptions);
   
   setResourceBasedRules(rulesWithOptions);
 
