@@ -4,10 +4,10 @@ import { useAtom } from 'jotai';
 import forEach from 'lodash/forEach';
 import isObject from 'lodash/isObject';
 import isBoolean from 'lodash/isBoolean';
-import merge from 'lodash/merge';
 import {
   resourceBasedRulesAtom,
   resourceBasedRequestAtom,
+  resourceBasedResponseAtom,
 } from '@/state/explore-section/list-view-atoms';
 import { RELEVANT_RULES } from '@/constants/explore-section/kg-inference';
 import { RuleWithOptionsProps, InferenceOptionsState } from '@/types/explore-section/kg-inference';
@@ -85,6 +85,7 @@ function GeneralizationOptions ({
 function GeneralizationRules ({ resourceId }: { resourceId: string }) {
   const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom);
   const [resourceBasedRequest, setResourceBasedRequest] = useAtom(resourceBasedRequestAtom);
+  const [resourceBasedResponse, setResourceBasedResponse] = useAtom(resourceBasedResponseAtom);
 
   if (!resourceBasedRules) return <Spin indicator={<LoadingOutlined />} />;
 
@@ -96,31 +97,32 @@ function GeneralizationRules ({ resourceId }: { resourceId: string }) {
   };
 
   const handleInferButtonClick = () => {
-    const selectedIgnoreModels = extractFalseKeys(resourceBasedRules);
-
-    const rulesArray: string[] = Object.keys(resourceBasedRules);
+    // const selectedIgnoreModels = extractFalseKeys(resourceBasedRules);
+    
+    const hardCodedResourceId = "https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/8a2dbbe4-2f22-41e5-a126-f09c73d3ccef";
+    
+    const rulesArray: object[] = [];
+    
+    Object.keys(resourceBasedRules).forEach((x)=> {
+      const hasTruthyValue = Object.values(resourceBasedRules[x]).some((value) => value === true);
+        if (hasTruthyValue) rulesArray.push({ id: x });
+    })
 
     // Construct the request using the updated checkbox state
     const request = {
       [resourceId]: {
         rules: rulesArray,
         inputFilter: {
-          TargetResourceParameter: resourceId,
-          IgnoreModelsParameter: selectedIgnoreModels,
+          TargetResourceParameter: hardCodedResourceId,
+          IgnoreModelsParameter: [],
         },
       },
     };
 
-    const newRequest = merge(resourceBasedRequest, request);
-
-    console.log(newRequest)
-    
-    setResourceBasedRequest(newRequest);
-    
-    console.log('RESOURCE BASED REQUEST ATOM', resourceBasedRequest);
+    setResourceBasedRequest((prev) => ({...prev, ...request}));
   };
 
-
+  
   return (
     <div className='flex flex-col space-y-4 bg-white pl-12 text-primary-8'>
       <div className='flex space-x-4'>

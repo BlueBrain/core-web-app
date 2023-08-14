@@ -8,6 +8,7 @@ import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
+import { resourceBasedInference } from '@/api/generalization';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
@@ -97,7 +98,6 @@ export const queryAtom = atom<object>((get) => {
   const pageSize = get(pageSizeAtom);
   const sortState = get(sortStateAtom);
   const filters = get(filtersAtom);
-
   if (!type || !filters) {
     return null;
   }
@@ -143,13 +143,19 @@ export const resourceBasedRulesAtom = atom<RuleWithOptionsProps>({});
 export const resourceBasedRequestAtom = atom({});
 
 export const resourceBasedResponseAtom = atom(async (get) => {
-  const requestObjects = await get(resourceBasedRequestAtom);
+  const requestObjects = get(resourceBasedRequestAtom);
+  const session = get(sessionAtom);
+  
+  if(isEmpty(requestObjects) || !session) return null;
+  
+  const requestKeys = Object.keys(requestObjects);  
+  const inferencePromises: Promise<any>[] = [];
+  
+  requestKeys.forEach((x) => {
+    inferencePromises.push(resourceBasedInference(session, requestObjects[x]))
+  });
 
-  if(isEmpty(requestObjects)) return null;
+  const results = await Promise.all(inferencePromises);
 
-  const requests = Object.values(requestObjects);
-
-  console.log("REQUESTS TO BE MADE FOR RESOURCE BASED",requests);
-
-  return requests;
+  return results;
 });
