@@ -177,13 +177,11 @@ export const resourceBasedRulesInitialStateAtom = atom<any | null>(async (get) =
   // Filter rules based on the specified names
   const relevantRules = filter(rules, (rule) => RELEVANT_RULES.includes(rule.name));
 
-  console.log("rules initial state atom relevant rules", relevantRules);
   // Generate initial state for the relevant rules
   relevantRules.forEach((rule) => {
     const inferenceOptions = find(rule.inputParameters, { name: 'IgnoreModelsParameter' })?.payload?.values;
     ruleBasedInitialState[rule.id] = generateInitialState(rule, inferenceOptions);
   });
-  console.log("rule based initial state return - ruleBasedInitialState", ruleBasedInitialState);
 
   return ruleBasedInitialState;
 });

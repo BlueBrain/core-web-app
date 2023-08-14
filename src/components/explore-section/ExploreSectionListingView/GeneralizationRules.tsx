@@ -128,8 +128,8 @@ function GeneralizationRules ({ resourceId }: {resourceId: string}) {
 
   if (!rules?.data) return <Spin indicator={<LoadingOutlined />} />;
 
-  if(resourceBasedRulesInitialState.state==='hasData') {
-    console.log("resourceBasedRulesInitialStateAtom",resourceBasedRulesInitialStateAtom);
+  if(resourceBasedRulesInitialState.state === 'hasData') {
+    console.log("resourceBasedRulesInitialState",resourceBasedRulesInitialState.data);
   }
 
   const handleCheckboxChange = (key: string, inferenceOptions: any) => {
