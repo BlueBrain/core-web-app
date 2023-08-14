@@ -12,8 +12,8 @@ export interface InputParameter {
   payload: Payload;
 }
 
-export interface PayLoadValues { 
-  [key: string]: string  
+export interface PayLoadValues {
+  [key: string]: string;
 }
 export interface Payload {
   name: string;

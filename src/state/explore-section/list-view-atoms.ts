@@ -10,7 +10,7 @@ import fetchEsResourcesByType from '@/api/explore-section/resources';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
-import {RuleWithOptionsProps} from '@/types/explore-section/kg-inference';
+import { RuleWithOptionsProps } from '@/types/explore-section/kg-inference';
 
 export const columnKeyToFilter = (key: string): Filter => {
   const fieldConfig = LISTING_CONFIG[key];

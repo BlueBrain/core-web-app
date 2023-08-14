@@ -6,7 +6,7 @@ import isObject from 'lodash/isObject';
 import isBoolean from 'lodash/isBoolean';
 import { resourceBasedRulesAtom } from '@/state/explore-section/list-view-atoms';
 import { RELEVANT_RULES } from '@/constants/explore-section/kg-inference';
-import {RuleWithOptionsProps,InferenceOptionsState} from '@/types/explore-section/kg-inference';
+import { RuleWithOptionsProps, InferenceOptionsState } from '@/types/explore-section/kg-inference';
 
 const extractFalseKeys = (obj: RuleWithOptionsProps, prefix = ''): string[] => {
   const falseKeys: string[] = [];
@@ -37,38 +37,37 @@ interface GeneralizationOptionsProps {
   onCheckboxChange: (inferenceRule: RuleWithOptionsProps) => void;
 }
 
-function GeneralizationOptions ({
+function GeneralizationOptions({
   ruleId,
   resourceId,
   ruleWithOptions,
   onCheckboxChange,
 }: GeneralizationOptionsProps) {
-
   if (!ruleWithOptions) return null;
 
   const handleCheckboxChange = (inferenceName: string) => {
     onCheckboxChange({
       [ruleId]: {
         ...ruleWithOptions,
-        [inferenceName]: !ruleWithOptions[inferenceName]
+        [inferenceName]: !ruleWithOptions[inferenceName],
       },
-    })
-  }
+    });
+  };
 
   return (
-    <div className='flex-initial w-1/4 flex-col space-y-2'>
-      <h1 className='font-semibold text-lg'>{RELEVANT_RULES[ruleId]}</h1>
-      <div className='space-y-2 pl-6 pr-12'>
+    <div className="flex-initial w-1/4 flex-col space-y-2">
+      <h1 className="font-semibold text-lg">{RELEVANT_RULES[ruleId]}</h1>
+      <div className="space-y-2 pl-6 pr-12">
         {Object.keys(ruleWithOptions).map((inferenceName: string) => (
           <li key={`${resourceId}${inferenceName}`}>
             <Checkbox
               checked={ruleWithOptions[inferenceName]}
               onChange={() => handleCheckboxChange(inferenceName)}
-              className='w-full text-primary-8 font-semibold'
+              className="w-full text-primary-8 font-semibold"
             >
               {inferenceName}
             </Checkbox>
-            <p className='font-thin pl-12'>
+            <p className="font-thin pl-12">
               At elementum eu facilisis sed odio morbi quis commodo. Nascetur ridiculus mus mauris
               vitae ultricies leo integer. Tempus imperdiet nulla malesuada pellentesque.
             </p>
@@ -79,15 +78,16 @@ function GeneralizationOptions ({
   );
 }
 
-function GeneralizationRules ({ resourceId }: { resourceId: string }) {
+function GeneralizationRules({ resourceId }: { resourceId: string }) {
   const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom);
 
+  if (!resourceBasedRules) return <Spin indicator={<LoadingOutlined />} />;
 
-  if (!resourceBasedRules)
-    return <Spin indicator={<LoadingOutlined />} />;
-
-  const handleCheckboxChange = (ruleWithOptionsAndIdKey: RuleWithOptionsProps) => {        
-    setResourceBasedRules((prev: RuleWithOptionsProps) => ({...prev, ...ruleWithOptionsAndIdKey}));
+  const handleCheckboxChange = (ruleWithOptionsAndIdKey: RuleWithOptionsProps) => {
+    setResourceBasedRules((prev: RuleWithOptionsProps) => ({
+      ...prev,
+      ...ruleWithOptionsAndIdKey,
+    }));
   };
 
   const handleInferButtonClick = () => {
@@ -108,26 +108,26 @@ function GeneralizationRules ({ resourceId }: { resourceId: string }) {
   };
 
   return (
-    <div className='flex flex-col space-y-4 bg-white pl-12 text-primary-8'>
-      <div className='flex space-x-4'>
+    <div className="flex flex-col space-y-4 bg-white pl-12 text-primary-8">
+      <div className="flex space-x-4">
         {Object.keys(resourceBasedRules).map((ruleId: string) => (
-            <GeneralizationOptions
-              key={ruleId}
-              ruleId={ruleId}
-              resourceId={resourceId}
-              ruleWithOptions={resourceBasedRules[ruleId]}
-              onCheckboxChange={handleCheckboxChange}
-            />
-          ))}
+          <GeneralizationOptions
+            key={ruleId}
+            ruleId={ruleId}
+            resourceId={resourceId}
+            ruleWithOptions={resourceBasedRules[ruleId]}
+            onCheckboxChange={handleCheckboxChange}
+          />
+        ))}
 
-        <div className='flex flex-col space-y-2 place-self-center'>
-          <label htmlFor='number-of-results' className='font-semibold'>
-            <span className='font-thin'>Number of infer results:</span>
-            <input type='number' id='number-of-results' className='ml-6 border-gray-500 border' />
+        <div className="flex flex-col space-y-2 place-self-center">
+          <label htmlFor="number-of-results" className="font-semibold">
+            <span className="font-thin">Number of infer results:</span>
+            <input type="number" id="number-of-results" className="ml-6 border-gray-500 border" />
           </label>
           <button
-            type='submit'
-            className='self-end	px-2 py-2 bg-primary-8 text-white font-semibold w-1/2'
+            type="submit"
+            className="self-end	px-2 py-2 bg-primary-8 text-white font-semibold w-1/2"
             onClick={handleInferButtonClick}
           >
             Infer

@@ -12,9 +12,7 @@ import {
 } from '@/types/explore-section/kg-inference';
 
 // Function to generate the initial state for a given rule and inference options
-function generateInitialState (
-  inferenceOptions: PayLoadValues
-): InferenceOptionsState {
+function generateInitialState(inferenceOptions: PayLoadValues): InferenceOptionsState {
   const initialState: InferenceOptionsState = {};
   Object.keys(inferenceOptions).forEach((key: string) => {
     initialState[key] = false;
@@ -22,7 +20,7 @@ function generateInitialState (
   return initialState;
 }
 
-export default async function MorphologyListingPage () {
+export default async function MorphologyListingPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) return null;
