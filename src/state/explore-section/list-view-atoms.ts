@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
+import isEmpty from 'lodash/isEmpty';
 import { ExploreSectionResponse, ESResponseRaw } from '@/types/explore-section/resources';
 import { TotalHits, Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
@@ -140,3 +141,15 @@ export const aggregationsAtom = atom<Promise<Aggregations | undefined>>(async (g
 export const resourceBasedRulesAtom = atom<RuleWithOptionsProps>({});
 
 export const resourceBasedRequestAtom = atom({});
+
+export const resourceBasedResponseAtom = atom(async (get) => {
+  const requestObjects = await get(resourceBasedRequestAtom);
+
+  if(isEmpty(requestObjects)) return null;
+
+  const requests = Object.values(requestObjects);
+
+  console.log("REQUESTS TO BE MADE FOR RESOURCE BASED",requests);
+
+  return requests;
+});
