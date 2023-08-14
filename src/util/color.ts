@@ -1,6 +1,5 @@
 import chroma from 'chroma-js';
 
-// eslint-disable-next-line import/prefer-default-export
 export function textColor(bgColor: string) {
   if (!chroma.valid(bgColor)) {
     throw new Error(`Can not parse color string: ${bgColor}`);

@@ -1,16 +1,14 @@
+import { ReactNode, useMemo, useState } from 'react';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
-import { ReactNode, useMemo, useState, useCallback } from 'react';
-import { ConfigProvider, Tag } from 'antd';
-import { CloseOutlined, InfoCircleFilled } from '@ant-design/icons';
-import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
+import { InfoCircleFilled } from '@ant-design/icons';
 import sortBy from 'lodash/sortBy';
 import { Filter, OptionsData } from './types';
+import SearchFilter from './SearchFilter';
 import { CheckIcon } from '@/components/icons';
-import { CheckListProps, FilterValues } from '@/types/explore-section/application';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
-import Search from '@/components/Search';
 import CenteredMessage from '@/components/CenteredMessage';
+import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import { CheckListProps } from '@/types/explore-section/application';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {
@@ -60,13 +58,13 @@ export default function CheckList({
   data,
   filter,
   values,
-  setFilterValues,
+  onChange,
 }: {
   children: (props: CheckListProps) => ReactNode;
   data: OptionsData;
   filter: Filter;
   values: string[];
-  setFilterValues: React.Dispatch<React.SetStateAction<FilterValues>>;
+  onChange: (value: string[]) => void;
 }) {
   const options = useMemo(() => {
     const agg = data[filter.field];
@@ -81,32 +79,15 @@ export default function CheckList({
       : undefined;
   }, [data, filter.field, values]);
 
-  const handleCheckedChange = useCallback(
-    (value: string) => {
-      setFilterValues((prevState) => {
-        let newValues = [...values];
-
-        if (values.includes(value)) {
-          newValues = values.filter((val) => val !== value);
-        } else {
-          newValues.push(value);
-        }
-
-        return {
-          ...prevState,
-          [filter.field]: newValues,
-        };
-      });
-    },
-    [filter.field, setFilterValues, values]
-  );
-
-  const onClear = useCallback(() => {
-    setFilterValues((prevState) => ({
-      ...prevState,
-      [filter.field]: [],
-    }));
-  }, [filter.field, setFilterValues]);
+  const handleCheckedChange = (value: string) => {
+    let newValues = [...values];
+    if (values.includes(value)) {
+      newValues = values.filter((val) => val !== value);
+    } else {
+      newValues.push(value);
+    }
+    onChange(newValues);
+  };
 
   const defaultRenderLength = 8;
   const [renderLength, setRenderLength] = useState<number>(defaultRenderLength);
@@ -132,54 +113,8 @@ export default function CheckList({
       </button>
     );
 
-  const tagRender = (tagProps: CustomTagProps) => {
-    const { label, closable, onClose } = tagProps;
-
-    return (
-      <ConfigProvider
-        theme={{
-          token: {
-            colorFillQuaternary: '#003A8C',
-            colorPrimary: 'white',
-            lineHeightSM: 3,
-            paddingXXS: 10,
-          },
-        }}
-      >
-        <Tag
-          className="font-bold"
-          closable={closable}
-          closeIcon={<CloseOutlined className="text-primary-3" />}
-          onClose={onClose}
-          style={{ margin: '0.125rem 0.125rem 0.125rem auto' }}
-        >
-          {label}
-        </Tag>
-      </ConfigProvider>
-    );
-  };
-
   const search = () => (
-    <Search
-      colorBgContainer="#002766"
-      onClear={onClear}
-      handleSelect={(value) => {
-        handleCheckedChange(value as string);
-      }}
-      options={
-        options?.map(({ key }) => ({
-          label: key as string,
-          value: key as string,
-        })) ?? []
-      }
-      mode="tags"
-      placeholder={`Search for ${LISTING_CONFIG[filter.field].vocabulary.plural}`}
-      tagRender={tagRender}
-      value={options?.reduce(
-        (acc, { checked, key }) => (checked ? [...acc, key as string] : acc),
-        [] as string[]
-      )}
-    />
+    <SearchFilter data={data} filter={filter} values={values} onChange={onChange} />
   );
 
   // Sort the options array by the checked property using Lodash's sortBy function

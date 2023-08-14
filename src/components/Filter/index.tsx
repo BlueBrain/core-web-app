@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, SetStateAction } from 'react';
+import { ReactElement } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import CheckList, { defaultList } from './CheckList';
@@ -9,21 +9,20 @@ import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import styles from './filters.module.scss';
 
+type ContentProps = {
+  filters: Filter[];
+  setFilters: (filters: Filter[]) => void;
+};
+
 export type FilterGroupProps = {
   items: {
-    content?: ({
-      filters,
-      setFilters,
-    }: {
-      filters: Filter[];
-      setFilters: Dispatch<SetStateAction<Filter[]>>;
-    }) => null | ReactElement;
+    content?: (contentProps: ContentProps) => null | ReactElement;
     display?: boolean;
     label: string;
     toggleFunc?: () => void;
   }[];
   filters: Filter[];
-  setFilters: Dispatch<SetStateAction<Filter[]>>;
+  setFilters: (filters: Filter[]) => void;
 };
 
 function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {

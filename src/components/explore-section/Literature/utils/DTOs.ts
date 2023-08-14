@@ -1,5 +1,5 @@
 import kebabCase from 'lodash/kebabCase';
-import { GenerativeQA, GenerativeQAResponse } from '../types';
+import { GenerativeQA, GenerativeQAResponse } from '@/types/literature';
 
 type GenerativeQADTO = {
   question: string;

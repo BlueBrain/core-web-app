@@ -4,10 +4,10 @@ import { FormEvent, useTransition } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
-import { GenerativeQA } from '../types';
 import { getGenerativeQA } from '../api';
 import { LiteratureValidationError } from '../errors';
 import { scrollToBottom } from '../utils';
+import { GenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
 import { literatureAtom, literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 import sessionAtom from '@/state/session';

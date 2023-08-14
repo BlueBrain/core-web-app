@@ -7,12 +7,13 @@ import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
 
 import { scrollToBottom } from '../utils';
-import { GenerativeQA } from '../types';
 import ArticlesTimeLine from './ArticlesTimeLine';
+import { FilterFns } from './FilterPanel';
+import { GenerativeQA, FilterFieldsType } from '@/types/literature';
 import BrainLight from '@/components/icons/BrainLight';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
-import { literatureResultAtom, useLiteratureAtom } from '@/state/literature';
+import { literatureAtom, literatureResultAtom, useLiteratureAtom } from '@/state/literature';
 
 export type GenerativeQASingleResultProps = Omit<GenerativeQA, 'sources' | 'paragraphs'>;
 
@@ -26,11 +27,21 @@ function GenerativeQASingleResult({
 }: GenerativeQASingleResultProps) {
   const [expandArticles, setExpandArticles] = useState(false);
   const [collpaseQuestion, setCollpaseQuestion] = useState(false);
-  const update = useLiteratureAtom();
   const answerRef = React.useRef<HTMLDivElement>(null);
   const toggleExpandArticles = () => setExpandArticles((state) => !state);
   const toggleCollapseQuestion = () => setCollpaseQuestion((state) => !state);
-  const openFilterPanel = () => update('isFilterPanelOpen', true);
+  const updateLiterature = useLiteratureAtom();
+
+  const { filterValues, selectedQuestionForFilter } = useAtomValue(literatureAtom);
+
+  const filteredArticles =
+    filterValues && selectedQuestionForFilter === id
+      ? articles.filter((article) =>
+          Object.entries(filterValues).every(([filterField, filterValue]) =>
+            FilterFns[filterField as FilterFieldsType](article, filterValue)
+          )
+        )
+      : articles;
 
   const showExtraDetails = Boolean(articles.length);
   let finalAnswer = answer;
@@ -49,6 +60,16 @@ function GenerativeQASingleResult({
       });
     }
   }, [expandArticles]);
+
+  const selectQuestion = () => {
+    const selectingNewQuestion = selectedQuestionForFilter !== id;
+    if (selectingNewQuestion) {
+      updateLiterature('filterValues', null);
+    }
+    updateLiterature('isFilterPanelOpen', true);
+    updateLiterature('selectedQuestionForFilter', id);
+    setExpandArticles(true);
+  };
 
   return (
     <div
@@ -112,7 +133,7 @@ function GenerativeQASingleResult({
             <button
               type="button"
               className="flex items-center gap-2 px-2 py-1 cursor-pointer"
-              onClick={openFilterPanel}
+              onClick={selectQuestion}
             >
               <span className="text-base text-primary-8">Filter</span>
               <span className="px-2 py-1 bg-gray-200 rounded-sm hover:bg-primary-8 group">
@@ -132,7 +153,7 @@ function GenerativeQASingleResult({
             <div className="mt-4 rounded">
               <ArticlesTimeLine
                 {...{
-                  articles,
+                  articles: filteredArticles,
                   collapseAll: expandArticles,
                 }}
               />

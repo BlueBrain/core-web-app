@@ -5,7 +5,13 @@ import { Spin } from 'antd';
 import { loadable } from 'jotai/utils';
 import { useAtom, useAtomValue } from 'jotai';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
-import { Filter, OptionsData, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
+import {
+  Filter,
+  GteLteValue,
+  OptionsData,
+  ValueOrRangeFilter,
+  RangeFilter,
+} from '@/components/Filter/types';
 import {
   CheckList,
   DateRange,
@@ -51,11 +57,23 @@ function createFilterItemComponent(
       );
     }
 
+    const updateFilterValues = (field: string, values: Filter['value']) => {
+      setFilterValues((prevState) => ({
+        ...prevState,
+        [field]: values,
+      }));
+    };
+
     if (aggregations.state !== 'hasData' || !aggregations?.data) return null;
 
     switch (type) {
       case 'dateRange':
-        return <DateRange filter={filter as RangeFilter} setFilterValues={setFilterValues} />;
+        return (
+          <DateRange
+            filter={filter as RangeFilter}
+            onChange={(values: GteLteValue) => updateFilterValues(filter.field, values)}
+          />
+        );
 
       case 'valueRange':
         if (nestedField) {
@@ -69,7 +87,7 @@ function createFilterItemComponent(
           <ValueRange
             filter={filter as RangeFilter}
             aggregation={agg}
-            setFilterValues={setFilterValues}
+            onChange={(values: GteLteValue) => updateFilterValues(filter.field, values)}
           />
         );
       case 'checkListInference':
@@ -78,7 +96,7 @@ function createFilterItemComponent(
             data={aggregations.data as OptionsData}
             filter={filter}
             values={filterValues[filter.field] as string[]}
-            setFilterValues={setFilterValues}
+            onChange={(values: string[]) => updateFilterValues(filter.field, values)}
           >
             {listWithInference}
           </CheckList>
@@ -89,7 +107,7 @@ function createFilterItemComponent(
             data={aggregations.data as OptionsData}
             filter={filter}
             values={filterValues[filter.field] as string[]}
-            setFilterValues={setFilterValues}
+            onChange={(values: string[]) => updateFilterValues(filter.field, values)}
           >
             {defaultList}
           </CheckList>
@@ -100,7 +118,7 @@ function createFilterItemComponent(
           <ValueOrRange
             filter={filter as ValueOrRangeFilter}
             setFilter={(value: ValueOrRangeFilter['value']) =>
-              setFilterValues({ ...filterValues, [filter.field]: value })
+              updateFilterValues(filter.field, value)
             }
           />
         );

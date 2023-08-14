@@ -1,6 +1,6 @@
-import { GenerativeQAResponse, ReturnGetGenerativeQA } from './types';
 import { generativeQADTO } from './utils/DTOs';
 import * as LiteratureErrors from './errors';
+import { GenerativeQAResponse, ReturnGetGenerativeQA } from '@/types/literature';
 import { nexus } from '@/config';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({ question, session }) => {

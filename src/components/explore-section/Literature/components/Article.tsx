@@ -5,7 +5,7 @@ import { Tooltip } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
 import { copyClipboard } from '../utils';
-import type { GArticle } from '../types';
+import type { GArticle } from '@/types/literature';
 import PersonIcon from '@/components/icons/Person';
 import JournalIcon from '@/components/icons/Journal';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
