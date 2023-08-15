@@ -37,6 +37,11 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
+# Add root CA certificate
+COPY root-ca.crt /usr/local/share/ca-certificates/root-ca.crt
+RUN cat /usr/local/share/ca-certificates/root-ca.crt >> /etc/ssl/certs/ca-certificates.crt
+ENV NODE_EXTRA_CA_CERTS /usr/local/share/ca-certificates/root-ca.crt
+
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
