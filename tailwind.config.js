@@ -78,6 +78,30 @@ module.exports = {
         'in-expo': 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
         'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
       },
+      animation: {
+        'slide-out': 'slide-out 2s ease-in-out',
+      },
+      keyframes: {
+        'slide-out': {
+          '0%': {
+            left: 0,
+          },
+          '50%': {
+            left: '300vw',
+            maxHeight: '10rem',
+          },
+          '75%': {
+            left: '300vw',
+            maxHeight: '5rem',
+          },
+          '100%': {
+            left: '300vw',
+            maxHeight: 0,
+            paddingTop: 0,
+            paddingBottom: 0,
+          },
+        },
+      },
     },
   },
   plugins: [],

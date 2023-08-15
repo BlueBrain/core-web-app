@@ -19,7 +19,6 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({ question, session }) => 
     const generativeQAResponse = (await response.json()) as GenerativeQAResponse;
     return generativeQADTO({ question, generativeQAResponse });
   } catch (error: unknown) {
-    console.error('@@getGenerativeQA - error ', error);
     if (error instanceof LiteratureErrors.LiteratureValidationError) {
       throw new LiteratureErrors.LiteratureValidationError(error.detail);
     }

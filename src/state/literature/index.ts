@@ -1,4 +1,4 @@
-import { atom, useSetAtom } from 'jotai';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 import { GenerativeQA, FilterFieldsType, FilterValues } from '@/types/literature';
@@ -12,6 +12,7 @@ export type LiteratureAtom = {
   selectedQuestionForFilter?: string;
   isFilterPanelOpen: boolean;
   filterValues: FilterValues | null;
+  activeQuestionId?: string;
 };
 
 export type LiteratureOptions = keyof LiteratureAtom;
@@ -48,6 +49,22 @@ export function useLiteratureFilter() {
         [field]: values,
       },
     }));
+}
+
+export function useLiteratureResultsAtom() {
+  const [QAs, updateResult] = useAtom(literatureResultAtom);
+  const update = (newValue: GenerativeQA) => {
+    updateResult([...QAs, newValue]);
+  };
+
+  const remove = (id: string) => {
+    const newQAs = QAs.filter((item) => item.id !== id);
+    updateResult(newQAs);
+
+    return newQAs;
+  };
+
+  return { QAs, update, remove };
 }
 
 export { literatureAtom, literatureResultAtom, useLiteratureAtom };
