@@ -31,6 +31,12 @@
   @apply cursor-pointer;
 }
 
+.inferredRow {
+  border-right: 10px blue solid !important;
+  background: grey;
+  @apply cursor-pointer;
+}
+
 .themeBlack {
   @apply bg-black;
 }

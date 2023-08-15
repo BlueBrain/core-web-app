@@ -7,7 +7,8 @@ import { SortState } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
 import sessionAtom from '@/state/session';
-import fetchEsResourcesByType from '@/api/explore-section/resources';
+import { INFERENCE_RES } from '@/api/generalization/inference-res';
+import {fetchEsResourcesByType, fetchInferredResources} from '@/api/explore-section/resources';
 import { resourceBasedInference } from '@/api/generalization';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
@@ -121,6 +122,18 @@ export const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((g
 
   return fetchEsResourcesByType(session.accessToken, query);
 });
+
+export const inferredResourcesQueryResponse = atom<Promise<ExploreSectionResponse> | null>((get) => {
+  const session = get(sessionAtom);
+
+  if (!session) return null;
+
+  return fetchInferredResources(session.accessToken, INFERENCE_RES);
+});
+
+export const inferredDataAtom = atom<Promise<ESResponseRaw[]>>(
+  async (get) => (await get(queryResponseAtom))?.hits ?? []
+);
 
 export const dataAtom = atom<Promise<ESResponseRaw[]>>(
   async (get) => (await get(queryResponseAtom))?.hits ?? []
