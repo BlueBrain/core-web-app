@@ -13,7 +13,7 @@ import { RuleWithOptionsProps } from '@/types/explore-section/kg-inference';
 
 const TYPE = 'https://neuroshapes.org/NeuronMorphology';
 
-export default function MorphologyListingPage({ rulesWithOptions }: RuleWithOptionsProps) {
+export default function MorphologyListingPage({ rulesWithOptions }: { rulesWithOptions: RuleWithOptionsProps}) {
   useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
 
   const setResourceBasedRules = useSetAtom(resourceBasedRulesAtom);
