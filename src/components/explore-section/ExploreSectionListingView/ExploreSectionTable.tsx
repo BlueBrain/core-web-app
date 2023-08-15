@@ -6,7 +6,11 @@ import { Table } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
-import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import {
+  PlusSquareOutlined,
+  MinusSquareOutlined,
+  VerticalAlignMiddleOutlined,
+} from '@ant-design/icons';
 import merge from 'lodash/merge';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
@@ -77,6 +81,14 @@ function CustomCell({ children, style, ...props }: { children: ReactNode; style:
   );
 }
 
+function ExpandIcon({ expanded }: { expanded: boolean }) {
+  return expanded ? <MinusSquareOutlined /> : <PlusSquareOutlined />;
+}
+
+function ExpandedRowRender({ resource }: { resource: ESResponseRaw }) {
+  return resource?.inferred ? false : <GeneralizationRules resourceId={resource._source['@id']} />;
+}
+
 export default function ExploreSectionTable({
   data,
   columns,
@@ -122,10 +134,6 @@ export default function ExploreSectionTable({
     return <div>Something went wrong</div>;
   }
 
-  const expandedRowRender = (resource: ESResponseRaw) => (
-    <GeneralizationRules resourceId={resource._source['@id']} />
-  );
-
   const rowClassName = (record: ESResponseRaw) =>
     record?.inferred ? styles.inferredRow : styles.tableRow;
 
@@ -159,7 +167,12 @@ export default function ExploreSectionTable({
             cell: CustomCell,
           },
         }}
-        expandable={{ expandedRowRender }}
+        expandable={{
+          expandedRowRender: ExpandedRowRender,
+          expandIconColumnIndex: columns.length + 1,
+          rowExpandable: (resource: ESResponseRaw) => !resource?.inferred,
+          expandIcon: ExpandIcon,
+        }}
       />
       {session && selectedRows.length > 0 && (
         <div className="sticky bottom-0 flex justify-end">
