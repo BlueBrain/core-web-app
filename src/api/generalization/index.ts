@@ -14,7 +14,6 @@ export function fetchRules(session: Session): Promise<RuleOuput[]> {
   return result;
 }
 
-
 export function resourceBasedInference(session: Session, requestBody: any): Promise<any> {
   const result = fetch(`${BASE_URL}/infer`, {
     method: 'POST',
@@ -22,6 +21,6 @@ export function resourceBasedInference(session: Session, requestBody: any): Prom
     body: JSON.stringify(requestBody), // Add an empty JSON object as the request body
   }).then((response) => response.json());
 
-  console.log("RAN THE RESOURCE BASED INFERENCE REQUEST AND HERE IS RESULT", result);
+  console.log('RAN THE RESOURCE BASED INFERENCE REQUEST AND HERE IS RESULT', result);
   return result;
 }

@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import fetchEsResourcesByType from '@/api/explore-section/resources';
+import { fetchEsResourcesByType } from '@/api/explore-section/resources';
 import fetchDataQuery from '@/queries/explore-section/data';
 import sessionAtom from '@/state/session';
 

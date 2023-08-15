@@ -32,8 +32,9 @@
 }
 
 .inferredRow {
-  border-right: 10px blue solid !important;
-  background: grey;
+  > td:last-child {
+    @apply border-r-8 border-primary-5;
+  }
   @apply cursor-pointer;
 }
 

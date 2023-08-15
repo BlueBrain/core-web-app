@@ -8,7 +8,7 @@ import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
 import sessionAtom from '@/state/session';
 import { INFERENCE_RES } from '@/api/generalization/inference-res';
-import {fetchEsResourcesByType, fetchInferredResources} from '@/api/explore-section/resources';
+import { fetchEsResourcesByType, fetchInferredResources } from '@/api/explore-section/resources';
 import { resourceBasedInference } from '@/api/generalization';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
@@ -123,16 +123,18 @@ export const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((g
   return fetchEsResourcesByType(session.accessToken, query);
 });
 
-export const inferredResourcesQueryResponse = atom<Promise<ExploreSectionResponse> | null>((get) => {
-  const session = get(sessionAtom);
+export const inferredResourcesQueryResponse = atom<Promise<ExploreSectionResponse> | null>(
+  (get) => {
+    const session = get(sessionAtom);
 
-  if (!session) return null;
+    if (!session) return null;
 
-  return fetchInferredResources(session.accessToken, INFERENCE_RES);
-});
+    return fetchInferredResources(session.accessToken, INFERENCE_RES);
+  }
+);
 
 export const inferredDataAtom = atom<Promise<ESResponseRaw[]>>(
-  async (get) => (await get(queryResponseAtom))?.hits ?? []
+  async (get) => (await get(inferredResourcesQueryResponse))?.hits ?? []
 );
 
 export const dataAtom = atom<Promise<ESResponseRaw[]>>(
@@ -158,14 +160,14 @@ export const resourceBasedRequestAtom = atom({});
 export const resourceBasedResponseAtom = atom(async (get) => {
   const requestObjects = get(resourceBasedRequestAtom);
   const session = get(sessionAtom);
-  
-  if(isEmpty(requestObjects) || !session) return null;
-  
-  const requestKeys = Object.keys(requestObjects);  
+
+  if (isEmpty(requestObjects) || !session) return null;
+
+  const requestKeys = Object.keys(requestObjects);
   const inferencePromises: Promise<any>[] = [];
-  
+
   requestKeys.forEach((x) => {
-    inferencePromises.push(resourceBasedInference(session, requestObjects[x]))
+    inferencePromises.push(resourceBasedInference(session, requestObjects[x]));
   });
 
   const results = await Promise.all(inferencePromises);

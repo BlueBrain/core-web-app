@@ -3,11 +3,11 @@
 import { MouseEvent, useState, ReactNode, CSSProperties, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
-import flatMap from 'lodash/flatMap';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import merge from 'lodash/merge';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
@@ -16,18 +16,16 @@ import { ESResponseRaw } from '@/types/explore-section/resources';
 import fetchArchive from '@/api/archive';
 import Spinner from '@/components/Spinner';
 import { classNames } from '@/util/utils';
-import { INFERENCE_RES } from '@/api/generalization/inference-res';
 import styles from '@/app/explore/explore.module.scss';
-
-const inferenceResourceIds: string[] = flatMap(INFERENCE_RES, 'results').map((res) => res.id);
 
 type ExploreSectionTableProps = {
   data: Loadable<ESResponseRaw[] | undefined>;
   columns: ColumnProps<any>[];
   enableDownload?: boolean;
+  inferredData?: Loadable<ESResponseRaw[] | undefined>;
 };
 
-function CustomTH ({
+function CustomTH({
   children,
   style,
   onClick,
@@ -48,11 +46,11 @@ function CustomTH ({
 
   return handleResizing ? (
     <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
-      <div className='flex'>
+      <div className="flex">
         <button
           className={classNames('flex items-top', styles.alignmentHack)}
           onClick={onClick}
-          type='button'
+          type="button"
         >
           {children}
         </button>
@@ -66,7 +64,7 @@ function CustomTH ({
   );
 }
 
-function CustomCell ({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
+function CustomCell({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
   const modifiedStyle = {
     ...style,
     backgroundColor: 'white',
@@ -79,10 +77,11 @@ function CustomCell ({ children, style, ...props }: { children: ReactNode; style
   );
 }
 
-export default function ExploreSectionTable ({
+export default function ExploreSectionTable({
   data,
   columns,
   enableDownload,
+  inferredData,
 }: ExploreSectionTableProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -90,16 +89,19 @@ export default function ExploreSectionTable ({
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>(
-    data.state === 'hasData' ? data.data : undefined
+    inferredData?.state === 'hasData' ? inferredData?.data : undefined
   );
 
   const session = useAtomValue(sessionAtom);
 
   useEffect(() => {
     if (data.state === 'hasData') {
+      if (inferredData && inferredData.state === 'hasData') {
+        setDataSource(merge(data.data, inferredData.data));
+      }
       setDataSource(data.data);
     }
-  }, [data]);
+  }, [data, inferredData]);
 
   const clearSelectedRows = () => {
     setFetching(false);
@@ -124,17 +126,8 @@ export default function ExploreSectionTable ({
     <GeneralizationRules resourceId={resource._source['@id']} />
   );
 
-  const rowClassName = (record: any) => {
-    const isHighlighted = inferenceResourceIds.includes(record._id);
-    if (isHighlighted)
-      console.log(
-        'row class name func, record, isHighlighted',
-        record,
-        isHighlighted,
-        styles.inferredRow
-      );
-    return isHighlighted ? styles.inferredRow : styles.tableRow;
-  };
+  const rowClassName = (record: ESResponseRaw) =>
+    record?.inferred ? styles.inferredRow : styles.tableRow;
 
   return (
     <>
@@ -169,9 +162,9 @@ export default function ExploreSectionTable ({
         expandable={{ expandedRowRender }}
       />
       {session && selectedRows.length > 0 && (
-        <div className='sticky bottom-0 flex justify-end'>
+        <div className="sticky bottom-0 flex justify-end">
           <button
-            className='bg-primary-8 flex gap-2 items-center justify-between font-bold px-7 py-4 rounded-none text-white'
+            className="bg-primary-8 flex gap-2 items-center justify-between font-bold px-7 py-4 rounded-none text-white"
             onClick={() => {
               setFetching(true);
 
@@ -181,12 +174,12 @@ export default function ExploreSectionTable ({
                 clearSelectedRows
               );
             }}
-            type='button'
+            type="button"
           >
             <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
               selectedRows.length
             })`}</span>
-            {fetching && <Spinner className='h-6 w-6' />}
+            {fetching && <Spinner className="h-6 w-6" />}
           </button>
         </div>
       )}

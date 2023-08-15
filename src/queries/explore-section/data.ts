@@ -4,7 +4,7 @@ import { SortState } from '@/types/explore-section/application';
 import buildFilters from '@/queries/explore-section/filters';
 import buildAggs from '@/queries/explore-section/aggs';
 
-export default function fetchDataQuery (
+export default function fetchDataQuery(
   size: number,
   currentPage: number,
   filters: Filter[],
@@ -22,6 +22,7 @@ export default function fetchDataQuery (
     sort: sortQuery,
     from: (currentPage - 1) * size,
     track_total_hits: true,
-    query: filtersQ, ...aggsQ,
+    query: filtersQ,
+    ...aggsQ,
   };
 }

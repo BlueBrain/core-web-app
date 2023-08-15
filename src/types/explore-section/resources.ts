@@ -89,6 +89,7 @@ export interface ESResponseRaw {
   _index: string;
   _source: Source;
   _type: string;
+  inferred?: boolean;
 }
 
 export interface Source extends OptionalExploreSectionFields {

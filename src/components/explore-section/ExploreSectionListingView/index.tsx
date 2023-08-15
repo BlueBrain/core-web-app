@@ -18,6 +18,7 @@ import {
   dataAtom,
   filtersAtom,
   totalAtom,
+  inferredDataAtom,
 } from '@/state/explore-section/list-view-atoms';
 
 function FilterBtn({ onClick }: HTMLProps<HTMLButtonElement>) {
@@ -98,6 +99,7 @@ function ExploreSectionListingView({ title, children }: { title: string; childre
 }
 
 const dataLoadable = loadable(dataAtom);
+const inferredDataLoadable = loadable(inferredDataAtom);
 
 export default function DefaultListView({
   title,
@@ -118,6 +120,7 @@ export default function DefaultListView({
 
   const activeColumns = useAtomValue(activeColumnsAtom);
   const data = useAtomValue(dataLoadable);
+  const inferredData = useAtomValue(inferredDataLoadable);
 
   return (
     <ExploreSectionListingView title={title}>
@@ -125,6 +128,7 @@ export default function DefaultListView({
         columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
         enableDownload={enableDownload}
         data={data}
+        inferredData={inferredData}
       />
     </ExploreSectionListingView>
   );

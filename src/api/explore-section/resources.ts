@@ -21,7 +21,7 @@ export async function fetchEsResourcesByType(accessToken: string, dataQuery: obj
     }));
 }
 
-export async function fetchInferredResources (accessToken: string, inferenceResources?: object[]) {
+export async function fetchInferredResources(accessToken: string, inferenceResources?: object[]) {
   if (!accessToken) throw new Error('Access token should be defined');
 
   const inferenceResourceIds = flatMap(inferenceResources, 'results').map((res) => res.id);
@@ -38,9 +38,9 @@ export async function fetchInferredResources (accessToken: string, inferenceReso
   })
     .then((response) => response.json())
     .then<ExploreSectionResponse>((data) => ({
-      hits: map(data?.hits?.hits, hit=> ({...hit, inferred: true})),
+      hits: map(data?.hits?.hits, (hit) => ({ ...hit, inferred: true })),
       total: data?.hits?.total,
       aggs: data.aggregations,
       inferred: true,
     }));
-};
+}
