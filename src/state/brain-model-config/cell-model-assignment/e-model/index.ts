@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 
 import {
-  EModel,
+  EModelMenuItem,
   ExamplarMorphologyDataType,
   ExperimentalTracesDataType,
   FeatureParameterGroup,
@@ -14,7 +14,7 @@ import {
   mockSimulationParameterList,
 } from '@/constants/cell-model-assignment/e-model';
 
-export const selectedEModelAtom = atom<EModel | null>(null);
+export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
 export const eModelRemoteParamsLoadedAtom = atom(false);
 

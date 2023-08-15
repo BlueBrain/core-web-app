@@ -543,8 +543,13 @@ export interface WorkflowExecution extends Entity {
 }
 
 export interface ContributionEntity {
-  '@type': string;
+  '@type': 'Contribution';
   agent: AgentOrIsPartOfOrLicense;
+  hadRole?: {
+    '@id': string;
+    label: string;
+    prefLabel: string;
+  };
 }
 
 export interface AgentOrIsPartOfOrLicense {
