@@ -11,12 +11,12 @@ import {
 import useListPage from '@/hooks/useListPage';
 import { RuleWithOptionsProps } from '@/types/explore-section/kg-inference';
 
-const TYPE = 'https://neuroshapes.org/NeuronMorphology';
-
 export default function MorphologyListingPage({
   rulesWithOptions,
+  TYPE
 }: {
   rulesWithOptions: RuleWithOptionsProps;
+  TYPE: string,
 }) {
   useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
 

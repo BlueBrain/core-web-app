@@ -4,17 +4,19 @@ import { RuleOuput } from '@/types/explore-section/kg-inference';
 
 const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
 
-export function fetchRules(session: Session): Promise<RuleOuput[]> {
+export function fetchRules (session: Session, TYPE: string): Promise<RuleOuput[]> {
   const result = fetch(`${BASE_URL}/rules`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
-    body: JSON.stringify({}), // Add an empty JSON object as the request body
+    body: JSON.stringify({
+      resourceTypes: [TYPE],
+    }),
   }).then((response) => response.json());
 
   return result;
 }
 
-export function resourceBasedInference(session: Session, requestBody: any): Promise<any> {
+export function resourceBasedInference (session: Session, requestBody: any): Promise<any> {
   const result = fetch(`${BASE_URL}/infer`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),

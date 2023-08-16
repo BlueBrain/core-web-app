@@ -11,6 +11,8 @@ import {
   PayLoadValues,
 } from '@/types/explore-section/kg-inference';
 
+const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+
 // Function to generate the initial state for a given rule and inference options
 function generateInitialState(inferenceOptions: PayLoadValues): InferenceOptionsState {
   const initialState: InferenceOptionsState = {};
@@ -25,7 +27,7 @@ export default async function MorphologyListingPage() {
 
   if (!session) return null;
 
-  const rules = await fetchRules(session);
+  const rules = await fetchRules(session, TYPE);
 
   const rulesWithOptions: RuleWithOptionsProps = {};
 
@@ -42,6 +44,6 @@ export default async function MorphologyListingPage() {
     if (typeof inferenceOptions === 'object')
       rulesWithOptions[rule.id] = generateInitialState(inferenceOptions);
   });
-
-  return <Wrapper rulesWithOptions={rulesWithOptions} />;
+  
+  return <Wrapper rulesWithOptions={rulesWithOptions} TYPE={TYPE} />;
 }
