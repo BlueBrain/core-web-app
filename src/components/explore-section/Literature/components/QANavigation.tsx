@@ -80,7 +80,6 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
 
 function QAHistoryNavigation() {
   const pathname = usePathname();
-
   const QAs = useAtomValue(literatureResultAtom);
   const update = useLiteratureAtom();
   const showNavigation = QAs.length > 1;
@@ -112,8 +111,8 @@ function QAHistoryNavigation() {
       ref={qaNavigationRef}
       id="gqa-navigation"
       className={classNames(
-        'flex flex-col h-full py-10 overflow-x-hidden no-scrollbar scroll-smooth',
-        isBuildSection ? '-ml-10' : ''
+        'flex flex-col py-10 overflow-x-hidden no-scrollbar scroll-smooth',
+        isBuildSection ? '-ml-10 h-[calc(100%-160px)]' : 'h-full'
       )}
     >
       {QAs.map((qa, index) => (
