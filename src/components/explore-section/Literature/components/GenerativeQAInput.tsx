@@ -1,15 +1,14 @@
 'use client';
 
-import { FormEvent, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 
-import { getGenerativeQA } from '../api';
+import { getGenerativeQAAction } from '../actions';
 import { LiteratureValidationError } from '../errors';
 import { GenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
 import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
-import sessionAtom from '@/state/session';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -33,7 +32,6 @@ function GenerativeQAInputBar() {
   const { query } = useAtomValue(literatureAtom);
   const { update: updateResults, QAs } = useLiteratureResultsAtom();
   const [isGQAPending, startGenerativeQATransition] = useTransition();
-  const session = useAtomValue(sessionAtom);
 
   const isChatBarMustSlideInDown = Boolean(QAs.length);
   const onChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
@@ -47,15 +45,6 @@ function GenerativeQAInputBar() {
       updateResults(generativeQA);
     }
     update('query', '');
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    startGenerativeQATransition(async () => {
-      const question = event.currentTarget['gqa-question'].value as string;
-      const generativeQA = await getGenerativeQA({ question, session });
-      onGenerativeQAFinished(generativeQA);
-    });
   };
 
   return (
@@ -75,7 +64,12 @@ function GenerativeQAInputBar() {
             ? 'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
             : ''
         )}
-        onSubmit={handleSubmit}
+        action={(data: FormData) => {
+          startGenerativeQATransition(async () => {
+            const result = await getGenerativeQAAction(data);
+            onGenerativeQAFinished(result);
+          });
+        }}
       >
         <div
           className={classNames(
