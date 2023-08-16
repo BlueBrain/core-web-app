@@ -96,9 +96,9 @@ export default function ExploreSectionTable({
 
   useEffect(() => {
     if (data.state === 'hasData') {
-      if (inferredData && inferredData.state === 'hasData') {
-        setDataSource(merge(data.data, inferredData.data));
-      }
+      // if (inferredData && inferredData.state === 'hasData') {
+      //   setDataSource(merge(data.data, inferredData.data));
+      // }
       setDataSource(data.data);
     }
   }, [data, inferredData]);

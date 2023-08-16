@@ -105,6 +105,7 @@ export default function buildFilters(type: string, filters: Filter[], searchStri
     filtersQuery.minimumShouldMatch(1);
   }
   filters.forEach((filter: Filter) => {
+    console.log("FILTER BUILDER LOOP OF FILTERS", filter)
     const esBuilder = getFilterESBuilder(filter);
 
     if (esBuilder && filterHasValue(filter)) {
