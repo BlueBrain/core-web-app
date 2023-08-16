@@ -14,6 +14,7 @@ import {
   useLiteratureResultsAtom,
 } from '@/state/literature';
 import { GenerativeQA } from '@/types/literature';
+import usePathname from '@/hooks/pathname';
 
 type QAHistoryNavigationItemProps = Pick<GenerativeQA, 'id' | 'question' | 'askedAt'> & {
   index: number;
@@ -78,11 +79,14 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
 }
 
 function QAHistoryNavigation() {
+  const pathname = usePathname();
+
   const QAs = useAtomValue(literatureResultAtom);
   const update = useLiteratureAtom();
   const showNavigation = QAs.length > 1;
   const firstRenderRef = useRef(false);
   const qaNavigationRef = useRef<HTMLElement>(null);
+  const isBuildSection = pathname?.startsWith('/build');
 
   useEffect(() => {
     // set the active question to the last question just in the first reneder
@@ -107,7 +111,10 @@ function QAHistoryNavigation() {
     <nav
       ref={qaNavigationRef}
       id="gqa-navigation"
-      className="flex flex-col h-full py-10 overflow-x-hidden no-scrollbar scroll-smooth"
+      className={classNames(
+        'flex flex-col h-full py-10 overflow-x-hidden no-scrollbar scroll-smooth',
+        isBuildSection ? '-ml-10' : ''
+      )}
     >
       {QAs.map((qa, index) => (
         <QAHistoryNavigationItem

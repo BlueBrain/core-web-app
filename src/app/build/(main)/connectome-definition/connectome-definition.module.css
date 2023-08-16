@@ -13,3 +13,8 @@
     'left-panel matrix-container right-panel'
     '. footer .';
 }
+
+.container.literature {
+  display: flex !important;
+  background-color: white;
+}
