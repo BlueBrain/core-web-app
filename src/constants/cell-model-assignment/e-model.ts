@@ -2,7 +2,6 @@ import {
   ExamplarMorphologyDataType,
   ExperimentalTracesDataType,
   FeatureParameterGroup,
-  SimulationParameter,
 } from '@/types/e-model';
 
 export const mockEModelAssignedMap: Record<string, string> = {
@@ -18,13 +17,6 @@ export const mockEModelAssignedMap: Record<string, string> = {
   'L1_SAC<>bNAC': '',
   'L1_SAC<>cAC': 'cNAC_12345_2023',
   'L1_SAC<>cNAC': '',
-};
-
-export const mockSimulationParameterList: SimulationParameter = {
-  'Temperature (°C)': 36.0,
-  Calcium: 36.0,
-  Ra: 270.0,
-  XXXX: 10,
 };
 
 export const mockFeatureParameters: FeatureParameterGroup = {

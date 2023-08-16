@@ -9,7 +9,7 @@ export interface EModelMenuItem {
   uuid: string;
 }
 
-export type SimulationParameterKeys = 'Temperature (°C)' | 'Ra' | 'Calcium' | 'XXXX';
+export type SimulationParameterKeys = 'Temperature (°C)' | 'Ra' | 'Initial voltage';
 export type SimulationParameter = Record<SimulationParameterKeys, number>;
 
 export type FeaturesCategories = 'Spike shape' | 'Spike event' | 'Voltage';

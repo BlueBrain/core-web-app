@@ -1,7 +1,12 @@
 import { atom } from 'jotai';
 
 import {
+  EModel,
+  EModelConfiguration,
+  EModelConfigurationParameter,
+  EModelConfigurationPayload,
   EModelMenuItem,
+  EModelWorkflow,
   ExamplarMorphologyDataType,
   ExperimentalTracesDataType,
   FeatureParameterGroup,
@@ -11,8 +16,10 @@ import {
   mockExamplarMorphology,
   mockExperimentalTraces,
   mockFeatureParameters,
-  mockSimulationParameterList,
 } from '@/constants/cell-model-assignment/e-model';
+import { fetchJsonFileByUrl, fetchResourceById } from '@/api/nexus';
+import sessionAtom from '@/state/session';
+import { convertRemoteParamsForUI } from '@/services/e-model';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
@@ -20,9 +27,14 @@ export const eModelRemoteParamsLoadedAtom = atom(false);
 
 export const refetchTriggerAtom = atom<{}>({});
 
-export const simulationParametersAtom = atom<Promise<SimulationParameter | null>>(
-  async () => mockSimulationParameterList
-);
+export const simulationParametersAtom = atom<Promise<SimulationParameter | null>>(async (get) => {
+  const remoteParameters = await get(eModelParameterAtom);
+
+  if (!remoteParameters) return null;
+
+  const simParams = convertRemoteParamsForUI(remoteParameters);
+  return simParams;
+});
 
 export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>(
   async () => mockFeatureParameters
@@ -34,4 +46,80 @@ export const examplarMorphologyAtom = atom<Promise<ExamplarMorphologyDataType[] 
 
 export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] | null>>(
   async () => mockExperimentalTraces
+);
+
+// Accessing the project from where the current data of e-model is located
+// TODO: remove this when the data is moved to mmb-point-neuron-framework-model
+const eModelProjConfig = {
+  project: 'mmb-emodels-for-synthesized-neurons',
+};
+
+const eModelIdAtom = atom<Promise<string | null>>(
+  async () => 'https://bbp.epfl.ch/neurosciencegraph/data/ff131327-704b-451e-a412-bef7ccf9daf0'
+);
+
+/* --------------------------------- EModel --------------------------------- */
+
+const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelId = await get(eModelIdAtom);
+
+  if (!session || !eModelId) return null;
+
+  const eModel = await fetchResourceById<EModel>(eModelId, session, eModelProjConfig);
+
+  return eModel.generation.activity.followedWorkflow['@id'];
+});
+
+/* ----------------------------- EModelWorkflow ----------------------------- */
+
+const eModelWorkflowAtom = atom<Promise<EModelWorkflow | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelWorkflowId = await get(eModelWorkflowIdAtom);
+
+  if (!session || !eModelWorkflowId) return null;
+
+  return fetchResourceById<EModelWorkflow>(eModelWorkflowId, session, eModelProjConfig);
+});
+
+/* --------------------------- EModelConfiguration -------------------------- */
+
+const eModelConfigurationIdAtom = atom<Promise<string | null>>(async (get) => {
+  const eModelWorkflow = await get(eModelWorkflowAtom);
+
+  if (!eModelWorkflow) return null;
+
+  const modelConfiguration = eModelWorkflow.hasPart.find(
+    (part) => part['@type'] === 'EModelConfiguration'
+  );
+  if (!modelConfiguration) throw new Error('No EModelConfiguration found on EModelWorkflow');
+
+  return modelConfiguration['@id'];
+});
+
+export const eModelConfigurationAtom = atom<Promise<EModelConfiguration | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelConfigurationId = await get(eModelConfigurationIdAtom);
+
+  if (!session || !eModelConfigurationId) return null;
+
+  const eModelConfiguration = await fetchResourceById<EModelConfiguration>(
+    eModelConfigurationId,
+    session,
+    eModelProjConfig
+  );
+  return eModelConfiguration;
+});
+
+export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelConfiguration = await get(eModelConfigurationAtom);
+
+    if (!session || !eModelConfiguration) return null;
+
+    const url = eModelConfiguration.distribution.contentUrl;
+    const fileContent = await fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
+    return fileContent.parameters;
+  }
 );

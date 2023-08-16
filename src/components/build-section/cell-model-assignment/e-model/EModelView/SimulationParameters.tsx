@@ -5,6 +5,7 @@ import { SimulationParameterKeys } from '@/types/e-model';
 
 export default function SimulationParameters() {
   const simulationParameters = useAtomValue(simulationParametersAtom);
+
   const paramKeys = Object.keys(
     simulationParameters || {}
   ) as SimulationParameterKeys[] satisfies SimulationParameterKeys[];
