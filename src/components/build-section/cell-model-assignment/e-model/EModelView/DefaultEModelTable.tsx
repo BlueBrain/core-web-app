@@ -29,7 +29,7 @@ export default function DefaultEModelTable<T extends SupportedDataTypes>({
         size="small"
         className="mt-6 mb-12"
         dataSource={dataSource}
-        pagination={false}
+        pagination={{ hideOnSinglePage: true }}
         rowKey="@id"
         columns={columns}
       />

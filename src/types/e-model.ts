@@ -48,6 +48,7 @@ export interface ExemplarMorphologyDataType {
 }
 
 export interface ExperimentalTracesDataType {
+  '@id': string;
   cellName: string;
   mType: string;
   eType: string;

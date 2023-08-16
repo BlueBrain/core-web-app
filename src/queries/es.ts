@@ -371,3 +371,12 @@ export const getWorkflowExecutionsQuery = (ids: string[] = []) => ({
   },
   sort: [{ startedAtTime: 'desc' }],
 });
+
+export const getEntityListByIdsQuery = (entityType: string, ids: string[]) => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      must: [{ term: { '@type': entityType } }, { terms: { '@id': ids } }],
+    },
+  },
+});

@@ -4,8 +4,12 @@ import {
   EModelConfigurationMorphology,
   EModelConfigurationParameter,
   ExemplarMorphologyDataType,
+  ExperimentalTracesDataType,
   SimulationParameter,
+  Trace,
 } from '@/types/e-model';
+
+const NOT_AVAILABLE_STR = 'Data not available';
 
 export function convertRemoteParamsForUI(
   remoteParams: EModelConfigurationParameter[]
@@ -28,13 +32,24 @@ export function convertRemoteParamsForUI(
 export function convertMorphologyForUI(
   remoteMorphology: EModelConfigurationMorphology
 ): ExemplarMorphologyDataType {
-  const notAvailableStr = 'Data not available';
   return {
     '@id': crypto.randomUUID(),
     name: remoteMorphology.name,
-    description: notAvailableStr,
-    brainLocation: notAvailableStr,
-    mType: notAvailableStr,
-    contributor: notAvailableStr,
+    description: NOT_AVAILABLE_STR,
+    brainLocation: NOT_AVAILABLE_STR,
+    mType: NOT_AVAILABLE_STR,
+    contributor: NOT_AVAILABLE_STR,
   };
+}
+
+export function convertTracesForUI(traces: Trace[]): ExperimentalTracesDataType[] {
+  return traces.map((trace) => ({
+    '@id': crypto.randomUUID(),
+    cellName: trace.name,
+    mType: NOT_AVAILABLE_STR,
+    eType: NOT_AVAILABLE_STR,
+    description: NOT_AVAILABLE_STR,
+    eCode: NOT_AVAILABLE_STR,
+    subjectSpecies: trace.subject.species.label,
+  }));
 }

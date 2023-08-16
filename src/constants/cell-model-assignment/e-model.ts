@@ -1,4 +1,4 @@
-import { ExperimentalTracesDataType, FeatureParameterGroup } from '@/types/e-model';
+import { FeatureParameterGroup } from '@/types/e-model';
 
 export const mockEModelAssignedMap: Record<string, string> = {
   'L1_DAC<>bNAC': 'cNAC_12345_2023',
@@ -35,22 +35,3 @@ export const mockFeatureParameters: FeatureParameterGroup = {
     { parameterName: 'voltage_deflection_vb_ssse', selected: true },
   ],
 };
-
-export const mockExperimentalTraces: ExperimentalTracesDataType[] = [
-  {
-    cellName: 'Oxtr-T2A-Cre;Ai14-309030.05.02.01',
-    mType: 'L1_NGC-DA',
-    eType: 'cAC',
-    description: 'tincidunt eget nullam non nisi. Adipis...',
-    eCode: '6',
-    subjectSpecies: 'Rattus Norvegicus',
-  },
-  {
-    cellName: 'Oxtr-T2A-Cre;Ai14-309030.05.02.01',
-    mType: 'L1_NGC-DA',
-    eType: 'cAC',
-    description: 'tincidunt eget nullam non nisi. Adipis...',
-    eCode: '6',
-    subjectSpecies: 'Rattus Norvegicus',
-  },
-];

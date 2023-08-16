@@ -244,8 +244,12 @@ export function updateResource(
   }).then((res) => res.json());
 }
 
-export function queryES<T>(query: Record<string, any>, session: Session) {
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
+export function queryES<T>(
+  query: Record<string, any>,
+  session: Session,
+  params?: ComposeUrlParams
+) {
+  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es', ...params });
 
   return fetch(apiUrl, {
     method: 'POST',

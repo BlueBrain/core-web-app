@@ -10,16 +10,20 @@ import {
   EModelWorkflow,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
+  ExtractionTargetsConfiguration,
   FeatureParameterGroup,
   SimulationParameter,
+  Trace,
 } from '@/types/e-model';
-import {
-  mockExperimentalTraces,
-  mockFeatureParameters,
-} from '@/constants/cell-model-assignment/e-model';
-import { fetchJsonFileByUrl, fetchResourceById } from '@/api/nexus';
+import { mockFeatureParameters } from '@/constants/cell-model-assignment/e-model';
+import { fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { convertRemoteParamsForUI, convertMorphologyForUI } from '@/services/e-model';
+import {
+  convertRemoteParamsForUI,
+  convertMorphologyForUI,
+  convertTracesForUI,
+} from '@/services/e-model';
+import { getEntityListByIdsQuery } from '@/queries/es';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
@@ -51,13 +55,31 @@ export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | 
 );
 
 export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] | null>>(
-  async () => mockExperimentalTraces
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelExtractionTargetsConfiguration = await get(
+      eModelExtractionTargetsConfigurationAtom
+    );
+
+    if (!eModelExtractionTargetsConfiguration || !session) return null;
+
+    const traceIds = eModelExtractionTargetsConfiguration.uses.map((trace) => trace['@id']);
+
+    const tracesQuery = getEntityListByIdsQuery('Trace', traceIds);
+    const traces = await queryES<Trace>(tracesQuery, session, eModelTracesProjConfig);
+
+    return convertTracesForUI(traces);
+  }
 );
 
 // Accessing the project from where the current data of e-model is located
 // TODO: remove this when the data is moved to mmb-point-neuron-framework-model
 const eModelProjConfig = {
   project: 'mmb-emodels-for-synthesized-neurons',
+};
+
+const eModelTracesProjConfig = {
+  project: 'lnmce',
 };
 
 const eModelIdAtom = atom<Promise<string | null>>(
@@ -150,3 +172,37 @@ export const eModelMorphologyAtom = atom<Promise<EModelConfigurationMorphology |
     );
   }
 );
+
+/* --------------------- ExtractionTargetsConfiguration --------------------- */
+
+const eModelExtractionTargetsConfigurationIdAtom = atom<Promise<string | null>>(async (get) => {
+  const eModelWorkflow = await get(eModelWorkflowAtom);
+
+  if (!eModelWorkflow) return null;
+
+  const extractionTargetsConfiguration = eModelWorkflow.hasPart.find(
+    (part) => part['@type'] === 'ExtractionTargetsConfiguration'
+  );
+
+  if (!extractionTargetsConfiguration)
+    throw new Error('No ExtractionTargetsConfiguration found on EModelWorkflow');
+
+  return extractionTargetsConfiguration['@id'];
+});
+
+const eModelExtractionTargetsConfigurationAtom = atom<
+  Promise<ExtractionTargetsConfiguration | null>
+>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelExtractionTargetsConfigurationId = await get(
+    eModelExtractionTargetsConfigurationIdAtom
+  );
+
+  if (!session || !eModelExtractionTargetsConfigurationId) return null;
+
+  return fetchResourceById<ExtractionTargetsConfiguration>(
+    eModelExtractionTargetsConfigurationId,
+    session,
+    eModelProjConfig
+  );
+});
