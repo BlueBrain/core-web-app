@@ -1,8 +1,4 @@
-import {
-  ExamplarMorphologyDataType,
-  ExperimentalTracesDataType,
-  FeatureParameterGroup,
-} from '@/types/e-model';
+import { ExperimentalTracesDataType, FeatureParameterGroup } from '@/types/e-model';
 
 export const mockEModelAssignedMap: Record<string, string> = {
   'L1_DAC<>bNAC': 'cNAC_12345_2023',
@@ -39,16 +35,6 @@ export const mockFeatureParameters: FeatureParameterGroup = {
     { parameterName: 'voltage_deflection_vb_ssse', selected: true },
   ],
 };
-
-export const mockExamplarMorphology: ExamplarMorphologyDataType[] = [
-  {
-    name: 'Oxtr-T2A-Cre;Ai14-309030.05.02.01',
-    description: 'Odio pellentesque diam volutpat commodo...',
-    brainLocation: 'Anteromedial visual area, layer 4',
-    mType: 'Rt_RC',
-    contributor: 'Allen Institute for Brain Science',
-  },
-];
 
 export const mockExperimentalTraces: ExperimentalTracesDataType[] = [
   {

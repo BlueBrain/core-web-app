@@ -1,7 +1,7 @@
 import { ConfigProvider, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
-import { ExamplarMorphologyDataType, ExperimentalTracesDataType } from '@/types/e-model';
+import { ExemplarMorphologyDataType, ExperimentalTracesDataType } from '@/types/e-model';
 
 const theme = {
   components: {
@@ -12,7 +12,7 @@ const theme = {
   },
 };
 
-type SupportedDataTypes = ExamplarMorphologyDataType | ExperimentalTracesDataType;
+type SupportedDataTypes = ExemplarMorphologyDataType | ExperimentalTracesDataType;
 
 type Props<T> = {
   dataSource: T[];

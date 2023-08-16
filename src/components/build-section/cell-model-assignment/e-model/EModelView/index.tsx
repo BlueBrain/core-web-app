@@ -1,7 +1,7 @@
 import { Divider } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import ExamplarMorphology from './ExamplarMorphology';
+import ExemplarMorphology from './ExemplarMorphology';
 import ExperimentalTraces from './ExperimentalTraces';
 import FeatureSelectionContainer from './FeatureSelectionContainer';
 import Mechanism from './Mechanism';
@@ -25,7 +25,7 @@ export default function EModelView() {
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
-          <ExamplarMorphology />
+          <ExemplarMorphology />
         </DefaultLoadingSuspense>
       </ErrorBoundary>
 

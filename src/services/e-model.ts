@@ -1,6 +1,11 @@
 import lodashFind from 'lodash/find';
 
-import { EModelConfigurationParameter, SimulationParameter } from '@/types/e-model';
+import {
+  EModelConfigurationMorphology,
+  EModelConfigurationParameter,
+  ExemplarMorphologyDataType,
+  SimulationParameter,
+} from '@/types/e-model';
 
 export function convertRemoteParamsForUI(
   remoteParams: EModelConfigurationParameter[]
@@ -17,5 +22,19 @@ export function convertRemoteParamsForUI(
     'Temperature (°C)': temp as number,
     Ra: ra as number,
     'Initial voltage': voltage as number,
+  };
+}
+
+export function convertMorphologyForUI(
+  remoteMorphology: EModelConfigurationMorphology
+): ExemplarMorphologyDataType {
+  const notAvailableStr = 'Data not available';
+  return {
+    '@id': crypto.randomUUID(),
+    name: remoteMorphology.name,
+    description: notAvailableStr,
+    brainLocation: notAvailableStr,
+    mType: notAvailableStr,
+    contributor: notAvailableStr,
   };
 }

@@ -3,23 +3,23 @@ import { atom } from 'jotai';
 import {
   EModel,
   EModelConfiguration,
+  EModelConfigurationMorphology,
   EModelConfigurationParameter,
   EModelConfigurationPayload,
   EModelMenuItem,
   EModelWorkflow,
-  ExamplarMorphologyDataType,
+  ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   FeatureParameterGroup,
   SimulationParameter,
 } from '@/types/e-model';
 import {
-  mockExamplarMorphology,
   mockExperimentalTraces,
   mockFeatureParameters,
 } from '@/constants/cell-model-assignment/e-model';
 import { fetchJsonFileByUrl, fetchResourceById } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { convertRemoteParamsForUI } from '@/services/e-model';
+import { convertRemoteParamsForUI, convertMorphologyForUI } from '@/services/e-model';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
@@ -40,8 +40,14 @@ export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>
   async () => mockFeatureParameters
 );
 
-export const examplarMorphologyAtom = atom<Promise<ExamplarMorphologyDataType[] | null>>(
-  async () => mockExamplarMorphology
+export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | null>>(
+  async (get) => {
+    const morphology = await get(eModelMorphologyAtom);
+
+    if (!morphology) return null;
+
+    return convertMorphologyForUI(morphology);
+  }
 );
 
 export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] | null>>(
@@ -121,5 +127,26 @@ export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] |
     const url = eModelConfiguration.distribution.contentUrl;
     const fileContent = await fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
     return fileContent.parameters;
+  }
+);
+
+export const eModelMorphologyAtom = atom<Promise<EModelConfigurationMorphology | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelConfiguration = await get(eModelConfigurationAtom);
+
+    if (!session || !eModelConfiguration) return null;
+
+    const morphologyId = eModelConfiguration.uses.find(
+      (usage) => usage['@type'] === 'NeuronMorphology'
+    )?.['@id'];
+
+    if (!morphologyId) return null;
+
+    return fetchResourceById<EModelConfigurationMorphology>(
+      morphologyId,
+      session,
+      eModelProjConfig
+    );
   }
 );

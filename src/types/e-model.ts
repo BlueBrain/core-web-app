@@ -38,7 +38,8 @@ export type FeatureParameterItem = {
 };
 export type FeatureParameterGroup = Record<FeaturesCategories, FeatureParameterItem[]>;
 
-export interface ExamplarMorphologyDataType {
+export interface ExemplarMorphologyDataType {
+  '@id': string;
   name: string;
   description: string;
   brainLocation: string;

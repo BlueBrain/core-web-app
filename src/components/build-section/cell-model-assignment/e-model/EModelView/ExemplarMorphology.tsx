@@ -2,12 +2,12 @@ import { useAtomValue } from 'jotai';
 import { ColumnsType } from 'antd/es/table';
 
 import DefaultEModelTable from './DefaultEModelTable';
-import { examplarMorphologyAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
-import { ExamplarMorphologyDataType } from '@/types/e-model';
+import { exemplarMorphologyAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { ExemplarMorphologyDataType } from '@/types/e-model';
 
 const nameRenderFn = (name: string) => <div className="font-bold">{name}</div>;
 
-const columns: ColumnsType<ExamplarMorphologyDataType> = [
+const columns: ColumnsType<ExemplarMorphologyDataType> = [
   {
     title: 'NAME',
     dataIndex: 'name',
@@ -36,14 +36,14 @@ const columns: ColumnsType<ExamplarMorphologyDataType> = [
   },
 ];
 
-export default function ExamplarMorphology() {
-  const examplarMorphology = useAtomValue(examplarMorphologyAtom);
+export default function ExemplarMorphology() {
+  const exemplarMorphology = useAtomValue(exemplarMorphologyAtom);
 
   return (
     <>
-      <div className="text-primary-8 text-2xl font-bold">Examplar morphology</div>
-      {examplarMorphology && (
-        <DefaultEModelTable dataSource={examplarMorphology} columns={columns} />
+      <div className="text-primary-8 text-2xl font-bold">Exemplar morphology</div>
+      {exemplarMorphology && (
+        <DefaultEModelTable dataSource={[exemplarMorphology]} columns={columns} />
       )}
     </>
   );
