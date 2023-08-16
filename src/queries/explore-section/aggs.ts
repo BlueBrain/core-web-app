@@ -3,13 +3,22 @@ import { Filter } from '@/components/Filter/types';
 import { getESTerm } from '@/queries/explore-section/utils';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
-export function getAggESBuilder(filter: Filter): Aggregation | undefined {
+export function getAggESBuilder (filter: Filter): Aggregation | undefined {
   const { aggregationType } = filter;
   const esTerm = getESTerm(filter.field);
   const { nestedField } = LISTING_CONFIG[filter.field];
+  const { compositeField } = LISTING_CONFIG[filter.field];
 
   switch (aggregationType) {
     case 'buckets':
+      if (compositeField) {
+        return esb
+          .compositeAggregation(filter.field)
+          .sources(
+            esb.CompositeAggregation.termsValuesSource('brainRegion.identifier.keyword', 'brainRegion.identifier.keyword'),
+            esb.CompositeAggregation.termsValuesSource(esTerm, 'brainRegion.label.keyword')
+          )
+      }
       return esb.termsAggregation(filter.field, esTerm).size(100);
     case 'stats':
       if (nestedField) {
@@ -31,7 +40,7 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
   }
 }
 
-export default function buildAggs(filters: Filter[]) {
+export default function buildAggs (filters: Filter[]) {
   const aggsQuery = esb.requestBodySearch();
   filters.forEach((filter: Filter) => {
     const esBuilder = getAggESBuilder(filter);

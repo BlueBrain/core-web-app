@@ -25,6 +25,7 @@ type ListingConfigProps = {
       plural: string;
       singular: string;
     };
+    compositeField?: boolean;
   };
 };
 
@@ -44,6 +45,7 @@ const LISTING_CONFIG: ListingConfigProps = {
       plural: 'Brain Regions',
       singular: 'Brain Region',
     },
+    compositeField: true
   },
   eType: {
     term: 'eType.label.keyword',

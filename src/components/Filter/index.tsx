@@ -26,7 +26,6 @@ export type FilterGroupProps = {
 };
 
 function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
-  console.log("FILTER GROUP items, filters", items, filters)
   return (
     <Accordion.Root
       className="divide-y divide-primary-7 flex flex-col space-y-5"

@@ -16,7 +16,8 @@ export default function fetchDataQuery(
 
   const filtersQ = buildFilters(type, filters, searchString).toJSON();
   const aggsQ = buildAggs(filters).toJSON();
-  console.log(filtersQ);
+
+  console.log("AGGS Q", aggsQ)
   return {
     size,
     sort: sortQuery,
