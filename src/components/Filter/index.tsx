@@ -42,7 +42,7 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
         return content ? (
           <Accordion.Item className="pt-5" value={label} key={label}>
             <div className="flex gap-3 items-center ">
-              {displayTrigger}
+              {toggleFunc && displayTrigger}
               <Accordion.Trigger
                 className={classNames(
                   styles.accordionTrigger,

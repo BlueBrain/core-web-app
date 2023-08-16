@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
+import isNil from 'lodash/isNil';
 import { copyClipboard } from '../utils';
 import type { GArticle } from '@/types/literature';
 import PersonIcon from '@/components/icons/Person';
@@ -11,13 +12,24 @@ import JournalIcon from '@/components/icons/Journal';
 import { generateId } from '@/components/experiment-designer/GenericParamWrapper';
 import QuoteOutline from '@/components/icons/QuoteOutline';
 import CopyIcon from '@/components/icons/CopyIcon';
-import { classNames } from '@/util/utils';
+import { classNames, formatDate } from '@/util/utils';
+import CalendarIcon from '@/components/icons/Calendar';
+import CitationIcon from '@/components/icons/CitationIcon';
 
-function ArticlePreview({ title, icon }: { title: string; icon: JSX.Element }) {
+function ArticlePreview({
+  title,
+  icon,
+  altText,
+}: {
+  title: string;
+  icon: JSX.Element;
+  altText?: string;
+}) {
   return (
     <button
       type="button"
       className="flex items-center justify-center gap-1 text-base font-normal text-primary-8"
+      title={altText ?? title}
     >
       {icon}
       {title}
@@ -57,6 +69,8 @@ export default function Article({
   journal,
   abstract,
   collapseAll,
+  publicationDate,
+  citationsCount,
 }: ArticleProps) {
   const [readmore, setReadmore] = useState(() => collapseAll);
   const [DOIcopied, setDOIcopied] = useState(false);
@@ -76,7 +90,7 @@ export default function Article({
   }, [collapseAll]);
 
   return (
-    <li className="mb-10 ml-4">
+    <li className="mb-10 ml-4" data-testid="article-item">
       <div className="absolute flex items-center justify-center w-2 h-2 mt-1 rounded-full bg-primary-8 first:mt-0 -left-1" />
       <div className="mb-1 -mt-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
         <div className="flex items-start justify-between">
@@ -123,7 +137,17 @@ export default function Article({
             <ArticlePreview title={authors.at(0)!} icon={<PersonIcon />} />
           </div>
         </Tooltip>
-        <ArticlePreview title={journal ?? 'Article Journal'} icon={<JournalIcon />} />
+        {journal && <ArticlePreview title={journal} icon={<JournalIcon />} altText="Journal" />}
+        {publicationDate && (
+          <ArticlePreview title={formatDate(publicationDate)} icon={<CalendarIcon />} />
+        )}
+        {!isNil(citationsCount) && (
+          <ArticlePreview
+            title={`${citationsCount} times`}
+            icon={<CitationIcon />}
+            altText={`Number of citations: ${citationsCount}`}
+          />
+        )}
       </div>
       <article className="bg-[#F5F5F5] mb-4 p-7">
         <div

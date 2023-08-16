@@ -8,7 +8,8 @@ import { format } from 'date-fns';
 
 import ArticlesTimeLine from './ArticlesTimeLine';
 import { FilterFns } from './FilterPanel';
-import { GenerativeQA, FilterFieldsType } from '@/types/literature';
+import ArticleSorter from './ArticleSorter';
+import { GenerativeQA, FilterFieldsType, SortFn } from '@/types/literature';
 import BrainLight from '@/components/icons/BrainLight';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
@@ -26,6 +27,8 @@ function GenerativeQASingleResult({
 }: GenerativeQASingleResultProps) {
   const [expandArticles, setExpandArticles] = useState(false);
   const [collpaseQuestion, setCollpaseQuestion] = useState(false);
+  const [sortFunction, setSortFunction] = useState<SortFn | null>(null);
+
   const answerRef = useRef<HTMLDivElement>(null);
   const toggleExpandArticles = () => setExpandArticles((state) => !state);
   const toggleCollapseQuestion = () => setCollpaseQuestion((state) => !state);
@@ -41,6 +44,10 @@ function GenerativeQASingleResult({
           )
         )
       : articles;
+
+  const displayedArticles = sortFunction
+    ? [...filteredArticles].sort(sortFunction)
+    : filteredArticles;
 
   const showExtraDetails = Boolean(articles.length);
   let finalAnswer = answer;
@@ -109,26 +116,35 @@ function GenerativeQASingleResult({
         <div className={`w-full h-px my-6 bg-zinc-300 ${showExtraDetails ? '' : 'hidden'}`} />
         <div className={`w-full ${showExtraDetails ? '' : 'hidden'}`}>
           <div className="inline-flex items-center justify-between w-full gap-y-3">
-            <button
-              type="button"
-              onClick={toggleExpandArticles}
-              className="w-[350px] h-11 px-3 py-3 gap-1.5 bg-blue-50 text-white shadow-sm  rounded-md relative inline-flex justify-between items-center whitespace-nowrap cursor-pointer no-underline leading-tight transition-all duration-200 "
-              aria-controls="collapse-content"
-            >
-              <div className="inline-flex items-center justify-start gap-1">
-                <div className="text-base font-normal leading-snug text-blue-900">Based on</div>
-                <div className="px-1 py-[.2px] bg-blue-900 rounded-[3px] flex-col justify-start items-center inline-flex">
-                  <span className="text-sm font-bold tracking-tight text-blue-50">
-                    {articles.length}
-                  </span>
+            <div className="flex items-center">
+              <button
+                type="button"
+                onClick={toggleExpandArticles}
+                className="w-[350px] h-11 px-3 py-3 gap-1.5 bg-blue-50 text-white shadow-sm  rounded-md relative inline-flex justify-between items-center whitespace-nowrap cursor-pointer no-underline leading-tight transition-all duration-200 "
+                aria-controls="collapse-content"
+                aria-label="expand-articles"
+              >
+                <div className="inline-flex items-center justify-start gap-1">
+                  <div className="text-base font-normal leading-snug text-blue-900">Based on</div>
+                  <div className="px-1 py-[.2px] bg-blue-900 rounded-[3px] flex-col justify-start items-center inline-flex">
+                    <span className="text-sm font-bold tracking-tight text-blue-50">
+                      {articles.length}
+                    </span>
+                  </div>
+                  <div className="text-base font-normal leading-snug text-blue-900">paragraphs</div>
                 </div>
-                <div className="text-base font-normal leading-snug text-blue-900">paragraphs</div>
-              </div>
-              <ChevronIcon
-                fill="#003A8C"
-                className={`${expandArticles ? '-rotate-90' : 'rotate-90'}`}
+                <ChevronIcon
+                  fill="#003A8C"
+                  className={`${expandArticles ? '-rotate-90' : 'rotate-90'}`}
+                />
+              </button>
+
+              <ArticleSorter
+                onChange={(sortFn) => {
+                  setSortFunction(() => sortFn);
+                }}
               />
-            </button>
+            </div>
             <button
               type="button"
               className="flex items-center gap-2 px-2 py-1 cursor-pointer"
@@ -152,7 +168,7 @@ function GenerativeQASingleResult({
             <div className="mt-4 rounded">
               <ArticlesTimeLine
                 {...{
-                  articles: filteredArticles,
+                  articles: displayedArticles,
                   collapseAll: expandArticles,
                 }}
               />

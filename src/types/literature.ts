@@ -29,7 +29,6 @@ export type GenerativeQAMetadata = {
   article_id: string;
   article_title: string;
   article_authors: string[];
-  article_journal: string;
   paragraph: string;
   paragraph_id: string;
   article_doi?: string;
@@ -76,7 +75,14 @@ export const FilterFields = [
   'authors',
 ] as const;
 
+export const SortableFields = ['publicationDate', 'citationsCount', 'impactFactor'] as const;
+
+export type SortDirection = 'asc' | 'desc' | null;
+export type SortFn = (article1: GArticle, article2: GArticle) => number;
+
 export type FilterFieldsType = (typeof FilterFields)[number];
+
+export type SortableFieldsType = (typeof SortableFields)[number];
 
 export type FilterValues = Partial<{ [key in FilterFieldsType]: Filter['value'] }>;
 

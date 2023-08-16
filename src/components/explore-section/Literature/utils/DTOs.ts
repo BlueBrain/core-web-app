@@ -21,7 +21,7 @@ const generativeQADTO = ({ question, generativeQAResponse }: GenerativeQADTO): G
       doi: article.article_doi,
       title: article.article_title,
       authors: article.article_authors,
-      journal: article.article_journal,
+      journal: article.journal,
       section: article.section,
       paragraph: article.paragraph,
       paragraphId: article.paragraph_id,

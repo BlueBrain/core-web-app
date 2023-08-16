@@ -9,7 +9,20 @@ function ArticlesTimeLine({ articles, collapseAll }: GenerativeQAResultsProps) {
   return (
     <ol className="relative border-l border-gray-200 dark:border-gray-700">
       {articles.map(
-        ({ id, title, doi, authors, journal, abstract, paragraph, section, paragraphId }) => (
+        ({
+          id,
+          title,
+          doi,
+          authors,
+          journal,
+          abstract,
+          paragraph,
+          paragraphId,
+          section,
+          publicationDate,
+          impactFactor,
+          citationsCount,
+        }) => (
           <Article
             key={id}
             {...{
@@ -20,9 +33,12 @@ function ArticlesTimeLine({ articles, collapseAll }: GenerativeQAResultsProps) {
               journal,
               abstract,
               paragraph,
+              paragraphId,
               section,
               collapseAll,
-              paragraphId,
+              publicationDate,
+              citationsCount,
+              impactFactor,
             }}
           />
         )
