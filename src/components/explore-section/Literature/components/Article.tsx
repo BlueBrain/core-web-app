@@ -63,7 +63,7 @@ export default function Article({
   const onReadMore = () => setReadmore((state) => !state);
 
   const onCopy = useCallback(() => {
-    copyClipboard(doi);
+    copyClipboard(doi!);
     setDOIcopied(true);
     const timeoutId = setTimeout(() => {
       setDOIcopied(false);
@@ -87,12 +87,14 @@ export default function Article({
             {title}
           </h1>
           <div className="grid grid-flow-col gap-4">
-            <ArticleAction
-              key="copy-doi"
-              onClick={onCopy}
-              title={DOIcopied ? 'copied' : 'Copy DOI'}
-              icon={DOIcopied ? <CheckCircleOutlined className="text-teal-600" /> : <CopyIcon />}
-            />
+            {doi && (
+              <ArticleAction
+                key="copy-doi"
+                onClick={onCopy}
+                title={DOIcopied ? 'copied' : 'Copy DOI'}
+                icon={DOIcopied ? <CheckCircleOutlined className="text-teal-600" /> : <CopyIcon />}
+              />
+            )}
             <ArticleAction key="quote" onClick={() => {}} title="Quote" icon={<QuoteOutline />} />
           </div>
         </div>

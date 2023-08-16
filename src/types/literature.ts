@@ -10,27 +10,36 @@ export type HighlightHit = {
 
 export type GArticle = {
   id: string;
-  doi: string;
+  doi?: string;
   title: string;
   authors: string[];
-  journal: string;
+  journal?: string;
   paragraph: string;
-  section: string;
-  abstract: string | string[];
+  paragraphId: string;
+  section?: string;
+  abstract?: string;
   categories?: string[];
   articleType?: string;
   publicationDate?: string; // format "%Y-%m-%d"
+  citationsCount?: number;
+  impactFactor?: number;
 };
 
 export type GenerativeQAMetadata = {
   article_id: string;
-  article_doi: string;
   article_title: string;
   article_authors: string[];
-  article_abstract: string | string[];
   article_journal: string;
-  section: string;
   paragraph: string;
+  paragraph_id: string;
+  article_doi?: string;
+  section?: string;
+  date?: string; // format "%Y-%m-%d"
+  article_type?: string;
+  journal?: string;
+  cited_by?: number;
+  impact_factor?: number;
+  abstract?: string;
 };
 
 export type GenerativeQAResponse = {

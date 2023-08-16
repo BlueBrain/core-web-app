@@ -8,22 +8,25 @@ type GenerativeQAResultsProps = Pick<GenerativeQASingleResultProps, 'articles'> 
 function ArticlesTimeLine({ articles, collapseAll }: GenerativeQAResultsProps) {
   return (
     <ol className="relative border-l border-gray-200 dark:border-gray-700">
-      {articles.map(({ id, title, doi, authors, journal, abstract, paragraph, section }) => (
-        <Article
-          key={id}
-          {...{
-            id,
-            title,
-            doi,
-            authors,
-            journal,
-            abstract,
-            paragraph,
-            section,
-            collapseAll,
-          }}
-        />
-      ))}
+      {articles.map(
+        ({ id, title, doi, authors, journal, abstract, paragraph, section, paragraphId }) => (
+          <Article
+            key={id}
+            {...{
+              id,
+              title,
+              doi,
+              authors,
+              journal,
+              abstract,
+              paragraph,
+              section,
+              collapseAll,
+              paragraphId,
+            }}
+          />
+        )
+      )}
     </ol>
   );
 }
