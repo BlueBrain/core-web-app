@@ -4,7 +4,7 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { typeAtom, triggerRefetchAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
 import useListPage from '@/hooks/useListPage';
 
-const TYPE = 'https://neuroshapes.org/SynapsePerConnection';
+const TYPE = 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapseDensity';
 
 export default function SynapsePerConnectionListingPage() {
   useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });

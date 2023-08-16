@@ -1,5 +1,5 @@
 export const typeToColumns: { [id: string]: string[] } = {
-  'https://neuroshapes.org/BoutonDensity': [
+  'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalBoutonDensity': [
     'brainRegion',
     'mType',
     'meanstd',
@@ -9,7 +9,7 @@ export const typeToColumns: { [id: string]: string[] } = {
     'contributors',
     'createdAt',
   ],
-  'https://neuroshapes.org/NeuronDensity': [
+  'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalNeuronDensity': [
     'brainRegion',
     'mType',
     'eType',
@@ -20,8 +20,7 @@ export const typeToColumns: { [id: string]: string[] } = {
     'contributors',
     'createdAt',
   ],
-
-  'https://neuroshapes.org/Trace': [
+  'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalTrace': [
     'brainRegion',
     'eType',
     'name',
@@ -29,7 +28,7 @@ export const typeToColumns: { [id: string]: string[] } = {
     'contributors',
     'createdAt',
   ],
-  'https://neuroshapes.org/LayerThickness': [
+  'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalLayerThickness': [
     'brainRegion',
     'layer',
     'layerThickness',
@@ -37,7 +36,7 @@ export const typeToColumns: { [id: string]: string[] } = {
     'contributors',
     'createdAt',
   ],
-  'https://neuroshapes.org/NeuronMorphology': [
+  'https://neuroshapes.org/ReconstructedNeuronMorphology': [
     'brainRegion',
     'mType',
     'name',
@@ -54,7 +53,7 @@ export const typeToColumns: { [id: string]: string[] } = {
     'parameter.coords.celsius',
     'createdAt',
   ],
-  'https://neuroshapes.org/SynapsePerConnection': [
+  'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapseDensity': [
     'brainRegion',
     'mType',
     'name',

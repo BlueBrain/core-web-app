@@ -4,7 +4,7 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { typeAtom, triggerRefetchAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
 import useListPage from '@/hooks/useListPage';
 
-const TYPE = 'https://neuroshapes.org/BoutonDensity';
+const TYPE = 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalBoutonDensity';
 
 export default function BoutonDensityListingPage() {
   useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
