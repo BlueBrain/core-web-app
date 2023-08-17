@@ -33,7 +33,7 @@ export const sectionContent: SingleCard[] = [
       },
       {
         name: 'Neuron morphology',
-        type: 'https://neuroshapes.org/ReconstructedNeuroMorphology',
+        type: 'https://neuroshapes.org/ReconstructedNeuronMorphology',
         url: '/explore/morphology',
       },
       {
