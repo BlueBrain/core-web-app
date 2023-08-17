@@ -27,6 +27,7 @@ import {
 } from '@/state/experiment-designer';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { classNames } from '@/util/utils';
+import GenericButton from '@/components/Global/GenericButton';
 import styles from './exp-des.module.css';
 
 const loadableRemoteConfigAtom = loadable(remoteConfigPayloadAtom);
@@ -51,22 +52,16 @@ function ActionButtons({ isConfigUsedInSim, isLoading }: ActionButtonProps) {
     setWorkflowExecutionAndClone(nexusUrl);
   };
 
-  const defaultButtonStyle = 'flex h-12 px-8 items-center';
-
   if (isLoading) {
-    return (
-      <div className={classNames(defaultButtonStyle, 'bg-slate-400')}>
-        <span>Loading...</span>
-      </div>
-    );
+    return <GenericButton disabled className="bg-slate-400" text="Loading..." />;
   }
 
   return (
     <>
       {isConfigUsedInSim && (
         <>
-          <ViewResultsBtn className={defaultButtonStyle} />
-          <DuplicateConfigBtn className={defaultButtonStyle} />
+          <ViewResultsBtn />
+          <DuplicateConfigBtn />
         </>
       )}
       {isConfigUsedInSim === false && <SimulateBtn onLaunched={onLaunched} />}

@@ -20,6 +20,7 @@ import generateWorkflowConfig from '@/services/bbp-workflow/placeholderReplacer'
 import { configAtom } from '@/state/brain-model-config';
 import { stepsToBuildAtom } from '@/state/build-status';
 import circuitAtom from '@/state/circuit';
+import GenericButton from '@/components/Global/GenericButton';
 
 const HIDDEN_IFRAME_AUTO_AUTH_AWAIT_DELAY = 5000;
 
@@ -210,7 +211,7 @@ export default function WorkflowLauncher({
   };
 
   const buttonClass = classNames(
-    'flex-auto text-white h-12 px-8',
+    'flex-auto text-white',
     className,
     disabled || launching ? 'bg-slate-400 cursor-not-allowed pointer-events-none' : 'bg-secondary-2'
   );
@@ -218,14 +219,12 @@ export default function WorkflowLauncher({
   const buttonTooltip = disabled ? 'Select at least one step to build' : 'Build step(s)';
 
   return (
-    <button
+    <GenericButton
       onClick={launchBbpWorkflow}
-      type="button"
       className={buttonClass}
       disabled={disabled}
       title={buttonTooltip}
-    >
-      {launching ? 'Launching...' : buttonText}
-    </button>
+      text={launching ? 'Launching...' : buttonText}
+    />
   );
 }

@@ -7,6 +7,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import Link from '@/components/Link';
+import GenericButton from '@/components/Global/GenericButton';
 
 type Props = {
   children: ReactNode;
@@ -23,12 +24,16 @@ export default function SimulationCampaignSelectorLayout({ children }: Props) {
           Here is a description of what can be achieved in this app. What is expected from the user
           and what is the output...
         </span>
-        <Link
-          href="/"
-          className="self-start flex items-center justify-between text-primary-3 border border-primary-3 h-12 mt-6 p-5"
-        >
-          <ArrowLeftOutlined />
-          <span className="ml-4">Back home</span>
+        <Link href="/">
+          <GenericButton
+            text={
+              <>
+                <ArrowLeftOutlined />
+                <span className="ml-4">Back home</span>
+              </>
+            }
+            className="self-start flex items-center justify-between text-primary-3 border border-primary-3 mt-6 p-5"
+          />
         </Link>
       </div>
 

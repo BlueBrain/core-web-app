@@ -8,6 +8,7 @@ import { SimulationCampaignUIConfigResource } from '@/types/nexus';
 import { configResourceAtom } from '@/state/experiment-designer';
 import { classNames } from '@/util/utils';
 import { getSimCampUIConfigsByNameQuery } from '@/queries/es';
+import GenericButton from '@/components/Global/GenericButton';
 
 const loadableSimCampUIConfigAtom = loadable(configResourceAtom);
 
@@ -50,13 +51,11 @@ export default function DuplicateConfigBtn({ className }: Props) {
 
   return (
     <>
-      <button
-        type="button"
+      <GenericButton
         className={style}
         onClick={() => (simCampUIConfig ? openCloneModal(simCampUIConfig) : () => {})}
-      >
-        Duplicate
-      </button>
+        text="Duplicate"
+      />
 
       {cloneContextHolder}
     </>

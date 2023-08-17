@@ -9,6 +9,7 @@ import circuitAtom from '@/state/circuit';
 import { classNames } from '@/util/utils';
 import { createSimulationCampaignUIConfig } from '@/services/bbp-workflow/simulationHelper';
 import expDesParamsDefaults from '@/components/experiment-designer/experiment-designer-defaults';
+import GenericButton from '@/components/Global/GenericButton';
 
 const expDesBaseUrl = '/experiment-designer/experiment-setup';
 
@@ -84,15 +85,13 @@ export default function ConfirmBtn({
   };
 
   return (
-    <button
-      type="button"
+    <GenericButton
       onClick={createSimCamUiConfig}
       className={classNames(
         allowed ? 'bg-secondary-2 ' : 'bg-slate-400 cursor-not-allowed',
-        'flex text-white h-12 px-8 fixed bottom-4 right-4 items-center'
+        'flex text-white fixed bottom-4 right-4 items-center'
       )}
-    >
-      {processing ? 'Processing' : 'Confirm'}
-    </button>
+      text={processing ? 'Processing' : 'Confirm'}
+    />
   );
 }
