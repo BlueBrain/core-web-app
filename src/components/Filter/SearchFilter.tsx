@@ -23,11 +23,11 @@ export default function SearchFilter({
 
     return buckets
       ? buckets?.map(({ key, doc_count: count }) => ({
-          checked: values.includes(key as string),
-          key,
+          checked: values.includes(key.label as string),
+          key: key.label as string,
           count,
         }))
-      : [];
+      : undefined;
   }, [data, filter.field, values]);
 
   const handleCheckedChange = (value: string) => {
