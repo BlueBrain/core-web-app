@@ -265,7 +265,7 @@ const getFilterBuckets = (
     [filterName]: {
       buckets: Array.from(fieldValues).map(([value, frequency]) => ({
         doc_count: frequency,
-        key: {label: value},
+        key: { label: value },
         key_as_string: value,
       })),
       excludeOwnFilter: { buckets: [] },
