@@ -44,6 +44,6 @@ export default async function MorphologyListingPage() {
     if (typeof inferenceOptions === 'object')
       rulesWithOptions[rule.id] = generateInitialState(inferenceOptions);
   });
-  
+
   return <Wrapper rulesWithOptions={rulesWithOptions} TYPE={TYPE} />;
 }

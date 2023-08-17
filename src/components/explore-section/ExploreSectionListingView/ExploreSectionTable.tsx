@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
-import merge from 'lodash/merge';
 import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';

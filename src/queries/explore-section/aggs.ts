@@ -3,11 +3,11 @@ import { Filter } from '@/components/Filter/types';
 import { getESTerm } from '@/queries/explore-section/utils';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
-export function getAggESBuilder (filter: Filter): Aggregation | undefined {
+export function getAggESBuilder(filter: Filter): Aggregation | undefined {
   const { aggregationType } = filter;
   const esTerm = getESTerm(filter.field);
   const { nestedField } = LISTING_CONFIG[filter.field];
-  const { idTerm } = LISTING_CONFIG[filter.field].elasticConfig
+  const { idTerm } = LISTING_CONFIG[filter.field].elasticConfig;
 
   switch (aggregationType) {
     case 'buckets':
@@ -15,15 +15,14 @@ export function getAggESBuilder (filter: Filter): Aggregation | undefined {
         return esb
           .compositeAggregation(filter.field)
           .sources(
-            esb.CompositeAggregation.termsValuesSource("id", idTerm),
-            esb.CompositeAggregation.termsValuesSource("label", esTerm)
-          )
+            esb.CompositeAggregation.termsValuesSource('id', idTerm),
+            esb.CompositeAggregation.termsValuesSource('label', esTerm)
+          );
       }
       return esb
-          .compositeAggregation(filter.field)
-          .sources(
-            esb.CompositeAggregation.termsValuesSource("label", esTerm)
-          ).size(100);
+        .compositeAggregation(filter.field)
+        .sources(esb.CompositeAggregation.termsValuesSource('label', esTerm))
+        .size(100);
     case 'stats':
       if (nestedField) {
         return esb
@@ -44,7 +43,7 @@ export function getAggESBuilder (filter: Filter): Aggregation | undefined {
   }
 }
 
-export default function buildAggs (filters: Filter[]) {
+export default function buildAggs(filters: Filter[]) {
   const aggsQuery = esb.requestBodySearch();
   filters.forEach((filter: Filter) => {
     const esBuilder = getAggESBuilder(filter);

@@ -76,21 +76,3 @@ export type RangeField =
       };
     }
   | undefined;
-
-export type Bucket = {
-  doc_count: number;
-  key: CompositeAggregationKey;
-  key_as_string?: string;
-};
-
-export type OptionsData = {
-  [key: string]: {
-    buckets: Bucket[];
-    excludeOwnFilter: { buckets: Bucket[] };
-  };
-};
-
-export type CompositeAggregationKey = {
-  label: string | number;
-  id?: string
-}

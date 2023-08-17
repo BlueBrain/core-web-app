@@ -27,7 +27,7 @@ type ListingConfigProps = {
     elasticConfig: {
       term: string;
       idTerm?: string;
-    }
+    };
   };
 };
 
@@ -41,7 +41,7 @@ const LISTING_CONFIG: ListingConfigProps = {
   brainRegion: {
     elasticConfig: {
       term: 'brainRegion.label.keyword',
-      idTerm: 'brainRegion.identifier.keyword'
+      idTerm: 'brainRegion.identifier.keyword',
     },
     title: 'Brain Region',
     filter: 'checkListInference',

@@ -4,14 +4,13 @@ import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { loadable } from 'jotai/utils';
 import { useAtom, useAtomValue } from 'jotai';
-import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import {
-  Filter,
-  GteLteValue,
-  OptionsData,
-  ValueOrRangeFilter,
-  RangeFilter,
-} from '@/components/Filter/types';
+  BucketAggregations,
+  Aggregations,
+  NestedStatsAggregation,
+  Statistics,
+} from '@/types/explore-section/fields';
+import { Filter, GteLteValue, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
 import {
   CheckList,
   DateRange,
@@ -93,7 +92,7 @@ function createFilterItemComponent(
       case 'checkListInference':
         return (
           <CheckList
-            data={aggregations.data as OptionsData}
+            data={aggregations.data as BucketAggregations}
             filter={filter}
             values={filterValues[filter.field] as string[]}
             onChange={(values: string[]) => updateFilterValues(filter.field, values)}
@@ -104,7 +103,7 @@ function createFilterItemComponent(
       case 'checkList':
         return (
           <CheckList
-            data={aggregations.data as OptionsData}
+            data={aggregations.data as BucketAggregations}
             filter={filter}
             values={filterValues[filter.field] as string[]}
             onChange={(values: string[]) => updateFilterValues(filter.field, values)}

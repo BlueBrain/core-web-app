@@ -166,10 +166,17 @@ export interface StimulusEntity {
   '@type': string;
   stimulusType: BrainRegionOrStimulusTypeOrSpecies;
 }
+
 export interface Bucket {
-  key: string;
   doc_count: number;
+  key: CompositeAggregationKey;
+  key_as_string?: string;
 }
+
+export type CompositeAggregationKey = {
+  label: string | number;
+  id?: string;
+};
 
 interface BucketAggregation {
   buckets: Bucket[];
@@ -193,6 +200,10 @@ export type StatsAggregation = NestedStatsAggregation | Statistics;
 
 export interface Aggregations {
   [key: string]: BucketAggregation | StatsAggregation;
+}
+
+export interface BucketAggregations {
+  [key: string]: BucketAggregation;
 }
 
 export type IdLabel<

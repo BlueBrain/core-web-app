@@ -13,10 +13,10 @@ import { RuleWithOptionsProps } from '@/types/explore-section/kg-inference';
 
 export default function MorphologyListingPage({
   rulesWithOptions,
-  TYPE
+  TYPE,
 }: {
   rulesWithOptions: RuleWithOptionsProps;
-  TYPE: string,
+  TYPE: string;
 }) {
   useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
 

@@ -4,9 +4,10 @@ import { format } from 'date-fns';
 import { InfoCircleFilled } from '@ant-design/icons';
 import sortBy from 'lodash/sortBy';
 import { useAtom } from 'jotai';
-import { Filter, OptionsData } from './types';
-import SearchFilter from './SearchFilter';
+import { Filter } from './types';
 import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
+import SearchFilter from './SearchFilter';
+import { BucketAggregations } from '@/types/explore-section/fields';
 import { CheckIcon } from '@/components/icons';
 import CenteredMessage from '@/components/CenteredMessage';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
@@ -64,7 +65,7 @@ export default function CheckList({
   onChange,
 }: {
   children: (props: CheckListProps) => ReactNode;
-  data: OptionsData;
+  data: BucketAggregations;
   filter: Filter;
   values: string[];
   onChange: (value: string[]) => void;
@@ -72,7 +73,6 @@ export default function CheckList({
   const options = useMemo(() => {
     const agg = data[filter.field];
     const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
-    console.log("CHECKLIST COMPONENT buckets", buckets)
 
     return buckets
       ? buckets?.map(({ key, doc_count: count }) => ({
@@ -133,7 +133,6 @@ export default function CheckList({
   // Sort the options array by the checked property using Lodash's sortBy function
   const sortedOptions = useMemo(() => sortBy(options, { checked: false }), [options]);
 
-  console.log("CHECKLIST COMPONENT LOGGING OPTIONS + VALUES", options, values);
   return (
     <div className="flex flex-col gap-4">
       {sortedOptions && sortedOptions.length > 0 ? (

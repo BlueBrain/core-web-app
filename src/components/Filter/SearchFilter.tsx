@@ -2,7 +2,8 @@ import { CloseOutlined } from '@ant-design/icons';
 import { ConfigProvider, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { useMemo } from 'react';
-import { Filter, OptionsData } from './types';
+import { BucketAggregations } from '@/types/explore-section/fields';
+import { Filter } from './types';
 import Search from '@/components/Search';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
@@ -12,7 +13,7 @@ export default function SearchFilter({
   values,
   onChange,
 }: {
-  data: OptionsData;
+  data: BucketAggregations;
   filter: Filter;
   values: string[];
   onChange: (newValues: string[]) => void;
@@ -74,10 +75,14 @@ export default function SearchFilter({
       handleSelect={(value) => {
         handleCheckedChange(value as string);
       }}
-      options={options.map(({ key }) => ({
-        label: key as string,
-        value: key as string,
-      }))}
+      options={
+        options
+          ? options.map(({ key }) => ({
+              label: key as string,
+              value: key as string,
+            }))
+          : []
+      }
       mode="tags"
       placeholder={`Search for ${LISTING_CONFIG[filter.field].vocabulary.plural}`}
       tagRender={tagRender}
