@@ -8,7 +8,7 @@ import { Portals } from '@/constants/explore-section/portals-content';
 import { ArrowRightIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 
-export default function SinglePortalItem({ content }: { content: Portals }) {
+export default function PortalItem({ content }: { content: Portals }) {
   const [mouseStatus, setMouseStatus] = useState<boolean>(false);
 
   return (

@@ -1,5 +1,5 @@
 import HomeHeader from '@/components/Global/HomeHeader';
-import SinglePortalItem from '@/components/explore-section/Portals/SinglePortalItem';
+import PortalItem from '@/components/explore-section/Portals/SinglePortalItem';
 import { portalsContent, Portals } from '@/constants/explore-section/portals-content';
 
 export default function ExplorePortalsPage() {
@@ -12,7 +12,7 @@ export default function ExplorePortalsPage() {
 
       <div className="flex flex-col w-2/3 pr-8 gap-y-2 my-4">
         {portalsContent.map((singlePortal: Portals) => (
-          <SinglePortalItem content={singlePortal} key={`single-portal_${singlePortal.name}`} />
+          <PortalItem content={singlePortal} key={`single-portal_${singlePortal.name}`} />
         ))}
       </div>
     </div>
