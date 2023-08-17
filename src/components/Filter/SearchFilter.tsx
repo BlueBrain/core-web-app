@@ -2,8 +2,8 @@ import { CloseOutlined } from '@ant-design/icons';
 import { ConfigProvider, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { useMemo } from 'react';
-import { BucketAggregations } from '@/types/explore-section/fields';
 import { Filter } from './types';
+import { BucketAggregations } from '@/types/explore-section/fields';
 import Search from '@/components/Search';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 
