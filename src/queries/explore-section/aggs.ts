@@ -10,7 +10,7 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
   const { idTerm } = LISTING_CONFIG[filter.field].elasticConfig;
 
   switch (aggregationType) {
-    case 'buckets':
+    case 'buckets': {
       const bucketSortAgg = esb
         .bucketSortAggregation('bucketSortAgg')
         .sort([esb.sort('_count', 'desc')])
@@ -27,7 +27,10 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
           )
         : commonCompositeAgg.sources(esb.CompositeAggregation.termsValuesSource('label', esTerm));
 
-      return compositeAgg.aggregation(bucketSortAgg);
+      compositeAgg = compositeAgg.aggregation(bucketSortAgg);
+      
+      return compositeAgg;
+    }
     case 'stats':
       if (nestedField) {
         return esb
