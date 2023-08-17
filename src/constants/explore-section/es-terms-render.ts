@@ -14,7 +14,6 @@ import { IndexColContent, ValueArray } from '@/components/ListTable';
 
 type ListingConfigProps = {
   [key: string]: {
-    term: string;
     nestedField?: NestedFieldConfig;
     title: string;
     description?: string;
@@ -25,7 +24,10 @@ type ListingConfigProps = {
       plural: string;
       singular: string;
     };
-    compositeField?: boolean;
+    elasticConfig: {
+      term: string;
+      idTerm?: string;
+    }
   };
 };
 
@@ -37,7 +39,10 @@ type NestedFieldConfig = {
 
 const LISTING_CONFIG: ListingConfigProps = {
   brainRegion: {
-    term: 'brainRegion.label.keyword',
+    elasticConfig: {
+      term: 'brainRegion.label.keyword',
+      idTerm: 'brainRegion.identifier.keyword'
+    },
     title: 'Brain Region',
     filter: 'checkListInference',
     renderFn: selectorFnBrainRegion,
@@ -45,10 +50,11 @@ const LISTING_CONFIG: ListingConfigProps = {
       plural: 'Brain Regions',
       singular: 'Brain Region',
     },
-    compositeField: true
   },
   eType: {
-    term: 'eType.label.keyword',
+    elasticConfig: {
+      term: 'eType.label.keyword',
+    },
     title: 'E-Type',
     filter: 'checkList',
     renderFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
@@ -58,7 +64,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   mType: {
-    term: 'mType.label.keyword',
+    elasticConfig: {
+      term: 'mType.label.keyword',
+    },
     title: 'M-Type',
     filter: 'checkList',
     renderFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
@@ -68,7 +76,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   name: {
-    term: 'name.keyword',
+    elasticConfig: {
+      term: 'name.keyword',
+    },
     title: 'Name',
     filter: null,
     renderFn: (_t, r) => selectorFnBasic(r._source?.name),
@@ -78,7 +88,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   simCampName: {
-    term: 'name.keyword',
+    elasticConfig: {
+      term: 'name.keyword',
+    },
     title: 'Name',
     filter: null,
     renderFn: (_t, r) =>
@@ -93,7 +105,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   subjectSpecies: {
-    term: 'subjectSpecies.label.keyword',
+    elasticConfig: {
+      term: 'subjectSpecies.label.keyword',
+    },
     title: 'Species',
     filter: 'checkList',
     renderFn: (_t, r) => selectorFnBasic(r._source?.subjectSpecies?.label),
@@ -103,7 +117,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   sem: {
-    term: 'series.statistic.standard error of the mean.keyword',
+    elasticConfig: {
+      term: 'series.statistic.standard error of the mean.keyword',
+    },
     nestedField: {
       extendedField: 'series.statistic.keyword',
       field: 'standard error of the mean',
@@ -120,7 +136,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   weight: {
-    term: 'weight.label.keyword',
+    elasticConfig: {
+      term: 'weight.label.keyword',
+    },
     title: 'Weight',
     filter: 'checkList',
     unit: 'gramms',
@@ -131,7 +149,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   subjectAge: {
-    term: 'subjectAge.label.keyword',
+    elasticConfig: {
+      term: 'subjectAge.label.keyword',
+    },
     title: 'Age',
     filter: 'checkList',
     unit: 'days',
@@ -142,7 +162,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   contributors: {
-    term: 'contributors.label.keyword',
+    elasticConfig: {
+      term: 'contributors.label.keyword',
+    },
     title: 'Contributors',
     filter: 'checkList',
     renderFn: selectorFnContributors,
@@ -152,11 +174,8 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   neuronDensity: {
-    term: 'series.statistic.mean.keyword',
-    nestedField: {
-      extendedField: 'series.statistic.keyword',
-      field: 'mean',
-      nestField: 'series',
+    elasticConfig: {
+      term: 'neuronDensity.value',
     },
     title: 'Density',
     filter: 'valueRange',
@@ -168,7 +187,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   boutonDensity: {
-    term: 'boutonDensity.label.keyword',
+    elasticConfig: {
+      term: 'boutonDensity.label.keyword',
+    },
     title: 'Bouton density',
     filter: 'checkList',
     renderFn: (_t, r) => selectorFnBasic(r._source?.boutonDensity?.value),
@@ -178,7 +199,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   layer: {
-    term: 'layer.label.keyword',
+    elasticConfig: {
+      term: 'layer.label.keyword',
+    },
     title: 'Layer',
     filter: 'checkList',
     renderFn: selectorFnLayer,
@@ -188,7 +211,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   layerThickness: {
-    term: 'layerThickness.value',
+    elasticConfig: {
+      term: 'layerThickness.value',
+    },
     title: 'Thickness',
     filter: 'valueRange',
     unit: 'μm',
@@ -199,7 +224,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   circuitType: {
-    term: 'circuitType.keyword',
+    elasticConfig: {
+      term: 'circuitType.keyword',
+    },
     title: 'Circuit type',
     filter: 'checkList',
     vocabulary: {
@@ -208,7 +235,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   createdAt: {
-    term: 'createdAt',
+    elasticConfig: {
+      term: 'createdAt',
+    },
     title: 'Creation date',
     filter: 'dateRange',
     renderFn: (_t, r) => selectorFnDate(r._source?.createdAt),
@@ -218,7 +247,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   createdBy: {
-    term: 'createdBy.keyword',
+    elasticConfig: {
+      term: 'createdBy.keyword',
+    },
     title: 'Created by',
     filter: 'checkList',
     vocabulary: {
@@ -227,7 +258,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   updatedAt: {
-    term: 'updatedAt',
+    elasticConfig: {
+      term: 'updatedAt',
+    },
     title: 'Updated at',
     filter: 'dateRange',
     renderFn: (_t, r) => selectorFnDate(r._source?.updatedAt),
@@ -237,7 +270,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   reference: {
-    term: 'reference.keyword',
+    elasticConfig: {
+      term: 'reference.keyword',
+    },
     title: 'Reference',
     filter: 'checkList',
     renderFn: (_t, r) => selectorFnBasic(r._source?.reference),
@@ -247,7 +282,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   conditions: {
-    term: 'conditions.keyword',
+    elasticConfig: {
+      term: 'conditions.keyword',
+    },
     title: 'Conditions',
     filter: 'checkList',
     unit: 'Cº',
@@ -258,7 +295,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   meanstd: {
-    term: 'series.statistic.mean.keyword',
+    elasticConfig: {
+      term: 'series.statistic.mean.keyword',
+    },
     nestedField: {
       extendedField: 'series.statistic.keyword',
       field: 'mean',
@@ -274,7 +313,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   numberOfMeasurements: {
-    term: 'series.statistic.N.keyword',
+    elasticConfig: {
+      term: 'series.statistic.N.keyword',
+    },
     nestedField: {
       extendedField: 'series.statistic.keyword',
       field: 'N',
@@ -289,7 +330,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   brainConfiguration: {
-    term: 'nValue',
+    elasticConfig: {
+      term: 'nValue',
+    },
     title: 'Brain Configuration',
     filter: null,
     renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
@@ -299,7 +342,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   'parameter.coords.vpm_pct': {
-    term: 'nValue',
+    elasticConfig: {
+      term: 'nValue',
+    },
     title: 'vpm_pct',
     filter: 'valueOrRange',
     renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
@@ -309,7 +354,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   'parameter.coords.extracellular_calcium': {
-    term: 'nValue',
+    elasticConfig: {
+      term: 'nValue',
+    },
     title: 'extracellular_calcium',
     filter: 'valueOrRange',
     renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
@@ -319,7 +366,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   'parameter.coords.celsius': {
-    term: 'nValue',
+    elasticConfig: {
+      term: 'nValue',
+    },
     title: 'celcius',
     filter: 'valueOrRange',
     renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
@@ -329,7 +378,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   'parameter.coords.seed': {
-    term: 'parameter.coords.seed',
+    elasticConfig: {
+      term: 'parameter.coords.seed',
+    },
     title: 'Seed',
     unit: 'unit xxxx',
     filter: 'valueOrRange',
@@ -343,7 +394,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   startedAt: {
-    term: 'nValue',
+    elasticConfig: {
+      term: 'nValue',
+    },
     title: 'started at',
     filter: null,
     renderFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
@@ -353,7 +406,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   categories: {
-    term: 'categories',
+    elasticConfig: {
+      term: 'categories',
+    },
     title: 'Category',
     filter: 'search',
     vocabulary: {
@@ -362,7 +417,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   articleType: {
-    term: 'articleType',
+    elasticConfig: {
+      term: 'articleType',
+    },
     title: 'Article type',
     filter: 'search',
     vocabulary: {
@@ -371,7 +428,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   journal: {
-    term: 'journal',
+    elasticConfig: {
+      term: 'journal',
+    },
     title: 'Journal',
     filter: 'search',
     vocabulary: {
@@ -380,7 +439,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   authors: {
-    term: 'authors',
+    elasticConfig: {
+      term: 'authors',
+    },
     title: 'Authors',
     filter: 'search',
     vocabulary: {
@@ -389,7 +450,9 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   publicationDate: {
-    term: 'publicationDate',
+    elasticConfig: {
+      term: 'publicationDate',
+    },
     title: 'Publication date',
     filter: 'dateRange',
     vocabulary: {

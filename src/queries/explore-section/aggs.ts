@@ -7,16 +7,16 @@ export function getAggESBuilder (filter: Filter): Aggregation | undefined {
   const { aggregationType } = filter;
   const esTerm = getESTerm(filter.field);
   const { nestedField } = LISTING_CONFIG[filter.field];
-  const { compositeField } = LISTING_CONFIG[filter.field];
+  const { idTerm } = LISTING_CONFIG[filter.field].elasticConfig
 
   switch (aggregationType) {
     case 'buckets':
-      if (compositeField) {
+      if (idTerm) {
         return esb
           .compositeAggregation(filter.field)
           .sources(
-            esb.CompositeAggregation.termsValuesSource('brainRegion.identifier.keyword', 'brainRegion.identifier.keyword'),
-            esb.CompositeAggregation.termsValuesSource(esTerm, 'brainRegion.label.keyword')
+            esb.CompositeAggregation.termsValuesSource(idTerm, "id"),
+            esb.CompositeAggregation.termsValuesSource(esTerm, "label")
           )
       }
       return esb.termsAggregation(filter.field, esTerm).size(100);
