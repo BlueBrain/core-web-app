@@ -11,19 +11,23 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
 
   switch (aggregationType) {
     case 'buckets':
-      if (idTerm) {
-        return esb
-          .compositeAggregation(filter.field)
-          .sources(
+      const bucketSortAgg = esb
+        .bucketSortAggregation('bucketSortAgg')
+        .sort([esb.sort('_count', 'desc')])
+        .size(200);
+
+      const commonCompositeAgg = esb.compositeAggregation(filter.field).size(200);
+
+      let compositeAgg;
+
+      compositeAgg = idTerm
+        ? commonCompositeAgg.sources(
             esb.CompositeAggregation.termsValuesSource('id', idTerm),
             esb.CompositeAggregation.termsValuesSource('label', esTerm)
           )
-          .size(200);
-      }
-      return esb
-        .compositeAggregation(filter.field)
-        .sources(esb.CompositeAggregation.termsValuesSource('label', esTerm))
-        .size(200);
+        : commonCompositeAgg.sources(esb.CompositeAggregation.termsValuesSource('label', esTerm));
+
+      return compositeAgg.aggregation(bucketSortAgg);
     case 'stats':
       if (nestedField) {
         return esb
