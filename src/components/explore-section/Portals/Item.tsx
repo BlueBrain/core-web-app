@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import Link from 'next/link';
-import TextContentPortals from './TextContentPortals';
+import TextContent from './TextContent';
 import { Portals } from '@/constants/explore-section/portals-content';
 import { ArrowRightIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
@@ -35,7 +35,7 @@ export default function PortalItem({ content }: { content: Portals }) {
           />
         </div>
 
-        <TextContentPortals content={content} />
+        <TextContent content={content} />
       </div>
 
       <div className="relative w-10percent h-4 flex items-center justify-center mr-5 overflow-hidden">

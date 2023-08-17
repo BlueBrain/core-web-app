@@ -1,6 +1,6 @@
 import { Portals } from '@/constants/explore-section/portals-content';
 
-export default function TextContentPortals({ content }: { content: Portals }) {
+export default function TextContent({ content }: { content: Portals }) {
   const contentDescription = `${content.description.slice(0, 110)}...`;
 
   return (
