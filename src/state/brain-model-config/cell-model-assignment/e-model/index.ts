@@ -11,17 +11,18 @@ import {
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   ExtractionTargetsConfiguration,
+  ExtractionTargetsConfigurationPayload,
   FeatureParameterGroup,
   SimulationParameter,
   Trace,
 } from '@/types/e-model';
-import { mockFeatureParameters } from '@/constants/cell-model-assignment/e-model';
 import { fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import {
   convertRemoteParamsForUI,
   convertMorphologyForUI,
   convertTracesForUI,
+  convertFeaturesForUI,
 } from '@/services/e-model';
 import { getEntityListByIdsQuery } from '@/queries/es';
 
@@ -40,9 +41,20 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
   return simParams;
 });
 
-export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>(
-  async () => mockFeatureParameters
-);
+export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelExtractionTargetsConfiguration = await get(eModelExtractionTargetsConfigurationAtom);
+
+  if (!eModelExtractionTargetsConfiguration || !session) return null;
+
+  const { contentUrl } = eModelExtractionTargetsConfiguration.distribution;
+  const payload = await fetchJsonFileByUrl<ExtractionTargetsConfigurationPayload>(
+    contentUrl,
+    session
+  );
+
+  return convertFeaturesForUI(payload.targets);
+});
 
 export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | null>>(
   async (get) => {

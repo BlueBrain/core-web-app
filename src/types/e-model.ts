@@ -1,5 +1,10 @@
 import { MModelMenuItem } from './m-model';
 import { ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
+import {
+  spikeEventFeatures,
+  spikeShapeFeatures,
+  voltageFeatures,
+} from '@/constants/cell-model-assignment/e-model';
 
 export interface EModelMenuItem {
   label: string;
@@ -11,32 +16,6 @@ export interface EModelMenuItem {
 
 export type SimulationParameterKeys = 'Temperature (°C)' | 'Ra' | 'Initial voltage';
 export type SimulationParameter = Record<SimulationParameterKeys, number>;
-
-export type FeaturesCategories = 'Spike shape' | 'Spike event' | 'Voltage';
-export type FeaturesKeys =
-  | 'decay_time_constant_after_sim'
-  | 'maximum_voltage'
-  | 'maximum_voltage_from_voltagebase'
-  | 'min_AHP-indices'
-  | 'min_AHP-values'
-  | 'min_voltage_between_spikes'
-  | 'minimum_voltage'
-  | 'peak_indices'
-  | 'steady_state_hyper'
-  | 'steady_state_voltage'
-  | 'steady_state_voltage_stimend'
-  | 'trace_check'
-  | 'voltage'
-  | 'voltage_after_stim'
-  | 'voltage_base'
-  | 'voltage_deflection'
-  | 'voltage_deflection_begin'
-  | 'voltage_deflection_vb_ssse';
-export type FeatureParameterItem = {
-  parameterName: FeaturesKeys;
-  selected: boolean;
-};
-export type FeatureParameterGroup = Record<FeaturesCategories, FeatureParameterItem[]>;
 
 export interface ExemplarMorphologyDataType {
   '@id': string;
@@ -208,12 +187,50 @@ export interface ExtractionTargetsConfiguration extends EModelCommonProps {
     '@id': string;
     '@type': TraceType;
   }[];
-  distribution: Distribution[];
+  distribution: Distribution;
 }
 
 export interface ExtractionTargetsConfigurationResource
   extends ResourceMetadata,
     ExtractionTargetsConfiguration {}
+
+export interface EModelFeature {
+  efeature: SpikeEventFeatureKeys | SpikeShapeFeatureKeys | VoltageFeatureKeys;
+  protocol: string;
+  amplitude: number;
+  tolerance: number;
+  efeature_name: string | null;
+  efel_settings: {
+    stim_start?: number;
+    stim_end?: number;
+    strict_stiminterval?: boolean;
+  };
+}
+
+export interface ExtractionTargetsConfigurationPayload {
+  // TODO: improve this type in the future
+  files: any[];
+  targets: EModelFeature[];
+  protocols_rheobase: ['IDthresh'];
+  auto_targets: null;
+}
+
+/* -------------------------------- >> Features -------------------------------- */
+
+export type SpikeEventFeatureKeys = (typeof spikeEventFeatures)[number];
+export type SpikeShapeFeatureKeys = (typeof spikeShapeFeatures)[number];
+export type VoltageFeatureKeys = (typeof voltageFeatures)[number];
+export type AllFeatureKeys = SpikeShapeFeatureKeys | SpikeEventFeatureKeys | VoltageFeatureKeys;
+export interface FeatureItem<T extends AllFeatureKeys> {
+  featureKey: T;
+  selected: boolean;
+}
+export type FeatureParameterGroup = {
+  'Spike event': FeatureItem<SpikeEventFeatureKeys>[];
+  'Spike shape': FeatureItem<SpikeShapeFeatureKeys>[];
+  Voltage: FeatureItem<VoltageFeatureKeys>[];
+};
+export type FeatureCategory = keyof FeatureParameterGroup;
 
 /* ---------------------------------- Trace --------------------------------- */
 
