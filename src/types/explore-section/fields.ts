@@ -181,6 +181,7 @@ export type CompositeAggregationKey = {
 interface BucketAggregation {
   buckets: Bucket[];
   excludeOwnFilter: { buckets: Bucket[] };
+  doc_count?: number;
 }
 
 export interface NestedStatsAggregation {

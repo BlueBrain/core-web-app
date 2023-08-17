@@ -15,7 +15,8 @@ import {
   FilterFieldsType,
   FilterValues,
 } from '@/types/literature';
-import { Filter, GteLteValue, OptionsData } from '@/components/Filter/types';
+import { Filter, GteLteValue } from '@/components/Filter/types';
+import { BucketAggregations } from '@/types/explore-section/fields';
 import SearchFilter from '@/components/Filter/SearchFilter';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { DateRange, FilterGroup } from '@/components/Filter';
@@ -257,14 +258,14 @@ const getFilterBuckets = (
   articles: GArticle[],
   filterName: FilterFieldsType,
   filterFields: (keyof GArticle)[]
-): OptionsData => {
+): BucketAggregations => {
   const fieldValues = getPossibleOptions(articles, filterFields);
 
   return {
     [filterName]: {
       buckets: Array.from(fieldValues).map(([value, frequency]) => ({
         doc_count: frequency,
-        key: value,
+        key: {label: value},
         key_as_string: value,
       })),
       excludeOwnFilter: { buckets: [] },
