@@ -71,26 +71,10 @@ export const sectionContent: SingleCard[] = [
     name: 'Gallery',
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    url: '#',
-    icon: 'plus',
+    url: '/explore/gallery',
+    icon: 'eye',
     image: 'images/explore/explore_home_bgImg-05.jpg',
-    items: [
-      {
-        name: 'My gallery number one',
-        type: '3,450 dataset',
-        url: '#',
-      },
-      {
-        name: 'My gallery number two',
-        type: '3,450 dataset',
-        url: '#',
-      },
-      {
-        name: 'My gallery number three',
-        type: '3,450 dataset',
-        url: '#',
-      },
-    ],
+    items: null,
   },
   {
     name: 'Literature',

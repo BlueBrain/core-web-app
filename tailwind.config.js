@@ -71,6 +71,7 @@ module.exports = {
         height: 'height',
         spacing: 'margin, padding',
         slideDown: 'height, opacity',
+        filter: 'filter',
       },
       spacing: {
         '10percent': '10%',
