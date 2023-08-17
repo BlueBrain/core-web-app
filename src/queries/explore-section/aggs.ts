@@ -17,12 +17,13 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
           .sources(
             esb.CompositeAggregation.termsValuesSource('id', idTerm),
             esb.CompositeAggregation.termsValuesSource('label', esTerm)
-          );
+          )
+          .size(200);
       }
       return esb
         .compositeAggregation(filter.field)
         .sources(esb.CompositeAggregation.termsValuesSource('label', esTerm))
-        .size(100);
+        .size(200);
     case 'stats':
       if (nestedField) {
         return esb
