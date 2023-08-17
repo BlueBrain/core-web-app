@@ -1,5 +1,5 @@
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { ArrowLeftIcon } from '../icons';
 
 export default function HomeHeader({ title, description }: { title: string; description: string }) {
   return (
@@ -12,7 +12,7 @@ export default function HomeHeader({ title, description }: { title: string; desc
             type="button"
             className="flex flex-row items-center bg-transparent text-sm text-primary-2 border border-primary-2 py-4 px-6 mt-4 uppercase tracking-wider transition-all ease-liner duration-300 hover:bg-primary-2 hover:text-primary-9"
           >
-            <ArrowLeftOutlined />
+            <ArrowLeftIcon className="w-auto h-2.5" />
             <div className="block ml-2">Back home</div>
           </button>
         </Link>
