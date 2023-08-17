@@ -82,7 +82,7 @@ function GenerativeQASingleResult({
   return (
     <div
       id={id}
-      className={classNames('w-full mt-3', collpaseQuestion ? 'mb-6' : 'mb-28')}
+      className={classNames('w-full mt-3', collpaseQuestion ? 'mb-4 last:mb-28' : 'mb-28')}
       ref={answerRef}
     >
       <div className="inline-flex items-center w-full gap-2">
@@ -109,11 +109,14 @@ function GenerativeQASingleResult({
           <button
             type="button"
             onClick={toggleCollapseQuestion}
-            className="flex items-center justify-center w-8 h-8 p-px rounded-full hover:shadow-md"
+            className="flex items-center justify-center w-8 h-8 p-px rounded-full min-w-[2rem] hover:shadow-md"
           >
             <ChevronIcon
               fill="#003A8C"
-              className={`${collpaseQuestion ? 'rotate-0' : 'rotate-90'}`}
+              className={classNames(
+                'transition-transform duration-300 ease-in-out',
+                collpaseQuestion ? 'rotate-0' : 'rotate-90'
+              )}
             />
           </button>
         </div>
