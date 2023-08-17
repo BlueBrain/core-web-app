@@ -133,6 +133,7 @@ export default function CheckList({
   // Sort the options array by the checked property using Lodash's sortBy function
   const sortedOptions = useMemo(() => sortBy(options, { checked: false }), [options]);
 
+  console.log("CHECKLIST COMPONENT LOGGING OPTIONS + VALUES", options, values);
   return (
     <div className="flex flex-col gap-4">
       {sortedOptions && sortedOptions.length > 0 ? (
