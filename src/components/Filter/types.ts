@@ -79,7 +79,7 @@ export type RangeField =
 
 export type Bucket = {
   doc_count: number;
-  key: string | number;
+  key: CompositeAggregationKey;
   key_as_string?: string;
 };
 
@@ -89,3 +89,8 @@ export type OptionsData = {
     excludeOwnFilter: { buckets: Bucket[] };
   };
 };
+
+export type CompositeAggregationKey = {
+  label: string | number;
+  id?: string
+}

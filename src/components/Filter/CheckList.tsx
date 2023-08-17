@@ -72,11 +72,12 @@ export default function CheckList({
   const options = useMemo(() => {
     const agg = data[filter.field];
     const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
+    console.log("CHECKLIST COMPONENT buckets", buckets)
 
     return buckets
       ? buckets?.map(({ key, doc_count: count }) => ({
-          checked: values.includes(key as string),
-          key: key as string,
+          checked: values.includes(key.label as string),
+          key: key.label as string,
           count,
         }))
       : undefined;

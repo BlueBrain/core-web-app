@@ -15,11 +15,15 @@ export function getAggESBuilder (filter: Filter): Aggregation | undefined {
         return esb
           .compositeAggregation(filter.field)
           .sources(
-            esb.CompositeAggregation.termsValuesSource(idTerm, "id"),
-            esb.CompositeAggregation.termsValuesSource(esTerm, "label")
+            esb.CompositeAggregation.termsValuesSource("id", idTerm),
+            esb.CompositeAggregation.termsValuesSource("label", esTerm)
           )
       }
-      return esb.termsAggregation(filter.field, esTerm).size(100);
+      return esb
+          .compositeAggregation(filter.field)
+          .sources(
+            esb.CompositeAggregation.termsValuesSource("label", esTerm)
+          ).size(100);
     case 'stats':
       if (nestedField) {
         return esb

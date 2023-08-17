@@ -11,7 +11,7 @@ function buildESSort({ field, order }: SortState): Sort | undefined {
 
   if (!nestedField) {
     return esb
-      .sort(LISTING_CONFIG[field as keyof typeof LISTING_CONFIG].term as string)
+      .sort(LISTING_CONFIG[field as keyof typeof LISTING_CONFIG].elasticConfig.term as string)
       .order(order)
       .unmappedType('keyword');
   }
