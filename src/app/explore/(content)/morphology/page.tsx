@@ -11,7 +11,7 @@ import {
   PayLoadValues,
 } from '@/types/explore-section/kg-inference';
 
-const TYPE = 'https://neuroshapes.org/NeuronMorphology';
+const TYPE = 'https://neuroshapes.org/ReconstructedNeuronMorphology';
 
 // Function to generate the initial state for a given rule and inference options
 function generateInitialState(inferenceOptions: PayLoadValues): InferenceOptionsState {
