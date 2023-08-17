@@ -6,6 +6,7 @@ import trim from 'lodash/trim';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
 
+import { QABrainRegionPerQuestion } from './QABrainRegion';
 import ArticlesTimeLine from './ArticlesTimeLine';
 import { FilterFns } from './FilterPanel';
 import ArticleSorter from './ArticleSorter';
@@ -23,6 +24,7 @@ function GenerativeQASingleResult({
   askedAt,
   answer,
   rawAnswer,
+  brainRegion,
   articles,
 }: GenerativeQASingleResultProps) {
   const [expandArticles, setExpandArticles] = useState(false);
@@ -86,10 +88,10 @@ function GenerativeQASingleResult({
       <div className="inline-flex items-center w-full gap-2">
         <div className="w-auto h-px bg-neutral-3 flex-[1_1]" />
         <span className="pl-2 text-sm w-max text-neutral-4">
-          Asked {format(new Date(askedAt), 'dd/MM/yyyy - kk:mm')}
+          Asked {format(new Date(askedAt), 'dd.MM.yyyy - kk:mm')}
         </span>
       </div>
-      <div className="inline-flex items-center justify-between w-full">
+      <div className="inline-flex items-center justify-between w-full mb-2">
         <div className="inline-flex items-center justify-start w-full gap-2 my-5">
           <BrainLight />
           <span
@@ -100,16 +102,21 @@ function GenerativeQASingleResult({
             {question}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={toggleCollapseQuestion}
-          className="flex items-center justify-center w-8 h-8 p-px rounded-full hover:shadow-md"
-        >
-          <ChevronIcon
-            fill="#003A8C"
-            className={`${collpaseQuestion ? 'rotate-0' : 'rotate-90'}`}
-          />
-        </button>
+        <div className="inline-flex items-center justify-end gap-2">
+          {brainRegion?.id && (
+            <QABrainRegionPerQuestion id={brainRegion.id} title={brainRegion.title} />
+          )}
+          <button
+            type="button"
+            onClick={toggleCollapseQuestion}
+            className="flex items-center justify-center w-8 h-8 p-px rounded-full hover:shadow-md"
+          >
+            <ChevronIcon
+              fill="#003A8C"
+              className={`${collpaseQuestion ? 'rotate-0' : 'rotate-90'}`}
+            />
+          </button>
+        </div>
       </div>
       <div className={`${collpaseQuestion ? 'hidden' : 'block'}`}>
         <div className="w-full text-xl font-normal leading-7 text-blue-900">{finalAnswer}</div>
@@ -197,7 +204,7 @@ function QAResultList() {
     <div className="w-full h-full max-h-screen">
       <div className="flex-1 w-full h-full overflow-auto scroll-smooth" ref={qaResultsRef}>
         <ul className="flex flex-col items-center justify-start max-w-4xl p-4 mx-auto list-none">
-          {QAs.map(({ id, question, answer, rawAnswer, articles, askedAt }) => (
+          {QAs.map(({ id, question, answer, rawAnswer, articles, askedAt, brainRegion }) => (
             <GenerativeQASingleResult
               key={id}
               {...{
@@ -207,6 +214,7 @@ function QAResultList() {
                 answer,
                 rawAnswer,
                 articles,
+                brainRegion,
               }}
             />
           ))}

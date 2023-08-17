@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 
 import * as LiteratureErrors from '../components/explore-section/Literature/errors';
 import { Filter } from '@/components/Filter/types';
+import { SelectedBrainRegion } from '@/state/brain-regions/types';
 
 export type HighlightHit = {
   start: number;
@@ -47,13 +48,14 @@ export type GenerativeQAResponse = {
   paragraphs: string[];
   metadata: GenerativeQAMetadata[];
 };
-
+export type SelectedBrainRegionPerQuestion = Pick<SelectedBrainRegion, 'id' | 'title'>;
 export type GenerativeQA = {
   id: string;
   askedAt: Date;
   question: string;
   answer: string;
   rawAnswer: string;
+  brainRegion?: SelectedBrainRegionPerQuestion;
   articles: GArticle[];
 };
 
@@ -90,3 +92,8 @@ export type MLFilter = Filter & {
   field: FilterFieldsType;
   hasOptions: boolean;
 };
+
+export function isGenerativeQA(gqa: any) {
+  if (gqa && 'id' in gqa && 'question' in gqa) return true;
+  return false;
+}

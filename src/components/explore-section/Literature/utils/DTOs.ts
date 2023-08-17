@@ -12,8 +12,8 @@ const generativeQADTO = ({ question, generativeQAResponse }: GenerativeQADTO): G
 
   return {
     question,
+    askedAt,
     id: questionId,
-    askedAt: new Date(),
     answer: generativeQAResponse.answer,
     rawAnswer: generativeQAResponse.raw_answer.split('SOURCES')?.[0],
     articles: generativeQAResponse.metadata.map((article, index) => ({

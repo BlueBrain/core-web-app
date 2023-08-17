@@ -3,12 +3,14 @@
 import { useTransition } from 'react';
 import { useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
+import merge from 'lodash/merge';
 
 import { getGenerativeQAAction } from '../actions';
 import { LiteratureValidationError } from '../errors';
-import { GenerativeQA } from '@/types/literature';
+import { GenerativeQA, isGenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
 import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -31,6 +33,7 @@ function GenerativeQAInputBar() {
   const update = useLiteratureAtom();
   const { query } = useAtomValue(literatureAtom);
   const { update: updateResults, QAs } = useLiteratureResultsAtom();
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const [isGQAPending, startGenerativeQATransition] = useTransition();
 
   const isChatBarMustSlideInDown = Boolean(QAs.length);
@@ -42,7 +45,16 @@ function GenerativeQAInputBar() {
   ) => {
     if (generativeQA && !(generativeQA instanceof LiteratureValidationError)) {
       update('activeQuestionId', generativeQA.id);
-      updateResults(generativeQA);
+      let newGenerativeQA = generativeQA;
+      if (selectedBrainRegion?.id && isGenerativeQA(generativeQA)) {
+        newGenerativeQA = merge(generativeQA, {
+          brainRegion: {
+            id: selectedBrainRegion.id,
+            title: selectedBrainRegion.title,
+          },
+        });
+      }
+      updateResults(newGenerativeQA);
     }
     update('query', '');
   };
