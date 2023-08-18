@@ -118,7 +118,7 @@ export const GalleryListContent: SingleGallery[] = [
   },
 ];
 
-export type GalleryImages = {
+export type GalleryImagesType = {
   name: string;
   src: string;
   alt: string;
@@ -130,7 +130,7 @@ export type GalleryImages = {
 export type SingleGalleryContentType = {
   name: string;
   description: string;
-  images: GalleryImages[];
+  images: GalleryImagesType[];
 };
 
 export const SingleGalleryContent = {
@@ -198,6 +198,9 @@ export const SingleGalleryContent = {
       name: 'Simulation renders number 8',
       src: '/images/explore/singleGallery/gallery_image_3.jpg',
       alt: 'Simulation renders',
+      credit: 'VIZ team',
+      year: '2013',
+      software: 'Brayns',
     },
     {
       name: 'Simulation renders number 9',

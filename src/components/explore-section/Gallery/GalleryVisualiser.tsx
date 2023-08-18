@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Navigation from './Navigation';
 import {
   SingleGalleryContentType,
-  GalleryImages,
+  GalleryImagesType,
 } from '@/constants/explore-section/gallery-content';
 import { classNames } from '@/util/utils';
 
@@ -33,12 +33,13 @@ export default function GalleryVisualliser({ content }: { content: SingleGallery
           width={1200}
           height={800}
           className="w-auto h-full"
+          priority
         />
       </div>
 
       {/* Visualizer */}
       <div className="w-full grid grid-cols-12 gap-2">
-        {content.images.map((singleImage: GalleryImages, index: number) => (
+        {content.images.map((singleImage: GalleryImagesType, index: number) => (
           <button
             type="button"
             key={`gallery-visualizer-${singleImage.name}`}
