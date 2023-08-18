@@ -1,15 +1,16 @@
-export default function SingleGalleryPage({
-  params
-}: {
-  params: {
-    slug: string
-  }
-}) {
+import { SingleGalleryContent } from "@/constants/explore-section/gallery-content"
+import HeaderSingleGallery from "@/components/explore-section/Gallery/HeaderSingleGallery"
+import GalleryVisualliser from "@/components/explore-section/Gallery/GalleryVisualiser"
+
+export default function SingleGalleryPage() {
+
   return (
-    <div className="w-screen h-screen bg-primary-9">
-      <h1 className="text-white text-4xl font-bold">
-        {params.slug}
-      </h1>
+    <div className="flex flex-row flex-nowrap justify-between w-screen h-screen bg-black">
+      <HeaderSingleGallery
+        title={SingleGalleryContent.name}
+        description={SingleGalleryContent.description}
+        />
+      <GalleryVisualliser content={SingleGalleryContent} />
     </div>
   )
 }
