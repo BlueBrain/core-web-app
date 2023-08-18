@@ -13,7 +13,9 @@ import {
   ExtractionTargetsConfiguration,
   ExtractionTargetsConfigurationPayload,
   FeatureParameterGroup,
+  MechanismForUI,
   SimulationParameter,
+  SubCellularModelScript,
   Trace,
 } from '@/types/e-model';
 import { fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
@@ -23,6 +25,7 @@ import {
   convertMorphologyForUI,
   convertTracesForUI,
   convertFeaturesForUI,
+  convertMechanismsForUI,
 } from '@/services/e-model';
 import { getEntityListByIdsQuery } from '@/queries/es';
 
@@ -182,6 +185,27 @@ export const eModelMorphologyAtom = atom<Promise<EModelConfigurationMorphology |
       session,
       eModelProjConfig
     );
+  }
+);
+
+export const eModelSubCellularModelScriptAtom = atom<Promise<MechanismForUI[] | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelConfiguration = await get(eModelConfigurationAtom);
+
+    if (!session || !eModelConfiguration) return null;
+
+    const subCellularModelScriptIds = eModelConfiguration.uses
+      .filter((usage) => usage['@type'] === 'SubCellularModelScript')
+      .map((m) => m['@id']);
+
+    const query = getEntityListByIdsQuery('SubCellularModelScript', subCellularModelScriptIds);
+    const subCellularModelScriptList = await queryES<SubCellularModelScript>(
+      query,
+      session,
+      eModelProjConfig
+    );
+    return convertMechanismsForUI(subCellularModelScriptList);
   }
 );
 

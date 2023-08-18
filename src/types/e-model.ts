@@ -345,3 +345,8 @@ export interface SubCellularModelScript extends Entity {
 }
 
 export interface SubCellularModelScriptResource extends ResourceMetadata, SubCellularModelScript {}
+
+export interface MechanismForUI {
+  name: string;
+  description: string;
+}

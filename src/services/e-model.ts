@@ -10,9 +10,11 @@ import {
   FeatureCategory,
   FeatureItem,
   FeatureParameterGroup,
+  MechanismForUI,
   SimulationParameter,
   SpikeEventFeatureKeys,
   SpikeShapeFeatureKeys,
+  SubCellularModelScript,
   Trace,
   VoltageFeatureKeys,
 } from '@/types/e-model';
@@ -99,4 +101,10 @@ export function convertFeaturesForUI(features: EModelFeature[]): FeatureParamete
     ) as FeatureItem<SpikeEventFeatureKeys>[],
     Voltage: getFeaturesFromCategory('Voltage', features) as FeatureItem<VoltageFeatureKeys>[],
   };
+}
+
+export function convertMechanismsForUI(
+  subCellularModelScripts: SubCellularModelScript[]
+): MechanismForUI[] {
+  return subCellularModelScripts.map((s) => ({ name: s.name, description: s.description }));
 }

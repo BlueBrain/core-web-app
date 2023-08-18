@@ -47,7 +47,11 @@ export default function EModelView() {
 
       <Divider />
 
-      <Mechanism />
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <DefaultLoadingSuspense>
+          <Mechanism />
+        </DefaultLoadingSuspense>
+      </ErrorBoundary>
     </div>
   );
 }
