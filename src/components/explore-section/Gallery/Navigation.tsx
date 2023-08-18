@@ -1,8 +1,8 @@
 import { ChevronIcon } from '@/components/icons';
-import { GalleryImages } from '@/constants/explore-section/gallery-content';
+import { GalleryImagesType } from '@/constants/explore-section/gallery-content';
 
 type NavigationProps = {
-  currentImageContent: GalleryImages;
+  currentImageContent: GalleryImagesType;
   navigate: (direction: string) => void;
   totalImages: number;
   currentImage: number;
