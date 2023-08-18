@@ -8,6 +8,7 @@ import last from 'lodash/last';
 
 import { classNames } from '@/util/utils';
 import {
+  brainRegionQAs,
   literatureAtom,
   literatureResultAtom,
   useLiteratureAtom,
@@ -70,6 +71,7 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
             'w-4/5 text-xl line-clamp-2 ',
             isActive ? 'text-primary-8 font-bold' : 'text-neutral-3 font-medium'
           )}
+          data-testid="question-navigation-item"
         >
           {question}
         </div>
@@ -80,20 +82,21 @@ function QAHistoryNavigationItem({ id, index, question }: QAHistoryNavigationIte
 
 function QAHistoryNavigation() {
   const pathname = usePathname();
-  const QAs = useAtomValue(literatureResultAtom);
+  const allQAs = useAtomValue(literatureResultAtom);
+  const brainReqionSpecificQAs = useAtomValue(brainRegionQAs);
   const update = useLiteratureAtom();
-  const showNavigation = QAs.length > 1;
+  const showNavigation = allQAs.length > 1;
   const firstRenderRef = useRef(false);
   const qaNavigationRef = useRef<HTMLElement>(null);
   const isBuildSection = pathname?.startsWith('/build');
 
   useEffect(() => {
     // set the active question to the last question just in the first reneder
-    if (QAs.length > 0 && !firstRenderRef.current) {
-      update('activeQuestionId', QAs[QAs.length - 1].id);
+    if (allQAs.length > 0 && !firstRenderRef.current) {
+      update('activeQuestionId', allQAs[allQAs.length - 1].id);
       firstRenderRef.current = true;
     }
-  }, [QAs, update, firstRenderRef]);
+  }, [allQAs, update, firstRenderRef]);
 
   useEffect(() => {
     if (qaNavigationRef.current) {
@@ -102,7 +105,7 @@ function QAHistoryNavigation() {
         top: qaNavigationRef.current.scrollHeight,
       });
     }
-  }, [QAs.length]);
+  }, [allQAs.length]);
 
   if (!showNavigation) return null;
 
@@ -115,7 +118,7 @@ function QAHistoryNavigation() {
         isBuildSection ? '-ml-10 h-[calc(100%-160px)]' : 'h-full'
       )}
     >
-      {QAs.map((qa, index) => (
+      {(isBuildSection ? brainReqionSpecificQAs : allQAs).map((qa, index) => (
         <QAHistoryNavigationItem
           key={`history-nav-item-${qa.id}`}
           {...{

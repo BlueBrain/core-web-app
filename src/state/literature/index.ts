@@ -1,6 +1,8 @@
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
+import isNil from 'lodash/isNil';
+import { selectedBrainRegionAtom } from '../brain-regions';
 import { GenerativeQA, FilterFieldsType, FilterValues } from '@/types/literature';
 import { Filter } from '@/components/Filter/types';
 
@@ -10,6 +12,7 @@ export type LiteratureAtom = {
   query: string;
   // the selectedQuestionForFilter is the question that the user has selected to filter the results
   selectedQuestionForFilter?: string;
+  showOnlyBrainRegionQuestions: boolean;
   isFilterPanelOpen: boolean;
   filterValues: FilterValues | null;
   activeQuestionId?: string;
@@ -20,6 +23,7 @@ export type LiteratureOptions = keyof LiteratureAtom;
 const literatureAtom = atom<LiteratureAtom>({
   query: '',
   selectedQuestionForFilter: undefined,
+  showOnlyBrainRegionQuestions: false,
   isFilterPanelOpen: false,
   filterValues: null,
 });
@@ -67,4 +71,17 @@ export function useLiteratureResultsAtom() {
   return { QAs, update, remove };
 }
 
-export { literatureAtom, literatureResultAtom, useLiteratureAtom };
+const brainRegionQAs = atom((get) => {
+  const allQuestions = get(literatureResultAtom);
+
+  const selectedBrainRegion = get(selectedBrainRegionAtom);
+  const { showOnlyBrainRegionQuestions } = get(literatureAtom);
+
+  return allQuestions.filter((question) =>
+    showOnlyBrainRegionQuestions && !isNil(selectedBrainRegion)
+      ? question.brainRegion?.id === selectedBrainRegion.id
+      : true
+  );
+});
+
+export { literatureAtom, literatureResultAtom, useLiteratureAtom, brainRegionQAs };

@@ -6,6 +6,7 @@ import trim from 'lodash/trim';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
 
+import { usePathname } from 'next/navigation';
 import { QABrainRegionPerQuestion } from './QABrainRegion';
 import ArticlesTimeLine from './ArticlesTimeLine';
 import { FilterFns } from './FilterPanel';
@@ -14,7 +15,12 @@ import { GenerativeQA, FilterFieldsType, SortFn } from '@/types/literature';
 import BrainLight from '@/components/icons/BrainLight';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
-import { literatureAtom, literatureResultAtom, useLiteratureAtom } from '@/state/literature';
+import {
+  brainRegionQAs,
+  literatureAtom,
+  literatureResultAtom,
+  useLiteratureAtom,
+} from '@/state/literature';
 
 export type GenerativeQASingleResultProps = Omit<GenerativeQA, 'sources' | 'paragraphs'>;
 
@@ -98,6 +104,7 @@ function GenerativeQASingleResult({
             className={`font-normal tracking-tight text-blue-900 ${
               collpaseQuestion ? 'text-xl font-extrabold' : 'text-sm'
             }`}
+            data-testid="question-result"
           >
             {question}
           </span>
@@ -192,7 +199,10 @@ function GenerativeQASingleResult({
 
 function QAResultList() {
   const qaResultsRef = useRef<HTMLDivElement>(null);
-  const QAs = useAtomValue(literatureResultAtom);
+  const allQAs = useAtomValue(literatureResultAtom);
+  const brainReqionSpecificQAs = useAtomValue(brainRegionQAs);
+  const pathname = usePathname();
+  const isBuildSection = pathname?.startsWith('/build');
 
   useEffect(() => {
     if (qaResultsRef.current) {
@@ -201,26 +211,28 @@ function QAResultList() {
         top: qaResultsRef.current.scrollHeight,
       });
     }
-  }, [QAs.length]);
+  }, [allQAs.length]);
 
   return (
     <div className="w-full h-full max-h-screen">
       <div className="flex-1 w-full h-full overflow-auto scroll-smooth" ref={qaResultsRef}>
         <ul className="flex flex-col items-center justify-start max-w-4xl p-4 mx-auto list-none">
-          {QAs.map(({ id, question, answer, rawAnswer, articles, askedAt, brainRegion }) => (
-            <GenerativeQASingleResult
-              key={id}
-              {...{
-                id,
-                askedAt,
-                question,
-                answer,
-                rawAnswer,
-                articles,
-                brainRegion,
-              }}
-            />
-          ))}
+          {(isBuildSection ? brainReqionSpecificQAs : allQAs).map(
+            ({ id, question, answer, rawAnswer, articles, askedAt, brainRegion }) => (
+              <GenerativeQASingleResult
+                key={id}
+                {...{
+                  id,
+                  askedAt,
+                  question,
+                  answer,
+                  rawAnswer,
+                  articles,
+                  brainRegion,
+                }}
+              />
+            )
+          )}
         </ul>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import QAInteractive from './QAInteractive';
 import QALeftPanel from './QALeftPanel';
+import QASettingsPanel from './QASettingsPanel';
 import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
 
@@ -21,6 +22,9 @@ function QAContainer() {
       </div>
       <div className="flex flex-1 w-full h-full">
         <QAInteractive />
+      </div>
+      <div>
+        <QASettingsPanel />
       </div>
     </div>
   );
