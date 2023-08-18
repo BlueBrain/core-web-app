@@ -15,7 +15,7 @@ export default function HeaderSingleGallery({ title, description }: HeaderSingle
         <Link href="/explore/gallery">
           <button
             type="button"
-            className="flex flex-row items-center bg-transparent text-sm text-white mt-4 uppercase tracking-wider transition-all ease-liner duration-300 hover:bg-primary-2 hover:text-primary-9"
+            className="flex flex-row items-center bg-transparent text-sm text-white mt-4 pb-1 uppercase border-b-0 border-solid border-b-neutral-4 tracking-wider transition-all ease-liner duration-300 hover:border-b "
           >
             <ArrowLeftIcon className="w-auto h-2.5" />
             <div className="block ml-2">Back to the list</div>

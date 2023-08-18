@@ -7,6 +7,7 @@ import {
   SingleGalleryContentType,
   GalleryImages,
 } from '@/constants/explore-section/gallery-content';
+import { classNames } from '@/util/utils';
 
 export default function GalleryVisualliser({ content }: { content: SingleGalleryContentType }) {
   const [currentActiveImage, setCurrentActiveImage] = useState<number>(0);
@@ -42,7 +43,12 @@ export default function GalleryVisualliser({ content }: { content: SingleGallery
             type="button"
             key={`gallery-visualizer-${singleImage.name}`}
             onClick={() => setCurrentActiveImage(index)}
-            className="justify-self-stretch self-stretch overflow-hidden border border-neutral-7 border-solid opacity-70 transition-opacity duration-300 ease-linear hover:opacity-100"
+            className={classNames(
+              'justify-self-stretch self-stretch overflow-hidden border-solid transition-opacity duration-300 ease-linear hover:opacity-100',
+              currentActiveImage === index
+                ? 'border-2 border-white opacity-100'
+                : 'border border-neutral-7 opacity-70'
+            )}
           >
             <Image
               src={singleImage.src}
