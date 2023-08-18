@@ -1,16 +1,12 @@
-import Link from "next/link"
-import { ArrowLeftIcon } from "@/components/icons";
+import Link from 'next/link';
+import { ArrowLeftIcon } from '@/components/icons';
 
 type HeaderSingleGalleryProps = {
   title: string;
   description: string;
-}
+};
 
-
-export default function HeaderSingleGallery({
-  title,
-  description,
-}: HeaderSingleGalleryProps) {
+export default function HeaderSingleGallery({ title, description }: HeaderSingleGalleryProps) {
   return (
     <div className="fixed z-10 top-0 left-0 w-1/4 h-full flex flex-col p-6">
       <div className="flex flex-col">
@@ -27,5 +23,5 @@ export default function HeaderSingleGallery({
         </Link>
       </div>
     </div>
-  )
+  );
 }
