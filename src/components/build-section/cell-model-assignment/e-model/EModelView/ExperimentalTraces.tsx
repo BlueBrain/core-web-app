@@ -1,5 +1,6 @@
 import { ColumnsType } from 'antd/es/table';
 import { useAtomValue } from 'jotai';
+import { Popover } from 'antd';
 
 import DefaultEModelTable from './DefaultEModelTable';
 import { experimentalTracesAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
@@ -31,8 +32,21 @@ const columns: ColumnsType<ExperimentalTracesDataType> = [
   },
   {
     title: 'E-CODE',
-    dataIndex: 'eCode',
     key: 'eCode',
+    render: (trace: ExperimentalTracesDataType) => {
+      const list = (
+        <div>
+          {trace.eCodes.map((ecode) => (
+            <p key={ecode}>{ecode}</p>
+          ))}
+        </div>
+      );
+      return (
+        <Popover trigger="hover" content={list} placement="left">
+          {trace.eCodes.length}
+        </Popover>
+      );
+    },
   },
   {
     title: 'SUBJECT SPECIES',

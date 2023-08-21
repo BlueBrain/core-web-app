@@ -139,3 +139,28 @@ export const voltageFeatures = [
   'maximum_voltage_from_voltagebase',
   'depol_block_bool',
 ] as const;
+
+export const eCodes = [
+  'IDrest',
+  'SpikeRecMultiSpikes',
+  'IV',
+  'APWaveform',
+  'FirePattern',
+  'sAHP',
+  'HyperDepol',
+  'DeHyperpol',
+  'PosCheops',
+  'NegCheops',
+  'Ramp',
+  'SineSpec',
+  'SubWhiteNoise',
+  'NoiseOU3',
+  'WhiteNoise',
+  'Comb',
+  'Synaptic',
+  'BAC',
+  'DendriticStep',
+  'MultipleRandomStepInputs',
+  'CustomFromFile',
+  'IDhyperpol',
+] as const;

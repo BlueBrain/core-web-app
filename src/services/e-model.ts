@@ -2,6 +2,7 @@ import lodashFind from 'lodash/find';
 
 import {
   AllFeatureKeys,
+  ECode,
   EModelConfigurationMorphology,
   EModelConfigurationParameter,
   EModelFeature,
@@ -64,7 +65,7 @@ export function convertTracesForUI(traces: Trace[]): ExperimentalTracesDataType[
     mType: NOT_AVAILABLE_STR,
     eType: NOT_AVAILABLE_STR,
     description: NOT_AVAILABLE_STR,
-    eCode: NOT_AVAILABLE_STR,
+    eCodes: trace.stimulus.map((s) => s.stimulusType.label as ECode),
     subjectSpecies: trace.subject.species.label,
   }));
 }

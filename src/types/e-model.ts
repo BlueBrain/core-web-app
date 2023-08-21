@@ -1,6 +1,7 @@
 import { MModelMenuItem } from './m-model';
 import { ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
 import {
+  eCodes,
   spikeEventFeatures,
   spikeShapeFeatures,
   voltageFeatures,
@@ -32,7 +33,7 @@ export interface ExperimentalTracesDataType {
   mType: string;
   eType: string;
   description: string;
-  eCode: string;
+  eCodes: ECode[];
   subjectSpecies: string;
 }
 
@@ -196,7 +197,7 @@ export interface ExtractionTargetsConfigurationResource
 
 export interface EModelFeature {
   efeature: SpikeEventFeatureKeys | SpikeShapeFeatureKeys | VoltageFeatureKeys;
-  protocol: string;
+  protocol: ECode;
   amplitude: number;
   tolerance: number;
   efeature_name: string | null;
@@ -231,6 +232,7 @@ export type FeatureParameterGroup = {
   Voltage: FeatureItem<VoltageFeatureKeys>[];
 };
 export type FeatureCategory = keyof FeatureParameterGroup;
+export type ECode = (typeof eCodes)[number];
 
 /* ---------------------------------- Trace --------------------------------- */
 
