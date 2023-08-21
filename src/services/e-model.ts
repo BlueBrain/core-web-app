@@ -3,7 +3,6 @@ import lodashFind from 'lodash/find';
 import {
   AllFeatureKeys,
   ECode,
-  EModelConfigurationMorphology,
   EModelConfigurationParameter,
   EModelFeature,
   ExemplarMorphologyDataType,
@@ -12,6 +11,7 @@ import {
   FeatureItem,
   FeatureParameterGroup,
   MechanismForUI,
+  NeuronMorphology,
   SimulationParameter,
   SpikeEventFeatureKeys,
   SpikeShapeFeatureKeys,
@@ -46,10 +46,10 @@ export function convertRemoteParamsForUI(
 }
 
 export function convertMorphologyForUI(
-  remoteMorphology: EModelConfigurationMorphology
+  remoteMorphology: NeuronMorphology
 ): ExemplarMorphologyDataType {
   return {
-    '@id': crypto.randomUUID(),
+    '@id': remoteMorphology['@id'],
     name: remoteMorphology.name,
     description: NOT_AVAILABLE_STR,
     brainLocation: NOT_AVAILABLE_STR,
@@ -60,7 +60,7 @@ export function convertMorphologyForUI(
 
 export function convertTracesForUI(traces: Trace[]): ExperimentalTracesDataType[] {
   return traces.map((trace) => ({
-    '@id': crypto.randomUUID(),
+    '@id': trace['@id'],
     cellName: trace.name,
     mType: NOT_AVAILABLE_STR,
     eType: NOT_AVAILABLE_STR,
@@ -78,17 +78,17 @@ export function convertFeaturesForUI(features: EModelFeature[]): FeatureParamete
   };
 
   const getFeaturesFromCategory = (categoryName: FeatureCategory, featureList: EModelFeature[]) => {
-    const featuresInCategory: AllFeatureKeys[] = featuresInCategoryMap[categoryName];
-    const uniqueFeatureSet: Set<AllFeatureKeys> = new Set();
+    const featureNamesInCategory: AllFeatureKeys[] = featuresInCategoryMap[categoryName];
     return featureList
-      .filter((feature) => {
-        const featureKey = feature.efeature;
-        // to avoid duplicate features
-        const isPresent = uniqueFeatureSet.has(featureKey);
-        uniqueFeatureSet.add(featureKey);
-        return featuresInCategory.includes(featureKey) && !isPresent;
-      })
-      .map((feature) => ({ featureKey: feature.efeature, selected: true }));
+      .filter((feature) => featureNamesInCategory.includes(feature.efeature))
+      .map(
+        (feature): FeatureItem<AllFeatureKeys> => ({
+          ...feature,
+          selected: true,
+          uuid: crypto.randomUUID(),
+          displayName: `${feature.efeature}_${feature.amplitude}`,
+        })
+      );
   };
 
   return {

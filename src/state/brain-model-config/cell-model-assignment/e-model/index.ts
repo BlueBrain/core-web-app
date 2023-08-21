@@ -3,7 +3,6 @@ import { atom } from 'jotai';
 import {
   EModel,
   EModelConfiguration,
-  EModelConfigurationMorphology,
   EModelConfigurationParameter,
   EModelConfigurationPayload,
   EModelMenuItem,
@@ -14,6 +13,7 @@ import {
   ExtractionTargetsConfigurationPayload,
   FeatureParameterGroup,
   MechanismForUI,
+  NeuronMorphology,
   SimulationParameter,
   SubCellularModelScript,
   Trace,
@@ -167,26 +167,20 @@ export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] |
   }
 );
 
-export const eModelMorphologyAtom = atom<Promise<EModelConfigurationMorphology | null>>(
-  async (get) => {
-    const session = get(sessionAtom);
-    const eModelConfiguration = await get(eModelConfigurationAtom);
+export const eModelMorphologyAtom = atom<Promise<NeuronMorphology | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelConfiguration = await get(eModelConfigurationAtom);
 
-    if (!session || !eModelConfiguration) return null;
+  if (!session || !eModelConfiguration) return null;
 
-    const morphologyId = eModelConfiguration.uses.find(
-      (usage) => usage['@type'] === 'NeuronMorphology'
-    )?.['@id'];
+  const morphologyId = eModelConfiguration.uses.find(
+    (usage) => usage['@type'] === 'NeuronMorphology'
+  )?.['@id'];
 
-    if (!morphologyId) return null;
+  if (!morphologyId) return null;
 
-    return fetchResourceById<EModelConfigurationMorphology>(
-      morphologyId,
-      session,
-      eModelProjConfig
-    );
-  }
-);
+  return fetchResourceById<NeuronMorphology>(morphologyId, session, eModelProjConfig);
+});
 
 export const eModelSubCellularModelScriptAtom = atom<Promise<MechanismForUI[] | null>>(
   async (get) => {

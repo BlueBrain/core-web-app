@@ -10,9 +10,9 @@ export default function FeatureSelectionContainer() {
 
   return (
     <>
-      <FeatureSelectionItem title="Spike shape" params={featureParameters['Spike shape']} />
-      <FeatureSelectionItem title="Spike event" params={featureParameters?.['Spike event']} />
-      <FeatureSelectionItem title="Voltage" params={featureParameters?.Voltage} />
+      <FeatureSelectionItem featureCategory="Spike shape" featureGroup={featureParameters} />
+      <FeatureSelectionItem featureCategory="Spike event" featureGroup={featureParameters} />
+      <FeatureSelectionItem featureCategory="Voltage" featureGroup={featureParameters} />
     </>
   );
 }

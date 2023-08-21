@@ -196,7 +196,7 @@ export interface ExtractionTargetsConfigurationResource
     ExtractionTargetsConfiguration {}
 
 export interface EModelFeature {
-  efeature: SpikeEventFeatureKeys | SpikeShapeFeatureKeys | VoltageFeatureKeys;
+  efeature: AllFeatureKeys;
   protocol: ECode;
   amplitude: number;
   tolerance: number;
@@ -222,9 +222,11 @@ export type SpikeEventFeatureKeys = (typeof spikeEventFeatures)[number];
 export type SpikeShapeFeatureKeys = (typeof spikeShapeFeatures)[number];
 export type VoltageFeatureKeys = (typeof voltageFeatures)[number];
 export type AllFeatureKeys = SpikeShapeFeatureKeys | SpikeEventFeatureKeys | VoltageFeatureKeys;
-export interface FeatureItem<T extends AllFeatureKeys> {
-  featureKey: T;
+export interface FeatureItem<T extends AllFeatureKeys> extends EModelFeature {
+  efeature: T;
   selected: boolean;
+  uuid: string;
+  displayName: string;
 }
 export type FeatureParameterGroup = {
   'Spike event': FeatureItem<SpikeEventFeatureKeys>[];
@@ -349,6 +351,17 @@ export interface SubCellularModelScript extends Entity {
 export interface SubCellularModelScriptResource extends ResourceMetadata, SubCellularModelScript {}
 
 export interface MechanismForUI {
+  '@id'?: string;
   name: string;
   description: string;
+}
+
+/* ----------------------------- EModelUIConfig ----------------------------- */
+
+export interface EModelUIConfig {
+  morphology: ExemplarMorphologyDataType | null;
+  traces: ExperimentalTracesDataType[];
+  mechanism: MechanismForUI[];
+  parameters: Record<SimulationParameterKeys, number>;
+  features: FeatureParameterGroup;
 }
