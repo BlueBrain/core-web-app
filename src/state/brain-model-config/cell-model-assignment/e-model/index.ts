@@ -242,3 +242,7 @@ const eModelExtractionTargetsConfigurationAtom = atom<
     eModelProjConfig
   );
 });
+
+/* --------------------------- EModelUIConfigAtom --------------------------- */
+
+export const eModelEditModeAtom = atom(false);
