@@ -88,8 +88,10 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
 
 export default function buildFilters(type: string, filters: Filter[], searchString?: string) {
   const filtersQuery = new esb.BoolQuery();
+
   filtersQuery.must(esb.termQuery('@type.keyword', type));
   filtersQuery.must(esb.termQuery('deprecated', false));
+
   if (searchString) {
     filtersQuery.should([
       esb

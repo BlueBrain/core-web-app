@@ -1,17 +1,19 @@
 import {
+  ChangeEvent,
   ForwardedRef,
   HTMLProps,
   MouseEventHandler,
   ReactNode,
   RefObject,
   forwardRef,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { useSetAtom } from 'jotai';
-import debounce from 'lodash/debounce';
+import { useAtom } from 'jotai';
 import { SearchOutlined } from '@ant-design/icons';
+import debounce from 'lodash/debounce';
 import { searchStringAtom } from '@/state/explore-section/list-view-atoms';
 import useForwardRef from '@/hooks/useForwardRef';
 
@@ -62,25 +64,39 @@ function Button({
 }
 
 export default function ExploreSectionNameSearch() {
-  const setSearchString = useSetAtom(searchStringAtom);
+  const [searchStringAtomValue, setSearchStringAtomValue] = useAtom(searchStringAtom);
+  const [searchStringLocalState, setSearchStringLocalState] = useState(searchStringAtomValue);
+
+  const [active, setActive] = useState<boolean>(false);
 
   const searchInput: RefObject<HTMLInputElement> = useRef(null);
-  const [openSearchInput, setOpenSearchInputOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
 
-  useEffect(() => debounce(() => setSearchString(value), 250), [setSearchString, value]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedUpdateAtom = useCallback(
+    debounce((searchStr: string) => setSearchStringAtomValue(searchStr), 600),
+    [setSearchStringAtomValue]
+  );
 
-  return openSearchInput ? (
+  useEffect(() => {
+    debouncedUpdateAtom(searchStringLocalState);
+  }, [searchStringLocalState, debouncedUpdateAtom]);
+
+  // "Clear filters" side-effect
+  useEffect(() => {
+    setSearchStringLocalState(searchStringAtomValue);
+  }, [searchStringAtomValue, setSearchStringLocalState]);
+
+  return active ? (
     <Input
-      onBlur={() => setOpenSearchInputOpen(false)}
-      onInput={(e) => setValue((e.target as HTMLInputElement).value)}
+      onBlur={() => setActive(false)}
+      onInput={(e: ChangeEvent<HTMLInputElement>) => setSearchStringLocalState(e.target.value)}
       ref={searchInput}
-      placeholder="Type your search..."
+      placeholder="Search by text..."
       type="text"
-      value={value}
+      value={searchStringLocalState}
     />
   ) : (
-    <Button onClick={() => setOpenSearchInputOpen(true)}>
+    <Button onClick={() => setActive(true)}>
       <SearchOutlined />
     </Button>
   );

@@ -96,6 +96,7 @@ export const queryAtom = atom<object>((get) => {
   const pageSize = get(pageSizeAtom);
   const sortState = get(sortStateAtom);
   const filters = get(filtersAtom);
+
   if (!type || !filters) {
     return null;
   }
