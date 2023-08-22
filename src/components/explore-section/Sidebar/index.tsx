@@ -14,8 +14,10 @@ import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
 export function DetailsPageSideBackLink() {
   const pathName = usePathname();
-  const prevPath = pathName?.substring(0, pathName.lastIndexOf('/'));
-
+  const isSimulation = pathName?.includes('/simulations/');
+  const prevPath = isSimulation
+    ? pathName?.substring(0, pathName.lastIndexOf('/simulations/'))
+    : pathName?.substring(0, pathName.lastIndexOf('/'));
   return prevPath ? (
     <div className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center">
       <Link

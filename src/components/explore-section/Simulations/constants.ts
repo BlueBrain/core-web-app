@@ -9,11 +9,11 @@ export const displayOptions = [
   },
   {
     label: 'PSTH',
-    value: 'psth',
+    value: 'firing_rate_histogram',
   },
   {
     label: 'Voltage report',
-    value: 'voltage',
+    value: 'trace',
   },
   {
     label: 'Local field potential',

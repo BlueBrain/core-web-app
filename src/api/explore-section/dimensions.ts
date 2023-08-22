@@ -16,8 +16,9 @@ export default function calculateDimensionValues(
   if (dimensionValue.type === 'range' && dimensionValue.minValue && dimensionValue.maxValue) {
     const minValue = parseFloat(dimensionValue.minValue);
     const maxValue = parseFloat(dimensionValue.maxValue);
+    const step = parseFloat(dimensionValue.step);
     // applying toFixed() due to a rounding error from range https://github.com/lodash/lodash/issues/1539
-    return range(minValue, maxValue + 0.1, 0.1).map((num) => parseFloat(num.toFixed(2)));
+    return range(minValue, maxValue + 0.1, step).map((num) => parseFloat(num.toFixed(2)));
   }
   return [];
 }

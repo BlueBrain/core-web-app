@@ -2,6 +2,9 @@ import { EyeOutlined, FileTextOutlined } from '@ant-design/icons';
 import { Simulation } from '@/types/explore-section/resources';
 import InlineDimension from '@/components/explore-section/Simulations/SimulationDisplayCard/InlineDimension';
 import timeElapsedFromToday from '@/util/date';
+import Link from '@/components/Link';
+import usePathname from '@/hooks/pathname';
+import { buildSimulationDetailURL } from '@/components/explore-section/Simulations/utils';
 
 type SimulationCardProps = {
   simulation: Simulation;
@@ -30,14 +33,12 @@ export default function SimulationCard({
 }: SimulationCardProps) {
   const backgroundColor = () => {
     switch (simulation.status) {
-      case 'running':
+      case 'Running':
         return 'text-primary-7';
-      case 'done':
+      case 'Done':
         return 'text-secondary-3';
-      case 'failed':
+      case 'Failed':
         return 'text-error';
-      case 'cancelled':
-        return 'text-neutral-4';
       default:
         return '';
     }
@@ -45,14 +46,12 @@ export default function SimulationCard({
 
   const renderStatus = () => {
     switch (simulation.status) {
-      case 'running':
+      case 'Running':
         return 'Running';
-      case 'done':
+      case 'Done':
         return 'Done';
-      case 'failed':
+      case 'Failed':
         return 'Failed';
-      case 'cancelled':
-        return 'Cancelled';
       default:
         return '';
     }
@@ -73,19 +72,19 @@ export default function SimulationCard({
 
   const renderStrapStyles = () => {
     switch (simulation.status) {
-      case 'running':
+      case 'Running':
         return 'linear-gradient(90deg, rgb(65, 121, 201) 0%, rgb(0, 58, 140) 50%)';
-      case 'done':
+      case 'Done':
         return 'linear-gradient(90deg, rgba(12,135,39,1) 0%, rgba(5,193,46,1) 50%)';
-      case 'failed':
+      case 'Failed':
         return 'linear-gradient(90deg, rgba(249,145,145,1) 0%, rgba(229,41,41,1) 50%)';
-      case 'cancelled':
-        return 'linear-gradient(90deg, rgba(211,211,211,1) 0%, rgba(90,90,90,1) 50%)';
       default:
         return '';
     }
   };
 
+  const [proj, org] = simulation.project.split('/').reverse();
+  const pathName = usePathname();
   return (
     <div
       className={`simulation-card w-[405px] border rounded rounded-b-none border-neutral-2 border-b-none ${backgroundColor()}`}
@@ -103,9 +102,12 @@ export default function SimulationCard({
           <div className="flex-auto w-16">
             Log <FileTextOutlined />
           </div>
-          <div className="flex-auto w-16">
+          <Link
+            href={buildSimulationDetailURL(org, proj, simulation.id, pathName)}
+            className="flex-auto w-16"
+          >
             View <EyeOutlined />
-          </div>
+          </Link>
         </div>
       </div>
       <div className="h-3 bg-primary-5 bottom-border" style={{ background: renderStrapStyles() }} />

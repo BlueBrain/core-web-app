@@ -93,7 +93,7 @@ export type Dimension = {
   value: number[];
 };
 
-export type SimulationStatus = 'running' | 'done' | 'failed' | 'cancelled';
+export type SimulationStatus = 'Running' | 'Done' | 'Failed';
 
 export interface Weight {
   maxValue: number;

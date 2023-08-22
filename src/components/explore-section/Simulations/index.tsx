@@ -46,7 +46,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           />
         </div>
       </div>
-      <DimensionSelector />
+      <DimensionSelector coords={resource.parameter?.coords} />
       <SimulationsDisplayGrid display={selectedDisplay} status={showStatus} />
     </div>
   );

@@ -69,6 +69,8 @@ export const analysisReportsAtom = atom<
       name: string;
       description: string;
       simulation: string;
+      createdAt: string;
+      createdBy: string;
     }[]
   >
 >(async (get) => {

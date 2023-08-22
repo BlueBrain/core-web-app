@@ -30,13 +30,20 @@ export default function AxisDimensionBoxEditForm({
       type: 'range',
       minValue: dimensionConfig[0],
       maxValue: dimensionConfig[dimensionConfig.length - 1],
+      step: '0.1',
     };
   }, [dimension?.id, simulationCampaignDimensions]);
 
   const finishFormEvent = (e: any) => {
     if (e.key === 'Enter') {
       form
-        .validateFields(['input-type', 'input-value', 'input-range-min', 'input-range-max'])
+        .validateFields([
+          'input-type',
+          'input-value',
+          'input-range-min',
+          'input-range-max',
+          'input-range-step',
+        ])
         .then(() => {
           const values = form.getFieldsValue();
           let dimensionValue: DimensionValue | DimensionRange;
@@ -50,6 +57,7 @@ export default function AxisDimensionBoxEditForm({
               type: 'range',
               minValue: values['input-range-min'],
               maxValue: values['input-range-max'],
+              step: values['input-range-step'],
             };
           }
           dimensionValueModified(dimension.id, dimensionValue);
@@ -63,8 +71,6 @@ export default function AxisDimensionBoxEditForm({
       return {
         'input-type': 'value',
         'input-value': dimension.value.value,
-        'input-range-min': 0,
-        'input-range-max': 0,
       };
     }
     return {
@@ -72,6 +78,7 @@ export default function AxisDimensionBoxEditForm({
       'input-value': 0,
       'input-range-min': dimension.value.minValue,
       'input-range-max': dimension.value.maxValue,
+      'input-range-step': dimension.value.step,
     };
   };
 
@@ -109,6 +116,14 @@ export default function AxisDimensionBoxEditForm({
       return Promise.reject(new Error(`Maximum value should be ≤ ${valueRange.maxValue}`));
     }
 
+    return Promise.resolve();
+  };
+
+  const stepValueValidator = (rule: any, value: string) => {
+    const regex = new RegExp(/(\d+(?:\.\d+)?)/);
+    if (!regex.test(value)) {
+      return Promise.reject(new Error('Please fill a correct integer or float'));
+    }
     return Promise.resolve();
   };
 
@@ -190,7 +205,7 @@ export default function AxisDimensionBoxEditForm({
                   },
                 ]}
               >
-                <Input size="small" type="text" onKeyDown={finishFormEvent} />
+                <Input size="small" type="text" onKeyDown={finishFormEvent} placeholder="min" />
               </Form.Item>
               <Form.Item
                 className="flex-1"
@@ -201,7 +216,18 @@ export default function AxisDimensionBoxEditForm({
                   },
                 ]}
               >
-                <Input size="small" type="text" onKeyDown={finishFormEvent} />
+                <Input size="small" type="text" onKeyDown={finishFormEvent} placeholder="max" />
+              </Form.Item>
+              <Form.Item
+                className="flex-1"
+                name="input-range-step"
+                rules={[
+                  {
+                    validator: stepValueValidator,
+                  },
+                ]}
+              >
+                <Input size="small" type="text" onKeyDown={finishFormEvent} placeholder="step" />
               </Form.Item>
             </div>
           </div>

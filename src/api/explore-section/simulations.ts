@@ -1,5 +1,6 @@
 import every from 'lodash/every';
 import { Session } from 'next-auth';
+import esb from 'elastic-builder';
 import { fetchFileByUrl } from '@/api/nexus';
 import { createHeaders } from '@/util/utils';
 import { Dimension } from '@/components/explore-section/Simulations/types';
@@ -49,6 +50,7 @@ export default function findSimulation(
 
     if (
       simulation &&
+      simulation.status &&
       (simulation.status.toLowerCase() === status || status === 'all') &&
       simulationIncludesAllDimensions(simulation, otherDimensions)
     ) {
@@ -62,21 +64,16 @@ export default function findSimulation(
 export async function fetchSimulationsFromEs(accessToken: string, campaignId: string) {
   if (!accessToken) throw new Error('Access token should be defined');
 
+  const query = esb
+    .boolQuery()
+    .must(esb.termQuery('@type.keyword', 'https://neuroshapes.org/Simulation'))
+    .must(esb.termQuery('campaign.@id.keyword', campaignId));
+
   return fetch(API_SEARCH, {
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({
-      query: {
-        bool: {
-          filter: [
-            {
-              term: {
-                'campaign.identifier.keyword': campaignId,
-              },
-            },
-          ],
-        },
-      },
+      query: query.toJSON(),
     }),
   })
     .then((response) => response.json())
@@ -119,6 +116,8 @@ export async function fetchAnalysisReportsFromEs(session: Session, simulationIds
         ),
         name: report.name,
         description: report.description,
+        createdAt: report.createdAt,
+        createdBy: report.createdBy,
         simulation: report.derivation.find(
           ({ '@type': type }: { '@type': string }) => type === 'https://neuroshapes.org/Simulation'
         ).identifier,
