@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import { CheckCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import isNil from 'lodash/isNil';
 import { copyClipboard } from '../utils';
@@ -15,6 +15,11 @@ import CopyIcon from '@/components/icons/CopyIcon';
 import { classNames, formatDate } from '@/util/utils';
 import CalendarIcon from '@/components/icons/Calendar';
 import CitationIcon from '@/components/icons/CitationIcon';
+
+const DoiDefinition = `A DOI, or Digital Object Identifier, is a string of
+ numbers, letters and symbols used to uniquely 
+ identify an article or document, and to provide it 
+ with a permanent web address (URL)`;
 
 function ArticlePreview({
   title,
@@ -102,12 +107,23 @@ export default function Article({
           </h1>
           <div className="grid grid-flow-col gap-4">
             {doi && (
-              <ArticleAction
-                key="copy-doi"
-                onClick={onCopy}
-                title={DOIcopied ? 'copied' : 'Copy DOI'}
-                icon={DOIcopied ? <CheckCircleOutlined className="text-teal-600" /> : <CopyIcon />}
-              />
+              <div className="flex">
+                <ArticleAction
+                  key="copy-doi"
+                  onClick={onCopy}
+                  title={DOIcopied ? 'copied' : 'Copy DOI'}
+                  icon={
+                    DOIcopied ? <CheckCircleOutlined className="text-teal-600" /> : <CopyIcon />
+                  }
+                />
+                <Tooltip
+                  title={DoiDefinition}
+                  color="#003A8C"
+                  overlayInnerStyle={{ borderRadius: '0px', background: '#003A8C' }}
+                >
+                  <InfoCircleOutlined className="text-gray-400" />
+                </Tooltip>
+              </div>
             )}
             <ArticleAction key="quote" onClick={() => {}} title="Quote" icon={<QuoteOutline />} />
           </div>
