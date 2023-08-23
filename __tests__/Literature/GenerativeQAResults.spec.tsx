@@ -95,6 +95,7 @@ describe('GenerativeQAResults', () => {
         question: 'How many neurons are there in brain',
         answer: '10k',
         rawAnswer: 'blah blah blah',
+        isNotFound: false,
         articles,
       },
     ];

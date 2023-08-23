@@ -124,6 +124,7 @@ describe('QASettingsPanel', () => {
     answer: '10k',
     rawAnswer: 'blah blah blah',
     articles: [],
+    isNotFound: false,
   });
 
   const mockBrainRegion: SelectedBrainRegion = {

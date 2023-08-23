@@ -41,13 +41,16 @@ export type GenerativeQAMetadata = {
   impact_factor?: number;
   abstract?: string;
 };
-
-export type GenerativeQAResponse = {
+export type GenerativeQAWithDataResponse = {
   answer: string;
   raw_answer: string;
   paragraphs: string[];
   metadata: GenerativeQAMetadata[];
 };
+export type GenerativeQAWithoutDataResponse = {
+  detail: string;
+};
+export type GenerativeQAResponse = GenerativeQAWithDataResponse | GenerativeQAWithoutDataResponse;
 export type SelectedBrainRegionPerQuestion = Pick<SelectedBrainRegion, 'id' | 'title'>;
 export type GenerativeQA = {
   id: string;
@@ -57,17 +60,22 @@ export type GenerativeQA = {
   rawAnswer: string;
   brainRegion?: SelectedBrainRegionPerQuestion;
   articles: GArticle[];
+  isNotFound: boolean;
 };
 
 export type GetGenerativeQAInput = {
   session: Session | null;
   question: string;
   size?: number;
+  keywords?: string[];
 };
-
+export type GenerativeQAServerResponse = {
+  question: string;
+  response: GenerativeQAResponse;
+};
 export type ReturnGetGenerativeQA = (
   input: GetGenerativeQAInput
-) => Promise<GenerativeQA | LiteratureErrors.LiteratureValidationError | null>;
+) => Promise<GenerativeQAServerResponse | LiteratureErrors.LiteratureValidationError | null>;
 
 export const FilterFields = [
   'categories',
@@ -93,7 +101,43 @@ export type MLFilter = Filter & {
   hasOptions: boolean;
 };
 
-export function isGenerativeQA(gqa: any) {
-  if (gqa && 'id' in gqa && 'question' in gqa) return true;
+/**
+ * for now their is no way to check if the answer is acceptable or not (the backend is working on that)
+ * to check if the answer is good, we have to exclude this two possible response
+ * answer is in the response and it has content
+ * or the raw_answer is exist and it has content
+ * @param gqa server response
+ * @returns if the response is considered as generative answer
+ */
+export function isGenerativeQA(gqa: GenerativeQAServerResponse) {
+  if (
+    gqa &&
+    (('answer' in gqa.response && gqa.response.answer && !!gqa.response.answer.length) ||
+      ('raw_answer' in gqa.response && gqa.response.raw_answer && !!gqa.response.raw_answer.length))
+  )
+    return true;
+  return false;
+}
+
+/**
+ * for now their is no way to check if the answer is acceptable or not (the backend is working on that)
+ * to check if the answer is not good, we have to exclude this two possible response
+ * detail is in the response
+ * or the raw_answer is empty and metadata is empty
+ * @param gqa server response
+ * @returns if the response is considered as not generative answer
+ */
+export function isGenerativeQANoFound(gqa: GenerativeQAServerResponse) {
+  if (
+    gqa &&
+    ('detail' in gqa.response ||
+      ('metadata' in gqa.response &&
+        gqa.response.metadata &&
+        !gqa.response.metadata.length &&
+        'raw_answer' in gqa.response &&
+        gqa.response.raw_answer &&
+        !gqa.response.raw_answer.length))
+  )
+    return true;
   return false;
 }

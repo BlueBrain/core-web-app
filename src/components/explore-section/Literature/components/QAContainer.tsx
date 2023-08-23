@@ -23,7 +23,7 @@ function QAContainer() {
       <div className="flex flex-1 w-full h-full">
         <QAInteractive />
       </div>
-      <div>
+      <div className="ml-5">
         <QASettingsPanel />
       </div>
     </div>

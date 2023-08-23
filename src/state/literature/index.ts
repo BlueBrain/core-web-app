@@ -78,7 +78,7 @@ const brainRegionQAs = atom((get) => {
   const { showOnlyBrainRegionQuestions } = get(literatureAtom);
 
   return allQuestions.filter((question) =>
-    showOnlyBrainRegionQuestions && !isNil(selectedBrainRegion)
+    showOnlyBrainRegionQuestions && !isNil(selectedBrainRegion) && !question.isNotFound
       ? question.brainRegion?.id === selectedBrainRegion.id
       : true
   );

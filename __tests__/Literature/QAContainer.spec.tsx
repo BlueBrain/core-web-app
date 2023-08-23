@@ -110,7 +110,6 @@ describe('QAContainer', () => {
     (usePathname as jest.Mock).mockReturnValue('/build/literature');
     (getGenerativeQAAction as jest.Mock).mockImplementation((data: FormData) => {
       const requestedQuestion = String(data.get('gqa-question'));
-      console.log('Question', requestedQuestion);
       return Promise.resolve(QAs.find((q) => q.question === requestedQuestion));
     });
     render(QAContainerProvider(QAs, selectedBrainRegion));
@@ -130,6 +129,7 @@ describe('QAContainer', () => {
     answer: '10k',
     rawAnswer: 'blah blah blah',
     articles: [],
+    isNotFound: false,
     ...extra,
   });
 

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, MouseEvent } from 'react';
 import { useAtomValue } from 'jotai';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, WarningOutlined } from '@ant-design/icons';
 import delay from 'lodash/delay';
 import last from 'lodash/last';
 
@@ -20,7 +20,7 @@ import usePathname from '@/hooks/pathname';
 
 type QAHistoryNavigationItemProps = Pick<
   GenerativeQA,
-  'id' | 'question' | 'askedAt' | 'brainRegion'
+  'id' | 'question' | 'askedAt' | 'brainRegion' | 'isNotFound'
 > & {
   index: number;
 };
@@ -30,6 +30,7 @@ function QAHistoryNavigationItem({
   index,
   question,
   brainRegion,
+  isNotFound,
 }: QAHistoryNavigationItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { activeQuestionId } = useAtomValue(literatureAtom);
@@ -39,7 +40,9 @@ function QAHistoryNavigationItem({
   const isActive = activeQuestionId === id;
 
   const onClick = () => update('activeQuestionId', id);
-  const onDelete = () => {
+  const onDelete = (e: MouseEvent<HTMLSpanElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDeleting(true);
     delay(() => {
       const newQAs = remove(id);
@@ -54,15 +57,15 @@ function QAHistoryNavigationItem({
       role="button"
       onClick={onClick}
       className={classNames(
-        'relative inline-flex items-center w-full pl-16 py-4 pr-2 mb-2 list-none gqa-nav-item text-neutral-8 hover:bg-gray-50 rounded-r-sm group',
-        isDeleting ? 'bg-gray-100 overflow-hidden py-4 animate-slide-out' : ''
+        'relative inline-flex items-center w-full pl-16 py-4 pr-2 list-none gqa-nav-item text-neutral-8 hover:bg-gray-50 rounded-r-sm group',
+        isDeleting && 'bg-gray-100 overflow-hidden py-4 animate-slide-out'
       )}
     >
       {isActive && (
         <div
           className={classNames(
             'absolute inline-flex w-10 h-[3.5px] transition-all duration-200 ease-in-expo transform rounded-full top-6 left-3 bg-primary-8',
-            isDeleting ? 'hidden' : ''
+            isDeleting && 'hidden'
           )}
         />
       )}
@@ -84,15 +87,23 @@ function QAHistoryNavigationItem({
             </span>
           </div>
         )}
-        <div
-          title={question}
-          className={classNames(
-            'w-4/5 text-xl line-clamp-2 group-hover:text-primary-8 group-hover:text-primary-8',
-            isActive ? 'text-primary-8 font-bold' : 'text-neutral-3 font-medium'
+        <div title={question} className="w-full">
+          <div
+            data-testid="question-navigation-item"
+            className={classNames(
+              'w-4/5 text-xl line-clamp-2 group-hover:text-primary-8',
+              isNotFound && isActive && 'text-amber-500',
+              isActive ? 'text-primary-8 font-bold' : 'text-neutral-3 font-medium'
+            )}
+          >
+            {question}
+          </div>
+          {isNotFound && (
+            <div className="inline-flex items-center justify-start">
+              <WarningOutlined className="mr-2 text-orange-300" />
+              <span className="font-light text-amber-500">No Answer available</span>
+            </div>
           )}
-          data-testid="question-navigation-item"
-        >
-          {question}
         </div>
       </div>
     </a>
@@ -147,6 +158,7 @@ function QAHistoryNavigation() {
             question: qa.question,
             articles: qa.articles,
             brainRegion: qa.brainRegion,
+            isNotFound: qa.isNotFound,
           }}
         />
       ))}

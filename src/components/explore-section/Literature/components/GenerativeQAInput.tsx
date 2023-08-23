@@ -5,9 +5,16 @@ import { useAtomValue } from 'jotai';
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import merge from 'lodash/merge';
 
+import { generativeQADTO } from '../utils/DTOs';
 import { getGenerativeQAAction } from '../actions';
 import { LiteratureValidationError } from '../errors';
-import { GenerativeQA, isGenerativeQA } from '@/types/literature';
+import {
+  GenerativeQA,
+  GenerativeQAServerResponse,
+  GenerativeQAWithDataResponse,
+  isGenerativeQA,
+  isGenerativeQANoFound,
+} from '@/types/literature';
 import { classNames } from '@/util/utils';
 import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -41,19 +48,25 @@ function GenerativeQAInputBar() {
     update('query', value);
   const onQuestionClear = () => update('query', '');
   const onGenerativeQAFinished = (
-    generativeQA: GenerativeQA | LiteratureValidationError | null
+    data: GenerativeQAServerResponse | LiteratureValidationError | null
   ) => {
-    if (generativeQA && !(generativeQA instanceof LiteratureValidationError)) {
-      update('activeQuestionId', generativeQA.id);
-      let newGenerativeQA = generativeQA;
-      if (selectedBrainRegion?.id && isGenerativeQA(generativeQA)) {
-        newGenerativeQA = merge(generativeQA, {
+    if (data && !(data instanceof LiteratureValidationError)) {
+      let newGenerativeQA: GenerativeQA = generativeQADTO({
+        question: data.question,
+        isNotFound: isGenerativeQANoFound(data) || !isGenerativeQA(data),
+        response: isGenerativeQA(data)
+          ? (data.response as GenerativeQAWithDataResponse)
+          : undefined,
+      });
+      if (selectedBrainRegion?.id) {
+        newGenerativeQA = merge(newGenerativeQA, {
           brainRegion: {
             id: selectedBrainRegion.id,
             title: selectedBrainRegion.title,
           },
         });
       }
+      update('activeQuestionId', newGenerativeQA.id);
       updateResults(newGenerativeQA);
     }
     update('query', '');
@@ -78,7 +91,10 @@ function GenerativeQAInputBar() {
         )}
         action={(data: FormData) => {
           startGenerativeQATransition(async () => {
-            const result = await getGenerativeQAAction(data);
+            const result = await getGenerativeQAAction({
+              data,
+              keywords: selectedBrainRegion ? [selectedBrainRegion.title] : undefined,
+            });
             onGenerativeQAFinished(result);
           });
         }}
