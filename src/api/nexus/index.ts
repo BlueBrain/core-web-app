@@ -361,10 +361,25 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
 
 export async function cloneSynapseConfig(id: string, session: Session) {
   const configSource = await fetchResourceById<SynapseConfig>(id, session);
-  const payload = await fetchJsonFileByUrl<SynapseConfigPayload>(
+  const payload = await fetchJsonFileByUrl<SynapseConfigPayload | {}>(
     configSource.distribution.contentUrl,
     session
   );
+
+  // Todo: Remove once BuildConfigs are migrated to include SynapseConfig
+  if (!('configuration' in payload)) {
+    const payloadMetadata = await createJsonFile({}, 'synapse-config.json', session);
+    const config: SynapseConfig = {
+      ...configSource,
+      '@id': createId('synapseconfig'),
+      distribution: createGeneratorConfig({
+        kgType: 'SynapseConfig',
+        payloadMetadata,
+      }).distribution,
+    };
+
+    return createResource(config, session);
+  }
 
   const synapticAssignmentResource = await fetchResourceByUrl<SynapseConfig>(
     payload.configuration.synapse_properties.id,
