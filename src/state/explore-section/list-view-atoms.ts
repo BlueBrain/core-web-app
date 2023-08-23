@@ -9,6 +9,7 @@ import { fetchRules } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOuput } from '@/types/explore-section/kg-inference';
 
@@ -61,9 +62,9 @@ export const columnKeyToFilter = (key: string): Filter => {
   }
 };
 
-export const pageSizeAtom = atom<number>(30);
+export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
-export const pageNumberAtom = atom<number>(1);
+export const pageNumberAtom = atom<number>(PAGE_NUMBER);
 
 export const searchStringAtom = atom<string>('');
 

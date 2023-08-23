@@ -1,14 +1,17 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useMemo } from 'react';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
 import { InfoCircleFilled } from '@ant-design/icons';
 import sortBy from 'lodash/sortBy';
+import { useAtom } from 'jotai';
 import { Filter, OptionsData } from './types';
 import SearchFilter from './SearchFilter';
+import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
 import { CheckIcon } from '@/components/icons';
 import CenteredMessage from '@/components/CenteredMessage';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { CheckListProps } from '@/types/explore-section/application';
+import { FiltersRenderLengthAtom } from '@/components/Filter/state';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {
@@ -89,8 +92,17 @@ export default function CheckList({
     onChange(newValues);
   };
 
-  const defaultRenderLength = 8;
-  const [renderLength, setRenderLength] = useState<number>(defaultRenderLength);
+  const [filtersRenderLength, setFiltersRenderLength] = useAtom(FiltersRenderLengthAtom);
+
+  const renderLength = filtersRenderLength[filter.field];
+
+  const updateRenderLength = () => {
+    setFiltersRenderLength((prevFiltersRenderLength) => ({
+      ...prevFiltersRenderLength,
+      [filter.field]: renderLength + adjustedLoadMoreLength,
+    }));
+  };
+
   const loadMoreLength = 5;
   const remainingLength = (options?.length ?? 0) - renderLength;
   const adjustedLoadMoreLength =
@@ -107,7 +119,7 @@ export default function CheckList({
       <button
         className="bg-primary-8 ml-auto py-3 px-8 rounded text-white w-fit"
         type="button"
-        onClick={() => setRenderLength(renderLength + adjustedLoadMoreLength)}
+        onClick={() => updateRenderLength()}
       >
         {`Load ${adjustedLoadMoreLength} more ${fieldLabel} (${remainingLength} remaining)`}
       </button>
@@ -130,7 +142,7 @@ export default function CheckList({
           filterField: filter.field,
           search, // Pass the search function to the ListComponent
           loadMoreBtn, // Pass the loadMoreBtn function to the ListComponent
-          defaultRenderLength, // Pass the defaultRenderLength as a prop
+          defaultRenderLength: DEFAULT_CHECKLIST_RENDER_LENGTH, // Pass the defaultRenderLength as a prop
         })
       ) : (
         <div className="text-neutral-1">
