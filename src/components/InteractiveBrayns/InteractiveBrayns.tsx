@@ -10,7 +10,7 @@ import Settings from './Settings';
 import HowToUseButton from './HowToUseButton';
 import ResetCameraButton from './ResetCameraButton';
 import Spinner from '@/components/Spinner';
-import BraynsService, { BraynsServiceInterface } from '@/services/brayns';
+import BraynsService, { BraynsServiceInterface } from '@/services/brayns/circuit';
 import { isString } from '@/util/type-guards';
 import { useVisibleCells } from '@/state/atlas';
 import styles from './interactive-brayns.module.css';
