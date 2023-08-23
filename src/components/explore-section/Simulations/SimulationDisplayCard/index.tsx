@@ -42,6 +42,7 @@ export default function SimulationDisplayCard({
 
     return blob ? (
       <AnalysisReportImage
+        title={simulation.title}
         id={simulation.id}
         project={simulation.project}
         blob={blob}

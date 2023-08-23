@@ -49,8 +49,8 @@ export const simulationsAtom = atom<Promise<Simulation[] | undefined>>(async (ge
 
   const simulations =
     execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
-
   return simulations?.hits.map(({ _source: simulation }: { _source: any }) => ({
+    title: simulation.name,
     completedAt: simulation.endedAt,
     dimensions: simulation.parameter?.coords,
     id: simulation['@id'],

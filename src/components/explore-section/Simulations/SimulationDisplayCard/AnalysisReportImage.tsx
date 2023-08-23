@@ -14,6 +14,7 @@ import timeElapsedFromToday from '@/util/date';
 import { buildSimulationDetailURL } from '@/components/explore-section/Simulations/utils';
 
 type AnalysisReportImageProps = {
+  title: string;
   id: string;
   project: string;
   blob: Blob;
@@ -27,6 +28,7 @@ export default function AnalysisReportImage({
   blob,
   createdAt,
   createdBy,
+  title,
 }: AnalysisReportImageProps) {
   const [showDimensionValue, setShowDimensionValue] = useState<boolean>(false);
   const pathname = usePathname();
@@ -43,7 +45,7 @@ export default function AnalysisReportImage({
           checked={showDimensionValue}
           className="font-semibold text-primary-7"
         >
-          Dimension values
+          {title}
         </Checkbox>
         <Link
           className="border radius-none w-max px-2 py-1"
