@@ -8,7 +8,6 @@ import {
   selectorFnBasic,
   selectorFnDate,
   selectorFnStatistic,
-  selectorFnValue,
 } from '@/state/explore-section/listing-selectors';
 import { FilterType } from '@/components/Filter/types';
 import { IndexColContent, ValueArray } from '@/components/ListTable';
@@ -151,11 +150,16 @@ const LISTING_CONFIG: ListingConfigProps = {
     },
   },
   neuronDensity: {
-    term: 'neuronDensity.value',
+    term: 'series.statistic.mean.keyword',
+    nestedField: {
+      extendedField: 'series.statistic.keyword',
+      field: 'mean',
+      nestField: 'series',
+    },
     title: 'Density',
     filter: 'valueRange',
     unit: 'n/mm³',
-    renderFn: (_t, r) => selectorFnValue(r._source?.neuronDensity),
+    renderFn: (_t, r) => selectorFnStatistic(r._source, 'mean'),
     vocabulary: {
       plural: 'Densities',
       singular: 'Density',

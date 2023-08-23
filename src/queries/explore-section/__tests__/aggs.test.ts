@@ -9,7 +9,7 @@ const checklistFilter: Filter = {
 };
 
 const valueRangeFilter: Filter = {
-  field: 'neuronDensity',
+  field: 'layerThickness',
   type: 'valueRange',
   value: {
     gte: 2,
@@ -34,9 +34,9 @@ describe('getFilterESBuilder tests', () => {
   it('should return correct stats builder for non nested filter', () => {
     const aggBuilder = getAggESBuilder(valueRangeFilter);
     expect(aggBuilder?.toJSON()).toEqual({
-      neuronDensity: {
+      layerThickness: {
         stats: {
-          field: 'neuronDensity.value',
+          field: 'layerThickness.value',
         },
       },
     });
@@ -91,9 +91,9 @@ describe('buildAggs unit tests', () => {
             size: 100,
           },
         },
-        neuronDensity: {
+        layerThickness: {
           stats: {
-            field: 'neuronDensity.value',
+            field: 'layerThickness.value',
           },
         },
       },
