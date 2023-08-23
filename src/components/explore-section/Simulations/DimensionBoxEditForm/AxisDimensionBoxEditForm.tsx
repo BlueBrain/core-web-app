@@ -120,6 +120,10 @@ export default function AxisDimensionBoxEditForm({
   };
 
   const stepValueValidator = (rule: any, value: string) => {
+    if (!value || form.getFieldValue('input-type') === 'value') {
+      return Promise.resolve();
+    }
+
     const regex = new RegExp(/(\d+(?:\.\d+)?)/);
     if (!regex.test(value)) {
       return Promise.reject(new Error('Please fill a correct integer or float'));

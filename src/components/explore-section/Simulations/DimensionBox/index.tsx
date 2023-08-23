@@ -23,7 +23,10 @@ function DimensionTitle({ title, dismissible, dismissFunc, setStatus }: Dimensio
             setStatus('selection');
           }}
         >
-          Edit axes <EditOutlined />
+          <div className="flex flex-row align-center text-primary-6">
+            <span>Edit axis</span>
+            <EditOutlined className="ml-2" />
+          </div>
         </Button>
       )}
     </div>
