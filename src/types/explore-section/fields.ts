@@ -86,13 +86,6 @@ export type Series = {
   value: number;
 };
 
-// TODO: dimension is a mock type
-export type Dimension = {
-  id: string;
-  label: string;
-  value: number[];
-};
-
 export type SimulationStatus = 'Running' | 'Done' | 'Failed';
 
 export interface Weight {
