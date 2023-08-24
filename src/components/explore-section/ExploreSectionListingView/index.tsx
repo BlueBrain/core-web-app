@@ -11,7 +11,9 @@ import ExploreSectionTable from '@/components/explore-section/ExploreSectionList
 import ListTable from '@/components/ListTable';
 import ControlPanel from '@/components/explore-section/ControlPanel';
 import SettingsIcon from '@/components/icons/Settings';
+import {PlusOutlined} from '@ant-design/icons';
 import { filterHasValue } from '@/components/Filter/util';
+import { GeneralizeDrawer } from '@/components/explore-section/GeneralizeDrawer';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import {
   activeColumnsAtom,
@@ -34,7 +36,7 @@ function FilterBtn({ onClick }: HTMLProps<HTMLButtonElement>) {
 
   return (
     <button
-      className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5"
+      className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-3"
       onClick={onClick}
       type="button"
     >
@@ -46,6 +48,21 @@ function FilterBtn({ onClick }: HTMLProps<HTMLButtonElement>) {
         <span className="text-primary-3 text-sm">{activeColumnsText}</span>
       </div>
       <SettingsIcon className="rotate-90 text-white" />
+    </button>
+  );
+}
+
+function GeneralizeDrawerBtn({ onClick }: HTMLProps<HTMLButtonElement>) {
+  return (
+    <button
+      className="bg-white py-3 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5 border border-gray-5"
+      onClick={onClick}
+      type="button"
+    >
+      <div className="flex gap-3 items-center">
+        <span className="font-bold text-primary-8">Extend your search</span>
+      </div>
+      <PlusOutlined className="rotate-90 text-primary-8 text-sm" />
     </button>
   );
 }
@@ -78,6 +95,7 @@ function Header({ title }: { title: string }) {
 
 function ExploreSectionListingView({ title, children }: { title: string; children: ReactNode }) {
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
+  const [displayGeneralizeDrawer, setDisplayGeneralizeDrawer] = useState(false);
 
   return (
     <>
@@ -87,6 +105,7 @@ function ExploreSectionListingView({ title, children }: { title: string; childre
           <div className="flex items-center gap-5 justify-between w-auto">
             <ClearFilters />
             <ExploreSectionNameSearch />
+            <GeneralizeDrawerBtn onClick={() => setDisplayGeneralizeDrawer(!displayGeneralizeDrawer)}/>
             <FilterBtn onClick={() => setDisplayControlPanel(!displayControlPanel)} />
           </div>
         </div>
