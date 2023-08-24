@@ -36,7 +36,7 @@ export default function SectionCards({ content, cardIndex, expanded }: SectionCa
       </div>
 
       {content.icon === 'eye' ? (
-        <EyeIcon fill="white" className="w-auto h-3" />
+        <EyeIcon className="w-auto h-3 text-white" />
       ) : (
         <AddIcon fill="white" className="w-auto h-4" />
       )}
@@ -61,7 +61,7 @@ export default function SectionCards({ content, cardIndex, expanded }: SectionCa
         </div>
 
         {content.icon === 'eye' ? (
-          <EyeIcon fill="white" className="w-auto h-3" />
+          <EyeIcon className="w-auto h-3 text-white" />
         ) : (
           <AddIcon
             fill="white"

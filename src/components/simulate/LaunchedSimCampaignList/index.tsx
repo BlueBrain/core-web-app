@@ -135,7 +135,7 @@ export default function LaunchedSimCampaignList() {
           key="actions"
           width={130}
           render={(config: LaunchedSimCampUIConfigType) => {
-            const iconFillStyle = config.status === 'Done' ? '#7DFF8A' : 'white';
+            const iconColor = config.status === 'Done' ? 'text-[#7DFF8A]' : 'text-white';
             const defaultActionStyle = 'inline-block mr-2';
 
             return (
@@ -143,15 +143,23 @@ export default function LaunchedSimCampaignList() {
                 <Button
                   size="small"
                   type="text"
-                  className={classNames(defaultActionStyle, 'align-bottom cursor-not-allowed')}
+                  className={classNames(
+                    defaultActionStyle,
+                    'align-bottom cursor-not-allowed',
+                    iconColor
+                  )}
                   title="Not implemented yet"
                 >
-                  <FileIcon fill={iconFillStyle} />
+                  <FileIcon fill={iconColor} />
                 </Button>
 
                 <Link href={`${expDesBaseUrl}?simulationCampaignUIConfigId=${extractId(config)}`}>
-                  <Button size="small" type="text" className={defaultActionStyle}>
-                    <SettingsIcon fill={iconFillStyle} />
+                  <Button
+                    size="small"
+                    type="text"
+                    className={classNames(defaultActionStyle, iconColor)}
+                  >
+                    <SettingsIcon fill={iconColor} />
                   </Button>
                 </Link>
 
@@ -160,8 +168,12 @@ export default function LaunchedSimCampaignList() {
                     href={`${exploreSimCampBaseUrl}?simCampId=${extractId(config)}`}
                     className="inline-block"
                   >
-                    <Button size="small" type="text" className={defaultActionStyle}>
-                      <EyeIcon fill={iconFillStyle} />
+                    <Button
+                      size="small"
+                      type="text"
+                      className={classNames(defaultActionStyle, iconColor)}
+                    >
+                      <EyeIcon />
                     </Button>
                   </Link>
                 )}

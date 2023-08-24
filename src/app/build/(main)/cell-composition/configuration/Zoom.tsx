@@ -13,7 +13,7 @@ export default function ZoomControl({
 }) {
   return (
     <div className="flex gap-2 items-center w-[300px] justify-self-end py-12">
-      <ZoomOutIcon className="h-[14px]" />
+      <ZoomOutIcon className="h-[14px] text-primary-8" />
       <Slider
         className="grow"
         defaultValue={1}
@@ -28,7 +28,7 @@ export default function ZoomControl({
         trackStyle={{ background: '#003A8C' }}
         value={zoom}
       />
-      <ZoomInIcon className="h-[14px]" />
+      <ZoomInIcon className="h-[14px] text-primary-8" />
       <Button onClick={reset} type="link" style={{ color: '#003A8C' }}>
         Reset
       </Button>
