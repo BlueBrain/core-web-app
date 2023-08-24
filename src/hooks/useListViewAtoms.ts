@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { ListViewAtoms } from '@/types/explore-section/application';
+import { ListViewAtoms, ListViewAtomValues } from '@/types/explore-section/application';
 
 export function useListViewAtoms({ ...atoms }) {
   return Object.entries(atoms).reduce(
@@ -7,6 +7,6 @@ export function useListViewAtoms({ ...atoms }) {
       ...acc,
       [key]: useAtom(atom), // eslint-disable-line react-hooks/rules-of-hooks
     }),
-    {} as ListViewAtoms
+    {} as ListViewAtoms<ListViewAtomValues>
   );
 }
