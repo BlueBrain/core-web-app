@@ -15,7 +15,7 @@ import { OriginalComposition } from '@/types/composition/original';
 const configPayloadDefaults = {
   VARIANT_DEFINITION: {
     algorithm: 'cell_composition_manipulation',
-    version: 'v0.3.3',
+    version: 'v1',
   },
   INPUTS: [
     {
