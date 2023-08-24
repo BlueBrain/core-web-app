@@ -1,16 +1,12 @@
-import { useEffect, useState, ReactNode } from 'react';
 import Drawer from 'antd/lib/drawer';
 import { CloseOutlined } from '@ant-design/icons';
-import { useAtomValue } from 'jotai';
-import ReloadIcon from '@/components/icons/Reload';
 
 export type Props = {
-  children?: ReactNode;
   toggleDisplay: () => void;
   display: boolean;
 };
 
-export default function GeneralizeDrawer ({ children, toggleDisplay, display }: Props) {
+export default function GeneralizeDrawer ({ toggleDisplay, display }: Props) {
   return (
     <Drawer
       open={display}
