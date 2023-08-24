@@ -1,7 +1,7 @@
 import { HTMLProps, ReactNode, useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
@@ -11,9 +11,8 @@ import ExploreSectionTable from '@/components/explore-section/ExploreSectionList
 import ListTable from '@/components/ListTable';
 import ControlPanel from '@/components/explore-section/ControlPanel';
 import SettingsIcon from '@/components/icons/Settings';
-import {PlusOutlined} from '@ant-design/icons';
 import { filterHasValue } from '@/components/Filter/util';
-import { GeneralizeDrawer } from '@/components/explore-section/GeneralizeDrawer';
+import GeneralizeDrawer from '@/components/explore-section/GeneralizeDrawer';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import {
   activeColumnsAtom,
@@ -113,6 +112,7 @@ function ExploreSectionListingView({ title, children }: { title: string; childre
         <LoadMoreButton />
       </section>
       {displayControlPanel && <ControlPanel toggleDisplay={() => setDisplayControlPanel(false)} />}
+      <GeneralizeDrawer toggleDisplay={() => setDisplayGeneralizeDrawer(false)} display={displayGeneralizeDrawer} />
     </>
   );
 }
