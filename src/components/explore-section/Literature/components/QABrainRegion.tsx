@@ -1,11 +1,11 @@
+import { useAtomValue } from 'jotai';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
-import { useAtomValue } from 'jotai';
 import usePathname from '@/hooks/pathname';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { classNames } from '@/util/utils';
 import { SelectedBrainRegionPerQuestion } from '@/types/literature';
 import { BrainIcon } from '@/components/icons';
+import { literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
 
 export function QABrainRegionPerQuestion({ id, title }: SelectedBrainRegionPerQuestion) {
   return (
@@ -22,7 +22,7 @@ export function QABrainRegionPerQuestion({ id, title }: SelectedBrainRegionPerQu
 }
 
 function QAContextBrainRegion() {
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const selectedBrainRegion = useAtomValue(literatureSelectedBrainRegionAtom);
   const isSelectedBrainRegionExists = Boolean(selectedBrainRegion?.id);
 
   return (

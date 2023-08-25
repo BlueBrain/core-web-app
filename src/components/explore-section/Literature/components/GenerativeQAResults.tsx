@@ -2,17 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { FilterOutlined } from '@ant-design/icons';
-import trim from 'lodash/trim';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
 import { usePathname } from 'next/navigation';
+import trim from 'lodash/trim';
 
-import { QABrainRegionPerQuestion } from './QABrainRegion';
 import ArticlesTimeLine from './ArticlesTimeLine';
-import { FilterFns } from './FilterPanel';
 import ArticleSorter from './ArticleSorter';
+import { QABrainRegionPerQuestion } from './QABrainRegion';
+import { FilterFns } from './FilterPanel';
 import { GenerativeQA, FilterFieldsType, SortFn } from '@/types/literature';
-import BrainLight from '@/components/icons/BrainLight';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import {
@@ -21,6 +20,7 @@ import {
   literatureResultAtom,
   useLiteratureAtom,
 } from '@/state/literature';
+import BrainLight from '@/components/icons/BrainLight';
 import LightIcon from '@/components/icons/Light';
 
 export type GenerativeQASingleResultProps = Omit<GenerativeQA, 'sources' | 'paragraphs'>;
@@ -125,9 +125,10 @@ function GenerativeQASingleResult({
         <div className="inline-flex items-center justify-start w-full gap-2 my-5">
           <BrainLight />
           <span
-            className={`font-normal tracking-tight text-blue-900 ${
+            className={classNames(
+              'font-normal tracking-tight text-blue-900',
               collpaseQuestion ? 'text-xl font-extrabold' : 'text-sm'
-            }`}
+            )}
             data-testid="question-result"
           >
             {question}
@@ -143,9 +144,8 @@ function GenerativeQASingleResult({
             className="flex items-center justify-center w-8 h-8 p-px rounded-full min-w-[2rem] hover:shadow-md"
           >
             <ChevronIcon
-              fill="#003A8C"
               className={classNames(
-                'transition-transform duration-300 ease-in-out',
+                'transition-transform duration-300 ease-in-out text-primary-8 fill-current',
                 collpaseQuestion ? 'rotate-0' : 'rotate-90'
               )}
             />
@@ -180,8 +180,10 @@ function GenerativeQASingleResult({
                     </div>
                   </div>
                   <ChevronIcon
-                    fill="#003A8C"
-                    className={`${expandArticles ? '-rotate-90' : 'rotate-90'}`}
+                    className={classNames(
+                      'text-primary-8 fill-current',
+                      expandArticles ? '-rotate-90' : 'rotate-90'
+                    )}
                   />
                 </button>
 

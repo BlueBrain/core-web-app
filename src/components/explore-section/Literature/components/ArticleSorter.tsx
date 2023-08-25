@@ -10,8 +10,7 @@ import {
   SortDirection,
 } from '@/types/literature';
 import SortIcon from '@/components/icons/SortIcon';
-import { normalizedDate } from '@/util/utils';
-import styles from './sorter.module.scss';
+import { classNames, normalizedDate } from '@/util/utils';
 
 interface SorterProps {
   onChange: (sortFn: SortFn | null) => void;
@@ -38,11 +37,14 @@ export default function ArticleSorter({ onChange }: SorterProps) {
 
   return (
     <div className="flex ml-[10px] items-center">
-      <span className="text-neutral-3 font-normal mr-1">Sort by</span>
+      <span className="mr-1 font-normal text-neutral-3">Sort by</span>
       <Select
         defaultValue={DefaultSortField}
         options={SortFieldsOptions}
-        className={`min-w-[130px] rounded-none border border-solid border-neutral-2 ${styles.sortSelector}`}
+        className={classNames(
+          'min-w-[130px] rounded-none border border-solid border-neutral-2',
+          '[&>.ant-select-selector]:text-primary-8 [&>.ant-select-selector]:font-bold'
+        )}
         popupClassName="!text-primary-8"
         popupMatchSelectWidth={false}
         bordered={false}
@@ -54,7 +56,7 @@ export default function ArticleSorter({ onChange }: SorterProps) {
       <Button
         onClick={onSortDirectionChange}
         icon={<SortIcon direction={sortDirection} className="text-primary-9" />}
-        className="border-none bg-transparent"
+        className="bg-transparent border-none"
         aria-label="sort-articles"
       />
     </div>

@@ -3,7 +3,7 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
 
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { selectedBrainRegionAtom, literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
 import { literatureResultAtom } from '@/state/literature';
 import { GenerativeQA } from '@/types/literature';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
@@ -36,15 +36,7 @@ describe('QAContainer', () => {
     expectQuestionToBeVisible(DifferentBrainRegionQuestion);
   });
 
-  test('shows only QAs for selected brain region when user toggles on "Show only current brain region questions"', () => {
-    fireEvent.click(showOnlyBrainRegionQAsSwitch());
-
-    expectQuestionToBeVisible(MatchingBrainRegionQuestion); // The Question appears in the navigation panel and in QAResultList.
-    expect(screen.queryByText(NoBrainRegionQuestion)).toBeFalsy();
-    expect(screen.queryByText(DifferentBrainRegionQuestion)).toBeFalsy();
-  });
-
-  test('removes selected brain region when user toggles on "Search in all brain regions"', () => {
+  test('removes selected brain region when user toggles on "Ignore current context"', () => {
     expect(screen.getByTestId('selected-brain-region').innerHTML).toEqual(mockBrainRegion.title);
 
     fireEvent.click(searchInBrainRegionSwitch());
@@ -52,9 +44,7 @@ describe('QAContainer', () => {
     expect(screen.queryByTestId('selected-brain-region')?.innerHTML).toEqual('All regions');
   });
 
-  const searchInBrainRegionSwitch = () => screen.getByLabelText('Search in all brain regions');
-  const showOnlyBrainRegionQAsSwitch = () =>
-    screen.getByLabelText('Show only current brain region questions');
+  const searchInBrainRegionSwitch = () => screen.getByLabelText('Ignore current context');
 
   const expectQuestionToBeVisible = (question: string) => {
     expect(screen.getByText(question, { selector: QuestionResultSelector })).toBeVisible();
@@ -80,6 +70,7 @@ describe('QAContainer', () => {
         initialValues={[
           [literatureResultAtom, qa],
           [selectedBrainRegionAtom, brainRegion],
+          [literatureSelectedBrainRegionAtom, brainRegion],
         ]}
       >
         <QAContainer />

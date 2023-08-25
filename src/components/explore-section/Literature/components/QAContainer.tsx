@@ -2,9 +2,8 @@
 
 import QAInteractive from './QAInteractive';
 import QALeftPanel from './QALeftPanel';
-import QASettingsPanel from './QASettingsPanel';
-import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
+import { classNames } from '@/util/utils';
 
 function QAContainer() {
   const pathname = usePathname();
@@ -22,9 +21,6 @@ function QAContainer() {
       </div>
       <div className="flex flex-1 w-full h-full">
         <QAInteractive />
-      </div>
-      <div className="ml-5">
-        <QASettingsPanel />
       </div>
     </div>
   );

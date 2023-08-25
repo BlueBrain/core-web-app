@@ -17,7 +17,8 @@ import {
 } from '@/types/literature';
 import { classNames } from '@/util/utils';
 import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
+import usePathname from '@/hooks/pathname';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -40,8 +41,10 @@ function GenerativeQAInputBar() {
   const update = useLiteratureAtom();
   const { query } = useAtomValue(literatureAtom);
   const { update: updateResults, QAs } = useLiteratureResultsAtom();
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const selectedBrainRegion = useAtomValue(literatureSelectedBrainRegionAtom);
   const [isGQAPending, startGenerativeQATransition] = useTransition();
+  const pathname = usePathname();
+  const isBuildSection = pathname?.startsWith('/build');
 
   const isChatBarMustSlideInDown = Boolean(QAs.length);
   const onChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
@@ -76,9 +79,9 @@ function GenerativeQAInputBar() {
     <div
       className={classNames(
         ' flex flex-col items-center justify-center w-full pr-4',
-        isChatBarMustSlideInDown
-          ? 'absolute bottom-0 left-0 right-0'
-          : 'fixed top-1/2 -translate-y-1/2'
+        !isChatBarMustSlideInDown && !isBuildSection && 'fixed top-1/2 -translate-y-1/2',
+        isBuildSection && !isChatBarMustSlideInDown && 'absolute top-1/2 -translate-y-1/2',
+        isChatBarMustSlideInDown && 'absolute bottom-0 left-0 right-0'
       )}
     >
       <form

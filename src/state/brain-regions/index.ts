@@ -1,6 +1,8 @@
 import { atom } from 'jotai';
+import { atomWithReset } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
+
 import sessionAtom from '@/state/session';
 import {
   BrainRegion,
@@ -371,6 +373,7 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
 export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(null);
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
+export const literatureSelectedBrainRegionAtom = atomWithReset<SelectedBrainRegion | null>(null);
 
 export const setSelectedBrainRegionAtom = atom(
   null,
@@ -382,12 +385,14 @@ export const setSelectedBrainRegionAtom = atom(
     selectedBrainRegionLeaves: string[] | null,
     selectedBrainRegionRepresentedInAnnotation: boolean
   ) => {
-    set(selectedBrainRegionAtom, {
+    const brainRegion = {
       id: selectedBrainRegionId,
       title: selectedBrainRegionTitle,
       leaves: selectedBrainRegionLeaves,
       representedInAnnotation: selectedBrainRegionRepresentedInAnnotation,
-    });
+    };
+    set(selectedBrainRegionAtom, brainRegion);
+    set(literatureSelectedBrainRegionAtom, brainRegion);
     set(compositionHistoryAtom, []);
     set(compositionHistoryIndexAtom, 0);
   }
