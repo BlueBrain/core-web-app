@@ -10,6 +10,7 @@ import SimulationBox from './SimulationBox';
 import { simulationPreviewsAtom } from '@/state/experiment-interactive';
 import { classNames } from '@/util/utils';
 import { MAX_SIMULATION_PREVIEW_COLS } from '@/components/experiment-interactive/config';
+import HollowBox from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/HollowBox';
 
 export default function SimulationGrid() {
   const simulationPreviews = useAtomValue(simulationPreviewsAtom);
@@ -46,7 +47,7 @@ export default function SimulationGrid() {
 
   const hollowBoxes = useMemo(() => {
     const boxDiff = rowCount * colCount - gridBoxes.length;
-    return range(boxDiff).map((i) => <div key={`hollow_${i}`} />);
+    return range(boxDiff).map((index) => <HollowBox index={index} />);
   }, [colCount, gridBoxes.length, rowCount]);
 
   return (
