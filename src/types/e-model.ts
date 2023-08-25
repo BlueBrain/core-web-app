@@ -227,6 +227,7 @@ export interface FeatureItem<T extends AllFeatureKeys> extends EModelFeature {
   selected: boolean;
   uuid: string;
   displayName: string;
+  description: string;
 }
 export type FeatureParameterGroup = {
   'Spike event': FeatureItem<SpikeEventFeatureKeys>[];

@@ -23,6 +23,7 @@ import {
   spikeEventFeatures,
   spikeShapeFeatures,
   voltageFeatures,
+  featureDescriptionsMap,
 } from '@/constants/cell-model-assignment/e-model';
 
 const NOT_AVAILABLE_STR = 'Data not available';
@@ -79,6 +80,7 @@ export function convertFeaturesForUI(features: EModelFeature[]): FeatureParamete
 
   const getFeaturesFromCategory = (categoryName: FeatureCategory, featureList: EModelFeature[]) => {
     const featureNamesInCategory: AllFeatureKeys[] = featuresInCategoryMap[categoryName];
+    const descriptionsInCategory = featureDescriptionsMap[categoryName];
     return featureList
       .filter((feature) => featureNamesInCategory.includes(feature.efeature))
       .map(
@@ -87,6 +89,9 @@ export function convertFeaturesForUI(features: EModelFeature[]): FeatureParamete
           selected: true,
           uuid: crypto.randomUUID(),
           displayName: `${feature.efeature}_${feature.amplitude}`,
+          // TODO: fix this types
+          // @ts-ignore
+          description: descriptionsInCategory[feature.efeature],
         })
       );
   };

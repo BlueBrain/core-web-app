@@ -1,12 +1,23 @@
 import { ColumnsType } from 'antd/es/table';
 import { useAtomValue } from 'jotai';
-import { Popover } from 'antd';
+import { Divider, Popover } from 'antd';
+import { GlobalOutlined } from '@ant-design/icons';
 
 import DefaultEModelTable from './DefaultEModelTable';
 import { experimentalTracesAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { ExperimentalTracesDataType } from '@/types/e-model';
+import { eCodesDocumentationUrl } from '@/constants/cell-model-assignment/e-model';
 
 const nameRenderFn = (name: string) => <div className="font-bold">{name}</div>;
+
+const eCodesLink = (
+  <div className="w-[100px]">
+    <a href={eCodesDocumentationUrl} target="_blank">
+      More info about e-codes <GlobalOutlined />
+    </a>
+    <Divider />
+  </div>
+);
 
 const columns: ColumnsType<ExperimentalTracesDataType> = [
   {
@@ -36,6 +47,7 @@ const columns: ColumnsType<ExperimentalTracesDataType> = [
     render: (trace: ExperimentalTracesDataType) => {
       const list = (
         <div>
+          {eCodesLink}
           {trace.eCodes.map((ecode) => (
             <p key={ecode}>{ecode}</p>
           ))}

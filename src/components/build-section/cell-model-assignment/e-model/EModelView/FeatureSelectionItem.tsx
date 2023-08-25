@@ -1,4 +1,5 @@
 import { CheckCircleFilled } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 
 import {
   AllFeatureKeys,
@@ -24,7 +25,7 @@ export default function FeatureSelectionItem({ featureCategory, featureGroup }: 
       </div>
       <div className="flex gap-3 flex-wrap">
         {features.map((feature) => (
-          <CustomCheckbox key={feature.uuid} feature={feature} />
+          <CustomCheckbox feature={feature} key={feature.uuid} />
         ))}
       </div>
     </div>
@@ -33,9 +34,11 @@ export default function FeatureSelectionItem({ featureCategory, featureGroup }: 
 
 function CustomCheckbox({ feature }: { feature: FeatureItem<AllFeatureKeys> }) {
   return (
-    <div className="flex rounded-3xl bg-slate-50 py-2 px-4 text-primary-8 gap-2">
-      <div className="whitespace-nowrap">{feature.displayName}</div>
-      <CheckCircleFilled />
-    </div>
+    <Tooltip title={feature.description}>
+      <div className="flex rounded-3xl bg-slate-50 py-2 px-4 text-primary-8 gap-2">
+        <div className="whitespace-nowrap">{feature.displayName}</div>
+        <CheckCircleFilled />
+      </div>
+    </Tooltip>
   );
 }

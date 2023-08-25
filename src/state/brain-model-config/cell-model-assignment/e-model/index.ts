@@ -103,13 +103,20 @@ const eModelIdAtom = atom<Promise<string | null>>(
 
 /* --------------------------------- EModel --------------------------------- */
 
-const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
+export const eModelAtom = atom<Promise<EModel | null>>(async (get) => {
   const session = get(sessionAtom);
   const eModelId = await get(eModelIdAtom);
 
   if (!session || !eModelId) return null;
 
-  const eModel = await fetchResourceById<EModel>(eModelId, session, eModelProjConfig);
+  return fetchResourceById<EModel>(eModelId, session, eModelProjConfig);
+});
+
+const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModel = await get(eModelAtom);
+
+  if (!session || !eModel) return null;
 
   return eModel.generation.activity.followedWorkflow['@id'];
 });

@@ -6,13 +6,18 @@ import ExperimentalTraces from './ExperimentalTraces';
 import FeatureSelectionContainer from './FeatureSelectionContainer';
 import Mechanism from './Mechanism';
 import SimulationParameters from './SimulationParameters';
+import EModelTitle from './EModelTitle';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 export default function EModelView() {
   return (
-    <div className="h-[90vh] overflow-auto p-6">
-      <div className="text-3xl font-bold text-primary-8">cNAC_1234_2023</div>
+    <div className="h-[80vh] overflow-auto p-6">
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <DefaultLoadingSuspense>
+          <EModelTitle />
+        </DefaultLoadingSuspense>
+      </ErrorBoundary>
       <Divider />
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
