@@ -72,6 +72,7 @@ export default function Article({
   doi,
   authors,
   journal,
+  journalISSN,
   abstract,
   collapseAll,
   publicationDate,
@@ -129,7 +130,7 @@ export default function Article({
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-4 my-5">
+      <div className="flex flex-wrap items-center my-5 gap-x-4 gap-y-1">
         <Tooltip
           title="Authors"
           placement="bottomLeft"
@@ -153,14 +154,23 @@ export default function Article({
             <ArticlePreview title={authors.at(0)!} icon={<PersonIcon />} />
           </div>
         </Tooltip>
-        {journal && <ArticlePreview title={journal} icon={<JournalIcon />} altText="Journal" />}
+        {journal && (
+          <ArticlePreview
+            title={journal}
+            icon={<JournalIcon />}
+            altText={`${journal} ${journalISSN ?? ''}`}
+          />
+        )}
         {publicationDate && (
-          <ArticlePreview title={formatDate(publicationDate)} icon={<CalendarIcon />} />
+          <ArticlePreview
+            title={formatDate(publicationDate)}
+            icon={<CalendarIcon className="w-4 h-4" />}
+          />
         )}
         {!isNil(citationsCount) && (
           <ArticlePreview
             title={`${citationsCount} times`}
-            icon={<CitationIcon />}
+            icon={<CitationIcon className="w-4 h-4" />}
             altText={`Number of citations: ${citationsCount}`}
           />
         )}

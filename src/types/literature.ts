@@ -15,6 +15,7 @@ export type GArticle = {
   title: string;
   authors: string[];
   journal?: string;
+  journalISSN?: string;
   paragraph: string;
   paragraphId: string;
   section?: string;
@@ -36,7 +37,8 @@ export type GenerativeQAMetadata = {
   section?: string;
   date?: string; // format "%Y-%m-%d"
   article_type?: string;
-  journal?: string;
+  journal_name?: string;
+  journal_issn?: string;
   cited_by?: number;
   impact_factor?: number;
   abstract?: string;
