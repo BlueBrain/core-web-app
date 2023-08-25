@@ -14,6 +14,9 @@ export interface EModelMenuItem {
   annotation?: string;
   uuid: string;
 }
+export interface MEModelMenuItem {
+  [mTypeKey: string]: EModelMenuItem[];
+}
 
 export type SimulationParameterKeys = 'Temperature (°C)' | 'Ra' | 'Initial voltage';
 export type SimulationParameter = Record<SimulationParameterKeys, number>;

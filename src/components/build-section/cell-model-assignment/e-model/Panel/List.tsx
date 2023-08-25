@@ -5,7 +5,7 @@ import { analysedETypesAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export default function List() {
-  const eModelItems = useAtomValue(analysedETypesAtom);
+  const mEModelItems = useAtomValue(analysedETypesAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
 
   let listItems = null;
@@ -13,8 +13,8 @@ export default function List() {
   if (selectedBrainRegion) {
     listItems = (
       <>
-        {eModelItems.map((item) => (
-          <ListItem key={item.uuid} item={item} />
+        {Object.entries(mEModelItems).map(([mTypeName, eTypes]) => (
+          <ListItem key={mTypeName} eTypeItems={eTypes} mTypeName={mTypeName} />
         ))}
       </>
     );
