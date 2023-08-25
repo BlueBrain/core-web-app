@@ -1,7 +1,8 @@
-import { useAtomValue } from 'jotai/index';
-import { simulationPreviewsAtom } from '@/state/experiment-interactive';
 import { useMemo } from 'react';
+import { useAtomValue } from 'jotai';
+
 import SimulationThumbnail from './SimulationThumbnail';
+import { simulationPreviewsAtom } from '@/state/experiment-interactive';
 import { MAX_SIMULATION_PREVIEW_COLS } from '@/components/experiment-interactive/config';
 
 export default function SelectSimulationsBox() {

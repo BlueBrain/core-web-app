@@ -47,7 +47,7 @@ export default function SimulationGrid() {
 
   const hollowBoxes = useMemo(() => {
     const boxDiff = rowCount * colCount - simulationBoxes.length;
-    return range(boxDiff).map((index) => <HollowBox index={index} />);
+    return range(boxDiff).map((index) => <HollowBox key={index} index={index} />);
   }, [colCount, simulationBoxes.length, rowCount]);
 
   return (
