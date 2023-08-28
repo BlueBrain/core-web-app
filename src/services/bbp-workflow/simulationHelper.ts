@@ -23,10 +23,11 @@ import {
 } from '@/components/experiment-designer/utils';
 import {
   DetailedCircuit,
+  EntityCreation,
   SimulationCampaignUIConfig,
   SimulationCampaignUIConfigResource,
 } from '@/types/nexus';
-import { createDistribution, createId } from '@/util/nexus';
+import { composeUrl, createDistribution } from '@/util/nexus';
 import { nexus } from '@/config';
 
 function getNotFoundMsg(variable: any, name?: string): string {
@@ -114,7 +115,7 @@ export async function createWorkflowMetaConfigs(
       let replacedContent = template(templateFile)(variablesToReplaceCopy);
       replacedContent = replaceCustomBbpWorkflowPlaceholders(replacedContent);
       const newResource = await createWorkflowConfigResource(fileName, replacedContent, session);
-      const urlWithRev = `${newResource._self}?rev=${newResource._rev}`;
+      const urlWithRev = composeUrl('resource', newResource['@id'], { rev: newResource._rev });
       variablesToReplaceCopy[placeholder] = urlWithRev;
     }
   );
@@ -291,8 +292,7 @@ export async function createSimulationCampaignUIConfig(
 
   const configFile = await createJsonFile(payload, 'sim-campaign-ui-config.json', session);
 
-  const uiConfig: SimulationCampaignUIConfig = {
-    '@id': createId('simulationcampaignuiconfig'),
+  const uiConfig: EntityCreation<SimulationCampaignUIConfig> = {
     '@context': nexus.defaultContext,
     '@type': ['Entity', 'SimulationCampaignUIConfig'],
     name,

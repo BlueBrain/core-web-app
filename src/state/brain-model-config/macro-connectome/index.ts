@@ -20,7 +20,6 @@ import {
   fetchFileByUrl,
   fetchJsonFileByUrl,
   fetchFileMetadataByUrl,
-  fetchResourceSourceById,
   fetchGeneratorTaskActivity,
 } from '@/api/nexus';
 import {
@@ -52,7 +51,7 @@ export const configSourceAtom = atom<Promise<MacroConnectomeConfig | null>>(asyn
 
   if (!session || !id) return null;
 
-  return fetchResourceSourceById<MacroConnectomeConfig>(id, session);
+  return fetchResourceById<MacroConnectomeConfig>(id, session);
 });
 
 export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
@@ -169,7 +168,7 @@ export const connectivityStrengthOverridesEntitySourceAtom = atom<
 
   const { id, rev } = configPayload.overrides.connection_strength;
 
-  return fetchResourceSourceById(id, session, { rev });
+  return fetchResourceById(id, session, { rev });
 });
 
 export const connectivityStrengthOverridesPayloadUrlAtom = atom<Promise<string | null>>(

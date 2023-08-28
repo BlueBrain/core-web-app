@@ -4,20 +4,6 @@ import { MModelWorkflowOverrides } from '@/types/m-model';
 
 export * from './common';
 
-export type IdType =
-  | 'file'
-  | 'modelconfiguration'
-  | 'cellcompositionconfig'
-  | 'cellpositionconfig'
-  | 'emodelassignmentconfig'
-  | 'morphologyassignmentconfig'
-  | 'microconnectomeconfig'
-  | 'synapseconfig'
-  | 'macroconnectomeconfig'
-  | 'wholebrainconnectomestrength'
-  | 'simulationcampaignuiconfig'
-  | 'bbpworkflowconfig';
-
 export interface BrainModelConfig extends Entity {
   name: string;
   description: string;
@@ -521,6 +507,8 @@ export interface SimulationCampaignUIConfig extends Entity {
   };
   contribution: ContributionEntity | ContributionEntity[];
 }
+
+export type EntityCreation<T> = Omit<T, '@id'>;
 
 export interface SimulationCampaignUIConfigResource
   extends ResourceMetadata,

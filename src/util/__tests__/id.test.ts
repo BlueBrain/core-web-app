@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 import { nexus } from '@/config';
-import { createId } from '@/util/nexus';
+import { expandId } from '@/util/nexus';
 
 Object.defineProperty(global, 'crypto', {
   value: {
@@ -9,14 +9,15 @@ Object.defineProperty(global, 'crypto', {
   },
 });
 
-const orgAndProjStr = `${nexus.org}/${nexus.project}`;
-const fileBase = `${nexus.url}/files/${orgAndProjStr}`;
-const resourceBase = `${nexus.url}/resources/${orgAndProjStr}`;
-
 describe('util/id.test.ts', () => {
   describe('Nexus configuration', () => {
     it('correct endpoint', () => {
       expect(nexus.url).toBe('https://bbp.epfl.ch/nexus/v1');
+    });
+    it('correct id base url', () => {
+      expect(nexus.defaultIdBaseUrl).toBe(
+        'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model'
+      );
     });
     it('correct organization', () => {
       expect(nexus.org).toBe('bbp');
@@ -26,28 +27,20 @@ describe('util/id.test.ts', () => {
     });
   });
 
-  describe('Generation of ids', () => {
-    it('for file', () => {
-      const id = createId('file');
-      expect(id).toContain(fileBase);
+  describe('Expand IDs', () => {
+    it('using uuid', () => {
+      const id = expandId('123');
+      expect(id).toBe(`${nexus.defaultIdBaseUrl}/123`);
     });
-    it('for file with id', () => {
-      const id = createId('file', '123');
-      expect(id).toBe(`${fileBase}/123`);
+    it('using empty', () => {
+      const id = expandId('');
+      expect(id).toBe('');
     });
-    it('for resource', () => {
-      const id = createId('cellcompositionconfig');
-      expect(id).toContain(resourceBase);
-    });
-    it('for resource with id', () => {
-      const id = createId('morphologyassignmentconfig', '123');
-      expect(id).toBe(`${resourceBase}/_/123`);
-    });
-    it('makes sure that there are not repeated parts', () => {
-      const id = createId('morphologyassignmentconfig');
-      const originalCount = id.split('/');
-      const withoutRepetition = new Set(originalCount);
-      expect(originalCount.length).toBe(withoutRepetition.size);
+    it('using url', () => {
+      const url =
+        'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/5c41379e-3b6c-425b-a82a-67305cc6b8d4';
+      const id = expandId(url);
+      expect(id).toBe(url);
     });
   });
 });

@@ -1,5 +1,4 @@
 import { Atom, atom } from 'jotai';
-import toLower from 'lodash/toLower';
 
 import {
   configSourceAtom as cellCompositionConfigSourceAtom,
@@ -39,8 +38,7 @@ import {
 import sessionAtom from '@/state/session';
 
 import { createResource, updateResource } from '@/api/nexus';
-import { GeneratorConfig, IdType } from '@/types/nexus';
-import { createId } from '@/util/nexus';
+import { GeneratorConfig } from '@/types/nexus';
 
 type BuildStepName =
   | 'cellComposition'
@@ -117,7 +115,6 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
           throw new Error(`Generator config source for ${step.name} can not be loaded`);
         }
 
-        configSource['@id'] = createId(`${toLower(step.name)}config` as IdType);
         const configCloneMeta = await createResource(configSource, session);
 
         modelConfig.configs[`${step.name}Config`]['@id'] = configCloneMeta['@id'];

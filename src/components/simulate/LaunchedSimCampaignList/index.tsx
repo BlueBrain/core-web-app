@@ -19,6 +19,7 @@ import { classNames } from '@/util/utils';
 import ClockIcon from '@/components/icons/Clock';
 import FullCircleIcon from '@/components/icons/FullCircle';
 import EmptyCircleIcon from '@/components/icons/EmptyCircle';
+import { collapseId } from '@/util/nexus';
 
 const { Column } = Table;
 
@@ -41,7 +42,7 @@ function getSorterFn<T extends LaunchedSimCampUIConfigType>(
 }
 
 function extractId(config: LaunchedSimCampUIConfigType) {
-  return config['@id'].split('/').pop();
+  return collapseId(config['@id']);
 }
 
 function getStatusIcon(status: WorkflowExecutionStatusType): ReactNode {

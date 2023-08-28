@@ -5,7 +5,6 @@ import { nexus } from '@/config';
 import {
   composeUrl,
   ComposeUrlParams,
-  createId,
   expandId,
   createGeneratorConfig,
   createDistribution,
@@ -36,6 +35,7 @@ import {
   SupportedConfigListTypes,
   MorphologyAssignmentConfigPayload,
   SynapseConfigPayload,
+  EntityCreation,
 } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -187,18 +187,6 @@ export function fetchResourceByUrl<T>(url: string, session: Session) {
   }).then<T>((res) => res.json());
 }
 
-export function fetchResourceSourceById<T>(
-  id: string,
-  session: Session,
-  options?: ComposeUrlParams
-) {
-  const url = composeUrl('resource', id, { ...options, source: true });
-
-  return fetch(url, {
-    headers: createHeaders(session.accessToken),
-  }).then<T>((res) => res.json());
-}
-
 export function listResourceLinksById<T>(
   id: string,
   session: Session,
@@ -263,14 +251,13 @@ export function queryES<T>(
 // #################################### Non-generic methods ##########################################
 
 export async function cloneCellCompositionConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<CellCompositionConfig>(id, session);
+  const configSource = await fetchResourceById<CellCompositionConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-composition-config.json', session);
 
   const clonedConfig: CellCompositionConfig = {
     ...configSource,
-    '@id': createId('cellcompositionconfig'),
     distribution: createGeneratorConfig({
       kgType: 'CellCompositionConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -281,14 +268,13 @@ export async function cloneCellCompositionConfig(id: string, session: Session) {
 }
 
 export async function cloneCellPositionConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<CellPositionConfig>(id, session);
+  const configSource = await fetchResourceById<CellPositionConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-position-config.json', session);
 
   const clonedConfig: CellPositionConfig = {
     ...configSource,
-    '@id': createId('cellpositionconfig'),
     distribution: createGeneratorConfig({
       kgType: 'CellPositionConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -299,14 +285,13 @@ export async function cloneCellPositionConfig(id: string, session: Session) {
 }
 
 export async function cloneEModelAssignmentConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<EModelAssignmentConfig>(id, session);
+  const configSource = await fetchResourceById<EModelAssignmentConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'emodel-assignment-config.json', session);
 
   const clonedConfig: EModelAssignmentConfig = {
     ...configSource,
-    '@id': createId('emodelassignmentconfig'),
     distribution: createGeneratorConfig({
       kgType: 'EModelAssignmentConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -317,7 +302,7 @@ export async function cloneEModelAssignmentConfig(id: string, session: Session) 
 }
 
 export async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<MorphologyAssignmentConfig>(id, session);
+  const configSource = await fetchResourceById<MorphologyAssignmentConfig>(id, session);
   const payload: MorphologyAssignmentConfigPayload = await fetchJsonFileByUrl(
     configSource.distribution.contentUrl,
     session
@@ -331,7 +316,6 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
 
   const clonedConfig: MorphologyAssignmentConfig = {
     ...configSource,
-    '@id': createId('morphologyassignmentconfig'),
     distribution: createGeneratorConfig({
       kgType: 'MorphologyAssignmentConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -342,14 +326,13 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
 }
 
 export async function cloneMicroConnectomeConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<MicroConnectomeConfig>(id, session);
+  const configSource = await fetchResourceById<MicroConnectomeConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'micro-connectome-config.json', session);
 
   const clonedConfig: MicroConnectomeConfig = {
     ...configSource,
-    '@id': createId('microconnectomeconfig'),
     distribution: createGeneratorConfig({
       kgType: 'MicroConnectomeConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -371,7 +354,6 @@ export async function cloneSynapseConfig(id: string, session: Session) {
     const payloadMetadata = await createJsonFile({}, 'synapse-config.json', session);
     const config: SynapseConfig = {
       ...configSource,
-      '@id': createId('synapseconfig'),
       distribution: createGeneratorConfig({
         kgType: 'SynapseConfig',
         payloadMetadata,
@@ -460,7 +442,6 @@ export async function cloneSynapseConfig(id: string, session: Session) {
 
   const config: SynapseConfig = {
     ...configSource,
-    '@id': createId('synapseconfig'),
     distribution: createGeneratorConfig({
       kgType: 'SynapseConfig',
       payloadMetadata: configMetadata,
@@ -471,13 +452,13 @@ export async function cloneSynapseConfig(id: string, session: Session) {
 }
 
 export async function cloneMacroConnectomeConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<MacroConnectomeConfig>(id, session);
+  const configSource = await fetchResourceById<MacroConnectomeConfig>(id, session);
   const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
     configSource.distribution.contentUrl,
     session
   );
 
-  const overridesEntity = await fetchResourceSourceById<WholeBrainConnectomeStrength>(
+  const overridesEntity = await fetchResourceById<WholeBrainConnectomeStrength>(
     payload.overrides.connection_strength.id,
     session,
     { rev: payload.overrides.connection_strength.rev }
@@ -495,7 +476,6 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
   );
   const clonedOverridesEntity: WholeBrainConnectomeStrength = {
     ...overridesEntity,
-    '@id': createId('wholebrainconnectomestrength'),
     distribution: createDistribution(clonedOverridesPayloadMeta),
   };
 
@@ -508,7 +488,6 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
 
   const clonedConfig: MacroConnectomeConfig = {
     ...configSource,
-    '@id': createId('macroconnectomeconfig'),
     distribution: createDistribution(clonedPayloadMeta),
   };
 
@@ -521,7 +500,7 @@ export async function cloneBrainModelConfig(
   description: string,
   session: Session
 ) {
-  const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
+  const brainModelConfigSource = await fetchResourceById<BrainModelConfig>(configId, session);
 
   const clonedCellCompositionConfigMetadata = await cloneCellCompositionConfig(
     brainModelConfigSource.configs?.cellCompositionConfig['@id'],
@@ -560,7 +539,6 @@ export async function cloneBrainModelConfig(
 
   const clonedModelConfig: BrainModelConfig = {
     ...brainModelConfigSource,
-    '@id': createId('modelconfiguration'),
     name,
     description,
     configs: {
@@ -607,7 +585,7 @@ export async function renameBrainModelConfig(
   const configId = config['@id'];
   const rev = config._rev;
 
-  const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
+  const brainModelConfigSource = await fetchResourceById<BrainModelConfig>(configId, session);
 
   const renamedModelConfig = {
     ...brainModelConfigSource,
@@ -688,10 +666,9 @@ export async function createWorkflowConfigResource(
 ) {
   const createdFile = await createTextFile(fileContent, fileName, session);
 
-  const bbpWorkflowconfig: BbpWorkflowConfigResource = {
+  const bbpWorkflowconfig: EntityCreation<BbpWorkflowConfigResource> = {
     '@context': nexus.defaultContext,
     '@type': 'BbpWorkflowConfig',
-    '@id': createId('bbpworkflowconfig'),
     distribution: createDistribution(createdFile),
   };
 
@@ -712,7 +689,7 @@ export async function getVariantTaskConfigUrlFromCircuit(
     session
   );
 
-  return `${variantTaskConfig._self}?rev=${variantTaskActivity.used_rev}`;
+  return composeUrl('resource', variantTaskConfig['@id'], { rev: variantTaskConfig._rev });
 }
 
 export async function cloneSimCampUIConfig(
@@ -721,19 +698,15 @@ export async function cloneSimCampUIConfig(
   description: string,
   session: Session
 ) {
-  const simCampUIConfig = await fetchResourceSourceById<SimulationCampaignUIConfig>(
-    configId,
-    session
-  );
+  const simCampUIConfig = await fetchResourceById<SimulationCampaignUIConfig>(configId, session);
 
   const payload = await fetchJsonFileByUrl(simCampUIConfig.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'sim-campaign-ui-config.json', session);
 
-  const clonedConfig: SimulationCampaignUIConfig = {
+  const clonedConfig: EntityCreation<SimulationCampaignUIConfig> = {
     '@context': simCampUIConfig['@context'],
     '@type': simCampUIConfig['@type'],
-    '@id': createId('simulationcampaignuiconfig'),
     distribution: createDistribution(clonedPayloadMeta),
     used: simCampUIConfig.used,
     contribution: simCampUIConfig.contribution,
@@ -753,7 +726,7 @@ export async function renameSimCampUIConfig(
   const configId = config['@id'];
   const rev = config._rev;
 
-  const simCampUIConfigSource = await fetchResourceSourceById<SimulationCampaignUIConfigResource>(
+  const simCampUIConfigSource = await fetchResourceById<SimulationCampaignUIConfigResource>(
     configId,
     session
   );

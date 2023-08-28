@@ -13,7 +13,6 @@ import sessionAtom from '@/state/session';
 import {
   fetchResourceById,
   fetchGeneratorTaskActivity,
-  fetchResourceSourceById,
   fetchFileMetadataByUrl,
   fetchJsonFileByUrl,
   fetchResourceByUrl,
@@ -90,7 +89,7 @@ export const configSourceAtom = atom<Promise<MorphologyAssignmentConfig | null>>
 
   if (!session || !id) return null;
 
-  return fetchResourceSourceById<MorphologyAssignmentConfig>(id, session);
+  return fetchResourceById<MorphologyAssignmentConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

@@ -9,6 +9,7 @@ import { configResourceAtom } from '@/state/experiment-designer';
 import { classNames } from '@/util/utils';
 import { getSimCampUIConfigsByNameQuery } from '@/queries/es';
 import GenericButton from '@/components/Global/GenericButton';
+import { collapseId } from '@/util/nexus';
 
 const loadableSimCampUIConfigAtom = loadable(configResourceAtom);
 
@@ -30,7 +31,7 @@ export default function DuplicateConfigBtn({ className }: Props) {
     );
 
   const replaceConfigQueryParam = (clonedConfigId: string) => {
-    const collapsedSimCampUIConfigInAtom = clonedConfigId?.split('/').pop();
+    const collapsedSimCampUIConfigInAtom = collapseId(clonedConfigId || '');
     if (!collapsedSimCampUIConfigInAtom) return;
 
     const newSearchParams = new URLSearchParams();

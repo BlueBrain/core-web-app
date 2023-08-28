@@ -10,7 +10,6 @@ import {
   fetchJsonFileByUrl,
   fetchFileMetadataByUrl,
   fetchGeneratorTaskActivity,
-  fetchResourceSourceById,
 } from '@/api/nexus';
 import {
   CellCompositionConfig,
@@ -43,7 +42,7 @@ export const configSourceAtom = atom<Promise<CellCompositionConfig | null>>(asyn
 
   if (!session || !id) return null;
 
-  return fetchResourceSourceById<CellCompositionConfig>(id, session);
+  return fetchResourceById<CellCompositionConfig>(id, session);
 });
 
 const configPayloadUrlAtom = selectAtom(configAtom, (config) => config?.distribution.contentUrl);

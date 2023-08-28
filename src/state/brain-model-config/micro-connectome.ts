@@ -8,7 +8,6 @@ import sessionAtom from '@/state/session';
 import {
   fetchResourceById,
   fetchGeneratorTaskActivity,
-  fetchResourceSourceById,
   fetchFileMetadataByUrl,
   fetchJsonFileByUrl,
   fetchFileByUrl,
@@ -53,7 +52,7 @@ export const configSourceAtom = atom<Promise<MicroConnectomeConfig | null>>(asyn
 
   if (!session || !id) return null;
 
-  return fetchResourceSourceById<MicroConnectomeConfig>(id, session);
+  return fetchResourceById<MicroConnectomeConfig>(id, session);
 });
 
 export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
