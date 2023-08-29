@@ -395,7 +395,7 @@ export async function cloneSynapseConfig(id: string, session: Session) {
   const rulesEntity = await createResource(
     {
       '@context': ['https://bbp.neuroshapes.org'],
-      '@type': ['Entitiy', 'Dataset', 'SynapticParameterAssignment'],
+      '@type': ['Entity', 'Dataset', 'SynapticParameterAssignment'],
       distribution: createDistribution(rulesFileMetadata),
     },
     session
@@ -404,7 +404,7 @@ export async function cloneSynapseConfig(id: string, session: Session) {
   const typesEntity = await createResource(
     {
       '@context': ['https://bbp.neuroshapes.org'],
-      '@type': ['Entitiy', 'Dataset', 'SynapticParameter'],
+      '@type': ['Entity', 'Dataset', 'SynapticParameter'],
       distribution: createDistribution(typesFileMetadata),
     },
     session
