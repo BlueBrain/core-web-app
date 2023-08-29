@@ -6,6 +6,7 @@ import {
   EModelConfigurationParameter,
   EModelConfigurationPayload,
   EModelMenuItem,
+  EModelUIConfig,
   EModelWorkflow,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
@@ -247,3 +248,5 @@ const eModelExtractionTargetsConfigurationAtom = atom<
 /* --------------------------- EModelUIConfigAtom --------------------------- */
 
 export const eModelEditModeAtom = atom(false);
+
+export const eModelUIConfigAtom = atom<Partial<EModelUIConfig> | null>({});
