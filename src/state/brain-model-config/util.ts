@@ -21,7 +21,7 @@ import {
 } from './cell-model-assignment/m-model';
 
 import {
-  configSourceAtom as microConnectomeConfigSourceAtom,
+  configAtom as microConnectomeConfigSourceAtom, // source fixed
   partialCircuitAtom as microConnectomeBuildArtefact,
 } from './micro-connectome';
 

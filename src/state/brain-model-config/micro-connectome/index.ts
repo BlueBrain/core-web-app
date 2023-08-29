@@ -3,7 +3,7 @@
 import { atom } from 'jotai';
 import { wrap } from 'comlink';
 
-import { microConnectomeConfigIdAtom } from './index';
+import { microConnectomeConfigIdAtom } from '../index';
 import sessionAtom from '@/state/session';
 import {
   fetchResourceById,
@@ -16,7 +16,6 @@ import {
   MicroConnectomeConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
-  MicroConnectomeConfig,
   MicroConnectomeConfigPayload,
   MicroConnectomeVariantSelectionResource,
   MicroConnectomeData,
@@ -26,7 +25,12 @@ import {
   InitFn,
   CreateAggregatedVariantViewFn,
   CreateAggregatedParamViewFn,
+  AddEditFn,
+  RemoveEditFn,
+  UpdateEditFn,
 } from '@/components/connectome-definition/micro/micro-connectome-worker';
+import { MicroConnectomeEditEntry } from '@/types/connectome';
+import { fromSerialisibleSelection } from '@/util/connectome';
 
 export const refetchCounterAtom = atom<number>(0);
 export const triggerRefetchAtom = atom(null, (get, set) =>
@@ -42,17 +46,6 @@ export const configAtom = atom<Promise<MicroConnectomeConfigResource | null>>(as
   if (!session || !id) return null;
 
   return fetchResourceById<MicroConnectomeConfigResource>(id, session);
-});
-
-export const configSourceAtom = atom<Promise<MicroConnectomeConfig | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = await get(microConnectomeConfigIdAtom);
-
-  get(refetchCounterAtom);
-
-  if (!session || !id) return null;
-
-  return fetchResourceById<MicroConnectomeConfig>(id, session);
 });
 
 export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
@@ -102,6 +95,26 @@ export const configPayloadAtom = atom<Promise<MicroConnectomeConfigPayload | nul
   const localConfigPayload = get(localConfigPayloadAtom).get(remoteConfigPayload);
 
   return localConfigPayload ?? remoteConfigPayload;
+});
+
+export const editsAtom = atom<Promise<MicroConnectomeEditEntry[] | null>>(async (get) => {
+  const configPayload = await get(configPayloadAtom);
+
+  if (!configPayload) return null;
+
+  const editEntries: MicroConnectomeEditEntry[] = (
+    configPayload._ui_data?.editHistory ?? []
+  ).map<MicroConnectomeEditEntry>(
+    (serialisibleEditEntry) =>
+      ({
+        ...serialisibleEditEntry,
+        srcSelection: fromSerialisibleSelection(serialisibleEditEntry.srcSelection),
+        dstSelection: fromSerialisibleSelection(serialisibleEditEntry.dstSelection),
+        // TODO investigate what's going on with these types, remove type assertion
+      } as MicroConnectomeEditEntry)
+  );
+
+  return editEntries;
 });
 
 export const initialVariantMatrix = atom<Promise<ArrayBuffer | null>>(async (get) => {
@@ -213,6 +226,9 @@ type WorkerFn = {
   init: InitFn;
   createAggregatedVariantView: CreateAggregatedVariantViewFn;
   createAggregatedParamView: CreateAggregatedParamViewFn;
+  addEdit: AddEditFn;
+  removeEdit: RemoveEditFn;
+  updateEdit: UpdateEditFn;
 };
 
 // ? To be instantiated in the component?

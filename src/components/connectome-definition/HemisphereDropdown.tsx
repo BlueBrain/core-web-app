@@ -14,16 +14,21 @@ const selectOptions = Object.entries(DIRECTION_LABEL).map(([value, label]) => ({
 type HemisphereDropdownProps = {
   value?: HemisphereDirection;
   onChange?: (value: HemisphereDirection) => void;
+  disabled?: boolean;
 };
 
 export default function HemisphereDropdown({
   value,
   onChange = () => {},
+  disabled,
 }: HemisphereDropdownProps) {
   return (
-    <div className="w-[250px] flex flex-col h-[60px] justify-between">
-      <div>Hemisphere</div>
-      <Select style={{ width: 200 }} value={value} options={selectOptions} onChange={onChange} />
-    </div>
+    <Select
+      style={{ width: '100%' }}
+      value={value}
+      options={selectOptions}
+      onChange={onChange}
+      disabled={disabled}
+    />
   );
 }

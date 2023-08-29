@@ -1,5 +1,5 @@
 import { Entity, Distribution, ResourceMetadata, DateISOString } from './common';
-import { MacroConnectomeEditEntry } from '@/types/connectome';
+import { MacroConnectomeEditEntry, SerialisibleMicroConnectomeEditEntry } from '@/types/connectome';
 import { MModelWorkflowOverrides } from '@/types/m-model';
 
 export * from './common';
@@ -308,6 +308,9 @@ export interface MicroConnectomeConfigPayload {
     variants: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeVariantSelectionOverrides'] };
   } & {
     [variantName: string]: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeDataOverrides'] };
+  };
+  _ui_data?: {
+    editHistory?: SerialisibleMicroConnectomeEditEntry[];
   };
 }
 
