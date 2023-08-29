@@ -18,7 +18,11 @@ export interface MEModelMenuItem {
   [mTypeKey: string]: EModelMenuItem[];
 }
 
-export type SimulationParameterKeys = 'Temperature (°C)' | 'Ra' | 'Initial voltage';
+export type SimulationParameterKeys =
+  | 'Temperature (°C)'
+  | 'Ra'
+  | 'Initial voltage'
+  | 'LJP (liquid junction potential)';
 export type SimulationParameter = Record<SimulationParameterKeys, number>;
 
 export interface ExemplarMorphologyDataType {

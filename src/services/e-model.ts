@@ -43,6 +43,7 @@ export function convertRemoteParamsForUI(
     'Temperature (°C)': temp as number,
     Ra: ra as number,
     'Initial voltage': voltage as number,
+    'LJP (liquid junction potential)': 14.0,
   };
 }
 

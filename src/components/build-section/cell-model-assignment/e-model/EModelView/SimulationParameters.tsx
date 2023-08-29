@@ -47,9 +47,12 @@ export default function SimulationParameters() {
   return (
     <>
       <div className="text-2xl font-bold text-primary-8 my-4">Simulation parameters</div>
-      <div className="flex flex-wrap flex-col h-[60px] gap-2">
+      <div className="flex flex-wrap flex-col h-[75px] gap-2">
         {paramKeys.map((paramKey) => (
-          <div key={paramKey} className="w-[200px] flex justify-between text-primary-7">
+          <div
+            key={paramKey}
+            className="w-[200px] flex justify-between items-center text-primary-7"
+          >
             <Item
               name={paramKey}
               value={parameters[paramKey]}
