@@ -51,3 +51,8 @@ export interface SimulationPreviewContextType {
   editedParamKey: SimulationParameterKey;
   setEditedParamKey: (value: SimulationParameterKey) => void;
 }
+
+export interface SimulationTimeRange {
+  start: number;
+  end: number;
+}

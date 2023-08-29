@@ -8,6 +8,7 @@ interface NumberInputProps {
   value: number;
   min?: number;
   max?: number;
+  step?: number;
   unit?: string;
   size?: number;
   onChange?: (newValue: number) => void;
@@ -21,6 +22,7 @@ export default function NumberInput({
   unit,
   size,
   value,
+  step,
   onChange,
   className,
   onFocus,
@@ -69,7 +71,7 @@ export default function NumberInput({
       <input
         type="number"
         className="border-none text-white bg-transparent text-right"
-        step={0.01}
+        step={step ?? 0.01}
         value={localValue}
         size={size ?? 3}
         max={max}

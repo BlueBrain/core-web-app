@@ -10,11 +10,12 @@ import SimulationBox from './SimulationBox';
 import { simulationPreviewsAtom } from '@/state/experiment-interactive';
 import { classNames } from '@/util/utils';
 import { MAX_SIMULATION_PREVIEW_COLS } from '@/components/experiment-interactive/config';
+import HollowBox from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/HollowBox';
 
 export default function SimulationGrid() {
   const simulationPreviews = useAtomValue(simulationPreviewsAtom);
 
-  const gridBoxes = useMemo(
+  const simulationBoxes = useMemo(
     () =>
       simulationPreviews.map((simulationPreview, index) => (
         <SimulationBox
@@ -27,27 +28,27 @@ export default function SimulationGrid() {
   );
 
   const rowCount = useMemo(
-    () => ceil(gridBoxes.length / MAX_SIMULATION_PREVIEW_COLS),
-    [gridBoxes.length]
+    () => ceil(simulationBoxes.length / MAX_SIMULATION_PREVIEW_COLS),
+    [simulationBoxes.length]
   );
 
   const colCount = useMemo(() => {
-    const sqrt = Math.sqrt(gridBoxes.length);
+    const sqrt = Math.sqrt(simulationBoxes.length);
     if (isInteger(sqrt)) {
       return sqrt;
     }
 
-    if (gridBoxes.length < MAX_SIMULATION_PREVIEW_COLS) {
-      return gridBoxes.length % MAX_SIMULATION_PREVIEW_COLS;
+    if (simulationBoxes.length < MAX_SIMULATION_PREVIEW_COLS) {
+      return simulationBoxes.length % MAX_SIMULATION_PREVIEW_COLS;
     }
 
     return MAX_SIMULATION_PREVIEW_COLS;
-  }, [gridBoxes.length]);
+  }, [simulationBoxes.length]);
 
   const hollowBoxes = useMemo(() => {
-    const boxDiff = rowCount * colCount - gridBoxes.length;
-    return range(boxDiff).map((i) => <div key={`hollow_${i}`} />);
-  }, [colCount, gridBoxes.length, rowCount]);
+    const boxDiff = rowCount * colCount - simulationBoxes.length;
+    return range(boxDiff).map((index) => <HollowBox key={index} index={index} />);
+  }, [colCount, simulationBoxes.length, rowCount]);
 
   return (
     <div
@@ -57,7 +58,7 @@ export default function SimulationGrid() {
         `grid-cols-${colCount}`
       )}
     >
-      {gridBoxes}
+      {simulationBoxes}
       {hollowBoxes}
     </div>
   );

@@ -10,6 +10,7 @@ import {
   SimulationAnnotation,
   SimulationData,
   SimulationPreviewElement,
+  SimulationTimeRange,
 } from '@/components/experiment-interactive/types';
 
 export const simulationPreviewsAtom = atom<SimulationPreviewElement[]>([...mockSimulationPreviews]);
@@ -31,3 +32,7 @@ export const simulationDurationAtom = atom<number>((get) => {
   const stepSize = get(playbackStepSizeAtom);
   return stepCount * stepSize;
 });
+
+export const movieGenerationSimulationsAtom = atom<string[]>([]);
+
+export const movieGenerationTimeRangeAtom = atom<SimulationTimeRange>({ start: 0, end: 0 });
