@@ -1,13 +1,16 @@
 'use client';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { typeAtom, triggerRefetchAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
+import {
+  experimentDataTypeAtom,
+  triggerRefetchAtom,
+  filtersAtom,
+} from '@/state/explore-section/list-view-atoms';
 import useListPage from '@/hooks/useListPage';
-
-const TYPE = 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalLayerThickness';
+import { LAYER_THICKNESS } from '@/constants/explore-section/list-views';
 
 export default function LayerThicknessListingPage() {
-  useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
+  useListPage({ experimentDataTypeAtom, triggerRefetchAtom, filtersAtom, TYPE: LAYER_THICKNESS });
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>

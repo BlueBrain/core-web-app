@@ -1,13 +1,16 @@
 'use client';
 
 import DefaultListView from '@/components/explore-section/ExploreSectionListingView';
-import { typeAtom, triggerRefetchAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
+import {
+  experimentDataTypeAtom,
+  triggerRefetchAtom,
+  filtersAtom,
+} from '@/state/explore-section/list-view-atoms';
 import useListPage from '@/hooks/useListPage';
-
-const TYPE = 'https://neuroshapes.org/ReconstructedNeuronMorphology';
+import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
 
 export default function MorphologyListingPage() {
-  useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
+  useListPage({ experimentDataTypeAtom, triggerRefetchAtom, filtersAtom, TYPE: NEURON_MORPHOLOGY });
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>

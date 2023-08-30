@@ -9,7 +9,13 @@ import { fetchRules } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
-import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
+import {
+  PAGE_SIZE,
+  PAGE_NUMBER,
+  DEFAULT_SELECTED_ROWS_OBJECT,
+  SelectedRowsProps,
+  ExperimentDataTypeName,
+} from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOuput } from '@/types/explore-section/kg-inference';
 
@@ -66,18 +72,20 @@ export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
 export const pageNumberAtom = atom<number>(PAGE_NUMBER);
 
+export const selectedRowsAtom = atom<SelectedRowsProps>(DEFAULT_SELECTED_ROWS_OBJECT);
+
 export const searchStringAtom = atom<string>('');
 
 export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', order: 'desc' });
 
-export const typeAtom = atom<string | undefined>(undefined);
+export const experimentDataTypeAtom = atom<ExperimentDataTypeName | undefined>(undefined);
 
 export const columnKeysAtom = atom<string[]>((get) => {
-  const type = get(typeAtom);
+  const experimentDataType = get(experimentDataTypeAtom);
 
-  if (!type) return [];
+  if (!experimentDataType) return [];
 
-  return typeToColumns[type as string];
+  return typeToColumns[experimentDataType as string];
 });
 
 export const activeColumnsAtom = atomWithDefault(
@@ -91,18 +99,18 @@ export const filtersAtom = atomWithDefault<Filter[]>((get) => {
 });
 
 export const queryAtom = atom<object>((get) => {
-  const type = get(typeAtom);
+  const experimentDataType = get(experimentDataTypeAtom);
   const searchString = get(searchStringAtom);
   const pageNumber = get(pageNumberAtom);
   const pageSize = get(pageSizeAtom);
   const sortState = get(sortStateAtom);
   const filters = get(filtersAtom);
 
-  if (!type || !filters) {
+  if (!experimentDataType || !filters) {
     return null;
   }
 
-  return fetchDataQuery(pageSize, pageNumber, filters, type, sortState, searchString);
+  return fetchDataQuery(pageSize, pageNumber, filters, experimentDataType, sortState, searchString);
 });
 
 const refetchCounterAtom = atom<number>(0);

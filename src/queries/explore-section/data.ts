@@ -8,7 +8,7 @@ export default function fetchDataQuery(
   size: number,
   currentPage: number,
   filters: Filter[],
-  type: string,
+  experimentDataType: string,
   sortState?: SortState,
   searchString: string = ''
 ) {
@@ -19,7 +19,7 @@ export default function fetchDataQuery(
     sort: sortQuery,
     from: (currentPage - 1) * size,
     track_total_hits: true,
-    query: buildFilters(type, filters, searchString).toJSON(),
+    query: buildFilters(experimentDataType, filters, searchString).toJSON(),
     ...buildAggs(filters).toJSON(),
   };
 }

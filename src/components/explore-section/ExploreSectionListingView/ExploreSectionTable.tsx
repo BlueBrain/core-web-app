@@ -1,7 +1,6 @@
-'use client';
-
 import { MouseEvent, useState, ReactNode, CSSProperties, useEffect } from 'react';
 import { Table } from 'antd';
+import { useAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
@@ -12,6 +11,7 @@ import GeneralizationRules from '@/components/explore-section/ExploreSectionList
 import DownloadButton from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 import { ESResponseRaw } from '@/types/explore-section/resources';
 import { classNames } from '@/util/utils';
+import { selectedRowsAtom, experimentDataTypeAtom } from '@/state/explore-section/list-view-atoms';
 import styles from '@/app/explore/explore.module.scss';
 
 type ExploreSectionTableProps = {
@@ -82,7 +82,8 @@ export default function ExploreSectionTable({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const experimentDataType = useAtomValue(experimentDataTypeAtom);
+  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom);
   const [fetching, setFetching] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>(
     data.state === 'hasData' ? data.data : undefined
@@ -96,17 +97,18 @@ export default function ExploreSectionTable({
 
   const clearSelectedRows = () => {
     setFetching(false);
-    setSelectedRows([]);
+    setSelectedRows((prevSelectedRows) => ({
+      ...prevSelectedRows,
+      [experimentDataType as string]: [],
+    }));
   };
 
-  const activeSelectedRowsButton = selectedRowsButton || (
-    <DownloadButton
-      setFetching={setFetching}
-      selectedRows={selectedRows}
-      clearSelectedRows={clearSelectedRows}
-      fetching={fetching}
-    />
-  );
+  const updateSelectedRows = (rows: ESResponseRaw[]) => {
+    setSelectedRows((prevSelectedRows) => ({
+      ...prevSelectedRows,
+      [experimentDataType as string]: rows,
+    }));
+  };
 
   const onCellRouteHandler = {
     onCell: (record: ESResponseRaw) => ({
@@ -118,11 +120,19 @@ export default function ExploreSectionTable({
     }),
   };
 
-  if (data.state === 'hasError') {
+  if (data.state === 'hasError' || experimentDataType === undefined) {
     return <div>Something went wrong</div>;
   }
 
   const expandedRowRender = () => <GeneralizationRules />;
+  const activeSelectedRowsButton = selectedRowsButton || (
+    <DownloadButton
+      setFetching={setFetching}
+      selectedRows={selectedRows[experimentDataType]}
+      clearSelectedRows={clearSelectedRows}
+      fetching={fetching}
+    />
+  );
 
   return (
     <>
@@ -139,8 +149,10 @@ export default function ExploreSectionTable({
         rowSelection={
           enableDownload
             ? {
-                selectedRowKeys: selectedRows.map(({ _source }) => _source._self),
-                onChange: (_keys, rows) => setSelectedRows(rows),
+                selectedRowKeys: selectedRows[experimentDataType].map(
+                  ({ _source }) => _source._self
+                ),
+                onChange: (_keys, rows) => updateSelectedRows(rows),
                 type: 'checkbox',
               }
             : undefined
