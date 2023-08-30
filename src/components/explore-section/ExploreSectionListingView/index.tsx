@@ -102,9 +102,11 @@ const dataLoadable = loadable(dataAtom);
 export default function DefaultListView({
   title,
   enableDownload,
+  selectedRowsButton,
 }: {
   title: string;
   enableDownload?: boolean;
+  selectedRowsButton?: ReactNode;
 }) {
   const columns = useExploreColumns([
     {
@@ -125,6 +127,7 @@ export default function DefaultListView({
         columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
         enableDownload={enableDownload}
         data={data}
+        selectedRowsButton={selectedRowsButton}
       />
     </ExploreSectionListingView>
   );
