@@ -144,14 +144,6 @@ export default function MicroConnectomeConfigView() {
 
       setPendingAsyncOpsCount((count) => count + 1);
 
-      const srcMap = currentViewSelection.src
-        .sort(selectionSorterFn)
-        .reduce(getLeafNodesReduceFn, new Map());
-
-      const dstMap = currentViewSelection.dst
-        .sort(selectionSorterFn)
-        .reduce(getLeafNodesReduceFn, new Map());
-
       await worker.init(
         configPayload,
         cellComposition,
@@ -172,8 +164,8 @@ export default function MicroConnectomeConfigView() {
 
         const viewData = await worker.createAggregatedVariantView(
           hemisphereDirection,
-          srcMap,
-          dstMap
+          currentViewSelection.src,
+          currentViewSelection.dst
         );
 
         const navUpDisabled = {
@@ -221,8 +213,8 @@ export default function MicroConnectomeConfigView() {
         hemisphereDirection,
         variantName,
         paramName,
-        srcMap,
-        dstMap
+        currentViewSelection.src,
+        currentViewSelection.dst
       );
 
       const navUpDisabled = {
@@ -252,8 +244,8 @@ export default function MicroConnectomeConfigView() {
 
       setPlotData({
         type: 'param',
-        srcSelections,
-        dstSelections,
+        srcSelections: currentViewSelection.src,
+        dstSelections: currentViewSelection.dst,
         navUpDisabled,
         brainRegionNotationTitleMap,
         viewData,

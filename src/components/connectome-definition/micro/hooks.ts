@@ -208,22 +208,24 @@ export function useGetParentSelections() {
       throw new Error(`Can not find brain region with notation: ${selection.brainRegionNotation}`);
     }
 
-    // TODO handle cases where mtype is set in the selection.
+    const parentSelectionBrainRegionId = selection.mtype ? brainRegion.id : brainRegion?.isPartOf;
 
-    const parentBrainRegionId = brainRegion?.isPartOf;
-
-    if (!parentBrainRegionId) {
+    if (!parentSelectionBrainRegionId) {
       throw new Error(`Can not find parent node for brain region id: ${brainRegion.id}`);
     }
 
-    const parentBrainRegion = brainRegionByIdMap?.get(parentBrainRegionId);
+    const parentSelectionBrainRegion = brainRegionByIdMap?.get(parentSelectionBrainRegionId);
 
-    return brainRegions
-      .filter((br) => br.isPartOf === parentBrainRegion?.isPartOf)
-      .filter((br) => br.representedInAnnotation)
+    const parentSelectionSiblingBrainRegions = brainRegions
+      .filter((br) => br.isPartOf === parentSelectionBrainRegion?.isPartOf)
+      .filter((br) => br.representedInAnnotation);
+
+    const parentSelections = parentSelectionSiblingBrainRegions
       .map((br) => br.notation)
       .sort(brainRegionNotationSorterFn)
       .map((brainRegionNotation) => ({ brainRegionNotation }));
+
+    return parentSelections;
   };
 }
 

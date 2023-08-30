@@ -227,7 +227,6 @@ function buildBrainRegionIndex(brainRegions: BrainRegion[]) {
 
       const leafNotations = brainRegion?.leaves
         ?.map((leaf) => brainRegionByIdMap.get(leaf.split('/').at(-1) as string))
-        ?.filter((br) => br?.representedInAnnotation)
         ?.map((br) => br?.notation as string);
 
       // Skip nodes with all the children not represented in annotations.
@@ -630,14 +629,10 @@ export type AggregatedVariantViewEntry = {
 
 function createAggregatedVariantView(
   hemisphereDirection: HemisphereDirection,
-  srcMap: Map<Selection, BrainRegionNotation[]>,
-  dstMap: Map<Selection, BrainRegionNotation[]>
+  srcSelections: Selection[],
+  dstSelections: Selection[]
 ): AggregatedVariantViewEntry[] {
   assertInitialised(workerState);
-
-  if (!workerState.compositionIndex) {
-    throw new Error('Missing composition index');
-  }
 
   if (!workerState.variantIndex[hemisphereDirection]) {
     buildVariantIndex(hemisphereDirection);
@@ -645,6 +640,7 @@ function createAggregatedVariantView(
 
   const hemisphereVariantIndex = workerState.variantIndex[hemisphereDirection];
   const { brainRegionMtypeMap } = workerState.compositionIndex;
+  const { leafNotationsByNotationMap } = workerState.brainRegionIndex;
 
   if (!hemisphereVariantIndex) {
     throw new Error('This is totally unexpected');
@@ -655,30 +651,35 @@ function createAggregatedVariantView(
   const variantNames = Object.keys(workerState.config.variants).sort();
   const nVariants = variantNames.length;
 
-  srcMap.forEach((sources, srcSelection) => {
-    dstMap.forEach((destinations, dstSelection) => {
+  srcSelections.forEach((srcSelection) => {
+    dstSelections.forEach((dstSelection) => {
       // The element with index 0 represents the number of pathways for which no variant has been assigned.
       // This is what will be rendered under the "disabled" category.
       const variantCountsArr = new Uint32Array(nVariants + 1);
 
-      sources.forEach((src) => {
-        destinations.forEach((dst) => {
-          // TODO Take m-type from the selection, remove this parstng.
-          const [srcNotation, selectedSrcMtype] = src.split('.');
-          const [dstNotation, selectedDstMtype] = dst.split('.');
+      const srcNotations = leafNotationsByNotationMap.get(srcSelection.brainRegionNotation);
+      const dstNotations = leafNotationsByNotationMap.get(dstSelection.brainRegionNotation);
 
+      if (!srcNotations || !dstNotations) {
+        const src = srcSelection.brainRegionNotation;
+        const dst = dstSelection.brainRegionNotation;
+        throw new Error(`Can not get leaf nodes for (${src}, ${dst})`);
+      }
+
+      srcNotations.forEach((srcNotation) => {
+        dstNotations.forEach((dstNotation) => {
           if (!hasMacroConnectivity(hemisphereDirection, srcNotation, dstNotation)) return;
 
           const srcDstBrainRegionKey = `${srcNotation}${dstNotation}`;
 
           const srcMtypes = (
-            selectedSrcMtype ? [selectedSrcMtype] : brainRegionMtypeMap.get(srcNotation) ?? []
+            srcSelection.mtype ? [srcSelection.mtype] : brainRegionMtypeMap.get(srcNotation) ?? []
           ).filter(
             (mtype) => !srcSelection.mtypeFilterSet || srcSelection.mtypeFilterSet.has(mtype)
           );
 
           const dstMtypes = (
-            selectedDstMtype ? [selectedDstMtype] : brainRegionMtypeMap.get(dstNotation) ?? []
+            dstSelection.mtype ? [dstSelection.mtype] : brainRegionMtypeMap.get(dstNotation) ?? []
           ).filter(
             (mtype) => !dstSelection.mtypeFilterSet || dstSelection.mtypeFilterSet.has(mtype)
           );
@@ -731,16 +732,10 @@ export function createAggregatedParamView(
   hemisphereDirection: HemisphereDirection,
   variantName: string,
   paramName: string,
-  srcMap: Map<Selection, BrainRegionNotation[]>,
-  dstMap: Map<Selection, BrainRegionNotation[]>
+  srcSelections: Selection[],
+  dstSelections: Selection[]
 ): AggregatedParamViewEntry[] {
-  if (!workerState.config) {
-    throw new Error('Config is not set');
-  }
-
-  if (!workerState.compositionIndex) {
-    throw new Error('Missing composition index');
-  }
+  assertInitialised(workerState);
 
   if (!isParamIndexAvailable(hemisphereDirection, variantName, paramName)) {
     buildParamIndex(hemisphereDirection, variantName, paramName);
@@ -748,6 +743,7 @@ export function createAggregatedParamView(
 
   const hemisphereParamIndex = workerState.paramIndex[variantName][hemisphereDirection];
   const { brainRegionMtypeMap } = workerState.compositionIndex;
+  const { leafNotationsByNotationMap } = workerState.brainRegionIndex;
 
   if (!hemisphereParamIndex) {
     throw new Error('This is totally unexpected');
@@ -759,29 +755,34 @@ export function createAggregatedParamView(
 
   const viewData: AggregatedParamViewEntry[] = [];
 
-  srcMap.forEach((sources, srcSelection) => {
-    dstMap.forEach((destinations, dstSelection) => {
+  srcSelections.forEach((srcSelection) => {
+    dstSelections.forEach((dstSelection) => {
       const paramValues: number[] = [];
       let nPathwaysNotSet: number = 0;
 
-      sources.forEach((src) => {
-        destinations.forEach((dst) => {
-          // TODO Check if these mtypes can have a value.
-          const [srcNotation, selectedSrcMtype] = src.split('.');
-          const [dstNotation, selectedDstMtype] = dst.split('.');
+      const srcNotations = leafNotationsByNotationMap.get(srcSelection.brainRegionNotation);
+      const dstNotations = leafNotationsByNotationMap.get(dstSelection.brainRegionNotation);
 
+      if (!srcNotations || !dstNotations) {
+        const src = srcSelection.brainRegionNotation;
+        const dst = dstSelection.brainRegionNotation;
+        throw new Error(`Can not get leaf nodes for (${src}, ${dst})`);
+      }
+
+      srcNotations.forEach((srcNotation) => {
+        dstNotations.forEach((dstNotation) => {
           if (!hasMacroConnectivity(hemisphereDirection, srcNotation, dstNotation)) return;
 
           const srcDstBrainRegionKey = `${srcNotation}${dstNotation}`;
 
           const srcMtypes = (
-            selectedSrcMtype ? [selectedSrcMtype] : brainRegionMtypeMap.get(srcNotation) ?? []
+            srcSelection.mtype ? [srcSelection.mtype] : brainRegionMtypeMap.get(srcNotation) ?? []
           ).filter(
             (mtype) => !srcSelection.mtypeFilterSet || srcSelection.mtypeFilterSet.has(mtype)
           );
 
           const dstMtypes = (
-            selectedDstMtype ? [selectedDstMtype] : brainRegionMtypeMap.get(dstNotation) ?? []
+            dstSelection.mtype ? [dstSelection.mtype] : brainRegionMtypeMap.get(dstNotation) ?? []
           ).filter(
             (mtype) => !srcSelection.mtypeFilterSet || srcSelection.mtypeFilterSet.has(mtype)
           );

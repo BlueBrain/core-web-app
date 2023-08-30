@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import { TreeSelect, TreeNodeProps, Popover, Input, Checkbox, Space, Button } from 'antd';
 import { CloseOutlined, DownOutlined } from '@ant-design/icons';
 
-import { useBrainRegionMtypeMap } from './hooks';
+import { useBrainRegionMtypeMap, useSelectionSorterFn } from './hooks';
 import { BrainRegion } from '@/types/ontologies';
 import { PathwaySideSelection as Selection } from '@/types/connectome';
 import { ensureArray } from '@/util/nexus';
@@ -193,6 +193,8 @@ export default function MicroConnectomeBrainRegionSelect({
 }: BrainRegionSelectProps) {
   const brainRegionsFilteredTree = useAtomValue(brainRegionsFilteredTreeAtom);
 
+  const selectionSorterFn = useSelectionSorterFn();
+
   const onMtypeFilterSetChange = (brainRegionNotation: string, mtypeFilterSet: Set<string>) => {
     if (!value) return;
 
@@ -214,7 +216,9 @@ export default function MicroConnectomeBrainRegionSelect({
 
     const newValue =
       brainRegionNotationList.length > value.length
-        ? value.concat({ brainRegionNotation: brainRegionNotationList.at(-1) as string })
+        ? value
+            .concat({ brainRegionNotation: brainRegionNotationList.at(-1) as string })
+            .sort(selectionSorterFn)
         : value.filter((selection) =>
             brainRegionNotationList.includes(selection.brainRegionNotation)
           );
