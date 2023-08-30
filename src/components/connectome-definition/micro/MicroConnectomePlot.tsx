@@ -573,7 +573,7 @@ function renderVariantPlotContent(
         : ''
     )
     .attr('font-size', '12px')
-    .attr('fill', (d) => textColor(d.data.color))
+    .attr('fill', (d) => textColor(d.data.color ?? 'gray'))
     .style('opacity', function getTextOpacity(d) {
       const sufficientHeight = d.y1 - d.y0 > 22;
       if (!sufficientHeight) return 0;

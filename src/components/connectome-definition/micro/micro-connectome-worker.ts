@@ -300,7 +300,7 @@ type CreateVariantIndexFnOptions = {
 function createVariantIndex(
   hemisphereDirection: HemisphereDirection,
   { applyOverrides }: CreateVariantIndexFnOptions
-) {
+): BrainRegionLevelMap<number> {
   if (!workerState.tables) {
     throw new Error('Micro-connectome data is missing');
   }
@@ -390,7 +390,7 @@ function createParamIndex(
   variantName: string,
   paramName: string,
   { applyOverrides }: CreateParamIndexFnOptions
-) {
+): BrainRegionLevelMap<number[]> {
   if (!workerState.tables) {
     throw new Error('Micro-connectome data is missing');
   }
@@ -467,12 +467,7 @@ function createParamIndex(
     applyTable(overridesTable);
   }
 
-  workerState.paramIndex[variantName] = {
-    ...workerState.paramIndex[variantName],
-    [hemisphereDirection]: hemisphereParamIndex,
-  };
-
-  setParamIndexAvailability(hemisphereDirection, variantName, paramName, true);
+  return hemisphereParamIndex;
 }
 
 function buildParamIndex(

@@ -4,7 +4,7 @@ import isNumber from 'lodash/isNumber';
 
 import { PathwaySideSelection as Selection, MicroConnectomeEditEntry } from '@/types/connectome';
 import { compositionAtom } from '@/state/build-composition';
-import { editsAtom } from '@/state/brain-model-config/micro-connectome';
+import { editsLoadableAtom } from '@/state/brain-model-config/micro-connectome';
 import {
   brainRegionByIdMapAtom,
   brainRegionByNotationMapAtom,
@@ -13,6 +13,7 @@ import {
   brainRegionsUnsortedArrayAtom,
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
+import { useLoadable } from '@/hooks/hooks';
 
 /**
  * A hook to create a map which provides a list of available in the cell composition m-types
@@ -240,8 +241,6 @@ export function useAreSiblings() {
         throw new Error('No brainRegionByNotationMap present');
       }
 
-      // const parsedLabels = labels.map((label) => label.split('.'));
-
       const brainRegionNotations = selections.map((selection) => selection.brainRegionNotation);
       const mtypes = selections.map((selection) => selection.mtype);
 
@@ -295,7 +294,7 @@ export function useAreTopLevelNodes() {
 }
 
 export function useValidateEdit() {
-  const edits = useAtomValue(editsAtom);
+  const edits = useLoadable(editsLoadableAtom, []);
 
   return (edit: Partial<MicroConnectomeEditEntry>) => {
     if (!edit.name) return false;

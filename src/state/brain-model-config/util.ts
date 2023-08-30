@@ -76,14 +76,14 @@ const buildSteps: BuildStep[] = [
     buildArtefactAtom: morphologyAssignmentBuildArtefact,
   },
   {
-    name: 'microConnectome',
-    configSourceAtom: microConnectomeConfigSourceAtom,
-    buildArtefactAtom: microConnectomeBuildArtefact,
-  },
-  {
     name: 'macroConnectome',
     configSourceAtom: macroConnectomeConfigSourceAtom,
     buildArtefactAtom: macroConnectomeBuildArtefact,
+  },
+  {
+    name: 'microConnectome',
+    configSourceAtom: microConnectomeConfigSourceAtom,
+    buildArtefactAtom: microConnectomeBuildArtefact,
   },
 ];
 
@@ -104,6 +104,8 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
       buildSteps.findIndex((step) => step.name === buildStepName)
     );
 
+    let modelConfigHasUpdates = false;
+
     await Promise.all(
       stepsToInvalidate.map(async (step) => {
         const buildArtefact = await get(step.buildArtefactAtom);
@@ -118,8 +120,11 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
         const configCloneMeta = await createResource(configSource, session);
 
         modelConfig.configs[`${step.name}Config`]['@id'] = configCloneMeta['@id'];
+        modelConfigHasUpdates = true;
       })
     );
+
+    if (!modelConfigHasUpdates) return;
 
     const modelConfigMeta = await get(modelConfigMetaAtom);
     if (!modelConfigMeta) {

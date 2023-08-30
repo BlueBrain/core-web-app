@@ -67,7 +67,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     config._rev,
     session
   );
-  await set(invalidateConfigAtom, 'macroConnectome');
+  await set(invalidateConfigAtom, 'microConnectome');
   set(writingConfigAtom, false);
 });
 

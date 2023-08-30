@@ -1,10 +1,11 @@
 import { Checkbox, ConfigProvider, Radio, Space, CheckboxProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { useAtomValue } from 'jotai';
 import capitalize from 'lodash/capitalize';
 
 import { variantLabel } from './constants';
-import { configPayloadAtom } from '@/state/brain-model-config/micro-connectome';
+import { variantNamesLoadableAtom } from './state';
+import { configPayloadLoadableAtom } from '@/state/brain-model-config/micro-connectome';
+import { useLoadable } from '@/hooks/hooks';
 
 type ColoredBoxProps = {
   color?: string;
@@ -82,9 +83,8 @@ export default function MicroConnectomeViewSelector({
   variantExcludeSet,
   onVariantExcludeSetChange,
 }: MicroConnectomeViewSelectorProps) {
-  const configPayload = useAtomValue(configPayloadAtom);
-
-  const variantNames = Object.keys(configPayload?.variants ?? {}).sort();
+  const configPayload = useLoadable(configPayloadLoadableAtom, null);
+  const variantNames = useLoadable(variantNamesLoadableAtom, []);
 
   const variantCheckboxesEditable = value === 'variant';
 
@@ -119,12 +119,12 @@ export default function MicroConnectomeViewSelector({
 
       {variantNames.map((variantName) => (
         <div key={variantName}>
-          <h3 className="mt-5 mb-3" style={{ color: variantColorMap.get(variantName) }}>
+          <h3 className="mt-5 mb-3" style={{ color: variantColorMap.get(variantName) ?? 'gray' }}>
             <VariantEntry
               variantName={variantName}
               checked={!variantExcludeSet.has(variantName)}
               editable={variantCheckboxesEditable}
-              color={variantColorMap.get(variantName) as string}
+              color={variantColorMap.get(variantName) ?? 'gray'}
               onChange={onVariantCheckChange}
             />
           </h3>

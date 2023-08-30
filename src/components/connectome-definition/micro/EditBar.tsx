@@ -7,10 +7,13 @@ import capitalize from 'lodash/capitalize';
 import HemisphereDropdown from '../HemisphereDropdown';
 import { variantLabel, unitLabel } from './constants';
 import { useValidateEdit } from './hooks';
-import { variantColorMapAtom, variantNamesAtom } from './state';
+import { variantColorMapAtom, variantNamesLoadableAtom } from './state';
 import { createEmptyEdit } from './utils';
 import BrainRegionSelect from './MicroConnectomeBrainRegionSelect';
-import { configPayloadAtom, editsAtom } from '@/state/brain-model-config/micro-connectome';
+import {
+  configPayloadLoadableAtom,
+  editsLoadableAtom,
+} from '@/state/brain-model-config/micro-connectome';
 import {
   addEditAtom,
   removeEditAtom,
@@ -18,6 +21,7 @@ import {
 } from '@/state/brain-model-config/micro-connectome/setters';
 import { MicroConnectomeEditEntry } from '@/types/connectome';
 import { classNames } from '@/util/utils';
+import { useLoadable } from '@/hooks/hooks';
 
 type EditFormProps = {
   value: Partial<MicroConnectomeEditEntry>;
@@ -55,8 +59,8 @@ function VariantLabel({ variantName }: VariantLabelProps) {
 }
 
 function EditForm({ value, onChange, disabled }: EditFormProps) {
-  const configPayload = useAtomValue(configPayloadAtom);
-  const variantNames = useAtomValue(variantNamesAtom);
+  const configPayload = useLoadable(configPayloadLoadableAtom, null);
+  const variantNames = useLoadable(variantNamesLoadableAtom, []);
 
   const variantOptions = variantNames.map((variantName) => ({
     value: variantName,
@@ -395,7 +399,8 @@ function EditHistoryEntry({ value, onClick, onRemove }: EditHistoryEntryProps) {
 }
 
 function EditHistory() {
-  const rawEdits = useAtomValue(editsAtom);
+  const rawEdits = useLoadable(editsLoadableAtom, []);
+
   const removeEdit = useSetAtom(removeEditAtom);
   const updateEdit = useSetAtom(updateEditAtom);
 

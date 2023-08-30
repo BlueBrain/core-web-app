@@ -5,7 +5,7 @@ import { PathwaySideSelection, MicroConnectomeEditEntry } from '@/types/connecto
 /**
  * Create a map containing a color palette of distinct colors per variant name.
  */
-export function createVariantColorMap(variantNames: string[]) {
+export function createVariantColorMap(variantNames: string[]): Map<string, string> {
   return distinctColors({
     count: variantNames.length,
     chromaMin: 65,
@@ -13,7 +13,7 @@ export function createVariantColorMap(variantNames: string[]) {
     lightMin: 70,
   })
     .map((chromaColor) => chromaColor.css())
-    .reduce<Map<string, string>>((map, color, idx) => map.set(variantNames[idx], color), new Map());
+    .reduce((map, color, idx) => map.set(variantNames[idx], color), new Map());
 }
 
 export function createEmptyEdit() {

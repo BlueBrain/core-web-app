@@ -1,6 +1,7 @@
 'use client';
 
 import { atom } from 'jotai';
+import { loadable } from 'jotai/utils';
 import { wrap } from 'comlink';
 
 import { microConnectomeConfigIdAtom } from '../index';
@@ -97,6 +98,8 @@ export const configPayloadAtom = atom<Promise<MicroConnectomeConfigPayload | nul
   return localConfigPayload ?? remoteConfigPayload;
 });
 
+export const configPayloadLoadableAtom = loadable(configPayloadAtom);
+
 export const editsAtom = atom<Promise<MicroConnectomeEditEntry[] | null>>(async (get) => {
   const configPayload = await get(configPayloadAtom);
 
@@ -116,6 +119,8 @@ export const editsAtom = atom<Promise<MicroConnectomeEditEntry[] | null>>(async 
 
   return editEntries;
 });
+
+export const editsLoadableAtom = loadable(editsAtom);
 
 export const initialVariantMatrix = atom<Promise<ArrayBuffer | null>>(async (get) => {
   const session = get(sessionAtom);

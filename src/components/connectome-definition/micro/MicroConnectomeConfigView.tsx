@@ -5,7 +5,7 @@ import { Spin, Button } from 'antd';
 
 import ViewSelector from './ViewSelector';
 import BrainRegionSelect from './MicroConnectomeBrainRegionSelect';
-import { variantColorMapAtom, variantNamesAtom } from './state';
+import { variantColorMapLoadableAtom, variantNamesLoadableAtom } from './state';
 import { AggregatedParamViewEntry, AggregatedVariantViewEntry } from './micro-connectome-worker';
 import {
   useAreSiblings,
@@ -17,7 +17,7 @@ import {
   useSelectionSorterFn,
 } from './hooks';
 import { MicroConnectomeEditBar as EditBar } from './EditBar';
-import { configPayloadAtom, workerAtom } from '@/state/brain-model-config/micro-connectome';
+import { configPayloadLoadableAtom, workerAtom } from '@/state/brain-model-config/micro-connectome';
 import sessionAtom from '@/state/session';
 import { compositionAtom } from '@/state/build-composition';
 import { connectivityStrengthMatrixAtom as macroConnectomeStrengthMatrixAtom } from '@/state/brain-model-config/macro-connectome';
@@ -31,6 +31,7 @@ import MicroConnectomePlot, {
   margin as plotMargin,
 } from '@/components/connectome-definition/micro/MicroConnectomePlot';
 import { HemisphereDirection, PathwaySideSelection as Selection } from '@/types/connectome';
+import { useLoadable } from '@/hooks/hooks';
 
 import styles from '../connectome-definition-view.module.scss';
 
@@ -70,7 +71,7 @@ export default function MicroConnectomeConfigView() {
   const worker = useAtomValue(workerAtom);
   const session = useAtomValue(sessionAtom);
 
-  const configPayload = useAtomValue(configPayloadAtom);
+  const configPayload = useLoadable(configPayloadLoadableAtom, null);
   const cellComposition = useAtomValue(compositionAtom);
 
   const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
@@ -79,8 +80,8 @@ export default function MicroConnectomeConfigView() {
 
   const macroConnectomeStrengthMatrix = useAtomValue(macroConnectomeStrengthMatrixAtom);
 
-  const variantNames = useAtomValue(variantNamesAtom);
-  const variantColorMap = useAtomValue(variantColorMapAtom);
+  const variantNames = useLoadable(variantNamesLoadableAtom, []);
+  const variantColorMap = useLoadable(variantColorMapLoadableAtom, new Map());
 
   const selectionSorterFn = useSelectionSorterFn();
   const createBrainRegionNotationTitleMap = useCreateBrainRegionNotationTitleMap();
