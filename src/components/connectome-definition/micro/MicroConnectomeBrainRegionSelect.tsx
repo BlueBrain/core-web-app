@@ -4,6 +4,7 @@ import { TreeSelect, TreeNodeProps, Popover, Input, Checkbox, Space, Button } fr
 import { CloseOutlined, DownOutlined } from '@ant-design/icons';
 
 import { useBrainRegionMtypeMap } from './hooks';
+import { BrainRegion } from '@/types/ontologies';
 import { PathwaySideSelection as Selection } from '@/types/connectome';
 import { ensureArray } from '@/util/nexus';
 import { classNames } from '@/util/utils';
@@ -24,6 +25,16 @@ type SelectionEntryProps = {
   onClose?: () => void;
   width?: number;
 };
+
+function filterTreeNode(searchStr: string, brainRegion: BrainRegion) {
+  const searchStrLowerCase = searchStr.toLowerCase();
+
+  const titleLower = (brainRegion.title as string).toLowerCase();
+  if (searchStrLowerCase.split(' ').every((token) => titleLower.includes(token))) return true;
+
+  const notationLower = (brainRegion.notation as string).toLowerCase();
+  return searchStrLowerCase.split(' ').every((token) => notationLower.includes(token));
+}
 
 function SelectionEntry({
   brainRegionNotation,
@@ -212,7 +223,7 @@ export default function MicroConnectomeBrainRegionSelect({
   };
 
   return (
-    <TreeSelect
+    <TreeSelect<string[], BrainRegion>
       className={classNames(style.outerContainer, extraPadding && style.extraPadding)}
       allowClear
       multiple
@@ -237,6 +248,9 @@ export default function MicroConnectomeBrainRegionSelect({
         value: 'notation',
         children: 'items',
       }}
+      // Antd's TreeSelect doesn't take into account custom OptionType (defined above)
+      // for the arguments of filterTreeNode function, thus the following hack to fix the type mismatch.
+      filterTreeNode={filterTreeNode as any}
     />
   );
 }
