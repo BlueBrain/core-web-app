@@ -1,6 +1,6 @@
 import { format, parseISO, isValid } from 'date-fns';
 import { Source, ESResponseRaw } from '@/types/explore-section/resources';
-import { NValueEntity } from '@/types/explore-section/fields';
+import { IdLabelEntity, NValueEntity } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { formatNumber } from '@/util/common';
 
@@ -112,3 +112,12 @@ export const selectorFnValue = (nValueEntity?: NValueEntity) =>
  * @returns {string} - The rendered text value.
  */
 export const selectorFnBasic = (text: string) => text;
+
+export const selectorFnSpecies = (species?: IdLabelEntity | IdLabelEntity[]) => {
+  if (species) {
+    return ensureArray(species)
+      .map((s) => s.label)
+      .join(', ');
+  }
+  return undefined;
+};

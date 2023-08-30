@@ -15,9 +15,8 @@ import { ListField } from '@/components/explore-section/Detail';
 export const formatContributors = (contributor: DeltaResource | null): IdLabel => {
   if (!contributor) return {};
 
-  const { name, familyName, givenName, '@id': id, '@type': type } = contributor;
+  const { name, familyName, givenName, '@id': id } = contributor;
 
-  if (type && type.includes('Organization')) return {};
   if (name) return { id, label: name };
   if (familyName && givenName) return { id, label: `${givenName} ${familyName}` };
 

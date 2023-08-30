@@ -8,6 +8,7 @@ import {
   selectorFnBasic,
   selectorFnDate,
   selectorFnStatistic,
+  selectorFnSpecies,
 } from '@/state/explore-section/listing-selectors';
 import { FilterType } from '@/components/Filter/types';
 import { IndexColContent, ValueArray } from '@/components/ListTable';
@@ -94,7 +95,7 @@ const LISTING_CONFIG: ListingConfigProps = {
     term: 'subjectSpecies.label.keyword',
     title: 'Species',
     filter: 'checkList',
-    renderFn: (_t, r) => selectorFnBasic(r._source?.subjectSpecies?.label),
+    renderFn: (_t, r) => selectorFnSpecies(r._source?.subjectSpecies),
     vocabulary: {
       plural: 'Species',
       singular: 'Species',
