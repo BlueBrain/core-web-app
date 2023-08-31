@@ -111,7 +111,7 @@ function GenerativeQASingleResult({
       id={id}
       className={classNames(
         'w-full mt-3',
-        collpaseQuestion || expandArticles ? 'mb-4 last:mb-28' : 'mb-28'
+        collpaseQuestion || expandArticles ? 'mb-4 last:mb-[280px]' : 'mb-28 last:mb-[320px]'
       )}
       ref={answerRef}
     >

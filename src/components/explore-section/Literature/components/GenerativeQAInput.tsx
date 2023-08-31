@@ -1,13 +1,20 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useReducer, useState, useTransition } from 'react';
 import { useAtomValue } from 'jotai';
-import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  InfoCircleOutlined,
+  LoadingOutlined,
+  SendOutlined,
+} from '@ant-design/icons';
 import merge from 'lodash/merge';
 
+import { Button, Tooltip } from 'antd';
 import { generativeQADTO } from '../utils/DTOs';
 import { getGenerativeQAAction } from '../actions';
 import { LiteratureValidationError } from '../errors';
+import JournalSearch from './JournalSearch';
 import {
   GenerativeQA,
   GenerativeQAServerResponse,
@@ -15,14 +22,21 @@ import {
   isGenerativeQA,
   isGenerativeQANoFound,
 } from '@/types/literature';
-import { classNames } from '@/util/utils';
+import { classNames, formatDate } from '@/util/utils';
 import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
 import { literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
 import usePathname from '@/hooks/pathname';
+import { DateRange } from '@/components/Filter';
+import { GteLteValue } from '@/components/Filter/types';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
   type: 'submit' | 'button';
+};
+
+type QuestionParameters = {
+  selectedDate: GteLteValue;
+  selectedJournals: string[];
 };
 
 function FormButton({ icon, type, ...props }: FormButtonProps) {
@@ -37,6 +51,15 @@ function FormButton({ icon, type, ...props }: FormButtonProps) {
   );
 }
 
+const initialParameters: QuestionParameters = {
+  selectedDate: { lte: null, gte: null },
+  selectedJournals: [],
+};
+
+const REFINE_SEARCH_HELP_TEXT = `Before launching the search related to your question,
+ use these parameters to obtain a more 
+ specific answer.`;
+
 function GenerativeQAInputBar() {
   const update = useLiteratureAtom();
   const { query } = useAtomValue(literatureAtom);
@@ -45,6 +68,12 @@ function GenerativeQAInputBar() {
   const [isGQAPending, startGenerativeQATransition] = useTransition();
   const pathname = usePathname();
   const isBuildSection = pathname?.startsWith('/build');
+
+  const [parametersVisible, setParametersVisible] = useState(false);
+  const [{ selectedDate, selectedJournals }, updateParameters] = useReducer(
+    (previous: QuestionParameters, next: Partial<QuestionParameters>) => ({ ...previous, ...next }),
+    { ...initialParameters }
+  );
 
   const isChatBarMustSlideInDown = Boolean(QAs.length);
   const onChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
@@ -73,7 +102,11 @@ function GenerativeQAInputBar() {
       updateResults(newGenerativeQA);
     }
     update('query', '');
+    updateParameters({ ...initialParameters });
+    setParametersVisible(false);
   };
+
+  const isQuestionEmpty = query.trim().length === 0;
 
   return (
     <div
@@ -97,6 +130,13 @@ function GenerativeQAInputBar() {
             const result = await getGenerativeQAAction({
               data,
               keywords: selectedBrainRegion ? [selectedBrainRegion.title] : undefined,
+              journals: selectedJournals,
+              fromDate: selectedDate.gte
+                ? formatDate(selectedDate.gte as Date, 'yyyy-MM-dd')
+                : undefined,
+              endDate: selectedDate.lte
+                ? formatDate(selectedDate.lte as Date, 'yyyy-MM-dd')
+                : undefined,
             });
             onGenerativeQAFinished(result);
           });
@@ -133,13 +173,73 @@ function GenerativeQAInputBar() {
                   onClick={onQuestionClear}
                 />
               )}
-              <FormButton
-                type="submit"
-                icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8" />}
-              />
+              {!parametersVisible && (
+                <FormButton
+                  type="submit"
+                  icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8" />}
+                />
+              )}
             </div>
           </div>
+          {!parametersVisible && (
+            <div className="flex justify-end w-full items-center mt-4">
+              <span className="text-primary-8">Refine your search</span>
+              <Tooltip
+                title={REFINE_SEARCH_HELP_TEXT}
+                color="#003A8C"
+                overlayInnerStyle={{ background: '#003A8C' }}
+              >
+                <InfoCircleOutlined className="text-primary-5 mx-2" />
+              </Tooltip>
+              <Button
+                onClick={() => setParametersVisible(true)}
+                className="border border-primary-4 text-primary-8 rounded-none bg-primary-0"
+              >
+                Parameters
+              </Button>
+            </div>
+          )}
+
+          {parametersVisible && (
+            <div className="w-full">
+              <div className="mt-10 w-full">
+                <DateRange
+                  onChange={(e) => updateParameters({ selectedDate: e })}
+                  filter={{
+                    field: 'publicationDate',
+                    type: 'dateRange',
+                    aggregationType: 'buckets',
+                    value: { ...initialParameters.selectedDate },
+                  }}
+                />
+                <hr className="border-primary-2 my-4" />
+              </div>
+
+              <div className="w-full">
+                <JournalSearch
+                  onChange={(newValues) => updateParameters({ selectedJournals: newValues })}
+                />
+                <hr className="border-primary-2 my-4" />
+              </div>
+            </div>
+          )}
         </div>
+
+        {parametersVisible && (
+          <div className="w-full flex justify-end mb-4">
+            <button
+              type="submit"
+              disabled={isQuestionEmpty}
+              title={isQuestionEmpty ? 'Please enter a question' : ''}
+              className={classNames(
+                'border-[1px ] border-solid border-gray rounded px-4 py-2',
+                isQuestionEmpty ? 'text-gray-400' : 'text-primary-8'
+              )}
+            >
+              Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

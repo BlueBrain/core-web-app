@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
+
 import { GArticle, GenerativeQA, SortDirection } from '@/types/literature';
 import { literatureResultAtom } from '@/state/literature';
 import QAResultList from '@/components/explore-section/Literature/components/GenerativeQAResults';

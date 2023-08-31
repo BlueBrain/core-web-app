@@ -36,5 +36,5 @@ export function getCurrentDate(separator: string = '_', returnAlsoTime = false) 
 export const normalizedDate = (date: string | number | Date) =>
   date instanceof Date ? date : new Date(date);
 
-export const formatDate = (date: string, formatStr: string = 'dd-MM-yyyy') =>
+export const formatDate = (date: string | Date, formatStr: string = 'dd-MM-yyyy') =>
   format(new Date(date), formatStr);

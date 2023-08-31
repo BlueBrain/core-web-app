@@ -70,6 +70,9 @@ export type GetGenerativeQAInput = {
   question: string;
   size?: number;
   keywords?: string[];
+  fromDate?: string;
+  endDate?: string;
+  journals?: string[];
 };
 export type GenerativeQAServerResponse = {
   question: string;
@@ -78,6 +81,13 @@ export type GenerativeQAServerResponse = {
 export type ReturnGetGenerativeQA = (
   input: GetGenerativeQAInput
 ) => Promise<GenerativeQAServerResponse | LiteratureErrors.LiteratureValidationError | null>;
+
+export type JournalSuggestionResponse = {
+  title: string;
+  citescore: number;
+  eissn: string;
+  print_issn: string;
+}[];
 
 export const FilterFields = [
   'categories',
