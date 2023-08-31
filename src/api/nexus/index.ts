@@ -36,6 +36,11 @@ import {
   MorphologyAssignmentConfigPayload,
   SynapseConfigPayload,
   EntityCreation,
+  MicroConnectomeConfigPayload,
+  MicroConnectomeVariantSelectionOverrides,
+  MicroConnectomeVariantSelectionOverridesResource,
+  MicroConnectomeDataOverridesResource,
+  MicroConnectomeDataOverrides,
 } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -325,14 +330,141 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
   return createResource(clonedConfig, session);
 }
 
-export async function cloneMicroConnectomeConfig(id: string, session: Session) {
-  const configSource = await fetchResourceById<MicroConnectomeConfig>(id, session);
-  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+export async function cloneMacroConnectomeConfig(id: string, session: Session) {
+  const configSource = await fetchResourceById<MacroConnectomeConfig>(id, session);
+  const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
+    configSource.distribution.contentUrl,
+    session
+  );
 
-  const clonedPayloadMeta = await createJsonFile(payload, 'micro-connectome-config.json', session);
+  const overridesEntity = await fetchResourceById<WholeBrainConnectomeStrength>(
+    payload.overrides.connection_strength.id,
+    session,
+    { rev: payload.overrides.connection_strength.rev }
+  );
+  const overridesPayloadBuffer = await fetchFileByUrl(
+    overridesEntity.distribution.contentUrl,
+    session
+  ).then((res) => res.arrayBuffer());
+
+  const clonedOverridesPayloadMeta = await createFile(
+    overridesPayloadBuffer,
+    'overrides.arrow',
+    'application/arrow',
+    session
+  );
+  const clonedOverridesEntity: WholeBrainConnectomeStrength = {
+    ...overridesEntity,
+    distribution: createDistribution(clonedOverridesPayloadMeta),
+  };
+
+  await createResource(clonedOverridesEntity, session);
+
+  payload.overrides.connection_strength.id = clonedOverridesEntity['@id'];
+  payload.overrides.connection_strength.rev = 1;
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
+
+  const clonedConfig: MacroConnectomeConfig = {
+    ...configSource,
+    distribution: createDistribution(clonedPayloadMeta),
+  };
+
+  return createResource(clonedConfig, session);
+}
+
+export async function cloneMicroConnectomeConfig(id: string, session: Session) {
+  const config = await fetchResourceById<MicroConnectomeConfig>(id, session);
+  const payload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(
+    config.distribution.contentUrl,
+    session
+  );
+
+  const variantOverridesEntity =
+    await fetchResourceById<MicroConnectomeVariantSelectionOverridesResource>(
+      payload.overrides.variants.id,
+      session,
+      { rev: payload.overrides.variants.rev }
+    );
+
+  const variantOverridesPayloadBuffer = await fetchFileByUrl(
+    variantOverridesEntity.distribution.contentUrl,
+    session
+  ).then((res) => res.arrayBuffer());
+
+  const clonedVariantOverridesPayloadMeta = await createFile(
+    variantOverridesPayloadBuffer,
+    'variant-overrides.arrow',
+    'application/arrow',
+    session
+  );
+
+  const clonedVariantOverridesEntity: MicroConnectomeVariantSelectionOverrides = {
+    ...variantOverridesEntity,
+    distribution: createDistribution(clonedVariantOverridesPayloadMeta),
+  };
+
+  const clonedVariantOverridesEntityMeta = await createResource(
+    clonedVariantOverridesEntity,
+    session
+  );
+
+  const variantNames = Object.keys(payload.overrides)
+    .filter((key) => key !== 'variants')
+    .sort();
+
+  const paramOverridesEntities = await Promise.all(
+    variantNames.map((variantName) =>
+      fetchResourceById<MicroConnectomeDataOverridesResource>(
+        payload.overrides[variantName].id,
+        session,
+        { rev: payload.overrides[variantName].rev }
+      )
+    )
+  );
+
+  const paramOverridesPayloadBuffers = await Promise.all(
+    paramOverridesEntities.map((variantParamOverridesEntity) =>
+      fetchFileByUrl(variantParamOverridesEntity.distribution.contentUrl, session).then((res) =>
+        res.arrayBuffer()
+      )
+    )
+  );
+
+  const clonedParamOverridesPayloadMetas = await Promise.all(
+    variantNames.map((variantName, idx) =>
+      createFile(
+        paramOverridesPayloadBuffers[idx],
+        `${variantName}-param-overrides.arrow`,
+        'application/arrow',
+        session
+      )
+    )
+  );
+
+  const clonedParamOverridesEntities = await Promise.all(
+    variantNames.map((variantName, idx) => {
+      const dataOverridesEntity: MicroConnectomeDataOverrides = {
+        ...paramOverridesEntities[idx],
+        distribution: createDistribution(clonedParamOverridesPayloadMetas[idx]),
+      };
+
+      return createResource(dataOverridesEntity, session);
+    })
+  );
+
+  payload.overrides.variants.id = clonedVariantOverridesEntityMeta['@id'];
+  payload.overrides.variants.rev = 1;
+
+  variantNames.forEach((variantName, idx) => {
+    payload.overrides[variantName].id = clonedParamOverridesEntities[idx]['@id'];
+    payload.overrides[variantName].rev = 1;
+  });
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'microconnectome-config.json', session);
 
   const clonedConfig: MicroConnectomeConfig = {
-    ...configSource,
+    ...config,
     distribution: createGeneratorConfig({
       kgType: 'MicroConnectomeConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -449,49 +581,6 @@ export async function cloneSynapseConfig(id: string, session: Session) {
   };
 
   return createResource(config, session);
-}
-
-export async function cloneMacroConnectomeConfig(id: string, session: Session) {
-  const configSource = await fetchResourceById<MacroConnectomeConfig>(id, session);
-  const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
-    configSource.distribution.contentUrl,
-    session
-  );
-
-  const overridesEntity = await fetchResourceById<WholeBrainConnectomeStrength>(
-    payload.overrides.connection_strength.id,
-    session,
-    { rev: payload.overrides.connection_strength.rev }
-  );
-  const overridesPayloadBuffer = await fetchFileByUrl(
-    overridesEntity.distribution.contentUrl,
-    session
-  ).then((res) => res.arrayBuffer());
-
-  const clonedOverridesPayloadMeta = await createFile(
-    overridesPayloadBuffer,
-    'overrides.arrow',
-    'application/arrow',
-    session
-  );
-  const clonedOverridesEntity: WholeBrainConnectomeStrength = {
-    ...overridesEntity,
-    distribution: createDistribution(clonedOverridesPayloadMeta),
-  };
-
-  await createResource(clonedOverridesEntity, session);
-
-  payload.overrides.connection_strength.id = clonedOverridesEntity['@id'];
-  payload.overrides.connection_strength.rev = 1;
-
-  const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
-
-  const clonedConfig: MacroConnectomeConfig = {
-    ...configSource,
-    distribution: createDistribution(clonedPayloadMeta),
-  };
-
-  return createResource(clonedConfig, session);
 }
 
 export async function cloneBrainModelConfig(
