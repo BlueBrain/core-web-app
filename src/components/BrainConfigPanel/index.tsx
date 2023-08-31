@@ -18,17 +18,17 @@ import { classNames } from '@/util/utils';
 
 export const CURATED_MODELS = [
   {
-    id: '1921aaae-69c4-4366-ae9d-7aa1453f2158',
+    id: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations/1921aaae-69c4-4366-ae9d-7aa1453f2158',
     name: 'Release 23.01',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
   {
-    id: '1921aaae-69c4-4366-ae9d-7aa1453f2158',
+    id: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations/1921aaae-69c4-4366-ae9d-7aa1453f2158',
     name: 'Disease model 1',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
   {
-    id: '1921aaae-69c4-4366-ae9d-7aa1453f2158',
+    id: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations/1921aaae-69c4-4366-ae9d-7aa1453f2158',
     name: 'Disease model 2',
     description: 'UIrna condimentum mattis pellentesque id nibh tortor id.',
   },
