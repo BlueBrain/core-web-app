@@ -38,7 +38,7 @@ export type ZoomRange = {
 
 export interface TotalHits {
   relation: string;
-  value: number;
+  value: number | null;
 }
 export interface Distribution {
   contentSize: number;

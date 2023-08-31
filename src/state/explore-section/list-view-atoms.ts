@@ -1,150 +1,102 @@
 import { atom } from 'jotai';
-import { atomWithDefault } from 'jotai/utils';
+import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
+import columnKeyToFilter from './column-key-to-filter';
 import { ExploreSectionResponse, ESResponseRaw } from '@/types/explore-section/resources';
-import { TotalHits, Aggregations } from '@/types/explore-section/fields';
+import { Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
-import { Filter } from '@/components/Filter/types';
 import fetchDataQuery from '@/queries/explore-section/data';
 import { fetchRules } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
-import {
-  PAGE_SIZE,
-  PAGE_NUMBER,
-  DEFAULT_SELECTED_ROWS_OBJECT,
-  SelectedRowsProps,
-  ExperimentDataTypeName,
-} from '@/constants/explore-section/list-views';
+import { PAGE_SIZE, PAGE_NUMBER, SelectedRowsProps } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOuput } from '@/types/explore-section/kg-inference';
-
-export const columnKeyToFilter = (key: string): Filter => {
-  const fieldConfig = LISTING_CONFIG[key];
-
-  switch (fieldConfig.filter) {
-    case 'checkList':
-      return {
-        field: key,
-        type: 'checkList',
-        value: [],
-        aggregationType: 'buckets',
-      };
-    case 'checkListInference':
-      return {
-        field: key,
-        type: 'checkListInference',
-        value: [],
-        aggregationType: 'buckets',
-      };
-    case 'dateRange':
-      return {
-        field: key,
-        type: 'dateRange',
-        value: { gte: null, lte: null },
-        aggregationType: 'stats',
-      };
-    case 'valueRange':
-      return {
-        field: key,
-        type: 'valueRange',
-        value: { gte: null, lte: null },
-        aggregationType: 'stats',
-      };
-    case 'valueOrRange':
-      return {
-        field: key,
-        type: 'valueOrRange',
-        value: null,
-        aggregationType: 'buckets',
-      };
-    default:
-      return {
-        field: key,
-        aggregationType: null,
-        type: null,
-        value: null,
-      };
-  }
-};
+import { Filter } from '@/components/Filter/types';
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
 export const pageNumberAtom = atom<number>(PAGE_NUMBER);
 
-export const selectedRowsAtom = atom<SelectedRowsProps>(DEFAULT_SELECTED_ROWS_OBJECT);
+export const selectedRowsAtom = atomFamily(() => atom<SelectedRowsProps>([]));
 
 export const searchStringAtom = atom<string>('');
 
 export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', order: 'desc' });
 
-export const experimentDataTypeAtom = atom<ExperimentDataTypeName | undefined>(undefined);
-
-export const columnKeysAtom = atom<string[]>((get) => {
-  const experimentDataType = get(experimentDataTypeAtom);
-
-  if (!experimentDataType) return [];
-
-  return typeToColumns[experimentDataType as string];
-});
-
-export const activeColumnsAtom = atomWithDefault(
-  (get) => ['index', ...get(columnKeysAtom)] // TODO: There is no 'index' for Simulation Campaigns
+export const activeColumnsAtom = atomFamily((experimentTypeName: string) =>
+  atomWithDefault(
+    () => ['index', ...typeToColumns[experimentTypeName]] // TODO: There is no 'index' for Simulation Campaigns
+  )
 );
 
-export const filtersAtom = atomWithDefault<Filter[]>((get) => {
-  const columnsKeys = get(columnKeysAtom);
+export const filtersAtom = atomFamily((experimentTypeName: string) =>
+  atomWithDefault<Filter[]>(() => {
+    const columnsKeys = typeToColumns[experimentTypeName];
 
-  return columnsKeys.map((colKey) => columnKeyToFilter(colKey));
-});
-
-export const queryAtom = atom<object>((get) => {
-  const experimentDataType = get(experimentDataTypeAtom);
-  const searchString = get(searchStringAtom);
-  const pageNumber = get(pageNumberAtom);
-  const pageSize = get(pageSizeAtom);
-  const sortState = get(sortStateAtom);
-  const filters = get(filtersAtom);
-
-  if (!experimentDataType || !filters) {
-    return null;
-  }
-
-  return fetchDataQuery(pageSize, pageNumber, filters, experimentDataType, sortState, searchString);
-});
-
-const refetchCounterAtom = atom<number>(0);
-
-export const triggerRefetchAtom = atom(null, async (_get, set) => {
-  set(refetchCounterAtom, (counter) => counter + 1);
-});
-
-export const queryResponseAtom = atom<Promise<ExploreSectionResponse> | null>((get) => {
-  const session = get(sessionAtom);
-  const query = get(queryAtom);
-
-  get(refetchCounterAtom);
-
-  if (!session) return null;
-
-  return fetchEsResourcesByType(session.accessToken, query);
-});
-
-export const dataAtom = atom<Promise<ESResponseRaw[]>>(
-  async (get) => (await get(queryResponseAtom))?.hits ?? []
+    return columnsKeys.map((colKey) => columnKeyToFilter(colKey));
+  })
 );
 
-export const totalAtom = atom<Promise<TotalHits | undefined>>(async (get) => {
-  const { total } = (await get(queryResponseAtom)) ?? { total: { relation: 'eq', value: 0 } };
+export const queryAtom = atomFamily((experimentTypeName: string) =>
+  atom<object>((get) => {
+    const searchString = get(searchStringAtom);
+    const pageNumber = get(pageNumberAtom);
+    const pageSize = get(pageSizeAtom);
+    const sortState = get(sortStateAtom);
+    const filters = get(filtersAtom(experimentTypeName));
 
-  return total;
-});
+    if (!filters) {
+      return null;
+    }
 
-export const aggregationsAtom = atom<Promise<Aggregations | undefined>>(async (get) => {
-  const response = await get(queryResponseAtom);
+    return fetchDataQuery(
+      pageSize,
+      pageNumber,
+      filters,
+      experimentTypeName,
+      sortState,
+      searchString
+    );
+  })
+);
 
-  return response?.aggs;
-});
+export const queryResponseAtom = atomFamily((experimentTypeName: string) =>
+  atom<Promise<ExploreSectionResponse> | null>((get) => {
+    const session = get(sessionAtom);
+    const query = get(queryAtom(experimentTypeName));
+
+    if (!session) return null;
+
+    return fetchEsResourcesByType(session.accessToken, query);
+  })
+);
+
+export const dataAtom = atomFamily((experimentTypeName: string) =>
+  selectAtom<Promise<ExploreSectionResponse> | null, Promise<ESResponseRaw[]>>(
+    queryResponseAtom(experimentTypeName),
+    async (response) => response?.hits ?? []
+  )
+);
+
+export const totalAtom = atomFamily((experimentTypeName: string) =>
+  selectAtom<Promise<ExploreSectionResponse> | null, Promise<number | null>>(
+    queryResponseAtom(experimentTypeName),
+    async (response) => {
+      const { total } = response ?? {
+        total: { value: 0 },
+      };
+
+      return total.value;
+    }
+  )
+);
+
+export const aggregationsAtom = atomFamily((experimentTypeName: string) =>
+  selectAtom<Promise<ExploreSectionResponse> | null, Promise<Aggregations | undefined>>(
+    queryResponseAtom(experimentTypeName),
+    async (response) => response?.aggs
+  )
+);
 
 export const rulesResponseAtom = atom<Promise<RuleOuput[]> | null>((get) => {
   const session = get(sessionAtom);

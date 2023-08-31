@@ -1,20 +1,8 @@
 'use client';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import {
-  experimentDataTypeAtom,
-  triggerRefetchAtom,
-  filtersAtom,
-} from '@/state/explore-section/list-view-atoms';
-import useListPage from '@/hooks/useListPage';
 import { LAYER_THICKNESS } from '@/constants/explore-section/list-views';
 
 export default function LayerThicknessListingPage() {
-  useListPage({ experimentDataTypeAtom, triggerRefetchAtom, filtersAtom, TYPE: LAYER_THICKNESS });
-
-  return (
-    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <ExploreSectionListingView title="Layer Thickness" />
-    </div>
-  );
+  return <ExploreSectionListingView title="Layer Thickness" type={LAYER_THICKNESS} />;
 }

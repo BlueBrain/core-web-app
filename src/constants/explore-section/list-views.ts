@@ -22,17 +22,7 @@ export type ExperimentDataTypeName =
   | typeof SIMULATION_CAMPAIGNS
   | typeof NEURON_MORPHOLOGY;
 
-export type SelectedRowsProps = Record<ExperimentDataTypeName, ESResponseRaw[]>;
-
-export const DEFAULT_SELECTED_ROWS_OBJECT: SelectedRowsProps = {
-  [BOUTON_DENSITY]: [],
-  [NEURON_DENSITY]: [],
-  [LAYER_THICKNESS]: [],
-  [ELECTRO_PHYSIOLOGY]: [],
-  [SYNAPSE_PER_CONNECTION]: [],
-  [SIMULATION_CAMPAIGNS]: [],
-  [NEURON_MORPHOLOGY]: [],
-};
+export type SelectedRowsProps = ESResponseRaw[];
 
 export const DEFAULT_CHECKLIST_RENDER_LENGTH = 8;
 export const PAGE_SIZE = 30;

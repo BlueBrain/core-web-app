@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
@@ -33,9 +33,8 @@ import {
 export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
+  experimentTypeName: string;
 };
-
-const aggregationsLoadable = loadable(aggregationsAtom);
 
 function createFilterItemComponent(
   filter: Filter,
@@ -129,10 +128,20 @@ function createFilterItemComponent(
   };
 }
 
-export default function ControlPanel({ children, toggleDisplay }: ControlPanelProps) {
-  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom);
+export default function ControlPanel({
+  children,
+  toggleDisplay,
+  experimentTypeName,
+}: ControlPanelProps) {
+  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom(experimentTypeName));
+
+  const aggregationsLoadable = useMemo(
+    () => loadable(aggregationsAtom(experimentTypeName)),
+    [experimentTypeName]
+  );
+
   const aggregations = useAtomValue(aggregationsLoadable);
-  const [filters, setFilters] = useAtom(filtersAtom);
+  const [filters, setFilters] = useAtom(filtersAtom(experimentTypeName));
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
 

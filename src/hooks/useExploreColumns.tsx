@@ -1,13 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
 import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
-import { columnKeysAtom, sortStateAtom } from '@/state/explore-section/list-view-atoms';
+import { SortState } from '@/types/explore-section/application';
 import styles from '@/app/explore/explore.module.scss';
+
+type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
 
 type ResizeInit = {
   key: string | null;
@@ -19,13 +20,14 @@ const COL_SIZING = {
   default: 125,
 };
 
-const useExploreColumns = (
-  initialColumns?: ColumnProps<ExploreSectionResource>[]
-): ColumnProps<ExploreSectionResource>[] => {
+export default function useExploreColumns(
+  setSortState: SetAtom<[SetStateAction<SortState | undefined>], void>,
+  sortState?: SortState,
+  initialColumns: ColumnProps<ExploreSectionResource>[] = []
+): ColumnProps<ExploreSectionResource>[] {
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>([]);
 
-  const keys = useAtomValue(columnKeysAtom);
-  const [sortState, setSortState] = useAtom(sortStateAtom);
+  const keys = useMemo(() => Object.keys(LISTING_CONFIG), []);
 
   useEffect(
     () =>
@@ -136,7 +138,5 @@ const useExploreColumns = (
         sortOrder: getSortOrder(key),
       },
     ];
-  }, initialColumns ?? []);
-};
-
-export default useExploreColumns;
+  }, initialColumns);
+}
