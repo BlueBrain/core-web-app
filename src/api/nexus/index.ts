@@ -774,7 +774,7 @@ export async function getVariantTaskConfigUrlFromCircuit(
   const variantTaskActivity = variantTaskActivities[0];
 
   const variantTaskConfig = await fetchResourceById<VariantTaskConfigResource>(
-    variantTaskActivity.used['@id'],
+    variantTaskActivity.used_config['@id'],
     session
   );
 

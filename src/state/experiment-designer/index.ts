@@ -239,7 +239,7 @@ export const brainModelConfigIdFromSimCampUIConfigIdAtom = atom<Promise<string |
     );
 
     const generatorTaskActivityResource = generatorTaskActivities[0];
-    const synpaseConfigId = generatorTaskActivityResource.used['@id'];
+    const synpaseConfigId = generatorTaskActivityResource.used_config['@id'];
 
     const brainModelConfigQuery = getBuiltBrainModelConfigsQuery('', [synpaseConfigId]);
     const brainModelConfigs = await queryES<BrainModelConfigResource>(

@@ -116,7 +116,7 @@ export async function createWorkflowMetaConfigs(
       replacedContent = replaceCustomBbpWorkflowPlaceholders(replacedContent);
       const newResource = await createWorkflowConfigResource(fileName, replacedContent, session);
       const urlWithRev = composeUrl('resource', newResource['@id'], { rev: newResource._rev });
-      variablesToReplaceCopy[placeholder] = urlWithRev;
+      variablesToReplaceCopy[placeholder] = urlWithRev.replaceAll('%', '%%');
     }
   );
 
@@ -243,6 +243,23 @@ export function convertExpDesConfigToSimVariables(
   ) as ExpDesignerPositionParameter;
   variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_POSITION] = JSON.stringify(
     cameraPosition.value
+  );
+
+  const cameraTarget = imaging.find(
+    (param) => param.id === 'cameraTarget'
+  ) as ExpDesignerPositionParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_TARGET] = JSON.stringify(
+    cameraTarget.value
+  );
+
+  const cameraUp = imaging.find((param) => param.id === 'cameraUp') as ExpDesignerPositionParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_UP] = JSON.stringify(cameraUp.value);
+
+  const cameraHeight = imaging.find(
+    (param) => param.id === 'cameraHeight'
+  ) as ExpDesignerPositionParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_HEIGHT] = JSON.stringify(
+    cameraHeight.value
   );
 
   const reportType = imaging.find(

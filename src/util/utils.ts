@@ -17,9 +17,18 @@ export function classNames(...classes: Array<string | null | undefined | boolean
   return classes.filter(Boolean).join(' ');
 }
 
-export function getCurrentDate(separator: string = '_') {
+export function getCurrentDate(separator: string = '_', returnAlsoTime = false) {
   const now = new Date();
-  let formatted = new Intl.DateTimeFormat('en-GB').format(now);
+  const timeDisplay = returnAlsoTime ? 'numeric' : undefined;
+  const options = {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: timeDisplay,
+    minute: timeDisplay,
+    second: timeDisplay,
+  } as const;
+  let formatted = new Intl.DateTimeFormat('en-GB', options).format(now);
   formatted = formatted.replaceAll('/', separator);
   return formatted;
 }

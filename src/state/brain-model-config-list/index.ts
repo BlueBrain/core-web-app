@@ -9,7 +9,11 @@ import {
 } from '@/queries/es';
 import { queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { BrainModelConfigResource, GeneratorTaskActivityResource } from '@/types/nexus';
+import {
+  BrainModelConfigResource,
+  GeneratorTaskActivityResource,
+  SynapseConfigType,
+} from '@/types/nexus';
 
 type SearchType = 'public' | 'personal' | 'archive';
 
@@ -53,9 +57,15 @@ export const builtConfigListAtom = atom<Promise<BrainModelConfigResource[]>>(asy
     generatorQuery,
     session
   );
+
+  const synapseConfigTypeName: SynapseConfigType = 'SynapseConfig';
+
   const synapseConfigsUsedByGenerators = generatorTaskActivities
-    .filter((gta) => gta.used['@id'].includes('/synapseconfigs/'))
-    .map((gta) => gta.used['@id']);
+    .filter((gta) => {
+      if (!gta.used_config) return false;
+      return gta.used_config['@type'].includes(synapseConfigTypeName);
+    })
+    .map((gta) => gta.used_config['@id']);
 
   const brainModelConfigQuery = getBuiltBrainModelConfigsQuery(
     searchString,

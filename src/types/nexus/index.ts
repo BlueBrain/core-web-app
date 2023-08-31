@@ -119,7 +119,7 @@ export interface GeneratorTaskActivity extends Entity {
     '@type': string | string[];
   };
   startedAtTime: string;
-  used: {
+  used_config: {
     '@id': string;
     '@type': string | string[];
   };
@@ -361,7 +361,7 @@ export interface MicroConnectomeDataOverridesResource
     MicroConnectomeDataOverrides {}
 
 type SynapseGeneratorName = 'connectome_filtering';
-type SynapseConfigType = 'SynapseConfig';
+export type SynapseConfigType = 'SynapseConfig';
 
 export interface SynapseConfig extends Entity {
   name: string;
@@ -437,8 +437,8 @@ export interface VariantTaskActivity extends Entity {
     '@id': string;
   };
   startedAtTime: string;
-  used: {
-    '@type': ['VariantTaskConfig', 'Entity'];
+  used_config: {
+    '@type': [VariantTaskConfigType, 'Entity'];
     '@id': string;
   };
   used_rev: number;
@@ -450,8 +450,9 @@ export interface VariantTaskActivity extends Entity {
 
 export interface VariantTaskActivityResource extends ResourceMetadata, VariantTaskActivity {}
 
+export type VariantTaskConfigType = 'VariantTaskConfig';
 export interface VariantTaskConfig extends Entity {
-  '@type': ['VariantTaskConfig', 'Entity'];
+  '@type': [VariantTaskConfigType, 'Entity'];
   name: string;
   distribution: Distribution;
 }

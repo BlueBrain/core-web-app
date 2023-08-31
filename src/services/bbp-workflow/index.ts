@@ -51,7 +51,8 @@ export async function getSimulationTaskFiles(
 
   let extraVariables = structuredClone(extraVariablesToReplace);
 
-  extraVariables[SimulationPlaceholders.VARIANT_TASK_ACTIVITY] = variantActivityConfigUrl;
+  const escapedUrl = variantActivityConfigUrl.replaceAll('%', '%%');
+  extraVariables[SimulationPlaceholders.VARIANT_TASK_ACTIVITY] = escapedUrl;
 
   extraVariables = { ...convertExpDesConfigToSimVariables(extraVariables) };
 

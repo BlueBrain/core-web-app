@@ -185,7 +185,7 @@ export const getGeneratorTaskActivityQuery = (configId: string, configRev: numbe
     bool: {
       must: [
         { term: { '@type': 'GeneratorTaskActivity' } },
-        { term: { 'used.@id.keyword': configId } },
+        { term: { 'used_config.@id.keyword': configId } },
         { term: { used_rev: configRev } },
       ],
     },
