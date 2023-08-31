@@ -197,13 +197,15 @@ export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(
   return tree;
 });
 
-const brainRegionsTreeWithRepresentationAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
-  const brainRegionsTree = await get(brainRegionsFilteredTreeAtom);
+export const brainRegionsTreeWithRepresentationAtom = atom<Promise<BrainRegion[] | null>>(
+  async (get) => {
+    const brainRegionsTree = await get(brainRegionsFilteredTreeAtom);
 
-  if (!brainRegionsTree) return null;
+    if (!brainRegionsTree) return null;
 
-  return brainRegionsTree.reduce(itemsInAnnotationReducer, []);
-});
+    return brainRegionsTree.reduce(itemsInAnnotationReducer, []);
+  }
+);
 
 export const selectedAlternateViews = atom<{ [id: string]: string }>({});
 

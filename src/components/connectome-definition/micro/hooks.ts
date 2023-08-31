@@ -188,7 +188,10 @@ export function useGetChildSelections() {
         .get(selection.brainRegionNotation)
         ?.map((mtype) => ({ brainRegionNotation: selection.brainRegionNotation, mtype }));
 
-    return childSelections;
+    // Return current selection if all child nodes are not represented in annotation.
+    return Array.isArray(childSelections) && childSelections.length !== 0
+      ? childSelections
+      : [selection];
   };
 }
 

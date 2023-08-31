@@ -227,11 +227,11 @@ function buildBrainRegionIndex(brainRegions: BrainRegion[]) {
 
       const leafNotations = brainRegion?.leaves
         ?.map((leaf) => brainRegionByIdMap.get(leaf.split('/').at(-1) as string))
+        .filter((leaf) => leaf?.representedInAnnotation)
         ?.map((br) => br?.notation as string);
 
-      // Skip nodes with all the children not represented in annotations.
       if (Array.isArray(leafNotations) && leafNotations.length === 0) {
-        return map;
+        return map.set(notation, []);
       }
 
       return map.set(notation, leafNotations ?? [notation]);
