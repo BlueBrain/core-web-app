@@ -4,7 +4,7 @@ import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { useMemo } from 'react';
 import { Filter, OptionsData } from './types';
 import Search from '@/components/Search';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 
 export default function SearchFilter({
   data,
@@ -79,7 +79,7 @@ export default function SearchFilter({
         value: key as string,
       }))}
       mode="tags"
-      placeholder={`Search for ${LISTING_CONFIG[filter.field].vocabulary.plural}`}
+      placeholder={`Search for ${EXPLORE_FIELDS_CONFIG[filter.field].vocabulary.plural}`}
       tagRender={tagRender}
       value={options?.reduce(
         (acc, { checked, key }) => (checked ? [...acc, key as string] : acc),

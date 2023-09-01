@@ -100,13 +100,6 @@ export const selectorFnDate = (date: string) =>
   isValid(parseISO(date)) ? format(parseISO(date), 'dd.MM.yyyy') : '';
 
 /**
- * Formats an nValue entity with units
- * @param nValueEntity the nValue
- */
-export const selectorFnValue = (nValueEntity?: NValueEntity) =>
-  nValueEntity ? formatNumber(Number(nValueEntity.value)) : '';
-
-/**
  * Renders the text value
  * @param {string} text - The text value to render.
  * @returns {string} - The rendered text value.

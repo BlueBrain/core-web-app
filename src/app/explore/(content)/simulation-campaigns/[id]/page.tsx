@@ -1,56 +1,35 @@
 'use client';
 
-import Detail, { DetailProps, ListField } from '@/components/explore-section/Detail';
+import Detail, { DetailProps } from '@/components/explore-section/Detail';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import Simulations from '@/components/explore-section/Simulations';
 import useDetailPage from '@/hooks/useDetailPage';
 import usePathname from '@/hooks/pathname';
-import SimulationCampaignStatus from '@/components/explore-section/SimulationCampaignStatus';
 
 const fields: DetailProps[] = [
   {
-    title: 'Description',
-    field: ({ description }) => description,
+    field: 'description',
   },
   {
-    title: 'Brain Configuration',
-    field: ({ brainConfiguration }) => brainConfiguration,
+    field: 'brainConfiguration',
   },
   {
-    title: 'Dimensions',
-    field: ({ parameter }) => (
-      <ListField
-        items={
-          parameter?.coords && Object.entries(parameter?.coords).map(([k]) => ({ id: k, label: k }))
-        }
-      />
-    ),
+    field: 'dimensions',
   },
   {
-    title: 'Attributes',
-    field: ({ parameter }) => (
-      <ListField
-        items={
-          parameter?.attrs && Object.entries(parameter?.attrs).map(([k]) => ({ id: k, label: k }))
-        }
-      />
-    ),
+    field: 'attributes',
   },
   {
-    title: 'Tags',
-    field: ({ tags }) => tags,
+    field: 'tags',
   },
   {
-    title: 'Status',
-    field: <SimulationCampaignStatus />,
+    field: 'simulationCampaignStatus',
   },
   {
-    title: 'Created By',
-    field: ({ createdBy }) => createdBy,
+    field: 'createdBy',
   },
   {
-    title: 'Updated',
-    field: ({ updatedAt }) => updatedAt,
+    field: 'createdAt',
   },
 ];
 

@@ -23,7 +23,7 @@ import {
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import {
   activeColumnsAtom,
   aggregationsAtom,
@@ -44,7 +44,7 @@ function createFilterItemComponent(
 ) {
   return function FilterItemComponent() {
     const { type } = filter;
-    const { nestedField } = LISTING_CONFIG[filter.field];
+    const { nestedField } = EXPLORE_FIELDS_CONFIG[filter.field];
 
     let agg;
 
@@ -180,7 +180,7 @@ export default function ControlPanel({
     content:
       filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
     display: activeColumns.includes(filter.field),
-    label: LISTING_CONFIG[filter.field].title,
+    label: EXPLORE_FIELDS_CONFIG[filter.field].title,
     type: filter.type,
     toggleFunc: () => onToggleActive && onToggleActive(filter.field),
   })) as FilterGroupProps['items'];

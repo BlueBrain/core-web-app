@@ -1,7 +1,7 @@
 import esb, { Query } from 'elastic-builder';
 import { format } from 'date-fns';
 import { Filter, RangeFilter } from '@/components/Filter/types';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { getESTerm } from '@/queries/explore-section/utils';
 import { filterHasValue } from '@/components/Filter/util';
 
@@ -18,7 +18,7 @@ function buildRangeQuery(filter: RangeFilter, esTerm: string) {
 
 export function getFilterESBuilder(filter: Filter): Query | undefined {
   const esTerm = getESTerm(filter.field);
-  const { nestedField } = LISTING_CONFIG[filter.field];
+  const { nestedField } = EXPLORE_FIELDS_CONFIG[filter.field];
 
   let filterESBuilder;
 

@@ -67,11 +67,13 @@ export interface ContributorsEntity {
 export interface NumericEntity {
   label: string;
   unit: string;
-  value: number | string;
+  value?: number | string;
 }
 
 export interface SubjectAge extends NumericEntity {
-  value: number | string;
+  value?: number | string;
+  minValue?: number | string;
+  maxValue?: number | string;
   period?: number | string;
   unitCode?: string;
 }

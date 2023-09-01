@@ -3,57 +3,44 @@
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
-import Contributors from '@/components/explore-section/Contributors';
-import License from '@/components/explore-section/License';
-import Species from '@/components/explore-section/Species';
 import useDetailPage from '@/hooks/useDetailPage';
 import usePathname from '@/hooks/pathname';
 
 const fields = [
   {
-    title: 'Description',
-    field: ({ description }) => description,
+    field: 'description',
     className: 'col-span-3 row-span-2',
   },
   {
-    title: 'Brain Region',
-    field: ({ brainRegion }) => brainRegion,
+    field: 'brainRegion',
   },
   {
-    title: 'Species',
-    field: <Species />,
+    field: 'subjectSpecies',
   },
   {
-    title: 'Reference',
+    field: 'reference',
   },
   {
-    title: 'Layer',
-    field: ({ layer }) => layer,
+    field: 'layer',
   },
   {
-    title: 'Age',
-    field: ({ subjectAge }) => subjectAge,
+    field: 'subjectAge',
     className: 'col-span-2',
   },
   {
-    title: ({ contributors }) => (contributors?.length === 1 ? 'Contributor' : 'Contributors'),
-    field: <Contributors />,
+    field: 'contributors',
   },
   {
-    title: 'Created On',
-    field: ({ creationDate }) => creationDate,
+    field: 'createdAt',
   },
   {
-    title: 'License',
-    field: <License />,
+    field: 'license',
   },
   {
-    title: 'Thickness',
-    field: ({ thickness }) => thickness,
+    field: 'layerThickness',
   },
   {
-    title: 'Conditions',
-    field: ({ conditions }) => conditions,
+    field: 'conditions',
   },
 ] as DetailProps[];
 

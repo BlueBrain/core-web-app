@@ -1,36 +1,25 @@
 'use client';
 
-import Detail, { DetailProps, ListField } from '@/components/explore-section/Detail';
+import Detail, { DetailProps } from '@/components/explore-section/Detail';
 import SimulationReports from '@/components/explore-section/Simulations/SimulationReports';
 import useDetailPage from '@/hooks/useDetailPage';
 import usePathname from '@/hooks/pathname';
 
 const fields: DetailProps[] = [
   {
-    title: 'CAMPAIGN',
-    field: ({ wasGeneratedBy }) => wasGeneratedBy,
+    field: 'campaign',
   },
   {
-    title: 'DIMENSION VALUES',
-    field: ({ parameter }) => (
-      <ListField
-        items={
-          parameter?.coords && Object.entries(parameter?.coords).map(([k]) => ({ id: k, label: k }))
-        }
-      />
-    ),
+    field: 'dimensions',
   },
   {
-    title: 'STARTED AT',
-    field: ({ startedAtTime }) => startedAtTime,
+    field: 'startedAt',
   },
   {
-    title: 'COMPLETED AT',
-    field: ({ completedAt }) => completedAt,
+    field: 'completedAt',
   },
   {
-    title: 'STATUS',
-    field: ({ status }) => status,
+    field: 'simulationStatus',
   },
 ];
 

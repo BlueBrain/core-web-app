@@ -1,12 +1,12 @@
 import esb, { Aggregation } from 'elastic-builder';
 import { Filter } from '@/components/Filter/types';
 import { getESTerm } from '@/queries/explore-section/utils';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 
 export function getAggESBuilder(filter: Filter): Aggregation | undefined {
   const { aggregationType } = filter;
   const esTerm = getESTerm(filter.field);
-  const { nestedField } = LISTING_CONFIG[filter.field];
+  const { nestedField } = EXPLORE_FIELDS_CONFIG[filter.field];
 
   switch (aggregationType) {
     case 'buckets':

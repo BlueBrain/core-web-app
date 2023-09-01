@@ -1,5 +1,5 @@
 import esb, { Sort } from 'elastic-builder';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { SortState } from '@/types/explore-section/application';
 
 function buildESSort({ field, order }: SortState): Sort | undefined {
@@ -7,11 +7,11 @@ function buildESSort({ field, order }: SortState): Sort | undefined {
     return undefined;
   }
 
-  const { nestedField } = LISTING_CONFIG[field];
+  const { nestedField } = EXPLORE_FIELDS_CONFIG[field];
 
   if (!nestedField) {
     return esb
-      .sort(LISTING_CONFIG[field as keyof typeof LISTING_CONFIG].term as string)
+      .sort(EXPLORE_FIELDS_CONFIG[field as keyof typeof EXPLORE_FIELDS_CONFIG].term as string)
       .order(order)
       .unmappedType('keyword');
   }

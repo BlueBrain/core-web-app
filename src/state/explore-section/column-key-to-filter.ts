@@ -1,8 +1,8 @@
 import { Filter } from '@/components/Filter/types';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 
 export default function columnKeyToFilter(key: string): Filter {
-  const fieldConfig = LISTING_CONFIG[key];
+  const fieldConfig = EXPLORE_FIELDS_CONFIG[key];
 
   switch (fieldConfig.filter) {
     case 'checkList':

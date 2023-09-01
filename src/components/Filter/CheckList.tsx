@@ -9,7 +9,7 @@ import SearchFilter from './SearchFilter';
 import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
 import { CheckIcon } from '@/components/icons';
 import CenteredMessage from '@/components/CenteredMessage';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { CheckListProps } from '@/types/explore-section/application';
 import { FiltersRenderLengthAtom } from '@/components/Filter/state';
 
@@ -110,8 +110,8 @@ export default function CheckList({
 
   const fieldLabel =
     remainingLength === 1
-      ? LISTING_CONFIG[filter.field].vocabulary.singular
-      : LISTING_CONFIG[filter.field].vocabulary.plural;
+      ? EXPLORE_FIELDS_CONFIG[filter.field].vocabulary.singular
+      : EXPLORE_FIELDS_CONFIG[filter.field].vocabulary.plural;
 
   const loadMoreBtn = () =>
     !!remainingLength &&

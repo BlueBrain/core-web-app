@@ -3,7 +3,7 @@
 import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { SortState } from '@/types/explore-section/application';
 import styles from '@/app/explore/explore.module.scss';
@@ -27,7 +27,7 @@ export default function useExploreColumns(
 ): ColumnProps<ExploreSectionResource>[] {
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>([]);
 
-  const keys = useMemo(() => Object.keys(LISTING_CONFIG), []);
+  const keys = useMemo(() => Object.keys(EXPLORE_FIELDS_CONFIG), []);
 
   useEffect(
     () =>
@@ -111,7 +111,7 @@ export default function useExploreColumns(
   };
 
   return keys.reduce((acc, key) => {
-    const term = LISTING_CONFIG[key];
+    const term = EXPLORE_FIELDS_CONFIG[key];
 
     return [
       ...acc,
@@ -127,7 +127,7 @@ export default function useExploreColumns(
         sorter: true,
         ellipsis: true,
         width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
-        render: term?.renderFn,
+        render: term?.render?.listingViewFn,
         onHeaderCell: () => ({
           handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
           onClick: () => sorterES(key),

@@ -17,7 +17,7 @@ import {
 } from '@/types/literature';
 import { Filter, GteLteValue, OptionsData } from '@/components/Filter/types';
 import SearchFilter from '@/components/Filter/SearchFilter';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { DateRange, FilterGroup } from '@/components/Filter';
 import ReloadIcon from '@/components/icons/Reload';
 import {
@@ -117,7 +117,7 @@ export default function FilterPanel() {
         setFilters={() => {}}
         items={filters.map((filter) => ({
           content: () => getFilterComponent(filter),
-          label: LISTING_CONFIG[filter.field].title,
+          label: EXPLORE_FIELDS_CONFIG[filter.field].title,
           display: true,
         }))}
       />
