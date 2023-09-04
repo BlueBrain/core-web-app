@@ -170,10 +170,10 @@ export default function WorkflowLauncher({
     }
 
     try {
-      await launchUnicoreWorkflowSetup(session.accessToken);
+      // await launchUnicoreWorkflowSetup(session.accessToken);
 
       // make sure the offline token is set
-      await ensureWorkflowAuth(session.user.username);
+      // await ensureWorkflowAuth(session.user.username);
 
       workflowExecutionUrl = await launchWorkflowTask({
         loginInfo: session,
