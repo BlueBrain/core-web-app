@@ -1,13 +1,6 @@
-export type Portals = {
-  name: string;
-  description: string;
-  url: string;
-  categories: string[];
-  lastUpdate: string;
-  image: string;
-};
+import { Portal } from 'types/explore-portal';
 
-export const portalsContent: Portals[] = [
+export const PORTALS_LIST_CONTENT: Portal[] = [
   {
     name: 'Whole-neocortex connectome model',
     description:

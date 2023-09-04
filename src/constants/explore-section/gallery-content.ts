@@ -1,6 +1,6 @@
-import { SingleGallery } from "types/explore-gallery";
+import { SingleGallery, SingleGalleryContentType } from 'types/explore-gallery';
 
-export const GalleryListContent: SingleGallery[] = [
+export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   {
     title: 'Simulation renders',
     imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_01.jpg',
@@ -111,9 +111,7 @@ export const GalleryListContent: SingleGallery[] = [
   },
 ];
 
-
-
-export const SingleGalleryContent = {
+export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
   name: 'Simulation renders',
   description:
     'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',

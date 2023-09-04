@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { useState } from 'react';
 import Link from 'next/link';
 import TextContent from './TextContent';
-import { Portals } from '@/constants/explore-section/portals-content';
+import { Portal } from 'types/explore-portal';
 import { ArrowRightIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 
-export default function PortalItem({ content }: { content: Portals }) {
+export default function PortalItem({ content }: { content: Portal }) {
   const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
 
   return (
