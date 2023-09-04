@@ -446,3 +446,17 @@ export const featureAutoTargets = {
     tolerance: 20.0,
   },
 };
+
+export const eTypeMechanismMapId =
+  'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/27d6009b-7a78-4af3-82c7-2c9f3c0758d2';
+
+export const mechanismLocations = [
+  'all',
+  'somadend',
+  'axonal',
+  'somatic',
+  'apical',
+  'allact',
+  'somaxon',
+  'basal',
+] as const;

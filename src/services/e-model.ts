@@ -4,17 +4,16 @@ import {
   AllFeatureKeys,
   ECode,
   EModelConfigurationParameter,
+  MechanismForUI,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   FeatureCategory,
   FeatureItem,
   FeatureParameterGroup,
-  MechanismForUI,
   NeuronMorphology,
   SimulationParameter,
   SpikeEventFeatureKeys,
   SpikeShapeFeatureKeys,
-  SubCellularModelScript,
   Trace,
   VoltageFeatureKeys,
 } from '@/types/e-model';
@@ -111,7 +110,7 @@ export function convertFeaturesForUI(features: AllFeatureKeys[]): FeatureParamet
 }
 
 export function convertMechanismsForUI(
-  subCellularModelScripts: SubCellularModelScript[]
-): MechanismForUI[] {
-  return subCellularModelScripts.map((s) => ({ name: s.name, description: s.description }));
+  mechanismsGroupedByLocation: MechanismForUI
+): MechanismForUI {
+  return mechanismsGroupedByLocation;
 }

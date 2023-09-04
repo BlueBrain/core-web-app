@@ -2,6 +2,7 @@ import { MModelMenuItem } from './m-model';
 import { ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
 import {
   eCodes,
+  mechanismLocations,
   presetNames,
   spikeEventFeatures,
   spikeShapeFeatures,
@@ -138,9 +139,9 @@ export interface EModelConfigurationResource extends ResourceMetadata, EModelCon
 
 export interface EModelConfigurationMechanism {
   name: string;
-  stochastic: boolean;
-  location: string;
-  version: null;
+  stochastic?: boolean;
+  location?: MechanismLocation;
+  version?: null;
 }
 
 export interface EModelConfigurationDistribution {
@@ -174,6 +175,12 @@ export interface EModelConfigurationPayload {
   morphology: EModelConfigurationMorphology;
   morph_modifiers: null;
 }
+
+/* ------------------------------ >> Mechanism ------------------------------ */
+
+export type MechanismLocation = (typeof mechanismLocations)[number];
+
+export interface MechanismForUI extends Record<MechanismLocation, EModelConfigurationMechanism[]> {}
 
 /* ------------------------- EModelPipelineSettings ------------------------- */
 
@@ -360,12 +367,6 @@ export interface SubCellularModelScript extends Entity {
 }
 
 export interface SubCellularModelScriptResource extends ResourceMetadata, SubCellularModelScript {}
-
-export interface MechanismForUI {
-  '@id'?: string;
-  name: string;
-  description: string;
-}
 
 /* ----------------------------- EModelUIConfig ----------------------------- */
 

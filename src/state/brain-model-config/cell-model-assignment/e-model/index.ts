@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import groupBy from 'lodash/groupBy';
 
 import {
   AllFeatureKeys,
@@ -6,6 +7,7 @@ import {
   EModelConfiguration,
   EModelConfigurationParameter,
   EModelConfigurationPayload,
+  MechanismForUI,
   EModelMenuItem,
   EModelUIConfig,
   EModelWorkflow,
@@ -15,13 +17,11 @@ import {
   ExtractionTargetsConfigurationPayload,
   FeatureParameterGroup,
   FeaturePresetName,
-  MechanismForUI,
   NeuronMorphology,
   SimulationParameter,
-  SubCellularModelScript,
   Trace,
 } from '@/types/e-model';
-import { fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
+import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import {
   convertRemoteParamsForUI,
@@ -31,7 +31,7 @@ import {
   convertMechanismsForUI,
 } from '@/services/e-model';
 import { getEntityListByIdsQuery } from '@/queries/es';
-import { featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
+import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
@@ -177,7 +177,7 @@ export const eModelConfigurationAtom = atom<Promise<EModelConfiguration | null>>
   return eModelConfiguration;
 });
 
-export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
+export const eModelConfigurationPayloadAtom = atom<Promise<EModelConfigurationPayload | null>>(
   async (get) => {
     const session = get(sessionAtom);
     const eModelConfiguration = await get(eModelConfigurationAtom);
@@ -185,8 +185,18 @@ export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] |
     if (!session || !eModelConfiguration) return null;
 
     const url = eModelConfiguration.distribution.contentUrl;
-    const fileContent = await fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
-    return fileContent.parameters;
+    return fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
+  }
+);
+
+export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelConfigurationPayload = await get(eModelConfigurationPayloadAtom);
+
+    if (!session || !eModelConfigurationPayload) return null;
+
+    return eModelConfigurationPayload.parameters;
   }
 );
 
@@ -205,26 +215,37 @@ export const eModelMorphologyAtom = atom<Promise<NeuronMorphology | null>>(async
   return fetchResourceById<NeuronMorphology>(morphologyId, session, eModelProjConfig);
 });
 
-export const eModelSubCellularModelScriptAtom = atom<Promise<MechanismForUI[] | null>>(
-  async (get) => {
-    const session = get(sessionAtom);
-    const eModelConfiguration = await get(eModelConfigurationAtom);
+export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (get) => {
+  const session = get(sessionAtom);
 
-    if (!session || !eModelConfiguration) return null;
+  if (!session) return null;
 
-    const subCellularModelScriptIds = eModelConfiguration.uses
-      .filter((usage) => usage['@type'] === 'SubCellularModelScript')
-      .map((m) => m['@id']);
+  const eModelEditMode = get(eModelEditModeAtom);
 
-    const query = getEntityListByIdsQuery('SubCellularModelScript', subCellularModelScriptIds);
-    const subCellularModelScriptList = await queryES<SubCellularModelScript>(
-      query,
-      session,
-      eModelProjConfig
-    );
-    return convertMechanismsForUI(subCellularModelScriptList);
+  if (eModelEditMode) {
+    const selectedEModel = get(selectedEModelAtom);
+    if (!selectedEModel) throw new Error('No selected e-model to edit');
+
+    type ETypeName = string;
+    const eType: ETypeName = selectedEModel.label;
+
+    type EModelMechanismsMapping = Record<ETypeName, MechanismForUI>;
+    const payload = await fetchJsonFileById<EModelMechanismsMapping>(eTypeMechanismMapId, session);
+
+    return convertMechanismsForUI(payload[eType]);
   }
-);
+
+  const eModelConfigurationPayload = await get(eModelConfigurationPayloadAtom);
+
+  if (!eModelConfigurationPayload) return null;
+
+  const mechanismsByLocation = groupBy(
+    eModelConfigurationPayload.mechanisms,
+    'location'
+  ) as MechanismForUI;
+
+  return convertMechanismsForUI(mechanismsByLocation);
+});
 
 /* --------------------- ExtractionTargetsConfiguration --------------------- */
 
