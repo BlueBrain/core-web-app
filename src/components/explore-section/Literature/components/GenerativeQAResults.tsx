@@ -54,16 +54,15 @@ function GenerativeQASingleResult({
   articles,
   isNotFound,
 }: GenerativeQASingleResultProps) {
+  const answerRef = useRef<HTMLDivElement>(null);
   const [expandArticles, setExpandArticles] = useState(false);
   const [collpaseQuestion, setCollpaseQuestion] = useState(false);
   const [sortFunction, setSortFunction] = useState<SortFn | null>(null);
+  const updateLiterature = useLiteratureAtom();
+  const { filterValues, selectedQuestionForFilter } = useAtomValue(literatureAtom);
 
-  const answerRef = useRef<HTMLDivElement>(null);
   const toggleExpandArticles = () => setExpandArticles((state) => !state);
   const toggleCollapseQuestion = () => setCollpaseQuestion((state) => !state);
-  const updateLiterature = useLiteratureAtom();
-
-  const { filterValues, selectedQuestionForFilter } = useAtomValue(literatureAtom);
 
   const filteredArticles =
     filterValues && selectedQuestionForFilter === id
@@ -79,8 +78,8 @@ function GenerativeQASingleResult({
     : filteredArticles;
 
   const showExtraDetails = Boolean(articles.length);
-  let finalAnswer = answer;
 
+  let finalAnswer = answer;
   if (answer && trim(answer).length > 0) {
     finalAnswer = answer;
   } else if (rawAnswer && trim(rawAnswer).length > 0) {

@@ -54,6 +54,12 @@ export type GenerativeQAWithoutDataResponse = {
 };
 export type GenerativeQAResponse = GenerativeQAWithDataResponse | GenerativeQAWithoutDataResponse;
 export type SelectedBrainRegionPerQuestion = Pick<SelectedBrainRegion, 'id' | 'title'>;
+export type BuildStepPath =
+  | 'cell-composition'
+  | 'cell-model-assignment'
+  | 'connectome-definition'
+  | 'connectome-model-assignment';
+
 export type GenerativeQA = {
   id: string;
   askedAt: Date;
@@ -63,6 +69,11 @@ export type GenerativeQA = {
   brainRegion?: SelectedBrainRegionPerQuestion;
   articles: GArticle[];
   isNotFound: boolean;
+  extra?: {
+    parameter: 'Etype | MType';
+    buildStep: BuildStepPath;
+    DensityOrCount?: 'density' | 'count';
+  };
 };
 
 export type GetGenerativeQAInput = {
@@ -111,6 +122,30 @@ export type FilterValues = Partial<{ [key in FilterFieldsType]: Filter['value'] 
 export type MLFilter = Filter & {
   field: FilterFieldsType;
   hasOptions: boolean;
+};
+
+export type QuestionAbout = 'EType' | 'MType';
+export type ContextQAItem = {
+  key: string;
+  value: JSX.Element;
+  gqa?: GenerativeQA;
+};
+
+export type ContextualLiteratureAtom = {
+  about?: QuestionAbout;
+  subject?: string;
+  contextDrawerOpen?: boolean;
+  contextQuestions?: Array<ContextQAItem>;
+  densityOrCount?: 'density' | 'count';
+  currentQuestion?: ContextQAItem | null;
+};
+
+export type BuildQuestionInput = {
+  about: QuestionAbout;
+  brainRegionTitle: string;
+  step: string;
+  subject: string;
+  densityOrCount?: 'density' | 'count';
 };
 
 /**

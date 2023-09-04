@@ -13,6 +13,7 @@ import { getGenerativeQAAction } from '@/components/explore-section/Literature/a
 jest.mock('next/navigation', () => ({
   __esModule: true,
   usePathname: jest.fn(),
+  useSearchParams: jest.fn(),
 }));
 
 jest.mock('@/components/explore-section/Literature/actions.ts', () => ({

@@ -3,14 +3,19 @@ import { atomWithStorage } from 'jotai/utils';
 
 import isNil from 'lodash/isNil';
 import { selectedBrainRegionAtom } from '../brain-regions';
-import { GenerativeQA, FilterFieldsType, FilterValues } from '@/types/literature';
+import {
+  GenerativeQA,
+  FilterFieldsType,
+  FilterValues,
+  ContextualLiteratureAtom,
+  ContextQAItem,
+} from '@/types/literature';
 import { Filter } from '@/components/Filter/types';
 
 export type BrainRegion = { id: string; title: string };
 
 export type LiteratureAtom = {
   query: string;
-  // the selectedQuestionForFilter is the question that the user has selected to filter the results
   selectedQuestionForFilter?: string;
   showOnlyBrainRegionQuestions: boolean;
   isFilterPanelOpen: boolean;
@@ -29,7 +34,10 @@ const literatureAtom = atom<LiteratureAtom>({
 });
 
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
+
 const literatureResultAtom = atomWithStorage<GenerativeQA[]>(GENERATIVE_QA_HISTORY_CACHE_KEY, []);
+const contextualLiteratureResultAtom = atom<GenerativeQA[]>([]);
+const contextualLiteratureAtom = atom<ContextualLiteratureAtom>({});
 
 function useLiteratureAtom() {
   const setLiteratureState = useSetAtom(literatureAtom);
@@ -57,6 +65,7 @@ export function useLiteratureFilter() {
 
 export function useLiteratureResultsAtom() {
   const [QAs, updateResult] = useAtom(literatureResultAtom);
+
   const update = (newValue: GenerativeQA) => {
     updateResult([...QAs, newValue]);
   };
@@ -69,6 +78,27 @@ export function useLiteratureResultsAtom() {
   };
 
   return { QAs, update, remove };
+}
+
+function useContextualLiteratureResultAtom() {
+  const [QAs, updateResult] = useAtom(contextualLiteratureResultAtom);
+
+  const reset = (newValue: GenerativeQA | null) => {
+    updateResult(newValue ? [newValue] : []);
+  };
+
+  const update = (newValue: GenerativeQA) => {
+    updateResult([...QAs, newValue]);
+  };
+
+  const remove = (id: string) => {
+    const newQAs = QAs.filter((item) => item.id !== id);
+    updateResult(newQAs);
+
+    return newQAs;
+  };
+
+  return { QAs, update, remove, reset };
 }
 
 const brainRegionQAs = atom((get) => {
@@ -84,4 +114,31 @@ const brainRegionQAs = atom((get) => {
   );
 });
 
-export { literatureAtom, literatureResultAtom, useLiteratureAtom, brainRegionQAs };
+const useContextualLiteratureAtom = () => {
+  const [context, updateContext] = useAtom(contextualLiteratureAtom);
+
+  const update = (
+    key: keyof ContextualLiteratureAtom,
+    value: string | boolean | ContextQAItem | ContextQAItem[] | undefined | null
+  ) =>
+    updateContext((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+  return {
+    context,
+    update,
+  };
+};
+
+export {
+  literatureAtom,
+  literatureResultAtom,
+  contextualLiteratureAtom,
+  contextualLiteratureResultAtom,
+  brainRegionQAs,
+  useLiteratureAtom,
+  useContextualLiteratureAtom,
+  useContextualLiteratureResultAtom,
+};
