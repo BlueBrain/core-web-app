@@ -43,8 +43,10 @@ export function GenerativeQAForm({
   onValueChange,
   ask,
   isParametersVisible,
+  children,
 }: Omit<Partial<ChatQAContextHook>, 'ask'> & {
   ask: (data: FormData) => void;
+  children: React.ReactNode;
 }) {
   return (
     <form name="qa-form" className="w-full" action={ask}>
@@ -85,6 +87,7 @@ export function GenerativeQAForm({
           )}
         </div>
       </div>
+      {children}
     </form>
   );
 }
@@ -142,66 +145,67 @@ function GenerativeQABar() {
               isParametersVisible,
               updateParameters,
             }}
-          />
-          {!isParametersVisible && (
-            <div className="flex items-center justify-end w-full mt-4">
-              <span className="text-primary-8">Refine your search</span>
-              <Tooltip
-                title={REFINE_SEARCH_HELP_TEXT}
-                color="#003A8C"
-                overlayInnerStyle={{ background: '#003A8C' }}
-              >
-                <InfoCircleOutlined className="mx-2 text-primary-5" />
-              </Tooltip>
-              <Button
-                onClick={() => setIsParametersVisible(true)}
-                className="border rounded-none border-primary-4 text-primary-8 bg-primary-0"
-              >
-                Parameters
-              </Button>
-            </div>
-          )}
-
-          {isParametersVisible && (
-            <div className="w-full">
-              <div className="w-full mt-10">
-                <DateRange
-                  onChange={(e) => updateParameters({ selectedDate: e })}
-                  filter={{
-                    field: 'publicationDate',
-                    type: 'dateRange',
-                    aggregationType: 'buckets',
-                    value: { ...initialParameters.selectedDate },
-                  }}
-                />
-                <hr className="my-4 border-primary-2" />
-              </div>
-
-              <div className="w-full">
-                <JournalSearch
-                  onChange={(newValues) => updateParameters({ selectedJournals: newValues })}
-                />
-                <hr className="my-4 border-primary-2" />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {isParametersVisible && (
-          <div className="flex justify-end w-full mb-4">
-            <button
-              type="submit"
-              disabled={isQuestionEmpty}
-              title={isQuestionEmpty ? 'Please enter a question' : ''}
-              className={classNames(
-                'border-[1px ] border-solid border-gray rounded px-4 py-2',
-                isQuestionEmpty ? 'text-gray-400' : 'text-primary-8'
+          >
+            <>
+              {!isParametersVisible && (
+                <div className="flex items-center justify-end w-full mt-4">
+                  <span className="text-primary-8">Refine your search</span>
+                  <Tooltip
+                    title={REFINE_SEARCH_HELP_TEXT}
+                    color="#003A8C"
+                    overlayInnerStyle={{ background: '#003A8C' }}
+                  >
+                    <InfoCircleOutlined className="mx-2 text-primary-5" />
+                  </Tooltip>
+                  <Button
+                    onClick={() => setIsParametersVisible(true)}
+                    className="border rounded-none border-primary-4 text-primary-8 bg-primary-0"
+                  >
+                    Parameters
+                  </Button>
+                </div>
               )}
-            >
-              Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
-            </button>
-          </div>
-        )}
+              {isParametersVisible && (
+                <div className="w-full">
+                  <div className="w-full mt-10">
+                    <DateRange
+                      onChange={(e) => updateParameters({ selectedDate: e })}
+                      filter={{
+                        field: 'publicationDate',
+                        type: 'dateRange',
+                        aggregationType: 'buckets',
+                        value: { ...initialParameters.selectedDate },
+                      }}
+                    />
+                    <hr className="my-4 border-primary-2" />
+                  </div>
+
+                  <div className="w-full">
+                    <JournalSearch
+                      onChange={(newValues) => updateParameters({ selectedJournals: newValues })}
+                    />
+                    <hr className="my-4 border-primary-2" />
+                  </div>
+                </div>
+              )}
+              {isParametersVisible && (
+                <div className="flex justify-end w-full mb-4">
+                  <button
+                    type="submit"
+                    disabled={isQuestionEmpty || isPending}
+                    title={isQuestionEmpty ? 'Please enter a question' : ''}
+                    className={classNames(
+                      'border-[1px ] border-solid border-gray rounded px-4 py-2',
+                      isQuestionEmpty ? 'text-gray-400' : 'text-primary-8'
+                    )}
+                  >
+                    Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
+                  </button>
+                </div>
+              )}
+            </>
+          </GenerativeQAForm>
+        </div>
       </div>
     </div>
   );
