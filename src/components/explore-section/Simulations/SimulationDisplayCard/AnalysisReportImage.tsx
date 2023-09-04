@@ -33,9 +33,7 @@ export default function AnalysisReportImage({
   const [showDimensionValue, setShowDimensionValue] = useState<boolean>(false);
   const pathname = usePathname();
   const [proj, org] = project.split('/').reverse();
-  const createdByUsername = createdBy
-    .replace('https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/', '')
-    .replace('https://bbp.epfl.ch/nexus/v1/', '');
+  const createdByUsername = createdBy.split('/').reverse()[0];
 
   return (
     <div className="mt-4">

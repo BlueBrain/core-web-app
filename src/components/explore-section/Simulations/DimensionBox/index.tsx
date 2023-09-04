@@ -55,7 +55,7 @@ export default function DimensionBox({
     return '';
   };
   return (
-    <Tooltip title={<div>Values: {ensureArray(possibleValues)?.join(',')}</div>}>
+    <Tooltip title={dimension && <div>Values: {ensureArray(possibleValues)?.join(',')}</div>}>
       <DimensionTitle
         dismissFunc={dismissFunc}
         title={title}

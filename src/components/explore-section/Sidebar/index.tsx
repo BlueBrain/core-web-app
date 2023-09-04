@@ -106,7 +106,7 @@ export default function Sidebar() {
             </ul>
           </li>
           <li>
-            <Link href="/simulation-campaigns">
+            <Link href="/explore/simulation-campaigns">
               <h1>Brain models</h1>
               <ArrowRightOutlined />
               <p>
