@@ -1,11 +1,4 @@
-export type SingleGallery = {
-  title: string;
-  imageCover: string;
-  description: string;
-  slug: {
-    current: string;
-  };
-};
+import { SingleGallery } from "types/explore-gallery";
 
 export const GalleryListContent: SingleGallery[] = [
   {
@@ -118,20 +111,7 @@ export const GalleryListContent: SingleGallery[] = [
   },
 ];
 
-export type GalleryImagesType = {
-  name: string;
-  src: string;
-  alt: string;
-  credit: string;
-  year: string;
-  software: string;
-};
 
-export type SingleGalleryContentType = {
-  name: string;
-  description: string;
-  images: GalleryImagesType[];
-};
 
 export const SingleGalleryContent = {
   name: 'Simulation renders',
