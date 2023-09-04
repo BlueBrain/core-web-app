@@ -4,6 +4,7 @@ import MainPanel from './MainPanel';
 import BottomPanel from './BottomPanel';
 import ControlPanel from './ControlPanel';
 import ExperimentInteractiveProvider from './ExperimentInteractiveProvider';
+import ViewSettingsPanel from '@/components/experiment-interactive/ExperimentInteractive/ControlPanel/ViewSettingsPanel';
 
 export default function ExperimentInteractive() {
   return (
@@ -12,6 +13,7 @@ export default function ExperimentInteractive() {
         <MainPanel />
         <BottomPanel />
         <ControlPanel />
+        <ViewSettingsPanel />
       </div>
     </ExperimentInteractiveProvider>
   );

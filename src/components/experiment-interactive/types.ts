@@ -38,6 +38,9 @@ export interface ExperimentInteractiveContextType {
   cancelBulkEditing: () => void;
   isBulkEditingMode: boolean;
   deleteSimulation: (index: number) => void;
+  isViewSettingsPanelVisible: boolean;
+  showViewSettingsPanel: () => void;
+  hideViewSettingsPanel: () => void;
 }
 
 export interface SimulationPreviewContextType {

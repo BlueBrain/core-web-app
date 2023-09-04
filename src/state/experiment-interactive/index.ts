@@ -36,3 +36,7 @@ export const simulationDurationAtom = atom<number>((get) => {
 export const movieGenerationSimulationsAtom = atom<string[]>([]);
 
 export const movieGenerationTimeRangeAtom = atom<SimulationTimeRange>({ start: 0, end: 0 });
+
+export const isDisplayWholeBrainCheckedAtom = atom<boolean>(false);
+
+export const isViewSettingsPanelVisibleAtom = atom<boolean>(false);
