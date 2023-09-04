@@ -6,7 +6,7 @@ export const BOUTON_DENSITY: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalBouto
 export const NEURON_DENSITY: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalNeuronDensity`;
 export const LAYER_THICKNESS: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalLayerThickness`;
 export const ELECTRO_PHYSIOLOGY: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalTrace`;
-export const SYNAPSE_PER_CONNECTION: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalSynapseDensity`;
+export const SYNAPSE_PER_CONNECTION: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalSynapsesPerConnection`;
 
 const NEURO_SHAPES_BASE_URL = 'https://neuroshapes.org/';
 

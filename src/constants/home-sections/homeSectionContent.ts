@@ -53,7 +53,7 @@ export const sectionContent: SingleCard[] = [
       },
       {
         name: 'Synapse per connection',
-        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapseDensity',
+        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapsesPerConnection',
         url: '/explore/synapse-per-connection',
       },
     ],

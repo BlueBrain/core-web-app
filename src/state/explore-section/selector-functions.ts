@@ -42,11 +42,6 @@ export const eTypeSelectorFn = (detail: DeltaResource | null) => {
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
 
-// renders weight in a min - max format
-export const weightSelectorFn = (detail: DeltaResource | null) =>
-  detail?.subject?.weight &&
-  `${detail.subject?.weight?.minValue} - ${detail.subject?.weight?.maxValue}`;
-
 // renders standard error of the mean if present
 export const semSelectorFn = (detail: DeltaResource | null) => {
   const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);

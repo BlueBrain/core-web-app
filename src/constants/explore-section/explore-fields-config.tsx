@@ -20,7 +20,6 @@ import {
   semSelectorFn,
   selectorFnStatisticDetail,
   subjectAgeSelectorFn,
-  weightSelectorFn,
 } from '@/state/explore-section/selector-functions';
 import Species from '@/components/explore-section/Species';
 import Contributors from '@/components/explore-section/Contributors';
@@ -30,6 +29,7 @@ import LayerThicknessField from '@/components/explore-section/Fields/LayerThickn
 import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
 import ListField from '@/components/explore-section/Fields/ListField';
 import SimulationCampaignStatus from '@/components/explore-section/SimulationCampaignStatus';
+import WeightField from '@/components/explore-section/Fields/WeightField';
 
 export type ExploreFieldConfig = {
   term: string;
@@ -191,7 +191,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     unit: 'gramms',
     render: {
       listingViewFn: (_t, r) => selectorFnBasic(r._source?.weight),
-      detailViewFn: (resource) => weightSelectorFn(resource),
+      detailViewFn: (resource) => <WeightField detail={resource} />,
     },
     vocabulary: {
       plural: 'Values',

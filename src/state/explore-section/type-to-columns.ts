@@ -53,7 +53,7 @@ export const typeToColumns: { [id: string]: string[] } = {
     'parameter.coords.celsius',
     'createdAt',
   ],
-  'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapseDensity': [
+  'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapsesPerConnection': [
     'brainRegion',
     'mType',
     'name',
