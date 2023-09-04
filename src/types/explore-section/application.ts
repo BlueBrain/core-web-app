@@ -32,30 +32,8 @@ export type ListViewAtomValues = {
   total: Loadable<TotalHits | undefined>;
 };
 
-export type ListViewAtoms = {
-  activeColumns: [
-    ListViewAtomValues['activeColumns'],
-    Dispatch<SetStateAction<ListViewAtomValues['activeColumns']>>
-  ];
-  aggregations: [
-    ListViewAtomValues['aggregations'],
-    Dispatch<SetStateAction<ListViewAtomValues['aggregations']>>
-  ];
-  data: [ListViewAtomValues['data'], Dispatch<SetStateAction<ListViewAtomValues['data']>>];
-  filters: [ListViewAtomValues['filters'], Dispatch<SetStateAction<ListViewAtomValues['filters']>>];
-  pageSize: [
-    ListViewAtomValues['pageSize'],
-    Dispatch<SetStateAction<ListViewAtomValues['pageSize']>>
-  ];
-  searchString: [
-    ListViewAtomValues['searchString'],
-    Dispatch<SetStateAction<ListViewAtomValues['searchString']>>
-  ];
-  sortState: [
-    ListViewAtomValues['sortState'],
-    Dispatch<SetStateAction<ListViewAtomValues['sortState']>>
-  ];
-  total: [ListViewAtomValues['total'], Dispatch<SetStateAction<ListViewAtomValues['total']>>];
+export type ListViewAtoms<T> = {
+  [P in keyof T]: [T[P], Dispatch<SetStateAction<T[P]>>];
 };
 
 export type PlotProps = {

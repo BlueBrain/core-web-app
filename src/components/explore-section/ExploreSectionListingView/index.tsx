@@ -1,112 +1,81 @@
-import { HTMLProps, ReactNode, useEffect, useState } from 'react';
-import { useAtomValue } from 'jotai';
-import { Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
-import { loadable } from 'jotai/utils';
+import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
+import { loadable, unwrap } from 'jotai/utils';
+import HeaderPanel from './HeaderPanel';
+import FilterControls from './FilterControls';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
-import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
-import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import ListTable from '@/components/ListTable';
 import ControlPanel from '@/components/explore-section/ControlPanel';
-import SettingsIcon from '@/components/icons/Settings';
-import { filterHasValue } from '@/components/Filter/util';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import {
   activeColumnsAtom,
   dataAtom,
-  filtersAtom,
   totalAtom,
+  sortStateAtom,
+  pageSizeAtom,
 } from '@/state/explore-section/list-view-atoms';
 
-function FilterBtn({ onClick }: HTMLProps<HTMLButtonElement>) {
-  const activeColumns = useAtomValue(activeColumnsAtom);
-  const filters = useAtomValue(filtersAtom);
+function WithControlPanel({
+  children,
+  loading,
+  type,
+}: {
+  children: ({
+    displayControlPanel,
+    setDisplayControlPanel,
+  }: {
+    displayControlPanel: boolean;
+    setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
+  }) => ReactNode;
+  loading: boolean;
+  type: string;
+}) {
+  const total = useAtomValue(useMemo(() => unwrap(totalAtom(type)), [type]));
 
-  const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
-  const activeColumnsText = `${activeColumnsLength} active ${
-    activeColumnsLength === 1 ? 'column' : 'columns'
-  }`;
+  const [pageSize, setPageSize] = useAtom(pageSizeAtom);
 
-  const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
-
-  return (
-    <button
-      className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5"
-      onClick={onClick}
-      type="button"
-    >
-      <div className="flex gap-3 items-center">
-        <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
-          {selectedFiltersCount}
-        </span>
-        <span className="font-bold text-white">Filters</span>
-        <span className="text-primary-3 text-sm">{activeColumnsText}</span>
-      </div>
-      <SettingsIcon className="rotate-90 text-white" />
-    </button>
-  );
-}
-
-const totalLoadable = loadable(totalAtom);
-
-function Header({ title }: { title: string }) {
-  const data = useAtomValue(totalLoadable);
-
-  const [total, setTotal] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (data.state === 'hasData' && data.data) {
-      setTotal(data.data.value);
-    }
-  }, [data]);
-
-  return (
-    <div className="text-primary-7 text-2xl font-bold flex-auto w-6/12">
-      {title}
-      <span className="text-sm whitespace-pre font-thin text-slate-400 pl-2">
-        Total:{' '}
-        {total?.toLocaleString('en-US') ?? (
-          <Spin className="ml-3" indicator={<LoadingOutlined />} />
-        )}
-      </span>
-    </div>
-  );
-}
-
-function ExploreSectionListingView({ title, children }: { title: string; children: ReactNode }) {
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
   return (
     <>
       <section className="w-full h-screen flex flex-col gap-5 bg-white pb-12 pl-7 pr-3 pt-8 overflow-scroll relative">
-        <div className="flex items-center justify-between ml-5">
-          <Header title={title} />
-          <div className="flex items-center gap-5 justify-between w-auto">
-            <ClearFilters />
-            <ExploreSectionNameSearch />
-            <FilterBtn onClick={() => setDisplayControlPanel(!displayControlPanel)} />
-          </div>
-        </div>
-        {children}
-        <LoadMoreButton />
+        {children({ displayControlPanel, setDisplayControlPanel })}
+        <LoadMoreButton
+          disabled={!!total && pageSize > total}
+          loading={loading}
+          onClick={() => setPageSize(pageSize + 30)}
+        >
+          {!!total && pageSize < total ? 'Load 30 more results...' : 'All resources are loaded'}
+        </LoadMoreButton>
       </section>
-      {displayControlPanel && <ControlPanel toggleDisplay={() => setDisplayControlPanel(false)} />}
+      {displayControlPanel && (
+        <ControlPanel
+          toggleDisplay={() => setDisplayControlPanel(false)}
+          experimentTypeName={type}
+        />
+      )}
     </>
   );
 }
 
-const dataLoadable = loadable(dataAtom);
-
 export default function DefaultListView({
-  title,
   enableDownload,
+  selectedRowsButton,
+  title,
+  type,
 }: {
-  title: string;
   enableDownload?: boolean;
+  selectedRowsButton?: ReactNode;
+  title: string;
+  type: string;
 }) {
-  const columns = useExploreColumns([
+  const activeColumns = useAtomValue(activeColumnsAtom(type));
+  const data = useAtomValue(useMemo(() => loadable(dataAtom(type)), [type]));
+  const [sortState, setSortState] = useAtom(sortStateAtom);
+
+  const columns = useExploreColumns(setSortState, sortState, [
     {
       title: '#',
       key: 'index',
@@ -116,32 +85,62 @@ export default function DefaultListView({
     },
   ]);
 
-  const activeColumns = useAtomValue(activeColumnsAtom);
-  const data = useAtomValue(dataLoadable);
+  const loading = data.state === 'loading';
 
   return (
-    <ExploreSectionListingView title={title}>
-      <ExploreSectionTable
-        columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
-        enableDownload={enableDownload}
-        data={data}
-      />
-    </ExploreSectionListingView>
+    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
+      <WithControlPanel loading={loading} type={type}>
+        {({ displayControlPanel, setDisplayControlPanel }) => (
+          <>
+            <HeaderPanel loading={loading} title={title} type={type}>
+              <FilterControls
+                displayControlPanel={displayControlPanel}
+                setDisplayControlPanel={setDisplayControlPanel}
+                type={type}
+              />
+            </HeaderPanel>
+            <ExploreSectionTable
+              columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
+              data={data}
+              enableDownload={enableDownload}
+              selectedRowsButton={selectedRowsButton}
+              type={type}
+            />
+          </>
+        )}
+      </WithControlPanel>
+    </div>
   );
 }
 
-export function SimulationCampaignView({ title }: { title: string }) {
-  const columns = useExploreColumns();
+export function SimulationCampaignView({ title, type }: { title: string; type: string }) {
+  const activeColumns = useAtomValue(activeColumnsAtom(type));
+  const data = useAtomValue(useMemo(() => loadable(dataAtom(type)), [type]));
+  const [sortState, setSortState] = useAtom(sortStateAtom);
 
-  const activeColumns = useAtomValue(activeColumnsAtom);
-  const data = useAtomValue(dataLoadable);
+  const columns = useExploreColumns(setSortState, sortState);
+
+  const loading = data.state === 'loading';
 
   return (
-    <ExploreSectionListingView title={title}>
-      <ListTable
-        columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
-        data={data} // Add a "key" for each row.
-      />
-    </ExploreSectionListingView>
+    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
+      <WithControlPanel loading={loading} type={type}>
+        {({ displayControlPanel, setDisplayControlPanel }) => (
+          <>
+            <HeaderPanel loading={loading} title={title} type={type}>
+              <FilterControls
+                displayControlPanel={displayControlPanel}
+                setDisplayControlPanel={setDisplayControlPanel}
+                type={type}
+              />
+            </HeaderPanel>
+            <ListTable
+              columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
+              data={data}
+            />
+          </>
+        )}
+      </WithControlPanel>
+    </div>
   );
 }

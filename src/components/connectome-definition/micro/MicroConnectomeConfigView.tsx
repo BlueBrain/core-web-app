@@ -1,26 +1,28 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { extent, scaleSequential, interpolatePlasma } from 'd3';
 import { useAtomValue } from 'jotai';
-import { Tag, TreeSelect, TreeNodeProps, Spin, Button } from 'antd';
+import { Spin, Button } from 'antd';
 
 import ViewSelector from './ViewSelector';
-import { createVariantColorMap } from './utils';
+import BrainRegionSelect from './MicroConnectomeBrainRegionSelect';
+import { variantColorMapLoadableAtom, variantNamesLoadableAtom } from './state';
 import { AggregatedParamViewEntry, AggregatedVariantViewEntry } from './micro-connectome-worker';
 import {
   useAreSiblings,
   useAreTopLevelNodes,
-  useCreateLabelDescriptionMap,
-  useGetChildNotations,
-  useGetHigherLevelNodes,
+  useCreateBrainRegionNotationTitleMap,
+  useGetChildSelections,
+  useGetParentSelections,
   useGetLeafNodesReduceFn,
+  useSelectionSorterFn,
 } from './hooks';
-import { configPayloadAtom, workerAtom } from '@/state/brain-model-config/micro-connectome';
+import { MicroConnectomeEditBar as EditBar } from './EditBar';
+import { configPayloadLoadableAtom, workerAtom } from '@/state/brain-model-config/micro-connectome';
 import sessionAtom from '@/state/session';
 import { compositionAtom } from '@/state/build-composition';
+import { connectivityStrengthMatrixAtom as macroConnectomeStrengthMatrixAtom } from '@/state/brain-model-config/macro-connectome';
 import {
   brainRegionsUnsortedArrayAtom,
-  brainRegionLeavesUnsortedArrayAtom,
-  brainRegionsFilteredTreeAtom,
   brainRegionByNotationMapAtom,
   brainRegionByIdMapAtom,
 } from '@/state/brain-regions';
@@ -28,25 +30,16 @@ import { HemisphereDropdown } from '@/components/connectome-definition';
 import MicroConnectomePlot, {
   margin as plotMargin,
 } from '@/components/connectome-definition/micro/MicroConnectomePlot';
-import { HemisphereDirection } from '@/types/connectome';
+import { HemisphereDirection, PathwaySideSelection as Selection } from '@/types/connectome';
+import { useLoadable } from '@/hooks/hooks';
 
 import styles from '../connectome-definition-view.module.scss';
 
-const brainRegionTagRender = (props: TreeNodeProps & { color?: string }) => (
-  <Tag color="#313131" title={props.label} closable onClose={props.onClose}>
-    <span
-      className="h-[14px] w-[14px] mr-1.5 inline-block align-[-0.21em]"
-      style={{ backgroundColor: props.color }}
-    />
-    {props.value}
-  </Tag>
-);
-
 type PlotDataBase = {
-  srcLabels: string[];
-  dstLabels: string[];
-  labelDescriptionMap: Map<string, string>;
-  labelColorMap: Map<string, string>;
+  srcSelections: Selection[];
+  dstSelections: Selection[];
+  brainRegionNotationTitleMap: Map<string, string>;
+  brainRegionNotationColorMap: Map<string, string>;
   navUpDisabled: {
     src: boolean;
     dst: boolean;
@@ -68,53 +61,54 @@ type ParamPlotData = {
 type PlotData = PlotDataBase & (VariantPlotData | ParamPlotData);
 
 type ViewSelection = {
-  src: string[];
-  dst: string[];
+  src: Selection[];
+  dst: Selection[];
 };
 
-const DEFAULT_SELECTION = ['BS', 'CB', 'CH'];
+const DEFAULT_SELECTION_BRAIN_REGIONS = ['BS', 'CB', 'CH'];
 
 export default function MicroConnectomeConfigView() {
   const worker = useAtomValue(workerAtom);
   const session = useAtomValue(sessionAtom);
 
-  const configPayload = useAtomValue(configPayloadAtom);
+  const configPayload = useLoadable(configPayloadLoadableAtom, null);
   const cellComposition = useAtomValue(compositionAtom);
-  const brainRegionLeaves = useAtomValue(brainRegionLeavesUnsortedArrayAtom);
-  const brainRegionsFilteredTree = useAtomValue(brainRegionsFilteredTreeAtom);
 
   const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
   const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
   const brainRegionByIdMap = useAtomValue(brainRegionByIdMapAtom);
 
-  const createLabelDescriptionMap = useCreateLabelDescriptionMap();
+  const macroConnectomeStrengthMatrix = useAtomValue(macroConnectomeStrengthMatrixAtom);
+
+  const variantNames = useLoadable(variantNamesLoadableAtom, []);
+  const variantColorMap = useLoadable(variantColorMapLoadableAtom, new Map());
+
+  const selectionSorterFn = useSelectionSorterFn();
+  const createBrainRegionNotationTitleMap = useCreateBrainRegionNotationTitleMap();
   const getLeafNodesReduceFn = useGetLeafNodesReduceFn();
-  const getChildNotations = useGetChildNotations();
-  const getHigherLevelNodes = useGetHigherLevelNodes();
+  const getChildSelections = useGetChildSelections();
+  const getParentSelections = useGetParentSelections();
   const areSiblings = useAreSiblings();
   const areTopLevelNodes = useAreTopLevelNodes();
 
   const [hemisphereDirection, setHemisphereDirection] = useState<HemisphereDirection>('LR');
 
-  const [srcBrainRegionNotations, setSrcBrainRegionNotations] =
-    useState<string[]>(DEFAULT_SELECTION);
-  const [dstBrainRegionNotations, setDstBrainRegionNotations] =
-    useState<string[]>(DEFAULT_SELECTION);
+  const [srcSelections, setSrcSelections] = useState<Selection[]>(
+    DEFAULT_SELECTION_BRAIN_REGIONS.map((brainRegionNotation) => ({ brainRegionNotation }))
+  );
+
+  const [dstSelections, setDstSelections] = useState<Selection[]>(
+    DEFAULT_SELECTION_BRAIN_REGIONS.map((brainRegionNotation) => ({ brainRegionNotation }))
+  );
 
   const [variantExcludeSet, setVariantExcludeSet] = useState<Set<string>>(new Set());
 
-  const [pendingAsyncOpsCount, setPendingAsyncOpsCount] = useState<number>(-1);
+  const [pendingAsyncOpsCount, setPendingAsyncOpsCount] = useState<number>(0);
   const loading = pendingAsyncOpsCount !== 0;
 
   const [viewSelectionHistory, setViewSelectionHistory] = useState<ViewSelection[]>([
-    { src: srcBrainRegionNotations, dst: dstBrainRegionNotations },
+    { src: srcSelections, dst: dstSelections },
   ]);
-
-  const variantNames = useMemo(
-    () => Object.keys(configPayload?.variants ?? {}).sort(),
-    [configPayload]
-  );
-  const variantColorMap = useMemo(() => createVariantColorMap(variantNames), [variantNames]);
 
   const [plotData, setPlotData] = useState<PlotData | null>(null);
 
@@ -125,34 +119,38 @@ export default function MicroConnectomeConfigView() {
 
   const currentViewSelection = viewSelectionHistory.at(-1) as ViewSelection;
 
-  const setSrc = (notations: string[]) => {
-    setSrcBrainRegionNotations(notations);
-    setViewSelectionHistory([{ src: notations, dst: dstBrainRegionNotations }]);
+  const setSrc = (selections: Selection[]) => {
+    setSrcSelections(selections);
+    setViewSelectionHistory([{ src: selections, dst: dstSelections }]);
   };
 
-  const setDst = (notations: string[]) => {
-    setDstBrainRegionNotations(notations);
-    setViewSelectionHistory([{ src: srcBrainRegionNotations, dst: notations }]);
+  const setDst = (selections: Selection[]) => {
+    setDstSelections(selections);
+    setViewSelectionHistory([{ src: srcSelections, dst: selections }]);
   };
 
   useEffect(() => {
     // TODO refactor
     const init = async () => {
-      if (!worker || !session || !configPayload || !cellComposition || !brainRegionLeaves) return;
+      if (
+        !worker ||
+        !session ||
+        !configPayload ||
+        !cellComposition ||
+        !brainRegions ||
+        !macroConnectomeStrengthMatrix
+      )
+        return;
 
       setPendingAsyncOpsCount((count) => count + 1);
 
-      const srcMap = currentViewSelection.src
-        // TODO implement sorting that will support mtypes
-        // .sort(brainRegionNotationSorterFn)
-        .reduce(getLeafNodesReduceFn, new Map());
-
-      const dstMap = currentViewSelection.dst
-        // TODO implement sorting that will support mtypes
-        // .sort(brainRegionNotationSorterFn)
-        .reduce(getLeafNodesReduceFn, new Map());
-
-      await worker.init(configPayload, cellComposition, brainRegionLeaves, session);
+      await worker.init(
+        configPayload,
+        cellComposition,
+        brainRegions,
+        macroConnectomeStrengthMatrix,
+        session
+      );
 
       if (viewType === 'variant') {
         const colorScale = (currentVariantName: string) => {
@@ -164,15 +162,15 @@ export default function MicroConnectomeConfigView() {
           return variantColorByName[currentVariantName];
         };
 
-        const [srcLabels, dstLabels, viewData] = await worker.createAggregatedVariantView(
+        const viewData = await worker.createAggregatedVariantView(
           hemisphereDirection,
-          srcMap,
-          dstMap
+          currentViewSelection.src,
+          currentViewSelection.dst
         );
 
         const navUpDisabled = {
-          src: !areSiblings(srcLabels) || areTopLevelNodes(srcLabels),
-          dst: !areSiblings(dstLabels) || areTopLevelNodes(dstLabels),
+          src: !areSiblings(currentViewSelection.src) || areTopLevelNodes(currentViewSelection.src),
+          dst: !areSiblings(currentViewSelection.dst) || areTopLevelNodes(currentViewSelection.dst),
         };
 
         // TODO implement filtering instead of deleting of already aggregated data
@@ -183,64 +181,58 @@ export default function MicroConnectomeConfigView() {
           })
         );
 
-        const uniqLabels = Array.from(new Set(srcLabels.concat(dstLabels)));
+        const allSelections = currentViewSelection.src.concat(currentViewSelection.dst);
+        const brainRegionNotationTitleMap = createBrainRegionNotationTitleMap(allSelections);
 
-        const labelDescriptionMap = createLabelDescriptionMap(uniqLabels);
-
-        const labelColorMap = uniqLabels
-          .map((label) => label.split('.')[0])
-          .reduce(
-            (map, brainRegionNotation) =>
-              map.set(
-                brainRegionNotation,
-                brainRegionByNotationMap?.get(brainRegionNotation)?.colorCode
-              ),
-            new Map()
-          );
+        const brainRegionNotationColorMap = allSelections.reduce(
+          (map, selection) =>
+            map.set(
+              selection.brainRegionNotation,
+              brainRegionByNotationMap?.get(selection.brainRegionNotation)?.colorCode
+            ),
+          new Map()
+        );
 
         setPlotData({
           type: 'variant',
-          srcLabels,
-          dstLabels,
+          srcSelections: currentViewSelection.src,
+          dstSelections: currentViewSelection.dst,
           navUpDisabled,
-          labelDescriptionMap,
+          brainRegionNotationTitleMap,
           viewData,
           colorScale,
-          labelColorMap,
+          brainRegionNotationColorMap,
         });
 
-        setPendingAsyncOpsCount(0);
+        setPendingAsyncOpsCount((count) => count - 1);
 
         return;
       }
 
-      const [srcLabels, dstLabels, viewData] = await worker.createAggregatedParamView(
+      const viewData = await worker.createAggregatedParamView(
         hemisphereDirection,
         variantName,
         paramName,
-        srcMap,
-        dstMap
+        currentViewSelection.src,
+        currentViewSelection.dst
       );
 
       const navUpDisabled = {
-        src: !areSiblings(srcLabels) || areTopLevelNodes(srcLabels),
-        dst: !areSiblings(dstLabels) || areTopLevelNodes(dstLabels),
+        src: !areSiblings(currentViewSelection.src) || areTopLevelNodes(currentViewSelection.src),
+        dst: !areSiblings(currentViewSelection.dst) || areTopLevelNodes(currentViewSelection.dst),
       };
 
-      const uniqLabels = Array.from(new Set(srcLabels.concat(dstLabels)));
+      const allSelections = currentViewSelection.src.concat(currentViewSelection.dst);
+      const brainRegionNotationTitleMap = createBrainRegionNotationTitleMap(allSelections);
 
-      const labelDescriptionMap = createLabelDescriptionMap(uniqLabels);
-
-      const labelColorMap = uniqLabels
-        .map((label) => label.split('.')[0])
-        .reduce(
-          (map, brainRegionNotation) =>
-            map.set(
-              brainRegionNotation,
-              brainRegionByNotationMap?.get(brainRegionNotation)?.colorCode
-            ),
-          new Map()
-        );
+      const brainRegionNotationColorMap = allSelections.reduce(
+        (map, selection) =>
+          map.set(
+            selection.brainRegionNotation,
+            brainRegionByNotationMap?.get(selection.brainRegionNotation)?.colorCode
+          ),
+        new Map()
+      );
 
       const minMaxParamValues: number[] = viewData.flatMap((viewDataEntry) => [
         viewDataEntry.min,
@@ -252,16 +244,16 @@ export default function MicroConnectomeConfigView() {
 
       setPlotData({
         type: 'param',
-        srcLabels,
-        dstLabels,
+        srcSelections: currentViewSelection.src,
+        dstSelections: currentViewSelection.dst,
         navUpDisabled,
-        labelDescriptionMap,
+        brainRegionNotationTitleMap,
         viewData,
         colorScale,
-        labelColorMap,
+        brainRegionNotationColorMap,
       });
 
-      setPendingAsyncOpsCount(0);
+      setPendingAsyncOpsCount((count) => count - 1);
     };
 
     init();
@@ -271,7 +263,6 @@ export default function MicroConnectomeConfigView() {
     cellComposition,
     viewSelectionHistory,
     worker,
-    brainRegionLeaves,
     viewType,
     hemisphereDirection,
     variantName,
@@ -280,7 +271,6 @@ export default function MicroConnectomeConfigView() {
     variantColorMap,
     variantNames,
     variantExcludeSet,
-    createLabelDescriptionMap,
     brainRegionByNotationMap,
     brainRegionByIdMap,
     currentViewSelection.src,
@@ -288,14 +278,20 @@ export default function MicroConnectomeConfigView() {
     getLeafNodesReduceFn,
     areSiblings,
     areTopLevelNodes,
+    selectionSorterFn,
+    createBrainRegionNotationTitleMap,
+    srcSelections,
+    dstSelections,
+    macroConnectomeStrengthMatrix,
   ]);
 
-  const onLabelClick = (srcLabel: string | null, dstLabel: string | null) => {
-    const src = srcLabel
-      ? getChildNotations(srcLabel)
+  const onChartEntryClick = (srcSelection: Selection | null, dstSelection: Selection | null) => {
+    const src = srcSelection
+      ? getChildSelections(srcSelection)
       : (viewSelectionHistory.at(-1) as ViewSelection).src;
-    const dst = dstLabel
-      ? getChildNotations(dstLabel)
+
+    const dst = dstSelection
+      ? getChildSelections(dstSelection)
       : (viewSelectionHistory.at(-1) as ViewSelection).dst;
 
     setViewSelectionHistory([...viewSelectionHistory, { src, dst }]);
@@ -304,8 +300,8 @@ export default function MicroConnectomeConfigView() {
   const onNavUpClick = (srcHierarchy: boolean, dstHierarchy: boolean) => {
     const current = viewSelectionHistory.at(-1) as ViewSelection;
 
-    const src = srcHierarchy ? getHigherLevelNodes(current.src[0].split('.')[0]) : current.src;
-    const dst = dstHierarchy ? getHigherLevelNodes(current.dst[0].split('.')[0]) : current.dst;
+    const src = srcHierarchy ? getParentSelections(current.src[0]) : current.src;
+    const dst = dstHierarchy ? getParentSelections(current.dst[0]) : current.dst;
 
     setViewSelectionHistory([...viewSelectionHistory, { src, dst }]);
   };
@@ -313,55 +309,14 @@ export default function MicroConnectomeConfigView() {
   return (
     <>
       <div className={styles.leftPanel}>
-        <h3 className="mb-3">Pre-synaptic brain regions:</h3>
-        <TreeSelect
-          style={{ width: '100%' }}
-          allowClear
-          multiple
-          treeData={brainRegionsFilteredTree?.[0].items}
-          treeNodeFilterProp="title"
-          treeNodeLabelProp="title"
-          popupMatchSelectWidth={520}
-          listHeight={320}
-          tagRender={(props) =>
-            brainRegionTagRender({
-              ...props,
-              color: brainRegionByNotationMap?.get(props.value)?.colorCode,
-            })
-          }
-          value={srcBrainRegionNotations}
-          onChange={setSrc}
-          fieldNames={{
-            label: 'title',
-            value: 'notation',
-            children: 'items',
-          }}
-        />
+        <h3 className="mb-2">Hemispheres</h3>
+        <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
 
-        <h3 className="mt-4 mb-3">Post-synaptic brain regions:</h3>
-        <TreeSelect
-          style={{ width: '100%' }}
-          allowClear
-          multiple
-          treeData={brainRegionsFilteredTree?.[0].items}
-          treeNodeFilterProp="title"
-          treeNodeLabelProp="title"
-          popupMatchSelectWidth={520}
-          tagRender={(props) =>
-            brainRegionTagRender({
-              ...props,
-              color: brainRegionByNotationMap?.get(props.value)?.colorCode,
-            })
-          }
-          listHeight={320}
-          value={dstBrainRegionNotations}
-          onChange={setDst}
-          fieldNames={{
-            label: 'title',
-            value: 'notation',
-            children: 'items',
-          }}
-        />
+        <h3 className="mt-4 mb-2">Pre-synaptic brain regions:</h3>
+        <BrainRegionSelect value={srcSelections} onChange={setSrc} extraPadding />
+
+        <h3 className="mt-4 mb-2">Post-synaptic brain regions:</h3>
+        <BrainRegionSelect value={dstSelections} onChange={setDst} extraPadding />
 
         <h3 className="mt-4 mb-3">View:</h3>
         <ViewSelector
@@ -392,17 +347,17 @@ export default function MicroConnectomeConfigView() {
           <>
             <MicroConnectomePlot
               type={plotData.type}
-              srcLabels={plotData.srcLabels}
-              dstLabels={plotData.dstLabels}
-              labelDescriptionMap={plotData.labelDescriptionMap}
+              srcSelections={plotData.srcSelections}
+              dstSelections={plotData.dstSelections}
+              brainRegionNotationTitleMap={plotData.brainRegionNotationTitleMap}
               viewData={plotData.viewData}
               // TODO fix type below
               // @ts-ignore-next-line
               colorScale={plotData.colorScale}
-              onEntryClick={onLabelClick}
+              onEntryClick={onChartEntryClick}
               navUpDisabled={plotData.navUpDisabled}
               onNavUpClick={onNavUpClick}
-              labelColorMap={plotData.labelColorMap}
+              brainRegionNotationColorMap={plotData.brainRegionNotationColorMap}
             />
 
             <div
@@ -433,9 +388,7 @@ export default function MicroConnectomeConfigView() {
       </div>
 
       <div className={styles.rightPanel}>
-        <HemisphereDropdown value={hemisphereDirection} onChange={setHemisphereDirection} />
-
-        <h3>Ops count: {pendingAsyncOpsCount}</h3>
+        <EditBar />
       </div>
     </>
   );

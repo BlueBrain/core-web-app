@@ -1,17 +1,8 @@
 'use client';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { typeAtom, triggerRefetchAtom, filtersAtom } from '@/state/explore-section/list-view-atoms';
-import useListPage from '@/hooks/useListPage';
-
-const TYPE = 'https://neuroshapes.org/SynapsePerConnection';
+import { SYNAPSE_PER_CONNECTION } from '@/constants/explore-section/list-views';
 
 export default function SynapsePerConnectionListingPage() {
-  useListPage({ typeAtom, triggerRefetchAtom, filtersAtom, TYPE });
-
-  return (
-    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <ExploreSectionListingView title="Synapse per connection" />
-    </div>
-  );
+  return <ExploreSectionListingView title="Synapse per connection" type={SYNAPSE_PER_CONNECTION} />;
 }

@@ -1,7 +1,7 @@
 import { ChangeEvent, HTMLProps, useState } from 'react';
 import { RangeIcon } from '@/components/icons';
 import { GteLteValue, ValueOrRangeFilter } from '@/components/Filter/types';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 
 function Radio({
   checked,
@@ -109,7 +109,7 @@ export default function ValueOrRange({
             onChange={updateValue}
             value={value}
           />
-          <span>{LISTING_CONFIG[filter.field].unit}</span>
+          <span>{EXPLORE_FIELDS_CONFIG[filter.field].unit}</span>
         </div>
       </Radio>
       <Radio
@@ -138,7 +138,7 @@ export default function ValueOrRange({
             type="number"
             value={(range.lte as number | null) ?? undefined}
           />
-          <span className="shrink-0">{LISTING_CONFIG[filter.field].unit}</span>
+          <span className="shrink-0">{EXPLORE_FIELDS_CONFIG[filter.field].unit}</span>
         </div>
       </Radio>
     </fieldset>

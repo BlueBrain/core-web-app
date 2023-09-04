@@ -3,55 +3,43 @@
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
-import Contributors from '@/components/explore-section/Contributors';
-import Species from '@/components/explore-section/Species';
 import useDetailPage from '@/hooks/useDetailPage';
 import usePathname from '@/hooks/pathname';
 
 const fields = [
   {
-    title: 'Description',
-    field: ({ description }) => description,
+    field: 'description',
     className: 'col-span-3 row-span-2',
   },
   {
-    title: 'Brain Region',
-    field: ({ brainRegion }) => brainRegion,
+    field: 'brainRegion',
   },
   {
-    title: 'Mean ± STD',
-    field: ({ meanPlusMinusStd }) => meanPlusMinusStd,
+    field: 'meanstd',
   },
   {
-    title: 'Species',
-    field: <Species />,
+    field: 'subjectSpecies',
   },
   {
-    title: 'M-Type',
-    field: ({ mType }) => mType,
+    field: 'mType',
   },
   {
-    title: 'SEM',
-    field: ({ sem }) => sem,
+    field: 'sem',
   },
   {
-    title: 'Weight',
-    field: ({ weight }) => weight,
+    field: 'weight',
   },
   {
-    title: ({ contributors }) => (contributors?.length === 1 ? 'Contributor' : 'Contributors'),
-    field: <Contributors />,
+    field: 'contributors',
   },
   {
-    title: 'Created On',
-    field: ({ creationDate }) => creationDate,
+    field: 'createdAt',
   },
   {
-    title: 'Reference',
+    field: 'reference',
   },
   {
-    title: 'N˚ of Measurements',
-    field: ({ numberOfMeasurements }) => numberOfMeasurements,
+    field: 'numberOfMeasurements',
     className: 'col-span-2 col-start-5',
   },
 ] as DetailProps[];

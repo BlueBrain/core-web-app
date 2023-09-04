@@ -12,10 +12,10 @@ import {
 import { getCircuitBuildingTaskFiles, getSimulationTaskFiles } from '@/services/bbp-workflow';
 import { GROUPS as EXECUTION_GROUPS, CellCompositionStepGroupValues } from '@/state/build-status';
 import { BrainModelConfigResource, DetailedCircuitResource } from '@/types/nexus';
+import { composeUrl } from '@/util/nexus';
 
-function getCircuitUrl(config: BrainModelConfigResource | null): string {
-  if (!config?._self) return '';
-  return `${config?._self}?rev=${config?._rev}`;
+function getCircuitUrl(config: BrainModelConfigResource): string {
+  return composeUrl('resource', config['@id'], { rev: config._rev });
 }
 
 async function generateWorkflowConfig(

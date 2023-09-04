@@ -16,6 +16,8 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  setupFiles: ['./global.mock.js'],
+  setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'], // Provides utilities for expectations like "toBeInTheDocument"/,
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

@@ -80,7 +80,7 @@ export default function SectionCards({
         </p>
       </div>
 
-      <EyeIcon fill="white" className="w-auto h-3 2xl:h-5" />
+      <EyeIcon className="w-auto h-3 2xl:h-5 text-white" />
     </Link>
   ) : (
     // IF BUTTON HAS CHILDREN ITEMS

@@ -4,11 +4,7 @@ import { atom } from 'jotai';
 import { cellPositionConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 
-import {
-  fetchResourceById,
-  fetchGeneratorTaskActivity,
-  fetchResourceSourceById,
-} from '@/api/nexus';
+import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
 import {
   CellPositionConfig,
   CellPositionConfigResource,
@@ -38,7 +34,7 @@ export const configSourceAtom = atom<Promise<CellPositionConfig | null>>(async (
 
   if (!session || !id) return null;
 
-  return fetchResourceSourceById<CellPositionConfig>(id, session);
+  return fetchResourceById<CellPositionConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

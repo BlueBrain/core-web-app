@@ -8,14 +8,14 @@ type InlineDimensionsProps = {
 export default function InlineDimension({ value, status }: InlineDimensionsProps) {
   const renderBackgroundColor = () => {
     switch (status) {
-      case 'done':
+      case 'Done':
         return 'bg-green-100';
-      case 'failed':
+      case 'Failed':
         return 'bg-red-100';
-      case 'cancelled':
-        return 'bg-neutral-1';
-      default:
+      case 'Running':
         return 'bg-sky-100';
+      default:
+        return 'bg-red-100';
     }
   };
 

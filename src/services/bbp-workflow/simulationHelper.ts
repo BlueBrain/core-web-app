@@ -23,10 +23,11 @@ import {
 } from '@/components/experiment-designer/utils';
 import {
   DetailedCircuit,
+  EntityCreation,
   SimulationCampaignUIConfig,
   SimulationCampaignUIConfigResource,
 } from '@/types/nexus';
-import { createDistribution, createId } from '@/util/nexus';
+import { composeUrl, createDistribution } from '@/util/nexus';
 import { nexus } from '@/config';
 
 function getNotFoundMsg(variable: any, name?: string): string {
@@ -114,8 +115,8 @@ export async function createWorkflowMetaConfigs(
       let replacedContent = template(templateFile)(variablesToReplaceCopy);
       replacedContent = replaceCustomBbpWorkflowPlaceholders(replacedContent);
       const newResource = await createWorkflowConfigResource(fileName, replacedContent, session);
-      const urlWithRev = `${newResource._self}?rev=${newResource._rev}`;
-      variablesToReplaceCopy[placeholder] = urlWithRev;
+      const urlWithRev = composeUrl('resource', newResource['@id'], { rev: newResource._rev });
+      variablesToReplaceCopy[placeholder] = urlWithRev.replaceAll('%', '%%');
     }
   );
 
@@ -244,6 +245,23 @@ export function convertExpDesConfigToSimVariables(
     cameraPosition.value
   );
 
+  const cameraTarget = imaging.find(
+    (param) => param.id === 'cameraTarget'
+  ) as ExpDesignerPositionParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_TARGET] = JSON.stringify(
+    cameraTarget.value
+  );
+
+  const cameraUp = imaging.find((param) => param.id === 'cameraUp') as ExpDesignerPositionParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_UP] = JSON.stringify(cameraUp.value);
+
+  const cameraHeight = imaging.find(
+    (param) => param.id === 'cameraHeight'
+  ) as ExpDesignerPositionParameter;
+  variablesToReplaceCopy[SimulationPlaceholders.VIZ_CAMERA_HEIGHT] = JSON.stringify(
+    cameraHeight.value
+  );
+
   const reportType = imaging.find(
     (param) => param.id === 'neuronActivity'
   ) as ExpDesignerRadioBtnParameter;
@@ -291,8 +309,7 @@ export async function createSimulationCampaignUIConfig(
 
   const configFile = await createJsonFile(payload, 'sim-campaign-ui-config.json', session);
 
-  const uiConfig: SimulationCampaignUIConfig = {
-    '@id': createId('simulationcampaignuiconfig'),
+  const uiConfig: EntityCreation<SimulationCampaignUIConfig> = {
     '@context': nexus.defaultContext,
     '@type': ['Entity', 'SimulationCampaignUIConfig'],
     name,

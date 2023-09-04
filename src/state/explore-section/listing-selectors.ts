@@ -1,6 +1,6 @@
 import { format, parseISO, isValid } from 'date-fns';
 import { Source, ESResponseRaw } from '@/types/explore-section/resources';
-import { NValueEntity } from '@/types/explore-section/fields';
+import { IdLabelEntity, NValueEntity } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { formatNumber } from '@/util/common';
 
@@ -100,15 +100,17 @@ export const selectorFnDate = (date: string) =>
   isValid(parseISO(date)) ? format(parseISO(date), 'dd.MM.yyyy') : '';
 
 /**
- * Formats an nValue entity with units
- * @param nValueEntity the nValue
- */
-export const selectorFnValue = (nValueEntity?: NValueEntity) =>
-  nValueEntity ? formatNumber(Number(nValueEntity.value)) : '';
-
-/**
  * Renders the text value
  * @param {string} text - The text value to render.
  * @returns {string} - The rendered text value.
  */
 export const selectorFnBasic = (text: string) => text;
+
+export const selectorFnSpecies = (species?: IdLabelEntity | IdLabelEntity[]) => {
+  if (species) {
+    return ensureArray(species)
+      .map((s) => s.label)
+      .join(', ');
+  }
+  return undefined;
+};

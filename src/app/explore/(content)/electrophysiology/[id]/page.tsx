@@ -5,43 +5,35 @@ import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
 import { DeltaResource } from '@/types/explore-section/resources';
 import EphysViewerContainer from '@/components/explore-section/EphysViewerContainer';
-import Contributors from '@/components/explore-section/Contributors';
-import Species from '@/components/explore-section/Species';
 import useDetailPage from '@/hooks/useDetailPage';
 import usePathname from '@/hooks/pathname';
 
 const fields = [
   {
-    title: 'Description',
-    field: ({ description }) => description,
+    field: 'description',
     className: 'col-span-3 row-span-2',
   },
   {
-    title: 'E-Type',
-    field: ({ eType }) => eType,
+    field: 'eType',
   },
   {
-    title: 'Species',
-    field: <Species />,
+    field: 'subjectSpecies',
   },
   {
-    title: 'Reference',
+    field: 'reference',
   },
   {
-    title: 'Brain Region',
-    field: ({ brainRegion }) => brainRegion,
+    field: 'brainRegion',
   },
   {
-    title: 'Conditions',
+    field: 'conditions',
     className: 'col-span-2',
   },
   {
-    title: ({ contributors }) => (contributors?.length === 1 ? 'Contributor' : 'Contributors'),
-    field: <Contributors />,
+    field: 'contributors',
   },
   {
-    title: 'Created On',
-    field: ({ creationDate }) => creationDate,
+    field: 'createdAt',
   },
 ] as DetailProps[];
 

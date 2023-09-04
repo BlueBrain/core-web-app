@@ -21,7 +21,7 @@ import {
 import { OriginalComposition } from '@/types/composition/original';
 import { AnalysedComposition, CalculatedCompositionNode } from '@/types/composition/calculation';
 import { MModelMenuItem } from '@/types/m-model';
-import { EModelMenuItem } from '@/types/e-model';
+import { MEModelMenuItem } from '@/types/e-model';
 
 // This holds a weak reference to the updatedComposition by it's initial composition
 // This allows GC to dispose the object once it is no longer used by current components
@@ -103,24 +103,40 @@ export const analysedMTypesAtom = atom<Promise<MModelMenuItem[]>>(async (get) =>
     : [];
 });
 
-export const analysedETypesAtom = atom<Promise<EModelMenuItem[]>>(async (get) => {
+export const analysedETypesAtom = atom<Promise<MEModelMenuItem>>(async (get) => {
   const analysedMTypes = await get(analysedMTypesAtom);
 
   // transform the mType info into a map for easier access
-  const mTypesMap = new Map();
+  const mTypesMap = new Map<string, MModelMenuItem>();
   analysedMTypes.forEach((mType) => {
     mTypesMap.set(mType.id, mType);
   });
 
   const composition = await get(analysedCompositionAtom);
-  if (!composition) return [];
+  if (!composition) return {};
 
-  return filter(composition.nodes, { about: 'EType' }).map((node) => ({
-    uuid: crypto.randomUUID(),
-    label: node.label,
-    id: node.id,
-    mType: mTypesMap.get(node.parentId),
-  }));
+  const eTypeNodes = filter(composition.nodes, { about: 'EType' });
+  // group all e-types per m-type
+  return eTypeNodes.reduce((acc, eType) => {
+    const mTypeInfo = mTypesMap.get(eType.parentId || '');
+    if (!mTypeInfo) return acc;
+
+    const eTypeInfo = {
+      uuid: crypto.randomUUID(),
+      label: eType.label,
+      id: eType.id,
+      mType: mTypeInfo,
+    };
+
+    if (acc[mTypeInfo.label]) {
+      const currentValues = acc[mTypeInfo.label];
+      acc[mTypeInfo.label] = [...currentValues, eTypeInfo];
+    } else {
+      acc[mTypeInfo.label] = [eTypeInfo];
+    }
+
+    return acc;
+  }, {} as MEModelMenuItem);
 });
 
 export const computeAndSetCompositionAtom = atom(

@@ -6,6 +6,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import Link from '@/components/Link';
+import GenericButton from '@/components/Global/GenericButton';
 
 type Props = {
   children: ReactNode;
@@ -17,12 +18,16 @@ export default function BrainConfigSelectorLayout({ children }: Props) {
       <div className="flex flex-col">
         <span className="text-4xl font-bold">New</span>
         <span className="text-2xl">Simulation Campaign</span>
-        <Link
-          href="/simulate"
-          className="flex items-center justify-around text-primary-3 border border-primary-3 h-12 mt-6"
-        >
-          <ArrowLeftOutlined />
-          Back Simulate Home
+        <Link href="/simulate">
+          <GenericButton
+            className="flex items-center justify-around text-primary-3 border border-primary-3 mt-6"
+            text={
+              <>
+                <ArrowLeftOutlined />
+                Back Simulate Home
+              </>
+            }
+          />
         </Link>
       </div>
 

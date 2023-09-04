@@ -6,13 +6,18 @@ import {
   GeneratorConfig,
   GeneratorConfigType,
   GeneratorName,
-  IdType,
 } from '@/types/nexus';
 import { PartialBy } from '@/types/common';
-import { metadataKeys, schemas } from '@/constants/nexus';
+import { metadataKeys } from '@/constants/nexus';
 
 export function collapseId(nexusId: string) {
-  return nexusId?.replace(`${nexus.defaultIdBaseUrl}/`, '') ?? '';
+  if (!nexusId) return nexusId;
+
+  // TODO: remove this once we create new Release configs with proper id
+  if (nexusId.startsWith(nexus.legacyIdBaseUrl)) {
+    return nexusId;
+  }
+  return nexusId.replace(`${nexus.defaultIdBaseUrl}/`, '') ?? '';
 }
 
 export function expandId(collapsedId: string) {
@@ -83,20 +88,6 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
   return [nexus.url, '/', pathname, seachParamsStr ? `?${seachParamsStr}` : null]
     .filter(Boolean)
     .join('');
-}
-
-export function createId(type: IdType, id?: string) {
-  const isFile = type === 'file';
-  return [
-    nexus.url,
-    isFile ? 'files' : 'resources',
-    nexus.org,
-    nexus.project,
-    isFile ? '' : schemas[type] || '_',
-    id ?? crypto.randomUUID(),
-  ]
-    .filter((item) => !!item)
-    .join('/');
 }
 
 const generatorNameByKgType: Record<GeneratorConfigType, GeneratorName> = {

@@ -108,8 +108,8 @@ export default function SimCampaignList() {
               </Button>
 
               <Link href={generateRedirectUrl(config)} className="inline-block">
-                <Button size="small" type="text">
-                  <EyeIcon fill="#FFF" />
+                <Button size="small" type="text" className="text-white">
+                  <EyeIcon />
                 </Button>
               </Link>
             </>

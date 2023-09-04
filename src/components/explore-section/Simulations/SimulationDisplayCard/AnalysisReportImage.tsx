@@ -9,22 +9,33 @@ import { useState } from 'react';
 import { Checkbox } from 'antd';
 import FileSaver from 'file-saver';
 import Link from '@/components/Link';
-import { to64 } from '@/util/common';
 import usePathname from '@/hooks/pathname';
+import timeElapsedFromToday from '@/util/date';
+import { buildSimulationDetailURL } from '@/components/explore-section/Simulations/utils';
 
 type AnalysisReportImageProps = {
+  title: string;
   id: string;
   project: string;
   blob: Blob;
+  createdAt: string;
+  createdBy: string;
 };
 
-export default function AnalysisReportImage({ id, project, blob }: AnalysisReportImageProps) {
+export default function AnalysisReportImage({
+  id,
+  project,
+  blob,
+  createdAt,
+  createdBy,
+  title,
+}: AnalysisReportImageProps) {
   const [showDimensionValue, setShowDimensionValue] = useState<boolean>(false);
-
   const pathname = usePathname();
-
   const [proj, org] = project.split('/').reverse();
-  const simulationPath = to64(`${org}/${proj}!/!${id}`);
+  const createdByUsername = createdBy
+    .replace('https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/', '')
+    .replace('https://bbp.epfl.ch/nexus/v1/', '');
 
   return (
     <div className="mt-4">
@@ -34,9 +45,12 @@ export default function AnalysisReportImage({ id, project, blob }: AnalysisRepor
           checked={showDimensionValue}
           className="font-semibold text-primary-7"
         >
-          Dimension values
+          {title}
         </Checkbox>
-        <Link className="border radius-none w-max px-2 py-1" href={`${pathname}/${simulationPath}`}>
+        <Link
+          className="border radius-none w-max px-2 py-1"
+          href={buildSimulationDetailURL(org, proj, id, pathname)}
+        >
           view simulation detail <ArrowRightOutlined className="ml-3" />
         </Link>
       </div>
@@ -45,10 +59,10 @@ export default function AnalysisReportImage({ id, project, blob }: AnalysisRepor
         <div className="flex gap-3">
           <div>
             <UserOutlined />
-            <span className="ml-2">Litvak</span>
+            <span className="ml-2 capitalize">{createdByUsername}</span>
           </div>
           <div>
-            <CalendarOutlined /> 6 days ago
+            <CalendarOutlined /> {timeElapsedFromToday(createdAt)}
           </div>
         </div>
         <button

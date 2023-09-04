@@ -8,6 +8,7 @@ import { classNames } from '@/util/utils';
 import LauncherModal from '@/components/BuildModelBtn/LauncherModal';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
 import { stepsToBuildAtom } from '@/state/build-status';
+import GenericButton from '@/components/Global/GenericButton';
 
 type BuildModelBtnProps = {
   className?: string;
@@ -30,13 +31,11 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
 
   return (
     <>
-      <button
+      <GenericButton
         onClick={() => setModalIsOpen(true)}
-        type="button"
-        className={classNames('flex-auto bg-secondary-2 text-white h-12 px-8', className)}
-      >
-        Build
-      </button>
+        className={classNames('flex-auto bg-secondary-2 text-white', className)}
+        text="Build"
+      />
 
       <LauncherModal isOpen={modalIsOpen} onCloseModal={onCloseModal} loading={loading}>
         <WorkflowLauncherBtn

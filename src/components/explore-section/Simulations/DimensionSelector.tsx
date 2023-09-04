@@ -11,7 +11,7 @@ import {
 import DimensionBox from '@/components/explore-section/Simulations/DimensionBox';
 import { Dimension } from '@/components/explore-section/Simulations/types';
 
-export default function DimensionSelector() {
+export default function DimensionSelector({ coords }: { coords?: { [id: string]: number[] } }) {
   const xAxisDimension = useAtomValue(selectedXDimensionAtom);
   const yAxisDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);
@@ -80,6 +80,7 @@ export default function DimensionSelector() {
               dismissFunc={() => dismissAxisDimension('x')}
               dismissible
               isAxis
+              possibleValues={xAxisDimension && coords?.[xAxisDimension?.id]}
             />
           </div>
           {swapVisible && (
@@ -99,6 +100,7 @@ export default function DimensionSelector() {
               dismissFunc={() => dismissAxisDimension('y')}
               dismissible
               isAxis
+              possibleValues={yAxisDimension && coords?.[yAxisDimension?.id]}
             />
           </div>
         </div>
@@ -112,6 +114,7 @@ export default function DimensionSelector() {
                   dimensionOptions={dimensionOptions}
                   dismissible={false}
                   isAxis={false}
+                  possibleValues={coords?.[dim.id]}
                 />
               </div>
             ))}

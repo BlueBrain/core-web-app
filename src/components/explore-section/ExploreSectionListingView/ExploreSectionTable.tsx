@@ -1,26 +1,25 @@
-'use client';
-
 import { MouseEvent, useState, ReactNode, CSSProperties, useEffect } from 'react';
-import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
+import { useAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { ColumnProps } from 'antd/es/table';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
-import sessionAtom from '@/state/session';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
 import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
+import DownloadButton from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 import { ESResponseRaw } from '@/types/explore-section/resources';
-import fetchArchive from '@/api/archive';
-import Spinner from '@/components/Spinner';
 import { classNames } from '@/util/utils';
+import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import styles from '@/app/explore/explore.module.scss';
 
 type ExploreSectionTableProps = {
-  data: Loadable<ESResponseRaw[] | undefined>;
   columns: ColumnProps<any>[];
+  data: Loadable<ESResponseRaw[] | undefined>;
   enableDownload?: boolean;
+  selectedRowsButton?: ReactNode;
+  type: string;
 };
 
 function CustomTH({
@@ -76,20 +75,20 @@ function CustomCell({ children, style, ...props }: { children: ReactNode; style:
 }
 
 export default function ExploreSectionTable({
-  data,
   columns,
+  data,
   enableDownload,
+  selectedRowsButton,
+  type,
 }: ExploreSectionTableProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom(type));
   const [fetching, setFetching] = useState<boolean>(false);
   const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>(
     data.state === 'hasData' ? data.data : undefined
   );
-
-  const session = useAtomValue(sessionAtom);
 
   useEffect(() => {
     if (data.state === 'hasData') {
@@ -117,6 +116,14 @@ export default function ExploreSectionTable({
   }
 
   const expandedRowRender = () => <GeneralizationRules />;
+  const activeSelectedRowsButton = selectedRowsButton || (
+    <DownloadButton
+      setFetching={setFetching}
+      selectedRows={selectedRows}
+      clearSelectedRows={clearSelectedRows}
+      fetching={fetching}
+    />
+  );
 
   return (
     <>
@@ -134,7 +141,7 @@ export default function ExploreSectionTable({
           enableDownload
             ? {
                 selectedRowKeys: selectedRows.map(({ _source }) => _source._self),
-                onChange: (_keys, rows) => setSelectedRows(rows),
+                onChange: (_keys, rows) => setSelectedRows(() => rows),
                 type: 'checkbox',
               }
             : undefined
@@ -150,28 +157,7 @@ export default function ExploreSectionTable({
         }}
         expandable={{ expandedRowRender }}
       />
-      {session && selectedRows.length > 0 && (
-        <div className="sticky bottom-0 flex justify-end">
-          <button
-            className="bg-primary-8 flex gap-2 items-center justify-between font-bold px-7 py-4 rounded-none text-white"
-            onClick={() => {
-              setFetching(true);
-
-              fetchArchive(
-                selectedRows.map((x) => x._source._self),
-                session,
-                clearSelectedRows
-              );
-            }}
-            type="button"
-          >
-            <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
-              selectedRows.length
-            })`}</span>
-            {fetching && <Spinner className="h-6 w-6" />}
-          </button>
-        </div>
-      )}
+      {activeSelectedRowsButton}
     </>
   );
 }

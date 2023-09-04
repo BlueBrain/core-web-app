@@ -9,7 +9,14 @@ import {
   Table,
 } from '@apache-arrow/es5-cjs';
 
-import { MacroConnectomeEditEntry, WholeBrainConnectivityMatrix } from '@/types/connectome';
+import {
+  MacroConnectomeEditEntry,
+  MicroConnectomeEditEntry,
+  PathwaySideSelection,
+  SerialisibleMicroConnectomeEditEntry,
+  SerialisiblePathwaySideSelection,
+  WholeBrainConnectivityMatrix,
+} from '@/types/connectome';
 import { BrainRegion } from '@/types/ontologies';
 import { HEMISPHERE_DIRECTIONS } from '@/constants/connectome';
 
@@ -90,4 +97,46 @@ export function createMacroConnectomeOverridesTable(
   });
 
   return overridesTable;
+}
+
+export function toSerialisibleSelection(selection: PathwaySideSelection) {
+  const serialisibleSelection: SerialisiblePathwaySideSelection = {
+    ...selection,
+    mtypeFilterSet: selection.mtypeFilterSet
+      ? Array.from(selection.mtypeFilterSet).sort()
+      : undefined,
+  };
+
+  return serialisibleSelection;
+}
+
+export function fromSerialisibleSelection(serialisibeSelection: SerialisiblePathwaySideSelection) {
+  const selection: PathwaySideSelection = {
+    ...serialisibeSelection,
+    mtypeFilterSet: serialisibeSelection.mtypeFilterSet
+      ? new Set(serialisibeSelection.mtypeFilterSet)
+      : undefined,
+  };
+
+  return selection;
+}
+
+export function toSerialisibleEdit(
+  edit: MicroConnectomeEditEntry
+): SerialisibleMicroConnectomeEditEntry {
+  return {
+    ...edit,
+    srcSelection: toSerialisibleSelection(edit.srcSelection),
+    dstSelection: toSerialisibleSelection(edit.dstSelection),
+  };
+}
+
+export function fromSerialisibleEdit(
+  serialisibleEdit: SerialisibleMicroConnectomeEditEntry
+): MicroConnectomeEditEntry {
+  return {
+    ...serialisibleEdit,
+    srcSelection: fromSerialisibleSelection(serialisibleEdit.srcSelection),
+    dstSelection: fromSerialisibleSelection(serialisibleEdit.dstSelection),
+  } as MicroConnectomeEditEntry;
 }

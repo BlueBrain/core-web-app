@@ -6,42 +6,27 @@ import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailAtom } from '@/state/explore-section/detail-atoms-constructor';
 import usePathname from '@/hooks/pathname';
-import { IdLabel } from '@/types/explore-section/fields';
-import { SerializedDeltaResource, DeltaResource } from '@/types/explore-section/resources';
+import { DeltaResource } from '@/types/explore-section/resources';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import useExploreSerializedFields from '@/hooks/useExploreSerializedFields';
 import { classNames } from '@/util/utils';
+import EXPLORE_FIELDS_CONFIG, {
+  ExploreFieldConfig,
+} from '@/constants/explore-section/explore-fields-config';
 
-type FieldPropKeys = 'title' | 'field';
+type FieldProps = { field: string; className?: string; data: DeltaResource };
 
-type FieldProps = Record<FieldPropKeys, ReactNode> & { className?: string };
+export type DetailProps = { field: string; className?: string };
 
-export type DetailProps = Record<
-  FieldPropKeys,
-  ReactNode | ((detail: SerializedDeltaResource) => ReactNode)
-> & { className?: string };
-
-function Field({ title, field, className }: FieldProps) {
+function Field({ field, className, data }: FieldProps) {
+  const fieldObj = EXPLORE_FIELDS_CONFIG[field] as ExploreFieldConfig;
   return (
     <div className={classNames('text-primary-7 text-xs mr-10', className)}>
-      <div className="text-xs uppercase text-neutral-4">{title}</div>
-      <div className="mt-3">{field}</div>
+      <div className="text-xs uppercase text-neutral-4">{fieldObj.title}</div>
+      <div className="mt-3">
+        {fieldObj.render?.detailViewFn && fieldObj.render?.detailViewFn(data)}
+      </div>
     </div>
-  );
-}
-
-export function ListField({ items }: { items: IdLabel[] | undefined | null }) {
-  if (!items) return null;
-
-  return (
-    <ul>
-      {items?.map((item) => (
-        <li key={item.id} className="break-words">
-          {item.label}
-        </li>
-      ))}
-    </ul>
   );
 }
 
@@ -57,10 +42,6 @@ export default function Detail({
   const { data: session } = useSession();
   const path = usePathname();
   const detail = useAtomValue(detailAtomLoadable);
-
-  const serializedFields = useExploreSerializedFields(
-    detail.state === 'hasData' ? detail?.data : null
-  );
 
   if (detail.state === 'loading' || !session) {
     return <CentralLoadingSpinner />;
@@ -86,13 +67,13 @@ export default function Detail({
           <DetailHeaderName detail={detail.data} url={path} />
           <div className="grid gap-4 grid-cols-6 break-words">
             {fields.map(
-              ({ className, field, title }) =>
-                serializedFields && (
+              ({ className, field }) =>
+                detail.data && (
                   <Field
-                    key={title as Key}
+                    key={field as Key}
                     className={className}
-                    title={typeof title === 'function' ? title(serializedFields) : title}
-                    field={typeof field === 'function' ? field(serializedFields) : field}
+                    field={field}
+                    data={detail.data}
                   />
                 )
             )}

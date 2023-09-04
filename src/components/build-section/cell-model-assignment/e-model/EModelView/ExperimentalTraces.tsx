@@ -1,13 +1,31 @@
+import { useEffect } from 'react';
+import { DeleteOutlined, GlobalOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/es/table';
-import { useAtomValue } from 'jotai';
+import { Divider, Popover } from 'antd';
+import { useAtom, useAtomValue } from 'jotai';
 
 import DefaultEModelTable from './DefaultEModelTable';
-import { experimentalTracesAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import {
+  eModelEditModeAtom,
+  eModelUIConfigAtom,
+  experimentalTracesAtom,
+} from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { ExperimentalTracesDataType } from '@/types/e-model';
+import { eCodesDocumentationUrl } from '@/constants/cell-model-assignment/e-model';
+import GenericButton from '@/components/Global/GenericButton';
 
 const nameRenderFn = (name: string) => <div className="font-bold">{name}</div>;
 
-const columns: ColumnsType<ExperimentalTracesDataType> = [
+const eCodesLink = (
+  <div className="w-[100px]">
+    <a href={eCodesDocumentationUrl} target="_blank">
+      More info about e-codes <GlobalOutlined />
+    </a>
+    <Divider />
+  </div>
+);
+
+const defaultColumns: ColumnsType<ExperimentalTracesDataType> = [
   {
     title: 'CELL NAME',
     dataIndex: 'cellName',
@@ -31,8 +49,22 @@ const columns: ColumnsType<ExperimentalTracesDataType> = [
   },
   {
     title: 'E-CODE',
-    dataIndex: 'eCode',
     key: 'eCode',
+    render: (trace: ExperimentalTracesDataType) => {
+      const list = (
+        <div>
+          {eCodesLink}
+          {trace.eCodes.map((ecode) => (
+            <p key={ecode}>{ecode}</p>
+          ))}
+        </div>
+      );
+      return (
+        <Popover trigger="hover" content={list} placement="left">
+          {trace.eCodes.length}
+        </Popover>
+      );
+    },
   },
   {
     title: 'SUBJECT SPECIES',
@@ -43,12 +75,47 @@ const columns: ColumnsType<ExperimentalTracesDataType> = [
 
 export default function ExperimentalTraces() {
   const experimentalTraces = useAtomValue(experimentalTracesAtom);
+  const eModelEditMode = useAtomValue(eModelEditModeAtom);
+  const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
+
+  useEffect(() => {
+    if (!eModelEditMode || !experimentalTraces) return;
+
+    setEModelUIConfig((oldAtomData) => ({
+      ...oldAtomData,
+      traces: structuredClone(experimentalTraces),
+    }));
+  }, [eModelEditMode, experimentalTraces, setEModelUIConfig]);
+
+  const onTraceDelete = (traceId: string) => {
+    setEModelUIConfig((oldAtomData) => {
+      if (!oldAtomData?.traces) return oldAtomData;
+
+      return {
+        ...oldAtomData,
+        traces: oldAtomData.traces.filter((t) => t['@id'] !== traceId),
+      };
+    });
+  };
+
+  const traces = eModelEditMode ? eModelUIConfig?.traces : experimentalTraces;
+  const deleteColumn = {
+    title: '',
+    key: 'action',
+    render: (trace: ExperimentalTracesDataType) => (
+      <button type="button" onClick={() => onTraceDelete(trace['@id'])}>
+        <DeleteOutlined />
+      </button>
+    ),
+  };
+  const columns = eModelEditMode ? [...defaultColumns, deleteColumn] : defaultColumns;
 
   return (
     <>
       <div className="text-primary-8 text-2xl font-bold">Experimental traces</div>
-      {experimentalTraces && (
-        <DefaultEModelTable dataSource={experimentalTraces} columns={columns} />
+      {traces && <DefaultEModelTable dataSource={traces} columns={columns} />}
+      {eModelEditMode && (
+        <GenericButton className="border-primary-7 text-primary-7 mt-2" text="Add trace" disabled />
       )}
     </>
   );

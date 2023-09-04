@@ -9,7 +9,7 @@ const checklistFilter: Filter = {
 };
 
 const valueRangeFilter: Filter = {
-  field: 'neuronDensity',
+  field: 'layerThickness',
   type: 'valueRange',
   value: {
     gte: 2,
@@ -30,7 +30,7 @@ describe('Filters elastic builder', () => {
     const builder = getFilterESBuilder(valueRangeFilter);
     expect(builder?.toJSON()).toEqual({
       range: {
-        'neuronDensity.value': {
+        'layerThickness.value': {
           gte: 2,
           lte: 5,
         },
@@ -40,20 +40,20 @@ describe('Filters elastic builder', () => {
 
   it('should build correct range filter when only gte', () => {
     const valueRangeFilterWithoutLTE: Filter = {
-      field: 'neuronDensity',
+      field: 'layerThickness',
       type: 'valueRange',
       // @ts-ignore
       value: {
         gte: 2,
       },
       aggregationType: 'stats',
-      title: 'Neuron Density',
+      title: 'Layer Thickness',
     };
 
     const builder = getFilterESBuilder(valueRangeFilterWithoutLTE);
     expect(builder?.toJSON()).toEqual({
       range: {
-        'neuronDensity.value': {
+        'layerThickness.value': {
           gte: 2,
         },
       },
@@ -146,7 +146,7 @@ describe('test buildFilters functionality', () => {
           },
           {
             range: {
-              'neuronDensity.value': {
+              'layerThickness.value': {
                 gte: 2,
                 lte: 5,
               },

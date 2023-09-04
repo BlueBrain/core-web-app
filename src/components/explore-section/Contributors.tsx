@@ -5,7 +5,7 @@ import { loadable } from 'jotai/utils';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { IdLabel } from '@/types/explore-section/fields';
 import { contributorsDataAtom } from '@/state/explore-section/detail-atoms-constructor';
-import { ListField } from '@/components/explore-section/Detail';
+import ListField from '@/components/explore-section/Fields/ListField';
 
 /**
  * DeltaResource is the raw data interface recived from a reequest to nexus
@@ -15,9 +15,8 @@ import { ListField } from '@/components/explore-section/Detail';
 export const formatContributors = (contributor: DeltaResource | null): IdLabel => {
   if (!contributor) return {};
 
-  const { name, familyName, givenName, '@id': id, '@type': type } = contributor;
+  const { name, familyName, givenName, '@id': id } = contributor;
 
-  if (type && type.includes('Organization')) return {};
   if (name) return { id, label: name };
   if (familyName && givenName) return { id, label: `${givenName} ${familyName}` };
 

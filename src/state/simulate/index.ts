@@ -13,12 +13,14 @@ import {
   getSimCampConfigsQuery,
   getWorkflowExecutionsQuery,
 } from '@/queries/es';
+import { getCurrentDate } from '@/util/utils';
 
 export const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-export const campaignNameAtom = atom('');
-export const campaignDescriptionAtom = atom('');
+const defaultTitle = `Simulation experiment ${getCurrentDate('/', true)}`;
+export const campaignNameAtom = atom(defaultTitle);
+export const campaignDescriptionAtom = atom(defaultTitle);
 
 export const searchSimCampUIConfigListStringAtom = atom<string>('');
 

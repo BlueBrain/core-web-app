@@ -3,6 +3,7 @@ import { DeltaResource } from '@/types/explore-section/resources';
 import { AnnotationEntity, Series } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { formatNumber } from '@/util/common';
 
 const seriesArrayFunc = (series: Series | Series[] | undefined) => series && ensureArray(series);
 
@@ -13,16 +14,15 @@ const annotationArrayFunc = (annotation: AnnotationEntity[] | undefined | null) 
  * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
-export const subjectAgeSelectorFn = (detail: DeltaResource | null) =>
-  detail?.subject?.age &&
-  `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
-
-/**
- * Takes delta resource and extracts subject species
- * @param {import("./types/explore-section/resources").DeltaResource} detail
- */
-export const subjectSpeciesSelectorFn = (detail: DeltaResource | null) =>
-  detail?.subject?.species?.label;
+export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
+  if (detail?.subject?.age?.value) {
+    return `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
+  }
+  if (detail?.subject?.age?.minValue && detail?.subject?.age?.maxValue) {
+    return `${detail.subject?.age.minValue} - ${detail.subject?.age.maxValue} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
+  }
+  return undefined;
+};
 
 // renders mtype or 'no MType text if not present
 export const mTypeSelectorFn = (detail: DeltaResource | null) => {
@@ -41,11 +41,6 @@ export const eTypeSelectorFn = (detail: DeltaResource | null) => {
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
-
-// renders weight in a min - max format
-export const weightSelectorFn = (detail: DeltaResource | null) =>
-  detail?.subject?.weight &&
-  `${detail.subject?.weight?.minValue} - ${detail.subject?.weight?.maxValue}`;
 
 // renders standard error of the mean if present
 export const semSelectorFn = (detail: DeltaResource | null) => {
@@ -69,4 +64,22 @@ export const dimensionsSelectorFn = (detail: DeltaResource | null) => {
     id: dimension,
     label: dimension,
   }));
+};
+
+/**
+ * Serializes a series array based on its format and string targetting specific statistic
+ * @param detail
+ * @param field the field of series to render
+ * @param withUnits whether to render units
+ */
+export const selectorFnStatisticDetail = (
+  detail: DeltaResource,
+  field: string,
+  withUnits: boolean = false
+): string | number => {
+  if (!detail?.series) return NO_DATA_STRING;
+
+  const found = ensureArray(detail?.series).find((el: Series) => el.statistic === field);
+  const units = withUnits && found ? found.unitCode : '';
+  return found ? `${formatNumber(found.value)} ${units}` : NO_DATA_STRING;
 };

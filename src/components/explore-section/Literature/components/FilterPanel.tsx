@@ -17,7 +17,7 @@ import {
 } from '@/types/literature';
 import { Filter, GteLteValue, OptionsData } from '@/components/Filter/types';
 import SearchFilter from '@/components/Filter/SearchFilter';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { DateRange, FilterGroup } from '@/components/Filter';
 import ReloadIcon from '@/components/icons/Reload';
 import {
@@ -26,6 +26,7 @@ import {
   useLiteratureAtom,
   useLiteratureFilter,
 } from '@/state/literature';
+import { normalizedDate } from '@/util/utils';
 
 export default function FilterPanel() {
   const updateFilters = useLiteratureFilter();
@@ -98,17 +99,17 @@ export default function FilterPanel() {
       destroyOnClose
       maskClosable
       closeIcon={
-        <CloseOutlined className="bg-primary-8 text-xs absolute left-[-30px] top-[0px] w-[40px] h-[30px] pl-3 rounded-tl-[22px] rounded-bl-[22px] text-white cursor-pointer" />
+        <CloseOutlined className="bg-primary-9 text-xs absolute left-[-30px] top-[0px] w-[40px] h-[30px] pl-3 rounded-tl-[22px] rounded-bl-[22px] text-white cursor-pointer" />
       }
       width="20vw"
       headerStyle={{
-        background: '#003A8C',
+        background: '#002766',
       }}
       bodyStyle={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        background: '#003A8C',
+        background: '#002766',
       }}
     >
       <FilterGroup
@@ -116,7 +117,7 @@ export default function FilterPanel() {
         setFilters={() => {}}
         items={filters.map((filter) => ({
           content: () => getFilterComponent(filter),
-          label: LISTING_CONFIG[filter.field].title,
+          label: EXPLORE_FIELDS_CONFIG[filter.field].title,
           display: true,
         }))}
       />
@@ -251,9 +252,6 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
         throw new Error(`Unhandled Filter Field: ${filterField}`);
     }
   });
-
-const normalizedDate = (date: string | number | Date) =>
-  date instanceof Date ? date : new Date(date);
 
 const getFilterBuckets = (
   articles: GArticle[],

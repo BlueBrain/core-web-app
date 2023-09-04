@@ -1,22 +1,8 @@
 import { Entity, Distribution, ResourceMetadata, DateISOString } from './common';
-import { MacroConnectomeEditEntry } from '@/types/connectome';
+import { MacroConnectomeEditEntry, SerialisibleMicroConnectomeEditEntry } from '@/types/connectome';
 import { MModelWorkflowOverrides } from '@/types/m-model';
 
 export * from './common';
-
-export type IdType =
-  | 'file'
-  | 'modelconfiguration'
-  | 'cellcompositionconfig'
-  | 'cellpositionconfig'
-  | 'emodelassignmentconfig'
-  | 'morphologyassignmentconfig'
-  | 'microconnectomeconfig'
-  | 'synapseconfig'
-  | 'macroconnectomeconfig'
-  | 'wholebrainconnectomestrength'
-  | 'simulationcampaignuiconfig'
-  | 'bbpworkflowconfig';
 
 export interface BrainModelConfig extends Entity {
   name: string;
@@ -133,7 +119,7 @@ export interface GeneratorTaskActivity extends Entity {
     '@type': string | string[];
   };
   startedAtTime: string;
-  used: {
+  used_config: {
     '@id': string;
     '@type': string | string[];
   };
@@ -323,6 +309,9 @@ export interface MicroConnectomeConfigPayload {
   } & {
     [variantName: string]: IdRev & { type: ['Entity', 'Dataset', 'MicroConnectomeDataOverrides'] };
   };
+  _ui_data?: {
+    editHistory?: SerialisibleMicroConnectomeEditEntry[];
+  };
 }
 
 export interface MicroConnectomeEntryBase {
@@ -372,7 +361,7 @@ export interface MicroConnectomeDataOverridesResource
     MicroConnectomeDataOverrides {}
 
 type SynapseGeneratorName = 'connectome_filtering';
-type SynapseConfigType = 'SynapseConfig';
+export type SynapseConfigType = 'SynapseConfig';
 
 export interface SynapseConfig extends Entity {
   name: string;
@@ -448,8 +437,8 @@ export interface VariantTaskActivity extends Entity {
     '@id': string;
   };
   startedAtTime: string;
-  used: {
-    '@type': ['VariantTaskConfig', 'Entity'];
+  used_config: {
+    '@type': [VariantTaskConfigType, 'Entity'];
     '@id': string;
   };
   used_rev: number;
@@ -461,8 +450,9 @@ export interface VariantTaskActivity extends Entity {
 
 export interface VariantTaskActivityResource extends ResourceMetadata, VariantTaskActivity {}
 
+export type VariantTaskConfigType = 'VariantTaskConfig';
 export interface VariantTaskConfig extends Entity {
-  '@type': ['VariantTaskConfig', 'Entity'];
+  '@type': [VariantTaskConfigType, 'Entity'];
   name: string;
   distribution: Distribution;
 }
@@ -521,6 +511,8 @@ export interface SimulationCampaignUIConfig extends Entity {
   };
   contribution: ContributionEntity | ContributionEntity[];
 }
+
+export type EntityCreation<T> = Omit<T, '@id'>;
 
 export interface SimulationCampaignUIConfigResource
   extends ResourceMetadata,

@@ -8,6 +8,8 @@ import { SimulationCampaignUIConfigResource } from '@/types/nexus';
 import { configResourceAtom } from '@/state/experiment-designer';
 import { classNames } from '@/util/utils';
 import { getSimCampUIConfigsByNameQuery } from '@/queries/es';
+import GenericButton from '@/components/Global/GenericButton';
+import { collapseId } from '@/util/nexus';
 
 const loadableSimCampUIConfigAtom = loadable(configResourceAtom);
 
@@ -29,7 +31,7 @@ export default function DuplicateConfigBtn({ className }: Props) {
     );
 
   const replaceConfigQueryParam = (clonedConfigId: string) => {
-    const collapsedSimCampUIConfigInAtom = clonedConfigId?.split('/').pop();
+    const collapsedSimCampUIConfigInAtom = collapseId(clonedConfigId || '');
     if (!collapsedSimCampUIConfigInAtom) return;
 
     const newSearchParams = new URLSearchParams();
@@ -50,13 +52,11 @@ export default function DuplicateConfigBtn({ className }: Props) {
 
   return (
     <>
-      <button
-        type="button"
+      <GenericButton
         className={style}
         onClick={() => (simCampUIConfig ? openCloneModal(simCampUIConfig) : () => {})}
-      >
-        Duplicate
-      </button>
+        text="Duplicate"
+      />
 
       {cloneContextHolder}
     </>

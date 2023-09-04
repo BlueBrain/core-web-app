@@ -1,7 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
+import isNumber from 'lodash/isNumber';
 
+import { PathwaySideSelection as Selection, MicroConnectomeEditEntry } from '@/types/connectome';
 import { compositionAtom } from '@/state/build-composition';
+import { editsLoadableAtom } from '@/state/brain-model-config/micro-connectome';
 import {
   brainRegionByIdMapAtom,
   brainRegionByNotationMapAtom,
@@ -10,16 +13,17 @@ import {
   brainRegionsUnsortedArrayAtom,
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
+import { useLoadable } from '@/hooks/hooks';
 
 /**
  * A hook to create a map which provides a list of available in the cell composition m-types
- * by a brain region notation.
+ * by a brain region notation (only for leaf nodes that are defined in cell composition config).
  */
-export function useBrainRegionMtypeMap(): Map<string, string[]> {
+export function useLeafBrainRegionMtypeMap(): Map<string, string[]> {
   const brainRegionNotationByIdMap = useAtomValue(brainRegionNotationByIdMapAtom);
   const cellComposition = useAtomValue(compositionAtom);
 
-  const brainRegionMtypeMap = useMemo(() => {
+  const leafBrainRegionMtypeMap = useMemo(() => {
     if (!cellComposition) return new Map();
 
     return Object.keys(cellComposition?.hasPart ?? {}).reduce((map, brainRegionFullId) => {
@@ -34,6 +38,39 @@ export function useBrainRegionMtypeMap(): Map<string, string[]> {
       return map.set(brainRegionNotation, mtypes);
     }, new Map());
   }, [cellComposition, brainRegionNotationByIdMap]);
+
+  return leafBrainRegionMtypeMap;
+}
+
+/**
+ * A hook to create a map which provides a set of available in the cell composition m-types
+ * by a brain region notation (including non-leaf nodes)
+ */
+export function useBrainRegionMtypeMap(): Map<string, Set<string>> {
+  const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
+  const brainRegionNotationByIdMap = useAtomValue(brainRegionNotationByIdMapAtom);
+
+  const leafBrainRegionMtypeMap = useLeafBrainRegionMtypeMap();
+
+  const brainRegionMtypeMap = useMemo(() => {
+    if (!brainRegions) return new Map();
+
+    return brainRegions?.reduce((map, brainRegion) => {
+      const mtypeSet: Set<string> = new Set();
+
+      // If the current brain region isn't a leaf node
+      brainRegion.leaves?.forEach((leave) => {
+        const id = leave.split('/').at(-1) as string;
+        const notation = brainRegionNotationByIdMap?.get(id) as string;
+        leafBrainRegionMtypeMap.get(notation)?.forEach((mtype) => mtypeSet.add(mtype));
+      });
+
+      // Otherwise
+      leafBrainRegionMtypeMap.get(brainRegion.notation)?.forEach((mtype) => mtypeSet.add(mtype));
+
+      return map.set(brainRegion.notation, mtypeSet);
+    }, new Map());
+  }, [brainRegionNotationByIdMap, brainRegions, leafBrainRegionMtypeMap]);
 
   return brainRegionMtypeMap;
 }
@@ -66,26 +103,36 @@ export function useBrainRegionNotationSorterFn() {
 }
 
 /**
- * Create a function to construct a map of label descriptions such as:
- * * Label has one of the following format:
- *   * `${brainRegionNotation}`
- *   * `${brainRegionNotation}.${mtype}`
- * * Description is formatted accordingly as:
- *   * `${brainRegionTitle}`
- *   * `${brainRegionTitle} - ${mtype}`
+ * A hook providing a sorter function for data of Selection type.
  */
-export function useCreateLabelDescriptionMap(): (labels: string[]) => Map<string, string> {
+export function useSelectionSorterFn() {
+  const brainRegionNotationSorterFn = useBrainRegionNotationSorterFn();
+
+  const sorterFn = useCallback(
+    (selectionA: Selection, selectionB: Selection) =>
+      brainRegionNotationSorterFn(selectionA.brainRegionNotation, selectionB.brainRegionNotation),
+    [brainRegionNotationSorterFn]
+  );
+
+  return sorterFn;
+}
+
+/**
+ * Create a function to construct a map of selection descriptions which is formatted as:
+ * `${brainRegionTitle}` or `${brainRegionTitle} - ${mtype}`
+ */
+export function useCreateBrainRegionNotationTitleMap(): (
+  selections: Selection[]
+) => Map<string, string> {
   const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
 
   return useCallback(
-    (labels: string[]) =>
-      labels.reduce((map, label) => {
-        const [brainRegionNotation, mtype] = label.split('.');
-
+    (selections: Selection[]) =>
+      selections.reduce((map, selection) => {
+        const { brainRegionNotation } = selection;
         const brainRegionTitle = brainRegionByNotationMap?.get(brainRegionNotation)?.title;
-        const mtypeSuffix = mtype ? ` - ${mtype}` : '';
 
-        return map.set(label, `${brainRegionTitle}${mtypeSuffix}`);
+        return map.set(brainRegionNotation, brainRegionTitle);
       }, new Map()),
     [brainRegionByNotationMap]
   );
@@ -96,9 +143,9 @@ export function useGetLeafNodesReduceFn() {
   const brainRegionByIdMap = useAtomValue(brainRegionByIdMapAtom);
 
   return useCallback(
-    (map: Map<string, string[]>, notation: string) => {
+    (map: Map<Selection, string[]>, selection: Selection) => {
       const leafNotations = brainRegionByNotationMap
-        ?.get(notation)
+        ?.get(selection.brainRegionNotation)
         ?.leaves?.map((leaf) => brainRegionByIdMap?.get(leaf.split('/').reverse()[0]))
         ?.filter((br) => br?.representedInAnnotation)
         ?.map((br) => br?.notation as string);
@@ -108,71 +155,80 @@ export function useGetLeafNodesReduceFn() {
         return map;
       }
 
-      return map.set(notation, leafNotations ?? [notation]);
+      return map.set(selection, leafNotations ?? [selection.brainRegionNotation]);
     },
     [brainRegionByNotationMap, brainRegionByIdMap]
   );
 }
 
-export function useGetChildNotations() {
+export function useGetChildSelections() {
   const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
   const brainRegionByIdMap = useAtomValue(brainRegionByIdMapAtom);
 
   const brainRegionNotationSorterFn = useBrainRegionNotationSorterFn();
-  const brainRegionMtypeMap = useBrainRegionMtypeMap();
+  const leafBrainRegionMtypeMap = useLeafBrainRegionMtypeMap();
 
-  return (brainRegionNotation: string): string[] => {
-    if (brainRegionNotation.includes('.')) {
-      return [brainRegionNotation];
+  return (selection: Selection): Selection[] => {
+    if (selection.mtype) {
+      return [selection];
     }
 
-    const brainRegion = brainRegionByNotationMap?.get(brainRegionNotation);
+    const brainRegion = brainRegionByNotationMap?.get(selection.brainRegionNotation);
 
     if (!brainRegion) return [];
 
-    const childNotations =
+    const childSelections =
       brainRegion.hasPart
         ?.map((strId) => brainRegionByIdMap?.get(strId.split('/').at(-1) as string) as BrainRegion)
         .filter((br) => br?.representedInAnnotation)
         .map((br) => br?.notation)
-        .sort(brainRegionNotationSorterFn) ??
-      brainRegionMtypeMap
-        .get(brainRegionNotation)
-        ?.map((mtype) => `${brainRegionNotation}.${mtype}`);
+        .sort(brainRegionNotationSorterFn)
+        .map((brainRegionNotation) => ({ brainRegionNotation })) ??
+      leafBrainRegionMtypeMap
+        .get(selection.brainRegionNotation)
+        ?.map((mtype) => ({ brainRegionNotation: selection.brainRegionNotation, mtype }));
 
-    return childNotations;
+    // Return current selection if all child nodes are not represented in annotation.
+    return Array.isArray(childSelections) && childSelections.length !== 0
+      ? childSelections
+      : [selection];
   };
 }
 
-export function useGetHigherLevelNodes() {
+export function useGetParentSelections() {
   const brainRegions = useAtomValue(brainRegionsUnsortedArrayAtom);
   const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
   const brainRegionByIdMap = useAtomValue(brainRegionByIdMapAtom);
 
   const brainRegionNotationSorterFn = useBrainRegionNotationSorterFn();
 
-  return (brainRegionNotation: string): string[] => {
+  return (selection: Selection): Selection[] => {
     if (!brainRegions) return [];
 
-    const brainRegion = brainRegionByNotationMap?.get(brainRegionNotation);
+    const brainRegion = brainRegionByNotationMap?.get(selection.brainRegionNotation);
 
     if (!brainRegion) {
-      throw new Error(`Can not find brain region with notation: ${brainRegionNotation}`);
+      throw new Error(`Can not find brain region with notation: ${selection.brainRegionNotation}`);
     }
 
-    const parentBrainRegionId = brainRegion?.isPartOf;
+    const parentSelectionBrainRegionId = selection.mtype ? brainRegion.id : brainRegion?.isPartOf;
 
-    if (!parentBrainRegionId) {
+    if (!parentSelectionBrainRegionId) {
       throw new Error(`Can not find parent node for brain region id: ${brainRegion.id}`);
     }
 
-    const parentBrainRegion = brainRegionByIdMap?.get(parentBrainRegionId);
+    const parentSelectionBrainRegion = brainRegionByIdMap?.get(parentSelectionBrainRegionId);
 
-    return brainRegions
-      .filter((br) => br.isPartOf === parentBrainRegion?.isPartOf)
-      .filter((br) => br.representedInAnnotation)
+    const parentSelectionSiblingBrainRegions = brainRegions
+      .filter((br) => br.isPartOf === parentSelectionBrainRegion?.isPartOf)
+      .filter((br) => br.representedInAnnotation);
+
+    const parentSelections = parentSelectionSiblingBrainRegions
       .map((br) => br.notation)
-      .sort(brainRegionNotationSorterFn);
+      .sort(brainRegionNotationSorterFn)
+      .map((brainRegionNotation) => ({ brainRegionNotation }));
+
+    return parentSelections;
   };
 }
 
@@ -185,25 +241,23 @@ export function useAreSiblings() {
   const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
 
   return useCallback(
-    (labels: string[]): boolean => {
+    (selections: Selection[]): boolean => {
       if (!brainRegionByNotationMap) {
         throw new Error('No brainRegionByNotationMap present');
       }
 
-      const parsedLabels = labels.map((label) => label.split('.'));
-
-      const brainRegionNotations = parsedLabels.map(([brainRegionNotation]) => brainRegionNotation);
-      const mtypes = parsedLabels.map(([, mtype]) => mtype);
+      const brainRegionNotations = selections.map((selection) => selection.brainRegionNotation);
+      const mtypes = selections.map((selection) => selection.mtype);
 
       const nMtypeLevelNodes = mtypes.filter(Boolean).length;
 
       // Not siblings if nodes belong to different levels (brain region, mtype).
-      if (nMtypeLevelNodes > 0 && nMtypeLevelNodes < parsedLabels.length) return false;
+      if (nMtypeLevelNodes > 0 && nMtypeLevelNodes < selections.length) return false;
 
       const nUniqBrainRegions = new Set(brainRegionNotations).size;
 
       // Not siblings if all nodes are of the mtype level and they do not share a common brain region.
-      if (nMtypeLevelNodes === parsedLabels.length && nUniqBrainRegions !== 1) return false;
+      if (nMtypeLevelNodes === selections.length && nUniqBrainRegions !== 1) return false;
 
       const parentBrainRegionIds = brainRegionNotations
         .map(
@@ -226,9 +280,9 @@ export function useAreTopLevelNodes() {
   const brainRegionByNotationMap = useAtomValue(brainRegionByNotationMapAtom);
 
   return useCallback(
-    (labels: string[]): boolean => {
-      const parsedLabels = labels.map((label) => label.split('.'));
-      const brainRegionNotations = parsedLabels.map(([brainRegionNotation]) => brainRegionNotation);
+    (selections: Selection[]): boolean => {
+      // const parsedLabels = labels.map((label) => label.split('.'));
+      const brainRegionNotations = selections.map((selection) => selection.brainRegionNotation);
       const parentBrainRegionIds = brainRegionNotations
         .map(
           (brainRegionNotation) => brainRegionByNotationMap?.get(brainRegionNotation) as BrainRegion
@@ -242,4 +296,45 @@ export function useAreTopLevelNodes() {
     },
     [brainRegionByNotationMap]
   );
+}
+
+export function useValidateEdit() {
+  const edits = useLoadable(editsLoadableAtom, []);
+
+  return (edit: Partial<MicroConnectomeEditEntry>) => {
+    if (!edit.name) return false;
+
+    const isNameDuplicated = edits?.find(
+      (existingEdit) => existingEdit.name === edit.name && existingEdit.id !== edit.id
+    );
+    if (isNameDuplicated) {
+      return false;
+    }
+
+    if (
+      !edit.srcSelection ||
+      !edit.dstSelection ||
+      !edit.operation ||
+      !edit.variantName ||
+      !edit.params
+    )
+      return false;
+
+    const paramsValid = Object.values(edit.params ?? {}).map((param) =>
+      edit.operation === 'setAlgorithm'
+        ? isNumber(param)
+        : isNumber(param.multiplier) && isNumber(param.offset)
+    );
+    if (!paramsValid) return false;
+
+    if (edit.operation === 'modifyParams') {
+      const zeroTransform = Object.values(edit.params).every(
+        (param) => param.multiplier === 1 && param.offset === 0
+      );
+
+      if (zeroTransform) return false;
+    }
+
+    return true;
+  };
 }

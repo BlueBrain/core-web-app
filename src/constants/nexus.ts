@@ -1,6 +1,5 @@
-import { IdType } from '@/types/nexus';
-
 export const metadataKeys = [
+  '@id',
   '_constrainedBy',
   '_createdAt',
   '_createdBy',
@@ -14,5 +13,3 @@ export const metadataKeys = [
   '_updatedAt',
   '_updatedBy',
 ];
-
-export const schemas: Partial<Record<IdType, string>> = {};

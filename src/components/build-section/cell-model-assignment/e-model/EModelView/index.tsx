@@ -1,18 +1,23 @@
 import { Divider } from 'antd';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import ExamplarMorphology from './ExamplarMorphology';
+import ExemplarMorphology from './ExemplarMorphology';
 import ExperimentalTraces from './ExperimentalTraces';
 import FeatureSelectionContainer from './FeatureSelectionContainer';
 import Mechanism from './Mechanism';
 import SimulationParameters from './SimulationParameters';
+import EModelTitle from './EModelTitle';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
 export default function EModelView() {
   return (
-    <div className="h-[90vh] overflow-auto p-6">
-      <div className="text-3xl font-bold text-primary-8">cNAC_1234_2023</div>
+    <div className="h-[80vh] overflow-auto p-6">
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <DefaultLoadingSuspense>
+          <EModelTitle />
+        </DefaultLoadingSuspense>
+      </ErrorBoundary>
       <Divider />
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -25,7 +30,7 @@ export default function EModelView() {
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
-          <ExamplarMorphology />
+          <ExemplarMorphology />
         </DefaultLoadingSuspense>
       </ErrorBoundary>
 
@@ -47,7 +52,11 @@ export default function EModelView() {
 
       <Divider />
 
-      <Mechanism />
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <DefaultLoadingSuspense>
+          <Mechanism />
+        </DefaultLoadingSuspense>
+      </ErrorBoundary>
     </div>
   );
 }

@@ -273,13 +273,13 @@ const config: ExpDesignerConfig = {
       id: 'cameraPos',
       name: 'Camera position',
       type: 'position',
-      value: [100, 200, 300],
+      value: [-17970.783508199806, -17086.701412939885, -19588.70241470358],
     },
     {
       id: 'cameraTarget',
       name: 'Camera target',
       type: 'position',
-      value: [100, 200, 300],
+      value: [6612.504, 3938.164, 5712.791],
       hidden: true,
     },
     {

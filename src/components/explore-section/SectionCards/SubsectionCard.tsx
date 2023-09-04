@@ -51,7 +51,7 @@ export function SubsectionCard({ subsection, cardIndex }: SectionCardsProps) {
       </div>
 
       <div className="block">
-        <EyeIcon fill="white" className="w-auto h-3" />
+        <EyeIcon className="w-auto h-3 text-white" />
       </div>
     </Link>
   );

@@ -1,7 +1,7 @@
 import { ConfigProvider, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
-import { ExamplarMorphologyDataType, ExperimentalTracesDataType } from '@/types/e-model';
+import { ExemplarMorphologyDataType, ExperimentalTracesDataType } from '@/types/e-model';
 
 const theme = {
   components: {
@@ -12,7 +12,7 @@ const theme = {
   },
 };
 
-type SupportedDataTypes = ExamplarMorphologyDataType | ExperimentalTracesDataType;
+type SupportedDataTypes = ExemplarMorphologyDataType | ExperimentalTracesDataType;
 
 type Props<T> = {
   dataSource: T[];
@@ -27,9 +27,9 @@ export default function DefaultEModelTable<T extends SupportedDataTypes>({
     <ConfigProvider theme={theme}>
       <Table<T>
         size="small"
-        className="mt-6 mb-12"
+        className="mt-6 mb-6"
         dataSource={dataSource}
-        pagination={false}
+        pagination={{ hideOnSinglePage: true }}
         rowKey="@id"
         columns={columns}
       />

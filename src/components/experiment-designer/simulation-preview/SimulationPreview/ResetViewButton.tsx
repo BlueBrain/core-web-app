@@ -15,7 +15,7 @@ export default function ResetViewButton({ onResetCamera, isDisabled }: ResetView
       }`}
     >
       Reset view
-      <EyeIcon className="ml-10" fill={isDisabled ? '#434343' : '#fff'} />
+      <EyeIcon className="ml-10" />
     </button>
   );
 }

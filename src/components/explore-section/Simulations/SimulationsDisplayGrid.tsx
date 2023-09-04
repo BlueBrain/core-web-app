@@ -55,7 +55,6 @@ export default function SimulationsDisplayGrid({ display, status }: SimulationDi
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);
-
   const xDimensionValues = useMemo(() => {
     if (xDimension) {
       return calculateDimensionValues(xDimension.value);
@@ -128,11 +127,9 @@ export default function SimulationsDisplayGrid({ display, status }: SimulationDi
                 </Col>
               );
             }
-
             const simulation =
               simulations &&
               findSimulation(x, y, xDimension, yDimension, simulations, status, otherDimensions);
-
             return (
               <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
                 {simulation ? (

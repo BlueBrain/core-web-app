@@ -4,11 +4,7 @@ import { atom } from 'jotai';
 import { eModelAssignmentConfigIdAtom } from './index';
 import sessionAtom from '@/state/session';
 
-import {
-  fetchResourceById,
-  fetchGeneratorTaskActivity,
-  fetchResourceSourceById,
-} from '@/api/nexus';
+import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
 import {
   EModelAssignmentConfigResource,
   DetailedCircuitResource,
@@ -38,7 +34,7 @@ export const configSourceAtom = atom<Promise<EModelAssignmentConfig | null>>(asy
 
   if (!session || !id) return null;
 
-  return fetchResourceSourceById<EModelAssignmentConfig>(id, session);
+  return fetchResourceById<EModelAssignmentConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

@@ -9,17 +9,29 @@ import {
   stratify,
   treemap,
   treemapSlice,
-  Selection,
+  Selection as D3Selection,
   ScaleBand,
   scaleLinear,
   max,
   pointer,
 } from 'd3';
 import { AggregatedParamViewEntry, AggregatedVariantViewEntry } from './micro-connectome-worker';
-import { VariantLabel } from './types';
+import { VariantLabel, PathwaySideSelection as Selection } from './types';
 import { variantLabel } from './constants';
+import { getSelectionLabel } from './utils';
 import { textColor } from '@/util/color';
 import { formatNumber } from '@/util/common';
+
+const layout = {
+  axisBar: {
+    height: '38px',
+    borderRadius: '5px',
+  },
+  navUpBar: {
+    width: '71px',
+    hight: '24px',
+  },
+};
 
 // TODO
 // * Add proper types.
@@ -29,14 +41,14 @@ import { formatNumber } from '@/util/common';
 // * Refactor and clean up.
 
 type MicroConnectomePlotBaseProps = {
-  srcLabels: string[];
-  dstLabels: string[];
-  labelDescriptionMap: Map<string, string>;
-  onEntryClick: (srcLabel: string | null, dstLabel: string | null) => void;
+  srcSelections: Selection[];
+  dstSelections: Selection[];
+  brainRegionNotationTitleMap: Map<string, string>;
+  onEntryClick: (srcSelection: Selection | null, dstSelection: Selection | null) => void;
   navUpDisabled: { src: boolean; dst: boolean };
   onNavUpClick: (src: boolean, dst: boolean) => void;
   colorScale: (value: number) => string;
-  labelColorMap: Map<string, string>;
+  brainRegionNotationColorMap: Map<string, string>;
 };
 
 type MicroConnectomeVariantPlotProps = MicroConnectomePlotBaseProps & {
@@ -58,18 +70,22 @@ type RenderFnBaseArgs = {
 export const margin = { top: 0, right: 30, bottom: 74, left: 74 };
 
 function isLeafNode(entry: AggregatedParamViewEntry): boolean {
-  const [, srcMtype] = entry.srcLabel.split('.');
-  const [, dstMtype] = entry.dstLabel.split('.');
-
-  return !!srcMtype && !!dstMtype;
+  return !!entry.srcSelection.mtype && !!entry.dstSelection.mtype;
 }
 
 function getAggregatedVariantEntryTooltipHtml(
   entry: AggregatedVariantViewEntry,
-  labelDescriptionMap: Map<string, string>
+  brainRegionNotationTitleMap: Map<string, string>
 ) {
-  const srcHeader = `Pre-synaptic: ${labelDescriptionMap.get(entry.srcLabel)}`;
-  const dstHeader = `Post-synaptic: ${labelDescriptionMap.get(entry.dstLabel)}`;
+  const srcBrainRegionTitle = brainRegionNotationTitleMap.get(
+    entry.srcSelection.brainRegionNotation
+  );
+  const srcHeader = `Pre-synaptic: ${srcBrainRegionTitle}`;
+
+  const dstBrainRegionTitle = brainRegionNotationTitleMap.get(
+    entry.dstSelection.brainRegionNotation
+  );
+  const dstHeader = `Post-synaptic: ${dstBrainRegionTitle}`;
 
   const nPathwaysTotal = Object.values(entry.variantCount).reduce((sum, count) => sum + count, 0);
 
@@ -95,10 +111,17 @@ function getAggregatedVariantEntryTooltipHtml(
 
 function getAggregatedParamEntryTooltipHtml(
   entry: AggregatedParamViewEntry,
-  labelDescriptionMap: Map<string, string>
+  brainRegionNotationTitleMap: Map<string, string>
 ) {
-  const srcHeader = `Pre-synaptic: ${labelDescriptionMap.get(entry.srcLabel)}`;
-  const dstHeader = `Post-synaptic: ${labelDescriptionMap.get(entry.dstLabel)}`;
+  const srcBrainRegionTitle = brainRegionNotationTitleMap.get(
+    entry.srcSelection.brainRegionNotation
+  );
+  const srcHeader = `Pre-synaptic: ${srcBrainRegionTitle}`;
+
+  const dstBrainRegionTitle = brainRegionNotationTitleMap.get(
+    entry.dstSelection.brainRegionNotation
+  );
+  const dstHeader = `Post-synaptic: ${dstBrainRegionTitle}`;
 
   return `
     <h3>${srcHeader}</h3>
@@ -119,7 +142,9 @@ function getPlotSize(container: HTMLDivElement): { width: number; height: number
   return { width, height };
 }
 
-function createPlotBase(container: HTMLDivElement): Selection<SVGGElement, unknown, null, unknown> {
+function createPlotBase(
+  container: HTMLDivElement
+): D3Selection<SVGGElement, unknown, null, unknown> {
   const { width, height } = getPlotSize(container);
 
   return select(container)
@@ -133,16 +158,19 @@ function createPlotBase(container: HTMLDivElement): Selection<SVGGElement, unkno
 
 function createPlotAxis(
   container: HTMLDivElement,
-  plotBase: Selection<SVGGElement, unknown, null, undefined>,
-  srcLabels: string[],
-  dstLabels: string[],
+  plotBase: D3Selection<SVGGElement, unknown, null, undefined>,
+  srcSelections: Selection[],
+  dstSelections: Selection[],
   navUpDisabled: { src: boolean; dst: boolean },
-  labelDescriptionMap: Map<string, string>,
+  brainRegionNotationTitleMap: Map<string, string>,
   onEntryClick: (srcLabel: string | null, dstLabel: string | null) => void,
   onNavUpClick: (src: boolean, dst: boolean) => void,
-  labelColorMap: Map<string, string>
+  brainRegionNotationColorMap: Map<string, string>
 ): { x: ScaleBand<string>; y: ScaleBand<string> } {
   const { width, height } = getPlotSize(container);
+
+  const srcLabels = srcSelections.map((selection) => getSelectionLabel(selection));
+  const dstLabels = dstSelections.map((selection) => getSelectionLabel(selection));
 
   // Build X scales and axis:
   const x = scaleBand().range([0, width]).domain(dstLabels).padding(0.01);
@@ -260,7 +288,7 @@ function createPlotAxis(
       .text('∨');
   }
 
-  const srcLabelsContainer: Selection<SVGGElement, unknown, null, undefined> = plotBase
+  const srcLabelsContainer: D3Selection<SVGGElement, unknown, null, undefined> = plotBase
     .select('.srcLabels')
     .node()
     ? plotBase.select('.srcLabels')
@@ -268,15 +296,19 @@ function createPlotAxis(
 
   srcLabelsContainer
     .selectAll()
-    .data(srcLabels)
+    .data(srcSelections)
     .enter()
     .append('rect')
     .attr('x', () => -50)
-    .attr('y', (srcLabel) => y(srcLabel) as number)
+    .attr('y', (srcSelection) => y(getSelectionLabel(srcSelection)) as number)
+    // .attr('rx', 10)
     .attr('width', 50)
     .attr('height', y.bandwidth())
     .attr('title', 'test')
-    .style('fill', (label) => labelColorMap.get(label.split('.')[0]) ?? 'grey')
+    .style(
+      'fill',
+      (srcSelection) => brainRegionNotationColorMap.get(srcSelection.brainRegionNotation) ?? 'grey'
+    )
     .style('opacity', '0.85')
     .style('cursor', 'pointer')
     .on('mouseover', function mouseOverHandler() {
@@ -287,9 +319,34 @@ function createPlotAxis(
     })
     .on('click', (e: any) => onEntryClick(e.target.__data__, null))
     .append('title')
-    .text((label) => labelDescriptionMap.get(label) as string);
+    .text(
+      (srcSelection) => brainRegionNotationTitleMap.get(srcSelection.brainRegionNotation) as string
+    );
 
-  const dstLabelsContainer: Selection<SVGGElement, unknown, null, undefined> = plotBase
+  srcLabelsContainer
+    .selectAll()
+    .data(srcSelections)
+    .enter()
+    .append('text')
+    .html((srcSelection) => {
+      const { brainRegionNotation, mtype } = srcSelection;
+      return mtype
+        ? `<tspan x="0" dy="-0.4em">${brainRegionNotation}</tspan><tspan x="0" dy="1.2em">${mtype}</tspan>`
+        : brainRegionNotation;
+    })
+    .attr(
+      'transform',
+      (srcSelection) => `translate(-25, ${y(getSelectionLabel(srcSelection)) + y.bandwidth() / 2})`
+    )
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .style('fill', (srcSelection) =>
+      textColor(brainRegionNotationColorMap.get(srcSelection.brainRegionNotation) ?? 'grey')
+    )
+    .style('font-size', '12px')
+    .style('pointer-events', 'none');
+
+  const dstLabelsContainer: D3Selection<SVGGElement, unknown, null, undefined> = plotBase
     .select('.dstLabels')
     .node()
     ? plotBase.select('.dstLabels')
@@ -297,15 +354,19 @@ function createPlotAxis(
 
   dstLabelsContainer
     .selectAll()
-    .data(dstLabels)
+    .data(dstSelections)
     .enter()
     .append('rect')
-    .attr('x', (dstLabel) => x(dstLabel) as number)
+    .attr('x', (dstSelection) => x(getSelectionLabel(dstSelection)) as number)
     .attr('y', () => height + 1)
+    // .attr('rx', 10)
     .attr('width', x.bandwidth())
     .attr('height', 50)
     .attr('title', 'test')
-    .style('fill', (label) => labelColorMap.get(label.split('.')[0]) ?? 'grey')
+    .style(
+      'fill',
+      (dstSelection) => brainRegionNotationColorMap.get(dstSelection.brainRegionNotation) ?? 'grey'
+    )
     .style('opacity', '0.85')
     .style('cursor', 'pointer')
     .on('mouseover', function mouseOverHandler() {
@@ -316,75 +377,50 @@ function createPlotAxis(
     })
     .on('click', (e: any) => onEntryClick(null, e.target.__data__))
     .append('title')
-    .text((label) => labelDescriptionMap.get(label) as string);
+    .text(
+      (dstSelection) => brainRegionNotationTitleMap.get(dstSelection.brainRegionNotation) as string
+    );
 
-  const srcAxisContainer: Selection<SVGGElement, unknown, null, undefined> =
-    plotBase.select('.srcAxis');
-
-  if (srcAxisContainer.node()) {
-    srcAxisContainer.call(axisLeft(y));
-  } else {
-    plotBase
-      .append('g')
-      .attr('class', 'srcAxis')
-      .style('pointer-events', 'none')
-      .call(axisLeft(y))
-      .call((g) =>
-        g
-          .selectAll<SVGGElement, string>('.tick')
-          .style('color', (label) => textColor(labelColorMap.get(label.split('.')[0]) ?? 'grey'))
-          .select('text')
-          .html((label: string) => {
-            const [brainRegionNotation, mtype] = label.split('.');
-            return mtype
-              ? `<tspan x="-9" dy="-0.2em">${brainRegionNotation}</tspan><tspan x="-9" dy="1.2em">${mtype}</tspan>`
-              : brainRegionNotation;
-          })
-      );
-  }
-
-  const dstAxisContainer: Selection<SVGGElement, unknown, null, undefined> =
-    plotBase.select('.dstAxis');
-
-  if (dstAxisContainer.node()) {
-    dstAxisContainer.call(axisBottom(x));
-  } else {
-    plotBase
-      .append('g')
-      .attr('class', 'dstAxis')
-      .attr('transform', `translate(0, ${height})`)
-      .style('pointer-events', 'none')
-      .call(axisBottom(x))
-      .call((g) =>
-        g
-          .selectAll<SVGGElement, string>('.tick')
-          .style('color', (label) => textColor(labelColorMap.get(label.split('.')[0]) ?? 'grey'))
-          .select('text')
-          .html((label: string) => {
-            const [brainRegionNotation, mtype] = label.split('.');
-            return mtype
-              ? `<tspan x="0" dy="0.8em">${brainRegionNotation}</tspan><tspan x="0" dy="1.2em">${mtype}</tspan>`
-              : brainRegionNotation;
-          })
-      );
-  }
+  dstLabelsContainer
+    .selectAll()
+    .data(dstSelections)
+    .enter()
+    .append('text')
+    .html((dstSelection) => {
+      const { brainRegionNotation, mtype } = dstSelection;
+      return mtype
+        ? `<tspan x="0" dy="-0.4em">${brainRegionNotation}</tspan><tspan x="0" dy="1.2em">${mtype}</tspan>`
+        : brainRegionNotation;
+    })
+    .attr(
+      'transform',
+      (dstSelection) =>
+        `translate(${x(getSelectionLabel(dstSelection)) + x.bandwidth() / 2}, ${height + 25})`
+    )
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .style('fill', (dstSelection) =>
+      textColor(brainRegionNotationColorMap.get(dstSelection.brainRegionNotation) ?? 'grey')
+    )
+    .style('font-size', '12px')
+    .style('pointer-events', 'none');
 
   return { x, y };
 }
 
 function renderVariantPlotContent(
   container: HTMLDivElement,
-  plotBase: Selection<SVGGElement, unknown, null, undefined>,
+  plotBase: D3Selection<SVGGElement, unknown, null, undefined>,
   viewData: AggregatedVariantViewEntry[],
-  labelDescriptionMap: Map<string, string>,
+  brainRegionNotationTitleMap: Map<string, string>,
   scaleBand: {
     x: ScaleBand<string>;
     y: ScaleBand<string>;
   },
-  onEntryClick: (srcLabel: string | null, dstLabel: string | null) => void,
+  onEntryClick: (srcSelection: Selection | null, dstSelection: Selection | null) => void,
   colorScale: (variantIdx: number) => string
 ): void {
-  const tooltip: Selection<HTMLDivElement, unknown, null, undefined> = select(container)
+  const tooltip: D3Selection<HTMLDivElement, unknown, null, undefined> = select(container)
     .select('.tooltip')
     .node()
     ? select(container).select('.tooltip')
@@ -402,6 +438,9 @@ function renderVariantPlotContent(
         .style('position', 'absolute')
         .style('pointer-events', 'none');
 
+  const hasData = (d: AggregatedVariantViewEntry): boolean =>
+    Object.values(d.variantCount).reduce((sum, count) => sum + count, 0) !== 0;
+
   const onMouseover = function onMouseover(d) {
     tooltip.style('opacity', 1);
 
@@ -417,7 +456,7 @@ function renderVariantPlotContent(
       .html(
         getAggregatedVariantEntryTooltipHtml(
           e.currentTarget.__data__ as AggregatedVariantViewEntry,
-          labelDescriptionMap
+          brainRegionNotationTitleMap
         )
       );
   };
@@ -428,14 +467,17 @@ function renderVariantPlotContent(
     select(this).style('stroke', 'none').style('opacity', 0.85);
   };
 
-  const onEntryClickLocal = (srcLabel: string | null, dstLabel: string | null) => {
+  const onEntryClickLocal = (
+    srcSelection: D3Selection | null,
+    dstSelection: D3Selection | null
+  ) => {
     tooltip.style('opacity', 0);
-    onEntryClick(srcLabel, dstLabel);
+    onEntryClick(srcSelection, dstSelection);
   };
 
   const { x, y } = scaleBand;
 
-  const contentContainer: Selection<SVGGElement, unknown, null, undefined> = plotBase
+  const contentContainer: D3Selection<SVGGElement, unknown, null, undefined> = plotBase
     .select('.content')
     .node()
     ? plotBase.select('.content')
@@ -444,8 +486,8 @@ function renderVariantPlotContent(
   const getTreeMapData = (dataEntry: AggregatedVariantViewEntry) =>
     treemap()
       .size([x.bandwidth(), y.bandwidth()])
+      .padding(0)
       .tile(treemapSlice)(
-        // .padding(1)
         stratify()(
           Object.entries(dataEntry.variantCount)
             .map(([variantName, value]) => ({
@@ -464,14 +506,22 @@ function renderVariantPlotContent(
     .data(viewData)
     .enter()
     .append('g')
-    .attr('transform', (d) => `translate(${x(d.dstLabel)},${y(d.srcLabel)})`)
+    .attr('transform', (d) => {
+      const xVal = x(getSelectionLabel(d.dstSelection));
+      const yVal = y(getSelectionLabel(d.srcSelection));
+
+      return `translate(${xVal},${yVal})`;
+    })
     .style('cursor', 'pointer')
     .on('click', (d) =>
-      onEntryClickLocal(d.currentTarget.__data__.srcLabel, d.currentTarget.__data__.dstLabel)
+      onEntryClickLocal(
+        d.currentTarget.__data__.srcSelection,
+        d.currentTarget.__data__.dstSelection
+      )
     );
 
   primaryLevelGroupEnterSelection
-    .filter((d) => Object.values(d.variantCount).reduce((sum, count) => sum + count, 0) === 0)
+    .filter((d) => !hasData(d))
     .append('rect')
     .attr('width', () => x.bandwidth())
     .attr('height', () => y.bandwidth())
@@ -479,7 +529,7 @@ function renderVariantPlotContent(
     .style('fill', 'darkslategray');
 
   primaryLevelGroupEnterSelection
-    .filter((d) => Object.values(d.variantCount).reduce((sum, count) => sum + count, 0) === 0)
+    .filter((d) => !hasData(d))
     .append('text')
     .text('No data')
     .attr('x', x.bandwidth() / 2)
@@ -492,6 +542,7 @@ function renderVariantPlotContent(
     .style('opacity', 0.24);
 
   primaryLevelGroupEnterSelection
+    .filter(hasData)
     .append('g')
     .style('opacity', 0.85)
     .on('mouseover', onMouseover)
@@ -509,6 +560,7 @@ function renderVariantPlotContent(
     .style('fill', (d) => d.data.color);
 
   primaryLevelGroupEnterSelection
+    .filter(hasData)
     .selectAll()
     .data(getTreeMapData)
     .enter()
@@ -521,7 +573,7 @@ function renderVariantPlotContent(
         : ''
     )
     .attr('font-size', '12px')
-    .attr('fill', (d) => textColor(d.data.color))
+    .attr('fill', (d) => textColor(d.data.color ?? 'gray'))
     .style('opacity', function getTextOpacity(d) {
       const sufficientHeight = d.y1 - d.y0 > 22;
       if (!sufficientHeight) return 0;
@@ -536,19 +588,19 @@ function renderVariantPlotContent(
 
 function renderParamPlotContent(
   container: HTMLDivElement,
-  plotBase: Selection<SVGGElement, unknown, null, undefined>,
+  plotBase: D3Selection<SVGGElement, unknown, null, undefined>,
   viewData: AggregatedParamViewEntry[],
   scaleBand: {
     x: ScaleBand<string>;
     y: ScaleBand<string>;
   },
-  labelDescriptionMap: Map<string, string>,
-  onEntryClick: (srcLabel: string | null, dstLabel: string | null) => void,
+  brainRegionNotationTitleMap: Map<string, string>,
+  onEntryClick: (srcSelection: Selection | null, dstSelection: Selection | null) => void,
   colorScale: (paraValue: number) => string
 ) {
   const { x, y } = scaleBand;
 
-  const tooltip: Selection<HTMLDivElement, unknown, null, undefined> = select(container)
+  const tooltip: D3Selection<HTMLDivElement, unknown, null, undefined> = select(container)
     .select('.tooltip')
     .node()
     ? select(container).select('.tooltip')
@@ -581,7 +633,7 @@ function renderParamPlotContent(
       .html(
         getAggregatedParamEntryTooltipHtml(
           e.currentTarget.__data__ as AggregatedVariantViewEntry,
-          labelDescriptionMap
+          brainRegionNotationTitleMap
         )
       );
   };
@@ -592,12 +644,12 @@ function renderParamPlotContent(
     select(this).style('stroke', 'none').style('opacity', 0.85);
   };
 
-  const onEntryClickLocal = (srcLabel: string | null, dstLabel: string | null) => {
+  const onEntryClickLocal = (srcSelection: Selection | null, dstSelection: Selection | null) => {
     tooltip.style('opacity', 0);
-    onEntryClick(srcLabel, dstLabel);
+    onEntryClick(srcSelection, dstSelection);
   };
 
-  const contentContainer: Selection<SVGGElement, unknown, null, undefined> = plotBase
+  const contentContainer: D3Selection<SVGGElement, unknown, null, undefined> = plotBase
     .select('.content')
     .node()
     ? plotBase.select('.content')
@@ -608,10 +660,18 @@ function renderParamPlotContent(
     .data(viewData)
     .enter()
     .append('g')
-    .attr('transform', (d) => `translate(${x(d.dstLabel)},${y(d.srcLabel)})`)
+    .attr('transform', (d) => {
+      const xVal = x(getSelectionLabel(d.dstSelection));
+      const yVal = y(getSelectionLabel(d.srcSelection));
+
+      return `translate(${xVal},${yVal})`;
+    })
     .style('cursor', 'pointer')
     .on('click', (d) =>
-      onEntryClickLocal(d.currentTarget.__data__.srcLabel, d.currentTarget.__data__.dstLabel)
+      onEntryClickLocal(
+        d.currentTarget.__data__.srcSelection,
+        d.currentTarget.__data__.dstSelection
+      )
     );
 
   primaryLevelGroupEnterSelection
@@ -720,34 +780,35 @@ type RenderVariantPlotArg = RenderFnBaseArgs & Omit<MicroConnectomeVariantPlotPr
 
 function renderVariantPlot({
   container,
-  srcLabels,
-  dstLabels,
+  srcSelections,
+  dstSelections,
   navUpDisabled,
-  labelDescriptionMap,
+  brainRegionNotationTitleMap,
   viewData,
   colorScale,
   onEntryClick,
   onNavUpClick,
-  labelColorMap,
+  brainRegionNotationColorMap,
 }: RenderVariantPlotArg) {
   const plotBase = createPlotBase(container);
 
   const { x, y } = createPlotAxis(
     container,
     plotBase,
-    srcLabels,
-    dstLabels,
+    srcSelections,
+    dstSelections,
     navUpDisabled,
-    labelDescriptionMap,
+    brainRegionNotationTitleMap,
     onEntryClick,
     onNavUpClick,
-    labelColorMap
+    brainRegionNotationColorMap
   );
+
   renderVariantPlotContent(
     container,
     plotBase,
     viewData,
-    labelDescriptionMap,
+    brainRegionNotationTitleMap,
     { x, y },
     onEntryClick,
     colorScale
@@ -758,35 +819,36 @@ type RenderParamPlotArg = RenderFnBaseArgs & Omit<MicroConnectomeParamPlotProps,
 
 function renderParamPlot({
   container,
-  srcLabels,
-  dstLabels,
+  srcSelections,
+  dstSelections,
   navUpDisabled,
-  labelDescriptionMap,
+  brainRegionNotationTitleMap,
   viewData,
   colorScale,
   onEntryClick,
   onNavUpClick,
-  labelColorMap,
+  brainRegionNotationColorMap,
 }: RenderParamPlotArg): void {
   const plotBase = createPlotBase(container);
 
   const { x, y } = createPlotAxis(
     container,
     plotBase,
-    srcLabels,
-    dstLabels,
+    srcSelections,
+    dstSelections,
     navUpDisabled,
-    labelDescriptionMap,
+    brainRegionNotationTitleMap,
     onEntryClick,
     onNavUpClick,
-    labelColorMap
+    brainRegionNotationColorMap
   );
+
   renderParamPlotContent(
     container,
     plotBase,
     viewData,
     { x, y },
-    labelDescriptionMap,
+    brainRegionNotationTitleMap,
     onEntryClick,
     colorScale
   );
@@ -794,34 +856,34 @@ function renderParamPlot({
 
 export default function MicroConnectomePlot({
   type,
-  srcLabels,
-  dstLabels,
+  srcSelections,
+  dstSelections,
   navUpDisabled,
-  labelDescriptionMap,
+  brainRegionNotationTitleMap,
   viewData,
   colorScale,
   onEntryClick,
   onNavUpClick,
-  labelColorMap,
+  brainRegionNotationColorMap,
 }: MicroConnectomePlotProps) {
   const plotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!srcLabels?.length || !dstLabels?.length || !viewData) return;
+    if (!srcSelections?.length || !dstSelections?.length || !viewData) return;
 
     const container = plotRef.current as HTMLDivElement;
 
     const renderPlotArg = {
       container,
-      srcLabels,
-      dstLabels,
+      srcSelections,
+      dstSelections,
       navUpDisabled,
-      labelDescriptionMap,
+      brainRegionNotationTitleMap,
       viewData,
       colorScale,
       onEntryClick,
       onNavUpClick,
-      labelColorMap,
+      brainRegionNotationColorMap,
     };
 
     if (type === 'variant') {
@@ -835,15 +897,16 @@ export default function MicroConnectomePlot({
       removePlot(container);
     };
   }, [
-    srcLabels,
-    dstLabels,
-    labelDescriptionMap,
+    srcSelections,
+    dstSelections,
+    brainRegionNotationTitleMap,
     viewData,
     colorScale,
     onEntryClick,
     type,
-    labelColorMap,
+    brainRegionNotationColorMap,
     onNavUpClick,
+    navUpDisabled,
   ]);
 
   return <div className="h-full" ref={plotRef} />;

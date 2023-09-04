@@ -38,7 +38,7 @@ export type ZoomRange = {
 
 export interface TotalHits {
   relation: string;
-  value: number;
+  value: number | null;
 }
 export interface Distribution {
   contentSize: number;
@@ -67,11 +67,13 @@ export interface ContributorsEntity {
 export interface NumericEntity {
   label: string;
   unit: string;
-  value: number | string;
+  value?: number | string;
 }
 
 export interface SubjectAge extends NumericEntity {
-  value: number | string;
+  value?: number | string;
+  minValue?: number | string;
+  maxValue?: number | string;
   period?: number | string;
   unitCode?: string;
 }
@@ -86,14 +88,7 @@ export type Series = {
   value: number;
 };
 
-// TODO: dimension is a mock type
-export type Dimension = {
-  id: string;
-  label: string;
-  value: number[];
-};
-
-export type SimulationStatus = 'running' | 'done' | 'failed' | 'cancelled';
+export type SimulationStatus = 'Running' | 'Done' | 'Failed';
 
 export interface Weight {
   maxValue: number;

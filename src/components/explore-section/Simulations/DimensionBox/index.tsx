@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import {
   DimensionBoxProps,
@@ -8,6 +8,7 @@ import {
 } from '@/components/explore-section/Simulations/types';
 import AssignedDimensionBox from '@/components/explore-section/Simulations/DimensionBox/AssignedDimensionBox';
 import UnassignedDimensionBox from '@/components/explore-section/Simulations/DimensionBox/UnassignedDimensionBox';
+import { ensureArray } from '@/util/nexus';
 
 function DimensionTitle({ title, dismissible, dismissFunc, setStatus }: DimensionTitleProps) {
   return (
@@ -22,7 +23,10 @@ function DimensionTitle({ title, dismissible, dismissFunc, setStatus }: Dimensio
             setStatus('selection');
           }}
         >
-          Edit axes <EditOutlined />
+          <div className="flex flex-row align-center text-primary-6">
+            <span>Edit axis</span>
+            <EditOutlined className="ml-2" />
+          </div>
         </Button>
       )}
     </div>
@@ -37,6 +41,7 @@ export default function DimensionBox({
   dismissFunc,
   dismissible,
   isAxis,
+  possibleValues,
 }: DimensionBoxProps) {
   const [status, setStatus] = useState<Status>('initial');
 
@@ -49,9 +54,8 @@ export default function DimensionBox({
     }
     return '';
   };
-
   return (
-    <>
+    <Tooltip title={<div>Values: {ensureArray(possibleValues)?.join(',')}</div>}>
       <DimensionTitle
         dismissFunc={dismissFunc}
         title={title}
@@ -72,6 +76,6 @@ export default function DimensionBox({
           />
         )}
       </div>
-    </>
+    </Tooltip>
   );
 }

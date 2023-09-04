@@ -5,7 +5,6 @@ import { nexus } from '@/config';
 import {
   composeUrl,
   ComposeUrlParams,
-  createId,
   expandId,
   createGeneratorConfig,
   createDistribution,
@@ -36,6 +35,12 @@ import {
   SupportedConfigListTypes,
   MorphologyAssignmentConfigPayload,
   SynapseConfigPayload,
+  EntityCreation,
+  MicroConnectomeConfigPayload,
+  MicroConnectomeVariantSelectionOverrides,
+  MicroConnectomeVariantSelectionOverridesResource,
+  MicroConnectomeDataOverridesResource,
+  MicroConnectomeDataOverrides,
 } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -187,18 +192,6 @@ export function fetchResourceByUrl<T>(url: string, session: Session) {
   }).then<T>((res) => res.json());
 }
 
-export function fetchResourceSourceById<T>(
-  id: string,
-  session: Session,
-  options?: ComposeUrlParams
-) {
-  const url = composeUrl('resource', id, { ...options, source: true });
-
-  return fetch(url, {
-    headers: createHeaders(session.accessToken),
-  }).then<T>((res) => res.json());
-}
-
 export function listResourceLinksById<T>(
   id: string,
   session: Session,
@@ -244,8 +237,12 @@ export function updateResource(
   }).then((res) => res.json());
 }
 
-export function queryES<T>(query: Record<string, any>, session: Session) {
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es' });
+export function queryES<T>(
+  query: Record<string, any>,
+  session: Session,
+  params?: ComposeUrlParams
+) {
+  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es', ...params });
 
   return fetch(apiUrl, {
     method: 'POST',
@@ -259,14 +256,13 @@ export function queryES<T>(query: Record<string, any>, session: Session) {
 // #################################### Non-generic methods ##########################################
 
 export async function cloneCellCompositionConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<CellCompositionConfig>(id, session);
+  const configSource = await fetchResourceById<CellCompositionConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-composition-config.json', session);
 
   const clonedConfig: CellCompositionConfig = {
     ...configSource,
-    '@id': createId('cellcompositionconfig'),
     distribution: createGeneratorConfig({
       kgType: 'CellCompositionConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -277,14 +273,13 @@ export async function cloneCellCompositionConfig(id: string, session: Session) {
 }
 
 export async function cloneCellPositionConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<CellPositionConfig>(id, session);
+  const configSource = await fetchResourceById<CellPositionConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-position-config.json', session);
 
   const clonedConfig: CellPositionConfig = {
     ...configSource,
-    '@id': createId('cellpositionconfig'),
     distribution: createGeneratorConfig({
       kgType: 'CellPositionConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -295,14 +290,13 @@ export async function cloneCellPositionConfig(id: string, session: Session) {
 }
 
 export async function cloneEModelAssignmentConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<EModelAssignmentConfig>(id, session);
+  const configSource = await fetchResourceById<EModelAssignmentConfig>(id, session);
   const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'emodel-assignment-config.json', session);
 
   const clonedConfig: EModelAssignmentConfig = {
     ...configSource,
-    '@id': createId('emodelassignmentconfig'),
     distribution: createGeneratorConfig({
       kgType: 'EModelAssignmentConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -313,7 +307,7 @@ export async function cloneEModelAssignmentConfig(id: string, session: Session) 
 }
 
 export async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<MorphologyAssignmentConfig>(id, session);
+  const configSource = await fetchResourceById<MorphologyAssignmentConfig>(id, session);
   const payload: MorphologyAssignmentConfigPayload = await fetchJsonFileByUrl(
     configSource.distribution.contentUrl,
     session
@@ -327,7 +321,6 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
 
   const clonedConfig: MorphologyAssignmentConfig = {
     ...configSource,
-    '@id': createId('morphologyassignmentconfig'),
     distribution: createGeneratorConfig({
       kgType: 'MorphologyAssignmentConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -337,15 +330,141 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
   return createResource(clonedConfig, session);
 }
 
-export async function cloneMicroConnectomeConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<MicroConnectomeConfig>(id, session);
-  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+export async function cloneMacroConnectomeConfig(id: string, session: Session) {
+  const configSource = await fetchResourceById<MacroConnectomeConfig>(id, session);
+  const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
+    configSource.distribution.contentUrl,
+    session
+  );
 
-  const clonedPayloadMeta = await createJsonFile(payload, 'micro-connectome-config.json', session);
+  const overridesEntity = await fetchResourceById<WholeBrainConnectomeStrength>(
+    payload.overrides.connection_strength.id,
+    session,
+    { rev: payload.overrides.connection_strength.rev }
+  );
+  const overridesPayloadBuffer = await fetchFileByUrl(
+    overridesEntity.distribution.contentUrl,
+    session
+  ).then((res) => res.arrayBuffer());
+
+  const clonedOverridesPayloadMeta = await createFile(
+    overridesPayloadBuffer,
+    'overrides.arrow',
+    'application/arrow',
+    session
+  );
+  const clonedOverridesEntity: WholeBrainConnectomeStrength = {
+    ...overridesEntity,
+    distribution: createDistribution(clonedOverridesPayloadMeta),
+  };
+
+  await createResource(clonedOverridesEntity, session);
+
+  payload.overrides.connection_strength.id = clonedOverridesEntity['@id'];
+  payload.overrides.connection_strength.rev = 1;
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
+
+  const clonedConfig: MacroConnectomeConfig = {
+    ...configSource,
+    distribution: createDistribution(clonedPayloadMeta),
+  };
+
+  return createResource(clonedConfig, session);
+}
+
+export async function cloneMicroConnectomeConfig(id: string, session: Session) {
+  const config = await fetchResourceById<MicroConnectomeConfig>(id, session);
+  const payload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(
+    config.distribution.contentUrl,
+    session
+  );
+
+  const variantOverridesEntity =
+    await fetchResourceById<MicroConnectomeVariantSelectionOverridesResource>(
+      payload.overrides.variants.id,
+      session,
+      { rev: payload.overrides.variants.rev }
+    );
+
+  const variantOverridesPayloadBuffer = await fetchFileByUrl(
+    variantOverridesEntity.distribution.contentUrl,
+    session
+  ).then((res) => res.arrayBuffer());
+
+  const clonedVariantOverridesPayloadMeta = await createFile(
+    variantOverridesPayloadBuffer,
+    'variant-overrides.arrow',
+    'application/arrow',
+    session
+  );
+
+  const clonedVariantOverridesEntity: MicroConnectomeVariantSelectionOverrides = {
+    ...variantOverridesEntity,
+    distribution: createDistribution(clonedVariantOverridesPayloadMeta),
+  };
+
+  const clonedVariantOverridesEntityMeta = await createResource(
+    clonedVariantOverridesEntity,
+    session
+  );
+
+  const variantNames = Object.keys(payload.overrides)
+    .filter((key) => key !== 'variants')
+    .sort();
+
+  const paramOverridesEntities = await Promise.all(
+    variantNames.map((variantName) =>
+      fetchResourceById<MicroConnectomeDataOverridesResource>(
+        payload.overrides[variantName].id,
+        session,
+        { rev: payload.overrides[variantName].rev }
+      )
+    )
+  );
+
+  const paramOverridesPayloadBuffers = await Promise.all(
+    paramOverridesEntities.map((variantParamOverridesEntity) =>
+      fetchFileByUrl(variantParamOverridesEntity.distribution.contentUrl, session).then((res) =>
+        res.arrayBuffer()
+      )
+    )
+  );
+
+  const clonedParamOverridesPayloadMetas = await Promise.all(
+    variantNames.map((variantName, idx) =>
+      createFile(
+        paramOverridesPayloadBuffers[idx],
+        `${variantName}-param-overrides.arrow`,
+        'application/arrow',
+        session
+      )
+    )
+  );
+
+  const clonedParamOverridesEntities = await Promise.all(
+    variantNames.map((variantName, idx) => {
+      const dataOverridesEntity: MicroConnectomeDataOverrides = {
+        ...paramOverridesEntities[idx],
+        distribution: createDistribution(clonedParamOverridesPayloadMetas[idx]),
+      };
+
+      return createResource(dataOverridesEntity, session);
+    })
+  );
+
+  payload.overrides.variants.id = clonedVariantOverridesEntityMeta['@id'];
+  payload.overrides.variants.rev = 1;
+
+  variantNames.forEach((variantName, idx) => {
+    payload.overrides[variantName].id = clonedParamOverridesEntities[idx]['@id'];
+    payload.overrides[variantName].rev = 1;
+  });
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'microconnectome-config.json', session);
 
   const clonedConfig: MicroConnectomeConfig = {
-    ...configSource,
-    '@id': createId('microconnectomeconfig'),
+    ...config,
     distribution: createGeneratorConfig({
       kgType: 'MicroConnectomeConfig',
       payloadMetadata: clonedPayloadMeta,
@@ -357,10 +476,24 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
 
 export async function cloneSynapseConfig(id: string, session: Session) {
   const configSource = await fetchResourceById<SynapseConfig>(id, session);
-  const payload = await fetchJsonFileByUrl<SynapseConfigPayload>(
+  const payload = await fetchJsonFileByUrl<SynapseConfigPayload | {}>(
     configSource.distribution.contentUrl,
     session
   );
+
+  // Todo: Remove once BuildConfigs are migrated to include SynapseConfig
+  if (!('configuration' in payload)) {
+    const payloadMetadata = await createJsonFile({}, 'synapse-config.json', session);
+    const config: SynapseConfig = {
+      ...configSource,
+      distribution: createGeneratorConfig({
+        kgType: 'SynapseConfig',
+        payloadMetadata,
+      }).distribution,
+    };
+
+    return createResource(config, session);
+  }
 
   const synapticAssignmentResource = await fetchResourceByUrl<SynapseConfig>(
     payload.configuration.synapse_properties.id,
@@ -441,7 +574,6 @@ export async function cloneSynapseConfig(id: string, session: Session) {
 
   const config: SynapseConfig = {
     ...configSource,
-    '@id': createId('synapseconfig'),
     distribution: createGeneratorConfig({
       kgType: 'SynapseConfig',
       payloadMetadata: configMetadata,
@@ -451,58 +583,13 @@ export async function cloneSynapseConfig(id: string, session: Session) {
   return createResource(config, session);
 }
 
-export async function cloneMacroConnectomeConfig(id: string, session: Session) {
-  const configSource = await fetchResourceSourceById<MacroConnectomeConfig>(id, session);
-  const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
-    configSource.distribution.contentUrl,
-    session
-  );
-
-  const overridesEntity = await fetchResourceSourceById<WholeBrainConnectomeStrength>(
-    payload.overrides.connection_strength.id,
-    session,
-    { rev: payload.overrides.connection_strength.rev }
-  );
-  const overridesPayloadBuffer = await fetchFileByUrl(
-    overridesEntity.distribution.contentUrl,
-    session
-  ).then((res) => res.arrayBuffer());
-
-  const clonedOverridesPayloadMeta = await createFile(
-    overridesPayloadBuffer,
-    'overrides.arrow',
-    'application/arrow',
-    session
-  );
-  const clonedOverridesEntity: WholeBrainConnectomeStrength = {
-    ...overridesEntity,
-    '@id': createId('wholebrainconnectomestrength'),
-    distribution: createDistribution(clonedOverridesPayloadMeta),
-  };
-
-  await createResource(clonedOverridesEntity, session);
-
-  payload.overrides.connection_strength.id = clonedOverridesEntity['@id'];
-  payload.overrides.connection_strength.rev = 1;
-
-  const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
-
-  const clonedConfig: MacroConnectomeConfig = {
-    ...configSource,
-    '@id': createId('macroconnectomeconfig'),
-    distribution: createDistribution(clonedPayloadMeta),
-  };
-
-  return createResource(clonedConfig, session);
-}
-
 export async function cloneBrainModelConfig(
   configId: string,
   name: string,
   description: string,
   session: Session
 ) {
-  const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
+  const brainModelConfigSource = await fetchResourceById<BrainModelConfig>(configId, session);
 
   const clonedCellCompositionConfigMetadata = await cloneCellCompositionConfig(
     brainModelConfigSource.configs?.cellCompositionConfig['@id'],
@@ -541,7 +628,6 @@ export async function cloneBrainModelConfig(
 
   const clonedModelConfig: BrainModelConfig = {
     ...brainModelConfigSource,
-    '@id': createId('modelconfiguration'),
     name,
     description,
     configs: {
@@ -588,7 +674,7 @@ export async function renameBrainModelConfig(
   const configId = config['@id'];
   const rev = config._rev;
 
-  const brainModelConfigSource = await fetchResourceSourceById<BrainModelConfig>(configId, session);
+  const brainModelConfigSource = await fetchResourceById<BrainModelConfig>(configId, session);
 
   const renamedModelConfig = {
     ...brainModelConfigSource,
@@ -669,10 +755,9 @@ export async function createWorkflowConfigResource(
 ) {
   const createdFile = await createTextFile(fileContent, fileName, session);
 
-  const bbpWorkflowconfig: BbpWorkflowConfigResource = {
+  const bbpWorkflowconfig: EntityCreation<BbpWorkflowConfigResource> = {
     '@context': nexus.defaultContext,
     '@type': 'BbpWorkflowConfig',
-    '@id': createId('bbpworkflowconfig'),
     distribution: createDistribution(createdFile),
   };
 
@@ -689,11 +774,11 @@ export async function getVariantTaskConfigUrlFromCircuit(
   const variantTaskActivity = variantTaskActivities[0];
 
   const variantTaskConfig = await fetchResourceById<VariantTaskConfigResource>(
-    variantTaskActivity.used['@id'],
+    variantTaskActivity.used_config['@id'],
     session
   );
 
-  return `${variantTaskConfig._self}?rev=${variantTaskActivity.used_rev}`;
+  return composeUrl('resource', variantTaskConfig['@id'], { rev: variantTaskConfig._rev });
 }
 
 export async function cloneSimCampUIConfig(
@@ -702,19 +787,15 @@ export async function cloneSimCampUIConfig(
   description: string,
   session: Session
 ) {
-  const simCampUIConfig = await fetchResourceSourceById<SimulationCampaignUIConfig>(
-    configId,
-    session
-  );
+  const simCampUIConfig = await fetchResourceById<SimulationCampaignUIConfig>(configId, session);
 
   const payload = await fetchJsonFileByUrl(simCampUIConfig.distribution.contentUrl, session);
 
   const clonedPayloadMeta = await createJsonFile(payload, 'sim-campaign-ui-config.json', session);
 
-  const clonedConfig: SimulationCampaignUIConfig = {
+  const clonedConfig: EntityCreation<SimulationCampaignUIConfig> = {
     '@context': simCampUIConfig['@context'],
     '@type': simCampUIConfig['@type'],
-    '@id': createId('simulationcampaignuiconfig'),
     distribution: createDistribution(clonedPayloadMeta),
     used: simCampUIConfig.used,
     contribution: simCampUIConfig.contribution,
@@ -734,7 +815,7 @@ export async function renameSimCampUIConfig(
   const configId = config['@id'];
   const rev = config._rev;
 
-  const simCampUIConfigSource = await fetchResourceSourceById<SimulationCampaignUIConfigResource>(
+  const simCampUIConfigSource = await fetchResourceById<SimulationCampaignUIConfigResource>(
     configId,
     session
   );

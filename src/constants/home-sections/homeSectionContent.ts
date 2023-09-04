@@ -28,32 +28,32 @@ export const sectionContent: SingleCard[] = [
     items: [
       {
         name: 'Neuron electrophysiology',
-        type: 'https://neuroshapes.org/Trace',
+        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalTrace',
         url: '/explore/electrophysiology',
       },
       {
         name: 'Neuron morphology',
-        type: 'https://neuroshapes.org/NeuronMorphology',
+        type: 'https://neuroshapes.org/ReconstructedNeuronMorphology',
         url: '/explore/morphology',
       },
       {
         name: 'Bouton density',
-        type: 'https://neuroshapes.org/BoutonDensity',
+        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalBoutonDensity',
         url: '/explore/bouton-density',
       },
       {
         name: 'Neuron density',
-        type: 'https://neuroshapes.org/NeuronDensity',
+        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalNeuronDensity',
         url: '/explore/neuron-density',
       },
       {
         name: 'Layer thickness',
-        type: 'https://neuroshapes.org/LayerThickness',
+        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalLayerThickness',
         url: '/explore/layer-thickness',
       },
       {
         name: 'Synapse per connection',
-        type: 'https://neuroshapes.org/SynapsePerConnection',
+        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapsesPerConnection',
         url: '/explore/synapse-per-connection',
       },
     ],

@@ -1,0 +1,71 @@
+.outerContainer {
+  width: 100%;
+
+  :global(.ant-select-arrow),
+  :global(.ant-select-clear) {
+    top: 16px;
+  }
+}
+
+.outerContainer.extraPadding {
+  :global .ant-select-selection-overflow {
+    margin-top: 1.8rem;
+  }
+
+  :global .ant-select-selection-overflow-item {
+    margin-top: 0.5rem;
+  }
+}
+
+.container {
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: #313131;
+  cursor: pointer;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+}
+
+.colorTag {
+  height: 14px;
+  width: 14px;
+  margin-right: 0.5rem;
+}
+
+.downIcon {
+  transition: transform 0.3s ease-out;
+}
+
+.closeIcon {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.downIcon,
+.closeIcon {
+  font-size: 10px;
+  padding: 4px;
+  position: absolute;
+  right: 0.5rem;
+}
+
+.container:hover {
+  .downIcon {
+    transform: translateX(-2rem);
+  }
+
+  .closeIcon {
+    opacity: 1;
+  }
+}
+
+.mtypeList {
+  margin-top: 1rem;
+  max-height: 360px;
+  overflow-y: scroll;
+}

@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
@@ -8,41 +8,28 @@ import { mockEModelAssignedMap } from '@/constants/cell-model-assignment/e-model
 import { generateMapKey } from '@/util/cell-model-assignment';
 
 interface ETypeListItemProps {
-  item: EModelMenuItem;
+  eTypeItems: EModelMenuItem[];
+  mTypeName: string;
 }
 
-export default function ListItem({ item }: ETypeListItemProps) {
-  const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
+export default function ListItem({ eTypeItems, mTypeName }: ETypeListItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleExpand = () => {
-    setIsExpanded((oldValue) => !oldValue);
-  };
-
-  const handleClick = () => {
-    setSelectedEModel(item);
-  };
-
-  const eModelAssigned = mockEModelAssignedMap[generateMapKey(item.mType.label, item.label)] || '';
-
-  const isActive =
-    selectedEModel?.label === item.label && selectedEModel.mType.label === item.mType.label;
-
-  useEffect(() => {
-    if (!eModelAssigned) return;
-    setIsExpanded(true);
-  }, [eModelAssigned]);
+  const handleExpand = useCallback((newVal?: boolean) => {
+    setIsExpanded((oldValue) => newVal || !oldValue);
+  }, []);
 
   return (
     <div className="ml-6">
-      <MTypeLine name={item.mType.label} onExpand={handleExpand} isExpanded={isExpanded} />
-      <ETypeLine
-        name={item.label}
-        eModelAssigned={eModelAssigned}
-        onClick={handleClick}
-        isActive={isActive}
-        isExpanded={isExpanded}
-      />
+      <MTypeLine name={mTypeName} onExpand={handleExpand} isExpanded={isExpanded} />
+      {eTypeItems.map((eType) => (
+        <ETypeLine
+          key={eType.uuid}
+          eType={eType}
+          handleExpand={handleExpand}
+          isExpanded={isExpanded}
+        />
+      ))}
     </div>
   );
 }
@@ -65,22 +52,39 @@ function MTypeLine({ name, onExpand, isExpanded }: MTypeLineProps) {
 }
 
 type ETypeLineProps = {
-  name: string;
-  eModelAssigned: string;
-  onClick: () => void;
-  isActive: boolean;
+  eType: EModelMenuItem;
+  handleExpand: (val: boolean) => void;
   isExpanded: boolean;
 };
 
-function ETypeLine({ name, eModelAssigned, onClick, isActive, isExpanded }: ETypeLineProps) {
+function ETypeLine({ eType, handleExpand, isExpanded }: ETypeLineProps) {
+  const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
+
+  const handleClick = () => {
+    setSelectedEModel(eType);
+  };
+
+  const eModelAssigned =
+    mockEModelAssignedMap[generateMapKey(eType.mType.label, eType.label)] || '';
+
+  const isActive =
+    selectedEModel?.label === eType.label && selectedEModel.mType.label === eType.mType.label;
+
+  // programatically expand m-type list when e-type is assigned
+  useEffect(() => {
+    if (!eModelAssigned || isExpanded) return;
+
+    handleExpand(true);
+  }, [eModelAssigned, handleExpand, isExpanded]);
+
   return isExpanded ? (
-    <button onClick={onClick} type="button" className="bg-none border-none m-0 w-full">
+    <button onClick={handleClick} type="button" className="bg-none border-none m-0 w-full">
       <div
         className={`flex flex-row justify-between items-center ml-2 py-2 pl-2 ${
           isActive ? `bg-white text-primary-7` : `text-white`
         }`}
       >
-        <div className="font-bold">{name}</div>
+        <div className="font-bold">{eType.label}</div>
         <div className="text-sm pr-4">{eModelAssigned}</div>
       </div>
     </button>

@@ -1,25 +1,37 @@
 import { atom } from 'jotai';
+import groupBy from 'lodash/groupBy';
 
 import {
+  AllFeatureKeys,
   EModel,
   EModelConfiguration,
   EModelConfigurationParameter,
   EModelConfigurationPayload,
+  MechanismForUI,
   EModelMenuItem,
+  EModelUIConfig,
   EModelWorkflow,
-  ExamplarMorphologyDataType,
+  ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
+  ExtractionTargetsConfiguration,
+  ExtractionTargetsConfigurationPayload,
   FeatureParameterGroup,
+  FeaturePresetName,
+  NeuronMorphology,
   SimulationParameter,
+  Trace,
 } from '@/types/e-model';
-import {
-  mockExamplarMorphology,
-  mockExperimentalTraces,
-  mockFeatureParameters,
-} from '@/constants/cell-model-assignment/e-model';
-import { fetchJsonFileByUrl, fetchResourceById } from '@/api/nexus';
+import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { convertRemoteParamsForUI } from '@/services/e-model';
+import {
+  convertRemoteParamsForUI,
+  convertMorphologyForUI,
+  convertTracesForUI,
+  convertFeaturesForUI,
+  convertMechanismsForUI,
+} from '@/services/e-model';
+import { getEntityListByIdsQuery } from '@/queries/es';
+import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
@@ -36,16 +48,59 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
   return simParams;
 });
 
-export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>(
-  async () => mockFeatureParameters
-);
+export const featureSelectedPresetAtom = atom<FeaturePresetName>('firing_pattern');
 
-export const examplarMorphologyAtom = atom<Promise<ExamplarMorphologyDataType[] | null>>(
-  async () => mockExamplarMorphology
+export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>(async (get) => {
+  const eModelEditMode = get(eModelEditModeAtom);
+
+  if (eModelEditMode) {
+    const featureSelectedPreset = get(featureSelectedPresetAtom);
+    const featuresPerPreset = featureAutoTargets[featureSelectedPreset]
+      .efeatures as AllFeatureKeys[];
+
+    return convertFeaturesForUI(featuresPerPreset);
+  }
+
+  const session = get(sessionAtom);
+  const eModelExtractionTargetsConfiguration = await get(eModelExtractionTargetsConfigurationAtom);
+
+  if (!eModelExtractionTargetsConfiguration || !session) return null;
+
+  const { contentUrl } = eModelExtractionTargetsConfiguration.distribution;
+  const payload = await fetchJsonFileByUrl<ExtractionTargetsConfigurationPayload>(
+    contentUrl,
+    session
+  );
+  const featureNames = payload.targets.map((f) => f.efeature);
+  return convertFeaturesForUI(featureNames);
+});
+
+export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | null>>(
+  async (get) => {
+    const morphology = await get(eModelMorphologyAtom);
+
+    if (!morphology) return null;
+
+    return convertMorphologyForUI(morphology);
+  }
 );
 
 export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] | null>>(
-  async () => mockExperimentalTraces
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelExtractionTargetsConfiguration = await get(
+      eModelExtractionTargetsConfigurationAtom
+    );
+
+    if (!eModelExtractionTargetsConfiguration || !session) return null;
+
+    const traceIds = eModelExtractionTargetsConfiguration.uses.map((trace) => trace['@id']);
+
+    const tracesQuery = getEntityListByIdsQuery('Trace', traceIds);
+    const traces = await queryES<Trace>(tracesQuery, session, eModelTracesProjConfig);
+
+    return convertTracesForUI(traces);
+  }
 );
 
 // Accessing the project from where the current data of e-model is located
@@ -54,19 +109,30 @@ const eModelProjConfig = {
   project: 'mmb-emodels-for-synthesized-neurons',
 };
 
+const eModelTracesProjConfig = {
+  project: 'lnmce',
+};
+
 const eModelIdAtom = atom<Promise<string | null>>(
   async () => 'https://bbp.epfl.ch/neurosciencegraph/data/ff131327-704b-451e-a412-bef7ccf9daf0'
 );
 
 /* --------------------------------- EModel --------------------------------- */
 
-const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
+export const eModelAtom = atom<Promise<EModel | null>>(async (get) => {
   const session = get(sessionAtom);
   const eModelId = await get(eModelIdAtom);
 
   if (!session || !eModelId) return null;
 
-  const eModel = await fetchResourceById<EModel>(eModelId, session, eModelProjConfig);
+  return fetchResourceById<EModel>(eModelId, session, eModelProjConfig);
+});
+
+const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModel = await get(eModelAtom);
+
+  if (!session || !eModel) return null;
 
   return eModel.generation.activity.followedWorkflow['@id'];
 });
@@ -111,7 +177,7 @@ export const eModelConfigurationAtom = atom<Promise<EModelConfiguration | null>>
   return eModelConfiguration;
 });
 
-export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
+export const eModelConfigurationPayloadAtom = atom<Promise<EModelConfigurationPayload | null>>(
   async (get) => {
     const session = get(sessionAtom);
     const eModelConfiguration = await get(eModelConfigurationAtom);
@@ -119,7 +185,104 @@ export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] |
     if (!session || !eModelConfiguration) return null;
 
     const url = eModelConfiguration.distribution.contentUrl;
-    const fileContent = await fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
-    return fileContent.parameters;
+    return fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
   }
 );
+
+export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const eModelConfigurationPayload = await get(eModelConfigurationPayloadAtom);
+
+    if (!session || !eModelConfigurationPayload) return null;
+
+    return eModelConfigurationPayload.parameters;
+  }
+);
+
+export const eModelMorphologyAtom = atom<Promise<NeuronMorphology | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelConfiguration = await get(eModelConfigurationAtom);
+
+  if (!session || !eModelConfiguration) return null;
+
+  const morphologyId = eModelConfiguration.uses.find(
+    (usage) => usage['@type'] === 'NeuronMorphology'
+  )?.['@id'];
+
+  if (!morphologyId) return null;
+
+  return fetchResourceById<NeuronMorphology>(morphologyId, session, eModelProjConfig);
+});
+
+export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (get) => {
+  const session = get(sessionAtom);
+
+  if (!session) return null;
+
+  const eModelEditMode = get(eModelEditModeAtom);
+
+  if (eModelEditMode) {
+    const selectedEModel = get(selectedEModelAtom);
+    if (!selectedEModel) throw new Error('No selected e-model to edit');
+
+    type ETypeName = string;
+    const eType: ETypeName = selectedEModel.label;
+
+    type EModelMechanismsMapping = Record<ETypeName, MechanismForUI>;
+    const payload = await fetchJsonFileById<EModelMechanismsMapping>(eTypeMechanismMapId, session);
+
+    return convertMechanismsForUI(payload[eType]);
+  }
+
+  const eModelConfigurationPayload = await get(eModelConfigurationPayloadAtom);
+
+  if (!eModelConfigurationPayload) return null;
+
+  const mechanismsByLocation = groupBy(
+    eModelConfigurationPayload.mechanisms,
+    'location'
+  ) as MechanismForUI;
+
+  return convertMechanismsForUI(mechanismsByLocation);
+});
+
+/* --------------------- ExtractionTargetsConfiguration --------------------- */
+
+const eModelExtractionTargetsConfigurationIdAtom = atom<Promise<string | null>>(async (get) => {
+  const eModelWorkflow = await get(eModelWorkflowAtom);
+
+  if (!eModelWorkflow) return null;
+
+  const extractionTargetsConfiguration = eModelWorkflow.hasPart.find(
+    (part) => part['@type'] === 'ExtractionTargetsConfiguration'
+  );
+
+  if (!extractionTargetsConfiguration)
+    throw new Error('No ExtractionTargetsConfiguration found on EModelWorkflow');
+
+  return extractionTargetsConfiguration['@id'];
+});
+
+const eModelExtractionTargetsConfigurationAtom = atom<
+  Promise<ExtractionTargetsConfiguration | null>
+>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelExtractionTargetsConfigurationId = await get(
+    eModelExtractionTargetsConfigurationIdAtom
+  );
+
+  if (!session || !eModelExtractionTargetsConfigurationId) return null;
+
+  return fetchResourceById<ExtractionTargetsConfiguration>(
+    eModelExtractionTargetsConfigurationId,
+    session,
+    eModelProjConfig
+  );
+});
+
+/* --------------------------- EModelUIConfigAtom --------------------------- */
+
+export const eModelEditModeAtom = atom(false);
+
+export const eModelUIConfigAtom = atom<Partial<EModelUIConfig> | null>({});

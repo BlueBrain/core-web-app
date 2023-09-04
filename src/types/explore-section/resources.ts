@@ -197,9 +197,9 @@ export type SimulationCampaignResource = DeltaResource & {
 };
 
 export type Simulation = {
+  title: string;
   completedAt: string;
   dimensions: Record<string, number>;
-  // dimensions?: Dimension[];
   id: string;
   project: string;
   startedAt: string;

@@ -38,6 +38,9 @@ export enum SimulationPlaceholders {
   VIZ_DISPLAY_DENDRITES = 'VIZ_DISPLAY_DENDRITES',
   VIZ_DISPLAY_AXON = 'VIZ_DISPLAY_AXON',
   VIZ_CAMERA_POSITION = 'VIZ_CAMERA_POSITION',
+  VIZ_CAMERA_TARGET = 'VIZ_CAMERA_TARGET',
+  VIZ_CAMERA_UP = 'VIZ_CAMERA_UP',
+  VIZ_CAMERA_HEIGHT = 'VIZ_CAMERA_HEIGHT',
   VIZ_REPORT_TYPE = 'VIZ_REPORT_TYPE',
   VIZ_REPORT_NAME = 'VIZ_REPORT_NAME',
 }
@@ -84,13 +87,10 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
   ReportsSimCampaignMeta: {
     fileName: 'ReportsSimCampaignMeta.cfg',
     templateFile: `
-      [DEFAULT]
-      module-archive: unstable
-
       [ReportsSimCampaign]
-      reports: {"spikes": {"raster": {"node_sets": <%= ${AnalysisPlaceholders.RASTER_TARGETS} %>},
-                           "firing_rate_histogram": {"node_sets": <%= ${AnalysisPlaceholders.PSTH_TARGETS} %>}},
-                <%= ${SimulationPlaceholders.VIZ_REPORT_NAME} %>: {"trace": {"node_sets": <%= ${AnalysisPlaceholders.VOLTAGE_TARGETS} %>}}}
+      reports: {"spikes": {"raster": {"node_sets": <%= ${AnalysisPlaceholders.RASTER_TARGETS} %>, "time": "2:00:00"},
+                           "firing_rate_histogram": {"node_sets": <%= ${AnalysisPlaceholders.PSTH_TARGETS} %>, "time": "2:00:00"}},
+                <%= ${SimulationPlaceholders.VIZ_REPORT_NAME} %>: {"trace": {"node_sets": <%= ${AnalysisPlaceholders.VOLTAGE_TARGETS} %>, "time": "2:00:00"}}}
     `,
     placeholder: 'ReportsSimCampaignMeta',
   },
@@ -113,8 +113,10 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
       camera-view: front
       background-color: [1, 1, 1, 0]
       camera-position: <%= ${SimulationPlaceholders.VIZ_CAMERA_POSITION} %>
-      fps: 25
-      slowing-factor: 100
+      camera_target: <%= ${SimulationPlaceholders.VIZ_CAMERA_TARGET} %>
+      camera_up: <%= ${SimulationPlaceholders.VIZ_CAMERA_UP} %>
+      fps: 10
+      slowing-factor: 10
       start_frame: 0
       end_frame: -1
     `,

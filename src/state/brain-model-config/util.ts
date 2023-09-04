@@ -1,5 +1,4 @@
 import { Atom, atom } from 'jotai';
-import toLower from 'lodash/toLower';
 
 import {
   configSourceAtom as cellCompositionConfigSourceAtom,
@@ -22,7 +21,7 @@ import {
 } from './cell-model-assignment/m-model';
 
 import {
-  configSourceAtom as microConnectomeConfigSourceAtom,
+  configAtom as microConnectomeConfigSourceAtom, // source fixed
   partialCircuitAtom as microConnectomeBuildArtefact,
 } from './micro-connectome';
 
@@ -39,8 +38,7 @@ import {
 import sessionAtom from '@/state/session';
 
 import { createResource, updateResource } from '@/api/nexus';
-import { GeneratorConfig, IdType } from '@/types/nexus';
-import { createId } from '@/util/nexus';
+import { GeneratorConfig } from '@/types/nexus';
 
 type BuildStepName =
   | 'cellComposition'
@@ -78,14 +76,14 @@ const buildSteps: BuildStep[] = [
     buildArtefactAtom: morphologyAssignmentBuildArtefact,
   },
   {
-    name: 'microConnectome',
-    configSourceAtom: microConnectomeConfigSourceAtom,
-    buildArtefactAtom: microConnectomeBuildArtefact,
-  },
-  {
     name: 'macroConnectome',
     configSourceAtom: macroConnectomeConfigSourceAtom,
     buildArtefactAtom: macroConnectomeBuildArtefact,
+  },
+  {
+    name: 'microConnectome',
+    configSourceAtom: microConnectomeConfigSourceAtom,
+    buildArtefactAtom: microConnectomeBuildArtefact,
   },
 ];
 
@@ -106,6 +104,8 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
       buildSteps.findIndex((step) => step.name === buildStepName)
     );
 
+    let modelConfigHasUpdates = false;
+
     await Promise.all(
       stepsToInvalidate.map(async (step) => {
         const buildArtefact = await get(step.buildArtefactAtom);
@@ -117,12 +117,14 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
           throw new Error(`Generator config source for ${step.name} can not be loaded`);
         }
 
-        configSource['@id'] = createId(`${toLower(step.name)}config` as IdType);
         const configCloneMeta = await createResource(configSource, session);
 
         modelConfig.configs[`${step.name}Config`]['@id'] = configCloneMeta['@id'];
+        modelConfigHasUpdates = true;
       })
     );
+
+    if (!modelConfigHasUpdates) return;
 
     const modelConfigMeta = await get(modelConfigMetaAtom);
     if (!modelConfigMeta) {

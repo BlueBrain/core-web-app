@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
@@ -23,7 +23,7 @@ import {
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
-import LISTING_CONFIG from '@/constants/explore-section/es-terms-render';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import {
   activeColumnsAtom,
   aggregationsAtom,
@@ -33,9 +33,8 @@ import {
 export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
+  experimentTypeName: string;
 };
-
-const aggregationsLoadable = loadable(aggregationsAtom);
 
 function createFilterItemComponent(
   filter: Filter,
@@ -45,7 +44,7 @@ function createFilterItemComponent(
 ) {
   return function FilterItemComponent() {
     const { type } = filter;
-    const { nestedField } = LISTING_CONFIG[filter.field];
+    const { nestedField } = EXPLORE_FIELDS_CONFIG[filter.field];
 
     let agg;
 
@@ -129,10 +128,20 @@ function createFilterItemComponent(
   };
 }
 
-export default function ControlPanel({ children, toggleDisplay }: ControlPanelProps) {
-  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom);
+export default function ControlPanel({
+  children,
+  toggleDisplay,
+  experimentTypeName,
+}: ControlPanelProps) {
+  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom(experimentTypeName));
+
+  const aggregationsLoadable = useMemo(
+    () => loadable(aggregationsAtom(experimentTypeName)),
+    [experimentTypeName]
+  );
+
   const aggregations = useAtomValue(aggregationsLoadable);
-  const [filters, setFilters] = useAtom(filtersAtom);
+  const [filters, setFilters] = useAtom(filtersAtom(experimentTypeName));
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
 
@@ -171,7 +180,7 @@ export default function ControlPanel({ children, toggleDisplay }: ControlPanelPr
     content:
       filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
     display: activeColumns.includes(filter.field),
-    label: LISTING_CONFIG[filter.field].title,
+    label: EXPLORE_FIELDS_CONFIG[filter.field].title,
     type: filter.type,
     toggleFunc: () => onToggleActive && onToggleActive(filter.field),
   })) as FilterGroupProps['items'];

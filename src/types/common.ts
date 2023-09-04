@@ -13,6 +13,11 @@ export type PartialRecord<K extends keyof any, T> = {
   [P in K]?: T;
 };
 
+/**
+ * Constructs a uniot type, properties from the second type take precedence when there is a conflict.
+ */
+export type Merge<A, B> = Omit<A, keyof B> & B;
+
 export type ErrorComponentProps = {
   error: Error;
   reset: () => void;

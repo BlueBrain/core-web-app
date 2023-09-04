@@ -10,6 +10,7 @@ export type DimensionBoxProps = {
   dismissFunc?: () => void;
   dismissible: boolean;
   isAxis: boolean;
+  possibleValues?: number[];
 };
 
 export type UnassignedDimensionBoxProps = {
@@ -45,6 +46,7 @@ export type DimensionTitleProps = {
   dismissible: boolean;
   dismissFunc?: () => void;
   setStatus: Dispatch<SetStateAction<Status>>;
+  possibleValues?: number[];
 };
 
 export type DimensionValue = {
@@ -56,6 +58,7 @@ export type DimensionRange = {
   type: 'range';
   minValue: string;
   maxValue: string;
+  step: string;
 };
 
 export type Dimension = {
