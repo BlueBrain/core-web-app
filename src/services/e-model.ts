@@ -4,7 +4,6 @@ import {
   AllFeatureKeys,
   ECode,
   EModelConfigurationParameter,
-  EModelFeature,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   FeatureCategory,
@@ -72,29 +71,30 @@ export function convertTracesForUI(traces: Trace[]): ExperimentalTracesDataType[
   }));
 }
 
-export function convertFeaturesForUI(features: EModelFeature[]): FeatureParameterGroup {
+export function convertFeaturesForUI(features: AllFeatureKeys[]): FeatureParameterGroup {
   const featuresInCategoryMap = {
     'Spike shape': [...spikeShapeFeatures] as SpikeShapeFeatureKeys[],
     'Spike event': [...spikeEventFeatures] as SpikeEventFeatureKeys[],
     Voltage: [...voltageFeatures] as VoltageFeatureKeys[],
   };
 
-  const getFeaturesFromCategory = (categoryName: FeatureCategory, featureList: EModelFeature[]) => {
-    const featureNamesInCategory: AllFeatureKeys[] = featuresInCategoryMap[categoryName];
+  const getFeaturesFromCategory = (
+    categoryName: FeatureCategory,
+    featureNameList: AllFeatureKeys[]
+  ) => {
+    const featureInCategoryNames: AllFeatureKeys[] = featuresInCategoryMap[categoryName];
     const descriptionsInCategory = featureDescriptionsMap[categoryName];
-    return featureList
-      .filter((feature) => featureNamesInCategory.includes(feature.efeature))
-      .map(
-        (feature): FeatureItem<AllFeatureKeys> => ({
-          ...feature,
-          selected: true,
-          uuid: crypto.randomUUID(),
-          displayName: `${feature.efeature}_${feature.amplitude}`,
-          // TODO: fix this types
-          // @ts-ignore
-          description: descriptionsInCategory[feature.efeature],
-        })
-      );
+    return featureInCategoryNames.map(
+      (featureInCategoryName): FeatureItem<AllFeatureKeys> => ({
+        efeature: featureInCategoryName,
+        selected: !!featureNameList.includes(featureInCategoryName),
+        uuid: crypto.randomUUID(),
+        displayName: featureInCategoryName,
+        // TODO: fix this types
+        // @ts-ignore
+        description: descriptionsInCategory[featureInCategoryName],
+      })
+    );
   };
 
   return {

@@ -15,7 +15,7 @@ type Props = {
 
 export default function FeatureSelectionItem({ featureCategory, featureGroup }: Props) {
   const features: FeatureItem<AllFeatureKeys>[] = featureGroup[featureCategory];
-  const selectedCount = features.length;
+  const selectedCount = features.filter((f) => f.selected).length;
 
   return (
     <div>
@@ -25,7 +25,7 @@ export default function FeatureSelectionItem({ featureCategory, featureGroup }: 
       </div>
       <div className="flex gap-3 flex-wrap">
         {features.map((feature) => (
-          <CustomCheckbox feature={feature} key={feature.uuid} />
+          <CustomCheckbox key={feature.uuid} feature={feature} />
         ))}
       </div>
     </div>
@@ -37,7 +37,7 @@ function CustomCheckbox({ feature }: { feature: FeatureItem<AllFeatureKeys> }) {
     <Tooltip title={feature.description}>
       <div className="flex rounded-3xl bg-slate-50 py-2 px-4 text-primary-8 gap-2">
         <div className="whitespace-nowrap">{feature.displayName}</div>
-        <CheckCircleFilled />
+        {feature.selected && <CheckCircleFilled />}
       </div>
     </Tooltip>
   );

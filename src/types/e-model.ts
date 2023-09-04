@@ -2,6 +2,7 @@ import { MModelMenuItem } from './m-model';
 import { ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
 import {
   eCodes,
+  presetNames,
   spikeEventFeatures,
   spikeShapeFeatures,
   voltageFeatures,
@@ -229,7 +230,7 @@ export type SpikeEventFeatureKeys = (typeof spikeEventFeatures)[number];
 export type SpikeShapeFeatureKeys = (typeof spikeShapeFeatures)[number];
 export type VoltageFeatureKeys = (typeof voltageFeatures)[number];
 export type AllFeatureKeys = SpikeShapeFeatureKeys | SpikeEventFeatureKeys | VoltageFeatureKeys;
-export interface FeatureItem<T extends AllFeatureKeys> extends EModelFeature {
+export interface FeatureItem<T extends AllFeatureKeys> {
   efeature: T;
   selected: boolean;
   uuid: string;
@@ -243,6 +244,8 @@ export type FeatureParameterGroup = {
 };
 export type FeatureCategory = keyof FeatureParameterGroup;
 export type ECode = (typeof eCodes)[number];
+
+export type FeaturePresetName = (typeof presetNames)[number];
 
 /* ---------------------------------- Trace --------------------------------- */
 
@@ -371,5 +374,5 @@ export interface EModelUIConfig {
   traces: ExperimentalTracesDataType[];
   mechanism: MechanismForUI[];
   parameters: Record<SimulationParameterKeys, number>;
-  features: FeatureParameterGroup;
+  featurePresetName: FeaturePresetName;
 }

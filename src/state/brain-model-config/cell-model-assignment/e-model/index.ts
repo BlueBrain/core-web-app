@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 
 import {
+  AllFeatureKeys,
   EModel,
   EModelConfiguration,
   EModelConfigurationParameter,
@@ -13,6 +14,7 @@ import {
   ExtractionTargetsConfiguration,
   ExtractionTargetsConfigurationPayload,
   FeatureParameterGroup,
+  FeaturePresetName,
   MechanismForUI,
   NeuronMorphology,
   SimulationParameter,
@@ -29,6 +31,7 @@ import {
   convertMechanismsForUI,
 } from '@/services/e-model';
 import { getEntityListByIdsQuery } from '@/queries/es';
+import { featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
@@ -45,7 +48,19 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
   return simParams;
 });
 
+export const featureSelectedPresetAtom = atom<FeaturePresetName>('firing_pattern');
+
 export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>(async (get) => {
+  const eModelEditMode = get(eModelEditModeAtom);
+
+  if (eModelEditMode) {
+    const featureSelectedPreset = get(featureSelectedPresetAtom);
+    const featuresPerPreset = featureAutoTargets[featureSelectedPreset]
+      .efeatures as AllFeatureKeys[];
+
+    return convertFeaturesForUI(featuresPerPreset);
+  }
+
   const session = get(sessionAtom);
   const eModelExtractionTargetsConfiguration = await get(eModelExtractionTargetsConfigurationAtom);
 
@@ -56,8 +71,8 @@ export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>
     contentUrl,
     session
   );
-
-  return convertFeaturesForUI(payload.targets);
+  const featureNames = payload.targets.map((f) => f.efeature);
+  return convertFeaturesForUI(featureNames);
 });
 
 export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | null>>(
