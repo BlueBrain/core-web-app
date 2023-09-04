@@ -7,7 +7,7 @@ export default function GalleryPage() {
   return (
     <div className="relative flex flex-row-reverse justify-start w-screen min-h-screen flex-nowrap bg-primary-9">
       <HomeHeader
-        title="Gallery"
+        title="Galleries"
         description="Here is a description of what can be achieved  in this app. What is expected from the user and what is the output..."
         buttonLabel="Back to explore"
         link="/explore"
