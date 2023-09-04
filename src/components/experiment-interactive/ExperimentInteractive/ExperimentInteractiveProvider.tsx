@@ -3,7 +3,10 @@ import { useAtom } from 'jotai';
 import last from 'lodash/last';
 
 import { ExperimentInteractiveContext } from '@/components/experiment-interactive/ExperimentInteractive/context';
-import { simulationPreviewsAtom } from '@/state/experiment-interactive';
+import {
+  isViewSettingsPanelVisibleAtom,
+  simulationPreviewsAtom,
+} from '@/state/experiment-interactive';
 import {
   ExperimentInteractiveContextType,
   SimulationParameterValues,
@@ -19,6 +22,10 @@ export default function ExperimentInteractiveProvider({
   children,
 }: ExperimentInteractiveProviderProps) {
   const [simulationPreviews, setSimulationPreviews] = useAtom(simulationPreviewsAtom);
+
+  const [isViewSettingsPanelVisible, setIsViewSettingsPanelVisible] = useAtom(
+    isViewSettingsPanelVisibleAtom
+  );
 
   const startBulkEditing = useCallback(() => {
     setSimulationPreviews((simPreviews) =>
@@ -84,6 +91,14 @@ export default function ExperimentInteractiveProvider({
     [setSimulationPreviews]
   );
 
+  const showViewSettingsPanel = useCallback(() => {
+    setIsViewSettingsPanelVisible(() => true);
+  }, [setIsViewSettingsPanelVisible]);
+
+  const hideViewSettingsPanel = useCallback(() => {
+    setIsViewSettingsPanelVisible(() => false);
+  }, [setIsViewSettingsPanelVisible]);
+
   const providerValue: ExperimentInteractiveContextType = useMemo(
     () => ({
       startBulkEditing,
@@ -93,6 +108,9 @@ export default function ExperimentInteractiveProvider({
       addNewSimulation,
       canAddNewSimulation,
       deleteSimulation,
+      isViewSettingsPanelVisible,
+      showViewSettingsPanel,
+      hideViewSettingsPanel,
     }),
     [
       startBulkEditing,
@@ -102,6 +120,9 @@ export default function ExperimentInteractiveProvider({
       addNewSimulation,
       canAddNewSimulation,
       deleteSimulation,
+      isViewSettingsPanelVisible,
+      showViewSettingsPanel,
+      hideViewSettingsPanel,
     ]
   );
 
