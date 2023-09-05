@@ -1,46 +1,61 @@
-import { Dispatch, SetStateAction } from 'react';
+import { HTMLProps, ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import fetchArchive from '@/api/archive';
 import Spinner from '@/components/Spinner';
-import { ESResponseRaw } from '@/types/explore-section/resources';
+import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
-
-type Props = {
-  setFetching: Dispatch<SetStateAction<boolean>>;
-  selectedRows: ESResponseRaw[];
-  clearSelectedRows: () => void;
-  fetching: boolean;
-};
+import { ESResponseRaw } from '@/types/explore-section/resources';
 
 export default function DownloadButton({
-  setFetching,
-  selectedRows,
-  clearSelectedRows,
+  children,
   fetching,
-}: Props) {
-  const session = useAtomValue(sessionAtom);
-  if (!session || selectedRows.length < 1) return null;
-
+  onClick,
+}: HTMLProps<HTMLButtonElement> & { fetching: boolean }) {
   return (
     <div className="sticky bottom-0 flex justify-end">
       <button
         className="bg-primary-8 flex gap-2 items-center justify-between font-bold px-7 py-4 rounded-none text-white"
-        onClick={() => {
-          setFetching(true);
-
-          fetchArchive(
-            selectedRows.map((x) => x._source._self),
-            session,
-            clearSelectedRows
-          );
-        }}
+        onClick={onClick}
         type="button"
       >
-        <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
-          selectedRows.length
-        })`}</span>
+        {children}
         {fetching && <Spinner className="h-6 w-6" />}
       </button>
     </div>
   );
+}
+
+export type RenderButtonProps = {
+  selectedRows: ESResponseRaw[];
+  clearSelectedRows: () => void;
+};
+
+export function ExploreDownloadButton({
+  children,
+  clearSelectedRows,
+  selectedRows,
+}: RenderButtonProps & { children: ReactNode }) {
+  const session = useAtomValue(sessionAtom);
+
+  const [fetching, setFetching] = useState<boolean>(false);
+
+  return session ? (
+    <DownloadButton
+      fetching={fetching}
+      onClick={() => {
+        if (selectedRows.length) {
+          setFetching(true);
+          fetchArchive(
+            selectedRows.map((x) => x._source._self),
+            session,
+            () => {
+              setFetching(false);
+              clearSelectedRows();
+            }
+          );
+        }
+      }}
+    >
+      {children}
+    </DownloadButton>
+  ) : null;
 }

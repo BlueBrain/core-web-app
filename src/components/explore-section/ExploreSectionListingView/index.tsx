@@ -62,17 +62,17 @@ function WithControlPanel({
 
 export default function DefaultListView({
   enableDownload,
-  selectedRowsButton,
   title,
   type,
 }: {
   enableDownload?: boolean;
-  selectedRowsButton?: ReactNode;
   title: string;
   type: string;
 }) {
   const activeColumns = useAtomValue(activeColumnsAtom(type));
-  const data = useAtomValue(useMemo(() => loadable(dataAtom(type)), [type]));
+  const scopedDataAtom = dataAtom(type);
+  const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
+  const unwrappedData = useAtomValue(useMemo(() => unwrap(scopedDataAtom), [scopedDataAtom]));
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
   const columns = useExploreColumns(setSortState, sortState, [
@@ -101,10 +101,11 @@ export default function DefaultListView({
             </HeaderPanel>
             <ExploreSectionTable
               columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
-              data={data}
+              dataSource={unwrappedData}
+              loading={data.state === 'loading'}
               enableDownload={enableDownload}
-              selectedRowsButton={selectedRowsButton}
-              type={type}
+              hasError={data.state === 'hasError'}
+              experimentTypeName={type}
             />
           </>
         )}
