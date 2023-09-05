@@ -1,9 +1,21 @@
+/* eslint-disable no-restricted-syntax */
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import { extent, bin } from 'd3';
 import { expose } from 'comlink';
 import { Session } from 'next-auth';
-import { tableFromIPC, Table } from '@apache-arrow/es5-cjs';
+import {
+  Utf8,
+  Uint8,
+  Uint16,
+  Dictionary,
+  DictionaryBuilder,
+  Float64,
+  Float64Builder,
+  tableFromIPC,
+  tableToIPC,
+  Table,
+} from '@apache-arrow/es5-cjs';
 
 import { IdRev, MicroConnectomeConfigPayload, MicroConnectomeEntryBase } from '@/types/nexus';
 import {
@@ -19,6 +31,7 @@ import { OriginalComposition } from '@/types/composition/original';
 import { BrainRegion } from '@/types/ontologies';
 import { fromSerialisibleEdit, getFlatArrayValueIdx } from '@/util/connectome';
 import { PartialBy } from '@/types/common';
+import { HEMISPHERE_DIRECTIONS } from '@/constants/connectome';
 
 type SrcDstBrainRegionKey = string;
 type SrcDstMtypeKey = string;
@@ -55,7 +68,7 @@ type InitialisedWorkerState = {
     brainRegionMtypeMap: BrainRegionMtypeMap;
     brainRegionMtypeNumMap: BrainRegionMtypeNumMap;
   };
-  tables?: {
+  tables: {
     variant: {
       initial: Table;
       overrides: Table;
@@ -73,17 +86,23 @@ type InitialisedWorkerState = {
   paramIndex: {
     [variantName: string]: DataIndex<number[]>;
   };
+  // refactor to use Set
   paramIndexAvailability: Map<ParamIndexAvailabilityKey, boolean>;
 };
 
 type WorkerState = PartialBy<
   InitialisedWorkerState,
-  'config' | 'edits' | 'brainRegionIndex' | 'compositionIndex' | 'macroConnectomeStrengthMatrix'
+  | 'config'
+  | 'edits'
+  | 'brainRegionIndex'
+  | 'compositionIndex'
+  | 'macroConnectomeStrengthMatrix'
+  | 'tables'
 >;
 
 type IndexScope = {
   variantName: string;
-  paramName: string;
+  paramName?: string;
 };
 
 const gzRe = /^.*\.gz$/;
@@ -93,6 +112,16 @@ const workerState: WorkerState = {
   variantIndex: {},
   paramIndexAvailability: new Map(),
 };
+
+const KEY_DELIMITER = '.';
+
+function createKey(...components: string[]): string {
+  return components.join(KEY_DELIMITER);
+}
+
+function parseKey(key: string) {
+  return key.split(KEY_DELIMITER);
+}
 
 type LinearTransformValue = {
   multiplier: number;
@@ -122,21 +151,13 @@ function hasMacroConnectivity(
   return macroStrength !== 0;
 }
 
-function getParamIndexKey(
-  hemisphereDirection: HemisphereDirection,
-  variantName: string,
-  paramName: string
-): string {
-  return `${hemisphereDirection}.${variantName}.${paramName}`;
-}
-
 function setParamIndexAvailability(
   hemisphereDirection: HemisphereDirection,
   variantName: string,
   paramName: string,
   available: boolean
 ) {
-  const paramIndexKey = getParamIndexKey(hemisphereDirection, variantName, paramName);
+  const paramIndexKey = createKey(hemisphereDirection, variantName, paramName);
   workerState.paramIndexAvailability.set(paramIndexKey, available);
 }
 
@@ -145,8 +166,12 @@ function isParamIndexAvailable(
   variantName: string,
   paramName: string
 ): boolean {
-  const paramIndexKey = getParamIndexKey(hemisphereDirection, variantName, paramName);
+  const paramIndexKey = createKey(hemisphereDirection, variantName, paramName);
   return !!workerState.paramIndexAvailability.get(paramIndexKey);
+}
+
+function compress(readableStream: ReadableStream): ReadableStream {
+  return readableStream.pipeThrough(new CompressionStream('gzip'));
 }
 
 function decompress(readableStream: ReadableStream): ReadableStream {
@@ -188,6 +213,7 @@ function isPristine(type: 'variant' | 'param', hemisphereDirection: HemisphereDi
 function assertInitialised(state: WorkerState): asserts state is InitialisedWorkerState {
   if (
     !state.config ||
+    !workerState.tables ||
     !state.brainRegionIndex ||
     !state.compositionIndex ||
     !state.macroConnectomeStrengthMatrix
@@ -319,12 +345,12 @@ function createVariantIndex(
   const hemisphereVariantIndex: BrainRegionLevelMap<number> = new Map();
 
   const applyEntry = (entry: any) => {
-    const brainRegionKey = `${entry.source_region}${entry.target_region}`;
+    const brainRegionKey = createKey(entry.source_region, entry.target_region);
 
     if (!hasMacroConnectivity(hemisphereDirection, entry.source_region, entry.target_region))
       return;
 
-    const mtypeKey = `${entry.source_mtype}${entry.target_mtype}`;
+    const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
 
     const variantIdx = variantIdxByName.get(entry.variant);
 
@@ -387,7 +413,7 @@ type CreateParamIndexFnOptions = {
 function createParamIndex(
   hemisphereDirection: HemisphereDirection,
   variantName: string,
-  paramName: string,
+  paramName: string | undefined,
   { applyOverrides }: CreateParamIndexFnOptions
 ): BrainRegionLevelMap<number[]> {
   if (!workerState.tables) {
@@ -399,7 +425,7 @@ function createParamIndex(
   }
 
   const paramNames = Object.keys(workerState.config.variants[variantName].params).sort();
-  const paramIdx = paramNames.indexOf(paramName);
+  const paramIdx = paramName ? paramNames.indexOf(paramName) : null;
 
   const initialTable = workerState.tables.params.initial[variantName];
   const overridesTable = workerState.tables.params.overrides[variantName];
@@ -407,17 +433,17 @@ function createParamIndex(
   const hemisphereParamIndex: BrainRegionLevelMap<number[]> =
     workerState.paramIndex[variantName]?.[hemisphereDirection] ?? new Map();
 
-  const applyEntry = (entry: any) => {
-    const paramValue = entry[paramName];
+  const applyEntryForSingleParam = (entry: any) => {
+    const paramValue = entry[paramName as string];
 
-    const brainRegionKey = `${entry.source_region}${entry.target_region}`;
-    const mtypeKey = `${entry.source_mtype}${entry.target_mtype}`;
+    const brainRegionKey = createKey(entry.source_region, entry.target_region);
+    const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
 
     const mtypeLevelMap = hemisphereParamIndex.get(brainRegionKey);
 
     if (!mtypeLevelMap) {
       const newParamArray = [];
-      newParamArray[paramIdx] = paramValue;
+      newParamArray[paramIdx as number] = paramValue;
 
       hemisphereParamIndex.set(brainRegionKey, new Map().set(mtypeKey, newParamArray));
 
@@ -427,13 +453,43 @@ function createParamIndex(
     const paramArray = mtypeLevelMap.get(mtypeKey);
 
     if (paramArray) {
-      paramArray[paramIdx] = paramValue;
+      paramArray[paramIdx as number] = paramValue;
     } else {
       const newParamArray = [];
-      newParamArray[paramIdx] = paramValue;
+      newParamArray[paramIdx as number] = paramValue;
       mtypeLevelMap.set(mtypeKey, newParamArray);
     }
   };
+
+  const applyEntryForAllParams = (entry: any) => {
+    const paramValue = entry[paramName as string];
+
+    const brainRegionKey = createKey(entry.source_region, entry.target_region);
+    const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
+
+    const mtypeLevelMap = hemisphereParamIndex.get(brainRegionKey);
+
+    if (!mtypeLevelMap) {
+      const newParamArray = paramNames.map((currParamName) => entry[currParamName]);
+      newParamArray[paramIdx as number] = paramValue;
+
+      hemisphereParamIndex.set(brainRegionKey, new Map().set(mtypeKey, newParamArray));
+
+      return;
+    }
+
+    const paramArray = mtypeLevelMap.get(mtypeKey);
+
+    if (paramArray) {
+      paramArray[paramIdx as number] = paramValue;
+    } else {
+      const newParamArray = paramNames.map((currParamName) => entry[currParamName]);
+      newParamArray[paramIdx as number] = paramValue;
+      mtypeLevelMap.set(mtypeKey, newParamArray);
+    }
+  };
+
+  const applyEntryFn = paramName ? applyEntryForSingleParam : applyEntryForAllParams;
 
   const applyTable = (allVariantParamsTable: Table) => {
     // Construct a new table containing only a relevant parameter to prevent performance impact
@@ -455,7 +511,7 @@ function createParamIndex(
 
     for (let i = 0; i < numRows; i += 1) {
       if (sideVec.get(i) === hemisphereDirection) {
-        applyEntry(batch.get(i));
+        applyEntryFn(batch.get(i));
       }
     }
   };
@@ -472,11 +528,15 @@ function createParamIndex(
 function buildParamIndex(
   hemisphereDirection: HemisphereDirection,
   variantName: string,
-  paramName: string
+  paramName?: string
 ) {
+  assertInitialised(workerState);
+
   const pristine = isPristine('param', hemisphereDirection);
 
   const applyOverrides = pristine;
+
+  const paramNames = Object.keys(workerState.config.variants[variantName].params).sort();
 
   const hemisphereParamIndex = createParamIndex(hemisphereDirection, variantName, paramName, {
     applyOverrides,
@@ -487,7 +547,13 @@ function buildParamIndex(
     [hemisphereDirection]: hemisphereParamIndex,
   };
 
-  setParamIndexAvailability(hemisphereDirection, variantName, paramName, true);
+  if (paramName) {
+    setParamIndexAvailability(hemisphereDirection, variantName, paramName, true);
+  } else {
+    paramNames.forEach((currParamName) =>
+      setParamIndexAvailability(hemisphereDirection, variantName, currParamName, true)
+    );
+  }
 
   if (!pristine) {
     const applicableEdits = workerState.edits?.filter((edit) =>
@@ -670,7 +736,7 @@ function createAggregatedVariantView(
         dstNotations.forEach((dstNotation) => {
           if (!hasMacroConnectivity(hemisphereDirection, srcNotation, dstNotation)) return;
 
-          const srcDstBrainRegionKey = `${srcNotation}${dstNotation}`;
+          const srcDstBrainRegionKey = createKey(srcNotation, dstNotation);
 
           const srcMtypes = (
             srcSelection.mtype ? [srcSelection.mtype] : brainRegionMtypeMap.get(srcNotation) ?? []
@@ -694,7 +760,7 @@ function createAggregatedVariantView(
 
           srcMtypes.forEach((srcMtype) => {
             dstMtypes.forEach((dstMtype) => {
-              const srcDstMtypeKey = `${srcMtype}${dstMtype}`;
+              const srcDstMtypeKey = createKey(srcMtype, dstMtype);
               const variantIdx = srcDstMtypeMap.get(srcDstMtypeKey) ?? 0;
               variantCountsArr[variantIdx] += 1;
             });
@@ -773,7 +839,7 @@ export function createAggregatedParamView(
         dstNotations.forEach((dstNotation) => {
           if (!hasMacroConnectivity(hemisphereDirection, srcNotation, dstNotation)) return;
 
-          const srcDstBrainRegionKey = `${srcNotation}${dstNotation}`;
+          const srcDstBrainRegionKey = createKey(srcNotation, dstNotation);
 
           const srcMtypes = (
             srcSelection.mtype ? [srcSelection.mtype] : brainRegionMtypeMap.get(srcNotation) ?? []
@@ -796,7 +862,7 @@ export function createAggregatedParamView(
 
           srcMtypes.forEach((srcMtype) => {
             dstMtypes.forEach((dstMtype) => {
-              const srcDstMtypeKey = `${srcMtype}${dstMtype}`;
+              const srcDstMtypeKey = createKey(srcMtype, dstMtype);
               const paramValue = srcDstMtypeMap.get(srcDstMtypeKey)?.[paramIdx];
 
               if (paramValue !== undefined) {
@@ -875,7 +941,7 @@ function setVariant(
     dstNotations?.forEach((dstNotation) => {
       if (!hasMacroConnectivity(hemisphereDirection, srcNotation, dstNotation)) return;
 
-      const srcDstBrainRegionKey = `${srcNotation}${dstNotation}`;
+      const srcDstBrainRegionKey = createKey(srcNotation, dstNotation);
 
       const srcMtypes = (brainRegionMtypeMap.get(srcNotation) ?? []).filter(
         (mtype) => !srcSelection.mtypeFilterSet || srcSelection.mtypeFilterSet.has(mtype)
@@ -896,7 +962,7 @@ function setVariant(
 
       srcMtypes.forEach((srcMtype) => {
         dstMtypes.forEach((dstMtype) => {
-          const srcDstMtypeKey = `${srcMtype}${dstMtype}`;
+          const srcDstMtypeKey = createKey(srcMtype, dstMtype);
           srcDstMtypeMap.set(srcDstMtypeKey, variantIdx);
         });
       });
@@ -922,8 +988,9 @@ function setParams(
     .sort()
     .reduce((map, paramName, idx) => map.set(paramName, idx), new Map());
 
-  const indexedParamNames = Array.from(workerState.paramIndexAvailability.keys())
-    .map((indexedParamKey) => indexedParamKey.split('.'))
+  const indexedParamNames = Array.from(workerState.paramIndexAvailability.entries())
+    .filter(([, available]) => available)
+    .map(([indexedParamKey]) => parseKey(indexedParamKey))
     .filter(
       ([indexedHemisphereDirection, indexedVariantName]) =>
         indexedHemisphereDirection === hemisphereDirection && indexedVariantName === variantName
@@ -936,7 +1003,7 @@ function setParams(
   const { brainRegionMtypeMap } = workerState.compositionIndex;
 
   const paramNamesToSet = indexedParamNames.filter(
-    (paramName) => !scope || scope.paramName === paramName
+    (paramName) => !scope || !scope.paramName || scope.paramName === paramName
   );
 
   const hemisphereParamIndex = workerState.paramIndex[variantName][hemisphereDirection];
@@ -959,7 +1026,7 @@ function setParams(
     dstNotations?.forEach((dstNotation) => {
       if (!hasMacroConnectivity(hemisphereDirection, srcNotation, dstNotation)) return;
 
-      const srcDstBrainRegionKey = `${srcNotation}${dstNotation}`;
+      const srcDstBrainRegionKey = createKey(srcNotation, dstNotation);
 
       const srcMtypes = (brainRegionMtypeMap.get(srcNotation) ?? []).filter(
         (mtype) => !srcSelection.mtypeFilterSet || srcSelection.mtypeFilterSet.has(mtype)
@@ -978,7 +1045,7 @@ function setParams(
 
       srcMtypes.forEach((srcMtype) => {
         dstMtypes.forEach((dstMtype) => {
-          const mtypeKey = `${srcMtype}${dstMtype}`;
+          const mtypeKey = createKey(srcMtype, dstMtype);
 
           const paramArray = mtypeLevelMap.get(mtypeKey);
 
@@ -1010,7 +1077,7 @@ function removeAffectedIndex(edit: EditEntry) {
   if (edit.operation === 'setAlgorithm') {
     delete workerState.variantIndex[edit.hemisphereDirection];
     const indexedParamNames = Array.from(workerState.paramIndexAvailability.keys())
-      .map((paramIndexKey) => paramIndexKey.split('.'))
+      .map((paramIndexKey) => parseKey(paramIndexKey))
       .filter(
         ([hemisphereDirection, variantName]) =>
           hemisphereDirection === edit.hemisphereDirection && variantName === edit.variantName
@@ -1102,6 +1169,366 @@ function updateEdit(updatedEdit: EditEntry) {
 
 export type UpdateEditFn = typeof updateEdit;
 
+type ComputeOverridesOptions = {
+  force?: boolean;
+};
+
+function computeVariantOverridesTable(): Table {
+  assertInitialised(workerState);
+
+  const sideBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  const srcRegionBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint16()),
+  });
+
+  // ! M-type dictionary is currently using an Uint8 index, so max supported number of m-types is 255.
+  const srcMtypeBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  const dstRegionBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint16()),
+  });
+
+  const dstMtypeBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  const variantBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  // Skip sides where there is no applicable edits
+  const hemisphereDirectionsAffectedByEdits = HEMISPHERE_DIRECTIONS.filter(
+    (hemisphereDirection) =>
+      workerState.edits.filter((edit) => isEditApplicable('variant', hemisphereDirection, edit))
+        .length > 0
+  );
+
+  hemisphereDirectionsAffectedByEdits.forEach((hemisphereDirection) => {
+    if (!workerState.variantIndex[hemisphereDirection]) {
+      buildVariantIndex(hemisphereDirection);
+    }
+
+    const variantNames = ['disabled', ...Object.keys(workerState.config?.variants).sort()];
+
+    const variantIdxByName = Object.keys(workerState.config?.variants)
+      .sort()
+      .reduce((map, variantName, idx) => map.set(variantName, idx + 1), new Map());
+
+    const initialTable = workerState.tables.variant.initial;
+
+    const hemisphereVariantDiffIndex = workerState.variantIndex[
+      hemisphereDirection
+    ] as BrainRegionLevelMap<number>;
+    workerState.variantIndex[hemisphereDirection] = undefined;
+
+    // First stage
+
+    const applyEntry = (entry: any) => {
+      const brainRegionKey = createKey(entry.source_region, entry.target_region);
+
+      const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
+
+      const variantIdx = variantIdxByName.get(entry.variant);
+
+      const mtypeLevelMap = hemisphereVariantDiffIndex.get(brainRegionKey);
+
+      if (!mtypeLevelMap) return;
+
+      if (mtypeLevelMap.size === 0) {
+        hemisphereVariantDiffIndex.delete(brainRegionKey);
+      }
+
+      const currentVariantIdx = mtypeLevelMap.get(mtypeKey);
+      if (currentVariantIdx === undefined) return;
+
+      if (currentVariantIdx !== variantIdx) {
+        sideBuilder.append(hemisphereDirection);
+        srcRegionBuilder.append(entry.source_region);
+        srcMtypeBuilder.append(entry.source_mtype);
+        dstRegionBuilder.append(entry.target_region);
+        dstMtypeBuilder.append(entry.target_mtype);
+        variantBuilder.append(variantNames[currentVariantIdx]);
+      }
+
+      mtypeLevelMap.delete(mtypeKey);
+    };
+
+    // TODO Is it worth to have a separate function here?
+    const applyTable = (table: Table) => {
+      const { numRows } = table;
+      const batch = table.batches[0];
+      const sideColIdx = table.schema.fields.findIndex((field) => field.name === 'side');
+      const sideVec = batch.getChildAt(sideColIdx);
+
+      if (!sideVec) {
+        throw new Error('Can not get Vector for .side property');
+      }
+
+      for (let i = 0; i < numRows; i += 1) {
+        if (sideVec.get(i) === hemisphereDirection) {
+          applyEntry(batch.get(i));
+        }
+      }
+    };
+
+    applyTable(initialTable);
+
+    // Second stage
+
+    for (const [brainRegionKey, mtypeLevelMap] of hemisphereVariantDiffIndex.entries()) {
+      for (const [mtypeKey, variantIndex] of mtypeLevelMap.entries()) {
+        const [srcBrainRegion, dstBrainRegion] = parseKey(brainRegionKey);
+        const [srcMtype, dstMtype] = parseKey(mtypeKey);
+
+        sideBuilder.append(hemisphereDirection);
+        srcRegionBuilder.append(srcBrainRegion);
+        srcMtypeBuilder.append(srcMtype);
+        dstRegionBuilder.append(dstBrainRegion);
+        dstMtypeBuilder.append(dstMtype);
+        variantBuilder.append(variantNames[variantIndex]);
+      }
+    }
+  });
+
+  const sideVector = sideBuilder.finish().toVector();
+  const srcRegionVector = srcRegionBuilder.finish().toVector();
+  const srcMtypeVector = srcMtypeBuilder.finish().toVector();
+  const dstRegionVector = dstRegionBuilder.finish().toVector();
+  const dstMtypeVector = dstMtypeBuilder.finish().toVector();
+  const variantVector = variantBuilder.finish().toVector();
+
+  const variantOverridesTable = new Table({
+    side: sideVector,
+    source_region: srcRegionVector,
+    source_mtype: srcMtypeVector,
+    target_region: dstRegionVector,
+    target_mtype: dstMtypeVector,
+    variant: variantVector,
+  });
+
+  return variantOverridesTable;
+}
+
+function computeParamOverridesTable(variantName: string): Table {
+  assertInitialised(workerState);
+
+  const paramNames = Object.keys(workerState.config.variants[variantName].params).sort();
+
+  const sideBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  const srcRegionBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint16()),
+  });
+
+  // ! M-type dictionary is currently using an Uint8 index, so max supported number of m-types is 255.
+  const srcMtypeBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  const dstRegionBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint16()),
+  });
+
+  const dstMtypeBuilder = new DictionaryBuilder({
+    type: new Dictionary(new Utf8(), new Uint8()),
+  });
+
+  const paramBuilders = paramNames.map(() => new Float64Builder({ type: new Float64() }));
+
+  // Skip sides where there is no applicable edits
+  const hemisphereDirectionsAffectedByEdits = HEMISPHERE_DIRECTIONS.filter(
+    (hemisphereDirection) =>
+      workerState.edits.filter((edit) => isEditApplicable('param', hemisphereDirection, edit))
+        .length > 0
+  );
+
+  hemisphereDirectionsAffectedByEdits.forEach((hemisphereDirection) => {
+    buildParamIndex(hemisphereDirection, variantName);
+
+    const initialTable = workerState.tables.params.initial[variantName];
+
+    const hemisphereParamDiffIndex = workerState.paramIndex[variantName][hemisphereDirection];
+    if (!hemisphereParamDiffIndex) {
+      throw new Error('No param index available for despite marked as such');
+    }
+    workerState.paramIndex[variantName][hemisphereDirection] = undefined;
+    paramNames.forEach((paramName) =>
+      workerState.paramIndexAvailability.set(
+        createKey(hemisphereDirection, variantName, paramName),
+        false
+      )
+    );
+
+    // First stage
+
+    const applyEntry = (entry: any) => {
+      const brainRegionKey = createKey(entry.source_region, entry.target_region);
+
+      const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
+
+      const mtypeLevelMap = hemisphereParamDiffIndex.get(brainRegionKey);
+
+      if (!mtypeLevelMap) return;
+
+      if (mtypeLevelMap.size === 0) {
+        hemisphereParamDiffIndex.delete(brainRegionKey);
+      }
+
+      const paramValues = mtypeLevelMap.get(mtypeKey);
+      if (paramValues === undefined) return;
+
+      const notEqual = paramNames.some(
+        (paramName, paramIdx) => paramValues[paramIdx] !== entry[paramName]
+      );
+
+      if (notEqual) {
+        sideBuilder.append(hemisphereDirection);
+        srcRegionBuilder.append(entry.source_region);
+        srcMtypeBuilder.append(entry.source_mtype);
+        dstRegionBuilder.append(entry.target_region);
+        dstMtypeBuilder.append(entry.target_mtype);
+
+        paramNames.forEach((paramName, idx) => paramBuilders[idx].append(paramValues[idx]));
+      }
+
+      mtypeLevelMap.delete(mtypeKey);
+    };
+
+    // TODO Is it worth to have a separate function here?
+    const applyTable = (table: Table) => {
+      const { numRows } = table;
+      const batch = table.batches[0];
+      const sideColIdx = table.schema.fields.findIndex((field) => field.name === 'side');
+      const sideVec = batch.getChildAt(sideColIdx);
+
+      if (!sideVec) {
+        throw new Error('Can not get Vector for .side property');
+      }
+
+      for (let i = 0; i < numRows; i += 1) {
+        if (sideVec.get(i) === hemisphereDirection) {
+          applyEntry(batch.get(i));
+        }
+      }
+    };
+
+    applyTable(initialTable);
+
+    // Second stage
+
+    for (const [brainRegionKey, mtypeLevelMap] of hemisphereParamDiffIndex.entries()) {
+      for (const [mtypeKey, paramValues] of mtypeLevelMap.entries()) {
+        const [srcBrainRegion, dstBrainRegion] = parseKey(brainRegionKey);
+        const [srcMtype, dstMtype] = parseKey(mtypeKey);
+
+        sideBuilder.append(hemisphereDirection);
+        srcRegionBuilder.append(srcBrainRegion);
+        srcMtypeBuilder.append(srcMtype);
+        dstRegionBuilder.append(dstBrainRegion);
+        dstMtypeBuilder.append(dstMtype);
+
+        paramNames.forEach((paramName, idx) => paramBuilders[idx].append(paramValues[idx]));
+      }
+    }
+  });
+
+  const sideVector = sideBuilder.finish().toVector();
+  const srcRegionVector = srcRegionBuilder.finish().toVector();
+  const srcMtypeVector = srcMtypeBuilder.finish().toVector();
+  const dstRegionVector = dstRegionBuilder.finish().toVector();
+  const dstMtypeVector = dstMtypeBuilder.finish().toVector();
+
+  const paramValueVectors = paramBuilders.map((paramBuilder) => paramBuilder.toVector());
+  const paramValueVectorObj = paramNames.reduce(
+    (obj, paramName, idx) => ({ ...obj, [paramName]: paramValueVectors[idx] }),
+    {}
+  );
+
+  const paramOverridesTable = new Table({
+    side: sideVector,
+    source_region: srcRegionVector,
+    source_mtype: srcMtypeVector,
+    target_region: dstRegionVector,
+    target_mtype: dstMtypeVector,
+    ...paramValueVectorObj,
+  });
+
+  return paramOverridesTable;
+}
+
+type ComputeOverridesResult = Promise<
+  | {
+      variantOverridesBuffer: ArrayBuffer;
+      paramOverridesBuffers: ArrayBuffer[];
+    }
+  | undefined
+>;
+
+/**
+ * The overrides are computed in two stages.
+ *
+ * During the first stage worker reads records from the arrow table and compares values
+ * with what's stored in the diff index.
+ * If the value is the same - it's deleted from the diff index,
+ * if different - the overrides table is extended with it.
+ * After the execution overrides table contains records for pathways
+ * that were originally present in the initial table.
+ *
+ * The second stage iterates over what's left from the diff index,
+ * which now contains only records for pathways not present in the
+ * initial table, and adds those records to the overrides table.
+ */
+async function computeOverrides(options?: ComputeOverridesOptions): ComputeOverridesResult {
+  assertInitialised(workerState);
+
+  const variantNames = Object.keys(workerState.config.variants).sort();
+
+  const configEdits = workerState.config._ui_data?.editHistory?.map((serialisibleEdit) =>
+    fromSerialisibleEdit(serialisibleEdit)
+  );
+
+  if (isEqual(workerState.edits, configEdits) && !options?.force) return;
+
+  const variantOverridesTable = computeVariantOverridesTable();
+  const paramOverridesTables = variantNames.map((variantName) =>
+    computeParamOverridesTable(variantName)
+  );
+
+  const variantOverridesBuffer = tableToIPC(variantOverridesTable, 'file').buffer;
+  const paramOverridesBuffers = variantNames.map(
+    (variantName, idx) => tableToIPC(paramOverridesTables[idx], 'file').buffer
+  );
+
+  const compressedVariantOverridesStream = compress(new Blob([variantOverridesBuffer]).stream());
+  const compressedParamOverridesStreams = variantNames.map((variantName, idx) =>
+    compress(new Blob([paramOverridesBuffers[idx]]).stream())
+  );
+
+  const compressedVariantOverridesBuffer = await new Response(
+    compressedVariantOverridesStream
+  ).arrayBuffer();
+  const compressedParamOverridesBuffers = await Promise.all(
+    variantNames.map((variantName, idx) =>
+      new Response(compressedParamOverridesStreams[idx]).arrayBuffer()
+    )
+  );
+
+  // eslint-disable-next-line consistent-return
+  return {
+    variantOverridesBuffer: compressedVariantOverridesBuffer,
+    paramOverridesBuffers: compressedParamOverridesBuffers,
+  };
+}
+
+export type ComputeOverridesFn = typeof computeOverrides;
+
 // TODO Investigate using a flat index
 
 expose({
@@ -1111,4 +1538,5 @@ expose({
   addEdit,
   removeEdit,
   updateEdit,
+  computeOverrides,
 });

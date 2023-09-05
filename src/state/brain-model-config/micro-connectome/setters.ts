@@ -106,6 +106,9 @@ export const addEditAtom = atom<null, [EditEntry], Promise<void>>(null, async (g
   if (!edits || !worker) return;
 
   await worker.addEdit(edit);
+
+  // await worker.computeOverrides();
+
   set(setEditsAtom, [...edits, edit]);
 });
 
