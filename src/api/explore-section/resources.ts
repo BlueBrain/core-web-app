@@ -1,5 +1,6 @@
 import esb from 'elastic-builder';
 import flatMap from 'lodash/flatMap';
+import map from 'lodash/map';
 import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section/queries';
 import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
