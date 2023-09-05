@@ -14,7 +14,8 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import ConnectomeEditorSidebar from '@/components/ConnectomeEditorSidebar';
 import { extraPanelContainerAtom } from '@/state/build-section/layout';
-import ContextualLiteratureContent from '@/components/build-section/ContextualLiterature/Content';
+import ContextualLiterature from '@/components/build-section/ContextualLiterature/Content';
+
 import styles from './build-section-main.module.css';
 
 type BuildSectionLayoutProps = {
@@ -70,7 +71,7 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
       </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <ContextualLiteratureContent />
+        <ContextualLiterature />
       </ErrorBoundary>
     </div>
   );

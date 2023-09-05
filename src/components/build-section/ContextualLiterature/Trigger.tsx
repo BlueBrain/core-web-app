@@ -1,8 +1,10 @@
 import { ReadOutlined } from '@ant-design/icons';
+import { useSetAtom } from 'jotai';
 
-import { useContextualLiteratureAtom } from '@/state/literature';
-import IconButton from '@/components/IconButton';
+import { contextualLiteratureAtom } from '@/state/literature';
 import { classNames } from '@/util/utils';
+import { QuestionAbout } from '@/types/literature';
+import IconButton from '@/components/IconButton';
 
 function ContextualTrigger({
   about,
@@ -10,19 +12,21 @@ function ContextualTrigger({
   densityOrCount,
   className,
 }: {
-  about: string;
+  about: QuestionAbout;
   subject?: string;
   densityOrCount?: 'density' | 'count';
   className: string;
 }) {
-  const { update } = useContextualLiteratureAtom();
-  // TODO: in the next MR I will be using the `useSetAtom` to update in bulk all the fields
-  // NOTE: --> all the updates here will have the same performance as bulk update since both react&jotai will batch the state update
+  const setContextualAtom = useSetAtom(contextualLiteratureAtom);
   const onTriggerContextualLiterature = () => {
-    update('about', about);
-    update('contextDrawerOpen', true);
-    update('subject', subject);
-    update('densityOrCount', densityOrCount);
+    setContextualAtom((prev) => ({
+      ...prev,
+      about,
+      subject,
+      densityOrCount,
+      contextDrawerOpen: true,
+      key: crypto.randomUUID(),
+    }));
   };
 
   return (

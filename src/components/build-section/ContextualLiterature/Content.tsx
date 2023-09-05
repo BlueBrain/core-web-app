@@ -3,19 +3,21 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Drawer, Skeleton } from 'antd';
 import { ArrowLeftOutlined, CloseOutlined } from '@ant-design/icons';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useRouter, useSearchParams } from 'next/navigation';
 import kebabCase from 'lodash/kebabCase';
 import find from 'lodash/find';
+import findIndex from 'lodash/findIndex';
 
 import ItemTile from './ItemTile';
-import { buildQuestionsList, destructPath } from './util';
+import { buildQuestionsList } from './util';
 import { GenerativeQASingleResultCompact } from '@/components/explore-section/Literature/components/GenerativeQAResults';
 import useContextualLiteratureContext from '@/components/explore-section/Literature/useContextualLiteratureContext';
 import { GenerativeQAForm } from '@/components/explore-section/Literature/components/GenerativeQAInput';
 import useChatQAContext from '@/components/explore-section/Literature/useChatQAContext';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import {
+  contextualLiteratureAtom,
   useContextualLiteratureAtom,
   useContextualLiteratureResultAtom,
   useLiteratureAtom,
@@ -25,6 +27,36 @@ import { ContextQAItem, GenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
 import updateArray from '@/util/updateArray';
 
+function ContextualContainer({ children }: { children: React.ReactNode }) {
+  const { context, update } = useContextualLiteratureAtom();
+  const onDrawerClose = () => update('contextDrawerOpen', false);
+
+  return (
+    <Drawer
+      maskClosable
+      destroyOnClose
+      open={context?.contextDrawerOpen}
+      onClose={onDrawerClose}
+      mask={false}
+      className="contextual-literature rounded-bl-2xl"
+      rootClassName="contextual-literature-root"
+      title={null}
+      closeIcon={null}
+      width="40vw"
+      rootStyle={{
+        margin: '20px 0',
+      }}
+      bodyStyle={{
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '0 20px',
+      }}
+    >
+      {children}
+    </Drawer>
+  );
+}
+
 function ContextualContent() {
   const { push: navigate } = useRouter();
   const searchParams = useSearchParams()!;
@@ -32,16 +64,19 @@ function ContextualContent() {
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const { context, update } = useContextualLiteratureAtom();
+  const setContextualAtom = useSetAtom(contextualLiteratureAtom);
   const [currentSlide, setCurrentSlide] = useState<'questions' | 'results'>('questions');
-  const { pathname, clearContextSearchParams } = useContextualLiteratureContext();
+  const { buildStep, clearContextSearchParams } = useContextualLiteratureContext();
   const { reset } = useContextualLiteratureResultAtom();
   const { QAs } = useLiteratureResultsAtom();
 
-  const path = destructPath(pathname!);
-  const currentGQA = useMemo(
-    () => find(context.contextQuestions, ({ key }) => key === context.currentQuestion?.key),
-    [context.contextQuestions, context.currentQuestion]
-  );
+  const currentGQA = useMemo(() => {
+    const predicate = ({ key }: ContextQAItem) => key === context.currentQuestion?.key;
+    return {
+      question: find(context.contextQuestions, predicate),
+      index: findIndex(context.contextQuestions, predicate),
+    };
+  }, [context.contextQuestions, context.currentQuestion]);
 
   const { ask, isPending, query, onValueChange, onQuestionClear } = useChatQAContext({
     resetAfterAsk: true,
@@ -86,7 +121,7 @@ function ContextualContent() {
 
   const onSelectQuestion =
     ({ key, value }: Omit<ContextQAItem, 'gqa'>) =>
-    async () => {
+    () => {
       const gqa = find(context.contextQuestions, { key })?.gqa;
       update('currentQuestion', { key, value, gqa });
       updateLiteratureAtom('query', key);
@@ -96,22 +131,23 @@ function ContextualContent() {
   const prebuiltQuestions = useMemo(() => {
     const questions = buildQuestionsList({
       densityOrCount,
-      step: path.step,
+      step: buildStep,
       brainRegionTitle: selectedBrainRegion?.title!,
       about: context.about!,
       subject: context.subject!,
     });
     return questions;
-  }, [densityOrCount, context.about, context.subject, path.step, selectedBrainRegion?.title]);
+  }, [densityOrCount, context.about, context.subject, buildStep, selectedBrainRegion?.title]);
 
   const gotoOptionMode = () => {
     onDrawerClose();
+    updateLiteratureAtom('query', '');
     const clearedParams = clearContextSearchParams(searchParams);
     if (searchParams) {
       const params = new URLSearchParams(clearedParams);
       params.append('context', 'more-options');
       params.append('context-question', context.currentQuestion?.gqa?.id ?? '');
-      const link = `/build/${path.step}/literature?${params.toString()}`;
+      const link = `/build/${buildStep}/literature?${params.toString()}`;
       const question = QAs.find((item) => item.id === context.currentQuestion?.gqa?.id) ?? null;
       if (question) reset(question);
       navigate(link);
@@ -121,208 +157,182 @@ function ContextualContent() {
   const gotoAskMoreMode = () => {
     reset(null);
     onDrawerClose();
+    updateLiteratureAtom('query', '');
     const clearedParams = clearContextSearchParams(searchParams);
     if (searchParams) {
       const params = new URLSearchParams(clearedParams);
       params.append('context', 'ask-more');
-      const link = `/build/${path.step}/literature?${params.toString()}`;
+      const link = `/build/${buildStep}/literature?${params.toString()}`;
       navigate(link);
     }
   };
 
   useEffect(() => {
-    update(
-      'contextQuestions',
-      prebuiltQuestions
+    setContextualAtom((prev) => ({
+      ...prev,
+      contextQuestions: prebuiltQuestions
         ? Object.entries(prebuiltQuestions).map(([key, value]) => ({ key, value }))
-        : ([] as ContextQAItem[])
-    );
-    // TODO: FYI: this part of the code will be updated in the next MR, to remove the tslint comment,
-    // TODO: --> in the next MR, I will be using the useSetAtom and added it to the deps array, since this fn is reference safe
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prebuiltQuestions]);
-
-  useEffect(() => {
-    (() => {
-      update('currentQuestion', null);
-      updateLiteratureAtom('query', '');
-      onSlideBack();
-    })();
-    // TODO: FYI: this part of the code will be updated in the next MR, to remove the tslint comment,
-    // TODO: --> in the next MR, I will be using the useSetAtom and added it to the deps array, since this fn is reference safe
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context.about, context.subject, path.step]);
+        : ([] as ContextQAItem[]),
+    }));
+  }, [prebuiltQuestions, setContextualAtom]);
 
   return (
-    <Drawer
-      maskClosable
-      destroyOnClose
-      open={context?.contextDrawerOpen}
-      onClose={onDrawerClose}
-      mask={false}
-      className="contextual-literature rounded-bl-2xl"
-      rootClassName="contextual-literature-root"
-      title={null}
-      closeIcon={null}
-      width="40vw"
-      rootStyle={{
-        margin: '20px 0',
-      }}
-      bodyStyle={{
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '0 20px',
-      }}
-    >
-      <div className="w-full h-full">
-        <div className="absolute top-0 z-30 flex items-center justify-center w-10 h-10 bg-white rounded-tl-full rounded-bl-full -left-10">
-          <CloseOutlined
-            className="text-base cursor-pointer text-primary-8"
-            onClick={onDrawerClose}
-          />
-        </div>
-        <div className="px-2 mt-4 mb-2">About</div>
-        <div className="px-2 mt-px mb-6 text-3xl font-extrabold text-primary-8">
-          {context.subject}
-        </div>
-        <div className="relative w-full">
-          <div
-            id="parameter-questions"
-            className={classNames(
-              'w-full h-full absolute left-0 right-0 transition-[visibility,opacity] duration-300',
-              currentSlide === 'results'
-                ? 'opacity-0 z-0 ease-out invisible'
-                : 'opacity-100 z-10 ease-in visible'
-            )}
-          >
-            <div className="flex flex-col items-center justify-center w-full px-2 gap-y-2">
-              {context.contextQuestions &&
-                context.contextQuestions.map(({ key, value }, index) => (
-                  <ItemTile
-                    key={kebabCase(key)}
-                    isPending={isPending && context.currentQuestion?.key === key}
-                    onSelect={onSelectQuestion({ key, value })}
-                    {...{ index: index + 1, question: value }}
-                  />
-                ))}
-            </div>
-          </div>
-          <div
-            id="question-result"
-            className={classNames(
-              'w-full h-full absolute left-0 right-0 bg-white transition-[visibility,opacity] duration-300',
-              currentSlide === 'results'
-                ? 'opacity-100 z-10 ease-in visible'
-                : 'opacity-0 z-0 ease-out invisible'
-            )}
-          >
-            <button
-              type="button"
-              onClick={onSlideBack}
-              className="inline-flex items-center px-4 py-3 rounded-md hover:bg-gray-50"
-            >
-              <ArrowLeftOutlined className="mr-2 text-base text-gray-400" />
-              <span className="text-base font-normal text-gray-500">Back to all questions</span>
-            </button>
-            {currentGQA?.gqa?.id && currentGQA.value ? (
-              <div className="my-4">
-                <ItemTile
-                  key={currentGQA.key}
-                  index={
-                    Number(
-                      context.contextQuestions?.findIndex((item) => item.key === currentGQA.key)
-                    ) + 1
-                  }
-                  question={currentGQA.value}
-                  selectable={false}
-                />
-              </div>
-            ) : (
-              <div
-                className={classNames(
-                  'bg-white p-4 my-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex mx-auto'
-                )}
-              >
-                <div
-                  className={classNames(
-                    'inline-flex flex-col items-start justify-start w-full px-2 py-3'
-                  )}
-                >
-                  <GenerativeQAForm
-                    ask={ask({
-                      parameter: context.about,
-                      buildStep: path.step,
-                      DensityOrCount: densityOrCount,
-                    })}
-                    {...{
-                      isPending,
-                      query,
-                      onQuestionClear,
-                      onValueChange,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-            <div
-              className={classNames(
-                'flex flex-col items-center justify-start w-full h-full min-h-[300px] mb-24'
-              )}
-            >
-              {isPending ? (
-                <Skeleton
-                  active
-                  className="px-2 mt-8"
-                  title={{ width: '50%' }}
-                  paragraph={{ rows: 5, width: '100%' }}
-                />
-              ) : (
-                <div className="w-full px-4">
-                  {currentGQA?.gqa && (
-                    <GenerativeQASingleResultCompact
-                      key={currentGQA.gqa.id}
-                      {...{
-                        id: currentGQA.gqa.id,
-                        brainRegion: currentGQA.gqa.brainRegion,
-                        answer: currentGQA.gqa.answer,
-                        rawAnswer: currentGQA.gqa.rawAnswer,
-                        question: currentGQA.gqa.question,
-                        articles: currentGQA.gqa.articles,
-                        askedAt: currentGQA.gqa.askedAt,
-                        isNotFound: currentGQA.gqa.isNotFound,
-                      }}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="absolute left-0 right-0 z-50 inline-flex items-center justify-center w-full mx-auto bottom-8 gap-x-3">
-          {context.currentQuestion?.gqa?.id && (
-            <button
-              type="button"
-              onClick={gotoOptionMode}
-              className="px-5 py-3 bg-white border border-gray-400 w-max hover:bg-primary-8 group"
-            >
-              <span className="text-base font-bold text-primary-8 group-hover:text-white">
-                More options
-              </span>
-            </button>
+    <div className="w-full h-full">
+      <div className="absolute top-0 z-30 flex items-center justify-center w-10 h-10 bg-white rounded-tl-full rounded-bl-full -left-10">
+        <CloseOutlined
+          className="text-base cursor-pointer text-primary-8"
+          onClick={onDrawerClose}
+        />
+      </div>
+      <div className="px-2 mt-4 mb-2">About</div>
+      <div className="px-2 mt-px mb-6 text-3xl font-extrabold text-primary-8">
+        {context.subject}
+      </div>
+      <div className="relative w-full">
+        <div
+          id="parameter-questions"
+          className={classNames(
+            'w-full h-full absolute left-0 right-0 transition-[visibility,opacity] duration-300',
+            currentSlide === 'results'
+              ? 'opacity-0 z-0 ease-out invisible'
+              : 'opacity-100 z-10 ease-in visible'
           )}
+        >
+          <div className="flex flex-col items-center justify-center w-full px-2 gap-y-2">
+            {context.contextQuestions &&
+              context.contextQuestions.map(({ key, value }, index) => (
+                <ItemTile
+                  key={kebabCase(key)}
+                  isPending={isPending && context.currentQuestion?.key === key}
+                  onSelect={onSelectQuestion({ key, value })}
+                  {...{ index: index + 1, question: value }}
+                />
+              ))}
+          </div>
+        </div>
+        <div
+          id="question-result"
+          className={classNames(
+            'w-full h-full absolute left-0 right-0 bg-white transition-[visibility,opacity] duration-300',
+            currentSlide === 'results'
+              ? 'opacity-100 z-10 ease-in visible'
+              : 'opacity-0 z-0 ease-out invisible'
+          )}
+        >
           <button
             type="button"
-            onClick={gotoAskMoreMode}
+            onClick={onSlideBack}
+            className="inline-flex items-center px-4 py-3 rounded-md hover:bg-gray-50"
+          >
+            <ArrowLeftOutlined className="mr-2 text-base text-gray-400" />
+            <span className="text-base font-normal text-gray-500">Back to all questions</span>
+          </button>
+          {currentGQA.question?.gqa?.id && currentGQA.question.value ? (
+            <div className="my-4">
+              <ItemTile
+                key={currentGQA.question.key}
+                index={Number(currentGQA.index) + 1}
+                question={currentGQA.question.value}
+                selectable={false}
+              />
+            </div>
+          ) : (
+            <div
+              className={classNames(
+                'bg-white p-4 my-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex mx-auto'
+              )}
+            >
+              <div
+                className={classNames(
+                  'inline-flex flex-col items-start justify-start w-full px-2 py-3'
+                )}
+              >
+                <GenerativeQAForm
+                  ask={ask({
+                    buildStep,
+                    parameter: context.about,
+                    DensityOrCount: densityOrCount,
+                  })}
+                  label={`${Number(currentGQA.index) + 1}.`}
+                  {...{
+                    query,
+                    isPending,
+                    onQuestionClear,
+                    onValueChange,
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          <div
+            className={classNames(
+              'flex flex-col items-center justify-start w-full h-full min-h-[300px] mb-24'
+            )}
+          >
+            {isPending ? (
+              <div className="flex flex-col w-full px-2">
+                <Skeleton.Input active style={{ width: '60%', marginBottom: '8px' }} size="large" />
+                <Skeleton.Input active style={{ width: '100%', height: '200px' }} />
+              </div>
+            ) : (
+              <div className="w-full px-4">
+                {currentGQA.question?.gqa && (
+                  <GenerativeQASingleResultCompact
+                    key={currentGQA.question.gqa.id}
+                    {...{
+                      id: currentGQA.question.gqa.id,
+                      brainRegion: currentGQA.question.gqa.brainRegion,
+                      answer: currentGQA.question.gqa.answer,
+                      rawAnswer: currentGQA.question.gqa.rawAnswer,
+                      question: currentGQA.question.gqa.question,
+                      articles: currentGQA.question.gqa.articles,
+                      askedAt: currentGQA.question.gqa.askedAt,
+                      isNotFound: currentGQA.question.gqa.isNotFound,
+                    }}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="absolute left-0 right-0 z-50 inline-flex items-center justify-center w-full mx-auto bottom-8 gap-x-3">
+        {context.currentQuestion?.gqa?.id && (
+          <button
+            type="button"
+            onClick={gotoOptionMode}
             className="px-5 py-3 bg-white border border-gray-400 w-max hover:bg-primary-8 group"
           >
             <span className="text-base font-bold text-primary-8 group-hover:text-white">
-              Ask more questions
+              More options
             </span>
           </button>
-        </div>
+        )}
+        <button
+          type="button"
+          onClick={gotoAskMoreMode}
+          className="px-5 py-3 bg-white border border-gray-400 w-max hover:bg-primary-8 group"
+        >
+          <span className="text-base font-bold text-primary-8 group-hover:text-white">
+            Ask more questions
+          </span>
+        </button>
       </div>
-    </Drawer>
+    </div>
   );
 }
 
-export default ContextualContent;
+// impo! use the key (randomly generated on each attempt to open the drawer)
+// this will re-initialize the state to the defaut values
+// no need to useEffect to reset in first render
+
+function ContextualLiterature() {
+  const { key: contextualKey } = useAtomValue(contextualLiteratureAtom);
+  return (
+    <ContextualContainer>
+      <ContextualContent key={contextualKey} />
+    </ContextualContainer>
+  );
+}
+
+export default ContextualLiterature;

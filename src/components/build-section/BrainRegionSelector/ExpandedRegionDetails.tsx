@@ -28,6 +28,7 @@ import {
   CalculatedCompositionNeuronGlia,
   CalculatedCompositionNode,
 } from '@/types/composition/calculation';
+import { QuestionAbout } from '@/types/literature';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -91,7 +92,7 @@ function NeuronCompositionEditor({
           )}
           <ContextualTrigger
             className={isEditable ? 'ml-1' : ''}
-            about={about}
+            about={about as QuestionAbout}
             subject={title}
             densityOrCount={densityOrCount}
           />

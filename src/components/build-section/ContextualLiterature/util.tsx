@@ -7,7 +7,12 @@ const subjectElement = (subject?: string) =>
 const brainRegionElement = (title?: string) =>
   title && <b className="px-2 py-px bg-orange-100 rounded-md text-amber-600">{title}</b>;
 
-const buildCellCompositionQuestion = ({
+/**
+ *
+ * @see (buildQuestionsList)
+ * @returns CellComposition predefined questions list
+ */
+const buildCellCompositionQuestions = ({
   about,
   brainRegionTitle,
   step,
@@ -24,7 +29,7 @@ const buildCellCompositionQuestion = ({
     ? {
         [`What are of electrophysiological types in ${brainRegionTitle}`]: (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
-            What are the {propertyElement('electrophysiological')} in{' '}
+            What are the {propertyElement('electrophysiological')} types in{' '}
             {brainRegionElement(brainRegionTitle)} region ?
           </span>
         ),
@@ -32,7 +37,7 @@ const buildCellCompositionQuestion = ({
     : {
         [`What are of morphological types in ${brainRegionTitle}`]: (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
-            What are the {propertyElement('morphological')} in{' '}
+            What are the {propertyElement('morphological')} types in{' '}
             {brainRegionElement(brainRegionTitle)} region ?
           </span>
         ),
@@ -43,14 +48,31 @@ const buildCellCompositionQuestion = ({
 // const buildConnectomeDefinitionQuestion = ({ about, brainRegionTitle, step, subject }: BuildQuestionInput) => null;
 
 export function destructPath(pathName: string) {
-  const [, build, step] = pathName.split('/');
+  if (pathName) {
+    const [, build, step] = pathName.split('/');
 
+    return {
+      build,
+      step,
+    };
+  }
   return {
-    build,
-    step,
+    build: '',
+    step: '',
   };
 }
 
+/**
+ * This function will take a set of paramters in each different step (some parameters are common)
+ * the result is the pre-defined questions both the text and styled text
+ * the default text will be passed to the AI
+ * @param Build.about depend on the step you are in (cell-composition) has Etype or MType
+ * @param Build.brainRegionTitle selected brain region
+ * @param Build.step build step (cell-composition, cell-model-assignement, ...)
+ * @param Build.subject the selected object you want to investigate on (in cell-composition as ex: GEN_mtype, L1_DAC, ...)
+ * @param Build.densityOrCount this related to cell-composition step it may be different in other steps
+ * @returns both default text and styled text
+ */
 export function buildQuestionsList({
   about,
   brainRegionTitle,
@@ -60,7 +82,7 @@ export function buildQuestionsList({
 }: BuildQuestionInput): Record<string, JSX.Element> | null {
   let questions: Record<string, JSX.Element> | null = null;
   if (step === 'cell-composition') {
-    questions = buildCellCompositionQuestion({
+    questions = buildCellCompositionQuestions({
       about,
       brainRegionTitle,
       step,

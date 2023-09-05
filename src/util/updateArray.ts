@@ -2,7 +2,7 @@ import find from 'lodash/find';
 import merge from 'lodash/merge';
 
 /**
- *
+ * This function will update an item of Array of objects by giving a costum predicate
  * @param array source array to update
  * @param keyfn function to chcek if the the elemet existed or not
  * @param newVal the replacement value

@@ -8,6 +8,7 @@ import {
 } from '@/state/literature';
 import { GenerativeQA } from '@/types/literature';
 import usePathname from '@/hooks/pathname';
+import { destructPath } from '@/components/build-section/ContextualLiterature/util';
 
 function useContextualLiteratureContext() {
   const pathname = usePathname();
@@ -43,7 +44,10 @@ function useContextualLiteratureContext() {
     return params;
   };
 
+  const { step: buildStep } = destructPath(pathname!);
+
   return {
+    buildStep,
     pathname,
     currentMode,
     isOptionsMode,
