@@ -93,6 +93,7 @@ export async function fetchAnalysisReportsFromEs(session: Session, simulationIds
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({
+      size: 10000,
       query: {
         bool: {
           filter: [
