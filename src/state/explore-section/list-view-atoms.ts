@@ -81,13 +81,14 @@ export const filtersAtom = atomFamily((experimentTypeName: string) =>
   })
 );
 
-export const queryAtom = atomFamily(({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
-  atom<object>((get) => {
-    const searchString = get(searchStringAtom);
-    const pageNumber = get(pageNumberAtom);
-    const pageSize = get(pageSizeAtom);
-    const sortState = get(sortStateAtom);
-    const filters = get(filtersAtom({ experimentTypeName, resourceId }));
+export const queryAtom = atomFamily(
+  ({ experimentTypeName }: DataAtomFamilyScopeType) =>
+    atom<object>((get) => {
+      const searchString = get(searchStringAtom);
+      const pageNumber = get(pageNumberAtom);
+      const pageSize = get(pageSizeAtom);
+      const sortState = get(sortStateAtom);
+      const filters = get(filtersAtom({ experimentTypeName }));
 
       if (!filters) {
         return null;
