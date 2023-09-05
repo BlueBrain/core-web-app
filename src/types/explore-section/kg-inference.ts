@@ -12,11 +12,22 @@ export interface InputParameter {
   payload: Payload;
 }
 
+export interface PayLoadValues {
+  [key: string]: string;
+}
 export interface Payload {
   name: string;
   description: string;
   optional: boolean;
   default: any[] | null;
   type: string;
-  values: { [key: string]: string } | null;
+  values: PayLoadValues;
+}
+
+export interface InferenceOptionsState {
+  [key: string]: boolean;
+}
+
+export interface RuleWithOptionsProps {
+  [rule: string]: InferenceOptionsState;
 }
