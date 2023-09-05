@@ -4,13 +4,13 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import find from 'lodash/find';
-import { RuleOuput } from '@/types/explore-section/kg-inference';
+import { RuleOutput } from '@/types/explore-section/kg-inference';
 import { rulesResponseAtom } from '@/state/explore-section/list-view-atoms';
 import useNotification from '@/hooks/notifications';
 
 const rulesLoadableAtom = loadable(rulesResponseAtom);
 
-function GeneraliztionOptions({ rule }: { rule: RuleOuput | undefined }) {
+function GeneraliztionOptions({ rule }: { rule: RuleOutput | undefined }) {
   if (!rule) return null;
 
   const inferenceOptions = find(rule.inputParameters, { name: 'IgnoreModelsParameter' })?.payload

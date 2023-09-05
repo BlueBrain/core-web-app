@@ -1,10 +1,10 @@
 import { Session } from 'next-auth';
 import { createHeaders } from '@/util/utils';
-import { RuleOuput } from '@/types/explore-section/kg-inference';
+import { RuleOutput } from '@/types/explore-section/kg-inference';
 
 const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
 
-export function fetchRules(session: Session, TYPE: string): Promise<RuleOuput[]> {
+export function fetchRules(session: Session, TYPE: string): Promise<RuleOutput[]> {
   const result = fetch(`${BASE_URL}/rules`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
