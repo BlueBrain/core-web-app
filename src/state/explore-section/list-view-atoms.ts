@@ -12,9 +12,10 @@ import {
   PAGE_NUMBER,
   SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
+import { fetchRules } from '@/api/generalization';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOutput } from '@/types/explore-section/kg-inference';
-import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
+import { ExploreESResponse, FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { resourceBasedResponseAtom } from '@/state/explore-section/generalization';
 
@@ -80,14 +81,13 @@ export const filtersAtom = atomFamily((experimentTypeName: string) =>
   })
 );
 
-export const queryAtom = atomFamily(
-  ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
-    atom<object>(async (get) => {
-      const searchString = get(searchStringAtom);
-      const pageNumber = get(pageNumberAtom);
-      const pageSize = get(pageSizeAtom);
-      const sortState = get(sortStateAtom);
-      const filters = get(filtersAtom({ experimentTypeName }));
+export const queryAtom = atomFamily(({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
+  atom<object>((get) => {
+    const searchString = get(searchStringAtom);
+    const pageNumber = get(pageNumberAtom);
+    const pageSize = get(pageSizeAtom);
+    const sortState = get(sortStateAtom);
+    const filters = get(filtersAtom({ experimentTypeName, resourceId }));
 
       if (!filters) {
         return null;
@@ -127,7 +127,7 @@ export const queryAtom = atomFamily(
 
 export const queryResponseAtom = atomFamily(
   ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
-    atom<Promise<ExploreSectionResponse | null> | null>(async (get) => {
+    atom<Promise<ExploreESResponse | null> | null>(async (get) => {
       const session = get(sessionAtom);
       const query = await get(queryAtom({ experimentTypeName, resourceId }));
 
