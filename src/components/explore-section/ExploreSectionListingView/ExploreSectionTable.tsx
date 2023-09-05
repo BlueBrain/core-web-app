@@ -2,8 +2,10 @@ import { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import { useSetAtom } from 'jotai';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
 import {
   ExploreDownloadButton,
@@ -77,6 +79,8 @@ export function BaseTable({
   const router = useRouter();
   const pathname = usePathname();
 
+  const setBackToListPath = useSetAtom(backToListPathAtom);
+
   if (hasError) {
     return <div>Something went wrong</div>;
   }
@@ -85,7 +89,7 @@ export function BaseTable({
     onCell: (record: ESResponseRaw) => ({
       onClick: (e: MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
-
+        setBackToListPath(pathname);
         router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`);
       },
     }),

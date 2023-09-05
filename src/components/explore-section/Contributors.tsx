@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { IdLabel } from '@/types/explore-section/fields';
-import { contributorsDataAtom } from '@/state/explore-section/detail-atoms-constructor';
+import { contributorsDataAtom } from '@/state/explore-section/detail-view-atoms';
 import ListField from '@/components/explore-section/Fields/ListField';
 
 /**

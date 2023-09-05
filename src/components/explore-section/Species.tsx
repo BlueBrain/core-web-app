@@ -2,7 +2,7 @@ import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { speciesDataAtom } from '@/state/explore-section/detail-atoms-constructor';
+import { speciesDataAtom } from '@/state/explore-section/detail-view-atoms';
 
 const speciesLabelLoadableAtom = loadable(speciesDataAtom);
 

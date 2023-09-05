@@ -5,7 +5,7 @@ import range from 'lodash/range';
 import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
 import { usePathname } from 'next/navigation';
-import { latestRevisionAtom } from '@/state/explore-section/detail-atoms-constructor';
+import { latestRevisionAtom } from '@/state/explore-section/detail-view-atoms';
 import { DeltaResource } from '@/types/explore-section/resources';
 import Link from '@/components/Link';
 import { InteractiveViewIcon } from '@/components/icons';

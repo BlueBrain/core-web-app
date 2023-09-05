@@ -6,7 +6,7 @@ import {
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
 import { AxesState } from '@/types/explore-section/fields';
-import { detailAtom } from '@/state/explore-section/detail-atoms-constructor';
+import { detailAtom } from '@/state/explore-section/detail-view-atoms';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 
 // Dimensions atoms
