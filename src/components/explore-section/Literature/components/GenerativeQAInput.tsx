@@ -11,8 +11,8 @@ import {
 import useChatQAContext, { ChatQAContextHook, initialParameters } from '../useChatQAContext';
 import useContextualLiteratureContext from '../useContextualLiteratureContext';
 import JournalSearch from './JournalSearch';
-import { classNames } from '@/util/utils';
 import { DateRange } from '@/components/Filter';
+import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -37,16 +37,16 @@ function FormButton({ icon, type, ...props }: FormButtonProps) {
 }
 
 export function GenerativeQAForm({
-  isPending,
   query,
-  onQuestionClear,
-  onValueChange,
-  ask,
   isParametersVisible,
+  isPending,
+  onValueChange,
+  onQuestionClear,
+  ask,
   children,
 }: Omit<Partial<ChatQAContextHook>, 'ask'> & {
   ask: (data: FormData) => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <form name="qa-form" className="w-full" action={ask}>
@@ -194,10 +194,7 @@ function GenerativeQABar() {
                     type="submit"
                     disabled={isQuestionEmpty || isPending}
                     title={isQuestionEmpty ? 'Please enter a question' : ''}
-                    className={classNames(
-                      'border-[1px ] border-solid border-gray rounded px-4 py-2',
-                      isQuestionEmpty ? 'text-gray-400' : 'text-primary-8'
-                    )}
+                    className="border-[1px ] border-solid border-gray rounded px-4 py-2 text-primary-8 disabled:text-gray-400"
                   >
                     Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
                   </button>

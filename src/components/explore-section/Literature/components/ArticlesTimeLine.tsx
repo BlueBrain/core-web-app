@@ -3,9 +3,10 @@ import Article from './Article';
 
 type GenerativeQAResultsProps = Pick<GenerativeQASingleResultProps, 'articles'> & {
   collapseAll: boolean;
+  isCompact?: boolean;
 };
 
-function ArticlesTimeLine({ articles, collapseAll }: GenerativeQAResultsProps) {
+function ArticlesTimeLine({ articles, collapseAll, isCompact }: GenerativeQAResultsProps) {
   return (
     <ol className="relative border-l border-gray-200 dark:border-gray-700">
       {articles.map(
@@ -41,6 +42,7 @@ function ArticlesTimeLine({ articles, collapseAll }: GenerativeQAResultsProps) {
               publicationDate,
               citationsCount,
               impactFactor,
+              isCompact,
             }}
           />
         )

@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { FilterOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { format } from 'date-fns';
-import { usePathname } from 'next/navigation';
 import trim from 'lodash/trim';
 
+import useContextualLiteratureContext from '../useContextualLiteratureContext';
 import ArticlesTimeLine from './ArticlesTimeLine';
 import ArticleSorter from './ArticleSorter';
 import { QABrainRegionPerQuestion } from './QABrainRegion';
@@ -14,18 +14,13 @@ import { FilterFns } from './FilterPanel';
 import { GenerativeQA, FilterFieldsType, SortFn } from '@/types/literature';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
-import {
-  brainRegionQAs,
-  literatureAtom,
-  literatureResultAtom,
-  useLiteratureAtom,
-} from '@/state/literature';
+import { literatureAtom, useLiteratureAtom } from '@/state/literature';
 import BrainLight from '@/components/icons/BrainLight';
 import LightIcon from '@/components/icons/Light';
 
 export type GenerativeQASingleResultProps = Omit<GenerativeQA, 'sources' | 'paragraphs'>;
 
-function GenerativeQASingleNotFound({ collpaseQuestion }: { collpaseQuestion: boolean }) {
+function GenerativeQASingleNotFound({ collpaseQuestion }: { collpaseQuestion?: boolean }) {
   return (
     <div
       className={classNames(
@@ -40,6 +35,95 @@ function GenerativeQASingleNotFound({ collpaseQuestion }: { collpaseQuestion: bo
         <LightIcon className="w-4 h-4 text-primary-8" />
         <div className="font-light">Please reformulate your question .</div>
       </div>
+    </div>
+  );
+}
+
+function GenerativeQASingleResultCompact({
+  id,
+  question,
+  answer,
+  rawAnswer,
+  articles,
+  isNotFound,
+}: GenerativeQASingleResultProps) {
+  const showExtraDetails = Boolean(articles.length);
+  const [expandArticles, setExpandArticles] = useState(false);
+  const toggleExpandArticles = () => setExpandArticles((state) => !state);
+
+  let finalAnswer = answer;
+
+  if (answer && trim(answer).length > 0) {
+    finalAnswer = answer;
+  } else if (rawAnswer && trim(rawAnswer).length > 0) {
+    finalAnswer = rawAnswer;
+  }
+
+  return (
+    <div id={id} className={classNames('w-full mt-3')}>
+      <div className="inline-flex items-center justify-between w-full mb-2">
+        <div className="inline-flex items-center justify-start w-full gap-2 my-5">
+          <span className="text-xl font-bold tracking-tight text-blue-900">{question}</span>
+        </div>
+      </div>
+      {isNotFound ? (
+        <GenerativeQASingleNotFound />
+      ) : (
+        <div className="block">
+          <div className="w-full text-xl font-normal leading-7 text-blue-900">{finalAnswer}</div>
+          <div className={`w-full h-px my-6 bg-zinc-300 ${showExtraDetails ? '' : 'hidden'}`} />
+          <div className={`w-full ${showExtraDetails ? '' : 'hidden'}`}>
+            <div className="inline-flex items-center justify-between w-full gap-y-3">
+              <div className="flex items-center w-full">
+                <button
+                  type="button"
+                  onClick={toggleExpandArticles}
+                  className="w-full h-11 px-3 py-3 gap-1.5 bg-blue-50 text-white shadow-sm  rounded-md relative inline-flex justify-between items-center whitespace-nowrap cursor-pointer no-underline leading-tight transition-all duration-200"
+                  aria-controls="collapse-content"
+                  aria-label="expand-articles"
+                >
+                  <div className="inline-flex items-center justify-start gap-1">
+                    <div className="text-base font-normal leading-snug text-blue-900">Based on</div>
+                    <div className="px-1 py-[.2px] bg-blue-900 rounded-[3px] flex-col justify-start items-center inline-flex">
+                      <span className="text-sm font-bold tracking-tight text-blue-50">
+                        {articles.length}
+                      </span>
+                    </div>
+                    <div className="text-base font-normal leading-snug text-blue-900">
+                      paragraphs
+                    </div>
+                  </div>
+                  <ChevronIcon
+                    className={classNames(
+                      'text-primary-8 fill-current',
+                      expandArticles ? '-rotate-90' : 'rotate-90'
+                    )}
+                  />
+                </button>
+              </div>
+            </div>
+            <div
+              id="collapse-content"
+              className={`mt-5 ${
+                expandArticles
+                  ? 'block px-1 opacity-100 transition-all ease-out-expo duration-300 overflow-hidden'
+                  : 'hidden transition-all duration-100 ease-in-expo'
+              }`}
+              data-collapse-animate="on"
+            >
+              <div className="mt-4 rounded mb-28">
+                <ArticlesTimeLine
+                  {...{
+                    articles,
+                    isCompact: true,
+                    collapseAll: expandArticles,
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -159,11 +243,11 @@ function GenerativeQASingleResult({
           <div className={`w-full h-px my-6 bg-zinc-300 ${showExtraDetails ? '' : 'hidden'}`} />
           <div className={`w-full ${showExtraDetails ? '' : 'hidden'}`}>
             <div className="inline-flex items-center justify-between w-full gap-y-3">
-              <div className="flex items-center">
+              <div className="flex items-center w-full">
                 <button
                   type="button"
                   onClick={toggleExpandArticles}
-                  className="w-[350px] h-11 px-3 py-3 gap-1.5 bg-blue-50 text-white shadow-sm  rounded-md relative inline-flex justify-between items-center whitespace-nowrap cursor-pointer no-underline leading-tight transition-all duration-200 "
+                  className="h-11 w-[300px] px-3 py-3 gap-1.5 bg-blue-50 text-white shadow-sm  rounded-md relative inline-flex justify-between items-center whitespace-nowrap cursor-pointer no-underline leading-tight transition-all duration-200"
                   aria-controls="collapse-content"
                   aria-label="expand-articles"
                 >
@@ -185,7 +269,6 @@ function GenerativeQASingleResult({
                     )}
                   />
                 </button>
-
                 <ArticleSorter
                   onChange={(sortFn) => {
                     setSortFunction(() => sortFn);
@@ -230,10 +313,7 @@ function GenerativeQASingleResult({
 
 function QAResultList() {
   const qaResultsRef = useRef<HTMLDivElement>(null);
-  const allQAs = useAtomValue(literatureResultAtom);
-  const brainRegionSpecificQAs = useAtomValue(brainRegionQAs);
-  const pathname = usePathname();
-  const isBuildSection = pathname?.startsWith('/build');
+  const { dataSource } = useContextualLiteratureContext();
 
   useEffect(() => {
     if (qaResultsRef.current) {
@@ -242,13 +322,13 @@ function QAResultList() {
         top: qaResultsRef.current.scrollHeight,
       });
     }
-  }, [allQAs.length]);
+  }, [dataSource.length]);
 
   return (
     <div className="w-full h-full max-h-screen">
       <div className="flex-1 w-full h-full overflow-auto scroll-smooth" ref={qaResultsRef}>
         <ul className="flex flex-col items-center justify-start max-w-4xl p-4 mx-auto list-none">
-          {(isBuildSection ? brainRegionSpecificQAs : allQAs).map(
+          {dataSource.map(
             ({ id, question, answer, rawAnswer, articles, askedAt, brainRegion, isNotFound }) => (
               <GenerativeQASingleResult
                 key={id}
@@ -270,4 +350,6 @@ function QAResultList() {
     </div>
   );
 }
+
+export { GenerativeQASingleResult, GenerativeQASingleNotFound, GenerativeQASingleResultCompact };
 export default QAResultList;

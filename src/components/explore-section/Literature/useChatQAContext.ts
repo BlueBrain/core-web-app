@@ -116,10 +116,10 @@ function useChatQAContext({
   };
 
   return {
-    isPending,
-    isQuestionEmpty,
-    isParametersVisible,
     query,
+    isQuestionEmpty,
+    isPending,
+    isParametersVisible,
     selectedDate,
     selectedJournals,
     updateParameters,

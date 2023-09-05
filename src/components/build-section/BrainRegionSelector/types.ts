@@ -46,4 +46,5 @@ export type NeuronCompositionEditorProps = {
   isEditable: boolean;
   isLeaf: boolean;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
+  about: string;
 };
