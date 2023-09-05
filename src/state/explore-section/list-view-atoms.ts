@@ -13,7 +13,7 @@ import {
   SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
-import { RuleOuput } from '@/types/explore-section/kg-inference';
+import { RuleOutput } from '@/types/explore-section/kg-inference';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 
@@ -133,10 +133,12 @@ export const aggregationsAtom = atomFamily((experimentTypeName: string) =>
   >(queryResponseAtom(experimentTypeName), async (response) => response?.aggs)
 );
 
-export const rulesResponseAtom = atom<Promise<RuleOuput[]> | null>((get) => {
-  const session = get(sessionAtom);
+export const rulesResponseAtom = atomFamily((experimentTypeName: string) =>
+  atom<Promise<RuleOutput[]> | null>((get) => {
+    const session = get(sessionAtom);
 
-  if (!session) return null;
+    if (!session) return null;
 
-  return fetchRules(session);
-});
+    return fetchRules(session, experimentTypeName);
+  })
+);

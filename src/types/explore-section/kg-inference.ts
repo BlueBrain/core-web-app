@@ -1,4 +1,4 @@
-export interface RuleOuput {
+export interface RuleOutput {
   id: string;
   name: string;
   description: string;
