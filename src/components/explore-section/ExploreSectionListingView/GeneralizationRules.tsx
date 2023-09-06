@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Spin, Checkbox } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
@@ -94,10 +95,10 @@ function GeneralizationRules({
           />
         ))}
 
-        <div className="flex flex-col space-y-2 place-self-center">
-          <label htmlFor="number-of-results" className="font-semibold">
-            <span className="font-thin">Number of infer results:</span>
-            <input type="number" id="number-of-results" className="ml-6 border-gray-500 border" />
+        <div className='flex flex-col space-y-2 place-self-center'>
+          <label htmlFor='number-of-results' className='font-semibold'>
+            <span className='font-thin'>Number of infer results:</span>
+            <input type='number' id='number-of-results' className='ml-6 border-gray-500 border' />
           </label>
           <button
             type="submit"

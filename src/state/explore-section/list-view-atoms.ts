@@ -1,4 +1,7 @@
 import { atom } from 'jotai';
+import isEmpty from 'lodash/isEmpty';
+import find from 'lodash/find';
+import filter from 'lodash/filter';
 import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import head from 'lodash/head';
@@ -24,6 +27,15 @@ type DataAtomFamilyScopeType = { experimentTypeName: string; resourceId?: string
 
 const DataAtomFamilyScopeComparator = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType) =>
   a.experimentTypeName === b.experimentTypeName && a.resourceId === b.resourceId;
+
+// Function to generate the initial state for a given rule and inference options
+function generateInitialState (inferenceOptions: PayLoadValues): InferenceOptionsState {
+  const initialState: InferenceOptionsState = {};
+  Object.keys(inferenceOptions).forEach((key: string) => {
+    initialState[key] = false;
+  });
+  return initialState;
+}
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
