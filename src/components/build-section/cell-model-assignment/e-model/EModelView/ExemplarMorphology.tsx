@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import DefaultEModelTable from './DefaultEModelTable';
+import PickMorphology from './PickMorphology';
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
@@ -47,6 +48,7 @@ export default function ExemplarMorphology() {
   const exemplarMorphology = useAtomValue(exemplarMorphologyAtom);
   const eModelEditMode = useAtomValue(eModelEditModeAtom);
   const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
+  const [openPicker, setOpenPicker] = useState(false);
 
   useEffect(() => {
     if (!eModelEditMode || !exemplarMorphology) return;
@@ -85,11 +87,20 @@ export default function ExemplarMorphology() {
       <div className="text-primary-8 text-2xl font-bold">Exemplar morphology</div>
       {morphology && <DefaultEModelTable dataSource={[morphology]} columns={columns} />}
       {eModelEditMode && (
-        <GenericButton
-          className="border-primary-7 text-primary-7 mt-2"
-          text="Assign morphology"
-          disabled
-        />
+        <>
+          <GenericButton
+            className="border-primary-7 text-primary-7 mt-2"
+            text="Assign morphology"
+            onClick={() => {
+              setOpenPicker(true);
+            }}
+          />
+          <PickMorphology
+            isOpen={openPicker}
+            onCancel={() => setOpenPicker((isOpen) => !isOpen)}
+            onOk={() => {}}
+          />
+        </>
       )}
     </>
   );

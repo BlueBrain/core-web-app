@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { DeleteOutlined, GlobalOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/es/table';
 import { Divider, Popover } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 
 import DefaultEModelTable from './DefaultEModelTable';
+import PickTraces from './PickTraces';
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
@@ -77,6 +78,7 @@ export default function ExperimentalTraces() {
   const experimentalTraces = useAtomValue(experimentalTracesAtom);
   const eModelEditMode = useAtomValue(eModelEditModeAtom);
   const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
+  const [openPicker, setOpenPicker] = useState(false);
 
   useEffect(() => {
     if (!eModelEditMode || !experimentalTraces) return;
@@ -115,7 +117,20 @@ export default function ExperimentalTraces() {
       <div className="text-primary-8 text-2xl font-bold">Experimental traces</div>
       {traces && <DefaultEModelTable dataSource={traces} columns={columns} />}
       {eModelEditMode && (
-        <GenericButton className="border-primary-7 text-primary-7 mt-2" text="Add trace" disabled />
+        <>
+          <GenericButton
+            className="border-primary-7 text-primary-7 mt-2"
+            text="Add trace"
+            onClick={() => {
+              setOpenPicker(true);
+            }}
+          />
+          <PickTraces
+            isOpen={openPicker}
+            onCancel={() => setOpenPicker((isOpen) => !isOpen)}
+            onOk={() => {}}
+          />
+        </>
       )}
     </>
   );
