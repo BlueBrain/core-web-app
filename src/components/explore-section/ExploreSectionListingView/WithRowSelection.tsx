@@ -25,7 +25,7 @@ export default function WithRowSelection({
 }) {
 
   const [selectedRows, setSelectedRows] = useAtom(
-    useMemo(() => selectedRowsAtom({experimentTypeName}), [experimentTypeName])
+    useMemo(() => selectedRowsAtom({ experimentTypeName }), [experimentTypeName])
   );
   const clearSelectedRows = () => setSelectedRows([]);
 
