@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEvent, ReactNode } from 'react';
+import { CSSProperties, MouseEvent, ReactNode, useMemo } from 'react';
 import { Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
@@ -145,7 +145,6 @@ export default function ExploreSectionTable({
     </ExploreDownloadButton>
   );
 
-<<<<<<< HEAD
   const expandedRowRender = (resource: ESResponseRaw) => (
 <<<<<<< HEAD
     <GeneralizationRules
@@ -156,9 +155,6 @@ export default function ExploreSectionTable({
     <GeneralizationRules resourceId={resource._source['@id']} />
 >>>>>>> 9c97f885 (Extends atom family scope and updates variable name of type to experimentTypeName)
   );
-=======
-  const expandedRowRender = () => <GeneralizationRules experimentTypeName={experimentTypeName} />;
->>>>>>> c402d759 (fixed some of the other atom family uses)
 
   return enableDownload ? (
     <WithRowSelection

@@ -4,11 +4,19 @@ import { RuleOutput, ResourceBasedInferenceRequest } from '@/types/explore-secti
 
 const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
 
+<<<<<<< HEAD
 export function fetchRules(session: Session, resourceId: string): Promise<RuleOutput[]> {
   const result = fetch(`${BASE_URL}/rules`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
     body: JSON.stringify({ resourceId }),
+=======
+export function fetchRules(session: Session): Promise<RuleOutput[]> {
+  const result = fetch(`${BASE_URL}/rules`, {
+    method: 'POST',
+    headers: createHeaders(session.accessToken),
+    body: JSON.stringify({}),
+>>>>>>> b9b8483f (debugging depth issue)
   }).then((response) => response.json());
 
   return result;
