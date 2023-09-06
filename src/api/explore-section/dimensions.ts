@@ -18,7 +18,7 @@ export default function calculateDimensionValues(
     const maxValue = parseFloat(dimensionValue.maxValue);
     const step = parseFloat(dimensionValue.step);
     // applying toFixed() due to a rounding error from range https://github.com/lodash/lodash/issues/1539
-    return range(minValue, maxValue + 0.1, step).map((num) => parseFloat(num.toFixed(2)));
+    return range(minValue, maxValue, step).map((num) => parseFloat(num.toFixed(2)));
   }
   return [];
 }
