@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEvent, ReactNode, useMemo } from 'react';
+import { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';

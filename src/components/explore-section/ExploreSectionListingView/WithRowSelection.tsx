@@ -23,13 +23,10 @@ export default function WithRowSelection({
   experimentTypeName: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-<<<<<<< HEAD
+
   const [selectedRows, setSelectedRows] = useAtom(
-    useMemo(() => selectedRowsAtom({ experimentTypeName }), [experimentTypeName])
+    useMemo(() => selectedRowsAtom({experimentTypeName}), [experimentTypeName])
   );
-=======
-  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom({ experimentTypeName }));
->>>>>>> c402d759 (fixed some of the other atom family uses)
   const clearSelectedRows = () => setSelectedRows([]);
 
   return (
