@@ -8,7 +8,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://portal.bluebrain.epfl.ch/resources/models/mouse-whole-neocortex/',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-1.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-1.jpg',
   },
   {
     name: 'Ion Channel',
@@ -17,7 +17,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://channelpedia.epfl.ch/',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-2.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-2.jpg',
   },
   {
     name: 'Neocortical microcircuit collaboration portal',
@@ -26,7 +26,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://bbp.epfl.ch/nmc-portal/welcome.html',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-3.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-3.jpg',
   },
   {
     name: 'Rat Somatosensory Cortex',
@@ -35,7 +35,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'http://celltypes.brain-map.org/data',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-4.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-4.jpg',
   },
   {
     name: 'Mouse Visual Cortex',
@@ -44,7 +44,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'http://celltypes.brain-map.org/data',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-5.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-5.jpg',
   },
   {
     name: 'Mouse Somatosensory Cortex',
@@ -53,7 +53,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://ebrains-cls-interactive.github.io/index.html',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-1.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-1.jpg',
   },
   {
     name: 'Rat Hippocampus CA1',
@@ -62,7 +62,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://ebrains-cls-interactive.github.io/online-use-cases.html',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-2.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-2.jpg',
   },
   {
     name: 'Hippocampus',
@@ -71,7 +71,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://www.hippocampushub.eu/',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-3.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-3.jpg',
   },
   {
     name: 'Brain Molecular Atlas',
@@ -80,7 +80,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://bbp.epfl.ch/nexus/cell-atlas/?all=1',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-4.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-4.jpg',
   },
   {
     name: 'Neuro-Glia-Vasculature',
@@ -89,7 +89,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://bbp.epfl.ch/nexus/cell-atlas/?all=1',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-5.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-5.jpg',
   },
   {
     name: 'Topological Neuron Synthesis',
@@ -98,7 +98,7 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://github.com/BlueBrain/NeuroTS',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-1.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-1.jpg',
   },
   {
     name: 'NeuroM',
@@ -107,6 +107,6 @@ export const PORTALS_LIST_CONTENT: Portal[] = [
     url: 'https://github.com/BlueBrain/NeuroM',
     categories: ['neuroscience', 'connectome', 'mouse'],
     lastUpdate: '24.06.2023',
-    image: '/images/explore/portals/img_portal_placeholder-2.jpg',
+    image: 'images/explore/portals/img_portal_placeholder-2.jpg',
   },
 ];
