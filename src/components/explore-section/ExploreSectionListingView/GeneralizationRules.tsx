@@ -56,6 +56,7 @@ function GeneralizationRules({
   resourceId: string;
   experimentTypeName: string;
 }) {
+
   const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom(resourceId));
   const [inferredResourceIds, setinferredResourceIds] = useAtom(
     inferredResourceIdsAtom(experimentTypeName)
