@@ -17,7 +17,13 @@ import {
   Table,
 } from '@apache-arrow/es5-cjs';
 
-import { IdRev, MicroConnectomeConfigPayload, MicroConnectomeEntryBase } from '@/types/nexus';
+import {
+  IdRev,
+  MicroConnectomeConfigPayload,
+  MicroConnectomeDataOverridesResource,
+  MicroConnectomeEntryBase,
+  MicroConnectomeVariantSelectionOverridesResource,
+} from '@/types/nexus';
 import {
   HemisphereDirection,
   MicroConnectomeEditEntry as EditEntry,
@@ -26,12 +32,19 @@ import {
   PathwaySideSelection as Selection,
   WholeBrainConnectivityMatrix,
 } from '@/types/connectome';
-import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
+import {
+  fetchFileByUrl,
+  fetchFileMetadataByUrl,
+  fetchResourceById,
+  updateFileByUrl,
+  updateResource,
+} from '@/api/nexus';
 import { OriginalComposition } from '@/types/composition/original';
 import { BrainRegion } from '@/types/ontologies';
-import { fromSerialisibleEdit, getFlatArrayValueIdx } from '@/util/connectome';
+import { fromSerialisibleEdit, getFlatArrayValueIdx, toSerialisibleEdit } from '@/util/connectome';
 import { PartialBy } from '@/types/common';
 import { HEMISPHERE_DIRECTIONS } from '@/constants/connectome';
+import { createDistribution, setRevision } from '@/util/nexus';
 
 type SrcDstBrainRegionKey = string;
 type SrcDstMtypeKey = string;
@@ -52,6 +65,7 @@ type BrainRegionMtypeNumMap = Map<BrainRegionNotation, number>;
 
 type InitialisedWorkerState = {
   config: MicroConnectomeConfigPayload;
+  session: Session;
   edits: EditEntry[];
   initPromise?: Promise<void>;
   brainRegionIndex: {
@@ -94,6 +108,7 @@ type WorkerState = PartialBy<
   InitialisedWorkerState,
   | 'config'
   | 'edits'
+  | 'session'
   | 'brainRegionIndex'
   | 'compositionIndex'
   | 'macroConnectomeStrengthMatrix'
@@ -191,28 +206,30 @@ function isEditApplicable(
   );
 }
 
-function isPristine(type: 'variant' | 'param', hemisphereDirection: HemisphereDirection): boolean {
-  assertInitialised(workerState);
+// TODO Uncomment when the save of overrides is enabled.
+// function isPristine(type: 'variant' | 'param', hemisphereDirection: HemisphereDirection): boolean {
+//   assertInitialised(workerState);
 
-  if (!workerState.config) {
-    throw new Error('Worker not initialised');
-  }
+//   if (!workerState.config) {
+//     throw new Error('Worker not initialised');
+//   }
 
-  const applicableEditFilterFn = (edit: EditEntry) =>
-    isEditApplicable(type, hemisphereDirection, edit);
+//   const applicableEditFilterFn = (edit: EditEntry) =>
+//     isEditApplicable(type, hemisphereDirection, edit);
 
-  const configEdits = workerState.config._ui_data?.editHistory
-    ?.map((serialisibleEdit) => fromSerialisibleEdit(serialisibleEdit))
-    .filter(applicableEditFilterFn);
+//   const configEdits = workerState.config._ui_data?.editHistory
+//     ?.map((serialisibleEdit) => fromSerialisibleEdit(serialisibleEdit))
+//     .filter(applicableEditFilterFn);
 
-  const currentEdits = workerState.edits?.filter(applicableEditFilterFn);
+//   const currentEdits = workerState.edits?.filter(applicableEditFilterFn);
 
-  return isEqual(configEdits, currentEdits);
-}
+//   return isEqual(configEdits, currentEdits);
+// }
 
 function assertInitialised(state: WorkerState): asserts state is InitialisedWorkerState {
   if (
     !state.config ||
+    !state.session ||
     !workerState.tables ||
     !state.brainRegionIndex ||
     !state.compositionIndex ||
@@ -391,7 +408,9 @@ function createVariantIndex(
 }
 
 function buildVariantIndex(hemisphereDirection: HemisphereDirection) {
-  const pristine = isPristine('variant', hemisphereDirection);
+  // TODO Revert when the save of overrides is enabled
+  // const pristine = isPristine('variant', hemisphereDirection);
+  const pristine = false;
 
   const applyOverrides = pristine;
 
@@ -532,7 +551,9 @@ function buildParamIndex(
 ) {
   assertInitialised(workerState);
 
-  const pristine = isPristine('param', hemisphereDirection);
+  // TODO Revert when the save of overrides is enabled
+  // const pristine = isPristine('param', hemisphereDirection);
+  const pristine = false;
 
   const applyOverrides = pristine;
 
@@ -665,6 +686,8 @@ async function init(
   }
 
   workerState.config = microConnectomeConfig;
+
+  workerState.session = session;
 
   workerState.edits = microConnectomeConfig._ui_data?.editHistory?.map((serialisibleEdit) =>
     fromSerialisibleEdit(serialisibleEdit)
@@ -1129,7 +1152,7 @@ function applyEdit(edit: EditEntry, scope?: IndexScope) {
   }
 }
 
-function addEdit(edit: EditEntry) {
+async function addEdit(edit: EditEntry) {
   assertInitialised(workerState);
 
   workerState.edits.push(edit);
@@ -1463,13 +1486,10 @@ function computeParamOverridesTable(variantName: string): Table {
   return paramOverridesTable;
 }
 
-type ComputeOverridesResult = Promise<
-  | {
-      variantOverridesBuffer: ArrayBuffer;
-      paramOverridesBuffers: ArrayBuffer[];
-    }
-  | undefined
->;
+type Overrides = {
+  variant: Table;
+  params: Table[];
+};
 
 /**
  * The overrides are computed in two stages.
@@ -1485,7 +1505,7 @@ type ComputeOverridesResult = Promise<
  * which now contains only records for pathways not present in the
  * initial table, and adds those records to the overrides table.
  */
-async function computeOverrides(options?: ComputeOverridesOptions): ComputeOverridesResult {
+async function computeOverrides(options?: ComputeOverridesOptions): Promise<Overrides | undefined> {
   assertInitialised(workerState);
 
   const variantNames = Object.keys(workerState.config.variants).sort();
@@ -1501,9 +1521,35 @@ async function computeOverrides(options?: ComputeOverridesOptions): ComputeOverr
     computeParamOverridesTable(variantName)
   );
 
-  const variantOverridesBuffer = tableToIPC(variantOverridesTable, 'file').buffer;
+  // eslint-disable-next-line consistent-return
+  return {
+    variant: variantOverridesTable,
+    params: paramOverridesTables,
+  };
+}
+
+export type ComputeOverridesFn = typeof computeOverrides;
+
+function setOverrides(overrides: Overrides): void {
+  assertInitialised(workerState);
+
+  workerState.tables.variant.overrides = overrides.variant;
+
+  const variantNames = Object.keys(workerState.config.variants).sort();
+
+  variantNames.forEach((variantName, idx) => {
+    workerState.tables.params.overrides[variantName] = overrides.params[idx];
+  });
+}
+
+async function persistOverrides(overrides: Overrides): Promise<Map<string, number>> {
+  assertInitialised(workerState);
+
+  const variantNames = Object.keys(workerState.config.variants).sort();
+
+  const variantOverridesBuffer = tableToIPC(overrides.variant, 'file').buffer;
   const paramOverridesBuffers = variantNames.map(
-    (variantName, idx) => tableToIPC(paramOverridesTables[idx], 'file').buffer
+    (variantName, idx) => tableToIPC(overrides.params[idx], 'file').buffer
   );
 
   const compressedVariantOverridesStream = compress(new Blob([variantOverridesBuffer]).stream());
@@ -1520,14 +1566,106 @@ async function computeOverrides(options?: ComputeOverridesOptions): ComputeOverr
     )
   );
 
-  // eslint-disable-next-line consistent-return
-  return {
-    variantOverridesBuffer: compressedVariantOverridesBuffer,
-    paramOverridesBuffers: compressedParamOverridesBuffers,
-  };
+  const { config, edits, session } = workerState;
+
+  /**
+   * Fetching latest versions of entities containing distributions with arrow files
+   * to extract next rev for the update.
+   */
+  const overridesResources = await Promise.all([
+    fetchResourceById<MicroConnectomeVariantSelectionOverridesResource>(
+      config.initial.variants.id,
+      session
+    ),
+    ...variantNames.map((variantName) =>
+      fetchResourceById<MicroConnectomeDataOverridesResource>(
+        config.overrides[variantName].id,
+        session
+      )
+    ),
+  ]);
+
+  /**
+   * Fetching latest versions of arrow files to extract next rev for the update.
+   */
+  const overridesFileMeta = await Promise.all(
+    overridesResources.map((resource) =>
+      fetchFileMetadataByUrl(resource.distribution.contentUrl, session)
+    )
+  );
+
+  /**
+   * Updating compressed arrow files.
+   */
+  const updatedOverridesFilesMeta = await Promise.all([
+    updateFileByUrl(
+      setRevision(overridesResources[0].distribution.contentUrl, overridesFileMeta[0]._rev),
+      compressedVariantOverridesBuffer,
+      'microconnectome-variant-overrides',
+      'application/arrow',
+      session
+    ),
+
+    ...variantNames.map((variantName, idx) =>
+      updateFileByUrl(
+        setRevision(
+          overridesResources[idx + 1].distribution.contentUrl,
+          overridesFileMeta[idx + 1]._rev
+        ),
+        compressedParamOverridesBuffers[idx],
+        `microconnectome-${variantName}-data-overrides.arrow.gz`,
+        'application/arrow',
+        session
+      )
+    ),
+  ]);
+
+  /**
+   * Updating entities containing arrow files.
+   */
+  const updatedOverridesResources = await Promise.all(
+    overridesResources
+      .map((resource, idx) => ({
+        ...resource,
+        distribution: createDistribution(updatedOverridesFilesMeta[idx]),
+      }))
+      .map((updatedResource, idx) =>
+        updateResource(updatedResource, overridesResources[idx]._rev, session)
+      )
+  );
+
+  const variantResourceRev = updatedOverridesResources[0]._rev;
+  const paramResourceRevs = updatedOverridesResources.slice(1).map((resource) => resource._rev);
+
+  config.overrides.variants.rev = variantResourceRev;
+  variantNames.forEach((variantName, idx) => {
+    config.overrides[variantName].rev = paramResourceRevs[idx];
+  });
+
+  if (!config._ui_data) {
+    config._ui_data = {};
+  }
+
+  config._ui_data.editHistory = edits.map((edit) => toSerialisibleEdit(edit));
+
+  return variantNames.reduce(
+    (map, variantName, idx) => map.set(variantName, paramResourceRevs[idx]),
+    new Map().set('variant', variantResourceRev)
+  );
 }
 
-export type ComputeOverridesFn = typeof computeOverrides;
+async function saveOverrides(): Promise<Map<string, number> | undefined> {
+  const overrides = await computeOverrides();
+
+  if (!overrides) return;
+
+  setOverrides(overrides);
+  const updatedRevMap = await persistOverrides(overrides);
+
+  // TODO Seek for a better solution
+  // eslint-disable-next-line consistent-return
+  return updatedRevMap;
+}
 
 // TODO Investigate using a flat index
 
@@ -1538,5 +1676,5 @@ expose({
   addEdit,
   removeEdit,
   updateEdit,
-  computeOverrides,
+  saveOverrides,
 });
