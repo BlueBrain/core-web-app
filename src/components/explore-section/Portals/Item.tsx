@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import Link from 'next/link';
 import TextContent from './TextContent';
-import { Portal } from 'types/explore-portal';
+import { Portal } from '@/types/explore-portal';
 import { ArrowRightIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 

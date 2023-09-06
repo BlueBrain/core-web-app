@@ -1,6 +1,6 @@
 import HomeHeader from '@/components/Global/HomeHeader';
 import { GALLERY_LIST_CONTENT } from '@/constants/explore-section/gallery-content';
-import { SingleGallery } from 'types/explore-gallery';
+import { SingleGallery } from '@/types/explore-gallery';
 import Card from '@/components/explore-section/Gallery/Card';
 
 export default function GalleryPage() {

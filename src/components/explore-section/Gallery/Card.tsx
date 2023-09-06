@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { SingleGallery } from 'types/explore-gallery';
+import { SingleGallery } from '@/types/explore-gallery';
 import { classNames } from '@/util/utils';
 
 export default function Card({ content }: { content: SingleGallery }) {

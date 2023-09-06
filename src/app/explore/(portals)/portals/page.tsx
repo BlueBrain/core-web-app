@@ -1,7 +1,7 @@
+import { Portal } from '@/types/explore-portal';
 import HomeHeader from '@/components/Global/HomeHeader';
 import Item from '@/components/explore-section/Portals/Item';
 import { PORTALS_LIST_CONTENT } from '@/constants/explore-section/portals-content';
-import { Portal } from 'types/explore-portal';
 
 export default function ExplorePortalsPage() {
   return (

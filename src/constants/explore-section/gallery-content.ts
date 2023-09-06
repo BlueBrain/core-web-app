@@ -1,4 +1,4 @@
-import { SingleGallery, SingleGalleryContentType } from 'types/explore-gallery';
+import { SingleGallery, SingleGalleryContentType } from '@/types/explore-gallery';
 
 export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   {

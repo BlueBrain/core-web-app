@@ -1,5 +1,5 @@
 import { ChevronIcon } from '@/components/icons';
-import { GalleryImagesType } from 'types/explore-gallery';
+import { GalleryImagesType } from '@/types/explore-gallery';
 
 type NavigationProps = {
   currentImageContent: GalleryImagesType;

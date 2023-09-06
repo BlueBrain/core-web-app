@@ -1,4 +1,4 @@
-import { Portal } from 'types/explore-portal';
+import { Portal } from '@/types/explore-portal';
 
 export const PORTALS_LIST_CONTENT: Portal[] = [
   {

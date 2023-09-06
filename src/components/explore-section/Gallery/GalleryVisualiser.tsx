@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import Navigation from './Navigation';
-import { SingleGalleryContentType, GalleryImagesType } from 'types/explore-gallery';
+import { SingleGalleryContentType, GalleryImagesType } from '@/types/explore-gallery';
 import { classNames } from '@/util/utils';
 
 export default function GalleryVisualliser({ content }: { content: SingleGalleryContentType }) {

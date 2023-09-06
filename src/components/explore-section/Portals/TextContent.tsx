@@ -1,4 +1,4 @@
-import { Portal } from 'types/explore-portal';
+import { Portal } from '@/types/explore-portal';
 
 export default function TextContent({ content }: { content: Portal }) {
   const contentDescription = `${content.description.slice(0, 110)}...`;
