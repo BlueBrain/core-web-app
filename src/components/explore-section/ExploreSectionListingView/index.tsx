@@ -16,6 +16,7 @@ import {
   sortStateAtom,
   pageSizeAtom,
 } from '@/state/explore-section/list-view-atoms';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 
 function WithControlPanel({
   children,
@@ -64,10 +65,12 @@ export default function DefaultListView({
   enableDownload,
   title,
   type,
+  renderButton,
 }: {
   enableDownload?: boolean;
   title: string;
   type: string;
+  renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const activeColumns = useAtomValue(activeColumnsAtom(type));
   const scopedDataAtom = dataAtom(type);
@@ -104,8 +107,9 @@ export default function DefaultListView({
               dataSource={unwrappedData}
               loading={data.state === 'loading'}
               enableDownload={enableDownload}
-              hasError={data.state === 'hasError'}
               experimentTypeName={type}
+              hasError={data.state === 'hasError'}
+              renderButton={renderButton}
             />
           </>
         )}

@@ -131,12 +131,14 @@ export default function ExploreSectionTable({
   experimentTypeName,
   hasError,
   loading,
+  renderButton,
 }: TableProps<any> & {
   enableDownload?: boolean;
   experimentTypeName: string;
   hasError?: boolean;
+  renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const renderButton = ({ selectedRows, clearSelectedRows }: RenderButtonProps) => (
+  const defaultRenderButton = ({ selectedRows, clearSelectedRows }: RenderButtonProps) => (
     <ExploreDownloadButton selectedRows={selectedRows} clearSelectedRows={clearSelectedRows}>
       <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
         selectedRows.length
@@ -147,7 +149,10 @@ export default function ExploreSectionTable({
   const expandedRowRender = () => <GeneralizationRules />;
 
   return enableDownload ? (
-    <WithRowSelection renderButton={renderButton} experimentTypeName={experimentTypeName}>
+    <WithRowSelection
+      renderButton={renderButton ?? defaultRenderButton}
+      experimentTypeName={experimentTypeName}
+    >
       {(rowSelection) => (
         <BaseTable
           columns={columns}
