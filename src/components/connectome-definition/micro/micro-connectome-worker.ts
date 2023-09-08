@@ -31,6 +31,7 @@ import {
   MicroConnectomeSetAlgorithmEditEntry as SetAlgorithmEditEntry,
   PathwaySideSelection as Selection,
   WholeBrainConnectivityMatrix,
+  MicroConnectomeModifyParamsEditEntry,
 } from '@/types/connectome';
 import {
   fetchFileByUrl,
@@ -164,6 +165,19 @@ function hasMacroConnectivity(
   const macroStrength = macroConnectomeFlatArray[flatArrayIdx];
 
   return macroStrength !== 0;
+}
+
+function getIndexedParamNames(hemisphereDirection: HemisphereDirection, variantName: string) {
+  assertInitialised(workerState);
+
+  return Array.from(workerState.paramIndexAvailability.entries())
+    .filter(([, available]) => available)
+    .map(([indexedParamKey]) => parseKey(indexedParamKey))
+    .filter(
+      ([indexedHemisphereDirection, indexedVariantName]) =>
+        indexedHemisphereDirection === hemisphereDirection && indexedVariantName === variantName
+    )
+    .map(([, , indexedParamName]) => indexedParamName);
 }
 
 function setParamIndexAvailability(
@@ -1011,14 +1025,7 @@ function setParams(
     .sort()
     .reduce((map, paramName, idx) => map.set(paramName, idx), new Map());
 
-  const indexedParamNames = Array.from(workerState.paramIndexAvailability.entries())
-    .filter(([, available]) => available)
-    .map(([indexedParamKey]) => parseKey(indexedParamKey))
-    .filter(
-      ([indexedHemisphereDirection, indexedVariantName]) =>
-        indexedHemisphereDirection === hemisphereDirection && indexedVariantName === variantName
-    )
-    .map(([, , indexedParamName]) => indexedParamName);
+  const indexedParamNames = getIndexedParamNames(hemisphereDirection, variantName);
 
   if (!indexedParamNames.length) return;
 
@@ -1132,9 +1139,79 @@ function applySetAlgorithmEdit(edit: SetAlgorithmEditEntry, scope?: IndexScope) 
   );
 }
 
-// function applyModifyParamsEdit(edit: ModifyParamsEditEntry, scope?: IndexScope) {
-//   // TODO implementation.
-// }
+function applyModifyParamsEdit(edit: MicroConnectomeModifyParamsEditEntry, scope?: IndexScope) {
+  assertInitialised(workerState);
+
+  if (scope && scope.variantName !== edit.variantName) return;
+
+  const { hemisphereDirection, variantName, srcSelection, dstSelection, params } = edit;
+
+  const paramIdxByNameMap: Map<string, number> = Object.keys(
+    workerState.config.variants[variantName].params
+  )
+    .sort()
+    .reduce((map, paramName, idx) => map.set(paramName, idx), new Map());
+
+  const indexedParamNames = getIndexedParamNames(hemisphereDirection, variantName);
+
+  if (!indexedParamNames.length) return;
+
+  const { leafNotationsByNotationMap } = workerState.brainRegionIndex;
+  const { brainRegionMtypeMap } = workerState.compositionIndex;
+
+  const paramNamesToSet = indexedParamNames.filter(
+    (paramName) => !scope || !scope.paramName || scope.paramName === paramName
+  );
+
+  const hemisphereParamIndex = workerState.paramIndex[variantName][hemisphereDirection];
+  if (!hemisphereParamIndex) {
+    throw new Error('HemisphereParamIndex not defined despite marked as such');
+  }
+
+  const srcNotations = leafNotationsByNotationMap.get(srcSelection.brainRegionNotation);
+  const dstNotations = leafNotationsByNotationMap.get(dstSelection.brainRegionNotation);
+
+  const applyParamArrayChange = (paramArray: number[]) => {
+    paramNamesToSet.forEach((paramName) => {
+      const paramIdx = paramIdxByNameMap.get(paramName) as number;
+      const currentValue = paramArray[paramIdx];
+      const { offset, multiplier } = params[paramName];
+      // eslint-disable-next-line no-param-reassign
+      paramArray[paramIdx] = currentValue * multiplier + offset;
+    });
+  };
+
+  srcNotations?.forEach((srcNotation) => {
+    dstNotations?.forEach((dstNotation) => {
+      if (!hasMacroConnectivity(hemisphereDirection, srcNotation, dstNotation)) return;
+
+      const srcDstBrainRegionKey = createKey(srcNotation, dstNotation);
+
+      const srcMtypes = (brainRegionMtypeMap.get(srcNotation) ?? []).filter(
+        (mtype) => !srcSelection.mtypeFilterSet || srcSelection.mtypeFilterSet.has(mtype)
+      );
+
+      const dstMtypes = (brainRegionMtypeMap.get(dstNotation) ?? []).filter(
+        (mtype) => !dstSelection.mtypeFilterSet || dstSelection.mtypeFilterSet.has(mtype)
+      );
+
+      const mtypeLevelMap = hemisphereParamIndex.get(srcDstBrainRegionKey);
+
+      if (!mtypeLevelMap) return;
+
+      srcMtypes.forEach((srcMtype) => {
+        dstMtypes.forEach((dstMtype) => {
+          const mtypeKey = createKey(srcMtype, dstMtype);
+          const paramArray = mtypeLevelMap.get(mtypeKey);
+
+          if (!paramArray) return;
+
+          applyParamArrayChange(paramArray);
+        });
+      });
+    });
+  });
+}
 
 /**
  * Apply an edit to existing partial indexed views.
@@ -1145,7 +1222,7 @@ function applyEdit(edit: EditEntry, scope?: IndexScope) {
       applySetAlgorithmEdit(edit, scope);
       break;
     case 'modifyParams':
-      // applyModifyParamsEdit(edit, scope);
+      applyModifyParamsEdit(edit, scope);
       break;
     default:
       break;
