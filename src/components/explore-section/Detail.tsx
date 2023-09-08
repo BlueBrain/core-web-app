@@ -4,7 +4,7 @@ import Error from 'next/error';
 import { useSession } from 'next-auth/react';
 import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
-import { detailAtom } from '@/state/explore-section/detail-atoms-constructor';
+import { detailAtom } from '@/state/explore-section/detail-view-atoms';
 import usePathname from '@/hooks/pathname';
 import { DeltaResource } from '@/types/explore-section/resources';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';

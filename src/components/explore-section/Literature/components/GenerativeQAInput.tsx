@@ -11,9 +11,8 @@ import {
 import useChatQAContext, { ChatQAContextHook, initialParameters } from '../useChatQAContext';
 import useContextualLiteratureContext from '../useContextualLiteratureContext';
 import JournalSearch from './JournalSearch';
-import { classNames } from '@/util/utils';
 import { DateRange } from '@/components/Filter';
-import usePathname from '@/hooks/pathname';
+import { classNames } from '@/util/utils';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -37,30 +36,36 @@ function FormButton({ icon, type, ...props }: FormButtonProps) {
 }
 
 export function GenerativeQAForm({
-  isPending,
   query,
-  onQuestionClear,
-  onValueChange,
-  ask,
   isParametersVisible,
+  isPending,
+  onValueChange,
+  onQuestionClear,
+  ask,
+  children,
+  label,
 }: Omit<Partial<ChatQAContextHook>, 'ask'> & {
   ask: (data: FormData) => void;
+  children?: React.ReactNode;
+  label?: string;
 }) {
   return (
     <form name="qa-form" className="w-full" action={ask}>
+      {label && (
+        <label htmlFor="gqa-question" className="mb-8 text-base text-slate-400">
+          {label}
+        </label>
+      )}
       <div className="pb-1.5 border-b border-sky-400 justify-between items-center gap-2.5 inline-flex w-full">
         <input
           type="text"
           id="gqa-question"
           name="gqa-question"
           autoComplete="off"
-          className={classNames(
-            'block w-full text-base font-semibold bg-transparent outline-none text-primary-8 focus:shadow-none',
-            'placeholder:text-blue-900 placeholder:text-base placeholder:font-normal placeholder:leading-snug'
-          )}
-          placeholder="Send your question"
-          onChange={onValueChange}
           value={query}
+          onChange={onValueChange}
+          placeholder="Send your question"
+          className="block w-full text-base font-semibold bg-transparent outline-none text-primary-8 placeholder:text-blue-900 placeholder:text-base placeholder:font-normal placeholder:leading-snug focus:shadow-none"
         />
         <div className="inline-flex items-center justify-center gap-2">
           {(isPending || (query && !!query.length)) && (
@@ -85,15 +90,13 @@ export function GenerativeQAForm({
           )}
         </div>
       </div>
+      {children}
     </form>
   );
 }
 
 function GenerativeQABar() {
-  const pathname = usePathname();
-  const { dataSource, isContextualLiterature } = useContextualLiteratureContext();
-
-  const isBuildSection = pathname?.startsWith('/build');
+  const { dataSource, isContextualLiterature, isBuildSection } = useContextualLiteratureContext();
   const isChatBarMustSlideInDown = Boolean(dataSource.length);
   const {
     query,
@@ -121,14 +124,13 @@ function GenerativeQABar() {
       <div
         className={classNames(
           'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto',
-          isChatBarMustSlideInDown
-            ? 'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
-            : ''
+          isChatBarMustSlideInDown &&
+            'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
         )}
       >
         <div
           className={classNames(
-            'inline-flex flex-col items-start justify-start w-full px-6 py-8  bg-primary-0',
+            'inline-flex flex-col items-start justify-start w-full px-6 py-8 bg-primary-0',
             isChatBarMustSlideInDown ? 'rounded-b-none' : 'rounded-lg'
           )}
         >
@@ -142,66 +144,64 @@ function GenerativeQABar() {
               isParametersVisible,
               updateParameters,
             }}
-          />
-          {!isParametersVisible && (
-            <div className="flex items-center justify-end w-full mt-4">
-              <span className="text-primary-8">Refine your search</span>
-              <Tooltip
-                title={REFINE_SEARCH_HELP_TEXT}
-                color="#003A8C"
-                overlayInnerStyle={{ background: '#003A8C' }}
-              >
-                <InfoCircleOutlined className="mx-2 text-primary-5" />
-              </Tooltip>
-              <Button
-                onClick={() => setIsParametersVisible(true)}
-                className="border rounded-none border-primary-4 text-primary-8 bg-primary-0"
-              >
-                Parameters
-              </Button>
-            </div>
-          )}
-
-          {isParametersVisible && (
-            <div className="w-full">
-              <div className="w-full mt-10">
-                <DateRange
-                  onChange={(e) => updateParameters({ selectedDate: e })}
-                  filter={{
-                    field: 'publicationDate',
-                    type: 'dateRange',
-                    aggregationType: 'buckets',
-                    value: { ...initialParameters.selectedDate },
-                  }}
-                />
-                <hr className="my-4 border-primary-2" />
-              </div>
-
-              <div className="w-full">
-                <JournalSearch
-                  onChange={(newValues) => updateParameters({ selectedJournals: newValues })}
-                />
-                <hr className="my-4 border-primary-2" />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {isParametersVisible && (
-          <div className="flex justify-end w-full mb-4">
-            <button
-              type="submit"
-              disabled={isQuestionEmpty}
-              title={isQuestionEmpty ? 'Please enter a question' : ''}
-              className={classNames(
-                'border-[1px ] border-solid border-gray rounded px-4 py-2',
-                isQuestionEmpty ? 'text-gray-400' : 'text-primary-8'
+          >
+            <>
+              {!isParametersVisible && (
+                <div className="flex items-center justify-end w-full mt-4">
+                  <span className="text-primary-8">Refine your search</span>
+                  <Tooltip
+                    title={REFINE_SEARCH_HELP_TEXT}
+                    color="#003A8C"
+                    overlayInnerStyle={{ background: '#003A8C' }}
+                  >
+                    <InfoCircleOutlined className="mx-2 text-primary-5" />
+                  </Tooltip>
+                  <Button
+                    onClick={() => setIsParametersVisible(true)}
+                    className="border rounded-none border-primary-4 text-primary-8 bg-primary-0"
+                  >
+                    Parameters
+                  </Button>
+                </div>
               )}
-            >
-              Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
-            </button>
-          </div>
-        )}
+              {isParametersVisible && (
+                <div className="w-full">
+                  <div className="w-full mt-10">
+                    <DateRange
+                      onChange={(e) => updateParameters({ selectedDate: e })}
+                      filter={{
+                        field: 'publicationDate',
+                        type: 'dateRange',
+                        aggregationType: 'buckets',
+                        value: { ...initialParameters.selectedDate },
+                      }}
+                    />
+                    <hr className="my-4 border-primary-2" />
+                  </div>
+
+                  <div className="w-full">
+                    <JournalSearch
+                      onChange={(newValues) => updateParameters({ selectedJournals: newValues })}
+                    />
+                    <hr className="my-4 border-primary-2" />
+                  </div>
+                </div>
+              )}
+              {isParametersVisible && (
+                <div className="flex justify-end w-full mb-4">
+                  <button
+                    type="submit"
+                    disabled={isQuestionEmpty || isPending}
+                    title={isQuestionEmpty ? 'Please enter a question' : ''}
+                    className="border-[1px] border-solid border-gray rounded px-4 py-2 text-primary-8 disabled:text-gray-400"
+                  >
+                    Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
+                  </button>
+                </div>
+              )}
+            </>
+          </GenerativeQAForm>
+        </div>
       </div>
     </div>
   );

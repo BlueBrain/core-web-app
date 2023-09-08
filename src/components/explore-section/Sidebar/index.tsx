@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from 'antd';
+import { useAtomValue } from 'jotai';
 import {
   PlusOutlined,
   UserOutlined,
@@ -10,14 +11,20 @@ import {
 } from '@ant-design/icons';
 import usePathname from '@/hooks/pathname';
 import Link from '@/components/Link';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
 export function DetailsPageSideBackLink() {
   const pathName = usePathname();
+
+  const backToListPath = useAtomValue(backToListPathAtom); // this uses the previous path atom for the back to list
+  const activePrevPath = backToListPath || pathName?.substring(0, pathName.lastIndexOf('/')); // this condition checks if the back to list path atom is set, if not use default
+
   const isSimulation = pathName?.includes('/simulations/');
   const prevPath = isSimulation
     ? pathName?.substring(0, pathName.lastIndexOf('/simulations/'))
-    : pathName?.substring(0, pathName.lastIndexOf('/'));
+    : activePrevPath;
+
   return prevPath ? (
     <div className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center">
       <Link
@@ -106,7 +113,7 @@ export default function Sidebar() {
             </ul>
           </li>
           <li>
-            <Link href="/simulation-campaigns">
+            <Link href="/explore/simulation-campaigns">
               <h1>Brain models</h1>
               <ArrowRightOutlined />
               <p>

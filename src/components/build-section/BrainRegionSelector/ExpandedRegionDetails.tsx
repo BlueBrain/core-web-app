@@ -7,6 +7,8 @@ import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import difference from 'lodash/difference';
 import uniq from 'lodash/uniq';
+
+import ContextualTrigger from '../ContextualLiterature/Trigger';
 import { getMetric } from './util';
 import { NeuronCompositionEditorProps, NeuronCompositionItem } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
@@ -26,6 +28,7 @@ import {
   CalculatedCompositionNeuronGlia,
   CalculatedCompositionNode,
 } from '@/types/composition/calculation';
+import { QuestionAbout } from '@/types/literature';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -51,8 +54,10 @@ function NeuronCompositionEditor({
   content, // A callback that returns the <Accordion.Content/>
   isEditable,
   isLeaf,
+  about,
 }: NeuronCompositionEditorProps) {
   const [compositionValue, setCompositionValue] = useState<number>(composition);
+  const densityOrCount = useAtomValue(densityOrCountAtom);
 
   useEffect(() => {
     setCompositionValue(composition);
@@ -85,6 +90,12 @@ function NeuronCompositionEditor({
               {lockIcon}
             </IconButton>
           )}
+          <ContextualTrigger
+            className={isEditable ? 'ml-1' : ''}
+            about={about as QuestionAbout}
+            subject={title}
+            densityOrCount={densityOrCount}
+          />
         </div>
         <div className={`flex items-center ${isLeaf ? 'gap-3' : 'gap-2'}`}>
           {isEditable ? (
@@ -240,6 +251,7 @@ function MeTypeDetails({
               max={calculateMax(relatedNodes, id, about, allLockedIds, neuronsToNodes)}
               isEditable={editMode}
               isLeaf={false}
+              about={about}
             >
               {({
                 content: nestedContent,
@@ -249,6 +261,7 @@ function MeTypeDetails({
                 id: nestedId,
                 parentId: nestedParentId,
                 path: nestedPath,
+                about: nestedAbout,
               }: NeuronCompositionItem) => {
                 const expandedNodeId = nestedPath ? nestedPath?.join('__') : '';
                 const isDisabled =
@@ -271,6 +284,7 @@ function MeTypeDetails({
                     setLockedFunc={() => setLocked(expandedNodeId)}
                     max={neuronsToNodes[nestedParentId].composition}
                     isEditable={editMode}
+                    about={nestedAbout}
                     isLeaf
                   />
                 );

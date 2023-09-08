@@ -113,12 +113,13 @@ export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
       camera-view: front
       background-color: [1, 1, 1, 0]
       camera-position: <%= ${SimulationPlaceholders.VIZ_CAMERA_POSITION} %>
-      camera_target: <%= ${SimulationPlaceholders.VIZ_CAMERA_TARGET} %>
-      camera_up: <%= ${SimulationPlaceholders.VIZ_CAMERA_UP} %>
+      camera-target: <%= ${SimulationPlaceholders.VIZ_CAMERA_TARGET} %>
+      camera-up: <%= ${SimulationPlaceholders.VIZ_CAMERA_UP} %>
+      camera-height: <%= ${SimulationPlaceholders.VIZ_CAMERA_HEIGHT} %>
       fps: 10
       slowing-factor: 10
-      start_frame: 0
-      end_frame: -1
+      start-frame: 0
+      end-frame: -1
     `,
     placeholder: 'VideoSimCampaignMeta',
   },

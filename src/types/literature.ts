@@ -132,6 +132,7 @@ export type ContextQAItem = {
 };
 
 export type ContextualLiteratureAtom = {
+  key?: React.Key;
   about?: QuestionAbout;
   subject?: string;
   contextDrawerOpen?: boolean;

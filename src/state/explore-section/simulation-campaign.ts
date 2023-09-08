@@ -6,7 +6,7 @@ import {
   fetchAnalysisReportsFromEs,
   fetchSimulationsFromEs,
 } from '@/api/explore-section/simulations';
-import { detailAtom, sessionAndInfoAtom } from '@/state/explore-section/detail-atoms-constructor';
+import { detailAtom, sessionAndInfoAtom } from '@/state/explore-section/detail-view-atoms';
 
 // fetches and stores the simulation campaign execution
 const simulationCampaignExecutionAtom = atom<Promise<SimulationCampaignResource | null>>(

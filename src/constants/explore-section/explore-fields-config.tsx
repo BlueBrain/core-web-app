@@ -311,7 +311,9 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Created by',
     filter: 'checkList',
     render: {
-      detailViewFn: (resource) => resource?._createdBy,
+      detailViewFn: (resource) => (
+        <span className="capitalize">{resource?._createdBy.split('/').reverse()[0]}</span>
+      ),
     },
     vocabulary: {
       plural: 'Users',

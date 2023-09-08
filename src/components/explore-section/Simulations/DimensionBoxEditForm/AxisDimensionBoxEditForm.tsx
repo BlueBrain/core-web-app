@@ -1,4 +1,4 @@
-import { useForm } from 'antd/es/form/Form';
+import { useForm, useWatch } from 'antd/es/form/Form';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 import { Form, Input, Radio } from 'antd';
@@ -17,8 +17,8 @@ export default function AxisDimensionBoxEditForm({
   setEditMode,
 }: AxisDimensionBoxEditFormProps) {
   const [form] = useForm();
+  const inputType = useWatch('input-type', form);
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
-
   const simulationCampaignDimensions = useAtomValue(simulationCampaignDimensionsAtom);
 
   const valueRange: DimensionRange | null = useMemo(() => {
@@ -92,7 +92,6 @@ export default function AxisDimensionBoxEditForm({
     if (
       valueRange?.minValue === undefined ||
       valueRange?.maxValue === undefined ||
-      !value ||
       form.getFieldValue('input-type') === 'value'
     ) {
       return Promise.resolve();
@@ -116,14 +115,21 @@ export default function AxisDimensionBoxEditForm({
       return Promise.reject(new Error(`Maximum value should be ≤ ${valueRange.maxValue}`));
     }
 
+    if (
+      form.getFieldValue('input-range-min') &&
+      form.getFieldValue('input-range-max') &&
+      form.getFieldValue('input-range-min') > form.getFieldValue('input-range-max')
+    ) {
+      return Promise.reject(new Error('Minimum value cannot be higher than maximum'));
+    }
+
     return Promise.resolve();
   };
 
   const stepValueValidator = (rule: any, value: string) => {
-    if (!value || form.getFieldValue('input-type') === 'value') {
+    if (form.getFieldValue('input-type') === 'value') {
       return Promise.resolve();
     }
-
     const regex = new RegExp(/(\d+(?:\.\d+)?)/);
     if (!regex.test(value)) {
       return Promise.reject(new Error('Please fill a correct integer or float'));
@@ -141,7 +147,6 @@ export default function AxisDimensionBoxEditForm({
     if (
       valueRange?.minValue === undefined ||
       valueRange?.maxValue === undefined ||
-      !value ||
       form.getFieldValue('input-type') === 'range'
     ) {
       return Promise.resolve();
@@ -195,7 +200,12 @@ export default function AxisDimensionBoxEditForm({
                 },
               ]}
             >
-              <Input size="small" type="text" onKeyDown={finishFormEvent} />
+              <Input
+                size="small"
+                type="text"
+                onKeyDown={finishFormEvent}
+                disabled={inputType === 'range'}
+              />
             </Form.Item>
           </div>
           <div className="flex-1">
@@ -209,7 +219,13 @@ export default function AxisDimensionBoxEditForm({
                   },
                 ]}
               >
-                <Input size="small" type="text" onKeyDown={finishFormEvent} placeholder="min" />
+                <Input
+                  size="small"
+                  type="text"
+                  onKeyDown={finishFormEvent}
+                  placeholder="min"
+                  disabled={inputType === 'value'}
+                />
               </Form.Item>
               <Form.Item
                 className="flex-1"
@@ -220,7 +236,13 @@ export default function AxisDimensionBoxEditForm({
                   },
                 ]}
               >
-                <Input size="small" type="text" onKeyDown={finishFormEvent} placeholder="max" />
+                <Input
+                  size="small"
+                  type="text"
+                  onKeyDown={finishFormEvent}
+                  placeholder="max"
+                  disabled={inputType === 'value'}
+                />
               </Form.Item>
               <Form.Item
                 className="flex-1"
@@ -231,7 +253,13 @@ export default function AxisDimensionBoxEditForm({
                   },
                 ]}
               >
-                <Input size="small" type="text" onKeyDown={finishFormEvent} placeholder="step" />
+                <Input
+                  size="small"
+                  type="text"
+                  onKeyDown={finishFormEvent}
+                  placeholder="step"
+                  disabled={inputType === 'value'}
+                />
               </Form.Item>
             </div>
           </div>

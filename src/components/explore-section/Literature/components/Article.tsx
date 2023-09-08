@@ -65,6 +65,7 @@ function ArticleAction({
 
 type ArticleProps = GArticle & {
   collapseAll: boolean;
+  isCompact?: boolean;
 };
 
 export default function Article({
@@ -77,6 +78,7 @@ export default function Article({
   collapseAll,
   publicationDate,
   citationsCount,
+  isCompact = false,
 }: ArticleProps) {
   const [readmore, setReadmore] = useState(() => collapseAll);
   const [DOIcopied, setDOIcopied] = useState(false);
@@ -98,6 +100,7 @@ export default function Article({
   return (
     <li className="mb-10 ml-4" data-testid="article-item">
       <div className="absolute flex items-center justify-center w-2 h-2 mt-1 rounded-full bg-primary-8 first:mt-0 -left-1" />
+
       <div className="mb-1 -mt-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
         <div className="flex items-start justify-between">
           <h1
@@ -106,75 +109,79 @@ export default function Article({
           >
             {title}
           </h1>
-          <div className="grid grid-flow-col gap-4">
-            {doi && (
-              <div className="flex">
-                <ArticleAction
-                  key="copy-doi"
-                  onClick={onCopy}
-                  title={DOIcopied ? 'copied' : 'Copy DOI'}
-                  icon={
-                    DOIcopied ? <CheckCircleOutlined className="text-teal-600" /> : <CopyIcon />
-                  }
-                />
-                <Tooltip
-                  title={DoiDefinition}
-                  color="#003A8C"
-                  overlayInnerStyle={{ borderRadius: '0px', background: '#003A8C' }}
-                >
-                  <InfoCircleOutlined className="text-gray-400" />
-                </Tooltip>
-              </div>
-            )}
-            <ArticleAction key="quote" onClick={() => {}} title="Quote" icon={<QuoteOutline />} />
-          </div>
+          {!isCompact && (
+            <div className="grid grid-flow-col gap-4">
+              {doi && (
+                <div className="flex">
+                  <ArticleAction
+                    key="copy-doi"
+                    onClick={onCopy}
+                    title={DOIcopied ? 'copied' : 'Copy DOI'}
+                    icon={
+                      DOIcopied ? <CheckCircleOutlined className="text-teal-600" /> : <CopyIcon />
+                    }
+                  />
+                  <Tooltip
+                    title={DoiDefinition}
+                    color="#003A8C"
+                    overlayInnerStyle={{ borderRadius: '0px', background: '#003A8C' }}
+                  >
+                    <InfoCircleOutlined className="text-gray-400" />
+                  </Tooltip>
+                </div>
+              )}
+              <ArticleAction key="quote" onClick={() => {}} title="Quote" icon={<QuoteOutline />} />
+            </div>
+          )}
         </div>
       </div>
-      <div className="flex flex-wrap items-center my-5 gap-x-4 gap-y-1">
-        <Tooltip
-          title="Authors"
-          placement="bottomLeft"
-          overlayInnerStyle={{ backgroundColor: 'white' }}
-          arrow={false}
-          overlay={
-            <div className="flex flex-col gap-2">
-              {authors.map((author) => {
-                const key = generateId(title, author);
-                return (
-                  <div key={key} className="text-sm text-gray-900">
-                    {author}
-                  </div>
-                );
-              })}
+      {!isCompact && (
+        <div className="flex flex-wrap items-center my-5 gap-x-4 gap-y-1">
+          <Tooltip
+            title="Authors"
+            placement="bottomLeft"
+            overlayInnerStyle={{ backgroundColor: 'white' }}
+            arrow={false}
+            overlay={
+              <div className="flex flex-col gap-2">
+                {authors.map((author) => {
+                  const key = generateId(title, author);
+                  return (
+                    <div key={key} className="text-sm text-gray-900">
+                      {author}
+                    </div>
+                  );
+                })}
+              </div>
+            }
+            trigger="hover"
+          >
+            <div>
+              <ArticlePreview title={authors.at(0)!} icon={<PersonIcon />} />
             </div>
-          }
-          trigger="hover"
-        >
-          <div>
-            <ArticlePreview title={authors.at(0)!} icon={<PersonIcon />} />
-          </div>
-        </Tooltip>
-        {journal && (
-          <ArticlePreview
-            title={journal}
-            icon={<JournalIcon />}
-            altText={`${journal} ${journalISSN ?? ''}`}
-          />
-        )}
-        {publicationDate && (
-          <ArticlePreview
-            title={formatDate(publicationDate)}
-            icon={<CalendarIcon className="w-4 h-4" />}
-          />
-        )}
-        {!isNil(citationsCount) && (
-          <ArticlePreview
-            title={`${citationsCount} times`}
-            icon={<CitationIcon className="w-4 h-4" />}
-            altText={`Number of citations: ${citationsCount}`}
-          />
-        )}
-      </div>
+          </Tooltip>
+          {journal && (
+            <ArticlePreview
+              title={journal}
+              icon={<JournalIcon />}
+              altText={`${journal} ${journalISSN ?? ''}`}
+            />
+          )}
+          {publicationDate && (
+            <ArticlePreview
+              title={formatDate(publicationDate)}
+              icon={<CalendarIcon className="w-4 h-4" />}
+            />
+          )}
+          {!isNil(citationsCount) && (
+            <ArticlePreview
+              title={`${citationsCount} times`}
+              icon={<CitationIcon className="w-4 h-4" />}
+              altText={`Number of citations: ${citationsCount}`}
+            />
+          )}
+        </div>
+      )}
       <article className="bg-[#F5F5F5] mb-4 p-7">
         <div
           className={classNames(

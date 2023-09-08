@@ -10,6 +10,8 @@ import { ensureArray } from '@/util/nexus';
 
 export const infoAtom = atom<FetchParams | null>(null);
 
+export const backToListPathAtom = atom<string | null | undefined>(null);
+
 export const sessionAndInfoAtom = atom((get) => {
   const session = get(sessionAtom);
   const info = get(infoAtom);

@@ -1,26 +1,20 @@
-import { MouseEvent, useState, ReactNode, CSSProperties, useEffect } from 'react';
-import { Table } from 'antd';
-import { useAtom } from 'jotai';
+import { CSSProperties, MouseEvent, ReactNode } from 'react';
+import { Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
-import { ColumnProps } from 'antd/es/table';
-import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import { useSetAtom } from 'jotai';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
-import DownloadButton from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
+import {
+  ExploreDownloadButton,
+  RenderButtonProps,
+} from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
+import WithRowSelection from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 import { ESResponseRaw } from '@/types/explore-section/resources';
 import { classNames } from '@/util/utils';
-import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import styles from '@/app/explore/explore.module.scss';
-
-type ExploreSectionTableProps = {
-  columns: ColumnProps<any>[];
-  data: Loadable<ESResponseRaw[] | undefined>;
-  enableDownload?: boolean;
-  selectedRowsButton?: ReactNode;
-  type: string;
-};
 
 function CustomTH({
   children,
@@ -74,90 +68,111 @@ function CustomCell({ children, style, ...props }: { children: ReactNode; style:
   );
 }
 
-export default function ExploreSectionTable({
+export function BaseTable({
   columns,
-  data,
-  enableDownload,
-  selectedRowsButton,
-  type,
-}: ExploreSectionTableProps) {
+  dataSource,
+  expandable,
+  hasError,
+  loading,
+  rowSelection,
+}: TableProps<any> & { hasError?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom(type));
-  const [fetching, setFetching] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>(
-    data.state === 'hasData' ? data.data : undefined
-  );
+  const setBackToListPath = useSetAtom(backToListPathAtom);
 
-  useEffect(() => {
-    if (data.state === 'hasData') {
-      setDataSource(data.data);
-    }
-  }, [data]);
-
-  const clearSelectedRows = () => {
-    setFetching(false);
-    setSelectedRows([]);
-  };
+  if (hasError) {
+    return <div>Something went wrong</div>;
+  }
 
   const onCellRouteHandler = {
     onCell: (record: ESResponseRaw) => ({
       onClick: (e: MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
-
+        setBackToListPath(pathname);
         router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`);
       },
     }),
   };
 
-  if (data.state === 'hasError') {
-    return <div>Something went wrong</div>;
-  }
-
-  const expandedRowRender = () => <GeneralizationRules />;
-  const activeSelectedRowsButton = selectedRowsButton || (
-    <DownloadButton
-      setFetching={setFetching}
-      selectedRows={selectedRows}
-      clearSelectedRows={clearSelectedRows}
-      fetching={fetching}
+  return (
+    <Table
+      className={styles.table}
+      columns={
+        columns &&
+        columns.map((col, i) => ({
+          ...col,
+          ...(i !== 0 && onCellRouteHandler),
+        }))
+      }
+      components={{
+        header: {
+          cell: CustomTH,
+        },
+        body: {
+          cell: CustomCell,
+        },
+      }}
+      dataSource={dataSource}
+      expandable={expandable}
+      loading={loading}
+      pagination={false}
+      rowClassName={styles.tableRow}
+      rowKey={(row) => row._source._self}
+      rowSelection={rowSelection}
     />
   );
+}
 
-  return (
-    <>
-      <Table
-        className={styles.table}
-        columns={columns.map((col, i) => ({
-          ...col,
-          ...(!(enableDownload && i === 0) && onCellRouteHandler),
-        }))}
-        dataSource={dataSource}
-        loading={data.state === 'loading'}
-        rowClassName={styles.tableRow}
-        rowKey={(row) => row._source._self}
-        rowSelection={
-          enableDownload
-            ? {
-                selectedRowKeys: selectedRows.map(({ _source }) => _source._self),
-                onChange: (_keys, rows) => setSelectedRows(() => rows),
-                type: 'checkbox',
-              }
-            : undefined
-        }
-        pagination={false}
-        components={{
-          header: {
-            cell: CustomTH,
-          },
-          body: {
-            cell: CustomCell,
-          },
-        }}
-        expandable={{ expandedRowRender }}
-      />
-      {activeSelectedRowsButton}
-    </>
+export default function ExploreSectionTable({
+  columns,
+  dataSource,
+  enableDownload,
+  experimentTypeName,
+  hasError,
+  loading,
+  renderButton,
+}: TableProps<any> & {
+  enableDownload?: boolean;
+  experimentTypeName: string;
+  hasError?: boolean;
+  renderButton?: (props: RenderButtonProps) => ReactNode;
+}) {
+  const defaultRenderButton = ({ selectedRows, clearSelectedRows }: RenderButtonProps) => (
+    <ExploreDownloadButton selectedRows={selectedRows} clearSelectedRows={clearSelectedRows}>
+      <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
+        selectedRows.length
+      })`}</span>
+    </ExploreDownloadButton>
+  );
+
+  const expandedRowRender = () => <GeneralizationRules />;
+
+  return enableDownload ? (
+    <WithRowSelection
+      renderButton={renderButton ?? defaultRenderButton}
+      experimentTypeName={experimentTypeName}
+    >
+      {(rowSelection) => (
+        <BaseTable
+          columns={columns}
+          dataSource={dataSource}
+          expandable={{ expandedRowRender }}
+          hasError={hasError}
+          loading={loading}
+          rowKey={(row) => row._source._self}
+          rowSelection={rowSelection}
+        />
+      )}
+    </WithRowSelection>
+  ) : (
+    <BaseTable
+      columns={columns}
+      dataSource={dataSource}
+      expandable={{ expandedRowRender }}
+      hasError={hasError}
+      loading={loading}
+      rowKey={(row) => row._source._self}
+    />
   );
 }

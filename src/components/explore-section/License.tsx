@@ -2,7 +2,7 @@ import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { licenseDataAtom } from '@/state/explore-section/detail-atoms-constructor';
+import { licenseDataAtom } from '@/state/explore-section/detail-view-atoms';
 
 const licenseDataLoadableAtom = loadable(licenseDataAtom);
 

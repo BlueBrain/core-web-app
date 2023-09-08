@@ -1,6 +1,5 @@
 import { atom } from 'jotai';
 import isEqual from 'lodash/isEqual';
-import pickBy from 'lodash/pickBy';
 
 import invalidateConfigAtom from '../util';
 import {
@@ -12,12 +11,13 @@ import {
   localConfigPayloadAtom,
   configPayloadRevAtom,
   workerAtom,
+  triggerRefetchAtom,
 } from '.';
 import {
   MicroConnectomeEditEntry as EditEntry,
   SerialisibleMicroConnectomeEditEntry as SerialisibleEditEntry,
 } from '@/types/connectome';
-import { Entity, MicroConnectomeConfigPayload } from '@/types/nexus';
+import { MicroConnectomeConfigPayload, MicroConnectomeConfigResource } from '@/types/nexus';
 import { toSerialisibleEdit } from '@/util/connectome';
 import sessionAtom from '@/state/session';
 import { createDistribution, setRevision } from '@/util/nexus';
@@ -60,14 +60,14 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     session
   );
 
-  config.distribution = createDistribution(updatedConfigPayloadMeta);
+  const updatedConfig: MicroConnectomeConfigResource = {
+    ...config,
+    distribution: createDistribution(updatedConfigPayloadMeta),
+  };
 
-  await updateResource(
-    pickBy(config, (val: any, key: string) => !key.startsWith('_')) as Entity,
-    config._rev,
-    session
-  );
+  await updateResource(updatedConfig, config._rev, session);
   await set(invalidateConfigAtom, 'microConnectome');
+  set(triggerRefetchAtom);
   set(writingConfigAtom, false);
 });
 
@@ -106,6 +106,7 @@ export const addEditAtom = atom<null, [EditEntry], Promise<void>>(null, async (g
   if (!edits || !worker) return;
 
   await worker.addEdit(edit);
+
   set(setEditsAtom, [...edits, edit]);
 });
 

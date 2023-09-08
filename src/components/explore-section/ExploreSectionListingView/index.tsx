@@ -16,6 +16,7 @@ import {
   sortStateAtom,
   pageSizeAtom,
 } from '@/state/explore-section/list-view-atoms';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 
 function WithControlPanel({
   children,
@@ -62,17 +63,19 @@ function WithControlPanel({
 
 export default function DefaultListView({
   enableDownload,
-  selectedRowsButton,
   title,
   type,
+  renderButton,
 }: {
   enableDownload?: boolean;
-  selectedRowsButton?: ReactNode;
   title: string;
   type: string;
+  renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const activeColumns = useAtomValue(activeColumnsAtom(type));
-  const data = useAtomValue(useMemo(() => loadable(dataAtom(type)), [type]));
+  const scopedDataAtom = dataAtom(type);
+  const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
+  const unwrappedData = useAtomValue(useMemo(() => unwrap(scopedDataAtom), [scopedDataAtom]));
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
   const columns = useExploreColumns(setSortState, sortState, [
@@ -101,10 +104,12 @@ export default function DefaultListView({
             </HeaderPanel>
             <ExploreSectionTable
               columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
-              data={data}
+              dataSource={unwrappedData}
+              loading={data.state === 'loading'}
               enableDownload={enableDownload}
-              selectedRowsButton={selectedRowsButton}
-              type={type}
+              experimentTypeName={type}
+              hasError={data.state === 'hasError'}
+              renderButton={renderButton}
             />
           </>
         )}

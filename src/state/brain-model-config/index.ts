@@ -106,7 +106,7 @@ export const isConfigEditableAtom = atom<Promise<boolean | null>>(async (get) =>
 export const cellCompositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs.cellCompositionConfig?.['@id'] ?? null;
+  return config?.configs?.cellCompositionConfig?.['@id'] ?? null;
 });
 
 export const cellPositionConfigIdAtom = atom<Promise<string | null>>(async (get) => {
@@ -135,7 +135,7 @@ export const microConnectomeConfigIdAtom = selectAtom(
 export const synapseConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 
-  return config?.configs.synapseConfig?.['@id'] ?? null;
+  return config?.configs?.synapseConfig?.['@id'] ?? null;
 });
 
 export const macroConnectomeConfigIdAtom = atom<Promise<string | null>>(async (get) => {

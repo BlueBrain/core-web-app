@@ -29,6 +29,7 @@ import {
   AddEditFn,
   RemoveEditFn,
   UpdateEditFn,
+  ComputeOverridesFn,
 } from '@/components/connectome-definition/micro/micro-connectome-worker';
 import { MicroConnectomeEditEntry } from '@/types/connectome';
 import { fromSerialisibleSelection } from '@/util/connectome';
@@ -234,6 +235,7 @@ type WorkerFn = {
   addEdit: AddEditFn;
   removeEdit: RemoveEditFn;
   updateEdit: UpdateEditFn;
+  computeOverrides: ComputeOverridesFn;
 };
 
 // ? To be instantiated in the component?
