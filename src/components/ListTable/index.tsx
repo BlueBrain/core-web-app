@@ -1,9 +1,6 @@
-import { CSSProperties, ReactNode, useEffect, useState } from 'react';
-import { Loadable } from 'jotai/vanilla/utils/loadable';
-import { ConfigProvider, Table } from 'antd';
-import { ColumnProps } from 'antd/es/table';
+import { CSSProperties, ReactNode } from 'react';
+import { ConfigProvider, Table, TableProps } from 'antd';
 import { isNumeric, to64 } from '@/util/common';
-import { ESResponseRaw } from '@/types/explore-section/resources';
 import usePathname from '@/hooks/pathname';
 import { BrainIcon, InteractiveViewIcon, VirtualLabIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
@@ -140,23 +137,7 @@ export function ValueArray({ value }: { value?: string[] }) {
   ) : null;
 }
 
-export default function ListTable({
-  columns,
-  data,
-}: {
-  columns: ColumnProps<any>[];
-  data: Loadable<ESResponseRaw[] | undefined>;
-}) {
-  const [dataSource, setDataSource] = useState<ESResponseRaw[] | undefined>(
-    data.state === 'hasData' ? data.data : undefined
-  );
-
-  useEffect(() => {
-    if (data.state === 'hasData') {
-      setDataSource(data.data);
-    }
-  }, [data]);
-
+export default function ListTable({ columns, dataSource, loading }: TableProps<any>) {
   return (
     <ConfigProvider
       theme={{
@@ -182,7 +163,7 @@ export default function ListTable({
           },
         }}
         dataSource={dataSource}
-        loading={data.state === 'loading'}
+        loading={loading}
         pagination={false}
         rowClassName="align-top bg-white rounded-md"
         rowKey={(row) => row._source._self}

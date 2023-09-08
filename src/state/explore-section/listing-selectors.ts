@@ -1,16 +1,23 @@
 import { format, parseISO, isValid } from 'date-fns';
-import { Source, ESResponseRaw } from '@/types/explore-section/resources';
-import { IdLabelEntity, NValueEntity } from '@/types/explore-section/fields';
+import { IdLabelEntity } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { formatNumber } from '@/util/common';
+import {
+  Experiment,
+  ExperimentalLayerThickness,
+  ExperimentalTrace,
+  ReconstructedNeuronMorphology,
+} from '@/types/explore-section/es';
+
+type Record = { _source: Experiment };
 
 /**
  * Selects and formats a brain region based on its format
- * @param {string} text - The text parameter.
- * @param {ESResponseRaw} record - The ESResponseRaw record.
+ * @param {string} _text - The text parameter.
+ * @param {Record} record - The record.
  * @returns {string|undefined} - The selected and formatted value for brain region.
  */
-export const selectorFnBrainRegion = (text: string, record: ESResponseRaw) => {
+export const selectorFnBrainRegion = (_text: string, record: Record): string | undefined => {
   if (!record._source.brainRegion) return undefined;
 
   if (Array.isArray(record._source.brainRegion?.label))
@@ -21,12 +28,11 @@ export const selectorFnBrainRegion = (text: string, record: ESResponseRaw) => {
 
 /**
  * Selects and formats contributors based on their format
- * @param {string} text - The text parameter.
- * @param {ESResponseRaw} record - The ESResponseRaw record.
+ * @param {string} _text
+ * @param {Record} record
  * @returns {string|undefined} - The selected and formatted value for contributors.
  */
-
-export const selectorFnContributors = (text: string, record: ESResponseRaw) => {
+export const selectorFnContributors = (_text: string, record: Record): string | undefined => {
   if (!record._source.contributors || record._source.contributors.length < 1) {
     return undefined;
   }
@@ -37,24 +43,27 @@ export const selectorFnContributors = (text: string, record: ESResponseRaw) => {
 
 /**
  * Selects and formats a statistic from the series array
- * @param {Source} source - The Source object.
+ * @param {Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology>} source - The Source object.
  * @param {string} statistic - The statistic to serialize.
- * @returns {string} - The selected and formatted value for statistic value.
  */
-export const selectorFnStatistic = (source: Source, statistic: string) => {
+export const selectorFnStatistic = (
+  source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology>,
+  statistic: string
+) => {
   if (!source) return '';
   const statValue = source.series?.find((s: any) => s.statistic === statistic)?.value;
   return statValue ? formatNumber(statValue) : '';
 };
 
 /**
- * Selects and formats the mean and standard deviation from the series array
- * @param {string} text - The text parameter.
- * @param {ESResponseRaw} record - The ESResponseRaw record.
- * @returns {string} - The selected and formatted value for mean and standard deviation.
+ * Selects and formats a MeanStd
+ * @param {string} _text
+ * @param {{ _source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology> }} record - The statistic to serialize.
  */
-
-export const selectorFnMeanStd = (text: string, record: ESResponseRaw) => {
+export const selectorFnMeanStd = (
+  _text: string,
+  record: { _source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology> }
+) => {
   const mean = selectorFnStatistic(record._source, 'mean');
   const std = selectorFnStatistic(record._source, 'standard deviation');
   if (mean && std) {
@@ -67,26 +76,28 @@ export const selectorFnMeanStd = (text: string, record: ESResponseRaw) => {
 };
 
 /**
- * Selects and formats layer thickness
- * @param {NValueEntity|undefined} layerThickness - The layer thickness object.
- * @returns {string} - The selected and formatted value for layer thickness.
+ * Selects and formats a LayerThickness
+ * @param {string} _text
+ * @param {{ _source: ExperimentalLayerThickness }} record
  */
+export const selectorFnLayerThickness = (
+  _text: string,
+  record: { _source: ExperimentalLayerThickness }
+) => {
+  const layerThickness = record._source?.layerThickness;
 
-export const selectorFnLayerThickness = (layerThickness: NValueEntity | undefined) => {
   if (!layerThickness || !Number(layerThickness?.value)) return '';
   return formatNumber(Number(layerThickness?.value));
 };
 
 /**
- * Selects and formats layer
- * @param {string} text - The text parameter.
- * @param {ESResponseRaw} esResponseRaw - The ESResponseRaw record.
- * @returns {string} - The selected and formatted value for layer.
+ * Selects and formats a Layer
+ * @param {string} _text
+ * @param {{ _source: ExperimentalLayerThickness }} record
  */
-
-export const selectorFnLayer = (text: string, esResponseRaw: ESResponseRaw) => {
-  if (!esResponseRaw._source.layer) return '';
-  return ensureArray(esResponseRaw._source.layer)
+export const selectorFnLayer = (_text: string, record: { _source: ExperimentalLayerThickness }) => {
+  if (!record._source.layer) return '';
+  return ensureArray(record._source.layer)
     .map((l) => l.label)
     .join(', ');
 };
@@ -96,7 +107,7 @@ export const selectorFnLayer = (text: string, esResponseRaw: ESResponseRaw) => {
  * @param {string} date - The date to format.
  * @returns {string} - The formatted date.
  */
-export const selectorFnDate = (date: string) =>
+export const selectorFnDate = (date: string): string =>
   isValid(parseISO(date)) ? format(parseISO(date), 'dd.MM.yyyy') : '';
 
 /**
@@ -104,7 +115,7 @@ export const selectorFnDate = (date: string) =>
  * @param {string} text - The text value to render.
  * @returns {string} - The rendered text value.
  */
-export const selectorFnBasic = (text: string) => text;
+export const selectorFnBasic = (text: string): string => text;
 
 export const selectorFnSpecies = (species?: IdLabelEntity | IdLabelEntity[]) => {
   if (species) {

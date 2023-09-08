@@ -1,23 +1,22 @@
 import { atom } from 'jotai';
 import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
 import columnKeyToFilter from './column-key-to-filter';
-import { ExploreSectionResponse, ESResponseRaw } from '@/types/explore-section/resources';
-import { Aggregations } from '@/types/explore-section/fields';
 import { SortState } from '@/types/explore-section/application';
 import fetchDataQuery from '@/queries/explore-section/data';
 import { fetchRules } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType from '@/api/explore-section/resources';
-import { PAGE_SIZE, PAGE_NUMBER, SelectedRowsProps } from '@/constants/explore-section/list-views';
+import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOuput } from '@/types/explore-section/kg-inference';
+import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
 export const pageNumberAtom = atom<number>(PAGE_NUMBER);
 
-export const selectedRowsAtom = atomFamily(() => atom<SelectedRowsProps>([]));
+export const selectedRowsAtom = atomFamily(() => atom<ExploreESHit[]>([]));
 
 export const searchStringAtom = atom<string>('');
 
@@ -61,7 +60,7 @@ export const queryAtom = atomFamily((experimentTypeName: string) =>
 );
 
 export const queryResponseAtom = atomFamily((experimentTypeName: string) =>
-  atom<Promise<ExploreSectionResponse> | null>((get) => {
+  atom<Promise<FlattenedExploreESResponse> | null>((get) => {
     const session = get(sessionAtom);
     const query = get(queryAtom(experimentTypeName));
 
@@ -72,14 +71,14 @@ export const queryResponseAtom = atomFamily((experimentTypeName: string) =>
 );
 
 export const dataAtom = atomFamily((experimentTypeName: string) =>
-  selectAtom<Promise<ExploreSectionResponse> | null, Promise<ESResponseRaw[]>>(
-    queryResponseAtom(experimentTypeName),
-    async (response) => response?.hits ?? []
-  )
+  selectAtom<
+    Promise<FlattenedExploreESResponse> | null,
+    Promise<FlattenedExploreESResponse['hits']>
+  >(queryResponseAtom(experimentTypeName), async (response) => response?.hits ?? [])
 );
 
 export const totalAtom = atomFamily((experimentTypeName: string) =>
-  selectAtom<Promise<ExploreSectionResponse> | null, Promise<number | null>>(
+  selectAtom<Promise<FlattenedExploreESResponse> | null, Promise<number | null>>(
     queryResponseAtom(experimentTypeName),
     async (response) => {
       const { total } = response ?? {
@@ -92,10 +91,10 @@ export const totalAtom = atomFamily((experimentTypeName: string) =>
 );
 
 export const aggregationsAtom = atomFamily((experimentTypeName: string) =>
-  selectAtom<Promise<ExploreSectionResponse> | null, Promise<Aggregations | undefined>>(
-    queryResponseAtom(experimentTypeName),
-    async (response) => response?.aggs
-  )
+  selectAtom<
+    Promise<FlattenedExploreESResponse> | null,
+    Promise<FlattenedExploreESResponse['aggs'] | undefined>
+  >(queryResponseAtom(experimentTypeName), async (response) => response?.aggs)
 );
 
 export const rulesResponseAtom = atom<Promise<RuleOuput[]> | null>((get) => {

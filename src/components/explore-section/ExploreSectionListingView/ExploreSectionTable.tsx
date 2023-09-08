@@ -7,12 +7,11 @@ import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
-import {
-  ExploreDownloadButton,
+import { ExploreDownloadButton } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
+import WithRowSelection, {
   RenderButtonProps,
-} from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
-import WithRowSelection from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import { ESResponseRaw } from '@/types/explore-section/resources';
+} from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
 
@@ -86,7 +85,7 @@ export function BaseTable({
   }
 
   const onCellRouteHandler = {
-    onCell: (record: ESResponseRaw) => ({
+    onCell: (record: ExploreESHit) => ({
       onClick: (e: MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
         setBackToListPath(pathname);
