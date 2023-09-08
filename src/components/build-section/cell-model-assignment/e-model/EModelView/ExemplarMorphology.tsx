@@ -55,27 +55,32 @@ export default function ExemplarMorphology() {
 
     setEModelUIConfig((oldAtomData) => ({
       ...oldAtomData,
-      morphology: structuredClone(exemplarMorphology),
+      morphologies: [structuredClone(exemplarMorphology)],
     }));
   }, [eModelEditMode, exemplarMorphology, setEModelUIConfig]);
 
-  const onMorphologyDelete = () => {
+  const onMorphologyDelete = (morphology: ExemplarMorphologyDataType) => {
     setEModelUIConfig((oldAtomData) => {
-      if (!oldAtomData?.morphology) return oldAtomData;
+      if (!oldAtomData?.morphologies) return oldAtomData;
+
+      const results = oldAtomData.morphologies.filter(
+        (morph) => morph['@id'] !== morphology['@id']
+      );
 
       return {
         ...oldAtomData,
-        morphology: null,
+        morphologies: results,
       };
     });
   };
 
-  const morphology = eModelEditMode ? eModelUIConfig?.morphology : exemplarMorphology;
+  const exemplarMorphologyAsList = exemplarMorphology ? [exemplarMorphology] : [];
+  const morphologies = eModelEditMode ? eModelUIConfig?.morphologies : exemplarMorphologyAsList;
   const deleteColumn = {
     title: '',
     key: 'action',
-    render: () => (
-      <button type="button" onClick={onMorphologyDelete}>
+    render: (morphology: ExemplarMorphologyDataType) => (
+      <button type="button" onClick={() => onMorphologyDelete(morphology)}>
         <DeleteOutlined />
       </button>
     ),
@@ -85,7 +90,12 @@ export default function ExemplarMorphology() {
   return (
     <>
       <div className="text-primary-8 text-2xl font-bold">Exemplar morphology</div>
-      {morphology && <DefaultEModelTable dataSource={[morphology]} columns={columns} />}
+
+      <DefaultEModelTable<ExemplarMorphologyDataType>
+        dataSource={morphologies || []}
+        columns={columns}
+      />
+
       {eModelEditMode && (
         <>
           <GenericButton
