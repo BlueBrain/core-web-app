@@ -9,8 +9,11 @@ import { useAtomValue } from 'jotai';
 import { Session } from 'next-auth';
 import Link from 'next/link';
 import sessionAtom from '@/state/session';
-import { createResource, queryES } from '@/api/nexus';
+import { createResource, fetchResourceById, queryES } from '@/api/nexus';
 import usePathname from '@/hooks/pathname';
+import { from64 } from '@/util/common';
+import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { useSession } from '@/hooks/hooks';
 
 export default function ExperimentAnalyses() {
   const [analyses, setAnalyses] = useAnalyses();
@@ -23,6 +26,8 @@ export default function ExperimentAnalyses() {
     () => analyses.filter((a) => a.codeRepository['@id'].toLocaleLowerCase().includes(search)),
     [analyses, search]
   );
+
+  const simCampaign = useFetchSimCampaign();
 
   const onFinish = async (values: Analysis) => {
     if (!session) return;
@@ -47,41 +52,47 @@ export default function ExperimentAnalyses() {
     setIsModalVisible(false);
     form.resetFields();
   };
+
   const pathname = usePathname();
 
   return (
     <div className="flex">
-      <div className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center">
-        <Link
-          className="whitespace-pre text-sm rotate-180 mt-5"
-          href={pathname?.replace(/\/experiment-analysis$/, '') || '/explore/simulation-campaigns'}
-          style={{ writingMode: 'vertical-rl' }}
-        >
-          Back to simulation
-          <ArrowRightOutlined className="mt-6" />
-        </Link>
+      <div className="stretch-self bg-neutral-1 text-primary-8 w-10 font-bold flex items-start justify-center">
+        {simCampaign && (
+          <Link
+            className="whitespace-pre text-sm rotate-180 mt-5"
+            href={
+              pathname?.replace(/\/experiment-analysis$/, '') || '/explore/simulation-campaigns'
+            }
+            style={{ writingMode: 'vertical-rl' }}
+          >
+            {`Back to ${simCampaign?.name ?? 'simulation'}`}
+            <ArrowRightOutlined className="mt-6" />
+          </Link>
+        )}
       </div>
       <div className="min-h-screen bg-white overflow-auto p-4 flex-1">
         <div className="flex justify-between">
           <div className="text-2xl text-primary-8 font-bold mb-4">Experiment Analyses</div>
-
-          <div>
-            <Input.Search
-              style={{ width: 150 }}
-              placeholder="Search"
-              size="middle"
-              onChange={(v) => setSearch(v.currentTarget.value)}
-              allowClear
-            />
-            <button
-              onClick={() => setIsModalVisible(true)}
-              className="bg-white text-primary-8 py-2 px-4 shadow-md border border-primary-8 h-9 text-sm w-21 font-bold ml-2"
-              type="button"
-              disabled={loading}
-            >
-              Upload new
-            </button>
-          </div>
+          {!!analyses.length && (
+            <div>
+              <Input.Search
+                style={{ width: 150 }}
+                placeholder="Search"
+                size="middle"
+                onChange={(v) => setSearch(v.currentTarget.value)}
+                allowClear
+              />
+              <button
+                onClick={() => setIsModalVisible(true)}
+                className="bg-white text-primary-8 py-2 px-4 shadow-md border border-primary-8 h-9 text-sm w-21 font-bold ml-2"
+                type="button"
+                disabled={loading}
+              >
+                Upload new
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -233,4 +244,26 @@ function useAnalyses(): [Analysis[], (a: Analysis[]) => void] {
     fetchAnalyses(session, (response: Analysis[]) => setAnalyses(response));
   }, [session, setAnalyses]);
   return [analyses, setAnalyses];
+}
+
+function useFetchSimCampaign() {
+  const pathname = usePathname();
+  const session = useSession();
+  const [simCampaign, setSimCampaign] = useState<SimulationCampaignResource>();
+
+  useEffect(() => {
+    if (!pathname || !session) return;
+    const parts = pathname?.split('/') || [];
+    const key: string | undefined = from64(parts[parts.length - 2]);
+    const data = key?.split('!/!');
+    const id = data[data.length - 1];
+
+    const fetch = async () => {
+      const r = await fetchResourceById<SimulationCampaignResource>(id, session);
+      setSimCampaign(r);
+    };
+
+    fetch();
+  }, [pathname, session]);
+  return simCampaign;
 }
