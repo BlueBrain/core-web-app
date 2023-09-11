@@ -149,7 +149,7 @@ export default function ExperimentAnalyses() {
                 },
               ]}
             >
-              <Input />
+              <Input className="block" />
             </Form.Item>
 
             <Form.Item
@@ -187,12 +187,19 @@ export default function ExperimentAnalyses() {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" onClick={onCancel}>
-                Cancel
-              </Button>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Send Data
-              </Button>
+              <div className="mt-2 float-right">
+                <Button type="primary" onClick={onCancel} className="bg-white text-primary-8">
+                  Cancel
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  className="bg-primary-8 ml-3"
+                >
+                  Add Analysis
+                </Button>
+              </div>
             </Form.Item>
           </Form>
         </Modal>
