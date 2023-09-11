@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import MorphoWrapper from './MorphoWrapper';
 import { MorphoViewerOptions } from './MorphologyViewer';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta';
 
-function MorphoViewerContainer({ resource }: { resource: DeltaResource }) {
+function MorphoViewerContainer({ resource }: { resource: ReconstructedNeuronMorphology }) {
   const [options, setOptions] = useState<MorphoViewerOptions>({
     asPolyline: false,
     focusOn: true,

@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
 import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { ExploreDeltaResource, ReconstructedNeuronMorphology } from '@/types/explore-section/delta';
 import useDetailPage from '@/hooks/useDetailPage';
 import usePathname from '@/hooks/pathname';
 
@@ -45,7 +45,9 @@ export default function MorphologyDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields}>
-        {(detail: DeltaResource) => <MorphoViewerContainer resource={detail} />}
+        {(detail: ExploreDeltaResource) => (
+          <MorphoViewerContainer resource={detail as ReconstructedNeuronMorphology} />
+        )}
       </Detail>
     </Suspense>
   );

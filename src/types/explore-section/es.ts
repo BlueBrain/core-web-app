@@ -205,6 +205,8 @@ export type Experiment =
   | ExperimentalTrace
   | ReconstructedNeuronMorphology;
 
+export type WithStatistic = Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology>;
+
 type SimulationCampaign = ESHitSource & {
   config: Config;
   description: string;

@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
+import { ParameterCoords } from '@/types/explore-section/delta';
 
 export type Status = 'initial' | 'selection';
 
@@ -10,7 +11,7 @@ export type DimensionBoxProps = {
   dismissFunc?: () => void;
   dismissible: boolean;
   isAxis: boolean;
-  possibleValues?: number[];
+  possibleValues?: keyof typeof ParameterCoords; // TODO: Start here tomorrow.
 };
 
 export type UnassignedDimensionBoxProps = {

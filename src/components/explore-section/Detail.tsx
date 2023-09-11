@@ -6,7 +6,7 @@ import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailAtom } from '@/state/explore-section/detail-view-atoms';
 import usePathname from '@/hooks/pathname';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { ExploreDeltaResource, SimulationCampaign } from '@/types/explore-section/delta';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { classNames } from '@/util/utils';
@@ -14,7 +14,7 @@ import EXPLORE_FIELDS_CONFIG, {
   ExploreFieldConfig,
 } from '@/constants/explore-section/explore-fields-config';
 
-type FieldProps = { field: string; className?: string; data: DeltaResource };
+type FieldProps = { field: string; className?: string; data: ExploreDeltaResource };
 
 export type DetailProps = { field: string; className?: string };
 
@@ -37,7 +37,7 @@ export default function Detail({
   children,
 }: {
   fields: DetailProps[];
-  children?: (detail: DeltaResource) => ReactNode;
+  children?: (detail: ExploreDeltaResource | SimulationCampaign) => ReactNode;
 }) {
   const { data: session } = useSession();
   const path = usePathname();
@@ -51,9 +51,9 @@ export default function Detail({
     return <Error statusCode={400} title="Something went wrong while fetching the data" />;
   }
 
-  if (detail?.data?.reason) {
-    return <Error statusCode={404} title={detail?.data?.reason} />;
-  }
+  // if (detail?.data?.reason) {
+  //     return <Error statusCode={404} title={detail?.data?.reason} />;
+  //   }
 
   if (detail.data === null) {
     return <>Not Found</>;

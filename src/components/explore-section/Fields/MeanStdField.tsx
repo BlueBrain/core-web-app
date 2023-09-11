@@ -1,14 +1,16 @@
 import { formatNumber } from '@/util/common';
 import useStats from '@/components/explore-section/Fields/useStats';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { WithSeries } from '@/types/explore-section/delta';
 
 type MeanStdFieldProps = {
-  detail: DeltaResource;
+  detail: WithSeries;
 };
 
 export default function MeanStdField({ detail }: MeanStdFieldProps) {
   const { mean, std } = useStats(detail);
+
   if (!mean) return null;
+
   return std ? (
     <>
       {formatNumber(mean.value)} ± {formatNumber(std.value)}{' '}

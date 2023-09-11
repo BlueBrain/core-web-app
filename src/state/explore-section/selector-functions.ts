@@ -1,49 +1,44 @@
 import find from 'lodash/find';
 import { DeltaResource } from '@/types/explore-section/resources';
-import { AnnotationEntity, Series } from '@/types/explore-section/fields';
+import { ExploreDeltaResource, WithAnnotation, WithSEM, WithSeries } from '@/types/explore-section/delta';
+import { Series } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
 
 const seriesArrayFunc = (series: Series | Series[] | undefined) => series && ensureArray(series);
 
-const annotationArrayFunc = (annotation: AnnotationEntity[] | undefined | null) =>
-  annotation && ensureArray(annotation);
-
 /**
  * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
-export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
+export const subjectAgeSelectorFn = (detail: ExploreDeltaResource | null) => {
   if (detail?.subject?.age?.value) {
     return `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
   }
+
   if (detail?.subject?.age?.minValue && detail?.subject?.age?.maxValue) {
     return `${detail.subject?.age.minValue} - ${detail.subject?.age.maxValue} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
   }
+
   return undefined;
 };
 
 // renders mtype or 'no MType text if not present
-export const mTypeSelectorFn = (detail: DeltaResource | null) => {
-  const entity = find(
-    annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name === 'M-type Annotation'
-  );
+export const mTypeSelectorFn = (detail: WithAnnotation) => {
+  const entity = find(ensureArray(detail?.annotation), (o) => o?.name === 'M-type Annotation');
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
 
 // renders etype or 'no EType' text if not present
-export const eTypeSelectorFn = (detail: DeltaResource | null) => {
-  const entity = find(
-    annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name === 'E-type Annotation'
-  );
-  return entity ? entity.hasBody?.label : NO_DATA_STRING;
+export const eTypeSelectorFn = (detail: WithAnnotation) => {
+  const entity = find(ensureArray(detail?.annotation), (o) => o?.name === 'E-type Annotation');
+
+  return entity ? entity.hasBody.label : NO_DATA_STRING;
 };
 
 // renders standard error of the mean if present
-export const semSelectorFn = (detail: DeltaResource | null) => {
+export const semSelectorFn = (detail: WithSEM | null) => {
   const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);
   return seriesArray?.find((series) => series.statistic === 'standard error of the mean')?.value;
 };
@@ -73,7 +68,7 @@ export const dimensionsSelectorFn = (detail: DeltaResource | null) => {
  * @param withUnits whether to render units
  */
 export const selectorFnStatisticDetail = (
-  detail: DeltaResource,
+  detail: WithSeries,
   field: string,
   withUnits: boolean = false
 ): string | number => {
