@@ -82,8 +82,6 @@ function GeneralizationRules({
     setinferredResourceIds(inferredResourceIds.add(resourceId));
   };
 
-  console.log('resourceBasedRequest outside inferClick', resourceBasedRequest);
-
   return (
     <div className="flex flex-col space-y-4 bg-white pl-12 text-primary-8">
       <div className="flex space-x-4">
