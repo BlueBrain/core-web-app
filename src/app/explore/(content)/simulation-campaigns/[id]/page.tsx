@@ -1,7 +1,7 @@
 'use client';
 
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
-import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { SimulationCampaign } from '@/types/explore-section/delta';
 import Simulations from '@/components/explore-section/Simulations';
 import useDetailPage from '@/hooks/useDetailPage';
 import usePathname from '@/hooks/pathname';
@@ -41,7 +41,7 @@ export default function SimulationCampaignDetailPage() {
       {(detail) => (
         <div>
           <hr />
-          <Simulations resource={detail as SimulationCampaignResource} />
+          <Simulations resource={detail as SimulationCampaign} />
         </div>
       )}
     </Detail>

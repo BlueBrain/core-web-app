@@ -13,7 +13,13 @@ import {
 } from '@/state/explore-section/listing-selectors';
 import { FilterType } from '@/components/Filter/types';
 import { IndexColContent, ValueArray } from '@/components/ListTable';
-import { DeltaResource } from '@/types/explore-section/resources';
+import {
+  ExploreDeltaResource,
+  Simulation,
+  WithAnnotation,
+  WithSEM,
+  WithSeries,
+} from '@/types/explore-section/delta';
 import {
   eTypeSelectorFn,
   mTypeSelectorFn,
@@ -21,7 +27,6 @@ import {
   selectorFnStatisticDetail,
   subjectAgeSelectorFn,
 } from '@/state/explore-section/selector-functions';
-import Species from '@/components/explore-section/Species';
 import Contributors from '@/components/explore-section/Contributors';
 import timeElapsedFromToday from '@/util/date';
 import License from '@/components/explore-section/License';
@@ -39,8 +44,8 @@ export type ExploreFieldConfig = {
   filter: FilterType;
   unit?: string;
   render?: {
-    listingViewFn?: (value: any, record: any, index: number) => ReactNode | any;
-    detailViewFn?: (resource: DeltaResource) => ReactNode | any;
+    listingViewFn?: (value: any, record: any, index: number) => ReactNode;
+    detailViewFn?: (resource: ExploreDeltaResource | any) => ReactNode; // TODO: Any makes it kind of useless
   };
   vocabulary: {
     plural: string;
@@ -102,7 +107,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'checkList',
     render: {
       listingViewFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
-      detailViewFn: (resource) => eTypeSelectorFn(resource),
+      detailViewFn: (resource) => eTypeSelectorFn(resource as WithAnnotation),
     },
     vocabulary: {
       plural: 'E-Types',
@@ -115,7 +120,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'checkList',
     render: {
       listingViewFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
-      detailViewFn: (resource) => mTypeSelectorFn(resource),
+      detailViewFn: (resource) => mTypeSelectorFn(resource as WithAnnotation),
     },
     vocabulary: {
       plural: 'M-Types',
@@ -157,7 +162,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'checkList',
     render: {
       listingViewFn: (_t, r) => selectorFnSpecies(r._source?.subjectSpecies),
-      detailViewFn: () => <Species />,
+      detailViewFn: (resource) => resource.subject.species.label,
     },
     vocabulary: {
       plural: 'Species',
@@ -177,7 +182,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'valueRange',
     render: {
       listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
-      detailViewFn: (resource) => semSelectorFn(resource),
+      detailViewFn: (resource) => semSelectorFn(resource as WithSEM),
     },
     vocabulary: {
       plural: 'Values',
@@ -237,7 +242,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     unit: 'n/mm³',
     render: {
       listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'mean'),
-      detailViewFn: (resource) => selectorFnStatisticDetail(resource, 'mean', true),
+      detailViewFn: (resource) => selectorFnStatisticDetail(resource as WithSeries, 'mean', true),
     },
     vocabulary: {
       plural: 'Densities',
@@ -276,7 +281,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     unit: 'μm',
     render: {
       listingViewFn: selectorFnLayerThickness,
-      detailViewFn: (resource) => <LayerThicknessField detail={resource} />,
+      detailViewFn: (resource) => <LayerThicknessField detail={resource as WithSeries} />,
     },
     vocabulary: {
       plural: 'Thicknesses',
@@ -370,7 +375,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'valueRange',
     render: {
       listingViewFn: selectorFnMeanStd,
-      detailViewFn: (resource) => <MeanStdField detail={resource} />,
+      detailViewFn: (resource) => <MeanStdField detail={resource as WithSeries} />,
     },
     vocabulary: {
       plural: 'Values',
@@ -388,26 +393,26 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'valueRange',
     render: {
       listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-      detailViewFn: (resource) => selectorFnStatisticDetail(resource, 'N'),
+      detailViewFn: (resource) => selectorFnStatisticDetail(resource as WithSeries, 'N'),
     },
     vocabulary: {
       plural: 'Values',
       singular: 'Value',
     },
   },
-  brainConfiguration: {
-    term: 'nValue',
-    title: 'Brain Configuration',
-    filter: null,
-    render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-      detailViewFn: (resource) => resource?.brainConfiguration,
-    },
-    vocabulary: {
-      plural: 'Brain Configurations',
-      singular: 'Brain Configuration',
-    },
-  },
+  // brainConfiguration: {
+  //     term: 'nValue',
+  //     title: 'Brain Configuration',
+  //     filter: null,
+  //     render: {
+  //       listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
+  //       detailViewFn: (resource) => (resource as WithBrainConfiguration)?.brainConfiguration,
+  //     },
+  //     vocabulary: {
+  //       plural: 'Brain Configurations',
+  //       singular: 'Brain Configuration',
+  //     },
+  //   },
   dimensions: {
     term: 'dimensions',
     title: 'Dimensions',
@@ -551,7 +556,8 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'started at',
     filter: null,
     render: {
-      detailViewFn: (resource) => resource && timeElapsedFromToday(resource.startedAtTime),
+      detailViewFn: (resource: Simulation) =>
+        resource && timeElapsedFromToday(resource.startedAtTime),
     },
     vocabulary: {
       plural: 'Dates',

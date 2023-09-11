@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { SimulationCampaign } from '@/types/explore-section/delta';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
 import { initializeDimensionsAtom } from '@/components/explore-section/Simulations/state';
@@ -11,7 +11,7 @@ import {
   showOnlyOptions,
 } from '@/components/explore-section/Simulations/constants';
 
-export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
+export default function Simulations({ resource }: { resource: SimulationCampaign }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
 
@@ -46,7 +46,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           />
         </div>
       </div>
-      <DimensionSelector coords={resource.parameter?.coords} />
+      <DimensionSelector coords={resource.parameter.coords} />
       <SimulationsDisplayGrid display={selectedDisplay} status={showStatus} />
     </div>
   );

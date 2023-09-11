@@ -5,14 +5,14 @@ import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { NexusImage } from './NexusImage';
 import ImageViewComponent from './ImageViewComponent';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { ExperimentalTrace } from '@/types/explore-section/delta';
 import createImageCollectionDataAtom from '@/components/explore-section/EphysViewerContainer/state/ImageCollectionDataAtom';
 
 // Only fetch three traces at a time.
 const PAGINATION_OFFSET = 5;
 
 interface ImageViewContainerProps {
-  resource: DeltaResource;
+  resource: ExperimentalTrace;
   stimulusTypeMap: Map<string, number>;
   stimulusType: string;
   onStimulusChange: (value: string) => void;

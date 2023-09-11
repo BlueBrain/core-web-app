@@ -6,7 +6,7 @@ import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
 import { usePathname } from 'next/navigation';
 import { latestRevisionAtom } from '@/state/explore-section/detail-view-atoms';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { ExploreDeltaResource } from '@/types/explore-section/delta';
 import Link from '@/components/Link';
 import { InteractiveViewIcon } from '@/components/icons';
 
@@ -16,7 +16,7 @@ export default function DetailHeaderName({
   detail,
   url,
 }: {
-  detail: DeltaResource;
+  detail: ExploreDeltaResource;
   url?: string | null;
 }) {
   const latestRevision = useAtomValue(latestRevisionLoadableAtom);

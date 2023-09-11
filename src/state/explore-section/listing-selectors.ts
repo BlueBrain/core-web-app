@@ -2,12 +2,7 @@ import { format, parseISO, isValid } from 'date-fns';
 import { IdLabelEntity } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { formatNumber } from '@/util/common';
-import {
-  Experiment,
-  ExperimentalLayerThickness,
-  ExperimentalTrace,
-  ReconstructedNeuronMorphology,
-} from '@/types/explore-section/es';
+import { Experiment, ExperimentalLayerThickness, WithStatistic } from '@/types/explore-section/es';
 
 type Record = { _source: Experiment };
 
@@ -43,27 +38,23 @@ export const selectorFnContributors = (_text: string, record: Record): string | 
 
 /**
  * Selects and formats a statistic from the series array
- * @param {Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology>} source - The Source object.
+ * @param {WithStatistic} source - The Source object.
  * @param {string} statistic - The statistic to serialize.
  */
-export const selectorFnStatistic = (
-  source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology>,
-  statistic: string
-) => {
+export const selectorFnStatistic = (source: WithStatistic, statistic: string) => {
   if (!source) return '';
+
   const statValue = source.series?.find((s: any) => s.statistic === statistic)?.value;
+
   return statValue ? formatNumber(statValue) : '';
 };
 
 /**
  * Selects and formats a MeanStd
  * @param {string} _text
- * @param {{ _source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology> }} record - The statistic to serialize.
+ * @param {{ _source: WithStatistic }} record - The statistic to serialize.
  */
-export const selectorFnMeanStd = (
-  _text: string,
-  record: { _source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology> }
-) => {
+export const selectorFnMeanStd = (_text: string, record: { _source: WithStatistic }) => {
   const mean = selectorFnStatistic(record._source, 'mean');
   const std = selectorFnStatistic(record._source, 'standard deviation');
   if (mean && std) {

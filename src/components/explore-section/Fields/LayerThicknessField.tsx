@@ -1,9 +1,9 @@
 import { formatNumber } from '@/util/common';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { WithSeries } from '@/types/explore-section/delta';
 import useStats from '@/components/explore-section/Fields/useStats';
 
 type LayerThicknessFieldProps = {
-  detail: DeltaResource;
+  detail: WithSeries;
 };
 
 export default function LayerThicknessField({ detail }: LayerThicknessFieldProps) {
