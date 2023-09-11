@@ -122,7 +122,7 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link href="/simulation-campaigns">
+            <Link href="/explore/simulation-campaigns">
               <h1>Simulations</h1>
               <ArrowRightOutlined />
               <p>
