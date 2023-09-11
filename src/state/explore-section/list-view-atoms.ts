@@ -1,7 +1,4 @@
 import { atom } from 'jotai';
-import isEmpty from 'lodash/isEmpty';
-import find from 'lodash/find';
-import filter from 'lodash/filter';
 import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import head from 'lodash/head';
