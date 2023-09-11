@@ -17,8 +17,8 @@ import {
 } from '@/constants/explore-section/list-views';
 import { fetchRules } from '@/api/generalization';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
-import { RuleOutput } from '@/types/explore-section/kg-inference';
 import { ExploreESResponse, FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
+import { RuleOutput } from '@/types/explore-section/kg-inference';
 import { Filter } from '@/components/Filter/types';
 import { resourceBasedResponseAtom } from '@/state/explore-section/generalization';
 
@@ -27,15 +27,6 @@ type DataAtomFamilyScopeType = { experimentTypeName: string; resourceId?: string
 
 const DataAtomFamilyScopeComparator = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType) =>
   a.experimentTypeName === b.experimentTypeName && a.resourceId === b.resourceId;
-
-// Function to generate the initial state for a given rule and inference options
-function generateInitialState (inferenceOptions: PayLoadValues): InferenceOptionsState {
-  const initialState: InferenceOptionsState = {};
-  Object.keys(inferenceOptions).forEach((key: string) => {
-    initialState[key] = false;
-  });
-  return initialState;
-}
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
