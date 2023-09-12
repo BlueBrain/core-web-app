@@ -18,6 +18,8 @@ import {
   canonicalMorphologyModelIdAtom,
   remoteConfigPayloadAtom,
   brainRegionMTypeArrayAtom,
+  canonicalMorphologyModelAtom,
+  canonicalParamsAndDistributionAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
 import sessionAtom from '@/state/session';
@@ -111,6 +113,7 @@ export const fetchMModelRemoteParamsAtom = atom<null, [], Promise<ParamConfig | 
       set(mModelLocalParamsAtom, localOverrides || {});
       set(mModelRemoteParamsAtom, fetchedInfo);
       set(mModelRemoteParamsLoadedAtom, true);
+      set(setCanonicalAndDistributionsAtom);
       return fetchedInfo;
     }
 
@@ -123,6 +126,7 @@ export const fetchMModelRemoteParamsAtom = atom<null, [], Promise<ParamConfig | 
     cachedDefaultParamsMap.set(brainMTypeMapKey, params);
     set(cachedDefaultParamsMapAtom, cachedDefaultParamsMap);
     set(mModelRemoteParamsLoadedAtom, true);
+    set(setCanonicalAndDistributionsAtom);
     return params;
   }
 );
@@ -182,3 +186,15 @@ export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
     await set(setConfigPayloadAtom, updatedConfigPayload);
   }
 );
+
+export const setCanonicalAndDistributionsAtom = atom<null, [], void>(null, async (get, set) => {
+  const session = get(sessionAtom);
+  const canonicalMorphologyModel = await get(canonicalMorphologyModelAtom);
+
+  if (!session || !canonicalMorphologyModel) return;
+
+  set(canonicalParamsAndDistributionAtom, {
+    parameters_id: canonicalMorphologyModel.morphologyModelParameter['@id'],
+    distributions_id: canonicalMorphologyModel.morphologyModelDistribution['@id'],
+  });
+});
