@@ -127,8 +127,8 @@ export default function ExperimentalTraces() {
           />
           <PickTraces
             isOpen={openPicker}
-            onCancel={() => setOpenPicker((isOpen) => !isOpen)}
-            onOk={() => {}}
+            onCancel={() => setOpenPicker(false)}
+            onOk={() => setOpenPicker(false)}
           />
         </>
       )}

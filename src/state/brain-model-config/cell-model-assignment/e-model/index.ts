@@ -26,7 +26,7 @@ import sessionAtom from '@/state/session';
 import {
   convertRemoteParamsForUI,
   convertMorphologyForUI,
-  convertTracesForUI,
+  convertTraceForUI,
   convertFeaturesForUI,
   convertMechanismsForUI,
 } from '@/services/e-model';
@@ -99,7 +99,7 @@ export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] 
     const tracesQuery = getEntityListByIdsQuery('Trace', traceIds);
     const traces = await queryES<Trace>(tracesQuery, session, eModelTracesProjConfig);
 
-    return convertTracesForUI(traces);
+    return traces.map((trace) => convertTraceForUI(trace));
   }
 );
 

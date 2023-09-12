@@ -1,8 +1,11 @@
-'use client';
-
 import { Modal } from 'antd';
+import { useSetAtom } from 'jotai';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
+import { eModelUIConfigAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { convertTraceForUI } from '@/services/e-model';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { ExperimentalTrace, ExploreESHit } from '@/types/explore-section/es';
 
 const TYPE = 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalTrace';
 
@@ -12,8 +15,35 @@ type Props = {
   onOk: () => void;
 };
 
+const pickButtonStyle =
+  'font-semibold mt-2 px-14 py-4 text-primary-8 bg-white sticky bottom-0 self-end border border-primary-8';
+
 export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
   const width = typeof window !== 'undefined' ? window.innerWidth - 50 : undefined;
+  const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
+
+  const onTraceAdd = (selectedRows: ExploreESHit[]) => {
+    setEModelUIConfig((oldAtomData) => {
+      const savedTraces = oldAtomData?.traces?.length ? [...oldAtomData.traces] : [];
+      const savedTraceIds = savedTraces.map((t) => t['@id']);
+      const newRows = selectedRows.filter((row) => !savedTraceIds.includes(row._source['@id']));
+      const selectedTraces = newRows.map((row) =>
+        convertTraceForUI(row._source as ExperimentalTrace)
+      );
+
+      return {
+        ...oldAtomData,
+        traces: [...savedTraces, ...selectedTraces],
+      };
+    });
+    onOk();
+  };
+
+  const pickTraceButtonFn = ({ selectedRows }: RenderButtonProps) => (
+    <button type="button" className={pickButtonStyle} onClick={() => onTraceAdd(selectedRows)}>
+      Add trace
+    </button>
+  );
 
   return (
     <div>
@@ -26,7 +56,12 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
         centered
         width={width}
       >
-        <ExploreSectionListingView title="Experimental Traces" type={TYPE} enableDownload />
+        <ExploreSectionListingView
+          title="Experimental Traces"
+          type={TYPE}
+          enableDownload
+          renderButton={pickTraceButtonFn}
+        />
       </Modal>
     </div>
   );

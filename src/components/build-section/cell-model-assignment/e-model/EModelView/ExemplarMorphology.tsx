@@ -86,6 +86,14 @@ export default function ExemplarMorphology() {
     ),
   };
   const columns = eModelEditMode ? [...defaultColumns, deleteColumn] : defaultColumns;
+  let displayMorphologyError = null;
+  if (morphologies && morphologies.length !== 1) {
+    if (morphologies.length > 1) {
+      displayMorphologyError = 'Too many morphologies selected. Keep only one.';
+    } else {
+      displayMorphologyError = 'Select at least one morphology';
+    }
+  }
 
   return (
     <>
@@ -95,6 +103,10 @@ export default function ExemplarMorphology() {
         dataSource={morphologies || []}
         columns={columns}
       />
+
+      {displayMorphologyError && (
+        <div className="text-red-400 text-xs">{displayMorphologyError}</div>
+      )}
 
       {eModelEditMode && (
         <>
@@ -107,8 +119,8 @@ export default function ExemplarMorphology() {
           />
           <PickMorphology
             isOpen={openPicker}
-            onCancel={() => setOpenPicker((isOpen) => !isOpen)}
-            onOk={() => {}}
+            onCancel={() => setOpenPicker(false)}
+            onOk={() => setOpenPicker(false)}
           />
         </>
       )}
