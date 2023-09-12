@@ -213,15 +213,11 @@ export function SimulationCampaignView({
   const activeColumns = useAtomValue(
     useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
   );
-  const scopedDataAtom = dataAtom(experimentTypeName);
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
   const unwrappedData = useAtomValue(
     useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
-  );
-  const [sortState, setSortState] = useAtom(sortStateAtom);
-  const dimensionColumns = useAtomValue(
-    useMemo(() => unwrap(dimensionColumnsAtom(experimentTypeName)), [experimentTypeName])
-  );
+  const activeColumns = useAtomValue(activeColumnsAtom({ experimentTypeName }));
+
   const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns);
   const loading = data.state === 'loading' || !dimensionColumns;
 

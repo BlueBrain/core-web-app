@@ -20,6 +20,7 @@ import { resourceBasedResponseAtom } from '@/state/explore-section/generalizatio
 
 type DataAtomFamilyScopeType = { experimentTypeName: string; resourceId?: string };
 
+
 const DataAtomFamilyScopeComparator = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType) =>
   a.experimentTypeName === b.experimentTypeName && a.resourceId === b.resourceId;
 
