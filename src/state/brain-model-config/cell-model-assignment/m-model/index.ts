@@ -322,7 +322,7 @@ export const canonicalMorphologyModelConfigPayloadAtom = atom<
     const mTypeIds = Object.keys(mTypeParentDict);
     mTypeIds.forEach((mTypeId) => {
       const data = mTypeParentDict[mTypeId];
-      mTypeParentDict[`${mTypeId}?rev=${data.rev}`] = data;
+      mTypeParentDict[`${mTypeId}?rev=${data._rev}`] = data;
       delete mTypeParentDict[mTypeId];
     });
   });
