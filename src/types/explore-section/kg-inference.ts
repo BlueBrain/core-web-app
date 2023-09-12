@@ -7,9 +7,9 @@ export interface RuleOutput {
   nexusLink: string;
 }
 
-export interface InputParameter {
-  name: string;
-  payload: Payload;
+export interface InputFilter {
+  TargetResourceParameter: string;
+  SelectModelsParameter: string[];
 }
 
 export interface PayLoadValues {
@@ -27,7 +27,20 @@ export interface Payload {
 export interface InferenceOptionsState {
   [key: string]: boolean;
 }
-
 export interface RuleWithOptionsProps {
   [rule: string]: InferenceOptionsState;
+}
+
+export interface InputParameter {
+  name: string;
+  payload: Payload;
+}
+export interface ResourceBasedInference {
+  name: string;
+  id: string;
+  value: boolean;
+}
+export interface ResourceBasedInferenceRequest {
+  rules: string[];
+  inputFilter: InputFilter;
 }

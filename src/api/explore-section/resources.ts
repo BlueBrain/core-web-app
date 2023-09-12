@@ -1,4 +1,5 @@
 import esb from 'elastic-builder';
+import flatMap from 'lodash/flatMap';
 import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section/queries';
 import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
@@ -61,7 +62,7 @@ export async function fetchInferredResources(accessToken: string, inferenceResou
     body: JSON.stringify(query),
   })
     .then((response) => response.json())
-    .then<ExploreSectionResponse>((data) => ({
+    .then<ExploreESResponse>((data) => ({
       hits: map(data?.hits?.hits, (hit) => ({ ...hit, inferred: true })),
       total: data?.hits?.total,
       aggs: data.aggregations,

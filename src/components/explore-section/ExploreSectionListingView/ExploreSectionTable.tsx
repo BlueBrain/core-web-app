@@ -145,7 +145,9 @@ export default function ExploreSectionTable({
     </ExploreDownloadButton>
   );
 
-  const expandedRowRender = () => <GeneralizationRules />;
+  const expandedRowRender = (resource: ESResponseRaw) => (
+    <GeneralizationRules resourceId={resource._source['@id']} />
+  );
 
   return enableDownload ? (
     <WithRowSelection

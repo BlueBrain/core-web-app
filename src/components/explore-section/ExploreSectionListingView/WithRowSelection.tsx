@@ -1,4 +1,4 @@
-import { Key, ReactNode } from 'react';
+import { Key, ReactNode, useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreESHit } from '@/types/explore-section/es';
@@ -23,7 +23,9 @@ export default function WithRowSelection({
   experimentTypeName: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom(experimentTypeName));
+  const [selectedRows, setSelectedRows] = useAtom(
+    useMemo(() => selectedRowsAtom({ experimentTypeName }), [experimentTypeName])
+  );
   const clearSelectedRows = () => setSelectedRows([]);
 
   return (

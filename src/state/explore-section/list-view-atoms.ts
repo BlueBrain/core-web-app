@@ -4,7 +4,6 @@ import uniq from 'lodash/uniq';
 import columnKeyToFilter from './column-key-to-filter';
 import { SortState } from '@/types/explore-section/application';
 import fetchDataQuery from '@/queries/explore-section/data';
-import { fetchRules } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType, { fetchDimensionAggs } from '@/api/explore-section/resources';
 import {
@@ -16,6 +15,11 @@ import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOutput } from '@/types/explore-section/kg-inference';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
+
+type DataAtomFamilyScopeType = { experimentTypeName: string; resourceId?: string };
+
+const DataAtomFamilyScopeComparator = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType) =>
+  a.experimentTypeName === b.experimentTypeName && a.resourceId === b.resourceId;
 
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
@@ -81,19 +85,20 @@ export const queryAtom = atomFamily((experimentTypeName: string) =>
     const sortState = get(sortStateAtom);
     const filters = await get(filtersAtom(experimentTypeName));
 
-    if (!filters) {
-      return null;
-    }
+      if (!filters) {
+        return null;
+      }
 
-    return fetchDataQuery(
-      pageSize,
-      pageNumber,
-      filters,
-      experimentTypeName,
-      sortState,
-      searchString
-    );
-  })
+      return fetchDataQuery(
+        pageSize,
+        pageNumber,
+        filters,
+        experimentTypeName,
+        sortState,
+        searchString
+      );
+    }),
+  DataAtomFamilyScopeComparator
 );
 
 export const queryResponseAtom = atomFamily((experimentTypeName: string) =>
@@ -101,10 +106,11 @@ export const queryResponseAtom = atomFamily((experimentTypeName: string) =>
     const session = get(sessionAtom);
     const query = await get(queryAtom(experimentTypeName));
 
-    if (!session) return null;
+      if (!session) return null;
 
-    return fetchEsResourcesByType(session.accessToken, query);
-  })
+      return fetchEsResourcesByType(session.accessToken, query);
+    }),
+  DataAtomFamilyScopeComparator
 );
 
 export const dataAtom = atomFamily((experimentTypeName: string) =>
