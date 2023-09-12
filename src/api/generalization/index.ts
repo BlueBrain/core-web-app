@@ -4,7 +4,6 @@ import { RuleOutput, ResourceBasedInferenceRequest } from '@/types/explore-secti
 
 const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
 
-
 export function fetchRules(session: Session, resourceId: string): Promise<RuleOutput[]> {
   const result = fetch(`${BASE_URL}/rules`, {
     method: 'POST',

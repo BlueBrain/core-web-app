@@ -23,7 +23,6 @@ export default function WithRowSelection({
   experimentTypeName: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-
   const [selectedRows, setSelectedRows] = useAtom(
     useMemo(() => selectedRowsAtom({ experimentTypeName }), [experimentTypeName])
   );
