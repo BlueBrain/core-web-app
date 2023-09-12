@@ -21,7 +21,7 @@ const configPayloadDefaults = {
     {
       name: 'base_cell_composition',
       type: 'Dataset' as 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/fea2f6c6-d09e-4aef-ae9a-6324f01e2467',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/54818e46-cf8c-4bd6-9b68-34dffbc8a68c',
     },
   ],
 };
