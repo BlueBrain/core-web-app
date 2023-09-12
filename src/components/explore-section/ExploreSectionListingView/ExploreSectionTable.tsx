@@ -146,14 +146,10 @@ export default function ExploreSectionTable({
   );
 
   const expandedRowRender = (resource: ESResponseRaw) => (
-<<<<<<< HEAD
     <GeneralizationRules
       resourceId={resource._source['@id']}
       experimentTypeName={experimentTypeName}
     />
-=======
-    <GeneralizationRules resourceId={resource._source['@id']} />
->>>>>>> 9c97f885 (Extends atom family scope and updates variable name of type to experimentTypeName)
   );
 
   return enableDownload ? (
