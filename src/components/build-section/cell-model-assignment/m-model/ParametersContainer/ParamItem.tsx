@@ -47,7 +47,6 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
 
   let component;
   switch (paramInfo.displayName) {
-    case 'Radius':
     case 'Randomness':
     case 'Targeting':
       component = (
