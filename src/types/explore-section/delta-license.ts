@@ -4,7 +4,7 @@ type Rejection = {
   status: 404;
 };
 
-export type LicenseResource = {
+export type License = {
   '@context': string;
   '@type': string;
   license?: { name: string };

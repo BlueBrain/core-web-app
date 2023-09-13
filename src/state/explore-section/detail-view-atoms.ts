@@ -4,7 +4,15 @@ import { atom } from 'jotai';
 import pick from 'lodash/pick';
 import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { EntityResource } from '@/types/nexus/common';
+import { Contributor } from '@/types/explore-section/delta-contributor';
+import {
+  Experiment,
+  ExperimentalTrace,
+  ReconstructedNeuronMorphology,
+} from '@/types/explore-section/delta-experiment';
+import { License } from '@/types/explore-section/delta-license';
+import { Subject } from '@/types/explore-section/delta-properties';
 import { FetchParams } from '@/types/explore-section/application';
 import { ensureArray } from '@/util/nexus';
 
@@ -21,10 +29,10 @@ export const sessionAndInfoAtom = atom((get) => {
   return { session, info };
 });
 
-export const detailAtom = atom<Promise<DeltaResource | null>>(async (get) => {
+export const detailAtom = atom<Promise<EntityResource | null>>(async (get) => {
   const { session, info } = get(sessionAndInfoAtom);
 
-  const resource: DeltaResource = await fetchResourceById(
+  const resource = await fetchResourceById<EntityResource>(
     info.id,
     session,
     pick(info, ['org', 'project', 'rev'])
@@ -33,9 +41,9 @@ export const detailAtom = atom<Promise<DeltaResource | null>>(async (get) => {
   return resource;
 });
 
-export const contributorsDataAtom = atom<Promise<DeltaResource[] | null>>(async (get) => {
+export const contributorsDataAtom = atom<Promise<Contributor[] | null>>(async (get) => {
   const { session, info } = get(sessionAndInfoAtom);
-  const detail = await get(detailAtom);
+  const detail = (await get(detailAtom)) as Experiment;
 
   if (!detail || !detail.contribution) return null;
 
@@ -43,7 +51,7 @@ export const contributorsDataAtom = atom<Promise<DeltaResource[] | null>>(async 
 
   const contributors = await Promise.all(
     contributions.map((contribution) =>
-      fetchResourceById<DeltaResource>(
+      fetchResourceById<Contributor>(
         contribution?.agent['@id'],
         session,
         pick(info, ['org', 'project'])
@@ -54,13 +62,13 @@ export const contributorsDataAtom = atom<Promise<DeltaResource[] | null>>(async 
   return contributors;
 });
 
-export const licenseDataAtom = atom<Promise<DeltaResource | null>>(async (get) => {
+export const licenseDataAtom = atom<Promise<License | null>>(async (get) => {
   const { session, info } = get(sessionAndInfoAtom);
-  const detail = await get(detailAtom);
+  const detail = (await get(detailAtom)) as ExperimentalTrace | ReconstructedNeuronMorphology;
 
   if (!detail || !detail.license) return null;
 
-  const license: DeltaResource = await fetchResourceById<DeltaResource>(
+  const license = await fetchResourceById<License>(
     detail.license['@id'],
     session,
     pick(info, ['org', 'project'])
@@ -72,7 +80,7 @@ export const licenseDataAtom = atom<Promise<DeltaResource | null>>(async (get) =
 export const latestRevisionAtom = atom<Promise<number | null>>(async (get) => {
   const { session, info } = get(sessionAndInfoAtom);
 
-  const latestRevision: DeltaResource = await fetchResourceById(
+  const latestRevision = await fetchResourceById<EntityResource>(
     info.id,
     session,
     pick(info, ['org', 'project'])
@@ -80,17 +88,19 @@ export const latestRevisionAtom = atom<Promise<number | null>>(async (get) => {
   return latestRevision._rev;
 });
 
-export const speciesDataAtom = atom<Promise<DeltaResource | null>>(async (get) => {
+export const speciesDataAtom = atom<
+  Promise<Experiment | (EntityResource & { subject: Subject }) | null>
+>(async (get) => {
   const { session, info } = get(sessionAndInfoAtom);
-  const detail = await get(detailAtom);
+  const detail = (await get(detailAtom)) as Experiment;
 
-  if (!detail || !detail.subject) return null;
+  if (!detail) return null;
 
-  if (detail.subject?.species?.label) return detail;
+  if (detail.subject.species.label) return detail;
 
-  if (detail.subject['@id']) {
-    const subject: DeltaResource = await fetchResourceById<DeltaResource>(
-      detail.subject['@id'],
+  if (detail.subject.species['@id']) {
+    const subject = await fetchResourceById<EntityResource & { subject: Subject }>(
+      detail.subject.species['@id'],
       session,
       pick(info, ['org', 'project'])
     );
