@@ -132,6 +132,14 @@ export interface GeneratorTaskActivity extends Entity {
 
 export interface GeneratorTaskActivityResource extends ResourceMetadata, GeneratorTaskActivity {}
 
+export interface BrainLocation {
+  '@type': 'BrainLocation';
+  brainRegion: {
+    '@id': string;
+    label: string;
+  };
+}
+
 export interface CellComposition extends Entity {
   about: string[];
   atlasRelease: {
@@ -142,13 +150,7 @@ export interface CellComposition extends Entity {
     '@id': string;
     '@type': 'AtlasSpatialReferenceSystem';
   };
-  brainLocation: {
-    '@type': 'BrainLocation';
-    brainRegion: {
-      '@id': string;
-      label: string;
-    };
-  };
+  brainLocation: BrainLocation;
   cellCompositionSummary: {
     '@id': string;
     '@type': 'CellCompositionSummary';
@@ -169,8 +171,7 @@ export interface DetailedCircuit extends Entity {
     '@id': string;
     '@type': ['AtlasRelease', 'BrainAtlasRelease'];
   };
-  brainLocation: {
-    '@type': 'BrainLocation';
+  brainLocation: BrainLocation & {
     brainRegion: {
       '@id': string;
       label: string;
@@ -319,13 +320,7 @@ export interface MicroConnectomeEntryBase {
     '@id': string;
     '@type': ['BrainAtlasRelease', 'AtlasRelease'];
   };
-  brainLocation: {
-    '@type': 'BrainLocation';
-    brainRegion: {
-      '@id': string;
-      label: string;
-    };
-  };
+  brainLocation: BrainLocation;
   name: string;
   distribution: Distribution;
 }
