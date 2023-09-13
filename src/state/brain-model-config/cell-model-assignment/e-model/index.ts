@@ -321,3 +321,14 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
     return byEType;
   }
 );
+
+export const eModelCanBeSavedAtom = atom<Promise<boolean>>(async (get) => {
+  const selectedEModel = get(selectedEModelAtom);
+  const eModelEditMode = get(eModelEditModeAtom);
+  const eModelUIConfig = get(eModelUIConfigAtom);
+
+  if (!selectedEModel || !eModelEditMode || !eModelUIConfig) return false;
+  if (!eModelUIConfig.eModelName) return false;
+
+  return eModelUIConfig.eModelName !== selectedEModel.name;
+});

@@ -1,5 +1,5 @@
 import { MModelMenuItem } from './m-model';
-import { ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
+import { BrainLocation, ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
 import {
   eCodes,
   mechanismLocations,
@@ -65,13 +65,7 @@ export interface EModel extends EModelCommonProps {
     };
   };
   seed: number;
-  brainLocation?: {
-    '@type': 'BrainLocation';
-    brainRegion: {
-      '@id': string;
-      label: string;
-    };
-  };
+  brainLocation?: BrainLocation;
   subject: {
     '@type': 'Subject';
     species: {
@@ -391,6 +385,11 @@ export interface EModelUIConfig {
   mechanism: MechanismForUI[];
   parameters: Record<SimulationParameterKeys, number>;
   featurePresetName: FeaturePresetName;
+  mType: string;
+  eType: string;
+  brainRegionName: string;
+  brainRegionId: string;
+  species: 'mouse';
 }
 
 /* -------------------------- EModelByETypeMapping -------------------------- */
@@ -403,4 +402,17 @@ export interface SelectedEModelType {
   name: string;
   id: string;
   mTypeName: string;
+}
+
+/* ------------------------ EModelOptimizationConfig ------------------------ */
+
+export type EModelOptimizationConfigType = 'EModelOptimizationConfig';
+
+export interface EModelOptimizationConfig extends Entity {
+  '@type': ['Entity', EModelOptimizationConfigType];
+  distribution: Distribution;
+  name: string;
+  eType: string;
+  mType: string;
+  brainLocation: BrainLocation;
 }
