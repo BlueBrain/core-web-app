@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Navigation from './Navigation';
 import { SingleGalleryContentType, GalleryImagesType } from '@/types/explore-gallery';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 export default function GalleryVisualliser({ content }: { content: SingleGalleryContentType }) {
   const [currentActiveImage, setCurrentActiveImage] = useState<number>(0);
@@ -25,7 +26,7 @@ export default function GalleryVisualliser({ content }: { content: SingleGallery
     <div className="relative left-1/4 w-3/4 h-screen flex flex-col justify-between p-6 gap-y-4">
       <div className="w-full overflow-hidden border border-neutral-5 border-solid flex items-center justify-center">
         <Image
-          src={content.images[currentActiveImage].src}
+          src={`${basePath}/${content.images[currentActiveImage].src}`}
           alt={content.images[currentActiveImage].alt}
           width={1200}
           height={800}
@@ -49,7 +50,7 @@ export default function GalleryVisualliser({ content }: { content: SingleGallery
             )}
           >
             <Image
-              src={singleImage.src}
+              src={`${basePath}/${singleImage.src}`}
               alt={singleImage.alt}
               width={800}
               height={800}

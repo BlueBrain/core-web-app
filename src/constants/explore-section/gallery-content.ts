@@ -3,7 +3,7 @@ import { SingleGallery, SingleGalleryContentType } from '@/types/explore-gallery
 export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   {
     title: 'Simulation renders',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_01.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_01.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -12,7 +12,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Cellular details',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_02.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_02.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -21,7 +21,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Atlas views',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_03.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_03.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -30,7 +30,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Point Neurons details',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_04.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_04.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -39,7 +39,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Circuit steps',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_05.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_05.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -48,7 +48,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Experiment detail',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_06.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_06.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -57,7 +57,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Thalamus Experiments',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_01.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_01.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -66,7 +66,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Isocortex astrocytes',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_02.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_02.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -75,7 +75,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Glial renders',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_03.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_03.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -84,7 +84,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Microglial structure',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_04.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_04.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -93,7 +93,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Hypothalamus renders',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_05.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_05.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -102,7 +102,7 @@ export const GALLERY_LIST_CONTENT: SingleGallery[] = [
   },
   {
     title: 'Ion channels analysis',
-    imageCover: '/images/explore/gallery/sbo_explore_gallery_imgCover_06.jpg',
+    imageCover: 'images/explore/gallery/sbo_explore_gallery_imgCover_06.jpg',
     description:
       'Here is a description of what can be achieved  in this app. What is expected from the user and what is the output...',
     slug: {
@@ -118,7 +118,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
   images: [
     {
       name: 'Simulation renders number 1',
-      src: '/images/explore/singleGallery/gallery_image_1.jpg',
+      src: 'images/explore/singleGallery/gallery_image_1.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -126,7 +126,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 2',
-      src: '/images/explore/singleGallery/gallery_image_2.jpg',
+      src: 'images/explore/singleGallery/gallery_image_2.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -134,7 +134,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 3',
-      src: '/images/explore/singleGallery/gallery_image_3.jpg',
+      src: 'images/explore/singleGallery/gallery_image_3.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -142,7 +142,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 4',
-      src: '/images/explore/singleGallery/gallery_image_4.jpg',
+      src: 'images/explore/singleGallery/gallery_image_4.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -150,7 +150,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 5',
-      src: '/images/explore/singleGallery/gallery_image_5.jpg',
+      src: 'images/explore/singleGallery/gallery_image_5.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -158,7 +158,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 6',
-      src: '/images/explore/singleGallery/gallery_image_1.jpg',
+      src: 'images/explore/singleGallery/gallery_image_1.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -166,7 +166,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 7',
-      src: '/images/explore/singleGallery/gallery_image_2.jpg',
+      src: 'images/explore/singleGallery/gallery_image_2.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -174,7 +174,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 8',
-      src: '/images/explore/singleGallery/gallery_image_3.jpg',
+      src: 'images/explore/singleGallery/gallery_image_3.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -182,7 +182,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 9',
-      src: '/images/explore/singleGallery/gallery_image_4.jpg',
+      src: 'images/explore/singleGallery/gallery_image_4.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -190,7 +190,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 10',
-      src: '/images/explore/singleGallery/gallery_image_5.jpg',
+      src: 'images/explore/singleGallery/gallery_image_5.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -198,7 +198,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 11',
-      src: '/images/explore/singleGallery/gallery_image_1.jpg',
+      src: 'images/explore/singleGallery/gallery_image_1.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -206,7 +206,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 12',
-      src: '/images/explore/singleGallery/gallery_image_2.jpg',
+      src: 'images/explore/singleGallery/gallery_image_2.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -214,7 +214,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 13',
-      src: '/images/explore/singleGallery/gallery_image_3.jpg',
+      src: 'images/explore/singleGallery/gallery_image_3.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -222,7 +222,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 14',
-      src: '/images/explore/singleGallery/gallery_image_4.jpg',
+      src: 'images/explore/singleGallery/gallery_image_4.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -230,7 +230,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 15',
-      src: '/images/explore/singleGallery/gallery_image_5.jpg',
+      src: 'images/explore/singleGallery/gallery_image_5.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -238,7 +238,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 16',
-      src: '/images/explore/singleGallery/gallery_image_1.jpg',
+      src: 'images/explore/singleGallery/gallery_image_1.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -246,7 +246,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 17',
-      src: '/images/explore/singleGallery/gallery_image_2.jpg',
+      src: 'images/explore/singleGallery/gallery_image_2.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -254,7 +254,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 18',
-      src: '/images/explore/singleGallery/gallery_image_3.jpg',
+      src: 'images/explore/singleGallery/gallery_image_3.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -262,7 +262,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 19',
-      src: '/images/explore/singleGallery/gallery_image_4.jpg',
+      src: 'images/explore/singleGallery/gallery_image_4.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
@@ -270,7 +270,7 @@ export const SINGLE_GALLERY_LIST_CONTENT: SingleGalleryContentType = {
     },
     {
       name: 'Simulation renders number 20',
-      src: '/images/explore/singleGallery/gallery_image_5.jpg',
+      src: 'images/explore/singleGallery/gallery_image_5.jpg',
       alt: 'Simulation renders',
       credit: 'VIZ team',
       year: '2013',
