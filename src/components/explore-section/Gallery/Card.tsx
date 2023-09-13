@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { SingleGallery } from '@/types/explore-gallery';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 export default function Card({ content }: { content: SingleGallery }) {
   const [mouseStatus, setMouseStatus] = useState<boolean>(false);
@@ -28,7 +29,7 @@ export default function Card({ content }: { content: SingleGallery }) {
         )}
       >
         <Image
-          src={content.imageCover}
+          src={`${basePath}/${content.imageCover}`}
           alt={content.title}
           width={400}
           height={400}

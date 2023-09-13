@@ -58,11 +58,13 @@ export interface ParamConfig extends ParamConfigBase {
   };
 }
 
+export interface CanonicalParamsAndDistributions {
+  parameters_id: string;
+  distributions_id: string;
+}
+
 export interface SynthesisPreviewInterface {
-  resources: {
-    parameters_id: string;
-    distributions_id: string;
-  };
+  resources: CanonicalParamsAndDistributions | {};
   overrides: ParamConfigBase | {};
 }
 

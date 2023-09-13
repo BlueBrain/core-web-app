@@ -631,15 +631,15 @@ export type CanonicalMorphologyModelConfigPayload = {
   hasPart: {
     [brainRegionId: string]: {
       about: 'BrainRegion';
-      rev: number;
+      _rev: number;
       hasPart: {
         [mTypeId: string]: {
-          rev: number;
+          _rev: number;
           about: 'NeuronMorphologicalType';
           hasPart: {
             [canonicalMorphologyModelId: string]: {
               about: CanonicalMorphologyModelType;
-              rev: number;
+              _rev: number;
             };
           };
         };
