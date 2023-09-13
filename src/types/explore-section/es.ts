@@ -1,4 +1,15 @@
 import Aggregations from './es-aggs';
+import { DateISOString } from '@/types/nexus/common';
+
+type Id = {
+  '@id': string;
+};
+
+type Type<T = string> = {
+  '@type': T;
+};
+
+type IdWithType<T = string> = Id & Type<T>;
 
 type Attrs = {
   blue_config_template: string;
@@ -6,22 +17,18 @@ type Attrs = {
   path_prefix: string;
 };
 
-type BrainRegion = {
-  '@id': string;
+type BrainRegion = Id & {
   idLabel: string;
   identifier: string;
   label: string;
 };
 
-type Config = {
-  '@id': string;
+type Config = Id & {
   identifier: string;
   name: string;
 };
 
-type Contributor = {
-  '@id': string;
-  '@type': string[];
+type Contributor = IdWithType<string[]> & {
   affiliation?: string; // ExperimentalTrace
   idLabel: string;
   label: string;
@@ -35,14 +42,12 @@ type CoordinatesInBrainAtlas = {
 
 type Coords = Record<string, number[]>;
 
-type DerivationResource = {
-  '@type': string | string[];
+type DerivationResource = Type<string | string[]> & {
   identifier: string;
   label: string;
 };
 
-type EType = {
-  '@id': string;
+type EType = Id & {
   idLabel: string;
   identifier: string;
   label: string;
@@ -62,8 +67,7 @@ type Generation = {
 
 type Image = StimulusImage[];
 
-type Layer = {
-  '@id': string;
+type Layer = Id & {
   idLabel: string;
   identifier: string;
   label: string;
@@ -76,13 +80,11 @@ type LayerThickness = {
   value: number;
 };
 
-type License = {
-  '@id': string;
+type License = Id & {
   identifier: string;
 };
 
-type MType = {
-  '@id': string;
+type MType = Id & {
   idLabel: string;
   identifier: string;
   label: string;
@@ -93,8 +95,7 @@ type Parameter = {
   coords: Coords;
 };
 
-type Project = {
-  '@id': string;
+type Project = Id & {
   identifier: string;
   label: string;
 };
@@ -105,8 +106,7 @@ type Statistic = {
   value: number;
 };
 
-type StimulusImage = {
-  '@id': string;
+type StimulusImage = Id & {
   about: string;
   identifier: string;
   repetition: number;
@@ -120,8 +120,7 @@ type SubjectAge = {
   value: number;
 };
 
-type SubjectSpecies = {
-  '@id': string;
+type SubjectSpecies = Id & {
   identifier: string;
   label: string;
 };
@@ -134,9 +133,7 @@ type SubjectWeight = {
   value: number;
 };
 
-type ESHitSource = {
-  '@id': string;
-  '@type': string[];
+type ESHitSource = IdWithType<string[]> & {
   createdAt: Date;
   createdBy: string;
   deprecated: boolean;
@@ -214,7 +211,16 @@ type SimulationCampaign = ESHitSource & {
   status: string;
 };
 
-export type ExploreResource = Experiment | SimulationCampaign;
+export type Simulation = ESHitSource & {
+  name: string;
+  endedAt: DateISOString;
+  parameter: Coords;
+  project: Project; // TODO: Possibly no longer necessary?
+  startedAt: DateISOString;
+  status: string;
+};
+
+export type ExploreResource = Experiment | Simulation | SimulationCampaign;
 
 export type ExploreESHit = {
   sort: number[];
