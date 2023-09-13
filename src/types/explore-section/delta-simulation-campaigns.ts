@@ -1,4 +1,4 @@
-import { IdWithType, Type } from './delta';
+import { IdWithType, Type } from './common';
 import { DateISOString, EntityResource } from '@/types/nexus/common';
 
 export type ParameterCoords = Record<string, number | number[]>;

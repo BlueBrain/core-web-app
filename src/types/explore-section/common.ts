@@ -24,4 +24,6 @@ export type IdWithValue = Id & Value;
 
 export type IdLabelWithType<T = string> = IdWithLabel & Type<T>;
 
+export type LabelWithType<T = string> = Label & Type<T>;
+
 export type TypeWithDate = Type & Value<DateISOString>;
