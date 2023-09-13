@@ -1,4 +1,4 @@
-import { IdWithLabel, IdWithType, TypeWithDate } from './delta';
+import { IdWithLabel, IdWithType, TypeWithDate } from './common';
 import {
   Annotation,
   BrainLocation,

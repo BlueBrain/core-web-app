@@ -1,4 +1,4 @@
-import { Id, IdWithLabel, IdWithType, IdWithValue, IdLabelWithType, Label, Type } from './delta';
+import { Id, IdWithLabel, IdWithType, IdWithValue, IdLabelWithType, Label, Type } from './common';
 import { DateISOString } from '@/types/nexus/common';
 
 export type Annotation = Type<string[]> & {
