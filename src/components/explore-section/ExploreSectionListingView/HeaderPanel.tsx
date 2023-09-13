@@ -10,14 +10,19 @@ export default function HeaderPanel({
   loading,
   title,
   experimentTypeName,
+  resourceId,
 }: {
   children: ReactNode;
   loading: boolean;
   title: string;
   experimentTypeName: string;
+  resourceId?: string;
 }) {
   const total = useAtomValue(
-    useMemo(() => unwrap(totalAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(
+      () => unwrap(totalAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
   );
 
   return (

@@ -1,6 +1,7 @@
-import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useMemo, useState, useEffect } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
+import { Tabs } from 'antd';
 import HeaderPanel from './HeaderPanel';
 import FilterControls from './FilterControls';
 import { ExploreResource } from '@/types/explore-section/es';
@@ -18,6 +19,7 @@ import {
   dimensionColumnsAtom,
 } from '@/state/explore-section/list-view-atoms';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { inferredResourceIdsAtom } from '@/state/explore-section/generalization';
 
 function WithControlPanel({
   children,
@@ -64,7 +66,7 @@ function WithControlPanel({
   );
 }
 
-export default function DefaultListView({
+export default function DefaultListViewTabs({
   enableDownload,
   title,
   experimentTypeName,
@@ -79,6 +81,78 @@ export default function DefaultListView({
     useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
   );
   const scopedDataAtom = dataAtom(experimentTypeName);
+  const inferredResourceIds = useAtomValue(inferredResourceIdsAtom(experimentTypeName));
+
+  // Convert inferredResourceIds to an array
+  const inferredResourceIdsArray = Array.from(inferredResourceIds);
+
+  // Use state to manage the items array
+  const [items, setItems] = useState<Array<{ label: string; key: string; children: ReactNode }>>([
+    {
+      key: experimentTypeName,
+      label: 'Original',
+      children: (
+        <DefaultListView
+          enableDownload={enableDownload}
+          title={title}
+          experimentTypeName={experimentTypeName}
+        />
+      ),
+    },
+  ]);
+
+  useEffect(() => {
+    // Create a new array with the original item and additional items
+    const newItems = [
+      {
+        key: experimentTypeName,
+        label: 'Original',
+        children: (
+          <DefaultListView
+            enableDownload={enableDownload}
+            title={title}
+            experimentTypeName={experimentTypeName}
+          />
+        ),
+      },
+      ...inferredResourceIdsArray.map((v1) => ({
+        key: v1 as string,
+        label: v1 as string,
+        children: (
+          <DefaultListView
+            enableDownload={enableDownload}
+            title={title}
+            experimentTypeName={experimentTypeName}
+            resourceId={v1 as string}
+          />
+        ),
+      })),
+    ];
+
+    // Update the items array
+    setItems(newItems);
+  }, [inferredResourceIdsArray, experimentTypeName, title, enableDownload]);
+
+  return (
+    <div className="p-0 m-0">
+      <Tabs items={items} />
+    </div>
+  );
+}
+
+export function DefaultListView({
+  enableDownload,
+  title,
+  experimentTypeName,
+  resourceId,
+}: {
+  enableDownload?: boolean;
+  title: string;
+  experimentTypeName: string;
+  resourceId?: string;
+}) {
+  const activeColumns = useAtomValue(activeColumnsAtom({ experimentTypeName }));
+  const scopedDataAtom = dataAtom({ experimentTypeName, resourceId });
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
   const unwrappedData = useAtomValue(
     useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
@@ -101,7 +175,12 @@ export default function DefaultListView({
       <WithControlPanel loading={loading} experimentTypeName={experimentTypeName}>
         {({ displayControlPanel, setDisplayControlPanel }) => (
           <>
-            <HeaderPanel loading={loading} title={title} experimentTypeName={experimentTypeName}>
+            <HeaderPanel
+              loading={loading}
+              title={title}
+              experimentTypeName={experimentTypeName}
+              resourceId={resourceId}
+            >
               <FilterControls
                 displayControlPanel={displayControlPanel}
                 setDisplayControlPanel={setDisplayControlPanel}

@@ -4,7 +4,7 @@ import find from 'lodash/find';
 import filter from 'lodash/filter';
 import pick from 'lodash/pick';
 import { atomWithDefault, atomFamily } from 'jotai/utils';
-import { fetchRules, resourceBasedInference } from '@/api/generalization';
+import { fetchRules, fetchResourceBasedInference } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import { RELEVANT_RULES } from '@/constants/explore-section/kg-inference';
 import {
@@ -13,7 +13,7 @@ import {
   ResourceBasedInferenceRequest,
 } from '@/types/explore-section/kg-inference';
 
-export const inferredResourceIdsAtom = atom(new Set());
+export const inferredResourceIdsAtom = atomFamily(() => atom(new Set()));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>
   atom<Promise<RuleOutput[] | null>>(async (get) => {
@@ -92,7 +92,7 @@ export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>
     if ((request && isEmpty(request.rules)) || !session) return null;
 
     const results = await Promise.resolve(
-      resourceBasedInference(session, request as ResourceBasedInferenceRequest)
+      fetchResourceBasedInference(session, request as ResourceBasedInferenceRequest)
     );
 
     return results;

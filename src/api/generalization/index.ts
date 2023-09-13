@@ -14,7 +14,7 @@ export function fetchRules(session: Session, resourceId: string): Promise<RuleOu
   return result;
 }
 
-export function resourceBasedInference(
+export function fetchResourceBasedInference(
   session: Session,
   requestBody: ResourceBasedInferenceRequest
 ): Promise<any> {

@@ -1,9 +1,10 @@
 import { atom } from 'jotai';
 import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
 import uniq from 'lodash/uniq';
+import head from 'lodash/head';
 import columnKeyToFilter from './column-key-to-filter';
 import { SortState } from '@/types/explore-section/application';
-import fetchDataQuery from '@/queries/explore-section/data';
+import fetchDataQuery, { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType, { fetchDimensionAggs } from '@/api/explore-section/resources';
 import {
@@ -15,6 +16,7 @@ import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOutput } from '@/types/explore-section/kg-inference';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
+import { resourceBasedResponseAtom } from '@/state/explore-section/generalization';
 
 type DataAtomFamilyScopeType = { experimentTypeName: string; resourceId?: string };
 
@@ -77,16 +79,37 @@ export const filtersAtom = atomFamily((experimentTypeName: string) =>
   })
 );
 
-export const queryAtom = atomFamily((experimentTypeName: string) =>
-  atom<object>(async (get) => {
-    const searchString = get(searchStringAtom);
-    const pageNumber = get(pageNumberAtom);
-    const pageSize = get(pageSizeAtom);
-    const sortState = get(sortStateAtom);
-    const filters = await get(filtersAtom(experimentTypeName));
+export const queryAtom = atomFamily(
+  ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
+    atom<object>(async (get) => {
+      const searchString = get(searchStringAtom);
+      const pageNumber = get(pageNumberAtom);
+      const pageSize = get(pageSizeAtom);
+      const sortState = get(sortStateAtom);
+      const filters = get(filtersAtom({ experimentTypeName }));
 
       if (!filters) {
         return null;
+      }
+
+      if (resourceId) {
+        const resourceBasedResponse = await get(resourceBasedResponseAtom(resourceId));
+        const resultsResourceBasedResponse: { id: string; results: object[] } | undefined =
+          head(resourceBasedResponse);
+        if (resultsResourceBasedResponse) {
+          const inferredResponseIds = resultsResourceBasedResponse.results.map((v: any) => v.id);
+          if (inferredResponseIds.length > 0) {
+            return fetchDataQueryUsingIds(
+              pageSize,
+              pageNumber,
+              filters,
+              experimentTypeName,
+              inferredResponseIds,
+              sortState,
+              searchString
+            );
+          }
+        }
       }
 
       return fetchDataQuery(
@@ -101,14 +124,17 @@ export const queryAtom = atomFamily((experimentTypeName: string) =>
   DataAtomFamilyScopeComparator
 );
 
-export const queryResponseAtom = atomFamily((experimentTypeName: string) =>
-  atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
-    const session = get(sessionAtom);
-    const query = await get(queryAtom(experimentTypeName));
+export const queryResponseAtom = atomFamily(
+  ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
+    atom<Promise<ExploreSectionResponse | null> | null>(async (get) => {
+      const session = get(sessionAtom);
+      const query = await get(queryAtom({ experimentTypeName, resourceId }));
 
       if (!session) return null;
 
-      return fetchEsResourcesByType(session.accessToken, query);
+      const result = await fetchEsResourcesByType(session.accessToken, query);
+
+      return result;
     }),
   DataAtomFamilyScopeComparator
 );

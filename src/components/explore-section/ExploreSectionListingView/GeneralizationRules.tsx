@@ -1,7 +1,10 @@
 import { Spin, Checkbox } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
-import { resourceBasedRulesAtom } from '@/state/explore-section/generalization';
+import {
+  resourceBasedRulesAtom,
+  inferredResourceIdsAtom,
+} from '@/state/explore-section/generalization';
 import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
 
 interface GeneralizationOptionsProps {
@@ -46,8 +49,17 @@ function GeneralizationOptions({
   );
 }
 
-function GeneralizationRules({ resourceId }: { resourceId: string }) {
+function GeneralizationRules({
+  resourceId,
+  experimentTypeName,
+}: {
+  resourceId: string;
+  experimentTypeName: string;
+}) {
   const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom(resourceId));
+  const [inferredResourceIds, setinferredResourceIds] = useAtom(
+    inferredResourceIdsAtom(experimentTypeName)
+  );
 
   if (!resourceBasedRules) return <Spin indicator={<LoadingOutlined />} />;
 
@@ -65,7 +77,9 @@ function GeneralizationRules({ resourceId }: { resourceId: string }) {
     }
   };
 
-  const handleInferButtonClick = () => {};
+  const handleInferButtonClick = () => {
+    setinferredResourceIds(inferredResourceIds.add(resourceId));
+  };
 
   return (
     <div className="flex flex-col space-y-4 bg-white pl-12 text-primary-8">
