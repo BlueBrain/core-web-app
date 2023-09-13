@@ -1,22 +1,31 @@
 import { useAtom } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
-import { EModelMenuItem } from '@/types/e-model';
-import { mockEModelAssignedMap } from '@/constants/cell-model-assignment/e-model';
-import { generateMapKey } from '@/util/cell-model-assignment';
+import {
+  EModel,
+  EModelByETypeMappingType,
+  EModelMenuItem,
+  SelectedEModelType,
+} from '@/types/e-model';
 
-interface ETypeListItemProps {
+interface ListItemProps {
   eTypeItems: EModelMenuItem[];
   mTypeName: string;
+  eModelByETypeMapping: EModelByETypeMappingType | null;
 }
 
-export default function ListItem({ eTypeItems, mTypeName }: ETypeListItemProps) {
+export default function ListItem({ eTypeItems, mTypeName, eModelByETypeMapping }: ListItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleExpand = useCallback((newVal?: boolean) => {
-    setIsExpanded((oldValue) => newVal || !oldValue);
+  const getAvailableEModels = (eTypeName: string) => {
+    const availableEModels: EModel[] = eModelByETypeMapping?.[eTypeName] || [];
+    return availableEModels;
+  };
+
+  const handleExpand = useCallback(() => {
+    setIsExpanded((oldValue) => !oldValue);
   }, []);
 
   return (
@@ -26,8 +35,8 @@ export default function ListItem({ eTypeItems, mTypeName }: ETypeListItemProps) 
         <ETypeLine
           key={eType.uuid}
           eType={eType}
-          handleExpand={handleExpand}
           isExpanded={isExpanded}
+          availableEModels={getAvailableEModels(eType.label)}
         />
       ))}
     </div>
@@ -51,42 +60,46 @@ function MTypeLine({ name, onExpand, isExpanded }: MTypeLineProps) {
   );
 }
 
+const isEModelSelected = (
+  selectedEModel: SelectedEModelType | null,
+  eModel: EModel,
+  eType: EModelMenuItem
+) => selectedEModel?.id === eModel['@id'] && selectedEModel.mTypeName === eType.mType.label;
+
 type ETypeLineProps = {
   eType: EModelMenuItem;
-  handleExpand: (val: boolean) => void;
   isExpanded: boolean;
+  availableEModels: EModel[];
 };
 
-function ETypeLine({ eType, handleExpand, isExpanded }: ETypeLineProps) {
+function ETypeLine({ eType, isExpanded, availableEModels }: ETypeLineProps) {
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
 
-  const handleClick = () => {
-    setSelectedEModel(eType);
+  const handleClick = (eModel: EModel, mTypeName: string) => {
+    setSelectedEModel({
+      id: eModel['@id'],
+      name: eModel.name,
+      mTypeName,
+    });
   };
 
-  const eModelAssigned =
-    mockEModelAssignedMap[generateMapKey(eType.mType.label, eType.label)] || '';
-
-  const isActive =
-    selectedEModel?.label === eType.label && selectedEModel.mType.label === eType.mType.label;
-
-  // programatically expand m-type list when e-type is assigned
-  useEffect(() => {
-    if (!eModelAssigned || isExpanded) return;
-
-    handleExpand(true);
-  }, [eModelAssigned, handleExpand, isExpanded]);
-
   return isExpanded ? (
-    <button onClick={handleClick} type="button" className="bg-none border-none m-0 w-full">
-      <div
-        className={`flex flex-row justify-between items-center ml-2 py-2 pl-2 ${
-          isActive ? `bg-white text-primary-7` : `text-white`
-        }`}
-      >
-        <div className="font-bold">{eType.label}</div>
-        <div className="text-sm pr-4">{eModelAssigned}</div>
-      </div>
-    </button>
+    <div className="bg-none border-none m-0 w-full flex flex-col">
+      <div className="font-bold self-start ml-2 text-white">{eType.label}</div>
+      {availableEModels.map((eModel) => (
+        <button
+          key={eModel['@id']}
+          type="button"
+          onClick={() => handleClick(eModel, eType.mType.label)}
+          className={`text-sm px-4 py-2 self-end ${
+            isEModelSelected(selectedEModel, eModel, eType)
+              ? `bg-white text-primary-7`
+              : `text-white`
+          }`}
+        >
+          {eModel.name}
+        </button>
+      ))}
+    </div>
   ) : null;
 }

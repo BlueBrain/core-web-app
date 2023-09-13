@@ -65,6 +65,20 @@ export interface EModel extends EModelCommonProps {
     };
   };
   seed: number;
+  brainLocation?: {
+    '@type': 'BrainLocation';
+    brainRegion: {
+      '@id': string;
+      label: string;
+    };
+  };
+  subject: {
+    '@type': 'Subject';
+    species: {
+      '@id': string;
+      label: string;
+    };
+  };
 }
 
 export interface EModelResource extends ResourceMetadata, EModel {}
@@ -377,4 +391,16 @@ export interface EModelUIConfig {
   mechanism: MechanismForUI[];
   parameters: Record<SimulationParameterKeys, number>;
   featurePresetName: FeaturePresetName;
+}
+
+/* -------------------------- EModelByETypeMapping -------------------------- */
+
+export interface EModelByETypeMappingType {
+  [eTypeName: string]: EModel[];
+}
+
+export interface SelectedEModelType {
+  name: string;
+  id: string;
+  mTypeName: string;
 }
