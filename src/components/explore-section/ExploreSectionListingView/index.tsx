@@ -1,3 +1,5 @@
+'use client';
+
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
@@ -15,6 +17,7 @@ import {
   totalAtom,
   sortStateAtom,
   pageSizeAtom,
+  dimensionColumnsAtom,
 } from '@/state/explore-section/list-view-atoms';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 
@@ -91,7 +94,6 @@ export default function DefaultListView({
   ]);
 
   const loading = data.state === 'loading';
-
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <WithControlPanel loading={loading} type={type}>
@@ -101,7 +103,7 @@ export default function DefaultListView({
               <FilterControls
                 displayControlPanel={displayControlPanel}
                 setDisplayControlPanel={setDisplayControlPanel}
-                type={type}
+                experimentTypeName={type}
               />
             </HeaderPanel>
             <ExploreSectionTable
@@ -128,10 +130,11 @@ export function SimulationCampaignView({ title, type }: { title: string; type: s
     useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
   );
   const [sortState, setSortState] = useAtom(sortStateAtom);
-
-  const columns = useExploreColumns(setSortState, sortState);
-
-  const loading = data.state === 'loading';
+  const dimensionColumns: string[] | undefined = useAtomValue(
+    useMemo(() => unwrap(dimensionColumnsAtom(type)), [type])
+  );
+  const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns || []);
+  const loading = data.state === 'loading' || !dimensionColumns;
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
@@ -142,13 +145,13 @@ export function SimulationCampaignView({ title, type }: { title: string; type: s
               <FilterControls
                 displayControlPanel={displayControlPanel}
                 setDisplayControlPanel={setDisplayControlPanel}
-                type={type}
+                experimentTypeName={type}
               />
             </HeaderPanel>
             <ListTable
               columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
               dataSource={unwrappedData}
-              loading={data.state === 'loading'}
+              loading={loading}
             />
           </>
         )}

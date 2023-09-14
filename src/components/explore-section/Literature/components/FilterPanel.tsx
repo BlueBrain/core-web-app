@@ -17,7 +17,6 @@ import {
 } from '@/types/literature';
 import { Filter, GteLteValue, OptionsData } from '@/components/Filter/types';
 import SearchFilter from '@/components/Filter/SearchFilter';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { DateRange, FilterGroup } from '@/components/Filter';
 import ReloadIcon from '@/components/icons/Reload';
 import {
@@ -27,6 +26,7 @@ import {
   useLiteratureFilter,
 } from '@/state/literature';
 import { normalizedDate } from '@/util/utils';
+import { getFieldLabel } from '@/api/explore-section/fields';
 
 export default function FilterPanel() {
   const updateFilters = useLiteratureFilter();
@@ -117,7 +117,7 @@ export default function FilterPanel() {
         setFilters={() => {}}
         items={filters.map((filter) => ({
           content: () => getFilterComponent(filter),
-          label: EXPLORE_FIELDS_CONFIG[filter.field].title,
+          label: getFieldLabel(filter.field),
           display: true,
         }))}
       />

@@ -114,6 +114,10 @@ export interface Source extends OptionalExploreSectionFields {
   contributors?: ContributorsEntity[] | null;
   license?: IdLabelEntity | null;
   organizations?: IdLabelEntity[] | null;
+  parameter?: {
+    coords: { [key: string]: number[] };
+    attrs: { [key: string]: number[] };
+  };
 }
 
 export interface DetailAtomResource extends DeltaResource {

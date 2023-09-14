@@ -1,8 +1,7 @@
 import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react';
-import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import { loadable } from 'jotai/utils';
+import { unwrap } from 'jotai/utils';
 import { useAtom, useAtomValue } from 'jotai';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import {
@@ -23,12 +22,12 @@ import {
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import {
   activeColumnsAtom,
   aggregationsAtom,
   filtersAtom,
 } from '@/state/explore-section/list-view-atoms';
+import { getFieldLabel, getNestedField } from '@/api/explore-section/fields';
 
 export type ControlPanelProps = {
   children?: ReactNode;
@@ -38,17 +37,17 @@ export type ControlPanelProps = {
 
 function createFilterItemComponent(
   filter: Filter,
-  aggregations: Loadable<Aggregations | undefined>,
+  aggregations: Aggregations | undefined,
   filterValues: FilterValues,
   setFilterValues: Dispatch<SetStateAction<FilterValues>>
 ) {
   return function FilterItemComponent() {
     const { type } = filter;
-    const { nestedField } = EXPLORE_FIELDS_CONFIG[filter.field];
+    const { nestedField } = getNestedField(filter.field);
 
     let agg;
 
-    if (aggregations.state === 'loading') {
+    if (!aggregations) {
       return (
         <div className="flex items-center justify-center">
           <Spin indicator={<LoadingOutlined />} />
@@ -63,7 +62,7 @@ function createFilterItemComponent(
       }));
     };
 
-    if (aggregations.state !== 'hasData' || !aggregations?.data) return null;
+    if (!aggregations) return null;
 
     switch (type) {
       case 'dateRange':
@@ -76,10 +75,10 @@ function createFilterItemComponent(
 
       case 'valueRange':
         if (nestedField) {
-          const nestedAgg = aggregations.data[filter.field] as NestedStatsAggregation;
+          const nestedAgg = aggregations[filter.field] as NestedStatsAggregation;
           agg = nestedAgg[filter.field][nestedField.field] as Statistics;
         } else {
-          agg = aggregations.data[filter.field] as Statistics;
+          agg = aggregations[filter.field] as Statistics;
         }
 
         return (
@@ -92,7 +91,7 @@ function createFilterItemComponent(
       case 'checkListInference':
         return (
           <CheckList
-            data={aggregations.data as OptionsData}
+            data={aggregations as OptionsData}
             filter={filter}
             values={filterValues[filter.field] as string[]}
             onChange={(values: string[]) => updateFilterValues(filter.field, values)}
@@ -103,7 +102,7 @@ function createFilterItemComponent(
       case 'checkList':
         return (
           <CheckList
-            data={aggregations.data as OptionsData}
+            data={aggregations as OptionsData}
             filter={filter}
             values={filterValues[filter.field] as string[]}
             onChange={(values: string[]) => updateFilterValues(filter.field, values)}
@@ -134,26 +133,26 @@ export default function ControlPanel({
   experimentTypeName,
 }: ControlPanelProps) {
   const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom(experimentTypeName));
-
-  const aggregationsLoadable = useMemo(
-    () => loadable(aggregationsAtom(experimentTypeName)),
-    [experimentTypeName]
-  );
-
-  const aggregations = useAtomValue(aggregationsLoadable);
   const [filters, setFilters] = useAtom(filtersAtom(experimentTypeName));
+  const aggregations = useAtomValue(
+    useMemo(() => unwrap(aggregationsAtom(experimentTypeName)), [experimentTypeName])
+  );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
 
   const onToggleActive = (key: string) => {
     const existingIndex = activeColumns.findIndex((existingKey) => existingKey === key);
 
-    return existingIndex === -1
-      ? setActiveColumns([...activeColumns, key])
-      : setActiveColumns([
-          ...activeColumns.slice(0, existingIndex),
-          ...activeColumns.slice(existingIndex + 1),
-        ]);
+    if (existingIndex === -1) {
+      // @ts-ignore
+      setActiveColumns([...activeColumns, key]);
+    } else {
+      // @ts-ignore
+      setActiveColumns([
+        ...activeColumns.slice(0, existingIndex),
+        ...activeColumns.slice(existingIndex + 1),
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -167,6 +166,7 @@ export default function ControlPanel({
 
   const submitValues = () => {
     setFilters(
+      // @ts-ignore
       filters.map((fil: Filter) => ({ ...fil, value: filterValues[fil.field] } as Filter))
     );
   };
@@ -180,11 +180,12 @@ export default function ControlPanel({
     content:
       filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
     display: activeColumns.includes(filter.field),
-    label: EXPLORE_FIELDS_CONFIG[filter.field].title,
+    label: getFieldLabel(filter.field),
     type: filter.type,
     toggleFunc: () => onToggleActive && onToggleActive(filter.field),
   })) as FilterGroupProps['items'];
 
+  // @ts-ignore
   return (
     <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
       <button type="button" onClick={toggleDisplay} className="text-white text-right">
@@ -201,6 +202,7 @@ export default function ControlPanel({
       </p>
 
       <div className="flex flex-col gap-12">
+        {/* @ts-ignore */}
         <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
         {children}
       </div>

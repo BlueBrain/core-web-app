@@ -1,6 +1,6 @@
 import { Dispatch, HTMLProps, SetStateAction } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import columnKeyToFilter from '@/state/explore-section/column-key-to-filter';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
 import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
 import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 import SettingsIcon from '@/components/icons/Settings';
@@ -27,21 +27,22 @@ function FilterBtn({ children, onClick }: HTMLProps<HTMLButtonElement>) {
 export default function FilterControls({
   displayControlPanel,
   setDisplayControlPanel,
-  type,
+  experimentTypeName,
 }: {
   displayControlPanel: boolean;
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
-  type: string;
+  experimentTypeName: string;
 }) {
-  const activeColumns = useAtomValue(activeColumnsAtom(type));
-  const [filters, setFilters] = useAtom(filtersAtom(type));
+  const activeColumns = useAtomValue(activeColumnsAtom(experimentTypeName));
+  const filters = useAtomValue(filtersAtom(experimentTypeName));
+  const resetFilters = useResetAtom(filtersAtom(experimentTypeName));
   const setSearchString = useSetAtom(searchStringAtom);
 
   const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
 
   // The columnKeyToFilter method receives a string (key) and in this case it is the equivalent to a filters[x].field
   const clearFilters = () => {
-    setFilters(filters.map((fil) => columnKeyToFilter(fil.field)));
+    resetFilters();
     setSearchString('');
   };
 

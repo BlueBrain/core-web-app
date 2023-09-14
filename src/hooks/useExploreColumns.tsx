@@ -6,6 +6,7 @@ import throttle from 'lodash/throttle';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { ExploreResource } from '@/types/explore-section/es';
 import { SortState } from '@/types/explore-section/application';
+import { ValueArray } from '@/components/ListTable';
 import styles from '@/app/explore/explore.module.scss';
 
 type ResizeInit = {
@@ -21,7 +22,8 @@ const COL_SIZING = {
 export default function useExploreColumns(
   setSortState: Dispatch<SetStateAction<SortState | undefined>>,
   sortState?: SortState,
-  initialColumns: ColumnProps<ExploreResource>[] = []
+  initialColumns: ColumnProps<ExploreResource>[] = [],
+  dimensionColumns: string[] = []
 ): ColumnProps<ExploreResource>[] {
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>([]);
 
@@ -30,12 +32,12 @@ export default function useExploreColumns(
   useEffect(
     () =>
       setColumnWidths(
-        keys.map((key) => ({
+        [...keys, ...dimensionColumns].map((key) => ({
           key,
           width: COL_SIZING.default,
         }))
       ),
-    [keys]
+    [dimensionColumns, keys]
   );
 
   const sorterES = useCallback(
@@ -108,7 +110,7 @@ export default function useExploreColumns(
     }
   };
 
-  return keys.reduce((acc, key) => {
+  const main: ColumnProps<ExploreResource>[] = keys.reduce((acc, key) => {
     const term = EXPLORE_FIELDS_CONFIG[key];
 
     return [
@@ -137,4 +139,27 @@ export default function useExploreColumns(
       },
     ];
   }, initialColumns);
+  // TODO: Find a way to re-use main/dimensions
+  const dimensions: ColumnProps<ExploreResource>[] = dimensionColumns.map((dimColumn) => ({
+    key: dimColumn,
+    title: (
+      <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
+        <div>{dimColumn}</div>
+      </div>
+    ),
+    className: 'text-primary-7 cursor-pointer',
+    sorter: false,
+    ellipsis: true,
+    width: columnWidths.find(({ key: colKey }) => colKey === dimColumn)?.width,
+    render: (_t: any, r: any) =>
+      ValueArray({
+        value: r._source?.parameter?.coords?.[dimColumn]?.map((label: string) => label),
+      }),
+    onHeaderCell: () => ({
+      handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, dimColumn),
+      onClick: () => {},
+    }),
+    sortOrder: getSortOrder(dimColumn),
+  }));
+  return [...main, ...dimensions];
 }

@@ -1,4 +1,5 @@
 import omit from 'lodash/omit';
+import isNumber from 'lodash/isNumber';
 import { Filter } from './types';
 import { BrainRegion } from '@/types/ontologies';
 /**
@@ -58,6 +59,11 @@ export function filterHasValue(filter: Filter) {
       return filter.value.gte || filter.value.lte;
     case 'valueRange':
       return filter.value.gte || filter.value.lte;
+    case 'valueOrRange':
+      if (!filter.value) {
+        return false;
+      }
+      return !!(isNumber(filter.value) || filter.value.gte || filter.value.lte);
     default:
       return !!filter.value;
   }
