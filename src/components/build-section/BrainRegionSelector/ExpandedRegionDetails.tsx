@@ -312,7 +312,7 @@ function ExpandedRegionDetails({
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
   const composition = useAtomValue(analysedCompositionAtom);
-  const isConfigEditable = useAtomValue(isConfigEditableAtom);
+  const isConfigEditable = true;
   const [meTypeNavValue, setNavValue] = useState<NavValue>({});
 
   const onValueChange = useCallback(
