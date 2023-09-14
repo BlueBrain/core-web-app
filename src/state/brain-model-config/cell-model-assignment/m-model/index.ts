@@ -322,24 +322,5 @@ export const canonicalMorphologyModelConfigPayloadAtom = atom<
   if (!session || !remoteCanonicalMorphologyModelConfigPayload) return null;
 
   const payloadUrl = remoteCanonicalMorphologyModelConfigPayload.distribution.contentUrl;
-  const payload = await fetchResourceByUrl<CanonicalMorphologyModelConfigPayload>(
-    payloadUrl,
-    session
-  );
-
-  // process data to have revision also in the url (hack until the m-type is fixed in composition)
-  // https://bbpteam.epfl.ch/project/issues/browse/BBPP134-616
-  const processedPayload: CanonicalMorphologyModelConfigPayload = structuredClone(payload);
-  const brainRegionIds = Object.keys(processedPayload.hasPart);
-  brainRegionIds.forEach((brainRegionId) => {
-    const mTypeParentDict = processedPayload.hasPart[brainRegionId].hasPart;
-    const mTypeIds = Object.keys(mTypeParentDict);
-    mTypeIds.forEach((mTypeId) => {
-      const data = mTypeParentDict[mTypeId];
-      mTypeParentDict[`${mTypeId}?rev=${data._rev}`] = data;
-      delete mTypeParentDict[mTypeId];
-    });
-  });
-
-  return processedPayload;
+  return fetchResourceByUrl<CanonicalMorphologyModelConfigPayload>(payloadUrl, session);
 });
