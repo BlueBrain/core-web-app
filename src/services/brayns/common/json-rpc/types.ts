@@ -1,4 +1,4 @@
-import { GenericEventInterface } from '../../common/utils/generic-event';
+import { GenericEventInterface } from '../utils/generic-event';
 import { isNumber, isObject, isString, isBoolean, assertType } from '@/util/type-guards';
 import { logError } from '@/util/logger';
 

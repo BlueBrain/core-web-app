@@ -5,7 +5,8 @@
 import Settings from '../../common/settings';
 import Async from '../../common/utils/async';
 import State from '../../common/state';
-import { JsonRpcServiceAddress } from '../json-rpc/types';
+import { JsonRpcServiceAddress } from '../../common/json-rpc/types';
+import { getSessionStorage } from '../../common/state/storage';
 import { BackendAllocationOptions, JobAllocatorServiceInterface, JobStatus } from './types';
 import ProxyService from './proxy-service';
 import { logError } from '@/util/logger';
@@ -23,12 +24,12 @@ export default class BackendAllocatorService {
 
   // eslint-disable-next-line class-methods-use-this
   get jobId() {
-    return window.sessionStorage.getItem(JOBID_STORAGE_KEY) ?? '';
+    return getSessionStorage().getItem(JOBID_STORAGE_KEY) ?? '';
   }
 
   // eslint-disable-next-line class-methods-use-this
   set jobId(value: string) {
-    window.sessionStorage.setItem(JOBID_STORAGE_KEY, value);
+    getSessionStorage().setItem(JOBID_STORAGE_KEY, value);
   }
 
   /**

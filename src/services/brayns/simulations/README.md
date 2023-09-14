@@ -22,3 +22,5 @@ The interface is minimal. `MultiBraynsManager` provides only 4 methods:
 
 Finally, the camera can be controlled with the property `camera`.
 This camera is shared between all the slots.
+
+![Dependencies Graph](dependencies.png)

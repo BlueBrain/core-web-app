@@ -1,0 +1,10 @@
+digraph G {
+    splines="FALSE";
+
+    MultiBraynsManager -> ResourceManager;
+    ResourceManager -> BraynsSlot;
+    BraynsSlot -> Allocator;
+    BraynsSlot -> BraynsService;
+    BraynsService -> JsonRpc;
+    BraynsService -> ImageStream;
+}

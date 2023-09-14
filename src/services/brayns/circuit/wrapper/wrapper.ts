@@ -2,9 +2,9 @@
 /* eslint-disable no-restricted-syntax */
 import { Vector3 } from '../../common/utils/calc';
 import GenericEvent from '../../common/utils/generic-event';
-import ImageStream from '../image-stream/image-stream';
+import ImageStream from '../../common/image-stream/image-stream';
 import BackendAllocatorService from '../allocation/backend-allocator-service';
-import { JsonRpcServiceInterface } from '../json-rpc/types';
+import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
 import Mesh from './mesh';
 import Storage from './storage';
 import Light from './light';

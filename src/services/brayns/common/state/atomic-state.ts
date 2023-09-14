@@ -4,6 +4,8 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-plusplus */
 import React from 'react';
+
+import { getLocalStorage, getSessionStorage } from './storage';
 import { logError } from '@/util/logger';
 
 export interface AtomicStateStorageOptions<T> {
@@ -78,7 +80,7 @@ export default class AtomicState<T> {
     if (value === this.currentValue) return;
 
     this.currentValue = value;
-    if (this.storage) window.localStorage.setItem(this.id, JSON.stringify(value));
+    if (this.storage) getLocalStorage().setItem(this.id, JSON.stringify(value));
     else this.saveSession(value);
     this.listeners.forEach((listener) => listener(value));
   }
@@ -136,10 +138,8 @@ export default class AtomicState<T> {
     const { storage } = this;
     if (!storage) return;
 
-    if (!window) return;
-
     try {
-      const text = window.localStorage.getItem(this.id);
+      const text = getLocalStorage().getItem(this.id);
       if (!text) return;
 
       const data: unknown = JSON.parse(text);
@@ -156,11 +156,11 @@ export default class AtomicState<T> {
 
     const text = JSON.stringify(value);
     const hash = computeHash(text);
-    window.sessionStorage.setItem(this.sessionId, `${hash}${text}`);
+    getSessionStorage().setItem(this.sessionId, `${hash}${text}`);
   }
 
   private restoreSession() {
-    const content = window.sessionStorage.getItem(this.sessionId);
+    const content = getSessionStorage().getItem(this.sessionId);
     if (!content) return;
 
     const hash = content.substring(0, 16);

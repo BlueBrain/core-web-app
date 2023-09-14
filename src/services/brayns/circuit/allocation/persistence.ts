@@ -1,4 +1,5 @@
-import { JsonRpcServiceAddress } from '../json-rpc/types';
+import { JsonRpcServiceAddress } from '../../common/json-rpc/types';
+import { getSessionStorage } from '../../common/state/storage';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 
@@ -28,7 +29,7 @@ const PersistenceInstance = {
     return null;
   },
   clearAllocatedServiceAddress() {
-    window.sessionStorage.removeItem(STORAGE_ITEM);
+    getSessionStorage().removeItem(STORAGE_ITEM);
   },
 };
 
@@ -70,7 +71,7 @@ function isPersistence(data: unknown): data is Persistence {
 }
 
 function storageGet(): Persistence {
-  const text = window.sessionStorage.getItem(STORAGE_ITEM);
+  const text = getSessionStorage().getItem(STORAGE_ITEM);
   if (!text) return DEFAULT_PERSISTENCE;
 
   try {
@@ -86,5 +87,5 @@ function storageGet(): Persistence {
 }
 
 function storageSet(persistence: Persistence) {
-  window.sessionStorage.setItem(STORAGE_ITEM, JSON.stringify(persistence));
+  getSessionStorage().setItem(STORAGE_ITEM, JSON.stringify(persistence));
 }
