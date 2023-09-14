@@ -6,7 +6,8 @@ import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 import { eModelUIConfigAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { convertMorphologyForUI } from '@/services/e-model';
-import { ExploreESHit, ReconstructedNeuronMorphology } from '@/types/explore-section/es';
+import { ExploreESHit } from '@/types/explore-section/es';
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
 
 type Props = {
   isOpen: boolean;

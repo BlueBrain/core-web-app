@@ -5,7 +5,8 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { eModelUIConfigAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { convertTraceForUI } from '@/services/e-model';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import { ExperimentalTrace, ExploreESHit } from '@/types/explore-section/es';
+import { ExploreESHit } from '@/types/explore-section/es';
+import { ExperimentalTrace } from '@/types/explore-section/es-experiment';
 
 const TYPE = 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalTrace';
 
