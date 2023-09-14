@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import { useMemo, useRef, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
+
 import { nexus } from '@/config';
 import { JournalSuggestionResponse } from '@/types/literature';
 import sessionAtom from '@/state/session';

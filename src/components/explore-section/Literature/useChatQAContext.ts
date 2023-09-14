@@ -25,11 +25,15 @@ import { formatDate } from '@/util/utils';
 type QuestionParameters = {
   selectedDate: GteLteValue;
   selectedJournals: string[];
+  selectedAuthors: string[];
+  selectedArticleTypes: string[];
 };
 
 export const initialParameters: QuestionParameters = {
   selectedDate: { lte: null, gte: null },
   selectedJournals: [],
+  selectedAuthors: [],
+  selectedArticleTypes: [],
 };
 
 function useChatQAContext({
@@ -48,7 +52,10 @@ function useChatQAContext({
   const { query } = useAtomValue(literatureAtom);
   const [isPending, startGenerativeQATransition] = useTransition();
   const [isParametersVisible, setIsParametersVisible] = useState(false);
-  const [{ selectedDate, selectedJournals }, updateParameters] = useReducer(
+  const [
+    { selectedDate, selectedJournals, selectedAuthors, selectedArticleTypes },
+    updateParameters,
+  ] = useReducer(
     (previous: QuestionParameters, next: Partial<QuestionParameters>) => ({ ...previous, ...next }),
     { ...initialParameters }
   );
@@ -103,6 +110,8 @@ function useChatQAContext({
       data,
       keywords: selectedBrainRegion ? [selectedBrainRegion.title] : undefined,
       journals: selectedJournals,
+      authors: selectedAuthors,
+      articleTypes: selectedArticleTypes,
       fromDate: selectedDate.gte ? formatDate(selectedDate.gte as Date, 'yyyy-MM-dd') : undefined,
       endDate: selectedDate.lte ? formatDate(selectedDate.lte as Date, 'yyyy-MM-dd') : undefined,
     });
@@ -122,6 +131,7 @@ function useChatQAContext({
     isParametersVisible,
     selectedDate,
     selectedJournals,
+    selectedAuthors,
     updateParameters,
     setIsParametersVisible,
     onComplete,

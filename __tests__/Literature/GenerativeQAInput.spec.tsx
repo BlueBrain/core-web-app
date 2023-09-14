@@ -3,13 +3,31 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
 import { format } from 'date-fns';
 import GenerativeQAInputBar from '@/components/explore-section/Literature/components/GenerativeQAInput';
+import sessionAtom from '@/state/session';
+import { ArticleTypeSuggestion, AuthorSuggestionResponse } from '@/types/literature';
+
+jest.mock('@/components/explore-section/Literature/api.ts', () => ({
+  _esModule: true,
+  fetchAuthorSuggestions: jest.fn().mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolve(mockAuthors);
+      })
+  ),
+}));
 
 jest.mock('@/components/explore-section/Literature/actions.ts', () => ({
   __esModule: true,
   getGenerativeQAAction: jest.fn(),
+  getArticleTypes: jest.fn().mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolve(mockArticleTypes);
+      })
+  ),
 }));
 
-fdescribe('GenerativeQAInput', () => {
+describe('GenerativeQAInput', () => {
   beforeEach(() => {
     render(GenerativeQAInputProvider());
   });
@@ -61,9 +79,54 @@ fdescribe('GenerativeQAInput', () => {
     expect(sendRefinedQuestionButton()).toBeVisible();
   });
 
+  test('closes parameters panel when user clicks the close button', () => {
+    openRefineSearchPanel();
+
+    typeQuestion(defaultQuestion);
+    expect(sendRefinedQuestionButton()).toBeVisible();
+
+    closeRefineSearchPanel();
+
+    expect(sendRefinedQuestionButton('undefined-if-not-found')).toBeFalsy();
+  });
+
+  test('selects authors from suggestions', async () => {
+    openRefineSearchPanel();
+
+    typeQuestion(defaultQuestion);
+
+    typeInInput('Authors', 'Archer');
+
+    await selectSuggestion('Sterling Archer');
+    await selectSuggestion('Malory Archer');
+
+    expectOptionsToBeSelected(['Sterling Archer', 'Malory Archer']);
+    expectOptionsNotToBeSelected(['Lana Kane']);
+  });
+
+  test('selects article types from suggestions', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    typeInInput('Article Types', 'paper');
+
+    await selectSuggestion('paper');
+    await selectSuggestion('journal paper');
+
+    expectOptionsToBeSelected(['paper', 'journal paper']);
+    expectOptionsNotToBeSelected(['abstract']);
+  });
+
   const sendQuestionWithoutParamsButton = () => screen.queryByRole('button', { name: 'send' });
 
-  const sendRefinedQuestionButton = () => screen.getByRole('button', { name: 'Search send' });
+  const sendRefinedQuestionButton = (
+    queryType: 'fail-if-not-found' | 'undefined-if-not-found' = 'fail-if-not-found'
+  ) => {
+    if (queryType === 'fail-if-not-found') {
+      return screen.getByRole('button', { name: 'Search send' });
+    }
+    return screen.queryByRole('button', { name: 'Search send' });
+  };
 
   const typeQuestion = (question: string) => {
     const questionInput = screen.getByPlaceholderText('Send your question');
@@ -95,6 +158,38 @@ fdescribe('GenerativeQAInput', () => {
     fireEvent.click(refineSearchButton);
   };
 
+  const closeRefineSearchPanel = () => {
+    const closePanelButton = screen.getByRole('button', { name: /close-parameters/i });
+    fireEvent.click(closePanelButton);
+  };
+
+  const typeInInput = (inputName: string, text: string) => {
+    const authorInput = screen.getByLabelText(inputName, { selector: 'input' });
+    fireEvent.change(authorInput, { target: { value: text } });
+  };
+
+  const selectSuggestion = async (optionLabel: string) => {
+    const selectedAuthor = await screen.findByRole('option', { name: optionLabel });
+    fireEvent.click(selectedAuthor);
+    fireEvent.mouseDown(selectedAuthor);
+  };
+
+  const expectOptionsToBeSelected = (options: string[]) => {
+    options.forEach((option) => {
+      expect(
+        screen.getByText(option, { selector: '.ant-select-selection-item-content' })
+      ).toBeVisible();
+    });
+  };
+
+  const expectOptionsNotToBeSelected = (options: string[]) => {
+    options.forEach((option) => {
+      expect(
+        screen.queryByText(option, { selector: '.ant-select-selection-item-content' })
+      ).toBeFalsy();
+    });
+  };
+
   const HydrateAtoms = ({ initialValues, children }: any) => {
     useHydrateAtoms(initialValues);
     return children;
@@ -110,7 +205,7 @@ fdescribe('GenerativeQAInput', () => {
 
   function GenerativeQAInputProvider() {
     return (
-      <TestProvider initialValues={[]}>
+      <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
         <GenerativeQAInputBar />
       </TestProvider>
     );
@@ -119,3 +214,22 @@ fdescribe('GenerativeQAInput', () => {
   const autocompletePlaceholderSelector = '.ant-select-selection-placeholder';
   const defaultQuestion = "'How many neurons are there in the brain?'";
 });
+
+const createMockOption = (name: string) => ({
+  name,
+  docs_in_db: 1,
+});
+
+const mockAuthors: AuthorSuggestionResponse = [
+  createMockOption('Sterling Archer'),
+  createMockOption('Lana Kane'),
+  createMockOption('Cheryl Tunt'),
+  createMockOption('Malory Archer'),
+  createMockOption('Dr. Krieger'),
+];
+
+const mockArticleTypes: ArticleTypeSuggestion[] = [
+  { articleType: 'abstract', docCount: 1 },
+  { articleType: 'journal paper', docCount: 1 },
+  { articleType: 'paper', docCount: 1 },
+];

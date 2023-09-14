@@ -3,16 +3,31 @@
 import { Button, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
+  CloseOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
   SendOutlined,
 } from '@ant-design/icons';
+import { useAtomValue } from 'jotai';
 
+import { useEffect, useState } from 'react';
+import { loadable } from 'jotai/utils';
 import useChatQAContext, { ChatQAContextHook, initialParameters } from '../useChatQAContext';
 import useContextualLiteratureContext from '../useContextualLiteratureContext';
-import JournalSearch from './JournalSearch';
+import AutoCompleteSearch from './AutoCompleteSearch';
 import { DateRange } from '@/components/Filter';
-import { classNames } from '@/util/utils';
+import { classNames, normalizeString } from '@/util/utils';
+import sessionAtom from '@/state/session';
+import {
+  AuthorSuggestionResponse,
+  JournalSuggestionResponse,
+  Suggestion,
+} from '@/types/literature';
+import { articleTypeSuggestionsAtom } from '@/state/literature';
+import {
+  fetchAuthorSuggestions,
+  fetchJournalSuggestions,
+} from '@/components/explore-section/Literature/api';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -95,8 +110,13 @@ export function GenerativeQAForm({
   );
 }
 
+const loadableArticleTypes = loadable(articleTypeSuggestionsAtom);
+
 function GenerativeQABar() {
   const { dataSource, isContextualLiterature, isBuildSection } = useContextualLiteratureContext();
+  const session = useAtomValue(sessionAtom);
+  const [articleTypes, setArticleTypes] = useState<Suggestion[]>([]);
+  const articleTypesStatus = useAtomValue(loadableArticleTypes);
   const isChatBarMustSlideInDown = Boolean(dataSource.length);
   const {
     query,
@@ -112,6 +132,20 @@ function GenerativeQABar() {
     saveOnContext: isContextualLiterature,
   });
 
+  useEffect(() => {
+    if (articleTypesStatus.state === 'loading' || articleTypesStatus.state === 'hasError') {
+      setArticleTypes([]);
+    } else {
+      setArticleTypes(
+        articleTypesStatus.data.map((type) => ({
+          key: type.articleType,
+          label: type.articleType,
+          value: type.articleType,
+        }))
+      );
+    }
+  }, [articleTypesStatus]);
+
   return (
     <div
       className={classNames(
@@ -123,7 +157,7 @@ function GenerativeQABar() {
     >
       <div
         className={classNames(
-          'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto',
+          'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto right-4',
           isChatBarMustSlideInDown &&
             'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
         )}
@@ -165,7 +199,14 @@ function GenerativeQABar() {
                 </div>
               )}
               {isParametersVisible && (
-                <div className="w-full">
+                <div className="w-full relative">
+                  <Button
+                    icon={<CloseOutlined />}
+                    onClick={() => setIsParametersVisible(false)}
+                    shape="circle"
+                    aria-label="close-parameters"
+                    className="bg-transparent border-none text-primary-8 shadow-none absolute right-4 -top-6"
+                  />
                   <div className="w-full mt-10">
                     <DateRange
                       onChange={(e) => updateParameters({ selectedDate: e })}
@@ -180,8 +221,51 @@ function GenerativeQABar() {
                   </div>
 
                   <div className="w-full">
-                    <JournalSearch
-                      onChange={(newValues) => updateParameters({ selectedJournals: newValues })}
+                    <AutoCompleteSearch
+                      title="Journal"
+                      fetchOptions={(searchTerm: string) =>
+                        fetchJournalSuggestions(searchTerm, session!.accessToken).then(
+                          (journalResponse) => getJournalOptions(journalResponse)
+                        )
+                      }
+                      onChange={(selectedValues: Suggestion[]) => {
+                        const selectedJournals = selectedValues.map((option) => option.key);
+                        updateParameters({ selectedJournals });
+                      }}
+                    />
+                    <hr className="my-4 border-primary-2" />
+                  </div>
+
+                  <div className="w-full">
+                    <AutoCompleteSearch
+                      title="Authors"
+                      fetchOptions={(searchTerm: string) =>
+                        fetchAuthorSuggestions(searchTerm, session!.accessToken).then((authors) =>
+                          getAuthorOptions(authors)
+                        )
+                      }
+                      onChange={(selectedValues: Suggestion[]) =>
+                        updateParameters({ selectedAuthors: selectedValues.map((v) => v.value) })
+                      }
+                    />
+                    <hr className="my-4 border-primary-2" />
+                  </div>
+
+                  <div className="w-full">
+                    <AutoCompleteSearch
+                      title="Article Types"
+                      fetchOptions={async (searchTerm: string) =>
+                        articleTypes.filter((articleTypeOption) =>
+                          normalizeString(articleTypeOption.value).includes(
+                            normalizeString(searchTerm)
+                          )
+                        )
+                      }
+                      onChange={(selectedValues: Suggestion[]) =>
+                        updateParameters({
+                          selectedArticleTypes: selectedValues.map((v) => v.value),
+                        })
+                      }
                     />
                     <hr className="my-4 border-primary-2" />
                   </div>
@@ -208,3 +292,20 @@ function GenerativeQABar() {
 }
 
 export default GenerativeQABar;
+
+const getAuthorOptions = (mlResponse: AuthorSuggestionResponse) =>
+  mlResponse.map(
+    (authorResponse) =>
+      ({
+        key: authorResponse.name,
+        label: authorResponse.name,
+        value: authorResponse.name,
+      } as Suggestion)
+  );
+
+const getJournalOptions = (mlResponse: JournalSuggestionResponse) =>
+  mlResponse.map((journalResponse, index) => ({
+    key: journalResponse.eissn ?? journalResponse.print_issn ?? `${index}`,
+    label: journalResponse.title,
+    value: journalResponse.title,
+  }));
