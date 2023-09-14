@@ -50,6 +50,80 @@ export default function ScriptPage() {
       return;
     }
 
+    const compositionFileOfReleaseUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fmmb-point-neuron-framework-model%2F64a95173-f092-4756-aa94-3c644451c307'
+    const configNoRevId = 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/254830cf-40bb-417a-bd65-bc562e2d4ae7'
+
+    const configResource = await fetchResourceById<BrainModelConfigResource>(configNoRevId, session)
+    const cellCompositionId = configResource.configs.cellCompositionConfig['@id']
+    const compositionResource = await fetchResourceById<CellCompositionConfigResource>(cellCompositionId, session)
+    const compositionFileNoRevUrl = compositionResource.distribution.contentUrl
+    const exampleBrainRegion = 'http://api.brain-map.org/api/v2/data/Structure/23'
+    const compositionOfReleasePayload = await fetchJsonFileByUrl<CellCompositionConfigPayload>(compositionFileOfReleaseUrl, session)
+
+    const resetComposition = async () => {
+      const fileMeta = await updateJsonFileByUrl(compositionFileNoRevUrl, compositionOfReleasePayload, 'cell-composition-config.json', session)
+      
+      const updatedResource: CellCompositionConfig = {
+        ...compositionResource,
+        distribution: createDistribution(fileMeta),
+      }
+      const updated = await updateResource(updatedResource, compositionResource._rev, session)
+      console.log('updated :>> ', updated);
+    }
+
+    const updateComposition = async (payload: unknown) => {  
+      const fileMeta = await updateJsonFileByUrl(compositionFileNoRevUrl, payload, 'cell-composition-config.json', session)
+      
+      const updatedResource: CellCompositionConfig = {
+        ...compositionResource,
+        distribution: createDistribution(fileMeta),
+      }
+      const updated = await updateResource(updatedResource, compositionResource._rev, session)
+      console.log('updated :>> ', updated);
+    }
+
+    function removeRevisionsInComposition(composition: CompositionOverridesWorkflowConfig, original: any) {
+      console.log('[removeRevisionsInComposition]...');
+      // composition = { [exampleBrainRegion]: composition[exampleBrainRegion] }
+      const revKey = '_rev'
+
+      Object.entries(composition).forEach(([brainRegionKey, brainRegionValue]) => {
+        Object.entries(brainRegionValue.hasPart).forEach(([mTypeKey, mTypeValue]) => {
+          const sanitizedMTypeKey = mTypeKey.replace(/\?rev=.+/, '')
+          const rev = get(original, [brainRegionKey, 'hasPart', sanitizedMTypeKey, revKey])
+          if (!rev) debugger;
+          mTypeValue[revKey] = rev;
+          // console.log(mTypeKey, rev);
+
+          Object.entries(mTypeValue.hasPart).forEach(([eTypeKey, eTypeValue]) => {
+            const sanitizedETypeKey = eTypeKey.replace(/\?rev=.+/, '')
+            const rev = get(original, [brainRegionKey, 'hasPart', sanitizedMTypeKey, 'hasPart', sanitizedETypeKey, revKey])
+            if (!rev) debugger;
+            eTypeValue[revKey] = rev;
+            // console.log(eTypeKey, rev);
+            set(mTypeValue.hasPart, [sanitizedETypeKey], eTypeValue)
+            delete mTypeValue.hasPart?.[eTypeKey]
+          })
+
+          set(brainRegionValue.hasPart, [sanitizedMTypeKey], mTypeValue)
+          delete brainRegionValue?.hasPart?.[mTypeKey]
+        })
+      })
+      // console.log(composition);
+    }
+
+    const cellCompositionSummaryUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/atlasdatasetrelease/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fatlasdatasetrelease%2Fb480420a-a452-4e08-8918-b4f24d1ca7b1'
+    const cellCompositionSummaryPayload: any = await fetchJsonFileByUrl(cellCompositionSummaryUrl, session)
+
+    // const compositionFileNoRevPayload: CellCompositionConfigPayload = await fetchJsonFileByUrl(compositionFileNoRevUrl, session)
+
+    const overrides = compositionOfReleasePayload[ROOT_BRAIN_REGION].configuration.overrides;
+    removeRevisionsInComposition(overrides, cellCompositionSummaryPayload.hasPart)
+    console.log(compositionOfReleasePayload);
+    await updateComposition(compositionOfReleasePayload)
+    // console.log(overrides[exampleBrainRegion]);
+    return;
+
     const query = getPublicBrainModelConfigsQuery();
     const configs = await queryES<BrainModelConfigResource>(query, session);
 

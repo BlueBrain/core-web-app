@@ -59,12 +59,14 @@ type EtypeWorkflowConfigEntry = {
   label: string;
   about: string;
   density: number;
+  _rev: number;
 };
 
 type MtypeWorkflowConfigEntry = {
   label: string;
   about: string;
   hasPart: Record<string, EtypeWorkflowConfigEntry>;
+  _rev: number;
 };
 
 type BrainRegionWorkflowConfigEntry = {
