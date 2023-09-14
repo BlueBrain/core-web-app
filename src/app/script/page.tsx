@@ -55,6 +55,9 @@ export default function ScriptPage() {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const config of configs) {
+      // do not modify the Releases
+      if (config.name.match(/^Release \d\d\.\d\d$/)) continue;
+
       // if (config.name === 'JDC-TEST2-Release 23.01 - new format - clone') {
       //   continue;
       // }
