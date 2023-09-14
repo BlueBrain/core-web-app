@@ -3,6 +3,9 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
+import get from 'lodash/get'
+import set from 'lodash/set'
+import isEqual from 'lodash/isEqual'
 
 import { getPublicBrainModelConfigsQuery } from '@/queries/es';
 import {
@@ -12,7 +15,6 @@ import {
   fetchFileMetadataByUrl,
   fetchJsonFileByUrl,
   fetchResourceById,
-  fetchResourceSourceById,
   queryES,
   updateJsonFileByUrl,
   updateResource,
@@ -26,17 +28,24 @@ import {
   CellPositionConfig,
   CellPositionConfigPayload,
   CellPositionConfigResource,
+  CompositionOverridesWorkflowConfig,
   EModelAssignmentConfig,
   EModelAssignmentConfigPayload,
   EModelAssignmentConfigResource,
+  MacroConnectomeConfig,
+  MacroConnectomeConfigPayload,
+  MacroConnectomeConfigResource,
   MicroConnectomeConfig,
   MicroConnectomeConfigPayload,
   MicroConnectomeConfigResource,
   MorphologyAssignmentConfig,
   MorphologyAssignmentConfigPayload,
   MorphologyAssignmentConfigResource,
+  SynapseConfigPayload,
+  SynapseConfigResource,
 } from '@/types/nexus';
-import { createGeneratorConfig } from '@/util/nexus';
+import { createDistribution } from '@/util/nexus';
+import { Session } from 'next-auth';
 
 
 const ROOT_BRAIN_REGION = 'http://api.brain-map.org/api/v2/data/Structure/997';
@@ -50,325 +59,39 @@ export default function ScriptPage() {
       return;
     }
 
-    const compositionFileOfReleaseUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fmmb-point-neuron-framework-model%2F64a95173-f092-4756-aa94-3c644451c307'
-    const configNoRevId = 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/254830cf-40bb-417a-bd65-bc562e2d4ae7'
-
-    const configResource = await fetchResourceById<BrainModelConfigResource>(configNoRevId, session)
-    const cellCompositionId = configResource.configs.cellCompositionConfig['@id']
-    const compositionResource = await fetchResourceById<CellCompositionConfigResource>(cellCompositionId, session)
-    const compositionFileNoRevUrl = compositionResource.distribution.contentUrl
-    const exampleBrainRegion = 'http://api.brain-map.org/api/v2/data/Structure/23'
-    const compositionOfReleasePayload = await fetchJsonFileByUrl<CellCompositionConfigPayload>(compositionFileOfReleaseUrl, session)
-
-    const resetComposition = async () => {
-      const fileMeta = await updateJsonFileByUrl(compositionFileNoRevUrl, compositionOfReleasePayload, 'cell-composition-config.json', session)
-      
-      const updatedResource: CellCompositionConfig = {
-        ...compositionResource,
-        distribution: createDistribution(fileMeta),
-      }
-      const updated = await updateResource(updatedResource, compositionResource._rev, session)
-      console.log('updated :>> ', updated);
-    }
-
-    const updateComposition = async (payload: unknown) => {  
-      const fileMeta = await updateJsonFileByUrl(compositionFileNoRevUrl, payload, 'cell-composition-config.json', session)
-      
-      const updatedResource: CellCompositionConfig = {
-        ...compositionResource,
-        distribution: createDistribution(fileMeta),
-      }
-      const updated = await updateResource(updatedResource, compositionResource._rev, session)
-      console.log('updated :>> ', updated);
-    }
-
-    function removeRevisionsInComposition(composition: CompositionOverridesWorkflowConfig, original: any) {
-      console.log('[removeRevisionsInComposition]...');
-      // composition = { [exampleBrainRegion]: composition[exampleBrainRegion] }
-      const revKey = '_rev'
-
-      Object.entries(composition).forEach(([brainRegionKey, brainRegionValue]) => {
-        Object.entries(brainRegionValue.hasPart).forEach(([mTypeKey, mTypeValue]) => {
-          const sanitizedMTypeKey = mTypeKey.replace(/\?rev=.+/, '')
-          const rev = get(original, [brainRegionKey, 'hasPart', sanitizedMTypeKey, revKey])
-          if (!rev) debugger;
-          mTypeValue[revKey] = rev;
-          // console.log(mTypeKey, rev);
-
-          Object.entries(mTypeValue.hasPart).forEach(([eTypeKey, eTypeValue]) => {
-            const sanitizedETypeKey = eTypeKey.replace(/\?rev=.+/, '')
-            const rev = get(original, [brainRegionKey, 'hasPart', sanitizedMTypeKey, 'hasPart', sanitizedETypeKey, revKey])
-            if (!rev) debugger;
-            eTypeValue[revKey] = rev;
-            // console.log(eTypeKey, rev);
-            set(mTypeValue.hasPart, [sanitizedETypeKey], eTypeValue)
-            delete mTypeValue.hasPart?.[eTypeKey]
-          })
-
-          set(brainRegionValue.hasPart, [sanitizedMTypeKey], mTypeValue)
-          delete brainRegionValue?.hasPart?.[mTypeKey]
-        })
-      })
-      // console.log(composition);
-    }
-
-    const cellCompositionSummaryUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/atlasdatasetrelease/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fatlasdatasetrelease%2Fb480420a-a452-4e08-8918-b4f24d1ca7b1'
-    const cellCompositionSummaryPayload: any = await fetchJsonFileByUrl(cellCompositionSummaryUrl, session)
-
-    // const compositionFileNoRevPayload: CellCompositionConfigPayload = await fetchJsonFileByUrl(compositionFileNoRevUrl, session)
-
-    const overrides = compositionOfReleasePayload[ROOT_BRAIN_REGION].configuration.overrides;
-    removeRevisionsInComposition(overrides, cellCompositionSummaryPayload.hasPart)
-    console.log(compositionOfReleasePayload);
-    await updateComposition(compositionOfReleasePayload)
-    // console.log(overrides[exampleBrainRegion]);
-    return;
-
     const query = getPublicBrainModelConfigsQuery();
     const configs = await queryES<BrainModelConfigResource>(query, session);
 
     // eslint-disable-next-line no-restricted-syntax
     for (const config of configs) {
       // do not modify the Releases
-      if (config.name.match(/^Release \d\d\.\d\d$/)) continue;
+      // if (!config.name.match(/^Release \d\d\.\d\d$/)) continue;
 
-      // if (config.name === 'JDC-TEST2-Release 23.01 - new format - clone') {
-      //   continue;
-      // }
+      // if (config.name !== 'Release 23.01') continue;
+      // if (config.name !== 'Release 23.02') continue;
+      // if (config.name !== 'Release 23.03') continue;
+      if (config.name !== 'Release 23.03 by antonel') continue
+      // if (config.name !== 'AO_latest_release_circuit') continue
 
       console.log('Processing config: ', config.name, config._self);
 
-      const configSource = await fetchResourceById<BrainModelConfig>(config['@id'], session);
+      await fixCellComposition(config, session)
+      await fixCellCompositionRev(config, session)
+      await setPlaceholderForCellPositionConfig(config, session)
+      await setPlaceholderForMacroConnectomeConfig(config, session)
+      await setFullMorphologyAssignment(config, session)
+      await setPlaceholderEModelAssignment(config, session)
 
-      // const cellCompositionConfigSource = await fetchResourceSourceById<CellCompositionConfig>(config.configs.cellCompositionConfig['@id'], session);
-      // const cellCompositionConfig = await fetchResourceById<CellCompositionConfigResource>(config.configs.cellCompositionConfig['@id'], session);
-      // const cellCompositionConfigPayload = await fetchJsonFileByUrl<CellCompositionConfigPayload>(cellCompositionConfigSource.distribution.contentUrl, session);
-      // const cellCompositionConfigPayloadMeta = await fetchFileMetadataByUrl(cellCompositionConfigSource.distribution.contentUrl, session);
+      // await setPlaceholderForSynapseConfig(config, session)
+      await setFullSynapseConfig(config, session)
+      // await checkFullSynapseConfig(config, session)
 
-      // if (cellCompositionConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version !== 'v1') {
-      //   console.log('Cell composition: updating variant definition version to v1');
-      //   cellCompositionConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version = 'v1';
+      // await setPlaceholderForMicroConnectome(config, session)
+      await setFullMicroConnectome(config, session)
+      // await checkFullMicroConnectomeConfig(config, session)
 
-      //   const updatedCellCompositionConfigPayload = await updateJsonFileByUrl(
-      //     cellCompositionConfigSource.distribution.contentUrl.includes('rev=')
-      //     ? cellCompositionConfigSource.distribution.contentUrl
-      //     : `${cellCompositionConfigSource.distribution.contentUrl}?rev=${cellCompositionConfigPayloadMeta._rev}`,
-      //     cellCompositionConfigPayload,
-      //     'cell-composition-config.json',
-      //     session
-      //   );
-
-      //   cellCompositionConfigSource.distribution = createGeneratorConfig({
-      //     kgType: 'CellCompositionConfig',
-      //     payloadMetadata: updatedCellCompositionConfigPayload,
-      //   }).distribution;
-
-      //   if (!cellCompositionConfigSource['@id']) {
-      //     console.log('No Id in the source, adding one');
-      //     cellCompositionConfigSource['@id'] = cellCompositionConfig['@id'];
-      //   }
-
-      //   await updateResource(cellCompositionConfigSource, cellCompositionConfig._rev, session);
-      // }
-
-
-      // const cellPositionConfigSource = await fetchResourceSourceById<CellPositionConfig>(config.configs.cellPositionConfig['@id'], session);
-      // const cellPositionConfig = await fetchResourceById<CellPositionConfigResource>(config.configs.cellPositionConfig['@id'], session);
-      // const cellPositionConfigPayload = await fetchJsonFileByUrl<CellPositionConfigPayload>(cellPositionConfigSource.distribution.contentUrl, session);
-      // const cellPositionConfigPayloadMeta = await fetchFileMetadataByUrl(cellPositionConfigSource.distribution.contentUrl, session);
-
-      // if (cellPositionConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version !== 'v1') {
-      //   console.log('Cell position: updating variant definition version to v1');
-      //   cellPositionConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version = 'v1';
-
-      //   const updatedCellPositionConfigPayload = await updateJsonFileByUrl(
-      //     cellPositionConfigSource.distribution.contentUrl.includes('rev=')
-      //       ? cellPositionConfigSource.distribution.contentUrl
-      //       : `${cellPositionConfigSource.distribution.contentUrl}?rev=${cellPositionConfigPayloadMeta._rev}`,
-      //     cellPositionConfigPayload,
-      //     'cell-position-config.json',
-      //     session
-      //   );
-
-      //   cellPositionConfigSource.distribution = createGeneratorConfig({
-      //     kgType: 'CellPositionConfig',
-      //     payloadMetadata: updatedCellPositionConfigPayload,
-      //   }).distribution;
-
-      //   if (!cellPositionConfigSource['@id']) {
-      //     console.log('No Id in the source, adding one');
-      //     cellPositionConfigSource['@id'] = cellPositionConfig['@id'];
-      //   }
-
-      //   await updateResource(cellPositionConfigSource, cellPositionConfig._rev, session);
-      // }
-
-
-
-      // const eModelAssignmentConfigSource = await fetchResourceSourceById<EModelAssignmentConfig>(config.configs.eModelAssignmentConfig['@id'], session);
-      // const eModelAssignmentConfig = await fetchResourceById<EModelAssignmentConfigResource>(config.configs.eModelAssignmentConfig['@id'], session);
-      // const eModelAssignmentConfigPayload = await fetchJsonFileByUrl<EModelAssignmentConfigPayload>(eModelAssignmentConfigSource.distribution.contentUrl, session);
-      // const eModelAssignmentConfigPayloadMeta = await fetchFileMetadataByUrl(eModelAssignmentConfigSource.distribution.contentUrl, session);
-
-      // if (eModelAssignmentConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version !== 'v1') {
-      //   console.log('eModel assignment: updating variant definition version to v1');
-      //   eModelAssignmentConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version = 'v1';
-
-      //   const updatedEModelAssignmentConfigPayload = await updateJsonFileByUrl(
-      //     eModelAssignmentConfigSource.distribution.contentUrl.includes('rev=')
-      //       ? eModelAssignmentConfigSource.distribution.contentUrl
-      //       : `${eModelAssignmentConfigSource.distribution.contentUrl}?rev=${eModelAssignmentConfigPayloadMeta._rev}`,
-      //     eModelAssignmentConfigPayload,
-      //     'emodel-assignment-config.json',
-      //     session
-      //   );
-
-      //   eModelAssignmentConfigSource.distribution = createGeneratorConfig({
-      //     kgType: 'EModelAssignmentConfig',
-      //     payloadMetadata: updatedEModelAssignmentConfigPayload,
-      //   }).distribution;
-
-      //   if (!eModelAssignmentConfigSource['@id']) {
-      //     console.log('No Id in the source, adding one');
-      //     eModelAssignmentConfigSource['@id'] = eModelAssignmentConfig['@id'];
-      //   }
-
-      //   await updateResource(eModelAssignmentConfigSource, eModelAssignmentConfig._rev, session);
-      // }
-
-
-
-      // const morphologyAssignmentConfigSource = await fetchResourceSourceById<MorphologyAssignmentConfig>(config.configs.morphologyAssignmentConfig['@id'], session);
-      // const morphologyAssignmentConfig = await fetchResourceById<MorphologyAssignmentConfigResource>(config.configs.morphologyAssignmentConfig['@id'], session);
-      // const morphologyAssignmentConfigPayload = await fetchJsonFileByUrl<MorphologyAssignmentConfigPayload>(morphologyAssignmentConfigSource.distribution.contentUrl, session);
-      // const morphologyAssignmentConfigPayloadMeta = await fetchFileMetadataByUrl(morphologyAssignmentConfigSource.distribution.contentUrl, session);
-
-      // if (morphologyAssignmentConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version !== 'v1') {
-      //   console.log('Morphology assignment: updating variant definition version to v1');
-      //   morphologyAssignmentConfigPayload[ROOT_BRAIN_REGION].variantDefinition.version = 'v1';
-
-      //   const updatedMorphologyAssignmentConfigPayload = await updateJsonFileByUrl(
-      //     morphologyAssignmentConfigSource.distribution.contentUrl.includes('rev=')
-      //       ? morphologyAssignmentConfigSource.distribution.contentUrl
-      //       : `${morphologyAssignmentConfigSource.distribution.contentUrl}?rev=${morphologyAssignmentConfigPayloadMeta._rev}`,
-      //     morphologyAssignmentConfigPayload,
-      //     'morphology-assignment-config.json',
-      //     session
-      //   );
-
-      //   morphologyAssignmentConfigSource.distribution = createGeneratorConfig({
-      //     kgType: 'MorphologyAssignmentConfig',
-      //     payloadMetadata: updatedMorphologyAssignmentConfigPayload,
-      //   }).distribution;
-
-      //   if (!morphologyAssignmentConfigSource['@id']) {
-      //     console.log('No Id in the source, adding one');
-      //     morphologyAssignmentConfigSource['@id'] = morphologyAssignmentConfig['@id'];
-      //   }
-
-      //   await updateResource(morphologyAssignmentConfigSource, morphologyAssignmentConfig._rev, session);
-      // }
-
-      // let isRootConfigModified = false;
-
-
-      // const defaultMicroConnectomeConfigId = 'https://bbp.epfl.ch/neurosciencegraph/data/microconnectomeconfigs/b4980534-1324-45a1-8170-6c3bcdc4882e';
-
-      // if (!configSource.configs.microConnectomeConfig) {
-      //   console.log('Micro-connectome: adding cloned config');
-      //   const clonedMicroConnectomeConfigMeta = await cloneMicroConnectomeConfig(defaultMicroConnectomeConfigId, session);
-      //   configSource.configs.microConnectomeConfig = {
-      //     '@id': clonedMicroConnectomeConfigMeta['@id'],
-      //     '@type': ['MicroConnectomeConfig', 'Entity'],
-      //   };
-      //   isRootConfigModified = true;
-      // } else {
-      //   const microConnectomeConfigSource = await fetchResourceSourceById<MicroConnectomeConfig>(config.configs.microConnectomeConfig['@id'], session);
-      //   const microConnectomeConfig = await fetchResourceById<MicroConnectomeConfigResource>(config.configs.microConnectomeConfig['@id'], session);
-      //   const microConnectomeConfigPayload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(microConnectomeConfigSource.distribution.contentUrl, session);
-      //   const microConnectomeConfigPayloadMeta = await fetchFileMetadataByUrl(microConnectomeConfigSource.distribution.contentUrl, session);
-
-      //   let isMicroConnectomeConfigPayloadModified = false;
-
-      //   Object.keys(microConnectomeConfigPayload.hasPart).forEach((srcHemisphere) => {
-      //     Object.keys(microConnectomeConfigPayload.hasPart[srcHemisphere].hasPart).forEach(dstHemisphere => {
-      //       Object.keys(microConnectomeConfigPayload.hasPart[srcHemisphere].hasPart[dstHemisphere].hasPart).forEach(srcBrainRegionId => {
-      //         Object.keys(microConnectomeConfigPayload.hasPart[srcHemisphere].hasPart[dstHemisphere].hasPart[srcBrainRegionId].hasPart).forEach(dstBrainRegionId => {
-      //           Object.keys(microConnectomeConfigPayload.hasPart[srcHemisphere].hasPart[dstHemisphere].hasPart[srcBrainRegionId].hasPart[dstBrainRegionId].hasPart).forEach(srcMtype => {
-      //             Object.keys(microConnectomeConfigPayload.hasPart[srcHemisphere].hasPart[dstHemisphere].hasPart[srcBrainRegionId].hasPart[dstBrainRegionId].hasPart[srcMtype].hasPart).forEach(dstMtype => {
-      //               const variantVersion = microConnectomeConfigPayload.hasPart[srcHemisphere].hasPart[dstHemisphere].hasPart[srcBrainRegionId].hasPart[dstBrainRegionId].hasPart[srcMtype].hasPart[dstMtype].variantDefinition.version;
-      //               if (variantVersion !== 'v1') {
-      //                 isMicroConnectomeConfigPayloadModified = true;
-      //                 microConnectomeConfigPayload.hasPart[srcHemisphere].hasPart[dstHemisphere].hasPart[srcBrainRegionId].hasPart[dstBrainRegionId].hasPart[srcMtype].hasPart[dstMtype].variantDefinition.version = 'v1';
-      //               }
-      //             });
-      //           });
-      //         });
-      //       });
-      //     });
-      //   });
-
-      //   if (isMicroConnectomeConfigPayloadModified) {
-      //     console.log('Micro-connectome: updating variant definition version to v1');
-
-      //     const updatedMicroConnectomeConfigPayload = await updateJsonFileByUrl(
-      //       microConnectomeConfigSource.distribution.contentUrl.includes('rev=')
-      //         ? microConnectomeConfigSource.distribution.contentUrl
-      //         : `${microConnectomeConfigSource.distribution.contentUrl}?rev=${microConnectomeConfigPayloadMeta._rev}`,
-      //       microConnectomeConfigPayload,
-      //       'micro-connectome-config.json',
-      //       session
-      //     );
-
-      //     microConnectomeConfigSource.distribution = createGeneratorConfig({
-      //       kgType: 'MicroConnectomeConfig',
-      //       payloadMetadata: updatedMicroConnectomeConfigPayload,
-      //     }).distribution;
-
-      //     if (!microConnectomeConfigSource['@id']) {
-      //       console.log('No Id in the source, adding one');
-      //       microConnectomeConfigSource['@id'] = microConnectomeConfig['@id'];
-      //     }
-
-      //     await updateResource(microConnectomeConfigSource, microConnectomeConfig._rev, session);
-      //   }
-      // }
-
-
-      // ensure macro-connectome config
-      // const macroConnectomeConfigId = 'https://bbp.epfl.ch/neurosciencegraph/data/6aef1bea-e66f-4b9f-b3ac-70fcce4e3636';
-      // if (!configSource.configs.macroConnectomeConfig) {
-        // console.log('Macro-connectome: adding cloned config');
-        // const clonedMacroConnectomeConfigMeta = await cloneMacroConnectomeConfig(macroConnectomeConfigId, session);
-        // configSource.configs.macroConnectomeConfig = {
-        //   '@id': clonedMacroConnectomeConfigMeta['@id'],
-        //   '@type': ['MacroConnectomeConfig', 'Entity'],
-        // };
-        // isRootConfigModified = true;
-      // } else {
-      //   console.warn('MacroConnectomeConfig present in: ', configSource.name);
-      // }
-
-      // ensure synapse editor config
-      // const synapseConfigId = 'https://bbp.epfl.ch/neurosciencegraph/data/32cf59fe-d6fb-41f4-8b6b-71821addc67f';
-      // if (!configSource.configs.synapseConfig) {
-      //   console.log('Synapse editor: adding cloned config');
-      //   const clonedSynapseConfigMeta = await cloneSynapseConfig(synapseConfigId, session);
-      //   configSource.configs.synapseConfig = {
-      //     '@id': clonedSynapseConfigMeta['@id'],
-      //     '@type': ['SynapseConfig', 'Entity'],
-      //   };
-      //   isRootConfigModified = true;
-      // }
-
-      // if (isRootConfigModified) {
-      //   console.log('Updating root level config');
-      //   await updateResource(configSource, config._rev, session);
-      // }
-
-
-      // console.log('Update config successful\n\n');
     }
+    console.log('All done');
   };
 
   return (
@@ -382,4 +105,445 @@ export default function ScriptPage() {
       </button>
     </main>
   );
+}
+
+async function fixCellComposition(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.cellCompositionConfig['@id']
+  const resource = await fetchResourceById<CellCompositionConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  const payload = await fetchJsonFileByUrl<CellCompositionConfigPayload>(fileUrl, session)
+  let modified = false;
+
+  modified = fixCellCompositionVersion(payload);
+  modified = fixCellCompositionBase(payload)
+
+  const supportedVersion = 1
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'cell-composition-config.json', session)
+  const updatedResource: CellCompositionConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'cell_composition',
+    configVersion: supportedVersion,
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+function fixCellCompositionVersion(compositionPayload: CellCompositionConfigPayload) {
+  const path = [ROOT_BRAIN_REGION, 'variantDefinition', 'version']
+  const properValue = 'v1';
+  const value = get(compositionPayload, path)
+  if (value === properValue) return false;
+
+  console.log('Fixing composition variant definition version...');
+  set(compositionPayload, path, properValue)
+  return true;
+}
+
+function fixCellCompositionBase(compositionPayload: CellCompositionConfigPayload) {
+  const path = [ROOT_BRAIN_REGION, 'inputs', '0', 'id']
+  const properValue = 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/54818e46-cf8c-4bd6-9b68-34dffbc8a68c';
+  const value = get(compositionPayload, path)
+  if (value === properValue) return false;
+
+  console.log('Fixing composition input base url...');
+  set(compositionPayload, path, properValue)
+  return true;
+}
+
+async function setPlaceholderForCellPositionConfig(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.cellPositionConfig['@id']
+  const resource = await fetchResourceById<CellPositionConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<CellPositionConfigPayload>(fileUrl, session)
+  const expectedPayload = {"http://api.brain-map.org/api/v2/data/Structure/997":{"variantDefinition":{"algorithm":"neurons_cell_position","version":"v1"},"inputs":[],"configuration":{"place_cells":{"soma_placement":"basic","density_factor":1,"sort_by":["region","mtype"],"seed":0,"mini_frequencies":false}}}};
+  const path = [ROOT_BRAIN_REGION, 'variantDefinition', 'algorithm']
+  const hasCorrectStructure = get(payload, path)
+
+  let modified = false;
+
+  if (!hasCorrectStructure) {
+    console.log('Setting placeholder config for synapse config');
+    payload = expectedPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'cell_position') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 0
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'cell-position-config.json', session)
+  const updatedResource: CellPositionConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'cell_position',
+    configVersion: supportedVersion
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function setPlaceholderForMacroConnectomeConfig(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.macroConnectomeConfig['@id']
+  const resource = await fetchResourceById<MacroConnectomeConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(fileUrl, session)
+  const expectedPayload = {"bases":{"connection_strength":{"id":"https://bbp.epfl.ch/neurosciencegraph/data/7c8badeb-2fc6-48bc-b9be-a0cf8ec347bb","type":["Entity","Dataset","WholeBrainConnectomeStrength"],"rev":1}},"overrides":{"connection_strength":{"id":"https://bbp.epfl.ch/neurosciencegraph/data/wholebrainconnectomestrengths/df01cdfb-257b-4964-987b-0d4cfd1ddbdb","type":["Entity","Dataset","WholeBrainConnectomeStrength"],"rev":1}}};
+  const path = ['bases', 'connection_strength', 'id']
+  const hasCorrectStructure = get(payload, path)
+
+  let modified = false;
+
+  if (!hasCorrectStructure) {
+    console.log('Setting placeholder config for macroConnectome config');
+    payload = expectedPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'connectome') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 0
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'macroconnectome-config.json', session)
+  const updatedResource: MacroConnectomeConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'connectome',
+    configVersion: supportedVersion
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function setPlaceholderForSynapseConfig(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.synapseConfig['@id']
+  const resource = await fetchResourceById<SynapseConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<SynapseConfigPayload>(fileUrl, session)
+  const expectedPayload = { configuration: {} };
+  let modified = false;
+
+  if (!isEqual(payload, expectedPayload)) {
+    console.log('Setting empty config for placeholder in synapse config');
+    payload = expectedPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'connectome_filtering') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 0
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'synapse-config.json', session)
+  const updatedResource: SynapseConfigResource = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'connectome_filtering',
+    configVersion: supportedVersion
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function setPlaceholderForMicroConnectome(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.microConnectomeConfig['@id']
+  const resource = await fetchResourceById<MicroConnectomeConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(fileUrl, session)
+  const expectedPayload = {"unitCode":{"scale":"unit","exponent":"unit","mean_synapses_per_connection":"unit","sdev_synapses_per_connection":"unit","mean_conductance_velocity":"unit","sdev_conductance_velocity":"unit"},"hasPart":{"1":{"label":"left","hasPart":{"1":{"label":"left","hasPart":{"http://api.brain-map.org/api/v2/data/Structure/614454292":{"hasPart":{"http://api.brain-map.org/api/v2/data/Structure/614454293":{"hasPart":{"http://uri.interlex.org/base/ilx_0383208":{"label":"L2_TPC:A","hasPart":{"http://uri.interlex.org/base/ilx_0383208":{"label":"L2_TPC:A","variantDefinition":{"algorithm":"distance","version":"v1"},"configuration":[{"name":"scale","value":0.11},{"name":"exponent","value":0.007},{"name":"mean_synapses_per_connection","value":100},{"name":"sdev_synapses_per_connection","value":1},{"name":"mean_conductance_velocity","value":0.3},{"name":"sdev_conductance_velocity","value":0.01}]}}}}}}}}}}}}}
+  const path = ['unitCode', 'scale']
+  const hasCorrectStructure = get(payload, path)
+
+  let modified = false;
+
+  if (!hasCorrectStructure) {
+    console.log('Rollback to supported payload for MicroConnectome');
+    payload = expectedPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'connectome') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 0
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'microconnectome-config.json', session)
+  const updatedResource: MicroConnectomeConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'connectome',
+    configVersion: supportedVersion
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function setFullMicroConnectome(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.microConnectomeConfig['@id']
+  const resource = await fetchResourceById<MicroConnectomeConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(fileUrl, session)
+
+  const fullFileUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fmmb-point-neuron-framework-model%2Ffc7e2e50-b09b-4dee-8001-1e6a4d410bfc'
+  let fullPayload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(fullFileUrl, session)
+
+  let modified = false;
+
+  if (!('variants' in payload)) {
+    console.log('Setting full payload for MicroConnectome');
+    payload = fullPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'connectome') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 1
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'microconnectome-config.json', session)
+  const updatedResource: MicroConnectomeConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'connectome',
+    configVersion: supportedVersion
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function checkFullMicroConnectomeConfig(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.microConnectomeConfig['@id']
+  const resource = await fetchResourceById<MicroConnectomeConfig>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(fileUrl, session)
+  if ('variants' in payload) {
+    console.log('payload :>> ', payload);
+  }
+}
+
+async function setFullMorphologyAssignment(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.morphologyAssignmentConfig['@id']
+  const resource = await fetchResourceById<MorphologyAssignmentConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<MorphologyAssignmentConfigPayload>(fileUrl, session)
+  const expectedPayload = {"variantDefinition":{"topological_synthesis":{"algorithm":"topological_synthesis","version":"v1"},"placeholder_assignment":{"algorithm":"placeholder_assignment","version":"v1"}},"defaults":{"topological_synthesis":{"id":"https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/5ec117b5-8ffa-4f3b-95ca-1dc8ad1b0c4d", "type":["CanonicalMorphologyModelConfig","Entity"]},"placeholder_assignment":{"id":"https://bbp.epfl.ch/neurosciencegraph/data/06b340d4-ac99-4459-bab4-013ef7199c36","type":["PlaceholderMorphologyConfig","Entity"]}},"configuration":{"topological_synthesis":{}}};
+  const path = ['variantDefinition', 'topological_synthesis', 'algorithm']
+  const hasCorrectStructure = get(payload, path)
+
+  let modified = false;
+
+  if (!hasCorrectStructure) {
+    console.log('Setting supported payload for MorphologyAssignment');
+    payload = expectedPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'mmodel') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 1
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'morphology-assignment-config.json', session)
+  const updatedResource: MorphologyAssignmentConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'mmodel',
+    configVersion: supportedVersion,
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function setPlaceholderEModelAssignment(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.eModelAssignmentConfig['@id']
+  const resource = await fetchResourceById<EModelAssignmentConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<EModelAssignmentConfigPayload>(fileUrl, session)
+  const expectedPayload = {"http://api.brain-map.org/api/v2/data/Structure/997":{"variantDefinition":{"algorithm":"emodel_assignment","version":"v1"},"inputs":[{"name":"etype_emodels","type":"Dataset","id":"https://bbp.epfl.ch/neurosciencegraph/data/000ccb05-8518-47ff-b726-87ff3975e2da"}],"configuration":{}}}
+  let modified = false;
+
+  if (!isEqual(payload, expectedPayload)) {
+    console.log('Setting supported payload for EModelAssignment');
+    payload = expectedPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'placeholder') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 0
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'emodel-assignment-config.json', session)
+  const updatedResource: EModelAssignmentConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'placeholder',
+    configVersion: supportedVersion,
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function fixCellCompositionRev(config: BrainModelConfig, session: Session) {
+  const cellCompositionId = config.configs.cellCompositionConfig['@id']
+  const compositionResource = await fetchResourceById<CellCompositionConfigResource>(cellCompositionId, session)
+  const compositionFileUrl = compositionResource.distribution.contentUrl
+  const exampleBrainRegion = 'http://api.brain-map.org/api/v2/data/Structure/23'
+  const compositionPayload = await fetchJsonFileByUrl<CellCompositionConfigPayload>(compositionFileUrl, session)
+
+  const updateComposition = async (payload: unknown) => {  
+    const fileMeta = await updateJsonFileByUrl(compositionFileUrl, payload, 'cell-composition-config.json', session)
+    
+    const updatedResource: CellCompositionConfig = {
+      ...compositionResource,
+      distribution: createDistribution(fileMeta),
+    }
+    return updateResource(updatedResource, compositionResource._rev, session)
+  }
+
+  const removeRevisionsInComposition = (composition: CompositionOverridesWorkflowConfig, original: any) => {
+    const revKey = '_rev'
+
+    Object.entries(composition).forEach(([brainRegionKey, brainRegionValue]) => {
+      Object.entries(brainRegionValue.hasPart).forEach(([mTypeKey, mTypeValue]) => {
+        const sanitizedMTypeKey = mTypeKey.replace(/\?rev=.+/, '')
+        const rev = get(original, [brainRegionKey, 'hasPart', sanitizedMTypeKey, revKey])
+        if (!rev) debugger;
+        mTypeValue[revKey] = rev;
+
+        Object.entries(mTypeValue.hasPart).forEach(([eTypeKey, eTypeValue]) => {
+          const sanitizedETypeKey = eTypeKey.replace(/\?rev=.+/, '')
+          const rev = get(original, [brainRegionKey, 'hasPart', sanitizedMTypeKey, 'hasPart', sanitizedETypeKey, revKey])
+          if (!rev) debugger;
+          eTypeValue[revKey] = rev;
+          set(mTypeValue.hasPart, [sanitizedETypeKey], eTypeValue)
+          delete mTypeValue.hasPart?.[eTypeKey]
+        })
+
+        set(brainRegionValue.hasPart, [sanitizedMTypeKey], mTypeValue)
+        delete brainRegionValue?.hasPart?.[mTypeKey]
+      })
+    })
+  }
+
+  const path = [ROOT_BRAIN_REGION, 'configuration', 'overrides', exampleBrainRegion, 'hasPart', 'https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType', '_rev']
+  if (get(compositionPayload, path)) return;
+  
+  console.log('Removing rev in cell composition...');
+  const cellCompositionSummaryUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/atlasdatasetrelease/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fatlasdatasetrelease%2Fb480420a-a452-4e08-8918-b4f24d1ca7b1'
+  const cellCompositionSummaryPayload: any = await fetchJsonFileByUrl(cellCompositionSummaryUrl, session)
+
+  const overrides = compositionPayload[ROOT_BRAIN_REGION].configuration.overrides;
+  removeRevisionsInComposition(overrides, cellCompositionSummaryPayload.hasPart)
+  const updated = await updateComposition(compositionPayload)
+  console.log('Done', updated['@id']);
+}
+
+async function setFullSynapseConfig(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.synapseConfig['@id']
+  const resource = await fetchResourceById<SynapseConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<SynapseConfigPayload>(fileUrl, session)
+  const hasCorrectStructure = ('defaults' in payload) && ('configuration' in payload)
+
+  const fullFileUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fmmb-point-neuron-framework-model%2F50e43aa2-d26f-4948-b19d-f0e576b64b81'
+  let fullPayload = await fetchJsonFileByUrl<SynapseConfigPayload>(fullFileUrl, session)
+  let modified = false;
+
+  if (!hasCorrectStructure) {
+    console.log('Setting full config in synapse config');
+    payload = fullPayload as any;
+    modified = true
+  }
+
+  if (resource.generatorName !== 'connectome_filtering') {
+    console.log('Fixing generatorName');
+    modified = true
+  }
+
+  const supportedVersion = 1
+  if (resource.configVersion !== supportedVersion) {
+    console.log('Fixing configVersion');
+    modified = true
+  }
+
+  if (!modified) return;
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'synapse-config.json', session)
+  const updatedResource: SynapseConfigResource = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+    generatorName: 'connectome_filtering',
+    configVersion: supportedVersion
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
+}
+
+async function checkFullSynapseConfig(config: BrainModelConfig, session: Session) {
+  const subConfigId = config.configs.synapseConfig['@id']
+  const resource = await fetchResourceById<SynapseConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<SynapseConfigPayload>(fileUrl, session)
+  if ('defaults' in payload) {
+    console.log('payload :>> ', payload);
+  }
 }
