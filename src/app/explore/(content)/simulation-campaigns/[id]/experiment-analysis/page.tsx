@@ -32,6 +32,15 @@ export default function ExperimentAnalyses() {
   const onFinish = async (values: Analysis) => {
     if (!session) return;
     setLoading(true);
+
+    const configurationTemplate = await createResource(
+      {
+        '@context': ['https://bbp.neuroshapes.org'],
+        '@type': 'ConfigurationTemplate',
+      },
+      session
+    );
+
     await createResource(
       {
         '@context': ['https://bbp.neuroshapes.org'],
@@ -40,9 +49,14 @@ export default function ExperimentAnalyses() {
         codeRepository: {
           '@id': values.codeRepository,
         },
+        configurationTemplate: {
+          '@id': configurationTemplate['@id'],
+          '@type': 'ConfigurationTemplate',
+        },
       },
       session
     );
+
     fetchAnalyses(session, (response: Analysis[]) => setAnalyses(response));
     setLoading(false);
     onCancel();
