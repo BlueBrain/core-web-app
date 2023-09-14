@@ -3,7 +3,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRightOutlined, LineChartOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, LineChartOutlined, RightOutlined } from '@ant-design/icons';
 import { Input, Modal, Form, Button } from 'antd';
 import { useAtomValue } from 'jotai';
 import { Session } from 'next-auth';
@@ -23,7 +23,12 @@ export default function ExperimentAnalyses() {
   const session = useAtomValue(sessionAtom);
   const [search, setSearch] = useState('');
   const filteredAnalyses = useMemo(
-    () => analyses.filter((a) => a.codeRepository['@id'].toLocaleLowerCase().includes(search)),
+    () =>
+      analyses.filter(
+        (a) =>
+          a.name.toLocaleLowerCase().includes(search) ||
+          a.description.toLocaleLowerCase().includes(search)
+      ),
     [analyses, search]
   );
 
@@ -53,6 +58,7 @@ export default function ExperimentAnalyses() {
           '@id': configurationTemplate['@id'],
           '@type': 'ConfigurationTemplate',
         },
+        description: values.description ?? '',
       },
       session
     );
@@ -110,39 +116,8 @@ export default function ExperimentAnalyses() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAnalyses.map((item, i) => (
-            <div
-              key={i} // eslint-disable-line react/no-array-index-key
-              className="border rounded-lg p-4 bg-white shadow-md"
-            >
-              <h3 className="text-xl font-semibold mb-4">
-                <span className="mr-2 text-primary-8">
-                  <LineChartOutlined style={{ fontSize: '16px', color: '#1890ff' }} />
-                </span>
-                {`Analysis ${i + 1}`}
-              </h3>
-              <div className="mt-2 text-sm text-gray-700">
-                <span className="block font-semibold">Git URL:</span>
-                <a
-                  href={item.codeRepository['@id']}
-                  className="text-blue-500 hover:underline truncate"
-                >
-                  {item.codeRepository['@id']}
-                </a>
-              </div>
-              <div className="mt-2 text-sm text-gray-700">
-                <span className="font-semibold">Git Ref:</span>
-                <span className="ml-2">{item.commit}</span>
-              </div>
-              <div className="mt-2 text-sm text-gray-700">
-                <span className="font-semibold">Subdirectory:</span>
-                <span className="ml-2">{item.subdirectory}</span>
-              </div>
-              <div className="mt-2 text-sm text-gray-700">
-                <span className="font-semibold">Command:</span>
-                <span className="ml-2">{item.command}</span>
-              </div>
-            </div>
+          {filteredAnalyses.map((item) => (
+            <AnalysisCard key={item['@id']} analysis={item} />
           ))}
         </div>
 
@@ -153,6 +128,23 @@ export default function ExperimentAnalyses() {
             initialValues={{ subdirectory: '' }}
             onFinish={onFinish}
           >
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input the name!',
+                },
+              ]}
+            >
+              <Input className="block" />
+            </Form.Item>
+
+            <Form.Item label="Description" name="description">
+              <Input className="block" />
+            </Form.Item>
+
             <Form.Item
               label="Code Repository"
               name="codeRepository"
@@ -223,12 +215,15 @@ export default function ExperimentAnalyses() {
 }
 
 interface Analysis {
+  '@id': string;
   codeRepository: { '@id': string };
   programmingLanguage: string;
   command: string;
   commit?: string;
   branch?: string;
   subdirectory: string;
+  name: string;
+  description: string;
 }
 
 const fetchAnalyses = async (session: Session, onSuccess: (response: Analysis[]) => void) => {
@@ -287,4 +282,60 @@ function useFetchSimCampaign() {
     fetch();
   }, [pathname, session]);
   return simCampaign;
+}
+
+function AnalysisCard({ analysis }: { analysis: Analysis }) {
+  const [showDetails, setShowDetails] = useState(false);
+  return (
+    <div className="border rounded-lg p-4 bg-white shadow-md">
+      <h3 className="text-xl font-semibold mb-4">
+        <span className="mr-2 text-primary-8">
+          <LineChartOutlined style={{ fontSize: '16px', color: '#1890ff' }} />
+        </span>
+        {analysis.name}
+      </h3>
+
+      <div className="mt-2 text-sm text-gray-700">
+        <p>{analysis.description}</p>
+      </div>
+
+      <div
+        className="mt-2 flex justify-between cursor-pointer"
+        onClick={() => setShowDetails(!showDetails)}
+      >
+        <div className="text-primary-8 font-bold">Details</div>
+        <RightOutlined />
+      </div>
+      {showDetails && (
+        <>
+          <div className="mt-2 text-sm text-gray-700">
+            <span className="block font-semibold">Git URL:</span>
+            <a
+              href={analysis.codeRepository['@id']}
+              className="text-blue-500 hover:underline truncate"
+            >
+              {analysis.codeRepository['@id']}
+            </a>
+          </div>
+
+          <div className="mt-2 text-sm text-gray-700">
+            <span className="font-semibold">Git Ref:</span>
+            <span className="ml-2">{analysis.commit}</span>
+          </div>
+          <div className="mt-2 text-sm text-gray-700">
+            <span className="font-semibold">Branch:</span>
+            <span className="ml-2">{analysis.branch}</span>
+          </div>
+          <div className="mt-2 text-sm text-gray-700">
+            <span className="font-semibold">Subdirectory:</span>
+            <span className="ml-2">{analysis.subdirectory}</span>
+          </div>
+          <div className="mt-2 text-sm text-gray-700">
+            <span className="font-semibold">Command:</span>
+            <span className="ml-2">{analysis.command}</span>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
