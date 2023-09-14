@@ -7,6 +7,7 @@ import {
   SynthesisPreviewInterface,
   MModelWorkflowOverrides,
   NeuriteType,
+  CanonicalParamsAndDistributions,
 } from '@/types/m-model';
 import { morphologyAssignmentConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
@@ -29,7 +30,6 @@ import {
   NeuronMorphologyModelParameter,
 } from '@/types/nexus';
 import { setRevision } from '@/util/nexus';
-import { paramsAndDistResources } from '@/constants/cell-model-assignment/m-model';
 import {
   generateBrainRegionMTypeMapKey,
   generateBrainRegionMTypeArray,
@@ -62,8 +62,12 @@ export const getMModelLocalParamsAtom = atom<ParamConfig | null>((get) => {
 
 export const mModelPreviewConfigAtom = atom<SynthesisPreviewInterface>((get) => {
   const localOverrides = get(mModelLocalParamsAtom);
+  const canonicalParamsAndDistribution = get(canonicalParamsAndDistributionAtom);
+
   return {
-    ...paramsAndDistResources,
+    resources: {
+      ...(canonicalParamsAndDistribution || {}),
+    },
     overrides: localOverrides,
   };
 });
@@ -276,16 +280,26 @@ export const canonicalMorphologyModelIdAtom = atom<Promise<string | null>>(async
   return canonicalMorphologyModelId;
 });
 
+export const canonicalMorphologyModelAtom = atom<Promise<CanonicalMorphologyModel | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
+
+    if (!session || !canonicalMorphologyModelId) return null;
+
+    return fetchResourceById<CanonicalMorphologyModel>(canonicalMorphologyModelId, session);
+  }
+);
+
+export const canonicalParamsAndDistributionAtom = atom<CanonicalParamsAndDistributions | null>(
+  null
+);
+
 export const canonicalModelParametersAtom = atom<Promise<ParamConfig | null>>(async (get) => {
   const session = get(sessionAtom);
-  const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
+  const canonicalMorphologyModel = await get(canonicalMorphologyModelAtom);
 
-  if (!session || !canonicalMorphologyModelId) return null;
-
-  const canonicalMorphologyModel = await fetchResourceById<CanonicalMorphologyModel>(
-    canonicalMorphologyModelId,
-    session
-  );
+  if (!session || !canonicalMorphologyModel) return null;
 
   const neuronMorphologyModelParameter = await fetchResourceById<NeuronMorphologyModelParameter>(
     canonicalMorphologyModel.morphologyModelParameter['@id'],
@@ -322,7 +336,7 @@ export const canonicalMorphologyModelConfigPayloadAtom = atom<
     const mTypeIds = Object.keys(mTypeParentDict);
     mTypeIds.forEach((mTypeId) => {
       const data = mTypeParentDict[mTypeId];
-      mTypeParentDict[`${mTypeId}?rev=${data.rev}`] = data;
+      mTypeParentDict[`${mTypeId}?rev=${data._rev}`] = data;
       delete mTypeParentDict[mTypeId];
     });
   });

@@ -371,7 +371,8 @@ export interface SubCellularModelScriptResource extends ResourceMetadata, SubCel
 /* ----------------------------- EModelUIConfig ----------------------------- */
 
 export interface EModelUIConfig {
-  morphology: ExemplarMorphologyDataType | null;
+  eModelName: string;
+  morphologies: ExemplarMorphologyDataType[];
   traces: ExperimentalTracesDataType[];
   mechanism: MechanismForUI[];
   parameters: Record<SimulationParameterKeys, number>;

@@ -23,6 +23,7 @@ import {
   voltageFeatures,
   featureDescriptionsMap,
 } from '@/constants/cell-model-assignment/e-model';
+import { ExperimentalTrace, ReconstructedNeuronMorphology } from '@/types/explore-section/es';
 
 const NOT_AVAILABLE_STR = 'Data not available';
 
@@ -46,28 +47,61 @@ export function convertRemoteParamsForUI(
 }
 
 export function convertMorphologyForUI(
-  remoteMorphology: NeuronMorphology
+  remoteMorphology: NeuronMorphology | ReconstructedNeuronMorphology
 ): ExemplarMorphologyDataType {
-  return {
+  const commonProps = {
     '@id': remoteMorphology['@id'],
     name: remoteMorphology.name,
-    description: NOT_AVAILABLE_STR,
-    brainLocation: NOT_AVAILABLE_STR,
+  };
+
+  if ('objectOfStudy' in remoteMorphology) {
+    // morph from e-model pipeline
+    return {
+      ...commonProps,
+      description: NOT_AVAILABLE_STR,
+      brainLocation: NOT_AVAILABLE_STR,
+      mType: NOT_AVAILABLE_STR,
+      contributor: remoteMorphology.contribution.agent.name || NOT_AVAILABLE_STR,
+    };
+  }
+
+  return {
+    // morph from search table
+    ...commonProps,
+    description: remoteMorphology.description || NOT_AVAILABLE_STR,
+    brainLocation: remoteMorphology.brainRegion.label,
     mType: NOT_AVAILABLE_STR,
-    contributor: NOT_AVAILABLE_STR,
+    contributor: remoteMorphology.contributors?.map((c) => c.label).join(' '),
   };
 }
 
-export function convertTracesForUI(traces: Trace[]): ExperimentalTracesDataType[] {
-  return traces.map((trace) => ({
+export function convertTraceForUI(trace: Trace | ExperimentalTrace): ExperimentalTracesDataType {
+  const commonProps = {
     '@id': trace['@id'],
     cellName: trace.name,
+  };
+
+  if ('stimulus' in trace) {
+    // trace from e-model pipeline
+    return {
+      ...commonProps,
+      mType: NOT_AVAILABLE_STR,
+      eType: NOT_AVAILABLE_STR,
+      description: NOT_AVAILABLE_STR,
+      eCodes: trace.stimulus.map((s) => s.stimulusType.label as ECode),
+      subjectSpecies: trace.subject?.species?.label || NOT_AVAILABLE_STR,
+    };
+  }
+
+  return {
+    // trace from search table
+    ...commonProps,
     mType: NOT_AVAILABLE_STR,
     eType: NOT_AVAILABLE_STR,
-    description: NOT_AVAILABLE_STR,
-    eCodes: trace.stimulus.map((s) => s.stimulusType.label as ECode),
-    subjectSpecies: trace.subject.species.label,
-  }));
+    description: trace?.description || NOT_AVAILABLE_STR,
+    eCodes: [],
+    subjectSpecies: NOT_AVAILABLE_STR,
+  };
 }
 
 export function convertFeaturesForUI(features: AllFeatureKeys[]): FeatureParameterGroup {

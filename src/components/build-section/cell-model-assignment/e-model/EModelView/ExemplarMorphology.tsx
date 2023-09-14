@@ -55,37 +55,59 @@ export default function ExemplarMorphology() {
 
     setEModelUIConfig((oldAtomData) => ({
       ...oldAtomData,
-      morphology: structuredClone(exemplarMorphology),
+      morphologies: [structuredClone(exemplarMorphology)],
     }));
   }, [eModelEditMode, exemplarMorphology, setEModelUIConfig]);
 
-  const onMorphologyDelete = () => {
+  const onMorphologyDelete = (morphology: ExemplarMorphologyDataType) => {
     setEModelUIConfig((oldAtomData) => {
-      if (!oldAtomData?.morphology) return oldAtomData;
+      if (!oldAtomData?.morphologies) return oldAtomData;
+
+      const results = oldAtomData.morphologies.filter(
+        (morph) => morph['@id'] !== morphology['@id']
+      );
 
       return {
         ...oldAtomData,
-        morphology: null,
+        morphologies: results,
       };
     });
   };
 
-  const morphology = eModelEditMode ? eModelUIConfig?.morphology : exemplarMorphology;
+  const exemplarMorphologyAsList = exemplarMorphology ? [exemplarMorphology] : [];
+  const morphologies = eModelEditMode ? eModelUIConfig?.morphologies : exemplarMorphologyAsList;
   const deleteColumn = {
     title: '',
     key: 'action',
-    render: () => (
-      <button type="button" onClick={onMorphologyDelete}>
+    render: (morphology: ExemplarMorphologyDataType) => (
+      <button type="button" onClick={() => onMorphologyDelete(morphology)}>
         <DeleteOutlined />
       </button>
     ),
   };
   const columns = eModelEditMode ? [...defaultColumns, deleteColumn] : defaultColumns;
+  let displayMorphologyError = null;
+  if (morphologies && morphologies.length !== 1) {
+    if (morphologies.length > 1) {
+      displayMorphologyError = 'Too many morphologies selected. Keep only one.';
+    } else {
+      displayMorphologyError = 'Select at least one morphology';
+    }
+  }
 
   return (
     <>
       <div className="text-primary-8 text-2xl font-bold">Exemplar morphology</div>
-      {morphology && <DefaultEModelTable dataSource={[morphology]} columns={columns} />}
+
+      <DefaultEModelTable<ExemplarMorphologyDataType>
+        dataSource={morphologies || []}
+        columns={columns}
+      />
+
+      {displayMorphologyError && (
+        <div className="text-red-400 text-xs">{displayMorphologyError}</div>
+      )}
+
       {eModelEditMode && (
         <>
           <GenericButton
@@ -97,8 +119,8 @@ export default function ExemplarMorphology() {
           />
           <PickMorphology
             isOpen={openPicker}
-            onCancel={() => setOpenPicker((isOpen) => !isOpen)}
-            onOk={() => {}}
+            onCancel={() => setOpenPicker(false)}
+            onOk={() => setOpenPicker(false)}
           />
         </>
       )}

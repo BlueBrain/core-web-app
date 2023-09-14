@@ -1,15 +1,5 @@
-export type RequiredParamRawNames =
-  | 'radius'
-  | 'randomness'
-  | 'step_size'
-  | 'orientation'
-  | 'targeting';
-export type RequiredParamDisplayNames =
-  | 'Radius'
-  | 'Randomness'
-  | 'Step size'
-  | 'Orientation'
-  | 'Targeting';
+export type RequiredParamRawNames = 'randomness' | 'step_size' | 'orientation' | 'targeting';
+export type RequiredParamDisplayNames = 'Randomness' | 'Step size' | 'Orientation' | 'Targeting';
 
 export type ParamsRawNames =
   | (RequiredParamRawNames & 'targeting')
@@ -58,11 +48,13 @@ export interface ParamConfig extends ParamConfigBase {
   };
 }
 
+export interface CanonicalParamsAndDistributions {
+  parameters_id: string;
+  distributions_id: string;
+}
+
 export interface SynthesisPreviewInterface {
-  resources: {
-    parameters_id: string;
-    distributions_id: string;
-  };
+  resources: CanonicalParamsAndDistributions | {};
   overrides: ParamConfigBase | {};
 }
 

@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import Spinner from '@/components/Spinner';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
-import { ESResponseRaw } from '@/types/explore-section/resources';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 
 export default function DownloadButton({
   children,
@@ -23,11 +23,6 @@ export default function DownloadButton({
     </div>
   );
 }
-
-export type RenderButtonProps = {
-  selectedRows: ESResponseRaw[];
-  clearSelectedRows: () => void;
-};
 
 export function ExploreDownloadButton({
   children,

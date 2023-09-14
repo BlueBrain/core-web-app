@@ -4,8 +4,8 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable class-methods-use-this */
 import { isNil } from 'lodash';
-import Async from '../../common/utils/async';
-import GenericEvent from '../../common/utils/generic-event';
+import Async from '../utils/async';
+import GenericEvent from '../utils/generic-event';
 import Progress, {
   isJsonRpcMessage,
   isJsonRpcQueryFailure,
@@ -56,6 +56,12 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
   private readonly secure: boolean;
 
   private readonly trace: (prefix: string, method: string, ...params: unknown[]) => void;
+
+  private ws?: WebSocket;
+
+  private promisedConnection?: Promise<WebSocket>;
+
+  private readonly pendingQueries = new Map<string, PendingQuery>();
 
   constructor(
     hostAndPort: string,
@@ -242,29 +248,29 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
     return isJsonRpcQuerySuccess(data) && data.success;
   }
 
-  async connect(): Promise<void> {
+  async connect(): Promise<WebSocket> {
     for (let maxLoops = 0; maxLoops < 5; maxLoops += 1) {
-      const success = await this.actualConnect();
-      if (success) return;
-      await Async.sleep(300);
+      try {
+        return await this.actualConnect();
+      } catch (ex) {
+        delete this.promisedConnection;
+        // eslint-disable-next-line no-console
+        console.warn(`Connection attempt: ${maxLoops + 2} / 5`);
+        logError(ex);
+        await Async.sleep(300);
+      }
     }
     throw Error(`Unable to connect to WebSocket service "${this.getWebSocketURL()}"!`);
   }
 
-  private actualConnect(): Promise<boolean> {
-    if (this.ws) {
-      try {
-        this.ws.close();
-      } catch (ex) {
-        logError(`Unable to close WSS connection to "${this.getWebSocketURL()}"!`);
-      }
-      delete this.ws;
-    }
-    return new Promise((resolve) => {
+  private actualConnect(): Promise<WebSocket> {
+    if (this.promisedConnection) return this.promisedConnection;
+
+    this.promisedConnection = new Promise((resolve, reject) => {
       const url = this.getWebSocketURL();
       const handleError = (ex: any) => {
         logError(`Unable to connect to JsonRpc Service on "${url.toString()}"!`, ex);
-        resolve(false);
+        reject(Error(`Unable to connect to JsonRpc Service on "${url.toString()}"!`));
       };
       const handleConnectionSuccess = () => {
         const { ws } = this;
@@ -272,11 +278,13 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
 
         ws.removeEventListener('open', handleConnectionSuccess);
         ws.removeEventListener('error', handleError);
-        resolve(true);
+        resolve(ws);
       };
       try {
+        this.trace('[JsonRPC]', 'Connecting WebSocket', { url: shortenUrl(url) });
         const ws = new WebSocket(url);
         this.ws = ws;
+        this.trace('[JsonRPC]', this.stateAsString);
         // This is very IMPORTANT!
         // With blobs, we have weird bugs when trying to
         // get the videostreaming messages without binaryType = "arraybuffer".
@@ -288,10 +296,11 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
         ws.addEventListener('error', handleError);
         ws.addEventListener('open', handleConnectionSuccess);
       } catch (ex) {
-        logError(`Connection attempt failed to ${url.toString()}!`, ex);
-        resolve(false);
+        logError(`Connection attempt failed to ${shortenUrl(url)}!`, ex);
+        reject(Error(`Connection attempt failed to ${shortenUrl(url)}!`));
       }
     });
+    return this.promisedConnection;
   }
 
   readonly tryToExec = async (
@@ -299,11 +308,7 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
     param?: unknown,
     chunk?: ArrayBuffer | string
   ): Promise<JsonRpcQueryResult> => {
-    if (!this.ws) {
-      logError('WebSocket is still undefined!');
-      throw Error('JsonRpcService is not connected yet!');
-    }
-
+    const ws = await this.connect();
     return new Promise((resolve, reject) => {
       const id = this.nextId();
       const message = {
@@ -320,7 +325,6 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
         resolve,
       });
       try {
-        const { ws } = this;
         if (!ws) {
           logError('WebSocket is now undefined!');
           throw Error('JsonRpcService is not connected!');
@@ -347,11 +351,19 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
 
   // #################### PRIVATE ####################
 
-  private ws?: WebSocket;
+  private get stateAsString() {
+    const { ws } = this;
+    if (!ws) return 'NOt CONNECTED';
 
-  private readonly pendingQueries = new Map<string, PendingQuery>();
-
-  private readonly resources = new Map<string, SerializableData>();
+    return (
+      {
+        [ws.CLOSED]: 'CLOSED',
+        [ws.CLOSING]: 'CLOSING',
+        [ws.CONNECTING]: 'CONNECTING',
+        [ws.OPEN]: 'OPEN',
+      }[ws.readyState] ?? `STATE #${ws.readyState}`
+    );
+  }
 
   private getWebSocketURL() {
     const { host, port } = this;
@@ -572,4 +584,11 @@ function extractHostAndPort(hostAndPort: string): [host: string, port: number] {
   const [host, tail] = hostAndPort.split(':');
   const port = parseInt(tail, 10);
   return [host, Number.isNaN(port) ? 0 : port];
+}
+
+function shortenUrl(url: string | { toString: () => string }): string {
+  return (typeof url === 'string' ? url : url.toString())
+    .split('/')
+    .map((part) => (part.length < 64 ? part : `${part.substring(0, 63)}...`))
+    .join('/');
 }

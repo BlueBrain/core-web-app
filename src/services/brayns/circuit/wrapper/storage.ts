@@ -1,4 +1,4 @@
-import { JsonRpcServiceInterface } from '../json-rpc/types';
+import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 

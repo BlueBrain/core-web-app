@@ -1,14 +1,12 @@
 'use client';
 
-import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
-import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { ExploreResource } from '@/types/explore-section/es';
 import { SortState } from '@/types/explore-section/application';
 import styles from '@/app/explore/explore.module.scss';
-
-type SetAtom<Args extends any[], Result> = (...args: Args) => Result;
 
 type ResizeInit = {
   key: string | null;
@@ -21,10 +19,10 @@ const COL_SIZING = {
 };
 
 export default function useExploreColumns(
-  setSortState: SetAtom<[SetStateAction<SortState | undefined>], void>,
+  setSortState: Dispatch<SetStateAction<SortState | undefined>>,
   sortState?: SortState,
-  initialColumns: ColumnProps<ExploreSectionResource>[] = []
-): ColumnProps<ExploreSectionResource>[] {
+  initialColumns: ColumnProps<ExploreResource>[] = []
+): ColumnProps<ExploreResource>[] {
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>([]);
 
   const keys = useMemo(() => Object.keys(EXPLORE_FIELDS_CONFIG), []);

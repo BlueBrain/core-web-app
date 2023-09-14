@@ -1,7 +1,7 @@
 import State from '../../common/state';
-import JsonRpcService from '../json-rpc/json-rpc';
+import JsonRpcService from '../../common/json-rpc/json-rpc';
 import BraynsWrapper from '../wrapper/wrapper';
-import JsonRpcSerializerService from '../json-rpc/json-rpc-serializer';
+import JsonRpcSerializerService from '../../common/json-rpc/json-rpc-serializer';
 import BackendAllocatorService from './backend-allocator-service';
 import Persistence from './persistence';
 import { logError } from '@/util/logger';

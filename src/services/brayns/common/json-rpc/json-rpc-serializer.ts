@@ -1,4 +1,4 @@
-import GenericEvent from '../../common/utils/generic-event';
+import GenericEvent from '../utils/generic-event';
 import JsonRpcService from './json-rpc';
 import Progress, { JsonRpcServiceInterface, LongTask, ProgressHandler } from './types';
 

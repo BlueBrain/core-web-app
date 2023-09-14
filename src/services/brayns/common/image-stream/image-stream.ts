@@ -1,5 +1,5 @@
 import { JsonRpcServiceInterface } from '../json-rpc/types';
-import GenericEvent from '../../common/utils/generic-event';
+import GenericEvent from '../utils/generic-event';
 import { loadImage } from './image-tools';
 import { logError } from '@/util/logger';
 import { assertNumber, assertObject, assertOptionalArrayBuffer } from '@/util/type-guards';

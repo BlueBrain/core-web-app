@@ -38,3 +38,5 @@ export const normalizedDate = (date: string | number | Date) =>
 
 export const formatDate = (date: string | Date, formatStr: string = 'dd-MM-yyyy') =>
   format(new Date(date), formatStr);
+
+export const normalizeString = (term: string) => term.trim().toLowerCase();

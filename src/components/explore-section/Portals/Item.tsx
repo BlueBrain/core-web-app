@@ -7,6 +7,7 @@ import TextContent from './TextContent';
 import { Portal } from '@/types/explore-portal';
 import { ArrowRightIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 export default function PortalItem({ content }: { content: Portal }) {
   const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
@@ -27,7 +28,7 @@ export default function PortalItem({ content }: { content: Portal }) {
         {/* Image */}
         <div className="w-48 h-full overflow-hidden shadow-strongImage bg-primary-2">
           <Image
-            src={content.image}
+            src={`${basePath}/${content.image}`}
             alt={content.name}
             width={400}
             height={400}

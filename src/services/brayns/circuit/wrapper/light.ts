@@ -1,4 +1,4 @@
-import { JsonRpcServiceInterface } from '../json-rpc/types';
+import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
 import { BraynsColorOpaque } from '../../common/types';
 import { Vector3 } from '../../common/utils/calc';
 import { assertBraynsModel } from './types';

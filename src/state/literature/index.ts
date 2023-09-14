@@ -9,8 +9,10 @@ import {
   FilterValues,
   ContextualLiteratureAtom,
   ContextQAItem,
+  ArticleTypeSuggestion,
 } from '@/types/literature';
 import { Filter } from '@/components/Filter/types';
+import { getArticleTypes } from '@/components/explore-section/Literature/actions';
 
 export type BrainRegion = { id: string; title: string };
 
@@ -132,6 +134,11 @@ const useContextualLiteratureAtom = () => {
   };
 };
 
+const articleTypeSuggestionsAtom = atom<Promise<ArticleTypeSuggestion[]>>(async () => {
+  const articleTypeResponse = await getArticleTypes();
+  return articleTypeResponse;
+});
+
 export {
   literatureAtom,
   literatureResultAtom,
@@ -141,4 +148,5 @@ export {
   useLiteratureAtom,
   useContextualLiteratureAtom,
   useContextualLiteratureResultAtom,
+  articleTypeSuggestionsAtom,
 };

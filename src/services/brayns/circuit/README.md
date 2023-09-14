@@ -19,9 +19,8 @@ It has a REST interface with two entry points:
 1. POST /start
    - params: `{ usecase: string }`
      - `usecase` is used to select which version of renderer and backend to launch.
-       Possible values are defined here: <https://bbpgitlab.epfl.ch/viz/mooc/vmm/-/blob/sbo/v1/vmm/script_list.py>
-       To edit launch scripts, just create a MR for the `sbo/v1` branch.
-       And make sure to add **"USE_CASES=SBO1"** in the commit message.
+       Possible values are defined here: [script_list.py](https://bbpgitlab.epfl.ch/viz/brayns/vsm/-/blob/master/vsm/script_list.py)
+       To edit launch scripts, create a MR for the `master` branch.
    - return: `{ job_id: string }`
      - `job_id` uniquely identifies the job you have allocated.
 2. GET /status/${job_id}

@@ -84,6 +84,8 @@ export type GetGenerativeQAInput = {
   fromDate?: string;
   endDate?: string;
   journals?: string[];
+  authors?: string[];
+  articleTypes?: string[];
 };
 export type GenerativeQAServerResponse = {
   question: string;
@@ -99,6 +101,16 @@ export type JournalSuggestionResponse = {
   eissn: string;
   print_issn: string;
 }[];
+
+export type AuthorSuggestionResponse = {
+  name: string;
+  docs_in_db: number;
+}[];
+
+export type ArticleTypeSuggestion = {
+  articleType: string;
+  docCount: number;
+};
 
 export const FilterFields = [
   'categories',
@@ -147,6 +159,12 @@ export type BuildQuestionInput = {
   step: string;
   subject: string;
   densityOrCount?: 'density' | 'count';
+};
+
+export type Suggestion = {
+  key: string;
+  label: string;
+  value: string;
 };
 
 /**

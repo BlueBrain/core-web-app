@@ -275,7 +275,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'valueRange',
     unit: 'μm',
     render: {
-      listingViewFn: (_t, r) => selectorFnLayerThickness(r._source?.layerThickness),
+      listingViewFn: selectorFnLayerThickness,
       detailViewFn: (resource) => <LayerThicknessField detail={resource} />,
     },
     vocabulary: {

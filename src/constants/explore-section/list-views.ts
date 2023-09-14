@@ -1,5 +1,3 @@
-import { ESResponseRaw } from '@/types/explore-section/resources';
-
 const BBP_ONTOLOGY_BASE_URL = 'https://bbp.epfl.ch/ontologies/core/bmo/';
 
 export const BOUTON_DENSITY: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalBoutonDensity`;
@@ -21,8 +19,6 @@ export type ExperimentDataTypeName =
   | typeof SYNAPSE_PER_CONNECTION
   | typeof SIMULATION_CAMPAIGNS
   | typeof NEURON_MORPHOLOGY;
-
-export type SelectedRowsProps = ESResponseRaw[];
 
 export const DEFAULT_CHECKLIST_RENDER_LENGTH = 8;
 export const PAGE_SIZE = 30;

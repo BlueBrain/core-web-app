@@ -1,13 +1,17 @@
 import { Key, ReactNode } from 'react';
 import { useAtom } from 'jotai';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
-import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
-import { ESResponseRaw } from '@/types/explore-section/resources';
+import { ExploreESHit } from '@/types/explore-section/es';
 
 type RowSelection = {
   selectedRowKeys: Key[];
-  onChange: (_keys: Key[], rows: ESResponseRaw[]) => void;
+  onChange: (_keys: Key[], rows: ExploreESHit[]) => void;
   type: 'checkbox' | 'radio';
+};
+
+export type RenderButtonProps = {
+  selectedRows: ExploreESHit[];
+  clearSelectedRows: () => void;
 };
 
 export default function WithRowSelection({
@@ -25,8 +29,8 @@ export default function WithRowSelection({
   return (
     <>
       {children({
-        selectedRowKeys: selectedRows.map(({ _source }) => _source._self),
-        onChange: (_keys: Key[], rows: ESResponseRaw[]) => setSelectedRows(() => rows),
+        selectedRowKeys: selectedRows.map(({ _source }: ExploreESHit) => _source._self),
+        onChange: (_keys: Key[], rows: ExploreESHit[]) => setSelectedRows(() => rows),
         type: 'checkbox',
       })}
       {!!(renderButton && selectedRows.length) && renderButton({ selectedRows, clearSelectedRows })}

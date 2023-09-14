@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import { JsonRpcServiceInterface } from '../json-rpc/types';
+import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
 import Calc, { Vector3 } from '../../common/utils/calc';
 
 export default class Camera {

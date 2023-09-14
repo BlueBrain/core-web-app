@@ -3,7 +3,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
 import HeaderPanel from './HeaderPanel';
 import FilterControls from './FilterControls';
-import { ExploreSectionResource } from '@/types/explore-section/resources';
+import { ExploreResource } from '@/types/explore-section/es';
 import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import ListTable from '@/components/ListTable';
@@ -16,7 +16,7 @@ import {
   sortStateAtom,
   pageSizeAtom,
 } from '@/state/explore-section/list-view-atoms';
-import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
+import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 
 function WithControlPanel({
   children,
@@ -75,7 +75,9 @@ export default function DefaultListView({
   const activeColumns = useAtomValue(activeColumnsAtom(type));
   const scopedDataAtom = dataAtom(type);
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
-  const unwrappedData = useAtomValue(useMemo(() => unwrap(scopedDataAtom), [scopedDataAtom]));
+  const unwrappedData = useAtomValue(
+    useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
+  );
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
   const columns = useExploreColumns(setSortState, sortState, [
@@ -83,7 +85,7 @@ export default function DefaultListView({
       title: '#',
       key: 'index',
       className: 'text-primary-7',
-      render: (_text: string, _record: ExploreSectionResource, index: number) => index + 1,
+      render: (_text: string, _record: ExploreResource, index: number) => index + 1,
       width: 70,
     },
   ]);
@@ -120,7 +122,11 @@ export default function DefaultListView({
 
 export function SimulationCampaignView({ title, type }: { title: string; type: string }) {
   const activeColumns = useAtomValue(activeColumnsAtom(type));
-  const data = useAtomValue(useMemo(() => loadable(dataAtom(type)), [type]));
+  const scopedDataAtom = dataAtom(type);
+  const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
+  const unwrappedData = useAtomValue(
+    useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
+  );
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
   const columns = useExploreColumns(setSortState, sortState);
@@ -141,7 +147,8 @@ export function SimulationCampaignView({ title, type }: { title: string; type: s
             </HeaderPanel>
             <ListTable
               columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
-              data={data}
+              dataSource={unwrappedData}
+              loading={data.state === 'loading'}
             />
           </>
         )}
