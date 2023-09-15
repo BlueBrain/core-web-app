@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { PlusOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
@@ -10,6 +12,8 @@ import {
   displayOptions,
   showOnlyOptions,
 } from '@/components/explore-section/Simulations/constants';
+import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
+import usePathname from '@/hooks/pathname';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
@@ -17,6 +21,8 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
 
   const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
   const simulationsCount = useAtomValue(simulationsCountAtom);
+  const [analyses] = useAnalyses();
+  const path = usePathname();
 
   useEffect(() => {
     setDefaultDimensions();
@@ -42,8 +48,14 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           <SimulationOptionsDropdown
             setSelectedValue={setSelectedDisplay}
             selectedValue={selectedDisplay}
-            options={displayOptions}
+            options={[
+              ...displayOptions,
+              ...analyses.map((a) => ({ label: a.name, value: a['@id'] })),
+            ]}
           />
+          <Link href={`${path}/experiment-analysis`}>
+            <PlusOutlined className="text-2xl ml-2 translate-y-[2px]" />
+          </Link>
         </div>
       </div>
       <DimensionSelector coords={resource.parameter?.coords} />

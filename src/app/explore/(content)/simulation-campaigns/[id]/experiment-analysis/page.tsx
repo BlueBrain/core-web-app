@@ -6,13 +6,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRightOutlined, LineChartOutlined, RightOutlined } from '@ant-design/icons';
 import { Input, Modal, Form, Button } from 'antd';
 import { useAtomValue } from 'jotai';
-import { Session } from 'next-auth';
+
 import Link from 'next/link';
+import { fetchAnalyses, useAnalyses, Analysis } from '../../shared';
 import sessionAtom from '@/state/session';
-import { createResource, fetchResourceById, queryES } from '@/api/nexus';
+import { createResource, fetchResourceById } from '@/api/nexus';
 import usePathname from '@/hooks/pathname';
 import { from64 } from '@/util/common';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
+
 import { useSession } from '@/hooks/hooks';
 
 export default function ExperimentAnalyses() {
@@ -212,54 +214,6 @@ export default function ExperimentAnalyses() {
       </div>
     </div>
   );
-}
-
-interface Analysis {
-  '@id': string;
-  codeRepository: { '@id': string };
-  programmingLanguage: string;
-  command: string;
-  commit?: string;
-  branch?: string;
-  subdirectory: string;
-  name: string;
-  description: string;
-}
-
-const fetchAnalyses = async (session: Session, onSuccess: (response: Analysis[]) => void) => {
-  try {
-    const response = await queryES<Analysis>(
-      {
-        query: {
-          bool: {
-            filter: [
-              { term: { _deprecated: false } },
-              {
-                term: {
-                  '@type': 'AnalysisSoftwareSourceCode',
-                },
-              },
-            ],
-          },
-        },
-      },
-      session
-    );
-    onSuccess(response);
-  } catch (error) {
-    throw new Error('Failed to fetch analyses');
-  }
-};
-
-function useAnalyses(): [Analysis[], (a: Analysis[]) => void] {
-  const session = useAtomValue(sessionAtom);
-  const [analyses, setAnalyses] = useState<Analysis[]>([]);
-
-  useEffect(() => {
-    if (!session) return;
-    fetchAnalyses(session, (response: Analysis[]) => setAnalyses(response));
-  }, [session, setAnalyses]);
-  return [analyses, setAnalyses];
 }
 
 function useFetchSimCampaign() {
