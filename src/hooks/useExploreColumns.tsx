@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
@@ -23,16 +23,26 @@ export default function useExploreColumns(
   setSortState: Dispatch<SetStateAction<SortState | undefined>>,
   sortState?: SortState,
   initialColumns: ColumnProps<ExploreResource>[] = [],
-  dimensionColumns: string[] = []
+  dimensionColumns?: string[] | null
 ): ColumnProps<ExploreResource>[] {
   const keys = useMemo(() => Object.keys(EXPLORE_FIELDS_CONFIG), []);
-
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>(
-    [...keys, ...dimensionColumns].map((key) => ({
+    [...keys, ...(dimensionColumns || [])].map((key) => ({
       key,
       width: COL_SIZING.default,
     }))
   );
+
+  useEffect(() => {
+    const totalKeys = dimensionColumns ? [...keys, ...dimensionColumns] : [...keys];
+
+    setColumnWidths(
+      totalKeys.map((key) => ({
+        key,
+        width: COL_SIZING.default,
+      }))
+    );
+  }, [dimensionColumns, keys]);
 
   const sorterES = useCallback(
     (field: string) => {
@@ -54,106 +64,123 @@ export default function useExploreColumns(
     [setSortState, sortState]
   );
 
-  const updateColumnWidths = (resizeInit: ResizeInit, clientX: number) => {
-    const { key, start } = resizeInit;
+  const updateColumnWidths = useCallback(
+    (resizeInit: ResizeInit, clientX: number) => {
+      const { key, start } = resizeInit;
 
-    const delta = start ? clientX - start : 0; // No start? No delta.
-    const colWidthIndex = columnWidths.findIndex(({ key: colKey }) => colKey === key);
+      const delta = start ? clientX - start : 0; // No start? No delta.
+      const colWidthIndex = columnWidths.findIndex(({ key: colKey }) => colKey === key);
 
-    const updatedWidth = {
-      key: key as string,
-      width: Math.max(columnWidths[colWidthIndex].width + delta, COL_SIZING.min),
-    };
+      const updatedWidth = {
+        key: key as string,
+        width: Math.max(columnWidths[colWidthIndex].width + delta, COL_SIZING.min),
+      };
 
-    setColumnWidths([
-      ...columnWidths.slice(0, colWidthIndex),
-      updatedWidth,
-      ...columnWidths.slice(colWidthIndex + 1),
-    ]);
-  };
+      setColumnWidths([
+        ...columnWidths.slice(0, colWidthIndex),
+        updatedWidth,
+        ...columnWidths.slice(colWidthIndex + 1),
+      ]);
+    },
+    [columnWidths]
+  );
 
-  const onMouseDown = (mouseDownEvent: React.MouseEvent<HTMLElement>, key: string) => {
-    const { clientX } = mouseDownEvent;
-    const resizeInit = {
-      key,
-      start: clientX,
-    };
+  const onMouseDown = useCallback(
+    (mouseDownEvent: React.MouseEvent<HTMLElement>, key: string) => {
+      const { clientX } = mouseDownEvent;
+      const resizeInit = {
+        key,
+        start: clientX,
+      };
 
-    const handleMouseMove = throttle(
-      (moveEvent: MouseEvent) => updateColumnWidths(resizeInit, moveEvent.clientX),
-      200
-    );
+      const handleMouseMove = throttle(
+        (moveEvent: MouseEvent) => updateColumnWidths(resizeInit, moveEvent.clientX),
+        200
+      );
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener(
-      'mouseup',
-      () => window.removeEventListener('mousemove', handleMouseMove),
-      { once: true } // Auto-removeEventListener
-    );
-  };
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener(
+        'mouseup',
+        () => window.removeEventListener('mousemove', handleMouseMove),
+        { once: true } // Auto-removeEventListener
+      );
+    },
+    [updateColumnWidths]
+  );
 
   // Translates ES terminology to AntD terminology.
-  const getSortOrder = (key: string) => {
-    switch (sortState?.order) {
-      case 'asc':
-        return sortState?.field === key ? 'ascend' : null;
-      case 'desc':
-        return sortState?.field === key ? 'descend' : null;
-      default:
-        return null;
-    }
-  };
+  const getSortOrder = useCallback(
+    (key: string) => {
+      switch (sortState?.order) {
+        case 'asc':
+          return sortState?.field === key ? 'ascend' : null;
+        case 'desc':
+          return sortState?.field === key ? 'descend' : null;
+        default:
+          return null;
+      }
+    },
+    [sortState?.field, sortState?.order]
+  );
 
-  const main: ColumnProps<ExploreResource>[] = keys.reduce((acc, key) => {
-    const term = EXPLORE_FIELDS_CONFIG[key];
+  const main: ColumnProps<ExploreResource>[] = useMemo(
+    () =>
+      keys.reduce((acc, key) => {
+        const term = EXPLORE_FIELDS_CONFIG[key];
 
-    return [
-      ...acc,
-      {
-        key,
+        return [
+          ...acc,
+          {
+            key,
+            title: (
+              <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
+                <div>{term.title}</div>
+                {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
+              </div>
+            ),
+            className: 'text-primary-7 cursor-pointer',
+            sorter: true,
+            ellipsis: true,
+            width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
+            render: term?.render?.listingViewFn,
+            onHeaderCell: () => ({
+              handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
+              onClick: () => sorterES(key),
+              showsortertooltip: {
+                title: term.description ? term.description : term.title,
+              },
+            }),
+            sortOrder: getSortOrder(key),
+          },
+        ];
+      }, initialColumns),
+    [columnWidths, getSortOrder, initialColumns, keys, onMouseDown, sorterES]
+  );
+
+  const dimensions: ColumnProps<ExploreResource>[] = useMemo(
+    () =>
+      (dimensionColumns || []).map((dimColumn) => ({
+        key: dimColumn,
         title: (
           <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
-            <div>{term.title}</div>
-            {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
+            <div>{dimColumn}</div>
           </div>
         ),
         className: 'text-primary-7 cursor-pointer',
-        sorter: true,
+        sorter: false,
         ellipsis: true,
-        width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
-        render: term?.render?.listingViewFn,
+        width: columnWidths.find(({ key: colKey }) => colKey === dimColumn)?.width,
+        render: (_t: any, r: any) =>
+          ValueArray({
+            value: r._source?.parameter?.coords?.[dimColumn]?.map((label: string) => label),
+          }),
         onHeaderCell: () => ({
-          handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
-          onClick: () => sorterES(key),
-          showsortertooltip: {
-            title: term.description ? term.description : term.title,
-          },
+          handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, dimColumn),
+          onClick: () => {},
         }),
-        sortOrder: getSortOrder(key),
-      },
-    ];
-  }, initialColumns);
-  // TODO: Find a way to re-use main/dimensions
-  const dimensions: ColumnProps<ExploreResource>[] = dimensionColumns.map((dimColumn) => ({
-    key: dimColumn,
-    title: (
-      <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
-        <div>{dimColumn}</div>
-      </div>
-    ),
-    className: 'text-primary-7 cursor-pointer',
-    sorter: false,
-    ellipsis: true,
-    width: columnWidths.find(({ key: colKey }) => colKey === dimColumn)?.width,
-    render: (_t: any, r: any) =>
-      ValueArray({
-        value: r._source?.parameter?.coords?.[dimColumn]?.map((label: string) => label),
-      }),
-    onHeaderCell: () => ({
-      handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, dimColumn),
-      onClick: () => {},
-    }),
-    sortOrder: getSortOrder(dimColumn),
-  }));
+        sortOrder: getSortOrder(dimColumn),
+      })),
+    [columnWidths, dimensionColumns, getSortOrder, onMouseDown]
+  );
   return [...main, ...dimensions];
 }

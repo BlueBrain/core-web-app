@@ -30,17 +30,17 @@ export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', o
 export const activeColumnsAtom = atomFamily((experimentTypeName: string) =>
   atomWithDefault<Promise<string[]>>(async (get) => {
     const dimensionColumns = await get(dimensionColumnsAtom(experimentTypeName));
-    return ['index', ...dimensionColumns, ...typeToColumns[experimentTypeName]];
+    return ['index', ...(dimensionColumns || []), ...typeToColumns[experimentTypeName]];
   })
 );
 
 export const dimensionColumnsAtom = atomFamily((experimentTypeName: string) =>
-  atom<Promise<string[]>>(async (get) => {
+  atom<Promise<string[] | null>>(async (get) => {
     const session = get(sessionAtom);
 
     // if the type is not simulation campaign, we dont fetch dimension columns
     if (!session || experimentTypeName !== SIMULATION_CAMPAIGNS) {
-      return [];
+      return null;
     }
     const dimensionsResponse = await fetchDimensionAggs(session?.accessToken);
     const dimensions: string[] = [];
@@ -60,7 +60,7 @@ export const filtersAtom = atomFamily((experimentTypeName: string) =>
     const dimensionsColumns = await get(dimensionColumnsAtom(experimentTypeName));
     return [
       ...columnsKeys.map((colKey) => columnKeyToFilter(colKey)),
-      ...dimensionsColumns.map(
+      ...(dimensionsColumns || []).map(
         (dimension) =>
           ({
             field: dimension,

@@ -140,10 +140,10 @@ export function SimulationCampaignView({
     useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
   );
   const [sortState, setSortState] = useAtom(sortStateAtom);
-  const dimensionColumns: string[] | undefined = useAtomValue(
+  const dimensionColumns = useAtomValue(
     useMemo(() => unwrap(dimensionColumnsAtom(experimentTypeName)), [experimentTypeName])
   );
-  const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns || []);
+  const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns);
   const loading = data.state === 'loading' || !dimensionColumns;
 
   return (
