@@ -1,6 +1,7 @@
-import { Dispatch, HTMLProps, SetStateAction, useMemo } from 'react';
+import { Dispatch, HTMLProps, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useResetAtom, unwrap } from 'jotai/utils';
+import { Spin } from 'antd';
 import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
 import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 import SettingsIcon from '@/components/icons/Settings';
@@ -33,6 +34,7 @@ export default function FilterControls({
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   experimentTypeName: string;
 }) {
+  const [activeColumnsLength, setActiveColumnsLength] = useState<number | undefined>(undefined);
   const activeColumns = useAtomValue(
     useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
   );
@@ -52,10 +54,11 @@ export default function FilterControls({
     setSearchString('');
   };
 
-  const activeColumnsLength = activeColumns && activeColumns.length ? activeColumns.length - 1 : 0;
-  const activeColumnsText = `${activeColumnsLength} active ${
-    activeColumnsLength === 1 ? 'column' : 'columns'
-  }`;
+  useEffect(() => {
+    if (activeColumns && activeColumns.length) {
+      setActiveColumnsLength(activeColumns.length - 1);
+    }
+  }, [activeColumns]);
 
   return (
     <div className="flex items-center gap-5 justify-between w-auto">
@@ -67,7 +70,15 @@ export default function FilterControls({
             {selectedFiltersCount}
           </span>
           <span className="font-bold text-white">Filters</span>
-          <span className="text-primary-3 text-sm">{activeColumnsText}</span>
+          <span className="text-primary-3 text-sm">
+            {activeColumnsLength ? (
+              <>
+                {activeColumnsLength} active {activeColumnsLength === 1 ? ' column' : ' columns'}
+              </>
+            ) : (
+              <Spin />
+            )}
+          </span>
         </div>
       </FilterBtn>
     </div>
