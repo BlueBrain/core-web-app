@@ -1,6 +1,8 @@
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import { SetStateAction, useMemo } from 'react';
+import sessionAtom from '@/state/session';
+import { meshDistributionsAtom } from '@/state/brain-regions';
 
 interface AtlasItemType {
   type: 'mesh' | 'pointCloud' | 'nodeSet' | 'cell';
@@ -53,22 +55,38 @@ function isCellType(obj: AtlasItemType): obj is CellType {
 }
 
 const defaultCollection: AtlasVisualizationType = {
-  visibleMeshes: [
-    {
-      type: 'mesh',
-      contentURL:
-        'https://bbp.epfl.ch/nexus/v1/files/bbp/atlas/00d2c212-fa1d-4f85-bd40-0bc217807f5b',
-      color: '#FFF',
-      isLoading: false,
-      hasError: false,
-    },
-  ],
+  visibleMeshes: [],
   visiblePointClouds: [],
   visibleNodeSets: [],
   visibleCells: [],
 };
 
-export const atlasVisualizationAtom = atom<AtlasVisualizationType>(defaultCollection);
+/**
+ * Atom that initializes the atlas visualization by retrieving the mesh distributions
+ * and setting up the root mesh
+ */
+export const initializeRootMeshAtom = atom(null, async (get, set) => {
+  const session = get(sessionAtom);
+  if (!session) return;
+  const meshes = await get(meshDistributionsAtom);
+  // By convention the root brain region has id = 997
+  const rootMeshContentUrl = meshes?.[997].contentUrl;
+
+  if (rootMeshContentUrl) {
+    const atlasVizualization = get(atlasVisualizationAtom);
+
+    atlasVizualization.visibleMeshes.push({
+      type: 'mesh',
+      contentURL: rootMeshContentUrl,
+      color: '#FFF',
+      isLoading: false,
+      hasError: false,
+    });
+    set(atlasVisualizationAtom, { ...atlasVizualization });
+  }
+});
+
+export const atlasVisualizationAtom = atom(defaultCollection);
 
 export const resetAtlasVisualizationAtom = atom(null, (get, set) =>
   set(atlasVisualizationAtom, defaultCollection)
