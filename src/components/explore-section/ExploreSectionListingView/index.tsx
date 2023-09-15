@@ -1,5 +1,3 @@
-'use client';
-
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
@@ -77,7 +75,9 @@ export default function DefaultListView({
   experimentTypeName: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const activeColumns = useAtomValue(activeColumnsAtom(experimentTypeName));
+  const activeColumns = useAtomValue(
+    useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
+  );
   const scopedDataAtom = dataAtom(experimentTypeName);
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
   const unwrappedData = useAtomValue(
@@ -95,7 +95,7 @@ export default function DefaultListView({
     },
   ]);
 
-  const loading = data.state === 'loading';
+  const loading = data.state === 'loading' || !activeColumns;
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
       <WithControlPanel loading={loading} experimentTypeName={experimentTypeName}>
@@ -109,7 +109,7 @@ export default function DefaultListView({
               />
             </HeaderPanel>
             <ExploreSectionTable
-              columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
+              columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
               dataSource={unwrappedData}
               loading={data.state === 'loading'}
               enableDownload={enableDownload}
@@ -131,7 +131,9 @@ export function SimulationCampaignView({
   title: string;
   experimentTypeName: string;
 }) {
-  const activeColumns = useAtomValue(activeColumnsAtom(experimentTypeName));
+  const activeColumns = useAtomValue(
+    useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
+  );
   const scopedDataAtom = dataAtom(experimentTypeName);
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
   const unwrappedData = useAtomValue(
@@ -157,7 +159,7 @@ export function SimulationCampaignView({
               />
             </HeaderPanel>
             <ListTable
-              columns={columns.filter(({ key }) => activeColumns.includes(key as string))}
+              columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
               dataSource={unwrappedData}
               loading={loading}
             />

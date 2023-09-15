@@ -1,6 +1,6 @@
-import { Dispatch, HTMLProps, SetStateAction } from 'react';
+import { Dispatch, HTMLProps, SetStateAction, useMemo } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useResetAtom } from 'jotai/utils';
+import { useResetAtom, unwrap } from 'jotai/utils';
 import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
 import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 import SettingsIcon from '@/components/icons/Settings';
@@ -33,12 +33,18 @@ export default function FilterControls({
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   experimentTypeName: string;
 }) {
-  const activeColumns = useAtomValue(activeColumnsAtom(experimentTypeName));
-  const filters = useAtomValue(filtersAtom(experimentTypeName));
+  const activeColumns = useAtomValue(
+    useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
+  );
+  const filters = useAtomValue(
+    useMemo(() => unwrap(filtersAtom(experimentTypeName)), [experimentTypeName])
+  );
   const resetFilters = useResetAtom(filtersAtom(experimentTypeName));
   const setSearchString = useSetAtom(searchStringAtom);
 
-  const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
+  const selectedFiltersCount = filters
+    ? filters.filter((filter) => filterHasValue(filter)).length
+    : 0;
 
   // The columnKeyToFilter method receives a string (key) and in this case it is the equivalent to a filters[x].field
   const clearFilters = () => {
@@ -46,7 +52,7 @@ export default function FilterControls({
     setSearchString('');
   };
 
-  const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
+  const activeColumnsLength = activeColumns && activeColumns.length ? activeColumns.length - 1 : 0;
   const activeColumnsText = `${activeColumnsLength} active ${
     activeColumnsLength === 1 ? 'column' : 'columns'
   }`;
