@@ -14,6 +14,11 @@ import {
 } from '@/components/explore-section/Simulations/constants';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import usePathname from '@/hooks/pathname';
+import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
+import { useSession } from '@/hooks/hooks';
+import { WorkflowExecution } from '@/types/nexus';
+import JSZip from 'jszip';
+import { Session } from 'next-auth';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
@@ -22,6 +27,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
   const simulationsCount = useAtomValue(simulationsCountAtom);
   const [analyses] = useAnalyses();
+  const session = useSession();
 
   const analysesById = useMemo(
     () =>
@@ -82,6 +88,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           <button
             type="button"
             className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
+            onClick={() => launchAnalysis(resource, analysesById[selectedDisplay], session)}
           >
             Launch Analysis
           </button>
@@ -89,4 +96,29 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
       )}
     </div>
   );
+}
+
+async function launchAnalysis(
+  simCampaign: SimulationCampaignResource,
+  analysis: Analysis | undefined,
+  session: Session | null
+) {
+  console.log(analysis);
+  if (!simCampaign.wasGeneratedBy || !session || !analysis) return null;
+  const execution = await fetchResourceById<{ wasInfluencedBy: { '@id': string } }>(
+    simCampaign.wasGeneratedBy['@id'],
+    session
+  );
+  const workflowExecution = await fetchResourceById<WorkflowExecution>(
+    execution.wasInfluencedBy['@id'],
+    session
+  );
+
+  const workflowConfig = await fetchFileByUrl(workflowExecution.distribution.contentUrl, session);
+
+  const workflowConfigPayload = await workflowConfig.blob();
+  const jszip = new JSZip();
+  const zip = await jszip.loadAsync(workflowConfigPayload);
+  const config = await zip.file('simulation.cfg')?.async('string');
+  return config?.match(/(\[DEFAULT\][\s\S]+)\[ReportsSimCampaignMeta\]/);
 }
