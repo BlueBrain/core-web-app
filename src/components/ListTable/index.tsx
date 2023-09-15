@@ -1,5 +1,6 @@
-import { CSSProperties, ReactNode } from 'react';
-import { ConfigProvider, Table, TableProps } from 'antd';
+import { CSSProperties, HTMLProps, ReactNode } from 'react';
+import { ConfigProvider, Table, TableProps, Tooltip } from 'antd';
+import { basePath } from '@/config';
 import { isNumeric, to64 } from '@/util/common';
 import usePathname from '@/hooks/pathname';
 import { BrainIcon, InteractiveViewIcon, VirtualLabIcon } from '@/components/icons';
@@ -95,6 +96,18 @@ function CustomTD({
   );
 }
 
+function LinkWrapper({ children, href, title }: HTMLProps<HTMLSpanElement>) {
+  return (
+    <Tooltip overlayInnerStyle={{ background: '#003A8C', color: 'white' }} title={title}>
+      <span className="border border-neutral-4 p-2 text-primary-7 hover:bg-white hover:text-primary-9">
+        <Link className="text-primary-7 hover:text-primary-9" href={href ?? ''}>
+          {children}
+        </Link>
+      </span>
+    </Tooltip>
+  );
+}
+
 export function IndexColContent({
   id,
   project,
@@ -113,15 +126,30 @@ export function IndexColContent({
       </span>
       <div className="flex items-center gap-3">
         <span className="text-neutral-4 text-sm uppercase">Open in</span>
-        <span className="border border-neutral-4 p-2 text-primary-7">
-          <InteractiveViewIcon />
-        </span>
-        <span className="border border-neutral-4 p-2 text-primary-7">
-          <BrainIcon />
-        </span>
-        <span className="border border-neutral-4 p-2 text-primary-7">
-          <VirtualLabIcon />
-        </span>
+        {[
+          {
+            children: <InteractiveViewIcon />,
+            href: `${pathname}/${to64(`${project}!/!${id}`)}/experiment-interactive`,
+            title: 'Interactive View',
+          },
+          {
+            children: <BrainIcon />,
+            href: `${basePath}/build/cell-composition/interactive?brainModelConfigId=${id}`,
+            title: 'View brain configuration',
+          },
+          {
+            children: <VirtualLabIcon />,
+            href: `${basePath}/experiment-designer/experiment-setup?simulationCampaignUIConfigId=${id}`,
+            title: 'View experiment configuration',
+          },
+        ].map(
+          ({ children, href, title }) =>
+            href && (
+              <LinkWrapper href={href} key={href} title={title}>
+                {children}
+              </LinkWrapper>
+            )
+        )}
       </div>
     </div>
   );
