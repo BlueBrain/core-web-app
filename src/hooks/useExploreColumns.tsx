@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
@@ -27,12 +27,16 @@ export default function useExploreColumns(
 ): ColumnProps<ExploreResource>[] {
   const keys = useMemo(() => Object.keys(EXPLORE_FIELDS_CONFIG), []);
 
-  const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>(
-    [...keys, ...dimensionColumns].map((key) => ({
-      key,
-      width: COL_SIZING.default,
-    }))
-  );
+  const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>([]);
+
+  useEffect(() => {
+    setColumnWidths(
+      [...keys, ...dimensionColumns].map((key) => ({
+        key,
+        width: COL_SIZING.default,
+      }))
+    );
+  }, [dimensionColumns, keys]);
 
   const sorterES = useCallback(
     (field: string) => {
