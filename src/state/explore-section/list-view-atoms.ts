@@ -7,7 +7,11 @@ import fetchDataQuery from '@/queries/explore-section/data';
 import { fetchRules } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import fetchEsResourcesByType, { fetchDimensionAggs } from '@/api/explore-section/resources';
-import { PAGE_SIZE, PAGE_NUMBER } from '@/constants/explore-section/list-views';
+import {
+  PAGE_SIZE,
+  PAGE_NUMBER,
+  SIMULATION_CAMPAIGNS,
+} from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { RuleOuput } from '@/types/explore-section/kg-inference';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
@@ -32,10 +36,10 @@ export const activeColumnsAtom = atomFamily((experimentTypeName: string) =>
 
 export const dimensionColumnsAtom = atomFamily((experimentTypeName: string) =>
   atom<Promise<string[]>>(async (get) => {
-    const session = await get(sessionAtom);
+    const session = get(sessionAtom);
 
     // if the type is not simulation campaign, we dont fetch dimension columns
-    if (!session || experimentTypeName !== 'https://neuroshapes.org/SimulationCampaign') {
+    if (!session || experimentTypeName !== SIMULATION_CAMPAIGNS) {
       return [];
     }
     const dimensionsResponse = await fetchDimensionAggs(session?.accessToken);

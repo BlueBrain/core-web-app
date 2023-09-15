@@ -9,14 +9,16 @@ export default function HeaderPanel({
   children,
   loading,
   title,
-  type,
+  experimentTypeName,
 }: {
   children: ReactNode;
   loading: boolean;
   title: string;
-  type: string;
+  experimentTypeName: string;
 }) {
-  const total = useAtomValue(useMemo(() => unwrap(totalAtom(type)), [type]));
+  const total = useAtomValue(
+    useMemo(() => unwrap(totalAtom(experimentTypeName)), [experimentTypeName])
+  );
 
   return (
     <div className="flex items-center justify-between ml-5">

@@ -58,7 +58,7 @@ export default function PickMorphology({ isOpen, onCancel, onOk }: Props) {
       >
         <ExploreSectionListingView
           title="Neuron morphology"
-          type={NEURON_MORPHOLOGY}
+          experimentTypeName={NEURON_MORPHOLOGY}
           enableDownload
           renderButton={pickMorphButtonFn}
         />

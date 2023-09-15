@@ -8,7 +8,7 @@ export default function EphysPage() {
     <ExploreSectionListingView
       enableDownload
       title="Neuron electrophysiology"
-      type={ELECTRO_PHYSIOLOGY}
+      experimentTypeName={ELECTRO_PHYSIOLOGY}
     />
   );
 }

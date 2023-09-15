@@ -4,5 +4,5 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { LAYER_THICKNESS } from '@/constants/explore-section/list-views';
 
 export default function LayerThicknessListingPage() {
-  return <ExploreSectionListingView title="Layer Thickness" type={LAYER_THICKNESS} />;
+  return <ExploreSectionListingView title="Layer Thickness" experimentTypeName={LAYER_THICKNESS} />;
 }

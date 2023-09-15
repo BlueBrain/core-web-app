@@ -24,7 +24,7 @@ import { RenderButtonProps } from '@/components/explore-section/ExploreSectionLi
 function WithControlPanel({
   children,
   loading,
-  type,
+  experimentTypeName,
 }: {
   children: ({
     displayControlPanel,
@@ -34,9 +34,11 @@ function WithControlPanel({
     setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   }) => ReactNode;
   loading: boolean;
-  type: string;
+  experimentTypeName: string;
 }) {
-  const total = useAtomValue(useMemo(() => unwrap(totalAtom(type)), [type]));
+  const total = useAtomValue(
+    useMemo(() => unwrap(totalAtom(experimentTypeName)), [experimentTypeName])
+  );
 
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);
 
@@ -57,7 +59,7 @@ function WithControlPanel({
       {displayControlPanel && (
         <ControlPanel
           toggleDisplay={() => setDisplayControlPanel(false)}
-          experimentTypeName={type}
+          experimentTypeName={experimentTypeName}
         />
       )}
     </>
@@ -67,16 +69,16 @@ function WithControlPanel({
 export default function DefaultListView({
   enableDownload,
   title,
-  type,
+  experimentTypeName,
   renderButton,
 }: {
   enableDownload?: boolean;
   title: string;
-  type: string;
+  experimentTypeName: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const activeColumns = useAtomValue(activeColumnsAtom(type));
-  const scopedDataAtom = dataAtom(type);
+  const activeColumns = useAtomValue(activeColumnsAtom(experimentTypeName));
+  const scopedDataAtom = dataAtom(experimentTypeName);
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
   const unwrappedData = useAtomValue(
     useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
@@ -96,14 +98,14 @@ export default function DefaultListView({
   const loading = data.state === 'loading';
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <WithControlPanel loading={loading} type={type}>
+      <WithControlPanel loading={loading} experimentTypeName={experimentTypeName}>
         {({ displayControlPanel, setDisplayControlPanel }) => (
           <>
-            <HeaderPanel loading={loading} title={title} type={type}>
+            <HeaderPanel loading={loading} title={title} experimentTypeName={experimentTypeName}>
               <FilterControls
                 displayControlPanel={displayControlPanel}
                 setDisplayControlPanel={setDisplayControlPanel}
-                experimentTypeName={type}
+                experimentTypeName={experimentTypeName}
               />
             </HeaderPanel>
             <ExploreSectionTable
@@ -111,7 +113,7 @@ export default function DefaultListView({
               dataSource={unwrappedData}
               loading={data.state === 'loading'}
               enableDownload={enableDownload}
-              experimentTypeName={type}
+              experimentTypeName={experimentTypeName}
               hasError={data.state === 'hasError'}
               renderButton={renderButton}
             />
@@ -122,30 +124,36 @@ export default function DefaultListView({
   );
 }
 
-export function SimulationCampaignView({ title, type }: { title: string; type: string }) {
-  const activeColumns = useAtomValue(activeColumnsAtom(type));
-  const scopedDataAtom = dataAtom(type);
+export function SimulationCampaignView({
+  title,
+  experimentTypeName,
+}: {
+  title: string;
+  experimentTypeName: string;
+}) {
+  const activeColumns = useAtomValue(activeColumnsAtom(experimentTypeName));
+  const scopedDataAtom = dataAtom(experimentTypeName);
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
   const unwrappedData = useAtomValue(
     useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
   );
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const dimensionColumns: string[] | undefined = useAtomValue(
-    useMemo(() => unwrap(dimensionColumnsAtom(type)), [type])
+    useMemo(() => unwrap(dimensionColumnsAtom(experimentTypeName)), [experimentTypeName])
   );
   const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns || []);
   const loading = data.state === 'loading' || !dimensionColumns;
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <WithControlPanel loading={loading} type={type}>
+      <WithControlPanel loading={loading} experimentTypeName={experimentTypeName}>
         {({ displayControlPanel, setDisplayControlPanel }) => (
           <>
-            <HeaderPanel loading={loading} title={title} type={type}>
+            <HeaderPanel loading={loading} title={title} experimentTypeName={experimentTypeName}>
               <FilterControls
                 displayControlPanel={displayControlPanel}
                 setDisplayControlPanel={setDisplayControlPanel}
-                experimentTypeName={type}
+                experimentTypeName={experimentTypeName}
               />
             </HeaderPanel>
             <ListTable
