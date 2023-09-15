@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import {
   displayOptions,
   showOnlyOptions,
 } from '@/components/explore-section/Simulations/constants';
-import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
+import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import usePathname from '@/hooks/pathname';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
@@ -22,7 +22,20 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
   const simulationsCount = useAtomValue(simulationsCountAtom);
   const [analyses] = useAnalyses();
+
+  const analysesById = useMemo(
+    () =>
+      analyses.reduce((acc, item) => {
+        acc[item['@id']] = item;
+        return acc;
+      }, {} as { [id: string]: Analysis }),
+    [analyses]
+  );
   const path = usePathname();
+  const isCustom = useMemo(
+    () => !displayOptions.map((o) => o.value).includes(selectedDisplay),
+    [selectedDisplay]
+  );
 
   useEffect(() => {
     setDefaultDimensions();
@@ -58,8 +71,22 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           </Link>
         </div>
       </div>
-      <DimensionSelector coords={resource.parameter?.coords} />
-      <SimulationsDisplayGrid display={selectedDisplay} status={showStatus} />
+      {!isCustom && (
+        <>
+          <DimensionSelector coords={resource.parameter?.coords} />
+          <SimulationsDisplayGrid display={selectedDisplay} status={showStatus} />
+        </>
+      )}
+      {isCustom && (
+        <div className="flex justify-center items-center" style={{ height: 200 }}>
+          <button
+            type="button"
+            className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
+          >
+            Launch Analysis
+          </button>
+        </div>
+      )}
     </div>
   );
 }
