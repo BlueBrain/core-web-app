@@ -9,7 +9,7 @@ import {
 import { SlotState } from '../resource-manager/types';
 import Spinner from '@/components/Spinner';
 
-import Styles from './BraynsSimulationViewer.module.css';
+import styles from './brayns-simulation-viewer.module.css';
 
 export interface BraynsSimulationViewerProps {
   className?: string;
@@ -26,12 +26,12 @@ export default function BraynsSimulationViewer({ className, slotId }: BraynsSimu
     <div className={getClassName(className)}>
       <canvas ref={refCanvas} />
       {progress && (
-        <div className={Styles.progress}>
+        <div className={styles.progress}>
           <Spinner />
           <div>{progress}</div>
         </div>
       )}
-      {error && <div className={Styles.error}>{error}</div>}
+      {error && <div className={styles.error}>{error}</div>}
     </div>
   );
 }
@@ -51,7 +51,7 @@ function useCircuitInitialization(slotId: number, manager: MultiBraynsManagerInt
 }
 
 function getClassName(className?: string) {
-  const classes = [Styles.BraynsSimulationViewer];
+  const classes = [styles.braynsSimulationViewer];
   if (className) classes.push(className);
   return classes.join(' ');
 }

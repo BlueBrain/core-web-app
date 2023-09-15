@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { classNames } from '@/util/utils';
-import Styles from './reset-camera-button.module.css';
+import styles from './reset-camera-button.module.css';
 
 export interface ResetCameraButtonProps {
   className?: string;
@@ -10,7 +10,7 @@ export interface ResetCameraButtonProps {
 export default function ResetCameraButton({ className, onClick }: ResetCameraButtonProps) {
   return (
     <button
-      className={classNames(Styles.resetCameraButton, className)}
+      className={classNames(styles.resetCameraButton, className)}
       type="button"
       onClick={onClick}
     >

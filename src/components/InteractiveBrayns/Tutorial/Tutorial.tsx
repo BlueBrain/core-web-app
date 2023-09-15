@@ -8,7 +8,7 @@ import XIcon from '../Icons/XIcon';
 import YIcon from '../Icons/YIcon';
 import ZIcon from '../Icons/ZIcon';
 import { basePath } from '@/config';
-import Style from './Tutorial.module.css';
+import styles from './tutorial.module.css';
 
 const SUBTITLES: Array<[time: number, content: React.ReactNode]> = [
   [
@@ -82,8 +82,8 @@ export default function Tutorial() {
   }
 
   return (
-    <div className={Style.tutorial}>
-      <div className={Style.videoWithSubtitles}>
+    <div className={styles.tutorial}>
+      <div className={styles.videoWithSubtitles}>
         <video
           ref={refVideoTop}
           src={`${basePath}/video/brayns/camera-tutorial/top.mp4`}
@@ -92,7 +92,7 @@ export default function Tutorial() {
           loop
           onCanPlay={handleCanPlay}
         />
-        <div className={Style.subtitles}>{subtitle}</div>
+        <div className={styles.subtitles}>{subtitle}</div>
       </div>
       <video
         ref={refVideoBottom}

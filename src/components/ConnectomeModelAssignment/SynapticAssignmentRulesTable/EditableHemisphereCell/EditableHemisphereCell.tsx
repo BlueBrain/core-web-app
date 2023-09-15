@@ -4,7 +4,7 @@ import HemiSphereButton from './HemiSphereButton';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
 import RightHemisphere from '@/components/icons/RightHemisphere';
 import LeftHemisphere from '@/components/icons/LeftHemisphere';
-import Style from './editable-hemisphere-cell.module.css';
+import styles from './editable-hemisphere-cell.module.css';
 
 interface EditableHemisphereProps {
   editing: boolean;
@@ -35,18 +35,18 @@ export default function EditableHemisphereCell({
   };
   if (!rule || !editing) {
     return (
-      <div className={Style.editableHemisphereCell}>
-        <div className={content === 'left' ? Style.selected : Style.unselected}>
+      <div className={styles.editableHemisphereCell}>
+        <div className={content === 'left' ? styles.selected : styles.unselected}>
           <LeftHemisphere />
         </div>
-        <div className={content === 'right' ? Style.selected : Style.unselected}>
+        <div className={content === 'right' ? styles.selected : styles.unselected}>
           <RightHemisphere />
         </div>
       </div>
     );
   }
   return (
-    <div className={Style.editableHemisphereCell}>
+    <div className={styles.editableHemisphereCell}>
       <HemiSphereButton type="left" value={value} onClick={update} />
       <HemiSphereButton type="right" value={value} onClick={update} />
     </div>

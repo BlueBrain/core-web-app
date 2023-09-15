@@ -5,7 +5,7 @@ import { loadingAtom } from '../state';
 import { useFieldsOptionsProvider } from '../hooks';
 import CustomSelect from './CustomSelect';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
-import Style from './add-rule-modal.module.css';
+import styles from './add-rule-modal.module.css';
 
 export interface AddRuleModalProps {
   open: boolean;
@@ -66,7 +66,7 @@ export default function AddRuleModal({ open, onValidate, onCancel }: AddRuleModa
         </div>
       }
     >
-      <div className={Style.grid}>
+      <div className={styles.grid}>
         <h2>From</h2>
         <CustomSelect rule={rule} onChange={setRule} field="fromHemisphere" />
         <CustomSelect rule={rule} onChange={setRule} field="fromRegion" />

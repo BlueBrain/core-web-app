@@ -2,7 +2,7 @@
 
 import Link from '@/components/Link';
 import IconPlus from '@/components/icons/Plus';
-import Styles from './simple-panel.module.css';
+import styles from './simple-panel.module.css';
 
 export type SimplePanelProps = {
   className?: string;
@@ -12,7 +12,7 @@ export type SimplePanelProps = {
 };
 
 function getClassName(className?: string) {
-  const classes = [Styles.simplePanel];
+  const classes = [styles.simplePanel];
   if (className) classes.push(className);
   return classes.join(' ');
 }

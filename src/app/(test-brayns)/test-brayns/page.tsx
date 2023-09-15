@@ -2,7 +2,7 @@
 
 import BraynsSimulationViewer from '@/services/brayns/simulations/BraynsSimulationViewer';
 
-import Style from './page.module.css';
+import styles from './page.module.css';
 
 /**
  * We need to test the allocation of multiple instances of Brayns
@@ -14,7 +14,7 @@ import Style from './page.module.css';
  */
 export default function TestBraynsPage() {
   return (
-    <div className={Style.TestBrayns}>
+    <div className={styles.testBrayns}>
       <BraynsSimulationViewer slotId={0} />
       <BraynsSimulationViewer slotId={1} />
       <BraynsSimulationViewer slotId={2} />

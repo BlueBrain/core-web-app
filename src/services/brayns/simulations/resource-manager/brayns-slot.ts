@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+import isEqual from 'lodash/isEqual';
 import { BraynsSimulationOptions, TokenProvider } from '../types';
 import GenericEvent from '../../common/utils/generic-event';
 import Allocator from './allocator';
@@ -184,5 +185,5 @@ function areDifferentSimulations(
 
   if (!a || !b) return true;
 
-  return JSON.stringify(a) !== JSON.stringify(b);
+  return isEqual(a, b);
 }

@@ -1,11 +1,11 @@
-import Styles from './icon.module.css';
+import styles from './icon.module.css';
 
 export type IconProps = {
   className?: string;
 };
 
 function getClassName(className?: string) {
-  const classes = [Styles.icon];
+  const classes = [styles.icon];
   if (className) classes.push(className);
   return classes.join(' ');
 }

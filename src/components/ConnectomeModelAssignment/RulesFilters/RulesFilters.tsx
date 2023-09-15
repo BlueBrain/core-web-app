@@ -8,7 +8,7 @@ import FilterItem from './FilterItem';
 import Filter from './filter';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
 import { SettingsIcon } from '@/components/icons';
-import Style from './rules-filters.module.css';
+import styles from './rules-filters.module.css';
 
 export interface RulesFiltersProps {
   rules: SynapticAssignmentRule[];
@@ -24,7 +24,7 @@ export default function RulesFilters({ rules, onFilterChange }: RulesFiltersProp
   useFilterUpdate(filterItems, setFilter);
   const handleAdd = useAddHandler(filterItems, setFilterItems);
   return (
-    <div className={`${Style.rulesFilters} text-primary-8 text-sm`}>
+    <div className={`${styles.rulesFilters} text-primary-8 text-sm`}>
       <button onClick={toggleDetails} type="button">
         <SettingsIcon className="rotate-90 inline-block " style={{ width: 12, height: 12 }} />
         <div className="-mt-1 ml-1 text-sm">Filter</div>
@@ -34,7 +34,7 @@ export default function RulesFilters({ rules, onFilterChange }: RulesFiltersProp
         {showDetails ? <DownOutlined /> : <RightOutlined />}
       </button>
       {showDetails && (
-        <div className={Style.filterItems}>
+        <div className={styles.filterItems}>
           {filterItems.map((item, index) => (
             <>
               <div key={`label-${item.ruleField}`}>

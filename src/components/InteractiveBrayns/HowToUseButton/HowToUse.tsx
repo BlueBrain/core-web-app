@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { classNames } from '@/util/utils';
-import Styles from './how-to-use.module.css';
+import styles from './how-to-use.module.css';
 
 export interface HowToUseProps {
   className?: string;
@@ -9,7 +9,7 @@ export interface HowToUseProps {
 
 export default function HowToUse({ className, onClick }: HowToUseProps) {
   return (
-    <button className={classNames(Styles.howToUse, className)} type="button" onClick={onClick}>
+    <button className={classNames(styles.howToUse, className)} type="button" onClick={onClick}>
       How to use
     </button>
   );
