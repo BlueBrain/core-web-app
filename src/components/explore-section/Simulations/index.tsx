@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { Session } from 'next-auth';
+import JSZip from 'jszip';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
@@ -14,13 +16,17 @@ import {
 } from '@/components/explore-section/Simulations/constants';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import usePathname from '@/hooks/pathname';
-import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
+import { fetchFileByUrl, fetchResourceById, updateResource } from '@/api/nexus';
 import { useSession } from '@/hooks/hooks';
-import { WorkflowExecution } from '@/types/nexus';
-import JSZip from 'jszip';
-import { Session } from 'next-auth';
+import { Entity, WorkflowExecution } from '@/types/nexus';
 
-export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
+import { createHeaders } from '@/util/utils';
+
+export default function Simulations({
+  resource,
+}: {
+  resource: SimulationCampaignResource & { analyses?: string[] };
+}) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
 
@@ -28,6 +34,12 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   const simulationsCount = useAtomValue(simulationsCountAtom);
   const [analyses] = useAnalyses();
   const session = useSession();
+  const isCustom = useMemo(
+    () => !displayOptions.map((o) => o.value).includes(selectedDisplay),
+    [selectedDisplay]
+  );
+
+  const [outputs, fetchingOutputs] = useAnalysisOutputs(resource, isCustom);
 
   const analysesById = useMemo(
     () =>
@@ -38,10 +50,6 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
     [analyses]
   );
   const path = usePathname();
-  const isCustom = useMemo(
-    () => !displayOptions.map((o) => o.value).includes(selectedDisplay),
-    [selectedDisplay]
-  );
 
   useEffect(() => {
     setDefaultDimensions();
@@ -83,19 +91,88 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           <SimulationsDisplayGrid display={selectedDisplay} status={showStatus} />
         </>
       )}
-      {isCustom && (
-        <div className="flex justify-center items-center" style={{ height: 200 }}>
-          <button
-            type="button"
-            className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
-            onClick={() => launchAnalysis(resource, analysesById[selectedDisplay], session)}
-          >
-            Launch Analysis
-          </button>
+
+      {isCustom &&
+        !outputs.length &&
+        !fetchingOutputs &&
+        resource.analyses?.includes(selectedDisplay) && <span>Running Analysis ... </span>}
+
+      {isCustom &&
+        !outputs.length &&
+        !fetchingOutputs &&
+        resource.analyses &&
+        !resource.analyses.includes(selectedDisplay) && (
+          <div className="flex justify-center items-center" style={{ height: 200 }}>
+            <button
+              type="button"
+              className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
+              onClick={() => launchAnalysis(resource, analysesById[selectedDisplay], session)}
+            >
+              Launch Analysis
+            </button>
+          </div>
+        )}
+
+      {isCustom && !!outputs.length && (
+        <div>
+          {outputs.map((o, i) => {
+            const src = URL.createObjectURL(o);
+            /* eslint-disable-next-line @next/next/no-img-element, react/no-array-index-key */
+            return <img key={i} alt="analysis" src={src} width={300} />;
+          })}
         </div>
       )}
     </div>
   );
+}
+
+function useAnalysisOutputs(
+  simCampaign: SimulationCampaignResource,
+  isCustom: boolean
+): [Blob[], boolean] {
+  const session = useSession();
+  const [outputs, setOutputs] = useState<Blob[]>([]);
+  const [fetching, setFetching] = useState(false);
+
+  useEffect(() => {
+    async function fetchIncoming() {
+      if (!session || !isCustom) return;
+      setFetching(true);
+      const res: { _results: { '@id': string; '@type': 'string' }[] } = await fetch(
+        simCampaign._incoming,
+        {
+          headers: createHeaders(session.accessToken),
+        }
+      ).then((r) => r.json());
+
+      const outputLink = res._results
+        .filter((l) => l['@type'].includes('CumulativeAnalysisReport'))
+        .pop();
+
+      if (!outputLink) {
+        setFetching(false);
+        return;
+      }
+
+      const outputUrls = (
+        await fetchResourceById<{ hasPart: Entity[] }>(outputLink['@id'], session)
+      ).hasPart.map((id) => id['@id']);
+
+      const outputEntities = await Promise.all(
+        outputUrls.map((url) =>
+          fetchResourceById<Entity & { distribution: { contentUrl: string } }>(url, session)
+        )
+      );
+
+      const outputImageUrls = outputEntities.map((o) => o.distribution.contentUrl);
+      const imagesRes = await Promise.all(outputImageUrls.map((u) => fetchFileByUrl(u, session)));
+      const images = await Promise.all(imagesRes.map((r) => r.blob()));
+      setFetching(false);
+      setOutputs(images);
+    }
+    fetchIncoming();
+  }, [simCampaign, session, isCustom, outputs]);
+  return [outputs, fetching];
 }
 
 async function launchAnalysis(
@@ -103,8 +180,7 @@ async function launchAnalysis(
   analysis: Analysis | undefined,
   session: Session | null
 ) {
-  console.log(analysis);
-  if (!simCampaign.wasGeneratedBy || !session || !analysis) return null;
+  if (!simCampaign.wasGeneratedBy || !session || !analysis) return;
   const execution = await fetchResourceById<{ wasInfluencedBy: { '@id': string } }>(
     simCampaign.wasGeneratedBy['@id'],
     session
@@ -120,5 +196,11 @@ async function launchAnalysis(
   const jszip = new JSZip();
   const zip = await jszip.loadAsync(workflowConfigPayload);
   const config = await zip.file('simulation.cfg')?.async('string');
-  return config?.match(/(\[DEFAULT\][\s\S]+)\[ReportsSimCampaignMeta\]/);
+  config?.match(/(\[DEFAULT\][\s\S]+)\[ReportsSimCampaignMeta\]/);
+
+  const r = await updateResource(
+    { ...simCampaign, analyses: [analysis?.['@id']] } as Entity,
+    simCampaign._rev,
+    session
+  );
 }
