@@ -121,35 +121,40 @@ export function IndexColContent({
 
   return (
     <div className="flex flex-col gap-5">
-      <span className="font-bold">
-        <Link href={`${pathname}/${to64(`${project}!/!${id}`)}`}>{text}</Link>
-      </span>
-      <div className="flex items-center gap-3">
+      <Link
+        className="font-bold whitespace-pre-wrap"
+        href={`${pathname}/${to64(`${project}!/!${id}`)}`}
+      >
+        {text}
+      </Link>
+      <div className="flex flex-wrap items-center gap-3">
         <span className="text-neutral-4 text-sm uppercase">Open in</span>
-        {[
-          {
-            children: <InteractiveViewIcon />,
-            href: `${pathname}/${to64(`${project}!/!${id}`)}/experiment-interactive`,
-            title: 'Interactive View',
-          },
-          {
-            children: <BrainIcon />,
-            href: `${basePath}/build/cell-composition/interactive?brainModelConfigId=${id}`,
-            title: 'View brain configuration',
-          },
-          {
-            children: <VirtualLabIcon />,
-            href: `${basePath}/experiment-designer/experiment-setup?simulationCampaignUIConfigId=${id}`,
-            title: 'View experiment configuration',
-          },
-        ].map(
-          ({ children, href, title }) =>
-            href && (
-              <LinkWrapper href={href} key={href} title={title}>
-                {children}
-              </LinkWrapper>
-            )
-        )}
+        <div className="flex items-center gap-3">
+          {[
+            {
+              children: <InteractiveViewIcon />,
+              href: `${pathname}/${to64(`${project}!/!${id}`)}/experiment-interactive`,
+              title: 'Interactive View',
+            },
+            {
+              children: <BrainIcon />,
+              href: `${basePath}/build/cell-composition/interactive?brainModelConfigId=${id}`,
+              title: 'View brain configuration',
+            },
+            {
+              children: <VirtualLabIcon />,
+              href: `${basePath}/experiment-designer/experiment-setup?simulationCampaignUIConfigId=${id}`,
+              title: 'View experiment configuration',
+            },
+          ].map(
+            ({ children, href, title }) =>
+              href && (
+                <LinkWrapper href={href} key={href} title={title}>
+                  {children}
+                </LinkWrapper>
+              )
+          )}
+        </div>
       </div>
     </div>
   );
