@@ -1,4 +1,4 @@
-import  { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
 import HeaderPanel from './HeaderPanel';
