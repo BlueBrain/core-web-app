@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { Session } from 'next-auth';
 import JSZip from 'jszip';
+import { notification } from 'antd';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
@@ -16,11 +17,19 @@ import {
 } from '@/components/explore-section/Simulations/constants';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import usePathname from '@/hooks/pathname';
-import { fetchFileByUrl, fetchResourceById, updateResource } from '@/api/nexus';
+import {
+  createWorkflowConfigResource,
+  fetchFileByUrl,
+  fetchResourceById,
+  updateResource,
+} from '@/api/nexus';
 import { useSession } from '@/hooks/hooks';
 import { Entity, WorkflowExecution } from '@/types/nexus';
 
 import { createHeaders } from '@/util/utils';
+import { composeUrl } from '@/util/nexus';
+import { launchWorkflowTask } from '@/services/bbp-workflow';
+import { refetchDetailCounter } from '@/state/explore-section/detail-view-atoms';
 
 export default function Simulations({
   resource,
@@ -29,6 +38,8 @@ export default function Simulations({
 }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
+  const [loading, setLoading] = useState(false);
+  const [refetchCount, refetchCampaign] = useAtom(refetchDetailCounter);
 
   const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
   const simulationsCount = useAtomValue(simulationsCountAtom);
@@ -100,15 +111,25 @@ export default function Simulations({
       {isCustom &&
         !outputs.length &&
         !fetchingOutputs &&
-        resource.analyses &&
-        !resource.analyses.includes(selectedDisplay) && (
+        (!resource.analyses ||
+          (resource.analyses && !resource.analyses.includes(selectedDisplay))) && (
           <div className="flex justify-center items-center" style={{ height: 200 }}>
             <button
               type="button"
               className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
-              onClick={() => launchAnalysis(resource, analysesById[selectedDisplay], session)}
+              onClick={() =>
+                launchAnalysis(
+                  resource,
+                  analysesById[selectedDisplay],
+                  setLoading,
+                  () => refetchCampaign(refetchCount + 1),
+                  session
+                )
+              }
+              disabled={loading}
             >
-              Launch Analysis
+              {!loading && <span>Launch Analysis</span>}
+              {loading && <span>Launching...</span>}
             </button>
           </div>
         )}
@@ -178,9 +199,12 @@ function useAnalysisOutputs(
 async function launchAnalysis(
   simCampaign: SimulationCampaignResource,
   analysis: Analysis | undefined,
+  setLoading: (value: boolean) => void,
+  onSuccess: () => void,
   session: Session | null
 ) {
   if (!simCampaign.wasGeneratedBy || !session || !analysis) return;
+  setLoading(true);
   const execution = await fetchResourceById<{ wasInfluencedBy: { '@id': string } }>(
     simCampaign.wasGeneratedBy['@id'],
     session
@@ -195,12 +219,85 @@ async function launchAnalysis(
   const workflowConfigPayload = await workflowConfig.blob();
   const jszip = new JSZip();
   const zip = await jszip.loadAsync(workflowConfigPayload);
-  const config = await zip.file('simulation.cfg')?.async('string');
-  config?.match(/(\[DEFAULT\][\s\S]+)\[ReportsSimCampaignMeta\]/);
+  let config = await zip.file('simulation.cfg')?.async('string');
+  const m = config?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g);
+  if (!(config = m?.[0])) return; // eslint-disable-line
 
-  const r = await updateResource(
+  // TODO: Figure out how to handle custom config later
+  const analyseSimCampaignMeta = `[AnalyseSimCampaign]
+  workspace-prefix: /gpfs/bbp.cscs.ch/data/scratch/proj134/home/${session.user.username}/SBO/analysis
+  analysis-config: {
+          "simulation_campaign": "$SIMULATION_CAMPAIGN_FILE",
+          "output": "$SCRATCH_PATH",
+          "report_type": "spikes",
+          "report_name": "raster",
+          "node_sets": ["FRP"],
+          "cell_step": 1
+          }`;
+
+  const newResource = await createWorkflowConfigResource(
+    'analysis.cfg',
+    analyseSimCampaignMeta,
+    session
+  );
+  const urlWithRev = composeUrl('resource', newResource['@id'], {
+    rev: newResource._rev,
+  }).replaceAll('%', '%%');
+
+  // Todo handle Git authentication later
+
+  config += `
+
+  [AnalyseSimCampaignMeta]
+  config-url: ${urlWithRev}
+
+  [CloneGitRepo]
+  git_url: ${analysis.codeRepository['@id']}
+  git_ref: ${analysis.branch}
+  subdirectory: ${analysis.subdirectory}
+  git_user: GUEST
+  git_password: WCY_qpuGG8xpKz_S8RNg
+    
+  [AnalyseSimCampaign]
+  time: 8:00:00
+  `;
+
+  await launchWorkflowTask({
+    loginInfo: session,
+    workflowName: 'bbp_workflow.sbo.analysis.task.AnalyseSimCampaignMeta/',
+    workflowFiles: [
+      {
+        NAME: 'config.cfg',
+        TYPE: 'file',
+        CONTENT: config,
+      },
+      { NAME: 'cfg_name', TYPE: 'string', CONTENT: 'config.cfg' },
+    ],
+  });
+
+  await updateResource(
     { ...simCampaign, analyses: [analysis?.['@id']] } as Entity,
     simCampaign._rev,
     session
   );
+
+  notification.success({
+    message: 'Workflow launched successfuly',
+    description: (
+      <span>
+        You can watch the progress of launched tasks in your{' '}
+        <a
+          href={`https://bbp-workflow-${session.user.username}.kcp.bbp.epfl.ch/static/visualiser/index.html#order=4%2Cdesc`}
+          target="_blank"
+        >
+          Workflow dashboard
+        </a>
+        .
+      </span>
+    ),
+    duration: 10,
+  });
+
+  setLoading(false);
+  onSuccess();
 }
