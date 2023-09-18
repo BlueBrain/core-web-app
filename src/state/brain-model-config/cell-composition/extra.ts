@@ -5,7 +5,7 @@ import { configAtom, configPayloadAtom, configPayloadRevAtom, setLocalConfigPayl
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import sessionAtom from '@/state/session';
 import { CellCompositionConfigPayload, CompositionOverridesWorkflowConfig } from '@/types/nexus';
-import { createGeneratorConfig, setRevision } from '@/util/nexus';
+import { createDistribution, setRevision } from '@/util/nexus';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
@@ -56,10 +56,7 @@ export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload]
       session
     );
 
-    config.distribution = createGeneratorConfig({
-      kgType: 'CellCompositionConfig',
-      payloadMetadata: updatedFile,
-    }).distribution;
+    config.distribution = createDistribution(updatedFile);
 
     await updateResource(config, config?._rev, session);
 

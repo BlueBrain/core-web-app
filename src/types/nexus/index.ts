@@ -473,24 +473,6 @@ export type GeneratorConfig =
   | SynapseConfig
   | MacroConnectomeConfig;
 
-export type GeneratorName =
-  | CellCompositionGeneratorName
-  | CellPositionGeneratorName
-  | PlaceholderGeneratorName
-  | MicroConnectomeGeneratorName
-  | SynapseGeneratorName
-  | MacroConnectomeGeneratorName
-  | MModelGeneratorName;
-
-export type GeneratorConfigType =
-  | CellCompositionConfigType
-  | CellPositionConfigType
-  | EModelAssignmentConfigType
-  | MorphologyAssignmentConfigType
-  | MicroConnectomeConfigType
-  | SynapseConfigType
-  | MacroConnectomeConfigType;
-
 export interface SimulationCampaignUIConfig extends Entity {
   '@type': ['Entity', 'SimulationCampaignUIConfig'];
   name: string;

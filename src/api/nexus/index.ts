@@ -6,7 +6,6 @@ import {
   composeUrl,
   ComposeUrlParams,
   expandId,
-  createGeneratorConfig,
   createDistribution,
   removeMetadata,
 } from '@/util/nexus';
@@ -263,10 +262,7 @@ export async function cloneCellCompositionConfig(id: string, session: Session) {
 
   const clonedConfig: CellCompositionConfig = {
     ...configSource,
-    distribution: createGeneratorConfig({
-      kgType: 'CellCompositionConfig',
-      payloadMetadata: clonedPayloadMeta,
-    }).distribution,
+    distribution: createDistribution(clonedPayloadMeta),
   };
 
   return createResource(clonedConfig, session);
@@ -280,10 +276,7 @@ export async function cloneCellPositionConfig(id: string, session: Session) {
 
   const clonedConfig: CellPositionConfig = {
     ...configSource,
-    distribution: createGeneratorConfig({
-      kgType: 'CellPositionConfig',
-      payloadMetadata: clonedPayloadMeta,
-    }).distribution,
+    distribution: createDistribution(clonedPayloadMeta),
   };
 
   return createResource(clonedConfig, session);
@@ -297,10 +290,7 @@ export async function cloneEModelAssignmentConfig(id: string, session: Session) 
 
   const clonedConfig: EModelAssignmentConfig = {
     ...configSource,
-    distribution: createGeneratorConfig({
-      kgType: 'EModelAssignmentConfig',
-      payloadMetadata: clonedPayloadMeta,
-    }).distribution,
+    distribution: createDistribution(clonedPayloadMeta),
   };
 
   return createResource(clonedConfig, session);
@@ -321,10 +311,7 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
 
   const clonedConfig: MorphologyAssignmentConfig = {
     ...configSource,
-    distribution: createGeneratorConfig({
-      kgType: 'MorphologyAssignmentConfig',
-      payloadMetadata: clonedPayloadMeta,
-    }).distribution,
+    distribution: createDistribution(clonedPayloadMeta),
   };
 
   return createResource(clonedConfig, session);
@@ -465,10 +452,7 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
 
   const clonedConfig: MicroConnectomeConfig = {
     ...config,
-    distribution: createGeneratorConfig({
-      kgType: 'MicroConnectomeConfig',
-      payloadMetadata: clonedPayloadMeta,
-    }).distribution,
+    distribution: createDistribution(clonedPayloadMeta),
   };
 
   return createResource(clonedConfig, session);
@@ -486,10 +470,7 @@ export async function cloneSynapseConfig(id: string, session: Session) {
     const payloadMetadata = await createJsonFile({}, 'synapse-config.json', session);
     const config: SynapseConfig = {
       ...configSource,
-      distribution: createGeneratorConfig({
-        kgType: 'SynapseConfig',
-        payloadMetadata,
-      }).distribution,
+      distribution: createDistribution(payloadMetadata),
     };
 
     return createResource(config, session);
@@ -574,10 +555,7 @@ export async function cloneSynapseConfig(id: string, session: Session) {
 
   const config: SynapseConfig = {
     ...configSource,
-    distribution: createGeneratorConfig({
-      kgType: 'SynapseConfig',
-      payloadMetadata: configMetadata,
-    }).distribution,
+    distribution: createDistribution(configMetadata),
   };
 
   return createResource(config, session);
