@@ -145,7 +145,7 @@ export default function ExploreSectionTable({
     </ExploreDownloadButton>
   );
 
-  const expandedRowRender = (resource: ESResponseRaw) => (
+  const expandedRowRender = (resource: ExploreESHit) => (
     <GeneralizationRules
       resourceId={resource._source['@id']}
       experimentTypeName={experimentTypeName}
