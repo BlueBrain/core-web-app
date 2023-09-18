@@ -6,7 +6,7 @@ import columnKeyToFilter from './column-key-to-filter';
 import { SortState } from '@/types/explore-section/application';
 import fetchDataQuery, { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
 import sessionAtom from '@/state/session';
-import fetchEsResourcesByType, { fetchDimensionAggs } from '@/api/explore-section/resources';
+import { fetchEsResourcesByType, fetchDimensionAggs } from '@/api/explore-section/resources';
 import {
   PAGE_SIZE,
   PAGE_NUMBER,
@@ -14,13 +14,12 @@ import {
 } from '@/constants/explore-section/list-views';
 import { fetchRules } from '@/api/generalization';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
-import { ExploreESResponse, FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
+import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { RuleOutput } from '@/types/explore-section/kg-inference';
 import { Filter } from '@/components/Filter/types';
 import { resourceBasedResponseAtom } from '@/state/explore-section/generalization';
 
 type DataAtomFamilyScopeType = { experimentTypeName: string; resourceId?: string };
-
 
 const DataAtomFamilyScopeComparator = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType) =>
   a.experimentTypeName === b.experimentTypeName && a.resourceId === b.resourceId;
@@ -35,14 +34,14 @@ export const searchStringAtom = atom<string>('');
 
 export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', order: 'desc' });
 
-export const activeColumnsAtom = atomFamily((experimentTypeName: string) =>
+export const activeColumnsAtom = atomFamily(({ experimentTypeName }: DataAtomFamilyScopeType) =>
   atomWithDefault<Promise<string[]>>(async (get) => {
-    const dimensionColumns = await get(dimensionColumnsAtom(experimentTypeName));
+    const dimensionColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
     return ['index', ...(dimensionColumns || []), ...typeToColumns[experimentTypeName]];
   })
 );
 
-export const dimensionColumnsAtom = atomFamily((experimentTypeName: string) =>
+export const dimensionColumnsAtom = atomFamily(({ experimentTypeName }: DataAtomFamilyScopeType) =>
   atom<Promise<string[] | null>>(async (get) => {
     const session = get(sessionAtom);
 
@@ -62,10 +61,10 @@ export const dimensionColumnsAtom = atomFamily((experimentTypeName: string) =>
   })
 );
 
-export const filtersAtom = atomFamily((experimentTypeName: string) =>
+export const filtersAtom = atomFamily(({ experimentTypeName }: DataAtomFamilyScopeType) =>
   atomWithDefault<Promise<Filter[]>>(async (get) => {
     const columnsKeys = typeToColumns[experimentTypeName];
-    const dimensionsColumns = await get(dimensionColumnsAtom(experimentTypeName));
+    const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
     return [
       ...columnsKeys.map((colKey) => columnKeyToFilter(colKey)),
       ...(dimensionsColumns || []).map(
@@ -82,13 +81,13 @@ export const filtersAtom = atomFamily((experimentTypeName: string) =>
 );
 
 export const queryAtom = atomFamily(
-  ({ experimentTypeName }: DataAtomFamilyScopeType) =>
-    atom<object>((get) => {
+  ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
+    atom<object>(async (get) => {
       const searchString = get(searchStringAtom);
       const pageNumber = get(pageNumberAtom);
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
-      const filters = get(filtersAtom({ experimentTypeName }));
+      const filters = await get(filtersAtom({ experimentTypeName, resourceId }));
 
       if (!filters) {
         return null;
@@ -128,7 +127,7 @@ export const queryAtom = atomFamily(
 
 export const queryResponseAtom = atomFamily(
   ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
-    atom<Promise<ExploreESResponse | null> | null>(async (get) => {
+    atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
       const session = get(sessionAtom);
       const query = await get(queryAtom({ experimentTypeName, resourceId }));
 
@@ -141,16 +140,16 @@ export const queryResponseAtom = atomFamily(
   DataAtomFamilyScopeComparator
 );
 
-export const dataAtom = atomFamily((experimentTypeName: string) =>
+export const dataAtom = atomFamily(({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
   selectAtom<
     Promise<FlattenedExploreESResponse | null>,
     Promise<FlattenedExploreESResponse['hits']>
-  >(queryResponseAtom(experimentTypeName), async (response) => response?.hits ?? [])
+  >(queryResponseAtom({ experimentTypeName, resourceId }), async (response) => response?.hits ?? [])
 );
 
-export const totalAtom = atomFamily((experimentTypeName: string) =>
+export const totalAtom = atomFamily(({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
   selectAtom<Promise<FlattenedExploreESResponse | null>, Promise<number | null>>(
-    queryResponseAtom(experimentTypeName),
+    queryResponseAtom({ experimentTypeName, resourceId }),
     async (response) => {
       const { total } = response ?? {
         total: { value: 0 },
@@ -160,11 +159,12 @@ export const totalAtom = atomFamily((experimentTypeName: string) =>
   )
 );
 
-export const aggregationsAtom = atomFamily((experimentTypeName: string) =>
-  selectAtom<
-    Promise<FlattenedExploreESResponse | null>,
-    Promise<FlattenedExploreESResponse['aggs'] | undefined>
-  >(queryResponseAtom(experimentTypeName), async (response) => response?.aggs)
+export const aggregationsAtom = atomFamily(
+  ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
+    selectAtom<
+      Promise<FlattenedExploreESResponse | null>,
+      Promise<FlattenedExploreESResponse['aggs'] | undefined>
+    >(queryResponseAtom({ experimentTypeName, resourceId }), async (response) => response?.aggs)
 );
 
 export const rulesResponseAtom = atomFamily((experimentTypeName: string) =>

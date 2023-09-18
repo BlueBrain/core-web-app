@@ -36,12 +36,12 @@ export default function FilterControls({
 }) {
   const [activeColumnsLength, setActiveColumnsLength] = useState<number | undefined>(undefined);
   const activeColumns = useAtomValue(
-    useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
   );
   const filters = useAtomValue(
-    useMemo(() => unwrap(filtersAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(() => unwrap(filtersAtom({ experimentTypeName })), [experimentTypeName])
   );
-  const resetFilters = useResetAtom(filtersAtom(experimentTypeName));
+  const resetFilters = useResetAtom(filtersAtom({ experimentTypeName }));
   const setSearchString = useSetAtom(searchStringAtom);
 
   const selectedFiltersCount = filters

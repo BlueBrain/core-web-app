@@ -132,10 +132,10 @@ export default function ControlPanel({
   toggleDisplay,
   experimentTypeName,
 }: ControlPanelProps) {
-  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom(experimentTypeName));
-  const [filters, setFilters] = useAtom(filtersAtom(experimentTypeName));
+  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom({ experimentTypeName }));
+  const [filters, setFilters] = useAtom(filtersAtom({ experimentTypeName }));
   const aggregations = useAtomValue(
-    useMemo(() => unwrap(aggregationsAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(() => unwrap(aggregationsAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});

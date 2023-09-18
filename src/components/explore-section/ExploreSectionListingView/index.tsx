@@ -37,7 +37,7 @@ function WithControlPanel({
   experimentTypeName: string;
 }) {
   const total = useAtomValue(
-    useMemo(() => unwrap(totalAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(() => unwrap(totalAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);
@@ -77,10 +77,6 @@ export default function DefaultListViewTabs({
   experimentTypeName: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const activeColumns = useAtomValue(
-    useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
-  );
-  const scopedDataAtom = dataAtom(experimentTypeName);
   const inferredResourceIds = useAtomValue(inferredResourceIdsAtom(experimentTypeName));
 
   // Convert inferredResourceIds to an array
@@ -96,6 +92,7 @@ export default function DefaultListViewTabs({
           enableDownload={enableDownload}
           title={title}
           experimentTypeName={experimentTypeName}
+          renderButton={renderButton}
         />
       ),
     },
@@ -112,6 +109,7 @@ export default function DefaultListViewTabs({
             enableDownload={enableDownload}
             title={title}
             experimentTypeName={experimentTypeName}
+            renderButton={renderButton}
           />
         ),
       },
@@ -124,6 +122,7 @@ export default function DefaultListViewTabs({
             title={title}
             experimentTypeName={experimentTypeName}
             resourceId={v1 as string}
+            renderButton={renderButton}
           />
         ),
       })),
@@ -131,7 +130,7 @@ export default function DefaultListViewTabs({
 
     // Update the items array
     setItems(newItems);
-  }, [inferredResourceIdsArray, experimentTypeName, title, enableDownload]);
+  }, [inferredResourceIdsArray, experimentTypeName, title, enableDownload, renderButton]);
 
   return (
     <div className="p-0 m-0">
@@ -145,11 +144,13 @@ export function DefaultListView({
   title,
   experimentTypeName,
   resourceId,
+  renderButton,
 }: {
   enableDownload?: boolean;
   title: string;
   experimentTypeName: string;
   resourceId?: string;
+  renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const activeColumns = useAtomValue(activeColumnsAtom({ experimentTypeName }));
   const scopedDataAtom = dataAtom({ experimentTypeName, resourceId });
@@ -211,14 +212,20 @@ export function SimulationCampaignView({
   experimentTypeName: string;
 }) {
   const activeColumns = useAtomValue(
-    useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
   );
+  const scopedDataAtom = dataAtom({ experimentTypeName });
   const data = useAtomValue(useMemo(() => loadable(scopedDataAtom), [scopedDataAtom]));
   const unwrappedData = useAtomValue(
     useMemo(() => unwrap(scopedDataAtom, (prev) => prev ?? []), [scopedDataAtom])
-  const activeColumns = useAtomValue(activeColumnsAtom({ experimentTypeName }));
+  );
+
+  const dimensionColumns = useAtomValue(
+    useMemo(() => unwrap(dimensionColumnsAtom({ experimentTypeName })), [experimentTypeName])
+  );
 
   const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns);
+
   const loading = data.state === 'loading' || !dimensionColumns;
 
   return (

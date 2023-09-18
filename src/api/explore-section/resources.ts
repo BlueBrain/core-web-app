@@ -62,8 +62,8 @@ export async function fetchInferredResources(accessToken: string, inferenceResou
     headers: createHeaders(accessToken),
     body: JSON.stringify(query),
   })
-    .then((response) => response.json())
-    .then<ExploreESResponse>((data) => ({
+    .then<ExploreESResponse>((response) => response.json())
+    .then<FlattenedExploreESResponse>((data) => ({
       hits: map(data?.hits?.hits, (hit) => ({ ...hit, inferred: true })),
       total: data?.hits?.total,
       aggs: data.aggregations,
