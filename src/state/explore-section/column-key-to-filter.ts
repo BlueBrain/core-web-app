@@ -12,13 +12,6 @@ export default function columnKeyToFilter(key: string): Filter {
         value: [],
         aggregationType: 'buckets',
       };
-    case 'checkListInference':
-      return {
-        field: key,
-        type: 'checkListInference',
-        value: [],
-        aggregationType: 'buckets',
-      };
     case 'dateRange':
       return {
         field: key,

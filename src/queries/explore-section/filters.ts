@@ -25,7 +25,6 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
 
   switch (filter.type) {
     case 'checkList':
-    case 'checkListInference':
       filterESBuilder = esb.termsQuery(esTerm, filter.value);
 
       break;

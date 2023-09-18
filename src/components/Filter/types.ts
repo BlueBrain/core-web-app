@@ -17,11 +17,6 @@ export interface CheckListFilter extends Omit<BaseFilter, 'type' | 'value'> {
   value: string[];
 }
 
-export interface CheckListInferenceFilter extends Omit<BaseFilter, 'type' | 'value'> {
-  type: 'checkListInference';
-  value: string[];
-}
-
 export interface SearchFilter extends Omit<BaseFilter, 'type' | 'value'> {
   type: 'search';
   value: string[];
@@ -48,14 +43,12 @@ export type Filter =
   | RangeFilter
   | ValueFilter
   | ValueOrRangeFilter
-  | CheckListInferenceFilter
   | BaseFilter;
 
 export type FilterType =
   | 'checkList'
   | 'dateRange'
   | 'valueRange'
-  | 'checkListInference'
   | 'valueOrRange'
   | 'search'
   | null;

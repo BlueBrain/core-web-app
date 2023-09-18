@@ -17,7 +17,6 @@ import {
   FilterGroup,
   FilterGroupProps,
   defaultList,
-  listWithInference,
 } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
@@ -87,17 +86,6 @@ function createFilterItemComponent(
             aggregation={agg}
             onChange={(values: GteLteValue) => updateFilterValues(filter.field, values)}
           />
-        );
-      case 'checkListInference':
-        return (
-          <CheckList
-            data={aggregations as OptionsData}
-            filter={filter}
-            values={filterValues[filter.field] as string[]}
-            onChange={(values: string[]) => updateFilterValues(filter.field, values)}
-          >
-            {listWithInference}
-          </CheckList>
         );
       case 'checkList':
         return (

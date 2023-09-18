@@ -86,7 +86,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   brainRegion: {
     term: 'brainRegion.label.keyword',
     title: 'Brain Region',
-    filter: 'checkListInference',
+    filter: 'checkList',
     render: {
       listingViewFn: selectorFnBrainRegion,
       detailViewFn: (resource) => resource.brainLocation.brainRegion.label,
