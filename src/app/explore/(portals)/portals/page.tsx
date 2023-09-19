@@ -1,9 +1,21 @@
+import { client } from '@/api/sanity';
 import { Portal } from '@/types/explore-portal';
 import HomeHeader from '@/components/Global/HomeHeader';
 import Item from '@/components/explore-section/Portals/Item';
-import { PORTALS_LIST_CONTENT } from '@/constants/explore-section/portals-content';
+// import { PORTALS_LIST_CONTENT } from '@/constants/explore-section/portals-content';
 
-export default function ExplorePortalsPage() {
+export default async function ExplorePortalsPage() {
+
+  const portalsContent = await client.fetch(`*[_type == 'portals'][] {
+    name, 
+    description,
+    url,
+    categories,
+    'heroImage': coverImage.asset->url
+  }
+  `)
+
+
   return (
     <div className="relative flex flex-row-reverse justify-start w-screen min-h-screen flex-nowrap bg-primary-9">
       <HomeHeader
@@ -14,7 +26,7 @@ export default function ExplorePortalsPage() {
       />
 
       <div className="flex flex-col w-2/3 pr-8 gap-y-2 my-4">
-        {PORTALS_LIST_CONTENT.map((singlePortal: Portal) => (
+        {portalsContent.map((singlePortal: Portal) => (
           <Item content={singlePortal} key={`single-portal_${singlePortal.name}`} />
         ))}
       </div>

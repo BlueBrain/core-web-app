@@ -4,5 +4,5 @@ export type Portal = {
   url: string;
   categories: string[];
   lastUpdate: string;
-  image: string;
+  heroImage: string;
 };
