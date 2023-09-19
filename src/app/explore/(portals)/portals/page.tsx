@@ -5,7 +5,6 @@ import Item from '@/components/explore-section/Portals/Item';
 // import { PORTALS_LIST_CONTENT } from '@/constants/explore-section/portals-content';
 
 export default async function ExplorePortalsPage() {
-
   const portalsContent = await client.fetch(`*[_type == 'portals'][] {
     name, 
     description,
@@ -13,8 +12,7 @@ export default async function ExplorePortalsPage() {
     categories,
     'heroImage': coverImage.asset->url
   }
-  `)
-
+  `);
 
   return (
     <div className="relative flex flex-row-reverse justify-start w-screen min-h-screen flex-nowrap bg-primary-9">

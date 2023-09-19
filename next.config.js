@@ -39,7 +39,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ["cdn.sanity.io"]
+    domains: ['cdn.sanity.io'],
   },
   async redirects() {
     return [
