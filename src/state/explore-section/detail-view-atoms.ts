@@ -21,11 +21,8 @@ export const sessionAndInfoAtom = atom((get) => {
   return { session, info };
 });
 
-export const refetchDetailCounter = atom(0);
-
 export const detailAtom = atom<Promise<DeltaResource | null>>(async (get) => {
   const { session, info } = get(sessionAndInfoAtom);
-  get(refetchDetailCounter);
 
   const resource: DeltaResource = await fetchResourceById(
     info.id,

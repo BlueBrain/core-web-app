@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { Session } from 'next-auth';
@@ -29,18 +29,12 @@ import { Entity, WorkflowExecution } from '@/types/nexus';
 import { createHeaders } from '@/util/utils';
 import { composeUrl } from '@/util/nexus';
 import { launchWorkflowTask } from '@/services/bbp-workflow';
-import { refetchDetailCounter } from '@/state/explore-section/detail-view-atoms';
 
-export default function Simulations({
-  resource,
-}: {
-  resource: SimulationCampaignResource & { analyses?: string[] };
-}) {
+export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
   const [loading, setLoading] = useState(false);
-  const [refetchCount, refetchCampaign] = useAtom(refetchDetailCounter);
-
+  const [analysesState, setAnalyses] = useState(resource.analyses || []);
   const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
   const simulationsCount = useAtomValue(simulationsCountAtom);
   const [analyses] = useAnalyses();
@@ -106,13 +100,12 @@ export default function Simulations({
       {isCustom &&
         !outputs.length &&
         !fetchingOutputs &&
-        resource.analyses?.includes(selectedDisplay) && <span>Running Analysis ... </span>}
+        analysesState.includes(selectedDisplay) && <span>Running Analysis ... </span>}
 
       {isCustom &&
         !outputs.length &&
         !fetchingOutputs &&
-        (!resource.analyses ||
-          (resource.analyses && !resource.analyses.includes(selectedDisplay))) && (
+        !analysesState.includes(selectedDisplay) && (
           <div className="flex justify-center items-center" style={{ height: 200 }}>
             <button
               type="button"
@@ -122,7 +115,7 @@ export default function Simulations({
                   resource,
                   analysesById[selectedDisplay],
                   setLoading,
-                  () => refetchCampaign(refetchCount + 1),
+                  setAnalyses,
                   session
                 )
               }
@@ -200,7 +193,7 @@ async function launchAnalysis(
   simCampaign: SimulationCampaignResource,
   analysis: Analysis | undefined,
   setLoading: (value: boolean) => void,
-  onSuccess: () => void,
+  onSuccess: (analyses: string[]) => void,
   session: Session | null
 ) {
   if (!simCampaign.wasGeneratedBy || !session || !analysis) return;
@@ -231,7 +224,7 @@ async function launchAnalysis(
           "output": "$SCRATCH_PATH",
           "report_type": "spikes",
           "report_name": "raster",
-          "node_sets": ["FRP"],
+          "node_sets": ["AAA"],
           "cell_step": 1
           }`;
 
@@ -276,10 +269,12 @@ async function launchAnalysis(
   });
 
   await updateResource(
-    { ...simCampaign, analyses: [analysis?.['@id']] } as Entity,
+    { ...simCampaign, analyses: [...(simCampaign.analyses || []), analysis['@id']] } as Entity,
     simCampaign._rev,
     session
   );
+
+  onSuccess([...(simCampaign.analyses || []), analysis['@id']]);
 
   notification.success({
     message: 'Workflow launched successfuly',
@@ -299,5 +294,4 @@ async function launchAnalysis(
   });
 
   setLoading(false);
-  onSuccess();
 }
