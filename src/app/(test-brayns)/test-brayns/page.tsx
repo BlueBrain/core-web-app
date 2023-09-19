@@ -1,6 +1,8 @@
 'use client';
 
 import BraynsSimulationViewer from '@/services/brayns/simulations/BraynsSimulationViewer';
+import AxisGizmo from '@/components/InteractiveBrayns/AxisGizmo';
+import { useMultiBraynsManager } from '@/services/brayns/simulations';
 
 import styles from './page.module.css';
 
@@ -13,12 +15,14 @@ import styles from './page.module.css';
  * we should delete this file (and its folder).
  */
 export default function TestBraynsPage() {
+  const manager = useMultiBraynsManager();
   return (
     <div className={styles.testBrayns}>
       <BraynsSimulationViewer slotId={0} />
       <BraynsSimulationViewer slotId={1} />
       <BraynsSimulationViewer slotId={2} />
       <BraynsSimulationViewer slotId={3} />
+      {manager && <AxisGizmo camera={manager.camera} className={styles.axisGizmo} />}
     </div>
   );
 }

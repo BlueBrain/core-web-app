@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 import CameraTransform from '../common/utils/camera-transform';
+import Gestures from '../common/utils/gestures';
 import ResourceManager from './resource-manager/resource-manager';
 import { MAX_BRAYNS_INSTANCES } from './settings';
 import { BraynsSimulationOptions, TokenProvider } from './types';
@@ -62,6 +63,8 @@ export interface MultiBraynsManagerInterface {
   loadSimulation(slotId: number, options: BraynsSimulationOptions): void;
 
   setSimulationFrame(frameIndex: number): void;
+
+  readonly camera: typeof CameraTransform;
 }
 
 class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
@@ -90,6 +93,9 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
 
   private readonly resourceManager: ResourceManager;
 
+  /** Listen to mouse gestures to control camera. */
+  private readonly gestures = new Gestures();
+
   /**
    * Map canvases (with ResizeObservers) to slots.
    */
@@ -105,7 +111,9 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
       currentlyLoadedSimulation.push(null);
     }
     this.canvases = canvases;
-    this.resourceManager = new ResourceManager(this, this.handleNewImage);
+    this.resourceManager = new ResourceManager(this, this.camera, this.handleNewImage);
+    this.gestures.eventDrag.addListener(handleDrag);
+    this.gestures.eventZoom.addListener(handleZoom);
   }
 
   addSlotStateChangeHandler(slotId: number, handler: (state: SlotState) => void): void {
@@ -134,6 +142,7 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
 
   attachCanvas(slotId: number, canvas: HTMLCanvasElement) {
     checkSlotId(slotId);
+    this.gestures.attach(canvas);
     const observer = new ResizeObserver(() => {
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
@@ -148,6 +157,7 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
 
   detachCanvas(slotId: number, canvas: HTMLCanvasElement) {
     checkSlotId(slotId);
+    this.gestures.detach(canvas);
     const observer = this.canvases[slotId].get(canvas);
     if (observer) {
       this.canvases[slotId].delete(canvas);
@@ -181,4 +191,38 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
       ctx.drawImage(image, 0, 0, w, h);
     }
   };
+}
+
+function handleDrag({
+  deltaX,
+  deltaY,
+  button,
+  isKeyPressed,
+}: {
+  deltaX: number;
+  deltaY: number;
+  button: number;
+  isKeyPressed: (key: string) => boolean;
+}) {
+  /* Scaling is used to mitigate the mouse speed */
+  const shift = isKeyPressed('Shift');
+  const scaleX = shift ? 0.5 : 5;
+  const scaleY = shift ? 0.5 : 5;
+  if (button === 0) {
+    // Left mouse button: Orbiting.
+    if (isKeyPressed('z')) {
+      CameraTransform.rotateAroundZ(-deltaX * scaleX);
+    } else {
+      if (!isKeyPressed('y')) CameraTransform.rotateAroundX(deltaY * scaleY);
+      if (!isKeyPressed('x')) CameraTransform.rotateAroundY(-deltaX * scaleX);
+    }
+    return;
+  }
+  // Translating.
+  CameraTransform.translate(deltaX * scaleX, deltaY * scaleY);
+}
+
+function handleZoom(direction: number) {
+  if (direction < 0) CameraTransform.zoomIn();
+  else CameraTransform.zoomOut();
 }

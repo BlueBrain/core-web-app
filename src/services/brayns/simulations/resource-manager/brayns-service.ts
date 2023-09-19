@@ -1,6 +1,7 @@
 import ImageStream from '../../common/image-stream';
 import JsonRpc from '../../common/json-rpc';
 import Settings from '../../common/settings';
+import { Vector3 } from '../../common/utils/calc';
 import { BraynsSimulationOptions } from '../types';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
@@ -27,6 +28,10 @@ export default class BraynsService {
     });
   }
 
+  askNextFrame(): Promise<void> {
+    return this.stream.askForNextFrame();
+  }
+
   async getVersion(): Promise<string> {
     const version = await this.service.exec('get-version');
     assertType<{ major: number; minor: number; patch: number; revision: string }>(version, {
@@ -39,17 +44,16 @@ export default class BraynsService {
   }
 
   async setViewport(width: number, height: number) {
-    const { service, stream } = this;
+    const { service } = this;
     const w = Math.max(MINIMAL_VIEWPORT_SIZE, Math.ceil(width));
     const h = Math.max(MINIMAL_VIEWPORT_SIZE, Math.ceil(height));
     await service.exec('set-application-parameters', {
       viewport: [w, h],
     });
-    await stream.askForNextFrame(true);
   }
 
   async loadCircuit(simulation: BraynsSimulationOptions) {
-    const { service, stream } = this;
+    const { service } = this;
     await service.exec('set-camera-orthographic', { height: 15000 });
     await service.exec('set-camera-view', {
       position: [6587, 3849, 18837],
@@ -57,8 +61,8 @@ export default class BraynsService {
       up: [0, 1, 0],
     });
     await service.exec('set-renderer-interactive', {
-      ao_samples: 0,
-      enable_shadows: true,
+      ao_samples: 2,
+      enable_shadows: false,
       max_ray_bounces: 1,
       samples_per_pixel: 4,
       background_color: [0.002, 0.008, 0.051, 0],
@@ -71,7 +75,7 @@ export default class BraynsService {
     await service.exec('clear-models');
     await service.exec('clear-lights');
     await service.exec('add-light-ambient', { intensity: 1 });
-    await service.exec('add-model', {
+    const models = await service.exec('add-model', {
       loader_name: 'SONATA loader',
       loader_properties: {
         node_population_settings: [
@@ -83,7 +87,7 @@ export default class BraynsService {
               load_axon: false,
               load_dendrites: false,
               load_soma: true,
-              radius_multiplier: 50,
+              radius_multiplier: 150,
             },
             report_name: simulation.report.name,
             spike_transition_time: 0.5,
@@ -92,6 +96,52 @@ export default class BraynsService {
       },
       path: simulation.circuitPath,
     });
-    await stream.askForNextFrame(true);
+    assertType<{ model_id: number }[]>(models, ['array', { model_id: 'number' }]);
+    const [model] = models;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { model_id } = model; // Brayns uses snake-case.
+    await service.exec('enable-simulation', { enabled: true, model_id });
+    const params = await service.exec('get-simulation-parameters');
+    assertType<{
+      current?: number;
+      dt: number;
+      end_frame: number;
+      start_frame: number;
+      unit: string;
+    }>(params, {
+      current: ['?', 'number'],
+      dt: 'number',
+      end_frame: 'number',
+      start_frame: 'number',
+      unit: 'string',
+    });
+    // Set a random simulation step.
+    // This will be removed as soon as we will add the simulation steps slider.
+    await service.exec('set-simulation-parameters', {
+      current:
+        params.start_frame + Math.floor(Math.random() * (params.end_frame - params.start_frame)),
+    });
+  }
+
+  async setCameraView({ height }: { height: number }) {
+    const { service } = this;
+    await service.exec('set-camera-orthographic', { height });
+  }
+
+  async setCameraOrthographic({
+    position,
+    target,
+    up,
+  }: {
+    position: Vector3;
+    target: Vector3;
+    up: Vector3;
+  }) {
+    const { service } = this;
+    await service.exec('set-camera-view', {
+      position,
+      target,
+      up,
+    });
   }
 }

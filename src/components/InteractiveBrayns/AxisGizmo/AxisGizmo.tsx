@@ -4,18 +4,11 @@ import { useCallback, useEffect, useRef } from 'react';
 import { logError } from '../../../util/logger';
 import Painter from './painter';
 import Icon from './Icon';
+import { CameraTransformInteface } from '@/services/brayns/common/utils/camera-transform';
+
 import styles from './axis-gizmo.module.css';
 
 const GIZMO_SIZE = 128;
-
-export interface CameraTransformInteface {
-  addChangeListener(listener: () => void): void;
-  removeChangeListener(listener: () => void): void;
-  reset(): void;
-  rotateAroundZ(angleInRadians: number): void;
-  getOrientation(): [x: number, y: number, z: number, w: number];
-  setOrientation(quaternion: [x: number, y: number, z: number, w: number]): void;
-}
 
 export interface AxisGizmoViewProps {
   className?: string;

@@ -7,7 +7,23 @@ const MAX_DISTANCE = 50000;
 /** Number to add/remove to the `distance` at every zomm out/in step. */
 const ZOOM_FACTOR = 0.1;
 
-const CameraTransform = {
+export interface CameraTransformInteface {
+  addChangeListener(listener: () => void): void;
+  removeChangeListener(listener: () => void): void;
+  reset(): void;
+  rotateAroundX(angleInRadians: number): void;
+  rotateAroundY(angleInRadians: number): void;
+  rotateAroundZ(angleInRadians: number): void;
+  translate(x: number, y: number, z?: number): void;
+  getDistance(): number;
+  getTarget(): [x: number, y: number, z: number];
+  getOrientation(): [x: number, y: number, z: number, w: number];
+  setOrientation(quaternion: [x: number, y: number, z: number, w: number]): void;
+  zoomIn(factor?: number): void;
+  zoomOut(factor?: number): void;
+}
+
+const CameraTransform: CameraTransformInteface = {
   addChangeListener(listener: () => void) {
     State.camera.addListener(listener);
   },
@@ -18,6 +34,14 @@ const CameraTransform = {
 
   reset() {
     State.camera.value = Settings.CAMERA;
+  },
+
+  getDistance(): number {
+    return State.camera.value.distance;
+  },
+
+  getTarget(): [x: number, y: number, z: number] {
+    return State.camera.value.target;
   },
 
   getOrientation(): [x: number, y: number, z: number, w: number] {

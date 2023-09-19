@@ -2,6 +2,8 @@
 import isEqual from 'lodash/isEqual';
 import { BraynsSimulationOptions, TokenProvider } from '../types';
 import GenericEvent from '../../common/utils/generic-event';
+import { CameraTransformInteface } from '../../common/utils/camera-transform';
+import Calc, { Vector3 } from '../../common/utils/calc';
 import Allocator from './allocator';
 import BraynsService from './brayns-service';
 import { SlotInterface, SlotState } from './types';
@@ -11,6 +13,12 @@ interface BraynsStatus {
   simulation: BraynsSimulationOptions;
   width: number;
   height: number;
+  camera: {
+    height: number;
+    position: Vector3;
+    target: Vector3;
+    up: Vector3;
+  };
 }
 
 /**
@@ -42,9 +50,11 @@ export default class BraynsSlot implements SlotInterface {
   constructor(
     private readonly tokenProvider: TokenProvider,
     private readonly slotId: number,
+    private readonly camera: CameraTransformInteface,
     private readonly onNewImage: (image: HTMLImageElement) => void
   ) {
     this.allocator = new Allocator(slotId);
+    this.camera.addChangeListener(this.handleCameraChange);
   }
 
   get error() {
@@ -89,9 +99,20 @@ export default class BraynsSlot implements SlotInterface {
       while (loop) {
         loop = await this.updateViewport();
         loop ||= await this.updateCircuit();
+        loop ||= await this.updateCamera();
+        if (loop) await this.askNextFrame();
       }
     } finally {
       this.processing = false;
+    }
+  }
+
+  private async askNextFrame() {
+    try {
+      const brayns = await this.getBraynsService();
+      brayns.askNextFrame();
+    } catch (ex) {
+      this.fatal(`Unable to ask a new frame for slot #${this.slotId}:`, ex);
     }
   }
 
@@ -134,6 +155,23 @@ export default class BraynsSlot implements SlotInterface {
     }
   }
 
+  private async updateCamera(): Promise<boolean> {
+    const { camera } = this.next;
+    if (!camera) return false;
+    if (isEqual(camera, this.current.camera)) return false;
+
+    try {
+      const brayns = await this.getBraynsService();
+      this.current.camera = camera;
+      await brayns.setCameraOrthographic(camera);
+      await brayns.setCameraView(camera);
+      return true;
+    } catch (ex) {
+      logError(`Unable to set camera for slot #${this.slotId}!`, ex);
+      return false;
+    }
+  }
+
   private async getBraynsService(): Promise<BraynsService> {
     if (this.brayns) return this.brayns;
 
@@ -156,7 +194,7 @@ export default class BraynsSlot implements SlotInterface {
     }
   }
 
-  fatal(...args: unknown[]) {
+  private fatal(...args: unknown[]) {
     logError(...args);
     this.error = args
       .map((arg) => {
@@ -175,6 +213,29 @@ export default class BraynsSlot implements SlotInterface {
       })
       .join('\n');
   }
+
+  private readonly handleCameraChange = () => {
+    const { camera } = this;
+    const distance = camera.getDistance();
+    const target = camera.getTarget();
+    const orientation = camera.getOrientation();
+    const { y: up, z: direction } = Calc.getAxisFromQuaternion(orientation);
+    const height = distance;
+    const position = Calc.addVectors(
+      target,
+      Calc.scaleVector(
+        Calc.normalizeVector(Calc.subVectors(target, Calc.scaleVector(direction, distance))),
+        1e6
+      )
+    );
+    this.next.camera = {
+      height,
+      position,
+      target,
+      up,
+    };
+    this.process();
+  };
 }
 
 function areDifferentSimulations(
