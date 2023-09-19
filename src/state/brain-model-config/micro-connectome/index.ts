@@ -33,6 +33,7 @@ import {
 } from '@/components/connectome-definition/micro/micro-connectome-worker';
 import { MicroConnectomeEditEntry } from '@/types/connectome';
 import { fromSerialisibleSelection } from '@/util/connectome';
+import { supportedUIConfigVersion } from '@/constants/configs';
 
 export const refetchCounterAtom = atom<number>(0);
 export const triggerRefetchAtom = atom(null, (get, set) =>
@@ -53,6 +54,10 @@ export const configAtom = atom<Promise<MicroConnectomeConfigResource | null>>(as
 export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
   if (!config) return null;
+
+  if (config.configVersion !== supportedUIConfigVersion.microConnectomeConfig) {
+    throw new Error('Config version is not supported by micro connectome editor');
+  }
 
   return config.distribution.contentUrl;
 });
