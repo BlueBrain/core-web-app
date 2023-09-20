@@ -30,7 +30,7 @@ function ContextualTrigger({
   };
 
   return (
-    <IconButton onClick={onTriggerContextualLiterature}>
+    <IconButton onClick={onTriggerContextualLiterature} className="w-min h-min p-0">
       <ReadOutlined className={classNames('h-4 text-base text-white', className)} />
     </IconButton>
   );

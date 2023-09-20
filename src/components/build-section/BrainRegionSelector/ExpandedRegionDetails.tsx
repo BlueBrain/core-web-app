@@ -91,7 +91,7 @@ function NeuronCompositionEditor({
             </IconButton>
           )}
           <ContextualTrigger
-            className={isEditable ? 'ml-1' : ''}
+            className={isEditable ? 'ml-1 h-max mb-1' : ''}
             about={about as QuestionAbout}
             subject={title}
             densityOrCount={densityOrCount}

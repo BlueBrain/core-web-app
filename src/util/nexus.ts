@@ -1,13 +1,6 @@
 import pickBy from 'lodash/pickBy';
 import { nexus } from '@/config';
-import {
-  Distribution,
-  FileMetadata,
-  GeneratorConfig,
-  GeneratorConfigType,
-  GeneratorName,
-} from '@/types/nexus';
-import { PartialBy } from '@/types/common';
+import { Distribution, FileMetadata } from '@/types/nexus';
 import { metadataKeys } from '@/constants/nexus';
 
 export function collapseId(nexusId: string) {
@@ -90,16 +83,6 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     .join('');
 }
 
-const generatorNameByKgType: Record<GeneratorConfigType, GeneratorName> = {
-  CellCompositionConfig: 'cell_composition',
-  CellPositionConfig: 'cell_position',
-  EModelAssignmentConfig: 'placeholder',
-  MorphologyAssignmentConfig: 'mmodel',
-  MicroConnectomeConfig: 'connectome',
-  SynapseConfig: 'connectome_filtering',
-  MacroConnectomeConfig: 'connectome',
-};
-
 export function createDistribution(payloadMetadata: FileMetadata): Distribution {
   return {
     '@type': 'DataDownload',
@@ -114,32 +97,6 @@ export function createDistribution(payloadMetadata: FileMetadata): Distribution 
       algorithm: payloadMetadata._digest._algorithm,
       value: payloadMetadata._digest._value,
     },
-  };
-}
-
-interface CreateGeneratorConfigProps {
-  id?: string;
-  name?: string;
-  description?: string;
-  kgType: GeneratorConfigType;
-  payloadMetadata: FileMetadata;
-}
-
-export function createGeneratorConfig({
-  id,
-  name = 'Generator configuration',
-  description = 'NA',
-  kgType,
-  payloadMetadata,
-}: CreateGeneratorConfigProps): PartialBy<GeneratorConfig, '@id'> {
-  return {
-    '@context': 'https://bbp.neuroshapes.org',
-    '@type': [kgType, 'Entity'],
-    '@id': id,
-    name,
-    description,
-    generatorName: generatorNameByKgType[kgType],
-    distribution: createDistribution(payloadMetadata),
   };
 }
 

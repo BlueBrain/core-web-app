@@ -8,7 +8,7 @@ import RightMouseButtonIcon from '../Icons/RightMouseButtonIcon';
 import Tutorial from '../Tutorial';
 import ShiftIcon from '../Icons/ShiftIcon';
 import { GizmoIcon } from './GizmoIcon';
-import Styles from './settings.module.css';
+import styles from './settings.module.css';
 
 interface SettingsProps {
   visible: boolean;
@@ -25,8 +25,8 @@ export default function Settings({
 }: SettingsProps) {
   const opacityId = useId();
   return (
-    <div className={`${Styles.settings} ${visible ? Styles.show : Styles.hide}`}>
-      <div className={Styles.closeButton}>
+    <div className={`${styles.settings} ${visible ? styles.show : styles.hide}`}>
+      <div className={styles.closeButton}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -39,7 +39,7 @@ export default function Settings({
         </svg>
       </div>
       <main>
-        <div className={Styles.opacity}>
+        <div className={styles.opacity}>
           <label htmlFor={opacityId}>
             <div>Opacity:</div>
             <div>{(100 * opacity).toFixed()}%</div>
@@ -49,7 +49,7 @@ export default function Settings({
           </div>
         </div>
         <hr />
-        <div className={Styles.threeColumns}>
+        <div className={styles.threeColumns}>
           <LeftMouseButtonIcon />
           <MiddleMouseButtonIcon />
           <RightMouseButtonIcon />
@@ -58,13 +58,13 @@ export default function Settings({
           <div>Translate</div>
         </div>
         <Tutorial />
-        <div className={Styles.shiftIcon}>
+        <div className={styles.shiftIcon}>
           <ShiftIcon />
           <p>Hold down Shift to slow down the movement.</p>
         </div>
         <hr />
         <p>Click on the gizmo to select an axis, or reset the view.</p>
-        <div className={Styles.center}>
+        <div className={styles.center}>
           <GizmoIcon />
         </div>
       </main>

@@ -23,7 +23,10 @@ import {
   voltageFeatures,
   featureDescriptionsMap,
 } from '@/constants/cell-model-assignment/e-model';
-import { ExperimentalTrace, ReconstructedNeuronMorphology } from '@/types/explore-section/es';
+import {
+  ExperimentalTrace,
+  ReconstructedNeuronMorphology,
+} from '@/types/explore-section/es-experiment';
 
 const NOT_AVAILABLE_STR = 'Data not available';
 

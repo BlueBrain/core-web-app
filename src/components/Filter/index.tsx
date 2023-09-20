@@ -32,7 +32,7 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
       defaultValue={['contributor', 'eType']}
       type="multiple"
     >
-      {items.map(({ content, display, label, toggleFunc }) => {
+      {items?.map(({ content, display, label, toggleFunc }) => {
         const displayTrigger = display ? (
           <EyeOutlined onClick={toggleFunc} style={{ color: 'white' }} />
         ) : (

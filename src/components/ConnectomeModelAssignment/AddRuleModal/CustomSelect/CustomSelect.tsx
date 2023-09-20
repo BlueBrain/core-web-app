@@ -5,7 +5,7 @@ import {
   useLabelsProvider,
 } from '@/components/ConnectomeModelAssignment/hooks';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
-import Style from './custom-select.module.css';
+import styles from './custom-select.module.css';
 
 export interface CustomSelectProps {
   rule: SynapticAssignmentRule;
@@ -21,7 +21,7 @@ export default function CustomSelect({ field, rule, onChange }: CustomSelectProp
 
   const options = optionsProvider(field).map((value) => ({ value, label: getLabel(value) }));
   return (
-    <div className={Style.customSelect}>
+    <div className={styles.customSelect}>
       <label htmlFor={id} style={{ textAlign: 'left' }} className="text-primary-7">
         {label}
       </label>

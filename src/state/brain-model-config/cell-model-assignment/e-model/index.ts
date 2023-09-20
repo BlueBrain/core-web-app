@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import groupBy from 'lodash/groupBy';
+import lodashFind from 'lodash/find';
 
 import {
   AllFeatureKeys,
@@ -8,7 +9,6 @@ import {
   EModelConfigurationParameter,
   EModelConfigurationPayload,
   MechanismForUI,
-  EModelMenuItem,
   EModelUIConfig,
   EModelWorkflow,
   ExemplarMorphologyDataType,
@@ -20,6 +20,8 @@ import {
   NeuronMorphology,
   SimulationParameter,
   Trace,
+  EModelByETypeMappingType,
+  SelectedEModelType,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -30,10 +32,12 @@ import {
   convertFeaturesForUI,
   convertMechanismsForUI,
 } from '@/services/e-model';
-import { getEntityListByIdsQuery } from '@/queries/es';
+import { getEModelQuery, getEntityListByIdsQuery } from '@/queries/es';
 import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
+import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 
-export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
+export const selectedEModelAtom = atom<SelectedEModelType | null>(null);
 
 export const eModelRemoteParamsLoadedAtom = atom(false);
 
@@ -113,15 +117,11 @@ const eModelTracesProjConfig = {
   project: 'lnmce',
 };
 
-const eModelIdAtom = atom<Promise<string | null>>(
-  async () => 'https://bbp.epfl.ch/neurosciencegraph/data/ff131327-704b-451e-a412-bef7ccf9daf0'
-);
-
 /* --------------------------------- EModel --------------------------------- */
 
 export const eModelAtom = atom<Promise<EModel | null>>(async (get) => {
   const session = get(sessionAtom);
-  const eModelId = await get(eModelIdAtom);
+  const eModelId = await get(selectedEModelAtom)?.id;
 
   if (!session || !eModelId) return null;
 
@@ -227,7 +227,7 @@ export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (
     if (!selectedEModel) throw new Error('No selected e-model to edit');
 
     type ETypeName = string;
-    const eType: ETypeName = selectedEModel.label;
+    const eType: ETypeName = selectedEModel.name;
 
     type EModelMechanismsMapping = Record<ETypeName, MechanismForUI>;
     const payload = await fetchJsonFileById<EModelMechanismsMapping>(eTypeMechanismMapId, session);
@@ -286,3 +286,38 @@ const eModelExtractionTargetsConfigurationAtom = atom<
 export const eModelEditModeAtom = atom(false);
 
 export const eModelUIConfigAtom = atom<Partial<EModelUIConfig> | null>({});
+
+/* ------------------------- EModelCanonicalMapping ------------------------- */
+
+export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const selectedBrainRegion = get(selectedBrainRegionAtom);
+    const brainRegions = await get(brainRegionsAtom);
+
+    if (!session || !selectedBrainRegion || !brainRegions) return null;
+
+    const eModelsQuery = getEModelQuery();
+    const eModels = await queryES<EModel>(eModelsQuery, session, eModelProjConfig);
+    // pick the e-models compatible with latest structure
+    const withGeneration = eModels.filter((eModel) => 'generation' in eModel);
+
+    const filteredByLocation = withGeneration.filter((eModel) => {
+      // as they don't have brain location, they can be use everywhere
+      if (!('brainLocation' in eModel)) return true;
+
+      const eModelBrainRegionCollapsedId = eModel.brainLocation?.brainRegion['@id'].replace(
+        `${BRAIN_REGION_URI_BASE}/`,
+        ''
+      );
+      const brainRegionForEModel = lodashFind(brainRegions, ['id', eModelBrainRegionCollapsedId]);
+
+      const selectedBrainRegionExpandedId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
+      const isChildren = brainRegionForEModel?.leaves?.includes(selectedBrainRegionExpandedId);
+      return isChildren;
+    });
+
+    const byEType: EModelByETypeMappingType = groupBy<EModel>(filteredByLocation, 'etype');
+    return byEType;
+  }
+);

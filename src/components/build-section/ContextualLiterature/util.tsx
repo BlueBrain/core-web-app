@@ -18,31 +18,82 @@ const buildCellCompositionQuestions = ({
   step,
   subject,
   densityOrCount,
-}: BuildQuestionInput): Record<string, JSX.Element> => ({
-  [`What is the neuron ${densityOrCount} of ${subject} in ${brainRegionTitle}`]: (
-    <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
-      What is the neuron {propertyElement(densityOrCount)} of {subjectElement(subject)} in{' '}
-      {brainRegionElement(brainRegionTitle)} region ?
-    </span>
-  ),
-  ...(about === 'EType'
-    ? {
-        [`What are of electrophysiological types in ${brainRegionTitle}`]: (
+}: BuildQuestionInput): Record<string, JSX.Element> => {
+  if (step === 'cell-composition') {
+    return {
+      [`What is the neuron ${densityOrCount} of ${subject} in ${brainRegionTitle}`]: (
+        <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+          What is the neuron {propertyElement(densityOrCount)} of {subjectElement(subject)} in{' '}
+          {brainRegionElement(brainRegionTitle)} region ?
+        </span>
+      ),
+      ...(about === 'EType'
+        ? {
+            [`What are of electrophysiological types in ${brainRegionTitle}`]: (
+              <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+                What are the {propertyElement('electrophysiological')} types in{' '}
+                {brainRegionElement(brainRegionTitle)} region ?
+              </span>
+            ),
+          }
+        : {
+            [`What are of morphological types in ${brainRegionTitle}`]: (
+              <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+                What are the {propertyElement('morphological')} types in{' '}
+                {brainRegionElement(brainRegionTitle)} region ?
+              </span>
+            ),
+          }),
+    };
+  }
+  if (step === 'connectome-model-assignment') {
+    return {
+      ...(about === 'nrrp' && {
+        'What is the number of readily releasible pool of vesicles': (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
-            What are the {propertyElement('electrophysiological')} types in{' '}
-            {brainRegionElement(brainRegionTitle)} region ?
-          </span>
-        ),
-      }
-    : {
-        [`What are of morphological types in ${brainRegionTitle}`]: (
-          <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
-            What are the {propertyElement('morphological')} types in{' '}
-            {brainRegionElement(brainRegionTitle)} region ?
+            What is the number of readily releasible pool of vesicles?
           </span>
         ),
       }),
-});
+      ...(about === 'gsyn' && {
+        'What is the synapse conductance': (
+          <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+            What is the synapse conductance?
+          </span>
+        ),
+      }),
+      ...(about === 'dtc' && {
+        'What is the mean time to decay from peak PSP amplitude to base line?': (
+          <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+            What is the mean time to decay from peak PSP amplitude to base line?
+          </span>
+        ),
+      }),
+      ...(about === 'u' && {
+        'What is the utilisation probability of the synaptic efficacy?': (
+          <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+            What is the utilisation probability of the synaptic efficacy?
+          </span>
+        ),
+      }),
+      ...(about === 'f' && {
+        'What is the facilitation time constant': (
+          <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+            What is the facilitation time constant?
+          </span>
+        ),
+      }),
+      ...(about === 'd' && {
+        'What is the decay time constant ': (
+          <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
+            What is the decay time constant ?
+          </span>
+        ),
+      }),
+    };
+  }
+  return {};
+};
 
 // const buildCellModelAssignementQuestion = ({ about, brainRegionTitle, step, subject }: BuildQuestionInput) => null;
 // const buildConnectomeDefinitionQuestion = ({ about, brainRegionTitle, step, subject }: BuildQuestionInput) => null;
@@ -88,6 +139,13 @@ export function buildQuestionsList({
       step,
       subject,
       densityOrCount,
+    });
+  } else if (step === 'connectome-model-assignment') {
+    questions = buildCellCompositionQuestions({
+      about,
+      brainRegionTitle,
+      step,
+      subject: about,
     });
   }
   // else if (step === 'cell-model-assignment') {

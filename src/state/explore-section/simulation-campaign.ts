@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import { SimulationCampaignResource, Simulation } from '@/types/explore-section/resources';
+import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { fetchResourceById } from '@/api/nexus';
 import {
   fetchAnalysisReportsFromEs,
@@ -60,43 +61,34 @@ export const simulationsAtom = atom<Promise<Simulation[] | undefined>>(async (ge
   }));
 });
 
-export const analysisReportsAtom = atom<
-  Promise<
-    {
-      id: string;
-      type: string;
-      blob: Blob;
-      name: string;
-      description: string;
-      simulation: string;
-      createdAt: string;
-      createdBy: string;
-    }[]
-  >
->(async (get) => {
-  const { session } = get(sessionAndInfoAtom);
-  const simulations = await get(simulationsAtom);
+export const analysisReportsAtom = atom<Promise<AnalysisReportWithImage[] | undefined>>(
+  async (get) => {
+    const { session } = get(sessionAndInfoAtom);
+    const simulations = await get(simulationsAtom);
 
-  const fetchedReports =
-    session &&
-    simulations &&
-    (await fetchAnalysisReportsFromEs(
-      session,
-      simulations.map(({ id }) => id)
-    ));
+    const fetchedReports =
+      session &&
+      simulations &&
+      (await fetchAnalysisReportsFromEs(
+        session,
+        simulations.map(({ id }) => id)
+      ));
 
-  return Promise.all(fetchedReports);
-});
+    return fetchedReports && Promise.all(fetchedReports);
+  }
+);
 
-export const reportImageFilesAtom = atom(async (get) => {
-  const detail = await get(detailAtom);
-  const analysisReports = await get(analysisReportsAtom);
-  const filteredReports = analysisReports?.filter(
-    ({ simulation }: { simulation: string }) => simulation === detail?.['@id']
-  );
+export const reportImageFilesAtom = atom<Promise<AnalysisReportWithImage[] | undefined>>(
+  async (get) => {
+    const detail = await get(detailAtom);
+    const analysisReports = await get(analysisReportsAtom);
+    const filteredReports = analysisReports?.filter(
+      ({ simulation }: { simulation: string }) => simulation === detail?.['@id']
+    );
 
-  return filteredReports;
-});
+    return filteredReports;
+  }
+);
 
 export const simulationsCountAtom = atom<Promise<number | undefined>>(async (get) => {
   const simulations = await get(simulationsAtom);

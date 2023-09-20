@@ -61,6 +61,23 @@ export const getPublicBrainModelConfigsQuery = (searchString: string = '') => ({
   },
 });
 
+export const getEModelQuery = (searchString: string = '') => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [{ term: { _deprecated: false } }, { term: { '@type': 'EModel' } }],
+          },
+        },
+        idExistsFilter,
+        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
+      ].filter(Boolean),
+    },
+  },
+});
+
 export const getPersonalBrainModelConfigsQuery = (username: string, searchString: string = '') => ({
   size: DEFAULT_SIZE,
   query: {

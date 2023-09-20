@@ -4,18 +4,11 @@ import { useCallback, useEffect, useRef } from 'react';
 import { logError } from '../../../util/logger';
 import Painter from './painter';
 import Icon from './Icon';
-import Style from './axis-gizmo.module.css';
+import { CameraTransformInteface } from '@/services/brayns/common/utils/camera-transform';
+
+import styles from './axis-gizmo.module.css';
 
 const GIZMO_SIZE = 128;
-
-export interface CameraTransformInteface {
-  addChangeListener(listener: () => void): void;
-  removeChangeListener(listener: () => void): void;
-  reset(): void;
-  rotateAroundZ(angleInRadians: number): void;
-  getOrientation(): [x: number, y: number, z: number, w: number];
-  setOrientation(quaternion: [x: number, y: number, z: number, w: number]): void;
-}
 
 export interface AxisGizmoViewProps {
   className?: string;
@@ -42,7 +35,7 @@ export default function AxisGizmoView({ className, camera }: AxisGizmoViewProps)
     [camera]
   );
   return (
-    <div className={join(className, Style.AxisGizmo)}>
+    <div className={join(className, styles.AxisGizmo)}>
       <canvas ref={refCanvas} width={GIZMO_SIZE} height={GIZMO_SIZE} />
       <Icon className="icon left" name="turn-left" onClick={() => rotate(+1)} />
       <Icon className="icon right" name="turn-right" onClick={() => rotate(-1)} />

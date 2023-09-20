@@ -14,6 +14,7 @@ import {
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Select, InputNumber, Input, Modal, Button } from 'antd';
 
+import ContextualTrigger from '../build-section/ContextualLiterature/Trigger';
 import AddRuleModal from './AddRuleModal';
 import RulesFilters from './RulesFilters';
 import Filter from './RulesFilters/filter';
@@ -141,7 +142,7 @@ export default function ConnectomeModelAssignmentView() {
 
             {!rulesTabActive && types && (
               <>
-                <div className="sticky top-0 bg-white py-4">
+                <div className="sticky top-0 bg-white pt-4">
                   <div className="flex justify-between">
                     <div className="font-bold text-primary-8">Total: {visibleTypesCount} types</div>
                     <Input.Search
@@ -461,20 +462,53 @@ function SynapticTypeRow({
 
   if (!editing)
     return (
-      <div className={classNames('flex', styles.synapseType, 'text-primary-8')}>
+      <div className={classNames('flex items-center', styles.synapseType, 'text-primary-8')}>
         <div style={{ flex: 1.9 }}>{name}</div>
         <div style={{ flex: 2.5 }}>{type.synapticModel || models[0] || ''}</div>
-        <div>{type.gsyn}</div>
-        <div>{type.gsynSD}</div>
-        <div>{type.nrrp}</div>
-        <div>{type.dtc}</div>
-        <div>{type.dtcSD}</div>
-        <div>{type.u}</div>
-        <div>{type.uSD}</div>
-        <div>{type.d}</div>
-        <div>{type.dSD}</div>
-        <div>{type.f}</div>
-        <div>{type.fSD}</div>
+        <div className="flex items-end">
+          {type.gsyn}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="gsyn" subject="gsyn" />
+        </div>
+        <div className="flex items-end">
+          {type.gsynSD}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="gsyn" subject="gsynSD" />
+        </div>
+        <div className="flex items-end">
+          {type.nrrp}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="nrrp" subject="nrrp" />
+        </div>
+        <div className="flex items-end">
+          {type.dtc}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="dtc" subject="dtc" />
+        </div>
+        <div className="flex items-end">
+          {type.dtcSD}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="dtc" subject="dtcSD" />
+        </div>
+        <div className="flex items-end">
+          {type.u}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="u" subject="u" />
+        </div>
+        <div className="flex items-end">
+          {type.uSD}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="u" subject="uSD" />
+        </div>
+        <div className="flex items-end">
+          {type.d}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="d" subject="d" />
+        </div>
+        <div className="flex items-end">
+          {type.dSD}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="d" subject="dSD" />
+        </div>
+        <div className="flex items-end">
+          {type.f}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="f" subject="f" />
+        </div>
+        <div className="flex items-end">
+          {type.fSD}
+          <ContextualTrigger className="!text-primary-3 ml-1" about="f" subject="fSD" />
+        </div>
         <div>{type.gsynSRSF}</div>
         <div>{type.uHillCoefficient}</div>
         <div style={{ flex: 1.1 }}>

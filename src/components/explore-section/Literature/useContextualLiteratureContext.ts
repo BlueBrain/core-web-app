@@ -45,7 +45,6 @@ function useContextualLiteratureContext() {
   };
 
   const { step: buildStep } = destructPath(pathname!);
-
   return {
     buildStep,
     pathname,

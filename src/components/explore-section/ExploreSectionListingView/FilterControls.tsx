@@ -1,14 +1,15 @@
-import { Dispatch, HTMLProps, SetStateAction } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import columnKeyToFilter from '@/state/explore-section/column-key-to-filter';
+import { Dispatch, HTMLProps, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useResetAtom, unwrap } from 'jotai/utils';
+import { Spin } from 'antd';
 import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
 import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 import SettingsIcon from '@/components/icons/Settings';
 import { filterHasValue } from '@/components/Filter/util';
 import {
-  activeColumnsAtom,
   filtersAtom,
   searchStringAtom,
+  activeColumnsAtom,
 } from '@/state/explore-section/list-view-atoms';
 
 function FilterBtn({ children, onClick }: HTMLProps<HTMLButtonElement>) {
@@ -27,40 +28,64 @@ function FilterBtn({ children, onClick }: HTMLProps<HTMLButtonElement>) {
 export default function FilterControls({
   displayControlPanel,
   setDisplayControlPanel,
-  type,
+  experimentTypeName,
+  resourceId,
 }: {
   displayControlPanel: boolean;
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
-  type: string;
+  experimentTypeName: string;
+  resourceId?: string;
 }) {
-  const activeColumns = useAtomValue(activeColumnsAtom(type));
-  const [filters, setFilters] = useAtom(filtersAtom(type));
-  const setSearchString = useSetAtom(searchStringAtom);
+  const [activeColumnsLength, setActiveColumnsLength] = useState<number | undefined>(undefined);
 
-  const selectedFiltersCount = filters.filter((filter) => filterHasValue(filter)).length;
+  const activeColumns = useAtomValue(
+    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
+  );
+
+  const filters = useAtomValue(
+    useMemo(
+      () => unwrap(filtersAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
+  );
+  const resetFilters = useResetAtom(filtersAtom({ experimentTypeName, resourceId }));
+  const setSearchString = useSetAtom(searchStringAtom({ experimentTypeName, resourceId }));
+
+  const selectedFiltersCount = filters
+    ? filters.filter((filter) => filterHasValue(filter)).length
+    : 0;
 
   // The columnKeyToFilter method receives a string (key) and in this case it is the equivalent to a filters[x].field
   const clearFilters = () => {
-    setFilters(filters.map((fil) => columnKeyToFilter(fil.field)));
+    resetFilters();
     setSearchString('');
   };
 
-  const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
-  const activeColumnsText = `${activeColumnsLength} active ${
-    activeColumnsLength === 1 ? 'column' : 'columns'
-  }`;
+  useEffect(() => {
+    if (activeColumns && activeColumns.length) {
+      setActiveColumnsLength(activeColumns.length - 1);
+    }
+  }, [activeColumns]);
 
   return (
-    <div className="flex items-center gap-5 justify-between w-auto">
+    <div className="flex items-center gap-5 justify-end w-auto">
       <ClearFilters onClick={clearFilters} />
-      <ExploreSectionNameSearch />
+      <ExploreSectionNameSearch experimentTypeName={experimentTypeName} resourceId={resourceId} />
       <FilterBtn onClick={() => setDisplayControlPanel(!displayControlPanel)}>
         <div className="flex gap-3 items-center">
           <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
             {selectedFiltersCount}
           </span>
           <span className="font-bold text-white">Filters</span>
-          <span className="text-primary-3 text-sm">{activeColumnsText}</span>
+          <span className="text-primary-3 text-sm">
+            {activeColumnsLength ? (
+              <>
+                {activeColumnsLength} active {activeColumnsLength === 1 ? ' column' : ' columns'}
+              </>
+            ) : (
+              <Spin />
+            )}
+          </span>
         </div>
       </FilterBtn>
     </div>

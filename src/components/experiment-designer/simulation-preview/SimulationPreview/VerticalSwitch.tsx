@@ -1,6 +1,6 @@
 import * as Switch from '@radix-ui/react-switch';
 import React from 'react';
-import Styles from './vertical-switch.module.css';
+import styles from './vertical-switch.module.css';
 
 type VerticalSwitchProps = {
   isChecked: boolean;
@@ -10,12 +10,12 @@ type VerticalSwitchProps = {
 export default function VerticalSwitch({ isChecked, onChange }: VerticalSwitchProps) {
   return (
     <Switch.Root
-      className={Styles.SwitchRoot}
+      className={styles.SwitchRoot}
       defaultChecked={isChecked}
       checked={isChecked}
       onCheckedChange={onChange}
     >
-      <Switch.Thumb className={Styles.SwitchThumb} />
+      <Switch.Thumb className={styles.SwitchThumb} />
     </Switch.Root>
   );
 }

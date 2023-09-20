@@ -2,10 +2,15 @@ import { CSSProperties } from 'react';
 
 type VirtualLabIconProps = {
   className?: string;
+  fill?: string;
   style?: CSSProperties;
 };
 
-export default function VirtualLabIcon({ className, style }: VirtualLabIconProps) {
+export default function VirtualLabIcon({
+  className,
+  fill = 'currentColor',
+  style,
+}: VirtualLabIconProps) {
   return (
     <svg
       className={className}
@@ -16,7 +21,7 @@ export default function VirtualLabIcon({ className, style }: VirtualLabIconProps
       width="15"
       height="13"
       viewBox="0 0 15 13"
-      fill="none"
+      fill={fill}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

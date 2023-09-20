@@ -1,4 +1,4 @@
-.TestBrayns {
+.testBrayns {
   position: absolute;
   left: 0;
   top: 0;
@@ -14,7 +14,14 @@
   background-color: #999;
 }
 
-.TestBrayns > canvas {
+.testBrayns > canvas {
   border: 1px solid #fff;
   background: #000;
+}
+
+.axisGizmo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -64px;
 }

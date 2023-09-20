@@ -33,7 +33,7 @@ export default function SimulationDisplayCard({
     return <Spin indicator={<LoadingOutlined />} />;
   }
   if (analysisReports.state === 'hasData') {
-    const { blob, createdAt, createdBy } = analysisReports.data.find(
+    const { blob, createdAt, createdBy } = analysisReports.data?.find(
       ({ simulation: id, name: type }) => id === simulation.id && type === display
     ) ?? {
       blob: undefined,

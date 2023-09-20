@@ -1,22 +1,25 @@
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { totalAtom } from '@/state/explore-section/list-view-atoms';
 
-export default function HeaderPanel({
-  children,
-  loading,
+function HeaderPanel({
   title,
-  type,
+  experimentTypeName,
+  resourceId,
 }: {
-  children: ReactNode;
-  loading: boolean;
-  title: string;
-  type: string;
+  title?: string;
+  experimentTypeName: string;
+  resourceId?: string;
 }) {
-  const total = useAtomValue(useMemo(() => unwrap(totalAtom(type)), [type]));
+  const total = useAtomValue(
+    useMemo(
+      () => unwrap(totalAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
+  );
 
   return (
     <div className="flex items-center justify-between ml-5">
@@ -26,7 +29,7 @@ export default function HeaderPanel({
           <small className="flex gap-1 text-sm whitespace-pre font-thin text-slate-400 pl-2">
             <span>Total:</span>
             <span>
-              {!loading ? (
+              {total ? (
                 total?.toLocaleString('en-US')
               ) : (
                 <Spin className="ml-3" indicator={<LoadingOutlined />} />
@@ -35,7 +38,8 @@ export default function HeaderPanel({
           </small>
         </h1>
       </div>
-      {children}
     </div>
   );
 }
+
+export default HeaderPanel;

@@ -1,7 +1,3 @@
-export const mockEModelAssignedMap: Record<string, string> = {
-  'L2_TPC:A<>cADpyr': 'EM__fa285b7__cADpyr__12',
-};
-
 export const spikeEventFeatures = [
   'time_to_first_spike',
   'time_to_second_spike',

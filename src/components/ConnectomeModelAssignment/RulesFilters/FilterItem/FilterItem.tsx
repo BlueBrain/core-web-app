@@ -5,7 +5,7 @@ import { FilterItemType } from '../types';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
 import { useFieldsOptionsProvider } from '@/components/ConnectomeModelAssignment/hooks';
 
-import Style from './filter-item.module.css';
+import styles from './filter-item.module.css';
 
 export interface FilterItemProps {
   item: FilterItemType;
@@ -16,7 +16,7 @@ export interface FilterItemProps {
 export default function FilterItem({ item, onChange, onDelete }: FilterItemProps) {
   const options = useOptions(item.ruleField);
   return (
-    <div className={Style.filterItem}>
+    <div className={styles.filterItem}>
       <Select
         options={OPTIONS}
         value={item.ruleField}
@@ -28,7 +28,7 @@ export default function FilterItem({ item, onChange, onDelete }: FilterItemProps
         value={item.value}
         onChange={(value) => onChange({ ...item, value })}
       />
-      <div className={Style.deleteIcon}>
+      <div className={styles.deleteIcon}>
         <DeleteOutlined onClick={onDelete} />
       </div>
     </div>

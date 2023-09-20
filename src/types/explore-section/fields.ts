@@ -44,6 +44,7 @@ export interface Distribution {
   contentSize: number;
   encodingFormat: string;
   label: string;
+  contentUrl: string;
 }
 
 export interface Subject {

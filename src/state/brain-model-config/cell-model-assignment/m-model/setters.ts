@@ -26,7 +26,7 @@ import sessionAtom from '@/state/session';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { MorphologyAssignmentConfigPayload } from '@/types/nexus';
 import { autoSaveDebounceInterval } from '@/config';
-import { createGeneratorConfig, setRevision } from '@/util/nexus';
+import { createDistribution, setRevision } from '@/util/nexus';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import {
   generateBrainRegionMTypeMapKey,
@@ -67,10 +67,7 @@ export const updateConfigPayloadAtom = atom<
     session
   );
 
-  config.distribution = createGeneratorConfig({
-    kgType: 'MorphologyAssignmentConfig',
-    payloadMetadata: updatedFile,
-  }).distribution;
+  config.distribution = createDistribution(updatedFile);
 
   await updateResource(config, config?._rev, session);
   await set(invalidateConfigAtom, 'morphologyAssignment');

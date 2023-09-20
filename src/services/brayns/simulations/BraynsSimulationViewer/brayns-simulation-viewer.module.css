@@ -1,9 +1,9 @@
-.BraynsSimulationViewer {
+.braynsSimulationViewer {
   position: relative;
   padding: 0;
 }
 
-.BraynsSimulationViewer > * {
+.braynsSimulationViewer > * {
   position: absolute;
   left: 0;
   top: 0;
@@ -11,7 +11,7 @@
   height: 100%;
 }
 
-.BraynsSimulationViewer > canvas {
+.braynsSimulationViewer > canvas {
   background-image: url(./background.jpg);
   background-repeat: repeat;
 }

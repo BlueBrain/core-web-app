@@ -1,6 +1,9 @@
-import { HTMLProps } from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
+import { HTMLProps, useMemo } from 'react';
 import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { useAtomValue, useAtom } from 'jotai';
+import { unwrap } from 'jotai/utils';
+import { totalAtom, pageSizeAtom } from '@/state/explore-section/list-view-atoms';
 import { classNames } from '@/util/utils';
 
 const antIcon = <LoadingOutlined style={{ float: 'left', fontSize: 24 }} spin />;
@@ -19,12 +22,21 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 }
 
 export default function LoadMoreButton({
-  children,
-  disabled,
-  loading,
-  onClick,
-}: HTMLProps<HTMLButtonElement> & { loading: boolean }) {
-  if (loading) {
+  experimentTypeName,
+  resourceId,
+}: HTMLProps<HTMLButtonElement> & { experimentTypeName: string; resourceId?: string }) {
+  const total = useAtomValue(
+    useMemo(
+      () => unwrap(totalAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
+  );
+
+  const [pageSize, setPageSize] = useAtom(pageSizeAtom);
+
+  const disabled = !!total && pageSize > total;
+
+  if (!total) {
     return (
       <Btn className="bg-primary-8 cursor-progress text-white" disabled>
         <Spin indicator={antIcon} />
@@ -33,12 +45,12 @@ export default function LoadMoreButton({
   }
 
   return !disabled ? (
-    <Btn className="bg-primary-8 text-white" onClick={onClick}>
-      {children}
+    <Btn className="bg-primary-8 text-white" onClick={() => setPageSize(pageSize + 30)}>
+      {!!total && pageSize < total ? 'Load 30 more results...' : 'All resources are loaded'}
     </Btn>
   ) : (
     <Btn className="bg-neutral-2 cursor-not-allowed text-primary-9" disabled>
-      {children}
+      {!!total && pageSize < total ? 'Load 30 more results...' : 'All resources are loaded'}
     </Btn>
   );
 }

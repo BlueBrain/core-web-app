@@ -91,6 +91,7 @@ export default class ProxyService implements JobAllocatorServiceInterface {
     return response;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private parseJobDetails(data: StatusResponse, jobId: string): JobStatus {
     if (!data.job_running || !data.brayns_started)
       return {
@@ -101,7 +102,8 @@ export default class ProxyService implements JobAllocatorServiceInterface {
 
     const endTime = new Date(data.end_time ?? Date.now()).valueOf();
     return {
-      hostname: `${Settings.PROXY_SLAVE_URL}${jobId}/[SERVER]?token=${this.options.token}`,
+      // hostname: `${Settings.PROXY_SLAVE_URL}${jobId}/[SERVER]?token=${this.options.token}`,
+      hostname: `${Settings.PROXY_SLAVE_URL}${jobId}/[SERVER]`,
       status: 'RUNNING',
       endTime,
     };

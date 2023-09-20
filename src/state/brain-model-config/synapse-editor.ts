@@ -10,6 +10,7 @@ import {
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
 } from '@/types/nexus';
+import { supportedUIConfigVersion } from '@/constants/configs';
 
 export const refetchCounterAtom = atom<number>(0);
 
@@ -30,6 +31,10 @@ const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | n
     const config = await get(configAtom);
 
     if (!session || !config) return null;
+
+    if (config.configVersion !== supportedUIConfigVersion.synapseConfig) {
+      throw new Error('Config version is not supported by synapse editor');
+    }
 
     return fetchGeneratorTaskActivity(config['@id'], config._rev, session);
   }

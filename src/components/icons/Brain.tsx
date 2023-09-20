@@ -2,10 +2,11 @@ import { CSSProperties } from 'react';
 
 type BrainIconProps = {
   className?: string;
+  fill?: string;
   style?: CSSProperties;
 };
 
-export default function BrainIcon({ className, style }: BrainIconProps) {
+export default function BrainIcon({ className, fill = 'currentColor', style }: BrainIconProps) {
   return (
     <svg
       className={className}
@@ -16,7 +17,7 @@ export default function BrainIcon({ className, style }: BrainIconProps) {
       height="15"
       width="15"
       viewBox="0 0 15 15"
-      fill="none"
+      fill={fill}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

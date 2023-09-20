@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { classNames } from '@/util/utils';
-import Styles from './icon.module.css';
+import styles from './icon.module.css';
 
 const ICONS = {
   'turn-left':
@@ -22,7 +22,7 @@ export default function Icon({ className, name, onClick }: IconProps) {
   };
   return (
     <span
-      className={classNames(Styles.Icon, className)}
+      className={classNames(styles.Icon, className)}
       tabIndex={0}
       role="button"
       onPointerDown={onClick}

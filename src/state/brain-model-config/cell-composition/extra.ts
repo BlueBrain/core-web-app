@@ -5,7 +5,7 @@ import { configAtom, configPayloadAtom, configPayloadRevAtom, setLocalConfigPayl
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import sessionAtom from '@/state/session';
 import { CellCompositionConfigPayload, CompositionOverridesWorkflowConfig } from '@/types/nexus';
-import { createGeneratorConfig, setRevision } from '@/util/nexus';
+import { createDistribution, setRevision } from '@/util/nexus';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
@@ -15,13 +15,13 @@ import { OriginalComposition } from '@/types/composition/original';
 const configPayloadDefaults = {
   VARIANT_DEFINITION: {
     algorithm: 'cell_composition_manipulation',
-    version: 'v0.3.3',
+    version: 'v1',
   },
   INPUTS: [
     {
       name: 'base_cell_composition',
       type: 'Dataset' as 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/fea2f6c6-d09e-4aef-ae9a-6324f01e2467',
+      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/54818e46-cf8c-4bd6-9b68-34dffbc8a68c',
     },
   ],
 };
@@ -56,10 +56,7 @@ export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload]
       session
     );
 
-    config.distribution = createGeneratorConfig({
-      kgType: 'CellCompositionConfig',
-      payloadMetadata: updatedFile,
-    }).distribution;
+    config.distribution = createDistribution(updatedFile);
 
     await updateResource(config, config?._rev, session);
 

@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Layout } from 'antd';
+import { useSetAtom, useAtomValue } from 'jotai';
 import threeCtxWrapper from '@/visual/ThreeCtxWrapper';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import MeshGenerators from '@/components/MeshGenerators';
+import { initializeRootMeshAtom } from '@/state/atlas/atlas';
+import sessionAtom from '@/state/session';
 import styles from './styles.module.css';
 
 const { Content } = Layout;
@@ -17,6 +20,14 @@ function RootMesh() {
   const shouldBeVisible = shouldBeVisiblePointClouds.concat(shouldBeVisibleMeshes);
   const meshCollection = threeCtxWrapper.getMeshCollection();
   const currentlyVisible = meshCollection.getAllVisibleMeshes();
+  const session = useAtomValue(sessionAtom);
+  const initRootMesh = useSetAtom(initializeRootMeshAtom);
+
+  useEffect(() => {
+    if (shouldBeVisibleMeshes.length === 0) {
+      initRootMesh();
+    }
+  }, [initRootMesh, session, shouldBeVisibleMeshes]);
 
   currentlyVisible.forEach((meshID) => {
     const meshShouldBeVisible = shouldBeVisible.includes(meshID);

@@ -75,7 +75,7 @@ export default function CheckList({
 
     return buckets
       ? buckets?.map(({ key, doc_count: count }) => ({
-          checked: values.includes(key as string),
+          checked: values?.includes(key as string),
           key: key as string,
           count,
         }))

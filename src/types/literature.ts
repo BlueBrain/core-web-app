@@ -136,7 +136,7 @@ export type MLFilter = Filter & {
   hasOptions: boolean;
 };
 
-export type QuestionAbout = 'EType' | 'MType';
+export type QuestionAbout = 'EType' | 'MType' | 'gsyn' | 'nrrp' | 'f' | 'u' | 'd' | 'dtc';
 export type ContextQAItem = {
   key: string;
   value: JSX.Element;

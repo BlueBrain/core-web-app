@@ -4,5 +4,11 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { NEURON_DENSITY } from '@/constants/explore-section/list-views';
 
 export default function NeuronDensityListingPage() {
-  return <ExploreSectionListingView enableDownload title="Neuron density" type={NEURON_DENSITY} />;
+  return (
+    <ExploreSectionListingView
+      enableDownload
+      title="Neuron density"
+      experimentTypeName={NEURON_DENSITY}
+    />
+  );
 }

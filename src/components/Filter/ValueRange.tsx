@@ -3,8 +3,8 @@ import { ConfigProvider, Form, InputNumber } from 'antd';
 import { GteLteValue, RangeFilter } from '@/components/Filter/types';
 import { Statistics } from '@/types/explore-section/fields';
 import ArrowLeftRightIcon from '@/components/icons/ArrowLeftRight';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { formatNumber } from '@/util/common';
+import { getFieldUnit } from '@/api/explore-section/fields';
 
 export default function ValueRange({
   filter,
@@ -64,7 +64,7 @@ export default function ValueRange({
               onChange={submitForm}
             />
           </Form.Item>
-          <div className="text-neutral-2 ml-2">{EXPLORE_FIELDS_CONFIG[filter.field].unit}</div>
+          <div className="text-neutral-2 ml-2">{getFieldUnit(filter.field)}</div>
         </Form>
       </ConfigProvider>
       <div className="text-neutral-2 mt-3 gap-2 flex flex-col">

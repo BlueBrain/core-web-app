@@ -7,8 +7,8 @@ import {
   ZoomRanges,
 } from '@/types/explore-section/fields';
 
-import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { Filter, GteLteValue } from '@/components/Filter/types';
+import { ExploreResource } from '@/types/explore-section/es';
 
 export interface FetchParams {
   id: string;
@@ -24,7 +24,7 @@ export interface SortState {
 export type ListViewAtomValues = {
   activeColumns: string[];
   aggregations: Loadable<Aggregations>;
-  data: Loadable<ExploreSectionResource[] | undefined>;
+  data: Loadable<ExploreResource[] | undefined>;
   filters: Filter[];
   pageSize: number;
   searchString: string;

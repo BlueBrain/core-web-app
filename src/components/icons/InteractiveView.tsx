@@ -2,10 +2,15 @@ import { CSSProperties } from 'react';
 
 type InteractiveViewIconProps = {
   className?: string;
+  fill?: string;
   style?: CSSProperties;
 };
 
-export default function InteractiveViewIcon({ className, style }: InteractiveViewIconProps) {
+export default function InteractiveViewIcon({
+  className,
+  fill = 'currentColor',
+  style,
+}: InteractiveViewIconProps) {
   return (
     <svg
       className={className}
@@ -16,7 +21,7 @@ export default function InteractiveViewIcon({ className, style }: InteractiveVie
       width="14"
       height="12"
       viewBox="0 0 14 12"
-      fill="none"
+      fill={fill}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

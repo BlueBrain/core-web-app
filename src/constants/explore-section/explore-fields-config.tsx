@@ -12,7 +12,7 @@ import {
   selectorFnSpecies,
 } from '@/state/explore-section/listing-selectors';
 import { FilterType } from '@/components/Filter/types';
-import { IndexColContent, ValueArray } from '@/components/ListTable';
+import { IndexColContent } from '@/components/ListTable';
 import { DeltaResource } from '@/types/explore-section/resources';
 import {
   eTypeSelectorFn,
@@ -86,7 +86,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   brainRegion: {
     term: 'brainRegion.label.keyword',
     title: 'Brain Region',
-    filter: 'checkListInference',
+    filter: 'checkList',
     render: {
       listingViewFn: selectorFnBrainRegion,
       detailViewFn: (resource) => resource.brainLocation.brainRegion.label,
@@ -492,58 +492,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     vocabulary: {
       plural: 'Tags',
       singular: 'Tag',
-    },
-  },
-  'parameter.coords.vpm_pct': {
-    term: 'nValue',
-    title: 'vpm_pct',
-    filter: 'valueOrRange',
-    render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-    },
-    vocabulary: {
-      plural: 'Values',
-      singular: 'Value',
-    },
-  },
-  'parameter.coords.extracellular_calcium': {
-    term: 'nValue',
-    title: 'extracellular_calcium',
-    filter: 'valueOrRange',
-    render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-    },
-    vocabulary: {
-      plural: 'Values',
-      singular: 'Value',
-    },
-  },
-  'parameter.coords.celsius': {
-    term: 'nValue',
-    title: 'celcius',
-    filter: 'valueOrRange',
-    render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-    },
-    vocabulary: {
-      plural: 'Values',
-      singular: 'Value',
-    },
-  },
-  'parameter.coords.seed': {
-    term: 'parameter.coords.seed',
-    title: 'Seed',
-    unit: 'unit xxxx',
-    filter: 'valueOrRange',
-    render: {
-      listingViewFn: (_t, r) =>
-        ValueArray({
-          value: r._source?.parameter?.coords?.seed?.map((label: string) => label),
-        }),
-    },
-    vocabulary: {
-      plural: 'Values',
-      singular: 'Value',
     },
   },
   startedAt: {

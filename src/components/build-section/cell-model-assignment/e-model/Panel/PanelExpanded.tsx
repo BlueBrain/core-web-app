@@ -8,6 +8,7 @@ import List from '@/components/build-section/cell-model-assignment/e-model/Panel
 import { BrainRegionIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 interface PanelTitleProps {
   title?: string;
@@ -48,7 +49,11 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
   let body = null;
   if (brainRegion) {
     if (isLeafNode(brainRegion)) {
-      body = <List />;
+      body = (
+        <DefaultLoadingSuspense>
+          <List />
+        </DefaultLoadingSuspense>
+      );
     } else {
       body = (
         <div className="self-center flex flex-col justify-center gap-10 w-[90%] text-white h-1/2">

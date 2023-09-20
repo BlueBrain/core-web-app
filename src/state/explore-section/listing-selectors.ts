@@ -7,7 +7,7 @@ import {
   ExperimentalLayerThickness,
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
-} from '@/types/explore-section/es';
+} from '@/types/explore-section/es-experiment';
 
 type Record = { _source: Experiment };
 
