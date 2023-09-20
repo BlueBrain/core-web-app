@@ -40,6 +40,12 @@ import {
   MicroConnectomeVariantSelectionOverridesResource,
   MicroConnectomeDataOverridesResource,
   MicroConnectomeDataOverrides,
+  CellCompositionConfigPayload,
+  EModelAssignmentConfigPayload,
+  GeneratorConfig,
+  GeneratorConfigPayload,
+  SubConfigName,
+  CellPositionConfigPayload,
 } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -49,6 +55,7 @@ import {
   getVariantTaskActivityByCircuitIdQuery,
 } from '@/queries/es';
 import { createHeaders } from '@/util/utils';
+import { defaultReleaseUrl, supportedUIConfigVersion } from '@/constants/configs';
 
 // #################################### Generic methods ##########################################
 
@@ -252,56 +259,106 @@ export function queryES<T>(
     .then<T[]>((res) => res.hits.hits.map((hit: any) => hit._source));
 }
 
+async function getPayloadByConfig<
+  PayloadType extends GeneratorConfigPayload,
+  ConfigType extends GeneratorConfig
+>(configName: SubConfigName, configSource: ConfigType, session: Session): Promise<PayloadType> {
+  const configVersion = configSource?.configVersion;
+  const useRelease = configVersion === undefined;
+
+  if (useRelease) {
+    // get payload from fully backend supported Release (Release 23.01)
+    const brainModelConfigResource = await fetchResourceByUrl<BrainModelConfig>(
+      defaultReleaseUrl,
+      session
+    );
+    const subConfigId = brainModelConfigResource.configs[configName]['@id'];
+    const resource = await fetchResourceById<ConfigType>(subConfigId, session);
+
+    return fetchJsonFileByUrl(resource.distribution.contentUrl, session);
+  }
+
+  return fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+}
+
+function getConfigVersion(configName: SubConfigName, configSource: GeneratorConfig) {
+  const configVersion = configSource?.configVersion;
+  const supportedVersion = supportedUIConfigVersion[configName];
+  if (configVersion === undefined) return supportedVersion;
+  return configVersion;
+}
+
 // #################################### Non-generic methods ##########################################
 
 export async function cloneCellCompositionConfig(id: string, session: Session) {
+  const configName: SubConfigName = 'cellCompositionConfig';
   const configSource = await fetchResourceById<CellCompositionConfig>(id, session);
-  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
-
+  const payload = await getPayloadByConfig<CellCompositionConfigPayload, CellCompositionConfig>(
+    configName,
+    configSource,
+    session
+  );
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-composition-config.json', session);
 
   const clonedConfig: CellCompositionConfig = {
     ...configSource,
     distribution: createDistribution(clonedPayloadMeta),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'cell_composition',
   };
 
   return createResource(clonedConfig, session);
 }
 
 export async function cloneCellPositionConfig(id: string, session: Session) {
+  const configName: SubConfigName = 'cellPositionConfig';
   const configSource = await fetchResourceById<CellPositionConfig>(id, session);
-  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+  const payload = await getPayloadByConfig<CellPositionConfigPayload, CellPositionConfig>(
+    configName,
+    configSource,
+    session
+  );
 
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-position-config.json', session);
 
   const clonedConfig: CellPositionConfig = {
     ...configSource,
     distribution: createDistribution(clonedPayloadMeta),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'cell_position',
   };
 
   return createResource(clonedConfig, session);
 }
 
 export async function cloneEModelAssignmentConfig(id: string, session: Session) {
+  const configName: SubConfigName = 'eModelAssignmentConfig';
   const configSource = await fetchResourceById<EModelAssignmentConfig>(id, session);
-  const payload = await fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+  const payload = await getPayloadByConfig<EModelAssignmentConfigPayload, EModelAssignmentConfig>(
+    configName,
+    configSource,
+    session
+  );
 
   const clonedPayloadMeta = await createJsonFile(payload, 'emodel-assignment-config.json', session);
 
   const clonedConfig: EModelAssignmentConfig = {
     ...configSource,
     distribution: createDistribution(clonedPayloadMeta),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'placeholder',
   };
 
   return createResource(clonedConfig, session);
 }
 
 export async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
+  const configName: SubConfigName = 'morphologyAssignmentConfig';
   const configSource = await fetchResourceById<MorphologyAssignmentConfig>(id, session);
-  const payload: MorphologyAssignmentConfigPayload = await fetchJsonFileByUrl(
-    configSource.distribution.contentUrl,
-    session
-  );
+  const payload = await getPayloadByConfig<
+    MorphologyAssignmentConfigPayload,
+    MorphologyAssignmentConfig
+  >(configName, configSource, session);
 
   const clonedPayloadMeta = await createJsonFile(
     payload,
@@ -312,15 +369,19 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
   const clonedConfig: MorphologyAssignmentConfig = {
     ...configSource,
     distribution: createDistribution(clonedPayloadMeta),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'mmodel',
   };
 
   return createResource(clonedConfig, session);
 }
 
 export async function cloneMacroConnectomeConfig(id: string, session: Session) {
+  const configName: SubConfigName = 'macroConnectomeConfig';
   const configSource = await fetchResourceById<MacroConnectomeConfig>(id, session);
-  const payload = await fetchJsonFileByUrl<MacroConnectomeConfigPayload>(
-    configSource.distribution.contentUrl,
+  const payload = await getPayloadByConfig<MacroConnectomeConfigPayload, MacroConnectomeConfig>(
+    configName,
+    configSource,
     session
   );
 
@@ -355,17 +416,34 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
   const clonedConfig: MacroConnectomeConfig = {
     ...configSource,
     distribution: createDistribution(clonedPayloadMeta),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'connectome',
   };
 
   return createResource(clonedConfig, session);
 }
 
 export async function cloneMicroConnectomeConfig(id: string, session: Session) {
-  const config = await fetchResourceById<MicroConnectomeConfig>(id, session);
-  const payload = await fetchJsonFileByUrl<MicroConnectomeConfigPayload>(
-    config.distribution.contentUrl,
+  const configName: SubConfigName = 'microConnectomeConfig';
+  const configSource = await fetchResourceById<MicroConnectomeConfig>(id, session);
+  const payload = await getPayloadByConfig<MicroConnectomeConfigPayload, MicroConnectomeConfig>(
+    configName,
+    configSource,
     session
   );
+
+  if (configSource.configVersion !== supportedUIConfigVersion[configName]) {
+    const clonedPayloadMeta = await createJsonFile(payload, 'microconnectome-config.json', session);
+
+    const clonedConfig: MicroConnectomeConfig = {
+      ...configSource,
+      distribution: createDistribution(clonedPayloadMeta),
+      configVersion: getConfigVersion(configName, configSource),
+      generatorName: 'connectome',
+    };
+
+    return createResource(clonedConfig, session);
+  }
 
   const variantOverridesEntity =
     await fetchResourceById<MicroConnectomeVariantSelectionOverridesResource>(
@@ -451,37 +529,43 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
   const clonedPayloadMeta = await createJsonFile(payload, 'microconnectome-config.json', session);
 
   const clonedConfig: MicroConnectomeConfig = {
-    ...config,
+    ...configSource,
     distribution: createDistribution(clonedPayloadMeta),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'connectome',
   };
 
   return createResource(clonedConfig, session);
 }
 
 export async function cloneSynapseConfig(id: string, session: Session) {
+  const configName: SubConfigName = 'synapseConfig';
   const configSource = await fetchResourceById<SynapseConfig>(id, session);
-  const payload = await fetchJsonFileByUrl<SynapseConfigPayload | {}>(
-    configSource.distribution.contentUrl,
+  const payload = await getPayloadByConfig<SynapseConfigPayload, SynapseConfig>(
+    configName,
+    configSource,
     session
   );
 
-  // Todo: Remove once BuildConfigs are migrated to include SynapseConfig
-  if (!('configuration' in payload)) {
-    const payloadMetadata = await createJsonFile({}, 'synapse-config.json', session);
+  if (configSource.configVersion !== supportedUIConfigVersion[configName]) {
+    const payloadMetadata = await createJsonFile(payload, 'synapse-config.json', session);
+
     const config: SynapseConfig = {
       ...configSource,
       distribution: createDistribution(payloadMetadata),
+      configVersion: getConfigVersion(configName, configSource),
+      generatorName: 'connectome_filtering',
     };
 
     return createResource(config, session);
   }
 
-  const synapticAssignmentResource = await fetchResourceByUrl<SynapseConfig>(
+  const synapticAssignmentResource = await fetchResourceById<SynapseConfig>(
     payload.configuration.synapse_properties.id,
     session
   );
 
-  const synapticParametersResource = await fetchResourceByUrl<SynapseConfig>(
+  const synapticParametersResource = await fetchResourceById<SynapseConfig>(
     payload.configuration.synapses_classification.id,
     session
   );
@@ -556,6 +640,8 @@ export async function cloneSynapseConfig(id: string, session: Session) {
   const config: SynapseConfig = {
     ...configSource,
     distribution: createDistribution(configMetadata),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'connectome_filtering',
   };
 
   return createResource(config, session);

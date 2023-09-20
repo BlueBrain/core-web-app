@@ -50,6 +50,7 @@ export interface CellCompositionConfig extends Entity {
   generatorName: CellCompositionGeneratorName;
   description: string;
   distribution: Distribution;
+  configVersion: number;
 }
 
 export interface CellCompositionConfigResource extends ResourceMetadata, CellCompositionConfig {}
@@ -109,9 +110,29 @@ export interface CellPositionConfig extends Entity {
   '@type': [CellPositionConfigType, 'Entity'];
   generatorName: CellPositionGeneratorName;
   distribution: Distribution;
+  configVersion: number;
 }
 
 export interface CellPositionConfigResource extends ResourceMetadata, CellPositionConfig {}
+
+export type CellPositionConfigPayload = {
+  [rootBrainRegionURI: BrainRegionURI]: {
+    variantDefinition: {
+      algorithm: string;
+      version: string;
+    };
+    inputs: [];
+    configuration: {
+      place_cells: {
+        soma_placement: string;
+        density_factor: number;
+        sort_by: string[];
+        seed: number;
+        mini_frequencies: boolean;
+      };
+    };
+  };
+};
 
 export interface GeneratorTaskActivity extends Entity {
   generated: {
@@ -204,6 +225,7 @@ export interface EModelAssignmentConfig extends Entity {
   '@type': [EModelAssignmentConfigType, 'Entity'];
   generatorName: PlaceholderGeneratorName;
   distribution: Distribution;
+  configVersion: number;
 }
 
 export interface EModelAssignmentConfigResource extends ResourceMetadata, EModelAssignmentConfig {}
@@ -234,6 +256,7 @@ export interface MorphologyAssignmentConfig extends Entity {
   '@context': 'https://bbp.neuroshapes.org';
   generatorName: MModelGeneratorName;
   distribution: Distribution;
+  configVersion: number;
 }
 
 export interface MorphologyAssignmentConfigResource
@@ -255,12 +278,10 @@ export type MorphologyAssignmentConfigPayload = {
     topological_synthesis: {
       id: string;
       type: ['CanonicalMorphologyModelConfig', 'Entity'];
-      rev: number;
     };
     placeholder_assignment: {
       id: string;
       type: ['PlaceholderMorphologyConfig', 'Entity'];
-      rev: number;
     };
   };
   configuration: {
@@ -277,6 +298,7 @@ export interface MicroConnectomeConfig extends Entity {
   '@type': [MicroConnectomeConfigType, 'Entity'];
   generatorName: MicroConnectomeGeneratorName;
   distribution: Distribution;
+  configVersion: number;
 }
 
 export interface MicroConnectomeConfigResource extends ResourceMetadata, MicroConnectomeConfig {}
@@ -364,6 +386,7 @@ export interface SynapseConfig extends Entity {
   '@type': [SynapseConfigType, 'Entity'];
   generatorName: SynapseGeneratorName;
   distribution: Distribution;
+  configVersion: number;
 }
 
 export interface SynapseConfigResource extends ResourceMetadata, SynapseConfig {}
@@ -396,6 +419,7 @@ export interface MacroConnectomeConfig extends Entity {
   type: [MacroConnectomeConfigType, 'Entity'];
   generatorName: MacroConnectomeGeneratorName;
   distribution: Distribution;
+  configVersion: number;
 }
 
 export interface MacroConnectomeConfigResource extends ResourceMetadata, MacroConnectomeConfig {}
@@ -472,6 +496,24 @@ export type GeneratorConfig =
   | MicroConnectomeConfig
   | SynapseConfig
   | MacroConnectomeConfig;
+
+export type GeneratorConfigPayload =
+  | CellCompositionConfigPayload
+  | CellPositionConfigPayload
+  | EModelAssignmentConfigPayload
+  | MorphologyAssignmentConfigPayload
+  | MicroConnectomeConfigPayload
+  | SynapseConfigPayload
+  | MacroConnectomeConfigPayload;
+
+export type SubConfigName =
+  | 'cellCompositionConfig'
+  | 'cellPositionConfig'
+  | 'eModelAssignmentConfig'
+  | 'morphologyAssignmentConfig'
+  | 'microConnectomeConfig'
+  | 'synapseConfig'
+  | 'macroConnectomeConfig';
 
 export interface SimulationCampaignUIConfig extends Entity {
   '@type': ['Entity', 'SimulationCampaignUIConfig'];
