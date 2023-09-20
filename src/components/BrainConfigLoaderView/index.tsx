@@ -4,6 +4,7 @@ import { ReactNode, Suspense, useState, useCallback, useEffect } from 'react';
 import { Button, ConfigProvider } from 'antd';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
+import { useRouter } from 'next/navigation';
 
 import RecentConfigList from './RecentConfigList';
 import ConfigSearchList from './ConfigSearchList';
@@ -21,7 +22,13 @@ import ArrowLeftIcon from '@/components/icons/ArrowLeft';
 import SettingsIcon from '@/components/icons/Settings';
 import UserIcon from '@/components/icons/User';
 import ArchiveIcon from '@/components/icons/Archive';
+import CloneIcon from '@/components/icons/Clone';
 
+import useCloneConfigModal from '@/hooks/config-clone-modal';
+import { BrainModelConfigResource } from '@/types/nexus';
+import { cloneBrainModelConfig } from '@/api/nexus';
+import { getBrainModelConfigsByNameQuery } from '@/queries/es';
+import { collapseId } from '@/util/nexus';
 import styles from './brain-config-loader-view.module.scss';
 
 type PanelProps = {
@@ -29,17 +36,43 @@ type PanelProps = {
   title: string;
   description: string;
   href: string;
+  modelId: string;
 };
 
-function Panel({ title, description, href, className = '' }: PanelProps) {
+function Panel({ title, description, href, className = '', modelId }: PanelProps) {
+  const router = useRouter();
+  const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
+    useCloneConfigModal<BrainModelConfigResource>(
+      cloneBrainModelConfig,
+      getBrainModelConfigsByNameQuery
+    );
+
+  const openCloneModal = useCallback(() => {
+    const config = {
+      '@id': modelId,
+      name: title,
+      description,
+    } as BrainModelConfigResource;
+
+    createCloneModal(config, () => router.push(href));
+  }, [description, title, modelId, createCloneModal, router, href]);
+
   return (
-    <Link href={href} className={classNames(styles.panel, className)}>
+    <div className={classNames(styles.panel, className)}>
       <header>
         <div>{title}</div>
-        <IconPlus />
+        <div className="flex items-center gap-4">
+          <Link href={href}>
+            <IconPlus />
+          </Link>
+          <button onClick={openCloneModal} type="button">
+            <CloneIcon />
+          </button>
+        </div>
       </header>
       <div>{description}</div>
-    </Link>
+      {cloneContextHolder}
+    </div>
   );
 }
 
@@ -107,7 +140,8 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
           className={styles.curatedModel}
           title={model.name}
           description={model.description}
-          href={`${baseHref}?brainModelConfigId=${encodeURIComponent(model.id)}`}
+          href={`${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(model.id))}`}
+          modelId={model.id}
         />
       ))}
 
