@@ -45,3 +45,5 @@ export interface ResourceBasedInferenceRequest {
   rules: string[];
   inputFilter: InputFilter;
 }
+
+export type InferredResource = Omit<ResourceBasedInference, 'value'>;

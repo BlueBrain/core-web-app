@@ -148,6 +148,7 @@ export default function ExploreSectionTable({
     <GeneralizationRules
       resourceId={resource._source['@id']}
       experimentTypeName={experimentTypeName}
+      name={resource._source.name}
     />
   );
 

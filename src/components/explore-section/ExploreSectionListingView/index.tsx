@@ -3,7 +3,8 @@ import { useAtomValue } from 'jotai';
 import CustomTabs from './CustomTabs';
 import DefaultListView from '@/components/explore-section/ExploreSectionListingView/DefaultListView';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import { inferredResourceIdsAtom } from '@/state/explore-section/generalization';
+import { inferredResourcesAtom } from '@/state/explore-section/generalization';
+import { InferredResource } from '@/types/explore-section/kg-inference';
 
 export default function DefaultListViewTabs({
   enableDownload,
@@ -16,7 +17,7 @@ export default function DefaultListViewTabs({
   experimentTypeName: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const inferredResourceIds = useAtomValue(inferredResourceIdsAtom(experimentTypeName));
+  const inferredResources = useAtomValue(inferredResourcesAtom(experimentTypeName));
 
   const items = [
     {
@@ -30,14 +31,14 @@ export default function DefaultListViewTabs({
         />
       ),
     },
-    ...Array.from(inferredResourceIds).map((v1) => ({
-      key: v1 as string,
-      label: v1 as string,
+    ...Array.from(inferredResources).map((inferredResource: InferredResource) => ({
+      key: inferredResource.id,
+      label: inferredResource.name,
       children: (
         <DefaultListView
           enableDownload={enableDownload}
           experimentTypeName={experimentTypeName}
-          resourceId={v1 as string}
+          resourceId={inferredResource.id}
           title={title}
           renderButton={renderButton}
         />

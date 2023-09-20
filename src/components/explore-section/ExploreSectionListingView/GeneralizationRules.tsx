@@ -4,7 +4,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
 import {
   resourceBasedRulesAtom,
-  inferredResourceIdsAtom,
+  inferredResourcesAtom,
 } from '@/state/explore-section/generalization';
 import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
 
@@ -52,13 +52,15 @@ function GeneralizationOptions({
 function GeneralizationRules({
   resourceId,
   experimentTypeName,
+  name,
 }: {
   resourceId: string;
   experimentTypeName: string;
+  name: string;
 }) {
   const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom(resourceId));
-  const [inferredResourceIds, setinferredResourceIds] = useAtom(
-    inferredResourceIdsAtom(experimentTypeName)
+  const [inferredResources, setinferredResources] = useAtom(
+    inferredResourcesAtom(experimentTypeName)
   );
 
   if (!resourceBasedRules) return <Spin className="h-6 w-6" indicator={<LoadingOutlined />} />;
@@ -78,7 +80,11 @@ function GeneralizationRules({
   };
 
   const handleInferButtonClick = () => {
-    setinferredResourceIds([...inferredResourceIds, ...[resourceId]]);
+    const foundResourceIndex: number = inferredResources.findIndex(
+      (item) => item.id === resourceId
+    );
+    if (foundResourceIndex === -1)
+      setinferredResources([...inferredResources, ...[{ id: resourceId, name }]]);
   };
 
   return (

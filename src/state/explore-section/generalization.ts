@@ -11,9 +11,10 @@ import {
   RuleOutput,
   ResourceBasedInference,
   ResourceBasedInferenceRequest,
+  InferredResource,
 } from '@/types/explore-section/kg-inference';
 
-export const inferredResourceIdsAtom = atomFamily(() => atom(new Array<string>()));
+export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>
   atom<Promise<RuleOutput[] | null>>(async (get) => {
