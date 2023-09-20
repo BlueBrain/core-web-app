@@ -141,10 +141,6 @@ export default function WorkflowLauncher({
   const stepsToBuild = useAtomValue(stepsToBuildAtom);
   const config = useAtomValue(configAtom);
 
-
-  console.log('circuitInfo', circuitInfo)
-  console.log('stepstoBuild', stepsToBuild)
-
   const launchBbpWorkflow = async () => {
     if (!session?.user) return;
     if (!config) return;
@@ -174,11 +170,10 @@ export default function WorkflowLauncher({
     }
 
     try {
-      console.log(workflowName, workflowConfig);
-      // await launchUnicoreWorkflowSetup(session.accessToken);
+      await launchUnicoreWorkflowSetup(session.accessToken);
 
       // make sure the offline token is set
-      // await ensureWorkflowAuth(session.user.username);
+      await ensureWorkflowAuth(session.user.username);
 
       workflowExecutionUrl = await launchWorkflowTask({
         loginInfo: session,
