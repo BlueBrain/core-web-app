@@ -52,7 +52,7 @@
     "jotai-optics": "^0.3.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "morphoviewer": "^0.1.9",
+    "morphoviewer": "^0.1.20",
     "next": "^13.4.10",
     "next-auth": "^4.22.1",
     "node-cache-engine": "^1.2.0",
