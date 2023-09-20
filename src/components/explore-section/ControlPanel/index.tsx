@@ -33,6 +33,7 @@ export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
   experimentTypeName: string;
+  resourceId?: string;
 };
 
 function createFilterItemComponent(
@@ -131,16 +132,33 @@ export default function ControlPanel({
   children,
   toggleDisplay,
   experimentTypeName,
+  resourceId,
 }: ControlPanelProps) {
-  const [activeColumns, setActiveColumns] = useAtom(activeColumnsAtom(experimentTypeName));
-  const [filters, setFilters] = useAtom(filtersAtom(experimentTypeName));
+  const activeColumns = useAtomValue(
+    useMemo(
+      () => unwrap(activeColumnsAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
+  );
+
   const aggregations = useAtomValue(
-    useMemo(() => unwrap(aggregationsAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(
+      () => unwrap(aggregationsAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
+  );
+
+  const [filters, setFilters] = useAtom(
+    useMemo(
+      () => unwrap(filtersAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
 
   const onToggleActive = (key: string) => {
+    if (!activeColumns) return;
     const existingIndex = activeColumns.findIndex((existingKey) => existingKey === key);
 
     if (existingIndex === -1) {
@@ -157,7 +175,7 @@ export default function ControlPanel({
 
   useEffect(() => {
     const values: FilterValues = {};
-    filters.forEach((filter: Filter) => {
+    filters?.forEach((filter: Filter) => {
       values[filter.field as string] = filter.value;
     });
 
@@ -167,19 +185,21 @@ export default function ControlPanel({
   const submitValues = () => {
     setFilters(
       // @ts-ignore
-      filters.map((fil: Filter) => ({ ...fil, value: filterValues[fil.field] } as Filter))
+      filters?.map((fil: Filter) => ({ ...fil, value: filterValues[fil.field] } as Filter))
     );
   };
+
+  if (!activeColumns) return null;
 
   const activeColumnsLength = activeColumns.length ? activeColumns.length - 1 : 0;
   const activeColumnsText = `${activeColumnsLength} active ${
     activeColumnsLength === 1 ? 'column' : 'columns'
   }`;
 
-  const filterItems = filters.map((filter) => ({
+  const filterItems = filters?.map((filter) => ({
     content:
       filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
-    display: activeColumns.includes(filter.field),
+    display: activeColumns?.includes(filter.field),
     label: getFieldLabel(filter.field),
     type: filter.type,
     toggleFunc: () => onToggleActive && onToggleActive(filter.field),

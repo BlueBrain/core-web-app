@@ -1,3 +1,4 @@
+import { boolQuery, TermsQuery } from 'elastic-builder';
 import buildESSort from './sorters';
 import { Filter } from '@/components/Filter/types';
 import { SortState } from '@/types/explore-section/application';
@@ -20,6 +21,34 @@ export default function fetchDataQuery(
     from: (currentPage - 1) * size,
     track_total_hits: true,
     query: buildFilters(experimentDataType, filters, searchString).toJSON(),
+    ...buildAggs(filters).toJSON(),
+  };
+}
+
+export function fetchDataQueryUsingIds(
+  size: number,
+  currentPage: number,
+  filters: Filter[],
+  experimentDataType: string,
+  inferredResponseIds: string[],
+  sortState?: SortState,
+  searchString: string = ''
+) {
+  const sortQuery = sortState && buildESSort(sortState);
+
+  const idsQuery = new TermsQuery('_id', inferredResponseIds);
+
+  const boolMustQuery = boolQuery().must([
+    buildFilters(experimentDataType, filters, searchString),
+    idsQuery,
+  ]);
+
+  return {
+    size,
+    sort: sortQuery,
+    from: (currentPage - 1) * size,
+    track_total_hits: true,
+    query: boolMustQuery.toJSON(),
     ...buildAggs(filters).toJSON(),
   };
 }

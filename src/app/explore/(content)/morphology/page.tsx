@@ -1,11 +1,11 @@
 'use client';
 
-import DefaultListView from '@/components/explore-section/ExploreSectionListingView';
+import DefaultListViewTabs from '@/components/explore-section/ExploreSectionListingView';
 import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
 
 export default function MorphologyListingPage() {
   return (
-    <DefaultListView
+    <DefaultListViewTabs
       enableDownload
       title="Neuron morphology"
       experimentTypeName={NEURON_MORPHOLOGY}

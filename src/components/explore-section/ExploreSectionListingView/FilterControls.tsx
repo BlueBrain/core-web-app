@@ -7,9 +7,9 @@ import ClearFilters from '@/components/explore-section/ExploreSectionListingView
 import SettingsIcon from '@/components/icons/Settings';
 import { filterHasValue } from '@/components/Filter/util';
 import {
-  activeColumnsAtom,
   filtersAtom,
   searchStringAtom,
+  activeColumnsAtom,
 } from '@/state/explore-section/list-view-atoms';
 
 function FilterBtn({ children, onClick }: HTMLProps<HTMLButtonElement>) {
@@ -29,20 +29,27 @@ export default function FilterControls({
   displayControlPanel,
   setDisplayControlPanel,
   experimentTypeName,
+  resourceId,
 }: {
   displayControlPanel: boolean;
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   experimentTypeName: string;
+  resourceId?: string;
 }) {
   const [activeColumnsLength, setActiveColumnsLength] = useState<number | undefined>(undefined);
+
   const activeColumns = useAtomValue(
-    useMemo(() => unwrap(activeColumnsAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
   );
+
   const filters = useAtomValue(
-    useMemo(() => unwrap(filtersAtom(experimentTypeName)), [experimentTypeName])
+    useMemo(
+      () => unwrap(filtersAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
   );
-  const resetFilters = useResetAtom(filtersAtom(experimentTypeName));
-  const setSearchString = useSetAtom(searchStringAtom);
+  const resetFilters = useResetAtom(filtersAtom({ experimentTypeName, resourceId }));
+  const setSearchString = useSetAtom(searchStringAtom({ experimentTypeName, resourceId }));
 
   const selectedFiltersCount = filters
     ? filters.filter((filter) => filterHasValue(filter)).length
@@ -61,9 +68,9 @@ export default function FilterControls({
   }, [activeColumns]);
 
   return (
-    <div className="flex items-center gap-5 justify-between w-auto">
+    <div className="flex items-center gap-5 justify-end w-auto">
       <ClearFilters onClick={clearFilters} />
-      <ExploreSectionNameSearch />
+      <ExploreSectionNameSearch experimentTypeName={experimentTypeName} resourceId={resourceId} />
       <FilterBtn onClick={() => setDisplayControlPanel(!displayControlPanel)}>
         <div className="flex gap-3 items-center">
           <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">

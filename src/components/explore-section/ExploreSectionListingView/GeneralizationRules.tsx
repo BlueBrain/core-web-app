@@ -1,66 +1,99 @@
-import React from 'react';
+import { Children } from 'react';
 import { Spin, Checkbox } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { loadable } from 'jotai/utils';
-import { useAtomValue } from 'jotai';
-import find from 'lodash/find';
-import { RuleOuput } from '@/types/explore-section/kg-inference';
-import { rulesResponseAtom } from '@/state/explore-section/list-view-atoms';
-import useNotification from '@/hooks/notifications';
+import { useAtom } from 'jotai';
+import {
+  resourceBasedRulesAtom,
+  inferredResourceIdsAtom,
+} from '@/state/explore-section/generalization';
+import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
 
-const rulesLoadableAtom = loadable(rulesResponseAtom);
+interface GeneralizationOptionsProps {
+  resourceId: string;
+  ruleWithBool: ResourceBasedInference;
+  onCheckboxChange: (inferenceRule: ResourceBasedInference) => void;
+}
 
-function GeneraliztionOptions({ rule }: { rule: RuleOuput | undefined }) {
-  if (!rule) return null;
+function GeneralizationOptions({
+  resourceId,
+  ruleWithBool,
+  onCheckboxChange,
+}: GeneralizationOptionsProps) {
+  if (!ruleWithBool) return <Spin className="h-6 w-6" indicator={<LoadingOutlined />} />;
 
-  const inferenceOptions = find(rule.inputParameters, { name: 'IgnoreModelsParameter' })?.payload
-    ?.values;
+  const handleCheckboxChange = () => {
+    onCheckboxChange({
+      ...ruleWithBool,
+      value: !ruleWithBool.value,
+    });
+  };
 
   return (
-    <div className="space-y-2 pl-6 pr-12">
-      {inferenceOptions &&
-        Object.keys(inferenceOptions).map((key: string) => (
-          <li key={inferenceOptions[key]}>
-            <Checkbox key={inferenceOptions[key]} className="w-full text-primary-8 font-semibold">
-              {key}
-            </Checkbox>
-            <p className="font-thin pl-12">
-              At elementum eu facilisis sed odio morbi quis commodo. Nascetur ridiculus mus mauris
-              vitae ultricies leo integer. Tempus imperdiet nulla malesuada pellentesque.
-            </p>
-          </li>
-        ))}
+    <div className="flex-initial w-1/4 flex-col space-y-2">
+      <div className="space-y-2 pl-6 pr-12">
+        <li key={`${resourceId}${ruleWithBool.name}`}>
+          <Checkbox
+            checked={ruleWithBool.value}
+            onChange={handleCheckboxChange}
+            className="w-full text-primary-8 font-semibold"
+          >
+            {ruleWithBool.name}
+          </Checkbox>
+          <p className="font-thin pl-12">
+            At elementum eu facilisis sed odio morbi quis commodo. Nascetur ridiculus mus mauris
+            vitae ultricies leo integer. Tempus imperdiet nulla malesuada pellentesque.
+          </p>
+        </li>
+      </div>
     </div>
   );
 }
 
-function GeneralizationRules() {
-  const rules = useAtomValue(rulesLoadableAtom);
-  const notify = useNotification();
+function GeneralizationRules({
+  resourceId,
+  experimentTypeName,
+}: {
+  resourceId: string;
+  experimentTypeName: string;
+}) {
+  const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom(resourceId));
+  const [inferredResourceIds, setinferredResourceIds] = useAtom(
+    inferredResourceIdsAtom(experimentTypeName)
+  );
 
-  if (rules.state === 'hasError') {
-    notify.error(rules.error as string);
-    return null;
-  }
+  if (!resourceBasedRules) return <Spin className="h-6 w-6" indicator={<LoadingOutlined />} />;
 
-  if (rules.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;
+  const handleCheckboxChange = (ruleWithBool: ResourceBasedInference) => {
+    const indexToUpdate = resourceBasedRules.findIndex(
+      (item: ResourceBasedInference) => item.name === ruleWithBool.name
+    );
 
-  if (!rules?.data) return <Spin indicator={<LoadingOutlined />} />;
+    if (indexToUpdate !== -1) {
+      const newResourceBasedRulesArray = [...resourceBasedRules];
 
-  const shapeBased = find(rules.data, { name: 'Shape-based morphology recommendation' });
-  const locationBased = find(rules.data, { name: 'Location-based morphology recommendation' });
+      newResourceBasedRulesArray[indexToUpdate] = ruleWithBool;
+
+      setResourceBasedRules(newResourceBasedRulesArray);
+    }
+  };
+
+  const handleInferButtonClick = () => {
+    setinferredResourceIds([...inferredResourceIds, ...[resourceId]]);
+  };
 
   return (
     <div className="flex flex-col space-y-4 bg-white pl-12 text-primary-8">
+      <h1 className="font-semibold text-lg">Inference options</h1>
       <div className="flex space-x-4">
-        <div className="flex-initial w-1/4 flex-col space-y-2">
-          <h1 className="font-semibold text-lg">{shapeBased?.name}</h1>
-          <GeneraliztionOptions rule={shapeBased} />
-        </div>
-        <div className="flex-initial w-1/4 flex-col space-y-2">
-          <h1 className="font-semibold text-lg">{locationBased?.name}</h1>
-          <GeneraliztionOptions rule={locationBased} />
-        </div>
+        {Children.toArray(
+          resourceBasedRules.map((rule: ResourceBasedInference) => (
+            <GeneralizationOptions
+              resourceId={resourceId}
+              ruleWithBool={rule}
+              onCheckboxChange={handleCheckboxChange}
+            />
+          ))
+        )}
 
         <div className="flex flex-col space-y-2 place-self-center">
           <label htmlFor="number-of-results" className="font-semibold">
@@ -70,6 +103,7 @@ function GeneralizationRules() {
           <button
             type="submit"
             className="self-end	px-2 py-2 bg-primary-8 text-white font-semibold w-1/2"
+            onClick={handleInferButtonClick}
           >
             Infer
           </button>

@@ -57,7 +57,6 @@ function CustomTH({
 function CustomCell({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
   const modifiedStyle = {
     ...style,
-    backgroundColor: 'white',
   };
 
   return (
@@ -145,7 +144,12 @@ export default function ExploreSectionTable({
     </ExploreDownloadButton>
   );
 
-  const expandedRowRender = () => <GeneralizationRules />;
+  const expandedRowRender = (resource: ExploreESHit) => (
+    <GeneralizationRules
+      resourceId={resource._source['@id']}
+      experimentTypeName={experimentTypeName}
+    />
+  );
 
   return enableDownload ? (
     <WithRowSelection
@@ -156,7 +160,9 @@ export default function ExploreSectionTable({
         <BaseTable
           columns={columns}
           dataSource={dataSource}
-          expandable={{ expandedRowRender }}
+          expandable={{
+            expandedRowRender,
+          }}
           hasError={hasError}
           loading={loading}
           rowKey={(row) => row._source._self}
@@ -168,7 +174,9 @@ export default function ExploreSectionTable({
     <BaseTable
       columns={columns}
       dataSource={dataSource}
-      expandable={{ expandedRowRender }}
+      expandable={{
+        expandedRowRender,
+      }}
       hasError={hasError}
       loading={loading}
       rowKey={(row) => row._source._self}
