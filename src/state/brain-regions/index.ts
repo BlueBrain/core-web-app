@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { atomWithReset } from 'jotai/utils';
+import { atomWithReset, selectAtom } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -17,7 +17,7 @@ import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
-import { itemsInAnnotationReducer } from '@/util/brain-hierarchy';
+import { itemsInAnnotationReducer, flattenBrainRegionsTree } from '@/util/brain-hierarchy';
 
 /*
   Atom dependency graph
@@ -53,23 +53,6 @@ import { itemsInAnnotationReducer } from '@/util/brain-hierarchy';
 */
 
 export const densityOrCountAtom = atom<'density' | 'count'>('count');
-
-/**
- * Recursively unravels a brain region tree to an array
- * @param brainRegion
- * @param result
- * @param ancestors
- */
-const treeToArray = (brainRegion: BrainRegion, result: BrainRegion[], ancestors: string[]) => {
-  brainRegion.items?.forEach((br) => {
-    const newRegion = { ...br };
-    delete newRegion.items;
-    const newAncestors = [...ancestors, brainRegion.id];
-    newRegion.ancestors = newAncestors;
-    result.push(newRegion);
-    treeToArray(br, result, newAncestors);
-  });
-};
 
 const brainRegionOntologyAtom = atom<Promise<BrainRegionOntology | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -248,6 +231,11 @@ export const alternateTreeWithRepresentationAtom = atom<Promise<BrainRegion[] | 
   }
 );
 
+export const alternateArrayWithRepresentationAtom = selectAtom(
+  alternateTreeWithRepresentationAtom,
+  (tree) => flattenBrainRegionsTree(tree)
+);
+
 export const addOrRemoveSelectedAlternateView = atom(
   null,
   async (get, set, viewId: string, brainRegionId: string) => {
@@ -272,19 +260,8 @@ export const addOrRemoveSelectedAlternateView = atom(
  */
 export const brainRegionsUnsortedArrayAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
   const tree = await get(brainRegionsFilteredTreeAtom);
-  // if the tree is successfully created, make region 8 the root and flatten it
-  // back to array. This is done in order to remove the brain regions that are
-  // siblings or parents of region 8
-  if (tree) {
-    const root = { ...tree[0] };
-    if (root) {
-      const flattenedRegions: BrainRegion[] = [];
-      treeToArray(root, flattenedRegions, []);
-      delete root.items;
-      return flattenedRegions;
-    }
-  }
-  return tree;
+
+  return flattenBrainRegionsTree(tree);
 });
 
 export const brainRegionIdxByNotationMapAtom = atom<Promise<Map<BrainRegionId, number> | null>>(
