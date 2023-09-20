@@ -38,11 +38,7 @@ export type NeuronCompositionEditorProps = {
   title?: string;
   composition: number;
   onSliderChange: (value: number) => void;
-  max: number;
-  isLocked: boolean;
-  setLockedFunc: () => void;
   trigger: (...args: any[]) => ReactElement;
-  lockIsDisabled: boolean;
   isEditable: boolean;
   isLeaf: boolean;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;

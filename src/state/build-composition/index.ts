@@ -141,13 +141,7 @@ export const analysedETypesAtom = atom<Promise<MEModelMenuItem>>(async (get) => 
 
 export const computeAndSetCompositionAtom = atom(
   null,
-  async (
-    get,
-    set,
-    modifiedNode: CalculatedCompositionNode,
-    newValue: number,
-    lockedIds: string[]
-  ) => {
+  async (get, set, modifiedNode: CalculatedCompositionNode, newValue: number) => {
     const analysedComposition = await get(analysedCompositionAtom);
     const volumes = await get(brainRegionOntologyVolumesAtom);
     if (!analysedComposition || modifiedNode.composition === undefined) {
@@ -167,7 +161,6 @@ export const computeAndSetCompositionAtom = atom(
         valueDifference,
         modifiedNode.leaves,
         composition,
-        lockedIds,
         densityOrCount,
         volumes,
         `http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion?.id}`

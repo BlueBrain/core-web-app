@@ -46,5 +46,4 @@ export type AnalysedComposition = {
   links: CompositionLink[];
   totalComposition: CalculatedCompositionNeuronGlia;
   composition: OriginalComposition;
-  blockedNodeIds: string[];
 };
