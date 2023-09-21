@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import merge from 'lodash/merge';
 import lodashGet from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 
 import {
   ParamConfig,
@@ -177,10 +178,12 @@ export const brainRegionMTypeArrayAtom = atom<string[] | null>((get) => {
   return generateBrainRegionMTypeArray(selectedBrainRegion.id, selectedMTypeId);
 });
 
-export const localMModelWorkflowOverridesAtom = atom<MModelWorkflowOverrides>({});
+export const localMModelWorkflowOverridesAtom = atom<MModelWorkflowOverrides | null>(null);
 
 export const mModelWorkflowOverridesAtom = atom<Promise<MModelWorkflowOverrides>>(async (get) => {
   const local = get(localMModelWorkflowOverridesAtom);
+  if (isEqual(local, {})) return {};
+
   const remoteConfigPayload = await get(remoteConfigPayloadAtom);
   const remote = remoteConfigPayload?.configuration.topological_synthesis;
   return { ...remote, ...local };

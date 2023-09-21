@@ -2,6 +2,7 @@ import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 import lodashSet from 'lodash/set';
 import lodashGet from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 
 import {
   mModelRemoteParamsAtom,
@@ -151,6 +152,10 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
 
   if (action === 'remove') {
     delete accumulative[brainRegionId][mTypeId];
+    if (isEqual(accumulative[brainRegionId], {})) {
+      // No canonical in that region so remove the region
+      delete accumulative[brainRegionId];
+    }
     set(localMModelWorkflowOverridesAtom, accumulative);
     set(setMorphologyAssignmentConfigPayloadAtom);
     return;
