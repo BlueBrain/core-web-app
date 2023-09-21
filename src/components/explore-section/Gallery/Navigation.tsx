@@ -23,7 +23,6 @@ export default function Navigation({
   totalImages,
   currentImage,
 }: NavigationProps) {
-
   return (
     <div className="fixed w-15vw bottom-6 left-6 flex flex-col z-50">
       <header className="w-full flex flex-col mb-12 text-white">

@@ -48,7 +48,9 @@ export default function Card({ content }: { content: SingleGalleryContentType })
           <div className="flex flex-row text-primary-2 text-xs font-normal">32 videos</div>
         </aside>
 
-        <p className="text-primary-3 font-normal leading-normal line-clamp-2">{content.description}</p>
+        <p className="text-primary-3 font-normal leading-normal line-clamp-2">
+          {content.description}
+        </p>
       </div>
     </Link>
   );

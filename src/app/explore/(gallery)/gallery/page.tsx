@@ -1,11 +1,9 @@
-
 import { client } from '@/api/sanity';
 import HomeHeader from '@/components/Global/HomeHeader';
 import { SingleGalleryContentType } from '@/types/explore-gallery';
 import Card from '@/components/explore-section/Gallery/Card';
 
 export default async function GalleryPage() {
-
   const galleryContent = await client.fetch(`*[_type == 'galleries'][]{
     name, 
     slug,

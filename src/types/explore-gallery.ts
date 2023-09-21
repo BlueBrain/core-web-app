@@ -7,8 +7,8 @@ export type GalleryImagesType = {
     asset: {
       _ref: string;
       _type: string;
-    }
-  }
+    };
+  };
 };
 
 export type SingleGalleryContentType = {
@@ -16,6 +16,6 @@ export type SingleGalleryContentType = {
   description: string;
   slug: {
     current: string;
-    };
+  };
   imageList: GalleryImagesType[];
 };
