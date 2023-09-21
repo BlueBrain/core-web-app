@@ -27,10 +27,10 @@ export function convertCompositionToCountPair(
 ): CountPair {
   const countPair = { neuron: 0, glia: 0 };
   if (composition.neuron) {
-    countPair.neuron = Math.round(composition.neuron.density * regionVolume);
+    countPair.neuron = composition.neuron.density * regionVolume;
   }
   if (composition.glia) {
-    countPair.glia = Math.round(composition.glia.density * regionVolume);
+    countPair.glia = composition.glia.density * regionVolume;
   }
   return countPair;
 }
@@ -170,7 +170,6 @@ export default async function calculateCompositions(
     if (leafId in compositionFile.hasPart && leafId in volumes) {
       const leaf = compositionFile.hasPart[leafId];
       const regionVolume = volumes[leafId];
-
       const rootCountPair = iterateNode(leaf, leafId, nodes, links, leafId, '', regionVolume);
       totalCountPair = addCountPairs(totalCountPair, rootCountPair);
     }
@@ -184,7 +183,7 @@ export default async function calculateCompositions(
       parentId: node.parentId,
       neuronComposition: {
         density: node.countPair.neuron / volumes[selectedRegionId],
-        count: node.countPair.neuron,
+        count: Math.round(node.countPair.neuron),
       },
       leaves: uniq(node.leaves),
       relatedNodes: uniq(node.relatedNodes),
