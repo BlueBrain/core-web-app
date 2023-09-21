@@ -59,6 +59,9 @@ export default function ScriptPage() {
       return;
     }
 
+    await resetOverridesMorphologyAssignment(session)
+    return;
+
     const query = getPublicBrainModelConfigsQuery();
     const configs = await queryES<BrainModelConfigResource>(query, session);
 
@@ -546,4 +549,30 @@ async function checkFullSynapseConfig(config: BrainModelConfig, session: Session
   if ('defaults' in payload) {
     console.log('payload :>> ', payload);
   }
+}
+
+async function resetOverridesMorphologyAssignment(session: Session) {
+  const subConfigId = 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/037e53cc-7a72-4765-8174-caebf7fa2707'
+  const resource = await fetchResourceById<MorphologyAssignmentConfigResource>(subConfigId, session)
+  const fileUrl = resource.distribution.contentUrl
+  let payload = await fetchJsonFileByUrl<MorphologyAssignmentConfigPayload>(fileUrl, session)
+  // const expectedPayload = {"variantDefinition":{"topological_synthesis":{"algorithm":"topological_synthesis","version":"v1"},"placeholder_assignment":{"algorithm":"placeholder_assignment","version":"v1"}},"defaults":{"topological_synthesis":{"id":"https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/5ec117b5-8ffa-4f3b-95ca-1dc8ad1b0c4d", "type":["CanonicalMorphologyModelConfig","Entity"]},"placeholder_assignment":{"id":"https://bbp.epfl.ch/neurosciencegraph/data/06b340d4-ac99-4459-bab4-013ef7199c36","type":["PlaceholderMorphologyConfig","Entity"]}},"configuration":{"topological_synthesis":{}}};
+  // const path = ['variantDefinition', 'topological_synthesis', 'algorithm']
+  // const hasCorrectStructure = get(payload, path)
+  let modified = false;
+
+  if (Object.keys(payload.configuration.topological_synthesis)) {
+    console.log('Cleaning up overrides...');
+    set(payload, ['configuration', 'topological_synthesis'], {})
+    modified = true;
+  }
+
+  if (!modified) return;
+  const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'morphology-assignment-config.json', session)
+  const updatedResource: MorphologyAssignmentConfig = {
+    ...resource,
+    distribution: createDistribution(fileMeta),
+  }
+  const updated = await updateResource(updatedResource, resource._rev, session)
+  console.log('Done', updated['@id']);
 }
