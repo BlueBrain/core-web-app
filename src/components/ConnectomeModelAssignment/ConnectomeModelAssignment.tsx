@@ -467,47 +467,91 @@ function SynapticTypeRow({
         <div style={{ flex: 2.5 }}>{type.synapticModel || models[0] || ''}</div>
         <div className="flex items-end">
           {type.gsyn}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="gsyn" subject="gsyn" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="gsyn"
+            subject="gsyn"
+          />
         </div>
         <div className="flex items-end">
           {type.gsynSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="gsyn" subject="gsynSD" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="gsyn"
+            subject="gsynSD"
+          />
         </div>
         <div className="flex items-end">
           {type.nrrp}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="nrrp" subject="nrrp" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="nrrp"
+            subject="nrrp"
+          />
         </div>
         <div className="flex items-end">
           {type.dtc}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="dtc" subject="dtc" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="dtc"
+            subject="dtc"
+          />
         </div>
         <div className="flex items-end">
           {type.dtcSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="dtc" subject="dtcSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="dtc"
+            subject="dtcSD"
+          />
         </div>
         <div className="flex items-end">
           {type.u}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="u" subject="u" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="u"
+            subject="u"
+          />
         </div>
         <div className="flex items-end">
           {type.uSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="u" subject="uSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="u"
+            subject="uSD"
+          />
         </div>
         <div className="flex items-end">
           {type.d}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="d" subject="d" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="d"
+            subject="d"
+          />
         </div>
         <div className="flex items-end">
           {type.dSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="d" subject="dSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="d"
+            subject="dSD"
+          />
         </div>
         <div className="flex items-end">
           {type.f}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="f" subject="f" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="f"
+            subject="f"
+          />
         </div>
         <div className="flex items-end">
           {type.fSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="f" subject="fSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="f"
+            subject="fSD"
+          />
         </div>
         <div>{type.gsynSRSF}</div>
         <div>{type.uHillCoefficient}</div>
