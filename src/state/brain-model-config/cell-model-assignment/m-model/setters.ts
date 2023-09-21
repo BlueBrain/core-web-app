@@ -152,6 +152,7 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
   if (action === 'remove') {
     delete accumulative[brainRegionId][mTypeId];
     set(localMModelWorkflowOverridesAtom, accumulative);
+    set(setMorphologyAssignmentConfigPayloadAtom);
     return;
   }
 
@@ -161,12 +162,12 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
     overrides,
   });
   set(localMModelWorkflowOverridesAtom, accumulative);
+  set(setMorphologyAssignmentConfigPayloadAtom);
 });
 
 export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   null,
   async (get, set) => {
-    await set(setMModelLocalTopologicalSynthesisParamsAtom);
     const remoteConfigPayload = await get(remoteConfigPayloadAtom);
     const topologicalSynthesisParams = await get(mModelWorkflowOverridesAtom);
 
