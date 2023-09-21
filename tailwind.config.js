@@ -90,6 +90,11 @@ module.exports = {
         '15vh': '15vh',
         '20vh': '20vh',
         '25vh': '25vh',
+        '30vh': '30vh',
+        '35vh': '35vh',
+        '40vh': '40vh',
+        '45vh': '45vh',
+        '50vh': '50vh',
       },
       minHeight: {
         '10vh': '10vh',

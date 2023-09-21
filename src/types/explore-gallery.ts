@@ -1,23 +1,21 @@
-export type SingleGallery = {
-  title: string;
-  imageCover: string;
-  description: string;
-  slug: {
-    current: string;
-  };
-};
-
 export type GalleryImagesType = {
   name: string;
-  src: string;
-  alt: string;
-  credit: string;
-  year: string;
+  credits: string;
+  year: number;
   software: string;
+  singleImage: {
+    asset: {
+      _ref: string;
+      _type: string;
+    }
+  }
 };
 
 export type SingleGalleryContentType = {
   name: string;
   description: string;
-  images: GalleryImagesType[];
+  slug: {
+    current: string;
+    };
+  imageList: GalleryImagesType[];
 };

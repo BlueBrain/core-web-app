@@ -2,15 +2,15 @@ import Link from 'next/link';
 import { ArrowLeftIcon } from '@/components/icons';
 
 type HeaderSingleGalleryProps = {
-  title: string;
+  name: string;
   description: string;
 };
 
-export default function HeaderSingleGallery({ title, description }: HeaderSingleGalleryProps) {
+export default function HeaderSingleGallery({ name, description }: HeaderSingleGalleryProps) {
   return (
     <div className="fixed z-10 top-0 left-0 w-1/4 h-full flex flex-col p-6">
       <div className="flex flex-col">
-        <h1 className="text-white text-5xl font-bold inline leading-none">{title}</h1>
+        <h1 className="text-white text-5xl font-bold inline leading-none">{name}</h1>
         <p className="mt-2 font-thin leading-5 text-neutral-3 w-2/3">{description}</p>
         <Link href="/explore/gallery">
           <button

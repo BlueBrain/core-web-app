@@ -1,15 +1,32 @@
-import { SINGLE_GALLERY_LIST_CONTENT } from '@/constants/explore-section/gallery-content';
+import { client } from '@/api/sanity';
+
 import HeaderSingleGallery from '@/components/explore-section/Gallery/HeaderSingleGallery';
 import GalleryVisualliser from '@/components/explore-section/Gallery/GalleryVisualiser';
 
-export default function SingleGalleryPage() {
+export default async function SingleGalleryPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+
+  console.log(params.slug)
+  
+  const galleryContent = await client.fetch(`*[_type == 'galleries' && slug.current == '${params.slug}'][0]{
+    name, 
+    slug,
+    description,
+    imageList,
+    }
+  `);
+
+
   return (
     <div className="flex flex-row flex-nowrap justify-between w-screen h-screen bg-black">
       <HeaderSingleGallery
-        title={SINGLE_GALLERY_LIST_CONTENT.name}
-        description={SINGLE_GALLERY_LIST_CONTENT.description}
+        name={galleryContent.name}
+        description={galleryContent.description}
       />
-      <GalleryVisualliser content={SINGLE_GALLERY_LIST_CONTENT} />
+      <GalleryVisualliser content={galleryContent} />
     </div>
   );
 }

@@ -8,7 +8,7 @@ type NavigationProps = {
   currentImage: number;
 };
 
-export function SingleInfoBox({ content, label }: { content: string; label: string }) {
+export function SingleInfoBox({ content, label }: { content: string | number; label: string }) {
   return (
     <div className="flex flex-row">
       <div className="block w-32 font-normal text-neutral-2">{label}</div>
@@ -23,6 +23,7 @@ export default function Navigation({
   totalImages,
   currentImage,
 }: NavigationProps) {
+
   return (
     <div className="fixed w-15vw bottom-6 left-6 flex flex-col z-50">
       <header className="w-full flex flex-col mb-12 text-white">
@@ -47,7 +48,7 @@ export default function Navigation({
       </header>
 
       <div className="flex flex-col gap-y-1">
-        <SingleInfoBox label="Credits" content={currentImageContent.credit} />
+        <SingleInfoBox label="Credits" content={currentImageContent.credits} />
         <div className="block w-full h-px bg-neutral-5" />
         <SingleInfoBox label="Year" content={currentImageContent.year} />
         <div className="block w-full h-px bg-neutral-5" />
