@@ -29,7 +29,7 @@ const buildCellCompositionQuestions = ({
       ),
       ...(about === 'EType'
         ? {
-            [`What are of electrophysiological types in ${brainRegionTitle}`]: (
+            [`What are electrophysiological types in ${brainRegionTitle}`]: (
               <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
                 What are the {propertyElement('electrophysiological')} types in{' '}
                 {brainRegionElement(brainRegionTitle)} region ?
@@ -37,7 +37,7 @@ const buildCellCompositionQuestions = ({
             ),
           }
         : {
-            [`What are of morphological types in ${brainRegionTitle}`]: (
+            [`What are morphological types in ${brainRegionTitle}`]: (
               <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
                 What are the {propertyElement('morphological')} types in{' '}
                 {brainRegionElement(brainRegionTitle)} region ?
