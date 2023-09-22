@@ -2,7 +2,7 @@ import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } fro
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { unwrap } from 'jotai/utils';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import {
   Filter,
@@ -134,6 +134,7 @@ export default function ControlPanel({
   experimentTypeName,
   resourceId,
 }: ControlPanelProps) {
+  const setActiveColumns = useSetAtom(activeColumnsAtom({ experimentTypeName, resourceId }));
   const activeColumns = useAtomValue(
     useMemo(
       () => unwrap(activeColumnsAtom({ experimentTypeName, resourceId })),
