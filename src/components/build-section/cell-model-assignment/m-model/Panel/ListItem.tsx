@@ -7,6 +7,7 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import ModelSelect from '@/components/build-section/cell-model-assignment/m-model/Panel/ModelSelect';
 import { ModelChoice } from '@/types/m-model';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 interface MTypeListItemProps {
   label: string;
@@ -54,12 +55,14 @@ export default function ListItem({
         <div className="text-xs font-light flex-grow">
           {onlyPlaceholder && <div className="text-end">Placeholder</div>}
           {!onlyPlaceholder && (
-            <ModelSelect
-              value={activeModel}
-              onChange={handleModelChange}
-              options={options}
-              compact
-            />
+            <DefaultLoadingSuspense>
+              <ModelSelect
+                value={activeModel}
+                onChange={handleModelChange}
+                options={options}
+                compact
+              />
+            </DefaultLoadingSuspense>
           )}
         </div>
       </div>

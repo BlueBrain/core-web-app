@@ -87,11 +87,11 @@ export const updateDescriptionAtom = atom(null, async (get, set, description: st
   set(updateConfigAtom, updatedConfig);
 });
 
-export const isConfigEditableAtom = atom<Promise<boolean | null>>(async (get) => {
+export const isConfigEditableAtom = atom<Promise<boolean>>(async (get) => {
   const session = get(sessionAtom);
   const createdBy = await get(getCreatedByAtom);
 
-  if (!session || !createdBy) return null;
+  if (!session || !createdBy) return false;
 
   return createdBy.split('/').reverse()[0] === session.user.username;
 });

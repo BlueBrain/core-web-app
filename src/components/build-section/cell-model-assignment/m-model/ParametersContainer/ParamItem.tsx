@@ -15,6 +15,7 @@ import {
 } from '@/types/m-model';
 import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;
@@ -25,6 +26,7 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
   const setMModelOverrides = useSetAtom(mModelLocalParamsAtom);
   const setMorphAssConfigPayload = useSetAtom(setMorphologyAssignmentConfigPayloadAtom);
   const neuriteTypeSelected = useAtomValue(mModelNeuriteTypeSelectedAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const paramInfo = paramsToDisplay[paramRawName];
 
@@ -54,6 +56,7 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
           paramValue={paramValue as number}
           paramInfo={paramInfo as ParamInfo}
           onChange={onNumberChange}
+          isConfigEditable={isConfigEditable}
         />
       );
       break;
@@ -64,6 +67,7 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
           paramValue={paramValue as StepSizeInterface}
           paramInfo={paramInfo as ParamInfo}
           onChange={onStepSizeChange}
+          isConfigEditable={isConfigEditable}
         />
       );
       break;

@@ -19,6 +19,7 @@ import {
   removeEditAtom,
   updateEditAtom,
 } from '@/state/brain-model-config/micro-connectome/setters';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { MicroConnectomeEditEntry } from '@/types/connectome';
 import { classNames } from '@/util/utils';
 import { useLoadable } from '@/hooks/hooks';
@@ -310,6 +311,8 @@ function ModifyEditDrawer({
   open,
   onClose,
 }: ModifyEditDrawerProps) {
+  const isEditable = useAtomValue(isConfigEditableAtom);
+
   const validateEdit = useValidateEdit();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -329,18 +332,24 @@ function ModifyEditDrawer({
       open={open}
       width={480}
       extra={
-        <Button onClick={onDoneLocal} type="primary" disabled={!editValid} loading={loading}>
+        <Button
+          onClick={onDoneLocal}
+          type="primary"
+          disabled={!editValid || !isEditable}
+          loading={loading}
+        >
           Save
         </Button>
       }
       destroyOnClose
     >
-      <EditForm value={value} onChange={onChange} disabled={loading} />
+      <EditForm value={value} onChange={onChange} disabled={loading || !isEditable} />
     </Drawer>
   );
 }
 
 function CreateEditBtn() {
+  const isEditable = useAtomValue(isConfigEditableAtom);
   const addEditGlobal = useSetAtom(addEditAtom);
 
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -359,18 +368,20 @@ function CreateEditBtn() {
 
   return (
     <>
-      <Button onClick={() => setDrawerOpen(true)} block>
+      <Button onClick={() => setDrawerOpen(true)} block disabled={!isEditable}>
         Add modification
       </Button>
 
-      <ModifyEditDrawer
-        title="Create a modification"
-        value={currentEdit}
-        onChange={setCurrentEdit}
-        onDone={addEdit}
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-      />
+      {isEditable && (
+        <ModifyEditDrawer
+          title="Create a modification"
+          value={currentEdit}
+          onChange={setCurrentEdit}
+          onDone={addEdit}
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+        />
+      )}
     </>
   );
 }
@@ -382,6 +393,8 @@ type EditHistoryEntryProps = {
 };
 
 function EditHistoryEntry({ value, onClick, onRemove }: EditHistoryEntryProps) {
+  const isEditable = useAtomValue(isConfigEditableAtom);
+
   return (
     <div className="mt-1 flex justify-between items-center">
       <button
@@ -393,12 +406,20 @@ function EditHistoryEntry({ value, onClick, onRemove }: EditHistoryEntryProps) {
         {value.name}
       </button>
 
-      <DeleteOutlined className="cursor-pointer" type="button" onClick={() => onRemove?.(value)} />
+      {isEditable && (
+        <DeleteOutlined
+          className="cursor-pointer"
+          type="button"
+          onClick={() => onRemove?.(value)}
+        />
+      )}
     </div>
   );
 }
 
 function EditHistory() {
+  const isEditable = useAtomValue(isConfigEditableAtom);
+
   const rawEdits = useLoadable(editsLoadableAtom, []);
 
   const removeEdit = useSetAtom(removeEditAtom);
@@ -442,7 +463,7 @@ function EditHistory() {
 
       {currentEdit && (
         <ModifyEditDrawer
-          title="Edit a modification"
+          title={isEditable ? 'Edit a modification' : 'View a modification'}
           value={currentEdit}
           onChange={setCurrentEdit}
           onDone={updateEditLocal}

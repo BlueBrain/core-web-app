@@ -1,8 +1,9 @@
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
 import { eModelEditModeAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { classNames } from '@/util/utils';
 import GenericButton from '@/components/Global/GenericButton';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 
 const positionStyle = 'absolute bottom-5 right-5 flex items-center gap-3';
 const defaultButtonColor = 'border-primary-8 text-primary-8 bg-white';
@@ -13,12 +14,14 @@ type Props = {
 
 export default function EditEModelButton({ className }: Props) {
   const [eModelEditMode, setEModelEditMode] = useAtom(eModelEditModeAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const body = !eModelEditMode ? (
     <GenericButton
       text="Edit model"
       onClick={() => setEModelEditMode(true)}
-      className={defaultButtonColor}
+      className={`${defaultButtonColor} ${isConfigEditable ? '' : 'cursor-not-allowed'}`}
+      disabled={!isConfigEditable}
     />
   ) : (
     <>

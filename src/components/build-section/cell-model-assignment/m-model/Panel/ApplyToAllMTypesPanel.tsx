@@ -7,6 +7,8 @@ import { analysedMTypesAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 import { expandBrainRegionId } from '@/util/cell-model-assignment';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 function Separator() {
   return <hr className="bg-primary-4 h-px w-full border-0" />;
@@ -15,6 +17,7 @@ function Separator() {
 export default function ApplyToAllMTypesPanel() {
   const mModelItems = useAtomValue(analysedMTypesAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const setAccumulativeTopologicalSynthesis = useSetAtom(setAccumulativeTopologicalSynthesisAtom);
   const [activeModel, setActiveModel] = useState<ModelChoice>('placeholder');
@@ -45,15 +48,20 @@ export default function ApplyToAllMTypesPanel() {
       <div className="flex flex-row justify-between font-semibold items-center gap-3 text-white text-sm">
         <div className="pr-3">Apply to all M-types</div>
         <div className="flex-grow">
-          <ModelSelect onChange={handleModelSelectChange} value={activeModel} />
+          <DefaultLoadingSuspense>
+            <ModelSelect onChange={handleModelSelectChange} value={activeModel} />
+          </DefaultLoadingSuspense>
         </div>
       </div>
 
       <div className="flex flex-row justify-end items-center gap-3">
         <button
           type="button"
-          className="bg-primary-1 text-primary-7 font-semibold p-1 px-6"
+          className={`bg-primary-1 text-primary-7 font-semibold p-1 px-6 ${
+            isConfigEditable ? '' : 'cursor-not-allowed'
+          }`}
           onClick={applyActiveModelToAll}
+          disabled={!isConfigEditable}
         >
           Apply
         </button>

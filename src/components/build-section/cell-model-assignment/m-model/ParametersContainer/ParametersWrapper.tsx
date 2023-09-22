@@ -7,6 +7,7 @@ import {
   mModelNeuriteTypeSelectedAtom,
   getMModelLocalParamsAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 type Props = {
   className?: string;
@@ -27,7 +28,9 @@ export default function ParametersWrapper({ className }: Props) {
         paramRawNames.map((paramRawName) => {
           const paramValue = requiredParamValues[paramRawName];
           return (
-            <ParameterItem key={paramRawName} paramRawName={paramRawName} paramValue={paramValue} />
+            <DefaultLoadingSuspense key={paramRawName}>
+              <ParameterItem paramRawName={paramRawName} paramValue={paramValue} />
+            </DefaultLoadingSuspense>
           );
         })}
     </div>

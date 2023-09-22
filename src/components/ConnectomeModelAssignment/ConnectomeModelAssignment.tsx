@@ -30,6 +30,7 @@ import SynapticAssignmentRulesTable from './SynapticAssignmentRulesTable';
 import { loadingAtom, synapticModelsAtom, userRulesAtom, userTypesAtom } from './state';
 import { classNames } from '@/util/utils';
 import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 import styles from './connectome-model-assignment.module.scss';
 
 const ACTIVE_TAB_CLASSNAME =
@@ -64,6 +65,7 @@ export default function ConnectomeModelAssignmentView() {
   const types = useAtomValue(userTypesAtom);
   const setUserRules = useSetRules();
   const setTypes = useSetTypes();
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const [userRulesFilter, setUserRulesFilter] = useState(new Filter([]));
   const [rulesTabActive, setRulesTabActive] = useState(true);
@@ -190,13 +192,21 @@ export default function ConnectomeModelAssignmentView() {
           <div className="fixed" style={{ right: 35, bottom: 8 }}>
             <button
               type="button"
-              className={classNames(styles.button, 'bg-primary-8')}
+              className={
+                isConfigEditable
+                  ? classNames(styles.button, 'bg-primary-8')
+                  : classNames(styles.button, 'bg-gray-300 cursor-not-allowed')
+              }
               onClick={() => setAddRuleModalOpen(true)}
-              disabled={loading}
+              disabled={loading || !isConfigEditable}
             >
               {!loading && <PlusOutlined />}
               {loading && <LoadingOutlined />}
-              &nbsp;&nbsp;Add synapse assignment rule
+              {isConfigEditable && <span className="ml-2">Add synapse assignment rule</span>}
+              {!isConfigEditable && (
+                // eslint-disable-next-line
+                <span className="ml-2">You can't modify another users configuration</span>
+              )}
             </button>
             <button type="button" className={classNames(styles.button, 'bg-black')}>
               <EyeOutlined />
@@ -208,13 +218,21 @@ export default function ConnectomeModelAssignmentView() {
           <div className="fixed" style={{ right: 35, bottom: 8 }}>
             <button
               type="button"
-              className={classNames(styles.button, 'bg-primary-8')}
+              className={
+                isConfigEditable
+                  ? classNames(styles.button, 'bg-primary-8')
+                  : classNames(styles.button, 'bg-gray-300 cursor-not-allowed')
+              }
               onClick={() => setAddTypeModalOpen(true)}
-              disabled={loading}
+              disabled={loading || !isConfigEditable}
             >
               {!loading && <PlusOutlined />}
               {loading && <LoadingOutlined />}
-              &nbsp;&nbsp;Add synaptic type
+              {isConfigEditable && <span className="ml-2">Add synaptic type</span>}
+              {!isConfigEditable && (
+                // eslint-disable-next-line
+                <span className="ml-2">You can't modify another users configuration</span>
+              )}
             </button>
             <button type="button" className={classNames(styles.button, 'bg-black')}>
               <EyeOutlined />
@@ -454,6 +472,7 @@ function SynapticTypeRow({
   const [editing, setEditing] = useState(false);
   const usedSynapseTypes = useSynapseTypeUseCount();
   const loading = useAtomValue(loadingAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const setSelectedTypeIdx = useSetAtom(selectedTypeIdxAtom);
   const setTypeUsedInRules = useSetAtom(typeUsedInRulesAtom);
@@ -556,7 +575,7 @@ function SynapticTypeRow({
         <div>{type.gsynSRSF}</div>
         <div>{type.uHillCoefficient}</div>
         <div style={{ flex: 1.1 }}>
-          {!loading && (
+          {!loading && isConfigEditable && (
             <>
               <CopyOutlined
                 className={styles.icon}
