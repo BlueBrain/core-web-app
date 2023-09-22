@@ -59,7 +59,7 @@ export const getPublicBrainModelConfigsQuery = (searchString: string = '') => ({
       ].filter(Boolean),
     },
   },
-  sort: [defaultCreationDateSort],
+  sort: searchString ? undefined : [defaultCreationDateSort],
 });
 
 export const getEModelQuery = (searchString: string = '') => ({
@@ -106,7 +106,7 @@ export const getPersonalBrainModelConfigsQuery = (username: string, searchString
       ].filter(Boolean),
     },
   },
-  sort: [defaultCreationDateSort],
+  sort: searchString ? undefined : [defaultCreationDateSort],
 });
 
 export const getArchiveBrainModelConfigsQuery = (searchString: string = '') => ({
