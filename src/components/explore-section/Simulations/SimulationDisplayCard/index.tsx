@@ -1,7 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
 import { Spin } from 'antd';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationCard from '@/components/explore-section/Simulations/SimulationDisplayCard/SimulationCard';
@@ -16,13 +15,14 @@ type SimulationDisplayCardProps = {
   yDimension: string;
 };
 
+const reportsLoadable = loadable(analysisReportsAtom);
+
 export default function SimulationDisplayCard({
   display,
   simulation,
   xDimension,
   yDimension,
 }: SimulationDisplayCardProps) {
-  const reportsLoadable = useMemo(() => loadable(analysisReportsAtom), []);
   const analysisReports = useAtomValue(reportsLoadable);
   if (display === 'status') {
     return (

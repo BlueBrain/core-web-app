@@ -198,6 +198,7 @@ export type SimulationCampaignResource = DeltaResource & {
     coords: { [key: string]: number[] };
     attrs: { [key: string]: number[] };
   };
+  analyses?: string[];
 };
 
 export type Simulation = {

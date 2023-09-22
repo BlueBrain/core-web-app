@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
 import { loadable } from 'jotai/utils';
@@ -17,9 +17,8 @@ export default function BrainConfigSelector({ onSelect }: Props) {
   const setSearchString = useSetAtom(searchConfigListStringAtom);
   const [searchInputValue, setSearchInputValue] = useState('');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const setSearchStringDebounced = useCallback(
-    debounce((searchStr: string) => setSearchString(searchStr), 300),
+  const setSearchStringDebounced = useMemo(
+    () => debounce((searchStr: string) => setSearchString(searchStr), 300),
     [setSearchString]
   );
 

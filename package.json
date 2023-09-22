@@ -50,6 +50,7 @@
     "file-saver": "^2.0.5",
     "jotai": "^2.4.0",
     "jotai-optics": "^0.3.0",
+    "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "morphoviewer": "^0.1.20",

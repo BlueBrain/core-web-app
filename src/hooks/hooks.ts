@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Atom } from 'jotai/vanilla';
+import sessionAtom from '@/state/session';
 
 export function usePrevious<T>(value: T) {
   // The ref object is a generic container whose current property is mutable ...
@@ -26,4 +27,8 @@ export function useLoadable<T>(loadableAtom: Atom<Loadable<Promise<T>>>, default
   }, [loadable]);
 
   return state;
+}
+
+export function useSessionAtomValue() {
+  return useAtomValue(sessionAtom);
 }
