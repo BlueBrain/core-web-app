@@ -170,6 +170,19 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
   set(setMorphologyAssignmentConfigPayloadAtom);
 });
 
+export const applyOverridesToAccumulativeAtom = atom<null, [], void>(null, async (get, set) => {
+  const overrides = get(mModelLocalParamsAtom);
+  const accumulative = structuredClone(await get(mModelWorkflowOverridesAtom));
+  const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
+
+  if (!brainRegionMTypeArray) return;
+
+  const path = [...brainRegionMTypeArray, 'overrides'];
+  lodashSet(accumulative, path, overrides);
+  set(localMModelWorkflowOverridesAtom, accumulative);
+  set(setMorphologyAssignmentConfigPayloadAtom);
+});
+
 export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   null,
   async (get, set) => {
