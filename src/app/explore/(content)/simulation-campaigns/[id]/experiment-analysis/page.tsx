@@ -15,7 +15,7 @@ import usePathname from '@/hooks/pathname';
 import { from64 } from '@/util/common';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 
-import { useSession } from '@/hooks/hooks';
+import { useSessionAtomValue } from '@/hooks/hooks';
 
 export default function ExperimentAnalyses() {
   const [analyses, setAnalyses] = useAnalyses();
@@ -218,7 +218,7 @@ export default function ExperimentAnalyses() {
 
 function useFetchSimCampaign() {
   const pathname = usePathname();
-  const session = useSession();
+  const session = useSessionAtomValue();
   const [simCampaign, setSimCampaign] = useState<SimulationCampaignResource>();
 
   useEffect(() => {

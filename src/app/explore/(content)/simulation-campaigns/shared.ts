@@ -23,6 +23,7 @@ export const fetchAnalyses = async (
             ],
           },
         },
+        size: 100,
       },
       session
     );

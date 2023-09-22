@@ -29,6 +29,6 @@ export function useLoadable<T>(loadableAtom: Atom<Loadable<Promise<T>>>, default
   return state;
 }
 
-export function useSession() {
+export function useSessionAtomValue() {
   return useAtomValue(sessionAtom);
 }
