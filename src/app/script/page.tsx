@@ -49,6 +49,7 @@ import { Session } from 'next-auth';
 
 
 const ROOT_BRAIN_REGION = 'http://api.brain-map.org/api/v2/data/Structure/997';
+const cellCompositionSummaryUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/atlasdatasetrelease/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fatlasdatasetrelease%2Fb480420a-a452-4e08-8918-b4f24d1ca7b1'
 
 export default function ScriptPage() {
   const { data: session } = useSession();
@@ -71,17 +72,19 @@ export default function ScriptPage() {
       // if (config.name !== 'Release 23.02') continue;
       // if (config.name !== 'Release 23.03') continue;
       // if (config.name !== 'Release 23.03 by antonel') continue
-      if (config.name !== 'antonel - new @id mmodel') continue;
-      // if (config.name !== 'AO_latest_release_circuit') continue
+      // if (config.name !== 'antonel - new @id mmodel') continue;
+      if (config.name !== 'AO_latest_release_circuit') continue
 
       console.log('Processing config: ', config.name, config._self);
 
-      // await fixCellComposition(config, session)
-      // await fixCellCompositionRev(config, session)
-      // await setPlaceholderForCellPositionConfig(config, session)
-      // await setPlaceholderForMacroConnectomeConfig(config, session)
+      await checkConsistencyCellComposition(config, session)
+      await fixCellComposition(config, session)
+      await setPlaceholderForCellPositionConfig(config, session)
+      await setPlaceholderForMacroConnectomeConfig(config, session)
       await setFullMorphologyAssignment(config, session)
-      // await setPlaceholderEModelAssignment(config, session)
+      await setPlaceholderEModelAssignment(config, session)
+
+      // await fixCellCompositionRev(config, session)
 
       // await setPlaceholderForSynapseConfig(config, session)
       // await setFullSynapseConfig(config, session)
@@ -133,7 +136,7 @@ async function fixCellComposition(config: BrainModelConfig, session: Session) {
     configVersion: supportedVersion,
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 function fixCellCompositionVersion(compositionPayload: CellCompositionConfigPayload) {
@@ -196,7 +199,7 @@ async function setPlaceholderForCellPositionConfig(config: BrainModelConfig, ses
     configVersion: supportedVersion
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function setPlaceholderForMacroConnectomeConfig(config: BrainModelConfig, session: Session) {
@@ -237,7 +240,7 @@ async function setPlaceholderForMacroConnectomeConfig(config: BrainModelConfig, 
     configVersion: supportedVersion
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function setPlaceholderForSynapseConfig(config: BrainModelConfig, session: Session) {
@@ -274,7 +277,7 @@ async function setPlaceholderForSynapseConfig(config: BrainModelConfig, session:
     configVersion: supportedVersion
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function setPlaceholderForMicroConnectome(config: BrainModelConfig, session: Session) {
@@ -314,7 +317,7 @@ async function setPlaceholderForMicroConnectome(config: BrainModelConfig, sessio
     configVersion: supportedVersion
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function setFullMicroConnectome(config: BrainModelConfig, session: Session) {
@@ -354,7 +357,7 @@ async function setFullMicroConnectome(config: BrainModelConfig, session: Session
     configVersion: supportedVersion
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function checkFullMicroConnectomeConfig(config: BrainModelConfig, session: Session) {
@@ -462,6 +465,8 @@ async function setFullMorphologyAssignment(config: BrainModelConfig, session: Se
   }
 
   if (!modified) return;
+  console.log('payload :>> ', payload);
+  return;
   const fileMeta = await updateJsonFileByUrl(fileUrl, payload, 'morphology-assignment-config.json', session)
   const updatedResource: MorphologyAssignmentConfig = {
     ...resource,
@@ -470,7 +475,7 @@ async function setFullMorphologyAssignment(config: BrainModelConfig, session: Se
     configVersion: supportedVersion,
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function setPlaceholderEModelAssignment(config: BrainModelConfig, session: Session) {
@@ -507,7 +512,7 @@ async function setPlaceholderEModelAssignment(config: BrainModelConfig, session:
     configVersion: supportedVersion,
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function fixCellCompositionRev(config: BrainModelConfig, session: Session) {
@@ -552,17 +557,59 @@ async function fixCellCompositionRev(config: BrainModelConfig, session: Session)
     })
   }
 
+  checkConsistencyCellComposition(config, session)
+
   const path = [ROOT_BRAIN_REGION, 'configuration', 'overrides', exampleBrainRegion, 'hasPart', 'https://bbp.epfl.ch/ontologies/core/bmo/GenericExcitatoryNeuronMType', '_rev']
   if (get(compositionPayload, path)) return;
   
   console.log('Removing rev in cell composition...');
-  const cellCompositionSummaryUrl = 'https://bbp.epfl.ch/nexus/v1/files/bbp/atlasdatasetrelease/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp%2Fatlasdatasetrelease%2Fb480420a-a452-4e08-8918-b4f24d1ca7b1'
   const cellCompositionSummaryPayload: any = await fetchJsonFileByUrl(cellCompositionSummaryUrl, session)
 
   const overrides = compositionPayload[ROOT_BRAIN_REGION].configuration.overrides;
   removeRevisionsInComposition(overrides, cellCompositionSummaryPayload.hasPart)
+  return;
   const updated = await updateComposition(compositionPayload)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
+}
+
+async function checkConsistencyCellComposition(config: BrainModelConfig, session: Session) {
+  const cellCompositionId = config.configs.cellCompositionConfig['@id']
+  const compositionResource = await fetchResourceById<CellCompositionConfigResource>(cellCompositionId, session)
+  const compositionFileUrl = compositionResource.distribution.contentUrl
+  const exampleBrainRegion = 'http://api.brain-map.org/api/v2/data/Structure/23'
+  const compositionPayload = await fetchJsonFileByUrl<CellCompositionConfigPayload>(compositionFileUrl, session)
+
+  const checkLabelAndAbout = (path: string[], original: any, currentValue: any) => {
+    let value = get(original, [...path, 'label'])
+    let expectedValue = currentValue['label']
+    if (value !== expectedValue) console.log('Label is different', value, expectedValue);
+
+    value = get(original, [...path, 'about'])
+    expectedValue = currentValue['about']
+    if (value !== expectedValue) console.log('About is different');
+  }
+
+  const checkConsistency = (composition: CompositionOverridesWorkflowConfig, original: any) => {
+    Object.entries(composition).forEach(([brainRegionKey, brainRegionValue]) => {
+      checkLabelAndAbout([brainRegionKey], original, brainRegionValue)
+      
+      Object.entries(brainRegionValue.hasPart).forEach(([mTypeKey, mTypeValue]) => {
+        checkLabelAndAbout([brainRegionKey, 'hasPart', mTypeKey], original, mTypeValue)
+
+        Object.entries(mTypeValue.hasPart).forEach(([eTypeKey, eTypeValue]) => {
+          checkLabelAndAbout([brainRegionKey, 'hasPart', mTypeKey, 'hasPart', eTypeKey], original, eTypeValue)
+        })
+      })
+    })
+  }
+  
+  console.log('Comparing summary to overrides cell composition...');
+  const cellCompositionSummaryPayload: any = await fetchJsonFileByUrl(cellCompositionSummaryUrl, session)
+
+  const overrides = compositionPayload[ROOT_BRAIN_REGION].configuration.overrides;
+  checkConsistency(overrides, cellCompositionSummaryPayload.hasPart)
+  
+  console.log('> Done');
 }
 
 async function setFullSynapseConfig(config: BrainModelConfig, session: Session) {
@@ -602,7 +649,7 @@ async function setFullSynapseConfig(config: BrainModelConfig, session: Session) 
     configVersion: supportedVersion
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }
 
 async function checkFullSynapseConfig(config: BrainModelConfig, session: Session) {
@@ -638,5 +685,5 @@ async function resetOverridesMorphologyAssignment(session: Session) {
     distribution: createDistribution(fileMeta),
   }
   const updated = await updateResource(updatedResource, resource._rev, session)
-  console.log('Done', updated['@id']);
+  console.log('> Done', updated['@id']);
 }

@@ -71,6 +71,7 @@ type MtypeWorkflowConfigEntry = {
 
 type BrainRegionWorkflowConfigEntry = {
   label: string;
+  about: string;
   hasPart: Record<string, MtypeWorkflowConfigEntry>;
 };
 
