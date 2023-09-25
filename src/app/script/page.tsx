@@ -59,9 +59,6 @@ export default function ScriptPage() {
       return;
     }
 
-    await resetOverridesMorphologyAssignment(session)
-    return;
-
     const query = getPublicBrainModelConfigsQuery();
     const configs = await queryES<BrainModelConfigResource>(query, session);
 
@@ -73,24 +70,25 @@ export default function ScriptPage() {
       // if (config.name !== 'Release 23.01') continue;
       // if (config.name !== 'Release 23.02') continue;
       // if (config.name !== 'Release 23.03') continue;
-      if (config.name !== 'Release 23.03 by antonel') continue
+      // if (config.name !== 'Release 23.03 by antonel') continue
+      if (config.name !== 'antonel - new @id mmodel') continue;
       // if (config.name !== 'AO_latest_release_circuit') continue
 
       console.log('Processing config: ', config.name, config._self);
 
-      await fixCellComposition(config, session)
-      await fixCellCompositionRev(config, session)
-      await setPlaceholderForCellPositionConfig(config, session)
-      await setPlaceholderForMacroConnectomeConfig(config, session)
+      // await fixCellComposition(config, session)
+      // await fixCellCompositionRev(config, session)
+      // await setPlaceholderForCellPositionConfig(config, session)
+      // await setPlaceholderForMacroConnectomeConfig(config, session)
       await setFullMorphologyAssignment(config, session)
-      await setPlaceholderEModelAssignment(config, session)
+      // await setPlaceholderEModelAssignment(config, session)
 
       // await setPlaceholderForSynapseConfig(config, session)
-      await setFullSynapseConfig(config, session)
+      // await setFullSynapseConfig(config, session)
       // await checkFullSynapseConfig(config, session)
 
       // await setPlaceholderForMicroConnectome(config, session)
-      await setFullMicroConnectome(config, session)
+      // await setFullMicroConnectome(config, session)
       // await checkFullMicroConnectomeConfig(config, session)
 
     }
@@ -374,16 +372,82 @@ async function setFullMorphologyAssignment(config: BrainModelConfig, session: Se
   const resource = await fetchResourceById<MorphologyAssignmentConfigResource>(subConfigId, session)
   const fileUrl = resource.distribution.contentUrl
   let payload = await fetchJsonFileByUrl<MorphologyAssignmentConfigPayload>(fileUrl, session)
-  const expectedPayload = {"variantDefinition":{"topological_synthesis":{"algorithm":"topological_synthesis","version":"v1"},"placeholder_assignment":{"algorithm":"placeholder_assignment","version":"v1"}},"defaults":{"topological_synthesis":{"id":"https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/5ec117b5-8ffa-4f3b-95ca-1dc8ad1b0c4d", "type":["CanonicalMorphologyModelConfig","Entity"]},"placeholder_assignment":{"id":"https://bbp.epfl.ch/neurosciencegraph/data/06b340d4-ac99-4459-bab4-013ef7199c36","type":["PlaceholderMorphologyConfig","Entity"]}},"configuration":{"topological_synthesis":{}}};
-  const path = ['variantDefinition', 'topological_synthesis', 'algorithm']
-  const hasCorrectStructure = get(payload, path)
+  const expectedPayload = {
+    "variantDefinition": {
+      "topological_synthesis": {
+        "algorithm": "topological_synthesis",
+        "version": "v1-dev"
+      },
+      "placeholder_assignment": {
+        "algorithm": "placeholder_assignment",
+        "version": "v1-dev"
+      }
+    },
+    "defaults": {
+      "topological_synthesis": {
+        "@id": "https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/960c075e-fb79-4a4d-afe3-081fbc41b082",
+        "@type": [
+          "CanonicalMorphologyModelConfig",
+          "Entity"
+        ],
+        "_rev": 1
+      },
+      "placeholder_assignment": {
+        "@id": "https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/dd6d729a-7770-49bf-abd9-643f469e4362",
+        "@type": [
+          "PlaceholderMorphologyConfig",
+          "Entity"
+        ],
+        "_rev": 3
+      }
+    },
+    "configuration": {
+      "topological_synthesis": {}
+    }
+  }
 
   let modified = false;
 
-  if (!hasCorrectStructure) {
-    console.log('Setting supported payload for MorphologyAssignment');
-    payload = expectedPayload as any;
+  let path = ['variantDefinition', 'topological_synthesis', 'version']
+  let expectedValue = get(expectedPayload, path)
+  let checkOk = get(payload, path) === expectedValue
+  if (!checkOk) {
+    console.log('Setting new version payload for MorphologyAssignment');
+    path = ['variantDefinition']
+    set(payload, path, get(expectedPayload, path))
     modified = true
+  }
+
+  path = ['defaults', 'topological_synthesis', '@id']
+  expectedValue = get(expectedPayload, path)
+  checkOk = get(payload, path) === expectedValue
+  if (!checkOk) {
+    console.log('Setting new @id on defaults payload for MorphologyAssignment');
+    path = ['defaults']
+    set(payload, path, get(expectedPayload, path))
+    modified = true
+  }
+
+  path = ['configuration', 'topological_synthesis']
+  const overrides = get(payload, path)
+  if (!isEqual(overrides, {})) {
+    for (const brainRegionKey in overrides) {
+      for (const mTypeKey in overrides[brainRegionKey]) {
+        const idPath = [...path, brainRegionKey, mTypeKey]
+        const info = get(payload, idPath)
+        if ('id' in info) {
+          console.log('Setting new @id on overrides for MorphologyAssignment');
+          const id = info.id
+          delete info['id']
+          set(payload, idPath, {
+            ...info,
+            '@id': id
+          })
+          modified = true
+        }
+      }
+      
+    }
   }
 
   if (resource.generatorName !== 'mmodel') {
