@@ -19,6 +19,7 @@ import {
   GeneratorTaskActivityResource,
 } from '@/types/nexus';
 import { setRevision } from '@/util/nexus';
+import { supportedUIConfigVersion } from '@/constants/configs';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
@@ -31,7 +32,11 @@ export const configAtom = atom<Promise<CellCompositionConfigResource | null>>(as
 
   if (!session || !id) return null;
 
-  return fetchResourceById<CellCompositionConfigResource>(id, session);
+  const resource = await fetchResourceById<CellCompositionConfigResource>(id, session);
+  if (resource.configVersion !== supportedUIConfigVersion['cellCompositionConfig']) {
+    throw new Error('Configuration is not fully supported by cell composition. Clone from Release')
+  }
+  return resource
 });
 
 export const configSourceAtom = atom<Promise<CellCompositionConfig | null>>(async (get) => {
