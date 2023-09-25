@@ -209,8 +209,7 @@ export const canonicalMorphologyModelConfigIdAtom = atom<Promise<string | null>>
 
   if (!remoteConfigPayload) return null;
 
-  const { id } = remoteConfigPayload.defaults.topological_synthesis;
-  return id;
+  return remoteConfigPayload.defaults.topological_synthesis['@id'];
 });
 
 export const remoteParamsAtom = atom<Promise<ParamConfig | {}>>(async (get) => {

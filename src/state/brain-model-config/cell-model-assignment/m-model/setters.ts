@@ -167,7 +167,7 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
 
   const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
   lodashSet(accumulative, generateBrainRegionMTypeArray(brainRegionId, mTypeId), {
-    id: canonicalMorphologyModelId,
+    '@id': canonicalMorphologyModelId,
     overrides,
   });
   set(localMModelWorkflowOverridesAtom, accumulative);
