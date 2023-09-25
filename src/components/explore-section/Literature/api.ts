@@ -32,7 +32,7 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
     }
 
     const urlQueryParams = params.toString().length > 0 ? `?${params.toString()}` : '';
-    const url = `${nexus.aiUrl}/generative_qa${urlQueryParams}`;
+    const url = `${nexus.aiUrl}/qa/generative${urlQueryParams}`;
     const response = await fetch(url, {
       method: 'POST',
       headers: new Headers({
@@ -63,11 +63,16 @@ const fetchArticleTypes = (
 ): Promise<{ article_type: string; docs_in_db: number }[]> => {
   const url = nexus.aiUrl;
 
-  return fetch(`${url}/article_types`, {
+  return fetch(`${url}/suggestions/article_types`, {
     method: 'GET',
     headers: createHeaders(accessToken),
   })
-    .then((response: any) => response.json())
+    .then((response: any) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return [];
+    })
     .catch(() => []);
 };
 
@@ -77,7 +82,7 @@ const fetchAuthorSuggestions = (
 ): Promise<AuthorSuggestionResponse> => {
   const url = nexus.aiUrl;
 
-  return fetch(`${url}/author_suggestion`, {
+  return fetch(`${url}/suggestions/author`, {
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({
@@ -85,14 +90,19 @@ const fetchAuthorSuggestions = (
       limit: 100,
     }),
   })
-    .then((response: any) => response.json() as AuthorSuggestionResponse)
+    .then((response: any) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return [];
+    })
     .catch(() => [{ name: searchTerm, docs_in_db: 0 }] as AuthorSuggestionResponse);
 };
 
 export const fetchJournalSuggestions = (searchTerm: string, accessToken: string) => {
   const url = nexus.aiUrl;
 
-  return fetch(`${url}/journal_suggestion`, {
+  return fetch(`${url}/suggestions/journal`, {
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({
@@ -100,7 +110,12 @@ export const fetchJournalSuggestions = (searchTerm: string, accessToken: string)
       limit: 100,
     }),
   })
-    .then((response: any) => response.json())
+    .then((response: any) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return [];
+    })
     .catch(() => []);
 };
 
