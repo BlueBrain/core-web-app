@@ -32,6 +32,7 @@ export function createSearchStringQueryFilter(searchString: string, fields: stri
             type: 'most_fields',
             fields: fields.map((field) => `${field}.ngramtext`),
             fuzziness: 'AUTO',
+            operator: 'and',
           },
         },
       ],
