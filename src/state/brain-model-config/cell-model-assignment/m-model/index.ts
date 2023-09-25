@@ -1,7 +1,6 @@
 import { atom } from 'jotai';
 import merge from 'lodash/merge';
 import lodashGet from 'lodash/get';
-import isEqual from 'lodash/isEqual';
 
 import {
   ParamConfig,
@@ -182,11 +181,11 @@ export const localMModelWorkflowOverridesAtom = atom<MModelWorkflowOverrides | n
 
 export const mModelWorkflowOverridesAtom = atom<Promise<MModelWorkflowOverrides>>(async (get) => {
   const local = get(localMModelWorkflowOverridesAtom);
-  if (isEqual(local, {})) return {};
-
   const remoteConfigPayload = await get(remoteConfigPayloadAtom);
   const remote = remoteConfigPayload?.configuration.topological_synthesis;
-  return { ...remote, ...local };
+
+  if (!local) return remote || {};
+  return local;
 });
 
 export const selectedCanonicalMapAtom = atom<Promise<Map<string, boolean>>>(async (get) => {
@@ -248,24 +247,31 @@ export const canonicalBrainRegionIdsAtom = atom<Promise<string[]>>(async (get) =
   return Object.keys(canonicalMorphologyModelConfig.hasPart);
 });
 
-export const canonicalBrainRegionMTypeMapAtom = atom<Promise<Map<string, boolean>>>(async (get) => {
-  const canonicalBrainRegionIds = await get(canonicalBrainRegionIdsAtom);
-  const canonicalMorphologyModelConfig = await get(canonicalMorphologyModelConfigPayloadAtom);
+export const canonicalBrainRegionMTypeMapAtom = atom<Promise<Map<string, string | null>>>(
+  async (get) => {
+    const canonicalBrainRegionIds = await get(canonicalBrainRegionIdsAtom);
+    const canonicalMorphologyModelConfig = await get(canonicalMorphologyModelConfigPayloadAtom);
 
-  const canonicalMap = new Map();
-  if (!canonicalBrainRegionIds.length || !canonicalMorphologyModelConfig) return canonicalMap;
+    const canonicalMap = new Map();
+    if (!canonicalBrainRegionIds.length || !canonicalMorphologyModelConfig) return canonicalMap;
 
-  canonicalBrainRegionIds.forEach((brainRegionId) => {
-    const mTypeIds = Object.keys(canonicalMorphologyModelConfig.hasPart[brainRegionId].hasPart);
-    mTypeIds.forEach((mTypeId) => {
-      canonicalMap.set(generateBrainRegionMTypeMapKey(brainRegionId, mTypeId), true);
+    canonicalBrainRegionIds.forEach((brainRegionId) => {
+      const mTypesPath = ['hasPart', brainRegionId, 'hasPart'];
+      const mTypeIds = Object.keys(lodashGet(canonicalMorphologyModelConfig, mTypesPath));
+      mTypeIds.forEach((mTypeId) => {
+        const canonicalModelPath = [...mTypesPath, mTypeId, 'hasPart'];
+        const canonicalModelObj = lodashGet(canonicalMorphologyModelConfig, canonicalModelPath);
+        const canonicalModelId = Object.keys(canonicalModelObj)[0];
+        canonicalMap.set(generateBrainRegionMTypeMapKey(brainRegionId, mTypeId), canonicalModelId);
+      });
     });
-  });
-  return canonicalMap;
-});
+    return canonicalMap;
+  }
+);
 
 export const canonicalMorphologyModelIdAtom = atom<Promise<string | null>>(async (get) => {
   const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
+  const canonicalBrainRegionMTypeMap = await get(canonicalBrainRegionMTypeMapAtom);
 
   if (!brainRegionMTypeArray) return null;
 
@@ -276,11 +282,8 @@ export const canonicalMorphologyModelIdAtom = atom<Promise<string | null>>(async
   );
   if (!canonicalMorphologyModelConfigPayload) throw new Error('No canonical payload');
 
-  const canonicalMorphologyModelId = Object.keys(
-    canonicalMorphologyModelConfigPayload.hasPart[brainRegionId].hasPart[mTypeId].hasPart
-  )[0];
-
-  return canonicalMorphologyModelId;
+  const brainRegionMTypeKey = generateBrainRegionMTypeMapKey(brainRegionId, mTypeId);
+  return canonicalBrainRegionMTypeMap.get(brainRegionMTypeKey) || null;
 });
 
 export const canonicalMorphologyModelAtom = atom<Promise<CanonicalMorphologyModel | null>>(
