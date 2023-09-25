@@ -1,10 +1,29 @@
 .simulationGrid {
   display: grid;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(6, 1fr);
   gap: 1px;
   gap: 0;
-  background-color: #333;
+  background-color: #111;
+}
+
+.simulationGrid > div {
+  position: relative;
+  margin: 1px;
+}
+
+.simulationGrid > div > div {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 4px;
 }
 
 .template-1 {
@@ -69,18 +88,18 @@
 
 .template-7 {
   grid-template-areas:
-    '- a a b b -'
-    '- a a b b -'
+    '. a a b b .'
+    '. a a b b .'
     'c c d d e e'
     'c c d d e e'
-    '- f f g g -'
-    '- f f g g -';
+    '. f f g g .'
+    '. f f g g .';
 }
 
 .template-8 {
   grid-template-areas:
-    'a a a b b b'
-    'a a a b b b'
+    '. a a b b .'
+    '. a a b b .'
     'c c d d e e'
     'c c d d e e'
     'f f g g h h'
