@@ -35,6 +35,7 @@ export type NeuronCompositionItem = {
 
 export type NeuronCompositionEditorProps = {
   content: (...args: any[]) => ReactElement;
+  id: string;
   title?: string;
   composition: number;
   onSliderChange: (value: number) => void;

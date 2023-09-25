@@ -2,7 +2,7 @@ import has from 'lodash/has';
 import { createHeaders } from '@/util/utils';
 import { BrainRegion, BrainRegionOntology, BrainRegionOntologyView } from '@/types/ontologies';
 import {
-  BrainRegionNexus,
+  ClassNexus,
   BrainRegionOntologyViewNexus,
   SerializedBrainRegionsAndVolumesResponse,
 } from '@/api/ontologies/types';
@@ -16,7 +16,7 @@ import { sanitizeId } from '@/util/brain-hierarchy';
  *
  * @param payload
  */
-const sanitizeLeaves = (payload: BrainRegionNexus): string[] => {
+const sanitizeLeaves = (payload: ClassNexus): string[] => {
   if (has(payload, 'hasLeafRegionPart')) {
     if (typeof payload.hasLeafRegionPart === 'string') {
       return [payload.hasLeafRegionPart];
@@ -33,13 +33,13 @@ const sanitizeLeaves = (payload: BrainRegionNexus): string[] => {
  * @param brainRegionPayloads the array of the payloads
  */
 export const serializeBrainRegionsAndVolumes = (
-  brainRegionPayloads: (BrainRegionNexus | string)[]
+  brainRegionPayloads: (ClassNexus | string)[]
 ): SerializedBrainRegionsAndVolumesResponse => {
   const serializedBrainRegions: BrainRegion[] = [];
   const volumes: { [key: string]: number } = {};
 
   brainRegionPayloads.forEach((brainRegionPayload) => {
-    const leaves = sanitizeLeaves(brainRegionPayload as BrainRegionNexus);
+    const leaves = sanitizeLeaves(brainRegionPayload as ClassNexus);
 
     if (typeof brainRegionPayload !== 'string' && brainRegionPayload.prefLabel) {
       serializedBrainRegions.push({

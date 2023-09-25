@@ -3,8 +3,9 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
-import { Button } from 'antd';
+import { Button, ConfigProvider, Spin, Tooltip } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
+import { unwrap } from 'jotai/utils';
 import ContextualTrigger from '../ContextualLiterature/Trigger';
 import { getMetric } from './util';
 import { NeuronCompositionEditorProps, NeuronCompositionItem } from './types';
@@ -22,6 +23,8 @@ import {
   CalculatedCompositionNode,
 } from '@/types/composition/calculation';
 import { QuestionAbout } from '@/types/literature';
+import { meTypeDetailsAtom } from '@/components/build-section/BrainRegionSelector/state';
+import { ClassNexus } from '@/api/ontologies/types';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -35,6 +38,25 @@ const metricToUnit = {
   count: <span>N</span>,
 };
 
+function CompositionTooltip({ title, subclasses }: { title: string; subclasses: string[] }) {
+  const renderType = () => {
+    if (subclasses.includes('nsg:MType')) {
+      return 'M-type';
+    }
+    if (subclasses.includes('nsg:EType')) {
+      return 'E-type';
+    }
+    return undefined;
+  };
+
+  return (
+    <div className="flex gap-2 items-center">
+      <div className="text-primary-8 font-bold">{title}</div>
+      <div className="text-neutral-4">{renderType()}</div>
+    </div>
+  );
+}
+
 function NeuronCompositionEditor({
   composition,
   title,
@@ -44,6 +66,7 @@ function NeuronCompositionEditor({
   isEditable,
   isLeaf,
   about,
+  id,
 }: NeuronCompositionEditorProps) {
   const [compositionValue, setCompositionValue] = useState<number>(composition);
   const densityOrCount = useAtomValue(densityOrCountAtom);
@@ -60,13 +83,44 @@ function NeuronCompositionEditor({
       : `${baseClasses} gap-2 py-3 text-left text-primary-3 w-full hover:text-white`;
   }, [isLeaf]);
 
+  const meTypeDetails: ClassNexus | undefined | null = useAtomValue(
+    useMemo(() => unwrap(meTypeDetailsAtom(id)), [id])
+  );
+
   return (
     <>
       <div className={containerClasses}>
         <div className="flex items-center gap-3">
-          <span className={`font-bold ${isLeaf ? 'whitespace-nowrap' : 'text-white'}`}>
-            {title}
-          </span>
+          <ConfigProvider
+            theme={{
+              components: {
+                Tooltip: {
+                  borderRadius: 0,
+                  paddingSM: 15,
+                  paddingXS: 15,
+                },
+              },
+            }}
+          >
+            <Tooltip
+              color="#FFF"
+              title={
+                meTypeDetails ? (
+                  <CompositionTooltip
+                    title={meTypeDetails.prefLabel}
+                    subclasses={meTypeDetails.subClassOf}
+                  />
+                ) : (
+                  <Spin />
+                )
+              }
+            >
+              <span className={`font-bold ${isLeaf ? 'whitespace-nowrap' : 'text-white'}`}>
+                {title}
+              </span>
+            </Tooltip>
+          </ConfigProvider>
+
           <ContextualTrigger
             className={isEditable ? 'ml-1 h-max mb-1' : ''}
             about={about as QuestionAbout}
@@ -161,6 +215,7 @@ function MeTypeDetails({
               isEditable={editMode}
               isLeaf={false}
               about={about}
+              id={id}
             >
               {({
                 content: nestedContent,
@@ -184,6 +239,7 @@ function MeTypeDetails({
                   isEditable={editMode}
                   about={nestedAbout}
                   isLeaf
+                  id={nestedId}
                 />
               )}
             </NeuronCompositionEditor>
