@@ -64,7 +64,7 @@ export default function MModelLayout({ children }: Props) {
 
     return createPortal(
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="bg-primary-7 flex h-screen overflow-hidden">
+        <div className="bg-primary-7 flex h-full overflow-hidden">
           {!isSidebarExpanded ? (
             <PanelCollapsed setIsSidebarExpanded={setIsSidebarExpanded} />
           ) : (

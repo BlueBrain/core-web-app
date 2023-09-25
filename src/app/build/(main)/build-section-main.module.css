@@ -1,4 +1,5 @@
 .container {
+  height: 100vh;
   display: grid;
   grid-template-columns: min-content min-content min-content auto;
   grid-template-rows: 40px auto;
