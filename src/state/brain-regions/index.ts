@@ -56,105 +56,86 @@ export const densityOrCountAtom = atom<'density' | 'count'>('count');
 
 const brainRegionOntologyAtom = atom<Promise<BrainRegionOntology | null>>(async (get) => {
   const session = get(sessionAtom);
-  if (!session) return null;
-  return getBrainRegionOntology(session.accessToken);
+
+  return session && getBrainRegionOntology(session.accessToken);
 });
 
-export const brainRegionOntologyViewsAtom = atom<Promise<BrainRegionOntologyView[] | null>>(
-  async (get) => {
-    const brainRegionOntology = await get(brainRegionOntologyAtom);
-    if (!brainRegionOntology) {
-      return null;
-    }
-    return brainRegionOntology.views;
-  }
+export const brainRegionOntologyViewsAtom = selectAtom<
+  Promise<BrainRegionOntology | null>,
+  BrainRegionOntologyView[] | null
+>(brainRegionOntologyAtom, (brainRegionOntology) => brainRegionOntology?.views ?? null);
+
+export const brainRegionOntologyVolumesAtom = selectAtom<
+  Promise<BrainRegionOntology | null>,
+  { [key: string]: number } | null
+>(brainRegionOntologyAtom, (brainRegionOntology) => brainRegionOntology?.volumes ?? null);
+
+export const defaultBrainRegionOntologyViewAtom = selectAtom<
+  Promise<BrainRegionOntologyView[] | null>,
+  BrainRegionOntologyView | null | undefined
+>(brainRegionOntologyViewsAtom, (views) =>
+  views ? views.find((view) => view.id === 'https://neuroshapes.org/BrainRegion') : views
 );
 
-export const brainRegionOntologyVolumesAtom = atom<Promise<{ [key: string]: number } | null>>(
-  async (get) => {
-    const brainRegionOntology = await get(brainRegionOntologyAtom);
-    if (!brainRegionOntology) {
-      return null;
-    }
-    return brainRegionOntology.volumes;
-  }
+export const brainRegionsAtom = selectAtom<
+  Promise<BrainRegionOntology | null>,
+  BrainRegion[] | null
+>(
+  brainRegionOntologyAtom,
+  (brainRegionOntology) =>
+    brainRegionOntology?.brainRegions.map(({ view, ...br }) => ({
+      ...br,
+      view: 'https://neuroshapes.org/BrainRegion',
+    })) ?? null
 );
-
-export const defaultBrainRegionOntologyViewAtom = atom<
-  Promise<BrainRegionOntologyView | null | undefined>
->(async (get) => {
-  const views = await get(brainRegionOntologyViewsAtom);
-  if (!views) return null;
-  return views.find((view) => view.id === 'https://neuroshapes.org/BrainRegion');
-});
-
-export const brainRegionsAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
-  const brainRegionOntology = await get(brainRegionOntologyAtom);
-  if (!brainRegionOntology) {
-    return null;
-  }
-  const brainRegionsWithViews = [...brainRegionOntology.brainRegions];
-  brainRegionsWithViews.forEach((br) => {
-    // eslint-disable-next-line no-param-reassign
-    br.view = 'https://neuroshapes.org/BrainRegion';
-  });
-
-  return brainRegionsWithViews;
-});
 
 type BrainRegionId = string;
 type BrainRegionNotation = string;
 
-export const brainRegionIdByNotationMapAtom = atom<
-  Promise<Map<BrainRegionNotation, BrainRegionId> | null>
->(async (get) => {
-  const brainRegions = await get(brainRegionsAtom);
-
-  if (!brainRegions) return null;
-
-  return brainRegions.reduce(
-    (idByNotationMap, brainRegion) => idByNotationMap.set(brainRegion.notation, brainRegion.id),
-    new Map()
-  );
-});
-
-export const brainRegionByNotationMapAtom = atom<
-  Promise<Map<BrainRegionNotation, BrainRegion> | null>
->(async (get) => {
-  const brainRegions = await get(brainRegionsAtom);
-
-  if (!brainRegions) return null;
-
-  return brainRegions.reduce(
-    (map, brainRegion) => map.set(brainRegion.notation, brainRegion),
-    new Map()
-  );
-});
-
-export const brainRegionNotationByIdMapAtom = atom<
-  Promise<Map<BrainRegionId, BrainRegionNotation> | null>
->(async (get) => {
-  const brainRegions = await get(brainRegionsAtom);
-
-  if (!brainRegions) return null;
-
-  return brainRegions.reduce(
-    (map, brainRegion) => map.set(brainRegion.id, brainRegion.notation),
-    new Map()
-  );
-});
-
-export const brainRegionByIdMapAtom = atom<Promise<Map<BrainRegionNotation, BrainRegion> | null>>(
-  async (get) => {
-    const brainRegions = await get(brainRegionsAtom);
-
-    if (!brainRegions) return null;
-
-    return brainRegions.reduce(
-      (map, brainRegion) => map.set(brainRegion.id, brainRegion),
+export const brainRegionIdByNotationMapAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  Map<string, string> | null
+>(
+  brainRegionsAtom,
+  (brainRegions) =>
+    brainRegions?.reduce(
+      (idByNotationMap, brainRegion) => idByNotationMap.set(brainRegion.notation, brainRegion.id),
       new Map()
-    );
-  }
+    ) ?? null
+);
+
+export const brainRegionByNotationMapAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  Map<BrainRegionNotation, BrainRegion> | null
+>(
+  brainRegionsAtom,
+  (brainRegions) =>
+    brainRegions?.reduce(
+      (map, brainRegion) => map.set(brainRegion.notation, brainRegion),
+      new Map()
+    ) ?? null
+);
+
+export const brainRegionNotationByIdMapAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  Map<BrainRegionId, BrainRegionNotation> | null
+>(
+  brainRegionsAtom,
+  (brainRegions) =>
+    brainRegions?.reduce(
+      (map, brainRegion) => map.set(brainRegion.id, brainRegion.notation),
+      new Map()
+    ) ?? null
+);
+
+export const brainRegionByIdMapAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  Map<BrainRegionNotation, BrainRegion> | null
+>(
+  brainRegionsAtom,
+  (brainRegions) =>
+    brainRegions?.reduce((map, brainRegion) => map.set(brainRegion.id, brainRegion), new Map()) ??
+    null
 );
 
 export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
@@ -180,17 +161,15 @@ export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(
   return tree;
 });
 
-export const brainRegionsTreeWithRepresentationAtom = atom<Promise<BrainRegion[] | null>>(
-  async (get) => {
-    const brainRegionsTree = await get(brainRegionsFilteredTreeAtom);
-
-    if (!brainRegionsTree) return null;
-
-    return brainRegionsTree.reduce(itemsInAnnotationReducer, []);
-  }
+export const brainRegionsTreeWithRepresentationAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  BrainRegion[] | null
+>(
+  brainRegionsFilteredTreeAtom,
+  (brainRegionsTree) => brainRegionsTree?.reduce(itemsInAnnotationReducer, []) ?? null
 );
 
-export const selectedAlternateViews = atom<{ [id: string]: string }>({});
+export const selectedAlternateViews = atom<Record<string, string>>({});
 
 export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null | undefined>>(
   async (get) => {
@@ -221,20 +200,18 @@ export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null |
   }
 );
 
-export const alternateTreeWithRepresentationAtom = atom<Promise<BrainRegion[] | null>>(
-  async (get) => {
-    const alternateTree = await get(brainRegionsAlternateTreeAtom);
-
-    if (!alternateTree) return null;
-
-    return alternateTree.reduce(itemsInAnnotationReducer, []);
-  }
+export const alternateTreeWithRepresentationAtom = selectAtom<
+  Promise<BrainRegion[] | null | undefined>,
+  BrainRegion[] | null
+>(
+  brainRegionsAlternateTreeAtom,
+  (alternateTree) => alternateTree?.reduce(itemsInAnnotationReducer, []) ?? null
 );
 
-export const alternateArrayWithRepresentationAtom = selectAtom(
-  alternateTreeWithRepresentationAtom,
-  (tree) => flattenBrainRegionsTree(tree)
-);
+export const alternateArrayWithRepresentationAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  BrainRegion[] | null
+>(alternateTreeWithRepresentationAtom, (tree) => flattenBrainRegionsTree(tree));
 
 export const addOrRemoveSelectedAlternateView = atom(
   null,
@@ -258,94 +235,89 @@ export const addOrRemoveSelectedAlternateView = atom(
 /**
  * This atom returns the filtered brain regions as array, preserving the original ordering
  */
-export const brainRegionsUnsortedArrayAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
-  const tree = await get(brainRegionsFilteredTreeAtom);
+export const brainRegionsUnsortedArrayAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  BrainRegion[] | null
+>(brainRegionsFilteredTreeAtom, (tree) => flattenBrainRegionsTree(tree));
 
-  return flattenBrainRegionsTree(tree);
-});
-
-export const brainRegionIdxByNotationMapAtom = atom<Promise<Map<BrainRegionId, number> | null>>(
-  async (get) => {
-    const brainRegionsUnsorted = await get(brainRegionsUnsortedArrayAtom);
-
-    if (!brainRegionsUnsorted) return null;
-
-    return brainRegionsUnsorted.reduce(
+export const brainRegionIdxByNotationMapAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  Map<BrainRegionId, number> | null
+>(
+  brainRegionsUnsortedArrayAtom,
+  (brainRegionsUnsorted) =>
+    brainRegionsUnsorted?.reduce(
       (idxByNotationMap, brainRegion, idx) => idxByNotationMap.set(brainRegion.notation, idx),
       new Map()
-    );
-  }
+    ) ?? null
 );
 
-export const leafIdsByRegionIdAtom = atom<Promise<{ [id: string]: string[] }>>(async (get) => {
-  const brainRegions = (await get(brainRegionsUnsortedArrayAtom)) ?? [];
-  const map: { [id: string]: string[] } = {};
-  brainRegions.forEach((br) => {
-    map[br.id] =
-      br.leaves?.map((id) => {
-        const substr = id.split('/');
-        return substr[substr.length - 1];
-      }) ?? [];
-  });
-  return map;
-});
+export const leafIdsByRegionIdAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  { [id: string]: string[] }
+>(
+  brainRegionsUnsortedArrayAtom,
+  (brainRegions) =>
+    brainRegions?.reduce(
+      (map, br) => ({
+        ...map,
+        [br.id]: br.leaves?.map((id) => id.split('/').at(-1)) ?? [],
+      }),
+      {} // Pass in the empty map as the initial value
+    ) ?? {} // Return an empty object in the event that brainRegions is null and can't be iterated
+);
 
 /**
  * This atom returns the filtered brain region leaves as an array, preserving the original ordering
  */
-export const brainRegionLeavesUnsortedArrayAtom = atom<Promise<BrainRegion[] | null>>(
-  async (get) => {
-    const brainRegionsUnsorted = await get(brainRegionsUnsortedArrayAtom);
-
-    if (!brainRegionsUnsorted) return null;
-
-    return brainRegionsUnsorted.filter((brainRegion) => !brainRegion.leaves);
-  }
+export const brainRegionLeavesUnsortedArrayAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  BrainRegion[] | null
+>(
+  brainRegionsUnsortedArrayAtom,
+  (brainRegionsUnsorted) =>
+    brainRegionsUnsorted?.filter((brainRegion) => !brainRegion.leaves) ?? null
 );
 
-export const brainRegionLeaveIdxByNotationMapAtom = atom<
-  Promise<Map<BrainRegionId, number> | null>
->(async (get) => {
-  const brainRegionLeaves = await get(brainRegionLeavesUnsortedArrayAtom);
+export const brainRegionLeaveIdxByNotationMapAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  Map<BrainRegionId, number> | null
+>(
+  brainRegionLeavesUnsortedArrayAtom,
+  (brainRegionLeaves) =>
+    brainRegionLeaves?.reduce(
+      (idxByNotationMap, brainRegion, idx) => idxByNotationMap.set(brainRegion.notation, idx),
+      new Map()
+    ) ?? null
+);
 
-  if (!brainRegionLeaves) return null;
-
-  return brainRegionLeaves.reduce(
-    (idxByNotationMap, brainRegion, idx) => idxByNotationMap.set(brainRegion.notation, idx),
-    new Map()
-  );
-});
-
-export const brainRegionLeaveIdxByIdAtom = atom<Promise<Record<BrainRegionId, number> | null>>(
-  async (get) => {
-    const brainRegionLeaves = await get(brainRegionLeavesUnsortedArrayAtom);
-
-    if (!brainRegionLeaves) return null;
-
-    return brainRegionLeaves.reduce(
+export const brainRegionLeaveIdxByIdAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  Record<BrainRegionId, number> | null
+>(
+  brainRegionLeavesUnsortedArrayAtom,
+  (brainRegionLeaves) =>
+    brainRegionLeaves?.reduce(
       (idxByNotation, brainRegion, idx) => Object.assign(idxByNotation, { [brainRegion.id]: idx }),
       {}
-    );
-  }
+    ) ?? null
 );
 
 /**
  * This atom returns the filtered brain regions as array sorted by id
  */
-export const brainRegionsFilteredArrayAtom = atom<Promise<BrainRegion[] | null | undefined>>(
-  async (get) => {
-    const flattenedRegions = await get(brainRegionsUnsortedArrayAtom);
-
-    if (!flattenedRegions) return null;
-
-    return [...flattenedRegions].sort((a, b) => a.id.localeCompare(b.id));
-  }
+export const brainRegionsFilteredArrayAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  BrainRegion[] | null | undefined
+>(brainRegionsUnsortedArrayAtom, (flattenedRegions) =>
+  flattenedRegions ? [...flattenedRegions].sort((a, b) => a.id.localeCompare(b.id)) : null
 );
 
 export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>>(async (get) => {
   const session = get(sessionAtom);
 
   if (!session) return null;
+
   return getDistributions(session.accessToken);
 });
 
