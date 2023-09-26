@@ -51,7 +51,7 @@ export default function Search({
         <Select
           allowClear
           autoClearSearchValue
-          className="block w-full py-3 pl-0"
+          className="block w-full my-3 pl-0"
           dropdownStyle={{ borderRadius: '4px' }}
           placeholder={placeholder}
           onClear={onClear}
