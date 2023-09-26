@@ -39,7 +39,7 @@ export default function EModelLayout({ children }: Props) {
 
     return createPortal(
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="bg-primary-7 flex h-full overflow-hidden">
+        <div className="bg-primary-7 flex h-screen overflow-hidden">
           {!isSidebarExpanded ? (
             <PanelCollapsed setIsSidebarExpanded={setIsSidebarExpanded} />
           ) : (
