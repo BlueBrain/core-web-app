@@ -687,3 +687,14 @@ async function resetOverridesMorphologyAssignment(session: Session) {
   const updated = await updateResource(updatedResource, resource._rev, session)
   console.log('> Done', updated['@id']);
 }
+
+async function hasRevInMType(config: BrainModelConfig, session: Session) {
+  const cellCompositionId = config.configs.cellCompositionConfig['@id']
+  const compositionResource = await fetchResourceById<CellCompositionConfigResource>(cellCompositionId, session)
+  const compositionFileUrl = compositionResource.distribution.contentUrl
+  const exampleBrainRegion = 'http://api.brain-map.org/api/v2/data/Structure/23'
+  const compositionPayload = await fetchJsonFileByUrl<CellCompositionConfigPayload>(compositionFileUrl, session)
+
+  const mTypes = Object.keys(compositionPayload[ROOT_BRAIN_REGION].configuration.overrides[exampleBrainRegion].hasPart)
+  return mTypes[0].includes('?rev')
+}
