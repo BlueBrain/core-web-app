@@ -167,7 +167,7 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
 
   const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
   lodashSet(accumulative, generateBrainRegionMTypeArray(brainRegionId, mTypeId), {
-    id: canonicalMorphologyModelId,
+    '@id': canonicalMorphologyModelId,
     overrides,
   });
   set(localMModelWorkflowOverridesAtom, accumulative);
@@ -207,7 +207,7 @@ export const bulkApplyAllAtom = atom<null, [string, string[], ChangeModelAction]
       const brainRegionMTypeKey = generateBrainRegionMTypeMapKey(brainRegionId, mTypeId);
       const canonicalId = canonicalBrainRegionMTypeMap.get(brainRegionMTypeKey);
       lodashSet(accumulative, path, {
-        id: canonicalId,
+        '@id': canonicalId,
         overrides: {},
       });
     });

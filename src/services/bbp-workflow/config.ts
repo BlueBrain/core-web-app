@@ -206,7 +206,7 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFile[] = [
       config-url: <%= ${BuildingPlaceholders.CONFIG_URL} %>
       host: bbpv1.epfl.ch
       account: proj134
-      output-dir: /gpfs/bbp.cscs.ch/project/proj134/workflow-outputs/<%= ${BuildingPlaceholders.DATE} %>-<%= ${BuildingPlaceholders.UUID} %>
+      output-dir: /gpfs/bbp.cscs.ch/project/proj134/scratch/workflow-outputs/<%= ${BuildingPlaceholders.DATE} %>-<%= ${BuildingPlaceholders.UUID} %>
     `,
   },
   {
