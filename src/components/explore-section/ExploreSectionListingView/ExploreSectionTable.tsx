@@ -6,7 +6,6 @@ import { useSetAtom } from 'jotai';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
-import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
 import { ExploreDownloadButton } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 import WithRowSelection, {
   RenderButtonProps,
@@ -126,6 +125,7 @@ export default function ExploreSectionTable({
   columns,
   dataSource,
   enableDownload,
+  expandable,
   experimentTypeName,
   hasError,
   loading,
@@ -144,14 +144,6 @@ export default function ExploreSectionTable({
     </ExploreDownloadButton>
   );
 
-  const expandedRowRender = (resource: ExploreESHit) => (
-    <GeneralizationRules
-      resourceId={resource._source['@id']}
-      experimentTypeName={experimentTypeName}
-      name={resource._source.name}
-    />
-  );
-
   return enableDownload ? (
     <WithRowSelection
       renderButton={renderButton ?? defaultRenderButton}
@@ -161,9 +153,7 @@ export default function ExploreSectionTable({
         <BaseTable
           columns={columns}
           dataSource={dataSource}
-          expandable={{
-            expandedRowRender,
-          }}
+          expandable={expandable}
           hasError={hasError}
           loading={loading}
           rowKey={(row) => row._source._self}
@@ -175,9 +165,7 @@ export default function ExploreSectionTable({
     <BaseTable
       columns={columns}
       dataSource={dataSource}
-      expandable={{
-        expandedRowRender,
-      }}
+      expandable={expandable}
       hasError={hasError}
       loading={loading}
       rowKey={(row) => row._source._self}

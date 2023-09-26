@@ -1,5 +1,6 @@
 import { boolQuery, TermsQuery } from 'elastic-builder';
 import buildESSort from './sorters';
+import { DataQuery } from '@/api/explore-section/resources';
 import { Filter } from '@/components/Filter/types';
 import { SortState } from '@/types/explore-section/application';
 import buildFilters from '@/queries/explore-section/filters';
@@ -12,7 +13,7 @@ export default function fetchDataQuery(
   experimentDataType: string,
   sortState?: SortState,
   searchString: string = ''
-) {
+): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
 
   return {
@@ -33,7 +34,7 @@ export function fetchDataQueryUsingIds(
   inferredResponseIds: string[],
   sortState?: SortState,
   searchString: string = ''
-) {
+): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
 
   const idsQuery = new TermsQuery('_id', inferredResponseIds);

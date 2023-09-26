@@ -41,9 +41,23 @@ export interface ResourceBasedInference {
   id: string;
   value: boolean;
 }
+
+export type InferenceError = {
+  detail: {
+    loc: Array<number | string>;
+    msg: string;
+    type: string;
+  }[];
+};
+
 export interface ResourceBasedInferenceRequest {
-  rules: string[];
+  rules: { id: string }[];
   inputFilter: InputFilter;
 }
+
+export type ResourceBasedInferenceResponse = Array<{
+  id: string;
+  results: ResourceBasedInference[];
+}>;
 
 export type InferredResource = Omit<ResourceBasedInference, 'value'>;

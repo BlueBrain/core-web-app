@@ -1,9 +1,10 @@
 import { Session } from 'next-auth';
 import { createHeaders } from '@/util/utils';
 import {
+  InferenceError,
   RuleOutput,
   ResourceBasedInferenceRequest,
-  ResourceBasedInference,
+  ResourceBasedInferenceResponse,
 } from '@/types/explore-section/kg-inference';
 
 const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
@@ -21,7 +22,7 @@ export function fetchRules(session: Session, resourceId: string): Promise<RuleOu
 export function fetchResourceBasedInference(
   session: Session,
   requestBody: ResourceBasedInferenceRequest
-): Promise<Array<{ id: string; results: ResourceBasedInference[] }>> {
+): Promise<ResourceBasedInferenceResponse | InferenceError> {
   const result = fetch(`${BASE_URL}/infer`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),

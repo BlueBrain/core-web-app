@@ -1,9 +1,17 @@
-import esb from 'elastic-builder';
+import esb, { Sort } from 'elastic-builder';
 import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section/queries';
 import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
 
-export async function fetchEsResourcesByType(accessToken: string, dataQuery: object) {
+export type DataQuery = {
+  size: number;
+  sort?: Sort;
+  from: number;
+  track_total_hits: boolean;
+  query: {};
+};
+
+export async function fetchEsResourcesByType(accessToken: string, dataQuery: DataQuery) {
   if (!accessToken) throw new Error('Access token should be defined');
 
   return fetch(API_SEARCH, {
@@ -18,6 +26,7 @@ export async function fetchEsResourcesByType(accessToken: string, dataQuery: obj
       aggs: data.aggregations,
     }));
 }
+
 // TODO: this function should be changed to use ES /_mappings
 export async function fetchDimensionAggs(accessToken: string) {
   if (!accessToken) throw new Error('Access token should be defined');

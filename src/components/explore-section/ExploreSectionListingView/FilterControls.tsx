@@ -1,4 +1,12 @@
-import { Dispatch, HTMLProps, SetStateAction, useEffect, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  HTMLProps,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useResetAtom, unwrap } from 'jotai/utils';
 import { Spin } from 'antd';
@@ -26,11 +34,13 @@ function FilterBtn({ children, onClick }: HTMLProps<HTMLButtonElement>) {
 }
 
 export default function FilterControls({
+  children,
   displayControlPanel,
   setDisplayControlPanel,
   experimentTypeName,
   resourceId,
 }: {
+  children?: ReactNode;
   displayControlPanel: boolean;
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   experimentTypeName: string;
@@ -68,7 +78,8 @@ export default function FilterControls({
   }, [activeColumns]);
 
   return (
-    <div className="flex items-center gap-5 justify-end w-auto">
+    <div className="flex items-center gap-5 justify-end pl-5 w-auto">
+      <div className="mr-auto">{children}</div>
       <ClearFilters onClick={clearFilters} />
       <ExploreSectionNameSearch experimentTypeName={experimentTypeName} resourceId={resourceId} />
       <FilterBtn onClick={() => setDisplayControlPanel(!displayControlPanel)}>
