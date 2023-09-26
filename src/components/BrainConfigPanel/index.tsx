@@ -137,7 +137,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
 
   return (
     <div
-      className={classNames('h-full bg-primary-9 text-white', isOpen ? 'w-[300px]' : 'w-[40px]')}
+      className={classNames('h-screen bg-primary-9 text-white', isOpen ? 'w-[300px]' : 'w-[40px]')}
     >
       {!isOpen && (
         <div className="flex flex-col items-center pt-2">
@@ -162,7 +162,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
       )}
 
       {isOpen && (
-        <div className="h-full overflow-y-scroll flex flex-col p-6">
+        <div className="h-screen overflow-y-scroll flex flex-col p-6">
           <div className="flex gap-x-2 justify-between items-start">
             <h2 className="text-xl overflow-hidden text-ellipsis">
               <Suspense fallback={null}>

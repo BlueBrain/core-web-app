@@ -55,8 +55,8 @@ function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?
 
   return (
     <div className="flex gap-2 items-center">
-      <div className="text-primary-8 font-bold">{title}</div>
-      <div className="text-neutral-4">{renderType()}</div>
+      <div className="basis-9/12 text-primary-8 font-bold">{title}</div>
+      <div className="basis-3/12 text-neutral-4">{renderType()}</div>
     </div>
   );
 }
