@@ -5,7 +5,15 @@ export interface RuleOutput {
   resourceType: string;
   inputParameters: InputParameter[];
   nexusLink: string;
+  embeddingModels: Record<string, EmbeddingModel>;
 }
+
+type EmbeddingModel = {
+  description: string;
+  name: string;
+  distance: string;
+  id: string;
+};
 
 export interface InputFilter {
   TargetResourceParameter: string;
@@ -40,6 +48,7 @@ export interface ResourceBasedInference {
   name: string;
   id: string;
   value: boolean;
+  description: string;
 }
 
 export type InferenceError = {
@@ -60,4 +69,4 @@ export type ResourceBasedInferenceResponse = Array<{
   results: ResourceBasedInference[];
 }>;
 
-export type InferredResource = Omit<ResourceBasedInference, 'value'>;
+export type InferredResource = Omit<ResourceBasedInference, 'value' | 'description'>;

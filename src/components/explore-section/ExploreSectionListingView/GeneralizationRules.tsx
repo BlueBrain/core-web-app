@@ -39,10 +39,7 @@ function GeneralizationOptions({
           >
             {ruleWithBool.name}
           </Checkbox>
-          <p className="font-thin pl-12">
-            At elementum eu facilisis sed odio morbi quis commodo. Nascetur ridiculus mus mauris
-            vitae ultricies leo integer. Tempus imperdiet nulla malesuada pellentesque.
-          </p>
+          <p className="font-thin pl-12">{ruleWithBool.description}</p>
         </li>
       </div>
     </div>

@@ -47,7 +47,9 @@ export const resourceBasedRulesAtom = atomFamily((resourceId: string) =>
       })?.values;
       if (typeof inferenceOptions !== 'undefined')
         inferenceOptions.forEach((inferenceOption: string) => {
-          rulesWithBool.push({ name: inferenceOption, value: false, id: rule.id });
+          const description = rule.embeddingModels[inferenceOption]?.description || '';
+
+          rulesWithBool.push({ name: inferenceOption, value: false, id: rule.id, description });
         });
     });
 
