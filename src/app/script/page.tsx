@@ -64,25 +64,40 @@ export default function ScriptPage() {
     const configs = await queryES<BrainModelConfigResource>(query, session);
 
     // eslint-disable-next-line no-restricted-syntax
+    const count = configs.length
+    let countDown = count;
+    const notValid = []
     for (const config of configs) {
       // do not modify the Releases
-      // if (!config.name.match(/^Release \d\d\.\d\d$/)) continue;
+      if (config.name.match(/^Release \d\d\.\d\d$/)) continue;
 
       // if (config.name !== 'Release 23.01') continue;
       // if (config.name !== 'Release 23.02') continue;
       // if (config.name !== 'Release 23.03') continue;
       // if (config.name !== 'Release 23.03 by antonel') continue
       // if (config.name !== 'antonel - new @id mmodel') continue;
-      if (config.name !== 'AO_latest_release_circuit') continue
+      // if (config.name !== 'AO_latest_release_circuit') continue
 
-      console.log('Processing config: ', config.name, config._self);
+      // console.log('Processing config: ', config.name, config._self);
+      console.log('Processing', countDown, count);
 
-      await checkConsistencyCellComposition(config, session)
-      await fixCellComposition(config, session)
-      await setPlaceholderForCellPositionConfig(config, session)
-      await setPlaceholderForMacroConnectomeConfig(config, session)
-      await setFullMorphologyAssignment(config, session)
-      await setPlaceholderEModelAssignment(config, session)
+      let invalidConfig = false
+      try {
+        invalidConfig = await hasRevInMType(config, session)
+      } catch {
+        invalidConfig = true
+      }
+      if (invalidConfig) {
+        console.log(`${config['@id']} >> ${config.name} >> ${config._createdBy}`);
+        notValid.push(config['@id'])
+      }
+      countDown -= 1
+      // await checkConsistencyCellComposition(config, session)
+      // await fixCellComposition(config, session)
+      // await setPlaceholderForCellPositionConfig(config, session)
+      // await setPlaceholderForMacroConnectomeConfig(config, session)
+      // await setFullMorphologyAssignment(config, session)
+      // await setPlaceholderEModelAssignment(config, session)
 
       // await fixCellCompositionRev(config, session)
 
@@ -95,7 +110,9 @@ export default function ScriptPage() {
       // await checkFullMicroConnectomeConfig(config, session)
 
     }
+    console.log(`Invalid config ${notValid.length} out of ${count}`);
     console.log('All done');
+
   };
 
   return (
