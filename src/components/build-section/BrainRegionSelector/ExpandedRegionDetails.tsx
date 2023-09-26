@@ -38,16 +38,20 @@ const metricToUnit = {
   count: <span>N</span>,
 };
 
-function CompositionTooltip({ title, subclasses }: { title: string; subclasses: string[] }) {
+function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?: string[] }) {
   const renderType = () => {
-    if (subclasses.includes('nsg:MType')) {
+    if (subclasses?.includes('nsg:MType')) {
       return 'M-type';
     }
-    if (subclasses.includes('nsg:EType')) {
+    if (subclasses?.includes('nsg:EType')) {
       return 'E-type';
     }
     return undefined;
   };
+
+  if (!title || !subclasses) {
+    return <div className="text-primary-8">Cell type information could not be retrieved</div>;
+  }
 
   return (
     <div className="flex gap-2 items-center">
