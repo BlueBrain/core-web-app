@@ -1,8 +1,8 @@
 import { useAtomValue } from 'jotai';
 import { ArrowLeftOutlined, InfoCircleOutlined } from '@ant-design/icons';
-
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
+
 import usePathname from '@/hooks/pathname';
 import { classNames } from '@/util/utils';
 import { SelectedBrainRegionPerQuestion } from '@/types/literature';
@@ -41,7 +41,20 @@ function QAContextBrainRegion() {
       >
         {!isSelectedBrainRegionExists ? 'All regions' : selectedBrainRegion?.title}
       </div>
-      <InfoCircleOutlined className="text-lg text-primary-8" />
+      <Tooltip
+        title="Context"
+        placement="bottom"
+        overlayInnerStyle={{ backgroundColor: 'white' }}
+        arrow={false}
+        overlay={
+          <p className="flex flex-col gap-2 select-none text-primary-8">
+            In order to modify the context, select another brain region from the side panel.
+          </p>
+        }
+        trigger="hover"
+      >
+        <InfoCircleOutlined className="text-lg text-primary-8" />
+      </Tooltip>
     </div>
   );
 }
@@ -56,7 +69,7 @@ function QABrainRegion() {
     <div className="px-4">
       <Button
         onClick={() => router.back()}
-        className="rounded-none flex items-center text-primary-8 py-6 mb-6"
+        className="flex items-center py-6 mb-6 rounded-none text-primary-8"
       >
         <ArrowLeftOutlined /> Back to configuration
       </Button>
