@@ -15,7 +15,7 @@ import {
   tableFromIPC,
   tableToIPC,
   Table,
-} from '@apache-arrow/es2015-esm';
+} from '@apache-arrow/es5-cjs';
 
 import {
   IdRev,

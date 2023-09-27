@@ -7,7 +7,7 @@ import {
   Float64,
   Float64Builder,
   Table,
-} from '@apache-arrow/es2015-esm';
+} from '@apache-arrow/es5-cjs';
 
 import {
   MacroConnectomeEditEntry,

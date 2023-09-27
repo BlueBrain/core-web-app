@@ -2,7 +2,7 @@
 
 import { atom } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { tableFromIPC, Table } from '@apache-arrow/es2015-esm';
+import { tableFromIPC, Table } from '@apache-arrow/es5-cjs';
 
 import { macroConnectomeConfigIdAtom } from '..';
 import { brainRegionLeaveIdxByNotationMapAtom } from '@/state/brain-regions';

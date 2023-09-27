@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Color } from 'three';
-import { tableFromIPC } from '@apache-arrow/es2015-esm';
+import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
