@@ -23,8 +23,8 @@ import {
   CalculatedCompositionNode,
 } from '@/types/composition/calculation';
 import { QuestionAbout } from '@/types/literature';
-import { meTypeDetailsAtom } from '@/components/build-section/BrainRegionSelector/state';
 import { ClassNexus } from '@/api/ontologies/types';
+import { cellTypesAtom } from '@/state/build-section/cell-types';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -40,10 +40,10 @@ const metricToUnit = {
 
 function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?: string[] }) {
   const renderType = () => {
-    if (subclasses?.includes('nsg:MType')) {
+    if (subclasses?.includes('https://neuroshapes.org/MType')) {
       return 'M-type';
     }
-    if (subclasses?.includes('nsg:EType')) {
+    if (subclasses?.includes('https://neuroshapes.org/EType')) {
       return 'E-type';
     }
     return undefined;
@@ -87,8 +87,8 @@ function NeuronCompositionEditor({
       : `${baseClasses} gap-2 py-3 text-left text-primary-3 w-full hover:text-white`;
   }, [isLeaf]);
 
-  const meTypeDetails: ClassNexus | undefined | null = useAtomValue(
-    useMemo(() => unwrap(meTypeDetailsAtom(id)), [id])
+  const classObjects: Record<string, ClassNexus> | undefined | null = useAtomValue(
+    useMemo(() => unwrap(cellTypesAtom), [])
   );
 
   return (
@@ -109,10 +109,10 @@ function NeuronCompositionEditor({
             <Tooltip
               color="#FFF"
               title={
-                meTypeDetails ? (
+                classObjects ? (
                   <CompositionTooltip
-                    title={meTypeDetails.prefLabel}
-                    subclasses={meTypeDetails.subClassOf}
+                    title={classObjects?.[id].prefLabel}
+                    subclasses={classObjects?.[id].subClassOf}
                   />
                 ) : (
                   <Spin />
