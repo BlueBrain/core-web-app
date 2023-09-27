@@ -28,6 +28,7 @@ import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
 import { OriginalCompositionUnit } from '@/types/composition/original';
+import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 import styles from './tabs.module.css';
 
 function CellPosition() {
@@ -281,16 +282,18 @@ export default function ConfigurationView() {
         { children: <CellDistribution />, value: 'distribution' },
         { children: <CellPosition />, value: 'position' },
       ].map(({ children, value }) => (
-        <Tabs.Content className="h-full relative" key={value} value={value}>
+        <Tabs.Content className="relative h-full" key={value} value={value}>
           {children}
         </Tabs.Content>
       )),
     []
   );
 
+  useLiteratureCleanNavigate();
+
   return (
     <Tabs.Root defaultValue="density" className="h-full overflow-hidden px-4 py-[25px]">
-      <Tabs.List className="items-baseline flex font-bold gap-3 mb-3">{tabItems}</Tabs.List>
+      <Tabs.List className="flex items-baseline gap-3 mb-3 font-bold">{tabItems}</Tabs.List>
       {tabContent}
     </Tabs.Root>
   );
