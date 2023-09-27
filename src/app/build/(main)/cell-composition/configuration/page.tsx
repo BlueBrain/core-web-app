@@ -15,11 +15,11 @@ import { useAtom, useAtomValue } from 'jotai';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
-
 import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util';
 import DensityChart from './DensityChart';
 import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
+import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
@@ -29,7 +29,6 @@ import useCompositionHistory from '@/app/build/(main)/cell-composition/configura
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
-import styles from './tabs.module.css';
 
 function CellPosition() {
   return (
@@ -252,22 +251,17 @@ function CellDensityWrapper() {
 }
 
 export default function ConfigurationView() {
-  const tabItems = useMemo(
-    () =>
-      [
-        {
-          children: 'Density',
-          value: 'density',
-        },
-        { children: 'Distribution', value: 'distribution' },
-        { children: 'Position', value: 'position' },
-      ].map(({ children, value }) => (
-        <Tabs.Trigger className={styles.TabTrigger} key={value} value={value}>
-          {children}
-        </Tabs.Trigger>
-      )),
-    []
-  );
+  const [activeTab, setActiveTab] = useState('density');
+
+  const tabItems = [
+    {
+      label: 'Density',
+      onClick: () => setActiveTab('density'),
+    },
+    { label: 'Distribution', onClick: () => setActiveTab('distribution') },
+    { label: 'Position', onClick: () => setActiveTab('position') },
+  ];
+
   const tabContent = useMemo(
     () =>
       [
@@ -292,8 +286,8 @@ export default function ConfigurationView() {
   useLiteratureCleanNavigate();
 
   return (
-    <Tabs.Root defaultValue="density" className="h-full overflow-hidden px-4 py-[25px]">
-      <Tabs.List className="flex items-baseline gap-3 mb-3 font-bold">{tabItems}</Tabs.List>
+    <Tabs.Root value={activeTab} className="h-full overflow-hidden px-4 py-[25px]">
+      <TopNavigation.PillNav items={tabItems} activeItemIndex={0} />
       {tabContent}
     </Tabs.Root>
   );
