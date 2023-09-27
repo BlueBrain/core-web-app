@@ -1,10 +1,13 @@
+import { useTransition } from 'react';
 import { ReadOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { contextualLiteratureAtom } from '@/state/literature';
 import { classNames } from '@/util/utils';
 import { QuestionAbout } from '@/types/literature';
 import IconButton from '@/components/IconButton';
+import usePathname from '@/hooks/pathname';
 
 function ContextualTrigger({
   about,
@@ -17,16 +20,26 @@ function ContextualTrigger({
   densityOrCount?: 'density' | 'count';
   className: string;
 }) {
+  const searchParams = useSearchParams()!;
+  const params = new URLSearchParams(searchParams);
+  const router = useRouter();
+  const path = usePathname();
+  const [, startTransition] = useTransition();
   const setContextualAtom = useSetAtom(contextualLiteratureAtom);
+
   const onTriggerContextualLiterature = () => {
-    setContextualAtom((prev) => ({
-      ...prev,
-      about,
-      subject,
-      densityOrCount,
-      contextDrawerOpen: true,
-      key: crypto.randomUUID(),
-    }));
+    params.set('chatId', crypto.randomUUID());
+    router.replace(`${path}?${params.toString()}`);
+    startTransition(() => {
+      setContextualAtom((prev) => ({
+        ...prev,
+        about,
+        subject,
+        densityOrCount,
+        contextDrawerOpen: true,
+        key: crypto.randomUUID(),
+      }));
+    });
   };
 
   return (

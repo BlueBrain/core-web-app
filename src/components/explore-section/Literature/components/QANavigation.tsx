@@ -15,12 +15,7 @@ import startCase from 'lodash/startCase';
 import useContextualLiteratureContext from '../useContextualLiteratureContext';
 import { BrainIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
-import {
-  literatureAtom,
-  useLiteratureAtom,
-  useContextualLiteratureResultAtom,
-  useLiteratureResultsAtom,
-} from '@/state/literature';
+import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
 import { GenerativeQA } from '@/types/literature';
 
 type QAHistoryNavigationItemProps = Pick<
@@ -71,8 +66,6 @@ function QAHistoryNavigationItem({
   const [isDeleting, setIsDeleting] = useState(false);
   const { activeQuestionId } = useAtomValue(literatureAtom);
   const { remove } = useLiteratureResultsAtom();
-  const { remove: removeContext } = useContextualLiteratureResultAtom();
-  const { isContextualLiterature } = useContextualLiteratureContext();
   const update = useLiteratureAtom();
 
   const isActive = activeQuestionId === id;
@@ -83,9 +76,6 @@ function QAHistoryNavigationItem({
     e.stopPropagation();
     setIsDeleting(true);
     delay(() => {
-      if (isContextualLiterature) {
-        removeContext(id);
-      }
       const newQAs = remove(id);
       setIsDeleting(false);
       update('activeQuestionId', newQAs ? last(newQAs)?.id : null);
@@ -99,7 +89,7 @@ function QAHistoryNavigationItem({
       role="button"
       onClick={onClick}
       className={classNames(
-        'relative inline-flex items-center w-full pl-16 py-4 pr-2 list-none gqa-nav-item text-neutral-8 hover:bg-gray-50 rounded-r-sm group',
+        'relative inline-flex items-center w-full pl-16 py-4 pr-2 list-none gqa-nav-item text-neutral-8 hover:bg-gray-50 rounded-r-sm group cursor-pointer',
         isDeleting && 'bg-gray-100 overflow-hidden py-4 animate-slide-out'
       )}
     >
@@ -198,7 +188,7 @@ function QAHistoryNavigation() {
       id="gqa-navigation"
       className={classNames(
         'flex flex-col py-10 overflow-x-hidden no-scrollbar scroll-smooth',
-        isBuildSection ? '-ml-10 h-[calc(100%-160px)]' : 'h-full'
+        isBuildSection ? '-ml-10 h-[calc(100%-210px)]' : 'h-full'
       )}
     >
       {dataSource.map((qa, index) => (

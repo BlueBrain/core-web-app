@@ -38,7 +38,6 @@ const literatureAtom = atom<LiteratureAtom>({
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
 
 const literatureResultAtom = atomWithStorage<GenerativeQA[]>(GENERATIVE_QA_HISTORY_CACHE_KEY, []);
-const contextualLiteratureResultAtom = atom<GenerativeQA[]>([]);
 const contextualLiteratureAtom = atom<ContextualLiteratureAtom>({});
 
 function useLiteratureAtom() {
@@ -82,27 +81,6 @@ export function useLiteratureResultsAtom() {
   return { QAs, update, remove };
 }
 
-function useContextualLiteratureResultAtom() {
-  const [QAs, updateResult] = useAtom(contextualLiteratureResultAtom);
-
-  const reset = (newValue: GenerativeQA | null) => {
-    updateResult(newValue ? [newValue] : []);
-  };
-
-  const update = (newValue: GenerativeQA) => {
-    updateResult([...QAs, newValue]);
-  };
-
-  const remove = (id: string) => {
-    const newQAs = QAs.filter((item) => item.id !== id);
-    updateResult(newQAs);
-
-    return newQAs;
-  };
-
-  return { QAs, update, remove, reset };
-}
-
 const brainRegionQAs = atom((get) => {
   const allQuestions = get(literatureResultAtom);
 
@@ -143,10 +121,8 @@ export {
   literatureAtom,
   literatureResultAtom,
   contextualLiteratureAtom,
-  contextualLiteratureResultAtom,
   brainRegionQAs,
   useLiteratureAtom,
   useContextualLiteratureAtom,
-  useContextualLiteratureResultAtom,
   articleTypeSuggestionsAtom,
 };

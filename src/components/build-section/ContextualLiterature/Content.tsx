@@ -19,9 +19,7 @@ import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regio
 import {
   contextualLiteratureAtom,
   useContextualLiteratureAtom,
-  useContextualLiteratureResultAtom,
   useLiteratureAtom,
-  useLiteratureResultsAtom,
 } from '@/state/literature';
 import { ContextQAItem, GenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
@@ -67,8 +65,6 @@ function ContextualContent() {
   const setContextualAtom = useSetAtom(contextualLiteratureAtom);
   const [currentSlide, setCurrentSlide] = useState<'questions' | 'results'>('questions');
   const { buildStep, clearContextSearchParams } = useContextualLiteratureContext();
-  const { reset } = useContextualLiteratureResultAtom();
-  const { QAs } = useLiteratureResultsAtom();
 
   const currentGQA = useMemo(() => {
     const predicate = ({ key }: ContextQAItem) => key === context.currentQuestion?.key;
@@ -145,23 +141,23 @@ function ContextualContent() {
     const clearedParams = clearContextSearchParams(searchParams);
     if (searchParams) {
       const params = new URLSearchParams(clearedParams);
-      params.append('context', 'more-options');
-      params.append('context-question', context.currentQuestion?.gqa?.id ?? '');
+      params.set('contextual', 'true');
+      params.set('context', 'more-options');
+      params.set('context-question', context.currentQuestion?.gqa?.id ?? '');
       const link = `/build/${buildStep}/literature?${params.toString()}`;
-      const question = QAs.find((item) => item.id === context.currentQuestion?.gqa?.id) ?? null;
-      if (question) reset(question);
       navigate(link);
     }
   };
 
   const gotoAskMoreMode = () => {
-    reset(null);
     onDrawerClose();
     updateLiteratureAtom('query', '');
     const clearedParams = clearContextSearchParams(searchParams);
     if (searchParams) {
       const params = new URLSearchParams(clearedParams);
-      params.append('context', 'ask-more');
+      params.set('contextual', 'true');
+      params.set('context', 'ask-more');
+      params.set('chatId', crypto.randomUUID());
       const link = `/build/${buildStep}/literature?${params.toString()}`;
       navigate(link);
     }
@@ -237,16 +233,8 @@ function ContextualContent() {
               />
             </div>
           ) : (
-            <div
-              className={classNames(
-                'bg-white p-4 my-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex mx-auto'
-              )}
-            >
-              <div
-                className={classNames(
-                  'inline-flex flex-col items-start justify-start w-full px-2 py-3'
-                )}
-              >
+            <div className="bg-white p-4 my-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex mx-auto">
+              <div className="inline-flex flex-col items-start justify-start w-full px-2 py-3">
                 <GenerativeQAForm
                   ask={ask({
                     buildStep,
@@ -264,11 +252,7 @@ function ContextualContent() {
               </div>
             </div>
           )}
-          <div
-            className={classNames(
-              'flex flex-col items-center justify-start w-full h-full min-h-[300px] mb-24'
-            )}
-          >
+          <div className="flex flex-col items-center justify-start w-full h-full min-h-[300px] mb-24">
             {isPending ? (
               <div className="flex flex-col w-full px-2">
                 <Skeleton.Input active style={{ width: '60%', marginBottom: '8px' }} size="large" />

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Button, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
@@ -9,9 +10,8 @@ import {
   SendOutlined,
 } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
-
-import { useEffect, useState } from 'react';
 import { loadable } from 'jotai/utils';
+
 import useChatQAContext, { ChatQAContextHook, initialParameters } from '../useChatQAContext';
 import useContextualLiteratureContext from '../useContextualLiteratureContext';
 import AutoCompleteSearch from './AutoCompleteSearch';
@@ -113,7 +113,7 @@ export function GenerativeQAForm({
 const loadableArticleTypes = loadable(articleTypeSuggestionsAtom);
 
 function GenerativeQABar() {
-  const { dataSource, isContextualLiterature, isBuildSection } = useContextualLiteratureContext();
+  const { dataSource, isBuildSection } = useContextualLiteratureContext();
   const session = useAtomValue(sessionAtom);
   const [articleTypes, setArticleTypes] = useState<Suggestion[]>([]);
   const articleTypesStatus = useAtomValue(loadableArticleTypes);
@@ -128,9 +128,7 @@ function GenerativeQABar() {
     updateParameters,
     setIsParametersVisible,
     isQuestionEmpty,
-  } = useChatQAContext({
-    saveOnContext: isContextualLiterature,
-  });
+  } = useChatQAContext({});
 
   useEffect(() => {
     if (articleTypesStatus.state === 'loading' || articleTypesStatus.state === 'hasError') {
@@ -157,7 +155,7 @@ function GenerativeQABar() {
     >
       <div
         className={classNames(
-          'bg-white p-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto right-4',
+          'bg-white p-4 w-full left-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex max-w-4xl mx-auto right-4',
           isChatBarMustSlideInDown &&
             'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
         )}
@@ -199,13 +197,13 @@ function GenerativeQABar() {
                 </div>
               )}
               {isParametersVisible && (
-                <div className="w-full relative">
+                <div className="relative w-full">
                   <Button
                     icon={<CloseOutlined />}
                     onClick={() => setIsParametersVisible(false)}
                     shape="circle"
                     aria-label="close-parameters"
-                    className="bg-transparent border-none text-primary-8 shadow-none absolute right-4 -top-6"
+                    className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 -top-6"
                   />
                   <div className="w-full mt-10">
                     <DateRange

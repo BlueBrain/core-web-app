@@ -62,6 +62,7 @@ export type BuildStepPath =
 
 export type GenerativeQA = {
   id: string;
+  chatId?: string;
   askedAt: Date;
   question: string;
   answer: string;

@@ -1,5 +1,6 @@
 import { useReducer, useState, useTransition } from 'react';
 import { useAtomValue } from 'jotai';
+import { useSearchParams } from 'next/navigation';
 import merge from 'lodash/merge';
 
 import { LiteratureValidationError } from './errors';
@@ -12,12 +13,7 @@ import {
   isGenerativeQA,
   isGenerativeQANoFound,
 } from '@/types/literature';
-import {
-  literatureAtom,
-  useLiteratureAtom,
-  useContextualLiteratureResultAtom,
-  useLiteratureResultsAtom,
-} from '@/state/literature';
+import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
 import { literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
 import { GteLteValue } from '@/components/Filter/types';
 import { formatDate } from '@/util/utils';
@@ -39,16 +35,14 @@ export const initialParameters: QuestionParameters = {
 function useChatQAContext({
   afterAskCallback,
   resetAfterAsk = true,
-  saveOnContext = false,
 }: {
   afterAskCallback?(value: GenerativeQA | null): void;
   resetAfterAsk?: boolean;
-  saveOnContext?: boolean;
 }) {
   const update = useLiteratureAtom();
+  const searchParams = useSearchParams();
   const selectedBrainRegion = useAtomValue(literatureSelectedBrainRegionAtom);
   const { update: updateResults } = useLiteratureResultsAtom();
-  const { update: updateContext } = useContextualLiteratureResultAtom();
   const { query } = useAtomValue(literatureAtom);
   const [isPending, startGenerativeQATransition] = useTransition();
   const [isParametersVisible, setIsParametersVisible] = useState(false);
@@ -88,11 +82,11 @@ function useChatQAContext({
         });
       }
 
-      newGenerativeQA = merge(newGenerativeQA, { extra });
+      newGenerativeQA = merge(newGenerativeQA, {
+        extra,
+        chatId: searchParams?.get('chatId'),
+      });
 
-      if (saveOnContext) {
-        updateContext(newGenerativeQA);
-      }
       updateResults(newGenerativeQA);
       update('activeQuestionId', newGenerativeQA.id);
     }
@@ -100,6 +94,7 @@ function useChatQAContext({
     if (resetAfterAsk) {
       update('query', '');
     }
+
     updateParameters({ ...initialParameters });
     setIsParametersVisible(false);
     return newGenerativeQA;
