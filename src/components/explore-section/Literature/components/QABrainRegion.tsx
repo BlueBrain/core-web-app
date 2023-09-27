@@ -1,6 +1,8 @@
 import { useAtomValue } from 'jotai';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
+import { Button } from 'antd';
+import { useRouter } from 'next/navigation';
 import usePathname from '@/hooks/pathname';
 import { classNames } from '@/util/utils';
 import { SelectedBrainRegionPerQuestion } from '@/types/literature';
@@ -47,10 +49,17 @@ function QAContextBrainRegion() {
 function QABrainRegion() {
   const pathname = usePathname();
   const isBuildSection = pathname?.startsWith('/build');
+  const router = useRouter();
 
   if (!isBuildSection) return null;
   return (
     <div className="px-4">
+      <Button
+        onClick={() => router.back()}
+        className="rounded-none flex items-center text-primary-8 py-6 mb-6"
+      >
+        <ArrowLeftOutlined /> Back to configuration
+      </Button>
       <div className="mb-2 text-lg font-medium text-primary-8">Current context of search: </div>
       <QAContextBrainRegion />
     </div>
