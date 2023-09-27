@@ -1,30 +1,9 @@
-import { ReactNode } from 'react';
-import * as Popover from '@radix-ui/react-popover';
-
 import TopNavigation from '@/components/TopNavigation';
 
-type BrainFactoryTabsProps = {
-  children: ReactNode;
-};
-
-export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
+export default function BrainFactoryTabs() {
   return (
     <div className="flex w-full">
-      <TopNavigation.Main>
-        <div className="flex">
-          <Popover.Root>
-            <Popover.Trigger className="flex-auto bg-secondary-2 text-white px-8">
-              Build & Simulate
-            </Popover.Trigger>
-            <Popover.Portal>
-              <Popover.Content className="text-white z-[100] flex flex-col">
-                {children}
-                <Popover.Arrow className="fill-white" />
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
-        </div>
-      </TopNavigation.Main>
+      <TopNavigation.Main />
 
       <TopNavigation.PrimaryDropdown
         items={[

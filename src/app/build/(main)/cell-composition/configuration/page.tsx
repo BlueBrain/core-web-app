@@ -15,6 +15,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
+import * as Popover from '@radix-ui/react-popover';
 import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util';
 import DensityChart from './DensityChart';
 import ZoomControl from './Zoom';
@@ -29,6 +30,8 @@ import useCompositionHistory from '@/app/build/(main)/cell-composition/configura
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
+import BuildModelBtn from '@/components/BuildModelBtn';
+import SimulationBtn, { PlaceholderLoadingButton } from '@/components/TopTabs/SimulationBtn';
 
 function CellPosition() {
   return (
@@ -230,12 +233,29 @@ function CellDensity() {
           {densityChart}
         </div>
       )}
-      <div className="flex absolute bottom-12 justify-between align-center w-full">
+      <div className="flex absolute bottom-0 justify-between align-center w-full">
         <div className="bg-[#F0F0F0] rounded flex gap-4 items-center px-5">
           <GripDotsVerticalIcon />
           <span className="font-bold text-neutral-5 text-lg">By MType</span>
         </div>
         <CellDensityToolbar onReset={handleReset} />
+        <div className="flex">
+          <Popover.Root>
+            <Popover.Trigger className="flex-auto bg-secondary-2 text-white px-8">
+              Build & Simulate
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content className="text-white z-[100] flex flex-col mr-[14px]">
+                <BuildModelBtn className="w-[250px]" />
+                <Suspense fallback={<PlaceholderLoadingButton />}>
+                  <SimulationBtn />
+                </Suspense>
+
+                <Popover.Arrow className="fill-white" />
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        </div>
       </div>
     </>
   );
