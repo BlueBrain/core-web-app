@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
+import { omitDeep } from 'deepdash-es/standalone';
 
 import { configAtom, configPayloadAtom, configPayloadRevAtom, setLocalConfigPayloadAtom } from '.';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
@@ -80,6 +81,13 @@ const setConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], void>(
   }
 );
 
+const getOverridesFromCellComposition = (composition: OriginalComposition) => {
+  const overrides = omitDeep(composition.hasPart, 'extendedNodeId', {
+    onMatch: { skipChildren: true },
+  });
+  return overrides as CompositionOverridesWorkflowConfig;
+};
+
 export const setCompositionPayloadConfigurationAtom = atom<null, [OriginalComposition], void>(
   null,
   async (get, set, composition) => {
@@ -103,7 +111,7 @@ export const setCompositionPayloadConfigurationAtom = atom<null, [OriginalCompos
       configuration: {
         version: composition.version,
         unitCode: composition.unitCode,
-        overrides: composition.hasPart as unknown as CompositionOverridesWorkflowConfig,
+        overrides: getOverridesFromCellComposition(composition),
       },
     };
 

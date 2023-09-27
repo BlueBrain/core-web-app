@@ -44,6 +44,7 @@
     "d3-sankey": "^0.12.3",
     "d3-zoom": "^3.0.0",
     "date-fns": "^2.30.0",
+    "deepdash-es": "^5.3.9",
     "distinct-colors": "^3.0.0",
     "downsample": "^1.4.0",
     "elastic-builder": "^2.20.0",
