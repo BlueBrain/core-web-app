@@ -3,7 +3,7 @@ import { Slider } from 'antd';
 import NumberInput from '@/components/experiment-interactive/ExperimentInteractive/NumberInput';
 import { classNames } from '@/util/utils';
 import { SimulationParameterKey } from '@/components/experiment-interactive/types';
-import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/hooks';
+import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/hooks';
 
 interface ParamFieldProps {
   paramKey: SimulationParameterKey;

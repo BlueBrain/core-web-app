@@ -1,11 +1,25 @@
 .main {
+  position: relative;
 }
 
-.main > :global(.edit-panel) {
-  transition: opacity ease 200ms;
+.main > .fullsize {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.main > .button {
+  position: absolute;
+  left: 1em;
+  top: 1em;
+  transition: all 0.3s;
+  transform: scale(0);
   opacity: 0;
 }
 
-.main:hover > :global(.edit-panel) {
+.main:hover > .button {
   opacity: 1;
+  transform: scale(1);
 }

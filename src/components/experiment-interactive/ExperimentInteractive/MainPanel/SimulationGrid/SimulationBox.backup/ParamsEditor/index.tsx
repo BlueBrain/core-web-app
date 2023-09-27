@@ -4,8 +4,8 @@ import { useSetAtom } from 'jotai';
 import { useSimulationPreview } from '../hooks';
 import ParamFields from './ParamFields';
 import { SimulationPreviewElement } from '@/components/experiment-interactive/types';
-import Buttons from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/ParamsEditor/Buttons';
-import Topic from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/ParamsEditor/Topic';
+import Buttons from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/ParamsEditor/Buttons';
+import Topic from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/ParamsEditor/Topic';
 import { simulationPreviewsAtom } from '@/state/experiment-interactive';
 
 export default function ParamsEditor() {

@@ -1,8 +1,8 @@
 import { useAtomValue } from 'jotai';
 
 import { displayedSimulationParamsConfigAtom } from '@/state/experiment-interactive';
-import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/hooks';
-import ParamField from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/ParamsEditor/ParamField';
+import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/hooks';
+import ParamField from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/ParamsEditor/ParamField';
 
 interface ParamFieldsProps {
   onChange: (paramKey: string, value: number) => void;

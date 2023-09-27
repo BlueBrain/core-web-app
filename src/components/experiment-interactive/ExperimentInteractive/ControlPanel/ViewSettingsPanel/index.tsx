@@ -3,7 +3,7 @@ import { CloseIcon } from 'next/dist/client/components/react-dev-overlay/interna
 import DisplayWholeBrainCheckbox from './DisplayWholeBrainCheckbox';
 import ResetViewButton from './ResetViewButton';
 import { ZoomInIcon, ZoomOutIcon } from '@/components/icons';
-import Button from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/ToolbarPanel/Button';
+import Button from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/ToolbarPanel/Button';
 import { useExperimentInteractive } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 import BraynsService from '@/services/brayns/circuit';
 import AxisGizmo from '@/components/InteractiveBrayns/AxisGizmo/AxisGizmo';

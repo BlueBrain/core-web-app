@@ -7,7 +7,7 @@ import {
   SimulationPreviewContextType,
   SimulationPreviewElement,
 } from '@/components/experiment-interactive/types';
-import { SimulationPreviewContext } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/context';
+import { SimulationPreviewContext } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/context';
 import {
   displayedSimulationParamsConfigAtom,
   simulationPreviewsAtom,

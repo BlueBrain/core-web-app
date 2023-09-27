@@ -1,6 +1,6 @@
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/hooks';
+import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/hooks';
 
 const antIcon = <LoadingOutlined style={{ float: 'left', fontSize: 24 }} spin />;
 

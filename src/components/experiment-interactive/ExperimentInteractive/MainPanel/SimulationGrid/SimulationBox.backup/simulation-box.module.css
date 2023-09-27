@@ -1,0 +1,11 @@
+.main {
+}
+
+.main > :global(.edit-panel) {
+  transition: opacity ease 200ms;
+  opacity: 0;
+}
+
+.main:hover > :global(.edit-panel) {
+  opacity: 1;
+}

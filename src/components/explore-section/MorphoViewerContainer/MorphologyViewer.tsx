@@ -96,7 +96,7 @@ export default function MorphologyViewer({
         }
       }
     };
-  }, [ref, data, options]);
+  }, [ref, data, options, addNotification]);
 
   // Orientation Viewer Operations
   React.useEffect(() => {

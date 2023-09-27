@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { displayedSimulationParamsConfigAtom } from '@/state/experiment-interactive';
 import { SimulationParameterValues } from '@/components/experiment-interactive/types';
-import ParamLabel from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/BoxLegend/ParamLabel';
+import ParamLabel from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/BoxLegend/ParamLabel';
 
 interface BoxLegendProps {
   index: number;

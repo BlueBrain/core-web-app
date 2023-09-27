@@ -2,7 +2,7 @@ import Button from './Button';
 import EditPencilIcon from '@/components/icons/EditPencil';
 import TrashIcon from '@/components/icons/Trash';
 import { ZoomInIcon, ZoomOutIcon } from '@/components/icons';
-import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/hooks';
+import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/hooks';
 
 export function ToolbarPanel() {
   const { startEditing, deleteCurrentSimulation } = useSimulationPreview();

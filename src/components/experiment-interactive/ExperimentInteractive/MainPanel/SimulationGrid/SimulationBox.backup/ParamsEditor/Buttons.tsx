@@ -1,5 +1,5 @@
 import { useExperimentInteractive } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
-import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox/hooks';
+import { useSimulationPreview } from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/hooks';
 
 export default function Buttons() {
   const { isBulkEditingMode } = useExperimentInteractive();
