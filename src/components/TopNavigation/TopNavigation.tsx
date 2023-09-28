@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import { themeAtom } from '@/state/theme';
@@ -8,7 +8,11 @@ import {
   secondaryDropdownAtom,
 } from '@/components/TopNavigation/atoms';
 
-export default function TopNavigation() {
+interface TopNavigationProps {
+  children: ReactNode;
+}
+
+export default function TopNavigation({ children }: TopNavigationProps) {
   const theme = useAtomValue(themeAtom);
   const isLightThemeActive = theme === 'light';
 
@@ -41,6 +45,7 @@ export default function TopNavigation() {
       <div className="flex min-w-[290px] h-full" ref={primaryDropdownRef} />
       <div className="flex flex-grow" ref={pillNavigationRef} />
       <div className="flex justify-end min-w-[290px] h-full" ref={secondaryDropdownRef} />
+      {children}
     </div>
   );
 }
