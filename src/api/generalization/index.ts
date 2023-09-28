@@ -8,12 +8,13 @@ import {
 } from '@/types/explore-section/kg-inference';
 
 const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
+const RESOURCE_BASED_RULE_TERM = 'ResourceGeneralizationRule';
 
 export function fetchRules(session: Session, resourceId: string): Promise<RuleOutput[]> {
   const result = fetch(`${BASE_URL}/rules`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
-    body: JSON.stringify({ resourceId }),
+    body: JSON.stringify({ resourceId, ruleTypes: [RESOURCE_BASED_RULE_TERM] }),
   }).then((response) => response.json());
 
   return result;
