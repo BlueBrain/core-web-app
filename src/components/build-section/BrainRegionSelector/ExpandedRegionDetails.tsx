@@ -111,8 +111,8 @@ function NeuronCompositionEditor({
               title={
                 classObjects ? (
                   <CompositionTooltip
-                    title={classObjects?.[id].prefLabel}
-                    subclasses={classObjects?.[id].subClassOf}
+                    title={classObjects?.[id]?.prefLabel}
+                    subclasses={classObjects?.[id]?.subClassOf}
                   />
                 ) : (
                   <Spin />
