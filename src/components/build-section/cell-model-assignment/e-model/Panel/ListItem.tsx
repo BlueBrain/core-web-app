@@ -3,12 +3,7 @@ import { useCallback, useState } from 'react';
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
-import {
-  EModel,
-  EModelByETypeMappingType,
-  EModelMenuItem,
-  SelectedEModelType,
-} from '@/types/e-model';
+import { EModelByETypeMappingType, EModelMenuItem } from '@/types/e-model';
 
 interface ListItemProps {
   eTypeItems: EModelMenuItem[];
@@ -20,7 +15,7 @@ export default function ListItem({ eTypeItems, mTypeName, eModelByETypeMapping }
   const [isExpanded, setIsExpanded] = useState(false);
 
   const getAvailableEModels = (eTypeName: string) => {
-    const availableEModels: EModel[] = eModelByETypeMapping?.[eTypeName] || [];
+    const availableEModels: EModelMenuItem[] = eModelByETypeMapping?.[eTypeName] || [];
     return availableEModels;
   };
 
@@ -33,10 +28,11 @@ export default function ListItem({ eTypeItems, mTypeName, eModelByETypeMapping }
       <MTypeLine name={mTypeName} onExpand={handleExpand} isExpanded={isExpanded} />
       {eTypeItems.map((eType) => (
         <ETypeLine
-          key={eType.uuid}
+          key={eType.id}
           eType={eType}
+          mTypeName={mTypeName}
           isExpanded={isExpanded}
-          availableEModels={getAvailableEModels(eType.label)}
+          availableEModels={getAvailableEModels(eType.name)}
         />
       ))}
     </div>
@@ -60,41 +56,40 @@ function MTypeLine({ name, onExpand, isExpanded }: MTypeLineProps) {
   );
 }
 
-const isEModelSelected = (
-  selectedEModel: SelectedEModelType | null,
-  eModel: EModel,
-  eType: EModelMenuItem
-) => selectedEModel?.id === eModel['@id'] && selectedEModel.mTypeName === eType.mType.label;
+const isEModelSelected = (selectedEModel: EModelMenuItem | null, eModel: EModelMenuItem) => {
+  if (!selectedEModel) return false;
+  return selectedEModel.id === eModel.id && selectedEModel.name === eModel.name;
+};
 
 type ETypeLineProps = {
   eType: EModelMenuItem;
+  mTypeName: string;
   isExpanded: boolean;
-  availableEModels: EModel[];
+  availableEModels: EModelMenuItem[];
 };
 
-function ETypeLine({ eType, isExpanded, availableEModels }: ETypeLineProps) {
+function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLineProps) {
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
 
-  const handleClick = (eModel: EModel, mTypeName: string) => {
+  const handleClick = (eModel: EModelMenuItem) => {
     setSelectedEModel({
-      id: eModel['@id'],
+      id: eModel.id,
       name: eModel.name,
-      mTypeName,
+      eType: eModel.eType,
+      mType: mTypeName,
     });
   };
 
   return isExpanded ? (
     <div className="bg-none border-none m-0 w-full flex flex-col">
-      <div className="font-bold self-start ml-2 text-white">{eType.label}</div>
+      <div className="font-bold self-start ml-2 text-white">{eType.name}</div>
       {availableEModels.map((eModel) => (
         <button
-          key={eModel['@id']}
+          key={eModel.id}
           type="button"
-          onClick={() => handleClick(eModel, eType.mType.label)}
+          onClick={() => handleClick(eModel)}
           className={`text-sm px-4 py-2 self-end ${
-            isEModelSelected(selectedEModel, eModel, eType)
-              ? `bg-white text-primary-7`
-              : `text-white`
+            isEModelSelected(selectedEModel, eModel) ? `bg-white text-primary-7` : `text-white`
           }`}
         >
           {eModel.name}

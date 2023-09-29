@@ -27,7 +27,7 @@ const createEModelOptimizationConfigAtom = atom(null, async (get) => {
     '@type': ['Entity', 'EModelOptimizationConfig'],
     '@context': 'https://bbp.neuroshapes.org',
     distribution: createDistribution(updatedFile),
-    name: eModelUIConfig.eModelName,
+    name: eModelUIConfig.name,
     eType: eModelUIConfig.eType,
     mType: eModelUIConfig.mType,
     brainLocation: {

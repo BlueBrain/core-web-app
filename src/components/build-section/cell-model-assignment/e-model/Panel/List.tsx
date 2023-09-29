@@ -15,10 +15,10 @@ export default function List() {
   if (selectedBrainRegion) {
     listItems = (
       <>
-        {Object.entries(mEModelItems).map(([mTypeName, eTypes]) => (
+        {Object.entries(mEModelItems).map(([mTypeName, { eTypeInfo }]) => (
           <ListItem
             key={mTypeName}
-            eTypeItems={eTypes}
+            eTypeItems={eTypeInfo}
             mTypeName={mTypeName}
             eModelByETypeMapping={eModelByETypeMapping}
           />

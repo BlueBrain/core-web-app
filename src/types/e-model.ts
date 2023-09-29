@@ -10,14 +10,17 @@ import {
 } from '@/constants/cell-model-assignment/e-model';
 
 export interface EModelMenuItem {
-  label: string;
+  name: string;
   id: string;
-  mType: MModelMenuItem;
-  annotation?: string;
-  uuid: string;
+  eType: string;
+  mType?: string;
 }
+
 export interface MEModelMenuItem {
-  [mTypeKey: string]: EModelMenuItem[];
+  [mTypeKey: string]: {
+    mTypeInfo: MModelMenuItem;
+    eTypeInfo: EModelMenuItem[];
+  };
 }
 
 export type SimulationParameterKeys =
@@ -379,7 +382,7 @@ export interface SubCellularModelScriptResource extends ResourceMetadata, SubCel
 /* ----------------------------- EModelUIConfig ----------------------------- */
 
 export interface EModelUIConfig {
-  eModelName: string;
+  name: string;
   morphologies: ExemplarMorphologyDataType[];
   traces: ExperimentalTracesDataType[];
   mechanism: MechanismForUI[];
@@ -395,13 +398,7 @@ export interface EModelUIConfig {
 /* -------------------------- EModelByETypeMapping -------------------------- */
 
 export interface EModelByETypeMappingType {
-  [eTypeName: string]: EModel[];
-}
-
-export interface SelectedEModelType {
-  name: string;
-  id: string;
-  mTypeName: string;
+  [eTypeName: string]: EModelMenuItem[];
 }
 
 /* ------------------------ EModelOptimizationConfig ------------------------ */

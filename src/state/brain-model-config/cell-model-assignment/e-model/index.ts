@@ -21,7 +21,7 @@ import {
   SimulationParameter,
   Trace,
   EModelByETypeMappingType,
-  SelectedEModelType,
+  EModelMenuItem,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -37,7 +37,7 @@ import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 
-export const selectedEModelAtom = atom<SelectedEModelType | null>(null);
+export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
 export const eModelRemoteParamsLoadedAtom = atom(false);
 
@@ -220,7 +220,7 @@ export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (
     if (!selectedEModel) throw new Error('No selected e-model to edit');
 
     type ETypeName = string;
-    const eType: ETypeName = selectedEModel.name;
+    const { eType } = selectedEModel;
 
     type EModelMechanismsMapping = Record<ETypeName, MechanismForUI>;
     const payload = await fetchJsonFileById<EModelMechanismsMapping>(eTypeMechanismMapId, session);
@@ -313,8 +313,13 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
       return isChildren;
     });
 
-    const byEType: EModelByETypeMappingType = groupBy<EModel>(filteredByLocation, 'etype');
-    return byEType;
+    const eModelMenuItems: EModelMenuItem[] = filteredByLocation.map((eModel: EModel) => ({
+      name: eModel.name,
+      id: eModel['@id'] || '',
+      eType: eModel.etype,
+    }));
+
+    return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
   }
 );
 
@@ -324,7 +329,7 @@ export const eModelCanBeSavedAtom = atom<Promise<boolean>>(async (get) => {
   const eModelUIConfig = get(eModelUIConfigAtom);
 
   if (!selectedEModel || !eModelEditMode || !eModelUIConfig) return false;
-  if (!eModelUIConfig.eModelName) return false;
+  if (!eModelUIConfig.name) return false;
 
-  return eModelUIConfig.eModelName !== selectedEModel.name;
+  return eModelUIConfig.name !== selectedEModel.name;
 });
