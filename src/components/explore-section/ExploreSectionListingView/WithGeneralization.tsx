@@ -35,8 +35,8 @@ export default function WithGeneralization({
   const useTab = ({ id, name: label }: InferredResource) => ({
     key: id,
     label,
+    type: label !== 'Original' ? 'resource' : 'source',
   });
-
   const tabs = [{ id: experimentTypeName, name: 'Original' }, ...inferredResources].map(useTab);
 
   return (
@@ -64,15 +64,24 @@ export default function WithGeneralization({
               <li key={tab.key}>
                 <button
                   className={classNames(
-                    'rounded-full w-fit px-4 py-1',
+                    'rounded w-fit px-4 py-1',
                     activeTab === tab.key
                       ? 'bg-primary-7 text-white'
-                      : 'hover:bg-blue-100 cursor-pointer'
+                      : 'hover:bg-blue-100 cursor-pointer border-solid border text-primary-8'
                   )}
                   onClick={() => setActiveTab(tab.key)}
                   type="button"
                 >
-                  {tab.label}
+                  {tab.type === 'resource' ? (
+                    <div className="flex gap-1">
+                      <span className={activeTab === tab.key ? 'text-neutral-2' : 'text-neutral-4'}>
+                        Inferred from
+                      </span>
+                      <span className="font-bold">{tab.label}</span>
+                    </div>
+                  ) : (
+                    tab.label
+                  )}
                 </button>
               </li>
             ))}

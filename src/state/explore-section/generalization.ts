@@ -29,7 +29,7 @@ export const rulesResponseAtom = atomFamily((resourceId: string) =>
 );
 
 export const resourceBasedRulesAtom = atomFamily((resourceId: string) =>
-  atomWithDefault<any>(async (get) => {
+  atomWithDefault<Promise<ResourceBasedInference[]>>(async (get) => {
     const rulesResponse = await get(rulesResponseAtom(resourceId));
 
     const rulesWithBool: ResourceBasedInference[] = [];
@@ -52,13 +52,12 @@ export const resourceBasedRulesAtom = atomFamily((resourceId: string) =>
           rulesWithBool.push({ name: inferenceOption, value: false, id: rule.id, description });
         });
     });
-
     return rulesWithBool;
   })
 );
 
 export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
-  selectAtom<ResourceBasedInference[], ResourceBasedInferenceRequest>(
+  selectAtom<Promise<ResourceBasedInference[]>, ResourceBasedInferenceRequest>(
     resourceBasedRulesAtom(resourceId),
     (resourceBasedRules) => {
       const uniqueRuleIds = [...new Set(resourceBasedRules?.map(({ id }) => id))];
