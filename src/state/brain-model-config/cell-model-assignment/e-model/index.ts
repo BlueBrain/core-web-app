@@ -296,15 +296,19 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
 
     const filteredByLocation = withGeneration.filter((eModel) => {
       // as they don't have brain location, they can be use everywhere
-      if (!('brainLocation' in eModel)) return true;
+      if (!eModel.brainLocation) return true;
 
-      const eModelBrainRegionCollapsedId = eModel.brainLocation?.brainRegion['@id'].replace(
+      const eModelBrainRegionId = eModel.brainLocation.brainRegion['@id'];
+      const selectedBrainRegionExpandedId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
+
+      if (selectedBrainRegionExpandedId === eModelBrainRegionId) return true;
+
+      const eModelBrainRegionCollapsedId = eModelBrainRegionId.replace(
         `${BRAIN_REGION_URI_BASE}/`,
         ''
       );
       const brainRegionForEModel = lodashFind(brainRegions, ['id', eModelBrainRegionCollapsedId]);
 
-      const selectedBrainRegionExpandedId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
       const isChildren = brainRegionForEModel?.leaves?.includes(selectedBrainRegionExpandedId);
       return isChildren;
     });
