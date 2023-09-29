@@ -1,8 +1,6 @@
 import { ReactNode } from 'react';
 import { Titillium_Web } from 'next/font/google';
-
 import Providers from './providers';
-import NotificationProvider from '@/components/NotificationProvider';
 import Feedback from '@/components/Feedback';
 import '@/styles/globals.scss';
 
@@ -22,10 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body>
         <Providers>
           {children}
-
           <Feedback />
-
-          <NotificationProvider />
         </Providers>
       </body>
     </html>
