@@ -1,5 +1,6 @@
 import { selectAtom } from 'jotai/utils';
 import esb from 'elastic-builder';
+import { Session } from 'next-auth';
 import sessionAtom from '@/state/session';
 import { createHeaders } from '@/util/utils';
 import { ClassNexus } from '@/api/ontologies/types';
@@ -9,7 +10,12 @@ type ClassESResponse = {
   _source: ClassNexus;
 };
 
-export const cellTypesAtom = selectAtom(sessionAtom, (session) => {
+export const cellTypesAtom = selectAtom<
+  Session | null,
+  Promise<Record<string, ClassNexus> | undefined> | null
+>(sessionAtom, (session) => {
+  if (!session) return null;
+
   const query = esb
     .requestBodySearch()
     .query(
@@ -26,7 +32,6 @@ export const cellTypesAtom = selectAtom(sessionAtom, (session) => {
     )
     .size(10000);
 
-  if (!session) return null;
   return fetch(ATLAS_SEARCH, {
     method: 'POST',
     headers: createHeaders(session.accessToken),

@@ -14,7 +14,8 @@ type RegionVolume = {
 
 export type ClassNexus = {
   '@id': string;
-  color_hex_triplet: string;
+  color_hex_triplet: string; // TODO: Is this really there?
+  color: string;
   isPartOf: string;
   isLayerPartOf: string;
   label: string;

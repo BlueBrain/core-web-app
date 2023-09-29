@@ -10,8 +10,8 @@ import {
   ReactNode,
   Suspense,
 } from 'react';
-import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom, useAtomValue } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -27,6 +27,7 @@ import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
+import { cellTypesAtom } from '@/state/build-section/cell-types';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 
@@ -181,14 +182,11 @@ function CellDensity() {
     [densityOrCount, links, nodes]
   );
 
-  // Prevent colorScale from ever changing after initial render
-  const colorScale = useMemo(
-    () =>
-      scaleOrdinal(
-        Object.entries(sankeyData.nodes).map((id) => id), // eslint-disable-line @typescript-eslint/no-unused-vars
-        schemeTableau10
-      ),
-    [sankeyData.nodes]
+  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
+
+  const colorScale = useCallback(
+    (id: string) => classObjects?.[id]?.color ?? '#ccc',
+    [classObjects]
   );
 
   const handleReset = useCallback(() => {

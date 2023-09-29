@@ -23,7 +23,6 @@ import {
   CalculatedCompositionNode,
 } from '@/types/composition/calculation';
 import { QuestionAbout } from '@/types/literature';
-import { ClassNexus } from '@/api/ontologies/types';
 import { cellTypesAtom } from '@/state/build-section/cell-types';
 
 /**
@@ -87,9 +86,7 @@ function NeuronCompositionEditor({
       : `${baseClasses} gap-2 py-3 text-left text-primary-3 w-full hover:text-white`;
   }, [isLeaf]);
 
-  const classObjects: Record<string, ClassNexus> | undefined | null = useAtomValue(
-    useMemo(() => unwrap(cellTypesAtom), [])
-  );
+  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
 
   return (
     <>
