@@ -107,12 +107,6 @@ export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] 
   }
 );
 
-// Accessing the project from where the current data of e-model is located
-// TODO: remove this when the data is moved to mmb-point-neuron-framework-model
-const eModelProjConfig = {
-  project: 'mmb-emodels-for-synthesized-neurons',
-};
-
 const eModelTracesProjConfig = {
   project: 'lnmce',
 };
@@ -125,7 +119,7 @@ export const eModelAtom = atom<Promise<EModel | null>>(async (get) => {
 
   if (!session || !eModelId) return null;
 
-  return fetchResourceById<EModel>(eModelId, session, eModelProjConfig);
+  return fetchResourceById<EModel>(eModelId, session);
 });
 
 const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
@@ -145,7 +139,7 @@ const eModelWorkflowAtom = atom<Promise<EModelWorkflow | null>>(async (get) => {
 
   if (!session || !eModelWorkflowId) return null;
 
-  return fetchResourceById<EModelWorkflow>(eModelWorkflowId, session, eModelProjConfig);
+  return fetchResourceById<EModelWorkflow>(eModelWorkflowId, session);
 });
 
 /* --------------------------- EModelConfiguration -------------------------- */
@@ -171,8 +165,7 @@ export const eModelConfigurationAtom = atom<Promise<EModelConfiguration | null>>
 
   const eModelConfiguration = await fetchResourceById<EModelConfiguration>(
     eModelConfigurationId,
-    session,
-    eModelProjConfig
+    session
   );
   return eModelConfiguration;
 });
@@ -212,7 +205,7 @@ export const eModelMorphologyAtom = atom<Promise<NeuronMorphology | null>>(async
 
   if (!morphologyId) return null;
 
-  return fetchResourceById<NeuronMorphology>(morphologyId, session, eModelProjConfig);
+  return fetchResourceById<NeuronMorphology>(morphologyId, session);
 });
 
 export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (get) => {
@@ -276,8 +269,7 @@ const eModelExtractionTargetsConfigurationAtom = atom<
 
   return fetchResourceById<ExtractionTargetsConfiguration>(
     eModelExtractionTargetsConfigurationId,
-    session,
-    eModelProjConfig
+    session
   );
 });
 
@@ -298,7 +290,7 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
     if (!session || !selectedBrainRegion || !brainRegions) return null;
 
     const eModelsQuery = getEModelQuery();
-    const eModels = await queryES<EModel>(eModelsQuery, session, eModelProjConfig);
+    const eModels = await queryES<EModel>(eModelsQuery, session);
     // pick the e-models compatible with latest structure
     const withGeneration = eModels.filter((eModel) => 'generation' in eModel);
 
