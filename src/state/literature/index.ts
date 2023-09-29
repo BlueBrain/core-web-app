@@ -10,8 +10,9 @@ import {
   ContextualLiteratureAtom,
   ContextQAItem,
   ArticleTypeSuggestion,
+  QuestionParameters,
 } from '@/types/literature';
-import { Filter } from '@/components/Filter/types';
+import { Filter, GteLteValue } from '@/components/Filter/types';
 import { getArticleTypes } from '@/components/explore-section/Literature/actions';
 
 export type BrainRegion = { id: string; title: string };
@@ -117,6 +118,25 @@ const articleTypeSuggestionsAtom = atom<Promise<ArticleTypeSuggestion[]>>(async 
   return articleTypeResponse;
 });
 
+export const initialParameters: QuestionParameters = {
+  selectedDate: { lte: null, gte: null },
+  selectedJournals: [],
+  selectedAuthors: [],
+  selectedArticleTypes: [],
+};
+
+const questionsParametersAtom = atom<Partial<QuestionParameters>>(initialParameters);
+
+export function useQuestionParameter() {
+  const setQuestionParameters = useSetAtom(questionsParametersAtom);
+
+  return (field: keyof QuestionParameters, values: GteLteValue | string[]) =>
+    setQuestionParameters((prev) => ({
+      ...prev,
+      [field]: values,
+    }));
+}
+
 export {
   literatureAtom,
   literatureResultAtom,
@@ -125,4 +145,5 @@ export {
   useLiteratureAtom,
   useContextualLiteratureAtom,
   articleTypeSuggestionsAtom,
+  questionsParametersAtom,
 };

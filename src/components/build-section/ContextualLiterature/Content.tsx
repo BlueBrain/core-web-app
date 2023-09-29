@@ -13,7 +13,6 @@ import ItemTile from './ItemTile';
 import { buildQuestionsList } from './util';
 import { GenerativeQASingleResultCompact } from '@/components/explore-section/Literature/components/GenerativeQAResults';
 import useContextualLiteratureContext from '@/components/explore-section/Literature/useContextualLiteratureContext';
-import { GenerativeQAForm } from '@/components/explore-section/Literature/components/GenerativeQAInput';
 import useChatQAContext from '@/components/explore-section/Literature/useChatQAContext';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import {
@@ -24,6 +23,7 @@ import {
 import { ContextQAItem, GenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
 import updateArray from '@/util/updateArray';
+import { GenerativeQAForm } from '@/components/explore-section/Literature/components/GenerativeQAForm';
 
 function ContextualContainer({ children }: { children: React.ReactNode }) {
   const { context, update } = useContextualLiteratureAtom();
@@ -74,7 +74,7 @@ function ContextualContent() {
     };
   }, [context.contextQuestions, context.currentQuestion]);
 
-  const { ask, isPending, query, onValueChange, onQuestionClear } = useChatQAContext({
+  const { ask, isPending, query } = useChatQAContext({
     resetAfterAsk: true,
     afterAskCallback: (gqa: GenerativeQA) => {
       const item = context.contextQuestions?.find((elt: ContextQAItem) => elt.key === query);
@@ -173,7 +173,7 @@ function ContextualContent() {
   }, [prebuiltQuestions, setContextualAtom]);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full max-h-[90%] overflow-y-auto">
       <div className="absolute top-0 z-30 flex items-center justify-center w-10 h-10 bg-white rounded-tl-full rounded-bl-full -left-10">
         <CloseOutlined
           className="text-base cursor-pointer text-primary-8"
@@ -241,13 +241,8 @@ function ContextualContent() {
                     parameter: context.about,
                     DensityOrCount: densityOrCount,
                   })}
+                  isPending={isPending}
                   label={`${Number(currentGQA.index) + 1}.`}
-                  {...{
-                    query,
-                    isPending,
-                    onQuestionClear,
-                    onValueChange,
-                  }}
                 />
               </div>
             </div>

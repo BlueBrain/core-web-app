@@ -1,5 +1,5 @@
-import { useReducer, useState, useTransition } from 'react';
-import { useAtomValue } from 'jotai';
+import { useTransition } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import merge from 'lodash/merge';
 
@@ -13,24 +13,15 @@ import {
   isGenerativeQA,
   isGenerativeQANoFound,
 } from '@/types/literature';
-import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
+import {
+  initialParameters,
+  literatureAtom,
+  questionsParametersAtom,
+  useLiteratureAtom,
+  useLiteratureResultsAtom,
+} from '@/state/literature';
 import { literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
-import { GteLteValue } from '@/components/Filter/types';
 import { formatDate } from '@/util/utils';
-
-type QuestionParameters = {
-  selectedDate: GteLteValue;
-  selectedJournals: string[];
-  selectedAuthors: string[];
-  selectedArticleTypes: string[];
-};
-
-export const initialParameters: QuestionParameters = {
-  selectedDate: { lte: null, gte: null },
-  selectedJournals: [],
-  selectedAuthors: [],
-  selectedArticleTypes: [],
-};
 
 function useChatQAContext({
   afterAskCallback,
@@ -45,14 +36,10 @@ function useChatQAContext({
   const { update: updateResults } = useLiteratureResultsAtom();
   const { query } = useAtomValue(literatureAtom);
   const [isPending, startGenerativeQATransition] = useTransition();
-  const [isParametersVisible, setIsParametersVisible] = useState(false);
   const [
     { selectedDate, selectedJournals, selectedAuthors, selectedArticleTypes },
     updateParameters,
-  ] = useReducer(
-    (previous: QuestionParameters, next: Partial<QuestionParameters>) => ({ ...previous, ...next }),
-    { ...initialParameters }
-  );
+  ] = useAtom(questionsParametersAtom);
 
   const onValueChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
     update('query', value);
@@ -96,7 +83,6 @@ function useChatQAContext({
     }
 
     updateParameters({ ...initialParameters });
-    setIsParametersVisible(false);
     return newGenerativeQA;
   };
 
@@ -107,8 +93,8 @@ function useChatQAContext({
       journals: selectedJournals,
       authors: selectedAuthors,
       articleTypes: selectedArticleTypes,
-      fromDate: selectedDate.gte ? formatDate(selectedDate.gte as Date, 'yyyy-MM-dd') : undefined,
-      endDate: selectedDate.lte ? formatDate(selectedDate.lte as Date, 'yyyy-MM-dd') : undefined,
+      fromDate: selectedDate?.gte ? formatDate(selectedDate.gte as Date, 'yyyy-MM-dd') : undefined,
+      endDate: selectedDate?.lte ? formatDate(selectedDate.lte as Date, 'yyyy-MM-dd') : undefined,
     });
 
   const ask = (extra?: Record<string, any>) => (data: FormData) => {
@@ -123,12 +109,10 @@ function useChatQAContext({
     query,
     isQuestionEmpty,
     isPending,
-    isParametersVisible,
     selectedDate,
     selectedJournals,
     selectedAuthors,
     updateParameters,
-    setIsParametersVisible,
     onComplete,
     onValueChange,
     onQuestionClear,

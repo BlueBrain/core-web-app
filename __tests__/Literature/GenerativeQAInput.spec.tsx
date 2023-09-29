@@ -1,17 +1,42 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
 import { format } from 'date-fns';
 import GenerativeQAInputBar from '@/components/explore-section/Literature/components/GenerativeQAInput';
 import sessionAtom from '@/state/session';
-import { ArticleTypeSuggestion, AuthorSuggestionResponse } from '@/types/literature';
+import {
+  ArticleTypeSuggestion,
+  AuthorSuggestionResponse,
+  JournalSuggestionResponse,
+} from '@/types/literature';
+import { normalizeString } from '@/util/utils';
 
 jest.mock('@/components/explore-section/Literature/api.ts', () => ({
   _esModule: true,
   fetchAuthorSuggestions: jest.fn().mockImplementation(
-    () =>
+    (searchTerm: string) =>
       new Promise((resolve) => {
-        resolve(mockAuthors);
+        if (!searchTerm) {
+          resolve(mockAuthors);
+        } else {
+          const filtered = mockAuthors.filter((author) =>
+            normalizeString(author.name).includes(normalizeString(searchTerm))
+          );
+          resolve(filtered);
+        }
+      })
+  ),
+  fetchJournalSuggestions: jest.fn().mockImplementation(
+    (searchTerm: string) =>
+      new Promise((resolve) => {
+        if (!searchTerm) {
+          resolve(mockJournals);
+        } else {
+          const filtered = mockJournals.filter((journal) =>
+            normalizeString(journal.title).includes(normalizeString(searchTerm))
+          );
+          resolve(filtered);
+        }
       })
   ),
 }));
@@ -69,13 +94,13 @@ describe('GenerativeQAInput', () => {
     expect(searchBtn).toBeEnabled();
   });
 
-  test('hides normal send button when the user clicks on refine question button', () => {
+  test('shows both, normal send button and refined question button when user opens search panel', () => {
     typeQuestion(defaultQuestion);
     expect(sendQuestionWithoutParamsButton()).toBeVisible();
 
     openRefineSearchPanel();
 
-    expect(sendQuestionWithoutParamsButton()).toBeFalsy();
+    expect(sendQuestionWithoutParamsButton()).toBeVisible();
     expect(sendRefinedQuestionButton()).toBeVisible();
   });
 
@@ -115,6 +140,121 @@ describe('GenerativeQAInput', () => {
 
     expectOptionsToBeSelected(['paper', 'journal paper']);
     expectOptionsNotToBeSelected(['abstract']);
+  });
+
+  test('shows journal suggestions even if user has not started typing', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    focusOnInput('Journal');
+
+    await waitFor(() => {
+      mockJournals.forEach((journal) =>
+        expect(screen.getByText(journal.title)).toBeInTheDocument()
+      );
+    });
+  });
+
+  test('shows only matching journal suggestions returned by api as user starts typing', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    const searchTerm = 'science';
+    typeInInput('Journal', searchTerm);
+
+    const nonMatchingJournalSuggestion = getSuggestions(
+      searchTerm,
+      mockJournals.map((j) => j.title),
+      'no-match'
+    );
+
+    expect(nonMatchingJournalSuggestion.length).toBeGreaterThanOrEqual(1);
+    await expectSuggestionsToNotBeVisible(nonMatchingJournalSuggestion);
+
+    const matchingJournalSuggestions = getSuggestions(
+      searchTerm,
+      mockJournals.map((j) => j.title),
+      'match'
+    );
+
+    expect(matchingJournalSuggestions.length).toBeGreaterThanOrEqual(1);
+    await expectSuggestionsToBeVisible(matchingJournalSuggestions);
+  });
+
+  test('shows article type suggestions even if user has not started typing', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    focusOnInput('Article Types');
+
+    await waitFor(() => {
+      mockArticleTypes.forEach((type) =>
+        expect(screen.getByText(type.articleType)).toBeInTheDocument()
+      );
+    });
+  });
+
+  test('shows only matching article types returned by api as user starts typing', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    const searchTerm = 'paper';
+    typeInInput('Article Types', searchTerm);
+
+    const nonMatchingArticleTypes = getSuggestions(
+      searchTerm,
+      mockArticleTypes.map((a) => a.articleType),
+      'no-match'
+    );
+
+    expect(nonMatchingArticleTypes.length).toBeGreaterThanOrEqual(1);
+    await expectSuggestionsToNotBeVisible(nonMatchingArticleTypes);
+
+    const matchingArticleTypes = getSuggestions(
+      searchTerm,
+      mockArticleTypes.map((a) => a.articleType),
+      'match'
+    );
+
+    expect(matchingArticleTypes.length).toBeGreaterThanOrEqual(1);
+    await expectSuggestionsToBeVisible(matchingArticleTypes);
+  });
+
+  test('shows author suggestions even if user has not started typing', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    focusOnInput('Authors');
+
+    await waitFor(() => {
+      mockAuthors.forEach((author) => expect(screen.getByText(author.name)).toBeInTheDocument());
+    });
+  });
+
+  test('shows only matching authors returned by api as user starts typing', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    const searchTerm = 'Archer';
+    typeInInput('Authors', searchTerm);
+
+    const nonMatchingAuthors = getSuggestions(
+      searchTerm,
+      mockAuthors.map((a) => a.name),
+      'no-match'
+    );
+
+    expect(nonMatchingAuthors.length).toBeGreaterThanOrEqual(1);
+    await expectSuggestionsToNotBeVisible(nonMatchingAuthors);
+
+    const matchingAuthors = getSuggestions(
+      searchTerm,
+      mockAuthors.map((a) => a.name),
+      'match'
+    );
+
+    expect(matchingAuthors.length).toBeGreaterThanOrEqual(1);
+    await expectSuggestionsToBeVisible(matchingAuthors);
   });
 
   const sendQuestionWithoutParamsButton = () => screen.queryByRole('button', { name: 'send' });
@@ -164,8 +304,46 @@ describe('GenerativeQAInput', () => {
   };
 
   const typeInInput = (inputName: string, text: string) => {
-    const authorInput = screen.getByLabelText(inputName, { selector: 'input' });
-    fireEvent.change(authorInput, { target: { value: text } });
+    const autocompleteInput = screen.getByLabelText(inputName, { selector: 'input' });
+    fireEvent.change(autocompleteInput, { target: { value: text } });
+  };
+
+  const focusOnInput = (inputName: string) => {
+    const autocompleteInput = screen.getByLabelText(inputName, { selector: 'input' });
+    fireEvent.click(autocompleteInput);
+    fireEvent.focus(autocompleteInput);
+    fireEvent.mouseDown(autocompleteInput);
+  };
+
+  const expectSuggestionsToNotBeVisible = async (nonMatchingSuggestions: string[]) => {
+    await waitFor(() => {
+      nonMatchingSuggestions.forEach((suggestion) =>
+        expect(screen.queryByText(suggestion)).toBeFalsy()
+      );
+    });
+  };
+
+  const expectSuggestionsToBeVisible = async (matchingSuggestions: string[]) => {
+    await waitFor(() => {
+      matchingSuggestions.forEach((suggestion) =>
+        expect(screen.getByRole('option', { name: suggestion })).toBeInTheDocument()
+      );
+    });
+  };
+
+  const getSuggestions = (
+    searchTerm: string,
+    allSuggestions: string[],
+    criteria: 'match' | 'no-match'
+  ) => {
+    if (criteria === 'match') {
+      return allSuggestions.filter((suggestion) =>
+        normalizeString(suggestion).includes(normalizeString(searchTerm))
+      );
+    }
+    return allSuggestions.filter(
+      (suggestion) => !normalizeString(suggestion).includes(normalizeString(searchTerm))
+    );
   };
 
   const selectSuggestion = async (optionLabel: string) => {
@@ -215,21 +393,36 @@ describe('GenerativeQAInput', () => {
   const defaultQuestion = "'How many neurons are there in the brain?'";
 });
 
-const createMockOption = (name: string) => ({
+const createMockAuthor = (name: string) => ({
   name,
   docs_in_db: 1,
 });
 
 const mockAuthors: AuthorSuggestionResponse = [
-  createMockOption('Sterling Archer'),
-  createMockOption('Lana Kane'),
-  createMockOption('Cheryl Tunt'),
-  createMockOption('Malory Archer'),
-  createMockOption('Dr. Krieger'),
+  createMockAuthor('Sterling Archer'),
+  createMockAuthor('Lana Kane'),
+  createMockAuthor('Cheryl Tunt'),
+  createMockAuthor('Malory Archer'),
+  createMockAuthor('Dr. Krieger'),
 ];
 
 const mockArticleTypes: ArticleTypeSuggestion[] = [
   { articleType: 'abstract', docCount: 1 },
   { articleType: 'journal paper', docCount: 1 },
   { articleType: 'paper', docCount: 1 },
+];
+
+const createMockJournal = (title: string, index: number) => ({
+  title,
+  citescore: 1,
+  eissn: `${index}`,
+  print_issn: `${index}`,
+});
+
+const mockJournals: JournalSuggestionResponse = [
+  createMockJournal('Science', 1),
+  createMockJournal('BioTech', 2),
+  createMockJournal('NeuroScience', 3),
+  createMockJournal('Biology', 4),
+  createMockJournal('Botany', 5),
 ];

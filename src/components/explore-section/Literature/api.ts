@@ -3,6 +3,7 @@ import {
   GenerativeQAResponse,
   ReturnGetGenerativeQA,
   AuthorSuggestionResponse,
+  JournalSuggestionResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
 import { createHeaders } from '@/util/utils';
@@ -22,7 +23,7 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
     keywords?.forEach((keyword) => params.append('keywords', keyword));
     journals?.forEach((journal) => params.append('journals', journal));
     authors?.forEach((author) => params.append('authors', author));
-    articleTypes?.forEach((articleType) => params.append('aritcle_types', articleType));
+    articleTypes?.forEach((articleType) => params.append('article_types', articleType));
 
     if (fromDate) {
       params.append('date_from', fromDate);
@@ -99,7 +100,10 @@ const fetchAuthorSuggestions = (
     .catch(() => [{ name: searchTerm, docs_in_db: 0 }] as AuthorSuggestionResponse);
 };
 
-export const fetchJournalSuggestions = (searchTerm: string, accessToken: string) => {
+export const fetchJournalSuggestions = (
+  searchTerm: string,
+  accessToken: string
+): Promise<JournalSuggestionResponse> => {
   const url = nexus.aiUrl;
 
   return fetch(`${url}/suggestions/journal`, {
