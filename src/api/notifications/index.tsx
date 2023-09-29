@@ -14,8 +14,8 @@ import { NotificationType, Placement } from '@/types/notifications';
 export default function openNotification(
   type: NotificationType,
   message: string,
-  duration: number,
-  placement: Placement
+  duration: number = 5,
+  placement: Placement = 'bottomRight'
 ) {
   let icon;
   let backgroundColor;

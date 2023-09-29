@@ -11,6 +11,7 @@ import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 import { OriginalComposition } from '@/types/composition/original';
+import openNotification from '@/api/notifications';
 
 // TODO: move to a separate module
 const configPayloadDefaults = {
@@ -60,8 +61,8 @@ export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload]
     config.distribution = createDistribution(updatedFile);
 
     await updateResource(config, config?._rev, session);
-
-    set(invalidateConfigAtom, 'cellComposition');
+    await set(invalidateConfigAtom, 'cellComposition');
+    openNotification('success', 'The composition was successfully saved');
   }
 );
 

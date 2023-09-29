@@ -47,7 +47,7 @@ function NodeSetMesh({
       detailedCircuit.state === 'hasData' && detailedCircuit.data?.circuitConfigPath.url;
 
     if (!circuitConfigPathOverride && !detailedCircuitHasData) {
-      throw new Error('Circuit config path is not found in the configuration');
+      throw new Error('The Circuit config path could not be found in the configuration.');
     }
 
     const detailedCircuitConfigPath = detailedCircuitHasData
