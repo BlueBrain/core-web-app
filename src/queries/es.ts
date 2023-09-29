@@ -81,6 +81,24 @@ export const getEModelQuery = (searchString: string = '') => ({
   },
 });
 
+export const getEModelOptimizationConfigQuery = () => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'EModelOptimizationConfig' } },
+            ],
+          },
+        },
+      ],
+    },
+  },
+});
+
 export const getPersonalBrainModelConfigsQuery = (username: string, searchString: string = '') => ({
   size: DEFAULT_SIZE,
   query: {

@@ -22,6 +22,7 @@ import {
   Trace,
   EModelByETypeMappingType,
   EModelMenuItem,
+  EModelOptimizationConfig,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -32,7 +33,11 @@ import {
   convertFeaturesForUI,
   convertMechanismsForUI,
 } from '@/services/e-model';
-import { getEModelQuery, getEntityListByIdsQuery } from '@/queries/es';
+import {
+  getEModelOptimizationConfigQuery,
+  getEModelQuery,
+  getEntityListByIdsQuery,
+} from '@/queries/es';
 import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
@@ -317,6 +322,30 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
       name: eModel.name,
       id: eModel['@id'] || '',
       eType: eModel.etype,
+    }));
+
+    return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
+  }
+);
+
+export const editedEModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const selectedBrainRegion = get(selectedBrainRegionAtom);
+    const brainRegions = await get(brainRegionsAtom);
+
+    if (!session || !selectedBrainRegion || !brainRegions) return null;
+
+    const eModelOptimizationsQuery = getEModelOptimizationConfigQuery();
+    const optimizationConfigs = await queryES<EModelOptimizationConfig>(
+      eModelOptimizationsQuery,
+      session
+    );
+
+    const eModelMenuItems: EModelMenuItem[] = optimizationConfigs.map((eModel) => ({
+      name: eModel.name,
+      id: eModel['@id'] || '',
+      eType: eModel.eType,
     }));
 
     return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
