@@ -25,7 +25,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
       >
         Add a new slot
       </Button>
-      <div>Number of slots: {simulationSlots.list.length}</div>
+      <pre>{JSON.stringify(simulationSlots.list, null, '    ')}</pre>
     </div>
   );
 }
