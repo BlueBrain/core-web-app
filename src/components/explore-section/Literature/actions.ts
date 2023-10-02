@@ -1,10 +1,9 @@
-'use server';
+// 'use server';
 
 import { getServerSession } from 'next-auth';
 
-import { fetchArticleTypes, getGenerativeQA } from './api';
+import { getGenerativeQA } from './api';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { ArticleTypeSuggestion } from '@/types/literature';
 
 export async function getGenerativeQAAction({
   data,
@@ -36,13 +35,4 @@ export async function getGenerativeQAAction({
     articleTypes,
   });
   return generativeQA;
-}
-
-export async function getArticleTypes(): Promise<ArticleTypeSuggestion[]> {
-  const articleTypeResponse = await fetchArticleTypes();
-
-  return articleTypeResponse.map((articleResponse) => ({
-    articleType: articleResponse.article_type,
-    docCount: articleResponse.docs_in_db,
-  }));
 }
