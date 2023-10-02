@@ -10,16 +10,16 @@ import {
   ReactNode,
   Suspense,
 } from 'react';
-import { scaleOrdinal, schemeTableau10 } from 'd3';
 import { useAtom, useAtomValue } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
-
 import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util';
 import DensityChart from './DensityChart';
 import ZoomControl from './Zoom';
 import { SankeyLinksReducerAcc } from './types';
+import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
@@ -27,8 +27,9 @@ import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
+import { cellTypesAtom } from '@/state/build-section/cell-types';
 import { OriginalCompositionUnit } from '@/types/composition/original';
-import styles from './tabs.module.css';
+import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 
 function CellPosition() {
   return (
@@ -181,14 +182,11 @@ function CellDensity() {
     [densityOrCount, links, nodes]
   );
 
-  // Prevent colorScale from ever changing after initial render
-  const colorScale = useMemo(
-    () =>
-      scaleOrdinal(
-        Object.entries(sankeyData.nodes).map((id) => id), // eslint-disable-line @typescript-eslint/no-unused-vars
-        schemeTableau10
-      ),
-    [sankeyData.nodes]
+  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
+
+  const colorScale = useCallback(
+    (id: string) => classObjects?.[id]?.color ?? '#ccc',
+    [classObjects]
   );
 
   const handleReset = useCallback(() => {
@@ -251,22 +249,17 @@ function CellDensityWrapper() {
 }
 
 export default function ConfigurationView() {
-  const tabItems = useMemo(
-    () =>
-      [
-        {
-          children: 'Density',
-          value: 'density',
-        },
-        { children: 'Distribution', value: 'distribution' },
-        { children: 'Position', value: 'position' },
-      ].map(({ children, value }) => (
-        <Tabs.Trigger className={styles.TabTrigger} key={value} value={value}>
-          {children}
-        </Tabs.Trigger>
-      )),
-    []
-  );
+  const [activeTab, setActiveTab] = useState('density');
+
+  const tabItems = [
+    {
+      label: 'Density',
+      onClick: () => setActiveTab('density'),
+    },
+    { label: 'Distribution', onClick: () => setActiveTab('distribution') },
+    { label: 'Position', onClick: () => setActiveTab('position') },
+  ];
+
   const tabContent = useMemo(
     () =>
       [
@@ -281,16 +274,18 @@ export default function ConfigurationView() {
         { children: <CellDistribution />, value: 'distribution' },
         { children: <CellPosition />, value: 'position' },
       ].map(({ children, value }) => (
-        <Tabs.Content className="h-full relative" key={value} value={value}>
+        <Tabs.Content className="relative h-full" key={value} value={value}>
           {children}
         </Tabs.Content>
       )),
     []
   );
 
+  useLiteratureCleanNavigate();
+
   return (
-    <Tabs.Root defaultValue="density" className="h-full overflow-hidden px-4 py-[25px]">
-      <Tabs.List className="items-baseline flex font-bold gap-3 mb-3">{tabItems}</Tabs.List>
+    <Tabs.Root value={activeTab} className="h-full overflow-hidden px-4 py-[25px]">
+      <TopNavigation.PillNav items={tabItems} activeItemIndex={0} />
       {tabContent}
     </Tabs.Root>
   );

@@ -1,9 +1,8 @@
 import { atom } from 'jotai';
+import { selectAtom, atomWithDefault, atomFamily } from 'jotai/utils';
 import isEmpty from 'lodash/isEmpty';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
-import pick from 'lodash/pick';
-import { atomWithDefault, atomFamily } from 'jotai/utils';
 import { fetchRules, fetchResourceBasedInference } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import { RELEVANT_RULES } from '@/constants/explore-section/kg-inference';
@@ -11,9 +10,11 @@ import {
   RuleOutput,
   ResourceBasedInference,
   ResourceBasedInferenceRequest,
+  ResourceBasedInferenceResponse,
+  InferredResource,
 } from '@/types/explore-section/kg-inference';
 
-export const inferredResourceIdsAtom = atomFamily(() => atom(new Array<string>()));
+export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>
   atom<Promise<RuleOutput[] | null>>(async (get) => {
@@ -28,11 +29,7 @@ export const rulesResponseAtom = atomFamily((resourceId: string) =>
 );
 
 export const resourceBasedRulesAtom = atomFamily((resourceId: string) =>
-  atomWithDefault<ResourceBasedInference[]>((get) => get(resourceBasedRulesInitialAtom(resourceId)))
-);
-
-export const resourceBasedRulesInitialAtom = atomFamily((resourceId: string) =>
-  atomWithDefault<any>(async (get) => {
+  atomWithDefault<Promise<ResourceBasedInference[]>>(async (get) => {
     const rulesResponse = await get(rulesResponseAtom(resourceId));
 
     const rulesWithBool: ResourceBasedInference[] = [];
@@ -50,50 +47,48 @@ export const resourceBasedRulesInitialAtom = atomFamily((resourceId: string) =>
       })?.values;
       if (typeof inferenceOptions !== 'undefined')
         inferenceOptions.forEach((inferenceOption: string) => {
-          rulesWithBool.push({ name: inferenceOption, value: false, id: rule.id });
+          const description = rule.embeddingModels[inferenceOption]?.description || '';
+
+          rulesWithBool.push({ name: inferenceOption, value: false, id: rule.id, description });
         });
     });
-
     return rulesWithBool;
   })
 );
 
 export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
-  atom(async (get) => {
-    const resourceBasedRules = await get(resourceBasedRulesAtom(resourceId));
-    const ruleIds = new Set();
-    const selectedModelsArray = new Set();
+  selectAtom<Promise<ResourceBasedInference[]>, ResourceBasedInferenceRequest>(
+    resourceBasedRulesAtom(resourceId),
+    (resourceBasedRules) => {
+      const uniqueRuleIds = [...new Set(resourceBasedRules?.map(({ id }) => id))];
+      const uniqueSelectedModels = [...new Set(resourceBasedRules?.map(({ name }) => name))];
 
-    if (resourceBasedRules.length === 0) return null;
-
-    resourceBasedRules.forEach((rule) => {
-      if (rule.value) {
-        ruleIds.add(pick(rule, 'id'));
-        selectedModelsArray.add(rule.name);
-      }
-    });
-
-    return {
-      rules: Array.from(ruleIds) as string[],
-      inputFilter: {
-        TargetResourceParameter: resourceId,
-        SelectModelsParameter: Array.from(selectedModelsArray),
-      },
-    };
-  })
+      return {
+        rules: uniqueRuleIds.map((id) => ({
+          id,
+        })),
+        inputFilter: {
+          TargetResourceParameter: resourceId,
+          SelectModelsParameter: uniqueSelectedModels,
+        },
+      };
+    }
+  )
 );
 
 export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>
-  atom(async (get) => {
-    const request = await get(resourceBasedRequestAtom(resourceId));
-
+  atom<Promise<ResourceBasedInferenceResponse | null>>(async (get) => {
     const session = get(sessionAtom);
 
-    if ((request && isEmpty(request.rules)) || !session) return null;
+    if (!session) return null;
 
-    const results = await Promise.resolve(
-      fetchResourceBasedInference(session, request as ResourceBasedInferenceRequest)
-    );
+    const request = await get(resourceBasedRequestAtom(resourceId)); // TODO: Why 'await' has no effect on the type of this expression?
+
+    if (isEmpty(request.rules)) return null; // No rules
+
+    const results = await fetchResourceBasedInference(session, request);
+
+    if (!Array.isArray(results)) return null; // Error
 
     return results;
   })

@@ -35,8 +35,7 @@ export default function sankey(
     align = 'justify', // convenience shorthand for nodeAlign
     nodeColorScale,
     nodeId = (d) => d.id, // given d in nodes, returns a unique identifier (string)
-    nodeGroup, // given d in nodes, returns an (ordinal) value for color
-    nodeGroups, // an array of ordinal values representing the node groups
+    nodeGroups = (d) => d.id, // an array of ordinal values representing the node groups
     nodeLabel, // given d in (computed) nodes, text to label the associated rect
     nodeTitle = (d) => `${d.id}\n${format(d.value)}`, // given d in (computed) nodes, hover text
     nodeAlign = align, // Sankey node alignment strategy: left, right, justify, center
@@ -64,6 +63,8 @@ export default function sankey(
     marginLeft = 1, // left margin, in pixels
   }
 ) {
+  console.log('nodes', nodes);
+
   // Convert nodeAlign from a name to a function (since d3-sankey is not part of core d3).
   if (typeof nodeAlign !== 'function')
     nodeAlign = // eslint-disable-line no-param-reassign
@@ -79,25 +80,16 @@ export default function sankey(
   const LV = d3.map(links, linkValue);
   if (nodes === undefined) nodes = Array.from(d3.union(LS, LT), (id) => ({ id })); // eslint-disable-line no-param-reassign
   const N = d3.map(nodes, nodeId).map(intern);
-  const G = nodeGroup == null ? null : d3.map(nodes, nodeGroup).map(intern);
 
   // Replace the input nodes and links with mutable objects for the simulation.
   nodes = d3.map(nodes, ({ id, label }) => ({ id, label })); // eslint-disable-line no-param-reassign
   links = d3.map(links, (_, i) => ({ source: LS[i], target: LT[i], value: LV[i] })); // eslint-disable-line no-param-reassign
 
   // Ignore a group-based linkColor option if no groups are specified.
-  if (!G && ['source', 'target', 'source-target'].includes(linkColor)) linkColor = 'currentColor'; // eslint-disable-line no-param-reassign
-
-  // Compute default domains.
-  if (G && nodeGroups === undefined) nodeGroups = G; // eslint-disable-line no-param-reassign
+  if (!['source', 'target', 'source-target'].includes(linkColor)) linkColor = 'currentColor'; // eslint-disable-line no-param-reassign
 
   // Construct the scales.
-  const color =
-    nodeGroup == null
-      ? null
-      : nodeColorScale
-      ? nodeColorScale
-      : d3.scaleOrdinal(nodeGroups, colors);
+  const color = nodeColorScale ? nodeColorScale : d3.scaleOrdinal(nodeGroups, colors);
 
   // Compute the Sankey layout.
   d3Sankey
@@ -117,7 +109,6 @@ export default function sankey(
   const Tt = nodeTitle == null ? null : d3.map(nodes, nodeTitle);
   const Lt = linkTitle == null ? null : d3.map(links, linkTitle);
 
-  // A unique identifier for clip paths (to avoid conflicts).
   const uid = `O-${Math.random().toString(16).slice(2)}`;
 
   const svg = d3
@@ -150,7 +141,8 @@ export default function sankey(
     .attr('height', (d) => d.y1 - d.y0)
     .attr('width', (d) => d.x1 - d.x0);
 
-  if (G) node.attr('fill', ({ index: i }) => color(G[i]));
+  node.attr('fill', ({ id }) => color(id));
+
   if (Tt) node.append('title').text(({ index: i }) => Tt[i]);
 
   const link = zoomWrapper
@@ -165,7 +157,7 @@ export default function sankey(
   if (linkColor === 'source-target')
     link
       .append('linearGradient')
-      .attr('id', (d) => `${uid}-link-${d.index}`)
+      .attr('id', (d) => d.id)
       .attr('gradientUnits', 'userSpaceOnUse')
       .attr('x1', (d) => d.source.x1)
       .attr('x2', (d) => d.target.x0)
@@ -173,13 +165,13 @@ export default function sankey(
         gradient
           .append('stop')
           .attr('offset', '0%')
-          .attr('stop-color', ({ source: { index: i } }) => color(G[i]))
+          .attr('stop-color', ({ source: { id } }) => color(id))
       )
       .call((gradient) =>
         gradient
           .append('stop')
           .attr('offset', '100%')
-          .attr('stop-color', ({ target: { index: i } }) => color(G[i]))
+          .attr('stop-color', ({ target: { id } }) => color(id))
       );
 
   link
@@ -188,11 +180,11 @@ export default function sankey(
     .attr(
       'stroke',
       linkColor === 'source-target' // eslint-disable-line no-nested-ternary
-        ? ({ index: i }) => `url(#${uid}-link-${i})`
+        ? (d) => `url(#${uid}-link-${d.index})`
         : linkColor === 'source' // eslint-disable-line no-nested-ternary
-        ? ({ source: { index: i } }) => color(G[i])
+        ? ({ source: { id } }) => color(id)
         : linkColor === 'target'
-        ? ({ target: { index: i } }) => color(G[i])
+        ? ({ target: { id } }) => color(id)
         : linkColor
     )
     .attr('stroke-width', ({ width: strokeWidth }) => Math.max(1, strokeWidth))

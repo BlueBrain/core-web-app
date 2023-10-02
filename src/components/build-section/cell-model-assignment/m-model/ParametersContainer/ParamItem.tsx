@@ -13,8 +13,9 @@ import {
   StepSizeInterface,
   OrientationInterface,
 } from '@/types/m-model';
-import { setMorphologyAssignmentConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
+import { applyOverridesToAccumulativeAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 import { paramsToDisplay } from '@/constants/cell-model-assignment/m-model';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 
 type ParameterProps = {
   paramRawName: RequiredParamRawNames;
@@ -23,8 +24,9 @@ type ParameterProps = {
 
 export default function ParameterItem({ paramRawName, paramValue }: ParameterProps) {
   const setMModelOverrides = useSetAtom(mModelLocalParamsAtom);
-  const setMorphAssConfigPayload = useSetAtom(setMorphologyAssignmentConfigPayloadAtom);
+  const setApplyOverridesToAccumulative = useSetAtom(applyOverridesToAccumulativeAtom);
   const neuriteTypeSelected = useAtomValue(mModelNeuriteTypeSelectedAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const paramInfo = paramsToDisplay[paramRawName];
 
@@ -34,7 +36,7 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
       set(cloned, `${neuriteTypeSelected}.${paramRawName}`, newValue);
       return cloned;
     });
-    setMorphAssConfigPayload();
+    setApplyOverridesToAccumulative();
   };
 
   const onNumberChange = (newValue: number) => {
@@ -54,6 +56,7 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
           paramValue={paramValue as number}
           paramInfo={paramInfo as ParamInfo}
           onChange={onNumberChange}
+          isConfigEditable={isConfigEditable}
         />
       );
       break;
@@ -64,6 +67,7 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
           paramValue={paramValue as StepSizeInterface}
           paramInfo={paramInfo as ParamInfo}
           onChange={onStepSizeChange}
+          isConfigEditable={isConfigEditable}
         />
       );
       break;

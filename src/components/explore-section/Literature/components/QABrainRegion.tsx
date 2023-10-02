@@ -1,5 +1,7 @@
 import { useAtomValue } from 'jotai';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
+import { useRouter } from 'next/navigation';
 
 import usePathname from '@/hooks/pathname';
 import { classNames } from '@/util/utils';
@@ -39,7 +41,20 @@ function QAContextBrainRegion() {
       >
         {!isSelectedBrainRegionExists ? 'All regions' : selectedBrainRegion?.title}
       </div>
-      <InfoCircleOutlined className="text-lg text-primary-8" />
+      <Tooltip
+        title="Context"
+        placement="bottom"
+        overlayInnerStyle={{ backgroundColor: 'white' }}
+        arrow={false}
+        overlay={
+          <p className="flex flex-col gap-2 select-none text-primary-8">
+            In order to modify the context, select another brain region from the side panel.
+          </p>
+        }
+        trigger="hover"
+      >
+        <InfoCircleOutlined className="text-lg text-primary-8" />
+      </Tooltip>
     </div>
   );
 }
@@ -47,10 +62,17 @@ function QAContextBrainRegion() {
 function QABrainRegion() {
   const pathname = usePathname();
   const isBuildSection = pathname?.startsWith('/build');
+  const router = useRouter();
 
   if (!isBuildSection) return null;
   return (
     <div className="px-4">
+      <Button
+        onClick={() => router.back()}
+        className="flex items-center py-6 mb-6 rounded-none text-primary-8"
+      >
+        <ArrowLeftOutlined /> Back to configuration
+      </Button>
       <div className="mb-2 text-lg font-medium text-primary-8">Current context of search: </div>
       <QAContextBrainRegion />
     </div>

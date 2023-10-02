@@ -37,9 +37,10 @@ type PanelProps = {
   description: string;
   href: string;
   modelId: string;
+  baseHref: string;
 };
 
-function Panel({ title, description, href, className = '', modelId }: PanelProps) {
+function Panel({ title, description, href, className = '', modelId, baseHref }: PanelProps) {
   const router = useRouter();
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
     useCloneConfigModal<BrainModelConfigResource>(
@@ -54,8 +55,12 @@ function Panel({ title, description, href, className = '', modelId }: PanelProps
       description,
     } as BrainModelConfigResource;
 
-    createCloneModal(config, () => router.push(href));
-  }, [description, title, modelId, createCloneModal, router, href]);
+    createCloneModal(config, (clonedConfig: BrainModelConfigResource) =>
+      router.push(
+        `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
+      )
+    );
+  }, [description, title, modelId, createCloneModal, router, baseHref]);
 
   return (
     <div className={classNames(styles.panel, className)}>
@@ -142,6 +147,7 @@ export default function BrainConfigLoader({ baseHref }: BrainConfigLoaderProps) 
           description={model.description}
           href={`${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(model.id))}`}
           modelId={model.id}
+          baseHref={baseHref}
         />
       ))}
 

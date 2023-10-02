@@ -21,7 +21,8 @@ import {
   SimulationParameter,
   Trace,
   EModelByETypeMappingType,
-  SelectedEModelType,
+  EModelMenuItem,
+  EModelOptimizationConfig,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -32,12 +33,16 @@ import {
   convertFeaturesForUI,
   convertMechanismsForUI,
 } from '@/services/e-model';
-import { getEModelQuery, getEntityListByIdsQuery } from '@/queries/es';
+import {
+  getEModelOptimizationConfigQuery,
+  getEModelQuery,
+  getEntityListByIdsQuery,
+} from '@/queries/es';
 import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 
-export const selectedEModelAtom = atom<SelectedEModelType | null>(null);
+export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
 export const eModelRemoteParamsLoadedAtom = atom(false);
 
@@ -107,12 +112,6 @@ export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] 
   }
 );
 
-// Accessing the project from where the current data of e-model is located
-// TODO: remove this when the data is moved to mmb-point-neuron-framework-model
-const eModelProjConfig = {
-  project: 'mmb-emodels-for-synthesized-neurons',
-};
-
 const eModelTracesProjConfig = {
   project: 'lnmce',
 };
@@ -125,7 +124,7 @@ export const eModelAtom = atom<Promise<EModel | null>>(async (get) => {
 
   if (!session || !eModelId) return null;
 
-  return fetchResourceById<EModel>(eModelId, session, eModelProjConfig);
+  return fetchResourceById<EModel>(eModelId, session);
 });
 
 const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
@@ -145,7 +144,7 @@ const eModelWorkflowAtom = atom<Promise<EModelWorkflow | null>>(async (get) => {
 
   if (!session || !eModelWorkflowId) return null;
 
-  return fetchResourceById<EModelWorkflow>(eModelWorkflowId, session, eModelProjConfig);
+  return fetchResourceById<EModelWorkflow>(eModelWorkflowId, session);
 });
 
 /* --------------------------- EModelConfiguration -------------------------- */
@@ -171,8 +170,7 @@ export const eModelConfigurationAtom = atom<Promise<EModelConfiguration | null>>
 
   const eModelConfiguration = await fetchResourceById<EModelConfiguration>(
     eModelConfigurationId,
-    session,
-    eModelProjConfig
+    session
   );
   return eModelConfiguration;
 });
@@ -212,7 +210,7 @@ export const eModelMorphologyAtom = atom<Promise<NeuronMorphology | null>>(async
 
   if (!morphologyId) return null;
 
-  return fetchResourceById<NeuronMorphology>(morphologyId, session, eModelProjConfig);
+  return fetchResourceById<NeuronMorphology>(morphologyId, session);
 });
 
 export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (get) => {
@@ -227,7 +225,7 @@ export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (
     if (!selectedEModel) throw new Error('No selected e-model to edit');
 
     type ETypeName = string;
-    const eType: ETypeName = selectedEModel.name;
+    const { eType } = selectedEModel;
 
     type EModelMechanismsMapping = Record<ETypeName, MechanismForUI>;
     const payload = await fetchJsonFileById<EModelMechanismsMapping>(eTypeMechanismMapId, session);
@@ -276,8 +274,7 @@ const eModelExtractionTargetsConfigurationAtom = atom<
 
   return fetchResourceById<ExtractionTargetsConfiguration>(
     eModelExtractionTargetsConfigurationId,
-    session,
-    eModelProjConfig
+    session
   );
 });
 
@@ -298,26 +295,70 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
     if (!session || !selectedBrainRegion || !brainRegions) return null;
 
     const eModelsQuery = getEModelQuery();
-    const eModels = await queryES<EModel>(eModelsQuery, session, eModelProjConfig);
+    const eModels = await queryES<EModel>(eModelsQuery, session);
     // pick the e-models compatible with latest structure
     const withGeneration = eModels.filter((eModel) => 'generation' in eModel);
 
     const filteredByLocation = withGeneration.filter((eModel) => {
       // as they don't have brain location, they can be use everywhere
-      if (!('brainLocation' in eModel)) return true;
+      if (!eModel.brainLocation) return true;
 
-      const eModelBrainRegionCollapsedId = eModel.brainLocation?.brainRegion['@id'].replace(
+      const eModelBrainRegionId = eModel.brainLocation.brainRegion['@id'];
+      const selectedBrainRegionExpandedId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
+
+      if (selectedBrainRegionExpandedId === eModelBrainRegionId) return true;
+
+      const eModelBrainRegionCollapsedId = eModelBrainRegionId.replace(
         `${BRAIN_REGION_URI_BASE}/`,
         ''
       );
       const brainRegionForEModel = lodashFind(brainRegions, ['id', eModelBrainRegionCollapsedId]);
 
-      const selectedBrainRegionExpandedId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
       const isChildren = brainRegionForEModel?.leaves?.includes(selectedBrainRegionExpandedId);
       return isChildren;
     });
 
-    const byEType: EModelByETypeMappingType = groupBy<EModel>(filteredByLocation, 'etype');
-    return byEType;
+    const eModelMenuItems: EModelMenuItem[] = filteredByLocation.map((eModel: EModel) => ({
+      name: eModel.name,
+      id: eModel['@id'] || '',
+      eType: eModel.etype,
+    }));
+
+    return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
   }
 );
+
+export const editedEModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | null>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    const selectedBrainRegion = get(selectedBrainRegionAtom);
+    const brainRegions = await get(brainRegionsAtom);
+
+    if (!session || !selectedBrainRegion || !brainRegions) return null;
+
+    const eModelOptimizationsQuery = getEModelOptimizationConfigQuery();
+    const optimizationConfigs = await queryES<EModelOptimizationConfig>(
+      eModelOptimizationsQuery,
+      session
+    );
+
+    const eModelMenuItems: EModelMenuItem[] = optimizationConfigs.map((eModel) => ({
+      name: eModel.name,
+      id: eModel['@id'] || '',
+      eType: eModel.eType,
+    }));
+
+    return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
+  }
+);
+
+export const eModelCanBeSavedAtom = atom<Promise<boolean>>(async (get) => {
+  const selectedEModel = get(selectedEModelAtom);
+  const eModelEditMode = get(eModelEditModeAtom);
+  const eModelUIConfig = get(eModelUIConfigAtom);
+
+  if (!selectedEModel || !eModelEditMode || !eModelUIConfig) return false;
+  if (!eModelUIConfig.name) return false;
+
+  return eModelUIConfig.name !== selectedEModel.name;
+});

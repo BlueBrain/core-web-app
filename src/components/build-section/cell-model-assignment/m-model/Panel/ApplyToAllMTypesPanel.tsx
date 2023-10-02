@@ -5,8 +5,10 @@ import ModelSelect from '@/components/build-section/cell-model-assignment/m-mode
 import { ChangeModelAction, ModelChoice } from '@/types/m-model';
 import { analysedMTypesAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import { setAccumulativeTopologicalSynthesisAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
+import { bulkApplyAllAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
 import { expandBrainRegionId } from '@/util/cell-model-assignment';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 function Separator() {
   return <hr className="bg-primary-4 h-px w-full border-0" />;
@@ -15,9 +17,11 @@ function Separator() {
 export default function ApplyToAllMTypesPanel() {
   const mModelItems = useAtomValue(analysedMTypesAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
-  const setAccumulativeTopologicalSynthesis = useSetAtom(setAccumulativeTopologicalSynthesisAtom);
+  const setBulkApplyAll = useSetAtom(bulkApplyAllAtom);
   const [activeModel, setActiveModel] = useState<ModelChoice>('placeholder');
+
   const handleModelSelectChange = useCallback((newModelChoice: ModelChoice) => {
     if (newModelChoice !== null) {
       setActiveModel(newModelChoice);
@@ -29,14 +33,10 @@ export default function ApplyToAllMTypesPanel() {
       const expandedBrainRegionId = expandBrainRegionId(selectedBrainRegion.id);
       const action: ChangeModelAction = activeModel === 'canonical' ? 'add' : 'remove';
 
-      mModelItems.forEach((mModelItem) => {
-        const selectedMTypeId = mModelItem.id;
-        setTimeout(() =>
-          setAccumulativeTopologicalSynthesis(expandedBrainRegionId, selectedMTypeId, action)
-        );
-      });
+      const mTypeIds = mModelItems.map((mModel) => mModel.id);
+      setBulkApplyAll(expandedBrainRegionId, mTypeIds, action);
     }
-  }, [activeModel, mModelItems, selectedBrainRegion, setAccumulativeTopologicalSynthesis]);
+  }, [activeModel, mModelItems, selectedBrainRegion, setBulkApplyAll]);
 
   return (
     <div className="px-7 flex flex-col gap-5 my-3">
@@ -45,15 +45,20 @@ export default function ApplyToAllMTypesPanel() {
       <div className="flex flex-row justify-between font-semibold items-center gap-3 text-white text-sm">
         <div className="pr-3">Apply to all M-types</div>
         <div className="flex-grow">
-          <ModelSelect onChange={handleModelSelectChange} value={activeModel} />
+          <DefaultLoadingSuspense>
+            <ModelSelect onChange={handleModelSelectChange} value={activeModel} />
+          </DefaultLoadingSuspense>
         </div>
       </div>
 
       <div className="flex flex-row justify-end items-center gap-3">
         <button
           type="button"
-          className="bg-primary-1 text-primary-7 font-semibold p-1 px-6"
+          className={`bg-primary-1 text-primary-7 font-semibold p-1 px-6 ${
+            isConfigEditable ? '' : 'cursor-not-allowed'
+          }`}
           onClick={applyActiveModelToAll}
+          disabled={!isConfigEditable}
         >
           Apply
         </button>

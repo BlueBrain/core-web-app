@@ -1,53 +1,76 @@
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai';
-import CustomTabs from './CustomTabs';
-import DefaultListView from '@/components/explore-section/ExploreSectionListingView/DefaultListView';
-import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import { inferredResourceIdsAtom } from '@/state/explore-section/generalization';
+import { useAtom } from 'jotai';
+import FilterControls from './FilterControls';
+import { RenderButtonProps } from './WithRowSelection';
+import WithGeneralization from './WithGeneralization';
+import { ExploreResource } from '@/types/explore-section/es';
+import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
+import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
+import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/HeaderPanel';
+import useExploreColumns from '@/hooks/useExploreColumns';
+import { sortStateAtom } from '@/state/explore-section/list-view-atoms';
 
-export default function DefaultListViewTabs({
+export default function DefaultListView({
   enableDownload,
-  title,
   experimentTypeName,
+  title,
   renderButton,
 }: {
   enableDownload?: boolean;
-  title: string;
   experimentTypeName: string;
+  title: string;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const inferredResourceIds = useAtomValue(inferredResourceIdsAtom(experimentTypeName));
+  const [sortState, setSortState] = useAtom(sortStateAtom);
 
-  const items = [
+  const columns = useExploreColumns(setSortState, sortState, [
     {
-      key: experimentTypeName,
-      label: 'Original',
-      children: (
-        <DefaultListView
-          enableDownload={enableDownload}
-          experimentTypeName={experimentTypeName}
-          title={title}
-        />
-      ),
+      title: '#',
+      key: 'index',
+      className: 'text-primary-7',
+      render: (_text: string, _record: ExploreResource, index: number) => index + 1,
+      width: 70,
     },
-    ...Array.from(inferredResourceIds).map((v1) => ({
-      key: v1 as string,
-      label: v1 as string,
-      children: (
-        <DefaultListView
-          enableDownload={enableDownload}
-          experimentTypeName={experimentTypeName}
-          resourceId={v1 as string}
-          title={title}
-          renderButton={renderButton}
-        />
-      ),
-    })),
-  ];
+  ]);
 
   return (
-    <div className="p-0 m-0">
-      <CustomTabs items={items} experimentTypeName={experimentTypeName} />
+    <div className="min-h-screen" style={{ background: '#d1d1d1' }}>
+      <WithGeneralization experimentTypeName={experimentTypeName}>
+        {({ data, expandable, resourceId, tabNavigation }) => (
+          <WithControlPanel experimentTypeName={experimentTypeName} resourceId={resourceId}>
+            {({ activeColumns, displayControlPanel, setDisplayControlPanel }) => (
+              <>
+                <div className="flex flex-col">
+                  <HeaderPanel
+                    experimentTypeName={experimentTypeName}
+                    resourceId={resourceId}
+                    title={title}
+                  />
+                </div>
+                <FilterControls
+                  displayControlPanel={displayControlPanel}
+                  experimentTypeName={experimentTypeName}
+                  resourceId={resourceId}
+                  setDisplayControlPanel={setDisplayControlPanel}
+                >
+                  {tabNavigation}
+                </FilterControls>
+                <ExploreSectionTable
+                  columns={columns.filter(({ key }) =>
+                    (activeColumns || []).includes(key as string)
+                  )}
+                  dataSource={data}
+                  enableDownload={enableDownload}
+                  expandable={expandable}
+                  experimentTypeName={experimentTypeName}
+                  loading={!data}
+                  renderButton={renderButton}
+                />
+              </>
+            )}
+          </WithControlPanel>
+        )}
+      </WithGeneralization>
     </div>
   );
 }

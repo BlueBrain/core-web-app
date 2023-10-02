@@ -1,6 +1,5 @@
 import { CSSProperties, HTMLProps, ReactNode } from 'react';
 import { ConfigProvider, Table, TableProps, Tooltip } from 'antd';
-import { basePath } from '@/config';
 import { isNumeric, to64 } from '@/util/common';
 import usePathname from '@/hooks/pathname';
 import { BrainIcon, InteractiveViewIcon, VirtualLabIcon } from '@/components/icons';
@@ -138,12 +137,12 @@ export function IndexColContent({
             },
             {
               children: <BrainIcon />,
-              href: `${basePath}/build/cell-composition/interactive?brainModelConfigId=${id}`,
+              href: `/build/cell-composition/interactive?brainModelConfigId=${id}`,
               title: 'View brain configuration',
             },
             {
               children: <VirtualLabIcon />,
-              href: `${basePath}/experiment-designer/experiment-setup?simulationCampaignUIConfigId=${id}`,
+              href: `/experiment-designer/experiment-setup?simulationCampaignUIConfigId=${id}`,
               title: 'View experiment configuration',
             },
           ].map(

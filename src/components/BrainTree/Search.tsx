@@ -1,7 +1,10 @@
 import { Dispatch, SetStateAction } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import set from 'lodash/fp/set';
-import { brainRegionsFilteredArrayAtom, setSelectedBrainRegionAtom } from '@/state/brain-regions';
+import {
+  alternateArrayWithRepresentationAtom,
+  setSelectedBrainRegionAtom,
+} from '@/state/brain-regions';
 import Search from '@/components/Search';
 import { NavValue } from '@/components/TreeNavItem';
 
@@ -20,7 +23,7 @@ export default function BrainTreeSearch({
   setValue?: Dispatch<SetStateAction<NavValue>>;
   value?: NavValue;
 }) {
-  const brainRegionsFilteredArray = useAtomValue(brainRegionsFilteredArrayAtom);
+  const brainRegionsArray = useAtomValue(alternateArrayWithRepresentationAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
 
   return (
@@ -52,15 +55,13 @@ export default function BrainTreeSearch({
         }, 500);
       }}
       options={
-        brainRegionsFilteredArray?.map(
-          ({ title, id, ancestors, leaves, representedInAnnotation }) => ({
-            label: title,
-            value: id,
-            ancestors,
-            leaves,
-            representedInAnnotation,
-          })
-        ) ?? []
+        brainRegionsArray?.map(({ title, id, ancestors, leaves, representedInAnnotation }) => ({
+          label: title,
+          value: id,
+          ancestors,
+          leaves,
+          representedInAnnotation,
+        })) ?? []
       }
       placeholder="Search region..."
     />

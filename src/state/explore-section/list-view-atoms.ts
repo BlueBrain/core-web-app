@@ -5,15 +5,18 @@ import head from 'lodash/head';
 import columnKeyToFilter from './column-key-to-filter';
 import { SortState } from '@/types/explore-section/application';
 import fetchDataQuery, { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
+import {
+  DataQuery,
+  fetchEsResourcesByType,
+  fetchDimensionAggs,
+} from '@/api/explore-section/resources';
 import sessionAtom from '@/state/session';
-import { fetchEsResourcesByType, fetchDimensionAggs } from '@/api/explore-section/resources';
 import {
   PAGE_SIZE,
   PAGE_NUMBER,
   SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
 import { typeToColumns } from '@/state/explore-section/type-to-columns';
-import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { resourceBasedResponseAtom } from '@/state/explore-section/generalization';
@@ -73,6 +76,7 @@ export const filtersAtom = atomFamily(
     atomWithDefault<Promise<Filter[]>>(async (get) => {
       const columnsKeys = typeToColumns[experimentTypeName];
       const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
+
       return [
         ...columnsKeys.map((colKey) => columnKeyToFilter(colKey)),
         ...(dimensionsColumns || []).map(
@@ -91,7 +95,7 @@ export const filtersAtom = atomFamily(
 
 export const queryAtom = atomFamily(
   ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
-    atom<object>(async (get) => {
+    atom<Promise<DataQuery | null>>(async (get) => {
       const searchString = get(searchStringAtom({ experimentTypeName, resourceId }));
       const pageNumber = get(pageNumberAtom({ experimentTypeName, resourceId }));
       const pageSize = get(pageSizeAtom);
@@ -102,14 +106,15 @@ export const queryAtom = atomFamily(
         return null;
       }
 
-      if (resourceId) {
+      if (resourceId && resourceId !== experimentTypeName) {
         const resourceBasedResponse = await get(resourceBasedResponseAtom(resourceId));
-        const resultsResourceBasedResponse:
-          | { id: string; results: ResourceBasedInference[] }
-          | undefined = head(resourceBasedResponse);
-        if (resultsResourceBasedResponse) {
-          const inferredResponseIds = resultsResourceBasedResponse.results.map((v: any) => v.id);
-          if (inferredResponseIds.length > 0) {
+
+        const firstRuleResults = head(resourceBasedResponse); // TODO: It's an array, because there can be multiple result sets (when inferring by multiple rules)
+
+        if (firstRuleResults) {
+          const inferredResponseIds = firstRuleResults.results.map(({ id }) => id);
+
+          if (inferredResponseIds.length) {
             return fetchDataQueryUsingIds(
               pageSize,
               pageNumber,
@@ -139,11 +144,12 @@ export const queryResponseAtom = atomFamily(
   ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
       const session = get(sessionAtom);
-      const query = await get(queryAtom({ experimentTypeName, resourceId }));
 
       if (!session) return null;
 
-      const result = await fetchEsResourcesByType(session.accessToken, query);
+      const query = await get(queryAtom({ experimentTypeName, resourceId }));
+
+      const result = query && (await fetchEsResourcesByType(session.accessToken, query));
 
       return result;
     }),

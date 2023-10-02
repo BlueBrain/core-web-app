@@ -8,7 +8,6 @@ import {
 } from 'three';
 import { tableFromIPC } from '@apache-arrow/es5-cjs';
 import { loadable } from 'jotai/utils';
-
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
 import { basePath } from '@/config';
@@ -37,7 +36,7 @@ function PointCloudMesh({
 }: PointCloudMeshProps) {
   const preventParallelism = usePreventParallelism();
   const atlas = useAtlasVisualizationManager();
-  const addNotification = useNotification();
+  const { warning, error } = useNotification();
   const detailedCircuit = useAtomValue(detailedCircuitLoadableAtom);
 
   /**
@@ -48,7 +47,7 @@ function PointCloudMesh({
       detailedCircuit.state === 'hasData' && detailedCircuit.data?.circuitConfigPath.url;
 
     if (!circuitConfigPathOverride && !detailedCircuitHasData) {
-      throw new Error('Circuit config path is not found in the configuration');
+      throw new Error('The Circuit config path could not be found in the configuration.');
     }
 
     const detailedCircuitConfigPath = detailedCircuitHasData
@@ -114,10 +113,17 @@ function PointCloudMesh({
           isLoading: false,
           hasError: true,
         });
-        addNotification.error('Something went wrong while fetching point cloud mesh');
+        if (
+          ex instanceof Error &&
+          ex.message.includes('The Circuit config path could not be found in the configuration.')
+        ) {
+          warning('The Point cloud could not displayed as the brain model has not yet been built.');
+        } else {
+          error('Something went wrong while parsing point cloud mesh');
+        }
       }
     });
-  }, [preventParallelism, regionID, atlas, fetchData, color, threeContextWrapper, addNotification]);
+  }, [preventParallelism, regionID, atlas, fetchData, color, threeContextWrapper, warning, error]);
 
   useEffect(() => {
     const pcObject = atlas.findVisiblePointCloud(regionID);

@@ -2,6 +2,8 @@ import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 import lodashSet from 'lodash/set';
 import lodashGet from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
 
 import {
   mModelRemoteParamsAtom,
@@ -20,6 +22,7 @@ import {
   brainRegionMTypeArrayAtom,
   canonicalMorphologyModelAtom,
   canonicalParamsAndDistributionAtom,
+  canonicalBrainRegionMTypeMapAtom,
 } from '.';
 import { ChangeModelAction, ParamConfig } from '@/types/m-model';
 import sessionAtom from '@/state/session';
@@ -150,23 +153,73 @@ export const setAccumulativeTopologicalSynthesisAtom = atom<
   const accumulative = structuredClone(await get(mModelWorkflowOverridesAtom));
 
   if (action === 'remove') {
+    if (isEmpty(accumulative)) return;
+
     delete accumulative[brainRegionId][mTypeId];
+    if (isEqual(accumulative[brainRegionId], {})) {
+      // No canonical in that region so remove the region
+      delete accumulative[brainRegionId];
+    }
     set(localMModelWorkflowOverridesAtom, accumulative);
+    set(setMorphologyAssignmentConfigPayloadAtom);
     return;
   }
 
   const canonicalMorphologyModelId = await get(canonicalMorphologyModelIdAtom);
   lodashSet(accumulative, generateBrainRegionMTypeArray(brainRegionId, mTypeId), {
-    id: canonicalMorphologyModelId,
+    '@id': canonicalMorphologyModelId,
     overrides,
   });
   set(localMModelWorkflowOverridesAtom, accumulative);
+  set(setMorphologyAssignmentConfigPayloadAtom);
 });
+
+export const applyOverridesToAccumulativeAtom = atom<null, [], void>(null, async (get, set) => {
+  const overrides = get(mModelLocalParamsAtom);
+  const accumulative = structuredClone(await get(mModelWorkflowOverridesAtom));
+  const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
+
+  if (!brainRegionMTypeArray) return;
+
+  const path = [...brainRegionMTypeArray, 'overrides'];
+  lodashSet(accumulative, path, overrides);
+  set(localMModelWorkflowOverridesAtom, accumulative);
+  set(setMorphologyAssignmentConfigPayloadAtom);
+});
+
+export const bulkApplyAllAtom = atom<null, [string, string[], ChangeModelAction], void>(
+  null,
+  async (get, set, brainRegionId, mTypeIds, action) => {
+    const accumulative = structuredClone(await get(mModelWorkflowOverridesAtom));
+    const canonicalBrainRegionMTypeMap = await get(canonicalBrainRegionMTypeMapAtom);
+
+    if (action === 'remove') {
+      if (isEmpty(accumulative)) return;
+
+      delete accumulative[brainRegionId];
+      set(localMModelWorkflowOverridesAtom, accumulative);
+      set(setMorphologyAssignmentConfigPayloadAtom);
+      return;
+    }
+
+    mTypeIds.forEach((mTypeId) => {
+      const path = generateBrainRegionMTypeArray(brainRegionId, mTypeId);
+      const brainRegionMTypeKey = generateBrainRegionMTypeMapKey(brainRegionId, mTypeId);
+      const canonicalId = canonicalBrainRegionMTypeMap.get(brainRegionMTypeKey);
+      lodashSet(accumulative, path, {
+        '@id': canonicalId,
+        overrides: {},
+      });
+    });
+
+    set(localMModelWorkflowOverridesAtom, accumulative);
+    set(setMorphologyAssignmentConfigPayloadAtom);
+  }
+);
 
 export const setMorphologyAssignmentConfigPayloadAtom = atom<null, [], void>(
   null,
   async (get, set) => {
-    await set(setMModelLocalTopologicalSynthesisParamsAtom);
     const remoteConfigPayload = await get(remoteConfigPayloadAtom);
     const topologicalSynthesisParams = await get(mModelWorkflowOverridesAtom);
 

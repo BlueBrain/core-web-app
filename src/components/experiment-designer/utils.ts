@@ -1,5 +1,4 @@
 import { focusAtom } from 'jotai-optics';
-import { OpticFor } from 'optics-ts';
 import { PrimitiveAtom } from 'jotai';
 import range from 'lodash/range';
 import round from 'lodash/round';
@@ -9,7 +8,6 @@ import find from 'lodash/find';
 import { getNewStepper, getNewTargetObj } from './defaultNewObject';
 import { expDesignerConfigAtom } from '@/state/experiment-designer';
 import type {
-  ExpDesignerConfig,
   ExpDesignerGroupParameter,
   ExpDesignerNumberParameter,
   ExpDesignerParam,
@@ -24,13 +22,11 @@ import type {
 import { customRangeDelimeter } from '@/services/bbp-workflow/config';
 
 export function getFocusedAtom(name: ExpDesignerSectionName) {
-  return focusAtom(expDesignerConfigAtom, (optic: OpticFor<ExpDesignerConfig>) => optic.prop(name));
+  return focusAtom(expDesignerConfigAtom, (optic) => optic.prop(name));
 }
 
 export function getSubGroupFocusedAtom(groupParamAtom: PrimitiveAtom<ExpDesignerGroupParameter>) {
-  return focusAtom(groupParamAtom, (optic: OpticFor<ExpDesignerGroupParameter>) =>
-    optic.prop('value')
-  );
+  return focusAtom(groupParamAtom, (optic) => optic.prop('value'));
 }
 
 export function cloneLastAndAdd(setSectionConfig: any) {

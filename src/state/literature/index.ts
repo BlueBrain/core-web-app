@@ -10,8 +10,9 @@ import {
   ContextualLiteratureAtom,
   ContextQAItem,
   ArticleTypeSuggestion,
+  QuestionParameters,
 } from '@/types/literature';
-import { Filter } from '@/components/Filter/types';
+import { Filter, GteLteValue } from '@/components/Filter/types';
 import { getArticleTypes } from '@/components/explore-section/Literature/actions';
 
 export type BrainRegion = { id: string; title: string };
@@ -38,7 +39,6 @@ const literatureAtom = atom<LiteratureAtom>({
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
 
 const literatureResultAtom = atomWithStorage<GenerativeQA[]>(GENERATIVE_QA_HISTORY_CACHE_KEY, []);
-const contextualLiteratureResultAtom = atom<GenerativeQA[]>([]);
 const contextualLiteratureAtom = atom<ContextualLiteratureAtom>({});
 
 function useLiteratureAtom() {
@@ -82,27 +82,6 @@ export function useLiteratureResultsAtom() {
   return { QAs, update, remove };
 }
 
-function useContextualLiteratureResultAtom() {
-  const [QAs, updateResult] = useAtom(contextualLiteratureResultAtom);
-
-  const reset = (newValue: GenerativeQA | null) => {
-    updateResult(newValue ? [newValue] : []);
-  };
-
-  const update = (newValue: GenerativeQA) => {
-    updateResult([...QAs, newValue]);
-  };
-
-  const remove = (id: string) => {
-    const newQAs = QAs.filter((item) => item.id !== id);
-    updateResult(newQAs);
-
-    return newQAs;
-  };
-
-  return { QAs, update, remove, reset };
-}
-
 const brainRegionQAs = atom((get) => {
   const allQuestions = get(literatureResultAtom);
 
@@ -139,14 +118,32 @@ const articleTypeSuggestionsAtom = atom<Promise<ArticleTypeSuggestion[]>>(async 
   return articleTypeResponse;
 });
 
+export const initialParameters: QuestionParameters = {
+  selectedDate: { lte: null, gte: null },
+  selectedJournals: [],
+  selectedAuthors: [],
+  selectedArticleTypes: [],
+};
+
+const questionsParametersAtom = atom<Partial<QuestionParameters>>(initialParameters);
+
+export function useQuestionParameter() {
+  const setQuestionParameters = useSetAtom(questionsParametersAtom);
+
+  return (field: keyof QuestionParameters, values: GteLteValue | string[]) =>
+    setQuestionParameters((prev) => ({
+      ...prev,
+      [field]: values,
+    }));
+}
+
 export {
   literatureAtom,
   literatureResultAtom,
   contextualLiteratureAtom,
-  contextualLiteratureResultAtom,
   brainRegionQAs,
   useLiteratureAtom,
   useContextualLiteratureAtom,
-  useContextualLiteratureResultAtom,
   articleTypeSuggestionsAtom,
+  questionsParametersAtom,
 };

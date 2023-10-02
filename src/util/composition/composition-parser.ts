@@ -1,4 +1,3 @@
-import has from 'lodash/has';
 import uniq from 'lodash/uniq';
 import {
   OriginalComposition,
@@ -28,10 +27,10 @@ export function convertCompositionToCountPair(
 ): CountPair {
   const countPair = { neuron: 0, glia: 0 };
   if (composition.neuron) {
-    countPair.neuron = Math.round(composition.neuron.density * regionVolume);
+    countPair.neuron = composition.neuron.density * regionVolume;
   }
   if (composition.glia) {
-    countPair.glia = Math.round(composition.glia.density * regionVolume);
+    countPair.glia = composition.glia.density * regionVolume;
   }
   return countPair;
 }
@@ -88,9 +87,7 @@ export function addNode(node: CalculationNode, nodes: { [key: string]: Calculati
  * @param nodes the map of total nodes
  * @param links the map of total links
  * @param leafId the leaf id we currently iterate into
- * @param blockedNodeIds the node ids that should be blocked
  * @param extendedNodeId the extended node of the node it currently visits
- * @param isBlocked
  * @param regionVolume
  */
 export function iterateNode(
@@ -99,14 +96,9 @@ export function iterateNode(
   nodes: { [key: string]: CalculationNode },
   links: { [key: string]: CalculationLink },
   leafId: string,
-  blockedNodeIds: string[],
   extendedNodeId: string,
-  isBlocked: boolean,
   regionVolume: number
 ): CountPair {
-  if (isBlocked) {
-    blockedNodeIds.push(extendedNodeId);
-  }
   if ('hasPart' in subTree) {
     let totalCountPair = initializeCountPair();
 
@@ -118,8 +110,6 @@ export function iterateNode(
         childSubtree.about
       );
       childSubtree.extendedNodeId = childExtendedNodeId;
-      const childIsBlocked =
-        isBlocked || (Object.keys(subTree.hasPart).length === 1 && has(childSubtree, 'hasPart'));
       // calculate its composition and add it in the total
       const childCountPair = iterateNode(
         childSubtree,
@@ -127,9 +117,7 @@ export function iterateNode(
         nodes,
         links,
         leafId,
-        blockedNodeIds,
         childExtendedNodeId,
-        childIsBlocked,
         regionVolume
       );
       totalCountPair = addCountPairs(totalCountPair, childCountPair);
@@ -178,23 +166,11 @@ export default async function calculateCompositions(
   const nodes: { [key: string]: CalculationNode } = {};
   const links: { [key: string]: CalculationLink } = {};
   let totalCountPair = initializeCountPair();
-  const blockedNodeIds: string[] = [];
   leafIDs?.forEach((leafId) => {
     if (leafId in compositionFile.hasPart && leafId in volumes) {
       const leaf = compositionFile.hasPart[leafId];
       const regionVolume = volumes[leafId];
-
-      const rootCountPair = iterateNode(
-        leaf,
-        leafId,
-        nodes,
-        links,
-        leafId,
-        blockedNodeIds,
-        '',
-        false,
-        regionVolume
-      );
+      const rootCountPair = iterateNode(leaf, leafId, nodes, links, leafId, '', regionVolume);
       totalCountPair = addCountPairs(totalCountPair, rootCountPair);
     }
   });
@@ -207,7 +183,7 @@ export default async function calculateCompositions(
       parentId: node.parentId,
       neuronComposition: {
         density: node.countPair.neuron / volumes[selectedRegionId],
-        count: node.countPair.neuron,
+        count: Math.round(node.countPair.neuron),
       },
       leaves: uniq(node.leaves),
       relatedNodes: uniq(node.relatedNodes),
@@ -233,7 +209,6 @@ export default async function calculateCompositions(
       glia: { density: 0, count: 0 },
     },
     composition: compositionFile,
-    blockedNodeIds: uniq(blockedNodeIds),
   };
 }
 /* eslint-enable no-param-reassign */

@@ -21,7 +21,7 @@ import {
 import { OriginalComposition } from '@/types/composition/original';
 import { AnalysedComposition, CalculatedCompositionNode } from '@/types/composition/calculation';
 import { MModelMenuItem } from '@/types/m-model';
-import { MEModelMenuItem } from '@/types/e-model';
+import { EModelMenuItem, MEModelMenuItem } from '@/types/e-model';
 
 // This holds a weak reference to the updatedComposition by it's initial composition
 // This allows GC to dispose the object once it is no longer used by current components
@@ -121,18 +121,20 @@ export const analysedETypesAtom = atom<Promise<MEModelMenuItem>>(async (get) => 
     const mTypeInfo = mTypesMap.get(eType.parentId || '');
     if (!mTypeInfo) return acc;
 
-    const eTypeInfo = {
-      uuid: crypto.randomUUID(),
-      label: eType.label,
+    const eTypeInfo: EModelMenuItem = {
+      name: eType.label,
       id: eType.id,
-      mType: mTypeInfo,
+      eType: eType.label,
     };
 
-    if (acc[mTypeInfo.label]) {
-      const currentValues = acc[mTypeInfo.label];
-      acc[mTypeInfo.label] = [...currentValues, eTypeInfo];
+    const existingMTypeInfo = acc[mTypeInfo.label];
+    if (existingMTypeInfo) {
+      existingMTypeInfo.eTypeInfo = [...existingMTypeInfo.eTypeInfo, eTypeInfo];
     } else {
-      acc[mTypeInfo.label] = [eTypeInfo];
+      acc[mTypeInfo.label] = {
+        mTypeInfo,
+        eTypeInfo: [eTypeInfo],
+      };
     }
 
     return acc;
@@ -141,13 +143,7 @@ export const analysedETypesAtom = atom<Promise<MEModelMenuItem>>(async (get) => 
 
 export const computeAndSetCompositionAtom = atom(
   null,
-  async (
-    get,
-    set,
-    modifiedNode: CalculatedCompositionNode,
-    newValue: number,
-    lockedIds: string[]
-  ) => {
+  async (get, set, modifiedNode: CalculatedCompositionNode, newValue: number) => {
     const analysedComposition = await get(analysedCompositionAtom);
     const volumes = await get(brainRegionOntologyVolumesAtom);
     if (!analysedComposition || modifiedNode.composition === undefined) {
@@ -167,7 +163,6 @@ export const computeAndSetCompositionAtom = atom(
         valueDifference,
         modifiedNode.leaves,
         composition,
-        lockedIds,
         densityOrCount,
         volumes,
         `http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion?.id}`

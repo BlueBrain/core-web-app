@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic';
 
+import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
+
 const MicroConnectomeConfigurationView = dynamic(
   () => import('@/components/connectome-definition/micro/MicroConnectomeConfigView'),
   {
@@ -10,5 +12,7 @@ const MicroConnectomeConfigurationView = dynamic(
 );
 
 export default function MicroConnectomeConfigurationPage() {
+  useLiteratureCleanNavigate();
+
   return <MicroConnectomeConfigurationView />;
 }

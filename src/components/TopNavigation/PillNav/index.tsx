@@ -26,7 +26,7 @@ export default function PillNav({ items, onChange, activeItemIndex = -1 }: PillN
           label={pill.label}
           href={pill.href}
           isActive={(pill.isActive ?? false) || index === activeItemIndex}
-          onClick={() => onChange?.(index)}
+          onClick={() => (pill.onClick ? pill.onClick() : onChange?.(index))}
         />
       )),
     [activeItemIndex, items, onChange]

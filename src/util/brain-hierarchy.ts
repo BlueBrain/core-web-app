@@ -136,3 +136,45 @@ export function itemsInAnnotationReducer(
   // LEAF
   return [...accBrainRegions, { ...curBrainRegion, itemsInAnnotation: false }]; // No items? Then no items in annotation.
 }
+
+/**
+ * Recursively unravels a brain region tree to an array
+ * @param brainRegion
+ * @param result
+ * @param ancestors
+ */
+export const treeToArray = (
+  brainRegion: BrainRegion,
+  result: BrainRegion[],
+  ancestors: string[]
+) => {
+  brainRegion.items?.forEach((br) => {
+    const newRegion = { ...br };
+    delete newRegion.items;
+    const newAncestors = [...ancestors, brainRegion.id];
+    newRegion.ancestors = newAncestors;
+    result.push(newRegion);
+    treeToArray(br, result, newAncestors);
+  });
+};
+
+export function flattenBrainRegionsTree(tree: BrainRegion[] | null): BrainRegion[] | null {
+  // if the tree is successfully created, make region 8 the root and flatten it
+  // back to array. This is done in order to remove the brain regions that are
+  // siblings or parents of region 8
+  if (tree) {
+    const root = { ...tree[0] };
+
+    if (root) {
+      const flattenedRegions: BrainRegion[] = [];
+
+      treeToArray(root, flattenedRegions, []);
+
+      delete root.items;
+
+      return flattenedRegions;
+    }
+  }
+
+  return tree;
+}

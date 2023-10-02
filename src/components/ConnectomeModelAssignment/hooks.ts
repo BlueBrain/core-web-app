@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import uniq from 'lodash/uniq';
 import { Session } from 'next-auth';
@@ -30,6 +30,7 @@ import {
 } from '@/api/nexus';
 import { usePrevious } from '@/hooks/hooks';
 import { createDistribution, setRevision } from '@/util/nexus';
+import { supportedUIConfigVersion } from '@/constants/configs';
 
 /**
  * Return a function that provides all the possible values
@@ -108,6 +109,10 @@ async function fetchRules(
   ) => void
 ) {
   const configResource = await fetchResourceById<SynapseConfigResource>(synapseConfigId, session);
+
+  if (configResource.configVersion !== supportedUIConfigVersion.synapseConfig)
+    throw new Error('Config version is not supported by Synapse Editor');
+
   const configPayload = await fetchJsonFileByUrl<SynapseConfigPayload>(
     setRevision(configResource.distribution.contentUrl, null),
     session
@@ -181,6 +186,11 @@ export function useFetch() {
   const setUserRules = useSetAtom(userRulesAtom);
   const setTypes = useSetAtom(userTypesAtom);
   const onFetchSuccess = useOnFetchSuccess();
+  const [error, setError] = useState<string>();
+
+  if (error) {
+    throw new Error(error);
+  }
 
   useEffect(() => {
     if (!synapseConfigId || !session || synapseConfigId === prevSynapseConfigId || !initialRules)
@@ -189,7 +199,13 @@ export function useFetch() {
     setRulesData(null);
     setUserRules([]);
     setTypes([]);
-    fetchRules(synapseConfigId, session, onFetchSuccess);
+    (async () => {
+      try {
+        await fetchRules(synapseConfigId, session, onFetchSuccess);
+      } catch (e) {
+        setError((e as Error).message);
+      }
+    })();
   }, [
     session,
     synapseConfigId,

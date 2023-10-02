@@ -10,12 +10,15 @@ import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { QAContainer } from '@/components/explore-section/Literature/components';
 import { getGenerativeQAAction } from '@/components/explore-section/Literature/actions';
 
+const navigateBackMock = jest.fn();
+
 jest.mock('next/navigation', () => ({
   __esModule: true,
   usePathname: jest.fn(),
   useSearchParams: jest.fn(),
   useRouter: () => ({
     replace: jest.fn(),
+    back: navigateBackMock,
   }),
 }));
 
@@ -46,6 +49,12 @@ describe('QAContainer', () => {
     fireEvent.click(searchInBrainRegionSwitch());
 
     expect(screen.queryByTestId('selected-brain-region')?.innerHTML).toEqual('All regions');
+  });
+
+  test('navigates back when "Back to configuration" button is clicked', () => {
+    const backButton = screen.getByText('Back to configuration');
+    fireEvent.click(backButton);
+    expect(navigateBackMock).toHaveBeenCalled();
   });
 
   const searchInBrainRegionSwitch = () => screen.getByLabelText('Ignore current context');

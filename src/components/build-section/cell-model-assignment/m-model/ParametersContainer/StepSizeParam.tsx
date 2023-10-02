@@ -5,9 +5,15 @@ type ParameterProps = {
   paramValue: StepSizeInterface;
   paramInfo: ParamInfo;
   onChange: (newValue: StepSizeInterface) => void;
+  isConfigEditable: boolean;
 };
 
-export default function StepSizeParam({ paramValue, paramInfo, onChange }: ParameterProps) {
+export default function StepSizeParam({
+  paramValue,
+  paramInfo,
+  onChange,
+  isConfigEditable,
+}: ParameterProps) {
   const value = paramValue?.norm?.mean;
 
   const onStepChange = (newValue: number) => {
@@ -16,5 +22,12 @@ export default function StepSizeParam({ paramValue, paramInfo, onChange }: Param
     onChange(cloned);
   };
 
-  return <NumberParam paramValue={value} paramInfo={paramInfo} onChange={onStepChange} />;
+  return (
+    <NumberParam
+      paramValue={value}
+      paramInfo={paramInfo}
+      onChange={onStepChange}
+      isConfigEditable={isConfigEditable}
+    />
+  );
 }

@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
+import { omitDeep } from 'deepdash-es/standalone';
 
 import { configAtom, configPayloadAtom, configPayloadRevAtom, setLocalConfigPayloadAtom } from '.';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
@@ -10,6 +11,7 @@ import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 import { OriginalComposition } from '@/types/composition/original';
+import openNotification from '@/api/notifications';
 
 // TODO: move to a separate module
 const configPayloadDefaults = {
@@ -59,8 +61,8 @@ export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload]
     config.distribution = createDistribution(updatedFile);
 
     await updateResource(config, config?._rev, session);
-
-    set(invalidateConfigAtom, 'cellComposition');
+    await set(invalidateConfigAtom, 'cellComposition');
+    openNotification('success', 'The composition was successfully saved');
   }
 );
 
@@ -79,6 +81,13 @@ const setConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], void>(
     set(triggerUpdateDebouncedAtom, configPayload);
   }
 );
+
+const getOverridesFromCellComposition = (composition: OriginalComposition) => {
+  const overrides = omitDeep(composition.hasPart, 'extendedNodeId', {
+    onMatch: { skipChildren: true },
+  });
+  return overrides as CompositionOverridesWorkflowConfig;
+};
 
 export const setCompositionPayloadConfigurationAtom = atom<null, [OriginalComposition], void>(
   null,
@@ -103,7 +112,7 @@ export const setCompositionPayloadConfigurationAtom = atom<null, [OriginalCompos
       configuration: {
         version: composition.version,
         unitCode: composition.unitCode,
-        overrides: composition.hasPart as unknown as CompositionOverridesWorkflowConfig,
+        overrides: getOverridesFromCellComposition(composition),
       },
     };
 

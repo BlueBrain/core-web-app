@@ -11,7 +11,6 @@ import QAHistoryNavigation from './QANavigation';
 import QABrainRegion from './QABrainRegion';
 import usePathname from '@/hooks/pathname';
 import { literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
-import { useContextualLiteratureResultAtom } from '@/state/literature';
 import { classNames } from '@/util/utils';
 
 function IgnoreBrainContext() {
@@ -53,17 +52,21 @@ function IgnoreBrainContext() {
 
 function IgnoreContextualLiterature() {
   const { replace } = useRouter();
-  const { reset } = useContextualLiteratureResultAtom();
-  const { isContextualLiterature, pathname, clearContextSearchParams } =
-    useContextualLiteratureContext();
-
+  const {
+    pathname,
+    isContextualMode,
+    isContextualLiterature,
+    removeContextualSearchParam,
+    appendContextualSearchParam,
+  } = useContextualLiteratureContext();
   const returnDefaultView = () => {
-    reset(null);
-    const params = clearContextSearchParams();
+    const params = isContextualLiterature
+      ? removeContextualSearchParam()
+      : appendContextualSearchParam();
     replace(`${pathname}?${params.toString()}`);
   };
 
-  if (!isContextualLiterature) return null;
+  if (!isContextualMode) return null;
   return (
     <div className="px-4 pt-2">
       <Switch.Root
@@ -73,7 +76,7 @@ function IgnoreContextualLiterature() {
           'data-[state=checked]:bg-primary-8 data-[state=checked]:border data-[state=checked]:border-primary-8',
           'data-[disabled]:cursor-not-allowed data-[disabled]:bg-gray-300 data-[disabled]:border data-[disabled]:border-gray-500'
         )}
-        title="A brain region should be selected"
+        title="show questions relative on the context"
         onCheckedChange={returnDefaultView}
         checked={!isContextualLiterature}
       >

@@ -1,11 +1,11 @@
 // TODO Enable Sentry back when the Nextjs build Sentry build is fixed
-// const { withSentryConfig } = require('@sentry/nextjs');
+const { withSentryConfig } = require('@sentry/nextjs');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-// const SentryWebpackPluginOptions = { silent: true, dryRun: !process.env.NEXT_PUBLIC_SENTRY_DSN };
+const SentryWebpackPluginOptions = { silent: true, dryRun: !process.env.NEXT_PUBLIC_SENTRY_DSN };
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
 
@@ -29,12 +29,11 @@ const nextConfig = {
   compress: false,
   output: 'standalone',
   experimental: {
-    appDir: true,
     serverActions: true,
   },
-  // sentry: {
-  //   hideSourceMaps: false,
-  // },
+  sentry: {
+    hideSourceMaps: false,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -67,26 +66,6 @@ const nextConfig = {
       },
     ];
   },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          // These are required to enable SharedArrayBuffer support,
-          // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'require-corp',
-          },
-        ],
-      },
-    ];
-  },
 };
 
-// module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, SentryWebpackPluginOptions));
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, SentryWebpackPluginOptions));

@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 
 import * as LiteratureErrors from '../components/explore-section/Literature/errors';
-import { Filter } from '@/components/Filter/types';
+import { Filter, GteLteValue } from '@/components/Filter/types';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 
 export type HighlightHit = {
@@ -62,6 +62,7 @@ export type BuildStepPath =
 
 export type GenerativeQA = {
   id: string;
+  chatId?: string;
   askedAt: Date;
   question: string;
   answer: string;
@@ -165,6 +166,13 @@ export type Suggestion = {
   key: string;
   label: string;
   value: string;
+};
+
+export type QuestionParameters = {
+  selectedDate: GteLteValue;
+  selectedJournals: string[];
+  selectedAuthors: string[];
+  selectedArticleTypes: string[];
 };
 
 /**

@@ -1,12 +1,14 @@
-import { Children } from 'react';
+import { Children, useMemo } from 'react';
 import { Spin, Checkbox } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, WarningOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import {
   resourceBasedRulesAtom,
-  inferredResourceIdsAtom,
+  inferredResourcesAtom,
 } from '@/state/explore-section/generalization';
 import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
+import useNotification from '@/hooks/notifications';
 
 interface GeneralizationOptionsProps {
   resourceId: string;
@@ -39,10 +41,7 @@ function GeneralizationOptions({
           >
             {ruleWithBool.name}
           </Checkbox>
-          <p className="font-thin pl-12">
-            At elementum eu facilisis sed odio morbi quis commodo. Nascetur ridiculus mus mauris
-            vitae ultricies leo integer. Tempus imperdiet nulla malesuada pellentesque.
-          </p>
+          <p className="font-thin pl-12">{ruleWithBool.description}</p>
         </li>
       </div>
     </div>
@@ -52,16 +51,29 @@ function GeneralizationOptions({
 function GeneralizationRules({
   resourceId,
   experimentTypeName,
+  name,
 }: {
   resourceId: string;
   experimentTypeName: string;
+  name: string;
 }) {
-  const [resourceBasedRules, setResourceBasedRules] = useAtom(resourceBasedRulesAtom(resourceId));
-  const [inferredResourceIds, setinferredResourceIds] = useAtom(
-    inferredResourceIdsAtom(experimentTypeName)
+  const [resourceBasedRules, setResourceBasedRules] = useAtom(
+    useMemo(() => unwrap(resourceBasedRulesAtom(resourceId)), [resourceId])
+  );
+  const [inferredResources, setinferredResources] = useAtom(
+    inferredResourcesAtom(experimentTypeName)
   );
 
-  if (!resourceBasedRules) return <Spin className="h-6 w-6" indicator={<LoadingOutlined />} />;
+  const { success } = useNotification();
+
+  if (!resourceBasedRules)
+    return (
+      <Spin
+        size="large"
+        className="flex justify-center items-center"
+        indicator={<LoadingOutlined />}
+      />
+    );
 
   const handleCheckboxChange = (ruleWithBool: ResourceBasedInference) => {
     const indexToUpdate = resourceBasedRules.findIndex(
@@ -72,15 +84,28 @@ function GeneralizationRules({
       const newResourceBasedRulesArray = [...resourceBasedRules];
 
       newResourceBasedRulesArray[indexToUpdate] = ruleWithBool;
-
+      // ts-ignore due to a typing issue caused by atomWithDefault with Promise
+      // @ts-ignore
       setResourceBasedRules(newResourceBasedRulesArray);
     }
   };
 
   const handleInferButtonClick = () => {
-    setinferredResourceIds([...inferredResourceIds, ...[resourceId]]);
+    // if not found, the resource is added
+    if (!inferredResources.find((item) => item.id === resourceId)) {
+      success('Resources were inferred. Change the tab to explore the inferred resources');
+      setinferredResources([...inferredResources, ...[{ id: resourceId, name }]]);
+    }
   };
 
+  if (resourceBasedRules.length === 0) {
+    return (
+      <div className="flex gap-3 text-warning">
+        <WarningOutlined />
+        <div>No inferred resource available</div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col space-y-4 bg-white pl-12 text-primary-8">
       <h1 className="font-semibold text-lg">Inference options</h1>
@@ -96,16 +121,12 @@ function GeneralizationRules({
         )}
 
         <div className="flex flex-col space-y-2 place-self-center">
-          <label htmlFor="number-of-results" className="font-semibold">
-            <span className="font-thin">Number of infer results:</span>
-            <input type="number" id="number-of-results" className="ml-6 border-gray-500 border" />
-          </label>
           <button
             type="submit"
-            className="self-end	px-2 py-2 bg-primary-8 text-white font-semibold w-1/2"
+            className="self-end	px-3 py-2 bg-primary-8 text-white font-semibold"
             onClick={handleInferButtonClick}
           >
-            Infer
+            Find new morphologies
           </button>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { ConfigProvider, Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Suggestion } from '@/types/literature';
 
@@ -22,7 +22,6 @@ export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Pr
     const loadOptions = (value: string) => {
       fetchRef.current = +1;
       const fetchId = fetchRef.current;
-      setSuggestions([]);
       setFetching(true);
 
       fetchOptions(value).then((newOptions) => {
@@ -35,6 +34,14 @@ export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Pr
       });
     };
     return debounce(loadOptions, 150);
+  }, [fetchOptions]);
+
+  useEffect(() => {
+    setFetching(true);
+    fetchOptions('').then((initialSuggestions) => {
+      setFetching(false);
+      setSuggestions(initialSuggestions);
+    });
   }, [fetchOptions]);
 
   return (

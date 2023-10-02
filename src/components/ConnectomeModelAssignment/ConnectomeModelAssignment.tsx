@@ -30,6 +30,7 @@ import SynapticAssignmentRulesTable from './SynapticAssignmentRulesTable';
 import { loadingAtom, synapticModelsAtom, userRulesAtom, userTypesAtom } from './state';
 import { classNames } from '@/util/utils';
 import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 import styles from './connectome-model-assignment.module.scss';
 
 const ACTIVE_TAB_CLASSNAME =
@@ -64,6 +65,7 @@ export default function ConnectomeModelAssignmentView() {
   const types = useAtomValue(userTypesAtom);
   const setUserRules = useSetRules();
   const setTypes = useSetTypes();
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const [userRulesFilter, setUserRulesFilter] = useState(new Filter([]));
   const [rulesTabActive, setRulesTabActive] = useState(true);
@@ -190,13 +192,21 @@ export default function ConnectomeModelAssignmentView() {
           <div className="fixed" style={{ right: 35, bottom: 8 }}>
             <button
               type="button"
-              className={classNames(styles.button, 'bg-primary-8')}
+              className={
+                isConfigEditable
+                  ? classNames(styles.button, 'bg-primary-8')
+                  : classNames(styles.button, 'bg-gray-300 cursor-not-allowed')
+              }
               onClick={() => setAddRuleModalOpen(true)}
-              disabled={loading}
+              disabled={loading || !isConfigEditable}
             >
               {!loading && <PlusOutlined />}
               {loading && <LoadingOutlined />}
-              &nbsp;&nbsp;Add synapse assignment rule
+              {isConfigEditable && <span className="ml-2">Add synapse assignment rule</span>}
+              {!isConfigEditable && (
+                // eslint-disable-next-line
+                <span className="ml-2">You can't modify another users configuration</span>
+              )}
             </button>
             <button type="button" className={classNames(styles.button, 'bg-black')}>
               <EyeOutlined />
@@ -208,13 +218,21 @@ export default function ConnectomeModelAssignmentView() {
           <div className="fixed" style={{ right: 35, bottom: 8 }}>
             <button
               type="button"
-              className={classNames(styles.button, 'bg-primary-8')}
+              className={
+                isConfigEditable
+                  ? classNames(styles.button, 'bg-primary-8')
+                  : classNames(styles.button, 'bg-gray-300 cursor-not-allowed')
+              }
               onClick={() => setAddTypeModalOpen(true)}
-              disabled={loading}
+              disabled={loading || !isConfigEditable}
             >
               {!loading && <PlusOutlined />}
               {loading && <LoadingOutlined />}
-              &nbsp;&nbsp;Add synaptic type
+              {isConfigEditable && <span className="ml-2">Add synaptic type</span>}
+              {!isConfigEditable && (
+                // eslint-disable-next-line
+                <span className="ml-2">You can't modify another users configuration</span>
+              )}
             </button>
             <button type="button" className={classNames(styles.button, 'bg-black')}>
               <EyeOutlined />
@@ -454,6 +472,7 @@ function SynapticTypeRow({
   const [editing, setEditing] = useState(false);
   const usedSynapseTypes = useSynapseTypeUseCount();
   const loading = useAtomValue(loadingAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const setSelectedTypeIdx = useSetAtom(selectedTypeIdxAtom);
   const setTypeUsedInRules = useSetAtom(typeUsedInRulesAtom);
@@ -467,52 +486,96 @@ function SynapticTypeRow({
         <div style={{ flex: 2.5 }}>{type.synapticModel || models[0] || ''}</div>
         <div className="flex items-end">
           {type.gsyn}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="gsyn" subject="gsyn" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="gsyn"
+            subject="gsyn"
+          />
         </div>
         <div className="flex items-end">
           {type.gsynSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="gsyn" subject="gsynSD" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="gsyn"
+            subject="gsynSD"
+          />
         </div>
         <div className="flex items-end">
           {type.nrrp}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="nrrp" subject="nrrp" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="nrrp"
+            subject="nrrp"
+          />
         </div>
         <div className="flex items-end">
           {type.dtc}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="dtc" subject="dtc" />
+          <ContextualTrigger
+            className=" ml-1 !text-gray-300 hover:!text-primary-8"
+            about="dtc"
+            subject="dtc"
+          />
         </div>
         <div className="flex items-end">
           {type.dtcSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="dtc" subject="dtcSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="dtc"
+            subject="dtcSD"
+          />
         </div>
         <div className="flex items-end">
           {type.u}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="u" subject="u" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="u"
+            subject="u"
+          />
         </div>
         <div className="flex items-end">
           {type.uSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="u" subject="uSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="u"
+            subject="uSD"
+          />
         </div>
         <div className="flex items-end">
           {type.d}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="d" subject="d" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="d"
+            subject="d"
+          />
         </div>
         <div className="flex items-end">
           {type.dSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="d" subject="dSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="d"
+            subject="dSD"
+          />
         </div>
         <div className="flex items-end">
           {type.f}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="f" subject="f" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="f"
+            subject="f"
+          />
         </div>
         <div className="flex items-end">
           {type.fSD}
-          <ContextualTrigger className="!text-primary-3 ml-1" about="f" subject="fSD" />
+          <ContextualTrigger
+            className="ml-1 !text-gray-300 hover:!text-primary-8"
+            about="f"
+            subject="fSD"
+          />
         </div>
         <div>{type.gsynSRSF}</div>
         <div>{type.uHillCoefficient}</div>
         <div style={{ flex: 1.1 }}>
-          {!loading && (
+          {!loading && isConfigEditable && (
             <>
               <CopyOutlined
                 className={styles.icon}

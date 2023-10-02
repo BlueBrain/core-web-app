@@ -1,14 +1,10 @@
 import cloneDeep from 'lodash/cloneDeep';
-
-import gustatory from './data/gustatory-layer-1.json';
 import testComposition from './data/test-composition.json';
 import { calculateNewExtendedNodeId } from '@/util/composition/utils';
 import computeModifiedComposition, {
   calculateDensityRatioChange,
-  calculateRatioSpread,
   findParentOfAffected,
   iterateAndApplyDensityChange,
-  calculateAndApplyDensityChange,
   applyNewDensity,
 } from '@/util/composition/composition-modifier';
 import { OriginalComposition, OriginalCompositionNode } from '@/types/composition/original';
@@ -28,76 +24,6 @@ describe('calculateNewExtendedNodeId', () => {
     const nodeId = 'http://uri.interlex.org/base/ilx_0738203?rev=28';
     const newExtendedNodeId = calculateNewExtendedNodeId('', nodeId, 'MType');
     expect(newExtendedNodeId).toBe('http://uri.interlex.org/base/ilx_0738203?rev=28');
-  });
-});
-
-describe('calculate ratio spread', () => {
-  // @ts-ignore
-  const node = gustatory as OriginalCompositionNode;
-  const modifiedMType = {
-    about: 'MType',
-    id: 'http://uri.interlex.org/base/ilx_0383192?rev=34',
-    label: 'L1_DAC',
-    parentId: null,
-    neuronComposition: { count: 0, density: 0 },
-    leaves: [],
-    relatedNodes: [],
-    extendedNodeId: 'http://uri.interlex.org/base/ilx_0383192?rev=34',
-  };
-  it('should have correct ratio spread', () => {
-    const ratioSpread = calculateRatioSpread(node, '', modifiedMType, []);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383192?rev=34']).toBeCloseTo(1);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383193?rev=34']).toBeCloseTo(0.3992);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383194?rev=38']).toBeCloseTo(0.029);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383195?rev=34']).toBeCloseTo(0.2544);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383196?rev=34']).toBeCloseTo(0.07);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383197?rev=34']).toBeCloseTo(0.2463);
-  });
-
-  it('should have 0 ratio spread if locked', () => {
-    const ratioSpread = calculateRatioSpread(node, '', modifiedMType, [
-      'http://uri.interlex.org/base/ilx_0383193?rev=34',
-    ]);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383193?rev=34']).toBeCloseTo(0);
-  });
-
-  it('ratio spread is correct if there is locked node on first level', () => {
-    const ratioSpread = calculateRatioSpread(node, '', modifiedMType, [
-      'http://uri.interlex.org/base/ilx_0383193?rev=34',
-    ]);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383194?rev=38']).toBeCloseTo(0.049);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383195?rev=34']).toBeCloseTo(0.423);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383196?rev=34']).toBeCloseTo(0.1166);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0383197?rev=34']).toBeCloseTo(0.41);
-  });
-
-  it('ratio spread is correct if there is locked node on second level', () => {
-    // @ts-ignore
-    const l1DAC = gustatory.hasPart[
-      'http://uri.interlex.org/base/ilx_0383192?rev=34'
-    ] as OriginalCompositionNode;
-    const ratioSpread = calculateRatioSpread(
-      l1DAC,
-      'http://uri.interlex.org/base/ilx_0383192?rev=34',
-      modifiedMType,
-      [
-        'http://uri.interlex.org/base/ilx_0383192?rev=34__http://uri.interlex.org/base/ilx_0738201?rev=31',
-      ]
-    );
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738203?rev=28']).toBeCloseTo(1);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738201?rev=31']).toBeCloseTo(0);
-  });
-
-  it('ratio spread is spread correctly if previous value is 0', () => {
-    const nodeCopy = cloneDeep(node.hasPart['http://uri.interlex.org/base/ilx_0383192?rev=34']);
-    const ratioSpread = calculateRatioSpread(
-      nodeCopy,
-      'http://uri.interlex.org/base/ilx_0383192?rev=34',
-      modifiedMType,
-      []
-    );
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738203?rev=28']).toBeCloseTo(0.5592);
-    expect(ratioSpread['http://uri.interlex.org/base/ilx_0738201?rev=31']).toBeCloseTo(0.44);
   });
 });
 
@@ -179,65 +105,6 @@ describe('iterateAndApplyDensityChange', () => {
   });
 });
 
-describe('calculateAndApplyDensityChange', () => {
-  it('should calculate the correct overall density change when changing first level', () => {
-    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = cloneDeep(testBrainRegion);
-    const modifiedNode = {
-      id: 'mtype1',
-      extendedNodeId: 'mtype1',
-      neuronComposition: {
-        density: 600,
-      },
-    } as CalculatedCompositionNode;
-    // @ts-ignore
-    calculateAndApplyDensityChange(modifiedNode, copyTestBR, 0.5, []);
-    expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(125);
-    expect(copyTestBR.hasPart.mtype1.hasPart.etype2.composition.neuron.density).toBe(175);
-    expect(copyTestBR.hasPart.mtype2.hasPart.etype3.composition.neuron.density).toBe(350);
-    expect(copyTestBR.hasPart.mtype3.hasPart.etype4.composition.neuron.density).toBe(175);
-    expect(copyTestBR.hasPart.mtype3.hasPart.etype5.composition.neuron.density).toBe(175);
-  });
-
-  it('should calculate the correct overall density change when changing second level', () => {
-    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = cloneDeep(testBrainRegion);
-    const modifiedNode = {
-      id: 'etype2',
-      extendedNodeId: 'mtype1__etype2',
-      neuronComposition: {
-        density: 350,
-      },
-    } as CalculatedCompositionNode;
-    // @ts-ignore
-    calculateAndApplyDensityChange(modifiedNode, copyTestBR.hasPart.mtype1, 0.5, []);
-    expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(425);
-    expect(copyTestBR.hasPart.mtype1.hasPart.etype2.composition.neuron.density).toBe(175);
-    expect(copyTestBR.hasPart.mtype2.hasPart.etype3.composition.neuron.density).toBe(200);
-    expect(copyTestBR.hasPart.mtype3.hasPart.etype4.composition.neuron.density).toBe(100);
-    expect(copyTestBR.hasPart.mtype3.hasPart.etype5.composition.neuron.density).toBe(100);
-  });
-
-  it('should calculate the correct overall density change when locked ids of first level', () => {
-    const testBrainRegion = cloneDeep(testComposition.hasPart.brainregion1);
-    const copyTestBR = cloneDeep(testBrainRegion);
-    const modifiedNode = {
-      id: 'mtype1',
-      extendedNodeId: 'mtype1',
-      neuronComposition: {
-        density: 600,
-      },
-    } as CalculatedCompositionNode;
-    // @ts-ignore
-    calculateAndApplyDensityChange(modifiedNode, copyTestBR, 0.5, ['mtype2']);
-    expect(copyTestBR.hasPart.mtype1.hasPart.etype1.composition.neuron.density).toBe(125);
-    expect(copyTestBR.hasPart.mtype1.hasPart.etype2.composition.neuron.density).toBe(175);
-    expect(copyTestBR.hasPart.mtype2.hasPart.etype3.composition.neuron.density).toBe(200);
-    expect(copyTestBR.hasPart.mtype3.hasPart.etype4.composition.neuron.density).toBe(250);
-    expect(copyTestBR.hasPart.mtype3.hasPart.etype5.composition.neuron.density).toBe(250);
-  });
-});
-
 describe('computeModifiedComposition', () => {
   it('should calculate the correct overall density change when decreasing value by half', () => {
     // @ts-ignore
@@ -253,7 +120,6 @@ describe('computeModifiedComposition', () => {
       -450,
       ['brainregion1', 'brainregion2'],
       copyComposition,
-      [],
       'density',
       { brainregion: 0.2 },
       'brainregion'
@@ -266,13 +132,13 @@ describe('computeModifiedComposition', () => {
     ).toBeCloseTo(175);
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype2.hasPart.etype3.composition.neuron.density
-    ).toBeCloseTo(350);
+    ).toBeCloseTo(200);
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype4.composition.neuron.density
-    ).toBeCloseTo(175);
+    ).toBeCloseTo(100);
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype5.composition.neuron.density
-    ).toBeCloseTo(175);
+    ).toBeCloseTo(100);
     // second brain region
     expect(
       copyComposition.hasPart.brainregion2.hasPart.mtype1.hasPart.etype1.composition.neuron.density
@@ -282,7 +148,7 @@ describe('computeModifiedComposition', () => {
     ).toBeCloseTo(100);
     expect(
       copyComposition.hasPart.brainregion2.hasPart.mtype2.hasPart.etype3.composition.neuron.density
-    ).toBeCloseTo(350);
+    ).toBeCloseTo(200);
   });
 
   it('should calculate the correct overall density change when increasing value', () => {
@@ -299,7 +165,6 @@ describe('computeModifiedComposition', () => {
       100,
       ['brainregion1', 'brainregion2'],
       copyComposition,
-      [],
       'density',
       { brainregion: 0.2 },
       'brainregion'
@@ -312,13 +177,13 @@ describe('computeModifiedComposition', () => {
     ).toBeCloseTo(388.888);
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype2.hasPart.etype3.composition.neuron.density
-    ).toBeCloseTo(166.666);
+    ).toBeCloseTo(200);
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype4.composition.neuron.density
-    ).toBeCloseTo(83.333);
+    ).toBeCloseTo(100);
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype3.hasPart.etype5.composition.neuron.density
-    ).toBeCloseTo(83.333);
+    ).toBeCloseTo(100);
     // // second brain region
     expect(
       copyComposition.hasPart.brainregion2.hasPart.mtype1.hasPart.etype1.composition.neuron.density
@@ -328,7 +193,7 @@ describe('computeModifiedComposition', () => {
     ).toBeCloseTo(222.222);
     expect(
       copyComposition.hasPart.brainregion2.hasPart.mtype2.hasPart.etype3.composition.neuron.density
-    ).toBeCloseTo(166.666);
+    ).toBeCloseTo(200);
   });
 
   it('should calculate the correct overall density change when decreasing value of second level', () => {
@@ -345,14 +210,13 @@ describe('computeModifiedComposition', () => {
       -175,
       ['brainregion1'],
       copyComposition,
-      [],
       'density',
       { brainregion: 0.2 },
       'brainregion'
     );
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype1.composition.neuron.density
-    ).toBeCloseTo(425);
+    ).toBeCloseTo(250);
     expect(
       copyComposition.hasPart.brainregion1.hasPart.mtype1.hasPart.etype2.composition.neuron.density
     ).toBeCloseTo(175);

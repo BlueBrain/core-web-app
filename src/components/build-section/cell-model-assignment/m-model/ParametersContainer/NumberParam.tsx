@@ -6,9 +6,15 @@ type ParameterProps = {
   paramValue: number;
   paramInfo: ParamInfo;
   onChange: (newValue: number) => void;
+  isConfigEditable: boolean;
 };
 
-export default function NumberParam({ paramValue, paramInfo, onChange }: ParameterProps) {
+export default function NumberParam({
+  paramValue,
+  paramInfo,
+  onChange,
+  isConfigEditable,
+}: ParameterProps) {
   const { min, max, step, displayName } = paramInfo;
 
   const sanitize = (changedValue: unknown) => {
@@ -43,6 +49,7 @@ export default function NumberParam({ paramValue, paramInfo, onChange }: Paramet
         tooltip={{ open: false }}
         onChange={onChange}
         value={sanitize(paramValue)}
+        disabled={!isConfigEditable}
       />
     </div>
   );

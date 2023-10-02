@@ -134,7 +134,7 @@ export default function ControlPanel({
   experimentTypeName,
   resourceId,
 }: ControlPanelProps) {
-  const activeColumns = useAtomValue(
+  const [activeColumns, setActiveColumns] = useAtom(
     useMemo(
       () => unwrap(activeColumnsAtom({ experimentTypeName, resourceId })),
       [experimentTypeName, resourceId]
@@ -175,6 +175,7 @@ export default function ControlPanel({
 
   useEffect(() => {
     const values: FilterValues = {};
+
     filters?.forEach((filter: Filter) => {
       values[filter.field as string] = filter.value;
     });
@@ -184,7 +185,7 @@ export default function ControlPanel({
 
   const submitValues = () => {
     setFilters(
-      // @ts-ignore
+      // @ts-ignore // TODO: remove this and fix the type error
       filters?.map((fil: Filter) => ({ ...fil, value: filterValues[fil.field] } as Filter))
     );
   };
@@ -205,7 +206,6 @@ export default function ControlPanel({
     toggleFunc: () => onToggleActive && onToggleActive(filter.field),
   })) as FilterGroupProps['items'];
 
-  // @ts-ignore
   return (
     <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
       <button type="button" onClick={toggleDisplay} className="text-white text-right">
@@ -222,7 +222,7 @@ export default function ControlPanel({
       </p>
 
       <div className="flex flex-col gap-12">
-        {/* @ts-ignore */}
+        {/* @ts-ignore : TODO: remove this and fix the type error */}
         <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
         {children}
       </div>

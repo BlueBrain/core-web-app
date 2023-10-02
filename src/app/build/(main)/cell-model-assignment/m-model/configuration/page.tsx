@@ -15,6 +15,7 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { generateBrainRegionMTypeMapKey } from '@/util/cell-model-assignment';
+import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 
 const selectedCanonicalMapAtomLoadable = loadable(selectedCanonicalMapAtom);
 const baseBannerStyle = 'flex h-full items-center justify-center text-4xl';
@@ -28,6 +29,8 @@ export default function ConfigurationPage() {
   const isLoading = loadableSelectedCanonicalMap.state === 'loading';
 
   let body = null;
+
+  useLiteratureCleanNavigate();
 
   if (isLoading) {
     body = <div className={baseBannerStyle}>Loading...</div>;

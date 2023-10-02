@@ -130,9 +130,7 @@ describe('Composition Parser unit tests for single region', () => {
       nodes,
       links,
       singleCompId,
-      [],
       '',
-      false,
       0.5
     );
     expect(composition.neuron).toBeCloseTo(105);
@@ -142,7 +140,7 @@ describe('Composition Parser unit tests for single region', () => {
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, [], '', false, 0.5);
+    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, '', 0.5);
     expect(nodes.A.countPair.neuron).toBe(15);
     expect(nodes.C__I.countPair.neuron).toBe(30);
   });
@@ -152,7 +150,7 @@ describe('Composition Parser unit tests for single region', () => {
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, [], '', false, 0.5);
+    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, '', 0.5);
     expect(nodes.A__D.extendedNodeId).toBe('A__D');
   });
 
@@ -161,30 +159,9 @@ describe('Composition Parser unit tests for single region', () => {
     const nodes: { [key: string]: CalculationNode } = {};
     const links: { [key: string]: CalculationLink } = {};
     // @ts-ignore
-    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, [], '', false, 0.5);
+    iterateNode(compToTest, singleCompId, nodes, links, singleCompId, '', 0.5);
     expect(Object.values(nodes)).toHaveLength(9);
     expect(Object.values(links)).toHaveLength(6);
-  });
-
-  it('composition parser returns correct blocked nodes if blocked', () => {
-    const blockedRegion = multipleCompositions.hasPart['21'];
-    const nodes: { [key: string]: CalculationNode } = {};
-    const links: { [key: string]: CalculationLink } = {};
-    const blockedNodeIds: string[] = [];
-    // @ts-ignore
-    iterateNode(blockedRegion, '21', nodes, links, '21', blockedNodeIds, '', false);
-    expect(blockedNodeIds).toHaveLength(2);
-    expect(blockedNodeIds).toContain('A');
-    expect(blockedNodeIds).toContain('A__D');
-  });
-
-  it('composition parser returns correct blocked nodes if not blocked', () => {
-    const nodes: { [key: string]: CalculationNode } = {};
-    const links: { [key: string]: CalculationLink } = {};
-    const blockedNodeIds: string[] = [];
-    // @ts-ignore
-    iterateNode(compToTest, '36', nodes, links, '36', blockedNodeIds, '', false);
-    expect(blockedNodeIds).toHaveLength(0);
   });
 });
 
@@ -200,8 +177,8 @@ describe('Calculate compositions unit tests', () => {
       leafIds,
       volumes
     );
-    expect(totalComposition.neuron?.count).toBe(131);
-    expect(totalComposition.neuron?.density).toBeCloseTo(174.666);
+    expect(totalComposition.neuron?.count).toBe(130);
+    expect(totalComposition.neuron?.density).toBeCloseTo(173.333);
   });
 
   it('all nodes and links are returned', async () => {

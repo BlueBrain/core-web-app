@@ -4,7 +4,6 @@ import { classNames } from '@/util/utils';
 interface HorizontalSliderProps {
   className?: string;
   color: string;
-  disabled?: boolean;
   max: number;
   step: number;
   onSliding?: ((value: number | null) => void) | undefined;
@@ -15,7 +14,6 @@ interface HorizontalSliderProps {
 export default function HorizontalSlider({
   className,
   color,
-  disabled = false,
   max,
   onSliding,
   onAfterSliding,
@@ -26,7 +24,6 @@ export default function HorizontalSlider({
     <div className={classNames('flex grow items-center justify-between w-full', className)}>
       <Slider
         className="grow"
-        disabled={disabled}
         tooltip={{ open: false }}
         min={0}
         max={max}

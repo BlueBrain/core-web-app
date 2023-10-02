@@ -95,12 +95,7 @@ export default function buildFilters(type: string, filters: Filter[], searchStri
 
   if (searchString) {
     filtersQuery.should([
-      esb
-        .multiMatchQuery(['*'], searchString)
-        .type('most_fields')
-        .fuzziness('AUTO')
-        .operator('and')
-        .boost(10),
+      esb.multiMatchQuery(['*'], searchString).type('most_fields').operator('and').boost(10),
       esb.multiMatchQuery(['*.ngramtext'], searchString).type('most_fields').fuzziness('AUTO'),
     ]);
     filtersQuery.minimumShouldMatch(1);

@@ -12,9 +12,10 @@ type RegionVolume = {
   value: number;
 };
 
-export type BrainRegionNexus = {
+export type ClassNexus = {
   '@id': string;
-  color_hex_triplet: string;
+  color_hex_triplet: string; // TODO: Is this really there?
+  color: string;
   isPartOf: string;
   isLayerPartOf: string;
   label: string;
@@ -25,9 +26,10 @@ export type BrainRegionNexus = {
   hasPart: string[];
   representedInAnnotation: boolean;
   regionVolume?: RegionVolume;
+  subClassOf: string[];
 };
 type BrainLocationNexus = {
-  brainRegion: BrainRegionNexus;
+  brainRegion: ClassNexus;
 };
 type MeshNexusSource = {
   brainRegion: string;

@@ -83,7 +83,7 @@ export type ParamsToDisplay = Record<RequiredParamRawNames, ParamInfo | Orientat
 export type MModelWorkflowOverrides = {
   [brainRegionId: string]: {
     [mTypeId: string]: {
-      id: string;
+      '@id': string;
       overrides: ParamConfig | {};
     };
   };

@@ -10,9 +10,11 @@ const idExistsFilter = {
   },
 };
 
-// This expects a <field>.ngramtext field(s) to be defined in the ES index,
+// This expects a name.ngramtext and description.ngramtext field(s) to be defined in the ES index,
 // which is a custom configuration for the KG `dataset` index.
-export function createSearchStringQueryFilter(searchString: string, fields: string[]) {
+export function createSearchStringQuery(searchString: string) {
+  if (!searchString) return undefined;
+
   return {
     bool: {
       should: [
@@ -20,18 +22,18 @@ export function createSearchStringQueryFilter(searchString: string, fields: stri
           multi_match: {
             query: searchString,
             type: 'most_fields',
-            fields,
+            fields: ['name^3', 'description^2'],
             fuzziness: 'AUTO',
             operator: 'and',
-            boost: 10,
           },
         },
         {
           multi_match: {
             query: searchString,
             type: 'most_fields',
-            fields: fields.map((field) => `${field}.ngramtext`),
-            fuzziness: 'AUTO',
+            fields: ['name.ngramtext^2', 'description.ngramtext'],
+            operator: 'and',
+            boost: 10,
           },
         },
       ],
@@ -55,10 +57,11 @@ export const getPublicBrainModelConfigsQuery = (searchString: string = '') => ({
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
     },
   },
+  sort: searchString ? undefined : [defaultCreationDateSort],
 });
 
 export const getEModelQuery = (searchString: string = '') => ({
@@ -72,8 +75,26 @@ export const getEModelQuery = (searchString: string = '') => ({
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
+    },
+  },
+});
+
+export const getEModelOptimizationConfigQuery = () => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [
+              { term: { _deprecated: false } },
+              { term: { '@type': 'EModelOptimizationConfig' } },
+            ],
+          },
+        },
+      ],
     },
   },
 });
@@ -101,10 +122,11 @@ export const getPersonalBrainModelConfigsQuery = (username: string, searchString
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
     },
   },
+  sort: searchString ? undefined : [defaultCreationDateSort],
 });
 
 export const getArchiveBrainModelConfigsQuery = (searchString: string = '') => ({
@@ -123,8 +145,8 @@ export const getArchiveBrainModelConfigsQuery = (searchString: string = '') => (
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
     },
   },
 });
@@ -258,8 +280,8 @@ export const getBuiltBrainModelConfigsQuery = (
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
     },
   },
   sort: [defaultCreationDateSort],
@@ -279,8 +301,8 @@ export const getSimCampConfigsQuery = (searchString: string) => ({
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
     },
   },
   sort: [defaultCreationDateSort],
@@ -301,8 +323,8 @@ export const getPersonalSimCampConfigsQuery = (username: string, searchString: s
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
     },
   },
   sort: [defaultCreationDateSort],
@@ -363,8 +385,8 @@ export const getLaunchedSimCampQuery = (username: string, searchString: string) 
           },
         },
         idExistsFilter,
-        searchString ? createSearchStringQueryFilter(searchString, ['name', 'description']) : null,
-      ].filter(Boolean),
+      ],
+      must: createSearchStringQuery(searchString),
     },
   },
 });

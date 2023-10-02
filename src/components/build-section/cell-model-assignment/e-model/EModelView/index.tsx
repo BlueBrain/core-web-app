@@ -7,6 +7,7 @@ import FeatureSelectionContainer from './FeatureSelectionContainer';
 import Mechanism from './Mechanism';
 import SimulationParameters from './SimulationParameters';
 import EModelTitle from './EModelTitle';
+import WorkflowAttributes from './WorkflowAttributes';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
@@ -55,6 +56,12 @@ export default function EModelView() {
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
           <Mechanism />
+        </DefaultLoadingSuspense>
+      </ErrorBoundary>
+
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <DefaultLoadingSuspense>
+          <WorkflowAttributes />
         </DefaultLoadingSuspense>
       </ErrorBoundary>
     </div>

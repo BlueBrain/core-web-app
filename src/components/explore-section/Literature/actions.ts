@@ -39,9 +39,7 @@ export async function getGenerativeQAAction({
 }
 
 export async function getArticleTypes(): Promise<ArticleTypeSuggestion[]> {
-  const session = await getServerSession(authOptions);
-
-  const articleTypeResponse = await fetchArticleTypes(session?.accessToken ?? '');
+  const articleTypeResponse = await fetchArticleTypes();
 
   return articleTypeResponse.map((articleResponse) => ({
     articleType: articleResponse.article_type,

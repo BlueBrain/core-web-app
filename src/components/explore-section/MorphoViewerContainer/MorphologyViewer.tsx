@@ -8,6 +8,7 @@ import ScaleViewer from './libs/ScaleViewer';
 import MorphoLegend from './MorphoLegend';
 
 import './styles/morpho-viewer.css';
+import useNotification from '@/hooks/notifications';
 
 export type MorphoViewerOptions = {
   asPolyline?: boolean;
@@ -29,6 +30,7 @@ export default function MorphologyViewer({
   const [mv, setMorphoViewer] = React.useState();
   const [orientationViewer, setOrientationViewer] = React.useState<OrientationViewer | null>(null);
   const [scaleViewer, setScaleViewer] = React.useState<ScaleViewer | null>(null);
+  const addNotification = useNotification();
 
   React.useEffect(() => {
     if (!mv) {
@@ -84,7 +86,7 @@ export default function MorphologyViewer({
       };
       morphoViewer.addMorphology(parsedFile, morphoViewerOptions);
     } catch (error: any) {
-      throw new Error(`Morphology parsing error: ${error.message}`);
+      addNotification.error('Something went wrong while parsing morphology visualization data');
     }
     return () => {
       if (morphoViewer) {
@@ -94,7 +96,7 @@ export default function MorphologyViewer({
         }
       }
     };
-  }, [ref, data, options]);
+  }, [ref, data, options, addNotification]);
 
   // Orientation Viewer Operations
   React.useEffect(() => {

@@ -20,18 +20,18 @@ export default function EModelTitle() {
 
     setEModelUIConfig((oldAtomData) => ({
       ...oldAtomData,
-      eModelName: eModel.name,
+      name: eModel.name,
     }));
   }, [eModelEditMode, eModel, setEModelUIConfig]);
 
   const onEModelNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEModelUIConfig((oldAtomData) => ({
       ...oldAtomData,
-      eModelName: event.target.value || ' ',
+      name: event.target.value || ' ',
     }));
   };
 
-  const eModelName = eModelEditMode ? eModelUIConfig?.eModelName : eModel?.name;
+  const eModelName = eModelEditMode ? eModelUIConfig?.name : eModel?.name;
 
   if (!eModelName) return null;
 
@@ -39,7 +39,7 @@ export default function EModelTitle() {
     return <div className={titleStyle}>{eModelName}</div>;
   }
 
-  const sameName = eModelUIConfig?.eModelName === eModel?.name;
+  const sameName = eModelUIConfig?.name === eModel?.name;
 
   return (
     <>

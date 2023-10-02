@@ -1,5 +1,5 @@
 import { MModelMenuItem } from './m-model';
-import { ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
+import { BrainLocation, ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
 import {
   eCodes,
   mechanismLocations,
@@ -10,14 +10,17 @@ import {
 } from '@/constants/cell-model-assignment/e-model';
 
 export interface EModelMenuItem {
-  label: string;
+  name: string;
   id: string;
-  mType: MModelMenuItem;
-  annotation?: string;
-  uuid: string;
+  eType: string;
+  mType?: string;
 }
+
 export interface MEModelMenuItem {
-  [mTypeKey: string]: EModelMenuItem[];
+  [mTypeKey: string]: {
+    mTypeInfo: MModelMenuItem;
+    eTypeInfo: EModelMenuItem[];
+  };
 }
 
 export type SimulationParameterKeys =
@@ -65,13 +68,7 @@ export interface EModel extends EModelCommonProps {
     };
   };
   seed: number;
-  brainLocation?: {
-    '@type': 'BrainLocation';
-    brainRegion: {
-      '@id': string;
-      label: string;
-    };
-  };
+  brainLocation?: BrainLocation;
   subject: {
     '@type': 'Subject';
     species: {
@@ -385,22 +382,34 @@ export interface SubCellularModelScriptResource extends ResourceMetadata, SubCel
 /* ----------------------------- EModelUIConfig ----------------------------- */
 
 export interface EModelUIConfig {
-  eModelName: string;
+  name: string;
   morphologies: ExemplarMorphologyDataType[];
   traces: ExperimentalTracesDataType[];
   mechanism: MechanismForUI[];
   parameters: Record<SimulationParameterKeys, number>;
   featurePresetName: FeaturePresetName;
+  mType: string;
+  eType: string;
+  brainRegionName: string;
+  brainRegionId: string;
+  species: 'mouse';
 }
 
 /* -------------------------- EModelByETypeMapping -------------------------- */
 
 export interface EModelByETypeMappingType {
-  [eTypeName: string]: EModel[];
+  [eTypeName: string]: EModelMenuItem[];
 }
 
-export interface SelectedEModelType {
+/* ------------------------ EModelOptimizationConfig ------------------------ */
+
+export type EModelOptimizationConfigType = 'EModelOptimizationConfig';
+
+export interface EModelOptimizationConfig extends Entity {
+  '@type': ['Entity', EModelOptimizationConfigType];
+  distribution: Distribution;
   name: string;
-  id: string;
-  mTypeName: string;
+  eType: string;
+  mType: string;
+  brainLocation: BrainLocation;
 }
