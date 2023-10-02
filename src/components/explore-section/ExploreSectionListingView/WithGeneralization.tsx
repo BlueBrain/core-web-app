@@ -1,7 +1,7 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
-import { inferredResourcesAtom } from '@/state/explore-section/generalization';
+import { unwrap, useAtomCallback } from 'jotai/utils';
+import { inferredResourcesAtom, expandedRowKeysAtom } from '@/state/explore-section/generalization';
 import { dataAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { InferredResource } from '@/types/explore-section/kg-inference';
@@ -14,7 +14,7 @@ export default function WithGeneralization({
 }: {
   children: (props: {
     data?: ExploreESHit[];
-    expandable: {};
+    expandable: (resourceId: string) => {} | undefined;
     resourceId: string;
     tabNavigation: ReactNode;
   }) => ReactNode;
@@ -24,19 +24,33 @@ export default function WithGeneralization({
 
   const [activeTab, setActiveTab] = useState<string>(experimentTypeName);
 
-  const expandedRowRender = (resource: ExploreESHit) => (
-    <GeneralizationRules
-      resourceId={resource._source['@id']}
-      experimentTypeName={experimentTypeName}
-      name={resource._source.name}
-    />
-  );
+  const allFunc =  useAtomCallback(
+    useCallback((get, set, resourceId) => {
+      const expandedRowRender = (resource: ExploreESHit) => (
+        <GeneralizationRules
+          resourceId={resource._source['@id']}
+          experimentTypeName={experimentTypeName}
+          name={resource._source.name}
+        />
+      );
+      console.log("RESOURCE ID IN CALLBACK", resourceId);
+      const expandedRowKeys = get(expandedRowKeysAtom(resourceId));
+      return ({
+        expandedRowRender,
+        expandedRowKeys: Array.from(expandedRowKeys),
+        onExpandedRowsChange: (expandedRows: string[]) => {
+          console.log('expandedRowsChange', expandedRows);
+          return set(expandedRowKeysAtom(resourceId), expandedRows);
+        }
+      })
+    }, [])
+  )
 
   const useTab = ({ id, name: label }: InferredResource) => ({
     key: id,
     label,
-    type: label !== 'Original' ? 'resource' : 'source',
   });
+
   const tabs = [{ id: experimentTypeName, name: 'Original' }, ...inferredResources].map(useTab);
 
   return (
@@ -54,9 +68,7 @@ export default function WithGeneralization({
             [activeTab, experimentTypeName, tabs]
           )
         ),
-        expandable: {
-          expandedRowRender,
-        },
+        expandable: (resourceId) => allFunc(resourceId),
         resourceId: activeTab,
         tabNavigation: tabs.length > 1 && (
           <ul className="flex gap-2.5">
@@ -64,24 +76,15 @@ export default function WithGeneralization({
               <li key={tab.key}>
                 <button
                   className={classNames(
-                    'rounded w-fit px-4 py-1',
+                    'rounded-full w-fit px-4 py-1',
                     activeTab === tab.key
                       ? 'bg-primary-7 text-white'
-                      : 'hover:bg-blue-100 cursor-pointer border-solid border text-primary-8'
+                      : 'hover:bg-blue-100 cursor-pointer'
                   )}
                   onClick={() => setActiveTab(tab.key)}
                   type="button"
                 >
-                  {tab.type === 'resource' ? (
-                    <div className="flex gap-1">
-                      <span className={activeTab === tab.key ? 'text-neutral-2' : 'text-neutral-4'}>
-                        Inferred from
-                      </span>
-                      <span className="font-bold">{tab.label}</span>
-                    </div>
-                  ) : (
-                    tab.label
-                  )}
+                  {tab.label}
                 </button>
               </li>
             ))}
