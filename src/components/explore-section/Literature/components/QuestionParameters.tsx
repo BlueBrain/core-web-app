@@ -59,6 +59,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
 
         <div className="w-full">
           <AutoCompleteSearch
+            key="Journal"
             title="Journal"
             fetchOptions={(searchTerm: string) =>
               fetchJournalSuggestions(searchTerm).then((journalResponse) =>
@@ -75,6 +76,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
 
         <div className="w-full">
           <AutoCompleteSearch
+            key="Authors"
             title="Authors"
             fetchOptions={(searchTerm: string) =>
               fetchAuthorSuggestions(searchTerm).then((authors) => getAuthorOptions(authors))
@@ -91,6 +93,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
 
         <div className="w-full">
           <AutoCompleteSearch
+            key="ArticleTypes"
             title="Article Types"
             fetchOptions={async (searchTerm: string) =>
               (articleTypes ?? []).filter((articleTypeOption) =>
