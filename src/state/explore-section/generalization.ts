@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { selectAtom, atomWithDefault, atomFamily } from 'jotai/utils';
+import { atomWithDefault, atomFamily } from 'jotai/utils';
 import isEmpty from 'lodash/isEmpty';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
@@ -15,6 +15,7 @@ import {
 } from '@/types/explore-section/kg-inference';
 
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
+export const limitQueryParameterAtom = atomFamily(() => atom(20));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>
   atom<Promise<RuleOutput[] | null>>(async (get) => {
@@ -48,32 +49,41 @@ export const resourceBasedRulesAtom = atomFamily((resourceId: string) =>
       if (typeof inferenceOptions !== 'undefined')
         inferenceOptions.forEach((inferenceOption: string) => {
           const description = rule.embeddingModels[inferenceOption]?.description || '';
+          const displayName = rule.embeddingModels[inferenceOption]?.name || inferenceOption;
 
-          rulesWithBool.push({ name: inferenceOption, value: false, id: rule.id, description });
+          rulesWithBool.push({
+            displayName,
+            name: inferenceOption,
+            value: false,
+            id: rule.id,
+            description,
+          });
         });
     });
+
     return rulesWithBool;
   })
 );
 
 export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
-  selectAtom<Promise<ResourceBasedInference[]>, ResourceBasedInferenceRequest>(
-    resourceBasedRulesAtom(resourceId),
-    (resourceBasedRules) => {
-      const uniqueRuleIds = [...new Set(resourceBasedRules?.map(({ id }) => id))];
-      const uniqueSelectedModels = [...new Set(resourceBasedRules?.map(({ name }) => name))];
+  atom<Promise<ResourceBasedInferenceRequest>>(async (get) => {
+    const resourceBasedRules = await get(resourceBasedRulesAtom(resourceId));
+    const limitQueryParameter = get(limitQueryParameterAtom(resourceId));
 
-      return {
-        rules: uniqueRuleIds.map((id) => ({
-          id,
-        })),
-        inputFilter: {
-          TargetResourceParameter: resourceId,
-          SelectModelsParameter: uniqueSelectedModels,
-        },
-      };
-    }
-  )
+    const uniqueRuleIds = [...new Set(resourceBasedRules?.map(({ id }) => id))];
+    const uniqueSelectedModels = [...new Set(resourceBasedRules?.map(({ name }) => name))];
+
+    return {
+      rules: uniqueRuleIds.map((id) => ({
+        id,
+      })),
+      inputFilter: {
+        TargetResourceParameter: resourceId,
+        SelectModelsParameter: uniqueSelectedModels,
+        LimitQueryParameter: limitQueryParameter,
+      },
+    };
+  })
 );
 
 export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>

@@ -1,11 +1,12 @@
 import { Children, useMemo } from 'react';
-import { Spin, Checkbox } from 'antd';
+import { Spin, Checkbox, InputNumber } from 'antd';
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import {
   resourceBasedRulesAtom,
   inferredResourcesAtom,
+  limitQueryParameterAtom,
 } from '@/state/explore-section/generalization';
 import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
 import useNotification from '@/hooks/notifications';
@@ -39,7 +40,7 @@ function GeneralizationOptions({
             onChange={handleCheckboxChange}
             className="w-full text-primary-8 font-semibold"
           >
-            {ruleWithBool.name}
+            {ruleWithBool.displayName}
           </Checkbox>
           <p className="font-thin pl-12">{ruleWithBool.description}</p>
         </li>
@@ -62,6 +63,10 @@ function GeneralizationRules({
   );
   const [inferredResources, setinferredResources] = useAtom(
     inferredResourcesAtom(experimentTypeName)
+  );
+
+  const [limitQueryParameter, setLimitQueryParameter] = useAtom(
+    limitQueryParameterAtom(resourceId)
   );
 
   const { success } = useNotification();
@@ -121,6 +126,11 @@ function GeneralizationRules({
         )}
 
         <div className="flex flex-col space-y-2 place-self-center">
+          <InputNumber
+            value={limitQueryParameter}
+            onChange={(value) => setLimitQueryParameter(value as number)}
+            className="px-3 py-2 border border-primary-8"
+          />
           <button
             type="submit"
             className="self-end	px-3 py-2 bg-primary-8 text-white font-semibold"
