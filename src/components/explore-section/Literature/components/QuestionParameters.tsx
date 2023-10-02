@@ -24,7 +24,6 @@ import {
   initialParameters,
   useQuestionParameter,
 } from '@/state/literature';
-import sessionAtom from '@/state/session';
 
 type Props = {
   isParametersVisible: boolean;
@@ -35,7 +34,6 @@ const loadableArticleTypes = loadable(articleTypeSuggestionsAtom);
 
 function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Props) {
   const update = useQuestionParameter();
-  const session = useAtomValue(sessionAtom);
   const articleTypesStatus = useAtomValue(loadableArticleTypes);
   const [articleTypes, setArticleTypes] = useState<Suggestion[]>([]);
 
@@ -80,7 +78,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             title="Journal"
             fetchOptions={(searchTerm: string) =>
-              fetchJournalSuggestions(searchTerm, session!.accessToken).then((journalResponse) =>
+              fetchJournalSuggestions(searchTerm).then((journalResponse) =>
                 getJournalOptions(journalResponse)
               )
             }
@@ -96,9 +94,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             title="Authors"
             fetchOptions={(searchTerm: string) =>
-              fetchAuthorSuggestions(searchTerm, session!.accessToken).then((authors) =>
-                getAuthorOptions(authors)
-              )
+              fetchAuthorSuggestions(searchTerm).then((authors) => getAuthorOptions(authors))
             }
             onChange={(selectedValues: Suggestion[]) =>
               update(

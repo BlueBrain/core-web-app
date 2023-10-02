@@ -6,7 +6,6 @@ import {
   JournalSuggestionResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
-import { createHeaders } from '@/util/utils';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
@@ -59,14 +58,15 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
   }
 };
 
-const fetchArticleTypes = (
-  accessToken: string
-): Promise<{ article_type: string; docs_in_db: number }[]> => {
+const fetchArticleTypes = (): Promise<{ article_type: string; docs_in_db: number }[]> => {
   const url = nexus.aiUrl;
 
   return fetch(`${url}/suggestions/article_types`, {
     method: 'GET',
-    headers: createHeaders(accessToken),
+    headers: new Headers({
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
   })
     .then((response: any) => {
       if (response.ok) {
@@ -77,15 +77,15 @@ const fetchArticleTypes = (
     .catch(() => []);
 };
 
-const fetchAuthorSuggestions = (
-  searchTerm: string,
-  accessToken: string
-): Promise<AuthorSuggestionResponse> => {
+const fetchAuthorSuggestions = (searchTerm: string): Promise<AuthorSuggestionResponse> => {
   const url = nexus.aiUrl;
 
   return fetch(`${url}/suggestions/author`, {
     method: 'POST',
-    headers: createHeaders(accessToken),
+    headers: new Headers({
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
     body: JSON.stringify({
       name: searchTerm,
       limit: 100,
@@ -100,15 +100,15 @@ const fetchAuthorSuggestions = (
     .catch(() => [{ name: searchTerm, docs_in_db: 0 }] as AuthorSuggestionResponse);
 };
 
-export const fetchJournalSuggestions = (
-  searchTerm: string,
-  accessToken: string
-): Promise<JournalSuggestionResponse> => {
+export const fetchJournalSuggestions = (searchTerm: string): Promise<JournalSuggestionResponse> => {
   const url = nexus.aiUrl;
 
   return fetch(`${url}/suggestions/journal`, {
     method: 'POST',
-    headers: createHeaders(accessToken),
+    headers: new Headers({
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
     body: JSON.stringify({
       keywords: searchTerm,
       limit: 100,
