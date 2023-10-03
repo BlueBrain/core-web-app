@@ -10,6 +10,7 @@ import {
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useResetAtom, unwrap } from 'jotai/utils';
 import { Spin } from 'antd';
+import AdvancedSearch from './AdvancedSearch';
 import ExploreSectionNameSearch from '@/components/explore-section/ExploreSectionListingView/ExploreSectionNameSearch';
 import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 import SettingsIcon from '@/components/icons/Settings';
@@ -99,6 +100,7 @@ export default function FilterControls({
           </span>
         </div>
       </FilterBtn>
+      <AdvancedSearch />
     </div>
   );
 }
