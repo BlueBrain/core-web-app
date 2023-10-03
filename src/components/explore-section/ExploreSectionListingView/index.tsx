@@ -61,11 +61,10 @@ export default function DefaultListView({
                   )}
                   dataSource={data}
                   enableDownload={enableDownload}
-                  expandable={expandable(resourceId)}
+                  expandable={expandable}
                   experimentTypeName={experimentTypeName}
                   loading={!data}
                   renderButton={renderButton}
-                  resourceId={resourceId}
                 />
               </>
             )}

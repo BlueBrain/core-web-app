@@ -1,3 +1,4 @@
+import { Key } from 'react';
 import { atom } from 'jotai';
 import { atomWithDefault, atomFamily } from 'jotai/utils';
 import isEmpty from 'lodash/isEmpty';
@@ -15,7 +16,7 @@ import {
 } from '@/types/explore-section/kg-inference';
 
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
-export const expandedRowKeysAtom = atomFamily(() => atom(new Array<string>()));
+export const expandedRowKeysAtom = atomFamily(() => atom<readonly Key[]>([]));
 export const limitQueryParameterAtom = atomFamily(() => atom(20));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>

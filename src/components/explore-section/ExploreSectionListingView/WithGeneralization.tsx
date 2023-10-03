@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { Key, ReactNode, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap, useAtomCallback } from 'jotai/utils';
 import { inferredResourcesAtom, expandedRowKeysAtom } from '@/state/explore-section/generalization';
@@ -14,7 +14,11 @@ export default function WithGeneralization({
 }: {
   children: (props: {
     data?: ExploreESHit[];
-    expandable: (resourceId: string) => any;
+    expandable: {
+      expandedRowRender: (resource: ExploreESHit) => ReactNode;
+      expandedRowKeys: readonly Key[];
+      onExpandedRowsChange: (expandedKeys: readonly Key[]) => void;
+    };
     resourceId: string;
     tabNavigation: ReactNode;
   }) => ReactNode;
@@ -32,9 +36,10 @@ export default function WithGeneralization({
         name={resource._source.name}
       />
     );
+
     return {
       expandedRowRender,
-      onExpandedRowsChange: (expandedRows: string[]) => {
+      onExpandedRowsChange: (expandedRows: readonly Key[]) => {
         set(expandedRowKeysAtom(resourceId), expandedRows);
       },
     };
@@ -62,7 +67,10 @@ export default function WithGeneralization({
             [activeTab, experimentTypeName, tabs]
           )
         ),
-        expandable: (resourceId: string) => getExpandable(resourceId),
+        expandable: {
+          ...getExpandable(activeTab),
+          expandedRowKeys: useAtomValue(expandedRowKeysAtom(activeTab)),
+        },
         resourceId: activeTab,
         tabNavigation: tabs.length > 1 && (
           <ul className="flex gap-2.5">
