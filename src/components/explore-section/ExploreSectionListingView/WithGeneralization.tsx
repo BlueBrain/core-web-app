@@ -1,7 +1,7 @@
 import { ReactNode, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
-import { inferredResourcesAtom } from '@/state/explore-section/generalization';
+import { unwrap, useAtomCallback } from 'jotai/utils';
+import { inferredResourcesAtom, expandedRowKeysAtom } from '@/state/explore-section/generalization';
 import { dataAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { InferredResource } from '@/types/explore-section/kg-inference';
@@ -14,7 +14,7 @@ export default function WithGeneralization({
 }: {
   children: (props: {
     data?: ExploreESHit[];
-    expandable: {};
+    expandable: (resourceId: string) => any;
     resourceId: string;
     tabNavigation: ReactNode;
   }) => ReactNode;
@@ -24,13 +24,21 @@ export default function WithGeneralization({
 
   const [activeTab, setActiveTab] = useState<string>(experimentTypeName);
 
-  const expandedRowRender = (resource: ExploreESHit) => (
-    <GeneralizationRules
-      resourceId={resource._source['@id']}
-      experimentTypeName={experimentTypeName}
-      name={resource._source.name}
-    />
-  );
+  const getExpandable = useAtomCallback((_get, set, resourceId) => {
+    const expandedRowRender = (resource: ExploreESHit) => (
+      <GeneralizationRules
+        resourceId={resource._source['@id']}
+        experimentTypeName={experimentTypeName}
+        name={resource._source.name}
+      />
+    );
+    return {
+      expandedRowRender,
+      onExpandedRowsChange: (expandedRows: string[]) => {
+        set(expandedRowKeysAtom(resourceId), expandedRows);
+      },
+    };
+  });
 
   const useTab = ({ id, name: label }: InferredResource) => ({
     key: id,
@@ -54,9 +62,7 @@ export default function WithGeneralization({
             [activeTab, experimentTypeName, tabs]
           )
         ),
-        expandable: {
-          expandedRowRender,
-        },
+        expandable: (resourceId: string) => getExpandable(resourceId),
         resourceId: activeTab,
         tabNavigation: tabs.length > 1 && (
           <ul className="flex gap-2.5">
