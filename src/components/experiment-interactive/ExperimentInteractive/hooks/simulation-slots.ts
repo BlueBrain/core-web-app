@@ -17,7 +17,7 @@ const atomSimulationSlots = atom<SimulationSlot[]>([]);
  * A "slot" is a space in the mosaic (that can be a 3x3 grid at most)
  * that will display one simulation in Brayns.
  */
-export const useSimulationSlots = () => {
+export function useSimulationSlots() {
   const [simulationSlots, setSimulationSlots] = useAtom(atomSimulationSlots);
   const add = (simSlot: Omit<SimulationSlot, 'slotId'>): SimulationSlot => {
     const slotId = findFreeSlotId(simulationSlots);
@@ -53,7 +53,7 @@ export const useSimulationSlots = () => {
       return hasBeenFoundAndReplaced;
     },
   };
-};
+}
 
 function findFreeSlotId(simulationSlots: SimulationSlot[]) {
   const slotIds = simulationSlots.map((item) => item.slotId).sort();
