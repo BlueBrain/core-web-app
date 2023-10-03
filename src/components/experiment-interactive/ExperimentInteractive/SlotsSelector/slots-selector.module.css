@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 1em;
+  padding: 1em;
   place-items: center;
   width: 100%;
   height: 100%;

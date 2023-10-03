@@ -1,6 +1,8 @@
 import { Button } from 'antd';
 
 import { useSimulationSlots } from '../hooks';
+import { useCurrentCampaignId } from '../hooks/current-campaign-id';
+import { useSimulations } from '../hooks/simulations';
 import { classNames } from '@/util/utils';
 
 import styles from './slots-selector.module.css';
@@ -11,6 +13,8 @@ export interface SlotsSelectorProps {
 
 export default function SlotsSelector({ className }: SlotsSelectorProps) {
   const simulationSlots = useSimulationSlots();
+  const campaignId = useCurrentCampaignId();
+  const simulations = useSimulations(campaignId);
   return (
     <div className={classNames(styles.slotsSelector, className)}>
       <Button
@@ -25,7 +29,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
       >
         Add a new slot
       </Button>
-      <pre>{JSON.stringify(simulationSlots.list, null, '    ')}</pre>
+      <pre>{JSON.stringify(simulations, null, '    ')}</pre>
     </div>
   );
 }
