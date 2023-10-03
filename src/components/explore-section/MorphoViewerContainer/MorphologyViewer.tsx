@@ -30,7 +30,7 @@ export default function MorphologyViewer({
   const [mv, setMorphoViewer] = React.useState();
   const [orientationViewer, setOrientationViewer] = React.useState<OrientationViewer | null>(null);
   const [scaleViewer, setScaleViewer] = React.useState<ScaleViewer | null>(null);
-  const addNotification = useNotification();
+  const { error } = useNotification();
 
   React.useEffect(() => {
     if (!mv) {
@@ -60,8 +60,7 @@ export default function MorphologyViewer({
       mv._threeContext._render();
     }
     // @ts-ignore
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mv && mv._threeContext]);
+  }, [mv, options.asPolyline]);
 
   React.useEffect(() => {
     let morphoViewer: any;
@@ -85,8 +84,8 @@ export default function MorphologyViewer({
         ...options,
       };
       morphoViewer.addMorphology(parsedFile, morphoViewerOptions);
-    } catch (error: any) {
-      addNotification.error('Something went wrong while parsing morphology visualization data');
+    } catch (e) {
+      error('Something went wrong while parsing morphology visualization data');
     }
     return () => {
       if (morphoViewer) {
@@ -96,7 +95,8 @@ export default function MorphologyViewer({
         }
       }
     };
-  }, [ref, data, options, addNotification]);
+    // Warning: Do not change the dependencies, it will cause infinite loop
+  }, [ref, data, options, error]);
 
   // Orientation Viewer Operations
   React.useEffect(() => {
@@ -115,7 +115,7 @@ export default function MorphologyViewer({
       orientationViewer?.destroy();
       setOrientationViewer(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Warning: Do not change the dependencies, it will cause infinite loop
   }, [orientationRef, mv, options]);
 
   // Scale Axis Operations
@@ -144,7 +144,7 @@ export default function MorphologyViewer({
       // @ts-ignore
       mv?._threeContext?._controls?.removeEventListener('change', controlEventListenerChangedEvent);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Warning: Do not change the dependencies, it will cause infinite loop
   }, [scaleRef, mv, options]);
 
   const handleOrientationClick = () => {
