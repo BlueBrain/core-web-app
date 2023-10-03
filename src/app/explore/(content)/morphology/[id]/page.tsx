@@ -5,8 +5,6 @@ import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail, { DetailProps } from '@/components/explore-section/Detail';
 import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
 import { DeltaResource } from '@/types/explore-section/resources';
-import useDetailPage from '@/hooks/useDetailPage';
-import usePathname from '@/hooks/pathname';
 
 const fields = [
   {
@@ -41,7 +39,6 @@ const fields = [
 ] as DetailProps[];
 
 export default function MorphologyDetailPage() {
-  useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields}>

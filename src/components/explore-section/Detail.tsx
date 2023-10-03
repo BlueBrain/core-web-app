@@ -1,11 +1,9 @@
-import { Key, ReactNode } from 'react';
+import { Key, ReactNode, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import Error from 'next/error';
-import { useSession } from 'next-auth/react';
 import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailAtom } from '@/state/explore-section/detail-view-atoms';
-import usePathname from '@/hooks/pathname';
 import { DeltaResource } from '@/types/explore-section/resources';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
@@ -13,6 +11,8 @@ import { classNames } from '@/util/utils';
 import EXPLORE_FIELDS_CONFIG, {
   ExploreFieldConfig,
 } from '@/constants/explore-section/explore-fields-config';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import usePathname from '@/hooks/pathname';
 
 type FieldProps = { field: string; className?: string; data: DeltaResource };
 
@@ -30,8 +30,6 @@ function Field({ field, className, data }: FieldProps) {
   );
 }
 
-const detailAtomLoadable = loadable(detailAtom);
-
 export default function Detail({
   fields,
   children,
@@ -39,11 +37,11 @@ export default function Detail({
   fields: DetailProps[];
   children?: (detail: DeltaResource) => ReactNode;
 }) {
-  const { data: session } = useSession();
+  const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
-  const detail = useAtomValue(detailAtomLoadable);
 
-  if (detail.state === 'loading' || !session) {
+  const detail = useAtomValue(useMemo(() => loadable(detailAtom(resourceInfo)), [resourceInfo]));
+  if (detail.state === 'loading') {
     return <CentralLoadingSpinner />;
   }
 

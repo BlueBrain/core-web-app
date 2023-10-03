@@ -1,6 +1,8 @@
 import { useForm } from 'antd/es/form/Form';
 import { ConfigProvider, Form, Select } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { useMemo } from 'react';
+import { unwrap } from 'jotai/utils';
 import {
   DimensionValue,
   OtherDimensionBoxEditFormProps,
@@ -8,14 +10,19 @@ import {
 import { simulationCampaignDimensionsAtom } from '@/state/explore-section/simulation-campaign';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
 import selectorTheme from '@/components/explore-section/Simulations/DimensionBoxEditForm/antd-theme';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function OtherDimensionBoxEditForm({
   dimension,
   setEditMode,
 }: OtherDimensionBoxEditFormProps) {
+  const resourceInfo = useResourceInfoFromPath();
+
   const [form] = useForm();
   const { Option } = Select;
-  const simulationCampaignDimensions = useAtomValue(simulationCampaignDimensionsAtom);
+  const simulationCampaignDimensions = useAtomValue(
+    useMemo(() => unwrap(simulationCampaignDimensionsAtom(resourceInfo)), [resourceInfo])
+  );
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
 
   const dimensionConfig =

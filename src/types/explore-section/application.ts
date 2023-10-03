@@ -11,9 +11,10 @@ import { Filter, GteLteValue } from '@/components/Filter/types';
 import { ExploreResource } from '@/types/explore-section/es';
 
 export interface FetchParams {
-  id: string;
-  project: string;
-  org: string;
+  id?: string;
+  project?: string;
+  org?: string;
+  rev?: number;
 }
 
 export interface SortState {

@@ -2,12 +2,16 @@ import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { useMemo } from 'react';
 import { speciesDataAtom } from '@/state/explore-section/detail-view-atoms';
-
-const speciesLabelLoadableAtom = loadable(speciesDataAtom);
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function Species() {
-  const speciesLabel = useAtomValue(speciesLabelLoadableAtom);
+  const resourceInfo = useResourceInfoFromPath();
+
+  const speciesLabel = useAtomValue(
+    useMemo(() => loadable(speciesDataAtom(resourceInfo)), [resourceInfo])
+  );
 
   if (speciesLabel.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;
 

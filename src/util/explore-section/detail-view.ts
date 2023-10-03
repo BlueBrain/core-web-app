@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
 import { from64 } from '@/util/common';
 import { FetchParams } from '@/types/explore-section/application';
 
@@ -7,14 +6,12 @@ import { FetchParams } from '@/types/explore-section/application';
  * Used to set the infoAtom used by the Explore section's detail views.
  * @param {string} path - A URL path.
  * @param revision
- * @param {Dispatch<SetStateAction<FetchParams>>} callback - The Atom setter.
  *
  */
-export function setInfoWithPath(
+export function pathToResource(
   path: string | null | undefined,
-  callback: Dispatch<SetStateAction<FetchParams | null>>,
   revision?: string | null
-) {
+): FetchParams | undefined {
   if (path) {
     const parts = path.split('/');
 
@@ -26,13 +23,12 @@ export function setInfoWithPath(
 
     const [org, project] = data[0].split('/'); // TODO: Why data[0], not data[1]?
 
-    const info = {
+    return {
       id,
       org,
       project,
-      rev: revision,
+      rev: revision ? Number.parseInt(revision, 10) : undefined,
     };
-
-    callback(info);
   }
+  return undefined;
 }
