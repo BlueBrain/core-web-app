@@ -1,8 +1,12 @@
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useCallback, useState } from 'react';
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 
-import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import {
+  eModelEditModeAtom,
+  eModelUIConfigAtom,
+  selectedEModelAtom,
+} from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { EModelByETypeMappingType, EModelMenuItem } from '@/types/e-model';
 
 interface ListItemProps {
@@ -70,6 +74,8 @@ type ETypeLineProps = {
 
 function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLineProps) {
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
+  const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
+  const setEModelEditMode = useSetAtom(eModelEditModeAtom);
 
   const handleClick = (eModel: EModelMenuItem) => {
     setSelectedEModel({
@@ -78,6 +84,8 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
       eType: eModel.eType,
       mType: mTypeName,
     });
+    setEModelUIConfig({});
+    setEModelEditMode(false);
   };
 
   return isExpanded ? (
