@@ -15,6 +15,7 @@ import {
 } from '@/types/explore-section/kg-inference';
 
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
+export const expandedRowKeysAtom = atomFamily(() => atom(new Array<string>()));
 export const limitQueryParameterAtom = atomFamily(() => atom(20));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>

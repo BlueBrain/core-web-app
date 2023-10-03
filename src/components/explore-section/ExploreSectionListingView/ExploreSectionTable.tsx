@@ -2,7 +2,7 @@ import { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
-import { useSetAtom } from 'jotai';
+import { useSetAtom, useAtomValue } from 'jotai';
 import usePathname from '@/hooks/pathname';
 import { to64 } from '@/util/common';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
@@ -10,6 +10,7 @@ import { ExploreDownloadButton } from '@/components/explore-section/ExploreSecti
 import WithRowSelection, {
   RenderButtonProps,
 } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { expandedRowKeysAtom } from '@/state/explore-section/generalization';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
@@ -130,11 +131,13 @@ export default function ExploreSectionTable({
   hasError,
   loading,
   renderButton,
+  resourceId,
 }: TableProps<any> & {
   enableDownload?: boolean;
   experimentTypeName: string;
   hasError?: boolean;
   renderButton?: (props: RenderButtonProps) => ReactNode;
+  resourceId?: string;
 }) {
   const defaultRenderButton = ({ selectedRows, clearSelectedRows }: RenderButtonProps) => (
     <ExploreDownloadButton selectedRows={selectedRows} clearSelectedRows={clearSelectedRows}>
@@ -143,6 +146,8 @@ export default function ExploreSectionTable({
       })`}</span>
     </ExploreDownloadButton>
   );
+
+  const expandedRowKeys = useAtomValue(expandedRowKeysAtom(resourceId));
 
   return enableDownload ? (
     <WithRowSelection
@@ -153,7 +158,7 @@ export default function ExploreSectionTable({
         <BaseTable
           columns={columns}
           dataSource={dataSource}
-          expandable={expandable}
+          expandable={{ ...expandable, expandedRowKeys }}
           hasError={hasError}
           loading={loading}
           rowKey={(row) => row._source._self}
