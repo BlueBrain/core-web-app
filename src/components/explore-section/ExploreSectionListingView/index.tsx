@@ -10,7 +10,7 @@ import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom } from '@/state/explore-section/list-view-atoms';
 
-export default function DefaultListView ({
+export default function DefaultListView({
   enableDownload,
   experimentTypeName,
   title,
@@ -34,13 +34,13 @@ export default function DefaultListView ({
   ]);
 
   return (
-    <div className='min-h-screen' style={{ background: '#d1d1d1' }}>
+    <div className="min-h-screen" style={{ background: '#d1d1d1' }}>
       <WithGeneralization experimentTypeName={experimentTypeName}>
         {({ data, expandable, resourceId, tabNavigation }) => (
           <WithControlPanel experimentTypeName={experimentTypeName} resourceId={resourceId}>
             {({ activeColumns, displayControlPanel, setDisplayControlPanel }) => (
               <>
-                <div className='flex flex-col'>
+                <div className="flex flex-col">
                   <HeaderPanel
                     experimentTypeName={experimentTypeName}
                     resourceId={resourceId}
