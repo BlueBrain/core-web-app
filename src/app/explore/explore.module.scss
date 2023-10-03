@@ -2,8 +2,9 @@
   @apply w-max;
 }
 .table a {
-  @apply text-primary-7;
+  @apply text-inherit;
 }
+
 .headerText,
 .tableHeader {
   @apply flex items-center justify-between text-left text-gray-500 gap-2 w-fit;

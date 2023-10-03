@@ -1,4 +1,5 @@
 import { ReactNode, useMemo, useState } from 'react';
+import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { unwrap, useAtomCallback } from 'jotai/utils';
 import { inferredResourcesAtom, expandedRowKeysAtom } from '@/state/explore-section/generalization';
@@ -8,7 +9,7 @@ import { InferredResource } from '@/types/explore-section/kg-inference';
 import { classNames } from '@/util/utils';
 import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
 
-export default function WithGeneralization({
+export default function WithGeneralization ({
   children,
   experimentTypeName,
 }: {
@@ -32,8 +33,25 @@ export default function WithGeneralization({
         name={resource._source.name}
       />
     );
+    const expandIcon = ({
+      expanded,
+      onExpand,
+      record,
+    }: {
+      expanded: boolean;
+      onExpand: (record: ExploreESHit, e: MouseEvent) => void;
+      record: ExploreESHit;
+    }) =>
+      expanded ? (
+        <MinusSquareOutlined onClick={e => onExpand(record, e)} className='text-primary-9 cursor-pointer' />
+      ) : (
+        <PlusSquareOutlined onClick={e => onExpand(record, e)} className='text-primary-9 cursor-pointer' />
+      );
+
     return {
       expandedRowRender,
+      expandIconPosition: 'right',
+      expandIcon,
       onExpandedRowsChange: (expandedRows: string[]) => {
         set(expandedRowKeysAtom(resourceId), expandedRows);
       },
@@ -65,7 +83,7 @@ export default function WithGeneralization({
         expandable: (resourceId: string) => getExpandable(resourceId),
         resourceId: activeTab,
         tabNavigation: tabs.length > 1 && (
-          <ul className="flex gap-2.5">
+          <ul className='flex gap-2.5'>
             {tabs.map((tab) => (
               <li key={tab.key}>
                 <button
@@ -76,14 +94,14 @@ export default function WithGeneralization({
                       : 'hover:bg-blue-100 cursor-pointer border-solid border text-primary-8'
                   )}
                   onClick={() => setActiveTab(tab.key)}
-                  type="button"
+                  type='button'
                 >
                   {tab.type === 'resource' ? (
-                    <div className="flex gap-1">
+                    <div className='flex gap-1'>
                       <span className={activeTab === tab.key ? 'text-neutral-2' : 'text-neutral-4'}>
                         Inferred from
                       </span>
-                      <span className="font-bold">{tab.label}</span>
+                      <span className='font-bold'>{tab.label}</span>
                     </div>
                   ) : (
                     tab.label

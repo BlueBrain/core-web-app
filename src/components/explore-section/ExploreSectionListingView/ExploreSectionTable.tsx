@@ -57,14 +57,29 @@ function CustomTH({
 function CustomCell({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
   const modifiedStyle = {
     ...style,
+    color: 'inherit',
+    background: 'inherit',
+    rowHoverBg: 'red',
   };
-
   return (
     <td {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
       {children}
     </td>
   );
 }
+
+// function CustomRow({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
+//   const modifiedStyle = {
+//     ...style,
+//     rowHoverBg: 'red',
+//     borderColor: 'red'
+//   };
+//   return (
+//     <tr {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
+//       {children}
+//     </tr>
+//   );
+// }
 
 export function BaseTable({
   columns,
@@ -73,6 +88,7 @@ export function BaseTable({
   hasError,
   loading,
   rowSelection,
+  rowClassName,
 }: TableProps<any> & { hasError?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -115,7 +131,7 @@ export function BaseTable({
       expandable={expandable}
       loading={loading}
       pagination={false}
-      rowClassName={styles.tableRow}
+      rowClassName={rowClassName || styles.tableRow}
       rowKey={(row) => row._source._self}
       rowSelection={rowSelection}
     />
@@ -159,6 +175,9 @@ export default function ExploreSectionTable({
           columns={columns}
           dataSource={dataSource}
           expandable={{ ...expandable, expandedRowKeys }}
+          rowClassName={(record) =>
+            expandedRowKeys.includes(record._source._self) ? 'text-white bg-primary-7' : 'bg-white text-primary-7'
+          }
           hasError={hasError}
           loading={loading}
           rowKey={(row) => row._source._self}
