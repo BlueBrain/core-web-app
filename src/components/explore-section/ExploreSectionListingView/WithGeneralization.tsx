@@ -43,7 +43,7 @@ export default function WithGeneralization({
           return set(expandedRowKeysAtom(resourceId), expandedRows);
         }
       })
-    }, [])
+    }, [experimentTypeName])
   )
 
   const useTab = ({ id, name: label }: InferredResource) => ({
