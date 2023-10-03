@@ -60,9 +60,13 @@ function MTypeLine({ name, onExpand, isExpanded }: MTypeLineProps) {
   );
 }
 
-const isEModelSelected = (selectedEModel: EModelMenuItem | null, eModel: EModelMenuItem) => {
+const isEModelSelected = (
+  selectedEModel: EModelMenuItem | null,
+  eModel: EModelMenuItem,
+  currentMType: string
+) => {
   if (!selectedEModel) return false;
-  return selectedEModel.id === eModel.id && selectedEModel.name === eModel.name;
+  return selectedEModel.id === eModel.id && selectedEModel.mType === currentMType;
 };
 
 type ETypeLineProps = {
@@ -97,7 +101,9 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
           type="button"
           onClick={() => handleClick(eModel)}
           className={`text-sm px-4 py-2 self-end ${
-            isEModelSelected(selectedEModel, eModel) ? `bg-white text-primary-7` : `text-white`
+            isEModelSelected(selectedEModel, eModel, mTypeName)
+              ? `bg-white text-primary-7`
+              : `text-white`
           }`}
         >
           {eModel.name}
