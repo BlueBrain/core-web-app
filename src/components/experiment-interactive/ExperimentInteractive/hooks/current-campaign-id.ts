@@ -20,11 +20,7 @@ export function useCurrentCampaignId() {
     // Format of the param is <ORG>/<PROJ>!/!<ID>
     const parts = decodedId.split('!/!');
     console.log('We should use this campaing ID = ', parts.pop()); // @FIXME: Remove this line written on 2023-09-28 at 14:43
-    // setCampaignId(parts.pop());
-    // For now, we use this campaign ID because most of the one in the list are not working.
-    setCampaignId(
-      'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/37c79ef0-099c-44ed-bad2-846cdf10faaf'
-    );
+    setCampaignId(parts.pop());
   }, [params]);
   return campaignId;
 }

@@ -8,6 +8,7 @@ import Allocator from './allocator';
 import BraynsService from './brayns-service';
 import { SlotInterface, SlotState } from './types';
 import { logError } from '@/util/logger';
+import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
 interface BraynsStatus {
   simulation: BraynsSimulationOptions;
@@ -80,7 +81,7 @@ export default class BraynsSlot implements SlotInterface {
     this.eventStateChange.dispatch(value);
   }
 
-  loadSimulation(options: BraynsSimulationOptions): void {
+  loadSimulation(options: SimulationSlot): void {
     this.next.simulation = structuredClone(options);
     this.process();
   }

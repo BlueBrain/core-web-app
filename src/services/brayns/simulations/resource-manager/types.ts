@@ -1,4 +1,4 @@
-import { BraynsSimulationOptions } from '../types';
+import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
 export enum SlotState {
   Initializing,
@@ -15,5 +15,5 @@ export interface SlotInterface {
    */
   get state(): SlotState;
 
-  loadSimulation(options: BraynsSimulationOptions): void;
+  loadSimulation(options: SimulationSlot): void;
 }

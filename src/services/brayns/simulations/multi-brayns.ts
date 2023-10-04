@@ -10,6 +10,7 @@ import { MAX_BRAYNS_INSTANCES } from './settings';
 import { BraynsSimulationOptions, TokenProvider } from './types';
 import { checkSlotId } from './utils';
 import { SlotState } from './resource-manager/types';
+import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
 export function useMultiBraynsManager(): MultiBraynsManagerInterface | null {
   const { data } = useSession();
@@ -60,7 +61,7 @@ export interface MultiBraynsManagerInterface {
 
   detachCanvas(slotId: number, canvas: HTMLCanvasElement): void;
 
-  loadSimulation(slotId: number, options: BraynsSimulationOptions): void;
+  loadSimulation(options: SimulationSlot): void;
 
   setSimulationFrame(frameIndex: number): void;
 
@@ -165,7 +166,8 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
     }
   }
 
-  loadSimulation(slotId: number, options: BraynsSimulationOptions) {
+  loadSimulation(options: SimulationSlot) {
+    const { slotId } = options;
     checkSlotId(slotId);
     const slot = this.resourceManager.getSlot(slotId);
     slot.loadSimulation(options);

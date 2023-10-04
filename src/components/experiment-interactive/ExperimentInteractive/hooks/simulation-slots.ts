@@ -3,9 +3,13 @@ import { atom, useAtom } from 'jotai';
 
 export interface SimulationSlot {
   slotId: number;
-  circuitPath: string;
-  populationName: string;
-  report: { name: string; type: string };
+  campaignId: string;
+  simulationId: string;
+  coords: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
 }
 
 const atomSimulationSlots = atom<SimulationSlot[]>([]);
