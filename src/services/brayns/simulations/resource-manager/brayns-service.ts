@@ -80,7 +80,7 @@ export default class BraynsService {
       loader_properties: {
         node_population_settings: [
           {
-            node_population: simulation.populationName,
+            node_population: 'root__neurons',
             node_count_limit: Settings.NODE_COUNT_LIMIT,
             report_type: simulation.report.type,
             neuron_morphology_parameters: {

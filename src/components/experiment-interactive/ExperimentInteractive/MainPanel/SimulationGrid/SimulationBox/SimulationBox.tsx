@@ -17,12 +17,8 @@ interface SimulationBoxProps {
 export default function SimulationBox({ className, value, onDelete }: SimulationBoxProps) {
   const manager = useMultiBraynsManager();
   useEffect(() => {
-    manager?.loadSimulation(value.slotId, {
-      circuitPath: value.circuitPath,
-      populationName: value.populationName,
-      report: value.report,
-    });
-  }, [manager, value.circuitPath, value.populationName, value.report, value.slotId]);
+    manager?.loadSimulation(value);
+  }, [manager, value]);
   return (
     <div className={classNames(styles.main, className)}>
       <BraynsSimulationViewer className={styles.fullsize} slotId={value.slotId} />
