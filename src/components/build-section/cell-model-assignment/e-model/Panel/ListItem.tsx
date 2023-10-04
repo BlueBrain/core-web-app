@@ -8,6 +8,8 @@ import {
   selectedEModelAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { EModelByETypeMappingType, EModelMenuItem } from '@/types/e-model';
+import BuiltIcon from '@/components/icons/BuildValidated';
+import ModifiedIcon from '@/components/icons/BuildModified';
 
 interface ListItemProps {
   eTypeItems: EModelMenuItem[];
@@ -83,9 +85,7 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
 
   const handleClick = (eModel: EModelMenuItem) => {
     setSelectedEModel({
-      id: eModel.id,
-      name: eModel.name,
-      eType: eModel.eType,
+      ...eModel,
       mType: mTypeName,
     });
     setEModelUIConfig({});
@@ -106,9 +106,22 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
               : `text-white`
           }`}
         >
-          {eModel.name}
+          <span className="flex items-center gap-3">
+            <span className="text-right">{eModel.name}</span>
+            <StatusIcon isOptimization={eModel.isOptimization} />
+          </span>
         </button>
       ))}
     </div>
   ) : null;
+}
+
+const iconStyle = { width: 14, height: 14 };
+
+function StatusIcon({ isOptimization }: { isOptimization: boolean }) {
+  return (
+    <div className="min-w-[20px]">
+      {isOptimization ? <ModifiedIcon style={iconStyle} /> : <BuiltIcon style={iconStyle} />}
+    </div>
+  );
 }

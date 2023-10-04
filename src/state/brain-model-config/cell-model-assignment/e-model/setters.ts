@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 
-import { eModelUIConfigAtom, refetchTriggerAtom } from '.';
-import { EModelOptimizationConfig, EModelUIConfig } from '@/types/e-model';
+import { assembledEModelUIConfigAtom, refetchTriggerAtom } from '.';
+import { EModelOptimizationConfig } from '@/types/e-model';
 import { createJsonFile, createResource } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import { EntityCreation } from '@/types/nexus';
@@ -11,9 +11,9 @@ import { autoSaveDebounceInterval } from '@/config';
 
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const createEModelOptimizationConfigAtom = atom(null, async (get) => {
+const createOptimizationConfigAtom = atom(null, async (get) => {
   const session = get(sessionAtom);
-  const eModelUIConfig = get(eModelUIConfigAtom) as EModelUIConfig | null;
+  const eModelUIConfig = await get(assembledEModelUIConfigAtom);
 
   if (!session || !eModelUIConfig) return;
 
@@ -44,9 +44,9 @@ const createEModelOptimizationConfigAtom = atom(null, async (get) => {
 
 const triggerCreateDebouncedAtom = atom<null, [], Promise<void>>(
   null,
-  debounce((get, set) => set(createEModelOptimizationConfigAtom), autoSaveDebounceInterval)
+  debounce((get, set) => set(createOptimizationConfigAtom), autoSaveDebounceInterval)
 );
 
-export const saveEModelOptimizationConfigAtom = atom<null, [], void>(null, (get, set) => {
+export const createEModelOptimizationConfigAtom = atom<null, [], void>(null, (get, set) => {
   set(triggerCreateDebouncedAtom);
 });

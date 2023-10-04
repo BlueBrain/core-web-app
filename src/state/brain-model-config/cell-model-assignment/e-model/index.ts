@@ -119,8 +119,11 @@ const eModelTracesProjConfig = {
 /* --------------------------------- EModel --------------------------------- */
 
 export const eModelAtom = atom<Promise<EModel | null>>(async (get) => {
+  const selectedEModel = get(selectedEModelAtom);
+  if (!selectedEModel) return null;
+
   const session = get(sessionAtom);
-  const eModelId = await get(selectedEModelAtom)?.id;
+  const eModelId = selectedEModel.id;
 
   if (!session || !eModelId) return null;
 
@@ -282,7 +285,7 @@ const eModelExtractionTargetsConfigurationAtom = atom<
 
 export const eModelEditModeAtom = atom(false);
 
-export const eModelUIConfigAtom = atom<Partial<EModelUIConfig> | null>({});
+export const eModelUIConfigAtom = atom<Partial<EModelUIConfig> | null>(null);
 
 /* ------------------------- EModelCanonicalMapping ------------------------- */
 
@@ -322,6 +325,8 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
       name: eModel.name,
       id: eModel['@id'] || '',
       eType: eModel.etype,
+      mType: '',
+      isOptimization: false,
     }));
 
     return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
@@ -344,15 +349,17 @@ export const editedEModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingT
 
     const eModelMenuItems: EModelMenuItem[] = optimizationConfigs.map((eModel) => ({
       name: eModel.name,
-      id: eModel['@id'] || '',
+      id: eModel['@id'] ?? '',
       eType: eModel.eType,
+      mType: eModel.mType ?? '',
+      isOptimization: true,
     }));
 
     return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
   }
 );
 
-export const eModelCanBeSavedAtom = atom<Promise<boolean>>(async (get) => {
+export const eModelCanBeSavedAtom = atom<boolean>((get) => {
   const selectedEModel = get(selectedEModelAtom);
   const eModelEditMode = get(eModelEditModeAtom);
   const eModelUIConfig = get(eModelUIConfigAtom);
@@ -361,4 +368,42 @@ export const eModelCanBeSavedAtom = atom<Promise<boolean>>(async (get) => {
   if (!eModelUIConfig.name) return false;
 
   return eModelUIConfig.name !== selectedEModel.name;
+});
+
+export const assembledEModelUIConfigAtom = atom<Promise<EModelUIConfig | null>>(async (get) => {
+  const selectedEModel = get(selectedEModelAtom);
+  const selectedBrainRegion = get(selectedBrainRegionAtom);
+  const eModelName = selectedEModel?.name;
+  const simulationParameters = await get(simulationParametersAtom);
+  const exemplarMorphology = await get(exemplarMorphologyAtom);
+  const experimentalTraces = await get(experimentalTracesAtom);
+  const featureSelectedPreset = get(featureSelectedPresetAtom);
+  const mechanisms = await get(eModelMechanismsAtom);
+
+  if (
+    !selectedEModel ||
+    !selectedBrainRegion ||
+    !eModelName ||
+    !simulationParameters ||
+    !exemplarMorphology ||
+    !experimentalTraces ||
+    !featureSelectedPreset ||
+    !mechanisms
+  )
+    return null;
+
+  const config: EModelUIConfig = {
+    mechanism: [mechanisms],
+    featurePresetName: featureSelectedPreset,
+    traces: experimentalTraces,
+    morphologies: [exemplarMorphology],
+    parameters: simulationParameters,
+    name: eModelName,
+    mType: selectedEModel.mType,
+    eType: selectedEModel.eType,
+    brainRegionName: selectedBrainRegion.title,
+    brainRegionId: `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`,
+    species: 'mouse',
+  };
+  return config;
 });

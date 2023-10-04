@@ -13,7 +13,8 @@ export interface EModelMenuItem {
   name: string;
   id: string;
   eType: string;
-  mType?: string;
+  mType: string;
+  isOptimization: boolean;
 }
 
 export interface MEModelMenuItem {
@@ -386,7 +387,7 @@ export interface EModelUIConfig {
   morphologies: ExemplarMorphologyDataType[];
   traces: ExperimentalTracesDataType[];
   mechanism: MechanismForUI[];
-  parameters: Record<SimulationParameterKeys, number>;
+  parameters: SimulationParameter;
   featurePresetName: FeaturePresetName;
   mType: string;
   eType: string;

@@ -37,14 +37,14 @@ export function convertRemoteParamsForUI(
   const temp = lodashFind(remoteParams, ['name', 'celsius'])?.value;
   const voltage = lodashFind(remoteParams, ['name', 'v_init'])?.value;
 
-  if ([ra, temp, voltage].some((value) => !value || Array.isArray(value))) {
+  if ([ra, temp, voltage].some((value) => !value || Array.isArray(value) || !Number(value))) {
     throw new Error('Failed converting remote simulation parameter');
   }
 
   return {
-    'Temperature (°C)': temp as number,
-    Ra: ra as number,
-    'Initial voltage': voltage as number,
+    'Temperature (°C)': Number(temp),
+    Ra: Number(ra),
+    'Initial voltage': Number(voltage),
     'LJP (liquid junction potential)': 14.0,
   };
 }
