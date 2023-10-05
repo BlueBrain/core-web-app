@@ -19,7 +19,6 @@ export function useCurrentCampaignId() {
     const decodedId = from64(params.id);
     // Format of the param is <ORG>/<PROJ>!/!<ID>
     const parts = decodedId.split('!/!');
-    console.log('We should use this campaing ID = ', parts.pop()); // @FIXME: Remove this line written on 2023-09-28 at 14:43
     setCampaignId(parts.pop());
   }, [params]);
   return campaignId;
