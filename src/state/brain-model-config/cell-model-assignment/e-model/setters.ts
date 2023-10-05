@@ -1,7 +1,14 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 
-import { assembledEModelUIConfigAtom, refetchTriggerAtom } from '.';
+import {
+  assembledEModelUIConfigAtom,
+  eModelUIConfigAtom,
+  editedEModelByETypeMappingAtom,
+  refetchTriggerAtom,
+  reloadListOfOptimizationsAtom,
+  selectedEModelAtom,
+} from '.';
 import { EModelOptimizationConfig } from '@/types/e-model';
 import { createJsonFile, createResource } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -15,7 +22,7 @@ const createOptimizationConfigAtom = atom(null, async (get) => {
   const session = get(sessionAtom);
   const eModelUIConfig = await get(assembledEModelUIConfigAtom);
 
-  if (!session || !eModelUIConfig) return;
+  if (!session || !eModelUIConfig) return null;
 
   const updatedFile = await createJsonFile(
     eModelUIConfig,
@@ -39,7 +46,7 @@ const createOptimizationConfigAtom = atom(null, async (get) => {
     },
   };
 
-  await createResource(clonedConfig, session);
+  return createResource(clonedConfig, session);
 });
 
 const triggerCreateDebouncedAtom = atom<null, [], Promise<void>>(
@@ -49,4 +56,26 @@ const triggerCreateDebouncedAtom = atom<null, [], Promise<void>>(
 
 export const createEModelOptimizationConfigAtom = atom<null, [], void>(null, (get, set) => {
   set(triggerCreateDebouncedAtom);
+});
+
+export const cloneEModelConfigAtom = atom<null, [], void>(null, async (get, set) => {
+  const assembledEModelUIConfig = await get(assembledEModelUIConfigAtom);
+  if (!assembledEModelUIConfig) return null;
+
+  set(eModelUIConfigAtom, assembledEModelUIConfig);
+  const eModelResource = await set(createOptimizationConfigAtom);
+
+  if (!eModelResource) throw new Error('Error cloning the e-model config');
+
+  set(reloadListOfOptimizationsAtom, {});
+  await get(editedEModelByETypeMappingAtom);
+
+  set(selectedEModelAtom, {
+    eType: assembledEModelUIConfig.eType,
+    id: eModelResource?.['@id'],
+    isOptimizationConfig: true,
+    mType: assembledEModelUIConfig.mType,
+    name: assembledEModelUIConfig.name,
+  });
+  return eModelResource;
 });

@@ -11,6 +11,7 @@ type Props = {
   onClick?: () => void;
   disabled?: boolean;
   title?: string;
+  loading?: boolean;
 };
 
 export default function GenericButton({
@@ -19,6 +20,7 @@ export default function GenericButton({
   onClick = () => {},
   disabled = false,
   title = '',
+  loading = false,
 }: Props) {
   const conditionalStyles = [
     className.includes('border-') ? 'border' : 'border-transparent',
@@ -33,6 +35,7 @@ export default function GenericButton({
       onClick={onClick}
       title={title}
       disabled={disabled}
+      loading={loading}
     >
       {text}
     </Button>
