@@ -9,7 +9,9 @@ import {
   limitQueryParameterAtom,
 } from '@/state/explore-section/generalization';
 import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
+import { Project } from '@/types/explore-section/es-common';
 import useNotification from '@/hooks/notifications';
+import { parseOrgProjectToResourceInfo } from '@/util/explore-section/detail-view';
 
 interface GeneralizationOptionsProps {
   resourceId: string;
@@ -51,13 +53,17 @@ function GeneralizationOptions({
 
 function GeneralizationRules({
   resourceId,
+  resourceOrgProject,
   experimentTypeName,
   name,
 }: {
   resourceId: string;
+  resourceOrgProject: Project;
   experimentTypeName: string;
   name: string;
 }) {
+  const resourceInfo = parseOrgProjectToResourceInfo(resourceId, resourceOrgProject);
+
   const [resourceBasedRules, setResourceBasedRules] = useAtom(
     useMemo(() => unwrap(resourceBasedRulesAtom(resourceId)), [resourceId])
   );
@@ -99,7 +105,7 @@ function GeneralizationRules({
     // if not found, the resource is added
     if (!inferredResources.find((item) => item.id === resourceId)) {
       success('Resources were inferred. Change the tab to explore the inferred resources');
-      setinferredResources([...inferredResources, ...[{ id: resourceId, name }]]);
+      setinferredResources([...inferredResources, ...[{ id: resourceId, name, resourceInfo }]]);
     }
   };
 

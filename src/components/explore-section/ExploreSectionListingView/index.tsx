@@ -9,6 +9,8 @@ import WithControlPanel from '@/components/explore-section/ExploreSectionListing
 import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/HeaderPanel';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom } from '@/state/explore-section/list-view-atoms';
+import { DETAIL_FIELDS_CONFIG } from '@/constants/explore-section/detail-fields-config';
+import InferredResourceHeader from '@/components/explore-section/InferredResourceHeader';
 
 export default function DefaultListView({
   enableDownload,
@@ -36,7 +38,7 @@ export default function DefaultListView({
   return (
     <div className="min-h-screen" style={{ background: '#d1d1d1' }}>
       <WithGeneralization experimentTypeName={experimentTypeName}>
-        {({ data, expandable, resourceId, tabNavigation }) => (
+        {({ data, expandable, resourceId, tabNavigation, resourceInfo }) => (
           <WithControlPanel experimentTypeName={experimentTypeName} resourceId={resourceId}>
             {({ activeColumns, displayControlPanel, setDisplayControlPanel }) => (
               <>
@@ -55,6 +57,12 @@ export default function DefaultListView({
                 >
                   {tabNavigation}
                 </FilterControls>
+                {resourceInfo && (
+                  <InferredResourceHeader
+                    fields={DETAIL_FIELDS_CONFIG[experimentTypeName]}
+                    resourceInfo={resourceInfo}
+                  />
+                )}
                 <ExploreSectionTable
                   columns={columns.filter(({ key }) =>
                     (activeColumns || []).includes(key as string)

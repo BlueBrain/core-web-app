@@ -84,3 +84,12 @@ export type SingleCard = {
   image: string;
   items?: SubSectionCardItem[] | null;
 };
+
+export type DetailProps = { field: string; className?: string };
+
+export type ResourceInfo = {
+  id: string;
+  project: string;
+  org: string;
+  rev?: string | number;
+};

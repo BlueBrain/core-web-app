@@ -14,9 +14,11 @@ import usePathname from '@/hooks/pathname';
 export default function DetailHeaderName({
   detail,
   url,
+  withRevision,
 }: {
   detail: DeltaResource;
   url?: string | null;
+  withRevision?: boolean;
 }) {
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
@@ -47,25 +49,27 @@ export default function DetailHeaderName({
       <div className="flex  justify-between">
         <div className="flex items-center gap-5">
           <div className="font-bold text-xl">{detail?.name}</div>
-          <Dropdown
-            menu={{ items }}
-            placement="bottom"
-            trigger={['click']}
-            disabled={items.length < 2}
-          >
-            <button
-              type="button"
-              className="border border-primary-7 flex gap-2 items-center px-4 py-2 w-fit"
+          {withRevision && (
+            <Dropdown
+              menu={{ items }}
+              placement="bottom"
+              trigger={['click']}
+              disabled={items.length < 2}
             >
-              {latestRevision.state === 'loading' && <Spin indicator={<LoadingOutlined />} />}
-              {latestRevision.state === 'hasData' && (
-                <span>
-                  Revision {detail._rev} {latestRevision.data === detail._rev ? '(latest)' : ''}
-                </span>
-              )}
-              <DownOutlined />
-            </button>
-          </Dropdown>
+              <button
+                type="button"
+                className="border border-primary-7 flex gap-2 items-center px-4 py-2 w-fit"
+              >
+                {latestRevision.state === 'loading' && <Spin indicator={<LoadingOutlined />} />}
+                {latestRevision.state === 'hasData' && (
+                  <span>
+                    Revision {detail._rev} {latestRevision.data === detail._rev ? '(latest)' : ''}
+                  </span>
+                )}
+                <DownOutlined />
+              </button>
+            </Dropdown>
+          )}
         </div>
         {isSimCampDetail && (
           <div className="flex gap-2">

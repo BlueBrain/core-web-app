@@ -5,6 +5,7 @@ import { inferredResourcesAtom, expandedRowKeysAtom } from '@/state/explore-sect
 import { dataAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { InferredResource } from '@/types/explore-section/kg-inference';
+import { ResourceInfo } from '@/types/explore-section/application';
 import { classNames } from '@/util/utils';
 import GeneralizationRules from '@/components/explore-section/ExploreSectionListingView/GeneralizationRules';
 
@@ -19,6 +20,7 @@ export default function WithGeneralization({
       expandedRowKeys: readonly Key[];
       onExpandedRowsChange: (expandedKeys: readonly Key[]) => void;
     };
+    resourceInfo?: ResourceInfo;
     resourceId: string;
     tabNavigation: ReactNode;
   }) => ReactNode;
@@ -34,6 +36,7 @@ export default function WithGeneralization({
         resourceId={resource._source['@id']}
         experimentTypeName={experimentTypeName}
         name={resource._source.name}
+        resourceOrgProject={resource._source.project}
       />
     );
 
@@ -45,12 +48,16 @@ export default function WithGeneralization({
     };
   });
 
-  const useTab = ({ id, name: label }: InferredResource) => ({
+  const useTab = ({ id, name: label, resourceInfo }: InferredResource) => ({
     key: id,
     label,
     type: label !== 'Original' ? 'resource' : 'source',
+    resourceInfo,
   });
+
   const tabs = [{ id: experimentTypeName, name: 'Original' }, ...inferredResources].map(useTab);
+
+  const getResourceInfo = () => tabs.find(({ key }) => key === activeTab)?.resourceInfo;
 
   return (
     <div className={classNames('w-full', activeTab === null ? 'hidden' : '')}>
@@ -71,6 +78,7 @@ export default function WithGeneralization({
           ...getExpandable(activeTab),
           expandedRowKeys: useAtomValue(expandedRowKeysAtom(activeTab)),
         },
+        resourceInfo: getResourceInfo(),
         resourceId: activeTab,
         tabNavigation: tabs.length > 1 && (
           <ul className="flex gap-2.5">

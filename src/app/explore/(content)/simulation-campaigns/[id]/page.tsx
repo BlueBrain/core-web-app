@@ -1,8 +1,9 @@
 'use client';
 
-import Detail, { DetailProps } from '@/components/explore-section/Detail';
+import Detail from '@/components/explore-section/Detail';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import Simulations from '@/components/explore-section/Simulations';
+import { DetailProps } from '@/types/explore-section/application';
 
 const fields: DetailProps[] = [
   {

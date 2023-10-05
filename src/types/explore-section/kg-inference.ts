@@ -1,3 +1,5 @@
+import { ResourceInfo } from '@/types/explore-section/application';
+
 export interface RuleOutput {
   id: string;
   name: string;
@@ -74,4 +76,4 @@ export type ResourceBasedInferenceResponse = Array<{
 export type InferredResource = Omit<
   ResourceBasedInference,
   'value' | 'description' | 'displayName'
->;
+> & { resourceInfo?: ResourceInfo };

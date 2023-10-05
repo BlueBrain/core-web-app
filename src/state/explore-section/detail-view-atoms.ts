@@ -7,18 +7,11 @@ import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { ensureArray } from '@/util/nexus';
-import { FetchParams } from '@/types/explore-section/application';
+import { ResourceInfo } from '@/types/explore-section/application';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
-type ResourceInfo = {
-  id: string;
-  project: string;
-  org: string;
-  rev?: string;
-};
-
-export const sessionAndInfoAtom = atomFamily((resourceInfo?: FetchParams) =>
+export const sessionAndInfoAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom((get) => {
     const session = get(sessionAtom);
 
@@ -28,20 +21,20 @@ export const sessionAndInfoAtom = atomFamily((resourceInfo?: FetchParams) =>
   })
 );
 
-export const detailAtom = atomFamily((resourceInfo?: FetchParams) =>
+export const detailAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<DeltaResource | null>>(async (get) => {
     const { session, info } = get(sessionAndInfoAtom(resourceInfo));
     const resource: DeltaResource = await fetchResourceById(info.id, session, {
       org: info.org,
       project: info.project,
-      rev: info.rev ? Number.parseInt(info.rev, 10) : undefined,
+      rev: info.rev ? Number.parseInt(info.rev as string, 10) : undefined,
     });
 
     return resource;
   })
 );
 
-export const contributorsDataAtom = atomFamily((resourceInfo?: FetchParams) =>
+export const contributorsDataAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<DeltaResource[] | null>>(async (get) => {
     const { session, info } = get(sessionAndInfoAtom(resourceInfo));
     const detail = await get(detailAtom(resourceInfo));
@@ -64,7 +57,7 @@ export const contributorsDataAtom = atomFamily((resourceInfo?: FetchParams) =>
   })
 );
 
-export const licenseDataAtom = atomFamily((resourceInfo?: FetchParams) =>
+export const licenseDataAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<DeltaResource | null>>(async (get) => {
     const { session, info } = get(sessionAndInfoAtom(resourceInfo));
     const detail = await get(detailAtom(resourceInfo));
@@ -81,7 +74,7 @@ export const licenseDataAtom = atomFamily((resourceInfo?: FetchParams) =>
   })
 );
 
-export const latestRevisionAtom = atomFamily((resourceInfo?: FetchParams) =>
+export const latestRevisionAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<number | null>>(async (get) => {
     const { session, info } = get(sessionAndInfoAtom(resourceInfo));
 
@@ -94,7 +87,7 @@ export const latestRevisionAtom = atomFamily((resourceInfo?: FetchParams) =>
   })
 );
 
-export const speciesDataAtom = atomFamily((resourceInfo?: FetchParams) =>
+export const speciesDataAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<DeltaResource | null>>(async (get) => {
     const { session, info } = get(sessionAndInfoAtom(resourceInfo));
 

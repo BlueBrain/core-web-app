@@ -2,9 +2,10 @@
 
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import Detail, { DetailProps } from '@/components/explore-section/Detail';
+import Detail from '@/components/explore-section/Detail';
 import { DeltaResource } from '@/types/explore-section/resources';
 import EphysViewerContainer from '@/components/explore-section/EphysViewerContainer';
+import { DetailProps } from '@/types/explore-section/application';
 
 const fields = [
   {

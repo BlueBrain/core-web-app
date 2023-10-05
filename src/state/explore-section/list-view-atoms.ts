@@ -113,7 +113,6 @@ export const queryAtom = atomFamily(
 
         if (firstRuleResults) {
           const inferredResponseIds = firstRuleResults.results.map(({ id }) => id);
-
           if (inferredResponseIds.length) {
             return fetchDataQueryUsingIds(
               pageSize,
@@ -176,7 +175,7 @@ export const totalAtom = atomFamily(
         const { total } = response ?? {
           total: { value: 0 },
         };
-        return total.value;
+        return total?.value;
       }
     ),
   DataAtomFamilyScopeComparator
