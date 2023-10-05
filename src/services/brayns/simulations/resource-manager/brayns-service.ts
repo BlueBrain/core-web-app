@@ -3,6 +3,8 @@ import JsonRpc from '../../common/json-rpc';
 import Settings from '../../common/settings';
 import { Vector3 } from '../../common/utils/calc';
 import { BraynsSimulationOptions } from '../types';
+import { findSimulationProperties } from './find-simulation-properties';
+import { CampaignSimulation } from './types';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 
@@ -52,8 +54,9 @@ export default class BraynsService {
     });
   }
 
-  async loadCircuit(simulation: BraynsSimulationOptions) {
+  async loadCircuit({ campaignId, simulationId }: CampaignSimulation) {
     const { service } = this;
+    const simulation: BraynsSimulationOptions = findSimulationProperties(campaignId, simulationId);
     await service.exec('set-camera-orthographic', { height: 15000 });
     await service.exec('set-camera-view', {
       position: [6587, 3849, 18837],

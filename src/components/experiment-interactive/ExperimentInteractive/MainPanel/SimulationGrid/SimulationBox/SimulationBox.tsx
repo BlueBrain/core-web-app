@@ -11,7 +11,7 @@ import styles from './simulation-box.module.css';
 interface SimulationBoxProps {
   className?: string;
   value: SimulationSlot;
-  onDelete(slotId: number): void;
+  onDelete(value: SimulationSlot): void;
 }
 
 export default function SimulationBox({ className, value, onDelete }: SimulationBoxProps) {
@@ -21,11 +21,11 @@ export default function SimulationBox({ className, value, onDelete }: Simulation
   }, [manager, value]);
   return (
     <div className={classNames(styles.main, className)}>
-      <BraynsSimulationViewer className={styles.fullsize} slotId={value.slotId} />
+      <BraynsSimulationViewer className={styles.fullsize} slot={value} />
       <button
         type="button"
         className={`${styles.button} w-9 h-9 bg-black rounded-lg border border-neutral-400 justify-center items-center gap-2.5 inline-flex flex-row items-center`}
-        onClick={() => onDelete(value.slotId)}
+        onClick={() => onDelete(value)}
       >
         <DeleteFilled />
       </button>

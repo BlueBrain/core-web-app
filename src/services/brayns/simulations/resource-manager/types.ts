@@ -17,3 +17,8 @@ export interface SlotInterface {
 
   loadSimulation(options: SimulationSlot): void;
 }
+
+export interface CampaignSimulation {
+  campaignId: string;
+  simulationId: string;
+}
