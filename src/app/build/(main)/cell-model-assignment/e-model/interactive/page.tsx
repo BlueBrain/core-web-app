@@ -1,3 +1,10 @@
+'use client';
+
+import InteractiveView from '@/components/build-section/cell-model-assignment/e-model/interactive/View';
+import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
+
 export default function InteractivePage() {
-  return <div>Interactive page</div>;
+  useLiteratureCleanNavigate();
+
+  return <InteractiveView />;
 }

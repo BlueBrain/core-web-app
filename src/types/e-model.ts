@@ -50,6 +50,17 @@ export interface ExperimentalTracesDataType {
   subjectSpecies: string;
 }
 
+type Generation = {
+  '@type': 'Generation';
+  activity: {
+    '@type': 'Activity';
+    followedWorkflow: {
+      '@id': string;
+      '@type': 'EModelWorkflow';
+    };
+  };
+};
+
 /* --------------------------------- EModel --------------------------------- */
 
 export type EModelType = 'EModel';
@@ -58,16 +69,7 @@ export interface EModel extends EModelCommonProps {
   '@type': ['Entity', EModelType];
   description: string;
   distribution: Distribution[];
-  generation: {
-    '@type': 'Generation';
-    activity: {
-      '@type': 'Activity';
-      followedWorkflow: {
-        '@id': string;
-        '@type': 'EModelWorkflow';
-      };
-    };
-  };
+  generation: Generation;
   seed: number;
   brainLocation?: BrainLocation;
   subject: {
@@ -379,6 +381,19 @@ export interface SubCellularModelScript extends Entity {
 }
 
 export interface SubCellularModelScriptResource extends ResourceMetadata, SubCellularModelScript {}
+
+/* ------------------------------ EModelScript ------------------------------ */
+
+export type EModelScriptType = 'EModelScript';
+
+export interface EModelScript extends Entity {
+  '@type': [EModelScriptType];
+  name: string;
+  distribution: Distribution;
+  generation: Generation;
+}
+
+export interface EModelScriptResource extends ResourceMetadata, EModelScript {}
 
 /* ----------------------------- EModelUIConfig ----------------------------- */
 
