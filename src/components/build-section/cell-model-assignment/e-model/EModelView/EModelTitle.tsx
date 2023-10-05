@@ -1,9 +1,10 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { ChangeEvent, useEffect } from 'react';
 
+import ErrorMessageLine from './ErrorMessageLine';
 import {
-  eModelAtom,
   eModelEditModeAtom,
+  eModelNameAtom,
   eModelUIConfigAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import EditPencilIcon from '@/components/icons/EditPencil';
@@ -11,35 +12,31 @@ import EditPencilIcon from '@/components/icons/EditPencil';
 const titleStyle = 'text-3xl font-bold text-primary-8 flex items-center';
 
 export default function EModelTitle() {
-  const eModel = useAtomValue(eModelAtom);
+  const eModelName = useAtomValue(eModelNameAtom);
   const eModelEditMode = useAtomValue(eModelEditModeAtom);
   const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
 
   useEffect(() => {
-    if (!eModelEditMode || !eModel) return;
+    if (!eModelEditMode || !eModelName) return;
 
     setEModelUIConfig((oldAtomData) => ({
       ...oldAtomData,
-      name: eModel.name,
+      name: eModelName,
     }));
-  }, [eModelEditMode, eModel, setEModelUIConfig]);
+  }, [eModelEditMode, eModelName, setEModelUIConfig]);
 
   const onEModelNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEModelUIConfig((oldAtomData) => ({
       ...oldAtomData,
-      name: event.target.value || ' ',
+      name: event.target.value || '',
     }));
   };
 
-  const eModelName = eModelEditMode ? eModelUIConfig?.name : eModel?.name;
-
-  if (!eModelName) return null;
+  const currentName = eModelEditMode ? eModelUIConfig?.name : eModelName;
 
   if (!eModelEditMode) {
-    return <div className={titleStyle}>{eModelName}</div>;
+    return <div className={titleStyle}>{currentName}</div>;
   }
-
-  const sameName = eModelUIConfig?.name === eModel?.name;
 
   return (
     <>
@@ -47,18 +44,13 @@ export default function EModelTitle() {
         <input
           className="border-b-2 mr-2 w-1/2"
           type="text"
-          defaultValue={eModel?.name}
+          defaultValue={currentName || ''}
           onChange={onEModelNameChange}
         />
         <EditPencilIcon style={{ width: 20, height: 20 }} />
       </div>
-      <div>
-        {sameName && (
-          <div className="text-red-400 text-xs">
-            EModel name should be different from the original
-          </div>
-        )}
-      </div>
+
+      <ErrorMessageLine message={currentName ? '' : 'Name is required'} />
     </>
   );
 }

@@ -126,7 +126,7 @@ export const analysedETypesAtom = atom<Promise<MEModelMenuItem>>(async (get) => 
       id: eType.id,
       eType: eType.label,
       mType: mTypeInfo.label,
-      isOptimization: false,
+      isOptimizationConfig: false,
     };
 
     const existingMTypeInfo = acc[mTypeInfo.label];

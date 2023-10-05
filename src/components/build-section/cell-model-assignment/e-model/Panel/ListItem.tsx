@@ -108,7 +108,7 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
         >
           <span className="flex items-center gap-3">
             <span className="text-right">{eModel.name}</span>
-            <StatusIcon isOptimization={eModel.isOptimization} />
+            <StatusIcon isOptimizationConfig={eModel.isOptimizationConfig} />
           </span>
         </button>
       ))}
@@ -118,10 +118,10 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
 
 const iconStyle = { width: 14, height: 14 };
 
-function StatusIcon({ isOptimization }: { isOptimization: boolean }) {
+function StatusIcon({ isOptimizationConfig }: { isOptimizationConfig: boolean }) {
   return (
     <div className="min-w-[20px]">
-      {isOptimization ? <ModifiedIcon style={iconStyle} /> : <BuiltIcon style={iconStyle} />}
+      {isOptimizationConfig ? <ModifiedIcon style={iconStyle} /> : <BuiltIcon style={iconStyle} />}
     </div>
   );
 }

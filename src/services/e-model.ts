@@ -1,4 +1,5 @@
 import lodashFind from 'lodash/find';
+import mergeWith from 'lodash/mergeWith';
 
 import {
   AllFeatureKeys,
@@ -16,6 +17,7 @@ import {
   SpikeShapeFeatureKeys,
   Trace,
   VoltageFeatureKeys,
+  EModelByETypeMappingType,
 } from '@/types/e-model';
 import {
   spikeEventFeatures,
@@ -150,4 +152,23 @@ export function convertMechanismsForUI(
   mechanismsGroupedByLocation: MechanismForUI
 ): MechanismForUI {
   return mechanismsGroupedByLocation;
+}
+
+export function mergeEModelsAndOptimizations(
+  optimizations: EModelByETypeMappingType | null,
+  eModels: EModelByETypeMappingType | null
+) {
+  if (!eModels || !optimizations) return eModels || optimizations;
+
+  function customizer(objValue: EModelByETypeMappingType, srcValue: EModelByETypeMappingType) {
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return [...srcValue, ...objValue];
+    }
+    return objValue;
+  }
+
+  const merged = {};
+
+  mergeWith(merged, optimizations, eModels, customizer);
+  return merged;
 }

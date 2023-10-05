@@ -49,6 +49,13 @@ export const eModelRemoteParamsLoadedAtom = atom(false);
 export const refetchTriggerAtom = atom<{}>({});
 
 export const simulationParametersAtom = atom<Promise<SimulationParameter | null>>(async (get) => {
+  const isOptimizationConfig = get(selectedEModelAtom)?.isOptimizationConfig;
+
+  if (isOptimizationConfig) {
+    const payload = await get(eModelOptimizationPayloadAtom);
+    return payload?.parameters || null;
+  }
+
   const remoteParameters = await get(eModelParameterAtom);
 
   if (!remoteParameters) return null;
@@ -64,6 +71,19 @@ export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>
 
   if (eModelEditMode) {
     const featureSelectedPreset = get(featureSelectedPresetAtom);
+    const featuresPerPreset = featureAutoTargets[featureSelectedPreset]
+      .efeatures as AllFeatureKeys[];
+
+    return convertFeaturesForUI(featuresPerPreset);
+  }
+
+  const isOptimizationConfig = get(selectedEModelAtom)?.isOptimizationConfig;
+
+  if (isOptimizationConfig) {
+    const payload = await get(eModelOptimizationPayloadAtom);
+    const featureSelectedPreset = payload?.featurePresetName;
+    if (!featureSelectedPreset) return null;
+
     const featuresPerPreset = featureAutoTargets[featureSelectedPreset]
       .efeatures as AllFeatureKeys[];
 
@@ -86,6 +106,13 @@ export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>
 
 export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | null>>(
   async (get) => {
+    const isOptimizationConfig = get(selectedEModelAtom)?.isOptimizationConfig;
+
+    if (isOptimizationConfig) {
+      const payload = await get(eModelOptimizationPayloadAtom);
+      return payload?.morphologies[0] || null;
+    }
+
     const morphology = await get(eModelMorphologyAtom);
 
     if (!morphology) return null;
@@ -96,6 +123,13 @@ export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | 
 
 export const experimentalTracesAtom = atom<Promise<ExperimentalTracesDataType[] | null>>(
   async (get) => {
+    const isOptimizationConfig = get(selectedEModelAtom)?.isOptimizationConfig;
+
+    if (isOptimizationConfig) {
+      const payload = await get(eModelOptimizationPayloadAtom);
+      return payload?.traces || null;
+    }
+
     const session = get(sessionAtom);
     const eModelExtractionTargetsConfiguration = await get(
       eModelExtractionTargetsConfigurationAtom
@@ -128,6 +162,41 @@ export const eModelAtom = atom<Promise<EModel | null>>(async (get) => {
   if (!session || !eModelId) return null;
 
   return fetchResourceById<EModel>(eModelId, session);
+});
+
+export const eModelNameAtom = atom<Promise<string | null>>(async (get) => {
+  const isOptimizationConfig = get(selectedEModelAtom)?.isOptimizationConfig;
+  if (isOptimizationConfig) {
+    const eModelOptimization = await get(eModelOptimizationAtom);
+    return eModelOptimization?.name || null;
+  }
+
+  const eModel = await get(eModelAtom);
+  return eModel?.name || null;
+});
+
+export const eModelOptimizationAtom = atom<Promise<EModelOptimizationConfig | null>>(
+  async (get) => {
+    const selectedEModel = get(selectedEModelAtom);
+    if (!selectedEModel) return null;
+
+    const session = get(sessionAtom);
+    const eModelId = selectedEModel.id;
+
+    if (!session || !eModelId) return null;
+
+    return fetchResourceById<EModelOptimizationConfig>(eModelId, session);
+  }
+);
+
+const eModelOptimizationPayloadAtom = atom<Promise<EModelUIConfig | null>>(async (get) => {
+  const eModel = await get(eModelOptimizationAtom);
+  const session = get(sessionAtom);
+
+  if (!session || !eModel) return null;
+
+  const url = eModel.distribution.contentUrl;
+  return fetchJsonFileByUrl<EModelUIConfig>(url, session);
 });
 
 const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
@@ -222,8 +291,9 @@ export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (
   if (!session) return null;
 
   const eModelEditMode = get(eModelEditModeAtom);
+  const isOptimizationConfig = get(selectedEModelAtom)?.isOptimizationConfig;
 
-  if (eModelEditMode) {
+  if (eModelEditMode || isOptimizationConfig) {
     const selectedEModel = get(selectedEModelAtom);
     if (!selectedEModel) throw new Error('No selected e-model to edit');
 
@@ -326,15 +396,18 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
       id: eModel['@id'] || '',
       eType: eModel.etype,
       mType: '',
-      isOptimization: false,
+      isOptimizationConfig: false,
     }));
 
     return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
   }
 );
 
+export const reloadListOfOptimizationsAtom = atom({});
+
 export const editedEModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | null>>(
   async (get) => {
+    get(reloadListOfOptimizationsAtom);
     const session = get(sessionAtom);
     const selectedBrainRegion = get(selectedBrainRegionAtom);
     const brainRegions = await get(brainRegionsAtom);
@@ -352,7 +425,7 @@ export const editedEModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingT
       id: eModel['@id'] ?? '',
       eType: eModel.eType,
       mType: eModel.mType ?? '',
-      isOptimization: true,
+      isOptimizationConfig: true,
     }));
 
     return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
