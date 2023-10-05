@@ -1,10 +1,14 @@
 import { BorderOutlined, CheckSquareOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { useState } from 'react';
 
+import CoordFilter from '../CoordFilter';
+import CoordLabel from '../CoordLabel';
 import { useSimulationSlots } from '../hooks';
+import { useAvailableCoords } from '../hooks/available-coords';
 import { useCurrentCampaignId } from '../hooks/current-campaign-id';
 import { useSimulations } from '../hooks/simulations';
-import { useAvailableCoords } from '../hooks/available-coords';
-import CoordLabel from '../CoordLabel';
+import { useSlotSelectorVisible } from '../hooks/slot-selector-visible';
 import { classNames } from '@/util/utils';
 
 import styles from './slots-selector.module.css';
@@ -14,6 +18,8 @@ export interface SlotsSelectorProps {
 }
 
 export default function SlotsSelector({ className }: SlotsSelectorProps) {
+  const [, setSlotSelectorVisible] = useSlotSelectorVisible();
+  const [filters, setFilters] = useState<Record<string, string | undefined>>({});
   const slots = useSimulationSlots();
   const campaignId = useCurrentCampaignId();
   const simulations = useSimulations(campaignId);
@@ -31,37 +37,80 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
             <CoordLabel key={coord.name} value={coord} />
           ))}
           <div />
-          {simulations.map((sim) => (
-            <>
-              {availableCoords.map((coord) => (
-                <div key={`${sim.id}/${coord.name}`} className={styles.underlined}>
-                  {sim.coords[coord.name] ?? 'N/A'}
-                </div>
-              ))}
-              <div className={classNames(styles.underlined, styles.icon)}>
-                <CheckSquareOutlined />
-                <BorderOutlined />
-              </div>
-            </>
+          {availableCoords.map((coord) => (
+            <CoordFilter
+              key={coord.name}
+              coord={coord}
+              value={filters[coord.name] ?? ''}
+              onChange={(v) =>
+                setFilters({
+                  ...filters,
+                  [coord.name]: v,
+                })
+              }
+            />
           ))}
+          <div>Reset</div>
+          {simulations.map((sim) => {
+            const isSelected = Boolean(
+              slots.list.find(
+                (item) =>
+                  sim.campaignId === item.campaignId && sim.simulationId === item.simulationId
+              )
+            );
+            return (
+              <>
+                {availableCoords.map((coord) => (
+                  <div key={`${sim.simulationId}/${coord.name}`} className={styles.underlined}>
+                    {sim.coords[coord.name] ?? 'N/A'}
+                  </div>
+                ))}
+                <div className={classNames(styles.underlined, styles.icon)}>
+                  {isSelected ? (
+                    <CheckSquareOutlined onClick={() => slots.remove(sim)} />
+                  ) : (
+                    <BorderOutlined onClick={() => slots.add(sim)} />
+                  )}
+                </div>
+              </>
+            );
+          })}
         </div>
       </div>
-      <div>
-        <h2>Selected simulations</h2>
-      </div>
-      {/* <Button
-        onClick={() =>
-          simulationSlots.add({
-            circuitPath:
-              '/gpfs/bbp.cscs.ch/data/scratch/proj134/home/king/BBPP134-479_custom/full_shm800.b/simulation_config.json',
-            populationName: 'root__neurons',
-            report: { name: 'soma', type: 'compartment' },
-          })
-        }
+      <div
+        style={{
+          '--custom-grid-columns': availableCoords.length,
+        }}
       >
-        Add a new slot
-      </Button>
-      <pre>{JSON.stringify(simulations, null, '    ')}</pre> */}
+        <h2>Selected simulations</h2>
+        <div className={styles.grid}>
+          {availableCoords.map((coord) => (
+            <CoordLabel key={coord.name} value={coord} />
+          ))}
+          {simulations.map((sim) => {
+            const isSelected = Boolean(
+              slots.list.find(
+                (item) =>
+                  sim.campaignId === item.campaignId && sim.simulationId === item.simulationId
+              )
+            );
+            if (!isSelected) return null;
+
+            return (
+              <>
+                {availableCoords.map((coord) => (
+                  <div key={`${sim.simulationId}/${coord.name}`} className={styles.underlined}>
+                    {sim.coords[coord.name] ?? 'N/A'}
+                  </div>
+                ))}
+              </>
+            );
+          })}
+        </div>
+        <Button disabled={slots.list.length === 0} onClick={() => setSlotSelectorVisible(false)}>
+          Confirm
+        </Button>
+      </div>
     </div>
   );
 }

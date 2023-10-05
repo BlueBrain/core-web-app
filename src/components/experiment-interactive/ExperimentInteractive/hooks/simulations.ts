@@ -4,7 +4,8 @@ import { fetchSimulationsFromEs } from '@/api/explore-section/simulations';
 import { assertType } from '@/util/type-guards';
 
 export interface SimulationDefinition {
-  id: string;
+  campaignId: string;
+  simulationId: string;
   coords: Record<string, number>;
 }
 
@@ -67,7 +68,8 @@ async function fetchSimulations(
   });
   return data.hits.map(({ _id, _source }: SimulationHit) => {
     const simulation: SimulationDefinition = {
-      id: _id,
+      campaignId,
+      simulationId: _id,
       coords: _source.parameter.coords,
     };
     return simulation;

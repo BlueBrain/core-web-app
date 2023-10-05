@@ -1,11 +1,15 @@
 .slotsSelector {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
   display: flex;
   justify-content: space-around;
   align-items: stretch;
   gap: 1em;
   padding: 1em;
-  width: 100%;
-  height: 100%;
   margin: 0;
 }
 
@@ -31,11 +35,11 @@
   align-items: center;
 }
 
-.underlines {
-  border-bottom: 1px solid currentColor;
+.underlined {
+  border-bottom: 1px solid #fff3;
 }
 
 .icon {
-  font-size: 2em;
+  font-size: 1.5em;
   cursor: pointer;
 }

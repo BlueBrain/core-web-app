@@ -6,12 +6,15 @@ import { CameraTransformInteface } from '../../common/utils/camera-transform';
 import Calc, { Vector3 } from '../../common/utils/calc';
 import Allocator from './allocator';
 import BraynsService from './brayns-service';
-import { SlotInterface, SlotState } from './types';
+import { CampaignSimulation, SlotInterface, SlotState } from './types';
 import { logError } from '@/util/logger';
 import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
 interface BraynsStatus {
-  simulation: BraynsSimulationOptions;
+  simulation: {
+    campaignId: string;
+    simulationId: string;
+  };
   width: number;
   height: number;
   camera: {
@@ -240,8 +243,8 @@ export default class BraynsSlot implements SlotInterface {
 }
 
 function areDifferentSimulations(
-  a: BraynsSimulationOptions | undefined,
-  b: BraynsSimulationOptions | undefined
+  a: CampaignSimulation | undefined,
+  b: CampaignSimulation | undefined
 ) {
   if (a === b) return false;
 

@@ -8,20 +8,21 @@ import {
 } from '../multi-brayns';
 import { SlotState } from '../resource-manager/types';
 import Spinner from '@/components/Spinner';
+import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
 import styles from './brayns-simulation-viewer.module.css';
 
 export interface BraynsSimulationViewerProps {
   className?: string;
-  slotId: number;
+  slot: SimulationSlot;
 }
 
-export default function BraynsSimulationViewer({ className, slotId }: BraynsSimulationViewerProps) {
+export default function BraynsSimulationViewer({ className, slot }: BraynsSimulationViewerProps) {
   const manager = useMultiBraynsManager();
-  useCircuitInitialization(slotId, manager);
-  const refCanvas = useCanvas(slotId, manager);
-  const progress = useProgress(slotId);
-  const error = useSlotError(slotId);
+  useCircuitInitialization(slot, manager);
+  const refCanvas = useCanvas(slot.slotId, manager);
+  const progress = useProgress(slot.slotId);
+  const error = useSlotError(slot.slotId);
   return (
     <div className={getClassName(className)}>
       <canvas ref={refCanvas} />
@@ -36,18 +37,15 @@ export default function BraynsSimulationViewer({ className, slotId }: BraynsSimu
   );
 }
 
-function useCircuitInitialization(slotId: number, manager: MultiBraynsManagerInterface | null) {
+function useCircuitInitialization(
+  slot: SimulationSlot,
+  manager: MultiBraynsManagerInterface | null
+) {
   useEffect(() => {
     if (!manager) return;
 
-    manager.loadSimulation(slotId, {
-      circuitPath:
-        // '/gpfs/bbp.cscs.ch/project/proj3/cloned_circuits/FULL_BRAIN_WITH_SIM_15_06_2023/simulation_config.json',
-        '/gpfs/bbp.cscs.ch/data/scratch/proj134/home/king/BBPP134-479_custom/full_shm800.b/simulation_config.json',
-      populationName: 'root__neurons',
-      report: { name: 'soma', type: 'compartment' },
-    });
-  }, [manager, slotId]);
+    manager.loadSimulation(slot);
+  }, [manager, slot]);
 }
 
 function getClassName(className?: string) {

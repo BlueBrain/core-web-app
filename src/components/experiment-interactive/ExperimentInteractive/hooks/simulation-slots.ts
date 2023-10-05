@@ -1,15 +1,9 @@
 /* eslint-disable no-restricted-syntax */
 import { atom, useAtom } from 'jotai';
+import { SimulationDefinition } from './simulations';
 
-export interface SimulationSlot {
+export interface SimulationSlot extends SimulationDefinition {
   slotId: number;
-  campaignId: string;
-  simulationId: string;
-  coords: Array<{
-    name: string;
-    value: number;
-    color: string;
-  }>;
 }
 
 const atomSimulationSlots = atom<SimulationSlot[]>([]);
@@ -24,6 +18,11 @@ const atomSimulationSlots = atom<SimulationSlot[]>([]);
 export function useSimulationSlots() {
   const [simulationSlots, setSimulationSlots] = useAtom(atomSimulationSlots);
   const add = (simSlot: Omit<SimulationSlot, 'slotId'>): SimulationSlot => {
+    const aleadyExistingSlot = simulationSlots.find(
+      (item) => item.campaignId === simSlot.campaignId && item.simulationId === simSlot.simulationId
+    );
+    if (aleadyExistingSlot) return aleadyExistingSlot;
+
     const slotId = findFreeSlotId(simulationSlots);
     const newSimSlot: SimulationSlot = {
       ...simSlot,
@@ -35,8 +34,10 @@ export function useSimulationSlots() {
   return {
     list: simulationSlots,
     add,
-    remove(slotIndex: number) {
-      const newList = simulationSlots.filter((item) => item.slotId !== slotIndex);
+    remove({ campaignId, simulationId }: { campaignId: string; simulationId: string }) {
+      const newList = simulationSlots.filter(
+        (item) => item.campaignId === campaignId && item.simulationId !== simulationId
+      );
       if (newList.length === simulationSlots.length) {
         // This slotIndex does not exist.
         return false;
