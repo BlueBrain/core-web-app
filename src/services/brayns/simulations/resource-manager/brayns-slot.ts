@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import isEqual from 'lodash/isEqual';
-import { BraynsSimulationOptions, TokenProvider } from '../types';
+import { TokenProvider } from '../types';
 import GenericEvent from '../../common/utils/generic-event';
 import { CameraTransformInteface } from '../../common/utils/camera-transform';
 import Calc, { Vector3 } from '../../common/utils/calc';

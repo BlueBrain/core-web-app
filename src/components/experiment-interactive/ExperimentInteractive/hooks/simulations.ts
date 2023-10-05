@@ -28,6 +28,7 @@ export function useSimulations(campaignId: string | undefined) {
 
       let list = await fetchSimulations(accessToken, campaignId);
       if (list.length === 0) {
+        // eslint-disable-next-line no-console
         console.warn('We are using a hardcoded campaign id because this one is empty:', campaignId);
         // This campaign has no simulation.
         // Since we are still in test mode, we will
@@ -38,7 +39,6 @@ export function useSimulations(campaignId: string | undefined) {
         );
       }
       setSimulations(list);
-      console.log('🚀 [SlotsSelector] list = ', list); // @FIXME: Remove this line written on 2023-09-27 at 14:41
     };
     action();
   }, [accessToken, campaignId]);
@@ -50,7 +50,6 @@ async function fetchSimulations(
   campaignId: string
 ): Promise<SimulationDefinition[]> {
   const data = await fetchSimulationsFromEs(accessToken, campaignId);
-  console.log('🚀 [simulations] data = ', data); // @FIXME: Remove this line written on 2023-10-02 at 13:48
   assertType<{
     hits: SimulationHit[];
   }>(data, {
