@@ -203,7 +203,7 @@ const eModelWorkflowIdAtom = atom<Promise<string | null>>(async (get) => {
   const session = get(sessionAtom);
   const eModel = await get(eModelAtom);
 
-  if (!session || !eModel) return null;
+  if (!session || !eModel || !eModel.generation) return null;
 
   return eModel.generation.activity.followedWorkflow['@id'];
 });
