@@ -63,8 +63,6 @@ export default function sankey(
     marginLeft = 1, // left margin, in pixels
   }
 ) {
-  console.log('nodes', nodes);
-
   // Convert nodeAlign from a name to a function (since d3-sankey is not part of core d3).
   if (typeof nodeAlign !== 'function')
     nodeAlign = // eslint-disable-line no-param-reassign
