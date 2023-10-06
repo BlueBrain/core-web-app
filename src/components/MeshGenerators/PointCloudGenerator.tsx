@@ -6,7 +6,7 @@ import {
   PointsMaterial as ThreePointsMaterial,
   TextureLoader as ThreeTextureLoader,
 } from 'three';
-import { tableFromIPC } from '@apache-arrow/es5-cjs';
+import { tableFromIPC } from '@apache-arrow/es2015-esm';
 import { loadable } from 'jotai/utils';
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
