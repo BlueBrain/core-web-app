@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import { useAccessToken } from './current-campaign-id';
 import { fetchSimulationsFromEs } from '@/api/explore-section/simulations';
 import { assertType } from '@/util/type-guards';
@@ -35,7 +36,8 @@ export function useSimulations(campaignId: string | undefined) {
         // use a campaign we know to be not empty.
         list = await fetchSimulations(
           accessToken,
-          'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/37c79ef0-099c-44ed-bad2-846cdf10faaf'
+          'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/09c5b1b4-fd41-45d0-b42f-2cff917945a9'
+          //   'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/37c79ef0-099c-44ed-bad2-846cdf10faaf'
         );
       }
       setSimulations(list);
@@ -49,7 +51,9 @@ async function fetchSimulations(
   accessToken: string,
   campaignId: string
 ): Promise<SimulationDefinition[]> {
+  console.log('Fetching simulations for campaign ID', campaignId);
   const data = await fetchSimulationsFromEs(accessToken, campaignId);
+  console.log('🚀 [simulations] data = ', data); // @FIXME: Remove this line written on 2023-10-05 at 16:10
   assertType<{
     hits: SimulationHit[];
   }>(data, {
