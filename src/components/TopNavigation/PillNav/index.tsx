@@ -22,7 +22,7 @@ export default function PillNav({ items, onChange, activeItemIndex = -1 }: PillN
     () =>
       items.map((pill, index) => (
         <Pill
-          key={pill.id}
+          key={pill.id || pill.label}
           label={pill.label}
           href={pill.href}
           isActive={(pill.isActive ?? false) || index === activeItemIndex}

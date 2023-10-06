@@ -124,7 +124,10 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
       })
     );
 
-    if (!modelConfigHasUpdates) return;
+    if (!modelConfigHasUpdates) {
+      set(triggerRefetchAtom);
+      return;
+    }
 
     const modelConfigMeta = await get(modelConfigMetaAtom);
     if (!modelConfigMeta) {

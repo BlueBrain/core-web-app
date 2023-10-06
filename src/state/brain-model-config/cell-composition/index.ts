@@ -51,8 +51,6 @@ export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => 
   const session = get(sessionAtom);
   const configPayloadUrl = await get(configPayloadUrlAtom);
 
-  get(refetchTriggerAtom);
-
   if (!session || !configPayloadUrl) {
     return null;
   }
@@ -68,11 +66,14 @@ export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => 
   return metadata._rev;
 });
 
+const remoteCompositionWasLoadedAtom = atom<boolean>(false);
+
 const remoteConfigPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
   const session = get(sessionAtom);
   const configPayloadUrl = await get(configPayloadUrlAtom);
+  const remoteCompositionWasLoaded = get(remoteCompositionWasLoadedAtom);
 
-  if (!session || !configPayloadUrl) {
+  if (!session || !configPayloadUrl || remoteCompositionWasLoaded) {
     return null;
   }
 
@@ -100,6 +101,7 @@ export const setLocalConfigPayloadAtom = atom<null, [CellCompositionConfigPayloa
 
     const localConfigPayloadWeakMap = get(localConfigPayloadWeakMapAtom);
     localConfigPayloadWeakMap.set(remoteConfig, configPayload);
+    set(remoteCompositionWasLoadedAtom, true);
   }
 );
 
