@@ -1,4 +1,4 @@
-import { BorderOutlined, CheckSquareOutlined } from '@ant-design/icons';
+import { BorderOutlined, CheckSquareOutlined, SlidersOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useState } from 'react';
 
@@ -20,10 +20,12 @@ export interface SlotsSelectorProps {
 export default function SlotsSelector({ className }: SlotsSelectorProps) {
   const [, setSlotSelectorVisible] = useSlotSelectorVisible();
   const [filters, setFilters] = useState<Record<string, string | undefined>>({});
+  const [showFilters, setShowFilters] = useState(false);
   const slots = useSimulationSlots();
   const campaignId = useCurrentCampaignId();
   const simulations = useSimulations(campaignId);
   const availableCoords = useAvailableCoords(simulations);
+
   return (
     <div className={classNames(styles.slotsSelector, className)}>
       <div
@@ -31,26 +33,47 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
           '--custom-grid-columns': availableCoords.length + 1,
         }}
       >
-        <h1>Select simulations to display</h1>
+        <div className="text-xl font-bold">Select simulations to display</div>
         <div className={styles.grid}>
           {availableCoords.map((coord) => (
-            <CoordLabel key={coord.name} value={coord} />
+            <CoordLabel key={coord.name} value={coord} className={styles.underlined} />
           ))}
-          <div />
-          {availableCoords.map((coord) => (
-            <CoordFilter
-              key={coord.name}
-              coord={coord}
-              value={filters[coord.name] ?? ''}
-              onChange={(v) =>
-                setFilters({
-                  ...filters,
-                  [coord.name]: v,
-                })
-              }
-            />
-          ))}
-          <div>Reset</div>
+          {availableCoords.length > 0 && <div className={styles.underlined} />}
+
+          {!!simulations.length && (
+            <>
+              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
+              <div onClick={() => setShowFilters(!showFilters)} className="cursor-pointer">
+                <SlidersOutlined />
+                <span className="inline-block ml-1 text-xs">Filter by value</span>
+              </div>
+              {Array.from({ length: availableCoords.length - 3 }, (_, i) => i).map((i) => (
+                <div key={i} />
+              ))}
+              <div className={`${styles.span2} text-sm`}>
+                Total simulations:
+                <span className="font-bold inline-block ml-1">{simulations.length}</span>
+              </div>
+            </>
+          )}
+          {showFilters && (
+            <>
+              {availableCoords.map((coord) => (
+                <CoordFilter
+                  key={coord.name}
+                  coord={coord}
+                  value={filters[coord.name] ?? ''}
+                  onChange={(v) =>
+                    setFilters({
+                      ...filters,
+                      [coord.name]: v,
+                    })
+                  }
+                />
+              ))}
+              <div>Reset</div>
+            </>
+          )}
           {simulations.map((sim) => {
             const isSelected = Boolean(
               slots.list.find(
@@ -82,7 +105,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
           '--custom-grid-columns': availableCoords.length,
         }}
       >
-        <h2>Selected simulations</h2>
+        <div className="text-xl font-bold">Selected simulations</div>
         <div className={styles.grid}>
           {availableCoords.map((coord) => (
             <CoordLabel key={coord.name} value={coord} />
@@ -107,9 +130,9 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
             );
           })}
         </div>
-        <Button disabled={slots.list.length === 0} onClick={() => setSlotSelectorVisible(false)}>
-          Confirm
-        </Button>
+        {slots.list.length !== 0 && (
+          <Button onClick={() => setSlotSelectorVisible(false)}>Confirm</Button>
+        )}
       </div>
     </div>
   );

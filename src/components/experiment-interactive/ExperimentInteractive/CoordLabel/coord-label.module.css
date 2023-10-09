@@ -2,7 +2,7 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 0.5em;
+  gap: 0.3em;
 }
 
 .coordLabel > div:first-child {
@@ -20,4 +20,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.9em;
+  margin-right: 10px;
 }
