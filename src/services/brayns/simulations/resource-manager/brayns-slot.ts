@@ -1,19 +1,22 @@
 /* eslint-disable no-await-in-loop */
 import isEqual from 'lodash/isEqual';
-import { TokenProvider } from '../types';
-import GenericEvent from '../../common/utils/generic-event';
-import { CameraTransformInteface } from '../../common/utils/camera-transform';
+
 import Calc, { Vector3 } from '../../common/utils/calc';
+import { CameraTransformInteface } from '../../common/utils/camera-transform';
+import GenericEvent from '../../common/utils/generic-event';
+import { TokenProvider } from '../types';
 import Allocator from './allocator';
+import { SimulationReport } from './backend-service';
 import BraynsService from './brayns-service';
 import { CampaignSimulation, SlotInterface, SlotState } from './types';
-import { logError } from '@/util/logger';
 import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
+import { logError } from '@/util/logger';
 
 interface BraynsStatus {
   simulation: {
     campaignId: string;
     simulationId: string;
+    sonataFile: string;
   };
   width: number;
   height: number;
@@ -50,6 +53,8 @@ export default class BraynsSlot implements SlotInterface {
   public readonly eventStateChange = new GenericEvent<SlotState>();
 
   public readonly eventErrorChange = new GenericEvent<string | null>();
+
+  public readonly eventReportLoaded = new GenericEvent<SimulationReport>();
 
   constructor(
     private readonly tokenProvider: TokenProvider,
@@ -189,6 +194,7 @@ export default class BraynsSlot implements SlotInterface {
       // eslint-disable-next-line no-console
       console.info(`👍 Brayns v${version} is started on slot #${this.slotId}.`);
       this.brayns = brayns;
+      brayns.eventReportLoaded.addListener((report) => this.eventReportLoaded.dispatch(report));
       return brayns;
     } catch (ex) {
       this.fatal(`Unable to get Brayns service for slot #${this.slotId}:`, ex);

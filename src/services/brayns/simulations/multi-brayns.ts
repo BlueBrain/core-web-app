@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 
 import CameraTransform from '../common/utils/camera-transform';
 import Gestures from '../common/utils/gestures';
+import { SimulationReport } from './resource-manager/backend-service';
 import ResourceManager from './resource-manager/resource-manager';
 import { MAX_BRAYNS_INSTANCES } from './settings';
 import { BraynsSimulationOptions, TokenProvider } from './types';
@@ -33,7 +34,9 @@ export function useSlotState(slotId: number): SlotState {
   return state;
 }
 
-export function useSlotError(slotId: number): string | null {
+export function useSlotError(
+  slotId: number
+): [error: string | null, setError: (error: string | null) => void] {
   const manager = useMultiBraynsManager();
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -45,10 +48,14 @@ export function useSlotError(slotId: number): string | null {
       manager.removeSlotErrorChangeHandler(slotId, setError);
     };
   }, [slotId, manager]);
-  return error;
+  return [error, setError];
 }
 
 export interface MultiBraynsManagerInterface {
+  addSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void;
+
+  removeSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void;
+
   addSlotStateChangeHandler(slotId: number, handler: (state: SlotState) => void): void;
 
   removeSlotStateChangeHandler(slotId: number, handler: (state: SlotState) => void): void;
@@ -61,7 +68,7 @@ export interface MultiBraynsManagerInterface {
 
   detachCanvas(slotId: number, canvas: HTMLCanvasElement): void;
 
-  loadSimulation(options: SimulationSlot): void;
+  loadSimulation(options: SimulationSlot, resetAllocation?: boolean): void;
 
   setSimulationFrame(frameIndex: number): void;
 
@@ -117,6 +124,18 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
     this.gestures.eventZoom.addListener(handleZoom);
   }
 
+  addSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void {
+    checkSlotId(slotId);
+    const slot = this.resourceManager.getSlot(slotId);
+    slot.eventReportLoaded.addListener(handler);
+  }
+
+  removeSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void {
+    checkSlotId(slotId);
+    const slot = this.resourceManager.getSlot(slotId);
+    slot.eventReportLoaded.removeListener(handler);
+  }
+
   addSlotStateChangeHandler(slotId: number, handler: (state: SlotState) => void): void {
     checkSlotId(slotId);
     const slot = this.resourceManager.getSlot(slotId);
@@ -166,9 +185,10 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
     }
   }
 
-  loadSimulation(options: SimulationSlot) {
+  loadSimulation(options: SimulationSlot, resetAllocation = false) {
     const { slotId } = options;
     checkSlotId(slotId);
+    if (resetAllocation) this.resourceManager.resetSlot(slotId);
     const slot = this.resourceManager.getSlot(slotId);
     slot.loadSimulation(options);
   }

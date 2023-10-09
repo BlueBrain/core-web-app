@@ -23,6 +23,10 @@ export default class ResourceManager {
     }
   }
 
+  resetSlot(slotId: number) {
+    if (this.slots[slotId]) this.slots[slotId] = null;
+  }
+
   getSlot(slotId: number): BraynsSlot {
     checkSlotId(slotId);
     const slot = this.slots[slotId];

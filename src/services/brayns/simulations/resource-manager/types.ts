@@ -21,4 +21,5 @@ export interface SlotInterface {
 export interface CampaignSimulation {
   campaignId: string;
   simulationId: string;
+  sonataFile: string;
 }

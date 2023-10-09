@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 
-import { useAccessToken } from './current-campaign-id';
+import { CampaignDescriptor, useAccessToken } from './current-campaign-descriptor';
+import LimitedCache from './limited-cache';
+import { nexus } from '@/config';
 import { fetchSimulationsFromEs } from '@/api/explore-section/simulations';
 import { assertType } from '@/util/type-guards';
+import { logError } from '@/util/logger';
 
 export interface SimulationDefinition {
   campaignId: string;
   simulationId: string;
+  sonataFile: string;
   coords: Record<string, number>;
 }
 
@@ -19,41 +23,72 @@ interface SimulationHit {
   };
 }
 
-export function useSimulations(campaignId: string | undefined) {
+const simulationsCache = new LimitedCache<SimulationDefinition[]>(1024);
+
+export function useSimulations(
+  campaignDescriptor: CampaignDescriptor | undefined
+): SimulationDefinition[] {
   const [simulations, setSimulations] = useState<SimulationDefinition[]>([]);
   const accessToken = useAccessToken();
   useEffect(() => {
     const action = async () => {
       if (!accessToken) return;
-      if (!campaignId) return;
+      if (!campaignDescriptor) return;
 
-      let list = await fetchSimulations(accessToken, campaignId);
-      if (list.length === 0) {
-        // eslint-disable-next-line no-console
-        console.warn('We are using a hardcoded campaign id because this one is empty:', campaignId);
-        // This campaign has no simulation.
-        // Since we are still in test mode, we will
-        // use a campaign we know to be not empty.
-        list = await fetchSimulations(
-          accessToken,
-          'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/09c5b1b4-fd41-45d0-b42f-2cff917945a9'
-          //   'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/37c79ef0-099c-44ed-bad2-846cdf10faaf'
+      const simulationsList = await simulationsCache.get(campaignDescriptor.id, async () => {
+        let list = await fetchSimulations(accessToken, campaignDescriptor.id);
+        if (list.length === 0) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            'We are using a hardcoded campaign id because this one is empty:',
+            campaignDescriptor.id
+          );
+          // This campaign has no simulation.
+          // Since we are still in test mode, we will
+          // use a campaign we know to be not empty.
+          list = await fetchSimulations(
+            accessToken,
+            'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/09c5b1b4-fd41-45d0-b42f-2cff917945a9'
+          );
+        }
+        // eslint-disable-next-line no-restricted-syntax
+        const simulationObjects = await Promise.all(
+          list.map((sim) => fetchFromDelta(accessToken, sim.simulationId))
         );
-      }
-      setSimulations(list);
+        console.log('🚀 [simulations] simulationObjects = ', simulationObjects); // @FIXME: Remove this line written on 2023-10-06 at 14:13
+        return list.map((item, index) => ({
+          ...item,
+          sonataFile: extractSonataFile(simulationObjects[index]),
+        }));
+      });
+      setSimulations(simulationsList);
     };
     action();
-  }, [accessToken, campaignId]);
+  }, [accessToken, campaignDescriptor]);
   return simulations;
+}
+
+async function fetchFromDelta(accessToken: string, objectId: string) {
+  const url = `${nexus.url}/resources/${nexus.org}/${nexus.project}/_/${encodeURIComponent(
+    objectId
+  )}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: new Headers({
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      Accept: '*/*',
+    }),
+  });
+  const data = await response.json();
+  return data;
 }
 
 async function fetchSimulations(
   accessToken: string,
   campaignId: string
 ): Promise<SimulationDefinition[]> {
-  console.log('Fetching simulations for campaign ID', campaignId);
   const data = await fetchSimulationsFromEs(accessToken, campaignId);
-  console.log('🚀 [simulations] data = ', data); // @FIXME: Remove this line written on 2023-10-05 at 16:10
   assertType<{
     hits: SimulationHit[];
   }>(data, {
@@ -74,7 +109,25 @@ async function fetchSimulations(
       campaignId,
       simulationId: _id,
       coords: _source.parameter.coords,
+      sonataFile: '',
     };
     return simulation;
   });
+}
+
+function extractSonataFile(simulation: unknown): string {
+  try {
+    assertType<{ log_url: string }>(simulation, {
+      log_url: 'string',
+    });
+    const logUrl = simulation.log_url;
+    const start = logUrl.indexOf('/gpfs/');
+    const logPath = logUrl.substring(start);
+    const end = logPath.lastIndexOf('/');
+    const path = logPath.substring(0, end + 1);
+    return `${path}simulation_config.json`;
+  } catch (ex) {
+    logError('Unexpected format for a simulation:', ex, simulation);
+    return '';
+  }
 }

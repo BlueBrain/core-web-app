@@ -3,8 +3,13 @@
 import { Timeline } from './Timeline';
 import StepNavigator from './StepNavigator';
 import StepSize from './StepSize';
+import { SimulationReport } from '@/services/brayns/simulations/resource-manager/backend-service';
 
-export default function PlaybackPanel() {
+export interface PlaybackPanelProps {
+  report: SimulationReport;
+}
+
+export default function PlaybackPanel({ report }: PlaybackPanelProps) {
   return (
     <div className="w-full p-5 flex flex-row gap-10">
       <Timeline />

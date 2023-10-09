@@ -6,7 +6,7 @@ import CoordFilter from '../CoordFilter';
 import CoordLabel from '../CoordLabel';
 import { useSimulationSlots } from '../hooks';
 import { useAvailableCoords } from '../hooks/available-coords';
-import { useCurrentCampaignId } from '../hooks/current-campaign-id';
+import { useCurrentCampaignDescriptor } from '../hooks/current-campaign-descriptor';
 import { useSimulations } from '../hooks/simulations';
 import { useSlotSelectorVisible } from '../hooks/slot-selector-visible';
 import { classNames } from '@/util/utils';
@@ -21,7 +21,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
   const [, setSlotSelectorVisible] = useSlotSelectorVisible();
   const [filters, setFilters] = useState<Record<string, string | undefined>>({});
   const slots = useSimulationSlots();
-  const campaignId = useCurrentCampaignId();
+  const campaignId = useCurrentCampaignDescriptor();
   const simulations = useSimulations(campaignId);
   const availableCoords = useAvailableCoords(simulations);
   return (
