@@ -512,6 +512,19 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
 
   private readonly handleClose = () => {
     logError('The WS connection has been closed!', this.host);
+    const error: JsonRpcQueryFailure = {
+      code: -1,
+      entrypoint: '?',
+      success: false,
+      message: 'The WebSocket server closed the connection!',
+    };
+    this.pendingQueries.forEach((query) =>
+      query.resolve({
+        ...error,
+        entrypoint: query.entryPointName,
+        param: query.param,
+      })
+    );
     this.eventConnectionStatus.dispatch(false);
   };
 
