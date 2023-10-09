@@ -26,18 +26,8 @@ export function useSimulations(campaignId: string | undefined) {
       if (!accessToken) return;
       if (!campaignId) return;
 
-      let list = await fetchSimulations(accessToken, campaignId);
-      if (list.length === 0) {
-        // eslint-disable-next-line no-console
-        console.warn('We are using a hardcoded campaign id because this one is empty:', campaignId);
-        // This campaign has no simulation.
-        // Since we are still in test mode, we will
-        // use a campaign we know to be not empty.
-        list = await fetchSimulations(
-          accessToken,
-          'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/37c79ef0-099c-44ed-bad2-846cdf10faaf'
-        );
-      }
+      const list = await fetchSimulations(accessToken, campaignId);
+
       setSimulations(list);
     };
     action();
