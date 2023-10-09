@@ -15,6 +15,9 @@ export type MorphoViewerOptions = {
   focusOn?: boolean;
   onDone?: VoidFunction;
   somaMode?: string;
+  showScale?: boolean;
+  showOrientation?: boolean;
+  showLegend?: boolean;
 };
 
 export default function MorphologyViewer({
@@ -73,6 +76,8 @@ export default function MorphologyViewer({
       const parsedFile = swcParser.getRawMorphology();
 
       const hasSomaData = parsedFile.soma.points.length > 1;
+      ref.current.style.height = '100%';
+      ref.current.style.width = '100%';
 
       morphoViewer = withFixedFocusOnMorphology(new morphoviewer.MorphoViewer(ref.current));
       morphoViewer.hasSomaData = hasSomaData;
@@ -126,6 +131,7 @@ export default function MorphologyViewer({
     }
     if (!scaleViewer) {
       scaleRef.current.innerHTML = ''; // Prevent duplication
+      scaleRef.current.style.height = '100%';
       setScaleViewer(new ScaleViewer(scaleRef.current, 0));
     }
     if (mv && scaleViewer) {
@@ -158,30 +164,37 @@ export default function MorphologyViewer({
 
   return (
     <>
-      <MorphoLegend
-        isInterneuron={
-          // @ts-ignore
-          !!mv?.isInterneuron()
-        }
-        hasApproximatedSoma={
-          // @ts-ignore
-          !mv?.hasSomaData
-        }
-      />
-      <div className="morpho-viewer" ref={ref} />
-      {/* eslint-disable jsx-a11y/no-static-element-interactions */}
-      <div
-        className="scale"
-        ref={scaleRef}
-        onClick={handleOrientationClick}
-        onKeyDown={handleOrientationClick}
-      />
-      <div
-        className="orientation"
-        ref={orientationRef}
-        onClick={handleOrientationClick}
-        onKeyDown={handleOrientationClick}
-      />
+      {options.showLegend && (
+        <MorphoLegend
+          isInterneuron={
+            // @ts-ignore
+            !!mv?.isInterneuron()
+          }
+          hasApproximatedSoma={
+            // @ts-ignore
+            !mv?.hasSomaData
+          }
+        />
+      )}
+      <div className={options.showScale ? 'morpho-viewer' : ''} ref={ref} />
+      {options.showScale && (
+        <div
+          role="none"
+          className="scale"
+          ref={scaleRef}
+          onClick={handleOrientationClick}
+          onKeyDown={handleOrientationClick}
+        />
+      )}
+      {options.showOrientation && (
+        <div
+          role="none"
+          className="orientation"
+          ref={orientationRef}
+          onClick={handleOrientationClick}
+          onKeyDown={handleOrientationClick}
+        />
+      )}
     </>
   );
 }
