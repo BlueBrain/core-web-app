@@ -27,6 +27,8 @@
   grid-auto-rows: 3em;
   place-items: stretch;
   gap: 0;
+  height: 95%;
+  overflow: scroll;
 }
 
 .grid > div {
