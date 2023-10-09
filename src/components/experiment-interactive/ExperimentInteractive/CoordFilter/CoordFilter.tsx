@@ -19,7 +19,11 @@ export default function CoordFilter({ className, coord, value, onChange }: Coord
   return (
     <div className={classNames(styles.coordLabel, className)}>
       <div style={{ background: coord.color }} />
-      <select value={value} onChange={handleSelectChange}>
+      <select
+        value={value}
+        onChange={handleSelectChange}
+        className="bg-black border border-gray-400 text-white"
+      >
         {['', ...coord.values].map((val) => (
           <option key={val} value={val}>
             {val}

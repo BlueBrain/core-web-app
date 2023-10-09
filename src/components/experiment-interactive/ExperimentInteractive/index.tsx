@@ -1,5 +1,6 @@
 'use client';
 
+import { ConfigProvider, theme } from 'antd';
 import MainPanel from './MainPanel';
 import BottomPanel from './BottomPanel';
 import ControlPanel from './ControlPanel';
@@ -17,7 +18,13 @@ export default function ExperimentInteractive() {
         <BottomPanel />
         <ControlPanel />
         <ViewSettingsPanel />
-        {slotSelectorVisible && <SlotsSelector />}
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm,
+          }}
+        >
+          {slotSelectorVisible && <SlotsSelector />}
+        </ConfigProvider>
       </div>
     </ExperimentInteractiveProvider>
   );
