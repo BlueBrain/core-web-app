@@ -80,7 +80,7 @@ type ETypeLineProps = {
 
 function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLineProps) {
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
-  const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
+  const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
   const setEModelEditMode = useSetAtom(eModelEditModeAtom);
 
   const handleClick = (eModel: EModelMenuItem) => {
@@ -91,6 +91,17 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
     setEModelUIConfig({});
     setEModelEditMode(false);
   };
+
+  // update name on left panel when config changes without having to reload the whole optimizations again
+  const displayName = useCallback(
+    (eModel: EModelMenuItem) =>
+      !eModelUIConfig?.name ||
+      !eModel.isOptimizationConfig ||
+      !isEModelSelected(selectedEModel, eModel, mTypeName)
+        ? eModel.name
+        : eModelUIConfig.name,
+    [selectedEModel, mTypeName, eModelUIConfig?.name]
+  );
 
   return isExpanded ? (
     <div className="bg-none border-none m-0 w-full flex flex-col">
@@ -107,7 +118,7 @@ function ETypeLine({ eType, isExpanded, availableEModels, mTypeName }: ETypeLine
           }`}
         >
           <span className="flex items-center gap-3">
-            <span className="text-right">{eModel.name}</span>
+            <span className="text-right">{displayName(eModel)}</span>
             <StatusIcon isOptimizationConfig={eModel.isOptimizationConfig} />
           </span>
         </button>

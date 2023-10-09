@@ -8,7 +8,10 @@ import {
   selectedEModelAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import { createEModelOptimizationConfigAtom } from '@/state/brain-model-config/cell-model-assignment/e-model/setters';
+import {
+  createEModelOptimizationConfigAtom,
+  updateEModelOptimizationConfigAtom,
+} from '@/state/brain-model-config/cell-model-assignment/e-model/setters';
 import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 
 // this component will set some extra attributes
@@ -19,7 +22,8 @@ export default function WorkflowAttributes() {
   const eModelEditMode = useAtomValue(eModelEditModeAtom);
   const [eModelUIConfig, setEModelUIConfig] = useAtom(eModelUIConfigAtom);
   const eModelCanBeSaved = useAtomValue(eModelCanBeSavedAtom);
-  const saveEModelOptimizationConfig = useSetAtom(createEModelOptimizationConfigAtom);
+  const createEModelOptimizationConfig = useSetAtom(createEModelOptimizationConfigAtom);
+  const updateEModelOptimizationConfig = useSetAtom(updateEModelOptimizationConfigAtom);
 
   useEffect(() => {
     if (!eModelEditMode || !selectedEModel || !selectedBrainRegion) return;
@@ -37,8 +41,18 @@ export default function WorkflowAttributes() {
   useEffect(() => {
     if (!eModelCanBeSaved) return;
 
-    saveEModelOptimizationConfig();
-  }, [eModelUIConfig, eModelCanBeSaved, saveEModelOptimizationConfig]);
+    if (selectedEModel?.isOptimizationConfig) {
+      updateEModelOptimizationConfig();
+    } else {
+      createEModelOptimizationConfig();
+    }
+  }, [
+    eModelUIConfig,
+    eModelCanBeSaved,
+    createEModelOptimizationConfig,
+    updateEModelOptimizationConfig,
+    selectedEModel?.isOptimizationConfig,
+  ]);
 
   return null;
 }

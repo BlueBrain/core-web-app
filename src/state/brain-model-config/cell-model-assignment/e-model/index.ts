@@ -23,6 +23,7 @@ import {
   EModelByETypeMappingType,
   EModelMenuItem,
   EModelOptimizationConfig,
+  EModelOptimizationConfigResource,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -188,6 +189,38 @@ export const eModelOptimizationAtom = atom<Promise<EModelOptimizationConfig | nu
     return fetchResourceById<EModelOptimizationConfig>(eModelId, session);
   }
 );
+
+export const refetchOptimizationRevAtom = atom<{}>({});
+
+export const eModelOptimizationRemoteAtom = atom<Promise<EModelOptimizationConfigResource | null>>(
+  async (get) => {
+    // fetches info after an update to avoid reloading the initial eModelOptimizationAtom
+    get(refetchOptimizationRevAtom);
+    const selectedEModel = get(selectedEModelAtom);
+    if (!selectedEModel) return null;
+
+    const session = get(sessionAtom);
+    const eModelId = selectedEModel.id;
+
+    if (!session || !eModelId) return null;
+
+    return fetchResourceById<EModelOptimizationConfigResource>(eModelId, session);
+  }
+);
+
+export const eModelOptimizationRevAtom = atom<Promise<number | null>>(async (get) => {
+  const eModelOptimizationRemote = await get(eModelOptimizationRemoteAtom);
+  if (!eModelOptimizationRemote) return null;
+
+  return eModelOptimizationRemote._rev;
+});
+
+export const eModelOptimizationDistributionUrlAtom = atom<Promise<string | null>>(async (get) => {
+  const eModelOptimizationRemote = await get(eModelOptimizationRemoteAtom);
+  if (!eModelOptimizationRemote) return null;
+
+  return eModelOptimizationRemote.distribution.contentUrl;
+});
 
 const eModelOptimizationPayloadAtom = atom<Promise<EModelUIConfig | null>>(async (get) => {
   const eModel = await get(eModelOptimizationAtom);
@@ -439,43 +472,33 @@ export const eModelCanBeSavedAtom = atom<boolean>((get) => {
 
   if (!selectedEModel || !eModelEditMode || !eModelUIConfig) return false;
   if (!eModelUIConfig.name) return false;
+  if (selectedEModel?.isOptimizationConfig) return true;
 
   return eModelUIConfig.name !== selectedEModel.name;
 });
 
-export const assembledEModelUIConfigAtom = atom<Promise<EModelUIConfig | null>>(async (get) => {
-  const selectedEModel = get(selectedEModelAtom);
-  const selectedBrainRegion = get(selectedBrainRegionAtom);
-  const eModelName = selectedEModel?.name;
-  const simulationParameters = await get(simulationParametersAtom);
-  const exemplarMorphology = await get(exemplarMorphologyAtom);
-  const experimentalTraces = await get(experimentalTracesAtom);
-  const featureSelectedPreset = get(featureSelectedPresetAtom);
-  const mechanisms = await get(eModelMechanismsAtom);
+function configIsFulfilled(config: Partial<EModelUIConfig>): config is EModelUIConfig {
+  return !!(
+    config.name &&
+    config.eType &&
+    config.mType &&
+    config.brainRegionName &&
+    config.brainRegionId &&
+    config.featurePresetName &&
+    config.morphologies?.length &&
+    config.traces?.length &&
+    config.parameters
+  );
+}
 
-  if (
-    !selectedEModel ||
-    !selectedBrainRegion ||
-    !eModelName ||
-    !simulationParameters ||
-    !exemplarMorphology ||
-    !experimentalTraces ||
-    !featureSelectedPreset ||
-    !mechanisms
-  )
-    return null;
+export const assembledEModelUIConfigAtom = atom<EModelUIConfig | null>((get) => {
+  const eModelUIConfig = get(eModelUIConfigAtom);
+  if (!eModelUIConfig) return null;
+
+  if (!configIsFulfilled(eModelUIConfig)) return null;
 
   const config: EModelUIConfig = {
-    mechanism: [mechanisms],
-    featurePresetName: featureSelectedPreset,
-    traces: experimentalTraces,
-    morphologies: [exemplarMorphology],
-    parameters: simulationParameters,
-    name: eModelName,
-    mType: selectedEModel.mType,
-    eType: selectedEModel.eType,
-    brainRegionName: selectedBrainRegion.title,
-    brainRegionId: `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`,
+    ...eModelUIConfig,
     species: 'mouse',
   };
   return config;

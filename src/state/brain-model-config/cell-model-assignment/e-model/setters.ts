@@ -3,14 +3,18 @@ import debounce from 'lodash/debounce';
 
 import {
   assembledEModelUIConfigAtom,
+  eModelOptimizationAtom,
+  eModelOptimizationDistributionUrlAtom,
+  eModelOptimizationRevAtom,
   eModelUIConfigAtom,
   editedEModelByETypeMappingAtom,
+  refetchOptimizationRevAtom,
   refetchTriggerAtom,
   reloadListOfOptimizationsAtom,
   selectedEModelAtom,
 } from '.';
 import { EModelOptimizationConfig } from '@/types/e-model';
-import { createJsonFile, createResource } from '@/api/nexus';
+import { createJsonFile, createResource, updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import { EntityCreation } from '@/types/nexus';
 import { createDistribution } from '@/util/nexus';
@@ -78,4 +82,48 @@ export const cloneEModelConfigAtom = atom<null, [], void>(null, async (get, set)
     name: assembledEModelUIConfig.name,
   });
   return eModelResource;
+});
+
+const updateOptimizationConfigAtom = atom(null, async (get, set) => {
+  const session = get(sessionAtom);
+  const assembledEModelUIConfig = get(assembledEModelUIConfigAtom);
+  if (!assembledEModelUIConfig) return;
+
+  const optimizationConfig = await get(eModelOptimizationAtom);
+  const rev = await get(eModelOptimizationRevAtom);
+  const configPayloadUpdateUrl = await get(eModelOptimizationDistributionUrlAtom);
+
+  if (
+    !session ||
+    !assembledEModelUIConfig ||
+    !optimizationConfig ||
+    !rev ||
+    !configPayloadUpdateUrl
+  )
+    return;
+
+  const updatedConfigPayloadMeta = await updateJsonFileByUrl(
+    configPayloadUpdateUrl,
+    assembledEModelUIConfig,
+    'emodel-optimization-config.json',
+    session
+  );
+
+  const updatedConfig: EModelOptimizationConfig = {
+    ...optimizationConfig,
+    name: assembledEModelUIConfig.name,
+    distribution: createDistribution(updatedConfigPayloadMeta),
+  };
+
+  await updateResource(updatedConfig, rev, session);
+  set(refetchOptimizationRevAtom, {});
+});
+
+const triggerUpdateDebouncedAtom = atom<null, [], Promise<void>>(
+  null,
+  debounce((get, set) => set(updateOptimizationConfigAtom), autoSaveDebounceInterval)
+);
+
+export const updateEModelOptimizationConfigAtom = atom<null, [], void>(null, (get, set) => {
+  set(triggerUpdateDebouncedAtom);
 });

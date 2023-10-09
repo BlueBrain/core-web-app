@@ -429,3 +429,7 @@ export interface EModelOptimizationConfig extends Entity {
   mType: string;
   brainLocation: BrainLocation;
 }
+
+export interface EModelOptimizationConfigResource
+  extends ResourceMetadata,
+    EModelOptimizationConfig {}
