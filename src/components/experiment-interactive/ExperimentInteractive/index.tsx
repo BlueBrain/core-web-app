@@ -18,7 +18,7 @@ export default function ExperimentInteractive() {
     <ExperimentInteractiveProvider>
       <div className="w-full flex flex-col bg-black h-screen text-white relative">
         <SimulationGrid onReportLoaded={setReport} />
-        <BottomPanel />
+        {report && <BottomPanel report={report} />}
         <ControlPanel />
         <ViewSettingsPanel />
         {slotSelectorVisible && <SlotsSelector />}

@@ -1,10 +1,8 @@
-import { useAtomValue } from 'jotai';
+export interface TimeRangeProps {
+  simulationDuration: number;
+}
 
-import { simulationDurationAtom } from '@/state/experiment-interactive';
-
-export default function TimeRange() {
-  const simulationDuration = useAtomValue(simulationDurationAtom);
-
+export default function TimeRange({ simulationDuration }: TimeRangeProps) {
   return (
     <div className="flex justify-between w-full items-center text-white/70">
       <div className="text-left">0 ms</div>

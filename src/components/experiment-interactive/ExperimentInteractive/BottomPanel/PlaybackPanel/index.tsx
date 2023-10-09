@@ -12,7 +12,7 @@ export interface PlaybackPanelProps {
 export default function PlaybackPanel({ report }: PlaybackPanelProps) {
   return (
     <div className="w-full p-5 flex flex-row gap-10">
-      <Timeline />
+      <Timeline report={report} />
 
       <div className="w-4/12 h-full flex flex-row items-center h-5 gap-10">
         <StepNavigator />
