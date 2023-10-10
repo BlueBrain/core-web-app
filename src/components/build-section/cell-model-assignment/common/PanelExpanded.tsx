@@ -1,10 +1,9 @@
 import { Button } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
+import { Dispatch, ElementType, SetStateAction, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import List from '@/components/build-section/cell-model-assignment/e-model/Panel/List';
 import { BrainRegionIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
@@ -39,9 +38,13 @@ function isLeafNode(brainRegion: SelectedBrainRegion) {
 
 interface PanelExpandedProps {
   setIsSidebarExpanded: Dispatch<SetStateAction<boolean>>;
+  listComponent: ElementType;
 }
 
-export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedProps) {
+export default function PanelExpanded({
+  setIsSidebarExpanded,
+  listComponent: ListComponent,
+}: PanelExpandedProps) {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
 
   const handleClick = useCallback(() => setIsSidebarExpanded(false), [setIsSidebarExpanded]);
@@ -51,7 +54,7 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
     if (isLeafNode(brainRegion)) {
       body = (
         <DefaultLoadingSuspense>
-          <List />
+          <ListComponent />
         </DefaultLoadingSuspense>
       );
     } else {

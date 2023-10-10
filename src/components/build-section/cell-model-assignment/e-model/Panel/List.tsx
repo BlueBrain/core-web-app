@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 
-import ListItem from './ListItem';
+import { ListItem, ETypeEntry } from '.';
 import { analysedETypesAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import {
@@ -28,6 +28,7 @@ export default function List() {
             eTypeItems={eTypeInfo}
             mTypeName={mTypeName}
             eModelByETypeMapping={eModelByETypeMapping}
+            eTypeEntryComponent={ETypeEntry}
           />
         ))}
       </>
