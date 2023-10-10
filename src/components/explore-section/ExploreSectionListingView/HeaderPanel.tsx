@@ -20,7 +20,6 @@ function HeaderPanel({
       [experimentTypeName, resourceId]
     )
   );
-
   return (
     <div className="flex items-center justify-between ml-5">
       <div className="text-primary-7 text-2xl font-bold flex-auto w-6/12">
@@ -29,7 +28,7 @@ function HeaderPanel({
           <small className="flex gap-1 text-sm whitespace-pre font-thin text-slate-400 pl-2">
             <span>Total:</span>
             <span>
-              {total ? (
+              {total || total === 0 ? (
                 total?.toLocaleString('en-US')
               ) : (
                 <Spin className="ml-3" indicator={<LoadingOutlined />} />

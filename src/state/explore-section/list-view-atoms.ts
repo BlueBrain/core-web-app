@@ -20,6 +20,8 @@ import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { resourceBasedResponseAtom } from '@/state/explore-section/generalization';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { brainRegionDescendantsAtom } from '@/state/brain-regions/descendants';
 
 type DataAtomFamilyScopeType = { experimentTypeName: string; resourceId?: string };
 
@@ -76,9 +78,15 @@ export const filtersAtom = atomFamily(
     atomWithDefault<Promise<Filter[]>>(async (get) => {
       const columnsKeys = typeToColumns[experimentTypeName];
       const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
-
+      const selectedBrainRegion = get(selectedBrainRegionAtom);
+      const descendants = await get(brainRegionDescendantsAtom(selectedBrainRegion?.id));
       return [
-        ...columnsKeys.map((colKey) => columnKeyToFilter(colKey)),
+        ...columnsKeys.map((colKey) =>
+          columnKeyToFilter(
+            colKey,
+            descendants?.map((d) => d.title)
+          )
+        ),
         ...(dimensionsColumns || []).map(
           (dimension) =>
             ({
@@ -100,8 +108,8 @@ export const queryAtom = atomFamily(
       const pageNumber = get(pageNumberAtom({ experimentTypeName, resourceId }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
-      const filters = await get(filtersAtom({ experimentTypeName, resourceId }));
 
+      const filters = await get(filtersAtom({ experimentTypeName, resourceId }));
       if (!filters) {
         return null;
       }
@@ -147,7 +155,6 @@ export const queryResponseAtom = atomFamily(
       if (!session) return null;
 
       const query = await get(queryAtom({ experimentTypeName, resourceId }));
-
       const result = query && (await fetchEsResourcesByType(session.accessToken, query));
 
       return result;
