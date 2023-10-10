@@ -1,6 +1,6 @@
 import { Key } from 'react';
-import { atom } from 'jotai';
-import { atomWithDefault, atomFamily } from 'jotai/utils';
+import { atom, Atom } from 'jotai';
+import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
 import isEmpty from 'lodash/isEmpty';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
@@ -65,6 +65,11 @@ export const resourceBasedRulesAtom = atomFamily((resourceId: string) =>
 
     return rulesWithBool;
   })
+);
+
+export const activeResourceBasedRulesAtom = atomFamily(
+  (resourceId: string): Atom<Promise<ResourceBasedInference[]>> =>
+    selectAtom(resourceBasedRulesAtom(resourceId), (rules) => rules.filter((rule) => rule.value))
 );
 
 export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
