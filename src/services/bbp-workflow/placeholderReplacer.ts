@@ -10,8 +10,7 @@ import {
   WorkflowFile,
 } from '@/services/bbp-workflow/config';
 import { getCircuitBuildingTaskFiles, getSimulationTaskFiles } from '@/services/bbp-workflow';
-import { GROUPS as EXECUTION_GROUPS, CellCompositionStepGroupValues } from '@/state/build-status';
-import { BrainModelConfigResource, DetailedCircuitResource } from '@/types/nexus';
+import { BrainModelConfigResource, DetailedCircuitResource, SubConfigName } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
 
 function getCircuitUrl(config: BrainModelConfigResource): string {
@@ -21,7 +20,7 @@ function getCircuitUrl(config: BrainModelConfigResource): string {
 async function generateWorkflowConfig(
   workflowName: string,
   circuitInfo: DetailedCircuitResource | null,
-  stepsToBuild: CellCompositionStepGroupValues[],
+  targetConfigToBuild: SubConfigName | null,
   config: BrainModelConfigResource,
   session: Session,
   extraVariablesToReplace: Record<string, any>
@@ -42,9 +41,12 @@ async function generateWorkflowConfig(
     }
 
     case WORKFLOW_CIRCUIT_BUILD_TASK_NAME:
-      if (stepsToBuild.includes(EXECUTION_GROUPS.CELL_COMPOSITION)) {
-        replacedConfigFiles = getCircuitBuildingTaskFiles(CIRCUIT_BUILDING_FILES, configUrl);
-      }
+      if (!targetConfigToBuild) break;
+      replacedConfigFiles = getCircuitBuildingTaskFiles(
+        CIRCUIT_BUILDING_FILES,
+        configUrl,
+        targetConfigToBuild
+      );
       break;
 
     default:

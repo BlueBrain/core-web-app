@@ -3,7 +3,11 @@ import { Checkbox, Spin } from 'antd';
 
 import { useSetAtom } from 'jotai';
 import StepItem from '@/components/ExecutionStatus/StepItem';
-import { statusStructure, StatusStructureItem, stepsToBuildAtom } from '@/state/build-status';
+import {
+  statusStructure,
+  StatusStructureItem,
+  targetConfigToBuildAtom,
+} from '@/state/build-status';
 
 type UncheckingWarningProps = {
   statusStructureState: StatusStructureItem[];
@@ -34,7 +38,7 @@ export default function ExecutionStatus() {
   const [statusStructureState, setStatusStructureState] =
     useState<StatusStructureItem[]>(statusStructure);
 
-  const setStepsToBuild = useSetAtom(stepsToBuildAtom);
+  const setTargetConfigToBuild = useSetAtom(targetConfigToBuildAtom);
 
   const handleChecked = (groupName: string, newCheckedValue: boolean) => {
     setStatusStructureState((groups) => {
@@ -55,11 +59,9 @@ export default function ExecutionStatus() {
   };
 
   useEffect(() => {
-    const selectedGroups = statusStructureState
-      .filter((group) => group.checked)
-      .map((group) => group.name);
-    setStepsToBuild(selectedGroups);
-  }, [statusStructureState, setStepsToBuild]);
+    const lastChecked = statusStructureState.findLast((step) => step.checked);
+    setTargetConfigToBuild(lastChecked?.targetConfigName || null);
+  }, [statusStructureState, setTargetConfigToBuild]);
 
   return (
     <>
