@@ -14,7 +14,7 @@ type ModeTabsType = {
 const modeTabs: ModeTabsType[] = [
   { name: 'M-Model', href: `${baseHref}/m-model` },
   { name: 'E-Model', href: `${baseHref}/e-model` },
-  { name: 'ME-Model', href: `${baseHref}/me-model`, disabled: true },
+  { name: 'ME-Model', href: `${baseHref}/me-model` },
 ];
 
 const defaultRedirectPage = 'configuration';
