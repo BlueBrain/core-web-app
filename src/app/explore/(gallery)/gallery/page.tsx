@@ -21,7 +21,6 @@ export default async function GalleryPage() {
         link="/explore"
       />
 
-      {/* <div className="w-2/3 grid grid-cols-3 gap-4 py-6 pr-10"> */}
       <div className="w-2/3 flex flex-row flex-wrap items-start gap-4 py-6 pr-10">
         {galleryContent.map((singleContent: SingleGalleryContentType) => (
           <Card content={singleContent} key={`gallery-${singleContent.name}`} />

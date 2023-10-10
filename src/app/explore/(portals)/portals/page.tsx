@@ -2,7 +2,6 @@ import { client } from '@/api/sanity';
 import { Portal } from '@/types/explore-portal';
 import HomeHeader from '@/components/Global/HomeHeader';
 import Item from '@/components/explore-section/Portals/Item';
-// import { PORTALS_LIST_CONTENT } from '@/constants/explore-section/portals-content';
 
 export default async function ExplorePortalsPage() {
   const portalsContent = await client.fetch(`*[_type == 'portals'][] {
@@ -11,7 +10,7 @@ export default async function ExplorePortalsPage() {
     url,
     categories,
     'heroImage': coverImage.asset->url
-  }
+    }
   `);
 
   return (

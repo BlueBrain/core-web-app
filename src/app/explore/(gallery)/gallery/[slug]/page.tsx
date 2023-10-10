@@ -4,7 +4,6 @@ import HeaderSingleGallery from '@/components/explore-section/Gallery/HeaderSing
 import GalleryVisualliser from '@/components/explore-section/Gallery/GalleryVisualiser';
 
 export default async function SingleGalleryPage({ params }: { params: { slug: string } }) {
-  console.log(params.slug);
 
   const galleryContent =
     await client.fetch(`*[_type == 'galleries' && slug.current == '${params.slug}'][0]{
