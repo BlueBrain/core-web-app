@@ -9,7 +9,7 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "prettier:check": "prettier --check . --loglevel warn",
-    "prettier:write": "prettier --write . --loglevel log",
+    "prettier:write": "prettier --write . --loglevel warn",
     "test": "jest --watch",
     "test:ci": "jest",
     "cypress": "cypress open",
