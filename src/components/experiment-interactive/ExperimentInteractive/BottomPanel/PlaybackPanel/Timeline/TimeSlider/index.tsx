@@ -1,3 +1,5 @@
+import { Slider } from 'antd';
+
 import { useAtom, useAtomValue } from 'jotai';
 import { DndContext, DragMoveEvent } from '@dnd-kit/core';
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
@@ -8,75 +10,58 @@ import ceil from 'lodash/ceil';
 import { adjustIndicatorPosition, calculatePercentX, restrictToParentElement } from '../../utils';
 import ActiveStepIndicator from './ActiveStepIndicator';
 import TimeAxis from './TimeAxis';
-import { playbackActiveStepAtom, simulationDataAtom } from '@/state/experiment-interactive';
+import {
+  playbackActiveStepAtom,
+  simulationDataAtom,
+  useSimulationCurrentStep,
+} from '@/state/experiment-interactive';
+import { SimulationReport } from '@/services/brayns/simulations/resource-manager/backend-service';
+import { useMultiBraynsManager } from '@/services/brayns/simulations';
+import { useCurrentSimulationReport } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-report';
+import Spinner from '@/components/Spinner';
 
 export default function TimeSlider() {
-  const { stepCount } = useAtomValue(simulationDataAtom);
-
-  const [playbackActiveStep, setPlaybackActiveStep] = useAtom(playbackActiveStepAtom);
-
+  const report = useCurrentSimulationReport();
+  const [step, setStep] = useSimulationCurrentStep(report);
+  const manager = useMultiBraynsManager();
   useEffect(() => {
-    setActiveStep(playbackActiveStep);
-  }, [playbackActiveStep]);
+    if (!manager || !report) return;
 
-  const [activeStep, setActiveStep] = useState(playbackActiveStep);
-
-  const playbackActiveStepPercentX = useMemo(
-    () => calculatePercentX(playbackActiveStep, stepCount),
-    [playbackActiveStep, stepCount]
-  );
-
-  const activeStepPercentX = useMemo(
-    () => calculatePercentX(activeStep, stepCount),
-    [activeStep, stepCount]
-  );
-
-  const onDragMove = useCallback(
-    (event: DragMoveEvent) => {
-      const target = event.activatorEvent.target as HTMLDivElement;
-      const barWidth = target.offsetParent?.clientWidth ?? 1;
-      const positionX = target.offsetLeft + event.delta.x + 8;
-      const percentX = round(positionX / barWidth, 5);
-      const dragStep = ceil(percentX * stepCount);
-      setActiveStep(dragStep);
-    },
-    [stepCount]
-  );
-
-  const onDragEnd = useCallback(() => {
-    setPlaybackActiveStep(activeStep);
-  }, [activeStep, setPlaybackActiveStep]);
-
-  const handleAxisClick = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      const targetRect = (event.target as HTMLDivElement).getBoundingClientRect();
-      const { clientX } = event;
-      const innerOffsetLeft = clientX - targetRect.left;
-      const percentLeft = round(innerOffsetLeft / targetRect.width, 3);
-      const closestStep = round(percentLeft * stepCount);
-      setActiveStep(closestStep);
-      setPlaybackActiveStep(closestStep);
-    },
-    [setPlaybackActiveStep, stepCount]
-  );
-
-  return (
-    <div className="w-full relative h-5" onClick={handleAxisClick} role="presentation">
-      <TimeAxis />
-
-      <DndContext
-        id="time-slider"
-        modifiers={[restrictToParentElement, restrictToHorizontalAxis, adjustIndicatorPosition]}
-        onDragMove={onDragMove}
-        onDragEnd={onDragEnd}
+    const frameIndex = Math.floor((step - report.start) / report.delta);
+    manager.setSimulationFrame(frameIndex);
+  }, [step, manager, report]);
+  if (report === null) {
+    return (
+      <div
+        role="alert"
+        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
       >
-        <div className="absolute w-full left-1/2 -translate-x-1/2 top-[6px] pointer-events-none">
-          <div className="bg-white h-[5px] left-0" style={{ width: `${activeStepPercentX}%` }} />
-        </div>
-        <div className="bg-white/20 w-full absolute">
-          <ActiveStepIndicator stepX={playbackActiveStepPercentX} />
-        </div>
-      </DndContext>
-    </div>
+        An error prevent us from loading the simulation report!
+      </div>
+    );
+  }
+  if (!report) {
+    return <Spinner>Loading...</Spinner>;
+  }
+  return (
+    <Slider
+      value={step}
+      onChange={setStep}
+      min={report.start}
+      max={report.end}
+      step={report.delta}
+      railStyle={{
+        background: '#fff7',
+      }}
+      trackStyle={{
+        background: '#fffe',
+      }}
+      handleStyle={{}}
+      tooltip={{ formatter: formatTooltip }}
+    />
   );
+}
+
+function formatTooltip(value?: number) {
+  return <div>{value ?? 0} ms</div>;
 }

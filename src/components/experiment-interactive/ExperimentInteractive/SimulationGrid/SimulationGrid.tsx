@@ -3,15 +3,10 @@
 import { useSimulationSlots } from '../hooks';
 import SimulationBox from './SimulationBox';
 import { classNames } from '@/util/utils';
-import { SimulationReport } from '@/services/brayns/simulations/resource-manager/backend-service';
 
 import styles from './simulation-grid.module.css';
 
-export interface SimulationGridProps {
-  onReportLoaded(report: SimulationReport): void;
-}
-
-export default function SimulationGrid({ onReportLoaded }: SimulationGridProps) {
+export default function SimulationGrid() {
   const simulationSlots = useSimulationSlots();
   return (
     <div
@@ -28,11 +23,7 @@ export default function SimulationGrid({ onReportLoaded }: SimulationGridProps) 
             gridArea: 'abcdefghi'.charAt(index),
           }}
         >
-          <SimulationBox
-            value={value}
-            onDelete={simulationSlots.remove}
-            onReportLoaded={onReportLoaded}
-          />
+          <SimulationBox value={value} onDelete={simulationSlots.remove} />
         </div>
       ))}
     </div>

@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react';
 
 import CameraTransform from '../common/utils/camera-transform';
 import Gestures from '../common/utils/gestures';
-import { SimulationReport } from './resource-manager/backend-service';
 import ResourceManager from './resource-manager/resource-manager';
 import { MAX_BRAYNS_INSTANCES } from './settings';
 import { BraynsSimulationOptions, TokenProvider } from './types';
@@ -52,10 +51,6 @@ export function useSlotError(
 }
 
 export interface MultiBraynsManagerInterface {
-  addSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void;
-
-  removeSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void;
-
   addSlotStateChangeHandler(slotId: number, handler: (state: SlotState) => void): void;
 
   removeSlotStateChangeHandler(slotId: number, handler: (state: SlotState) => void): void;
@@ -124,18 +119,6 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
     this.gestures.eventZoom.addListener(handleZoom);
   }
 
-  addSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void {
-    checkSlotId(slotId);
-    const slot = this.resourceManager.getSlot(slotId);
-    slot.eventReportLoaded.addListener(handler);
-  }
-
-  removeSlotReportLoadedHandler(slotId: number, handler: (report: SimulationReport) => void): void {
-    checkSlotId(slotId);
-    const slot = this.resourceManager.getSlot(slotId);
-    slot.eventReportLoaded.removeListener(handler);
-  }
-
   addSlotStateChangeHandler(slotId: number, handler: (state: SlotState) => void): void {
     checkSlotId(slotId);
     const slot = this.resourceManager.getSlot(slotId);
@@ -193,9 +176,13 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
     slot.loadSimulation(options);
   }
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   setSimulationFrame(frameIndex: number) {
-    // Implementation will follow in another MR.
+    for (let slotId = 0; slotId < MAX_BRAYNS_INSTANCES; slotId += 1) {
+      if (this.resourceManager.isSlotLoaded(slotId)) {
+        const slot = this.resourceManager.getSlot(slotId);
+        slot.setSimulationFrame(frameIndex);
+      }
+    }
   }
 
   /**

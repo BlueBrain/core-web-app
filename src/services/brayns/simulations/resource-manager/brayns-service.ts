@@ -2,9 +2,8 @@ import ImageStream from '../../common/image-stream';
 import JsonRpc from '../../common/json-rpc';
 import Settings from '../../common/settings';
 import { Vector3 } from '../../common/utils/calc';
-import GenericEvent from '../../common/utils/generic-event';
 import { BraynsSimulationOptions } from '../types';
-import BackendService, { SimulationReport } from './backend-service';
+import BackendService from './backend-service';
 import { findSimulationProperties } from './find-simulation-properties';
 import { CampaignSimulation } from './types';
 import { logError } from '@/util/logger';
@@ -25,8 +24,6 @@ export default class BraynsService {
   private readonly service: JsonRpc;
 
   private readonly backend: BackendService;
-
-  public readonly eventReportLoaded = new GenericEvent<SimulationReport>();
 
   constructor(hostname: string, onNewImage: (image: HTMLImageElement) => void) {
     this.service = new JsonRpc(hostname, { secure: true, trace: true });
@@ -108,22 +105,21 @@ export default class BraynsService {
       start_frame: 'number',
       unit: 'string',
     });
-    // Set a random simulation step.
-    // This will be removed as soon as we will add the simulation steps slider.
+  }
+
+  async setFrameIndex(frameIndex: number) {
+    const { service } = this;
     await service.exec('set-simulation-parameters', {
-      current:
-        params.start_frame + Math.floor(Math.random() * (params.end_frame - params.start_frame)),
+      current: frameIndex,
     });
   }
 
   private async getSonataLoderProperties(circuitPath: string) {
     const info = await this.backend.getInfo(circuitPath);
-    console.log('🚀 [brayns-service] info = ', info); // @FIXME: Remove this line written on 2023-10-09 at 09:18
     const report = info.reports.find((item) => item.type === 'compartment');
     if (!report) {
       throw Error(`There is no compartment report in this circuit: "${circuitPath}"!`);
     }
-    this.eventReportLoaded.dispatch(report);
     return {
       loader_name: 'SONATA loader',
       loader_properties: {
@@ -135,7 +131,7 @@ export default class BraynsService {
             load_axon: false,
             load_dendrites: false,
             load_soma: true,
-            radius_multiplier: 150,
+            radius_multiplier: 100,
           },
           report_name: report.name,
           spike_transition_time: 0.5,

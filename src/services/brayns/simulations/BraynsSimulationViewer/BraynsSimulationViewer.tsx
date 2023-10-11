@@ -9,7 +9,6 @@ import {
   useSlotState,
 } from '../multi-brayns';
 import { SlotState } from '../resource-manager/types';
-import { SimulationReport } from '../resource-manager/backend-service';
 import Spinner from '@/components/Spinner';
 import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
@@ -18,25 +17,11 @@ import styles from './brayns-simulation-viewer.module.css';
 export interface BraynsSimulationViewerProps {
   className?: string;
   slot: SimulationSlot;
-  onReportLoaded(report: SimulationReport): void;
 }
 
-export default function BraynsSimulationViewer({
-  className,
-  slot,
-  onReportLoaded,
-}: BraynsSimulationViewerProps) {
+export default function BraynsSimulationViewer({ className, slot }: BraynsSimulationViewerProps) {
   const manager = useMultiBraynsManager();
   useCircuitInitialization(slot, manager);
-  useEffect(() => {
-    if (!manager) return;
-
-    manager.addSlotReportLoadedHandler(slot.slotId, onReportLoaded);
-    // eslint-disable-next-line consistent-return
-    return () => {
-      manager.removeSlotReportLoadedHandler(slot.slotId, onReportLoaded);
-    };
-  }, [slot, manager, onReportLoaded]);
   const refCanvas = useCanvas(slot.slotId, manager);
   const progress = useProgress(slot.slotId);
   const [error, setError] = useSlotError(slot.slotId);

@@ -1,18 +1,13 @@
 import BottomLegendPanel from './BottomLegendPanel';
 import PlaybackPanel from './PlaybackPanel';
 import GenerateMoviePanel from './GenerateMoviePanel';
-import { SimulationReport } from '@/services/brayns/simulations/resource-manager/backend-service';
 
-export interface BottomPanelProps {
-  report: SimulationReport;
-}
-
-export default function BottomPanel({ report }: BottomPanelProps) {
+export default function BottomPanel() {
   return (
     <div className="w-full flex flex-col divide-y relative">
       <div className="w-full flex flex-col divide-y divide-white/20">
         <div className="relative">
-          <PlaybackPanel report={report} />
+          <PlaybackPanel />
         </div>
 
         <div className="relative">

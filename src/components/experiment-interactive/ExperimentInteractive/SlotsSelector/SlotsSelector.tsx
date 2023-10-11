@@ -7,9 +7,10 @@ import CoordLabel from '../CoordLabel';
 import { useSimulationSlots } from '../hooks';
 import { useAvailableCoords } from '../hooks/available-coords';
 import { useCurrentCampaignDescriptor } from '../hooks/current-campaign-descriptor';
-import { useSimulations } from '../hooks/simulations';
+import { useSimulations } from '../hooks/simulations/simulations';
 import { useSlotSelectorVisible } from '../hooks/slot-selector-visible';
 import { classNames } from '@/util/utils';
+import Spinner from '@/components/Spinner';
 
 import styles from './slots-selector.module.css';
 
@@ -51,7 +52,8 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
             />
           ))}
           <div>Reset</div>
-          {simulations.map((sim) => {
+          {!simulations && <Spinner>Loading...</Spinner>}
+          {(simulations ?? []).map((sim) => {
             const isSelected = Boolean(
               slots.list.find(
                 (item) =>
@@ -87,7 +89,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
           {availableCoords.map((coord) => (
             <CoordLabel key={coord.name} value={coord} />
           ))}
-          {simulations.map((sim) => {
+          {(simulations ?? []).map((sim) => {
             const isSelected = Boolean(
               slots.list.find(
                 (item) =>
