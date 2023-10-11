@@ -58,7 +58,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
                 <SlidersOutlined />
                 <span className="inline-block ml-1 text-xs">Filter by value</span>
               </div>
-              {Array.from({ length: availableCoords.length - 3 }, (_, i) => i).map((i) => (
+              {Array.from({ length: availableCoords.length - 2 }, (_, i) => i).map((i) => (
                 <div key={i} />
               ))}
               <div className={`${styles.span2} text-sm`}>
