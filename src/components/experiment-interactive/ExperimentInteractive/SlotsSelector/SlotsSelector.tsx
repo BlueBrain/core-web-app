@@ -26,9 +26,10 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
   const slots = useSimulationSlots();
   const campaignId = useCurrentCampaignDescriptor();
   const simulations = useSimulations(campaignId);
+
   const filteredSimulations = useMemo(
     () =>
-      simulations.filter((s) =>
+      simulations?.filter((s) =>
         Object.keys(filters).every(
           (key) => filters[key] === undefined || Number(filters[key]) === s.coords[key]
         )
@@ -37,6 +38,9 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
   );
 
   const availableCoords = useAvailableCoords(simulations);
+
+  if (simulations === undefined) return <Spinner />;
+  if (simulations === null) return 'An error occurred while loading simulations';
 
   return (
     <div className={classNames(styles.slotsSelector, className)}>
@@ -64,7 +68,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
               ))}
               <div className={`${styles.span2} text-sm`}>
                 Total simulations:
-                <span className="font-bold inline-block ml-1">{filteredSimulations.length}</span>
+                <span className="font-bold inline-block ml-1">{filteredSimulations?.length}</span>
               </div>
             </>
           )}
@@ -88,7 +92,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
               </div>
             </>
           )}
-          {filteredSimulations.map((sim) => {
+          {filteredSimulations?.map((sim) => {
             const isSelected = Boolean(
               slots.list.find(
                 (item) =>
