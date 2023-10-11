@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions, arrow-body-style */
 import { CloseOutlined, SlidersOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 
 import CoordFilter from '../CoordFilter';
 import CoordLabel from '../CoordLabel';
@@ -95,7 +95,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
               )
             );
             return (
-              <>
+              <Fragment key={sim.simulationId}>
                 {availableCoords.map((coord) => (
                   <div key={`${sim.simulationId}/${coord.name}`} className={styles.underlined}>
                     {sim.coords[coord.name] ?? 'N/A'}
@@ -108,7 +108,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
                     disabled={!isSelected && slots.list.length === 9}
                   />
                 </div>
-              </>
+              </Fragment>
             );
           })}
         </div>
@@ -147,7 +147,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
             if (!isSelected) return null;
 
             return (
-              <>
+              <Fragment key={sim.simulationId}>
                 {availableCoords.map((coord) => (
                   <div key={`${sim.simulationId}/${coord.name}`} className={styles.underlined}>
                     {sim.coords[coord.name] ?? 'N/A'}
@@ -156,7 +156,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
                 <div className={classNames(styles.underlined, styles.icon)}>
                   <CloseOutlined onClick={() => slots.remove(sim)} className="text-sm" />
                 </div>
-              </>
+              </Fragment>
             );
           })}
           {slots.list.length !== 0 && (
