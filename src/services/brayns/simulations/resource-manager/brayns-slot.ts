@@ -9,7 +9,6 @@ import BraynsService from './brayns-service';
 import { CampaignSimulation, SlotInterface, SlotState } from './types';
 import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 import { logError } from '@/util/logger';
-import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
 interface BraynsStatus {
   simulation: {
