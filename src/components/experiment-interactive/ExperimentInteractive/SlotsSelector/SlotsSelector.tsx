@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions, arrow-body-style */
-import { SlidersOutlined, UndoOutlined } from '@ant-design/icons';
+import { CloseOutlined, SlidersOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, Checkbox } from 'antd';
 import { useState, useMemo } from 'react';
 
@@ -154,10 +154,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
                   </div>
                 ))}
                 <div className={classNames(styles.underlined, styles.icon)}>
-                  <Checkbox
-                    checked={isSelected}
-                    onChange={() => (isSelected ? slots.remove(sim) : slots.add(sim))}
-                  />
+                  <CloseOutlined onClick={() => slots.remove(sim)} className="text-sm" />
                 </div>
               </>
             );
