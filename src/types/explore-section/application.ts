@@ -77,6 +77,7 @@ export type SubSectionCardItem = {
 };
 
 export type SingleCard = {
+  prefixIcon?: string;
   name: string;
   description: string;
   url: string;

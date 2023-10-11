@@ -2,61 +2,22 @@ import { SingleCard } from '@/types/explore-section/application';
 
 export const sectionContent: SingleCard[] = [
   {
-    name: 'Brain Models',
+    prefixIcon: 'images/explore/interactive_exploration_icon.svg',
+    name: 'Interactive exploration',
     description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    url: '/explore/brain-models',
+      'Explore each brain region and discover all the experimental data, virtual experiments targeting these regions and the literature associated to those.',
+    url: '/explore/interactive',
     icon: 'eye',
-    image: 'images/explore/explore_home_bgImg-01.jpg',
-    items: null,
-  },
-  {
-    name: 'Simulations',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    url: '/explore/simulation-campaigns',
-    icon: 'eye',
-    image: 'images/explore/explore_home_bgImg-02.jpg',
-    items: null,
-  },
-  {
-    name: 'Experimental Data',
-    description: 'A set of experimental data to build models',
-    url: '#',
-    icon: 'plus',
     image: 'images/explore/explore_home_bgImg-03.jpg',
-    items: [
-      {
-        name: 'Neuron electrophysiology',
-        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalTrace',
-        url: '/explore/electrophysiology',
-      },
-      {
-        name: 'Neuron morphology',
-        type: 'https://neuroshapes.org/ReconstructedNeuronMorphology',
-        url: '/explore/morphology',
-      },
-      {
-        name: 'Bouton density',
-        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalBoutonDensity',
-        url: '/explore/bouton-density',
-      },
-      {
-        name: 'Neuron density',
-        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalNeuronDensity',
-        url: '/explore/neuron-density',
-      },
-      {
-        name: 'Layer thickness',
-        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalLayerThickness',
-        url: '/explore/layer-thickness',
-      },
-      {
-        name: 'Synapse per connection',
-        type: 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalSynapsesPerConnection',
-        url: '/explore/synapse-per-connection',
-      },
-    ],
+  },
+  {
+    name: 'Literature',
+    description:
+      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    url: '/explore/literature',
+    icon: 'eye',
+    image: 'images/explore/explore_home_bgImg-06.jpg',
+    items: null,
   },
   {
     name: 'Portals',
@@ -74,15 +35,6 @@ export const sectionContent: SingleCard[] = [
     url: '/explore/gallery',
     icon: 'eye',
     image: 'images/explore/explore_home_bgImg-05.jpg',
-    items: null,
-  },
-  {
-    name: 'Literature',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    url: '/explore/literature',
-    icon: 'eye',
-    image: 'images/explore/explore_home_bgImg-06.jpg',
     items: null,
   },
 ];
