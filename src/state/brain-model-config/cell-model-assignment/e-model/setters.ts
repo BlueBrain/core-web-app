@@ -3,6 +3,7 @@ import debounce from 'lodash/debounce';
 
 import {
   assembledEModelUIConfigAtom,
+  configIsFulfilled,
   eModelOptimizationAtom,
   eModelOptimizationDistributionUrlAtom,
   eModelOptimizationRevAtom,
@@ -86,32 +87,26 @@ export const cloneEModelConfigAtom = atom<null, [], void>(null, async (get, set)
 
 const updateOptimizationConfigAtom = atom(null, async (get, set) => {
   const session = get(sessionAtom);
-  const assembledEModelUIConfig = get(assembledEModelUIConfigAtom);
-  if (!assembledEModelUIConfig) return;
+  const eModelUIConfig = get(eModelUIConfigAtom);
+
+  if (!configIsFulfilled(eModelUIConfig)) return;
 
   const optimizationConfig = await get(eModelOptimizationAtom);
   const rev = await get(eModelOptimizationRevAtom);
   const configPayloadUpdateUrl = await get(eModelOptimizationDistributionUrlAtom);
 
-  if (
-    !session ||
-    !assembledEModelUIConfig ||
-    !optimizationConfig ||
-    !rev ||
-    !configPayloadUpdateUrl
-  )
-    return;
+  if (!session || !eModelUIConfig || !optimizationConfig || !rev || !configPayloadUpdateUrl) return;
 
   const updatedConfigPayloadMeta = await updateJsonFileByUrl(
     configPayloadUpdateUrl,
-    assembledEModelUIConfig,
+    eModelUIConfig,
     'emodel-optimization-config.json',
     session
   );
 
   const updatedConfig: EModelOptimizationConfig = {
     ...optimizationConfig,
-    name: assembledEModelUIConfig.name,
+    name: eModelUIConfig.name,
     distribution: createDistribution(updatedConfigPayloadMeta),
   };
 

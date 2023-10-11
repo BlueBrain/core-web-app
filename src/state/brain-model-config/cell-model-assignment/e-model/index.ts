@@ -477,7 +477,7 @@ export const eModelCanBeSavedAtom = atom<boolean>((get) => {
   return eModelUIConfig.name !== selectedEModel.name;
 });
 
-function configIsFulfilled(config: Partial<EModelUIConfig>): config is EModelUIConfig {
+export function configIsFulfilled(config: any): config is EModelUIConfig {
   return !!(
     config.name &&
     config.eType &&
@@ -491,15 +491,23 @@ function configIsFulfilled(config: Partial<EModelUIConfig>): config is EModelUIC
   );
 }
 
-export const assembledEModelUIConfigAtom = atom<EModelUIConfig | null>((get) => {
-  const eModelUIConfig = get(eModelUIConfigAtom);
-  if (!eModelUIConfig) return null;
+export const assembledEModelUIConfigAtom = atom<Promise<EModelUIConfig | null>>(async (get) => {
+  const selectedEModel = get(selectedEModelAtom);
+  const selectedBrainRegion = get(selectedBrainRegionAtom);
 
-  if (!configIsFulfilled(eModelUIConfig)) return null;
-
-  const config: EModelUIConfig = {
-    ...eModelUIConfig,
+  const config = {
+    mechanism: [await get(eModelMechanismsAtom)],
+    featurePresetName: get(featureSelectedPresetAtom),
+    traces: await get(experimentalTracesAtom),
+    morphologies: [await get(exemplarMorphologyAtom)],
+    parameters: await get(simulationParametersAtom),
+    name: await get(eModelNameAtom),
+    mType: selectedEModel?.mType,
+    eType: selectedEModel?.eType,
+    brainRegionName: selectedBrainRegion?.title,
+    brainRegionId: `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion?.id}`,
     species: 'mouse',
   };
-  return config;
+
+  return configIsFulfilled(config) ? config : null;
 });
