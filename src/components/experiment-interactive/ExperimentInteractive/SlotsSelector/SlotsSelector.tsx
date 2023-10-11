@@ -1,12 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions, arrow-body-style */
-import {
-  BorderOutlined,
-  CheckSquareOutlined,
-  SlidersOutlined,
-  UndoOutlined,
-} from '@ant-design/icons';
-import { Button } from 'antd';
-import { useState } from 'react';
+import { SlidersOutlined, UndoOutlined } from '@ant-design/icons';
+import { Button, Checkbox } from 'antd';
+import { useState, useMemo } from 'react';
 
 import CoordFilter from '../CoordFilter';
 import CoordLabel from '../CoordLabel';
@@ -30,6 +25,16 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
   const slots = useSimulationSlots();
   const campaignId = useCurrentCampaignId();
   const simulations = useSimulations(campaignId);
+  const filteredSimulations = useMemo(
+    () =>
+      simulations.filter((s) =>
+        Object.keys(filters).every(
+          (key) => filters[key] === undefined || Number(filters[key]) === s.coords[key]
+        )
+      ),
+    [simulations, filters]
+  );
+
   const availableCoords = useAvailableCoords(simulations);
 
   return (
@@ -57,7 +62,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
               ))}
               <div className={`${styles.span2} text-sm`}>
                 Total simulations:
-                <span className="font-bold inline-block ml-1">{simulations.length}</span>
+                <span className="font-bold inline-block ml-1">{filteredSimulations.length}</span>
               </div>
             </>
           )}
@@ -81,36 +86,29 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
               </div>
             </>
           )}
-          {simulations
-            .filter((s) =>
-              Object.keys(filters).every(
-                (key) => filters[key] === undefined || Number(filters[key]) === s.coords[key]
+          {filteredSimulations.map((sim) => {
+            const isSelected = Boolean(
+              slots.list.find(
+                (item) =>
+                  sim.campaignId === item.campaignId && sim.simulationId === item.simulationId
               )
-            )
-            .map((sim) => {
-              const isSelected = Boolean(
-                slots.list.find(
-                  (item) =>
-                    sim.campaignId === item.campaignId && sim.simulationId === item.simulationId
-                )
-              );
-              return (
-                <>
-                  {availableCoords.map((coord) => (
-                    <div key={`${sim.simulationId}/${coord.name}`} className={styles.underlined}>
-                      {sim.coords[coord.name] ?? 'N/A'}
-                    </div>
-                  ))}
-                  <div className={classNames(styles.underlined, styles.icon)}>
-                    {isSelected ? (
-                      <CheckSquareOutlined onClick={() => slots.remove(sim)} />
-                    ) : (
-                      <BorderOutlined onClick={() => slots.add(sim)} />
-                    )}
+            );
+            return (
+              <>
+                {availableCoords.map((coord) => (
+                  <div key={`${sim.simulationId}/${coord.name}`} className={styles.underlined}>
+                    {sim.coords[coord.name] ?? 'N/A'}
                   </div>
-                </>
-              );
-            })}
+                ))}
+                <div className={classNames(styles.underlined, styles.icon)}>
+                  <Checkbox
+                    checked={isSelected}
+                    onChange={() => (isSelected ? slots.remove(sim) : slots.add(sim))}
+                  />
+                </div>
+              </>
+            );
+          })}
         </div>
       </div>
       <div
