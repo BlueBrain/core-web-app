@@ -40,6 +40,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
   return (
     <div className={classNames(styles.slotsSelector, className)}>
       <div
+        className={styles.panel}
         style={{
           '--custom-grid-columns': availableCoords.length + 1,
         }}
@@ -104,6 +105,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
                   <Checkbox
                     checked={isSelected}
                     onChange={() => (isSelected ? slots.remove(sim) : slots.add(sim))}
+                    disabled={!isSelected && slots.list.length === 9}
                   />
                 </div>
               </>
@@ -112,15 +114,29 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
         </div>
       </div>
       <div
+        className={styles.panel}
         style={{
-          '--custom-grid-columns': availableCoords.length,
+          '--custom-grid-columns': availableCoords.length + 1,
         }}
       >
-        <div className="text-xl font-bold">Selected simulations</div>
+        <div className="flex">
+          <div className="w-1/2">
+            <div className="text-xl font-bold">Selected simulations</div>
+            <div className="text-xs">
+              Selected simulations
+              <span className="font-bold inline-block ml-2">{slots.list.length}</span> / 9
+            </div>
+          </div>
+          <div className="text-xs items-center flex justify-end w-1/2">
+            You can only select a maximum of 9 simulations
+          </div>
+        </div>
+
         <div className={styles.grid}>
           {availableCoords.map((coord) => (
             <CoordLabel key={coord.name} value={coord} />
           ))}
+          <div />
           {simulations.map((sim) => {
             const isSelected = Boolean(
               slots.list.find(
@@ -137,13 +153,24 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
                     {sim.coords[coord.name] ?? 'N/A'}
                   </div>
                 ))}
+                <div className={classNames(styles.underlined, styles.icon)}>
+                  <Checkbox
+                    checked={isSelected}
+                    onChange={() => (isSelected ? slots.remove(sim) : slots.add(sim))}
+                  />
+                </div>
               </>
             );
           })}
+          {slots.list.length !== 0 && (
+            <Button
+              onClick={() => setSlotSelectorVisible(false)}
+              style={{ width: 100, marginTop: 30 }}
+            >
+              Confirm
+            </Button>
+          )}
         </div>
-        {slots.list.length !== 0 && (
-          <Button onClick={() => setSlotSelectorVisible(false)}>Confirm</Button>
-        )}
       </div>
     </div>
   );
