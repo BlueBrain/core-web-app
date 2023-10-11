@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { SimulationDefinition } from './simulations';
+import { SimulationDefinition } from './simulations/simulations';
 
 export interface SimulationCoord {
   name: string;
@@ -11,9 +11,15 @@ export interface SimulationCoord {
  * @returns The list of all the coords found in the simulations,
  * with all possible values for each.
  */
-export function useAvailableCoords(simulations: SimulationDefinition[]): SimulationCoord[] {
+export function useAvailableCoords(
+  simulations: SimulationDefinition[] | null | undefined
+): SimulationCoord[] {
   const [coords, setCoords] = useState<SimulationCoord[]>([]);
   useMemo(() => {
+    if (!simulations) {
+      setCoords([]);
+      return;
+    }
     const valuesPerCoord = new Map<string, Set<number>>();
     simulations.forEach((sim) => {
       const coordNames = Object.keys(sim.coords);

@@ -38,4 +38,8 @@ export default class AllocatorStorage {
       return null;
     }
   }
+
+  clear() {
+    window.localStorage.removeItem(this.key);
+  }
 }

@@ -33,7 +33,9 @@ export function useSlotState(slotId: number): SlotState {
   return state;
 }
 
-export function useSlotError(slotId: number): string | null {
+export function useSlotError(
+  slotId: number
+): [error: string | null, setError: (error: string | null) => void] {
   const manager = useMultiBraynsManager();
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -45,7 +47,7 @@ export function useSlotError(slotId: number): string | null {
       manager.removeSlotErrorChangeHandler(slotId, setError);
     };
   }, [slotId, manager]);
-  return error;
+  return [error, setError];
 }
 
 export interface MultiBraynsManagerInterface {
@@ -61,7 +63,7 @@ export interface MultiBraynsManagerInterface {
 
   detachCanvas(slotId: number, canvas: HTMLCanvasElement): void;
 
-  loadSimulation(options: SimulationSlot): void;
+  loadSimulation(options: SimulationSlot, resetAllocation?: boolean): void;
 
   setSimulationFrame(frameIndex: number): void;
 
@@ -166,16 +168,21 @@ class MultiBraynsManager implements MultiBraynsManagerInterface, TokenProvider {
     }
   }
 
-  loadSimulation(options: SimulationSlot) {
+  loadSimulation(options: SimulationSlot, resetAllocation = false) {
     const { slotId } = options;
     checkSlotId(slotId);
+    if (resetAllocation) this.resourceManager.resetSlot(slotId);
     const slot = this.resourceManager.getSlot(slotId);
     slot.loadSimulation(options);
   }
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   setSimulationFrame(frameIndex: number) {
-    // Implementation will follow in another MR.
+    for (let slotId = 0; slotId < MAX_BRAYNS_INSTANCES; slotId += 1) {
+      if (this.resourceManager.isSlotLoaded(slotId)) {
+        const slot = this.resourceManager.getSlot(slotId);
+        slot.setSimulationFrame(frameIndex);
+      }
+    }
   }
 
   /**

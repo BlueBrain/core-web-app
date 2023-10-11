@@ -23,6 +23,15 @@ export default class ResourceManager {
     }
   }
 
+  isSlotLoaded(slotId: number): boolean {
+    checkSlotId(slotId);
+    return Boolean(this.slots[slotId]);
+  }
+
+  resetSlot(slotId: number) {
+    if (this.slots[slotId]) this.slots[slotId] = null;
+  }
+
   getSlot(slotId: number): BraynsSlot {
     checkSlotId(slotId);
     const slot = this.slots[slotId];

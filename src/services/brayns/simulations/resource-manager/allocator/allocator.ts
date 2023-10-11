@@ -28,32 +28,40 @@ export default class Allocator {
   }
 
   private async createAllocationProcess(token: string): Promise<Allocation> {
-    // We first check for an ongoing allocation.
-    const ongoingAllocation = this.storage.get();
-    if (ongoingAllocation && ongoingAllocation.endTime > Date.now()) return ongoingAllocation;
+    try {
+      // We first check for an ongoing allocation.
+      const ongoingAllocation = this.storage.get();
+      if (ongoingAllocation && ongoingAllocation.endTime > Date.now()) return ongoingAllocation;
 
-    const proxy = new ProxyService({
-      token,
-      url: Settings.PROXY_MASTER_URL,
-    });
-    const jobId = await proxy.createJob();
-    // Timeout in 60 seconds.
-    const timetout = Date.now() + 60 * 1000;
-    while (Date.now() < timetout) {
-      const status = await proxy.getJobStatus(jobId);
-      if (status.status === 'ERROR') {
-        throw Error(`Unable to allocate a node on slot #${this.slotId}!`);
+      const proxy = new ProxyService({
+        token,
+        url: Settings.PROXY_MASTER_URL,
+      });
+      const jobId = await proxy.createJob();
+      // Timeout in 60 seconds.
+      const timetout = Date.now() + 60 * 1000;
+      while (Date.now() < timetout) {
+        const status = await proxy.getJobStatus(jobId);
+        if (status.status === 'ERROR') {
+          throw Error(`Unable to allocate a node on slot #${this.slotId}!`);
+        }
+        if (status.status === 'RUNNING') {
+          const allocation = {
+            host: sanitizeHostname(status.hostname, 'renderer'),
+            endTime: status.endTime,
+          };
+          this.storage.set(allocation);
+          return allocation;
+        }
       }
-      if (status.status === 'RUNNING') {
-        const allocation = {
-          host: sanitizeHostname(status.hostname, 'renderer'),
-          endTime: status.endTime,
-        };
-        this.storage.set(allocation);
-        return allocation;
-      }
+      throw Error(`Timeout for node allocation on slot #${this.slotId}!`);
+    } catch (ex) {
+      // An error occured during the allocation process.
+      // We need to clean up the session storage to prevent
+      // the next attemps to try to reuse this broken allocation.
+      this.storage.clear();
+      throw ex;
     }
-    throw Error(`Timeout for node allocation on slot #${this.slotId}!`);
   }
 }
 

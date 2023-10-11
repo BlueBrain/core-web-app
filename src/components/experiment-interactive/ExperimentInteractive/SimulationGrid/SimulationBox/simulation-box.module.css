@@ -23,3 +23,16 @@
   opacity: 1;
   transform: scale(1);
 }
+
+.coords {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 0.5em;
+  width: 100%;
+  display: flex;
+  gap: 1em;
+  justify-content: space-around;
+  align-items: center;
+  background-image: linear-gradient(to top, #0009, #0006, #0000);
+}

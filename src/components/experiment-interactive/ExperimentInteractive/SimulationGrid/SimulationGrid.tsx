@@ -1,6 +1,6 @@
 'use client';
 
-import { useSimulationSlots } from '../../hooks';
+import { useSimulationSlots } from '../hooks';
 import SimulationBox from './SimulationBox';
 import { classNames } from '@/util/utils';
 
@@ -12,7 +12,8 @@ export default function SimulationGrid() {
     <div
       className={classNames(
         styles.simulationGrid,
-        styles[`template-${simulationSlots.list.length}`]
+        styles[`template-${simulationSlots.list.length}`],
+        'flex-grow flex flex-row relative w-full'
       )}
     >
       {simulationSlots.list.map((value, index) => (

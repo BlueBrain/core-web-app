@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import { atom, useAtom } from 'jotai';
-import { SimulationDefinition } from './simulations';
+import { SimulationDefinition } from './simulations/simulations';
 
 export interface SimulationSlot extends SimulationDefinition {
   slotId: number;

@@ -1,12 +1,13 @@
 /* eslint-disable no-await-in-loop */
 import isEqual from 'lodash/isEqual';
-import { TokenProvider } from '../types';
-import GenericEvent from '../../common/utils/generic-event';
-import { CameraTransformInteface } from '../../common/utils/camera-transform';
 import Calc, { Vector3 } from '../../common/utils/calc';
+import { CameraTransformInteface } from '../../common/utils/camera-transform';
+import GenericEvent from '../../common/utils/generic-event';
+import { TokenProvider } from '../types';
 import Allocator from './allocator';
 import BraynsService from './brayns-service';
 import { CampaignSimulation, SlotInterface, SlotState } from './types';
+import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 import { logError } from '@/util/logger';
 import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
@@ -14,7 +15,10 @@ interface BraynsStatus {
   simulation: {
     campaignId: string;
     simulationId: string;
+    sonataFile: string;
   };
+  // Simulation frame index.
+  frameIndex: number;
   width: number;
   height: number;
   camera: {
@@ -89,6 +93,11 @@ export default class BraynsSlot implements SlotInterface {
     this.process();
   }
 
+  setSimulationFrame(frameIndex: number): void {
+    this.next.frameIndex = frameIndex;
+    this.process();
+  }
+
   setViewport(width: number, height: number) {
     this.next.width = width;
     this.next.height = height;
@@ -104,6 +113,7 @@ export default class BraynsSlot implements SlotInterface {
         loop = await this.updateViewport();
         loop ||= await this.updateCircuit();
         loop ||= await this.updateCamera();
+        loop ||= await this.updateFrameIndex();
         if (loop) await this.askNextFrame();
       }
     } finally {
@@ -172,6 +182,22 @@ export default class BraynsSlot implements SlotInterface {
       return true;
     } catch (ex) {
       logError(`Unable to set camera for slot #${this.slotId}!`, ex);
+      return false;
+    }
+  }
+
+  private async updateFrameIndex(): Promise<boolean> {
+    const { frameIndex } = this.next;
+    if (typeof frameIndex !== 'number') return false;
+    if (frameIndex === this.current.frameIndex) return false;
+
+    try {
+      const brayns = await this.getBraynsService();
+      this.current.frameIndex = frameIndex;
+      await brayns.setFrameIndex(frameIndex);
+      return true;
+    } catch (ex) {
+      logError(`Unable to set the current frame index for slot #${this.slotId}!`, ex);
       return false;
     }
   }

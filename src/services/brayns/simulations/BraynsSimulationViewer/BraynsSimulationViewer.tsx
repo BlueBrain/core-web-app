@@ -1,4 +1,6 @@
 import { useEffect, useRef, ReactNode } from 'react';
+import { ReloadOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
 import {
   MultiBraynsManagerInterface,
@@ -22,17 +24,39 @@ export default function BraynsSimulationViewer({ className, slot }: BraynsSimula
   useCircuitInitialization(slot, manager);
   const refCanvas = useCanvas(slot.slotId, manager);
   const progress = useProgress(slot.slotId);
-  const error = useSlotError(slot.slotId);
+  const [error, setError] = useSlotError(slot.slotId);
   return (
     <div className={getClassName(className)}>
       <canvas ref={refCanvas} />
       {progress && (
         <div className={styles.progress}>
-          <Spinner />
           <div>{progress}</div>
+          <Spinner />
         </div>
       )}
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <div className={styles.error}>
+          <details>
+            <summary>
+              <b>An unexpected error occured...</b> (click for details)
+            </summary>
+            {error}
+          </details>
+          <center>
+            <Button
+              className="flex gap-2 items-center text-sm"
+              icon={<ReloadOutlined />}
+              type="primary"
+              onClick={() => {
+                setError(null);
+                manager?.loadSimulation(slot, true);
+              }}
+            >
+              Retry
+            </Button>
+          </center>
+        </div>
+      )}
     </div>
   );
 }
