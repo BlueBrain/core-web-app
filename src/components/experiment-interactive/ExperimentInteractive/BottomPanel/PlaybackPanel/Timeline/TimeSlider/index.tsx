@@ -1,21 +1,7 @@
 import { Slider } from 'antd';
 
-import { useAtom, useAtomValue } from 'jotai';
-import { DndContext, DragMoveEvent } from '@dnd-kit/core';
-import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import round from 'lodash/round';
-import ceil from 'lodash/ceil';
-
-import { adjustIndicatorPosition, calculatePercentX, restrictToParentElement } from '../../utils';
-import ActiveStepIndicator from './ActiveStepIndicator';
-import TimeAxis from './TimeAxis';
-import {
-  playbackActiveStepAtom,
-  simulationDataAtom,
-  useSimulationCurrentStep,
-} from '@/state/experiment-interactive';
-import { SimulationReport } from '@/services/brayns/simulations/resource-manager/backend-service';
+import { useEffect } from 'react';
+import { useSimulationCurrentStep } from '@/state/experiment-interactive';
 import { useMultiBraynsManager } from '@/services/brayns/simulations';
 import { useCurrentSimulationReport } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-report';
 import Spinner from '@/components/Spinner';
