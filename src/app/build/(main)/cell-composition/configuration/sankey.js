@@ -1,31 +1,16 @@
 import * as d3 from 'd3';
 import * as d3Sankey from 'd3-sankey';
-import * as d3Zoom from 'd3-zoom';
 
 function intern(value) {
   return value !== null && typeof value === 'object' ? value.valueOf() : value;
-}
-
-/**
- * Returns a zoom event callback.
- * @param {HTMLElement} g - The SVG "group" to apply the zoom to.
- */
-function getZoomed(g) {
-  return (event) => {
-    const { transform } = event;
-
-    g.attr('transform', transform);
-    g.attr('stroke-width', 1 / transform.k);
-
-    return transform.k;
-  };
 }
 
 // https://observablehq.com/@d3/sankey
 // Modified to use a React.refObject.
 export default function sankey(
   ref,
-  onZoom,
+  onClickLink,
+  onClickSource,
   {
     links, // an iterable of node objects (typically [{id}, …]); implied by links if missing
     nodes, // an iterable of link objects (typically [{source, target}, …])
@@ -47,6 +32,7 @@ export default function sankey(
     nodeStrokeOpacity, // opacity of stroke around node rects
     nodeStrokeLinejoin, // line join for stroke around node rects
     linkSource = ({ source }) => source, // given d in links, returns a node identifier string
+    // linkOpacity = 1,
     linkTarget = ({ target }) => target, // given d in links, returns a node identifier string
     linkValue = ({ value }) => value, // given d in links, returns the quantitative value
     linkPath = d3Sankey.sankeyLinkHorizontal(), // given d in (computed) links, returns the SVG path
@@ -74,6 +60,7 @@ export default function sankey(
 
   // Compute values.
   const LS = d3.map(links, linkSource).map(intern);
+  const LSel = links.reduce((acc, { source, selected }) => (selected ? [...acc, source] : acc), []);
   const LT = d3.map(links, linkTarget).map(intern);
   const LV = d3.map(links, linkValue);
   if (nodes === undefined) nodes = Array.from(d3.union(LS, LT), (id) => ({ id })); // eslint-disable-line no-param-reassign
@@ -81,7 +68,12 @@ export default function sankey(
 
   // Replace the input nodes and links with mutable objects for the simulation.
   nodes = d3.map(nodes, ({ id, label }) => ({ id, label })); // eslint-disable-line no-param-reassign
-  links = d3.map(links, (_, i) => ({ source: LS[i], target: LT[i], value: LV[i] })); // eslint-disable-line no-param-reassign
+  links = d3.map(links, (_, i) => ({
+    source: LS[i],
+    selected: LSel.find((source) => source === _.source),
+    target: LT[i],
+    value: LV[i],
+  })); // eslint-disable-line no-param-reassign
 
   // Ignore a group-based linkColor option if no groups are specified.
   if (!['source', 'target', 'source-target'].includes(linkColor)) linkColor = 'currentColor'; // eslint-disable-line no-param-reassign
@@ -112,8 +104,8 @@ export default function sankey(
   const svg = d3
     .select(ref.current)
     .attr('width', width)
-    .attr('height', height)
-    .attr('viewBox', [0, 0, width, height])
+    .attr('height', 'auto')
+    .attr('viewBox', [0, 0, width, 'auto'])
     /*
       The `will-change: opacity` is applied here to move the SVG element into its own layer
       in order to fix page flickering in Chrome on devices using Apple silicon,
@@ -121,11 +113,9 @@ export default function sankey(
 
       The root cause is still unknown.
     */
-    .attr('style', 'max-width: 100%; height: auto; height: intrinsic; will-change: opacity;');
+    .attr('style', 'max-width: 100%; will-change: opacity;');
 
-  const zoomWrapper = svg.append('g');
-
-  const node = zoomWrapper
+  const node = svg
     .append('g')
     .attr('stroke', nodeStroke)
     .attr('stroke-width', nodeStrokeWidth)
@@ -137,20 +127,26 @@ export default function sankey(
     .attr('x', (d) => d.x0)
     .attr('y', (d) => d.y0)
     .attr('height', (d) => d.y1 - d.y0)
-    .attr('width', (d) => d.x1 - d.x0);
+    .attr('width', (d) => d.x1 - d.x0)
+    .classed('source-node', ({ targetLinks }) => !targetLinks.length)
+    .on('click', (_e, d) => d.sourceLinks.length && onClickSource(d));
 
   node.attr('fill', ({ id }) => color(id));
 
   if (Tt) node.append('title').text(({ index: i }) => Tt[i]);
 
-  const link = zoomWrapper
+  const link = svg
     .append('g')
     .attr('fill', 'none')
     .attr('stroke-opacity', linkStrokeOpacity)
     .selectAll('g')
     .data(links)
     .join('g')
-    .style('mix-blend-mode', linkMixBlendMode);
+    .style('mix-blend-mode', linkMixBlendMode)
+    .attr('data-index', function (d) {
+      return d.index;
+    })
+    .on('click', (_e, d) => onClickLink(d));
 
   if (linkColor === 'source-target')
     link
@@ -186,10 +182,11 @@ export default function sankey(
         : linkColor
     )
     .attr('stroke-width', ({ width: strokeWidth }) => Math.max(1, strokeWidth))
+    .classed('is-selected', ({ source }) => LSel.find((id) => source.id === id))
     .call(Lt ? (path) => path.append('title').text(({ index: i }) => Lt[i]) : () => {});
 
   if (Tl)
-    zoomWrapper
+    svg
       .append('g')
       .attr('font-family', 'sans-serif')
       .attr('font-size', 10)
@@ -202,30 +199,10 @@ export default function sankey(
       .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
       .text(({ index: i }) => Tl[i]);
 
-  const zoomed = getZoomed(zoomWrapper);
-  const zoom = d3Zoom
-    .zoom()
-    .scaleExtent([1, 10])
-    .on('zoom', (x) => {
-      const k = zoomed(x); // Perform zoom, then return the zoom value.
-
-      onZoom(k);
-    });
-
-  svg.call(zoom);
-
   return Object.assign(svg.node(), {
     reset: () => {
-      svg
-        .transition()
-        .duration(750)
-        .call(
-          zoom.transform,
-          d3.zoomIdentity,
-          d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
-        );
+      svg.transition().duration(750);
     },
     scales: { color },
-    zoom: (value) => svg.transition().call(zoom.scaleTo, value),
   });
 }

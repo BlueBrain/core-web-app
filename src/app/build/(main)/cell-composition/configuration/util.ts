@@ -1,54 +1,64 @@
 import { CalculatedCompositionNode, CompositionLink } from '@/types/composition/calculation';
 
-export function sankeyNodesReducer(
-  acc: CalculatedCompositionNode[],
-  cur: CalculatedCompositionNode
+export function getSankeyNodesReducer(
+  selectedNodes: string[],
+  sankeyLinks: CompositionLink[],
+  densityOrCount: 'density' | 'count'
 ) {
-  const existingNodeIndex = acc.findIndex((node: CalculatedCompositionNode) => node.id === cur.id);
-  const existingNode = acc[existingNodeIndex];
+  return function sankeyNodesReducer(
+    acc: CalculatedCompositionNode[],
+    cur: CalculatedCompositionNode
+  ) {
+    const existingNodeIndex = acc.findIndex((node) => node.id === cur.id);
+    const existingNode = acc[existingNodeIndex];
 
-  return existingNode
-    ? [
-        ...acc.slice(0, existingNodeIndex),
-        {
-          ...existingNode,
-          neuronComposition: {
-            count: existingNode.neuronComposition.count + cur.neuronComposition.count,
-            density: existingNode.neuronComposition.density + cur.neuronComposition.density,
+    const isSelected = selectedNodes.includes(cur.id);
+    const isLinkTarget = sankeyLinks.map(({ target }) => target).includes(cur.id);
+
+    const addNew =
+      (cur.neuronComposition[densityOrCount] > 0 && !selectedNodes.length) ||
+      isSelected ||
+      isLinkTarget
+        ? [...acc, cur]
+        : acc;
+
+    return existingNode
+      ? [
+          ...acc.slice(0, existingNodeIndex),
+          {
+            ...existingNode,
+            neuronComposition: {
+              count: existingNode.neuronComposition.count + cur.neuronComposition.count,
+              density: existingNode.neuronComposition.density + cur.neuronComposition.density,
+            },
           },
-        },
-        ...acc.slice(existingNodeIndex + 1),
-      ]
-    : [...acc, cur];
-}
-
-export function filterOutEmptyNodes(
-  nodes: CalculatedCompositionNode[],
-  type: string,
-  value: string
-) {
-  // @ts-ignore
-  return nodes.filter((node) => node[type][value] > 0);
+          ...acc.slice(existingNodeIndex + 1),
+        ]
+      : addNew;
+  };
 }
 
 export function getSankeyLinks(
   links: CompositionLink[],
   nodes: CalculatedCompositionNode[],
-  type: string,
-  value: string
+  densityOrCount: 'density' | 'count',
+  selectedNodes: string[]
 ) {
-  const sankeyLinks: CompositionLink[] = [];
-  links.forEach(({ source, target }: CompositionLink) => {
-    const linkValue = (nodes.find((node) => node.id === target && node.parentId === source) as any)[
-      type
-    ][value];
-    if (linkValue > 0) {
-      sankeyLinks.push({
-        source,
-        target,
-        value: linkValue,
-      });
-    }
-  });
-  return sankeyLinks;
+  return links.reduce<CompositionLink[]>((acc, { source, target }) => {
+    const value = nodes.find(
+      (node) =>
+        node.neuronComposition[densityOrCount] > 0 && node.id === target && node.parentId === source
+    )?.neuronComposition[densityOrCount];
+
+    return value && (!selectedNodes.length || selectedNodes.includes(source))
+      ? [
+          ...acc,
+          {
+            source,
+            target,
+            value,
+          },
+        ]
+      : acc;
+  }, []);
 }

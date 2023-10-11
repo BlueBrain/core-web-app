@@ -1,0 +1,19 @@
+svg.sankey .source-node,
+svg.sankey path {
+  cursor: pointer;
+}
+
+svg.sankey:hover path,
+svg.sankey.is-selected path {
+  opacity: 0.25;
+}
+
+svg.sankey:hover path:hover,
+svg.sankey:hover path.is-selected,
+svg.sankey.is-selected path.is-selected {
+  opacity: 1;
+}
+
+svg.sankey path.is-selected {
+  stroke-opacity: 0.7;
+}

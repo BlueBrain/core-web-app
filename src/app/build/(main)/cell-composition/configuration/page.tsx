@@ -1,24 +1,11 @@
 'use client';
 
-import {
-  useCallback,
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-  RefObject,
-  ReactNode,
-  Suspense,
-} from 'react';
+import { useCallback, useState, useMemo, ReactNode, Suspense } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
-import { sankeyNodesReducer, getSankeyLinks, filterOutEmptyNodes } from './util';
 import DensityChart from './DensityChart';
-import ZoomControl from './Zoom';
-import { SankeyLinksReducerAcc } from './types';
 import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -27,7 +14,6 @@ import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
-import { cellTypesAtom } from '@/state/build-section/cell-types';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 
@@ -146,12 +132,9 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
 }
 
 function CellDensity() {
-  const [densityOrCount] = useAtom(densityOrCountAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const composition = useAtomValue(analysedCompositionAtom);
   const { resetComposition } = useCompositionHistory();
-
-  const { nodes, links } = composition ?? { nodes: [], links: [] };
 
   // This should be treated as a temporary solution
   // as we shouldn't expect empty composition in the end.
@@ -159,75 +142,13 @@ function CellDensity() {
     throw new Error(`There is no configuration data for the ${brainRegion?.title}`);
   }
 
-  const [zoom, setZoom] = useState(1);
-
-  useEffect(() => {
-    if (composition) {
-      setZoom(1);
-    }
-  }, [brainRegion?.id, composition]);
-
-  const sankeyData = useMemo(
-    () =>
-      ({
-        links: getSankeyLinks(links, nodes, 'neuronComposition', densityOrCount),
-        nodes: filterOutEmptyNodes(
-          [...nodes].reduce(sankeyNodesReducer, []),
-          'neuronComposition',
-          densityOrCount
-        ),
-        type: 'neuronComposition',
-        value: densityOrCount,
-      } as SankeyLinksReducerAcc),
-    [densityOrCount, links, nodes]
-  );
-
-  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
-
-  const colorScale = useCallback(
-    (id: string) => classObjects?.[id]?.color ?? '#ccc',
-    [classObjects]
-  );
-
   const handleReset = useCallback(() => {
     resetComposition();
   }, [resetComposition]);
 
-  // Prevent SVG from rendering whenever zoom changes
-  const ref: RefObject<SVGSVGElement & { reset: () => void; zoom: (value: number) => void }> =
-    useRef(null);
-  const densityChart = useMemo(
-    () =>
-      ref && (
-        <DensityChart
-          className="w-full"
-          colorScale={colorScale}
-          data={sankeyData}
-          onZoom={setZoom}
-          chartRef={ref}
-        />
-      ),
-    [colorScale, sankeyData, setZoom, ref]
-  );
-
   return (
     <>
-      {sankeyData.links.length > 0 && (
-        <div className="grid gap-5">
-          <ZoomControl
-            onChange={(value: number) => {
-              setZoom(value);
-              ref?.current?.zoom(value);
-            }}
-            zoom={zoom}
-            reset={() => {
-              setZoom(1);
-              ref?.current?.reset();
-            }}
-          />
-          {densityChart}
-        </div>
-      )}
+      <DensityChart />
       <div className="flex absolute bottom-12 justify-between align-center w-full">
         <div className="bg-[#F0F0F0] rounded flex gap-4 items-center px-5">
           <GripDotsVerticalIcon />
