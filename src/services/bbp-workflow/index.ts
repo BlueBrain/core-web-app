@@ -17,7 +17,7 @@ import {
   PLACEHOLDERS as UNICORE_PLACEHOLDERS,
 } from '@/services/unicore/config';
 import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
-import { DetailedCircuitResource } from '@/types/nexus';
+import { DetailedCircuitResource, SubConfigName } from '@/types/nexus';
 import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
 import { replaceCustomBbpWorkflowPlaceholders } from '@/components/experiment-designer/utils';
 import { getCurrentDate } from '@/util/utils';
@@ -72,7 +72,8 @@ export async function getSimulationTaskFiles(
 
 export function getCircuitBuildingTaskFiles(
   workflowFiles: WorkflowFile[],
-  configUrl: string | null
+  configUrl: string | null,
+  targetConfigToBuild: SubConfigName
 ): WorkflowFile[] {
   if (!configUrl) return workflowFiles;
 
@@ -82,6 +83,7 @@ export function getCircuitBuildingTaskFiles(
   if (!circuitBuildingConfigFile) return workflowFiles;
 
   const variables = {
+    [BuildingPlaceholders.TARGET_CONFIG_NAME]: targetConfigToBuild,
     [BuildingPlaceholders.CONFIG_URL]: escapedConfigUrl,
     [BuildingPlaceholders.DATE]: getCurrentDate(''),
     [BuildingPlaceholders.UUID]: crypto.randomUUID(),

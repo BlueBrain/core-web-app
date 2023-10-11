@@ -5,6 +5,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 
 import DefaultEModelTable from './DefaultEModelTable';
 import PickMorphology from './PickMorphology';
+import ErrorMessageLine from './ErrorMessageLine';
 import {
   eModelEditModeAtom,
   eModelUIConfigAtom,
@@ -104,9 +105,7 @@ export default function ExemplarMorphology() {
         columns={columns}
       />
 
-      {displayMorphologyError && (
-        <div className="text-red-400 text-xs">{displayMorphologyError}</div>
-      )}
+      <ErrorMessageLine message={displayMorphologyError} />
 
       {eModelEditMode && (
         <>

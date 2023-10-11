@@ -4,11 +4,7 @@ import { Provider } from 'jotai';
 import { format } from 'date-fns';
 import GenerativeQAInputBar from '@/components/explore-section/Literature/components/GenerativeQAInput';
 import sessionAtom from '@/state/session';
-import {
-  ArticleTypeSuggestion,
-  AuthorSuggestionResponse,
-  JournalSuggestionResponse,
-} from '@/types/literature';
+import { AuthorSuggestionResponse, JournalSuggestionResponse } from '@/types/literature';
 import { normalizeString } from '@/util/utils';
 
 jest.mock('@/components/explore-section/Literature/api.ts', () => ({
@@ -39,17 +35,17 @@ jest.mock('@/components/explore-section/Literature/api.ts', () => ({
         }
       })
   ),
+  fetchArticleTypes: jest.fn().mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolve(mockArticleResponse);
+      })
+  ),
 }));
 
 jest.mock('@/components/explore-section/Literature/actions.ts', () => ({
   __esModule: true,
   getGenerativeQAAction: jest.fn(),
-  getArticleTypes: jest.fn().mockImplementation(
-    () =>
-      new Promise((resolve) => {
-        resolve(mockArticleTypes);
-      })
-  ),
 }));
 
 describe('GenerativeQAInput', () => {
@@ -188,8 +184,8 @@ describe('GenerativeQAInput', () => {
     focusOnInput('Article Types');
 
     await waitFor(() => {
-      mockArticleTypes.forEach((type) =>
-        expect(screen.getByText(type.articleType)).toBeInTheDocument()
+      mockArticleResponse.forEach((type) =>
+        expect(screen.getByText(type.article_type)).toBeInTheDocument()
       );
     });
   });
@@ -203,7 +199,7 @@ describe('GenerativeQAInput', () => {
 
     const nonMatchingArticleTypes = getSuggestions(
       searchTerm,
-      mockArticleTypes.map((a) => a.articleType),
+      mockArticleResponse.map((a) => a.article_type),
       'no-match'
     );
 
@@ -212,7 +208,7 @@ describe('GenerativeQAInput', () => {
 
     const matchingArticleTypes = getSuggestions(
       searchTerm,
-      mockArticleTypes.map((a) => a.articleType),
+      mockArticleResponse.map((a) => a.article_type),
       'match'
     );
 
@@ -406,10 +402,10 @@ const mockAuthors: AuthorSuggestionResponse = [
   createMockAuthor('Dr. Krieger'),
 ];
 
-const mockArticleTypes: ArticleTypeSuggestion[] = [
-  { articleType: 'abstract', docCount: 1 },
-  { articleType: 'journal paper', docCount: 1 },
-  { articleType: 'paper', docCount: 1 },
+const mockArticleResponse: { article_type: string; docs_in_db: number }[] = [
+  { article_type: 'abstract', docs_in_db: 1 },
+  { article_type: 'journal paper', docs_in_db: 1 },
+  { article_type: 'paper', docs_in_db: 1 },
 ];
 
 const createMockJournal = (title: string, index: number) => ({

@@ -1,36 +1,15 @@
-import { Key, ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import Error from 'next/error';
-import { useSession } from 'next-auth/react';
 import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailAtom } from '@/state/explore-section/detail-view-atoms';
-import usePathname from '@/hooks/pathname';
 import { DeltaResource } from '@/types/explore-section/resources';
-import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
+import { DetailProps } from '@/types/explore-section/application';
+import DetailHeader from '@/components/explore-section/DetailHeader';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import { classNames } from '@/util/utils';
-import EXPLORE_FIELDS_CONFIG, {
-  ExploreFieldConfig,
-} from '@/constants/explore-section/explore-fields-config';
-
-type FieldProps = { field: string; className?: string; data: DeltaResource };
-
-export type DetailProps = { field: string; className?: string };
-
-function Field({ field, className, data }: FieldProps) {
-  const fieldObj = EXPLORE_FIELDS_CONFIG[field] as ExploreFieldConfig;
-  return (
-    <div className={classNames('text-primary-7 text-xs mr-10', className)}>
-      <div className="text-xs uppercase text-neutral-4">{fieldObj.title}</div>
-      <div className="mt-3">
-        {fieldObj.render?.detailViewFn && fieldObj.render?.detailViewFn(data)}
-      </div>
-    </div>
-  );
-}
-
-const detailAtomLoadable = loadable(detailAtom);
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import usePathname from '@/hooks/pathname';
 
 export default function Detail({
   fields,
@@ -39,11 +18,11 @@ export default function Detail({
   fields: DetailProps[];
   children?: (detail: DeltaResource) => ReactNode;
 }) {
-  const { data: session } = useSession();
+  const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
-  const detail = useAtomValue(detailAtomLoadable);
 
-  if (detail.state === 'loading' || !session) {
+  const detail = useAtomValue(useMemo(() => loadable(detailAtom(resourceInfo)), [resourceInfo]));
+  if (detail.state === 'loading') {
     return <CentralLoadingSpinner />;
   }
 
@@ -63,22 +42,7 @@ export default function Detail({
     <div className="flex h-screen">
       <DetailsPageSideBackLink />
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
-        <div className="flex flex-col gap-10 max-w-screen-2xl">
-          <DetailHeaderName detail={detail.data} url={path} />
-          <div className="grid gap-4 grid-cols-6 break-words">
-            {fields.map(
-              ({ className, field }) =>
-                detail.data && (
-                  <Field
-                    key={field as Key}
-                    className={className}
-                    field={field}
-                    data={detail.data}
-                  />
-                )
-            )}
-          </div>
-        </div>
+        <DetailHeader fields={fields} detail={detail.data} url={path} />
         {children && detail.data && children(detail.data)}
       </div>
     </div>

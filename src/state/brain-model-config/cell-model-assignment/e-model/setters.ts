@@ -1,9 +1,20 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 
-import { eModelUIConfigAtom, refetchTriggerAtom } from '.';
-import { EModelOptimizationConfig, EModelUIConfig } from '@/types/e-model';
-import { createJsonFile, createResource } from '@/api/nexus';
+import {
+  assembledEModelUIConfigAtom,
+  eModelOptimizationAtom,
+  eModelOptimizationDistributionUrlAtom,
+  eModelOptimizationRevAtom,
+  eModelUIConfigAtom,
+  editedEModelByETypeMappingAtom,
+  refetchOptimizationRevAtom,
+  refetchTriggerAtom,
+  reloadListOfOptimizationsAtom,
+  selectedEModelAtom,
+} from '.';
+import { EModelOptimizationConfig } from '@/types/e-model';
+import { createJsonFile, createResource, updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import { EntityCreation } from '@/types/nexus';
 import { createDistribution } from '@/util/nexus';
@@ -11,11 +22,11 @@ import { autoSaveDebounceInterval } from '@/config';
 
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
-const createEModelOptimizationConfigAtom = atom(null, async (get) => {
+const createOptimizationConfigAtom = atom(null, async (get) => {
   const session = get(sessionAtom);
-  const eModelUIConfig = get(eModelUIConfigAtom) as EModelUIConfig | null;
+  const eModelUIConfig = await get(assembledEModelUIConfigAtom);
 
-  if (!session || !eModelUIConfig) return;
+  if (!session || !eModelUIConfig) return null;
 
   const updatedFile = await createJsonFile(
     eModelUIConfig,
@@ -39,14 +50,80 @@ const createEModelOptimizationConfigAtom = atom(null, async (get) => {
     },
   };
 
-  await createResource(clonedConfig, session);
+  return createResource(clonedConfig, session);
 });
 
 const triggerCreateDebouncedAtom = atom<null, [], Promise<void>>(
   null,
-  debounce((get, set) => set(createEModelOptimizationConfigAtom), autoSaveDebounceInterval)
+  debounce((get, set) => set(createOptimizationConfigAtom), autoSaveDebounceInterval)
 );
 
-export const saveEModelOptimizationConfigAtom = atom<null, [], void>(null, (get, set) => {
+export const createEModelOptimizationConfigAtom = atom<null, [], void>(null, (get, set) => {
   set(triggerCreateDebouncedAtom);
+});
+
+export const cloneEModelConfigAtom = atom<null, [], void>(null, async (get, set) => {
+  const assembledEModelUIConfig = await get(assembledEModelUIConfigAtom);
+  if (!assembledEModelUIConfig) return null;
+
+  set(eModelUIConfigAtom, assembledEModelUIConfig);
+  const eModelResource = await set(createOptimizationConfigAtom);
+
+  if (!eModelResource) throw new Error('Error cloning the e-model config');
+
+  set(reloadListOfOptimizationsAtom, {});
+  await get(editedEModelByETypeMappingAtom);
+
+  set(selectedEModelAtom, {
+    eType: assembledEModelUIConfig.eType,
+    id: eModelResource?.['@id'],
+    isOptimizationConfig: true,
+    mType: assembledEModelUIConfig.mType,
+    name: assembledEModelUIConfig.name,
+  });
+  return eModelResource;
+});
+
+const updateOptimizationConfigAtom = atom(null, async (get, set) => {
+  const session = get(sessionAtom);
+  const assembledEModelUIConfig = get(assembledEModelUIConfigAtom);
+  if (!assembledEModelUIConfig) return;
+
+  const optimizationConfig = await get(eModelOptimizationAtom);
+  const rev = await get(eModelOptimizationRevAtom);
+  const configPayloadUpdateUrl = await get(eModelOptimizationDistributionUrlAtom);
+
+  if (
+    !session ||
+    !assembledEModelUIConfig ||
+    !optimizationConfig ||
+    !rev ||
+    !configPayloadUpdateUrl
+  )
+    return;
+
+  const updatedConfigPayloadMeta = await updateJsonFileByUrl(
+    configPayloadUpdateUrl,
+    assembledEModelUIConfig,
+    'emodel-optimization-config.json',
+    session
+  );
+
+  const updatedConfig: EModelOptimizationConfig = {
+    ...optimizationConfig,
+    name: assembledEModelUIConfig.name,
+    distribution: createDistribution(updatedConfigPayloadMeta),
+  };
+
+  await updateResource(updatedConfig, rev, session);
+  set(refetchOptimizationRevAtom, {});
+});
+
+const triggerUpdateDebouncedAtom = atom<null, [], Promise<void>>(
+  null,
+  debounce((get, set) => set(updateOptimizationConfigAtom), autoSaveDebounceInterval)
+);
+
+export const updateEModelOptimizationConfigAtom = atom<null, [], void>(null, (get, set) => {
+  set(triggerUpdateDebouncedAtom);
 });

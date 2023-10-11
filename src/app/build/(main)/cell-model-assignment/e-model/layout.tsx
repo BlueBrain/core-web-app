@@ -16,6 +16,7 @@ import {
   eModelRemoteParamsLoadedAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import List from '@/components/build-section/cell-model-assignment/e-model/Panel/List';
 
 type Props = {
   children: ReactNode;
@@ -43,7 +44,7 @@ export default function EModelLayout({ children }: Props) {
           {!isSidebarExpanded ? (
             <PanelCollapsed setIsSidebarExpanded={setIsSidebarExpanded} />
           ) : (
-            <PanelExpanded setIsSidebarExpanded={setIsSidebarExpanded} />
+            <PanelExpanded setIsSidebarExpanded={setIsSidebarExpanded} listComponent={List} />
           )}
         </div>
       </ErrorBoundary>,

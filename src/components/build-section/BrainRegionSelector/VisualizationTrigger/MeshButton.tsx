@@ -1,7 +1,8 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-
+import { useAtom } from 'jotai';
 import ToggleButton from './ToggleButton';
 import { useAtlasVisualizationManager } from '@/state/atlas';
+import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 
 interface MeshButtonProps {
   contentURL: string;
@@ -17,7 +18,19 @@ export default function MeshButton({ contentURL, regionID, colorCode }: MeshButt
   const atlas = useAtlasVisualizationManager();
   const mesh = atlas.findVisibleMesh(contentURL);
   const selected = Boolean(mesh);
+  const [visibleExploreBrainRegions, setVisibleExploreBrainRegions] = useAtom(
+    visibleExploreBrainRegionsAtom
+  );
+
   const handleClick = () => {
+    // if already exists, remove it. If not, add it
+    if (visibleExploreBrainRegions.includes(regionID)) {
+      setVisibleExploreBrainRegions([
+        ...visibleExploreBrainRegions.filter((id) => id !== regionID),
+      ]);
+    } else {
+      setVisibleExploreBrainRegions([...visibleExploreBrainRegions, regionID]);
+    }
     if (mesh) {
       atlas.removeVisibleMeshesOrPointClouds(mesh.contentURL, regionID);
     } else {

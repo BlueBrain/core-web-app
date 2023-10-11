@@ -2,9 +2,8 @@
 
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import Detail, { DetailProps } from '@/components/explore-section/Detail';
-import useDetailPage from '@/hooks/useDetailPage';
-import usePathname from '@/hooks/pathname';
+import Detail from '@/components/explore-section/Detail';
+import { DetailProps } from '@/types/explore-section/application';
 
 const fields = [
   {
@@ -45,7 +44,6 @@ const fields = [
 ] as DetailProps[];
 
 export default function BoutonDensityDetails() {
-  useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields} />

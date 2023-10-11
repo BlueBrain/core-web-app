@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Placement } from '@/types/notifications';
 import openNotification from '@/api/notifications';
 
@@ -8,9 +9,12 @@ export default function useNotification() {
    * @param duration
    * @param placement
    */
-  function error(message: string, duration: number = 5, placement: Placement = 'bottomRight') {
-    openNotification('error', message, duration, placement);
-  }
+  const error = useCallback(
+    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
+      openNotification('error', message, duration, placement);
+    },
+    []
+  );
 
   /**
    * Adds a warning message in the notifications queue
@@ -18,9 +22,12 @@ export default function useNotification() {
    * @param duration
    * @param placement
    */
-  function warning(message: string, duration: number = 5, placement: Placement = 'bottomRight') {
-    openNotification('warning', message, duration, placement);
-  }
+  const warning = useCallback(
+    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
+      openNotification('warning', message, duration, placement);
+    },
+    []
+  );
 
   /**
    * Adds a success message in the notifications queue
@@ -28,9 +35,12 @@ export default function useNotification() {
    * @param duration
    * @param placement
    */
-  function success(message: string, duration: number = 5, placement: Placement = 'bottomRight') {
-    openNotification('success', message, duration, placement);
-  }
+  const success = useCallback(
+    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
+      openNotification('success', message, duration, placement);
+    },
+    []
+  );
 
   /**
    * Adds an info message in the notifications queue
@@ -38,9 +48,12 @@ export default function useNotification() {
    * @param duration
    * @param placement
    */
-  function info(message: string, duration: number = 5, placement: Placement = 'bottomRight') {
-    openNotification('info', message, duration, placement);
-  }
+  const info = useCallback(
+    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
+      openNotification('info', message, duration, placement);
+    },
+    []
+  );
 
   return { error, warning, success, info };
 }

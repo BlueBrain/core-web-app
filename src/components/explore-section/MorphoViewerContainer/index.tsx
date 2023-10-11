@@ -10,6 +10,9 @@ function MorphoViewerContainer({ resource }: { resource: DeltaResource }) {
     asPolyline: false,
     focusOn: true,
     somaMode: 'fromOrphanSections',
+    showScale: true,
+    showOrientation: true,
+    showLegend: true,
   });
 
   const handleAsPolyline = () => {

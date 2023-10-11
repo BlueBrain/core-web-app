@@ -18,7 +18,7 @@ import {
 } from '@/services/bbp-workflow/config';
 import generateWorkflowConfig from '@/services/bbp-workflow/placeholderReplacer';
 import { configAtom } from '@/state/brain-model-config';
-import { stepsToBuildAtom } from '@/state/build-status';
+import { targetConfigToBuildAtom } from '@/state/build-status';
 import circuitAtom from '@/state/circuit';
 import GenericButton from '@/components/Global/GenericButton';
 
@@ -138,7 +138,7 @@ export default function WorkflowLauncher({
   const { ensureWorkflowAuth } = useWorkflowAuth();
 
   const circuitInfo = useAtomValue(circuitAtom);
-  const stepsToBuild = useAtomValue(stepsToBuildAtom);
+  const targetConfigToBuild = useAtomValue(targetConfigToBuildAtom);
   const config = useAtomValue(configAtom);
 
   const launchBbpWorkflow = async () => {
@@ -155,7 +155,7 @@ export default function WorkflowLauncher({
       workflowConfig = await generateWorkflowConfig(
         workflowName,
         circuitInfo,
-        stepsToBuild,
+        targetConfigToBuild,
         config,
         session,
         extraVariablesToReplace

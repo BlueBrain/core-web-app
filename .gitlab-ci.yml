@@ -51,9 +51,16 @@ unit-test:
   script:
     - npm run test:ci
 
+.deploy:
+  variables:
+    KUBERNETES_MEMORY_REQUEST: 4Gi
+    KUBERNETES_MEMORY_LIMIT: 8Gi
+
 deploy-prod:
   stage: deploy
-  extends: .build-image-using-kaniko
+  extends:
+    - .deploy
+    - .build-image-using-kaniko
   before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
@@ -76,7 +83,9 @@ deploy-prod:
 
 deploy-dev:
   stage: deploy
-  extends: .build-image-using-kaniko
+  extends:
+    - .deploy
+    - .build-image-using-kaniko
   before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
@@ -100,7 +109,9 @@ deploy-dev:
 
 deploy-test:
   stage: deploy
-  extends: .build-image-using-kaniko
+  extends:
+    - .deploy
+    - .build-image-using-kaniko
   before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app

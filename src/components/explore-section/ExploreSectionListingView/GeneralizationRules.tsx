@@ -1,14 +1,17 @@
 import { Children, useMemo } from 'react';
-import { Spin, Checkbox } from 'antd';
+import { Spin, Checkbox, InputNumber } from 'antd';
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons';
 import { useAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import {
   resourceBasedRulesAtom,
   inferredResourcesAtom,
+  limitQueryParameterAtom,
 } from '@/state/explore-section/generalization';
 import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
+import { Project } from '@/types/explore-section/es-common';
 import useNotification from '@/hooks/notifications';
+import { parseOrgProjectToResourceInfo } from '@/util/explore-section/detail-view';
 
 interface GeneralizationOptionsProps {
   resourceId: string;
@@ -39,7 +42,7 @@ function GeneralizationOptions({
             onChange={handleCheckboxChange}
             className="w-full text-primary-8 font-semibold"
           >
-            {ruleWithBool.name}
+            {ruleWithBool.displayName}
           </Checkbox>
           <p className="font-thin pl-12">{ruleWithBool.description}</p>
         </li>
@@ -50,18 +53,26 @@ function GeneralizationOptions({
 
 function GeneralizationRules({
   resourceId,
+  resourceOrgProject,
   experimentTypeName,
   name,
 }: {
   resourceId: string;
+  resourceOrgProject: Project;
   experimentTypeName: string;
   name: string;
 }) {
+  const resourceInfo = parseOrgProjectToResourceInfo(resourceId, resourceOrgProject);
+
   const [resourceBasedRules, setResourceBasedRules] = useAtom(
     useMemo(() => unwrap(resourceBasedRulesAtom(resourceId)), [resourceId])
   );
   const [inferredResources, setinferredResources] = useAtom(
     inferredResourcesAtom(experimentTypeName)
+  );
+
+  const [limitQueryParameter, setLimitQueryParameter] = useAtom(
+    limitQueryParameterAtom(resourceId)
   );
 
   const { success } = useNotification();
@@ -94,7 +105,7 @@ function GeneralizationRules({
     // if not found, the resource is added
     if (!inferredResources.find((item) => item.id === resourceId)) {
       success('Resources were inferred. Change the tab to explore the inferred resources');
-      setinferredResources([...inferredResources, ...[{ id: resourceId, name }]]);
+      setinferredResources([...inferredResources, ...[{ id: resourceId, name, resourceInfo }]]);
     }
   };
 
@@ -121,6 +132,11 @@ function GeneralizationRules({
         )}
 
         <div className="flex flex-col space-y-2 place-self-center">
+          <InputNumber
+            value={limitQueryParameter}
+            onChange={(value) => setLimitQueryParameter(value as number)}
+            className="px-3 py-2 border border-primary-8"
+          />
           <button
             type="submit"
             className="self-end	px-3 py-2 bg-primary-8 text-white font-semibold"

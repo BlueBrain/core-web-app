@@ -1,10 +1,9 @@
 'use client';
 
-import Detail, { DetailProps } from '@/components/explore-section/Detail';
+import Detail from '@/components/explore-section/Detail';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import Simulations from '@/components/explore-section/Simulations';
-import useDetailPage from '@/hooks/useDetailPage';
-import usePathname from '@/hooks/pathname';
+import { DetailProps } from '@/types/explore-section/application';
 
 const fields: DetailProps[] = [
   {
@@ -34,8 +33,6 @@ const fields: DetailProps[] = [
 ];
 
 export default function SimulationCampaignDetailPage() {
-  useDetailPage(usePathname());
-
   return (
     <Detail fields={fields}>
       {(detail) => (

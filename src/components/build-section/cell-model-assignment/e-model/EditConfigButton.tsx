@@ -12,13 +12,13 @@ type Props = {
   className?: string;
 };
 
-export default function EditEModelButton({ className }: Props) {
+export default function EditConfigButton({ className }: Props) {
   const [eModelEditMode, setEModelEditMode] = useAtom(eModelEditModeAtom);
   const isConfigEditable = useAtomValue(isConfigEditableAtom);
 
   const body = !eModelEditMode ? (
     <GenericButton
-      text="Edit model"
+      text="Edit config"
       onClick={() => setEModelEditMode(true)}
       className={`${defaultButtonColor} ${isConfigEditable ? '' : 'cursor-not-allowed'}`}
       disabled={!isConfigEditable}

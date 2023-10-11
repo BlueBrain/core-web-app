@@ -2,11 +2,10 @@
 
 import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import Detail, { DetailProps } from '@/components/explore-section/Detail';
+import Detail from '@/components/explore-section/Detail';
 import { DeltaResource } from '@/types/explore-section/resources';
 import EphysViewerContainer from '@/components/explore-section/EphysViewerContainer';
-import useDetailPage from '@/hooks/useDetailPage';
-import usePathname from '@/hooks/pathname';
+import { DetailProps } from '@/types/explore-section/application';
 
 const fields = [
   {
@@ -38,7 +37,6 @@ const fields = [
 ] as DetailProps[];
 
 export default function EphysDetailPage() {
-  useDetailPage(usePathname());
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={fields}>

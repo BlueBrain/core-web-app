@@ -1,10 +1,16 @@
 'use client';
 
-import InteractiveBrayns from '@/components/InteractiveBrayns';
+import { Suspense } from 'react';
+
+import InteractiveView from '@/components/build-section/cell-model-assignment/e-model/interactive/View';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 
 export default function InteractivePage() {
   useLiteratureCleanNavigate();
 
-  return <InteractiveBrayns />;
+  return (
+    <Suspense fallback={null}>
+      <InteractiveView />
+    </Suspense>
+  );
 }

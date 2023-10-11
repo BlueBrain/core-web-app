@@ -1,14 +1,21 @@
 import { useAtomValue } from 'jotai';
 
-import ListItem from './ListItem';
+import { ListItem, ETypeEntry } from '.';
 import { analysedETypesAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import { eModelByETypeMappingAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import {
+  eModelByETypeMappingAtom,
+  editedEModelByETypeMappingAtom,
+} from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { mergeEModelsAndOptimizations } from '@/services/e-model';
 
 export default function List() {
   const mEModelItems = useAtomValue(analysedETypesAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const eModelByETypeMapping = useAtomValue(eModelByETypeMappingAtom);
+  const optimizations = useAtomValue(eModelByETypeMappingAtom);
+  const eModels = useAtomValue(editedEModelByETypeMappingAtom);
+
+  const eModelByETypeMapping = mergeEModelsAndOptimizations(optimizations, eModels);
 
   let listItems = null;
 
@@ -21,6 +28,7 @@ export default function List() {
             eTypeItems={eTypeInfo}
             mTypeName={mTypeName}
             eModelByETypeMapping={eModelByETypeMapping}
+            eTypeEntryComponent={ETypeEntry}
           />
         ))}
       </>

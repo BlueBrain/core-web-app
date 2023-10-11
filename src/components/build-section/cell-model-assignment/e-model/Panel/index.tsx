@@ -1,6 +1,8 @@
-import List from './List';
-import ListItem from './ListItem';
-import PanelCollapsed from './PanelCollapsed';
-import PanelExpanded from './PanelExpanded';
+import ETypeEntry from './ETypeEntry';
+import {
+  PanelExpanded,
+  PanelCollapsed,
+  ListItem,
+} from '@/components/build-section/cell-model-assignment/common';
 
-export { List, ListItem, PanelCollapsed, PanelExpanded };
+export { ListItem, PanelCollapsed, PanelExpanded, ETypeEntry };

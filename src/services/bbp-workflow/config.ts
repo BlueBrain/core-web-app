@@ -18,6 +18,7 @@ export enum BuildingPlaceholders {
   CONFIG_URL = 'CONFIG_URL',
   UUID = 'UUID',
   DATE = 'DATE',
+  TARGET_CONFIG_NAME = 'TARGET_CONFIG_NAME',
 }
 
 export enum SimulationPlaceholders {
@@ -204,6 +205,7 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFile[] = [
 
       [SBOWorkflow]
       config-url: <%= ${BuildingPlaceholders.CONFIG_URL} %>
+      target: <%= ${BuildingPlaceholders.TARGET_CONFIG_NAME} %>
       host: bbpv1.epfl.ch
       account: proj134
       output-dir: /gpfs/bbp.cscs.ch/project/proj134/scratch/workflow-outputs/<%= ${BuildingPlaceholders.DATE} %>-<%= ${BuildingPlaceholders.UUID} %>
