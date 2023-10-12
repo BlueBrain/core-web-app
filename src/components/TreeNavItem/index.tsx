@@ -1,7 +1,8 @@
 import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
-import ArrowDownOutlinedIcon from '@/components/icons/ArrowDownOutlined';
+import { CaretRightOutlined } from '@ant-design/icons';
+
 import { classNames } from '@/util/utils';
 import styles from './tree-nav-item.module.css';
 
@@ -92,10 +93,7 @@ export function TreeNavItem({
               data-disabled={!items || items.length === 0}
               {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
             >
-              <ArrowDownOutlinedIcon
-                className={styles.accordionChevron}
-                style={{ height: '13px' }}
-              />
+              <CaretRightOutlined className={styles.accordionChevron} style={{ height: '13px' }} />
             </Accordion.Trigger>
           )
         : null,
@@ -138,9 +136,9 @@ export function TreeNavItem({
       path,
       trigger,
       content,
+      isExpanded,
       ...props,
     });
-
   return !render.props.isHidden ? (
     <Accordion.Item value={id} className={className} data-tree-id={id}>
       <Accordion.Header asChild>
@@ -178,7 +176,7 @@ function TreeNav(
 ) {
   return (
     <Accordion.Root
-      className={classNames('-ml-3', className)}
+      className={classNames('-ml-4 relative', className)}
       onValueChange={(newValue) => onValueChange(newValue, [])} // Empty path for root
       ref={ref}
       type="multiple"
@@ -186,7 +184,7 @@ function TreeNav(
     >
       {navItems.map(({ id, items, ...rest }) => (
         <TreeNavItem
-          className={classNames('ml-3', className)}
+          className={classNames('ml-4 relative', className)}
           id={id}
           isExpanded={typeof value?.[id] !== 'undefined'}
           items={items}
