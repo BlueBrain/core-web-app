@@ -1,4 +1,12 @@
-import { ExperimentDataTypeName, NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
+import {
+  BOUTON_DENSITY,
+  ELECTRO_PHYSIOLOGY,
+  ExperimentDataTypeName,
+  LAYER_THICKNESS,
+  NEURON_DENSITY,
+  NEURON_MORPHOLOGY,
+  SYNAPSE_PER_CONNECTION,
+} from '@/constants/explore-section/list-views';
 import { DetailProps } from '@/types/explore-section/application';
 
 type ExperimentType = {
@@ -35,3 +43,40 @@ export const EXPERIMENT_TYPES: Record<ExperimentDataTypeName, ExperimentType> = 
     ],
   },
 };
+
+export const EXPERIMENT_TYPE_DETAILS: {
+  id: ExperimentDataTypeName;
+  title: string;
+  route: string;
+}[] = [
+  {
+    title: 'Bouton density',
+    id: BOUTON_DENSITY,
+    route: '/explore/bouton-density',
+  },
+  {
+    title: 'Morphologies',
+    id: NEURON_MORPHOLOGY,
+    route: '/explore/morphology',
+  },
+  {
+    title: 'Electrophysiology',
+    id: ELECTRO_PHYSIOLOGY,
+    route: '/explore/electrophysiology',
+  },
+  {
+    title: 'Neuron density',
+    id: NEURON_DENSITY,
+    route: '/explore/neuron-density',
+  },
+  {
+    title: 'Layer thickness',
+    id: LAYER_THICKNESS,
+    route: '/explore/layer-thickness',
+  },
+  {
+    title: 'Synapse per connection',
+    id: SYNAPSE_PER_CONNECTION,
+    route: '/explore/synapse-per-connection',
+  },
+];

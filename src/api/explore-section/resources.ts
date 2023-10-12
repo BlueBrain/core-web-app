@@ -2,6 +2,8 @@ import esb, { Sort } from 'elastic-builder';
 import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section/queries';
 import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
+import { ExperimentDataTypeName } from '@/constants/explore-section/list-views';
+import { BrainRegion } from '@/types/ontologies';
 
 export type DataQuery = {
   size: number;
@@ -25,6 +27,47 @@ export async function fetchEsResourcesByType(accessToken: string, dataQuery: Dat
       total: data?.hits?.total,
       aggs: data.aggregations,
     }));
+}
+
+export type ExperimentDatasetCountPerBrainRegion = {
+  total: number;
+  brainRegionId: string;
+  experimentUrl: string;
+};
+
+export async function fetchExperimentDatasetCountForBrainRegion(
+  accessToken: string,
+  experimentUrl: ExperimentDataTypeName,
+  brainRegionId: string,
+  descendants: BrainRegion[]
+) {
+  if (!accessToken) throw new Error('Access token should be defined');
+
+  const brainRegionKeywords = descendants.map(
+    (descendant) => `http://api.brain-map.org/api/v2/data/Structure/${descendant.id}`
+  );
+
+  const esQuery = new esb.BoolQuery();
+  esQuery.must(esb.termQuery('@type.keyword', experimentUrl));
+  esQuery.must(esb.termQuery('deprecated', false));
+  esQuery.must(esb.termsQuery('brainRegion.@id.keyword', brainRegionKeywords));
+
+  return fetch(API_SEARCH, {
+    method: 'POST',
+    headers: createHeaders(accessToken),
+    body: JSON.stringify({
+      query: esQuery.toJSON(),
+    }),
+  })
+    .then<ExploreESResponse>((response) => response.json())
+    .then<ExperimentDatasetCountPerBrainRegion>((res) => ({
+      total: res.hits.total.value,
+      brainRegionId,
+      experimentUrl,
+    }))
+    .catch(
+      () => ({ total: 0, brainRegionId, experimentUrl } as ExperimentDatasetCountPerBrainRegion)
+    );
 }
 
 // TODO: this function should be changed to use ES /_mappings
