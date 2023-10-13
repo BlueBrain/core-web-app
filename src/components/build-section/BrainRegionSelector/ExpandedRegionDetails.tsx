@@ -54,8 +54,8 @@ function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?
 
   return (
     <div className="flex gap-2 items-center">
-      <div className="basis-9/12 text-primary-8 font-bold">{title}</div>
-      <div className="basis-3/12 text-neutral-4">{renderType()}</div>
+      <div className="grow text-primary-8 font-bold">{title}</div>
+      <div className="flex-none text-neutral-4">{renderType()}</div>
     </div>
   );
 }
@@ -104,6 +104,7 @@ function NeuronCompositionEditor({
             }}
           >
             <Tooltip
+              overlayStyle={{ width: 'fit-content', maxWidth: '500px' }}
               color="#FFF"
               title={
                 classObjects ? (
