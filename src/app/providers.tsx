@@ -4,6 +4,8 @@ import { ReactNode } from 'react';
 import { ConfigProvider } from 'antd';
 import { SessionProvider } from 'next-auth/react';
 import { Provider as JotaiProvider } from 'jotai';
+import { DevTools } from 'jotai-devtools';
+
 import { basePath } from '@/config';
 import commonAntdTheme from '@/theme/antd';
 import SessionStateProvider from '@/components/SessionStateProvider';
@@ -17,6 +19,7 @@ export default function Providers({ children }: ProvidersProps) {
   return (
     <ConfigProvider theme={commonAntdTheme}>
       <JotaiProvider>
+        <DevTools />
         <ThemeProvider>
           <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={5 * 60}>
             <SessionStateProvider>{children}</SessionStateProvider>

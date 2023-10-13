@@ -28,6 +28,7 @@ const nextConfig = {
   swcMinify: true,
   compress: false,
   output: 'standalone',
+  transpilePackages: ['jotai-devtools'],
   experimental: {
     serverActions: true,
   },
