@@ -156,6 +156,12 @@ export function useQuestionParameter() {
     }));
 }
 
+questionsParametersAtom.debugLabel = 'questionsParametersAtom';
+brainRegionQAs.debugLabel = 'brainRegionQAs';
+literatureAtom.debugLabel = 'literatureAtom';
+literatureResultAtom.debugLabel = 'literatureResultAtom';
+contextualLiteratureAtom.debugLabel = 'contextualLiteratureAtom';
+
 export {
   literatureAtom,
   literatureResultAtom,
