@@ -2,19 +2,20 @@
 
 import { useAtomValue } from 'jotai';
 import { ConfigProvider, Tabs } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { unwrap } from 'jotai/utils';
 import { BrainRegionExperimentsCount } from './BrainRegionExperimentsCount';
 import { BrainRegionTabLabel } from './BrainRegionTabLabel';
 import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
-import { brainRegionsAtom } from '@/state/brain-regions';
+import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 
 const defaultTabColor = '#ffffff';
 
 export default function SelectedBrainRegionPanel() {
   const visualizedBrainRegions = useAtomValue(visibleExploreBrainRegionsAtom);
-  const brainRegions = useAtomValue(brainRegionsAtom);
-
+  const brainRegions = useAtomValue(useMemo(() => unwrap(brainRegionsAtom), []));
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const visualizedBrainRegionDetails = visualizedBrainRegions.reduce<BrainRegion[]>(
     (acc, selectedRegion) => {
       const selected = brainRegions?.find((brainRegion) => brainRegion.id === selectedRegion);
@@ -24,7 +25,28 @@ export default function SelectedBrainRegionPanel() {
     []
   );
 
-  const [activeBrainRegion, setActiveBrainRegion] = useState<BrainRegion | undefined>(undefined);
+  /**
+   * The default active brain region is decided in the following order.
+   *
+   * If a brain region is selected, then this becomes the active brain region
+   * If there are visualized brain region, the first one becomes the active brain region
+   * If none of the above is true, return undefined
+   */
+  const defaultActiveBrainRegion = () => {
+    const selectedBr = brainRegions?.find((br) => br.id === selectedBrainRegion?.id);
+    if (selectedBr && visualizedBrainRegions.includes(selectedBr.id)) {
+      return selectedBr;
+    }
+    if (visualizedBrainRegionDetails.length > 0) {
+      return visualizedBrainRegionDetails?.[0];
+    }
+    return undefined;
+  };
+
+  // the currently active brain region. Initializing with the first one (if exists) or undefined
+  const [activeBrainRegion, setActiveBrainRegion] = useState<BrainRegion | undefined>(
+    defaultActiveBrainRegion
+  );
 
   useEffect(() => {
     // if there is only one visualized brain region or if the current active brain region
