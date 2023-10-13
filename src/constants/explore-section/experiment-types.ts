@@ -52,31 +52,31 @@ export const EXPERIMENT_TYPE_DETAILS: {
   {
     title: 'Bouton density',
     id: BOUTON_DENSITY,
-    route: '/explore/bouton-density',
+    route: '/explore/interactive/bouton-density',
   },
   {
     title: 'Morphologies',
     id: NEURON_MORPHOLOGY,
-    route: '/explore/morphology',
+    route: '/explore/interactive/morphology',
   },
   {
     title: 'Electrophysiology',
     id: ELECTRO_PHYSIOLOGY,
-    route: '/explore/electrophysiology',
+    route: '/explore/interactive/electrophysiology',
   },
   {
     title: 'Neuron density',
     id: NEURON_DENSITY,
-    route: '/explore/neuron-density',
+    route: '/explore/interactive/neuron-density',
   },
   {
     title: 'Layer thickness',
     id: LAYER_THICKNESS,
-    route: '/explore/layer-thickness',
+    route: '/explore/interactive/layer-thickness',
   },
   {
     title: 'Synapse per connection',
     id: SYNAPSE_PER_CONNECTION,
-    route: '/explore/synapse-per-connection',
+    route: '/explore/interactive/synapse-per-connection',
   },
 ];

@@ -6,9 +6,11 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import Sidebar from '@/components/explore-section/Sidebar';
-import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
+import useAuth from '@/hooks/auth';
 
 export default function ExploreInteractiveLayout({ children }: { children: ReactNode }) {
+  useAuth(true);
+
   return (
     <div className="h-screen grid grid-cols-[min-content_min-content_auto] grid-rows-1 ">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -21,12 +23,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
           </DefaultLoadingSuspense>
         </ErrorBoundary>
       </div>
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="relative">
-          {children}
-          <SelectedBrainRegionPanel />
-        </div>
-      </ErrorBoundary>
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>
     </div>
   );
 }

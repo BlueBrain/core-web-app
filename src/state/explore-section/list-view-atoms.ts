@@ -164,27 +164,25 @@ export const queryResponseAtom = atomFamily(
 
 export const dataAtom = atomFamily(
   ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
-    selectAtom<
-      Promise<FlattenedExploreESResponse | null>,
-      Promise<FlattenedExploreESResponse['hits']>
-    >(
-      queryResponseAtom({ experimentTypeName, resourceId }),
-      async (response) => response?.hits ?? []
-    ),
+    atom(async (get) => {
+      const response = await get(queryResponseAtom({ experimentTypeName, resourceId }));
+      if (response?.hits) {
+        return response.hits;
+      }
+      return [];
+    }),
   DataAtomFamilyScopeComparator
 );
 
 export const totalAtom = atomFamily(
   ({ experimentTypeName, resourceId }: DataAtomFamilyScopeType) =>
-    selectAtom<Promise<FlattenedExploreESResponse | null>, Promise<number | null>>(
-      queryResponseAtom({ experimentTypeName, resourceId }),
-      async (response) => {
-        const { total } = response ?? {
-          total: { value: 0 },
-        };
-        return total?.value;
-      }
-    ),
+    atom(async (get) => {
+      const response = await get(queryResponseAtom({ experimentTypeName, resourceId }));
+      const { total } = response ?? {
+        total: { value: 0 },
+      };
+      return total?.value;
+    }),
   DataAtomFamilyScopeComparator
 );
 
