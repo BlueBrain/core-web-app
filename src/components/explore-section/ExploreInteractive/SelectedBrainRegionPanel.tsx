@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { ConfigProvider, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { BrainRegionExperimentsCount } from './BrainRegionExperimentsCount';
+import { BrainRegionTabLabel } from './BrainRegionTabLabel';
 import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 import { brainRegionsAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
@@ -38,7 +39,7 @@ export default function SelectedBrainRegionPanel() {
   }, [activeBrainRegion, visualizedBrainRegionDetails, visualizedBrainRegions]);
 
   return visualizedBrainRegionDetails.length > 0 && activeBrainRegion ? (
-    <div className="absolute bottom-0 bg-transparent z-10 w-full text-white px-10 min-h-[200px]">
+    <div className="absolute bottom-0 bg-[#000000b3] z-10 w-full text-white px-10 min-h-[200px]">
       <ConfigProvider
         theme={{
           components: {
@@ -52,7 +53,12 @@ export default function SelectedBrainRegionPanel() {
       >
         <Tabs
           items={visualizedBrainRegionDetails.map((brainRegion) => ({
-            label: brainRegion.title,
+            label: (
+              <BrainRegionTabLabel
+                brainRegion={brainRegion}
+                isActive={brainRegion.id === activeBrainRegion.id}
+              />
+            ),
             key: brainRegion.id,
             children: <BrainRegionExperimentsCount brainRegion={brainRegion} />,
             className: 'hover:text-red',

@@ -4,12 +4,12 @@
   --focus: 2px #275efe4d;
   --border: #bbc1e1;
   --border-hover: #275efe;
-  --background: #fff;
+  --background: transparent;
   --disabled: #f6f8ff;
   --disabled-inner: #e1e6f9;
   -webkit-appearance: none;
   -moz-appearance: none;
-  border-color: var(--border-color, --border);
+  border-color: var(--border-color, #ffffff);
   background-color: var(--background);
   outline: none;
   background: var(--b, var(--background));
