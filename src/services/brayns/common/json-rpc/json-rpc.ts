@@ -263,8 +263,17 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
     throw Error(`Unable to connect to WebSocket service "${this.getWebSocketURL()}"!`);
   }
 
-  private actualConnect(): Promise<WebSocket> {
-    if (this.promisedConnection) return this.promisedConnection;
+  private async actualConnect(): Promise<WebSocket> {
+    if (this.promisedConnection) {
+      const cnx = await this.promisedConnection;
+      if (cnx.readyState === cnx.CLOSED) {
+        this.promisedConnection = undefined;
+        // eslint-disable-next-line no-console
+        console.warn('Connection has been closed! Trying to reconnect...');
+        return this.actualConnect();
+      }
+      return cnx;
+    }
 
     this.promisedConnection = new Promise((resolve, reject) => {
       const url = this.getWebSocketURL();
@@ -278,6 +287,7 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
 
         ws.removeEventListener('open', handleConnectionSuccess);
         ws.removeEventListener('error', handleError);
+        this.trace('[JsonRPC]', this.stateAsString);
         resolve(ws);
       };
       try {
@@ -338,11 +348,12 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
         view.setUint32(0, messageData.byteLength, true);
         const data = new Uint8Array(buff);
         data.set(messageData, 4);
-        if (chunk)
+        if (chunk) {
           data.set(new Uint8Array(ensureChunkArrayBuffer(chunk)), 4 + messageData.byteLength);
+        }
         ws.send(data);
       } catch (ex) {
-        logError('Unable to send a message through WebSocket: ', ex);
+        logError('<<<', entryPointName, '- Unable to send a message through WebSocket: ', ex);
         this.pendingQueries.delete(id);
         reject(ex);
       }
@@ -463,6 +474,7 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
       logError('Unknown query ID:', id, this.getWebSocketURL());
       return;
     }
+    this.trace(`<<< ${getDuration(query)}`, query.entryPointName, error);
     this.pendingQueries.delete(id);
     query.resolve({
       success: false,
@@ -500,6 +512,20 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
   };
 
   private readonly handleClose = () => {
+    logError('The WS connection has been closed!', this.host);
+    const error: JsonRpcQueryFailure = {
+      code: -1,
+      entrypoint: '?',
+      success: false,
+      message: 'The WebSocket server closed the connection!',
+    };
+    this.pendingQueries.forEach((query) =>
+      query.resolve({
+        ...error,
+        entrypoint: query.entryPointName,
+        param: query.param,
+      })
+    );
     this.eventConnectionStatus.dispatch(false);
   };
 

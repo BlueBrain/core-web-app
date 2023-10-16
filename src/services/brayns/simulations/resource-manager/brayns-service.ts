@@ -3,6 +3,9 @@ import JsonRpc from '../../common/json-rpc';
 import Settings from '../../common/settings';
 import { Vector3 } from '../../common/utils/calc';
 import { BraynsSimulationOptions } from '../types';
+import BackendService from './backend-service';
+import { findSimulationProperties } from './find-simulation-properties';
+import { CampaignSimulation } from './types';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 
@@ -20,8 +23,11 @@ export default class BraynsService {
 
   private readonly service: JsonRpc;
 
+  private readonly backend: BackendService;
+
   constructor(hostname: string, onNewImage: (image: HTMLImageElement) => void) {
-    this.service = new JsonRpc(hostname, { secure: true, trace: true });
+    this.service = new JsonRpc(hostname, { secure: true, trace: false });
+    this.backend = new BackendService(figureOutBackendServiceFromBraynsHostname(hostname));
     this.stream = new ImageStream(this.service);
     this.stream.eventNewImage.addListener((stream) => {
       onNewImage(stream.image);
@@ -32,7 +38,7 @@ export default class BraynsService {
     return this.stream.askForNextFrame();
   }
 
-  async getVersion(): Promise<string> {
+  async getRendererVersion(): Promise<string> {
     const version = await this.service.exec('get-version');
     assertType<{ major: number; minor: number; patch: number; revision: string }>(version, {
       major: 'number',
@@ -41,6 +47,10 @@ export default class BraynsService {
       revision: 'string',
     });
     return `${version.major}.${version.minor}.${version.patch} (${version.revision})`;
+  }
+
+  async getBackendVersion(): Promise<string> {
+    return this.backend.getVersion();
   }
 
   async setViewport(width: number, height: number) {
@@ -52,8 +62,9 @@ export default class BraynsService {
     });
   }
 
-  async loadCircuit(simulation: BraynsSimulationOptions) {
+  async loadCircuit(simulation: CampaignSimulation) {
     const { service } = this;
+    const options: BraynsSimulationOptions = findSimulationProperties(simulation);
     await service.exec('set-camera-orthographic', { height: 15000 });
     await service.exec('set-camera-view', {
       position: [6587, 3849, 18837],
@@ -75,27 +86,10 @@ export default class BraynsService {
     await service.exec('clear-models');
     await service.exec('clear-lights');
     await service.exec('add-light-ambient', { intensity: 1 });
-    const models = await service.exec('add-model', {
-      loader_name: 'SONATA loader',
-      loader_properties: {
-        node_population_settings: [
-          {
-            node_population: simulation.populationName,
-            node_count_limit: Settings.NODE_COUNT_LIMIT,
-            report_type: simulation.report.type,
-            neuron_morphology_parameters: {
-              load_axon: false,
-              load_dendrites: false,
-              load_soma: true,
-              radius_multiplier: 150,
-            },
-            report_name: simulation.report.name,
-            spike_transition_time: 0.5,
-          },
-        ],
-      },
-      path: simulation.circuitPath,
-    });
+    const models = await service.exec(
+      'add-model',
+      await this.getSonataLoderProperties(options.circuitPath)
+    );
     assertType<{ model_id: number }[]>(models, ['array', { model_id: 'number' }]);
     const [model] = models;
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -115,12 +109,40 @@ export default class BraynsService {
       start_frame: 'number',
       unit: 'string',
     });
-    // Set a random simulation step.
-    // This will be removed as soon as we will add the simulation steps slider.
+  }
+
+  async setFrameIndex(frameIndex: number) {
+    const { service } = this;
     await service.exec('set-simulation-parameters', {
-      current:
-        params.start_frame + Math.floor(Math.random() * (params.end_frame - params.start_frame)),
+      current: frameIndex,
     });
+  }
+
+  private async getSonataLoderProperties(circuitPath: string) {
+    const info = await this.backend.getInfo(circuitPath);
+    const report = info.reports.find((item) => item.type === 'compartment');
+    if (!report) {
+      throw Error(`There is no compartment report in this circuit: "${circuitPath}"!`);
+    }
+    return {
+      loader_name: 'SONATA loader',
+      loader_properties: {
+        node_population_settings: info.populations.map((population) => ({
+          node_population: population.name,
+          node_count_limit: Settings.NODE_COUNT_LIMIT,
+          report_type: report.type,
+          neuron_morphology_parameters: {
+            load_axon: false,
+            load_dendrites: true,
+            load_soma: true,
+            radius_multiplier: 2,
+          },
+          report_name: report.name,
+          spike_transition_time: 0.5,
+        })),
+      },
+      path: circuitPath,
+    };
   }
 
   async setCameraView({ height }: { height: number }) {
@@ -144,4 +166,13 @@ export default class BraynsService {
       up,
     });
   }
+}
+
+/**
+ * The proxy address for brayns end with "/renderer",
+ * whereas for the backend we have "/backend".
+ */
+function figureOutBackendServiceFromBraynsHostname(hostname: string): string {
+  const index = hostname.lastIndexOf('/renderer');
+  return `${hostname.substring(0, index)}/backend`;
 }

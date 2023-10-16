@@ -1,0 +1,28 @@
+.coordValue {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5em;
+  min-width: 3em;
+}
+
+.coordValue > * {
+  flex: 0 0 auto;
+}
+
+.coordValue > div:first-child {
+  content: '';
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 1px solid #fffe;
+}
+
+.coordValue > .name {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.8;
+}

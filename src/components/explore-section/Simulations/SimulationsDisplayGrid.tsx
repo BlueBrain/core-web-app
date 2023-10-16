@@ -29,7 +29,7 @@ type DimensionHeaderProps = {
 };
 
 function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
-  const style = (
+  const style: CSSProperties = (
     orientation === 'vertical'
       ? {
           writingMode: 'sideways-lr',

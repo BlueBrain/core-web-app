@@ -1,4 +1,6 @@
 import { useEffect, useRef, ReactNode } from 'react';
+import { ReloadOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
 import {
   MultiBraynsManagerInterface,
@@ -8,46 +10,66 @@ import {
 } from '../multi-brayns';
 import { SlotState } from '../resource-manager/types';
 import Spinner from '@/components/Spinner';
+import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
 import styles from './brayns-simulation-viewer.module.css';
 
 export interface BraynsSimulationViewerProps {
   className?: string;
-  slotId: number;
+  slot: SimulationSlot;
 }
 
-export default function BraynsSimulationViewer({ className, slotId }: BraynsSimulationViewerProps) {
+export default function BraynsSimulationViewer({ className, slot }: BraynsSimulationViewerProps) {
   const manager = useMultiBraynsManager();
-  useCircuitInitialization(slotId, manager);
-  const refCanvas = useCanvas(slotId, manager);
-  const progress = useProgress(slotId);
-  const error = useSlotError(slotId);
+  useCircuitInitialization(slot, manager);
+  const refCanvas = useCanvas(slot.slotId, manager);
+  const progress = useProgress(slot.slotId);
+  const [error, setError] = useSlotError(slot.slotId);
   return (
     <div className={getClassName(className)}>
       <canvas ref={refCanvas} />
       {progress && (
         <div className={styles.progress}>
-          <Spinner />
           <div>{progress}</div>
+          <Spinner />
         </div>
       )}
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <div className={styles.error}>
+          <details>
+            <summary>
+              <b>An unexpected error occured...</b> (click for details)
+            </summary>
+            {error}
+          </details>
+          <center>
+            <Button
+              className="flex gap-2 items-center text-sm"
+              icon={<ReloadOutlined />}
+              type="primary"
+              onClick={() => {
+                setError(null);
+                manager?.loadSimulation(slot, true);
+              }}
+            >
+              Retry
+            </Button>
+          </center>
+        </div>
+      )}
     </div>
   );
 }
 
-function useCircuitInitialization(slotId: number, manager: MultiBraynsManagerInterface | null) {
+function useCircuitInitialization(
+  slot: SimulationSlot,
+  manager: MultiBraynsManagerInterface | null
+) {
   useEffect(() => {
     if (!manager) return;
 
-    manager.loadSimulation(slotId, {
-      circuitPath:
-        // '/gpfs/bbp.cscs.ch/project/proj3/cloned_circuits/FULL_BRAIN_WITH_SIM_15_06_2023/simulation_config.json',
-        '/gpfs/bbp.cscs.ch/data/scratch/proj134/home/king/BBPP134-479_custom/full_shm800.b/simulation_config.json',
-      populationName: 'root__neurons',
-      report: { name: 'soma', type: 'compartment' },
-    });
-  }, [manager, slotId]);
+    manager.loadSimulation(slot);
+  }, [manager, slot]);
 }
 
 function getClassName(className?: string) {

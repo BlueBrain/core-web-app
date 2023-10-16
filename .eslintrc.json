@@ -47,6 +47,7 @@
     "lodash/prop-shorthand": "off",
     "lodash/matches-prop-shorthand": "off",
     "import/prefer-default-export": "off",
-    "@typescript-eslint/no-use-before-define": "off"
+    "@typescript-eslint/no-use-before-define": "off",
+    "no-restricted-exports": "off"
   }
 }

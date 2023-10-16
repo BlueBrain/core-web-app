@@ -1,9 +1,9 @@
+import { Button } from 'antd';
 import { CloseIcon } from 'next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon';
 
 import DisplayWholeBrainCheckbox from './DisplayWholeBrainCheckbox';
 import ResetViewButton from './ResetViewButton';
 import { ZoomInIcon, ZoomOutIcon } from '@/components/icons';
-import Button from '@/components/experiment-interactive/ExperimentInteractive/MainPanel/SimulationGrid/SimulationBox.backup/ToolbarPanel/Button';
 import { useExperimentInteractive } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 import BraynsService from '@/services/brayns/circuit';
 import AxisGizmo from '@/components/InteractiveBrayns/AxisGizmo/AxisGizmo';
@@ -31,14 +31,14 @@ export default function ViewSettingsPanel() {
 
       <div className="p-3">
         <div className="flex flex-row items-center text-3xl gap-3">
-          <Button borderless>
+          <Button type="text">
             <ZoomOutIcon className="w-[16px] h-[16px]" />
           </Button>
           <div className="w-full flex-grow relative">
             <div className="text-center w-full bg-white h-[1px]" />
             <div className="w-[3px] h-[15px] absolute left-1/2 bg-white -translate-y-1/2" />
           </div>
-          <Button borderless>
+          <Button type="text">
             <ZoomInIcon className="w-[16px] h-[16px]" />
           </Button>
         </div>

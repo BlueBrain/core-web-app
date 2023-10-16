@@ -1,0 +1,22 @@
+.coordLabel {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.coordLabel > div:first-child {
+  content: '';
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+}
+
+.coordLabel > div:last-child {
+  flex: 1 1 auto;
+  min-width: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
