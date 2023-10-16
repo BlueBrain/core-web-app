@@ -483,7 +483,7 @@ export function configIsFulfilled(config: any): config is EModelUIConfig {
     config.brainRegionName &&
     config.brainRegionId &&
     config.featurePresetName &&
-    config.morphologies?.length &&
+    config.morphologies?.length === 1 &&
     config.traces?.length &&
     config.parameters
   );

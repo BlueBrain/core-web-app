@@ -2,6 +2,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
 
 import {
+  configIsFulfilled,
   eModelEditModeAtom,
   eModelUIConfigAtom,
   selectedEModelAtom,
@@ -37,6 +38,8 @@ export default function EditConfigButton({ className }: Props) {
     [EModelBuildingPlaceholders.OPTIMIZATION_CONFIG_ID]: selectedEModel?.id,
   };
 
+  const configIsOk = eModelUIConfig && configIsFulfilled(eModelUIConfig);
+
   const body = !eModelEditMode ? (
     <GenericButton
       text="Edit config"
@@ -56,7 +59,7 @@ export default function EditConfigButton({ className }: Props) {
         workflowName={WORKFLOW_EMODEL_BUILD_TASK_NAME}
         extraVariablesToReplace={extraVariablesToReplace}
         onLaunchingChange={() => setIsLoading((loading) => !loading)}
-        disabled={isLoading}
+        disabled={isLoading || !configIsOk}
         className="border-green-600 text-white bg-green-600"
       />
     </>
