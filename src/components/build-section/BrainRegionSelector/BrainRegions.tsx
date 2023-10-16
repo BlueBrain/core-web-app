@@ -110,9 +110,9 @@ function NavTitle({
             className={classNames(
               'hover:text-white mr-auto whitespace-pre-wrap text-left',
               isExpanded || selectedBrainRegion?.id === id
-                ? 'text-primary-4 font-medium'
-                : 'text-primary-1',
-              selected ? 'font-bold' : 'font-light',
+                ? !selected && 'text-primary-4 font-medium'
+                : !selected && 'text-primary-1 font-light',
+              selected && 'font-bold',
               className
             )}
             style={
