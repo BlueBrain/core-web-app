@@ -409,6 +409,7 @@ export interface EModelUIConfig {
   brainRegionName: string;
   brainRegionId: string;
   species: 'mouse';
+  ecodes_metadata: any;
 }
 
 /* -------------------------- EModelByETypeMapping -------------------------- */

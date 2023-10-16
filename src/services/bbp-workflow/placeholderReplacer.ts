@@ -8,8 +8,14 @@ import {
   CIRCUIT_BUILDING_FILES,
   SIMULATION_FILES,
   WorkflowFile,
+  WORKFLOW_EMODEL_BUILD_TASK_NAME,
+  EMODEL_BUILDING_FILES,
 } from '@/services/bbp-workflow/config';
-import { getCircuitBuildingTaskFiles, getSimulationTaskFiles } from '@/services/bbp-workflow';
+import {
+  getCircuitBuildingTaskFiles,
+  getEModelBuildingTaskFiles,
+  getSimulationTaskFiles,
+} from '@/services/bbp-workflow';
 import { BrainModelConfigResource, DetailedCircuitResource, SubConfigName } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
 
@@ -46,6 +52,14 @@ async function generateWorkflowConfig(
         CIRCUIT_BUILDING_FILES,
         configUrl,
         targetConfigToBuild
+      );
+      break;
+
+    case WORKFLOW_EMODEL_BUILD_TASK_NAME:
+      replacedConfigFiles = await getEModelBuildingTaskFiles(
+        EMODEL_BUILDING_FILES,
+        extraVariablesToReplace,
+        session
       );
       break;
 

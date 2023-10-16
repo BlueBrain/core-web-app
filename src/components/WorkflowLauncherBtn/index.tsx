@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { notification, Modal } from 'antd';
@@ -14,7 +12,7 @@ import {
 } from '@/services/bbp-workflow';
 import {
   WORKFLOW_TEST_TASK_NAME,
-  WORKFLOW_CIRCUIT_BUILD_TASK_NAME,
+  WORKFLOW_SIMULATION_TASK_NAME,
 } from '@/services/bbp-workflow/config';
 import generateWorkflowConfig from '@/services/bbp-workflow/placeholderReplacer';
 import { configAtom } from '@/state/brain-model-config';
@@ -144,7 +142,7 @@ export default function WorkflowLauncher({
   const launchBbpWorkflow = async () => {
     if (!session?.user) return;
     if (!config) return;
-    if (workflowName !== WORKFLOW_CIRCUIT_BUILD_TASK_NAME && !circuitInfo) return;
+    if (workflowName === WORKFLOW_SIMULATION_TASK_NAME && !circuitInfo) return;
 
     let workflowExecutionUrl = null;
     onLaunchingChange(true, workflowExecutionUrl);

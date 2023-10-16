@@ -1,7 +1,7 @@
 export const PLACEHOLDERS = {
   USERNAME: '{USERNAME}',
   TASK_NAME: '{TASK_NAME}',
-  SIMULATION_URL: '{SIMULATION_URL}',
+  ENDPOINT_PREFIX: '{ENDPOINT_PREFIX}',
 };
 export const BBP_WORKFLOW_URL = `https://bbp-workflow-api-${PLACEHOLDERS.USERNAME}.kcp.bbp.epfl.ch`;
 export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl.ch/${PLACEHOLDERS.USERNAME}`;
@@ -9,8 +9,14 @@ export const BBP_WORKFLOW_AUTH_URL = `https://bbp-workflow-api-auth.kcp.bbp.epfl
 export const WORKFLOW_CIRCUIT_BUILD_TASK_NAME = 'bbp_workflow.generation.SBOWorkflow/';
 export const WORKFLOW_SIMULATION_TASK_NAME = 'bbp_workflow.sbo.viz.task.RunAllSimCampaignMeta/';
 export const WORKFLOW_TEST_TASK_NAME = 'bbp_workflow.luigi.CompleteTask/';
+export const WORKFLOW_EMODEL_BUILD_TASK_NAME =
+  'bbp_workflow.sbo.emodel.task.LaunchEModelOptimisationMeta/';
 
-export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/launch/${PLACEHOLDERS.TASK_NAME}`;
+export const ENDPOINT_PREFIX_MAP: Record<string, string> = {
+  WORKFLOW_EMODEL_BUILD_TASK_NAME: 'launch-bb5',
+};
+
+export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/${PLACEHOLDERS.ENDPOINT_PREFIX}/${PLACEHOLDERS.TASK_NAME}`;
 
 export const customRangeDelimeter = '@@';
 
@@ -52,7 +58,15 @@ export enum AnalysisPlaceholders {
   VOLTAGE_TARGETS = 'VOLTAGE_TARGETS',
 }
 
-type WorkflowMetaConfigPlaceholders = Record<
+export enum EModelBuildingPlaceholders {
+  E_MODEL_NAME = 'E_MODEL_NAME',
+  E_TYPE = 'E_TYPE',
+  BRAIN_REGION = 'BRAIN_REGION',
+  UUID = 'UUID',
+  OPTIMIZATION_CONFIG_ID = 'OPTIMIZATION_CONFIG_ID',
+}
+
+export type WorkflowMetaConfigPlaceholders = Record<
   string,
   {
     fileName: string;
@@ -61,7 +75,7 @@ type WorkflowMetaConfigPlaceholders = Record<
   }
 >;
 
-export const workflowMetaConfigs: WorkflowMetaConfigPlaceholders = {
+export const simulationMetaConfigs: WorkflowMetaConfigPlaceholders = {
   GenSimCampaignMeta: {
     fileName: 'GenSimCampaignMeta.cfg',
     templateFile: `
@@ -146,16 +160,16 @@ export const SIMULATION_FILES: WorkflowFile[] = [
       config-url: <%= ${SimulationPlaceholders.VARIANT_TASK_ACTIVITY} %>
 
       [GenSimCampaignMeta]
-      config-url: <%= ${workflowMetaConfigs.GenSimCampaignMeta.placeholder} %>
+      config-url: <%= ${simulationMetaConfigs.GenSimCampaignMeta.placeholder} %>
 
       [RunSimCampaignMeta]
-      config-url: <%= ${workflowMetaConfigs.RunSimCampaignMeta.placeholder} %>
+      config-url: <%= ${simulationMetaConfigs.RunSimCampaignMeta.placeholder} %>
 
       [ReportsSimCampaignMeta]
-      config-url: <%= ${workflowMetaConfigs.ReportsSimCampaignMeta.placeholder} %>
+      config-url: <%= ${simulationMetaConfigs.ReportsSimCampaignMeta.placeholder} %>
 
       [VideoSimCampaignMeta]
-      config-url: <%= ${workflowMetaConfigs.VideoSimCampaignMeta.placeholder} %>
+      config-url: <%= ${simulationMetaConfigs.VideoSimCampaignMeta.placeholder} %>
     `,
   },
   {
@@ -215,5 +229,79 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFile[] = [
     NAME: 'cfg_name',
     TYPE: 'string',
     CONTENT: 'circuit_building.cfg',
+  },
+];
+
+export const eModelMetaConfigs: WorkflowMetaConfigPlaceholders = {
+  eModelMeta: {
+    fileName: 'GenSimCampaignMeta.cfg',
+    templateFile: `
+      [ExtractEFeatures]
+      enable-internet=True
+      modules=
+
+      [Optimise]
+      enable-internet=True
+      modules=
+      nodes=1
+      time=30:00
+      continue_unfinished_optimisation=True
+
+      [Validation]
+      enable-internet=True
+      modules=
+
+      [core]
+      log_level=INFO
+
+      [parallel]
+      backend=ipyparallel
+
+      [EmodelAPIConfig]
+      api=nexus
+      forge_path=/gpfs/bbp.cscs.ch/project/proj134/workflows/environments/venv-emodel-optimization/data/forge1.yml
+      forge_ontology_path=/gpfs/bbp.cscs.ch/project/proj134/workflows/environments/venv-emodel-optimization/data/nsg1.yml
+
+      nexus_project=mmb-point-neuron-framework-model
+      nexus_organisation=bbp
+      nexus_endpoint=https://bbp.epfl.ch/nexus/v1
+
+      [LaunchEModelOptimisation]
+      emodel=<%= ${EModelBuildingPlaceholders.E_MODEL_NAME} %>
+      etype=<%= ${EModelBuildingPlaceholders.E_TYPE} %>
+      species=mouse
+      brain_region=<%= ${EModelBuildingPlaceholders.BRAIN_REGION} %>
+      iteration_tag=<%= ${EModelBuildingPlaceholders.UUID} %>
+      config_nexus=<%= ${EModelBuildingPlaceholders.OPTIMIZATION_CONFIG_ID} %>
+    `,
+    placeholder: 'GenSimCampaignMeta',
+  },
+};
+
+export const EMODEL_BUILDING_FILES: WorkflowFile[] = [
+  {
+    NAME: 'emodel.cfg',
+    TYPE: 'file',
+    CONTENT: `
+      [DEFAULT]
+      modules=
+      workers=1
+      kg-base: https://bbp.epfl.ch/nexus/v1
+      kg-org: bbp
+      kg-proj=mmb-point-neuron-framework-model
+      account=proj134
+      enable-internet=True
+      time=4:00:00
+      virtual-env=/gpfs/bbp.cscs.ch/project/proj134/workflows/environments/venv-emodel-optimization/
+      chdir=/gpfs/bbp.cscs.ch/project/proj134/scratch/workflow-outputs
+      
+      [LaunchEModelOptimisationMeta]
+      config-url: <%= ${eModelMetaConfigs.eModelMeta.placeholder} %>
+    `,
+  },
+  {
+    NAME: 'cfg_name',
+    TYPE: 'string',
+    CONTENT: 'emodel.cfg',
   },
 ];

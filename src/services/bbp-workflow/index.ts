@@ -10,6 +10,9 @@ import {
   PLACEHOLDERS,
   SimulationPlaceholders,
   BuildingPlaceholders,
+  simulationMetaConfigs,
+  eModelMetaConfigs,
+  ENDPOINT_PREFIX_MAP,
 } from '@/services/bbp-workflow/config';
 import {
   UNICORE_JOB_CONFIG,
@@ -57,7 +60,7 @@ export async function getSimulationTaskFiles(
   extraVariables = { ...convertExpDesConfigToSimVariables(extraVariables) };
 
   extraVariables = {
-    ...(await createWorkflowMetaConfigs(extraVariables, session)),
+    ...(await createWorkflowMetaConfigs(simulationMetaConfigs, extraVariables, session)),
   };
 
   const replacedFiles = structuredClone(workflowFiles).map((file) => {
@@ -93,11 +96,31 @@ export function getCircuitBuildingTaskFiles(
   return workflowFiles;
 }
 
-function getWorkflowTaskUrl(username: string, workflowName: string): string {
-  return BBP_WORKFLOW_TASK_PATH.replace(PLACEHOLDERS.USERNAME, username).replace(
-    PLACEHOLDERS.TASK_NAME,
-    workflowName
-  );
+export async function getEModelBuildingTaskFiles(
+  workflowFiles: WorkflowFile[],
+  extraVariablesToReplace: Record<string, any>,
+  session: Session
+): Promise<WorkflowFile[]> {
+  let extraVariables = structuredClone(extraVariablesToReplace);
+
+  extraVariables = {
+    ...(await createWorkflowMetaConfigs(eModelMetaConfigs, extraVariables, session)),
+  };
+
+  const replacedFiles = structuredClone(workflowFiles).map((file) => {
+    const modifiedFile = file;
+    modifiedFile.CONTENT = template(modifiedFile.CONTENT)(extraVariables);
+    modifiedFile.CONTENT = replaceCustomBbpWorkflowPlaceholders(modifiedFile.CONTENT);
+    return modifiedFile;
+  });
+
+  return replacedFiles;
+}
+
+function getWorkflowTaskUrl(username: string, workflowTaskName: string): string {
+  return BBP_WORKFLOW_TASK_PATH.replace(PLACEHOLDERS.USERNAME, username)
+    .replace(PLACEHOLDERS.TASK_NAME, workflowTaskName)
+    .replace(PLACEHOLDERS.ENDPOINT_PREFIX, ENDPOINT_PREFIX_MAP[workflowTaskName] || 'launch');
 }
 
 async function launchWorkflow(

@@ -4,7 +4,7 @@ import { Session } from 'next-auth';
 import {
   SimulationPlaceholders,
   AnalysisPlaceholders,
-  workflowMetaConfigs,
+  WorkflowMetaConfigPlaceholders,
   customRangeDelimeter,
 } from '@/services/bbp-workflow/config';
 import {
@@ -102,6 +102,7 @@ function getValueOrPlaceholder(
 }
 
 export async function createWorkflowMetaConfigs(
+  workflowMetaConfigs: WorkflowMetaConfigPlaceholders,
   variablesToReplace: Record<string, any>,
   session: Session
 ) {
