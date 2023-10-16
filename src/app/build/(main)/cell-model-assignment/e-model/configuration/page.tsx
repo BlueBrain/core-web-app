@@ -5,8 +5,9 @@ import { useAtomValue } from 'jotai';
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import EModelView from '@/components/build-section/cell-model-assignment/e-model/EModelView';
-import EditEModelButton from '@/components/build-section/cell-model-assignment/e-model/EditEModelButton';
+import CloneConfigButton from '@/components/build-section/cell-model-assignment/e-model/CloneConfigButton';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
+import EditConfigButton from '@/components/build-section/cell-model-assignment/e-model/EditConfigButton';
 
 const baseBannerStyle = 'flex h-full items-center justify-center text-4xl';
 
@@ -24,7 +25,7 @@ export default function ConfigurationPage() {
     body = (
       <div>
         <EModelView />
-        <EditEModelButton />
+        {selectedEModel.isOptimizationConfig ? <EditConfigButton /> : <CloneConfigButton />}
       </div>
     );
   }

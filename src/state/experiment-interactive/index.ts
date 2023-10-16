@@ -13,6 +13,8 @@ import {
   SimulationTimeRange,
 } from '@/components/experiment-interactive/types';
 
+export * from './current-simulation-step';
+
 export const simulationPreviewsAtom = atom<SimulationPreviewElement[]>([...mockSimulationPreviews]);
 
 export const displayedSimulationParamsConfigAtom = atom<ParameterKeyConfig[]>([
@@ -21,7 +23,7 @@ export const displayedSimulationParamsConfigAtom = atom<ParameterKeyConfig[]>([
 
 export const playbackStepSizeAtom = atom<number>(20);
 
-export const playbackActiveStepAtom = atom<number>(600);
+export const playbackActiveStepAtom = atom<number>(0);
 
 export const simulationDataAtom = atom<SimulationData>(mockSimulationData);
 

@@ -4,6 +4,7 @@ import SimplePanel from '../src/components/Home/panel/SimplePanel';
 
 jest.mock('next/navigation');
 
+// @ts-ignore
 Navigation.useSearchParams = jest.fn(() => new URLSearchParams());
 
 test('Home page', async () => {

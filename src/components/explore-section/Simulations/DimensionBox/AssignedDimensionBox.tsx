@@ -23,7 +23,6 @@ export default function AssignedDimensionBox({ dimension, isAxis }: AssignedDime
   const changeEditMode = () => {
     setEditMode(true);
   };
-
   return (
     <button type="submit" onClick={changeEditMode}>
       <div className="flex flex-row justify-between">

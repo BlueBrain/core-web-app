@@ -1,5 +1,5 @@
 .accordionChevron {
-  @apply transition-transform;
+  @apply text-white transition-transform;
 }
 
 .accordionTrigger {
@@ -12,7 +12,7 @@
 }
 
 .accordionTrigger[data-state='open'] > .accordionChevron {
-  @apply rotate-180;
+  @apply rotate-90;
 }
 
 .accordionTrigger[data-state='open'] {

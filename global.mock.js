@@ -6,3 +6,7 @@ jest.mock('@/components/explore-section/Literature/actions.ts', () => ({
   __esModule: true,
   getGenerativeQAAction: jest.fn(),
 }));
+
+// Mocks for function from deepdash-es. The dependency is not resolved with jest, therefore the functions need to be mocked. (see - https://github.com/YuriGor/deepdash/issues/133)
+export const findDeep = (flatTree, findFn) => flatTree.find(findFn);
+export const reduceDeep = (arr) => arr;

@@ -8,10 +8,15 @@ import {
   CIRCUIT_BUILDING_FILES,
   SIMULATION_FILES,
   WorkflowFile,
+  WORKFLOW_EMODEL_BUILD_TASK_NAME,
+  EMODEL_BUILDING_FILES,
 } from '@/services/bbp-workflow/config';
-import { getCircuitBuildingTaskFiles, getSimulationTaskFiles } from '@/services/bbp-workflow';
-import { GROUPS as EXECUTION_GROUPS, CellCompositionStepGroupValues } from '@/state/build-status';
-import { BrainModelConfigResource, DetailedCircuitResource } from '@/types/nexus';
+import {
+  getCircuitBuildingTaskFiles,
+  getEModelBuildingTaskFiles,
+  getSimulationTaskFiles,
+} from '@/services/bbp-workflow';
+import { BrainModelConfigResource, DetailedCircuitResource, SubConfigName } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
 
 function getCircuitUrl(config: BrainModelConfigResource): string {
@@ -21,7 +26,7 @@ function getCircuitUrl(config: BrainModelConfigResource): string {
 async function generateWorkflowConfig(
   workflowName: string,
   circuitInfo: DetailedCircuitResource | null,
-  stepsToBuild: CellCompositionStepGroupValues[],
+  targetConfigToBuild: SubConfigName | null,
   config: BrainModelConfigResource,
   session: Session,
   extraVariablesToReplace: Record<string, any>
@@ -42,9 +47,20 @@ async function generateWorkflowConfig(
     }
 
     case WORKFLOW_CIRCUIT_BUILD_TASK_NAME:
-      if (stepsToBuild.includes(EXECUTION_GROUPS.CELL_COMPOSITION)) {
-        replacedConfigFiles = getCircuitBuildingTaskFiles(CIRCUIT_BUILDING_FILES, configUrl);
-      }
+      if (!targetConfigToBuild) break;
+      replacedConfigFiles = getCircuitBuildingTaskFiles(
+        CIRCUIT_BUILDING_FILES,
+        configUrl,
+        targetConfigToBuild
+      );
+      break;
+
+    case WORKFLOW_EMODEL_BUILD_TASK_NAME:
+      replacedConfigFiles = await getEModelBuildingTaskFiles(
+        EMODEL_BUILDING_FILES,
+        extraVariablesToReplace,
+        session
+      );
       break;
 
     default:

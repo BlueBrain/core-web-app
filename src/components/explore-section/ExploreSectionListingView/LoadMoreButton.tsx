@@ -2,7 +2,7 @@ import { HTMLProps, useMemo } from 'react';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue, useAtom } from 'jotai';
-import { unwrap } from 'jotai/utils';
+import { loadable } from 'jotai/utils';
 import { totalAtom, pageSizeAtom } from '@/state/explore-section/list-view-atoms';
 import { classNames } from '@/util/utils';
 
@@ -24,33 +24,47 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 export default function LoadMoreButton({
   experimentTypeName,
   resourceId,
-}: HTMLProps<HTMLButtonElement> & { experimentTypeName: string; resourceId?: string }) {
+}: HTMLProps<HTMLButtonElement> & {
+  experimentTypeName: string;
+  resourceId?: string;
+}) {
   const total = useAtomValue(
     useMemo(
-      () => unwrap(totalAtom({ experimentTypeName, resourceId })),
+      () => loadable(totalAtom({ experimentTypeName, resourceId })),
       [experimentTypeName, resourceId]
     )
   );
 
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);
 
-  const disabled = !!total && pageSize > total;
-
-  if (!total) {
+  if (total.state === 'loading') {
     return (
       <Btn className="bg-primary-8 cursor-progress text-white" disabled>
         <Spin indicator={antIcon} />
       </Btn>
     );
   }
+  if (total.state === 'hasError') {
+    return (
+      <Btn className="bg-primary-8 cursor-progress text-white" disabled>
+        <div>Data could not be fetched</div>
+      </Btn>
+    );
+  }
+
+  const disabled = !!total.data && pageSize > total.data;
 
   return !disabled ? (
     <Btn className="bg-primary-8 text-white" onClick={() => setPageSize(pageSize + 30)}>
-      {!!total && pageSize < total ? 'Load 30 more results...' : 'All resources are loaded'}
+      {!!total.data && pageSize < total.data
+        ? 'Load 30 more results...'
+        : 'All resources are loaded'}
     </Btn>
   ) : (
     <Btn className="bg-neutral-2 cursor-not-allowed text-primary-9" disabled>
-      {!!total && pageSize < total ? 'Load 30 more results...' : 'All resources are loaded'}
+      {!!total.data && pageSize < total.data
+        ? 'Load 30 more results...'
+        : 'All resources are loaded'}
     </Btn>
   );
 }

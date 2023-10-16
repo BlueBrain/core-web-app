@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import clone from 'lodash/clone';
+import { atomFamily } from 'jotai/utils';
 import {
   Dimension,
   DimensionRange,
@@ -8,6 +9,7 @@ import {
 import { AxesState } from '@/types/explore-section/fields';
 import { detailAtom } from '@/state/explore-section/detail-view-atoms';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { ResourceInfo } from '@/types/explore-section/application';
 
 // Dimensions atoms
 
@@ -26,17 +28,19 @@ function buildDefaultDimensions(resource: SimulationCampaignResource) {
 
 export const dimensionsAtom = atom<Dimension[] | null>([]);
 
-export const initializeDimensionsAtom = atom(null, async (get, set) => {
-  const resource = await get(detailAtom);
+export const initializeDimensionsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
+  atom(null, async (get, set) => {
+    const resource = await get(detailAtom(resourceInfo));
 
-  if (resource) {
-    const defaultDimensions = buildDefaultDimensions(resource as SimulationCampaignResource);
+    if (resource) {
+      const defaultDimensions = buildDefaultDimensions(resource as SimulationCampaignResource);
 
-    set(dimensionsAtom, defaultDimensions);
-  }
+      set(dimensionsAtom, defaultDimensions);
+    }
 
-  return undefined;
-});
+    return undefined;
+  })
+);
 
 export const modifyDimensionValue = atom<null, [string, DimensionValue | DimensionRange], void>(
   null,

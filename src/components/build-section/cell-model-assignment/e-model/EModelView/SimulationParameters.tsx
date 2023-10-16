@@ -7,6 +7,7 @@ import {
   simulationParametersAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { SimulationParameterKeys } from '@/types/e-model';
+import { eCodesMetadata } from '@/constants/cell-model-assignment/e-model';
 
 export default function SimulationParameters() {
   const simulationParameters = useAtomValue(simulationParametersAtom);
@@ -19,6 +20,7 @@ export default function SimulationParameters() {
     setEModelUIConfig((oldAtomData) => ({
       ...oldAtomData,
       parameters: structuredClone(simulationParameters),
+      ecodes_metadata: eCodesMetadata,
     }));
   }, [eModelEditMode, simulationParameters, setEModelUIConfig]);
 

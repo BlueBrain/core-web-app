@@ -7,13 +7,18 @@ import { assertType } from '@/util/type-guards';
 
 const HTTP_CREATED_CODE = 201;
 
+const MAX_RETRIES_ON_ERROR = 5;
+
 export default class ProxyService implements JobAllocatorServiceInterface {
+  private errorsCount = 0;
+
   constructor(private readonly options: ProxyServiceOptions) {}
 
   /**
    * @returns Job ID.
    */
   async createJob(): Promise<string> {
+    this.errorsCount = 0;
     const response = await this.post({ usecase: 'SBO1' });
     if (response.status !== HTTP_CREATED_CODE) {
       logError('Unable to create Allocation Job!', response);
@@ -37,8 +42,12 @@ export default class ProxyService implements JobAllocatorServiceInterface {
       assertStatusResponse(data);
       return this.parseJobDetails(data, jobId);
     } catch (ex) {
-      logError('Unable tot get job status:', ex);
-      jobStatus.status = 'ERROR';
+      this.errorsCount += 1;
+      logError(
+        `Unable tot get status for job "${jobId}"!\nAttempt ${this.errorsCount} of ${MAX_RETRIES_ON_ERROR}.\n`,
+        ex
+      );
+      jobStatus.status = this.errorsCount < MAX_RETRIES_ON_ERROR ? 'WAITING' : 'ERROR';
     }
     return jobStatus;
   }
@@ -86,7 +95,11 @@ export default class ProxyService implements JobAllocatorServiceInterface {
     const response = await fetch(fullUrl, options);
     if (!response.ok) {
       logError('Failing URL:', fullUrl);
-      throw Error(`Get failed with error #${response.status}: ${response.statusText}.`);
+      throw Error(
+        `Get failed with error #${response.status}: ${
+          response.statusText
+        }.\n${await response.text()}`
+      );
     }
     return response;
   }

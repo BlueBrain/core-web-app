@@ -26,6 +26,7 @@ const green = {
   2: '#389E0D',
   3: '#00B212',
   4: '#95DE64',
+  5: '#5AF56A',
 };
 
 /** @type {import('tailwindcss').Config} */

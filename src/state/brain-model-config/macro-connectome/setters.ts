@@ -2,7 +2,7 @@
 
 import { atom } from 'jotai';
 import isEqual from 'lodash/isEqual';
-import { tableToIPC } from '@apache-arrow/es5-cjs';
+import { tableToIPC } from '@apache-arrow/es2015-esm';
 
 import invalidateConfigAtom from '../util';
 import {

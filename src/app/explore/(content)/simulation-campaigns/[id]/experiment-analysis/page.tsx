@@ -111,7 +111,7 @@ export default function ExperimentAnalyses() {
                 type="button"
                 disabled={loading}
               >
-                Upload new
+                Register New Analysis
               </button>
             </div>
           )}

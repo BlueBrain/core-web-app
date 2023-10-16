@@ -9,11 +9,12 @@ import {
   FilterValues,
   ContextualLiteratureAtom,
   ContextQAItem,
-  ArticleTypeSuggestion,
   QuestionParameters,
+  Suggestion,
+  ArticleTypeSuggestion,
 } from '@/types/literature';
 import { Filter, GteLteValue } from '@/components/Filter/types';
-import { getArticleTypes } from '@/components/explore-section/Literature/actions';
+import { fetchArticleTypes } from '@/components/explore-section/Literature/api';
 
 export type BrainRegion = { id: string; title: string };
 
@@ -113,9 +114,27 @@ const useContextualLiteratureAtom = () => {
   };
 };
 
-const articleTypeSuggestionsAtom = atom<Promise<ArticleTypeSuggestion[]>>(async () => {
-  const articleTypeResponse = await getArticleTypes();
-  return articleTypeResponse;
+async function getArticleTypes(): Promise<ArticleTypeSuggestion[]> {
+  const articleTypeResponse = await fetchArticleTypes();
+
+  return articleTypeResponse.map((articleResponse) => ({
+    articleType: articleResponse.article_type,
+    docCount: articleResponse.docs_in_db,
+  }));
+}
+
+const articleTypeSuggestionsAtom = atom<Promise<Suggestion[]>>(async () => {
+  try {
+    const articleTypeResponse = await getArticleTypes();
+    const options = articleTypeResponse.map((type) => ({
+      key: type.articleType,
+      label: type.articleType,
+      value: type.articleType,
+    }));
+    return options;
+  } catch (err) {
+    return [];
+  }
 });
 
 export const initialParameters: QuestionParameters = {

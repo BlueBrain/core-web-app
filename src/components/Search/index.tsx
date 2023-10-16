@@ -1,14 +1,9 @@
 import { ReactElement, JSXElementConstructor } from 'react';
 import { ConfigProvider, Select } from 'antd';
-import { SelectProps } from 'antd/es/select';
+import { SelectProps, DefaultOptionType } from 'antd/es/select';
 import { classNames } from '@/util/utils';
 
-type SelectOptions = {
-  label: string;
-  value: string;
-};
-
-export default function Search({
+export default function Search<T extends DefaultOptionType>({
   className,
   colorBgContainer = '#003A8C',
   onClear,
@@ -24,7 +19,7 @@ export default function Search({
   onClear?: () => void;
   handleSelect: SelectProps['onSelect'];
   mode?: 'multiple' | 'tags';
-  options: SelectOptions[];
+  options: T[];
   placeholder?: string;
   tagRender?: (props: any) => ReactElement<any, string | JSXElementConstructor<any>>;
   value?: string[];

@@ -7,7 +7,7 @@ import { WORKFLOW_CIRCUIT_BUILD_TASK_NAME } from '@/services/bbp-workflow/config
 import { classNames } from '@/util/utils';
 import LauncherModal from '@/components/BuildModelBtn/LauncherModal';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
-import { stepsToBuildAtom } from '@/state/build-status';
+import { targetConfigToBuildAtom } from '@/state/build-status';
 import GenericButton from '@/components/Global/GenericButton';
 
 type BuildModelBtnProps = {
@@ -18,7 +18,7 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const stepsToBuild = useAtomValue(stepsToBuildAtom);
+  const targetConfigToBuild = useAtomValue(targetConfigToBuildAtom);
 
   const onLaunchingChange = useCallback((newState: boolean) => {
     setLoading(newState);
@@ -42,7 +42,7 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
           buttonText="Build"
           workflowName={WORKFLOW_CIRCUIT_BUILD_TASK_NAME}
           onLaunchingChange={onLaunchingChange}
-          disabled={!stepsToBuild.length}
+          disabled={!targetConfigToBuild}
         />
       </LauncherModal>
     </>

@@ -2,10 +2,12 @@ import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { useMemo } from 'react';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { IdLabel } from '@/types/explore-section/fields';
 import { contributorsDataAtom } from '@/state/explore-section/detail-view-atoms';
 import ListField from '@/components/explore-section/Fields/ListField';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 /**
  * DeltaResource is the raw data interface recived from a reequest to nexus
@@ -35,10 +37,12 @@ export const contributorLabelParser = (contributors: DeltaResource[] | null) => 
   return result.length > 0 ? result : null;
 };
 
-const contributorsDataLoadableAtom = loadable(contributorsDataAtom);
-
 export default function Contributors() {
-  const contributors = useAtomValue(contributorsDataLoadableAtom);
+  const resourceInfo = useResourceInfoFromPath();
+
+  const contributors = useAtomValue(
+    useMemo(() => loadable(contributorsDataAtom(resourceInfo)), [resourceInfo])
+  );
 
   if (contributors.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;
 

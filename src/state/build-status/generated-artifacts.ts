@@ -4,7 +4,10 @@ import { cellCompositionAtom } from '@/state/brain-model-config/cell-composition
 import { partialCircuitAtom as cellPositionPartialCircuitAtom } from '@/state/brain-model-config/cell-position';
 import { partialCircuitAtom as emodelAssignmentPartialCircuitAtom } from '@/state/brain-model-config/emodel-assignment';
 import { partialCircuitAtom as morphologyAssignmentPartialCircuitAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
-import { partialCircuitAtom as microConnectomePartialCircuitAtom } from '@/state/brain-model-config/micro-connectome';
+import {
+  partialCircuitAtom as microConnectomePartialCircuitAtom,
+  partialCircuitAtom as macroConnectomePartialCircuitAtom,
+} from '@/state/brain-model-config/micro-connectome';
 
 export const cellCompositionWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
   const cellComposition = await get(cellCompositionAtom);
@@ -32,6 +35,12 @@ export const morphologyAssignmentWasBuiltAtom = atom<Promise<boolean>>(async (ge
 
 export const microConnectomeWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
   const circuit = await get(microConnectomePartialCircuitAtom);
+
+  return !!circuit;
+});
+
+export const macroConnectomeWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
+  const circuit = await get(macroConnectomePartialCircuitAtom);
 
   return !!circuit;
 });

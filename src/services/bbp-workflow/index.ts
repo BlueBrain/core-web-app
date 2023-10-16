@@ -10,6 +10,9 @@ import {
   PLACEHOLDERS,
   SimulationPlaceholders,
   BuildingPlaceholders,
+  simulationMetaConfigs,
+  eModelMetaConfigs,
+  ENDPOINT_PREFIX_MAP,
 } from '@/services/bbp-workflow/config';
 import {
   UNICORE_JOB_CONFIG,
@@ -17,7 +20,7 @@ import {
   PLACEHOLDERS as UNICORE_PLACEHOLDERS,
 } from '@/services/unicore/config';
 import { submitJob, waitUntilJobDone } from '@/services/unicore/helper';
-import { DetailedCircuitResource } from '@/types/nexus';
+import { DetailedCircuitResource, SubConfigName } from '@/types/nexus';
 import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
 import { replaceCustomBbpWorkflowPlaceholders } from '@/components/experiment-designer/utils';
 import { getCurrentDate } from '@/util/utils';
@@ -57,7 +60,7 @@ export async function getSimulationTaskFiles(
   extraVariables = { ...convertExpDesConfigToSimVariables(extraVariables) };
 
   extraVariables = {
-    ...(await createWorkflowMetaConfigs(extraVariables, session)),
+    ...(await createWorkflowMetaConfigs(simulationMetaConfigs, extraVariables, session)),
   };
 
   const replacedFiles = structuredClone(workflowFiles).map((file) => {
@@ -72,7 +75,8 @@ export async function getSimulationTaskFiles(
 
 export function getCircuitBuildingTaskFiles(
   workflowFiles: WorkflowFile[],
-  configUrl: string | null
+  configUrl: string | null,
+  targetConfigToBuild: SubConfigName
 ): WorkflowFile[] {
   if (!configUrl) return workflowFiles;
 
@@ -82,6 +86,7 @@ export function getCircuitBuildingTaskFiles(
   if (!circuitBuildingConfigFile) return workflowFiles;
 
   const variables = {
+    [BuildingPlaceholders.TARGET_CONFIG_NAME]: targetConfigToBuild,
     [BuildingPlaceholders.CONFIG_URL]: escapedConfigUrl,
     [BuildingPlaceholders.DATE]: getCurrentDate(''),
     [BuildingPlaceholders.UUID]: crypto.randomUUID(),
@@ -91,11 +96,31 @@ export function getCircuitBuildingTaskFiles(
   return workflowFiles;
 }
 
-function getWorkflowTaskUrl(username: string, workflowName: string): string {
-  return BBP_WORKFLOW_TASK_PATH.replace(PLACEHOLDERS.USERNAME, username).replace(
-    PLACEHOLDERS.TASK_NAME,
-    workflowName
-  );
+export async function getEModelBuildingTaskFiles(
+  workflowFiles: WorkflowFile[],
+  extraVariablesToReplace: Record<string, any>,
+  session: Session
+): Promise<WorkflowFile[]> {
+  let extraVariables = structuredClone(extraVariablesToReplace);
+
+  extraVariables = {
+    ...(await createWorkflowMetaConfigs(eModelMetaConfigs, extraVariables, session)),
+  };
+
+  const replacedFiles = structuredClone(workflowFiles).map((file) => {
+    const modifiedFile = file;
+    modifiedFile.CONTENT = template(modifiedFile.CONTENT)(extraVariables);
+    modifiedFile.CONTENT = replaceCustomBbpWorkflowPlaceholders(modifiedFile.CONTENT);
+    return modifiedFile;
+  });
+
+  return replacedFiles;
+}
+
+function getWorkflowTaskUrl(username: string, workflowTaskName: string): string {
+  return BBP_WORKFLOW_TASK_PATH.replace(PLACEHOLDERS.USERNAME, username)
+    .replace(PLACEHOLDERS.TASK_NAME, workflowTaskName)
+    .replace(PLACEHOLDERS.ENDPOINT_PREFIX, ENDPOINT_PREFIX_MAP[workflowTaskName] || 'launch');
 }
 
 async function launchWorkflow(

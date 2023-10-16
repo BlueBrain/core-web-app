@@ -6,6 +6,8 @@ import {
   JournalSuggestionResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
+import { BrainRegion } from '@/types/ontologies';
+import { ExperimentDatasetCountPerBrainRegion } from '@/api/explore-section/resources';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
@@ -123,4 +125,34 @@ export const fetchJournalSuggestions = (searchTerm: string): Promise<JournalSugg
     .catch(() => []);
 };
 
-export { getGenerativeQA, fetchArticleTypes, fetchAuthorSuggestions };
+const fetchParagraphsForBrainRegionAndExperiment = (
+  accessToken: string,
+  brainRegionId: string,
+  experimentType: { name: string; id: string },
+  descendants: BrainRegion[]
+) => {
+  if (!accessToken) throw new Error('Access token should be defined');
+
+  descendants.map(
+    (descendant) => `http://api.brain-map.org/api/v2/data/Structure/${descendant.id}`
+  );
+
+  const mockRequest = new Promise<ExperimentDatasetCountPerBrainRegion>((resolve) => {
+    setTimeout(() => {
+      resolve({
+        total: Math.floor(Math.random() * 30),
+        experimentUrl: experimentType.id,
+        brainRegionId,
+      });
+    }, 1000);
+  });
+
+  return mockRequest;
+};
+
+export {
+  getGenerativeQA,
+  fetchArticleTypes,
+  fetchAuthorSuggestions,
+  fetchParagraphsForBrainRegionAndExperiment,
+};

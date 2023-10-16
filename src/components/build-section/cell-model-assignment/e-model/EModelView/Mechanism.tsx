@@ -40,7 +40,7 @@ function MechanismTable({ mechanismCollection }: MechanismTableProps) {
   const locations: MechanismLocation[] = [...mechanismLocations].sort();
 
   const getMechanismInfo = (location: MechanismLocation) =>
-    (mechanismCollection?.[location] as EModelConfigurationMechanism[]) || [null];
+    (mechanismCollection?.processed?.[location] as EModelConfigurationMechanism[]) || [null];
 
   return (
     <div className="flex gap-8 flex-wrap justify-between">

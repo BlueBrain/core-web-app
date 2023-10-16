@@ -19,10 +19,34 @@ import {
 } from '@/state/brain-regions';
 import { NavValue } from '@/components/TreeNavItem';
 import { BrainRegion } from '@/types/ontologies';
-import ColorBox from '@/components/build-section/BrainRegionSelector/ColorBox';
 import VisualizationTrigger from '@/components/build-section/BrainRegionSelector/VisualizationTrigger';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { resetAtlasVisualizationAtom } from '@/state/atlas/atlas';
+import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
+
+/**
+ * the line component is added for each NavTitle with absolue position
+ * the height is calculated based on the container "NavTitle" height and the bottom padding of the title
+ * we added some space to the top to not be too close to the title
+ * @param TreeLineBar.height is the height of the title component
+ * @returns absolute postionned dashed line
+ */
+function TreeLineBar({ show, height }: { show: boolean; height?: number }) {
+  if (!show) return null;
+  return (
+    <div
+      className="absolute w-px border-l border-dashed border-primary-4 left-px"
+      style={
+        height
+          ? {
+              top: `calc(${height}px - 0.75rem + .25rem)`,
+              height: `calc(100% - ${height}px - 0.75rem + .25rem)`,
+            }
+          : {}
+      }
+    />
+  );
+}
 
 function NavTitle({
   className,
@@ -38,6 +62,11 @@ function NavTitle({
   const brainRegionViews = useAtomValue(brainRegionOntologyViewsAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(brainRegionsAtom);
+  const visibleExploreBrainRegions = useAtomValue(visibleExploreBrainRegionsAtom);
+  const navTitleRef = useRef<HTMLDivElement>(null);
+  const [height, setTitleHeight] = useState<number>(0);
+
+  const selected = id && visibleExploreBrainRegions.includes(id);
 
   const selectOptions = brainRegionViews?.map((view) => {
     const brainRegion = brainRegions?.find((br) => br.id === id);
@@ -55,21 +84,44 @@ function NavTitle({
     [selectOptions, viewId]
   );
 
+  useEffect(() => {
+    if (!navTitleRef || !navTitleRef.current) return;
+    const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+      const currentTitle = entries[0];
+      setTitleHeight(currentTitle.target.clientHeight);
+    });
+    resizeObserver.observe(navTitleRef.current);
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [navTitleRef]);
+
   return (
     <>
-      <div className="py-3 flex items-center justify-between">
+      <div ref={navTitleRef} className="flex items-center justify-between py-3 first:border-none">
         <button
           type="button"
-          className="h-auto border-none flex font-bold gap-3 justify-end items-center"
+          className="flex items-center justify-end h-auto gap-3 font-bold border-none"
           onClick={() => id && onClick()}
         >
-          {colorCode && <ColorBox color={colorCode} />}
           <span
             className={classNames(
               'hover:text-white mr-auto whitespace-pre-wrap text-left',
-              isExpanded || selectedBrainRegion?.id === id ? 'text-white' : 'text-primary-4',
+              isExpanded || selectedBrainRegion?.id === id
+                ? 'text-primary-4 font-medium'
+                : 'text-primary-1',
+              selected ? 'font-bold' : 'font-light',
               className
             )}
+            style={
+              selected
+                ? {
+                    color: colorCode,
+                  }
+                : {}
+            }
           >
             {title}
           </span>
@@ -86,6 +138,7 @@ function NavTitle({
           {trigger?.()}
         </div>
       </div>
+      <TreeLineBar show={isExpanded} height={height} />
       {content?.({ className: '-mt-3 divide-y divide-primary-6' })}
     </>
   );
@@ -97,7 +150,7 @@ export default function BrainRegions() {
   const resetBrainRegion = useSetAtom(selectedBrainRegionAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [navValue, setNavValue] = useState<NavValue>(null);
+  const [brainRegionHierarchyState, setBrainRegionHierarchyState] = useState<NavValue>(null);
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const brainModelConfigId = useAtomValue(brainModelConfigIdAtom);
   const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
@@ -108,21 +161,21 @@ export default function BrainRegions() {
     if (brainModelConfigId === localSelectedBrainModelConfigId) return;
 
     setLocalSelectedBrainModelConfigId(brainModelConfigId);
-    setNavValue(null); // reset tree
+    setBrainRegionHierarchyState(null); // reset tree
     resetBrainRegion(null); // reset brain region
     setResetAtlasVisualization(); // reset meshes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brainModelConfigId, localSelectedBrainModelConfigId]);
 
   return brainRegionsTree ? (
-    <div className="bg-primary-8 flex flex-1 flex-col h-screen">
+    <div className="flex flex-col flex-1 h-screen bg-primary-8">
       {isCollapsed ? (
         <CollapsedBrainRegionsSidebar setIsCollapsed={setIsCollapsed} />
       ) : (
-        <div className="flex flex-1 flex-col overflow-y-auto px-7 py-6 min-w-[300px]">
+        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[300px]">
           <div className="grid">
-            <div className="flex justify-between mb-7 items-start">
-              <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
+            <div className="flex items-start justify-between mb-7">
+              <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
                 <BrainIcon style={{ height: '1em' }} />
                 <span>Brain region</span>
               </div>
@@ -135,10 +188,13 @@ export default function BrainRegions() {
             </div>
             <BrainTreeSearch
               brainTreeNav={brainTreeNavRef?.current}
-              setValue={setNavValue}
-              value={navValue}
+              setValue={setBrainRegionHierarchyState}
             />
-            <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
+            <BrainTreeNav
+              ref={brainTreeNavRef}
+              setValue={setBrainRegionHierarchyState}
+              value={brainRegionHierarchyState}
+            >
               {({
                 colorCode,
                 id,
@@ -152,12 +208,10 @@ export default function BrainRegions() {
                 itemsInAnnotation,
               }) => (
                 <NavTitle
-                  className="uppercase text-lg"
+                  className="text-base capitalize"
                   colorCode={colorCode}
                   id={id}
-                  onClick={() =>
-                    leaves && setSelectedBrainRegion(id, title, leaves, representedInAnnotation)
-                  }
+                  onClick={() => setSelectedBrainRegion(id, title, leaves, representedInAnnotation)}
                   title={title}
                   isExpanded={isExpanded}
                   isHidden={!representedInAnnotation && !itemsInAnnotation}
@@ -165,41 +219,7 @@ export default function BrainRegions() {
                   content={content}
                   selectedBrainRegion={selectedBrainRegion}
                   viewId={view}
-                >
-                  {({
-                    colorCode: nestedColorCode,
-                    id: nestedId,
-                    isExpanded: nestedIsExpanded,
-                    title: nestedTitle,
-                    trigger: nestedTrigger,
-                    content: nestedContent,
-                    leaves: nestedLeaves,
-                    view: nestedView,
-                    representedInAnnotation: nestedRepresentedInAnnotation,
-                    itemsInAnnotation: nestedItemsInAnnotation,
-                  }) => (
-                    <NavTitle
-                      className="capitalize text-base"
-                      onClick={() =>
-                        setSelectedBrainRegion(
-                          nestedId,
-                          nestedTitle,
-                          nestedLeaves,
-                          nestedRepresentedInAnnotation
-                        )
-                      }
-                      colorCode={nestedColorCode}
-                      id={nestedId}
-                      title={nestedTitle}
-                      isExpanded={nestedIsExpanded}
-                      isHidden={!nestedRepresentedInAnnotation && !nestedItemsInAnnotation}
-                      trigger={nestedTrigger}
-                      content={nestedContent}
-                      selectedBrainRegion={selectedBrainRegion}
-                      viewId={nestedView}
-                    />
-                  )}
-                </NavTitle>
+                />
               )}
             </BrainTreeNav>
           </div>

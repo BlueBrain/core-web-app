@@ -30,6 +30,7 @@ import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
 import ListField from '@/components/explore-section/Fields/ListField';
 import SimulationCampaignStatus from '@/components/explore-section/SimulationCampaignStatus';
 import WeightField from '@/components/explore-section/Fields/WeightField';
+import { Experiment } from '@/types/explore-section/es-experiment';
 
 export type ExploreFieldConfig = {
   term: string;
@@ -41,6 +42,7 @@ export type ExploreFieldConfig = {
   render?: {
     listingViewFn?: (value: any, record: any, index: number) => ReactNode | any;
     detailViewFn?: (resource: DeltaResource) => ReactNode | any;
+    cardViewFn?: (resource: Experiment) => ReactNode | any;
   };
   vocabulary: {
     plural: string;
@@ -561,6 +563,78 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     vocabulary: {
       plural: 'Publication dates',
       singular: 'Publication date',
+    },
+  },
+  length: {
+    term: 'length',
+    title: 'length',
+    filter: null,
+    vocabulary: {
+      plural: 'length',
+      singular: 'length',
+    },
+    render: {
+      cardViewFn: () => '-',
+    },
+  },
+  maximumLength: {
+    term: 'maximumLength',
+    title: 'maximum length',
+    filter: null,
+    vocabulary: {
+      plural: 'maximum length',
+      singular: 'maximum length',
+    },
+    render: {
+      cardViewFn: () => '-',
+    },
+  },
+  totalLength: {
+    term: 'totalLength',
+    title: 'total length',
+    filter: null,
+    vocabulary: {
+      plural: 'total length',
+      singular: 'total length',
+    },
+    render: {
+      cardViewFn: () => '-',
+    },
+  },
+  dendriteStemming: {
+    term: 'dendriteStemming',
+    title: 'dendrite stemming from soma',
+    filter: null,
+    vocabulary: {
+      plural: 'dendrite stemming from soma',
+      singular: 'dendrite stemmings from soma',
+    },
+    render: {
+      cardViewFn: () => '-',
+    },
+  },
+  axon: {
+    term: 'axon',
+    title: 'axon',
+    filter: null,
+    vocabulary: {
+      plural: 'axon',
+      singular: 'axons',
+    },
+    render: {
+      cardViewFn: () => '-',
+    },
+  },
+  bifurcations: {
+    term: 'bifurcations',
+    title: 'bifurcations',
+    filter: null,
+    vocabulary: {
+      plural: 'bifurcation',
+      singular: 'bifurcations',
+    },
+    render: {
+      cardViewFn: () => '-',
     },
   },
 };

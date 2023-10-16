@@ -1,3 +1,5 @@
+import { ResourceInfo } from '@/types/explore-section/application';
+
 export interface RuleOutput {
   id: string;
   name: string;
@@ -18,6 +20,7 @@ type EmbeddingModel = {
 export interface InputFilter {
   TargetResourceParameter: string;
   SelectModelsParameter: string[];
+  LimitQueryParameter?: number;
 }
 
 export interface PayLoadValues {
@@ -45,6 +48,7 @@ export interface InputParameter {
   values?: string[];
 }
 export interface ResourceBasedInference {
+  displayName: string;
   name: string;
   id: string;
   value: boolean;
@@ -69,4 +73,7 @@ export type ResourceBasedInferenceResponse = Array<{
   results: ResourceBasedInference[];
 }>;
 
-export type InferredResource = Omit<ResourceBasedInference, 'value' | 'description'>;
+export type InferredResource = Omit<
+  ResourceBasedInference,
+  'value' | 'description' | 'displayName'
+> & { resourceInfo?: ResourceInfo };

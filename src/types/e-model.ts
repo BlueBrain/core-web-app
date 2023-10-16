@@ -13,7 +13,8 @@ export interface EModelMenuItem {
   name: string;
   id: string;
   eType: string;
-  mType?: string;
+  mType: string;
+  isOptimizationConfig: boolean;
 }
 
 export interface MEModelMenuItem {
@@ -49,6 +50,17 @@ export interface ExperimentalTracesDataType {
   subjectSpecies: string;
 }
 
+type Generation = {
+  '@type': 'Generation';
+  activity: {
+    '@type': 'Activity';
+    followedWorkflow: {
+      '@id': string;
+      '@type': 'EModelWorkflow';
+    };
+  };
+};
+
 /* --------------------------------- EModel --------------------------------- */
 
 export type EModelType = 'EModel';
@@ -57,16 +69,7 @@ export interface EModel extends EModelCommonProps {
   '@type': ['Entity', EModelType];
   description: string;
   distribution: Distribution[];
-  generation: {
-    '@type': 'Generation';
-    activity: {
-      '@type': 'Activity';
-      followedWorkflow: {
-        '@id': string;
-        '@type': 'EModelWorkflow';
-      };
-    };
-  };
+  generation: Generation;
   seed: number;
   brainLocation?: BrainLocation;
   subject: {
@@ -191,7 +194,10 @@ export interface EModelConfigurationPayload {
 
 export type MechanismLocation = (typeof mechanismLocations)[number];
 
-export interface MechanismForUI extends Record<MechanismLocation, EModelConfigurationMechanism[]> {}
+export type MechanismForUI = {
+  processed: Record<MechanismLocation, EModelConfigurationMechanism[]>;
+  raw: any; // pass the whole params recipe to launch the workflow
+};
 
 /* ------------------------- EModelPipelineSettings ------------------------- */
 
@@ -379,6 +385,19 @@ export interface SubCellularModelScript extends Entity {
 
 export interface SubCellularModelScriptResource extends ResourceMetadata, SubCellularModelScript {}
 
+/* ------------------------------ EModelScript ------------------------------ */
+
+export type EModelScriptType = 'EModelScript';
+
+export interface EModelScript extends Entity {
+  '@type': [EModelScriptType];
+  name: string;
+  distribution: Distribution;
+  generation: Generation;
+}
+
+export interface EModelScriptResource extends ResourceMetadata, EModelScript {}
+
 /* ----------------------------- EModelUIConfig ----------------------------- */
 
 export interface EModelUIConfig {
@@ -386,13 +405,14 @@ export interface EModelUIConfig {
   morphologies: ExemplarMorphologyDataType[];
   traces: ExperimentalTracesDataType[];
   mechanism: MechanismForUI[];
-  parameters: Record<SimulationParameterKeys, number>;
+  parameters: SimulationParameter;
   featurePresetName: FeaturePresetName;
   mType: string;
   eType: string;
   brainRegionName: string;
   brainRegionId: string;
   species: 'mouse';
+  ecodes_metadata: any;
 }
 
 /* -------------------------- EModelByETypeMapping -------------------------- */
@@ -413,3 +433,7 @@ export interface EModelOptimizationConfig extends Entity {
   mType: string;
   brainLocation: BrainLocation;
 }
+
+export interface EModelOptimizationConfigResource
+  extends ResourceMetadata,
+    EModelOptimizationConfig {}

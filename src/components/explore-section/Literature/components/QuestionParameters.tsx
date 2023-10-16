@@ -3,9 +3,9 @@
 import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
+import { memo, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
-import { memo, useEffect, useState } from 'react';
-import { loadable } from 'jotai/utils';
+import { unwrap } from 'jotai/utils';
 import AutoCompleteSearch from './AutoCompleteSearch';
 import { DateRange } from '@/components/Filter';
 import { normalizeString } from '@/util/utils';
@@ -30,26 +30,9 @@ type Props = {
   setIsParametersVisible: (value: boolean) => void;
 };
 
-const loadableArticleTypes = loadable(articleTypeSuggestionsAtom);
-
 function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Props) {
   const update = useQuestionParameter();
-  const articleTypesStatus = useAtomValue(loadableArticleTypes);
-  const [articleTypes, setArticleTypes] = useState<Suggestion[]>([]);
-
-  useEffect(() => {
-    if (articleTypesStatus.state === 'loading' || articleTypesStatus.state === 'hasError') {
-      setArticleTypes([]);
-    } else {
-      setArticleTypes(
-        articleTypesStatus.data.map((type) => ({
-          key: type.articleType,
-          label: type.articleType,
-          value: type.articleType,
-        }))
-      );
-    }
-  }, [articleTypesStatus]);
+  const articleTypes = useAtomValue(useMemo(() => unwrap(articleTypeSuggestionsAtom), []));
 
   return (
     isParametersVisible && (
@@ -76,6 +59,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
 
         <div className="w-full">
           <AutoCompleteSearch
+            key="Journal"
             title="Journal"
             fetchOptions={(searchTerm: string) =>
               fetchJournalSuggestions(searchTerm).then((journalResponse) =>
@@ -92,6 +76,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
 
         <div className="w-full">
           <AutoCompleteSearch
+            key="Authors"
             title="Authors"
             fetchOptions={(searchTerm: string) =>
               fetchAuthorSuggestions(searchTerm).then((authors) => getAuthorOptions(authors))
@@ -108,9 +93,10 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
 
         <div className="w-full">
           <AutoCompleteSearch
+            key="ArticleTypes"
             title="Article Types"
             fetchOptions={async (searchTerm: string) =>
-              articleTypes.filter((articleTypeOption) =>
+              (articleTypes ?? []).filter((articleTypeOption) =>
                 normalizeString(articleTypeOption.value).includes(normalizeString(searchTerm))
               )
             }

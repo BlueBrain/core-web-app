@@ -456,3 +456,11 @@ export const mechanismLocations = [
   'somaxon',
   'basal',
 ] as const;
+
+export const eCodesMetadata = {
+  IDthresh: { ljp: 14.0 },
+  IDrest: { ljp: 14.0 },
+  IV: { ljp: 14.0, ton: 20, toff: 1020 },
+  APWaveform: { ljp: 14.0 },
+  IDhyperpol: { ljp: 14.0, ton: 100, tmid: 700, tmid2: 2700, toff: 2900 },
+};

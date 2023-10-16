@@ -11,10 +11,12 @@ function MorphoWrapper({
   options,
   onPolylineClick,
   resource,
+  hideTitleOptions,
 }: {
   options: MorphoViewerOptions;
   onPolylineClick: VoidFunction;
   resource: DeltaResource;
+  hideTitleOptions?: boolean;
 }) {
   const morphologyDataAtom = useMemo(
     () => loadable(createMorphologyDataAtom(resource)),
@@ -24,17 +26,19 @@ function MorphoWrapper({
 
   return (
     <div className="flex flex-col h-full gap-3">
-      <div className="flex flex-col gap-3">
-        <h1 className="font-bold text-primary-9 text-lg">Morphology 3D Viewer</h1>
-        <Button
-          className="w-fit"
-          size="small"
-          disabled={morphologyData.state === 'loading'}
-          onClick={onPolylineClick}
-        >
-          {options.asPolyline ? 'Show as Geometry' : 'Show as Lines'}
-        </Button>
-      </div>
+      {!hideTitleOptions && (
+        <div className="flex flex-col gap-3">
+          <h1 className="font-bold text-primary-9 text-lg">Morphology 3D Viewer</h1>
+          <Button
+            className="w-fit"
+            size="small"
+            disabled={morphologyData.state === 'loading'}
+            onClick={onPolylineClick}
+          >
+            {options.asPolyline ? 'Show as Geometry' : 'Show as Lines'}
+          </Button>
+        </div>
+      )}
       <div
         className={morphologyData.state === 'loading' ? 'morpho-wrapper loading' : 'morpho-wrapper'}
       >

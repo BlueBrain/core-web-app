@@ -6,7 +6,9 @@ import {
   emodelAssignmentWasBuiltAtom,
   morphologyAssignmentWasBuiltAtom,
   microConnectomeWasBuiltAtom,
+  macroConnectomeWasBuiltAtom,
 } from './generated-artifacts';
+import { SubConfigName } from '@/types/nexus';
 
 export const STATUS = {
   BUILT: 'Built',
@@ -42,6 +44,7 @@ export type StatusStructureItem = {
     name: string;
     statusAtom: Atom<Promise<any>>;
   }[];
+  targetConfigName: SubConfigName;
   checked?: boolean;
 };
 
@@ -62,6 +65,7 @@ export const statusStructure: StatusStructureItem[] = [
         statusAtom: cellPositionWasBuiltAtom,
       },
     ],
+    targetConfigName: 'cellPositionConfig',
   },
   {
     name: GROUPS.CELL_MODEL_ASSIGNMENT,
@@ -76,26 +80,38 @@ export const statusStructure: StatusStructureItem[] = [
       },
       {
         name: STEPS.ME_MODEL,
-        statusAtom: atom(() => Promise.resolve(null)),
+        statusAtom: atom(async (get) => {
+          // TODO: replace this for proper atom when we have me-model in pipeline
+          const eModelWasBuilt = await get(emodelAssignmentWasBuiltAtom);
+          const mModelWasBuilt = await get(morphologyAssignmentWasBuiltAtom);
+          return eModelWasBuilt && mModelWasBuilt;
+        }),
       },
     ],
+    targetConfigName: 'eModelAssignmentConfig',
   },
   {
     name: GROUPS.CONNECTOME_DEFINITION,
     items: [
       {
         name: STEPS.MACRO,
-        statusAtom: atom(() => Promise.resolve(null)),
+        statusAtom: macroConnectomeWasBuiltAtom,
       },
       {
         name: STEPS.MESO,
-        statusAtom: atom(() => Promise.resolve(null)),
+        statusAtom: atom(async (get) => {
+          // TODO: replace this for proper atom when we have meso in pipeline
+          const microWasBuilt = await get(microConnectomeWasBuiltAtom);
+          const macroWasBuilt = await get(macroConnectomeWasBuiltAtom);
+          return microWasBuilt && macroWasBuilt;
+        }),
       },
       {
         name: STEPS.MICRO,
         statusAtom: microConnectomeWasBuiltAtom,
       },
     ],
+    targetConfigName: 'microConnectomeConfig',
   },
   {
     name: GROUPS.CONNECTOME_MODEL_ASSIGNMENT,
@@ -113,7 +129,8 @@ export const statusStructure: StatusStructureItem[] = [
         statusAtom: atom(() => Promise.resolve(null)),
       },
     ],
+    targetConfigName: 'synapseConfig',
   },
 ];
 
-export const stepsToBuildAtom = atom<CellCompositionStepGroupValues[]>([]);
+export const targetConfigToBuildAtom = atom<SubConfigName | null>(null);

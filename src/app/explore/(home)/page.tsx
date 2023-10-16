@@ -11,8 +11,6 @@ import { classNames } from '@/util/utils';
 import { SingleCard } from '@/types/explore-section/application';
 
 export default function Explore() {
-  const content = sectionContent;
-
   const [currentImageBackground, setCurrentImageBackground] = useState<string>(
     '/images/explore/explore_home_bgImg-01.jpg'
   );
@@ -24,8 +22,8 @@ export default function Explore() {
         description="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
       />
 
-      <div className="relative z-10 flex flex-col w-2/3 p-8 gap-y-1">
-        {content.map((singleCard: SingleCard, index: number) => (
+      <div className="relative z-10 flex flex-col w-2/3 h-full p-8 gap-y-2">
+        {sectionContent.map((singleCard: SingleCard, index: number) => (
           <SectionCards
             content={singleCard}
             cardIndex={index}
@@ -36,7 +34,7 @@ export default function Explore() {
       </div>
 
       <div className="fixed bottom-0 left-0 z-0 w-screen h-screen max-w-screen">
-        {content.map((singleImage: SingleCard) => (
+        {sectionContent.map((singleImage: SingleCard) => (
           <Image
             src={`${basePath}/${singleImage.image}`}
             width={1920}

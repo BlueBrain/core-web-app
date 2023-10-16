@@ -37,12 +37,14 @@ export default function SubsectionTabs({ className }: Props) {
     );
   };
 
+  const currentMode = pathname?.match('-model/(.+)?')?.[1];
+
   return (
     <div className="flex justify-start items-center shrink-0 gap-4">
       {modeTabs.map((tab) => (
         <Link
           key={tab.href}
-          href={`${tab.href}/${defaultRedirectPage}`}
+          href={`${tab.href}/${currentMode || defaultRedirectPage}`}
           className={getTabClassName(tab)}
           preserveLocationSearchParams
         >

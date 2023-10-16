@@ -1,4 +1,5 @@
 import lodashFind from 'lodash/find';
+import mergeWith from 'lodash/mergeWith';
 
 import {
   AllFeatureKeys,
@@ -16,6 +17,7 @@ import {
   SpikeShapeFeatureKeys,
   Trace,
   VoltageFeatureKeys,
+  EModelByETypeMappingType,
 } from '@/types/e-model';
 import {
   spikeEventFeatures,
@@ -37,14 +39,14 @@ export function convertRemoteParamsForUI(
   const temp = lodashFind(remoteParams, ['name', 'celsius'])?.value;
   const voltage = lodashFind(remoteParams, ['name', 'v_init'])?.value;
 
-  if ([ra, temp, voltage].some((value) => !value || Array.isArray(value))) {
+  if ([ra, temp, voltage].some((value) => !value || Array.isArray(value) || !Number(value))) {
     throw new Error('Failed converting remote simulation parameter');
   }
 
   return {
-    'Temperature (°C)': temp as number,
-    Ra: ra as number,
-    'Initial voltage': voltage as number,
+    'Temperature (°C)': Number(temp),
+    Ra: Number(ra),
+    'Initial voltage': Number(voltage),
     'LJP (liquid junction potential)': 14.0,
   };
 }
@@ -150,4 +152,23 @@ export function convertMechanismsForUI(
   mechanismsGroupedByLocation: MechanismForUI
 ): MechanismForUI {
   return mechanismsGroupedByLocation;
+}
+
+export function mergeEModelsAndOptimizations(
+  optimizations: EModelByETypeMappingType | null,
+  eModels: EModelByETypeMappingType | null
+) {
+  if (!eModels || !optimizations) return eModels || optimizations;
+
+  function customizer(objValue: EModelByETypeMappingType, srcValue: EModelByETypeMappingType) {
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return [...srcValue, ...objValue];
+    }
+    return objValue;
+  }
+
+  const merged = {};
+
+  mergeWith(merged, optimizations, eModels, customizer);
+  return merged;
 }

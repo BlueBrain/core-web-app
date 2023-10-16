@@ -11,9 +11,10 @@ import { Filter, GteLteValue } from '@/components/Filter/types';
 import { ExploreResource } from '@/types/explore-section/es';
 
 export interface FetchParams {
-  id: string;
-  project: string;
-  org: string;
+  id?: string;
+  project?: string;
+  org?: string;
+  rev?: number;
 }
 
 export interface SortState {
@@ -76,10 +77,20 @@ export type SubSectionCardItem = {
 };
 
 export type SingleCard = {
+  prefixIcon?: string;
   name: string;
   description: string;
   url: string;
   icon: string;
   image: string;
   items?: SubSectionCardItem[] | null;
+};
+
+export type DetailProps = { field: string; className?: string };
+
+export type ResourceInfo = {
+  id: string;
+  project: string;
+  org: string;
+  rev?: string | number;
 };

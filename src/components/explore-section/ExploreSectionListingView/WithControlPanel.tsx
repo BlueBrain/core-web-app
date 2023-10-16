@@ -29,7 +29,7 @@ export default function WithControlPanel({
 
   return (
     <div className="flex">
-      <section className="w-full h-screen flex flex-col gap-5 bg-white pb-12 pl-3 pr-3 pt-8 overflow-scroll relative">
+      <section className="w-full min-h-screen h-screen flex flex-col gap-5 bg-white pb-12 pl-3 pr-3 pt-8 overflow-scroll relative">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel })}
         <LoadMoreButton experimentTypeName={experimentTypeName} resourceId={resourceId} />
       </section>

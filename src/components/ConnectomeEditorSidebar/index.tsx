@@ -218,11 +218,7 @@ export default function ConnectomeEditorSidebar() {
 
             <BrainAreaSwitch />
 
-            <BrainTreeSearch
-              brainTreeNav={brainTreeNavRef?.current}
-              setValue={setNavValue}
-              value={navValue}
-            />
+            <BrainTreeSearch brainTreeNav={brainTreeNavRef?.current} setValue={setNavValue} />
             <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
               {({
                 colorCode,

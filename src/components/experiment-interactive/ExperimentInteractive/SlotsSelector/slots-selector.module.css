@@ -1,7 +1,57 @@
 .slotsSelector {
-  display: grid;
-  place-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
+  background: #000;
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  gap: 1em;
+  padding: 1em;
   margin: 0;
+}
+
+.slotsSelector h1 {
+  font-size: 3rem;
+}
+
+.slotsSelector h2 {
+  font-size: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--custom-grid-columns), 1fr);
+  grid-auto-rows: 3em;
+  place-items: stretch;
+  gap: 0;
+  height: 95%;
+  overflow: scroll;
+}
+
+.grid > div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.underlined {
+  border-bottom: 1px solid #fff3;
+}
+
+.icon {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.span2 {
+  grid-column: span 2;
+  justify-content: flex-end !important;
+}
+
+.panel {
+  margin: 0 35px;
+  width: 100%;
 }

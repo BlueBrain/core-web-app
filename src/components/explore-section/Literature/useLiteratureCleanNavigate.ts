@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import intersect from 'lodash/intersection';
 
@@ -16,6 +16,7 @@ const blackList = ['contextual', 'context', 'context-question', 'chatId'];
  */
 
 function useLiteratureCleanNavigate() {
+  const firstRender = useRef(true);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams()!;
@@ -39,7 +40,10 @@ function useLiteratureCleanNavigate() {
   }, [cleanParams, pathname, router, searchParams]);
 
   useEffect(() => {
-    cleanLiteratureNavigate();
+    if (firstRender.current) {
+      cleanLiteratureNavigate();
+      firstRender.current = false;
+    }
   }, [cleanLiteratureNavigate]);
 }
 
