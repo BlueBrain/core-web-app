@@ -15,6 +15,7 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    'deepdash-es': '<rootDir>/global.mock.js', // deepdash-es is mocked because jest is not able to resolve the module. (see - https://github.com/YuriGor/deepdash/issues/133)
   },
   setupFiles: ['./global.mock.js'],
   setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'], // Provides utilities for expectations like "toBeInTheDocument"/,

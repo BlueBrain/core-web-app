@@ -6,11 +6,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { unwrap } from 'jotai/utils';
 import { BrainRegionExperimentsCount } from './BrainRegionExperimentsCount';
 import { BrainRegionTabLabel } from './BrainRegionTabLabel';
+import { LiteratureForExperimentType } from './LiteratureForExperimentType';
 import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 
-const defaultTabColor = '#ffffff';
+export const defaultTabColor = '#ffffff';
 
 export default function SelectedBrainRegionPanel() {
   const visualizedBrainRegions = useAtomValue(visibleExploreBrainRegionsAtom);
@@ -82,7 +83,12 @@ export default function SelectedBrainRegionPanel() {
               />
             ),
             key: brainRegion.id,
-            children: <BrainRegionExperimentsCount brainRegion={brainRegion} />,
+            children: (
+              <div className="flex">
+                <BrainRegionExperimentsCount brainRegion={brainRegion} />
+                <LiteratureForExperimentType brainRegion={brainRegion} />
+              </div>
+            ),
             className: 'hover:text-red',
           }))}
           className="font-bold"
