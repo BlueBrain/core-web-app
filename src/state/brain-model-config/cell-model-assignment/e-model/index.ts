@@ -343,12 +343,10 @@ export const eModelMechanismsAtom = atom<Promise<MechanismForUI | null>>(async (
 
   if (!eModelConfigurationPayload) return null;
 
-  const mechanismsByLocation = groupBy(
-    eModelConfigurationPayload.mechanisms,
-    'location'
-  ) as MechanismForUI;
+  const mechanismsByLocation = groupBy(eModelConfigurationPayload.mechanisms, 'location');
 
-  return convertMechanismsForUI(mechanismsByLocation);
+  const data = { processed: mechanismsByLocation, raw: {} } as MechanismForUI;
+  return convertMechanismsForUI(data);
 });
 
 /* --------------------- ExtractionTargetsConfiguration --------------------- */

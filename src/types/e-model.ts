@@ -194,7 +194,10 @@ export interface EModelConfigurationPayload {
 
 export type MechanismLocation = (typeof mechanismLocations)[number];
 
-export interface MechanismForUI extends Record<MechanismLocation, EModelConfigurationMechanism[]> {}
+export type MechanismForUI = {
+  processed: Record<MechanismLocation, EModelConfigurationMechanism[]>;
+  raw: any; // pass the whole params recipe to launch the workflow
+};
 
 /* ------------------------- EModelPipelineSettings ------------------------- */
 
