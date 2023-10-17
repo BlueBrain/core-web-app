@@ -78,15 +78,8 @@ export const filtersAtom = atomFamily(
     atomWithDefault<Promise<Filter[]>>(async (get) => {
       const columnsKeys = typeToColumns[experimentTypeName];
       const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
-      const selectedBrainRegion = get(selectedBrainRegionAtom);
-      const descendants = await get(brainRegionDescendantsAtom(selectedBrainRegion?.id));
       return [
-        ...columnsKeys.map((colKey) =>
-          columnKeyToFilter(
-            colKey,
-            descendants?.map((d) => d.title)
-          )
-        ),
+        ...columnsKeys.map((colKey) => columnKeyToFilter(colKey)),
         ...(dimensionsColumns || []).map(
           (dimension) =>
             ({
@@ -108,7 +101,10 @@ export const queryAtom = atomFamily(
       const pageNumber = get(pageNumberAtom({ experimentTypeName, resourceId }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
-
+      const selectedBrainRegion = get(selectedBrainRegionAtom);
+      // if a brain region is not selected, selecting by default the brain region with id 8 (Basic cell groups and regions)
+      const descendants = await get(brainRegionDescendantsAtom(selectedBrainRegion?.id || '8'));
+      const descendantLabels = descendants?.map((d) => d.title);
       const filters = await get(filtersAtom({ experimentTypeName, resourceId }));
       if (!filters) {
         return null;
@@ -129,19 +125,20 @@ export const queryAtom = atomFamily(
               experimentTypeName,
               inferredResponseIds,
               sortState,
-              searchString
+              searchString,
+              descendantLabels
             );
           }
         }
       }
-
       return fetchDataQuery(
         pageSize,
         pageNumber,
         filters,
         experimentTypeName,
         sortState,
-        searchString
+        searchString,
+        descendantLabels
       );
     }),
   DataAtomFamilyScopeComparator

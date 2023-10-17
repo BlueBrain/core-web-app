@@ -1,7 +1,7 @@
 import { Filter } from '@/components/Filter/types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 
-export default function columnKeyToFilter(key: string, brainRegionLabels?: string[]): Filter {
+export default function columnKeyToFilter(key: string): Filter {
   const fieldConfig = EXPLORE_FIELDS_CONFIG[key];
 
   switch (fieldConfig.filter) {
@@ -9,7 +9,7 @@ export default function columnKeyToFilter(key: string, brainRegionLabels?: strin
       return {
         field: key,
         type: 'checkList',
-        value: (key === 'brainRegion' && brainRegionLabels) || [],
+        value: [],
         aggregationType: 'buckets',
       };
     case 'checkListInference':
