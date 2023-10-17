@@ -1,21 +1,65 @@
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { Select } from 'antd';
+import { Select, Tag } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
+import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
 import { getSankeyNodesReducer, getSankeyLinks } from './util';
 import sankey from './sankey';
-import { densityOrCountAtom } from '@/state/brain-regions';
+import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { analysedCompositionAtom } from '@/state/build-composition';
 import { cellTypesAtom } from '@/state/build-section/cell-types';
 import { formatNumber } from '@/util/common';
 import { classNames } from '@/util/utils';
+import ColorBox from '@/components/build-section/BrainRegionSelector/ColorBox';
 import './sankey.css'; // Tell webpack that Button.js uses these styles
 
 type SelectedNodeOptionType<T extends DefaultOptionType['value']> = {
-  label: DefaultOptionType['label'];
+  label: ReactNode;
   value: T;
 };
+
+function MissingSelectedNodes({
+  items,
+  title,
+}: {
+  items: SelectedNodeOptionType<string>[];
+  title?: string;
+}) {
+  const missingSelectedCellTypes =
+    items.length === 1
+      ? items.map(({ label, value }) => <span key={value}>{label}</span>)
+      : items.map(({ label, value }, i) =>
+          i < items.length - 1 ? (
+            <span key={value}>{label}, </span>
+          ) : (
+            <span key={value}>and {label}</span>
+          )
+        );
+
+  const renderMissing = <strong className="flex gap-1">{missingSelectedCellTypes}</strong>;
+
+  return (
+    !!items.length && (
+      <div className="text-left w-full">
+        <em>
+          {items.length === 1 ? (
+            <span className="flex gap-1">
+              Note: {renderMissing} is not shown, as it is not represented in the cell composition
+              for {title}.
+            </span>
+          ) : (
+            <span className="flex gap-1">
+              Note: {renderMissing} are not shown, as they are not represented in the cell
+              composition for {title}.
+            </span>
+          )}
+        </em>
+      </div>
+    )
+  );
+}
 
 export default function DensityChart() {
   const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
@@ -72,19 +116,29 @@ export default function DensityChart() {
 
   const { nodes, links } = composition ?? { nodes: [], links: [] };
 
+  const filteredForComposition = useMemo(
+    () => selectedNodes.filter(({ value }) => nodes.find(({ id }) => id === value)),
+    [nodes, selectedNodes]
+  );
+
+  const notInFilteredArray = selectedNodes.filter(
+    ({ value }) =>
+      !filteredForComposition.find(({ value: filteredValue }) => filteredValue === value)
+  );
+
   const sankeyData = useMemo(() => {
     const sankeyLinks = getSankeyLinks(
       links,
       nodes,
       densityOrCount,
-      selectedNodes.map(({ value }) => value)
+      filteredForComposition.map(({ value }) => value)
     );
 
     return {
       links: sankeyLinks,
       nodes: nodes.reduce(
         getSankeyNodesReducer(
-          selectedNodes.map(({ value }) => value),
+          filteredForComposition.map(({ value }) => value),
           sankeyLinks,
           densityOrCount
         ),
@@ -92,7 +146,7 @@ export default function DensityChart() {
       ),
       value: densityOrCount,
     };
-  }, [densityOrCount, links, nodes, selectedNodes]);
+  }, [densityOrCount, links, nodes, filteredForComposition]);
 
   const colorScale = useCallback(
     (id: string) => classObjects?.[id]?.color ?? '#ccc',
@@ -156,10 +210,28 @@ export default function DensityChart() {
     }
   }, [chartRef, colorScale, onClickLink, onClickSource, sankeyData, selectedNodes, height, width]);
 
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+
+  const tagRender = ({ closable, label, onClose, value }: CustomTagProps) => (
+    <Tag
+      className="flex font-semibold gap-2 items-center justify-between"
+      closable={closable}
+      closeIcon={
+        <CloseOutlined className="text-primary-9" style={{ display: 'block', fontSize: 14 }} />
+      }
+      onClose={onClose}
+      style={{ margin: '0.125rem 0.125rem 0.125rem auto' }}
+    >
+      <ColorBox color={classObjects?.[value]?.color ?? '#ccc'} />
+      <span className="text-lg text-primary-9">{label}</span>
+    </Tag>
+  );
+
   return (
     sankeyData.links.length > 0 && (
       <div className="flex flex-col gap-5 h-full w-full">
-        <div className="flex gap-4 items-center">
+        <h1 className="font-bold text-3xl text-primary-9">{selectedBrainRegion?.title}</h1>
+        <div className="flex flex-col gap-4 items-center">
           <Select
             allowClear
             autoClearSearchValue
@@ -179,8 +251,10 @@ export default function DensityChart() {
             )}
             mode="multiple"
             size="large"
+            tagRender={tagRender}
             value={selectedNodes}
           />
+          <MissingSelectedNodes items={notInFilteredArray} title={selectedBrainRegion?.title} />
         </div>
         <div className="h-full w-full" ref={wrapperRef}>
           <svg
