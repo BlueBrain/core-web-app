@@ -1,10 +1,26 @@
 .accordionChevron {
-  @apply text-white transition-transform;
+  @apply text-white transition-transform opacity-50;
 }
 
 .accordionTrigger {
-  @apply flex;
+  @apply flex items-center justify-center;
   @apply p-[4px];
+}
+
+.accordionTrigger.intermediateTrigger[data-state='closed'] {
+  @apply h-[14px] p-0 bg-white rounded-sm;
+}
+
+.accordionTrigger.intermediateTrigger[data-state='closed'] .accordionChevron {
+  @apply !text-primary-7 opacity-100;
+}
+
+.accordionTrigger.intermediateTrigger[data-state='closed']:hover .accordionChevron {
+  @apply !text-primary-3;
+}
+
+.accordionTrigger.intermediateTrigger[data-state='closed']:hover .accordionChevron path {
+  @apply !fill-primary-3;
 }
 
 .accordionTrigger:hover .accordionChevron path {
@@ -12,16 +28,17 @@
 }
 
 .accordionTrigger[data-state='open'] > .accordionChevron {
+  color: var(--color-code);
+  opacity: 1;
   @apply rotate-90;
 }
 
 .accordionTrigger[data-state='open'] {
-  @apply text-white;
   @apply font-bold;
 }
 
 .accordionTrigger[data-state='open'] > .accordionChevron path {
-  @apply fill-white;
+  @apply fill-current;
 }
 
 .accordionHeader.is-active {

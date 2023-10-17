@@ -22,7 +22,7 @@ export function handleNavValueChange(
 }
 
 /**
- * each a node in the brain region heirarchy tree has a path array that contains a list
+ * each node in the brain region heirarchy tree has a path array that contains a list
  * of all the node that will lead to it by navigation the tree as isocortex: [root, Cerebrum, cerebral cortex, cortical plate]
  * this function will generate a tree based on this table -> { root: { Cerebrum: { cerebral cortex: { cortical plate: null } } }
  * @param ancestors Array<string> path that lead to specific node
@@ -33,7 +33,7 @@ export function generateHierarchyPathTree(ancestors: string[]) {
     return null;
   }
 
-  // use destructing instead of array.shift because it's shit is mutable
+  // use destructing instead of array.shift because 'shift' is mutable
   const [head, ...rest] = ancestors;
   if (!head) return null;
 

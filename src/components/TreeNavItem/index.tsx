@@ -1,9 +1,14 @@
-import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo } from 'react';
+import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo, CSSProperties } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
 import { CaretRightOutlined } from '@ant-design/icons';
+import intersection from 'lodash/intersection';
+import { useAtomValue } from 'jotai';
 
 import { classNames } from '@/util/utils';
+import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
+import { getDeeplyNestedChildrenFromNode } from '@/util/brain-hierarchy';
+
 import styles from './tree-nav-item.module.css';
 
 export type NavValue = { [key: string]: NavValue } | null;
@@ -18,6 +23,7 @@ type TreeNavItemProps = {
     ...args: any[]
   ) => ReactElement<{ children?: (...args: any[]) => ReactElement; isHidden?: boolean }>;
   items?: TreeItem[];
+  colorCode?: string;
   // All other props - https://stackoverflow.com/questions/40032592/typescript-workaround-for-rest-props-in-react
   [x: string]: any;
 };
@@ -44,8 +50,15 @@ export function TreeNavItem({
   value,
   onValueChange,
   path,
+  colorCode,
   ...props
 }: TreeNavItemProps) {
+  const visibleExploreBrainRegions = useAtomValue(visibleExploreBrainRegionsAtom);
+  const selected = id && visibleExploreBrainRegions.includes(id);
+  const childrenNodes: string[] = getDeeplyNestedChildrenFromNode({ id, items }, []);
+  const isThisHaveSelectedChildren = !!intersection(childrenNodes, visibleExploreBrainRegions)
+    .length;
+
   const renderedItems = items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
     // children may return another render-prop
     const childRender = children({
@@ -71,6 +84,7 @@ export function TreeNavItem({
         isExpanded={typeof value?.[itemId] !== 'undefined'}
         onValueChange={onValueChange}
         path={[...path, itemId]}
+        colorCode={colorCode}
         {...props} // eslint-disable-line react/jsx-props-no-spreading
         {...itemProps} // eslint-disable-line react/jsx-props-no-spreading
       >
@@ -89,15 +103,26 @@ export function TreeNavItem({
       items?.length && renderedItems?.some((item) => item !== null) // Any non-hidden children?
         ? (triggerProps: {}) => (
             <Accordion.Trigger
-              className={styles.accordionTrigger}
+              className={classNames(
+                styles.accordionTrigger,
+                isThisHaveSelectedChildren ? styles.intermediateTrigger : ''
+              )}
               data-disabled={!items || items.length === 0}
               {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
             >
-              <CaretRightOutlined className={styles.accordionChevron} style={{ height: '13px' }} />
+              <CaretRightOutlined
+                className={styles.accordionChevron}
+                style={
+                  {
+                    height: '13px',
+                    '--color-code': selected ? colorCode : 'white',
+                  } as CSSProperties
+                }
+              />
             </Accordion.Trigger>
           )
         : null,
-    [items, renderedItems]
+    [colorCode, isThisHaveSelectedChildren, items, renderedItems, selected]
   );
 
   const content =
@@ -137,6 +162,7 @@ export function TreeNavItem({
       trigger,
       content,
       isExpanded,
+      colorCode,
       ...props,
     });
   return !render.props.isHidden ? (
@@ -165,12 +191,14 @@ function TreeNav(
     items: navItems,
     onValueChange,
     value,
+    colorCode,
   }: {
     children: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
     className?: string;
     items: TreeItem[];
     onValueChange: (newValue: string[], path: string[]) => void;
     value: NavValue;
+    colorCode?: string;
   },
   ref?: ForwardedRef<HTMLDivElement>
 ) {
@@ -192,6 +220,7 @@ function TreeNav(
           onValueChange={onValueChange}
           path={[id]}
           value={value?.[id] ?? null}
+          colorCode={colorCode}
           {...rest} // eslint-disable-line react/jsx-props-no-spreading
         >
           {children}

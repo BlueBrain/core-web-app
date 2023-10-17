@@ -110,9 +110,9 @@ function NavTitle({
             className={classNames(
               'hover:text-white mr-auto whitespace-pre-wrap text-left',
               isExpanded || selectedBrainRegion?.id === id
-                ? 'text-primary-4 font-medium'
-                : 'text-primary-1',
-              selected ? 'font-bold' : 'font-light',
+                ? !selected && 'text-primary-4 font-medium'
+                : !selected && 'text-primary-1 font-light',
+              selected && 'font-bold',
               className
             )}
             style={
@@ -172,7 +172,7 @@ export default function BrainRegions() {
       {isCollapsed ? (
         <CollapsedBrainRegionsSidebar setIsCollapsed={setIsCollapsed} />
       ) : (
-        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[300px]">
+        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[300px] no-scrollbar">
           <div className="grid">
             <div className="flex items-start justify-between mb-7">
               <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
