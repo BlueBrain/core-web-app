@@ -13,7 +13,7 @@ export const WORKFLOW_EMODEL_BUILD_TASK_NAME =
   'bbp_workflow.sbo.emodel.task.LaunchEModelOptimisationMeta/';
 
 export const ENDPOINT_PREFIX_MAP: Record<string, string> = {
-  WORKFLOW_EMODEL_BUILD_TASK_NAME: 'launch-bb5',
+  [WORKFLOW_EMODEL_BUILD_TASK_NAME]: 'launch-bb5',
 };
 
 export const BBP_WORKFLOW_TASK_PATH = `${BBP_WORKFLOW_URL}/${PLACEHOLDERS.ENDPOINT_PREFIX}/${PLACEHOLDERS.TASK_NAME}`;
@@ -234,7 +234,7 @@ export const CIRCUIT_BUILDING_FILES: WorkflowFile[] = [
 
 export const eModelMetaConfigs: WorkflowMetaConfigPlaceholders = {
   eModelMeta: {
-    fileName: 'GenSimCampaignMeta.cfg',
+    fileName: 'EModelMeta.cfg',
     templateFile: `
       [ExtractEFeatures]
       enable-internet=True
