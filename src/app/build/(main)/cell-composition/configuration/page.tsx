@@ -9,6 +9,7 @@ import DensityChart from './DensityChart';
 import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
@@ -134,6 +135,7 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
 function CellDensity() {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const composition = useAtomValue(analysedCompositionAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
   const { resetComposition } = useCompositionHistory();
 
   // This should be treated as a temporary solution
@@ -149,13 +151,15 @@ function CellDensity() {
   return (
     <>
       <DensityChart />
-      <div className="flex absolute bottom-12 justify-between align-center w-full">
-        <div className="bg-[#F0F0F0] rounded flex gap-4 items-center px-5">
-          <GripDotsVerticalIcon />
-          <span className="font-bold text-neutral-5 text-lg">By MType</span>
+      {isConfigEditable && (
+        <div className="flex absolute bottom-12 justify-between align-center w-full">
+          <div className="bg-[#F0F0F0] rounded flex gap-4 items-center px-5">
+            <GripDotsVerticalIcon />
+            <span className="font-bold text-neutral-5 text-lg">By MType</span>
+          </div>
+          <CellDensityToolbar onReset={handleReset} />
         </div>
-        <CellDensityToolbar onReset={handleReset} />
-      </div>
+      )}
     </>
   );
 }
