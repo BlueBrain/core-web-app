@@ -7,7 +7,7 @@ import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
 import { getSankeyNodesReducer, getSankeyLinks } from './util';
 import sankey from './sankey';
-import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { analysedCompositionAtom } from '@/state/build-composition';
 import { cellTypesAtom } from '@/state/build-section/cell-types';
 import { formatNumber } from '@/util/common';
@@ -64,7 +64,7 @@ function MissingSelectedNodes({
 export default function DensityChart() {
   const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
   const composition = useAtomValue(analysedCompositionAtom);
-  const densityOrCount = useAtomValue(densityOrCountAtom);
+  const densityOrCount = 'density';
 
   const [selectedNodes, setSelectedNodes] = useState<SelectedNodeOptionType<string>[]>([]);
 
@@ -134,16 +134,18 @@ export default function DensityChart() {
       filteredForComposition.map(({ value }) => value)
     );
 
+    const sankeyNodes = nodes.reduce(
+      getSankeyNodesReducer(
+        filteredForComposition.map(({ value }) => value),
+        sankeyLinks,
+        densityOrCount
+      ),
+      []
+    );
+
     return {
       links: sankeyLinks,
-      nodes: nodes.reduce(
-        getSankeyNodesReducer(
-          filteredForComposition.map(({ value }) => value),
-          sankeyLinks,
-          densityOrCount
-        ),
-        []
-      ),
+      nodes: sankeyNodes,
       value: densityOrCount,
     };
   }, [densityOrCount, links, nodes, filteredForComposition]);
@@ -228,44 +230,49 @@ export default function DensityChart() {
   );
 
   return (
-    sankeyData.links.length > 0 && (
-      <div className="flex flex-col gap-5 h-full w-full">
-        <h1 className="font-bold text-3xl text-primary-9">{selectedBrainRegion?.title}</h1>
-        <div className="flex flex-col gap-4 items-center">
-          <Select
-            allowClear
-            autoClearSearchValue
-            className="w-full"
-            dropdownStyle={{ borderRadius: '4px' }}
-            placeholder="Search for MTypes"
-            onClear={onClear}
-            onDeselect={onDeselect}
-            onSelect={onSelect}
-            filterOption={(input, option) =>
-              ((option?.label as string)?.toLowerCase() ?? '').includes(input.toLowerCase())
-            }
-            options={nodes.reduce<{ label: string; value: string }[]>(
-              (acc, { about, id: value, label }) =>
-                about === 'MType' ? [...acc, { label, value }] : acc,
-              []
-            )}
-            mode="multiple"
-            size="large"
-            tagRender={tagRender}
-            value={selectedNodes}
-          />
-          <MissingSelectedNodes items={notInFilteredArray} title={selectedBrainRegion?.title} />
-        </div>
-        <div className="h-full w-full" ref={wrapperRef}>
-          <svg
-            className={classNames(
-              'h-full w-full sankey',
-              selectedNodes.length ? 'is-selected' : ''
-            )}
-            ref={chartRef}
-          />
-        </div>
-      </div>
-    )
+    <div className="flex flex-col gap-5 h-full w-full">
+      <h1 className="flex font-bold gap-1 items-baseline text-3xl text-primary-9">
+        {selectedBrainRegion?.title ?? 'Please select a brain region.'}
+        {!!selectedBrainRegion?.title && <small className="font-light text-sm">Densities</small>}
+      </h1>
+      {sankeyData.links.length > 0 && (
+        <>
+          <div className="flex flex-col gap-4 items-center">
+            <Select
+              allowClear
+              autoClearSearchValue
+              className="w-full"
+              dropdownStyle={{ borderRadius: '4px' }}
+              placeholder="Search for MTypes"
+              onClear={onClear}
+              onDeselect={onDeselect}
+              onSelect={onSelect}
+              filterOption={(input, option) =>
+                ((option?.label as string)?.toLowerCase() ?? '').includes(input.toLowerCase())
+              }
+              options={nodes.reduce<{ label: string; value: string }[]>(
+                (acc, { about, id: value, label }) =>
+                  about === 'MType' ? [...acc, { label, value }] : acc,
+                []
+              )}
+              mode="multiple"
+              size="large"
+              tagRender={tagRender}
+              value={selectedNodes}
+            />
+            <MissingSelectedNodes items={notInFilteredArray} title={selectedBrainRegion?.title} />
+          </div>
+          <div className="h-full w-full" ref={wrapperRef}>
+            <svg
+              className={classNames(
+                'h-full w-full sankey',
+                selectedNodes.length ? 'is-selected' : ''
+              )}
+              ref={chartRef}
+            />
+          </div>
+        </>
+      )}
+    </div>
   );
 }
