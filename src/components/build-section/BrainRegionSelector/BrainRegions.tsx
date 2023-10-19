@@ -4,6 +4,7 @@ import React, { RefObject, useRef, useState, useMemo, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
+import { unwrap } from 'jotai/utils';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
 import AlternateViewSelector from './AlternateViewSelector';
@@ -145,7 +146,7 @@ function NavTitle({
 }
 
 export default function BrainRegions() {
-  const brainRegionsTree = useAtomValue(brainRegionsAlternateTreeAtom);
+  const brainRegionsTree = useAtomValue(useMemo(() => unwrap(brainRegionsAlternateTreeAtom), []));
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const resetBrainRegion = useSetAtom(selectedBrainRegionAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
