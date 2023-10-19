@@ -1,9 +1,8 @@
 import esb, { Query } from 'elastic-builder';
 import { format } from 'date-fns';
 import { Filter, RangeFilter } from '@/components/Filter/types';
-import { getESTerm } from '@/queries/explore-section/utils';
 import { filterHasValue } from '@/components/Filter/util';
-import { getNestedField } from '@/api/explore-section/fields';
+import { getFieldEsConfig } from '@/api/explore-section/fields';
 
 function buildRangeQuery(filter: RangeFilter, esTerm: string) {
   const filterESBuilder = esb.rangeQuery(esTerm);
@@ -17,9 +16,11 @@ function buildRangeQuery(filter: RangeFilter, esTerm: string) {
 }
 
 export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Query | undefined {
-  const esTerm = getESTerm(filter.field);
+  const esConfig = getFieldEsConfig(filter.field);
 
-  const { nestedField } = getNestedField(filter.field);
+  if (!esConfig) {
+    throw new Error(`Field ${filter.field} does not have an ES config`);
+  }
 
   let filterESBuilder;
 
@@ -27,13 +28,13 @@ export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Qu
     case 'checkList':
     case 'checkListInference':
       filterESBuilder = esb.termsQuery(
-        esTerm,
+        esConfig.flat?.filter,
         filter.field === 'brainRegion' && filter.value.length === 0 ? descendantIds : filter.value
       );
 
       break;
     case 'dateRange':
-      filterESBuilder = esb.rangeQuery(esTerm);
+      filterESBuilder = esb.rangeQuery(esConfig.flat?.filter);
 
       if (filter.value.gte) {
         filterESBuilder.gte(format(filter.value.gte, 'yyyy-MM-dd'));
@@ -45,29 +46,29 @@ export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Qu
 
       break;
     case 'valueRange':
-      if (nestedField) {
+      if (esConfig.nested) {
         filterESBuilder = esb
           .nestedQuery()
-          .path(nestedField.nestField)
+          .path(esConfig.nested.nestField)
           .query(
             esb
               .boolQuery()
-              .must(esb.termQuery(nestedField.extendedField, nestedField.field))
-              .must(buildRangeQuery(filter, `${nestedField.nestField}.value`))
+              .must(esb.termQuery(esConfig.nested.extendedField, esConfig.nested.field))
+              .must(buildRangeQuery(filter, `${esConfig.nested.nestField}.value`))
           );
       } else {
-        filterESBuilder = buildRangeQuery(filter, esTerm);
+        filterESBuilder = buildRangeQuery(filter, esConfig.flat?.filter || '');
       }
 
       break;
     case 'valueOrRange':
       switch (typeof filter.value) {
         case 'number':
-          filterESBuilder = esb.termsQuery(esTerm, filter.value);
+          filterESBuilder = esb.termsQuery(esConfig.flat?.filter, filter.value);
 
           break;
         case 'object': // GteLteValue
-          filterESBuilder = esb.rangeQuery(esTerm);
+          filterESBuilder = esb.rangeQuery(esConfig.flat?.filter);
 
           if (filter.value?.gte) {
             filterESBuilder.gte(filter.value.gte as number);

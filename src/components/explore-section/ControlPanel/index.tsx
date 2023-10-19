@@ -27,7 +27,7 @@ import {
   aggregationsAtom,
   filtersAtom,
 } from '@/state/explore-section/list-view-atoms';
-import { getFieldLabel, getNestedField } from '@/api/explore-section/fields';
+import { getFieldEsConfig, getFieldLabel } from '@/api/explore-section/fields';
 
 export type ControlPanelProps = {
   children?: ReactNode;
@@ -43,7 +43,7 @@ function createFilterItemComponent(
 ) {
   return function FilterItemComponent() {
     const { type } = filter;
-    const { nestedField } = getNestedField(filter.field);
+    const esConfig = getFieldEsConfig(filter.field);
 
     let agg;
 
@@ -74,9 +74,9 @@ function createFilterItemComponent(
         );
 
       case 'valueRange':
-        if (nestedField) {
+        if (esConfig?.nested) {
           const nestedAgg = aggregations[filter.field] as NestedStatsAggregation;
-          agg = nestedAgg[filter.field][nestedField.field] as Statistics;
+          agg = nestedAgg[filter.field][esConfig?.nested.field] as Statistics;
         } else {
           agg = aggregations[filter.field] as Statistics;
         }

@@ -10,13 +10,6 @@ import {
 import { Filter, GteLteValue } from '@/components/Filter/types';
 import { ExploreResource } from '@/types/explore-section/es';
 
-export interface FetchParams {
-  id?: string;
-  project?: string;
-  org?: string;
-  rev?: number;
-}
-
 export interface SortState {
   field: string;
   order: 'asc' | 'desc' | null;
@@ -58,9 +51,10 @@ export type FilterValues = {
 
 export type CheckListProps = {
   options: {
-    checked: string | boolean;
+    checked: boolean;
     count: number | null;
-    key: string;
+    id: string;
+    label: string;
   }[];
   renderLength: number;
   handleCheckedChange: (value: string) => void;

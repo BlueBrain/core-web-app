@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { InfoCircleFilled } from '@ant-design/icons';
 import sortBy from 'lodash/sortBy';
 import { useAtom } from 'jotai';
+import uniqBy from 'lodash/uniqBy';
 import { Filter, OptionsData } from './types';
 import SearchFilter from './SearchFilter';
 import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
@@ -30,16 +31,18 @@ export function CheckListOption({
   handleCheckedChange,
   id: key,
   filterField,
+  label,
 }: {
   checked: string | boolean;
   count: number | null;
   handleCheckedChange: (key: string) => void;
   id: string;
   filterField: string;
+  label: string;
 }) {
   return (
     <li className="flex items-center justify-between pt-3" key={key}>
-      <span className="font-bold text-white">{DisplayLabel(filterField, key)}</span>
+      <span className="font-bold text-white">{DisplayLabel(filterField, label)}</span>
       <span className="flex items-center justify-between gap-2">
         {!!count && <span className="text-primary-5">{`${count} datasets`}</span>}
         <Checkbox.Root
@@ -73,12 +76,17 @@ export default function CheckList({
     const agg = data[filter.field];
     const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
 
+    // returning unique buckets since some times we have same label and different id (eg. contributors)
     return buckets
-      ? buckets?.map(({ key, doc_count: count }) => ({
-          checked: values?.includes(key as string),
-          key: key as string,
-          count,
-        }))
+      ? uniqBy(
+          buckets.map((bucket) => ({
+            checked: values?.includes(bucket.key as string),
+            id: bucket.key as string,
+            count: bucket.doc_count,
+            label: bucket.label?.buckets[0].key as string,
+          })),
+          'label'
+        )
       : undefined;
   }, [data, filter.field, values]);
 
@@ -168,14 +176,15 @@ export const defaultList = ({
   <>
     {options && options.length > defaultRenderLength && search()}
     <ul className="divide-y divide-white/20 flex flex-col space-y-3">
-      {options?.slice(0, renderLength)?.map(({ checked, count, key }) => (
+      {options?.slice(0, renderLength)?.map(({ checked, count, id, label }) => (
         <CheckListOption
           checked={checked}
           count={count}
-          key={key}
+          key={id}
           handleCheckedChange={handleCheckedChange}
-          id={key}
+          id={id}
           filterField={filterField}
+          label={label}
         />
       ))}
     </ul>

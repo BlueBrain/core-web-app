@@ -24,8 +24,16 @@ describe('getFilterESBuilder tests', () => {
     expect(aggBuilder?.toJSON()).toEqual({
       brainRegion: {
         terms: {
-          field: 'brainRegion.label.keyword',
+          field: 'brainRegion.@id.keyword',
           size: 100,
+        },
+        aggs: {
+          label: {
+            terms: {
+              field: 'brainRegion.label.keyword',
+              size: 1,
+            },
+          },
         },
       },
     });
@@ -87,8 +95,16 @@ describe('buildAggs unit tests', () => {
       aggs: {
         brainRegion: {
           terms: {
-            field: 'brainRegion.label.keyword',
+            field: 'brainRegion.@id.keyword',
             size: 100,
+          },
+          aggs: {
+            label: {
+              terms: {
+                field: 'brainRegion.label.keyword',
+                size: 1,
+              },
+            },
           },
         },
         layerThickness: {

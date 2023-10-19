@@ -102,7 +102,9 @@ export const queryAtom = atomFamily(
       const selectedBrainRegion = get(selectedBrainRegionAtom);
       // if a brain region is not selected, selecting by default the brain region with id 8 (Basic cell groups and regions)
       const descendants = await get(brainRegionDescendantsAtom(selectedBrainRegion?.id || '8'));
-      const descendantLabels = descendants?.map((d) => d.title);
+      const descendantIds = descendants?.map(
+        (d) => `http://api.brain-map.org/api/v2/data/Structure/${d.id}`
+      );
       const filters = await get(filtersAtom({ experimentTypeName }));
       if (!filters) {
         return null;
@@ -115,7 +117,7 @@ export const queryAtom = atomFamily(
         experimentTypeName,
         sortState,
         searchString,
-        descendantLabels
+        descendantIds
       );
     }),
   DataAtomFamilyScopeComparator
