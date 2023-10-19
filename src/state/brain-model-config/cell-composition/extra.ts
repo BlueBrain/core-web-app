@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 import { omitDeep } from 'deepdash-es/standalone';
+import lodashSet from 'lodash/set';
 
 import { configAtom, configPayloadAtom, configPayloadRevAtom, setLocalConfigPayloadAtom } from '.';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
@@ -12,21 +13,6 @@ import { autoSaveDebounceInterval } from '@/config';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 import { OriginalComposition } from '@/types/composition/original';
 import openNotification from '@/api/notifications';
-
-// TODO: move to a separate module
-const configPayloadDefaults = {
-  VARIANT_DEFINITION: {
-    algorithm: 'cell_composition_manipulation',
-    version: 'v1',
-  },
-  INPUTS: [
-    {
-      name: 'base_cell_composition',
-      type: 'Dataset' as 'Dataset',
-      id: 'https://bbp.epfl.ch/neurosciencegraph/data/cellcompositions/54818e46-cf8c-4bd6-9b68-34dffbc8a68c',
-    },
-  ],
-};
 
 export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], Promise<void>>(
   null,
@@ -94,27 +80,12 @@ export const setCompositionPayloadConfigurationAtom = atom<null, [OriginalCompos
   async (get, set, composition) => {
     const configPayload = await get(configPayloadAtom);
 
-    let updatedConfigPayload: CellCompositionConfigPayload = {};
+    if (!configPayload) throw new Error('no payload to save');
 
-    if (configPayload) {
-      updatedConfigPayload = { ...configPayload };
-    }
+    const updatedConfigPayload: CellCompositionConfigPayload = structuredClone(configPayload);
 
-    updatedConfigPayload[ROOT_BRAIN_REGION_URI] = {
-      // This is to replace inputs with the latest base composition summary and distributions
-      // TODO: revert back when configs are migrated to use the newest input params
-      // TODO: refactor to have separate "focus" atoms for each part of the payload
-      ...{
-        variantDefinition: configPayloadDefaults.VARIANT_DEFINITION,
-        inputs: configPayloadDefaults.INPUTS,
-      },
-      jobConfiguration: {},
-      configuration: {
-        version: composition.version,
-        unitCode: composition.unitCode,
-        overrides: getOverridesFromCellComposition(composition),
-      },
-    };
+    const path = [ROOT_BRAIN_REGION_URI, 'configuration', 'overrides'];
+    lodashSet(updatedConfigPayload, path, getOverridesFromCellComposition(composition));
 
     await set(setConfigPayloadAtom, updatedConfigPayload);
   }
