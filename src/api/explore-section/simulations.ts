@@ -88,7 +88,7 @@ export async function fetchSimulationsFromEs(accessToken: string, campaignId: st
 export async function fetchAnalysisReportsFromEs(
   session: Session,
   simulationIds: string[]
-): Promise<AnalysisReportWithImage[]> {
+): Promise<AnalysisReport[]> {
   const { accessToken } = session;
 
   if (!accessToken) throw new Error('Access token should be defined');
@@ -114,16 +114,5 @@ export async function fetchAnalysisReportsFromEs(
     .then((response) => response.json())
     .then((data) =>
       data?.hits?.hits.map(({ _source: report }: { _source: AnalysisReport }) => report)
-    )
-    .then((analysisReports) =>
-      analysisReports.map(async (report: AnalysisReport) => ({
-        ...report,
-        blob: await fetchFileByUrl(report.distribution[0].contentUrl, session).then((res) =>
-          res.blob()
-        ),
-        simulation: report.derivation.find(
-          ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
-        )?.identifier,
-      }))
     );
 }

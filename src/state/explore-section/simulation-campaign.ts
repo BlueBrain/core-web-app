@@ -1,8 +1,10 @@
 import { atom } from 'jotai';
 import { atomFamily, selectAtom } from 'jotai/utils';
+import sessionAtom from '../session';
 import { Simulation, SimulationCampaignResource } from '@/types/explore-section/resources';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
-import { fetchResourceById } from '@/api/nexus';
+import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
+
 import {
   fetchAnalysisReportsFromEs,
   fetchSimulationsFromEs,
@@ -62,10 +64,21 @@ export const simulationsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   })
 );
 
+// eslint-disable-next-line
+export const refetchReportCounterFamily = atomFamily((resourceInfo?: ResourceInfo) => atom(0));
+const reportImageFamily = atomFamily((contentUrl: string | undefined) =>
+  atom(async (get) => {
+    const session = get(sessionAtom);
+    if (!session || !contentUrl) return null;
+    return await fetchFileByUrl(contentUrl, session).then((res) => res.blob()); //eslint-disable-line
+  })
+);
+
 export const analysisReportsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
     const { session } = get(sessionAndInfoAtom(resourceInfo));
     const simulations = await get(simulationsAtom(resourceInfo));
+    get(refetchReportCounterFamily(resourceInfo));
 
     const fetchedReports =
       session &&
@@ -75,7 +88,15 @@ export const analysisReportsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
         simulations.map(({ id: simId }) => simId)
       ));
 
-    return fetchedReports && Promise.all(fetchedReports);
+    const reportsWithImage = fetchedReports?.map(async (report) => ({
+      ...report,
+      blob: (await get(reportImageFamily(report.distribution?.[0].contentUrl))) as Blob,
+      simulation: report.derivation.find(
+        ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
+      )?.identifier,
+    })) as AnalysisReportWithImage[] | undefined;
+
+    return reportsWithImage && (await Promise.all(reportsWithImage));
   })
 );
 
