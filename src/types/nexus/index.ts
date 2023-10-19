@@ -278,12 +278,10 @@ export type MorphologyAssignmentConfigPayload = {
     topological_synthesis: {
       '@id': string;
       '@type': ['CanonicalMorphologyModelConfig', 'Entity'];
-      _rev: number;
     };
     placeholder_assignment: {
       '@id': string;
       '@type': ['PlaceholderMorphologyConfig', 'Entity'];
-      _rev: number;
     };
   };
   configuration: {
