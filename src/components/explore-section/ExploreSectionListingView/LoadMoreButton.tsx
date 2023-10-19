@@ -23,16 +23,11 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 
 export default function LoadMoreButton({
   experimentTypeName,
-  resourceId,
 }: HTMLProps<HTMLButtonElement> & {
   experimentTypeName: string;
-  resourceId?: string;
 }) {
   const total = useAtomValue(
-    useMemo(
-      () => loadable(totalAtom({ experimentTypeName, resourceId })),
-      [experimentTypeName, resourceId]
-    )
+    useMemo(() => loadable(totalAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);

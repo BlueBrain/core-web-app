@@ -33,7 +33,6 @@ export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
   experimentTypeName: string;
-  resourceId?: string;
 };
 
 function createFilterItemComponent(
@@ -132,27 +131,17 @@ export default function ControlPanel({
   children,
   toggleDisplay,
   experimentTypeName,
-  resourceId,
 }: ControlPanelProps) {
   const [activeColumns, setActiveColumns] = useAtom(
-    useMemo(
-      () => unwrap(activeColumnsAtom({ experimentTypeName, resourceId })),
-      [experimentTypeName, resourceId]
-    )
+    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const aggregations = useAtomValue(
-    useMemo(
-      () => unwrap(aggregationsAtom({ experimentTypeName, resourceId })),
-      [experimentTypeName, resourceId]
-    )
+    useMemo(() => unwrap(aggregationsAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const [filters, setFilters] = useAtom(
-    useMemo(
-      () => unwrap(filtersAtom({ experimentTypeName, resourceId })),
-      [experimentTypeName, resourceId]
-    )
+    useMemo(() => unwrap(filtersAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
