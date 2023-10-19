@@ -3,8 +3,7 @@ import { Col, Row } from 'antd';
 import range from 'lodash/range';
 import { useAtomValue } from 'jotai';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { unwrap } from 'jotai/utils';
-import { simulationsAtom } from '@/state/explore-section/simulation-campaign';
+import { simulationsFamily } from '@/state/explore-section/simulation-campaign';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationDisplayCard from '@/components/explore-section/Simulations/SimulationDisplayCard';
 import {
@@ -16,6 +15,7 @@ import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 type SimulationDisplayGridProps = {
   display: string;
@@ -55,9 +55,8 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
 export default function SimulationsDisplayGrid({ display, status }: SimulationDisplayGridProps) {
   const resourceInfo = useResourceInfoFromPath();
 
-  const simulations = useAtomValue(
-    useMemo(() => unwrap(simulationsAtom(resourceInfo)), [resourceInfo])
-  );
+  const simulations = useUnwrappedValue(simulationsFamily(resourceInfo));
+
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);

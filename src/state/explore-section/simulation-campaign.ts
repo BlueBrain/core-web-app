@@ -45,7 +45,7 @@ export const simulationCampaignStatusAtom = atomFamily((resourceInfo?: ResourceI
 export const simulationCampaignDimensionsAtom = (resourceInfo?: ResourceInfo) =>
   selectAtom(detailAtom(resourceInfo), (simCamp) => simCamp?.parameter?.coords);
 
-export const simulationsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
+export const simulationsFamily = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<Simulation[] | undefined>>(async (get) => {
     const execution = await get(simulationCampaignExecutionAtom(resourceInfo));
     const { session } = get(sessionAndInfoAtom(resourceInfo));
@@ -77,7 +77,7 @@ const reportImageFamily = atomFamily((contentUrl: string | undefined) =>
 export const analysisReportsFamily = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
     const { session } = get(sessionAndInfoAtom(resourceInfo));
-    const simulations = await get(simulationsAtom(resourceInfo));
+    const simulations = await get(simulationsFamily(resourceInfo));
     get(refetchReportCounterFamily(resourceInfo));
 
     const fetchedReports =
@@ -98,21 +98,4 @@ export const analysisReportsFamily = atomFamily((resourceInfo?: ResourceInfo) =>
 
     return reportsWithImage && (await Promise.all(reportsWithImage));
   })
-);
-
-export const reportImageFilesAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
-    const detail = await get(detailAtom(resourceInfo));
-    const analysisReports = await get(analysisReportsFamily(resourceInfo));
-    return analysisReports?.filter(
-      ({ simulation }: { simulation: string }) => simulation === detail?.['@id']
-    );
-  })
-);
-
-export const simulationsCountAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  selectAtom<Promise<Simulation[] | undefined>, number | undefined>(
-    simulationsAtom(resourceInfo),
-    (simulations) => simulations?.length
-  )
 );

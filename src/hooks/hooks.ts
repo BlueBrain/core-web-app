@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Atom } from 'jotai/vanilla';
+import { unwrap } from 'jotai/utils';
 import sessionAtom from '@/state/session';
 
 export function usePrevious<T>(value: T) {
@@ -31,4 +32,12 @@ export function useLoadable<T>(loadableAtom: Atom<Loadable<Promise<T>>>, default
 
 export function useSessionAtomValue() {
   return useAtomValue(sessionAtom);
+}
+
+export function useUnwrappedValue<T>(atom: Atom<Promise<T>>) {
+  const [unwrapped, setUnwrapped] = useState(unwrap(atom));
+  useEffect(() => {
+    setUnwrapped(unwrap(atom));
+  }, [atom]);
+  return useAtomValue(unwrapped);
 }

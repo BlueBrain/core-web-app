@@ -1,17 +1,17 @@
-import { useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { Spin } from 'antd';
-import { unwrap } from 'jotai/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import ImageReport from './ImageReport';
-import { reportImageFilesAtom } from '@/state/explore-section/simulation-campaign';
+import { analysisReportsFamily } from '@/state/explore-section/simulation-campaign';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function SimulationReports() {
   const resourceInfo = useResourceInfoFromPath();
-
-  const reportImageFiles = useAtomValue(
-    useMemo(() => unwrap(reportImageFilesAtom(resourceInfo)), [resourceInfo])
+  const reports = useUnwrappedValue(analysisReportsFamily(resourceInfo));
+  const reportImageFiles = useMemo(
+    () => reports?.filter((r) => r.simulation === resourceInfo?.id),
+    [reports, resourceInfo?.id]
   );
 
   if (reportImageFiles) {
