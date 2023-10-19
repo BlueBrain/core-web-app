@@ -1598,7 +1598,6 @@ async function computeOverrides(options?: ComputeOverridesOptions): Promise<Over
     computeParamOverridesTable(variantName)
   );
 
-  // eslint-disable-next-line consistent-return
   return {
     variant: variantOverridesTable,
     params: paramOverridesTables,
@@ -1740,7 +1739,6 @@ async function saveOverrides(): Promise<Map<string, number> | undefined> {
   const updatedRevMap = await persistOverrides(overrides);
 
   // TODO Seek for a better solution
-  // eslint-disable-next-line consistent-return
   return updatedRevMap;
 }
 

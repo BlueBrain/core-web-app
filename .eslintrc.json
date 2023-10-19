@@ -48,6 +48,8 @@
     "lodash/matches-prop-shorthand": "off",
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-use-before-define": "off",
-    "no-restricted-exports": "off"
+    "no-restricted-exports": "off",
+    "consistent-return": "off",
+    "@typescript-eslint/return-await": "off"
   }
 }

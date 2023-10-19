@@ -57,7 +57,7 @@ export const createTextCanvas = (text: string, textProps: TextProps) => {
   ctx.fillStyle = color;
   ctx.fillText(text, width / 2, height / 2);
 
-  return canvas; // eslint-disable-line consistent-return
+  return canvas;
 };
 
 export const makeText = (text: string, textProps: TextProps) => {
@@ -81,5 +81,5 @@ export const makeText = (text: string, textProps: TextProps) => {
   sprite.position.set(0, 1.5, 0);
 
   textObject.add(sprite);
-  return textObject; // eslint-disable-line consistent-return
+  return textObject;
 };

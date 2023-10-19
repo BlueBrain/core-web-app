@@ -25,7 +25,6 @@ export function useSlotState(slotId: number): SlotState {
     if (!manager) return;
 
     manager.addSlotStateChangeHandler(slotId, setState);
-    // eslint-disable-next-line consistent-return
     return () => {
       manager.removeSlotStateChangeHandler(slotId, setState);
     };
@@ -42,7 +41,6 @@ export function useSlotError(
     if (!manager) return;
 
     manager.addSlotErrorChangeHandler(slotId, setError);
-    // eslint-disable-next-line consistent-return
     return () => {
       manager.removeSlotErrorChangeHandler(slotId, setError);
     };

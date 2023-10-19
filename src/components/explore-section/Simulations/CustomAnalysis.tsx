@@ -24,7 +24,6 @@ export default function CustomAnalysis({
   selectedDisplay: string;
 }) {
   const [outputs, fetchingOutputs] = useAnalysisOutputs(resource);
-  const [analysesState, setAnalyses] = useState(resource.analyses || []);
   const [loading, setLoading] = useState(false);
   const session = useSessionAtomValue();
   const [analyses] = useAnalyses();
@@ -38,25 +37,20 @@ export default function CustomAnalysis({
     [analyses]
   );
 
+  console.log('outputs', outputs);
+  console.log('fetchingOutputs', fetchingOutputs);
+
   return (
     <>
-      {!outputs.length && !fetchingOutputs && analysesState.includes(selectedDisplay) && (
-        <span>Running Analysis ... </span>
-      )}
+      {false && !outputs.length && !fetchingOutputs && <span>Running Analysis ... </span>}
 
-      {!outputs.length && !fetchingOutputs && !analysesState.includes(selectedDisplay) && (
+      {!outputs.length && !fetchingOutputs && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
           <button
             type="button"
             className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
             onClick={() =>
-              launchAnalysis(
-                resource,
-                analysesById[selectedDisplay],
-                setLoading,
-                setAnalyses,
-                session
-              )
+              launchAnalysis(resource, analysesById[selectedDisplay], setLoading, session)
             }
             disabled={loading}
           >
@@ -88,16 +82,19 @@ function useAnalysisOutputs(simCampaign: SimulationCampaignResource): [Blob[], b
     async function fetchIncoming() {
       if (!session) return;
       setFetching(true);
-      const res: { _results: { '@id': string; '@type': 'string' }[] } = await fetch(
-        simCampaign._incoming,
-        {
+      const res: { _results: { '@id': string; '@type': 'string'; _deprecated: boolean }[] } =
+        await fetch(simCampaign._incoming, {
           headers: createHeaders(session.accessToken),
-        }
-      ).then((r) => r.json());
+        }).then((r) => r.json());
 
-      const outputLink = res._results
-        .filter((l) => l['@type'].includes('CumulativeAnalysisReport'))
-        .pop();
+      const outputLinks = res._results.filter(
+        (l) => l['@type'].includes('CumulativeAnalysisReport') && l._deprecated === false
+      );
+
+      // Todo find sourceCode
+      setFetching(false);
+
+      return;
 
       if (!outputLink) {
         setFetching(false);
@@ -121,7 +118,7 @@ function useAnalysisOutputs(simCampaign: SimulationCampaignResource): [Blob[], b
       setOutputs(images);
     }
     fetchIncoming();
-  }, [simCampaign, session, outputs]);
+  }, [simCampaign, session]);
   return [outputs, fetching];
 }
 
@@ -129,7 +126,6 @@ async function launchAnalysis(
   simCampaign: SimulationCampaignResource,
   analysis: Analysis | undefined,
   setLoading: (value: boolean) => void,
-  onSuccess: (analyses: string[]) => void,
   session: Session | null
 ) {
   if (!simCampaign.wasGeneratedBy || !session || !analysis) return;
@@ -150,23 +146,39 @@ async function launchAnalysis(
   const zip = await jszip.loadAsync(workflowConfigPayload);
   let config = await zip.file('simulation.cfg')?.async('string');
   const m = config?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g);
+
   if (!(config = m?.[0])) return; // eslint-disable-line
 
   // TODO: Figure out how to handle custom config later
-  const analyseSimCampaignMeta = `[AnalyseSimCampaign]
-    workspace-prefix: /gpfs/bbp.cscs.ch/data/scratch/proj134/home/${session.user.username}/SBO/analysis
-    analysis-config: {
-            "simulation_campaign": "$SIMULATION_CAMPAIGN_FILE",
-            "output": "$SCRATCH_PATH",
-            "report_type": "spikes",
-            "report_name": "raster",
-            "node_sets": ["AAA"],
-            "cell_step": 1
-            }`;
+  const multiAnalyseSimCampaignMeta = `[MultiAnalyseSimCampaign]
+workspace-prefix: /gpfs/bbp.cscs.ch/data/scratch/proj134/home/${session.user.username}/SBO/analysis
+analysis-configs: [
+  {
+    "AnalyseSimCampaign":  {
+      "source_code_url": "${analysis['@id']}",
+        "analysis_config": {
+          "simulation_campaign": "$SIMULATION_CAMPAIGN_FILE",
+          "output": "$SCRATCH_PATH",
+          "report_type": "spikes",
+          "report_name": "raster",
+          "node_sets": ["AAA"],
+          "cell_step": 1
+
+        }
+    },
+    
+    "CloneGitRepo": {
+      "git_url": "${analysis.codeRepository['@id']}",
+      "git_ref": "${analysis.branch}",
+      "subdirectory": "${analysis.subdirectory}",
+      "git_user": "GUEST",
+      "git_password": "WCY_qpuGG8xpKz_S8RNg"
+    }
+  }]`;
 
   const newResource = await createWorkflowConfigResource(
     'analysis.cfg',
-    analyseSimCampaignMeta,
+    multiAnalyseSimCampaignMeta,
     session
   );
 
@@ -178,23 +190,16 @@ async function launchAnalysis(
 
   config += `
   
-    [AnalyseSimCampaignMeta]
+    [MultiAnalyseSimCampaignMeta]
     config-url: ${urlWithRev}
   
-    [CloneGitRepo]
-    git_url: ${analysis.codeRepository['@id']}
-    git_ref: ${analysis.branch}
-    subdirectory: ${analysis.subdirectory}
-    git_user: GUEST
-    git_password: WCY_qpuGG8xpKz_S8RNg
-      
-    [AnalyseSimCampaign]
+    [MultiAnalyseSimCampaign]
     time: 8:00:00
     `;
 
   await launchWorkflowTask({
     loginInfo: session,
-    workflowName: 'bbp_workflow.sbo.analysis.task.AnalyseSimCampaignMeta/',
+    workflowName: 'bbp_workflow.sbo.analysis.task.MultiAnalyseSimCampaignMeta/',
     workflowFiles: [
       {
         NAME: 'config.cfg',
@@ -204,14 +209,6 @@ async function launchAnalysis(
       { NAME: 'cfg_name', TYPE: 'string', CONTENT: 'config.cfg' },
     ],
   });
-
-  await updateResource(
-    { ...simCampaign, analyses: [...(simCampaign.analyses || []), analysis['@id']] } as Entity,
-    simCampaign._rev,
-    session
-  );
-
-  onSuccess([...(simCampaign.analyses || []), analysis['@id']]);
 
   notification.success({
     message: 'Workflow launched successfuly',

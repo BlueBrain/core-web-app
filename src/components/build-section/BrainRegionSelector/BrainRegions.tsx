@@ -92,7 +92,6 @@ function NavTitle({
     });
     resizeObserver.observe(navTitleRef.current);
 
-    // eslint-disable-next-line consistent-return
     return () => {
       resizeObserver.disconnect();
     };

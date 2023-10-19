@@ -64,17 +64,17 @@ export const simulationsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   })
 );
 
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const refetchReportCounterFamily = atomFamily((resourceInfo?: ResourceInfo) => atom(0));
 const reportImageFamily = atomFamily((contentUrl: string | undefined) =>
   atom(async (get) => {
     const session = get(sessionAtom);
     if (!session || !contentUrl) return null;
-    return await fetchFileByUrl(contentUrl, session).then((res) => res.blob()); //eslint-disable-line
+    return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
   })
 );
 
-export const analysisReportsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
+export const analysisReportsFamily = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
     const { session } = get(sessionAndInfoAtom(resourceInfo));
     const simulations = await get(simulationsAtom(resourceInfo));
@@ -103,7 +103,7 @@ export const analysisReportsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
 export const reportImageFilesAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
     const detail = await get(detailAtom(resourceInfo));
-    const analysisReports = await get(analysisReportsAtom(resourceInfo));
+    const analysisReports = await get(analysisReportsFamily(resourceInfo));
     return analysisReports?.filter(
       ({ simulation }: { simulation: string }) => simulation === detail?.['@id']
     );

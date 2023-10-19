@@ -85,7 +85,6 @@ function useCanvas(slotId: number, manager: MultiBraynsManagerInterface | null) 
     if (!canvas || !manager) return;
 
     manager.attachCanvas(slotId, canvas);
-    // eslint-disable-next-line consistent-return
     return () => {
       manager.detachCanvas(slotId, canvas);
     };
