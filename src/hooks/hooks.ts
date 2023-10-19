@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { Loadable, loadable } from 'jotai/vanilla/utils/loadable';
+import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Atom } from 'jotai/vanilla';
-import { unwrap } from 'jotai/utils';
+import { unwrap, loadable } from 'jotai/utils';
 import sessionAtom from '@/state/session';
 
 export function usePrevious<T>(value: T) {
