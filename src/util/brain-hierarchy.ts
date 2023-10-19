@@ -175,3 +175,23 @@ export function flattenBrainRegionsTree(tree: BrainRegion[] | null): BrainRegion
 
   return tree;
 }
+
+/**
+ * get all deeply nested ancestors of a brain region
+ * @param vertex brain region
+ * @param all accumalutor
+ * @returns all deeply nested ancestors
+ */
+// eslint-disable-next-line consistent-return
+export function getDeeplyNestedChildrenFromNode(vertex: TreeItem, all: string[]) {
+  if (vertex && vertex.items) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const node of vertex.items) {
+      all.push(node.id);
+      if (node.items && node.items.length) {
+        getDeeplyNestedChildrenFromNode(node, all);
+      }
+    }
+  }
+  return all;
+}

@@ -15,17 +15,18 @@ function listWithInference({
     <>
       {options && options.length > defaultRenderLength && search()}
       <ul className="divide-y divide-white/20 flex flex-col space-y-3">
-        {options?.slice(0, renderLength)?.map(({ checked, count, key }) => (
-          <div key={key}>
+        {options?.slice(0, renderLength)?.map(({ checked, count, id, label }) => (
+          <div key={id}>
             <CheckListOption
               checked={checked}
               count={count}
-              key={key}
+              key={id}
               handleCheckedChange={handleCheckedChange}
-              id={key}
+              id={id}
               filterField={filterField}
+              label={label}
             />
-            {checked && <InferenceTable brainRegionTitle={key} />}
+            {checked && <InferenceTable brainRegionTitle={label} />}
           </div>
         ))}
       </ul>

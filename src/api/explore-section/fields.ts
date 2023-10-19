@@ -1,7 +1,7 @@
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 
-export function getNestedField(field: string) {
-  return field in EXPLORE_FIELDS_CONFIG ? EXPLORE_FIELDS_CONFIG[field] : { nestedField: null };
+export function getFieldEsConfig(field: string) {
+  return EXPLORE_FIELDS_CONFIG[field]?.esTerms;
 }
 
 export function getFieldLabel(field: string) {

@@ -4,10 +4,11 @@ import React, { RefObject, useRef, useState, useMemo, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
+import { unwrap } from 'jotai/utils';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
 import AlternateViewSelector from './AlternateViewSelector';
-import { classNames } from '@/util/utils';
+import { classNames, brainRegionTitleCaseExceptConjunctions } from '@/util/utils';
 import { BrainIcon } from '@/components/icons';
 import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/BrainTree';
 import {
@@ -109,9 +110,9 @@ function NavTitle({
             className={classNames(
               'hover:text-white mr-auto whitespace-pre-wrap text-left',
               isExpanded || selectedBrainRegion?.id === id
-                ? 'text-primary-4 font-medium'
-                : 'text-primary-1',
-              selected ? 'font-bold' : 'font-light',
+                ? !selected && 'text-primary-4 font-medium'
+                : !selected && 'text-primary-1 font-light',
+              selected && 'font-bold',
               className
             )}
             style={
@@ -144,7 +145,7 @@ function NavTitle({
 }
 
 export default function BrainRegions() {
-  const brainRegionsTree = useAtomValue(brainRegionsAlternateTreeAtom);
+  const brainRegionsTree = useAtomValue(useMemo(() => unwrap(brainRegionsAlternateTreeAtom), []));
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const resetBrainRegion = useSetAtom(selectedBrainRegionAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
@@ -171,7 +172,7 @@ export default function BrainRegions() {
       {isCollapsed ? (
         <CollapsedBrainRegionsSidebar setIsCollapsed={setIsCollapsed} />
       ) : (
-        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[300px]">
+        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[300px] no-scrollbar">
           <div className="grid">
             <div className="flex items-start justify-between mb-7">
               <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
@@ -207,11 +208,11 @@ export default function BrainRegions() {
                 itemsInAnnotation,
               }) => (
                 <NavTitle
-                  className="text-base capitalize"
+                  className="text-base"
                   colorCode={colorCode}
                   id={id}
                   onClick={() => setSelectedBrainRegion(id, title, leaves, representedInAnnotation)}
-                  title={title}
+                  title={brainRegionTitleCaseExceptConjunctions(title)}
                   isExpanded={isExpanded}
                   isHidden={!representedInAnnotation && !itemsInAnnotation}
                   trigger={trigger}

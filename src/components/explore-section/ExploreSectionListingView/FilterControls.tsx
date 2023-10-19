@@ -38,13 +38,11 @@ export default function FilterControls({
   displayControlPanel,
   setDisplayControlPanel,
   experimentTypeName,
-  resourceId,
 }: {
   children?: ReactNode;
   displayControlPanel: boolean;
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   experimentTypeName: string;
-  resourceId?: string;
 }) {
   const [activeColumnsLength, setActiveColumnsLength] = useState<number | undefined>(undefined);
 
@@ -53,13 +51,10 @@ export default function FilterControls({
   );
 
   const filters = useAtomValue(
-    useMemo(
-      () => unwrap(filtersAtom({ experimentTypeName, resourceId })),
-      [experimentTypeName, resourceId]
-    )
+    useMemo(() => unwrap(filtersAtom({ experimentTypeName })), [experimentTypeName])
   );
-  const resetFilters = useResetAtom(filtersAtom({ experimentTypeName, resourceId }));
-  const setSearchString = useSetAtom(searchStringAtom({ experimentTypeName, resourceId }));
+  const resetFilters = useResetAtom(filtersAtom({ experimentTypeName }));
+  const setSearchString = useSetAtom(searchStringAtom({ experimentTypeName }));
 
   const selectedFiltersCount = filters
     ? filters.filter((filter) => filterHasValue(filter)).length
@@ -81,7 +76,7 @@ export default function FilterControls({
     <div className="flex items-center gap-5 justify-end pl-5 w-auto">
       <div className="mr-auto">{children}</div>
       <ClearFilters onClick={clearFilters} />
-      <ExploreSectionNameSearch experimentTypeName={experimentTypeName} resourceId={resourceId} />
+      <ExploreSectionNameSearch experimentTypeName={experimentTypeName} />
       <FilterBtn onClick={() => setDisplayControlPanel(!displayControlPanel)}>
         <div className="flex gap-3 items-center">
           <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">

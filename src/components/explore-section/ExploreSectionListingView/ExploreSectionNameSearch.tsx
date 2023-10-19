@@ -65,12 +65,11 @@ function Button({
 
 type SearchProps = {
   experimentTypeName: string;
-  resourceId?: string;
 };
 
-export default function ExploreSectionNameSearch({ experimentTypeName, resourceId }: SearchProps) {
+export default function ExploreSectionNameSearch({ experimentTypeName }: SearchProps) {
   const [searchStringAtomValue, setSearchStringAtomValue] = useAtom(
-    searchStringAtom({ experimentTypeName, resourceId })
+    searchStringAtom({ experimentTypeName })
   );
   const [searchStringLocalState, setSearchStringLocalState] = useState(searchStringAtomValue);
 

@@ -8,7 +8,6 @@ import { activeColumnsAtom } from '@/state/explore-section/list-view-atoms';
 export default function WithControlPanel({
   children,
   experimentTypeName,
-  resourceId,
 }: {
   children: (props: {
     activeColumns?: string[];
@@ -16,28 +15,23 @@ export default function WithControlPanel({
     setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   }) => ReactNode;
   experimentTypeName: string;
-  resourceId?: string;
 }) {
   const activeColumns = useAtomValue(
-    useMemo(
-      () => unwrap(activeColumnsAtom({ experimentTypeName, resourceId })),
-      [experimentTypeName, resourceId]
-    )
+    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
   return (
-    <div className="flex">
-      <section className="w-full min-h-screen h-screen flex flex-col gap-5 bg-white pb-12 pl-3 pr-3 pt-8 overflow-scroll relative">
+    <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full">
+      <section className="w-full flex flex-col min-h-screen h-screen flex flex-col gap-5 bg-white pb-12 pl-3 pr-3 pt-8 overflow-scroll relative">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel })}
-        <LoadMoreButton experimentTypeName={experimentTypeName} resourceId={resourceId} />
+        <LoadMoreButton experimentTypeName={experimentTypeName} />
       </section>
       {displayControlPanel && (
         <ControlPanel
           toggleDisplay={() => setDisplayControlPanel(false)}
           experimentTypeName={experimentTypeName}
-          resourceId={resourceId}
         />
       )}
     </div>

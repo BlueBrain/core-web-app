@@ -68,7 +68,6 @@ function CustomCell({ children, style, ...props }: { children: ReactNode; style:
 export function BaseTable({
   columns,
   dataSource,
-  expandable,
   hasError,
   loading,
   rowSelection,
@@ -111,7 +110,6 @@ export function BaseTable({
         },
       }}
       dataSource={dataSource}
-      expandable={expandable}
       loading={loading}
       pagination={false}
       rowClassName={styles.tableRow}
@@ -125,7 +123,6 @@ export default function ExploreSectionTable({
   columns,
   dataSource,
   enableDownload,
-  expandable,
   experimentTypeName,
   hasError,
   loading,
@@ -153,7 +150,6 @@ export default function ExploreSectionTable({
         <BaseTable
           columns={columns}
           dataSource={dataSource}
-          expandable={expandable}
           hasError={hasError}
           loading={loading}
           rowKey={(row) => row._source._self}
@@ -165,7 +161,6 @@ export default function ExploreSectionTable({
     <BaseTable
       columns={columns}
       dataSource={dataSource}
-      expandable={expandable}
       hasError={hasError}
       loading={loading}
       rowKey={(row) => row._source._self}

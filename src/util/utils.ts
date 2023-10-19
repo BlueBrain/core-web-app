@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import capitalize from 'lodash/capitalize';
 
 export function createHeaders(
   token: string,
@@ -40,3 +41,28 @@ export const formatDate = (date: string | Date, formatStr: string = 'dd-MM-yyyy'
   format(new Date(date), formatStr);
 
 export const normalizeString = (term: string) => term.trim().toLowerCase();
+
+const conjunctionWords = ['and', 'but', 'or', 'nor', 'for', 'so', 'yet', 'of'];
+const romanNumeralsRegex = /^\(?(?=[MDCLXVI])M*(C[MD]|D?C*)(X[CL]|L?X*)(I[XV]|V?I*)\)?$/;
+
+const checkRomanSeperatedByDash = (str: string) => {
+  const words = str.split('-');
+  return words.every((word) => romanNumeralsRegex.test(word.toUpperCase()));
+};
+
+export function brainRegionTitleCaseExceptConjunctions(phrase: string) {
+  const words = phrase.split(' ');
+  const capitalizedWords = words.map((word) => {
+    const lowerWord = word.toLowerCase();
+    if (
+      conjunctionWords.includes(lowerWord) ||
+      romanNumeralsRegex.test(lowerWord.toUpperCase()) ||
+      checkRomanSeperatedByDash(word)
+    ) {
+      return word;
+    }
+    return capitalize(word);
+  });
+
+  return capitalizedWords.join(' ');
+}

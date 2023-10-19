@@ -2,6 +2,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { ConfigProvider, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { useMemo } from 'react';
+import uniqBy from 'lodash/uniqBy';
 import { Filter, OptionsData } from './types';
 import Search from '@/components/Search';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
@@ -22,11 +23,15 @@ export default function SearchFilter({
     const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
 
     return buckets
-      ? buckets?.map(({ key, doc_count: count }) => ({
-          checked: values.includes(key as string),
-          key,
-          count,
-        }))
+      ? uniqBy(
+          buckets.map((bucket) => ({
+            checked: values?.includes(bucket.key as string),
+            id: bucket.key as string,
+            count: bucket.doc_count,
+            label: bucket.label?.buckets[0].key as string,
+          })),
+          'label'
+        )
       : [];
   }, [data, filter.field, values]);
 
@@ -74,15 +79,15 @@ export default function SearchFilter({
       handleSelect={(value) => {
         handleCheckedChange(value as string);
       }}
-      options={options.map(({ key }) => ({
-        label: key as string,
-        value: key as string,
+      options={options.map(({ id, label }) => ({
+        label: label as string,
+        value: id as string,
       }))}
       mode="tags"
       placeholder={`Search for ${EXPLORE_FIELDS_CONFIG[filter.field].vocabulary.plural}`}
       tagRender={tagRender}
       value={options?.reduce(
-        (acc, { checked, key }) => (checked ? [...acc, key as string] : acc),
+        (acc, { checked, id }) => (checked ? [...acc, id as string] : acc),
         [] as string[]
       )}
     />

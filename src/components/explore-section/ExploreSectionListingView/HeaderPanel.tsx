@@ -8,21 +8,16 @@ import { totalAtom } from '@/state/explore-section/list-view-atoms';
 function HeaderPanel({
   title,
   experimentTypeName,
-  resourceId,
 }: {
   title?: string;
   experimentTypeName: string;
-  resourceId?: string;
 }) {
   const total = useAtomValue(
-    useMemo(
-      () => unwrap(totalAtom({ experimentTypeName, resourceId })),
-      [experimentTypeName, resourceId]
-    )
+    useMemo(() => unwrap(totalAtom({ experimentTypeName })), [experimentTypeName])
   );
   return (
-    <div className="flex items-center justify-between ml-5">
-      <div className="text-primary-7 text-2xl font-bold flex-auto w-6/12">
+    <div className="flex justify-between pl-5 w-full">
+      <div className="text-primary-9 text-2xl font-bold flex-auto">
         <h1 className="flex items-baseline">
           {title}
           <small className="flex gap-1 text-sm whitespace-pre font-thin text-slate-400 pl-2">

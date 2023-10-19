@@ -10,16 +10,19 @@ import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-co
 type CardProps = {
   resource: Experiment;
   experimentTypeName: string;
+  score?: number;
 };
 
-export default function Card({ resource, experimentTypeName }: CardProps) {
+export default function Card({ resource, experimentTypeName, score }: CardProps) {
   const cardFields = EXPERIMENT_TYPES[experimentTypeName]?.cardViewFields;
 
   return (
     <div className="flex flex-col border border-solid rounded-md h-[500px] w-full p-4">
-      <div className="text-primary-7 mb-2">
-        Score: <span className="font-bold">0.86</span>
-      </div>
+      {score && (
+        <div className="text-primary-7 mb-2">
+          Score: <span className="font-bold">0.86</span>
+        </div>
+      )}
       <div className="h-full border rounded-md">
         <CardVisualization
           experimentTypeName={experimentTypeName}

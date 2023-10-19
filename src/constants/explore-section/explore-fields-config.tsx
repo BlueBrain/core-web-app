@@ -33,8 +33,7 @@ import WeightField from '@/components/explore-section/Fields/WeightField';
 import { Experiment } from '@/types/explore-section/es-experiment';
 
 export type ExploreFieldConfig = {
-  term: string;
-  nestedField?: NestedFieldConfig;
+  esTerms?: EsTermsConfig;
   title: string;
   description?: string;
   filter: FilterType;
@@ -54,6 +53,15 @@ export type ExploreFieldsConfigProps = {
   [key: string]: ExploreFieldConfig;
 };
 
+type EsTermsConfig = {
+  flat?: {
+    filter?: string;
+    aggregation?: string;
+    sort?: string;
+  };
+  nested?: NestedFieldConfig;
+};
+
 type NestedFieldConfig = {
   extendedField: string;
   field: string;
@@ -62,7 +70,6 @@ type NestedFieldConfig = {
 
 const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   description: {
-    term: 'description',
     title: 'Description',
     filter: 'checkList',
     render: {
@@ -74,7 +81,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   license: {
-    term: 'license.keyword',
     title: 'License',
     filter: 'checkList',
     render: {
@@ -86,7 +92,13 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   brainRegion: {
-    term: 'brainRegion.label.keyword',
+    esTerms: {
+      flat: {
+        filter: 'brainRegion.@id.keyword',
+        aggregation: 'brainRegion',
+        sort: 'brainRegion.label.keyword',
+      },
+    },
     title: 'Brain Region',
     filter: 'checkList',
     render: {
@@ -99,7 +111,13 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   eType: {
-    term: 'eType.label.keyword',
+    esTerms: {
+      flat: {
+        filter: 'eType.@id.keyword',
+        aggregation: 'eType',
+        sort: 'eType.label.keyword',
+      },
+    },
     title: 'E-Type',
     filter: 'checkList',
     render: {
@@ -112,7 +130,13 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   mType: {
-    term: 'mType.label.keyword',
+    esTerms: {
+      flat: {
+        filter: 'mType.@id.keyword',
+        aggregation: 'mType',
+        sort: 'mType.label.keyword',
+      },
+    },
     title: 'M-Type',
     filter: 'checkList',
     render: {
@@ -125,7 +149,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   name: {
-    term: 'name.keyword',
+    esTerms: {
+      flat: {
+        filter: 'name.keyword',
+        sort: 'name.keyword',
+      },
+    },
     title: 'Name',
     filter: null,
     render: {
@@ -137,7 +166,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   simCampName: {
-    term: 'name.keyword',
+    esTerms: {
+      flat: {
+        filter: 'name.keyword',
+        sort: 'name.keyword',
+      },
+    },
     title: 'Name',
     filter: null,
     render: {
@@ -154,7 +188,13 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   subjectSpecies: {
-    term: 'subjectSpecies.label.keyword',
+    esTerms: {
+      flat: {
+        filter: 'subjectSpecies.@id.keyword',
+        aggregation: 'subjectSpecies',
+        sort: 'subjectSpecies.label.keyword',
+      },
+    },
     title: 'Species',
     filter: 'checkList',
     render: {
@@ -167,11 +207,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   sem: {
-    term: 'series.statistic.standard error of the mean.keyword',
-    nestedField: {
-      extendedField: 'series.statistic.keyword',
-      field: 'standard error of the mean',
-      nestField: 'series',
+    esTerms: {
+      nested: {
+        extendedField: 'series.statistic.keyword',
+        field: 'standard error of the mean',
+        nestField: 'series',
+      },
     },
     unit: 'boutons/μm',
     title: 'SEM',
@@ -187,7 +228,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   weight: {
-    term: 'weight.label.keyword',
     title: 'Weight',
     filter: 'checkList',
     unit: 'gramms',
@@ -201,7 +241,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   subjectAge: {
-    term: 'subjectAge.label.keyword',
     title: 'Age',
     filter: 'checkList',
     unit: 'days',
@@ -215,7 +254,13 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   contributors: {
-    term: 'contributors.label.keyword',
+    esTerms: {
+      flat: {
+        filter: 'contributors.@id.keyword',
+        aggregation: 'contributors',
+        sort: 'contributors.label.keyword',
+      },
+    },
     title: 'Contributors',
     filter: 'checkList',
     render: {
@@ -228,11 +273,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   neuronDensity: {
-    term: 'series.statistic.mean.keyword',
-    nestedField: {
-      extendedField: 'series.statistic.keyword',
-      field: 'mean',
-      nestField: 'series',
+    esTerms: {
+      nested: {
+        extendedField: 'series.statistic.keyword',
+        field: 'mean',
+        nestField: 'series',
+      },
     },
     title: 'Density',
     filter: 'valueRange',
@@ -246,20 +292,7 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Density',
     },
   },
-  boutonDensity: {
-    term: 'boutonDensity.label.keyword',
-    title: 'Bouton density',
-    filter: 'checkList',
-    render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.boutonDensity?.value),
-    },
-    vocabulary: {
-      plural: 'Bouton Densities',
-      singular: 'Bouton Density',
-    },
-  },
   layer: {
-    term: 'layer.label.keyword',
     title: 'Layer',
     filter: 'checkList',
     render: {
@@ -272,7 +305,13 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   layerThickness: {
-    term: 'layerThickness.value',
+    esTerms: {
+      flat: {
+        filter: 'layerThickness.value',
+        aggregation: 'layerThickness.value',
+        sort: 'layerThickness.value',
+      },
+    },
     title: 'Thickness',
     filter: 'valueRange',
     unit: 'μm',
@@ -285,17 +324,14 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Thickness',
     },
   },
-  circuitType: {
-    term: 'circuitType.keyword',
-    title: 'Circuit type',
-    filter: 'checkList',
-    vocabulary: {
-      plural: 'Circuit Types',
-      singular: 'Circuit Type',
-    },
-  },
   createdAt: {
-    term: 'createdAt',
+    esTerms: {
+      flat: {
+        filter: 'createdAt',
+        aggregation: 'createdAt',
+        sort: 'createdAt',
+      },
+    },
     title: 'Creation date',
     filter: 'dateRange',
     render: {
@@ -309,7 +345,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   createdBy: {
-    term: 'createdBy.keyword',
     title: 'Created by',
     filter: 'checkList',
     render: {
@@ -323,7 +358,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   updatedAt: {
-    term: 'updatedAt',
     title: 'Updated at',
     filter: 'dateRange',
     render: {
@@ -336,7 +370,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   reference: {
-    term: 'reference.keyword',
     title: 'Reference',
     filter: 'checkList',
     render: {
@@ -348,7 +381,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   conditions: {
-    term: 'conditions.keyword',
     title: 'Conditions',
     filter: 'checkList',
     unit: 'Cº',
@@ -361,11 +393,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   meanstd: {
-    term: 'series.statistic.mean.keyword',
-    nestedField: {
-      extendedField: 'series.statistic.keyword',
-      field: 'mean',
-      nestField: 'series',
+    esTerms: {
+      nested: {
+        extendedField: 'series.statistic.keyword',
+        field: 'mean',
+        nestField: 'series',
+      },
     },
     unit: 'boutons/μm',
     title: 'Mean ± std',
@@ -380,11 +413,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   numberOfMeasurements: {
-    term: 'series.statistic.N.keyword',
-    nestedField: {
-      extendedField: 'series.statistic.keyword',
-      field: 'N',
-      nestField: 'series',
+    esTerms: {
+      nested: {
+        extendedField: 'series.statistic.keyword',
+        field: 'N',
+        nestField: 'series',
+      },
     },
     title: 'N° of Measurements',
     filter: 'valueRange',
@@ -398,7 +432,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   brainConfiguration: {
-    term: 'nValue',
+    esTerms: {
+      flat: {
+        filter: 'nValue',
+        sort: 'nValue',
+      },
+    },
     title: 'Brain Configuration',
     filter: null,
     render: {
@@ -411,7 +450,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   dimensions: {
-    term: 'dimensions',
     title: 'Dimensions',
     filter: 'checkList',
     render: {
@@ -430,7 +468,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   attributes: {
-    term: 'attributes',
     title: 'Attributes',
     filter: 'checkList',
     render: {
@@ -449,7 +486,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   simulationCampaignStatus: {
-    term: 'status',
     title: 'Status',
     filter: 'checkList',
     render: {
@@ -461,7 +497,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   simulationStatus: {
-    term: 'status',
     title: 'Status',
     filter: 'checkList',
     render: {
@@ -473,7 +508,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   campaign: {
-    term: 'campaign',
     title: 'Campaign',
     filter: 'checkList',
     render: {
@@ -485,7 +519,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   tags: {
-    term: 'tags',
     title: 'Tags',
     filter: 'checkList',
     render: {
@@ -497,7 +530,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   startedAt: {
-    term: 'nValue',
     title: 'started at',
     filter: null,
     render: {
@@ -509,7 +541,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   completedAt: {
-    term: 'completedAt',
     title: 'completed at',
     filter: null,
     render: {
@@ -521,7 +552,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   categories: {
-    term: 'categories',
     title: 'Category',
     filter: 'search',
     vocabulary: {
@@ -530,7 +560,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   articleType: {
-    term: 'articleType',
     title: 'Article type',
     filter: 'search',
     vocabulary: {
@@ -539,7 +568,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   journal: {
-    term: 'journal',
     title: 'Journal',
     filter: 'search',
     vocabulary: {
@@ -548,7 +576,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   authors: {
-    term: 'authors',
     title: 'Authors',
     filter: 'search',
     vocabulary: {
@@ -557,7 +584,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   publicationDate: {
-    term: 'publicationDate',
     title: 'Publication date',
     filter: 'dateRange',
     vocabulary: {
@@ -566,7 +592,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   length: {
-    term: 'length',
     title: 'length',
     filter: null,
     vocabulary: {
@@ -578,7 +603,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   maximumLength: {
-    term: 'maximumLength',
     title: 'maximum length',
     filter: null,
     vocabulary: {
@@ -590,7 +614,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   totalLength: {
-    term: 'totalLength',
     title: 'total length',
     filter: null,
     vocabulary: {
@@ -602,7 +625,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   dendriteStemming: {
-    term: 'dendriteStemming',
     title: 'dendrite stemming from soma',
     filter: null,
     vocabulary: {
@@ -614,7 +636,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   axon: {
-    term: 'axon',
     title: 'axon',
     filter: null,
     vocabulary: {
@@ -626,7 +647,6 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   bifurcations: {
-    term: 'bifurcations',
     title: 'bifurcations',
     filter: null,
     vocabulary: {

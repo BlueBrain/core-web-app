@@ -174,11 +174,20 @@ export default function ConfigurationView() {
 
   const tabItems = [
     {
+      id: 'density',
       label: 'Density',
       onClick: () => setActiveTab('density'),
     },
-    { label: 'Distribution', onClick: () => setActiveTab('distribution') },
-    { label: 'Position', onClick: () => setActiveTab('position') },
+    {
+      id: 'distribution',
+      label: 'Distribution',
+      onClick: () => setActiveTab('distribution'),
+    },
+    {
+      id: 'position',
+      label: 'Position',
+      onClick: () => setActiveTab('position'),
+    },
   ];
 
   const tabContent = useMemo(
@@ -206,7 +215,10 @@ export default function ConfigurationView() {
 
   return (
     <Tabs.Root value={activeTab} className="h-full overflow-hidden px-4 py-[25px]">
-      <TopNavigation.PillNav items={tabItems} activeItemIndex={0} />
+      <TopNavigation.PillNav
+        items={tabItems}
+        activeItemIndex={tabItems.findIndex(({ id }) => id === activeTab)}
+      />
       {tabContent}
     </Tabs.Root>
   );
