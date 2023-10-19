@@ -166,6 +166,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   simCampName: {
+    esTerms: {
+      flat: {
+        filter: 'name.keyword',
+        sort: 'name.keyword',
+      },
+    },
     title: 'Name',
     filter: null,
     render: {
@@ -426,6 +432,12 @@ const EXPLORE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   brainConfiguration: {
+    esTerms: {
+      flat: {
+        filter: 'nValue',
+        sort: 'nValue',
+      },
+    },
     title: 'Brain Configuration',
     filter: null,
     render: {

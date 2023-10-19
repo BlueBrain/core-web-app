@@ -1,7 +1,7 @@
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 
 export function getFieldEsConfig(field: string) {
-  return EXPLORE_FIELDS_CONFIG[field].esTerms;
+  return EXPLORE_FIELDS_CONFIG[field]?.esTerms;
 }
 
 export function getFieldLabel(field: string) {

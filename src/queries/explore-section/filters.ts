@@ -18,23 +18,19 @@ function buildRangeQuery(filter: RangeFilter, esTerm: string) {
 export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Query | undefined {
   const esConfig = getFieldEsConfig(filter.field);
 
-  if (!esConfig) {
-    throw new Error(`Field ${filter.field} does not have an ES config`);
-  }
-
   let filterESBuilder;
 
   switch (filter.type) {
     case 'checkList':
     case 'checkListInference':
       filterESBuilder = esb.termsQuery(
-        esConfig.flat?.filter,
+        esConfig?.flat?.filter,
         filter.field === 'brainRegion' && filter.value.length === 0 ? descendantIds : filter.value
       );
 
       break;
     case 'dateRange':
-      filterESBuilder = esb.rangeQuery(esConfig.flat?.filter);
+      filterESBuilder = esb.rangeQuery(esConfig?.flat?.filter);
 
       if (filter.value.gte) {
         filterESBuilder.gte(format(filter.value.gte, 'yyyy-MM-dd'));
@@ -46,7 +42,7 @@ export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Qu
 
       break;
     case 'valueRange':
-      if (esConfig.nested) {
+      if (esConfig?.nested) {
         filterESBuilder = esb
           .nestedQuery()
           .path(esConfig.nested.nestField)
@@ -57,18 +53,22 @@ export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Qu
               .must(buildRangeQuery(filter, `${esConfig.nested.nestField}.value`))
           );
       } else {
-        filterESBuilder = buildRangeQuery(filter, esConfig.flat?.filter || '');
+        filterESBuilder = buildRangeQuery(filter, esConfig?.flat?.filter || '');
       }
 
       break;
     case 'valueOrRange':
       switch (typeof filter.value) {
         case 'number':
-          filterESBuilder = esb.termsQuery(esConfig.flat?.filter, filter.value);
-
+          filterESBuilder = esb.termsQuery(
+            esConfig?.flat?.filter || `parameter.coords.${filter.field}`,
+            filter.value
+          );
           break;
         case 'object': // GteLteValue
-          filterESBuilder = esb.rangeQuery(esConfig.flat?.filter);
+          filterESBuilder = esb.rangeQuery(
+            esConfig?.flat?.filter || `parameter.coords.${filter.field}`
+          );
 
           if (filter.value?.gte) {
             filterESBuilder.gte(filter.value.gte as number);

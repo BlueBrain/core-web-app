@@ -6,18 +6,14 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
   const { aggregationType } = filter;
   const esConfig = getFieldEsConfig(filter.field);
 
-  if (!esConfig) {
-    throw new Error(`Field ${filter.field} does not have an ES config`);
-  }
-
   switch (aggregationType) {
     case 'buckets':
       return esb
-        .termsAggregation(filter.field, `${esConfig.flat?.aggregation}.@id.keyword`)
+        .termsAggregation(filter.field, `${esConfig?.flat?.aggregation}.@id.keyword`)
         .size(100)
-        .agg(esb.termsAggregation('label', `${esConfig.flat?.aggregation}.label.keyword`).size(1));
+        .agg(esb.termsAggregation('label', `${esConfig?.flat?.aggregation}.label.keyword`).size(1));
     case 'stats':
-      if (esConfig.nested) {
+      if (esConfig?.nested) {
         return esb
           .nestedAggregation(filter.field, esConfig.nested.nestField)
           .agg(
@@ -31,7 +27,7 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
               )
           );
       }
-      return esb.statsAggregation(filter.field, esConfig.flat?.aggregation);
+      return esb.statsAggregation(filter.field, esConfig?.flat?.aggregation || filter.field);
     default:
       return undefined;
   }
