@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { Loadable } from 'jotai/vanilla/utils/loadable';
+import { Loadable, loadable } from 'jotai/vanilla/utils/loadable';
 import { Atom } from 'jotai/vanilla';
 import { unwrap } from 'jotai/utils';
 import sessionAtom from '@/state/session';
@@ -18,14 +18,14 @@ export function usePrevious<T>(value: T) {
 }
 
 export function useLoadable<T>(loadableAtom: Atom<Loadable<Promise<T>>>, defaultValue: T) {
-  const loadable = useAtomValue(loadableAtom);
+  const loadableValue = useAtomValue(loadableAtom);
   const [state, setState] = useState(defaultValue);
 
   useEffect(() => {
-    if (loadable.state !== 'hasData' || !loadable.data) return;
+    if (loadableValue.state !== 'hasData' || !loadableValue.data) return;
 
-    setState(loadable.data);
-  }, [loadable]);
+    setState(loadableValue.data);
+  }, [loadableValue]);
 
   return state;
 }
@@ -34,10 +34,18 @@ export function useSessionAtomValue() {
   return useAtomValue(sessionAtom);
 }
 
-export function useUnwrappedValue<T>(atom: Atom<Promise<T>>) {
+export function useUnwrappedValue<T>(atom: Atom<T>) {
   const [unwrapped, setUnwrapped] = useState(unwrap(atom));
   useEffect(() => {
     setUnwrapped(unwrap(atom));
   }, [atom]);
   return useAtomValue(unwrapped);
+}
+
+export function useLoadableValue<T>(atom: Atom<T>) {
+  const [loadableValue, setLoadableValue] = useState(loadable(atom));
+  useEffect(() => {
+    setLoadableValue(loadable(atom));
+  }, [atom]);
+  return useAtomValue(loadableValue);
 }
