@@ -7,14 +7,14 @@ import {
   fetchAnalysisReportsFromEs,
   fetchSimulationsFromEs,
 } from '@/api/explore-section/simulations';
-import { detailAtom, sessionAndInfoAtom } from '@/state/explore-section/detail-view-atoms';
+import { detailFamily, sessionAndInfoFamily } from '@/state/explore-section/detail-view-atoms';
 import { ResourceInfo } from '@/types/explore-section/application';
 
 // fetches and stores the simulation campaign execution
 const simulationCampaignExecutionAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<SimulationCampaignResource | null>>(async (get) => {
-    const detail = await get(detailAtom(resourceInfo));
-    const { session, info } = get(sessionAndInfoAtom(resourceInfo));
+    const detail = await get(detailFamily(resourceInfo));
+    const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
     const executionId = detail?.wasGeneratedBy?.['@id'];
 
@@ -41,12 +41,12 @@ export const simulationCampaignStatusAtom = atomFamily((resourceInfo?: ResourceI
 );
 
 export const simulationCampaignDimensionsAtom = (resourceInfo?: ResourceInfo) =>
-  selectAtom(detailAtom(resourceInfo), (simCamp) => simCamp?.parameter?.coords);
+  selectAtom(detailFamily(resourceInfo), (simCamp) => simCamp?.parameter?.coords);
 
 export const simulationsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<Simulation[] | undefined>>(async (get) => {
     const execution = await get(simulationCampaignExecutionAtom(resourceInfo));
-    const { session } = get(sessionAndInfoAtom(resourceInfo));
+    const { session } = get(sessionAndInfoFamily(resourceInfo));
 
     const simulations =
       execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
@@ -64,7 +64,7 @@ export const simulationsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
 
 export const analysisReportsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
-    const { session } = get(sessionAndInfoAtom(resourceInfo));
+    const { session } = get(sessionAndInfoFamily(resourceInfo));
     const simulations = await get(simulationsAtom(resourceInfo));
 
     const fetchedReports =
@@ -81,7 +81,7 @@ export const analysisReportsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
 
 export const reportImageFilesAtom = atomFamily((resourceInfo?: ResourceInfo) =>
   atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
-    const detail = await get(detailAtom(resourceInfo));
+    const detail = await get(detailFamily(resourceInfo));
     const analysisReports = await get(analysisReportsAtom(resourceInfo));
     return analysisReports?.filter(
       ({ simulation }: { simulation: string }) => simulation === detail?.['@id']

@@ -3,14 +3,14 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useMemo } from 'react';
-import { licenseDataAtom } from '@/state/explore-section/detail-view-atoms';
+import { licenseDataFamily } from '@/state/explore-section/detail-view-atoms';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function License() {
   const resourceInfo = useResourceInfoFromPath();
 
   const license = useAtomValue(
-    useMemo(() => loadable(licenseDataAtom(resourceInfo)), [resourceInfo])
+    useMemo(() => loadable(licenseDataFamily(resourceInfo)), [resourceInfo])
   );
 
   if (license.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;

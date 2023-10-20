@@ -5,7 +5,7 @@ import { loadable } from 'jotai/utils';
 import { useMemo } from 'react';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { IdLabel } from '@/types/explore-section/fields';
-import { contributorsDataAtom } from '@/state/explore-section/detail-view-atoms';
+import { contributorsDataFamily } from '@/state/explore-section/detail-view-atoms';
 import ListField from '@/components/explore-section/Fields/ListField';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
@@ -41,7 +41,7 @@ export default function Contributors() {
   const resourceInfo = useResourceInfoFromPath();
 
   const contributors = useAtomValue(
-    useMemo(() => loadable(contributorsDataAtom(resourceInfo)), [resourceInfo])
+    useMemo(() => loadable(contributorsDataFamily(resourceInfo)), [resourceInfo])
   );
 
   if (contributors.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;

@@ -7,7 +7,7 @@ import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import SimilarityRules from '@/components/explore-section/SimilarityRules';
 import MorphoWrapper from '@/components/explore-section/MorphoViewerContainer/MorphoWrapper';
 import { MorphoViewerOptions } from '@/components/explore-section/MorphoViewerContainer/MorphologyViewer';
-import { detailAtom } from '@/state/explore-section/detail-view-atoms';
+import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 
 export default function InferredResourceHeader({
   fields,
@@ -18,7 +18,7 @@ export default function InferredResourceHeader({
   resourceInfo: ResourceInfo;
   url?: string | null;
 }) {
-  const detail = useAtomValue(useMemo(() => unwrap(detailAtom(resourceInfo)), [resourceInfo]));
+  const detail = useAtomValue(useMemo(() => unwrap(detailFamily(resourceInfo)), [resourceInfo]));
 
   const [options, setOptions] = useState<MorphoViewerOptions>({
     asPolyline: false,
