@@ -5,8 +5,7 @@ import CenteredMessage from '@/components/CenteredMessage';
 import SimulationCard from '@/components/explore-section/Simulations/SimulationDisplayCard/SimulationCard';
 import { Simulation } from '@/types/explore-section/resources';
 import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
-import { analysisReportsFamily } from '@/state/explore-section/simulation-campaign';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { analysisReportsAtom } from '@/state/explore-section/simulation-campaign';
 import { useLoadableValue } from '@/hooks/hooks';
 
 type SimulationDisplayCardProps = {
@@ -22,8 +21,7 @@ export default function SimulationDisplayCard({
   xDimension,
   yDimension,
 }: SimulationDisplayCardProps) {
-  const resourceInfo = useResourceInfoFromPath();
-  const analysisReports = useLoadableValue(analysisReportsFamily(resourceInfo));
+  const analysisReports = useLoadableValue(analysisReportsAtom);
 
   const blobData = useMemo(() => {
     if (analysisReports.state !== 'hasData') return;

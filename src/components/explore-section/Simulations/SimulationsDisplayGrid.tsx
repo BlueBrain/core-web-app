@@ -3,7 +3,7 @@ import { Col, Row } from 'antd';
 import range from 'lodash/range';
 import { useAtomValue } from 'jotai';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { simulationsFamily } from '@/state/explore-section/simulation-campaign';
+import { simulationsAtom } from '@/state/explore-section/simulation-campaign';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationDisplayCard from '@/components/explore-section/Simulations/SimulationDisplayCard';
 import {
@@ -53,9 +53,7 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
 }
 
 export default function SimulationsDisplayGrid({ display, status }: SimulationDisplayGridProps) {
-  const resourceInfo = useResourceInfoFromPath();
-
-  const simulations = useUnwrappedValue(simulationsFamily(resourceInfo));
+  const simulations = useUnwrappedValue(simulationsAtom);
 
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);

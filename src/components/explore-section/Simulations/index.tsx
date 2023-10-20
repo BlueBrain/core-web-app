@@ -11,25 +11,23 @@ import {
   dimensionsAtom,
   initializeDimensionsAtom,
 } from '@/components/explore-section/Simulations/state';
-import { simulationsFamily } from '@/state/explore-section/simulation-campaign';
+import { simulationsAtom } from '@/state/explore-section/simulation-campaign';
 import SimulationOptionsDropdown from '@/components/explore-section/Simulations/DisplayDropdown';
 import {
   displayOptions,
   showOnlyOptions,
 } from '@/components/explore-section/Simulations/constants';
 import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import usePathname from '@/hooks/pathname';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
-  const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
   const dimensions = useAtomValue(dimensionsAtom);
   const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
-  const simulations = useUnwrappedValue(simulationsFamily(resourceInfo));
+  const simulations = useUnwrappedValue(simulationsAtom);
   const setDimensions = useSetAtom(dimensionsAtom);
   const [analyses] = useAnalyses();
 
@@ -40,9 +38,9 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
 
   useEffect(() => {
     if (dimensions?.length === 0) {
-      setDefaultDimensions(resourceInfo);
+      setDefaultDimensions();
     }
-  }, [dimensions, resource, setDefaultDimensions, setDimensions, resourceInfo]);
+  }, [dimensions, resource, setDefaultDimensions, setDimensions]);
 
   return (
     <div className="flex flex-col gap-4 mt-4">

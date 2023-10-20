@@ -1,8 +1,7 @@
 import { useForm, useWatch } from 'antd/es/form/Form';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 import { Form, Input, Radio } from 'antd';
-import { unwrap } from 'jotai/utils';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
 import { simulationCampaignDimensionsAtom } from '@/state/explore-section/simulation-campaign';
 import {
@@ -10,7 +9,7 @@ import {
   DimensionRange,
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 /* eslint-disable prefer-regex-literals */
 
@@ -18,14 +17,10 @@ export default function AxisDimensionBoxEditForm({
   dimension,
   setEditMode,
 }: AxisDimensionBoxEditFormProps) {
-  const resourceInfo = useResourceInfoFromPath();
-
   const [form] = useForm();
   const inputType = useWatch('input-type', form);
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
-  const simulationCampaignDimensions = useAtomValue(
-    useMemo(() => unwrap(simulationCampaignDimensionsAtom(resourceInfo)), [resourceInfo])
-  );
+  const simulationCampaignDimensions = useUnwrappedValue(simulationCampaignDimensionsAtom);
 
   const valueRange: DimensionRange | null = useMemo(() => {
     const dimensionConfig =

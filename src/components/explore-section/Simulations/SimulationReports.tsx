@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import ImageReport from './ImageReport';
-import { analysisReportsFamily } from '@/state/explore-section/simulation-campaign';
+import { analysisReportsAtom } from '@/state/explore-section/simulation-campaign';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function SimulationReports() {
   const resourceInfo = useResourceInfoFromPath();
-  const reports = useUnwrappedValue(analysisReportsFamily(resourceInfo));
+  const reports = useUnwrappedValue(analysisReportsAtom);
   const reportImageFiles = useMemo(
     () => reports?.filter((r) => r.simulation === resourceInfo?.id),
     [reports, resourceInfo?.id]
