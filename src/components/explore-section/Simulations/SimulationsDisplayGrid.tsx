@@ -136,6 +136,7 @@ export default function SimulationsDisplayGrid({ display, status }: SimulationDi
               <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
                 {simulation ? (
                   <SimulationDisplayCard
+                    key={simulation.id} // use key to not re-render the component and not refetch the reports if simulation hasn't changed
                     display={display}
                     simulation={simulation}
                     xDimension={xDimension.id}
