@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import range from 'lodash/range';
 import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
-import { latestRevisionAtom } from '@/state/explore-section/detail-view-atoms';
+import { latestRevisionFamily } from '@/state/explore-section/detail-view-atoms';
 import { DeltaResource } from '@/types/explore-section/resources';
 import Link from '@/components/Link';
 import { InteractiveViewIcon } from '@/components/icons';
@@ -23,7 +23,7 @@ export default function DetailHeaderName({
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
   const latestRevision = useAtomValue(
-    useMemo(() => loadable(latestRevisionAtom(resourceInfo)), [resourceInfo])
+    useMemo(() => loadable(latestRevisionFamily(resourceInfo)), [resourceInfo])
   );
   const simCampMatch = path?.match(/\/explore\/simulation-campaigns\/[a-zA-Z0-9=]*/g);
   const isSimCampDetail = simCampMatch && path === simCampMatch[0];
