@@ -14,7 +14,6 @@ import {
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
 type SimulationDisplayGridProps = {
