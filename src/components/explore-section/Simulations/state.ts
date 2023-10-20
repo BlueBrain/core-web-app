@@ -1,13 +1,12 @@
 import { atom } from 'jotai';
 import clone from 'lodash/clone';
-import { atomFamily } from 'jotai/utils';
 import {
   Dimension,
   DimensionRange,
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
 import { AxesState } from '@/types/explore-section/fields';
-import { detailAtom } from '@/state/explore-section/detail-view-atoms';
+import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { ResourceInfo } from '@/types/explore-section/application';
 
@@ -31,7 +30,7 @@ export const dimensionsAtom = atom<Dimension[] | null>([]);
 export const initializeDimensionsAtom = atom(
   null,
   async (get, set, resourceInfo?: ResourceInfo) => {
-    const resource = await get(detailAtom(resourceInfo));
+    const resource = await get(detailFamily(resourceInfo));
 
     if (resource) {
       const defaultDimensions = buildDefaultDimensions(resource as SimulationCampaignResource);

@@ -3,14 +3,14 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useMemo } from 'react';
-import { speciesDataAtom } from '@/state/explore-section/detail-view-atoms';
+import { speciesDataFamily } from '@/state/explore-section/detail-view-atoms';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function Species() {
   const resourceInfo = useResourceInfoFromPath();
 
   const speciesLabel = useAtomValue(
-    useMemo(() => loadable(speciesDataAtom(resourceInfo)), [resourceInfo])
+    useMemo(() => loadable(speciesDataFamily(resourceInfo)), [resourceInfo])
   );
 
   if (speciesLabel.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;

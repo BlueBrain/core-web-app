@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import Error from 'next/error';
 import { loadable } from 'jotai/utils';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
-import { detailAtom } from '@/state/explore-section/detail-view-atoms';
+import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { DeltaResource } from '@/types/explore-section/resources';
 import { DetailProps } from '@/types/explore-section/application';
 import DetailHeader from '@/components/explore-section/DetailHeader';
@@ -21,7 +21,7 @@ export default function Detail({
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
 
-  const detail = useAtomValue(useMemo(() => loadable(detailAtom(resourceInfo)), [resourceInfo]));
+  const detail = useAtomValue(useMemo(() => loadable(detailFamily(resourceInfo)), [resourceInfo]));
   if (detail.state === 'loading') {
     return <CentralLoadingSpinner />;
   }
