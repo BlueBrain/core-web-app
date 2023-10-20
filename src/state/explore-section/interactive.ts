@@ -1,6 +1,6 @@
 import { atomWithReset } from 'jotai/utils';
 import { atom } from 'jotai';
-import { brainRegionDescendantsAtom } from '../brain-regions/descendants';
+import { getBrainRegionDescendants } from '../brain-regions/descendants';
 import sessionAtom from '@/state/session';
 import {
   ExperimentDatasetCountPerBrainRegion,
@@ -17,7 +17,7 @@ export const getExperimentTotalForBrainRegion = (brainRegionId: string) =>
     const session = get(sessionAtom);
     if (!session) return null;
 
-    const descendants = await get(brainRegionDescendantsAtom(brainRegionId));
+    const descendants = await get(getBrainRegionDescendants([brainRegionId]));
 
     const experimentToCount = await Promise.allSettled(
       EXPERIMENT_TYPE_DETAILS.map((experimentType) =>
@@ -49,7 +49,7 @@ export const getLiteratureCountForBrainRegion = (brainRegionId: string) =>
     const session = get(sessionAtom);
     if (!session) return null;
 
-    const descendants = await get(brainRegionDescendantsAtom(brainRegionId));
+    const descendants = await get(getBrainRegionDescendants([brainRegionId]));
 
     const experimentToCount = await Promise.allSettled(
       EXPERIMENT_TYPE_DETAILS.map((experimentType) =>
