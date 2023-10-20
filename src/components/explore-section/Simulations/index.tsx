@@ -28,8 +28,9 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   const resourceInfo = useResourceInfoFromPath();
   const path = usePathname();
   const dimensions = useAtomValue(dimensionsAtom);
-  const setDefaultDimensions = useSetAtom(initializeDimensionsAtom(resourceInfo));
+  const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
   const simulations = useUnwrappedValue(simulationsFamily(resourceInfo));
+  const setDimensions = useSetAtom(dimensionsAtom);
   const [analyses] = useAnalyses();
 
   const isCustom = useMemo(
@@ -39,9 +40,9 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
 
   useEffect(() => {
     if (dimensions?.length === 0) {
-      setDefaultDimensions();
+      setDefaultDimensions(resourceInfo);
     }
-  }, [dimensions, resource, setDefaultDimensions]);
+  }, [dimensions, resource, setDefaultDimensions, setDimensions, resourceInfo]);
 
   return (
     <div className="flex flex-col gap-4 mt-4">

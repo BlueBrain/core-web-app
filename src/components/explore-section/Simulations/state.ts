@@ -28,8 +28,9 @@ function buildDefaultDimensions(resource: SimulationCampaignResource) {
 
 export const dimensionsAtom = atom<Dimension[] | null>([]);
 
-export const initializeDimensionsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  atom(null, async (get, set) => {
+export const initializeDimensionsAtom = atom(
+  null,
+  async (get, set, resourceInfo?: ResourceInfo) => {
     const resource = await get(detailAtom(resourceInfo));
 
     if (resource) {
@@ -39,7 +40,7 @@ export const initializeDimensionsAtom = atomFamily((resourceInfo?: ResourceInfo)
     }
 
     return undefined;
-  })
+  }
 );
 
 export const modifyDimensionValue = atom<null, [string, DimensionValue | DimensionRange], void>(
