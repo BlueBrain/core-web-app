@@ -2,14 +2,10 @@ import every from 'lodash/every';
 import { Session } from 'next-auth';
 import esb from 'elastic-builder';
 
-import { fetchFileByUrl } from '@/api/nexus';
 import { createHeaders } from '@/util/utils';
 import { Dimension } from '@/components/explore-section/Simulations/types';
 import { ExploreSectionResponse, Simulation } from '@/types/explore-section/resources';
-import {
-  AnalysisReport,
-  AnalysisReportWithImage,
-} from '@/types/explore-section/es-analysis-report';
+import { AnalysisReport } from '@/types/explore-section/es-analysis-report';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import { API_SEARCH } from '@/constants/explore-section/queries';
 

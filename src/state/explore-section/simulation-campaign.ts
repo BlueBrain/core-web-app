@@ -80,14 +80,12 @@ export const refetchReportCounterFamily = atomFamily(
   isEqual
 );
 
-const reportImageFamily = atomFamily(
-  (contentUrl: string | undefined) =>
-    atom(async (get) => {
-      const session = get(sessionAtom);
-      if (!session || !contentUrl) return null;
-      return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
-    }),
-  isEqual
+const reportImageFamily = atomFamily((contentUrl: string | undefined) =>
+  atom(async (get) => {
+    const session = get(sessionAtom);
+    if (!session || !contentUrl) return null;
+    return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
+  })
 );
 
 export const analysisReportsFamily = atomFamily(
