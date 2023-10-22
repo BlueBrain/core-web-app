@@ -9,7 +9,7 @@ import {
   fetchAnalysisReportsFromEs,
   fetchSimulationsFromEs,
 } from '@/api/explore-section/simulations';
-import { detailFamily, sessionAndInfoFamily } from '@/state/explore-section/detail-view-atoms';
+import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { pathToResource } from '@/util/explore-section/detail-view';
 
 export function getResourceInfoFromPath() {
@@ -21,13 +21,13 @@ export function getResourceInfoFromPath() {
 // fetches and stores the simulation campaign execution
 export const simulationCampaignExecutionAtom = atom<Promise<SimulationCampaignResource | null>>(
   async (get) => {
-    const resourceInfo = getResourceInfoFromPath();
-    const detail = await get(detailFamily(resourceInfo));
-    const { session, info } = get(sessionAndInfoFamily(resourceInfo));
+    const info = getResourceInfoFromPath();
+    const session = get(sessionAtom);
+    const detail = await get(detailFamily(info));
 
     const executionId = detail?.wasGeneratedBy?.['@id'];
 
-    if (!executionId || !detail) return null;
+    if (!executionId || !detail || !session || !info) return null;
 
     const cleanExecutionId = executionId.replace('https://bbp.epfl.ch/neurosciencegraph/data/', '');
 
