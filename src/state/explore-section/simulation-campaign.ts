@@ -13,7 +13,8 @@ import { detailFamily, sessionAndInfoFamily } from '@/state/explore-section/deta
 import { pathToResource } from '@/util/explore-section/detail-view';
 
 export function getResourceInfoFromPath() {
-  const [path, rev] = window.location.pathname.split('?');
+  const [path, params] = window.location.pathname.split('?');
+  const rev = new URLSearchParams(params).get('rev');
   return pathToResource(path, rev);
 }
 
