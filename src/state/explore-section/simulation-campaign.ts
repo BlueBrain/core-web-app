@@ -19,41 +19,39 @@ export function getResourceInfoFromPath() {
 }
 
 // fetches and stores the simulation campaign execution
-export const simulationCampaignExecutionAtom = atom<Promise<SimulationCampaignResource | null>>(
-  async (get) => {
-    const info = getResourceInfoFromPath();
-    const session = get(sessionAtom);
-    const detail = await get(detailFamily(info));
+export const simulationCampaignExecutionAtom = atom(async (get) => {
+  const info = getResourceInfoFromPath();
+  const session = get(sessionAtom);
+  const detail = await get(detailFamily(info));
 
-    const executionId = detail?.wasGeneratedBy?.['@id'];
+  const executionId = detail?.wasGeneratedBy?.['@id'];
 
-    if (!executionId || !detail || !session || !info) return null;
+  if (!executionId || !detail || !session || !info) return null;
 
-    const cleanExecutionId = executionId.replace('https://bbp.epfl.ch/neurosciencegraph/data/', '');
+  const cleanExecutionId = executionId.replace('https://bbp.epfl.ch/neurosciencegraph/data/', '');
 
-    const execution = (await fetchResourceById(cleanExecutionId, session, {
-      org: info.org,
-      project: info.project,
-      idExpand: false,
-    })) as SimulationCampaignResource;
+  const execution = await fetchResourceById<SimulationCampaignResource>(cleanExecutionId, session, {
+    org: info.org,
+    project: info.project,
+    idExpand: false,
+  });
 
-    return execution;
-  }
-);
+  return execution;
+});
 
 export const simulationCampaignDimensionsAtom = selectAtom(
   detailFamily(getResourceInfoFromPath()),
   (simCamp) => simCamp?.parameter?.coords
 );
 
-export const simulationsAtom = atom<Promise<Simulation[] | undefined>>(async (get) => {
+export const simulationsAtom = atom(async (get) => {
   const execution = await get(simulationCampaignExecutionAtom);
   const session = get(sessionAtom);
   if (!session) return;
 
   const simulations =
     execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
-  return simulations?.hits.map(({ _source: simulation }: { _source: any }) => ({
+  return simulations?.hits.map(({ _source: simulation }) => ({
     title: simulation.name,
     completedAt: simulation.endedAt,
     dimensions: simulation.parameter?.coords,
@@ -61,7 +59,7 @@ export const simulationsAtom = atom<Promise<Simulation[] | undefined>>(async (ge
     project: simulation?.project.identifier, // TODO: Possibly no longer necessary
     startedAt: simulation.startedAt,
     status: simulation.status,
-  }));
+  })) as Simulation[];
 });
 
 export const refetchReportCounterAtom = atom(0);
@@ -75,29 +73,27 @@ const reportImageFamily = atomFamily((contentUrl: string | undefined) =>
   })
 );
 
-export const analysisReportsAtom = atom<Promise<AnalysisReportWithImage[] | undefined>>(
-  async (get) => {
-    const session = get(sessionAtom);
-    const simulations = await get(simulationsAtom);
+export const analysisReportsAtom = atom(async (get) => {
+  const session = get(sessionAtom);
+  const simulations = await get(simulationsAtom);
 
-    get(refetchReportCounterAtom);
+  get(refetchReportCounterAtom);
 
-    const fetchedReports =
-      session &&
-      simulations &&
-      (await fetchAnalysisReportsFromEs(
-        session,
-        simulations.map(({ id: simId }) => simId)
-      ));
+  const fetchedReports =
+    session &&
+    simulations &&
+    (await fetchAnalysisReportsFromEs(
+      session,
+      simulations.map(({ id: simId }) => simId)
+    ));
 
-    const reportsWithImage = fetchedReports?.map(async (report) => ({
-      ...report,
-      blob: (await get(reportImageFamily(report.distribution?.[0].contentUrl))) as Blob,
-      simulation: report.derivation.find(
-        ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
-      )?.identifier,
-    })) as AnalysisReportWithImage[] | undefined;
+  const reportsWithImage = fetchedReports?.map(async (report) => ({
+    ...report,
+    blob: (await get(reportImageFamily(report.distribution?.[0].contentUrl))) as Blob,
+    simulation: report.derivation.find(
+      ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
+    )?.identifier,
+  })) as AnalysisReportWithImage[] | undefined;
 
-    return reportsWithImage && (await Promise.all(reportsWithImage));
-  }
-);
+  return reportsWithImage && (await Promise.all(reportsWithImage));
+});

@@ -115,7 +115,7 @@ export interface Source extends OptionalExploreSectionFields {
   license?: IdLabelEntity | null;
   organizations?: IdLabelEntity[] | null;
   parameter?: {
-    coords: { [key: string]: number[] };
+    coords: { [key: string]: number[] | number };
     attrs: { [key: string]: number[] };
   };
 }
