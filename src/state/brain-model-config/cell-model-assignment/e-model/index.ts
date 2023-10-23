@@ -41,7 +41,6 @@ import {
 } from '@/queries/es';
 import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
-import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
 
@@ -408,17 +407,12 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
       if (!eModel.brainLocation) return true;
 
       const eModelBrainRegionId = eModel.brainLocation.brainRegion['@id'];
-      const selectedBrainRegionExpandedId = `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`;
 
-      if (selectedBrainRegionExpandedId === eModelBrainRegionId) return true;
+      if (selectedBrainRegion.id === eModelBrainRegionId) return true;
 
-      const eModelBrainRegionCollapsedId = eModelBrainRegionId.replace(
-        `${BRAIN_REGION_URI_BASE}/`,
-        ''
-      );
-      const brainRegionForEModel = lodashFind(brainRegions, ['id', eModelBrainRegionCollapsedId]);
+      const brainRegionForEModel = lodashFind(brainRegions, ['id', eModelBrainRegionId]);
 
-      const isChildren = brainRegionForEModel?.leaves?.includes(selectedBrainRegionExpandedId);
+      const isChildren = brainRegionForEModel?.leaves?.includes(selectedBrainRegion.id);
       return isChildren;
     });
 
@@ -503,7 +497,7 @@ export const assembledEModelUIConfigAtom = atom<Promise<EModelUIConfig | null>>(
     mType: selectedEModel?.mType,
     eType: selectedEModel?.eType,
     brainRegionName: selectedBrainRegion?.title,
-    brainRegionId: `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion?.id}`,
+    brainRegionId: selectedBrainRegion?.id,
     species: 'mouse',
   };
 

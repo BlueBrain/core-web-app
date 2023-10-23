@@ -6,7 +6,6 @@ import { ChangeModelAction, ModelChoice } from '@/types/m-model';
 import { analysedMTypesAtom } from '@/state/build-composition';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { bulkApplyAllAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
-import { expandBrainRegionId } from '@/util/cell-model-assignment';
 import { isConfigEditableAtom } from '@/state/brain-model-config';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
@@ -30,11 +29,10 @@ export default function ApplyToAllMTypesPanel() {
 
   const applyActiveModelToAll = useCallback(() => {
     if (selectedBrainRegion) {
-      const expandedBrainRegionId = expandBrainRegionId(selectedBrainRegion.id);
       const action: ChangeModelAction = activeModel === 'canonical' ? 'add' : 'remove';
 
       const mTypeIds = mModelItems.map((mModel) => mModel.id);
-      setBulkApplyAll(expandedBrainRegionId, mTypeIds, action);
+      setBulkApplyAll(selectedBrainRegion.id, mTypeIds, action);
     }
   }, [activeModel, mModelItems, selectedBrainRegion, setBulkApplyAll]);
 
