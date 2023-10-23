@@ -120,9 +120,9 @@ export interface Source extends OptionalExploreSectionFields {
   };
 }
 
-export interface DetailAtomResource extends DeltaResource {
+export type DetailAtomResources<T> = DeltaResource<T> & {
   contributors: string[] | null;
-}
+};
 
 type IdType = {
   '@id': string;
@@ -130,11 +130,7 @@ type IdType = {
 };
 
 // Below is the delta response interface definitions
-export type DeltaResource<
-  T = {
-    [key: string]: any;
-  }
-> = T & {
+export type DeltaResource<T = {}> = T & {
   '@context'?: string[] | null;
   '@id': string;
   '@type'?: string[] | null;
@@ -190,7 +186,7 @@ export type SimulationCampaignsResponse = {
   name: string;
 };
 
-export type SimulationCampaignResource = DeltaResource & {
+export type SimulationCampaignResource<T = {}> = DeltaResource<T> & {
   brainConfiguration: string;
   status: string;
   tags: string[];
@@ -211,7 +207,7 @@ export type Simulation = {
   status: SimulationStatus;
 };
 
-export type SimulationResource = DeltaResource & {
+export type SimulationResource<T> = DeltaResource<T> & {
   campaign: string;
   coords: { [key: string]: number };
   status: SimulationStatus;

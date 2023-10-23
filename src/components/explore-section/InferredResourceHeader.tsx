@@ -1,6 +1,4 @@
-import { Key, useMemo, useState } from 'react';
-import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
+import { Key, useState } from 'react';
 import { Field } from './DetailHeader';
 import { DetailProps, ResourceInfo } from '@/types/explore-section/application';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
@@ -8,6 +6,8 @@ import SimilarityRules from '@/components/explore-section/SimilarityRules';
 import MorphoWrapper from '@/components/explore-section/MorphoViewerContainer/MorphoWrapper';
 import { MorphoViewerOptions } from '@/components/explore-section/MorphoViewerContainer/MorphologyViewer';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
+import { useUnwrappedValue } from '@/hooks/hooks';
+import { DetailViewFnArgs } from '@/constants/explore-section/explore-fields-config';
 
 export default function InferredResourceHeader({
   fields,
@@ -18,7 +18,7 @@ export default function InferredResourceHeader({
   resourceInfo: ResourceInfo;
   url?: string | null;
 }) {
-  const detail = useAtomValue(useMemo(() => unwrap(detailFamily(resourceInfo)), [resourceInfo]));
+  const detail = useUnwrappedValue(detailFamily(resourceInfo)) as DetailViewFnArgs;
 
   const [options, setOptions] = useState<MorphoViewerOptions>({
     asPolyline: false,

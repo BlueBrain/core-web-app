@@ -22,6 +22,7 @@ import usePathname from '@/hooks/pathname';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
+  console.log(resource)
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
   const path = usePathname();

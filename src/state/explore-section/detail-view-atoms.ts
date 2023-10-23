@@ -25,10 +25,10 @@ export const sessionAndInfoFamily = atomFamily(
 );
 
 export const detailFamily = atomFamily(
-  (resourceInfo?: ResourceInfo) =>
-    atom<Promise<DeltaResource | null>>(async (get) => {
+  <T>(resourceInfo?: ResourceInfo) =>
+    atom<Promise<DeltaResource<T> | null>>(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const resource: DeltaResource = await fetchResourceById(info.id, session, {
+      const resource: DeltaResource<T> = await fetchResourceById(info.id, session, {
         org: info.org,
         project: info.project,
         rev: info.rev ? Number.parseInt(info.rev as string, 10) : undefined,
@@ -39,9 +39,11 @@ export const detailFamily = atomFamily(
   isEqual
 );
 
+export type Contributor = DeltaResource<{ familyName: string; givenName: string }>;
+
 export const contributorsDataFamily = atomFamily(
   (resourceInfo?: ResourceInfo) =>
-    atom<Promise<DeltaResource[] | null>>(async (get) => {
+    atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
       const detail = await get(detailFamily(resourceInfo));
 
@@ -51,7 +53,7 @@ export const contributorsDataFamily = atomFamily(
 
       const contributors = await Promise.all(
         contributions.map((contribution) =>
-          fetchResourceById<DeltaResource>(
+          fetchResourceById<Contributor>(
             contribution?.agent['@id'],
             session,
             pick(info, ['org', 'project'])

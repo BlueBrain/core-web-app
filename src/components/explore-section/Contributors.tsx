@@ -1,20 +1,17 @@
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
-import { DeltaResource } from '@/types/explore-section/resources';
 import { IdLabel } from '@/types/explore-section/fields';
-import { contributorsDataFamily } from '@/state/explore-section/detail-view-atoms';
+import { contributorsDataFamily, Contributor } from '@/state/explore-section/detail-view-atoms';
 import ListField from '@/components/explore-section/Fields/ListField';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useLoadableValue } from '@/hooks/hooks';
+import { getResourceInfoFromPath } from '@/state/explore-section/simulation-campaign';
 
 /**
  * DeltaResource is the raw data interface recived from a reequest to nexus
  * DetailAtomResource used by the detailAtom variable extends DeltaResource using response from formatContributors
  * @param {import("./types/explore-section").DeltaResource} contributor
  */
-export const formatContributors = (contributor: DeltaResource | null): IdLabel => {
+export const formatContributors = (contributor: Contributor | null): IdLabel => {
   if (!contributor) return {};
 
   const { name, familyName, givenName, '@id': id } = contributor;
@@ -29,7 +26,7 @@ export const formatContributors = (contributor: DeltaResource | null): IdLabel =
  * Takes array of contributor Delta resources and returns an array of names
  * @param {import("./types/explore-section").DeltaResource[]} contributors
  */
-export const contributorLabelParser = (contributors: DeltaResource[] | null) => {
+export const contributorLabelParser = (contributors: Contributor[] | null) => {
   if (!contributors) return null;
   const result = contributors
     .map((contributor) => formatContributors(contributor))
@@ -38,11 +35,7 @@ export const contributorLabelParser = (contributors: DeltaResource[] | null) => 
 };
 
 export default function Contributors() {
-  const resourceInfo = useResourceInfoFromPath();
-
-  const contributors = useAtomValue(
-    useMemo(() => loadable(contributorsDataFamily(resourceInfo)), [resourceInfo])
-  );
+  const contributors = useLoadableValue(contributorsDataFamily(getResourceInfoFromPath()));
 
   if (contributors.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;
 

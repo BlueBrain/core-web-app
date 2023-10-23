@@ -32,6 +32,15 @@ import SimulationCampaignStatus from '@/components/explore-section/SimulationCam
 import WeightField from '@/components/explore-section/Fields/WeightField';
 import { Experiment } from '@/types/explore-section/es-experiment';
 
+// TODO: Improve type
+export type DetailViewFnArgs = DeltaResource<{
+  brainConfiguration: {};
+  parameter: { coords: { id: string; value: string }; attrs: { id: string; value: string } };
+  status: string;
+  startedAtTime: string;
+  completedAt: string;
+}>;
+
 export type ExploreFieldConfig = {
   esTerms?: EsTermsConfig;
   title: string;
@@ -40,7 +49,7 @@ export type ExploreFieldConfig = {
   unit?: string;
   render?: {
     listingViewFn?: (value: any, record: any, index: number) => ReactNode | any;
-    detailViewFn?: (resource: DeltaResource) => ReactNode | any;
+    detailViewFn?: (resource: DetailViewFnArgs) => ReactNode | any;
     cardViewFn?: (resource: Experiment) => ReactNode | any;
   };
   vocabulary: {

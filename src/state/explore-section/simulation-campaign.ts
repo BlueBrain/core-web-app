@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { atomFamily, selectAtom } from 'jotai/utils';
 import sessionAtom from '../session';
-import { Simulation, SimulationCampaignResource } from '@/types/explore-section/resources';
+import { DeltaResource, Simulation } from '@/types/explore-section/resources';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 
@@ -30,7 +30,13 @@ export const simulationCampaignExecutionAtom = atom(async (get) => {
 
   const cleanExecutionId = executionId.replace('https://bbp.epfl.ch/neurosciencegraph/data/', '');
 
-  const execution = await fetchResourceById<SimulationCampaignResource>(cleanExecutionId, session, {
+  const execution = await fetchResourceById<
+    DeltaResource<
+      { generated: { '@id': string; type: 'SimulationCampaign' } } & {
+        status: string;
+      }
+    >
+  >(cleanExecutionId, session, {
     org: info.org,
     project: info.project,
     idExpand: false,
@@ -41,6 +47,7 @@ export const simulationCampaignExecutionAtom = atom(async (get) => {
 
 export const simulationCampaignDimensionsAtom = selectAtom(
   detailFamily(getResourceInfoFromPath()),
+  // @ts-ignore TODO: Improve type
   (simCamp) => simCamp?.parameter?.coords
 );
 

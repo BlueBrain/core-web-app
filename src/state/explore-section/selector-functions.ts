@@ -48,7 +48,9 @@ export const semSelectorFn = (detail: DeltaResource | null) => {
   return seriesArray?.find((series) => series.statistic === 'standard error of the mean')?.value;
 };
 
-export const attrsSelectorFn = (detail: DeltaResource | null) => {
+export const attrsSelectorFn = (
+  detail: DeltaResource<{ attrs: { id: string; label: string } }> | null
+) => {
   if (!detail?.attrs) return [];
 
   return Object.keys(detail?.attrs).map((attr) => ({
@@ -57,7 +59,9 @@ export const attrsSelectorFn = (detail: DeltaResource | null) => {
   }));
 };
 
-export const dimensionsSelectorFn = (detail: DeltaResource | null) => {
+export const dimensionsSelectorFn = (
+  detail: DeltaResource<{ coords: { dimension: { id: string; label: string } } }> | null
+) => {
   if (!detail?.coords) return [];
 
   return Object.keys(detail.coords).map((dimension) => ({

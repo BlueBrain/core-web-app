@@ -38,7 +38,7 @@ export default function SimulationCampaignDetailPage() {
       {(detail) => (
         <div>
           <hr />
-          <Simulations resource={detail as SimulationCampaignResource} />
+          <Simulations resource={detail as unknown as SimulationCampaignResource} />
         </div>
       )}
     </Detail>
