@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Spin } from 'antd';
+import { useAtom } from 'jotai';
 import { AnalysisReport, CumulativeAnalysisReportWContrib } from './types';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
 import DimensionSelector from './DimensionSelector';
+import { fetchingCustomAnalysesAtom } from './state';
 import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import {
@@ -21,7 +22,7 @@ export default function CustomAnalysisReport({
   cumulativeReport: CumulativeAnalysisReportWContrib;
 }) {
   const session = useSessionAtomValue();
-  const [fetching, setFetching] = useState(false);
+  const [fetching, setFetching] = useAtom(fetchingCustomAnalysesAtom);
   const [simulations, setSimulations] = useState<Simulation[]>([]);
   const [reports, setReports] = useState<AnalysisReportWithImage[]>([]);
 
@@ -32,7 +33,6 @@ export default function CustomAnalysisReport({
   useEffect(() => {
     (async () => {
       if (!session) return;
-      setFetching(true);
       const fetchedAnalysisReports = await Promise.all(
         (cumulativeReport.hasPart ?? []).map((r) =>
           fetchResourceById<AnalysisReport>(r['@id'], session)
@@ -70,25 +70,14 @@ export default function CustomAnalysisReport({
 
       setFetching(false);
     })();
-  }, [cumulativeReport, session]);
+  }, [cumulativeReport, session, setFetching]);
 
   return (
-    <>
-      {fetching && (
-        <div className="flex justify-center items-center" style={{ height: 200 }}>
-          <Spin />
-        </div>
-      )}
-      {simulations && resource && (
-        <>
-          <DimensionSelector coords={resource.parameter?.coords} />
-          <SimulationsDisplayGrid
-            status="Done"
-            simulations={simulations}
-            analysisReports={reports}
-          />
-        </>
-      )}
-    </>
+    !fetching && (
+      <>
+        <DimensionSelector coords={resource.parameter?.coords} />
+        <SimulationsDisplayGrid status="Done" simulations={simulations} analysisReports={reports} />
+      </>
+    )
   );
 }
