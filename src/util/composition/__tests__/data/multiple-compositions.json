@@ -4,7 +4,7 @@
     "density": "mm^-3"
   },
   "hasPart": {
-    "36": {
+    "http://api.brain-map.org/api/v2/data/Structure/36": {
       "label": "Gustatory areas, layer 1",
       "about": "BrainRegion",
       "hasPart": {
@@ -82,7 +82,7 @@
         }
       }
     },
-    "10": {
+    "http://api.brain-map.org/api/v2/data/Structure/10": {
       "label": "Gustatory areas, layer 2",
       "about": "BrainRegion",
       "hasPart": {
@@ -136,7 +136,7 @@
         }
       }
     },
-    "21": {
+    "http://api.brain-map.org/api/v2/data/Structure/21": {
       "label": "Gustatory areas, layer 2",
       "about": "BrainRegion",
       "hasPart": {

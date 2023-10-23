@@ -43,9 +43,7 @@ export async function fetchExperimentDatasetCountForBrainRegion(
 ) {
   if (!accessToken) throw new Error('Access token should be defined');
 
-  const brainRegionKeywords = descendants.map(
-    (descendant) => `http://api.brain-map.org/api/v2/data/Structure/${descendant.id}`
-  );
+  const brainRegionKeywords = descendants.map((descendant) => descendant.id);
 
   const esQuery = new esb.BoolQuery();
   esQuery.must(esb.termQuery('@type.keyword', experimentUrl));

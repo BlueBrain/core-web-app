@@ -3,6 +3,7 @@ import { selectAtom } from 'jotai/utils';
 import { SetStateAction, useMemo } from 'react';
 import sessionAtom from '@/state/session';
 import { meshDistributionsAtom } from '@/state/brain-regions';
+import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 
 interface AtlasItemType {
   type: 'mesh' | 'pointCloud' | 'nodeSet' | 'cell';
@@ -70,7 +71,7 @@ export const initializeRootMeshAtom = atom(null, async (get, set) => {
   if (!session) return;
   const meshes = await get(meshDistributionsAtom);
   // By convention the root brain region has id = 997
-  const rootMeshContentUrl = meshes?.[997].contentUrl;
+  const rootMeshContentUrl = meshes?.[ROOT_BRAIN_REGION_URI].contentUrl;
 
   if (rootMeshContentUrl) {
     const atlasVizualization = get(atlasVisualizationAtom);

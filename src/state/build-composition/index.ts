@@ -82,15 +82,8 @@ export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>
 
   if (!session || !selectedBrainRegion || !compositionData || !volumes) return null;
   // TODO: the leaf IDS retrieved from BMO are incorrect. Change the implementation to calculate them here
-  const leaves = selectedBrainRegion.leaves
-    ? selectedBrainRegion.leaves
-    : [`http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`];
-  return calculateCompositions(
-    compositionData,
-    `http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion.id}`,
-    leaves,
-    volumes
-  );
+  const leaves = selectedBrainRegion.leaves ? selectedBrainRegion.leaves : [selectedBrainRegion.id];
+  return calculateCompositions(compositionData, selectedBrainRegion.id, leaves, volumes);
 });
 
 export const analysedMTypesAtom = atom<Promise<MModelMenuItem[]>>(async (get) => {
@@ -167,7 +160,7 @@ export const computeAndSetCompositionAtom = atom(
         composition,
         densityOrCount,
         volumes,
-        `http://api.brain-map.org/api/v2/data/Structure/${selectedBrainRegion?.id}`
+        selectedBrainRegion?.id
       );
       set(setUpdatedCompositionAtom, modifiedComposition);
 

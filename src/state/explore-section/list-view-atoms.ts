@@ -20,6 +20,7 @@ import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-sectio
 import { Filter } from '@/components/Filter/types';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
+import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
 
 type DataAtomFamilyScopeType = { experimentTypeName: string };
 
@@ -102,7 +103,9 @@ export const queryAtom = atomFamily(
       const selectedBrainRegion = get(selectedBrainRegionAtom);
       // if a brain region is not selected, selecting by default the brain region with id 8 (Basic cell groups and regions)
       const descendants = await get(
-        getBrainRegionDescendants(selectedBrainRegion?.id ? [selectedBrainRegion.id] : ['8'])
+        getBrainRegionDescendants(
+          selectedBrainRegion?.id ? [selectedBrainRegion.id] : [BASIC_CELL_GROUPS_AND_REGIONS_ID]
+        )
       );
       const descendantIds = descendants?.map(
         (d) => `http://api.brain-map.org/api/v2/data/Structure/${d.id}`

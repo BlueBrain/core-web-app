@@ -14,6 +14,7 @@ import {
 } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 import { useLoadable } from '@/hooks/hooks';
+import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
 
 /**
  * A hook to create a map which provides a list of available in the cell composition m-types
@@ -292,7 +293,10 @@ export function useAreTopLevelNodes() {
       const nUniqParentBrainRegions = new Set(parentBrainRegionIds).size;
 
       // TODO create a constant for the Whole Brain region id, replace all hardcoded occurences across the app.
-      return nUniqParentBrainRegions === 1 && parentBrainRegionIds[0] === '8';
+      return (
+        nUniqParentBrainRegions === 1 &&
+        parentBrainRegionIds[0] === BASIC_CELL_GROUPS_AND_REGIONS_ID
+      );
     },
     [brainRegionByNotationMap]
   );

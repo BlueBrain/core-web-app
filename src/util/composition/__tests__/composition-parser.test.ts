@@ -118,7 +118,8 @@ describe('Add nodes', () => {
 
 describe('Composition Parser unit tests for single region', () => {
   const singleCompId = 'http://api.brain-map.org/api/v2/data/Structure/36';
-  const compToTest = multipleCompositions.hasPart['36'];
+  const compToTest =
+    multipleCompositions.hasPart['http://api.brain-map.org/api/v2/data/Structure/36'];
 
   it('total count is calculated correctly', () => {
     const nodes = {};
@@ -166,14 +167,21 @@ describe('Composition Parser unit tests for single region', () => {
 });
 
 describe('Calculate compositions unit tests', () => {
-  const leafIds = ['36', '10'];
-  const volumes = { '5': 0.75, '36': 0.5, '10': 0.25 };
+  const leafIds = [
+    'http://api.brain-map.org/api/v2/data/Structure/36',
+    'http://api.brain-map.org/api/v2/data/Structure/10',
+  ];
+  const volumes = {
+    'http://api.brain-map.org/api/v2/data/Structure/5': 0.75,
+    'http://api.brain-map.org/api/v2/data/Structure/36': 0.5,
+    'http://api.brain-map.org/api/v2/data/Structure/10': 0.25,
+  };
 
   it('total count is calculated correctly', async () => {
     const { totalComposition } = await calculateCompositions(
       // @ts-ignore
       multipleCompositions,
-      '5',
+      'http://api.brain-map.org/api/v2/data/Structure/5',
       leafIds,
       volumes
     );
@@ -185,7 +193,7 @@ describe('Calculate compositions unit tests', () => {
     const { nodes, links } = await calculateCompositions(
       // @ts-ignore
       multipleCompositions,
-      '5',
+      'http://api.brain-map.org/api/v2/data/Structure/5',
       leafIds,
       volumes
     );

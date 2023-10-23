@@ -18,6 +18,7 @@ import {
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/components/TreeNavItem';
 import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/BrainTree';
+import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
 
 function NavTitle({
   className,
@@ -43,7 +44,7 @@ function NavTitle({
 
   let checkbox = null;
 
-  if (multi && id && id !== '8') {
+  if (multi && id && id !== BASIC_CELL_GROUPS_AND_REGIONS_ID) {
     if (isLeaf) checkbox = <Checkbox checked={selectedBrainRegions.has(id)} onClick={onClick} />;
     else checkbox = <Checkbox checked={checked} indeterminate={indeterminate} onClick={onClick} />;
   }

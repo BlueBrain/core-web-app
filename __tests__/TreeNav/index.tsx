@@ -48,16 +48,32 @@ function TestNavItem({
   );
 }
 
-const pathToCorticalPlate = ['997', '8', '567', '688', '695']; // "695" is Cortical Plate
+const pathToCorticalPlate = [
+  'http://api.brain-map.org/api/v2/data/Structure/997',
+  'http://api.brain-map.org/api/v2/data/Structure/8',
+  'http://api.brain-map.org/api/v2/data/Structure/567',
+  'http://api.brain-map.org/api/v2/data/Structure/688',
+  'http://api.brain-map.org/api/v2/data/Structure/695',
+]; // "695" is Cortical Plate
 // "315" is the ID that corrosponds to Isocortex.
 // In this example, it is attached to the trigger as the data-testid attribute.
-const isocortex = 315;
+const isocortex = 'http://api.brain-map.org/api/v2/data/Structure/315';
 
 describe('The TreeNav implementation details using Brain Regions data', () => {
   test('Expanding the Isocortex nav item', async () => {
     // Context: TreeNav is expanded until Isocortex is rendered and selectable.
     // `value` is a tree, consising of only the expanded nav items.
-    const defaulValue = { '997': { '8': { '567': { '688': { '695': null } } } } }; // "695" is Cortical Plate
+    const defaulValue = {
+      'http://api.brain-map.org/api/v2/data/Structure/997': {
+        'http://api.brain-map.org/api/v2/data/Structure/8': {
+          'http://api.brain-map.org/api/v2/data/Structure/567': {
+            'http://api.brain-map.org/api/v2/data/Structure/688': {
+              'http://api.brain-map.org/api/v2/data/Structure/695': null,
+            },
+          },
+        },
+      },
+    }; // "695" is Cortical Plate
 
     // This mock function takes the place of brainRegionsNavValue or meTypeNavValue.
     const mockCallback = jest.fn((value: string[], path: string[]) => ({
@@ -78,7 +94,7 @@ describe('The TreeNav implementation details using Brain Regions data', () => {
     fireEvent.click(screen.getByTestId(isocortex));
 
     expect(mockCallback.mock.results[0].value).toStrictEqual({
-      value: ['315'], // Isocortex
+      value: ['http://api.brain-map.org/api/v2/data/Structure/315'], // Isocortex
       path: pathToCorticalPlate,
     });
   });
