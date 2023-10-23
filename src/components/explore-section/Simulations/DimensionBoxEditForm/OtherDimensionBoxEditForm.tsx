@@ -9,8 +9,6 @@ import { simulationCampaignDimensionsAtom } from '@/state/explore-section/simula
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
 import selectorTheme from '@/components/explore-section/Simulations/DimensionBoxEditForm/antd-theme';
 import { useUnwrappedValue } from '@/hooks/hooks';
-import { detailFamily } from '@/state/explore-section/detail-view-atoms';
-import { Campaign } from '@/types/explore-section/resources';
 
 export default function OtherDimensionBoxEditForm({
   dimension,

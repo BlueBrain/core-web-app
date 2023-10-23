@@ -14,7 +14,6 @@ import {
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { getResourceInfoFromPath } from '@/state/explore-section/simulation-campaign';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
-import { pathToResource } from '@/util/explore-section/detail-view';
 
 export default function CustomAnalysisReport({
   cumulativeReport,

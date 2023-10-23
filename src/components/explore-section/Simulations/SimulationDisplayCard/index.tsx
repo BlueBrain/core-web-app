@@ -35,8 +35,6 @@ export default function SimulationDisplayCard({
     );
   }
 
-  console.log(matchingReport);
-
   return matchingReport ? (
     <AnalysisReportImage
       title={simulation.title}
