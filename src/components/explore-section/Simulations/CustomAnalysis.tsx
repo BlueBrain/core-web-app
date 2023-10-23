@@ -4,10 +4,8 @@ import JSZip from 'jszip';
 import { Session } from 'next-auth';
 import { uniqBy } from 'lodash/fp';
 import { LoadingOutlined } from '@ant-design/icons';
-import { useAtomValue, useSetAtom } from 'jotai';
 import CustomAnalysisReport from './CustomAnalysisReport';
 import { CumulativeAnalysisReportWContrib, Contribution, CumulativeAnalysisReport } from './types';
-import { fetchingCustomAnalysesAtom } from './state';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
@@ -24,11 +22,10 @@ export default function CustomAnalysis({
   resource: SimulationCampaignResource;
   analysisId: string;
 }) {
-  const reports = useCumulativeAnalysisReports(resource);
+  const [reports, fetching] = useCumulativeAnalysisReports(resource);
   const [loading, setLoading] = useState(false);
   const session = useSessionAtomValue();
   const [analyses] = useAnalyses();
-  const fetching = useAtomValue(fetchingCustomAnalysesAtom);
 
   const analysesById = useMemo(
     () =>
@@ -49,7 +46,7 @@ export default function CustomAnalysis({
           <Spin indicator={<LoadingOutlined />} />
         </div>
       )}
-      {false && !reports.length && !fetching && <span>Running Analysis ... </span>}
+      {/* {false && !reports.length && !fetching && <span>Running Analysis ... </span>} */}
 
       {!report && !fetching && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
@@ -68,15 +65,18 @@ export default function CustomAnalysis({
   );
 }
 
-function useCumulativeAnalysisReports(simCampaign: SimulationCampaignResource): {
-  [analysisId: string]: CumulativeAnalysisReportWContrib;
-} {
+function useCumulativeAnalysisReports(simCampaign: SimulationCampaignResource): [
+  {
+    [analysisId: string]: CumulativeAnalysisReportWContrib;
+  },
+  boolean
+] {
   const session = useSessionAtomValue();
   const [reports, setReports] = useState<{
     [analysisId: string]: CumulativeAnalysisReportWContrib;
   }>({});
 
-  const setFetching = useSetAtom(fetchingCustomAnalysesAtom);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     async function fetchIncoming() {
@@ -128,13 +128,12 @@ function useCumulativeAnalysisReports(simCampaign: SimulationCampaignResource): 
         {}
       );
 
-      if (uniqueReports.length === 0) setFetching(false);
-
       setReports(reportsByAnalysisId);
+      setFetching(false);
     }
     fetchIncoming();
   }, [simCampaign, session, setFetching]);
-  return reports;
+  return [reports, fetching];
 }
 
 async function launchAnalysis(
