@@ -69,6 +69,7 @@ type MtypeWorkflowConfigEntry = {
 
 type BrainRegionWorkflowConfigEntry = {
   label: string;
+  about: string;
   hasPart: Record<string, MtypeWorkflowConfigEntry>;
 };
 
@@ -175,7 +176,7 @@ export interface CellComposition extends Entity {
   cellCompositionSummary: {
     '@id': string;
     '@type': 'CellCompositionSummary';
-  }[];
+  };
   cellCompositionVolume: {
     '@id': string;
     '@type': 'CellCompositionVolume';
@@ -396,15 +397,27 @@ export interface RulesResource extends ResourceMetadata, Entity {
 
 export type TypesResource = RulesResource;
 export interface SynapseConfigPayload {
-  configuration: {
+  defaults: {
     synapse_properties: {
       id: string;
-      type: ['Entity', 'Dataset', 'SynapticParameterAssignment'];
+      type: ['Dataset', 'SynapticParameterAssignment'];
       rev: number;
     };
     synapses_classification: {
       id: string;
-      type: ['Entity', 'Dataset', 'SynapticParameter'];
+      type: ['Dataset', 'SynapticParameter'];
+      rev: number;
+    };
+  };
+  configuration: {
+    synapse_properties: {
+      id: string;
+      type: ['Dataset', 'SynapticParameterAssignment'];
+      rev: number;
+    };
+    synapses_classification: {
+      id: string;
+      type: ['Dataset', 'SynapticParameter'];
       rev: number;
     };
   };
@@ -425,7 +438,7 @@ export interface MacroConnectomeConfig extends Entity {
 export interface MacroConnectomeConfigResource extends ResourceMetadata, MacroConnectomeConfig {}
 
 export interface MacroConnectomeConfigPayload {
-  bases: {
+  initial: {
     connection_strength: {
       id: string;
       type: ['Entity', 'Dataset', 'WholeBrainConnectomeStrength'];
