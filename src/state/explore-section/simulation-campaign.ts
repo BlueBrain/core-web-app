@@ -69,8 +69,6 @@ export const simulationsAtom = atom(async (get) => {
   })) as Simulation[];
 });
 
-export const refetchReportCounterAtom = atom(0);
-
 // Caches report images so that they're not refetched again when refetching the reports
 const reportImageFamily = atomFamily((contentUrl: string | undefined) =>
   atom(async (get) => {
@@ -83,8 +81,6 @@ const reportImageFamily = atomFamily((contentUrl: string | undefined) =>
 export const analysisReportsAtom = atom(async (get) => {
   const session = get(sessionAtom);
   const simulations = await get(simulationsAtom);
-
-  get(refetchReportCounterAtom);
 
   const fetchedReports =
     session &&

@@ -15,6 +15,7 @@ export function pathToResource(
 ): ResourceInfo | undefined {
   if (path) {
     const parts = path.split('/');
+    if (parts.length < 4) return;
 
     const key = from64(parts[parts.length - 1]);
 

@@ -1,57 +1,58 @@
 import { useEffect, useMemo, useState } from 'react';
-import { notification } from 'antd';
+import { Spin, notification } from 'antd';
 import JSZip from 'jszip';
 import { Session } from 'next-auth';
+import { uniqBy } from 'lodash/fp';
+import CustomAnalysisReport from './CustomAnalysisReport';
+import { CumulativeAnalysisReportWContrib, Contribution, CumulativeAnalysisReport } from './types';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createHeaders } from '@/util/utils';
-import {
-  createWorkflowConfigResource,
-  fetchFileByUrl,
-  fetchResourceById,
-  updateResource,
-} from '@/api/nexus';
-import { Entity, WorkflowExecution } from '@/types/nexus';
+import { createWorkflowConfigResource, fetchFileByUrl, fetchResourceById } from '@/api/nexus';
+import { WorkflowExecution } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
 import { launchWorkflowTask } from '@/services/bbp-workflow';
 
 export default function CustomAnalysis({
   resource,
-  selectedDisplay,
+  analysisId,
 }: {
   resource: SimulationCampaignResource;
-  selectedDisplay: string;
+  analysisId: string;
 }) {
-  const [outputs, fetchingOutputs] = useAnalysisOutputs(resource);
+  const [reports, fetchingReports] = useCumulativeAnalysisReports(resource);
   const [loading, setLoading] = useState(false);
   const session = useSessionAtomValue();
   const [analyses] = useAnalyses();
 
   const analysesById = useMemo(
     () =>
-      analyses.reduce((acc, item) => {
+      analyses.reduce((acc: { [id: string]: Analysis }, item) => {
         acc[item['@id']] = item;
         return acc;
-      }, {} as { [id: string]: Analysis }),
+      }, {}),
     [analyses]
   );
 
-  console.log('outputs', outputs);
-  console.log('fetchingOutputs', fetchingOutputs);
+  const report: CumulativeAnalysisReportWContrib | undefined = reports[analysisId];
 
   return (
     <>
-      {false && !outputs.length && !fetchingOutputs && <span>Running Analysis ... </span>}
+      {report && <CustomAnalysisReport cumulativeReport={report} />}
+      {fetchingReports && (
+        <div className="flex justify-center items-center" style={{ height: 200 }}>
+          <Spin />
+        </div>
+      )}
+      {false && !reports.length && !fetchingReports && <span>Running Analysis ... </span>}
 
-      {!outputs.length && !fetchingOutputs && (
+      {!reports.length && !fetchingReports && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
           <button
             type="button"
             className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
-            onClick={() =>
-              launchAnalysis(resource, analysesById[selectedDisplay], setLoading, session)
-            }
+            onClick={() => launchAnalysis(resource, analysesById[analysisId], setLoading, session)}
             disabled={loading}
           >
             {!loading && <span>Launch Analysis</span>}
@@ -59,67 +60,79 @@ export default function CustomAnalysis({
           </button>
         </div>
       )}
-
-      {!!outputs.length && (
-        <div>
-          {outputs.map((o, i) => {
-            const src = URL.createObjectURL(o);
-            /* eslint-disable-next-line @next/next/no-img-element, react/no-array-index-key */
-            return <img key={i} alt="analysis" src={src} width={300} />;
-          })}
-        </div>
-      )}
     </>
   );
 }
 
-function useAnalysisOutputs(simCampaign: SimulationCampaignResource): [Blob[], boolean] {
+function useCumulativeAnalysisReports(simCampaign: SimulationCampaignResource): [
+  {
+    [analysisId: string]: CumulativeAnalysisReportWContrib;
+  },
+  boolean
+] {
   const session = useSessionAtomValue();
-  const [outputs, setOutputs] = useState<Blob[]>([]);
+  const [reports, setReports] = useState<{
+    [analysisId: string]: CumulativeAnalysisReportWContrib;
+  }>({});
   const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     async function fetchIncoming() {
       if (!session) return;
       setFetching(true);
-      const res: { _results: { '@id': string; '@type': 'string'; _deprecated: boolean }[] } =
+      const res: { _results: { '@id': string; '@type': string; _deprecated: boolean }[] } =
         await fetch(simCampaign._incoming, {
           headers: createHeaders(session.accessToken),
         }).then((r) => r.json());
 
-      const outputLinks = res._results.filter(
+      const cumulativeAnalysisReportLinks = res._results.filter(
         (l) => l['@type'].includes('CumulativeAnalysisReport') && l._deprecated === false
       );
 
-      // Todo find sourceCode
-      setFetching(false);
-
-      return;
-
-      if (!outputLink) {
-        setFetching(false);
-        return;
-      }
-
-      const outputUrls = (
-        await fetchResourceById<{ hasPart: Entity[] }>(outputLink['@id'], session)
-      ).hasPart.map((id) => id['@id']);
-
-      const outputEntities = await Promise.all(
-        outputUrls.map((url) =>
-          fetchResourceById<Entity & { distribution: { contentUrl: string } }>(url, session)
-        )
+      // Fetch CumulativeAnalysis reports
+      const cumulativeAnalysisReports = await Promise.all<CumulativeAnalysisReport>(
+        cumulativeAnalysisReportLinks.map((l) => fetchResourceById(l['@id'], session))
       );
 
-      const outputImageUrls = outputEntities.map((o) => o.distribution.contentUrl);
-      const imagesRes = await Promise.all(outputImageUrls.map((u) => fetchFileByUrl(u, session)));
-      const images = await Promise.all(imagesRes.map((r) => r.blob()));
+      // Fetch the contribution (containing AnalysisSoftwareSourceCode)
+      const cumulativeReportsWithContrib = await Promise.all(
+        cumulativeAnalysisReports.map(async (cr) => {
+          const contribution: Contribution = await fetchResourceById(
+            cr.contribution['@id'],
+            session
+          );
+          return { ...cr, contribution };
+        })
+      );
+
+      // Newest first
+      cumulativeReportsWithContrib.sort((a, b) => {
+        const dateA = new Date(a._createdAt);
+        const dateB = new Date(b._createdAt);
+        // @ts-ignore
+        return dateB - dateA;
+      });
+
+      // Only the latest CumulativeAnalysisReport for each AnalysisSoftwareSource
+      const uniqueReports = uniqBy(
+        (cr) => cr.contribution.agent['@id'],
+        cumulativeReportsWithContrib
+      );
+
+      const reportsByAnalysisId = uniqueReports.reduce(
+        (acc: { [id: string]: CumulativeAnalysisReportWContrib }, report) => {
+          acc[report.contribution.agent['@id']] = report;
+          return acc;
+        },
+        {}
+      );
+
+      setReports(reportsByAnalysisId);
       setFetching(false);
-      setOutputs(images);
     }
     fetchIncoming();
   }, [simCampaign, session]);
-  return [outputs, fetching];
+  return [reports, fetching];
 }
 
 async function launchAnalysis(

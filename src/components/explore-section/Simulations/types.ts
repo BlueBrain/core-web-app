@@ -65,3 +65,33 @@ export type Dimension = {
   id: string;
   value: DimensionValue | DimensionRange;
 };
+
+interface AnalysisReportLink {
+  '@id': string;
+  '@type': 'AnalysisReport';
+}
+
+interface ContributionLink {
+  '@id': string;
+  '@type': 'Contribution';
+}
+
+export interface Contribution extends ContributionLink {
+  agent: { '@id': string; type: 'AnalysisSoftwareSourceCode' };
+}
+export interface CumulativeAnalysisReport {
+  '@id': string;
+  type: 'CumulativeAnalysisReport';
+  hasPart?: AnalysisReportLink[];
+  contribution: ContributionLink;
+  _createdAt: string;
+}
+
+export interface CumulativeAnalysisReportWContrib extends CumulativeAnalysisReport {
+  contribution: Contribution;
+}
+
+export interface AnalysisReport extends AnalysisReportLink {
+  derivation: { entity: { '@id': string; type: 'Simulation' } };
+  distribution: { contentUrl: string };
+}

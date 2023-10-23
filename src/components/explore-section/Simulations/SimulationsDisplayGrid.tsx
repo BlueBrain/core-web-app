@@ -3,7 +3,6 @@ import { Col, Row } from 'antd';
 import range from 'lodash/range';
 import { useAtomValue } from 'jotai';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { simulationsAtom } from '@/state/explore-section/simulation-campaign';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationDisplayCard from '@/components/explore-section/Simulations/SimulationDisplayCard';
 import {
@@ -14,11 +13,16 @@ import {
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
+import { Simulation } from '@/types/explore-section/resources';
+import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { useUnwrappedValue } from '@/hooks/hooks';
+import { analysisReportsAtom } from '@/state/explore-section/simulation-campaign';
 
 type SimulationDisplayGridProps = {
-  display: string;
+  display?: string;
   status: string;
+  simulations: Simulation[];
+  analysisReports?: AnalysisReportWithImage[];
 };
 
 type DimensionHeaderProps = {
@@ -51,9 +55,13 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
   );
 }
 
-export default function SimulationsDisplayGrid({ display, status }: SimulationDisplayGridProps) {
-  const simulations = useUnwrappedValue(simulationsAtom);
-
+export default function SimulationsDisplayGrid({
+  display,
+  status,
+  simulations,
+  analysisReports,
+}: SimulationDisplayGridProps) {
+  const analysisReportsES = useUnwrappedValue(analysisReportsAtom);
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);
@@ -132,15 +140,16 @@ export default function SimulationsDisplayGrid({ display, status }: SimulationDi
             const simulation =
               simulations &&
               findSimulation(x, y, xDimension, yDimension, simulations, status, otherDimensions);
+
             return (
               <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
                 {simulation ? (
                   <SimulationDisplayCard
-                    key={simulation.id} // use key to not re-render the component and not refetch the reports if simulation hasn't changed
                     display={display}
                     simulation={simulation}
                     xDimension={xDimension.id}
                     yDimension={yDimension.id}
+                    analysisReports={analysisReports || analysisReportsES}
                   />
                 ) : (
                   <NoSimulationFoundCard />

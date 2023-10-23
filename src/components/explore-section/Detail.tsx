@@ -20,10 +20,10 @@ export default function Detail({
   children?: (detail: DetailViewFnArgs) => ReactNode;
 }) {
   const path = usePathname();
-
   const detail = useLoadableValue(
     detailFamily(getResourceInfoFromPath())
   ) as Loadable<DetailViewFnArgs>;
+
   if (detail.state === 'loading') {
     return <CentralLoadingSpinner />;
   }

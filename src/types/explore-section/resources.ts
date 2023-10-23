@@ -17,7 +17,6 @@ import {
   NValueEntity,
   ImageEntity,
   SubjectAge,
-  // Dimension,
   TotalHits,
   IdLabel,
   Series,

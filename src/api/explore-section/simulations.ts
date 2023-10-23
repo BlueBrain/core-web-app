@@ -48,7 +48,7 @@ export default function findSimulation(
     if (
       simulation &&
       simulation.status &&
-      (simulation.status.toLowerCase() === status || status === 'all') &&
+      (simulation.status.toLowerCase() === status.toLowerCase() || status === 'all') &&
       simulationIncludesAllDimensions(simulation, otherDimensions)
     ) {
       return simulation;

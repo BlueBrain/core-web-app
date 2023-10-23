@@ -22,7 +22,6 @@ import usePathname from '@/hooks/pathname';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
-  console.log(resource)
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
   const path = usePathname();
@@ -75,14 +74,18 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           </Link>
         </div>
       </div>
-      {!isCustom && (
+      {!isCustom && simulations && (
         <>
           <DimensionSelector coords={resource.parameter?.coords} />
-          <SimulationsDisplayGrid display={selectedDisplay} status={showStatus} />
+          <SimulationsDisplayGrid
+            display={selectedDisplay}
+            status={showStatus}
+            simulations={simulations}
+          />
         </>
       )}
 
-      {isCustom && <CustomAnalysis resource={resource} selectedDisplay={selectedDisplay} />}
+      {isCustom && <CustomAnalysis resource={resource} analysisId={selectedDisplay} />}
     </div>
   );
 }

@@ -1,18 +1,17 @@
-import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { useMemo } from 'react';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationCard from '@/components/explore-section/Simulations/SimulationDisplayCard/SimulationCard';
 import { Simulation } from '@/types/explore-section/resources';
 import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
-import { analysisReportsAtom } from '@/state/explore-section/simulation-campaign';
-import { useLoadableValue } from '@/hooks/hooks';
+import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 
 type SimulationDisplayCardProps = {
-  display: string;
+  display?: string;
   simulation: Simulation;
   xDimension: string;
   yDimension: string;
+  analysisReports?: AnalysisReportWithImage[];
 };
 
 export default function SimulationDisplayCard({
@@ -20,34 +19,32 @@ export default function SimulationDisplayCard({
   simulation,
   xDimension,
   yDimension,
+  analysisReports,
 }: SimulationDisplayCardProps) {
-  const analysisReports = useLoadableValue(analysisReportsAtom);
-
-  const blobData = useMemo(() => {
-    if (analysisReports.state !== 'hasData') return;
-
-    return analysisReports.data?.find(
-      ({ simulation: id, name: type }) => id === simulation.id && type === display
-    );
-  }, [analysisReports, display, simulation.id]);
+  const matchingReport = useMemo(() => {
+    if (display)
+      return analysisReports?.find(
+        (r) => r.simulation === simulation.id && r.name === display // Reports from Sim Campaign
+      );
+    return analysisReports?.find((report) => report.simulation === simulation.id); // Reports from Custom Analysis
+  }, [display, simulation.id, analysisReports]);
 
   if (display === 'status') {
     return (
       <SimulationCard simulation={simulation} xDimension={xDimension} yDimension={yDimension} />
     );
   }
-  if (analysisReports.state === 'loading') {
-    return <Spin indicator={<LoadingOutlined />} />;
-  }
 
-  return blobData ? (
+  console.log(matchingReport);
+
+  return matchingReport ? (
     <AnalysisReportImage
       title={simulation.title}
       id={simulation.id}
       project={simulation.project}
-      blob={blobData.blob}
-      createdAt={blobData.createdAt}
-      createdBy={blobData.createdBy}
+      blob={matchingReport.blob}
+      createdAt={matchingReport.createdAt || matchingReport._createdAt}
+      createdBy={matchingReport.createdBy || matchingReport._createdBy}
     />
   ) : (
     <CenteredMessage
