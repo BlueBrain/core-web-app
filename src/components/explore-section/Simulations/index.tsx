@@ -28,7 +28,6 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   const dimensions = useAtomValue(dimensionsAtom);
   const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
   const simulations = useUnwrappedValue(simulationsAtom);
-  const setDimensions = useSetAtom(dimensionsAtom);
   const [analyses] = useAnalyses();
 
   const isCustom = useMemo(
@@ -40,7 +39,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
     if (dimensions?.length === 0) {
       setDefaultDimensions();
     }
-  }, [dimensions, resource, setDefaultDimensions, setDimensions]);
+  }, [dimensions, resource, setDefaultDimensions]);
 
   return (
     <div className="flex flex-col gap-4 mt-4">
