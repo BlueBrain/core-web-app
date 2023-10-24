@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState, useMemo, ReactNode, Suspense } from 'react';
+import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
@@ -17,6 +18,7 @@ import { analysedCompositionAtom, compositionAtom } from '@/state/build-composit
 import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
+import { toolBarAtom } from '@/state/build-section/layout';
 
 function CellPosition() {
   return (
@@ -152,12 +154,14 @@ function CellDensity() {
     resetComposition();
   }, [resetComposition]);
 
+  const toolBar = useAtomValue(toolBarAtom);
+
   return (
     <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
-      <DensityChart />
-      <div className="flex justify-between align-center w-full">
-        <CellDensityToolbar onReset={handleReset} />
-      </div>
+      <>
+        <DensityChart />
+        {!!toolBar && createPortal(<CellDensityToolbar onReset={handleReset} />, toolBar)}
+      </>
     </ErrorBoundary>
   );
 }
