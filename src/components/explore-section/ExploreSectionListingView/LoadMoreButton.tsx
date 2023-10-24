@@ -5,6 +5,7 @@ import { useAtomValue, useAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { totalAtom, pageSizeAtom } from '@/state/explore-section/list-view-atoms';
 import { classNames } from '@/util/utils';
+import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 
 const antIcon = <LoadingOutlined style={{ float: 'left', fontSize: 24 }} spin />;
 
@@ -23,11 +24,16 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 
 export default function LoadMoreButton({
   experimentTypeName,
+  brainRegionSource,
 }: HTMLProps<HTMLButtonElement> & {
   experimentTypeName: string;
+  brainRegionSource: ExploreDataBrainRegionSource;
 }) {
   const total = useAtomValue(
-    useMemo(() => loadable(totalAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(
+      () => loadable(totalAtom({ experimentTypeName, brainRegionSource })),
+      [brainRegionSource, experimentTypeName]
+    )
   );
 
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);

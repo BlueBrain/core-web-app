@@ -9,6 +9,7 @@ export default function EphysPage() {
       enableDownload
       title="Neuron electrophysiology"
       experimentTypeName={ELECTRO_PHYSIOLOGY}
+      brainRegionSource="visible"
     />
   );
 }
