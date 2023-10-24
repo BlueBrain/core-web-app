@@ -22,7 +22,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
   useAuth(true);
 
   return (
-    <div className="h-screen grid grid-cols-[min-content_min-content_auto] grid-rows-1 ">
+    <div className="h-screen grid grid-cols-[min-content_min-content_auto] grid-rows-1">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <Sidebar />
       </ErrorBoundary>
