@@ -2,7 +2,6 @@ import { Project } from './es-common';
 import { DerivationResource, FileDistribution } from './es-properties';
 import { DateISOString } from '@/types/nexus/common';
 
-// TODO: Consistent createdBy, createdAt fields
 export type AnalysisReport = {
   '@id': string;
   '@type': string;
