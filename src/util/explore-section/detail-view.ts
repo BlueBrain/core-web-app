@@ -12,10 +12,10 @@ import { Project } from '@/types/explore-section/es-common';
 export function pathToResource(
   path: string | null | undefined,
   revision?: string | null
-): ResourceInfo | undefined {
-  if (path) {
+): ResourceInfo {
+  try {
+    // @ts-expect-error
     const parts = path.split('/');
-    if (parts.length < 4) return;
 
     const key = from64(parts[parts.length - 1]);
 
@@ -31,8 +31,9 @@ export function pathToResource(
       project,
       rev: revision ? Number.parseInt(revision, 10) : undefined,
     };
+  } catch {
+    throw new Error('Invalid path');
   }
-  return undefined;
 }
 
 /**

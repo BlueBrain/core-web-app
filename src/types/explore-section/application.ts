@@ -86,5 +86,5 @@ export type ResourceInfo = {
   id: string;
   project: string;
   org: string;
-  rev?: string | number;
+  rev?: number;
 };
