@@ -10,7 +10,7 @@ import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import usePathname from '@/hooks/pathname';
 import { DetailType } from '@/constants/explore-section/explore-fields-config';
 import { useLoadableValue } from '@/hooks/hooks';
-import { getResourceInfoFromPath } from '@/state/explore-section/simulation-campaign';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function Detail({
   fields,
@@ -20,7 +20,8 @@ export default function Detail({
   children?: (detail: DetailType) => ReactNode;
 }) {
   const path = usePathname();
-  const detail = useLoadableValue(detailFamily(getResourceInfoFromPath())) as Loadable<DetailType>;
+  const resourceInfo = useResourceInfoFromPath();
+  const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<DetailType>;
 
   if (detail.state === 'loading') {
     return <CentralLoadingSpinner />;

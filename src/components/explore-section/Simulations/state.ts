@@ -8,7 +8,7 @@ import {
 import { AxesState } from '@/types/explore-section/fields';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
-import { getResourceInfoFromPath } from '@/state/explore-section/simulation-campaign';
+import { ResourceInfo } from '@/types/explore-section/application';
 
 // Dimensions atoms
 
@@ -27,17 +27,18 @@ function buildDefaultDimensions(resource: SimulationCampaignResource) {
 
 export const dimensionsAtom = atom<Dimension[] | null>([]);
 
-export const initializeDimensionsAtom = atom(null, async (get, set) => {
-  const resource = await get(detailFamily(getResourceInfoFromPath()));
+export const getInitializeDimensionsAtom = (resourceInfo: ResourceInfo) =>
+  atom(null, async (get, set) => {
+    const resource = await get(detailFamily(resourceInfo));
 
-  if (resource) {
-    const defaultDimensions = buildDefaultDimensions(resource as SimulationCampaignResource);
+    if (resource) {
+      const defaultDimensions = buildDefaultDimensions(resource as SimulationCampaignResource);
 
-    set(dimensionsAtom, defaultDimensions);
-  }
+      set(dimensionsAtom, defaultDimensions);
+    }
 
-  return undefined;
-});
+    return undefined;
+  });
 
 export const modifyDimensionValue = atom<null, [string, DimensionValue | DimensionRange], void>(
   null,

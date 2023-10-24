@@ -35,7 +35,7 @@ export default function SimulationDisplayCard({
     );
   }
 
-  return matchingReport ? (
+  return matchingReport?.blob ? (
     <AnalysisReportImage
       title={simulation.title}
       id={simulation.id}

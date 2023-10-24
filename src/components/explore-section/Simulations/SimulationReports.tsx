@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import ImageReport from './ImageReport';
-import { analysisReportsAtom } from '@/state/explore-section/simulation-campaign';
+import { getAnalysisReportsAtom } from '@/state/explore-section/simulation-campaign';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { useUnwrappedValue } from '@/hooks/hooks';
 
 export default function SimulationReports() {
   const resourceInfo = useResourceInfoFromPath();
-  const reports = useUnwrappedValue(analysisReportsAtom);
+  const reports = useUnwrappedValue(getAnalysisReportsAtom(resourceInfo));
   const reportImageFiles = useMemo(
     () => reports?.filter((r) => r.simulation === resourceInfo?.id),
     [reports, resourceInfo?.id]
@@ -23,9 +23,12 @@ export default function SimulationReports() {
         </div>
 
         <div className="grid grid-cols-3 mt-4">
-          {reportImageFiles?.map(({ blob, name }) => (
-            <ImageReport key={name} imageSource={URL.createObjectURL(blob)} title={name} />
-          ))}
+          {reportImageFiles?.map(
+            ({ blob, name }) =>
+              blob && (
+                <ImageReport key={name} imageSource={URL.createObjectURL(blob)} title={name} />
+              )
+          )}
         </div>
       </div>
     );

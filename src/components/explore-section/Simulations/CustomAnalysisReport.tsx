@@ -8,11 +8,9 @@ import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
-import {
-  analysisReportsAtom,
-  getResourceInfoFromPath,
-} from '@/state/explore-section/simulation-campaign';
+import { getAnalysisReportsAtom } from '@/state/explore-section/simulation-campaign';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function CustomAnalysisReport({
   cumulativeReport,
@@ -20,11 +18,12 @@ export default function CustomAnalysisReport({
   cumulativeReport: CumulativeAnalysisReportWContrib;
 }) {
   const session = useSessionAtomValue();
+  const resourceInfo = useResourceInfoFromPath();
   const [fetching, setFetching] = useState(true);
   const [customReports, setCustomReports] = useState<AnalysisReportWithImage[]>([]);
-  const analysisReports = useUnwrappedValue(analysisReportsAtom);
+  const analysisReports = useUnwrappedValue(getAnalysisReportsAtom(resourceInfo));
 
-  const resource = useUnwrappedValue(detailFamily(getResourceInfoFromPath())) as
+  const resource = useUnwrappedValue(detailFamily(resourceInfo)) as
     | SimulationCampaignResource
     | undefined;
 

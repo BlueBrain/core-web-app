@@ -9,9 +9,9 @@ import DimensionSelector from '@/components/explore-section/Simulations/Dimensio
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
 import {
   dimensionsAtom,
-  initializeDimensionsAtom,
+  getInitializeDimensionsAtom,
 } from '@/components/explore-section/Simulations/state';
-import { simulationsAtom } from '@/state/explore-section/simulation-campaign';
+import { getSimulationsAtom } from '@/state/explore-section/simulation-campaign';
 import SimulationOptionsDropdown from '@/components/explore-section/Simulations/DisplayDropdown';
 import {
   displayOptions,
@@ -20,14 +20,16 @@ import {
 import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
 import usePathname from '@/hooks/pathname';
 import { useUnwrappedValue } from '@/hooks/hooks';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
   const path = usePathname();
   const dimensions = useAtomValue(dimensionsAtom);
-  const setDefaultDimensions = useSetAtom(initializeDimensionsAtom);
-  const simulations = useUnwrappedValue(simulationsAtom);
+  const resourceInfo = useResourceInfoFromPath();
+  const setDefaultDimensions = useSetAtom(getInitializeDimensionsAtom(resourceInfo));
+  const simulations = useUnwrappedValue(getSimulationsAtom(resourceInfo));
   const [analyses] = useAnalyses();
 
   const isCustom = useMemo(

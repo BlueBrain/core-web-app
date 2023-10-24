@@ -4,7 +4,7 @@ import { IdLabel } from '@/types/explore-section/fields';
 import { contributorsDataFamily, Contributor } from '@/state/explore-section/detail-view-atoms';
 import ListField from '@/components/explore-section/Fields/ListField';
 import { useLoadableValue } from '@/hooks/hooks';
-import { getResourceInfoFromPath } from '@/state/explore-section/simulation-campaign';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 /**
  * DeltaResource is the raw data interface recived from a reequest to nexus
@@ -35,7 +35,8 @@ export const contributorLabelParser = (contributors: Contributor[] | null) => {
 };
 
 export default function Contributors() {
-  const contributors = useLoadableValue(contributorsDataFamily(getResourceInfoFromPath()));
+  const resourceInfo = useResourceInfoFromPath();
+  const contributors = useLoadableValue(contributorsDataFamily(resourceInfo));
 
   if (contributors.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;
 

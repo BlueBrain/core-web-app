@@ -1,5 +1,3 @@
-'use client';
-
 import { atom } from 'jotai';
 import { atomFamily, selectAtom } from 'jotai/utils';
 import sessionAtom from '../session';
@@ -45,7 +43,7 @@ export const getSimulationCampaignExecutionAtom = (info: ResourceInfo) =>
     return execution;
   });
 
-export const simulationCampaignDimensionsAtom = (info: ResourceInfo) =>
+export const getSimCampaignDimensionsAtom = (info: ResourceInfo) =>
   selectAtom(
     detailFamily(info),
     // @ts-ignore TODO: Improve type
@@ -78,7 +76,7 @@ const reportImageFamily = atomFamily((contentUrl: string) =>
   })
 );
 
-export const analysisReportsAtom = (info: ResourceInfo) =>
+export const getAnalysisReportsAtom = (info: ResourceInfo) =>
   atom(async (get) => {
     const session = get(ensureSessionAtom);
     const simulations = await get(getSimulationsAtom(info));
@@ -100,7 +98,7 @@ export const analysisReportsAtom = (info: ResourceInfo) =>
         simulation: report.derivation.find(
           ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
         )?.identifier,
-      } as AnalysisReportWithImage | undefined;
+      } as AnalysisReportWithImage;
     });
 
     return reportsWithImage && (await Promise.all(reportsWithImage));

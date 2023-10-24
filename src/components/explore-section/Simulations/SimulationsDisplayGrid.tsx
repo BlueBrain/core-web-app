@@ -15,7 +15,11 @@ import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { useUnwrappedValue } from '@/hooks/hooks';
-import { analysisReportsAtom, simulationsAtom } from '@/state/explore-section/simulation-campaign';
+import {
+  getAnalysisReportsAtom,
+  getSimulationsAtom,
+} from '@/state/explore-section/simulation-campaign';
+import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
 type SimulationDisplayGridProps = {
   display?: string;
@@ -58,8 +62,9 @@ export default function SimulationsDisplayGrid({
   status,
   customAnalysisReports,
 }: SimulationDisplayGridProps) {
-  const simulations = useUnwrappedValue(simulationsAtom);
-  const analysisReports = useUnwrappedValue(analysisReportsAtom);
+  const resourceInfo = useResourceInfoFromPath();
+  const simulations = useUnwrappedValue(getSimulationsAtom(resourceInfo));
+  const analysisReports = useUnwrappedValue(getAnalysisReportsAtom(resourceInfo));
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);

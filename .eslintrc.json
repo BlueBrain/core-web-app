@@ -51,6 +51,7 @@
     "no-restricted-exports": "off",
     "consistent-return": "off",
     "@typescript-eslint/return-await": "off",
-    "arrow-body-style": "off"
+    "arrow-body-style": "off",
+    "prefer-regex-literals": "off"
   }
 }
