@@ -107,9 +107,7 @@ export const queryAtom = atomFamily(
           selectedBrainRegion?.id ? [selectedBrainRegion.id] : [BASIC_CELL_GROUPS_AND_REGIONS_ID]
         )
       );
-      const descendantIds = descendants?.map(
-        (d) => `http://api.brain-map.org/api/v2/data/Structure/${d.id}`
-      );
+      const descendantIds = descendants?.map((d) => d.id);
       const filters = await get(filtersAtom({ experimentTypeName }));
       if (!filters) {
         return null;
