@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, Suspense, useEffect, useRef } from 'react';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { usePathname } from 'next/navigation';
 import { ErrorBoundary } from 'react-error-boundary';
 import * as Popover from '@radix-ui/react-popover';
@@ -13,7 +13,7 @@ import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import ConnectomeEditorSidebar from '@/components/ConnectomeEditorSidebar';
-import { extraPanelContainerAtom } from '@/state/build-section/layout';
+import { extraPanelContainerAtom, toolBarAtom } from '@/state/build-section/layout';
 import ContextualLiterature from '@/components/build-section/ContextualLiterature/Content';
 import SimulationBtn, { PlaceholderLoadingButton } from '@/components/TopTabs/SimulationBtn';
 import BuildModelBtn from '@/components/BuildModelBtn';
@@ -35,6 +35,13 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
   useEffect(() => {
     setExtraPanelContainer(extraPanelRef.current);
   }, [setExtraPanelContainer]);
+
+  const toolBar = useRef<HTMLDivElement>(useAtomValue(toolBarAtom));
+  const setToolbar = useSetAtom(toolBarAtom);
+
+  useEffect(() => {
+    setToolbar(toolBar?.current);
+  }, [setToolbar]);
 
   return (
     <div className={styles.container}>
@@ -68,6 +75,7 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
           </ErrorBoundary>
           <div className="grow">{children}</div>
           <div className="flex items-center justify-between pb-4 pt-0 px-4 w-full z-10">
+            <div ref={toolBar} />
             <Popover.Root>
               <Popover.Trigger className="bg-secondary-2 ml-auto text-white px-8 py-4">
                 Build & Simulate
