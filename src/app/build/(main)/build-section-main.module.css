@@ -2,7 +2,7 @@
   height: 100vh;
   display: grid;
   grid-template-columns: min-content min-content min-content auto;
-  grid-template-rows: 40px auto;
+  grid-template-rows: 0 auto;
   grid-template-areas:
     'config-selector region-selector extra-panel top-tabs'
     'config-selector region-selector extra-panel content-container';
@@ -21,8 +21,11 @@
 }
 
 .contentContainer {
-  grid-area: content-container;
   position: relative;
+  grid-area: content-container;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .extraPanelContainer {

@@ -4,7 +4,7 @@ import { ReactNode, Suspense, useEffect, useRef } from 'react';
 import { useSetAtom } from 'jotai';
 import { usePathname } from 'next/navigation';
 import { ErrorBoundary } from 'react-error-boundary';
-
+import * as Popover from '@radix-ui/react-popover';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import BrainConfigPanel from '@/components/BrainConfigPanel';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
@@ -15,7 +15,8 @@ import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import ConnectomeEditorSidebar from '@/components/ConnectomeEditorSidebar';
 import { extraPanelContainerAtom } from '@/state/build-section/layout';
 import ContextualLiterature from '@/components/build-section/ContextualLiterature/Content';
-
+import SimulationBtn, { PlaceholderLoadingButton } from '@/components/TopTabs/SimulationBtn';
+import BuildModelBtn from '@/components/BuildModelBtn';
 import styles from './build-section-main.module.css';
 
 type BuildSectionLayoutProps = {
@@ -60,14 +61,29 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
 
       <div className={styles.extraPanelContainer} ref={extraPanelRef} />
 
-      <div className={styles.tabsContainer}>
-        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <TopTabs />
-        </ErrorBoundary>
-      </div>
-
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className={styles.contentContainer}>{children}</div>
+        <div className={styles.contentContainer}>
+          <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+            <TopTabs />
+          </ErrorBoundary>
+          <div className="grow">{children}</div>
+          <div className="flex items-center justify-between pb-4 pt-0 px-4 w-full z-10">
+            <Popover.Root>
+              <Popover.Trigger className="bg-secondary-2 ml-auto text-white px-8 py-4">
+                Build & Simulate
+              </Popover.Trigger>
+              <Popover.Portal>
+                <Popover.Content className="text-white z-[100] flex flex-col">
+                  <BuildModelBtn className="w-[250px]" />
+                  <Suspense fallback={<PlaceholderLoadingButton />}>
+                    <SimulationBtn />
+                  </Suspense>
+                  <Popover.Arrow className="fill-white" />
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
+          </div>
+        </div>
       </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>

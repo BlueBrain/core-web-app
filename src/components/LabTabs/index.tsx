@@ -1,31 +1,15 @@
-import { ReactNode } from 'react';
-import * as Popover from '@radix-ui/react-popover';
-
+import { useAtomValue } from 'jotai';
 import TopNavigation from '@/components/TopNavigation';
+import { themeAtom } from '@/state/theme';
+import { classNames } from '@/util/utils';
 
-type BrainFactoryTabsProps = {
-  children: ReactNode;
-};
+export default function BrainFactoryTabs() {
+  const theme = useAtomValue(themeAtom);
+  const bgClassName = theme === 'light' ? 'bg-neutral-1' : 'bg-black';
 
-export default function BrainFactoryTabs({ children }: BrainFactoryTabsProps) {
   return (
-    <div className="flex w-full">
-      <TopNavigation.Main>
-        <div className="flex">
-          <Popover.Root>
-            <Popover.Trigger className="flex-auto bg-secondary-2 text-white px-8">
-              Build & Simulate
-            </Popover.Trigger>
-            <Popover.Portal>
-              <Popover.Content className="text-white z-[100] flex flex-col">
-                {children}
-                <Popover.Arrow className="fill-white" />
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
-        </div>
-      </TopNavigation.Main>
-
+    <div className={classNames('flex w-full', bgClassName)}>
+      <TopNavigation.Main />
       <TopNavigation.PrimaryDropdown
         items={[
           {
