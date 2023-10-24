@@ -65,7 +65,7 @@ export const getSimulationsAtom = (info: ResourceInfo) =>
       project: simulation?.project.identifier, // TODO: Possibly no longer necessary
       startedAt: simulation.startedAt,
       status: simulation.status,
-    })) as Simulation[];
+    })) as Simulation[] | undefined;
   });
 
 // Caches report images so that they're not refetched again when refetching the reports
