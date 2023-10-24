@@ -13,8 +13,10 @@ import {
 } from '@/api/explore-section/simulations';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { pathToResource } from '@/util/explore-section/detail-view';
+import { isServer } from '@/config';
 
 export function getResourceInfoFromPath() {
+  if (isServer) return; // Only for build env
   const [path, params] = window.location.pathname.split('?');
   const rev = new URLSearchParams(params).get('rev');
   return pathToResource(path, rev);
