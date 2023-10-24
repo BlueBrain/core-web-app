@@ -1,6 +1,5 @@
 import { composeUrl } from '@/util/nexus';
 import { createHeaders } from '@/util/utils';
-import { sanitizeId } from '@/util/brain-hierarchy';
 import { MeshSourceNexus } from '@/api/ontologies/types';
 import { Mesh } from '@/types/ontologies';
 import { getAtlasReleaseMeshesQuery } from '@/queries/es';
@@ -14,7 +13,7 @@ const serializeMeshes = (meshPayloads: MeshSourceNexus[]): { [id: string]: Mesh 
   const meshDistributions: { [id: string]: Mesh } = {};
   const serializedMeshDistributions = meshPayloads.map((meshPayload) => ({
     contentUrl: meshPayload._source.distribution.contentUrl,
-    brainRegion: sanitizeId(meshPayload._source.brainLocation.brainRegion['@id']),
+    brainRegion: meshPayload._source.brainLocation.brainRegion['@id'],
   }));
   serializedMeshDistributions.forEach((meshDistribution) => {
     meshDistributions[meshDistribution.brainRegion] = meshDistribution;

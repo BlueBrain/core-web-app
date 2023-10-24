@@ -236,7 +236,7 @@ const getMockBrainRegion = (
   id,
   colorCode,
   title: name,
-  isPartOf: '48',
+  isPartOf: 'http://api.brain-map.org/api/v2/data/Structure/48',
   isLayerPartOf: null,
   notation: 'ACAv5',
   representedInAnnotation: true,
@@ -246,11 +246,23 @@ const getMockBrainRegion = (
 });
 
 export const mockBrainRegions: BrainRegion[] = [
-  getMockBrainRegion('Anterior cingulate area, ventral part, layer 5', '1', '#0802A3'),
-  getMockBrainRegion('Agranular insular area, posterior part, layer 2', '2', '#FF4B91'),
-  getMockBrainRegion('Isocortex', '3', '#FF7676'),
-  getMockBrainRegion('Ventral posterolateral nucleus of the thalamus', '718', '#FFCD4B'),
-  getMockBrainRegion('Cerebrum', '6', '#98E4FF'),
+  getMockBrainRegion(
+    'Anterior cingulate area, ventral part, layer 5',
+    'http://api.brain-map.org/api/v2/data/Structure/1',
+    '#0802A3'
+  ),
+  getMockBrainRegion(
+    'Agranular insular area, posterior part, layer 2',
+    'http://api.brain-map.org/api/v2/data/Structure/2',
+    '#FF4B91'
+  ),
+  getMockBrainRegion('Isocortex', 'http://api.brain-map.org/api/v2/data/Structure/3', '#FF7676'),
+  getMockBrainRegion(
+    'Ventral posterolateral nucleus of the thalamus',
+    'http://api.brain-map.org/api/v2/data/Structure/718',
+    '#FFCD4B'
+  ),
+  getMockBrainRegion('Cerebrum', 'http://api.brain-map.org/api/v2/data/Structure/6', '#98E4FF'),
 ];
 
 const defaultVisualizedRegion = mockBrainRegions[0];

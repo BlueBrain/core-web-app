@@ -64,8 +64,10 @@ function createDefaultViewTree(data: BrainRegionOntology) {
         ?.parentProperty,
       childrenField: 'items',
     })
-      .find((region) => region.id === '997')
-      ?.items?.find((region: BrainRegion) => region.id === '8'),
+      .find((region) => region.id === 'http://api.brain-map.org/api/v2/data/Structure/997')
+      ?.items?.find(
+        (region: BrainRegion) => region.id === 'http://api.brain-map.org/api/v2/data/Structure/8'
+      ),
   };
 }
 
@@ -89,12 +91,20 @@ function checkTreeForAnnotationRepresentation({
   brainRegions: BrainRegion[];
   treeWithRepresentation: BrainRegion[];
 }) {
-  const pathToAmmonsHorn = ['688', '695', '1089', '1080', '375'];
+  const pathToAmmonsHorn = [
+    'http://api.brain-map.org/api/v2/data/Structure/688',
+    'http://api.brain-map.org/api/v2/data/Structure/695',
+    'http://api.brain-map.org/api/v2/data/Structure/1089',
+    'http://api.brain-map.org/api/v2/data/Structure/1080',
+    'http://api.brain-map.org/api/v2/data/Structure/375',
+  ];
 
   const ammonsHorn = pathToAmmonsHorn.reduce(
     (tree: BrainRegion | undefined, brainRegionId) =>
       tree?.items?.find(({ id: itemId }: { id: string }) => itemId === brainRegionId),
-    treeWithRepresentation.find(({ id }) => id === '567')
+    treeWithRepresentation.find(
+      ({ id }) => id === 'http://api.brain-map.org/api/v2/data/Structure/567'
+    )
   );
 
   test("Whether Ammon's Horn is represented in the annotation volume.", () =>
@@ -119,7 +129,7 @@ function createAlternateViewTree({
   const alternateTree = cloneDeep(treeWithRepresentation);
 
   const alternateChildren = buildAlternateChildren(
-    '375', // Ammon's Horn
+    'http://api.brain-map.org/api/v2/data/Structure/375', // Ammon's Horn
     'isLayerPartOf',
     brainRegions,
     'https://bbp.epfl.ch/ontologies/core/bmo/BrainLayer'
@@ -127,7 +137,7 @@ function createAlternateViewTree({
 
   buildAlternateTree(
     alternateTree[2], // "567"
-    '375', // Ammon's Horn
+    'http://api.brain-map.org/api/v2/data/Structure/375', // Ammon's Horn
     alternateChildren,
     'https://bbp.epfl.ch/ontologies/core/bmo/BrainLayer'
   );
@@ -138,12 +148,20 @@ function createAlternateViewTree({
 function checkAlternateViewForItemsInAnnotation(alternateTree: BrainRegion[]) {
   const alternateTreeWithRepresentation = alternateTree.reduce(itemsInAnnotationReducer, []);
 
-  const pathToAmmonsHorn = ['688', '695', '1089', '1080', '375'];
+  const pathToAmmonsHorn = [
+    'http://api.brain-map.org/api/v2/data/Structure/688',
+    'http://api.brain-map.org/api/v2/data/Structure/695',
+    'http://api.brain-map.org/api/v2/data/Structure/1089',
+    'http://api.brain-map.org/api/v2/data/Structure/1080',
+    'http://api.brain-map.org/api/v2/data/Structure/375',
+  ];
 
   const ammonsHorn = pathToAmmonsHorn.reduce(
     (tree: BrainRegion | undefined, brainRegionId) =>
       tree?.items?.find(({ id: itemId }: { id: string }) => itemId === brainRegionId),
-    alternateTreeWithRepresentation.find(({ id }) => id === '567')
+    alternateTreeWithRepresentation.find(
+      ({ id }) => id === 'http://api.brain-map.org/api/v2/data/Structure/567'
+    )
   );
 
   test("Whether Ammon's Horn has represented parts in the annotation, in the ALTERNATE view.", () => {

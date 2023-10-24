@@ -78,29 +78,6 @@ export function extendCompositionWithOverrideProps(
 }
 
 /**
- * Converts numeric brain region id to URI:
- * XXX -> http://api.brain-map.org/api/v2/data/Structure/XXX
- */
-export function brainRegionIdToUri(brainRegionId: string) {
-  return `${BRAIN_REGION_URI_BASE}/${brainRegionId}`;
-}
-
-/**
- * Extracts numeric brain region id from URI:
- * http://api.brain-map.org/api/v2/data/Structure/XXX -> XXX
- */
-export function brainRegionIdFromUri(brainRegionUri: string) {
-  return brainRegionUri.match(/.*\/(\d+)$/)?.[1];
-}
-
-/**
- * Sanitizes the ID in order to be in a single numeric format
- * @param id
- */
-export const sanitizeId = (id: string) =>
-  id.replace('mba:', '').replace('http://api.brain-map.org/api/v2/data/Structure/', '');
-
-/**
  * Adds the itemsInAnnotation property to every brain region in a tree.
  * @param {BrainRegion[]} accBrainRegions
  * @param {BrainRegion} curBrainRegion

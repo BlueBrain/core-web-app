@@ -4,8 +4,8 @@ import { BrainRegion } from '@/types/ontologies';
 
 const expectedFindForD: BrainRegion[] = [
   {
-    id: '3',
-    isPartOf: '2',
+    id: 'http://api.brain-map.org/api/v2/data/Structure/3',
+    isPartOf: 'http://api.brain-map.org/api/v2/data/Structure/2',
     isLayerPartOf: null,
     title: 'C',
     notation: 'C-NOTATION',
@@ -15,8 +15,8 @@ const expectedFindForD: BrainRegion[] = [
     representedInAnnotation: false,
   },
   {
-    id: '2',
-    isPartOf: '1',
+    id: 'http://api.brain-map.org/api/v2/data/Structure/2',
+    isPartOf: 'http://api.brain-map.org/api/v2/data/Structure/1',
     isLayerPartOf: null,
     title: 'B',
     notation: 'B-NOTATION',
@@ -26,7 +26,7 @@ const expectedFindForD: BrainRegion[] = [
     representedInAnnotation: false,
   },
   {
-    id: '1',
+    id: 'http://api.brain-map.org/api/v2/data/Structure/1',
     isPartOf: null,
     isLayerPartOf: null,
     title: 'A',
@@ -39,8 +39,8 @@ const expectedFindForD: BrainRegion[] = [
 ];
 const expectedFindForC: BrainRegion[] = [
   {
-    id: '2',
-    isPartOf: '1',
+    id: 'http://api.brain-map.org/api/v2/data/Structure/2',
+    isPartOf: 'http://api.brain-map.org/api/v2/data/Structure/1',
     isLayerPartOf: null,
     title: 'B',
     notation: 'B-NOTATION',
@@ -50,7 +50,7 @@ const expectedFindForC: BrainRegion[] = [
     representedInAnnotation: false,
   },
   {
-    id: '1',
+    id: 'http://api.brain-map.org/api/v2/data/Structure/1',
     isPartOf: null,
     isLayerPartOf: null,
     title: 'A',

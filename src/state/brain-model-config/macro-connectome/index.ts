@@ -111,7 +111,7 @@ export const initialConnectivityStrengthEntityAtom = atom<
 
   if (!session || !remoteConfigPayload) return null;
 
-  const { id, rev } = remoteConfigPayload.bases.connection_strength;
+  const { id, rev } = remoteConfigPayload.initial.connection_strength;
 
   return fetchResourceById(id, session, { rev });
 });

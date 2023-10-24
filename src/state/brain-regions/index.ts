@@ -18,6 +18,10 @@ import {
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
 import { itemsInAnnotationReducer, flattenBrainRegionsTree } from '@/util/brain-hierarchy';
+import {
+  BASIC_CELL_GROUPS_AND_REGIONS_ID,
+  ROOT_BRAIN_REGION_URI,
+} from '@/constants/brain-hierarchy';
 
 /*
   Atom dependency graph
@@ -154,8 +158,8 @@ export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(
   if (tree.length > 0) {
     // find the root and select the new root
     const newRoot = tree
-      .find((region: BrainRegion) => region.id === '997')
-      ?.items?.find((region: BrainRegion) => region.id === '8');
+      .find((region: BrainRegion) => region.id === ROOT_BRAIN_REGION_URI)
+      ?.items?.find((region: BrainRegion) => region.id === BASIC_CELL_GROUPS_AND_REGIONS_ID);
     return newRoot ? [newRoot] : null;
   }
   return tree;

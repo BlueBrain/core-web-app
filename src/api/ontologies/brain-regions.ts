@@ -7,7 +7,6 @@ import {
   SerializedBrainRegionsAndVolumesResponse,
 } from '@/api/ontologies/types';
 import { composeUrl } from '@/util/nexus';
-import { sanitizeId } from '@/util/brain-hierarchy';
 
 /**
  * Sanitizes the leaves in order to be in a uniform format. Leaves sometimes are
@@ -21,9 +20,7 @@ const sanitizeLeaves = (payload: ClassNexus): string[] => {
     if (typeof payload.hasLeafRegionPart === 'string') {
       return [payload.hasLeafRegionPart];
     }
-    return payload.hasLeafRegionPart.map((leaf) =>
-      leaf.replace('mba:', 'http://api.brain-map.org/api/v2/data/Structure/')
-    );
+    return payload.hasLeafRegionPart;
   }
   return payload.hasLeafRegionPart as string[];
 };
@@ -43,13 +40,13 @@ export const serializeBrainRegionsAndVolumes = (
 
     if (typeof brainRegionPayload !== 'string' && brainRegionPayload.prefLabel) {
       serializedBrainRegions.push({
-        id: sanitizeId(brainRegionPayload['@id']),
+        id: brainRegionPayload['@id'],
         colorCode: `#${
           brainRegionPayload.color_hex_triplet ? brainRegionPayload.color_hex_triplet : 'FFF'
         }`,
-        isPartOf: brainRegionPayload.isPartOf ? sanitizeId(brainRegionPayload.isPartOf[0]) : null,
+        isPartOf: brainRegionPayload.isPartOf ? brainRegionPayload.isPartOf[0] : null,
         isLayerPartOf: brainRegionPayload.isLayerPartOf
-          ? sanitizeId(brainRegionPayload.isLayerPartOf[0])
+          ? brainRegionPayload.isLayerPartOf[0]
           : null,
         hasLayerPart: brainRegionPayload.hasLayerPart,
         hasPart: brainRegionPayload.hasPart,

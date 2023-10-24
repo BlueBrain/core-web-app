@@ -12,7 +12,6 @@ import {
   createEModelOptimizationConfigAtom,
   updateEModelOptimizationConfigAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model/setters';
-import { BRAIN_REGION_URI_BASE } from '@/util/brain-hierarchy';
 
 // this component will set some extra attributes
 // to the configuration to launch workflow for building e-model
@@ -33,7 +32,7 @@ export default function WorkflowAttributes() {
       mType: selectedEModel.mType,
       eType: selectedEModel.eType,
       brainRegionName: selectedBrainRegion.title,
-      brainRegionId: `${BRAIN_REGION_URI_BASE}/${selectedBrainRegion.id}`,
+      brainRegionId: selectedBrainRegion.id,
       species: 'mouse',
     }));
   }, [eModelEditMode, selectedEModel, setEModelUIConfig, selectedBrainRegion]);
