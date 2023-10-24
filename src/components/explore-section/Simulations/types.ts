@@ -66,7 +66,7 @@ export type Dimension = {
   value: DimensionValue | DimensionRange;
 };
 
-interface AnalysisReportLink {
+export interface AnalysisReportLink {
   '@id': string;
   '@type': 'AnalysisReport';
 }
@@ -89,9 +89,4 @@ export interface CumulativeAnalysisReport {
 
 export interface CumulativeAnalysisReportWContrib extends CumulativeAnalysisReport {
   contribution: Contribution;
-}
-
-export interface AnalysisReport extends AnalysisReportLink {
-  derivation: { entity: { '@id': string; type: 'Simulation' } };
-  distribution: { contentUrl: string };
 }

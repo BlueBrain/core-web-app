@@ -76,11 +76,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
       {!isCustom && simulations && (
         <>
           <DimensionSelector coords={resource.parameter?.coords} />
-          <SimulationsDisplayGrid
-            display={selectedDisplay}
-            status={showStatus}
-            simulations={simulations}
-          />
+          <SimulationsDisplayGrid display={selectedDisplay} status={showStatus} />
         </>
       )}
 

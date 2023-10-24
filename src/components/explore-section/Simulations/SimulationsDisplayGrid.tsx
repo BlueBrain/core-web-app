@@ -13,16 +13,14 @@ import {
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
-import { Simulation } from '@/types/explore-section/resources';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { useUnwrappedValue } from '@/hooks/hooks';
-import { analysisReportsAtom } from '@/state/explore-section/simulation-campaign';
+import { analysisReportsAtom, simulationsAtom } from '@/state/explore-section/simulation-campaign';
 
 type SimulationDisplayGridProps = {
   display?: string;
   status: string;
-  simulations: Simulation[];
-  analysisReports?: AnalysisReportWithImage[];
+  customAnalysisReports?: AnalysisReportWithImage[];
 };
 
 type DimensionHeaderProps = {
@@ -58,10 +56,10 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
 export default function SimulationsDisplayGrid({
   display,
   status,
-  simulations,
-  analysisReports,
+  customAnalysisReports,
 }: SimulationDisplayGridProps) {
-  const analysisReportsES = useUnwrappedValue(analysisReportsAtom);
+  const simulations = useUnwrappedValue(simulationsAtom);
+  const analysisReports = useUnwrappedValue(analysisReportsAtom);
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);
@@ -149,7 +147,7 @@ export default function SimulationsDisplayGrid({
                     simulation={simulation}
                     xDimension={xDimension.id}
                     yDimension={yDimension.id}
-                    analysisReports={analysisReports || analysisReportsES}
+                    analysisReports={customAnalysisReports || analysisReports}
                   />
                 ) : (
                   <NoSimulationFoundCard />
