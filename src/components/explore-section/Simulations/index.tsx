@@ -18,18 +18,15 @@ import {
   showOnlyOptions,
 } from '@/components/explore-section/Simulations/constants';
 import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
-import usePathname from '@/hooks/pathname';
-import { useUnwrappedValue } from '@/hooks/hooks';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
-  const path = usePathname();
+  const path = useEnsuredPath();
   const dimensions = useAtomValue(dimensionsAtom);
-  const resourceInfo = useResourceInfoFromPath();
-  const setDefaultDimensions = useSetAtom(getInitializeDimensionsAtom(resourceInfo));
-  const simulations = useUnwrappedValue(getSimulationsAtom(resourceInfo));
+  const setDefaultDimensions = useSetAtom(getInitializeDimensionsAtom(path));
+  const simulations = useUnwrappedValue(getSimulationsAtom(path));
   const [analyses] = useAnalyses();
 
   const isCustom = useMemo(

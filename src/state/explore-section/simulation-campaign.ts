@@ -1,26 +1,26 @@
 import { atom } from 'jotai';
 import { atomFamily, selectAtom } from 'jotai/utils';
+import memoizeOne from 'memoize-one';
 import sessionAtom from '../session';
 import { DeltaResource, Simulation } from '@/types/explore-section/resources';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
-import { ResourceInfo } from '@/types/explore-section/application';
-
 import {
   fetchAnalysisReportsFromEs,
   fetchSimulationsFromEs,
 } from '@/api/explore-section/simulations';
-import { detailFamily } from '@/state/explore-section/detail-view-atoms';
+import { detailFamily, sessionAndInfoFamily } from '@/state/explore-section/detail-view-atoms';
+import { pathToResource } from '@/util/explore-section/detail-view';
 
-const ensureSessionAtom = atom((get) => {
+const ensuredSessionAtom = atom((get) => {
   const session = get(sessionAtom);
-  if (!session) throw new Error('Invalid session, please login');
+  if (!session) throw new Error('No valid session, please login');
   return session;
 });
 
-export const getSimulationCampaignExecutionAtom = (info: ResourceInfo) =>
+export const getSimCapaignExecutionAtom = memoizeOne((path: string) =>
   atom(async (get) => {
-    const session = get(ensureSessionAtom);
+    const { session, info } = get(sessionAndInfoFamily(pathToResource(path)));
     const detail = await get(detailFamily(info));
     const executionId = detail?.wasGeneratedBy?.['@id'];
 
@@ -41,19 +41,21 @@ export const getSimulationCampaignExecutionAtom = (info: ResourceInfo) =>
     });
 
     return execution;
-  });
+  })
+);
 
-export const getSimCampaignDimensionsAtom = (info: ResourceInfo) =>
+export const getSimCampaignDimensionsAtom = memoizeOne((path: string) =>
   selectAtom(
-    detailFamily(info),
+    detailFamily(pathToResource(path)),
     // @ts-ignore TODO: Improve type
     (simCamp) => simCamp?.parameter?.coords
-  );
+  )
+);
 
-export const getSimulationsAtom = (info: ResourceInfo) =>
+export const getSimulationsAtom = memoizeOne((path: string) =>
   atom(async (get) => {
-    const execution = await get(getSimulationCampaignExecutionAtom(info));
-    const session = get(ensureSessionAtom);
+    const session = get(ensuredSessionAtom);
+    const execution = await get(getSimCapaignExecutionAtom(path));
 
     const simulations =
       execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
@@ -66,20 +68,21 @@ export const getSimulationsAtom = (info: ResourceInfo) =>
       startedAt: simulation.startedAt,
       status: simulation.status,
     })) as Simulation[] | undefined;
-  });
+  })
+);
 
 // Caches report images so that they're not refetched again when refetching the reports
 const reportImageFamily = atomFamily((contentUrl: string) =>
   atom(async (get) => {
-    const session = get(ensureSessionAtom);
+    const session = get(ensuredSessionAtom);
     return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
   })
 );
 
-export const getAnalysisReportsAtom = (info: ResourceInfo) =>
+export const getAnalysisReportsAtom = memoizeOne((path: string) =>
   atom(async (get) => {
-    const session = get(ensureSessionAtom);
-    const simulations = await get(getSimulationsAtom(info));
+    const session = get(ensuredSessionAtom);
+    const simulations = await get(getSimulationsAtom(path));
 
     const fetchedReports =
       session &&
@@ -102,4 +105,5 @@ export const getAnalysisReportsAtom = (info: ResourceInfo) =>
     });
 
     return reportsWithImage && (await Promise.all(reportsWithImage));
-  });
+  })
+);

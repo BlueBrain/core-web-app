@@ -8,8 +8,7 @@ import {
 import { getSimCampaignDimensionsAtom } from '@/state/explore-section/simulation-campaign';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
 import selectorTheme from '@/components/explore-section/Simulations/DimensionBoxEditForm/antd-theme';
-import { useUnwrappedValue } from '@/hooks/hooks';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function OtherDimensionBoxEditForm({
   dimension,
@@ -17,10 +16,8 @@ export default function OtherDimensionBoxEditForm({
 }: OtherDimensionBoxEditFormProps) {
   const [form] = useForm();
   const { Option } = Select;
-  const resourceInfo = useResourceInfoFromPath();
-  const simulationCampaignDimensions = useUnwrappedValue(
-    getSimCampaignDimensionsAtom(resourceInfo)
-  );
+  const path = useEnsuredPath();
+  const simulationCampaignDimensions = useUnwrappedValue(getSimCampaignDimensionsAtom(path));
 
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
 

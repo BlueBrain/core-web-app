@@ -4,7 +4,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { AnalysisReportLink, CumulativeAnalysisReportWContrib } from './types';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
 import DimensionSelector from './DimensionSelector';
-import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
+import { useEnsuredPath, useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
@@ -18,10 +18,11 @@ export default function CustomAnalysisReport({
   cumulativeReport: CumulativeAnalysisReportWContrib;
 }) {
   const session = useSessionAtomValue();
-  const resourceInfo = useResourceInfoFromPath();
+  const path = useEnsuredPath()
+  const resourceInfo = useResourceInfoFromPath()
   const [fetching, setFetching] = useState(true);
   const [customReports, setCustomReports] = useState<AnalysisReportWithImage[]>([]);
-  const analysisReports = useUnwrappedValue(getAnalysisReportsAtom(resourceInfo));
+  const analysisReports = useUnwrappedValue(getAnalysisReportsAtom(path));
 
   const resource = useUnwrappedValue(detailFamily(resourceInfo)) as
     | SimulationCampaignResource

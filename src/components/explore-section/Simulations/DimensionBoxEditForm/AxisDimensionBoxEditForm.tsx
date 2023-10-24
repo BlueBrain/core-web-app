@@ -9,8 +9,7 @@ import {
   DimensionRange,
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
-import { useUnwrappedValue } from '@/hooks/hooks';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function AxisDimensionBoxEditForm({
   dimension,
@@ -19,10 +18,8 @@ export default function AxisDimensionBoxEditForm({
   const [form] = useForm();
   const inputType = useWatch('input-type', form);
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
-  const resourceInfo = useResourceInfoFromPath();
-  const simulationCampaignDimensions = useUnwrappedValue(
-    getSimCampaignDimensionsAtom(resourceInfo)
-  );
+  const path = useEnsuredPath();
+  const simulationCampaignDimensions = useUnwrappedValue(getSimCampaignDimensionsAtom(path));
 
   const valueRange: DimensionRange | null = useMemo(() => {
     const dimensionConfig =

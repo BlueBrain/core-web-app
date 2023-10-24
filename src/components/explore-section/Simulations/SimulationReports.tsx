@@ -4,11 +4,12 @@ import { LoadingOutlined } from '@ant-design/icons';
 import ImageReport from './ImageReport';
 import { getAnalysisReportsAtom } from '@/state/explore-section/simulation-campaign';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-import { useUnwrappedValue } from '@/hooks/hooks';
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function SimulationReports() {
+  const path = useEnsuredPath();
   const resourceInfo = useResourceInfoFromPath();
-  const reports = useUnwrappedValue(getAnalysisReportsAtom(resourceInfo));
+  const reports = useUnwrappedValue(getAnalysisReportsAtom(path));
   const reportImageFiles = useMemo(
     () => reports?.filter((r) => r.simulation === resourceInfo?.id),
     [reports, resourceInfo?.id]

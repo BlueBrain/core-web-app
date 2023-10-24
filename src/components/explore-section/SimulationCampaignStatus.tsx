@@ -1,12 +1,11 @@
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { getSimulationCampaignExecutionAtom } from '@/state/explore-section/simulation-campaign';
-import { useLoadableValue } from '@/hooks/hooks';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { getSimCapaignExecutionAtom } from '@/state/explore-section/simulation-campaign';
+import { useEnsuredPath, useLoadableValue } from '@/hooks/hooks';
 
 export default function SimulationCampaignStatus() {
-  const resourceInfo = useResourceInfoFromPath();
-  const execution = useLoadableValue(getSimulationCampaignExecutionAtom(resourceInfo));
+  const path = useEnsuredPath();
+  const execution = useLoadableValue(getSimCapaignExecutionAtom(path));
 
   if (execution.state === 'loading') {
     return <Spin indicator={<LoadingOutlined />} />;

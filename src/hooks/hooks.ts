@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Atom } from 'jotai/vanilla';
 import { unwrap, loadable } from 'jotai/utils';
+import { usePathname } from 'next/navigation';
 import sessionAtom from '@/state/session';
 
 export function usePrevious<T>(value: T) {
@@ -48,4 +49,10 @@ export function useLoadableValue<T>(atom: Atom<T>) {
     setLoadableValue(loadable(atom));
   }, [atom]);
   return useAtomValue(loadableValue);
+}
+
+export function useEnsuredPath() {
+  const path = usePathname();
+  if (!path) throw new Error('Invalid pathname');
+  return path;
 }
