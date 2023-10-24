@@ -1,3 +1,5 @@
+'use client';
+
 import { atom } from 'jotai';
 import { atomFamily, selectAtom } from 'jotai/utils';
 import sessionAtom from '../session';
