@@ -207,7 +207,7 @@ export default function ConfigurationView() {
   useLiteratureCleanNavigate();
 
   return (
-    <Tabs.Root value={activeTab} className="h-full overflow-hidden px-4 py-4">
+    <Tabs.Root value={activeTab} className="h-full px-4 py-4">
       <TopNavigation.PillNav
         items={tabItems}
         activeItemIndex={tabItems.findIndex(({ id }) => id === activeTab)}
