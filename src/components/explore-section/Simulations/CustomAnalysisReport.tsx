@@ -24,9 +24,9 @@ export default function CustomAnalysisReport({
   const [customReports, setCustomReports] = useState<AnalysisReportWithImage[]>([]);
   const analysisReports = useUnwrappedValue(analysisReportsAtom);
 
-  const resource = useUnwrappedValue(
-    detailFamily(getResourceInfoFromPath())
-  ) as SimulationCampaignResource | undefined;
+  const resource = useUnwrappedValue(detailFamily(getResourceInfoFromPath())) as
+    | SimulationCampaignResource
+    | undefined;
 
   useEffect(() => {
     (async () => {

@@ -89,5 +89,3 @@ export const otherDimensionsAtom = atom<Dimension[] | undefined>((get) => {
 
   return undefined;
 });
-
-export const fetchingCustomAnalysesAtom = atom(true);

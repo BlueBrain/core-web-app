@@ -6,8 +6,8 @@ import { DateISOString } from '@/types/nexus/common';
 export type AnalysisReport = {
   '@id': string;
   '@type': string;
-  createdAt?: DateISOString;
-  createdBy?: string;
+  createdAt: DateISOString;
+  createdBy: string;
   deprecated: boolean;
   derivation: DerivationResource[];
   description: string;
@@ -17,8 +17,6 @@ export type AnalysisReport = {
   updatedAt: DateISOString;
   updatedBy: string;
   _self: string;
-  _createdAt?: DateISOString;
-  _createdBy?: string;
 };
 
 export type AnalysisReportWithImage = AnalysisReport & {

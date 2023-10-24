@@ -41,8 +41,8 @@ export default function SimulationDisplayCard({
       id={simulation.id}
       project={simulation.project}
       blob={matchingReport.blob}
-      createdAt={matchingReport.createdAt || matchingReport._createdAt}
-      createdBy={matchingReport.createdBy || matchingReport._createdBy}
+      createdAt={matchingReport.createdAt}
+      createdBy={matchingReport.createdBy}
     />
   ) : (
     <CenteredMessage

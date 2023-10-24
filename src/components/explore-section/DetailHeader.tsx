@@ -2,13 +2,13 @@ import { DetailProps } from '@/types/explore-section/application';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import { classNames } from '@/util/utils';
 import EXPLORE_FIELDS_CONFIG, {
-  DetailViewFnArgs,
+  DetailType,
 } from '@/constants/explore-section/explore-fields-config';
 
 type FieldProps = {
   field: string;
   className?: string;
-  data: DetailViewFnArgs;
+  data: DetailType;
 };
 
 export function Field({ field, className, data }: FieldProps) {
@@ -30,7 +30,7 @@ export default function DetailHeader({
   url,
 }: {
   fields: DetailProps[];
-  detail?: DetailViewFnArgs | undefined;
+  detail?: DetailType | undefined;
   url?: string | null;
 }) {
   if (!detail) return null;

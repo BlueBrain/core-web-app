@@ -18,8 +18,8 @@ type AnalysisReportImageProps = {
   id: string;
   project: string;
   blob: Blob;
-  createdAt?: string;
-  createdBy?: string;
+  createdAt: string;
+  createdBy: string;
 };
 
 export default function AnalysisReportImage({
