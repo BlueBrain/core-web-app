@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { SwapOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -18,14 +17,6 @@ export default function DimensionSelector({ coords }: { coords?: { [id: string]:
   const otherDimensions = useAtomValue(otherDimensionsAtom);
   const dimensionModifier = useSetAtom(modifyDimensionValue);
   const [axes, setAxes] = useAtom(axesAtom);
-
-  // Reset the selected axes so that other simulations don't have the previous selected dimensions
-  useEffect(
-    () => () => {
-      setAxes({ xAxis: undefined, yAxis: undefined });
-    },
-    [setAxes]
-  );
 
   const dimensionOptions = otherDimensions
     ? otherDimensions.map((dim) => ({
