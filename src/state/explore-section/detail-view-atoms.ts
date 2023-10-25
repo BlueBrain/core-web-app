@@ -31,7 +31,6 @@ export const detailFamily = atomFamily(
       const resource: DeltaResource = await fetchResourceById(info.id, session, {
         org: info.org,
         project: info.project,
-        rev: info.rev ? Number.parseInt(info.rev as string, 10) : undefined,
       });
 
       return resource;

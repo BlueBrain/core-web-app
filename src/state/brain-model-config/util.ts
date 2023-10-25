@@ -131,7 +131,7 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
       throw new Error('Model config meta can not be loaded');
     }
 
-    await updateResource(modelConfig, modelConfigMeta?._rev, session);
+    await updateResource(modelConfig, session);
 
     set(triggerRefetchAtom);
   }

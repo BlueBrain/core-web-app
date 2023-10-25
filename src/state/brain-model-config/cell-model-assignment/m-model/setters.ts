@@ -9,7 +9,6 @@ import {
   mModelRemoteParamsAtom,
   mModelRemoteParamsLoadedAtom,
   refetchTriggerAtom,
-  configPayloadRevAtom,
   configAtom,
   mModelLocalParamsAtom,
   localMModelWorkflowOverridesAtom,
@@ -29,7 +28,7 @@ import sessionAtom from '@/state/session';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { MorphologyAssignmentConfigPayload } from '@/types/nexus';
 import { autoSaveDebounceInterval } from '@/config';
-import { createDistribution, setRevision } from '@/util/nexus';
+import { createDistribution } from '@/util/nexus';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import {
   generateBrainRegionMTypeMapKey,
@@ -44,17 +43,12 @@ export const updateConfigPayloadAtom = atom<
   Promise<void>
 >(null, async (get, set, configPayload) => {
   const session = get(sessionAtom);
-  const rev = await get(configPayloadRevAtom);
   const config = await get(configAtom);
 
-  const url = setRevision(config?.distribution.contentUrl, rev);
+  const url = config?.distribution.contentUrl;
 
   if (!session) {
     throw new Error('No auth session found in the state');
-  }
-
-  if (!rev) {
-    throw new Error('No revision found in the morphology assigment config state');
   }
 
   if (!url) {
@@ -72,7 +66,7 @@ export const updateConfigPayloadAtom = atom<
 
   config.distribution = createDistribution(updatedFile);
 
-  await updateResource(config, config?._rev, session);
+  await updateResource(config, session);
   await set(invalidateConfigAtom, 'morphologyAssignment');
   set(triggerRefetchAtom);
 });

@@ -6,7 +6,6 @@ import {
   configIsFulfilled,
   eModelOptimizationAtom,
   eModelOptimizationDistributionUrlAtom,
-  eModelOptimizationRevAtom,
   eModelUIConfigAtom,
   editedEModelByETypeMappingAtom,
   refetchOptimizationRevAtom,
@@ -92,10 +91,9 @@ const updateOptimizationConfigAtom = atom(null, async (get, set) => {
   if (!configIsFulfilled(eModelUIConfig)) return;
 
   const optimizationConfig = await get(eModelOptimizationAtom);
-  const rev = await get(eModelOptimizationRevAtom);
   const configPayloadUpdateUrl = await get(eModelOptimizationDistributionUrlAtom);
 
-  if (!session || !eModelUIConfig || !optimizationConfig || !rev || !configPayloadUpdateUrl) return;
+  if (!session || !eModelUIConfig || !optimizationConfig || !configPayloadUpdateUrl) return;
 
   const updatedConfigPayloadMeta = await updateJsonFileByUrl(
     configPayloadUpdateUrl,
@@ -110,7 +108,7 @@ const updateOptimizationConfigAtom = atom(null, async (get, set) => {
     distribution: createDistribution(updatedConfigPayloadMeta),
   };
 
-  await updateResource(updatedConfig, rev, session);
+  await updateResource(updatedConfig, session);
   set(refetchOptimizationRevAtom, {});
 });
 

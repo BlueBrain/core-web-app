@@ -9,7 +9,6 @@ import {
   remoteConfigPayloadAtom,
   configPayloadUrlAtom,
   localConfigPayloadAtom,
-  configPayloadRevAtom,
   workerAtom,
   triggerRefetchAtom,
 } from '.';
@@ -20,7 +19,7 @@ import {
 import { MicroConnectomeConfigPayload, MicroConnectomeConfigResource } from '@/types/nexus';
 import { toSerialisibleEdit } from '@/util/connectome';
 import sessionAtom from '@/state/session';
-import { createDistribution, setRevision } from '@/util/nexus';
+import { createDistribution } from '@/util/nexus';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 
 export const writingConfigAtom = atom(false);
@@ -34,27 +33,16 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const configPayload = await get(configPayloadAtom);
 
   const configPayloadUrl = await get(configPayloadUrlAtom);
-  const configPayloadRev = await get(configPayloadRevAtom);
 
-  if (
-    !session ||
-    !config ||
-    !remoteConfigPayload ||
-    !configPayload ||
-    !configPayloadUrl ||
-    !configPayloadRev
-  )
-    return;
+  if (!session || !config || !remoteConfigPayload || !configPayload || !configPayloadUrl) return;
 
   if (isEqual(remoteConfigPayload?._ui_data?.editHistory, configPayload?._ui_data?.editHistory))
     return;
 
   set(writingConfigAtom, true);
 
-  const configPayloadUpdateUrl = setRevision(configPayloadUrl, configPayloadRev);
-
   const updatedConfigPayloadMeta = await updateJsonFileByUrl(
-    configPayloadUpdateUrl,
+    configPayloadUrl,
     configPayload,
     'microconnectome-config.json',
     session
@@ -65,7 +53,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     distribution: createDistribution(updatedConfigPayloadMeta),
   };
 
-  await updateResource(updatedConfig, config._rev, session);
+  await updateResource(updatedConfig, session);
   await set(invalidateConfigAtom, 'microConnectome');
   set(triggerRefetchAtom);
   set(writingConfigAtom, false);

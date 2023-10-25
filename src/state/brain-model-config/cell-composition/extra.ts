@@ -3,11 +3,11 @@ import debounce from 'lodash/debounce';
 import { omitDeep } from 'deepdash-es/standalone';
 import lodashSet from 'lodash/set';
 
-import { configAtom, configPayloadAtom, configPayloadRevAtom, setLocalConfigPayloadAtom } from '.';
+import { configAtom, configPayloadAtom, setLocalConfigPayloadAtom } from '.';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import sessionAtom from '@/state/session';
 import { CellCompositionConfigPayload, CompositionOverridesWorkflowConfig } from '@/types/nexus';
-import { createDistribution, setRevision } from '@/util/nexus';
+import { createDistribution } from '@/util/nexus';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
@@ -18,17 +18,12 @@ export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload]
   null,
   async (get, set, configPayload) => {
     const session = get(sessionAtom);
-    const rev = await get(configPayloadRevAtom);
     const config = await get(configAtom);
 
-    const url = setRevision(config?.distribution.contentUrl, rev);
+    const url = config?.distribution.contentUrl;
 
     if (!session) {
       throw new Error('No auth session found in the state');
-    }
-
-    if (!rev) {
-      throw new Error('No revision found in the cell composition config state');
     }
 
     if (!url) {
@@ -46,7 +41,7 @@ export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload]
 
     config.distribution = createDistribution(updatedFile);
 
-    await updateResource(config, config?._rev, session);
+    await updateResource(config, session);
     await set(invalidateConfigAtom, 'cellComposition');
     openNotification('success', 'The composition was successfully saved');
   }

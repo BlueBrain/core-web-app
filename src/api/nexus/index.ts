@@ -56,6 +56,7 @@ import {
 } from '@/queries/es';
 import { createHeaders } from '@/util/utils';
 import { defaultReleaseUrl, supportedUIConfigVersion } from '@/constants/configs';
+import { revParamRegexp } from '@/constants/nexus';
 
 // #################################### Generic methods ##########################################
 
@@ -133,7 +134,19 @@ export function createTextFile(data: any, filename: string, session: Session) {
   return createFile(data, filename, contentType, session);
 }
 
-export function updateFileByUrl(
+async function fetchLatestRev(url: string, session: Session) {
+  const urlWithoutRev = url.replace(revParamRegexp, '');
+
+  if (url.includes('/files/')) {
+    const metadata = await fetchFileMetadataByUrl(urlWithoutRev, session);
+    return metadata._rev;
+  }
+
+  const resource = await fetchResourceById<EntityResource>(urlWithoutRev, session);
+  return resource._rev;
+}
+
+export async function updateFileByUrl(
   url: string,
   data: any,
   filename: string,
@@ -151,15 +164,21 @@ export function updateFileByUrl(
   }).then<FileMetadata>((res) => res.json());
 }
 
-export function updateFileById(
+export async function updateFileById(
   id: string,
   data: any,
   filename: string,
   contentType: string,
-  rev: number,
-  session: Session
+  session: Session,
+  rev?: number
 ) {
-  const url = composeUrl('file', id, { rev });
+  /*
+   * when file is passed by id, there is no /files/ in the url so it will try
+   * to fetch with fetchResourceById leading to fetch the content instead of the metadata.
+   * That is why we need to compose a file url first to pass it to fetchLatestRev
+   */
+  const latestRev = rev || (await fetchLatestRev(composeUrl('file', id), session));
+  const url = composeUrl('file', id, { rev: latestRev });
 
   return updateFileByUrl(url, data, filename, contentType, session);
 }
@@ -168,15 +187,32 @@ export function updateJsonFileById(
   id: string,
   rawData: any,
   filename: string,
-  rev: number,
-  session: Session
+  session: Session,
+  rev?: number
 ) {
   const data = JSON.stringify(rawData);
-  return updateFileById(id, data, filename, 'application/json', rev, session);
+  return updateFileById(id, data, filename, 'application/json', session, rev);
 }
 
-export function updateJsonFileByUrl(url: string, data: any, filename: string, session: Session) {
-  return updateFileByUrl(url, JSON.stringify(data), filename, 'application/json', session);
+export async function updateJsonFileByUrl(
+  url: string,
+  data: any,
+  filename: string,
+  session: Session
+) {
+  if (!url.includes('?rev=')) throw new Error('revision not present when updating json file');
+
+  const latestRev = await fetchLatestRev(url, session);
+  // positive lookbehind regexp matching what follows the group
+  const urlWithLatestRev = url.replace(/(?<=\?rev=)\d+$/, latestRev.toString());
+
+  return updateFileByUrl(
+    urlWithLatestRev,
+    JSON.stringify(data),
+    filename,
+    'application/json',
+    session
+  );
 }
 
 export function fetchResourceById<T>(
@@ -225,16 +261,16 @@ export function createResource<T extends EntityResource>(
   }).then<T>((res) => res.json());
 }
 
-export function updateResource(
+export async function updateResource(
   resource: Entity,
-  rev: number,
-  session: Session
+  session: Session,
+  rev?: number
 ): Promise<EntityResource> {
   const id = resource['@id'];
   // TODO: remove this while all entities do not have metadata in source
   const sanitizedResource = removeMetadata(resource);
-
-  const url = composeUrl('resource', id, { rev, sync: true });
+  const latestRev = rev || (await fetchLatestRev(resource['@id'], session));
+  const url = composeUrl('resource', id, { rev: latestRev, sync: true });
 
   return fetch(url, {
     method: 'PUT',
@@ -736,7 +772,6 @@ export async function renameBrainModelConfig(
   session: Session
 ) {
   const configId = config['@id'];
-  const rev = config._rev;
 
   const brainModelConfigSource = await fetchResourceById<BrainModelConfig>(configId, session);
 
@@ -746,7 +781,7 @@ export async function renameBrainModelConfig(
     description,
   };
 
-  const clonedModelConfigMetadata = await updateResource(renamedModelConfig, rev, session);
+  const clonedModelConfigMetadata = await updateResource(renamedModelConfig, session);
 
   return clonedModelConfigMetadata;
 }
@@ -877,7 +912,6 @@ export async function renameSimCampUIConfig(
   session: Session
 ) {
   const configId = config['@id'];
-  const rev = config._rev;
 
   const simCampUIConfigSource = await fetchResourceById<SimulationCampaignUIConfigResource>(
     configId,
@@ -890,5 +924,5 @@ export async function renameSimCampUIConfig(
     description,
   };
 
-  return updateResource(renamedConfig, rev, session);
+  return updateResource(renamedConfig, session);
 }

@@ -19,7 +19,6 @@ import {
   fetchResourceById,
   fetchFileByUrl,
   fetchJsonFileByUrl,
-  fetchFileMetadataByUrl,
   fetchGeneratorTaskActivity,
 } from '@/api/nexus';
 import {
@@ -28,7 +27,6 @@ import {
   WholeBrainConnectivityMatrix,
 } from '@/types/connectome';
 import { getFlatArrayValueIdx } from '@/util/connectome';
-import { setRevision } from '@/util/nexus';
 
 export const refetchCounterAtom = atom<number>(0);
 
@@ -59,21 +57,6 @@ export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => 
   if (!config) return null;
 
   return config.distribution.contentUrl;
-});
-
-export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const configPayloadUrl = await get(configPayloadUrlAtom);
-
-  get(refetchCounterAtom);
-
-  if (!session || !configPayloadUrl) return null;
-
-  const configPayloadBaseUrl = setRevision(configPayloadUrl, null);
-
-  const metadata = await fetchFileMetadataByUrl(configPayloadBaseUrl, session);
-
-  return metadata._rev;
 });
 
 export const remoteConfigPayloadAtom = atom<Promise<MacroConnectomeConfigPayload | null>>(
@@ -177,25 +160,6 @@ export const connectivityStrengthOverridesPayloadUrlAtom = atom<Promise<string |
     if (!entity) return null;
 
     return entity.distribution.contentUrl;
-  }
-);
-
-export const connectivityStrengthOverridesPayloadRevAtom = atom<Promise<number | null>>(
-  async (get) => {
-    const session = get(sessionAtom);
-    const connectivityStrengthOverridesPayloadUrl = await get(
-      connectivityStrengthOverridesPayloadUrlAtom
-    );
-
-    get(refetchCounterAtom);
-
-    if (!session || !connectivityStrengthOverridesPayloadUrl) return null;
-
-    const payloadBaseUrl = setRevision(connectivityStrengthOverridesPayloadUrl);
-
-    const metadata = await fetchFileMetadataByUrl(payloadBaseUrl, session);
-
-    return metadata._rev;
   }
 );
 

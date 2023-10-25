@@ -9,7 +9,6 @@ import sessionAtom from '@/state/session';
 import {
   fetchResourceById,
   fetchGeneratorTaskActivity,
-  fetchFileMetadataByUrl,
   fetchJsonFileByUrl,
   fetchFileByUrl,
 } from '@/api/nexus';
@@ -21,7 +20,6 @@ import {
   MicroConnectomeVariantSelectionResource,
   MicroConnectomeData,
 } from '@/types/nexus';
-import { setRevision } from '@/util/nexus';
 import {
   InitFn,
   CreateAggregatedVariantViewFn,
@@ -60,21 +58,6 @@ export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => 
   }
 
   return config.distribution.contentUrl;
-});
-
-export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const configPayloadUrl = await get(configPayloadUrlAtom);
-
-  get(refetchCounterAtom);
-
-  if (!session || !configPayloadUrl) return null;
-
-  const configPayloadBaseUrl = setRevision(configPayloadUrl, null);
-
-  const metadata = await fetchFileMetadataByUrl(configPayloadBaseUrl, session);
-
-  return metadata._rev;
 });
 
 export const remoteConfigPayloadAtom = atom<Promise<MicroConnectomeConfigPayload | null>>(
