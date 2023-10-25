@@ -93,7 +93,7 @@ const getReportImageFamily = memoizeOne(
     )
 );
 
-// TODO: Only fetch one report at at time corresponding to the selected simulation
+// TODO: Only fetch the reports corresponding to the selected simulation
 // memoize by path, return atomFamily scoped by simulation id.
 export const getAnalysisReportsAtom = memoizeOne((path: string) =>
   atom(async (get) => {
