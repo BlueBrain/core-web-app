@@ -18,6 +18,11 @@ const ensuredSessionAtom = atom((get) => {
   return session;
 });
 
+/* MemoizeOne instead of atomFamily ensures only one atom
+ containing the data for only one sim campaign (the one corresponding to the current path) 
+ is stored in memory at a time. Thus preventing memory leaks.
+ See https://jotai.org/docs/utilities/family#caveat-memory-leaks
+ */
 export const getSimCapaignExecutionAtom = memoizeOne((path: string) =>
   atom(async (get) => {
     const { session, info } = get(sessionAndInfoFamily(pathToResource(path)));
@@ -71,14 +76,25 @@ export const getSimulationsAtom = memoizeOne((path: string) =>
   })
 );
 
-// Caches report images so that they're not refetched again when refetching the reports
-const reportImageFamily = atomFamily((contentUrl: string) =>
-  atom(async (get) => {
-    const session = get(ensuredSessionAtom);
-    return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
-  })
+/* Caches report images in an atomFamily so that they're not refetched again when 
+ refetching the reports.
+ Memoize one ensures the family is destroyed and recreated when user
+ visits a new path, preventing memory leaks.
+*/
+const getReportImageFamily = memoizeOne(
+  (
+    path: string // eslint-disable-line
+  ) =>
+    atomFamily((contentUrl: string) =>
+      atom(async (get) => {
+        const session = get(ensuredSessionAtom);
+        return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
+      })
+    )
 );
 
+// TODO: Only fetch one report at at time corresponding to the selected simulation
+// memoize by path, return atomFamily scoped by simulation id.
 export const getAnalysisReportsAtom = memoizeOne((path: string) =>
   atom(async (get) => {
     const session = get(ensuredSessionAtom);
@@ -94,7 +110,7 @@ export const getAnalysisReportsAtom = memoizeOne((path: string) =>
 
     const reportsWithImage = fetchedReports?.map(async (report) => {
       const imageUrl: string | undefined = report.distribution?.[0].contentUrl;
-      const blob = imageUrl ? await get(reportImageFamily(imageUrl)) : undefined;
+      const blob = imageUrl ? await get(getReportImageFamily(path)(imageUrl)) : undefined;
       return {
         ...report,
         blob,
