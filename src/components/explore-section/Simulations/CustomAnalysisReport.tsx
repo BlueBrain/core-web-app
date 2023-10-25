@@ -18,8 +18,8 @@ export default function CustomAnalysisReport({
   cumulativeReport: CumulativeAnalysisReportWContrib;
 }) {
   const session = useSessionAtomValue();
-  const path = useEnsuredPath()
-  const resourceInfo = useResourceInfoFromPath()
+  const path = useEnsuredPath();
+  const resourceInfo = useResourceInfoFromPath();
   const [fetching, setFetching] = useState(true);
   const [customReports, setCustomReports] = useState<AnalysisReportWithImage[]>([]);
   const analysisReports = useUnwrappedValue(getAnalysisReportsAtom(path));
