@@ -12,19 +12,17 @@ import { fetchParagraphsForBrainRegionAndExperiment } from '@/components/explore
 // Keeps track of the visible interactive brain regions
 export const visibleExploreBrainRegionsAtom = atomWithReset<string[]>([]);
 
-export const getExperimentTotalForBrainRegion = (brainRegionId: string) =>
+export const getExperimentTotalForBrainRegion = (brainRegionIds: string[]) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {
     const session = get(sessionAtom);
     if (!session) return null;
-
-    const descendants = await get(getBrainRegionDescendants([brainRegionId]));
+    const descendants = await get(getBrainRegionDescendants(brainRegionIds));
 
     const experimentToCount = await Promise.allSettled(
       EXPERIMENT_TYPE_DETAILS.map((experimentType) =>
         fetchExperimentDatasetCountForBrainRegion(
           session.accessToken,
           experimentType.id,
-          brainRegionId,
           descendants ?? []
         )
       )
@@ -44,20 +42,16 @@ export const getExperimentTotalForBrainRegion = (brainRegionId: string) =>
   });
 
 // NOTE: This atom uses mock results of an ML api that is yet to be finalized.
-export const getLiteratureCountForBrainRegion = (brainRegionId: string) =>
+export const getLiteratureCountForBrainRegion = (brainRegionIds: string[]) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {
     const session = get(sessionAtom);
     if (!session) return null;
-
-    const descendants = await get(getBrainRegionDescendants([brainRegionId]));
-
     const experimentToCount = await Promise.allSettled(
       EXPERIMENT_TYPE_DETAILS.map((experimentType) =>
         fetchParagraphsForBrainRegionAndExperiment(
           session.accessToken,
-          experimentType.id,
           { name: experimentType.title, id: experimentType.id },
-          descendants ?? []
+          brainRegionIds
         )
       )
     ).then((accumulatedResponse) => {
