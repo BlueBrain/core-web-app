@@ -10,8 +10,13 @@ export default function useNotification() {
    * @param placement
    */
   const error = useCallback(
-    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
-      openNotification('error', message, duration, placement);
+    (
+      message: string,
+      duration: number = 5,
+      placement: Placement = 'bottomRight',
+      key?: React.Key
+    ) => {
+      openNotification('error', message, duration, placement, key);
     },
     []
   );
@@ -23,8 +28,13 @@ export default function useNotification() {
    * @param placement
    */
   const warning = useCallback(
-    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
-      openNotification('warning', message, duration, placement);
+    (
+      message: string,
+      duration: number = 5,
+      placement: Placement = 'bottomRight',
+      key?: React.Key
+    ) => {
+      openNotification('warning', message, duration, placement, key);
     },
     []
   );
@@ -36,8 +46,13 @@ export default function useNotification() {
    * @param placement
    */
   const success = useCallback(
-    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
-      openNotification('success', message, duration, placement);
+    (
+      message: string,
+      duration: number = 5,
+      placement: Placement = 'bottomRight',
+      key?: React.Key
+    ) => {
+      openNotification('success', message, duration, placement, key);
     },
     []
   );
@@ -49,8 +64,13 @@ export default function useNotification() {
    * @param placement
    */
   const info = useCallback(
-    (message: string, duration: number = 5, placement: Placement = 'bottomRight') => {
-      openNotification('info', message, duration, placement);
+    (
+      message: string,
+      duration: number = 5,
+      placement: Placement = 'bottomRight',
+      key?: React.Key
+    ) => {
+      openNotification('info', message, duration, placement, key);
     },
     []
   );
