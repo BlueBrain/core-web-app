@@ -87,7 +87,7 @@ function buildESReportsQuery(simId: string, name?: string, ids?: string[]) {
       terms: {
         '@id.keyword': ids,
       },
-    };
+    }; // Fetch all reports by provided id's
 
   const query: {
     bool?: {
