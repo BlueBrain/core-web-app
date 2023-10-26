@@ -1,10 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Spin, notification } from 'antd';
 import JSZip from 'jszip';
 import { Session } from 'next-auth';
-import { uniqBy } from 'lodash/fp';
 import { LoadingOutlined } from '@ant-design/icons';
-import { CumulativeAnalysisReportWContrib, Contribution, CumulativeAnalysisReport } from './types';
+import {
+  ExtendedCumAnalysisReport,
+  Contribution,
+  CumulativeAnalysisReport,
+  MultipleSimulationCampaignAnalysis,
+} from './types';
 import DimensionSelector from './DimensionSelector';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
@@ -23,11 +27,10 @@ export default function CustomAnalysis({
   resource: SimulationCampaignResource;
   analysisId: string;
 }) {
-  const [reports, fetching] = useCumulativeAnalysisReports(resource);
-  const [loading, setLoading] = useState(false);
+  const [launchingAnalysis, setLaunchingAnalysis] = useState(false);
+  const [report, fetching] = useCumulativeAnalysisReports(resource, analysisId);
   const session = useSessionAtomValue();
   const [analyses] = useAnalyses();
-  const [customReportIds, setCustomReportIds] = useState<string[] | undefined>();
 
   const analysesById = useMemo(
     () =>
@@ -38,41 +41,40 @@ export default function CustomAnalysis({
     [analyses]
   );
 
-  const report: CumulativeAnalysisReportWContrib | undefined = reports[analysisId];
-
-  useEffect(() => {
-    const ids = report?.hasPart?.map((r) => r['@id']);
-    setCustomReportIds(ids);
-    return () => {
-      setCustomReportIds(undefined);
-    };
-  }, [report, setCustomReportIds]);
+  const customReportIds = useMemo(() => report?.hasPart?.map((r) => r['@id']), [report]);
 
   return (
     <>
-      {report && customReportIds && !fetching && (
+      {report?.multiAnalysis.status === 'Done' && (
         <>
           <DimensionSelector coords={resource.parameter?.coords} />
           <SimulationsDisplayGrid status="Done" customReportIds={customReportIds} />
         </>
       )}
+
       {fetching && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
           <Spin indicator={<LoadingOutlined />} />
         </div>
       )}
-      {/* {false && !reports.length && !fetching && <span>Running Analysis ... </span>} */}
+
+      {report?.multiAnalysis.status === 'Running' && !fetching && (
+        <span>Running Analysis ... </span>
+      )}
 
       {!report && !fetching && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
           <button
             type="button"
             className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
-            onClick={() => launchAnalysis(resource, analysesById[analysisId], setLoading, session)}
-            disabled={loading}
+            onClick={() => {
+              setLaunchingAnalysis(true);
+              launchAnalysis(resource, analysesById[analysisId], session);
+            }}
+            disabled={launchingAnalysis}
           >
-            {!loading && <span>Launch Analysis</span>}
-            {loading && <span>Launching...</span>}
+            {!launchingAnalysis && <span>Launch Analysis</span>}
+            {launchingAnalysis && <span>Launching...</span>}
           </button>
         </div>
       )}
@@ -80,22 +82,20 @@ export default function CustomAnalysis({
   );
 }
 
-function useCumulativeAnalysisReports(simCampaign: SimulationCampaignResource): [
-  {
-    [analysisId: string]: CumulativeAnalysisReportWContrib;
-  },
-  boolean
-] {
+function useCumulativeAnalysisReports(
+  simCampaign: SimulationCampaignResource,
+  analysisId: string
+): [ExtendedCumAnalysisReport | undefined, boolean] {
   const session = useSessionAtomValue();
-  const [reports, setReports] = useState<{
-    [analysisId: string]: CumulativeAnalysisReportWContrib;
-  }>({});
-
+  const [report, setReport] = useState<ExtendedCumAnalysisReport>();
   const [fetching, setFetching] = useState(true);
+  const intervalRef = useRef<number>();
+  const fetchingRef = useRef<boolean>(false);
 
   useEffect(() => {
-    async function fetchIncoming() {
-      if (!session) return;
+    async function fetchCumulativeReports() {
+      if (!session || fetchingRef.current) return;
+      fetchingRef.current = true;
       const res: { _results: { '@id': string; '@type': string; _deprecated: boolean }[] } =
         await fetch(simCampaign._incoming, {
           headers: createHeaders(session.accessToken),
@@ -129,36 +129,35 @@ function useCumulativeAnalysisReports(simCampaign: SimulationCampaignResource): 
         return dateB - dateA;
       });
 
-      // Only the latest CumulativeAnalysisReport for each AnalysisSoftwareSource
-      const uniqueReports = uniqBy(
-        (cr) => cr.contribution.agent['@id'],
-        cumulativeReportsWithContrib
+      const foundReport = cumulativeReportsWithContrib.find(
+        (r) => r.contribution.agent['@id'] === analysisId
       );
 
-      const reportsByAnalysisId = uniqueReports.reduce(
-        (acc: { [id: string]: CumulativeAnalysisReportWContrib }, report) => {
-          acc[report.contribution.agent['@id']] = report;
-          return acc;
-        },
-        {}
-      );
+      const multiAnalysis =
+        foundReport &&
+        (await fetchResourceById<MultipleSimulationCampaignAnalysis>(
+          foundReport.wasGeneratedBy['@id'],
+          session
+        ));
 
-      setReports(reportsByAnalysisId);
+      setReport(multiAnalysis && { ...foundReport, multiAnalysis });
       setFetching(false);
+      fetchingRef.current = false;
+      if (multiAnalysis?.status === 'Done') window.clearInterval(intervalRef.current); // stop polling if task is done
     }
-    fetchIncoming();
-  }, [simCampaign, session, setFetching]);
-  return [reports, fetching];
+    fetchCumulativeReports();
+    intervalRef.current = window.setInterval(fetchCumulativeReports, 2000); // Refetch every minute to check for task status
+    return () => window.clearInterval(intervalRef.current);
+  }, [simCampaign, session, setFetching, analysisId]);
+  return [report, fetching];
 }
 
 async function launchAnalysis(
   simCampaign: SimulationCampaignResource,
   analysis: Analysis | undefined,
-  setLoading: (value: boolean) => void,
   session: Session | null
 ) {
   if (!simCampaign.wasGeneratedBy || !session || !analysis) return;
-  setLoading(true);
   const execution = await fetchResourceById<{ wasInfluencedBy: { '@id': string } }>(
     simCampaign.wasGeneratedBy['@id'],
     session
@@ -255,6 +254,4 @@ analysis-configs: [
     ),
     duration: 10,
   });
-
-  setLoading(false);
 }

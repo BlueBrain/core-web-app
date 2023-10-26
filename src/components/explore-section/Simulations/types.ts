@@ -84,9 +84,16 @@ export interface CumulativeAnalysisReport {
   type: 'CumulativeAnalysisReport';
   hasPart?: AnalysisReportLink[];
   contribution: ContributionLink;
+  wasGeneratedBy: { '@id': string };
   _createdAt: string;
 }
 
-export interface CumulativeAnalysisReportWContrib extends CumulativeAnalysisReport {
+export interface ExtendedCumAnalysisReport extends CumulativeAnalysisReport {
   contribution: Contribution;
+  multiAnalysis: MultipleSimulationCampaignAnalysis;
+}
+
+export interface MultipleSimulationCampaignAnalysis {
+  '@id': string;
+  status: string;
 }

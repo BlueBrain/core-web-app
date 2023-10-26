@@ -79,7 +79,9 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
         </>
       )}
 
-      {isCustom && <CustomAnalysis resource={resource} analysisId={selectedDisplay} />}
+      {isCustom && (
+        <CustomAnalysis resource={resource} analysisId={selectedDisplay} key={selectedDisplay} />
+      )}
     </div>
   );
 }
