@@ -12,7 +12,7 @@ import React, {
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button, ConfigProvider, Spin, Tooltip } from 'antd';
-import { MinusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, MinusOutlined } from '@ant-design/icons';
 import { unwrap, loadable } from 'jotai/utils';
 import ContextualTrigger from '../ContextualLiterature/Trigger';
 import { getMetric } from './util';
@@ -339,7 +339,11 @@ function ExpandedRegionDetails({
     return null;
   }
   if (composition.state === 'loading') {
-    return <Spin />;
+    return (
+      <div className="flex w-full h-full justify-center items-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
   }
   if (composition.state === 'hasError') {
     return (
