@@ -140,9 +140,6 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
 function CellDensity() {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const analysedComposition = useAtomValue(useMemo(() => loadable(analysedCompositionAtom), []));
-
-  // const composition = useAtomValue(compositionAtom);
-
   const { resetComposition } = useCompositionHistory();
 
   const handleReset = useCallback(() => {
