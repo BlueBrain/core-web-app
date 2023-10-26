@@ -1,6 +1,7 @@
 import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { useMemo } from 'react';
+import SimulationCard from './SimulationCard';
 import CenteredMessage from '@/components/CenteredMessage';
 import { Simulation } from '@/types/explore-section/resources';
 import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
@@ -14,12 +15,16 @@ type SimulationDisplayCardProps = {
   name?: string;
   simulation: Simulation;
   customReportIds?: string[];
+  xDimension: string;
+  yDimension: string;
 };
 
 export default function SimulationDisplayCard({
   name,
   simulation,
   customReportIds,
+  xDimension,
+  yDimension,
 }: SimulationDisplayCardProps) {
   const path = useEnsuredPath();
 
@@ -39,6 +44,11 @@ export default function SimulationDisplayCard({
     return analysisReports.find((r) => r.simulation === simulation.id);
   }, [analysisReports, name, simulation.id]);
 
+  if (name === 'status') {
+    return (
+      <SimulationCard simulation={simulation} xDimension={xDimension} yDimension={yDimension} />
+    );
+  }
   if (!analysisReports) return <Spin indicator={<LoadingOutlined />} />;
 
   return report?.blob ? (

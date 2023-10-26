@@ -145,6 +145,8 @@ export default function SimulationsDisplayGrid({
                     name={display}
                     simulation={simulation}
                     customReportIds={customReportIds}
+                    xDimension={xDimension.id}
+                    yDimension={yDimension.id}
                   />
                 ) : (
                   <NoSimulationFoundCard />
