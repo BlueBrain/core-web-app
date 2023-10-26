@@ -1,11 +1,19 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
 import { Button, ConfigProvider, Spin, Tooltip } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
-import { unwrap } from 'jotai/utils';
+import { unwrap, loadable } from 'jotai/utils';
 import ContextualTrigger from '../ContextualLiterature/Trigger';
 import { getMetric } from './util';
 import { NeuronCompositionEditorProps, NeuronCompositionItem } from './types';
@@ -291,15 +299,11 @@ function UnitsToggle({
   );
 }
 
-function NoVolumeAnnotations() {
+function NoVolumeAnnotations({ message }: { message: ReactNode }) {
   return (
     <div className="flex flex-col gap-3 text-center mt-48">
       <MissingData className="w-full" style={{ color: '#fff' }} />
-      <h3 className="font-semibold text-base text-white">
-        No volume annotations
-        <br />
-        available for this brain region
-      </h3>
+      {message}
     </div>
   );
 }
@@ -313,7 +317,7 @@ function ExpandedRegionDetails({
 }) {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
-  const composition = useAtomValue(analysedCompositionAtom);
+  const composition = useAtomValue(useMemo(() => loadable(analysedCompositionAtom), []));
   const isConfigEditable = useAtomValue(isConfigEditableAtom);
   const [meTypeNavValue, setNavValue] = useState<NavValue>({});
 
@@ -334,8 +338,25 @@ function ExpandedRegionDetails({
   if (!brainRegion) {
     return null;
   }
+  if (composition.state === 'loading') {
+    return <Spin />;
+  }
+  if (composition.state === 'hasError') {
+    return (
+      <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 w-[300px]">
+        {title}
+        <NoVolumeAnnotations
+          message={
+            <h3 className="font-semibold text-base text-white">
+              Cell composition could not be fetched
+            </h3>
+          }
+        />
+      </div>
+    );
+  }
 
-  return brainRegion.representedInAnnotation && composition?.totalComposition.neuron ? (
+  return brainRegion.representedInAnnotation && composition.data?.totalComposition.neuron ? (
     <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 min-w-[300px]">
       {title}
       <UnitsToggle
@@ -345,9 +366,9 @@ function ExpandedRegionDetails({
           setDensityOrCount(toSet);
         }}
       />
-      {composition ? (
+      {composition.data ? (
         <MeTypeDetails
-          neuronComposition={composition.totalComposition}
+          neuronComposition={composition.data.totalComposition}
           meTypeNavValue={meTypeNavValue}
           onValueChange={onValueChange}
           editMode={editMode && !!isConfigEditable}
@@ -359,7 +380,15 @@ function ExpandedRegionDetails({
   ) : (
     <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 w-[300px]">
       {title}
-      <NoVolumeAnnotations />
+      <NoVolumeAnnotations
+        message={
+          <h3 className="font-semibold text-base text-white">
+            No volume annotations
+            <br />
+            available for this brain region
+          </h3>
+        }
+      />
     </div>
   );
 }

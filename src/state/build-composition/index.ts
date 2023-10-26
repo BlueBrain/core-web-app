@@ -35,6 +35,10 @@ const initialCompositionAtom = atom<Promise<OriginalComposition | null>>(async (
   if (!session) return null;
 
   const compositionPayload = await get(configPayloadAtom);
+  // if '@type' is in composition payload, then there is an error in the config payload
+  if (compositionPayload && '@type' in compositionPayload) {
+    throw new Error('Composition could not be fetched');
+  }
   if (compositionPayload) {
     // TODO: create a focus-/selectAtom under cell-composition state to directly contain configuration
     const config = Object.values(compositionPayload)[0].configuration;
