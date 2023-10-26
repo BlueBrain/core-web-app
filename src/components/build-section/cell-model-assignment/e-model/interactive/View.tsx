@@ -13,6 +13,7 @@ import {
   Select,
   Collapse,
 } from 'antd';
+import { MenuFoldOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 
 import throttle from 'lodash/throttle';
@@ -325,6 +326,13 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
           },
         }}
       >
+        <Button
+          className="absolute top-8 right-8"
+          type="default"
+          icon={<MenuFoldOutlined />}
+          onClick={() => setSimDrawerOpen(true)}
+        />
+
         {selectionCtrlConfig && (
           <PositionedPoptip config={selectionCtrlConfig.position}>
             <Button
