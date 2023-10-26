@@ -2,7 +2,7 @@ import { DeltaResource } from '@/types/explore-section/resources';
 import { DetailProps } from '@/types/explore-section/application';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import { classNames } from '@/util/utils';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 
 type FieldProps = { field: string; className?: string; data: DeltaResource };
 

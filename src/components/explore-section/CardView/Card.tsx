@@ -5,7 +5,7 @@ import {
 } from '@/types/explore-section/es-experiment';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import { EXPERIMENT_TYPES } from '@/constants/explore-section/experiment-types';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 
 type CardProps = {
   resource: Experiment;

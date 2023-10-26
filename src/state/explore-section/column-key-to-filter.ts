@@ -1,5 +1,5 @@
 import { Filter } from '@/components/Filter/types';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 
 export default function columnKeyToFilter(key: string): Filter {
   const fieldConfig = EXPLORE_FIELDS_CONFIG[key];
