@@ -1,19 +1,20 @@
 'use client';
 
-import { useCallback, useState, useMemo, ReactNode, Suspense } from 'react';
+import React, { useCallback, useState, useMemo, ReactNode, Suspense } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { Button, Image } from 'antd';
+import { Button, Image, Spin } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
+import { loadable } from 'jotai/utils';
 import DensityChart from './DensityChart';
 import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
-import { ResetIcon, UndoIcon } from '@/components/icons';
+import { MissingData, ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
-import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
+import { analysedCompositionAtom } from '@/state/build-composition';
 import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
@@ -137,10 +138,27 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
 
 function CellDensity() {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
-  const analysedComposition = useAtomValue(analysedCompositionAtom);
-  const composition = useAtomValue(compositionAtom);
+  const analysedComposition = useAtomValue(useMemo(() => loadable(analysedCompositionAtom), []));
+
+  // const composition = useAtomValue(compositionAtom);
 
   const { resetComposition } = useCompositionHistory();
+
+  const handleReset = useCallback(() => {
+    resetComposition();
+  }, [resetComposition]);
+
+  if (analysedComposition.state === 'loading') {
+    return <Spin />;
+  }
+  if (analysedComposition.state === 'hasError') {
+    return (
+      <div className="flex flex-col text-primary-7 justify-center w-full h-full items-center font-bold text-xl gap-2">
+        <MissingData className="w-full" style={{ color: '#0050B3' }} />
+        <div>Cell composition could not be calculated</div>
+      </div>
+    );
+  }
 
   // This should be treated as a temporary solution
   // as we shouldn't expect empty composition in the end.
@@ -148,12 +166,8 @@ function CellDensity() {
     throw new Error(`There is no configuration data for the ${brainRegion?.title}`);
   }
 
-  const handleReset = useCallback(() => {
-    resetComposition();
-  }, [resetComposition]);
-
   return (
-    <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
+    <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[analysedComposition.data]}>
       <DensityChart />
       <div className="flex justify-between align-center w-full">
         <CellDensityToolbar onReset={handleReset} />

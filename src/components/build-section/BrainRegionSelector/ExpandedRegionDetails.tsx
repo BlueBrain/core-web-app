@@ -348,7 +348,7 @@ function ExpandedRegionDetails({
         <NoVolumeAnnotations
           message={
             <h3 className="font-semibold text-base text-white">
-              Cell composition could not be fetched
+              Cell composition could not be calculated
             </h3>
           }
         />
