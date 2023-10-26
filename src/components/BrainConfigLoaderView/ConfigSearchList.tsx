@@ -41,6 +41,7 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
 
   const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
     useCloneModal<BrainModelConfigResource>(cloneBrainModelConfig, getBrainModelConfigsByNameQuery);
+
   const { createModal: createRenameModal, contextHolder: renameContextHolder } =
     useRenameModal<BrainModelConfigResource>(
       renameBrainModelConfig,
@@ -91,11 +92,11 @@ export default function ConfigSearchList({ baseHref }: ConfigSearchListProps) {
                 className="inline-block mr-2"
                 onClick={() => openRenameModal(config)}
               >
-                <EditIcon />
+                <EditIcon className="text-white" />
               </Button>
 
               <Button size="small" type="text" onClick={() => openCloneModal(config)}>
-                <CloneIcon />
+                <CloneIcon className="text-white" />
               </Button>
             </>
           )}
