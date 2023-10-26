@@ -6,6 +6,7 @@ import { Button, Image, Spin } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadable } from 'jotai/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 import DensityChart from './DensityChart';
 import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
@@ -149,7 +150,11 @@ function CellDensity() {
   }, [resetComposition]);
 
   if (analysedComposition.state === 'loading') {
-    return <Spin />;
+    return (
+      <div className="flex w-full h-full justify-center items-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
   }
   if (analysedComposition.state === 'hasError') {
     return (
