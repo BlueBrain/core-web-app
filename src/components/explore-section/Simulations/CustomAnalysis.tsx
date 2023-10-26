@@ -58,9 +58,7 @@ export default function CustomAnalysis({
         </div>
       )}
 
-      {report?.multiAnalysis.status === 'Running' && !fetching && (
-        <span>Running Analysis ... </span>
-      )}
+      {report?.multiAnalysis.status === 'Running' && <span>Running Analysis ... </span>}
 
       {!report && !fetching && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
