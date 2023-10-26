@@ -93,7 +93,7 @@ const getReportImageFamily = memoizeOne(
 );
 
 // Only fetch the reports corresponding to the selected simulation and name or by custom report id's
-// If custom report ids are provided fetch all of them
+// If custom report ids are provided fetch them
 // If name is provided fetch only the report by that name corresponding to the simId
 // If no name and no ids are provide fetch all reports for the simulation (only for simulation detail page)
 // Wipe-out cache when user visits another path
