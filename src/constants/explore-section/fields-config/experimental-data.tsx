@@ -44,7 +44,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Brain Region',
-    filter: 'checkList',
+    filter: null,
     render: {
       listingViewFn: selectorFnBrainRegion,
       detailViewFn: (resource) => resource.brainLocation.brainRegion.label,
