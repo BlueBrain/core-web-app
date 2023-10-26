@@ -1,48 +1,54 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 import { useMemo } from 'react';
 import CenteredMessage from '@/components/CenteredMessage';
-import SimulationCard from '@/components/explore-section/Simulations/SimulationDisplayCard/SimulationCard';
 import { Simulation } from '@/types/explore-section/resources';
 import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
-import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
+import {
+  getAnalysisReportsArgs,
+  getAnalysisReportsFamily,
+} from '@/state/explore-section/simulation-campaign';
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 type SimulationDisplayCardProps = {
-  display?: string;
+  name?: string;
   simulation: Simulation;
-  xDimension: string;
-  yDimension: string;
-  analysisReports?: AnalysisReportWithImage[];
+  customReportIds?: string[];
 };
 
 export default function SimulationDisplayCard({
-  display,
+  name,
   simulation,
-  xDimension,
-  yDimension,
-  analysisReports,
+  customReportIds,
 }: SimulationDisplayCardProps) {
-  const matchingReport = useMemo(() => {
-    if (display)
-      return analysisReports?.find(
-        (r) => r.simulation === simulation.id && r.name === display // Reports from Sim Campaign
-      );
-    return analysisReports?.find((report) => report.simulation === simulation.id); // Reports from Custom Analysis
-  }, [display, simulation.id, analysisReports]);
+  const path = useEnsuredPath();
 
-  if (display === 'status') {
-    return (
-      <SimulationCard simulation={simulation} xDimension={xDimension} yDimension={yDimension} />
-    );
-  }
+  if (Boolean(name) === Boolean(customReportIds))
+    throw new Error('Provide only one of name and customReportIds');
 
-  return matchingReport?.blob ? (
+  const analysisReports = useUnwrappedValue(
+    getAnalysisReportsFamily(path)(...getAnalysisReportsArgs(simulation.id, name, customReportIds))
+  );
+
+  const report = useMemo(() => {
+    if (!analysisReports) return;
+    if (name) {
+      if (analysisReports.length > 1) throw new Error('Error, data fetching error'); // If name was specified there should be at most one fetched report
+      return analysisReports[0];
+    }
+    return analysisReports.find((r) => r.simulation === simulation.id);
+  }, [analysisReports, name, simulation.id]);
+
+  if (!analysisReports) return <Spin indicator={<LoadingOutlined />} />;
+
+  return report?.blob ? (
     <AnalysisReportImage
       title={simulation.title}
       id={simulation.id}
       project={simulation.project}
-      blob={matchingReport.blob}
-      createdAt={matchingReport.createdAt}
-      createdBy={matchingReport.createdBy}
+      blob={report.blob}
+      createdAt={report.createdAt}
+      createdBy={report.createdBy}
     />
   ) : (
     <CenteredMessage

@@ -1,30 +1,30 @@
-import { useMemo } from 'react';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import ImageReport from './ImageReport';
-import { getAnalysisReportsAtom } from '@/state/explore-section/simulation-campaign';
+import {
+  getAnalysisReportsArgs,
+  getAnalysisReportsFamily,
+} from '@/state/explore-section/simulation-campaign';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function SimulationReports() {
   const path = useEnsuredPath();
-  const resourceInfo = useResourceInfoFromPath();
-  const reports = useUnwrappedValue(getAnalysisReportsAtom(path));
-  const reportImageFiles = useMemo(
-    () => reports?.filter((r) => r.simulation === resourceInfo?.id),
-    [reports, resourceInfo?.id]
+  const simulation = useResourceInfoFromPath();
+  const reports = useUnwrappedValue(
+    getAnalysisReportsFamily(path)(...getAnalysisReportsArgs(simulation.id))
   );
 
-  if (reportImageFiles) {
+  if (reports) {
     return (
       <div className="text-primary-7 mt-7">
         <div className="text-primary-7">
           <span className="text-2xl font-bold">Reports</span>
-          <span className="ml-3 text-xs">({reportImageFiles?.length})</span>
+          <span className="ml-3 text-xs">({reports.length})</span>
         </div>
 
         <div className="grid grid-cols-3 mt-4">
-          {reportImageFiles?.map(
+          {reports.map(
             ({ blob, name }) =>
               blob && (
                 <ImageReport key={name} imageSource={URL.createObjectURL(blob)} title={name} />

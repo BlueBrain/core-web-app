@@ -1,14 +1,12 @@
 import { atom } from 'jotai';
-import { atomFamily, selectAtom } from 'jotai/utils';
+import { selectAtom } from 'jotai/utils';
+import { memoize } from 'lodash/fp';
 import memoizeOne from 'memoize-one';
 import sessionAtom from '../session';
 import { DeltaResource, Simulation } from '@/types/explore-section/resources';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
-import {
-  fetchAnalysisReportsFromEs,
-  fetchSimulationsFromEs,
-} from '@/api/explore-section/simulations';
+import { fetchAnalysisReports, fetchSimulationsFromEs } from '@/api/explore-section/simulations';
 import { detailFamily, sessionAndInfoFamily } from '@/state/explore-section/detail-view-atoms';
 import { pathToResource } from '@/util/explore-section/detail-view';
 
@@ -18,7 +16,7 @@ const ensuredSessionAtom = atom((get) => {
   return session;
 });
 
-/* MemoizeOne instead of atomFamily ensures only one atom
+/* memoizeOne instead of atomFamily ensures only one atom
  containing the data for only one sim campaign (the one corresponding to the current path) 
  is stored in memory at a time. Thus preventing memory leaks.
  See https://jotai.org/docs/utilities/family#caveat-memory-leaks
@@ -76,16 +74,17 @@ export const getSimulationsAtom = memoizeOne((path: string) =>
   })
 );
 
-/* Caches report images in an atomFamily so that they're not refetched again when 
+/* Caches report images so that they're not refetched again when 
  refetching the reports.
- Memoize one ensures the family is destroyed and recreated when user
+ Memoize one ensures the cache is destroyed and recreated when user
  visits a new path, preventing memory leaks.
+ lodash's memoize works the same as atomFamily but accepts more params
 */
 const getReportImageFamily = memoizeOne(
   (
     path: string // eslint-disable-line
   ) =>
-    atomFamily((contentUrl: string) =>
+    memoize((contentUrl: string) =>
       atom(async (get) => {
         const session = get(ensuredSessionAtom);
         return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
@@ -93,33 +92,48 @@ const getReportImageFamily = memoizeOne(
     )
 );
 
-// TODO: Only fetch the reports corresponding to the selected simulation
-// memoize by path, return atomFamily scoped by simulation id.
-export const getAnalysisReportsAtom = memoizeOne((path: string) =>
-  atom(async (get) => {
-    const session = get(ensuredSessionAtom);
-    const simulations = await get(getSimulationsAtom(path));
+// Only fetch the reports corresponding to the selected simulation and name or by custom report id's
+// If custom report ids are provided fetch all of them
+// If name is provided fetch only the report by that name corresponding to the simId
+// If no name and no ids are provide fetch all reports for the simulation (only for simulation detail page)
+// Wipe-out cache when user visits another path
+export const getAnalysisReportsFamily = memoizeOne((path: string) =>
+  memoize((key: string, simId: string, name?: string, ids?: string[]) => {
+    return atom(async (get) => {
+      const session = get(ensuredSessionAtom);
+      const fetchedReports = await fetchAnalysisReports(session, simId, name, ids);
 
-    const fetchedReports =
-      session &&
-      simulations &&
-      (await fetchAnalysisReportsFromEs(
-        session,
-        simulations.map(({ id: simId }) => simId)
-      ));
+      const reportsWithImage = fetchedReports?.map(async (report) => {
+        const imageUrl: string | undefined = report.distribution?.[0].contentUrl;
+        const blob = imageUrl ? await get(getReportImageFamily(path)(imageUrl)) : undefined;
+        return {
+          ...report,
+          blob,
+          simulation: report.derivation.find(
+            ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
+          )?.identifier,
+        } as AnalysisReportWithImage;
+      });
 
-    const reportsWithImage = fetchedReports?.map(async (report) => {
-      const imageUrl: string | undefined = report.distribution?.[0].contentUrl;
-      const blob = imageUrl ? await get(getReportImageFamily(path)(imageUrl)) : undefined;
-      return {
-        ...report,
-        blob,
-        simulation: report.derivation.find(
-          ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
-        )?.identifier,
-      } as AnalysisReportWithImage;
+      return reportsWithImage && (await Promise.all(reportsWithImage));
     });
-
-    return reportsWithImage && (await Promise.all(reportsWithImage));
   })
 );
+
+function getAnalysisReportsKey(simId: string, name?: string, ids?: string[]) {
+  if (name && ids) throw new Error("Can't specify name if ids provided");
+  if (ids) return `${ids}`;
+  if (!name) return simId;
+  return simId + name;
+}
+
+export function getAnalysisReportsArgs(
+  simId: string,
+  name?: string,
+  ids?: string[]
+): [string, string, string | undefined, string[] | undefined] {
+  const key = getAnalysisReportsKey(simId, name, ids);
+  return [key, simId, name, ids];
+}
+
+export const customReportIdsAtom = atom<string[] | undefined>(undefined);

@@ -81,10 +81,45 @@ export async function fetchSimulationsFromEs(accessToken: string, campaignId: st
     }));
 }
 
-export async function fetchAnalysisReportsFromEs(
+function buildESReportsQuery(simId: string, name?: string, ids?: string[]) {
+  if (ids)
+    return {
+      terms: {
+        '@id.keyword': ids,
+      },
+    };
+
+  const query: {
+    bool?: {
+      must?: { match: { [key: string]: string | string[] } }[];
+    };
+    terms?: { [key: string]: string | string[] };
+  } = {
+    bool: {
+      must: [
+        {
+          match: {
+            'derivation.identifier.keyword': simId,
+          },
+        },
+      ],
+    },
+  }; // Fetch all reports beloging to simulation Id
+
+  if (name && query.bool?.must) {
+    query.bool.must.push({ match: { name } });
+    return query;
+  } // If name specified only fetch the report matching that name
+
+  return query;
+}
+
+export async function fetchAnalysisReports(
   session: Session,
-  simulationIds: string[]
-): Promise<AnalysisReport[]> {
+  simulationId: string,
+  name?: string,
+  ids?: string[]
+): Promise<AnalysisReport[] | undefined> {
   const { accessToken } = session;
 
   if (!accessToken) throw new Error('Access token should be defined');
@@ -93,18 +128,7 @@ export async function fetchAnalysisReportsFromEs(
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({
-      size: 10000,
-      query: {
-        bool: {
-          filter: [
-            {
-              terms: {
-                'derivation.identifier.keyword': simulationIds,
-              },
-            },
-          ],
-        },
-      },
+      query: buildESReportsQuery(simulationId, name, ids),
     }),
   })
     .then((response) => response.json())

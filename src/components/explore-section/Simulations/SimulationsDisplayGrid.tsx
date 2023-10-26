@@ -13,17 +13,13 @@ import {
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
-import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
-import {
-  getAnalysisReportsAtom,
-  getSimulationsAtom,
-} from '@/state/explore-section/simulation-campaign';
+import { getSimulationsAtom } from '@/state/explore-section/simulation-campaign';
 
 type SimulationDisplayGridProps = {
   display?: string;
+  customReportIds?: string[];
   status: string;
-  customAnalysisReports?: AnalysisReportWithImage[];
 };
 
 type DimensionHeaderProps = {
@@ -59,11 +55,10 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
 export default function SimulationsDisplayGrid({
   display,
   status,
-  customAnalysisReports,
+  customReportIds,
 }: SimulationDisplayGridProps) {
   const path = useEnsuredPath();
   const simulations = useUnwrappedValue(getSimulationsAtom(path));
-  const analysisReports = useUnwrappedValue(getAnalysisReportsAtom(path));
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);
@@ -147,11 +142,9 @@ export default function SimulationsDisplayGrid({
               <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
                 {simulation ? (
                   <SimulationDisplayCard
-                    display={display}
+                    name={display}
                     simulation={simulation}
-                    xDimension={xDimension.id}
-                    yDimension={yDimension.id}
-                    analysisReports={customAnalysisReports || analysisReports}
+                    customReportIds={customReportIds}
                   />
                 ) : (
                   <NoSimulationFoundCard />

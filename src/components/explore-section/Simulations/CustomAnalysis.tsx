@@ -4,8 +4,9 @@ import JSZip from 'jszip';
 import { Session } from 'next-auth';
 import { uniqBy } from 'lodash/fp';
 import { LoadingOutlined } from '@ant-design/icons';
-import CustomAnalysisReport from './CustomAnalysisReport';
 import { CumulativeAnalysisReportWContrib, Contribution, CumulativeAnalysisReport } from './types';
+import DimensionSelector from './DimensionSelector';
+import SimulationsDisplayGrid from './SimulationsDisplayGrid';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
@@ -26,6 +27,7 @@ export default function CustomAnalysis({
   const [loading, setLoading] = useState(false);
   const session = useSessionAtomValue();
   const [analyses] = useAnalyses();
+  const [customReportIds, setCustomReportIds] = useState<string[] | undefined>();
 
   const analysesById = useMemo(
     () =>
@@ -38,9 +40,22 @@ export default function CustomAnalysis({
 
   const report: CumulativeAnalysisReportWContrib | undefined = reports[analysisId];
 
+  useEffect(() => {
+    const ids = report?.hasPart?.map((r) => r['@id']);
+    setCustomReportIds(ids);
+    return () => {
+      setCustomReportIds(undefined);
+    };
+  }, [report, setCustomReportIds]);
+
   return (
     <>
-      {report && <CustomAnalysisReport cumulativeReport={report} />}
+      {report && customReportIds && !fetching && (
+        <>
+          <DimensionSelector coords={resource.parameter?.coords} />
+          <SimulationsDisplayGrid status="Done" customReportIds={customReportIds} />
+        </>
+      )}
       {fetching && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
           <Spin indicator={<LoadingOutlined />} />
