@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import capitalize from 'lodash/capitalize';
+import _memoize from 'lodash/memoize';
 
 export function createHeaders(
   token: string,
@@ -65,4 +66,94 @@ export function brainRegionTitleCaseExceptConjunctions(phrase: string) {
   });
 
   return capitalizedWords.join(' ');
+}
+
+function makeLRUMap(maxKeys: number) {
+  class LRUMap<K, V> {
+    private maxKeys: number;
+
+    private map: Map<K, V>;
+
+    private lru: Map<K, null>;
+
+    constructor() {
+      this.maxKeys = maxKeys;
+      this.map = new Map<K, V>();
+      this.lru = new Map<K, null>();
+    }
+
+    // Helper method to update the access record
+    private _updateLRU(key: K): void {
+      this.lru.delete(key); // Remove the existing record
+      this.lru.set(key, null); // Set it anew as the most recently used, value doesn't matter
+    }
+
+    // Helper method to maintain the size of the map
+    private _checkSizeAndRemoveLRU(): void {
+      if (this.map.size > this.maxKeys) {
+        // Least recently used item is the first item in the LRU map
+        const lruKey = this.lru.keys().next().value as K;
+        this.lru.delete(lruKey);
+        this.map.delete(lruKey);
+      }
+    }
+
+    public set(key: K, value: V) {
+      if (this.map.has(key) || this.map.size < this.maxKeys) {
+        this._updateLRU(key); // Existing key or space available, update LRU
+      }
+
+      this.map.set(key, value);
+      this._checkSizeAndRemoveLRU();
+      return this; // For consistency with Map.set
+    }
+
+    public get(key: K): V | undefined {
+      if (!this.map.has(key)) {
+        return undefined; // Key doesn't exist, return undefined
+      }
+
+      this._updateLRU(key); // Key accessed, update LRU
+      return this.map.get(key);
+    }
+
+    public has(key: K): boolean {
+      return this.map.has(key);
+    }
+
+    public delete(key: K): boolean {
+      if (this.map.has(key)) {
+        this.lru.delete(key);
+        return this.map.delete(key);
+      }
+      return false; // For consistency with native Map.delete behavior
+    }
+
+    public clear(): void {
+      this.lru.clear();
+      this.map.clear();
+    }
+
+    public get size(): number {
+      return this.map.size;
+    }
+  }
+  return LRUMap;
+}
+
+/* Custom memoize constructor that keeps at most maxSize
+elements in the cache to prevent memory leaks.
+Uses LRU instead of LRI as cache expiry mechanism.
+Used in place of atomFamily.
+https://jotai.org/docs/utilities/family#caveat-memory-leaks
+*/
+export function memoize<Param, T>(
+  initialize: (param: Param) => T,
+  resolver?: (a: Param) => string,
+  maxSize?: number
+) {
+  if (maxSize === undefined) maxSize = 100; // eslint-disable-line
+  const newFamily = _memoize(initialize, resolver);
+  newFamily.cache = new (makeLRUMap(maxSize))();
+  return newFamily;
 }

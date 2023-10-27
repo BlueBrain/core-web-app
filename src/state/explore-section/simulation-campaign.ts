@@ -1,7 +1,6 @@
-import { Atom, atom } from 'jotai';
-import { atomFamily as atomFamily_, selectAtom } from 'jotai/utils';
+import { atom } from 'jotai';
+import { selectAtom } from 'jotai/utils';
 import memoizeOne from 'memoize-one';
-import { isEqual } from 'lodash/fp';
 import sessionAtom from '../session';
 import { DeltaResource, Simulation } from '@/types/explore-section/resources';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
@@ -9,22 +8,7 @@ import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { fetchAnalysisReports, fetchSimulationsFromEs } from '@/api/explore-section/simulations';
 import { detailFamily, sessionAndInfoFamily } from '@/state/explore-section/detail-view-atoms';
 import { pathToResource } from '@/util/explore-section/detail-view';
-
-/* Custom atomFamily constructor that automatically deletes atoms from the cache
-after maxAgeSecs seconds to prevent memory leaks. 
-https://jotai.org/docs/utilities/family#caveat-memory-leaks
-*/
-function atomFamily<Param, AtomType extends Atom<T>, T>(
-  initializeAtom: (param: Param) => AtomType,
-  areEqual?: (a: Param, b: Param) => boolean,
-  maxAgeSecs = 60 * 5 // Atoms last for at most 5 minutes by default
-) {
-  const newFamily = atomFamily_(initializeAtom, areEqual);
-  newFamily.setShouldRemove(
-    (createdAt) => (Date.now() - createdAt) / 1000 > Math.max(1, maxAgeSecs)
-  );
-  return newFamily;
-}
+import { memoize as atomFamily } from '@/util/utils';
 
 const ensuredSessionAtom = atom((get) => {
   const session = get(sessionAtom);
@@ -121,5 +105,10 @@ export const analysisReportsFamily = atomFamily(
       return reportsWithImage && (await Promise.all(reportsWithImage));
     });
   },
-  isEqual
+  // Resolver for keys in the cache
+  ({ simId, name, ids }) => {
+    if (ids) return ids.join('_');
+    if (name) return simId + name;
+    return simId;
+  }
 );
