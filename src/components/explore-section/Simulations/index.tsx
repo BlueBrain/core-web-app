@@ -9,9 +9,9 @@ import DimensionSelector from '@/components/explore-section/Simulations/Dimensio
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
 import {
   dimensionsAtom,
-  getInitializeDimensionsAtom,
+  initializeDimensionsFamily,
 } from '@/components/explore-section/Simulations/state';
-import { getSimulationsAtom } from '@/state/explore-section/simulation-campaign';
+import { simulationsFamily } from '@/state/explore-section/simulation-campaign';
 import SimulationOptionsDropdown from '@/components/explore-section/Simulations/DisplayDropdown';
 import {
   displayOptions,
@@ -25,8 +25,8 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   const [showStatus, setShowStatus] = useState<string>('all');
   const path = useEnsuredPath();
   const dimensions = useAtomValue(dimensionsAtom);
-  const setDefaultDimensions = useSetAtom(getInitializeDimensionsAtom(path));
-  const simulations = useUnwrappedValue(getSimulationsAtom(path));
+  const setDefaultDimensions = useSetAtom(initializeDimensionsFamily(path));
+  const simulations = useUnwrappedValue(simulationsFamily(path));
   const [analyses] = useAnalyses();
 
   const isCustom = useMemo(

@@ -28,7 +28,7 @@ function buildDefaultDimensions(resource: SimulationCampaignResource) {
 
 export const dimensionsAtom = atom<Dimension[] | null>([]);
 
-export const getInitializeDimensionsAtom = memoizeOne((path: string) =>
+export const initializeDimensionsFamily = memoizeOne((path: string) =>
   atom(null, async (get, set) => {
     const resource = await get(detailFamily(pathToResource(path)));
 

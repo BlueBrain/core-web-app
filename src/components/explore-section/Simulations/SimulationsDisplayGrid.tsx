@@ -14,7 +14,7 @@ import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
 import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
-import { getSimulationsAtom } from '@/state/explore-section/simulation-campaign';
+import { simulationsFamily } from '@/state/explore-section/simulation-campaign';
 
 type SimulationDisplayGridProps = {
   display?: string;
@@ -58,7 +58,7 @@ export default function SimulationsDisplayGrid({
   customReportIds,
 }: SimulationDisplayGridProps) {
   const path = useEnsuredPath();
-  const simulations = useUnwrappedValue(getSimulationsAtom(path));
+  const simulations = useUnwrappedValue(simulationsFamily(path));
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);

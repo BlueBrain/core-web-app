@@ -5,11 +5,8 @@ import SimulationCard from './SimulationCard';
 import CenteredMessage from '@/components/CenteredMessage';
 import { Simulation } from '@/types/explore-section/resources';
 import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
-import {
-  getAnalysisReportsArgs,
-  getAnalysisReportsFamily,
-} from '@/state/explore-section/simulation-campaign';
-import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
+import { analysisReportsFamily } from '@/state/explore-section/simulation-campaign';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 type SimulationDisplayCardProps = {
   name?: string;
@@ -26,13 +23,11 @@ export default function SimulationDisplayCard({
   xDimension,
   yDimension,
 }: SimulationDisplayCardProps) {
-  const path = useEnsuredPath();
-
   if (Boolean(name) === Boolean(customReportIds))
     throw new Error('Provide only one of name and customReportIds');
 
   const analysisReports = useUnwrappedValue(
-    getAnalysisReportsFamily(path)(...getAnalysisReportsArgs(simulation.id, name, customReportIds))
+    analysisReportsFamily({ simId: simulation.id, name, ids: customReportIds })
   );
 
   const report = useMemo(() => {

@@ -3,7 +3,7 @@ import { useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 import { Form, Input, Radio } from 'antd';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
-import { getSimCampaignDimensionsAtom } from '@/state/explore-section/simulation-campaign';
+import { simCampaignDimensionsFamily } from '@/state/explore-section/simulation-campaign';
 import {
   AxisDimensionBoxEditFormProps,
   DimensionRange,
@@ -19,7 +19,7 @@ export default function AxisDimensionBoxEditForm({
   const inputType = useWatch('input-type', form);
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
   const path = useEnsuredPath();
-  const simulationCampaignDimensions = useUnwrappedValue(getSimCampaignDimensionsAtom(path));
+  const simulationCampaignDimensions = useUnwrappedValue(simCampaignDimensionsFamily(path));
 
   const valueRange: DimensionRange | null = useMemo(() => {
     const dimensionConfig =
