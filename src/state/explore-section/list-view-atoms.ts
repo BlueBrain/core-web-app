@@ -19,7 +19,6 @@ import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
-import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
 import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 
 type DataAtomFamilyScopeType = {
@@ -105,13 +104,12 @@ export const queryAtom = atomFamily(
       const sortState = get(sortStateAtom);
       const visibleBrainRegions = get(visibleExploreBrainRegionsAtom);
 
-      // if a brain region is not selected, selecting by default the brain region with id 8 (Basic cell groups and regions)
-      const descendants = await get(
-        getBrainRegionDescendants(
-          brainRegionSource === 'visible' ? visibleBrainRegions : [BASIC_CELL_GROUPS_AND_REGIONS_ID]
-        )
-      );
-      const descendantIds = descendants?.map((d) => d.id);
+      let descendantIds: string[] = [];
+      // if the source of brain sources are the visible ones, we fill with descendants
+      if (brainRegionSource === 'visible') {
+        const descendants = await get(getBrainRegionDescendants(visibleBrainRegions));
+        descendantIds = descendants?.map((d) => d.id) || [];
+      }
       const filters = await get(filtersAtom({ experimentTypeName }));
       if (!filters) {
         return null;
