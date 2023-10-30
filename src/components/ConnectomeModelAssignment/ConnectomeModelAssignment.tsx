@@ -83,7 +83,7 @@ export default function ConnectomeModelAssignmentView() {
 
   return (
     <>
-      <div className="bg-black mr-7 relative">
+      <div className="bg-black">
         <div className="text-white">
           <h1 className="text-white font-bold p-4">Default synapse model assignments</h1>
           <div style={{ width: '90%' }}>
