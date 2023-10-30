@@ -1,3 +1,4 @@
+import { ISODateString } from 'next-auth';
 import { Dispatch, SetStateAction } from 'react';
 
 export type Status = 'initial' | 'selection';
@@ -85,7 +86,7 @@ export interface CumulativeAnalysisReport {
   hasPart?: AnalysisReportLink[];
   contribution: ContributionLink;
   wasGeneratedBy: { '@id': string };
-  _createdAt: string;
+  _createdAt: ISODateString;
 }
 
 export interface ExtendedCumAnalysisReport extends CumulativeAnalysisReport {
@@ -96,4 +97,5 @@ export interface ExtendedCumAnalysisReport extends CumulativeAnalysisReport {
 export interface MultipleSimulationCampaignAnalysis {
   '@id': string;
   status: string;
+  _createdAt: ISODateString;
 }

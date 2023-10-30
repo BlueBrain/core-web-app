@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Spin, notification } from 'antd';
 import JSZip from 'jszip';
-import { Session } from 'next-auth';
-import { LoadingOutlined } from '@ant-design/icons';
+import { ISODateString, Session } from 'next-auth';
+import { LoadingOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   ExtendedCumAnalysisReport,
   Contribution,
@@ -58,7 +58,11 @@ export default function CustomAnalysis({
         </div>
       )}
 
-      {report?.multiAnalysis.status === 'Running' && <span>Running Analysis ... </span>}
+      {report?.multiAnalysis.status === 'Running' && (
+        <div className="flex justify-center items-center" style={{ height: 200 }}>
+          <RunningAnalysis createdAt={report.multiAnalysis._createdAt} />
+        </div>
+      )}
 
       {!report && !fetching && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
@@ -144,7 +148,7 @@ function useCumulativeAnalysisReports(
       if (multiAnalysis?.status === 'Done') window.clearInterval(intervalRef.current); // stop polling if task is done
     }
     fetchCumulativeReports();
-    intervalRef.current = window.setInterval(fetchCumulativeReports, 2000); // Refetch every minute to check for task status
+    intervalRef.current = window.setInterval(fetchCumulativeReports, 3600); // Refetch every minute to check for task status
     return () => window.clearInterval(intervalRef.current);
   }, [simCampaign, session, setFetching, analysisId]);
   return [report, fetching];
@@ -252,4 +256,54 @@ analysis-configs: [
     ),
     duration: 10,
   });
+}
+
+function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
+  const [executionTime, setExecutionTime] = useState<string>();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const startTime = new Date(createdAt);
+      const currentTime = new Date();
+      // @ts-ignore-error
+      const difference = Math.floor((currentTime - startTime) / 1000); // in seconds
+      setExecutionTime(formatTimeDifference(difference));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [createdAt]);
+
+  if (!executionTime) return null;
+
+  return (
+    <div className="flex items-center space-x-4 bg-blue-100 p-4 rounded-md shadow-md">
+      <SyncOutlined className="text-blue-500 text-2xl" spin />
+      <div className="text-blue-600">
+        <div className="font-semibold">Running analysis...</div>
+        <div className="text-sm mt-1">Started: {executionTime} ago</div>
+      </div>
+    </div>
+  );
+}
+
+function formatTimeDifference(differenceInSeconds: number): string {
+  if (differenceInSeconds < 60) {
+    return `${differenceInSeconds} seconds`;
+  }
+
+  if (differenceInSeconds < 3600) {
+    const minutes = Math.floor(differenceInSeconds / 60);
+    const seconds = differenceInSeconds % 60;
+    return `${minutes} minutes ${seconds} seconds`;
+  }
+
+  if (differenceInSeconds < 86400) {
+    const hours = Math.floor(differenceInSeconds / 3600);
+    const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+    return `${hours} hours ${minutes} minutes`;
+  }
+
+  const days = Math.floor(differenceInSeconds / 86400);
+  const hours = Math.floor((differenceInSeconds % 86400) / 3600);
+  return `${days} days ${hours} hours`;
 }
