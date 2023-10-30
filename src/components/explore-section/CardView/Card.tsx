@@ -1,3 +1,4 @@
+import { useInView } from 'react-intersection-observer';
 import {
   Experiment,
   ExperimentalTrace,
@@ -15,19 +16,22 @@ type CardProps = {
 
 export default function Card({ resource, experimentTypeName, score }: CardProps) {
   const cardFields = EXPERIMENT_TYPES[experimentTypeName]?.cardViewFields;
+  const { ref, inView } = useInView();
 
   return (
-    <div className="flex flex-col border border-solid rounded-md h-[500px] w-full p-4">
+    <div ref={ref} className="flex flex-col border border-solid rounded-md h-[500px] w-full p-4">
       {score && (
         <div className="text-primary-7 mb-2">
           Score: <span className="font-bold">0.86</span>
         </div>
       )}
       <div className="h-full border rounded-md">
-        <CardVisualization
-          experimentTypeName={experimentTypeName}
-          resource={resource as ReconstructedNeuronMorphology | ExperimentalTrace}
-        />
+        {inView && (
+          <CardVisualization
+            experimentTypeName={experimentTypeName}
+            resource={resource as ReconstructedNeuronMorphology | ExperimentalTrace}
+          />
+        )}
       </div>
       <div>
         <div className="text-neutral-4">NAME</div>
