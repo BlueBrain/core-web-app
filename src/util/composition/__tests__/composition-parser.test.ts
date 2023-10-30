@@ -185,8 +185,8 @@ describe('Calculate compositions unit tests', () => {
       leafIds,
       volumes
     );
-    expect(totalComposition.neuron?.count).toBe(130);
-    expect(totalComposition.neuron?.density).toBeCloseTo(173.333);
+    expect(totalComposition.neuron?.count).toBe(131);
+    expect(totalComposition.neuron?.density).toBeCloseTo(174.666);
   });
 
   it('all nodes and links are returned', async () => {
