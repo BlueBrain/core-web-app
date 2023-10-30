@@ -1,10 +1,13 @@
 import { ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
+import distinctColors from 'distinct-colors';
+import shuffle from 'lodash/shuffle';
 import { Select, Tag } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
+import generatedPalette from './generated-color-palette.json';
 import { getSankeyNodesReducer, getSankeyLinks } from './util';
 import sankey from './sankey';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -150,9 +153,37 @@ export default function DensityChart() {
     };
   }, [densityOrCount, links, nodes, filteredForComposition]);
 
+  // This function will only be called if generated-color-palette.json is manually cleared.
+  // The purpose of leaving this function in here is to make it easier to update the color-
+  // mappings when new classes are added to the cell composition.
+  const getNewDistinctColors = useCallback(() => {
+    const nodesWithoutColors = shuffle(
+      Object.entries(classObjects ?? {}).reduce<string[]>(
+        (acc, [id, { color }]) => (!color ? [...acc, id] : acc),
+        []
+      )
+    );
+
+    return distinctColors({ count: nodesWithoutColors.length, quality: 250 }).reduce(
+      (acc, color, i) => {
+        const id = nodesWithoutColors[i];
+
+        return { ...acc, [id]: color.hex() };
+      },
+      {}
+    ); // Stringify and over-write generated-color-palette.json with this object when a refresh of the color mappings is needed.
+  }, [classObjects]);
+
+  // The condition below will always be TRUE unless generated-color-palette.json is manually cleared.
+  // See the comment above the getNewDistinctColors() definition for more context.
+  const palette: Record<string, string> = useMemo(
+    () => (Object.keys(generatedPalette).length ? generatedPalette : getNewDistinctColors()),
+    [getNewDistinctColors]
+  );
+
   const colorScale = useCallback(
-    (id: string) => classObjects?.[id]?.color ?? '#ccc',
-    [classObjects]
+    (id: string) => classObjects?.[id]?.color ?? palette?.[`${id}`] ?? '#ccc',
+    [classObjects, palette]
   );
 
   // Prevent SVG from rendering whenever zoom changes
@@ -224,7 +255,9 @@ export default function DensityChart() {
       onClose={onClose}
       style={{ margin: '0.125rem 0.125rem 0.125rem auto' }}
     >
-      <ColorBox color={classObjects?.[value]?.color ?? '#ccc'} />
+      <ColorBox
+        color={classObjects?.[value]?.color ?? (palette as Record<string, string>)[value]}
+      />
       <span className="text-lg text-primary-9">{label}</span>
     </Tag>
   );

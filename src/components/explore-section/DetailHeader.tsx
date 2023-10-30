@@ -1,9 +1,8 @@
 import { DetailProps } from '@/types/explore-section/application';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import { classNames } from '@/util/utils';
-import EXPLORE_FIELDS_CONFIG, {
-  DetailType,
-} from '@/constants/explore-section/explore-fields-config';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
+import { DetailType } from '@/constants/explore-section/fields-config/types';
 
 type FieldProps = {
   field: string;

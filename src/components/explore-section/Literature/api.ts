@@ -6,7 +6,6 @@ import {
   JournalSuggestionResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
-import { BrainRegion } from '@/types/ontologies';
 import { ExperimentDatasetCountPerBrainRegion } from '@/api/explore-section/resources';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
@@ -127,20 +126,18 @@ export const fetchJournalSuggestions = (searchTerm: string): Promise<JournalSugg
 
 const fetchParagraphsForBrainRegionAndExperiment = (
   accessToken: string,
-  brainRegionId: string,
   experimentType: { name: string; id: string },
-  descendants: BrainRegion[]
+  brainRegionIds: string[]
 ) => {
   if (!accessToken) throw new Error('Access token should be defined');
 
-  descendants.map((descendant) => descendant.id);
-
   const mockRequest = new Promise<ExperimentDatasetCountPerBrainRegion>((resolve) => {
     setTimeout(() => {
+      // TODO: We might need brain region title instead when the API is ready.
+      brainRegionIds.map((brainRegionId) => `${brainRegionId}`);
       resolve({
         total: Math.floor(Math.random() * 30),
         experimentUrl: experimentType.id,
-        brainRegionId,
       });
     }, 1000);
   });

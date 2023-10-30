@@ -56,7 +56,7 @@ export const updateConfigAtom = atom(null, async (get, set, config: BrainModelCo
     throw new Error('No session state found');
   }
 
-  updateResource(config, config._rev, session);
+  updateResource(config, session);
 
   set(triggerRefetchAtom);
 });

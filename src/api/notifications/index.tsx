@@ -15,7 +15,8 @@ export default function openNotification(
   type: NotificationType,
   message: string,
   duration: number = 5,
-  placement: Placement = 'bottomRight'
+  placement: Placement = 'bottomRight',
+  key?: React.Key
 ) {
   let icon;
   let backgroundColor;
@@ -45,5 +46,6 @@ export default function openNotification(
     duration,
     icon,
     placement,
+    key,
   });
 }

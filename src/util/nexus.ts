@@ -1,7 +1,7 @@
 import pickBy from 'lodash/pickBy';
 import { nexus } from '@/config';
 import { Distribution, FileMetadata } from '@/types/nexus';
-import { metadataKeys } from '@/constants/nexus';
+import { metadataKeys, revParamRegexp } from '@/constants/nexus';
 
 export function collapseId(nexusId: string) {
   if (!nexusId) return nexusId;
@@ -52,7 +52,9 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
     idExpand = true,
   } = params ?? {};
 
-  const uriEncodedId = encodeURIComponent(idExpand ? expandId(id) : id);
+  // if id has revision and revision is passed as attribute remove to avoid collision
+  const revRemoved = rev && id.includes('?rev=') ? id.replace(revParamRegexp, '') : id;
+  const uriEncodedId = encodeURIComponent(idExpand ? expandId(revRemoved) : revRemoved);
 
   const pathname = [
     `${apiGroupType}s`,
@@ -84,6 +86,9 @@ export function composeUrl(apiGroupType: ApiGroupType, id: string, params?: Comp
 }
 
 export function createDistribution(payloadMetadata: FileMetadata): Distribution {
+  if (!payloadMetadata._rev)
+    throw new Error('revision in file metadata missing when creating distribution');
+
   return {
     '@type': 'DataDownload',
     name: payloadMetadata._filename,
@@ -98,23 +103,6 @@ export function createDistribution(payloadMetadata: FileMetadata): Distribution 
       value: payloadMetadata._digest._value,
     },
   };
-}
-
-/**
- * Create a URL with customized rev search parameter
- */
-export function setRevision<T extends string | undefined>(url?: T, rev?: number | null) {
-  if (!url) return url as T extends string ? string : undefined;
-
-  const urlObj = new URL(url);
-
-  if (rev) {
-    urlObj.searchParams.set('rev', rev.toString());
-  } else {
-    urlObj.searchParams.delete('rev');
-  }
-
-  return urlObj.toString() as T extends string ? string : undefined;
 }
 
 export function ensureArray<T>(value: T | T[]) {

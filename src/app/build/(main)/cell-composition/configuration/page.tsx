@@ -9,11 +9,12 @@ import DensityChart from './DensityChart';
 import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
-import { GripDotsVerticalIcon, ResetIcon, UndoIcon } from '@/components/icons';
+import { ResetIcon, UndoIcon } from '@/components/icons';
 import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 
@@ -51,6 +52,7 @@ interface CellDensityToolbarProps {
 
 function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   const [densityOrCount, setDensityOrCount] = useAtom(densityOrCountAtom);
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
   const { undoComposition, redoComposition, canUndo, canRedo } = useCompositionHistory();
 
   const toggleDensityAndCount = useCallback(
@@ -114,31 +116,35 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
   ];
 
   return (
-    <div className="flex gap-2 justify-end">
-      {items.map(({ icon, key, children, callback, isDisabled }) => (
-        <Button
-          className="flex gap-2 items-center text-sm"
-          icon={icon}
-          key={key}
-          type="text"
-          disabled={isDisabled ?? false}
-          onClick={callback}
-        >
-          {children}
-        </Button>
-      ))}
-    </div>
+    !!isConfigEditable && (
+      <div className="flex gap-2 justify-end">
+        {items.map(({ icon, key, children, callback, isDisabled }) => (
+          <Button
+            className="flex gap-2 items-center text-sm"
+            icon={icon}
+            key={key}
+            type="text"
+            disabled={isDisabled ?? false}
+            onClick={callback}
+          >
+            {children}
+          </Button>
+        ))}
+      </div>
+    )
   );
 }
 
 function CellDensity() {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
-  const composition = useAtomValue(analysedCompositionAtom);
+  const analysedComposition = useAtomValue(analysedCompositionAtom);
+  const composition = useAtomValue(compositionAtom);
+
   const { resetComposition } = useCompositionHistory();
 
   // This should be treated as a temporary solution
   // as we shouldn't expect empty composition in the end.
-  if (!composition && brainRegion) {
+  if (!analysedComposition && brainRegion) {
     throw new Error(`There is no configuration data for the ${brainRegion?.title}`);
   }
 
@@ -147,24 +153,11 @@ function CellDensity() {
   }, [resetComposition]);
 
   return (
-    <>
+    <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
       <DensityChart />
-      <div className="flex absolute bottom-12 justify-between align-center w-full">
-        <div className="bg-[#F0F0F0] rounded flex gap-4 items-center px-5">
-          <GripDotsVerticalIcon />
-          <span className="font-bold text-neutral-5 text-lg">By MType</span>
-        </div>
+      <div className="flex justify-between align-center w-full">
         <CellDensityToolbar onReset={handleReset} />
       </div>
-    </>
-  );
-}
-
-function CellDensityWrapper() {
-  const composition = useAtomValue(compositionAtom);
-  return (
-    <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
-      <CellDensity />
     </ErrorBoundary>
   );
 }
@@ -196,7 +189,7 @@ export default function ConfigurationView() {
         {
           children: (
             <Suspense fallback={null}>
-              <CellDensityWrapper />
+              <CellDensity />
             </Suspense>
           ),
           value: 'density',
@@ -204,7 +197,7 @@ export default function ConfigurationView() {
         { children: <CellDistribution />, value: 'distribution' },
         { children: <CellPosition />, value: 'position' },
       ].map(({ children, value }) => (
-        <Tabs.Content className="relative h-full" key={value} value={value}>
+        <Tabs.Content className="flex flex-col gap-5 h-full" key={value} value={value}>
           {children}
         </Tabs.Content>
       )),
@@ -214,7 +207,7 @@ export default function ConfigurationView() {
   useLiteratureCleanNavigate();
 
   return (
-    <Tabs.Root value={activeTab} className="h-full overflow-hidden px-4 py-[25px]">
+    <Tabs.Root value={activeTab} className="h-full overflow-hidden px-4 py-4">
       <TopNavigation.PillNav
         items={tabItems}
         activeItemIndex={tabItems.findIndex(({ id }) => id === activeTab)}

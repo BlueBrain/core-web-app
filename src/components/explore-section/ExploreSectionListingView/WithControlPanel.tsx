@@ -4,10 +4,12 @@ import { unwrap } from 'jotai/utils';
 import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
 import ControlPanel from '@/components/explore-section/ControlPanel';
 import { activeColumnsAtom } from '@/state/explore-section/list-view-atoms';
+import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 
 export default function WithControlPanel({
   children,
   experimentTypeName,
+  brainRegionSource,
 }: {
   children: (props: {
     activeColumns?: string[];
@@ -15,6 +17,7 @@ export default function WithControlPanel({
     setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
   }) => ReactNode;
   experimentTypeName: string;
+  brainRegionSource: ExploreDataBrainRegionSource;
 }) {
   const activeColumns = useAtomValue(
     useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
@@ -26,12 +29,16 @@ export default function WithControlPanel({
     <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full">
       <section className="w-full flex flex-col min-h-screen h-screen flex flex-col gap-5 bg-white pb-12 pl-3 pr-3 pt-8 overflow-scroll relative">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel })}
-        <LoadMoreButton experimentTypeName={experimentTypeName} />
+        <LoadMoreButton
+          experimentTypeName={experimentTypeName}
+          brainRegionSource={brainRegionSource}
+        />
       </section>
       {displayControlPanel && (
         <ControlPanel
           toggleDisplay={() => setDisplayControlPanel(false)}
           experimentTypeName={experimentTypeName}
+          brainRegionSource={brainRegionSource}
         />
       )}
     </div>

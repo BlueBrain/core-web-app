@@ -193,7 +193,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
             </div>
           </Collapse>
 
-          <Collapse className="mb-8" title="Recently used configurations">
+          <Collapse className="mb-8 w-full" title="Recently used configurations">
             <div className="space-y-2">
               <Suspense fallback={null}>
                 <RecentConfigs baseHref={baseHref} />
@@ -201,7 +201,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
             </div>
           </Collapse>
 
-          <Collapse className="mb-8" title="Public configurations" defaultCollapsed>
+          <Collapse className="mb-8 w-full" title="Public configurations" defaultCollapsed>
             <div className="space-y-2">
               <Suspense fallback={null}>
                 <PublicConfigs baseHref={baseHref} />
@@ -209,7 +209,7 @@ export default function BrainConfigPanel({ baseHref }: BrainConfigPanelProps) {
             </div>
           </Collapse>
 
-          <Collapse className="mb-8" title="My configurations" defaultCollapsed>
+          <Collapse className="mb-8 w-full" title="My configurations" defaultCollapsed>
             <div className="space-y-2">
               <Suspense fallback={null}>
                 <PersonalConfigs baseHref={baseHref} />

@@ -156,7 +156,7 @@ const updateConfigPayloadAtom = atom<null, [], Promise<void>>(null, async (get, 
   );
 
   configResource.distribution = createDistribution(updatedFile);
-  await updateResource(configResource, configResource?._rev, session);
+  await updateResource(configResource, session);
   set(triggerRefetchAtom);
 });
 
@@ -219,7 +219,7 @@ export const setWorkflowExecutionAndCloneAtom = atom<null, [string], Promise<voi
       },
     };
 
-    await updateResource(updatedResource, updatedResource?._rev, session);
+    await updateResource(updatedResource, session);
   }
 );
 

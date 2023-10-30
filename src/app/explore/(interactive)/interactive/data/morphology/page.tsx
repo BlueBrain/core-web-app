@@ -9,6 +9,7 @@ export default function MorphologyListingPage() {
       enableDownload
       title="Neuron morphology"
       experimentTypeName={NEURON_MORPHOLOGY}
+      brainRegionSource="visible"
     />
   );
 }

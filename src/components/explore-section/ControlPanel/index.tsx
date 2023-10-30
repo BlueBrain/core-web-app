@@ -21,7 +21,7 @@ import {
 } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
-import { FilterValues } from '@/types/explore-section/application';
+import { ExploreDataBrainRegionSource, FilterValues } from '@/types/explore-section/application';
 import {
   activeColumnsAtom,
   aggregationsAtom,
@@ -33,6 +33,7 @@ export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
   experimentTypeName: string;
+  brainRegionSource: ExploreDataBrainRegionSource;
 };
 
 function createFilterItemComponent(
@@ -131,13 +132,17 @@ export default function ControlPanel({
   children,
   toggleDisplay,
   experimentTypeName,
+  brainRegionSource,
 }: ControlPanelProps) {
   const [activeColumns, setActiveColumns] = useAtom(
     useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const aggregations = useAtomValue(
-    useMemo(() => unwrap(aggregationsAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(
+      () => unwrap(aggregationsAtom({ experimentTypeName, brainRegionSource })),
+      [brainRegionSource, experimentTypeName]
+    )
   );
 
   const [filters, setFilters] = useAtom(

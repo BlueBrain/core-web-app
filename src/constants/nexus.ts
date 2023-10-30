@@ -13,3 +13,5 @@ export const metadataKeys = [
   '_updatedAt',
   '_updatedBy',
 ];
+
+export const revParamRegexp = /\?rev=\d+$/;

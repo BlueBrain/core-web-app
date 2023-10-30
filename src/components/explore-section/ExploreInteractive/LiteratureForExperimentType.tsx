@@ -1,7 +1,7 @@
 'use client';
 
 import { loadable } from 'jotai/utils';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { LoadingOutlined, ReadOutlined } from '@ant-design/icons';
 import { BrainRegion } from '@/types/ontologies';
@@ -9,16 +9,15 @@ import { getLiteratureCountForBrainRegion } from '@/state/explore-section/intera
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
 
 type Props = {
-  brainRegion: BrainRegion;
+  brainRegions: BrainRegion[];
 };
 
-export function LiteratureForExperimentType({ brainRegion }: Props) {
+export function LiteratureForExperimentType({ brainRegions }: Props) {
   const totalByExperimentAndBrainRegionAtom = useMemo(
-    () => loadable(getLiteratureCountForBrainRegion(brainRegion.id)),
-    [brainRegion.id]
+    () => loadable(getLiteratureCountForBrainRegion(brainRegions.map((br) => br.id))),
+    [brainRegions]
   );
   const totalByExperimentAndBrainRegion = useAtomValue(totalByExperimentAndBrainRegionAtom);
-  const [hoveredExperimentType, setHoveredExperimentType] = useState<string | null>(null);
 
   return (
     <div className="text-white mb-4 h-52 flex-1">
@@ -38,13 +37,7 @@ export function LiteratureForExperimentType({ brainRegion }: Props) {
           {EXPERIMENT_TYPE_DETAILS.map((experimentType) => (
             <div
               key={experimentType.title}
-              className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer"
-              style={{
-                color:
-                  hoveredExperimentType === experimentType.id ? brainRegion.colorCode : 'white',
-              }}
-              onMouseEnter={() => setHoveredExperimentType(experimentType.id)}
-              onMouseLeave={() => setHoveredExperimentType(null)}
+              className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer hover:text-primary-4"
               data-testid={`literature-articles-${experimentType.id}`}
             >
               <span className="font-light">{experimentType.title}</span>

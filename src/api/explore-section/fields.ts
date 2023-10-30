@@ -1,4 +1,4 @@
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 
 export function getFieldEsConfig(field: string) {
   return EXPLORE_FIELDS_CONFIG[field]?.esTerms;

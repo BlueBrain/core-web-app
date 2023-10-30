@@ -33,19 +33,13 @@ import {
   WholeBrainConnectivityMatrix,
   MicroConnectomeModifyParamsEditEntry,
 } from '@/types/connectome';
-import {
-  fetchFileByUrl,
-  fetchFileMetadataByUrl,
-  fetchResourceById,
-  updateFileByUrl,
-  updateResource,
-} from '@/api/nexus';
+import { fetchFileByUrl, fetchResourceById, updateFileByUrl, updateResource } from '@/api/nexus';
 import { OriginalComposition } from '@/types/composition/original';
 import { BrainRegion } from '@/types/ontologies';
 import { fromSerialisibleEdit, getFlatArrayValueIdx, toSerialisibleEdit } from '@/util/connectome';
 import { PartialBy } from '@/types/common';
 import { HEMISPHERE_DIRECTIONS } from '@/constants/connectome';
-import { createDistribution, setRevision } from '@/util/nexus';
+import { createDistribution } from '@/util/nexus';
 
 type SrcDstBrainRegionKey = string;
 type SrcDstMtypeKey = string;
@@ -1662,20 +1656,11 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
   ]);
 
   /**
-   * Fetching latest versions of arrow files to extract next rev for the update.
-   */
-  const overridesFileMeta = await Promise.all(
-    overridesResources.map((resource) =>
-      fetchFileMetadataByUrl(resource.distribution.contentUrl, session)
-    )
-  );
-
-  /**
    * Updating compressed arrow files.
    */
   const updatedOverridesFilesMeta = await Promise.all([
     updateFileByUrl(
-      setRevision(overridesResources[0].distribution.contentUrl, overridesFileMeta[0]._rev),
+      overridesResources[0].distribution.contentUrl,
       compressedVariantOverridesBuffer,
       'microconnectome-variant-overrides',
       'application/arrow',
@@ -1684,10 +1669,7 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
 
     ...variantNames.map((variantName, idx) =>
       updateFileByUrl(
-        setRevision(
-          overridesResources[idx + 1].distribution.contentUrl,
-          overridesFileMeta[idx + 1]._rev
-        ),
+        overridesResources[idx + 1].distribution.contentUrl,
         compressedParamOverridesBuffers[idx],
         `microconnectome-${variantName}-data-overrides.arrow.gz`,
         'application/arrow',
@@ -1705,9 +1687,7 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
         ...resource,
         distribution: createDistribution(updatedOverridesFilesMeta[idx]),
       }))
-      .map((updatedResource, idx) =>
-        updateResource(updatedResource, overridesResources[idx]._rev, session)
-      )
+      .map((updatedResource) => updateResource(updatedResource, session))
   );
 
   const variantResourceRev = updatedOverridesResources[0]._rev;

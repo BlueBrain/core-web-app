@@ -8,7 +8,7 @@ import { DetailProps } from '@/types/explore-section/application';
 import DetailHeader from '@/components/explore-section/DetailHeader';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import usePathname from '@/hooks/pathname';
-import { DetailType } from '@/constants/explore-section/explore-fields-config';
+import { DetailType } from '@/constants/explore-section/fields-config/types';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 

@@ -47,18 +47,20 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
 
   return (
     <>
-      <div className="flex justify-between items-center">
-        <Link className="inline-flex items-baseline max-w-[190px]" href={href}>
-          <span title={config.name} className="overflow-hidden text-ellipsis whitespace-pre flex-1">
+      <div className="grid grid-cols-[1fr_max-content] items-start gap-2 !w-full">
+        <Link className="inline-flex flex-col items-start group" href={href}>
+          <span title={config.name} className="line-clamp-1 group-hover:text-primary-3">
             {config.name}
           </span>
-          <small className="text-primary-3 ml-2 whitespace-nowrap">{createdAtFormatted}</small>
+          <small className="text-primary-3 whitespace-nowrap group-hover:text-white">
+            {createdAtFormatted}
+          </small>
         </Link>
 
-        <div className="text-primary-3 space-x-2">
+        <div className="text-primary-3 inline-flex items-center justify-between gap-1 w-max">
           <button
             type="button"
-            className="text-primary-3 disabled:text-primary-7 disabled:cursor-not-allowed"
+            className="text-primary-3 disabled:text-primary-7 disabled:cursor-not-allowed hover:text-white"
             onClick={openRenameModal}
             disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
           >
@@ -66,11 +68,11 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
           </button>
 
           <button type="button" onClick={openCloneModal}>
-            <CopyOutlined className="text-primary-3" />
+            <CopyOutlined className="text-primary-3 hover:text-white" />
           </button>
 
           <Link href={href}>
-            <ArrowRightOutlined className="text-primary-3" />
+            <ArrowRightOutlined className="text-primary-3 hover:text-white" />
           </Link>
         </div>
       </div>

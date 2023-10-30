@@ -3,10 +3,10 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { ExploreResource } from '@/types/explore-section/es';
 import { SortState } from '@/types/explore-section/application';
 import { ValueArray } from '@/components/ListTable';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import styles from '@/app/explore/explore.module.scss';
 
 type ResizeInit = {

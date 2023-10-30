@@ -7,7 +7,7 @@ import MorphoWrapper from '@/components/explore-section/MorphoViewerContainer/Mo
 import { MorphoViewerOptions } from '@/components/explore-section/MorphoViewerContainer/MorphologyViewer';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { useUnwrappedValue } from '@/hooks/hooks';
-import { DetailType } from '@/constants/explore-section/explore-fields-config';
+import { DetailType } from '@/constants/explore-section/fields-config/types';
 
 export default function InferredResourceHeader({
   fields,

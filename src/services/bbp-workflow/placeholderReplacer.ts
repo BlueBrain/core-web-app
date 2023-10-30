@@ -20,7 +20,7 @@ import { BrainModelConfigResource, DetailedCircuitResource, SubConfigName } from
 import { composeUrl } from '@/util/nexus';
 
 function getCircuitUrl(config: BrainModelConfigResource): string {
-  return composeUrl('resource', config['@id'], { rev: config._rev });
+  return composeUrl('resource', config['@id']);
 }
 
 async function generateWorkflowConfig(

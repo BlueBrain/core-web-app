@@ -117,7 +117,12 @@ function PointCloudMesh({
           ex instanceof Error &&
           ex.message.includes('The Circuit config path could not be found in the configuration.')
         ) {
-          warning('The Point cloud could not displayed as the brain model has not yet been built.');
+          warning(
+            'The cell positions cannot be displayed because the brain model has not been built yet.',
+            undefined,
+            'topRight',
+            'cell-position-display-warning'
+          );
         } else {
           error('Something went wrong while parsing point cloud mesh');
         }

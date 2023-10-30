@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import uniqBy from 'lodash/uniqBy';
 import { Filter, OptionsData } from './types';
 import Search from '@/components/Search';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 
 export default function SearchFilter({
   data,

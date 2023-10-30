@@ -17,15 +17,13 @@ import {
   remoteConnectivityStrengthMatrixAtom,
   localConnectivityStrengthMatrixAtom,
   connectivityStrengthOverridesPayloadUrlAtom,
-  connectivityStrengthOverridesPayloadRevAtom,
   configPayloadUrlAtom,
-  configPayloadRevAtom,
   configAtom,
   configSourceAtom,
   connectivityStrengthOverridesEntityRevAtom,
   initialConnectivityStrengthMatrixAtom,
 } from '.';
-import { createDistribution, setRevision } from '@/util/nexus';
+import { createDistribution } from '@/util/nexus';
 import { MacroConnectomeEditEntry, WholeBrainConnectivityMatrix } from '@/types/connectome';
 import {
   applyConnectivityMatrixEdit as applyEdit,
@@ -57,14 +55,12 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const configPayload = await get(configPayloadAtom);
 
   const configPayloadUrl = await get(configPayloadUrlAtom);
-  const configPayloadRev = await get(configPayloadRevAtom);
 
   const overridesEntity = await get(connectivityStrengthOverridesEntityAtom);
   const overridesEntitySource = await get(connectivityStrengthOverridesEntitySourceAtom);
   const overridesEntityRev = await get(connectivityStrengthOverridesEntityRevAtom);
 
   const overridesPayloadUrl = await get(connectivityStrengthOverridesPayloadUrlAtom);
-  const overridesPayloadRevAtom = await get(connectivityStrengthOverridesPayloadRevAtom);
 
   if (
     !session ||
@@ -79,8 +75,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     !remoteConfigPayload ||
     !configPayload ||
     !configPayloadUrl ||
-    !overridesPayloadUrl ||
-    !overridesPayloadRevAtom
+    !overridesPayloadUrl
   ) {
     throw new Error('Trying to persist a config while it has not been initialized ');
   }
@@ -98,10 +93,8 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
 
   const overridesBuffer = tableToIPC(overridesTable, 'file').buffer;
 
-  const overridesPayloadUpdateUrl = setRevision(overridesPayloadUrl, overridesPayloadRevAtom);
-
   const updatedOverridesPayloadMeta = await updateFileByUrl(
-    overridesPayloadUpdateUrl,
+    overridesPayloadUrl,
     overridesBuffer,
     'overrides.arrow',
     'application/arrow',
@@ -110,18 +103,12 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
 
   overridesEntitySource.distribution = createDistribution(updatedOverridesPayloadMeta);
 
-  const updatedOverridesEntityMeta = await updateResource(
-    overridesEntitySource,
-    overridesEntityRev,
-    session
-  );
+  const updatedOverridesEntityMeta = await updateResource(overridesEntitySource, session);
 
   configPayload.overrides.connection_strength.rev = updatedOverridesEntityMeta._rev;
 
-  const configPayloadUpdateUrl = setRevision(configPayloadUrl, configPayloadRev);
-
   const updatedConfigPayloadMeta = await updateJsonFileByUrl(
-    configPayloadUpdateUrl,
+    configPayloadUrl,
     configPayload,
     'macroconnectome-config.json',
     session
@@ -129,7 +116,7 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
 
   configSource.distribution = createDistribution(updatedConfigPayloadMeta);
 
-  await updateResource(configSource, config._rev, session);
+  await updateResource(configSource, session);
 
   await set(invalidateConfigAtom, 'macroConnectome');
   set(writingConfigAtom, false);

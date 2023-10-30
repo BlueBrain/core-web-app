@@ -151,7 +151,7 @@ export default function LaunchedSimCampaignList() {
                   )}
                   title="Not implemented yet"
                 >
-                  <FileIcon fill={iconColor} />
+                  <FileIcon />
                 </Button>
 
                 <Link href={`${expDesBaseUrl}?simulationCampaignUIConfigId=${extractId(config)}`}>
@@ -160,7 +160,7 @@ export default function LaunchedSimCampaignList() {
                     type="text"
                     className={classNames(defaultActionStyle, iconColor)}
                   >
-                    <SettingsIcon fill={iconColor} />
+                    <SettingsIcon />
                   </Button>
                 </Link>
 
