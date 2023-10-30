@@ -264,7 +264,7 @@ export const leafIdsByRegionIdAtom = selectAtom<
     brainRegions?.reduce(
       (map, br) => ({
         ...map,
-        [br.id]: br.leaves?.map((id) => id.split('/').at(-1)) ?? [],
+        [br.id]: br.leaves ?? [],
       }),
       {} // Pass in the empty map as the initial value
     ) ?? {} // Return an empty object in the event that brainRegions is null and can't be iterated

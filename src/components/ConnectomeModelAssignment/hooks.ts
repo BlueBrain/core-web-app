@@ -31,6 +31,7 @@ import {
 import { usePrevious } from '@/hooks/hooks';
 import { createDistribution } from '@/util/nexus';
 import { supportedUIConfigVersion } from '@/constants/configs';
+import { brainRegionsAtom } from '@/state/brain-regions';
 
 /**
  * Return a function that provides all the possible values
@@ -38,24 +39,29 @@ import { supportedUIConfigVersion } from '@/constants/configs';
  */
 export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule) => string[] {
   const composition = useAtomValue(compositionAtom);
-  const synapseTypes = useAtomValue(initialTypesAtom);
+  const initialTypes = useAtomValue(initialTypesAtom);
+  const initialTypeNames = useMemo(() => initialTypes && Object.keys(initialTypes), [initialTypes]);
+  const userTypes = useAtomValue(userTypesAtom);
+  const userTypeNames = useMemo(() => userTypes.map(([name]) => name), [userTypes]);
+  const types = useMemo(
+    () => (userTypeNames?.length > 0 ? userTypeNames : initialTypeNames ?? []),
+    [userTypeNames, initialTypeNames]
+  );
+  const brainRegions = useAtomValue(brainRegionsAtom);
+  const brainRegionNames = useMemo(() => brainRegions?.map((br) => br.title), [brainRegions]);
 
   const arrays = useMemo(() => {
-    const brainRegions: string[] = [];
     const mTypes: string[] = [];
     const eTypes: string[] = [];
 
     if (composition)
       Object.entries(composition.hasPart).forEach((brainRegion) => {
-        brainRegions.push(brainRegion[1].label);
-
         Object.values(brainRegion[1].hasPart).forEach((mType) => {
           mTypes.push(mType.label);
           Object.values(mType.hasPart).forEach((eType) => eTypes.push(eType.label));
         });
       });
 
-    const ubrainRegions = uniq(brainRegions);
     const uMtypes = uniq(mTypes);
     const ueTypes = uniq(eTypes);
 
@@ -64,15 +70,15 @@ export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule
       toSClass: ['INH', 'EXC'],
       fromHemisphere: ['left', 'right'],
       toHemisphere: ['left', 'right'],
-      fromRegion: ubrainRegions,
-      toRegion: ubrainRegions,
+      fromRegion: brainRegionNames,
+      toRegion: brainRegionNames,
       fromMType: uMtypes,
       toMType: uMtypes,
       fromEType: ueTypes,
       toEType: ueTypes,
-      synapticType: Array.from(Object.keys(synapseTypes ?? [])),
+      synapticType: types,
     };
-  }, [composition, synapseTypes]);
+  }, [composition, types, brainRegionNames]);
 
   return useCallback((field: keyof SynapticAssignmentRule) => arrays[field] ?? [], [arrays]);
 }

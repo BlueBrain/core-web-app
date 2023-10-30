@@ -27,12 +27,10 @@ export function useLeafBrainRegionMtypeMap(): Map<string, string[]> {
   const leafBrainRegionMtypeMap = useMemo(() => {
     if (!cellComposition) return new Map();
 
-    return Object.keys(cellComposition?.hasPart ?? {}).reduce((map, brainRegionFullId) => {
-      const id = brainRegionFullId.split('/').reverse()[0];
+    return Object.keys(cellComposition?.hasPart ?? {}).reduce((map, brainRegionId) => {
+      const brainRegionNotation = brainRegionNotationByIdMap?.get(brainRegionId);
 
-      const brainRegionNotation = brainRegionNotationByIdMap?.get(id);
-
-      const mtypes = Object.values(cellComposition?.hasPart[brainRegionFullId].hasPart ?? {})
+      const mtypes = Object.values(cellComposition?.hasPart[brainRegionId].hasPart ?? {})
         .map((mtypeEntry) => mtypeEntry.label)
         .sort();
 
@@ -60,9 +58,8 @@ export function useBrainRegionMtypeMap(): Map<string, Set<string>> {
       const mtypeSet: Set<string> = new Set();
 
       // If the current brain region isn't a leaf node
-      brainRegion.leaves?.forEach((leave) => {
-        const id = leave.split('/').at(-1) as string;
-        const notation = brainRegionNotationByIdMap?.get(id) as string;
+      brainRegion.leaves?.forEach((leafId) => {
+        const notation = brainRegionNotationByIdMap?.get(leafId) as string;
         leafBrainRegionMtypeMap.get(notation)?.forEach((mtype) => mtypeSet.add(mtype));
       });
 
@@ -147,7 +144,7 @@ export function useGetLeafNodesReduceFn() {
     (map: Map<Selection, string[]>, selection: Selection) => {
       const leafNotations = brainRegionByNotationMap
         ?.get(selection.brainRegionNotation)
-        ?.leaves?.map((leaf) => brainRegionByIdMap?.get(leaf.split('/').reverse()[0]))
+        ?.leaves?.map((leafId) => brainRegionByIdMap?.get(leafId))
         ?.filter((br) => br?.representedInAnnotation)
         ?.map((br) => br?.notation as string);
 
@@ -180,7 +177,7 @@ export function useGetChildSelections() {
 
     const childSelections =
       brainRegion.hasPart
-        ?.map((strId) => brainRegionByIdMap?.get(strId.split('/').at(-1) as string) as BrainRegion)
+        ?.map((strId) => brainRegionByIdMap?.get(strId) as BrainRegion)
         .filter((br) => br?.representedInAnnotation)
         .map((br) => br?.notation)
         .sort(brainRegionNotationSorterFn)

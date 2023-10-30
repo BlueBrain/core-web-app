@@ -277,7 +277,7 @@ function buildBrainRegionIndex(brainRegions: BrainRegion[]) {
       const { notation } = brainRegion;
 
       const leafNotations = brainRegion?.leaves
-        ?.map((leaf) => brainRegionByIdMap.get(leaf.split('/').at(-1) as string))
+        ?.map((leadId) => brainRegionByIdMap.get(leadId))
         .filter((leaf) => leaf?.representedInAnnotation)
         ?.map((br) => br?.notation as string);
 
@@ -316,20 +316,15 @@ function buildCompositionIndex(cellComposition: OriginalComposition) {
 
   const { brainRegionNotationByIdMap } = workerState.brainRegionIndex;
 
-  const brainRegionMtypeMap = Object.keys(cellComposition.hasPart).reduce(
-    (map, brainRegionFullId) => {
-      const id = brainRegionFullId.split('/').at(-1) as string;
+  const brainRegionMtypeMap = Object.keys(cellComposition.hasPart).reduce((map, brainRegionId) => {
+    const brainRegionNotation = brainRegionNotationByIdMap.get(brainRegionId);
 
-      const brainRegionNotation = brainRegionNotationByIdMap.get(id);
+    const mtypes = Object.values(cellComposition.hasPart[brainRegionId].hasPart)
+      .map((mtypeEntry) => mtypeEntry.label)
+      .sort();
 
-      const mtypes = Object.values(cellComposition.hasPart[brainRegionFullId].hasPart)
-        .map((mtypeEntry) => mtypeEntry.label)
-        .sort();
-
-      return map.set(brainRegionNotation, mtypes);
-    },
-    new Map()
-  );
+    return map.set(brainRegionNotation, mtypes);
+  }, new Map());
 
   // TODO Check if this is used.
   const brainRegionMtypeNumMap = Array.from(brainRegionMtypeMap.entries()).reduce(
