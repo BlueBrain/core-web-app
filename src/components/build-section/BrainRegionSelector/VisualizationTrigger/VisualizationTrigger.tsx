@@ -22,7 +22,7 @@ export default function VisualizationTrigger({ colorCode, id }: { colorCode: str
   const atlas = useAtlasVisualizationManager();
   const cell = atlas.findVisibleCell(id);
   const mesh = meshDistribution && atlas.findVisibleMesh(meshDistribution.contentUrl);
-  const selected = Boolean(cell) || Boolean(mesh);
+  const selected = Boolean(cell) || Boolean(mesh) || visibleExploreBrainRegions.includes(id);
 
   const handleOnCheck = () => {
     if (meshDistribution && colorCode) {
@@ -37,12 +37,6 @@ export default function VisualizationTrigger({ colorCode, id }: { colorCode: str
           isLoading: false,
           hasError: false,
         });
-      }
-      // previously mesh button
-      if (visibleExploreBrainRegions.includes(id)) {
-        setVisibleExploreBrainRegions([...visibleExploreBrainRegions.filter((_id) => _id !== id)]);
-      } else {
-        setVisibleExploreBrainRegions([...visibleExploreBrainRegions, id]);
       }
       if (mesh) {
         atlas.removeVisibleMeshesOrPointClouds(mesh.contentURL, id);
@@ -64,6 +58,12 @@ export default function VisualizationTrigger({ colorCode, id }: { colorCode: str
           }
         );
       }
+    }
+    // previously mesh button
+    if (visibleExploreBrainRegions.includes(id)) {
+      setVisibleExploreBrainRegions([...visibleExploreBrainRegions.filter((_id) => _id !== id)]);
+    } else {
+      setVisibleExploreBrainRegions([...visibleExploreBrainRegions, id]);
     }
   };
 
