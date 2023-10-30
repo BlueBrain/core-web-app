@@ -262,11 +262,24 @@ export default function DensityChart() {
     </Tag>
   );
 
+  const densityCountLabel = useMemo(() => {
+    switch (densityOrCount) {
+      case 'count':
+        return 'Counts [N]';
+      case 'density':
+        return 'Densities [/mm³]';
+      default:
+        return '';
+    }
+  }, [densityOrCount]);
+
   return (
     <div className="flex flex-col gap-5 h-full w-full">
       <h1 className="flex font-bold gap-1 items-baseline text-3xl text-primary-9">
         {selectedBrainRegion?.title ?? 'Please select a brain region.'}
-        {!!selectedBrainRegion?.title && <small className="font-light text-sm">Densities</small>}
+        {!!selectedBrainRegion?.title && (
+          <small className="font-light text-sm">{densityCountLabel}</small>
+        )}
       </h1>
       {sankeyData.links.length > 0 && (
         <>
