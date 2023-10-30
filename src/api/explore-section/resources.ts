@@ -31,19 +31,17 @@ export async function fetchEsResourcesByType(accessToken: string, dataQuery: Dat
 
 export type ExperimentDatasetCountPerBrainRegion = {
   total: number;
-  brainRegionId: string;
   experimentUrl: string;
 };
 
 export async function fetchExperimentDatasetCountForBrainRegion(
   accessToken: string,
   experimentUrl: ExperimentDataTypeName,
-  brainRegionId: string,
-  descendants: BrainRegion[]
-) {
+  brainRegions: BrainRegion[]
+): Promise<ExperimentDatasetCountPerBrainRegion> {
   if (!accessToken) throw new Error('Access token should be defined');
 
-  const brainRegionKeywords = descendants.map((descendant) => descendant.id);
+  const brainRegionKeywords = brainRegions.map((brainRegion) => brainRegion.id);
 
   const esQuery = new esb.BoolQuery();
   esQuery.must(esb.termQuery('@type.keyword', experimentUrl));
@@ -60,12 +58,9 @@ export async function fetchExperimentDatasetCountForBrainRegion(
     .then<ExploreESResponse>((response) => response.json())
     .then<ExperimentDatasetCountPerBrainRegion>((res) => ({
       total: res.hits.total.value,
-      brainRegionId,
       experimentUrl,
     }))
-    .catch(
-      () => ({ total: 0, brainRegionId, experimentUrl } as ExperimentDatasetCountPerBrainRegion)
-    );
+    .catch(() => ({ total: 0, experimentUrl }));
 }
 
 // TODO: this function should be changed to use ES /_mappings

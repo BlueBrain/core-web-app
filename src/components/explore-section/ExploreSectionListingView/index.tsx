@@ -11,6 +11,7 @@ import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom, dataAtom } from '@/state/explore-section/list-view-atoms';
 import CardView from '@/components/explore-section/CardView';
+import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 
 type ViewMode = 'table' | 'card';
 
@@ -18,11 +19,13 @@ export default function DefaultListView({
   enableDownload,
   experimentTypeName,
   title,
+  brainRegionSource,
   renderButton,
 }: {
   enableDownload?: boolean;
   experimentTypeName: string;
   title: string;
+  brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
@@ -44,15 +47,19 @@ export default function DefaultListView({
         unwrap(
           dataAtom({
             experimentTypeName,
+            brainRegionSource,
           })
         ),
-      [experimentTypeName]
+      [brainRegionSource, experimentTypeName]
     )
   );
 
   return (
     <div className="min-h-screen" style={{ background: '#d1d1d1' }}>
-      <WithControlPanel experimentTypeName={experimentTypeName}>
+      <WithControlPanel
+        experimentTypeName={experimentTypeName}
+        brainRegionSource={brainRegionSource}
+      >
         {({ activeColumns, displayControlPanel, setDisplayControlPanel }) => (
           <>
             <FilterControls
@@ -60,7 +67,11 @@ export default function DefaultListView({
               experimentTypeName={experimentTypeName}
               setDisplayControlPanel={setDisplayControlPanel}
             >
-              <HeaderPanel experimentTypeName={experimentTypeName} title={title} />
+              <HeaderPanel
+                experimentTypeName={experimentTypeName}
+                title={title}
+                brainRegionSource={brainRegionSource}
+              />
             </FilterControls>
             <div className="flex gap-2 place-content-end  items-center ">
               <div className="text-primary-7">View:</div>

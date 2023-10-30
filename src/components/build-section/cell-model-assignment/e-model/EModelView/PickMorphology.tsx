@@ -61,6 +61,7 @@ export default function PickMorphology({ isOpen, onCancel, onOk }: Props) {
           experimentTypeName={NEURON_MORPHOLOGY}
           enableDownload
           renderButton={pickMorphButtonFn}
+          brainRegionSource="root"
         />
       </Modal>
     </div>

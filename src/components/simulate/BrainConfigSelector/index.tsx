@@ -61,6 +61,7 @@ export default function BrainConfigSelector({ onSelect }: Props) {
           type: 'radio',
           onSelect,
         }}
+        rowClassName="text-primary-4"
       />
     </>
   );

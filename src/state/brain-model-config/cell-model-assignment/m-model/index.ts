@@ -14,7 +14,6 @@ import sessionAtom from '@/state/session';
 import {
   fetchResourceById,
   fetchGeneratorTaskActivity,
-  fetchFileMetadataByUrl,
   fetchJsonFileByUrl,
   fetchResourceByUrl,
 } from '@/api/nexus';
@@ -29,7 +28,6 @@ import {
   CanonicalMorphologyModel,
   NeuronMorphologyModelParameter,
 } from '@/types/nexus';
-import { setRevision } from '@/util/nexus';
 import {
   generateBrainRegionMTypeMapKey,
   generateBrainRegionMTypeArray,
@@ -124,27 +122,6 @@ export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => 
   if (!config) return null;
 
   return config.distribution.contentUrl;
-});
-
-export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const configPayloadUrl = await get(configPayloadUrlAtom);
-
-  get(refetchTriggerAtom);
-
-  if (!session || !configPayloadUrl) {
-    return null;
-  }
-
-  const url = setRevision(configPayloadUrl, null);
-
-  if (!url) {
-    return null;
-  }
-
-  const metadata = await fetchFileMetadataByUrl(url, session);
-
-  return metadata._rev;
 });
 
 export const remoteConfigPayloadAtom = atom<Promise<MorphologyAssignmentConfigPayload | null>>(

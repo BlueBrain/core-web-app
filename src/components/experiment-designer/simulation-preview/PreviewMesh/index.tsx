@@ -1,13 +1,14 @@
-import { useCallback, useEffect } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { useAtlasVisualizationManager } from '@/state/atlas';
+import { useCallback, useEffect } from 'react';
+
 import MeshGenerators from '@/components/MeshGenerators';
-import simPreviewThreeCtxWrapper from '@/components/experiment-designer/simulation-preview/SimulationPreview/SimPreviewThreeCtxWrapper';
 import generateRandomColor from '@/components/experiment-designer/simulation-preview/PreviewMesh/generate-random-color';
+import simPreviewThreeCtxWrapper from '@/components/experiment-designer/simulation-preview/SimulationPreview/SimPreviewThreeCtxWrapper';
 import { nodeSetsPaletteAtom } from '@/components/experiment-designer/simulation-preview/atoms';
-import { TargetList } from '@/types/experiment-designer';
-import { cameraConfigAtom } from '@/state/experiment-designer/visualization';
+import { useAtlasVisualizationManager } from '@/state/atlas';
 import { NodeSetType } from '@/state/atlas/atlas';
+import { cameraConfigAtom } from '@/state/experiment-designer/visualization';
+import { TargetList } from '@/types/experiment-designer';
 
 interface PreviewMeshProps {
   targetsToDisplay: TargetList;

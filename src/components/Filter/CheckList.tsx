@@ -10,9 +10,9 @@ import SearchFilter from './SearchFilter';
 import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
 import { CheckIcon } from '@/components/icons';
 import CenteredMessage from '@/components/CenteredMessage';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { CheckListProps } from '@/types/explore-section/application';
 import { FiltersRenderLengthAtom } from '@/components/Filter/state';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {

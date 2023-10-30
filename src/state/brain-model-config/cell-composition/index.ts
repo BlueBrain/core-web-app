@@ -5,12 +5,7 @@ import { selectAtom } from 'jotai/utils';
 
 import { cellCompositionConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
-import {
-  fetchResourceById,
-  fetchJsonFileByUrl,
-  fetchFileMetadataByUrl,
-  fetchGeneratorTaskActivity,
-} from '@/api/nexus';
+import { fetchResourceById, fetchJsonFileByUrl, fetchGeneratorTaskActivity } from '@/api/nexus';
 import {
   CellCompositionConfig,
   CellCompositionConfigPayload,
@@ -18,7 +13,6 @@ import {
   CellCompositionResource,
   GeneratorTaskActivityResource,
 } from '@/types/nexus';
-import { setRevision } from '@/util/nexus';
 
 const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
@@ -46,27 +40,6 @@ export const configSourceAtom = atom<Promise<CellCompositionConfig | null>>(asyn
 });
 
 const configPayloadUrlAtom = selectAtom(configAtom, (config) => config?.distribution.contentUrl);
-
-export const configPayloadRevAtom = atom<Promise<number | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const configPayloadUrl = await get(configPayloadUrlAtom);
-
-  get(refetchTriggerAtom);
-
-  if (!session || !configPayloadUrl) {
-    return null;
-  }
-
-  const url = setRevision(configPayloadUrl, null);
-
-  if (!url) {
-    return null;
-  }
-
-  const metadata = await fetchFileMetadataByUrl(url, session);
-
-  return metadata._rev;
-});
 
 const remoteConfigPayloadAtom = atom<Promise<CellCompositionConfigPayload | null>>(async (get) => {
   const session = get(sessionAtom);

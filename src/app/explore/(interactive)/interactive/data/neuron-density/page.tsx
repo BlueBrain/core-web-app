@@ -9,6 +9,7 @@ export default function NeuronDensityListingPage() {
       enableDownload
       title="Neuron density"
       experimentTypeName={NEURON_DENSITY}
+      brainRegionSource="visible"
     />
   );
 }

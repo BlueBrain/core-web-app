@@ -45,11 +45,15 @@ export default function SimulationCampaignListView({
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <WithControlPanel experimentTypeName={experimentTypeName}>
+      <WithControlPanel experimentTypeName={experimentTypeName} brainRegionSource="root">
         {({ displayControlPanel, setDisplayControlPanel }) => (
           <>
             <div className="flex flex-col pt-10">
-              <HeaderPanel title={title} experimentTypeName={experimentTypeName} />
+              <HeaderPanel
+                title={title}
+                experimentTypeName={experimentTypeName}
+                brainRegionSource="root"
+              />
             </div>
             <FilterControls
               displayControlPanel={displayControlPanel}

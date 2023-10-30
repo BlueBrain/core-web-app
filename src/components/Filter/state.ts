@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/explore-fields-config';
 import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
+import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 
 type FiltersRenderLengthObjectProps = { [key: string]: number };
 const FiltersRenderLengthObject: FiltersRenderLengthObjectProps = {};

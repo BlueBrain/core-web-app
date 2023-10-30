@@ -207,13 +207,6 @@ export const eModelOptimizationRemoteAtom = atom<Promise<EModelOptimizationConfi
   }
 );
 
-export const eModelOptimizationRevAtom = atom<Promise<number | null>>(async (get) => {
-  const eModelOptimizationRemote = await get(eModelOptimizationRemoteAtom);
-  if (!eModelOptimizationRemote) return null;
-
-  return eModelOptimizationRemote._rev;
-});
-
 export const eModelOptimizationDistributionUrlAtom = atom<Promise<string | null>>(async (get) => {
   const eModelOptimizationRemote = await get(eModelOptimizationRemoteAtom);
   if (!eModelOptimizationRemote) return null;

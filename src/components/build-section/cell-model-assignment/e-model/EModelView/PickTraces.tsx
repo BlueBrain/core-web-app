@@ -62,6 +62,7 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
           experimentTypeName={TYPE}
           enableDownload
           renderButton={pickTraceButtonFn}
+          brainRegionSource="root"
         />
       </Modal>
     </div>

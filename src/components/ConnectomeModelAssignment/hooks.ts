@@ -29,7 +29,7 @@ import {
   updateResource,
 } from '@/api/nexus';
 import { usePrevious } from '@/hooks/hooks';
-import { createDistribution, setRevision } from '@/util/nexus';
+import { createDistribution } from '@/util/nexus';
 import { supportedUIConfigVersion } from '@/constants/configs';
 
 /**
@@ -114,7 +114,7 @@ async function fetchRules(
     throw new Error('Config version is not supported by Synapse Editor');
 
   const configPayload = await fetchJsonFileByUrl<SynapseConfigPayload>(
-    setRevision(configResource.distribution.contentUrl, null),
+    configResource.distribution.contentUrl,
     session
   );
 
@@ -128,12 +128,12 @@ async function fetchRules(
   );
 
   const rules = await fetchJsonFileByUrl<SynapticAssignmentRule[]>(
-    setRevision(rulesEntity.distribution.contentUrl, null),
+    rulesEntity.distribution.contentUrl,
     session
   );
 
   const types = await fetchJsonFileByUrl<{ [type: string]: SynapticType }>(
-    setRevision(typesEntity.distribution.contentUrl, null),
+    typesEntity.distribution.contentUrl,
     session
   );
 
@@ -274,7 +274,7 @@ export async function updateRules(
 
   rulesData.rulesEntity.distribution = createDistribution(fileMeta);
 
-  await updateResource(rulesData.rulesEntity, rulesData.rulesEntity._rev, session);
+  await updateResource(rulesData.rulesEntity, session);
 
   rulesData.configPayload.configuration.synapse_properties.rev = parseRevfromUrl(
     rulesData.rulesEntity.distribution.contentUrl
@@ -289,7 +289,7 @@ export async function updateRules(
 
   rulesData.configResource.distribution = createDistribution(updatedConfigPayloadMeta);
 
-  await updateResource(rulesData.configResource, rulesData.configResource._rev, session);
+  await updateResource(rulesData.configResource, session);
 }
 
 export async function updateTypes(
@@ -306,7 +306,7 @@ export async function updateTypes(
 
   data.typesEntity.distribution = createDistribution(fileMeta);
 
-  await updateResource(data.typesEntity, data.typesEntity._rev, session);
+  await updateResource(data.typesEntity, session);
 
   data.configPayload.configuration.synapses_classification.rev = parseRevfromUrl(
     data.typesEntity.distribution.contentUrl
@@ -321,7 +321,7 @@ export async function updateTypes(
 
   data.configResource.distribution = createDistribution(updatedConfigPayloadMeta);
 
-  await updateResource(data.configResource, data.configResource._rev, session);
+  await updateResource(data.configResource, session);
 }
 
 function parseRevfromUrl(url: string) {

@@ -8,6 +8,7 @@ export default function SynapsePerConnectionListingPage() {
     <ExploreSectionListingView
       title="Synapse per connection"
       experimentTypeName={SYNAPSE_PER_CONNECTION}
+      brainRegionSource="visible"
     />
   );
 }

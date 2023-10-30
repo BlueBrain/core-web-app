@@ -1,18 +1,31 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
 import { Button } from 'antd';
 import { useAtomValue } from 'jotai';
-import {
+import Icon, {
   PlusOutlined,
   UserOutlined,
   HomeOutlined,
   MinusOutlined,
   ArrowRightOutlined,
-  DownOutlined,
 } from '@ant-design/icons';
+
+import { EyeIcon } from '@/components/icons';
+import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
+import { sectionContent } from '@/constants/home-sections/homeSectionContent';
+import { SingleCard } from '@/types/explore-section/application';
+import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
 import Link from '@/components/Link';
-import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
-import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
+
+type NavTailItemProps = {
+  url: string;
+  title: string;
+  expandedMenu: boolean;
+  icon: React.ForwardRefExoticComponent<any>;
+  background?: string;
+  showIconOnCollapse?: boolean;
+  hasDivider?: boolean;
+};
 
 export function DetailsPageSideBackLink() {
   const pathName = usePathname();
@@ -39,124 +52,160 @@ export function DetailsPageSideBackLink() {
   ) : null;
 }
 
+const tailNavItems: Array<Omit<NavTailItemProps, 'expandedMenu'>> = [
+  {
+    title: 'Home',
+    url: '/',
+    icon: HomeOutlined,
+    showIconOnCollapse: true,
+    hasDivider: true,
+  },
+  {
+    title: 'User',
+    url: '/',
+    icon: UserOutlined,
+    showIconOnCollapse: true,
+  },
+  {
+    url: '/build/load-brain-config',
+    title: 'Build',
+    icon: ArrowRightOutlined,
+    background: 'bg-primary-8',
+  },
+  {
+    url: '/simulate',
+    title: 'Simulate',
+    icon: ArrowRightOutlined,
+    background: 'bg-primary-8',
+  },
+];
+
+function NavTailItem({
+  url,
+  title,
+  icon,
+  expandedMenu,
+  background,
+  showIconOnCollapse,
+  hasDivider,
+}: NavTailItemProps) {
+  return (
+    <>
+      <li
+        className={classNames(
+          'mx-auto p-2 relative right-0 w-full block ease-in-out hover:bg-primary-7',
+          'transition-opacity ease-in-out duration-100',
+          background ?? 'bg-transparent',
+          !showIconOnCollapse && !expandedMenu ? 'h-0 w-0 opacity-0' : 'opacity-100'
+        )}
+      >
+        <Link
+          href={url}
+          className={classNames(
+            'w-full inline-flex items-center  gap-2 transition-transform ease-in-out font-bold',
+            expandedMenu ? 'justify-between' : 'justify-center'
+          )}
+        >
+          <h2 className={expandedMenu ? 'block' : 'hidden'}>{title}</h2>
+          <Icon component={icon} className={expandedMenu ? 'text-white' : 'text-primary-4'} />
+        </Link>
+      </li>
+      {expandedMenu && hasDivider && <div className="w-[96%] px-2 bg-primary-7 h-px mx-auto" />}
+    </>
+  );
+}
+
+function ObservationNavItem({ url, name, description }: SingleCard) {
+  const pathname = usePathname();
+  return (
+    <li
+      key={url}
+      className={classNames(
+        'h-1/4 flex mx-auto p-4 cursor-pointer relative w-full  hover:bg-primary-7',
+        pathname?.startsWith(url) ? 'bg-primary-7' : 'bg-primary-8'
+      )}
+    >
+      <Link href={url} className="w-full mx-auto">
+        <h1 className="text-xl font-bold">{name}</h1>
+        <span className="h-7 w-6 flex items-center justify-center mx-auto w-ful absolute top-4 right-4">
+          <EyeIcon className="text-white h-6" />
+        </span>
+        <p className="select-none mt-4 text-justify font-thin text-sm line-clamp-2 text-primary-4">
+          {description}
+        </p>
+      </Link>
+    </li>
+  );
+}
+
 export default function Sidebar() {
-  const [expanded, setExpanded] = useState(false);
-  const [openExp, setOpenExp] = useState<boolean>(false);
+  const pathname = usePathname();
+  const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
 
   return (
-    <div className={expanded ? styles.expanded : styles.side}>
-      <div>
-        <Link href="/explore">Explore</Link>
+    <div
+      className={classNames(
+        'h-screen transition-transform ease-in-out bg-primary-9 text-light',
+        pathname?.includes('/explore/literature') && 'fixed top-0 z-50',
+        expanded
+          ? 'px-3 w-80 flex flex-col items-start justify-between shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
+          : 'w-10 flex flex-col items-center justify-between transition-transform ease-in-out will-change-auto'
+      )}
+    >
+      <div
+        className={classNames(
+          'flex items-center justify-between w-full relative my-2',
+          !expanded && 'flex-col justify-between items-start'
+        )}
+      >
+        <Link
+          href="/explore"
+          className={classNames(
+            'font-bold text-2xl order-1 transition-transform duration-150 ease-in-out',
+            !expanded && 'relative top-20 -rotate-90 origin-center order-2 text-lg'
+          )}
+        >
+          Explore
+        </Link>
         <Button
           type="text"
-          onClick={() => setExpanded((isExapanded) => !isExapanded)}
-          style={{ color: 'white' }}
-          icon={expanded ? <MinusOutlined /> : <PlusOutlined />}
+          onClick={toggleExpand}
+          className={classNames(
+            'mt-4 bg-transparent border-none order-2',
+            !expanded && 'order-1 absolute top-0'
+          )}
+          icon={
+            expanded ? (
+              <MinusOutlined className="text-white" />
+            ) : (
+              <PlusOutlined className="text-white" />
+            )
+          }
         />
       </div>
 
       {expanded && (
-        <ul className={styles.obsNav}>
-          <li>
-            <Link href="/explore/simulation-campaigns">
-              <h1>Brain & cells annotations</h1>
-              <ArrowRightOutlined />
-              <p>
-                Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet.
-              </p>
-            </Link>
-          </li>
-          <li>
-            <span
-              onClick={() => setOpenExp(!openExp)}
-              role="menuitem"
-              tabIndex={0}
-              onKeyDown={() => setOpenExp(!openExp)}
-            >
-              <h1>Experimental Data</h1>
-              {openExp ? <DownOutlined /> : <PlusOutlined />}
-              <p>
-                Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet.
-              </p>
-            </span>
-            <ul style={{ display: openExp ? 'block' : 'none' }}>
-              <li>
-                <Link href="/explore/electrophysiology">
-                  Neuron electrophysiology <ArrowRightOutlined />
-                </Link>
-              </li>
-              <li>
-                <Link href="/explore/morphology">
-                  Neuron morphology <ArrowRightOutlined />
-                </Link>
-              </li>
-              <li>
-                <Link href="/explore/bouton-density">
-                  Bouton density <ArrowRightOutlined />
-                </Link>
-              </li>
-              <li>
-                <Link href="/explore/neuron-density">
-                  Neuron density <ArrowRightOutlined />
-                </Link>
-              </li>
-              <li>
-                <Link href="/explore/layer-thickness">
-                  Layer thickness <ArrowRightOutlined />
-                </Link>
-              </li>
-              <li>
-                <Link href="/explore/synapse-per-connection">
-                  Synapse per connection <ArrowRightOutlined />
-                </Link>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <Link href="/explore/simulation-campaigns">
-              <h1>Brain models</h1>
-              <ArrowRightOutlined />
-              <p>
-                Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet.
-              </p>
-            </Link>
-          </li>
-          <li>
-            <Link href="/explore/simulation-campaigns">
-              <h1>Simulations</h1>
-              <ArrowRightOutlined />
-              <p>
-                Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet.
-              </p>
-            </Link>
-          </li>
+        <ul className="my-5 w-full h-full flex items-start justify-start gap-y-1 flex-col">
+          {sectionContent.map((item) => (
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            <ObservationNavItem key={item.url} {...{ ...item }} />
+          ))}
         </ul>
       )}
-      <ul className={styles.fixedNav}>
-        <li>
-          <Link href="/">
-            <h2>Home</h2>
-            <HomeOutlined />
-          </Link>
-        </li>
-        <li>
-          <Link href="/">
-            <h2>User</h2>
-            <UserOutlined />
-          </Link>
-        </li>
-        <li className={styles.hiddenWhenCollapse}>
-          <Link href="/build/load-brain-config">
-            <h2>Brain lab</h2>
-            <ArrowRightOutlined />
-          </Link>
-        </li>
-        <li className={styles.hiddenWhenCollapse}>
-          <Link href="/simulate">
-            <h2>Brain simulation</h2>
-            <ArrowRightOutlined />
-          </Link>
-        </li>
+      <ul
+        className={classNames(
+          'mb-4 w-full flex items-center gap-y-2',
+          expanded ? 'flex-col' : 'flex-col-reverse gap-y-0'
+        )}
+      >
+        {tailNavItems.map((item) => (
+          <NavTailItem
+            key={`${item.url}-${item.title}`}
+            expandedMenu={expanded}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...{ ...item }}
+          />
+        ))}
       </ul>
     </div>
   );

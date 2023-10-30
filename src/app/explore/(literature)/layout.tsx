@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import Sidebar from '@/components/explore-section/Literature/components/SideBar';
+import Sidebar from '@/components/explore-section/Sidebar';
 
 type LiteratureLayoutProps = {
   children: ReactNode;

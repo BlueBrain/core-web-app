@@ -2,7 +2,6 @@
 
 import { ReactNode } from 'react';
 import Sidebar from '@/components/explore-section/Sidebar';
-import styles from '@/components/explore-section/Sidebar/sidebar.module.scss';
 
 type GenericLayoutProps = {
   children: ReactNode;
@@ -10,11 +9,11 @@ type GenericLayoutProps = {
 
 export default function ExploreListingLayout({ children }: GenericLayoutProps) {
   return (
-    <div className={styles.wrapper}>
-      <aside>
+    <div className="flex">
+      <aside className="fixed z-50">
         <Sidebar />
       </aside>
-      <main>{children}</main>
+      <main className="w-full pl-[35px]">{children}</main>
     </div>
   );
 }

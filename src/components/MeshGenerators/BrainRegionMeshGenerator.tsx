@@ -112,7 +112,6 @@ function BrainRegionMesh({ id, colorCode, threeContextWrapper }: BrainRegionMesh
 
 export default function BrainRegionMeshGenerator({ threeContextWrapper }: MeshGeneratorProps) {
   const atlasVisualization = useAtomValue(atlasVisualizationAtom);
-
   return (
     <>
       {atlasVisualization.visibleMeshes.map((mesh) => (

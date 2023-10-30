@@ -15,7 +15,7 @@ function buildRangeQuery(filter: RangeFilter, esTerm: string) {
   return filterESBuilder;
 }
 
-export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Query | undefined {
+export function getFilterESBuilder(filter: Filter): Query | undefined {
   const esConfig = getFieldEsConfig(filter.field);
 
   let filterESBuilder;
@@ -23,10 +23,7 @@ export function getFilterESBuilder(filter: Filter, descendantIds?: string[]): Qu
   switch (filter.type) {
     case 'checkList':
     case 'checkListInference':
-      filterESBuilder = esb.termsQuery(
-        esConfig?.flat?.filter,
-        filter.field === 'brainRegion' && filter.value.length === 0 ? descendantIds : filter.value
-      );
+      filterESBuilder = esb.termsQuery(esConfig?.flat?.filter, filter.value);
 
       break;
     case 'dateRange':
@@ -101,6 +98,9 @@ export default function buildFilters(
 
   filtersQuery.must(esb.termQuery('@type.keyword', type));
   filtersQuery.must(esb.termQuery('deprecated', false));
+  if (descendantIds && descendantIds.length > 0) {
+    filtersQuery.must(esb.termsQuery('brainRegion.@id.keyword', descendantIds));
+  }
 
   if (searchString) {
     filtersQuery.should([
@@ -110,7 +110,7 @@ export default function buildFilters(
     filtersQuery.minimumShouldMatch(1);
   }
   filters.forEach((filter: Filter) => {
-    const esBuilder = getFilterESBuilder(filter, descendantIds);
+    const esBuilder = getFilterESBuilder(filter);
 
     if (esBuilder && (filterHasValue(filter) || filter.field === 'brainRegion')) {
       filtersQuery.must(esBuilder);
