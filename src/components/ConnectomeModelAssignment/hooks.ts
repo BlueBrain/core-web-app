@@ -50,8 +50,6 @@ export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule
   const brainRegions = useAtomValue(brainRegionsAtom);
   const brainRegionNames = useMemo(() => brainRegions?.map((br) => br.title), [brainRegions]);
 
-  const synapseTypes = useAtomValue(initialTypesAtom);
-
   const arrays = useMemo(() => {
     const mTypes: string[] = [];
     const eTypes: string[] = [];
