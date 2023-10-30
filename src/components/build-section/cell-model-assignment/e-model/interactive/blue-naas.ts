@@ -1,6 +1,7 @@
 import Renderer, { ClickData, HoverData } from './renderer';
 import Ws from './websocket';
 import { BLUE_NAAS_WS_URL } from './constants';
+import morphologyData from './morphology.json';
 
 import type { Morphology, SecMarkerConfig, SimConfig, TraceData } from './types';
 
@@ -55,7 +56,11 @@ export default class BlueNaas {
     this.ws = new Ws(BLUE_NAAS_WS_URL, this.onMessage);
 
     this.ws.send(BlueNaasCmd.SET_MODEL, modelId);
-    this.ws.send(BlueNaasCmd.GET_UI_DATA);
+    // this.ws.send(BlueNaasCmd.GET_UI_DATA);
+
+    this.renderer.addMorphology(morphologyData);
+    this.onMorphologyLoaded(morphologyData);
+    this.ensureSecMarkers();
   }
 
   private ensureSecMarkers() {
