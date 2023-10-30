@@ -477,6 +477,8 @@ function SynapticTypeRow({
   const setSelectedTypeIdx = useSetAtom(selectedTypeIdxAtom);
   const setTypeUsedInRules = useSetAtom(typeUsedInRulesAtom);
 
+  console.log(types);
+
   if (!visible) return null;
 
   if (!editing)

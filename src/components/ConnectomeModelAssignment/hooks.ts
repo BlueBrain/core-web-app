@@ -38,7 +38,14 @@ import { supportedUIConfigVersion } from '@/constants/configs';
  */
 export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule) => string[] {
   const composition = useAtomValue(compositionAtom);
-  const synapseTypes = useAtomValue(initialTypesAtom);
+  const initialTypes = useAtomValue(initialTypesAtom);
+  const initialTypeNames = useMemo(() => initialTypes && Object.keys(initialTypes), [initialTypes]);
+  const userTypes = useAtomValue(userTypesAtom);
+  const userTypeNames = useMemo(() => userTypes.map(([name]) => name), [userTypes]);
+  const types = useMemo(
+    () => (userTypeNames?.length > 0 ? userTypeNames : initialTypeNames ?? []),
+    [userTypeNames, initialTypeNames]
+  );
 
   const arrays = useMemo(() => {
     const brainRegions: string[] = [];
@@ -70,9 +77,9 @@ export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule
       toMType: uMtypes,
       fromEType: ueTypes,
       toEType: ueTypes,
-      synapticType: Array.from(Object.keys(synapseTypes ?? [])),
+      synapticType: types,
     };
-  }, [composition, synapseTypes]);
+  }, [composition, types]);
 
   return useCallback((field: keyof SynapticAssignmentRule) => arrays[field] ?? [], [arrays]);
 }
