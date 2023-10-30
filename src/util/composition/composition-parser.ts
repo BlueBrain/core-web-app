@@ -52,8 +52,8 @@ export function convertCountPairToComposition(
 
 export function addCountPairs(nodeCountPair: CountPair, toAddCountPair: CountPair) {
   return {
-    neuron: nodeCountPair.neuron + toAddCountPair.neuron,
-    glia: nodeCountPair.glia + toAddCountPair.glia,
+    neuron: Math.round(nodeCountPair.neuron) + Math.round(toAddCountPair.neuron),
+    glia: Math.round(nodeCountPair.glia) + Math.round(toAddCountPair.glia),
   };
 }
 
@@ -183,7 +183,7 @@ export default async function calculateCompositions(
       parentId: node.parentId,
       neuronComposition: {
         density: node.countPair.neuron / volumes[selectedRegionId],
-        count: Math.round(node.countPair.neuron),
+        count: node.countPair.neuron,
       },
       leaves: uniq(node.leaves),
       relatedNodes: uniq(node.relatedNodes),

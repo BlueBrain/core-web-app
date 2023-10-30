@@ -10,7 +10,7 @@ import { SelectProps, DefaultOptionType } from 'antd/es/select';
 import generatedPalette from './generated-color-palette.json';
 import { getSankeyNodesReducer, getSankeyLinks } from './util';
 import sankey from './sankey';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { analysedCompositionAtom } from '@/state/build-composition';
 import { cellTypesAtom } from '@/state/build-section/cell-types';
 import { formatNumber } from '@/util/common';
@@ -67,7 +67,7 @@ function MissingSelectedNodes({
 export default function DensityChart() {
   const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
   const composition = useAtomValue(analysedCompositionAtom);
-  const densityOrCount = 'density';
+  const densityOrCount = useAtomValue(densityOrCountAtom);
 
   const [selectedNodes, setSelectedNodes] = useState<SelectedNodeOptionType<string>[]>([]);
 
