@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import Detail from '@/components/explore-section/Detail';
 import { DetailProps } from '@/types/explore-section/application';
 import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
 import { DeltaResource } from '@/types/explore-section/resources';
@@ -38,6 +38,9 @@ const fields = [
     field: 'license',
   },
 ] as DetailProps[];
+
+// dynamic importation due to hydration issue in morphology 3d component
+const Detail = dynamic(() => import('@/components/explore-section/Detail'), { ssr: false });
 
 export default function MorphologyDetailPage() {
   return (

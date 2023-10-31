@@ -121,7 +121,7 @@ export default function MorphologyViewer({
       setOrientationViewer(null);
     };
     // Warning: Do not change the dependencies, it will cause infinite loop
-  }, [orientationRef, mv, options, orientationViewer]);
+  }, [orientationRef, mv, options]);
 
   // Scale Axis Operations
   React.useEffect(() => {
@@ -151,7 +151,7 @@ export default function MorphologyViewer({
       mv?._threeContext?._controls?.removeEventListener('change', controlEventListenerChangedEvent);
     };
     // Warning: Do not change the dependencies, it will cause infinite loop
-  }, [scaleRef, mv, options, scaleViewer]);
+  }, [scaleRef, mv, options]);
 
   const handleOrientationClick = () => {
     // @ts-ignore

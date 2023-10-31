@@ -19,7 +19,7 @@ export default function Explore() {
     <div className="relative flex flex-row-reverse justify-start w-screen min-h-screen flex-nowrap bg-primary-9">
       <HomeHeader
         title="Explore"
-        description="Sed turpis tincidunt id aliquet risus. Duis tristique sollicitudin nibh sit amet"
+        description="Explore a large collection of neuronal models, virtual simulations, and brain cell distributions in a 3D and interactive manner."
       />
 
       <div className="relative z-10 flex flex-col w-2/3 h-full p-8 gap-y-2">
