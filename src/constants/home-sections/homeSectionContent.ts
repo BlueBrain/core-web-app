@@ -12,8 +12,7 @@ export const sectionContent: SingleCard[] = [
   },
   {
     name: 'Literature',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    description: 'Explore the literature and query publications using a chatbot.',
     url: '/explore/literature',
     icon: 'eye',
     image: 'images/explore/explore_home_bgImg-06.jpg',
@@ -21,8 +20,7 @@ export const sectionContent: SingleCard[] = [
   },
   {
     name: 'Portals',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    description: 'Explore our existing data portals.',
     url: '/explore/portals',
     icon: 'eye',
     image: 'images/explore/explore_home_bgImg-04.jpg',
@@ -30,8 +28,7 @@ export const sectionContent: SingleCard[] = [
   },
   {
     name: 'Gallery',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    description: 'Explore our brain models visualizations.',
     url: '/explore/gallery',
     icon: 'eye',
     image: 'images/explore/explore_home_bgImg-05.jpg',
