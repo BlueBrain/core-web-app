@@ -173,10 +173,10 @@ async function launchAnalysis(
   const workflowConfigPayload = await workflowConfig.blob();
   const jszip = new JSZip();
   const zip = await jszip.loadAsync(workflowConfigPayload);
-  let config = await zip.file('simulation.cfg')?.async('string');
-  const m = config?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g);
+  const configFile = await zip.file('simulation.cfg')?.async('string');
+  const config = configFile?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g);
 
-  if (!(config = m?.[0])) return; // eslint-disable-line no-cond-assign
+  if (!config?.[0]) return;
 
   // TODO: Figure out how to handle custom config later
   const multiAnalyseSimCampaignMeta = `[MultiAnalyseSimCampaign]
