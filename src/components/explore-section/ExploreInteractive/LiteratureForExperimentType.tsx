@@ -1,11 +1,13 @@
 'use client';
 
 import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useAtomValue } from 'jotai';
-import { LoadingOutlined, ReadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ReadOutlined, WarningFilled } from '@ant-design/icons';
 import Link from 'next/link';
 
+import isNil from 'lodash/isNil';
+import { Tooltip } from 'antd';
 import { BrainRegion } from '@/types/ontologies';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
@@ -15,11 +17,26 @@ type Props = {
 };
 
 export function LiteratureForExperimentType({ brainRegions }: Props) {
-  const totalByExperimentAndBrainRegionAtom = useMemo(
-    () => loadable(getLiteratureCountForBrainRegion(brainRegions.map((br) => br.id))),
-    [brainRegions]
-  );
+  const previousFetchController = useRef<AbortController>();
+
+  const totalByExperimentAndBrainRegionAtom = useMemo(() => {
+    // When the brain regions change, cancel the request for previous brain regions
+    if (previousFetchController.current) {
+      previousFetchController.current.abort();
+    }
+    const controller = new AbortController();
+    previousFetchController.current = controller;
+
+    return loadable(
+      getLiteratureCountForBrainRegion(
+        brainRegions.map((br) => br.title),
+        controller.signal
+      )
+    );
+  }, [brainRegions]);
+
   const totalByExperimentAndBrainRegion = useAtomValue(totalByExperimentAndBrainRegionAtom);
+
   return (
     <div className="text-white mb-4 h-52 flex-1">
       <h3 className="text-gray-400 py-4 uppercase">Literature</h3>
@@ -45,7 +62,15 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
               <span className="font-light">{experimentType.title}</span>
               <span className="flex items-center font-light">
                 <span className="mr-2">
-                  {totalByExperimentAndBrainRegion.data?.[experimentType.id].total} articles
+                  {isNil(totalByExperimentAndBrainRegion.data?.[experimentType.id]) ? (
+                    <Tooltip
+                      title={`There was an error when fetching literature data for ${experimentType.title}.`}
+                    >
+                      <WarningFilled />
+                    </Tooltip>
+                  ) : (
+                    `${totalByExperimentAndBrainRegion.data?.[experimentType.id].total} articles`
+                  )}
                 </span>
                 <ReadOutlined />
               </span>

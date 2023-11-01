@@ -6,16 +6,13 @@ import {
   ExperimentDatasetCountPerBrainRegion,
   fetchExperimentDatasetCountForBrainRegion,
 } from '@/api/explore-section/resources';
-import {
-  EXPERIMENT_TYPE_DETAILS,
-  ExperimentDetail,
-} from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
 import { fetchParagraphCountForBrainRegionAndExperiment } from '@/components/explore-section/Literature/api';
 
 // Keeps track of the visible interactive brain regions
 export const visibleExploreBrainRegionsAtom = atomWithReset<string[]>([]);
 
-export const getExperimentTotalForBrainRegion = (brainRegionIds: string[]) =>
+export const getExperimentTotalForBrainRegion = (brainRegionIds: string[], signal: AbortSignal) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {
     const session = get(sessionAtom);
     if (!session) return null;
@@ -26,7 +23,8 @@ export const getExperimentTotalForBrainRegion = (brainRegionIds: string[]) =>
         fetchExperimentDatasetCountForBrainRegion(
           session.accessToken,
           experimentType.id,
-          descendants ?? []
+          descendants ?? [],
+          signal
         )
       )
     ).then((accumulatedResponse) => {
@@ -44,21 +42,18 @@ export const getExperimentTotalForBrainRegion = (brainRegionIds: string[]) =>
     return experimentToCount;
   });
 
-// NOTE: This atom uses mock results of an ML api that is yet to be finalized.
-export const getLiteratureCountForBrainRegion = (
-  brainRegionIds: string[],
-  experiments: ExperimentDetail[] = EXPERIMENT_TYPE_DETAILS
-) =>
+export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], signal: AbortSignal) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {
     const session = get(sessionAtom);
     if (!session) return null;
 
     const experimentToCount = await Promise.allSettled(
-      experiments.map((experimentType) =>
+      EXPERIMENT_TYPE_DETAILS.map((experimentType) =>
         fetchParagraphCountForBrainRegionAndExperiment(
           session.accessToken,
           { name: experimentType.title, id: experimentType.id },
-          brainRegionIds
+          brainRegionNames,
+          signal
         )
       )
     ).then((accumulatedResponse) => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useAtomValue } from 'jotai';
 import { LoadingOutlined, MenuOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -14,11 +14,25 @@ type Props = {
 };
 
 export function BrainRegionExperimentsCount({ brainRegions }: Props) {
-  const totalByExperimentAndBrainRegionAtom = useMemo(
-    () => loadable(getExperimentTotalForBrainRegion(brainRegions.map((br) => br.id))),
-    [brainRegions]
-  );
+  const previousFetchController = useRef<AbortController>();
+
+  const totalByExperimentAndBrainRegionAtom = useMemo(() => {
+    // When the brain regions change, cancel the request for previous brain regions
+    if (previousFetchController.current) {
+      previousFetchController.current.abort();
+    }
+    const controller = new AbortController();
+    previousFetchController.current = controller;
+
+    return loadable(
+      getExperimentTotalForBrainRegion(
+        brainRegions.map((br) => br.id),
+        controller.signal
+      )
+    );
+  }, [brainRegions]);
   const totalByExperimentAndBrainRegion = useAtomValue(totalByExperimentAndBrainRegionAtom);
+
   return (
     <div className="text-white mb-4 h-52 flex-1">
       <h3 className="text-gray-400 py-4 uppercase">Experimental data</h3>
