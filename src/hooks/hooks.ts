@@ -36,19 +36,11 @@ export function useSessionAtomValue() {
 }
 
 export function useUnwrappedValue<T>(atom: Atom<T>) {
-  const [unwrapped, setUnwrapped] = useState(unwrap(atom));
-  useEffect(() => {
-    setUnwrapped(unwrap(atom));
-  }, [atom]);
-  return useAtomValue(unwrapped);
+  return useAtomValue(unwrap(atom));
 }
 
 export function useLoadableValue<T>(atom: Atom<T>) {
-  const [loadableValue, setLoadableValue] = useState(loadable(atom));
-  useEffect(() => {
-    setLoadableValue(loadable(atom));
-  }, [atom]);
-  return useAtomValue(loadableValue);
+  return useAtomValue(loadable(atom));
 }
 
 export function useEnsuredPath() {
