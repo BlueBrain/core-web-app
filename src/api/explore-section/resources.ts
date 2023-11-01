@@ -34,10 +34,23 @@ export type ExperimentDatasetCountPerBrainRegion = {
   experimentUrl: string;
 };
 
+export type ArticleListResult = {
+  total: number;
+  results: ArticleItem[];
+  offset: number;
+};
+
+export type ArticleItem = {
+  title: string;
+  doi: string;
+  abstract: string;
+};
+
 export async function fetchExperimentDatasetCountForBrainRegion(
   accessToken: string,
   experimentUrl: ExperimentDataTypeName,
-  brainRegions: BrainRegion[]
+  brainRegions: BrainRegion[],
+  signal: AbortSignal
 ): Promise<ExperimentDatasetCountPerBrainRegion> {
   if (!accessToken) throw new Error('Access token should be defined');
 
@@ -49,6 +62,7 @@ export async function fetchExperimentDatasetCountForBrainRegion(
   esQuery.must(esb.termsQuery('brainRegion.@id.keyword', brainRegionKeywords));
 
   return fetch(API_SEARCH, {
+    signal,
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({

@@ -6,7 +6,12 @@ import {
   JournalSuggestionResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
-import { ExperimentDatasetCountPerBrainRegion } from '@/api/explore-section/resources';
+import {
+  ArticleItem,
+  ArticleListResult,
+  ExperimentDatasetCountPerBrainRegion,
+} from '@/api/explore-section/resources';
+import { createHeaders } from '@/util/utils';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
@@ -124,30 +129,84 @@ export const fetchJournalSuggestions = (searchTerm: string): Promise<JournalSugg
     .catch(() => []);
 };
 
-const fetchParagraphsForBrainRegionAndExperiment = (
+const fetchParagraphCountForBrainRegionAndExperiment = (
   accessToken: string,
   experimentType: { name: string; id: string },
-  brainRegionIds: string[]
-) => {
+  brainRegionNames: string[],
+  signal: AbortSignal
+): Promise<ExperimentDatasetCountPerBrainRegion> => {
   if (!accessToken) throw new Error('Access token should be defined');
 
-  const mockRequest = new Promise<ExperimentDatasetCountPerBrainRegion>((resolve) => {
+  const url = nexus.aiUrl;
+  const brainRegionParams = brainRegionNames
+    .map((name) => encodeURIComponent(name.toLowerCase()))
+    .join('&regions=');
+
+  return fetch(
+    `${url}/retrieval/article_count?topics=${encodeURIComponent(
+      experimentType.name
+    )}&regions=${brainRegionParams}`,
+    {
+      signal,
+      method: 'POST',
+      headers: createHeaders(accessToken, { Accept: 'application/json' }),
+    }
+  )
+    .then((response: any) => {
+      if (response.ok) {
+        return response.json();
+      }
+      // 40X errors
+      throw new Error(
+        'There was an error retrieving literature data for the selected brain regions'
+      );
+    })
+    .then((response) => ({
+      total: response.article_count,
+      experimentUrl: experimentType.id,
+    }));
+};
+
+const fetchArticlesForBrainRegionAndExperiment = (
+  accessToken: string,
+  experimentName: string,
+  brainRegions: string[],
+  offset: number,
+  signal: AbortSignal
+) => {
+  if (!accessToken) throw new Error('Access token should be defined');
+  const mockRequest = new Promise<ArticleListResult>((resolve, reject) => {
     setTimeout(() => {
-      // TODO: We might need brain region title instead when the API is ready.
-      brainRegionIds.map((brainRegionId) => `${brainRegionId}`);
+      if (signal.aborted) {
+        reject(new Error('Aborted'));
+      }
       resolve({
-        total: Math.floor(Math.random() * 30),
-        experimentUrl: experimentType.id,
+        total: 100,
+        results: [...Array(50).keys()].map((_, index) =>
+          createMockArticle(
+            `A Comparison of Neurotransmitter-Specific and Neuropeptide-Specific Neuronal Cell Types Present in the Dorsal Cortex in Turtles with Those Present in the Isocortex in Mammals: Implications for the Evolution of Isocortex; pp. 53–72 ${index}`,
+            `${index}`,
+            '… The neurons containing these substances in dor sal cortex in turtles were generally highlysimilar in morphology to their counterparts in mammalian isocortex. In contrast, neurons …'
+          )
+        ),
+        offset,
       });
-    }, 1000);
+    }, 2000);
   });
 
   return mockRequest;
 };
 
+export const createMockArticle = (title: string, doi: string, abstract: string): ArticleItem => ({
+  title,
+  doi,
+  abstract,
+});
+
 export {
   getGenerativeQA,
   fetchArticleTypes,
   fetchAuthorSuggestions,
-  fetchParagraphsForBrainRegionAndExperiment,
+  fetchParagraphCountForBrainRegionAndExperiment,
+  fetchArticlesForBrainRegionAndExperiment,
 };

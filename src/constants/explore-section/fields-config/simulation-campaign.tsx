@@ -141,7 +141,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'completed at',
     filter: null,
     render: {
-      detailViewFn: (resource) => resource && timeElapsedFromToday(resource.completedAt),
+      detailViewFn: (resource) => resource && timeElapsedFromToday(resource.endedAtTime),
     },
     vocabulary: {
       plural: 'Dates',

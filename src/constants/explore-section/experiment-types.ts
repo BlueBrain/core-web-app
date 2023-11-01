@@ -44,39 +44,41 @@ export const EXPERIMENT_TYPES: Record<ExperimentDataTypeName, ExperimentType> = 
   },
 };
 
-export const EXPERIMENT_TYPE_DETAILS: {
+export type ExperimentDetail = {
   id: ExperimentDataTypeName;
   title: string;
-  route: string;
-}[] = [
+  name: string;
+};
+
+export const EXPERIMENT_TYPE_DETAILS: ExperimentDetail[] = [
   {
     title: 'Bouton density',
     id: BOUTON_DENSITY,
-    route: '/explore/interactive/data/bouton-density',
+    name: 'bouton-density',
   },
   {
     title: 'Morphologies',
     id: NEURON_MORPHOLOGY,
-    route: '/explore/interactive/data/morphology',
+    name: 'morphology',
   },
   {
     title: 'Electrophysiology',
     id: ELECTRO_PHYSIOLOGY,
-    route: '/explore/interactive/data/electrophysiology',
+    name: 'electrophysiology',
   },
   {
     title: 'Neuron density',
     id: NEURON_DENSITY,
-    route: '/explore/interactive/data/neuron-density',
+    name: 'neuron-density',
   },
   {
     title: 'Layer thickness',
     id: LAYER_THICKNESS,
-    route: '/explore/interactive/data/layer-thickness',
+    name: 'layer-thickness',
   },
   {
     title: 'Synapse per connection',
     id: SYNAPSE_PER_CONNECTION,
-    route: '/explore/interactive/data/synapse-per-connection',
+    name: 'synapse-per-connection',
   },
 ];

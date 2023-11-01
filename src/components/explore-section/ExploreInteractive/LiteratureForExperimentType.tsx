@@ -1,9 +1,13 @@
 'use client';
 
 import { loadable } from 'jotai/utils';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useAtomValue } from 'jotai';
-import { LoadingOutlined, ReadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ReadOutlined, WarningFilled } from '@ant-design/icons';
+import Link from 'next/link';
+
+import isNil from 'lodash/isNil';
+import { Tooltip } from 'antd';
 import { BrainRegion } from '@/types/ontologies';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
@@ -13,10 +17,24 @@ type Props = {
 };
 
 export function LiteratureForExperimentType({ brainRegions }: Props) {
-  const totalByExperimentAndBrainRegionAtom = useMemo(
-    () => loadable(getLiteratureCountForBrainRegion(brainRegions.map((br) => br.id))),
-    [brainRegions]
-  );
+  const previousFetchController = useRef<AbortController>();
+
+  const totalByExperimentAndBrainRegionAtom = useMemo(() => {
+    // When the brain regions change, cancel the request for previous brain regions
+    if (previousFetchController.current) {
+      previousFetchController.current.abort();
+    }
+    const controller = new AbortController();
+    previousFetchController.current = controller;
+
+    return loadable(
+      getLiteratureCountForBrainRegion(
+        brainRegions.map((br) => br.title),
+        controller.signal
+      )
+    );
+  }, [brainRegions]);
+
   const totalByExperimentAndBrainRegion = useAtomValue(totalByExperimentAndBrainRegionAtom);
 
   return (
@@ -35,7 +53,8 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
         <div className="flex flex-col flex-wrap mb-7 h-36">
           {EXPERIMENT_TYPE_DETAILS.map((experimentType) => (
-            <div
+            <Link
+              href={`/explore/interactive/literature/${experimentType.name}`}
               key={experimentType.title}
               className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer hover:text-primary-4"
               data-testid={`literature-articles-${experimentType.id}`}
@@ -43,11 +62,19 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
               <span className="font-light">{experimentType.title}</span>
               <span className="flex items-center font-light">
                 <span className="mr-2">
-                  {totalByExperimentAndBrainRegion.data?.[experimentType.id].total} articles
+                  {isNil(totalByExperimentAndBrainRegion.data?.[experimentType.id]) ? (
+                    <Tooltip
+                      title={`There was an error when fetching literature data for ${experimentType.title}.`}
+                    >
+                      <WarningFilled />
+                    </Tooltip>
+                  ) : (
+                    `${totalByExperimentAndBrainRegion.data?.[experimentType.id].total} articles`
+                  )}
                 </span>
                 <ReadOutlined />
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       )}
