@@ -42,6 +42,6 @@ export type DetailType = DeltaResource<{
   parameter: { coords: { id: string; value: string }; attrs: { id: string; value: string } };
   status: string;
   startedAtTime: string;
-  endedAtTime: string
+  endedAtTime: string;
   completedAt: string;
 }>;
