@@ -127,8 +127,7 @@ function useCumulativeAnalysisReports(
       cumulativeReportsWithContrib.sort((a, b) => {
         const dateA = new Date(a._createdAt);
         const dateB = new Date(b._createdAt);
-        // @ts-ignore
-        return dateB - dateA;
+        return dateB.valueOf() - dateA.valueOf();
       });
 
       const foundReport = cumulativeReportsWithContrib.find(
@@ -265,8 +264,7 @@ function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
     const interval = setInterval(() => {
       const startTime = new Date(createdAt);
       const currentTime = new Date();
-      // @ts-ignore-error
-      const difference = Math.floor((currentTime - startTime) / 1000); // in seconds
+      const difference = Math.floor((currentTime.valueOf() - startTime.valueOf()) / 1000); // in seconds
       setExecutionTime(formatTimeDifference(difference));
     }, 1000);
 
