@@ -6,7 +6,7 @@ import { atomFamily } from 'jotai/utils';
 import isEqual from 'lodash/isEqual';
 import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { DeltaResource, Contributor } from '@/types/explore-section/resources';
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
 
@@ -38,8 +38,6 @@ export const detailFamily = atomFamily(
     }),
   isEqual
 );
-
-export type Contributor = DeltaResource<{ familyName: string; givenName: string }>;
 
 export const contributorsDataFamily = atomFamily(
   (resourceInfo?: ResourceInfo) =>

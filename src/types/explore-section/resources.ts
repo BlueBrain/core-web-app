@@ -258,3 +258,5 @@ export type EPhysImageItem = {
     '@id': string;
   };
 };
+
+export type Contributor = DeltaResource<{ familyName: string; givenName: string }>;

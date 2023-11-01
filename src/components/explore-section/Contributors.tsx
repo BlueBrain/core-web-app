@@ -1,14 +1,16 @@
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IdLabel } from '@/types/explore-section/fields';
-import { contributorsDataFamily, Contributor } from '@/state/explore-section/detail-view-atoms';
+import { contributorsDataFamily } from '@/state/explore-section/detail-view-atoms';
 import ListField from '@/components/explore-section/Fields/ListField';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { Contributor } from '@/types/explore-section/resources';
 
 /**
  * DeltaResource is the raw data interface recived from a reequest to nexus
  * DetailAtomResource used by the detailAtom variable extends DeltaResource using response from formatContributors
+ *
  * @param {import("./types/explore-section").DeltaResource} contributor
  */
 export const formatContributors = (contributor: Contributor | null): IdLabel => {
