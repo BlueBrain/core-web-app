@@ -173,10 +173,10 @@ async function launchAnalysis(
   const workflowConfigPayload = await workflowConfig.blob();
   const jszip = new JSZip();
   const zip = await jszip.loadAsync(workflowConfigPayload);
-  const configFile = await zip.file('simulation.cfg')?.async('string');
-  const config = configFile?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g);
+  const fullConfig = await zip.file('simulation.cfg')?.async('string');
+  let config = fullConfig?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g)?.[0];
 
-  if (!config?.[0]) return;
+  if (!config) return;
 
   // TODO: Figure out how to handle custom config later
   const multiAnalyseSimCampaignMeta = `[MultiAnalyseSimCampaign]
