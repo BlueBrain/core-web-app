@@ -44,7 +44,7 @@ export default function SectionCards({
       onMouseOver={handleMouseOver}
       onMouseOut={() => setMouseOver(false)}
     >
-      <div className="flex flex-col justify-start">
+      <div className="flex flex-col justify-start w-full">
         <div
           className={classNames(
             'relative flex items-start h-9 2xl:h-11 gap-2 transition-top ease-in-out duration-500',
