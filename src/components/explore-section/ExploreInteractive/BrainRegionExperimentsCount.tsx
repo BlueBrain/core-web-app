@@ -35,7 +35,7 @@ export function BrainRegionExperimentsCount({ brainRegions }: Props) {
         <div className="flex flex-col flex-wrap mb-7 h-36">
           {EXPERIMENT_TYPE_DETAILS.map((experimentType) => (
             <Link
-              href={experimentType.route}
+              href={`/explore/interactive/data/${experimentType.name}`}
               key={experimentType.title}
               className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 hover:text-primary-4"
               data-testid={`experiment-dataset-${experimentType.id}`}

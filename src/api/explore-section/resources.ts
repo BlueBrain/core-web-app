@@ -34,6 +34,18 @@ export type ExperimentDatasetCountPerBrainRegion = {
   experimentUrl: string;
 };
 
+export type ArticleListResult = {
+  total: number;
+  results: ArticleItem[];
+  offset: number;
+};
+
+export type ArticleItem = {
+  title: string;
+  doi: string;
+  abstract: string;
+};
+
 export async function fetchExperimentDatasetCountForBrainRegion(
   accessToken: string,
   experimentUrl: ExperimentDataTypeName,

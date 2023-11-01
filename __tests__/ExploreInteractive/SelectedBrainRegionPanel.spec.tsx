@@ -9,6 +9,8 @@ import SelectedBrainRegionPanel from '@/components/explore-section/ExploreIntera
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
+import { createMockArticle } from '@/components/explore-section/Literature/api';
+import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,
@@ -53,6 +55,31 @@ jest.mock('src/api/explore-section/resources.ts', () => ({
         resolve({
           total: mockCountForExperiment(experimentUrl, brainRegions.length),
           experimentUrl,
+        });
+      })
+  ),
+}));
+
+jest.mock('src/components/explore-section/Literature/api.ts', () => ({
+  _esModule: true,
+  fetchParagraphCountForBrainRegionAndExperiment: jest.fn().mockImplementation(
+    (token, experimentType) =>
+      new Promise((resolve) => {
+        resolve({
+          total: Math.floor(Math.random() * 30),
+          experimentUrl: experimentType.id,
+        });
+      })
+  ),
+  fetchArticlesForBrainRegionAndExperiment: jest.fn().mockImplementation(
+    (token, experiment, brainregion, offset) =>
+      new Promise((resolve) => {
+        resolve({
+          total: 42,
+          results: [...Array(50).keys()].map((_, index) =>
+            createMockArticle(`Mock title ${index}`, `${index}`, 'Mock abstract')
+          ),
+          offset,
         });
       })
   ),
@@ -187,46 +214,4 @@ describe('SelectedBrainRegionPanel', () => {
   }
 });
 
-const IDPrefix = 'http://api.brain-map.org/api/v2/data/Structure';
-
-const getMockBrainRegion = (
-  name: string,
-  id: string,
-  colorCode: string = '#40A666',
-  extra: Partial<BrainRegion> = {}
-): BrainRegion => ({
-  id: `${IDPrefix}/${id}`,
-  colorCode,
-  title: name,
-  isPartOf: `${IDPrefix}/48`,
-  isLayerPartOf: null,
-  notation: 'ACAv5',
-  representedInAnnotation: true,
-  view: 'https://neuroshapes.org/BrainRegion',
-  hasLayerPart: [],
-  hasPart: [],
-  items: undefined,
-  ...extra,
-  // items: isRoot ? [getMockBrainRegion('Roots child', '8', '#000')] : undefined
-});
-
-export const mockBrainRegions: BrainRegion[] = [
-  getMockBrainRegion('Anterior cingulate area, ventral part, layer 5', '1', '#0802A3', {
-    isPartOf: `${IDPrefix}/8`,
-  }),
-  getMockBrainRegion('Agranular insular area, posterior part, layer 2', '2', '#FF4B91', {
-    isPartOf: `${IDPrefix}/8`,
-  }),
-  getMockBrainRegion('Isocortex', '3', '#FF7676', { isPartOf: `${IDPrefix}/8` }),
-  getMockBrainRegion('Ventral posterolateral nucleus of the thalamus', '718', '#FFCD4B', {
-    isPartOf: `${IDPrefix}/8`,
-  }),
-  getMockBrainRegion('Cerebrum', '6', '#98E4FF', { isPartOf: `${IDPrefix}/8` }),
-  getMockBrainRegion('Child of root', '8', '#000', { isPartOf: `${IDPrefix}/997` }),
-  getMockBrainRegion('Root Brain Region', '997', '#98E4FF', {
-    isPartOf: null,
-    isLayerPartOf: null,
-    hasPart: [`${IDPrefix}/8`],
-  }),
-];
 const defaultVisualizedRegion = mockBrainRegions[0];

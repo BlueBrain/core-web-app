@@ -6,7 +6,11 @@ import {
   JournalSuggestionResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
-import { ExperimentDatasetCountPerBrainRegion } from '@/api/explore-section/resources';
+import {
+  ArticleItem,
+  ArticleListResult,
+  ExperimentDatasetCountPerBrainRegion,
+} from '@/api/explore-section/resources';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
@@ -124,7 +128,7 @@ export const fetchJournalSuggestions = (searchTerm: string): Promise<JournalSugg
     .catch(() => []);
 };
 
-const fetchParagraphsForBrainRegionAndExperiment = (
+const fetchParagraphCountForBrainRegionAndExperiment = (
   accessToken: string,
   experimentType: { name: string; id: string },
   brainRegionIds: string[]
@@ -145,9 +149,46 @@ const fetchParagraphsForBrainRegionAndExperiment = (
   return mockRequest;
 };
 
+const fetchArticlesForBrainRegionAndExperiment = (
+  accessToken: string,
+  experimentName: string,
+  brainRegions: string[],
+  offset: number,
+  signal: AbortSignal
+) => {
+  if (!accessToken) throw new Error('Access token should be defined');
+  const mockRequest = new Promise<ArticleListResult>((resolve, reject) => {
+    setTimeout(() => {
+      if (signal.aborted) {
+        reject(new Error('Aborted'));
+      }
+      resolve({
+        total: 100,
+        results: [...Array(50).keys()].map((_, index) =>
+          createMockArticle(
+            `A Comparison of Neurotransmitter-Specific and Neuropeptide-Specific Neuronal Cell Types Present in the Dorsal Cortex in Turtles with Those Present in the Isocortex in Mammals: Implications for the Evolution of Isocortex; pp. 53–72 ${index}`,
+            `${index}`,
+            '… The neurons containing these substances in dor sal cortex in turtles were generally highlysimilar in morphology to their counterparts in mammalian isocortex. In contrast, neurons …'
+          )
+        ),
+        offset,
+      });
+    }, 2000);
+  });
+
+  return mockRequest;
+};
+
+export const createMockArticle = (title: string, doi: string, abstract: string): ArticleItem => ({
+  title,
+  doi,
+  abstract,
+});
+
 export {
   getGenerativeQA,
   fetchArticleTypes,
   fetchAuthorSuggestions,
-  fetchParagraphsForBrainRegionAndExperiment,
+  fetchParagraphCountForBrainRegionAndExperiment,
+  fetchArticlesForBrainRegionAndExperiment,
 };
