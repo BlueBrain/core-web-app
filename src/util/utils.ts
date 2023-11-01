@@ -68,6 +68,11 @@ export function brainRegionTitleCaseExceptConjunctions(phrase: string) {
   return capitalizedWords.join(' ');
 }
 
+/* Creates an LRU (Least Recently Used) Map.
+When the size of the map exceeds maxKeys,
+the key that was accesed the least recently
+is deleted.
+*/
 function makeLRUMap(maxKeys: number) {
   class LRUMap<K, V> {
     private maxKeys: number;

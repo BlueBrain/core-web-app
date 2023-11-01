@@ -177,7 +177,7 @@ async function launchAnalysis(
   let config = await zip.file('simulation.cfg')?.async('string');
   const m = config?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g);
 
-  if (!(config = m?.[0])) return; // eslint-disable-line
+  if (!(config = m?.[0])) return; // eslint-disable-line no-cond-assign
 
   // TODO: Figure out how to handle custom config later
   const multiAnalyseSimCampaignMeta = `[MultiAnalyseSimCampaign]

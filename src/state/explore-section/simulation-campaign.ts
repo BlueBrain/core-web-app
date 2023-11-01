@@ -42,15 +42,15 @@ export const simCampaignExecutionFamily = atomFamily((path: string) =>
   })
 );
 
-/* No need to use atomFmily as coords are already stored in the detail atom
+/* No need to use atomFamily as coords are already stored in the detail atom
 so it would be just storing duplicate data
 memoizeOne acts as an atomFamily with just one element
 */
 export const simCampaignDimensionsFamily = memoizeOne((path: string) =>
   selectAtom(
     detailFamily(pathToResource(path)),
-    // @ts-ignore TODO: Improve type
-    (simCamp) => simCamp?.parameter?.coords
+    // @ts-ignore
+    (simCamp) => simCamp?.parameter?.coords // TODO: Improve type
   )
 );
 
