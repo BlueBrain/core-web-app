@@ -701,13 +701,13 @@ export async function cloneBrainModelConfig(
     session
   );
 
-  const clonedEModelAssignmentConfigMetadata = await cloneEModelAssignmentConfig(
-    brainModelConfigSource.configs.eModelAssignmentConfig['@id'],
+  const clonedMorphologyAssignmentConfigMetadata = await cloneMorphologyAssignmentConfig(
+    brainModelConfigSource.configs.morphologyAssignmentConfig['@id'],
     session
   );
 
-  const clonedMorphologyAssignmentConfigMetadata = await cloneMorphologyAssignmentConfig(
-    brainModelConfigSource.configs.morphologyAssignmentConfig['@id'],
+  const clonedEModelAssignmentConfigMetadata = await cloneEModelAssignmentConfig(
+    brainModelConfigSource.configs.eModelAssignmentConfig['@id'],
     session
   );
 
@@ -739,25 +739,25 @@ export async function cloneBrainModelConfig(
         '@id': clonedCellPositionConfigMetadata['@id'],
         '@type': ['CellPositionConfig', 'Entity'],
       },
-      eModelAssignmentConfig: {
-        '@id': clonedEModelAssignmentConfigMetadata['@id'],
-        '@type': ['EModelAssignmentConfig', 'Entity'],
-      },
       morphologyAssignmentConfig: {
         '@id': clonedMorphologyAssignmentConfigMetadata['@id'],
         '@type': ['MorphologyAssignmentConfig', 'Entity'],
+      },
+      eModelAssignmentConfig: {
+        '@id': clonedEModelAssignmentConfigMetadata['@id'],
+        '@type': ['EModelAssignmentConfig', 'Entity'],
       },
       microConnectomeConfig: {
         '@id': clonedMicroConnectomeConfigMetadata['@id'],
         '@type': ['MicroConnectomeConfig', 'Entity'],
       },
-      synapseConfig: {
-        '@id': clonedSynapseConfigMetadata['@id'],
-        '@type': ['SynapseConfig', 'Entity'],
-      },
       macroConnectomeConfig: {
         '@id': clonedMacroConnectomeConfigMetadata['@id'],
         '@type': ['MacroConnectomeConfig', 'Entity'],
+      },
+      synapseConfig: {
+        '@id': clonedSynapseConfigMetadata['@id'],
+        '@type': ['SynapseConfig', 'Entity'],
       },
     },
   };

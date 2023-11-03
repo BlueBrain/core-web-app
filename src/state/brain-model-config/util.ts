@@ -43,8 +43,8 @@ import { GeneratorConfig } from '@/types/nexus';
 type BuildStepName =
   | 'cellComposition'
   | 'cellPosition'
-  | 'eModelAssignment'
   | 'morphologyAssignment'
+  | 'eModelAssignment'
   | 'microConnectome'
   | 'macroConnectome';
 
@@ -66,14 +66,14 @@ const buildSteps: BuildStep[] = [
     buildArtefactAtom: cellPositionBuildArtefact,
   },
   {
-    name: 'eModelAssignment',
-    configSourceAtom: eModelAssignmentConfigSourceAtom,
-    buildArtefactAtom: eModelAssignmentBuildArtefact,
-  },
-  {
     name: 'morphologyAssignment',
     configSourceAtom: morphologyAssignmentConfigSourceAtom,
     buildArtefactAtom: morphologyAssignmentBuildArtefact,
+  },
+  {
+    name: 'eModelAssignment',
+    configSourceAtom: eModelAssignmentConfigSourceAtom,
+    buildArtefactAtom: eModelAssignmentBuildArtefact,
   },
   {
     name: 'macroConnectome',
