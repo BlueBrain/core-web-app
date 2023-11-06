@@ -8,6 +8,7 @@ import {
   partialCircuitAtom as microConnectomePartialCircuitAtom,
   partialCircuitAtom as macroConnectomePartialCircuitAtom,
 } from '@/state/brain-model-config/micro-connectome';
+import { partialCircuitAtom as synapsePartialCircuitAtom } from '@/state/brain-model-config/synapse-editor';
 
 export const cellCompositionWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
   const cellComposition = await get(cellCompositionAtom);
@@ -41,6 +42,12 @@ export const microConnectomeWasBuiltAtom = atom<Promise<boolean>>(async (get) =>
 
 export const macroConnectomeWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
   const circuit = await get(macroConnectomePartialCircuitAtom);
+
+  return !!circuit;
+});
+
+export const synapseWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
+  const circuit = await get(synapsePartialCircuitAtom);
 
   return !!circuit;
 });
