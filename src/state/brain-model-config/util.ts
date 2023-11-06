@@ -31,6 +31,11 @@ import {
 } from './macro-connectome';
 
 import {
+  configAtom as synapseConfigAtom,
+  partialCircuitAtom as synapseBuildArtefact,
+} from './synapse-editor';
+
+import {
   configSourceAtom as modelConfigSourceAtom,
   configAtom as modelConfigMetaAtom,
   triggerRefetchAtom,
@@ -46,7 +51,8 @@ type BuildStepName =
   | 'morphologyAssignment'
   | 'eModelAssignment'
   | 'microConnectome'
-  | 'macroConnectome';
+  | 'macroConnectome'
+  | 'synapse';
 
 type BuildStep = {
   name: BuildStepName;
@@ -84,6 +90,11 @@ const buildSteps: BuildStep[] = [
     name: 'microConnectome',
     configSourceAtom: microConnectomeConfigSourceAtom,
     buildArtefactAtom: microConnectomeBuildArtefact,
+  },
+  {
+    name: 'synapse',
+    configSourceAtom: synapseConfigAtom,
+    buildArtefactAtom: synapseBuildArtefact,
   },
 ];
 

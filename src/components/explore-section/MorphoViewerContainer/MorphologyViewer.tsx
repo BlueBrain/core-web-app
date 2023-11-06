@@ -2,6 +2,7 @@ import * as React from 'react';
 // TODO update morphoviewer library with typings
 import morphoviewer from 'morphoviewer';
 import swcmorphologyparser from 'swcmorphologyparser';
+import { Camera } from 'three';
 import withFixedFocusOnMorphology from './withFixedFocusOnMorphology';
 import OrientationViewer from './libs/OrientationViewer';
 import ScaleViewer from './libs/ScaleViewer';
@@ -20,6 +21,31 @@ export type MorphoViewerOptions = {
   showLegend?: boolean;
 };
 
+type SomaMesh = {
+  material: { color: { setHex: (hex: number) => void } };
+};
+
+type MorphViewer = {
+  destroy: () => void;
+  _threeContext: {
+    getOrphanedSomaChildren: () => SomaMesh | undefined;
+    removeOrphanedSomaChildren: () => void;
+    getSomaChildren: () => SomaMesh[];
+    _render: () => void;
+    _camera: Camera;
+    _controls: {
+      removeEventListener: (a: string, b: VoidFunction | null) => void;
+      addEventListener: (a: string, b: VoidFunction | null) => void;
+      reset: () => void;
+    };
+    getCameraHeightAtMorpho: () => number;
+    focusOnMorphology: () => void;
+  } | null;
+  hasSomaData: boolean;
+  isInterneuron: () => boolean;
+  addMorphology: (parsedFile: {}, morphoViewerOptions: MorphoViewerOptions) => void;
+};
+
 export default function MorphologyViewer({
   data,
   options,
@@ -28,100 +54,103 @@ export default function MorphologyViewer({
   options: MorphoViewerOptions;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
+  const mv = React.useRef<MorphViewer>();
+
   const orientationRef = React.useRef<HTMLDivElement>(null);
+  const orientationViewer = React.useRef<OrientationViewer | null>(null);
+
   const scaleRef = React.useRef<HTMLDivElement>(null);
-  const [mv, setMorphoViewer] = React.useState();
-  const [orientationViewer, setOrientationViewer] = React.useState<OrientationViewer | null>(null);
-  const [scaleViewer, setScaleViewer] = React.useState<ScaleViewer | null>(null);
+  const scaleViewer = React.useRef<ScaleViewer | null>(null);
   const { error } = useNotification();
 
   React.useEffect(() => {
-    if (!mv) {
+    if (!mv.current) {
       return;
     }
-    // @ts-ignore
-    if (!mv.hasSomaData) {
+    if (!mv.current.hasSomaData) {
       // Change soma color to black
-      // @ts-ignore
-      const somaMesh = mv._threeContext.getOrphanedSomaChildren();
-      (somaMesh as any)?.material.color.setHex(0x000000);
+      const somaMesh = mv.current._threeContext?.getOrphanedSomaChildren();
+      somaMesh?.material.color.setHex(0x000000);
     }
-    // @ts-ignore
-    if (mv.hasSomaData && !options.asPolyline) {
+
+    if (mv.current.hasSomaData && !options.asPolyline) {
       // remove orphaned soma because real one exists, but two are shown
       // this is a bug with morphoviewer and will be fixed
       // TODO update morphoviewer and remove this code.
-      // @ts-ignore
-      mv._threeContext.removeOrphanedSomaChildren();
+
+      mv.current._threeContext?.removeOrphanedSomaChildren();
 
       // Change soma color to black
-      // @ts-ignore
-      mv._threeContext.getSomaChildren().forEach((somaMesh: any) => {
-        somaMesh?.material.color.setHex(0x000000);
+
+      mv.current._threeContext?.getSomaChildren().forEach((somaMesh) => {
+        somaMesh.material.color.setHex(0x000000);
       });
-      // @ts-ignore
-      mv._threeContext._render();
+
+      mv.current._threeContext?._render();
     }
-    // @ts-ignore
-  }, [mv, options.asPolyline]);
+  }, [options.asPolyline]);
 
   React.useEffect(() => {
-    let morphoViewer: any;
-    if (!ref.current) {
-      return () => {};
+    function initMorphViewer() {
+      try {
+        if (!ref.current) return;
+        const swcParser = new swcmorphologyparser.SwcParser();
+        swcParser.parse(data);
+        const parsedFile = swcParser.getRawMorphology();
+
+        const hasSomaData = parsedFile.soma.points.length > 1;
+        ref.current.style.height = '100%';
+        ref.current.style.width = '100%';
+
+        const morphoViewer: MorphViewer = withFixedFocusOnMorphology(
+          new morphoviewer.MorphoViewer(ref.current)
+        );
+        morphoViewer.hasSomaData = hasSomaData;
+
+        morphoViewer._threeContext?._camera.up.negate();
+
+        const morphoViewerOptions = {
+          name: 'morphology',
+          ...options,
+        };
+        morphoViewer.addMorphology(parsedFile, morphoViewerOptions);
+        mv.current = morphoViewer;
+      } catch (e) {
+        error('Something went wrong while parsing morphology visualization data');
+      }
     }
-    try {
-      const swcParser = new swcmorphologyparser.SwcParser();
-      swcParser.parse(data);
-      const parsedFile = swcParser.getRawMorphology();
 
-      const hasSomaData = parsedFile.soma.points.length > 1;
-      ref.current.style.height = '100%';
-      ref.current.style.width = '100%';
+    initMorphViewer();
 
-      morphoViewer = withFixedFocusOnMorphology(new morphoviewer.MorphoViewer(ref.current));
-      morphoViewer.hasSomaData = hasSomaData;
-
-      morphoViewer._threeContext._camera.up.negate();
-      setMorphoViewer(morphoViewer);
-      const morphoViewerOptions = {
-        name: 'morphology',
-        ...options,
-      };
-      morphoViewer.addMorphology(parsedFile, morphoViewerOptions);
-    } catch (e) {
-      error('Something went wrong while parsing morphology visualization data');
-    }
     return () => {
-      if (morphoViewer) {
-        morphoViewer.destroy();
-        if (morphoViewer && morphoViewer._threeContext) {
-          morphoViewer._threeContext = null;
-        }
+      if (mv.current) {
+        mv.current.destroy();
+        mv.current._threeContext = null;
       }
     };
-    // Warning: Do not change the dependencies, it will cause infinite loop
-  }, [ref, data, options, error]);
+  }, [data, options, error]);
 
   // Orientation Viewer Operations
   React.useEffect(() => {
-    if (!orientationRef.current) {
-      return () => {};
+    function initOrientationViewer() {
+      if (!orientationRef.current) return;
+
+      if (!orientationViewer.current) {
+        orientationRef.current.innerHTML = ''; // Prevent duplication
+        orientationViewer.current = new OrientationViewer(orientationRef.current);
+      }
+      if (mv.current?._threeContext && orientationViewer.current) {
+        orientationViewer.current.setFollowCamera(mv.current._threeContext._camera);
+      }
     }
-    if (!orientationViewer) {
-      orientationRef.current.innerHTML = ''; // Prevent duplication
-      setOrientationViewer(new OrientationViewer(orientationRef.current));
-    }
-    if (mv && orientationViewer) {
-      // @ts-ignore
-      orientationViewer.setFollowCamera(mv._threeContext._camera);
-    }
+
+    initOrientationViewer();
+
     return () => {
-      orientationViewer?.destroy();
-      setOrientationViewer(null);
+      orientationViewer.current?.destroy();
+      orientationViewer.current = null;
     };
-    // Warning: Do not change the dependencies, it will cause infinite loop
-  }, [orientationRef, mv, options]);
+  }, [options]);
 
   // Scale Axis Operations
   React.useEffect(() => {
@@ -129,51 +158,46 @@ export default function MorphologyViewer({
     if (!scaleRef.current) {
       return () => {};
     }
-    if (!scaleViewer) {
+    if (!scaleViewer.current) {
       scaleRef.current.innerHTML = ''; // Prevent duplication
       scaleRef.current.style.height = '100%';
-      setScaleViewer(new ScaleViewer(scaleRef.current, 0));
+      scaleViewer.current = new ScaleViewer(scaleRef.current, 0);
     }
-    if (mv && scaleViewer) {
-      // @ts-ignore
-      scaleViewer.onScaleChange(mv._threeContext.getCameraHeightAtMorpho());
+    if (mv.current && scaleViewer) {
+      const height = mv.current._threeContext?.getCameraHeightAtMorpho();
+      if (height !== undefined) scaleViewer.current.onScaleChange(height);
       controlEventListenerChangedEvent = () => {
-        // @ts-ignore
-        scaleViewer.onScaleChange(mv._threeContext.getCameraHeightAtMorpho());
+        const height2 = mv.current?._threeContext?.getCameraHeightAtMorpho();
+        if (height2 !== undefined) scaleViewer.current?.onScaleChange(height2);
       };
-      // @ts-ignore
-      mv._threeContext._controls.addEventListener('change', controlEventListenerChangedEvent);
+
+      mv.current?._threeContext?._controls.addEventListener(
+        'change',
+        controlEventListenerChangedEvent
+      );
     }
     return () => {
-      scaleViewer?.destroy();
-      setScaleViewer(null);
-      // @ts-ignore
-      mv?._threeContext?._controls?.removeEventListener('change', controlEventListenerChangedEvent);
+      scaleViewer.current?.destroy();
+      scaleViewer.current = null;
+      mv.current?._threeContext?._controls.removeEventListener(
+        'change',
+        controlEventListenerChangedEvent
+      );
     };
-    // Warning: Do not change the dependencies, it will cause infinite loop
-  }, [scaleRef, mv, options]);
+  }, [options]);
 
   const handleOrientationClick = () => {
-    // @ts-ignore
-    mv?._threeContext._controls.reset();
-    // @ts-ignore
-    mv?._threeContext._camera.up.negate();
-    // @ts-ignore
-    mv?._threeContext.focusOnMorphology();
+    mv.current?._threeContext?._controls.reset();
+    mv.current?._threeContext?._camera.up.negate();
+    mv.current?._threeContext?.focusOnMorphology();
   };
 
   return (
     <>
       {options.showLegend && (
         <MorphoLegend
-          isInterneuron={
-            // @ts-ignore
-            !!mv?.isInterneuron()
-          }
-          hasApproximatedSoma={
-            // @ts-ignore
-            !mv?.hasSomaData
-          }
+          isInterneuron={!!mv.current?.isInterneuron()}
+          hasApproximatedSoma={!mv.current?.hasSomaData}
         />
       )}
       <div className={options.showScale ? 'morpho-viewer' : ''} ref={ref} />

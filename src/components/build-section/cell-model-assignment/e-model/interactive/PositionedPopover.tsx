@@ -21,7 +21,7 @@ export function PositionedPoptip({ config, children }: PositionedPoptipProps) {
 
   useEffect(() => setHoverTargetHidden(false), [config]);
 
-  const containerStyle = {
+  const containerStyle: CSSProperties = {
     left: `${config.x - PopoverTarget.WIDTH / 2}px`,
     top: `${config.y - 8}px`,
   };
@@ -32,9 +32,9 @@ export function PositionedPoptip({ config, children }: PositionedPoptipProps) {
   };
 
   return (
-    <div className="fixed" style={containerStyle}>
-      <Popover content={children} trigger="hover" align={{ offset: [0, 0] }}>
-        <div style={hoverTargetStyle} onMouseLeave={() => setHoverTargetHidden(true)} />
+    <div className="fixed" style={containerStyle} onMouseLeave={() => setHoverTargetHidden(true)}>
+      <Popover content={children} open={!hoverTargetHidden} align={{ offset: [0, 0] }}>
+        <div style={hoverTargetStyle} />
       </Popover>
     </div>
   );

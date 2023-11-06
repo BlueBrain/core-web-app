@@ -7,6 +7,7 @@ import {
   morphologyAssignmentWasBuiltAtom,
   microConnectomeWasBuiltAtom,
   macroConnectomeWasBuiltAtom,
+  synapseWasBuiltAtom,
 } from './generated-artifacts';
 import { SubConfigName } from '@/types/nexus';
 
@@ -118,15 +119,15 @@ export const statusStructure: StatusStructureItem[] = [
     items: [
       {
         name: STEPS.MACRO,
-        statusAtom: atom(() => Promise.resolve(null)),
+        statusAtom: synapseWasBuiltAtom,
       },
       {
         name: STEPS.MESO,
-        statusAtom: atom(() => Promise.resolve(null)),
+        statusAtom: synapseWasBuiltAtom,
       },
       {
         name: STEPS.MICRO,
-        statusAtom: atom(() => Promise.resolve(null)),
+        statusAtom: synapseWasBuiltAtom,
       },
     ],
     targetConfigName: 'synapseConfig',

@@ -116,7 +116,7 @@ function SimConfigForm({ simConfig, onChange, onSubmit, secNames, segNames }: Si
       </Form.Item>
 
       <Form.Item name="amp" label="Amperage" rules={[{ required: true }]}>
-        <InputNumber addonAfter="nA" className="w-full" min={-10} max={10} />
+        <InputNumber addonAfter="nA" className="w-full" min={-10} max={10} step={0.1} />
       </Form.Item>
 
       <Form.Item
@@ -354,6 +354,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
           title="Simulate E-Model"
           placement="right"
           rootStyle={{ top: '90px' }}
+          zIndex={20}
           open={simDrawerOpen}
           onClose={() => setSimDrawerOpen(false)}
           mask={false}

@@ -25,7 +25,9 @@ function ItemTile({ index, question, onSelect, isPending, selectable = true }: P
     >
       <div className="w-[90%]">
         <span>{index}.</span>
-        <div className="font-normal group-hover:font-bold text-primary-8">{question}</div>
+        <div className="font-normal group-hover:font-bold text-primary-8 text-base leading-9">
+          {question}
+        </div>
       </div>
       {isPending ? (
         <LoadingOutlined className="transition-all duration-200 ease-out-expo" />
