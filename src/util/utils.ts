@@ -162,3 +162,25 @@ export function memoize<Param, T>(
   newFamily.cache = new (makeLRUMap(maxSize))();
   return newFamily;
 }
+
+export function formatTimeDifference(differenceInSeconds: number): string {
+  if (differenceInSeconds < 60) {
+    return `${differenceInSeconds} seconds`;
+  }
+
+  if (differenceInSeconds < 3600) {
+    const minutes = Math.floor(differenceInSeconds / 60);
+    const seconds = differenceInSeconds % 60;
+    return `${minutes} minutes ${seconds} seconds`;
+  }
+
+  if (differenceInSeconds < 86400) {
+    const hours = Math.floor(differenceInSeconds / 3600);
+    const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+    return `${hours} hours ${minutes} minutes`;
+  }
+
+  const days = Math.floor(differenceInSeconds / 86400);
+  const hours = Math.floor((differenceInSeconds % 86400) / 3600);
+  return `${days} days ${hours} hours`;
+}

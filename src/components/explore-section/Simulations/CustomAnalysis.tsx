@@ -11,10 +11,11 @@ import {
 } from './types';
 import DimensionSelector from './DimensionSelector';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
+import { getMultiAnalysisWorkflowConfig } from './utils';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
-import { createHeaders } from '@/util/utils';
+import { createHeaders, formatTimeDifference } from '@/util/utils';
 import { createWorkflowConfigResource, fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { WorkflowExecution } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
@@ -178,32 +179,7 @@ async function launchAnalysis(
 
   if (!config) return;
 
-  // TODO: Figure out how to handle custom config later
-  const multiAnalyseSimCampaignMeta = `[MultiAnalyseSimCampaign]
-workspace-prefix: /gpfs/bbp.cscs.ch/data/scratch/proj134/home/${session.user.username}/SBO/analysis
-analysis-configs: [
-  {
-    "AnalyseSimCampaign":  {
-      "source_code_url": "${analysis['@id']}",
-        "analysis_config": {
-          "simulation_campaign": "$SIMULATION_CAMPAIGN_FILE",
-          "output": "$SCRATCH_PATH",
-          "report_type": "spikes",
-          "report_name": "raster",
-          "node_sets": ["AAA"],
-          "cell_step": 1
-
-        }
-    },
-    
-    "CloneGitRepo": {
-      "git_url": "${analysis.codeRepository['@id']}",
-      "git_ref": "${analysis.branch}",
-      "subdirectory": "${analysis.subdirectory}",
-      "git_user": "GUEST",
-      "git_password": "WCY_qpuGG8xpKz_S8RNg"
-    }
-  }]`;
+  const multiAnalyseSimCampaignMeta = getMultiAnalysisWorkflowConfig(analysis, session);
 
   const newResource = await createWorkflowConfigResource(
     'analysis.cfg',
@@ -268,7 +244,7 @@ function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
       setExecutionTime(formatTimeDifference(difference));
     }
     computeExecutionTime();
-    const interval = setInterval(computeExecutionTime, 1000);
+    const interval = setInterval(() => computeExecutionTime, 1000);
     return () => clearInterval(interval);
   }, [createdAt]);
 
@@ -283,26 +259,4 @@ function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
       </div>
     </div>
   );
-}
-
-function formatTimeDifference(differenceInSeconds: number): string {
-  if (differenceInSeconds < 60) {
-    return `${differenceInSeconds} seconds`;
-  }
-
-  if (differenceInSeconds < 3600) {
-    const minutes = Math.floor(differenceInSeconds / 60);
-    const seconds = differenceInSeconds % 60;
-    return `${minutes} minutes ${seconds} seconds`;
-  }
-
-  if (differenceInSeconds < 86400) {
-    const hours = Math.floor(differenceInSeconds / 3600);
-    const minutes = Math.floor((differenceInSeconds % 3600) / 60);
-    return `${hours} hours ${minutes} minutes`;
-  }
-
-  const days = Math.floor(differenceInSeconds / 86400);
-  const hours = Math.floor((differenceInSeconds % 86400) / 3600);
-  return `${days} days ${hours} hours`;
 }
