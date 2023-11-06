@@ -71,12 +71,12 @@ export const statusStructure: StatusStructureItem[] = [
     name: GROUPS.CELL_MODEL_ASSIGNMENT,
     items: [
       {
-        name: STEPS.E_MODEL,
-        statusAtom: emodelAssignmentWasBuiltAtom,
-      },
-      {
         name: STEPS.M_MODEL,
         statusAtom: morphologyAssignmentWasBuiltAtom,
+      },
+      {
+        name: STEPS.E_MODEL,
+        statusAtom: emodelAssignmentWasBuiltAtom,
       },
       {
         name: STEPS.ME_MODEL,
