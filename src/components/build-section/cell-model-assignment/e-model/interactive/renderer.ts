@@ -29,6 +29,8 @@ import RendererCtrl from './renderer-ctrl';
 import type { Morphology, SecMarkerConfig } from './types';
 import { createSegMarkerMesh, createSegmentMesh } from './renderer-utils';
 
+import { basePath } from '@/config';
+
 const FOG_COLOR = 0xffffff;
 const FOG_NEAR = 1;
 const FOG_FAR = 50000;
@@ -37,10 +39,10 @@ const CAMERA_LIGHT_COLOR = 0xcacaca;
 const BACKGROUND_COLOR = 0x000103;
 const HOVER_BOX_COLOR = 0xffdf00;
 
-const CLICK_DELAY = 200; // ms
+const CLICK_DELAY_TOLERANCE = 500; // ms
 const CLICK_POS_TOLERANCE = 5; // px
 
-const TEXTURE_BASE_URL = '/images/e-model-interactive';
+const TEXTURE_BASE_URL = `${basePath}/images/e-model-interactive`;
 
 export type ClickData = {
   type: string;
@@ -249,7 +251,7 @@ export default class BlueNaasRenderer {
     if (!this.config.onClick) return;
 
     if (
-      (this.pointerDownTimestamp as number) + CLICK_DELAY < Date.now() ||
+      Math.abs(Date.now() - (this.pointerDownTimestamp as number)) > CLICK_DELAY_TOLERANCE ||
       Math.abs(this.mouseNative.x - e.clientX) > CLICK_POS_TOLERANCE ||
       Math.abs(this.mouseNative.y - e.clientY) > CLICK_POS_TOLERANCE
     )
