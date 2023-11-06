@@ -8,6 +8,7 @@ import { ExploreSectionResponse, Simulation } from '@/types/explore-section/reso
 import { AnalysisReport } from '@/types/explore-section/es-analysis-report';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import { API_SEARCH } from '@/constants/explore-section/queries';
+import { buildESReportsQuery } from '@/queries/es';
 
 /**
  * Checks if a given simulation falls within a given dimension
@@ -79,39 +80,6 @@ export async function fetchSimulationsFromEs(accessToken: string, campaignId: st
       total: data?.hits?.total,
       aggs: data.aggregations,
     }));
-}
-
-function buildESReportsQuery(simId: string, name?: string, ids?: string[]) {
-  if (ids)
-    return {
-      terms: {
-        '@id.keyword': ids,
-      },
-    }; // Fetch all reports by provided id's
-
-  const query: {
-    bool?: {
-      must?: { match: { [key: string]: string | string[] } }[];
-    };
-    terms?: { [key: string]: string | string[] };
-  } = {
-    bool: {
-      must: [
-        {
-          match: {
-            'derivation.identifier.keyword': simId,
-          },
-        },
-      ],
-    },
-  }; // Fetch all reports beloging to simulation Id
-
-  if (name && query.bool?.must) {
-    query.bool.must.push({ match: { name } });
-    return query;
-  } // If name specified only fetch the report matching that name
-
-  return query;
 }
 
 export async function fetchAnalysisReports(

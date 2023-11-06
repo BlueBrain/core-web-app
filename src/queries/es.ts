@@ -419,3 +419,39 @@ export const getEntityListByIdsQuery = (entityType: string, ids: string[]) => ({
     },
   },
 });
+
+export function buildESReportsQuery(simId: string, name?: string, ids?: string[]) {
+  if (ids)
+    return {
+      size: DEFAULT_SIZE,
+      terms: {
+        '@id.keyword': ids,
+      },
+    }; // Fetch all reports by provided id's
+
+  const query: {
+    size: number;
+    bool?: {
+      must?: { match: { [key: string]: string | string[] } }[];
+    };
+    terms?: { [key: string]: string | string[] };
+  } = {
+    size: DEFAULT_SIZE,
+    bool: {
+      must: [
+        {
+          match: {
+            'derivation.identifier.keyword': simId,
+          },
+        },
+      ],
+    },
+  }; // Fetch all reports beloging to simulation Id
+
+  if (name && query.bool?.must) {
+    query.bool.must.push({ match: { name } });
+    return query;
+  } // If name specified only fetch the report matching that name
+
+  return query;
+}
