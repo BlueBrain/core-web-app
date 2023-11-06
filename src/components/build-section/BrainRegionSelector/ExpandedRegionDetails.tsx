@@ -87,6 +87,7 @@ function NeuronCompositionEditor({
   }, [isLeaf]);
 
   const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
+  const questionSubject = classObjects?.[id]?.prefLabel ?? title;
 
   return (
     <>
@@ -126,7 +127,7 @@ function NeuronCompositionEditor({
           <ContextualTrigger
             className={isEditable ? 'ml-1 h-max mb-1' : ''}
             about={about as QuestionAbout}
-            subject={title}
+            subject={questionSubject}
             densityOrCount={densityOrCount}
           />
         </div>
