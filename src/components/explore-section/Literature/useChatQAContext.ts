@@ -26,9 +26,11 @@ import { formatDate } from '@/util/utils';
 function useChatQAContext({
   afterAskCallback,
   resetAfterAsk = true,
+  useKeywords = true,
 }: {
   afterAskCallback?(value: GenerativeQA | null): void;
   resetAfterAsk?: boolean;
+  useKeywords?: boolean;
 }) {
   const update = useLiteratureAtom();
   const searchParams = useSearchParams();
@@ -89,6 +91,7 @@ function useChatQAContext({
   const send = (data: FormData) =>
     getGenerativeQAAction({
       data,
+      useKeywords,
       keywords: selectedBrainRegion ? [selectedBrainRegion.title] : undefined,
       journals: selectedJournals,
       authors: selectedAuthors,

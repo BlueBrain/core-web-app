@@ -2,7 +2,7 @@
 
 import { getServerSession } from 'next-auth';
 
-import { getGenerativeQA } from './api';
+import { GenerativeQAPayload, getGenerativeQA } from './api';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 export async function getGenerativeQAAction({
@@ -13,14 +13,9 @@ export async function getGenerativeQAAction({
   journals,
   authors,
   articleTypes,
-}: {
+  useKeywords,
+}: GenerativeQAPayload & {
   data: FormData;
-  keywords?: string[];
-  journals?: string[];
-  authors?: string[];
-  articleTypes?: string[];
-  fromDate?: string;
-  endDate?: string;
 }) {
   const session = await getServerSession(authOptions);
   const question = String(data.get('gqa-question'));
@@ -33,6 +28,7 @@ export async function getGenerativeQAAction({
     journals,
     authors,
     articleTypes,
+    useKeywords,
   });
   return generativeQA;
 }

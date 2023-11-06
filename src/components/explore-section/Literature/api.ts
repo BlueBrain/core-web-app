@@ -1,3 +1,5 @@
+import { Session } from 'next-auth';
+
 import * as LiteratureErrors from './errors';
 import {
   GenerativeQAResponse,
@@ -13,6 +15,16 @@ import {
 } from '@/api/explore-section/resources';
 import { createHeaders } from '@/util/utils';
 
+export type GenerativeQAPayload = {
+  keywords?: string[];
+  journals?: string[];
+  authors?: string[];
+  articleTypes?: string[];
+  fromDate?: string;
+  endDate?: string;
+  useKeywords?: boolean;
+};
+
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
   session,
@@ -22,14 +34,20 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
   journals,
   authors,
   articleTypes,
+  useKeywords = true,
+}: GenerativeQAPayload & {
+  question: string;
+  session: Session | null;
 }) => {
   try {
     const params = new URLSearchParams();
-    keywords?.forEach((keyword) => params.append('keywords', keyword));
     journals?.forEach((journal) => params.append('journals', journal));
     authors?.forEach((author) => params.append('authors', author));
     articleTypes?.forEach((articleType) => params.append('article_types', articleType));
 
+    if (useKeywords && keywords?.length) {
+      keywords.forEach((keyword) => params.append('keywords', keyword));
+    }
     if (fromDate) {
       params.append('date_from', fromDate);
     }

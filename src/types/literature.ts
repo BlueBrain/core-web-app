@@ -87,6 +87,7 @@ export type GetGenerativeQAInput = {
   journals?: string[];
   authors?: string[];
   articleTypes?: string[];
+  useKeywords?: boolean;
 };
 export type GenerativeQAServerResponse = {
   question: string;
