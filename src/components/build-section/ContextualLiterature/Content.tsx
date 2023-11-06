@@ -76,6 +76,7 @@ function ContextualContent() {
 
   const { ask, isPending, query } = useChatQAContext({
     resetAfterAsk: true,
+    useKeywords: false,
     afterAskCallback: (gqa: GenerativeQA) => {
       const item = context.contextQuestions?.find((elt: ContextQAItem) => elt.key === query);
       update('currentQuestion', {
