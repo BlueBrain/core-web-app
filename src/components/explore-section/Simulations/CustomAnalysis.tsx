@@ -268,7 +268,7 @@ function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
       setExecutionTime(formatTimeDifference(difference));
     }
     computeExecutionTime();
-    const interval = setInterval(() => computeExecutionTime, 1000);
+    const interval = setInterval(computeExecutionTime, 1000);
     return () => clearInterval(interval);
   }, [createdAt]);
 
