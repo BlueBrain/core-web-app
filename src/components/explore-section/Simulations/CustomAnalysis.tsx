@@ -258,16 +258,17 @@ analysis-configs: [
 }
 
 function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
-  const [executionTime, setExecutionTime] = useState<string>();
+  const [executionTime, setExecutionTime] = useState('');
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    function computeExecutionTime() {
       const startTime = new Date(createdAt);
       const currentTime = new Date();
       const difference = Math.floor((currentTime.valueOf() - startTime.valueOf()) / 1000); // in seconds
       setExecutionTime(formatTimeDifference(difference));
-    }, 1000);
-
+    }
+    computeExecutionTime();
+    const interval = setInterval(() => computeExecutionTime, 1000);
     return () => clearInterval(interval);
   }, [createdAt]);
 
