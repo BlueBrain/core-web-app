@@ -1,7 +1,7 @@
 import {
   Utf8,
-  Uint8,
-  Uint16,
+  Int8,
+  Int16,
   Dictionary,
   DictionaryBuilder,
   Float64,
@@ -53,15 +53,15 @@ export function createMacroConnectomeOverridesTable(
   const totalLeaves = brainRegionLeaves.length;
 
   const sideBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   const sourceRegionBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint16()),
+    type: new Dictionary(new Utf8(), new Int16()),
   });
 
   const targetRegionBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint16()),
+    type: new Dictionary(new Utf8(), new Int16()),
   });
 
   const valueBuilder = new Float64Builder({ type: new Float64() });
