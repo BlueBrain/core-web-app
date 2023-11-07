@@ -6,12 +6,14 @@ import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assign
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import MEModelView from '@/components/build-section/cell-model-assignment/me-model/MEModelView';
 import CloneConfigButton from '@/components/build-section/cell-model-assignment/me-model/CloneConfigButton';
+import { useInitializeFeatures } from '@/hooks/me-model-editor';
 
 const baseBannerStyle = 'flex h-full items-center justify-center text-4xl';
 
 export default function ConfigurationPage() {
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const selectedRegion = useAtomValue(selectedBrainRegionAtom);
+  useInitializeFeatures();
 
   let body = null;
 
