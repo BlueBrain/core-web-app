@@ -191,8 +191,6 @@ async function launchAnalysis(
     rev: newResource._rev,
   }).replaceAll('%', '%%');
 
-  // Todo handle Git authentication later
-
   config += `
   
     [MultiAnalyseSimCampaignMeta]

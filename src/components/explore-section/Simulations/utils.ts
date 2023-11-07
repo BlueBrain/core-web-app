@@ -23,6 +23,7 @@ export function buildSimulationDetailURL(
 }
 
 // TODO: Figure out how to handle custom config later
+// TODO: Remove temporary git user and password
 export function getMultiAnalysisWorkflowConfig(analysis: Analysis, session: Session) {
   return `[MultiAnalyseSimCampaign]
   workspace-prefix: /gpfs/bbp.cscs.ch/data/scratch/proj134/home/${session.user.username}/SBO/analysis
