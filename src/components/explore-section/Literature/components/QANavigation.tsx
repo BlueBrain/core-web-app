@@ -188,7 +188,7 @@ function QAHistoryNavigation() {
       id="gqa-navigation"
       className={classNames(
         'flex flex-col py-10 overflow-x-hidden no-scrollbar scroll-smooth',
-        isBuildSection ? '-ml-10 h-[calc(100%-210px)]' : 'h-full'
+        isBuildSection ? '-ml-10 h-[calc(100%-240px)]' : 'h-full'
       )}
     >
       {dataSource.map((qa, index) => (

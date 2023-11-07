@@ -61,8 +61,8 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="Journal"
             title="Journal"
-            fetchOptions={(searchTerm: string) =>
-              fetchJournalSuggestions(searchTerm).then((journalResponse) =>
+            fetchOptions={(searchTerm: string, signal?: AbortSignal) =>
+              fetchJournalSuggestions(searchTerm, signal).then((journalResponse) =>
                 getJournalOptions(journalResponse)
               )
             }
@@ -78,8 +78,10 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="Authors"
             title="Authors"
-            fetchOptions={(searchTerm: string) =>
-              fetchAuthorSuggestions(searchTerm).then((authors) => getAuthorOptions(authors))
+            fetchOptions={(searchTerm: string, signal?: AbortSignal) =>
+              fetchAuthorSuggestions(searchTerm, signal).then((authors) =>
+                getAuthorOptions(authors)
+              )
             }
             onChange={(selectedValues: Suggestion[]) =>
               update(
