@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
 import { format } from 'date-fns';
+import startCase from 'lodash/startCase';
 import GenerativeQAInputBar from '@/components/explore-section/Literature/components/GenerativeQAInput';
 import sessionAtom from '@/state/session';
 import { AuthorSuggestionResponse, JournalSuggestionResponse } from '@/types/literature';
@@ -131,11 +132,11 @@ describe('GenerativeQAInput', () => {
 
     typeInInput('Article Types', 'paper');
 
-    await selectSuggestion('paper');
-    await selectSuggestion('journal paper');
+    await selectSuggestion('Paper');
+    await selectSuggestion('Journal Paper');
 
-    expectOptionsToBeSelected(['paper', 'journal paper']);
-    expectOptionsNotToBeSelected(['abstract']);
+    expectOptionsToBeSelected(['paper', 'journal paper'].map(startCase));
+    expectOptionsNotToBeSelected(['abstract'].map(startCase));
   });
 
   test('shows journal suggestions even if user has not started typing', async () => {
@@ -185,7 +186,7 @@ describe('GenerativeQAInput', () => {
 
     await waitFor(() => {
       mockArticleResponse.forEach((type) =>
-        expect(screen.getByText(type.article_type)).toBeInTheDocument()
+        expect(screen.getByText(startCase(type.article_type))).toBeInTheDocument()
       );
     });
   });
@@ -204,7 +205,7 @@ describe('GenerativeQAInput', () => {
     );
 
     expect(nonMatchingArticleTypes.length).toBeGreaterThanOrEqual(1);
-    await expectSuggestionsToNotBeVisible(nonMatchingArticleTypes);
+    await expectSuggestionsToNotBeVisible(nonMatchingArticleTypes, true);
 
     const matchingArticleTypes = getSuggestions(
       searchTerm,
@@ -213,7 +214,7 @@ describe('GenerativeQAInput', () => {
     );
 
     expect(matchingArticleTypes.length).toBeGreaterThanOrEqual(1);
-    await expectSuggestionsToBeVisible(matchingArticleTypes);
+    await expectSuggestionsToBeVisible(matchingArticleTypes, true);
   });
 
   test('shows author suggestions even if user has not started typing', async () => {
@@ -311,18 +312,26 @@ describe('GenerativeQAInput', () => {
     fireEvent.mouseDown(autocompleteInput);
   };
 
-  const expectSuggestionsToNotBeVisible = async (nonMatchingSuggestions: string[]) => {
+  const expectSuggestionsToNotBeVisible = async (
+    nonMatchingSuggestions: string[],
+    useStartCase?: boolean
+  ) => {
     await waitFor(() => {
       nonMatchingSuggestions.forEach((suggestion) =>
-        expect(screen.queryByText(suggestion)).toBeFalsy()
+        expect(screen.queryByText(useStartCase ? startCase(suggestion) : suggestion)).toBeFalsy()
       );
     });
   };
 
-  const expectSuggestionsToBeVisible = async (matchingSuggestions: string[]) => {
+  const expectSuggestionsToBeVisible = async (
+    matchingSuggestions: string[],
+    useStartCase?: boolean
+  ) => {
     await waitFor(() => {
       matchingSuggestions.forEach((suggestion) =>
-        expect(screen.getByRole('option', { name: suggestion })).toBeInTheDocument()
+        expect(
+          screen.getByRole('option', { name: useStartCase ? startCase(suggestion) : suggestion })
+        ).toBeInTheDocument()
       );
     });
   };
@@ -404,7 +413,7 @@ const mockAuthors: AuthorSuggestionResponse = [
 
 const mockArticleResponse: { article_type: string; docs_in_db: number }[] = [
   { article_type: 'abstract', docs_in_db: 1 },
-  { article_type: 'journal paper', docs_in_db: 1 },
+  { article_type: 'journal-paper', docs_in_db: 1 },
   { article_type: 'paper', docs_in_db: 1 },
 ];
 

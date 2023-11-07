@@ -8,7 +8,7 @@ import { Suggestion } from '@/types/literature';
 
 type Props = {
   onChange: (selectedValues: Suggestion[]) => void;
-  fetchOptions: (searchTerm: string) => Promise<Suggestion[]>;
+  fetchOptions: (searchTerm: string, signal?: AbortSignal) => Promise<Suggestion[]>;
   title: string;
 };
 
@@ -16,32 +16,51 @@ export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Pr
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
 
-  const fetchRef = useRef(0);
+  const previousFetchController = useRef<AbortController>();
+
+  const cancelPreviousFetch = () => {
+    if (previousFetchController.current) {
+      previousFetchController.current.abort();
+    }
+    const controller = new AbortController();
+    const { signal } = controller;
+    previousFetchController.current = controller;
+    return signal;
+  };
 
   const debounceFetchOptions = useMemo(() => {
     const loadOptions = (value: string) => {
-      fetchRef.current = +1;
-      const fetchId = fetchRef.current;
+      const signal = cancelPreviousFetch();
+
       setFetching(true);
 
-      fetchOptions(value).then((newOptions) => {
-        if (fetchId !== fetchRef.current) {
-          return;
-        }
-
-        setSuggestions(newOptions);
-        setFetching(false);
-      });
+      fetchOptions(value, signal)
+        .then((newOptions) => {
+          setSuggestions(newOptions);
+          setFetching(false);
+        })
+        .catch((e) => {
+          if (e.name !== 'AbortError') {
+            setSuggestions([]);
+            setFetching(false);
+          }
+        });
     };
-    return debounce(loadOptions, 150);
+
+    return debounce(loadOptions, 100);
   }, [fetchOptions]);
 
   useEffect(() => {
-    setFetching(true);
-    fetchOptions('').then((initialSuggestions) => {
-      setFetching(false);
-      setSuggestions(initialSuggestions);
-    });
+    const signal = cancelPreviousFetch();
+    fetchOptions('', signal)
+      .then((initialSuggestions) => {
+        setSuggestions(initialSuggestions);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelPreviousFetch();
+    };
   }, [fetchOptions]);
 
   return (
@@ -52,13 +71,11 @@ export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Pr
           colorFillQuaternary: '#91D5FF',
           colorFillSecondary: '#91D5FF',
           colorTextPlaceholder: '#40A9FF',
-          colorPrimary: 'white',
         },
       }}
     >
       <Select
         onSearch={debounceFetchOptions}
-        notFoundContent={fetching ? <Spin size="small" /> : null}
         placeholder={title}
         aria-label={title}
         mode="multiple"
@@ -67,7 +84,7 @@ export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Pr
         options={suggestions}
         allowClear
         onChange={onChange}
-        suffixIcon={<DownOutlined className="text-primary-4" />}
+        suffixIcon={fetching ? <Spin size="small" /> : <DownOutlined className="text-primary-4" />}
         className="min-w-[120px] rounded"
         bordered={false}
         size="middle"

@@ -2,6 +2,7 @@ import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 import isNil from 'lodash/isNil';
+import startCase from 'lodash/startCase';
 import { selectedBrainRegionAtom } from '../brain-regions';
 import {
   GenerativeQA,
@@ -126,11 +127,13 @@ async function getArticleTypes(): Promise<ArticleTypeSuggestion[]> {
 const articleTypeSuggestionsAtom = atom<Promise<Suggestion[]>>(async () => {
   try {
     const articleTypeResponse = await getArticleTypes();
-    const options = articleTypeResponse.map((type) => ({
-      key: type.articleType,
-      label: type.articleType,
-      value: type.articleType,
-    }));
+    const options = articleTypeResponse
+      .filter((type) => !!type.articleType)
+      .map((type) => ({
+        key: type.articleType,
+        label: startCase(type.articleType),
+        value: type.articleType,
+      }));
     return options;
   } catch (err) {
     return [];

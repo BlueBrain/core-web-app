@@ -83,10 +83,14 @@ const fetchArticleTypes = (): Promise<{ article_type: string; docs_in_db: number
     .catch(() => []);
 };
 
-const fetchAuthorSuggestions = (searchTerm: string): Promise<AuthorSuggestionResponse> => {
+const fetchAuthorSuggestions = (
+  searchTerm: string,
+  signal?: AbortSignal
+): Promise<AuthorSuggestionResponse> => {
   const url = nexus.aiUrl;
 
   return fetch(`${url}/suggestions/author`, {
+    signal,
     method: 'POST',
     headers: new Headers({
       accept: 'application/json',
@@ -103,13 +107,22 @@ const fetchAuthorSuggestions = (searchTerm: string): Promise<AuthorSuggestionRes
       }
       return [];
     })
-    .catch(() => [{ name: searchTerm, docs_in_db: 0 }] as AuthorSuggestionResponse);
+    .catch((e) => {
+      if (e.name === 'AbortError') {
+        throw e;
+      }
+      return [];
+    });
 };
 
-export const fetchJournalSuggestions = (searchTerm: string): Promise<JournalSuggestionResponse> => {
+export const fetchJournalSuggestions = (
+  searchTerm: string,
+  signal?: AbortSignal
+): Promise<JournalSuggestionResponse> => {
   const url = nexus.aiUrl;
 
   return fetch(`${url}/suggestions/journal`, {
+    signal,
     method: 'POST',
     headers: new Headers({
       accept: 'application/json',
