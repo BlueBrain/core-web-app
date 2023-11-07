@@ -13,8 +13,9 @@ export function pathToResource(
   path: string | null | undefined,
   revision?: string | null
 ): ResourceInfo {
+  const error = new Error('Invalid path');
+  if (!path) throw error;
   try {
-    // @ts-expect-error
     const parts = path.split('/');
 
     const key = from64(parts[parts.length - 1]);
@@ -32,7 +33,7 @@ export function pathToResource(
       rev: revision ? Number.parseInt(revision, 10) : undefined,
     };
   } catch {
-    throw new Error('Invalid path');
+    throw error;
   }
 }
 
