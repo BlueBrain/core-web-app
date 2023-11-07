@@ -6,8 +6,8 @@ import { expose } from 'comlink';
 import { Session } from 'next-auth';
 import {
   Utf8,
-  Uint8,
-  Uint16,
+  Int8,
+  Int16,
   Dictionary,
   DictionaryBuilder,
   Float64,
@@ -1266,28 +1266,28 @@ function computeVariantOverridesTable(): Table {
   assertInitialised(workerState);
 
   const sideBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   const srcRegionBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint16()),
+    type: new Dictionary(new Utf8(), new Int16()),
   });
 
-  // ! M-type dictionary is currently using an Uint8 index, so max supported number of m-types is 255.
+  // ! M-type dictionary is currently using an Int8 index, so max supported number of m-types is 128.
   const srcMtypeBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   const dstRegionBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint16()),
+    type: new Dictionary(new Utf8(), new Int16()),
   });
 
   const dstMtypeBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   const variantBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   // Skip sides where there is no applicable edits
@@ -1409,24 +1409,24 @@ function computeParamOverridesTable(variantName: string): Table {
   const paramNames = Object.keys(workerState.config.variants[variantName].params).sort();
 
   const sideBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   const srcRegionBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint16()),
+    type: new Dictionary(new Utf8(), new Int16()),
   });
 
-  // ! M-type dictionary is currently using an Uint8 index, so max supported number of m-types is 255.
+  // ! M-type dictionary is currently using an Int8 index, so max supported number of m-types is 255.
   const srcMtypeBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   const dstRegionBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint16()),
+    type: new Dictionary(new Utf8(), new Int16()),
   });
 
   const dstMtypeBuilder = new DictionaryBuilder({
-    type: new Dictionary(new Utf8(), new Uint8()),
+    type: new Dictionary(new Utf8(), new Int8()),
   });
 
   const paramBuilders = paramNames.map(() => new Float64Builder({ type: new Float64() }));

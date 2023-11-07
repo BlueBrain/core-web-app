@@ -2,6 +2,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import AssignmentAlgorithm from './AssignmentAlgorithm';
 import AxonAssignment from './AxonAssignment';
+import EModelDropdown from './EModelDropdown';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import FeatureWithEModel from '@/components/build-section/cell-model-assignment/me-model/FeatureWithEModel';
@@ -9,6 +10,12 @@ import FeatureWithEModel from '@/components/build-section/cell-model-assignment/
 export default function MEModelView() {
   return (
     <div className="h-[80vh] overflow-auto p-6">
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <DefaultLoadingSuspense>
+          <EModelDropdown />
+        </DefaultLoadingSuspense>
+      </ErrorBoundary>
+
       <div className="relative mt-10">
         <div className="w-full h-full absolute flex justify-center items-center z-10 text-red-500 text-4xl">
           <span className="-rotate-45">Coming soon</span>
