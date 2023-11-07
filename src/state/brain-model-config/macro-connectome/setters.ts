@@ -31,7 +31,7 @@ import {
 } from '@/util/connectome';
 import sessionAtom from '@/state/session';
 import { brainRegionLeavesUnsortedArrayAtom } from '@/state/brain-regions';
-import { updateFileByUrl, updateJsonFileByUrl, updateResource } from '@/api/nexus';
+import { fetchLatestRev, updateFileByUrl, updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { MacroConnectomeConfigPayload } from '@/types/nexus';
 
 export const writingConfigAtom = atom(false);
@@ -93,8 +93,15 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
 
   const overridesBuffer = tableToIPC(overridesTable, 'file').buffer;
 
+  const overridesPayloadLatestRev = await fetchLatestRev(overridesPayloadUrl, session);
+
+  const overridesPayloadUpdateUrl = overridesPayloadUrl.replace(
+    /rev=\d+/,
+    `rev=${overridesPayloadLatestRev}`
+  );
+
   const updatedOverridesPayloadMeta = await updateFileByUrl(
-    overridesPayloadUrl,
+    overridesPayloadUpdateUrl,
     overridesBuffer,
     'overrides.arrow',
     'application/arrow',

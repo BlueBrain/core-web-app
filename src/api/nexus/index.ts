@@ -134,7 +134,7 @@ export function createTextFile(data: any, filename: string, session: Session) {
   return createFile(data, filename, contentType, session);
 }
 
-async function fetchLatestRev(url: string, session: Session) {
+export async function fetchLatestRev(url: string, session: Session) {
   const urlWithoutRev = url.replace(revParamRegexp, '');
 
   if (url.includes('/files/')) {
