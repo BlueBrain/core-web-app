@@ -51,3 +51,14 @@ export function getMultiAnalysisWorkflowConfig(analysis: Analysis, session: Sess
       }
     }]`;
 }
+
+export function getMultiAnalyseSimCampaignMetaConfig(url: string) {
+  return `
+  
+  [MultiAnalyseSimCampaignMeta]
+  config-url: ${url}
+
+  [MultiAnalyseSimCampaign]
+  time: 8:00:00
+  `;
+}

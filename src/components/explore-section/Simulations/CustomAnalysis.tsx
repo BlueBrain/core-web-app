@@ -11,7 +11,7 @@ import {
 } from './types';
 import DimensionSelector from './DimensionSelector';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
-import { getMultiAnalysisWorkflowConfig } from './utils';
+import { getMultiAnalyseSimCampaignMetaConfig, getMultiAnalysisWorkflowConfig } from './utils';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
@@ -191,14 +191,7 @@ async function launchAnalysis(
     rev: newResource._rev,
   }).replaceAll('%', '%%');
 
-  config += `
-  
-    [MultiAnalyseSimCampaignMeta]
-    config-url: ${urlWithRev}
-  
-    [MultiAnalyseSimCampaign]
-    time: 8:00:00
-    `;
+  config = config.concat(getMultiAnalyseSimCampaignMetaConfig(urlWithRev));
 
   await launchWorkflowTask({
     loginInfo: session,
