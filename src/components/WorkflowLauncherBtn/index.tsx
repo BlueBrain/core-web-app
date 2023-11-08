@@ -22,7 +22,7 @@ import GenericButton from '@/components/Global/GenericButton';
 
 const HIDDEN_IFRAME_AUTO_AUTH_AWAIT_DELAY = 5000;
 
-function useWorkflowAuth() {
+export function useWorkflowAuth() {
   const ensureWorkflowAuth = useCallback(
     (username: string) =>
       new Promise<void>((resolve, reject) => {

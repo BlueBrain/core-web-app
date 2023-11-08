@@ -19,7 +19,8 @@ import { createHeaders, formatTimeDifference } from '@/util/utils';
 import { createWorkflowConfigResource, fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { WorkflowExecution } from '@/types/nexus';
 import { composeUrl } from '@/util/nexus';
-import { launchWorkflowTask } from '@/services/bbp-workflow';
+import { launchUnicoreWorkflowSetup, launchWorkflowTask } from '@/services/bbp-workflow';
+import { useWorkflowAuth } from '@/components/WorkflowLauncherBtn';
 
 export default function CustomAnalysis({
   resource,
@@ -28,6 +29,7 @@ export default function CustomAnalysis({
   resource: SimulationCampaignResource;
   analysisId: string;
 }) {
+  const { ensureWorkflowAuth } = useWorkflowAuth();
   const [launchingAnalysis, setLaunchingAnalysis] = useState(false);
   const [report, fetching] = useCumulativeAnalysisReports(resource, analysisId);
   const session = useSessionAtomValue();
@@ -70,8 +72,11 @@ export default function CustomAnalysis({
           <button
             type="button"
             className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
-            onClick={() => {
+            onClick={async () => {
               setLaunchingAnalysis(true);
+              if (!session) return;
+              await launchUnicoreWorkflowSetup(session.accessToken);
+              await ensureWorkflowAuth(session.user.username);
               launchAnalysis(resource, analysesById[analysisId], session);
             }}
             disabled={launchingAnalysis}
