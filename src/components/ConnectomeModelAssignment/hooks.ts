@@ -39,10 +39,16 @@ import { brainRegionsAtom } from '@/state/brain-regions';
  */
 export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule) => string[] {
   const composition = useAtomValue(compositionAtom);
+  const initialTypes = useAtomValue(initialTypesAtom);
+  const initialTypeNames = useMemo(() => initialTypes && Object.keys(initialTypes), [initialTypes]);
+  const userTypes = useAtomValue(userTypesAtom);
+  const userTypeNames = useMemo(() => userTypes.map(([name]) => name), [userTypes]);
+  const types = useMemo(() => {
+    const usortedTypes = userTypeNames?.length > 0 ? userTypeNames : initialTypeNames ?? [];
+    return [...usortedTypes].sort((a, b) => a.localeCompare(b));
+  }, [userTypeNames, initialTypeNames]);
   const brainRegions = useAtomValue(brainRegionsAtom);
   const brainRegionNames = useMemo(() => brainRegions?.map((br) => br.title), [brainRegions]);
-
-  const synapseTypes = useAtomValue(initialTypesAtom);
 
   const arrays = useMemo(() => {
     const mTypes: string[] = [];
@@ -70,9 +76,9 @@ export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule
       toMType: uMtypes,
       fromEType: ueTypes,
       toEType: ueTypes,
-      synapticType: Array.from(Object.keys(synapseTypes ?? [])),
+      synapticType: types,
     };
-  }, [composition, synapseTypes, brainRegionNames]);
+  }, [composition, types, brainRegionNames]);
 
   return useCallback((field: keyof SynapticAssignmentRule) => arrays[field] ?? [], [arrays]);
 }
