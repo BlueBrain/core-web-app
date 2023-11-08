@@ -9,7 +9,6 @@ import SelectedBrainRegionPanel from '@/components/explore-section/ExploreIntera
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
-import { createMockArticle } from '@/components/explore-section/Literature/api';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 
 jest.mock('next/navigation', () => ({
@@ -68,18 +67,6 @@ jest.mock('src/components/explore-section/Literature/api.ts', () => ({
         resolve({
           total: Math.floor(Math.random() * 30),
           experimentUrl: experimentType.id,
-        });
-      })
-  ),
-  fetchArticlesForBrainRegionAndExperiment: jest.fn().mockImplementation(
-    (token, experiment, brainregion, offset) =>
-      new Promise((resolve) => {
-        resolve({
-          total: 42,
-          results: [...Array(50).keys()].map((_, index) =>
-            createMockArticle(`Mock title ${index}`, `${index}`, 'Mock abstract')
-          ),
-          offset,
         });
       })
   ),
