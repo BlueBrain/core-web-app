@@ -14,12 +14,14 @@ const REFINE_SEARCH_HELP_TEXT = `Before launching the search related to your que
  use these parameters to obtain a more 
  specific answer.`;
 
-function GenerativeQABar() {
+function GenerativeQABar({ goToBottom }: { goToBottom?: () => void }) {
   const { dataSource, isBuildSection } = useContextualLiteratureContext();
   const isChatBarMustSlideInDown = Boolean(dataSource.length);
   const [isParametersVisible, setIsParametersVisible] = useState(false);
 
-  const { ask, isPending, isQuestionEmpty } = useChatQAContext({});
+  const { ask, isPending, isQuestionEmpty } = useChatQAContext({
+    afterAskCallback: goToBottom,
+  });
 
   return (
     <div
