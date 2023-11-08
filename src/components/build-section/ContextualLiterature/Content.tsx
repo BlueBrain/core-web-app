@@ -11,7 +11,10 @@ import findIndex from 'lodash/findIndex';
 
 import ItemTile from './ItemTile';
 import { buildQuestionsList } from './util';
-import { GenerativeQASingleResultCompact } from '@/components/explore-section/Literature/components/GenerativeQAResults';
+import {
+  GenerativeQASingleResultCompact,
+  GenerativeQASingleResultError,
+} from '@/components/explore-section/Literature/components/GenerativeQAResults';
 import useContextualLiteratureContext from '@/components/explore-section/Literature/useContextualLiteratureContext';
 import useChatQAContext from '@/components/explore-section/Literature/useChatQAContext';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -20,7 +23,12 @@ import {
   useContextualLiteratureAtom,
   useLiteratureAtom,
 } from '@/state/literature';
-import { ContextQAItem, GenerativeQA } from '@/types/literature';
+import {
+  ContextQAItem,
+  FailedGenerativeQA,
+  GenerativeQA,
+  SucceededGenerativeQA,
+} from '@/types/literature';
 import { classNames } from '@/util/utils';
 import updateArray from '@/util/updateArray';
 import { GenerativeQAForm } from '@/components/explore-section/Literature/components/GenerativeQAForm';
@@ -255,21 +263,25 @@ function ContextualContent() {
               </div>
             ) : (
               <div className="w-full px-4">
-                {currentGQA.question?.gqa && (
-                  <GenerativeQASingleResultCompact
-                    key={currentGQA.question.gqa.id}
-                    {...{
-                      id: currentGQA.question.gqa.id,
-                      brainRegion: currentGQA.question.gqa.brainRegion,
-                      answer: currentGQA.question.gqa.answer,
-                      rawAnswer: currentGQA.question.gqa.rawAnswer,
-                      question: currentGQA.question.gqa.question,
-                      articles: currentGQA.question.gqa.articles,
-                      askedAt: currentGQA.question.gqa.askedAt,
-                      isNotFound: currentGQA.question.gqa.isNotFound,
-                    }}
-                  />
-                )}
+                {currentGQA.question?.gqa &&
+                  (currentGQA.question?.gqa.isNotFound ? (
+                    <GenerativeQASingleResultError
+                      showHeader={false}
+                      showRemoveBtn={false}
+                      // eslint-disable-next-line react/jsx-props-no-spreading
+                      {...{
+                        ...(currentGQA.question.gqa as FailedGenerativeQA),
+                      }}
+                    />
+                  ) : (
+                    <GenerativeQASingleResultCompact
+                      key={currentGQA.question.gqa.id}
+                      // eslint-disable-next-line react/jsx-props-no-spreading
+                      {...{
+                        ...(currentGQA.question.gqa as SucceededGenerativeQA),
+                      }}
+                    />
+                  ))}
               </div>
             )}
           </div>
