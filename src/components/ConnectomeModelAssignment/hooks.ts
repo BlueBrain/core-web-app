@@ -43,10 +43,10 @@ export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule
   const initialTypeNames = useMemo(() => initialTypes && Object.keys(initialTypes), [initialTypes]);
   const userTypes = useAtomValue(userTypesAtom);
   const userTypeNames = useMemo(() => userTypes.map(([name]) => name), [userTypes]);
-  const types = useMemo(
-    () => (userTypeNames?.length > 0 ? userTypeNames : initialTypeNames ?? []),
-    [userTypeNames, initialTypeNames]
-  );
+  const types = useMemo(() => {
+    const usortedTypes = userTypeNames?.length > 0 ? userTypeNames : initialTypeNames ?? [];
+    return [...usortedTypes].sort((a, b) => a.localeCompare(b));
+  }, [userTypeNames, initialTypeNames]);
   const brainRegions = useAtomValue(brainRegionsAtom);
   const brainRegionNames = useMemo(() => brainRegions?.map((br) => br.title), [brainRegions]);
 

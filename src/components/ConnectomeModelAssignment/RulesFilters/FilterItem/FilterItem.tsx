@@ -38,7 +38,7 @@ export default function FilterItem({ item, onChange, onDelete }: FilterItemProps
 function useOptions(ruleField: keyof SynapticAssignmentRule) {
   const getOptions = useFieldsOptionsProvider();
   return useMemo(() => {
-    const options = ['', ...getOptions(ruleField).sort()];
+    const options = ['', ...getOptions(ruleField)];
     return options.map((label) => ({ label, value: label }));
   }, [getOptions, ruleField]);
 }
