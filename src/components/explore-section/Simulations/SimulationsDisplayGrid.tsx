@@ -3,8 +3,6 @@ import { Col, Row } from 'antd';
 import range from 'lodash/range';
 import { useAtomValue } from 'jotai';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { unwrap } from 'jotai/utils';
-import { simulationsAtom } from '@/state/explore-section/simulation-campaign';
 import CenteredMessage from '@/components/CenteredMessage';
 import SimulationDisplayCard from '@/components/explore-section/Simulations/SimulationDisplayCard';
 import {
@@ -15,10 +13,12 @@ import {
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
+import { simulationsFamily } from '@/state/explore-section/simulation-campaign';
 
 type SimulationDisplayGridProps = {
-  display: string;
+  display?: string;
+  customReportIds?: string[];
   status: string;
 };
 
@@ -52,12 +52,13 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
   );
 }
 
-export default function SimulationsDisplayGrid({ display, status }: SimulationDisplayGridProps) {
-  const resourceInfo = useResourceInfoFromPath();
-
-  const simulations = useAtomValue(
-    useMemo(() => unwrap(simulationsAtom(resourceInfo)), [resourceInfo])
-  );
+export default function SimulationsDisplayGrid({
+  display,
+  status,
+  customReportIds,
+}: SimulationDisplayGridProps) {
+  const path = useEnsuredPath();
+  const simulations = useUnwrappedValue(simulationsFamily(path));
   const xDimension = useAtomValue(selectedXDimensionAtom);
   const yDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);
@@ -136,12 +137,14 @@ export default function SimulationsDisplayGrid({ display, status }: SimulationDi
             const simulation =
               simulations &&
               findSimulation(x, y, xDimension, yDimension, simulations, status, otherDimensions);
+
             return (
               <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
                 {simulation ? (
                   <SimulationDisplayCard
-                    display={display}
+                    name={display}
                     simulation={simulation}
+                    customReportIds={customReportIds}
                     xDimension={xDimension.id}
                     yDimension={yDimension.id}
                   />

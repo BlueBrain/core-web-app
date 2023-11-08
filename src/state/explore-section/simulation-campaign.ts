@@ -1,56 +1,67 @@
 import { atom } from 'jotai';
-import { atomFamily, selectAtom } from 'jotai/utils';
-import { Simulation, SimulationCampaignResource } from '@/types/explore-section/resources';
+import { selectAtom } from 'jotai/utils';
+import memoizeOne from 'memoize-one';
+import sessionAtom from '../session';
+import { DeltaResource, Simulation } from '@/types/explore-section/resources';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
-import { fetchResourceById } from '@/api/nexus';
-import {
-  fetchAnalysisReportsFromEs,
-  fetchSimulationsFromEs,
-} from '@/api/explore-section/simulations';
+import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
+import { fetchAnalysisReports, fetchSimulationsFromEs } from '@/api/explore-section/simulations';
 import { detailFamily, sessionAndInfoFamily } from '@/state/explore-section/detail-view-atoms';
-import { ResourceInfo } from '@/types/explore-section/application';
+import { pathToResource } from '@/util/explore-section/detail-view';
+import { memoize as atomFamily } from '@/util/utils';
 
-// fetches and stores the simulation campaign execution
-const simulationCampaignExecutionAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  atom<Promise<SimulationCampaignResource | null>>(async (get) => {
-    const detail = await get(detailFamily(resourceInfo));
-    const { session, info } = get(sessionAndInfoFamily(resourceInfo));
+const ensuredSessionAtom = atom((get) => {
+  const session = get(sessionAtom);
+  if (!session) throw new Error('No valid session, please login');
+  return session;
+});
 
+export const simCampaignExecutionFamily = atomFamily((path: string) =>
+  atom(async (get) => {
+    const { session, info } = get(sessionAndInfoFamily(pathToResource(path)));
+    const detail = await get(detailFamily(info));
     const executionId = detail?.wasGeneratedBy?.['@id'];
 
     if (!executionId || !detail) return null;
 
     const cleanExecutionId = executionId.replace('https://bbp.epfl.ch/neurosciencegraph/data/', '');
 
-    const execution = (await fetchResourceById(cleanExecutionId, session, {
+    const execution = await fetchResourceById<
+      DeltaResource<
+        { generated: { '@id': string; type: 'SimulationCampaign' } } & {
+          status: string;
+        }
+      >
+    >(cleanExecutionId, session, {
       org: info.org,
       project: info.project,
       idExpand: false,
-    })) as SimulationCampaignResource;
+    });
 
     return execution;
   })
 );
 
-// fetches the simulation campaign status
-export const simulationCampaignStatusAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  atom<Promise<string | undefined>>(async (get) => {
-    const execution = await get(simulationCampaignExecutionAtom(resourceInfo));
-    return execution?.status;
-  })
+/* No need to use atomFamily as coords are already stored in the detail atom
+so it would be just storing duplicate data
+memoizeOne acts as an atomFamily with just one element
+*/
+export const simCampaignDimensionsFamily = memoizeOne((path: string) =>
+  selectAtom(
+    detailFamily(pathToResource(path)),
+    // @ts-ignore
+    (simCamp) => simCamp?.parameter?.coords // TODO: Improve type
+  )
 );
 
-export const simulationCampaignDimensionsAtom = (resourceInfo?: ResourceInfo) =>
-  selectAtom(detailFamily(resourceInfo), (simCamp) => simCamp?.parameter?.coords);
-
-export const simulationsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  atom<Promise<Simulation[] | undefined>>(async (get) => {
-    const execution = await get(simulationCampaignExecutionAtom(resourceInfo));
-    const { session } = get(sessionAndInfoFamily(resourceInfo));
+export const simulationsFamily = atomFamily((path: string) =>
+  atom(async (get) => {
+    const session = get(ensuredSessionAtom);
+    const execution = await get(simCampaignExecutionFamily(path));
 
     const simulations =
       execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
-    return simulations?.hits.map(({ _source: simulation }: { _source: any }) => ({
+    return simulations?.hits.map(({ _source: simulation }) => ({
       title: simulation.name,
       completedAt: simulation.endedAt,
       dimensions: simulation.parameter?.coords,
@@ -58,40 +69,46 @@ export const simulationsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
       project: simulation?.project.identifier, // TODO: Possibly no longer necessary
       startedAt: simulation.startedAt,
       status: simulation.status,
-    }));
+    })) as Simulation[] | undefined;
   })
 );
 
-export const analysisReportsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
-    const { session } = get(sessionAndInfoFamily(resourceInfo));
-    const simulations = await get(simulationsAtom(resourceInfo));
-
-    const fetchedReports =
-      session &&
-      simulations &&
-      (await fetchAnalysisReportsFromEs(
-        session,
-        simulations.map(({ id: simId }) => simId)
-      ));
-
-    return fetchedReports && Promise.all(fetchedReports);
+const reportImageFamily = atomFamily((contentUrl: string) =>
+  atom(async (get) => {
+    const session = get(ensuredSessionAtom);
+    return await fetchFileByUrl(contentUrl, session).then((res) => res.blob());
   })
 );
 
-export const reportImageFilesAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  atom<Promise<AnalysisReportWithImage[] | undefined>>(async (get) => {
-    const detail = await get(detailFamily(resourceInfo));
-    const analysisReports = await get(analysisReportsAtom(resourceInfo));
-    return analysisReports?.filter(
-      ({ simulation }: { simulation: string }) => simulation === detail?.['@id']
-    );
-  })
-);
+// Only fetch the reports corresponding to the selected simulation and name or by custom report id's
+// If custom report ids are provided fetch them
+// If name is provided fetch only the report by that name corresponding to the simId
+// If no name and no ids are provide fetch all reports for the simulation (only for simulation detail page)
+export const analysisReportsFamily = atomFamily(
+  ({ simId, name, ids }: { simId: string; name?: string; ids?: string[] }) => {
+    return atom(async (get) => {
+      const session = get(ensuredSessionAtom);
+      const fetchedReports = await fetchAnalysisReports(session, simId, name, ids);
 
-export const simulationsCountAtom = atomFamily((resourceInfo?: ResourceInfo) =>
-  selectAtom<Promise<Simulation[] | undefined>, number | undefined>(
-    simulationsAtom(resourceInfo),
-    (simulations) => simulations?.length
-  )
+      const reportsWithImage = fetchedReports?.map(async (report) => {
+        const imageUrl: string | undefined = report.distribution?.[0].contentUrl;
+        const blob = imageUrl ? await get(reportImageFamily(imageUrl)) : undefined;
+        return {
+          ...report,
+          blob,
+          simulation: report.derivation.find(
+            ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
+          )?.identifier,
+        } as AnalysisReportWithImage;
+      });
+
+      return reportsWithImage && (await Promise.all(reportsWithImage));
+    });
+  },
+  // Resolver for keys in the cache
+  ({ simId, name, ids }) => {
+    if (ids) return ids.join('_');
+    if (name) return simId + name;
+    return simId;
+  }
 );

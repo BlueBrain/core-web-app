@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useEffect, useMemo } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
+import { axesAtom } from '../Simulations/state';
 import HeaderPanel from './HeaderPanel';
 import FilterControls from './FilterControls';
 import ListTable from '@/components/ListTable';
@@ -33,6 +34,14 @@ export default function SimulationCampaignListView({
   );
   const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns);
   const loading = !data || !dimensionColumns;
+
+  /* Resets the dimensions axes when changing to list view so that when the next Campaign is viewd users
+   don'see invalid dimensions from another campaign */
+  const setAxes = useSetAtom(axesAtom);
+
+  useEffect(() => {
+    setAxes({ xAxis: undefined, yAxis: undefined });
+  }, [setAxes]);
 
   return (
     <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>

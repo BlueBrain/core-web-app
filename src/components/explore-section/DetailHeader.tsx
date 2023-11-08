@@ -1,10 +1,14 @@
-import { DeltaResource } from '@/types/explore-section/resources';
 import { DetailProps } from '@/types/explore-section/application';
 import DetailHeaderName from '@/components/explore-section/DetailHeaderName';
 import { classNames } from '@/util/utils';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
+import { DetailType } from '@/constants/explore-section/fields-config/types';
 
-type FieldProps = { field: string; className?: string; data: DeltaResource };
+type FieldProps = {
+  field: string;
+  className?: string;
+  data: DetailType;
+};
 
 export function Field({ field, className, data }: FieldProps) {
   const fieldObj = EXPLORE_FIELDS_CONFIG[field];
@@ -25,7 +29,7 @@ export default function DetailHeader({
   url,
 }: {
   fields: DetailProps[];
-  detail: DeltaResource | undefined;
+  detail?: DetailType | undefined;
   url?: string | null;
 }) {
   if (!detail) return null;

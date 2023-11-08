@@ -2,16 +2,13 @@ import every from 'lodash/every';
 import { Session } from 'next-auth';
 import esb from 'elastic-builder';
 
-import { fetchFileByUrl } from '@/api/nexus';
 import { createHeaders } from '@/util/utils';
 import { Dimension } from '@/components/explore-section/Simulations/types';
 import { ExploreSectionResponse, Simulation } from '@/types/explore-section/resources';
-import {
-  AnalysisReport,
-  AnalysisReportWithImage,
-} from '@/types/explore-section/es-analysis-report';
+import { AnalysisReport } from '@/types/explore-section/es-analysis-report';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import { API_SEARCH } from '@/constants/explore-section/queries';
+import { buildESReportsQuery } from '@/queries/es';
 
 /**
  * Checks if a given simulation falls within a given dimension
@@ -52,7 +49,7 @@ export default function findSimulation(
     if (
       simulation &&
       simulation.status &&
-      (simulation.status.toLowerCase() === status || status === 'all') &&
+      (simulation.status.toLowerCase() === status.toLowerCase() || status === 'all') &&
       simulationIncludesAllDimensions(simulation, otherDimensions)
     ) {
       return simulation;
@@ -85,10 +82,12 @@ export async function fetchSimulationsFromEs(accessToken: string, campaignId: st
     }));
 }
 
-export async function fetchAnalysisReportsFromEs(
+export async function fetchAnalysisReports(
   session: Session,
-  simulationIds: string[]
-): Promise<AnalysisReportWithImage[]> {
+  simulationId: string,
+  name?: string,
+  ids?: string[]
+): Promise<AnalysisReport[] | undefined> {
   const { accessToken } = session;
 
   if (!accessToken) throw new Error('Access token should be defined');
@@ -97,33 +96,11 @@ export async function fetchAnalysisReportsFromEs(
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({
-      size: 10000,
-      query: {
-        bool: {
-          filter: [
-            {
-              terms: {
-                'derivation.identifier.keyword': simulationIds,
-              },
-            },
-          ],
-        },
-      },
+      query: buildESReportsQuery(simulationId, name, ids),
     }),
   })
     .then((response) => response.json())
     .then((data) =>
       data?.hits?.hits.map(({ _source: report }: { _source: AnalysisReport }) => report)
-    )
-    .then((analysisReports) =>
-      analysisReports.map(async (report: AnalysisReport) => ({
-        ...report,
-        blob: await fetchFileByUrl(report.distribution[0].contentUrl, session).then((res) =>
-          res.blob()
-        ),
-        simulation: report.derivation.find(
-          ({ '@type': type }) => type === 'https://neuroshapes.org/Simulation'
-        )?.identifier,
-      }))
     );
 }

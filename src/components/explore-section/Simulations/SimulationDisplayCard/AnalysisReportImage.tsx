@@ -33,7 +33,7 @@ export default function AnalysisReportImage({
   const [showDimensionValue, setShowDimensionValue] = useState<boolean>(false);
   const pathname = usePathname();
   const [proj, org] = project.split('/').reverse();
-  const createdByUsername = createdBy.split('/').reverse()[0];
+  const createdByUsername = createdBy?.split('/').reverse()[0];
 
   return (
     <div className="mt-4">

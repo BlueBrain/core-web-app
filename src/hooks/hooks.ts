@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { Atom } from 'jotai/vanilla';
+import { unwrap, loadable } from 'jotai/utils';
+import { usePathname } from 'next/navigation';
 import sessionAtom from '@/state/session';
 
 export function usePrevious<T>(value: T) {
@@ -17,18 +19,32 @@ export function usePrevious<T>(value: T) {
 }
 
 export function useLoadable<T>(loadableAtom: Atom<Loadable<Promise<T>>>, defaultValue: T) {
-  const loadable = useAtomValue(loadableAtom);
+  const loadableValue = useAtomValue(loadableAtom);
   const [state, setState] = useState(defaultValue);
 
   useEffect(() => {
-    if (loadable.state !== 'hasData' || !loadable.data) return;
+    if (loadableValue.state !== 'hasData' || !loadableValue.data) return;
 
-    setState(loadable.data);
-  }, [loadable]);
+    setState(loadableValue.data);
+  }, [loadableValue]);
 
   return state;
 }
 
 export function useSessionAtomValue() {
   return useAtomValue(sessionAtom);
+}
+
+export function useUnwrappedValue<T>(atom: Atom<T>) {
+  return useAtomValue(unwrap(atom));
+}
+
+export function useLoadableValue<T>(atom: Atom<T>) {
+  return useAtomValue(loadable(atom));
+}
+
+export function useEnsuredPath() {
+  const path = usePathname();
+  if (!path) throw new Error('Invalid pathname');
+  return path;
 }

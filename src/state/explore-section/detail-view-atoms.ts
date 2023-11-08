@@ -6,7 +6,7 @@ import { atomFamily } from 'jotai/utils';
 import isEqual from 'lodash/isEqual';
 import sessionAtom from '@/state/session';
 import { fetchResourceById } from '@/api/nexus';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { DeltaResource, Contributor } from '@/types/explore-section/resources';
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
 
@@ -25,12 +25,13 @@ export const sessionAndInfoFamily = atomFamily(
 );
 
 export const detailFamily = atomFamily(
-  (resourceInfo?: ResourceInfo) =>
-    atom<Promise<DeltaResource | null>>(async (get) => {
+  <T>(resourceInfo?: ResourceInfo) =>
+    atom<Promise<DeltaResource<T> | null>>(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const resource: DeltaResource = await fetchResourceById(info.id, session, {
+      const resource: DeltaResource<T> = await fetchResourceById(info.id, session, {
         org: info.org,
         project: info.project,
+        rev: info.rev,
       });
 
       return resource;
@@ -40,7 +41,7 @@ export const detailFamily = atomFamily(
 
 export const contributorsDataFamily = atomFamily(
   (resourceInfo?: ResourceInfo) =>
-    atom<Promise<DeltaResource[] | null>>(async (get) => {
+    atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
       const detail = await get(detailFamily(resourceInfo));
 
@@ -50,7 +51,7 @@ export const contributorsDataFamily = atomFamily(
 
       const contributors = await Promise.all(
         contributions.map((contribution) =>
-          fetchResourceById<DeltaResource>(
+          fetchResourceById<Contributor>(
             contribution?.agent['@id'],
             session,
             pick(info, ['org', 'project'])

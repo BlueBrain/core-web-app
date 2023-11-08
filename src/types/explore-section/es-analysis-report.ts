@@ -19,6 +19,6 @@ export type AnalysisReport = {
 };
 
 export type AnalysisReportWithImage = AnalysisReport & {
-  blob: Blob;
+  blob?: Blob;
   simulation: string;
 };

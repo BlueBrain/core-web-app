@@ -1,31 +1,25 @@
 import { useForm, useWatch } from 'antd/es/form/Form';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 import { Form, Input, Radio } from 'antd';
-import { unwrap } from 'jotai/utils';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
-import { simulationCampaignDimensionsAtom } from '@/state/explore-section/simulation-campaign';
+import { simCampaignDimensionsFamily } from '@/state/explore-section/simulation-campaign';
 import {
   AxisDimensionBoxEditFormProps,
   DimensionRange,
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
-
-/* eslint-disable prefer-regex-literals */
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function AxisDimensionBoxEditForm({
   dimension,
   setEditMode,
 }: AxisDimensionBoxEditFormProps) {
-  const resourceInfo = useResourceInfoFromPath();
-
   const [form] = useForm();
   const inputType = useWatch('input-type', form);
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
-  const simulationCampaignDimensions = useAtomValue(
-    useMemo(() => unwrap(simulationCampaignDimensionsAtom(resourceInfo)), [resourceInfo])
-  );
+  const path = useEnsuredPath();
+  const simulationCampaignDimensions = useUnwrappedValue(simCampaignDimensionsFamily(path));
 
   const valueRange: DimensionRange | null = useMemo(() => {
     const dimensionConfig =

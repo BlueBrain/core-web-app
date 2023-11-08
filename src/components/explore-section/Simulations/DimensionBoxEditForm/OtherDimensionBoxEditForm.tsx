@@ -1,28 +1,24 @@
 import { useForm } from 'antd/es/form/Form';
 import { ConfigProvider, Form, Select } from 'antd';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useMemo } from 'react';
-import { unwrap } from 'jotai/utils';
+import { useSetAtom } from 'jotai';
 import {
   DimensionValue,
   OtherDimensionBoxEditFormProps,
 } from '@/components/explore-section/Simulations/types';
-import { simulationCampaignDimensionsAtom } from '@/state/explore-section/simulation-campaign';
+import { simCampaignDimensionsFamily } from '@/state/explore-section/simulation-campaign';
 import { modifyDimensionValue } from '@/components/explore-section/Simulations/state';
 import selectorTheme from '@/components/explore-section/Simulations/DimensionBoxEditForm/antd-theme';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function OtherDimensionBoxEditForm({
   dimension,
   setEditMode,
 }: OtherDimensionBoxEditFormProps) {
-  const resourceInfo = useResourceInfoFromPath();
-
   const [form] = useForm();
   const { Option } = Select;
-  const simulationCampaignDimensions = useAtomValue(
-    useMemo(() => unwrap(simulationCampaignDimensionsAtom(resourceInfo)), [resourceInfo])
-  );
+  const path = useEnsuredPath();
+  const simulationCampaignDimensions = useUnwrappedValue(simCampaignDimensionsFamily(path));
+
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
 
   const dimensionConfig =

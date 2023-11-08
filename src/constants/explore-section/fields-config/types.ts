@@ -11,7 +11,7 @@ export type ExploreFieldConfig = {
   unit?: string;
   render?: {
     listingViewFn?: (value: any, record: any, index: number) => ReactNode | any;
-    detailViewFn?: (resource: DeltaResource) => ReactNode | any;
+    detailViewFn?: (resource: DetailType) => ReactNode | any;
     cardViewFn?: (resource: Experiment) => ReactNode | any;
   };
   vocabulary: {
@@ -19,6 +19,7 @@ export type ExploreFieldConfig = {
     singular: string;
   };
 };
+
 export type ExploreFieldsConfigProps = {
   [key: string]: ExploreFieldConfig;
 };
@@ -35,3 +36,12 @@ type NestedFieldConfig = {
   field: string;
   nestField: string;
 };
+
+export type DetailType = DeltaResource<{
+  brainConfiguration: {};
+  parameter: { coords: { id: string; value: string }; attrs: { id: string; value: string } };
+  status: string;
+  startedAtTime: string;
+  endedAtTime: string;
+  completedAt: string;
+}>;

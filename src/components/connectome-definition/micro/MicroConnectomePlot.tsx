@@ -892,7 +892,6 @@ export default function MicroConnectomePlot({
       renderParamPlot(renderPlotArg as RenderParamPlotArg);
     }
 
-    // eslint-disable-next-line consistent-return
     return () => {
       removePlot(container);
     };

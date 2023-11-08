@@ -1,63 +1,64 @@
-import { useAtomValue } from 'jotai';
 import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { loadable } from 'jotai/utils';
 import { Spin } from 'antd';
 import { useMemo } from 'react';
+import SimulationCard from './SimulationCard';
 import CenteredMessage from '@/components/CenteredMessage';
-import SimulationCard from '@/components/explore-section/Simulations/SimulationDisplayCard/SimulationCard';
 import { Simulation } from '@/types/explore-section/resources';
 import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
-import { analysisReportsAtom } from '@/state/explore-section/simulation-campaign';
-import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+import { analysisReportsFamily } from '@/state/explore-section/simulation-campaign';
+import { useUnwrappedValue } from '@/hooks/hooks';
 
 type SimulationDisplayCardProps = {
-  display: string;
+  name?: string;
   simulation: Simulation;
+  customReportIds?: string[];
   xDimension: string;
   yDimension: string;
 };
 
 export default function SimulationDisplayCard({
-  display,
+  name,
   simulation,
+  customReportIds,
   xDimension,
   yDimension,
 }: SimulationDisplayCardProps) {
-  const resourceInfo = useResourceInfoFromPath();
+  if (Boolean(name) === Boolean(customReportIds))
+    throw new Error('Provide only one of name and customReportIds');
 
-  const analysisReports = useAtomValue(
-    useMemo(() => loadable(analysisReportsAtom(resourceInfo)), [resourceInfo])
+  const analysisReports = useUnwrappedValue(
+    analysisReportsFamily({ simId: simulation.id, name, ids: customReportIds })
   );
-  if (display === 'status') {
+
+  const report = useMemo(() => {
+    if (!analysisReports) return;
+    if (name) {
+      if (analysisReports.length > 1) throw new Error('Error, data fetching error'); // If name was specified there should be at most one fetched report
+      return analysisReports[0];
+    }
+    return analysisReports.find((r) => r.simulation === simulation.id);
+  }, [analysisReports, name, simulation.id]);
+
+  if (name === 'status') {
     return (
       <SimulationCard simulation={simulation} xDimension={xDimension} yDimension={yDimension} />
     );
   }
-  if (analysisReports.state === 'loading') {
-    return <Spin indicator={<LoadingOutlined />} />;
-  }
-  if (analysisReports.state === 'hasData') {
-    const { blob, createdAt, createdBy } = analysisReports.data?.find(
-      ({ simulation: id, name: type }) => id === simulation.id && type === display
-    ) ?? {
-      blob: undefined,
-      name: undefined,
-    };
+  if (!analysisReports) return <Spin indicator={<LoadingOutlined />} />;
 
-    return blob ? (
-      <AnalysisReportImage
-        title={simulation.title}
-        id={simulation.id}
-        project={simulation.project}
-        blob={blob}
-        createdAt={createdAt}
-        createdBy={createdBy}
-      />
-    ) : (
-      <CenteredMessage
-        message="There is no report for this simulation"
-        icon={<InfoCircleOutlined className="text-5xl" />}
-      />
-    );
-  }
+  return report?.blob ? (
+    <AnalysisReportImage
+      title={simulation.title}
+      id={simulation.id}
+      project={simulation.project}
+      blob={report.blob}
+      createdAt={report.createdAt}
+      createdBy={report.createdBy}
+    />
+  ) : (
+    <CenteredMessage
+      message="There is no report for this simulation"
+      icon={<InfoCircleOutlined className="text-5xl" />}
+    />
+  );
 }

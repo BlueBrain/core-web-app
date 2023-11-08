@@ -9,7 +9,6 @@ export type RegionFullPathType = {
   name: string;
 };
 
-/* eslint-disable consistent-return */
 /**
  * Gets the path from top brain region to node clicked.
  *
@@ -54,8 +53,6 @@ export function getBottomUpPath(hierarchy: TreeItem[], nodeId: string): RegionFu
   if (!paths?.length) return [];
   return paths[0];
 }
-/* eslint-enable consistent-return */
-
 export function extendLeafNodeWithOverrideProps(
   node: CompositionOverrideLeafNode
 ): CompositionOverrideLeafNode {

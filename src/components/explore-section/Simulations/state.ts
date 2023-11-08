@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import clone from 'lodash/clone';
-import { atomFamily } from 'jotai/utils';
+import memoizeOne from 'memoize-one';
 import {
   Dimension,
   DimensionRange,
@@ -9,7 +9,7 @@ import {
 import { AxesState } from '@/types/explore-section/fields';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
-import { ResourceInfo } from '@/types/explore-section/application';
+import { pathToResource } from '@/util/explore-section/detail-view';
 
 // Dimensions atoms
 
@@ -28,9 +28,9 @@ function buildDefaultDimensions(resource: SimulationCampaignResource) {
 
 export const dimensionsAtom = atom<Dimension[] | null>([]);
 
-export const initializeDimensionsAtom = atomFamily((resourceInfo?: ResourceInfo) =>
+export const initializeDimensionsFamily = memoizeOne((path: string) =>
   atom(null, async (get, set) => {
-    const resource = await get(detailFamily(resourceInfo));
+    const resource = await get(detailFamily(pathToResource(path)));
 
     if (resource) {
       const defaultDimensions = buildDefaultDimensions(resource as SimulationCampaignResource);

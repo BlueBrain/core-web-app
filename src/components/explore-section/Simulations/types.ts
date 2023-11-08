@@ -1,3 +1,4 @@
+import { ISODateString } from 'next-auth';
 import { Dispatch, SetStateAction } from 'react';
 
 export type Status = 'initial' | 'selection';
@@ -65,3 +66,36 @@ export type Dimension = {
   id: string;
   value: DimensionValue | DimensionRange;
 };
+
+export interface AnalysisReportLink {
+  '@id': string;
+  '@type': 'AnalysisReport';
+}
+
+interface ContributionLink {
+  '@id': string;
+  '@type': 'Contribution';
+}
+
+export interface Contribution extends ContributionLink {
+  agent: { '@id': string; type: 'AnalysisSoftwareSourceCode' };
+}
+export interface CumulativeAnalysisReport {
+  '@id': string;
+  type: 'CumulativeAnalysisReport';
+  hasPart?: AnalysisReportLink[];
+  contribution: ContributionLink;
+  wasGeneratedBy: { '@id': string };
+  _createdAt: ISODateString;
+}
+
+export interface ExtendedCumAnalysisReport extends CumulativeAnalysisReport {
+  contribution: Contribution;
+  multiAnalysis: MultipleSimulationCampaignAnalysis;
+}
+
+export interface MultipleSimulationCampaignAnalysis {
+  '@id': string;
+  status: string;
+  _createdAt: ISODateString;
+}

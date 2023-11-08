@@ -17,7 +17,6 @@ import {
 } from '@/state/explore-section/selector-functions';
 import Species from '@/components/explore-section/Species';
 import WeightField from '@/components/explore-section/Fields/WeightField';
-
 import LayerThicknessField from '@/components/explore-section/Fields/LayerThicknessField';
 
 import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
