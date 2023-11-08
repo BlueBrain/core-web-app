@@ -74,8 +74,8 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
             <TopTabs />
           </ErrorBoundary>
           <div className="grow">{children}</div>
-          <div className="flex items-center justify-between pb-4 pt-0 px-4 w-full z-10">
-            <div ref={toolBar} />
+          <div className="flex gap-2 items-center justify-between pb-4 pt-0 px-4 w-full z-10">
+            <div className="grow" ref={toolBar} />
             <Popover.Root>
               <Popover.Trigger className="bg-secondary-2 ml-auto text-white px-8 py-4">
                 Build & Simulate

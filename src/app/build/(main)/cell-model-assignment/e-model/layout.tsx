@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { extraPanelContainerAtom } from '@/state/build-section/layout';
+import { extraPanelContainerAtom, toolBarAtom } from '@/state/build-section/layout';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import {
   PanelExpanded,
@@ -28,6 +28,7 @@ export default function EModelLayout({ children }: Props) {
   const setSelectedEModel = useSetAtom(selectedEModelAtom);
   const setEModelRemoteOverridesLoaded = useSetAtom(eModelRemoteParamsLoadedAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
+  const toolBar = useAtomValue(toolBarAtom);
 
   useEffect(() => {
     // resetting the m-type selection when brain region changes
@@ -57,6 +58,17 @@ export default function EModelLayout({ children }: Props) {
       {brainRegionDetails}
 
       {children}
+
+      {!!toolBar &&
+        createPortal(
+          <button
+            className="bg-primary-8 flex gap-2 items-center justify-between ml-auto px-7 py-4 rounded-none text-white"
+            type="button"
+          >
+            Build E-Model
+          </button>,
+          toolBar
+        )}
     </>
   );
 }
