@@ -4,6 +4,9 @@ import {
   ReturnGetGenerativeQA,
   AuthorSuggestionResponse,
   JournalSuggestionResponse,
+  GenerativeQAWithoutDataResponse,
+  GenerativeQAWithDataResponse,
+  GenerativeQAServerResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
 import {
@@ -53,11 +56,18 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
 
     return {
       question,
-      response: generativeQAResponse,
-    };
+      success: response.ok,
+      ...(response.ok
+        ? {
+            data: generativeQAResponse as GenerativeQAWithDataResponse,
+          }
+        : {
+            error: (generativeQAResponse as { detail: GenerativeQAWithoutDataResponse }).detail,
+          }),
+    } as GenerativeQAServerResponse;
   } catch (error: unknown) {
     if (error instanceof LiteratureErrors.LiteratureValidationError) {
-      throw new LiteratureErrors.LiteratureValidationError(error.detail);
+      return new LiteratureErrors.LiteratureValidationError(error.detail);
     }
     throw new Error((error as Error).message);
   }
@@ -232,13 +242,6 @@ const fetchArticlesForBrainRegionAndExperiment = (
       )
     );
 };
-
-// TODO: Move to spec file
-export const createMockArticle = (title: string, doi: string, abstract: string): ArticleItem => ({
-  title,
-  doi,
-  abstract,
-});
 
 export {
   getGenerativeQA,

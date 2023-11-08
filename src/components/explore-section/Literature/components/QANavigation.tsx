@@ -16,14 +16,15 @@ import useContextualLiteratureContext from '../useContextualLiteratureContext';
 import { BrainIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
-import { GenerativeQA } from '@/types/literature';
+import { GenerativeQA, SucceededGenerativeQA } from '@/types/literature';
 
 type QAHistoryNavigationItemProps = Pick<
   GenerativeQA,
-  'id' | 'question' | 'askedAt' | 'brainRegion' | 'isNotFound' | 'extra'
-> & {
-  index: number;
-};
+  'id' | 'question' | 'askedAt' | 'brainRegion' | 'isNotFound'
+> &
+  Pick<SucceededGenerativeQA, 'extra'> & {
+    index: number;
+  };
 
 function IndicationIcon({
   title,
@@ -199,10 +200,9 @@ function QAHistoryNavigation() {
             id: qa.id,
             askedAt: qa.askedAt,
             question: qa.question,
-            articles: qa.articles,
             brainRegion: qa.brainRegion,
             isNotFound: qa.isNotFound,
-            extra: qa.extra,
+            extra: (qa as SucceededGenerativeQA).extra,
           }}
         />
       ))}
