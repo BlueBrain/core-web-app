@@ -49,10 +49,15 @@ export type GenerativeQAWithDataResponse = {
   paragraphs: string[];
   metadata: GenerativeQAMetadata[];
 };
+
 export type GenerativeQAWithoutDataResponse = {
+  code: number;
   detail: string;
 };
-export type GenerativeQAResponse = GenerativeQAWithDataResponse | GenerativeQAWithoutDataResponse;
+
+export type GenerativeQAResponse =
+  | GenerativeQAWithDataResponse
+  | { detail: GenerativeQAWithoutDataResponse };
 export type SelectedBrainRegionPerQuestion = Pick<SelectedBrainRegion, 'id' | 'title'>;
 export type BuildStepPath =
   | 'cell-composition'
@@ -60,22 +65,42 @@ export type BuildStepPath =
   | 'connectome-definition'
   | 'connectome-model-assignment';
 
-export type GenerativeQA = {
+interface BaseGenerativeQA {
   id: string;
   chatId?: string;
   askedAt: Date;
   question: string;
+  brainRegion?: SelectedBrainRegionPerQuestion;
+}
+export interface SucceededGenerativeQA extends BaseGenerativeQA {
+  isNotFound: false;
   answer: string;
   rawAnswer: string;
-  brainRegion?: SelectedBrainRegionPerQuestion;
   articles: GArticle[];
-  isNotFound: boolean;
   extra?: {
     parameter: 'Etype | MType';
     buildStep: BuildStepPath;
     DensityOrCount?: 'density' | 'count';
   };
-};
+}
+export interface FailedGenerativeQA extends BaseGenerativeQA {
+  isNotFound: true;
+  statusCode: string;
+  details: string;
+}
+
+export type GenerativeQA = SucceededGenerativeQA | FailedGenerativeQA;
+
+export type GenerativeQADTO = { question: string } & (
+  | {
+      isNotFound: false;
+      response: GenerativeQAWithDataResponse;
+    }
+  | {
+      isNotFound: true;
+      response: GenerativeQAWithoutDataResponse;
+    }
+);
 
 export type GetGenerativeQAInput = {
   session: Session | null;
@@ -88,13 +113,22 @@ export type GetGenerativeQAInput = {
   authors?: string[];
   articleTypes?: string[];
 };
-export type GenerativeQAServerResponse = {
-  question: string;
-  response: GenerativeQAResponse;
-};
+
+export type GenerativeQAServerResponse =
+  | {
+      success: true;
+      question: string;
+      data: GenerativeQAWithDataResponse;
+    }
+  | {
+      success: false;
+      question: string;
+      error: GenerativeQAWithoutDataResponse;
+    };
+
 export type ReturnGetGenerativeQA = (
   input: GetGenerativeQAInput
-) => Promise<GenerativeQAServerResponse | LiteratureErrors.LiteratureValidationError | null>;
+) => Promise<GenerativeQAServerResponse | LiteratureErrors.LiteratureValidationError>;
 
 export type JournalSuggestionResponse = {
   title: string;
@@ -174,44 +208,3 @@ export type QuestionParameters = {
   selectedAuthors: string[];
   selectedArticleTypes: string[];
 };
-
-/**
- * for now their is no way to check if the answer is acceptable or not (the backend is working on that)
- * to check if the answer is good, we have to exclude this two possible response
- * answer is in the response and it has content
- * or the raw_answer is exist and it has content
- * @param gqa server response
- * @returns if the response is considered as generative answer
- */
-export function isGenerativeQA(gqa: GenerativeQAServerResponse) {
-  if (
-    gqa &&
-    (('answer' in gqa.response && gqa.response.answer && !!gqa.response.answer.length) ||
-      ('raw_answer' in gqa.response && gqa.response.raw_answer && !!gqa.response.raw_answer.length))
-  )
-    return true;
-  return false;
-}
-
-/**
- * for now their is no way to check if the answer is acceptable or not (the backend is working on that)
- * to check if the answer is not good, we have to exclude this two possible response
- * detail is in the response
- * or the raw_answer is empty and metadata is empty
- * @param gqa server response
- * @returns if the response is considered as not generative answer
- */
-export function isGenerativeQANoFound(gqa: GenerativeQAServerResponse) {
-  if (
-    gqa &&
-    ('detail' in gqa.response ||
-      ('metadata' in gqa.response &&
-        gqa.response.metadata &&
-        !gqa.response.metadata.length &&
-        'raw_answer' in gqa.response &&
-        gqa.response.raw_answer &&
-        !gqa.response.raw_answer.length))
-  )
-    return true;
-  return false;
-}
