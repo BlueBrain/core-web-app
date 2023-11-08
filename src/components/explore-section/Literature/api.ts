@@ -8,10 +8,9 @@ import {
 import { nexus } from '@/config';
 import {
   ArticleItem,
-  ArticleListResult,
+  ArticleListingResponse,
   ExperimentDatasetCountPerBrainRegion,
 } from '@/api/explore-section/resources';
-import { createHeaders } from '@/util/utils';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
@@ -162,7 +161,10 @@ const fetchParagraphCountForBrainRegionAndExperiment = (
     {
       signal,
       method: 'POST',
-      headers: createHeaders(accessToken, { Accept: 'application/json' }),
+      headers: new Headers({
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+      }),
     }
   )
     .then((response: any) => {
@@ -184,32 +186,54 @@ const fetchArticlesForBrainRegionAndExperiment = (
   accessToken: string,
   experimentName: string,
   brainRegions: string[],
-  offset: number,
   signal: AbortSignal
-) => {
+): Promise<ArticleItem[]> => {
   if (!accessToken) throw new Error('Access token should be defined');
-  const mockRequest = new Promise<ArticleListResult>((resolve, reject) => {
-    setTimeout(() => {
-      if (signal.aborted) {
-        reject(new Error('Aborted'));
-      }
-      resolve({
-        total: 100,
-        results: [...Array(50).keys()].map((_, index) =>
-          createMockArticle(
-            `A Comparison of Neurotransmitter-Specific and Neuropeptide-Specific Neuronal Cell Types Present in the Dorsal Cortex in Turtles with Those Present in the Isocortex in Mammals: Implications for the Evolution of Isocortex; pp. 53–72 ${index}`,
-            `${index}`,
-            '… The neurons containing these substances in dor sal cortex in turtles were generally highlysimilar in morphology to their counterparts in mammalian isocortex. In contrast, neurons …'
-          )
-        ),
-        offset,
-      });
-    }, 2000);
-  });
 
-  return mockRequest;
+  const url = nexus.aiUrl;
+  const brainRegionParams = brainRegions
+    .map((name) => encodeURIComponent(name.toLowerCase()))
+    .join('&regions=');
+  const maxResults = 100;
+
+  return fetch(
+    `${url}/retrieval/article_listing?number_results=${maxResults}&topics=${encodeURIComponent(
+      experimentName
+    )}&regions=${brainRegionParams}`,
+    {
+      signal,
+      method: 'POST',
+      headers: new Headers({
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+      }),
+    }
+  )
+    .then((response: any) => {
+      if (response.ok) {
+        return response.json();
+      }
+      if (response.status === 404) {
+        return [];
+      }
+      // Other 40X errors
+      throw new Error(
+        'There was an error retrieving literature data for the selected brain regions'
+      );
+    })
+    .then((response: ArticleListingResponse) =>
+      response.map(
+        (articleResponse) =>
+          ({
+            doi: articleResponse.article_doi,
+            abstract: articleResponse.abstract,
+            title: articleResponse.article_title,
+          } as ArticleItem)
+      )
+    );
 };
 
+// TODO: Move to spec file
 export const createMockArticle = (title: string, doi: string, abstract: string): ArticleItem => ({
   title,
   doi,

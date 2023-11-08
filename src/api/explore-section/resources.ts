@@ -34,11 +34,13 @@ export type ExperimentDatasetCountPerBrainRegion = {
   experimentUrl: string;
 };
 
-export type ArticleListResult = {
-  total: number;
-  results: ArticleItem[];
-  offset: number;
-};
+export type ArticleListingResponse = {
+  article_title: string;
+  article_authors: string[];
+  article_doi: string;
+  article_id: string;
+  abstract: string;
+}[];
 
 export type ArticleItem = {
   title: string;

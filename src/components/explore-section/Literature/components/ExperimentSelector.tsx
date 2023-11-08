@@ -10,13 +10,13 @@ import {
 } from '@/constants/explore-section/experiment-types';
 
 type Props = {
-  currentExperiment: ExperimentDetail;
+  currentExperiment?: ExperimentDetail;
 };
 
 export default function ExperimentSelector({ currentExperiment }: Props) {
   const router = useRouter();
   return (
-    <>
+    <div className="flex flex-col">
       <span className="text-gray-400 text-sm">Keywords</span>
       <ConfigProvider
         theme={{
@@ -31,9 +31,10 @@ export default function ExperimentSelector({ currentExperiment }: Props) {
       >
         <Select
           aria-label="keywords"
+          placeholder="Experiment type"
           bordered={false}
-          defaultValue={currentExperiment.name}
-          value={currentExperiment.name}
+          defaultValue={currentExperiment?.name}
+          value={currentExperiment?.name}
           onChange={(experimentName) => {
             router.push(`/explore/interactive/literature/${experimentName}`);
           }}
@@ -46,6 +47,6 @@ export default function ExperimentSelector({ currentExperiment }: Props) {
           suffixIcon={<DownOutlined className="text-primary-8 text-[8px]" />}
         />
       </ConfigProvider>
-    </>
+    </div>
   );
 }

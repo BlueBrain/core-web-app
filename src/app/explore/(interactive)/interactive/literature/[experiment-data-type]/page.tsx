@@ -1,9 +1,10 @@
 'use client';
 
-import { useParams, notFound } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
+import LiteratureArticlesError from './error';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
 import { ArticleListing } from '@/components/explore-section/Literature/components/ArticlesListing';
 import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
@@ -26,7 +27,9 @@ export default function LiteratureArticleListingPage() {
     []
   );
 
-  if (!currentExperiment || visualizedBrainRegionDetails.length <= 0) return notFound();
+  if (!currentExperiment) return <LiteratureArticlesError noExperimentSelected />;
+  if (visualizedBrainRegionDetails.length <= 0)
+    return <LiteratureArticlesError noBrainRegionSelected currentExperiment={currentExperiment} />;
 
   return (
     <div className="flex">
