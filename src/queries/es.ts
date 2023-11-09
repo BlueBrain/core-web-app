@@ -434,10 +434,12 @@ export function buildESReportsQuery(simId: string, name?: string, ids?: string[]
   const query: {
     size: number;
     query: {
-      bool?: {
-        must?: { match: { [key: string]: string | string[] } }[];
+      bool: {
+        must: (
+          | { match: { [key: string]: string | string[] } }
+          | { wildcard: { [key: string]: { value: string } } }
+        )[];
       };
-      terms?: { [key: string]: string | string[] };
     };
   } = {
     size: DEFAULT_SIZE,
@@ -449,15 +451,17 @@ export function buildESReportsQuery(simId: string, name?: string, ids?: string[]
               'derivation.identifier.keyword': simId,
             },
           },
+          {
+            wildcard: {
+              name: {
+                value: name || '*',
+              },
+            },
+          },
         ],
       },
     },
-  }; // Fetch all reports beloging to simulation Id
-
-  if (name && query.query.bool?.must) {
-    query.query.bool.must.push({ match: { name } });
-    return query;
-  } // If name specified only fetch the report matching that name
+  }; // Fetch all reports beloging to simulation Id and name
 
   return query;
 }
