@@ -1,28 +1,9 @@
-import { HTMLProps, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import Spinner from '@/components/Spinner';
 import fetchArchive from '@/api/archive';
 import sessionAtom from '@/state/session';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-
-export default function DownloadButton({
-  children,
-  fetching,
-  onClick,
-}: HTMLProps<HTMLButtonElement> & { fetching: boolean }) {
-  return (
-    <div className="sticky bottom-0 flex justify-end">
-      <button
-        className="bg-primary-8 flex gap-2 items-center justify-between font-bold px-7 py-4 rounded-none text-white"
-        onClick={onClick}
-        type="button"
-      >
-        {children}
-        {fetching && <Spinner className="h-6 w-6" />}
-      </button>
-    </div>
-  );
-}
+import { Btn } from '@/components/Btn';
 
 export function ExploreDownloadButton({
   children,
@@ -34,8 +15,9 @@ export function ExploreDownloadButton({
   const [fetching, setFetching] = useState<boolean>(false);
 
   return session ? (
-    <DownloadButton
-      fetching={fetching}
+    <Btn
+      className="bg-primary-8 sticky bottom-0 ml-auto fit-content w-fit"
+      loading={fetching}
       onClick={() => {
         if (selectedRows.length) {
           setFetching(true);
@@ -51,6 +33,6 @@ export function ExploreDownloadButton({
       }}
     >
       {children}
-    </DownloadButton>
+    </Btn>
   ) : null;
 }

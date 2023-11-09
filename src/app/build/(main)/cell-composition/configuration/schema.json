@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "patternProperties": {
+    ".*": {
+      "type": "object",
+      "required": ["configuration"],
+      "properties": {
+        "configuration": {
+          "type": "object",
+          "required": ["overrides"],
+          "properties": {
+            "overrides": {
+              "id": "root",
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "type": "object",
+                  "required": ["label", "about"],
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "about": {
+                      "type": "string"
+                    },
+                    "hasPart": {
+                      "type": "object",
+                      "$ref": "root"
+                    },
+                    "composition": {
+                      "type": "object",
+                      "required": ["neuron"],
+                      "properties": {
+                        "neuron": {
+                          "type": "object",
+                          "required": ["density"],
+                          "properties": {
+                            "density": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobConfiguration": {
+          "type": "object"
+        },
+        "variantDefinition": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

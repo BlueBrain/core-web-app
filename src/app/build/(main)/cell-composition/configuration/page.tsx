@@ -1,10 +1,14 @@
 'use client';
 
-import { useCallback, useState, useMemo, ReactNode, Suspense } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useCallback, useState, useMemo, ChangeEvent, ReactNode, Suspense } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { unwrap } from 'jotai/utils';
+import { validator } from '@exodus/schemasafe';
 import { Button, Image } from 'antd';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ErrorBoundary } from 'react-error-boundary';
+import FileSaver from 'file-saver';
+import schema from './schema.json';
 import DensityChart from './DensityChart';
 import TopNavigation from '@/components/TopNavigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
@@ -14,9 +18,13 @@ import { basePath } from '@/config';
 import { switchStateType } from '@/util/common';
 import useCompositionHistory from '@/app/build/(main)/cell-composition/configuration/use-composition-history';
 import { analysedCompositionAtom, compositionAtom } from '@/state/build-composition';
+import { configPayloadAtom } from '@/state/brain-model-config/cell-composition';
+import { setCompositionPayloadConfigurationAtom } from '@/state/brain-model-config/cell-composition/extra';
 import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { OriginalCompositionUnit } from '@/types/composition/original';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
+import { Btn, FileInputBtn } from '@/components/Btn';
+import useNotification from '@/hooks/notifications';
 
 function CellPosition() {
   return (
@@ -139,6 +147,8 @@ function CellDensity() {
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
   const analysedComposition = useAtomValue(analysedCompositionAtom);
   const composition = useAtomValue(compositionAtom);
+  const compositionExport = useAtomValue(useMemo(() => unwrap(configPayloadAtom), []));
+  const setCompositionFromUpload = useSetAtom(setCompositionPayloadConfigurationAtom);
 
   const { resetComposition } = useCompositionHistory();
 
@@ -152,11 +162,58 @@ function CellDensity() {
     resetComposition();
   }, [resetComposition]);
 
+  const [uploading, setUploading] = useState(false);
+
+  const validate = useMemo(() => validator(schema), []);
+
+  const notify = useNotification();
+
+  const onUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    setUploading(true);
+
+    const { files } = event.target;
+    const newComposition = files?.[0];
+    const fileContent = await newComposition?.text();
+    const parsedFileContent = fileContent && JSON.parse(fileContent);
+
+    if (validate(parsedFileContent)) {
+      setCompositionFromUpload(parsedFileContent);
+      notify.success('The composition has been successfully updated.');
+    } else {
+      notify.error(
+        'The provided JSON did not match the format of the cell composition configuration.'
+      );
+    }
+
+    setUploading(false);
+  };
+
+  const onClickExport = () => {
+    FileSaver.saveAs(
+      new Blob([JSON.stringify(compositionExport)], { type: 'text/plain;charset=utf-8' }),
+      'cell-composition.json',
+      false
+    );
+  };
+
   return (
     <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
       <DensityChart />
-      <div className="flex justify-between align-center w-full">
+      <div className="flex justify-between items-center w-full">
         <CellDensityToolbar onReset={handleReset} />
+        <div className="flex gap-2 sticky bottom-0">
+          <FileInputBtn
+            accept="application/json"
+            className="bg-primary-7"
+            onChange={onUpload}
+            loading={uploading}
+          >
+            <strong>Import</strong> Composition Config
+          </FileInputBtn>
+          <Btn className="bg-primary-8" onClick={onClickExport}>
+            <strong>Export</strong> Composition Config
+          </Btn>
+        </div>
       </div>
     </ErrorBoundary>
   );
