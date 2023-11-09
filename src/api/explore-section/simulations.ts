@@ -95,9 +95,7 @@ export async function fetchAnalysisReports(
   return fetch(API_SEARCH, {
     method: 'POST',
     headers: createHeaders(accessToken),
-    body: JSON.stringify({
-      query: buildESReportsQuery(simulationId, name, ids),
-    }),
+    body: JSON.stringify(buildESReportsQuery(simulationId, name, ids)),
   })
     .then((response) => response.json())
     .then((data) =>
