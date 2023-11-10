@@ -1,8 +1,13 @@
 'use client';
 
 import { CloseCircleOutlined, LoadingOutlined, SendOutlined } from '@ant-design/icons';
+import kebabCase from 'lodash/kebabCase';
+import find from 'lodash/find';
+import { useAtom } from 'jotai';
 
-import useChatQAContext from '../useChatQAContext';
+import { ASKED_TIME_SEPARATOR } from '../utils/DTOs';
+import { literatureAtom, literatureResultAtom } from '@/state/literature';
+import { GenerativeQA } from '@/types/literature';
 
 type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon: React.ReactNode;
@@ -22,19 +27,70 @@ function FormButton({ icon, type, ...props }: FormButtonProps) {
 }
 
 export function GenerativeQAForm({
-  ask,
   children,
   label,
-  isPending,
 }: {
-  ask: (data: FormData) => void;
-  isPending: boolean;
   children?: React.ReactNode;
   label?: string;
 }) {
-  const { query, onValueChange, onQuestionClear } = useChatQAContext({});
+  const [QAs, updateResult] = useAtom(literatureResultAtom);
+  const [{ query, isGenerating }, updateLA] = useAtom(literatureAtom);
+
+  const onQuestionClear = () =>
+    updateLA((prev) => ({
+      ...prev,
+      query: '',
+    }));
+
+  const onValueChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) =>
+    updateLA((prev) => ({
+      ...prev,
+      query: value,
+    }));
+
+  const buildQuestionEntryBaseObject = ({
+    questionId,
+    question,
+    streamed,
+    askedAt,
+  }: {
+    questionId: string;
+    question: string;
+    streamed: boolean;
+    askedAt: Date;
+  }) => {
+    if (!find(QAs, (o) => o.id === questionId)) {
+      const newQuestion = {
+        id: questionId,
+        question,
+        answer: '',
+        streamed,
+        askedAt,
+      } as GenerativeQA;
+      updateResult((prevQAs) => [...prevQAs, newQuestion]);
+    }
+  };
+
+  const onQAFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const askedAt = new Date();
+    const question = String(formData.get('gqa-question'));
+    const questionId = `${kebabCase(question)}-${ASKED_TIME_SEPARATOR}${askedAt.getTime()}`;
+    updateLA((prev) => ({
+      ...prev,
+      isGenerating: true,
+    }));
+    buildQuestionEntryBaseObject({
+      questionId,
+      question,
+      askedAt,
+      streamed: false,
+    });
+  };
+
   return (
-    <form name="qa-form" className="w-full" action={ask}>
+    <form name="qa-form" className="w-full" onSubmit={onQAFormSubmit}>
       {label && (
         <label htmlFor="gqa-question" className="mb-8 text-base text-slate-400">
           {label}
@@ -48,15 +104,16 @@ export function GenerativeQAForm({
           autoComplete="off"
           value={query}
           onChange={onValueChange}
+          disabled={isGenerating}
           placeholder="Send your question"
           className="block w-full text-base font-semibold bg-transparent outline-none text-primary-8 placeholder:text-blue-900 placeholder:text-base placeholder:font-normal placeholder:leading-snug focus:shadow-none"
         />
         <div className="inline-flex items-center justify-center gap-2">
-          {(isPending || (query && !!query.length)) && (
+          {(isGenerating || (query && !!query.length)) && (
             <FormButton
               type="button"
               icon={
-                isPending ? (
+                isGenerating ? (
                   <LoadingOutlined className="text-base text-primary-8" />
                 ) : (
                   query &&
