@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 
@@ -8,6 +9,28 @@ import usePathname from '@/hooks/pathname';
 
 /// NOTE: make sure to remove "chatId" from the query params in the url if return back from literature to the config/interactive pages
 /// back to configuration as an example, @dinika
+
+export function useLiteratureDataSource() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams()!;
+  const allQAs = useAtomValue(literatureResultAtom);
+  const brainRegionSpecificQAs = useAtomValue(brainRegionQAs);
+  const chatId = searchParams?.get('chatId');
+  const isContextualLiterature = searchParams?.get('contextual') === 'true';
+  const isBuildSection = pathname?.startsWith('/build');
+
+  return useMemo(() => {
+    let dataSource: GenerativeQA[] = [];
+    if (isContextualLiterature) {
+      dataSource = allQAs.filter(({ chatId: questionChatId }) => questionChatId === chatId);
+    } else if (isBuildSection) {
+      dataSource = brainRegionSpecificQAs;
+    } else {
+      dataSource = allQAs;
+    }
+    return dataSource;
+  }, [chatId, allQAs, brainRegionSpecificQAs, isBuildSection, isContextualLiterature]);
+}
 
 function useContextualLiteratureContext() {
   const pathname = usePathname();
