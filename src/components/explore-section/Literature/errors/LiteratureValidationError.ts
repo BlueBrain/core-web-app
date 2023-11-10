@@ -1,17 +1,17 @@
-type CostumError = {
+type TValidationCostumError = {
   loc: string[];
   msg: string;
   type: string;
-};
+}[];
 
-class LiteratureValidationError extends Error {
-  detail: CostumError;
+class ValidationError extends Error {
+  detail: TValidationCostumError;
 
-  constructor(detail: CostumError) {
-    super(detail.msg, { cause: detail });
+  constructor(detail: TValidationCostumError) {
+    super(detail.map((item) => item.msg).join(' | '), { cause: detail });
     this.name = 'LiteratureValidationError';
     this.detail = detail;
   }
 }
 
-export default LiteratureValidationError;
+export default ValidationError;

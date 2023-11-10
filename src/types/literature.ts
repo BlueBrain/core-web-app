@@ -89,7 +89,7 @@ export interface FailedGenerativeQA extends BaseGenerativeQA {
 
 export type GenerativeQA = SucceededGenerativeQA | FailedGenerativeQA;
 
-export type GenerativeQADTO = { question: string; questionId: string } & (
+export type GenerativeQADTO = { question: string; questionId: string; askedAt: Date } & (
   | {
       isNotFound: false;
       response: GenerativeQAWithDataResponse;
