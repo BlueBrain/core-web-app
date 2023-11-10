@@ -1,4 +1,3 @@
-import kebabCase from 'lodash/kebabCase';
 import {
   FailedGenerativeQA,
   GenerativeQA,
@@ -6,11 +5,18 @@ import {
   SucceededGenerativeQA,
 } from '@/types/literature';
 
-const generativeQADTO = ({ question, response, isNotFound }: GenerativeQADTO): GenerativeQA => {
-  const askedAt = new Date();
-  const questionId = `${kebabCase(question)}-${askedAt.getTime()}`;
+export const STREAM_JSON_DATA_SEPARATOR_REGEX = /^({"answer":|{"error":)/gm;
+export const ASKED_TIME_SEPARATOR = '@time:';
+export const ANSWER_SOURCE_SEPARATOR = 'SOURCES:';
 
-  return isNotFound
+const generativeQADTO = ({
+  question,
+  response,
+  askedAt,
+  isNotFound,
+  questionId,
+}: GenerativeQADTO): GenerativeQA =>
+  isNotFound
     ? ({
         question,
         askedAt,
@@ -45,6 +51,5 @@ const generativeQADTO = ({ question, response, isNotFound }: GenerativeQADTO): G
             }))
           : [],
       } as SucceededGenerativeQA);
-};
 
 export { generativeQADTO };
