@@ -44,9 +44,9 @@ jest.mock('@/components/explore-section/Literature/api.ts', () => ({
   ),
 }));
 
-jest.mock('@/components/explore-section/Literature/actions.ts', () => ({
+jest.mock('@/components/explore-section/Literature/api.ts', () => ({
   __esModule: true,
-  getGenerativeQAAction: jest.fn(),
+  getGenerativeQA: jest.fn(),
 }));
 
 describe('GenerativeQAInput', () => {
