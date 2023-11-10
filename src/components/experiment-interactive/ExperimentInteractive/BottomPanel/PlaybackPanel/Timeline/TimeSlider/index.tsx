@@ -1,14 +1,14 @@
 import { Slider } from 'antd';
 
 import { useEffect } from 'react';
-import { useSimulationCurrentStep } from '@/state/experiment-interactive';
+import { useSimulationCurrentBiologicalTime } from '@/state/experiment-interactive';
 import { useMultiBraynsManager } from '@/services/brayns/simulations';
 import { useCurrentSimulationReport } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-report';
 import Spinner from '@/components/Spinner';
 
 export default function TimeSlider() {
   const report = useCurrentSimulationReport();
-  const [step, setStep] = useSimulationCurrentStep(report);
+  const [step, setStep] = useSimulationCurrentBiologicalTime(report);
   const manager = useMultiBraynsManager();
   useEffect(() => {
     if (!manager || !report) return;

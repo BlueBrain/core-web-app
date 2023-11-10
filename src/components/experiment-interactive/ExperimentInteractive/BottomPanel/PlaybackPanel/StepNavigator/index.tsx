@@ -1,39 +1,34 @@
-import { useCallback } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import clamp from 'lodash/clamp';
 
+import { useCurrentSimulationReport } from '../../../hooks/current-report';
 import BackwardStep from '@/components/icons/BackwardStep';
 import NumberInput from '@/components/experiment-interactive/ExperimentInteractive/NumberInput';
 import ForwardStep from '@/components/icons/ForwardStep';
-import { playbackActiveStepAtom, simulationDataAtom } from '@/state/experiment-interactive';
+import { useSimulationCurrentStep } from '@/state/experiment-interactive';
 
 export default function StepNavigator() {
-  const { stepCount } = useAtomValue(simulationDataAtom);
-  const [playbackActiveStep, setPlaybackActiveStep] = useAtom(playbackActiveStepAtom);
+  const report = useCurrentSimulationReport();
+  const [step, setStep] = useSimulationCurrentStep(report);
+  if (!report) return null;
 
-  const stepBackwards = useCallback(
-    () => setPlaybackActiveStep((prev) => (prev > 0 ? prev - 1 : prev)),
-    [setPlaybackActiveStep]
-  );
-
-  const stepForward = useCallback(
-    () => setPlaybackActiveStep((prev) => (prev < stepCount ? prev + 1 : prev)),
-    [setPlaybackActiveStep, stepCount]
-  );
-
+  const lastStep = Math.floor((report.end - report.start) / report.delta);
+  const stepBackwards = () => setStep(Math.max(0, step - 1));
+  const stepForward = () => setStep(Math.min(lastStep, step + 1));
   return (
     <div className="inline-flex items-center gap-3 flex">
       <button type="button" onClick={stepBackwards}>
         <BackwardStep />
       </button>
-      <div>
+      <div className="whitespace-nowrap">
         <NumberInput
-          value={playbackActiveStep}
+          value={step}
           className="font-bold"
-          onChange={(value) => (value <= stepCount ? setPlaybackActiveStep(value) : null)}
+          onChange={(value) => setStep(clamp(value, 0, lastStep))}
+          size={6}
           min={0}
-          max={stepCount}
+          max={lastStep}
         />
-        / {stepCount}
+        / {lastStep}
       </div>
       <button type="button" onClick={stepForward}>
         <ForwardStep />

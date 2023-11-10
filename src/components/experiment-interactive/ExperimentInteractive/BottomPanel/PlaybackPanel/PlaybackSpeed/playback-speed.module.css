@@ -1,0 +1,9 @@
+.playbackSpeed > :global(.ant-select) > :global(.ant-select-selector),
+.playbackSpeed > :global(.ant-select) :global(.ant-select-arrow),
+.playbackSpeed > :global(.ant-select) :global(.ant-select-selection-item) {
+  color: #fffe;
+}
+
+.playbackSpeed > :global(.ant-select.ant-select-borderless) {
+  border: 1px solid #fff7;
+}

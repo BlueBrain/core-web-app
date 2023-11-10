@@ -64,7 +64,7 @@ export default function NumberInput({
   return (
     <div
       className={classNames(
-        'text-white/50 border border-white/20 inline-flex flex flex-row px-1 gap-1',
+        'text-white/50 border border-white/20 inline-flex flex flex-row px-1 gap-2',
         className
       )}
     >
@@ -84,6 +84,7 @@ export default function NumberInput({
             acceptValueChange();
           }
         }}
+        disabled={!onChange}
       />
       {unit}
     </div>

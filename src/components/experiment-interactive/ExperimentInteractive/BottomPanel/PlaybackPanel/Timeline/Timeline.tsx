@@ -7,7 +7,7 @@ export default function Timeline({ disabled = false }: { disabled: boolean }) {
   return (
     <div
       className={classNames(
-        'w-8/12 transition-all duration-500',
+        'w-8/12 transition-all duration-500 grow',
         disabled && 'pointer-events-none opacity-60 grayscale'
       )}
     >
