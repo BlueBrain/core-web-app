@@ -1,6 +1,3 @@
-import { Session } from 'next-auth';
-
-import * as LiteratureErrors from '../components/explore-section/Literature/errors';
 import { Filter, GteLteValue } from '@/components/Filter/types';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 
@@ -65,12 +62,13 @@ export type BuildStepPath =
   | 'connectome-definition'
   | 'connectome-model-assignment';
 
-interface BaseGenerativeQA {
+export interface BaseGenerativeQA {
   id: string;
   chatId?: string;
   askedAt: Date;
   question: string;
   brainRegion?: SelectedBrainRegionPerQuestion;
+  streamed: boolean;
 }
 export interface SucceededGenerativeQA extends BaseGenerativeQA {
   isNotFound: false;
@@ -91,7 +89,7 @@ export interface FailedGenerativeQA extends BaseGenerativeQA {
 
 export type GenerativeQA = SucceededGenerativeQA | FailedGenerativeQA;
 
-export type GenerativeQADTO = { question: string } & (
+export type GenerativeQADTO = { question: string; questionId: string } & (
   | {
       isNotFound: false;
       response: GenerativeQAWithDataResponse;
@@ -103,7 +101,6 @@ export type GenerativeQADTO = { question: string } & (
 );
 
 export type GetGenerativeQAInput = {
-  session: Session | null;
   question: string;
   size?: number;
   keywords?: string[];
@@ -126,9 +123,7 @@ export type GenerativeQAServerResponse =
       error: GenerativeQAWithoutDataResponse;
     };
 
-export type ReturnGetGenerativeQA = (
-  input: GetGenerativeQAInput
-) => Promise<GenerativeQAServerResponse | LiteratureErrors.LiteratureValidationError>;
+export type ReturnGetGenerativeQA = (input: GetGenerativeQAInput) => Promise<Response | Error>;
 
 export type JournalSuggestionResponse = {
   title: string;

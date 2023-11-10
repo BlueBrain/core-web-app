@@ -1,7 +1,9 @@
 import { atom, useAtom, useSetAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
+import { atomWithDefault, atomWithStorage } from 'jotai/utils';
 
 import isNil from 'lodash/isNil';
+import isArray from 'lodash/isArray';
+
 import startCase from 'lodash/startCase';
 import { selectedBrainRegionAtom } from '../brain-regions';
 import {
@@ -26,6 +28,7 @@ export type LiteratureAtom = {
   isFilterPanelOpen: boolean;
   filterValues: FilterValues | null;
   activeQuestionId?: string;
+  isGenerating: boolean;
 };
 
 export type LiteratureOptions = keyof LiteratureAtom;
@@ -36,11 +39,16 @@ const literatureAtom = atom<LiteratureAtom>({
   showOnlyBrainRegionQuestions: false,
   isFilterPanelOpen: false,
   filterValues: null,
+  isGenerating: false,
 });
 
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
 
-const literatureResultAtom = atomWithStorage<GenerativeQA[]>(GENERATIVE_QA_HISTORY_CACHE_KEY, []);
+const permanantLiteratureResultAtom = atomWithStorage<GenerativeQA[]>(
+  GENERATIVE_QA_HISTORY_CACHE_KEY,
+  []
+);
+const literatureResultAtom = atomWithDefault((get) => get(permanantLiteratureResultAtom));
 const contextualLiteratureAtom = atom<ContextualLiteratureAtom>({});
 
 function useLiteratureAtom() {
@@ -70,8 +78,9 @@ export function useLiteratureFilter() {
 export function useLiteratureResultsAtom() {
   const [QAs, updateResult] = useAtom(literatureResultAtom);
 
-  const update = (newValue: GenerativeQA) => {
-    updateResult([...QAs, newValue]);
+  // accept batch update
+  const update = (newValue: GenerativeQA | Array<GenerativeQA>) => {
+    updateResult([...QAs, ...(isArray(newValue) ? newValue : [newValue])]);
   };
 
   const remove = (id: string) => {
@@ -82,6 +91,24 @@ export function useLiteratureResultsAtom() {
   };
 
   return { QAs, update, remove };
+}
+
+export function usePermanantLiteratureResultsAtom() {
+  const [PQAs, updateResult] = useAtom(permanantLiteratureResultAtom);
+
+  // accept batch update
+  const update = (newValue: GenerativeQA | Array<GenerativeQA>) => {
+    updateResult([...PQAs, ...(isArray(newValue) ? newValue : [newValue])]);
+  };
+
+  const remove = (id: string) => {
+    const newQAs = PQAs.filter((item) => item.id !== id);
+    updateResult(newQAs);
+
+    return newQAs;
+  };
+
+  return { PQAs, update, remove };
 }
 
 const brainRegionQAs = atom((get) => {
