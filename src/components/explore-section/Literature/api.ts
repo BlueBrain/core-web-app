@@ -1,12 +1,7 @@
-import * as LiteratureErrors from './errors';
 import {
-  GenerativeQAResponse,
   ReturnGetGenerativeQA,
   AuthorSuggestionResponse,
   JournalSuggestionResponse,
-  GenerativeQAWithoutDataResponse,
-  GenerativeQAWithDataResponse,
-  GenerativeQAServerResponse,
 } from '@/types/literature';
 import { nexus } from '@/config';
 import {
@@ -17,7 +12,6 @@ import {
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
-  session,
   keywords,
   fromDate,
   endDate,
@@ -40,35 +34,21 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
     }
 
     const urlQueryParams = params.toString().length > 0 ? `?${params.toString()}` : '';
-    const url = `${nexus.aiUrl}/qa/generative${urlQueryParams}`;
+    const url = `${nexus.aiUrl}/qa/streamed_generative${urlQueryParams}`;
     const response = await fetch(url, {
       method: 'POST',
       headers: new Headers({
-        accept: 'application/json',
+        accept: 'text/event-stream',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${session?.accessToken}`,
+        'cache-control': 'no-cache',
       }),
       body: JSON.stringify({
         query: question,
       }),
     });
-    const generativeQAResponse = (await response.json()) as GenerativeQAResponse;
 
-    return {
-      question,
-      success: response.ok,
-      ...(response.ok
-        ? {
-            data: generativeQAResponse as GenerativeQAWithDataResponse,
-          }
-        : {
-            error: (generativeQAResponse as { detail: GenerativeQAWithoutDataResponse }).detail,
-          }),
-    } as GenerativeQAServerResponse;
+    return response;
   } catch (error: unknown) {
-    if (error instanceof LiteratureErrors.LiteratureValidationError) {
-      return new LiteratureErrors.LiteratureValidationError(error.detail);
-    }
     throw new Error((error as Error).message);
   }
 };
