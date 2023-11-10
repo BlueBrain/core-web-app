@@ -91,7 +91,7 @@ function QAHistoryNavigationItem({
       onClick={onClick}
       className={classNames(
         'relative inline-flex items-center w-full pl-16 py-4 pr-2 list-none gqa-nav-item text-neutral-8 hover:bg-gray-50 rounded-r-sm group cursor-pointer',
-        isDeleting && 'bg-gray-100 overflow-hidden py-4 animate-slide-out'
+        isDeleting && 'bg-gray-100 overflow-hidden py-4 animate-scale-down'
       )}
     >
       {isActive && (
