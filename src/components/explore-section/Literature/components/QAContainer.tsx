@@ -1,12 +1,13 @@
 'use client';
 
-import useContextualLiteratureContext from '../useContextualLiteratureContext';
 import QAInteractive from './QAInteractive';
 import QALeftPanel from './QALeftPanel';
 import { classNames } from '@/util/utils';
+import usePathname from '@/hooks/pathname';
 
 function QAContainer() {
-  const { isBuildSection } = useContextualLiteratureContext();
+  const pathname = usePathname();
+  const isBuildSection = pathname?.startsWith('/build');
 
   return (
     <div
