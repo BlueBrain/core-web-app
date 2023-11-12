@@ -38,6 +38,7 @@ export const EXPLORE_NAVIGATION_LIST: Array<NavigationItemProps> = [
   },
 ];
 
+
 export function DetailsPageSideBackLink() {
   const pathName = usePathname();
 
