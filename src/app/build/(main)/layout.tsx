@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
-import BrainConfigPanel from '@/components/BrainConfigPanel';
+import BuildSideBar from '@/components/BrainConfigPanel/BuildSideBar';
 import useBrainModelConfigState from '@/hooks/brain-model-config';
 import TopTabs from '@/components/TopTabs';
 import useAuth from '@/hooks/auth';
@@ -39,7 +39,7 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
     <div className={styles.container}>
       <div className={styles.brainConfigSelectorContainer}>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <BrainConfigPanel baseHref="/build/cell-composition/interactive" />
+          <BuildSideBar baseHref="/build/cell-composition/interactive" />
         </ErrorBoundary>
       </div>
 
