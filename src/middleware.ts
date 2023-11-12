@@ -11,6 +11,7 @@ export async function middleware(request: NextRequest) {
   if (sessionValid && requestUrl === '/') {
     const url = request.nextUrl.clone();
     url.pathname = '/main';
+    
     return NextResponse.redirect(url);
   }
   // if the user is not authenticated at all
