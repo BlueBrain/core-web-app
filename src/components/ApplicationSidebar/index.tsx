@@ -1,5 +1,3 @@
-'use client';
-
 import { useReducer, useRef } from 'react';
 import { Button } from 'antd';
 import kebabCase from 'lodash/kebabCase';
