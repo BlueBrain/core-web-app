@@ -2,6 +2,7 @@ import { ComponentType } from 'react';
 import { signIn } from 'next-auth/react';
 import { kebabCase } from 'lodash/fp';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { classNames } from '@/util/utils';
 
@@ -11,7 +12,7 @@ interface BaseEntrypointMenuItem {
   bgcolor: string;
 }
 interface EntrypointMenuItemAsButton extends BaseEntrypointMenuItem {
-  action?: () => any;
+  action?: (input: any) => any;
 }
 interface EntrypointMenuItemAsLink extends BaseEntrypointMenuItem {
   href: string;
@@ -35,7 +36,7 @@ const ENTRYPOINT_MENU_ITEMS: Array<TEntrypointMenuItem> = [
     title: 'Login',
     description: 'Get access to all your models & experiments',
     bgcolor: 'bg-primary-7',
-    action: () => signIn('keycloak', { callbackUrl: '/main' }),
+    action: (callbackUrl: string) => signIn('keycloak', { callbackUrl: callbackUrl ?? '/main' }),
   },
   {
     title: 'Sign-up',
@@ -49,9 +50,13 @@ function withButtonOrLink(WrapperComponent: ComponentType<TEntrypointMenuItem>) 
   // eslint-disable-next-line react/display-name
   return function Action({ bgcolor, description, title, ...rest }: TEntrypointMenuItem) {
     const key = kebabCase(`${title}-${description}`);
+    const params = useSearchParams();
     if ('action' in rest && rest.action) {
+      const origin = params?.get('origin');
+      const callbackUrl = origin ? decodeURIComponent(origin) : '/main';
+      const onClick = () => () => rest.action?.(callbackUrl);
       return (
-        <button key={key} type="button" aria-label={title} onClick={rest.action}>
+        <button key={key} type="button" aria-label={title} onClick={onClick()}>
           <WrapperComponent {...{ bgcolor, description, title }} />
         </button>
       );

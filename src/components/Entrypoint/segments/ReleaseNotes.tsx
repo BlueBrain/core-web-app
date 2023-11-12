@@ -69,7 +69,7 @@ function ReleaseNote({
 
 export default function ReleaseNotes() {
   return (
-    <div className="flex flex-col w-full relative mt-auto px-7 z-20">
+    <div className="flex flex-col w-full relative mt-auto z-20">
       <div className="inline-flex flex-row items-center justify-between w-full mb-4">
         <h2 className="font-bold text-lg text-white select-none">Release notes</h2>
         <Link
@@ -82,9 +82,9 @@ export default function ReleaseNotes() {
         </Link>
       </div>
       <div className="grid grid-flow-col items-stretch justify-between gap-2">
-        {RELEASE_NOTES_SAMPLE.map(({ image, release, seeable, title }) => (
+        {RELEASE_NOTES_SAMPLE.map(({ image, release, seeable, title }, ind) => (
           <ReleaseNote
-            key={kebabCase(`${release}-${title}`)}
+            key={kebabCase(`${release}-${title}-${ind}`)}
             {...{ image, release, seeable, title }}
           />
         ))}

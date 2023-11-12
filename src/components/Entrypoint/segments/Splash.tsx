@@ -1,11 +1,12 @@
 import { basePath } from '@/config';
+import { classNames } from '@/util/utils';
 
 function Background() {
   return (
     <div className="absolute inset-0 bg-primary-9 flex flex-col items-center justify-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        fetchPriority='high'
+        fetchPriority="high"
         src={`${basePath}/images/obp_fullbrain.png`}
         alt="Open Brain Platform Full Brain"
         className="max-w-[42%] h-auto mb-[76px]"
@@ -22,10 +23,15 @@ function HeroText() {
   );
 }
 
-function OBPLogo() {
+function OBPLogo({ color = 'text-white' }: { color?: string }) {
   return (
     <div className="absolute top-7 left-7 z-20 pr-2 ">
-      <h1 className="whitespace-pre-line text-left text-[2.4rem] leading-[90.5%] text-white font-extrabold uppercase p-1">{`Open\nBrain\nPlatform`}</h1>
+      <h1
+        className={classNames(
+          'whitespace-pre-line text-left text-[2.4rem] leading-[90.5%] font-extrabold uppercase p-1',
+          color
+        )}
+      >{`Open\nBrain\nPlatform`}</h1>
     </div>
   );
 }
