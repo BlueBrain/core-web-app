@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducer } from 'react';
+import { useReducer, useRef } from 'react';
 import { Button } from 'antd';
 import kebabCase from 'lodash/kebabCase';
 import Icon, {
@@ -16,6 +16,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
 import Link from '@/components/Link';
+import useOnClickOutside from '@/hooks/useOnClickOutside';
 
 type TDefaulNavigation = {
   title: string;
@@ -234,11 +235,17 @@ export default function ApplicationSidebar({
   account = DefaultAccountPanel,
   navigation = AppNavigation,
 }: ApplicationSidebarProps) {
+  const ref = useRef(null);
   const pathname = usePathname();
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
 
+  useOnClickOutside(ref, () => {
+    if (expanded) toggleExpand();
+  });
+
   return (
     <div
+      ref={ref}
       className={classNames(
         'h-screen transition-transform ease-in-out bg-primary-9 text-light',
         pathname?.includes('/explore/literature') ? 'fixed top-0 z-50' : 'relative',
