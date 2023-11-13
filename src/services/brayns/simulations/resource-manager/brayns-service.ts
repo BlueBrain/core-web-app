@@ -2,6 +2,7 @@ import ImageStream from '../../common/image-stream';
 import JsonRpc from '../../common/json-rpc';
 import Settings from '../../common/settings';
 import { Vector3 } from '../../common/utils/calc';
+import { DEFAULT_SIMULATION_COLORRAMP } from '../settings';
 import { BraynsSimulationOptions } from '../types';
 import BackendService from './backend-service';
 import { findSimulationProperties } from './find-simulation-properties';
@@ -95,6 +96,13 @@ export default class BraynsService {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { model_id } = model; // Brayns uses snake-case.
     await service.exec('enable-simulation', { enabled: true, model_id });
+    await service.exec('set-color-ramp', {
+      id: model_id,
+      color_ramp: {
+        colors: DEFAULT_SIMULATION_COLORRAMP,
+        range: [-80, -10],
+      },
+    });
     const params = await service.exec('get-simulation-parameters');
     assertType<{
       current?: number;
