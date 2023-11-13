@@ -102,7 +102,7 @@ export default function ExperimentAnalyses() {
                 style={{ width: 150 }}
                 placeholder="Search"
                 size="middle"
-                onChange={(v) => setSearch(v.currentTarget.value)}
+                onChange={(v) => setSearch(v.currentTarget.value.toLocaleLowerCase())}
                 allowClear
               />
               <button
@@ -241,7 +241,7 @@ function useFetchSimCampaign() {
 function AnalysisCard({ analysis }: { analysis: Analysis }) {
   const [showDetails, setShowDetails] = useState(false);
   return (
-    <div className="border rounded-lg p-4 bg-white shadow-md">
+    <div className="border rounded-lg p-4 bg-white shadow-md self-start">
       <h3 className="text-xl font-semibold mb-4">
         <span className="mr-2 text-primary-8">
           <LineChartOutlined style={{ fontSize: '16px', color: '#1890ff' }} />
@@ -249,7 +249,7 @@ function AnalysisCard({ analysis }: { analysis: Analysis }) {
         {analysis.name}
       </h3>
 
-      <div className="mt-2 text-sm text-gray-700">
+      <div className="mt-2 text-sm text-gray-700 min-h-[25px]">
         <p>{analysis.description}</p>
       </div>
 

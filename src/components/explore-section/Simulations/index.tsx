@@ -67,8 +67,9 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
               ...analyses.map((a) => ({ label: a.name, value: a['@id'] })),
             ]}
           />
-          <Link href={`${path}/experiment-analysis`}>
-            <PlusOutlined className="text-2xl ml-2 translate-y-[2px]" />
+          <Link href={`${path}/experiment-analysis`} className="ml-3 font-light text-primary-8">
+            Register new analysis
+            <PlusOutlined className="text-2xl ml-2 translate-y-[2px] border border-gray-200 " />
           </Link>
         </div>
       </div>
