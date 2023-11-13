@@ -1,3 +1,5 @@
+'use client';
+
 import { useReducer } from 'react';
 import { Button } from 'antd';
 import kebabCase from 'lodash/kebabCase';
@@ -37,6 +39,13 @@ type ApplicationSidebarProps = {
   navigation?: ({ expanded }: P) => React.ReactNode;
 };
 
+export type NavigationItemProps = {
+  name: string;
+  description: string;
+  url: string;
+  bgcolor: string;
+};
+
 const DEFAULT_NAVIGATION: Array<TDefaulNavigation> = [
   {
     title: 'Home',
@@ -64,7 +73,29 @@ const DEFAULT_NAVIGATION: Array<TDefaulNavigation> = [
   },
 ];
 
-function DefaultNavigationItem({
+export function NavigationItem({ url, name, description, bgcolor }: NavigationItemProps) {
+  return (
+    <li
+      key={url}
+      className={classNames(
+        'flex mx-auto p-4 cursor-pointer relative w-full hover:bg-primary-7',
+        bgcolor
+      )}
+    >
+      <Link href={url} className="w-full mx-auto">
+        <h1 className="text-xl font-bold text-white">{name}</h1>
+        <p
+          title={description}
+          className="select-none mt-1 text-left font-thin text-sm line-clamp-1 text-primary-4"
+        >
+          {description}
+        </p>
+      </Link>
+    </li>
+  );
+}
+
+function AppNavigationItem({
   expanded,
   title,
   bgcolor,
@@ -94,7 +125,7 @@ function DefaultNavigationItem({
   );
 }
 
-function DefaultNavigation({ expanded }: { expanded: boolean }) {
+function AppNavigation({ expanded }: { expanded: boolean }) {
   return (
     <div
       className={classNames(
@@ -103,7 +134,7 @@ function DefaultNavigation({ expanded }: { expanded: boolean }) {
       )}
     >
       {DEFAULT_NAVIGATION.map(({ title, url, icon, bgcolor, showIconOnCollapse }) => (
-        <DefaultNavigationItem
+        <AppNavigationItem
           key={kebabCase(`${title}${url}`)}
           {...{ expanded, title, url, icon, bgcolor, showIconOnCollapse }}
         />
@@ -112,7 +143,7 @@ function DefaultNavigation({ expanded }: { expanded: boolean }) {
   );
 }
 
-function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
+export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
   const { data } = useSession();
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
   const logout = () => signOut({ callbackUrl: '/' });
@@ -201,7 +232,7 @@ export default function ApplicationSidebar({
   title,
   control,
   account = DefaultAccountPanel,
-  navigation = DefaultNavigation,
+  navigation = AppNavigation,
 }: ApplicationSidebarProps) {
   const pathname = usePathname();
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
@@ -209,8 +240,13 @@ export default function ApplicationSidebar({
   return (
     <div
       className={classNames(
+<<<<<<< HEAD
         'h-screen transition-transform ease-in-out bg-primary-9 text-light',
         pathname?.includes('/explore/literature') ? 'fixed top-0 z-50' : 'relative',
+=======
+        'h-screen transition-transform ease-in-out bg-primary-9 text-light relative z-20',
+        pathname?.includes('/explore/literature') && 'fixed top-0 z-50',
+>>>>>>> 9954e772 (134-1076/refactor: application sidebar)
         expanded
           ? 'px-5 w-80 flex flex-col items-start justify-start shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
           : 'w-10 flex flex-col items-center justify-between transition-transform ease-in-out will-change-auto'
