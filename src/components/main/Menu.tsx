@@ -1,4 +1,8 @@
-import { useReducer } from 'react';
+import { useReducer, useRef } from 'react';
+
+import ExploreMainMenu from './ExploreMainMenu';
+import BuildMainMenu from './BuildMainMenu';
+import SimulateMainMenu from './SimulateMainMenu';
 import { classNames } from '@/util/utils';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 

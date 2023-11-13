@@ -6,6 +6,7 @@ import ApplicationSidebar, {
   NavigationItemProps,
 } from '../ApplicationSidebar';
 import { OBPLogo } from '../Entrypoint/segments/Splash';
+import MainMenu from './Menu';
 import { classNames } from '@/util/utils';
 
 function MainSideBarHeader({ expanded }: { expanded: boolean }) {
@@ -55,7 +56,7 @@ export default function Main() {
         <DefaultAccountPanel expanded />
       </div>
       <div className="absolute h-[calc(100vh-56px)] top-7 right-7 flex justify-end w-[calc(100%-3rem)] ml-auto">
-        <div />
+        <MainMenu />
       </div>
     </div>
   );
