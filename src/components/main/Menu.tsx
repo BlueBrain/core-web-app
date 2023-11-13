@@ -4,6 +4,10 @@ import ExploreMainMenu from './ExploreMainMenu';
 import BuildMainMenu from './BuildMainMenu';
 import SimulateMainMenu from './SimulateMainMenu';
 import { classNames } from '@/util/utils';
+<<<<<<< HEAD
+=======
+import useOnClickOutside from '@/hooks/useOnClickOutside';
+>>>>>>> 3c6817ba (134-1076/update: add Build main menu)
 
 type Empty = '';
 type MainMenuListKey = Empty | 'main-explore-entry' | 'main-build-entry' | 'main-simulate-entry';
@@ -53,7 +57,7 @@ function MainMenuItem({ id, title, description, bgcolor, selected, onSelect }: M
       className={classNames(
         'py-4 px-5 hover:bg-white text-left group flex-1 basis-1/3',
         bgcolor,
-        selected && 'bg-white'
+        selected && 'bg-white shadow-lg'
       )}
     >
       <h3
@@ -76,22 +80,41 @@ function MainMenuItem({ id, title, description, bgcolor, selected, onSelect }: M
   );
 }
 
-const renderedMainMenuDetails = (id: MainMenuListKey) => {
-  const menuItem = MAIN_MENU_LIST.find((compo) => compo.id === id);
+function RenderedMainMenuDetails({
+  id,
+  onDeselect,
+}: {
+  id: MainMenuListKey;
+  onDeselect: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const menuItem = MAIN_MENU_LIST.find((comp) => comp.id === id);
+
+  useOnClickOutside(ref, onDeselect);
 
   if (menuItem) {
     const { Component } = menuItem;
-    return <Component />;
+    return (
+      <div
+        className="relative w-full mt-1 transition-all will-change-contents duration-300 ease-in-out"
+        ref={ref}
+      >
+        <Component />
+      </div>
+    );
   }
+
   return null;
-};
+}
 
 export default function MainMenu() {
-  const [selectedSubmenu, setSelectedSubmenu] = useReducer(
-    (state: string, value: MainMenuListKey) => value,
+  const [selectedSubmenuId, setSelectedSubmenu] = useReducer(
+    (_: string, value: MainMenuListKey) => value,
     ''
   );
+
   const onSelect = (id: MainMenuListKey) => () => setSelectedSubmenu(id);
+  const onDeselect = () => setSelectedSubmenu('');
 
   return (
     <div className="flex flex-col justify-between gap-px items-stretch w-2/3">
@@ -105,14 +128,18 @@ export default function MainMenu() {
               description,
               bgcolor,
               onSelect,
-              selected: selectedSubmenu === id,
+              selected: selectedSubmenuId === id,
             }}
           />
         ))}
       </div>
-      <div className="relative w-full mt-1 transition-all will-change-contents duration-300 ease-in-out">
-        {renderedMainMenuDetails(selectedSubmenu)}
-      </div>
+
+      <RenderedMainMenuDetails
+        {...{
+          onDeselect,
+          id: selectedSubmenuId,
+        }}
+      />
     </div>
   );
 }
