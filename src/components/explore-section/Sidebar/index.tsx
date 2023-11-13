@@ -5,16 +5,12 @@ import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
 import Link from '@/components/Link';
-import ApplicationSidebar from '@/components/ApplicationSidebar';
+import ApplicationSidebar, {
+  NavigationItem,
+  NavigationItemProps,
+} from '@/components/ApplicationSidebar';
 
-export type ExploreNav = {
-  name: string;
-  description: string;
-  url: string;
-  bgcolor: string;
-};
-
-export const EXPLORE_NAVIGATION_LIST: Array<ExploreNav> = [
+export const EXPLORE_NAVIGATION_LIST: Array<NavigationItemProps> = [
   {
     name: 'Interactive exploration',
     description:
@@ -67,28 +63,6 @@ export function DetailsPageSideBackLink() {
   ) : null;
 }
 
-function ExploreNavigationItem({ url, name, description, bgcolor }: ExploreNav) {
-  return (
-    <li
-      key={url}
-      className={classNames(
-        'flex mx-auto p-4 cursor-pointer relative w-full hover:bg-primary-7',
-        bgcolor
-      )}
-    >
-      <Link href={url} className="w-full mx-auto">
-        <h1 className="text-xl font-bold text-white">{name}</h1>
-        <p
-          title={description}
-          className="select-none mt-1 text-left font-thin text-sm line-clamp-1 text-primary-4"
-        >
-          {description}
-        </p>
-      </Link>
-    </li>
-  );
-}
-
 function ExploreNavigation({ expanded }: { expanded: boolean }) {
   return (
     <ul
@@ -98,7 +72,7 @@ function ExploreNavigation({ expanded }: { expanded: boolean }) {
       )}
     >
       {EXPLORE_NAVIGATION_LIST.map(({ name, url, description, bgcolor }) => (
-        <ExploreNavigationItem key={url} {...{ name, url, description, bgcolor }} />
+        <NavigationItem key={url} {...{ name, url, description, bgcolor }} />
       ))}
     </ul>
   );
