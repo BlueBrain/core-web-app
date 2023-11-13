@@ -51,11 +51,15 @@ type MTypeEntryProps = {
 
 export function MTypeEntry({ name, onExpand, isExpanded }: MTypeEntryProps) {
   return (
-    <div className="flex justify-between w-full py-2 text-primary-1">
+    <button
+      onClick={onExpand}
+      type="button"
+      className="flex justify-between w-full py-2 text-primary-1"
+    >
       <div className="font-bold ">{name}</div>
-      <button onClick={onExpand} type="button" className="bg-none border-none mr-6">
+      <div className="bg-none border-none mr-6">
         {isExpanded ? <DownOutlined /> : <RightOutlined />}
-      </button>
-    </div>
+      </div>
+    </button>
   );
 }
