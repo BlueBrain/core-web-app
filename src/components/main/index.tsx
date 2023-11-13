@@ -9,6 +9,7 @@ import { OBPLogo } from '../Entrypoint/segments/Splash';
 import MainMenu from './Menu';
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
+import MainMenu from './Menu';
 
 function MainSideBarHeader({ expanded }: { expanded: boolean }) {
   return expanded ? <span>OBP</span> : <span>Menu</span>;
