@@ -1,3 +1,5 @@
-export default function Main() {
-  return <div>page</div>;
+import Main from '@/components/main';
+
+export default function MainPage() {
+  return <Main />;
 }
