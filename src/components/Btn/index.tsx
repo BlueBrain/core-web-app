@@ -8,7 +8,8 @@ export function Btn({
   className,
   loading,
   onClick,
-}: HTMLProps<HTMLButtonElement> & { loading?: boolean }) {
+  ariaLabel,
+}: HTMLProps<HTMLButtonElement> & { loading?: boolean; ariaLabel?: string }) {
   return (
     <button
       className={classNames(
@@ -17,6 +18,7 @@ export function Btn({
       )}
       onClick={onClick}
       type="button"
+      aria-label={ariaLabel}
     >
       {children}
       {loading && (

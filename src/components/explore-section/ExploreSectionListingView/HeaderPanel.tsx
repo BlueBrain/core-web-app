@@ -24,9 +24,12 @@ function HeaderPanel({
   return (
     <div className="flex justify-between pl-5 w-full">
       <div className="text-primary-9 text-2xl font-bold flex-auto">
-        <h1 className="flex items-baseline">
+        <h1 className="flex items-baseline" aria-label="listing-view-title">
           {title}
-          <small className="flex gap-1 text-sm whitespace-pre font-thin text-slate-400 pl-2">
+          <small
+            className="flex gap-1 text-sm whitespace-pre font-thin text-slate-400 pl-2"
+            aria-label="listing-view-total"
+          >
             <span>Total:</span>
             <span>
               {total || total === 0 ? (

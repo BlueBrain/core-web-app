@@ -12,14 +12,20 @@ const customJestConfig = {
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   moduleDirectories: ['node_modules', '<rootDir>/'],
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: './test.environment.js',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     'deepdash-es': '<rootDir>/global.mock.js', // deepdash-es is mocked because jest is not able to resolve the module. (see - https://github.com/YuriGor/deepdash/issues/133)
+    morphoviewer: '<rootDir>/global.mock.js',
+    d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
+    '^d3-(.*)$': '<rootDir>/node_modules/d3-$1/dist/d3-$1.min.js',
   },
-  testPathIgnorePatterns: ['__tests__/__utils__'],
+  testPathIgnorePatterns: ['__tests__/__utils__', '__tests__/__server__/*'],
   setupFiles: ['./global.mock.js'],
   setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'], // Provides utilities for expectations like "toBeInTheDocument"/,
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

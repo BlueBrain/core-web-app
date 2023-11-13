@@ -34,9 +34,16 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
     >
       {items?.map(({ content, display, label, toggleFunc }) => {
         const displayTrigger = display ? (
-          <EyeOutlined onClick={toggleFunc} style={{ color: 'white' }} />
+          <button type="button" aria-label="filter-panel-hide-field-button" onClick={toggleFunc}>
+            <EyeOutlined style={{ color: 'white' }} />
+          </button>
         ) : (
-          <EyeInvisibleOutlined onClick={toggleFunc} style={{ color: '#69C0FF' }} />
+          <button type="button" aria-label="filter-panel-show-field-button" onClick={toggleFunc}>
+            <EyeInvisibleOutlined
+              style={{ color: '#69C0FF' }}
+              aria-label="filter-panel-show-field-button"
+            />
+          </button>
         );
 
         return content ? (

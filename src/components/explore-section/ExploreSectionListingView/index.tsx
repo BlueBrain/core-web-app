@@ -55,7 +55,11 @@ export default function DefaultListView({
   );
 
   return (
-    <div className="min-h-screen" style={{ background: '#d1d1d1' }}>
+    <div
+      className="min-h-screen"
+      style={{ background: '#d1d1d1' }}
+      data-testid="explore-section-listing-view"
+    >
       <WithControlPanel
         experimentTypeName={experimentTypeName}
         brainRegionSource={brainRegionSource}
@@ -82,7 +86,11 @@ export default function DefaultListView({
                   }
                 />
               </button>
-              <button onClick={() => setViewMode('card')} type="button">
+              <button
+                onClick={() => setViewMode('card')}
+                type="button"
+                aria-label="card-view-button"
+              >
                 <InsertRowAboveOutlined
                   className={
                     viewMode === 'card' ? 'bg-primary-7 p-1 text-neutral-1' : 'text-neutral-3 p-1'

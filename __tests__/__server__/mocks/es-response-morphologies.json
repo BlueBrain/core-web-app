@@ -1,0 +1,963 @@
+{
+  "aggregations": {
+    "contributors": {
+      "buckets": [
+        {
+          "doc_count": 733,
+          "key": "https://www.grid.ac/institutes/grid.443970.d",
+          "label": {
+            "buckets": [
+              {
+                "doc_count": 733,
+                "key": "Janelia Research Campus"
+              }
+            ],
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0
+          }
+        },
+        {
+          "doc_count": 368,
+          "key": "https://www.grid.ac/institutes/grid.263826.b",
+          "label": {
+            "buckets": [
+              {
+                "doc_count": 368,
+                "key": "Southeast University"
+              }
+            ],
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0
+          }
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "createdAt": {
+      "avg": 1.6591084193138374E12,
+      "avg_as_string": "2022-07-29T15:26:59.313Z",
+      "count": 1101,
+      "max": 1.695815720728E12,
+      "max_as_string": "2023-09-27T11:55:20.728Z",
+      "min": 1.630572090273E12,
+      "min_as_string": "2021-09-02T08:41:30.273Z",
+      "sum": 1.826678369664535E15,
+      "sum_as_string": "+59855-02-18T18:14:24.535Z"
+    },
+    "mType": {
+      "buckets": [ ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    },
+    "subjectSpecies": {
+      "buckets": [
+        {
+          "doc_count": 1075,
+          "key": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+          "label": {
+            "buckets": [
+              {
+                "doc_count": 1075,
+                "key": "Mus musculus"
+              }
+            ],
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0
+          }
+        },
+        {
+          "doc_count": 26,
+          "key": "ncbitaxon:10090",
+          "label": {
+            "buckets": [
+              {
+                "doc_count": 26,
+                "key": "Mus musculus"
+              }
+            ],
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0
+          }
+        }
+      ],
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0
+    }
+  },
+  "hits": {
+    "hits": [
+      {
+        "sort": [
+          1695815720728
+        ],
+        "_id": "https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/1120a0b1-07d2-4748-8b1f-164036099ba9",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/1120a0b1-07d2-4748-8b1f-164036099ba9",
+          "@type": [
+            "https://neuroshapes.org/ReconstructedCell",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/985",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/985|Primary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/985",
+            "label": "Primary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "3358.0",
+            "valueY": "13741.0",
+            "valueZ": "4157.0"
+          },
+          "createdAt": "2023-09-27T11:55:20.728Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 5290521,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fb991687d-c851-4184-9d2b-fd1d8639b0c4",
+              "encodingFormat": "application/asc",
+              "label": "18864_00028.asc"
+            },
+            {
+              "contentSize": 1070000,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F7615bd7e-71ac-4c25-a145-13919ee23324",
+              "encodingFormat": "application/h5",
+              "label": "18864_00028.h5"
+            },
+            {
+              "contentSize": 2760063,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F04c52479-efda-4d92-aebc-8f0cde411fc9",
+              "encodingFormat": "application/swc",
+              "label": "18864_00028.swc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005391",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005391|L2",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005391",
+              "label": "L2"
+            },
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005392",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005392|L3",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005392",
+              "label": "L3"
+            }
+          ],
+          "name": "SEU Morphology 18864_00028",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:46:43.027Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fneuronmorphologies%2F1120a0b1-07d2-4748-8b1f-164036099ba9"
+        }
+      },
+      {
+        "sort": [
+          1695815185402
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/96732af8-09a1-42a9-9414-f149b5ea07bc",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/96732af8-09a1-42a9-9414-f149b5ea07bc",
+          "@type": [
+            "https://neuroshapes.org/ReconstructedCell",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell",
+            "https://neuroshapes.org/NeuronMorphology"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "7529.0",
+            "valueY": "21792.0",
+            "valueZ": "2526.0"
+          },
+          "createdAt": "2023-09-27T11:46:25.402Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 2260232,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fd4e6c29e-162f-4967-a697-77d675bbe63c",
+              "encodingFormat": "application/h5",
+              "label": "182724_00013.h5"
+            },
+            {
+              "contentSize": 6276814,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F53ab4af3-9001-4b0c-9a9d-d7f0b52ad0ee",
+              "encodingFormat": "application/swc",
+              "label": "182724_00013.swc"
+            },
+            {
+              "contentSize": 12721592,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fc4fe4375-b564-4663-91ba-096bc5594d47",
+              "encodingFormat": "application/asc",
+              "label": "182724_00013.asc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005392",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005392|L3",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005392",
+              "label": "L3"
+            },
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005391",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005391|L2",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005391",
+              "label": "L2"
+            }
+          ],
+          "name": "SEU Morphology 182724_00013",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:55:44.362Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F96732af8-09a1-42a9-9414-f149b5ea07bc"
+        }
+      },
+      {
+        "sort": [
+          1695815177545
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/c2efe74d-a1ff-415f-9524-74bb08d04f7c",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/c2efe74d-a1ff-415f-9524-74bb08d04f7c",
+          "@type": [
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedCell",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "5615.0",
+            "valueY": "13225.0",
+            "valueZ": "2670.0"
+          },
+          "createdAt": "2023-09-27T11:46:17.545Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 7635545,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F59a208b0-44c7-4d7f-9318-6cc0df41096f",
+              "encodingFormat": "application/swc",
+              "label": "182724_00012.swc"
+            },
+            {
+              "contentSize": 2739180,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Ffa83beb1-6193-4055-9c25-bfb7f341c483",
+              "encodingFormat": "application/h5",
+              "label": "182724_00012.h5"
+            },
+            {
+              "contentSize": 15935437,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Ff5ccaf14-2a40-4840-acea-739d2eaee308",
+              "encodingFormat": "application/asc",
+              "label": "182724_00012.asc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005394|L5",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "label": "L5"
+            }
+          ],
+          "name": "SEU Morphology 182724_00012",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T09:21:04.659Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fc2efe74d-a1ff-415f-9524-74bb08d04f7c"
+        }
+      },
+      {
+        "sort": [
+          1695815169681
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/6d7da2f8-0f0e-4df5-8bd7-5095a772a626",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/6d7da2f8-0f0e-4df5-8bd7-5095a772a626",
+          "@type": [
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/ReconstructedCell",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell",
+            "https://neuroshapes.org/NeuronMorphology"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "5821.0",
+            "valueY": "12613.0",
+            "valueZ": "2997.0"
+          },
+          "createdAt": "2023-09-27T11:46:09.681Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 1580641,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fcc946403-4791-4a38-b8aa-71e9b18c5aa2",
+              "encodingFormat": "application/swc",
+              "label": "182724_00007.swc"
+            },
+            {
+              "contentSize": 596992,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fbc5f0815-3079-4363-869f-90da12afbdd8",
+              "encodingFormat": "application/h5",
+              "label": "182724_00007.h5"
+            },
+            {
+              "contentSize": 2643055,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fc25fe803-0d36-4470-bba1-d09900cf571e",
+              "encodingFormat": "application/asc",
+              "label": "182724_00007.asc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005394|L5",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "label": "L5"
+            }
+          ],
+          "name": "SEU Morphology 182724_00007",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:53:10.461Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F6d7da2f8-0f0e-4df5-8bd7-5095a772a626"
+        }
+      },
+      {
+        "sort": [
+          1695815161759
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/4343f393-efda-4441-a2fd-1e5be4273cac",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/4343f393-efda-4441-a2fd-1e5be4273cac",
+          "@type": [
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell",
+            "https://neuroshapes.org/ReconstructedCell"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "7081.0",
+            "valueY": "21185.0",
+            "valueZ": "2333.0"
+          },
+          "createdAt": "2023-09-27T11:46:01.759Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 6280868,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F75997aaf-6bb1-4d35-845d-b3dd6854e7ca",
+              "encodingFormat": "application/swc",
+              "label": "182724_00006.swc"
+            },
+            {
+              "contentSize": 2256296,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fd2c01038-922b-41cf-bbc9-62bcd5871570",
+              "encodingFormat": "application/h5",
+              "label": "182724_00006.h5"
+            },
+            {
+              "contentSize": 13043860,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fca716e74-202d-4f07-ac26-8ed3f1a3207e",
+              "encodingFormat": "application/asc",
+              "label": "182724_00006.asc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005392",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005392|L3",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005392",
+              "label": "L3"
+            },
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005391",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005391|L2",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005391",
+              "label": "L2"
+            }
+          ],
+          "name": "SEU Morphology 182724_00006",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:50:45.100Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F4343f393-efda-4441-a2fd-1e5be4273cac"
+        }
+      },
+      {
+        "sort": [
+          1695815154040
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/2726dc4d-ffee-4ced-86dc-721bfc752b39",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/2726dc4d-ffee-4ced-86dc-721bfc752b39",
+          "@type": [
+            "https://neuroshapes.org/ReconstructedWholeBrainCell",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedCell"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "5279.0",
+            "valueY": "13761.0",
+            "valueZ": "2926.0"
+          },
+          "createdAt": "2023-09-27T11:45:54.040Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 6674974,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F38cf09b1-4a04-463f-bfab-d918f572b197",
+              "encodingFormat": "application/swc",
+              "label": "182724_00003.swc"
+            },
+            {
+              "contentSize": 2398244,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F1091da5c-6c0a-4e4f-b993-d042bc006cb1",
+              "encodingFormat": "application/h5",
+              "label": "182724_00003.h5"
+            },
+            {
+              "contentSize": 14870089,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F6274107c-c4e0-4753-a7f6-5d0d17082e06",
+              "encodingFormat": "application/asc",
+              "label": "182724_00003.asc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005394|L5",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "label": "L5"
+            }
+          ],
+          "name": "SEU Morphology 182724_00003",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:41:21.325Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F2726dc4d-ffee-4ced-86dc-721bfc752b39"
+        }
+      },
+      {
+        "sort": [
+          1695815146069
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/1238ee53-8446-4280-b71e-e4910ee115df",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/1238ee53-8446-4280-b71e-e4910ee115df",
+          "@type": [
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell",
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedCell"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "15653.0",
+            "valueY": "4273.0",
+            "valueZ": "4414.0"
+          },
+          "createdAt": "2023-09-27T11:45:46.069Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 2022724,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F798a2473-4282-487d-baec-f3e0d3a1e4ea",
+              "encodingFormat": "application/asc",
+              "label": "18869_00213.asc"
+            },
+            {
+              "contentSize": 440244,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fea17f0ac-4af0-4345-96de-82f84c5726ff",
+              "encodingFormat": "application/h5",
+              "label": "18869_00213.h5"
+            },
+            {
+              "contentSize": 1054785,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fbf930e91-48b0-461d-8e5d-edc4239c1f65",
+              "encodingFormat": "application/swc",
+              "label": "18869_00213.swc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005394|L5",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "label": "L5"
+            }
+          ],
+          "name": "SEU Morphology 18869_00213",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:40:12.254Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F1238ee53-8446-4280-b71e-e4910ee115df"
+        }
+      },
+      {
+        "sort": [
+          1695815138355
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/1dd9b536-73fb-4066-a9bf-54890c44bd0f",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/1dd9b536-73fb-4066-a9bf-54890c44bd0f",
+          "@type": [
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/ReconstructedCell"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "11765.0",
+            "valueY": "8944.0",
+            "valueZ": "2621.0"
+          },
+          "createdAt": "2023-09-27T11:45:38.355Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 8216263,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fa22c5359-b031-4b5a-ad9c-656883efcd0b",
+              "encodingFormat": "application/swc",
+              "label": "18868_00424.swc"
+            },
+            {
+              "contentSize": 2919632,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Feef64c9e-d89c-4d1e-93e7-b21ffefe06b0",
+              "encodingFormat": "application/h5",
+              "label": "18868_00424.h5"
+            },
+            {
+              "contentSize": 15852222,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fe1143192-53ca-45b4-b068-13d321a50d04",
+              "encodingFormat": "application/asc",
+              "label": "18868_00424.asc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005394|L5",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "label": "L5"
+            }
+          ],
+          "name": "SEU Morphology 18868_00424",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:40:46.789Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F1dd9b536-73fb-4066-a9bf-54890c44bd0f"
+        }
+      },
+      {
+        "sort": [
+          1695815130338
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/93b30399-3530-42af-b575-228caae71ed4",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/93b30399-3530-42af-b575-228caae71ed4",
+          "@type": [
+            "https://neuroshapes.org/ReconstructedWholeBrainCell",
+            "https://neuroshapes.org/ReconstructedCell",
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "22459.0",
+            "valueY": "29708.0",
+            "valueZ": "3582.0"
+          },
+          "createdAt": "2023-09-27T11:45:30.338Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 14539442,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Ffbf38575-0c8e-49d1-86d4-d759cca41b01",
+              "encodingFormat": "application/asc",
+              "label": "18470_00130.asc"
+            },
+            {
+              "contentSize": 2224252,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F9993e40a-e031-42dc-a923-fb4625044a44",
+              "encodingFormat": "application/h5",
+              "label": "18470_00130.h5"
+            },
+            {
+              "contentSize": 6193169,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F71bd1132-ba5c-462e-8fe6-743f302478ef",
+              "encodingFormat": "application/swc",
+              "label": "18470_00130.swc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005394|L5",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "label": "L5"
+            }
+          ],
+          "name": "SEU Morphology 18470_00130",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:55:37.541Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F93b30399-3530-42af-b575-228caae71ed4"
+        }
+      },
+      {
+        "sort": [
+          1695815122686
+        ],
+        "_id": "https://bbp.epfl.ch/data/bbp-external/seu/109bf60a-3d5c-4b12-92ab-fa786bd94365",
+        "_index": "nexus_search_4aa0bb89-000b-40ea-9515-dfff424f0781_c1870049-f4a3-4b0c-8510-28109bb78342_11",
+        "_source": {
+          "@id": "https://bbp.epfl.ch/data/bbp-external/seu/109bf60a-3d5c-4b12-92ab-fa786bd94365",
+          "@type": [
+            "https://neuroshapes.org/ReconstructedCell",
+            "https://neuroshapes.org/ReconstructedNeuronMorphology",
+            "https://neuroshapes.org/NeuronMorphology",
+            "https://neuroshapes.org/ReconstructedWholeBrainCell"
+          ],
+          "brainRegion": {
+            "@id": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "idLabel": "http://api.brain-map.org/api/v2/data/Structure/993|Secondary motor area",
+            "identifier": "http://api.brain-map.org/api/v2/data/Structure/993",
+            "label": "Secondary motor area"
+          },
+          "contributors": [
+            {
+              "@id": "https://www.grid.ac/institutes/grid.263826.b",
+              "@type": [
+                "http://schema.org/Organization",
+                "http://www.w3.org/ns/prov#Agent"
+              ],
+              "idLabel": "https://www.grid.ac/institutes/grid.263826.b|Southeast University",
+              "label": "Southeast University"
+            }
+          ],
+          "coordinatesInBrainAtlas": {
+            "valueX": "11862.0",
+            "valueY": "12983.0",
+            "valueZ": "2622.0"
+          },
+          "createdAt": "2023-09-27T11:45:22.686Z",
+          "createdBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/plurie",
+          "curated": true,
+          "deprecated": false,
+          "description": "Initial neuron morphology shared by provider",
+          "distribution": [
+            {
+              "contentSize": 599328,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F877a9000-4049-4105-b0a6-703fcdadef7e",
+              "encodingFormat": "application/h5",
+              "label": "18047_00005.h5"
+            },
+            {
+              "contentSize": 2862150,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F7112899a-f842-4e6f-b2bf-bbe07218fdc0",
+              "encodingFormat": "application/asc",
+              "label": "18047_00005.asc"
+            },
+            {
+              "contentSize": 1594122,
+              "contentUrl": "https://bbp.epfl.ch/nexus/v1/files/bbp-external/seu/https%3A%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2Fc983fa6b-99d8-4414-a881-37d93a8e023d",
+              "encodingFormat": "application/swc",
+              "label": "18047_00005.swc"
+            }
+          ],
+          "layer": [
+            {
+              "@id": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "idLabel": "http://purl.obolibrary.org/obo/UBERON_0005394|L5",
+              "identifier": "http://purl.obolibrary.org/obo/UBERON_0005394",
+              "label": "L5"
+            }
+          ],
+          "name": "SEU Morphology 18047_00005",
+          "project": {
+            "@id": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "identifier": "https://bbp.epfl.ch/nexus/v1/projects/bbp-external/seu",
+            "label": "bbp-external/seu"
+          },
+          "subjectSpecies": {
+            "@id": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "identifier": "http://purl.obolibrary.org/obo/NCBITaxon_10090",
+            "label": "Mus musculus"
+          },
+          "updatedAt": "2023-10-25T15:39:58.484Z",
+          "updatedBy": "https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale",
+          "_self": "https://bbp.epfl.ch/nexus/v1/resources/bbp-external/seu/_/https:%2F%2Fbbp.epfl.ch%2Fdata%2Fbbp-external%2Fseu%2F109bf60a-3d5c-4b12-92ab-fa786bd94365"
+        }
+      }
+    ],
+    "total": {
+      "relation": "eq",
+      "value": 1101
+    }
+  }
+}

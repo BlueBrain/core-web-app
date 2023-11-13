@@ -36,6 +36,7 @@ export default function WithControlPanel({
       </section>
       {displayControlPanel && (
         <ControlPanel
+          data-testid="listing-view-control-panel"
           toggleDisplay={() => setDisplayControlPanel(false)}
           experimentTypeName={experimentTypeName}
           brainRegionSource={brainRegionSource}

@@ -14,7 +14,7 @@ export default function CardView({ data, experimentTypeName }: CardViewProps) {
     return <Spin indicator={<LoadingOutlined />} />;
   }
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-4" data-testid="explore-section-listing-card-view">
       {data.map((d) => (
         <Card
           key={d._id}

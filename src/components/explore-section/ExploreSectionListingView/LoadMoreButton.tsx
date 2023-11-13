@@ -16,6 +16,7 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
       type="button"
       disabled={disabled}
       onClick={onClick}
+      aria-label="load-more-resources-button"
     >
       {children}
     </button>

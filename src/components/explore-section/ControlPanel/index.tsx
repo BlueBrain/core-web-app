@@ -201,7 +201,10 @@ export default function ControlPanel({
   })) as FilterGroupProps['items'];
 
   return (
-    <div className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]">
+    <div
+      data-testid="listing-view-filter-panel"
+      className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]"
+    >
       <button type="button" onClick={toggleDisplay} className="text-white text-right">
         <CloseOutlined />
       </button>

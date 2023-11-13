@@ -93,6 +93,7 @@ export function BaseTable({
 
   return (
     <Table
+      aria-label="listing-view-table"
       className={styles.table}
       columns={
         columns &&
@@ -134,7 +135,11 @@ export default function ExploreSectionTable({
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const defaultRenderButton = ({ selectedRows, clearSelectedRows }: RenderButtonProps) => (
-    <ExploreDownloadButton selectedRows={selectedRows} clearSelectedRows={clearSelectedRows}>
+    <ExploreDownloadButton
+      selectedRows={selectedRows}
+      clearSelectedRows={clearSelectedRows}
+      data-testid="listing-view-download-button"
+    >
       <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
         selectedRows.length
       })`}</span>

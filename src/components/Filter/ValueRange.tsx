@@ -1,4 +1,4 @@
-import { useForm } from 'antd/es/form/Form';
+import { useForm } from 'antd/lib/form/Form';
 import { ConfigProvider, Form, InputNumber } from 'antd';
 import { GteLteValue, RangeFilter } from '@/components/Filter/types';
 import { Statistics } from '@/types/explore-section/fields';

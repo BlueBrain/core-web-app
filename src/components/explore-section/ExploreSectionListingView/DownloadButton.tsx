@@ -18,6 +18,7 @@ export function ExploreDownloadButton({
     <Btn
       className="bg-primary-8 sticky bottom-0 ml-auto fit-content w-fit"
       loading={fetching}
+      ariaLabel="download-resources-button"
       onClick={() => {
         if (selectedRows.length) {
           setFetching(true);

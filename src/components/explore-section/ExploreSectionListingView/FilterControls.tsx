@@ -26,6 +26,7 @@ function FilterBtn({ children, onClick }: HTMLProps<HTMLButtonElement>) {
       className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5"
       onClick={onClick}
       type="button"
+      aria-label="listing-view-filter-button"
     >
       {children}
       <SettingsIcon className="rotate-90 text-white" />
