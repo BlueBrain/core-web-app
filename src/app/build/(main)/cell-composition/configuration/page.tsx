@@ -168,6 +168,8 @@ function CellDensity() {
 
   const notify = useNotification();
 
+  const isConfigEditable = useAtomValue(isConfigEditableAtom);
+
   const onUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     setUploading(true);
 
@@ -202,14 +204,16 @@ function CellDensity() {
       <div className="flex justify-between items-center w-full">
         <CellDensityToolbar onReset={handleReset} />
         <div className="flex gap-2 sticky bottom-0">
-          <FileInputBtn
-            accept="application/json"
-            className="bg-primary-7"
-            onChange={onUpload}
-            loading={uploading}
-          >
-            <strong>Import</strong> Composition Config
-          </FileInputBtn>
+          {isConfigEditable && (
+            <FileInputBtn
+              accept="application/json"
+              className="bg-primary-7"
+              onChange={onUpload}
+              loading={uploading}
+            >
+              <strong>Import</strong> Composition Config
+            </FileInputBtn>
+          )}
           <Btn className="bg-primary-8" onClick={onClickExport}>
             <strong>Export</strong> Composition Config
           </Btn>
