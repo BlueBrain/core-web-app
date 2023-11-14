@@ -15,6 +15,7 @@ export interface EModelMenuItem {
   eType: string;
   mType: string;
   isOptimizationConfig: boolean;
+  rev: number;
 }
 
 export interface MEModelMenuItem {

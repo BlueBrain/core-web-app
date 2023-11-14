@@ -247,6 +247,37 @@ export type EModelAssignmentConfigPayload = {
   };
 };
 
+export interface MEModelConfigPayload {
+  variantDefinition: {
+    neurons_me_model: {
+      algorithm: 'neurons_me_model';
+      version: 'v1';
+    };
+  };
+  defaults: {
+    neurons_me_model: {
+      '@id': string;
+      '@type': ['PlaceholderEModelConfig', 'Entity'];
+    };
+  };
+  overrides: {
+    neurons_me_model: {
+      [regionId: string]: {
+        [mTypeId: string]: {
+          [eTypeId: string]: {
+            assignmentAlgorithm: 'assignOne';
+            eModel: {
+              '@id': string;
+              _rev: number;
+            };
+            axonInitialSegmentAssignment: { fixedValue: { value: number } };
+          };
+        };
+      };
+    };
+  };
+}
+
 type MorphologyAssignmentConfigType = 'MorphologyAssignmentConfig';
 type MModelGeneratorName = 'mmodel';
 

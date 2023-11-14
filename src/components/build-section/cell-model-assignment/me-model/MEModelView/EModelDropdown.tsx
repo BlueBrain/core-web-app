@@ -1,15 +1,18 @@
 import { Select } from 'antd';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+
 import { SelectOption } from '@/types/common';
 import {
   eModelByETypeMappingAtom,
   selectedEModelAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { EModelMenuItem } from '@/types/e-model';
+import { setMEConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/me-model/setters';
 
 export default function EModelDropdown() {
   const eModels = useAtomValue(eModelByETypeMappingAtom);
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
+  const setMEConfigPayload = useSetAtom(setMEConfigPayloadAtom);
 
   if (!selectedEModel || !eModels) return null;
 
@@ -29,6 +32,8 @@ export default function EModelDropdown() {
       id: newId,
       name: newName,
     });
+
+    setMEConfigPayload();
   };
 
   const filterOption = (input: string, option?: { label: string; value: string }) =>

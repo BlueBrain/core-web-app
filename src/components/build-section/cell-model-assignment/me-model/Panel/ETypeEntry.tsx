@@ -1,7 +1,9 @@
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 
 import { EModelMenuItem } from '@/types/e-model';
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { setDefaultEModelForMETypeAtom } from '@/state/brain-model-config/cell-model-assignment/me-model/setters';
+import { selectedMENameAtom } from '@/state/brain-model-config/cell-model-assignment/me-model';
 
 const isETypeSelected = (
   selectedEModel: EModelMenuItem | null,
@@ -25,22 +27,20 @@ export default function ETypeEntry({
   availableEModels,
   mTypeName,
 }: ETypeEntryProps) {
-  const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
+  const [selectedEModel] = useAtom(selectedEModelAtom);
+  const setDefaultEModelForMEType = useSetAtom(setDefaultEModelForMETypeAtom);
+  const setSelectedMEName = useSetAtom(selectedMENameAtom);
 
-  const handleClick = (eModel: EModelMenuItem) => {
-    if (!eModel) return;
-
-    setSelectedEModel({
-      ...eModel,
-      mType: mTypeName,
-    });
+  const handleClick = () => {
+    setSelectedMEName([mTypeName, eType.name]);
+    setDefaultEModelForMEType();
   };
 
   return isExpanded ? (
     <div className="bg-none border-none m-0 w-full flex flex-col">
       <button
         type="button"
-        onClick={() => handleClick(availableEModels[0])}
+        onClick={handleClick}
         className={`flex justify-between px-4 py-2 items-center ${
           isETypeSelected(selectedEModel, eType.name, mTypeName)
             ? `bg-white text-primary-7`

@@ -24,6 +24,7 @@ import {
   EModelMenuItem,
   EModelOptimizationConfig,
   EModelOptimizationConfigResource,
+  EModelResource,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -391,7 +392,7 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
     if (!session || !selectedBrainRegion || !brainRegions) return null;
 
     const eModelsQuery = getEModelQuery();
-    const eModels = await queryES<EModel>(eModelsQuery, session);
+    const eModels = await queryES<EModelResource>(eModelsQuery, session);
     // pick the e-models compatible with latest structure
     const withGeneration = eModels.filter((eModel) => 'generation' in eModel);
 
@@ -409,12 +410,13 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
       return isChildren;
     });
 
-    const eModelMenuItems: EModelMenuItem[] = filteredByLocation.map((eModel: EModel) => ({
+    const eModelMenuItems: EModelMenuItem[] = filteredByLocation.map((eModel: EModelResource) => ({
       name: eModel.name,
       id: eModel['@id'] || '',
       eType: eModel.etype,
       mType: '',
       isOptimizationConfig: false,
+      rev: eModel._rev,
     }));
 
     return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');
@@ -433,7 +435,7 @@ export const editedEModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingT
     if (!session || !selectedBrainRegion || !brainRegions) return null;
 
     const eModelOptimizationsQuery = getEModelOptimizationConfigQuery();
-    const optimizationConfigs = await queryES<EModelOptimizationConfig>(
+    const optimizationConfigs = await queryES<EModelOptimizationConfigResource>(
       eModelOptimizationsQuery,
       session
     );
@@ -444,6 +446,7 @@ export const editedEModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingT
       eType: eModel.eType,
       mType: eModel.mType ?? '',
       isOptimizationConfig: true,
+      rev: eModel._rev,
     }));
 
     return groupBy<EModelMenuItem>(eModelMenuItems, 'eType');

@@ -76,10 +76,11 @@ export const cloneEModelConfigAtom = atom<null, [], void>(null, async (get, set)
 
   set(selectedEModelAtom, {
     eType: assembledEModelUIConfig.eType,
-    id: eModelResource?.['@id'],
+    id: eModelResource['@id'],
     isOptimizationConfig: true,
     mType: assembledEModelUIConfig.mType,
     name: assembledEModelUIConfig.name,
+    rev: eModelResource._rev,
   });
   return eModelResource;
 });
