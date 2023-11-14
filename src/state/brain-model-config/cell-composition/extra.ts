@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import debounce from 'lodash/debounce';
 import { omitDeep } from 'deepdash-es/standalone';
 import lodashSet from 'lodash/set';
-
+import { validator } from '@exodus/schemasafe';
 import { configAtom, configPayloadAtom, setLocalConfigPayloadAtom } from '.';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import sessionAtom from '@/state/session';
@@ -13,6 +13,7 @@ import { autoSaveDebounceInterval } from '@/config';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 import { OriginalComposition } from '@/types/composition/original';
 import openNotification from '@/api/notifications';
+import schema from '@/app/build/(main)/cell-composition/configuration/schema.json';
 
 export const updateConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], Promise<void>>(
   null,
@@ -63,11 +64,19 @@ const setConfigPayloadAtom = atom<null, [CellCompositionConfigPayload], void>(
   }
 );
 
-const getOverridesFromCellComposition = (composition: OriginalComposition) => {
-  const overrides = omitDeep(composition.hasPart, 'extendedNodeId', {
-    onMatch: { skipChildren: true },
-  });
-  return overrides as CompositionOverridesWorkflowConfig;
+const getOverridesFromCellComposition = (
+  composition: OriginalComposition | CellCompositionConfigPayload
+): CompositionOverridesWorkflowConfig => {
+  const validate = validator(schema);
+  const compositionHasLegacyFormat = !validate(composition);
+
+  return compositionHasLegacyFormat
+    ? omitDeep(composition.hasPart, 'extendedNodeId', {
+        onMatch: { skipChildren: true },
+      })
+    : (composition as CellCompositionConfigPayload)[
+        'http://api.brain-map.org/api/v2/data/Structure/997'
+      ].configuration.overrides;
 };
 
 export const setCompositionPayloadConfigurationAtom = atom<null, [OriginalComposition], void>(
