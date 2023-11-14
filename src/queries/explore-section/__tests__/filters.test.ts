@@ -122,10 +122,12 @@ describe('Filters elastic builder', () => {
 
 describe('test buildFilters functionality', () => {
   it('should build correct terms filter', () => {
-    const builder = buildFilters('https://neuroshapes.org/BoutonDensity', [
-      checklistFilter,
-      valueRangeFilter,
-    ]);
+    const builder = buildFilters(
+      [checklistFilter, valueRangeFilter],
+      undefined,
+      undefined,
+      'https://neuroshapes.org/BoutonDensity'
+    );
     expect(builder?.toJSON()).toEqual({
       bool: {
         must: [

@@ -2,7 +2,7 @@ import { Session } from 'next-auth';
 import { createHeaders } from '@/util/utils';
 import {
   InferenceError,
-  RuleOutput,
+  RulesOutput,
   ResourceBasedInferenceRequest,
   ResourceBasedInferenceResponse,
 } from '@/types/explore-section/kg-inference';
@@ -10,11 +10,11 @@ import {
 const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
 const RESOURCE_BASED_RULE_TERM = 'ResourceGeneralizationRule';
 
-export function fetchRules(session: Session, resourceId: string): Promise<RuleOutput[]> {
+export function fetchRules(session: Session, resourceIds: string[]): Promise<RulesOutput> {
   const result = fetch(`${BASE_URL}/rules`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
-    body: JSON.stringify({ resourceId, ruleTypes: [RESOURCE_BASED_RULE_TERM] }),
+    body: JSON.stringify({ resourceIds, ruleTypes: [RESOURCE_BASED_RULE_TERM] }),
   }).then((response) => response.json());
 
   return result;

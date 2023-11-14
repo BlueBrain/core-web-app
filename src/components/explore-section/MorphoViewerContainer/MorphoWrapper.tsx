@@ -22,6 +22,7 @@ function MorphoWrapper({
     () => loadable(createMorphologyDataAtom(resource)),
     [resource]
   );
+
   const morphologyData = useAtomValue(morphologyDataAtom);
 
   return (

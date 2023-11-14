@@ -1,50 +1,51 @@
 import { Children, useMemo } from 'react';
 import { Spin, Checkbox, InputNumber } from 'antd';
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import {
-  resourceBasedRulesAtom,
+  rulesAtom,
   inferredResourcesAtom,
   limitQueryParameterAtom,
+  selectedRulesAtom,
 } from '@/state/explore-section/generalization';
-import { ResourceBasedInference } from '@/types/explore-section/kg-inference';
+import { ResourceBasedGeneralization } from '@/types/explore-section/kg-inference';
 import { Project } from '@/types/explore-section/es-common';
 import useNotification from '@/hooks/notifications';
 import { parseOrgProjectToResourceInfo } from '@/util/explore-section/detail-view';
 
 interface GeneralizationOptionsProps {
   resourceId: string;
-  ruleWithBool: ResourceBasedInference;
-  onCheckboxChange: (inferenceRule: ResourceBasedInference) => void;
+  ruleWithChecked: ResourceBasedGeneralization;
+  onCheckboxChange: (inferenceRule: ResourceBasedGeneralization) => void;
 }
 
 function GeneralizationOptions({
   resourceId,
-  ruleWithBool,
+  ruleWithChecked,
   onCheckboxChange,
 }: GeneralizationOptionsProps) {
-  if (!ruleWithBool) return <Spin className="h-6 w-6" indicator={<LoadingOutlined />} />;
+  if (!ruleWithChecked) return <Spin className="h-6 w-6" indicator={<LoadingOutlined />} />;
 
   const handleCheckboxChange = () => {
     onCheckboxChange({
-      ...ruleWithBool,
-      value: !ruleWithBool.value,
+      ...ruleWithChecked,
+      checked: !ruleWithChecked.checked,
     });
   };
 
   return (
     <div className="flex-initial w-1/4 flex-col space-y-2">
       <div className="space-y-2 pl-6 pr-12">
-        <li key={`${resourceId}${ruleWithBool.name}`}>
+        <li key={`${resourceId}${ruleWithChecked.name}`}>
           <Checkbox
-            checked={ruleWithBool.value}
+            checked={ruleWithChecked.checked}
             onChange={handleCheckboxChange}
             className="w-full text-primary-8 font-semibold"
           >
-            {ruleWithBool.displayName}
+            {ruleWithChecked.name}
           </Checkbox>
-          <p className="font-thin pl-12">{ruleWithBool.description}</p>
+          <p className="font-thin pl-12">{ruleWithChecked.description}</p>
         </li>
       </div>
     </div>
@@ -64,9 +65,10 @@ function GeneralizationRules({
 }) {
   const resourceInfo = parseOrgProjectToResourceInfo(resourceId, resourceOrgProject);
 
-  const [resourceBasedRules, setResourceBasedRules] = useAtom(
-    useMemo(() => unwrap(resourceBasedRulesAtom(resourceId)), [resourceId])
+  const resourceBasedRules = useAtomValue(
+    useMemo(() => unwrap(rulesAtom(resourceId)), [resourceId])
   );
+  const [selectedRules, setSelectedRules] = useAtom(selectedRulesAtom(resourceId));
   const [inferredResources, setinferredResources] = useAtom(
     inferredResourcesAtom(experimentTypeName)
   );
@@ -86,18 +88,15 @@ function GeneralizationRules({
       />
     );
 
-  const handleCheckboxChange = (ruleWithBool: ResourceBasedInference) => {
-    const indexToUpdate = resourceBasedRules.findIndex(
-      (item: ResourceBasedInference) => item.name === ruleWithBool.name
-    );
+  const handleCheckboxChange = (ruleWithChecked: ResourceBasedGeneralization) => {
+    const existingIndex = selectedRules.findIndex((ruleName) => ruleName === ruleWithChecked.name);
 
-    if (indexToUpdate !== -1) {
-      const newResourceBasedRulesArray = [...resourceBasedRules];
-
-      newResourceBasedRulesArray[indexToUpdate] = ruleWithBool;
-      // ts-ignore due to a typing issue caused by atomWithDefault with Promise
-      // @ts-ignore
-      setResourceBasedRules(newResourceBasedRulesArray);
+    if (existingIndex !== -1) {
+      setSelectedRules([
+        ...selectedRules.slice(0, existingIndex),
+        ruleWithChecked.name,
+        ...selectedRules.slice(existingIndex + 1),
+      ]);
     }
   };
 
@@ -122,15 +121,14 @@ function GeneralizationRules({
       <h1 className="font-semibold text-lg">Inference options</h1>
       <div className="flex space-x-4">
         {Children.toArray(
-          resourceBasedRules.map((rule: ResourceBasedInference) => (
+          resourceBasedRules.map((rule) => (
             <GeneralizationOptions
               resourceId={resourceId}
-              ruleWithBool={rule}
+              ruleWithChecked={rule}
               onCheckboxChange={handleCheckboxChange}
             />
           ))
         )}
-
         <div className="flex flex-col space-y-2 place-self-center">
           <InputNumber
             value={limitQueryParameter}

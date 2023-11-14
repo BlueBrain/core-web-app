@@ -4,8 +4,11 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { DetailProps } from '@/types/explore-section/application';
+import { DetailType } from '@/constants/explore-section/fields-config/types';
 import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
-import { DeltaResource } from '@/types/explore-section/resources';
+import WithGeneralization from '@/components/explore-section/WithGeneralization';
+import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
+import RuleSelection from '@/components/explore-section/WithGeneralization/RuleSelection';
 
 const fields = [
   {
@@ -45,9 +48,19 @@ const Detail = dynamic(() => import('@/components/explore-section/Detail'), { ss
 export default function MorphologyDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={fields}>
-        {(detail: DeltaResource) => <MorphoViewerContainer resource={detail} />}
-      </Detail>
+      <WithGeneralization experimentTypeName={NEURON_MORPHOLOGY}>
+        {({ render: renderSimilar }) => (
+          <Detail fields={fields}>
+            {(detail: DetailType) => (
+              <>
+                <MorphoViewerContainer resource={detail} />
+                <RuleSelection />
+                {renderSimilar}
+              </>
+            )}
+          </Detail>
+        )}
+      </WithGeneralization>
     </Suspense>
   );
 }

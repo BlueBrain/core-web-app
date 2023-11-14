@@ -89,14 +89,17 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
 }
 
 export default function buildFilters(
-  type: string,
   filters: Filter[],
   searchString?: string,
-  descendantIds?: string[]
+  descendantIds?: string[],
+  experimentDataType?: string
 ) {
   const filtersQuery = new esb.BoolQuery();
 
-  filtersQuery.must(esb.termQuery('@type.keyword', type));
+  if (experimentDataType) {
+    filtersQuery.must(esb.termQuery('@type.keyword', experimentDataType));
+  }
+
   filtersQuery.must(esb.termQuery('deprecated', false));
   if (descendantIds && descendantIds.length > 0) {
     filtersQuery.must(esb.termsQuery('brainRegion.@id.keyword', descendantIds));

@@ -21,7 +21,7 @@ export default function fetchDataQuery(
     sort: sortQuery,
     from: (currentPage - 1) * size,
     track_total_hits: true,
-    query: buildFilters(experimentDataType, filters, searchString, descendantIds).toJSON(),
+    query: buildFilters(filters, searchString, descendantIds, experimentDataType).toJSON(),
     ...buildAggs(filters).toJSON(),
   };
 }
@@ -30,20 +30,14 @@ export function fetchDataQueryUsingIds(
   size: number,
   currentPage: number,
   filters: Filter[],
-  experimentDataType: string,
   inferredResponseIds: string[],
-  sortState?: SortState,
-  searchString: string = '',
-  descendantIds?: string[]
+  sortState?: SortState
 ): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
 
   const idsQuery = new TermsQuery('_id', inferredResponseIds);
 
-  const boolMustQuery = boolQuery().must([
-    buildFilters(experimentDataType, filters, searchString, descendantIds),
-    idsQuery,
-  ]);
+  const boolMustQuery = boolQuery().must([buildFilters(filters), idsQuery]);
 
   return {
     size,

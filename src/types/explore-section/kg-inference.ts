@@ -1,14 +1,17 @@
 import { ResourceInfo } from '@/types/explore-section/application';
 
-export interface RuleOutput {
-  id: string;
-  name: string;
-  description: string;
-  resourceType: string;
-  inputParameters: InputParameter[];
-  nexusLink: string;
-  embeddingModels: Record<string, EmbeddingModel>;
-}
+export type RulesOutput = {
+  resource_id: string;
+  rules: {
+    id: string;
+    name: string;
+    description: string;
+    resourceType: string;
+    inputParameters: InputParameter[];
+    nexusLink: string;
+    embeddingModels: Record<string, EmbeddingModel>;
+  }[];
+}[];
 
 type EmbeddingModel = {
   description: string;
@@ -45,14 +48,27 @@ export interface RuleWithOptionsProps {
 export interface InputParameter {
   name: string;
   payload: Payload;
-  values?: string[];
+  values?: ResourceBasedGeneralization[];
 }
+
 export interface ResourceBasedInference {
   displayName: string;
   name: string;
   id: string;
   value: boolean;
   description: string;
+}
+export interface ResourceBasedGeneralization {
+  org: string;
+  project: string;
+  name: string;
+  type: string;
+  id: string;
+  description: string;
+  about: string;
+  hasPart: any[];
+  distance: string;
+  checked?: boolean;
 }
 
 export type InferenceError = {

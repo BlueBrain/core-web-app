@@ -36,15 +36,15 @@ export default function Detail({
   }
 
   if (detail.data === null) {
-    return <>Not Found</>;
+    return <h1>Selected resource not found</h1>;
   }
 
   return (
     <div className="flex h-screen">
       <DetailsPageSideBackLink />
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
-        <DetailHeader fields={fields} detail={detail?.data} url={path} />
-        {children && detail.data && children(detail?.data)}
+        <DetailHeader fields={fields} detail={detail.data} url={path} />
+        {children && detail.data && children(detail.data)}
       </div>
     </div>
   );
