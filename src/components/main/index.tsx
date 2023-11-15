@@ -6,7 +6,7 @@ import ApplicationSidebar, {
   NavigationItemProps,
 } from '../ApplicationSidebar';
 import { OBPLogo } from '../Entrypoint/segments/Splash';
-import MainMenu from './Menu';
+import MainMenu from './main';
 import { classNames } from '@/util/utils';
 
 function MainSideBarHeader({ expanded }: { expanded: boolean }) {
@@ -46,18 +46,16 @@ function MainNavigation({ expanded }: { expanded: boolean }) {
 
 export default function Main() {
   return (
-    <div
-      className={classNames(
-        'relative bg-primary-9',
-        'bg-fullbrain-image bg-blend-lighten bg-no-repeat bg-center backdrop-grayscale-0 [background-size:70%]'
-      )}
-    >
-      <ApplicationSidebar title={MainSideBarHeader} control={MainNavigation} />
+    <div className={classNames('relative bg-primary-9 h-full')}>
+      <div className="fixed bg-primary-9 inset-0 w-full h-full min-h-screen z-0 bg-fullbrain-image bg-blend-lighten bg-no-repeat bg-center [background-size:70%]" />
+      <div className="fixed left-0 z-20">
+        <ApplicationSidebar title={MainSideBarHeader} control={MainNavigation} />
+      </div>
       <OBPLogo color="text-primary-5" className="!left-14" />
-      <div className="absolute top-[130px] left-[53px] max-w-[250px] w-full">
+      <div className="fixed top-[130px] left-[53px] max-w-[250px] w-full z-20">
         <DefaultAccountPanel expanded />
       </div>
-      <div className="absolute top-7 right-7 flex justify-end w-[calc(100%-3rem)] ml-auto">
+      <div className="absolute h-[calc(100vh-56px)] top-7 right-7 flex justify-end w-[calc(100%-3rem)] ml-auto">
         <MainMenu />
       </div>
     </div>
