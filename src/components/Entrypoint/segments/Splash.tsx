@@ -33,7 +33,7 @@ export function OBPLogo({
   className?: string;
 }) {
   return (
-    <div className={classNames('absolute top-7 left-7 z-10 pr-2', className)}>
+    <div className={classNames('fixed top-7 left-7 z-10 pr-2', className)}>
       <h1
         className={classNames(
           'whitespace-pre-line text-left text-[2.4rem] leading-[90.5%] font-extrabold uppercase p-1 tracking-wider select-none',
