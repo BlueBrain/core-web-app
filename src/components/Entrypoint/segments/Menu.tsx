@@ -1,6 +1,6 @@
 import { ComponentType } from 'react';
 import { signIn } from 'next-auth/react';
-import { kebabCase } from 'lodash/fp';
+import kebabCase from 'lodash/fp/kebabCase';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
