@@ -1,6 +1,7 @@
 import { useReducer, useRef } from 'react';
 
 import ExploreMainMenu from './segments/ExploreMainMenu';
+import BuildMainMenu from './segments/BuildMainMenu';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
 
@@ -25,6 +26,13 @@ const MAIN_MENU_LIST: Array<TMainMenuItem> = [
     description: 'Lorem irure in consequat sit consequat ipsum sint elit.',
     Component: ExploreMainMenu,
     bgcolor: 'bg-primary-6',
+  },
+  {
+    id: 'main-build-entry',
+    title: 'Build',
+    description: 'Sint elit incididunt in excepteur culpa exercitation enim velit duis.',
+    Component: BuildMainMenu,
+    bgcolor: 'bg-primary-7',
   },
 ];
 

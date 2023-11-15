@@ -154,7 +154,7 @@ function BrowseModelsGrid({
     () => ({
       total: configs.length,
       perPage: 10,
-      showBelowThreeshold: false,
+      showBelowThreshold: false,
     }),
     [configs.length]
   );
@@ -189,9 +189,6 @@ function BrowseModelsGrid({
       {
         key: 'status',
         name: 'Status',
-        sortable: true,
-        sortFn: () => {},
-        sortPosition: 'left',
         // eslint-disable-next-line react/no-unstable-nested-components
         cellRenderer: () => (
           <div className="inline-flex items-center justify-center gap-1">
