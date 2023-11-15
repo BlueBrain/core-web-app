@@ -1,13 +1,6 @@
 import { useReducer } from 'react';
-
-import ExploreMainMenu from './ExploreMainMenu';
-import BuildMainMenu from './BuildMainMenu';
-import SimulateMainMenu from './SimulateMainMenu';
 import { classNames } from '@/util/utils';
-<<<<<<< HEAD
-=======
 import useOnClickOutside from '@/hooks/useOnClickOutside';
->>>>>>> 3c6817ba (134-1076/update: add Build main menu)
 
 type Empty = '';
 type MainMenuListKey = Empty | 'main-explore-entry' | 'main-build-entry' | 'main-simulate-entry';
