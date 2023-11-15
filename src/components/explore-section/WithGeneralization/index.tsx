@@ -33,7 +33,11 @@ export default function WithGeneralization({
       break;
     case 'hasData':
       render = resourceBasedResponseData.data?.length ? (
-        <CardView data={resourceBasedResponseData.data} experimentTypeName={experimentTypeName} />
+        <CardView
+          data={resourceBasedResponseData.data}
+          experimentTypeName={experimentTypeName}
+          resourceId={resourceId}
+        />
       ) : (
         notFound
       );

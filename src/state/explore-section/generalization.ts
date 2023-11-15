@@ -9,6 +9,7 @@ import {
   RulesOutput,
   ResourceBasedInferenceRequest,
   ResourceBasedInferenceResponse,
+  ResourceBasedInference,
   ResourceBasedGeneralization,
   InferredResource,
 } from '@/types/explore-section/kg-inference';
@@ -136,8 +137,8 @@ export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>
   })
 );
 
-export const resourceBasedResponseDataAtom = atomFamily((resourceId: string) =>
-  atom<Promise<ExploreESHit[] | null>>(async (get) => {
+export const resourceBasedResponseResultsAtom = atomFamily((resourceId: string) =>
+  atom<Promise<ResourceBasedInference[] | null | []>>(async (get) => {
     const session = get(sessionAtom);
 
     if (!session) return null;
@@ -146,7 +147,21 @@ export const resourceBasedResponseDataAtom = atomFamily((resourceId: string) =>
 
     if (!resourceBasedResponse || resourceBasedResponse.length === 0) return null;
 
-    const ids = map(head(resourceBasedResponse)?.results, 'id');
+    return head(resourceBasedResponse)?.results || [];
+  })
+);
+
+export const resourceBasedResponseDataAtom = atomFamily((resourceId: string) =>
+  atom<Promise<ExploreESHit[] | null>>(async (get) => {
+    const session = get(sessionAtom);
+
+    if (!session) return null;
+
+    const resourceBasedResponseResults = await get(resourceBasedResponseResultsAtom(resourceId));
+
+    if (!resourceBasedResponseResults || resourceBasedResponseResults.length === 0) return null;
+
+    const ids = map(resourceBasedResponseResults, 'id');
 
     if (!ids) return null;
 
