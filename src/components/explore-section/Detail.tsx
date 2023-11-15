@@ -2,8 +2,10 @@ import { ReactNode } from 'react';
 import Error from 'next/error';
 
 import { Loadable } from 'jotai/vanilla/utils/loadable';
+import { useSetAtom } from 'jotai';
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
+import { brainRegionSidebarIsCollapsedAtom } from '@/state/brain-regions';
 import { DetailProps } from '@/types/explore-section/application';
 import DetailHeader from '@/components/explore-section/DetailHeader';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
@@ -19,6 +21,10 @@ export default function Detail({
   fields: DetailProps[];
   children?: (detail: DetailType) => ReactNode;
 }) {
+  const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
+
+  setBrainRegionSidebarIsCollapsed(true);
+
   const path = usePathname();
   const resourceInfo = useResourceInfoFromPath();
   const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<DetailType>;

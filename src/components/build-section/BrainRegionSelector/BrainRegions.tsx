@@ -1,7 +1,7 @@
 'use client';
 
 import React, { RefObject, useRef, useState, useMemo, useEffect } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { unwrap } from 'jotai/utils';
@@ -17,6 +17,7 @@ import {
   setSelectedBrainRegionAtom,
   brainRegionsAtom,
   brainRegionsAlternateTreeAtom,
+  brainRegionSidebarIsCollapsedAtom,
 } from '@/state/brain-regions';
 import { NavValue } from '@/components/TreeNavItem';
 import { BrainRegion } from '@/types/ontologies';
@@ -149,7 +150,7 @@ export default function BrainRegions() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const resetBrainRegion = useSetAtom(selectedBrainRegionAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useAtom(brainRegionSidebarIsCollapsedAtom);
   const [brainRegionHierarchyState, setBrainRegionHierarchyState] = useState<NavValue>(null);
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const brainModelConfigId = useAtomValue(brainModelConfigIdAtom);

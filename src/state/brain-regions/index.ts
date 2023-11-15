@@ -369,3 +369,5 @@ export const setSelectedPostBrainRegionAtom = atom(null, (get, set, id: string, 
 
   set(selectedPostBrainRegionsAtom, selections);
 });
+
+export const brainRegionSidebarIsCollapsedAtom = atom(false);
