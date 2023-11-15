@@ -1,14 +1,23 @@
 import { CSSProperties, HTMLProps, useState } from 'react';
 import { Empty } from 'antd';
-import { CaretDownOutlined, LeftOutlined, LoadingOutlined, RightOutlined } from '@ant-design/icons';
+import {
+  CaretDownOutlined,
+  LeftOutlined,
+  LoadingOutlined,
+  RightOutlined,
+  VerticalAlignMiddleOutlined,
+} from '@ant-design/icons';
 import kebabCase from 'lodash/kebabCase';
 
 import { classNames as csx } from '@/util/utils';
 
+type PropertyKey = string | number | symbol;
+type TableObject = Record<PropertyKey, any>;
+
 export type TablePagination = {
   currentPage?: number;
   total: number;
-  showBelowThreeshold?: boolean;
+  showBelowThreshold?: boolean;
   perPage?: number;
   onPageChange?: (num: number) => void;
 };
@@ -30,11 +39,13 @@ export type TableProps<T> = {
    * a default one is provided if none specified
    */
   cellRenderer?: ({
+    key,
     row,
     index,
     text,
     transformer,
   }: {
+    key: string;
     row: T;
     index: number;
     text: string;
@@ -47,30 +58,32 @@ export type TableProps<T> = {
      */
     key: string;
     /**
-     * nam: column name
+     * name: column name
      */
-    name: string | React.ReactNode;
+    name: React.ReactNode;
     /**
      * description: a tiny description to the column
      * defaul be under the name of the column
      */
-    description?: string | React.ReactNode;
+    description?: React.ReactNode;
     /**
      * see(cellRenderer) global
      */
     cellRenderer?: ({
+      key,
       row,
       index,
       text,
       transformer,
     }: {
+      key: string;
       row: T;
       index: number;
       text: string;
       transformer?: (t: string) => string;
     }) => JSX.Element;
     /**
-     * sortable: if the column can be sort
+     * sortable: if the column can be sorted
      */
     sortable?: boolean;
     /**
@@ -84,7 +97,7 @@ export type TableProps<T> = {
     /**
      * sortFn: function to sort the column
      */
-    sortFn?: any;
+    sortFn?: (() => (a: T, b: T) => boolean) | (() => (a: T, b: T) => 1 | -1);
     /**
      * transformer: used to transform the text of a cell
      * eg: get the username from a url or add prefix to the text
@@ -94,7 +107,7 @@ export type TableProps<T> = {
   /**
    * data: table data
    */
-  data: Array<T> & {};
+  data: Array<T>;
   /**
    * rowKey: if not specified an internal key will be generated
    */
@@ -137,17 +150,30 @@ export type TableProps<T> = {
   onChange?: (input: TablePagination | TableSort) => void;
 };
 
+function getWidth(w?: number | string) {
+  let width;
+  if (width) {
+    width = typeof w === 'number' ? `${w}px` : w;
+  }
+  return width;
+}
+
 function DefaultCellRenderer({
   data,
   transformer,
+  className,
 }: {
   data: string;
   transformer?: (t: string) => string;
+  className?: HTMLProps<HTMLElement>['className'];
 }) {
   return (
     <span
       title={data}
-      className="text-sm text-primary-8 whitespace-pre-wrap break-words line-clamp-2"
+      className={csx(
+        'text-sm text-primary-8 whitespace-pre-wrap break-words line-clamp-2',
+        className
+      )}
     >
       {transformer?.(data) ?? data}
     </span>
@@ -155,12 +181,16 @@ function DefaultCellRenderer({
 }
 
 function DefaultSorter({ fn }: { fn?: (direction: 'asc' | 'desc') => void }) {
-  const [state, setState] = useState<'asc' | 'desc'>('desc');
+  const [state, setState] = useState<'asc' | 'desc' | null>(null);
 
   const sort = (direction: 'asc' | 'desc') => () => {
     fn?.(direction);
     setState((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
+
+  if (!state) {
+    return <VerticalAlignMiddleOutlined onClick={sort('asc')} />;
+  }
 
   return (
     <CaretDownOutlined
@@ -173,12 +203,22 @@ function DefaultSorter({ fn }: { fn?: (direction: 'asc' | 'desc') => void }) {
   );
 }
 
+/**
+ * generate pages after truncating the biggest array of data
+ * used only when not using some fetch requests
+ * eg: when fetching build configs there is not pagination support
+ */
 export function paginateArray<T>(array: T[], itemsPerPage: number, pageNumber: number) {
   const startIndex = pageNumber * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   return array.slice(startIndex, endIndex);
 }
 
+/**
+ * This will generate a range as an array
+ * it's the same as D3 range fn
+ * @returns Array<number>
+ */
 const range = (start: number, end: number, step: number = 1) => {
   if (!Number.isInteger(start)) {
     throw new TypeError('start should be an integer');
@@ -200,37 +240,50 @@ const range = (start: number, end: number, step: number = 1) => {
   return Array.from({ length: (end - start) / step + 1 }, (_, i) => start + i * step);
 };
 
+/**
+ * This function will generate the pagination steps and some cool dots arround
+ * when you will have many pagination steps
+ * @see(https://gist.github.com/bilalesi/6df411acaeb424cbcb8a4bfa0a3e10f2)
+ * @returns pages numbers
+ */
 const generatePagination = (
   curPage: number,
   totalPages: number,
   pagesAtEnd: number = 2,
   pagesAroundCurrent: number = 2,
-  dots = '•••'
+  separator: string = '•••'
 ) => {
+  // We aim for a consistent number of items in each sequence.
+  // This includes the current page, nearby items on both sides,
+  // items at the sequence edges, and separators in between.
+  // The default is 11 items,
+
   const numItemsInSequence = 1 + pagesAroundCurrent * 2 + pagesAtEnd * 2 + 2;
   const reworkedCurPage = Math.min(curPage, totalPages);
 
   let pages = [];
 
+  // If we have fewer than the expected number of pages (numItemsInSequence),
+  // we can skip calculations and return the full sequence starting at page 1.
   if (totalPages <= numItemsInSequence) {
     pages = range(1, totalPages);
   } else {
     const start = pagesAtEnd > 0 ? 1 : reworkedCurPage;
-    const sequence = {
-      leftEdge: [] as any,
-      rightEdge: [] as any,
-      dotsLeft: [] as any,
-      centerPart: [] as any,
-      dotsRight: [] as any,
+    const sequence: { [key: string]: Array<number | string> } = {
+      leftEdge: [],
+      rightEdge: [],
+      separatorLeft: [],
+      centerPart: [],
+      separatorRight: [],
     };
 
     if (reworkedCurPage < numItemsInSequence / 2) {
       sequence.leftEdge = range(1, Math.ceil(numItemsInSequence / 2) + pagesAroundCurrent);
-      sequence.centerPart = [dots];
+      sequence.centerPart = [separator];
       if (pagesAtEnd > 0) sequence.rightEdge = range(totalPages - (pagesAtEnd - 1), totalPages);
     } else if (reworkedCurPage > totalPages - numItemsInSequence / 2) {
       if (pagesAtEnd > 0) sequence.leftEdge = range(start, pagesAtEnd);
-      sequence.centerPart = [dots];
+      sequence.centerPart = [separator];
       sequence.rightEdge = range(
         Math.min(
           totalPages - Math.floor(numItemsInSequence / 2) - pagesAroundCurrent,
@@ -245,8 +298,9 @@ const generatePagination = (
       );
       if (pagesAtEnd > 0) sequence.leftEdge = range(start, pagesAtEnd);
       if (pagesAtEnd > 0) sequence.rightEdge = range(totalPages - (pagesAtEnd - 1), totalPages);
-      sequence.dotsLeft = sequence.centerPart[0] === pagesAtEnd + 2 ? [pagesAtEnd + 1] : [dots];
-      sequence.dotsRight = [dots];
+      sequence.separatorLeft =
+        sequence.centerPart[0] === pagesAtEnd + 2 ? [pagesAtEnd + 1] : [separator];
+      sequence.separatorRight = [separator];
     }
     pages = Object.values(sequence)
       .filter((v) => v !== null)
@@ -256,6 +310,10 @@ const generatePagination = (
   return pages;
 };
 
+/**
+ * A pagination item
+ * @returns
+ */
 function PaginationPoint({
   value,
   icon,
@@ -266,7 +324,7 @@ function PaginationPoint({
 }: {
   value: number | string;
   icon?: JSX.Element;
-  onSelect: () => void;
+  onSelect?: () => void;
   title?: string;
   isCurrent?: boolean;
   isDisabled?: boolean;
@@ -312,7 +370,7 @@ function PaginationPoint({
 function Pagination({
   name,
   total,
-  showBelowThreeshold = false,
+  showBelowThreshold = false,
   perPage = 10,
   onChange,
   currentPage,
@@ -320,19 +378,19 @@ function Pagination({
 }: {
   name: string;
   total: number;
-  showBelowThreeshold?: boolean;
+  showBelowThreshold?: boolean;
   perPage?: number;
   onChange?: (input: TablePagination) => void;
   currentPage: number;
   setCurrentPage: (num: number) => void;
 }) {
   const numPages = Math.ceil(total / perPage);
-  const pages = generatePagination(currentPage, numPages, 2, 2, '•••');
+  const pages = numPages ? generatePagination(currentPage, numPages, 2, 2, '•••') : 0;
   const onNavItemClick = (id: number) => () => {
     onChange?.({ currentPage: id - 1, total, onPageChange: setCurrentPage });
   };
 
-  if (!showBelowThreeshold && total < perPage) {
+  if ((!showBelowThreshold && total < perPage) || !pages) {
     return null;
   }
 
@@ -350,7 +408,7 @@ function Pagination({
           key={`${name}-pagination-${item}-${index.toString()}`}
           value={item}
           isCurrent={item === currentPage}
-          onSelect={onNavItemClick(item)}
+          onSelect={onNavItemClick(item as number)}
         />
       ))}
       <PaginationPoint
@@ -364,7 +422,7 @@ function Pagination({
   );
 }
 
-export default function Table<T extends { [key: string]: any }>({
+export default function Table<T extends TableObject>({
   name: tableName,
   cellRenderer,
   columns,
@@ -380,6 +438,12 @@ export default function Table<T extends { [key: string]: any }>({
   onChange,
 }: TableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
+  let shadowedTable;
+
+  if (shadowed) {
+    shadowedTable = typeof shadowed === 'string' ? shadowed : 'shadow-md';
+  }
+
   if (loading) {
     return (
       <div className="w-full py-3 flex items-center justify-center">
@@ -392,9 +456,8 @@ export default function Table<T extends { [key: string]: any }>({
     <div
       className={csx(
         'relative overflow-x-auto overflow-y-auto sm:rounded-lg',
-        // eslint-disable-next-line no-nested-ternary
-        shadowed ? (typeof shadowed === 'string' ? shadowed : 'shadow-md') : undefined,
         classNames && classNames.container,
+        shadowedTable,
         !data.length && 'h-56'
       )}
       style={style}
@@ -409,8 +472,7 @@ export default function Table<T extends { [key: string]: any }>({
           <tr>
             {columns.map(
               ({ key, name, description, sortable, sortFn, sortPosition, width: w }, ind) => {
-                // eslint-disable-next-line no-nested-ternary
-                const width = w ? (typeof w === 'number' ? `${w}px` : w) : null;
+                const width = getWidth(w);
                 // this can be handled by providing e default sort fn
                 if (sortable) {
                   if (!sortFn) {
@@ -499,9 +561,9 @@ export default function Table<T extends { [key: string]: any }>({
                     const rowData = key in row ? row[key] : '';
                     const reactColumnKey = `${tableName}-row${index}-${key}-col${columIndex}`;
                     if (columnCellRenderer)
-                      Comp = columnCellRenderer({ index, row, text: rowData, transformer });
-                    if (cellRenderer)
-                      Comp = cellRenderer({ index, row, text: rowData, transformer });
+                      Comp = columnCellRenderer({ key, index, row, text: rowData, transformer });
+                    if (cellRenderer && !columnCellRenderer)
+                      Comp = cellRenderer({ key, index, row, text: rowData, transformer });
 
                     return columIndex === 0 ? (
                       <th
@@ -536,7 +598,7 @@ export default function Table<T extends { [key: string]: any }>({
               name: tableName,
               total: pagination.total,
               perPage: pagination.perPage,
-              showBelowThreeshold: pagination.showBelowThreeshold,
+              showBelowThreshold: pagination.showBelowThreshold,
             }}
           />
         </div>
