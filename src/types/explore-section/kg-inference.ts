@@ -57,6 +57,7 @@ export interface ResourceBasedInference {
   id: string;
   value: boolean;
   description: string;
+  score?: number;
 }
 export interface ResourceBasedGeneralization {
   org: string;

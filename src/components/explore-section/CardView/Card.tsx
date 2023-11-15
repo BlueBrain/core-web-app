@@ -22,7 +22,7 @@ export default function Card({ resource, experimentTypeName, score }: CardProps)
     <div ref={ref} className="flex flex-col border border-solid rounded-md h-[500px] w-full p-4">
       {score && (
         <div className="text-primary-7 mb-2">
-          Score: <span className="font-bold">0.86</span>
+          Score: <span className="font-bold">{score}</span>
         </div>
       )}
       <div className="h-full border rounded-md">
