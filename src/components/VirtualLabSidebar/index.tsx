@@ -4,6 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { Button } from 'antd';
 
+// TODO: Move this to VirtualLab components folder
 export default function VirtualLabSidebar() {
   const { data: session } = useSession();
 
@@ -18,7 +19,7 @@ export default function VirtualLabSidebar() {
       <div className="border border-primary-7 p-5 pb-3 min-w-[220px]">
         <div>
           <UserOutlined className="text-primary-4 mr-2" />
-          <span className="font-bold">{session?.user.username}</span>
+          <span className="font-bold">{session?.user.name}</span>
         </div>
         <div className="flex justify-between">
           {/* TODO: Add click handlers to the following button once Bilal's work is done. */}

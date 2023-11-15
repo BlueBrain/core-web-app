@@ -20,3 +20,9 @@ export interface VirtualLabMember {
   email: string;
   role: 'admin' | 'user';
 }
+
+export interface ComputeTime {
+  labId: string;
+  usedTimeInHours: number;
+  totalTimeInHours: number;
+}
