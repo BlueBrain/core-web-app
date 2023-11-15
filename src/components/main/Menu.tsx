@@ -2,6 +2,7 @@ import { useReducer } from 'react';
 
 import ExploreMainMenu from './segments/ExploreMainMenu';
 import BuildMainMenu from './segments/BuildMainMenu';
+import SimulateMainMenu from './segments/SimulateMainMenu';
 import { classNames } from '@/util/utils';
 
 type MainMenuListKey = 'main-explore-entry' | 'main-build-entry' | 'main-simulate-entry' | null;
@@ -32,6 +33,14 @@ const MAIN_MENU_LIST: Array<MainMenuItem> = [
     description: 'Sint elit incididunt in excepteur culpa exercitation enim velit duis.',
     Component: BuildMainMenu,
     bgcolor: 'bg-primary-7',
+  },
+  {
+    id: 'main-simulate-entry',
+    title: 'Simulate',
+    description:
+      'Do officia esse ipsum nisi sit nisi sunt sunt occaecat esse labore elit ipsum eiusmod.',
+    Component: SimulateMainMenu,
+    bgcolor: 'bg-primary-8',
   },
 ];
 

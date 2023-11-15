@@ -62,7 +62,7 @@ export default function Main() {
         <DefaultAccountPanel expanded />
       </div>
       <div className="absolute h-[calc(100vh-56px)] top-7 right-7 flex justify-end w-[calc(100%-3rem)] ml-auto">
-        <div />
+        <MainMenu />
       </div>
     </div>
   );
