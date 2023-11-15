@@ -6,7 +6,6 @@ import ApplicationSidebar, {
   NavigationItemProps,
 } from '../ApplicationSidebar';
 import { OBPLogo } from '../Entrypoint/segments/Splash';
-import MainMenu from './main';
 import { classNames } from '@/util/utils';
 
 function MainSideBarHeader({ expanded }: { expanded: boolean }) {
@@ -52,11 +51,11 @@ export default function Main() {
         <ApplicationSidebar title={MainSideBarHeader} control={MainNavigation} />
       </div>
       <OBPLogo color="text-primary-5" className="!left-14" />
-      <div className="fixed top-[130px] left-[53px] max-w-[250px] w-full z-20">
+      <div className="fixed top-[130px] left-[53px] max-w-[250px] w-full z-10">
         <DefaultAccountPanel expanded />
       </div>
       <div className="absolute h-[calc(100vh-56px)] top-7 right-7 flex justify-end w-[calc(100%-3rem)] ml-auto">
-        <MainMenu />
+        <div />
       </div>
     </div>
   );
