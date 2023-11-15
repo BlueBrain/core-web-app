@@ -209,8 +209,8 @@ export default function ApplicationSidebar({
   return (
     <div
       className={classNames(
-        'h-screen transition-transform ease-in-out bg-primary-9 text-light relative',
-        pathname?.includes('/explore/literature') && 'fixed top-0 z-50',
+        'h-screen transition-transform ease-in-out bg-primary-9 text-light',
+        pathname?.includes('/explore/literature') ? 'fixed top-0 z-50' : 'relative',
         expanded
           ? 'px-5 w-80 flex flex-col items-start justify-start shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
           : 'w-10 flex flex-col items-center justify-between transition-transform ease-in-out will-change-auto'
