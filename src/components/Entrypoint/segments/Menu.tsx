@@ -17,9 +17,9 @@ interface EntrypointMenuItemAsButton extends BaseEntrypointMenuItem {
 interface EntrypointMenuItemAsLink extends BaseEntrypointMenuItem {
   href: string;
 }
-type TEntrypointMenuItem = EntrypointMenuItemAsButton | EntrypointMenuItemAsLink;
+type EntrypointMenuItem = EntrypointMenuItemAsButton | EntrypointMenuItemAsLink;
 
-const ENTRYPOINT_MENU_ITEMS: Array<TEntrypointMenuItem> = [
+const ENTRYPOINT_MENU_ITEMS: Array<EntrypointMenuItem> = [
   {
     title: 'Discover',
     description: 'Explore brain models and experimental data',
@@ -46,9 +46,9 @@ const ENTRYPOINT_MENU_ITEMS: Array<TEntrypointMenuItem> = [
   },
 ];
 
-function withButtonOrLink(WrapperComponent: ComponentType<TEntrypointMenuItem>) {
+function withButtonOrLink(WrapperComponent: ComponentType<EntrypointMenuItem>) {
   // eslint-disable-next-line react/display-name
-  return function Action({ bgcolor, description, title, ...rest }: TEntrypointMenuItem) {
+  return function Action({ bgcolor, description, title, ...rest }: EntrypointMenuItem) {
     const key = kebabCase(`${title}-${description}`);
     const params = useSearchParams();
     if ('action' in rest && rest.action) {
@@ -72,7 +72,7 @@ function withButtonOrLink(WrapperComponent: ComponentType<TEntrypointMenuItem>) 
   };
 }
 
-function EntrypointMenuItem({
+function EntrypointMenuSingleItem({
   title,
   description,
   bgcolor,
@@ -94,7 +94,7 @@ function EntrypointMenuItem({
 export default function EntrypointMenu() {
   return (
     <div className="grid grid-flow-col gap-1 absolute top-7 right-7 z-20">
-      {ENTRYPOINT_MENU_ITEMS.map((props) => withButtonOrLink(EntrypointMenuItem)(props))}
+      {ENTRYPOINT_MENU_ITEMS.map((props) => withButtonOrLink(EntrypointMenuSingleItem)(props))}
     </div>
   );
 }

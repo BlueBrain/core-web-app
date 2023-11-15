@@ -1,10 +1,9 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import isEmpty from 'lodash/isEmpty';
 
 export async function middleware(request: NextRequest) {
   const session = await getToken({ req: request });
-  const sessionValid = !isEmpty(session?.user) && session?.accessToken;
+  const sessionValid = session?.user && session?.accessToken;
   const requestUrl = request.nextUrl.pathname;
 
   // if the user is the authenticated and want to access home page
