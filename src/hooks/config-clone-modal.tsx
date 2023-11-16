@@ -45,7 +45,7 @@ function CloneConfigSuccess({ name, startEditing }: { name: string; startEditing
       <div className="w-full" style={{ padding: '.75rem 0 3.75rem' }}>
         <div className="flex items-center justify-center flex-col gap-1">
           <p className="text-primary-8 text-base">
-            You have successfully clone the configuration. Your new composition
+            You have successfully clone the configuration. Your cloned configuration
           </p>
           <h2 className="text-2xl text-primary-8 font-bold">{name}</h2>
           <p className="text-primary-8 text-base">is ready to use.</p>
@@ -56,7 +56,7 @@ function CloneConfigSuccess({ name, startEditing }: { name: string; startEditing
         className="ml-2 bg-primary-9 py-6 px-8 rounded-none inline-flex items-center justify-center"
         onClick={startEditing}
       >
-        Start Editing
+        Start editing
       </Button>
     </div>
   );
@@ -127,11 +127,11 @@ function CloneConfig<T extends SupportedConfigListTypes>({
         <div className="flex flex-col items-start justify-start gap-y-3">
           <div className="inline-flex items-center gap-x-2">
             <CloneIcon className="text-primary-8" />
-            <h2 className="text-2xl font-bold text-primary-8">Edit Configuration</h2>
+            <h2 className="text-2xl font-bold text-primary-8">Clone configuration</h2>
           </div>
           <p className="text-primary-8">
-            Duplicate the original configuration. Give it a new name and start working on your own
-            configuration.
+            You are about to clone this configuration. You can now give it a new name and start
+            working on it.
           </p>
         </div>
         <Form
@@ -183,7 +183,7 @@ function CloneConfig<T extends SupportedConfigListTypes>({
               onClick={cloneConfig}
               loading={cloningState.status === 'cloning'}
             >
-              Create
+              Save
             </Button>
           </div>
         </Form>

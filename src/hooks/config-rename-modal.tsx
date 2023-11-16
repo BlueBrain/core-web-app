@@ -133,7 +133,7 @@ function RenameConfigForm<T extends SupportedConfigListTypes>({
           onClick={renameConfig}
           loading={renaming}
         >
-          Rename
+          Save
         </Button>
       </div>
     </Form>
