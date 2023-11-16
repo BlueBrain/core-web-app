@@ -84,7 +84,12 @@ function SimulateTemplateItem({ id, name, description }: CuratedTemplate) {
   return (
     <div id={id} className="border border-neutral-2 p-4 rounded-md hover:bg-gray-50 cursor-pointer">
       <div className="block">
-        <h3 className="text-primary-8 font-bold text-lg mb-3">{name}</h3>
+        <div className="inline-flex items-center justify-between w-full gap-2 mb-3">
+          <h3 className="text-primary-8 font-bold text-lg select-none">{name}</h3>
+          <button type="button" className="text-neutral-4 text-sm hover:text-primary-8">
+            Choose
+          </button>
+        </div>
         <p className="text-gray-400 text-sm font-normal line-clamp-2">{description}</p>
       </div>
     </div>
@@ -185,8 +190,6 @@ function MySimulations() {
       {
         key: 'status',
         name: 'Status',
-        sortable: true,
-        sortFn: () => {},
         sortPosition: 'left',
         // eslint-disable-next-line react/no-unstable-nested-components
         cellRenderer: ({ row: { status } }) => (
@@ -250,7 +253,7 @@ function MySimulations() {
     () => ({
       total: configs.length,
       perPage: 10,
-      showBelowThreeshold: false,
+      showBelowThreshold: false,
     }),
     [configs.length]
   );
