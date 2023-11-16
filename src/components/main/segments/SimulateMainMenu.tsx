@@ -101,9 +101,12 @@ function NewExperiment() {
     <div className="px-4 pt-4 pb-6 flex-col items-start justify-start gap-2 border hover:bg-gray-50 border-neutral-2 w-full rounded-md">
       <div className="inline-flex items-center justify-between w-full gap-3">
         <h3 className="text-primary-8 font-bold select-none text-xl">New experiments</h3>
-        <button type="button" className="text-neutral-4 text-base hover:text-primary-8">
+        <Link
+          href="/simulate/brain-config-selector"
+          className="text-neutral-4 text-base hover:text-primary-8"
+        >
           Choose
-        </button>
+        </Link>
       </div>
       <p className="text-gray-400 font-normal select-none w-3/5 line-clamp-2 mb-4">
         Cillum duis duis dolor nulla. Proident ad eiusmod ut anim magna minim magna ea ex mollit et
@@ -135,7 +138,10 @@ function SimulateTemplateList() {
 
 export function BrowseSimulations() {
   return (
-    <div className="relative w-full p-7 bg-white hover:bg-primary-8 flex flex-col items-start text-left cursor-pointer group">
+    <Link
+      href="/explore/simulation-campaigns"
+      className="relative w-full p-7 bg-white hover:bg-primary-8 flex flex-col items-start text-left cursor-pointer group"
+    >
       <h2 className="text-primary-8 font-bold text-xl group-hover:text-white">
         Browse simulation experiments
       </h2>
@@ -144,7 +150,7 @@ export function BrowseSimulations() {
         anim id est laborum.
       </p>
       <EyeIcon className="absolute right-12 top-1/2 -translate-y-1/2 text-primary-8 group-hover:text-white w-5 h-5" />
-    </div>
+    </Link>
   );
 }
 
