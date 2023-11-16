@@ -747,6 +747,10 @@ export async function cloneBrainModelConfig(
         '@id': clonedEModelAssignmentConfigMetadata['@id'],
         '@type': ['EModelAssignmentConfig', 'Entity'],
       },
+      meModelConfig: {
+        '@id': 'will-come-in-next-mr',
+        '@type': ['MEModelConfig', 'Entity'],
+      },
       microConnectomeConfig: {
         '@id': clonedMicroConnectomeConfigMetadata['@id'],
         '@type': ['MicroConnectomeConfig', 'Entity'],

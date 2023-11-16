@@ -18,3 +18,35 @@ export type MEFeatureWithEModel = {
     eModel: EModelMenuItem | null;
   };
 };
+
+/* --------------------------- DefaultPlaceholders -------------------------- */
+
+export type DefaultPlaceholders = {
+  hasPart: {
+    [brainRegionId: string]: {
+      about: 'BrainRegion';
+      notation: string;
+      label: string;
+      hasPart: {
+        [mTypeId: string]: {
+          about: 'MType';
+          label: string;
+          hasPart: {
+            [eTypeId: string]: {
+              about: 'EType';
+              label: string;
+              hasPart: DefaultEModelPlaceholder;
+            };
+          };
+        };
+      };
+    };
+  };
+};
+
+export type DefaultEModelPlaceholder = {
+  [eModelId: string]: {
+    about: 'EModel';
+    _rev: number;
+  };
+};

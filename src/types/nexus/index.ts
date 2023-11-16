@@ -24,6 +24,10 @@ export interface BrainModelConfig extends Entity {
       '@id': string;
       '@type': [MorphologyAssignmentConfigType, 'Entity'];
     };
+    meModelConfig: {
+      '@id': string;
+      '@type': ['MEModelConfig', 'Entity'];
+    };
     microConnectomeConfig: {
       '@id': string;
       '@type': [MicroConnectomeConfigType, 'Entity'];
@@ -246,6 +250,20 @@ export type EModelAssignmentConfigPayload = {
     jobConfiguration: Record<string, string | number>;
   };
 };
+
+type MEModelGeneratorName = 'memodel';
+type MEModelConfigType = 'MEModelConfig';
+
+export interface MEModelConfig extends Entity {
+  name: string;
+  description: string;
+  '@type': [MEModelConfigType, 'Entity'];
+  generatorName: MEModelGeneratorName;
+  distribution: Distribution;
+  configVersion: number;
+}
+
+export interface MEModelConfigResource extends ResourceMetadata, MEModelConfig {}
 
 export interface MEModelConfigPayload {
   variantDefinition: {
@@ -537,6 +555,7 @@ export type GeneratorConfig =
   | CellPositionConfig
   | EModelAssignmentConfig
   | MorphologyAssignmentConfig
+  | MEModelConfig
   | MicroConnectomeConfig
   | SynapseConfig
   | MacroConnectomeConfig;
@@ -546,6 +565,7 @@ export type GeneratorConfigPayload =
   | CellPositionConfigPayload
   | EModelAssignmentConfigPayload
   | MorphologyAssignmentConfigPayload
+  | MEModelConfigPayload
   | MicroConnectomeConfigPayload
   | SynapseConfigPayload
   | MacroConnectomeConfigPayload;
@@ -555,6 +575,7 @@ export type SubConfigName =
   | 'cellPositionConfig'
   | 'eModelAssignmentConfig'
   | 'morphologyAssignmentConfig'
+  | 'meModelConfig'
   | 'microConnectomeConfig'
   | 'synapseConfig'
   | 'macroConnectomeConfig';

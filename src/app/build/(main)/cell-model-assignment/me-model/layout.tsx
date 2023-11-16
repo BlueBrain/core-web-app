@@ -14,6 +14,7 @@ import {
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import List from '@/components/build-section/cell-model-assignment/me-model/Panel/List';
+import { defaultEModelPlaceholdersAtom } from '@/state/brain-model-config/cell-model-assignment/me-model';
 
 type Props = {
   children: ReactNode;
@@ -24,6 +25,8 @@ export default function MEModelLayout({ children }: Props) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const setSelectedEModel = useSetAtom(selectedEModelAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
+  // preload the default e-models to speed up render later
+  useAtomValue(defaultEModelPlaceholdersAtom);
 
   useEffect(() => {
     // resetting the e-type selection when brain region changes

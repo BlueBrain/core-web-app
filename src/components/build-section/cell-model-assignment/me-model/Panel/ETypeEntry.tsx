@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import { EModelMenuItem } from '@/types/e-model';
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
@@ -27,7 +27,7 @@ export default function ETypeEntry({
   availableEModels,
   mTypeName,
 }: ETypeEntryProps) {
-  const [selectedEModel] = useAtom(selectedEModelAtom);
+  const selectedEModel = useAtomValue(selectedEModelAtom);
   const setDefaultEModelForMEType = useSetAtom(setDefaultEModelForMETypeAtom);
   const setSelectedMEName = useSetAtom(selectedMENameAtom);
 

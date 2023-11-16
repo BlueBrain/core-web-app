@@ -3,6 +3,7 @@ import lodashSet from 'lodash/set';
 import lodashGet from 'lodash/get';
 
 import {
+  defaultEModelPlaceholderAtom,
   getMETypeIdAtom,
   mEModelConfigPayloadAtom,
   refetchTriggerAtom,
@@ -67,7 +68,21 @@ export const setDefaultEModelForMETypeAtom = atom<null, [], void>(null, async (g
   const availableEModels = eModels[eTypeName];
 
   if (!eModelIdInPayload) {
-    set(selectedEModelAtom, { ...availableEModels[0], mType: mTypeName, eType: eTypeName });
+    const defaultEModelPlaceholder = await get(defaultEModelPlaceholderAtom);
+    if (!defaultEModelPlaceholder) return;
+
+    const defaultEModelId = Object.keys(defaultEModelPlaceholder)[0];
+    const defaultEModelRev = defaultEModelPlaceholder[defaultEModelId]._rev;
+
+    const foundEModel = availableEModels.find((eModel) => eModel.id === defaultEModelId);
+    if (!foundEModel) {
+      throw new Error('Default placeholder eModel not found in available eModels');
+    }
+    if (foundEModel?.rev !== defaultEModelRev) {
+      throw new Error('Revision between default placeholder and available eModels does not match');
+    }
+
+    set(selectedEModelAtom, { ...foundEModel, mType: mTypeName, eType: eTypeName });
     return;
   }
 

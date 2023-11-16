@@ -127,6 +127,12 @@ export const morphologyAssignmentConfigIdAtom = atom<Promise<string | null>>(asy
   return config?.configs.morphologyAssignmentConfig?.['@id'] ?? null;
 });
 
+export const meModelConfigIdAtom = atom<Promise<string | null>>(async (get) => {
+  const config = await get(configAtom);
+
+  return config?.configs.meModelConfig?.['@id'] ?? null;
+});
+
 export const microConnectomeConfigIdAtom = selectAtom(
   configAtom,
   (config) => config?.configs.microConnectomeConfig?.['@id']

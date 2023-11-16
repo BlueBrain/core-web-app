@@ -8,6 +8,7 @@ export const supportedUIConfigVersion: Record<SubConfigName, number> = {
   cellPositionConfig: 0,
   eModelAssignmentConfig: 0,
   morphologyAssignmentConfig: 1,
+  meModelConfig: 1,
   macroConnectomeConfig: 0,
   microConnectomeConfig: 1,
   synapseConfig: 1,
