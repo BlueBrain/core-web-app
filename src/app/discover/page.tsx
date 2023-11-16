@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import ApplicationSidebar, {
-  DefaultAccountPanel,
   NavigationItem,
   NavigationItemProps,
 } from '@/components/ApplicationSidebar';
@@ -13,7 +13,7 @@ import { classNames } from '@/util/utils';
 import { EyeIcon } from '@/components/icons';
 
 function MainSideBarHeader({ expanded }: { expanded: boolean }) {
-  return expanded ? <span>OBP</span> : <span>Menu</span>;
+  return expanded ? <span>Discover</span> : <span>Menu</span>;
 }
 
 export function DiscoverNavigationItem({
@@ -76,7 +76,12 @@ export default function Main() {
       </div>
       <OBPLogo color="text-primary-5" className="!left-14" />
       <div className="fixed top-[130px] left-[53px] max-w-[250px] w-full z-10">
-        <DefaultAccountPanel expanded />
+        <Link href="/" className="inline-flex items-center gap-1 group">
+          <ArrowLeftOutlined className="text-white w-5 h-5 group-hover:text-primary-4" />
+          <span className="text-white text-base font-bold group-hover:text-primary-4">
+            Back to Home
+          </span>
+        </Link>
       </div>
       <div className="absolute h-[calc(100vh-56px)] top-7 right-7 flex justify-end w-3/5 ml-auto z-20">
         <DiscoverNavigation />
