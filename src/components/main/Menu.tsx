@@ -14,12 +14,12 @@ type TMainMenuItem = {
   bgcolor: string;
 };
 
-type MainMenuItemProps = Omit<TMainMenuItem, 'Component'> & {
+type MainMenuItemProps = Omit<MainMenuItem, 'Component'> & {
   selected: boolean;
   onSelect: (id: MainMenuListKey) => (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
-const MAIN_MENU_LIST: Array<TMainMenuItem> = [
+const MAIN_MENU_LIST: Array<MainMenuItem> = [
   {
     id: 'main-explore-entry',
     title: 'Explore',
@@ -36,7 +36,7 @@ const MAIN_MENU_LIST: Array<TMainMenuItem> = [
   },
 ];
 
-export function MainMenuItem({
+export function MainMenuSingleItem({
   id,
   title,
   description,
@@ -111,7 +111,7 @@ export default function MainMenu() {
     <div className="relative flex flex-col justify-start gap-px items-stretch w-2/3">
       <div className="inline-flex items-stretch justify-between gap-x-1 gap-y-4 sticky top-0 z-20 bg-primary-8">
         {MAIN_MENU_LIST.map(({ id, title, description, bgcolor }) => (
-          <MainMenuItem
+          <MainMenuSingleItem
             key={id}
             {...{
               id,
