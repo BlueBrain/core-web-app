@@ -1,4 +1,4 @@
-import { CSSProperties, HTMLProps, useState } from 'react';
+import { CSSProperties, HTMLProps, isValidElement, useState } from 'react';
 import { Empty } from 'antd';
 import {
   CaretDownOutlined,
@@ -49,7 +49,7 @@ export type TableProps<T> = {
     row: T;
     index: number;
     text: string;
-    transformer?: (t: string) => string;
+    transformer?: (t: any) => JSX.Element | null;
   }) => JSX.Element;
 
   columns: Array<{
@@ -80,7 +80,7 @@ export type TableProps<T> = {
       row: T;
       index: number;
       text: string;
-      transformer?: (t: string) => string;
+      transformer?: (t: any) => JSX.Element | null;
     }) => JSX.Element;
     /**
      * sortable: if the column can be sorted
@@ -102,7 +102,7 @@ export type TableProps<T> = {
      * transformer: used to transform the text of a cell
      * eg: get the username from a url or add prefix to the text
      */
-    transformer?: (text: string) => string;
+    transformer?: (t: any) => JSX.Element | null;
   }>;
   /**
    * data: table data
@@ -163,10 +163,20 @@ function DefaultCellRenderer({
   transformer,
   className,
 }: {
-  data: string;
-  transformer?: (t: string) => string;
+  data: any;
+  transformer?: (t: any) => React.ReactNode;
   className?: HTMLProps<HTMLElement>['className'];
 }) {
+  // Do not crash if final 'data' is not valide ReactNode
+  if (typeof data === 'object' && !Array.isArray(data) && !isValidElement(data)) {
+    return null;
+  }
+
+  let value = data;
+  if (transformer && typeof transformer === 'function') {
+    value = transformer(data);
+  }
+
   return (
     <span
       title={data}
@@ -175,29 +185,29 @@ function DefaultCellRenderer({
         className
       )}
     >
-      {transformer?.(data) ?? data}
+      {value}
     </span>
   );
 }
 
 function DefaultSorter({ fn }: { fn?: (direction: 'asc' | 'desc') => void }) {
-  const [state, setState] = useState<'asc' | 'desc' | null>(null);
+  const [order, setOrder] = useState<'asc' | 'desc' | null>(null);
 
-  const sort = (direction: 'asc' | 'desc') => () => {
-    fn?.(direction);
-    setState((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+  const sort = () => {
+    fn?.(order ?? 'asc');
+    setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
-  if (!state) {
-    return <VerticalAlignMiddleOutlined onClick={sort('asc')} />;
+  if (!order) {
+    return <VerticalAlignMiddleOutlined onClick={sort} />;
   }
 
   return (
     <CaretDownOutlined
-      onClick={sort(state === 'asc' ? 'desc' : 'asc')}
+      onClick={sort}
       className={csx(
         'transform transition-transform duration-200',
-        state === 'asc' ? 'rotate-0' : 'rotate-180'
+        order === 'asc' ? 'rotate-0' : 'rotate-180'
       )}
     />
   );
@@ -205,8 +215,9 @@ function DefaultSorter({ fn }: { fn?: (direction: 'asc' | 'desc') => void }) {
 
 /**
  * generate pages after truncating the biggest array of data
- * used only when not using some fetch requests
+ * used only when not using some fetch requests that support pagination
  * eg: when fetching build configs there is not pagination support
+ * so trancating it's the way we go to do pagination
  */
 export function paginateArray<T>(array: T[], itemsPerPage: number, pageNumber: number) {
   const startIndex = pageNumber * itemsPerPage;
@@ -473,7 +484,7 @@ export default function Table<T extends TableObject>({
             {columns.map(
               ({ key, name, description, sortable, sortFn, sortPosition, width: w }, ind) => {
                 const width = getWidth(w);
-                // this can be handled by providing e default sort fn
+                // TODO: this can be handled by providing a default sort fn
                 if (sortable) {
                   if (!sortFn) {
                     throw new Error(
