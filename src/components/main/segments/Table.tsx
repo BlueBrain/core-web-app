@@ -49,7 +49,7 @@ export type TableProps<T> = {
     row: T;
     index: number;
     text: string;
-    transformer?: (t: any) => JSX.Element | null;
+    transformer?: (t: any) => React.ReactNode;
   }) => JSX.Element;
 
   columns: Array<{
@@ -80,7 +80,7 @@ export type TableProps<T> = {
       row: T;
       index: number;
       text: string;
-      transformer?: (t: any) => JSX.Element | null;
+      transformer?: (t: any) => React.ReactNode;
     }) => JSX.Element;
     /**
      * sortable: if the column can be sorted
@@ -102,7 +102,7 @@ export type TableProps<T> = {
      * transformer: used to transform the text of a cell
      * eg: get the username from a url or add prefix to the text
      */
-    transformer?: (t: any) => JSX.Element | null;
+    transformer?: (t: any) => React.ReactNode;
   }>;
   /**
    * data: table data
