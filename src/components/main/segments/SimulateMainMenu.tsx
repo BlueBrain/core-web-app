@@ -154,6 +154,39 @@ export function BrowseSimulations() {
   );
 }
 
+function StatusColumn({ row: { status } }: { row: LaunchedSimCampUIConfigType }) {
+  return (
+    <div className="flex flex-row gap-3 items-center justify-start">
+      {getStatusIcon(status)} {status}
+    </div>
+  );
+}
+
+function ActionColumn({ row }: { row: LaunchedSimCampUIConfigType }) {
+  return (
+    <div className="inline-flex flex-row items-center justify-center gap-2">
+      <button disabled title="Edit" type="button" className="cursor-pointer">
+        <FileIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+      </button>
+      <Link
+        title="Settings"
+        href={`${EXPIREMENT_BASE_URL}?simulationCampaignUIConfigId=${collapseId(row['@id'])}`}
+      >
+        <SettingsIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+      </Link>
+      {row.status === 'Done' && (
+        <Link
+          href={`${EXPLORE_SIM_CAMP_BASE_URM}?simCampId=${collapseId(row['@id'])}`}
+          className="inline-block"
+          title="Clone"
+        >
+          <EyeIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
 function MySimulations() {
   const launchedSimCampaignsLoadable = useAtomValue(loadableLaunchedSimCampaignListAtom);
 
@@ -197,12 +230,7 @@ function MySimulations() {
         key: 'status',
         name: 'Status',
         sortPosition: 'left',
-        // eslint-disable-next-line react/no-unstable-nested-components
-        cellRenderer: ({ row: { status } }) => (
-          <div className="flex flex-row gap-3 items-center justify-start">
-            {getStatusIcon(status)} {status}
-          </div>
-        ),
+        cellRenderer: StatusColumn,
       },
       {
         key: 'startedAtTime',
@@ -223,33 +251,7 @@ function MySimulations() {
       {
         key: 'action',
         name: 'Actions',
-        // eslint-disable-next-line react/no-unstable-nested-components
-        cellRenderer: ({ row }) => {
-          return (
-            <div className="inline-flex flex-row items-center justify-center gap-2">
-              <button disabled title="Edit" type="button" className="cursor-pointer">
-                <FileIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
-              </button>
-              <Link
-                title="Settings"
-                href={`${EXPIREMENT_BASE_URL}?simulationCampaignUIConfigId=${collapseId(
-                  row['@id']
-                )}`}
-              >
-                <SettingsIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
-              </Link>
-              {row.status === 'Done' && (
-                <Link
-                  href={`${EXPLORE_SIM_CAMP_BASE_URM}?simCampId=${collapseId(row['@id'])}`}
-                  className="inline-block"
-                  title="Clone"
-                >
-                  <EyeIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
-                </Link>
-              )}
-            </div>
-          );
-        },
+        cellRenderer: ActionColumn,
       },
     ],
     []
