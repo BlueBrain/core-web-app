@@ -13,6 +13,7 @@ import { classNames as csx } from '@/util/utils';
 
 type PropertyKey = string | number | symbol;
 type TableObject = Record<PropertyKey, any>;
+type SortDirection = 'asc' | 'desc';
 
 export type TablePagination = {
   currentPage?: number;
@@ -23,7 +24,7 @@ export type TablePagination = {
 };
 export type TableSort = {
   key: string;
-  dir?: 'asc' | 'desc';
+  dir?: SortDirection;
   sortFn?: any;
   onPageChange: (num: number) => void;
 };
@@ -167,14 +168,13 @@ function DefaultCellRenderer({
   transformer?: (t: any) => React.ReactNode;
   className?: HTMLProps<HTMLElement>['className'];
 }) {
-  // Do not crash if final 'data' is not valide ReactNode
-  if (typeof data === 'object' && !Array.isArray(data) && !isValidElement(data)) {
-    return null;
-  }
-
   let value = data;
   if (transformer && typeof transformer === 'function') {
     value = transformer(data);
+  }
+  // Do not crash if final 'data' is not valide ReactNode
+  if (typeof value === 'object' && !Array.isArray(value) && !isValidElement(value)) {
+    return null;
   }
 
   return (
@@ -190,11 +190,15 @@ function DefaultCellRenderer({
   );
 }
 
-function DefaultSorter({ fn }: { fn?: (direction: 'asc' | 'desc') => void }) {
-  const [order, setOrder] = useState<'asc' | 'desc' | null>(null);
+function DefaultSorter({ fn }: { fn?: (direction: SortDirection) => void }) {
+  const [order, setOrder] = useState<SortDirection | null>(null);
 
   const sort = () => {
-    fn?.(order ?? 'asc');
+    let newOrder: SortDirection;
+    if (!order) newOrder = 'asc';
+    else newOrder = order === 'asc' ? 'desc' : 'asc';
+
+    fn?.(newOrder);
     setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
@@ -537,7 +541,7 @@ export default function Table<T extends TableObject>({
                       </div>
                       {sortable && sortFn ? (
                         <DefaultSorter
-                          fn={(dir: 'asc' | 'desc') =>
+                          fn={(dir: SortDirection) =>
                             onChange?.({ sortFn, dir, key, onPageChange: setCurrentPage })
                           }
                         />
