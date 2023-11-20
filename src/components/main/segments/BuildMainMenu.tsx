@@ -6,7 +6,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
-import { CopyOutlined, EyeOutlined, InfoCircleFilled } from '@ant-design/icons';
+import { EyeOutlined, FileTextOutlined, InfoCircleFilled } from '@ant-design/icons';
 import { isValid, formatDistance } from 'date-fns';
 import { orderBy } from 'lodash/fp';
 
@@ -132,6 +132,45 @@ function getSorterFn<T extends SupportedConfigListTypes>(
   return (a: T, b: T) => (a[sortProp] < b[sortProp] ? 1 : -1);
 }
 
+function ActionColumn({
+  row,
+  openRenameModal,
+  openCloneModal,
+}: {
+  row: BrainModelConfigResource;
+  openCloneModal: (currentConfig: BrainModelConfigResource) => void;
+  openRenameModal: (currentConfig: BrainModelConfigResource) => void;
+}) {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const onRename = () => openRenameModal(row);
+  const onView = () =>
+    router.push(
+      `${BUILD_BASE_HREF}?brainModelConfigId=${encodeURIComponent(collapseId(row['@id']))}`
+    );
+  const onClone = () => openCloneModal(row);
+  const disableEdit = disableAction(row, session);
+  return (
+    <div className="inline-flex flex-row items-center justify-center gap-2">
+      <button
+        title="Edit"
+        type="button"
+        className="cursor-pointer"
+        onClick={onRename}
+        disabled={disableEdit}
+      >
+        <FileTextOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+      </button>
+      <button title="View" type="button" className="cursor-pointer" onClick={onView}>
+        <EyeOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+      </button>
+      <button title="Clone" type="button" className="cursor-pointer" onClick={onClone}>
+        <CloneIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+      </button>
+    </div>
+  );
+}
+
 function BrowseModelsGrid({
   openCloneModal,
   openRenameModal,
@@ -139,9 +178,6 @@ function BrowseModelsGrid({
   openCloneModal: (currentConfig: BrainModelConfigResource) => void;
   openRenameModal: (currentConfig: BrainModelConfigResource) => void;
 }) {
-  const router = useRouter();
-  const { data: session } = useSession();
-
   const configsLoadable = useAtomValue(loadableConfigAtom);
 
   const [configs, setConfigs] = useState<BrainModelConfigResource[]>(
@@ -159,6 +195,37 @@ function BrowseModelsGrid({
     [configs.length]
   );
 
+  const NameColumn = useCallback(
+    // eslint-disable-next-line react/no-unused-prop-types
+    ({ row, text }: { row: BrainModelConfigResource; text: BrainModelConfigResource['name'] }) => (
+      <Link
+        href={`${BUILD_BASE_HREF}?brainModelConfigId=${encodeURIComponent(collapseId(row['@id']))}`}
+        className="text-sm font-bold text-primary-8"
+      >
+        {text}
+      </Link>
+    ),
+    []
+  );
+
+  const StatusColumn = useCallback(
+    () => (
+      <div className="inline-flex items-center justify-center gap-1">
+        <InfoCircleFilled className="text-blue-500" />
+        <span className="leading-9">Waiting</span>
+      </div>
+    ),
+    []
+  );
+
+  const ActionColumnWrapper = useCallback(
+    // eslint-disable-next-line react/no-unused-prop-types
+    ({ row }: { row: BrainModelConfigResource }) => (
+      <ActionColumn {...{ row, openCloneModal, openRenameModal }} />
+    ),
+    [openCloneModal, openRenameModal]
+  );
+
   const columns: TableProps<BrainModelConfigResource>['columns'] = useMemo(
     () => [
       {
@@ -167,17 +234,7 @@ function BrowseModelsGrid({
         sortable: true,
         sortFn: () => getSorterFn('name'),
         sortPosition: 'left',
-        // eslint-disable-next-line react/no-unstable-nested-components
-        cellRenderer: ({ row, text }) => (
-          <Link
-            href={`${BUILD_BASE_HREF}?brainModelConfigId=${encodeURIComponent(
-              collapseId(row['@id'])
-            )}`}
-            className="text-sm font-bold text-primary-8"
-          >
-            {text}
-          </Link>
-        ),
+        cellRenderer: NameColumn,
       },
       {
         key: 'description',
@@ -189,13 +246,7 @@ function BrowseModelsGrid({
       {
         key: 'status',
         name: 'Status',
-        // eslint-disable-next-line react/no-unstable-nested-components
-        cellRenderer: () => (
-          <div className="inline-flex items-center justify-center gap-1">
-            <InfoCircleFilled className="text-blue-500" />
-            <span className="leading-9">Waiting</span>
-          </div>
-        ),
+        cellRenderer: StatusColumn,
       },
       {
         key: '_createdBy',
@@ -221,38 +272,10 @@ function BrowseModelsGrid({
       {
         key: 'action',
         name: 'Actions',
-        // eslint-disable-next-line react/no-unstable-nested-components
-        cellRenderer: ({ row }) => {
-          const onRename = () => openRenameModal(row);
-          const onView = () =>
-            router.push(
-              `${BUILD_BASE_HREF}?brainModelConfigId=${encodeURIComponent(collapseId(row['@id']))}`
-            );
-          const onClone = () => openCloneModal(row);
-          const disableEdit = disableAction(row, session);
-          return (
-            <div className="inline-flex flex-row items-center justify-center gap-2">
-              <button
-                title="Edit"
-                type="button"
-                className="cursor-pointer"
-                onClick={onRename}
-                disabled={disableEdit}
-              >
-                <CopyOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
-              </button>
-              <button title="View" type="button" className="cursor-pointer" onClick={onView}>
-                <EyeOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
-              </button>
-              <button title="Clone" type="button" className="cursor-pointer" onClick={onClone}>
-                <CloneIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
-              </button>
-            </div>
-          );
-        },
+        cellRenderer: ActionColumnWrapper,
       },
     ],
-    [openCloneModal, openRenameModal, router, session]
+    [ActionColumnWrapper, NameColumn, StatusColumn]
   );
 
   useEffect(() => {

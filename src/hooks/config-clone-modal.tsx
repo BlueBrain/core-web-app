@@ -148,7 +148,9 @@ function CloneConfig<T extends SupportedConfigListTypes>({
           }}
         >
           <Form.Item
+            id="name"
             name="name"
+            label={<span className="text-base font-bold text-primary-8">Name</span>}
             rules={[
               { required: true, message: 'Please define a name' },
               { validator: nameValidatorFn },
@@ -156,16 +158,19 @@ function CloneConfig<T extends SupportedConfigListTypes>({
           >
             <Input
               className="mt-2 rounded-none !focus:shadow-none border-0 border-b border-primary-8 text-xl"
-              placeholder="Name your configuration"
+              placeholder="Name your configuration..."
             />
           </Form.Item>
           <Form.Item
+            id="description"
             name="description"
+            label={<span className="text-base font-bold text-primary-8">Description</span>}
             rules={[{ required: true, message: 'Please define a description' }]}
           >
-            <Input
-              className="mt-2 rounded-none !focus:shadow-none border-0 border-b border-primary-8 text-xl"
-              placeholder="Description"
+            <Input.TextArea
+              rows={3}
+              className="mt-2 !focus:shadow-none border border-neutral-3 rounded-sm text-base"
+              placeholder="Write your description here..."
             />
           </Form.Item>
 

@@ -2,11 +2,10 @@ import { useReducer, useRef } from 'react';
 
 import ExploreMainMenu from './segments/ExploreMainMenu';
 import BuildMainMenu from './segments/BuildMainMenu';
-import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
 
 type MainMenuListKey = 'main-explore-entry' | 'main-build-entry' | 'main-simulate-entry' | null;
-type TMainMenuItem = {
+type MainMenuItem = {
   id: MainMenuListKey;
   title: string;
   description: string;
@@ -74,13 +73,7 @@ export function MainMenuSingleItem({
   );
 }
 
-export function RenderedMainDetails({
-  id,
-  onDeselect,
-}: {
-  id: MainMenuListKey;
-  onDeselect: () => void;
-}) {
+export function RenderedMainDetails({ id }: { id: MainMenuListKey }) {
   const ref = useRef<HTMLDivElement>(null);
   const menuItem = MAIN_MENU_LIST.find((comp) => comp.id === id);
 
@@ -105,7 +98,6 @@ export default function MainMenu() {
   );
 
   const onSelect = (id: MainMenuListKey) => () => setSelectedSubmenu(id);
-  const onDeselect = () => setSelectedSubmenu(null);
 
   return (
     <div className="relative flex flex-col justify-start gap-px items-stretch w-2/3">
@@ -127,7 +119,6 @@ export default function MainMenu() {
 
       <RenderedMainDetails
         {...{
-          onDeselect,
           id: selectedSubmenuId,
         }}
       />
