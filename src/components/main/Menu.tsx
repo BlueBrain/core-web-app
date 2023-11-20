@@ -77,6 +77,7 @@ export function RenderedMainDetails({ id }: { id: MainMenuListKey }) {
   const menuItem = MAIN_MENU_LIST.find((comp) => comp.id === id);
 
   if (!menuItem) return null;
+  
   const { Component } = menuItem;
   return (
     <div className="relative overflow-y-auto pr-1 primary-scrollbar w-full mt-1 transition-all will-change-contents duration-300 ease-in-out">
