@@ -1,12 +1,15 @@
 import { atom } from 'jotai';
 import lodashSet from 'lodash/set';
 import lodashGet from 'lodash/get';
+import debounce from 'lodash/debounce';
 
 import {
+  configAtom,
   defaultEModelPlaceholderAtom,
   getMETypeIdAtom,
-  mEModelConfigPayloadAtom,
+  localConfigPayloadAtom,
   refetchTriggerAtom,
+  remoteConfigPayloadAtom,
   selectedMENameAtom,
 } from '.';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -14,6 +17,12 @@ import {
   eModelByETypeMappingAtom,
   selectedEModelAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { MEModelConfigPayload } from '@/types/nexus';
+import sessionAtom from '@/state/session';
+import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
+import { autoSaveDebounceInterval } from '@/config';
+import openNotification from '@/api/notifications';
+import { createDistribution } from '@/util/nexus';
 
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
@@ -25,8 +34,13 @@ export const setMEConfigPayloadAtom = atom<null, [], void>(null, async (get, set
   const [mTypeId, eTypeId] = await get(getMETypeIdAtom);
   if (!mTypeId || !eTypeId) return;
 
-  const payload = structuredClone(await get(mEModelConfigPayloadAtom));
-  if (!payload) return;
+  const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+  if (!remoteConfigPayload) throw new Error('Remote config payload not found');
+
+  let localConfigPayload = get(localConfigPayloadAtom);
+  if (!localConfigPayload) {
+    localConfigPayload = structuredClone(remoteConfigPayload);
+  }
 
   const path = ['overrides', 'neurons_me_model', selectedBrainRegion.id, mTypeId, eTypeId];
 
@@ -39,13 +53,12 @@ export const setMEConfigPayloadAtom = atom<null, [], void>(null, async (get, set
     axonInitialSegmentAssignment: { fixedValue: { value: 1 } },
   };
 
-  lodashSet(payload, path, eModelData);
-
-  set(mEModelConfigPayloadAtom, payload);
+  lodashSet(localConfigPayload, path, eModelData);
+  set(setConfigPayloadAtom, localConfigPayload);
 });
 
 export const setDefaultEModelForMETypeAtom = atom<null, [], void>(null, async (get, set) => {
-  const mEModelConfigPayload = get(mEModelConfigPayloadAtom);
+  const localConfigPayload = get(localConfigPayloadAtom);
   const selectedBrainRegion = get(selectedBrainRegionAtom);
   const eModels = await get(eModelByETypeMappingAtom);
   if (!eModels || !selectedBrainRegion) return;
@@ -65,10 +78,11 @@ export const setDefaultEModelForMETypeAtom = atom<null, [], void>(null, async (g
     'eModel',
     '@id',
   ];
-  const eModelIdInPayload: string | undefined = lodashGet(mEModelConfigPayload, path);
+  const eModelIdInPayload: string | undefined = lodashGet(localConfigPayload, path);
   const availableEModels = eModels[eTypeName];
 
   if (!eModelIdInPayload) {
+    // if no eModel was selected in the past, use default placeholders from remote
     const defaultEModelPlaceholder = await get(defaultEModelPlaceholderAtom);
     if (!defaultEModelPlaceholder) return;
 
@@ -89,6 +103,55 @@ export const setDefaultEModelForMETypeAtom = atom<null, [], void>(null, async (g
 
   // if eModel was selected in the past, reuse it as selected in dropdown
   const savedEModel = availableEModels.find((eModel) => eModel.id === eModelIdInPayload);
-  if (!savedEModel) return;
+  if (!savedEModel) throw new Error('Previously used eModel not found in available eModels');
+
   set(selectedEModelAtom, { ...savedEModel, mType: mTypeName, eType: eTypeName });
 });
+
+export const updateConfigPayloadAtom = atom<null, [MEModelConfigPayload], Promise<void>>(
+  null,
+  async (get, set, configPayload) => {
+    const session = get(sessionAtom);
+    const config = await get(configAtom);
+
+    const url = config?.distribution.contentUrl;
+
+    if (!session) {
+      throw new Error('No auth session found in the state');
+    }
+
+    if (!url) {
+      throw new Error('No id found for meModelConfig');
+    }
+
+    if (!config) return;
+
+    const updatedFile = await updateJsonFileByUrl(
+      url,
+      configPayload,
+      'me-model-config.json',
+      session
+    );
+
+    config.distribution = createDistribution(updatedFile);
+
+    await updateResource(config, session);
+    openNotification('success', 'The me-model config was successfully saved');
+  }
+);
+
+const triggerUpdateDebouncedAtom = atom<null, [MEModelConfigPayload], Promise<void>>(
+  null,
+  debounce(
+    (get, set, configPayload) => set(updateConfigPayloadAtom, configPayload),
+    autoSaveDebounceInterval
+  )
+);
+
+const setConfigPayloadAtom = atom<null, [MEModelConfigPayload], void>(
+  null,
+  (get, set, configPayload: MEModelConfigPayload) => {
+    set(localConfigPayloadAtom, configPayload);
+    set(triggerUpdateDebouncedAtom, configPayload);
+  }
+);

@@ -19,7 +19,7 @@ export const featureWithEModelAtom = atom<MEFeatureWithEModel | null>(null);
 
 export const selectedMENameAtom = atom<[string, string] | [null, null]>([null, null]);
 
-export const mEModelConfigPayloadAtom = atom<MEModelConfigPayload | null>(null);
+export const localConfigPayloadAtom = atom<MEModelConfigPayload | null>(null);
 
 export const configAtom = atom<Promise<MEModelConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -32,18 +32,16 @@ export const configAtom = atom<Promise<MEModelConfigResource | null>>(async (get
   return fetchResourceById<MEModelConfigResource>(id, session);
 });
 
-const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
+const configPayloadUrlAtom = atom<Promise<string | undefined>>(async (get) => {
   const config = await get(configAtom);
-  return config?.distribution.contentUrl || null;
+  return config?.distribution.contentUrl;
 });
 
-const remoteConfigPayloadAtom = atom<Promise<MEModelConfigPayload | null>>(async (get) => {
+export const remoteConfigPayloadAtom = atom<Promise<MEModelConfigPayload | null>>(async (get) => {
   const session = get(sessionAtom);
   const configPayloadUrl = await get(configPayloadUrlAtom);
 
-  if (!session) return null;
-
-  if (!configPayloadUrl) return null;
+  if (!session || !configPayloadUrl) return null;
 
   return fetchJsonFileByUrl<MEModelConfigPayload>(configPayloadUrl, session);
 });
