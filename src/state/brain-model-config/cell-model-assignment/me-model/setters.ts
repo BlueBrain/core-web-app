@@ -26,6 +26,7 @@ export const setMEConfigPayloadAtom = atom<null, [], void>(null, async (get, set
   if (!mTypeId || !eTypeId) return;
 
   const payload = structuredClone(await get(mEModelConfigPayloadAtom));
+  if (!payload) return;
 
   const path = ['overrides', 'neurons_me_model', selectedBrainRegion.id, mTypeId, eTypeId];
 

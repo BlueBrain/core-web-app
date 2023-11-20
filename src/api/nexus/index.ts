@@ -46,6 +46,8 @@ import {
   GeneratorConfigPayload,
   SubConfigName,
   CellPositionConfigPayload,
+  MEModelConfig,
+  MEModelConfigPayload,
 } from '@/types/nexus';
 import {
   getEntitiesByIdsQuery,
@@ -412,6 +414,27 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
   return createResource(clonedConfig, session);
 }
 
+export async function cloneMEModelConfig(id: string, session: Session) {
+  const configName: SubConfigName = 'meModelConfig';
+  const configSource = await fetchResourceById<MEModelConfig>(id, session);
+  const payload = await getPayloadByConfig<MEModelConfigPayload, MEModelConfig>(
+    configName,
+    configSource,
+    session
+  );
+
+  const clonedPayloadMeta = await createJsonFile(payload, 'me-model-config.json', session);
+
+  const clonedConfig: MEModelConfig = {
+    ...configSource,
+    distribution: createDistribution(clonedPayloadMeta),
+    configVersion: getConfigVersion(configName, configSource),
+    generatorName: 'memodel',
+  };
+
+  return createResource(clonedConfig, session);
+}
+
 export async function cloneMacroConnectomeConfig(id: string, session: Session) {
   const configName: SubConfigName = 'macroConnectomeConfig';
   const configSource = await fetchResourceById<MacroConnectomeConfig>(id, session);
@@ -711,6 +734,11 @@ export async function cloneBrainModelConfig(
     session
   );
 
+  const clonedMEModelConfigMetadata = await cloneMEModelConfig(
+    brainModelConfigSource.configs.meModelConfig['@id'],
+    session
+  );
+
   const clonedMicroConnectomeConfigMetadata = await cloneMicroConnectomeConfig(
     brainModelConfigSource.configs.microConnectomeConfig['@id'],
     session
@@ -748,7 +776,7 @@ export async function cloneBrainModelConfig(
         '@type': ['EModelAssignmentConfig', 'Entity'],
       },
       meModelConfig: {
-        '@id': 'will-come-in-next-mr',
+        '@id': clonedMEModelConfigMetadata['@id'],
         '@type': ['MEModelConfig', 'Entity'],
       },
       microConnectomeConfig: {

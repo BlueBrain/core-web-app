@@ -5,7 +5,6 @@ import { useAtomValue } from 'jotai';
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import MEModelView from '@/components/build-section/cell-model-assignment/me-model/MEModelView';
-import CloneConfigButton from '@/components/build-section/cell-model-assignment/me-model/CloneConfigButton';
 import { useInitializeFeatures } from '@/hooks/me-model-editor';
 
 const baseBannerStyle = 'flex h-full items-center justify-center text-4xl';
@@ -15,18 +14,9 @@ export default function ConfigurationPage() {
   const selectedRegion = useAtomValue(selectedBrainRegionAtom);
   useInitializeFeatures();
 
-  let body = null;
-
   if (!selectedEModel || !selectedRegion) {
-    body = <div className={baseBannerStyle}>Select region and E-Model</div>;
-  } else {
-    body = (
-      <div>
-        <MEModelView />
-        <CloneConfigButton />
-      </div>
-    );
+    return <div className={baseBannerStyle}>Select region and E-Model</div>;
   }
 
-  return body;
+  return <MEModelView />;
 }

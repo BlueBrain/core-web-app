@@ -8,7 +8,6 @@ import {
 } from '@/types/me-model';
 import { Distribution, Entity, MEModelConfigPayload, MEModelConfigResource } from '@/types/nexus';
 import { analysedETypesAtom } from '@/state/build-composition';
-import { defaultMEModelConfigPayload } from '@/constants/cell-model-assignment/me-model';
 import sessionAtom from '@/state/session';
 import { meModelConfigIdAtom } from '@/state/brain-model-config';
 import { fetchJsonFileByUrl, fetchResourceById } from '@/api/nexus';
@@ -20,7 +19,7 @@ export const featureWithEModelAtom = atom<MEFeatureWithEModel | null>(null);
 
 export const selectedMENameAtom = atom<[string, string] | [null, null]>([null, null]);
 
-export const mEModelConfigPayloadAtom = atom<MEModelConfigPayload>(defaultMEModelConfigPayload);
+export const mEModelConfigPayloadAtom = atom<MEModelConfigPayload | null>(null);
 
 export const configAtom = atom<Promise<MEModelConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -44,7 +43,7 @@ const remoteConfigPayloadAtom = atom<Promise<MEModelConfigPayload | null>>(async
 
   if (!session) return null;
 
-  if (!configPayloadUrl) return defaultMEModelConfigPayload;
+  if (!configPayloadUrl) return null;
 
   return fetchJsonFileByUrl<MEModelConfigPayload>(configPayloadUrl, session);
 });
