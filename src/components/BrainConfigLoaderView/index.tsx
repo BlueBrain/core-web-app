@@ -14,7 +14,7 @@ import {
   searchConfigListStringAtom,
   configListAtom,
 } from '@/state/brain-model-config-list';
-import { CURATED_MODELS } from '@/components/BrainConfigPanel';
+import { CURATED_MODELS } from '@/components/BrainConfigPanel/BuildSideBar';
 import Link from '@/components/Link';
 import { classNames } from '@/util/utils';
 import IconPlus from '@/components/icons/Plus';
