@@ -63,11 +63,12 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
             className="text-primary-3 disabled:text-primary-7 disabled:cursor-not-allowed hover:text-white"
             onClick={openRenameModal}
             disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
+            aria-label="Edit"
           >
             <EditOutlined className="" />
           </button>
 
-          <button type="button" onClick={openCloneModal}>
+          <button type="button" onClick={openCloneModal} aria-label="Clone">
             <CopyOutlined className="text-primary-3 hover:text-white" />
           </button>
 

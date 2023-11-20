@@ -125,6 +125,7 @@ export default function VirtualLabsList() {
                       }}
                       className="w-full flex items-center justify-between mt-3"
                       type="button"
+                      aria-label="Show"
                     >
                       <VirtualLabLabel labName={lab.name} />
                       <div

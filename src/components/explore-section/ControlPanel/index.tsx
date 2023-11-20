@@ -194,7 +194,12 @@ export default function ControlPanel({
       data-testid="listing-view-filter-panel"
       className="bg-primary-9 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]"
     >
-      <button type="button" onClick={toggleDisplay} className="text-white text-right">
+      <button
+        type="button"
+        onClick={toggleDisplay}
+        className="text-white text-right"
+        aria-label="Close"
+      >
         <CloseOutlined />
       </button>
       <span className="flex font-bold gap-2 items-baseline text-2xl text-white">

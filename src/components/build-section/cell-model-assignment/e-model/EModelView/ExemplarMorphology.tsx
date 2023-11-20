@@ -81,7 +81,7 @@ export default function ExemplarMorphology() {
     title: '',
     key: 'action',
     render: (morphology: ExemplarMorphologyDataType) => (
-      <button type="button" onClick={() => onMorphologyDelete(morphology)}>
+      <button type="button" onClick={() => onMorphologyDelete(morphology)} aria-label="Delete">
         <DeleteOutlined />
       </button>
     ),

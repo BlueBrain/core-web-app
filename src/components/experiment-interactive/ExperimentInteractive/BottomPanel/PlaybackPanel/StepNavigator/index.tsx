@@ -16,7 +16,7 @@ export default function StepNavigator() {
   const stepForward = () => setStep(Math.min(lastStep, step + 1));
   return (
     <div className="inline-flex items-center gap-3 flex">
-      <button type="button" onClick={stepBackwards}>
+      <button type="button" onClick={stepBackwards} aria-label="Step backwards">
         <BackwardStep />
       </button>
       <div className="whitespace-nowrap">
@@ -30,7 +30,7 @@ export default function StepNavigator() {
         />
         / {lastStep}
       </div>
-      <button type="button" onClick={stepForward}>
+      <button type="button" onClick={stepForward} aria-label="Step forward">
         <ForwardStep />
       </button>
     </div>

@@ -81,6 +81,7 @@ function ImageSetComponent({
                   className="bg-neutral-1 flex items-center p-3 rounded hover:bg-neutral-2"
                   onClick={onRepetitionClicked(stimulusType, repKey)}
                   type="button"
+                  aria-label="Toggle selection"
                 >
                   <LineChartOutlined className="stroke-primary-8" />
                 </button>

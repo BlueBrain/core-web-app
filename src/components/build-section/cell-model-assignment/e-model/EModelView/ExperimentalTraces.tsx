@@ -106,7 +106,7 @@ export default function ExperimentalTraces() {
     title: '',
     key: 'action',
     render: (trace: ExperimentalTracesDataType) => (
-      <button type="button" onClick={() => onTraceDelete(trace['@id'])}>
+      <button type="button" onClick={() => onTraceDelete(trace['@id'])} aria-label="Delete">
         <DeleteOutlined />
       </button>
     ),

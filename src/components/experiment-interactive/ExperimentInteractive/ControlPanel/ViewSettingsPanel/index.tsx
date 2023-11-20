@@ -19,7 +19,12 @@ export default function ViewSettingsPanel() {
     >
       <div className="flex flex-row justify-between text-lg items-center">
         View settings
-        <button type="button" className="text-white" onClick={hideViewSettingsPanel}>
+        <button
+          type="button"
+          className="text-white"
+          onClick={hideViewSettingsPanel}
+          aria-label="Hide panel"
+        >
           <CloseIcon />
         </button>
       </div>

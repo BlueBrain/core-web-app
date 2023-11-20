@@ -59,7 +59,7 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
 
   const genExtra = () => <ImportOutlined onClick={onChangeParamType} />;
 
-  const onSliderChange = ([newStart, newEnd]: [number, number]) => {
+  const onSliderChange = ([newStart, newEnd]: number[]) => {
     // increase max when end reaches max value
     const newMax = newEnd === max ? round(max * 1.5, 2) : max;
     setMarks({
