@@ -47,6 +47,8 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
       }),
       body: JSON.stringify({
         query: question,
+        retriever_k: 700,
+        use_reranker: true,
       }),
     });
     const generativeQAResponse = (await response.json()) as GenerativeQAResponse;
