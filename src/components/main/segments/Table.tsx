@@ -1,3 +1,8 @@
+/**
+ * Note: as discussed in the MR review
+ * this Table component need to added type precision for DATA accepted
+ */
+
 import { CSSProperties, HTMLProps, isValidElement, useState } from 'react';
 import { Empty } from 'antd';
 import {
