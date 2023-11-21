@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-syntax */
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
+import userEvent from '@testing-library/user-event';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { Session } from 'next-auth';
-import userEvent from '@testing-library/user-event';
 import VirtualLabSettingsComponent from '.';
 import sessionAtom from '@/state/session';
 import * as MockVirtualLabModule from '@/services/virtual-lab/virtual-lab-service';

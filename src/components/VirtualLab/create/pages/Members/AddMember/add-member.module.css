@@ -1,0 +1,11 @@
+.main {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+  place-items: center stretch;
+  max-width: 640px;
+}
+
+.email {
+  grid-column: 1/3;
+}

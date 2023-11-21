@@ -1,0 +1,8 @@
+.main {
+  background-color: var(--theme-color-primary-5);
+  padding: 1em;
+}
+
+.main > h1 {
+  font-size: 200%;
+}

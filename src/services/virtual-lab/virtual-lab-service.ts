@@ -2,6 +2,7 @@
 
 import { Session } from 'next-auth';
 import { ComputeTime, VirtualLab, assertVirtualLabArray } from './types';
+import { logError } from '@/util/logger';
 
 export default class VirtualLabService {
   static LOCAL_STORAGE_ID = 'USERS_VIRTUAL_LABS';
@@ -28,37 +29,28 @@ export default class VirtualLabService {
     });
   }
 
-  create(user: Session['user'], lab: Omit<VirtualLab, 'id'>): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (user && lab) {
-        resolve();
-      } else {
-        reject();
-      }
-    });
+  async create(user: Session['user'], lab: Omit<VirtualLab, 'id'>): Promise<VirtualLab> {
+    const createdLab = {
+      ...lab,
+      id: makeNewFakeId(),
+    };
+    await this.#saveLabToLocalStorage(user, createdLab);
+    return createdLab;
   }
 
-  edit(
+  async edit(
     user: Session['user'],
     labId: string,
     update: Omit<Partial<VirtualLab>, 'id'>
   ): Promise<VirtualLab> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (!user) {
-          reject(new Error('Unauthorized'));
-        }
+    if (!user) {
+      throw Error('Unauthorized');
+    }
 
-        try {
-          const currentLab = this.#getLabFromLocalStorage(labId, user);
-          const updatedLab = { ...currentLab, ...update };
-          this.#saveLabToLocalStorage(updatedLab);
-          resolve(this.#getLabFromLocalStorage(labId, user));
-        } catch (e) {
-          reject(e);
-        }
-      }, 150);
-    });
+    const currentLab = await this.#getLabFromLocalStorage(labId, user);
+    const updatedLab = { ...currentLab, ...update };
+    await this.#saveLabToLocalStorage(user, updatedLab);
+    return this.#getLabFromLocalStorage(labId, user);
   }
 
   getComputeTime(labId: string): Promise<ComputeTime> {
@@ -71,16 +63,28 @@ export default class VirtualLabService {
     });
   }
 
-  #getLabFromLocalStorage(labId: string, user: Session['user']) {
-    const localStorage = window.localStorage.getItem(VirtualLabService.LOCAL_STORAGE_ID);
-    if (!localStorage) {
-      throw new Error(`No lab with id ${labId} found for user ${user.username}`);
+  async #loadVirtualLabs(user: Session['user']): Promise<VirtualLab[]> {
+    try {
+      await pauseToSimulateNetworkAccess();
+      const key = `${VirtualLabService.LOCAL_STORAGE_ID}/${user.username}`;
+      const localStorage = window.localStorage.getItem(key);
+      assertVirtualLabArray(localStorage);
+      return localStorage;
+    } catch (err) {
+      logError(err);
+      return [];
     }
-    const allLabs = JSON.parse(localStorage) as VirtualLab[];
-    assertVirtualLabArray(allLabs);
+  }
 
+  async #saveVirtualLabs(user: Session['user'], labs: VirtualLab[]): Promise<void> {
+    await pauseToSimulateNetworkAccess();
+    const key = `${VirtualLabService.LOCAL_STORAGE_ID}/${user.username}`;
+    window.localStorage.setItem(key, JSON.stringify(labs));
+  }
+
+  async #getLabFromLocalStorage(labId: string, user: Session['user']) {
+    const allLabs = await this.#loadVirtualLabs(user);
     const lab = allLabs.find((l) => l.id === labId);
-
     if (!lab) {
       throw new Error(`No lab with id ${labId} found for user ${user.username}`);
     }
@@ -88,18 +92,22 @@ export default class VirtualLabService {
     return lab;
   }
 
-  #saveLabToLocalStorage(lab: VirtualLab) {
-    const localStorage = window.localStorage.getItem(VirtualLabService.LOCAL_STORAGE_ID);
-
-    const otherLabs = localStorage
-      ? (JSON.parse(localStorage) as VirtualLab[]).filter((l) => l.id !== lab.id)
-      : [];
-
-    assertVirtualLabArray(otherLabs);
-
-    window.localStorage.setItem(
-      VirtualLabService.LOCAL_STORAGE_ID,
-      JSON.stringify([...otherLabs, lab] as VirtualLab[])
-    );
+  async #saveLabToLocalStorage(user: Session['user'], lab: VirtualLab) {
+    const otherLabs = (await this.#loadVirtualLabs(user)).filter((l) => l.id !== lab.id);
+    return this.#saveVirtualLabs(user, [...otherLabs, lab]);
   }
+}
+
+/**
+ * For now the service is fake and stores everything in the LocalStorage.
+ * But we want to simulate the delay of the network, as if it was a real service.
+ */
+function pauseToSimulateNetworkAccess() {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, 250 + 1750 * Math.random());
+  });
+}
+
+function makeNewFakeId() {
+  return `${Math.random()}`.substring(2);
 }

@@ -1,0 +1,15 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  place-items: stretch;
+  gap: 0.5em;
+  width: 100%;
+  height: 100%;
+}
+
+.layout > header {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}

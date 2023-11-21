@@ -68,6 +68,12 @@ export function assertObject(
   }
 }
 
+export function assertArray(data: unknown, name = 'data'): asserts data is unknown[] {
+  if (!Array.isArray(data)) {
+    throw Error(`${name} was expected to be an Array but we got ${typeof data}!`);
+  }
+}
+
 export function assertArrayBuffer(data: unknown, name = 'data'): asserts data is ArrayBuffer {
   if (!isArrayBuffer(data)) {
     throw Error(`${name} was expected to be an ArrayBuffer but we got ${typeof data}!`);
@@ -88,6 +94,7 @@ export type TypeDef =
   | 'null'
   | 'number'
   | 'string'
+  | 'function'
   | 'undefined'
   | 'unknown'
   | ['number', { min?: number; max?: number }]
@@ -96,7 +103,19 @@ export type TypeDef =
   | ['array', TypeDef]
   | [`array(${number})`, TypeDef]
   | ['map', TypeDef]
+  | ['tuple', ...TypeDef[]]
+  | ['literal', ...string[]]
+  | ['partial', { [name: string]: TypeDef }]
   | { [name: string]: TypeDef };
+
+export function isType<T>(data: unknown, type: TypeDef): data is T {
+  try {
+    assertType<T>(data, type);
+    return true;
+  } catch (ex) {
+    return false;
+  }
+}
 
 export function assertType<T>(data: unknown, type: TypeDef, prefix = 'data'): asserts data is T {
   if (type === 'unknown') return;
@@ -128,6 +147,15 @@ export function assertType<T>(data: unknown, type: TypeDef, prefix = 'data'): as
       case '|':
         assertTypeAlternative(data, prefix, type);
         return;
+      case 'tuple':
+        assertTypeTuple(data, prefix, type);
+        return;
+      case 'partial':
+        assertTypePartial(data, prefix, type);
+        return;
+      case 'literal':
+        assertTypeLiteral(data, prefix, type);
+        return;
       default:
         if (kind.startsWith('array(')) {
           const size = parseInt(kind.substring('array('.length, kind.length - 1), 10);
@@ -147,8 +175,34 @@ export function assertType<T>(data: unknown, type: TypeDef, prefix = 'data'): as
   for (const name of Object.keys(type)) {
     if (typeof name !== 'string') continue;
 
-    const objType = type[name];
-    if (objType) assertType(obj[name], type[name], `${prefix}.${name}`);
+    assertType(obj[name], type[name], `${prefix}.${name}`);
+  }
+}
+
+function assertTypeTuple(data: unknown, prefix: string, [, ...types]: ['tuple', ...TypeDef[]]) {
+  assertArray(data);
+  if (types.length !== data.length) {
+    throw Error(`Expected ${prefix} to have ${types.length} elements, not ${data.length}!`);
+  }
+  for (let i = 0; i < types.length; i += 1) {
+    const type: TypeDef = types[i] as TypeDef;
+    assertType(data[i], type, `${prefix}[$i]`);
+  }
+}
+
+function assertTypePartial(
+  data: unknown,
+  prefix: string,
+  [, type]: ['partial', { [name: string]: TypeDef }]
+) {
+  assertObject(data, prefix);
+  for (const name of Object.keys(type)) {
+    if (typeof name !== 'string') continue;
+
+    const attrib: unknown = data[name];
+    if (typeof attrib !== 'undefined') {
+      assertType(attrib, type[name], `${prefix}.${name}`);
+    }
   }
 }
 
@@ -208,4 +262,14 @@ function assertTypeAlternative(data: unknown, prefix: string, type: ['|', ...Typ
     }
   }
   throw lastException;
+}
+
+function assertTypeLiteral(data: unknown, prefix: string, type: ['literal', ...string[]]) {
+  const [, ...literals] = type;
+  for (const literal of literals) {
+    if (data === literal) return;
+  }
+  throw Error(
+    `Expected ${prefix} to be a literal (${literals.map((item) => `"${item}"`).join(' | ')})!`
+  );
 }
