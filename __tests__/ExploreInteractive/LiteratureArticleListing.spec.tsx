@@ -5,9 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import sessionAtom from '@/state/session';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
 import { BrainRegionOntology } from '@/types/ontologies';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { selectedBrainRegionAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
 import { ArticleItem } from '@/api/explore-section/resources';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
@@ -184,7 +183,7 @@ describe('LiteratureArticleListingPage', () => {
               representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
             } as SelectedBrainRegion,
           ],
-          [visibleExploreBrainRegionsAtom, [mockBrainRegions[1].id]],
+          [visibleBrainRegionsAtom('explore'), [mockBrainRegions[1].id]],
         ]}
       >
         <LiteratureArticleListingPage />

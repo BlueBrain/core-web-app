@@ -32,3 +32,5 @@ export type SelectOption = {
   label: string;
   isDisabled?: boolean;
 };
+
+export type ApplicationSection = 'explore' | 'build' | 'simulate';

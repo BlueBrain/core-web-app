@@ -19,8 +19,8 @@ import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
-import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
+import { visibleBrainRegionsAtom } from '@/state/brain-regions';
 
 type DataAtomFamilyScopeType = {
   experimentTypeName: string;
@@ -103,7 +103,7 @@ export const queryAtom = atomFamily(
       const pageNumber = get(pageNumberAtom({ experimentTypeName }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
-      const visibleBrainRegions = get(visibleExploreBrainRegionsAtom);
+      const visibleBrainRegions = get(visibleBrainRegionsAtom('explore'));
 
       let descendantIds: string[] = [];
       // if the source of brain sources are the visible ones, we fill with descendants

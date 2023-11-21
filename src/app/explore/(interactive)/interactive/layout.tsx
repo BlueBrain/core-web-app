@@ -4,7 +4,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ReactNode, useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
@@ -28,9 +27,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
       </ErrorBoundary>
       <div>
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <DefaultLoadingSuspense>
-            <BrainRegionsSidebar />
-          </DefaultLoadingSuspense>
+          <BrainRegionsSidebar />
         </ErrorBoundary>
       </div>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>

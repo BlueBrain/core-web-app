@@ -1,8 +1,11 @@
 import { useCallback, useState, ReactElement } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { useHydrateAtoms } from 'jotai/utils';
+import { Provider } from 'jotai';
 import data from './brain-regions.min.json';
 import TreeNav, { NavValue } from '@/components/TreeNavItem';
 import { handleNavValueChange } from '@/components/BrainTree/util';
+import { sectionAtom } from '@/state/application';
 
 /*
   The purpose of this file is to both test the TreeNav component,
@@ -16,6 +19,19 @@ import { handleNavValueChange } from '@/components/BrainTree/util';
 
   https://reactjs.org/docs/render-props.html
  */
+
+const HydrateAtoms = ({ initialValues, children }: any) => {
+  useHydrateAtoms(initialValues);
+  return children;
+};
+
+function TestProvider({ initialValues, children }: any) {
+  return (
+    <Provider>
+      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+  );
+}
 
 /**
  * Renders the markup & content of a TreeNavItem.
@@ -82,11 +98,13 @@ describe('The TreeNav implementation details using Brain Regions data', () => {
     }));
 
     render(
-      <TreeNav items={data} value={defaulValue} onValueChange={mockCallback}>
-        {({ id, content, title, trigger }) => (
-          <TestNavItem id={id} content={content} trigger={trigger} title={title} />
-        )}
-      </TreeNav>
+      <TestProvider initialValues={[[sectionAtom, 'build']]}>
+        <TreeNav items={data} value={defaulValue} onValueChange={mockCallback}>
+          {({ id, content, title, trigger }) => (
+            <TestNavItem id={id} content={content} trigger={trigger} title={title} />
+          )}
+        </TreeNav>
+      </TestProvider>
     );
 
     await screen.findByTestId(isocortex);
@@ -122,7 +140,11 @@ function StatefulTreeNav() {
 
 describe('A normal user interaction with TreeNav', () => {
   test('Expanding the navigation items', async () => {
-    render(<StatefulTreeNav />);
+    render(
+      <TestProvider initialValues={[[sectionAtom, 'build']]}>
+        <StatefulTreeNav />
+      </TestProvider>
+    );
 
     // Expand nav all the way to (and including) Cortical Plate
     pathToCorticalPlate.forEach((id) => fireEvent.click(screen.getByTestId(id)));

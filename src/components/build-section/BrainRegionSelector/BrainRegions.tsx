@@ -4,7 +4,7 @@ import React, { RefObject, useRef, useState, useMemo, useEffect } from 'react';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
-import { unwrap } from 'jotai/utils';
+import { unwrap, useResetAtom } from 'jotai/utils';
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
 import AlternateViewSelector from './AlternateViewSelector';
@@ -18,13 +18,14 @@ import {
   brainRegionsAtom,
   brainRegionsAlternateTreeAtom,
   brainRegionSidebarIsCollapsedAtom,
+  visibleBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { NavValue } from '@/components/TreeNavItem';
 import { BrainRegion } from '@/types/ontologies';
 import VisualizationTrigger from '@/components/build-section/BrainRegionSelector/VisualizationTrigger';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
-import { resetAtlasVisualizationAtom } from '@/state/atlas/atlas';
-import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
+import { atlasVisualizationAtom } from '@/state/atlas/atlas';
+import { sectionAtom } from '@/state/application';
 
 /**
  * the line component is added for each NavTitle with absolue position
@@ -61,14 +62,19 @@ function NavTitle({
   content, // A callback that returns the <Accordion.Content/>
   viewId,
 }: TitleComponentProps) {
+  const section = useAtomValue(sectionAtom);
+  if (!section) {
+    throw new Error('Section is not set');
+  }
+
   const brainRegionViews = useAtomValue(brainRegionOntologyViewsAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(brainRegionsAtom);
-  const visibleExploreBrainRegions = useAtomValue(visibleExploreBrainRegionsAtom);
+  const visibleBrainRegions = useAtomValue(visibleBrainRegionsAtom(section));
   const navTitleRef = useRef<HTMLDivElement>(null);
   const [height, setTitleHeight] = useState<number>(0);
 
-  const selected = id && visibleExploreBrainRegions.includes(id);
+  const selected = id && visibleBrainRegions.includes(id);
 
   const selectOptions = brainRegionViews?.map((view) => {
     const brainRegion = brainRegions?.find((br) => br.id === id);
@@ -155,7 +161,7 @@ export default function BrainRegions() {
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const brainModelConfigId = useAtomValue(brainModelConfigIdAtom);
   const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
-  const setResetAtlasVisualization = useSetAtom(resetAtlasVisualizationAtom);
+  const setResetAtlasVisualization = useResetAtom(atlasVisualizationAtom);
 
   useEffect(() => {
     if (!brainModelConfigId) return;
@@ -167,7 +173,6 @@ export default function BrainRegions() {
     setResetAtlasVisualization(); // reset meshes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brainModelConfigId, localSelectedBrainModelConfigId]);
-
   return brainRegionsTree ? (
     <div className="flex flex-col flex-1 h-screen bg-primary-8 overflow-hidden">
       {isCollapsed ? (
@@ -228,7 +233,7 @@ export default function BrainRegions() {
       )}
     </div>
   ) : (
-    <div className="bg-primary-8 h-screen w-[40px] text-neutral-1 text-3xl flex justify-center items-center">
+    <div className="w-[300px] bg-primary-8 h-screen text-neutral-1 text-3xl flex justify-center items-center">
       <LoadingOutlined />
     </div>
   );

@@ -1,5 +1,5 @@
 import { atom, useAtom, useAtomValue } from 'jotai';
-import { selectAtom } from 'jotai/utils';
+import { atomWithReset, selectAtom } from 'jotai/utils';
 import { SetStateAction, useMemo } from 'react';
 import sessionAtom from '@/state/session';
 import { meshDistributionsAtom } from '@/state/brain-regions';
@@ -87,7 +87,7 @@ export const initializeRootMeshAtom = atom(null, async (get, set) => {
   }
 });
 
-export const atlasVisualizationAtom = atom(defaultCollection);
+export const atlasVisualizationAtom = atomWithReset(defaultCollection);
 
 export const resetAtlasVisualizationAtom = atom(null, (get, set) =>
   set(atlasVisualizationAtom, defaultCollection)

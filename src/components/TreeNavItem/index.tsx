@@ -4,11 +4,10 @@ import { TreeItem } from 'performant-array-to-tree';
 import { CaretRightOutlined } from '@ant-design/icons';
 import intersection from 'lodash/intersection';
 import { useAtomValue } from 'jotai';
-
 import { classNames } from '@/util/utils';
-import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 import { getDeeplyNestedChildrenFromNode } from '@/util/brain-hierarchy';
-
+import { visibleBrainRegionsAtom } from '@/state/brain-regions';
+import { sectionAtom } from '@/state/application';
 import styles from './tree-nav-item.module.css';
 
 export type NavValue = { [key: string]: NavValue } | null;
@@ -53,11 +52,14 @@ export function TreeNavItem({
   colorCode,
   ...props
 }: TreeNavItemProps) {
-  const visibleExploreBrainRegions = useAtomValue(visibleExploreBrainRegionsAtom);
-  const selected = id && visibleExploreBrainRegions.includes(id);
+  const section = useAtomValue(sectionAtom);
+  if (!section) {
+    throw new Error('Section is not set');
+  }
+  const visibleBrainRegions = useAtomValue(visibleBrainRegionsAtom(section));
+  const selected = id && visibleBrainRegions.includes(id);
   const childrenNodes: string[] = getDeeplyNestedChildrenFromNode({ id, items }, []);
-  const isThisHaveSelectedChildren = !!intersection(childrenNodes, visibleExploreBrainRegions)
-    .length;
+  const doesItHaveSelectedChildren = !!intersection(childrenNodes, visibleBrainRegions).length;
 
   const renderedItems = items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
     // children may return another render-prop
@@ -105,7 +107,7 @@ export function TreeNavItem({
             <Accordion.Trigger
               className={classNames(
                 styles.accordionTrigger,
-                isThisHaveSelectedChildren ? styles.intermediateTrigger : ''
+                doesItHaveSelectedChildren ? styles.intermediateTrigger : ''
               )}
               data-disabled={!items || items.length === 0}
               {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
@@ -122,7 +124,7 @@ export function TreeNavItem({
             </Accordion.Trigger>
           )
         : null,
-    [colorCode, isThisHaveSelectedChildren, items, renderedItems, selected]
+    [colorCode, doesItHaveSelectedChildren, items, renderedItems, selected]
   );
 
   const content =

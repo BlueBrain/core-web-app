@@ -5,14 +5,13 @@ import { useMemo } from 'react';
 import { unwrap } from 'jotai/utils';
 import { BrainRegionExperimentsCount } from './BrainRegionExperimentsCount';
 import { LiteratureForExperimentType } from './LiteratureForExperimentType';
-import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
-import { brainRegionsAtom } from '@/state/brain-regions';
+import { brainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 
 export const defaultTabColor = '#ffffff';
 
 export default function SelectedBrainRegionPanel() {
-  const visualizedBrainRegions = useAtomValue(visibleExploreBrainRegionsAtom);
+  const visualizedBrainRegions = useAtomValue(visibleBrainRegionsAtom('explore'));
   const brainRegions = useAtomValue(useMemo(() => unwrap(brainRegionsAtom), []));
   const visualizedBrainRegionDetails = visualizedBrainRegions.reduce<BrainRegion[]>(
     (acc, selectedRegion) => {

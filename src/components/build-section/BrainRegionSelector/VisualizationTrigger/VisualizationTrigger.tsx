@@ -1,11 +1,10 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-
-import { meshDistributionsAtom } from '@/state/brain-regions';
+import { meshDistributionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { useAtlasVisualizationManager } from '@/state/atlas';
-import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 import Checkbox from '@/components/Checkbox';
+import { sectionAtom } from '@/state/application';
 
 /**
  * This component select a specific brain region to be displayed in 3D view.
@@ -14,15 +13,18 @@ import Checkbox from '@/components/Checkbox';
  * @returns a checkbox that allow to select a brain region
  */
 export default function VisualizationTrigger({ colorCode, id }: { colorCode: string; id: string }) {
-  const [visibleExploreBrainRegions, setVisibleExploreBrainRegions] = useAtom(
-    visibleExploreBrainRegionsAtom
-  );
+  const section = useAtomValue(sectionAtom);
+  if (!section) {
+    throw new Error('Section is not set');
+  }
+
+  const [visibleBrainRegions, setVisibleBrainRegions] = useAtom(visibleBrainRegionsAtom(section));
   const meshDistributions = useAtomValue(meshDistributionsAtom);
   const meshDistribution = meshDistributions && meshDistributions[id];
   const atlas = useAtlasVisualizationManager();
   const cell = atlas.findVisibleCell(id);
   const mesh = meshDistribution && atlas.findVisibleMesh(meshDistribution.contentUrl);
-  const selected = Boolean(cell) || Boolean(mesh) || visibleExploreBrainRegions.includes(id);
+  const selected = visibleBrainRegions.includes(id);
 
   const handleOnCheck = () => {
     if (meshDistribution && colorCode) {
@@ -60,10 +62,10 @@ export default function VisualizationTrigger({ colorCode, id }: { colorCode: str
       }
     }
     // previously mesh button
-    if (visibleExploreBrainRegions.includes(id)) {
-      setVisibleExploreBrainRegions([...visibleExploreBrainRegions.filter((_id) => _id !== id)]);
+    if (visibleBrainRegions.includes(id)) {
+      setVisibleBrainRegions(visibleBrainRegions.filter((_id) => _id !== id));
     } else {
-      setVisibleExploreBrainRegions([...visibleExploreBrainRegions, id]);
+      setVisibleBrainRegions([...visibleBrainRegions, id]);
     }
   };
 

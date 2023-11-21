@@ -1,4 +1,3 @@
-import { atomWithReset } from 'jotai/utils';
 import { atom } from 'jotai';
 import { getBrainRegionDescendants } from '../brain-regions/descendants';
 import sessionAtom from '@/state/session';
@@ -8,9 +7,6 @@ import {
 } from '@/api/explore-section/resources';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
 import { fetchParagraphCountForBrainRegionAndExperiment } from '@/components/explore-section/Literature/api';
-
-// Keeps track of the visible interactive brain regions
-export const visibleExploreBrainRegionsAtom = atomWithReset<string[]>([]);
 
 export const getExperimentTotalForBrainRegion = (brainRegionIds: string[], signal: AbortSignal) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {

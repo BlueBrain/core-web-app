@@ -2,11 +2,10 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider, useAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import { visibleExploreBrainRegionsAtom } from '@/state/explore-section/interactive';
 import sessionAtom from '@/state/session';
 import { BrainRegion, BrainRegionOntology } from '@/types/ontologies';
 import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { selectedBrainRegionAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
@@ -159,7 +158,7 @@ describe('SelectedBrainRegionPanel', () => {
               representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
             } as SelectedBrainRegion,
           ],
-          [visibleExploreBrainRegionsAtom, [defaultVisualizedRegion.id]],
+          [visibleBrainRegionsAtom('explore'), [defaultVisualizedRegion.id]],
         ]}
       >
         {mockBrainRegions.map((brainRegion) => (
@@ -172,7 +171,7 @@ describe('SelectedBrainRegionPanel', () => {
 
   function VizButtons({ brainRegion }: { brainRegion: BrainRegion }) {
     const [visualizedBrainRegions, setVisualizedBrainRegions] = useAtom(
-      visibleExploreBrainRegionsAtom
+      visibleBrainRegionsAtom('explore')
     );
     return (
       <div key={brainRegion.id}>
@@ -180,18 +179,20 @@ describe('SelectedBrainRegionPanel', () => {
         {brainRegion.title}
         <button
           type="button"
-          onClick={() =>
+          onClick={() => {
             setVisualizedBrainRegions(
               Array.from(new Set([...visualizedBrainRegions, brainRegion.id]))
-            )
-          }
+            );
+          }}
         >
           Add {brainRegion.id}
         </button>
         <button
           type="button"
           onClick={() =>
-            setVisualizedBrainRegions(visualizedBrainRegions.filter((br) => br !== brainRegion.id))
+            setVisualizedBrainRegions(
+              visualizedBrainRegions.filter((_id) => _id !== brainRegion.id)
+            )
           }
         >
           Remove {brainRegion.id}
