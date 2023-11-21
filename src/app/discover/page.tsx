@@ -12,15 +12,11 @@ import { EXPLORE_NAVIGATION_LIST } from '@/components/explore-section/Sidebar';
 import { classNames } from '@/util/utils';
 import { EyeIcon } from '@/components/icons';
 
-function MainSideBarHeader({ expanded }: { expanded: boolean }) {
+function DiscoverSideBarHeader({ expanded }: { expanded: boolean }) {
   return expanded ? <span>Discover</span> : <span>Menu</span>;
 }
 
-export function DiscoverNavigationItem({
-  url,
-  name,
-  description,
-}: Omit<NavigationItemProps, 'bgcolor'>) {
+function DiscoverNavigationItem({ url, name, description }: Omit<NavigationItemProps, 'bgcolor'>) {
   return (
     <li
       key={url}
@@ -42,7 +38,7 @@ export function DiscoverNavigationItem({
   );
 }
 
-function DiscoverNavigation() {
+function DiscoverPageNavigation() {
   return (
     <ul className="w-full h-full flex items-start justify-start gap-y-1 flex-col overflow-y-auto primary-scrollbar">
       {EXPLORE_NAVIGATION_LIST.map(({ name, description, url }) => (
@@ -67,12 +63,12 @@ function MainNavigation({ expanded }: { expanded: boolean }) {
   );
 }
 
-export default function Main() {
+export default function Discover() {
   return (
     <div className={classNames('relative bg-primary-9 h-full')}>
       <div className="fixed bg-primary-9 inset-0 w-full h-full min-h-screen z-0 bg-fullbrain-image bg-blend-lighten bg-no-repeat bg-center [background-size:70%]" />
       <div className="fixed left-0 z-20">
-        <ApplicationSidebar title={MainSideBarHeader} control={MainNavigation} />
+        <ApplicationSidebar title={DiscoverSideBarHeader} control={MainNavigation} />
       </div>
       <OBPLogo color="text-primary-5" className="!left-14" />
       <div className="fixed top-[130px] left-[53px] max-w-[250px] w-full z-10">
@@ -84,7 +80,7 @@ export default function Main() {
         </Link>
       </div>
       <div className="absolute h-[calc(100vh-56px)] top-7 right-7 flex justify-end w-3/5 ml-auto z-20">
-        <DiscoverNavigation />
+        <DiscoverPageNavigation />
       </div>
     </div>
   );
