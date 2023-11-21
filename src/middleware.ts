@@ -28,5 +28,9 @@ export async function middleware(request: NextRequest) {
 // NOTE: use middelware to redirect only when the user want to access membership pages
 // any new page that need user auth data need to be added to this matcher
 export const config = {
-  matcher: ['/', '/main', '/(explore|build|simulate|main|experiment-designer)/(.*)'],
+  matcher: [
+    '/',
+    '/main',
+    '/(explore|build|simulate|simulations|main|experiment-designer|svc|virtual-lab)/(.*)',
+  ],
 };

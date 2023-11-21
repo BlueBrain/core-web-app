@@ -16,7 +16,7 @@ import ClockIcon from '@/components/icons/Clock';
 import FullCircleIcon from '@/components/icons/FullCircle';
 import EmptyCircleIcon from '@/components/icons/EmptyCircle';
 
-type SimulateMenuKey = '' | 'new-experiment' | 'browse-experiments' | 'my-simulation-experiments';
+type SimulateMenuKey = 'new-experiment' | 'browse-experiments' | 'my-simulation-experiments' | null;
 type CuratedTemplate = {
   id: string;
   name: string;
