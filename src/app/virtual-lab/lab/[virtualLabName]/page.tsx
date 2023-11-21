@@ -5,14 +5,16 @@ import { useMemo } from 'react';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
 import VirtualLabSettingsError from './error';
 import { getVirtualLabAtom } from '@/state/virtual-lab/lab';
 import VirtualLabSettingsComponent from '@/components/VirtualLab/VirtualLabSettingsComponent';
 
 export default function VirtualLabSettingsPage() {
   const params = useParams();
-  const currentLabId = params?.virtualLabName;
+  const { data: session } = useSession();
 
+  const currentLabId = params?.virtualLabName;
   const currentLabAtom = useMemo(
     () => loadable(getVirtualLabAtom((currentLabId as string) ?? '')),
     [currentLabId]
@@ -37,8 +39,8 @@ export default function VirtualLabSettingsPage() {
 
   return (
     <div className="ml-10 text-white">
-      {currentLab.data ? (
-        <VirtualLabSettingsComponent virtualLab={currentLab.data} />
+      {currentLab.data && session ? (
+        <VirtualLabSettingsComponent virtualLab={currentLab.data} user={session.user} />
       ) : (
         <VirtualLabSettingsError message={`No lab with id ${currentLabId} found.`} />
       )}

@@ -3,7 +3,7 @@ import { VirtualLab } from '@/services/virtual-lab/types';
 export const createMockVirtualLab = (id: string, extra?: Partial<VirtualLab>): VirtualLab => ({
   id,
   name: `Mock Lab ${id}`,
-  decription: 'Sploosh',
+  description: 'Sploosh',
   referenceEMail: 'sterling.archer@secretservice.cc',
   members: [
     { name: 'Sterling Archer', email: 'sterling.archer@secretservice.cc', role: 'user' },

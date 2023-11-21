@@ -1,9 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
-// TODO: Remove the above disable line once this class has more logic.
-
 import { Session } from 'next-auth';
-import { ComputeTime, VirtualLab } from './types';
+import { ComputeTime, VirtualLab, assertVirtualLabArray } from './types';
 
 export default class VirtualLabService {
   static LOCAL_STORAGE_ID = 'USERS_VIRTUAL_LABS';
@@ -12,18 +10,7 @@ export default class VirtualLabService {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          const localStorage = window.localStorage.getItem(VirtualLabService.LOCAL_STORAGE_ID);
-          if (!localStorage) {
-            throw new Error(`No lab with id ${labId} found for user ${user.username}`);
-          }
-          const allLabs = JSON.parse(localStorage) as VirtualLab[];
-
-          const lab = allLabs.find((l) => l.id === labId);
-
-          if (!lab) {
-            throw new Error(`No lab with id ${labId} found for user ${user.username}`);
-          }
-          resolve(lab);
+          resolve(this.#getLabFromLocalStorage(labId, user));
         } catch (e) {
           reject(e);
         }
@@ -54,14 +41,23 @@ export default class VirtualLabService {
   edit(
     user: Session['user'],
     labId: string,
-    updatedLab: Omit<VirtualLab, 'id'>
+    update: Omit<Partial<VirtualLab>, 'id'>
   ): Promise<VirtualLab> {
     return new Promise((resolve, reject) => {
-      if (user && labId) {
-        resolve({ ...updatedLab, id: labId });
-      } else {
-        reject();
-      }
+      setTimeout(() => {
+        if (!user) {
+          reject(new Error('Unauthorized'));
+        }
+
+        try {
+          const currentLab = this.#getLabFromLocalStorage(labId, user);
+          const updatedLab = { ...currentLab, ...update };
+          this.#saveLabToLocalStorage(updatedLab);
+          resolve(this.#getLabFromLocalStorage(labId, user));
+        } catch (e) {
+          reject(e);
+        }
+      }, 150);
     });
   }
 
@@ -73,5 +69,37 @@ export default class VirtualLabService {
         resolve({ labId, totalTimeInHours: total, usedTimeInHours: used });
       }, 0);
     });
+  }
+
+  #getLabFromLocalStorage(labId: string, user: Session['user']) {
+    const localStorage = window.localStorage.getItem(VirtualLabService.LOCAL_STORAGE_ID);
+    if (!localStorage) {
+      throw new Error(`No lab with id ${labId} found for user ${user.username}`);
+    }
+    const allLabs = JSON.parse(localStorage) as VirtualLab[];
+    assertVirtualLabArray(allLabs);
+
+    const lab = allLabs.find((l) => l.id === labId);
+
+    if (!lab) {
+      throw new Error(`No lab with id ${labId} found for user ${user.username}`);
+    }
+
+    return lab;
+  }
+
+  #saveLabToLocalStorage(lab: VirtualLab) {
+    const localStorage = window.localStorage.getItem(VirtualLabService.LOCAL_STORAGE_ID);
+
+    const otherLabs = localStorage
+      ? (JSON.parse(localStorage) as VirtualLab[]).filter((l) => l.id !== lab.id)
+      : [];
+
+    assertVirtualLabArray(otherLabs);
+
+    window.localStorage.setItem(
+      VirtualLabService.LOCAL_STORAGE_ID,
+      JSON.stringify([...otherLabs, lab] as VirtualLab[])
+    );
   }
 }

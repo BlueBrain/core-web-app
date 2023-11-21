@@ -5,22 +5,45 @@
 import { Button, Collapse, ConfigProvider, Skeleton } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
+import { Session } from 'next-auth';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
+import InformationPanel from './InformationPanel';
 import { VirtualLab } from '@/services/virtual-lab/types';
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
+import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
 
 type Props = {
   virtualLab: VirtualLab;
+  user: Session['user'];
 };
 
-export default function VirtualLabSettingsComponent({ virtualLab }: Props) {
+export default function VirtualLabSettingsComponent({
+  virtualLab: initialVirtualLab,
+  user,
+}: Props) {
+  const [virtualLab, setVirtualLab] = useState(initialVirtualLab);
+
   const router = useRouter();
+  const userIsAdmin =
+    virtualLab.members.find((member) => member.email === user?.email)?.role === 'admin';
+
   const computeTimeAtom = useMemo(() => loadable(getComputeTimeAtom(virtualLab.id)), [virtualLab]);
   const computeTime = useAtomValue(computeTimeAtom);
+
+  const saveInformation = (update: Omit<Partial<VirtualLab>, 'id'>): Promise<void> => {
+    return new VirtualLabService()
+      .edit(user, virtualLab.id, update)
+      .then((updatedLab) => {
+        setVirtualLab(updatedLab);
+      })
+      .catch((err) => {
+        throw err;
+      });
+  };
 
   return (
     <ConfigProvider
@@ -32,6 +55,7 @@ export default function VirtualLabSettingsComponent({ virtualLab }: Props) {
           Collapse: {
             headerBg: '#fff',
             headerPadding: '24px 28px',
+            contentPadding: '40px 28px',
           },
         },
       }}
@@ -72,11 +96,18 @@ export default function VirtualLabSettingsComponent({ virtualLab }: Props) {
         expandIconPosition="end"
         expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
         className="mt-4 rounded-none text-primary-8"
+        bordered={false}
         items={[
           {
             key: 1,
             label: <h3 className="font-bold text-xl color-primary-8">Information</h3>,
-            children: <p>Dummy information</p>,
+            children: (
+              <InformationPanel
+                virtualLab={virtualLab}
+                allowEdit={userIsAdmin}
+                save={saveInformation}
+              />
+            ),
           },
         ]}
       />

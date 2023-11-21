@@ -2,7 +2,7 @@
 
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
-import { Button } from 'antd';
+import { Button, ConfigProvider } from 'antd';
 
 // TODO: Move this to VirtualLab components folder
 export default function VirtualLabSidebar() {
@@ -23,12 +23,22 @@ export default function VirtualLabSidebar() {
         </div>
         <div className="flex justify-between">
           {/* TODO: Add click handlers to the following button once Bilal's work is done. */}
-          <Button type="text" className="text-primary-5 p-0">
-            Account
-          </Button>
-          <Button type="text" className="text-primary-5 p-0">
-            Signout
-          </Button>
+          <ConfigProvider
+            theme={{
+              components: {
+                Button: {
+                  textHoverBg: '#91D5FF',
+                },
+              },
+            }}
+          >
+            <Button type="text" className="text-primary-5 p-0">
+              Account
+            </Button>
+            <Button type="text" className="text-primary-5 p-0">
+              Signout
+            </Button>
+          </ConfigProvider>
         </div>
       </div>
     </div>
