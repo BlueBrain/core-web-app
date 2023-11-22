@@ -13,6 +13,7 @@ import {
   simulationMetaConfigs,
   eModelMetaConfigs,
   ENDPOINT_PREFIX_MAP,
+  CustomAnalysisPlaceholders,
 } from '@/services/bbp-workflow/config';
 import {
   UNICORE_JOB_CONFIG,
@@ -24,6 +25,7 @@ import { DetailedCircuitResource, SubConfigName } from '@/types/nexus';
 import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
 import { replaceCustomBbpWorkflowPlaceholders } from '@/components/experiment-designer/utils';
 import { getCurrentDate } from '@/util/utils';
+import { ExpDesignerConfig, ExpDesignerCustomAnalysisDropdown } from '@/types/experiment-designer';
 
 export function getWorkflowAuthUrl(username: string) {
   return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
@@ -55,7 +57,8 @@ export async function getSimulationTaskFiles(
   let extraVariables = structuredClone(extraVariablesToReplace);
 
   const escapedUrl = variantActivityConfigUrl.replaceAll('%', '%%');
-  extraVariables[SimulationPlaceholders.VARIANT_TASK_ACTIVITY] = escapedUrl;
+  extraVariables[SimulationPlaceholders.VARIANT_TASK_ACTIVITY] = '--';
+  extraVariables[CustomAnalysisPlaceholders.USERNAME] = session?.user?.username;
 
   extraVariables = { ...convertExpDesConfigToSimVariables(extraVariables) };
 
@@ -69,6 +72,16 @@ export async function getSimulationTaskFiles(
     modifiedFile.CONTENT = replaceCustomBbpWorkflowPlaceholders(modifiedFile.CONTENT);
     return modifiedFile;
   });
+
+  // TODO: hack to remove custom analysis if it is not set.
+  const expDesignerConfig = extraVariables.expDesignerConfig as ExpDesignerConfig;
+  const { analysis } = expDesignerConfig;
+  const customAnalysis = analysis.find((a) => a.id === 'customAnalysis');
+  const customAnalysisData = (customAnalysis as ExpDesignerCustomAnalysisDropdown).value;
+  if (!customAnalysisData) {
+    console.log('Remove custom analysis');
+    // regexpt to remove [MultiAnalyseSimCampaignMeta] until the end. or another [.+]
+  }
 
   return replacedFiles;
 }

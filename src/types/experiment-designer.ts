@@ -95,7 +95,7 @@ export interface ExpDesignerGroupParameter extends ExpDesignerBaseParameter {
 
 export interface ExpDesignerCustomAnalysisDropdown extends ExpDesignerBaseParameter {
   type: 'customAnalysisDropdown';
-  value: string[];
+  value: string | null;
   options: DropdownOptionType[];
 }
 

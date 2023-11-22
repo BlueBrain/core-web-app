@@ -58,6 +58,14 @@ export enum AnalysisPlaceholders {
   VOLTAGE_TARGETS = 'VOLTAGE_TARGETS',
 }
 
+export enum CustomAnalysisPlaceholders {
+  USERNAME = 'USERNAME',
+  ID = 'ID',
+  REPO_ID = 'REPO_ID',
+  BRANCH = 'BRANCH',
+  SUBDIRECTORY = 'SUBDIRECTORY',
+}
+
 export enum EModelBuildingPlaceholders {
   E_MODEL_NAME = 'E_MODEL_NAME',
   E_TYPE = 'E_TYPE',
@@ -138,6 +146,36 @@ export const simulationMetaConfigs: WorkflowMetaConfigPlaceholders = {
     `,
     placeholder: 'VideoSimCampaignMeta',
   },
+  CustomAnalysisMeta: {
+    fileName: 'CustomAnalysis.cfg',
+    templateFile: `
+      [MultiAnalyseSimCampaign]
+      time: 8:00:00
+      workspace-prefix: /gpfs/bbp.cscs.ch/data/scratch/proj134/home/<%= ${CustomAnalysisPlaceholders.USERNAME} %>/SBO/analysis
+      analysis-configs: [{
+        "AnalyseSimCampaign":  {
+          "source_code_url": <%= ${CustomAnalysisPlaceholders.ID} %>,
+          "analysis_config": {
+            "simulation_campaign": "$SIMULATION_CAMPAIGN_FILE",
+            "output": "$SCRATCH_PATH",
+            "report_type": "spikes",
+            "report_name": "raster",
+            "node_sets": <%= ${AnalysisPlaceholders.RASTER_TARGETS} %>,
+            "cell_step": 1
+          }
+        },
+
+        "CloneGitRepo": {
+          "git_url": <%= ${CustomAnalysisPlaceholders.REPO_ID} %>,
+          "git_ref": <%= ${CustomAnalysisPlaceholders.BRANCH} %>,
+          "subdirectory": <%= ${CustomAnalysisPlaceholders.SUBDIRECTORY} %>,
+          "git_user": "GUEST",
+          "git_password": "WCY_qpuGG8xpKz_S8RNg"
+        }
+      }]
+    `,
+    placeholder: 'CustomAnalysisMeta',
+  },
 };
 
 export type WorkflowFile = {
@@ -170,6 +208,9 @@ export const SIMULATION_FILES: WorkflowFile[] = [
 
       [VideoSimCampaignMeta]
       config-url: <%= ${simulationMetaConfigs.VideoSimCampaignMeta.placeholder} %>
+
+      [MultiAnalyseSimCampaignMeta]
+      config-url: <%= ${simulationMetaConfigs.CustomAnalysisMeta.placeholder} %>
     `,
   },
   {

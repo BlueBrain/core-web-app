@@ -6,6 +6,7 @@ import {
   AnalysisPlaceholders,
   WorkflowMetaConfigPlaceholders,
   customRangeDelimeter,
+  CustomAnalysisPlaceholders,
 } from '@/services/bbp-workflow/config';
 import {
   ExpDesignerConfig,
@@ -15,6 +16,7 @@ import {
   ExpDesignerPositionParameter,
   ExpDesignerTargetDropdownGroupParameter,
   ExpDesignerRecordingParameter,
+  ExpDesignerCustomAnalysisDropdown,
 } from '@/types/experiment-designer';
 import { createWorkflowConfigResource, createJsonFile, createResource } from '@/api/nexus';
 import {
@@ -29,6 +31,7 @@ import {
 } from '@/types/nexus';
 import { composeUrl, createDistribution } from '@/util/nexus';
 import { nexus } from '@/config';
+import { CustomAnalysisType } from '@/app/explore/(content)/simulation-campaigns/shared';
 
 function getNotFoundMsg(variable: any, name?: string): string {
   const variableName = Object.keys({ variable })[0];
@@ -292,6 +295,23 @@ export function convertExpDesConfigToSimVariables(
   variablesToReplaceCopy[AnalysisPlaceholders.RASTER_TARGETS] = JSON.stringify(rasterTargets);
   variablesToReplaceCopy[AnalysisPlaceholders.PSTH_TARGETS] = JSON.stringify(psthTargets);
   variablesToReplaceCopy[AnalysisPlaceholders.VOLTAGE_TARGETS] = JSON.stringify(voltageTargets);
+
+  // ----------------------------------------
+  // ------------ CustomAnalysis ------------
+  // ----------------------------------------
+
+  const customAnalysis = analysis.find((a) => a.id === 'customAnalysis') as
+    | ExpDesignerCustomAnalysisDropdown
+    | undefined;
+  // TODO: support multiple custom analysis
+  const customAnalysisDataStringified = customAnalysis?.value || '{}';
+  const customAnalysisData = JSON.parse(customAnalysisDataStringified) as CustomAnalysisType;
+  variablesToReplaceCopy[CustomAnalysisPlaceholders.ID] = customAnalysisData?.['@id'];
+  variablesToReplaceCopy[CustomAnalysisPlaceholders.REPO_ID] =
+    customAnalysisData?.codeRepository?.['@id'];
+  variablesToReplaceCopy[CustomAnalysisPlaceholders.BRANCH] = customAnalysisData?.branch;
+  variablesToReplaceCopy[CustomAnalysisPlaceholders.SUBDIRECTORY] =
+    customAnalysisData?.subdirectory;
 
   return variablesToReplaceCopy;
 }

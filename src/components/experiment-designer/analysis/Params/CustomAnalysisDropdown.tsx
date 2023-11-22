@@ -21,15 +21,16 @@ export default function CustomAnalysisDropdown({
     if (analyses.length) {
       setData((oldAtomData) => ({
         ...oldAtomData,
-        options: analyses.map((a) => ({ label: a.name, value: a['@id'] })),
+        options: analyses.map((a) => ({ label: a.name, value: JSON.stringify(a) })),
+        value: null,
       }));
     }
   }, [analyses, setData]);
 
-  const onSelect = (analysisIds: string[]) => {
+  const onChange = (analysisInfoStringified: string) => {
     setData((oldAtomData) => ({
       ...oldAtomData,
-      value: analysisIds,
+      value: analysisInfoStringified,
     }));
   };
 
@@ -39,11 +40,10 @@ export default function CustomAnalysisDropdown({
 
       <Select
         className="mt-3 pl-3"
-        value={data.value?.length ? data.value : []}
+        value={data.value || null}
         options={data.options}
         style={{ minWidth: '200px' }}
-        onChange={onSelect}
-        mode="multiple"
+        onChange={onChange}
         size="small"
       />
       <div className="block mt-3 pl-3 text-primary-8">
