@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import kebabCase from 'lodash/kebabCase';
 
-import { EXPLORE_NAVIGATION_LIST } from '../../explore-section/Sidebar';
-import { EyeIcon } from '../../icons';
+import { EXPLORE_NAVIGATION_LIST } from '@/components/explore-section/Sidebar';
+import { EyeIcon } from '@/components/icons';
 
 function ExploreMainMenuItem({
   name,

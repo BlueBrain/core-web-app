@@ -78,19 +78,16 @@ export function RenderedMainDetails({
 
   useOnClickOutside(ref, onDeselect);
 
-  if (menuItem) {
-    const { Component } = menuItem;
-    return (
-      <div
-        className="relative overflow-y-auto pr-1 primary-scrollbar w-full mt-1 transition-all will-change-contents duration-300 ease-in-out"
-        ref={ref}
-      >
-        <Component />
-      </div>
-    );
-  }
-
-  return null;
+  if (!menuItem) return null;
+  const { Component } = menuItem;
+  return (
+    <div
+      className="relative overflow-y-auto pr-1 primary-scrollbar w-full mt-1 transition-all will-change-contents duration-300 ease-in-out"
+      ref={ref}
+    >
+      <Component />
+    </div>
+  );
 }
 
 export default function MainMenu() {

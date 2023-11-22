@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash/fp';
+import kebabCase from 'lodash/kebabCase';
 import Link from 'next/link';
 import { PlusOutlined } from '@ant-design/icons';
 
