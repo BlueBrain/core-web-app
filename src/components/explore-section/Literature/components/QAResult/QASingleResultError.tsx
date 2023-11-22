@@ -4,7 +4,6 @@ import delay from 'lodash/delay';
 
 import GenerativeQASingleResultContainer from './QASingleResultContainer';
 import GenerativeQASingleResultHeader from './QASingleResultHeader';
-import LightIcon from '@/components/icons/Light';
 import { useLiteratureResultsAtom } from '@/state/literature';
 import { FailedGenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
@@ -78,10 +77,6 @@ export default function GenerativeQASingleResultError({
                 Remove question
               </Button>
             )}
-          </div>
-          <div className="inline-flex items-center justify-center gap-x-1 text-primary-8">
-            <LightIcon className="w-4 h-4 text-primary-8" />
-            <div className="font-light">Please reformulate your question .</div>
           </div>
         </div>
       </>
