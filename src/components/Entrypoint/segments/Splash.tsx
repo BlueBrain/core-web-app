@@ -1,15 +1,18 @@
+import Image from 'next/image';
+
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 
 function Background() {
   return (
     <div className="absolute inset-0 bg-primary-9 flex flex-col items-center justify-center">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         fetchPriority="high"
         src={`${basePath}/images/obp_fullbrain.png`}
         alt="Open Brain Platform Full Brain"
         className="max-w-[42%] h-auto mb-[76px]"
+        width={984}
+        height={927}
       />
     </div>
   );
