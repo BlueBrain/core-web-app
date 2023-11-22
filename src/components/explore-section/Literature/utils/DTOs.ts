@@ -5,9 +5,8 @@ import {
   SucceededGenerativeQA,
 } from '@/types/literature';
 
-export const STREAM_JSON_DATA_SEPARATOR_REGEX = /^({"answer":|{"error":)/gm;
+export const STREAM_JSON_DATA_SEPARATOR_REGEX = /<bbs_json_(data|error)>/g;
 export const ASKED_TIME_SEPARATOR = '@time:';
-export const ANSWER_SOURCE_SEPARATOR = 'SOURCES:';
 
 const generativeQADTO = ({
   question,

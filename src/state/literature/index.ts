@@ -44,7 +44,7 @@ const literatureAtom = atom<LiteratureAtom>({
 
 const GENERATIVE_QA_HISTORY_CACHE_KEY = 'lgqa-history';
 
-const permanantLiteratureResultAtom = atomWithStorage<GenerativeQA[]>(
+export const permanantLiteratureResultAtom = atomWithStorage<GenerativeQA[]>(
   GENERATIVE_QA_HISTORY_CACHE_KEY,
   []
 );

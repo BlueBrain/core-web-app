@@ -444,6 +444,7 @@ const GenerativeQAResult = memo(
       question,
       streamed,
       goToBottom,
+      askedAt,
     });
 
     return (
