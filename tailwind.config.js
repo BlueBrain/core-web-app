@@ -129,9 +129,6 @@ module.exports = {
           },
         },
       },
-      backgroundImage: {
-        'fullbrain-image': "url('/images/obp_fullbrain_backdroped.png')",
-      },
     },
   },
   plugins: [],

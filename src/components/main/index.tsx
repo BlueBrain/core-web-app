@@ -7,6 +7,7 @@ import ApplicationSidebar, {
 } from '../ApplicationSidebar';
 import { OBPLogo } from '../Entrypoint/segments/Splash';
 import MainMenu from './Menu';
+import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 
 function MainSideBarHeader({ expanded }: { expanded: boolean }) {
@@ -47,7 +48,12 @@ function MainNavigation({ expanded }: { expanded: boolean }) {
 export default function Main() {
   return (
     <div className={classNames('relative bg-primary-9 h-full')}>
-      <div className="fixed bg-primary-9 inset-0 w-full h-full min-h-screen z-0 bg-fullbrain-image bg-blend-lighten bg-no-repeat bg-center [background-size:70%]" />
+      <div
+        className="fixed bg-primary-9 inset-0 w-full h-full min-h-screen z-0 bg-blend-lighten bg-no-repeat bg-center [background-size:70%]"
+        style={{
+          backgroundImage: `url(${basePath}/images/obp_fullbrain_backdroped.png)`,
+        }}
+      />
       <div className="fixed left-0 z-20">
         <ApplicationSidebar title={MainSideBarHeader} control={MainNavigation} />
       </div>
