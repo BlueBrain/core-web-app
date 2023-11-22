@@ -14,7 +14,7 @@ import SimulationsDisplayGrid from './SimulationsDisplayGrid';
 import { getMultiAnalyseSimCampaignMetaConfig, getMultiAnalysisWorkflowConfig } from './utils';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
-import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
+import { useAnalyses, CustomAnalysisType } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createHeaders, formatTimeDifference } from '@/util/utils';
 import { createWorkflowConfigResource, fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { WorkflowExecution } from '@/types/nexus';
@@ -37,7 +37,7 @@ export default function CustomAnalysis({
 
   const analysesById = useMemo(
     () =>
-      analyses.reduce((acc: { [id: string]: Analysis }, item) => {
+      analyses.reduce((acc: { [id: string]: CustomAnalysisType }, item) => {
         acc[item['@id']] = item;
         return acc;
       }, {}),
@@ -161,7 +161,7 @@ function useCumulativeAnalysisReports(
 
 async function launchAnalysis(
   simCampaign: SimulationCampaignResource,
-  analysis: Analysis | undefined,
+  analysis: CustomAnalysisType | undefined,
   session: Session | null
 ) {
   if (!simCampaign.wasGeneratedBy || !session || !analysis) return;

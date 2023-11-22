@@ -6,10 +6,10 @@ import sessionAtom from '@/state/session';
 
 export const fetchAnalyses = async (
   session: Session,
-  onSuccess: (response: Analysis[]) => void
+  onSuccess: (response: CustomAnalysisType[]) => void
 ) => {
   try {
-    const response = await queryES<Analysis>(
+    const response = await queryES<CustomAnalysisType>(
       {
         query: {
           bool: {
@@ -33,7 +33,7 @@ export const fetchAnalyses = async (
   }
 };
 
-export interface Analysis {
+export interface CustomAnalysisType {
   '@id': string;
   codeRepository: { '@id': string };
   programmingLanguage: string;
@@ -45,15 +45,15 @@ export interface Analysis {
   description: string;
 }
 
-const analysesAtom = atom<Analysis[]>([]);
+const analysesAtom = atom<CustomAnalysisType[]>([]);
 
-export function useAnalyses(): [Analysis[], (a: Analysis[]) => void] {
+export function useAnalyses(): [CustomAnalysisType[], (a: CustomAnalysisType[]) => void] {
   const session = useAtomValue(sessionAtom);
   const [analyses, setAnalyses] = useAtom(analysesAtom);
 
   useEffect(() => {
     if (!session) return;
-    fetchAnalyses(session, (response: Analysis[]) => setAnalyses(response));
+    fetchAnalyses(session, (response: CustomAnalysisType[]) => setAnalyses(response));
   }, [session, setAnalyses]);
   return [analyses, setAnalyses];
 }
