@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { selectedBrainRegionAtom, literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
 import { literatureResultAtom } from '@/state/literature';
-import { GenerativeQA } from '@/types/literature';
+import { GenerativeQA, SucceededGenerativeQA } from '@/types/literature';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { QAContainer } from '@/components/explore-section/Literature/components';
 import { getGenerativeQAAction } from '@/components/explore-section/Literature/actions';
@@ -126,14 +126,14 @@ describe('QAContainer', () => {
   const NoBrainRegionQuestion = 'No brain region question';
   const DifferentBrainRegionQuestion = 'Different brain region question';
 
-  const mockQA = (extra: Partial<GenerativeQA>): GenerativeQA => ({
+  const mockQA = (extra: Partial<GenerativeQA>): SucceededGenerativeQA => ({
     id: '1',
     askedAt: new Date(),
     question: 'How many neurons are there in brain',
     answer: '10k',
     rawAnswer: 'blah blah blah',
     articles: [],
-    isNotFound: false,
+    isNotFound: false as any,
     ...extra,
   });
 

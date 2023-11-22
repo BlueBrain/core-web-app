@@ -11,7 +11,6 @@ import findIndex from 'lodash/findIndex';
 
 import ItemTile from './ItemTile';
 import { buildQuestionsList } from './util';
-import { GenerativeQASingleResultCompact } from '@/components/explore-section/Literature/components/GenerativeQAResults';
 import useContextualLiteratureContext from '@/components/explore-section/Literature/useContextualLiteratureContext';
 import useChatQAContext from '@/components/explore-section/Literature/useChatQAContext';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
@@ -20,10 +19,12 @@ import {
   useContextualLiteratureAtom,
   useLiteratureAtom,
 } from '@/state/literature';
-import { ContextQAItem, GenerativeQA } from '@/types/literature';
+import { ContextQAItem, GenerativeQA, SucceededGenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
 import updateArray from '@/util/updateArray';
 import { GenerativeQAForm } from '@/components/explore-section/Literature/components/GenerativeQAForm';
+import GenerativeQASingleResultError from '@/components/explore-section/Literature/components/QAResult/QASingleResultError';
+import GenerativeQASingleResultCompact from '@/components/explore-section/Literature/components/QAResult/QASingleResultCompact';
 
 function ContextualContainer({ children }: { children: React.ReactNode }) {
   const { context, update } = useContextualLiteratureAtom();
@@ -255,21 +256,35 @@ function ContextualContent() {
               </div>
             ) : (
               <div className="w-full px-4">
-                {currentGQA.question?.gqa && (
-                  <GenerativeQASingleResultCompact
-                    key={currentGQA.question.gqa.id}
-                    {...{
-                      id: currentGQA.question.gqa.id,
-                      brainRegion: currentGQA.question.gqa.brainRegion,
-                      answer: currentGQA.question.gqa.answer,
-                      rawAnswer: currentGQA.question.gqa.rawAnswer,
-                      question: currentGQA.question.gqa.question,
-                      articles: currentGQA.question.gqa.articles,
-                      askedAt: currentGQA.question.gqa.askedAt,
-                      isNotFound: currentGQA.question.gqa.isNotFound,
-                    }}
-                  />
-                )}
+                {currentGQA.question?.gqa &&
+                  (currentGQA.question?.gqa.isNotFound ? (
+                    <GenerativeQASingleResultError
+                      id={currentGQA.question.gqa.id}
+                      askedAt={currentGQA.question.gqa.askedAt}
+                      question={currentGQA.question.gqa.question}
+                      brainRegion={currentGQA.question.gqa.brainRegion}
+                      chatId={currentGQA.question.gqa.chatId}
+                      showHeader={false}
+                      showRemoveBtn={false}
+                      isNotFound={currentGQA.question.gqa.isNotFound}
+                      statusCode={currentGQA.question.gqa.statusCode}
+                      details={currentGQA.question.gqa.details}
+                    />
+                  ) : (
+                    <GenerativeQASingleResultCompact
+                      isNotFound={false}
+                      key={currentGQA.question.gqa.id}
+                      id={currentGQA.question.gqa.id}
+                      askedAt={currentGQA.question.gqa.askedAt}
+                      question={currentGQA.question.gqa.question}
+                      brainRegion={currentGQA.question.gqa.brainRegion}
+                      chatId={currentGQA.question.gqa.chatId}
+                      answer={(currentGQA.question.gqa as SucceededGenerativeQA).answer}
+                      rawAnswer={(currentGQA.question.gqa as SucceededGenerativeQA).rawAnswer}
+                      articles={(currentGQA.question.gqa as SucceededGenerativeQA).articles}
+                      extra={(currentGQA.question.gqa as SucceededGenerativeQA).extra}
+                    />
+                  ))}
               </div>
             )}
           </div>

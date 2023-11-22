@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
@@ -89,6 +90,7 @@ describe('GenerativeQAResults', () => {
   }
 
   function QAListProvider(articles: GArticle[]) {
+    const ref = createRef<{ goToBottom: () => void }>();
     const qa: GenerativeQA[] = [
       {
         id: '1',
@@ -102,7 +104,7 @@ describe('GenerativeQAResults', () => {
     ];
     return (
       <TestProvider initialValues={[[literatureResultAtom, qa]]}>
-        <QAResultList />
+        <QAResultList imperativeRef={ref} />
       </TestProvider>
     );
   }

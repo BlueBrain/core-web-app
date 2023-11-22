@@ -6,13 +6,7 @@ import merge from 'lodash/merge';
 import { LiteratureValidationError } from './errors';
 import { generativeQADTO } from './utils/DTOs';
 import { getGenerativeQAAction } from './actions';
-import {
-  GenerativeQA,
-  GenerativeQAServerResponse,
-  GenerativeQAWithDataResponse,
-  isGenerativeQA,
-  isGenerativeQANoFound,
-} from '@/types/literature';
+import { GenerativeQA, GenerativeQADTO, GenerativeQAServerResponse } from '@/types/literature';
 import {
   initialParameters,
   literatureAtom,
@@ -47,19 +41,18 @@ function useChatQAContext({
   const isQuestionEmpty = query.trim().length === 0;
 
   const onComplete = (
-    data: GenerativeQAServerResponse | LiteratureValidationError | null,
+    response: GenerativeQAServerResponse | LiteratureValidationError | null,
     extra?: Record<string, any>
   ) => {
     let newGenerativeQA: GenerativeQA | null = null;
 
-    if (data && !(data instanceof LiteratureValidationError)) {
+    if (response && !(response instanceof LiteratureValidationError)) {
       newGenerativeQA = generativeQADTO({
-        question: data.question,
-        isNotFound: isGenerativeQANoFound(data) || !isGenerativeQA(data),
-        response: isGenerativeQA(data)
-          ? (data.response as GenerativeQAWithDataResponse)
-          : undefined,
-      });
+        question: response.question,
+        isNotFound: !response.success,
+        response: response.success ? response.data : response.error,
+      } as GenerativeQADTO);
+
       if (selectedBrainRegion?.id) {
         newGenerativeQA = merge(newGenerativeQA, {
           brainRegion: {
