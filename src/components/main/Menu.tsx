@@ -1,4 +1,4 @@
-import { useReducer, useRef } from 'react';
+import { useReducer } from 'react';
 
 import ExploreMainMenu from './segments/ExploreMainMenu';
 import BuildMainMenu from './segments/BuildMainMenu';
@@ -74,18 +74,12 @@ export function MainMenuSingleItem({
 }
 
 export function RenderedMainDetails({ id }: { id: MainMenuListKey }) {
-  const ref = useRef<HTMLDivElement>(null);
   const menuItem = MAIN_MENU_LIST.find((comp) => comp.id === id);
-
-  useOnClickOutside(ref, onDeselect);
 
   if (!menuItem) return null;
   const { Component } = menuItem;
   return (
-    <div
-      className="relative overflow-y-auto pr-1 primary-scrollbar w-full mt-1 transition-all will-change-contents duration-300 ease-in-out"
-      ref={ref}
-    >
+    <div className="relative overflow-y-auto pr-1 primary-scrollbar w-full mt-1 transition-all will-change-contents duration-300 ease-in-out">
       <Component />
     </div>
   );
