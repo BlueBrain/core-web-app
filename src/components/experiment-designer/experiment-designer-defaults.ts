@@ -336,6 +336,13 @@ const config: ExpDesignerConfig = {
       value: [defaultTarget],
     },
     {
+      id: 'customAnalysis',
+      name: 'Custom Analysis',
+      type: 'customAnalysisDropdown',
+      value: [],
+      options: [],
+    },
+    {
       id: 'localFieldPotential',
       name: 'Local Field Potential (coming soon)',
       type: 'group',

@@ -6,11 +6,16 @@ import { splitAtom } from 'jotai/utils';
 
 import TargetDropdownGroup from './TargetDropdownGroup';
 import ParamGroup from './ParamGroup';
+import CustomAnalysisDropdown from './CustomAnalysisDropdown';
 import GenericParamWrapper, {
   defaultPadding,
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
-import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
+import type {
+  ExpDesignerCustomAnalysisDropdown,
+  ExpDesignerGroupParameter,
+  ExpDesignerParam,
+} from '@/types/experiment-designer';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
@@ -25,6 +30,12 @@ function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesigne
     case 'group': {
       const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerGroupParameter>;
       constantCol = <ParamGroup paramAtom={paramAtomTyped} />;
+      break;
+    }
+
+    case 'customAnalysisDropdown': {
+      const paramAtomTyped = paramAtom as PrimitiveAtom<ExpDesignerCustomAnalysisDropdown>;
+      constantCol = <CustomAnalysisDropdown paramAtom={paramAtomTyped} />;
       break;
     }
 
