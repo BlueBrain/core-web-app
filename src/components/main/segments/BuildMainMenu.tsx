@@ -1,4 +1,3 @@
-import kebabCase from 'lodash/kebabCase';
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { Button, Switch, Tag } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -8,13 +7,14 @@ import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { EyeOutlined, FileTextOutlined, InfoCircleFilled } from '@ant-design/icons';
 import { isValid, formatDistance } from 'date-fns';
-import { orderBy } from 'lodash/fp';
+import kebabCase from 'lodash/kebabCase';
+import orderBy from 'lodash/orderBy';
 
-import { CURATED_MODELS } from '../../BrainConfigPanel/BuildSideBar';
-import { EyeIcon } from '../../icons';
-import CloneIcon from '../../icons/Clone';
 import Table, { TablePagination, TableProps, TableSort, paginateArray } from './Table';
 import { CollapsibleMenuItem, SubMenuList } from './molecules';
+import { CURATED_MODELS } from '@/components/BrainConfigPanel/BuildSideBar';
+import { EyeIcon } from '@/components/icons';
+import CloneIcon from '@/components/icons/Clone';
 import {
   SearchType,
   configListAtom,
@@ -320,7 +320,7 @@ function BrowseModelsGrid({
       input.onPageChange?.(input.currentPage! + 1);
     }
     if ('sortFn' in input && 'key' in input && 'dir' in input) {
-      const newData = orderBy(input.key, input.dir ?? 'asc', configs);
+      const newData = orderBy(configs, [input.key], [input.dir ?? 'asc']);
       const dataChunk = paginateArray(newData, pagination.perPage, 0);
       input.onPageChange?.(1);
       setDataSource(dataChunk);
