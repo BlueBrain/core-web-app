@@ -4,8 +4,7 @@ import ExploreMainMenu from './segments/ExploreMainMenu';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
 
-type Empty = '';
-type MainMenuListKey = Empty | 'main-explore-entry' | 'main-build-entry' | 'main-simulate-entry';
+type MainMenuListKey = 'main-explore-entry' | 'main-build-entry' | 'main-simulate-entry' | null;
 type TMainMenuItem = {
   id: MainMenuListKey;
   title: string;
@@ -96,12 +95,12 @@ export function RenderedMainDetails({
 
 export default function MainMenu() {
   const [selectedSubmenuId, setSelectedSubmenu] = useReducer(
-    (_: string, value: MainMenuListKey) => value,
-    ''
+    (_: MainMenuListKey, value: MainMenuListKey) => value,
+    null
   );
 
   const onSelect = (id: MainMenuListKey) => () => setSelectedSubmenu(id);
-  const onDeselect = () => setSelectedSubmenu('');
+  const onDeselect = () => setSelectedSubmenu(null);
 
   return (
     <div className="relative flex flex-col justify-start gap-px items-stretch w-2/3">
