@@ -608,7 +608,7 @@ export default function Table<T extends TableObject>({
           })}
         </tbody>
       </table>
-      {pagination && !loading && data.length && (
+      {pagination && !loading && Boolean(data.length) && (
         <div className="py-4 flex items-end justify-end">
           <Pagination
             {...{

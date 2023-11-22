@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import Link from 'next/link';
-import kebabCase from 'lodash/kebabCase';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { orderBy } from 'lodash/fp';
+import orderBy from 'lodash/orderBy';
+import kebabCase from 'lodash/kebabCase';
 
 import { Tag } from 'antd';
 import Table, { TablePagination, TableProps, TableSort, paginateArray } from './Table';
@@ -277,7 +277,7 @@ function MySimulations() {
       input.onPageChange?.(input.currentPage! + 1);
     }
     if ('sortFn' in input && 'key' in input && 'dir' in input) {
-      const newData = orderBy(input.key, input.dir ?? 'asc', configs);
+      const newData = orderBy(configs, [input.key], [input.dir ?? 'asc']);
       const dataChunk = paginateArray(newData, pagination.perPage, 0);
       input.onPageChange?.(1);
       setDataSource(dataChunk);
