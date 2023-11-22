@@ -1,5 +1,11 @@
-import { CheckCircleFilled, InfoCircleOutlined, WarningFilled } from '@ant-design/icons';
+import {
+  CheckCircleFilled,
+  CloseOutlined,
+  InfoCircleOutlined,
+  WarningFilled,
+} from '@ant-design/icons';
 import { notification } from 'antd';
+import { Key } from 'react';
 import { NotificationType, Placement } from '@/types/notifications';
 
 /**
@@ -10,13 +16,16 @@ import { NotificationType, Placement } from '@/types/notifications';
  * @param message the message to display
  * @param duration the duration in seconds
  * @param placement where to appear in the screen
+ * @param closeIcon whether to show the close icon or not
+ * @param key
  */
 export default function openNotification(
   type: NotificationType,
   message: string,
   duration: number = 5,
   placement: Placement = 'bottomRight',
-  key?: React.Key
+  closeIcon: boolean = true,
+  key?: Key
 ) {
   let icon;
   let backgroundColor;
@@ -42,7 +51,7 @@ export default function openNotification(
   notification[type]({
     message: <div className="text-neutral-1">{message}</div>,
     style: { backgroundColor },
-    closeIcon: false,
+    closeIcon: closeIcon && <CloseOutlined style={{ fontSize: '1.5em', color: 'white' }} />,
     duration,
     icon,
     placement,

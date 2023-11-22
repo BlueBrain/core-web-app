@@ -121,6 +121,7 @@ function PointCloudMesh({
             'The cell positions cannot be displayed because the brain model has not been built yet.',
             undefined,
             'topRight',
+            true,
             'cell-position-display-warning'
           );
         } else {

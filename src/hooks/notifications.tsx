@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, Key } from 'react';
 import { Placement } from '@/types/notifications';
 import openNotification from '@/api/notifications';
 
@@ -14,9 +14,10 @@ export default function useNotification() {
       message: string,
       duration: number = 5,
       placement: Placement = 'bottomRight',
-      key?: React.Key
+      closeIcon: boolean = true,
+      key?: Key
     ) => {
-      openNotification('error', message, duration, placement, key);
+      openNotification('error', message, duration, placement, closeIcon, key);
     },
     []
   );
@@ -32,9 +33,10 @@ export default function useNotification() {
       message: string,
       duration: number = 5,
       placement: Placement = 'bottomRight',
-      key?: React.Key
+      closeIcon: boolean = true,
+      key?: Key
     ) => {
-      openNotification('warning', message, duration, placement, key);
+      openNotification('warning', message, duration, placement, closeIcon, key);
     },
     []
   );
@@ -50,9 +52,10 @@ export default function useNotification() {
       message: string,
       duration: number = 5,
       placement: Placement = 'bottomRight',
-      key?: React.Key
+      closeIcon: boolean = true,
+      key?: Key
     ) => {
-      openNotification('success', message, duration, placement, key);
+      openNotification('success', message, duration, placement, closeIcon, key);
     },
     []
   );
@@ -68,9 +71,10 @@ export default function useNotification() {
       message: string,
       duration: number = 5,
       placement: Placement = 'bottomRight',
-      key?: React.Key
+      closeIcon: boolean = true,
+      key?: Key
     ) => {
-      openNotification('info', message, duration, placement, key);
+      openNotification('info', message, duration, placement, closeIcon, key);
     },
     []
   );

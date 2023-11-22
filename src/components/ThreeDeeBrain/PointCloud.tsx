@@ -26,7 +26,7 @@ export function PointCloudMesh({
   color,
   circuitConfigPathOverride,
 }: PointCloudMeshProps) {
-  const { warning } = useNotification();
+  const { info } = useNotification();
   const { scene } = useThree();
   const addLoading = useSetAtom(addLoadingAtom);
   const disableLoading = useSetAtom(disableLoadingAtom);
@@ -44,10 +44,11 @@ export function PointCloudMesh({
     }
     if (pointCloudData.state === 'hasError') {
       if ((pointCloudData.error as Error).message === CIRCUIT_NOT_BUILT_ERROR) {
-        warning(
+        info(
           'The cell positions cannot be displayed because the brain model has not been built yet.',
           5,
           'topRight',
+          true,
           'point-cloud-warning'
         );
       }
@@ -66,10 +67,10 @@ export function PointCloudMesh({
     brainRegionId,
     color,
     disableLoading,
+    info,
     pointCloudData,
     scene,
     section,
-    warning,
   ]);
 
   return null;
