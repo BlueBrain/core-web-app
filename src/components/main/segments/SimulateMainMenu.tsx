@@ -4,8 +4,9 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import orderBy from 'lodash/orderBy';
 import kebabCase from 'lodash/kebabCase';
-
+import { isValid, formatDistance } from 'date-fns';
 import { Tag } from 'antd';
+
 import Table, { TablePagination, TableProps, TableSort, paginateArray } from './Table';
 import { CollapsibleMenuItem } from './molecules';
 import { launchedSimCampaignListAtom } from '@/state/simulate';
@@ -70,11 +71,11 @@ function getSorterFn<T extends LaunchedSimCampUIConfigType>(
 function getStatusIcon(status: WorkflowExecutionStatusType): React.ReactNode {
   switch (status) {
     case 'Running':
-      return <ClockIcon />;
+      return <ClockIcon className="text-primary-4" />;
     case 'Done':
-      return <FullCircleIcon />;
+      return <FullCircleIcon className="text-green-400" />;
     case 'Failed':
-      return <EmptyCircleIcon />;
+      return <EmptyCircleIcon className="text-red-400" />;
     default:
       return <EmptyCircleIcon />;
   }
@@ -154,9 +155,17 @@ export function BrowseSimulations() {
   );
 }
 
+function NameColumn({ text }: { text: LaunchedSimCampUIConfigType['name'] }) {
+  return (
+    <div className="text-sm font-normal text-primary-8 line-clamp-1" title={text}>
+      {text}
+    </div>
+  );
+}
+
 function StatusColumn({ row: { status } }: { row: LaunchedSimCampUIConfigType }) {
   return (
-    <div className="flex flex-row gap-3 items-center justify-start">
+    <div className="flex flex-row gap-2 items-center justify-start text-primary-8">
       {getStatusIcon(status)} {status}
     </div>
   );
@@ -189,14 +198,7 @@ function ActionColumn({ row }: { row: LaunchedSimCampUIConfigType }) {
 
 function MySimulations() {
   const launchedSimCampaignsLoadable = useAtomValue(loadableLaunchedSimCampaignListAtom);
-
   const [configs, setConfigs] = useState<LaunchedSimCampUIConfigType[]>([]);
-
-  useEffect(() => {
-    if (launchedSimCampaignsLoadable.state !== 'hasData') return;
-
-    setConfigs(launchedSimCampaignsLoadable.data);
-  }, [launchedSimCampaignsLoadable]);
   const [datasource, setDataSource] = useState(() => configs);
   const loading = launchedSimCampaignsLoadable.state === 'loading';
 
@@ -218,6 +220,7 @@ function MySimulations() {
         sortable: true,
         sortFn: () => getSorterFn('name'),
         sortPosition: 'left',
+        cellRenderer: NameColumn,
       },
       {
         key: 'description',
@@ -239,6 +242,11 @@ function MySimulations() {
         center: true,
         sortPosition: 'left',
         sortFn: () => getSorterFn('startedAtTime'),
+        transformer: (text) => {
+          if (isValid(new Date(text)))
+            return formatDistance(new Date(text), new Date(), { addSuffix: true });
+          return '';
+        },
       },
       {
         key: 'endedAtTime',
@@ -247,6 +255,11 @@ function MySimulations() {
         center: true,
         sortPosition: 'left',
         sortFn: () => getSorterFn('endedAtTime'),
+        transformer: (text) => {
+          if (isValid(new Date(text)))
+            return formatDistance(new Date(text), new Date(), { addSuffix: true });
+          return '';
+        },
       },
       {
         key: 'action',
@@ -283,6 +296,19 @@ function MySimulations() {
       setDataSource(dataChunk);
     }
   };
+
+  useEffect(() => {
+    if (launchedSimCampaignsLoadable.state !== 'hasData') return;
+
+    setConfigs(launchedSimCampaignsLoadable.data);
+  }, [launchedSimCampaignsLoadable]);
+
+  useEffect(() => {
+    if (configs && !loading) {
+      setDataSource(paginateArray(configs, pagination.perPage, 0));
+    }
+  }, [configs, loading, pagination.perPage]);
+
   return (
     <div className="relative w-full">
       <div className="sticky top-0 z-20 bg-white w-full py-8 px-7">
