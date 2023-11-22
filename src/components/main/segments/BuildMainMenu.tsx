@@ -35,7 +35,26 @@ type CuratedModel = {
   description: string;
 };
 
-type BuildMenuKey = '' | 'create-model' | 'browse-models';
+type BuildMenuKey = 'create-model' | 'browse-models' | null;
+
+const loadableConfigAtom = loadable(configListAtom);
+const BUILD_BASE_HREF = '/build/cell-composition/interactive';
+const BUILD_MENU: Array<SubMenuList<BuildMenuKey>> = [
+  {
+    id: 'create-model',
+    title: 'Create new brain models',
+    description:
+      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    Component: () => <BuildModelList />,
+  },
+  {
+    id: 'browse-models',
+    title: 'Browse brain models',
+    description:
+      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    Component: () => <BuildBrowseModel />,
+  },
+];
 
 function BuildModelItem({
   id,
@@ -413,29 +432,10 @@ function BuildBrowseModel() {
   );
 }
 
-const loadableConfigAtom = loadable(configListAtom);
-const BUILD_BASE_HREF = '/build/cell-composition/interactive';
-const BUILD_MENU: Array<SubMenuList<BuildMenuKey>> = [
-  {
-    id: 'create-model',
-    title: 'Create new brain models',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    Component: () => <BuildModelList />,
-  },
-  {
-    id: 'browse-models',
-    title: 'Browse brain models',
-    description:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    Component: () => <BuildBrowseModel />,
-  },
-];
-
 export default function BuildMainMenu() {
   const [currentMenu, setCurrentMenu] = useReducer(
     (_: BuildMenuKey, value: BuildMenuKey) => value,
-    ''
+    null
   );
 
   const onSelect = (value: BuildMenuKey) => setCurrentMenu(value);

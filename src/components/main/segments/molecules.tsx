@@ -54,7 +54,7 @@ export function MainMenuItemHeader({ title, description, opened }: CollapsibleMe
   );
 }
 
-export function CollapsibleMenuItem<T extends string = string>({
+export function CollapsibleMenuItem<T>({
   id,
   opened,
   title,
@@ -67,18 +67,14 @@ export function CollapsibleMenuItem<T extends string = string>({
   opened: boolean;
   title: string;
   description: string;
-  onSelect: (id: T) => void;
+  onSelect: (id: T | null) => void;
   Header?: (props: CollapsibleMenuProps) => JSX.Element;
   children: ({ opened }: { opened: boolean }) => React.ReactNode;
 }) {
-  // @ts-ignore
-  const onSelectCollapsible = () => onSelect(opened ? '' : id);
+  const onSelectCollapsible = () => onSelect(opened ? null : id);
 
   return (
-    <div
-      id={id}
-      className={classNames('bg-white group', opened ? 'shadow-lg' : 'hover:bg-primary-8')}
-    >
+    <div className={classNames('bg-white group', opened ? 'shadow-lg' : 'hover:bg-primary-8')}>
       <button
         type="button"
         onClick={onSelectCollapsible}
