@@ -178,7 +178,7 @@ export default function BrainRegions() {
       {isCollapsed ? (
         <CollapsedBrainRegionsSidebar setIsCollapsed={setIsCollapsed} />
       ) : (
-        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[300px] no-scrollbar">
+        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 max-w-[300px] no-scrollbar">
           <div className="grid">
             <div className="flex items-start justify-between mb-7">
               <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">

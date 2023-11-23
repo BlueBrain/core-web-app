@@ -337,7 +337,7 @@ function ExpandedRegionDetails({
   }
 
   return brainRegion.representedInAnnotation && composition?.totalComposition.neuron ? (
-    <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 min-w-[300px]">
+    <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 w-[300px]">
       {title}
       <UnitsToggle
         isChecked={densityOrCount === 'count'}
