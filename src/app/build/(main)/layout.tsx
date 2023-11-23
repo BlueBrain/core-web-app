@@ -16,8 +16,6 @@ import ConnectomeEditorSidebar from '@/components/ConnectomeEditorSidebar';
 import { extraPanelContainerAtom } from '@/state/build-section/layout';
 import ContextualLiterature from '@/components/build-section/ContextualLiterature/Content';
 
-import styles from './build-section-main.module.css';
-
 type BuildSectionLayoutProps = {
   children: ReactNode;
 };
@@ -36,14 +34,14 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
   }, [setExtraPanelContainer]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.brainConfigSelectorContainer}>
+    <div className="h-screen w-screen flex">
+      <div className="shrink">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
           <BrainConfigPanel baseHref="/build/cell-composition/interactive" />
         </ErrorBoundary>
       </div>
 
-      <div className={styles.brainSelectorContainer}>
+      <div className="shrink">
         {!isConnectomeEditor && !isSynapseEditor && (
           <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
             <DefaultLoadingSuspense>
@@ -58,17 +56,15 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
         )}
       </div>
 
-      <div className={styles.extraPanelContainer} ref={extraPanelRef} />
+      <div className="shrink" ref={extraPanelRef} />
 
-      <div className={styles.tabsContainer}>
+      {/* min-width: 0 / min-height: 0 and overflow: hidden are needed when rendering a canvas inside */}
+      <div className="grow min-w-0 min-h-0 overflow-hidden">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
           <TopTabs />
         </ErrorBoundary>
+        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>
       </div>
-
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className={styles.contentContainer}>{children}</div>
-      </ErrorBoundary>
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <ContextualLiterature />

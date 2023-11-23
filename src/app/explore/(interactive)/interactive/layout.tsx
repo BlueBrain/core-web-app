@@ -33,6 +33,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        {/* min-width: 0 / min-height: 0 and overflow: hidden are needed when rendering a canvas inside */}
         <div className="grow min-w-0 min-h-0 overflow-hidden">{children}</div>
       </ErrorBoundary>
     </div>
