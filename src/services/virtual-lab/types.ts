@@ -1,19 +1,5 @@
 import { TypeDef, assertType } from '@/util/type-guards';
 
-export type VirtualLabPlanType = 'entry' | 'beginner' | 'intermediate' | 'advanced';
-
-export interface VirtualLabMember {
-  name: string;
-  email: string;
-  role: 'admin' | 'user';
-}
-
-const VirtualLabMemberTypeDef: TypeDef = {
-  name: 'string',
-  email: 'string',
-  role: ['literal', 'admin', 'user'],
-};
-
 export interface VirtualLab {
   id: string;
   name: string;
@@ -29,6 +15,29 @@ export interface VirtualLab {
     postalCode: string;
     country: string;
   };
+}
+
+export type VirtualLabPlanType = 'entry' | 'beginner' | 'intermediate' | 'advanced';
+
+const VirtualLabMemberTypeDef: TypeDef = {
+  name: 'string',
+  email: 'string',
+  role: ['literal', 'admin', 'user'],
+};
+
+export interface VirtualLabMember {
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+  lastActive?: number;
+}
+
+export type NewMember = Pick<VirtualLabMember, 'email' | 'role'>;
+
+export interface ComputeTime {
+  labId: string;
+  usedTimeInHours: number;
+  totalTimeInHours: number;
 }
 
 const VirtualLabTypeDef: TypeDef = {
@@ -50,10 +59,4 @@ const VirtualLabTypeDef: TypeDef = {
 
 export function assertVirtualLabArray(data: unknown): asserts data is VirtualLab[] {
   assertType(data, ['array', VirtualLabTypeDef]);
-}
-
-export interface ComputeTime {
-  labId: string;
-  usedTimeInHours: number;
-  totalTimeInHours: number;
 }

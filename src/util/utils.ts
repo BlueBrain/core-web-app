@@ -184,3 +184,9 @@ export function formatTimeDifference(differenceInSeconds: number): string {
   const hours = Math.floor((differenceInSeconds % 86400) / 3600);
   return `${days} days ${hours} hours`;
 }
+
+// Antd email validation does not allow emails such as user@bbp (i.e. emails without top level domain) which is a valid email.
+// The following regular expression to validate emails is taken from MDN and seems to be similar to what most browsers support
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#basic_validation
+export const VALID_EMAIL_REGEXP =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;

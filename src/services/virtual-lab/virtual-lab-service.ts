@@ -1,22 +1,21 @@
 /* eslint-disable class-methods-use-this */
 
 import { Session } from 'next-auth';
-import { ComputeTime, VirtualLab, assertVirtualLabArray } from './types';
+import {
+  ComputeTime,
+  NewMember,
+  VirtualLab,
+  VirtualLabMember,
+  assertVirtualLabArray,
+} from './types';
 import { logError } from '@/util/logger';
 
 export default class VirtualLabService {
   static LOCAL_STORAGE_ID = 'USERS_VIRTUAL_LABS';
 
-  get(user: Session['user'], labId: string): Promise<VirtualLab> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          resolve(this.#getLabFromLocalStorage(labId, user));
-        } catch (e) {
-          reject(e);
-        }
-      }, 150);
-    });
+  async get(user: Session['user'], labId: string): Promise<VirtualLab> {
+    const lab = await this.#getLabFromLocalStorage(labId, user);
+    return lab;
   }
 
   listAll(user: Session['user']): Promise<VirtualLab[]> {
@@ -63,17 +62,79 @@ export default class VirtualLabService {
     });
   }
 
-  async #loadVirtualLabs(user: Session['user']): Promise<VirtualLab[]> {
-    try {
-      await pauseToSimulateNetworkAccess();
-      const key = `${VirtualLabService.LOCAL_STORAGE_ID}/${user.username}`;
-      const localStorage = window.localStorage.getItem(key);
-      assertVirtualLabArray(localStorage);
-      return localStorage;
-    } catch (err) {
-      logError(err);
-      return [];
+  async inviteNewMember(
+    newMember: NewMember,
+    labId: string,
+    currentUser: Session['user']
+  ): Promise<void> {
+    const currentLab = await this.#getLabFromLocalStorage(labId, currentUser);
+    const userIsAdmin =
+      currentLab.members.find((member) => member.email === currentUser.email)?.role === 'admin';
+    if (!currentUser || !userIsAdmin) {
+      throw new Error('Unauthorized');
     }
+
+    const userAlreadyExisits = currentLab.members.find(
+      (member) => member.email === newMember.email
+    );
+    if (userAlreadyExisits) {
+      return;
+    }
+
+    const updatedLab: VirtualLab = {
+      ...currentLab,
+      members: [
+        ...currentLab.members,
+        {
+          name: newMember.email.split('@')[0],
+          email: newMember.email,
+          role: newMember.role,
+          lastActive: Date.now(),
+        },
+      ],
+    };
+    await this.#saveLabToLocalStorage(currentUser, updatedLab);
+  }
+
+  async changeRole(
+    memberToChange: VirtualLabMember,
+    newRole: VirtualLabMember['role'],
+    labId: string,
+    userMakingChanges: Session['user']
+  ): Promise<VirtualLabMember> {
+    const currentLab = await this.#getLabFromLocalStorage(labId, userMakingChanges);
+    const userIsAdmin =
+      currentLab.members.find((m) => m.email === userMakingChanges.email)?.role === 'admin';
+    if (!userIsAdmin) {
+      throw new Error('Unauthorized');
+    }
+    const updatedLab: VirtualLab = {
+      ...currentLab,
+      members: currentLab.members.map((m) =>
+        m.email === memberToChange.email ? { ...m, role: newRole } : { ...m }
+      ),
+    };
+    await this.#saveLabToLocalStorage(userMakingChanges, updatedLab);
+    return { ...memberToChange, role: newRole };
+  }
+
+  async removeMember(
+    memberToRemove: VirtualLabMember,
+    labId: string,
+    userMakingChanges: Session['user']
+  ): Promise<void> {
+    const currentLab = await this.#getLabFromLocalStorage(labId, userMakingChanges);
+    const userIsAdmin =
+      currentLab.members.find((m) => m.email === userMakingChanges.email)?.role === 'admin';
+    const authorized = userIsAdmin || memberToRemove.email === userMakingChanges.email;
+    if (!authorized) {
+      throw new Error('Unauthorized');
+    }
+    const updatedLab: VirtualLab = {
+      ...currentLab,
+      members: currentLab.members.filter((m) => m.email !== memberToRemove.email),
+    };
+    await this.#saveLabToLocalStorage(userMakingChanges, updatedLab);
   }
 
   async #saveVirtualLabs(user: Session['user'], labs: VirtualLab[]): Promise<void> {
@@ -96,6 +157,19 @@ export default class VirtualLabService {
     const otherLabs = (await this.#loadVirtualLabs(user)).filter((l) => l.id !== lab.id);
     return this.#saveVirtualLabs(user, [...otherLabs, lab]);
   }
+
+  async #loadVirtualLabs(user: Session['user']): Promise<VirtualLab[]> {
+    try {
+      await pauseToSimulateNetworkAccess();
+      const key = `${VirtualLabService.LOCAL_STORAGE_ID}/${user.username}`;
+      const localStorage = JSON.parse(window.localStorage.getItem(key) ?? '');
+      assertVirtualLabArray(localStorage);
+      return localStorage;
+    } catch (err) {
+      logError(err);
+      return [];
+    }
+  }
 }
 
 /**
@@ -104,7 +178,7 @@ export default class VirtualLabService {
  */
 function pauseToSimulateNetworkAccess() {
   return new Promise((resolve) => {
-    window.setTimeout(resolve, 250 + 1750 * Math.random());
+    window.setTimeout(resolve, 250);
   });
 }
 

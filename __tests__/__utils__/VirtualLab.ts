@@ -6,9 +6,24 @@ export const createMockVirtualLab = (id: string, extra?: Partial<VirtualLab>): V
   description: 'Sploosh',
   referenceEMail: 'sterling.archer@secretservice.cc',
   members: [
-    { name: 'Sterling Archer', email: 'sterling.archer@secretservice.cc', role: 'user' },
-    { name: 'Malory Archer', email: 'malory.archer@secretservice.cc', role: 'admin' },
-    { name: 'Algernop Krieger', email: 'drkrieger@secretservice.cc', role: 'admin' },
+    {
+      name: 'Sterling Archer',
+      email: 'sterling.archer@secretservice.cc',
+      role: 'user',
+      lastActive: Date.now(),
+    },
+    {
+      name: 'Malory Archer',
+      email: 'malory.archer@secretservice.cc',
+      role: 'admin',
+      lastActive: Date.now(),
+    },
+    {
+      name: 'Algernop Krieger',
+      email: 'drkrieger@secretservice.cc',
+      role: 'admin',
+      lastActive: Date.now(),
+    },
   ],
   plan: 'beginner',
   billing: {

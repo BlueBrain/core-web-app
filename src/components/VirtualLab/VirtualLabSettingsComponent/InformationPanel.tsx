@@ -4,6 +4,7 @@ import { Button, ConfigProvider, Form, Input, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import EditIcon from '@/components/icons/Edit';
 import { VirtualLab } from '@/services/virtual-lab/types';
+import { VALID_EMAIL_REGEXP } from '@/util/utils';
 
 type Props = {
   virtualLab: VirtualLab;
@@ -66,12 +67,6 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
       });
   }, [form, values]);
 
-  // Input elements don't expand to the size of their `value` when width: fit-content is used. This is the workaround for that taken from https://css-tricks.com/auto-growing-inputs-textareas/
-  const getFitContentWidthForInput = (fieldName: keyof InformationForm): string => {
-    const width = Math.max(virtualLab[fieldName]?.length ?? 0, 14);
-    return `${width}ch`;
-  };
-
   return (
     <ConfigProvider
       theme={{
@@ -121,14 +116,14 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
           <Form.Item
             name="name"
             label="Team Name"
-            validateFirst
-            rules={[{ required: true, max: 100 }]}
+            validateTrigger="onBlur"
+            rules={[{ required: true }]}
             className={`w-full ${editMode ? 'border-b' : ''}`}
           >
             <Input
               readOnly={!editMode}
               className="font-bold"
-              style={{ width: showEditPrompts ? `${getFitContentWidthForInput('name')}` : '100%' }}
+              style={{ width: showEditPrompts ? `50%` : '100%' }}
               title={form.getFieldValue('name')}
               addonAfter={editButton}
               required
@@ -136,15 +131,10 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
           </Form.Item>
 
           <div className="flex items-center">
-            <Form.Item
-              name="description"
-              label="Description"
-              className={showEditPrompts ? 'w-fit' : 'w-full'}
-            >
+            <Form.Item name="description" label="Description" className="w-1/2">
               <Input.TextArea
                 readOnly={!editMode}
                 style={{
-                  width: showEditPrompts ? `${getFitContentWidthForInput('description')}` : '100%',
                   maxWidth: '700px',
                 }}
                 className={`rounded-none ${editMode ? 'border border-gray-200 px-3' : ''}`}
@@ -156,8 +146,14 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
             {editButton}
           </div>
           <Form.Item
-            validateFirst
-            rules={[{ required: true, type: 'email' }]}
+            validateTrigger="onBlur"
+            rules={[
+              {
+                required: true,
+                pattern: VALID_EMAIL_REGEXP,
+                message: 'Entered value is not the correct email format',
+              },
+            ]}
             name="referenceEMail"
             label="Reference Contact"
             className={`w-full ${editMode ? 'border-b' : ''}`}
@@ -166,11 +162,10 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
               readOnly={!editMode}
               className="font-bold"
               style={{
-                width: showEditPrompts ? `${getFitContentWidthForInput('referenceEMail')}` : '100%',
+                width: showEditPrompts ? `50%` : '100%',
               }}
               addonAfter={editButton}
               title={form.getFieldValue('referenceEmail')}
-              required
               type="email"
             />
           </Form.Item>

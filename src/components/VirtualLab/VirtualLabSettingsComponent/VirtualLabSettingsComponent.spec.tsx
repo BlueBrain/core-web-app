@@ -227,7 +227,7 @@ describe('VirtualLabSettingsComponent', () => {
     if (adminMode) {
       // eslint-disable-next-line react/destructuring-assignment
       const anAdmin = virtualLab.members.find((member) => member.role === 'admin')!;
-      expect(adminMode).toBeTruthy();
+      expect(anAdmin).toBeTruthy();
       const user: Session['user'] = {
         username: anAdmin.email,
         email: anAdmin.email,

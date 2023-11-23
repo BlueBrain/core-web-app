@@ -12,7 +12,8 @@ import { loadable } from 'jotai/utils';
 import { Session } from 'next-auth';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import InformationPanel from './InformationPanel';
-import { VirtualLab } from '@/services/virtual-lab/types';
+import MembersPanel from './MembersPanel';
+import { VirtualLab, NewMember, VirtualLabMember } from '@/services/virtual-lab/types';
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
 import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
 
@@ -28,6 +29,8 @@ export default function VirtualLabSettingsComponent({
   const [virtualLab, setVirtualLab] = useState(initialVirtualLab);
 
   const router = useRouter();
+  const service = new VirtualLabService();
+
   const userIsAdmin =
     virtualLab.members.find((member) => member.email === user?.email)?.role === 'admin';
 
@@ -35,7 +38,7 @@ export default function VirtualLabSettingsComponent({
   const computeTime = useAtomValue(computeTimeAtom);
 
   const saveInformation = (update: Omit<Partial<VirtualLab>, 'id'>): Promise<void> => {
-    return new VirtualLabService()
+    return service
       .edit(user, virtualLab.id, update)
       .then((updatedLab) => {
         setVirtualLab(updatedLab);
@@ -43,6 +46,40 @@ export default function VirtualLabSettingsComponent({
       .catch((err) => {
         throw err;
       });
+  };
+
+  const inviteNewMember = (newMember: NewMember): Promise<void> => {
+    return service.inviteNewMember(newMember, virtualLab.id, user).catch((err) => {
+      throw err;
+    });
+  };
+
+  const changeMemberRole = (
+    memberToChange: VirtualLabMember,
+    newRole: VirtualLabMember['role']
+  ) => {
+    return service
+      .changeRole(memberToChange, newRole, virtualLab.id, user)
+      .then((updatedMember) => {
+        setVirtualLab({
+          ...virtualLab,
+          members: virtualLab.members.map((m) =>
+            m.email === memberToChange.email ? { ...updatedMember } : { ...m }
+          ),
+        });
+      })
+      .catch((err) => {
+        throw err;
+      });
+  };
+
+  const removeMember = (member: VirtualLabMember) => {
+    return service.removeMember(member, virtualLab.id, user).then(() => {
+      setVirtualLab({
+        ...virtualLab,
+        members: virtualLab.members.filter((m) => m.email !== member.email),
+      });
+    });
   };
 
   return (
@@ -120,7 +157,16 @@ export default function VirtualLabSettingsComponent({
           {
             key: 1,
             label: <h3 className="font-bold text-xl color-primary-8">Members</h3>,
-            children: <p>Dummy members</p>,
+            children: (
+              <MembersPanel
+                members={virtualLab.members}
+                userIsAdmin={userIsAdmin}
+                currentUser={user}
+                onRemoveMember={removeMember}
+                onAddMember={inviteNewMember}
+                onChangeRole={changeMemberRole}
+              />
+            ),
           },
         ]}
       />

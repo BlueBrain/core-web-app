@@ -11,7 +11,7 @@ export default function VirtualLabLayout({ children }: { children: ReactNode }) 
 
   return (
     // TODO: Change background to include the brain image once Bilal's work is done
-    <div className="bg-primary-9 text-white h-screen grid grid-cols-[1fr_3fr] grid-rows-1 p-10">
+    <div className="bg-primary-9 text-white h-screen grid grid-cols-[1fr_3fr] grid-rows-1 p-10 overflow-y-scroll">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <VirtualLabSidebar />
       </ErrorBoundary>
