@@ -53,7 +53,6 @@ export function findTitleAndCollectParentBrainRegions(
 export function filterHasValue(filter: Filter) {
   switch (filter.type) {
     case 'checkList':
-    case 'checkListInference':
       return filter.value.length !== 0;
     case 'dateRange':
       return filter.value.gte || filter.value.lte;

@@ -1,22 +1,24 @@
 import { Key } from 'react';
 import { atom } from 'jotai';
-import { atomFamily, atomWithDefault } from 'jotai/utils';
+import { atomFamily, atomWithDefault, selectAtom } from 'jotai/utils';
 import head from 'lodash/head';
 import map from 'lodash/map';
+import isEqual from 'lodash/isEqual';
 import { fetchRules, fetchResourceBasedInference } from '@/api/generalization';
 import sessionAtom from '@/state/session';
+import { filtersAtom } from '@/state/explore-section/list-view-atoms';
 import {
   RulesOutput,
   ResourceBasedInferenceRequest,
   ResourceBasedInferenceResponse,
-  ResourceBasedInference,
+  ResourceBasedInferenceSingleResponse,
   ResourceBasedGeneralization,
   InferredResource,
 } from '@/types/explore-section/kg-inference';
+import { FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
 import { fetchEsResourcesByType } from '@/api/explore-section/resources';
-import { ExploreESHit } from '@/types/explore-section/es';
 
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
 export const expandedRowKeysAtom = atomFamily(() => atom<readonly Key[]>([]));
@@ -35,6 +37,11 @@ export const rulesResponseAtom = atomFamily((resourceId: string) =>
 );
 
 type Rule = ResourceBasedGeneralization & { modelName: string; ruleId: string };
+
+type ResourceBasedResponseAtomFamilyScopeType = {
+  resourceId: string;
+  experimentTypeName: string;
+};
 
 function flattenRules(formattedRules: Rule[], { rules }: RulesOutput[0]): Rule[] {
   // Un-nest the "rules".
@@ -137,42 +144,72 @@ export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>
   })
 );
 
-export const resourceBasedResponseResultsAtom = atomFamily((resourceId: string) =>
-  atom<Promise<ResourceBasedInference[] | null | []>>(async (get) => {
-    const session = get(sessionAtom);
+export const resourceBasedResponseResultsAtom = atomFamily(
+  (resourceId: string) =>
+    selectAtom<
+      Promise<ResourceBasedInferenceResponse | null>,
+      Promise<ResourceBasedInferenceSingleResponse['results'] | null>
+    >(resourceBasedResponseAtom(resourceId), async (resourceBasedResponse) => {
+      if (!resourceBasedResponse || resourceBasedResponse.length === 0) return null;
 
-    if (!session) return null;
-
-    const resourceBasedResponse = await get(resourceBasedResponseAtom(resourceId));
-
-    if (!resourceBasedResponse || resourceBasedResponse.length === 0) return null;
-
-    return head(resourceBasedResponse)?.results || [];
-  })
+      return head(resourceBasedResponse)?.results || [];
+    }),
+  isEqual
 );
 
-export const resourceBasedResponseDataAtom = atomFamily((resourceId: string) =>
-  atom<Promise<ExploreESHit[] | null>>(async (get) => {
-    const session = get(sessionAtom);
+export const resourceBasedResponseRawAtom = atomFamily(
+  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
+    atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
+      const session = get(sessionAtom);
 
-    if (!session) return null;
+      if (!session) return null;
 
-    const resourceBasedResponseResults = await get(resourceBasedResponseResultsAtom(resourceId));
+      const resourceBasedResponseResults = await get(resourceBasedResponseResultsAtom(resourceId));
 
-    if (!resourceBasedResponseResults || resourceBasedResponseResults.length === 0) return null;
+      if (!resourceBasedResponseResults || resourceBasedResponseResults.length === 0) return null;
 
-    const ids = map(resourceBasedResponseResults, 'id');
+      const ids = map(resourceBasedResponseResults, 'id');
 
-    if (!ids) return null;
+      if (!ids) return null;
 
-    const query = fetchDataQueryUsingIds(6, PAGE_NUMBER, [], ids);
+      const filters = await get(filtersAtom({ experimentTypeName, resourceId }));
 
-    const response = query && (await fetchEsResourcesByType(session.accessToken, query));
+      const query = fetchDataQueryUsingIds(12, PAGE_NUMBER, filters, ids);
 
-    if (response?.hits) {
-      return response.hits;
-    }
+      return query && (await fetchEsResourcesByType(session.accessToken, query));
+    }),
+  isEqual
+);
 
-    return [];
-  })
+export const resourceBasedResponseHitsAtom = atomFamily(
+  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
+    selectAtom<
+      Promise<FlattenedExploreESResponse | null>,
+      Promise<FlattenedExploreESResponse['hits'] | undefined>
+    >(
+      resourceBasedResponseRawAtom({ resourceId, experimentTypeName }),
+      async (response) => response?.hits
+    ),
+  isEqual
+);
+
+export const resourceBasedResponseAggregationsAtom = atomFamily(
+  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
+    selectAtom<
+      Promise<FlattenedExploreESResponse | null>,
+      Promise<FlattenedExploreESResponse['aggs'] | undefined>
+    >(
+      resourceBasedResponseRawAtom({ resourceId, experimentTypeName }),
+      async (response) => response?.aggs
+    ),
+  isEqual
+);
+
+export const resourceBasedResponseHitsCountAtom = atomFamily(
+  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
+    selectAtom<Promise<FlattenedExploreESResponse | null>, Promise<number | undefined>>(
+      resourceBasedResponseRawAtom({ resourceId, experimentTypeName }),
+      async (response) => response?.hits?.length
+    ),
+  isEqual
 );

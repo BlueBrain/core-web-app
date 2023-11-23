@@ -2,7 +2,7 @@ import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } fro
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { unwrap } from 'jotai/utils';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import {
   Filter,
@@ -21,19 +21,17 @@ import {
 } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
-import { ExploreDataBrainRegionSource, FilterValues } from '@/types/explore-section/application';
-import {
-  activeColumnsAtom,
-  aggregationsAtom,
-  filtersAtom,
-} from '@/state/explore-section/list-view-atoms';
+import { FilterValues } from '@/types/explore-section/application';
+import { activeColumnsAtom } from '@/state/explore-section/list-view-atoms';
 import { getFieldEsConfig, getFieldLabel } from '@/api/explore-section/fields';
 
 export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
   experimentTypeName: string;
-  brainRegionSource: ExploreDataBrainRegionSource;
+  aggregations: Aggregations;
+  filters: Filter[];
+  setFilters: any;
 };
 
 function createFilterItemComponent(
@@ -132,21 +130,12 @@ export default function ControlPanel({
   children,
   toggleDisplay,
   experimentTypeName,
-  brainRegionSource,
+  aggregations,
+  filters,
+  setFilters,
 }: ControlPanelProps) {
   const [activeColumns, setActiveColumns] = useAtom(
     useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
-  );
-
-  const aggregations = useAtomValue(
-    useMemo(
-      () => unwrap(aggregationsAtom({ experimentTypeName, brainRegionSource })),
-      [brainRegionSource, experimentTypeName]
-    )
-  );
-
-  const [filters, setFilters] = useAtom(
-    useMemo(() => unwrap(filtersAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});

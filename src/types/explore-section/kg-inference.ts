@@ -85,10 +85,12 @@ export interface ResourceBasedInferenceRequest {
   inputFilter: InputFilter;
 }
 
-export type ResourceBasedInferenceResponse = Array<{
+export type ResourceBasedInferenceSingleResponse = {
   id: string;
   results: ResourceBasedInference[];
-}>;
+};
+
+export type ResourceBasedInferenceResponse = Array<ResourceBasedInferenceSingleResponse>;
 
 export type InferredResource = Omit<
   ResourceBasedInference,

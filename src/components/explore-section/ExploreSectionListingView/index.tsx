@@ -64,9 +64,10 @@ export default function DefaultListView({
         experimentTypeName={experimentTypeName}
         brainRegionSource={brainRegionSource}
       >
-        {({ activeColumns, displayControlPanel, setDisplayControlPanel }) => (
+        {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
           <>
             <FilterControls
+              filters={filters}
               displayControlPanel={displayControlPanel}
               experimentTypeName={experimentTypeName}
               setDisplayControlPanel={setDisplayControlPanel}

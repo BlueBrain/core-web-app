@@ -46,7 +46,7 @@ export default function Detail({
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <DetailsPageSideBackLink />
       <div className="bg-white w-full h-full overflow-scroll p-7 pr-12 flex flex-col gap-7">
         <DetailHeader fields={fields} detail={detail.data} url={path} />

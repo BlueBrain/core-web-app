@@ -1,4 +1,3 @@
-import find from 'lodash/find';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { ExploreESHit } from '@/types/explore-section/es';
@@ -22,7 +21,7 @@ export default function CardView({ data, experimentTypeName, resourceId }: CardV
   }
 
   const scoreFinder = (id: string): number | undefined =>
-    find(resourceBasedResponseResults, { id })?.score;
+    resourceBasedResponseResults?.find((resource) => resource.id === id)?.score;
 
   return (
     <div className="grid grid-cols-3 gap-4" data-testid="explore-section-listing-card-view">
