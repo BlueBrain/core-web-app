@@ -13,7 +13,7 @@ import {
   reloadListOfOptimizationsAtom,
   selectedEModelAtom,
 } from '.';
-import { EModelOptimizationConfig } from '@/types/e-model';
+import { EModelOptimizationConfig, EModelOptimizationConfigResource } from '@/types/e-model';
 import { createJsonFile, createResource, updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import { EntityCreation } from '@/types/nexus';
@@ -103,7 +103,7 @@ const updateOptimizationConfigAtom = atom(null, async (get, set) => {
     session
   );
 
-  const updatedConfig: EModelOptimizationConfig = {
+  const updatedConfig: EModelOptimizationConfigResource = {
     ...optimizationConfig,
     name: eModelUIConfig.name,
     distribution: createDistribution(updatedConfigPayloadMeta),

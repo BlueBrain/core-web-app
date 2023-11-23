@@ -22,7 +22,6 @@ import {
   Trace,
   EModelByETypeMappingType,
   EModelMenuItem,
-  EModelOptimizationConfig,
   EModelOptimizationConfigResource,
   EModelResource,
 } from '@/types/e-model';
@@ -176,7 +175,7 @@ export const eModelNameAtom = atom<Promise<string | null>>(async (get) => {
   return eModel?.name || null;
 });
 
-export const eModelOptimizationAtom = atom<Promise<EModelOptimizationConfig | null>>(
+export const eModelOptimizationAtom = atom<Promise<EModelOptimizationConfigResource | null>>(
   async (get) => {
     const selectedEModel = get(selectedEModelAtom);
     if (!selectedEModel) return null;
@@ -186,7 +185,7 @@ export const eModelOptimizationAtom = atom<Promise<EModelOptimizationConfig | nu
 
     if (!session || !eModelId) return null;
 
-    return fetchResourceById<EModelOptimizationConfig>(eModelId, session);
+    return fetchResourceById<EModelOptimizationConfigResource>(eModelId, session);
   }
 );
 

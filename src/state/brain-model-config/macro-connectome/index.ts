@@ -10,7 +10,6 @@ import sessionAtom from '@/state/session';
 import {
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
-  MacroConnectomeConfig,
   MacroConnectomeConfigPayload,
   MacroConnectomeConfigResource,
   WholeBrainConnectomeStrengthResource,
@@ -41,7 +40,7 @@ export const configAtom = atom<Promise<MacroConnectomeConfigResource | null>>(as
   return fetchResourceById<MacroConnectomeConfigResource>(id, session);
 });
 
-export const configSourceAtom = atom<Promise<MacroConnectomeConfig | null>>(async (get) => {
+export const configSourceAtom = atom<Promise<MacroConnectomeConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = await get(macroConnectomeConfigIdAtom);
 
@@ -49,7 +48,7 @@ export const configSourceAtom = atom<Promise<MacroConnectomeConfig | null>>(asyn
 
   if (!session || !id) return null;
 
-  return fetchResourceById<MacroConnectomeConfig>(id, session);
+  return fetchResourceById<MacroConnectomeConfigResource>(id, session);
 });
 
 export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {

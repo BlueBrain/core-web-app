@@ -4,7 +4,7 @@ import { atom } from 'jotai';
 import { selectAtom, atomWithStorage } from 'jotai/utils';
 
 import sessionAtom from '@/state/session';
-import { BrainModelConfig, BrainModelConfigResource } from '@/types/nexus';
+import { BrainModelConfigResource } from '@/types/nexus';
 import { fetchResourceById, updateResource } from '@/api/nexus';
 
 const RECENTLY_USED_SIZE = 5;
@@ -38,7 +38,7 @@ export const configAtom = atom<Promise<BrainModelConfigResource | null>>(async (
   return fetchResourceById<BrainModelConfigResource>(id, session);
 });
 
-export const configSourceAtom = atom<Promise<BrainModelConfig | null>>(async (get) => {
+export const configSourceAtom = atom<Promise<BrainModelConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
   const id = get(idAtom);
 

@@ -14,7 +14,6 @@ import {
   BrainModelConfigResource,
   CellCompositionConfig,
   CellPositionConfig,
-  Entity,
   EntityResource,
   FileMetadata,
   GeneratorTaskActivityResource,
@@ -264,10 +263,14 @@ export function createResource<T extends EntityResource>(
 }
 
 export async function updateResource(
-  resource: Entity,
+  resource: EntityResource,
   session: Session,
   rev?: number
 ): Promise<EntityResource> {
+  if (resource._createdBy && resource._createdBy.split('/').at(-1) !== session.user.username) {
+    throw new Error('Trying to update resource created by another user');
+  }
+
   const id = resource['@id'];
   // TODO: remove this while all entities do not have metadata in source
   const sanitizedResource = removeMetadata(resource);
@@ -805,7 +808,10 @@ export async function renameBrainModelConfig(
 ) {
   const configId = config['@id'];
 
-  const brainModelConfigSource = await fetchResourceById<BrainModelConfig>(configId, session);
+  const brainModelConfigSource = await fetchResourceById<BrainModelConfigResource>(
+    configId,
+    session
+  );
 
   const renamedModelConfig = {
     ...brainModelConfigSource,
