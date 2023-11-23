@@ -21,16 +21,20 @@ export default function ExploreInteractiveLayout({ children }: { children: React
   useAuth(true);
 
   return (
-    <div className="h-screen grid grid-cols-[min-content_min-content_auto] grid-rows-1">
+    <div className="h-screen w-screen flex">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <Sidebar />
+        <div className="shrink">
+          <Sidebar />
+        </div>
       </ErrorBoundary>
-      <div>
-        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <div className="shrink">
           <BrainRegionsSidebar />
-        </ErrorBoundary>
-      </div>
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>
+        </div>
+      </ErrorBoundary>
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <div className="grow min-w-0 min-h-0 overflow-hidden">{children}</div>
+      </ErrorBoundary>
     </div>
   );
 }
