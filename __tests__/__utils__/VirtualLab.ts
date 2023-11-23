@@ -32,7 +32,7 @@ export const createMockVirtualLab = (id: string, extra?: Partial<VirtualLab>): V
     address: '456 Popeyes Suds and Duds',
     city: 'New York City',
     postalCode: '456',
-    country: 'Worldwide',
+    country: 'Switzerland',
   },
   ...extra,
 });

@@ -13,9 +13,12 @@ import { Session } from 'next-auth';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import InformationPanel from './InformationPanel';
 import MembersPanel from './MembersPanel';
+import PlanPanel, { Plan } from './PlanPanel';
+import DangerZonePanel from './DangerZonePanel';
 import { VirtualLab, NewMember, VirtualLabMember } from '@/services/virtual-lab/types';
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
 import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
+import useNotification from '@/hooks/notifications';
 
 type Props = {
   virtualLab: VirtualLab;
@@ -29,6 +32,7 @@ export default function VirtualLabSettingsComponent({
   const [virtualLab, setVirtualLab] = useState(initialVirtualLab);
 
   const router = useRouter();
+  const notify = useNotification();
   const service = new VirtualLabService();
 
   const userIsAdmin =
@@ -40,6 +44,17 @@ export default function VirtualLabSettingsComponent({
   const saveInformation = (update: Omit<Partial<VirtualLab>, 'id'>): Promise<void> => {
     return service
       .edit(user, virtualLab.id, update)
+      .then((updatedLab) => {
+        setVirtualLab(updatedLab);
+      })
+      .catch((err) => {
+        throw err;
+      });
+  };
+
+  const changePlan = (newPlan: Plan, billingInfo: VirtualLab['billing']): Promise<void> => {
+    return service
+      .changePlan(user, virtualLab.id, newPlan, billingInfo)
       .then((updatedLab) => {
         setVirtualLab(updatedLab);
       })
@@ -79,6 +94,13 @@ export default function VirtualLabSettingsComponent({
         ...virtualLab,
         members: virtualLab.members.filter((m) => m.email !== member.email),
       });
+    });
+  };
+
+  const deleteVirtualLab = () => {
+    return service.deleteVirtualLab(user, virtualLab.id).then(() => {
+      notify.success(`Virtual lab ${virtualLab.name} is now deleted`);
+      router.push('/');
     });
   };
 
@@ -134,6 +156,7 @@ export default function VirtualLabSettingsComponent({
         expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
         className="mt-4 rounded-none text-primary-8"
         bordered={false}
+        key="information"
         items={[
           {
             key: 1,
@@ -153,6 +176,7 @@ export default function VirtualLabSettingsComponent({
         expandIconPosition="end"
         expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
         className="mt-4 rounded-none text-primary-8"
+        key="members"
         items={[
           {
             key: 1,
@@ -175,14 +199,53 @@ export default function VirtualLabSettingsComponent({
         expandIconPosition="end"
         expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
         className="mt-4 rounded-none text-primary-8"
+        key="plan"
         items={[
           {
             key: 1,
             label: <h3 className="font-bold text-xl color-primary-8">Plan</h3>,
-            children: <p>Dummy plan</p>,
+            children: (
+              <PlanPanel
+                currentPlan={virtualLab.plan ?? 'entry'}
+                billingInfo={virtualLab.billing}
+                userIsAdmin={userIsAdmin}
+                onChangePlan={changePlan}
+              />
+            ),
           },
         ]}
       />
+
+      {userIsAdmin && (
+        <ConfigProvider
+          theme={{
+            components: {
+              Collapse: {
+                colorBgContainer: '#e5e7eb',
+              },
+            },
+          }}
+        >
+          <Collapse
+            expandIconPosition="end"
+            expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
+            className="mt-4 rounded-none text-primary-8 bg-gray-200"
+            key="danger-zone"
+            items={[
+              {
+                key: 1,
+                label: <h3 className="font-bold text-xl color-primary-8">Danger Zone</h3>,
+                children: (
+                  <DangerZonePanel
+                    onDeleteVirtualLabClick={deleteVirtualLab}
+                    labName={virtualLab.name}
+                  />
+                ),
+              },
+            ]}
+          />
+        </ConfigProvider>
+      )}
     </ConfigProvider>
   );
 }

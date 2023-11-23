@@ -9,6 +9,7 @@ import {
   assertVirtualLabArray,
 } from './types';
 import { logError } from '@/util/logger';
+import { Plan } from '@/components/VirtualLab/VirtualLabSettingsComponent/PlanPanel';
 
 export default class VirtualLabService {
   static LOCAL_STORAGE_ID = 'USERS_VIRTUAL_LABS';
@@ -50,6 +51,23 @@ export default class VirtualLabService {
     const updatedLab = { ...currentLab, ...update };
     await this.#saveLabToLocalStorage(user, updatedLab);
     return this.#getLabFromLocalStorage(labId, user);
+  }
+
+  async changePlan(
+    currentUser: Session['user'],
+    labId: string,
+    newPlan: Plan,
+    billing: VirtualLab['billing']
+  ): Promise<VirtualLab> {
+    const currentLab = await this.#getLabFromLocalStorage(labId, currentUser);
+    const userIsAdmin =
+      currentLab.members.find((member) => member.email === currentUser.email)?.role === 'admin';
+    if (!userIsAdmin) {
+      throw new Error('Unauthorized');
+    }
+    const updatedLab: VirtualLab = { ...currentLab, plan: newPlan, billing };
+    await this.#saveLabToLocalStorage(currentUser, updatedLab);
+    return this.#getLabFromLocalStorage(labId, currentUser);
   }
 
   getComputeTime(labId: string): Promise<ComputeTime> {
@@ -137,10 +155,16 @@ export default class VirtualLabService {
     await this.#saveLabToLocalStorage(userMakingChanges, updatedLab);
   }
 
-  async #saveVirtualLabs(user: Session['user'], labs: VirtualLab[]): Promise<void> {
-    await pauseToSimulateNetworkAccess();
-    const key = `${VirtualLabService.LOCAL_STORAGE_ID}/${user.username}`;
-    window.localStorage.setItem(key, JSON.stringify(labs));
+  async deleteVirtualLab(userMakingChanges: Session['user'], labId: string) {
+    const currentLab = await this.#getLabFromLocalStorage(labId, userMakingChanges);
+    const userIsAdmin =
+      currentLab.members.find((m) => m.email === userMakingChanges.email)?.role === 'admin';
+
+    if (!userIsAdmin) {
+      throw new Error('Unauthorized');
+    }
+
+    await this.#deleteVirtualLabFromStorage(userMakingChanges, labId);
   }
 
   async #getLabFromLocalStorage(labId: string, user: Session['user']) {
@@ -153,9 +177,23 @@ export default class VirtualLabService {
     return lab;
   }
 
+  async #deleteVirtualLabFromStorage(user: Session['user'], labId: string): Promise<void> {
+    const allLabs = await this.#loadVirtualLabs(user);
+    return this.#saveVirtualLabs(
+      user,
+      allLabs.filter((lab) => lab.id !== labId)
+    );
+  }
+
   async #saveLabToLocalStorage(user: Session['user'], lab: VirtualLab) {
     const otherLabs = (await this.#loadVirtualLabs(user)).filter((l) => l.id !== lab.id);
     return this.#saveVirtualLabs(user, [...otherLabs, lab]);
+  }
+
+  async #saveVirtualLabs(user: Session['user'], labs: VirtualLab[]): Promise<void> {
+    await pauseToSimulateNetworkAccess();
+    const key = `${VirtualLabService.LOCAL_STORAGE_ID}/${user.username}`;
+    window.localStorage.setItem(key, JSON.stringify(labs));
   }
 
   async #loadVirtualLabs(user: Session['user']): Promise<VirtualLab[]> {

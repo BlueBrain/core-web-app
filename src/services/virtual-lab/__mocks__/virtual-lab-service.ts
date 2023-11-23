@@ -1,4 +1,5 @@
 import { VirtualLab, VirtualLabMember } from '../types';
+import { Plan } from '@/components/VirtualLab/VirtualLabSettingsComponent/PlanPanel';
 import { createMockVirtualLab } from '__tests__/__utils__/VirtualLab';
 
 export const getVirtualLabMock = jest.fn();
@@ -27,6 +28,15 @@ const mockService = jest.fn().mockImplementation(() => {
           setTimeout(() => {
             resolve({ ...createMockVirtualLab(labId), ...update });
           }, 0);
+        });
+      }
+    ),
+    changePlan: editVirtualLabMock.mockImplementation(
+      (user: any, labId: string, newPlan: Plan, billing: VirtualLab['billing']) => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ ...createMockVirtualLab(labId), plan: newPlan, billing });
+          }, 150);
         });
       }
     ),
