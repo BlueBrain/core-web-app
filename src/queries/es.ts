@@ -287,6 +287,21 @@ export const getBuiltBrainModelConfigsQuery = (
   sort: [defaultCreationDateSort],
 });
 
+export const getSynapseConfigsQuery = () => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: [{ term: { _deprecated: false } }, { term: { '@type': 'SynapseConfig' } }],
+          },
+        },
+      ],
+    },
+  },
+});
+
 export const getSimCampConfigsQuery = (searchString: string) => ({
   size: DEFAULT_SIZE,
   query: {

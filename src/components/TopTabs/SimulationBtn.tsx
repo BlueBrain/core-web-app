@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 
-import { cellCompositionAtom } from '@/state/brain-model-config/cell-composition';
+import detailedCircuitAtom from '@/state/circuit';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
 import { WORKFLOW_SIMULATION_TASK_NAME } from '@/services/bbp-workflow/config';
 import GenericButton from '@/components/Global/GenericButton';
@@ -16,7 +16,7 @@ export function PlaceholderLoadingButton() {
 }
 
 export default function SimulationBtn() {
-  const wasBuilt = useAtomValue(cellCompositionAtom);
+  const wasBuilt = useAtomValue(detailedCircuitAtom);
 
   return (
     <div className="mt-px w-[250px] flex">

@@ -6,12 +6,14 @@ import {
   getArchiveBrainModelConfigsQuery,
   getBuiltBrainModelConfigsQuery,
   getGeneratorTaskActivitiesQuery,
+  getSynapseConfigsQuery,
 } from '@/queries/es';
 import { queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import {
   BrainModelConfigResource,
   GeneratorTaskActivityResource,
+  SynapseConfigResource,
   SynapseConfigType,
 } from '@/types/nexus';
 
@@ -52,6 +54,15 @@ export const builtConfigListAtom = atom<Promise<BrainModelConfigResource[]>>(asy
   get(refetchTriggerAtom);
 
   if (!session) return [];
+
+  // TODO Refactor to make sure that the logic here works in case the number of synapse configs is larger than ES query's `DEFAULT_SIZE`.
+
+  const synapseConfigs = await queryES<SynapseConfigResource>(getSynapseConfigsQuery(), session);
+  const synapseIdAndVersionMap = new Map<string, number>();
+  synapseConfigs.forEach((synapseConfig) => {
+    synapseIdAndVersionMap.set(synapseConfig['@id'], synapseConfig._rev);
+  });
+
   const generatorQuery = getGeneratorTaskActivitiesQuery();
   const generatorTaskActivities = await queryES<GeneratorTaskActivityResource>(
     generatorQuery,
@@ -59,17 +70,18 @@ export const builtConfigListAtom = atom<Promise<BrainModelConfigResource[]>>(asy
   );
 
   const synapseConfigTypeName: SynapseConfigType = 'SynapseConfig';
-
   const synapseConfigsUsedByGenerators = generatorTaskActivities
     .filter((gta) => {
       if (!gta.used_config) return false;
       return gta.used_config['@type'].includes(synapseConfigTypeName);
     })
+    .filter((gta) => synapseIdAndVersionMap.get(gta.used_config['@id']) === gta.used_rev)
     .map((gta) => gta.used_config['@id']);
 
   const brainModelConfigQuery = getBuiltBrainModelConfigsQuery(
     searchString,
     synapseConfigsUsedByGenerators
   );
+
   return queryES<BrainModelConfigResource>(brainModelConfigQuery, session);
 });
