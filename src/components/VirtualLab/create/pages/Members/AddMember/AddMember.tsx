@@ -13,12 +13,14 @@ import styles from './add-member.module.css';
 
 export interface AddMemberProps {
   className?: string;
+  currentMembersEmails: string[];
   onNew(member: VirtualLabMember): void;
 }
 
-export function AddMember({ className, onNew }: AddMemberProps) {
+export function AddMember({ className, currentMembersEmails, onNew }: AddMemberProps) {
   const [valid, setValid] = useState(false);
   const [member, update, reset] = useNewMember();
+  const emailAlreadyExists = currentMembersEmails.includes(member.email);
   const handleClick = () => {
     const newMember = makeVirtualLabMember(member);
     onNew(newMember);
@@ -39,9 +41,12 @@ export function AddMember({ className, onNew }: AddMemberProps) {
         onChange={(role) => update({ role })}
         options={ROLES}
       />
-      <Button onClick={handleClick} disabled={!valid}>
+      <Button onClick={handleClick} disabled={emailAlreadyExists || !valid}>
         <IconPlus /> <div>Add new member</div>
       </Button>
+      {emailAlreadyExists && (
+        <div className={styles.error}>There is already a member with this email!</div>
+      )}
     </Form>
   );
 }

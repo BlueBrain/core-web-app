@@ -11,19 +11,22 @@ import styles from './member-item.module.css';
 export interface MemberItemProps {
   className?: string;
   value: VirtualLabMember;
+  readonly?: boolean;
   onDelete(value: VirtualLabMember): void;
 }
 
-export function MemberItem({ className, value, onDelete }: MemberItemProps) {
+export function MemberItem({ className, value, readonly = false, onDelete }: MemberItemProps) {
   return (
     <div className={classNames(styles.main, className)}>
       <Avatar email={value.email} />
       <div className={styles.name}>{value.name}</div>
       <div className={styles.email}>{value.email}</div>
       <div className={styles.role}>{ROLES[value.role]}</div>
-      <button type="button" onClick={() => onDelete(value)}>
-        <DeleteFilled />
-      </button>
+      {!readonly && (
+        <button type="button" onClick={() => onDelete(value)}>
+          <DeleteFilled />
+        </button>
+      )}
     </div>
   );
 }

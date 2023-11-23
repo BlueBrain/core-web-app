@@ -1,3 +1,5 @@
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
 
 import { VirtualLabWithOptionalId } from '../types';
@@ -28,13 +30,32 @@ export function useCurrentVirtualLabMembers(): {
   removeMember: (member: VirtualLabMember) => void;
 } {
   const [lab, update] = useCurrentVirtualLab();
+  const session = useSession().data;
+  useEffect(() => {
+    if (!session) return;
+
+    if (lab.members.find(({ email }) => email === session.user.email)) return;
+
+    update({
+      members: [
+        {
+          name: session.user.name ?? session.user.username,
+          // We should always have the email, but since this is an optional
+          // attibute, we put a fallback.
+          email: session.user.email ?? `${session.user.username}@epfl.ch`,
+          role: 'admin',
+        },
+        ...lab.members,
+      ],
+    });
+  }, [session, lab.members, update]);
   return {
     members: lab.members,
-    addMember(member: VirtualLabMember) {
-      update({ members: [...lab.members.filter((m) => m.email !== member.email), member] });
+    addMember(newMember: VirtualLabMember) {
+      update({ members: [...lab.members.filter((m) => m.email !== newMember.email), newMember] });
     },
-    removeMember(member: VirtualLabMember) {
-      update({ members: lab.members.filter((m) => m.email !== member.email) });
+    removeMember(memberToDelete: VirtualLabMember) {
+      update({ members: lab.members.filter((m) => m.email !== memberToDelete.email) });
     },
   };
 }
