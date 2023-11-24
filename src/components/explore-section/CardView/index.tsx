@@ -2,8 +2,11 @@ import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { ExploreESHit } from '@/types/explore-section/es';
 import Card from '@/components/explore-section/CardView/Card';
-import { ReconstructedNeuronMorphology } from '@/types/explore-section/es-experiment';
 import { resourceBasedResponseResultsAtom } from '@/state/explore-section/generalization';
+import {
+  ExperimentalTrace,
+  ReconstructedNeuronMorphology,
+} from '@/types/explore-section/es-experiment';
 
 type CardViewProps = {
   data?: ExploreESHit[] | null;
@@ -28,7 +31,10 @@ export default function CardView({ data, experimentTypeName, resourceId }: CardV
       {data.map((d) => (
         <Card
           key={d._id}
-          resource={d._source as ReconstructedNeuronMorphology}
+          resource={{
+            ...d,
+            _source: d._source as ReconstructedNeuronMorphology | ExperimentalTrace,
+          }}
           experimentTypeName={experimentTypeName}
           score={scoreFinder(d._id)}
         />

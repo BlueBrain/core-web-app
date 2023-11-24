@@ -4,6 +4,7 @@ import { atomFamily, atomWithDefault, selectAtom } from 'jotai/utils';
 import head from 'lodash/head';
 import map from 'lodash/map';
 import isEqual from 'lodash/isEqual';
+import sortBy from 'lodash/sortBy';
 import { fetchRules, fetchResourceBasedInference } from '@/api/generalization';
 import sessionAtom from '@/state/session';
 import { filtersAtom } from '@/state/explore-section/list-view-atoms';
@@ -15,14 +16,35 @@ import {
   ResourceBasedGeneralization,
   InferredResource,
 } from '@/types/explore-section/kg-inference';
+
+import { CardMetric, CardMetricIds } from '@/types/explore-section/generalization';
+
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { PAGE_NUMBER } from '@/constants/explore-section/list-views';
+import {
+  DEFAULT_CARD_METRIC,
+  DEFAULT_CARDS_NUMBER,
+} from '@/constants/explore-section/generalization';
 import { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
 import { fetchEsResourcesByType } from '@/api/explore-section/resources';
 
+const CARD_METRICS: CardMetric[] = [
+  {
+    id: 'metadata',
+    name: 'Metadata',
+    description:
+      'Name, brain region, m-type, condition, specie, contributor, creation date, reference',
+  },
+  {
+    id: 'morphometrics',
+    name: 'Morphometrics',
+    description: 'Axon total length, dendrite total length, dendrite maximal length',
+  },
+];
+
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
 export const expandedRowKeysAtom = atomFamily(() => atom<readonly Key[]>([]));
-export const limitQueryParameterAtom = atomFamily(() => atom(20));
+export const limitQueryParameterAtom = atomFamily(() => atom(DEFAULT_CARDS_NUMBER));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>
   atom<Promise<RulesOutput | null>>(async (get) => {
@@ -88,6 +110,10 @@ export const selectedRulesAtom = atomFamily((resourceId: string) =>
     return defaultSelectedRule ? [defaultSelectedRule] : [];
   })
 );
+
+export const cardsMetricsAtom = atom<readonly CardMetric[]>(CARD_METRICS);
+
+export const selectedCardsMetricAtom = atom<CardMetricIds>(DEFAULT_CARD_METRIC);
 
 export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
   atom<Promise<ResourceBasedInferenceRequest | null>>(async (get) => {
@@ -174,9 +200,17 @@ export const resourceBasedResponseRawAtom = atomFamily(
 
       const filters = await get(filtersAtom({ experimentTypeName, resourceId }));
 
-      const query = fetchDataQueryUsingIds(12, PAGE_NUMBER, filters, ids);
+      const query = fetchDataQueryUsingIds(DEFAULT_CARDS_NUMBER, PAGE_NUMBER, filters, ids);
 
-      return query && (await fetchEsResourcesByType(session.accessToken, query));
+      const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
+
+      // Use sortBy to order the results based on the order of IDs in resourceBasedResponseResults
+      esResponse.hits =
+        esResponse && esResponse.hits
+          ? sortBy(esResponse.hits, (item) => ids.indexOf(item._id))
+          : [];
+
+      return esResponse;
     }),
   isEqual
 );

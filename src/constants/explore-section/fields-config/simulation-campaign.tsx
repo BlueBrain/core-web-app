@@ -16,7 +16,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Name',
     filter: null,
     render: {
-      listingViewFn: (_t, r) =>
+      esResourceViewFn: (_t, r) =>
         IndexColContent({
           id: r._source['@id'],
           project: r._source?.project.label,
@@ -38,8 +38,8 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Brain Configuration',
     filter: null,
     render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-      detailViewFn: (resource) => resource?.brainConfiguration,
+      esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
+      deltaResourceViewFn: (resource) => resource?.brainConfiguration,
     },
     vocabulary: {
       plural: 'Brain Configurations',
@@ -50,7 +50,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Dimensions',
     filter: 'checkList',
     render: {
-      detailViewFn: (resource) => (
+      deltaResourceViewFn: (resource) => (
         <ListField
           items={
             resource.parameter?.coords &&
@@ -68,7 +68,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Attributes',
     filter: 'checkList',
     render: {
-      detailViewFn: (resource) => (
+      deltaResourceViewFn: (resource) => (
         <ListField
           items={
             resource.parameter?.attrs &&
@@ -86,7 +86,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Status',
     filter: 'checkList',
     render: {
-      detailViewFn: () => <SimulationCampaignStatus />,
+      deltaResourceViewFn: () => <SimulationCampaignStatus />,
     },
     vocabulary: {
       plural: 'Status',
@@ -97,7 +97,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Status',
     filter: 'checkList',
     render: {
-      detailViewFn: (resource) => resource?.status,
+      deltaResourceViewFn: (resource) => resource?.status,
     },
     vocabulary: {
       plural: 'Status',
@@ -108,7 +108,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Campaign',
     filter: 'checkList',
     render: {
-      detailViewFn: (resource) => resource?.wasGeneratedBy?.['@id'],
+      deltaResourceViewFn: (resource) => resource?.wasGeneratedBy?.['@id'],
     },
     vocabulary: {
       plural: 'Campaigns',
@@ -119,7 +119,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Tags',
     filter: 'checkList',
     render: {
-      detailViewFn: () => undefined,
+      deltaResourceViewFn: () => undefined,
     },
     vocabulary: {
       plural: 'Tags',
@@ -130,7 +130,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'started at',
     filter: null,
     render: {
-      detailViewFn: (resource) => resource && timeElapsedFromToday(resource.startedAtTime),
+      deltaResourceViewFn: (resource) => resource && timeElapsedFromToday(resource.startedAtTime),
     },
     vocabulary: {
       plural: 'Dates',
@@ -141,7 +141,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'completed at',
     filter: null,
     render: {
-      detailViewFn: (resource) => resource && timeElapsedFromToday(resource.endedAtTime),
+      deltaResourceViewFn: (resource) => resource && timeElapsedFromToday(resource.endedAtTime),
     },
     vocabulary: {
       plural: 'Dates',

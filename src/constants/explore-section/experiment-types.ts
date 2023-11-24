@@ -10,37 +10,65 @@ import {
 import { DetailProps } from '@/types/explore-section/application';
 
 type ExperimentType = {
-  cardViewFields?: DetailProps[];
+  cardViewFields?: { [key: string]: DetailProps[] };
 };
 
 export const EXPERIMENT_TYPES: Record<ExperimentDataTypeName, ExperimentType> = {
   [NEURON_MORPHOLOGY]: {
-    cardViewFields: [
-      {
-        field: 'length',
-        className: 'col-span-2',
-      },
-      {
-        field: 'maximumLength',
-        className: 'col-span-2',
-      },
-      {
-        field: 'totalLength',
-        className: 'col-span-2',
-      },
-      {
-        field: 'dendriteStemming',
-        className: 'col-span-2',
-      },
-      {
-        field: 'axon',
-        className: 'col-span-2',
-      },
-      {
-        field: 'bifurcations',
-        className: 'col-span-2',
-      },
-    ],
+    cardViewFields: {
+      morphometrics: [
+        {
+          field: 'length',
+          className: 'col-span-2',
+        },
+        {
+          field: 'maximumLength',
+          className: 'col-span-2',
+        },
+        {
+          field: 'totalLength',
+          className: 'col-span-2',
+        },
+        {
+          field: 'dendriteStemming',
+          className: 'col-span-2',
+        },
+        {
+          field: 'axon',
+          className: 'col-span-2',
+        },
+        {
+          field: 'bifurcations',
+          className: 'col-span-2',
+        },
+      ],
+      metadata: [
+        {
+          field: 'brainRegion',
+          className: 'col-span-2',
+        },
+        {
+          field: 'mType',
+          className: 'col-span-2',
+        },
+        {
+          field: 'name',
+          className: 'col-span-2',
+        },
+        {
+          field: 'subjectSpecies',
+          className: 'col-span-2',
+        },
+        {
+          field: 'contributors',
+          className: 'col-span-2',
+        },
+        {
+          field: 'createdAt',
+          className: 'col-span-2',
+        },
+      ], // these fields are duplicates of the fields found in the typToColumns method. We should in the future reorganize our constants since they are starting to overlap in places.
+    },
   },
 };
 

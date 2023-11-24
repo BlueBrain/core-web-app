@@ -27,7 +27,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'License',
     filter: 'checkList',
     render: {
-      detailViewFn: () => <License />,
+      deltaResourceViewFn: () => <License />,
     },
     vocabulary: {
       plural: 'Licenses',
@@ -45,8 +45,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Brain Region',
     filter: null,
     render: {
-      listingViewFn: selectorFnBrainRegion,
-      detailViewFn: (resource) => resource.brainLocation.brainRegion.label,
+      esResourceViewFn: selectorFnBrainRegion,
+      deltaResourceViewFn: (resource) => resource.brainLocation.brainRegion.label,
     },
     vocabulary: {
       plural: 'Brain Regions',
@@ -64,8 +64,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'E-Type',
     filter: 'checkList',
     render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
-      detailViewFn: (resource) => eTypeSelectorFn(resource),
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
+      deltaResourceViewFn: (resource) => eTypeSelectorFn(resource),
     },
     vocabulary: {
       plural: 'E-Types',
@@ -83,8 +83,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'M-Type',
     filter: 'checkList',
     render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
-      detailViewFn: (resource) => mTypeSelectorFn(resource),
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
+      deltaResourceViewFn: (resource) => mTypeSelectorFn(resource),
     },
     vocabulary: {
       plural: 'M-Types',
@@ -102,8 +102,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Species',
     filter: 'checkList',
     render: {
-      listingViewFn: (_t, r) => selectorFnSpecies(r._source?.subjectSpecies),
-      detailViewFn: () => <Species />,
+      esResourceViewFn: (_t, r) => selectorFnSpecies(r._source?.subjectSpecies),
+      deltaResourceViewFn: () => <Species />,
     },
     vocabulary: {
       plural: 'Species',
@@ -123,8 +123,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     description: 'Standard error of the mean',
     filter: 'valueRange',
     render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
-      detailViewFn: (resource) => semSelectorFn(resource),
+      esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
+      deltaResourceViewFn: (resource) => semSelectorFn(resource),
     },
     vocabulary: {
       plural: 'Values',
@@ -136,8 +136,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'checkList',
     unit: 'gramms',
     render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.weight),
-      detailViewFn: (resource) => <WeightField detail={resource} />,
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.weight),
+      deltaResourceViewFn: (resource) => <WeightField detail={resource} />,
     },
     vocabulary: {
       plural: 'Values',
@@ -149,8 +149,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'checkList',
     unit: 'days',
     render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.subjectAge?.label),
-      detailViewFn: (resource) => subjectAgeSelectorFn(resource),
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.subjectAge?.label),
+      deltaResourceViewFn: (resource) => subjectAgeSelectorFn(resource),
     },
     vocabulary: {
       plural: 'Ages',
@@ -169,8 +169,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'valueRange',
     unit: 'n/mm³',
     render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'mean'),
-      detailViewFn: (resource) => selectorFnStatisticDetail(resource, 'mean', true),
+      esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'mean'),
+      deltaResourceViewFn: (resource) => selectorFnStatisticDetail(resource, 'mean', true),
     },
     vocabulary: {
       plural: 'Densities',
@@ -181,8 +181,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Layer',
     filter: 'checkList',
     render: {
-      listingViewFn: selectorFnLayer,
-      detailViewFn: (resource) => resource.brainLocation?.layer?.label,
+      esResourceViewFn: selectorFnLayer,
+      deltaResourceViewFn: (resource) => resource.brainLocation?.layer?.label,
     },
     vocabulary: {
       plural: 'Layers',
@@ -201,8 +201,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'valueRange',
     unit: 'μm',
     render: {
-      listingViewFn: selectorFnLayerThickness,
-      detailViewFn: (resource) => <LayerThicknessField detail={resource} />,
+      esResourceViewFn: selectorFnLayerThickness,
+      deltaResourceViewFn: (resource) => <LayerThicknessField detail={resource} />,
     },
     vocabulary: {
       plural: 'Thicknesses',
@@ -213,7 +213,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Reference',
     filter: 'checkList',
     render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.reference),
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.reference),
     },
     vocabulary: {
       plural: 'References',
@@ -225,7 +225,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: 'checkList',
     unit: 'Cº',
     render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.conditions),
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.conditions),
     },
     vocabulary: {
       plural: 'Conditions',
@@ -244,8 +244,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Mean ± std',
     filter: 'valueRange',
     render: {
-      listingViewFn: selectorFnMeanStd,
-      detailViewFn: (resource) => <MeanStdField detail={resource} />,
+      esResourceViewFn: selectorFnMeanStd,
+      deltaResourceViewFn: (resource) => <MeanStdField detail={resource} />,
     },
     vocabulary: {
       plural: 'Values',
@@ -263,8 +263,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'N° of Measurements',
     filter: 'valueRange',
     render: {
-      listingViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-      detailViewFn: (resource) => selectorFnStatisticDetail(resource, 'N'),
+      esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
+      deltaResourceViewFn: (resource) => selectorFnStatisticDetail(resource, 'N'),
     },
     vocabulary: {
       plural: 'Values',
@@ -278,9 +278,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       plural: 'length',
       singular: 'length',
     },
-    render: {
-      cardViewFn: () => '-',
-    },
   },
   maximumLength: {
     title: 'maximum length',
@@ -288,9 +285,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     vocabulary: {
       plural: 'maximum length',
       singular: 'maximum length',
-    },
-    render: {
-      cardViewFn: () => '-',
     },
   },
   totalLength: {
@@ -300,9 +294,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       plural: 'total length',
       singular: 'total length',
     },
-    render: {
-      cardViewFn: () => '-',
-    },
   },
   dendriteStemming: {
     title: 'dendrite stemming from soma',
@@ -310,9 +301,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     vocabulary: {
       plural: 'dendrite stemming from soma',
       singular: 'dendrite stemmings from soma',
-    },
-    render: {
-      cardViewFn: () => '-',
     },
   },
   axon: {
@@ -322,9 +310,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       plural: 'axon',
       singular: 'axons',
     },
-    render: {
-      cardViewFn: () => '-',
-    },
   },
   bifurcations: {
     title: 'bifurcations',
@@ -332,9 +317,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     vocabulary: {
       plural: 'bifurcation',
       singular: 'bifurcations',
-    },
-    render: {
-      cardViewFn: () => '-',
     },
   },
 };

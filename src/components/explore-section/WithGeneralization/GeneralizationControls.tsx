@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { Select, Spin } from 'antd';
+import { Spin, ConfigProvider, ThemeConfig } from 'antd';
+import CardsControls from './CardsControls';
+import RulesControls from './RulesControls';
 import {
   rulesAtom,
-  selectedRulesAtom,
   resourceBasedResponseAggregationsAtom,
   resourceBasedResponseHitsCountAtom,
 } from '@/state/explore-section/generalization';
@@ -14,17 +15,18 @@ import ControlPanel from '@/components/explore-section/ControlPanel';
 import FilterControls from '@/components/explore-section/ExploreSectionListingView/FilterControls';
 import styles from './styles.module.scss';
 
-const { Option } = Select;
+export const theme: ThemeConfig = {
+  token: {
+    colorPrimary: '#002766',
+    colorPrimaryBorder: '#002766',
+    colorPrimaryHover: '#002766',
+  },
+};
 
 function GeneralizationControls({ experimentTypeName }: { experimentTypeName: string }) {
   const { id: resourceId } = useResourceInfoFromPath() ?? { id: '' };
 
   const allRules = useAtomValue(useMemo(() => unwrap(rulesAtom(resourceId)), [resourceId]));
-  const [selectedRules, setSelectedRules] = useAtom(
-    useMemo(() => unwrap(selectedRulesAtom(resourceId)), [resourceId])
-  );
-
-  const [showTitles, setShowTitles] = useState(true);
 
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
@@ -52,36 +54,15 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
   if (!allRules || allRules.length < 1) return null;
 
   return (
-    <div>
+    <ConfigProvider theme={theme}>
       <div className="flex items-center">
         <div className={styles.label}>
           Here are the {resourceBasedResponseHitsCount || <Spin />} most similar morphologies
           according to the rules:
         </div>
-        <div className="flex-1 ml-2">
-          <Select
-            mode="multiple"
-            className="w-full"
-            maxTagCount={1}
-            maxTagTextLength={10}
-            value={selectedRules}
-            onChange={setSelectedRules}
-            onDropdownVisibleChange={(visible) => setShowTitles(!visible)}
-          >
-            {allRules?.map((rule) => (
-              <Option key={rule.modelName} value={rule.modelName}>
-                <div className="bg-white text-primary-9 px-2 whitespace-normal">
-                  {rule.name}
-                  {!showTitles && (
-                    <p className="pl-5 font-thin text-gray-500">{rule.description}</p>
-                  )}
-                </div>
-              </Option>
-            ))}
-          </Select>
-        </div>
+        <RulesControls />
         {filters && (
-          <div>
+          <div className="ml-auto">
             <FilterControls
               filters={filters}
               displayControlPanel={displayControlPanel}
@@ -91,6 +72,7 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
             />
           </div>
         )}
+        <CardsControls />
       </div>
       {displayControlPanel && aggregations && filters && (
         <div className="h-screen fixed right-0 top-0 z-50">
@@ -104,7 +86,7 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
           />
         </div>
       )}
-    </div>
+    </ConfigProvider>
   );
 }
 

@@ -142,7 +142,7 @@ export default function useExploreColumns(
             sorter: true,
             ellipsis: true,
             width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
-            render: term?.render?.listingViewFn,
+            render: term?.render?.esResourceViewFn,
             onHeaderCell: () => ({
               handleResizing: (e: React.MouseEvent<HTMLElement>) => onMouseDown(e, key),
               onClick: () => sorterES(key),

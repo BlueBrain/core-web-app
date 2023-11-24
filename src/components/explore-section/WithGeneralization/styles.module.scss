@@ -1,3 +1,6 @@
 .label {
   @apply min-w-fit font-bold text-lg text-primary-9;
 }
+.menuItem:hover {
+  background: none !important;
+}

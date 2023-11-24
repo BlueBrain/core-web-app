@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { FilterType } from '@/components/Filter/types';
 import { DeltaResource } from '@/types/explore-section/resources';
-import { Experiment } from '@/types/explore-section/es-experiment';
 
 export type ExploreFieldConfig = {
   esTerms?: EsTermsConfig;
@@ -10,9 +9,8 @@ export type ExploreFieldConfig = {
   filter: FilterType;
   unit?: string;
   render?: {
-    listingViewFn?: (value: any, record: any, index: number) => ReactNode | any;
-    detailViewFn?: (resource: DetailType) => ReactNode | any;
-    cardViewFn?: (resource: Experiment) => ReactNode | any;
+    esResourceViewFn?: (value: any, record: any, index: number) => ReactNode | any;
+    deltaResourceViewFn?: (resource: DetailType) => ReactNode | any;
   };
   vocabulary: {
     plural: string;

@@ -19,7 +19,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Name',
     filter: null,
     render: {
-      listingViewFn: (_t, r) => selectorFnBasic(r._source?.name),
+      esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.name),
     },
     vocabulary: {
       plural: 'Names',
@@ -37,8 +37,8 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Contributors',
     filter: 'checkList',
     render: {
-      listingViewFn: selectorFnContributors,
-      detailViewFn: () => <Contributors />,
+      esResourceViewFn: selectorFnContributors,
+      deltaResourceViewFn: () => <Contributors />,
     },
     vocabulary: {
       plural: 'Contributors',
@@ -56,8 +56,8 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Creation date',
     filter: 'dateRange',
     render: {
-      listingViewFn: (_t, r) => selectorFnDate(r._source?.createdAt),
-      detailViewFn: (resource) =>
+      esResourceViewFn: (_t, r) => selectorFnDate(r._source?.createdAt),
+      deltaResourceViewFn: (resource) =>
         resource._createdAt && format(parseISO(resource._createdAt), 'dd.MM.yyyy'),
     },
     vocabulary: {
@@ -69,7 +69,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Created by',
     filter: 'checkList',
     render: {
-      detailViewFn: (resource) => (
+      deltaResourceViewFn: (resource) => (
         <span className="capitalize">{resource?._createdBy.split('/').reverse()[0]}</span>
       ),
     },
@@ -82,8 +82,9 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Updated at',
     filter: 'dateRange',
     render: {
-      listingViewFn: (_t, r) => selectorFnDate(r._source?.updatedAt),
-      detailViewFn: (resource) => resource._updatedAt && timeElapsedFromToday(resource?._updatedAt),
+      esResourceViewFn: (_t, r) => selectorFnDate(r._source?.updatedAt),
+      deltaResourceViewFn: (resource) =>
+        resource._updatedAt && timeElapsedFromToday(resource?._updatedAt),
     },
     vocabulary: {
       plural: 'Dates',
@@ -94,7 +95,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Description',
     filter: 'checkList',
     render: {
-      detailViewFn: (resource) => resource.description,
+      deltaResourceViewFn: (resource) => resource.description,
     },
     vocabulary: {
       plural: 'Descriptions',

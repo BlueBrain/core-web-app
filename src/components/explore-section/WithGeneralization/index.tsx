@@ -3,7 +3,6 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import Error from 'next/error';
 import { resourceBasedResponseHitsAtom } from '@/state/explore-section/generalization';
-import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import CardView from '@/components/explore-section/CardView';
 
@@ -29,7 +28,6 @@ export default function WithGeneralization({
 
   switch (resourceBasedResponseHits.state) {
     case 'loading':
-      render = <CentralLoadingSpinner />;
       break;
     case 'hasError':
       render = <Error statusCode={400} title="Something went wrong while fetching the data" />;

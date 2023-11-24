@@ -17,7 +17,7 @@ export function Field({ field, className, data }: FieldProps) {
     <div className={classNames('text-primary-7 text-xs mr-10', className)}>
       <div className="text-xs uppercase text-neutral-4">{fieldObj.title}</div>
       <div className="mt-3">
-        {fieldObj.render?.detailViewFn && fieldObj.render?.detailViewFn(data)}
+        {fieldObj.render?.deltaResourceViewFn && fieldObj.render?.deltaResourceViewFn(data)}
       </div>
     </div>
   );
