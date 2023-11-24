@@ -389,6 +389,12 @@ const config: ExpDesignerConfig = {
         },
       ],
     },
+    {
+      id: 'custom',
+      type: 'custom',
+      name: 'custom',
+      value: [],
+    },
   ],
 };
 

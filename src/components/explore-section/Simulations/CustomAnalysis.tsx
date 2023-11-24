@@ -11,14 +11,13 @@ import {
 } from './types';
 import DimensionSelector from './DimensionSelector';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
-import { getMultiAnalyseSimCampaignMetaConfig, getMultiAnalysisWorkflowConfig } from './utils';
+import { getConfigWithMultiAnalysis } from './utils';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createHeaders, formatTimeDifference } from '@/util/utils';
-import { createWorkflowConfigResource, fetchFileByUrl, fetchResourceById } from '@/api/nexus';
+import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { WorkflowExecution } from '@/types/nexus';
-import { composeUrl } from '@/util/nexus';
 import { launchUnicoreWorkflowSetup, launchWorkflowTask } from '@/services/bbp-workflow';
 import { useWorkflowAuth } from '@/components/WorkflowLauncherBtn';
 
@@ -51,7 +50,7 @@ export default function CustomAnalysis({
       {report?.multiAnalysis.status === 'Done' && (
         <>
           <DimensionSelector coords={resource.parameter?.coords} />
-          <SimulationsDisplayGrid status="Done" customReportIds={customReportIds} />
+          <SimulationsDisplayGrid status="all" customReportIds={customReportIds} />
         </>
       )}
 
@@ -184,19 +183,7 @@ async function launchAnalysis(
 
   if (!config) return;
 
-  const multiAnalyseSimCampaignMeta = getMultiAnalysisWorkflowConfig(analysis, session);
-
-  const newResource = await createWorkflowConfigResource(
-    'analysis.cfg',
-    multiAnalyseSimCampaignMeta,
-    session
-  );
-
-  const urlWithRev = composeUrl('resource', newResource['@id'], {
-    rev: newResource._rev,
-  }).replaceAll('%', '%%');
-
-  config = config.concat(getMultiAnalyseSimCampaignMetaConfig(urlWithRev));
+  config = await getConfigWithMultiAnalysis(config, [analysis], [], session);
 
   await launchWorkflowTask({
     loginInfo: session,

@@ -92,6 +92,16 @@ export default function ExperimentAnalyses() {
             <ArrowRightOutlined className="mt-6" />
           </Link>
         )}
+        {!simCampaign && (
+          <div
+            className="whitespace-pre text-sm rotate-180 mt-5 cursor-pointer"
+            style={{ writingMode: 'vertical-rl' }}
+            onClick={() => window.history.back()}
+          >
+            Back to simulation configuration
+            <ArrowRightOutlined className="mt-6" />
+          </div>
+        )}
       </div>
       <div className="min-h-screen bg-white overflow-auto p-4 flex-1">
         <div className="flex justify-between">
@@ -222,11 +232,14 @@ function useFetchSimCampaign() {
   const [simCampaign, setSimCampaign] = useState<SimulationCampaignResource>();
 
   useEffect(() => {
-    if (!pathname || !session) return;
+    if (!pathname || !session || pathname.includes('simulate')) return;
+
     const parts = pathname?.split('/') || [];
     const key: string | undefined = from64(parts[parts.length - 2]);
     const data = key?.split('!/!');
-    const id = data[data.length - 1];
+    const id: string | undefined = data[data.length - 1];
+
+    if (!id) return;
 
     const fetch = async () => {
       const r = await fetchResourceById<SimulationCampaignResource>(id, session);

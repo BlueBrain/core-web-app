@@ -96,6 +96,7 @@ export const simulationMetaConfigs: WorkflowMetaConfigPlaceholders = {
       [RunSimCampaign]
       simulation-type: CortexNrdmsPySim
       nodes: 5
+      time: 8:00:00
     `,
     placeholder: 'RunSimCampaignMeta',
   },

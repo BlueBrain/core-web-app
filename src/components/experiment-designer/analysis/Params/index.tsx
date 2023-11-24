@@ -11,6 +11,7 @@ import GenericParamWrapper, {
   defaultColumnStyle,
 } from '@/components/experiment-designer/GenericParamWrapper';
 import type { ExpDesignerGroupParameter, ExpDesignerParam } from '@/types/experiment-designer';
+import CustomAnalysisSelector from '@/components/experiment-designer/analysis/Params/CustomAnalysisSelector';
 
 function ParameterRenderRow({ paramAtom }: { paramAtom: PrimitiveAtom<ExpDesignerParam> }) {
   const [param] = useAtom<ExpDesignerParam>(paramAtom);
@@ -50,6 +51,8 @@ export default function Params({ focusedAtom }: Props) {
       listAtoms={listAtoms}
       RowRenderer={ParameterRenderRow}
       showHeader={false}
-    />
+    >
+      <CustomAnalysisSelector focusedAtom={focusedAtom} />
+    </GenericParamWrapper>
   );
 }

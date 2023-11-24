@@ -24,6 +24,7 @@ import { DetailedCircuitResource, SubConfigName } from '@/types/nexus';
 import { getVariantTaskConfigUrlFromCircuit } from '@/api/nexus';
 import { replaceCustomBbpWorkflowPlaceholders } from '@/components/experiment-designer/utils';
 import { getCurrentDate } from '@/util/utils';
+import { getConfigWithMultiAnalysis } from '@/components/explore-section/Simulations/utils';
 
 export function getWorkflowAuthUrl(username: string) {
   return BBP_WORKFLOW_AUTH_URL.replace(PLACEHOLDERS.USERNAME, username);
@@ -69,6 +70,13 @@ export async function getSimulationTaskFiles(
     modifiedFile.CONTENT = replaceCustomBbpWorkflowPlaceholders(modifiedFile.CONTENT);
     return modifiedFile;
   });
+
+  replacedFiles[0].CONTENT = await getConfigWithMultiAnalysis(
+    replacedFiles[0].CONTENT,
+    extraVariablesToReplace.selectedAnalyses,
+    extraVariablesToReplace.targets,
+    session
+  );
 
   return replacedFiles;
 }

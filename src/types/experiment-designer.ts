@@ -92,6 +92,11 @@ export interface ExpDesignerGroupParameter extends ExpDesignerBaseParameter {
   type: 'group';
   value: ExpDesignerParam[];
 }
+export interface ExpDesignerCustomAnalysisParameter extends ExpDesignerBaseParameter {
+  id: 'custom';
+  type: 'custom';
+  value: AnalysisConfig[];
+}
 
 export type ExpDesignerParam =
   | ExpDesignerNumberParameter
@@ -105,10 +110,17 @@ export type ExpDesignerParam =
   | ExpDesignerTargetDropdownGroupParameter
   | ExpDesignerCheckboxParameter
   | ExpDesignerCheckboxGroupParameter
-  | ExpDesignerGroupParameter;
+  | ExpDesignerGroupParameter
+  | ExpDesignerCustomAnalysisParameter;
 
 type ExpDesignerConfigBaseType = {
   [key in ExpDesignerSectionName]: ExpDesignerParam[];
+};
+
+export type AnalysisConfig = {
+  id: string;
+  name: string;
+  value: string[];
 };
 
 export type ExpDesignerConfig = ExpDesignerConfigBaseType & {

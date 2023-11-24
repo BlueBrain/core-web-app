@@ -1,5 +1,8 @@
+import { useMemo } from 'react';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
+import { useCustomAnalysisConfig } from '@/hooks/experiment-designer';
+import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
 import {
@@ -27,6 +30,9 @@ export default function SimulateBtn({ onLaunched }: Props) {
   const expDesignerConfig = expDesLoadable.state === 'hasData' ? expDesLoadable.data : {};
   const circuitInfo = circuitInfoLodable.state === 'hasData' ? circuitInfoLodable.data : null;
 
+  const selectedAnalyses = useSelectedAnalyses();
+  const targets = useTargets();
+
   const getButtonText = () => {
     switch (circuitInfoLodable.state) {
       case 'loading':
@@ -47,6 +53,8 @@ export default function SimulateBtn({ onLaunched }: Props) {
     expDesignerConfig,
     [SimulationPlaceholders.SIM_CAMPAIGN_NAME]: simCampName,
     [SimulationPlaceholders.SIM_CAMPAIGN_DESCRIPTION]: simCampDescription,
+    selectedAnalyses,
+    targets,
   };
 
   const onLaunchingChange = (isLoading: boolean, nexusUrl: string | null) => {
@@ -66,5 +74,33 @@ export default function SimulateBtn({ onLaunched }: Props) {
         onLaunchingChange={onLaunchingChange}
       />
     </DefaultLoadingSuspense>
+  );
+}
+
+function useSelectedAnalyses() {
+  const customAnalysisConfig = useCustomAnalysisConfig();
+
+  const [analyses] = useAnalyses();
+  const analysisById = useMemo(
+    () =>
+      analyses.reduce((acc: { [key: string]: Analysis }, a) => {
+        acc[a['@id']] = a;
+        return acc;
+      }, {}),
+    [analyses]
+  );
+
+  const selectedanalyses = customAnalysisConfig?.value;
+  return useMemo(
+    () => selectedanalyses?.map((a) => analysisById[a.id]) ?? [],
+    [selectedanalyses, analysisById]
+  );
+}
+
+function useTargets() {
+  const customAnalysisConfig = useCustomAnalysisConfig();
+  return useMemo(
+    () => customAnalysisConfig?.value.map((c) => c.value) ?? [],
+    [customAnalysisConfig?.value]
   );
 }
