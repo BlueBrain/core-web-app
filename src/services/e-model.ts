@@ -4,7 +4,6 @@ import mergeWith from 'lodash/mergeWith';
 import {
   AllFeatureKeys,
   ECode,
-  EModelConfigurationParameter,
   MechanismForUI,
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
@@ -18,6 +17,7 @@ import {
   Trace,
   VoltageFeatureKeys,
   EModelByETypeMappingType,
+  EModelRemoteParameters,
 } from '@/types/e-model';
 import {
   spikeEventFeatures,
@@ -33,13 +33,18 @@ import {
 const NOT_AVAILABLE_STR = 'Data not available';
 
 export function convertRemoteParamsForUI(
-  remoteParams: EModelConfigurationParameter[]
+  remoteParams: EModelRemoteParameters
 ): SimulationParameter {
-  const ra = lodashFind(remoteParams, ['name', 'Ra'])?.value;
-  const temp = lodashFind(remoteParams, ['name', 'celsius'])?.value;
-  const voltage = lodashFind(remoteParams, ['name', 'v_init'])?.value;
+  const ra = lodashFind(remoteParams.parameters, ['name', 'Ra'])?.value;
+  const temp = lodashFind(remoteParams.parameters, ['name', 'celsius'])?.value;
+  const voltage = lodashFind(remoteParams.parameters, ['name', 'v_init'])?.value;
+  const { validationThreshold } = remoteParams;
 
-  if ([ra, temp, voltage].some((value) => !value || Array.isArray(value) || !Number(value))) {
+  if (
+    [ra, temp, voltage, validationThreshold].some(
+      (value) => !value || Array.isArray(value) || Number.isNaN(value)
+    )
+  ) {
     throw new Error('Failed converting remote simulation parameter');
   }
 
@@ -48,6 +53,7 @@ export function convertRemoteParamsForUI(
     Ra: Number(ra),
     'Initial voltage': Number(voltage),
     'LJP (liquid junction potential)': 14.0,
+    'Validation threshold': validationThreshold || 10,
   };
 }
 

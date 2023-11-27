@@ -23,6 +23,8 @@ import {
   EModelByETypeMappingType,
   EModelMenuItem,
   EModelOptimizationConfigResource,
+  EModelPipelineSettings,
+  EModelPipelineSettingsPayload,
   EModelResource,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
@@ -57,10 +59,14 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
   }
 
   const remoteParameters = await get(eModelParameterAtom);
+  const eModelValidationThreshold = await get(eModelValidationThresholdAtom);
 
-  if (!remoteParameters) return null;
+  if (!remoteParameters || !eModelValidationThreshold) return null;
 
-  const simParams = convertRemoteParamsForUI(remoteParameters);
+  const simParams = convertRemoteParamsForUI({
+    parameters: remoteParameters,
+    validationThreshold: eModelValidationThreshold,
+  });
   return simParams;
 });
 
@@ -283,6 +289,35 @@ export const eModelConfigurationPayloadAtom = atom<Promise<EModelConfigurationPa
     return fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
   }
 );
+
+const eModelPipelineSettingsIdAtom = atom<Promise<string | null>>(async (get) => {
+  const eModelWorkflow = await get(eModelWorkflowAtom);
+
+  if (!eModelWorkflow) return null;
+
+  const modelPipelineSettings = eModelWorkflow.hasPart.find(
+    (part) => part['@type'] === 'EModelPipelineSettings'
+  );
+  if (!modelPipelineSettings) throw new Error('No EModelPipelineSettings found on EModelWorkflow');
+
+  return modelPipelineSettings['@id'];
+});
+
+const eModelValidationThresholdAtom = atom<Promise<number | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelPipelineSettingsId = await get(eModelPipelineSettingsIdAtom);
+
+  if (!session || !eModelPipelineSettingsId) return null;
+
+  const pipelineSettingResource = await fetchResourceById<EModelPipelineSettings>(
+    eModelPipelineSettingsId,
+    session
+  );
+
+  const url = pipelineSettingResource.distribution.contentUrl;
+  const payload = await fetchJsonFileByUrl<EModelPipelineSettingsPayload>(url, session);
+  return payload.validation_threshold;
+});
 
 export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
   async (get) => {

@@ -29,7 +29,8 @@ export type SimulationParameterKeys =
   | 'Temperature (°C)'
   | 'Ra'
   | 'Initial voltage'
-  | 'LJP (liquid junction potential)';
+  | 'LJP (liquid junction potential)'
+  | 'Validation threshold';
 export type SimulationParameter = Record<SimulationParameterKeys, number>;
 
 export interface ExemplarMorphologyDataType {
@@ -210,6 +211,10 @@ export interface EModelPipelineSettings extends EModelCommonProps {
 }
 
 export interface EModelPipelineSettingsResource extends ResourceMetadata, EModelPipelineSettings {}
+
+export interface EModelPipelineSettingsPayload extends Record<string, number> {
+  validation_threshold: number;
+}
 
 /* --------------------- ExtractionTargetsConfiguration --------------------- */
 
@@ -438,3 +443,10 @@ export interface EModelOptimizationConfig extends Entity {
 export interface EModelOptimizationConfigResource
   extends ResourceMetadata,
     EModelOptimizationConfig {}
+
+/* ------------------------------- Parameters ------------------------------- */
+
+export interface EModelRemoteParameters {
+  parameters: EModelConfigurationParameter[];
+  validationThreshold: number;
+}

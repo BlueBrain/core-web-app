@@ -239,18 +239,15 @@ export const eModelMetaConfigs: WorkflowMetaConfigPlaceholders = {
     templateFile: `
       [ExtractEFeatures]
       enable-internet=True
-      modules=
 
       [Optimise]
       enable-internet=True
-      modules=
       nodes=1
-      time=30:00
+      time=1:30:00
       continue_unfinished_optimisation=True
 
       [Validation]
       enable-internet=True
-      modules=
 
       [core]
       log_level=INFO
@@ -285,7 +282,7 @@ export const EMODEL_BUILDING_FILES: WorkflowFile[] = [
     TYPE: 'file',
     CONTENT: `
       [DEFAULT]
-      modules=
+      module-archive: unstable
       workers=1
       kg-base: https://bbp.epfl.ch/nexus/v1
       kg-org: bbp
@@ -293,7 +290,6 @@ export const EMODEL_BUILDING_FILES: WorkflowFile[] = [
       account=proj134
       enable-internet=True
       time=4:00:00
-      virtual-env=/gpfs/bbp.cscs.ch/project/proj134/workflows/environments/venv-emodel-optimization/
       chdir=/gpfs/bbp.cscs.ch/project/proj134/scratch/workflow-outputs
       
       [LaunchEModelOptimisationMeta]
