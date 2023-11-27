@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 interface BaseEntrypointMenuItem {
   title: string;
@@ -36,7 +37,8 @@ const ENTRYPOINT_MENU_ITEMS: Array<EntrypointMenuItem> = [
     title: 'Login',
     description: 'Get access to all your models & experiments',
     bgcolor: 'bg-primary-7',
-    action: (callbackUrl: string) => signIn('keycloak', { callbackUrl: callbackUrl ?? '/main' }),
+    action: (callbackUrl: string) =>
+      signIn('keycloak', { callbackUrl: callbackUrl ?? `${basePath}/main` }),
   },
   {
     title: 'Sign-up',
@@ -53,7 +55,7 @@ function withButtonOrLink(WrapperComponent: ComponentType<EntrypointMenuItem>) {
     const params = useSearchParams();
     if ('action' in rest && rest.action) {
       const origin = params?.get('origin');
-      const callbackUrl = origin ? decodeURIComponent(origin) : '/main';
+      const callbackUrl = origin ? decodeURIComponent(origin) : `${basePath}/main`;
       const onClick = () => () => rest.action?.(callbackUrl);
       return (
         <button key={key} type="button" aria-label={title} onClick={onClick()}>

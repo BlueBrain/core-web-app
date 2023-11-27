@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import { basePath } from './config';
 
 export async function middleware(request: NextRequest) {
   const session = await getToken({ req: request });
@@ -11,7 +10,7 @@ export async function middleware(request: NextRequest) {
   // then redirect him to the main page
   if (sessionValid && requestUrl === '/') {
     const url = request.nextUrl.clone();
-    url.pathname = `${basePath}/main`;
+    url.pathname = `/main`;
     return NextResponse.redirect(url);
   }
   // if the user is not authenticated at all
