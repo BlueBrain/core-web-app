@@ -1,7 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
 import uniq from 'lodash/uniq';
-import isEqual from 'lodash/isEqual';
 import columnKeyToFilter from './column-key-to-filter';
 import { ExploreDataBrainRegionSource, SortState } from '@/types/explore-section/application';
 import fetchDataQuery from '@/queries/explore-section/data';
@@ -29,13 +28,19 @@ type DataAtomFamilyScopeType = {
   resourceId?: string;
 };
 
+const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType): boolean =>
+  // eslint-disable-next-line lodash/prefer-matches
+  a.experimentTypeName === b.experimentTypeName &&
+  a.brainRegionSource === b.brainRegionSource &&
+  a.resourceId === b.resourceId;
+
 export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
-export const pageNumberAtom = atomFamily(() => atom<number>(PAGE_NUMBER), isEqual);
+export const pageNumberAtom = atomFamily(() => atom<number>(PAGE_NUMBER), isListAtomEqual);
 
-export const selectedRowsAtom = atomFamily(() => atom<ExploreESHit[]>([]), isEqual);
+export const selectedRowsAtom = atomFamily(() => atom<ExploreESHit[]>([]), isListAtomEqual);
 
-export const searchStringAtom = atomFamily(() => atom<string>(''), isEqual);
+export const searchStringAtom = atomFamily(() => atom<string>(''), isListAtomEqual);
 
 export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', order: 'desc' });
 
@@ -45,7 +50,7 @@ export const activeColumnsAtom = atomFamily(
       const dimensionColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
       return ['index', ...(dimensionColumns || []), ...typeToColumns[experimentTypeName]];
     }),
-  isEqual
+  isListAtomEqual
 );
 
 export const dimensionColumnsAtom = atomFamily(({ experimentTypeName }: DataAtomFamilyScopeType) =>
@@ -86,7 +91,7 @@ export const filtersAtom = atomFamily(
         ),
       ];
     }),
-  isEqual
+  isListAtomEqual
 );
 
 export const queryAtom = atomFamily(
@@ -125,7 +130,7 @@ export const queryAtom = atomFamily(
         descendantIds
       );
     }),
-  isEqual
+  isListAtomEqual
 );
 
 export const queryResponseAtom = atomFamily(
@@ -140,7 +145,7 @@ export const queryResponseAtom = atomFamily(
 
       return result;
     }),
-  isEqual
+  isListAtomEqual
 );
 
 export const dataAtom = atomFamily(
@@ -152,7 +157,7 @@ export const dataAtom = atomFamily(
       }
       return [];
     }),
-  isEqual
+  isListAtomEqual
 );
 
 export const totalAtom = atomFamily(
@@ -164,7 +169,7 @@ export const totalAtom = atomFamily(
       };
       return total?.value;
     }),
-  isEqual
+  isListAtomEqual
 );
 
 export const aggregationsAtom = atomFamily(
@@ -176,5 +181,5 @@ export const aggregationsAtom = atomFamily(
       queryResponseAtom({ experimentTypeName, brainRegionSource }),
       async (response) => response?.aggs
     ),
-  isEqual
+  isListAtomEqual
 );
