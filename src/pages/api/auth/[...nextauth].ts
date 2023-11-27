@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
       wellKnown: `${issuer}/.well-known/openid-configuration`,
       authorization: {
         params: {
-          scope: 'profile openid nexus groups',
+          scope: 'profile openid groups',
         },
       },
       idToken: true,
