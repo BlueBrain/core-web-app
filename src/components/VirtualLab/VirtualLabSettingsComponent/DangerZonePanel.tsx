@@ -21,7 +21,7 @@ export default function DangerZonePanel({
 
     onDeleteVirtualLabClick()
       .then(() => {
-        setError(true);
+        setError(false);
       })
       .catch(() => {
         setError(true);

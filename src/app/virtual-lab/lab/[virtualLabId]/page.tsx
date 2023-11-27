@@ -14,7 +14,7 @@ export default function VirtualLabSettingsPage() {
   const params = useParams();
   const { data: session } = useSession();
 
-  const currentLabId = params?.virtualLabName;
+  const currentLabId = params?.virtualLabId;
   const currentLabAtom = useMemo(
     () => loadable(getVirtualLabAtom((currentLabId as string) ?? '')),
     [currentLabId]

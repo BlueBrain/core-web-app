@@ -19,14 +19,8 @@ export default class VirtualLabService {
     return lab;
   }
 
-  listAll(user: Session['user']): Promise<VirtualLab[]> {
-    return new Promise((resolve, reject) => {
-      if (user) {
-        resolve([]);
-      } else {
-        reject();
-      }
-    });
+  async listAll(user: Session['user']): Promise<VirtualLab[]> {
+    return this.#loadVirtualLabs(user);
   }
 
   async create(user: Session['user'], lab: Omit<VirtualLab, 'id'>): Promise<VirtualLab> {

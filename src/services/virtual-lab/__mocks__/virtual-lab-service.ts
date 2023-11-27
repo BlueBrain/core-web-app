@@ -2,6 +2,7 @@ import { VirtualLab, VirtualLabMember } from '../types';
 import { Plan } from '@/components/VirtualLab/VirtualLabSettingsComponent/PlanPanel';
 import { createMockVirtualLab } from '__tests__/__utils__/VirtualLab';
 
+export const mockListAll = jest.fn();
 export const getVirtualLabMock = jest.fn();
 export const getComputeTimeMock = jest.fn();
 export const editVirtualLabMock = jest.fn();
@@ -55,6 +56,15 @@ const mockService = jest.fn().mockImplementation(() => {
         });
       }
     ),
+    listAll: mockListAll.mockImplementation(() => {
+      return new Promise((resolve) => {
+        resolve([
+          createMockVirtualLab('123'),
+          createMockVirtualLab('456'),
+          createMockVirtualLab('798'),
+        ]);
+      });
+    }),
   };
 });
 

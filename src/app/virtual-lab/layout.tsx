@@ -3,12 +3,17 @@
 import { ErrorBoundary } from 'react-error-boundary';
 import { ReactNode } from 'react';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import VirtualLabSidebar from '@/components/VirtualLabSidebar';
+import { basePath } from '@/config';
+import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSettingsComponent/VirtualLabSidebar';
 
 export default function VirtualLabLayout({ children }: { children: ReactNode }) {
   return (
-    // TODO: Change background to include the brain image once Bilal's work is done
-    <div className="bg-primary-9 text-white h-screen grid grid-cols-[1fr_3fr] grid-rows-1 p-10 overflow-y-scroll">
+    <div
+      className="text-white h-screen grid grid-cols-[1fr_3fr] grid-rows-1 p-10 bg-primary-9 inset-0 z-0 bg-blend-lighten bg-no-repeat bg-center [background-size:70%] overflow-y-scroll"
+      style={{
+        backgroundImage: `url(${basePath}/images/obp_fullbrain_backdroped.png)`,
+      }}
+    >
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <VirtualLabSidebar />
       </ErrorBoundary>

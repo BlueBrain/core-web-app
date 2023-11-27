@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import userEvent from '@testing-library/user-event';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import { Session } from 'next-auth';
@@ -47,18 +47,18 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('shows team name and reference when information panel is expanded', async () => {
-    const renderedVirtualLab = renderComponentWithLab('test-lab');
-    await openInformationPanel();
+    const { virtualLab, user } = renderComponentWithLab('test-lab');
+    await openInformationPanel(user);
 
     const teamName = screen.getByLabelText('Team Name') as HTMLInputElement;
-    expect(teamName.value).toEqual(renderedVirtualLab.name);
+    expect(teamName.value).toEqual(virtualLab.name);
     const referenceEMail = screen.getByLabelText('Reference Contact') as HTMLInputElement;
-    expect(referenceEMail.value).toEqual(renderedVirtualLab.referenceEMail);
+    expect(referenceEMail.value).toEqual(virtualLab.referenceEMail);
   });
 
   it('does not show edit features if user is not admin', async () => {
-    renderComponentWithLab('test-lab', false);
-    await openInformationPanel();
+    const { user } = renderComponentWithLab('test-lab', false);
+    await openInformationPanel(user);
 
     // Verify that all inputs are readonly
     const allInputs = Array.from(document.querySelectorAll('input')) as HTMLInputElement[];
@@ -71,8 +71,8 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('shows edit features if user is admin', async () => {
-    renderComponentWithLab('test-lab', true);
-    await openInformationPanel();
+    const { user } = renderComponentWithLab('test-lab', true);
+    await openInformationPanel(user);
 
     const allInputs = Array.from(document.querySelectorAll('input')) as HTMLInputElement[];
     const readOnlyInputs = allInputs.filter((input) => input.readOnly);
@@ -83,8 +83,8 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('shows edittable inputs if any edit button is clicked', async () => {
-    renderComponentWithLab('test-lab', true);
-    await openInformationPanel();
+    const { user } = renderComponentWithLab('test-lab', true);
+    await openInformationPanel(user);
 
     const editButtons = screen.queryAllByTitle('Edit virtual lab information');
 
@@ -97,12 +97,12 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('shows udpated information when user clicks save button', async () => {
-    renderComponentWithLab('test-lab', true);
-    await enableEditModeInInformation();
+    const { user } = renderComponentWithLab('test-lab', true);
+    await enableEditModeInInformation(user);
 
     changeInputValue('Team Name', 'New team name');
 
-    await saveInformation();
+    await saveInformation(user);
 
     const teamNameInput = (await screen.findByLabelText('Team Name')) as HTMLInputElement;
     expect(teamNameInput.readOnly).toEqual(true);
@@ -110,8 +110,8 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('disables save button if user enters invalid virtual lab name', async () => {
-    renderComponentWithLab('test-lab', true);
-    await enableEditModeInInformation();
+    const { user } = renderComponentWithLab('test-lab', true);
+    await enableEditModeInInformation(user);
 
     changeInputValue('Team Name', '');
 
@@ -123,9 +123,9 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('disables save button if user enters invalid reference email', async () => {
-    renderComponentWithLab('test-lab', true);
+    const { user } = renderComponentWithLab('test-lab', true);
 
-    await enableEditModeInInformation();
+    await enableEditModeInInformation(user);
 
     changeInputValue('Reference Contact', 'not_an_email');
 
@@ -139,35 +139,35 @@ describe('VirtualLabSettingsComponent', () => {
   it('shows error message when saving information fails', async () => {
     editVirtualLabMock().mockRejectedValueOnce(new Error('Mock error'));
 
-    const renderedVirtualLab = renderComponentWithLab('test-lab', true);
-    await enableEditModeInInformation();
+    const { virtualLab, user } = renderComponentWithLab('test-lab', true);
+    await enableEditModeInInformation(user);
 
     changeInputValue('Team Name', 'New valid team name');
 
-    await saveInformation();
+    await saveInformation(user);
 
     await screen.findByText('There was an error in saving information.');
 
     const teamName = screen.getByLabelText('Team Name') as HTMLInputElement;
-    expect(teamName.value).toEqual(renderedVirtualLab.name);
+    expect(teamName.value).toEqual(virtualLab.name);
   });
 
   it('removes error message when saving information passes eventually', async () => {
     editVirtualLabMock().mockRejectedValueOnce(new Error('Mock error'));
 
-    renderComponentWithLab('test-lab', true);
+    const { user } = renderComponentWithLab('test-lab', true);
 
-    await enableEditModeInInformation();
+    await enableEditModeInInformation(user);
 
     changeInputValue('Team Name', 'This should fail');
-    await saveInformation();
+    await saveInformation(user);
 
     await screen.findByText(informationPanelError);
 
-    await enableEditModeInInformation(false);
+    await enableEditModeInInformation(user, false);
 
     changeInputValue('Team Name', 'This should pass');
-    await saveInformation();
+    await saveInformation(user);
 
     const teamNameInputAfter = (await screen.findByLabelText('Team Name')) as HTMLInputElement;
     expect(teamNameInputAfter.value).toEqual('This should pass');
@@ -177,17 +177,17 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('highlights currently selected plan when user expands Plan section', async () => {
-    const lab = renderComponentWithLab('test-lab', true);
-    await userEvent.click(screen.getByText('Plan'));
-    const planElement = getElementForPlanType(lab.plan!);
+    const { virtualLab, user } = renderComponentWithLab('test-lab', true);
+    await user.click(screen.getByText('Plan'));
+    const planElement = getElementForPlanType(virtualLab.plan!);
     within(planElement!).getByText('Current Selection');
     const currentSelection = screen.getAllByText('Current Selection');
     expect(currentSelection).toHaveLength(1);
   });
 
   it('does not show Select plan buttons if user is not admin', async () => {
-    renderComponentWithLab('test-lab', false);
-    await userEvent.click(screen.getByText('Plan'));
+    const { user } = renderComponentWithLab('test-lab', false);
+    await user.click(screen.getByText('Plan'));
 
     const planCollapseContent = screen.getByTestId('plans-collapsible-content');
     const selectPlanButtons = within(planCollapseContent).queryAllByText('Select', {
@@ -197,16 +197,16 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('changes plan to entry level without asking for billing info', async () => {
-    renderComponentWithLab('test-lab', true);
-    await userEvent.click(screen.getByText('Plan'));
+    const { user } = renderComponentWithLab('test-lab', true);
+    await user.click(screen.getByText('Plan'));
 
     const entryPlanElement = getElementForPlanType('entry');
     const selectPlanButton = within(entryPlanElement).getByText('Select', {
       selector: 'button span',
     });
 
-    await userEvent.click(selectPlanButton);
-    await userEvent.click(screen.getByText('Confirm'));
+    await user.click(selectPlanButton);
+    await user.click(screen.getByText('Confirm'));
     screen.getByTestId('Saving changes');
 
     const entryPlanElementAfterChange = await findElementForPlanType('entry');
@@ -214,20 +214,20 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   it('changes plan to new type after asking for billing info', async () => {
-    const lab = renderComponentWithLab('test-lab', true);
-    await userEvent.click(screen.getByText('Plan'));
-    expect(lab.plan).not.toEqual('advanced');
+    const { virtualLab, user } = renderComponentWithLab('test-lab', true);
+    await user.click(screen.getByText('Plan'));
+    expect(virtualLab.plan).not.toEqual('advanced');
 
     const advancedPlanElement = getElementForPlanType('advanced');
     const selectPlanButton = within(advancedPlanElement).getByText('Select', {
       selector: 'button span',
     });
 
-    await userEvent.click(selectPlanButton);
+    await user.click(selectPlanButton);
     screen.getByTestId('billing-form');
     changeInputValue('Address', 'My new fake address');
-    await userEvent.click(screen.getByText('Submit'));
-    await userEvent.click(screen.getByText('Confirm'));
+    await user.click(screen.getByText('Submit'));
+    await user.click(screen.getByText('Confirm'));
 
     screen.getByTestId('Saving changes');
 
@@ -266,30 +266,30 @@ describe('VirtualLabSettingsComponent', () => {
   const renderComponentWithLab = (name: string, adminMode?: boolean) => {
     cleanup();
 
-    const virtualLab = createMockVirtualLab(name);
+    const user = userEvent.setup();
 
+    const virtualLab = createMockVirtualLab(name);
     render(VirtualLabSettingsComponentProvider(virtualLab, adminMode));
 
-    return virtualLab;
+    return { virtualLab, user };
   };
 
-  const openInformationPanel = async () => {
+  const openInformationPanel = async (user: UserEvent) => {
     const informationPanelHeader = screen.getByText('Information');
-    await userEvent.click(informationPanelHeader);
+    await user.click(informationPanelHeader);
   };
 
-  const enableEditModeInInformation = async (openPanel: boolean = true) => {
+  const enableEditModeInInformation = async (user: UserEvent, openPanel: boolean = true) => {
     if (openPanel) {
-      await openInformationPanel();
+      await openInformationPanel(user);
     }
     const editButton = screen.getAllByTitle('Edit virtual lab information')[0];
-    // await userEvent.click(editButton);
     fireEvent.click(editButton);
   };
 
-  const saveInformation = async () => {
+  const saveInformation = async (user: UserEvent) => {
     const save = screen.getByText('Save').closest('button') as HTMLButtonElement;
-    await userEvent.click(save);
+    await user.click(save);
   };
 
   const changeInputValue = (label: string, value: string) => {

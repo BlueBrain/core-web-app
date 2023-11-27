@@ -35,28 +35,28 @@ describe('VirtualLabSettingsComponent', () => {
   });
 
   test('lab is only deleted if user types correct info in the input', async () => {
-    const { virtualLab } = renderComponentWithLab('test-lab');
+    const { virtualLab, user } = renderComponentWithLab('test-lab');
 
     click(getButton('Delete Virtual Lab'));
 
     screen.getByText('Are you sure you want to delete the virtual lab?');
     changeInputValue('confirm lab delete', `Delete ${virtualLab.name}`);
-    await userEvent.click(getButton('Confirm'));
+    await user.click(getButton('Confirm'));
 
     expect(onDeleteVirtualLabClick).toHaveBeenCalledTimes(1);
   });
 
   test('lab is not deleted if user did not type correct info in cofirmation input', async () => {
-    const { virtualLab } = renderComponentWithLab('test-lab');
+    const { virtualLab, user } = renderComponentWithLab('test-lab');
 
     click(getButton('Delete Virtual Lab'));
 
     changeInputValue('confirm lab delete', `${virtualLab.name}`);
-    await userEvent.click(getButton('Confirm'));
+    await user.click(getButton('Confirm'));
     screen.getByText('The word "Delete" is missing in your input');
 
     changeInputValue('confirm lab delete', 'Delete');
-    await userEvent.click(getButton('Confirm'));
+    await user.click(getButton('Confirm'));
     screen.getByText('The name of the virtual lab is incorrect');
 
     expect(onDeleteVirtualLabClick).not.toHaveBeenCalled();
@@ -75,11 +75,12 @@ describe('VirtualLabSettingsComponent', () => {
     adminMode?: boolean,
     extra?: Partial<VirtualLab>
   ) => {
+    const user = userEvent.setup();
     const virtualLab = createMockVirtualLab(name, extra);
 
     render(MembersPanelProvider(virtualLab));
 
-    return { virtualLab };
+    return { virtualLab, user };
   };
 
   const HydrateAtoms = ({ initialValues, children }: any) => {

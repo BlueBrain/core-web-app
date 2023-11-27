@@ -120,9 +120,9 @@ export default function VirtualLabSettingsComponent({
       }}
     >
       <Button
-        onClick={() => router.back()}
+        onClick={() => router.push('/')}
         type="text"
-        className="flex items-center my-6 text-white"
+        className="flex items-center my-6 !text-white"
       >
         <ArrowLeftOutlined /> Back to
       </Button>

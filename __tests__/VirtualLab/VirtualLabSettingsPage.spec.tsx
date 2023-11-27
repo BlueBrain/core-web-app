@@ -3,7 +3,7 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { render, screen } from '@testing-library/react';
 import { useParams } from 'next/navigation';
 
-import VirtualLabSettingsPage from '@/app/virtual-lab/lab/[virtualLabName]/page';
+import VirtualLabSettingsPage from '@/app/virtual-lab/lab/[virtualLabId]/page';
 import sessionAtom from '@/state/session';
 import * as MockVirtualLabModule from '@/services/virtual-lab/virtual-lab-service';
 
@@ -54,7 +54,7 @@ describe('VirtualLabSettingsPage', () => {
 
   const renderComponentWithRoute = (name?: string) => {
     const routeSpy = useParams as unknown as jest.Mock;
-    routeSpy.mockReturnValue({ virtualLabName: name });
+    routeSpy.mockReturnValue({ virtualLabId: name });
 
     render(VirtualLabSettingsPageProvider());
   };
