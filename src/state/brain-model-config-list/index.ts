@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 
+import { recentlyUsedConfigIdsAtom } from '../brain-model-config';
 import {
   getPublicBrainModelConfigsQuery,
   getPersonalBrainModelConfigsQuery,
@@ -8,7 +9,7 @@ import {
   getGeneratorTaskActivitiesQuery,
   getSynapseConfigsQuery,
 } from '@/queries/es';
-import { queryES } from '@/api/nexus';
+import { fetchBrainModelConfigsByIds, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
 import {
   BrainModelConfigResource,
@@ -17,7 +18,7 @@ import {
   SynapseConfigType,
 } from '@/types/nexus';
 
-type SearchType = 'public' | 'personal' | 'archive';
+export type SearchType = 'public' | 'personal' | 'archive' | 'recent';
 
 export const searchConfigListTypeAtom = atom<SearchType>('public');
 
@@ -40,6 +41,10 @@ export const configListAtom = atom<Promise<BrainModelConfigResource[]>>(async (g
     query = getPublicBrainModelConfigsQuery(searchString);
   } else if (searchType === 'personal') {
     query = getPersonalBrainModelConfigsQuery(session.user.username, searchString);
+  } else if (searchType === 'recent') {
+    const ids = get(recentlyUsedConfigIdsAtom);
+    if (!ids.length) return [];
+    return fetchBrainModelConfigsByIds(ids, session);
   } else {
     query = getArchiveBrainModelConfigsQuery(searchString);
   }

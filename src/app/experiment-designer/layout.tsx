@@ -12,7 +12,6 @@ import {
   DuplicateConfigBtn,
   ViewResultsBtn,
 } from '@/components/experiment-designer';
-import useAuth from '@/hooks/auth';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import ExperimentDesignerPanel from '@/components/experiment-designer/ExperimentDesignerPanel';
 import useSimulationCampaignUIConfig from '@/hooks/simulation-campaign-ui-config';
@@ -84,7 +83,6 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
   const isConfigUsedInSim =
     isConfigUsedInSimLoadable.state === 'hasData' ? isConfigUsedInSimLoadable.data : false;
 
-  useAuth(true);
   useSimulationCampaignUIConfig();
 
   useEffect(() => {
