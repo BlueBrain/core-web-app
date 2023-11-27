@@ -88,6 +88,7 @@ export default function BrainTreeSearch({
       handleSelect={handleSelect}
       options={options}
       placeholder="Search region..."
+      defaultValue={defaultBrainRegionId}
     />
   );
 }
