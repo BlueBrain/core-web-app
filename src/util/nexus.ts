@@ -112,3 +112,11 @@ export function ensureArray<T>(value: T | T[]) {
 export function removeMetadata(resource: Record<string, any>) {
   return pickBy(resource, (value, key) => !metadataKeys.includes(key));
 }
+
+export function setRev(url: string, rev: number | string) {
+  const urlObj = new URL(url);
+
+  urlObj.searchParams.set('rev', rev.toString());
+
+  return urlObj.toString();
+}

@@ -33,13 +33,19 @@ import {
   WholeBrainConnectivityMatrix,
   MicroConnectomeModifyParamsEditEntry,
 } from '@/types/connectome';
-import { fetchFileByUrl, fetchResourceById, updateFileByUrl, updateResource } from '@/api/nexus';
+import {
+  fetchFileByUrl,
+  fetchLatestRev,
+  fetchResourceById,
+  updateFileByUrl,
+  updateResource,
+} from '@/api/nexus';
 import { OriginalComposition } from '@/types/composition/original';
 import { BrainRegion } from '@/types/ontologies';
 import { fromSerialisibleEdit, getFlatArrayValueIdx, toSerialisibleEdit } from '@/util/connectome';
 import { PartialBy } from '@/types/common';
 import { HEMISPHERE_DIRECTIONS } from '@/constants/connectome';
-import { createDistribution } from '@/util/nexus';
+import { createDistribution, setRev } from '@/util/nexus';
 
 type SrcDstBrainRegionKey = string;
 type SrcDstMtypeKey = string;
@@ -193,9 +199,10 @@ function isParamIndexAvailable(
   return !!workerState.paramIndexAvailability.get(paramIndexKey);
 }
 
-function compress(readableStream: ReadableStream): ReadableStream {
-  return readableStream.pipeThrough(new CompressionStream('gzip'));
-}
+// TODO Use compression when the support for gzipped arrow files arrives to the workflow.
+// function compress(readableStream: ReadableStream): ReadableStream {
+//   return readableStream.pipeThrough(new CompressionStream('gzip'));
+// }
 
 function decompress(readableStream: ReadableStream): ReadableStream {
   const ds = new DecompressionStream('gzip');
@@ -484,7 +491,7 @@ function createParamIndex(
   };
 
   const applyEntryForAllParams = (entry: any) => {
-    const paramValue = entry[paramName as string];
+    const paramValues = paramNames.map((currParamName) => entry[currParamName]);
 
     const brainRegionKey = createKey(entry.source_region, entry.target_region);
     const mtypeKey = createKey(entry.source_mtype, entry.target_mtype);
@@ -492,23 +499,12 @@ function createParamIndex(
     const mtypeLevelMap = hemisphereParamIndex.get(brainRegionKey);
 
     if (!mtypeLevelMap) {
-      const newParamArray = paramNames.map((currParamName) => entry[currParamName]);
-      newParamArray[paramIdx as number] = paramValue;
-
-      hemisphereParamIndex.set(brainRegionKey, new Map().set(mtypeKey, newParamArray));
+      hemisphereParamIndex.set(brainRegionKey, new Map().set(mtypeKey, paramValues));
 
       return;
     }
 
-    const paramArray = mtypeLevelMap.get(mtypeKey);
-
-    if (paramArray) {
-      paramArray[paramIdx as number] = paramValue;
-    } else {
-      const newParamArray = paramNames.map((currParamName) => entry[currParamName]);
-      newParamArray[paramIdx as number] = paramValue;
-      mtypeLevelMap.set(mtypeKey, newParamArray);
-    }
+    mtypeLevelMap.set(mtypeKey, paramValues);
   };
 
   const applyEntryFn = paramName ? applyEntryForSingleParam : applyEntryForAllParams;
@@ -518,7 +514,9 @@ function createParamIndex(
     // caused by the execution of getters for unused params.
     const fieldNames = allVariantParamsTable.schema.fields
       .map((field) => field.name)
-      .filter((fieldName) => !paramNames.includes(fieldName) || fieldName === paramName);
+      .filter(
+        (fieldName) => !paramName || !paramNames.includes(fieldName) || fieldName === paramName
+      );
 
     const table = allVariantParamsTable.select(fieldNames);
 
@@ -1087,7 +1085,9 @@ function removeParamIndex(
   paramName: string
 ) {
   setParamIndexAvailability(hemisphereDirection, variantName, paramName, false);
-  delete workerState.paramIndex[variantName][hemisphereDirection];
+  if (workerState.paramIndex[variantName]?.[hemisphereDirection]) {
+    delete workerState.paramIndex[variantName][hemisphereDirection];
+  }
 }
 
 function removeAffectedIndex(edit: EditEntry) {
@@ -1416,7 +1416,7 @@ function computeParamOverridesTable(variantName: string): Table {
     type: new Dictionary(new Utf8(), new Int16()),
   });
 
-  // ! M-type dictionary is currently using an Int8 index, so max supported number of m-types is 255.
+  // ! M-type dictionary is currently using an Int8 index, so max supported number of m-types is 128.
   const srcMtypeBuilder = new DictionaryBuilder({
     type: new Dictionary(new Utf8(), new Int8()),
   });
@@ -1554,7 +1554,7 @@ function computeParamOverridesTable(variantName: string): Table {
 
 type Overrides = {
   variant: Table;
-  params: Table[];
+  params: Map<string, Table>;
 };
 
 /**
@@ -1583,13 +1583,14 @@ async function computeOverrides(options?: ComputeOverridesOptions): Promise<Over
   if (isEqual(workerState.edits, configEdits) && !options?.force) return;
 
   const variantOverridesTable = computeVariantOverridesTable();
-  const paramOverridesTables = variantNames.map((variantName) =>
-    computeParamOverridesTable(variantName)
+  const paramOverridesTableMap = variantNames.reduce(
+    (map, variantName) => map.set(variantName, computeParamOverridesTable(variantName)),
+    new Map()
   );
 
   return {
     variant: variantOverridesTable,
-    params: paramOverridesTables,
+    params: paramOverridesTableMap,
   };
 }
 
@@ -1602,8 +1603,14 @@ function setOverrides(overrides: Overrides): void {
 
   const variantNames = Object.keys(workerState.config.variants).sort();
 
-  variantNames.forEach((variantName, idx) => {
-    workerState.tables.params.overrides[variantName] = overrides.params[idx];
+  variantNames.forEach((variantName) => {
+    const paramOverridesTable = overrides.params.get(variantName);
+
+    if (!paramOverridesTable) {
+      throw new Error(`Missing variant param table for ${variantName}`);
+    }
+
+    workerState.tables.params.overrides[variantName] = paramOverridesTable;
   });
 }
 
@@ -1613,23 +1620,31 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
   const variantNames = Object.keys(workerState.config.variants).sort();
 
   const variantOverridesBuffer = tableToIPC(overrides.variant, 'file').buffer;
-  const paramOverridesBuffers = variantNames.map(
-    (variantName, idx) => tableToIPC(overrides.params[idx], 'file').buffer
-  );
 
-  const compressedVariantOverridesStream = compress(new Blob([variantOverridesBuffer]).stream());
-  const compressedParamOverridesStreams = variantNames.map((variantName, idx) =>
-    compress(new Blob([paramOverridesBuffers[idx]]).stream())
-  );
+  const paramOverridesBuffers = variantNames.map((variantName) => {
+    const variantParamsOverridesTable = overrides.params.get(variantName);
 
-  const compressedVariantOverridesBuffer = await new Response(
-    compressedVariantOverridesStream
-  ).arrayBuffer();
-  const compressedParamOverridesBuffers = await Promise.all(
-    variantNames.map((variantName, idx) =>
-      new Response(compressedParamOverridesStreams[idx]).arrayBuffer()
-    )
-  );
+    if (!variantParamsOverridesTable) {
+      throw new Error(`Missing variant param table for ${variantName}`);
+    }
+
+    return tableToIPC(variantParamsOverridesTable, 'file').buffer;
+  });
+
+  // TODO Use compression when the support for gzipped arrow files arrives to the workflow.
+  // const compressedVariantOverridesStream = compress(new Blob([variantOverridesBuffer]).stream());
+  // const compressedParamOverridesStreams = variantNames.map((variantName, idx) =>
+  //   compress(new Blob([paramOverridesBuffers[idx]]).stream())
+  // );
+
+  // const compressedVariantOverridesBuffer = await new Response(
+  //   compressedVariantOverridesStream
+  // ).arrayBuffer();
+  // const compressedParamOverridesBuffers = await Promise.all(
+  //   variantNames.map((variantName, idx) =>
+  //     new Response(compressedParamOverridesStreams[idx]).arrayBuffer()
+  //   )
+  // );
 
   const { config, edits, session } = workerState;
 
@@ -1639,7 +1654,7 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
    */
   const overridesResources = await Promise.all([
     fetchResourceById<MicroConnectomeVariantSelectionOverridesResource>(
-      config.initial.variants.id,
+      config.overrides.variants.id,
       session
     ),
     ...variantNames.map((variantName) =>
@@ -1650,23 +1665,41 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
     ),
   ]);
 
+  const overridesFilesLatestRevs = await Promise.all([
+    fetchLatestRev(overridesResources[0].distribution.contentUrl, session),
+    ...variantNames.map((variantName, idx) =>
+      fetchLatestRev(overridesResources[idx + 1].distribution.contentUrl, session)
+    ),
+  ]);
+
   /**
    * Updating compressed arrow files.
    */
   const updatedOverridesFilesMeta = await Promise.all([
     updateFileByUrl(
-      overridesResources[0].distribution.contentUrl,
-      compressedVariantOverridesBuffer,
-      'microconnectome-variant-overrides',
+      setRev(overridesResources[0].distribution.contentUrl, overridesFilesLatestRevs[0]),
+      // TODO Use compression when the worflow supports that.
+      // compressedVariantOverridesBuffer,
+      // 'microconnectome-variant-overrides.arrow.gz',
+      // 'application/gzip',
+      variantOverridesBuffer,
+      'microconnectome-variant-overrides.arrow',
       'application/arrow',
       session
     ),
 
     ...variantNames.map((variantName, idx) =>
       updateFileByUrl(
-        overridesResources[idx + 1].distribution.contentUrl,
-        compressedParamOverridesBuffers[idx],
-        `microconnectome-${variantName}-data-overrides.arrow.gz`,
+        setRev(
+          overridesResources[idx + 1].distribution.contentUrl,
+          overridesFilesLatestRevs[idx + 1]
+        ),
+        // TODO Use compression when the worflow supports that.
+        // compressedParamOverridesBuffers[idx],
+        // `microconnectome-${variantName}-data-overrides.arrow.gz`,
+        // 'application/gzip',
+        paramOverridesBuffers[idx],
+        `microconnectome-${variantName}-data-overrides.arrow`,
         'application/arrow',
         session
       )
@@ -1682,7 +1715,7 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
         ...resource,
         distribution: createDistribution(updatedOverridesFilesMeta[idx]),
       }))
-      .map((updatedResource) => updateResource(updatedResource, session))
+      .map((updatedResource) => updateResource(updatedResource, session, undefined, false))
   );
 
   const variantResourceRev = updatedOverridesResources[0]._rev;
@@ -1704,6 +1737,8 @@ async function persistOverrides(overrides: Overrides): Promise<Map<string, numbe
     new Map().set('variant', variantResourceRev)
   );
 }
+
+export type SaveOverridesFn = typeof saveOverrides;
 
 async function saveOverrides(): Promise<Map<string, number> | undefined> {
   const overrides = await computeOverrides();

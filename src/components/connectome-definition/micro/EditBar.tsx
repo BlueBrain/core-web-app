@@ -13,11 +13,13 @@ import BrainRegionSelect from './MicroConnectomeBrainRegionSelect';
 import {
   configPayloadLoadableAtom,
   editsLoadableAtom,
+  hasUnsavedEditsAtom,
 } from '@/state/brain-model-config/micro-connectome';
 import {
   addEditAtom,
   removeEditAtom,
   updateEditAtom,
+  persistConfigAtom,
 } from '@/state/brain-model-config/micro-connectome/setters';
 import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { MicroConnectomeEditEntry } from '@/types/connectome';
@@ -476,11 +478,36 @@ function EditHistory() {
 }
 
 export function MicroConnectomeEditBar() {
+  const persistConfig = useSetAtom(persistConfigAtom);
+  const hasUnsavedEdits = useAtomValue(hasUnsavedEditsAtom);
+
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+    await persistConfig();
+    setSaving(false);
+  };
+
+  // TODO Implement auto-save functionality.
+
   return (
     <>
       <CreateEditBtn />
 
       <EditHistory />
+
+      <Button
+        className="mt-8"
+        block
+        size="small"
+        type="primary"
+        disabled={!hasUnsavedEdits}
+        loading={saving}
+        onClick={save}
+      >
+        Save
+      </Button>
     </>
   );
 }

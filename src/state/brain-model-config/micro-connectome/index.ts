@@ -1,5 +1,6 @@
 'use client';
 
+import isEqual from 'lodash/isEqual';
 import { atom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { wrap } from 'comlink';
@@ -27,7 +28,7 @@ import {
   AddEditFn,
   RemoveEditFn,
   UpdateEditFn,
-  ComputeOverridesFn,
+  SaveOverridesFn,
 } from '@/components/connectome-definition/micro/micro-connectome-worker';
 import { MicroConnectomeEditEntry } from '@/types/connectome';
 import { fromSerialisibleSelection } from '@/util/connectome';
@@ -110,6 +111,28 @@ export const editsAtom = atom<Promise<MicroConnectomeEditEntry[] | null>>(async 
 });
 
 export const editsLoadableAtom = loadable(editsAtom);
+
+export const hasUnsavedEditsAtom = atom<Promise<boolean>>(async (get) => {
+  const remoteConfigPayload = await get(remoteConfigPayloadAtom);
+  const configPayload = await get(configPayloadAtom);
+
+  const remoteEditHistory = remoteConfigPayload?._ui_data?.editHistory;
+  const editHistory = configPayload?._ui_data?.editHistory;
+
+  if (!remoteEditHistory || !editHistory) return false;
+
+  return (
+    remoteEditHistory.length !== editHistory.length ||
+    remoteEditHistory.some(
+      // A workaround to compare edit objects which might contain proprties
+      // that are: not defined in one object and have undefined value in the other.
+      // Default isEqual behaviour is to report a diffference in such a case,
+      // and that is unwanted here.
+      // TODO Find a better solution.
+      (edit, idx) => !isEqual(edit, JSON.parse(JSON.stringify(editHistory[idx])))
+    )
+  );
+});
 
 export const initialVariantMatrix = atom<Promise<ArrayBuffer | null>>(async (get) => {
   const session = get(sessionAtom);
@@ -223,7 +246,7 @@ type WorkerFn = {
   addEdit: AddEditFn;
   removeEdit: RemoveEditFn;
   updateEdit: UpdateEditFn;
-  computeOverrides: ComputeOverridesFn;
+  saveOverrides: SaveOverridesFn;
 };
 
 // ? To be instantiated in the component?

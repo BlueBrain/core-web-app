@@ -24,10 +24,11 @@ import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 
 export const writingConfigAtom = atom(false);
 
-const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
+export const persistConfigAtom = atom<null, [], Promise<void>>(null, async (get, set) => {
   const session = get(sessionAtom);
 
   const config = await get(configAtom);
+  const worker = await get(workerAtom);
 
   const remoteConfigPayload = await get(remoteConfigPayloadAtom);
   const configPayload = await get(configPayloadAtom);
@@ -40,6 +41,16 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     return;
 
   set(writingConfigAtom, true);
+
+  const updatedRevMap = await worker.saveOverrides();
+
+  if (!updatedRevMap) {
+    throw new Error('Failed to compute overrides');
+  }
+
+  Object.keys(configPayload.overrides).forEach((overrideKey) => {
+    configPayload.overrides[overrideKey].rev = updatedRevMap.get(overrideKey) as number;
+  });
 
   const updatedConfigPayloadMeta = await updateJsonFileByUrl(
     configPayloadUrl,
@@ -82,8 +93,6 @@ export const setEditsAtom = atom<null, [EditEntry[]], Promise<void>>(
     };
 
     set(localConfigPayloadAtom, new WeakMap().set(remoteConfigPayload, updatedConfigPayload));
-
-    set(persistConfig);
   }
 );
 

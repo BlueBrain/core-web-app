@@ -265,7 +265,8 @@ export function createResource<T extends EntityResource>(
 export async function updateResource(
   resource: EntityResource,
   session: Session,
-  rev?: number
+  rev?: number,
+  sync: boolean = true
 ): Promise<EntityResource> {
   if (resource._createdBy && resource._createdBy.split('/').at(-1) !== session.user.username) {
     throw new Error('Trying to update resource created by another user');
@@ -275,7 +276,7 @@ export async function updateResource(
   // TODO: remove this while all entities do not have metadata in source
   const sanitizedResource = removeMetadata(resource);
   const latestRev = rev || (await fetchLatestRev(resource['@id'], session));
-  const url = composeUrl('resource', id, { rev: latestRev, sync: true });
+  const url = composeUrl('resource', id, { rev: latestRev, sync });
 
   return fetch(url, {
     method: 'PUT',
