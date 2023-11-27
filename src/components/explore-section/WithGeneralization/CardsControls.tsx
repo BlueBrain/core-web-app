@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Radio, Dropdown, Menu } from 'antd';
 import { useAtom, useAtomValue } from 'jotai';
 import { cardsMetricsAtom, selectedCardsMetricAtom } from '@/state/explore-section/generalization';
@@ -7,6 +8,8 @@ function CardsControl() {
   const cardsMetrics = useAtomValue(cardsMetricsAtom);
 
   const [selectedCardsMetric, setSelectedCardsMetric] = useAtom(selectedCardsMetricAtom);
+
+  const [metricsDropdownVisible, setMetricsDropdownVisible] = useState<boolean>(false);
 
   if (!cardsMetrics) return null;
 
@@ -30,6 +33,8 @@ function CardsControl() {
 
   return (
     <Dropdown
+      open={metricsDropdownVisible}
+      onOpenChange={(isVisible: boolean) => setMetricsDropdownVisible(isVisible)}
       overlay={menu}
       trigger={['click']}
       placement="bottomRight"

@@ -1,6 +1,6 @@
 import { Checkbox, Dropdown, Menu } from 'antd';
 import { DownOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { rulesAtom, selectedRulesAtom } from '@/state/explore-section/generalization';
@@ -10,6 +10,7 @@ import styles from './styles.module.scss';
 function RulesControls() {
   const { id: resourceId } = useResourceInfoFromPath() ?? { id: '' };
 
+  const [rulesDropdownVisible, setRulesDropdownVisible] = useState<boolean>(false);
   const allRules = useAtomValue(useMemo(() => unwrap(rulesAtom(resourceId)), [resourceId]));
 
   const [selectedRules, setSelectedRules] = useAtom(
@@ -53,6 +54,8 @@ function RulesControls() {
   return (
     <div className="relative ml-2">
       <Dropdown
+        open={rulesDropdownVisible}
+        onOpenChange={(isVisible) => setRulesDropdownVisible(isVisible)}
         overlay={menu}
         trigger={['click']}
         placement="bottomRight"

@@ -24,7 +24,7 @@ export default function WithGeneralization({
 
   let render: ReactNode;
 
-  const notFound = <h1>Inferred resources not found.</h1>;
+  const notFound = <h1>No similar resources were found.</h1>;
 
   switch (resourceBasedResponseHits.state) {
     case 'loading':

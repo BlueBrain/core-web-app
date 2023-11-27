@@ -1,5 +1,7 @@
 import { useInView } from 'react-intersection-observer';
+import { Tooltip } from 'antd';
 import { useAtomValue } from 'jotai';
+import reject from 'lodash/reject';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
@@ -9,6 +11,24 @@ import CardVisualization from '@/components/explore-section/CardView/CardVisuali
 import { EXPERIMENT_TYPES } from '@/constants/explore-section/experiment-types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExploreESHit } from '@/types/explore-section/es';
+
+type TooltipFieldProps = {
+  label: string;
+  content: React.ReactNode;
+  cursor: string;
+  className?: string;
+};
+
+function TooltipField({ label, content, cursor, className }: TooltipFieldProps) {
+  return (
+    <div className={className}>
+      <div className="uppercase text-neutral-4">{label}</div>
+      <Tooltip title={content}>
+        <div className={`text-primary-8 truncate ${cursor}`}>{content}</div>
+      </Tooltip>
+    </div>
+  );
+}
 
 type CardProps = {
   resource: {
@@ -23,7 +43,10 @@ export default function Card({ resource, experimentTypeName, score }: CardProps)
 
   const selectedCardsMetric = useAtomValue(selectedCardsMetricAtom);
 
-  const cardFields = EXPERIMENT_TYPES[experimentTypeName]?.cardViewFields?.[selectedCardsMetric];
+  const cardFields = reject(
+    EXPERIMENT_TYPES[experimentTypeName]?.cardViewFields?.[selectedCardsMetric],
+    ['field', 'name']
+  );
 
   return (
     <div ref={ref} className="flex flex-col border border-solid rounded-md h-[500px] w-full p-4">
@@ -38,23 +61,21 @@ export default function Card({ resource, experimentTypeName, score }: CardProps)
         )}
       </div>
       <div>
-        <div className="text-neutral-4">NAME</div>
-        <div className="text-primary-8">{resource._source.name}</div>
+        <TooltipField cursor="cursor-pointer" label="Name" content={resource._source.name} />
       </div>
       <div className="grid gap-4 grid-cols-6 break-words mt-2">
         {cardFields &&
           cardFields.map((cardField, index) => (
             <div key={cardField.field} className={cardField.className}>
-              <div className="uppercase text-neutral-4">
-                {EXPLORE_FIELDS_CONFIG[cardField.field].title}
-              </div>
-              <div className="text-primary-8">
-                {EXPLORE_FIELDS_CONFIG[cardField.field]?.render?.esResourceViewFn?.(
+              <TooltipField
+                cursor="cursor-help"
+                label={EXPLORE_FIELDS_CONFIG[cardField.field].title}
+                content={EXPLORE_FIELDS_CONFIG[cardField.field]?.render?.esResourceViewFn?.(
                   'text',
                   resource,
                   index
                 )}
-              </div>
+              />
             </div>
           ))}
       </div>
