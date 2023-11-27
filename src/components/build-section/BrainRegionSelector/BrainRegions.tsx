@@ -168,11 +168,11 @@ export default function BrainRegions() {
     if (brainModelConfigId === localSelectedBrainModelConfigId) return;
 
     setLocalSelectedBrainModelConfigId(brainModelConfigId);
-    setBrainRegionHierarchyState(null); // reset tree
     resetBrainRegion(null); // reset brain region
     setResetAtlasVisualization(); // reset meshes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brainModelConfigId, localSelectedBrainModelConfigId]);
+
   return brainRegionsTree ? (
     <div className="flex flex-col flex-1 h-screen bg-primary-8 overflow-hidden">
       {isCollapsed ? (

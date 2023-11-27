@@ -20,6 +20,7 @@ import {
 import { itemsInAnnotationReducer, flattenBrainRegionsTree } from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
+  DEFAULT_BRAIN_REGION_SELECTED,
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
 
@@ -349,6 +350,7 @@ export const setSelectedBrainRegionAtom = atom(
     set(literatureSelectedBrainRegionAtom, brainRegion);
     set(compositionHistoryAtom, []);
     set(compositionHistoryIndexAtom, 0);
+    window.localStorage.setItem(DEFAULT_BRAIN_REGION_SELECTED.storageKey, selectedBrainRegionId);
   }
 );
 
@@ -375,3 +377,9 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
 // Keeps track of the visible interactive brain regions
 
 export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
+
+export const defaultBrainRegionIdAtom = atom<string>(() => {
+  const lastClickedRegionId = window.localStorage.getItem(DEFAULT_BRAIN_REGION_SELECTED.storageKey);
+  const defaultSelectedBrainRegionId = lastClickedRegionId || DEFAULT_BRAIN_REGION_SELECTED.id;
+  return defaultSelectedBrainRegionId;
+});

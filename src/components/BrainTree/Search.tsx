@@ -1,10 +1,11 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { SelectProps } from 'antd/es/select';
 
 import { generateHierarchyPathTree } from './util';
 import {
   alternateArrayWithRepresentationAtom,
+  defaultBrainRegionIdAtom,
   setSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import Search from '@/components/Search';
@@ -32,8 +33,10 @@ export default function BrainTreeSearch({
   brainTreeNav?: HTMLDivElement | null;
   setValue?: Dispatch<SetStateAction<NavValue>>;
 }) {
+  const [loadDefaultBrainRegion, setLoadDefaultBrainRegion] = useState(true);
   const brainRegionsArray = useAtomValue(alternateArrayWithRepresentationAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
+  const defaultBrainRegionId = useAtomValue(defaultBrainRegionIdAtom);
 
   const options = useMemo(
     () =>
@@ -68,6 +71,16 @@ export default function BrainTreeSearch({
     },
     [brainTreeNav, setSelectedBrainRegion, setValue]
   ) as SelectProps['onSelect'];
+
+  useEffect(() => {
+    if (!loadDefaultBrainRegion || !handleSelect || !options.length) return;
+
+    const found = options?.find(({ value }) => value === defaultBrainRegionId);
+    if (!found) return;
+
+    handleSelect(found.label, found);
+    setLoadDefaultBrainRegion(false);
+  }, [loadDefaultBrainRegion, options, handleSelect, defaultBrainRegionId]);
 
   return (
     <Search<SearchOption>
