@@ -55,7 +55,7 @@ function withButtonOrLink(WrapperComponent: ComponentType<EntrypointMenuItem>) {
     const params = useSearchParams();
     if ('action' in rest && rest.action) {
       const origin = params?.get('origin');
-      const callbackUrl = origin ? decodeURIComponent(origin) : `${basePath}/main`;
+      const callbackUrl = origin ? `${basePath}${decodeURIComponent(origin)}` : `${basePath}/main`;
       const onClick = () => () => rest.action?.(callbackUrl);
       return (
         <button key={key} type="button" aria-label={title} onClick={onClick()}>

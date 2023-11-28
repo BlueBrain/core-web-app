@@ -1,4 +1,7 @@
-import { useReducer } from 'react';
+'use client';
+
+import { useEffect, useReducer } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import ExploreMainMenu from './segments/ExploreMainMenu';
 import BuildMainMenu from './segments/BuildMainMenu';
@@ -96,12 +99,26 @@ export function RenderedMainDetails({ id }: { id: MainMenuListKey }) {
 }
 
 export default function MainMenu() {
+  const params = useSearchParams();
+  const tab = params?.get('tab');
+
   const [selectedSubmenuId, setSelectedSubmenu] = useReducer(
     (_: MainMenuListKey, value: MainMenuListKey) => value,
     null
   );
 
   const onSelect = (id: MainMenuListKey) => () => setSelectedSubmenu(id);
+
+  useEffect(() => {
+    // I use useEffect due the sidebar also exist in the main page
+    // if not then using the searchparams immediatly in the reducer set fn
+    // will do thing
+    let defaultSelectSubmenu: MainMenuListKey = null;
+    if (tab === 'explore') defaultSelectSubmenu = 'main-explore-entry';
+    if (tab === 'build') defaultSelectSubmenu = 'main-build-entry';
+    if (tab === 'simulate') defaultSelectSubmenu = 'main-simulate-entry';
+    if (tab) setSelectedSubmenu(defaultSelectSubmenu);
+  }, [tab]);
 
   return (
     <div className="relative flex flex-col justify-start gap-px items-stretch w-2/3">

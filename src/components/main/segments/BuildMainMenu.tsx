@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { Button, Switch, Tag } from 'antd';
 import { useRouter } from 'next/navigation';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
@@ -24,7 +24,6 @@ import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
 import { getBrainModelConfigsByNameQuery } from '@/queries/es';
 import { BrainModelConfigResource, SupportedConfigListTypes } from '@/types/nexus';
 import { collapseId } from '@/util/nexus';
-import { triggerRefetchAtom } from '@/components/BrainConfigLoaderView/state';
 import useCloneConfigModal from '@/hooks/config-clone-modal';
 import useRenameModal from '@/hooks/config-rename-modal';
 import Link from '@/components/Link';
@@ -56,6 +55,9 @@ const BUILD_MENU: Array<SubMenuList<BuildMenuKey>> = [
     Component: () => <BuildBrowseModel />,
   },
 ];
+
+const refetchTriggerAtom = atom<{}>({});
+const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
 function BuildModelItem({
   id,

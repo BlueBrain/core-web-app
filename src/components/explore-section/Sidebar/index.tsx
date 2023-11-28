@@ -79,7 +79,7 @@ function ExploreNavigation({ expanded }: { expanded: boolean }) {
 }
 
 function ExploreSideBarHeader() {
-  return <Link href="/explore">Explore</Link>;
+  return <Link href="/main?tab=explore">Explore</Link>;
 }
 
 export default function ExploreSidebar() {

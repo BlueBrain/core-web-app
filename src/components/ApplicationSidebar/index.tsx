@@ -1,5 +1,6 @@
 import { useReducer, useRef } from 'react';
 import { Button } from 'antd';
+import Link from 'next/link';
 import kebabCase from 'lodash/kebabCase';
 import Icon, {
   PlusOutlined,
@@ -14,7 +15,6 @@ import { signOut, useSession } from 'next-auth/react';
 import VirtualLabsList from './VirtualLabsList';
 import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
-import Link from '@/components/Link';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 
 type TDefaulNavigation = {
@@ -54,19 +54,19 @@ const DEFAULT_NAVIGATION: Array<TDefaulNavigation> = [
     showIconOnCollapse: true,
   },
   {
-    url: '/explore',
+    url: '/explore/interactive',
     title: 'Explore',
     icon: ArrowRightOutlined,
     bgcolor: 'bg-primary-8',
   },
   {
-    url: '/build/load-brain-config',
+    url: '/main?tab=build',
     title: 'Build',
     icon: ArrowRightOutlined,
     bgcolor: 'bg-primary-8',
   },
   {
-    url: '/simulate',
+    url: '/main?tab=simulate',
     title: 'Simulate',
     icon: ArrowRightOutlined,
     bgcolor: 'bg-primary-8',
