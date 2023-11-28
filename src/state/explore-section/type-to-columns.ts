@@ -37,6 +37,7 @@ export const typeToColumns: { [id: string]: string[] } = {
     'createdAt',
   ],
   'https://neuroshapes.org/ReconstructedNeuronMorphology': [
+    'preview',
     'brainRegion',
     'mType',
     'name',

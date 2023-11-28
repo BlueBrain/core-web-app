@@ -139,7 +139,7 @@ export default function useExploreColumns(
               </div>
             ),
             className: 'text-primary-7 cursor-pointer',
-            sorter: true,
+            sorter: term?.sorter ?? true,
             ellipsis: true,
             width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
             render: term?.render?.esResourceViewFn,

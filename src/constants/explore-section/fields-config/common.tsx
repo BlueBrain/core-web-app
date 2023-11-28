@@ -6,9 +6,24 @@ import {
   selectorFnDate,
 } from '@/state/explore-section/listing-selectors';
 import Contributors from '@/components/explore-section/Contributors';
+import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
 import timeElapsedFromToday from '@/util/date';
 
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
+  preview: {
+    title: 'Preview',
+    filter: null,
+    render: {
+      esResourceViewFn: ({ _id: id }) => {
+        return <MorphoThumbnail id={id} />;
+      },
+    },
+    sorter: false,
+    vocabulary: {
+      plural: 'previews',
+      singular: 'preview',
+    },
+  },
   name: {
     esTerms: {
       flat: {
