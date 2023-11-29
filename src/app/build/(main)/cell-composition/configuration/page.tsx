@@ -148,7 +148,9 @@ function CellDensity() {
   const analysedComposition = useAtomValue(analysedCompositionAtom);
   const composition = useAtomValue(compositionAtom);
   const compositionExport = useAtomValue(useMemo(() => unwrap(configPayloadAtom), []));
-  const setCompositionFromUpload = useSetAtom(setCompositionPayloadConfigurationAtom);
+  const [compositionFromUpload, setCompositionFromUpload] = useAtom(
+    setCompositionPayloadConfigurationAtom
+  );
 
   const { resetComposition } = useCompositionHistory();
 
@@ -180,6 +182,10 @@ function CellDensity() {
 
     if (validate(parsedFileContent)) {
       setCompositionFromUpload(parsedFileContent);
+      console.log(
+        '🚀 ~ file: page.tsx:183 ~ CellDensity ~ SUCCESS upload compositionFromUpload:',
+        compositionFromUpload
+      );
       notify.success('The composition has been successfully updated.');
     } else {
       notify.error(

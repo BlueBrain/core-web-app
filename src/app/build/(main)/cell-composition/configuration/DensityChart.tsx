@@ -67,6 +67,7 @@ function MissingSelectedNodes({
 export default function DensityChart() {
   const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
   const composition = useAtomValue(analysedCompositionAtom);
+  console.log('🚀 ~ file: DensityChart.tsx:70 ~ DensityChart ~ composition:', composition);
   const densityOrCount = useAtomValue(densityOrCountAtom);
 
   const [selectedNodes, setSelectedNodes] = useState<SelectedNodeOptionType<string>[]>([]);
