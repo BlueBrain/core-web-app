@@ -2,8 +2,8 @@ import { Key } from 'react';
 import { atom } from 'jotai';
 import { atomFamily, atomWithDefault, selectAtom } from 'jotai/utils';
 import head from 'lodash/head';
-import map from 'lodash/map';
 import isEqual from 'lodash/isEqual';
+import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import { fetchRules, fetchResourceBasedInference } from '@/api/generalization';
 import sessionAtom from '@/state/session';
@@ -12,7 +12,7 @@ import {
   RulesOutput,
   ResourceBasedInferenceRequest,
   ResourceBasedInferenceResponse,
-  ResourceBasedInferenceSingleResponse,
+  ResourceBasedInference,
   ResourceBasedGeneralization,
   InferredResource,
 } from '@/types/explore-section/kg-inference';
@@ -60,7 +60,7 @@ export const rulesResponseAtom = atomFamily((resourceId: string) =>
 
 type Rule = ResourceBasedGeneralization & { modelName: string; ruleId: string };
 
-type ResourceBasedResponseAtomFamilyScopeType = {
+type GenFamilyType = {
   resourceId: string;
   experimentTypeName: string;
 };
@@ -170,21 +170,18 @@ export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>
   })
 );
 
-export const resourceBasedResponseResultsAtom = atomFamily(
-  (resourceId: string) =>
-    selectAtom<
-      Promise<ResourceBasedInferenceResponse | null>,
-      Promise<ResourceBasedInferenceSingleResponse['results'] | null>
-    >(resourceBasedResponseAtom(resourceId), async (resourceBasedResponse) => {
-      if (!resourceBasedResponse || resourceBasedResponse.length === 0) return null;
+export const resourceBasedResponseResultsAtom = atomFamily((resourceId: string) =>
+  atom<Promise<ResourceBasedInference[] | null>>(async (get) => {
+    const resourceBasedResponse = await get(resourceBasedResponseAtom(resourceId));
 
-      return head(resourceBasedResponse)?.results || [];
-    }),
-  isEqual
+    if (!resourceBasedResponse || resourceBasedResponse.length === 0) return null;
+
+    return head(resourceBasedResponse)?.results || [];
+  })
 );
 
 export const resourceBasedResponseRawAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
+  ({ resourceId, experimentTypeName }: GenFamilyType) =>
     atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
       const session = get(sessionAtom);
 
@@ -216,19 +213,16 @@ export const resourceBasedResponseRawAtom = atomFamily(
 );
 
 export const resourceBasedResponseHitsAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
-    selectAtom<
-      Promise<FlattenedExploreESResponse | null>,
-      Promise<FlattenedExploreESResponse['hits'] | undefined>
-    >(
-      resourceBasedResponseRawAtom({ resourceId, experimentTypeName }),
-      async (response) => response?.hits
-    ),
+  ({ resourceId, experimentTypeName }: GenFamilyType) =>
+    atom<Promise<FlattenedExploreESResponse['hits'] | undefined>>(async (get) => {
+      const response = await get(resourceBasedResponseRawAtom({ resourceId, experimentTypeName }));
+      return response?.hits;
+    }),
   isEqual
 );
 
 export const resourceBasedResponseAggregationsAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
+  ({ resourceId, experimentTypeName }: GenFamilyType) =>
     selectAtom<
       Promise<FlattenedExploreESResponse | null>,
       Promise<FlattenedExploreESResponse['aggs'] | undefined>
@@ -240,10 +234,10 @@ export const resourceBasedResponseAggregationsAtom = atomFamily(
 );
 
 export const resourceBasedResponseHitsCountAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: ResourceBasedResponseAtomFamilyScopeType) =>
-    selectAtom<Promise<FlattenedExploreESResponse | null>, Promise<number | undefined>>(
-      resourceBasedResponseRawAtom({ resourceId, experimentTypeName }),
-      async (response) => response?.hits?.length
-    ),
+  ({ resourceId, experimentTypeName }: GenFamilyType) =>
+    atom<Promise<number | undefined>>(async (get) => {
+      const response = await get(resourceBasedResponseRawAtom({ resourceId, experimentTypeName }));
+      return response?.hits?.length;
+    }),
   isEqual
 );

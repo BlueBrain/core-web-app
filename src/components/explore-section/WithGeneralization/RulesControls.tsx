@@ -1,4 +1,4 @@
-import { Checkbox, Dropdown, Menu } from 'antd';
+import { Checkbox, Dropdown, Menu, Tooltip } from 'antd';
 import { DownOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
@@ -35,14 +35,27 @@ function RulesControls() {
     <Menu className="w-[46rem] fixed top-0 right-[-36.5rem]">
       {allRules.map((rule) => (
         <Menu.Item key={rule.modelName} className={styles.menuItem}>
-          <Checkbox
-            checked={selectedRules && selectedRules.includes(rule.modelName)}
-            value={rule.modelName}
-            onChange={() => onCheckBoxChange(rule.modelName)}
-            className="text-primary-9 font-semibold"
+          <Tooltip
+            title={
+              selectedRules && selectedRules.length === 1 && selectedRules.includes(rule.modelName)
+                ? 'At least one rule must be selected'
+                : undefined
+            }
           >
-            {rule.name}
-          </Checkbox>
+            <Checkbox
+              checked={selectedRules && selectedRules.includes(rule.modelName)}
+              value={rule.modelName}
+              onChange={() => onCheckBoxChange(rule.modelName)}
+              disabled={
+                selectedRules &&
+                selectedRules.length === 1 &&
+                selectedRules.includes(rule.modelName)
+              }
+              className="text-primary-9 font-semibold"
+            >
+              {rule.name}
+            </Checkbox>
+          </Tooltip>
           <p className="text-gray-500 font-thin ml-7">
             <InfoCircleOutlined className="font-thin" /> {rule.description}
           </p>
