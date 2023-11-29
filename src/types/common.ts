@@ -34,3 +34,10 @@ export type SelectOption = {
 };
 
 export type ApplicationSection = 'explore' | 'build' | 'simulate';
+
+export type LoadingDefaultValuesType = {
+  brainRegionSelector: boolean;
+  eModelSelector: boolean;
+  mModelSelector: boolean;
+  meModelSelector: boolean;
+};

@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from 'react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { SelectProps } from 'antd/es/select';
 
 import { generateHierarchyPathTree } from './util';
@@ -10,6 +10,7 @@ import {
 } from '@/state/brain-regions';
 import Search from '@/components/Search';
 import { NavValue } from '@/components/TreeNavItem';
+import { loadingDefaultValuesAtom } from '@/state/application';
 
 type SearchOption = {
   ancestors: string[] | undefined;
@@ -33,7 +34,7 @@ export default function BrainTreeSearch({
   brainTreeNav?: HTMLDivElement | null;
   setValue?: Dispatch<SetStateAction<NavValue>>;
 }) {
-  const [loadDefaultBrainRegion, setLoadDefaultBrainRegion] = useState(true);
+  const [loadingDefaultValues, setLoadingDefaultValues] = useAtom(loadingDefaultValuesAtom);
   const brainRegionsArray = useAtomValue(alternateArrayWithRepresentationAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const defaultBrainRegionId = useAtomValue(defaultBrainRegionIdAtom);
@@ -73,14 +74,17 @@ export default function BrainTreeSearch({
   ) as SelectProps['onSelect'];
 
   useEffect(() => {
-    if (!loadDefaultBrainRegion || !handleSelect || !options.length) return;
+    if (!loadingDefaultValues.brainRegionSelector || !handleSelect || !options.length) return;
 
     const found = options?.find(({ value }) => value === defaultBrainRegionId);
     if (!found) return;
 
     handleSelect(found.label, found);
-    setLoadDefaultBrainRegion(false);
-  }, [loadDefaultBrainRegion, options, handleSelect, defaultBrainRegionId]);
+    setLoadingDefaultValues((oldAtomData) => ({
+      ...oldAtomData,
+      brainRegionSelector: false,
+    }));
+  }, [loadingDefaultValues, options, handleSelect, defaultBrainRegionId, setLoadingDefaultValues]);
 
   return (
     <Search<SearchOption>
