@@ -11,18 +11,20 @@ import {
   refetchTriggerAtom,
   remoteConfigPayloadAtom,
   selectedMENameAtom,
+  selectedEModelAtom,
 } from '.';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
-import {
-  eModelByETypeMappingAtom,
-  selectedEModelAtom,
-} from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { eModelByETypeMappingAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { MEModelConfigPayload } from '@/types/nexus';
 import sessionAtom from '@/state/session';
 import { updateJsonFileByUrl, updateResource } from '@/api/nexus';
 import { autoSaveDebounceInterval } from '@/config';
 import openNotification from '@/api/notifications';
 import { createDistribution } from '@/util/nexus';
+import { DEFAULT_ME_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/me-model';
+import { DefaultMEModelType } from '@/types/me-model';
+import { EModelMenuItem } from '@/types/e-model';
+import { setInitializationValue } from '@/util/utils';
 
 export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
@@ -55,6 +57,12 @@ export const setMEConfigPayloadAtom = atom<null, [], void>(null, async (get, set
 
   lodashSet(localConfigPayload, path, eModelData);
   set(setConfigPayloadAtom, localConfigPayload);
+
+  setInitializationValue(DEFAULT_ME_MODEL_STORAGE_KEY, {
+    mePairValue: [selectedEModel.mType, selectedEModel.eType],
+    eModelValue: selectedEModel,
+    brainRegionId: selectedBrainRegion.id,
+  } satisfies DefaultMEModelType);
 });
 
 export const unassignFromMEConfigPayloadAtom = atom<null, [], void>(null, async (get, set) => {
@@ -114,6 +122,8 @@ export const setDefaultEModelForMETypeAtom = atom<null, [], void>(null, async (g
   const eModelIdInPayload: string | undefined = lodashGet(localConfigPayload, path);
   const availableEModels = eModels[eTypeName];
 
+  let eModelToSet: EModelMenuItem | null = null;
+
   if (!eModelIdInPayload) {
     // if no eModel was selected in the past, use default placeholders from remote
     const defaultEModelPlaceholder = await get(defaultEModelPlaceholderAtom);
@@ -130,15 +140,22 @@ export const setDefaultEModelForMETypeAtom = atom<null, [], void>(null, async (g
       throw new Error('Revision between default placeholder and available eModels does not match');
     }
 
-    set(selectedEModelAtom, { ...foundEModel, mType: mTypeName, eType: eTypeName });
-    return;
+    eModelToSet = { ...foundEModel, mType: mTypeName, eType: eTypeName };
+  } else {
+    // if eModel was selected in the past, reuse it as selected in dropdown
+    const savedEModel = availableEModels.find((eModel) => eModel.id === eModelIdInPayload);
+    if (!savedEModel) throw new Error('Previously used eModel not found in available eModels');
+
+    eModelToSet = { ...savedEModel, mType: mTypeName, eType: eTypeName };
   }
 
-  // if eModel was selected in the past, reuse it as selected in dropdown
-  const savedEModel = availableEModels.find((eModel) => eModel.id === eModelIdInPayload);
-  if (!savedEModel) throw new Error('Previously used eModel not found in available eModels');
-
-  set(selectedEModelAtom, { ...savedEModel, mType: mTypeName, eType: eTypeName });
+  const defaultDataToSave: DefaultMEModelType = {
+    mePairValue: [mTypeName, eTypeName],
+    eModelValue: eModelToSet,
+    brainRegionId: selectedBrainRegion.id,
+  };
+  setInitializationValue(DEFAULT_ME_MODEL_STORAGE_KEY, defaultDataToSave);
+  set(selectedEModelAtom, eModelToSet);
 });
 
 export const updateConfigPayloadAtom = atom<null, [MEModelConfigPayload], Promise<void>>(

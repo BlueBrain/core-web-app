@@ -50,3 +50,9 @@ export type DefaultEModelPlaceholder = {
     _rev: number;
   };
 };
+
+export type DefaultMEModelType = {
+  mePairValue: [string, string];
+  eModelValue: EModelMenuItem;
+  brainRegionId: string;
+};

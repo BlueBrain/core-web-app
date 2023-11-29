@@ -1,17 +1,16 @@
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 
 import { EModelMenuItem } from '@/types/e-model';
-import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { setDefaultEModelForMETypeAtom } from '@/state/brain-model-config/cell-model-assignment/me-model/setters';
 import { selectedMENameAtom } from '@/state/brain-model-config/cell-model-assignment/me-model';
 
 const isETypeSelected = (
-  selectedEModel: EModelMenuItem | null,
+  selectedMEName: [string, string] | [null, null],
   currentEType: string,
   currentMType: string
 ) => {
-  if (!selectedEModel) return false;
-  return selectedEModel.mType === currentMType && selectedEModel.eType === currentEType;
+  if (!selectedMEName) return false;
+  return selectedMEName[0] === currentMType && selectedMEName[1] === currentEType;
 };
 
 type ETypeEntryProps = {
@@ -27,9 +26,8 @@ export default function ETypeEntry({
   availableEModels,
   mTypeName,
 }: ETypeEntryProps) {
-  const selectedEModel = useAtomValue(selectedEModelAtom);
   const setDefaultEModelForMEType = useSetAtom(setDefaultEModelForMETypeAtom);
-  const setSelectedMEName = useSetAtom(selectedMENameAtom);
+  const [selectedMEName, setSelectedMEName] = useAtom(selectedMENameAtom);
 
   const handleClick = () => {
     setSelectedMEName([mTypeName, eType.name]);
@@ -42,7 +40,7 @@ export default function ETypeEntry({
         type="button"
         onClick={handleClick}
         className={`flex justify-between px-4 py-2 items-center ${
-          isETypeSelected(selectedEModel, eType.name, mTypeName)
+          isETypeSelected(selectedMEName, eType.name, mTypeName)
             ? `bg-white text-primary-7`
             : `text-white`
         } ${availableEModels.length ? 'cursor-pointer' : 'cursor-not-allowed'}`}

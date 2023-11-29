@@ -2,7 +2,7 @@
 
 import { useAtomValue } from 'jotai';
 
-import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/me-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import MEModelView from '@/components/build-section/cell-model-assignment/me-model/MEModelView';
 import { useInitializeFeatures, useInitializeLocalPayload } from '@/hooks/me-model-editor';

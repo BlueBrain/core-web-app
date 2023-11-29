@@ -3,6 +3,7 @@ import lodashGet from 'lodash/get';
 
 import {
   DefaultEModelPlaceholder,
+  DefaultMEModelType,
   DefaultPlaceholders,
   MEFeatureWithEModel,
 } from '@/types/me-model';
@@ -12,12 +13,35 @@ import sessionAtom from '@/state/session';
 import { meModelConfigIdAtom } from '@/state/brain-model-config';
 import { fetchJsonFileByUrl, fetchResourceById } from '@/api/nexus';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { DEFAULT_BRAIN_REGION_STORAGE_KEY } from '@/constants/brain-hierarchy';
+import { DEFAULT_ME_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/me-model';
+import { getInitializationValue } from '@/util/utils';
+import { DefaultBrainRegionType } from '@/state/brain-regions/types';
+import { EModelMenuItem } from '@/types/e-model';
 
 export const refetchTriggerAtom = atom<{}>({});
 
 export const featureWithEModelAtom = atom<MEFeatureWithEModel | null>(null);
 
-export const selectedMENameAtom = atom<[string, string] | [null, null]>([null, null]);
+const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
+  DEFAULT_BRAIN_REGION_STORAGE_KEY
+);
+
+const initializationMEModel = getInitializationValue<DefaultMEModelType>(
+  DEFAULT_ME_MODEL_STORAGE_KEY
+);
+
+const useSavedMEModel =
+  initializationBrainRegion &&
+  initializationBrainRegion.value.id === initializationMEModel?.brainRegionId;
+
+export const selectedMENameAtom = atom<[string, string] | [null, null]>(
+  useSavedMEModel ? initializationMEModel.mePairValue : [null, null]
+);
+
+export const selectedEModelAtom = atom<EModelMenuItem | null>(
+  useSavedMEModel ? initializationMEModel.eModelValue : null
+);
 
 export const localConfigPayloadAtom = atom<MEModelConfigPayload | null>(null);
 

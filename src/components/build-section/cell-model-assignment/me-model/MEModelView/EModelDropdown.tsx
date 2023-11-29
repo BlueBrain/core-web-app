@@ -2,15 +2,13 @@ import { Select } from 'antd';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import { SelectOption } from '@/types/common';
-import {
-  eModelByETypeMappingAtom,
-  selectedEModelAtom,
-} from '@/state/brain-model-config/cell-model-assignment/e-model';
+import { eModelByETypeMappingAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { EModelMenuItem } from '@/types/e-model';
 import {
   setMEConfigPayloadAtom,
   unassignFromMEConfigPayloadAtom,
 } from '@/state/brain-model-config/cell-model-assignment/me-model/setters';
+import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/me-model';
 
 export default function EModelDropdown() {
   const eModels = useAtomValue(eModelByETypeMappingAtom);
