@@ -17,7 +17,7 @@ export interface VirtualLabCreateCongratsProps {
 export function VirtualLabCreateCongrats({ className }: VirtualLabCreateCongratsProps) {
   const [lab, update] = useCurrentVirtualLab();
   const resetCurrentVirtualLab = () => {
-    update(EMPTY_VIRTUAL_LAB);
+    update({ ...EMPTY_VIRTUAL_LAB, id: undefined });
   };
   return (
     <div className={classNames(styles.main, commonStyles.theme, className)}>

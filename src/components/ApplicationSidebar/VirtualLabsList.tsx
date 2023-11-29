@@ -111,7 +111,7 @@ export default function VirtualLabsList() {
               <div
                 className={classNames(
                   'transition-all duration-500',
-                  virtualLabListExpanded ? 'mt-0' : 'mt-[-100%]'
+                  virtualLabListExpanded ? 'mt-0' : 'mt-[-1000%]'
                 )}
                 data-collapse-animate="on"
               >

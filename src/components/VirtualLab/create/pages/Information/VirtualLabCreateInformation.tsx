@@ -17,6 +17,7 @@ export function VirtualLabCreateInformation({
 }: VirtualLabCreateInformationProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
   const [valid, setValid] = useState(false);
+
   return (
     <Layout className={className}>
       <Main nextPage={nextPage} canGoNext={valid} step="information">
