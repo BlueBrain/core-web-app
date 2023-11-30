@@ -50,7 +50,6 @@ export default function ParameterItem({ paramRawName, paramValue }: ParameterPro
   let component;
   switch (paramInfo.displayName) {
     case 'Randomness':
-    case 'Targeting':
       component = (
         <NumberParam
           paramValue={paramValue as number}

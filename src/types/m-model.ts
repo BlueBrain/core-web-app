@@ -1,8 +1,8 @@
-export type RequiredParamRawNames = 'randomness' | 'step_size' | 'orientation' | 'targeting';
-export type RequiredParamDisplayNames = 'Randomness' | 'Step size' | 'Orientation' | 'Targeting';
+export type RequiredParamRawNames = 'randomness' | 'step_size' | 'orientation';
+export type RequiredParamDisplayNames = 'Randomness' | 'Step size' | 'Orientation';
 
 export type ParamsRawNames =
-  | (RequiredParamRawNames & 'targeting')
+  | RequiredParamRawNames
   | 'metric'
   | 'growth_method'
   | 'branching_method'
@@ -26,7 +26,6 @@ type BaseParamsType = Record<
 export interface BasicParams extends BaseParamsType {
   metric: string;
   randomness: number;
-  targeting: number;
   radius: number;
   orientation: OrientationInterface[];
   growth_method: string;

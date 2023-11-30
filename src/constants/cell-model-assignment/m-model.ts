@@ -10,12 +10,6 @@ export const paramsToDisplay: ParamsToDisplay = {
     max: 0.5,
     step: 0.01,
   },
-  targeting: {
-    displayName: 'Targeting',
-    min: 0,
-    max: 0.5,
-    step: 0.01,
-  },
   step_size: {
     displayName: 'Step size',
     min: 0.1,
