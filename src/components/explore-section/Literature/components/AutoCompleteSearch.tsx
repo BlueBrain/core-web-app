@@ -1,18 +1,25 @@
 'use client';
 
+import { DownOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
+import isNil from 'lodash/isNil';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { DownOutlined } from '@ant-design/icons';
 import { Suggestion } from '@/types/literature';
 
 type Props = {
   onChange: (selectedValues: Suggestion[]) => void;
   fetchOptions: (searchTerm: string, signal?: AbortSignal) => Promise<Suggestion[]>;
   title: string;
+  selectedValues?: string[];
 };
 
-export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Props) {
+export default function AutoCompleteSearch({
+  onChange,
+  fetchOptions,
+  title,
+  selectedValues,
+}: Props) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
 
@@ -63,6 +70,12 @@ export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Pr
     };
   }, [fetchOptions]);
 
+  const values = selectedValues
+    ? (selectedValues
+        .map((value) => suggestions.find((suggestion) => suggestion.key === value))
+        .filter((value) => !isNil(value)) as Suggestion[])
+    : [];
+
   return (
     <ConfigProvider
       theme={{
@@ -77,6 +90,7 @@ export default function AutoCompleteSearch({ onChange, fetchOptions, title }: Pr
       <Select
         onSearch={debounceFetchOptions}
         placeholder={title}
+        value={values}
         aria-label={title}
         mode="multiple"
         labelInValue

@@ -22,6 +22,7 @@ import {
 import {
   articleTypeSuggestionsAtom,
   initialParameters,
+  questionsParametersAtom,
   useQuestionParameter,
 } from '@/state/literature';
 
@@ -33,6 +34,7 @@ type Props = {
 function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Props) {
   const update = useQuestionParameter();
   const articleTypes = useAtomValue(useMemo(() => unwrap(articleTypeSuggestionsAtom), []));
+  const currentParameters = useAtomValue(questionsParametersAtom);
 
   return (
     isParametersVisible && (
@@ -51,7 +53,9 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
               field: 'publicationDate',
               type: 'dateRange',
               aggregationType: 'buckets',
-              value: { ...initialParameters.selectedDate },
+              value: currentParameters.selectedDate
+                ? { ...currentParameters.selectedDate }
+                : { ...initialParameters.selectedDate },
             }}
           />
           <hr className="my-4 border-primary-2" />
@@ -70,6 +74,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
               const selectedJournals = selectedValues.map((option) => option.key);
               update('selectedJournals', selectedJournals);
             }}
+            selectedValues={currentParameters.selectedJournals}
           />
           <hr className="my-4 border-primary-2" />
         </div>
@@ -89,6 +94,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
                 selectedValues.map((v) => v.value)
               )
             }
+            selectedValues={currentParameters.selectedAuthors}
           />
           <hr className="my-4 border-primary-2" />
         </div>
@@ -108,6 +114,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
                 selectedValues.map((v) => v.value)
               )
             }
+            selectedValues={currentParameters.selectedArticleTypes}
           />
           <hr className="my-4 border-primary-2" />
         </div>
