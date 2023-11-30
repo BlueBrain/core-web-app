@@ -1,6 +1,6 @@
 import { Key } from 'react';
 import { atom } from 'jotai';
-import { atomFamily, atomWithDefault, selectAtom } from 'jotai/utils';
+import { atomFamily, atomWithDefault } from 'jotai/utils';
 import head from 'lodash/head';
 import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
@@ -234,13 +234,10 @@ export const resourceBasedResponseHitsAtom = atomFamily(
 
 export const resourceBasedResponseAggregationsAtom = atomFamily(
   ({ resourceId, experimentTypeName }: GenFamilyType) =>
-    selectAtom<
-      Promise<FlattenedExploreESResponse | null>,
-      Promise<FlattenedExploreESResponse['aggs'] | undefined>
-    >(
-      resourceBasedResponseRawAtom({ resourceId, experimentTypeName }),
-      async (response) => response?.aggs
-    ),
+    atom<Promise<FlattenedExploreESResponse['aggs'] | undefined>>(async (get) => {
+      const response = await get(resourceBasedResponseRawAtom({ resourceId, experimentTypeName }));
+      return response?.aggs;
+    }),
   isEqual
 );
 

@@ -21,13 +21,16 @@ import {
 } from '@/state/explore-section/list-view-atoms';
 import { Filter } from '@/components/Filter/types';
 
-function FilterBtn({ children, onClick }: HTMLProps<HTMLButtonElement>) {
+function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
     <button
-      className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5"
+      className={`${
+        disabled ? 'bg-neutral-100 cursor-not-allowed' : 'bg-primary-8'
+      } flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5`}
       onClick={onClick}
       type="button"
       aria-label="listing-view-filter-button"
+      disabled={!!disabled}
     >
       {children}
       <SettingsIcon className="rotate-90 text-white" />
@@ -42,6 +45,7 @@ export default function FilterControls({
   experimentTypeName,
   filters,
   resourceId,
+  disabled,
 }: {
   children?: ReactNode;
   displayControlPanel: boolean;
@@ -49,6 +53,7 @@ export default function FilterControls({
   experimentTypeName: string;
   filters?: Filter[];
   resourceId?: string;
+  disabled?: boolean;
 }) {
   const [activeColumnsLength, setActiveColumnsLength] = useState<number | undefined>(undefined);
 
@@ -81,21 +86,25 @@ export default function FilterControls({
       <ClearFilters onClick={clearFilters} />
       {/* only show search input on listing views. resource id is present on detail views. */}
       {!resourceId && <ExploreSectionNameSearch experimentTypeName={experimentTypeName} />}
-      <FilterBtn onClick={() => setDisplayControlPanel(!displayControlPanel)}>
+      <FilterBtn disabled={disabled} onClick={() => setDisplayControlPanel(!displayControlPanel)}>
         <div className="flex gap-3 items-center">
           <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
             {selectedFiltersCount}
           </span>
-          <span className="font-bold text-white">Filters</span>
-          <span className="text-primary-3 text-sm">
-            {activeColumnsLength ? (
-              <>
-                {activeColumnsLength} active {activeColumnsLength === 1 ? ' column' : ' columns'}
-              </>
-            ) : (
-              <Spin />
-            )}
-          </span>
+          <div className="flex items-center">
+            <span className={`${disabled ? 'text-primary-8' : 'text-white'} font-bold mb-1`}>
+              Filters
+            </span>
+            <span className="text-primary-3 text-sm ml-2">
+              {activeColumnsLength ? (
+                <>
+                  {activeColumnsLength} active {activeColumnsLength === 1 ? ' column' : ' columns'}
+                </>
+              ) : (
+                <Spin />
+              )}
+            </span>
+          </div>
         </div>
       </FilterBtn>
     </div>

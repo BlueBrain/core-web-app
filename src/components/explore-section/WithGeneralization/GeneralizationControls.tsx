@@ -69,6 +69,7 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
               setDisplayControlPanel={setDisplayControlPanel}
               experimentTypeName={experimentTypeName}
               resourceId={resourceId}
+              disabled={!(aggregations && filters)}
             />
           </div>
         )}

@@ -1,4 +1,4 @@
-import { Checkbox, Dropdown, Menu, Tooltip } from 'antd';
+import { Checkbox, Dropdown, Menu, Tooltip, ConfigProvider } from 'antd';
 import { DownOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
@@ -10,6 +10,14 @@ import {
 } from '@/state/explore-section/generalization';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import styles from './styles.module.scss';
+
+const theme = {
+  components: {
+    Checkbox: {
+      colorTextDisabled: '#002766',
+    },
+  },
+};
 
 function RulesControls() {
   const { id: resourceId } = useResourceInfoFromPath() ?? { id: '' };
@@ -75,21 +83,23 @@ function RulesControls() {
   );
 
   return (
-    <div className="relative ml-2">
-      <Dropdown
-        open={rulesDropdownVisible}
-        onOpenChange={(isVisible) => setRulesDropdownVisible(isVisible)}
-        overlay={menu}
-        trigger={['click']}
-        placement="bottomRight"
-        className="cursor-pointer	ml-5 bg-white flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5 border-gray-200 border"
-      >
-        <span className="flex items-center">
-          <span className="mr-2 text-primary-9 font-semibold">shape</span>
-          <DownOutlined />
-        </span>
-      </Dropdown>
-    </div>
+    <ConfigProvider theme={theme}>
+      <div className="relative ml-2">
+        <Dropdown
+          open={rulesDropdownVisible}
+          onOpenChange={(isVisible) => setRulesDropdownVisible(isVisible)}
+          overlay={menu}
+          trigger={['click']}
+          placement="bottomRight"
+          className="cursor-pointer	ml-5 bg-white flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5 border-gray-200 border"
+        >
+          <span className="flex items-center">
+            <span className="mr-2 text-primary-9 font-semibold">shape</span>
+            <DownOutlined />
+          </span>
+        </Dropdown>
+      </div>
+    </ConfigProvider>
   );
 }
 
