@@ -446,6 +446,10 @@ export interface RulesResource extends ResourceMetadata, Entity {
 
 export type TypesResource = RulesResource;
 export interface SynapseConfigPayload {
+  variantDefinition: {
+    algorithm: string;
+    version: string;
+  };
   defaults: {
     synapse_properties: {
       id: string;
