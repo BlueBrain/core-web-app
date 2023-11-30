@@ -9,7 +9,6 @@ import {
   EModelAssignmentConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
-  EModelAssignmentConfig,
 } from '@/types/nexus';
 
 const refetchTriggerAtom = atom<{}>({});
@@ -24,17 +23,6 @@ export const configAtom = atom<Promise<EModelAssignmentConfigResource | null>>(a
   if (!session || !id) return null;
 
   return fetchResourceById<EModelAssignmentConfigResource>(id, session);
-});
-
-export const configSourceAtom = atom<Promise<EModelAssignmentConfig | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = await get(eModelAssignmentConfigIdAtom);
-
-  get(refetchTriggerAtom);
-
-  if (!session || !id) return null;
-
-  return fetchResourceById<EModelAssignmentConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

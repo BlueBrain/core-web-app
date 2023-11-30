@@ -21,7 +21,6 @@ import {
   MorphologyAssignmentConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
-  MorphologyAssignmentConfig,
   MorphologyAssignmentConfigPayload,
   CanonicalMorphologyModelConfigPayload,
   CanonicalMorphologyModelConfig,
@@ -81,17 +80,6 @@ export const configAtom = atom<Promise<MorphologyAssignmentConfigResource | null
   if (!session || !id) return null;
 
   return fetchResourceById<MorphologyAssignmentConfigResource>(id, session);
-});
-
-export const configSourceAtom = atom<Promise<MorphologyAssignmentConfig | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = await get(morphologyAssignmentConfigIdAtom);
-
-  get(refetchTriggerAtom);
-
-  if (!session || !id) return null;
-
-  return fetchResourceById<MorphologyAssignmentConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

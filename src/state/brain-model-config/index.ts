@@ -38,17 +38,6 @@ export const configAtom = atom<Promise<BrainModelConfigResource | null>>(async (
   return fetchResourceById<BrainModelConfigResource>(id, session);
 });
 
-export const configSourceAtom = atom<Promise<BrainModelConfigResource | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = get(idAtom);
-
-  get(refetchTriggerAtom);
-
-  if (!session || !id) return null;
-
-  return fetchResourceById<BrainModelConfigResource>(id, session);
-});
-
 export const updateConfigAtom = atom(null, async (get, set, config: BrainModelConfigResource) => {
   const session = get(sessionAtom);
 

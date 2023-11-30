@@ -40,17 +40,6 @@ export const configAtom = atom<Promise<MacroConnectomeConfigResource | null>>(as
   return fetchResourceById<MacroConnectomeConfigResource>(id, session);
 });
 
-export const configSourceAtom = atom<Promise<MacroConnectomeConfigResource | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = await get(macroConnectomeConfigIdAtom);
-
-  get(refetchCounterAtom);
-
-  if (!session || !id) return null;
-
-  return fetchResourceById<MacroConnectomeConfigResource>(id, session);
-});
-
 export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
   if (!config) return null;

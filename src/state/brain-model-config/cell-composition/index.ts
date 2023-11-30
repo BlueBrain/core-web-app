@@ -7,7 +7,6 @@ import { cellCompositionConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
 import { fetchResourceById, fetchJsonFileByUrl, fetchGeneratorTaskActivity } from '@/api/nexus';
 import {
-  CellCompositionConfig,
   CellCompositionConfigPayload,
   CellCompositionConfigResource,
   CellCompositionResource,
@@ -26,17 +25,6 @@ export const configAtom = atom<Promise<CellCompositionConfigResource | null>>(as
   if (!session || !id) return null;
 
   return fetchResourceById<CellCompositionConfigResource>(id, session);
-});
-
-export const configSourceAtom = atom<Promise<CellCompositionConfig | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = await get(cellCompositionConfigIdAtom);
-
-  get(refetchTriggerAtom);
-
-  if (!session || !id) return null;
-
-  return fetchResourceById<CellCompositionConfig>(id, session);
 });
 
 const configPayloadUrlAtom = selectAtom(configAtom, (config) => config?.distribution.contentUrl);

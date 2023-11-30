@@ -1,32 +1,32 @@
 import { Atom, atom } from 'jotai';
 
 import {
-  configSourceAtom as cellCompositionConfigSourceAtom,
+  configAtom as cellCompositionConfigAtom,
   cellCompositionAtom as cellCompositionBuildArtefact,
 } from './cell-composition';
 
 import {
-  configSourceAtom as cellPositionConfigSourceAtom,
+  configAtom as cellPositionConfigAtom,
   partialCircuitAtom as cellPositionBuildArtefact,
 } from './cell-position';
 
 import {
-  configSourceAtom as eModelAssignmentConfigSourceAtom,
+  configAtom as eModelAssignmentConfigAtom,
   partialCircuitAtom as eModelAssignmentBuildArtefact,
 } from './emodel-assignment';
 
 import {
-  configSourceAtom as morphologyAssignmentConfigSourceAtom,
+  configAtom as morphologyAssignmentConfigAtom,
   partialCircuitAtom as morphologyAssignmentBuildArtefact,
 } from './cell-model-assignment/m-model';
 
 import {
-  configAtom as microConnectomeConfigSourceAtom, // source fixed
+  configAtom as microConnectomeConfigAtom, // source fixed
   partialCircuitAtom as microConnectomeBuildArtefact,
 } from './micro-connectome';
 
 import {
-  configSourceAtom as macroConnectomeConfigSourceAtom,
+  configAtom as macroConnectomeConfigAtom,
   partialCircuitAtom as macroConnectomeBuildArtefact,
 } from './macro-connectome';
 
@@ -36,7 +36,7 @@ import {
 } from './synapse-editor';
 
 import {
-  configSourceAtom as modelConfigSourceAtom,
+  configAtom as modelConfigAtom,
   configAtom as modelConfigMetaAtom,
   triggerRefetchAtom,
 } from '.';
@@ -56,44 +56,44 @@ type BuildStepName =
 
 type BuildStep = {
   name: BuildStepName;
-  configSourceAtom: Atom<Promise<GeneratorConfig | null>>;
+  configAtom: Atom<Promise<GeneratorConfig | null>>;
   buildArtefactAtom: Atom<Promise<any>>;
 };
 
 const buildSteps: BuildStep[] = [
   {
     name: 'cellComposition',
-    configSourceAtom: cellCompositionConfigSourceAtom,
+    configAtom: cellCompositionConfigAtom,
     buildArtefactAtom: cellCompositionBuildArtefact,
   },
   {
     name: 'cellPosition',
-    configSourceAtom: cellPositionConfigSourceAtom,
+    configAtom: cellPositionConfigAtom,
     buildArtefactAtom: cellPositionBuildArtefact,
   },
   {
     name: 'morphologyAssignment',
-    configSourceAtom: morphologyAssignmentConfigSourceAtom,
+    configAtom: morphologyAssignmentConfigAtom,
     buildArtefactAtom: morphologyAssignmentBuildArtefact,
   },
   {
     name: 'eModelAssignment',
-    configSourceAtom: eModelAssignmentConfigSourceAtom,
+    configAtom: eModelAssignmentConfigAtom,
     buildArtefactAtom: eModelAssignmentBuildArtefact,
   },
   {
     name: 'macroConnectome',
-    configSourceAtom: macroConnectomeConfigSourceAtom,
+    configAtom: macroConnectomeConfigAtom,
     buildArtefactAtom: macroConnectomeBuildArtefact,
   },
   {
     name: 'microConnectome',
-    configSourceAtom: microConnectomeConfigSourceAtom,
+    configAtom: microConnectomeConfigAtom,
     buildArtefactAtom: microConnectomeBuildArtefact,
   },
   {
     name: 'synapse',
-    configSourceAtom: synapseConfigAtom,
+    configAtom: synapseConfigAtom,
     buildArtefactAtom: synapseBuildArtefact,
   },
 ];
@@ -106,7 +106,7 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
       throw new Error('No session');
     }
 
-    const modelConfig = await get(modelConfigSourceAtom);
+    const modelConfig = await get(modelConfigAtom);
     if (!modelConfig) {
       throw new Error('No model config');
     }
@@ -123,12 +123,12 @@ const invalidateConfigAtom = atom<null, [BuildStepName], Promise<void>>(
 
         if (!buildArtefact) return;
 
-        const configSource = await get(step.configSourceAtom);
-        if (!configSource) {
+        const config = await get(step.configAtom);
+        if (!config) {
           throw new Error(`Generator config source for ${step.name} can not be loaded`);
         }
 
-        const configCloneMeta = await createResource(configSource, session);
+        const configCloneMeta = await createResource(config, session);
 
         modelConfig.configs[`${step.name}Config`]['@id'] = configCloneMeta['@id'];
         modelConfigHasUpdates = true;

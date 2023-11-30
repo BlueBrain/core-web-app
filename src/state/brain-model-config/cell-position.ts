@@ -6,7 +6,6 @@ import sessionAtom from '@/state/session';
 
 import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
 import {
-  CellPositionConfig,
   CellPositionConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
@@ -24,17 +23,6 @@ export const configAtom = atom<Promise<CellPositionConfigResource | null>>(async
   if (!session || !id) return null;
 
   return fetchResourceById<CellPositionConfigResource>(id, session);
-});
-
-export const configSourceAtom = atom<Promise<CellPositionConfig | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const id = await get(cellPositionConfigIdAtom);
-
-  get(refetchTriggerAtom);
-
-  if (!session || !id) return null;
-
-  return fetchResourceById<CellPositionConfig>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(

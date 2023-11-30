@@ -19,7 +19,6 @@ import {
   connectivityStrengthOverridesPayloadUrlAtom,
   configPayloadUrlAtom,
   configAtom,
-  configSourceAtom,
   connectivityStrengthOverridesEntityRevAtom,
   initialConnectivityStrengthMatrixAtom,
 } from '.';
@@ -44,7 +43,6 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   const session = get(sessionAtom);
 
   const config = await get(configAtom);
-  const configSource = await get(configSourceAtom);
 
   const initialConnectivityStrengthMatrix = await get(initialConnectivityStrengthMatrixAtom);
   const connectivityStrengthMatrix = await get(connectivityStrengthMatrixAtom);
@@ -65,7 +63,6 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
   if (
     !session ||
     !config ||
-    !configSource ||
     !brainRegionLeaves ||
     !overridesEntity ||
     !overridesEntitySource ||
@@ -121,9 +118,9 @@ const persistConfig = atom<null, [], Promise<void>>(null, async (get, set) => {
     session
   );
 
-  configSource.distribution = createDistribution(updatedConfigPayloadMeta);
+  config.distribution = createDistribution(updatedConfigPayloadMeta);
 
-  await updateResource(configSource, session);
+  await updateResource(config, session);
 
   await set(invalidateConfigAtom, 'macroConnectome');
   set(writingConfigAtom, false);

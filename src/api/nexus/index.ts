@@ -304,8 +304,8 @@ export function queryES<T>(
 async function getPayloadByConfig<
   PayloadType extends GeneratorConfigPayload,
   ConfigType extends GeneratorConfig
->(configName: SubConfigName, configSource: ConfigType, session: Session): Promise<PayloadType> {
-  const configVersion = configSource?.configVersion;
+>(configName: SubConfigName, config: ConfigType, session: Session): Promise<PayloadType> {
+  const configVersion = config?.configVersion;
   const useRelease = configVersion === undefined;
 
   if (useRelease) {
@@ -320,11 +320,11 @@ async function getPayloadByConfig<
     return fetchJsonFileByUrl(resource.distribution.contentUrl, session);
   }
 
-  return fetchJsonFileByUrl(configSource.distribution.contentUrl, session);
+  return fetchJsonFileByUrl(config.distribution.contentUrl, session);
 }
 
-function getConfigVersion(configName: SubConfigName, configSource: GeneratorConfig) {
-  const configVersion = configSource?.configVersion;
+function getConfigVersion(configName: SubConfigName, config: GeneratorConfig) {
+  const configVersion = config?.configVersion;
   const supportedVersion = supportedUIConfigVersion[configName];
   if (configVersion === undefined) return supportedVersion;
   return configVersion;
@@ -334,18 +334,18 @@ function getConfigVersion(configName: SubConfigName, configSource: GeneratorConf
 
 export async function cloneCellCompositionConfig(id: string, session: Session) {
   const configName: SubConfigName = 'cellCompositionConfig';
-  const configSource = await fetchResourceById<CellCompositionConfig>(id, session);
+  const config = await fetchResourceById<CellCompositionConfig>(id, session);
   const payload = await getPayloadByConfig<CellCompositionConfigPayload, CellCompositionConfig>(
     configName,
-    configSource,
+    config,
     session
   );
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-composition-config.json', session);
 
   const clonedConfig: CellCompositionConfig = {
-    ...configSource,
+    ...config,
     distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'cell_composition',
   };
 
@@ -354,19 +354,19 @@ export async function cloneCellCompositionConfig(id: string, session: Session) {
 
 export async function cloneCellPositionConfig(id: string, session: Session) {
   const configName: SubConfigName = 'cellPositionConfig';
-  const configSource = await fetchResourceById<CellPositionConfig>(id, session);
+  const config = await fetchResourceById<CellPositionConfig>(id, session);
   const payload = await getPayloadByConfig<CellPositionConfigPayload, CellPositionConfig>(
     configName,
-    configSource,
+    config,
     session
   );
 
   const clonedPayloadMeta = await createJsonFile(payload, 'cell-position-config.json', session);
 
   const clonedConfig: CellPositionConfig = {
-    ...configSource,
+    ...config,
     distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'cell_position',
   };
 
@@ -375,19 +375,19 @@ export async function cloneCellPositionConfig(id: string, session: Session) {
 
 export async function cloneEModelAssignmentConfig(id: string, session: Session) {
   const configName: SubConfigName = 'eModelAssignmentConfig';
-  const configSource = await fetchResourceById<EModelAssignmentConfig>(id, session);
+  const config = await fetchResourceById<EModelAssignmentConfig>(id, session);
   const payload = await getPayloadByConfig<EModelAssignmentConfigPayload, EModelAssignmentConfig>(
     configName,
-    configSource,
+    config,
     session
   );
 
   const clonedPayloadMeta = await createJsonFile(payload, 'emodel-assignment-config.json', session);
 
   const clonedConfig: EModelAssignmentConfig = {
-    ...configSource,
+    ...config,
     distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'placeholder',
   };
 
@@ -396,11 +396,11 @@ export async function cloneEModelAssignmentConfig(id: string, session: Session) 
 
 export async function cloneMorphologyAssignmentConfig(id: string, session: Session) {
   const configName: SubConfigName = 'morphologyAssignmentConfig';
-  const configSource = await fetchResourceById<MorphologyAssignmentConfig>(id, session);
+  const config = await fetchResourceById<MorphologyAssignmentConfig>(id, session);
   const payload = await getPayloadByConfig<
     MorphologyAssignmentConfigPayload,
     MorphologyAssignmentConfig
-  >(configName, configSource, session);
+  >(configName, config, session);
 
   const clonedPayloadMeta = await createJsonFile(
     payload,
@@ -409,9 +409,9 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
   );
 
   const clonedConfig: MorphologyAssignmentConfig = {
-    ...configSource,
+    ...config,
     distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'mmodel',
   };
 
@@ -420,19 +420,19 @@ export async function cloneMorphologyAssignmentConfig(id: string, session: Sessi
 
 export async function cloneMEModelConfig(id: string, session: Session) {
   const configName: SubConfigName = 'meModelConfig';
-  const configSource = await fetchResourceById<MEModelConfig>(id, session);
+  const config = await fetchResourceById<MEModelConfig>(id, session);
   const payload = await getPayloadByConfig<MEModelConfigPayload, MEModelConfig>(
     configName,
-    configSource,
+    config,
     session
   );
 
   const clonedPayloadMeta = await createJsonFile(payload, 'me-model-config.json', session);
 
   const clonedConfig: MEModelConfig = {
-    ...configSource,
+    ...config,
     distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'memodel',
   };
 
@@ -441,10 +441,10 @@ export async function cloneMEModelConfig(id: string, session: Session) {
 
 export async function cloneMacroConnectomeConfig(id: string, session: Session) {
   const configName: SubConfigName = 'macroConnectomeConfig';
-  const configSource = await fetchResourceById<MacroConnectomeConfig>(id, session);
+  const config = await fetchResourceById<MacroConnectomeConfig>(id, session);
   const payload = await getPayloadByConfig<MacroConnectomeConfigPayload, MacroConnectomeConfig>(
     configName,
-    configSource,
+    config,
     session
   );
 
@@ -477,9 +477,9 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
   const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
 
   const clonedConfig: MacroConnectomeConfig = {
-    ...configSource,
+    ...config,
     distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'connectome',
   };
 
@@ -488,20 +488,20 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
 
 export async function cloneMicroConnectomeConfig(id: string, session: Session) {
   const configName: SubConfigName = 'microConnectomeConfig';
-  const configSource = await fetchResourceById<MicroConnectomeConfig>(id, session);
+  const config = await fetchResourceById<MicroConnectomeConfig>(id, session);
   const payload = await getPayloadByConfig<MicroConnectomeConfigPayload, MicroConnectomeConfig>(
     configName,
-    configSource,
+    config,
     session
   );
 
-  if (configSource.configVersion !== supportedUIConfigVersion[configName]) {
+  if (config.configVersion !== supportedUIConfigVersion[configName]) {
     const clonedPayloadMeta = await createJsonFile(payload, 'microconnectome-config.json', session);
 
     const clonedConfig: MicroConnectomeConfig = {
-      ...configSource,
+      ...config,
       distribution: createDistribution(clonedPayloadMeta),
-      configVersion: getConfigVersion(configName, configSource),
+      configVersion: getConfigVersion(configName, config),
       generatorName: 'connectome',
     };
 
@@ -592,9 +592,9 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
   const clonedPayloadMeta = await createJsonFile(payload, 'microconnectome-config.json', session);
 
   const clonedConfig: MicroConnectomeConfig = {
-    ...configSource,
+    ...config,
     distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'connectome',
   };
 
@@ -603,24 +603,24 @@ export async function cloneMicroConnectomeConfig(id: string, session: Session) {
 
 export async function cloneSynapseConfig(id: string, session: Session) {
   const configName: SubConfigName = 'synapseConfig';
-  const configSource = await fetchResourceById<SynapseConfig>(id, session);
+  const config = await fetchResourceById<SynapseConfig>(id, session);
   const payload = await getPayloadByConfig<SynapseConfigPayload, SynapseConfig>(
     configName,
-    configSource,
+    config,
     session
   );
 
-  if (configSource.configVersion !== supportedUIConfigVersion[configName]) {
+  if (config.configVersion !== supportedUIConfigVersion[configName]) {
     const payloadMetadata = await createJsonFile(payload, 'synapse-config.json', session);
 
-    const config: SynapseConfig = {
-      ...configSource,
+    const synapseConfig: SynapseConfig = {
+      ...config,
       distribution: createDistribution(payloadMetadata),
-      configVersion: getConfigVersion(configName, configSource),
+      configVersion: getConfigVersion(configName, config),
       generatorName: 'connectome_filtering',
     };
 
-    return createResource(config, session);
+    return createResource(synapseConfig, session);
   }
 
   const synapticAssignmentResource = await fetchResourceById<SynapseConfig>(
@@ -700,14 +700,14 @@ export async function cloneSynapseConfig(id: string, session: Session) {
 
   const configMetadata = await createJsonFile(configPayload, 'synapse-config.json', session);
 
-  const config: SynapseConfig = {
-    ...configSource,
+  const synapseConfig: SynapseConfig = {
+    ...config,
     distribution: createDistribution(configMetadata),
-    configVersion: getConfigVersion(configName, configSource),
+    configVersion: getConfigVersion(configName, config),
     generatorName: 'connectome_filtering',
   };
 
-  return createResource(config, session);
+  return createResource(synapseConfig, session);
 }
 
 export async function cloneBrainModelConfig(
@@ -716,50 +716,50 @@ export async function cloneBrainModelConfig(
   description: string,
   session: Session
 ) {
-  const brainModelConfigSource = await fetchResourceById<BrainModelConfig>(configId, session);
+  const brainModelConfig = await fetchResourceById<BrainModelConfig>(configId, session);
 
   const clonedCellCompositionConfigMetadata = await cloneCellCompositionConfig(
-    brainModelConfigSource.configs?.cellCompositionConfig['@id'],
+    brainModelConfig.configs?.cellCompositionConfig['@id'],
     session
   );
 
   const clonedCellPositionConfigMetadata = await cloneCellPositionConfig(
-    brainModelConfigSource.configs.cellPositionConfig['@id'],
+    brainModelConfig.configs.cellPositionConfig['@id'],
     session
   );
 
   const clonedMorphologyAssignmentConfigMetadata = await cloneMorphologyAssignmentConfig(
-    brainModelConfigSource.configs.morphologyAssignmentConfig['@id'],
+    brainModelConfig.configs.morphologyAssignmentConfig['@id'],
     session
   );
 
   const clonedEModelAssignmentConfigMetadata = await cloneEModelAssignmentConfig(
-    brainModelConfigSource.configs.eModelAssignmentConfig['@id'],
+    brainModelConfig.configs.eModelAssignmentConfig['@id'],
     session
   );
 
   const clonedMEModelConfigMetadata = await cloneMEModelConfig(
-    brainModelConfigSource.configs.meModelConfig['@id'],
+    brainModelConfig.configs.meModelConfig['@id'],
     session
   );
 
   const clonedMicroConnectomeConfigMetadata = await cloneMicroConnectomeConfig(
-    brainModelConfigSource.configs.microConnectomeConfig['@id'],
+    brainModelConfig.configs.microConnectomeConfig['@id'],
     session
   );
 
   const clonedSynapseConfigMetadata = await cloneSynapseConfig(
-    brainModelConfigSource.configs.synapseConfig['@id'],
+    brainModelConfig.configs.synapseConfig['@id'],
     session
   );
 
   const clonedMacroConnectomeConfigMetadata = await cloneMacroConnectomeConfig(
-    brainModelConfigSource.configs.macroConnectomeConfig['@id'],
+    brainModelConfig.configs.macroConnectomeConfig['@id'],
     session
   );
 
   const clonedModelConfig: BrainModelConfig = {
-    ...brainModelConfigSource,
+    ...brainModelConfig,
     name,
     description,
     configs: {
@@ -809,13 +809,10 @@ export async function renameBrainModelConfig(
 ) {
   const configId = config['@id'];
 
-  const brainModelConfigSource = await fetchResourceById<BrainModelConfigResource>(
-    configId,
-    session
-  );
+  const brainModelConfig = await fetchResourceById<BrainModelConfigResource>(configId, session);
 
   const renamedModelConfig = {
-    ...brainModelConfigSource,
+    ...brainModelConfig,
     name,
     description,
   };
@@ -952,13 +949,13 @@ export async function renameSimCampUIConfig(
 ) {
   const configId = config['@id'];
 
-  const simCampUIConfigSource = await fetchResourceById<SimulationCampaignUIConfigResource>(
+  const simCampUIConfig = await fetchResourceById<SimulationCampaignUIConfigResource>(
     configId,
     session
   );
 
   const renamedConfig = {
-    ...simCampUIConfigSource,
+    ...simCampUIConfig,
     name,
     description,
   };
