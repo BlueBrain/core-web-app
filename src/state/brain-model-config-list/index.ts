@@ -25,6 +25,7 @@ export const searchConfigListTypeAtom = atom<SearchType>('public');
 export const searchConfigListStringAtom = atom<string>('');
 
 export const refetchTriggerAtom = atom<{}>({});
+export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
 export const configListAtom = atom<Promise<BrainModelConfigResource[]>>(async (get) => {
   const session = get(sessionAtom);

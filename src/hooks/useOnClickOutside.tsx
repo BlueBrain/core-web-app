@@ -22,7 +22,8 @@ const defaultEvents = ['mousedown', 'touchstart'];
 const useOnClickOutside = <E extends Event = Event>(
   ref: RefObject<HTMLElement | null>,
   onClickAway: (event: E) => void,
-  events: string[] = defaultEvents
+  events: string[] = defaultEvents,
+  ignore?: (event: any) => boolean
 ) => {
   const savedCallback = useRef(onClickAway);
 
@@ -31,19 +32,21 @@ const useOnClickOutside = <E extends Event = Event>(
   }, [onClickAway]);
 
   useEffect(() => {
-    const handler = (event: any) => {
+    const handler = (event: E) => {
       const { current: el } = ref;
-      if (el && !el.contains(event.target)) savedCallback.current(event);
+      if (ignore?.(event)) return;
+      if (el && !el.contains(event.target as HTMLElement)) savedCallback.current(event);
     };
     events.forEach((eventName) => {
       on(document, eventName, handler);
     });
+
     return () => {
       events.forEach((eventName) => {
         off(document, eventName, handler);
       });
     };
-  }, [events, ref]);
+  }, [events, ignore, ref]);
 };
 
 export default useOnClickOutside;

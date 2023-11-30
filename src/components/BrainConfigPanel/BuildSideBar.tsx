@@ -1,19 +1,30 @@
 'use client';
 
-import { Suspense } from 'react';
-import { useAtomValue } from 'jotai';
+import { Suspense, useCallback } from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Button } from 'antd';
 import { CalendarOutlined, LinkOutlined, RightOutlined, UserOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
 
 import ApplicationSidebar from '../ApplicationSidebar';
 import CloneIcon from '../icons/Clone';
 import BrainConfigEntry from './BrainConfigEntry';
-import { recentConfigsAtom, publicConfigsAtom, personalConfigsAtom } from './state';
+import {
+  recentConfigsAtom,
+  publicConfigsAtom,
+  personalConfigsAtom,
+  triggerRefetchAllAtom,
+} from './state';
 import { configAtom } from '@/state/brain-model-config';
 import detailedCircuitAtom from '@/state/circuit';
 import { LinkIcon } from '@/components/icons';
 import CopyTextBtn from '@/components/CopyTextBtn';
 import Link from '@/components/Link';
+import useCloneConfigModal from '@/hooks/config-clone-modal';
+import { cloneBrainModelConfig } from '@/api/nexus';
+import { getBrainModelConfigsByNameQuery } from '@/queries/es';
+import { BrainModelConfigResource } from '@/types/nexus';
+import { collapseId } from '@/util/nexus';
 
 type ConfigListProps = {
   baseHref: string;
@@ -66,8 +77,8 @@ function BrainModelConfigDetails() {
           )}
         </div>
         {brainModelConfig?._updatedAt && (
-          <div className="inline-flex items-center gap-1">
-            <CalendarOutlined className="text-base inline-block" />
+          <div className="flex items-center justify-center gap-1">
+            <CalendarOutlined className="text-base" />
             <span className="align-middle text-white">
               {new Date(brainModelConfig._updatedAt).toLocaleDateString().replaceAll('/', '.')}
             </span>
@@ -164,6 +175,27 @@ function Collapsible({
 }
 
 function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; expanded: boolean }) {
+  const router = useRouter();
+  const brainModelConfig = useAtomValue(configAtom);
+  const triggerRefetch = useSetAtom(triggerRefetchAllAtom);
+
+  const { createModal: createCloneModal, contextHolder: cloneContextHolder } =
+    useCloneConfigModal<BrainModelConfigResource>(
+      cloneBrainModelConfig,
+      getBrainModelConfigsByNameQuery
+    );
+  const openCloneModal = useCallback(
+    (currentConfig: BrainModelConfigResource) => () => {
+      createCloneModal(currentConfig, (clonedConfig: BrainModelConfigResource) => {
+        triggerRefetch();
+        router.push(
+          `${baseHref}?brainModelConfigId=${encodeURIComponent(collapseId(clonedConfig['@id']))}`
+        );
+      });
+    },
+    [baseHref, createCloneModal, router, triggerRefetch]
+  );
+
   if (!expanded) return null;
   return (
     <div className="pr-2 w-full">
@@ -172,20 +204,23 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
       </Suspense>
 
       <div className="w-full flex flex-col items-start py-2 mb-3 border-y border-primary-7">
-        <Button
-          type="text"
-          icon={<CloneIcon className="text-primary-4" />}
-          className="text-white font-bold text-base px-0 hover:!bg-transparent hover:!text-primary-4"
-        >
-          Duplicate brain model
-        </Button>
-        <Button
-          type="text"
+        {brainModelConfig && (
+          <Button
+            type="text"
+            icon={<CloneIcon className="text-primary-4" />}
+            className="text-white font-bold text-base px-0 hover:!bg-transparent hover:!text-primary-4"
+            onClick={openCloneModal(brainModelConfig)}
+          >
+            Duplicate brain model
+          </Button>
+        )}
+        <CopyTextBtn
           icon={<LinkOutlined className="text-primary-4" />}
+          text={brainModelConfig?.['@id'] ?? ''}
           className="text-white font-bold text-base px-0 hover:!bg-transparent hover:!text-primary-4"
         >
           Copy brain model url
-        </Button>
+        </CopyTextBtn>
       </div>
 
       <Collapsible title="Reference configurations">
@@ -225,6 +260,7 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
           </Suspense>
         </div>
       </Collapsible>
+      {cloneContextHolder}
     </div>
   );
 }

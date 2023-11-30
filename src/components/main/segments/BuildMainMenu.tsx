@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { Button, Switch, Tag } from 'antd';
 import { useRouter } from 'next/navigation';
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
@@ -19,6 +19,7 @@ import {
   SearchType,
   configListAtom,
   searchConfigListTypeAtom,
+  triggerRefetchAtom,
 } from '@/state/brain-model-config-list';
 import { cloneBrainModelConfig, renameBrainModelConfig } from '@/api/nexus';
 import { getBrainModelConfigsByNameQuery } from '@/queries/es';
@@ -55,9 +56,6 @@ const BUILD_MENU: Array<SubMenuList<BuildMenuKey>> = [
     Component: () => <BuildBrowseModel />,
   },
 ];
-
-const refetchTriggerAtom = atom<{}>({});
-const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
 
 function BuildModelItem({
   id,

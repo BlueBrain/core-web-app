@@ -242,9 +242,16 @@ export default function ApplicationSidebar({
   const pathname = usePathname();
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
 
-  useOnClickOutside(ref, () => {
-    if (expanded) toggleExpand();
-  });
+  useOnClickOutside(
+    ref,
+    () => {
+      if (expanded) toggleExpand();
+    },
+    ['mousedown', 'touchstart'],
+    (event) => {
+      return event && (event.target as HTMLElement)?.closest('.ant-modal-root');
+    }
+  );
 
   return (
     <div
