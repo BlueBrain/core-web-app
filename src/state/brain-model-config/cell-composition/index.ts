@@ -71,8 +71,7 @@ export const setLocalConfigPayloadAtom = atom<null, [CellCompositionConfigPayloa
 
     if (!remoteConfig) return;
 
-    const localConfigPayloadWeakMap = get(localConfigPayloadWeakMapAtom);
-    localConfigPayloadWeakMap.set(remoteConfig, configPayload);
+    set(localConfigPayloadWeakMapAtom, new WeakMap().set(remoteConfig, configPayload));
   }
 );
 
