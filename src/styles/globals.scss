@@ -52,8 +52,7 @@ input[type='number'] {
       margin-right: 5px;
     }
     .primary-scrollbar::-webkit-scrollbar-track {
-      @apply bg-white;
-      border-radius: 4px;
+      @apply rounded bg-[rgba(0_0_0_0.2)];
     }
     .primary-scrollbar::-webkit-scrollbar-thumb {
       @apply bg-primary-4;
