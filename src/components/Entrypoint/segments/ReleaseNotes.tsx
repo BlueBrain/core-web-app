@@ -1,5 +1,6 @@
 import kebabCase from 'lodash/kebabCase';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PlusOutlined } from '@ant-design/icons';
 
 import { basePath } from '@/config';
@@ -52,11 +53,12 @@ function ReleaseNote({
         'hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:backdrop-blur-[2px] hover:bg-primary-8 hover:rounded-sm'
       )}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={image.length ? image : `${basePath}/images/obp_fullbrain.png`}
         alt={title}
         className="w-32 h-auto flex-grow-0 flex-shrink-0"
+        width={984}
+        height={927}
       />
       <div className="flex flex-col items-start gap-y-1 flex-1 basis-3/5 p-4">
         <div className="font-light text-sm text-white line-clamp-1">{release}</div>
@@ -73,7 +75,7 @@ export default function ReleaseNotes() {
       <div className="inline-flex flex-row items-center justify-between w-full mb-4">
         <h2 className="font-bold text-lg text-white select-none">Release notes</h2>
         <Link
-          href="/about/release-notes"
+          href="/about/releases"
           type="button"
           className="inline-flex flex-row gap-2 items-center"
         >
@@ -81,7 +83,7 @@ export default function ReleaseNotes() {
           <PlusOutlined className="text-white w-3 h-3" />
         </Link>
       </div>
-      <div className="grid grid-flow-col items-stretch justify-between gap-2">
+      <div className="grid grid-flow-col items-stretch gap-2">
         {RELEASE_NOTES_SAMPLE.map(({ image, release, seeable, title }, ind) => (
           <ReleaseNote
             key={kebabCase(`${release}-${title}-${ind}`)}

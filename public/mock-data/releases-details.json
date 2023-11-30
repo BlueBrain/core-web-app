@@ -1,0 +1,50 @@
+{
+  "id": "release-1",
+  "version": "v0.04",
+  "date": "2023-11-17T12:03:01.811Z",
+  "title": "340 new morphologies added",
+  "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+  "features": {
+    "explore": {
+      "title": "Explore",
+      "description": "Occaecat occaecat Lorem anim aliqua ad occaecat. Qui nostrud quis enim ea anim do veniam voluptate culpa in. Reprehenderit velit laboris ea laboris proident incididunt culpa sint cupidatat minim qui.",
+      "notes": [
+        "Ipsum non nisi minim velit ipsum laborum id irure culpa. Mollit incididunt dolore labore do nulla aute. Aliqua consectetur sit cillum irure consectetur dolor est veniam aute dolor. Officia ipsum ea nostrud nostrud ut.",
+        "Est voluptate aliquip nisi adipisicing dolor tempor cupidatat. Amet cillum quis labore Lorem nisi proident irure voluptate sunt sint proident nulla nostrud. Aliqua ullamco elit amet deserunt mollit elit commodo. Ea sunt proident dolore consequat cillum deserunt eu do amet ex ipsum aliqua minim magna. Consectetur excepteur laboris commodo enim.",
+        "Non culpa tempor anim qui non consequat. Cillum aliquip consequat qui ex ullamco incididunt nulla duis eu do adipisicing anim consectetur amet. Cillum ut ut pariatur sint excepteur ipsum.",
+        "Proident adipisicing aliqua consequat ullamco ea et cillum tempor aliquip eu et incididunt. Aliquip exercitation minim laboris nostrud nulla nulla ipsum velit officia duis deserunt non. Qui adipisicing enim ex voluptate."
+      ]
+    },
+    "build": {
+      "title": "build",
+      "description": "Nisi excepteur quis officia velit minim cupidatat excepteur sit. Enim sint pariatur laboris ipsum esse aliqua nostrud proident. Ipsum aliqua voluptate laborum esse aliqua proident in. Laborum ullamco nulla ad reprehenderit proident duis. Dolore veniam in culpa consequat fugiat nostrud fugiat. Duis irure sint fugiat cillum aliquip quis reprehenderit culpa. Mollit consequat cupidatat qui ea.",
+      "notes": [
+        "Incididunt proident consequat minim sint excepteur pariatur incididunt mollit officia. Fugiat dolor occaecat cupidatat ea sint aliqua pariatur. Magna aute do nisi aute pariatur enim ullamco.",
+        "Nostrud occaecat consequat ea tempor. Nulla sit nisi mollit in esse consectetur irure cillum amet est dolor dolore incididunt. Ipsum laboris Lorem aliquip occaecat nisi sunt ullamco nisi. Occaecat adipisicing veniam labore id dolore deserunt nulla consectetur nulla.",
+        "Aute occaecat minim in laboris consectetur culpa exercitation nulla enim. Cupidatat Lorem culpa velit mollit pariatur excepteur consequat elit sit consequat adipisicing laborum. Dolore ut ullamco amet quis mollit esse anim. Fugiat adipisicing occaecat Lorem commodo dolor ipsum tempor voluptate nisi. Aliqua aliqua fugiat ex sint sint nisi tempor duis labore sit veniam aliquip. Aute sunt eu sunt aute pariatur laborum anim. Labore culpa quis et incididunt irure velit."
+      ]
+    },
+    "simulate": {
+      "title": "Simulate",
+      "description": "Officia nostrud ea quis dolore nisi dolor aute duis ex cupidatat. Esse ea quis minim cillum. Dolore cillum irure duis mollit exercitation consequat eiusmod.",
+      "notes": [
+        "Elit deserunt aute est sunt magna Lorem mollit. Cillum ullamco velit consequat aliqua sint adipisicing id. Non aliquip Lorem non anim et. Ea incididunt ex culpa adipisicing officia deserunt amet ullamco tempor incididunt irure ut aliquip. Adipisicing do non velit ex est culpa. Ullamco laboris quis officia et nostrud tempor non occaecat veniam exercitation nisi ullamco nulla ut. Dolor reprehenderit sit aliqua non ullamco incididunt excepteur duis nulla.",
+        "Ipsum sit aute anim voluptate. Quis magna exercitation quis ipsum laboris ad consectetur elit laboris esse ex et enim. Dolore irure anim aliqua non. Labore ad dolor non cillum. Occaecat magna mollit consequat laborum ea ipsum veniam fugiat qui ut. Occaecat esse mollit magna eu officia nulla velit.",
+        "Exercitation cillum officia mollit est laborum ea ex eiusmod ipsum. Cillum elit fugiat mollit officia incididunt adipisicing fugiat voluptate duis enim. Occaecat duis aliquip et sunt fugiat nisi duis elit do minim labore et. Reprehenderit anim mollit cillum id labore magna velit esse et deserunt dolore. Proident proident ex quis nisi officia dolor cupidatat deserunt labore culpa laboris. Exercitation commodo labore consequat incididunt quis magna.",
+        "Ipsum cillum mollit adipisicing occaecat laboris esse tempor. Adipisicing eu Lorem sint commodo dolor qui amet magna quis sit qui exercitation dolor officia. Amet sint consectetur tempor irure esse velit.",
+        "Do enim amet cillum ad incididunt quis nisi consectetur reprehenderit aliqua in. Proident ut duis aute sunt laboris culpa sint mollit excepteur elit est. Lorem excepteur culpa excepteur deserunt amet. Magna deserunt occaecat adipisicing labore eiusmod sint commodo ullamco enim eiusmod cupidatat elit laborum. Minim sint nostrud officia pariatur reprehenderit. Non duis fugiat duis reprehenderit minim irure incididunt ipsum labore qui proident et duis cillum. Elit ullamco deserunt nostrud ex culpa sit in eiusmod sunt quis officia est veniam adipisicing."
+      ]
+    },
+    "expirement": {
+      "title": "Expirement",
+      "description": "Officia nostrud ea quis dolore nisi dolor aute duis ex cupidatat. Esse ea quis minim cillum. Dolore cillum irure duis mollit exercitation consequat eiusmod.",
+      "notes": [
+        "Elit deserunt aute est sunt magna Lorem mollit. Cillum ullamco velit consequat aliqua sint adipisicing id. Non aliquip Lorem non anim et. Ea incididunt ex culpa adipisicing officia deserunt amet ullamco tempor incididunt irure ut aliquip. Adipisicing do non velit ex est culpa. Ullamco laboris quis officia et nostrud tempor non occaecat veniam exercitation nisi ullamco nulla ut. Dolor reprehenderit sit aliqua non ullamco incididunt excepteur duis nulla.",
+        "Ipsum sit aute anim voluptate. Quis magna exercitation quis ipsum laboris ad consectetur elit laboris esse ex et enim. Dolore irure anim aliqua non. Labore ad dolor non cillum. Occaecat magna mollit consequat laborum ea ipsum veniam fugiat qui ut. Occaecat esse mollit magna eu officia nulla velit.",
+        "Exercitation cillum officia mollit est laborum ea ex eiusmod ipsum. Cillum elit fugiat mollit officia incididunt adipisicing fugiat voluptate duis enim. Occaecat duis aliquip et sunt fugiat nisi duis elit do minim labore et. Reprehenderit anim mollit cillum id labore magna velit esse et deserunt dolore. Proident proident ex quis nisi officia dolor cupidatat deserunt labore culpa laboris. Exercitation commodo labore consequat incididunt quis magna.",
+        "Ipsum cillum mollit adipisicing occaecat laboris esse tempor. Adipisicing eu Lorem sint commodo dolor qui amet magna quis sit qui exercitation dolor officia. Amet sint consectetur tempor irure esse velit.",
+        "Do enim amet cillum ad incididunt quis nisi consectetur reprehenderit aliqua in. Proident ut duis aute sunt laboris culpa sint mollit excepteur elit est. Lorem excepteur culpa excepteur deserunt amet. Magna deserunt occaecat adipisicing labore eiusmod sint commodo ullamco enim eiusmod cupidatat elit laborum. Minim sint nostrud officia pariatur reprehenderit. Non duis fugiat duis reprehenderit minim irure incididunt ipsum labore qui proident et duis cillum. Elit ullamco deserunt nostrud ex culpa sit in eiusmod sunt quis officia est veniam adipisicing."
+      ]
+    }
+  }
+}

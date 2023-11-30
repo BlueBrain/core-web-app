@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-
 import { ErrorBoundary } from '@sentry/nextjs';
-import { OBPLogo } from '@/components/Entrypoint/segments/Splash';
+
 import { classNames } from '@/util/utils';
+import { OBPLogo } from '@/components/Entrypoint/segments/Splash';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import AboutMenu from '@/components/About/Menu';
 import { basePath } from '@/config';

@@ -1,3 +1,3 @@
-export default function Releases() {
-  return <div>Releases</div>;
+export default function ReleasesPage() {
+  return null;
 }
