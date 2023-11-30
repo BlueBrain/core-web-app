@@ -22,13 +22,13 @@ export function fetchRules(session: Session, resourceIds: string[]): Promise<Rul
 
 export function fetchResourceBasedInference(
   session: Session,
-  requestBody: ResourceBasedInferenceRequest
+  requestBody: ResourceBasedInferenceRequest,
+  signal?: AbortSignal
 ): Promise<ResourceBasedInferenceResponse | InferenceError> {
-  const result = fetch(`${BASE_URL}/infer`, {
+  return fetch(`${BASE_URL}/infer`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
-    body: JSON.stringify(requestBody), // Add an empty JSON object as the request body
+    body: JSON.stringify(requestBody),
+    signal,
   }).then((response) => response.json());
-
-  return result;
 }

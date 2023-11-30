@@ -13,9 +13,10 @@ export type DataQuery = {
   query: {};
 };
 
-export async function fetchEsResourcesByType(accessToken: string, dataQuery: DataQuery) {
-  if (!accessToken) throw new Error('Access token should be defined');
-
+export async function fetchEsResourcesByType(
+  accessToken: string,
+  dataQuery: DataQuery
+): Promise<FlattenedExploreESResponse> {
   return fetch(API_SEARCH, {
     method: 'POST',
     headers: createHeaders(accessToken),

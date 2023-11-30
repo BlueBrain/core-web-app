@@ -92,6 +92,8 @@ function flattenRules(formattedRules: Rule[], { rules }: RulesOutput[0]): Rule[]
   );
 }
 
+export const resourceBasedRequestControllerMap = new Map<string, AbortController>();
+
 // Reduce the rules response into a (flat) array of ResourceBasedRule objects.
 export const rulesAtom = atomFamily((resourceId: string) =>
   atom<Promise<Rule[] | undefined>>(async (get) => {
@@ -118,6 +120,7 @@ export const selectedCardsMetricAtom = atom<CardMetricIds>(DEFAULT_CARD_METRIC);
 export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
   atom<Promise<ResourceBasedInferenceRequest | null>>(async (get) => {
     const rules = await get(rulesAtom(resourceId));
+
     const selectedRules = await get(selectedRulesAtom(resourceId));
     const limitQueryParameter = get(limitQueryParameterAtom(resourceId));
 
@@ -158,11 +161,17 @@ export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>
 
     if (!session) return null;
 
+    resourceBasedRequestControllerMap.set(resourceId, new AbortController());
+
     const request = await get(resourceBasedRequestAtom(resourceId));
 
     if (request === null) return null; // No rules
 
-    const results = await fetchResourceBasedInference(session, request);
+    const results = await fetchResourceBasedInference(
+      session,
+      request,
+      resourceBasedRequestControllerMap.get(resourceId)?.signal
+    );
 
     if (!Array.isArray(results)) return null; // Error
 
@@ -200,6 +209,8 @@ export const resourceBasedResponseRawAtom = atomFamily(
       const query = fetchDataQueryUsingIds(DEFAULT_CARDS_NUMBER, PAGE_NUMBER, filters, ids);
 
       const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
+
+      if (!esResponse) return null; // Error
 
       // Use sortBy to order the results based on the order of IDs in resourceBasedResponseResults
       esResponse.hits =
