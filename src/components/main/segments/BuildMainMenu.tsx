@@ -65,7 +65,7 @@ function BuildModelItem({
 }: CuratedModel & { openCloneModel: () => void }) {
   const href = `${BUILD_BASE_HREF}?brainModelConfigId=${encodeURIComponent(collapseId(id))}`;
   return (
-    <div className="border border-neutral-2 p-4 rounded-md hover:bg-gray-50 cursor-pointer">
+    <div className="border border-neutral-2 p-4 rounded-md hover:bg-gray-50 cursor-pointer max-w-[40%]">
       <div className="block">
         <h3 className="text-primary-8 font-bold text-xl">{name}</h3>
         <p className="text-gray-400 font-normal w-3/4 line-clamp-2">{description}</p>

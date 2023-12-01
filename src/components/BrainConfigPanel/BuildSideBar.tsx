@@ -36,16 +36,6 @@ export const CURATED_MODELS = [
     name: 'Release 23.01',
     description: 'Fully supported by circuit building.',
   },
-  {
-    id: 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/fa12833f-5f40-4f20-bdec-2cab995c23d4',
-    name: 'Release 23.02',
-    description: 'With Synapse config.',
-  },
-  {
-    id: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations/f2bf4c1a-cd20-43e9-bbc1-5fee116266c5',
-    name: 'Release 23.03',
-    description: 'With MicroConnectome config.',
-  },
 ];
 
 function BrainModelConfigName() {
