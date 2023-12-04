@@ -26,22 +26,23 @@ const MAIN_MENU_LIST: Array<MainMenuItem> = [
   {
     id: 'main-explore-entry',
     title: 'Explore',
-    description: 'Lorem irure in consequat sit consequat ipsum sint elit.',
+    description:
+      'Explore a large collection of neuronal models, virtual simulations, and brain cell distribution in a 3D and interactive manner',
     Component: ExploreMainMenu,
     bgcolor: 'bg-primary-6',
   },
   {
     id: 'main-build-entry',
     title: 'Build',
-    description: 'Sint elit incididunt in excepteur culpa exercitation enim velit duis.',
+    description:
+      'Build your own brain configurations by customizing the cell compositions, assigning neuronal models and configuring the desired connectivity pattern.',
     Component: BuildMainMenu,
     bgcolor: 'bg-primary-7',
   },
   {
     id: 'main-simulate-entry',
     title: 'Simulate',
-    description:
-      'Do officia esse ipsum nisi sit nisi sunt sunt occaecat esse labore elit ipsum eiusmod.',
+    description: 'Run your own virtual experiments and simulations.',
     Component: SimulateMainMenu,
     bgcolor: 'bg-primary-8',
   },
@@ -60,7 +61,7 @@ export function MainMenuSingleItem({
       type="button"
       onClick={onSelect(id)}
       className={classNames(
-        'py-4 px-5 hover:bg-white text-left group flex-1 basis-1/3',
+        'py-4 px-5 hover:bg-white text-left group flex-1 basis-1/3 flex flex-col items-start',
         bgcolor,
         selected && 'bg-white shadow-lg'
       )}
