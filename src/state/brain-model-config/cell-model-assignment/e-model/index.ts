@@ -14,7 +14,6 @@ import {
   ExemplarMorphologyDataType,
   ExperimentalTracesDataType,
   ExtractionTargetsConfiguration,
-  ExtractionTargetsConfigurationPayload,
   FeatureParameterGroup,
   FeaturePresetName,
   NeuronMorphology,
@@ -41,7 +40,11 @@ import {
   getEModelQuery,
   getEntityListByIdsQuery,
 } from '@/queries/es';
-import { eTypeMechanismMapId, featureAutoTargets } from '@/constants/cell-model-assignment/e-model';
+import {
+  eTypeMechanismMapId,
+  featureAutoTargets,
+  presetNames,
+} from '@/constants/cell-model-assignment/e-model';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(null);
@@ -59,13 +62,13 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
   }
 
   const remoteParameters = await get(eModelParameterAtom);
-  const eModelValidationThreshold = await get(eModelValidationThresholdAtom);
+  const eModelMaxGenerations = await get(eModelMaxGenerationsAtom);
 
-  if (!remoteParameters || !eModelValidationThreshold) return null;
+  if (!remoteParameters || !eModelMaxGenerations) return null;
 
   const simParams = convertRemoteParamsForUI({
     parameters: remoteParameters,
-    validationThreshold: eModelValidationThreshold,
+    maxGenerations: eModelMaxGenerations,
   });
   return simParams;
 });
@@ -73,41 +76,12 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
 export const featureSelectedPresetAtom = atom<FeaturePresetName>('firing_pattern');
 
 export const featureParametersAtom = atom<Promise<FeatureParameterGroup | null>>(async (get) => {
-  const eModelEditMode = get(eModelEditModeAtom);
+  const featureSelectedPreset = get(featureSelectedPresetAtom) || presetNames[0];
+  if (!featureSelectedPreset) return null;
 
-  if (eModelEditMode) {
-    const featureSelectedPreset = get(featureSelectedPresetAtom);
-    const featuresPerPreset = featureAutoTargets[featureSelectedPreset]
-      .efeatures as AllFeatureKeys[];
+  const featuresPerPreset = featureAutoTargets[featureSelectedPreset].efeatures as AllFeatureKeys[];
 
-    return convertFeaturesForUI(featuresPerPreset);
-  }
-
-  const isOptimizationConfig = get(selectedEModelAtom)?.isOptimizationConfig;
-
-  if (isOptimizationConfig) {
-    const payload = await get(eModelOptimizationPayloadAtom);
-    const featureSelectedPreset = payload?.featurePresetName;
-    if (!featureSelectedPreset) return null;
-
-    const featuresPerPreset = featureAutoTargets[featureSelectedPreset]
-      .efeatures as AllFeatureKeys[];
-
-    return convertFeaturesForUI(featuresPerPreset);
-  }
-
-  const session = get(sessionAtom);
-  const eModelExtractionTargetsConfiguration = await get(eModelExtractionTargetsConfigurationAtom);
-
-  if (!eModelExtractionTargetsConfiguration || !session) return null;
-
-  const { contentUrl } = eModelExtractionTargetsConfiguration.distribution;
-  const payload = await fetchJsonFileByUrl<ExtractionTargetsConfigurationPayload>(
-    contentUrl,
-    session
-  );
-  const featureNames = payload.targets.map((f) => f.efeature);
-  return convertFeaturesForUI(featureNames);
+  return convertFeaturesForUI(featuresPerPreset);
 });
 
 export const exemplarMorphologyAtom = atom<Promise<ExemplarMorphologyDataType | null>>(
@@ -303,7 +277,7 @@ const eModelPipelineSettingsIdAtom = atom<Promise<string | null>>(async (get) =>
   return modelPipelineSettings['@id'];
 });
 
-const eModelValidationThresholdAtom = atom<Promise<number | null>>(async (get) => {
+const eModelMaxGenerationsAtom = atom<Promise<number | null>>(async (get) => {
   const session = get(sessionAtom);
   const eModelPipelineSettingsId = await get(eModelPipelineSettingsIdAtom);
 
@@ -316,7 +290,7 @@ const eModelValidationThresholdAtom = atom<Promise<number | null>>(async (get) =
 
   const url = pipelineSettingResource.distribution.contentUrl;
   const payload = await fetchJsonFileByUrl<EModelPipelineSettingsPayload>(url, session);
-  return payload.validation_threshold;
+  return payload.max_ngen;
 });
 
 export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
@@ -506,7 +480,6 @@ export function configIsFulfilled(config: any): config is EModelUIConfig {
     config.mType &&
     config.brainRegionName &&
     config.brainRegionId &&
-    config.featurePresetName &&
     config.morphologies?.length === 1 &&
     config.traces?.length &&
     config.parameters
@@ -519,7 +492,6 @@ export const assembledEModelUIConfigAtom = atom<Promise<EModelUIConfig | null>>(
 
   const config = {
     mechanism: [await get(eModelMechanismsAtom)],
-    featurePresetName: get(featureSelectedPresetAtom),
     traces: await get(experimentalTracesAtom),
     morphologies: [await get(exemplarMorphologyAtom)],
     parameters: await get(simulationParametersAtom),

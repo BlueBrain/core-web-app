@@ -30,7 +30,7 @@ export type SimulationParameterKeys =
   | 'Ra'
   | 'Initial voltage'
   | 'LJP (liquid junction potential)'
-  | 'Validation threshold';
+  | 'Max optimisation generation';
 export type SimulationParameter = Record<SimulationParameterKeys, number>;
 
 export interface ExemplarMorphologyDataType {
@@ -40,6 +40,7 @@ export interface ExemplarMorphologyDataType {
   brainLocation: string;
   mType: string;
   contributor: string;
+  isPlaceholder: boolean;
 }
 
 export interface ExperimentalTracesDataType {
@@ -213,7 +214,7 @@ export interface EModelPipelineSettings extends EModelCommonProps {
 export interface EModelPipelineSettingsResource extends ResourceMetadata, EModelPipelineSettings {}
 
 export interface EModelPipelineSettingsPayload extends Record<string, number> {
-  validation_threshold: number;
+  max_ngen: number;
 }
 
 /* --------------------- ExtractionTargetsConfiguration --------------------- */
@@ -353,7 +354,11 @@ export interface TraceResource extends ResourceMetadata, Trace {}
 export type NeuronMorphologyType = 'NeuronMorphology';
 
 export interface NeuronMorphology extends Entity {
-  '@type': ['Entity', NeuronMorphologyType, 'ReconstructedCell'];
+  '@type': [
+    'Entity',
+    NeuronMorphologyType,
+    'ReconstructedNeuronMorphology' | 'SynthesizedNeuronMorphology'
+  ];
   contribution: ContributionEntity;
   distribution: Distribution;
   objectOfStudy: EModelObjectOfStudy;
@@ -412,7 +417,6 @@ export interface EModelUIConfig {
   traces: ExperimentalTracesDataType[];
   mechanism: MechanismForUI[];
   parameters: SimulationParameter;
-  featurePresetName: FeaturePresetName;
   mType: string;
   eType: string;
   brainRegionName: string;
@@ -448,5 +452,5 @@ export interface EModelOptimizationConfigResource
 
 export interface EModelRemoteParameters {
   parameters: EModelConfigurationParameter[];
-  validationThreshold: number;
+  maxGenerations: number;
 }

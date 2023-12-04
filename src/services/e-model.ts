@@ -38,10 +38,10 @@ export function convertRemoteParamsForUI(
   const ra = lodashFind(remoteParams.parameters, ['name', 'Ra'])?.value;
   const temp = lodashFind(remoteParams.parameters, ['name', 'celsius'])?.value;
   const voltage = lodashFind(remoteParams.parameters, ['name', 'v_init'])?.value;
-  const { validationThreshold } = remoteParams;
+  const { maxGenerations } = remoteParams;
 
   if (
-    [ra, temp, voltage, validationThreshold].some(
+    [ra, temp, voltage, maxGenerations].some(
       (value) => !value || Array.isArray(value) || Number.isNaN(value)
     )
   ) {
@@ -53,7 +53,7 @@ export function convertRemoteParamsForUI(
     Ra: Number(ra),
     'Initial voltage': Number(voltage),
     'LJP (liquid junction potential)': 14.0,
-    'Validation threshold': validationThreshold || 10,
+    'Max optimisation generation': maxGenerations || 10,
   };
 }
 
@@ -63,6 +63,7 @@ export function convertMorphologyForUI(
   const commonProps = {
     '@id': remoteMorphology['@id'],
     name: remoteMorphology.name,
+    isPlaceholder: remoteMorphology['@type'].includes('SynthesizedNeuronMorphology'),
   };
 
   if ('objectOfStudy' in remoteMorphology) {

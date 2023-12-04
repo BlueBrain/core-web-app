@@ -1,11 +1,7 @@
-import { useEffect } from 'react';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
-import { CheckCircleFilled } from '@ant-design/icons';
 import FeatureSelectionItem from './FeatureSelectionItem';
 import {
-  eModelEditModeAtom,
-  eModelUIConfigAtom,
   featureParametersAtom,
   featureSelectedPresetAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
@@ -15,13 +11,12 @@ import GenericButton from '@/components/Global/GenericButton';
 
 export default function FeatureSelectionContainer() {
   const featureParameters = useAtomValue(featureParametersAtom);
-  const eModelEditMode = useAtomValue(eModelEditModeAtom);
 
   if (!featureParameters) return null;
 
   return (
     <>
-      {eModelEditMode && <PresetSelector />}
+      <PresetSelector />
 
       <FeatureSelectionItem featureCategory="Spike shape" featureGroup={featureParameters} />
       <FeatureSelectionItem featureCategory="Spike event" featureGroup={featureParameters} />
@@ -32,16 +27,6 @@ export default function FeatureSelectionContainer() {
 
 function PresetSelector() {
   const [featureSelectedPreset, setFeatureSelectedPreset] = useAtom(featureSelectedPresetAtom);
-  const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
-
-  useEffect(() => {
-    if (!featureSelectedPreset) return;
-
-    setEModelUIConfig((oldAtomData) => ({
-      ...oldAtomData,
-      featurePresetName: featureSelectedPreset,
-    }));
-  }, [featureSelectedPreset, setEModelUIConfig]);
 
   return (
     <>
@@ -56,12 +41,7 @@ function PresetSelector() {
               key={presetName}
               className={classNames(isSelected ? 'text-white bg-primary-8' : 'text-primary-8')}
               onClick={() => setFeatureSelectedPreset(presetName)}
-              text={
-                <>
-                  {presetName}
-                  {isSelected && <CheckCircleFilled className="ml-2" />}
-                </>
-              }
+              text={presetName}
             />
           );
         })}

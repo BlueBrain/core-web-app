@@ -243,7 +243,7 @@ export const eModelMetaConfigs: WorkflowMetaConfigPlaceholders = {
       [Optimise]
       enable-internet=True
       nodes=1
-      time=1:30:00
+      time=20:00:00
       continue_unfinished_optimisation=True
 
       [Validation]
