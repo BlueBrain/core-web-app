@@ -56,6 +56,7 @@ function CustomTH({
 function CustomCell({ children, style, ...props }: { children: ReactNode; style: CSSProperties }) {
   const modifiedStyle = {
     ...style,
+    padding: '4px 6pX',
   };
 
   return (

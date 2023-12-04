@@ -151,6 +151,7 @@ export default function useExploreColumns(
               },
             }),
             sortOrder: getSortOrder(key),
+            align: term.style?.align,
           },
         ];
       }, initialColumns),

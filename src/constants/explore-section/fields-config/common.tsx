@@ -68,7 +68,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         sort: 'createdAt',
       },
     },
-    title: 'Creation date',
+    title: 'Registration date',
     filter: 'dateRange',
     render: {
       esResourceViewFn: (_t, r) => selectorFnDate(r._source?.createdAt),
@@ -79,6 +79,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       plural: 'Dates',
       singular: 'Date',
     },
+    style: { align: 'center' },
   },
   createdBy: {
     title: 'Created by',

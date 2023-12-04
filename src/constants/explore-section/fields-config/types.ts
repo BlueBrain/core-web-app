@@ -2,6 +2,11 @@ import { ReactNode } from 'react';
 import { FilterType } from '@/components/Filter/types';
 import { DeltaResource } from '@/types/explore-section/resources';
 
+type TableCellAlign = 'left' | 'right' | 'center';
+type ExploreFieldConfigStyle = {
+  align?: TableCellAlign;
+};
+
 export type ExploreFieldConfig = {
   esTerms?: EsTermsConfig;
   title: string;
@@ -17,6 +22,7 @@ export type ExploreFieldConfig = {
     plural: string;
     singular: string;
   };
+  style?: Partial<ExploreFieldConfigStyle>;
 };
 
 export type ExploreFieldsConfigProps = {
