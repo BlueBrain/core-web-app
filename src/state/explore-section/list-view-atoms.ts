@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { atomWithDefault, atomFamily, selectAtom } from 'jotai/utils';
+import { atomWithDefault, atomFamily } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import columnKeyToFilter from './column-key-to-filter';
 import { ExploreDataBrainRegionSource, SortState } from '@/types/explore-section/application';
@@ -174,12 +174,9 @@ export const totalAtom = atomFamily(
 
 export const aggregationsAtom = atomFamily(
   ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
-    selectAtom<
-      Promise<FlattenedExploreESResponse | null>,
-      Promise<FlattenedExploreESResponse['aggs'] | undefined>
-    >(
-      queryResponseAtom({ experimentTypeName, brainRegionSource }),
-      async (response) => response?.aggs
-    ),
+    atom<Promise<FlattenedExploreESResponse['aggs'] | undefined>>(async (get) => {
+      const response = await get(queryResponseAtom({ experimentTypeName, brainRegionSource }));
+      return response?.aggs;
+    }),
   isListAtomEqual
 );
