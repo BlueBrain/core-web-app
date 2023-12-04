@@ -27,7 +27,7 @@ function ReleaseFeatureItem({ id, feature, title, description, notes }: ReleaseF
       <ul className="border-y border-neutral-3 px-6 py-5 list-disc">
         {notes.map((note, ind) => (
           // eslint-disable-next-line react/no-array-index-key
-          <li key={`${id}-${feature}-${note}-${ind}`}>
+          <li key={`note-${id}-${feature}-${ind}`}>
             <p className="text-justify text-sm text-primary-8">{note}</p>
           </li>
         ))}

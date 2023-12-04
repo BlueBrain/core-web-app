@@ -255,7 +255,6 @@ function MySimulations() {
       {
         key: 'endedAtTime',
         name: 'Completed at',
-        sortable: true,
         center: true,
         sortPosition: 'left',
         sortFn: () => getSorterFn('endedAtTime'),

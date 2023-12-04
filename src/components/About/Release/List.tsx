@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 
 import FilledCalendar from '@/components/icons/FilledCalendar';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 export type Release = {
   id: string;
@@ -37,7 +38,7 @@ export function ReleaseCard({
       id={`release-${id}`}
       className="snap-start flex flex-col relative h-full border-x bg-[#0027661a] backdrop-blur-[2px] hover:shadow-md"
     >
-      <Image alt={title} {...{ src, width, height }} />
+      <Image alt={title} src={`${basePath}${src}`} {...{ width, height }} />
       <div
         className={classNames(
           'flex flex-col w-full p-4 transition-background duration-200 ease-out',

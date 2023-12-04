@@ -1,0 +1,83 @@
+{
+  "time": "Fall 2023",
+  "categories": [
+    {
+      "label": "All",
+      "value": "all"
+    },
+    {
+      "label": "Explore",
+      "value": "explore"
+    },
+    {
+      "label": "Build",
+      "value": "build"
+    },
+    {
+      "label": "Simulate",
+      "value": "simulate"
+    }
+  ],
+  "features": [
+    {
+      "id": "a12e705c-32bd-402e-8f53-5d9d8e297bdd",
+      "title": "Implementation of resource capture",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "explore"
+    },
+    {
+      "id": "779d219c-2804-4819-a140-ae87a18ee58a",
+      "title": "Brain Mapping and Visualization",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "explore"
+    },
+    {
+      "id": "82c61d40-d664-4332-a630-95b7d56d0efb",
+      "title": "Circuit Modeling Framework",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "build"
+    },
+    {
+      "id": "5761f4fb-284e-4b6d-b315-8ceb533cf84f",
+      "title": "Electrophysiological Simulations",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "build"
+    },
+    {
+      "id": "de2aaf28-3b8e-458f-8d48-8269b9e115fd",
+      "title": "Real-Time Monitoring and Feedback",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "build"
+    },
+    {
+      "id": "bbc09ebb-695b-48b1-a1d5-f885182972cf",
+      "title": "Optogenetics and Chemogenetics Integration",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "simulate"
+    },
+    {
+      "id": "078a0ff2-9c27-4ca2-8df9-0d6d21451781",
+      "title": "Collaboration and Data Sharing",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "simulate"
+    },
+    {
+      "id": "687076f4-20e0-4fec-8b54-9f762eaa5631",
+      "title": "Performance Optimization and Scalability",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "explore"
+    },
+    {
+      "id": "476eb811-ebcb-4d92-b72d-5c32d893cee5",
+      "title": "Multi-Scale Modeling",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "build"
+    },
+    {
+      "id": "643ed409-4443-4c02-b7ef-9de57c86d1f2",
+      "title": "Virtual Reality Integration",
+      "description": "Enim id aliqua consectetur in pariatur consectetur quis magna aliquip nulla eiusmod nostrud aliquip. Aute irure est Lorem ea tempor cupidatat proident voluptate.",
+      "category": "build"
+    }
+  ]
+}

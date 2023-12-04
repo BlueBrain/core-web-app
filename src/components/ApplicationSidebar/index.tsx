@@ -238,7 +238,7 @@ export default function ApplicationSidebar({
   account = DefaultAccountPanel,
   navigation = AppNavigation,
 }: ApplicationSidebarProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
 
