@@ -30,16 +30,16 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
 
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
-  const aggregations = useAtomValue(
-    useMemo(
-      () => unwrap(resourceBasedResponseAggregationsAtom({ experimentTypeName, resourceId })),
-      [resourceId, experimentTypeName]
-    )
-  );
-
   const [filters, setFilters] = useAtom(
     useMemo(
       () => unwrap(filtersAtom({ experimentTypeName, resourceId })),
+      [experimentTypeName, resourceId]
+    )
+  );
+
+  const aggregations = useAtomValue(
+    useMemo(
+      () => unwrap(resourceBasedResponseAggregationsAtom({ resourceId, experimentTypeName })),
       [experimentTypeName, resourceId]
     )
   );
@@ -69,13 +69,13 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
               setDisplayControlPanel={setDisplayControlPanel}
               experimentTypeName={experimentTypeName}
               resourceId={resourceId}
-              disabled={!(aggregations && filters)}
+              disabled={!filters}
             />
           </div>
         )}
         <CardsControls />
       </div>
-      {displayControlPanel && aggregations && filters && (
+      {displayControlPanel && filters && (
         <div className="h-screen fixed right-0 top-0 z-50">
           <ControlPanel
             data-testid="detail-view-control-panel"

@@ -31,15 +31,15 @@ export default function WithControlPanel({
 
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
+  const [filters, setFilters] = useAtom(
+    useMemo(() => unwrap(filtersAtom({ experimentTypeName })), [experimentTypeName])
+  );
+
   const aggregations = useAtomValue(
     useMemo(
       () => unwrap(aggregationsAtom({ experimentTypeName, brainRegionSource })),
-      [brainRegionSource, experimentTypeName]
+      [experimentTypeName, brainRegionSource]
     )
-  );
-
-  const [filters, setFilters] = useAtom(
-    useMemo(() => unwrap(filtersAtom({ experimentTypeName })), [experimentTypeName])
   );
 
   return (
@@ -51,7 +51,7 @@ export default function WithControlPanel({
           brainRegionSource={brainRegionSource}
         />
       </section>
-      {displayControlPanel && aggregations && filters && (
+      {displayControlPanel && filters && (
         <ControlPanel
           data-testid="listing-view-control-panel"
           aggregations={aggregations}

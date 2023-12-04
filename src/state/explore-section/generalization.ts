@@ -92,8 +92,6 @@ function flattenRules(formattedRules: Rule[], { rules }: RulesOutput[0]): Rule[]
   );
 }
 
-export const resourceBasedRequestControllerMap = new Map<string, AbortController>();
-
 // Reduce the rules response into a (flat) array of ResourceBasedRule objects.
 export const rulesAtom = atomFamily((resourceId: string) =>
   atom<Promise<Rule[] | undefined>>(async (get) => {
@@ -156,22 +154,16 @@ export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
 );
 
 export const resourceBasedResponseAtom = atomFamily((resourceId: string) =>
-  atom<Promise<ResourceBasedInferenceResponse | null>>(async (get) => {
+  atom<Promise<ResourceBasedInferenceResponse | null>>(async (get, { signal }) => {
     const session = get(sessionAtom);
 
     if (!session) return null;
-
-    resourceBasedRequestControllerMap.set(resourceId, new AbortController());
 
     const request = await get(resourceBasedRequestAtom(resourceId));
 
     if (request === null) return null; // No rules
 
-    const results = await fetchResourceBasedInference(
-      session,
-      request,
-      resourceBasedRequestControllerMap.get(resourceId)?.signal
-    );
+    const results = await fetchResourceBasedInference(session, request, signal);
 
     if (!Array.isArray(results)) return null; // Error
 
@@ -191,7 +183,7 @@ export const resourceBasedResponseResultsAtom = atomFamily((resourceId: string) 
 
 export const resourceBasedResponseRawAtom = atomFamily(
   ({ resourceId, experimentTypeName }: GenFamilyType) =>
-    atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
+    atom<Promise<FlattenedExploreESResponse | null>>(async (get, { signal }) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
@@ -208,7 +200,8 @@ export const resourceBasedResponseRawAtom = atomFamily(
 
       const query = fetchDataQueryUsingIds(DEFAULT_CARDS_NUMBER, PAGE_NUMBER, filters, ids);
 
-      const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
+      const esResponse =
+        query && (await fetchEsResourcesByType(session.accessToken, query, signal));
 
       if (!esResponse) return null; // Error
 

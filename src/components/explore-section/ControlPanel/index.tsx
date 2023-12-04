@@ -1,8 +1,8 @@
 import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import { unwrap } from 'jotai/utils';
 import { useAtom } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import {
   Filter,
@@ -29,7 +29,7 @@ export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
   experimentTypeName: string;
-  aggregations: Aggregations;
+  aggregations?: Aggregations;
   filters: Filter[];
   setFilters: any;
 };

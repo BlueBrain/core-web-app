@@ -3,11 +3,7 @@ import { DownOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import {
-  rulesAtom,
-  selectedRulesAtom,
-  resourceBasedRequestControllerMap,
-} from '@/state/explore-section/generalization';
+import { rulesAtom, selectedRulesAtom } from '@/state/explore-section/generalization';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import styles from './styles.module.scss';
 
@@ -30,12 +26,6 @@ function RulesControls() {
   );
 
   const onCheckBoxChange = (modelName: string) => {
-    // this code is used to cancel previous requests to kg inference when more recent changes are made
-    if (resourceBasedRequestControllerMap.has(resourceId)) {
-      resourceBasedRequestControllerMap.get(resourceId)?.abort('aborting previous request');
-      resourceBasedRequestControllerMap.set(resourceId, new AbortController());
-    }
-
     if (selectedRules) {
       setSelectedRules(
         selectedRules.includes(modelName)

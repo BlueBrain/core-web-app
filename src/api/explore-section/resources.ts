@@ -15,12 +15,14 @@ export type DataQuery = {
 
 export async function fetchEsResourcesByType(
   accessToken: string,
-  dataQuery: DataQuery
+  dataQuery: DataQuery,
+  signal?: AbortSignal
 ): Promise<FlattenedExploreESResponse> {
   return fetch(API_SEARCH, {
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify(dataQuery),
+    signal,
   })
     .then<ExploreESResponse>((response) => response.json())
     .then<FlattenedExploreESResponse>((data) => ({
