@@ -4,10 +4,10 @@ import sessionAtom from '@/state/session';
 import { meshDistributionsAtom } from '@/state/brain-regions';
 import { ApplicationSection } from '@/types/common';
 import { LoadingState, MeshVisibility, VisibilityType } from '@/components/ThreeDeeBrain/types';
-import detailedCircuitAtom from '@/state/circuit';
 import { BRAIN_REGION_PREFIX } from '@/constants/brain-hierarchy';
 import { fetchMesh, fetchPointCloud } from '@/components/ThreeDeeBrain/api';
 import { CIRCUIT_NOT_BUILT_ERROR } from '@/constants/errors';
+import { partialCircuitAtom } from '@/state/brain-model-config/cell-position';
 
 const CELL_API_BASE_PATH = 'https://cells.sbo.kcp.bbp.epfl.ch';
 
@@ -50,17 +50,17 @@ export const addMeshVisibilityAtom = atom(
  */
 export const getPointCloudAtom = (brainRegionId: string, circuitConfigPathOverride?: string) =>
   atom(async (get) => {
-    const detailedCircuit = await get(detailedCircuitAtom);
-    if (!detailedCircuit) {
+    const partialCircuit = await get(partialCircuitAtom);
+    if (!partialCircuit) {
       throw new Error(CIRCUIT_NOT_BUILT_ERROR);
     }
-    const detailedCircuitConfigPath =
-      detailedCircuit?.circuitConfigPath.url.replace('file://', '') || '';
+    const partialCircuitConfigPath =
+      partialCircuit.circuitConfigPath.url.replace('file://', '') || '';
 
     const circuitConfigPath =
       typeof circuitConfigPathOverride !== 'undefined'
         ? circuitConfigPathOverride
-        : detailedCircuitConfigPath;
+        : partialCircuitConfigPath;
 
     const url = `${CELL_API_BASE_PATH}/circuit?input_path=${encodeURIComponent(
       circuitConfigPath
