@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import set from 'lodash/fp/set';
 import getOr from 'lodash/fp/getOr';
 
-import { NavValue } from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 
 export function handleNavValueChange(
   navValue: NavValue,

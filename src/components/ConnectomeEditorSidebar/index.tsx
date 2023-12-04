@@ -16,7 +16,7 @@ import {
   leafIdsByRegionIdAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
-import { NavValue } from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 import { Nav as BrainTreeNav, Search as BrainTreeSearch } from '@/components/BrainTree';
 import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
 

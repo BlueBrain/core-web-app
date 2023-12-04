@@ -1,10 +1,11 @@
 'use client';
 
-import React, { RefObject, useRef, useState, useMemo, useEffect } from 'react';
+import { RefObject, useRef, useState, useMemo, useEffect } from 'react';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { Button } from 'antd';
 import { MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { unwrap, useResetAtom } from 'jotai/utils';
+
 import CollapsedBrainRegionsSidebar from './CollapsedBrainRegions';
 import { TitleComponentProps } from './types';
 import AlternateViewSelector from './AlternateViewSelector';
@@ -20,7 +21,7 @@ import {
   brainRegionSidebarIsCollapsedAtom,
   visibleBrainRegionsAtom,
 } from '@/state/brain-regions';
-import { NavValue } from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 import { BrainRegion } from '@/types/ontologies';
 import VisualizationTrigger from '@/components/build-section/BrainRegionSelector/VisualizationTrigger';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';

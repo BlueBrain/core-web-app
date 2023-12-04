@@ -6,11 +6,13 @@ import { arrayToTree } from 'performant-array-to-tree';
 import { Button, ConfigProvider, Spin, Tooltip } from 'antd';
 import { MinusOutlined } from '@ant-design/icons';
 import { unwrap } from 'jotai/utils';
+
 import ContextualTrigger from '../ContextualLiterature/Trigger';
 import { getMetric } from './util';
 import { NeuronCompositionEditorProps, NeuronCompositionItem } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
-import TreeNav, { NavValue } from '@/components/TreeNavItem';
+import TreeNav from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { BrainRegionIcon, MissingData } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';

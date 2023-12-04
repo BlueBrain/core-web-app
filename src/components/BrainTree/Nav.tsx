@@ -9,7 +9,8 @@ import React, {
 import { useAtomValue } from 'jotai';
 import { handleNavValueChange } from './util';
 import { alternateTreeWithRepresentationAtom } from '@/state/brain-regions';
-import TreeNav, { NavValue } from '@/components/TreeNavItem';
+import TreeNav from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 
 /**
  * This component is a wrapper for the TreeNav component that renders a TreeNav using the brain regions data.

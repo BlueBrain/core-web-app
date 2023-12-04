@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { formatNumber } from '@/util/common';
 import { CalculatedCompositionPair } from '@/types/composition/calculation';
-import { NavValue } from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 
 /**
  * Calculates the metric to be displayed based on whether count or density is

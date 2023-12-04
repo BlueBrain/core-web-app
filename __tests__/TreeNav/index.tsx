@@ -3,7 +3,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
 import data from './brain-regions.min.json';
-import TreeNav, { NavValue } from '@/components/TreeNavItem';
+import TreeNav from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
 import { sectionAtom } from '@/state/application';
 

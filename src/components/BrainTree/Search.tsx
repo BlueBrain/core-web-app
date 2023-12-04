@@ -8,7 +8,7 @@ import {
   setSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import Search from '@/components/Search';
-import { NavValue } from '@/components/TreeNavItem';
+import { NavValue } from '@/state/brain-regions/types';
 
 type SearchOption = {
   ancestors: string[] | undefined;

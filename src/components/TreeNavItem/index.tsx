@@ -8,9 +8,8 @@ import { classNames } from '@/util/utils';
 import { getDeeplyNestedChildrenFromNode } from '@/util/brain-hierarchy';
 import { visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { sectionAtom } from '@/state/application';
+import { NavValue } from '@/state/brain-regions/types';
 import styles from './tree-nav-item.module.css';
-
-export type NavValue = { [key: string]: NavValue } | null;
 
 type TreeNavItemProps = {
   className?: string;

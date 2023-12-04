@@ -4,3 +4,5 @@ export type SelectedBrainRegion = {
   leaves: string[] | null;
   representedInAnnotation: boolean;
 };
+
+export type NavValue = { [key: string]: NavValue } | null;
