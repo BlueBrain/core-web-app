@@ -3,7 +3,7 @@ import { atom, Atom } from 'jotai';
 import {
   cellCompositionWasBuiltAtom,
   cellPositionWasBuiltAtom,
-  emodelAssignmentWasBuiltAtom,
+  meModelWasBuiltAtom,
   morphologyAssignmentWasBuiltAtom,
   microConnectomeWasBuiltAtom,
   macroConnectomeWasBuiltAtom,
@@ -77,19 +77,19 @@ export const statusStructure: StatusStructureItem[] = [
       },
       {
         name: STEPS.E_MODEL,
-        statusAtom: emodelAssignmentWasBuiltAtom,
+        statusAtom: atom(async (get) => {
+          // TODO: replace this for proper atom when we have me-model in pipeline
+          const mModelWasBuilt = await get(morphologyAssignmentWasBuiltAtom);
+          const meModelWasBuilt = await get(meModelWasBuiltAtom);
+          return meModelWasBuilt && mModelWasBuilt;
+        }),
       },
       {
         name: STEPS.ME_MODEL,
-        statusAtom: atom(async (get) => {
-          // TODO: replace this for proper atom when we have me-model in pipeline
-          const eModelWasBuilt = await get(emodelAssignmentWasBuiltAtom);
-          const mModelWasBuilt = await get(morphologyAssignmentWasBuiltAtom);
-          return eModelWasBuilt && mModelWasBuilt;
-        }),
+        statusAtom: meModelWasBuiltAtom,
       },
     ],
-    targetConfigName: 'eModelAssignmentConfig',
+    targetConfigName: 'meModelConfig',
   },
   {
     name: GROUPS.CONNECTOME_DEFINITION,

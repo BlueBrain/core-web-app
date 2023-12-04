@@ -104,12 +104,6 @@ export const cellPositionConfigIdAtom = atom<Promise<string | null>>(async (get)
   return config?.configs.cellPositionConfig?.['@id'] ?? null;
 });
 
-export const eModelAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
-  const config = await get(configAtom);
-
-  return config?.configs.eModelAssignmentConfig?.['@id'] ?? null;
-});
-
 export const morphologyAssignmentConfigIdAtom = atom<Promise<string | null>>(async (get) => {
   const config = await get(configAtom);
 

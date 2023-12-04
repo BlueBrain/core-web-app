@@ -3,6 +3,7 @@ import debounce from 'lodash/debounce';
 import { omitDeep } from 'deepdash-es/standalone';
 import lodashSet from 'lodash/set';
 import { validator } from '@exodus/schemasafe';
+
 import { configAtom, configPayloadAtom, setLocalConfigPayloadAtom } from '.';
 import invalidateConfigAtom from '@/state/brain-model-config/util';
 import sessionAtom from '@/state/session';

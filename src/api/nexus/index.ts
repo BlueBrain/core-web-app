@@ -21,7 +21,6 @@ import {
   DetailedCircuitResource,
   VariantTaskActivityResource,
   VariantTaskConfigResource,
-  EModelAssignmentConfig,
   MorphologyAssignmentConfig,
   MicroConnectomeConfig,
   SynapseConfig,
@@ -40,7 +39,6 @@ import {
   MicroConnectomeDataOverridesResource,
   MicroConnectomeDataOverrides,
   CellCompositionConfigPayload,
-  EModelAssignmentConfigPayload,
   GeneratorConfig,
   GeneratorConfigPayload,
   SubConfigName,
@@ -368,27 +366,6 @@ export async function cloneCellPositionConfig(id: string, session: Session) {
     distribution: createDistribution(clonedPayloadMeta),
     configVersion: getConfigVersion(configName, config),
     generatorName: 'cell_position',
-  };
-
-  return createResource(clonedConfig, session);
-}
-
-export async function cloneEModelAssignmentConfig(id: string, session: Session) {
-  const configName: SubConfigName = 'eModelAssignmentConfig';
-  const config = await fetchResourceById<EModelAssignmentConfig>(id, session);
-  const payload = await getPayloadByConfig<EModelAssignmentConfigPayload, EModelAssignmentConfig>(
-    configName,
-    config,
-    session
-  );
-
-  const clonedPayloadMeta = await createJsonFile(payload, 'emodel-assignment-config.json', session);
-
-  const clonedConfig: EModelAssignmentConfig = {
-    ...config,
-    distribution: createDistribution(clonedPayloadMeta),
-    configVersion: getConfigVersion(configName, config),
-    generatorName: 'placeholder',
   };
 
   return createResource(clonedConfig, session);
@@ -733,11 +710,6 @@ export async function cloneBrainModelConfig(
     session
   );
 
-  const clonedEModelAssignmentConfigMetadata = await cloneEModelAssignmentConfig(
-    brainModelConfig.configs.eModelAssignmentConfig['@id'],
-    session
-  );
-
   const clonedMEModelConfigMetadata = await cloneMEModelConfig(
     brainModelConfig.configs.meModelConfig['@id'],
     session
@@ -774,10 +746,6 @@ export async function cloneBrainModelConfig(
       morphologyAssignmentConfig: {
         '@id': clonedMorphologyAssignmentConfigMetadata['@id'],
         '@type': ['MorphologyAssignmentConfig', 'Entity'],
-      },
-      eModelAssignmentConfig: {
-        '@id': clonedEModelAssignmentConfigMetadata['@id'],
-        '@type': ['EModelAssignmentConfig', 'Entity'],
       },
       meModelConfig: {
         '@id': clonedMEModelConfigMetadata['@id'],

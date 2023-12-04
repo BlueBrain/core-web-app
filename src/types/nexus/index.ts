@@ -16,10 +16,6 @@ export interface BrainModelConfig extends Entity {
       '@id': string;
       '@type': [CellPositionConfigType, 'Entity'];
     };
-    eModelAssignmentConfig: {
-      '@id': string;
-      '@type': [EModelAssignmentConfigType, 'Entity'];
-    };
     morphologyAssignmentConfig: {
       '@id': string;
       '@type': [MorphologyAssignmentConfigType, 'Entity'];
@@ -220,36 +216,6 @@ export interface DetailedCircuit extends Entity {
 }
 
 export interface DetailedCircuitResource extends ResourceMetadata, DetailedCircuit {}
-
-type PlaceholderGeneratorName = 'placeholder';
-type EModelAssignmentConfigType = 'EModelAssignmentConfig';
-
-export interface EModelAssignmentConfig extends Entity {
-  name: string;
-  description: string;
-  '@type': [EModelAssignmentConfigType, 'Entity'];
-  generatorName: PlaceholderGeneratorName;
-  distribution: Distribution;
-  configVersion: number;
-}
-
-export interface EModelAssignmentConfigResource extends ResourceMetadata, EModelAssignmentConfig {}
-
-export type EModelAssignmentConfigPayload = {
-  [rootBrainRegionURI: BrainRegionURI]: {
-    variantDefinition: {
-      algorithm: string;
-      version: string;
-    };
-    inputs: {
-      name: string;
-      type: 'Dataset';
-      id: string;
-    }[];
-    configuration: {};
-    jobConfiguration: Record<string, string | number>;
-  };
-};
 
 type MEModelGeneratorName = 'memodel';
 type MEModelConfigType = 'MEModelConfig';
@@ -557,7 +523,6 @@ export interface WholeBrainConnectomeStrengthResource
 export type GeneratorConfig =
   | CellCompositionConfig
   | CellPositionConfig
-  | EModelAssignmentConfig
   | MorphologyAssignmentConfig
   | MEModelConfig
   | MicroConnectomeConfig
@@ -567,7 +532,6 @@ export type GeneratorConfig =
 export type GeneratorConfigPayload =
   | CellCompositionConfigPayload
   | CellPositionConfigPayload
-  | EModelAssignmentConfigPayload
   | MorphologyAssignmentConfigPayload
   | MEModelConfigPayload
   | MicroConnectomeConfigPayload
@@ -577,7 +541,6 @@ export type GeneratorConfigPayload =
 export type SubConfigName =
   | 'cellCompositionConfig'
   | 'cellPositionConfig'
-  | 'eModelAssignmentConfig'
   | 'morphologyAssignmentConfig'
   | 'meModelConfig'
   | 'microConnectomeConfig'

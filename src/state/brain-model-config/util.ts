@@ -11,9 +11,9 @@ import {
 } from './cell-position';
 
 import {
-  configAtom as eModelAssignmentConfigAtom,
-  partialCircuitAtom as eModelAssignmentBuildArtefact,
-} from './emodel-assignment';
+  configAtom as meModelConfigAtom,
+  partialCircuitAtom as meModelBuildArtefact,
+} from './me-model';
 
 import {
   configAtom as morphologyAssignmentConfigAtom,
@@ -21,7 +21,7 @@ import {
 } from './cell-model-assignment/m-model';
 
 import {
-  configAtom as microConnectomeConfigAtom, // source fixed
+  configAtom as microConnectomeConfigAtom,
   partialCircuitAtom as microConnectomeBuildArtefact,
 } from './micro-connectome';
 
@@ -49,7 +49,7 @@ type BuildStepName =
   | 'cellComposition'
   | 'cellPosition'
   | 'morphologyAssignment'
-  | 'eModelAssignment'
+  | 'meModel'
   | 'microConnectome'
   | 'macroConnectome'
   | 'synapse';
@@ -77,9 +77,9 @@ const buildSteps: BuildStep[] = [
     buildArtefactAtom: morphologyAssignmentBuildArtefact,
   },
   {
-    name: 'eModelAssignment',
-    configAtom: eModelAssignmentConfigAtom,
-    buildArtefactAtom: eModelAssignmentBuildArtefact,
+    name: 'meModel',
+    configAtom: meModelConfigAtom,
+    buildArtefactAtom: meModelBuildArtefact,
   },
   {
     name: 'macroConnectome',

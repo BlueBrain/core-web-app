@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 
 import { cellCompositionAtom } from '@/state/brain-model-config/cell-composition';
 import { partialCircuitAtom as cellPositionPartialCircuitAtom } from '@/state/brain-model-config/cell-position';
-import { partialCircuitAtom as emodelAssignmentPartialCircuitAtom } from '@/state/brain-model-config/emodel-assignment';
+import { partialCircuitAtom as meModelPartialCircuitAtom } from '@/state/brain-model-config/me-model';
 import { partialCircuitAtom as morphologyAssignmentPartialCircuitAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import {
   partialCircuitAtom as microConnectomePartialCircuitAtom,
@@ -22,8 +22,8 @@ export const cellPositionWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
   return !!circuit;
 });
 
-export const emodelAssignmentWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
-  const circuit = await get(emodelAssignmentPartialCircuitAtom);
+export const meModelWasBuiltAtom = atom<Promise<boolean>>(async (get) => {
+  const circuit = await get(meModelPartialCircuitAtom);
 
   return !!circuit;
 });

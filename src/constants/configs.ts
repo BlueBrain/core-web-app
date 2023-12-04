@@ -6,7 +6,6 @@ export const defaultReleaseUrl =
 export const supportedUIConfigVersion: Record<SubConfigName, number> = {
   cellCompositionConfig: 1,
   cellPositionConfig: 0,
-  eModelAssignmentConfig: 0,
   morphologyAssignmentConfig: 1,
   meModelConfig: 1,
   macroConnectomeConfig: 0,

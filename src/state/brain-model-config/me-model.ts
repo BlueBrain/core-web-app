@@ -1,28 +1,26 @@
-'use client';
-
+/*
+  Note: this file was created separate instead of putting it into
+  state/brain-model-config/cell-model-assignment/me-model
+  to avoid cycle dependency
+*/
 import { atom } from 'jotai';
-import { eModelAssignmentConfigIdAtom } from './index';
-import sessionAtom from '@/state/session';
 
-import { fetchResourceById, fetchGeneratorTaskActivity } from '@/api/nexus';
+import { meModelConfigIdAtom } from './index';
 import {
-  EModelAssignmentConfigResource,
   DetailedCircuitResource,
   GeneratorTaskActivityResource,
+  MEModelConfigResource,
 } from '@/types/nexus';
+import sessionAtom from '@/state/session';
+import { fetchGeneratorTaskActivity, fetchResourceById } from '@/api/nexus';
 
-const refetchTriggerAtom = atom<{}>({});
-export const triggerRefetchAtom = atom(null, (get, set) => set(refetchTriggerAtom, {}));
-
-export const configAtom = atom<Promise<EModelAssignmentConfigResource | null>>(async (get) => {
+export const configAtom = atom<Promise<MEModelConfigResource | null>>(async (get) => {
   const session = get(sessionAtom);
-  const id = await get(eModelAssignmentConfigIdAtom);
-
-  get(refetchTriggerAtom);
+  const id = await get(meModelConfigIdAtom);
 
   if (!session || !id) return null;
 
-  return fetchResourceById<EModelAssignmentConfigResource>(id, session);
+  return fetchResourceById<MEModelConfigResource>(id, session);
 });
 
 const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(
