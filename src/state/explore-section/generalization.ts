@@ -47,12 +47,12 @@ export const expandedRowKeysAtom = atomFamily(() => atom<readonly Key[]>([]));
 export const limitQueryParameterAtom = atomFamily(() => atom(DEFAULT_CARDS_NUMBER));
 
 export const rulesResponseAtom = atomFamily((resourceId: string) =>
-  atom<Promise<RulesOutput | null>>(async (get) => {
+  atom<Promise<RulesOutput | null>>(async (get, { signal }) => {
     const session = get(sessionAtom);
 
     if (!session) return null;
 
-    const result = await fetchRules(session, [resourceId]);
+    const result = await fetchRules(session, [resourceId], signal);
 
     return result;
   })

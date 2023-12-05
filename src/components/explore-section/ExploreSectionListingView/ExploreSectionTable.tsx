@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
 import usePathname from '@/hooks/pathname';
-import { to64 } from '@/util/common';
+import { detailUrlBuilder } from '@/util/common';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { ExploreDownloadButton } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 import WithRowSelection, {
   RenderButtonProps,
 } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
+import { EXPERIMENT_TYPES } from '@/constants/explore-section/experiment-types';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
@@ -72,11 +73,14 @@ export function BaseTable({
   hasError,
   loading,
   rowSelection,
-}: TableProps<any> & { hasError?: boolean }) {
+  experimentTypeName,
+}: TableProps<any> & { hasError?: boolean; experimentTypeName: string }) {
   const router = useRouter();
   const pathname = usePathname();
 
   const setBackToListPath = useSetAtom(backToListPathAtom);
+
+  const explorePathForType = EXPERIMENT_TYPES[experimentTypeName].resourceBasePath;
 
   if (hasError) {
     return <div>Something went wrong</div>;
@@ -87,7 +91,7 @@ export function BaseTable({
       onClick: (e: MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
         setBackToListPath(pathname);
-        router.push(`${pathname}/${to64(`${record._source.project.label}!/!${record._id}`)}`);
+        router.push(detailUrlBuilder(record, explorePathForType));
       },
     }),
   };
@@ -160,6 +164,7 @@ export default function ExploreSectionTable({
           loading={loading}
           rowKey={(row) => row._source._self}
           rowSelection={rowSelection}
+          experimentTypeName={experimentTypeName}
         />
       )}
     </WithRowSelection>
@@ -170,6 +175,7 @@ export default function ExploreSectionTable({
       hasError={hasError}
       loading={loading}
       rowKey={(row) => row._source._self}
+      experimentTypeName={experimentTypeName}
     />
   );
 }

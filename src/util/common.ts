@@ -1,3 +1,5 @@
+import { ExploreESHit } from '@/types/explore-section/es';
+
 export const switchStateType = {
   COUNT: 'count',
   DENSITY: 'density',
@@ -25,3 +27,6 @@ export function isNumeric(str: string) {
     !Number.isNaN(parseFloat(str))
   ); // ...and ensure strings of whitespace fail
 }
+
+export const detailUrlBuilder = (resource: ExploreESHit, explorePathForType: string) =>
+  `${explorePathForType}/${to64(`${resource._source.project.label}!/!${resource._id}`)}`;

@@ -1,6 +1,7 @@
 import { useInView } from 'react-intersection-observer';
 import { Tooltip } from 'antd';
 import { useAtomValue } from 'jotai';
+import Link from 'next/link';
 import reject from 'lodash/reject';
 import {
   ExperimentalTrace,
@@ -11,6 +12,7 @@ import CardVisualization from '@/components/explore-section/CardView/CardVisuali
 import { EXPERIMENT_TYPES } from '@/constants/explore-section/experiment-types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExploreESHit } from '@/types/explore-section/es';
+import { detailUrlBuilder } from '@/util/common';
 
 type TooltipFieldProps = {
   label: string;
@@ -48,6 +50,9 @@ export default function Card({ resource, experimentTypeName, score }: CardProps)
     ['field', 'name']
   );
 
+  const explorePathForType = EXPERIMENT_TYPES[experimentTypeName].resourceBasePath;
+
+  const resourceUrl = detailUrlBuilder(resource, explorePathForType);
   return (
     <div ref={ref} className="flex flex-col border border-solid rounded-md h-[500px] w-full p-4">
       {score && (
@@ -60,9 +65,9 @@ export default function Card({ resource, experimentTypeName, score }: CardProps)
           <CardVisualization experimentTypeName={experimentTypeName} resource={resource._source} />
         )}
       </div>
-      <div>
+      <Link href={resourceUrl} passHref>
         <TooltipField cursor="cursor-pointer" label="Name" content={resource._source.name} />
-      </div>
+      </Link>
       <div className="grid gap-4 grid-cols-6 break-words mt-2">
         {cardFields &&
           cardFields.map((cardField, index) => (

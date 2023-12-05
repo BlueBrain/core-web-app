@@ -9,8 +9,11 @@ import {
 } from '@/constants/explore-section/list-views';
 import { DetailProps } from '@/types/explore-section/application';
 
+const BASE_EXPLORE_PATH = `/explore/interactive/data`;
+
 type ExperimentType = {
   cardViewFields?: { [key: string]: DetailProps[] };
+  resourceBasePath: string;
 };
 
 type TypesOrder = {
@@ -86,6 +89,7 @@ export const EXPERIMENTAL_DATA_FIELDS_ORDER: TypesOrder = {
 
 export const EXPERIMENT_TYPES: Record<ExperimentDataTypeName, ExperimentType> = {
   [NEURON_MORPHOLOGY]: {
+    resourceBasePath: `${BASE_EXPLORE_PATH}/morphology`,
     cardViewFields: {
       morphometrics: [
         {
