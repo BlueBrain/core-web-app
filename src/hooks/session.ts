@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import sessionAtom from '@/state/session';
 
 export default function useSessionState() {
@@ -19,4 +19,11 @@ export default function useSessionState() {
 
     setSession(currentSession.data);
   }, [session?.accessToken, currentSession, setSession]);
+
+  useEffect(() => {
+    if (session?.error !== 'RefreshAccessTokenError') return;
+
+    // automatically signIn when a refresh token expires
+    signIn('keycloak');
+  }, [session]);
 }
