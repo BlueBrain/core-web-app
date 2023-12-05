@@ -8,7 +8,7 @@ import {
 } from '@/types/explore-section/es-experiment';
 import { selectedCardsMetricAtom } from '@/state/explore-section/generalization';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
-import { EXPERIMENT_TYPES } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExploreESHit } from '@/types/explore-section/es';
 
@@ -44,7 +44,7 @@ export default function Card({ resource, experimentTypeName, score }: CardProps)
   const selectedCardsMetric = useAtomValue(selectedCardsMetricAtom);
 
   const cardFields = reject(
-    EXPERIMENT_TYPES[experimentTypeName]?.cardViewFields?.[selectedCardsMetric],
+    EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields?.[selectedCardsMetric],
     ['field', 'name']
   );
 
