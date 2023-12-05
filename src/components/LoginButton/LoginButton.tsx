@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 
 import { SignInButton, SignOutButton } from './buttons';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { authOptions } from '@/auth';
 
 export default async function LoginButton() {
   const session = await getServerSession(authOptions);

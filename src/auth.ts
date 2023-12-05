@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions, TokenSet } from 'next-auth';
+import type { NextAuthOptions, TokenSet } from 'next-auth';
 
 import { keycloak } from '@/config';
 
@@ -112,6 +112,9 @@ export const authOptions: NextAuthOptions = {
       };
     },
   },
-};
-
-export default NextAuth(authOptions);
+  session: {
+    strategy: 'jwt',
+    // 30 minutes (< 1 hour of access token to have time to request a new access token using refresh token)
+    maxAge: 1800,
+  },
+} satisfies NextAuthOptions;
