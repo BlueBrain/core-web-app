@@ -15,12 +15,12 @@ import {
   PAGE_NUMBER,
   SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
-import { typeToColumns } from '@/state/explore-section/type-to-columns';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
 import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
 import { visibleBrainRegionsAtom } from '@/state/brain-regions';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 type DataAtomFamilyScopeType = {
   experimentTypeName: string;
@@ -48,7 +48,11 @@ export const activeColumnsAtom = atomFamily(
   ({ experimentTypeName }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<string[]>>(async (get) => {
       const dimensionColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
-      return ['index', ...(dimensionColumns || []), ...typeToColumns[experimentTypeName]];
+      return [
+        'index',
+        ...(dimensionColumns || []),
+        ...EXPERIMENT_DATA_TYPES[experimentTypeName].columns,
+      ];
     }),
   isListAtomEqual
 );
@@ -76,7 +80,7 @@ export const dimensionColumnsAtom = atomFamily(({ experimentTypeName }: DataAtom
 export const filtersAtom = atomFamily(
   ({ experimentTypeName }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<Filter[]>>(async (get) => {
-      const columnsKeys = typeToColumns[experimentTypeName];
+      const columnsKeys = EXPERIMENT_DATA_TYPES[experimentTypeName].columns;
       const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
       return [
         ...columnsKeys.map((colKey) => columnKeyToFilter(colKey)),
