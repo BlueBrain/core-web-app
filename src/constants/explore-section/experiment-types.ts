@@ -9,16 +9,16 @@ import {
 } from '@/constants/explore-section/list-views';
 import { DetailProps } from '@/types/explore-section/application';
 
-type ExperimentTypes = {
-  [x: ExperimentDataTypeName]: {
-    title: string;
-    name: string;
-    columns: Array<string>;
-    cardViewFields?: { [key: string]: DetailProps[] };
-  };
+export type ExperimentConfig = {
+  title: string;
+  name: string;
+  columns: Array<string>;
+  cardViewFields?: { [key: string]: DetailProps[] };
 };
 
-export const EXPERIMENT_DATA_TYPES: ExperimentTypes = {
+export const EXPERIMENT_DATA_TYPES: {
+  [x: ExperimentDataTypeName]: ExperimentConfig;
+} = {
   [NEURON_MORPHOLOGY]: {
     title: 'Morphologies',
     name: 'morphology',
@@ -162,42 +162,3 @@ export const EXPERIMENT_DATA_TYPES: ExperimentTypes = {
     ],
   },
 };
-
-export type ExperimentDetail = {
-  id: ExperimentDataTypeName;
-  title: string;
-  name: string;
-};
-
-export const EXPERIMENT_TYPE_DETAILS: ExperimentDetail[] = [
-  {
-    title: 'Bouton density',
-    id: BOUTON_DENSITY,
-    name: 'bouton-density',
-  },
-  {
-    title: 'Morphologies',
-    id: NEURON_MORPHOLOGY,
-    name: 'morphology',
-  },
-  {
-    title: 'Electrophysiology',
-    id: ELECTRO_PHYSIOLOGY,
-    name: 'electrophysiology',
-  },
-  {
-    title: 'Neuron density',
-    id: NEURON_DENSITY,
-    name: 'neuron-density',
-  },
-  {
-    title: 'Layer thickness',
-    id: LAYER_THICKNESS,
-    name: 'layer-thickness',
-  },
-  {
-    title: 'Synapse per connection',
-    id: SYNAPSE_PER_CONNECTION,
-    name: 'synapse-per-connection',
-  },
-];

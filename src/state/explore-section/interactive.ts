@@ -5,7 +5,7 @@ import {
   ExperimentDatasetCountPerBrainRegion,
   fetchExperimentDatasetCountForBrainRegion,
 } from '@/api/explore-section/resources';
-import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { fetchParagraphCountForBrainRegionAndExperiment } from '@/components/explore-section/Literature/api';
 
 export const getExperimentTotalForBrainRegion = (brainRegionIds: string[], signal: AbortSignal) =>
@@ -15,10 +15,10 @@ export const getExperimentTotalForBrainRegion = (brainRegionIds: string[], signa
     const descendants = await get(getBrainRegionDescendants(brainRegionIds));
 
     const experimentToCount = await Promise.allSettled(
-      EXPERIMENT_TYPE_DETAILS.map((experimentType) =>
+      Object.keys(EXPERIMENT_DATA_TYPES).map((id) =>
         fetchExperimentDatasetCountForBrainRegion(
           session.accessToken,
-          experimentType.id,
+          id,
           descendants ?? [],
           signal
         )
@@ -43,11 +43,11 @@ export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], sig
     const session = get(sessionAtom);
     if (!session) return null;
 
-    const experimentToCount = await Promise.allSettled(
-      EXPERIMENT_TYPE_DETAILS.map((experimentType) =>
+    return await Promise.allSettled(
+      Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) =>
         fetchParagraphCountForBrainRegionAndExperiment(
           session.accessToken,
-          { name: experimentType.title, id: experimentType.id },
+          { name: config.title, id },
           brainRegionNames,
           signal
         )
@@ -63,6 +63,4 @@ export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], sig
 
       return experimentTypeToTotal;
     });
-
-    return experimentToCount;
   });

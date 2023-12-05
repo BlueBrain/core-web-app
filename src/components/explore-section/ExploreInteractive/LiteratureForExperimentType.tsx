@@ -10,7 +10,7 @@ import isNil from 'lodash/isNil';
 import { Tooltip } from 'antd';
 import { BrainRegion } from '@/types/ontologies';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
-import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 type Props = {
   brainRegions: BrainRegion[];
@@ -52,24 +52,24 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
 
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
         <div className="flex flex-col flex-wrap mb-7 h-36">
-          {EXPERIMENT_TYPE_DETAILS.map((experimentType) => (
+          {Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) => (
             <Link
-              href={`/explore/interactive/literature/${experimentType.name}`}
-              key={experimentType.title}
+              href={`/explore/interactive/literature/${config.name}`}
+              key={config.title}
               className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer hover:text-primary-4"
-              data-testid={`literature-articles-${experimentType.id}`}
+              data-testid={`literature-articles-${id}`}
             >
-              <span className="font-light">{experimentType.title}</span>
+              <span className="font-light">{config.title}</span>
               <span className="flex items-center font-light">
                 <span className="mr-2">
-                  {isNil(totalByExperimentAndBrainRegion.data?.[experimentType.id]) ? (
+                  {isNil(totalByExperimentAndBrainRegion.data?.[id]) ? (
                     <Tooltip
-                      title={`There was an error when fetching literature data for ${experimentType.title}.`}
+                      title={`There was an error when fetching literature data for ${config.title}.`}
                     >
                       <WarningFilled />
                     </Tooltip>
                   ) : (
-                    `${totalByExperimentAndBrainRegion.data?.[experimentType.id].total} articles`
+                    `${totalByExperimentAndBrainRegion.data?.[id].total} articles`
                   )}
                 </span>
                 <ReadOutlined />

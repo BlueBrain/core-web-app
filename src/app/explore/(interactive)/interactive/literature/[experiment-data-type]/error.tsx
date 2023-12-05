@@ -2,14 +2,14 @@
 
 import ExperimentSelector from '@/components/explore-section/Literature/components/ExperimentSelector';
 import {
-  EXPERIMENT_TYPE_DETAILS,
-  ExperimentDetail,
+  EXPERIMENT_DATA_TYPES,
+  ExperimentConfig,
 } from '@/constants/explore-section/experiment-types';
 
 type Props = {
   noExperimentSelected?: boolean;
   noBrainRegionSelected?: boolean;
-  currentExperiment?: ExperimentDetail;
+  currentExperiment?: ExperimentConfig;
 };
 
 export default function LiteratureArticlesError({
@@ -27,7 +27,9 @@ export default function LiteratureArticlesError({
   }
 
   if (noExperimentSelected) {
-    const validExperimentTypes = EXPERIMENT_TYPE_DETAILS.map((experiment) => experiment.name);
+    const validExperimentTypes = Object.values(EXPERIMENT_DATA_TYPES).map(
+      (experiment) => experiment.name
+    );
 
     return (
       <div className="flex mx-10 mt-12 w-full">

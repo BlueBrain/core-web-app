@@ -7,7 +7,7 @@ import { LoadingOutlined, MenuOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { BrainRegion } from '@/types/ontologies';
 import { getExperimentTotalForBrainRegion } from '@/state/explore-section/interactive';
-import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 type Props = {
   brainRegions: BrainRegion[];
@@ -47,17 +47,17 @@ export function BrainRegionExperimentsCount({ brainRegions }: Props) {
 
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
         <div className="flex flex-col flex-wrap mb-7 h-36">
-          {EXPERIMENT_TYPE_DETAILS.map((experimentType) => (
+          {Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) => (
             <Link
-              href={`/explore/interactive/data/${experimentType.name}`}
-              key={experimentType.title}
+              href={`/explore/interactive/data/${config.name}`}
+              key={config.title}
               className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 hover:text-primary-4"
-              data-testid={`experiment-dataset-${experimentType.id}`}
+              data-testid={`experiment-dataset-${id}`}
             >
-              <span className="font-light">{experimentType.title}</span>
+              <span className="font-light">{config.title}</span>
               <span>
                 <span className="font-semibold mr-2">
-                  {totalByExperimentAndBrainRegion.data?.[experimentType.id].total}
+                  {totalByExperimentAndBrainRegion.data?.[id].total}
                 </span>
                 <MenuOutlined />
               </span>
