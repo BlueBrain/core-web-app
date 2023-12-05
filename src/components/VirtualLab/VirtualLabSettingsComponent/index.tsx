@@ -4,7 +4,7 @@
 
 import { Button, Collapse, ConfigProvider, Skeleton } from 'antd';
 import { useRouter } from 'next/navigation';
-import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
@@ -153,7 +153,13 @@ export default function VirtualLabSettingsComponent({
 
       <Collapse
         expandIconPosition="end"
-        expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
+        expandIcon={({ isActive }) =>
+          isActive ? (
+            <MinusOutlined style={{ fontSize: '14px' }} />
+          ) : (
+            <PlusOutlined style={{ fontSize: '14px' }} />
+          )
+        }
         className="mt-4 rounded-none text-primary-8"
         bordered={false}
         key="information"
@@ -174,7 +180,13 @@ export default function VirtualLabSettingsComponent({
 
       <Collapse
         expandIconPosition="end"
-        expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
+        expandIcon={({ isActive }) =>
+          isActive ? (
+            <MinusOutlined style={{ fontSize: '14px' }} />
+          ) : (
+            <PlusOutlined style={{ fontSize: '14px' }} />
+          )
+        }
         className="mt-4 rounded-none text-primary-8"
         key="members"
         items={[
@@ -197,7 +209,13 @@ export default function VirtualLabSettingsComponent({
 
       <Collapse
         expandIconPosition="end"
-        expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
+        expandIcon={({ isActive }) =>
+          isActive ? (
+            <MinusOutlined style={{ fontSize: '14px' }} />
+          ) : (
+            <PlusOutlined style={{ fontSize: '14px' }} />
+          )
+        }
         className="mt-4 rounded-none text-primary-8"
         key="plan"
         items={[
@@ -228,7 +246,13 @@ export default function VirtualLabSettingsComponent({
         >
           <Collapse
             expandIconPosition="end"
-            expandIcon={() => <PlusOutlined style={{ fontSize: '14px' }} />}
+            expandIcon={({ isActive }) =>
+              isActive ? (
+                <MinusOutlined style={{ fontSize: '14px' }} />
+              ) : (
+                <PlusOutlined style={{ fontSize: '14px' }} />
+              )
+            }
             className="mt-4 rounded-none text-primary-8 bg-gray-200"
             key="danger-zone"
             items={[

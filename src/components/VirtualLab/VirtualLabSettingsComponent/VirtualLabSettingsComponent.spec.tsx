@@ -46,11 +46,11 @@ describe('VirtualLabSettingsComponent', () => {
     screen.getByText('Plan');
   });
 
-  it('shows team name and reference when information panel is expanded', async () => {
+  it('shows lab name and reference when information panel is expanded', async () => {
     const { virtualLab, user } = renderComponentWithLab('test-lab');
     await openInformationPanel(user);
 
-    const teamName = screen.getByLabelText('Team Name') as HTMLInputElement;
+    const teamName = screen.getByLabelText('Lab Name') as HTMLInputElement;
     expect(teamName.value).toEqual(virtualLab.name);
     const referenceEMail = screen.getByLabelText('Reference Contact') as HTMLInputElement;
     expect(referenceEMail.value).toEqual(virtualLab.referenceEMail);
@@ -100,11 +100,11 @@ describe('VirtualLabSettingsComponent', () => {
     const { user } = renderComponentWithLab('test-lab', true);
     await enableEditModeInInformation(user);
 
-    changeInputValue('Team Name', 'New team name');
+    changeInputValue('Lab Name', 'New team name');
 
     await saveInformation(user);
 
-    const teamNameInput = (await screen.findByLabelText('Team Name')) as HTMLInputElement;
+    const teamNameInput = (await screen.findByLabelText('Lab Name')) as HTMLInputElement;
     expect(teamNameInput.readOnly).toEqual(true);
     expect(teamNameInput.value).toEqual('New team name');
   });
@@ -113,12 +113,12 @@ describe('VirtualLabSettingsComponent', () => {
     const { user } = renderComponentWithLab('test-lab', true);
     await enableEditModeInInformation(user);
 
-    changeInputValue('Team Name', '');
+    changeInputValue('Lab Name', '');
 
     const save = screen.getByText('Save').closest('button') as HTMLButtonElement;
     await waitFor(() => expect(save.disabled).toEqual(true));
 
-    changeInputValue('Team Name', 'A valid name');
+    changeInputValue('Lab Name', 'A valid name');
     await waitFor(() => expect(save.disabled).toEqual(false));
   });
 
@@ -142,13 +142,13 @@ describe('VirtualLabSettingsComponent', () => {
     const { virtualLab, user } = renderComponentWithLab('test-lab', true);
     await enableEditModeInInformation(user);
 
-    changeInputValue('Team Name', 'New valid team name');
+    changeInputValue('Lab Name', 'New valid team name');
 
     await saveInformation(user);
 
     await screen.findByText('There was an error in saving information.');
 
-    const teamName = screen.getByLabelText('Team Name') as HTMLInputElement;
+    const teamName = screen.getByLabelText('Lab Name') as HTMLInputElement;
     expect(teamName.value).toEqual(virtualLab.name);
   });
 
@@ -159,17 +159,17 @@ describe('VirtualLabSettingsComponent', () => {
 
     await enableEditModeInInformation(user);
 
-    changeInputValue('Team Name', 'This should fail');
+    changeInputValue('Lab Name', 'This should fail');
     await saveInformation(user);
 
     await screen.findByText(informationPanelError);
 
     await enableEditModeInInformation(user, false);
 
-    changeInputValue('Team Name', 'This should pass');
+    changeInputValue('Lab Name', 'This should pass');
     await saveInformation(user);
 
-    const teamNameInputAfter = (await screen.findByLabelText('Team Name')) as HTMLInputElement;
+    const teamNameInputAfter = (await screen.findByLabelText('Lab Name')) as HTMLInputElement;
     expect(teamNameInputAfter.value).toEqual('This should pass');
 
     const errorMessage = screen.queryByText(informationPanelError);

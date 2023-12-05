@@ -78,6 +78,7 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
           colorText: '#003A8C',
           controlPaddingHorizontal: 0,
           lineWidth: 0,
+          borderRadius: 0,
         },
         components: {
           Form: {
@@ -115,14 +116,14 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
           {saveError && <p className="text-error">There was an error in saving information.</p>}
           <Form.Item
             name="name"
-            label="Team Name"
+            label="Lab Name"
             validateTrigger="onBlur"
             rules={[{ required: true }]}
             className={`w-full ${editMode ? 'border-b' : ''}`}
           >
             <Input
               readOnly={!editMode}
-              className="font-bold"
+              className={`font-bold rounded-none ${editMode ? 'border border-gray-200 px-3' : ''}`}
               style={{ width: showEditPrompts ? `50%` : '100%' }}
               title={form.getFieldValue('name')}
               addonAfter={editButton}
@@ -160,7 +161,7 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
           >
             <Input
               readOnly={!editMode}
-              className="font-bold"
+              className={`font-bold rounded-none ${editMode ? 'border border-gray-200 px-3' : ''}`}
               style={{
                 width: showEditPrompts ? `50%` : '100%',
               }}
