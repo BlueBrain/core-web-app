@@ -162,7 +162,7 @@ const updateConfigPayloadAtom = atom<null, [], Promise<void>>(null, async (get, 
 
 const triggerUpdateDebouncedAtom = atom<null, [], Promise<void>>(
   null,
-  debounce((get, set) => set(updateConfigPayloadAtom), autoSaveDebounceInterval)
+  debounce((get, set) => set(updateConfigPayloadAtom), autoSaveDebounceInterval, { leading: true }) // Leading ensures API call is made on the leading edge of the waiting period so that if no other calls have been made there is no wait.
 );
 
 export const setConfigPayloadAtom = atom<null, [], void>(null, (get, set) => {

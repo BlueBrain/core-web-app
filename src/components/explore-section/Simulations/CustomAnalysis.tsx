@@ -1,23 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Spin, notification } from 'antd';
-import JSZip from 'jszip';
 import { ISODateString, Session } from 'next-auth';
 import { LoadingOutlined, SyncOutlined } from '@ant-design/icons';
+
 import {
   ExtendedCumAnalysisReport,
-  Contribution,
   CumulativeAnalysisReport,
   MultipleSimulationCampaignAnalysis,
 } from './types';
 import DimensionSelector from './DimensionSelector';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
-import { getConfigWithMultiAnalysis } from './utils';
+import { fetchSimCampWorkflowConfig, getConfigWithMultiAnalysis, useAnalysisIds } from './utils';
+import ScheduledIndicator from './ScheduledIndicator';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createHeaders, formatTimeDifference } from '@/util/utils';
-import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
-import { WorkflowExecution } from '@/types/nexus';
+import { fetchResourceById } from '@/api/nexus';
 import { launchUnicoreWorkflowSetup, launchWorkflowTask } from '@/services/bbp-workflow';
 import { useWorkflowAuth } from '@/components/WorkflowLauncherBtn';
 
@@ -34,6 +33,13 @@ export default function CustomAnalysis({
   const session = useSessionAtomValue();
   const [analyses] = useAnalyses();
 
+  const [launchedAnalysisIds, fetchingAnalysisConfigs] = useAnalysisIds(resource);
+
+  const analysisLaunched = useMemo(
+    () => launchedAnalysisIds.find((id) => id === analysisId),
+    [launchedAnalysisIds, analysisId]
+  );
+
   const analysesById = useMemo(
     () =>
       analyses.reduce((acc: { [id: string]: Analysis }, item) => {
@@ -47,6 +53,8 @@ export default function CustomAnalysis({
 
   return (
     <>
+      {analysisLaunched && !report && !fetching && <ScheduledIndicator />}
+
       {report?.multiAnalysis.status === 'Done' && (
         <>
           <DimensionSelector coords={resource.parameter?.coords} />
@@ -66,7 +74,7 @@ export default function CustomAnalysis({
         </div>
       )}
 
-      {!report && !fetching && (
+      {!report && !fetching && !analysisLaunched && !fetchingAnalysisConfigs && (
         <div className="flex justify-center items-center" style={{ height: 200 }}>
           <button
             type="button"
@@ -81,6 +89,7 @@ export default function CustomAnalysis({
             disabled={launchingAnalysis}
           >
             {!launchingAnalysis && <span>Launch Analysis</span>}
+
             {launchingAnalysis && <span>Launching...</span>}
           </button>
         </div>
@@ -117,27 +126,19 @@ function useCumulativeAnalysisReports(
         cumulativeAnalysisReportLinks.map((l) => fetchResourceById(l['@id'], session))
       );
 
-      // Fetch the contribution (containing AnalysisSoftwareSourceCode)
-      const cumulativeReportsWithContrib = await Promise.all(
-        cumulativeAnalysisReports.map(async (cr) => {
-          const contribution: Contribution = await fetchResourceById(
-            cr.contribution['@id'],
-            session
-          );
-          return { ...cr, contribution };
-        })
-      );
-
       // Newest first
-      cumulativeReportsWithContrib.sort((a, b) => {
+      cumulativeAnalysisReports.sort((a, b) => {
         const dateA = new Date(a._createdAt);
         const dateB = new Date(b._createdAt);
         return dateB.valueOf() - dateA.valueOf();
       });
 
-      const foundReport = cumulativeReportsWithContrib.find(
-        (r) => r.contribution.agent['@id'] === analysisId
-      );
+      const foundReport = cumulativeAnalysisReports.find((r) => {
+        if (Array.isArray(r.contribution))
+          return r.contribution.find((c) => c.agent['@id'] === analysisId);
+
+        return r.contribution.agent['@id'] === analysisId;
+      });
 
       const multiAnalysis =
         foundReport &&
@@ -164,21 +165,8 @@ async function launchAnalysis(
   session: Session | null
 ) {
   if (!simCampaign.wasGeneratedBy || !session || !analysis) return;
-  const execution = await fetchResourceById<{ wasInfluencedBy: { '@id': string } }>(
-    simCampaign.wasGeneratedBy['@id'],
-    session
-  );
-  const workflowExecution = await fetchResourceById<WorkflowExecution>(
-    execution.wasInfluencedBy['@id'],
-    session
-  );
 
-  const workflowConfig = await fetchFileByUrl(workflowExecution.distribution.contentUrl, session);
-
-  const workflowConfigPayload = await workflowConfig.blob();
-  const jszip = new JSZip();
-  const zip = await jszip.loadAsync(workflowConfigPayload);
-  const fullConfig = await zip.file('simulation.cfg')?.async('string');
+  const fullConfig = await fetchSimCampWorkflowConfig(simCampaign, session);
   let config = fullConfig?.match(/\[DEFAULT\][\s\S]+?\[RunSimCampaignMeta\][\s\S]+?rev=1/g)?.[0];
 
   if (!config) return;

@@ -72,25 +72,22 @@ export interface AnalysisReportLink {
   '@type': 'AnalysisReport';
 }
 
-interface ContributionLink {
-  '@id': string;
-  '@type': 'Contribution';
-}
-
-export interface Contribution extends ContributionLink {
-  agent: { '@id': string; type: 'AnalysisSoftwareSourceCode' };
-}
+type Contribution = {
+  agent: {
+    '@id': string;
+    '@type': 'AnalysisSoftwareSourceCode';
+  };
+};
 export interface CumulativeAnalysisReport {
   '@id': string;
   type: 'CumulativeAnalysisReport';
   hasPart?: AnalysisReportLink[];
-  contribution: ContributionLink;
+  contribution: Contribution | Contribution[];
   wasGeneratedBy: { '@id': string };
   _createdAt: ISODateString;
 }
 
 export interface ExtendedCumAnalysisReport extends CumulativeAnalysisReport {
-  contribution: Contribution;
   multiAnalysis: MultipleSimulationCampaignAnalysis;
 }
 
