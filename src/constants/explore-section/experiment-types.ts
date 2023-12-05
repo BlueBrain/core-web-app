@@ -13,6 +13,77 @@ type ExperimentType = {
   cardViewFields?: { [key: string]: DetailProps[] };
 };
 
+type TypesOrder = {
+  [x: ExperimentDataTypeName]: Array<string>;
+};
+
+export const EXPERIMENTAL_DATA_FIELDS_ORDER: TypesOrder = {
+  [NEURON_MORPHOLOGY]: [
+    'preview',
+    'brainRegion',
+    'mType',
+    'name',
+    'subjectSpecies',
+    'contributors',
+    'createdAt',
+    'reference',
+  ],
+  [ELECTRO_PHYSIOLOGY]: [
+    'brainRegion',
+    'eType',
+    'name',
+    'conditions',
+    'subjectSpecies',
+    'contributors',
+    'createdAt',
+    'reference',
+  ],
+  [NEURON_DENSITY]: [
+    'brainRegion',
+    'mType',
+    'eType',
+    'neuronDensity',
+    'numberOfMeasurements',
+    'name',
+    'conditions',
+    'subjectSpecies',
+    'contributors',
+    'createdAt',
+    'reference',
+  ],
+  [BOUTON_DENSITY]: [
+    'brainRegion',
+    'mType',
+    'meanstd',
+    'sem',
+    'numberOfMeasurements',
+    'subjectSpecies',
+    'contributors',
+    'createdAt',
+    'reference',
+  ],
+  [LAYER_THICKNESS]: [
+    'brainRegion',
+    'layer',
+    'layerThickness',
+    'conditions',
+    'subjectSpecies',
+    'contributors',
+    'createdAt',
+    'reference',
+  ],
+  [SYNAPSE_PER_CONNECTION]: [
+    'brainRegion',
+    'layer',
+    'layerThickness',
+    'conditions',
+    'subjectSpecies',
+    'contributors',
+    'createdAt',
+    'reference',
+  ],
+};
+
 export const EXPERIMENT_TYPES: Record<ExperimentDataTypeName, ExperimentType> = {
   [NEURON_MORPHOLOGY]: {
     cardViewFields: {

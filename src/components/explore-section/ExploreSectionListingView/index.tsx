@@ -31,15 +31,21 @@ export default function DefaultListView({
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const [viewMode, setViewMode] = useState<ViewMode>('table');
 
-  const columns = useExploreColumns(setSortState, sortState, [
-    {
-      title: '#',
-      key: 'index',
-      className: 'text-primary-7',
-      render: (_text: string, _record: ExploreResource, index: number) => index + 1,
-      width: 70,
-    },
-  ]);
+  const columns = useExploreColumns(
+    setSortState,
+    sortState,
+    [
+      {
+        title: '#',
+        key: 'index',
+        className: 'text-primary-7',
+        render: (_text: string, _record: ExploreResource, index: number) => index + 1,
+        width: 70,
+      },
+    ],
+    null,
+    experimentTypeName
+  );
 
   const data = useAtomValue(
     useMemo(

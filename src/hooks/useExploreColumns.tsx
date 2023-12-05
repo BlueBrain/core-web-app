@@ -7,6 +7,9 @@ import { ExploreResource } from '@/types/explore-section/es';
 import { SortState } from '@/types/explore-section/application';
 import { ValueArray } from '@/components/ListTable';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
+import { ExperimentDataTypeName } from '@/constants/explore-section/list-views';
+import { EXPERIMENTAL_DATA_FIELDS_ORDER } from '@/constants/explore-section/experiment-types';
+
 import styles from '@/app/explore/explore.module.scss';
 
 type ResizeInit = {
@@ -23,7 +26,8 @@ export default function useExploreColumns(
   setSortState: Dispatch<SetStateAction<SortState | undefined>>,
   sortState?: SortState,
   initialColumns: ColumnProps<ExploreResource>[] = [],
-  dimensionColumns?: string[] | null
+  dimensionColumns?: string[] | null,
+  experimentTypeName?: ExperimentDataTypeName
 ): ColumnProps<ExploreResource>[] {
   const keys = useMemo(() => Object.keys(EXPLORE_FIELDS_CONFIG), []);
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>(
@@ -157,7 +161,6 @@ export default function useExploreColumns(
       }, initialColumns),
     [columnWidths, getSortOrder, initialColumns, keys, onMouseDown, sorterES]
   );
-
   const dimensions: ColumnProps<ExploreResource>[] = useMemo(
     () =>
       (dimensionColumns || []).map((dimColumn) => ({
@@ -183,5 +186,17 @@ export default function useExploreColumns(
       })),
     [columnWidths, dimensionColumns, getSortOrder, onMouseDown]
   );
-  return [...main, ...dimensions];
+
+  const columns = [...main, ...dimensions];
+
+  if (experimentTypeName) {
+    return columns.sort((a, b) =>
+      a.key && b.key
+        ? EXPERIMENTAL_DATA_FIELDS_ORDER[experimentTypeName].indexOf(a.key as string) -
+          EXPERIMENTAL_DATA_FIELDS_ORDER[experimentTypeName].indexOf(b.key as string)
+        : -1
+    );
+  }
+
+  return columns;
 }
