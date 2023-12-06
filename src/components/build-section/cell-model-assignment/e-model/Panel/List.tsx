@@ -6,6 +6,7 @@ import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import {
   eModelByETypeMappingAtom,
   editedEModelByETypeMappingAtom,
+  selectedEModelAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { mergeEModelsAndOptimizations } from '@/services/e-model';
 
@@ -14,6 +15,7 @@ export default function List() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const optimizations = useAtomValue(eModelByETypeMappingAtom);
   const eModels = useAtomValue(editedEModelByETypeMappingAtom);
+  const selectedEModel = useAtomValue(selectedEModelAtom);
 
   const eModelByETypeMapping = mergeEModelsAndOptimizations(optimizations, eModels);
 
@@ -29,6 +31,7 @@ export default function List() {
             mTypeName={mTypeName}
             eModelByETypeMapping={eModelByETypeMapping}
             eTypeEntryComponent={ETypeEntry}
+            selectedMTypeName={selectedEModel?.mType}
           />
         ))}
       </>

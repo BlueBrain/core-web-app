@@ -454,3 +454,15 @@ export interface EModelRemoteParameters {
   parameters: EModelConfigurationParameter[];
   maxGenerations: number;
 }
+
+export type DefaultEModelType = {
+  value: {
+    name: string;
+    id: string;
+    eType: string;
+    mType: string;
+    isOptimizationConfig: boolean;
+    rev: number;
+  };
+  brainRegionId: string;
+};

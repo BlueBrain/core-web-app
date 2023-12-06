@@ -8,6 +8,7 @@ interface ListItemProps {
   mTypeName: string;
   eModelByETypeMapping: EModelByETypeMappingType | null;
   eTypeEntryComponent: ElementType;
+  selectedMTypeName?: string;
 }
 
 export default function ListItem({
@@ -15,6 +16,7 @@ export default function ListItem({
   mTypeName,
   eModelByETypeMapping,
   eTypeEntryComponent: ETypeEntryComponent,
+  selectedMTypeName,
 }: ListItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -35,7 +37,7 @@ export default function ListItem({
           key={eType.id}
           eType={eType}
           mTypeName={mTypeName}
-          isExpanded={isExpanded}
+          isExpanded={isExpanded || selectedMTypeName === mTypeName}
           availableEModels={getAvailableEModels(eType.name)}
         />
       ))}

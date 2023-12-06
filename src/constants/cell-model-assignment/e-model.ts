@@ -464,3 +464,17 @@ export const eCodesMetadata = {
   APWaveform: { ljp: 14.0 },
   IDhyperpol: { ljp: 14.0, ton: 100, tmid: 700, tmid2: 2700, toff: 2900 },
 };
+
+export const DEFAULT_E_MODEL = {
+  value: {
+    name: 'EM__66aaeea__bNAC__6',
+    id: 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/82632ef0-a084-4fce-a1fc-cb6874a67731',
+    eType: 'bNAC',
+    mType: 'L1_DAC',
+    isOptimizationConfig: false,
+    rev: 2,
+  },
+  brainRegionId: 'http://api.brain-map.org/api/v2/data/Structure/558',
+};
+
+export const DEFAULT_E_MODEL_STORAGE_KEY = 'lastClickedEModel';
