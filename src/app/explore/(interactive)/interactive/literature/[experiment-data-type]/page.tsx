@@ -5,14 +5,14 @@ import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import LiteratureArticlesError from './error';
-import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { ArticleListing } from '@/components/explore-section/Literature/components/ArticlesListing';
 import { brainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 
 export default function LiteratureArticleListingPage() {
   const params = useParams();
-  const currentExperiment = EXPERIMENT_TYPE_DETAILS.find(
+  const currentExperiment = Object.values(EXPERIMENT_DATA_TYPES).find(
     (experiment) => experiment.name === params?.['experiment-data-type'] ?? ''
   );
   const visualizedBrainRegions = useAtomValue(visibleBrainRegionsAtom('explore'));

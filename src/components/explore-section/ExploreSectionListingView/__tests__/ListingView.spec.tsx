@@ -10,7 +10,7 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/HeaderPanel';
-import { typeToColumns } from '@/state/explore-section/type-to-columns';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 jest.mock('next/navigation');
 
@@ -339,6 +339,8 @@ describe('Listing view table tests', () => {
     );
     const tableHeaders = screen.getAllByRole('columnheader');
     // +1 because it includes all columns plus the index/checkboxes
-    expect(tableHeaders.length).toEqual(typeToColumns[NEURON_MORPHOLOGY].length + 1);
+    expect(tableHeaders.length).toEqual(
+      EXPERIMENT_DATA_TYPES[NEURON_MORPHOLOGY].columns.length + 1
+    );
   });
 });

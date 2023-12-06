@@ -10,7 +10,6 @@ import { ExploreDownloadButton } from '@/components/explore-section/ExploreSecti
 import WithRowSelection, {
   RenderButtonProps,
 } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import { EXPERIMENT_TYPES } from '@/constants/explore-section/experiment-types';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
@@ -80,8 +79,6 @@ export function BaseTable({
 
   const setBackToListPath = useSetAtom(backToListPathAtom);
 
-  const explorePathForType = EXPERIMENT_TYPES[experimentTypeName].resourceBasePath;
-
   if (hasError) {
     return <div>Something went wrong</div>;
   }
@@ -91,7 +88,7 @@ export function BaseTable({
       onClick: (e: MouseEvent<HTMLInputElement>) => {
         e.preventDefault();
         setBackToListPath(pathname);
-        router.push(detailUrlBuilder(record, explorePathForType));
+        router.push(detailUrlBuilder(record, experimentTypeName));
       },
     }),
   };

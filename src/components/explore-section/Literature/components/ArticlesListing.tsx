@@ -5,16 +5,15 @@
 import { loadable } from 'jotai/utils';
 import { useMemo, useRef } from 'react';
 import { useAtomValue } from 'jotai';
-
 import { ConfigProvider, List, Skeleton } from 'antd';
 import ExperimentSelector from './ExperimentSelector';
 import ArticleListItem from './ArticleListItem';
-import { ExperimentDetail } from '@/constants/explore-section/experiment-types';
+import { ExperimentConfig } from '@/constants/explore-section/experiment-types';
 import { getLiteratureArticlesForExperimentAndBrainRegions } from '@/state/explore-section/literature-article-list';
 
 type Props = {
   brainRegions: string[];
-  experiment: ExperimentDetail;
+  experiment: ExperimentConfig;
 };
 
 export function ArticleListing({ brainRegions, experiment }: Props) {

@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 
 import { DownOutlined } from '@ant-design/icons';
 import {
-  EXPERIMENT_TYPE_DETAILS,
-  ExperimentDetail,
+  EXPERIMENT_DATA_TYPES,
+  ExperimentConfig,
 } from '@/constants/explore-section/experiment-types';
 
 type Props = {
-  currentExperiment?: ExperimentDetail;
+  currentExperiment?: ExperimentConfig;
 };
 
 export default function ExperimentSelector({ currentExperiment }: Props) {
@@ -38,9 +38,9 @@ export default function ExperimentSelector({ currentExperiment }: Props) {
           onChange={(experimentName) => {
             router.push(`/explore/interactive/literature/${experimentName}`);
           }}
-          options={EXPERIMENT_TYPE_DETAILS.map((experimentDetail) => ({
-            label: <span className="font-semibold text-base">{experimentDetail.title}</span>,
-            value: experimentDetail.name,
+          options={Object.values(EXPERIMENT_DATA_TYPES).map((config) => ({
+            label: <span className="font-semibold text-base">{config.title}</span>,
+            value: config.name,
           }))}
           popupMatchSelectWidth={false}
           className="border-b-2 text-primary-8 min-w-max w-36 p-0!"

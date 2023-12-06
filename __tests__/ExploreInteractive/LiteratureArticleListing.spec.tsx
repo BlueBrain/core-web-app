@@ -7,9 +7,10 @@ import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactiv
 import { BrainRegionOntology } from '@/types/ontologies';
 import { selectedBrainRegionAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import { EXPERIMENT_TYPE_DETAILS } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { ArticleItem } from '@/api/explore-section/resources';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
+import { ELECTRO_PHYSIOLOGY, NEURON_DENSITY } from '@/constants/explore-section/list-views';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,
@@ -80,24 +81,24 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows current experiment as selected in the keywords menu', async () => {
-    await renderComponentWithRoute(NEURON_DENSITY.name, true);
+    await renderComponentWithRoute(density.name, true);
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
 
     const selectedOption = screen.getByRole('option', { selected: true });
-    expect(selectedOption.textContent).toContain(NEURON_DENSITY.title);
+    expect(selectedOption.textContent).toContain(density.title);
   });
 
   test('shows all experiment types as options', async () => {
-    await renderComponentWithRoute(NEURON_DENSITY.name, true);
+    await renderComponentWithRoute(density.name, true);
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
 
     const options = screen.getAllByRole('option');
 
-    expect(options.length).toEqual(EXPERIMENT_TYPE_DETAILS.length);
+    expect(options.length).toEqual(Object.keys(EXPERIMENT_DATA_TYPES).length);
   });
 
   test('navigates to route selected by user', async () => {
@@ -105,14 +106,12 @@ describe('LiteratureArticleListingPage', () => {
       push: jest.fn(),
     };
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
-    await renderComponentWithRoute(NEURON_DENSITY.name, true);
+    await renderComponentWithRoute(density.name, true);
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
 
-    const electrophysiologyExperiment = EXPERIMENT_TYPE_DETAILS.find(
-      (experiment) => experiment.name === 'electrophysiology'
-    )!;
+    const electrophysiologyExperiment = EXPERIMENT_DATA_TYPES[ELECTRO_PHYSIOLOGY];
     const electrophysiologyOption = screen.getByRole('option', {
       name: electrophysiologyExperiment.title,
     });
@@ -124,14 +123,14 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows total count of articles', async () => {
-    renderComponentWithRoute(NEURON_DENSITY.name);
+    renderComponentWithRoute(density.name);
 
     const articleCount = await screen.findByTestId('total-article-count', {}, { timeout: 3000 });
     expect(articleCount.textContent).toMatch(/100/);
   });
 
   test('shows articles for page 1 by default', async () => {
-    renderComponentWithRoute(NEURON_DENSITY.name);
+    renderComponentWithRoute(density.name);
 
     const allArticles = await screen.findAllByText(/mock title/i);
     expect(allArticles.length).toBeLessThanOrEqual(100);
@@ -141,9 +140,7 @@ describe('LiteratureArticleListingPage', () => {
     });
   });
 
-  const NEURON_DENSITY = EXPERIMENT_TYPE_DETAILS.find(
-    (experiment) => experiment.name === 'neuron-density'
-  )!;
+  const density = EXPERIMENT_DATA_TYPES[NEURON_DENSITY];
 
   const renderComponentWithRoute = async (name?: string, waitForArticles?: boolean) => {
     const spy = useParams as unknown as jest.Mock;

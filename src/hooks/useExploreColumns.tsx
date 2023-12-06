@@ -8,7 +8,7 @@ import { SortState } from '@/types/explore-section/application';
 import { ValueArray } from '@/components/ListTable';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExperimentDataTypeName } from '@/constants/explore-section/list-views';
-import { EXPERIMENTAL_DATA_FIELDS_ORDER } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 import styles from '@/app/explore/explore.module.scss';
 
@@ -192,8 +192,8 @@ export default function useExploreColumns(
   if (experimentTypeName) {
     return columns.sort((a, b) =>
       a.key && b.key
-        ? EXPERIMENTAL_DATA_FIELDS_ORDER[experimentTypeName].indexOf(a.key as string) -
-          EXPERIMENTAL_DATA_FIELDS_ORDER[experimentTypeName].indexOf(b.key as string)
+        ? EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(a.key as string) -
+          EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(b.key as string)
         : -1
     );
   }

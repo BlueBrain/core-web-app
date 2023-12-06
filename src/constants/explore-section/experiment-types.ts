@@ -9,87 +9,31 @@ import {
 } from '@/constants/explore-section/list-views';
 import { DetailProps } from '@/types/explore-section/application';
 
-const BASE_EXPLORE_PATH = `/explore/interactive/data`;
-
-type ExperimentType = {
+export type ExperimentConfig = {
+  title: string;
+  name: string;
+  columns: Array<string>;
   cardViewFields?: { [key: string]: DetailProps[] };
-  resourceBasePath: string;
 };
 
-type TypesOrder = {
-  [x: ExperimentDataTypeName]: Array<string>;
-};
+export const BASE_EXPLORE_PATH = `/explore/interactive/data`;
 
-export const EXPERIMENTAL_DATA_FIELDS_ORDER: TypesOrder = {
-  [NEURON_MORPHOLOGY]: [
-    'preview',
-    'brainRegion',
-    'mType',
-    'name',
-    'subjectSpecies',
-    'contributors',
-    'createdAt',
-    'reference',
-  ],
-  [ELECTRO_PHYSIOLOGY]: [
-    'brainRegion',
-    'eType',
-    'name',
-    'conditions',
-    'subjectSpecies',
-    'contributors',
-    'createdAt',
-    'reference',
-  ],
-  [NEURON_DENSITY]: [
-    'brainRegion',
-    'mType',
-    'eType',
-    'neuronDensity',
-    'numberOfMeasurements',
-    'name',
-    'conditions',
-    'subjectSpecies',
-    'contributors',
-    'createdAt',
-    'reference',
-  ],
-  [BOUTON_DENSITY]: [
-    'brainRegion',
-    'mType',
-    'meanstd',
-    'sem',
-    'numberOfMeasurements',
-    'subjectSpecies',
-    'contributors',
-    'createdAt',
-    'reference',
-  ],
-  [LAYER_THICKNESS]: [
-    'brainRegion',
-    'layer',
-    'layerThickness',
-    'conditions',
-    'subjectSpecies',
-    'contributors',
-    'createdAt',
-    'reference',
-  ],
-  [SYNAPSE_PER_CONNECTION]: [
-    'brainRegion',
-    'layer',
-    'layerThickness',
-    'conditions',
-    'subjectSpecies',
-    'contributors',
-    'createdAt',
-    'reference',
-  ],
-};
-
-export const EXPERIMENT_TYPES: Record<ExperimentDataTypeName, ExperimentType> = {
+export const EXPERIMENT_DATA_TYPES: {
+  [x: ExperimentDataTypeName]: ExperimentConfig;
+} = {
   [NEURON_MORPHOLOGY]: {
-    resourceBasePath: `${BASE_EXPLORE_PATH}/morphology`,
+    title: 'Morphologies',
+    name: 'morphology',
+    columns: [
+      'preview',
+      'brainRegion',
+      'mType',
+      'name',
+      'subjectSpecies',
+      'contributors',
+      'createdAt',
+      'reference',
+    ],
     cardViewFields: {
       morphometrics: [
         {
@@ -145,43 +89,78 @@ export const EXPERIMENT_TYPES: Record<ExperimentDataTypeName, ExperimentType> = 
       ], // these fields are duplicates of the fields found in the typToColumns method. We should in the future reorganize our constants since they are starting to overlap in places.
     },
   },
-};
-
-export type ExperimentDetail = {
-  id: ExperimentDataTypeName;
-  title: string;
-  name: string;
-};
-
-export const EXPERIMENT_TYPE_DETAILS: ExperimentDetail[] = [
-  {
-    title: 'Bouton density',
-    id: BOUTON_DENSITY,
-    name: 'bouton-density',
-  },
-  {
-    title: 'Morphologies',
-    id: NEURON_MORPHOLOGY,
-    name: 'morphology',
-  },
-  {
+  [ELECTRO_PHYSIOLOGY]: {
     title: 'Electrophysiology',
-    id: ELECTRO_PHYSIOLOGY,
     name: 'electrophysiology',
+    columns: [
+      'brainRegion',
+      'eType',
+      'name',
+      'conditions',
+      'subjectSpecies',
+      'contributors',
+      'createdAt',
+      'reference',
+    ],
   },
-  {
+  [NEURON_DENSITY]: {
     title: 'Neuron density',
-    id: NEURON_DENSITY,
     name: 'neuron-density',
+    columns: [
+      'brainRegion',
+      'mType',
+      'eType',
+      'neuronDensity',
+      'numberOfMeasurements',
+      'name',
+      'conditions',
+      'subjectSpecies',
+      'contributors',
+      'createdAt',
+      'reference',
+    ],
   },
-  {
+  [BOUTON_DENSITY]: {
+    title: 'Bouton density',
+    name: 'bouton-density',
+    columns: [
+      'brainRegion',
+      'mType',
+      'meanstd',
+      'sem',
+      'numberOfMeasurements',
+      'subjectSpecies',
+      'contributors',
+      'createdAt',
+      'reference',
+    ],
+  },
+  [LAYER_THICKNESS]: {
     title: 'Layer thickness',
-    id: LAYER_THICKNESS,
     name: 'layer-thickness',
+    columns: [
+      'brainRegion',
+      'layer',
+      'layerThickness',
+      'conditions',
+      'subjectSpecies',
+      'contributors',
+      'createdAt',
+      'reference',
+    ],
   },
-  {
+  [SYNAPSE_PER_CONNECTION]: {
     title: 'Synapse per connection',
-    id: SYNAPSE_PER_CONNECTION,
     name: 'synapse-per-connection',
+    columns: [
+      'brainRegion',
+      'layer',
+      'layerThickness',
+      'conditions',
+      'subjectSpecies',
+      'contributors',
+      'createdAt',
+      'reference',
+    ],
   },
-];
+};
