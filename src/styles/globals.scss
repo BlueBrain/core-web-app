@@ -47,6 +47,10 @@ input[type='number'] {
       scrollbar-width: none; /* Firefox */
     }
 
+    .primary-scrollbar {
+      scrollbar-color: theme('colors.primary.4') rgba(#000, 0.2);
+    }
+
     .primary-scrollbar::-webkit-scrollbar {
       width: 5px;
       margin-right: 5px;

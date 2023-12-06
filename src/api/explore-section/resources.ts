@@ -38,17 +38,30 @@ export type ExperimentDatasetCountPerBrainRegion = {
 };
 
 export type ArticleListingResponse = {
-  article_title: string;
-  article_authors: string[];
-  article_doi: string;
-  article_id: string;
-  abstract: string;
-}[];
+  items: {
+    article_title: string;
+    article_authors: string[];
+    article_doi: string;
+    article_id: string;
+    abstract: string;
+    journal_name?: string;
+    cited_by?: number;
+    date?: string;
+  }[];
+  page: number;
+  pages: number;
+  size: number;
+  total: number;
+};
 
 export type ArticleItem = {
   title: string;
   doi: string;
   abstract: string;
+  authors: string[];
+  publicationDate?: string;
+  journalName?: string;
+  citationCount?: number;
 };
 
 export async function fetchExperimentDatasetCountForBrainRegion(

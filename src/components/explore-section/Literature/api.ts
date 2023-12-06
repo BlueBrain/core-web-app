@@ -180,10 +180,10 @@ const fetchArticlesForBrainRegionAndExperiment = (
   accessToken: string,
   experimentName: string,
   brainRegions: string[],
-  signal: AbortSignal
-): Promise<ArticleItem[]> => {
+  page: number,
+  signal?: AbortSignal
+): Promise<{ articles: ArticleItem[]; total: number; currentPage: number; pages: number }> => {
   if (!accessToken) throw new Error('Access token should be defined');
-
   const url = nexus.aiUrl;
   const brainRegionParams = brainRegions
     .map((name) => encodeURIComponent(name.toLowerCase()))
@@ -193,7 +193,7 @@ const fetchArticlesForBrainRegionAndExperiment = (
   return fetch(
     `${url}/retrieval/article_listing?number_results=${maxResults}&topics=${encodeURIComponent(
       experimentName
-    )}&regions=${brainRegionParams}`,
+    )}&regions=${brainRegionParams}&page=${page}`,
     {
       signal,
       method: 'POST',
@@ -204,27 +204,37 @@ const fetchArticlesForBrainRegionAndExperiment = (
     }
   )
     .then((response: any) => {
-      if (response.ok) {
-        return response.json();
-      }
       if (response.status === 404) {
         return [];
       }
-      // Other 40X errors
-      throw new Error(
-        'There was an error retrieving literature data for the selected brain regions'
-      );
+
+      return response.json();
     })
-    .then((response: ArticleListingResponse) =>
-      response.map(
+    .then((response: any) => {
+      if (!response.items) {
+        throw new Error(response.detail?.code, { cause: response.detail?.code });
+      }
+      const mlResponse = response as ArticleListingResponse;
+      const { total, page: currentPage, pages } = mlResponse;
+      const articles = mlResponse.items.map(
         (articleResponse) =>
           ({
             doi: articleResponse.article_doi,
             abstract: articleResponse.abstract,
             title: articleResponse.article_title,
+            authors: articleResponse.article_authors ?? [],
+            journalName: articleResponse.journal_name,
+            publicationDate: articleResponse.date,
+            citationCount: articleResponse.cited_by,
           } as ArticleItem)
-      )
-    );
+      );
+      return {
+        articles,
+        total,
+        pages,
+        currentPage,
+      };
+    });
 };
 
 export {

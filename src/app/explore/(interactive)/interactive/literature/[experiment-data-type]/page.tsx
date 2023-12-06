@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import LiteratureArticlesError from './error';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
-import { ArticleListing } from '@/components/explore-section/Literature/components/ArticlesListing';
+import { ArticleListing } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
 import { brainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 
@@ -31,11 +31,9 @@ export default function LiteratureArticleListingPage() {
     return <LiteratureArticlesError noBrainRegionSelected currentExperiment={currentExperiment} />;
 
   return (
-    <div className="flex">
-      <ArticleListing
-        brainRegions={visualizedBrainRegionDetails.map((br) => br.title)}
-        experiment={currentExperiment}
-      />
-    </div>
+    <ArticleListing
+      brainRegions={visualizedBrainRegionDetails.map((br) => br.title)}
+      experiment={currentExperiment}
+    />
   );
 }

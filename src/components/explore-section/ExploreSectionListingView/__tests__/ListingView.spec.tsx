@@ -28,15 +28,6 @@ jest.mock('morphoviewer', () => ({
   Morphoviewer: jest.fn(() => null),
 }));
 
-// mocking intersection observer, used in card view
-const mockIntersectionObserver = jest.fn();
-mockIntersectionObserver.mockReturnValue({
-  observe: () => null,
-  unobserve: () => null,
-  disconnect: () => null,
-});
-window.IntersectionObserver = mockIntersectionObserver;
-
 function pressHideColumnButton() {
   const button = screen.getAllByRole('button', { name: 'filter-panel-hide-field-button' })[0];
   fireEvent.click(button);

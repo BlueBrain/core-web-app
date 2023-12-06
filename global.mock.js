@@ -24,6 +24,15 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// mocking intersection observer, used in card view & explore article listing
+const mockIntersectionObserver = jest.fn();
+mockIntersectionObserver.mockReturnValue({
+  observe: () => null,
+  unobserve: () => null,
+  disconnect: () => null,
+});
+window.IntersectionObserver = mockIntersectionObserver;
+
 // Mocks for function from deepdash-es. The dependency is not resolved with jest, therefore the functions need to be mocked. (see - https://github.com/YuriGor/deepdash/issues/133)
 export const findDeep = (flatTree, findFn) => flatTree.find(findFn);
 export const reduceDeep = (someValue) => [someValue];

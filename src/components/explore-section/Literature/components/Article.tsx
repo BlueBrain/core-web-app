@@ -16,12 +16,12 @@ import { classNames, formatDate } from '@/util/utils';
 import CalendarIcon from '@/components/icons/Calendar';
 import CitationIcon from '@/components/icons/CitationIcon';
 
-const DoiDefinition = `A DOI, or Digital Object Identifier, is a string of
+export const DoiDefinition = `A DOI, or Digital Object Identifier, is a string of
  numbers, letters and symbols used to uniquely 
  identify an article or document, and to provide it 
  with a permanent web address (URL)`;
 
-function ArticlePreview({
+export function ArticlePreview({
   title,
   icon,
   altText,
@@ -42,7 +42,7 @@ function ArticlePreview({
   );
 }
 
-function ArticleAction({
+export function ArticleAction({
   title,
   icon,
   onClick,
@@ -130,7 +130,7 @@ export default function Article({
                   </Tooltip>
                 </div>
               )}
-              <ArticleAction key="quote" onClick={() => {}} title="Quote" icon={<QuoteOutline />} />
+              <ArticleAction key="cite" onClick={() => {}} title="Cite" icon={<QuoteOutline />} />
             </div>
           )}
         </div>

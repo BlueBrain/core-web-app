@@ -1,0 +1,26 @@
+@import '~tailwindcss/base';
+@import '~tailwindcss/components';
+@import '~tailwindcss/utilities';
+
+.article-list-scrollbar {
+  scrollbar-color: theme('colors.primary.8') #f0f0f0;
+}
+
+.article-list-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  margin-right: 5px;
+}
+
+.article-list-scrollbar::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+.article-list-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-primary-8;
+  border-radius: 5px;
+}
+
+.article-list-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #f0f0f0;
+  @apply bg-primary-8;
+}

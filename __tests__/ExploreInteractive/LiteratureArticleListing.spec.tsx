@@ -54,22 +54,33 @@ const createMockArticle = (title: string, doi: string, abstract: string): Articl
   title,
   doi,
   abstract,
+  authors: ['Bach', 'Chopin '],
 });
+
+const mockFetchArticlesForBrainRegionAndExperiment = jest.fn().mockImplementation(
+  (token, name, brainRegions, page: number) =>
+    new Promise((resolve) => {
+      const mockResponse: ArticleItem[] = [...Array(50).keys()].map((_, index) =>
+        createMockArticle(`Mock title ${index}`, `${index}`, 'Mock abstract')
+      );
+      resolve({ articles: mockResponse, total: 100, currentPage: page, pages: 2 });
+    })
+);
 
 jest.mock('src/components/explore-section/Literature/api.ts', () => ({
   __esModule: true,
-  fetchArticlesForBrainRegionAndExperiment: jest.fn().mockImplementation(
-    () =>
-      new Promise((resolve) => {
-        const mockResponse: ArticleItem[] = [...Array(100).keys()].map((_, index) =>
-          createMockArticle(`Mock title ${index}`, `${index}`, 'Mock abstract')
-        );
-        resolve(mockResponse);
-      })
-  ),
+  fetchArticlesForBrainRegionAndExperiment: jest
+    .fn()
+    .mockImplementation((token, name, brainRegions, page: number) =>
+      mockFetchArticlesForBrainRegionAndExperiment(token, name, brainRegions, page)
+    ),
 }));
 
 describe('LiteratureArticleListingPage', () => {
+  beforeEach(() => {
+    mockFetchArticlesForBrainRegionAndExperiment.mockClear();
+  });
+
   test('shows error message when user navigates to incorrect experiment detail', async () => {
     renderComponentWithRoute('invalid-experiment-name');
     screen.getByText(/No articles were found for this experiment type./i);
@@ -81,17 +92,17 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows current experiment as selected in the keywords menu', async () => {
-    await renderComponentWithRoute(density.name, true);
+    await renderComponentWithRoute(neuronDensity.name, true);
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
 
     const selectedOption = screen.getByRole('option', { selected: true });
-    expect(selectedOption.textContent).toContain(density.title);
+    expect(selectedOption.textContent).toContain(neuronDensity.title);
   });
 
   test('shows all experiment types as options', async () => {
-    await renderComponentWithRoute(density.name, true);
+    await renderComponentWithRoute(neuronDensity.name, true);
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
@@ -106,7 +117,7 @@ describe('LiteratureArticleListingPage', () => {
       push: jest.fn(),
     };
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
-    await renderComponentWithRoute(density.name, true);
+    await renderComponentWithRoute(neuronDensity.name, true);
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
@@ -123,14 +134,14 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows total count of articles', async () => {
-    renderComponentWithRoute(density.name);
+    renderComponentWithRoute(neuronDensity.name);
 
     const articleCount = await screen.findByTestId('total-article-count', {}, { timeout: 3000 });
     expect(articleCount.textContent).toMatch(/100/);
   });
 
   test('shows articles for page 1 by default', async () => {
-    renderComponentWithRoute(density.name);
+    renderComponentWithRoute(neuronDensity.name);
 
     const allArticles = await screen.findAllByText(/mock title/i);
     expect(allArticles.length).toBeLessThanOrEqual(100);
@@ -140,7 +151,31 @@ describe('LiteratureArticleListingPage', () => {
     });
   });
 
-  const density = EXPERIMENT_DATA_TYPES[NEURON_DENSITY];
+  test('does not show load more indicator when more articles are not available', async () => {
+    mockFetchArticlesForBrainRegionAndExperiment.mockImplementationOnce(
+      (token, name, brainRegions, page: number) =>
+        new Promise((resolve) => {
+          const mockResponse: ArticleItem[] = [...Array(10).keys()].map((_, index) =>
+            createMockArticle(`Only 10 articles available ${index}`, `${index}`, 'Mock abstract')
+          );
+          resolve({ articles: mockResponse, total: 10, currentPage: page, pages: 1 });
+        })
+    );
+
+    renderComponentWithRoute(neuronDensity.name);
+    await screen.findAllByText(/only 10 articles available/i);
+    expect(screen.queryByTestId('load more articles')).not.toBeInTheDocument();
+  });
+
+  test('shows load more indicator when more articles are available', async () => {
+    renderComponentWithRoute(neuronDensity.name);
+
+    await screen.findAllByText(/mock title/i);
+
+    screen.getByTestId('load more articles');
+  });
+
+  const neuronDensity = EXPERIMENT_DATA_TYPES[NEURON_DENSITY];
 
   const renderComponentWithRoute = async (name?: string, waitForArticles?: boolean) => {
     const spy = useParams as unknown as jest.Mock;
