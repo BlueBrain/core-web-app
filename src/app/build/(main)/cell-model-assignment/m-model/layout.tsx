@@ -2,9 +2,8 @@
 
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useRouter } from 'next/navigation';
 
 import { extraPanelContainerAtom } from '@/state/build-section/layout';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
@@ -12,52 +11,30 @@ import {
   PanelExpanded,
   PanelCollapsed,
 } from '@/components/build-section/cell-model-assignment/m-model/Panel';
-import {
-  selectedMModelNameAtom,
-  selectedMModelIdAtom,
-  mModelRemoteParamsLoadedAtom,
-} from '@/state/brain-model-config/cell-model-assignment/m-model';
-import useMModelQueryParam from '@/hooks/m-model-editor';
+import { selectedMModelNameAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { fetchMModelRemoteParamsAtom } from '@/state/brain-model-config/cell-model-assignment/m-model/setters';
-
-const MMODEL_QUERY_PARAM_KEY = 'mModel';
+import { useResetMModel } from '@/hooks/m-model-editor';
+import { useSessionAtomValue } from '@/hooks/hooks';
 
 type Props = {
   children: ReactNode;
 };
 
 export default function MModelLayout({ children }: Props) {
-  useMModelQueryParam();
   const extraPanelContainer = useAtomValue(extraPanelContainerAtom);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
-  const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
-  const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
-  const setMModelRemoteOverridesLoaded = useSetAtom(mModelRemoteParamsLoadedAtom);
+  const selectedMModelName = useAtomValue(selectedMModelNameAtom);
   const brainRegion = useAtomValue(selectedBrainRegionAtom);
-  const router = useRouter();
   const mModelGetRemoteConfig = useSetAtom(fetchMModelRemoteParamsAtom);
+  const session = useSessionAtomValue();
+  useResetMModel();
 
   useEffect(() => {
-    if (selectedMModelName !== null) {
-      const baseUrl = '/build/cell-model-assignment/m-model/configuration';
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      urlSearchParams.set(MMODEL_QUERY_PARAM_KEY, selectedMModelName);
-      const updatedQueryParams = urlSearchParams.toString();
-      router.replace(`${baseUrl}?${updatedQueryParams}`);
-    }
-  }, [router, selectedMModelName]);
+    if (!session) return;
 
-  useEffect(() => {
-    // resetting the m-type selection when brain region changes
-    setSelectedMModelName(null);
-    setSelectedMModelId(null);
-    setMModelRemoteOverridesLoaded(false);
-  }, [brainRegion, setSelectedMModelName, setSelectedMModelId, setMModelRemoteOverridesLoaded]);
-
-  useEffect(() => {
     mModelGetRemoteConfig();
-  }, [mModelGetRemoteConfig, brainRegion, selectedMModelName]);
+  }, [session, mModelGetRemoteConfig, brainRegion, selectedMModelName]);
 
   const brainRegionDetails = useMemo(() => {
     if (!extraPanelContainer || !brainRegion) return null;

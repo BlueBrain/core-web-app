@@ -97,3 +97,11 @@ export interface MModelMenuItem {
   annotation?: string;
   id: string;
 }
+
+export type DefaultMModelType = {
+  value: {
+    name: string;
+    id: string;
+    brainRegionId: string;
+  };
+};

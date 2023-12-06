@@ -74,6 +74,7 @@ export default function SynthesisPreview({ className }: Props) {
 
   useEffect(() => {
     if (!mModelPreviewConfig || !session) return undefined;
+    if (Object.keys(mModelPreviewConfig.resources).length === 0) return undefined;
 
     setIsLoading(true);
     const abortController = new AbortController();

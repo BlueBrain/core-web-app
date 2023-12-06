@@ -1,4 +1,4 @@
-import { NeuriteType, ParamsToDisplay } from '@/types/m-model';
+import { DefaultMModelType, NeuriteType, ParamsToDisplay } from '@/types/m-model';
 
 export const synthesisPreviewApiUrl =
   'https://synthesis.sbo.kcp.bbp.epfl.ch/synthesis-with-resources';
@@ -26,3 +26,13 @@ export const neuriteTypes: Record<NeuriteType, NeuriteType> = {
   apical_dendrite: 'apical_dendrite',
   axon: 'axon',
 };
+
+export const DEFAULT_M_MODEL: DefaultMModelType = {
+  value: {
+    id: 'http://uri.interlex.org/base/ilx_0383192',
+    name: 'L1_DAC',
+    brainRegionId: 'http://api.brain-map.org/api/v2/data/Structure/558',
+  },
+};
+
+export const DEFAULT_M_MODEL_STORAGE_KEY = 'lastClickedMModel';

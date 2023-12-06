@@ -6,8 +6,9 @@ import {
   selectedMModelIdAtom,
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import ModelSelect from '@/components/build-section/cell-model-assignment/m-model/Panel/ModelSelect';
-import { ModelChoice } from '@/types/m-model';
+import { DefaultMModelType, ModelChoice } from '@/types/m-model';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
+import { DEFAULT_M_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/m-model';
 
 interface MTypeListItemProps {
   label: string;
@@ -15,6 +16,7 @@ interface MTypeListItemProps {
   activeModel: ModelChoice;
   onModelChange: (mTypeId: string, newValue: ModelChoice) => void;
   onlyPlaceholder: boolean;
+  brainRegionId: string;
 }
 
 export default function ListItem({
@@ -23,14 +25,17 @@ export default function ListItem({
   activeModel,
   onModelChange,
   onlyPlaceholder,
+  brainRegionId,
 }: MTypeListItemProps) {
   const [selectedMModelName, setSelectedMModelName] = useAtom(selectedMModelNameAtom);
-
   const setSelectedMModelId = useSetAtom(selectedMModelIdAtom);
 
   const handleClick = () => {
     setSelectedMModelName(label);
     setSelectedMModelId(id);
+
+    const defaultDataToSave: DefaultMModelType = { value: { name: label, brainRegionId, id } };
+    window.localStorage.setItem(DEFAULT_M_MODEL_STORAGE_KEY, JSON.stringify(defaultDataToSave));
   };
 
   const isActive = label === selectedMModelName;

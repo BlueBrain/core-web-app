@@ -8,6 +8,7 @@ import {
   MModelWorkflowOverrides,
   NeuriteType,
   CanonicalParamsAndDistributions,
+  DefaultMModelType,
 } from '@/types/m-model';
 import { morphologyAssignmentConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
@@ -32,10 +33,37 @@ import {
   generateBrainRegionMTypeArray,
 } from '@/util/cell-model-assignment';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { getInitializationValue } from '@/util/utils';
+import {
+  DEFAULT_M_MODEL,
+  DEFAULT_M_MODEL_STORAGE_KEY,
+} from '@/constants/cell-model-assignment/m-model';
+import {
+  DEFAULT_BRAIN_REGION,
+  DEFAULT_BRAIN_REGION_STORAGE_KEY,
+} from '@/constants/brain-hierarchy';
+import { DefaultBrainRegionType } from '@/state/brain-regions/types';
 
-export const selectedMModelNameAtom = atom<string | null>(null);
+const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
+  DEFAULT_BRAIN_REGION_STORAGE_KEY,
+  DEFAULT_BRAIN_REGION
+);
 
-export const selectedMModelIdAtom = atom<string | null>(null);
+const initializationMModel = getInitializationValue<DefaultMModelType>(
+  DEFAULT_M_MODEL_STORAGE_KEY,
+  DEFAULT_M_MODEL
+);
+
+const useSavedMModel =
+  initializationBrainRegion.value.id === initializationMModel.value.brainRegionId;
+
+export const selectedMModelNameAtom = atom<string | null>(
+  useSavedMModel ? initializationMModel.value.name : null
+);
+
+export const selectedMModelIdAtom = atom<string | null>(
+  useSavedMModel ? initializationMModel.value.id : null
+);
 
 export const mModelRemoteParamsAtom = atom<ParamConfig | null>(null);
 
@@ -234,10 +262,11 @@ export const canonicalBrainRegionMTypeMapAtom = atom<Promise<Map<string, string 
 );
 
 export const canonicalMorphologyModelIdAtom = atom<Promise<string | null>>(async (get) => {
+  const session = get(sessionAtom);
   const brainRegionMTypeArray = get(brainRegionMTypeArrayAtom);
   const canonicalBrainRegionMTypeMap = await get(canonicalBrainRegionMTypeMapAtom);
 
-  if (!brainRegionMTypeArray) return null;
+  if (!session || !brainRegionMTypeArray) return null;
 
   const [brainRegionId, mTypeId] = brainRegionMTypeArray;
 
@@ -277,7 +306,6 @@ export const canonicalModelParametersAtom = atom<Promise<ParamConfig | null>>(as
   );
 
   const distributionUrl = neuronMorphologyModelParameter.distribution.contentUrl;
-
   return fetchJsonFileByUrl<ParamConfig>(distributionUrl, session);
 });
 

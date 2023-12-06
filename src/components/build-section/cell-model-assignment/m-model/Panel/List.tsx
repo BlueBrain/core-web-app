@@ -52,6 +52,7 @@ export default function List() {
               activeModel={activeModel}
               onModelChange={onModelChange}
               onlyPlaceholder={!hasCanonical}
+              brainRegionId={selectedBrainRegion.id}
             />
           );
         })}
