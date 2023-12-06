@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { Filter, RangeFilter } from '@/components/Filter/types';
 import { filterHasValue } from '@/components/Filter/util';
 import { getFieldEsConfig } from '@/api/explore-section/fields';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 function buildRangeQuery(filter: RangeFilter, esTerm: string) {
   const filterESBuilder = esb.rangeQuery(esTerm);
@@ -98,6 +99,9 @@ export default function buildFilters(
 
   if (experimentDataType) {
     filtersQuery.must(esb.termQuery('@type.keyword', experimentDataType));
+    if (EXPERIMENT_DATA_TYPES[experimentDataType].curated) {
+      filtersQuery.must(esb.termQuery('curated', true));
+    }
   }
 
   filtersQuery.must(esb.termQuery('deprecated', false));

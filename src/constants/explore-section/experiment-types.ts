@@ -13,6 +13,7 @@ export type ExperimentConfig = {
   title: string;
   name: string;
   columns: Array<string>;
+  curated: boolean;
   cardViewFields?: { [key: string]: DetailProps[] };
 };
 
@@ -33,6 +34,7 @@ export const EXPERIMENT_DATA_TYPES: {
       'contributors',
       'createdAt',
     ],
+    curated: true,
     cardViewFields: {
       morphometrics: [
         {
@@ -92,6 +94,7 @@ export const EXPERIMENT_DATA_TYPES: {
     title: 'Electrophysiology',
     name: 'electrophysiology',
     columns: ['brainRegion', 'eType', 'name', 'subjectSpecies', 'contributors', 'createdAt'],
+    curated: true,
   },
   [NEURON_DENSITY]: {
     title: 'Neuron density',
@@ -107,6 +110,7 @@ export const EXPERIMENT_DATA_TYPES: {
       'contributors',
       'createdAt',
     ],
+    curated: false,
   },
   [BOUTON_DENSITY]: {
     title: 'Bouton density',
@@ -121,6 +125,7 @@ export const EXPERIMENT_DATA_TYPES: {
       'contributors',
       'createdAt',
     ],
+    curated: false,
   },
   [LAYER_THICKNESS]: {
     title: 'Layer thickness',
@@ -133,6 +138,7 @@ export const EXPERIMENT_DATA_TYPES: {
       'contributors',
       'createdAt',
     ],
+    curated: false,
   },
   [SYNAPSE_PER_CONNECTION]: {
     title: 'Synapse per connection',
@@ -145,5 +151,6 @@ export const EXPERIMENT_DATA_TYPES: {
       'contributors',
       'createdAt',
     ],
+    curated: false,
   },
 };

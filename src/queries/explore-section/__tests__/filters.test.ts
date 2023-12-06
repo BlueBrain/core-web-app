@@ -1,5 +1,6 @@
 import buildFilters, { getFilterESBuilder } from '@/queries/explore-section/filters';
 import { Filter } from '@/components/Filter/types';
+import { BOUTON_DENSITY } from '@/constants/explore-section/list-views';
 
 const checklistFilter: Filter = {
   field: 'brainRegion',
@@ -126,14 +127,14 @@ describe('test buildFilters functionality', () => {
       [checklistFilter, valueRangeFilter],
       undefined,
       undefined,
-      'https://neuroshapes.org/BoutonDensity'
+      BOUTON_DENSITY
     );
     expect(builder?.toJSON()).toEqual({
       bool: {
         must: [
           {
             term: {
-              '@type.keyword': 'https://neuroshapes.org/BoutonDensity',
+              '@type.keyword': BOUTON_DENSITY,
             },
           },
           {
