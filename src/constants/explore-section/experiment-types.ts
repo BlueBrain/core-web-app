@@ -32,7 +32,6 @@ export const EXPERIMENT_DATA_TYPES: {
       'subjectSpecies',
       'contributors',
       'createdAt',
-      'reference',
     ],
     cardViewFields: {
       morphometrics: [
@@ -92,16 +91,7 @@ export const EXPERIMENT_DATA_TYPES: {
   [ELECTRO_PHYSIOLOGY]: {
     title: 'Electrophysiology',
     name: 'electrophysiology',
-    columns: [
-      'brainRegion',
-      'eType',
-      'name',
-      'conditions',
-      'subjectSpecies',
-      'contributors',
-      'createdAt',
-      'reference',
-    ],
+    columns: ['brainRegion', 'eType', 'name', 'subjectSpecies', 'contributors', 'createdAt'],
   },
   [NEURON_DENSITY]: {
     title: 'Neuron density',
@@ -113,11 +103,9 @@ export const EXPERIMENT_DATA_TYPES: {
       'neuronDensity',
       'numberOfMeasurements',
       'name',
-      'conditions',
       'subjectSpecies',
       'contributors',
       'createdAt',
-      'reference',
     ],
   },
   [BOUTON_DENSITY]: {
@@ -132,7 +120,6 @@ export const EXPERIMENT_DATA_TYPES: {
       'subjectSpecies',
       'contributors',
       'createdAt',
-      'reference',
     ],
   },
   [LAYER_THICKNESS]: {
@@ -142,11 +129,9 @@ export const EXPERIMENT_DATA_TYPES: {
       'brainRegion',
       'layer',
       'layerThickness',
-      'conditions',
       'subjectSpecies',
       'contributors',
       'createdAt',
-      'reference',
     ],
   },
   [SYNAPSE_PER_CONNECTION]: {
@@ -156,11 +141,9 @@ export const EXPERIMENT_DATA_TYPES: {
       'brainRegion',
       'layer',
       'layerThickness',
-      'conditions',
       'subjectSpecies',
       'contributors',
       'createdAt',
-      'reference',
     ],
   },
 };
