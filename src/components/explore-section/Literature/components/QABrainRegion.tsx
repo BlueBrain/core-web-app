@@ -13,7 +13,7 @@ export function QABrainRegionPerQuestion({ id, title }: SelectedBrainRegionPerQu
   return (
     <div
       id={`brain-region-${id}`}
-      className="inline-flex items-center justify-between w-full min-w-full gap-2 px-4 py-2 rounded-sm bg-neutral-1 text-primary-8"
+      className="inline-flex items-center justify-between w-full gap-2 px-4 py-2 rounded-sm bg-neutral-1 text-primary-8"
     >
       <BrainIcon />
       <div title={title} className="flex-1 w-full text-base font-bold line-clamp-1">

@@ -1,4 +1,3 @@
-import { createRef } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
@@ -33,7 +32,7 @@ describe('GenerativeQAResults', () => {
     const article4 = getArticle(4, { citationsCount: 1 });
 
     renderComponent([article1, article2, article3, article4]);
-
+    expandArticles();
     await selectSortByField('Number of citations');
 
     expectArticlesInOrder([article4, article1, article2, article3]);
@@ -46,6 +45,7 @@ describe('GenerativeQAResults', () => {
     const article4 = getArticle(4, { impactFactor: 1 });
 
     renderComponent([article1, article2, article3, article4]);
+    expandArticles();
 
     await selectSortByField('Matching score');
 
@@ -90,7 +90,6 @@ describe('GenerativeQAResults', () => {
   }
 
   function QAListProvider(articles: GArticle[]) {
-    const ref = createRef<{ goToBottom: () => void }>();
     const qa: GenerativeQA[] = [
       {
         id: '1',
@@ -100,11 +99,12 @@ describe('GenerativeQAResults', () => {
         rawAnswer: 'blah blah blah',
         isNotFound: false,
         articles,
+        streamed: true,
       },
     ];
     return (
       <TestProvider initialValues={[[literatureResultAtom, qa]]}>
-        <QAResultList imperativeRef={ref} />
+        <QAResultList />
       </TestProvider>
     );
   }
@@ -128,10 +128,13 @@ describe('GenerativeQAResults', () => {
   };
 
   const renderComponent = (articles: GArticle[]) => render(QAListProvider(articles));
-
-  const sortArticles = (direction: SortDirection | null) => {
+  const expandArticles = () => {
     const expandArticlesBt = screen.getByRole('button', { name: 'expand-articles' });
     fireEvent.click(expandArticlesBt);
+  };
+
+  const sortArticles = (direction: SortDirection | null) => {
+    expandArticles();
 
     if (direction === 'asc') {
       clickSortButton();

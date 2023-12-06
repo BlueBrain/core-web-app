@@ -1,42 +1,49 @@
+import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 
 import { brainRegionQAs, literatureResultAtom } from '@/state/literature';
 import { GenerativeQA } from '@/types/literature';
-import { destructPath } from '@/components/build-section/ContextualLiterature/util';
 import usePathname from '@/hooks/pathname';
 
-/// NOTE: make sure to remove "chatId" from the query params in the url if return back from literature to the config/interactive pages
-/// back to configuration as an example, @dinika
-
-function useContextualLiteratureContext() {
+export function useLiteratureDataSource() {
   const pathname = usePathname();
   const searchParams = useSearchParams()!;
   const allQAs = useAtomValue(literatureResultAtom);
   const brainRegionSpecificQAs = useAtomValue(brainRegionQAs);
+  const chatId = searchParams?.get('chatId');
+  const isContextualLiterature = searchParams?.get('contextual') === 'true';
+  const isBuildSection = pathname?.startsWith('/build');
 
+  return useMemo(() => {
+    let dataSource: GenerativeQA[] = [];
+    if (isContextualLiterature) {
+      dataSource = allQAs.filter(({ chatId: questionChatId }) => questionChatId === chatId);
+    } else if (isBuildSection) {
+      dataSource = brainRegionSpecificQAs;
+    } else {
+      dataSource = allQAs;
+    }
+
+    return dataSource;
+  }, [chatId, allQAs, brainRegionSpecificQAs, isBuildSection, isContextualLiterature]);
+}
+
+export function useContextSearchParams() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams()!;
   const currentMode = searchParams?.get('context');
   const chatId = searchParams?.get('chatId');
   const isOptionsMode = searchParams?.get('context') === 'more-options';
   const isAskMoreMode = searchParams?.get('context') === 'ask-more';
   const isContextualLiterature = searchParams?.get('contextual') === 'true';
-  const selectedQuestion = searchParams?.get('context-question');
 
   const isBuildSection = pathname?.startsWith('/build');
   const isContextualMode = isAskMoreMode || isOptionsMode;
 
-  let dataSource: GenerativeQA[] = [];
-  if (isContextualLiterature) {
-    dataSource = allQAs.filter(({ chatId: questionChatId }) => questionChatId === chatId);
-  } else if (isBuildSection) {
-    dataSource = brainRegionSpecificQAs;
-  } else {
-    dataSource = allQAs;
-  }
-
   const clearContextSearchParams = (
     Params: ReadonlyURLSearchParams = searchParams,
-    clearChat?: boolean
+    clearChat: boolean = false
   ) => {
     const params = new URLSearchParams(Array.from(Params.entries()));
     Array.from(params.entries()).forEach(([key]) => {
@@ -62,22 +69,16 @@ function useContextualLiteratureContext() {
     return params;
   };
 
-  const { step: buildStep } = destructPath(pathname!);
   return {
-    buildStep,
+    chatId,
     pathname,
+    searchParams,
     currentMode,
-    isOptionsMode,
-    isAskMoreMode,
-    selectedQuestion,
-    dataSource,
-    isBuildSection,
     isContextualLiterature,
+    isBuildSection,
     isContextualMode,
     clearContextSearchParams,
     removeContextualSearchParam,
     appendContextualSearchParam,
   };
 }
-
-export default useContextualLiteratureContext;

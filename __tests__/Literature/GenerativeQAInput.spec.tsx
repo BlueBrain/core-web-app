@@ -42,12 +42,27 @@ jest.mock('@/components/explore-section/Literature/api.ts', () => ({
         resolve(mockArticleResponse);
       })
   ),
+  getGenerativeQA: jest.fn(),
 }));
 
-jest.mock('@/components/explore-section/Literature/actions.ts', () => ({
-  __esModule: true,
-  getGenerativeQAAction: jest.fn(),
-}));
+jest.mock('next/navigation', () => {
+  const actual = jest.requireActual('next/navigation');
+
+  return {
+    ...actual,
+    usePathname: () => '',
+    useSearchParams: () => {
+      return {
+        get: jest.fn(),
+        set: jest.fn(),
+      };
+    },
+    useRouter: () => ({
+      push: () => jest.fn(),
+      replace: () => jest.fn(),
+    }),
+  };
+});
 
 describe('GenerativeQAInput', () => {
   beforeEach(() => {
@@ -55,7 +70,7 @@ describe('GenerativeQAInput', () => {
   });
 
   test('shows input for typing question', () => {
-    const questionInput = screen.getByPlaceholderText('Send your question');
+    const questionInput = screen.getByPlaceholderText('Your question');
     expect(questionInput).toBeVisible();
   });
 
@@ -262,11 +277,11 @@ describe('GenerativeQAInput', () => {
     if (queryType === 'fail-if-not-found') {
       return screen.getByRole('button', { name: 'Search send' });
     }
-    return screen.queryByRole('button', { name: 'Search send' });
+    return screen.queryByRole('button', { name: 'Search' });
   };
 
   const typeQuestion = (question: string) => {
-    const questionInput = screen.getByPlaceholderText('Send your question');
+    const questionInput = screen.getByPlaceholderText('Your question');
     fireEvent.change(questionInput, { target: { value: question } });
   };
 
@@ -286,7 +301,7 @@ describe('GenerativeQAInput', () => {
     );
     expect(dateInputAfter).toHaveValue(today);
 
-    const questionInput = screen.getByPlaceholderText('Send your question');
+    const questionInput = screen.getByPlaceholderText('Your question');
     fireEvent.click(questionInput);
   };
 

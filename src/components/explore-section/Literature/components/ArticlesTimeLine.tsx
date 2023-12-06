@@ -1,7 +1,7 @@
 import Article from './Article';
-import { GenerativeQASingleResultProps } from '@/types/literature';
+import { SucceededGenerativeQA } from '@/types/literature';
 
-type GenerativeQAResultsProps = Pick<GenerativeQASingleResultProps, 'articles'> & {
+type GenerativeQAResultsProps = Pick<SucceededGenerativeQA, 'articles'> & {
   collapseAll: boolean;
   isCompact?: boolean;
 };

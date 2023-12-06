@@ -4,7 +4,7 @@ import { classNames } from '@/util/utils';
 
 type Props = {
   index?: number;
-  question: JSX.Element;
+  question?: JSX.Element;
   onSelect?(): void;
   isPending?: boolean;
   selectable?: boolean;
@@ -23,9 +23,9 @@ function ItemTile({ index, question, onSelect, isPending, selectable = true }: P
       )}
       onClick={onSelect}
     >
-      <div className="w-[90%]">
+      <div className="w-[90%] inline-flex flex-col items-start justify-start">
         <span>{index}.</span>
-        <div className="font-normal group-hover:font-bold text-primary-8 text-base leading-9">
+        <div className="font-normal text-left group-hover:font-bold text-primary-8 text-base leading-9">
           {question}
         </div>
       </div>
@@ -33,7 +33,7 @@ function ItemTile({ index, question, onSelect, isPending, selectable = true }: P
         <LoadingOutlined className="transition-all duration-200 ease-out-expo" />
       ) : (
         selectable && (
-          <SendOutlined className="opacity-0 group-hover:opacity-100 group-hover:transition-all group-hover:duration-200 group-hover:ease-out-expo" />
+          <SendOutlined className="opacity-0 text-primary-8 group-hover:opacity-100 group-hover:transition-all group-hover:duration-200 group-hover:ease-out-expo" />
         )
       )}
     </div>

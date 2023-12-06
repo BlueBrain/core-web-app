@@ -3,24 +3,21 @@ import { format } from 'date-fns';
 import { QABrainRegionPerQuestion } from '../QABrainRegion';
 import { classNames } from '@/util/utils';
 import { ChevronIcon } from '@/components/icons';
+import { SucceededGenerativeQA } from '@/types/literature';
 import BrainLight from '@/components/icons/BrainLight';
-import { GenerativeQASingleResultProps } from '@/types/literature';
 
-type GenerativeQASingleResultHeaderProps = Pick<
-  GenerativeQASingleResultProps,
-  'askedAt' | 'question' | 'brainRegion'
-> & {
+type ResultHeaderProps = Pick<SucceededGenerativeQA, 'askedAt' | 'question' | 'brainRegion'> & {
   collpaseQuestion?: boolean;
   toggleCollapseQuestion: () => void;
 };
 
-export default function GenerativeQASingleResultHeader({
+export default function ResultHeader({
   question,
   askedAt,
   brainRegion,
   collpaseQuestion,
   toggleCollapseQuestion,
-}: GenerativeQASingleResultHeaderProps) {
+}: ResultHeaderProps) {
   return (
     <>
       <div className="inline-flex items-center w-full gap-2">
@@ -29,8 +26,8 @@ export default function GenerativeQASingleResultHeader({
           Asked {format(new Date(askedAt), 'dd.MM.yyyy - kk:mm')}
         </span>
       </div>
-      <div className="inline-flex items-center justify-between w-full mb-2">
-        <div className="inline-flex items-center justify-start w-full gap-2 my-5">
+      <div className="grid grid-cols-[2fr_1fr] items-center justify-between gap-2  w-full mb-2">
+        <div className="inline-flex items-center justify-start w-full flex-[70%] gap-2 my-5">
           <BrainLight />
           <span
             className={classNames(
@@ -42,7 +39,7 @@ export default function GenerativeQASingleResultHeader({
             {question}
           </span>
         </div>
-        <div className="inline-flex items-center justify-end gap-2">
+        <div className="inline-flex items-center justify-end gap-2 flex-[30%]">
           {brainRegion?.id && (
             <QABrainRegionPerQuestion id={brainRegion.id} title={brainRegion.title} />
           )}

@@ -1,6 +1,3 @@
-import { Session } from 'next-auth';
-
-import * as LiteratureErrors from '../components/explore-section/Literature/errors';
 import { Filter, GteLteValue } from '@/components/Filter/types';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 
@@ -32,7 +29,7 @@ export type GenerativeQAMetadata = {
   article_title: string;
   article_authors: string[];
   paragraph: string;
-  paragraph_id: string;
+  ds_document_id: string;
   article_doi?: string;
   section?: string;
   date?: string; // format "%Y-%m-%d"
@@ -53,11 +50,12 @@ export type GenerativeQAWithDataResponse = {
 export type GenerativeQAWithoutDataResponse = {
   code: number;
   detail: string;
+  raw_answer?: string;
 };
 
 export type GenerativeQAResponse =
   | GenerativeQAWithDataResponse
-  | { detail: GenerativeQAWithoutDataResponse };
+  | { Error: GenerativeQAWithoutDataResponse };
 export type SelectedBrainRegionPerQuestion = Pick<SelectedBrainRegion, 'id' | 'title'>;
 export type BuildStepPath =
   | 'cell-composition'
@@ -65,12 +63,13 @@ export type BuildStepPath =
   | 'connectome-definition'
   | 'connectome-model-assignment';
 
-interface BaseGenerativeQA {
+export interface BaseGenerativeQA {
   id: string;
   chatId?: string;
   askedAt: Date;
   question: string;
   brainRegion?: SelectedBrainRegionPerQuestion;
+  streamed: boolean;
 }
 export interface SucceededGenerativeQA extends BaseGenerativeQA {
   isNotFound: false;
@@ -83,17 +82,16 @@ export interface SucceededGenerativeQA extends BaseGenerativeQA {
     DensityOrCount?: 'density' | 'count';
   };
 }
-export type GenerativeQASingleResultProps = Omit<SucceededGenerativeQA, 'sources' | 'paragraphs'>;
-
 export interface FailedGenerativeQA extends BaseGenerativeQA {
   isNotFound: true;
   statusCode: string;
   details: string;
+  rawRanswer?: string;
 }
 
 export type GenerativeQA = SucceededGenerativeQA | FailedGenerativeQA;
 
-export type GenerativeQADTO = { question: string } & (
+export type GenerativeQADTO = { question: string; questionId: string; askedAt: Date } & (
   | {
       isNotFound: false;
       response: GenerativeQAWithDataResponse;
@@ -105,7 +103,6 @@ export type GenerativeQADTO = { question: string } & (
 );
 
 export type GetGenerativeQAInput = {
-  session: Session | null;
   question: string;
   size?: number;
   keywords?: string[];
@@ -114,6 +111,7 @@ export type GetGenerativeQAInput = {
   journals?: string[];
   authors?: string[];
   articleTypes?: string[];
+  signal?: AbortSignal;
 };
 
 export type GenerativeQAServerResponse =
@@ -128,9 +126,7 @@ export type GenerativeQAServerResponse =
       error: GenerativeQAWithoutDataResponse;
     };
 
-export type ReturnGetGenerativeQA = (
-  input: GetGenerativeQAInput
-) => Promise<GenerativeQAServerResponse | LiteratureErrors.LiteratureValidationError>;
+export type ReturnGetGenerativeQA = (input: GetGenerativeQAInput) => Promise<Response | Error>;
 
 export type JournalSuggestionResponse = {
   title: string;
@@ -184,10 +180,9 @@ export type ContextualLiteratureAtom = {
   key?: React.Key;
   about?: QuestionAbout;
   subject?: string;
-  contextDrawerOpen?: boolean;
-  contextQuestions?: Array<ContextQAItem>;
   densityOrCount?: 'density' | 'count';
-  currentQuestion?: ContextQAItem | null;
+  drawerOpen?: boolean;
+  currentQuestion?: string;
 };
 
 export type BuildQuestionInput = {

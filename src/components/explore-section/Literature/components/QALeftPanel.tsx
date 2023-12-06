@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import isNil from 'lodash/isNil';
 
-import useContextualLiteratureContext from '../useContextualLiteratureContext';
+import { useContextSearchParams, useLiteratureDataSource } from '../useContextualLiteratureContext';
 import QAHistoryNavigation from './QANavigation';
 import QABrainRegion from './QABrainRegion';
 import usePathname from '@/hooks/pathname';
@@ -58,7 +58,7 @@ function IgnoreContextualLiterature() {
     isContextualLiterature,
     removeContextualSearchParam,
     appendContextualSearchParam,
-  } = useContextualLiteratureContext();
+  } = useContextSearchParams();
   const returnDefaultView = () => {
     const params = isContextualLiterature
       ? removeContextualSearchParam()
@@ -98,7 +98,8 @@ function IgnoreContextualLiterature() {
 
 function QALeftPanel() {
   const pathname = usePathname();
-  const { dataSource, isContextualLiterature } = useContextualLiteratureContext();
+  const { isContextualLiterature } = useContextSearchParams();
+  const dataSource = useLiteratureDataSource();
   const isBuildSection = pathname?.startsWith('/build');
   const shouldShowNavigation = isContextualLiterature ? true : dataSource.length > 1;
 

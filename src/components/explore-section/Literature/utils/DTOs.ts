@@ -1,4 +1,5 @@
-import kebabCase from 'lodash/kebabCase';
+import toInteger from 'lodash/toInteger';
+
 import {
   FailedGenerativeQA,
   GenerativeQA,
@@ -6,29 +7,38 @@ import {
   SucceededGenerativeQA,
 } from '@/types/literature';
 
-const generativeQADTO = ({ question, response, isNotFound }: GenerativeQADTO): GenerativeQA => {
-  const askedAt = new Date();
-  const questionId = `${kebabCase(question)}-${askedAt.getTime()}`;
+export const DATA_SEPERATOR = '<bbs_json_data>';
+export const ERROR_SEPERATOR = '<bbs_json_error>';
+export const SOURCES_SEPERATOR = '<bbs_sources>';
+export const STREAM_JSON_DATA_SEPARATOR_REGEX = /(<bbs_json_data>|<bbs_json_error>)/g;
 
-  return isNotFound
+const generativeQADTO = ({
+  question,
+  response,
+  askedAt,
+  isNotFound,
+  questionId,
+}: GenerativeQADTO): GenerativeQA =>
+  isNotFound
     ? ({
         question,
         askedAt,
         isNotFound,
         id: questionId,
-        statusCode: response.code.toString(),
+        statusCode: toInteger(response.code).toString(),
         details: response.detail,
+        rawRanswer: response.raw_answer,
       } as FailedGenerativeQA)
     : ({
         question,
         askedAt,
         isNotFound,
         id: questionId,
-        answer: response.answer ?? '',
-        rawAnswer: response.raw_answer?.split('SOURCES')?.[0] ?? '',
+        answer: response.answer?.split(SOURCES_SEPERATOR)?.[0] ?? '',
+        rawAnswer: response.raw_answer?.split(SOURCES_SEPERATOR)?.[0] ?? '',
         articles: response.metadata
           ? response.metadata.map((article, index) => ({
-              id: `${article.article_id}-${index}-${questionId}-${article.paragraph_id}`,
+              id: `${article.article_id}-${index}-${questionId}-${article.ds_document_id}`,
               doi: article.article_doi,
               title: article.article_title,
               authors: article.article_authors,
@@ -36,7 +46,7 @@ const generativeQADTO = ({ question, response, isNotFound }: GenerativeQADTO): G
               journalISSN: article.journal_issn,
               section: article.section,
               paragraph: article.paragraph,
-              paragraphId: article.paragraph_id,
+              paragraphId: article.ds_document_id,
               articleType: article.article_type,
               abstract: article.abstract,
               publicationDate: article.date,
@@ -45,6 +55,5 @@ const generativeQADTO = ({ question, response, isNotFound }: GenerativeQADTO): G
             }))
           : [],
       } as SucceededGenerativeQA);
-};
 
 export { generativeQADTO };

@@ -28,7 +28,7 @@ import {
 
 type Props = {
   isParametersVisible: boolean;
-  setIsParametersVisible: (value: boolean) => void;
+  setIsParametersVisible: () => void;
 };
 
 function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Props) {
@@ -41,7 +41,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
       <div className="relative w-full">
         <Button
           icon={<CloseOutlined />}
-          onClick={() => setIsParametersVisible(false)}
+          onClick={setIsParametersVisible}
           shape="circle"
           aria-label="close-parameters"
           className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 -top-6"

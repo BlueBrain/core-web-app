@@ -1,12 +1,16 @@
 import { useReducer } from 'react';
+import { useSetAtom } from 'jotai';
 import { Button } from 'antd';
 import delay from 'lodash/delay';
+import reject from 'lodash/reject';
 
-import GenerativeQASingleResultContainer from './QASingleResultContainer';
-import GenerativeQASingleResultHeader from './QASingleResultHeader';
-import { useLiteratureResultsAtom } from '@/state/literature';
+import GenerativeQASingleResultContainer from './ResultContainer';
+import GenerativeQASingleResultHeader from './ResultHeader';
+import { literatureResultAtom, persistedLiteratureResultAtom } from '@/state/literature';
 import { FailedGenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
+
+export type ResultErrorProps = Omit<FailedGenerativeQA, 'isNotFound'>;
 
 const GENERATIVE_QA_ERRORS_MAP: { [key: string]: string } = {
   '1': 'Unfortunately, no relevant information could be found in our database.\n Please modify your request.',
@@ -18,7 +22,7 @@ const GENERATIVE_QA_ERRORS_MAP: { [key: string]: string } = {
   default: 'An unexpected error has occurred.\n Please try your request again later.',
 };
 
-export default function GenerativeQASingleResultError({
+export default function ResultError({
   askedAt,
   id,
   question,
@@ -26,16 +30,17 @@ export default function GenerativeQASingleResultError({
   statusCode,
   showHeader = true,
   showRemoveBtn = true,
-}: FailedGenerativeQA & { showHeader?: boolean; showRemoveBtn?: boolean }) {
-  const { remove } = useLiteratureResultsAtom();
+}: ResultErrorProps & { showHeader?: boolean; showRemoveBtn?: boolean }) {
+  const updatePersistedResults = useSetAtom(persistedLiteratureResultAtom);
+  const updateResults = useSetAtom(literatureResultAtom);
   const [collpaseQuestion, toggleCollapseQuestion] = useReducer((val) => !val, false);
   const [deletingPending, toggleDelete] = useReducer((val) => !val, false);
 
   const onDelete = () => {
     toggleDelete();
     delay(() => {
-      remove(id);
-      toggleDelete();
+      updateResults((prev) => reject(prev, { id }));
+      updatePersistedResults((prev) => reject(prev, { id }));
     }, 1000);
   };
 

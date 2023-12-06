@@ -1,180 +1,242 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Drawer, Skeleton } from 'antd';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import { ConfigProvider, Drawer } from 'antd';
 import { ArrowLeftOutlined, CloseOutlined } from '@ant-design/icons';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
 import kebabCase from 'lodash/kebabCase';
-import find from 'lodash/find';
 import findIndex from 'lodash/findIndex';
+import get from 'lodash/get';
+import keys from 'lodash/keys';
+import omit from 'lodash/omit';
 
 import ItemTile from './ItemTile';
-import { buildQuestionsList } from './util';
-import useContextualLiteratureContext from '@/components/explore-section/Literature/useContextualLiteratureContext';
-import useChatQAContext from '@/components/explore-section/Literature/useChatQAContext';
+import { buildQuestionsList, destructPath } from './util';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import {
   contextualLiteratureAtom,
-  useContextualLiteratureAtom,
-  useLiteratureAtom,
+  literatureAtom,
+  literatureResultAtom,
+  promptResponseNodesAtomFamily,
 } from '@/state/literature';
-import { ContextQAItem, GenerativeQA, SucceededGenerativeQA } from '@/types/literature';
+import { updateAndMerge } from '@/components/explore-section/Literature/utils';
+import { GenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
-import updateArray from '@/util/updateArray';
-import { GenerativeQAForm } from '@/components/explore-section/Literature/components/GenerativeQAForm';
-import GenerativeQASingleResultError from '@/components/explore-section/Literature/components/QAResult/QASingleResultError';
-import GenerativeQASingleResultCompact from '@/components/explore-section/Literature/components/QAResult/QASingleResultCompact';
+import { useContextSearchParams } from '@/components/explore-section/Literature/useContextualLiteratureContext';
+import withStreamResult from '@/components/explore-section/Literature/components/QAResult/ResultWithStream';
+import QAForm from '@/components/explore-section/Literature/components/GenerativeQAForm';
+import usePathname from '@/hooks/pathname';
+import { ResultWithoutId } from '@/components/explore-section/Literature/useStreamGenerative';
+
+function RedirectionButton({ title, onClick }: { title: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="px-5 py-3 bg-white border border-gray-400 w-max hover:bg-primary-8 group"
+    >
+      <span className="text-base font-bold text-primary-8 group-hover:text-white">{title}</span>
+    </button>
+  );
+}
+
+function BackButton({ onSlideBack }: { onSlideBack: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onSlideBack}
+      className="inline-flex items-center px-4 py-3 rounded-md hover:bg-gray-50"
+    >
+      <ArrowLeftOutlined className="mr-2 text-base text-gray-400" />
+      <span className="text-base font-normal text-gray-500">Back to all questions</span>
+    </button>
+  );
+}
+
+function CurratedQuestions({
+  curratedQuestions,
+  onSelectQuestion,
+}: {
+  curratedQuestions: Record<string, JSX.Element>;
+  onSelectQuestion: (key: string) => () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center w-full px-2 gap-y-2">
+      {curratedQuestions &&
+        Object.entries(curratedQuestions).map(([key, question], index) => (
+          <ItemTile
+            key={kebabCase(key)}
+            onSelect={onSelectQuestion(key)}
+            {...{ index: index + 1, question }}
+          />
+        ))}
+    </div>
+  );
+}
 
 function ContextualContainer({ children }: { children: React.ReactNode }) {
-  const { context, update } = useContextualLiteratureAtom();
-  const onDrawerClose = () => update('contextDrawerOpen', false);
+  const [{ drawerOpen }, updateContext] = useAtom(contextualLiteratureAtom);
+  const { controller } = useAtomValue(literatureAtom);
+  const onDrawerClose = () => {
+    controller?.abort();
+    updateContext((prev) => ({ ...prev, drawerOpen: false }));
+  };
 
   return (
-    <Drawer
-      maskClosable
-      destroyOnClose
-      open={context?.contextDrawerOpen}
-      onClose={onDrawerClose}
-      mask={false}
-      className="contextual-literature rounded-bl-2xl"
-      rootClassName="contextual-literature-root"
-      title={null}
-      closeIcon={null}
-      width="40vw"
-      rootStyle={{
-        margin: '20px 0',
-      }}
-      bodyStyle={{
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '0 20px',
-      }}
-    >
-      {children}
-    </Drawer>
+    <ConfigProvider theme={{ hashed: false }}>
+      <Drawer
+        mask={false}
+        maskClosable
+        destroyOnClose
+        maskClassName="!bg-transparent"
+        open={drawerOpen}
+        onClose={onDrawerClose}
+        rootClassName="!primary-scrollbar [&>.ant-drawer-content-wrapper]:rounded-bl-2xl"
+        className="rounded-bl-2xl py-3 [&>.ant-drawer-wrapper-body]:!h-[calc(100%-100px)] [&>.ant-drawer-wrapper-body>.ant-drawer-body]:!primary-scrollbar [&>.ant-drawer-wrapper-body]:flex [&>.ant-drawer-wrapper-body]:flex-col-reverse"
+        title={null}
+        closeIcon={null}
+        width="40vw"
+        rootStyle={{
+          margin: '20px 0',
+        }}
+        bodyStyle={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '0 20px',
+          overflowY: 'auto',
+        }}
+      >
+        {children}
+      </Drawer>
+    </ConfigProvider>
   );
 }
 
 function ContextualContent() {
-  const { push: navigate } = useRouter();
-  const searchParams = useSearchParams()!;
-  const updateLiteratureAtom = useLiteratureAtom();
+  const { push: navigate, replace: routeReplace } = useRouter();
+  const pathname = usePathname();
+  const streamRef = useRef<HTMLDivElement>(null);
+  const updateLiteratureAtom = useSetAtom(literatureAtom);
+  const updateResults = useSetAtom(literatureResultAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const { context, update } = useContextualLiteratureAtom();
-  const setContextualAtom = useSetAtom(contextualLiteratureAtom);
+  const { controller } = useAtomValue(literatureAtom);
+  const [{ currentQuestion, subject, about }, updateContext] = useAtom(contextualLiteratureAtom);
   const [currentSlide, setCurrentSlide] = useState<'questions' | 'results'>('questions');
-  const { buildStep, clearContextSearchParams } = useContextualLiteratureContext();
+  const { searchParams, clearContextSearchParams } = useContextSearchParams();
+  const { step } = destructPath(pathname!);
+  const [curratedQuestions, setCurratedQuestions] = useReducer(
+    (state: Record<string, JSX.Element>, value: Record<string, JSX.Element>) => ({
+      ...state,
+      ...value,
+    }),
+    {}
+  );
 
-  const currentGQA = useMemo(() => {
-    const predicate = ({ key }: ContextQAItem) => key === context.currentQuestion?.key;
-    return {
-      question: find(context.contextQuestions, predicate),
-      index: findIndex(context.contextQuestions, predicate),
-    };
-  }, [context.contextQuestions, context.currentQuestion]);
-
-  const { ask, isPending, query } = useChatQAContext({
-    resetAfterAsk: true,
-    afterAskCallback: (gqa: GenerativeQA) => {
-      const item = context.contextQuestions?.find((elt: ContextQAItem) => elt.key === query);
-      update('currentQuestion', {
-        key: query,
-        value: item?.value ?? <span className="text-lg to-primary-8">{query}</span>,
-        gqa,
-      });
-      if (context.contextQuestions) {
-        update(
-          'contextQuestions',
-          (item
-            ? updateArray<ContextQAItem>({
-                array: context.contextQuestions,
-                keyfn: (elt) => elt.key === context.currentQuestion?.key,
-                newVal: {
-                  ...item,
-                  gqa,
-                },
-              })
-            : [
-                ...context.contextQuestions,
-                {
-                  key: query,
-                  value: <span className="text-lg to-primary-8">{query}</span>,
-                  gqa,
-                },
-              ]) as ContextQAItem[]
-        );
-      }
-    },
-  });
-
-  const onDrawerClose = () => update('contextDrawerOpen', false);
-  const onSlideForward = () => setCurrentSlide('results');
-  const onSlideBack = () => {
-    setCurrentSlide('questions');
-    update('currentQuestion', null);
+  const extra = {
+    buildStep: step,
+    parameter: about,
+    DensityOrCount: densityOrCount,
   };
 
-  const onSelectQuestion =
-    ({ key, value }: Omit<ContextQAItem, 'gqa'>) =>
-    () => {
-      const gqa = find(context.contextQuestions, { key })?.gqa;
-      update('currentQuestion', { key, value, gqa });
-      updateLiteratureAtom('query', key);
-      onSlideForward();
-    };
+  const [promptResponseNode, updatePromptResponseNode] = useAtom(
+    promptResponseNodesAtomFamily({ key: currentQuestion! })
+  );
 
-  const prebuiltQuestions = useMemo(() => {
-    const questions = buildQuestionsList({
-      densityOrCount,
-      step: buildStep,
-      brainRegionTitle: selectedBrainRegion?.title!,
-      about: context.about!,
-      subject: context.subject!,
-    });
-    return questions;
-  }, [densityOrCount, context.about, context.subject, buildStep, selectedBrainRegion?.title]);
+  const currentQuestionIndex = findIndex(keys(curratedQuestions), (v) => v === currentQuestion) + 1;
+  const currentQuestionElement = get(curratedQuestions, currentQuestion!);
+
+  const onDrawerClose = () => {
+    controller?.abort();
+    updateContext((prev) => ({ ...prev, drawerOpen: false }));
+  };
+
+  const onSlideForward = () => setCurrentSlide('results');
+  const onSlideBack = () => {
+    controller?.abort();
+    setCurrentSlide('questions');
+    updateContext((prev) => ({ ...prev, currentQuestion: undefined }));
+  };
+
+  const onSelectQuestion = (key: string) => () => {
+    onSlideForward();
+    updateContext((prev) => ({ ...prev, currentQuestion: key }));
+    updateLiteratureAtom((prev) => ({ ...prev, query: key }));
+  };
 
   const gotoOptionMode = () => {
     onDrawerClose();
-    updateLiteratureAtom('query', '');
-    const clearedParams = clearContextSearchParams(searchParams);
-    if (searchParams) {
-      const params = new URLSearchParams(clearedParams);
-      params.set('contextual', 'true');
-      params.set('context', 'more-options');
-      params.set('context-question', context.currentQuestion?.gqa?.id ?? '');
-      const link = `/build/${buildStep}/literature?${params.toString()}`;
-      navigate(link);
-    }
+    updateLiteratureAtom((prev) => ({ ...prev, query: '' }));
+    const params = clearContextSearchParams(searchParams);
+    params.set('contextual', 'true');
+    params.set('context', 'more-options');
+    navigate(`/build/${step}/literature?${params.toString()}`);
   };
 
   const gotoAskMoreMode = () => {
     onDrawerClose();
-    updateLiteratureAtom('query', '');
-    const clearedParams = clearContextSearchParams(searchParams);
-    if (searchParams) {
-      const params = new URLSearchParams(clearedParams);
-      params.set('contextual', 'true');
-      params.set('context', 'ask-more');
-      params.set('chatId', crypto.randomUUID());
-      const link = `/build/${buildStep}/literature?${params.toString()}`;
-      navigate(link);
+    updateLiteratureAtom((prev) => ({ ...prev, query: '' }));
+    const params = clearContextSearchParams(searchParams);
+    params.set('contextual', 'true');
+    params.set('context', 'ask-more');
+    params.set('chatId', crypto.randomUUID());
+    navigate(`/build/${step}/literature?${params.toString()}`);
+  };
+
+  const onContextSubmit = ({
+    id,
+    chatId,
+    newQuestion,
+  }: {
+    id: string;
+    chatId: string;
+    newQuestion: Partial<GenerativeQA>;
+  }) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('chatId', chatId);
+    if (newQuestion.question && !Object.keys(curratedQuestions).includes(newQuestion.question)) {
+      setCurratedQuestions({
+        [newQuestion.question]: (
+          <span
+            key={`${step}-${selectedBrainRegion?.title ?? ''}-${about}-${subject}`}
+            className="text-lg"
+          >
+            {newQuestion.question}
+          </span>
+        ),
+      });
+      updateContext((prev) => ({ ...prev, currentQuestion: newQuestion.question }));
+      promptResponseNodesAtomFamily({ id, key: newQuestion.question, result: newQuestion });
+    } else {
+      updatePromptResponseNode({ id, key: newQuestion.question!, result: newQuestion });
     }
+
+    routeReplace(`${pathname}?${params.toString()}`);
+  };
+
+  const onAfterStream = (result: GenerativeQA) => {
+    updateResults((QAs) => updateAndMerge(QAs, (item) => item.id === result.id, { extra }));
+    updatePromptResponseNode({
+      ...promptResponseNode,
+      result,
+    });
   };
 
   useEffect(() => {
-    setContextualAtom((prev) => ({
-      ...prev,
-      contextQuestions: prebuiltQuestions
-        ? Object.entries(prebuiltQuestions).map(([key, value]) => ({ key, value }))
-        : ([] as ContextQAItem[]),
-    }));
-  }, [prebuiltQuestions, setContextualAtom]);
+    setCurratedQuestions(
+      buildQuestionsList({
+        step,
+        densityOrCount,
+        about: about!,
+        subject: subject!,
+        brainRegionTitle: selectedBrainRegion?.title!,
+      }) ?? {}
+    );
+  }, [about, densityOrCount, selectedBrainRegion?.title, step, subject]);
 
   return (
-    <div className="w-full h-full max-h-[90%] overflow-y-auto">
+    <div className="w-full h-full my-2">
       <div className="absolute top-0 z-30 flex items-center justify-center w-10 h-10 bg-white rounded-tl-full rounded-bl-full -left-10">
         <CloseOutlined
           className="text-base cursor-pointer text-primary-8"
@@ -182,9 +244,7 @@ function ContextualContent() {
         />
       </div>
       <div className="px-2 mt-4 mb-2">About</div>
-      <div className="px-2 mt-px mb-6 text-3xl font-extrabold text-primary-8">
-        {context.subject}
-      </div>
+      <div className="px-2 mt-px mb-6 text-3xl font-extrabold text-primary-8">{subject}</div>
       <div className="relative w-full">
         <div
           id="parameter-questions"
@@ -195,17 +255,7 @@ function ContextualContent() {
               : 'opacity-100 z-10 ease-in visible'
           )}
         >
-          <div className="flex flex-col items-center justify-center w-full px-2 gap-y-2">
-            {context.contextQuestions &&
-              context.contextQuestions.map(({ key, value }, index) => (
-                <ItemTile
-                  key={kebabCase(key)}
-                  isPending={isPending && context.currentQuestion?.key === key}
-                  onSelect={onSelectQuestion({ key, value })}
-                  {...{ index: index + 1, question: value }}
-                />
-              ))}
-          </div>
+          <CurratedQuestions {...{ curratedQuestions, onSelectQuestion }} />
         </div>
         <div
           id="question-result"
@@ -216,101 +266,46 @@ function ContextualContent() {
               : 'opacity-0 z-0 ease-out invisible'
           )}
         >
-          <button
-            type="button"
-            onClick={onSlideBack}
-            className="inline-flex items-center px-4 py-3 rounded-md hover:bg-gray-50"
-          >
-            <ArrowLeftOutlined className="mr-2 text-base text-gray-400" />
-            <span className="text-base font-normal text-gray-500">Back to all questions</span>
-          </button>
-          {currentGQA.question?.gqa?.id && currentGQA.question.value ? (
+          <BackButton {...{ onSlideBack }} />
+          {!promptResponseNode.result?.isNotFound && promptResponseNode.result?.streamed ? (
             <div className="my-4">
               <ItemTile
-                key={currentGQA.question.key}
-                index={Number(currentGQA.index) + 1}
-                question={currentGQA.question.value}
+                index={currentQuestionIndex}
+                question={currentQuestionElement}
                 selectable={false}
               />
             </div>
           ) : (
             <div className="bg-white p-4 my-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex mx-auto">
               <div className="inline-flex flex-col items-start justify-start w-full px-2 py-3">
-                <GenerativeQAForm
-                  ask={ask({
-                    buildStep,
-                    parameter: context.about,
-                    DensityOrCount: densityOrCount,
-                  })}
-                  isPending={isPending}
-                  label={`${Number(currentGQA.index) + 1}.`}
+                <QAForm
+                  key={promptResponseNode.key}
+                  label={String(currentQuestionIndex)}
+                  onExternalSubmit={onContextSubmit}
                 />
               </div>
             </div>
           )}
-          <div className="flex flex-col items-center justify-start w-full h-full min-h-[300px] mb-24">
-            {isPending ? (
-              <div className="flex flex-col w-full px-2">
-                <Skeleton.Input active style={{ width: '60%', marginBottom: '8px' }} size="large" />
-                <Skeleton.Input active style={{ width: '100%', height: '200px' }} />
-              </div>
-            ) : (
-              <div className="w-full px-4">
-                {currentGQA.question?.gqa &&
-                  (currentGQA.question?.gqa.isNotFound ? (
-                    <GenerativeQASingleResultError
-                      id={currentGQA.question.gqa.id}
-                      askedAt={currentGQA.question.gqa.askedAt}
-                      question={currentGQA.question.gqa.question}
-                      brainRegion={currentGQA.question.gqa.brainRegion}
-                      chatId={currentGQA.question.gqa.chatId}
-                      showHeader={false}
-                      showRemoveBtn={false}
-                      isNotFound={currentGQA.question.gqa.isNotFound}
-                      statusCode={currentGQA.question.gqa.statusCode}
-                      details={currentGQA.question.gqa.details}
-                    />
-                  ) : (
-                    <GenerativeQASingleResultCompact
-                      isNotFound={false}
-                      key={currentGQA.question.gqa.id}
-                      id={currentGQA.question.gqa.id}
-                      askedAt={currentGQA.question.gqa.askedAt}
-                      question={currentGQA.question.gqa.question}
-                      brainRegion={currentGQA.question.gqa.brainRegion}
-                      chatId={currentGQA.question.gqa.chatId}
-                      answer={(currentGQA.question.gqa as SucceededGenerativeQA).answer}
-                      rawAnswer={(currentGQA.question.gqa as SucceededGenerativeQA).rawAnswer}
-                      articles={(currentGQA.question.gqa as SucceededGenerativeQA).articles}
-                      extra={(currentGQA.question.gqa as SucceededGenerativeQA).extra}
-                    />
-                  ))}
-              </div>
-            )}
-          </div>
+          {promptResponseNode.id && (
+            <div
+              className="flex flex-col items-center justify-start w-full h-full min-h-[300px] mb-24 px-4"
+              ref={streamRef}
+            >
+              {withStreamResult({
+                onAfterStream,
+                scoped: true,
+                id: promptResponseNode.id,
+                current: omit(promptResponseNode.result, ['id']) as ResultWithoutId,
+              })}
+            </div>
+          )}
         </div>
       </div>
-      <div className="absolute left-0 right-0 z-50 inline-flex items-center justify-center w-full mx-auto bottom-8 gap-x-3">
-        {context.currentQuestion?.gqa?.id && (
-          <button
-            type="button"
-            onClick={gotoOptionMode}
-            className="px-5 py-3 bg-white border border-gray-400 w-max hover:bg-primary-8 group"
-          >
-            <span className="text-base font-bold text-primary-8 group-hover:text-white">
-              More options
-            </span>
-          </button>
+      <div className="absolute left-0 right-0 bottom-0 py-8 z-50 inline-flex items-center justify-center w-full mx-auto gap-x-3 rounded-bl-2xl bg-white">
+        {promptResponseNode.result && (
+          <RedirectionButton title="More options" onClick={gotoOptionMode} />
         )}
-        <button
-          type="button"
-          onClick={gotoAskMoreMode}
-          className="px-5 py-3 bg-white border border-gray-400 w-max hover:bg-primary-8 group"
-        >
-          <span className="text-base font-bold text-primary-8 group-hover:text-white">
-            Ask more questions
-          </span>
-        </button>
+        <RedirectionButton title="Ask more questions" onClick={gotoAskMoreMode} />
       </div>
     </div>
   );

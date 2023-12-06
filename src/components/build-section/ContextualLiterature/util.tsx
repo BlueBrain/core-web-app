@@ -21,7 +21,7 @@ const buildCellCompositionQuestions = ({
 }: BuildQuestionInput): Record<string, JSX.Element> => {
   if (step === 'cell-composition') {
     return {
-      [`What is the neuron ${densityOrCount} of ${subject} in ${brainRegionTitle}`]: (
+      [`What is the neuron ${densityOrCount} of ${subject} in ${brainRegionTitle} ?`]: (
         <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
           What is the neuron {propertyElement(densityOrCount)} of {subjectElement(subject)} in{' '}
           {brainRegionElement(brainRegionTitle)} region ?
@@ -29,7 +29,7 @@ const buildCellCompositionQuestions = ({
       ),
       ...(about === 'EType'
         ? {
-            [`What are electrophysiological types in ${brainRegionTitle}`]: (
+            [`What are electrophysiological types in ${brainRegionTitle} region ?`]: (
               <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
                 What are the {propertyElement('electrophysiological')} types in{' '}
                 {brainRegionElement(brainRegionTitle)} region ?
@@ -37,7 +37,7 @@ const buildCellCompositionQuestions = ({
             ),
           }
         : {
-            [`What are morphological types in ${brainRegionTitle}`]: (
+            [`What are morphological types in ${brainRegionTitle} region ?`]: (
               <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
                 What are the {propertyElement('morphological')} types in{' '}
                 {brainRegionElement(brainRegionTitle)} region ?
@@ -49,42 +49,42 @@ const buildCellCompositionQuestions = ({
   if (step === 'connectome-model-assignment') {
     return {
       ...(about === 'nrrp' && {
-        'What is the number of readily releasible pool of vesicles': (
+        'What is the number of readily releasible pool of vesicles ?': (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
             What is the number of readily releasible pool of vesicles?
           </span>
         ),
       }),
       ...(about === 'gsyn' && {
-        'What is the synapse conductance': (
+        'What is the synapse conductance ?': (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
             What is the synapse conductance?
           </span>
         ),
       }),
       ...(about === 'dtc' && {
-        'What is the mean time to decay from peak PSP amplitude to base line?': (
+        'What is the mean time to decay from peak PSP amplitude to base line ?': (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
             What is the mean time to decay from peak PSP amplitude to base line?
           </span>
         ),
       }),
       ...(about === 'u' && {
-        'What is the utilisation probability of the synaptic efficacy?': (
+        'What is the utilisation probability of the synaptic efficacy ?': (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
             What is the utilisation probability of the synaptic efficacy?
           </span>
         ),
       }),
       ...(about === 'f' && {
-        'What is the facilitation time constant': (
+        'What is the facilitation time constant ?': (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
             What is the facilitation time constant?
           </span>
         ),
       }),
       ...(about === 'd' && {
-        'What is the decay time constant ': (
+        'What is the decay time constant ?': (
           <span key={`${step}-${brainRegionTitle}-${about}-${subject}`} className="text-lg">
             What is the decay time constant ?
           </span>
@@ -94,9 +94,6 @@ const buildCellCompositionQuestions = ({
   }
   return {};
 };
-
-// const buildCellModelAssignementQuestion = ({ about, brainRegionTitle, step, subject }: BuildQuestionInput) => null;
-// const buildConnectomeDefinitionQuestion = ({ about, brainRegionTitle, step, subject }: BuildQuestionInput) => null;
 
 export function destructPath(pathName: string) {
   if (pathName) {
@@ -148,10 +145,5 @@ export function buildQuestionsList({
       subject: about,
     });
   }
-  // else if (step === 'cell-model-assignment') {
-  //     questions = buildCellModelAssignementQuestion({ about, brainRegionTitle, step, subject });
-  // } else if (step === 'connectome-definition') {
-  //     questions = buildConnectomeDefinitionQuestion({ about, brainRegionTitle, step, subject });
-  // }
   return questions;
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, MouseEvent } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   AppstoreOutlined,
   DeleteOutlined,
@@ -11,11 +11,17 @@ import {
 import delay from 'lodash/delay';
 import last from 'lodash/last';
 import startCase from 'lodash/startCase';
+import reject from 'lodash/reject';
 
-import useContextualLiteratureContext from '../useContextualLiteratureContext';
+import { useContextSearchParams, useLiteratureDataSource } from '../useContextualLiteratureContext';
 import { BrainIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
-import { literatureAtom, useLiteratureAtom, useLiteratureResultsAtom } from '@/state/literature';
+import {
+  literatureAtom,
+  literatureResultAtom,
+  useLiteratureAtom,
+  persistedLiteratureResultAtom,
+} from '@/state/literature';
 import { GenerativeQA, SucceededGenerativeQA } from '@/types/literature';
 
 type QAHistoryNavigationItemProps = Pick<
@@ -66,7 +72,8 @@ function QAHistoryNavigationItem({
 }: QAHistoryNavigationItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { activeQuestionId } = useAtomValue(literatureAtom);
-  const { remove } = useLiteratureResultsAtom();
+  const [QAs, updateResult] = useAtom(literatureResultAtom);
+  const updatePersistedResults = useSetAtom(persistedLiteratureResultAtom);
   const update = useLiteratureAtom();
 
   const isActive = activeQuestionId === id;
@@ -77,9 +84,10 @@ function QAHistoryNavigationItem({
     e.stopPropagation();
     setIsDeleting(true);
     delay(() => {
-      const newQAs = remove(id);
+      updatePersistedResults((PQAs) => reject(PQAs, { id }));
+      updateResult((PQAs) => reject(PQAs, { id }));
       setIsDeleting(false);
-      update('activeQuestionId', newQAs ? last(newQAs)?.id : null);
+      update('activeQuestionId', QAs ? last(QAs)?.id : null);
     }, 1000);
   };
 
@@ -91,7 +99,7 @@ function QAHistoryNavigationItem({
       onClick={onClick}
       className={classNames(
         'relative inline-flex items-center w-full pl-16 py-4 pr-2 list-none gqa-nav-item text-neutral-8 hover:bg-gray-50 rounded-r-sm group cursor-pointer',
-        isDeleting && 'bg-gray-100 overflow-hidden py-4 animate-slide-out'
+        isDeleting && 'bg-gray-100 overflow-hidden py-4 animate-scale-down'
       )}
     >
       {isActive && (
@@ -160,7 +168,8 @@ function QAHistoryNavigation() {
   const update = useLiteratureAtom();
   const firstRenderRef = useRef(false);
   const qaNavigationRef = useRef<HTMLElement>(null);
-  const { dataSource, isBuildSection, isContextualLiterature } = useContextualLiteratureContext();
+  const dataSource = useLiteratureDataSource();
+  const { isBuildSection, isContextualLiterature } = useContextSearchParams();
 
   const showNavigation = isContextualLiterature ? true : dataSource.length > 1;
 

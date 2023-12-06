@@ -8,7 +8,7 @@ import { literatureResultAtom } from '@/state/literature';
 import { GenerativeQA, SucceededGenerativeQA } from '@/types/literature';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { QAContainer } from '@/components/explore-section/Literature/components';
-import { getGenerativeQAAction } from '@/components/explore-section/Literature/actions';
+import { getGenerativeQA } from '@/components/explore-section/Literature/api';
 
 const navigateBackMock = jest.fn();
 
@@ -22,9 +22,9 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock('@/components/explore-section/Literature/actions.ts', () => ({
+jest.mock('@/components/explore-section/Literature/api.ts', () => ({
   __esModule: true,
-  getGenerativeQAAction: jest.fn(),
+  getGenerativeQA: jest.fn(),
 }));
 
 describe('QAContainer', () => {
@@ -112,7 +112,7 @@ describe('QAContainer', () => {
     ];
 
     (usePathname as jest.Mock).mockReturnValue('/build/literature');
-    (getGenerativeQAAction as jest.Mock).mockImplementation((data: FormData) => {
+    (getGenerativeQA as jest.Mock).mockImplementation((data: FormData) => {
       const requestedQuestion = String(data.get('gqa-question'));
       return Promise.resolve(QAs.find((q) => q.question === requestedQuestion));
     });
@@ -134,6 +134,7 @@ describe('QAContainer', () => {
     rawAnswer: 'blah blah blah',
     articles: [],
     isNotFound: false as any,
+    streamed: true,
     ...extra,
   });
 

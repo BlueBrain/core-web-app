@@ -1,9 +1,8 @@
-import { useTransition } from 'react';
 import { ReadOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { contextualLiteratureAtom } from '@/state/literature';
+import { contextualLiteratureAtom, promptResponseNodesAtomFamily } from '@/state/literature';
 import { classNames } from '@/util/utils';
 import { QuestionAbout } from '@/types/literature';
 import IconButton from '@/components/IconButton';
@@ -20,28 +19,34 @@ function ContextualTrigger({
   densityOrCount?: 'density' | 'count';
   className: string;
 }) {
-  const searchParams = useSearchParams()!;
-  const params = new URLSearchParams(searchParams);
-  const router = useRouter();
+  const { replace: replaceRoute } = useRouter();
   const path = usePathname();
-  const [, startTransition] = useTransition();
+  const searchParams = useSearchParams()!;
   const setContextualAtom = useSetAtom(contextualLiteratureAtom);
+  const isLiteraturePage = path?.startsWith('/build/cell-composition/literature');
 
   const onTriggerContextualLiterature = () => {
-    params.set('chatId', crypto.randomUUID());
-    router.replace(`${path}?${params.toString()}`);
-    startTransition(() => {
-      setContextualAtom((prev) => ({
-        ...prev,
-        about,
-        subject,
-        densityOrCount,
-        contextDrawerOpen: true,
-        key: crypto.randomUUID(),
-      }));
-    });
+    promptResponseNodesAtomFamily.setShouldRemove(() => true);
+    promptResponseNodesAtomFamily.setShouldRemove(null);
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.delete('chatId');
+    params.set('contextual', 'true');
+
+    setContextualAtom((prev) => ({
+      ...prev,
+      about,
+      subject,
+      densityOrCount,
+      drawerOpen: true,
+      key: crypto.randomUUID(),
+    }));
+
+    if (path) {
+      replaceRoute(`${path}?${params.toString()}`);
+    }
   };
 
+  if (isLiteraturePage) return null;
   return (
     <IconButton
       onClick={onTriggerContextualLiterature}
