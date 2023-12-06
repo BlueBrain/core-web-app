@@ -13,6 +13,7 @@ export default function Search<T extends DefaultOptionType>({
   placeholder = 'Search',
   tagRender,
   value,
+  defaultValue,
 }: {
   className?: string;
   colorBgContainer?: string;
@@ -22,7 +23,8 @@ export default function Search<T extends DefaultOptionType>({
   options: T[];
   placeholder?: string;
   tagRender?: (props: any) => ReactElement<any, string | JSXElementConstructor<any>>;
-  value?: string[];
+  value?: string[] | string;
+  defaultValue?: string[] | string;
 }) {
   return (
     <div className={classNames('border-b border-white', className)}>
@@ -66,6 +68,7 @@ export default function Search<T extends DefaultOptionType>({
           showSearch
           tagRender={tagRender}
           value={value}
+          defaultValue={defaultValue}
         />
       </ConfigProvider>
     </div>

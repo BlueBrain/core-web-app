@@ -12,7 +12,7 @@ import {
 } from '@/types/ontologies';
 import { getBrainRegionOntology, getDistributions } from '@/api/ontologies';
 import { buildAlternateChildren, buildAlternateTree } from '@/state/brain-regions/alternate-view';
-import { SelectedBrainRegion } from '@/state/brain-regions/types';
+import { DefaultBrainRegionType, NavValue, SelectedBrainRegion } from '@/state/brain-regions/types';
 import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
@@ -20,8 +20,12 @@ import {
 import { itemsInAnnotationReducer, flattenBrainRegionsTree } from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
+  DEFAULT_BRAIN_REGION,
+  DEFAULT_BRAIN_REGION_STORAGE_KEY,
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
+import { getInitializationValue } from '@/util/utils';
+import { generateHierarchyPathTree } from '@/components/BrainTree/util';
 
 /*
   Atom dependency graph
@@ -324,7 +328,13 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
   return getDistributions(session.accessToken);
 });
 
-export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(null);
+const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
+  DEFAULT_BRAIN_REGION_STORAGE_KEY,
+  DEFAULT_BRAIN_REGION
+);
+export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(
+  initializationBrainRegion.value
+);
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
 export const literatureSelectedBrainRegionAtom = atomWithReset<SelectedBrainRegion | null>(null);
@@ -337,7 +347,8 @@ export const setSelectedBrainRegionAtom = atom(
     selectedBrainRegionId: string,
     selectedBrainRegionTitle: string,
     selectedBrainRegionLeaves: string[] | null,
-    selectedBrainRegionRepresentedInAnnotation: boolean
+    selectedBrainRegionRepresentedInAnnotation: boolean,
+    ancestors?: string[]
   ) => {
     const brainRegion = {
       id: selectedBrainRegionId,
@@ -345,10 +356,21 @@ export const setSelectedBrainRegionAtom = atom(
       leaves: selectedBrainRegionLeaves,
       representedInAnnotation: selectedBrainRegionRepresentedInAnnotation,
     };
+
     set(selectedBrainRegionAtom, brainRegion);
     set(literatureSelectedBrainRegionAtom, brainRegion);
     set(compositionHistoryAtom, []);
     set(compositionHistoryIndexAtom, 0);
+
+    const defaultDataToSave: DefaultBrainRegionType = {
+      ...DEFAULT_BRAIN_REGION,
+      value: brainRegion,
+      ancestors: ancestors ?? [],
+    };
+    window.localStorage.setItem(
+      DEFAULT_BRAIN_REGION_STORAGE_KEY,
+      JSON.stringify(defaultDataToSave)
+    );
   }
 );
 
@@ -375,3 +397,8 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
 // Keeps track of the visible interactive brain regions
 
 export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
+
+// Keeps track of the hierarchy tree of the brain regions
+export const brainRegionHierarchyStateAtom = atom<NavValue | null>(
+  generateHierarchyPathTree(initializationBrainRegion.ancestors)
+);

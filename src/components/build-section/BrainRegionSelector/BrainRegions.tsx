@@ -20,6 +20,7 @@ import {
   brainRegionsAlternateTreeAtom,
   brainRegionSidebarIsCollapsedAtom,
   visibleBrainRegionsAtom,
+  brainRegionHierarchyStateAtom,
 } from '@/state/brain-regions';
 import { NavValue } from '@/state/brain-regions/types';
 import { BrainRegion } from '@/types/ontologies';
@@ -155,10 +156,11 @@ function NavTitle({
 export default function BrainRegions() {
   const brainRegionsTree = useAtomValue(useMemo(() => unwrap(brainRegionsAlternateTreeAtom), []));
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const resetBrainRegion = useSetAtom(selectedBrainRegionAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const [isCollapsed, setIsCollapsed] = useAtom(brainRegionSidebarIsCollapsedAtom);
-  const [brainRegionHierarchyState, setBrainRegionHierarchyState] = useState<NavValue>(null);
+  const [brainRegionHierarchyState, setBrainRegionHierarchyState] = useAtom<NavValue>(
+    brainRegionHierarchyStateAtom
+  );
   const brainTreeNavRef: RefObject<HTMLDivElement> = useRef(null);
   const brainModelConfigId = useAtomValue(brainModelConfigIdAtom);
   const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
@@ -169,11 +171,10 @@ export default function BrainRegions() {
     if (brainModelConfigId === localSelectedBrainModelConfigId) return;
 
     setLocalSelectedBrainModelConfigId(brainModelConfigId);
-    setBrainRegionHierarchyState(null); // reset tree
-    resetBrainRegion(null); // reset brain region
     setResetAtlasVisualization(); // reset meshes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brainModelConfigId, localSelectedBrainModelConfigId]);
+
   return brainRegionsTree ? (
     <div className="flex flex-col flex-1 h-screen bg-primary-8 overflow-hidden">
       {isCollapsed ? (

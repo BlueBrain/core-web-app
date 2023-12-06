@@ -5,6 +5,7 @@ import { SelectProps } from 'antd/es/select';
 import { generateHierarchyPathTree } from './util';
 import {
   alternateArrayWithRepresentationAtom,
+  selectedBrainRegionAtom,
   setSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import Search from '@/components/Search';
@@ -32,6 +33,7 @@ export default function BrainTreeSearch({
   brainTreeNav?: HTMLDivElement | null;
   setValue?: Dispatch<SetStateAction<NavValue>>;
 }) {
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegionsArray = useAtomValue(alternateArrayWithRepresentationAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
 
@@ -57,7 +59,8 @@ export default function BrainTreeSearch({
         optionValue as string,
         label as string,
         leaves ?? null,
-        representedInAnnotation
+        representedInAnnotation,
+        ancestors
       );
 
       // This timeout seems to be necessary to "wait" until the nav item has been rendered before attemping to scroll to it.
@@ -75,6 +78,7 @@ export default function BrainTreeSearch({
       handleSelect={handleSelect}
       options={options}
       placeholder="Search region..."
+      defaultValue={selectedBrainRegion?.id}
     />
   );
 }

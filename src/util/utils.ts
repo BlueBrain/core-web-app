@@ -190,3 +190,14 @@ export function formatTimeDifference(differenceInSeconds: number): string {
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#basic_validation
 export const VALID_EMAIL_REGEXP =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+export function getInitializationValue<T>(storageKey: string, defaultValue: T): T {
+  const isClientProcessing = typeof window !== 'undefined';
+  if (!isClientProcessing) return defaultValue;
+
+  const lastClicked = window.localStorage.getItem(storageKey);
+  if (lastClicked && lastClicked !== 'null') {
+    return JSON.parse(lastClicked) as T;
+  }
+  return defaultValue;
+}

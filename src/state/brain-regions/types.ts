@@ -6,3 +6,13 @@ export type SelectedBrainRegion = {
 };
 
 export type NavValue = { [key: string]: NavValue } | null;
+
+export type DefaultBrainRegionType = {
+  value: {
+    id: string;
+    title: string;
+    leaves: null | string[];
+    representedInAnnotation: boolean;
+  };
+  ancestors: string[];
+};
