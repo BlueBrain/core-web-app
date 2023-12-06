@@ -6,6 +6,7 @@ import {
   NEURON_DENSITY,
   NEURON_MORPHOLOGY,
   SYNAPSE_PER_CONNECTION,
+  SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
 import { DetailProps } from '@/types/explore-section/application';
 
@@ -151,6 +152,12 @@ export const EXPERIMENT_DATA_TYPES: {
       'contributors',
       'createdAt',
     ],
+    curated: false,
+  },
+  [SIMULATION_CAMPAIGNS]: {
+    title: 'Simulation campaigns',
+    name: 'simulation-campaigns',
+    columns: ['simCampName', 'brainConfiguration', 'createdAt'],
     curated: false,
   },
 };
