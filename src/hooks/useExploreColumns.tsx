@@ -50,20 +50,16 @@ export default function useExploreColumns(
 
   const sorterES = useCallback(
     (field: string) => {
-      let order: 'asc' | 'desc' | null;
+      let order: 'asc' | 'desc' = 'asc';
 
-      switch (sortState?.order) {
-        case 'asc':
-          order = field === sortState.field ? 'desc' : 'asc';
-          break;
-        case 'desc':
-          order = field === sortState.field ? null : 'asc';
-          break;
-        default:
-          order = 'asc';
+      if (sortState?.order && field === sortState.field) {
+        order = sortState.order === 'desc' ? 'asc' : 'desc';
       }
 
-      setSortState({ field, order });
+      setSortState({
+        field,
+        order,
+      });
     },
     [setSortState, sortState]
   );

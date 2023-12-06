@@ -34,7 +34,6 @@ export function fetchDataQueryUsingIds(
   sortState?: SortState
 ): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
-
   const idsQuery = new TermsQuery('_id', inferredResponseIds);
 
   const boolMustQuery = boolQuery().must([buildFilters(filters), idsQuery]);

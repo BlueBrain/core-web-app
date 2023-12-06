@@ -17,7 +17,7 @@ export type ExploreDataBrainRegionSource = 'visible' | 'root';
 
 export interface SortState {
   field: string;
-  order: 'asc' | 'desc' | null;
+  order: 'asc' | 'desc';
 }
 
 export type ListViewAtomValues = {
