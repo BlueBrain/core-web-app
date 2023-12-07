@@ -30,15 +30,20 @@ function CustomTH({
     ...style,
     fontWeight: '500',
     color: '#434343',
-    verticalAlign: 'baseline',
+    verticalAlign: 'middle',
     boxSizing: 'border-box',
+    backgroundColor: 'white',
+    padding: '16px 16px 16px 6px',
   };
 
   return handleResizing ? (
     <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
-      <div className="grid grid-flow-col gap-2">
+      <div className="flex w-full">
         <button
-          className={classNames('flex items-top', styles.alignmentHack)}
+          className={classNames(
+            'inline-flex w-full',
+            '[&>.ant-table-column-sorters]:inline-flex [&>.ant-table-column-sorters]:gap-2 [&>.ant-table-column-sorters]:flex-none'
+          )}
           onClick={onClick}
           type="button"
         >
