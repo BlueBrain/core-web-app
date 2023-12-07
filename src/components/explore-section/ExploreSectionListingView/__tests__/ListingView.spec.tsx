@@ -7,7 +7,7 @@ import {
   mockMorphologyResponse,
 } from '../../../../../__tests__/__server__/handlers';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
+import { NEURON_MORPHOLOGY, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/HeaderPanel';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
@@ -258,11 +258,12 @@ describe('Load more resources button unit tests', () => {
         </TestProvider>
       )
     );
+
     const loadMoreButton = screen.getByRole('button', { name: 'load-more-resources-button' });
-    expect(loadMoreButton.textContent).toEqual('Load 30 more results...');
+    expect(loadMoreButton.textContent).toEqual(`Load ${PAGE_SIZE} more results...`);
   });
 
-  test('Load more resources button shows text if no resources were returned', async () => {
+  test("Load more resources button doesn't show up if there are no more resources", async () => {
     testServer.use(mockEmptyESResponse);
     await act(() =>
       render(
@@ -275,8 +276,8 @@ describe('Load more resources button unit tests', () => {
         </TestProvider>
       )
     );
-    const loadMoreButton = screen.getByRole('button', { name: 'load-more-resources-button' });
-    expect(loadMoreButton.textContent).toEqual('All resources are loaded');
+    const loadMoreButton = screen.queryByText('Load more');
+    expect(loadMoreButton).toEqual(null);
   });
 });
 
