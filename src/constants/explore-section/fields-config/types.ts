@@ -9,6 +9,7 @@ type ExploreFieldConfigStyle = {
 };
 
 export type ExploreFieldConfig = {
+  className?: string;
   esTerms?: EsTermsConfig;
   title: string;
   description?: string;
@@ -29,6 +30,7 @@ export type ExploreFieldConfig = {
 export type ExploreFieldsConfigProps = {
   [key: string]: ExploreFieldConfig;
 };
+
 type EsTermsConfig = {
   flat?: {
     filter?: string;
@@ -37,6 +39,7 @@ type EsTermsConfig = {
   };
   nested?: NestedFieldConfig;
 };
+
 type NestedFieldConfig = {
   extendedField: string;
   field: string;

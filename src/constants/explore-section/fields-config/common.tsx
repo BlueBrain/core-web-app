@@ -11,11 +11,19 @@ import timeElapsedFromToday from '@/util/date';
 
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   preview: {
-    title: 'Preview',
+    className: 'text-center',
+    title: '', // No column header for thumbnails.
     filter: null,
     render: {
-      esResourceViewFn: ({ _id: id }) => {
-        return <MorphoThumbnail id={id} />;
+      esResourceViewFn: ({ _source: source }) => {
+        const { distribution } = source;
+        const swcDistribution = distribution.find(
+          (dist: { contentUrl: string; encodingFormat: string }) =>
+            dist.encodingFormat === 'application/swc'
+        );
+        const { contentUrl } = swcDistribution;
+
+        return <MorphoThumbnail contentUrl={contentUrl} />;
       },
     },
     sorter: false,

@@ -330,9 +330,8 @@ describe('Listing view table tests', () => {
       )
     );
     const tableHeaders = screen.getAllByRole('columnheader');
-    // +1 because it includes all columns plus the index/checkboxes
     expect(tableHeaders.length).toEqual(
-      EXPERIMENT_DATA_TYPES[NEURON_MORPHOLOGY].columns.length + 1
+      EXPERIMENT_DATA_TYPES[NEURON_MORPHOLOGY].columns.length // Preview column has no header.
     );
   });
 });

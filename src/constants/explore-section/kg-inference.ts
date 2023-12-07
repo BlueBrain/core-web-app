@@ -1,3 +1,5 @@
+export const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
+
 type RelevantRulesProps = {
   [key: string]: string;
 };

@@ -1,4 +1,4 @@
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import { atomWithDefault, atomFamily } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import columnKeyToFilter from './column-key-to-filter';
@@ -152,13 +152,15 @@ export const queryResponseAtom = atomFamily(
   isListAtomEqual
 );
 
-export const dataAtom = atomFamily(
-  ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
+export const dataAtom = atomFamily<DataAtomFamilyScopeType, Atom<Promise<ExploreESHit[]>>>(
+  ({ experimentTypeName, brainRegionSource }) =>
     atom(async (get) => {
       const response = await get(queryResponseAtom({ experimentTypeName, brainRegionSource }));
+
       if (response?.hits) {
         return response.hits;
       }
+
       return [];
     }),
   isListAtomEqual

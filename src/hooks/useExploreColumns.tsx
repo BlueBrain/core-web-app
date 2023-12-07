@@ -9,6 +9,7 @@ import { ValueArray } from '@/components/ListTable';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExperimentDataTypeName } from '@/constants/explore-section/list-views';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { classNames } from '@/util/utils';
 
 import styles from '@/app/explore/explore.module.scss';
 
@@ -160,7 +161,7 @@ export default function useExploreColumns(
                 {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
               </div>
             ),
-            className: 'text-primary-7 cursor-pointer',
+            className: classNames('text-primary-7 cursor-pointer', term?.className),
             sorter: term?.sorter ?? true,
             ellipsis: true,
             width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,

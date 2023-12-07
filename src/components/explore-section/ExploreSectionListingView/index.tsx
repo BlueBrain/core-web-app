@@ -1,10 +1,10 @@
-import { ReactNode, useState, useMemo } from 'react';
+import { ReactNode, useEffect, useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
+import { loadable } from 'jotai/utils';
 import { InsertRowAboveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import FilterControls from './FilterControls';
 import { RenderButtonProps } from './WithRowSelection';
-import { ExploreResource } from '@/types/explore-section/es';
+import { ExploreESHit } from '@/types/explore-section/es';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
 import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/HeaderPanel';
@@ -31,26 +31,12 @@ export default function DefaultListView({
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const [viewMode, setViewMode] = useState<ViewMode>('table');
 
-  const columns = useExploreColumns(
-    setSortState,
-    sortState,
-    [
-      {
-        title: '#',
-        key: 'index',
-        className: 'text-primary-7',
-        render: (_text: string, _record: ExploreResource, index: number) => index + 1,
-        width: 70,
-      },
-    ],
-    null,
-    experimentTypeName
-  );
+  const columns = useExploreColumns(setSortState, sortState, [], null, experimentTypeName);
 
   const data = useAtomValue(
     useMemo(
       () =>
-        unwrap(
+        loadable(
           dataAtom({
             experimentTypeName,
             brainRegionSource,
@@ -59,6 +45,14 @@ export default function DefaultListView({
       [brainRegionSource, experimentTypeName]
     )
   );
+
+  const [dataSource, setDataSource] = useState<ExploreESHit[]>();
+
+  useEffect(() => {
+    if (data.state === 'hasData') {
+      setDataSource(data.data);
+    }
+  }, [data, setDataSource]);
 
   return (
     <div
@@ -84,7 +78,7 @@ export default function DefaultListView({
                 brainRegionSource={brainRegionSource}
               />
             </FilterControls>
-            <div className="flex gap-2 place-content-end  items-center ">
+            <div className="flex gap-2 place-content-end items-center">
               <div className="text-primary-7">View:</div>
               <button onClick={() => setViewMode('table')} type="button">
                 <UnorderedListOutlined
@@ -108,14 +102,14 @@ export default function DefaultListView({
             {viewMode === 'table' ? (
               <ExploreSectionTable
                 columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
-                dataSource={data}
+                dataSource={dataSource}
                 enableDownload={enableDownload}
                 experimentTypeName={experimentTypeName}
-                loading={!data}
+                loading={data.state === 'loading'}
                 renderButton={renderButton}
               />
             ) : (
-              <CardView data={data} experimentTypeName={experimentTypeName} />
+              <CardView data={dataSource} experimentTypeName={experimentTypeName} />
             )}
           </>
         )}

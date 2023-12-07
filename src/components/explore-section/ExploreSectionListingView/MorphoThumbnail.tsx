@@ -3,8 +3,9 @@ import Image from 'next/image';
 import { Skeleton } from 'antd';
 import { createHeaders } from '@/util/utils';
 import { useSessionAtomValue } from '@/hooks/hooks';
+import { BASE_URL } from '@/constants/explore-section/kg-inference';
 
-export default function MorphoThumbnail({ id }: { id: string }) {
+export default function MorphoThumbnail({ contentUrl }: { contentUrl: string }) {
   const session = useSessionAtomValue();
 
   const [thumbnail, setThumbnail] = useState<string | null>(null);
@@ -16,31 +17,35 @@ export default function MorphoThumbnail({ id }: { id: string }) {
     if (accessToken) {
       setLoading(true);
 
-      fetch(`https://kg-inference-api.kcp.bbp.epfl.ch/generate/morphology-image`, {
-        method: 'POST',
-        headers: createHeaders(accessToken),
-        body: JSON.stringify({ id }),
+      const encodedContentUrl = encodeURIComponent(contentUrl);
+      const requestUrl = `${BASE_URL}/generate/morphology-image?content_url=${encodedContentUrl}`;
+
+      fetch(requestUrl, {
+        method: 'GET',
+        headers: createHeaders(accessToken, {
+          Accept: 'image/png',
+        }),
       })
         .then((response) => response.blob())
         .then((blob) => {
-          setThumbnail(URL.createObjectURL(blob));
+          if (blob.type === 'image/png') {
+            setThumbnail(URL.createObjectURL(blob));
+          }
           setLoading(false);
         })
         .catch(() => setLoading(false));
     }
-  }, [id, session]);
+  }, [contentUrl, session]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center w-full">
-        <Skeleton.Image active className="!w-[138px] !h-[124px]" />
-      </div>
-    );
-  }
-
-  return (
-    thumbnail && (
-      <Image alt={`Preview of morphology: ${id}`} src={thumbnail} width={181} height={111} />
-    )
+  return thumbnail ? (
+    <Image
+      alt={`Morphology preview: ${contentUrl}`}
+      className="mx-auto max-h-[116px]"
+      src={thumbnail}
+      width={184}
+      height={116}
+    />
+  ) : (
+    <Skeleton.Image active={loading} className="!w-[184px] !h-[116px]" />
   );
 }

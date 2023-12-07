@@ -6,8 +6,8 @@ import {
   ResourceBasedInferenceRequest,
   ResourceBasedInferenceResponse,
 } from '@/types/explore-section/kg-inference';
+import { BASE_URL } from '@/constants/explore-section/kg-inference';
 
-const BASE_URL = 'https://kg-inference-api.kcp.bbp.epfl.ch';
 const RESOURCE_BASED_RULE_TERM = 'ResourceGeneralizationRule';
 
 export function fetchRules(
