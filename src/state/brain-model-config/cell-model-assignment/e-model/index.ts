@@ -42,31 +42,25 @@ import {
   getEntityListByIdsQuery,
 } from '@/queries/es';
 import {
-  DEFAULT_E_MODEL,
   DEFAULT_E_MODEL_STORAGE_KEY,
   eTypeMechanismMapId,
   featureAutoTargets,
   presetNames,
 } from '@/constants/cell-model-assignment/e-model';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
-import {
-  DEFAULT_BRAIN_REGION,
-  DEFAULT_BRAIN_REGION_STORAGE_KEY,
-} from '@/constants/brain-hierarchy';
+import { DEFAULT_BRAIN_REGION_STORAGE_KEY } from '@/constants/brain-hierarchy';
 import { getInitializationValue } from '@/util/utils';
 import { DefaultBrainRegionType } from '@/state/brain-regions/types';
 
 const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-  DEFAULT_BRAIN_REGION_STORAGE_KEY,
-  DEFAULT_BRAIN_REGION
+  DEFAULT_BRAIN_REGION_STORAGE_KEY
 );
 
-const initializationEModel = getInitializationValue<DefaultEModelType>(
-  DEFAULT_E_MODEL_STORAGE_KEY,
-  DEFAULT_E_MODEL
-);
+const initializationEModel = getInitializationValue<DefaultEModelType>(DEFAULT_E_MODEL_STORAGE_KEY);
 
-const useSavedEModel = initializationBrainRegion.value.id === initializationEModel.brainRegionId;
+const useSavedEModel =
+  initializationBrainRegion &&
+  initializationBrainRegion?.value?.id === initializationEModel?.brainRegionId;
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(
   useSavedEModel ? initializationEModel.value : null

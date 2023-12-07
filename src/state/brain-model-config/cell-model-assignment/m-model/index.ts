@@ -34,28 +34,19 @@ import {
 } from '@/util/cell-model-assignment';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { getInitializationValue } from '@/util/utils';
-import {
-  DEFAULT_M_MODEL,
-  DEFAULT_M_MODEL_STORAGE_KEY,
-} from '@/constants/cell-model-assignment/m-model';
-import {
-  DEFAULT_BRAIN_REGION,
-  DEFAULT_BRAIN_REGION_STORAGE_KEY,
-} from '@/constants/brain-hierarchy';
+import { DEFAULT_M_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/m-model';
+import { DEFAULT_BRAIN_REGION_STORAGE_KEY } from '@/constants/brain-hierarchy';
 import { DefaultBrainRegionType } from '@/state/brain-regions/types';
 
 const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-  DEFAULT_BRAIN_REGION_STORAGE_KEY,
-  DEFAULT_BRAIN_REGION
+  DEFAULT_BRAIN_REGION_STORAGE_KEY
 );
 
-const initializationMModel = getInitializationValue<DefaultMModelType>(
-  DEFAULT_M_MODEL_STORAGE_KEY,
-  DEFAULT_M_MODEL
-);
+const initializationMModel = getInitializationValue<DefaultMModelType>(DEFAULT_M_MODEL_STORAGE_KEY);
 
 const useSavedMModel =
-  initializationBrainRegion.value.id === initializationMModel.value.brainRegionId;
+  initializationBrainRegion &&
+  initializationBrainRegion.value.id === initializationMModel?.value?.brainRegionId;
 
 export const selectedMModelNameAtom = atom<string | null>(
   useSavedMModel ? initializationMModel.value.name : null

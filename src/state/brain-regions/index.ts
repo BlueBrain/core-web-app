@@ -329,11 +329,11 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
 });
 
 const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-  DEFAULT_BRAIN_REGION_STORAGE_KEY,
-  DEFAULT_BRAIN_REGION
+  DEFAULT_BRAIN_REGION_STORAGE_KEY
 );
+
 export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(
-  initializationBrainRegion.value
+  initializationBrainRegion ? initializationBrainRegion.value : null
 );
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
@@ -396,5 +396,5 @@ export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
 
 // Keeps track of the hierarchy tree of the brain regions
 export const brainRegionHierarchyStateAtom = atom<NavValue | null>(
-  generateHierarchyPathTree(initializationBrainRegion.ancestors)
+  initializationBrainRegion ? generateHierarchyPathTree(initializationBrainRegion.ancestors) : null
 );

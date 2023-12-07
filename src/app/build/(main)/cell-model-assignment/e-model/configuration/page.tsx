@@ -8,18 +8,20 @@ import EModelView from '@/components/build-section/cell-model-assignment/e-model
 import CloneConfigButton from '@/components/build-section/cell-model-assignment/e-model/CloneConfigButton';
 import useLiteratureCleanNavigate from '@/components/explore-section/Literature/useLiteratureCleanNavigate';
 import EditConfigButton from '@/components/build-section/cell-model-assignment/e-model/EditConfigButton';
+import { useSessionAtomValue } from '@/hooks/hooks';
 
 const baseBannerStyle = 'flex h-full items-center justify-center text-4xl';
 
 export default function ConfigurationPage() {
   const selectedEModel = useAtomValue(selectedEModelAtom);
   const selectedRegion = useAtomValue(selectedBrainRegionAtom);
+  const session = useSessionAtomValue();
 
   let body = null;
 
   useLiteratureCleanNavigate();
 
-  if (!selectedEModel || !selectedRegion) {
+  if (!session || !selectedEModel || !selectedRegion) {
     body = <div className={baseBannerStyle}>Select region and E-Type</div>;
   } else {
     body = (

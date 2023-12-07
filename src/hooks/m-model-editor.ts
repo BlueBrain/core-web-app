@@ -10,6 +10,8 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment/m-model';
 import { DEFAULT_M_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/m-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { getInitializationValue, setInitializationValue } from '@/util/utils';
+import { DefaultMModelType } from '@/types/m-model';
 
 export function useResetMModel() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
@@ -21,8 +23,7 @@ export function useResetMModel() {
     // resetting the m-type state and localStorage when brain region changes
     if (!selectedBrainRegion) return;
 
-    const savedMModelStr = window.localStorage.getItem(DEFAULT_M_MODEL_STORAGE_KEY);
-    const savedMModel = JSON.parse(savedMModelStr || 'null');
+    const savedMModel = getInitializationValue<DefaultMModelType>(DEFAULT_M_MODEL_STORAGE_KEY);
 
     if (!savedMModel || savedMModel.value.brainRegionId === selectedBrainRegion.id) return;
 
@@ -30,7 +31,7 @@ export function useResetMModel() {
     setSelectedMModelId(null);
     setMModelRemoteOverridesLoaded(false);
 
-    window.localStorage.setItem(DEFAULT_M_MODEL_STORAGE_KEY, 'null');
+    setInitializationValue(DEFAULT_M_MODEL_STORAGE_KEY, 'null');
   }, [
     selectedBrainRegion,
     setSelectedMModelName,

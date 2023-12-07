@@ -191,19 +191,25 @@ export function formatTimeDifference(differenceInSeconds: number): string {
 export const VALID_EMAIL_REGEXP =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-export function getInitializationValue<T>(storageKey: string, defaultValue: T): T {
+export function getInitializationValue<T>(storageKey: string): T | null {
   const isClientProcessing = typeof window !== 'undefined';
-  if (!isClientProcessing) return defaultValue;
+  if (!isClientProcessing) return null;
+
+  // only pre-select if on build/cell-model-assignment
+  const isCellModelAssignment = window.location.href.includes('/build/cell-model-assignment');
+  if (!isCellModelAssignment) return null;
 
   const queryParams = new URLSearchParams(window.location.search);
   const brainModelConfigId = queryParams.get('brainModelConfigId');
 
   const storageKeyWithBrainModelConfigId = `${storageKey}-${brainModelConfigId}`;
   const lastClicked = window.localStorage.getItem(storageKeyWithBrainModelConfigId);
+
   if (lastClicked && lastClicked !== 'null') {
     return JSON.parse(lastClicked) as T;
   }
-  return defaultValue;
+  // first time
+  return null;
 }
 
 export function setInitializationValue<T>(storageKey: string, dataToSave: T) {
