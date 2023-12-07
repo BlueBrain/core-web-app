@@ -33,6 +33,7 @@ export default function EditConfigButton({ className }: Props) {
   const extraVariablesToReplace = {
     [EModelBuildingPlaceholders.E_MODEL_NAME]: eModelUIConfig?.name,
     [EModelBuildingPlaceholders.E_TYPE]: eModelUIConfig?.eType,
+    [EModelBuildingPlaceholders.M_TYPE]: eModelUIConfig?.mType,
     [EModelBuildingPlaceholders.BRAIN_REGION]: eModelUIConfig?.brainRegionName,
     [EModelBuildingPlaceholders.UUID]: crypto.randomUUID(),
     [EModelBuildingPlaceholders.OPTIMIZATION_CONFIG_ID]: selectedEModel?.id,

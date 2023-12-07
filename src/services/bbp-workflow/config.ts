@@ -61,6 +61,7 @@ export enum AnalysisPlaceholders {
 export enum EModelBuildingPlaceholders {
   E_MODEL_NAME = 'E_MODEL_NAME',
   E_TYPE = 'E_TYPE',
+  M_TYPE = 'M_TYPE',
   BRAIN_REGION = 'BRAIN_REGION',
   UUID = 'UUID',
   OPTIMIZATION_CONFIG_ID = 'OPTIMIZATION_CONFIG_ID',
@@ -267,6 +268,7 @@ export const eModelMetaConfigs: WorkflowMetaConfigPlaceholders = {
       [LaunchEModelOptimisation]
       emodel=<%= ${EModelBuildingPlaceholders.E_MODEL_NAME} %>
       etype=<%= ${EModelBuildingPlaceholders.E_TYPE} %>
+      mtype=<%= ${EModelBuildingPlaceholders.M_TYPE} %>
       species=mouse
       brain_region=<%= ${EModelBuildingPlaceholders.BRAIN_REGION} %>
       iteration_tag=<%= ${EModelBuildingPlaceholders.UUID} %>
@@ -289,7 +291,7 @@ export const EMODEL_BUILDING_FILES: WorkflowFile[] = [
       kg-proj=mmb-point-neuron-framework-model
       account=proj134
       enable-internet=True
-      time=4:00:00
+      time=24:00:00
       chdir=/gpfs/bbp.cscs.ch/project/proj134/scratch/workflow-outputs
       
       [LaunchEModelOptimisationMeta]
