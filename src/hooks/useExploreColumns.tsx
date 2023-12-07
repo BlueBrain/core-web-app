@@ -22,6 +22,26 @@ const COL_SIZING = {
   default: 125,
 };
 
+/**
+ * This fn will get the exact width that the column title must take in the table
+ * the returned width will be the Max between the default width and the
+ * the width of the sum of the title, the sorting arrows and the unit (if present)
+ * @param title string
+ * @param unit string
+ * @returns number
+ */
+function getProvisionedWidth(title: string, unit?: string) {
+  const titleSpan = document.createElement('span');
+  titleSpan.textContent = `${title} ${unit ?? ''}`;
+  // font-{size/weight} must be the same as the column style
+  titleSpan.style.setProperty('font-size', '1rem');
+  document.body.appendChild(titleSpan);
+  // 56= x-padding (32px) + (sorter icon) 24
+  const width = titleSpan.getBoundingClientRect().width + 56;
+  document.body.removeChild(titleSpan);
+  return Math.max(width, COL_SIZING.default);
+}
+
 export default function useExploreColumns(
   setSortState: Dispatch<SetStateAction<SortState | undefined>>,
   sortState?: SortState,
@@ -43,7 +63,10 @@ export default function useExploreColumns(
     setColumnWidths(
       totalKeys.map((key) => ({
         key,
-        width: COL_SIZING.default,
+        width: getProvisionedWidth(
+          EXPLORE_FIELDS_CONFIG[key].title,
+          EXPLORE_FIELDS_CONFIG[key].unit
+        ),
       }))
     );
   }, [dimensionColumns, keys]);

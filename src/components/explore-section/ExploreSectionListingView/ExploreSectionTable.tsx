@@ -26,16 +26,17 @@ function CustomTH({
   onClick: () => void;
   handleResizing: () => void;
 }) {
-  const modifiedStyle = {
+  const modifiedStyle: CSSProperties = {
     ...style,
     fontWeight: '500',
     color: '#434343',
     verticalAlign: 'baseline',
+    boxSizing: 'border-box',
   };
 
   return handleResizing ? (
     <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
-      <div className="flex">
+      <div className="grid grid-flow-col gap-2">
         <button
           className={classNames('flex items-top', styles.alignmentHack)}
           onClick={onClick}
