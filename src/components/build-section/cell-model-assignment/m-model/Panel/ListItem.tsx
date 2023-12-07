@@ -9,6 +9,7 @@ import ModelSelect from '@/components/build-section/cell-model-assignment/m-mode
 import { DefaultMModelType, ModelChoice } from '@/types/m-model';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import { DEFAULT_M_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/m-model';
+import { setInitializationValue } from '@/util/utils';
 
 interface MTypeListItemProps {
   label: string;
@@ -34,8 +35,9 @@ export default function ListItem({
     setSelectedMModelName(label);
     setSelectedMModelId(id);
 
-    const defaultDataToSave: DefaultMModelType = { value: { name: label, brainRegionId, id } };
-    window.localStorage.setItem(DEFAULT_M_MODEL_STORAGE_KEY, JSON.stringify(defaultDataToSave));
+    setInitializationValue(DEFAULT_M_MODEL_STORAGE_KEY, {
+      value: { name: label, brainRegionId, id },
+    } satisfies DefaultMModelType);
   };
 
   const isActive = label === selectedMModelName;

@@ -24,7 +24,7 @@ import {
   DEFAULT_BRAIN_REGION_STORAGE_KEY,
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
-import { getInitializationValue } from '@/util/utils';
+import { getInitializationValue, setInitializationValue } from '@/util/utils';
 import { generateHierarchyPathTree } from '@/components/BrainTree/util';
 
 /*
@@ -362,15 +362,11 @@ export const setSelectedBrainRegionAtom = atom(
     set(compositionHistoryAtom, []);
     set(compositionHistoryIndexAtom, 0);
 
-    const defaultDataToSave: DefaultBrainRegionType = {
+    setInitializationValue(DEFAULT_BRAIN_REGION_STORAGE_KEY, {
       ...DEFAULT_BRAIN_REGION,
       value: brainRegion,
       ancestors: ancestors ?? [],
-    };
-    window.localStorage.setItem(
-      DEFAULT_BRAIN_REGION_STORAGE_KEY,
-      JSON.stringify(defaultDataToSave)
-    );
+    } satisfies DefaultBrainRegionType);
   }
 );
 

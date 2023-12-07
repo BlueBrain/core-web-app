@@ -11,6 +11,7 @@ import BuiltIcon from '@/components/icons/BuildValidated';
 import ModifiedIcon from '@/components/icons/BuildModified';
 import { DEFAULT_E_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/e-model';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
+import { setInitializationValue } from '@/util/utils';
 
 type ETypeEntryProps = {
   eType: EModelMenuItem;
@@ -39,11 +40,10 @@ export default function ETypeEntry({
     setEModelUIConfig({});
     setEModelEditMode(false);
 
-    const defaultDataToSave: DefaultEModelType = {
+    setInitializationValue(DEFAULT_E_MODEL_STORAGE_KEY, {
       value: { ...newSelectedEModel },
       brainRegionId,
-    };
-    window.localStorage.setItem(DEFAULT_E_MODEL_STORAGE_KEY, JSON.stringify(defaultDataToSave));
+    } satisfies DefaultEModelType);
   };
 
   // update name on left panel when config changes without having to reload the whole optimizations again
