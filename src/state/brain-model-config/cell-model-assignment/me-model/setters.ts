@@ -57,6 +57,39 @@ export const setMEConfigPayloadAtom = atom<null, [], void>(null, async (get, set
   set(setConfigPayloadAtom, localConfigPayload);
 });
 
+export const unassignFromMEConfigPayloadAtom = atom<null, [], void>(null, async (get, set) => {
+  const selectedBrainRegion = get(selectedBrainRegionAtom);
+  if (!selectedBrainRegion) return;
+
+  const [mTypeId, eTypeId] = await get(getMETypeIdAtom);
+  if (!mTypeId || !eTypeId) return;
+
+  const localConfigPayload = get(localConfigPayloadAtom);
+  if (!localConfigPayload) throw new Error('Local config payload not found');
+
+  const path = ['overrides', 'neurons_me_model', selectedBrainRegion.id, mTypeId, eTypeId];
+  if (!lodashGet(localConfigPayload, path)) return;
+
+  const newPayload = structuredClone(localConfigPayload);
+
+  const brainRegionObject = newPayload.overrides.neurons_me_model[selectedBrainRegion.id];
+  const mTypeObject = brainRegionObject[mTypeId];
+
+  delete mTypeObject[eTypeId];
+
+  // cleanup empty objects after deletion
+  if (Object.keys(mTypeObject).length === 0) {
+    delete brainRegionObject[mTypeId];
+
+    if (Object.keys(brainRegionObject).length === 0) {
+      delete newPayload.overrides.neurons_me_model[selectedBrainRegion.id];
+    }
+  }
+
+  set(setConfigPayloadAtom, newPayload);
+  set(setDefaultEModelForMETypeAtom);
+});
+
 export const setDefaultEModelForMETypeAtom = atom<null, [], void>(null, async (get, set) => {
   const localConfigPayload = get(localConfigPayloadAtom);
   const selectedBrainRegion = get(selectedBrainRegionAtom);

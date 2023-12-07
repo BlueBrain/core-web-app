@@ -7,12 +7,16 @@ import {
   selectedEModelAtom,
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { EModelMenuItem } from '@/types/e-model';
-import { setMEConfigPayloadAtom } from '@/state/brain-model-config/cell-model-assignment/me-model/setters';
+import {
+  setMEConfigPayloadAtom,
+  unassignFromMEConfigPayloadAtom,
+} from '@/state/brain-model-config/cell-model-assignment/me-model/setters';
 
 export default function EModelDropdown() {
   const eModels = useAtomValue(eModelByETypeMappingAtom);
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
   const setMEConfigPayload = useSetAtom(setMEConfigPayloadAtom);
+  const unassignFromPayload = useSetAtom(unassignFromMEConfigPayloadAtom);
 
   if (!selectedEModel || !eModels) return null;
 
@@ -43,7 +47,7 @@ export default function EModelDropdown() {
     <div className="flex gap-5">
       <div className="text-3xl font-bold text-primary-8">Available E-Models</div>
       <Select
-        key={`${selectedEModel.mType}-${selectedEModel.eType}`}
+        key={`${selectedEModel.id}`}
         defaultValue={selectedEModel.id}
         options={options}
         filterOption={filterOption}
@@ -51,7 +55,11 @@ export default function EModelDropdown() {
         placeholder="Select model"
         optionFilterProp="children"
         onChange={onSelect}
+        style={{ minWidth: 200 }}
       />
+      <button type="button" onClick={() => unassignFromPayload()}>
+        Reset to default
+      </button>
     </div>
   );
 }
