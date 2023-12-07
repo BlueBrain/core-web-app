@@ -5,6 +5,7 @@ import { DeltaResource } from '@/types/explore-section/resources';
 type TableCellAlign = 'left' | 'right' | 'center';
 type ExploreFieldConfigStyle = {
   align?: TableCellAlign;
+  width?: number;
 };
 
 export type ExploreFieldConfig = {

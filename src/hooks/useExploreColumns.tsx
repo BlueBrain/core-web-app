@@ -63,10 +63,9 @@ export default function useExploreColumns(
     setColumnWidths(
       totalKeys.map((key) => ({
         key,
-        width: getProvisionedWidth(
-          EXPLORE_FIELDS_CONFIG[key].title,
-          EXPLORE_FIELDS_CONFIG[key].unit
-        ),
+        width:
+          EXPLORE_FIELDS_CONFIG[key].style?.width ??
+          getProvisionedWidth(EXPLORE_FIELDS_CONFIG[key].title, EXPLORE_FIELDS_CONFIG[key].unit),
       }))
     );
   }, [dimensionColumns, keys]);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Skeleton } from 'antd';
 import { createHeaders } from '@/util/utils';
 import { useSessionAtomValue } from '@/hooks/hooks';
 
@@ -33,7 +33,7 @@ export default function MorphoThumbnail({ id }: { id: string }) {
   if (loading) {
     return (
       <div className="flex items-center w-full">
-        <LoadingOutlined className="mx-auto" />
+        <Skeleton.Image active className="!w-[138px] !h-[124px]" />
       </div>
     );
   }

@@ -23,6 +23,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       plural: 'previews',
       singular: 'preview',
     },
+    style: { width: 138 },
   },
   name: {
     esTerms: {
