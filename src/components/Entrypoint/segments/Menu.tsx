@@ -4,6 +4,7 @@ import kebabCase from 'lodash/kebabCase';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
+import { OBPLogo } from './Splash';
 import { classNames } from '@/util/utils';
 import { basePath } from '@/config';
 
@@ -22,9 +23,9 @@ type EntrypointMenuItem = EntrypointMenuItemAsButton | EntrypointMenuItemAsLink;
 
 const ENTRYPOINT_MENU_ITEMS: Array<EntrypointMenuItem> = [
   {
-    title: 'Discover',
+    title: 'Explore',
     description: 'Explore brain models and experimental data',
-    href: '/discover',
+    href: '/explore/interactive',
     bgcolor: 'bg-primary-5',
   },
   {
@@ -41,7 +42,7 @@ const ENTRYPOINT_MENU_ITEMS: Array<EntrypointMenuItem> = [
       signIn('keycloak', { callbackUrl: callbackUrl ?? `${basePath}/main` }),
   },
   {
-    title: 'Sign-up',
+    title: 'Sign up',
     href: '/sign-up',
     description: 'Create an account and start experimenting with OBP',
     bgcolor: 'bg-primary-8',
@@ -84,9 +85,7 @@ function EntrypointMenuSingleItem({
   bgcolor: string;
 }) {
   return (
-    <div
-      className={classNames('p-4 h-28 w-52 box-border cursor-pointer hover:bg-primary-4', bgcolor)}
-    >
+    <div className={classNames('p-4 h-full box-border cursor-pointer hover:bg-primary-4', bgcolor)}>
       <h3 className="font-bold text-2xl text-white mb-1 text-left">{title}</h3>
       <p className="font-normal text-sm text-primary-1 line-clamp-2 text-left">{description}</p>
     </div>
@@ -95,8 +94,11 @@ function EntrypointMenuSingleItem({
 
 export default function EntrypointMenu() {
   return (
-    <div className="grid grid-flow-col gap-1 absolute top-7 right-7 z-20">
-      {ENTRYPOINT_MENU_ITEMS.map((props) => withButtonOrLink(EntrypointMenuSingleItem)(props))}
+    <div className="grid grid-cols-[1fr_4fr] w-[calc(100%-3.25rem)] mx-auto left-7 right-7  absolute top-7 z-20">
+      <OBPLogo />
+      <div className="grid grid-cols-4 gap-1">
+        {ENTRYPOINT_MENU_ITEMS.map((props) => withButtonOrLink(EntrypointMenuSingleItem)(props))}
+      </div>
     </div>
   );
 }

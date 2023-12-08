@@ -13,7 +13,6 @@ const RELEASE_23_01_CONFIG_ID =
 
 export default function ExploreInteractiveLayout({ children }: { children: ReactNode }) {
   const setConfig = useSetAtom(brainModelConfigIdAtom);
-
   // set Release 23.01 as the configuration of explore interactive
   useEffect(() => setConfig(RELEASE_23_01_CONFIG_ID), [setConfig]);
 

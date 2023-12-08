@@ -16,13 +16,6 @@ function MainSidebarHeader({ expanded }: { expanded: boolean }) {
 
 export const MAIN_NAVIGATION_LIST: Array<NavigationItemProps> = [
   {
-    name: 'Discover',
-    description:
-      'Explore each brain region and discover all the experimental data, virtual experiments targeting these regions and the literature associated to those.',
-    url: '/discover',
-    bgcolor: 'bg-primary-5',
-  },
-  {
     name: 'About',
     description: 'Explore the literature and query publications using a chatbot.',
     url: '/about',
@@ -30,7 +23,7 @@ export const MAIN_NAVIGATION_LIST: Array<NavigationItemProps> = [
   },
 ];
 
-function MainNavigation({ expanded }: { expanded: boolean }) {
+export function MainNavigation({ expanded }: { expanded: boolean }) {
   return (
     <ul
       className={classNames(
@@ -55,13 +48,21 @@ export default function Main() {
         }}
       />
       <div className="fixed left-0 z-20">
-        <ApplicationSidebar title={MainSidebarHeader} control={MainNavigation} />
+        <ApplicationSidebar
+          title={MainSidebarHeader}
+          control={MainNavigation}
+          account={null}
+          navigation={null}
+        />
       </div>
-      <OBPLogo color="text-primary-5" className="!left-14" />
-      <div className="fixed top-[130px] left-[53px] max-w-[250px] w-full z-10">
-        <DefaultAccountPanel expanded />
-      </div>
-      <div className="absolute h-[calc(100vh-56px)] top-7 right-7 flex justify-end w-[calc(100%-3rem)] ml-auto">
+
+      <div className="h-screen pr-7 pl-14 py-5 justify-end gap-x-2 grid grid-cols-[1fr_3fr]">
+        <div className="flex flex-col w-full gap-y-7">
+          <OBPLogo color="text-white" />
+          <div className="w-90percent z-10">
+            <DefaultAccountPanel expanded />
+          </div>
+        </div>
         <MainMenu />
       </div>
     </div>

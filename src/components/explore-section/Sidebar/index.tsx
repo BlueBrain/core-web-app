@@ -1,14 +1,19 @@
 import { useAtomValue } from 'jotai';
-import { ArrowRightOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, HomeOutlined } from '@ant-design/icons';
 
+import { useSession } from 'next-auth/react';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
 import Link from '@/components/Link';
 import ApplicationSidebar, {
+  AppNavigation,
+  AppNavigationItem,
+  DefaultAccountPanel,
   NavigationItem,
   NavigationItemProps,
 } from '@/components/ApplicationSidebar';
+import { MainNavigation } from '@/components/main';
 
 export const EXPLORE_NAVIGATION_LIST: Array<NavigationItemProps> = [
   {
@@ -19,22 +24,10 @@ export const EXPLORE_NAVIGATION_LIST: Array<NavigationItemProps> = [
     bgcolor: 'bg-primary-5',
   },
   {
-    name: 'Literature',
+    name: 'Knowledge discovery',
     description: 'Explore the literature and query publications using a chatbot.',
     url: '/explore/literature',
     bgcolor: 'bg-primary-6',
-  },
-  {
-    name: 'Portals',
-    description: 'Explore our existing data portals.',
-    url: '/explore/portals',
-    bgcolor: 'bg-primary-7',
-  },
-  {
-    name: 'Gallery',
-    description: 'Explore our brain models visualizations.',
-    url: '/explore/gallery',
-    bgcolor: 'bg-primary-8',
   },
 ];
 
@@ -82,6 +75,40 @@ function ExploreSideBarHeader() {
   return <Link href="/main?tab=explore">Explore</Link>;
 }
 
+function AnonymousExploreSideBarNavigation({ expanded }: { expanded: boolean }) {
+  return (
+    <div
+      className={classNames(
+        'w-full flex flex-col gap-y-1 my-2',
+        expanded ? 'items-start' : 'items-center'
+      )}
+    >
+      <AppNavigationItem
+        showIconOnCollapse
+        {...{
+          expanded,
+          title: 'Home',
+          url: '/',
+          icon: HomeOutlined,
+        }}
+      />
+    </div>
+  );
+}
+
 export default function ExploreSidebar() {
-  return <ApplicationSidebar title={ExploreSideBarHeader} control={ExploreNavigation} />;
+  const { status } = useSession();
+  const control = status === 'unauthenticated' ? MainNavigation : ExploreNavigation;
+  const navigation =
+    status === 'unauthenticated' ? AnonymousExploreSideBarNavigation : AppNavigation;
+  const account = status === 'unauthenticated' ? null : DefaultAccountPanel;
+
+  return (
+    <ApplicationSidebar
+      title={ExploreSideBarHeader}
+      control={control}
+      navigation={navigation}
+      account={account}
+    />
+  );
 }

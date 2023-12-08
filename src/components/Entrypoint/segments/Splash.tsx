@@ -1,27 +1,26 @@
+import Link from 'next/link';
 import Image from 'next/image';
 
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
+import { ObpLogo } from '@/components/icons/ObpLogo';
 
 export function Background() {
   return (
-    <div className="absolute inset-0 bg-primary-9 flex flex-col items-center justify-center">
-      <Image
-        fetchPriority="high"
-        src={`${basePath}/images/obp_fullbrain.png`}
-        alt="Open Brain Platform Full Brain"
-        className="max-w-[42%] h-auto mb-[76px]"
-        width={984}
-        height={927}
-      />
-    </div>
+    <Image
+      fill
+      priority
+      src={`${basePath}/images/obp_home_background.webp`}
+      alt="Open Brain Platform Full Brain"
+      className="absolute inset-0 bg-primary-9 object-cover"
+    />
   );
 }
 
 function HeroText() {
   return (
-    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center">
-      <div className="whitespace-pre-line text-center select-none text-white text-7xl font-bold">{`From models building to\nsimulation experiments`}</div>
+    <div className="absolute z-20 top-1/2 -translate-y-1/2 lg:left-10percent items-center justify-center">
+      <div className="whitespace-pre-line text-left select-none text-white text-4xl xl:text-7xl 2xl:text-9xl font-bold">{`Leveraging\nsimulation\nneuroscience `}</div>
     </div>
   );
 }
@@ -34,14 +33,12 @@ export function OBPLogo({
   className?: string;
 }) {
   return (
-    <div className={classNames('fixed top-7 left-7 z-10 pr-2', className)}>
-      <h1
-        className={classNames(
-          'whitespace-pre-line text-left text-[2.4rem] leading-[90.5%] font-extrabold uppercase p-1 tracking-wider select-none',
-          color
-        )}
-      >{`Open\nBrain\nPlatform`}</h1>
-    </div>
+    <Link
+      href="/"
+      className={classNames('z-10 flex flex-col justify-center pr-4 h-auto', color, className)}
+    >
+      <ObpLogo />
+    </Link>
   );
 }
 
@@ -50,7 +47,6 @@ export default function Splash() {
     <>
       <Background />
       <HeroText />
-      <OBPLogo />
     </>
   );
 }

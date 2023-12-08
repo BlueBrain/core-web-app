@@ -35,8 +35,8 @@ type P = { expanded: boolean };
 type ApplicationSidebarProps = {
   title: ({ expanded }: P) => React.ReactNode;
   control: ({ expanded }: P) => React.ReactNode;
-  account?: ({ expanded }: P) => React.ReactNode;
-  navigation?: ({ expanded }: P) => React.ReactNode;
+  account?: (({ expanded }: P) => React.ReactNode) | null;
+  navigation?: (({ expanded }: P) => React.ReactNode) | null;
 };
 
 export type NavigationItemProps = {
@@ -95,7 +95,7 @@ export function NavigationItem({ url, name, description, bgcolor }: NavigationIt
   );
 }
 
-function AppNavigationItem({
+export function AppNavigationItem({
   expanded,
   title,
   bgcolor,
@@ -125,7 +125,7 @@ function AppNavigationItem({
   );
 }
 
-function AppNavigation({ expanded }: { expanded: boolean }) {
+export function AppNavigation({ expanded }: { expanded: boolean }) {
   return (
     <div
       className={classNames(
@@ -268,10 +268,12 @@ export default function ApplicationSidebar({
       <div className="w-full h-[calc(100%-410px)] overflow-y-auto primary-scrollbar flex items-start justify-start gap-y-1 flex-col">
         {control({ expanded })}
       </div>
-      <div className="mb-4 w-[calc(100%-2.5rem)] bg-primary-9 z-20 mt-auto flex flex-col items-center justify-center absolute bottom-0">
-        {account({ expanded })}
-        {navigation({ expanded })}
-      </div>
+      {(account || navigation) && (
+        <div className="mb-4 w-[calc(100%-2.5rem)] bg-primary-9 z-20 mt-auto flex flex-col items-center justify-center absolute bottom-0">
+          {account?.({ expanded })}
+          {navigation?.({ expanded })}
+        </div>
+      )}
     </div>
   );
 }
