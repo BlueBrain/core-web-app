@@ -24,8 +24,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           backgroundImage: `url(${basePath}/images/obp_hippocampus.png)`,
         }}
       />
-      <OBPLogo color="text-primary-5" className="!left-14" />
-      <div className="fixed top-[130px] left-[53px] max-w-[250px] w-full z-10">
+      <div className="absolute top-7 left-14 py-2">
+        <OBPLogo color="text-white" />
+      </div>
+      <div className="fixed top-44 left-14 max-w-[250px] w-full z-10">
         <Link href="/" className="inline-flex items-center gap-1 group">
           <ArrowLeftOutlined className="text-white w-5 h-5 group-hover:text-primary-4" />
           <span className="text-white text-base font-bold group-hover:text-primary-4">
@@ -34,7 +36,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Link>
       </div>
       {isDocs && (
-        <div className="absolute top-52 left-10 z-20 w-80 h-full">
+        <div className="absolute top-56 left-10 z-20 w-80 h-full">
           <DocumentationSideMenu />
         </div>
       )}
