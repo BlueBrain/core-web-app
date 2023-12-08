@@ -4,7 +4,7 @@ import { totalAtom, pageSizeAtom } from '@/state/explore-section/list-view-atoms
 import { classNames } from '@/util/utils';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { PAGE_SIZE } from '@/constants/explore-section/list-views';
-import { useUnwrappedValue } from '@/hooks/hooks';
+import { useLoadableValue } from '@/hooks/hooks';
 
 function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
@@ -27,10 +27,18 @@ export default function LoadMoreButton({
   experimentTypeName: string;
   brainRegionSource: ExploreDataBrainRegionSource;
 }) {
-  const total = useUnwrappedValue(totalAtom({ experimentTypeName, brainRegionSource }));
+  const total = useLoadableValue(totalAtom({ experimentTypeName, brainRegionSource }));
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);
 
-  if (total === undefined || pageSize > total) return null;
+  if (total.state === 'hasError') {
+    return (
+      <Btn className="bg-primary-8 cursor-progress text-white" disabled>
+        <div>Data could not be fetched</div>
+      </Btn>
+    );
+  }
+
+  if (total.state === 'hasData' && pageSize > total.data) return null;
 
   return (
     <Btn className="bg-primary-8 text-white" onClick={() => setPageSize(pageSize + 30)}>
