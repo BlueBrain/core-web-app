@@ -88,7 +88,6 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       plural: 'Dates',
       singular: 'Date',
     },
-    style: { align: 'center' },
   },
   createdBy: {
     title: 'Created by',
