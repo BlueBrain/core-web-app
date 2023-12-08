@@ -441,14 +441,15 @@ export async function cloneMacroConnectomeConfig(id: string, session: Session) {
     'application/arrow',
     session
   );
+
   const clonedOverridesEntity: WholeBrainConnectomeStrength = {
     ...overridesEntity,
     distribution: createDistribution(clonedOverridesPayloadMeta),
   };
 
-  await createResource(clonedOverridesEntity, session);
+  const clonedOverridesEntityMeta = await createResource(clonedOverridesEntity, session);
 
-  payload.overrides.connection_strength.id = clonedOverridesEntity['@id'];
+  payload.overrides.connection_strength.id = clonedOverridesEntityMeta['@id'];
   payload.overrides.connection_strength.rev = 1;
 
   const clonedPayloadMeta = await createJsonFile(payload, 'macroconnectome-config.json', session);
