@@ -46,7 +46,6 @@ function postNexusArchive(resources: FileMetadata[], session: Session) {
       method: 'POST',
       headers: createHeaders(session.accessToken, {
         'Content-Type': 'application/json',
-        Accept: 'application/x-tar',
       }),
       body: JSON.stringify({
         resources: resources.map(formatArchiveResource),
