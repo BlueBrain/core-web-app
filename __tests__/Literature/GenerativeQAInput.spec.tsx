@@ -299,7 +299,7 @@ describe('GenerativeQAInput', () => {
     const dateInputAfter = screen.getByPlaceholderText(
       type === 'start' ? 'Start date' : 'End date'
     );
-    expect(dateInputAfter).toHaveValue(today);
+    expect(dateInputAfter).toHaveValue(format(new Date(today), 'dd-MM-yyyy'));
 
     const questionInput = screen.getByPlaceholderText('Your question');
     fireEvent.click(questionInput);

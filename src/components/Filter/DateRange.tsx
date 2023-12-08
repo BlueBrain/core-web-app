@@ -17,6 +17,7 @@ export default function DateRange({
     () => (
       <DateRangePicker.RangePicker
         allowClear
+        format="DD-MM-YYYY"
         allowEmpty={[true, true]}
         defaultValue={[filter.value.gte as Date, filter.value.lte as Date]}
         className="p-2 bg-transparent border rounded border-primary-4 font-sm placeholder-primary-4 text-primary-4"
