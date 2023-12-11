@@ -31,6 +31,6 @@ export const config = {
   matcher: [
     '/',
     '/main',
-    '/(build|simulate|simulations|main|experiment-designer|svc|virtual-lab)/(.*)',
+    '/(build|explore|simulate|simulations|main|experiment-designer|svc|virtual-lab)/(.*)',
   ],
 };
