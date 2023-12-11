@@ -15,7 +15,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Preview',
     filter: null,
     render: {
-      esResourceViewFn: ({ _source: source }) => {
+      esResourceViewFn: ({ _source: source }, _, index) => {
         const { distribution } = source;
         const swcDistribution = distribution.find(
           (dist: { contentUrl: string; encodingFormat: string }) =>
@@ -23,7 +23,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         );
         const { contentUrl } = swcDistribution;
 
-        return <MorphoThumbnail contentUrl={contentUrl} />;
+        return <MorphoThumbnail contentUrl={contentUrl} priorityLoad={index < 5} />;
       },
     },
     sorter: false,

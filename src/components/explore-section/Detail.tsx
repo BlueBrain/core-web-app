@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import Error from 'next/error';
-
 import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { useSetAtom } from 'jotai';
+
 import { DetailsPageSideBackLink } from '@/components/explore-section/Sidebar';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { brainRegionSidebarIsCollapsedAtom } from '@/state/brain-regions';
