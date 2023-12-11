@@ -37,7 +37,11 @@ function CustomTH({
   };
 
   return handleResizing ? (
-    <th {...props} /* eslint-disable-line react/jsx-props-no-spreading */ style={modifiedStyle}>
+    <th
+      {...props} /* eslint-disable-line react/jsx-props-no-spreading */
+      style={modifiedStyle}
+      className="before:!bg-neutral-4"
+    >
       <div className="flex w-full">
         <button
           className={classNames(
