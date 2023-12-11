@@ -12,7 +12,7 @@ import timeElapsedFromToday from '@/util/date';
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   preview: {
     className: 'text-center',
-    title: '', // No column header for thumbnails.
+    title: 'Preview',
     filter: null,
     render: {
       esResourceViewFn: ({ _source: source }) => {
