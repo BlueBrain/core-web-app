@@ -41,6 +41,7 @@ export default function SimulationBox({ className, value, onDelete }: Simulation
         type="button"
         className={`${styles.button} w-9 h-9 bg-black rounded-lg border border-neutral-400 justify-center items-center gap-2.5 inline-flex flex-row items-center`}
         onClick={() => onDelete(value)}
+        aria-label="Delete"
       >
         <DeleteFilled />
       </button>

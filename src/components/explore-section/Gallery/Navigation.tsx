@@ -27,7 +27,12 @@ export default function Navigation({
     <div className="fixed w-15vw bottom-6 left-6 flex flex-col z-50">
       <header className="w-full flex flex-col mb-12 text-white">
         <div className="w-full flex flex-row items-center justify-between">
-          <button type="button" onClick={(e) => navigate(e.currentTarget.name)} name="previous">
+          <button
+            type="button"
+            onClick={(e) => navigate(e.currentTarget.name)}
+            name="previous"
+            aria-label="Navigate"
+          >
             <ChevronIcon className="w-auto h-3 origin-center rotate-180" />
           </button>
 
@@ -36,7 +41,12 @@ export default function Navigation({
             <div className="w-6 h-px bg-neutral-4 mx-2" />
             <div className="font-light">{totalImages}</div>
           </div>
-          <button type="button" onClick={(e) => navigate(e.currentTarget.name)} name="next">
+          <button
+            type="button"
+            onClick={(e) => navigate(e.currentTarget.name)}
+            name="next"
+            aria-label="Navigate"
+          >
             <ChevronIcon className="w-auto h-3" />
           </button>
         </div>

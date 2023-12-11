@@ -67,6 +67,7 @@ export default function AnalysisReportImage({
           type="button"
           className="border-2 radius-none w-max p-2"
           onClick={() => FileSaver.saveAs(blob)}
+          aria-label="Download report image"
         >
           <DownloadOutlined />
         </button>

@@ -178,13 +178,26 @@ function ActionColumn({
         className="cursor-pointer"
         onClick={onRename}
         disabled={disableEdit}
+        aria-label="Edit"
       >
         <FileTextOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
-      <button title="View" type="button" className="cursor-pointer" onClick={onView}>
+      <button
+        title="View"
+        type="button"
+        className="cursor-pointer"
+        onClick={onView}
+        aria-label="View"
+      >
         <EyeOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
-      <button title="Clone" type="button" className="cursor-pointer" onClick={onClone}>
+      <button
+        title="Clone"
+        type="button"
+        className="cursor-pointer"
+        onClick={onClone}
+        aria-label="Clone"
+      >
         <CloneIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
     </div>

@@ -175,7 +175,7 @@ function StatusColumn({ row: { status } }: { row: LaunchedSimCampUIConfigType })
 function ActionColumn({ row }: { row: LaunchedSimCampUIConfigType }) {
   return (
     <div className="inline-flex flex-row items-center justify-center gap-2">
-      <button disabled title="Edit" type="button" className="cursor-pointer">
+      <button disabled title="Edit" type="button" className="cursor-pointer" aria-label="Edit">
         <FileIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
       <Link

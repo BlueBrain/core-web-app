@@ -54,7 +54,7 @@ export default function NameGroupEditor({ paramAtom, namePrefix, groupIndex }: P
       {!isEditing && (
         <>
           <div className={groupNameStyle}>{groupName}</div>
-          <button type="button" onClick={() => setIsEditing(true)}>
+          <button type="button" onClick={() => setIsEditing(true)} aria-label="Edit">
             <EditOutlined />
           </button>
         </>
@@ -70,6 +70,7 @@ export default function NameGroupEditor({ paramAtom, namePrefix, groupIndex }: P
               setIsEditing(false);
               onChanged();
             }}
+            aria-label="Apply"
           >
             <CheckOutlined />
           </button>

@@ -23,7 +23,7 @@ export function MemberItem({ className, value, readonly = false, onDelete }: Mem
       <div className={styles.email}>{value.email}</div>
       <div className={styles.role}>{ROLES[value.role]}</div>
       {!readonly && (
-        <button type="button" onClick={() => onDelete(value)}>
+        <button type="button" onClick={() => onDelete(value)} aria-label="Delete member">
           <DeleteFilled />
         </button>
       )}

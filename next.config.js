@@ -28,9 +28,6 @@ const nextConfig = {
   swcMinify: true,
   compress: false,
   output: 'standalone',
-  experimental: {
-    serverActions: true,
-  },
   sentry: {
     hideSourceMaps: false,
   },

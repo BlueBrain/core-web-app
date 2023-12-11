@@ -80,7 +80,11 @@ export default function DefaultListView({
             </FilterControls>
             <div className="flex gap-2 place-content-end items-center">
               <div className="text-primary-7">View:</div>
-              <button onClick={() => setViewMode('table')} type="button">
+              <button
+                onClick={() => setViewMode('table')}
+                type="button"
+                aria-label="Set table mode"
+              >
                 <UnorderedListOutlined
                   className={
                     viewMode === 'table' ? 'bg-primary-7 p-1 text-neutral-1' : 'text-neutral-3 p-1'
