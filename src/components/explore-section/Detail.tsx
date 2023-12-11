@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import Error from 'next/error';
 
 import { Loadable } from 'jotai/vanilla/utils/loadable';
@@ -23,11 +23,13 @@ export default function Detail({
 }) {
   const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
 
-  setBrainRegionSidebarIsCollapsed(true);
-
   const path = usePathname();
   const resourceInfo = useResourceInfoFromPath();
   const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<DetailType>;
+
+  useEffect(() => {
+    setBrainRegionSidebarIsCollapsed(true);
+  }, [setBrainRegionSidebarIsCollapsed]);
 
   if (detail.state === 'loading') {
     return <CentralLoadingSpinner />;
