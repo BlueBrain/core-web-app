@@ -145,7 +145,10 @@ export const EXPERIMENT_DATA_TYPES: {
     title: 'Synapse per connection',
     name: 'synapse-per-connection',
     columns: [
-      'brainRegion',
+      'preSynapticBrainRegion',
+      'postSynapticBrainRegion',
+      'preSynapticCellType',
+      'postSynapticCellType',
       'layer',
       'layerThickness',
       'subjectSpecies',

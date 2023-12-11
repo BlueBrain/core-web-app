@@ -5,7 +5,7 @@ import { InfoCircleFilled } from '@ant-design/icons';
 import sortBy from 'lodash/sortBy';
 import { useAtom } from 'jotai';
 import uniqBy from 'lodash/uniqBy';
-import { Filter, OptionsData } from './types';
+import { Filter } from './types';
 import SearchFilter from './SearchFilter';
 import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
 import { CheckIcon } from '@/components/icons';
@@ -13,6 +13,8 @@ import CenteredMessage from '@/components/CenteredMessage';
 import { CheckListProps } from '@/types/explore-section/application';
 import { FiltersRenderLengthAtom } from '@/components/Filter/state';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
+import { getFieldEsConfig } from '@/api/explore-section/fields';
+import { Buckets } from '@/types/explore-section/fields';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
   switch (filterField) {
@@ -67,15 +69,15 @@ export default function CheckList({
   onChange,
 }: {
   children: (props: CheckListProps) => ReactNode;
-  data: OptionsData;
+  data: Buckets;
   filter: Filter;
   values: string[];
   onChange: (value: string[]) => void;
 }) {
-  const options = useMemo(() => {
-    const agg = data[filter.field];
-    const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
+  const esConfig = getFieldEsConfig(filter.field);
 
+  const options = useMemo(() => {
+    const buckets = data?.buckets ?? data?.excludeOwnFilter?.buckets;
     // returning unique buckets since some times we have same label and different id (eg. contributors)
     return buckets
       ? uniqBy(
@@ -88,7 +90,7 @@ export default function CheckList({
           'label'
         )
       : undefined;
-  }, [data, filter.field, values]);
+  }, [data, esConfig?.flat, filter.field, values]);
 
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];

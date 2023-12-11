@@ -85,10 +85,3 @@ export type Bucket = {
     buckets: Bucket[];
   };
 };
-
-export type OptionsData = {
-  [key: string]: {
-    buckets: Bucket[];
-    excludeOwnFilter: { buckets: Bucket[] };
-  };
-};

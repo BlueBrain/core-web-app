@@ -3,21 +3,20 @@ import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { useAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import { Aggregations, NestedStatsAggregation, Statistics } from '@/types/explore-section/fields';
 import {
-  Filter,
-  GteLteValue,
-  OptionsData,
-  ValueOrRangeFilter,
-  RangeFilter,
-} from '@/components/Filter/types';
+  Aggregations,
+  Buckets,
+  NestedBucketAggregation,
+  NestedStatsAggregation,
+  Statistics,
+} from '@/types/explore-section/fields';
+import { Filter, GteLteValue, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
 import {
   CheckList,
   DateRange,
   FilterGroup,
   FilterGroupProps,
   defaultList,
-  listWithInference,
 } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
@@ -75,7 +74,7 @@ function createFilterItemComponent(
       case 'valueRange':
         if (esConfig?.nested) {
           const nestedAgg = aggregations[filter.field] as NestedStatsAggregation;
-          agg = nestedAgg[filter.field][esConfig?.nested.field] as Statistics;
+          agg = nestedAgg[filter.field][esConfig?.nested.aggregationName] as Statistics;
         } else {
           agg = aggregations[filter.field] as Statistics;
         }
@@ -87,21 +86,17 @@ function createFilterItemComponent(
             onChange={(values: GteLteValue) => updateFilterValues(filter.field, values)}
           />
         );
-      case 'checkListInference':
-        return (
-          <CheckList
-            data={aggregations as OptionsData}
-            filter={filter}
-            values={filterValues[filter.field] as string[]}
-            onChange={(values: string[]) => updateFilterValues(filter.field, values)}
-          >
-            {listWithInference}
-          </CheckList>
-        );
       case 'checkList':
+        if (esConfig?.nested) {
+          const nestedAgg = aggregations[filter.field] as NestedBucketAggregation;
+          agg = nestedAgg[filter.field][filter.field] as Buckets;
+        } else {
+          agg = aggregations[filter.field] as Buckets;
+        }
+
         return (
           <CheckList
-            data={aggregations as OptionsData}
+            data={agg}
             filter={filter}
             values={filterValues[filter.field] as string[]}
             onChange={(values: string[]) => updateFilterValues(filter.field, values)}

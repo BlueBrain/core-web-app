@@ -7,6 +7,7 @@ import {
   selectorFnMeanStd,
   selectorFnSpecies,
   selectorFnStatistic,
+  selectorFnSynaptic,
 } from '@/state/explore-section/listing-selectors';
 import {
   eTypeSelectorFn,
@@ -21,6 +22,7 @@ import LayerThicknessField from '@/components/explore-section/Fields/LayerThickn
 
 import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
+import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   license: {
@@ -113,9 +115,11 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   sem: {
     esTerms: {
       nested: {
-        extendedField: 'series.statistic.keyword',
-        field: 'standard error of the mean',
-        nestField: 'series',
+        nestedPath: 'series',
+        filterTerm: 'series.statistic.keyword',
+        filterValue: 'standard error of the mean',
+        aggregationName: 'standard error of the mean',
+        aggregationField: 'series.value',
       },
     },
     unit: 'boutons/μm',
@@ -160,9 +164,11 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   neuronDensity: {
     esTerms: {
       nested: {
-        extendedField: 'series.statistic.keyword',
-        field: 'mean',
-        nestField: 'series',
+        nestedPath: 'series',
+        filterTerm: 'series.statistic.keyword',
+        filterValue: 'mean',
+        aggregationName: 'mean',
+        aggregationField: 'series.value',
       },
     },
     title: 'Density',
@@ -235,9 +241,11 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   meanstd: {
     esTerms: {
       nested: {
-        extendedField: 'series.statistic.keyword',
-        field: 'mean',
-        nestField: 'series',
+        nestedPath: 'series',
+        filterTerm: 'series.statistic.keyword',
+        filterValue: 'mean',
+        aggregationName: 'mean',
+        aggregationField: 'series.value',
       },
     },
     unit: 'boutons/μm',
@@ -255,9 +263,11 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   numberOfMeasurements: {
     esTerms: {
       nested: {
-        extendedField: 'series.statistic.keyword',
-        field: 'N',
-        nestField: 'series',
+        nestedPath: 'series',
+        filterTerm: 'series.statistic.keyword',
+        filterValue: 'N',
+        aggregationName: 'N',
+        aggregationField: 'series.value',
       },
     },
     title: 'N° of Measurements',
@@ -317,6 +327,103 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     vocabulary: {
       plural: 'bifurcation',
       singular: 'bifurcations',
+    },
+  },
+  preSynapticBrainRegion: {
+    title: 'Brain Region [From]',
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnSynaptic(r._source, SynapticPosition.Pre, SynapticType.BrainRegion),
+      deltaResourceViewFn: (resource) =>
+        resource.synapticPathway?.preSynaptic.find((synapse) => synapse.about === 'nsg:BrainRegion')
+          ?.label,
+    },
+    filter: 'checkList',
+    esTerms: {
+      nested: {
+        nestedPath: 'preSynapticPathway',
+        filterTerm: 'preSynapticPathway.about.keyword',
+        filterValue: 'https://neuroshapes.org/BrainRegion',
+        aggregationName: 'label',
+        aggregationField: 'preSynapticPathway.label.keyword',
+      },
+    },
+    vocabulary: {
+      plural: 'Brain Region [From]',
+      singular: 'Brain Region [From]',
+    },
+  },
+  postSynapticBrainRegion: {
+    title: 'Brain Region [To]',
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnSynaptic(r._source, SynapticPosition.Post, SynapticType.BrainRegion),
+      deltaResourceViewFn: (resource) =>
+        resource.synapticPathway?.postSynaptic.find(
+          (synapse) => synapse.about === 'nsg:BrainRegion'
+        )?.label,
+    },
+    filter: 'checkList',
+    esTerms: {
+      nested: {
+        nestedPath: 'postSynapticPathway',
+        filterTerm: 'postSynapticPathway.about.keyword',
+        filterValue: 'https://neuroshapes.org/BrainRegion',
+        aggregationName: 'label',
+        aggregationField: 'postSynapticPathway.label.keyword',
+      },
+    },
+    vocabulary: {
+      plural: 'Brain Region [To]',
+      singular: 'Brain Region [To]',
+    },
+  },
+  preSynapticCellType: {
+    title: 'Cell Type [From]',
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnSynaptic(r._source, SynapticPosition.Pre, SynapticType.CellType),
+      deltaResourceViewFn: (resource) =>
+        resource.synapticPathway?.preSynaptic.find((synapse) => synapse.about === 'BrainCell:Type')
+          ?.label,
+    },
+    filter: 'checkList',
+    esTerms: {
+      nested: {
+        nestedPath: 'preSynapticPathway',
+        filterTerm: 'preSynapticPathway.about.keyword',
+        filterValue: 'https://bbp.epfl.ch/ontologies/core/bmo/BrainCellType',
+        aggregationName: 'label',
+        aggregationField: 'preSynapticPathway.label.keyword',
+      },
+    },
+    vocabulary: {
+      plural: 'Cell Type [From]',
+      singular: 'Cell Type [From]',
+    },
+  },
+  postSynapticCellType: {
+    title: 'Cell Type [To]',
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnSynaptic(r._source, SynapticPosition.Post, SynapticType.CellType),
+      deltaResourceViewFn: (resource) =>
+        resource.synapticPathway?.postSynaptic.find((synapse) => synapse.about === 'BrainCell:Type')
+          ?.label,
+    },
+    filter: 'checkList',
+    esTerms: {
+      nested: {
+        nestedPath: 'postSynapticPathway',
+        filterTerm: 'postSynapticPathway.about.keyword',
+        filterValue: 'https://bbp.epfl.ch/ontologies/core/bmo/BrainCellType',
+        aggregationName: 'label',
+        aggregationField: 'postSynapticPathway.label.keyword',
+      },
+    },
+    vocabulary: {
+      plural: 'Cell Type [To]',
+      singular: 'Cell Type [To]',
     },
   },
 };

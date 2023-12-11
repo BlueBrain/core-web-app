@@ -22,6 +22,7 @@ import {
   Series,
   Weight,
 } from '@/types/explore-section/fields';
+import { IdWithLabel } from '@/types/explore-section/common';
 
 export interface Campaign {
   id: string;
@@ -155,6 +156,10 @@ export type DeltaResource<T = {}> = T & {
   };
   latestRevision?: number | null | undefined;
   wasGeneratedBy?: IdType;
+  synapticPathway?: {
+    postSynaptic: (IdWithLabel & { about: string })[];
+    preSynaptic: (IdWithLabel & { about: string })[];
+  };
   _constrainedBy: string;
   _createdAt: DateISOString;
   _createdBy: string;

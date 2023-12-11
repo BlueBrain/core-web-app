@@ -1,3 +1,5 @@
+import { Bucket } from '@/components/Filter/types';
+
 export interface IdLabelEntity {
   identifier: string;
   label: string | string[];
@@ -169,15 +171,17 @@ export interface StimulusEntity {
   '@type': string;
   stimulusType: BrainRegionOrStimulusTypeOrSpecies;
 }
-export interface Bucket {
-  key: string;
-  doc_count: number;
-}
 
-interface BucketAggregation {
+export interface Buckets {
   buckets: Bucket[];
   excludeOwnFilter: { buckets: Bucket[] };
 }
+
+export interface NestedBucketAggregation {
+  [key: string]: { [key: string]: Buckets };
+}
+
+type BucketAggregation = Buckets | NestedBucketAggregation;
 
 export interface NestedStatsAggregation {
   [key: string]: { [key: string]: Statistics };
@@ -232,3 +236,21 @@ export type AxesState = {
   xAxis?: string;
   yAxis?: string;
 };
+
+export type SynapticPathway = {
+  '@id': string;
+  about: string;
+  label: string;
+  idLabel?: string;
+  identifier?: string;
+};
+
+export enum SynapticPosition {
+  Pre,
+  Post,
+}
+
+export enum SynapticType {
+  BrainRegion = 'https://neuroshapes.org/BrainRegion',
+  CellType = 'https://bbp.epfl.ch/ontologies/core/bmo/BrainCellType',
+}

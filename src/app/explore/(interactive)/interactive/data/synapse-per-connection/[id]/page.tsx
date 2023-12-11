@@ -11,7 +11,7 @@ const fields = [
     className: 'col-span-3 row-span-2',
   },
   {
-    field: 'brainRegion',
+    field: 'preSynapticBrainRegion',
   },
   {
     field: 'subjectSpecies',
@@ -20,13 +20,13 @@ const fields = [
     field: 'meanstd',
   },
   {
+    field: 'postSynapticBrainRegion',
+  },
+  {
     field: 'subjectAge',
   },
   {
     field: 'sem',
-  },
-  {
-    field: 'weight',
   },
   {
     field: 'contributors',
@@ -41,7 +41,16 @@ const fields = [
     className: 'row-span-2',
   },
   {
+    field: 'preSynapticCellType',
+  },
+  {
+    field: 'weight',
+  },
+  {
     field: 'numberOfMeasurements',
+  },
+  {
+    field: 'postSynapticCellType',
   },
   {
     field: 'conditions',

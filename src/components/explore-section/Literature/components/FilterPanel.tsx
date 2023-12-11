@@ -15,7 +15,7 @@ import {
   FilterFieldsType,
   FilterValues,
 } from '@/types/literature';
-import { Filter, GteLteValue, OptionsData } from '@/components/Filter/types';
+import { Filter, GteLteValue } from '@/components/Filter/types';
 import SearchFilter from '@/components/Filter/SearchFilter';
 import { DateRange, FilterGroup } from '@/components/Filter';
 import ReloadIcon from '@/components/icons/Reload';
@@ -27,6 +27,7 @@ import {
 } from '@/state/literature';
 import { normalizedDate } from '@/util/utils';
 import { getFieldLabel } from '@/api/explore-section/fields';
+import { Buckets } from '@/types/explore-section/fields';
 
 export default function FilterPanel() {
   const updateFilters = useLiteratureFilter();
@@ -257,18 +258,16 @@ const getFilterBuckets = (
   articles: GArticle[],
   filterName: FilterFieldsType,
   filterFields: (keyof GArticle)[]
-): OptionsData => {
+): Buckets => {
   const fieldValues = getPossibleOptions(articles, filterFields);
 
   return {
-    [filterName]: {
-      buckets: Array.from(fieldValues).map(([value, frequency]) => ({
-        doc_count: frequency,
-        key: value,
-        key_as_string: value,
-      })),
-      excludeOwnFilter: { buckets: [] },
-    },
+    buckets: Array.from(fieldValues).map(([value, frequency]) => ({
+      doc_count: frequency,
+      key: value,
+      key_as_string: value,
+    })),
+    excludeOwnFilter: { buckets: [] },
   };
 };
 

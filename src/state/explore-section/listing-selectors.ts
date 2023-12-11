@@ -1,10 +1,11 @@
 import { format, parseISO, isValid } from 'date-fns';
-import { IdLabelEntity } from '@/types/explore-section/fields';
+import { IdLabelEntity, SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { formatNumber } from '@/util/common';
 import {
   Experiment,
   ExperimentalLayerThickness,
+  ExperimentalSynapsesPerConnection,
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
@@ -124,4 +125,15 @@ export const selectorFnSpecies = (species?: IdLabelEntity | IdLabelEntity[]) => 
       .join(', ');
   }
   return undefined;
+};
+
+export const selectorFnSynaptic = (
+  source: ExperimentalSynapsesPerConnection,
+  preOrPost: SynapticPosition,
+  type: SynapticType
+) => {
+  const synapticList =
+    preOrPost === SynapticPosition.Pre ? source.preSynapticPathway : source.postSynapticPathway;
+  const preSynaptic = synapticList.find((synaptic) => synaptic.about === type);
+  return preSynaptic?.label ?? '';
 };

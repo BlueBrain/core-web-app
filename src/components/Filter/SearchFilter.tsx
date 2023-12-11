@@ -3,9 +3,10 @@ import { ConfigProvider, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { useMemo } from 'react';
 import uniqBy from 'lodash/uniqBy';
-import { Filter, OptionsData } from './types';
+import { Filter } from './types';
 import Search from '@/components/Search';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
+import { Buckets } from '@/types/explore-section/fields';
 
 export default function SearchFilter({
   data,
@@ -13,14 +14,13 @@ export default function SearchFilter({
   values,
   onChange,
 }: {
-  data: OptionsData;
+  data: Buckets;
   filter: Filter;
   values: string[];
   onChange: (newValues: string[]) => void;
 }) {
   const options = useMemo(() => {
-    const agg = data[filter.field];
-    const buckets = agg?.buckets ?? agg?.excludeOwnFilter?.buckets;
+    const buckets = data?.buckets ?? data?.excludeOwnFilter?.buckets;
 
     return buckets
       ? uniqBy(

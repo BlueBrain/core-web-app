@@ -17,6 +17,7 @@ import {
   SubjectWeight,
 } from './es-properties';
 import { ESHitSource } from './es-common';
+import { SynapticPathway } from '@/types/explore-section/fields';
 
 type ExperimentProps = ESHitSource & {
   brainRegion: BrainRegion;
@@ -43,10 +44,12 @@ type ExperimentalNeuronDensity = ExperimentProps & {
   series: Statistic[];
 };
 
-type ExperimentalSynapsesPerConnection = ExperimentProps & {
+export type ExperimentalSynapsesPerConnection = ExperimentProps & {
   description: string;
   series: Statistic[];
   subjectWeight: SubjectWeight;
+  preSynapticPathway: SynapticPathway[];
+  postSynapticPathway: SynapticPathway[];
 };
 
 export type ExperimentalTrace = ExperimentProps & {

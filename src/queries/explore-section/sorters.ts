@@ -17,12 +17,12 @@ function buildESSort({ field, order }: SortState): Sort | undefined {
   }
 
   return esb
-    .sort(`${esConfig.nested.nestField}.value`)
+    .sort(esConfig.nested.aggregationField)
     .order(order)
     .mode('min')
     .nested({
-      path: esConfig.nested.nestField,
-      filter: esb.termQuery(esConfig.nested.extendedField, esConfig.nested.field),
+      path: esConfig.nested.nestedPath,
+      filter: esb.termQuery(esConfig.nested.filterTerm, esConfig.nested.filterValue),
     });
 }
 

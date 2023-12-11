@@ -23,8 +23,19 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
 
   switch (filter.type) {
     case 'checkList':
-    case 'checkListInference':
-      filterESBuilder = esb.termsQuery(esConfig?.flat?.filter, filter.value);
+      if (esConfig?.nested) {
+        filterESBuilder = esb
+          .nestedQuery()
+          .path(esConfig.nested.nestedPath)
+          .query(
+            esb
+              .boolQuery()
+              .must(esb.termQuery(esConfig.nested.filterTerm, esConfig.nested.filterValue))
+              .must(esb.termsQuery(`${esConfig.nested.nestedPath}.@id.keyword`, filter.value))
+          );
+      } else {
+        filterESBuilder = esb.termsQuery(esConfig?.flat?.filter, filter.value);
+      }
 
       break;
     case 'dateRange':
@@ -43,12 +54,12 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
       if (esConfig?.nested) {
         filterESBuilder = esb
           .nestedQuery()
-          .path(esConfig.nested.nestField)
+          .path(esConfig.nested.nestedPath)
           .query(
             esb
               .boolQuery()
-              .must(esb.termQuery(esConfig.nested.extendedField, esConfig.nested.field))
-              .must(buildRangeQuery(filter, `${esConfig.nested.nestField}.value`))
+              .must(esb.termQuery(esConfig.nested.filterTerm, esConfig.nested.filterValue))
+              .must(buildRangeQuery(filter, esConfig.nested.aggregationField))
           );
       } else {
         filterESBuilder = buildRangeQuery(filter, esConfig?.flat?.filter || '');

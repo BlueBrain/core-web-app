@@ -41,9 +41,11 @@ type EsTermsConfig = {
 };
 
 type NestedFieldConfig = {
-  extendedField: string;
-  field: string;
-  nestField: string;
+  nestedPath: string;
+  filterTerm: string;
+  filterValue: string;
+  aggregationName: string;
+  aggregationField: string;
 };
 
 export type DetailType = DeltaResource<{

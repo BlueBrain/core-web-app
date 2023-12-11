@@ -11,6 +11,7 @@ variables:
   KUBERNETES_MEMORY_LIMIT: 8Gi
   KUBERNETES_CPU_REQUEST: 2
   KUBERNETES_CPU_LIMIT: 4
+  NODE_OPTIONS: --max-old-space-size=4096
 
 default:
   interruptible: true

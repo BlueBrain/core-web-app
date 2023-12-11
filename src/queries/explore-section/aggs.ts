@@ -8,6 +8,27 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
 
   switch (aggregationType) {
     case 'buckets':
+      if (esConfig?.nested) {
+        return esb
+          .nestedAggregation(filter.field, esConfig.nested.nestedPath)
+          .agg(
+            esb
+              .filterAggregation(
+                filter.field,
+                esb.termQuery(esConfig.nested.filterTerm, esConfig.nested.filterValue)
+              )
+              .agg(
+                esb
+                  .termsAggregation(filter.field, `${esConfig.nested.nestedPath}.@id.keyword`)
+                  .agg(
+                    esb.termsAggregation(
+                      esConfig.nested.aggregationName,
+                      esConfig.nested.aggregationField
+                    )
+                  )
+              )
+          );
+      }
       return esb
         .termsAggregation(filter.field, `${esConfig?.flat?.aggregation}.@id.keyword`)
         .size(100)
@@ -15,15 +36,18 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
     case 'stats':
       if (esConfig?.nested) {
         return esb
-          .nestedAggregation(filter.field, esConfig.nested.nestField)
+          .nestedAggregation(filter.field, esConfig.nested.nestedPath)
           .agg(
             esb
               .filterAggregation(
                 filter.field,
-                esb.termQuery(esConfig.nested.extendedField, esConfig.nested.field)
+                esb.termQuery(esConfig.nested.filterTerm, esConfig.nested.filterValue)
               )
               .agg(
-                esb.statsAggregation(esConfig.nested.field, `${esConfig.nested.nestField}.value`)
+                esb.statsAggregation(
+                  esConfig.nested.aggregationName,
+                  esConfig.nested.aggregationField
+                )
               )
           );
       }
