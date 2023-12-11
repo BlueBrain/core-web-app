@@ -14,8 +14,8 @@ export function Field({ field, className, data }: FieldProps) {
   const fieldObj = EXPLORE_FIELDS_CONFIG[field];
 
   return (
-    <div className={classNames('text-primary-7 text-xs mr-10', className)}>
-      <div className="text-xs uppercase text-neutral-4">{fieldObj.title}</div>
+    <div className={classNames('text-primary-7 mr-10', className)}>
+      <div className="uppercase text-neutral-4">{fieldObj.title}</div>
       <div className="mt-3">
         {fieldObj.render?.deltaResourceViewFn && fieldObj.render?.deltaResourceViewFn(data)}
       </div>

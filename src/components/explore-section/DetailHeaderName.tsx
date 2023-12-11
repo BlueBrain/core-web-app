@@ -45,10 +45,10 @@ export default function DetailHeaderName({
 
   return (
     <div className="flex flex-col text-primary-7">
-      <div className="font-thin text-xs">Name</div>
+      <div className="font-thin text">Name</div>
       <div className="flex  justify-between">
         <div className="flex items-center gap-5">
-          <div className="font-bold text-xl">{detail?.name}</div>
+          <div className="font-bold text-2xl">{detail?.name}</div>
           {withRevision && (
             <Dropdown
               menu={{ items }}
