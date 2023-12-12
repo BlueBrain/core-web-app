@@ -52,7 +52,10 @@ export const rulesResponseAtom = atomFamily((resourceId: string) =>
 
     if (!session) return null;
 
-    const result = await fetchRules(session, [resourceId], signal);
+    const result = await fetchRules(session, [resourceId], signal).catch((e) => {
+      if (e.name === 'AbortError') return null;
+      throw new Error(e);
+    });
 
     return result;
   })
