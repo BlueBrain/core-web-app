@@ -52,12 +52,6 @@ const fields = [
   {
     field: 'postSynapticCellType',
   },
-  {
-    field: 'conditions',
-  },
-  {
-    field: 'reference',
-  },
 ] as DetailProps[];
 
 export default function SynapsePerConnectionDetailPage() {

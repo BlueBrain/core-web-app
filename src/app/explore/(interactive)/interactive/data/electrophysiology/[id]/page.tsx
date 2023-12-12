@@ -14,19 +14,15 @@ const fields = [
   },
   {
     field: 'eType',
+    className: 'row-span-2',
   },
   {
     field: 'subjectSpecies',
-  },
-  {
-    field: 'reference',
+    className: 'row-span-2',
   },
   {
     field: 'brainRegion',
-  },
-  {
-    field: 'conditions',
-    className: 'col-span-2',
+    className: 'row-span-2',
   },
   {
     field: 'contributors',

@@ -13,7 +13,6 @@ import CenteredMessage from '@/components/CenteredMessage';
 import { CheckListProps } from '@/types/explore-section/application';
 import { FiltersRenderLengthAtom } from '@/components/Filter/state';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { getFieldEsConfig } from '@/api/explore-section/fields';
 import { Buckets } from '@/types/explore-section/fields';
 
 const DisplayLabel = (filterField: string, key: string): string | null => {
@@ -74,8 +73,6 @@ export default function CheckList({
   values: string[];
   onChange: (value: string[]) => void;
 }) {
-  const esConfig = getFieldEsConfig(filter.field);
-
   const options = useMemo(() => {
     const buckets = data?.buckets ?? data?.excludeOwnFilter?.buckets;
     // returning unique buckets since some times we have same label and different id (eg. contributors)
@@ -90,7 +87,7 @@ export default function CheckList({
           'label'
         )
       : undefined;
-  }, [data, esConfig?.flat, filter.field, values]);
+  }, [data, values]);
 
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];

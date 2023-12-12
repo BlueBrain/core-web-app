@@ -17,13 +17,13 @@ const fields = [
     field: 'subjectSpecies',
   },
   {
-    field: 'reference',
-  },
-  {
     field: 'layer',
   },
   {
     field: 'subjectAge',
+  },
+  {
+    field: 'layerThickness',
     className: 'col-span-2',
   },
   {
@@ -34,12 +34,6 @@ const fields = [
   },
   {
     field: 'license',
-  },
-  {
-    field: 'layerThickness',
-  },
-  {
-    field: 'conditions',
   },
 ] as DetailProps[];
 

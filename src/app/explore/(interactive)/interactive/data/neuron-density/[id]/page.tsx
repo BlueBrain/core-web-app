@@ -17,14 +17,16 @@ const fields = [
     field: 'subjectSpecies',
   },
   {
-    field: 'reference',
-  },
-  {
     field: 'numberOfMeasurements',
   },
   {
     field: 'subjectAge',
-    className: 'col-span-2',
+  },
+  {
+    field: 'mType',
+  },
+  {
+    field: 'eType',
   },
   {
     field: 'contributors',
@@ -32,18 +34,7 @@ const fields = [
   },
   {
     field: 'createdAt',
-    className: 'col-span-2 row-span-3',
-  },
-  {
-    field: 'mType',
-  },
-  {
-    field: 'conditions',
     className: 'col-span-2',
-  },
-  {
-    field: 'eType',
-    className: 'col-span-3',
   },
   {
     field: 'neuronDensity',
