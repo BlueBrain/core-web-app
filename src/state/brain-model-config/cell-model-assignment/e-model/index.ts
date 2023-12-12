@@ -22,8 +22,6 @@ import {
   EModelByETypeMappingType,
   EModelMenuItem,
   EModelOptimizationConfigResource,
-  EModelPipelineSettings,
-  EModelPipelineSettingsPayload,
   EModelResource,
   DefaultEModelType,
 } from '@/types/e-model';
@@ -79,13 +77,13 @@ export const simulationParametersAtom = atom<Promise<SimulationParameter | null>
   }
 
   const remoteParameters = await get(eModelParameterAtom);
-  const eModelMaxGenerations = await get(eModelMaxGenerationsAtom);
 
-  if (!remoteParameters || !eModelMaxGenerations) return null;
+  if (!remoteParameters) return null;
 
   const simParams = convertRemoteParamsForUI({
     parameters: remoteParameters,
-    maxGenerations: eModelMaxGenerations,
+    // default to 20 because the original is > 500
+    maxGenerations: 20,
   });
   return simParams;
 });
@@ -280,35 +278,6 @@ export const eModelConfigurationPayloadAtom = atom<Promise<EModelConfigurationPa
     return fetchJsonFileByUrl<EModelConfigurationPayload>(url, session);
   }
 );
-
-const eModelPipelineSettingsIdAtom = atom<Promise<string | null>>(async (get) => {
-  const eModelWorkflow = await get(eModelWorkflowAtom);
-
-  if (!eModelWorkflow) return null;
-
-  const modelPipelineSettings = eModelWorkflow.hasPart.find(
-    (part) => part['@type'] === 'EModelPipelineSettings'
-  );
-  if (!modelPipelineSettings) throw new Error('No EModelPipelineSettings found on EModelWorkflow');
-
-  return modelPipelineSettings['@id'];
-});
-
-const eModelMaxGenerationsAtom = atom<Promise<number | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const eModelPipelineSettingsId = await get(eModelPipelineSettingsIdAtom);
-
-  if (!session || !eModelPipelineSettingsId) return null;
-
-  const pipelineSettingResource = await fetchResourceById<EModelPipelineSettings>(
-    eModelPipelineSettingsId,
-    session
-  );
-
-  const url = pipelineSettingResource.distribution.contentUrl;
-  const payload = await fetchJsonFileByUrl<EModelPipelineSettingsPayload>(url, session);
-  return payload.max_ngen;
-});
 
 export const eModelParameterAtom = atom<Promise<EModelConfigurationParameter[] | null>>(
   async (get) => {
