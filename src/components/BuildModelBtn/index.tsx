@@ -9,6 +9,7 @@ import LauncherModal from '@/components/BuildModelBtn/LauncherModal';
 import WorkflowLauncherBtn from '@/components/WorkflowLauncherBtn';
 import { targetConfigToBuildAtom } from '@/state/build-status';
 import GenericButton from '@/components/Global/GenericButton';
+import { isConfigEditableAtom } from '@/state/brain-model-config';
 
 type BuildModelBtnProps = {
   className?: string;
@@ -17,6 +18,7 @@ type BuildModelBtnProps = {
 export default function BuildModelBtn({ className }: BuildModelBtnProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isEditable = useAtomValue(isConfigEditableAtom);
 
   const targetConfigToBuild = useAtomValue(targetConfigToBuildAtom);
 
@@ -42,7 +44,7 @@ export default function BuildModelBtn({ className }: BuildModelBtnProps) {
           buttonText="Build"
           workflowName={WORKFLOW_CIRCUIT_BUILD_TASK_NAME}
           onLaunchingChange={onLaunchingChange}
-          disabled={!targetConfigToBuild}
+          disabled={!targetConfigToBuild || !isEditable}
         />
       </LauncherModal>
     </>
