@@ -6,12 +6,10 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { totalAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 
-function HeaderPanel({
-  title,
+function NumericResultsInfo({
   experimentTypeName,
   brainRegionSource,
 }: {
-  title?: string;
   experimentTypeName: string;
   brainRegionSource: ExploreDataBrainRegionSource;
 }) {
@@ -23,26 +21,22 @@ function HeaderPanel({
   );
   return (
     <div className="flex justify-between pl-5 w-full">
-      <div className="text-primary-9 text-2xl font-bold flex-auto">
-        <h1 className="flex items-baseline" aria-label="listing-view-title">
-          {title}
-          <small
-            className="flex gap-1 text-sm whitespace-pre font-thin text-slate-400 pl-2"
-            aria-label="listing-view-total"
-          >
-            <span>Total:</span>
-            <span>
-              {total || total === 0 ? (
-                total?.toLocaleString('en-US')
-              ) : (
-                <Spin className="ml-3" indicator={<LoadingOutlined />} />
-              )}
-            </span>
-          </small>
-        </h1>
-      </div>
+      <h1 className="text-primary-9 flex" aria-label="listing-view-title">
+        <span aria-label="listing-view-total">
+          {total || total === 0 ? (
+            total?.toLocaleString('en-US')
+          ) : (
+            <Spin className="ml-3" indicator={<LoadingOutlined />} />
+          )}{' '}
+          matching your filter selection
+          <span className="font-thin text-slate-400" aria-label="listing-view-total">
+            {' '}
+            (out of 4500 in active brain region)
+          </span>
+        </span>
+      </h1>
     </div>
   );
 }
 
-export default HeaderPanel;
+export default NumericResultsInfo;

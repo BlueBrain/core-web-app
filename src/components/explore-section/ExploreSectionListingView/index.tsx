@@ -7,7 +7,7 @@ import { RenderButtonProps } from './WithRowSelection';
 import { ExploreESHit } from '@/types/explore-section/es';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
-import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/HeaderPanel';
+import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom, dataAtom } from '@/state/explore-section/list-view-atoms';
 import CardView from '@/components/explore-section/CardView';
@@ -18,13 +18,11 @@ type ViewMode = 'table' | 'card';
 export default function DefaultListView({
   enableDownload,
   experimentTypeName,
-  title,
   brainRegionSource,
   renderButton,
 }: {
   enableDownload?: boolean;
   experimentTypeName: string;
-  title: string;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
@@ -55,11 +53,7 @@ export default function DefaultListView({
   }, [data, setDataSource]);
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ background: '#d1d1d1' }}
-      data-testid="explore-section-listing-view"
-    >
+    <div style={{ background: '#d1d1d1' }} data-testid="explore-section-listing-view">
       <WithControlPanel
         experimentTypeName={experimentTypeName}
         brainRegionSource={brainRegionSource}
@@ -72,9 +66,8 @@ export default function DefaultListView({
               experimentTypeName={experimentTypeName}
               setDisplayControlPanel={setDisplayControlPanel}
             >
-              <HeaderPanel
+              <NumericResultsInfo
                 experimentTypeName={experimentTypeName}
-                title={title}
                 brainRegionSource={brainRegionSource}
               />
             </FilterControls>

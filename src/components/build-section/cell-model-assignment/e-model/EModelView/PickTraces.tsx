@@ -58,7 +58,6 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
         width={width}
       >
         <ExploreSectionListingView
-          title="Experimental Traces"
           experimentTypeName={TYPE}
           enableDownload
           renderButton={pickTraceButtonFn}

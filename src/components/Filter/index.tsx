@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import CheckList, { defaultList } from './CheckList';
-import listWithInference from './CheckListWithInference';
 import DateRange from './DateRange';
 import { Filter } from './types';
 import { ChevronIcon } from '@/components/icons';
@@ -75,4 +74,4 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
   );
 }
 
-export { CheckList, DateRange, FilterGroup, defaultList, listWithInference };
+export { CheckList, DateRange, FilterGroup, defaultList };

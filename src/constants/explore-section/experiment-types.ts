@@ -18,13 +18,14 @@ export type ExperimentConfig = {
   cardViewFields?: { [key: string]: DetailProps[] };
 };
 
-export const BASE_EXPLORE_PATH = `/explore/interactive/data`;
+export const INTERACTIVE_PATH = `/explore/interactive/`;
+export const BASE_EXPLORE_PATH = `${INTERACTIVE_PATH}data/`;
 
 export const EXPERIMENT_DATA_TYPES: {
   [x: ExperimentDataTypeName]: ExperimentConfig;
 } = {
   [NEURON_MORPHOLOGY]: {
-    title: 'Morphologies',
+    title: 'Neuron morphology',
     name: 'morphology',
     columns: [
       'preview',

@@ -7,7 +7,6 @@ export default function EphysPage() {
   return (
     <ExploreSectionListingView
       enableDownload
-      title="Neuron electrophysiology"
       experimentTypeName={ELECTRO_PHYSIOLOGY}
       brainRegionSource="visible"
     />

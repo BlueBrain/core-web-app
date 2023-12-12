@@ -4,10 +4,5 @@ import SimulationCampaignListView from '@/components/explore-section/ExploreSect
 import { SIMULATION_CAMPAIGNS } from '@/constants/explore-section/list-views';
 
 export default function SimulationCampaignPage() {
-  return (
-    <SimulationCampaignListView
-      title="Simulation Campaigns"
-      experimentTypeName={SIMULATION_CAMPAIGNS}
-    />
-  );
+  return <SimulationCampaignListView experimentTypeName={SIMULATION_CAMPAIGNS} />;
 }

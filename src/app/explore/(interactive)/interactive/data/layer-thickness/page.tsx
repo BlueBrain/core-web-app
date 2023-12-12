@@ -5,10 +5,6 @@ import { LAYER_THICKNESS } from '@/constants/explore-section/list-views';
 
 export default function LayerThicknessListingPage() {
   return (
-    <ExploreSectionListingView
-      title="Layer Thickness"
-      experimentTypeName={LAYER_THICKNESS}
-      brainRegionSource="visible"
-    />
+    <ExploreSectionListingView experimentTypeName={LAYER_THICKNESS} brainRegionSource="visible" />
   );
 }

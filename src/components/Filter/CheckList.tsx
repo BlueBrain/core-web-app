@@ -127,7 +127,7 @@ export default function CheckList({
     !!remainingLength &&
     remainingLength > 0 && (
       <button
-        className="bg-primary-8 ml-auto py-3 px-8 rounded text-white w-fit"
+        className="bg-primary-9 ml-auto py-3 px-8 rounded text-white w-fit"
         type="button"
         onClick={() => updateRenderLength()}
       >

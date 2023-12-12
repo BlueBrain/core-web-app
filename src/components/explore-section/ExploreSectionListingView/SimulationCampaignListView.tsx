@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { axesAtom } from '../Simulations/state';
-import HeaderPanel from './HeaderPanel';
+import NumericResultsInfo from './NumericResultsInfo';
 import FilterControls from './FilterControls';
 import ListTable from '@/components/ListTable';
 import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
@@ -15,10 +15,8 @@ import {
 } from '@/state/explore-section/list-view-atoms';
 
 export default function SimulationCampaignListView({
-  title,
   experimentTypeName,
 }: {
-  title: string;
   experimentTypeName: string;
 }) {
   const activeColumns = useAtomValue(
@@ -49,8 +47,7 @@ export default function SimulationCampaignListView({
         {({ displayControlPanel, setDisplayControlPanel }) => (
           <>
             <div className="flex flex-col pt-10">
-              <HeaderPanel
-                title={title}
+              <NumericResultsInfo
                 experimentTypeName={experimentTypeName}
                 brainRegionSource="root"
               />

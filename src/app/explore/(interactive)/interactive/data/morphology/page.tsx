@@ -7,7 +7,6 @@ export default function MorphologyListingPage() {
   return (
     <DefaultListView
       enableDownload
-      title="Neuron morphology"
       experimentTypeName={NEURON_MORPHOLOGY}
       brainRegionSource="visible"
     />

@@ -37,6 +37,6 @@ export const detailUrlBuilder = (
   resource: ExploreESHit,
   experimentTypeName: ExperimentDataTypeName
 ) =>
-  `${BASE_EXPLORE_PATH}/${EXPERIMENT_DATA_TYPES[experimentTypeName].name}/${to64(
+  `${BASE_EXPLORE_PATH}${EXPERIMENT_DATA_TYPES[experimentTypeName].name}/${to64(
     `${resource._source.project.label}!/!${resource._id}`
   )}`;

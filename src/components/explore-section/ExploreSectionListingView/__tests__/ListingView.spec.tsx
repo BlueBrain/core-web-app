@@ -9,7 +9,7 @@ import {
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { NEURON_MORPHOLOGY, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
-import HeaderPanel from '@/components/explore-section/ExploreSectionListingView/HeaderPanel';
+import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 jest.mock('next/navigation');
@@ -60,7 +60,6 @@ describe('Test main functionalities of interface', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
@@ -87,7 +86,6 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
@@ -102,7 +100,6 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
             enableDownload
           />
@@ -119,7 +116,6 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
             enableDownload
           />
@@ -137,7 +133,6 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
             enableDownload
           />
@@ -160,7 +155,6 @@ describe('Filters panel tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
@@ -201,35 +195,21 @@ describe('Filters panel tests', () => {
 });
 
 describe('Header panel unit tests', () => {
-  test('Header Panel shows the correct title', () => {
-    render(
-      <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-        <HeaderPanel
-          title="Neuron Morphologies"
-          experimentTypeName={NEURON_MORPHOLOGY}
-          brainRegionSource="root"
-        />
-      </TestProvider>
-    );
-    const view = screen.getByRole('heading', { name: 'listing-view-title' });
-    expect(view.textContent).toContain('Neuron Morphologies');
-  });
-
   test('Header Panel with data shows correct totals', async () => {
     testServer.use(mockMorphologyResponse);
 
     render(
       <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-        <HeaderPanel
-          title="Neuron Morphologies"
-          experimentTypeName={NEURON_MORPHOLOGY}
-          brainRegionSource="root"
-        />
+        <NumericResultsInfo experimentTypeName={NEURON_MORPHOLOGY} brainRegionSource="root" />
       </TestProvider>
     );
 
     const view = screen.getByRole('heading', { name: 'listing-view-title' });
-    await waitFor(() => expect(view.textContent).toContain('Total:1,101'));
+    await waitFor(() =>
+      expect(view.textContent).toContain(
+        '1,101 matching your filter selection (out of 4500 in active brain region)'
+      )
+    );
   });
 
   test('Header Panel without data shows 0 totals if no data', async () => {
@@ -237,11 +217,11 @@ describe('Header panel unit tests', () => {
 
     render(
       <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-        <HeaderPanel experimentTypeName={NEURON_MORPHOLOGY} brainRegionSource="root" />
+        <NumericResultsInfo experimentTypeName={NEURON_MORPHOLOGY} brainRegionSource="root" />
       </TestProvider>
     );
     const view = screen.getByRole('heading', { name: 'listing-view-title' });
-    await waitFor(() => expect(view.textContent).toContain('Total:0'));
+    await waitFor(() => expect(view.textContent).toContain('0 matching your filter selection'));
   });
 });
 
@@ -252,7 +232,6 @@ describe('Load more resources button unit tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
@@ -270,7 +249,6 @@ describe('Load more resources button unit tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
@@ -290,7 +268,6 @@ describe('Listing view table tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
@@ -307,7 +284,6 @@ describe('Listing view table tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
@@ -323,7 +299,6 @@ describe('Listing view table tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            title="Neuron Morphologies"
             experimentTypeName={NEURON_MORPHOLOGY}
           />
         </TestProvider>
