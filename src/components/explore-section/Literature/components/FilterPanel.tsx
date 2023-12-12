@@ -103,14 +103,16 @@ export default function FilterPanel() {
         <CloseOutlined className="bg-primary-9 text-xs absolute left-[-30px] top-[0px] w-[40px] h-[30px] pl-3 rounded-tl-[22px] rounded-bl-[22px] text-white cursor-pointer" />
       }
       width="20vw"
-      headerStyle={{
-        background: '#002766',
-      }}
-      bodyStyle={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        background: '#002766',
+      styles={{
+        header: {
+          background: '#002766',
+        },
+        body: {
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          background: '#002766',
+        },
       }}
     >
       <FilterGroup

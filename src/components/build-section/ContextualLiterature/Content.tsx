@@ -100,11 +100,13 @@ function ContextualContainer({ children }: { children: React.ReactNode }) {
         rootStyle={{
           margin: '20px 0',
         }}
-        bodyStyle={{
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '0 20px',
-          overflowY: 'auto',
+        styles={{
+          body: {
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '0 20px',
+            overflowY: 'auto',
+          },
         }}
       >
         {children}

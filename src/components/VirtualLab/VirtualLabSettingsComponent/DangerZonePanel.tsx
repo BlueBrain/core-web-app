@@ -118,7 +118,7 @@ function DeleteVirtualLabConfirmation({
         okButtonProps={{ className: 'hidden' }}
         cancelButtonProps={{ className: 'hidden' }}
         style={{ maxWidth: '348px' }}
-        bodyStyle={{ maxWidth: '348px' }}
+        styles={{ body: { maxWidth: '348px' } }}
         closeIcon={<CloseOutlined onClick={onCancel} />}
       >
         <h3 className="font-bold text-xl">Are you sure you want to delete the virtual lab?</h3>

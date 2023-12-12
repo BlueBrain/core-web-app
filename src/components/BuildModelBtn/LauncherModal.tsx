@@ -32,7 +32,7 @@ export default function LauncherModal({
         footer={null}
         open={isOpen}
         onCancel={onClose}
-        maskStyle={maskStyle}
+        styles={{ mask: maskStyle }}
         maskClosable={false}
       >
         <div className="flex flex-col items-center">
@@ -64,7 +64,7 @@ export default function LauncherModal({
       footer={footer}
       open={isOpen}
       onCancel={() => onCloseModal(false)}
-      maskStyle={maskStyle}
+      styles={{ mask: maskStyle }}
     >
       <div className="text-primary-7 mb-4 mt-4">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde id vitae natus minima quam,

@@ -43,8 +43,10 @@ export default function DeleteGroupBtn({ onDelete = () => {}, className }: Props
         onCancel={handleCancel}
         centered
         footer={null}
-        bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-        maskStyle={{ backgroundColor: '#002766bf' }}
+        styles={{
+          body: { display: 'flex', flexDirection: 'column', alignItems: 'center' },
+          mask: { backgroundColor: '#002766bf' },
+        }}
         width={350}
       >
         <WarningOutlined className="text-red-600 text-7xl mb-6" />

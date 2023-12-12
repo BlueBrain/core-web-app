@@ -253,12 +253,14 @@ export default function ConnectomeModelAssignmentView() {
         open={typeUsedinRules > 0}
         footer={null}
         onCancel={() => setTypeUsedInRules(0)}
-        bodyStyle={{
-          height: '25vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+        styles={{
+          body: {
+            height: '25vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
         }}
       >
         <div className="text-error mb-8 font-bold text-center w-1/2">
@@ -281,12 +283,14 @@ export default function ConnectomeModelAssignmentView() {
           setSelectedTypeIdx(null);
         }}
         onCancel={() => setSelectedTypeIdx(null)}
-        bodyStyle={{
-          height: '25vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+        styles={{
+          body: {
+            height: '25vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
         }}
       >
         <div className="font-bold text-primary-8">

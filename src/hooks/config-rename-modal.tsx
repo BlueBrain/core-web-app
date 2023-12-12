@@ -232,8 +232,10 @@ export default function useRenameConfigModal<T extends SupportedConfigListTypes>
       width: 680,
       centered: true,
       mask: true,
-      maskStyle: { background: '#002766' },
-      bodyStyle: { padding: '60px 40px 20px' },
+      styles: {
+        mask: { background: '#002766' },
+        body: { padding: '60px 40px 20px' },
+      },
       closeIcon: <CloseOutlined className="text-primary-8 text-2xl" />,
       className: '![&>.ant-modal-content]:bg-red-500',
       content: (
