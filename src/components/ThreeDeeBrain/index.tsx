@@ -90,7 +90,7 @@ export default function ThreeDeeBrain() {
       <Canvas
         dpr={[1, 2]}
         camera={{
-          position: [-14437.479, 4358.573, 5423.8],
+          position: [6566.864, 4358.572, -15339.125],
           up: [0, -1, 0],
           fov: 55,
           far: 100000,
