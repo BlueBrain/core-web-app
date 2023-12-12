@@ -3,7 +3,8 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
-import { ExploreResource } from '@/types/explore-section/es';
+
+import { ExploreESHit } from '@/types/explore-section/es';
 import { SortState } from '@/types/explore-section/application';
 import { ValueArray } from '@/components/ListTable';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
@@ -46,10 +47,10 @@ function getProvisionedWidth(title: string, unit?: string) {
 export default function useExploreColumns(
   setSortState: Dispatch<SetStateAction<SortState | undefined>>,
   sortState?: SortState,
-  initialColumns: ColumnProps<ExploreResource>[] = [],
+  initialColumns: ColumnProps<ExploreESHit>[] = [],
   dimensionColumns?: string[] | null,
   experimentTypeName?: ExperimentDataTypeName
-): ColumnProps<ExploreResource>[] {
+): ColumnProps<ExploreESHit>[] {
   const keys = useMemo(() => Object.keys(EXPLORE_FIELDS_CONFIG), []);
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>(
     [...keys, ...(dimensionColumns || [])].map((key) => ({
@@ -146,7 +147,7 @@ export default function useExploreColumns(
     [sortState?.field, sortState?.order]
   );
 
-  const main: ColumnProps<ExploreResource>[] = useMemo(
+  const main: ColumnProps<ExploreESHit>[] = useMemo(
     () =>
       keys.reduce((acc, key) => {
         const term = EXPLORE_FIELDS_CONFIG[key];
@@ -180,7 +181,8 @@ export default function useExploreColumns(
       }, initialColumns),
     [columnWidths, getSortOrder, initialColumns, keys, onMouseDown, sorterES]
   );
-  const dimensions: ColumnProps<ExploreResource>[] = useMemo(
+
+  const dimensions: ColumnProps<ExploreESHit>[] = useMemo(
     () =>
       (dimensionColumns || []).map((dimColumn) => ({
         key: dimColumn,

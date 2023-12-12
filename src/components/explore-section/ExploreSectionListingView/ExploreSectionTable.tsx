@@ -3,6 +3,8 @@ import { Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
+import { ColumnGroupType, ColumnType } from 'antd/es/table';
+
 import usePathname from '@/hooks/pathname';
 import { detailUrlBuilder } from '@/util/common';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
@@ -10,7 +12,7 @@ import { ExploreDownloadButton } from '@/components/explore-section/ExploreSecti
 import WithRowSelection, {
   RenderButtonProps,
 } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
-import { ExploreESHit } from '@/types/explore-section/es';
+import type { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import styles from '@/app/explore/explore.module.scss';
 
@@ -33,7 +35,7 @@ function CustomTH({
     verticalAlign: 'middle',
     boxSizing: 'border-box',
     backgroundColor: 'white',
-    padding: '16px 16px 16px 6px',
+    padding: '16px 16px 16px 8px',
   };
 
   return handleResizing ? (
@@ -83,7 +85,7 @@ export function BaseTable({
   loading,
   rowSelection,
   experimentTypeName,
-}: TableProps<any> & { hasError?: boolean; experimentTypeName: string }) {
+}: TableProps<ExploreESHit> & { hasError?: boolean; experimentTypeName: string }) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -93,14 +95,19 @@ export function BaseTable({
     return <div>Something went wrong</div>;
   }
 
-  const onCellRouteHandler = {
-    onCell: (record: ExploreESHit) => ({
-      onClick: (e: MouseEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        setBackToListPath(pathname);
-        router.push(detailUrlBuilder(record, experimentTypeName));
-      },
-    }),
+  const onCellRouteHandler = (col: ColumnGroupType<ExploreESHit> | ColumnType<ExploreESHit>) => {
+    return {
+      onCell: (record: ExploreESHit) =>
+        col.key !== 'preview'
+          ? {
+              onClick: (e: MouseEvent<HTMLInputElement>) => {
+                e.preventDefault();
+                setBackToListPath(pathname);
+                router.push(detailUrlBuilder(record, experimentTypeName));
+              },
+            }
+          : {},
+    };
   };
 
   return (
@@ -109,9 +116,9 @@ export function BaseTable({
       className={styles.table}
       columns={
         columns &&
-        columns.map((col, i) => ({
+        columns.map((col) => ({
           ...col,
-          ...(i !== 0 && onCellRouteHandler),
+          ...onCellRouteHandler(col),
         }))
       }
       components={{
@@ -132,6 +139,18 @@ export function BaseTable({
   );
 }
 
+const defaultRenderButton = ({ selectedRows, clearSelectedRows }: RenderButtonProps) => (
+  <ExploreDownloadButton
+    selectedRows={selectedRows}
+    clearSelectedRows={clearSelectedRows}
+    data-testid="listing-view-download-button"
+  >
+    <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
+      selectedRows.length
+    })`}</span>
+  </ExploreDownloadButton>
+);
+
 export default function ExploreSectionTable({
   columns,
   dataSource,
@@ -140,24 +159,12 @@ export default function ExploreSectionTable({
   hasError,
   loading,
   renderButton,
-}: TableProps<any> & {
+}: TableProps<ExploreESHit> & {
   enableDownload?: boolean;
   experimentTypeName: string;
   hasError?: boolean;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const defaultRenderButton = ({ selectedRows, clearSelectedRows }: RenderButtonProps) => (
-    <ExploreDownloadButton
-      selectedRows={selectedRows}
-      clearSelectedRows={clearSelectedRows}
-      data-testid="listing-view-download-button"
-    >
-      <span>{`Download ${selectedRows.length === 1 ? 'Resource' : 'Resources'} (${
-        selectedRows.length
-      })`}</span>
-    </ExploreDownloadButton>
-  );
-
   return enableDownload ? (
     <WithRowSelection
       renderButton={renderButton ?? defaultRenderButton}

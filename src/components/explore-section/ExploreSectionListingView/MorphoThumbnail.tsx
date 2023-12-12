@@ -43,7 +43,7 @@ export default function MorphoThumbnail({ contentUrl }: { contentUrl: string }) 
   }, [contentUrl, session, inView]);
 
   return (
-    <div ref={ref} className="w-[184px] h-auto">
+    <div ref={ref} className="h-auto">
       {thumbnail ? (
         <Image
           alt={`Morphology preview: ${contentUrl}`}
