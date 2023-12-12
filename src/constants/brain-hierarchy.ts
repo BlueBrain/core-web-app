@@ -5,6 +5,8 @@ export const ROOT_BRAIN_REGION_URI = 'http://api.brain-map.org/api/v2/data/Struc
 
 export const BASIC_CELL_GROUPS_AND_REGIONS_ID = 'http://api.brain-map.org/api/v2/data/Structure/8';
 
+export const CEREBRUM_ID = 'http://api.brain-map.org/api/v2/data/Structure/567';
+
 export const DEFAULT_BRAIN_REGION: DefaultBrainRegionType = {
   value: {
     id: 'http://api.brain-map.org/api/v2/data/Structure/558',

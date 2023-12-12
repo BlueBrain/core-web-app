@@ -20,12 +20,14 @@ import {
 import { itemsInAnnotationReducer, flattenBrainRegionsTree } from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
+  CEREBRUM_ID,
   DEFAULT_BRAIN_REGION,
   DEFAULT_BRAIN_REGION_STORAGE_KEY,
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
 import { getInitializationValue, setInitializationValue } from '@/util/utils';
 import { generateHierarchyPathTree } from '@/components/BrainTree/util';
+import { ApplicationSection } from '@/types/common';
 
 /*
   Atom dependency graph
@@ -392,9 +394,16 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
 
 // Keeps track of the visible interactive brain regions
 
-export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
+export const visibleBrainRegionsAtom = atomFamily((section: ApplicationSection) =>
+  // explore is initialized with cerebrum already selected
+  atom<string[]>(section === 'explore' ? [CEREBRUM_ID] : [])
+);
 
 // Keeps track of the hierarchy tree of the brain regions
 export const brainRegionHierarchyStateAtom = atom<NavValue | null>(
-  initializationBrainRegion ? generateHierarchyPathTree(initializationBrainRegion.ancestors) : null
+  initializationBrainRegion
+    ? generateHierarchyPathTree(initializationBrainRegion.ancestors)
+    : {
+        'http://api.brain-map.org/api/v2/data/Structure/8': null,
+      }
 );
