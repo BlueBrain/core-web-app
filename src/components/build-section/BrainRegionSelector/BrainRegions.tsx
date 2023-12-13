@@ -219,7 +219,15 @@ export default function BrainRegions() {
                   className="text-base"
                   colorCode={colorCode}
                   id={id}
-                  onClick={() => setSelectedBrainRegion(id, title, leaves, representedInAnnotation)}
+                  onClick={() =>
+                    setSelectedBrainRegion(
+                      id,
+                      title,
+                      leaves,
+                      representedInAnnotation,
+                      brainRegionHierarchyState
+                    )
+                  }
                   title={brainRegionTitleCaseExceptConjunctions(title)}
                   isExpanded={isExpanded}
                   isHidden={!representedInAnnotation && !itemsInAnnotation}

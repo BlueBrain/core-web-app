@@ -29,6 +29,6 @@ export function useResetEModel() {
     setSelectedEModel(null);
     setEModelRemoteOverridesLoaded(false);
 
-    setInitializationValue(DEFAULT_E_MODEL_STORAGE_KEY, 'null');
+    setInitializationValue(DEFAULT_E_MODEL_STORAGE_KEY, null);
   }, [selectedBrainRegion, setSelectedEModel, setEModelRemoteOverridesLoaded]);
 }

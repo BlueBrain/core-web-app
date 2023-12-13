@@ -25,7 +25,6 @@ import {
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
 import { getInitializationValue, setInitializationValue } from '@/util/utils';
-import { generateHierarchyPathTree } from '@/components/BrainTree/util';
 
 /*
   Atom dependency graph
@@ -348,7 +347,7 @@ export const setSelectedBrainRegionAtom = atom(
     selectedBrainRegionTitle: string,
     selectedBrainRegionLeaves: string[] | null,
     selectedBrainRegionRepresentedInAnnotation: boolean,
-    ancestors?: string[]
+    brainRegionHierarchyState: {} | null
   ) => {
     const brainRegion = {
       id: selectedBrainRegionId,
@@ -365,7 +364,7 @@ export const setSelectedBrainRegionAtom = atom(
     setInitializationValue(DEFAULT_BRAIN_REGION_STORAGE_KEY, {
       ...DEFAULT_BRAIN_REGION,
       value: brainRegion,
-      ancestors: ancestors ?? [],
+      brainRegionHierarchyState: brainRegionHierarchyState ?? {},
     } satisfies DefaultBrainRegionType);
   }
 );
@@ -396,5 +395,5 @@ export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
 
 // Keeps track of the hierarchy tree of the brain regions
 export const brainRegionHierarchyStateAtom = atom<NavValue | null>(
-  initializationBrainRegion ? generateHierarchyPathTree(initializationBrainRegion.ancestors) : null
+  initializationBrainRegion ? initializationBrainRegion.brainRegionHierarchyState : null
 );

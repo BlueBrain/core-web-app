@@ -14,5 +14,5 @@ export type DefaultBrainRegionType = {
     leaves: null | string[];
     representedInAnnotation: boolean;
   };
-  ancestors: string[];
+  brainRegionHierarchyState: {};
 };

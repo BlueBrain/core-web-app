@@ -12,16 +12,23 @@ export const DEFAULT_BRAIN_REGION: DefaultBrainRegionType = {
     leaves: null,
     representedInAnnotation: true,
   },
-  ancestors: [
-    'http://api.brain-map.org/api/v2/data/Structure/8',
-    'http://api.brain-map.org/api/v2/data/Structure/567',
-    'http://api.brain-map.org/api/v2/data/Structure/688',
-    'http://api.brain-map.org/api/v2/data/Structure/695',
-    'http://api.brain-map.org/api/v2/data/Structure/315',
-    'http://api.brain-map.org/api/v2/data/Structure/453',
-    'http://api.brain-map.org/api/v2/data/Structure/322',
-    'http://api.brain-map.org/api/v2/data/Structure/353',
-  ],
+  brainRegionHierarchyState: {
+    'http://api.brain-map.org/api/v2/data/Structure/8': {
+      'http://api.brain-map.org/api/v2/data/Structure/567': {
+        'http://api.brain-map.org/api/v2/data/Structure/688': {
+          'http://api.brain-map.org/api/v2/data/Structure/695': {
+            'http://api.brain-map.org/api/v2/data/Structure/315': {
+              'http://api.brain-map.org/api/v2/data/Structure/247': {
+                'http://api.brain-map.org/api/v2/data/Structure/1002': {
+                  'http://api.brain-map.org/api/v2/data/Structure/251': null,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
 
 export const DEFAULT_BRAIN_REGION_STORAGE_KEY = 'lastClickedRegionId';

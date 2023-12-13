@@ -31,7 +31,7 @@ export function useResetMModel() {
     setSelectedMModelId(null);
     setMModelRemoteOverridesLoaded(false);
 
-    setInitializationValue(DEFAULT_M_MODEL_STORAGE_KEY, 'null');
+    setInitializationValue(DEFAULT_M_MODEL_STORAGE_KEY, null);
   }, [
     selectedBrainRegion,
     setSelectedMModelName,

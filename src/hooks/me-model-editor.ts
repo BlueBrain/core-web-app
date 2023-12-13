@@ -55,6 +55,6 @@ export function useResetMEModel() {
     setSelectedEModel(null);
     setSelectedMEName([null, null]);
 
-    setInitializationValue(DEFAULT_ME_MODEL_STORAGE_KEY, 'null');
+    setInitializationValue(DEFAULT_ME_MODEL_STORAGE_KEY, null);
   }, [selectedBrainRegion, setSelectedEModel, setSelectedMEName]);
 }
