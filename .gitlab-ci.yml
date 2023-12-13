@@ -96,6 +96,7 @@ deploy-aws-prod:
     NEXT_PUBLIC_BASE_PATH: /mmb-beta
     NEXT_PUBLIC_NEXUS_URL: https://sbo-nexus-delta.shapes-registry.org/v1
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
+    NEXT_PUBLIC_ATLAS_ES_VIEW_ID: https://sbo-nexus-delta.shapes-registry.org/data/bbp/atlas/98e91247-a3f2-4dae-8cfb-9432fc7d84ae
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
     KANIKO_EXTRA_ARGS: >
       --build-arg=NEXT_PUBLIC_BASE_PATH
@@ -103,6 +104,7 @@ deploy-aws-prod:
       --build-arg=NEXT_PUBLIC_SENTRY_DSN
       --build-arg=SENTRY_AUTH_TOKEN
       --build-arg=NEXT_PUBLIC_NEXUS_URL
+      --bulid-arg=NEXT_PUBLIC_ATLAS_ES_VIEW_ID
   only:
     - develop
 

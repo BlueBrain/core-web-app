@@ -1,20 +1,22 @@
-// TODO Enable Sentry back when the Nextjs build Sentry build is fixed
-const { withSentryConfig } = require('@sentry/nextjs');
+import NextBundleAnalyzer from '@next/bundle-analyzer';
+import { withSentryConfig } from '@sentry/nextjs';
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
+import { env } from './src/env.mjs';
+
+const withBundleAnalyzer = NextBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const SentryWebpackPluginOptions = { silent: true, dryRun: !process.env.NEXT_PUBLIC_SENTRY_DSN };
+const SentryWebpackPluginOptions = { silent: true, dryRun: !env.NEXT_PUBLIC_SENTRY_DSN };
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
+const basePath = env.NEXT_PUBLIC_BASE_PATH;
 
 /**
  * @returns `1.0.0` in devlopment mode, and `1.0.0 (776dc84)` after CI compiles it.
  */
 function getVersion() {
-  const version = process.env.npm_package_version;
-  const commit = process.env.CI_COMMIT_SHORT_SHA;
+  const version = env.npm_package_version;
+  const commit = env.CI_COMMIT_SHORT_SHA;
   return commit ? `${version} (${commit})` : version;
 }
 
@@ -23,7 +25,7 @@ const nextConfig = {
     applicationVersion: getVersion(),
   },
   basePath,
-  assetPrefix: basePath ?? null,
+  assetPrefix: basePath ?? undefined,
   reactStrictMode: true,
   swcMinify: true,
   compress: false,
@@ -60,4 +62,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, SentryWebpackPluginOptions));
+export default withBundleAnalyzer(withSentryConfig(nextConfig, SentryWebpackPluginOptions));

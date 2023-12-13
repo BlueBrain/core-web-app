@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { captureException } from '@sentry/nextjs';
 
-import { nexus } from '@/config';
+import { nexus, defaultModelRelease, synParamAssignmentResource, synParamResource } from '@/config';
 import {
   composeUrl,
   ComposeUrlParams,
@@ -54,7 +54,7 @@ import {
   getVariantTaskActivityByCircuitIdQuery,
 } from '@/queries/es';
 import { createHeaders } from '@/util/utils';
-import { defaultReleaseUrl, supportedUIConfigVersion } from '@/constants/configs';
+import { supportedUIConfigVersion } from '@/constants/configs';
 import { revParamRegexp } from '@/constants/nexus';
 
 // #################################### Generic methods ##########################################
@@ -308,6 +308,11 @@ async function getPayloadByConfig<
 
   if (useRelease) {
     // get payload from fully backend supported Release (Release 23.01)
+    const defaultReleaseUrl = composeUrl('resource', defaultModelRelease.id, {
+      org: nexus.org,
+      project: nexus.project,
+    });
+
     const brainModelConfigResource = await fetchResourceByUrl<BrainModelConfig>(
       defaultReleaseUrl,
       session
@@ -652,12 +657,12 @@ export async function cloneSynapseConfig(id: string, session: Session) {
   const configPayload = {
     defaults: {
       synapse_properties: {
-        id: 'https://bbp.epfl.ch/neurosciencegraph/data/synapticassignment/d57536aa-d576-4b3b-a89b-b7888f24eb21',
+        id: synParamAssignmentResource.id,
         type: ['Dataset', 'SynapticParameterAssignment'],
         rev: 9,
       },
       synapses_classification: {
-        id: 'https://bbp.epfl.ch/neurosciencegraph/data/synapticparameters/cf25c2bf-e6e4-4367-acd8-94004bfcfe49',
+        id: synParamResource.id,
         type: ['Dataset', 'SynapticParameter'],
         rev: 6,
       },

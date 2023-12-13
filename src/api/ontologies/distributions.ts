@@ -3,6 +3,7 @@ import { createHeaders } from '@/util/utils';
 import { MeshSourceNexus } from '@/api/ontologies/types';
 import { Mesh } from '@/types/ontologies';
 import { getAtlasReleaseMeshesQuery } from '@/queries/es';
+import { atlasESView } from '@/config';
 
 /**
  * Serialize the meshes in an object format of ID => Mesh where id is the id
@@ -22,15 +23,9 @@ const serializeMeshes = (meshPayloads: MeshSourceNexus[]): { [id: string]: Mesh 
 };
 
 const getDistributions = async (accessToken: string): Promise<{ [id: string]: Mesh }> => {
-  const url = composeUrl(
-    'view',
-    'https://bbp.epfl.ch/neurosciencegraph/data/420e53b8-db21-4f70-a534-d799c4b59b5d',
-    {
-      org: 'bbp',
-      project: 'atlas',
-      viewType: 'es',
-    }
-  );
+  const { org, project, id } = atlasESView;
+
+  const url = composeUrl('view', id, { org, project, viewType: 'es' });
   return fetch(url, {
     method: 'POST',
     headers: createHeaders(accessToken),

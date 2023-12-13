@@ -7,14 +7,13 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import Sidebar from '@/components/explore-section/Sidebar';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
-
-const RELEASE_23_01_CONFIG_ID =
-  'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations/1921aaae-69c4-4366-ae9d-7aa1453f2158';
+import { defaultModelRelease } from '@/config';
 
 export default function ExploreInteractiveLayout({ children }: { children: ReactNode }) {
-  const setConfig = useSetAtom(brainModelConfigIdAtom);
+  const setConfigId = useSetAtom(brainModelConfigIdAtom);
+
   // set Release 23.01 as the configuration of explore interactive
-  useEffect(() => setConfig(RELEASE_23_01_CONFIG_ID), [setConfig]);
+  useEffect(() => setConfigId(defaultModelRelease.id), [setConfigId]);
 
   return (
     <div className="h-screen grid grid-cols-[min-content_min-content_auto] grid-rows-1">

@@ -1,3 +1,5 @@
+import { atlasReleaseResource } from '@/config';
+
 const DEFAULT_SIZE = 1000;
 
 const idExistsFilter = {
@@ -204,15 +206,10 @@ export const getAtlasReleaseMeshesQuery = () => ({
     bool: {
       must: [
         {
-          match: {
-            '@type': 'Mesh',
-          },
+          match: { '@type': 'Mesh' },
         },
         {
-          match: {
-            'atlasRelease.@id':
-              'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885',
-          },
+          match: { 'atlasRelease.@id': atlasReleaseResource.id },
         },
       ],
     },

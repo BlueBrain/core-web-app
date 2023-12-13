@@ -6,7 +6,7 @@ import {
   ResourceBasedInferenceRequest,
   ResourceBasedInferenceResponse,
 } from '@/types/explore-section/kg-inference';
-import { BASE_URL } from '@/constants/explore-section/kg-inference';
+import { kgInferenceBaseUrl } from '@/config';
 
 const RESOURCE_BASED_RULE_TERM = 'ResourceGeneralizationRule';
 
@@ -15,7 +15,7 @@ export function fetchRules(
   resourceIds: string[],
   signal?: AbortSignal
 ): Promise<RulesOutput> {
-  const result = fetch(`${BASE_URL}/rules`, {
+  const result = fetch(`${kgInferenceBaseUrl}/rules`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
     body: JSON.stringify({ resourceIds, ruleTypes: [RESOURCE_BASED_RULE_TERM] }),
@@ -29,7 +29,7 @@ export function fetchResourceBasedInference(
   requestBody: ResourceBasedInferenceRequest,
   signal?: AbortSignal
 ): Promise<ResourceBasedInferenceResponse | InferenceError> {
-  return fetch(`${BASE_URL}/infer`, {
+  return fetch(`${kgInferenceBaseUrl}/infer`, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
     body: JSON.stringify(requestBody),

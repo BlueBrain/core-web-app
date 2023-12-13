@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import JSZip from 'jszip';
 
-import { BLUE_NAAS_DEPLOYMENT_URL } from './constants';
+import { blueNaas } from '@/config';
 import {
   eModelAtom,
   eModelConfigurationAtom,
@@ -98,7 +98,7 @@ export function useEnsureModelPackage() {
   const createEmodelPackageFile = useCreateEmodelPackageFile();
 
   return useCallback(async () => {
-    const packageExistsRes = await fetch(`${BLUE_NAAS_DEPLOYMENT_URL}/models/${eModelUUID}`, {
+    const packageExistsRes = await fetch(`${blueNaas.deploymentUrl}/models/${eModelUUID}`, {
       method: 'HEAD',
     });
 
@@ -116,7 +116,7 @@ export function useEnsureModelPackage() {
     const formData = new FormData();
     formData.append('file', emodelPackageFile);
 
-    const packageUploadRes = await fetch(`${BLUE_NAAS_DEPLOYMENT_URL}/models/${eModelUUID}`, {
+    const packageUploadRes = await fetch(`${blueNaas.deploymentUrl}/models/${eModelUUID}`, {
       body: formData,
       method: 'POST',
     });

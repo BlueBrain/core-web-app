@@ -11,7 +11,7 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "ignorePatterns": ["**/*.js", "**/*.jsx"],
+  "ignorePatterns": ["**/*.js", "**/*.jsx", "**/*.mjs"],
   "rules": {
     "react/require-default-props": "off",
     "no-underscore-dangle": "off",

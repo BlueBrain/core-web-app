@@ -12,7 +12,7 @@ import {
 import sessionAtom from '@/state/session';
 import { SynthesisPreviewInterface, SynthesisPreviewApiPlotResponse } from '@/types/m-model';
 import { classNames } from '@/util/utils';
-import { synthesisPreviewApiUrl } from '@/constants/cell-model-assignment/m-model';
+import { synthesisUrl } from '@/config';
 
 type Props = {
   className?: string;
@@ -21,7 +21,7 @@ type Props = {
 const debounceDelay = 500;
 
 async function getImages(config: SynthesisPreviewInterface, token: string, fetchOptions = {}) {
-  const response = await fetch(synthesisPreviewApiUrl, {
+  const response = await fetch(synthesisUrl, {
     method: 'POST',
     headers: {
       Accept: 'application/json',

@@ -7,6 +7,7 @@ import {
   SerializedBrainRegionsAndVolumesResponse,
 } from '@/api/ontologies/types';
 import { composeUrl } from '@/util/nexus';
+import { brainRegionOntologyResource } from '@/config';
 
 /**
  * Sanitizes the leaves in order to be in a uniform format. Leaves sometimes are
@@ -94,11 +95,9 @@ export const serializeBrainRegionOntologyViews = (
  * @param accessToken
  */
 const getBrainRegionOntology = async (accessToken: string): Promise<BrainRegionOntology> => {
-  const url = composeUrl(
-    'resource',
-    'http://bbp.epfl.ch/neurosciencegraph/ontologies/core/brainregion',
-    { org: 'neurosciencegraph', project: 'datamodels', source: true }
-  );
+  const { id, org, project } = brainRegionOntologyResource;
+
+  const url = composeUrl('resource', id, { org, project, source: true });
   return fetch(url, { headers: createHeaders(accessToken) })
     .then((r) => r.json())
     .then((response) => {

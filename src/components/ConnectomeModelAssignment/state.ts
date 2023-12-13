@@ -1,7 +1,10 @@
 import { atom } from 'jotai';
-import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
+
 import sessionAtom from '@/state/session';
+import { SynapticAssignmentRule, SynapticType } from '@/types/connectome-model-assignment';
 import { fetchJsonFileByUrl, queryES } from '@/api/nexus';
+import { connInitialParamsFile, connInitialRulesFile, nexus } from '@/config';
+import { composeUrl } from '@/util/nexus';
 import {
   RulesResource,
   SynapseConfigPayload,
@@ -9,11 +12,15 @@ import {
   TypesResource,
 } from '@/types/nexus';
 
-const INTIAL_RULES_URL =
-  'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F7e2f41a0-3d84-4142-a38e-734117acb33d';
+const INTIAL_RULES_URL = composeUrl('file', connInitialRulesFile.id, {
+  org: nexus.org,
+  project: nexus.project,
+});
 
-const INITIAL_PARAMETERS_URL =
-  'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F2924ab22-086e-42d5-96ee-f9ce46ccf4b4';
+const INITIAL_PARAMETERS_URL = composeUrl('file', connInitialParamsFile.id, {
+  org: nexus.org,
+  project: nexus.project,
+});
 
 export const initialRulesAtom = atom(async (get) => {
   const session = get(sessionAtom);

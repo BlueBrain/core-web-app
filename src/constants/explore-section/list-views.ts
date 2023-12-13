@@ -1,15 +1,13 @@
-const BBP_ONTOLOGY_BASE_URL = 'https://bbp.epfl.ch/ontologies/core/bmo/';
+import { neuroShapesBaseUrl, ontologyBaseUrl } from '@/config';
 
-export const BOUTON_DENSITY: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalBoutonDensity`;
-export const NEURON_DENSITY: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalNeuronDensity`;
-export const LAYER_THICKNESS: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalLayerThickness`;
-export const ELECTRO_PHYSIOLOGY: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalTrace`;
-export const SYNAPSE_PER_CONNECTION: string = `${BBP_ONTOLOGY_BASE_URL}ExperimentalSynapsesPerConnection`;
+export const BOUTON_DENSITY: string = `${ontologyBaseUrl}/ExperimentalBoutonDensity`;
+export const NEURON_DENSITY: string = `${ontologyBaseUrl}/ExperimentalNeuronDensity`;
+export const LAYER_THICKNESS: string = `${ontologyBaseUrl}/ExperimentalLayerThickness`;
+export const ELECTRO_PHYSIOLOGY: string = `${ontologyBaseUrl}/ExperimentalTrace`;
+export const SYNAPSE_PER_CONNECTION: string = `${ontologyBaseUrl}/ExperimentalSynapsesPerConnection`;
 
-const NEURO_SHAPES_BASE_URL = 'https://neuroshapes.org/';
-
-export const SIMULATION_CAMPAIGNS: string = `${NEURO_SHAPES_BASE_URL}SimulationCampaign`;
-export const NEURON_MORPHOLOGY: string = `${NEURO_SHAPES_BASE_URL}ReconstructedNeuronMorphology`;
+export const SIMULATION_CAMPAIGNS: string = `${neuroShapesBaseUrl}/SimulationCampaign`;
+export const NEURON_MORPHOLOGY: string = `${neuroShapesBaseUrl}/ReconstructedNeuronMorphology`;
 
 export type ExperimentDataTypeName =
   | typeof BOUTON_DENSITY

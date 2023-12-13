@@ -1,7 +1,7 @@
-const API_URL = 'https://bbp.epfl.ch/mmb-beta/api/jira';
+import { feedbackUrl } from '@/config';
 
 export default function postIssue(data = {}) {
-  return fetch(API_URL, {
+  return fetch(feedbackUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { createHeaders } from '@/util/utils';
 import { useSessionAtomValue } from '@/hooks/hooks';
-import { BASE_URL } from '@/constants/explore-section/kg-inference';
+import { kgInferenceBaseUrl } from '@/config';
 
 export default function MorphoThumbnail({ contentUrl }: { contentUrl: string }) {
   const session = useSessionAtomValue();
@@ -23,7 +23,7 @@ export default function MorphoThumbnail({ contentUrl }: { contentUrl: string }) 
       setLoading(true);
 
       const encodedContentUrl = encodeURIComponent(contentUrl);
-      const requestUrl = `${BASE_URL}/generate/morphology-image?content_url=${encodedContentUrl}`;
+      const requestUrl = `${kgInferenceBaseUrl}/generate/morphology-image?content_url=${encodedContentUrl}`;
 
       fetch(requestUrl, {
         method: 'GET',

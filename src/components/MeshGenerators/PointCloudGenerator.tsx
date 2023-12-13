@@ -10,7 +10,7 @@ import { tableFromIPC } from '@apache-arrow/es2015-esm';
 import { loadable } from 'jotai/utils';
 import { usePreventParallelism } from '@/hooks/parallelism';
 import { useAtlasVisualizationManager } from '@/state/atlas';
-import { basePath } from '@/config';
+import { basePath, cellSvcBaseUrl } from '@/config';
 import useNotification from '@/hooks/notifications';
 import detailedCircuitAtom from '@/state/circuit';
 import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
@@ -23,8 +23,6 @@ type PointCloudMeshProps = {
   circuitConfigPathOverride?: string;
   threeContextWrapper: ThreeCtxWrapper;
 };
-
-const CELL_API_BASE_PATH = 'https://cells.sbo.kcp.bbp.epfl.ch';
 
 const detailedCircuitLoadableAtom = loadable(detailedCircuitAtom);
 
@@ -59,7 +57,7 @@ function PointCloudMesh({
         ? circuitConfigPathOverride
         : detailedCircuitConfigPath;
 
-    const url = `${CELL_API_BASE_PATH}/circuit?input_path=${encodeURIComponent(
+    const url = `${cellSvcBaseUrl}/circuit?input_path=${encodeURIComponent(
       circuitConfigPath
     )}&region=${regionID}&how=arrow`;
     return fetch(url, {
