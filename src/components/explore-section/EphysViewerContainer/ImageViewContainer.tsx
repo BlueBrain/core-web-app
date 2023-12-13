@@ -1,10 +1,10 @@
-import * as React from 'react';
 import { Button, Spin } from 'antd';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
+
 import { NexusImage } from './NexusImage';
-import ImageViewComponent from './ImageViewComponent';
+import ImageViewComponent, { ImageCollection } from './ImageViewComponent';
 import { DeltaResource } from '@/types/explore-section/resources';
 import createImageCollectionDataAtom from '@/components/explore-section/EphysViewerContainer/state/ImageCollectionDataAtom';
 
@@ -26,14 +26,15 @@ function ImageViewContainer({
   onRepetitionClicked,
   onStimulusChange,
 }: ImageViewContainerProps) {
-  const [page, setPage] = React.useState<number>(0);
+  const [page, setPage] = useState<number>(0);
   const imageCollectionAtom = useMemo(
     () => loadable(createImageCollectionDataAtom(resource, page, stimulusType, stimulusTypeMap)),
     [page, resource, stimulusType, stimulusTypeMap]
   );
   const imageCollectionData = useAtomValue(imageCollectionAtom);
+  const [localImageCollectionData, setLocalImageCollectionData] = useState<ImageCollection>();
 
-  const isLastPage = React.useMemo(() => {
+  const isLastPage = useMemo(() => {
     if (stimulusType !== 'All') {
       return true;
     }
@@ -44,16 +45,22 @@ function ImageViewContainer({
     return false;
   }, [page, stimulusType, stimulusTypeMap, imageCollectionData]);
 
+  useEffect(() => {
+    if (imageCollectionData.state !== 'hasData' || !imageCollectionData.data) return;
+
+    setLocalImageCollectionData(imageCollectionData.data);
+  }, [imageCollectionData]);
+
   const [projectLabel, orgLabel] = resource._project.split('/').reverse();
 
   return (
     <>
-      {imageCollectionData.state === 'hasData' && imageCollectionData.data && (
+      {localImageCollectionData && (
         <ImageViewComponent
           {...{
             stimulusTypeMap,
             stimulusType,
-            imageCollectionData: imageCollectionData.data,
+            imageCollectionData: localImageCollectionData,
             onStimulusChange,
             onRepetitionClicked,
             // eslint-disable-next-line react/no-unstable-nested-components
