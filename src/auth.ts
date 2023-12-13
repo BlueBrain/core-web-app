@@ -1,10 +1,8 @@
 import type { NextAuthOptions, TokenSet } from 'next-auth';
 
-import { env } from '@/env.mjs';
+import { keycloak } from '@/config';
 
-const issuer = env.KEYCLOAK_ISSUER;
-const clientId = env.KEYCLOAK_CLIENT_ID;
-const clientSecret = env.KEYCLOAK_CLIENT_SECRET;
+const { issuer, clientId, clientSecret } = keycloak;
 
 /**
  * Takes a token, and returns a new token with updated

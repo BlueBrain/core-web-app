@@ -12,7 +12,6 @@ import { ThreeCtxWrapper } from '@/visual/ThreeCtxWrapper';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 import { loadNodeSetsAsPoints, loadNodeSetsAsSpheres } from '@/components/MeshGenerators/utils';
 import { CameraType } from '@/types/experiment-designer-visualization';
-import { cellSvcBaseUrl } from '@/config';
 
 type NodeSetMeshProps = {
   nodeSetName: string;
@@ -21,6 +20,8 @@ type NodeSetMeshProps = {
   threeContextWrapper: ThreeCtxWrapper;
   cameraType?: CameraType;
 };
+
+const CELL_API_BASE_PATH = 'https://cells.sbo.kcp.bbp.epfl.ch';
 
 const detailedCircuitLoadableAtom = loadable(detailedCircuitAtom);
 
@@ -58,7 +59,7 @@ function NodeSetMesh({
         ? circuitConfigPathOverride
         : detailedCircuitConfigPath;
 
-    const url = `${cellSvcBaseUrl}/circuit?input_path=${encodeURIComponent(
+    const url = `${CELL_API_BASE_PATH}/circuit?input_path=${encodeURIComponent(
       circuitConfigPath
     )}&node_set=${nodeSetName}&how=arrow&use_cache=True&sampling_ratio=0.01`;
 

@@ -26,7 +26,7 @@ import {
   updateResource,
 } from '@/api/nexus';
 import { createDistribution } from '@/util/nexus';
-import { autoSaveDebounceInterval, cellSvcBaseUrl } from '@/config';
+import { autoSaveDebounceInterval } from '@/config';
 import {
   getBuiltBrainModelConfigsQuery,
   getGeneratorTaskActivityByCircuitIdQuery,
@@ -36,7 +36,7 @@ import {
   processStimulationConditionalParams,
 } from '@/util/experiment-designer';
 
-const nodeSetsAPIUrl = `${cellSvcBaseUrl}/circuit/node_sets?input_path=`;
+const nodeSetsAPIUrl = 'https://cells.sbo.kcp.bbp.epfl.ch/circuit/node_sets?input_path=';
 
 export const expDesignerConfigAtomBase = atom<ExpDesignerConfig>(expDesParamsDefaults);
 

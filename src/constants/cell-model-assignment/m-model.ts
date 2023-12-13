@@ -1,5 +1,8 @@
 import { DefaultMModelType, NeuriteType, ParamsToDisplay } from '@/types/m-model';
 
+export const synthesisPreviewApiUrl =
+  'https://synthesis.sbo.kcp.bbp.epfl.ch/synthesis-with-resources';
+
 export const paramsToDisplay: ParamsToDisplay = {
   randomness: {
     displayName: 'Randomness',

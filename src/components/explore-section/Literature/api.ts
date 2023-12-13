@@ -3,7 +3,7 @@ import {
   AuthorSuggestionResponse,
   JournalSuggestionResponse,
 } from '@/types/literature';
-import { bbsMlBaseUrl } from '@/config';
+import { nexus } from '@/config';
 import {
   ArticleItem,
   ArticleListingResponse,
@@ -35,7 +35,7 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
     }
 
     const urlQueryParams = params.toString().length > 0 ? `?${params.toString()}` : '';
-    const url = `${bbsMlBaseUrl}/qa/streamed_generative${urlQueryParams}`;
+    const url = `${nexus.aiUrl}/qa/streamed_generative${urlQueryParams}`;
     const response = await fetch(url, {
       signal,
       method: 'POST',
@@ -58,7 +58,9 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
 };
 
 const fetchArticleTypes = (): Promise<{ article_type: string; docs_in_db: number }[]> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/article_types`, {
+  const url = nexus.aiUrl;
+
+  return fetch(`${url}/suggestions/article_types`, {
     method: 'GET',
     headers: new Headers({
       accept: 'application/json',
@@ -78,7 +80,9 @@ const fetchAuthorSuggestions = (
   searchTerm: string,
   signal?: AbortSignal
 ): Promise<AuthorSuggestionResponse> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/author`, {
+  const url = nexus.aiUrl;
+
+  return fetch(`${url}/suggestions/author`, {
     signal,
     method: 'POST',
     headers: new Headers({
@@ -108,7 +112,9 @@ export const fetchJournalSuggestions = (
   searchTerm: string,
   signal?: AbortSignal
 ): Promise<JournalSuggestionResponse> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/journal`, {
+  const url = nexus.aiUrl;
+
+  return fetch(`${url}/suggestions/journal`, {
     signal,
     method: 'POST',
     headers: new Headers({
@@ -137,7 +143,7 @@ const fetchParagraphCountForBrainRegionAndExperiment = (
 ): Promise<ExperimentDatasetCountPerBrainRegion> => {
   if (!accessToken) throw new Error('Access token should be defined');
 
-  const url = bbsMlBaseUrl;
+  const url = nexus.aiUrl;
   const brainRegionParams = brainRegionNames
     .map((name) => encodeURIComponent(name.toLowerCase()))
     .join('&regions=');
@@ -178,8 +184,7 @@ const fetchArticlesForBrainRegionAndExperiment = (
   signal?: AbortSignal
 ): Promise<{ articles: ArticleItem[]; total: number; currentPage: number; pages: number }> => {
   if (!accessToken) throw new Error('Access token should be defined');
-
-  const url = bbsMlBaseUrl;
+  const url = nexus.aiUrl;
   const brainRegionParams = brainRegions
     .map((name) => encodeURIComponent(name.toLowerCase()))
     .join('&regions=');

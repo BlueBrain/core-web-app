@@ -1,5 +1,3 @@
-import { eTypeMechanismMap } from '@/config';
-
 export const spikeEventFeatures = [
   'time_to_first_spike',
   'time_to_second_spike',
@@ -445,7 +443,8 @@ export const featureAutoTargets = {
   },
 };
 
-export const eTypeMechanismMapId = eTypeMechanismMap.id;
+export const eTypeMechanismMapId =
+  'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/27d6009b-7a78-4af3-82c7-2c9f3c0758d2';
 
 export const mechanismLocations = [
   'all',

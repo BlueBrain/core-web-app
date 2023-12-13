@@ -8,7 +8,8 @@ import { BRAIN_REGION_PREFIX } from '@/constants/brain-hierarchy';
 import { fetchMesh, fetchPointCloud } from '@/components/ThreeDeeBrain/api';
 import { CIRCUIT_NOT_BUILT_ERROR } from '@/constants/errors';
 import { partialCircuitAtom } from '@/state/brain-model-config/cell-position';
-import { cellSvcBaseUrl } from '@/config';
+
+const CELL_API_BASE_PATH = 'https://cells.sbo.kcp.bbp.epfl.ch';
 
 export const meshVisibilityAtom = atomFamily(() => atomWithReset<MeshVisibility[]>([]));
 
@@ -61,7 +62,7 @@ export const getPointCloudAtom = (brainRegionId: string, circuitConfigPathOverri
         ? circuitConfigPathOverride
         : partialCircuitConfigPath;
 
-    const url = `${cellSvcBaseUrl}/circuit?input_path=${encodeURIComponent(
+    const url = `${CELL_API_BASE_PATH}/circuit?input_path=${encodeURIComponent(
       circuitConfigPath
     )}&region=${brainRegionId.replace(BRAIN_REGION_PREFIX, '')}&how=arrow`;
     return await fetchPointCloud(url);

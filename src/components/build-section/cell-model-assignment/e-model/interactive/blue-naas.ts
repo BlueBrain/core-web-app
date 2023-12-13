@@ -1,8 +1,8 @@
 import Renderer, { ClickData, HoverData } from './renderer';
 import Ws from './websocket';
+import { BLUE_NAAS_WS_URL } from './constants';
 
 import type { Morphology, SecMarkerConfig, SimConfig, TraceData } from './types';
-import { blueNaas } from '@/config';
 
 const BlueNaasCmd = {
   // Cmd target: backend
@@ -52,7 +52,7 @@ export default class BlueNaas {
     this.config = config;
 
     this.renderer = new Renderer(container, config);
-    this.ws = new Ws(blueNaas.wsUrl, this.onMessage);
+    this.ws = new Ws(BLUE_NAAS_WS_URL, this.onMessage);
 
     this.ws.send(BlueNaasCmd.SET_MODEL, modelId);
     this.ws.send(BlueNaasCmd.GET_UI_DATA);

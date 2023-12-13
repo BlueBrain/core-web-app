@@ -6,7 +6,7 @@ import { useMemo, useRef, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 
-import { bbsMlBaseUrl } from '@/config';
+import { nexus } from '@/config';
 import { JournalSuggestionResponse } from '@/types/literature';
 import sessionAtom from '@/state/session';
 import { createHeaders } from '@/util/utils';
@@ -87,7 +87,9 @@ export default function JournalSearch({ onChange }: Props) {
 }
 
 const fetchJournalOptions = (searchTerm: string, accessToken: string) => {
-  return fetch(`${bbsMlBaseUrl}/journal_suggestion`, {
+  const url = nexus.aiUrl;
+
+  return fetch(`${url}/journal_suggestion`, {
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify({
