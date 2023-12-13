@@ -40,20 +40,14 @@ jest.mock('src/api/ontologies/index.ts', () => ({
   ),
 }));
 
-const mockCountForExperiment = (experimentUrl: string, brainRegionsIdCount: number) => {
-  const ExperimentCountForOneRegion = 10;
-  return ExperimentCountForOneRegion * brainRegionsIdCount + experimentUrl.length;
-};
+const mockCountForExperiment = 10;
 
 jest.mock('src/api/explore-section/resources.ts', () => ({
   __esModule: true,
-  fetchExperimentDatasetCountForBrainRegion: jest.fn().mockImplementation(
-    (accessToken, experimentUrl, brainRegions: BrainRegion[]) =>
+  fetchTotalByExperimentAndRegions: jest.fn().mockImplementation(
+    () =>
       new Promise((resolve) => {
-        resolve({
-          total: mockCountForExperiment(experimentUrl, brainRegions.length),
-          experimentUrl,
-        });
+        resolve(mockCountForExperiment);
       })
   ),
 }));
@@ -100,9 +94,7 @@ describe('SelectedBrainRegionPanel', () => {
     for await (const [id, config] of Object.entries(EXPERIMENT_DATA_TYPES)) {
       const experimentEle = await screen.findByTestId(`experiment-dataset-${id}`);
       expect(experimentEle.textContent).toContain(config.title);
-      expect(experimentEle.textContent).toContain(
-        `${mockCountForExperiment(id, brainRegionsToVisualize.length)}`
-      );
+      expect(experimentEle.textContent).toContain(`${mockCountForExperiment}`);
     }
   });
 

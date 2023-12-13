@@ -3,7 +3,7 @@
 import { useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { unwrap } from 'jotai/utils';
-import { BrainRegionExperimentsCount } from './BrainRegionExperimentsCount';
+import { ExperimentsTotals } from './ExperimentsTotals';
 import { LiteratureForExperimentType } from './LiteratureForExperimentType';
 import { brainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
@@ -25,7 +25,7 @@ export default function SelectedBrainRegionPanel() {
   return visualizedBrainRegionDetails.length > 0 ? (
     <div className="absolute bottom-0 bg-[#000000b3] z-10 w-full px-10 min-h-[200px]">
       <div className="flex">
-        <BrainRegionExperimentsCount brainRegions={visualizedBrainRegionDetails} />
+        <ExperimentsTotals />
         <LiteratureForExperimentType brainRegions={visualizedBrainRegionDetails} />
       </div>
     </div>

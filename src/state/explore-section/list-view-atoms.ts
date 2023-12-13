@@ -8,6 +8,7 @@ import {
   DataQuery,
   fetchEsResourcesByType,
   fetchDimensionAggs,
+  fetchTotalByExperimentAndRegions,
 } from '@/api/explore-section/resources';
 import sessionAtom from '@/state/session';
 import {
@@ -16,6 +17,7 @@ import {
   SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
 import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
+import { BrainRegion } from '@/types/ontologies';
 import { Filter } from '@/components/Filter/types';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
 import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
@@ -98,6 +100,44 @@ export const filtersAtom = atomFamily(
   isListAtomEqual
 );
 
+export const brainRegionDescendantsAtom = atom<Promise<BrainRegion[]>>(async (get) => {
+  const visibleBrainRegions = get(visibleBrainRegionsAtom('explore'));
+  const brainRegionDescendants = await get(
+    getBrainRegionDescendants(
+      visibleBrainRegions.length > 0 ? visibleBrainRegions : [BASIC_CELL_GROUPS_AND_REGIONS_ID]
+    )
+  );
+  return brainRegionDescendants || [];
+});
+
+export const descendantIdsAtom = atom(async (get) => {
+  const brainRegionDescendants = await get(brainRegionDescendantsAtom);
+
+  return brainRegionDescendants?.map((d) => d.id) || [];
+});
+
+export const totalByExperimentAndRegionsAtom = atomFamily(
+  ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
+    atom<Promise<number | undefined | null>>(async (get) => {
+      const session = get(sessionAtom);
+
+      if (!session) return null;
+
+      const sortState = get(sortStateAtom);
+      let descendantIds: string[] = [];
+      // if the source of brain sources are the visible ones, we fill with descendants
+      if (brainRegionSource === 'visible') {
+        descendantIds = await get(descendantIdsAtom);
+      }
+      const query = fetchDataQuery(0, 1, [], experimentTypeName, sortState, '', descendantIds);
+
+      const result = query && (await fetchTotalByExperimentAndRegions(session.accessToken, query));
+
+      return result;
+    }),
+  isListAtomEqual
+);
+
 export const queryAtom = atomFamily(
   ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
     atom<Promise<DataQuery | null>>(async (get) => {
@@ -105,21 +145,15 @@ export const queryAtom = atomFamily(
       const pageNumber = get(pageNumberAtom({ experimentTypeName }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
-      const visibleBrainRegions = get(visibleBrainRegionsAtom('explore'));
 
       let descendantIds: string[] = [];
       // if the source of brain sources are the visible ones, we fill with descendants
       if (brainRegionSource === 'visible') {
-        const descendants = await get(
-          getBrainRegionDescendants(
-            visibleBrainRegions.length > 0
-              ? visibleBrainRegions
-              : [BASIC_CELL_GROUPS_AND_REGIONS_ID]
-          )
-        );
-        descendantIds = descendants?.map((d) => d.id) || [];
+        descendantIds = await get(descendantIdsAtom);
       }
+
       const filters = await get(filtersAtom({ experimentTypeName }));
+
       if (!filters) {
         return null;
       }

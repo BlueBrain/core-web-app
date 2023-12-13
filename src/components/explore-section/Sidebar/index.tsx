@@ -43,9 +43,9 @@ export function DetailsPageSideBackLink() {
     : activePrevPath;
 
   return prevPath ? (
-    <div className="bg-neutral-1 text-primary-8 w-10 font-bold h-full flex items-start justify-center">
+    <div className="bg-neutral-1 text-primary-8 w-10 h-full flex items-start justify-center">
       <Link
-        className="whitespace-pre text-sm rotate-180 mt-5"
+        className="whitespace-pre text-sm rotate-180 mt-6"
         href={prevPath}
         style={{ writingMode: 'vertical-rl' }}
       >

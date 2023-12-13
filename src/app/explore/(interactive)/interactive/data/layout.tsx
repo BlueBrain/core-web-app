@@ -23,7 +23,7 @@ function InteractiveLink() {
         href={INTERACTIVE_PATH}
         style={{ writingMode: 'vertical-rl' }}
       >
-        Back to interactive explore
+        Back to interactive exploration
         <ArrowRightOutlined className="mt-6" />
       </Link>
     </div>

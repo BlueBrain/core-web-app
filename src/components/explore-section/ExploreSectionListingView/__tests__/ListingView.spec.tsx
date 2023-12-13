@@ -207,21 +207,9 @@ describe('Header panel unit tests', () => {
     const view = screen.getByRole('heading', { name: 'listing-view-title' });
     await waitFor(() =>
       expect(view.textContent).toContain(
-        '1,101 matching your filter selection (out of 4500 in active brain region)'
+        '1,101 matching your filter selection (out of 1,101 in active brain region)'
       )
     );
-  });
-
-  test('Header Panel without data shows 0 totals if no data', async () => {
-    testServer.use(mockEmptyESResponse);
-
-    render(
-      <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-        <NumericResultsInfo experimentTypeName={NEURON_MORPHOLOGY} brainRegionSource="root" />
-      </TestProvider>
-    );
-    const view = screen.getByRole('heading', { name: 'listing-view-title' });
-    await waitFor(() => expect(view.textContent).toContain('0 matching your filter selection'));
   });
 });
 

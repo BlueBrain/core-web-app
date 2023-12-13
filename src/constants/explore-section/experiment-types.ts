@@ -25,7 +25,7 @@ export const EXPERIMENT_DATA_TYPES: {
   [x: ExperimentDataTypeName]: ExperimentConfig;
 } = {
   [NEURON_MORPHOLOGY]: {
-    title: 'Neuron morphology',
+    title: 'Morphology',
     name: 'morphology',
     columns: [
       'preview',
