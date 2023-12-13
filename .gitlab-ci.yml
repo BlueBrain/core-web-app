@@ -104,7 +104,7 @@ deploy-aws-prod:
       --build-arg=NEXT_PUBLIC_SENTRY_DSN
       --build-arg=SENTRY_AUTH_TOKEN
       --build-arg=NEXT_PUBLIC_NEXUS_URL
-      --bulid-arg=NEXT_PUBLIC_ATLAS_ES_VIEW_ID
+      --build-arg=NEXT_PUBLIC_ATLAS_ES_VIEW_ID
   only:
     - develop
 

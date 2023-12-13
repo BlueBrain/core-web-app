@@ -17,8 +17,8 @@ export const blueNaas = {
   wsUrl: env.NEXT_PUBLIC_BLUE_NAAS_WS_URL,
 };
 
-const ORG = env.NEXUS_PUBLIC_DEFAULT_ORG;
-const PROJECT = env.NEXUS_PUBLIC_DEFAULT_PROJECT;
+const ORG = env.NEXT_PUBLIC_NEXUS_DEFAULT_ORG;
+const PROJECT = env.NEXT_PUBLIC_NEXUS_DEFAULT_PROJECT;
 
 export const nexus = {
   url: env.NEXT_PUBLIC_NEXUS_URL,
