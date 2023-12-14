@@ -24,7 +24,7 @@ import {
 } from '@/state/brain-regions';
 import { NavValue } from '@/state/brain-regions/types';
 import { BrainRegion } from '@/types/ontologies';
-import VisualizationTrigger from '@/components/build-section/BrainRegionSelector/VisualizationTrigger';
+import BrainRegionControls from '@/components/build-section/BrainRegionSelector/BrainRegionControls';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 import { sectionAtom } from '@/state/application';
@@ -109,7 +109,10 @@ function NavTitle({
 
   return (
     <>
-      <div ref={navTitleRef} className="flex items-center justify-between py-3 first:border-none">
+      <div
+        ref={navTitleRef}
+        className="flex items-center justify-between py-3 first:border-none group"
+      >
         <button
           type="button"
           className="flex items-center justify-end h-auto gap-3 font-bold border-none"
@@ -135,7 +138,7 @@ function NavTitle({
             {title}
           </span>
         </button>
-        <div className="-mr-[4px] ml-[6px] flex gap-2 justify-between items-center">
+        <div className="-mr-[4px] ml-[6px] flex gap-2 justify-between items-center [&:not(:has(button.accordion-trigger))]:pr-6">
           <AlternateViewSelector
             brainRegionViews={brainRegionViews}
             defaultViewOption={defaultViewOption}
@@ -143,7 +146,7 @@ function NavTitle({
             selectOptions={selectOptions}
             selectedBrainRegion={selectedBrainRegion?.id}
           />
-          {id && colorCode && <VisualizationTrigger colorCode={colorCode} id={id} />}
+          {id && colorCode && <BrainRegionControls {...{ id, colorCode }} />}
           {trigger?.()}
         </div>
       </div>
@@ -180,7 +183,7 @@ export default function BrainRegions() {
       {isCollapsed ? (
         <CollapsedBrainRegionsSidebar setIsCollapsed={setIsCollapsed} />
       ) : (
-        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[300px] no-scrollbar">
+        <div className="flex flex-1 flex-col overflow-y-auto px-6 py-6 min-w-[340px] no-scrollbar">
           <div className="grid">
             <div className="flex items-start justify-between mb-7">
               <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">

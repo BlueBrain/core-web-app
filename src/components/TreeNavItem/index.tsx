@@ -6,7 +6,7 @@ import intersection from 'lodash/intersection';
 import { useAtomValue } from 'jotai';
 import { classNames } from '@/util/utils';
 import { getDeeplyNestedChildrenFromNode } from '@/util/brain-hierarchy';
-import { visibleBrainRegionsAtom } from '@/state/brain-regions';
+import { dataBrainRegionsAtom } from '@/state/brain-regions';
 import { sectionAtom } from '@/state/application';
 import { NavValue } from '@/state/brain-regions/types';
 import styles from './tree-nav-item.module.css';
@@ -55,10 +55,10 @@ export function TreeNavItem({
   if (!section) {
     throw new Error('Section is not set');
   }
-  const visibleBrainRegions = useAtomValue(visibleBrainRegionsAtom(section));
-  const selected = id && visibleBrainRegions.includes(id);
+  const dataBrainRegions = useAtomValue(dataBrainRegionsAtom);
+  const selected = id && dataBrainRegions.includes(id);
   const childrenNodes: string[] = getDeeplyNestedChildrenFromNode({ id, items }, []);
-  const doesItHaveSelectedChildren = !!intersection(childrenNodes, visibleBrainRegions).length;
+  const doesItHaveSelectedChildren = !!intersection(childrenNodes, dataBrainRegions).length;
 
   const renderedItems = items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
     // children may return another render-prop
@@ -105,8 +105,10 @@ export function TreeNavItem({
         ? (triggerProps: {}) => (
             <Accordion.Trigger
               className={classNames(
+                'accordion-trigger',
                 styles.accordionTrigger,
-                doesItHaveSelectedChildren ? styles.intermediateTrigger : ''
+                doesItHaveSelectedChildren ? styles.intermediateTrigger : '',
+                section ? styles[section] : ''
               )}
               data-disabled={!items || items.length === 0}
               {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
@@ -123,7 +125,7 @@ export function TreeNavItem({
             </Accordion.Trigger>
           )
         : null,
-    [colorCode, doesItHaveSelectedChildren, items, renderedItems, selected]
+    [colorCode, doesItHaveSelectedChildren, items, renderedItems, selected, section]
   );
 
   const content =

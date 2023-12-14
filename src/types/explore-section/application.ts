@@ -13,7 +13,9 @@ import { ExploreResource } from '@/types/explore-section/es';
 // defines the source from where the explore data will be retrieved
 // visible: visible brain regions
 // root: all brain regions are applied
-export type ExploreDataBrainRegionSource = 'visible' | 'root';
+// data: brain regions for statistics
+
+export type ExploreDataBrainRegionSource = 'visible' | 'root' | 'data';
 
 export interface SortState {
   field: string;

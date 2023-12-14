@@ -33,7 +33,7 @@ export default function SearchFilter({
           'label'
         )
       : [];
-  }, [data, filter.field, values]);
+  }, [data, values]);
 
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];

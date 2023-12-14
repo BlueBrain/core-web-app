@@ -392,6 +392,7 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
 // Keeps track of the visible interactive brain regions
 
 export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
+export const dataBrainRegionsAtom = atom<string[]>([]);
 
 // Keeps track of the hierarchy tree of the brain regions
 export const brainRegionHierarchyStateAtom = atom<NavValue | null>(

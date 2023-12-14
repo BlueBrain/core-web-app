@@ -4,11 +4,10 @@
 
 .accordionTrigger {
   @apply flex items-center justify-center;
-  @apply p-[4px];
 }
 
-.accordionTrigger.intermediateTrigger[data-state='closed'] {
-  @apply h-[14px] p-0 bg-white rounded-sm;
+.accordionTrigger.explore.intermediateTrigger[data-state='closed'] {
+  @apply h-[14px] w-[14px] bg-white rounded-sm;
 }
 
 .accordionTrigger.intermediateTrigger[data-state='closed'] .accordionChevron {
