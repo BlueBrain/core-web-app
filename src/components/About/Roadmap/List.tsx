@@ -4,7 +4,6 @@ import { ConfigProvider, Select } from 'antd';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
-import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 
 export type RoadmapFeature = {
@@ -56,8 +55,7 @@ export function Metadata({
   const params = useSearchParams();
   const selectCategory = params?.get('category') ?? 'all';
 
-  const onSelectCategory = (value: string) =>
-    router.replace(`${basePath}/about/roadmap?category=${value}`);
+  const onSelectCategory = (value: string) => router.replace(`/about/roadmap?category=${value}`);
 
   return (
     <>
