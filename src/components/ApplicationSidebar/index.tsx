@@ -172,7 +172,7 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
             onClick={logout}
             className="text-primary-4 text-base cursor-pointer font-normal hover:text-white"
           >
-            Logout
+            Log out
           </button>
         </div>
       </div>

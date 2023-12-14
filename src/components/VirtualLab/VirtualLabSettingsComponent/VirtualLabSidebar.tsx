@@ -38,7 +38,7 @@ export default function VirtualLabSidebar() {
               Account
             </Link>
             <Button type="text" className="text-primary-5 py-0 px-2" onClick={logout}>
-              Signout
+              Log out
             </Button>
           </ConfigProvider>
         </div>

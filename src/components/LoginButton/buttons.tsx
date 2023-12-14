@@ -7,7 +7,7 @@ import Styles from './login-button.module.css';
 export function SignInButton() {
   return (
     <button className={Styles.loginButton} type="button" onClick={() => signIn('keycloak')}>
-      Login
+      Log in
     </button>
   );
 }
@@ -15,7 +15,7 @@ export function SignInButton() {
 export function SignOutButton() {
   return (
     <button className={Styles.loginButton} type="button" onClick={() => signOut()}>
-      Logout
+      Log out
     </button>
   );
 }

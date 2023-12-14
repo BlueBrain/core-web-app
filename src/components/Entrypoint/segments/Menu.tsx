@@ -35,7 +35,7 @@ const ENTRYPOINT_MENU_ITEMS: Array<EntrypointMenuItem> = [
     bgcolor: 'bg-primary-6',
   },
   {
-    title: 'Login',
+    title: 'Log in',
     description: 'Get access to all your models & experiments',
     bgcolor: 'bg-primary-7',
     action: (callbackUrl: string) =>
