@@ -1,21 +1,15 @@
 import React, { useCallback } from 'react';
 import { useSetAtom } from 'jotai';
+import { BrainViewId, BrainRegionOntologyView } from '@/types/ontologies';
 import { addOrRemoveSelectedAlternateView } from '@/state/brain-regions';
-import { BrainRegionOntologyView } from '@/types/ontologies';
-import SelectDropdown from '@/components/SelectDropdown';
+import SelectDropdown, { SelectOption } from '@/components/SelectDropdown';
 
 type AlternateViewProps = {
   brainRegionViews: BrainRegionOntologyView[] | null;
-  defaultViewOption: { value: string; label: string; isDisabled: boolean } | undefined;
-  id: string | undefined;
-  selectOptions:
-    | {
-        value: string;
-        label: string;
-        isDisabled: boolean;
-      }[]
-    | undefined;
-  selectedBrainRegion: string | undefined;
+  defaultViewOption?: SelectOption;
+  id?: string;
+  selectOptions?: SelectOption[];
+  selectedBrainRegion?: string;
 };
 
 export default function AlternateViewSelector({
@@ -32,7 +26,7 @@ export default function AlternateViewSelector({
    * @param newViewId the selected view id
    */
   const onChangeViewSelection = useCallback(
-    (newViewId: string | undefined) => {
+    (newViewId: BrainViewId | undefined) => {
       if (id && newViewId) {
         changeSelectedViews(newViewId, id);
       }

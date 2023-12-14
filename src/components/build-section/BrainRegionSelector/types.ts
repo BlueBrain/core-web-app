@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Mesh } from '@/types/ontologies';
+import { BrainViewId, Mesh } from '@/types/ontologies';
 
 export type TitleComponentProps = {
   className?: string;
@@ -17,7 +17,7 @@ export type TitleComponentProps = {
     title: string;
     leaves: string[] | null;
   } | null;
-  viewId: string;
+  viewId: BrainViewId;
   children?: (...args: any[]) => ReactElement<{ children?: (...args: any[]) => ReactElement }>;
 };
 

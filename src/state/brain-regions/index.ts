@@ -8,6 +8,7 @@ import {
   BrainRegion,
   BrainRegionOntology,
   BrainRegionOntologyView,
+  BrainViewId,
   Mesh,
 } from '@/types/ontologies';
 import { getBrainRegionOntology, getDistributions } from '@/api/ontologies';
@@ -61,7 +62,7 @@ import { getInitializationValue, setInitializationValue } from '@/util/utils';
 
 export const densityOrCountAtom = atom<'density' | 'count'>('count');
 
-const brainRegionOntologyAtom = atom<Promise<BrainRegionOntology | null>>(async (get) => {
+export const brainRegionOntologyAtom = atom<Promise<BrainRegionOntology | null>>(async (get) => {
   const session = get(sessionAtom);
 
   return session && getBrainRegionOntology(session.accessToken);
@@ -175,7 +176,7 @@ export const brainRegionsTreeWithRepresentationAtom = selectAtom<
   (brainRegionsTree) => brainRegionsTree?.reduce(itemsInAnnotationReducer, []) ?? null
 );
 
-export const selectedAlternateViews = atom<Record<string, string>>({});
+export const selectedAlternateViews = atom<Record<string, BrainViewId>>({});
 
 export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null | undefined>>(
   async (get) => {
@@ -221,7 +222,7 @@ export const alternateArrayWithRepresentationAtom = selectAtom<
 
 export const addOrRemoveSelectedAlternateView = atom(
   null,
-  async (get, set, viewId: string, brainRegionId: string) => {
+  async (get, set, viewId: BrainViewId, brainRegionId: string) => {
     const selectedViews = get(selectedAlternateViews);
     const brainRegionViews = await get(brainRegionOntologyViewsAtom);
     const defaultView = await get(defaultBrainRegionOntologyViewAtom);

@@ -8,14 +8,14 @@ import {
   serializeBrainRegionsAndVolumes,
   serializeBrainRegionOntologyViews,
 } from '@/api/ontologies/brain-regions';
-import { BrainRegion, BrainRegionOntologyView } from '@/types/ontologies';
+import { BrainRegion, BrainRegionOntologyView, BrainViewId } from '@/types/ontologies';
 import { buildAlternateChildren, buildAlternateTree } from '@/state/brain-regions/alternate-view';
 import { itemsInAnnotationReducer } from '@/util/brain-hierarchy';
 
 type Volumes = { [key: string]: number };
 
 type HasHierarchyViewRaw = {
-  '@id': string;
+  '@id': BrainViewId;
   description: string;
   hasChildrenHierarchyProperty: string;
   hasLeafHierarchyProperty: string;

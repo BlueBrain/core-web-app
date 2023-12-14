@@ -1,6 +1,6 @@
 import { TreeItem } from 'performant-array-to-tree';
 import { OriginalComposition, CompositionOverrideLeafNode } from '@/types/composition/original';
-import { BrainRegion } from '@/types/ontologies';
+import { Ancestor, BrainRegion, DefaultBrainViewId } from '@/types/ontologies';
 
 export const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -120,12 +120,19 @@ export function itemsInAnnotationReducer(
 export const treeToArray = (
   brainRegion: BrainRegion,
   result: BrainRegion[],
-  ancestors: string[]
+  ancestors: Ancestor[]
 ) => {
   brainRegion.items?.forEach((br) => {
     const newRegion = { ...br };
+
     delete newRegion.items;
-    const newAncestors = [...ancestors, brainRegion.id];
+
+    const view = brainRegion?.view;
+    const ancestor = view
+      ? { [brainRegion.id]: view }
+      : { [brainRegion.id]: 'https://neuroshapes.org/BrainRegion' as DefaultBrainViewId }; // Use default if view undefined.
+    const newAncestors = ancestor ? [...ancestors, ancestor] : ancestors;
+
     newRegion.ancestors = newAncestors;
     result.push(newRegion);
     treeToArray(br, result, newAncestors);

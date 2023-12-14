@@ -1,8 +1,48 @@
 import { Dispatch, SetStateAction } from 'react';
 import set from 'lodash/fp/set';
 import getOr from 'lodash/fp/getOr';
-
+import { BrainRegion, BrainViewId } from '@/types/ontologies';
 import { NavValue } from '@/state/brain-regions/types';
+import {
+  ROOT_BRAIN_REGION_URI,
+  BRAIN_VIEW_DEFAULT,
+  BRAIN_VIEW_LAYER,
+} from '@/constants/brain-hierarchy';
+
+export function getAncestors(
+  brainRegions: BrainRegion[],
+  brainRegionId: string | null
+): Record<string, BrainViewId>[] {
+  const brainRegion = brainRegions.find(({ id }) => id === brainRegionId);
+
+  if (
+    !brainRegion ||
+    !brainRegionId ||
+    brainRegionId === ROOT_BRAIN_REGION_URI // Dont' include the root (Whole Mouse Brain)
+  ) {
+    return [];
+  }
+
+  const { isPartOf, isLayerPartOf } = brainRegion;
+
+  if (
+    (isPartOf || isLayerPartOf) === ROOT_BRAIN_REGION_URI // Dont' include the root (Whole Mouse Brain)
+  ) {
+    return [];
+  }
+
+  const ancestors = getAncestors(
+    brainRegions,
+    !isPartOf && isLayerPartOf ? isLayerPartOf : isPartOf
+  ); // By default, assume the non alternate-view parent.
+
+  return [
+    ...ancestors,
+    !isPartOf && isLayerPartOf // If there is layerPartOf, but not isPartOf, then set the brain region as a selected alternate view.
+      ? { [isLayerPartOf]: BRAIN_VIEW_LAYER }
+      : { [isPartOf as string]: BRAIN_VIEW_DEFAULT },
+  ];
+}
 
 export function handleNavValueChange(
   navValue: NavValue,

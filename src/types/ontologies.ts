@@ -1,3 +1,9 @@
+export type DefaultBrainViewId = 'https://neuroshapes.org/BrainRegion';
+export type BrainLayerViewId = 'https://bbp.epfl.ch/ontologies/core/bmo/BrainLayer';
+export type BrainViewId = DefaultBrainViewId | BrainLayerViewId;
+
+export type Ancestor = Record<string, BrainViewId>;
+
 export type BrainRegion = {
   id: string;
   isPartOf: string | null;
@@ -7,10 +13,10 @@ export type BrainRegion = {
   colorCode: string;
   items?: BrainRegion[];
   leaves?: string[];
-  ancestors?: string[];
+  ancestors?: Ancestor[];
   hasLayerPart: string[];
   hasPart: string[];
-  view?: string;
+  view?: BrainViewId;
   representedInAnnotation: boolean;
   itemsInAnnotation?: boolean;
 };
@@ -21,7 +27,7 @@ export type Mesh = {
 };
 
 export type BrainRegionOntologyView = {
-  id: string;
+  id: BrainViewId;
   leafProperty: string;
   parentProperty: string;
   childrenProperty: string;

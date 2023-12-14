@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { arrayToTree } from 'performant-array-to-tree';
-import { BrainRegion } from '@/types/ontologies';
+import { BrainRegion, BrainViewId } from '@/types/ontologies';
 
 /**
  * Builds the alternate children of a given selected view
@@ -13,7 +13,7 @@ export const buildAlternateChildren = (
   brainRegionId: string,
   parentProperty: string,
   brainRegions: BrainRegion[],
-  newViewId: string
+  newViewId: BrainViewId
 ) => {
   let cleanBrainRegions = cloneDeep(brainRegions);
 
@@ -43,7 +43,7 @@ export const buildAlternateTree = (
   brainRegionRoot: BrainRegion,
   alternatedRegionId: string,
   alternateChildren: BrainRegion[],
-  newViewId: string
+  newViewId: BrainViewId
 ) => {
   // if the currently visited region is the one whose children we want to replace
   if (brainRegionRoot.id === alternatedRegionId) {

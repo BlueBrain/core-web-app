@@ -3,12 +3,18 @@ import React from 'react';
 import './SelectDropdown.css';
 import ChevronRightIcon from '@/components/icons/ChevronRightIcon';
 import ChevronDownIcon from '@/components/icons/ChevronDownIcon';
-import { SelectOption } from '@/types/common';
+import { BrainViewId } from '@/types/ontologies';
+
+export type SelectOption = {
+  value: BrainViewId;
+  label: string;
+  isDisabled?: boolean;
+};
 
 type SelectDropdownProps = {
   selectOptions: SelectOption[];
   defaultOption: SelectOption;
-  onChangeFunc: (viewId: string | undefined) => void;
+  onChangeFunc: (viewId?: BrainViewId) => void;
 };
 
 function DropdownIndicator(props: DropdownIndicatorProps<SelectOption>) {

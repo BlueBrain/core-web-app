@@ -32,3 +32,6 @@ export const DEFAULT_BRAIN_REGION: DefaultBrainRegionType = {
 };
 
 export const DEFAULT_BRAIN_REGION_STORAGE_KEY = 'lastClickedRegionId';
+
+export const BRAIN_VIEW_DEFAULT = 'https://neuroshapes.org/BrainRegion';
+export const BRAIN_VIEW_LAYER = 'https://bbp.epfl.ch/ontologies/core/bmo/BrainLayer';

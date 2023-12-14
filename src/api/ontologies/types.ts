@@ -1,4 +1,4 @@
-import { BrainRegion } from '@/types/ontologies';
+import { BrainRegion, BrainViewId } from '@/types/ontologies';
 
 type MeshDistributionNexus = {
   contentUrl: string;
@@ -37,7 +37,7 @@ type MeshNexusSource = {
   brainLocation: BrainLocationNexus;
 };
 export type BrainRegionOntologyViewNexus = {
-  '@id': string;
+  '@id': BrainViewId;
   hasLeafHierarchyProperty: string;
   hasParentHierarchyProperty: string;
   hasChildrenHierarchyProperty: string;
