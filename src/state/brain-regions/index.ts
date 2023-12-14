@@ -393,7 +393,23 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
 // Keeps track of the visible interactive brain regions
 
 export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
-export const dataBrainRegionsAtom = atom<string[]>([]);
+
+export const dataBrainRegionsAtom = atom<Record<string, string[]>>({});
+
+/**
+ * An array containing all (unique) brainRegions that are selected either manually (keys of `dataBrainRegionsAtom`) or automatically (array values of `dataBrainRegionsAtom`).
+ */
+export const selectedBrainRegionsWithChildrenAtom = atom<string[]>((get) => {
+  const dataBrainRegions = get(dataBrainRegionsAtom);
+  const allSelectedBrainRegions = new Set<string>();
+
+  Object.entries(dataBrainRegions).forEach(([brainRegion, children]) => {
+    allSelectedBrainRegions.add(brainRegion);
+    children.forEach((child) => allSelectedBrainRegions.add(child));
+  });
+
+  return Array.from(allSelectedBrainRegions);
+});
 
 // Keeps track of the hierarchy tree of the brain regions
 export const brainRegionHierarchyStateAtom = atom<NavValue | null>(

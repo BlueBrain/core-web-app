@@ -6,7 +6,7 @@ import intersection from 'lodash/intersection';
 import { useAtomValue } from 'jotai';
 import { classNames } from '@/util/utils';
 import { getDeeplyNestedChildrenFromNode } from '@/util/brain-hierarchy';
-import { dataBrainRegionsAtom } from '@/state/brain-regions';
+import { selectedBrainRegionsWithChildrenAtom } from '@/state/brain-regions';
 import { sectionAtom } from '@/state/application';
 import { NavValue } from '@/state/brain-regions/types';
 import styles from './tree-nav-item.module.css';
@@ -55,7 +55,7 @@ export function TreeNavItem({
   if (!section) {
     throw new Error('Section is not set');
   }
-  const dataBrainRegions = useAtomValue(dataBrainRegionsAtom);
+  const dataBrainRegions = useAtomValue(selectedBrainRegionsWithChildrenAtom);
   const selected = id && dataBrainRegions.includes(id);
   const childrenNodes: string[] = getDeeplyNestedChildrenFromNode({ id, items }, []);
   const doesItHaveSelectedChildren = !!intersection(childrenNodes, dataBrainRegions).length;

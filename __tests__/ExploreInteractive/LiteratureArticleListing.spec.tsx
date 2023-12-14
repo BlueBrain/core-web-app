@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import sessionAtom from '@/state/session';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
 import { BrainRegionOntology } from '@/types/ontologies';
-import { selectedBrainRegionAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
+import { dataBrainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { ArticleItem } from '@/api/explore-section/resources';
@@ -496,7 +496,7 @@ describe('LiteratureArticleListingPage', () => {
               representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
             } as SelectedBrainRegion,
           ],
-          [visibleBrainRegionsAtom('explore'), [mockBrainRegions[1].id]],
+          [dataBrainRegionsAtom, { [mockBrainRegions[1].id]: [] }],
         ]}
       >
         <LiteratureArticleListingPage />

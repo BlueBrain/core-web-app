@@ -7,7 +7,7 @@ import { unwrap } from 'jotai/utils';
 
 import LiteratureArticlesError from './error';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
-import { brainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
+import { brainRegionsAtom, dataBrainRegionsAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
 import { ArticleListing } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
 import ArticleListFilters from '@/components/explore-section/Literature/components/ArticleList/ArticleListFilters';
@@ -24,9 +24,9 @@ export default function LiteratureArticleListingPage() {
   const currentExperiment = Object.values(EXPERIMENT_DATA_TYPES).find(
     (experiment) => experiment.name === params?.['experiment-data-type'] ?? ''
   );
-  const visualizedBrainRegions = useAtomValue(visibleBrainRegionsAtom('explore'));
+  const dataBrainRegions = useAtomValue(dataBrainRegionsAtom);
   const brainRegions = useAtomValue(useMemo(() => unwrap(brainRegionsAtom), []));
-  const visualizedBrainRegionDetails = visualizedBrainRegions.reduce<BrainRegion[]>(
+  const visualizedBrainRegionDetails = Object.keys(dataBrainRegions).reduce<BrainRegion[]>(
     (acc, selectedRegion) => {
       const selected = brainRegions?.find((brainRegion) => brainRegion.id === selectedRegion);
 

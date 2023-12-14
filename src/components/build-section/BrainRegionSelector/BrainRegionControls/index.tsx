@@ -4,10 +4,13 @@ import { Tooltip } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { unwrap } from 'jotai/utils';
 import map from 'lodash/map';
+import omit from 'lodash/omit';
+import intersection from 'lodash/intersection';
 
 import {
   dataBrainRegionsAtom,
   meshDistributionsAtom,
+  selectedBrainRegionsWithChildrenAtom,
   visibleBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { useAtlasVisualizationManager } from '@/state/atlas';
@@ -43,13 +46,14 @@ export default function BrainRegionControls({ colorCode, id }: { colorCode: stri
   const [visibleBrainRegions, setVisibleBrainRegions] = useAtom(visibleBrainRegionsAtom(section));
   const brainRegions = useAtomValue(useMemo(() => unwrap(getBrainRegionDescendants([id])), [id]));
   const [dataBrainRegions, setDataBrainRegions] = useAtom(dataBrainRegionsAtom);
+  const selectedBrainRegionsAndChildren = useAtomValue(selectedBrainRegionsWithChildrenAtom);
   const meshDistributions = useAtomValue(meshDistributionsAtom);
   const meshDistribution = meshDistributions && meshDistributions[id];
   const atlas = useAtlasVisualizationManager();
   const cell = atlas.findVisibleCell(id);
   const mesh = meshDistribution && atlas.findVisibleMesh(meshDistribution.contentUrl);
   const displayed = visibleBrainRegions.includes(id);
-  const selected = dataBrainRegions.includes(id);
+  const selected = selectedBrainRegionsAndChildren.includes(id);
   const showCheckbox = section === 'explore';
 
   const handleOnAddVisibleRegionsEntry = () => {
@@ -95,17 +99,28 @@ export default function BrainRegionControls({ colorCode, id }: { colorCode: stri
   };
 
   const handleOnAddDataRegionsEntry = async () => {
-    const children = map(brainRegions, 'id');
-    let dataBrainRegionsList: Array<string>;
+    const childrenOfCurrent = map(brainRegions, 'id');
 
-    if (dataBrainRegions.includes(id)) {
-      dataBrainRegionsList = dataBrainRegions.filter(
-        (_id) => !children?.includes(_id) && _id !== id
-      );
+    let updatedDataBrainRegions: Record<string, string[]>;
+
+    if (selectedBrainRegionsAndChildren.includes(id)) {
+      const brainRegionsToRemove = [id, ...childrenOfCurrent];
+
+      // Remove manually selected brainRegions
+      updatedDataBrainRegions = omit(dataBrainRegions, brainRegionsToRemove);
+
+      // Remove automatically selected brainRegions (which are present inside the arrays of `dataBrainRegions`)
+      Object.entries(updatedDataBrainRegions).forEach(([parent, children]) => {
+        if (intersection(children, brainRegionsToRemove).length > 0) {
+          updatedDataBrainRegions[parent] = children.filter(
+            (child) => !brainRegionsToRemove.includes(child)
+          );
+        }
+      });
     } else {
-      dataBrainRegionsList = [...dataBrainRegions, id, ...(children ?? [])];
+      updatedDataBrainRegions = { ...dataBrainRegions, [id]: [...childrenOfCurrent] };
     }
-    setDataBrainRegions([...dataBrainRegionsList]);
+    setDataBrainRegions(updatedDataBrainRegions);
   };
 
   if (meshDistributions === undefined) {

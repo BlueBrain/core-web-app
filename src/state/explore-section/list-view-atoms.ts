@@ -21,7 +21,10 @@ import { BrainRegion } from '@/types/ontologies';
 import { Filter } from '@/components/Filter/types';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
 import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
-import { dataBrainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
+import {
+  selectedBrainRegionsWithChildrenAtom,
+  visibleBrainRegionsAtom,
+} from '@/state/brain-regions';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 type DataAtomFamilyScopeType = {
@@ -102,7 +105,10 @@ export const filtersAtom = atomFamily(
 
 export const brainRegionDescendantsAtom = atomFamily((type: ExploreDataBrainRegionSource) =>
   atom<Promise<BrainRegion[]>>(async (get) => {
-    const usedAtom = type === 'visible' ? visibleBrainRegionsAtom('explore') : dataBrainRegionsAtom;
+    const usedAtom =
+      type === 'visible'
+        ? visibleBrainRegionsAtom('explore')
+        : selectedBrainRegionsWithChildrenAtom;
     const visibleBrainRegions = get(usedAtom);
     const brainRegionDescendants = await get(
       getBrainRegionDescendants(

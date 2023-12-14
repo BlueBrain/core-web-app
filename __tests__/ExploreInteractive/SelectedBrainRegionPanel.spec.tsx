@@ -2,6 +2,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider, useAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
+import omit from 'lodash/omit';
+
 import sessionAtom from '@/state/session';
 import { BrainRegion, BrainRegionOntology } from '@/types/ontologies';
 import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
@@ -150,7 +152,7 @@ describe('SelectedBrainRegionPanel', () => {
               representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
             } as SelectedBrainRegion,
           ],
-          [dataBrainRegionsAtom, [defaultVisualizedRegion.id]],
+          [dataBrainRegionsAtom, { [defaultVisualizedRegion.id]: [] }],
         ]}
       >
         {mockBrainRegions.map((brainRegion) => (
@@ -170,16 +172,14 @@ describe('SelectedBrainRegionPanel', () => {
         <button
           type="button"
           onClick={() => {
-            setDataBrainRegions(Array.from(new Set([...dataBrainRegions, brainRegion.id])));
+            setDataBrainRegions({ ...dataBrainRegions, [brainRegion.id]: [] });
           }}
         >
           Add {brainRegion.id}
         </button>
         <button
           type="button"
-          onClick={() =>
-            setDataBrainRegions(dataBrainRegions.filter((_id) => _id !== brainRegion.id))
-          }
+          onClick={() => setDataBrainRegions(omit(dataBrainRegions, brainRegion.id))}
         >
           Remove {brainRegion.id}
         </button>
