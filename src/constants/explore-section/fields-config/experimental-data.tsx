@@ -150,7 +150,14 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   subjectAge: {
     title: 'Age',
-    filter: 'checkList',
+    filter: 'valueRange',
+    esTerms: {
+      flat: {
+        filter: 'subjectAge.value',
+        aggregation: 'subjectAge.value',
+        sort: 'subjectAge.value',
+      },
+    },
     unit: 'days',
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.subjectAge?.label),

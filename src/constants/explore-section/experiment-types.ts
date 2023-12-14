@@ -109,6 +109,7 @@ export const EXPERIMENT_DATA_TYPES: {
       'numberOfMeasurements',
       'name',
       'subjectSpecies',
+      'subjectAge',
       'contributors',
       'createdAt',
     ],
