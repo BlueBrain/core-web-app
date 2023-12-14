@@ -22,10 +22,13 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock('@/components/explore-section/Literature/api.ts', () => ({
-  __esModule: true,
-  getGenerativeQA: jest.fn(),
-}));
+jest.mock('@/components/explore-section/Literature/api.ts', () => {
+  const actual = jest.requireActual('@/components/explore-section/Literature/api.ts');
+  return {
+    ...actual,
+    getGenerativeQA: jest.fn(),
+  };
+});
 
 describe('QAContainer', () => {
   beforeAll(() => {

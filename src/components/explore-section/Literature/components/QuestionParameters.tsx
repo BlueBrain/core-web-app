@@ -1,30 +1,33 @@
 'use client';
 
-import { Button } from 'antd';
+import { Button, ConfigProvider } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import AutoCompleteSearch from './AutoCompleteSearch';
 import { DateRange } from '@/components/Filter';
-import { normalizeString } from '@/util/utils';
-import {
-  AuthorSuggestionResponse,
-  JournalSuggestionResponse,
-  Suggestion,
-} from '@/types/literature';
+import { classNames, normalizeString } from '@/util/utils';
+import { Suggestion } from '@/types/literature';
 import {
   fetchAuthorSuggestions,
   fetchJournalSuggestions,
+  getArticleTypeOptions,
+  getAuthorOptions,
+  getJournalOptions,
 } from '@/components/explore-section/Literature/api';
 
 import {
-  articleTypeSuggestionsAtom,
   initialParameters,
   questionsParametersAtom,
   useQuestionParameter,
 } from '@/state/literature';
+import {
+  articleTypeSuggestionsAtom,
+  initialAuthorSuggestionsAtom,
+  initialJournalSuggestionsAtom,
+} from '@/state/explore-section/literature-filters';
 
 type Props = {
   isParametersVisible: boolean;
@@ -33,12 +36,44 @@ type Props = {
 
 function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Props) {
   const update = useQuestionParameter();
-  const articleTypes = useAtomValue(useMemo(() => unwrap(articleTypeSuggestionsAtom), []));
+
+  const articleTypesResponse = useAtomValue(useMemo(() => unwrap(articleTypeSuggestionsAtom), []));
+  const articleTypes = articleTypesResponse ? getArticleTypeOptions(articleTypesResponse) : [];
+
+  const initialAuthorSuggestions = useAtomValue(
+    useMemo(() => unwrap(initialAuthorSuggestionsAtom), [])
+  );
+  const initialJournalSuggestions = useAtomValue(
+    useMemo(() => unwrap(initialJournalSuggestionsAtom), [])
+  );
+
   const currentParameters = useAtomValue(questionsParametersAtom);
 
+  const fetchAuthors = useCallback(
+    (searchTerm: string, signal?: AbortSignal) =>
+      fetchAuthorSuggestions(searchTerm, signal).then((authors) => getAuthorOptions(authors)),
+    []
+  );
+  const fetchJournals = useCallback(
+    (searchTerm: string, signal?: AbortSignal) =>
+      fetchJournalSuggestions(searchTerm, signal).then((journalResponse) =>
+        getJournalOptions(journalResponse)
+      ),
+    []
+  );
+
   return (
-    isParametersVisible && (
-      <div className="relative w-full">
+    <ConfigProvider
+      theme={{
+        token: {
+          colorBgContainer: '#E8F7FF',
+          colorFillQuaternary: '#91D5FF',
+          colorFillSecondary: '#91D5FF',
+          colorTextPlaceholder: '#40A9FF',
+        },
+      }}
+    >
+      <div className={classNames('relative w-fill', isParametersVisible ? 'block' : 'hidden')}>
         <Button
           icon={<CloseOutlined />}
           onClick={setIsParametersVisible}
@@ -65,16 +100,12 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="Journal"
             title="Journal"
-            fetchOptions={(searchTerm: string, signal?: AbortSignal) =>
-              fetchJournalSuggestions(searchTerm, signal).then((journalResponse) =>
-                getJournalOptions(journalResponse)
-              )
-            }
+            initialSuggestions={initialJournalSuggestions}
+            fetchOptions={fetchJournals}
             onChange={(selectedValues: Suggestion[]) => {
               const selectedJournals = selectedValues.map((option) => option.key);
               update('selectedJournals', selectedJournals);
             }}
-            selectedValues={currentParameters.selectedJournals}
           />
           <hr className="my-4 border-primary-2" />
         </div>
@@ -83,18 +114,14 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="Authors"
             title="Authors"
-            fetchOptions={(searchTerm: string, signal?: AbortSignal) =>
-              fetchAuthorSuggestions(searchTerm, signal).then((authors) =>
-                getAuthorOptions(authors)
-              )
-            }
+            fetchOptions={fetchAuthors}
+            initialSuggestions={initialAuthorSuggestions}
             onChange={(selectedValues: Suggestion[]) =>
               update(
                 'selectedAuthors',
                 selectedValues.map((v) => v.value)
               )
             }
-            selectedValues={currentParameters.selectedAuthors}
           />
           <hr className="my-4 border-primary-2" />
         </div>
@@ -103,6 +130,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="ArticleTypes"
             title="Article Types"
+            initialSuggestions={articleTypes}
             fetchOptions={async (searchTerm: string) =>
               (articleTypes ?? []).filter((articleTypeOption) =>
                 normalizeString(articleTypeOption.value).includes(normalizeString(searchTerm))
@@ -114,12 +142,11 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
                 selectedValues.map((v) => v.value)
               )
             }
-            selectedValues={currentParameters.selectedArticleTypes}
           />
           <hr className="my-4 border-primary-2" />
         </div>
       </div>
-    )
+    </ConfigProvider>
   );
 }
 
@@ -130,20 +157,3 @@ export default memo(({ isParametersVisible, setIsParametersVisible }: Props) => 
     setIsParametersVisible={setIsParametersVisible}
   />
 ));
-
-const getAuthorOptions = (mlResponse: AuthorSuggestionResponse) =>
-  mlResponse.map(
-    (authorResponse) =>
-      ({
-        key: authorResponse.name,
-        label: authorResponse.name,
-        value: authorResponse.name,
-      } as Suggestion)
-  );
-
-const getJournalOptions = (mlResponse: JournalSuggestionResponse) =>
-  mlResponse.map((journalResponse, index) => ({
-    key: journalResponse.eissn ?? journalResponse.print_issn ?? `${index}`,
-    label: journalResponse.title,
-    value: journalResponse.title,
-  }));

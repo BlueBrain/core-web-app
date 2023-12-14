@@ -1,27 +1,29 @@
 'use client';
 
-import { DownOutlined } from '@ant-design/icons';
-import { ConfigProvider, Select, Spin } from 'antd';
+import { CloseOutlined, DownOutlined } from '@ant-design/icons';
+import { Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
-import isNil from 'lodash/isNil';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Suggestion } from '@/types/literature';
 
 type Props = {
   onChange: (selectedValues: Suggestion[]) => void;
   fetchOptions: (searchTerm: string, signal?: AbortSignal) => Promise<Suggestion[]>;
+  initialSuggestions?: Suggestion[];
+  defaultValues?: Suggestion[];
   title: string;
-  selectedValues?: string[];
 };
 
 export default function AutoCompleteSearch({
+  title,
   onChange,
   fetchOptions,
-  title,
-  selectedValues,
+  defaultValues,
+  initialSuggestions,
 }: Props) {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>(initialSuggestions ?? []);
   const [fetching, setFetching] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string | null>();
 
   const previousFetchController = useRef<AbortController>();
 
@@ -58,52 +60,40 @@ export default function AutoCompleteSearch({
   }, [fetchOptions]);
 
   useEffect(() => {
-    const signal = cancelPreviousFetch();
-    fetchOptions('', signal)
-      .then((initialSuggestions) => {
-        setSuggestions(initialSuggestions);
-      })
-      .catch(() => {});
-
-    return () => {
-      cancelPreviousFetch();
-    };
-  }, [fetchOptions]);
-
-  const values = selectedValues
-    ? (selectedValues
-        .map((value) => suggestions.find((suggestion) => suggestion.key === value))
-        .filter((value) => !isNil(value)) as Suggestion[])
-    : [];
+    if (!searchTerm && initialSuggestions) {
+      setSuggestions(initialSuggestions);
+    }
+  }, [searchTerm, initialSuggestions]);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorBgContainer: '#E8F7FF',
-          colorFillQuaternary: '#91D5FF',
-          colorFillSecondary: '#91D5FF',
-          colorTextPlaceholder: '#40A9FF',
-        },
+    <Select
+      onSearch={(value: string) => {
+        debounceFetchOptions(value);
+        setSearchTerm(value);
       }}
-    >
-      <Select
-        onSearch={debounceFetchOptions}
-        placeholder={title}
-        value={values}
-        aria-label={title}
-        mode="multiple"
-        labelInValue
-        filterOption={false}
-        options={suggestions}
-        allowClear
-        onChange={onChange}
-        suffixIcon={fetching ? <Spin size="small" /> : <DownOutlined className="text-primary-4" />}
-        className="min-w-[120px] rounded"
-        bordered={false}
-        size="middle"
-        popupMatchSelectWidth={false}
-      />
-    </ConfigProvider>
+      placeholder={title}
+      aria-label={title}
+      mode="multiple"
+      labelInValue
+      filterOption={false}
+      options={suggestions}
+      allowClear={{
+        clearIcon: <CloseOutlined className="text-primary-8 " />,
+      }}
+      onChange={onChange}
+      suffixIcon={
+        initialSuggestions?.length === 0 || fetching ? (
+          <Spin size="small" data-testid="loading-suggestions" className="mr-9" />
+        ) : (
+          <DownOutlined className="text-primary-4" />
+        )
+      }
+      defaultValue={defaultValues}
+      className="min-w-[120px] rounded w-full"
+      bordered={false}
+      size="middle"
+      popupMatchSelectWidth={false}
+      notFoundContent={!fetching && <span>No suggestions found.</span>}
+    />
   );
 }

@@ -1,49 +1,52 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Provider } from 'jotai';
-import { format } from 'date-fns';
 import startCase from 'lodash/startCase';
 import GenerativeQAInputBar from '@/components/explore-section/Literature/components/GenerativeQAInput';
 import sessionAtom from '@/state/session';
 import { AuthorSuggestionResponse, JournalSuggestionResponse } from '@/types/literature';
 import { normalizeString } from '@/util/utils';
+import { selectTodayAsDate } from '__tests__/__utils__/utils';
 
-jest.mock('@/components/explore-section/Literature/api.ts', () => ({
-  _esModule: true,
-  fetchAuthorSuggestions: jest.fn().mockImplementation(
-    (searchTerm: string) =>
-      new Promise((resolve) => {
-        if (!searchTerm) {
-          resolve(mockAuthors);
-        } else {
-          const filtered = mockAuthors.filter((author) =>
-            normalizeString(author.name).includes(normalizeString(searchTerm))
-          );
-          resolve(filtered);
-        }
-      })
-  ),
-  fetchJournalSuggestions: jest.fn().mockImplementation(
-    (searchTerm: string) =>
-      new Promise((resolve) => {
-        if (!searchTerm) {
-          resolve(mockJournals);
-        } else {
-          const filtered = mockJournals.filter((journal) =>
-            normalizeString(journal.title).includes(normalizeString(searchTerm))
-          );
-          resolve(filtered);
-        }
-      })
-  ),
-  fetchArticleTypes: jest.fn().mockImplementation(
-    () =>
-      new Promise((resolve) => {
-        resolve(mockArticleResponse);
-      })
-  ),
-  getGenerativeQA: jest.fn(),
-}));
+jest.mock('@/components/explore-section/Literature/api.ts', () => {
+  const actual = jest.requireActual('@/components/explore-section/Literature/api.ts');
+  return {
+    ...actual,
+    fetchAuthorSuggestions: jest.fn().mockImplementation(
+      (searchTerm: string) =>
+        new Promise((resolve) => {
+          if (!searchTerm) {
+            resolve(mockAuthors);
+          } else {
+            const filtered = mockAuthors.filter((author) =>
+              normalizeString(author.name).includes(normalizeString(searchTerm))
+            );
+            resolve(filtered);
+          }
+        })
+    ),
+    fetchJournalSuggestions: jest.fn().mockImplementation(
+      (searchTerm: string) =>
+        new Promise((resolve) => {
+          if (!searchTerm) {
+            resolve(mockJournals);
+          } else {
+            const filtered = mockJournals.filter((journal) =>
+              normalizeString(journal.title).includes(normalizeString(searchTerm))
+            );
+            resolve(filtered);
+          }
+        })
+    ),
+    fetchArticleTypes: jest.fn().mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolve(mockArticleResponse);
+        })
+    ),
+    getGenerativeQA: jest.fn(),
+  };
+});
 
 jest.mock('next/navigation', () => {
   const actual = jest.requireActual('next/navigation');
@@ -285,26 +288,6 @@ describe('GenerativeQAInput', () => {
     fireEvent.change(questionInput, { target: { value: question } });
   };
 
-  const selectTodayAsDate = (type: 'start' | 'end') => {
-    const dateInput = screen.getByPlaceholderText(type === 'start' ? 'Start date' : 'End date');
-    fireEvent.mouseDown(dateInput);
-    fireEvent.click(dateInput);
-
-    const today = format(new Date(), 'yyyy-MM-dd');
-
-    const todayCell = document.querySelector(`td[title="${today}"]`)!;
-    expect(todayCell).toBeInTheDocument();
-    fireEvent.click(todayCell);
-
-    const dateInputAfter = screen.getByPlaceholderText(
-      type === 'start' ? 'Start date' : 'End date'
-    );
-    expect(dateInputAfter).toHaveValue(format(new Date(today), 'dd-MM-yyyy'));
-
-    const questionInput = screen.getByPlaceholderText('Your question');
-    fireEvent.click(questionInput);
-  };
-
   const openRefineSearchPanel = () => {
     const refineSearchButton = screen.getByRole('button', { name: 'Parameters' });
     fireEvent.click(refineSearchButton);
@@ -418,7 +401,7 @@ const createMockAuthor = (name: string) => ({
   docs_in_db: 1,
 });
 
-const mockAuthors: AuthorSuggestionResponse = [
+export const mockAuthors: AuthorSuggestionResponse = [
   createMockAuthor('Sterling Archer'),
   createMockAuthor('Lana Kane'),
   createMockAuthor('Cheryl Tunt'),

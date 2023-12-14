@@ -98,7 +98,7 @@ function useStreamGenerative({
         authors: selectedAuthors,
         journals: selectedJournals,
         articleTypes: selectedArticleTypes,
-        keywords: brainRegionTitle ? [brainRegionTitle] : undefined,
+        brainRegions: brainRegionTitle ? [brainRegionTitle] : undefined,
         fromDate: selectedDate?.gte
           ? formatDate(selectedDate.gte as Date, 'yyyy-MM-dd')
           : undefined,

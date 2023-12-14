@@ -2,13 +2,22 @@
 
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
+
 import LiteratureArticlesError from './error';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
-import { ArticleListing } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
 import { brainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
 import { BrainRegion } from '@/types/ontologies';
+import { ArticleListing } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
+import ArticleListFilters from '@/components/explore-section/Literature/components/ArticleList/ArticleListFilters';
+import { ArticleListFilters as Filters } from '@/components/explore-section/Literature/api';
+import {
+  articleListFilters,
+  articleListingFilterPanelOpen,
+  initialFilters,
+} from '@/state/explore-section/literature-filters';
+import { SettingsIcon } from '@/components/icons';
 
 export default function LiteratureArticleListingPage() {
   const params = useParams();
@@ -25,15 +34,63 @@ export default function LiteratureArticleListingPage() {
     },
     []
   );
+  const openFilterPanel = useSetAtom(articleListingFilterPanelOpen);
+  const [filters, updateFilters] = useAtom(articleListFilters);
 
   if (!currentExperiment) return <LiteratureArticlesError noExperimentSelected />;
   if (visualizedBrainRegionDetails.length <= 0)
     return <LiteratureArticlesError noBrainRegionSelected currentExperiment={currentExperiment} />;
 
   return (
-    <ArticleListing
-      brainRegions={visualizedBrainRegionDetails.map((br) => br.title)}
-      experiment={currentExperiment}
-    />
+    <div className="flex w-full">
+      <ArticleListFilters
+        values={filters}
+        onSubmit={updateFilters}
+        onClearFilters={() => {
+          updateFilters({ ...initialFilters });
+          openFilterPanel(false);
+        }}
+      />
+
+      <ArticleListing
+        brainRegions={visualizedBrainRegionDetails.map((br) => br.title)}
+        experiment={currentExperiment}
+        filters={filters}
+      >
+        <div className="flex justify-end w-[60vw] m-auto mb-3 max-w-7xl">
+          <button
+            type="button"
+            className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5 ml-3"
+            onClick={() => openFilterPanel(true)}
+          >
+            <div>
+              <span className="text-white font-bold mr-2">Filter</span>
+              <span className="text-primary-3 text-sm">
+                <span data-testid="active-filters-count">
+                  {getActiveFiltersCount(filters, initialFilters)}
+                </span>{' '}
+                Active Filters
+              </span>
+            </div>
+            <SettingsIcon className="rotate-90 text-white" />
+          </button>
+        </div>
+      </ArticleListing>
+    </div>
   );
 }
+
+const getActiveFiltersCount = (currentFilters: Filters, defaultFilters: Filters) => {
+  let activeFilters = 0;
+  if (
+    currentFilters.publicationDate?.lte !== defaultFilters.publicationDate?.lte ||
+    currentFilters.publicationDate?.gte !== defaultFilters.publicationDate?.gte
+  ) {
+    activeFilters += 1;
+  }
+  if (currentFilters.authors.length !== defaultFilters.authors.length) {
+    activeFilters += 1;
+  }
+
+  return activeFilters;
+};

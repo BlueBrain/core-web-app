@@ -10,6 +10,7 @@ import {
 } from './types';
 import { logError } from '@/util/logger';
 import { Plan } from '@/components/VirtualLab/VirtualLabSettingsComponent/PlanPanel';
+import { isJSON } from '@/components/explore-section/Literature/utils';
 
 export default class VirtualLabService {
   static LOCAL_STORAGE_ID = 'USERS_VIRTUAL_LABS';
@@ -194,9 +195,10 @@ export default class VirtualLabService {
     try {
       await pauseToSimulateNetworkAccess();
       const key = `${VirtualLabService.LOCAL_STORAGE_ID}/${user.username}`;
-      const localStorage = JSON.parse(window.localStorage.getItem(key) ?? '');
-      assertVirtualLabArray(localStorage);
-      return localStorage;
+      const localStorageItem = window.localStorage.getItem(key) ?? '';
+      const virtualLabs = isJSON(localStorageItem) ? JSON.parse(localStorageItem) : [];
+      assertVirtualLabArray(virtualLabs);
+      return virtualLabs;
     } catch (err) {
       logError(err);
       return [];

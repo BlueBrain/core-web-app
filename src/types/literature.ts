@@ -105,7 +105,7 @@ export type GenerativeQADTO = { question: string; questionId: string; askedAt: D
 export type GetGenerativeQAInput = {
   question: string;
   size?: number;
-  keywords?: string[];
+  brainRegions?: string[];
   fromDate?: string;
   endDate?: string;
   journals?: string[];
@@ -137,6 +137,11 @@ export type JournalSuggestionResponse = {
 
 export type AuthorSuggestionResponse = {
   name: string;
+  docs_in_db: number;
+}[];
+
+export type ArticleTypeSuggestionResponse = {
+  article_type: string;
   docs_in_db: number;
 }[];
 

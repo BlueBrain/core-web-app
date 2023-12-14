@@ -2,7 +2,6 @@ import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomFamily, atomWithDefault, atomWithStorage } from 'jotai/utils';
 import isNil from 'lodash/isNil';
 import isArray from 'lodash/isArray';
-import startCase from 'lodash/startCase';
 
 import { selectedBrainRegionAtom } from '../brain-regions';
 import {
@@ -11,11 +10,8 @@ import {
   FilterValues,
   ContextualLiteratureAtom,
   QuestionParameters,
-  Suggestion,
-  ArticleTypeSuggestion,
 } from '@/types/literature';
 import { Filter, GteLteValue } from '@/components/Filter/types';
-import { fetchArticleTypes } from '@/components/explore-section/Literature/api';
 
 export type BrainRegion = { id: string; title: string };
 
@@ -121,31 +117,6 @@ const brainRegionQAs = atom((get) => {
   );
 });
 
-async function getArticleTypes(): Promise<ArticleTypeSuggestion[]> {
-  const articleTypeResponse = await fetchArticleTypes();
-
-  return articleTypeResponse.map((articleResponse) => ({
-    articleType: articleResponse.article_type,
-    docCount: articleResponse.docs_in_db,
-  }));
-}
-
-const articleTypeSuggestionsAtom = atom<Promise<Suggestion[]>>(async () => {
-  try {
-    const articleTypeResponse = await getArticleTypes();
-    const options = articleTypeResponse
-      .filter((type) => !!type.articleType)
-      .map((type) => ({
-        key: type.articleType,
-        label: startCase(type.articleType),
-        value: type.articleType,
-      }));
-    return options;
-  } catch (err) {
-    return [];
-  }
-});
-
 export const initialParameters: QuestionParameters = {
   selectedDate: { lte: null, gte: null },
   selectedJournals: [],
@@ -170,6 +141,5 @@ export {
   contextualLiteratureAtom,
   brainRegionQAs,
   useLiteratureAtom,
-  articleTypeSuggestionsAtom,
   questionsParametersAtom,
 };

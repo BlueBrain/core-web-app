@@ -1,7 +1,12 @@
+import { format } from 'date-fns';
+import startCase from 'lodash/startCase';
+
 import {
   ReturnGetGenerativeQA,
   AuthorSuggestionResponse,
   JournalSuggestionResponse,
+  Suggestion,
+  ArticleTypeSuggestionResponse,
 } from '@/types/literature';
 import { bbsMlBaseUrl } from '@/config';
 import {
@@ -9,10 +14,11 @@ import {
   ArticleListingResponse,
   ExperimentDatasetCountPerBrainRegion,
 } from '@/api/explore-section/resources';
+import { GteLteValue } from '@/components/Filter/types';
 
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
-  keywords,
+  brainRegions,
   fromDate,
   endDate,
   journals,
@@ -22,11 +28,10 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
 }) => {
   try {
     const params = new URLSearchParams();
-    keywords?.forEach((keyword) => params.append('keywords', keyword));
+    brainRegions?.forEach((keyword) => params.append('regions', keyword));
     journals?.forEach((journal) => params.append('journals', journal));
     authors?.forEach((author) => params.append('authors', author));
     articleTypes?.forEach((articleType) => params.append('article_types', articleType));
-
     if (fromDate) {
       params.append('date_from', fromDate);
     }
@@ -57,7 +62,7 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
   }
 };
 
-const fetchArticleTypes = (): Promise<{ article_type: string; docs_in_db: number }[]> => {
+const fetchArticleTypes = (): Promise<ArticleTypeSuggestionResponse> => {
   return fetch(`${bbsMlBaseUrl}/suggestions/article_types`, {
     method: 'GET',
     headers: new Headers({
@@ -170,34 +175,50 @@ const fetchParagraphCountForBrainRegionAndExperiment = (
     }));
 };
 
+export const ML_DATE_FORMAT = 'yyyy-MM-dd';
+
+export type ArticleListFilters = {
+  publicationDate: GteLteValue | null;
+  authors: string[];
+};
+
 const fetchArticlesForBrainRegionAndExperiment = (
   accessToken: string,
   experimentName: string,
   brainRegions: string[],
   page: number,
+  filters: ArticleListFilters,
   signal?: AbortSignal
 ): Promise<{ articles: ArticleItem[]; total: number; currentPage: number; pages: number }> => {
   if (!accessToken) throw new Error('Access token should be defined');
 
   const url = bbsMlBaseUrl;
-  const brainRegionParams = brainRegions
-    .map((name) => encodeURIComponent(name.toLowerCase()))
-    .join('&regions=');
   const maxResults = 100;
 
-  return fetch(
-    `${url}/retrieval/article_listing?number_results=${maxResults}&topics=${encodeURIComponent(
-      experimentName
-    )}&regions=${brainRegionParams}&page=${page}`,
-    {
-      signal,
-      method: 'POST',
-      headers: new Headers({
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      }),
-    }
-  )
+  const params = new URLSearchParams();
+  brainRegions.forEach((keyword) => params.append('regions', keyword));
+  params.append('topics', experimentName);
+  params.append('number_results', `${maxResults}`);
+  params.append('page', `${page}`);
+
+  if (filters.publicationDate?.gte) {
+    params.append('date_from', format(filters.publicationDate?.gte, ML_DATE_FORMAT));
+  }
+  if (filters.publicationDate?.lte) {
+    params.append('date_to', format(filters.publicationDate?.lte, ML_DATE_FORMAT));
+  }
+  filters.authors?.forEach((author) => params.append('authors', author));
+
+  const urlQueryParams = params.toString().length > 0 ? `?${params.toString()}` : '';
+
+  return fetch(`${url}/retrieval/article_listing${urlQueryParams}`, {
+    signal,
+    method: 'POST',
+    headers: new Headers({
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
     .then((response: any) => {
       if (response.status === 404) {
         return [];
@@ -232,10 +253,39 @@ const fetchArticlesForBrainRegionAndExperiment = (
     });
 };
 
+const getAuthorOptions = (mlResponse: AuthorSuggestionResponse) =>
+  mlResponse.map(
+    (authorResponse) =>
+      ({
+        key: authorResponse.name,
+        label: authorResponse.name,
+        value: authorResponse.name,
+      } as Suggestion)
+  );
+
+const getJournalOptions = (mlResponse: JournalSuggestionResponse) =>
+  mlResponse.map((journalResponse, index) => ({
+    key: journalResponse.eissn ?? journalResponse.print_issn ?? `${index}`,
+    label: journalResponse.title,
+    value: journalResponse.title,
+  }));
+
+const getArticleTypeOptions = (mlResponse: ArticleTypeSuggestionResponse) =>
+  mlResponse
+    .filter((response) => !!response.article_type)
+    .map(({ article_type }) => ({
+      key: article_type,
+      label: startCase(article_type),
+      value: article_type,
+    }));
+
 export {
   getGenerativeQA,
   fetchArticleTypes,
   fetchAuthorSuggestions,
   fetchParagraphCountForBrainRegionAndExperiment,
   fetchArticlesForBrainRegionAndExperiment,
+  getAuthorOptions,
+  getJournalOptions,
+  getArticleTypeOptions,
 };
