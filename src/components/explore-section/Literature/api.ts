@@ -29,17 +29,18 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
   try {
     const params = new URLSearchParams();
     brainRegions?.forEach((keyword) => params.append('regions', keyword));
-    journals?.forEach((journal) => params.append('journals', journal));
-    authors?.forEach((author) => params.append('authors', author));
-    articleTypes?.forEach((articleType) => params.append('article_types', articleType));
+    const paramsWithFilters = addQueryParamsForFilters(params, { authors, journals, articleTypes });
+
     if (fromDate) {
-      params.append('date_from', fromDate);
+      paramsWithFilters.append('date_from', fromDate);
     }
     if (endDate) {
-      params.append('date_to', endDate);
+      paramsWithFilters.append('date_to', endDate);
     }
 
-    const urlQueryParams = params.toString().length > 0 ? `?${params.toString()}` : '';
+    const urlQueryParams =
+      paramsWithFilters.toString().length > 0 ? `?${paramsWithFilters.toString()}` : '';
+
     const url = `${bbsMlBaseUrl}/qa/streamed_generative${urlQueryParams}`;
     const response = await fetch(url, {
       signal,
@@ -144,7 +145,7 @@ const fetchParagraphCountForBrainRegionAndExperiment = (
 
   const url = bbsMlBaseUrl;
   const brainRegionParams = brainRegionNames
-    .map((name) => encodeURIComponent(name.toLowerCase()))
+    .map((name) => encodeURIComponent(name.toLowerCase().replace(':', '')))
     .join('&regions=');
 
   return fetch(
@@ -180,6 +181,8 @@ export const ML_DATE_FORMAT = 'yyyy-MM-dd';
 export type ArticleListFilters = {
   publicationDate: GteLteValue | null;
   authors: string[];
+  journals: Suggestion[];
+  articleTypes: string[];
 };
 
 const fetchArticlesForBrainRegionAndExperiment = (
@@ -201,15 +204,9 @@ const fetchArticlesForBrainRegionAndExperiment = (
   params.append('number_results', `${maxResults}`);
   params.append('page', `${page}`);
 
-  if (filters.publicationDate?.gte) {
-    params.append('date_from', format(filters.publicationDate?.gte, ML_DATE_FORMAT));
-  }
-  if (filters.publicationDate?.lte) {
-    params.append('date_to', format(filters.publicationDate?.lte, ML_DATE_FORMAT));
-  }
-  filters.authors?.forEach((author) => params.append('authors', author));
-
-  const urlQueryParams = params.toString().length > 0 ? `?${params.toString()}` : '';
+  const paramsWithFilter = addQueryParamsForFilters(params, { ...filters });
+  const urlQueryParams =
+    paramsWithFilter.toString().length > 0 ? `?${paramsWithFilter.toString()}` : '';
 
   return fetch(`${url}/retrieval/article_listing${urlQueryParams}`, {
     signal,
@@ -253,6 +250,33 @@ const fetchArticlesForBrainRegionAndExperiment = (
     });
 };
 
+const addQueryParamsForFilters = (
+  params: URLSearchParams,
+  { publicationDate, authors, journals, articleTypes }: Partial<ArticleListFilters>
+) => {
+  if (publicationDate?.gte) {
+    params.append('date_from', format(publicationDate?.gte, ML_DATE_FORMAT));
+  }
+  if (publicationDate?.lte) {
+    params.append('date_to', format(publicationDate?.lte, ML_DATE_FORMAT));
+  }
+
+  authors?.forEach((author) => params.append('authors', author));
+  articleTypes?.forEach((articleType) => params.append('article_types', articleType));
+
+  journals?.forEach((journal) => {
+    const eIssn = getJournalEIssn(journal);
+    const printIssn = getjournalPrintIssn(journal);
+
+    params.append('journals', eIssn);
+
+    if (eIssn !== printIssn) {
+      params.append('journals', printIssn);
+    }
+  });
+  return params;
+};
+
 const getAuthorOptions = (mlResponse: AuthorSuggestionResponse) =>
   mlResponse.map(
     (authorResponse) =>
@@ -267,7 +291,7 @@ const getJournalOptions = (mlResponse: JournalSuggestionResponse) =>
   mlResponse.map((journalResponse, index) => ({
     key: journalResponse.eissn ?? journalResponse.print_issn ?? `${index}`,
     label: journalResponse.title,
-    value: journalResponse.title,
+    value: journalResponse.print_issn ?? journalResponse.eissn ?? `${index}`,
   }));
 
 const getArticleTypeOptions = (mlResponse: ArticleTypeSuggestionResponse) =>
@@ -278,6 +302,9 @@ const getArticleTypeOptions = (mlResponse: ArticleTypeSuggestionResponse) =>
       label: startCase(article_type),
       value: article_type,
     }));
+
+const getJournalEIssn = (journal: Suggestion) => journal.key;
+const getjournalPrintIssn = (journal: Suggestion) => journal.value;
 
 export {
   getGenerativeQA,

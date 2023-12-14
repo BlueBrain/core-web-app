@@ -4,9 +4,9 @@ import { Provider } from 'jotai';
 import startCase from 'lodash/startCase';
 import GenerativeQAInputBar from '@/components/explore-section/Literature/components/GenerativeQAInput';
 import sessionAtom from '@/state/session';
-import { AuthorSuggestionResponse, JournalSuggestionResponse } from '@/types/literature';
 import { normalizeString } from '@/util/utils';
 import { selectTodayAsDate } from '__tests__/__utils__/utils';
+import { mockArticleResponse, mockAuthors, mockJournals } from '__tests__/__utils__/Literature';
 
 jest.mock('@/components/explore-section/Literature/api.ts', () => {
   const actual = jest.requireActual('@/components/explore-section/Literature/api.ts');
@@ -395,37 +395,3 @@ describe('GenerativeQAInput', () => {
   const autocompletePlaceholderSelector = '.ant-select-selection-placeholder';
   const defaultQuestion = "'How many neurons are there in the brain?'";
 });
-
-const createMockAuthor = (name: string) => ({
-  name,
-  docs_in_db: 1,
-});
-
-export const mockAuthors: AuthorSuggestionResponse = [
-  createMockAuthor('Sterling Archer'),
-  createMockAuthor('Lana Kane'),
-  createMockAuthor('Cheryl Tunt'),
-  createMockAuthor('Malory Archer'),
-  createMockAuthor('Dr. Krieger'),
-];
-
-const mockArticleResponse: { article_type: string; docs_in_db: number }[] = [
-  { article_type: 'abstract', docs_in_db: 1 },
-  { article_type: 'journal-paper', docs_in_db: 1 },
-  { article_type: 'paper', docs_in_db: 1 },
-];
-
-const createMockJournal = (title: string, index: number) => ({
-  title,
-  citescore: 1,
-  eissn: `${index}`,
-  print_issn: `${index}`,
-});
-
-const mockJournals: JournalSuggestionResponse = [
-  createMockJournal('Science', 1),
-  createMockJournal('BioTech', 2),
-  createMockJournal('NeuroScience', 3),
-  createMockJournal('Biology', 4),
-  createMockJournal('Botany', 5),
-];

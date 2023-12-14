@@ -15,7 +15,7 @@ import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import { ELECTRO_PHYSIOLOGY, NEURON_DENSITY } from '@/constants/explore-section/list-views';
 import { findButton, getButton, selectTodayAsDate } from '__tests__/__utils__/utils';
 import { ARTICLES_PER_PAGE } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
-import { mockAuthors } from '__tests__/__utils__/Literature';
+import { mockArticleResponse, mockAuthors, mockJournals } from '__tests__/__utils__/Literature';
 import { normalizeString } from '@/util/utils';
 import { ArticleListFilters } from '@/components/explore-section/Literature/api';
 
@@ -120,6 +120,25 @@ jest.mock('src/components/explore-section/Literature/api.ts', () => {
     fetchAuthorSuggestions: jest
       .fn()
       .mockImplementation((searchTerm: string) => mockAuthorsSuggestions(searchTerm)),
+    fetchJournalSuggestions: jest.fn().mockImplementation(
+      (searchTerm: string) =>
+        new Promise((resolve) => {
+          if (!searchTerm) {
+            resolve(mockJournals);
+          } else {
+            const filtered = mockJournals.filter((journal) =>
+              normalizeString(journal.title).includes(normalizeString(searchTerm))
+            );
+            resolve(filtered);
+          }
+        })
+    ),
+    fetchArticleTypes: jest.fn().mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolve(mockArticleResponse);
+        })
+    ),
   };
 });
 
@@ -367,16 +386,39 @@ describe('LiteratureArticleListingPage', () => {
     typeInInput('Authors', 'Tunt');
     await selectSuggestion('Tunt');
 
+    typeInInput('Journal', 'NeuroScience');
+    await selectSuggestion('NeuroScience');
+
+    typeInInput('Article type', 'abstract');
+    await selectSuggestion('abstract');
+
     applyFilters();
-    await expectActiveFiltersCount(2);
+    await expectActiveFiltersCount(4);
 
     await openFilterPanel();
-    const dateInputAfter = screen.getByPlaceholderText('Start date');
-    expect(dateInputAfter).toHaveValue(format(new Date(date), UI_DATE_FORMAT));
-    const selectedAuthors = document.querySelectorAll(selectedItemSelector);
-    expect(selectedAuthors).toHaveLength(1);
-    expect(selectedAuthors.item(0).textContent).toEqual('Cheryl Tunt');
+
+    const dateInput = screen.getByPlaceholderText('Start date');
+    expect(dateInput).toHaveValue(format(new Date(date), UI_DATE_FORMAT));
+
+    expect(getSelectedFilterOptions('Authors')!.item(0).textContent).toEqual('Cheryl Tunt');
+    expect(getSelectedFilterOptions('Journals')!.item(0).textContent).toEqual('NeuroScience');
+    expect(getSelectedFilterOptions('Article type')!.item(0).textContent).toEqual('abstract');
   });
+
+  const getSelectedFilterOptions = (filterName: 'Authors' | 'Journals' | 'Article type') => {
+    switch (filterName) {
+      case 'Authors':
+        return document.querySelectorAll(`[data-testid="author-input"] ${selectedItemSelector}`);
+      case 'Journals':
+        return document.querySelectorAll(`[data-testid="journal-input"] ${selectedItemSelector}`);
+      case 'Article type':
+        return document.querySelectorAll(
+          `[data-testid="article-type-input"] ${selectedItemSelector}`
+        );
+      default:
+        document.querySelectorAll(selectedItemSelector);
+    }
+  };
 
   const expectActiveFiltersCount = async (expectedCount: number) => {
     const actualCount = (await screen.findByTestId('active-filters-count')).textContent;

@@ -9,7 +9,9 @@ import { unwrap } from 'jotai/utils';
 import AutoCompleteSearch from '../AutoCompleteSearch';
 import {
   articleListingFilterPanelOpen,
+  articleTypeSuggestionsAtom,
   initialAuthorSuggestionsAtom,
+  initialJournalSuggestionsAtom,
 } from '@/state/explore-section/literature-filters';
 import { DateRange } from '@/components/Filter';
 import { Suggestion } from '@/types/literature';
@@ -17,8 +19,12 @@ import ReloadIcon from '@/components/icons/Reload';
 import {
   ArticleListFilters as ArticleFilters,
   fetchAuthorSuggestions,
+  fetchJournalSuggestions,
+  getJournalOptions,
   getAuthorOptions,
+  getArticleTypeOptions,
 } from '@/components/explore-section/Literature/api';
+import { normalizeString } from '@/util/utils';
 
 type Props = {
   values: ArticleFilters;
@@ -31,6 +37,11 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
   const initialAuthorSuggestions = useAtomValue(
     useMemo(() => unwrap(initialAuthorSuggestionsAtom), [])
   );
+  const initialJournalSuggestions = useAtomValue(
+    useMemo(() => unwrap(initialJournalSuggestionsAtom), [])
+  );
+  const articleTypesResponse = useAtomValue(useMemo(() => unwrap(articleTypeSuggestionsAtom), []));
+  const articleTypes = articleTypesResponse ? getArticleTypeOptions(articleTypesResponse) : [];
 
   const [filters, updateFilters] = useReducer(
     (prev: ArticleFilters, next: Partial<ArticleFilters>) => ({
@@ -44,6 +55,11 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
   const memoizedFetchAuthors = useCallback(
     (searchTerm: string, signal?: AbortSignal) =>
       fetchAuthorSuggestions(searchTerm, signal).then((authors) => getAuthorOptions(authors)),
+    []
+  );
+  const memoizedFetchJournals = useCallback(
+    (searchTerm: string, signal?: AbortSignal) =>
+      fetchJournalSuggestions(searchTerm, signal).then((journal) => getJournalOptions(journal)),
     []
   );
 
@@ -112,15 +128,50 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
             },
           }}
         >
+          <div data-testid="journal-input">
+            <h3 className="font-bold text-xl text-white mt-12">Journal</h3>
+            <AutoCompleteSearch
+              key="Journal"
+              title="Journal"
+              initialSuggestions={initialJournalSuggestions}
+              defaultValues={filters.journals}
+              fetchOptions={memoizedFetchJournals}
+              onChange={(selectedValues: Suggestion[]) =>
+                updateFilters({ journals: [...selectedValues] })
+              }
+            />
+            <hr className="my-4 border-primary-2" />
+          </div>
+
           <div data-testid="author-input">
             <h3 className="font-bold text-xl text-white mt-12">Authors</h3>
             <AutoCompleteSearch
+              key="Authors"
               title="Authors"
               initialSuggestions={initialAuthorSuggestions}
               defaultValues={filters.authors.map((a) => ({ label: a, key: a, value: a }))}
               fetchOptions={memoizedFetchAuthors}
               onChange={(selectedValues: Suggestion[]) =>
                 updateFilters({ authors: selectedValues.map((v) => v.value) })
+              }
+            />
+            <hr className="my-4 border-primary-2" />
+          </div>
+
+          <div data-testid="article-type-input">
+            <h3 className="font-bold text-xl text-white mt-12">Article type</h3>
+            <AutoCompleteSearch
+              key="ArticleType"
+              title="Article type"
+              initialSuggestions={articleTypes}
+              defaultValues={filters.articleTypes.map((a) => ({ label: a, key: a, value: a }))}
+              fetchOptions={async (searchTerm: string) =>
+                (articleTypes ?? []).filter((articleTypeOption) =>
+                  normalizeString(articleTypeOption.value).includes(normalizeString(searchTerm))
+                )
+              }
+              onChange={(selectedValues: Suggestion[]) =>
+                updateFilters({ articleTypes: selectedValues.map((v) => v.value) })
               }
             />
             <hr className="my-4 border-primary-2" />

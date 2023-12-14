@@ -10,6 +10,7 @@ import {
   FilterValues,
   ContextualLiteratureAtom,
   QuestionParameters,
+  Suggestion,
 } from '@/types/literature';
 import { Filter, GteLteValue } from '@/components/Filter/types';
 
@@ -129,7 +130,7 @@ const questionsParametersAtom = atom<Partial<QuestionParameters>>(initialParamet
 export function useQuestionParameter() {
   const setQuestionParameters = useSetAtom(questionsParametersAtom);
 
-  return (field: keyof QuestionParameters, values: GteLteValue | string[]) =>
+  return (field: keyof QuestionParameters, values: GteLteValue | Suggestion[] | string[]) =>
     setQuestionParameters((prev) => ({
       ...prev,
       [field]: values,

@@ -268,6 +268,15 @@ const getFilterBuckets = (
       doc_count: frequency,
       key: value,
       key_as_string: value,
+      label: {
+        buckets: [
+          {
+            doc_count: frequency,
+            key: value,
+            key_as_string: value,
+          },
+        ],
+      },
     })),
     excludeOwnFilter: { buckets: [] },
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useReducer } from 'react';
+import { memo, useState } from 'react';
 import { Button, Tooltip } from 'antd';
 import { useAtomValue } from 'jotai';
 import { SendOutlined, InfoCircleOutlined } from '@ant-design/icons';
@@ -12,10 +12,16 @@ import { classNames } from '@/util/utils';
 import { literatureAtom } from '@/state/literature';
 
 const REFINE_SEARCH_HELP_TEXT = `Before launching the search related to your question,
- use these parameters to obtain a more 
+ use these parameters to obtain a more
  specific answer.`;
 
-function SearchButton({ isParametersVisible }: { isParametersVisible: boolean }) {
+function SearchButton({
+  isParametersVisible,
+  closeParametersPanel,
+}: {
+  isParametersVisible: boolean;
+  closeParametersPanel: () => void;
+}) {
   const { query, isGenerating } = useAtomValue(literatureAtom);
   const isQuestionEmpty = query.trim().length === 0;
   return (
@@ -25,6 +31,7 @@ function SearchButton({ isParametersVisible }: { isParametersVisible: boolean })
         disabled={isQuestionEmpty || isGenerating}
         title={isQuestionEmpty ? 'Please enter a question' : ''}
         className="border-[1px] border-solid border-gray rounded px-4 py-2 text-primary-8 disabled:text-gray-400"
+        onClick={closeParametersPanel}
       >
         Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
       </button>
@@ -33,7 +40,7 @@ function SearchButton({ isParametersVisible }: { isParametersVisible: boolean })
 }
 
 function QASettings() {
-  const [isParametersVisible, toggleParametersVisible] = useReducer((val) => !val, false);
+  const [isParametersVisible, setIsParametersVisible] = useState(false);
   return (
     <>
       <div
@@ -51,7 +58,7 @@ function QASettings() {
           <InfoCircleOutlined className="mx-2 text-primary-5" />
         </Tooltip>
         <Button
-          onClick={toggleParametersVisible}
+          onClick={() => setIsParametersVisible(true)}
           className="border rounded-none border-primary-4 text-primary-8 bg-primary-0"
         >
           Parameters
@@ -59,9 +66,11 @@ function QASettings() {
       </div>
       <QuestionParameters
         isParametersVisible={isParametersVisible}
-        setIsParametersVisible={toggleParametersVisible}
+        setIsParametersVisible={() => setIsParametersVisible((current) => !current)}
       />
-      <SearchButton {...{ isParametersVisible }} />
+      <SearchButton
+        {...{ isParametersVisible, closeParametersPanel: () => setIsParametersVisible(false) }}
+      />
     </>
   );
 }

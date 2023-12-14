@@ -108,7 +108,7 @@ export type GetGenerativeQAInput = {
   brainRegions?: string[];
   fromDate?: string;
   endDate?: string;
-  journals?: string[];
+  journals?: Suggestion[];
   authors?: string[];
   articleTypes?: string[];
   signal?: AbortSignal;
@@ -206,7 +206,7 @@ export type Suggestion = {
 
 export type QuestionParameters = {
   selectedDate: GteLteValue;
-  selectedJournals: string[];
+  selectedJournals: Suggestion[];
   selectedAuthors: string[];
   selectedArticleTypes: string[];
 };

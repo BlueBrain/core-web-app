@@ -62,6 +62,8 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
     []
   );
 
+  if (!isParametersVisible) return null;
+
   return (
     <ConfigProvider
       theme={{
@@ -100,11 +102,11 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="Journal"
             title="Journal"
+            defaultValues={currentParameters.selectedJournals}
             initialSuggestions={initialJournalSuggestions}
             fetchOptions={fetchJournals}
             onChange={(selectedValues: Suggestion[]) => {
-              const selectedJournals = selectedValues.map((option) => option.key);
-              update('selectedJournals', selectedJournals);
+              update('selectedJournals', [...selectedValues]);
             }}
           />
           <hr className="my-4 border-primary-2" />
@@ -114,6 +116,11 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="Authors"
             title="Authors"
+            defaultValues={currentParameters.selectedAuthors?.map((a) => ({
+              label: a,
+              key: a,
+              value: a,
+            }))}
             fetchOptions={fetchAuthors}
             initialSuggestions={initialAuthorSuggestions}
             onChange={(selectedValues: Suggestion[]) =>
@@ -130,6 +137,11 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           <AutoCompleteSearch
             key="ArticleTypes"
             title="Article Types"
+            defaultValues={currentParameters.selectedArticleTypes?.map((a) => ({
+              label: a,
+              key: a,
+              value: a,
+            }))}
             initialSuggestions={articleTypes}
             fetchOptions={async (searchTerm: string) =>
               (articleTypes ?? []).filter((articleTypeOption) =>

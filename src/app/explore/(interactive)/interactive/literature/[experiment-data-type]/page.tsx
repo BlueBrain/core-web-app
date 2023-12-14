@@ -82,13 +82,23 @@ export default function LiteratureArticleListingPage() {
 
 const getActiveFiltersCount = (currentFilters: Filters, defaultFilters: Filters) => {
   let activeFilters = 0;
+
   if (
     currentFilters.publicationDate?.lte !== defaultFilters.publicationDate?.lte ||
     currentFilters.publicationDate?.gte !== defaultFilters.publicationDate?.gte
   ) {
     activeFilters += 1;
   }
+
   if (currentFilters.authors.length !== defaultFilters.authors.length) {
+    activeFilters += 1;
+  }
+
+  if (currentFilters.journals.length !== defaultFilters.journals.length) {
+    activeFilters += 1;
+  }
+
+  if (currentFilters.articleTypes.length !== defaultFilters.articleTypes.length) {
     activeFilters += 1;
   }
 

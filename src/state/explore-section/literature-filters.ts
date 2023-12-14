@@ -15,7 +15,10 @@ export const articleListingFilterPanelOpen = atom(false);
 export const initialFilters: ArticleListFilters = {
   publicationDate: null,
   authors: [],
+  journals: [],
+  articleTypes: [],
 };
+
 export const articleListFilters = atom<ArticleListFilters>(initialFilters);
 
 /**

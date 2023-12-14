@@ -41,6 +41,11 @@ export default function AutoCompleteSearch({
     const loadOptions = (value: string) => {
       const signal = cancelPreviousFetch();
 
+      if (!value) {
+        setFetching(false);
+        return;
+      }
+
       setFetching(true);
 
       fetchOptions(value, signal)
