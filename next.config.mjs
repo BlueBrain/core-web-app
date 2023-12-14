@@ -60,6 +60,7 @@ const nextConfig = {
       },
     ];
   },
+  transpilePackages: ['jotai-devtools'],
 };
 
 export default withBundleAnalyzer(withSentryConfig(nextConfig, SentryWebpackPluginOptions));

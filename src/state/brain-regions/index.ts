@@ -397,3 +397,9 @@ export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
 export const brainRegionHierarchyStateAtom = atom<NavValue | null>(
   initializationBrainRegion ? initializationBrainRegion.brainRegionHierarchyState : null
 );
+
+brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';
+brainRegionSidebarIsCollapsedAtom.debugLabel = 'brainRegionSidebarIsCollapsedAtom';
+selectedBrainRegionAtom.debugLabel = 'selectedBrainRegionAtom';
+setSelectedBrainRegionAtom.debugLabel = 'setSelectedBrainRegionAtom';
+brainRegionsAlternateTreeAtom.debugLabel = 'brainRegionsAlternateTreeAtom';
