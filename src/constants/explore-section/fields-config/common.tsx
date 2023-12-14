@@ -4,7 +4,7 @@ import {
   selectorFnBasic,
   selectorFnContributors,
   selectorFnDate,
-} from '@/state/explore-section/listing-selectors';
+} from '@/util/explore-section/listing-selectors';
 import Contributors from '@/components/explore-section/Contributors';
 import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
 import timeElapsedFromToday from '@/util/date';

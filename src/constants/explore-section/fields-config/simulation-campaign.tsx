@@ -1,5 +1,5 @@
 import { IndexColContent } from '@/components/ListTable';
-import { selectorFnStatistic } from '@/state/explore-section/listing-selectors';
+import { selectorFnStatistic } from '@/util/explore-section/listing-selectors';
 import ListField from '@/components/explore-section/Fields/ListField';
 import SimulationCampaignStatus from '@/components/explore-section/SimulationCampaignStatus';
 import timeElapsedFromToday from '@/util/date';

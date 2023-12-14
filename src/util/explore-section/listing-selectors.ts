@@ -9,6 +9,7 @@ import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
+import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 
 type Record = { _source: Experiment };
 
@@ -116,7 +117,7 @@ export const selectorFnDate = (date: string): string =>
  * @param {string} text - The text value to render.
  * @returns {string} - The rendered text value.
  */
-export const selectorFnBasic = (text: string): string => text;
+export const selectorFnBasic = (text?: string): string => text || NO_DATA_STRING;
 
 export const selectorFnSpecies = (species?: IdLabelEntity | IdLabelEntity[]) => {
   if (species) {

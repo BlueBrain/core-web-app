@@ -21,7 +21,7 @@ export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
   if (detail?.subject?.age?.minValue && detail?.subject?.age?.maxValue) {
     return `${detail.subject?.age.minValue} - ${detail.subject?.age.maxValue} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
   }
-  return undefined;
+  return NO_DATA_STRING;
 };
 
 // renders mtype or 'no MType text if not present
@@ -45,29 +45,10 @@ export const eTypeSelectorFn = (detail: DeltaResource | null) => {
 // renders standard error of the mean if present
 export const semSelectorFn = (detail: DeltaResource | null) => {
   const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);
-  return seriesArray?.find((series) => series.statistic === 'standard error of the mean')?.value;
-};
-
-export const attrsSelectorFn = (
-  detail: DeltaResource<{ attrs: { id: string; label: string } }> | null
-) => {
-  if (!detail?.attrs) return [];
-
-  return Object.keys(detail?.attrs).map((attr) => ({
-    id: attr,
-    label: attr,
-  }));
-};
-
-export const dimensionsSelectorFn = (
-  detail: DeltaResource<{ coords: { dimension: { id: string; label: string } } }> | null
-) => {
-  if (!detail?.coords) return [];
-
-  return Object.keys(detail.coords).map((dimension) => ({
-    id: dimension,
-    label: dimension,
-  }));
+  return (
+    seriesArray?.find((series) => series.statistic === 'standard error of the mean')?.value ||
+    NO_DATA_STRING
+  );
 };
 
 /**

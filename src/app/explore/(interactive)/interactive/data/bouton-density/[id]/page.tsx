@@ -35,9 +35,6 @@ const fields = [
     field: 'createdAt',
   },
   {
-    field: 'reference',
-  },
-  {
     field: 'numberOfMeasurements',
     className: 'col-span-2 col-start-5',
   },

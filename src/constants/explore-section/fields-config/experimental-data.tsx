@@ -8,14 +8,14 @@ import {
   selectorFnSpecies,
   selectorFnStatistic,
   selectorFnSynaptic,
-} from '@/state/explore-section/listing-selectors';
+} from '@/util/explore-section/listing-selectors';
 import {
   eTypeSelectorFn,
   mTypeSelectorFn,
   selectorFnStatisticDetail,
   semSelectorFn,
   subjectAgeSelectorFn,
-} from '@/state/explore-section/selector-functions';
+} from '@/util/explore-section/selector-functions';
 import Species from '@/components/explore-section/Species';
 import WeightField from '@/components/explore-section/Fields/WeightField';
 import LayerThicknessField from '@/components/explore-section/Fields/LayerThicknessField';

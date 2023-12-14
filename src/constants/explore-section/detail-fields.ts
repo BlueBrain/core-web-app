@@ -12,14 +12,7 @@ export const NEURON_MORPHOLOGY_FIELDS = [
     field: 'subjectSpecies',
   },
   {
-    field: 'reference',
-  },
-  {
     field: 'brainRegion',
-  },
-  {
-    field: 'conditions',
-    className: 'col-span-2',
   },
   {
     field: 'contributors',
