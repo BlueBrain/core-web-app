@@ -8,7 +8,7 @@ export default function EphysPage() {
     <ExploreSectionListingView
       enableDownload
       experimentTypeName={ELECTRO_PHYSIOLOGY}
-      brainRegionSource="visible"
+      brainRegionSource="data"
     />
   );
 }

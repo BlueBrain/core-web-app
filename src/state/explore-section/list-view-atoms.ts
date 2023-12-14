@@ -152,7 +152,7 @@ export const queryAtom = atomFamily(
       const sortState = get(sortStateAtom);
 
       const descendantIds: string[] =
-        brainRegionSource === 'visible' ? await get(descendantIdsAtom('visible')) : [];
+        brainRegionSource === 'data' ? await get(descendantIdsAtom('data')) : [];
 
       const filters = await get(filtersAtom({ experimentTypeName }));
 

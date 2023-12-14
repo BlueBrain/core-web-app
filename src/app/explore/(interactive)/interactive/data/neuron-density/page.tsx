@@ -8,7 +8,7 @@ export default function NeuronDensityListingPage() {
     <ExploreSectionListingView
       enableDownload
       experimentTypeName={NEURON_DENSITY}
-      brainRegionSource="visible"
+      brainRegionSource="data"
     />
   );
 }

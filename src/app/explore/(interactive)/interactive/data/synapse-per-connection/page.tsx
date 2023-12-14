@@ -7,7 +7,7 @@ export default function SynapsePerConnectionListingPage() {
   return (
     <ExploreSectionListingView
       experimentTypeName={SYNAPSE_PER_CONNECTION}
-      brainRegionSource="visible"
+      brainRegionSource="data"
     />
   );
 }
