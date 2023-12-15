@@ -56,20 +56,23 @@ export function MainMenuSingleItem({
   selected,
   onSelect,
 }: MainMenuItemProps) {
+  const exploreTab = id === 'main-explore-entry';
   return (
     <button
       type="button"
       onClick={onSelect(id)}
       className={classNames(
         'py-4 px-5 h-full hover:bg-white text-left group flex-1 basis-1/3 flex flex-col items-start justify-stretch',
-        bgcolor,
-        selected && 'bg-white shadow-lg'
+        selected && (exploreTab ? 'bg-black' : 'bg-white shadow-lg'),
+        selected && 'after:bg-black h-[calc(100%+1rem)]',
+        !selected && bgcolor
       )}
     >
       <h3
         className={classNames(
           'text-lg lg:text-2xl xl:text-3xl font-bold group-hover:text-primary-8',
-          selected ? 'text-primary-8' : 'text-white'
+          selected && !exploreTab ? 'text-primary-8' : 'text-white',
+          selected && exploreTab && 'text-white'
         )}
       >
         {title}
@@ -77,7 +80,8 @@ export function MainMenuSingleItem({
       <p
         className={classNames(
           'line-clamp-2 text-sm font-normal group-hover:text-primary-8',
-          selected ? 'text-primary-8' : 'text-white'
+          selected && !exploreTab ? 'text-primary-8' : 'text-white',
+          selected && exploreTab && 'text-white'
         )}
       >
         {description}
@@ -88,12 +92,11 @@ export function MainMenuSingleItem({
 
 export function RenderedMainDetails({ id }: { id: MainMenuListKey }) {
   const menuItem = MAIN_MENU_LIST.find((comp) => comp.id === id);
-
   if (!menuItem) return null;
 
   const { Component } = menuItem;
   return (
-    <div className="relative overflow-y-auto pr-1 primary-scrollbar w-full h-full mt-1 transition-all will-change-contents duration-300 ease-in-out">
+    <div className="relative overflow-y-auto w-full h-full mt-1 transition-all will-change-contents duration-300 ease-in-out">
       <Component />
     </div>
   );
@@ -119,8 +122,8 @@ export default function MainMenu() {
   }, [tab]);
 
   return (
-    <div className="relative flex flex-col justify-start gap-px items-stretch w-full h-[calc(100vh-2.5rem)]">
-      <div className="grid grid-cols-3 gap-x-1 col-start-2 col-span-3 bg-primary-8">
+    <div className="relative flex flex-col justify-start items-stretch w-full h-[calc(100vh-2.5rem)]">
+      <div className="grid grid-cols-3 gap-x-1 col-start-2 col-span-3">
         {MAIN_MENU_LIST.map(({ id, title, description, bgcolor }) => (
           <MainMenuSingleItem
             key={id}
