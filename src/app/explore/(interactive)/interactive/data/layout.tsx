@@ -6,6 +6,7 @@ import type { MenuProps } from 'antd';
 import { Menu, Button } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { usePathname, useRouter, useParams } from 'next/navigation';
+
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import Link from '@/components/Link';
 import {
@@ -32,16 +33,15 @@ function MenuItemLabel({
 
 function InteractiveLink() {
   return (
-    <div className="bg-neutral-1 text-primary-8 w-10 h-full flex items-start justify-center">
-      <Link
-        className="whitespace-pre text-sm rotate-180 mt-4"
-        href={INTERACTIVE_PATH}
-        style={{ writingMode: 'vertical-rl' }}
-      >
+    <Link
+      className="pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] h-full flex flex-col items-center"
+      href={INTERACTIVE_PATH}
+    >
+      <ArrowRightOutlined className="rotate-180 mt-1.5 mb-4" />
+      <div style={{ writingMode: 'vertical-rl', rotate: '180deg' }}>
         Back to interactive exploration
-        <ArrowRightOutlined className="mt-6" />
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 }
 

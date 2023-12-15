@@ -119,7 +119,7 @@ function CollapsedSidebar() {
   return (
     <div className="flex flex-col items-center pt-2 w-[40px]">
       <Button
-        className="mb-4"
+        className="mb-2"
         type="text"
         size="small"
         icon={<PlusOutlined style={{ color: 'white' }} />}

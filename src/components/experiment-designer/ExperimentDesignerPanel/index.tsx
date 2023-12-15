@@ -43,7 +43,7 @@ export default function ExperimentDesignerPanel() {
       {!isOpen && (
         <div className="flex flex-col items-center pt-2">
           <Button
-            className="mb-4"
+            className="mb-2"
             type="text"
             size="small"
             icon={<PlusOutlined style={{ color: 'white' }} />}

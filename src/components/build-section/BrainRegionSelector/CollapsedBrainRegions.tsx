@@ -1,10 +1,9 @@
-import { useMemo, Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useAtomValue } from 'jotai';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
-import { getBottomUpPath, RegionFullPathType } from '@/util/brain-hierarchy';
-import { brainRegionsFilteredTreeAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export default function CollapsedBrainRegionsSidebar({
   setIsCollapsed,
@@ -12,28 +11,11 @@ export default function CollapsedBrainRegionsSidebar({
   setIsCollapsed: Dispatch<SetStateAction<boolean>>;
 }) {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const brainRegions = useAtomValue(brainRegionsFilteredTreeAtom);
-
-  const regionFullPath: RegionFullPathType[] = useMemo(
-    () =>
-      brainRegions && selectedBrainRegion
-        ? getBottomUpPath(brainRegions, selectedBrainRegion.id)
-        : [],
-    [selectedBrainRegion, brainRegions]
-  );
-
-  const displaySubregions = [...regionFullPath].reverse();
-  const selectedRegion = displaySubregions.shift();
-
-  const subRegionsStr = displaySubregions.reduce(
-    (acc, subregions) => `${acc}\u00A0\u00A0\u00A0${subregions.name}`,
-    ''
-  );
 
   return (
     <div className="flex flex-col items-center pt-2 w-[40px]">
       <Button
-        className="mb-4"
+        className="mb-2"
         type="text"
         size="small"
         icon={<PlusOutlined style={{ color: 'white' }} />}
@@ -50,8 +32,9 @@ export default function CollapsedBrainRegionsSidebar({
         role="presentation"
         onClick={() => setIsCollapsed(false)}
       >
-        <div className="text-sm font-bold whitespace-nowrap">{selectedRegion?.name}</div>
-        <div className="text-sm font-thin truncate">{subRegionsStr}</div>
+        <div className="text-sm whitespace-nowrap text-secondary-4">
+          {selectedBrainRegion?.title}
+        </div>
         <div className="text-lg font-bold whitespace-nowrap">Brain region</div>
       </div>
     </div>
