@@ -2,7 +2,6 @@ import { ReactNode, useMemo } from 'react';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { format } from 'date-fns';
 import { InfoCircleFilled } from '@ant-design/icons';
-import sortBy from 'lodash/sortBy';
 import { useAtom } from 'jotai';
 import uniqBy from 'lodash/uniqBy';
 import { Filter } from './types';
@@ -136,14 +135,11 @@ export default function CheckList({
     <SearchFilter data={data} filter={filter} values={values} onChange={onChange} />
   );
 
-  // Sort the options array by the checked property using Lodash's sortBy function
-  const sortedOptions = useMemo(() => sortBy(options, { checked: false }), [options]);
-
   return (
     <div className="flex flex-col gap-4">
-      {sortedOptions && sortedOptions.length > 0 ? (
+      {options && options.length > 0 ? (
         children({
-          options: sortedOptions,
+          options,
           renderLength,
           handleCheckedChange,
           filterField: filter.field,

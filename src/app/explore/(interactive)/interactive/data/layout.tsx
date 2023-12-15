@@ -14,6 +14,21 @@ import {
   INTERACTIVE_PATH,
 } from '@/constants/explore-section/experiment-types';
 import { SIMULATION_CAMPAIGNS } from '@/constants/explore-section/list-views';
+import useTotalResults from '@/hooks/useTotalResults';
+
+const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
+
+const brainRegionSource = 'data';
+
+function MenuItemLabel({
+  label,
+  experimentTypeName,
+}: {
+  label: string;
+  experimentTypeName: string;
+}) {
+  return `${label} ${useTotalResults({ experimentTypeName, brainRegionSource })}`;
+}
 
 function InteractiveLink() {
   return (
@@ -49,14 +64,14 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
   if (params?.id)
     return <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>;
 
-  const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
-
   const items = Object.keys(EXPERIMENT_DATA_TYPES)
     .filter((item) => item !== SIMULATION_CAMPAIGNS)
     .map((k) => {
       return {
+        active: EXPERIMENT_DATA_TYPES[k].name === activeExperimentPath,
         label: EXPERIMENT_DATA_TYPES[k].title,
         key: EXPERIMENT_DATA_TYPES[k].name,
+        experimentTypeName: k,
       };
     });
 
@@ -92,12 +107,12 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
                 key={item.key}
                 className="font-semibold text-center"
                 style={{
-                  backgroundColor: item.key === activeExperimentPath ? 'white' : '#002766',
-                  color: item.key === activeExperimentPath ? '#002766' : 'white',
+                  backgroundColor: item.active ? 'white' : '#002766',
+                  color: item.active ? '#002766' : 'white',
                   flexBasis: menuItemWidth,
                 }}
               >
-                {item.label}
+                <MenuItemLabel label={item.label} experimentTypeName={item.experimentTypeName} />
               </Menu.Item>
             ))}
           </Menu>
