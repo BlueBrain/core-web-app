@@ -48,12 +48,9 @@ export default function Main() {
         }}
       />
       <div className="fixed left-0 z-20">
-        <ApplicationSidebar
-          title={MainSidebarHeader}
-          control={MainNavigation}
-          account={null}
-          navigation={null}
-        />
+        <ApplicationSidebar title={MainSidebarHeader} account={null} navigation={null}>
+          {({ expanded }) => <MainNavigation {...{ expanded }} />}
+        </ApplicationSidebar>
       </div>
 
       <div className="h-screen pr-7 pl-14 py-5 justify-end gap-x-2 grid grid-cols-[1fr_3fr]">

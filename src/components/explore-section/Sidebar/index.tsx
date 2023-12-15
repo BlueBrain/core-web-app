@@ -98,17 +98,14 @@ function AnonymousExploreSideBarNavigation({ expanded }: { expanded: boolean }) 
 
 export default function ExploreSidebar() {
   const { status } = useSession();
-  const control = status === 'unauthenticated' ? MainNavigation : ExploreNavigation;
+  const Control = status === 'unauthenticated' ? MainNavigation : ExploreNavigation;
   const navigation =
     status === 'unauthenticated' ? AnonymousExploreSideBarNavigation : AppNavigation;
   const account = status === 'unauthenticated' ? null : DefaultAccountPanel;
 
   return (
-    <ApplicationSidebar
-      title={ExploreSideBarHeader}
-      control={control}
-      navigation={navigation}
-      account={account}
-    />
+    <ApplicationSidebar title={ExploreSideBarHeader} navigation={navigation} account={account}>
+      {({ expanded }) => <Control {...{ expanded }} />}
+    </ApplicationSidebar>
   );
 }

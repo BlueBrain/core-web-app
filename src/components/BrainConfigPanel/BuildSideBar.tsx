@@ -257,9 +257,8 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
 
 export default function BuildSideBar({ baseHref }: { baseHref: string }) {
   return (
-    <ApplicationSidebar
-      title={BuildSideBarHeader}
-      control={({ expanded }) => BuildSideBarControlPanel({ baseHref, expanded })}
-    />
+    <ApplicationSidebar title={BuildSideBarHeader}>
+      {({ expanded }) => <BuildSideBarControlPanel {...{ expanded, baseHref }} />}
+    </ApplicationSidebar>
   );
 }

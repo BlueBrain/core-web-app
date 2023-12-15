@@ -1,4 +1,4 @@
-import { useReducer, useRef } from 'react';
+import { Suspense, useReducer, useRef } from 'react';
 import { Button } from 'antd';
 import Link from 'next/link';
 import kebabCase from 'lodash/kebabCase';
@@ -34,9 +34,9 @@ type ApplicationSidebarHeaderProps = {
 type P = { expanded: boolean };
 type ApplicationSidebarProps = {
   title: ({ expanded }: P) => React.ReactNode;
-  control: ({ expanded }: P) => React.ReactNode;
   account?: (({ expanded }: P) => React.ReactNode) | null;
   navigation?: (({ expanded }: P) => React.ReactNode) | null;
+  children?: ({ expanded }: P) => React.ReactNode;
 };
 
 export type NavigationItemProps = {
@@ -234,9 +234,9 @@ function ApplicationSidebarHeader({
 
 export default function ApplicationSidebar({
   title,
-  control,
   account = DefaultAccountPanel,
   navigation = AppNavigation,
+  children,
 }: ApplicationSidebarProps) {
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -266,7 +266,7 @@ export default function ApplicationSidebar({
     >
       <ApplicationSidebarHeader {...{ title, expanded, toggleExpand }} />
       <div className="w-full h-[calc(100%-410px)] overflow-y-auto primary-scrollbar flex items-start justify-start gap-y-1 flex-col">
-        {control({ expanded })}
+        <Suspense>{children?.({ expanded })}</Suspense>
       </div>
       {(account || navigation) && (
         <div className="mb-4 w-[calc(100%-2.5rem)] bg-primary-9 z-20 mt-auto flex flex-col items-center justify-center absolute bottom-0">
