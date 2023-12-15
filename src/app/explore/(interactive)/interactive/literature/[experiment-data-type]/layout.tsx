@@ -12,6 +12,7 @@ export default function ArticleListForExperimentLayout({ children }: { children:
           className="whitespace-pre text-sm rotate-180 mt-5"
           href="/explore/interactive"
           style={{ writingMode: 'vertical-rl' }}
+          prefetch={false}
         >
           Back to explore interactive
           <ArrowRightOutlined className="mt-6" />

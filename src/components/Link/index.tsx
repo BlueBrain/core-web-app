@@ -10,6 +10,7 @@ type LinkProps = {
   style?: React.CSSProperties;
   preserveLocationSearchParams?: boolean;
   preservedSearchParamKeys?: string[];
+  prefetch?: boolean;
 };
 
 /**
@@ -22,6 +23,7 @@ export default function Link({
   style,
   preserveLocationSearchParams = false,
   preservedSearchParamKeys,
+  prefetch = true,
 }: PropsWithChildren<LinkProps>) {
   const locationSearchParams = useSearchParams();
 
@@ -47,7 +49,12 @@ export default function Link({
     : `${href}${searchParamsStr}`;
 
   return (
-    <NextLink className={className} href={hrefWLocationSearchParams} style={style}>
+    <NextLink
+      className={className}
+      href={hrefWLocationSearchParams}
+      style={style}
+      prefetch={prefetch}
+    >
       {children}
     </NextLink>
   );
