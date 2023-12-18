@@ -289,7 +289,7 @@ describe('GenerativeQAInput', () => {
   };
 
   const openRefineSearchPanel = () => {
-    const refineSearchButton = screen.getByRole('button', { name: 'Parameters' });
+    const refineSearchButton = screen.getByRole('button', { name: 'Refine your search' });
     fireEvent.click(refineSearchButton);
   };
 

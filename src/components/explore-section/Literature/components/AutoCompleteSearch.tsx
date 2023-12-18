@@ -3,7 +3,9 @@
 import { CloseOutlined, DownOutlined } from '@ant-design/icons';
 import { Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import isNil from 'lodash/isNil';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+
 import { Suggestion } from '@/types/literature';
 
 type Props = {
@@ -21,7 +23,11 @@ export default function AutoCompleteSearch({
   defaultValues,
   initialSuggestions,
 }: Props) {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>(initialSuggestions ?? []);
+  const [suggestions, setSuggestions] = useReducer(
+    (prev: Suggestion[], next: Suggestion[]) => next.sort((a, b) => a.label.localeCompare(b.label)),
+    initialSuggestions?.sort((a, b) => a.label.localeCompare(b.label)) ?? []
+  );
+
   const [fetching, setFetching] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string | null>();
 
@@ -40,7 +46,6 @@ export default function AutoCompleteSearch({
   const debounceFetchOptions = useMemo(() => {
     const loadOptions = (value: string) => {
       const signal = cancelPreviousFetch();
-
       if (!value) {
         setFetching(false);
         return;
@@ -76,6 +81,9 @@ export default function AutoCompleteSearch({
         debounceFetchOptions(value);
         setSearchTerm(value);
       }}
+      onFocus={() => {
+        setSuggestions(initialSuggestions ?? []);
+      }}
       placeholder={title}
       aria-label={title}
       mode="multiple"
@@ -87,7 +95,7 @@ export default function AutoCompleteSearch({
       }}
       onChange={onChange}
       suffixIcon={
-        initialSuggestions?.length === 0 || fetching ? (
+        isNil(initialSuggestions) || fetching ? (
           <Spin size="small" data-testid="loading-suggestions" className="mr-9" />
         ) : (
           <DownOutlined className="text-primary-4" />
@@ -98,7 +106,13 @@ export default function AutoCompleteSearch({
       bordered={false}
       size="middle"
       popupMatchSelectWidth={false}
-      notFoundContent={!fetching && <span>No suggestions found.</span>}
+      notFoundContent={
+        isNil(initialSuggestions) ? (
+          <span>Searching...</span>
+        ) : (
+          !fetching && <span>No suggestions found.</span>
+        )
+      }
     />
   );
 }

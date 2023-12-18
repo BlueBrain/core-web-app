@@ -49,7 +49,6 @@ function QASettings() {
           !isParametersVisible ? 'flex' : 'hidden'
         )}
       >
-        <span className="text-primary-8">Refine your search</span>
         <Tooltip
           title={REFINE_SEARCH_HELP_TEXT}
           color="#003A8C"
@@ -61,7 +60,7 @@ function QASettings() {
           onClick={() => setIsParametersVisible(true)}
           className="border rounded-none border-primary-4 text-primary-8 bg-primary-0"
         >
-          Parameters
+          Refine your search
         </Button>
       </div>
       <QuestionParameters
