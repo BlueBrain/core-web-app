@@ -138,7 +138,7 @@ function NavTitle({
             {title}
           </span>
         </button>
-        <div className="-mr-[4px] ml-[6px] flex gap-2 justify-between items-center [&:not(:has(button.accordion-trigger))]:pr-6">
+        <div className="flex gap-2 justify-between items-center [&:not(:has(button.accordion-trigger))]:pr-6">
           <AlternateViewSelector
             brainRegionViews={brainRegionViews}
             defaultViewOption={defaultViewOption}

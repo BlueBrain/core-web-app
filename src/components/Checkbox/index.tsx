@@ -11,11 +11,19 @@ type CheckboxProps = {
   checked: boolean;
   title?: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
+  size?: string;
 };
 
-export default function CheckBox({ id, onChange, checked, bgColor, title }: CheckboxProps) {
+export default function CheckBox({
+  id,
+  onChange,
+  checked,
+  bgColor,
+  title,
+  size = '18px',
+}: CheckboxProps) {
   return (
-    <div className="checkbox-container">
+    <div className="checkbox-container flex">
       <input
         onChange={onChange}
         id={id}
@@ -23,11 +31,13 @@ export default function CheckBox({ id, onChange, checked, bgColor, title }: Chec
         checked={checked}
         className={classNames(
           styles.checkbox,
-          'h-[18px] w-[18px] inline-block align-top relative cursor-pointer border rounded m-0 border-solid',
+          'inline-block align-top relative cursor-pointer border rounded m-0 border-solid',
           'transition-all duration-300'
         )}
         style={
           {
+            width: size,
+            height: size,
             '--color': bgColor,
           } as CSSProperties
         }

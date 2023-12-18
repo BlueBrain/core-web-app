@@ -128,14 +128,14 @@ export default function BrainRegionControls({ colorCode, id }: { colorCode: stri
   }
 
   return (
-    <div className="flex items-center justify-between gap-2">
+    <div className="flex gap-2">
       <InfoTooltip title="Visualize brain region mesh">
         <button
           id={`eye-${id}`}
           type="button"
           onClick={handleOnAddVisibleRegionsEntry}
           aria-label="visualize brain region mesh"
-          className="group flex items-center justify-center h-full mb-[3px]"
+          className="group"
         >
           {displayed ? (
             <EyeSlashIcon
@@ -149,14 +149,12 @@ export default function BrainRegionControls({ colorCode, id }: { colorCode: stri
       </InfoTooltip>
       {showCheckbox && (
         <InfoTooltip title="Show region-specific data">
-          <div className="flex items-center justify-center">
-            <Checkbox
-              id={`data-checkbox-${id}`}
-              onChange={handleOnAddDataRegionsEntry}
-              checked={selected}
-              bgColor={colorCode}
-            />
-          </div>
+          <Checkbox
+            id={`data-checkbox-${id}`}
+            onChange={handleOnAddDataRegionsEntry}
+            checked={selected}
+            bgColor={colorCode}
+          />
         </InfoTooltip>
       )}
     </div>
