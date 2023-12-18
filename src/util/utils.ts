@@ -195,10 +195,6 @@ export function getInitializationValue<T>(storageKey: string): T | null {
   const isClientProcessing = typeof window !== 'undefined';
   if (!isClientProcessing) return null;
 
-  // only pre-select if on build/cell-model-assignment
-  const isCellModelAssignment = window.location.href.includes('/build/cell-model-assignment');
-  if (!isCellModelAssignment) return null;
-
   const queryParams = new URLSearchParams(window.location.search);
   const brainModelConfigId = queryParams.get('brainModelConfigId');
 
