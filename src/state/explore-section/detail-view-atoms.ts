@@ -66,19 +66,12 @@ export const contributorsDataFamily = atomFamily(
 
 export const licenseDataFamily = atomFamily(
   (resourceInfo?: ResourceInfo) =>
-    atom<Promise<DeltaResource | null>>(async (get) => {
-      const { session, info } = get(sessionAndInfoFamily(resourceInfo));
+    atom<Promise<string | null>>(async (get) => {
       const detail = await get(detailFamily(resourceInfo));
 
       if (!detail || !detail.license) return null;
 
-      const license: DeltaResource = await fetchResourceById<DeltaResource>(
-        detail.license['@id'],
-        session,
-        pick(info, ['org', 'project'])
-      );
-
-      return license;
+      return detail.license?.name || detail.license['@id'];
     }),
   isEqual
 );

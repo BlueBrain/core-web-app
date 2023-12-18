@@ -15,7 +15,7 @@ export default function License() {
 
   if (license.state === 'loading') return <Spin indicator={<LoadingOutlined />} />;
 
-  if (license.state === 'hasData') return <span>{license.data?.license?.name}</span>;
+  if (license.state === 'hasData') return <span>{license.data}</span>;
 
   return <>Not Found</>;
 }
