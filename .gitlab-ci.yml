@@ -37,7 +37,6 @@ eslint:
 
 prettier:
   stage: lint
-  allow_failure: true
   script:
     - npm run prettier:check
 
