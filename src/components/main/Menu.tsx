@@ -14,7 +14,9 @@ type MainMenuItem = {
   title: string;
   description: string;
   Component: (props: any) => JSX.Element;
-  bgcolor: string;
+  bgColor: string;
+  selectedBgColor: string;
+  selectedTextColor: string;
 };
 
 type MainMenuItemProps = Omit<MainMenuItem, 'Component'> & {
@@ -29,7 +31,9 @@ const MAIN_MENU_LIST: Array<MainMenuItem> = [
     description:
       'Explore a large collection of neuronal models, virtual simulations, and brain cell distribution in a 3D and interactive manner',
     Component: ExploreMainMenu,
-    bgcolor: 'bg-primary-6',
+    bgColor: 'bg-primary-6',
+    selectedBgColor: 'bg-black',
+    selectedTextColor: 'text-white',
   },
   {
     id: 'main-build-entry',
@@ -37,14 +41,18 @@ const MAIN_MENU_LIST: Array<MainMenuItem> = [
     description:
       'Build your own brain configurations by customizing the cell compositions, assigning neuronal models and configuring the desired connectivity pattern.',
     Component: BuildMainMenu,
-    bgcolor: 'bg-primary-7',
+    bgColor: 'bg-primary-7',
+    selectedBgColor: 'bg-white',
+    selectedTextColor: 'text-primary-8',
   },
   {
     id: 'main-simulate-entry',
     title: 'Simulate',
     description: 'Run your own virtual experiments and simulations.',
     Component: SimulateMainMenu,
-    bgcolor: 'bg-primary-8',
+    bgColor: 'bg-primary-8',
+    selectedBgColor: 'bg-white',
+    selectedTextColor: 'text-primary-8',
   },
 ];
 
@@ -52,9 +60,11 @@ export function MainMenuSingleItem({
   id,
   title,
   description,
-  bgcolor,
+  bgColor,
   selected,
   onSelect,
+  selectedBgColor,
+  selectedTextColor,
 }: MainMenuItemProps) {
   return (
     <button
@@ -62,14 +72,13 @@ export function MainMenuSingleItem({
       onClick={onSelect(id)}
       className={classNames(
         'py-4 px-5 h-full hover:bg-white text-left group flex-1 basis-1/3 flex flex-col items-start justify-stretch',
-        bgcolor,
-        selected && 'bg-white shadow-lg'
+        selected ? selectedBgColor : bgColor,
       )}
     >
       <h3
         className={classNames(
           'text-lg lg:text-2xl xl:text-3xl font-bold group-hover:text-primary-8',
-          selected ? 'text-primary-8' : 'text-white'
+          selected ? selectedTextColor : 'text-white'
         )}
       >
         {title}
@@ -77,7 +86,7 @@ export function MainMenuSingleItem({
       <p
         className={classNames(
           'line-clamp-2 text-sm font-normal group-hover:text-primary-8',
-          selected ? 'text-primary-8' : 'text-white'
+          selected ? selectedTextColor : 'text-white'
         )}
       >
         {description}
@@ -93,7 +102,7 @@ export function RenderedMainDetails({ id }: { id: MainMenuListKey }) {
 
   const { Component } = menuItem;
   return (
-    <div className="relative overflow-y-auto pr-1 primary-scrollbar w-full h-full mt-1 transition-all will-change-contents duration-300 ease-in-out">
+    <div className="relative overflow-y-auto primary-scrollbar w-full h-full transition-all will-change-contents duration-300 ease-in-out">
       <Component />
     </div>
   );
@@ -121,16 +130,18 @@ export default function MainMenu() {
   return (
     <div className="relative flex flex-col justify-start gap-px items-stretch w-full h-[calc(100vh-2.5rem)]">
       <div className="grid grid-cols-3 gap-x-1 col-start-2 col-span-3 bg-primary-8">
-        {MAIN_MENU_LIST.map(({ id, title, description, bgcolor }) => (
+        {MAIN_MENU_LIST.map(({ id, title, description, bgColor, selectedBgColor, selectedTextColor }) => (
           <MainMenuSingleItem
             key={id}
             {...{
               id,
               title,
               description,
-              bgcolor,
+              bgColor,
               onSelect,
               selected: selectedSubmenuId === id,
+              selectedBgColor,
+              selectedTextColor,
             }}
           />
         ))}
