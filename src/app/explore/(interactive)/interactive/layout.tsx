@@ -20,11 +20,9 @@ export default function ExploreInteractiveLayout({ children }: { children: React
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <Sidebar />
       </ErrorBoundary>
-      <div>
-        <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-          <BrainRegionsSidebar />
-        </ErrorBoundary>
-      </div>
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <BrainRegionsSidebar />
+      </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>
     </div>
   );

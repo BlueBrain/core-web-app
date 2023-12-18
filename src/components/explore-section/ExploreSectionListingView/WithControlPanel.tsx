@@ -43,8 +43,8 @@ export default function WithControlPanel({
   );
 
   return (
-    <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full">
-      <section className="w-full min-h-screen h-screen flex flex-col gap-5 bg-white pb-12 pl-3 pr-3 pt-8 overflow-scroll relative">
+    <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full max-h-[calc(100vh-156px)] h-full overflow-x-auto overflow-y-hidden">
+      <section className="w-full h-full flex flex-col gap-5 bg-white pb-12 pl-3 pr-3 pt-8 relative overflow-auto min-w-fit">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel, filters })}
         <LoadMoreButton
           experimentTypeName={experimentTypeName}

@@ -30,6 +30,7 @@ export default function LoadMoreButton({
   const total = useLoadableValue(totalAtom({ experimentTypeName, brainRegionSource }));
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);
 
+  if (total.state === 'loading') return null;
   if (total.state === 'hasError') {
     return (
       <Btn className="bg-primary-8 cursor-progress text-white" disabled>

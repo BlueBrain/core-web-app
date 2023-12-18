@@ -81,32 +81,35 @@ export default function FilterControls({
   }, [activeColumns]);
 
   return (
-    <div className="flex items-center gap-5 justify-end pl-5 w-auto">
+    <div className="flex justify-between gap-5 pl-5 w-full flex-1 max-h-14">
       <div className="mr-auto">{children}</div>
-      <ClearFilters onClick={clearFilters} />
-      {/* only show search input on listing views. resource id is present on detail views. */}
-      {!resourceId && <ExploreSectionNameSearch experimentTypeName={experimentTypeName} />}
-      <FilterBtn disabled={disabled} onClick={() => setDisplayControlPanel(!displayControlPanel)}>
-        <div className="flex gap-3 items-center">
-          <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
-            {selectedFiltersCount}
-          </span>
-          <div className="flex items-center">
-            <span className={`${disabled ? 'text-primary-8' : 'text-white'} font-bold mb-1`}>
-              Filters
+      <div className="w-full inline-flex place-content-end">
+        <ClearFilters onClick={clearFilters} />
+        {/* only show search input on listing views. resource id is present on detail views. */}
+        {!resourceId && <ExploreSectionNameSearch experimentTypeName={experimentTypeName} />}
+        <FilterBtn disabled={disabled} onClick={() => setDisplayControlPanel(!displayControlPanel)}>
+          <div className="flex gap-3 items-center">
+            <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">
+              {selectedFiltersCount}
             </span>
-            <span className="text-primary-3 text-sm ml-2">
-              {activeColumnsLength ? (
-                <>
-                  {activeColumnsLength} active {activeColumnsLength === 1 ? ' column' : ' columns'}
-                </>
-              ) : (
-                <Spin />
-              )}
-            </span>
+            <div className="flex items-center">
+              <span className={`${disabled ? 'text-primary-8' : 'text-white'} font-bold mb-1`}>
+                Filters
+              </span>
+              <span className="text-primary-3 text-sm ml-2">
+                {activeColumnsLength ? (
+                  <>
+                    {activeColumnsLength} active{' '}
+                    {activeColumnsLength === 1 ? ' column' : ' columns'}
+                  </>
+                ) : (
+                  <Spin />
+                )}
+              </span>
+            </div>
           </div>
-        </div>
-      </FilterBtn>
+        </FilterBtn>
+      </div>
     </div>
   );
 }

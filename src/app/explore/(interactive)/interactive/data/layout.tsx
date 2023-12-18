@@ -76,11 +76,9 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
     });
 
   return (
-    <div className="h-screen bg-primary-9 flex">
+    <div className="h-screen bg-primary-9 flex overflow-hidden">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <div className="flex-none">
-          <InteractiveLink />
-        </div>
+        <InteractiveLink />
 
         <div className="flex-1 pt-12">
           <div className="flex items-center mb-8">
@@ -116,7 +114,7 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
               </Menu.Item>
             ))}
           </Menu>
-          <div className="bg-primary-9 text-white h-full overflow-y-auto">{children}</div>
+          <div className="bg-primary-9 text-white h-full w-full">{children}</div>
         </div>
       </ErrorBoundary>
     </div>

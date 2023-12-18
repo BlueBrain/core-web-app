@@ -53,7 +53,11 @@ export default function DefaultListView({
   }, [data, setDataSource]);
 
   return (
-    <div style={{ background: '#d1d1d1' }} data-testid="explore-section-listing-view">
+    <div
+      className="h-full"
+      style={{ background: '#d1d1d1' }}
+      data-testid="explore-section-listing-view"
+    >
       <WithControlPanel
         experimentTypeName={experimentTypeName}
         brainRegionSource={brainRegionSource}
@@ -71,7 +75,7 @@ export default function DefaultListView({
                 brainRegionSource={brainRegionSource}
               />
             </FilterControls>
-            <div className="flex gap-2 place-content-end items-center">
+            <div className="flex gap-2 place-content-end items-center max-h-6">
               <div className="text-primary-7">View:</div>
               <button
                 onClick={() => setViewMode('table')}

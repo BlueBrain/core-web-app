@@ -110,6 +110,7 @@ export function BaseTable({
     };
   };
 
+  if (!columns?.length) return null;
   return (
     <Table
       aria-label="listing-view-table"
