@@ -116,7 +116,12 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
               </Menu.Item>
             ))}
           </Menu>
-          <div className="bg-primary-9 text-white h-full overflow-y-auto">{children}</div>
+          <div
+            className="bg-primary-9 text-white overflow-y-auto"
+            style={{ height: 'calc(100vh - 156px)' }} // 156px is the height of the tabs plus the padding, so that the table occupies the rest of the screen
+          >
+            {children}
+          </div>
         </div>
       </ErrorBoundary>
     </div>
