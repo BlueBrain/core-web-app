@@ -4,7 +4,7 @@ import { Session } from 'next-auth';
 import sessionAtom from '@/state/session';
 import { createHeaders } from '@/util/utils';
 import { ClassNexus } from '@/api/ontologies/types';
-import { ATLAS_SEARCH } from '@/constants/build-section';
+import { ATLAS_SEARCH_URL } from '@/constants/build-section';
 
 type ClassESResponse = {
   _source: ClassNexus;
@@ -32,7 +32,7 @@ export const cellTypesAtom = selectAtom<
     )
     .size(10000);
 
-  return fetch(ATLAS_SEARCH, {
+  return fetch(ATLAS_SEARCH_URL, {
     method: 'POST',
     headers: createHeaders(session.accessToken),
     body: JSON.stringify(query.toJSON()),
