@@ -12,16 +12,9 @@ import {
 } from '@/types/m-model';
 import { morphologyAssignmentConfigIdAtom } from '@/state/brain-model-config';
 import sessionAtom from '@/state/session';
-import {
-  fetchResourceById,
-  fetchGeneratorTaskActivity,
-  fetchJsonFileByUrl,
-  fetchResourceByUrl,
-} from '@/api/nexus';
+import { fetchResourceById, fetchJsonFileByUrl, fetchResourceByUrl } from '@/api/nexus';
 import {
   MorphologyAssignmentConfigResource,
-  DetailedCircuitResource,
-  GeneratorTaskActivityResource,
   MorphologyAssignmentConfigPayload,
   CanonicalMorphologyModelConfigPayload,
   CanonicalMorphologyModelConfig,
@@ -94,34 +87,9 @@ export const configAtom = atom<Promise<MorphologyAssignmentConfigResource | null
   const session = get(sessionAtom);
   const id = await get(morphologyAssignmentConfigIdAtom);
 
-  get(refetchTriggerAtom);
-
   if (!session || !id) return null;
 
   return fetchResourceById<MorphologyAssignmentConfigResource>(id, session);
-});
-
-const generatorTaskActivityAtom = atom<Promise<GeneratorTaskActivityResource | null>>(
-  async (get) => {
-    const session = get(sessionAtom);
-    const config = await get(configAtom);
-
-    if (!session || !config) return null;
-
-    return fetchGeneratorTaskActivity(config['@id'], config._rev, session);
-  }
-);
-
-export const partialCircuitAtom = atom<Promise<DetailedCircuitResource | null>>(async (get) => {
-  const session = get(sessionAtom);
-  const generatorTaskActivity = await get(generatorTaskActivityAtom);
-
-  if (!session || !generatorTaskActivity) return null;
-
-  return fetchResourceById<DetailedCircuitResource>(
-    generatorTaskActivity.generated['@id'],
-    session
-  );
 });
 
 export const configPayloadUrlAtom = atom<Promise<string | null>>(async (get) => {

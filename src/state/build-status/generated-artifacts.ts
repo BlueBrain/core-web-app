@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 import { cellCompositionAtom } from '@/state/brain-model-config/cell-composition';
 import { partialCircuitAtom as cellPositionPartialCircuitAtom } from '@/state/brain-model-config/cell-position';
 import { partialCircuitAtom as meModelPartialCircuitAtom } from '@/state/brain-model-config/me-model';
-import { partialCircuitAtom as morphologyAssignmentPartialCircuitAtom } from '@/state/brain-model-config/cell-model-assignment/m-model';
+import { partialCircuitAtom as morphologyAssignmentPartialCircuitAtom } from '@/state/brain-model-config/m-model';
 import {
   partialCircuitAtom as microConnectomePartialCircuitAtom,
   partialCircuitAtom as macroConnectomePartialCircuitAtom,
