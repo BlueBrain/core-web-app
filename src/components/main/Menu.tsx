@@ -72,7 +72,7 @@ export function MainMenuSingleItem({
       onClick={onSelect(id)}
       className={classNames(
         'py-4 px-5 h-full hover:bg-white text-left group flex-1 basis-1/3 flex flex-col items-start justify-stretch',
-        selected ? selectedBgColor : bgColor,
+        selected ? selectedBgColor : bgColor
       )}
     >
       <h3
@@ -130,21 +130,23 @@ export default function MainMenu() {
   return (
     <div className="relative flex flex-col justify-start gap-px items-stretch w-full h-[calc(100vh-2.5rem)]">
       <div className="grid grid-cols-3 gap-x-1 col-start-2 col-span-3 bg-primary-8">
-        {MAIN_MENU_LIST.map(({ id, title, description, bgColor, selectedBgColor, selectedTextColor }) => (
-          <MainMenuSingleItem
-            key={id}
-            {...{
-              id,
-              title,
-              description,
-              bgColor,
-              onSelect,
-              selected: selectedSubmenuId === id,
-              selectedBgColor,
-              selectedTextColor,
-            }}
-          />
-        ))}
+        {MAIN_MENU_LIST.map(
+          ({ id, title, description, bgColor, selectedBgColor, selectedTextColor }) => (
+            <MainMenuSingleItem
+              key={id}
+              {...{
+                id,
+                title,
+                description,
+                bgColor,
+                onSelect,
+                selected: selectedSubmenuId === id,
+                selectedBgColor,
+                selectedTextColor,
+              }}
+            />
+          )
+        )}
       </div>
 
       <RenderedMainDetails
