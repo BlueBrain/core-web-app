@@ -22,7 +22,12 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_BASE_PATH: z.preprocess((basePath) => basePath ?? '', z.string()),
 
-    NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+    // When run on non-protected branch in Gitlab CI the value of env var will be an empty string.
+    // This transforms an empty string value to undefined in order to pass the .optional validation.
+    NEXT_PUBLIC_SENTRY_DSN: z.preprocess(
+      (sentryDsn) => sentryDsn || undefined,
+      z.string().url().optional()
+    ),
 
     NEXT_PUBLIC_NEXUS_URL: z.string().url(),
 
