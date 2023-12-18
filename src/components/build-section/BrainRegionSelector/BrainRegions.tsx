@@ -21,6 +21,7 @@ import {
   brainRegionSidebarIsCollapsedAtom,
   visibleBrainRegionsAtom,
   brainRegionHierarchyStateAtom,
+  resetSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import { NavValue } from '@/state/brain-regions/types';
 import { BrainRegion } from '@/types/ontologies';
@@ -168,6 +169,7 @@ export default function BrainRegions() {
   const brainModelConfigId = useAtomValue(brainModelConfigIdAtom);
   const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
   const setResetAtlasVisualization = useResetAtom(atlasVisualizationAtom);
+  const resetSelectedBrainRegion = useSetAtom(resetSelectedBrainRegionAtom);
 
   useEffect(() => {
     if (!brainModelConfigId) return;
@@ -200,6 +202,7 @@ export default function BrainRegions() {
             <BrainTreeSearch
               brainTreeNav={brainTreeNavRef?.current}
               setValue={setBrainRegionHierarchyState}
+              onClear={resetSelectedBrainRegion}
             />
             <BrainTreeNav
               ref={brainTreeNavRef}

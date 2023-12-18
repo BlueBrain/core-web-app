@@ -370,6 +370,14 @@ export const setSelectedBrainRegionAtom = atom(
   }
 );
 
+export const resetSelectedBrainRegionAtom = atom(null, (get, set) => {
+  set(selectedBrainRegionAtom, null);
+  set(literatureSelectedBrainRegionAtom, null);
+  set(compositionHistoryAtom, []);
+  set(compositionHistoryIndexAtom, 0);
+  setInitializationValue(DEFAULT_BRAIN_REGION_STORAGE_KEY, null);
+});
+
 export const setSelectedPreBrainRegionAtom = atom(null, (get, set, id: string, title: string) => {
   const selections = new Map(get(selectedPreBrainRegionsAtom));
 
