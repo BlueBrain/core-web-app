@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import startCase from 'lodash/startCase';
+import uniq from 'lodash/uniq';
 
 import {
   ReturnGetGenerativeQA,
@@ -16,6 +17,9 @@ import {
 } from '@/api/explore-section/resources';
 import { GteLteValue } from '@/components/Filter/types';
 
+const normalizeBrainRegionQueryParam = (region: string) =>
+  region.toLowerCase().replace(': other', '');
+
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
   brainRegions,
@@ -28,7 +32,12 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
 }) => {
   try {
     const params = new URLSearchParams();
-    brainRegions?.forEach((keyword) => params.append('regions', keyword));
+
+    const uniqueBrainRegions = uniq(
+      brainRegions?.map((br) => encodeURIComponent(normalizeBrainRegionQueryParam(br)))
+    );
+    uniqueBrainRegions?.forEach((brainRegion) => params.append('regions', brainRegion));
+
     const paramsWithFilters = addQueryParamsForFilters(params, { authors, journals, articleTypes });
 
     if (fromDate) {
@@ -144,9 +153,10 @@ const fetchParagraphCountForBrainRegionAndExperiment = (
   if (!accessToken) throw new Error('Access token should be defined');
 
   const url = bbsMlBaseUrl;
-  const brainRegionParams = brainRegionNames
-    .map((name) => encodeURIComponent(name.toLowerCase().replace(':', '')))
-    .join('&regions=');
+
+  const brainRegionParams = uniq(
+    brainRegionNames.map((br) => encodeURIComponent(normalizeBrainRegionQueryParam(br)))
+  ).join('&regions=');
 
   return fetch(
     `${url}/retrieval/article_count?topics=${encodeURIComponent(
@@ -199,7 +209,12 @@ const fetchArticlesForBrainRegionAndExperiment = (
   const maxResults = 100;
 
   const params = new URLSearchParams();
-  brainRegions.forEach((keyword) => params.append('regions', keyword));
+
+  const uniqueBrainRegions = uniq(
+    brainRegions?.map((br) => encodeURIComponent(normalizeBrainRegionQueryParam(br)))
+  );
+  uniqueBrainRegions?.forEach((brainRegion) => params.append('regions', brainRegion));
+
   params.append('topics', experimentName);
   params.append('number_results', `${maxResults}`);
   params.append('page', `${page}`);
