@@ -9,14 +9,13 @@ import { usePathname, useRouter, useParams } from 'next/navigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import {
   BASE_EXPLORE_PATH,
-  EXPERIMENT_DATA_TYPES,
+  EXPERIMENT_DATA_TYPES_NO_SC,
   INTERACTIVE_PATH,
 } from '@/constants/explore-section/experiment-types';
-import { SIMULATION_CAMPAIGNS } from '@/constants/explore-section/list-views';
 import useTotalResults from '@/hooks/useTotalResults';
 import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
 
-const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
+const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES_NO_SC).length)}%`;
 
 const brainRegionSource = 'data';
 
@@ -49,16 +48,14 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
   if (params?.id)
     return <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>;
 
-  const items = Object.keys(EXPERIMENT_DATA_TYPES)
-    .filter((item) => item !== SIMULATION_CAMPAIGNS)
-    .map((k) => {
-      return {
-        active: EXPERIMENT_DATA_TYPES[k].name === activeExperimentPath,
-        label: EXPERIMENT_DATA_TYPES[k].title,
-        key: EXPERIMENT_DATA_TYPES[k].name,
-        experimentTypeName: k,
-      };
-    });
+  const items = Object.keys(EXPERIMENT_DATA_TYPES_NO_SC).map((k) => {
+    return {
+      active: EXPERIMENT_DATA_TYPES_NO_SC[k].name === activeExperimentPath,
+      label: EXPERIMENT_DATA_TYPES_NO_SC[k].title,
+      key: EXPERIMENT_DATA_TYPES_NO_SC[k].name,
+      experimentTypeName: k,
+    };
+  });
 
   return (
     <div className="h-screen bg-primary-9 flex overflow-hidden">
