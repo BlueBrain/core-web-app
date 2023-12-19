@@ -34,7 +34,7 @@ function MenuItemLabel({
 function InteractiveLink() {
   return (
     <Link
-      className="pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] h-full flex flex-col items-center"
+      className="pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] shrink-0 h-full flex flex-col items-center"
       href={INTERACTIVE_PATH}
     >
       <ArrowRightOutlined className="rotate-180 mt-1.5 mb-4" />
