@@ -57,10 +57,10 @@ export default function LiteratureArticleListingPage() {
         experiment={currentExperiment}
         filters={filters}
       >
-        <div className="flex justify-end w-[60vw] m-auto mb-3 max-w-7xl">
+        <div className="flex justify-end m-auto mb-3 max-w-7xl">
           <button
             type="button"
-            className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5 ml-3"
+            className="bg-primary-8 flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5 ml-3 mr-5"
             onClick={() => openFilterPanel(true)}
           >
             <div>

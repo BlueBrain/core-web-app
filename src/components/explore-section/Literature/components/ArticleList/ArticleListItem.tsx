@@ -97,7 +97,7 @@ export default function ArticleListItem({ article, index }: Props) {
         )}
         {!isNil(article.citationCount) && (
           <ArticlePreview
-            title={`${article.citationCount} times`}
+            title={`Times cited: ${article.citationCount}`}
             icon={<CitationIcon className="w-4 h-4" style={{ borderColor: '#D9D9D9' }} />}
             altText={`Number of citations: ${article.citationCount}`}
           />

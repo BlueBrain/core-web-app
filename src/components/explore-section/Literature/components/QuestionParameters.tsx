@@ -81,7 +81,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
           onClick={setIsParametersVisible}
           shape="circle"
           aria-label="close-parameters"
-          className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 -top-6"
+          className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 -top-6 mr-3"
         />
         <div className="w-full mt-10">
           <DateRange

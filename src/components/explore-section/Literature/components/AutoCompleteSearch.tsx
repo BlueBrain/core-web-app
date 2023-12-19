@@ -27,6 +27,7 @@ export default function AutoCompleteSearch({
     (prev: Suggestion[], next: Suggestion[]) => next.sort((a, b) => a.label.localeCompare(b.label)),
     initialSuggestions?.sort((a, b) => a.label.localeCompare(b.label)) ?? []
   );
+  const [openSuggestions, setOpenSuggestions] = useState(false);
 
   const [fetching, setFetching] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string | null>();
@@ -84,6 +85,8 @@ export default function AutoCompleteSearch({
       onFocus={() => {
         setSuggestions(initialSuggestions ?? []);
       }}
+      open={openSuggestions}
+      onDropdownVisibleChange={(open) => setOpenSuggestions(open)}
       placeholder={title}
       aria-label={title}
       mode="multiple"
@@ -91,14 +94,20 @@ export default function AutoCompleteSearch({
       filterOption={false}
       options={suggestions}
       allowClear={{
-        clearIcon: <CloseOutlined className="text-primary-8 " />,
+        clearIcon: <CloseOutlined className="text-primary-8" />,
       }}
       onChange={onChange}
       suffixIcon={
         isNil(initialSuggestions) || fetching ? (
           <Spin size="small" data-testid="loading-suggestions" className="mr-9" />
         ) : (
-          <DownOutlined className="text-primary-4" />
+          <DownOutlined
+            className="text-primary-4 mr-7"
+            onClick={() => {
+              setSearchTerm('');
+              setOpenSuggestions(true);
+            }}
+          />
         )
       }
       defaultValue={defaultValues}

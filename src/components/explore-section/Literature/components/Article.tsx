@@ -175,7 +175,7 @@ export default function Article({
           )}
           {!isNil(citationsCount) && (
             <ArticlePreview
-              title={`${citationsCount} times`}
+              title={`Times cited: ${citationsCount}`}
               icon={<CitationIcon className="w-4 h-4" />}
               altText={`Number of citations: ${citationsCount}`}
             />
