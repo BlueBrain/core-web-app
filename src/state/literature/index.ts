@@ -22,6 +22,7 @@ export type LiteratureAtom = {
   answer: string;
   selectedQuestionForFilter?: string;
   showOnlyBrainRegionQuestions: boolean;
+  areQAParamsVisible: boolean;
   isFilterPanelOpen: boolean;
   filterValues: FilterValues | null;
   activeQuestionId?: string;
@@ -43,6 +44,7 @@ const literatureAtom = atom<LiteratureAtom>({
   answer: '',
   selectedQuestionForFilter: undefined,
   showOnlyBrainRegionQuestions: false,
+  areQAParamsVisible: false,
   isFilterPanelOpen: false,
   filterValues: null,
   isGenerating: false,

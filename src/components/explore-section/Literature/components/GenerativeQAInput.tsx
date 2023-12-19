@@ -1,8 +1,8 @@
 'use client';
 
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { Button, Tooltip } from 'antd';
-import { useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 import { SendOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import { useContextSearchParams, useLiteratureDataSource } from '../useContextualLiteratureContext';
@@ -15,23 +15,17 @@ const REFINE_SEARCH_HELP_TEXT = `Before launching the search related to your que
  use these parameters to obtain a more
  specific answer.`;
 
-function SearchButton({
-  isParametersVisible,
-  closeParametersPanel,
-}: {
-  isParametersVisible: boolean;
-  closeParametersPanel: () => void;
-}) {
-  const { query, isGenerating } = useAtomValue(literatureAtom);
+function SearchButton() {
+  const [{ query, isGenerating, areQAParamsVisible }, updateLiterature] = useAtom(literatureAtom);
   const isQuestionEmpty = query.trim().length === 0;
   return (
-    <div className={classNames('justify-end w-full mb-4', isParametersVisible ? 'flex' : 'hidden')}>
+    <div className={classNames('justify-end w-full mb-4', areQAParamsVisible ? 'flex' : 'hidden')}>
       <button
         type="submit"
         disabled={isQuestionEmpty || isGenerating}
         title={isQuestionEmpty ? 'Please enter a question' : ''}
         className="border-[1px] border-solid border-gray rounded px-4 py-2 text-primary-8 disabled:text-gray-400"
-        onClick={closeParametersPanel}
+        onClick={() => updateLiterature((prev) => ({ ...prev, areQAParamsVisible: false }))}
       >
         Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
       </button>
@@ -40,13 +34,13 @@ function SearchButton({
 }
 
 function QASettings() {
-  const [isParametersVisible, setIsParametersVisible] = useState(false);
+  const [{ areQAParamsVisible }, updateLiterature] = useAtom(literatureAtom);
   return (
     <>
       <div
         className={classNames(
           'items-center justify-end w-full mt-4',
-          !isParametersVisible ? 'flex' : 'hidden'
+          areQAParamsVisible ? 'hidden' : 'flex'
         )}
       >
         <Tooltip
@@ -57,19 +51,19 @@ function QASettings() {
           <InfoCircleOutlined className="mx-2 text-primary-5" />
         </Tooltip>
         <Button
-          onClick={() => setIsParametersVisible(true)}
+          onClick={() => updateLiterature((prev) => ({ ...prev, areQAParamsVisible: true }))}
           className="border rounded-none border-primary-4 text-primary-8 bg-primary-0"
         >
           Refine your search
         </Button>
       </div>
       <QuestionParameters
-        isParametersVisible={isParametersVisible}
-        setIsParametersVisible={() => setIsParametersVisible((current) => !current)}
+        areQAParamsVisible={areQAParamsVisible}
+        setAreQAParamsVisible={() =>
+          updateLiterature((prev) => ({ ...prev, areQAParamsVisible: !prev.areQAParamsVisible }))
+        }
       />
-      <SearchButton
-        {...{ isParametersVisible, closeParametersPanel: () => setIsParametersVisible(false) }}
-      />
+      <SearchButton />
     </>
   );
 }

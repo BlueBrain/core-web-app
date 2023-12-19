@@ -30,11 +30,11 @@ import {
 } from '@/state/explore-section/literature-filters';
 
 type Props = {
-  isParametersVisible: boolean;
-  setIsParametersVisible: () => void;
+  areQAParamsVisible: boolean;
+  setAreQAParamsVisible: () => void;
 };
 
-function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Props) {
+function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props) {
   const update = useQuestionParameter();
 
   const articleTypesResponse = useAtomValue(useMemo(() => unwrap(articleTypeSuggestionsAtom), []));
@@ -62,7 +62,7 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
     []
   );
 
-  if (!isParametersVisible) return null;
+  if (!areQAParamsVisible) return null;
 
   return (
     <ConfigProvider
@@ -75,10 +75,10 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
         },
       }}
     >
-      <div className={classNames('relative w-fill', isParametersVisible ? 'block' : 'hidden')}>
+      <div className={classNames('relative w-fill', areQAParamsVisible ? 'block' : 'hidden')}>
         <Button
           icon={<CloseOutlined />}
-          onClick={setIsParametersVisible}
+          onClick={setAreQAParamsVisible}
           shape="circle"
           aria-label="close-parameters"
           className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 -top-6 mr-3"
@@ -163,9 +163,9 @@ function QuestionParameters({ isParametersVisible, setIsParametersVisible }: Pro
 }
 
 // eslint-disable-next-line react/display-name
-export default memo(({ isParametersVisible, setIsParametersVisible }: Props) => (
+export default memo(({ areQAParamsVisible, setAreQAParamsVisible }: Props) => (
   <QuestionParameters
-    isParametersVisible={isParametersVisible}
-    setIsParametersVisible={setIsParametersVisible}
+    areQAParamsVisible={areQAParamsVisible}
+    setAreQAParamsVisible={setAreQAParamsVisible}
   />
 ));
