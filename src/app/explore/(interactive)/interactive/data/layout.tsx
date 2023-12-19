@@ -4,11 +4,9 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ReactNode } from 'react';
 import type { MenuProps } from 'antd';
 import { Menu, Button } from 'antd';
-import { ArrowRightOutlined } from '@ant-design/icons';
 import { usePathname, useRouter, useParams } from 'next/navigation';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import Link from '@/components/Link';
 import {
   BASE_EXPLORE_PATH,
   EXPERIMENT_DATA_TYPES,
@@ -16,6 +14,7 @@ import {
 } from '@/constants/explore-section/experiment-types';
 import { SIMULATION_CAMPAIGNS } from '@/constants/explore-section/list-views';
 import useTotalResults from '@/hooks/useTotalResults';
+import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
 
 const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
 
@@ -29,20 +28,6 @@ function MenuItemLabel({
   experimentTypeName: string;
 }) {
   return `${label} ${useTotalResults({ experimentTypeName, brainRegionSource })}`;
-}
-
-function InteractiveLink() {
-  return (
-    <Link
-      className="pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] shrink-0 h-full flex flex-col items-center"
-      href={INTERACTIVE_PATH}
-    >
-      <ArrowRightOutlined className="rotate-180 mt-1.5 mb-4" />
-      <div style={{ writingMode: 'vertical-rl', rotate: '180deg' }}>
-        Back to interactive exploration
-      </div>
-    </Link>
-  );
 }
 
 export default function ExploreInteractiveDataLayout({ children }: { children: ReactNode }) {
@@ -78,7 +63,7 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
   return (
     <div className="h-screen bg-primary-9 flex overflow-hidden">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <InteractiveLink />
+        <BackToInteractiveExplorationBtn href={INTERACTIVE_PATH} />
 
         <div className="flex-1 pt-12">
           <div className="flex items-center mb-8">
