@@ -7,10 +7,15 @@ import { Select, Tag } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
+
 import generatedPalette from './generated-color-palette.json';
 import { getSankeyNodesReducer, getSankeyLinks } from './util';
 import sankey from './sankey';
-import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import {
+  densityOrCountAtom,
+  densityOrCountLabelAtom,
+  selectedBrainRegionAtom,
+} from '@/state/brain-regions';
 import { analysedCompositionAtom } from '@/state/build-composition';
 import { cellTypesAtom } from '@/state/build-section/cell-types';
 import { formatNumber } from '@/util/common';
@@ -68,6 +73,7 @@ export default function DensityChart() {
   const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
   const composition = useAtomValue(analysedCompositionAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
+  const densityOrCountLabel = useAtomValue(densityOrCountLabelAtom);
 
   const [selectedNodes, setSelectedNodes] = useState<SelectedNodeOptionType<string>[]>([]);
 
@@ -262,23 +268,12 @@ export default function DensityChart() {
     </Tag>
   );
 
-  const densityCountLabel = useMemo(() => {
-    switch (densityOrCount) {
-      case 'count':
-        return 'Counts [N]';
-      case 'density':
-        return 'Densities [/mm³]';
-      default:
-        return '';
-    }
-  }, [densityOrCount]);
-
   return (
     <div className="flex flex-col gap-5 h-full w-full">
       <h1 className="flex font-bold gap-1 items-baseline text-3xl text-primary-9">
         {selectedBrainRegion?.title ?? 'Please select a brain region.'}
         {!!selectedBrainRegion?.title && (
-          <small className="font-light text-sm">{densityCountLabel}</small>
+          <small className="font-light text-sm">{densityOrCountLabel}</small>
         )}
       </h1>
       {sankeyData.links.length > 0 && (

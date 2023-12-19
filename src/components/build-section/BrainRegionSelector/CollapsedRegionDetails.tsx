@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useAtomValue } from 'jotai';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { selectedBrainRegionAtom } from '@/state/brain-regions';
+
+import { densityOrCountLabelAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 
 export default function CollapsedRegionDetails({
   setIsSidebarExpanded,
@@ -10,6 +11,7 @@ export default function CollapsedRegionDetails({
   setIsSidebarExpanded: Dispatch<SetStateAction<boolean>>;
 }) {
   const { title } = useAtomValue(selectedBrainRegionAtom) ?? { title: '' };
+  const densityOrCountLabel = useAtomValue(densityOrCountLabelAtom);
 
   return (
     <div className="flex flex-col items-center pt-2 w-[40px]">
@@ -31,7 +33,7 @@ export default function CollapsedRegionDetails({
         onClick={() => setIsSidebarExpanded(true)}
       >
         <div className="text-sm">
-          View <span className="font-bold">Counts[N]</span>
+          <span className="font-bold">{densityOrCountLabel}</span>
         </div>
         <div className="text-lg text-secondary-4 font-bold">{title}</div>
       </div>

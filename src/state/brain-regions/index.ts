@@ -63,6 +63,18 @@ import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 
 export const densityOrCountAtom = atom<'density' | 'count'>('count');
 
+export const densityOrCountLabelAtom = atom<'Counts [N]' | 'Densities [/mm³]' | ''>((get) => {
+  const densityOrCount = get(densityOrCountAtom);
+  switch (densityOrCount) {
+    case 'count':
+      return 'Counts [N]';
+    case 'density':
+      return 'Densities [/mm³]';
+    default:
+      return '';
+  }
+});
+
 export const brainRegionOntologyAtom = atom<Promise<BrainRegionOntology | null>>(async (get) => {
   const session = get(sessionAtom);
 
