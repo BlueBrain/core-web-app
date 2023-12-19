@@ -43,16 +43,13 @@ export function DetailsPageSideBackLink() {
     : activePrevPath;
 
   return prevPath ? (
-    <div className="bg-neutral-1 text-primary-8 w-10 h-full flex items-start justify-center">
-      <Link
-        className="whitespace-pre text-sm rotate-180 mt-6"
-        href={prevPath}
-        style={{ writingMode: 'vertical-rl' }}
-      >
-        Back to list
-        <ArrowRightOutlined className="mt-6" />
-      </Link>
-    </div>
+    <Link
+      className="pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] h-full flex flex-col items-center"
+      href={prevPath}
+    >
+      <ArrowRightOutlined className="rotate-180 mt-1.5 mb-4" />
+      <div style={{ writingMode: 'vertical-rl', rotate: '180deg' }}>Back to list</div>
+    </Link>
   ) : null;
 }
 
