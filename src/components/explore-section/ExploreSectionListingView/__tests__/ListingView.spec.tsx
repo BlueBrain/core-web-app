@@ -10,7 +10,7 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { NEURON_MORPHOLOGY, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES_NO_SC } from '@/constants/explore-section/experiment-types';
 
 jest.mock('next/navigation');
 
@@ -294,7 +294,7 @@ describe('Listing view table tests', () => {
     );
     const tableHeaders = screen.getAllByRole('columnheader');
     expect(tableHeaders.length).toEqual(
-      EXPERIMENT_DATA_TYPES[NEURON_MORPHOLOGY].columns.length // Preview column has no header.
+      EXPERIMENT_DATA_TYPES_NO_SC[NEURON_MORPHOLOGY].columns.length // Preview column has no header.
     );
   });
 });
