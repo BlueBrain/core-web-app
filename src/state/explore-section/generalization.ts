@@ -143,9 +143,9 @@ export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
         : [...acc, modelName]; // Apply all models if no boxes checked.
     }
 
-    return rules
+    return rules && rules?.length > 0
       ? {
-          rules: rules?.reduce(reduceRules, []) ?? [],
+          rules: rules?.reduce(reduceRules, []),
           inputFilter: {
             TargetResourceParameter: resourceId,
             SelectModelsParameter: rules.reduce(reduceSelectedModels, []),
