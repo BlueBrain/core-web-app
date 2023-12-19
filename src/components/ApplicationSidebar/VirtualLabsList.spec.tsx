@@ -1,6 +1,6 @@
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import VirtualLabsList from './VirtualLabsList';
 import sessionAtom from '@/state/session';
@@ -28,7 +28,7 @@ describe('VirtualLabsList', () => {
     mockListAll().mockResolvedValueOnce([]);
     render(VirtualLabsListProvider());
 
-    expect(screen.queryByTestId('all-user-labs')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByTestId('all-user-labs')).not.toBeInTheDocument());
   });
 
   test('Shows first lab as current lab if no current lab already exists', async () => {

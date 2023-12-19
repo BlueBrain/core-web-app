@@ -69,7 +69,7 @@ jest.mock('next/navigation', () => {
 
 describe('GenerativeQAInput', () => {
   beforeEach(() => {
-    render(GenerativeQAInputProvider());
+    waitFor(() => render(GenerativeQAInputProvider()));
   });
 
   test('shows input for typing question', () => {

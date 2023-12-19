@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Provider, useAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import omit from 'lodash/omit';
@@ -77,7 +77,7 @@ jest.mock('deepdash-es/standalone', () => ({
 
 describe('SelectedBrainRegionPanel', () => {
   beforeEach(async () => {
-    render(SelectedBrainRegionPanelProvider());
+    waitFor(() => render(SelectedBrainRegionPanelProvider()));
   });
 
   test('does not show any tab if no brain region is selected to be visualized', () => {
