@@ -166,3 +166,9 @@ export const EXPERIMENT_DATA_TYPES: {
     curated: false,
   },
 };
+
+export const EXPERIMENT_DATA_TYPES_NO_SC: {
+  [x: ExperimentDataTypeName]: ExperimentConfig;
+} = Object.fromEntries(
+  Object.entries(EXPERIMENT_DATA_TYPES).filter(([key]) => key !== SIMULATION_CAMPAIGNS)
+);

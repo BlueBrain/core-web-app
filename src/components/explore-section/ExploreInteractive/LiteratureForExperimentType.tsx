@@ -10,7 +10,7 @@ import isNil from 'lodash/isNil';
 import { Tooltip } from 'antd';
 import { BrainRegion } from '@/types/ontologies';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES_NO_SC } from '@/constants/explore-section/experiment-types';
 
 type Props = {
   brainRegions: BrainRegion[];
@@ -52,7 +52,7 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
 
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
         <div className="flex flex-col flex-wrap mb-7 h-36">
-          {Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) => (
+          {Object.entries(EXPERIMENT_DATA_TYPES_NO_SC).map(([id, config]) => (
             <Link
               href={`/explore/interactive/literature/${config.name}`}
               key={config.title}
