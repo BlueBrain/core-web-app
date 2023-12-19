@@ -82,14 +82,14 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
       }
       data-testid="article-list-filters"
       width="20vw"
-      headerStyle={{
-        background: '#002766',
-      }}
-      bodyStyle={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        background: '#002766',
+      styles={{
+        header: { background: '#002766' },
+        body: {
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          background: '#002766',
+        },
       }}
     >
       <div className="w-full">
