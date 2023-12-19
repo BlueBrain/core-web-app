@@ -83,7 +83,7 @@ export default function FilterControls({
   return (
     <div className="flex justify-between gap-5 pl-5 w-full flex-1 max-h-14">
       <div className="mr-auto">{children}</div>
-      <div className="w-full inline-flex place-content-end">
+      <div className="w-full inline-flex gap-2 place-content-end">
         <ClearFilters onClick={clearFilters} />
         {/* only show search input on listing views. resource id is present on detail views. */}
         {!resourceId && <ExploreSectionNameSearch experimentTypeName={experimentTypeName} />}
