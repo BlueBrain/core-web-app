@@ -19,6 +19,11 @@ import Checkbox from '@/components/Checkbox';
 import { EyeIcon } from '@/components/icons';
 import EyeSlashIcon from '@/components/icons/EyeSlashIcon';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
+import { setInitializationValue } from '@/util/utils';
+import {
+  DEFAULT_EXPLORE_CHECKED_BRAIN_REGION_STORAGE_KEY,
+  DefaultCheckedBrainRegions,
+} from '@/constants/explore-section/preselected-regions';
 
 function InfoTooltip({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -121,6 +126,10 @@ export default function BrainRegionControls({ colorCode, id }: { colorCode: stri
       updatedDataBrainRegions = { ...dataBrainRegions, [id]: [...childrenOfCurrent] };
     }
     setDataBrainRegions(updatedDataBrainRegions);
+    setInitializationValue(
+      DEFAULT_EXPLORE_CHECKED_BRAIN_REGION_STORAGE_KEY,
+      updatedDataBrainRegions satisfies DefaultCheckedBrainRegions
+    );
   };
 
   if (meshDistributions === undefined) {

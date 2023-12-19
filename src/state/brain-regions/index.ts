@@ -27,6 +27,11 @@ import {
 } from '@/constants/brain-hierarchy';
 import { getInitializationValue, setInitializationValue } from '@/util/utils';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
+import {
+  DEFAULT_EXPLORE_CHECKED_BRAIN_REGION_STORAGE_KEY,
+  DefaultCheckedBrainRegions,
+  defaultCheckedBrainRegions,
+} from '@/constants/explore-section/preselected-regions';
 
 /*
   Atom dependency graph
@@ -419,7 +424,12 @@ export const brainRegionSidebarIsCollapsedAtom = atom(false);
 
 export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
 
-export const dataBrainRegionsAtom = atom<Record<string, string[]>>({});
+export const dataBrainRegionsAtom = atomWithDefault<Record<string, string[]>>(() => {
+  const checkedBrainRegions = getInitializationValue<DefaultCheckedBrainRegions>(
+    DEFAULT_EXPLORE_CHECKED_BRAIN_REGION_STORAGE_KEY
+  );
+  return checkedBrainRegions || defaultCheckedBrainRegions;
+});
 
 /**
  * An array containing all (unique) brainRegions that are selected either manually (keys of `dataBrainRegionsAtom`) or automatically (array values of `dataBrainRegionsAtom`).
@@ -444,7 +454,11 @@ export const brainRegionHierarchyStateAtom = atomWithDefault<NavValue | null>((g
   const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
     DEFAULT_BRAIN_REGION_STORAGE_KEY
   );
-  return initializationBrainRegion ? initializationBrainRegion.brainRegionHierarchyState : null;
+  return initializationBrainRegion
+    ? initializationBrainRegion.brainRegionHierarchyState
+    : {
+        'http://api.brain-map.org/api/v2/data/Structure/8': null,
+      };
 });
 
 brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';
