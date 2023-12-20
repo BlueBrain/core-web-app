@@ -29,10 +29,16 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
               )
           );
       }
+      if(esConfig?.flat?.idLabel) { 
+        return esb
+        .termsAggregation(filter.field, `${esConfig?.flat?.aggregation}.idLabel`)
+        .size(100)
+      }
       return esb
         .termsAggregation(filter.field, `${esConfig?.flat?.aggregation}.@id.keyword`)
         .size(100)
         .agg(esb.termsAggregation('label', `${esConfig?.flat?.aggregation}.label.keyword`).size(1));
+
     case 'stats':
       if (esConfig?.nested) {
         return esb
@@ -61,6 +67,7 @@ export default function buildAggs(filters: Filter[]) {
   const aggsQuery = esb.requestBodySearch();
   filters.forEach((filter: Filter) => {
     const esBuilder = getAggESBuilder(filter);
+
     if (esBuilder) {
       aggsQuery.agg(esBuilder);
     }

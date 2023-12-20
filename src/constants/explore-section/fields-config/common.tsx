@@ -53,6 +53,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   contributors: {
     esTerms: {
       flat: {
+        idLabel: true,
         filter: 'contributors.@id.keyword',
         aggregation: 'contributors',
         sort: 'contributors.label.keyword',

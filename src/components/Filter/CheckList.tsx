@@ -87,7 +87,9 @@ export default function CheckList({
         )
       : undefined;
   }, [data, values]);
-
+  
+  console.log("🚀 ~ file: CheckList.tsx:80 ~ options ~ buckets:", options)
+  
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];
     if (values.includes(value)) {

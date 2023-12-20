@@ -36,6 +36,7 @@ type EsTermsConfig = {
     filter?: string;
     aggregation?: string;
     sort?: string;
+    idLabel?: boolean;
   };
   nested?: NestedFieldConfig;
 };

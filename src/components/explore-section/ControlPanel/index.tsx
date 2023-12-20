@@ -10,7 +10,7 @@ import {
   NestedStatsAggregation,
   Statistics,
 } from '@/types/explore-section/fields';
-import { Filter, GteLteValue, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
+import { Bucket, Filter, GteLteValue, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
 import {
   CheckList,
   DateRange,
@@ -33,13 +33,13 @@ export type ControlPanelProps = {
   setFilters: any;
 };
 
-function createFilterItemComponent(
+function createFilterItemComponent (
   filter: Filter,
   aggregations: Aggregations | undefined,
   filterValues: FilterValues,
   setFilterValues: Dispatch<SetStateAction<FilterValues>>
 ) {
-  return function FilterItemComponent() {
+  return function FilterItemComponent () {
     const { type } = filter;
     const esConfig = getFieldEsConfig(filter.field);
 
@@ -47,7 +47,7 @@ function createFilterItemComponent(
 
     if (!aggregations) {
       return (
-        <div className="flex items-center justify-center">
+        <div className='flex items-center justify-center'>
           <Spin indicator={<LoadingOutlined />} />
         </div>
       );
@@ -90,6 +90,28 @@ function createFilterItemComponent(
         if (esConfig?.nested) {
           const nestedAgg = aggregations[filter.field] as NestedBucketAggregation;
           agg = nestedAgg[filter.field][filter.field] as Buckets;
+        } else if (esConfig?.flat?.idLabel) {
+          const flatAgg = aggregations[filter.field] as Buckets;
+          const reshapedBuckets: Bucket[] = flatAgg.buckets.map(bucket => {
+            const [key, label] = (bucket.key as string).split("|");
+            return {
+              doc_count: bucket.doc_count,
+              key,
+              label: {
+                buckets: [
+                  {
+                    key,
+                    label,
+                  },
+                ],
+              },
+            };
+          });
+      
+          agg = {
+            buckets: reshapedBuckets as Bucket[],
+            excludeOwnFilter: { buckets: [] },
+          };
         } else {
           agg = aggregations[filter.field] as Buckets;
         }
@@ -121,7 +143,7 @@ function createFilterItemComponent(
   };
 }
 
-export default function ControlPanel({
+export default function ControlPanel ({
   children,
   toggleDisplay,
   experimentTypeName,
@@ -186,20 +208,20 @@ export default function ControlPanel({
 
   return (
     <div
-      data-testid="listing-view-filter-panel"
-      className="z-10 fixed top-0 right-0 bg-primary-8 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]"
+      data-testid='listing-view-filter-panel'
+      className='z-10 fixed top-0 right-0 bg-primary-8 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]'
     >
       <button
-        type="button"
+        type='button'
         onClick={toggleDisplay}
-        className="text-white text-right"
-        aria-label="Close"
+        className='text-white text-right'
+        aria-label='Close'
       >
         <CloseOutlined />
       </button>
-      <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
+      <span className='flex font-bold gap-2 items-baseline text-2xl text-white'>
         Filters
-        <small className="font-light text-base text-primary-3">{activeColumnsText}</small>
+        <small className='font-light text-base text-primary-3'>{activeColumnsText}</small>
       </span>
 
       <p className="text-white">
@@ -207,16 +229,16 @@ export default function ControlPanel({
         option(s).
       </p>
 
-      <div className="flex flex-col gap-12">
+      <div className='flex flex-col gap-12'>
         {/* @ts-ignore : TODO: remove this and fix the type error */}
         <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
         {children}
       </div>
-      <div className="w-full">
+      <div className='w-full'>
         <button
-          type="submit"
+          type='submit'
           onClick={submitValues}
-          className="mt-4 float-right bg-primary-2 py-3 px-8 text-primary-9"
+          className='mt-4 float-right bg-primary-2 py-3 px-8 text-primary-9'
         >
           Apply
         </button>
