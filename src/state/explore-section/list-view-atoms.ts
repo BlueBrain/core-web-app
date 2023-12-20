@@ -25,7 +25,7 @@ import {
   selectedBrainRegionsWithChildrenAtom,
   visibleBrainRegionsAtom,
 } from '@/state/brain-regions';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import dataTypeConfigSelector from '@/util/explore-section/dataTypeConfigSelector';
 
 type DataAtomFamilyScopeType = {
   experimentTypeName: string;
@@ -53,11 +53,8 @@ export const activeColumnsAtom = atomFamily(
   ({ experimentTypeName }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<string[]>>(async (get) => {
       const dimensionColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
-      return [
-        'index',
-        ...(dimensionColumns || []),
-        ...EXPERIMENT_DATA_TYPES[experimentTypeName].columns,
-      ];
+      const { columns } = dataTypeConfigSelector(experimentTypeName);
+      return ['index', ...(dimensionColumns || []), ...columns];
     }),
   isListAtomEqual
 );
@@ -85,10 +82,10 @@ export const dimensionColumnsAtom = atomFamily(({ experimentTypeName }: DataAtom
 export const filtersAtom = atomFamily(
   ({ experimentTypeName }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<Filter[]>>(async (get) => {
-      const columnsKeys = EXPERIMENT_DATA_TYPES[experimentTypeName].columns;
+      const { columns } = dataTypeConfigSelector(experimentTypeName);
       const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
       return [
-        ...columnsKeys.map((colKey) => columnKeyToFilter(colKey)),
+        ...columns.map((colKey) => columnKeyToFilter(colKey)),
         ...(dimensionsColumns || []).map(
           (dimension) =>
             ({

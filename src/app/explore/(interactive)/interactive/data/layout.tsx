@@ -12,7 +12,6 @@ import {
   EXPERIMENT_DATA_TYPES,
   INTERACTIVE_PATH,
 } from '@/constants/explore-section/experiment-types';
-import { SIMULATION_CAMPAIGNS } from '@/constants/explore-section/list-views';
 import useTotalResults from '@/hooks/useTotalResults';
 import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
 
@@ -49,16 +48,14 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
   if (params?.id)
     return <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>;
 
-  const items = Object.keys(EXPERIMENT_DATA_TYPES)
-    .filter((item) => item !== SIMULATION_CAMPAIGNS)
-    .map((k) => {
-      return {
-        active: EXPERIMENT_DATA_TYPES[k].name === activeExperimentPath,
-        label: EXPERIMENT_DATA_TYPES[k].title,
-        key: EXPERIMENT_DATA_TYPES[k].name,
-        experimentTypeName: k,
-      };
-    });
+  const items = Object.keys(EXPERIMENT_DATA_TYPES).map((k) => {
+    return {
+      active: EXPERIMENT_DATA_TYPES[k].name === activeExperimentPath,
+      label: EXPERIMENT_DATA_TYPES[k].title,
+      key: EXPERIMENT_DATA_TYPES[k].name,
+      experimentTypeName: k,
+    };
+  });
 
   return (
     <div className="h-screen bg-primary-9 flex overflow-hidden">

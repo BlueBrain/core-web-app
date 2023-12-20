@@ -21,6 +21,17 @@ export type ExperimentConfig = {
 export const INTERACTIVE_PATH = `/explore/interactive/`;
 export const BASE_EXPLORE_PATH = `${INTERACTIVE_PATH}data/`;
 
+export const SIMULATION_DATA_TYPES: {
+  [x: ExperimentDataTypeName]: ExperimentConfig;
+} = {
+  [SIMULATION_CAMPAIGNS]: {
+    title: 'Simulation campaigns',
+    name: 'simulation-campaigns',
+    columns: ['simCampName', 'brainConfiguration', 'createdAt'],
+    curated: false,
+  },
+};
+
 export const EXPERIMENT_DATA_TYPES: {
   [x: ExperimentDataTypeName]: ExperimentConfig;
 } = {
@@ -157,12 +168,6 @@ export const EXPERIMENT_DATA_TYPES: {
       'contributors',
       'createdAt',
     ],
-    curated: false,
-  },
-  [SIMULATION_CAMPAIGNS]: {
-    title: 'Simulation campaigns',
-    name: 'simulation-campaigns',
-    columns: ['simCampName', 'brainConfiguration', 'createdAt'],
     curated: false,
   },
 };
