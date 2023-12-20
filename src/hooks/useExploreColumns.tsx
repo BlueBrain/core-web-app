@@ -41,7 +41,7 @@ function getProvisionedWidth(title: string, unit?: string) {
   // 56= x-padding (32px) + (sorter icon) 24
   const width = titleSpan.getBoundingClientRect().width + 56;
   document.body.removeChild(titleSpan);
-  return Math.max(width, COL_SIZING.default);
+  return width;
 }
 
 export default function useExploreColumns(
