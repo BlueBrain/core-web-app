@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MorphologyPainter, ColoringType } from '@bbp/morphoviewer';
 
+import { Scalebar } from './Scalebar';
 import { classNames } from '@/util/utils';
 
 import styles from './morpho-viewer.module.css';
@@ -44,7 +45,8 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   return (
     <div className={classNames(styles.main, className)} ref={refDiv}>
       <canvas ref={refCanvas}>MorphologyViewer</canvas>
-      <header>
+      <Scalebar className={styles.scalebar} painter={refPainter.current} />
+      <footer>
         <button type="button" onClick={() => setColorBy(otherColoringMethod)}>
           <div>
             Color by <b>{otherColoringMethod}</b>
@@ -57,20 +59,14 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
           </svg>
           <div>Reset camera</div>
         </button>
-        <button
-          className={styles.small}
-          type="button"
-          onClick={handleFullscreen}
-          title="Toggle fullscreen"
-        >
+        <button type="button" onClick={handleFullscreen} title="Toggle fullscreen">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <title>fullscreen</title>
             <path d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z" />
           </svg>
+          <div>Full screen</div>
         </button>
-      </header>
-      <footer>
-        <div>
+        <div className={styles.grid}>
           <div>Thickness:</div>
           <div>{(100 * radiusMultiplier).toFixed(0)} %</div>
           <input
@@ -82,7 +78,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
             onChange={(evt) => setRadiusMultiplier(Number(evt.target.value))}
           />
         </div>
-        <div>
+        <div className={styles.grid}>
           <div>Variable</div>
           <div>Constant</div>
           <input

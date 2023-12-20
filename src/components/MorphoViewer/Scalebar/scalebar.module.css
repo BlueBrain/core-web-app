@@ -1,0 +1,19 @@
+.main {
+  display: grid;
+  place-items: center;
+  height: 2em;
+  font-weight: bold;
+  text-shadow: 0 1px 1px #fff, 0 -1px 1px #fff, 1px 0 1px #fff, -1px 0 1px #fff;
+}
+
+.main > hr {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+  height: 3px;
+  width: 100%;
+  box-shadow: 0 0 2px 1px #fff;
+  background-color: #000;
+}

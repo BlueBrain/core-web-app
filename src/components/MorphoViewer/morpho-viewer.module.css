@@ -1,5 +1,12 @@
 .main {
   position: relative;
+  border: 1px solid #0008;
+}
+
+.scalebar {
+  position: absolute;
+  left: 8px;
+  top: 8px;
 }
 
 .main > canvas {
@@ -10,74 +17,55 @@
   height: 100%;
 }
 
-.main > header {
-  top: 0;
-}
-
 .main > footer {
   bottom: 0;
 }
 
-.main > footer,
-.main > header {
+.main > footer {
   position: absolute;
   left: 0;
   width: 100%;
   height: auto;
   padding: 0.5em;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
   gap: 2em;
-  background: #0007;
+  background: #fffc;
 }
 
-.main > footer > div,
-.main > header > div {
+.main > footer > div.grid {
   width: 320px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
   gap: 0.5em;
-  color: #fff;
+  color: #000;
 }
 
-.main > footer > div > div:nth-child(2),
-.main > header > div > div:nth-child(2) {
+.main > footer > div.grid > div:nth-child(2) {
   text-align: right;
 }
 
-.main > footer > div > input,
-.main > header > div > input {
+.main > footer > div.grid > input {
   grid-column: 1/3;
 }
 
-.main button {
+.main > footer button {
   font: inherit;
   line-height: 2em;
-  width: 200px;
+  width: 180px;
   background-color: #fffe;
   color: #000e;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  box-shadow: 0 0.125em 0.25em #0008;
+  box-shadow: 0 0.125em 0.25em #000d;
   border-radius: 0.125em;
 }
 
-.main button > svg {
+.main > footer button > svg {
   width: 2em;
   height: 2em;
-}
-
-.main button.small {
-  font: inherit;
-  border: none;
-  width: 2em;
-  height: 2em;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  box-shadow: 0 0.125em 0.25em #000;
 }
