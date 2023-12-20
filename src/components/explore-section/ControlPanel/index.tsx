@@ -203,7 +203,7 @@ export default function ControlPanel({
       </span>
 
       <p className="text-white">
-        Use the eye icon to hide/show columns. Select the property and tick the checkbox of the
+        Use the eye icon to hide/show columns. Select the column titles and tick the checkbox of the
         option(s).
       </p>
 
