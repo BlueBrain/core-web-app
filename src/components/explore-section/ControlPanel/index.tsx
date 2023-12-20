@@ -203,8 +203,8 @@ export default function ControlPanel({
       </span>
 
       <p className="text-white">
-        Sed risus pretium quam vulputate dignissim. Sollicitudin aliquam ultrices sagittis orci a
-        scelerisque.
+        Use the eye icon to hide/show columns. Select the property and tick the checkbox of the
+        option(s).
       </p>
 
       <div className="flex flex-col gap-12">
