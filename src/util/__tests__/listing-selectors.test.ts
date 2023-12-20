@@ -84,6 +84,44 @@ describe('Selectors', () => {
       const result = selectorFnContributors('text', { _source: {} });
       expect(result).toBeUndefined();
     });
+
+    it('returns sorted contributors when multiple', () => {
+      const result = selectorFnContributors('text', {
+        // @ts-ignore
+        _source: {
+          contributors: [
+            {
+              '@id': 'https://www.grid.ac/institutes/grid.443970.d',
+              '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
+              idLabel: 'https://www.grid.ac/institutes/grid.443970.d/Janelia Research Campus',
+              label: 'Janelia Research Campus',
+            },
+            {
+              '@id': 'https://www.grid.ac/institutes/grid.443970.d',
+              '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
+              idLabel:
+                'https://www.grid.ac/institutes/grid.443970.d/École Polytechnique Fédérale de Lausanne',
+              label: 'École Polytechnique Fédérale de Lausanne',
+            },
+            {
+              '@id': 'https://www.grid.ac/institutes/grid.443970.d',
+              '@type': ['http://schema.org/Person', 'http://www.w3.org/ns/prov#Agent'],
+              idLabel: 'https://www.grid.ac/institutes/grid.443970.d/Bernardo Selva',
+              label: 'Bernardo Selva',
+            },
+            {
+              '@id': 'https://www.grid.ac/institutes/grid.443970.d',
+              '@type': ['http://schema.org/Person', 'http://www.w3.org/ns/prov#Agent'],
+              idLabel: 'https://www.grid.ac/institutes/grid.443970.d/Amanda Tores',
+              label: 'Amanda Tores',
+            },
+          ],
+        },
+      });
+      expect(result).toBe(
+        'École Polytechnique Fédérale de Lausanne, Janelia Research Campus, Amanda Tores, Bernardo Selva'
+      );
+    });
   });
 
   describe('selectorFnStatistic', () => {

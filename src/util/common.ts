@@ -40,3 +40,5 @@ export const detailUrlBuilder = (
   `${BASE_EXPLORE_PATH}${EXPERIMENT_DATA_TYPES[experimentTypeName].name}/${to64(
     `${resource._source.project.label}!/!${resource._id}`
   )}`;
+
+export const localCompareString = (a: string, b: string) => a.localeCompare(b);

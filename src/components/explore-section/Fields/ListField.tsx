@@ -1,6 +1,6 @@
 import { IdLabel } from '@/types/explore-section/fields';
 
-export default function ListField({ items }: { items: IdLabel[] | undefined | null }) {
+export default function ListField<T>({ items }: { items: IdLabel<T>[] | undefined | null }) {
   if (!items) return null;
 
   return (

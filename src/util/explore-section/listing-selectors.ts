@@ -1,4 +1,8 @@
 import { format, parseISO, isValid } from 'date-fns';
+import map from 'lodash/map';
+
+import { Unionize } from '../typing';
+import { normalizeContributors } from './sort-contributors';
 import { IdLabelEntity, SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { formatNumber } from '@/util/common';
@@ -10,8 +14,11 @@ import {
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
+import { formatEsContributors } from '@/components/explore-section/Contributors';
+import { Contributor } from '@/types/explore-section/es-properties';
 
 type Record = { _source: Experiment };
+type ContributorEsProperty = Unionize<Contributor>;
 
 /**
  * Selects and formats a brain region based on its format
@@ -35,12 +42,16 @@ export const selectorFnBrainRegion = (_text: string, record: Record): string | u
  * @returns {string|undefined} - The selected and formatted value for contributors.
  */
 export const selectorFnContributors = (_text: string, record: Record): string | undefined => {
-  if (!record._source.contributors || record._source.contributors.length < 1) {
+  const { contributors } = record._source;
+
+  if (!contributors || contributors.length < 1) {
     return undefined;
   }
-  return ensureArray(record._source.contributors)
-    .map((c) => c.label)
-    .join(', ');
+
+  return map(
+    normalizeContributors<ContributorEsProperty>(contributors, formatEsContributors),
+    'label'
+  ).join(', ');
 };
 
 /**
