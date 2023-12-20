@@ -313,11 +313,11 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   dendriteStemming: {
-    title: 'dendrite stemming from soma',
+    title: 'dendrites stemming from soma',
     filter: null,
     vocabulary: {
-      plural: 'dendrite stemming from soma',
-      singular: 'dendrite stemmings from soma',
+      plural: 'dendrites stemming from soma',
+      singular: 'dendrite stemming from soma',
     },
   },
   axon: {
