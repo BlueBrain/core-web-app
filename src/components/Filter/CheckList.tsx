@@ -79,17 +79,15 @@ export default function CheckList({
       ? uniqBy(
           buckets.map((bucket) => ({
             checked: values?.includes(bucket.key as string),
+            label: bucket.key as string,
             id: bucket.key as string,
             count: bucket.doc_count,
-            label: bucket.label?.buckets[0].key as string,
           })),
           'label'
         )
       : undefined;
   }, [data, values]);
-  
-  console.log("🚀 ~ file: CheckList.tsx:80 ~ options ~ buckets:", options)
-  
+
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];
     if (values.includes(value)) {
