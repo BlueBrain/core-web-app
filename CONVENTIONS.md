@@ -8,20 +8,20 @@ The goal is to agree on common ground and try to make the linter check all this 
 
 What case do we use?
 
-* File names:
-  * components:
-    * folder: pascal (ex.: `BrainConfigPanel`)
-    * file: pascal (ex.: `VirtalLabLabel.tsx`)
-    * stylesheet: kebab (ex.: `virtual-lab-label.module.css`)
-  * others: camel or kebab (ex.: `placeholderReplacer.ts` or `m-model.ts`)
-* Routes: defined by the folder hierarchy inside `src/app/` folder.
-  * path: kebab (ex.: `experiment-designer/stimulation-protocol`)
-  * params (inside square brakets): camel (ex.: `virtual-lab/lab/[virtualLabId]`)
+- File names:
+  - components:
+    - folder: pascal (ex.: `BrainConfigPanel`)
+    - file: pascal (ex.: `VirtalLabLabel.tsx`)
+    - stylesheet: kebab (ex.: `virtual-lab-label.module.css`)
+  - others: camel or kebab (ex.: `placeholderReplacer.ts` or `m-model.ts`)
+- Routes: defined by the folder hierarchy inside `src/app/` folder.
+  - path: kebab (ex.: `experiment-designer/stimulation-protocol`)
+  - params (inside square brakets): camel (ex.: `virtual-lab/lab/[virtualLabId]`)
 
 ## Ordering
 
-* imports: there is already a linter rule for imports ordering, but nothing for the grouping. Do we want to skip a line between external and internal imports, between aliases and non-aliases, etc...
-* components props: do we want to order the props of a component? Do we want an aplhabetical order, no order at all, pushing the optional props to the end, ...
+- imports: there is already a linter rule for imports ordering, but nothing for the grouping. Do we want to skip a line between external and internal imports, between aliases and non-aliases, etc...
+- components props: do we want to order the props of a component? Do we want an aplhabetical order, no order at all, pushing the optional props to the end, ...
 
 ## Imports
 
