@@ -9,11 +9,14 @@ import ResultSuccess from './ResultSuccess';
 import { GenerativeQA } from '@/types/literature';
 import { literatureAtom } from '@/state/literature';
 
-// Isolate the result to only re-render the answer placeholder
 function ResultOnStreamAnswer() {
   const { answer } = useAtomValue(literatureAtom);
 
-  return <div className="w-full text-xl font-normal leading-7 text-blue-900">{answer}</div>;
+  return (
+    <div className="w-full flex items-start text-xl font-normal leading-7 text-blue-900">
+      {answer}
+    </div>
+  );
 }
 
 // Component used to receive the stream result

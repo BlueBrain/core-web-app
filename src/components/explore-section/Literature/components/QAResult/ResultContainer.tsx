@@ -1,31 +1,19 @@
-import { forwardRef } from 'react';
-
 import { classNames } from '@/util/utils';
 
-const ResultContainer = forwardRef<
-  HTMLDivElement,
-  {
-    id: string;
-    className?: string;
-    moreSpace: boolean;
-    children: React.ReactNode;
-  }
->(({ id, moreSpace, className, children }, ref) => {
+export default function ResultContainer({
+  id,
+  moreSpace,
+  className,
+  children,
+}: {
+  id: string;
+  className?: string;
+  moreSpace: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <div
-      id={id}
-      ref={ref}
-      className={classNames(
-        'w-full mt-3',
-        moreSpace ? 'mb-4 last:mb-[280px]' : 'mb-28 last:mb-[320px]',
-        className
-      )}
-    >
+    <div id={id} className={classNames('w-full mt-3', moreSpace ? 'mb-4' : 'mb-28', className)}>
       {children}
     </div>
   );
-});
-
-ResultContainer.displayName = 'ResultContainer';
-
-export default ResultContainer;
+}

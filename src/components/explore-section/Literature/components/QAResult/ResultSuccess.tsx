@@ -1,13 +1,13 @@
 import { useAtomValue } from 'jotai';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { FilterOutlined } from '@ant-design/icons';
 
 import ArticleSorter from '../ArticleSorter';
 import ArticlesTimeLine from '../ArticlesTimeLine';
 import { FilterFns } from '../FilterPanel';
-import GenerativeQASingleResultHeader from './ResultHeader';
+import ResultHeader from './ResultHeader';
 
-import GenerativeQASingleResultContainer from './ResultContainer';
+import ResultContainer from './ResultContainer';
 import { FilterFieldsType, SortFn, SucceededGenerativeQA } from '@/types/literature';
 import { literatureAtom, useLiteratureAtom } from '@/state/literature';
 import { ChevronIcon } from '@/components/icons';
@@ -29,22 +29,13 @@ export default function ResultSuccess({
   streamed,
   children,
 }: ResultSuccessProps) {
-  const answerRef = useRef<HTMLDivElement>(null);
   const [expandArticles, setExpandArticles] = useState(false);
   const [collpaseQuestion, setCollpaseQuestion] = useState(false);
   const [sortFunction, setSortFunction] = useState<SortFn | null>(null);
   const updateLiterature = useLiteratureAtom();
   const { filterValues, selectedQuestionForFilter } = useAtomValue(literatureAtom);
 
-  const onExpandArticles = () => {
-    setExpandArticles((prev) => !prev);
-    if (answerRef.current) {
-      answerRef.current.scrollIntoView({
-        block: 'start',
-        behavior: 'smooth',
-      });
-    }
-  };
+  const onExpandArticles = () => setExpandArticles((prev) => !prev);
   const toggleCollapseQuestion = () => setCollpaseQuestion((state) => !state);
 
   const filteredArticles =
@@ -73,13 +64,9 @@ export default function ResultSuccess({
   };
 
   return (
-    <GenerativeQASingleResultContainer
-      ref={answerRef}
-      id={id}
-      moreSpace={collpaseQuestion || expandArticles}
-    >
+    <ResultContainer id={id} moreSpace={collpaseQuestion || expandArticles}>
       <>
-        <GenerativeQASingleResultHeader
+        <ResultHeader
           {...{
             question,
             askedAt,
@@ -155,6 +142,6 @@ export default function ResultSuccess({
           )}
         </div>
       </>
-    </GenerativeQASingleResultContainer>
+    </ResultContainer>
   );
 }

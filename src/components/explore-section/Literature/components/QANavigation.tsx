@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, MouseEvent } from 'react';
+import { useEffect, useRef, useState, MouseEvent, useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   AppstoreOutlined,
@@ -167,7 +167,6 @@ function QAHistoryNavigationItem({
 function QAHistoryNavigation() {
   const update = useLiteratureAtom();
   const firstRenderRef = useRef(false);
-  const qaNavigationRef = useRef<HTMLElement>(null);
   const dataSource = useLiteratureDataSource();
   const { isBuildSection, isContextualLiterature } = useContextSearchParams();
 
@@ -181,14 +180,17 @@ function QAHistoryNavigation() {
     }
   }, [dataSource, update, firstRenderRef]);
 
-  useEffect(() => {
-    if (qaNavigationRef.current) {
-      qaNavigationRef.current.scrollTo({
-        behavior: 'smooth',
-        top: qaNavigationRef.current.scrollHeight,
-      });
-    }
-  }, [dataSource.length]);
+  const qaNavigationRef = useCallback(
+    (node: HTMLElement) => {
+      if (node && dataSource.length) {
+        node.scrollTo({
+          behavior: 'auto',
+          top: node.scrollHeight,
+        });
+      }
+    },
+    [dataSource]
+  );
 
   if (!showNavigation) return null;
 
@@ -197,7 +199,7 @@ function QAHistoryNavigation() {
       ref={qaNavigationRef}
       id="gqa-navigation"
       className={classNames(
-        'flex flex-col py-10 overflow-x-hidden no-scrollbar scroll-smooth',
+        'flex flex-col py-10 overflow-x-hidden no-scrollbar',
         isBuildSection ? '-ml-10 h-[calc(100%-240px)]' : 'h-full'
       )}
     >

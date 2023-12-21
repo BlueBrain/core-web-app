@@ -4,8 +4,8 @@ import { Button } from 'antd';
 import delay from 'lodash/delay';
 import reject from 'lodash/reject';
 
-import GenerativeQASingleResultContainer from './ResultContainer';
-import GenerativeQASingleResultHeader from './ResultHeader';
+import ResultContainer from './ResultContainer';
+import ResultHeader from './ResultHeader';
 import { literatureResultAtom, persistedLiteratureResultAtom } from '@/state/literature';
 import { FailedGenerativeQA } from '@/types/literature';
 import { classNames } from '@/util/utils';
@@ -45,14 +45,14 @@ export default function ResultError({
   };
 
   return (
-    <GenerativeQASingleResultContainer
+    <ResultContainer
       id={id}
       moreSpace={collpaseQuestion}
       className={classNames(deletingPending ? 'animate-scale-down' : '')}
     >
       <>
         {showHeader && (
-          <GenerativeQASingleResultHeader
+          <ResultHeader
             {...{
               question,
               askedAt,
@@ -85,6 +85,6 @@ export default function ResultError({
           </div>
         </div>
       </>
-    </GenerativeQASingleResultContainer>
+    </ResultContainer>
   );
 }
