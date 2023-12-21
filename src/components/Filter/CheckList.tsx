@@ -79,9 +79,9 @@ export default function CheckList({
       ? uniqBy(
           buckets.map((bucket) => ({
             checked: values?.includes(bucket.key as string),
-            label: bucket.key as string,
             id: bucket.key as string,
             count: bucket.doc_count,
+            label: bucket.key as string,
           })),
           'label'
         )
