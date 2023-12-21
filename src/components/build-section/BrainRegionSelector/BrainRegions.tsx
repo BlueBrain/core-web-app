@@ -28,6 +28,7 @@ import { BrainRegion } from '@/types/ontologies';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 import { sectionAtom } from '@/state/application';
+import { useSaveHierarchy } from '@/hooks/brain-region-panel';
 
 /**
  * the line component is added for each NavTitle with absolue position
@@ -168,6 +169,7 @@ export default function BrainRegions() {
   const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
   const setResetAtlasVisualization = useResetAtom(atlasVisualizationAtom);
   const resetSelectedBrainRegion = useSetAtom(resetSelectedBrainRegionAtom);
+  useSaveHierarchy();
 
   useEffect(() => {
     if (!brainModelConfigId) return;
@@ -223,15 +225,7 @@ export default function BrainRegions() {
                   className="text-base"
                   colorCode={colorCode}
                   id={id}
-                  onClick={() =>
-                    setSelectedBrainRegion(
-                      id,
-                      title,
-                      leaves,
-                      representedInAnnotation,
-                      brainRegionHierarchyState
-                    )
-                  }
+                  onClick={() => setSelectedBrainRegion(id, title, leaves, representedInAnnotation)}
                   title={brainRegionTitleCaseExceptConjunctions(title)}
                   isExpanded={isExpanded}
                   isHidden={!representedInAnnotation && !itemsInAnnotation}

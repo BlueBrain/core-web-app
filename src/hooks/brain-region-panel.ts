@@ -6,6 +6,7 @@ import intersection from 'lodash/intersection';
 import { unwrap } from 'jotai/utils';
 
 import {
+  brainRegionsAtom,
   dataBrainRegionsAtom,
   meshDistributionsAtom,
   selectedBrainRegionAtom,
@@ -15,6 +16,13 @@ import {
 import { sectionAtom } from '@/state/application';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
 import { useAtlasVisualizationManager } from '@/state/atlas';
+import { generateHierarchyPathTree, getAncestors } from '@/components/BrainTree/util';
+import { setInitializationValue } from '@/util/utils';
+import {
+  DEFAULT_BRAIN_REGION_STORAGE_KEY,
+  DEFAULT_BRAIN_REGION,
+} from '@/constants/brain-hierarchy';
+import { DefaultBrainRegionType } from '@/state/brain-regions/types';
 
 export function useDisplayMesh() {
   const sectionName = useAtomValue(sectionAtom);
@@ -134,4 +142,27 @@ export function useCollectExperimentalData() {
     setDataBrainRegions,
     sectionName,
   ]);
+}
+
+export function useSaveHierarchy() {
+  const sectionName = useAtomValue(sectionAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
+  const brainRegions = useAtomValue(unwrap(brainRegionsAtom));
+
+  useEffect(() => {
+    if (!brainRegions || !selectedBrainRegion || !sectionName) return;
+
+    const ancestors = getAncestors(brainRegions, selectedBrainRegion.id);
+
+    const brainRegionHierarchy = generateHierarchyPathTree(
+      ancestors.map((ancestor) => Object.keys(ancestor)[0])
+    );
+
+    setInitializationValue(DEFAULT_BRAIN_REGION_STORAGE_KEY, {
+      ...DEFAULT_BRAIN_REGION,
+      value: selectedBrainRegion,
+      // keep only the selected region path in the tree
+      brainRegionHierarchyState: brainRegionHierarchy ?? {},
+    } satisfies DefaultBrainRegionType);
+  }, [selectedBrainRegion, brainRegions, sectionName]);
 }

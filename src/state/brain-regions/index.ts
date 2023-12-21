@@ -21,7 +21,6 @@ import {
 import { itemsInAnnotationReducer, flattenBrainRegionsTree } from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
-  DEFAULT_BRAIN_REGION,
   DEFAULT_BRAIN_REGION_STORAGE_KEY,
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
@@ -375,8 +374,7 @@ export const setSelectedBrainRegionAtom = atom(
     selectedBrainRegionId: string,
     selectedBrainRegionTitle: string,
     selectedBrainRegionLeaves: string[] | null,
-    selectedBrainRegionRepresentedInAnnotation: boolean,
-    brainRegionHierarchyState: {} | null
+    selectedBrainRegionRepresentedInAnnotation: boolean
   ) => {
     const brainRegion = {
       id: selectedBrainRegionId,
@@ -389,12 +387,6 @@ export const setSelectedBrainRegionAtom = atom(
     set(literatureSelectedBrainRegionAtom, brainRegion);
     set(compositionHistoryAtom, []);
     set(compositionHistoryIndexAtom, 0);
-
-    setInitializationValue(DEFAULT_BRAIN_REGION_STORAGE_KEY, {
-      ...DEFAULT_BRAIN_REGION,
-      value: brainRegion,
-      brainRegionHierarchyState: brainRegionHierarchyState ?? {},
-    } satisfies DefaultBrainRegionType);
   }
 );
 
