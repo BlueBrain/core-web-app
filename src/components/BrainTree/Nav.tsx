@@ -1,4 +1,4 @@
-import React, {
+import {
   Dispatch,
   ForwardedRef,
   ReactElement,
@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useAtomValue } from 'jotai';
+
 import { handleNavValueChange } from './util';
 import { alternateTreeWithRepresentationAtom } from '@/state/brain-regions';
 import TreeNav from '@/components/TreeNavItem';
