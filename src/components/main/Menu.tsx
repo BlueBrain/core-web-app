@@ -29,7 +29,7 @@ const MAIN_MENU_LIST: Array<MainMenuItem> = [
     id: 'main-explore-entry',
     title: 'Explore',
     description:
-      'Explore a large collection of neuronal models, virtual simulations, and brain cell distribution in a 3D and interactive manner',
+      'Examine neuronal models and virtual simulations through 3D interactive exploration and literature searches.',
     Component: ExploreMainMenu,
     bgColor: 'bg-primary-6',
     selectedBgColor: 'bg-black',
@@ -39,7 +39,7 @@ const MAIN_MENU_LIST: Array<MainMenuItem> = [
     id: 'main-build-entry',
     title: 'Build',
     description:
-      'Build your own brain configurations by customizing the cell compositions, assigning neuronal models and configuring the desired connectivity pattern.',
+      'Build your own brain configurations by customizing cell compositions, neuronal models, and connectivity metrics.',
     Component: BuildMainMenu,
     bgColor: 'bg-primary-7',
     selectedBgColor: 'bg-white',
