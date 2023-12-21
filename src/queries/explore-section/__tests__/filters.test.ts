@@ -23,7 +23,7 @@ describe('Filters elastic builder', () => {
   it('should build correct terms filter', () => {
     const builder = getFilterESBuilder(checklistFilter);
     expect(builder?.toJSON()).toEqual({
-      terms: { 'brainRegion.@id.keyword': ['brainRegion1'] },
+      terms: { 'brainRegion.label.keyword': ['brainRegion1'] },
     });
   });
 
@@ -144,7 +144,7 @@ describe('test buildFilters functionality', () => {
           },
           {
             terms: {
-              'brainRegion.@id.keyword': ['brainRegion1'],
+              'brainRegion.label.keyword': ['brainRegion1'],
             },
           },
           {
