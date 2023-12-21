@@ -27,6 +27,7 @@ import {
 } from '@/constants/brain-hierarchy';
 import { getInitializationValue, setInitializationValue } from '@/util/utils';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
+import { sectionAtom } from '@/state/application';
 
 /*
   Atom dependency graph
@@ -342,14 +343,24 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
 });
 
 export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | null>((get) => {
-  const brainModelConfigId = get(brainModelConfigIdAtom);
-  if (!brainModelConfigId) return null;
+  const sectionName = get(sectionAtom);
+  if (!sectionName) return null;
 
   const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
     DEFAULT_BRAIN_REGION_STORAGE_KEY
   );
 
-  return initializationBrainRegion ? initializationBrainRegion.value : null;
+  const defaultRegion =
+    sectionName === 'explore'
+      ? {
+          id: 'http://api.brain-map.org/api/v2/data/Structure/567',
+          title: 'Cerebrum',
+          leaves: [],
+          representedInAnnotation: true,
+        }
+      : null;
+
+  return initializationBrainRegion ? initializationBrainRegion.value : defaultRegion;
 });
 
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
@@ -444,7 +455,11 @@ export const brainRegionHierarchyStateAtom = atomWithDefault<NavValue | null>((g
   const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
     DEFAULT_BRAIN_REGION_STORAGE_KEY
   );
-  return initializationBrainRegion ? initializationBrainRegion.brainRegionHierarchyState : null;
+  return initializationBrainRegion
+    ? initializationBrainRegion.brainRegionHierarchyState
+    : {
+        'http://api.brain-map.org/api/v2/data/Structure/8': null,
+      };
 });
 
 brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';
