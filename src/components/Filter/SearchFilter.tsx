@@ -28,7 +28,7 @@ export default function SearchFilter({
             checked: values?.includes(bucket.key as string),
             id: bucket.key as string,
             count: bucket.doc_count,
-            label: bucket.label?.buckets[0].key as string,
+            label: bucket.key as string,
           })),
           'label'
         )

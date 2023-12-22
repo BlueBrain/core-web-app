@@ -39,7 +39,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   brainRegion: {
     esTerms: {
       flat: {
-        filter: 'brainRegion.@id.keyword',
+        filter: 'brainRegion.label.keyword',
         aggregation: 'brainRegion',
         sort: 'brainRegion.label.keyword',
       },
@@ -58,7 +58,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   eType: {
     esTerms: {
       flat: {
-        filter: 'eType.@id.keyword',
+        filter: 'eType.label.keyword',
         aggregation: 'eType',
         sort: 'eType.label.keyword',
       },
@@ -77,7 +77,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   mType: {
     esTerms: {
       flat: {
-        filter: 'mType.@id.keyword',
+        filter: 'mType.label.keyword',
         aggregation: 'mType',
         sort: 'mType.label.keyword',
       },
@@ -96,7 +96,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   subjectSpecies: {
     esTerms: {
       flat: {
-        filter: 'subjectSpecies.@id.keyword',
+        filter: 'subjectSpecies.label.keyword',
         aggregation: 'subjectSpecies',
         sort: 'subjectSpecies.label.keyword',
       },
