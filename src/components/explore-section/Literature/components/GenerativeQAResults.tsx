@@ -8,8 +8,12 @@ import withStreamResult from './QAResult/ResultWithStream';
 import { literatureAtom } from '@/state/literature';
 
 function AlwaysScrollToBottom() {
+  const { answer } = useAtomValue(literatureAtom);
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => ref.current?.scrollIntoView(false));
+
+  useEffect(() => {
+    if (ref.current && answer !== '') ref.current?.scrollIntoView(false);
+  }, [answer]);
 
   return <div aria-hidden ref={ref} />;
 }
