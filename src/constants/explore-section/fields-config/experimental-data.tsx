@@ -155,7 +155,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       flat: {
         filter: 'subjectAge.value',
         aggregation: 'subjectAge.value',
-        sort: 'subjectAge.value',
+        sort: 'subjectAge.value.minValue',
       },
     },
     render: {
