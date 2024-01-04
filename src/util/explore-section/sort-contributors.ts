@@ -15,7 +15,7 @@ const SCHEMA_TYPE_PERSON = ['http://schema.org/Person', 'Person'];
  * @param b Contributor
  * @returns number
  */
-function sortContributors<T extends { label?: string }>(a: T, b: T): number {
+export function sortContributors<T extends { label?: string }>(a: T, b: T): number {
   return localCompareString(a.label ?? '', b.label ?? '');
 }
 
@@ -36,10 +36,10 @@ export function normalizeContributors<T>(
       people: Array<IdLabelWithType>;
     }>(
       (accumulator, contributor) => {
-        if (intersection(contributor.type, SCHEMA_TYPE_ORGANIZATION).length)
+        const types = typeof contributor.type === 'string' ? [contributor.type] : contributor.type;
+        if (intersection(types, SCHEMA_TYPE_ORGANIZATION).length)
           accumulator.organizations.push(contributor);
-        if (intersection(contributor.type, SCHEMA_TYPE_PERSON).length)
-          accumulator.people.push(contributor);
+        if (intersection(types, SCHEMA_TYPE_PERSON).length) accumulator.people.push(contributor);
         return accumulator;
       },
       {

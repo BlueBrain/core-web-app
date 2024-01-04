@@ -16,7 +16,7 @@ import { IdLabelWithType, normalizeContributors } from '@/util/explore-section/s
  *
  * @param {import("./types/explore-section").DeltaResource} contributor
  */
-export const formatContributors = (contributor: Contributor): IdLabelWithType => {
+export const formatContributors = (contributor: Contributor | null): IdLabelWithType => {
   if (!contributor) return {};
 
   const { name, familyName, givenName, '@id': id, '@type': type } = contributor;
@@ -27,7 +27,9 @@ export const formatContributors = (contributor: Contributor): IdLabelWithType =>
   return { id, type };
 };
 
-export const formatEsContributors = (contributor: ContributorEsProperty): IdLabelWithType => {
+export const formatEsContributors = (
+  contributor: ContributorEsProperty | null
+): IdLabelWithType => {
   if (!contributor) return {};
 
   const { '@id': id, '@type': type, label } = contributor;
