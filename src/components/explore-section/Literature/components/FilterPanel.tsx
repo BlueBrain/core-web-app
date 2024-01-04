@@ -6,6 +6,9 @@ import { CloseOutlined } from '@ant-design/icons';
 import isNil from 'lodash/isNil';
 import { useAtomValue } from 'jotai';
 import get from 'lodash/get';
+import { ConfigProvider, DatePicker } from 'antd';
+import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns'; // eslint-disable-line import/no-extraneous-dependencies
+import { RangeValue } from 'rc-picker/lib/interface'; // eslint-disable-line import/no-extraneous-dependencies
 
 import {
   GArticle,
@@ -17,7 +20,7 @@ import {
 } from '@/types/literature';
 import { Filter, GteLteValue } from '@/components/Filter/types';
 import SearchFilter from '@/components/Filter/SearchFilter';
-import { DateRange, FilterGroup } from '@/components/Filter';
+import { FilterGroup } from '@/components/Filter';
 import ReloadIcon from '@/components/icons/Reload';
 import {
   literatureAtom,
@@ -28,6 +31,8 @@ import {
 import { normalizedDate } from '@/util/utils';
 import { getFieldLabel } from '@/api/explore-section/fields';
 import { Buckets } from '@/types/explore-section/fields';
+
+const { RangePicker } = DatePicker.generatePicker<Date>(dateFnsGenerateConfig);
 
 export default function FilterPanel() {
   const updateFilters = useLiteratureFilter();
@@ -75,17 +80,37 @@ export default function FilterPanel() {
         );
       case 'dateRange':
         return (
-          <DateRange
-            filter={filter}
-            onChange={(values: GteLteValue) => {
-              setFilters((prevFilters) => {
-                const newFilters = prevFilters.map((f) =>
-                  f.field === filter.field ? { ...f, value: values } : f
-                ) as MLFilter[];
-                return newFilters;
-              });
+          <ConfigProvider
+            theme={{
+              token: {
+                colorBgContainer: '#002766',
+                colorText: '#40A9FF',
+                colorTextQuaternary: '#40A9FF',
+                colorTextPlaceholder: '#40A9FF',
+                colorTextDescription: '#40A9FF',
+              },
             }}
-          />
+          >
+            <RangePicker
+              format="DD-MM-YYYY"
+              className="py-2 bg-primary-9 border rounded border-primary-4 font-sm"
+              allowEmpty={[true, true]}
+              value={[filter.value.gte as Date, filter.value.lte as Date]}
+              onChange={(newValues: RangeValue<Date>) => {
+                setFilters((prevFilters) => {
+                  const newFilters = prevFilters.map((f) =>
+                    f.field === filter.field
+                      ? {
+                          ...f,
+                          value: { gte: newValues?.[0] ?? null, lte: newValues?.[1] ?? null },
+                        }
+                      : f
+                  ) as MLFilter[];
+                  return newFilters;
+                });
+              }}
+            />
+          </ConfigProvider>
         );
       default:
         throw new Error(`Unhandles filter type: ${filter.type}`);

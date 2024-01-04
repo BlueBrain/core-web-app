@@ -109,13 +109,13 @@ describe('GenerativeQAInput', () => {
     expect(searchBtn).toBeEnabled();
   });
 
-  test('shows both, normal send button and refined question button when user opens search panel', () => {
+  test('shows only refined question button when user opens search panel', () => {
     typeQuestion(defaultQuestion);
     expect(sendQuestionWithoutParamsButton()).toBeVisible();
 
     openRefineSearchPanel();
 
-    expect(sendQuestionWithoutParamsButton()).toBeVisible();
+    expect(sendQuestionWithoutParamsButton()).not.toBeInTheDocument();
     expect(sendRefinedQuestionButton()).toBeVisible();
   });
 

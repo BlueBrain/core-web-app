@@ -58,7 +58,8 @@ export default function QAForm({
   const searchParams = useSearchParams()!;
   const pathname = usePathname();
   const [QAs, updateResult] = useAtom(literatureResultAtom);
-  const [{ query, isGenerating, controller }, updateLiterature] = useAtom(literatureAtom);
+  const [{ query, isGenerating, controller, areQAParamsVisible }, updateLiterature] =
+    useAtom(literatureAtom);
   const currentBrainRegion = useAtomValue(literatureSelectedBrainRegionAtom);
   const { isContextualLiterature } = useContextSearchParams();
 
@@ -183,11 +184,13 @@ export default function QAForm({
               icon={<StopLoading className="text-primary-6 w-6 h-6" />}
             />
           ) : (
-            <FormButton
-              type="submit"
-              name="send"
-              icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8" />}
-            />
+            !areQAParamsVisible && (
+              <FormButton
+                type="submit"
+                name="send"
+                icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8 ml-5" />}
+              />
+            )
           )}
         </div>
       </div>

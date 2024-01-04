@@ -85,6 +85,7 @@ export default function AutoCompleteSearch({
       onFocus={() => {
         setSuggestions(initialSuggestions ?? []);
       }}
+      maxTagTextLength={100} // Prevents overlap between delete tag icon and show autocomplete options icons when tag length is too long.
       open={openSuggestions}
       onDropdownVisibleChange={(open) => setOpenSuggestions(open)}
       placeholder={title}

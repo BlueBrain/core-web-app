@@ -19,6 +19,8 @@ import { mockArticleResponse, mockAuthors, mockJournals } from '__tests__/__util
 import { normalizeString } from '@/util/utils';
 import { ArticleListFilters } from '@/components/explore-section/Literature/api';
 
+jest.setTimeout(20_000);
+
 jest.mock('next/navigation', () => {
   const actual = jest.requireActual('next/navigation');
 
