@@ -29,7 +29,7 @@ export type Mesh = {
 export type BrainRegionOntologyView = {
   id: BrainViewId;
   leafProperty: string;
-  parentProperty: string;
+  parentProperty: "isPartOf" | "isLayerPartOf";
   childrenProperty: string;
   title: string;
 };
