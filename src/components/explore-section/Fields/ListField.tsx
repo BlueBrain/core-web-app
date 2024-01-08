@@ -6,7 +6,7 @@ export default function ListField<T>({ items }: { items: IdLabel<T>[] | undefine
   return (
     <ul>
       {items?.map((item) => (
-        <li key={item.id} className="break-words">
+        <li key={item.id} className="break-words [&:not(:last-child)]:after:content-[',']">
           {item.label}
         </li>
       ))}
