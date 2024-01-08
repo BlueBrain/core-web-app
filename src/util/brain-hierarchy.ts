@@ -1,6 +1,7 @@
 import { TreeItem } from 'performant-array-to-tree';
 import { OriginalComposition, CompositionOverrideLeafNode } from '@/types/composition/original';
 import { Ancestor, BrainRegion, DefaultBrainViewId } from '@/types/ontologies';
+import { BRAIN_VIEW_LAYER } from '@/constants/brain-hierarchy';
 
 export const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -8,6 +9,64 @@ export type RegionFullPathType = {
   id: string;
   name: string;
 };
+
+// This function's purpose is similar to that of itemsInAnnotationReducer(), in that it looks for the descendents of a brain region to recursively check whether at least one of the descendents is represented in the annotation volume.
+// The difference is that this function relies on a flat brainRegions array, whereas itemsInAnnotationReducer() is used to handle the nested tree hierarchy structure.
+export function checkRepresentationOfDescendents(
+  acc: { brainRegions: BrainRegion[]; representedInAnnotation: boolean },
+  brainRegionId: string
+): { brainRegions: BrainRegion[]; representedInAnnotation: boolean } {
+  const { brainRegions, representedInAnnotation } = acc;
+
+  if (representedInAnnotation) {
+    return {
+      brainRegions,
+      representedInAnnotation,
+    }; // It only needs to be true for one.
+  }
+
+  const brainRegion = brainRegions?.find(({ id }) => id === brainRegionId);
+
+  const descendents = getDescendentsFromView(
+    brainRegion?.hasPart,
+    brainRegion?.hasLayerPart,
+    brainRegion?.view
+  );
+
+  const { representedInAnnotation: descendentsRepresentedInAnnotation } = descendents?.reduce(
+    checkRepresentationOfDescendents,
+    {
+      brainRegions,
+      representedInAnnotation: false,
+    }
+  ) ?? { representedInAnnotation: false }; // If no descendents, then no descendents are represented.
+
+  return {
+    brainRegions,
+    representedInAnnotation:
+      brainRegion?.representedInAnnotation ?? descendentsRepresentedInAnnotation,
+  };
+}
+
+// This function returns either the hasPart or hasLayerPart array of brain region IDs, depending on the currently selected "view" (think: default or layer-based).
+export function getDescendentsFromView(
+  hasPart?: string[],
+  hasLayerPart?: string[],
+  view?: string
+): string[] | undefined {
+  let descendents;
+
+  // Currently, it seems that "layer" brain regions have the default view ID, even if they will never appear in the default hierarchy.
+  switch (view) {
+    case BRAIN_VIEW_LAYER:
+      descendents = hasLayerPart;
+      break;
+    default: // This means that by default, layer-based views also have the default view ID (see brainRegionOntologyAtom).
+      descendents = hasPart ?? hasLayerPart; // To compensate for this, we first check whether hasPart, before falling-back on hasLayerPart (for the layer-based brain-regions).
+  }
+
+  return descendents;
+}
 
 /**
  * Gets the path from top brain region to node clicked.

@@ -4,7 +4,8 @@ import { SelectProps } from 'antd/es/select';
 import { getAncestors, generateHierarchyPathTree } from './util';
 import { BrainViewId, BrainLayerViewId } from '@/types/ontologies';
 import {
-  brainRegionsAtom,
+  // brainRegionsAtom,
+  brainRegionsWithRepresentationAtom,
   selectedAlternateViews,
   selectedBrainRegionAtom,
   setSelectedBrainRegionAtom,
@@ -29,14 +30,12 @@ type SearchOption = {
 export default function BrainTreeSearch({
   brainTreeNav,
   setValue,
-  onClear = () => {},
 }: {
   brainTreeNav?: HTMLDivElement | null;
   setValue?: Dispatch<SetStateAction<NavValue>>;
-  onClear?: () => void;
 }) {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const brainRegions = useAtomValue(brainRegionsAtom);
+  const brainRegions = useAtomValue(brainRegionsWithRepresentationAtom);
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
 
   // This function returns either the hasPart or hasLayerPart array of brain region IDs, depending on the currently selected "view" (think: default or layer-based).
@@ -85,31 +84,19 @@ export default function BrainTreeSearch({
 
   const options = useMemo(
     () =>
-      brainRegions?.reduce<SearchOption[]>(
-        (acc, { title, id, hasPart, hasLayerPart, leaves, representedInAnnotation, view }) => {
-          const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
+      brainRegions?.map(({ title, id, isPartOf, isLayerPartOf, ...rest }) => {
+        const ancestors = getAncestors(brainRegions, id);
 
-          const descendentsRepresentedInAnnotation = descendents?.reduce(
-            checkRepresentationOfDescendents,
-            false
-          );
-
-          return representedInAnnotation || descendentsRepresentedInAnnotation
-            ? [
-                ...acc,
-                {
-                  ancestors: getAncestors(brainRegions, id),
-                  label: title,
-                  leaves,
-                  representedInAnnotation,
-                  value: id,
-                },
-              ]
-            : acc;
-        },
-        []
-      ) ?? [],
-    [brainRegions, checkRepresentationOfDescendents]
+        return {
+          ancestors,
+          label: title,
+          isLayerPartOf,
+          isPartOf,
+          value: id,
+          ...rest,
+        };
+      }) ?? [],
+    [brainRegions]
   );
 
   const setSelectedAlternateViews = useSetAtom(selectedAlternateViews);
@@ -157,10 +144,8 @@ export default function BrainTreeSearch({
 
   return (
     <Search<SearchOption>
-      key={selectedBrainRegion?.id}
       className="mb-10"
       handleSelect={handleSelect}
-      onClear={onClear}
       options={options}
       placeholder="Search region..."
       defaultValue={selectedBrainRegion?.id}
