@@ -26,6 +26,7 @@ const fields = [
   },
   {
     field: 'contributors',
+    className: 'col-span-3',
   },
   {
     field: 'createdAt',
