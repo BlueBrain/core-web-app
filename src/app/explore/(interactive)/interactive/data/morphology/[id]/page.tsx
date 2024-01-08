@@ -28,8 +28,8 @@ export default function MorphologyDetailPage() {
           <Detail fields={NEURON_MORPHOLOGY_FIELDS}>
             {(detail: DetailType) => (
               <>
-                <MorphoViewerContainer resource={detail} />
                 <MorphoViewerLoader resource={detail} />
+                <MorphoViewerContainer resource={detail} />
                 <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                   <GeneralizationControls experimentTypeName={NEURON_MORPHOLOGY} />
                 </ErrorBoundary>

@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { MorphologyPainter, ColoringType } from '@bbp/morphoviewer';
 
 import { Scalebar } from './Scalebar';
+import { useSignal } from './hooks/signal';
+import { Warning } from './Warning';
 import { classNames } from '@/util/utils';
 
 import styles from './morpho-viewer.module.css';
@@ -22,6 +24,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   const [radiusType, setRadiusType] = useRadiusType(refPainter.current, 0);
   const [colorBy, setColorBy] = useColorBy(refPainter.current, 'section');
   const refCanvas = useRef<HTMLCanvasElement | null>(null);
+  const [warning, setWarning] = useSignal(3000);
 
   useEffect(() => {
     const painter = refPainter.current;
@@ -32,23 +35,37 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
     painter.colors.axon = '#05f';
     painter.colors.basalDendrite = '#f00';
     painter.colors.apicalDendrite = '#f0f';
-  }, [swc]);
+
+    const handleWarning = () => {
+      setWarning(true);
+    };
+    painter.eventMouseWheelWithoutCtrl.addListener(handleWarning);
+    return () => painter.eventMouseWheelWithoutCtrl.removeListener(handleWarning);
+  }, [setWarning, swc]);
 
   const otherColoringMethod: ColoringType = colorBy === 'section' ? 'distance' : 'section';
   const handleFullscreen = () => {
     const div = refDiv.current;
     if (!div) return;
 
-    div.requestFullscreen({
-      navigationUI: 'hide',
-    });
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      div.requestFullscreen({
+        navigationUI: 'hide',
+      });
+    }
   };
   const handleResetCamera = () => {
     refPainter.current.resetCamera();
   };
 
   return (
-    <div className={classNames(styles.main, className)} ref={refDiv}>
+    <div
+      className={classNames(styles.main, className)}
+      ref={refDiv}
+      onDoubleClick={handleFullscreen}
+    >
       <canvas ref={refCanvas}>MorphologyViewer</canvas>
       <Scalebar className={styles.scalebar} painter={refPainter.current} />
       <footer>
@@ -96,6 +113,9 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
           />
         </div>
       </footer>
+      <Warning visible={warning} onClose={() => setWarning(false)}>
+        Hold Ctrl key to zoom
+      </Warning>
     </div>
   );
 }

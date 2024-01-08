@@ -1,0 +1,34 @@
+.main {
+  all: inherit;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  margin: 0;
+  transition: all 0.3s;
+}
+
+.main > div {
+  font-size: 2.5rem;
+  padding: 1em;
+  border-radius: 999vmax;
+  background-color: #0007;
+  color: #fff;
+  border: 0.25em solid currentColor;
+}
+
+.hide {
+  pointer-events: none;
+  opacity: 0;
+  backdrop-filter: blur(0);
+}
+
+.show {
+  pointer-events: all;
+  opacity: 1;
+  backdrop-filter: blur(4px);
+}
