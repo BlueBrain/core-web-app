@@ -142,14 +142,14 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
               ...acc,
               {
                 ancestors: getAncestors(brainRegions, id),
+                id,
+                hasLayerPart,
+                hasPart,
                 label: title,
                 leaves,
                 representedInAnnotation,
-                value: id,
                 title,
-                id,
-                hasPart,
-                hasLayerPart,
+                value: id,
                 ...rest,
               },
             ]
