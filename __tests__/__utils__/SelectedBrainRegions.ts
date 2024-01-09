@@ -24,21 +24,33 @@ const getMockBrainRegion = (
 });
 
 export const mockBrainRegions: BrainRegion[] = [
-  getMockBrainRegion('Anterior cingulate area, ventral part, layer 5', '1', '#0802A3', {
-    isPartOf: `${IDPrefix}/8`,
-  }),
-  getMockBrainRegion('Agranular insular area, posterior part, layer 2', '2', '#FF4B91', {
-    isPartOf: `${IDPrefix}/8`,
-  }),
-  getMockBrainRegion('Isocortex', '3', '#FF7676', { isPartOf: `${IDPrefix}/8` }),
-  getMockBrainRegion('Ventral posterolateral nucleus of the thalamus', '718', '#FFCD4B', {
-    isPartOf: `${IDPrefix}/8`,
-  }),
-  getMockBrainRegion('Cerebrum', '6', '#98E4FF', { isPartOf: `${IDPrefix}/8` }),
-  getMockBrainRegion('Child of root', '8', '#000', { isPartOf: `${IDPrefix}/997` }),
   getMockBrainRegion('Root Brain Region', '997', '#98E4FF', {
     isPartOf: null,
-    isLayerPartOf: null,
     hasPart: [`${IDPrefix}/8`],
   }),
+  getMockBrainRegion('Basic cell groups and regions', '8', '#BFDAE3', {
+    isPartOf: `${IDPrefix}/997`,
+    hasPart: [`${IDPrefix}/567`, `${IDPrefix}/512`, `${IDPrefix}/343`],
+  }),
+  getMockBrainRegion('Brain stem', '343', '#FF7080', {
+    isPartOf: `${IDPrefix}/8`,
+    hasPart: [`${IDPrefix}/1065`, `${IDPrefix}/1129`, `${IDPrefix}/313`],
+  }),
+  getMockBrainRegion('Cerebellum', '512', '#F0F080', {
+    isPartOf: `${IDPrefix}/8`,
+    hasPart: [`${IDPrefix}/528`, `${IDPrefix}/614454453`, `${IDPrefix}/519`],
+  }),
+  getMockBrainRegion('Cerebrum', '567', '#B0F0FF', {
+    isPartOf: `${IDPrefix}/8`,
+    hasPart: [`${IDPrefix}/614454562`, `${IDPrefix}/596`],
+  }),
+  getMockBrainRegion('Cerebral cortex', '688', '#B0FFB8', {
+    isPartOf: `${IDPrefix}/567`,
+    hasPart: [`${IDPrefix}/695`],
+  }),
+  getMockBrainRegion('Cortical plate', '695', '#70FF70', {
+    isPartOf: `${IDPrefix}/688`,
+    hasPart: [`${IDPrefix}/315`],
+  }),
+  getMockBrainRegion('Isocortex', '315', '#70FF71', { isPartOf: `${IDPrefix}/695` }),
 ];
