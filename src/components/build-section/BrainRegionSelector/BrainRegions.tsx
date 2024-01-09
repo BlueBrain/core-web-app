@@ -25,7 +25,6 @@ import {
 } from '@/state/brain-regions';
 import { NavValue } from '@/state/brain-regions/types';
 import { BrainRegion } from '@/types/ontologies';
-import BrainRegionControls from '@/components/build-section/BrainRegionSelector/BrainRegionControls';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 import { sectionAtom } from '@/state/application';
@@ -147,7 +146,6 @@ function NavTitle({
             selectOptions={selectOptions}
             selectedBrainRegion={selectedBrainRegion?.id}
           />
-          {id && colorCode && <BrainRegionControls {...{ id, colorCode }} />}
           {trigger?.()}
         </div>
       </div>

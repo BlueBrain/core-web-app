@@ -3,6 +3,7 @@
 import { ErrorBoundary } from 'react-error-boundary';
 import { ReactNode, useEffect } from 'react';
 import { useSetAtom } from 'jotai';
+
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import Sidebar from '@/components/explore-section/Sidebar';
