@@ -29,8 +29,7 @@ type SearchOption = {
   value: string;
 };
 
-export type BrainRegionWithRepresentation = BrainRegion &
-  SearchOption;
+export type BrainRegionWithRepresentation = BrainRegion & SearchOption;
 
 export type Mesh = {
   contentUrl: string;
@@ -40,7 +39,7 @@ export type Mesh = {
 export type BrainRegionOntologyView = {
   id: BrainViewId;
   leafProperty: string;
-  parentProperty: "isPartOf" | "isLayerPartOf";
+  parentProperty: 'isPartOf' | 'isLayerPartOf';
   childrenProperty: string;
   title: string;
 };

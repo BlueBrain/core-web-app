@@ -39,7 +39,7 @@ type MeshNexusSource = {
 export type BrainRegionOntologyViewNexus = {
   '@id': BrainViewId;
   hasLeafHierarchyProperty: string;
-  hasParentHierarchyProperty: "isPartOf" | "isLayerPartOf";
+  hasParentHierarchyProperty: 'isPartOf' | 'isLayerPartOf';
   hasChildrenHierarchyProperty: string;
   label: string;
 };

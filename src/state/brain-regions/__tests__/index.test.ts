@@ -19,7 +19,7 @@ type HasHierarchyViewRaw = {
   description: string;
   hasChildrenHierarchyProperty: string;
   hasLeafHierarchyProperty: string;
-  hasParentHierarchyProperty: string;
+  hasParentHierarchyProperty: 'isPartOf' | 'isLayerPartOf';
   label: string;
 }[];
 
