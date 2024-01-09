@@ -1,4 +1,4 @@
-import { LTTB, DataPoint } from 'downsample';
+import { LTTB, DataPoint } from './LTTB';
 
 interface RawData {
   y: number[];
