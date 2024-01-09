@@ -9,6 +9,7 @@ import {
   BrainRegion,
   BrainRegionOntology,
   BrainRegionOntologyView,
+  BrainRegionWithRepresentation,
   BrainViewId,
   Mesh,
 } from '@/types/ontologies';
@@ -103,22 +104,12 @@ export const brainRegionsAtom = selectAtom<
     })) ?? null
 );
 
-type SearchOption = {
-  ancestors: Record<string, BrainViewId>[];
-  label: string;
-  leaves?: string[];
-  representedInAnnotation: boolean;
-  value: string;
-};
-
-type BrainRegionsWithRepresentation = BrainRegion | SearchOption
-
 export const brainRegionsWithRepresentationAtom = selectAtom<
   Promise<BrainRegion[] | null>,
-  BrainRegionsWithRepresentation[] | null
+  BrainRegionWithRepresentation[] | null
 >(brainRegionsAtom, (brainRegions) => {
   return (
-    brainRegions?.reduce<BrainRegionsWithRepresentation[]>(
+    brainRegions?.reduce<BrainRegionWithRepresentation[]>(
       (
         acc,
         { title, id, hasPart, hasLayerPart, leaves, representedInAnnotation, view, ...rest }
@@ -126,10 +117,13 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
         const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
 
         const { representedInAnnotation: descendentsRepresentedInAnnotation } =
-          descendents?.reduce<{ brainRegions: BrainRegionsWithRepresentation[]; representedInAnnotation: boolean }>(
-            checkRepresentationOfDescendents,
-            { brainRegions, representedInAnnotation: false }
-          ) ?? { representedInAnnotation: false };
+          descendents?.reduce<{
+            brainRegions: BrainRegion[];
+            representedInAnnotation: boolean;
+          }>(checkRepresentationOfDescendents, {
+            brainRegions,
+            representedInAnnotation: false,
+          }) ?? { representedInAnnotation: false };
 
         return representedInAnnotation || descendentsRepresentedInAnnotation
           ? [
@@ -140,6 +134,10 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
                 leaves,
                 representedInAnnotation,
                 value: id,
+                title,
+                id,
+                hasPart,
+                hasLayerPart,
                 ...rest,
               },
             ]

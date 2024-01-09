@@ -21,6 +21,17 @@ export type BrainRegion = {
   itemsInAnnotation?: boolean;
 };
 
+type SearchOption = {
+  ancestors: Record<string, BrainViewId>[];
+  label: string;
+  leaves?: string[];
+  representedInAnnotation: boolean;
+  value: string;
+};
+
+export type BrainRegionWithRepresentation = BrainRegion &
+  SearchOption;
+
 export type Mesh = {
   contentUrl: string;
   brainRegion: string;
