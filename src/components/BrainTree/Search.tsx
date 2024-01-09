@@ -29,9 +29,11 @@ type SearchOption = {
 export default function BrainTreeSearch({
   brainTreeNav,
   setValue,
+  onClear = () => {},
 }: {
   brainTreeNav?: HTMLDivElement | null;
   setValue?: Dispatch<SetStateAction<NavValue>>;
+  onClear?: () => void;
 }) {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(brainRegionsWithRepresentationAtom);
@@ -87,6 +89,7 @@ export default function BrainTreeSearch({
       <Search<SearchOption>
         className="mb-10"
         handleSelect={handleSelect}
+        onClear={onClear}
         options={options}
         placeholder="Search region..."
         defaultValue={selectedBrainRegion?.id}
