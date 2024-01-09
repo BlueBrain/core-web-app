@@ -77,7 +77,7 @@ jest.mock('deepdash-es/standalone', () => ({
 
 describe('SelectedBrainRegionPanel', () => {
   beforeEach(async () => {
-    waitFor(() => render(SelectedBrainRegionPanelProvider()));
+    await waitFor(() => render(SelectedBrainRegionPanelProvider()));
   });
 
   test('does not show any tab if no brain region is selected to be visualized', () => {
