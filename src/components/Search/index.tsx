@@ -3,6 +3,26 @@ import { ConfigProvider, Select } from 'antd';
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
 import { classNames } from '@/util/utils';
 
+type FilterFn = 'start' | 'include';
+
+function filterOptions({
+  filterFn,
+  input,
+  option,
+}: {
+  filterFn: FilterFn;
+  input: string;
+  option?: string;
+}) {
+  if (filterFn === 'start') {
+    return option?.toLowerCase().startsWith(input.toLowerCase()) ?? false;
+  }
+  if (filterFn === 'include') {
+    return option?.toLowerCase().includes(input.toLowerCase()) ?? false;
+  }
+  return false;
+}
+
 export default function Search<T extends DefaultOptionType>({
   className,
   colorBgContainer = '#003A8C',
@@ -14,6 +34,7 @@ export default function Search<T extends DefaultOptionType>({
   tagRender,
   value,
   defaultValue,
+  filterFn = 'include',
 }: {
   className?: string;
   colorBgContainer?: string;
@@ -25,6 +46,7 @@ export default function Search<T extends DefaultOptionType>({
   tagRender?: (props: any) => ReactElement<any, string | JSXElementConstructor<any>>;
   value?: string[] | string;
   defaultValue?: string[] | string;
+  filterFn?: FilterFn;
 }) {
   return (
     <div className={classNames('border-b border-white', className)}>
@@ -56,7 +78,7 @@ export default function Search<T extends DefaultOptionType>({
           onSelect={handleSelect}
           options={options}
           filterOption={(input, option) =>
-            ((option?.label as string)?.toLowerCase() ?? '').includes(input.toLowerCase())
+            filterOptions({ filterFn, input, option: option?.label as string })
           }
           filterSort={(optionA, optionB) =>
             ((optionA?.label as string).toLowerCase() ?? '').localeCompare(

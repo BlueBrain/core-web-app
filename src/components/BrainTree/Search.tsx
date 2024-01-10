@@ -164,6 +164,7 @@ export default function BrainTreeSearch({
       options={options}
       placeholder="Search region..."
       defaultValue={selectedBrainRegion?.id}
+      filterFn="start"
     />
   );
 }
