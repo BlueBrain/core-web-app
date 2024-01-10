@@ -21,7 +21,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@apache-arrow/es2015-esm": "^14.0.1",
-    "@bbp/morphoviewer": "^0.5.1",
+    "@bbp/morphoviewer": "^0.6.1",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
