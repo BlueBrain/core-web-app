@@ -13,7 +13,7 @@ type Props = {
 };
 
 function ExperimentTotal({ experimentTypeName }: Props) {
-  const brainRegionSource = 'data';
+  const brainRegionSource = 'selected';
 
   const total = useAtomValue(
     loadable(totalByExperimentAndRegionsAtom({ experimentTypeName, brainRegionSource }))

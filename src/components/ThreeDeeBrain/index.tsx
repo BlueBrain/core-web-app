@@ -5,7 +5,7 @@ import { unwrap, useResetAtom } from 'jotai/utils';
 import { Vector3 } from 'three';
 import { OrbitControls } from '@react-three/drei';
 import { ApplicationSection } from '@/types/common';
-import { brainRegionsAtom, visibleBrainRegionsAtom } from '@/state/brain-regions';
+import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
 import { BrainRegionMesh } from '@/components/ThreeDeeBrain/BrainRegionMesh';
 import { meshVisibilityAtom } from '@/components/ThreeDeeBrain/state';
@@ -14,7 +14,7 @@ import { sectionAtom } from '@/state/application';
 import { LoadingHandler } from '@/components/ThreeDeeBrain/LoadingHandler';
 
 function VisualizationHandler({ section }: { section: ApplicationSection }) {
-  const visibleBrainRegions = useAtomValue(visibleBrainRegionsAtom(section));
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(useMemo(() => unwrap(brainRegionsAtom), []));
   const [meshVisibility, setMeshVisibility] = useAtom(meshVisibilityAtom(section));
   const resetMeshVisibility = useResetAtom(meshVisibilityAtom(section));
@@ -34,7 +34,7 @@ function VisualizationHandler({ section }: { section: ApplicationSection }) {
     meshVisibility
       .filter((vis) => {
         return (
-          !visibleBrainRegions.includes(vis.brainRegionId) &&
+          selectedBrainRegion?.id !== vis.brainRegionId &&
           vis.brainRegionId !== ROOT_BRAIN_REGION_URI
         );
       })
@@ -47,13 +47,15 @@ function VisualizationHandler({ section }: { section: ApplicationSection }) {
           );
         }
       });
-  }, [meshVisibility, scene, section, setMeshVisibility, visibleBrainRegions]);
+  }, [meshVisibility, scene, section, selectedBrainRegion?.id, setMeshVisibility]);
 
   if (!brainRegions) return null;
-
+  const regions = selectedBrainRegion
+    ? [selectedBrainRegion.id, ROOT_BRAIN_REGION_URI]
+    : [ROOT_BRAIN_REGION_URI];
   return (
     <>
-      {[...(visibleBrainRegions || []), ROOT_BRAIN_REGION_URI].map((brainRegionId) => {
+      {regions.map((brainRegionId) => {
         const brainRegion = brainRegions.find((br) => br.id === brainRegionId);
         return (
           <Suspense key={brainRegionId}>

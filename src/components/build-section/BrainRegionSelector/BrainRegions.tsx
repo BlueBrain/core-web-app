@@ -19,7 +19,6 @@ import {
   brainRegionsAtom,
   brainRegionsAlternateTreeAtom,
   brainRegionSidebarIsCollapsedAtom,
-  visibleBrainRegionsAtom,
   brainRegionHierarchyStateAtom,
   resetSelectedBrainRegionAtom,
 } from '@/state/brain-regions';
@@ -72,11 +71,10 @@ function NavTitle({
   const brainRegionViews = useAtomValue(brainRegionOntologyViewsAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegions = useAtomValue(brainRegionsAtom);
-  const visibleBrainRegions = useAtomValue(visibleBrainRegionsAtom(section));
   const navTitleRef = useRef<HTMLDivElement>(null);
   const [height, setTitleHeight] = useState<number>(0);
 
-  const selected = id && visibleBrainRegions.includes(id);
+  const selected = id && selectedBrainRegion?.id === id;
 
   const selectOptions = brainRegionViews?.map((view) => {
     const brainRegion = brainRegions?.find((br) => br.id === id);

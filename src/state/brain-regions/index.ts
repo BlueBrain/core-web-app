@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { atomFamily, atomWithDefault, atomWithReset, selectAtom } from 'jotai/utils';
+import { atomWithDefault, atomWithReset, selectAtom } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -421,10 +421,6 @@ export const setSelectedPostBrainRegionAtom = atom(null, (get, set, id: string, 
 });
 
 export const brainRegionSidebarIsCollapsedAtom = atom(false);
-
-// Keeps track of the visible interactive brain regions
-
-export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
 
 export const dataBrainRegionsAtom = atom<Record<string, string[]>>({});
 

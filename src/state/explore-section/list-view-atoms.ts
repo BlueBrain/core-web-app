@@ -21,10 +21,7 @@ import { BrainRegion } from '@/types/ontologies';
 import { Filter } from '@/components/Filter/types';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
 import { BASIC_CELL_GROUPS_AND_REGIONS_ID } from '@/constants/brain-hierarchy';
-import {
-  selectedBrainRegionsWithChildrenAtom,
-  visibleBrainRegionsAtom,
-} from '@/state/brain-regions';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import dataTypeConfigSelector from '@/util/explore-section/dataTypeConfigSelector';
 
 type DataAtomFamilyScopeType = {
@@ -100,18 +97,16 @@ export const filtersAtom = atomFamily(
   isListAtomEqual
 );
 
-export const brainRegionDescendantsAtom = atomFamily((type: ExploreDataBrainRegionSource) =>
+export const brainRegionDescendantsAtom = atomFamily(() =>
   atom<Promise<BrainRegion[]>>(async (get) => {
-    const usedAtom =
-      type === 'visible'
-        ? visibleBrainRegionsAtom('explore')
-        : selectedBrainRegionsWithChildrenAtom;
-    const visibleBrainRegions = get(usedAtom);
+    const selectedBrainRegion = get(selectedBrainRegionAtom);
+    const visibleBrainRegions = selectedBrainRegion ? [selectedBrainRegion.id] : [];
     const brainRegionDescendants = await get(
       getBrainRegionDescendants(
         visibleBrainRegions.length > 0 ? visibleBrainRegions : [BASIC_CELL_GROUPS_AND_REGIONS_ID]
       )
     );
+
     return brainRegionDescendants || [];
   })
 );
@@ -134,7 +129,7 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
       const sortState = get(sortStateAtom);
       let descendantIds: string[] = [];
 
-      if (brainRegionSource === 'visible' || brainRegionSource === 'data')
+      if (brainRegionSource === 'selected')
         descendantIds = await get(descendantIdsAtom(brainRegionSource));
 
       const query = fetchDataQuery(0, 1, [], experimentTypeName, sortState, '', descendantIds);
@@ -155,7 +150,7 @@ export const queryAtom = atomFamily(
       const sortState = get(sortStateAtom);
 
       const descendantIds: string[] =
-        brainRegionSource === 'data' ? await get(descendantIdsAtom('data')) : [];
+        brainRegionSource === 'selected' ? await get(descendantIdsAtom('selected')) : [];
 
       const filters = await get(filtersAtom({ experimentTypeName }));
 

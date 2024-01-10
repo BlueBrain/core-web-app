@@ -7,85 +7,11 @@ import { unwrap } from 'jotai/utils';
 
 import {
   dataBrainRegionsAtom,
-  meshDistributionsAtom,
   selectedBrainRegionAtom,
   selectedBrainRegionsWithChildrenAtom,
-  visibleBrainRegionsAtom,
 } from '@/state/brain-regions';
 import { sectionAtom } from '@/state/application';
 import { getBrainRegionDescendants } from '@/state/brain-regions/descendants';
-import { useAtlasVisualizationManager } from '@/state/atlas';
-
-export function useDisplayMesh() {
-  const sectionName = useAtomValue(sectionAtom);
-  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const section = useAtomValue(sectionAtom);
-  const id = selectedBrainRegion?.id;
-  const [visibleBrainRegions, setVisibleBrainRegions] = useAtom(visibleBrainRegionsAtom(section));
-  const brainRegions = useAtomValue(
-    useMemo(() => unwrap(getBrainRegionDescendants(id ? [id] : [])), [id])
-  );
-  const meshDistributions = useAtomValue(unwrap(meshDistributionsAtom));
-  const atlas = useAtlasVisualizationManager();
-
-  useEffect(() => {
-    if (!selectedBrainRegion || !visibleBrainRegions || !id || !brainRegions || !sectionName)
-      return;
-    if (visibleBrainRegions.includes(id)) return;
-
-    const cell = !!id && atlas.findVisibleCell(id);
-    const meshDistribution = meshDistributions && id && meshDistributions[id];
-    const mesh = meshDistribution && atlas.findVisibleMesh(meshDistribution.contentUrl);
-    const colorCode = brainRegions?.find(
-      (brainRegion) => brainRegion.id === selectedBrainRegion?.id
-    )?.colorCode;
-
-    if (meshDistribution && colorCode) {
-      if (cell) {
-        atlas.removeVisibleCells(cell.regionID);
-      } else {
-        atlas.addVisibleObjects({
-          type: 'cell',
-          regionID: id,
-          color: colorCode,
-          isLoading: false,
-          hasError: false,
-        });
-      }
-      if (mesh) {
-        atlas.removeVisibleMeshesOrPointClouds(mesh.contentURL, id);
-      } else {
-        atlas.addVisibleObjects(
-          {
-            type: 'mesh',
-            contentURL: meshDistribution.contentUrl,
-            color: colorCode,
-            isLoading: false,
-            hasError: false,
-          },
-          {
-            type: 'pointCloud',
-            regionID: id,
-            color: colorCode,
-            isLoading: false,
-            hasError: false,
-          }
-        );
-      }
-    }
-
-    setVisibleBrainRegions([id]);
-  }, [
-    selectedBrainRegion,
-    atlas,
-    brainRegions,
-    id,
-    meshDistributions,
-    setVisibleBrainRegions,
-    visibleBrainRegions,
-    sectionName,
-  ]);
-}
 
 export function useCollectExperimentalData() {
   const sectionName = useAtomValue(sectionAtom);

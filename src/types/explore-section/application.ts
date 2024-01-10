@@ -11,11 +11,10 @@ import { Filter, GteLteValue } from '@/components/Filter/types';
 import { ExploreResource } from '@/types/explore-section/es';
 
 // defines the source from where the explore data will be retrieved
-// visible: visible brain regions
 // root: all brain regions are applied
-// data: brain regions for statistics
+// selected: only the selected brain region is applied
 
-export type ExploreDataBrainRegionSource = 'visible' | 'root' | 'data';
+export type ExploreDataBrainRegionSource = 'selected' | 'root';
 
 export interface SortState {
   field: string;

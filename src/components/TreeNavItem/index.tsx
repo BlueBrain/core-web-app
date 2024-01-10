@@ -2,11 +2,8 @@ import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo, CSSProperti
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
 import { CaretRightOutlined } from '@ant-design/icons';
-import intersection from 'lodash/intersection';
 import { useAtomValue } from 'jotai';
 import { classNames } from '@/util/utils';
-import { getDeeplyNestedChildrenFromNode } from '@/util/brain-hierarchy';
-import { selectedBrainRegionsWithChildrenAtom } from '@/state/brain-regions';
 import { sectionAtom } from '@/state/application';
 import { NavValue } from '@/state/brain-regions/types';
 import styles from './tree-nav-item.module.css';
@@ -55,10 +52,6 @@ export function TreeNavItem({
   if (!section) {
     throw new Error('Section is not set');
   }
-  const dataBrainRegions = useAtomValue(selectedBrainRegionsWithChildrenAtom);
-  const selected = id && dataBrainRegions.includes(id);
-  const childrenNodes: string[] = getDeeplyNestedChildrenFromNode({ id, items }, []);
-  const doesItHaveSelectedChildren = !!intersection(childrenNodes, dataBrainRegions).length;
 
   const renderedItems = items?.map(({ id: itemId, items: nestedItems, ...itemProps }) => {
     // children may return another render-prop
@@ -107,7 +100,6 @@ export function TreeNavItem({
               className={classNames(
                 'accordion-trigger',
                 styles.accordionTrigger,
-                doesItHaveSelectedChildren ? styles.intermediateTrigger : '',
                 section ? styles[section] : ''
               )}
               data-disabled={!items || items.length === 0}
@@ -118,14 +110,14 @@ export function TreeNavItem({
                 style={
                   {
                     height: '13px',
-                    '--color-code': selected ? colorCode : 'white',
+                    '--color-code': 'white',
                   } as CSSProperties
                 }
               />
             </Accordion.Trigger>
           )
         : null,
-    [colorCode, doesItHaveSelectedChildren, items, renderedItems, selected, section]
+    [items, renderedItems, section]
   );
 
   const content =

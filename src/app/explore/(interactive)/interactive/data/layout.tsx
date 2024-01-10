@@ -17,7 +17,7 @@ import BackToInteractiveExplorationBtn from '@/components/explore-section/BackTo
 
 const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
 
-const brainRegionSource = 'data';
+const brainRegionSource = 'selected';
 
 function MenuItemLabel({
   label,
