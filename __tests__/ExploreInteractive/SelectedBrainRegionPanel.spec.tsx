@@ -5,7 +5,7 @@ import { useHydrateAtoms } from 'jotai/utils';
 import omit from 'lodash/omit';
 
 import sessionAtom from '@/state/session';
-import { BrainRegion, BrainRegionOntology } from '@/types/ontologies';
+import { BrainRegion } from '@/types/ontologies';
 import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
 import { selectedBrainRegionAtom, dataBrainRegionsAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
@@ -19,28 +19,10 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock('src/api/ontologies/index.ts', () => ({
-  __esModule: true,
-  getBrainRegionOntology: jest.fn().mockImplementation(
-    () =>
-      new Promise((resolve) => {
-        const mockResponse: BrainRegionOntology = {
-          brainRegions: mockBrainRegions,
-          views: [
-            {
-              id: 'https://neuroshapes.org/BrainRegion',
-              leafProperty: 'hasLeafRegionPart',
-              parentProperty: 'isPartOf',
-              childrenProperty: 'hasPart',
-              title: 'BrainRegion',
-            },
-          ],
-          volumes: {},
-        };
-        resolve(mockResponse);
-      })
-  ),
-}));
+jest.mock(
+  'src/api/ontologies/index.ts',
+  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
+);
 
 const mockCountForExperiment = 10;
 

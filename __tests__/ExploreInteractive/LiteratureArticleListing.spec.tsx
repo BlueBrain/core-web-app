@@ -6,7 +6,6 @@ import { format } from 'date-fns';
 
 import sessionAtom from '@/state/session';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
-import { BrainRegionOntology } from '@/types/ontologies';
 import { dataBrainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
@@ -40,28 +39,10 @@ jest.mock('deepdash-es/standalone', () => ({
   }),
 }));
 
-jest.mock('src/api/ontologies/index.ts', () => ({
-  __esModule: true,
-  getBrainRegionOntology: jest.fn().mockImplementation(
-    () =>
-      new Promise((resolve) => {
-        const mockResponse: BrainRegionOntology = {
-          brainRegions: mockBrainRegions,
-          views: [
-            {
-              id: 'https://neuroshapes.org/BrainRegion',
-              leafProperty: 'hasLeafRegionPart',
-              parentProperty: 'isPartOf',
-              childrenProperty: 'hasPart',
-              title: 'BrainRegion',
-            },
-          ],
-          volumes: {},
-        };
-        resolve(mockResponse);
-      })
-  ),
-}));
+jest.mock(
+  'src/api/ontologies/index.ts',
+  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
+);
 
 const createMockArticle = (
   title: string,
