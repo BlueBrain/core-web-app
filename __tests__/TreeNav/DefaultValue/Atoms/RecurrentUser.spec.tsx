@@ -10,7 +10,8 @@ import {
   brainRegionSelectorId,
   hierarchySelector,
   hierarchySelectorId,
-} from './constants';
+  previouslySelectedRegion,
+} from '../constants';
 
 const HydrateAtoms = ({ initialValues, children }: any) => {
   useHydrateAtoms(initialValues);
@@ -25,17 +26,21 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
-describe('Default brain region in explore', () => {
+jest.mock('src/util/utils.ts', () => ({
+  getInitializationValue: () => previouslySelectedRegion,
+}));
+
+describe('Show previous chosen brain region in explore', () => {
   beforeEach(async () => {
     render(Provider());
   });
 
-  test('show Cerebrum', () => {
-    screen.getByText('Cerebrum', { selector: brainRegionSelector });
+  test('show saved if new not new user', () => {
+    screen.getByText(previouslySelectedRegion.value.title, { selector: brainRegionSelector });
   });
 
-  test('show opened tree', () => {
-    screen.getByText('{"http://api.brain-map.org/api/v2/data/Structure/8":null}', {
+  test('show opened based on previously selected brain region', () => {
+    screen.getByText(JSON.stringify(previouslySelectedRegion.brainRegionHierarchyState), {
       selector: hierarchySelector,
     });
   });
@@ -54,39 +59,17 @@ describe('Default brain region in explore', () => {
   }
 });
 
-describe('No section set', () => {
+describe('Show previous chosen brain region in build', () => {
   beforeEach(async () => {
     render(Provider());
   });
 
-  test('show no brain region selected', () => {
-    screen.getByText('', { selector: brainRegionSelector });
+  test('show saved if new not new user', () => {
+    screen.getByText(previouslySelectedRegion.value.title, { selector: brainRegionSelector });
   });
 
-  test('show not opened tree', () => {
-    screen.getByText('null', { selector: hierarchySelector });
-  });
-
-  function Provider() {
-    return (
-      <TestProvider initialValues={[]}>
-        <TestComponent />
-      </TestProvider>
-    );
-  }
-});
-
-describe('Default brain region in build', () => {
-  beforeEach(async () => {
-    render(Provider());
-  });
-
-  test('do not select any brain region', () => {
-    screen.getByText('', { selector: brainRegionSelector });
-  });
-
-  test('show opened tree', () => {
-    screen.getByText('{"http://api.brain-map.org/api/v2/data/Structure/8":null}', {
+  test('show opened based on previously selected brain region', () => {
+    screen.getByText(JSON.stringify(previouslySelectedRegion.brainRegionHierarchyState), {
       selector: hierarchySelector,
     });
   });
