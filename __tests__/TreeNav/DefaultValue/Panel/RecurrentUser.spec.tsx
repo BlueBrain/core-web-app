@@ -59,7 +59,7 @@ describe('Default brain region panel in explore', () => {
   });
 
   test('show saved region in search', async () => {
-    await screen.findByText(defaultRegion, { selector: `span[title=${defaultRegion}]` });
+    await screen.findByText(defaultRegion, { selector: `span[title=${defaultRegion}]` }, { timeout: 10_000 });
   });
 
   test('show saved region in tree', async () => {

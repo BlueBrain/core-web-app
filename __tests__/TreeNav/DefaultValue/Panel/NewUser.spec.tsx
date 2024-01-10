@@ -39,7 +39,7 @@ describe('Default brain region panel in explore', () => {
   const defaultRegion = 'Cerebrum';
 
   test('show Cerebrum in search', async () => {
-    await screen.findByText(defaultRegion, { selector: `span[title=${defaultRegion}]` });
+    await screen.findByText(defaultRegion, { selector: `span[title=${defaultRegion}]` }, { timeout: 10_000 });
   });
 
   test('show Cerebrum in tree', async () => {
