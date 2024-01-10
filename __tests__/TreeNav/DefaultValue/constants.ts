@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 export const previouslySelectedRegion = {
   value: {
     id: 'http://api.brain-map.org/api/v2/data/Structure/315',
@@ -26,6 +24,7 @@ export const brainRegionSelector = `#${brainRegionSelectorId}`;
 export const hierarchySelectorId = 'hierarchyOpened';
 export const hierarchySelector = `#${hierarchySelectorId}`;
 
-it('selector is id', () => {
-  brainRegionSelector.startsWith('#') && hierarchySelector.startsWith('#');
+test('selector is id', () => {
+  expect(brainRegionSelector).toContain('#');
+  expect(hierarchySelector).toContain('#');
 });
