@@ -46,7 +46,7 @@ export default function AlternateViewSelector({
   // without the selector
   if (id === selectedBrainRegion && nonDisabled < 2 && defaultViewOption) {
     return (
-      <span className="text-neutral-1 font-thin text-[10px] text-left">
+      <span className="text-neutral-1 font-thin text-[10px] text-left mix-blend-difference">
         {defaultViewOption.label}
       </span>
     );

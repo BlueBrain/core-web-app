@@ -107,44 +107,43 @@ function NavTitle({
 
   return (
     <>
-      <div
-        ref={navTitleRef}
-        className="flex items-center justify-between py-3 first:border-none group"
-      >
-        <button
-          type="button"
-          className="flex items-center justify-end h-auto gap-3 font-bold border-none"
-          onClick={() => id && onClick()}
+      <div ref={navTitleRef} className="py-3 first:border-none group">
+        <div
+          className={classNames(
+            'w-full flex items-center justify-between py-px rounded-full gap-x-1',
+            selected && 'px-2 transition-all ease-out duration-200 hover:shadow-md'
+          )}
+          style={selected ? { backgroundColor: colorCode } : {}}
         >
-          <span
-            className={classNames(
-              'hover:text-white mr-auto whitespace-pre-wrap text-left',
-              isExpanded || selectedBrainRegion?.id === id
-                ? !selected && 'text-primary-4 font-medium'
-                : !selected && 'text-primary-1 font-light',
-              selected && 'font-bold',
-              className
-            )}
-            style={
-              selected
-                ? {
-                    color: colorCode,
-                  }
-                : {}
-            }
+          <button
+            type="button"
+            className="flex items-center justify-end h-auto gap-3 font-bold border-none"
+            onClick={() => id && onClick()}
           >
-            {title}
-          </span>
-        </button>
-        <div className="flex gap-2 justify-between items-center [&:not(:has(button.accordion-trigger))]:pr-6">
-          <AlternateViewSelector
-            brainRegionViews={brainRegionViews}
-            defaultViewOption={defaultViewOption}
-            id={id}
-            selectOptions={selectOptions}
-            selectedBrainRegion={selectedBrainRegion?.id}
-          />
-          {trigger?.()}
+            <span
+              title={title}
+              className={classNames(
+                'mr-auto whitespace-pre-wrap text-left',
+                isExpanded || selectedBrainRegion?.id === id
+                  ? !selected && 'text-primary-4 font-medium'
+                  : !selected && 'text-primary-1 font-light',
+                selected && 'font-bold text-primary-8 line-clamp-1',
+                className
+              )}
+            >
+              {title}
+            </span>
+          </button>
+          <div className="flex gap-2 justify-between items-center [&:not(:has(button.accordion-trigger))]:pr-6">
+            <AlternateViewSelector
+              brainRegionViews={brainRegionViews}
+              defaultViewOption={defaultViewOption}
+              id={id}
+              selectOptions={selectOptions}
+              selectedBrainRegion={selectedBrainRegion?.id}
+            />
+            {trigger?.()}
+          </div>
         </div>
       </div>
       <TreeLineBar show={isExpanded} height={height} />

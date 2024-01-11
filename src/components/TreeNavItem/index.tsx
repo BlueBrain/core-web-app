@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo, CSSProperties } from 'react';
+import { ReactElement, ReactNode, ForwardedRef, forwardRef, useMemo } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { TreeItem } from 'performant-array-to-tree';
 import { CaretRightOutlined } from '@ant-design/icons';
@@ -105,15 +105,7 @@ export function TreeNavItem({
               data-disabled={!items || items.length === 0}
               {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
             >
-              <CaretRightOutlined
-                className={styles.accordionChevron}
-                style={
-                  {
-                    height: '13px',
-                    '--color-code': 'white',
-                  } as CSSProperties
-                }
-              />
+              <CaretRightOutlined className={classNames(styles.accordionChevron, 'h-[13px]')} />
             </Accordion.Trigger>
           )
         : null,

@@ -3,17 +3,18 @@
   padding: 0 5px 3px 5px;
   border: 1px solid #0050b3;
   border-top: none;
-  background-color: #003a8c;
+  background-color: white;
   width: 84px !important;
   font-weight: normal;
 }
 
 .select-dropdown__indicator {
   width: 1em;
+  color: #0050b3;
 }
 
 .select-dropdown__control {
-  min-height: 20px !important;
+  min-height: 18px !important;
 }
 
 .select-dropdown__control input {
@@ -23,4 +24,11 @@
 .select-dropdown__option--is-disabled,
 .select-dropdown--is-disabled {
   color: gray !important;
+}
+
+.select-dropdown__single-value {
+  color: #0050b3;
+}
+.select-dropdown__option {
+  color: #0050b3;
 }

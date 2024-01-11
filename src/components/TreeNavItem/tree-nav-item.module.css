@@ -27,7 +27,7 @@
 }
 
 .accordionTrigger[data-state='open'] > .accordionChevron {
-  color: var(--color-code);
+  color: white;
   opacity: 1;
   @apply rotate-90;
 }
