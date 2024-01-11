@@ -54,7 +54,7 @@ export default function ArticleListItem({ article, index }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center gap-x-7 mb-3">
+      <div className="flex flex-wrap items-center gap-x-7 mb-3">
         {article.authors.length > 0 && (
           <Tooltip
             title="Authors"
