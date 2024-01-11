@@ -21,7 +21,7 @@ default:
       - .next/cache/
       - node_modules
       - .eslint/cache/
-      - .prettier/cache/
+      - .prettier/cache
 
 stages:
   - setup
@@ -32,7 +32,7 @@ stages:
 prime_npm:
   stage: setup
   script:
-    - mkdir -p .npm .next/cache/ node_modules .eslint/cache/ .prettier/cache/
+    - mkdir -p .npm .next/cache/ node_modules .eslint/cache/ .prettier/
     - npm clean-install --cache .npm --prefer-offline
 
 eslint:
@@ -43,7 +43,7 @@ eslint:
 prettier:
   stage: lint_and_test
   script:
-    - npm run prettier:check -- --cache --cache-location=.prettier/cache/
+    - npm run prettier:check -- --cache --cache-location=.prettier/cache
 
 unit-test:
   stage: lint_and_test
