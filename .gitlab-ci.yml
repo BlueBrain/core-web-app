@@ -19,6 +19,7 @@ default:
     paths:
       - .npm/
       - .next/cache/
+      - node_modules
 
 stages:
   - setup
@@ -29,6 +30,7 @@ stages:
 prime_npm:
   stage: setup
   script:
+    - mkdir -p .npm .next/cache/ node_modules
     - npm ci --cache .npm --prefer-offline
 
 eslint:
