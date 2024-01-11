@@ -23,20 +23,24 @@ default:
       - .next/cache/
 
 stages:
-  - lint
+  - lint_and_test
   - build
-  - test
   - deploy
 
 eslint:
-  stage: lint
+  stage: lint_and_test
   script:
     - npm run lint
 
 prettier:
-  stage: lint
+  stage: lint_and_test
   script:
     - npm run prettier:check
+
+unit-test:
+  stage: lint_and_test
+  script:
+    - npm run test:ci
 
 build:
   stage: build
@@ -45,11 +49,6 @@ build:
   except:
     - develop
     - main
-
-unit-test:
-  stage: test
-  script:
-    - npm run test:ci
 
 deploy-prod:
   stage: deploy
