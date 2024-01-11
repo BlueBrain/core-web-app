@@ -2,7 +2,8 @@ import { atom } from 'jotai';
 import { atomWithDefault, atomWithReset, selectAtom } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
-
+import uniqBy from 'lodash/uniqBy';
+import { findDeep, reduceDeep } from 'deepdash-es/standalone';
 import sessionAtom from '@/state/session';
 import {
   BrainRegion,
@@ -18,7 +19,7 @@ import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
-import { itemsInAnnotationReducer, flattenBrainRegionsTree } from '@/util/brain-hierarchy';
+import { flattenBrainRegionsTree, itemsInAnnotationReducer } from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
   DEFAULT_BRAIN_REGION,
@@ -422,21 +423,49 @@ export const setSelectedPostBrainRegionAtom = atom(null, (get, set, id: string, 
 
 export const brainRegionSidebarIsCollapsedAtom = atom(false);
 
-export const dataBrainRegionsAtom = atom<Record<string, string[]>>({});
-
 /**
- * An array containing all (unique) brainRegions that are selected either manually (keys of `dataBrainRegionsAtom`) or automatically (array values of `dataBrainRegionsAtom`).
+ * Returns the descendants of a list of brain regions based on their id
  */
-export const selectedBrainRegionsWithChildrenAtom = atom<string[]>((get) => {
-  const dataBrainRegions = get(dataBrainRegionsAtom);
-  const allSelectedBrainRegions = new Set<string>();
-
-  Object.entries(dataBrainRegions).forEach(([brainRegion, children]) => {
-    allSelectedBrainRegions.add(brainRegion);
-    children.forEach((child) => allSelectedBrainRegions.add(child));
+export const getBrainRegionDescendants = (brainRegionIds: string[]) =>
+  atom(async (get) => {
+    const brainRegionTree = await get(brainRegionsFilteredTreeAtom);
+    if (!brainRegionTree) return undefined;
+    // returns unique brain regions (in case there is an overlap of brain regions)
+    return uniqBy(
+      brainRegionIds.reduce((totalDescendants: BrainRegion[], brainRegionId: string) => {
+        // first search for the actual brain region in the tree
+        const brainRegion = findDeep(brainRegionTree, (region) => region.id === brainRegionId, {
+          pathFormat: 'array',
+          childrenPath: ['items'],
+        })?.value;
+        // if not found, return empty array
+        if (!brainRegion) return [];
+        // iterate over the children of the brain region (items) and construct array of descendants
+        const descendants = reduceDeep(
+          brainRegion,
+          (acc, value: BrainRegion) => {
+            if (value.items) {
+              return [...acc, ...value.items];
+            }
+            return acc;
+          },
+          [],
+          { pathFormat: 'array', childrenPath: ['items'] }
+        );
+        // appends the brain region along with the descendants
+        return [...totalDescendants, ...descendants, brainRegion];
+      }, []),
+      'id'
+    );
   });
-
-  return Array.from(allSelectedBrainRegions);
+/**
+ * An array containing the selected brain region along with all the descendants
+ */
+export const selectedBrainRegionWithChildrenAtom = atom<Promise<string[]>>(async (get) => {
+  const selectedBrainRegion = get(selectedBrainRegionAtom);
+  if (!selectedBrainRegion) return [];
+  const descendants = await get(getBrainRegionDescendants([selectedBrainRegion.id]));
+  return descendants?.map((d) => d.id) || [];
 });
 
 // Keeps track of the hierarchy tree of the brain regions

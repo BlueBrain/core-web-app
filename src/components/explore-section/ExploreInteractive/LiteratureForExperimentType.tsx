@@ -8,9 +8,9 @@ import Link from 'next/link';
 
 import isNil from 'lodash/isNil';
 import { Tooltip } from 'antd';
-import { BrainRegion } from '@/types/ontologies';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { BrainRegion } from '@/types/ontologies';
 
 type Props = {
   brainRegions: BrainRegion[];

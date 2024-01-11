@@ -1,14 +1,10 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useMemo } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { unwrap } from 'jotai/utils';
-
 import LiteratureArticlesError from './error';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
-import { brainRegionsAtom, dataBrainRegionsAtom } from '@/state/brain-regions';
-import { BrainRegion } from '@/types/ontologies';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { ArticleListing } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
 import ArticleListFilters from '@/components/explore-section/Literature/components/ArticleList/ArticleListFilters';
 import { ArticleListFilters as Filters } from '@/components/explore-section/Literature/api';
@@ -24,21 +20,12 @@ export default function LiteratureArticleListingPage() {
   const currentExperiment = Object.values(EXPERIMENT_DATA_TYPES).find(
     (experiment) => experiment.name === params?.['experiment-data-type'] ?? ''
   );
-  const dataBrainRegions = useAtomValue(dataBrainRegionsAtom);
-  const brainRegions = useAtomValue(useMemo(() => unwrap(brainRegionsAtom), []));
-  const visualizedBrainRegionDetails = Object.keys(dataBrainRegions).reduce<BrainRegion[]>(
-    (acc, selectedRegion) => {
-      const selected = brainRegions?.find((brainRegion) => brainRegion.id === selectedRegion);
-
-      return selected ? [...acc, selected] : acc;
-    },
-    []
-  );
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const openFilterPanel = useSetAtom(articleListingFilterPanelOpen);
   const [filters, updateFilters] = useAtom(articleListFilters);
 
   if (!currentExperiment) return <LiteratureArticlesError noExperimentSelected />;
-  if (visualizedBrainRegionDetails.length <= 0)
+  if (!selectedBrainRegion)
     return <LiteratureArticlesError noBrainRegionSelected currentExperiment={currentExperiment} />;
 
   return (
@@ -53,7 +40,7 @@ export default function LiteratureArticleListingPage() {
       />
 
       <ArticleListing
-        brainRegions={visualizedBrainRegionDetails.map((br) => br.title)}
+        brainRegions={[selectedBrainRegion.title]}
         experiment={currentExperiment}
         filters={filters}
       >

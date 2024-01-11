@@ -3,10 +3,9 @@ import { Provider } from 'jotai';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useParams, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-
 import sessionAtom from '@/state/session';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
-import { dataBrainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { ArticleItem } from '@/api/explore-section/resources';
@@ -479,7 +478,6 @@ describe('LiteratureArticleListingPage', () => {
               representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
             } as SelectedBrainRegion,
           ],
-          [dataBrainRegionsAtom, { [mockBrainRegions[1].id]: [] }],
         ]}
       >
         <LiteratureArticleListingPage />
