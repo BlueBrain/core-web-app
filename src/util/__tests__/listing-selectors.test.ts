@@ -10,8 +10,10 @@ import {
   selectorFnSpecies,
   selectorFnStatistic,
   selectorFnSynaptic,
+  selectorFnMorphologyFeature,
 } from '@/util/explore-section/listing-selectors';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
+import { formatNumber } from '@/util/common';
 
 describe('Selectors', () => {
   describe('selectorFnBrainRegion', () => {
@@ -550,6 +552,114 @@ describe('Selectors', () => {
         SynapticType.CellType
       );
       expect(result).toBe('');
+    });
+  });
+
+  describe('selectorFnMorphologyFeature', () => {
+    const mockSource = {
+      morphologyFeature: [
+        {
+          compartment: 'NeuronMorphology',
+          label: 'Total Depth',
+          statistic: 'mean',
+          unit: 'dimensionless',
+          value: 853.0,
+        },
+        {
+          compartment: 'Axon',
+          label: 'Partition Asymmetry',
+          statistic: 'standard deviation',
+          unit: 'dimensionless',
+          value: 0.34878757070556377,
+        },
+        {
+          compartment: 'NeuronMorphology',
+          label: 'Total Length',
+          statistic: 'mean',
+          unit: 'μm',
+          value: 13944.989401578903,
+        },
+        {
+          compartment: 'Axon',
+          label: 'Section Strahler Orders',
+          statistic: 'maximum',
+          unit: 'dimensionless',
+          value: 5.0,
+        },
+        {
+          compartment: 'Axon',
+          label: 'Total Length',
+          statistic: 'maximum',
+          unit: 'μm',
+          value: 9600.45951640606,
+        },
+        {
+          compartment: 'Soma',
+          label: 'Soma Radius',
+          statistic: 'minimum',
+          unit: 'μm',
+          value: 5.46871709813711,
+        },
+        {
+          compartment: 'BasalDendrite',
+          label: 'Total Length',
+          statistic: 'mean',
+          unit: 'μm',
+          value: 4344.529885172844,
+        },
+        {
+          compartment: 'BasalDendrite',
+          label: 'Section Strahler Orders',
+          statistic: 'standard deviation',
+          unit: 'dimensionless',
+          value: 0.8123269504088237,
+        },
+      ],
+    };
+    it('returns NO_DATA_STRING if source is not present', () => {
+      // @ts-ignore
+      const result = selectorFnMorphologyFeature(undefined, 'compartment', 'label');
+      expect(result).toBe(NO_DATA_STRING);
+    });
+
+    it('returns NO_DATA_STRING if morphologyFeature is not present in source', () => {
+      // @ts-ignore
+      const result = selectorFnMorphologyFeature({}, 'compartment', 'label');
+      expect(result).toBe(NO_DATA_STRING);
+    });
+
+    it('returns formatted statistic value if present', () => {
+      const result = selectorFnMorphologyFeature(
+        // @ts-ignore
+        mockSource,
+        'NeuronMorphology',
+        'Total Length',
+        true
+      );
+      expect(result).toBe('13,940 μm');
+    });
+
+    it('returns formatted statistic value without unit if showUnits is false', () => {
+      const result = selectorFnMorphologyFeature(
+        // @ts-ignore
+        mockSource,
+        'NeuronMorphology',
+        'Total Length',
+        false
+      );
+      expect(result).toBe(formatNumber(13944.989401578903));
+    });
+
+    it('returns double the value for Soma Radius', () => {
+      // @ts-ignore
+      const result = selectorFnMorphologyFeature(mockSource, 'Soma', 'Soma Radius', true);
+      expect(result).toBe('10.94 μm');
+    });
+
+    it('returns NO_DATA_STRING if statistic is not found', () => {
+      // @ts-ignore
+      const result = selectorFnMorphologyFeature(mockSource, 'compartment', 'nonexistent');
+      expect(result).toBe(NO_DATA_STRING);
     });
   });
 });

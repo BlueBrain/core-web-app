@@ -17,30 +17,11 @@ import {
   InferredResource,
 } from '@/types/explore-section/kg-inference';
 
-import { CardMetric, CardMetricIds } from '@/types/explore-section/generalization';
-
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { PAGE_NUMBER } from '@/constants/explore-section/list-views';
-import {
-  DEFAULT_CARD_METRIC,
-  DEFAULT_CARDS_NUMBER,
-} from '@/constants/explore-section/generalization';
+import { DEFAULT_CARDS_NUMBER } from '@/constants/explore-section/generalization';
 import { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
 import { fetchEsResourcesByType } from '@/api/explore-section/resources';
-
-const CARD_METRICS: CardMetric[] = [
-  {
-    id: 'metadata',
-    name: 'Metadata',
-    description:
-      'Name, brain region, m-type, condition, specie, contributor, creation date, reference',
-  },
-  {
-    id: 'morphometrics',
-    name: 'Morphometrics',
-    description: 'Axon total length, dendrite total length, dendrite maximal length',
-  },
-];
 
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
 export const expandedRowKeysAtom = atomFamily(() => atom<readonly Key[]>([]));
@@ -113,10 +94,6 @@ export const selectedRulesAtom = atomFamily((resourceId: string) =>
     return defaultSelectedRule ? [defaultSelectedRule] : [];
   })
 );
-
-export const cardsMetricsAtom = atom<readonly CardMetric[]>(CARD_METRICS);
-
-export const selectedCardsMetricAtom = atom<CardMetricIds>(DEFAULT_CARD_METRIC);
 
 export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
   atom<Promise<ResourceBasedInferenceRequest | null>>(async (get) => {

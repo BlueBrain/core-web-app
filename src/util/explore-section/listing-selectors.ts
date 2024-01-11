@@ -149,3 +149,33 @@ export const selectorFnSynaptic = (
   const preSynaptic = synapticList.find((synaptic) => synaptic.about === type);
   return preSynaptic?.label ?? '';
 };
+
+/**
+ * Selects and formats a statistic from the series array
+ * @param { ReconstructedNeuronMorphology } source
+ * @param {string} compartment - The compartment to serialize.
+ * @param {string} label - The label to serialize.
+ */
+export const selectorFnMorphologyFeature = (
+  source: ReconstructedNeuronMorphology,
+  compartment: string,
+  label: string,
+  showUnits?: boolean
+) => {
+  if (!source || !source.morphologyFeature) return NO_DATA_STRING;
+
+  const statistic = source.morphologyFeature.find(
+    (s: any) => s.compartment === compartment && s.label === label
+  );
+
+  if (statistic && statistic.value) {
+    let { value } = statistic;
+    const unit = showUnits ? ` ${statistic.unit}` : '';
+
+    if (label === 'Soma Radius') value = 2 * statistic.value;
+
+    return `${formatNumber(value)}${unit}`;
+  }
+
+  return NO_DATA_STRING;
+};

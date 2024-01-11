@@ -15,7 +15,7 @@ export type ExperimentConfig = {
   name: string;
   columns: Array<string>;
   curated: boolean;
-  cardViewFields?: { [key: string]: DetailProps[] };
+  cardViewFields?: DetailProps[];
 };
 
 export const INTERACTIVE_PATH = `/explore/interactive/`;
@@ -48,60 +48,84 @@ export const EXPERIMENT_DATA_TYPES: {
       'createdAt',
     ],
     curated: true,
-    cardViewFields: {
-      morphometrics: [
-        {
-          field: 'length',
-          className: 'col-span-2',
-        },
-        {
-          field: 'maximumLength',
-          className: 'col-span-2',
-        },
-        {
-          field: 'totalLength',
-          className: 'col-span-2',
-        },
-        {
-          field: 'dendriteStemming',
-          className: 'col-span-2',
-        },
-        {
-          field: 'axon',
-          className: 'col-span-2',
-        },
-        {
-          field: 'bifurcations',
-          className: 'col-span-2',
-        },
-      ],
-      metadata: [
-        {
-          field: 'brainRegion',
-          className: 'col-span-2',
-        },
-        {
-          field: 'mType',
-          className: 'col-span-2',
-        },
-        {
-          field: 'name',
-          className: 'col-span-2',
-        },
-        {
-          field: 'subjectSpecies',
-          className: 'col-span-2',
-        },
-        {
-          field: 'contributors',
-          className: 'col-span-2',
-        },
-        {
-          field: 'createdAt',
-          className: 'col-span-2',
-        },
-      ], // these fields are duplicates of the fields found in the typToColumns method. We should in the future reorganize our constants since they are starting to overlap in places.
-    },
+    cardViewFields: [
+      {
+        field: 'name',
+        className: 'col-span-2',
+      },
+      {
+        field: 'neuronMorphologyWidth',
+        className: 'col-span-2',
+      },
+      {
+        field: 'neuronMorphologyLength',
+        className: 'col-span-2',
+      },
+      {
+        field: 'neuronMorphologyDepth',
+        className: 'col-span-2',
+      },
+      {
+        field: 'axonTotalLength',
+        className: 'col-span-2',
+      },
+      {
+        field: 'axonMaxBranchOrder',
+        className: 'col-span-2',
+      },
+      {
+        field: 'axonArborAsymmetryIndex',
+        className: 'col-span-2',
+      },
+      {
+        field: 'basalDendriticTotalLength',
+        className: 'col-span-2',
+      },
+      {
+        field: 'basalDendriteMaxBranchOrder',
+        className: 'col-span-2',
+      },
+      {
+        field: 'basalArborAsymmetryIndex',
+        className: 'col-span-2',
+      },
+      {
+        field: 'apicalDendriticTotalLength',
+        className: 'col-span-2',
+      },
+      {
+        field: 'apicalDendtriteMaxBranchOrder',
+        className: 'col-span-2',
+      },
+      {
+        field: 'somaDiameter',
+        className: 'col-span-2',
+      },
+      {
+        field: 'apicalArborAsymmetryIndex',
+        className: 'col-span-2',
+      },
+      {
+        field: 'brainRegion',
+        className: 'col-span-2',
+      },
+      {
+        field: 'mType',
+        className: 'col-span-2',
+      },
+      {
+        field: 'subjectSpecies',
+        className: 'col-span-2',
+      },
+      {
+        field: 'contributors',
+        className: 'col-span-2',
+      },
+      {
+        field: 'createdAt',
+        className: 'col-span-2',
+      },
+    ],
   },
   [ELECTRO_PHYSIOLOGY]: {
     title: 'Electrophysiology',

@@ -1,18 +1,18 @@
 import { useInView } from 'react-intersection-observer';
-import { Tooltip } from 'antd';
-import { useAtomValue } from 'jotai';
+import { Tooltip, Collapse } from 'antd';
 import Link from 'next/link';
 import reject from 'lodash/reject';
+import groupBy from 'lodash/groupBy';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
-import { selectedCardsMetricAtom } from '@/state/explore-section/generalization';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { detailUrlBuilder } from '@/util/common';
+import styles from './styles.module.scss';
 
 type TooltipFieldProps = {
   label: string;
@@ -37,50 +37,67 @@ type CardProps = {
     _source: ReconstructedNeuronMorphology | ExperimentalTrace;
   } & ExploreESHit;
   experimentTypeName: string;
+  activeKeys: string[];
   score?: number;
 };
 
-export default function Card({ resource, experimentTypeName, score }: CardProps) {
+const { Panel } = Collapse;
+
+export default function Card({ resource, experimentTypeName, activeKeys, score }: CardProps) {
   const { ref, inView } = useInView();
 
-  const selectedCardsMetric = useAtomValue(selectedCardsMetricAtom);
-
-  const cardFields = reject(
-    EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields?.[selectedCardsMetric],
-    ['field', 'name']
-  );
+  const cardFields =
+    reject(EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields, (o) => o.field === 'field') ||
+    [];
 
   const resourceUrl = detailUrlBuilder(resource, experimentTypeName);
+
+  const groupedCardFields = groupBy(
+    cardFields,
+    (o) => EXPLORE_FIELDS_CONFIG[o.field].group || 'Metadata'
+  );
+
   return (
-    <div ref={ref} className="flex flex-col border border-solid rounded-md h-[500px] w-full p-4">
+    <div ref={ref} className="flex-shrink-0 h-fit py-4 px-0 mr-0">
       {score && (
         <div className="text-primary-7 mb-2">
           Score: <span className="font-bold">{score}</span>
         </div>
       )}
-      <div className="h-full border rounded-md">
+      <div className="min-h-[350px] min-w-[350px] h-full border-y border-l">
         {inView && (
           <CardVisualization experimentTypeName={experimentTypeName} resource={resource._source} />
         )}
       </div>
       <Link href={resourceUrl} passHref>
-        <TooltipField cursor="cursor-pointer" label="Name" content={resource._source.name} />
+        <TooltipField
+          cursor="cursor-pointer"
+          label="Name"
+          content={resource._source.name}
+          className="pl-3 pt-2"
+        />
       </Link>
-      <div className="grid gap-4 grid-cols-6 break-words mt-2">
-        {cardFields &&
-          cardFields.map((cardField, index) => (
-            <div key={cardField.field} className={cardField.className}>
-              <TooltipField
-                cursor="cursor-help"
-                label={EXPLORE_FIELDS_CONFIG[cardField.field].title}
-                content={EXPLORE_FIELDS_CONFIG[cardField.field]?.render?.esResourceViewFn?.(
-                  'text',
-                  resource,
-                  index
-                )}
-              />
-            </div>
+      <div className="break-words mt-[1.4rem]">
+        <Collapse activeKey={activeKeys} expandIcon={() => null} bordered={false} ghost>
+          {Object.entries(groupedCardFields).map(([group, fields]) => (
+            <Panel header={group} key={group} className={styles.custom} collapsible="disabled">
+              <div className="border-l">
+                {fields.map((field, index) => (
+                  <div
+                    key={field.field}
+                    className={`text-primary-8 pl-4 mb-2 h-6 ${field.className}`}
+                  >
+                    {EXPLORE_FIELDS_CONFIG[field.field]?.render?.esResourceViewFn?.(
+                      'text',
+                      resource,
+                      index
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Panel>
           ))}
+        </Collapse>
       </div>
     </div>
   );

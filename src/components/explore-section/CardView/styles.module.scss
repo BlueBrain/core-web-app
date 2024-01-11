@@ -1,0 +1,13 @@
+.custom {
+  @apply border-t;
+  :global(.ant-collapse-content-box) {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+  :global(.ant-collapse-header) {
+    cursor: default !important;
+  }
+  :global(.ant-collapse-header-text) {
+    visibility: hidden;
+  }
+}

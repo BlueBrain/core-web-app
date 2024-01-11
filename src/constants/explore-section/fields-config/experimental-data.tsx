@@ -8,6 +8,7 @@ import {
   selectorFnSpecies,
   selectorFnStatistic,
   selectorFnSynaptic,
+  selectorFnMorphologyFeature,
 } from '@/util/explore-section/listing-selectors';
 import {
   eTypeSelectorFn,
@@ -21,7 +22,10 @@ import WeightField from '@/components/explore-section/Fields/WeightField';
 import LayerThicknessField from '@/components/explore-section/Fields/LayerThicknessField';
 
 import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
-import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
+import {
+  ExploreFieldsConfigProps,
+  MorphoMetricGroups,
+} from '@/constants/explore-section/fields-config/types';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
@@ -430,6 +434,188 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     vocabulary: {
       plural: 'Cell Type [To]',
       singular: 'Cell Type [To]',
+    },
+  },
+  axonTotalLength: {
+    group: MorphoMetricGroups.Axon,
+    title: 'Total Length',
+    description: 'Total length of the axon',
+    filter: null,
+    vocabulary: {
+      plural: 'Total Length',
+      singular: 'Total Length',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Total Length', true),
+    },
+  },
+  axonMaxBranchOrder: {
+    group: MorphoMetricGroups.Axon,
+    title: 'Maximum Branch Order',
+    description: 'Maximum branch order (Strahler index)',
+    filter: null,
+    vocabulary: {
+      plural: 'Maximum Branch Order',
+      singular: 'Maximum Branch Order',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders'),
+    },
+  },
+  axonArborAsymmetryIndex: {
+    group: MorphoMetricGroups.Axon,
+    title: 'Arbor Asymmetry Index',
+    description: 'Arbor asymmetry index (if calculated)',
+    filter: null,
+    vocabulary: {
+      plural: 'Arbor Asymmetry Index',
+      singular: 'Arbor Asymmetry Index',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Partition Asymmetry'),
+    },
+  },
+  basalDendriticTotalLength: {
+    group: MorphoMetricGroups.BasalDendrite,
+    title: 'Total Length',
+    description: 'Total length of the basal dendrites',
+    filter: null,
+    vocabulary: {
+      plural: 'Total Length',
+      singular: 'Total Length',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Total Length', true),
+    },
+  },
+  basalDendriteMaxBranchOrder: {
+    group: MorphoMetricGroups.BasalDendrite,
+    title: 'Maximum Branch Order',
+    description: 'Maximum branch order (Strahler index)',
+    filter: null,
+    vocabulary: {
+      plural: 'Maximum Branch Order',
+      singular: 'Maximum Branch Order',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders'),
+    },
+  },
+  basalArborAsymmetryIndex: {
+    group: MorphoMetricGroups.BasalDendrite,
+    title: 'Arbor Asymmetry Index',
+    description: 'Basal Arbor asymmetry index (if calculated)',
+    filter: null,
+    vocabulary: {
+      plural: 'Arbor Asymmetry Index',
+      singular: 'Arbor Asymmetry Index',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Partition Asymmetry'),
+    },
+  },
+  apicalDendriticTotalLength: {
+    group: MorphoMetricGroups.ApicalDendrite,
+    title: 'Total Length',
+    description: 'Total length of the apical dendrites',
+    filter: null,
+    vocabulary: {
+      plural: 'Total Length',
+      singular: 'Total Length',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Total Length', true),
+    },
+  },
+  apicalDendtriteMaxBranchOrder: {
+    group: MorphoMetricGroups.ApicalDendrite,
+    title: 'Maximum Branch Order',
+    description: 'Apical Dendrite Maximum branch order (Strahler index)',
+    filter: null,
+    vocabulary: {
+      plural: 'Maximum Branch Order',
+      singular: 'Maximum Branch Order',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Section Strahler Orders'),
+    },
+  },
+  apicalArborAsymmetryIndex: {
+    group: MorphoMetricGroups.ApicalDendrite,
+    title: 'Arbor Asymmetry Index',
+    description: 'Apical Arbor asymmetry index (if calculated)',
+    filter: null,
+    vocabulary: {
+      plural: 'Arbor Asymmetry Index',
+      singular: 'Arbor Asymmetry Index',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Partition Asymmetry'),
+    },
+  },
+  neuronMorphologyWidth: {
+    group: MorphoMetricGroups.NeuronMorphology,
+    title: 'Total Width',
+    description: 'Neuron morphology total width',
+    filter: null,
+    vocabulary: {
+      plural: 'Total width',
+      singular: 'Total width',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Width', true),
+    },
+  },
+  neuronMorphologyLength: {
+    group: MorphoMetricGroups.NeuronMorphology,
+    title: 'Total Length',
+    description: 'Neuron morphology total Length',
+    filter: null,
+    vocabulary: {
+      plural: 'Total Length',
+      singular: 'Total Length',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Length', true),
+    },
+  },
+  neuronMorphologyDepth: {
+    group: MorphoMetricGroups.NeuronMorphology,
+    title: 'Total Depth',
+    description: 'Neuron morphology total Depth',
+    filter: null,
+    vocabulary: {
+      plural: 'Total Depth',
+      singular: 'Total Depth',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Depth'),
+    },
+  },
+  somaDiameter: {
+    group: MorphoMetricGroups.Soma,
+    title: 'Diameter',
+    description: 'Diameter of the soma',
+    filter: null,
+    vocabulary: {
+      plural: 'Diameter',
+      singular: 'Diameter',
+    },
+    render: {
+      esResourceViewFn: (_text, r) =>
+        selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', true),
     },
   },
 };

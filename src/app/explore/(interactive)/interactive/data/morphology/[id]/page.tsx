@@ -33,7 +33,7 @@ export default function MorphologyDetailPage() {
                 <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                   <GeneralizationControls experimentTypeName={NEURON_MORPHOLOGY} />
                 </ErrorBoundary>
-                <div className="min-h-[2100px]">{renderSimilar}</div>
+                <div className="min-h-[1500px]">{renderSimilar}</div>
               </>
             )}
           </Detail>

@@ -69,6 +69,23 @@ export type ReconstructedNeuronMorphology = ExperimentProps & {
   distribution: FileDistribution[];
   generation: Generation;
   license: License;
+  morphologyFeature: MorphologyFeature[];
+};
+
+enum MorphoMetricCompartment {
+  Axon = 'Axon',
+  ApicalDendrite = 'ApicalDendrite',
+  BasalDendrite = 'BasalDendrite',
+  Soma = 'Soma',
+  NeuronMorphology = 'NeuronMorphology',
+}
+
+type MorphologyFeature = {
+  compartment: MorphoMetricCompartment;
+  label: string;
+  statistic: string;
+  unit: string;
+  value: number;
 };
 
 export type Experiment =

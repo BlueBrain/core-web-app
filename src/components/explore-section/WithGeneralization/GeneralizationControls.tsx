@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { Spin, ConfigProvider, ThemeConfig } from 'antd';
-import CardsControls from './CardsControls';
 import RulesControls from './RulesControls';
 import {
   rulesAtom,
@@ -73,7 +72,6 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
             />
           </div>
         )}
-        <CardsControls />
       </div>
       {displayControlPanel && filters && (
         <div className="h-screen fixed right-0 top-0 z-50">
