@@ -22,14 +22,13 @@ import {
 import { flattenBrainRegionsTree, itemsInAnnotationReducer } from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
-  DEFAULT_BRAIN_REGION,
   DEFAULT_BRAIN_REGION_STORAGE_KEY,
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
 import { getInitializationValue, setInitializationValue } from '@/util/utils';
-import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { sectionAtom } from '@/state/application';
 import {
+  brainRegionIdQueryParamKey,
   defaultExploreRegion,
   defaultHierarchyTree,
 } from '@/constants/explore-section/default-brain-region';
@@ -357,6 +356,19 @@ export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | nul
 
   const defaultRegion = sectionName === 'explore' ? defaultExploreRegion : null;
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const brainRegionIdQueryParam = searchParams.get(brainRegionIdQueryParamKey);
+  if (brainRegionIdQueryParam) {
+    if (
+      !initializationBrainRegion ||
+      initializationBrainRegion.value.id !== decodeURIComponent(brainRegionIdQueryParam)
+    ) {
+      // do not set initial value, wait until the brain region is
+      // set by the hook based on query param
+      return null;
+    }
+  }
+
   return initializationBrainRegion ? initializationBrainRegion.value : defaultRegion;
 });
 
@@ -372,8 +384,7 @@ export const setSelectedBrainRegionAtom = atom(
     selectedBrainRegionId: string,
     selectedBrainRegionTitle: string,
     selectedBrainRegionLeaves: string[] | null,
-    selectedBrainRegionRepresentedInAnnotation: boolean,
-    brainRegionHierarchyState: {} | null
+    selectedBrainRegionRepresentedInAnnotation: boolean
   ) => {
     const brainRegion = {
       id: selectedBrainRegionId,
@@ -386,12 +397,6 @@ export const setSelectedBrainRegionAtom = atom(
     set(literatureSelectedBrainRegionAtom, brainRegion);
     set(compositionHistoryAtom, []);
     set(compositionHistoryIndexAtom, 0);
-
-    setInitializationValue(DEFAULT_BRAIN_REGION_STORAGE_KEY, {
-      ...DEFAULT_BRAIN_REGION,
-      value: brainRegion,
-      brainRegionHierarchyState: brainRegionHierarchyState ?? {},
-    } satisfies DefaultBrainRegionType);
   }
 );
 
@@ -469,17 +474,8 @@ export const selectedBrainRegionWithChildrenAtom = atom<Promise<string[]>>(async
 });
 
 // Keeps track of the hierarchy tree of the brain regions
-export const brainRegionHierarchyStateAtom = atomWithDefault<NavValue | null>((get) => {
-  const brainModelConfigId = get(brainModelConfigIdAtom);
-  if (!brainModelConfigId) return null;
-
-  const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-    DEFAULT_BRAIN_REGION_STORAGE_KEY
-  );
-  return initializationBrainRegion
-    ? initializationBrainRegion.brainRegionHierarchyState
-    : defaultHierarchyTree;
-});
+// it will be expanded based on region selected in useBrainRegionFromQuery
+export const brainRegionHierarchyStateAtom = atom<NavValue>(defaultHierarchyTree);
 
 brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';
 brainRegionSidebarIsCollapsedAtom.debugLabel = 'brainRegionSidebarIsCollapsedAtom';
