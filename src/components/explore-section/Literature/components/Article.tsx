@@ -25,15 +25,20 @@ export function ArticlePreview({
   title,
   icon,
   altText,
+  className,
 }: {
   title: string;
   icon: JSX.Element;
   altText?: string;
+  className?: string;
 }) {
   return (
     <button
       type="button"
-      className="flex items-center justify-center gap-1 text-base font-normal text-primary-8"
+      className={classNames(
+        'flex items-center justify-center gap-1 text-base font-normal text-primary-8',
+        className ?? ''
+      )}
       title={altText ?? title}
     >
       {icon}
@@ -165,12 +170,14 @@ export default function Article({
               title={journal}
               icon={<JournalIcon />}
               altText={`${journal} ${journalISSN ?? ''}`}
+              className="cursor-default"
             />
           )}
           {publicationDate && (
             <ArticlePreview
               title={formatDate(publicationDate)}
               icon={<CalendarIcon className="w-4 h-4" />}
+              className="cursor-default"
             />
           )}
           {!isNil(citationsCount) && (
@@ -178,6 +185,7 @@ export default function Article({
               title={`Times cited: ${citationsCount}`}
               icon={<CitationIcon className="w-4 h-4" />}
               altText={`Number of citations: ${citationsCount}`}
+              className="cursor-default"
             />
           )}
         </div>

@@ -87,12 +87,14 @@ export default function ArticleListItem({ article, index }: Props) {
             title={article.journalName}
             icon={<JournalIcon style={{ borderColor: '#D9D9D9' }} />}
             altText={`${article.journalName}`}
+            className="cursor-default"
           />
         )}
         {article.publicationDate && (
           <ArticlePreview
             title={formatDate(article.publicationDate)}
             icon={<CalendarIcon className="w-4 h-4" style={{ borderColor: '#D9D9D9' }} />}
+            className="cursor-default"
           />
         )}
         {!isNil(article.citationCount) && (
@@ -100,6 +102,7 @@ export default function ArticleListItem({ article, index }: Props) {
             title={`Times cited: ${article.citationCount}`}
             icon={<CitationIcon className="w-4 h-4" style={{ borderColor: '#D9D9D9' }} />}
             altText={`Number of citations: ${article.citationCount}`}
+            className="cursor-default"
           />
         )}
       </div>
