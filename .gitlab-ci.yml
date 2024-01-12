@@ -15,25 +15,22 @@ default:
   interruptible: true
   image: node:18-alpine
   cache:
-    key: npm-next-cache
+    key: js-cache
     paths:
       - .npm/
       - .next/cache/
       - node_modules
       - .eslint/cache/
       - .prettier/cache
+  before_script:
+    # note that node_modules isn't cached since it takes to save/restore the cache
+    - mkdir -p .npm .next/cache/ node_modules .eslint/cache/ .prettier/
+    - npm ci --cache .npm --prefer-offline
 
 stages:
-  - setup
   - lint_and_test
   - build
   - deploy
-
-prime_npm:
-  stage: setup
-  script:
-    - mkdir -p .npm .next/cache/ node_modules .eslint/cache/ .prettier/
-    - npm clean-install --cache .npm --prefer-offline
 
 eslint:
   stage: lint_and_test
