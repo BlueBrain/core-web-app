@@ -8,6 +8,8 @@ import BrainRegions from '@/components/build-section/BrainRegionSelector/BrainRe
 import sessionAtom from '@/state/session';
 import {
   defaultIncreasedTimeout,
+  previouslySelectedRegion,
+  queryParamRegion,
   regionContainerSelector,
 } from '__tests__/__utils__/BrainRegionPanel/constants';
 
@@ -37,8 +39,18 @@ global.ResizeObserver = class MockedResizeObserver {
 
 jest.mock('nuqs', () => ({
   __esModule: true,
-  useQueryState: () => [null, () => {}],
+  useQueryState: () => [queryParamRegion, jest.fn()],
 }));
+
+jest.mock('src/util/utils.ts', () => {
+  const utils = jest.requireActual('src/util/utils.ts');
+  return {
+    ...utils,
+    getInitializationValue: () => previouslySelectedRegion,
+  };
+});
+
+const defaultRegion = 'Interbrain';
 
 async function checkDefaultBrainTreeExpanded() {
   const selector = `div[data-tree-id] button > ${regionContainerSelector}`;
@@ -48,30 +60,33 @@ async function checkDefaultBrainTreeExpanded() {
   await screen.findByText('Cerebellum', { selector });
 }
 
-describe('Default brain region panel in explore', () => {
+describe('Using query param region in explore', () => {
   beforeEach(async () => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        assign: jest.fn(),
+        search: `?brainRegion=${queryParamRegion}`,
+      },
+    });
+
     await waitFor(() => render(Provider()));
   });
 
-  const defaultRegion = 'Cerebrum';
+  test('show default expanded tree until query region', async () => {
+    await checkDefaultBrainTreeExpanded();
 
-  test('show Cerebrum region tree', async () => {
-    await screen.findByText('Brain region', { selector: 'span' });
-    await screen.findByText(
-      defaultRegion,
-      {
-        selector: `div.ant-select ${regionContainerSelector}`,
-      },
-      { timeout: defaultIncreasedTimeout }
-    );
-    await screen.findByText(
-      defaultRegion,
-      { selector: `button > ${regionContainerSelector}` },
-      { timeout: defaultIncreasedTimeout }
-    );
+    expect(
+      await screen.queryByText(defaultRegion, { selector: `button > ${regionContainerSelector}` })
+    ).toBeInTheDocument();
   });
 
-  test('show expanded tree', checkDefaultBrainTreeExpanded);
+  test('saved value not to be displayed', async () => {
+    expect(
+      await screen.queryByText(previouslySelectedRegion.value.title, {
+        selector: `button > ${regionContainerSelector}`,
+      })
+    ).not.toBeInTheDocument();
+  });
 
   function Provider() {
     return (
@@ -88,41 +103,26 @@ describe('Default brain region panel in explore', () => {
   }
 });
 
-describe('Default brain region panel with no atoms', () => {
+describe('Using query param region in buid', () => {
   beforeEach(async () => {
     await waitFor(() => render(Provider()));
   });
 
-  test('show empty search', async () => {
-    await screen.findByText('Search region...', { selector: `div.ant-select span:not([title])` });
+  test('show default expanded tree instead of expanding until query region', async () => {
+    await checkDefaultBrainTreeExpanded();
+
+    expect(
+      await screen.queryByText(defaultRegion, { selector: `button > ${regionContainerSelector}` })
+    ).not.toBeInTheDocument();
   });
 
-  test('show default region tree', checkDefaultBrainTreeExpanded);
-
-  function Provider() {
-    return (
-      <TestProvider
-        initialValues={[
-          [sessionAtom, { accessToken: 'abc' }],
-          [sectionAtom, 'test'],
-        ]}
-      >
-        <BrainRegions />
-      </TestProvider>
-    );
-  }
-});
-
-describe('Default brain region panel in buid', () => {
-  beforeEach(async () => {
-    await waitFor(() => render(Provider()));
+  test('saved to be displayed', async () => {
+    expect(
+      await screen.queryByText(previouslySelectedRegion.value.title, {
+        selector: `button > ${regionContainerSelector}`,
+      })
+    ).not.toBeInTheDocument();
   });
-
-  test('show empty search', async () => {
-    await screen.findByText('Search region...', { selector: `span:not([title])` });
-  });
-
-  test('show default region tree', checkDefaultBrainTreeExpanded);
 
   function Provider() {
     return (

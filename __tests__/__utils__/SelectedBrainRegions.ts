@@ -53,4 +53,5 @@ export const mockBrainRegions: BrainRegion[] = [
     hasPart: [`${IDPrefix}/315`],
   }),
   getMockBrainRegion('Isocortex', '315', '#70FF71', { isPartOf: `${IDPrefix}/695` }),
+  getMockBrainRegion('Interbrain', '1129', '#FF7080', { isPartOf: `${IDPrefix}/343` }),
 ];

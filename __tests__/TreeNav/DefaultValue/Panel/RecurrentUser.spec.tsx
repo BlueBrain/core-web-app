@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -44,6 +44,11 @@ jest.mock('src/util/utils.ts', () => {
   };
 });
 
+jest.mock('nuqs', () => ({
+  __esModule: true,
+  useQueryState: () => [null, () => {}],
+}));
+
 const defaultRegion = 'Isocortex';
 
 async function checkTreeExpandedFromSaved() {
@@ -58,11 +63,12 @@ async function checkTreeExpandedFromSaved() {
 }
 
 describe('Default brain region panel in explore', () => {
-  beforeEach(() => {
-    render(Provider());
+  beforeEach(async () => {
+    await waitFor(() => render(Provider()));
   });
 
   test('show Isocortex in brain region tree', async () => {
+    await screen.findByText('Brain region', { selector: 'span' });
     await screen.findByText(
       defaultRegion,
       {
@@ -90,8 +96,8 @@ describe('Default brain region panel in explore', () => {
 });
 
 describe('Default brain region panel in buid', () => {
-  beforeEach(() => {
-    render(Provider());
+  beforeEach(async () => {
+    await waitFor(() => render(Provider()));
   });
 
   test('show expanded tree', checkTreeExpandedFromSaved);

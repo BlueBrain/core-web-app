@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider, useAtomValue } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -25,20 +25,22 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
+function showDefaultOpenRegionTree() {
+  screen.getByText('{"http://api.brain-map.org/api/v2/data/Structure/8":null}', {
+    selector: hierarchySelector,
+  });
+}
+
 describe('Default brain region in explore', () => {
   beforeEach(async () => {
-    render(Provider());
+    await waitFor(() => render(Provider()));
   });
 
   test('show Cerebrum', () => {
     screen.getByText('Cerebrum', { selector: brainRegionSelector });
   });
 
-  test('show opened tree', () => {
-    screen.getByText('{"http://api.brain-map.org/api/v2/data/Structure/8":null}', {
-      selector: hierarchySelector,
-    });
-  });
+  test('show opened tree', showDefaultOpenRegionTree);
 
   function Provider() {
     return (
@@ -56,16 +58,14 @@ describe('Default brain region in explore', () => {
 
 describe('No section set', () => {
   beforeEach(async () => {
-    render(Provider());
+    await waitFor(() => render(Provider()));
   });
 
   test('show no brain region selected', () => {
     screen.getByText('', { selector: brainRegionSelector });
   });
 
-  test('show not opened tree', () => {
-    screen.getByText('null', { selector: hierarchySelector });
-  });
+  test('show opened tree', showDefaultOpenRegionTree);
 
   function Provider() {
     return (
@@ -78,18 +78,14 @@ describe('No section set', () => {
 
 describe('Default brain region in build', () => {
   beforeEach(async () => {
-    render(Provider());
+    await waitFor(() => render(Provider()));
   });
 
   test('do not select any brain region', () => {
     screen.getByText('', { selector: brainRegionSelector });
   });
 
-  test('show opened tree', () => {
-    screen.getByText('{"http://api.brain-map.org/api/v2/data/Structure/8":null}', {
-      selector: hierarchySelector,
-    });
-  });
+  test('show opened tree', showDefaultOpenRegionTree);
 
   function Provider() {
     return (

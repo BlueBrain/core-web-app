@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { Provider, useAtomValue } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -8,10 +8,13 @@ import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import {
   brainRegionSelector,
   brainRegionSelectorId,
+  brainTreeUntilIsocortex,
   hierarchySelector,
   hierarchySelectorId,
   previouslySelectedRegion,
 } from '__tests__/__utils__/BrainRegionPanel/constants';
+import { useBrainRegionFromQuery } from '@/hooks/brain-region-panel';
+import sessionAtom from '@/state/session';
 
 const HydrateAtoms = ({ initialValues, children }: any) => {
   useHydrateAtoms(initialValues);
@@ -26,29 +29,41 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
+jest.mock(
+  'src/api/ontologies/index.ts',
+  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
+);
+
 jest.mock('src/util/utils.ts', () => ({
+  setInitializationValue: () => {},
   getInitializationValue: () => previouslySelectedRegion,
 }));
 
+jest.mock('nuqs', () => ({
+  __esModule: true,
+  useQueryState: () => [null, () => {}],
+}));
+
+async function showSavedOpenRegionTree() {
+  await screen.findByText(JSON.stringify(brainTreeUntilIsocortex), { selector: hierarchySelector });
+}
+
 describe('Show previous chosen brain region in explore', () => {
   beforeEach(async () => {
-    render(Provider());
+    await waitFor(() => render(Provider()));
   });
 
-  test('show saved if new not new user', () => {
+  test('show saved brain region', () => {
     screen.getByText(previouslySelectedRegion.value.title, { selector: brainRegionSelector });
   });
 
-  test('show opened based on previously selected brain region', () => {
-    screen.getByText(JSON.stringify(previouslySelectedRegion.brainRegionHierarchyState), {
-      selector: hierarchySelector,
-    });
-  });
+  test('show opened region tree based on saved', showSavedOpenRegionTree);
 
   function Provider() {
     return (
       <TestProvider
         initialValues={[
+          [sessionAtom, { accessToken: 'abc' }],
           [sectionAtom, 'explore'],
           [brainModelConfigIdAtom, '123'],
         ]}
@@ -61,23 +76,20 @@ describe('Show previous chosen brain region in explore', () => {
 
 describe('Show previous chosen brain region in build', () => {
   beforeEach(async () => {
-    render(Provider());
+    await waitFor(() => render(Provider()));
   });
 
-  test('show saved if new not new user', () => {
+  test('show saved brain region', () => {
     screen.getByText(previouslySelectedRegion.value.title, { selector: brainRegionSelector });
   });
 
-  test('show opened based on previously selected brain region', () => {
-    screen.getByText(JSON.stringify(previouslySelectedRegion.brainRegionHierarchyState), {
-      selector: hierarchySelector,
-    });
-  });
+  test('show opened region tree based on saved', showSavedOpenRegionTree);
 
   function Provider() {
     return (
       <TestProvider
         initialValues={[
+          [sessionAtom, { accessToken: 'abc' }],
           [sectionAtom, 'build'],
           [brainModelConfigIdAtom, '123'],
         ]}
@@ -91,6 +103,7 @@ describe('Show previous chosen brain region in build', () => {
 function TestComponent() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegionHierarchyState = useAtomValue(brainRegionHierarchyStateAtom);
+  useBrainRegionFromQuery();
 
   return (
     <>
