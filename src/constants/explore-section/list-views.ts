@@ -2,7 +2,6 @@ import { neuroShapesBaseUrl, ontologyBaseUrl } from '@/config';
 
 export const BOUTON_DENSITY: string = `${ontologyBaseUrl}/ExperimentalBoutonDensity`;
 export const NEURON_DENSITY: string = `${ontologyBaseUrl}/ExperimentalNeuronDensity`;
-export const LAYER_THICKNESS: string = `${ontologyBaseUrl}/ExperimentalLayerThickness`;
 export const ELECTRO_PHYSIOLOGY: string = `${ontologyBaseUrl}/ExperimentalTrace`;
 export const SYNAPSE_PER_CONNECTION: string = `${ontologyBaseUrl}/ExperimentalSynapsesPerConnection`;
 
@@ -12,7 +11,6 @@ export const NEURON_MORPHOLOGY: string = `${neuroShapesBaseUrl}/ReconstructedNeu
 export type ExperimentDataTypeName =
   | typeof BOUTON_DENSITY
   | typeof NEURON_DENSITY
-  | typeof LAYER_THICKNESS
   | typeof ELECTRO_PHYSIOLOGY
   | typeof SYNAPSE_PER_CONNECTION
   | typeof SIMULATION_CAMPAIGNS
