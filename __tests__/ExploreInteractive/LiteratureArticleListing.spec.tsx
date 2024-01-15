@@ -3,7 +3,7 @@ import { Provider } from 'jotai';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useParams, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import sessionAtom from '@/state/session';
+import isUndefined from 'lodash/isUndefined';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
@@ -16,6 +16,7 @@ import { ARTICLES_PER_PAGE } from '@/components/explore-section/Literature/compo
 import { mockArticleResponse, mockAuthors, mockJournals } from '__tests__/__utils__/Literature';
 import { normalizeString } from '@/util/utils';
 import { ArticleListFilters } from '@/components/explore-section/Literature/api';
+import sessionAtom from '@/state/session';
 
 jest.setTimeout(20_000);
 
@@ -60,7 +61,7 @@ const ML_DATE_FORMAT = 'yyyy-MM-dd';
 const UI_DATE_FORMAT = 'dd-MM-yyyy';
 
 const mockFetchArticlesForBrainRegionAndExperiment = jest.fn().mockImplementation(
-  (token, experimentName, brainRegions, page: number, filters: ArticleListFilters) =>
+  (experimentName, brainRegions, page: number, filters: ArticleListFilters) =>
     new Promise((resolve) => {
       const mockResponse: ArticleItem[] = [...Array(50).keys()].map((_, index) =>
         createMockArticle(
@@ -96,8 +97,8 @@ jest.mock('src/components/explore-section/Literature/api.ts', () => {
     ...actual,
     fetchArticlesForBrainRegionAndExperiment: jest
       .fn()
-      .mockImplementation((token, name, brainRegions, page: number, filters: ArticleListFilters) =>
-        mockFetchArticlesForBrainRegionAndExperiment(token, name, brainRegions, page, filters)
+      .mockImplementation((name, brainRegions, page: number, filters: ArticleListFilters) =>
+        mockFetchArticlesForBrainRegionAndExperiment(name, brainRegions, page, filters)
       ),
     fetchAuthorSuggestions: jest
       .fn()
@@ -141,7 +142,7 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows current experiment as selected in the keywords menu', async () => {
-    await renderComponentWithRoute(neuronDensity.name, true);
+    await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
@@ -151,7 +152,7 @@ describe('LiteratureArticleListingPage', () => {
   });
 
   test('shows all experiment types as options', async () => {
-    await renderComponentWithRoute(neuronDensity.name, true);
+    await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
@@ -166,7 +167,7 @@ describe('LiteratureArticleListingPage', () => {
       push: jest.fn(),
     };
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
-    await renderComponentWithRoute(neuronDensity.name, true);
+    await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
 
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
@@ -387,6 +388,14 @@ describe('LiteratureArticleListingPage', () => {
     expect(getSelectedFilterOptions('Article type')!.item(0).textContent).toEqual('abstract');
   });
 
+  test('component renders for unauthenticated users also', async () => {
+    await renderComponentWithRoute(neuronDensity.name, {
+      authenticatedUser: false,
+    });
+    const articleCount = await screen.findByTestId('total-article-count', {}, { timeout: 3000 });
+    expect(articleCount.textContent).toMatch(/100/);
+  });
+
   const getSelectedFilterOptions = (filterName: 'Authors' | 'Journals' | 'Article type') => {
     switch (filterName) {
       case 'Authors':
@@ -408,8 +417,8 @@ describe('LiteratureArticleListingPage', () => {
   };
 
   const filtersPassedToApi = (callNumber: number = 0): ArticleListFilters => {
-    // 4th argument contains the filters that are passed as query params to the api
-    return mockFetchArticlesForBrainRegionAndExperiment.mock.calls[callNumber][4];
+    // 3rd argument contains the filters that are passed as query params to the api
+    return mockFetchArticlesForBrainRegionAndExperiment.mock.calls[callNumber][3];
   };
 
   const applyFilters = () => {
@@ -440,13 +449,23 @@ describe('LiteratureArticleListingPage', () => {
 
   const selectedItemSelector = '.ant-select-selection-item-content';
 
-  const renderComponentWithRoute = async (name?: string, waitForArticles?: boolean) => {
+  const renderComponentWithRoute = async (
+    name?: string,
+    config?: { waitForArticles?: boolean; authenticatedUser?: boolean }
+  ) => {
     const spy = useParams as unknown as jest.Mock;
 
     spy.mockReturnValue({ 'experiment-data-type': name });
-    render(LiteratureArticleListingPageProvider());
 
-    if (waitForArticles) {
+    await waitFor(() =>
+      render(
+        LiteratureArticleListingPageProvider(
+          isUndefined(config?.authenticatedUser) ? true : config?.authenticatedUser
+        )
+      )
+    );
+
+    if (config?.waitForArticles) {
       await screen.findByTestId('total-article-count', {}, { timeout: 3000 });
     }
   };
@@ -464,22 +483,23 @@ describe('LiteratureArticleListingPage', () => {
     );
   }
 
-  function LiteratureArticleListingPageProvider() {
+  function LiteratureArticleListingPageProvider(authenticatedUser?: boolean) {
+    const initialAtoms: any[] = [
+      [
+        selectedBrainRegionAtom,
+        {
+          id: mockBrainRegions[1].id,
+          title: mockBrainRegions[1].title,
+          leaves: mockBrainRegions[1].leaves,
+          representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
+        } as SelectedBrainRegion,
+      ],
+    ];
+    if (authenticatedUser) {
+      initialAtoms.push([sessionAtom, { accessToken: 'abc' }]);
+    }
     return (
-      <TestProvider
-        initialValues={[
-          [sessionAtom, { accessToken: 'abc' }],
-          [
-            selectedBrainRegionAtom,
-            {
-              id: mockBrainRegions[1].id,
-              title: mockBrainRegions[1].title,
-              leaves: mockBrainRegions[1].leaves,
-              representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
-            } as SelectedBrainRegion,
-          ],
-        ]}
-      >
+      <TestProvider initialValues={...initialAtoms}>
         <LiteratureArticleListingPage />
       </TestProvider>
     );

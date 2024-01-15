@@ -196,15 +196,12 @@ export type ArticleListFilters = {
 };
 
 const fetchArticlesForBrainRegionAndExperiment = (
-  accessToken: string,
   experimentName: string,
   brainRegions: string[],
   page: number,
   filters: ArticleListFilters,
   signal?: AbortSignal
 ): Promise<{ articles: ArticleItem[]; total: number; currentPage: number; pages: number }> => {
-  if (!accessToken) throw new Error('Access token should be defined');
-
   const url = bbsMlBaseUrl;
   const maxResults = 100;
 

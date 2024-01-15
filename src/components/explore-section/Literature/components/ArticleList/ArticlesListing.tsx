@@ -3,13 +3,11 @@
 'use client';
 
 import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { useAtomValue } from 'jotai';
 import { ConfigProvider, List, Skeleton, Spin } from 'antd';
 
 import ExperimentSelector from '../ExperimentSelector';
 import { ArticleListFilters, fetchArticlesForBrainRegionAndExperiment } from '../../api';
 import ArticleListItem from './ArticleListItem';
-import sessionAtom from '@/state/session';
 import { ArticleItem } from '@/api/explore-section/resources';
 import { classNames } from '@/util/utils';
 import { ExperimentConfig } from '@/constants/explore-section/experiment-types';
@@ -42,7 +40,6 @@ export function ArticleListing({
   children: filterControls,
   filters,
 }: Props) {
-  const session = useAtomValue(sessionAtom);
   const [articles, setArticles] = useState<ArticleItem[]>([]);
 
   const [{ loading, error, pageToFetch, total, hasMoreData }, setListingState] = useReducer(
@@ -80,7 +77,6 @@ export function ArticleListing({
     });
 
     fetchArticlesForBrainRegionAndExperiment(
-      session?.accessToken ?? '',
       experiment.title,
       brainRegions,
       1,
@@ -110,7 +106,7 @@ export function ArticleListing({
           setListingState({ loading: false });
         }
       });
-  }, [brainRegions, experiment.title, filters, session]);
+  }, [brainRegions, experiment.title, filters]);
 
   const loadMoreArticles = useCallback(() => {
     if (loading) {
@@ -119,13 +115,7 @@ export function ArticleListing({
 
     setListingState({ loading: true });
 
-    fetchArticlesForBrainRegionAndExperiment(
-      session?.accessToken ?? '',
-      experiment.title,
-      brainRegions,
-      pageToFetch,
-      filters
-    )
+    fetchArticlesForBrainRegionAndExperiment(experiment.title, brainRegions, pageToFetch, filters)
       .then((response) => {
         setArticles((prev) => [...prev, ...response.articles]);
         setListingState({
@@ -143,7 +133,7 @@ export function ArticleListing({
       .finally(() => {
         setListingState({ loading: false });
       });
-  }, [brainRegions, experiment.title, pageToFetch, filters, session, loading]);
+  }, [brainRegions, experiment.title, pageToFetch, filters, loading]);
 
   // useEffect to load initial articles when the props (brain regions or experiment name) change
   useEffect(() => {
