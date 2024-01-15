@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -7,11 +7,11 @@ import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import BrainRegions from '@/components/build-section/BrainRegionSelector/BrainRegions';
 import sessionAtom from '@/state/session';
 import {
-  defaultIncreasedTimeout,
   previouslySelectedRegion,
   queryParamRegion,
   regionContainerSelector,
 } from '__tests__/__utils__/BrainRegionPanel/constants';
+import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 
 const HydrateAtoms = ({ initialValues, children }: any) => {
   useHydrateAtoms(initialValues);
@@ -25,11 +25,6 @@ function TestProvider({ initialValues, children }: any) {
     </Provider>
   );
 }
-
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
 
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
@@ -50,7 +45,7 @@ jest.mock('src/util/utils.ts', () => {
   };
 });
 
-const defaultRegion = 'Interbrain';
+const queryParamRegionName = 'Interbrain';
 
 async function checkDefaultBrainTreeExpanded() {
   const selector = `div[data-tree-id] button > ${regionContainerSelector}`;
@@ -65,7 +60,7 @@ describe('Using query param region in explore', () => {
     Object.defineProperty(window, 'location', {
       value: {
         assign: jest.fn(),
-        search: `?brainRegion=${queryParamRegion}`,
+        search: `?brainRegion=${queryParamRegionName}`,
       },
     });
 
@@ -76,17 +71,22 @@ describe('Using query param region in explore', () => {
     await checkDefaultBrainTreeExpanded();
 
     expect(
-      await screen.queryByText(defaultRegion, { selector: `button > ${regionContainerSelector}` })
+      screen.queryByText(queryParamRegionName, { selector: `button > ${regionContainerSelector}` })
     ).toBeInTheDocument();
   });
 
-  test('saved value not to be displayed', async () => {
+  test('saved brain region not to be displayed (query param has priority)', async () => {
     expect(
       screen.queryByText(previouslySelectedRegion.value.title, {
         selector: `button > ${regionContainerSelector}`,
       })
     ).not.toBeInTheDocument();
   });
+
+  function ExploreContext() {
+    useSetBrainRegionFromQuery();
+    return null;
+  }
 
   function Provider() {
     return (
@@ -97,31 +97,36 @@ describe('Using query param region in explore', () => {
           [brainModelConfigIdAtom, '123'],
         ]}
       >
+        <ExploreContext />
         <BrainRegions />
       </TestProvider>
     );
   }
 });
 
-describe('Using query param region in buid', () => {
+describe('Using query param region in build', () => {
   beforeEach(async () => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        assign: jest.fn(),
+        search: `?brainRegion=${queryParamRegionName}`,
+      },
+    });
     await waitFor(() => render(Provider()));
   });
 
-  test('show default expanded tree instead of expanding until query region', async () => {
+  test('show saved region tree instead of query param region', async () => {
     await checkDefaultBrainTreeExpanded();
 
     expect(
-      await screen.queryByText(defaultRegion, { selector: `button > ${regionContainerSelector}` })
+      screen.queryByText(queryParamRegionName, { selector: `button > ${regionContainerSelector}` })
     ).not.toBeInTheDocument();
-  });
 
-  test('saved to be displayed', async () => {
     expect(
       screen.queryByText(previouslySelectedRegion.value.title, {
         selector: `button > ${regionContainerSelector}`,
       })
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
   });
 
   function Provider() {

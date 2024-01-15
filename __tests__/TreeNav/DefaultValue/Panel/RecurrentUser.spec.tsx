@@ -25,11 +25,6 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
-
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
   unobserve = jest.fn();
@@ -43,11 +38,6 @@ jest.mock('src/util/utils.ts', () => {
     getInitializationValue: () => previouslySelectedRegion,
   };
 });
-
-jest.mock('nuqs', () => ({
-  __esModule: true,
-  useQueryState: () => [null, () => {}],
-}));
 
 const defaultRegion = 'Isocortex';
 
@@ -68,7 +58,6 @@ describe('Default brain region panel in explore', () => {
   });
 
   test('show Isocortex in brain region tree', async () => {
-    await screen.findByText('Brain region', { selector: 'span' });
     await screen.findByText(
       defaultRegion,
       {

@@ -24,21 +24,11 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
-
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
   unobserve = jest.fn();
   disconnect = jest.fn();
 };
-
-jest.mock('nuqs', () => ({
-  __esModule: true,
-  useQueryState: () => [null, () => {}],
-}));
 
 async function checkDefaultBrainTreeExpanded() {
   const selector = `div[data-tree-id] button > ${regionContainerSelector}`;
@@ -56,14 +46,6 @@ describe('Default brain region panel in explore', () => {
   const defaultRegion = 'Cerebrum';
 
   test('show Cerebrum region tree', async () => {
-    await screen.findByText('Brain region', { selector: 'span' });
-    await screen.findByText(
-      defaultRegion,
-      {
-        selector: `div.ant-select ${regionContainerSelector}`,
-      },
-      { timeout: defaultIncreasedTimeout }
-    );
     await screen.findByText(
       defaultRegion,
       { selector: `button > ${regionContainerSelector}` },

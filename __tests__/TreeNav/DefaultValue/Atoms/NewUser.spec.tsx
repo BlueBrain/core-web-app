@@ -40,7 +40,15 @@ describe('Default brain region in explore', () => {
     screen.getByText('Cerebrum', { selector: brainRegionSelector });
   });
 
-  test('show opened tree', showDefaultOpenRegionTree);
+  test('show opened tree', () => {
+    /*
+     * the atom is null because it has default brain region
+     * and the tree will be opened with a hook
+     */
+    screen.getByText('null', {
+      selector: hierarchySelector,
+    });
+  });
 
   function Provider() {
     return (

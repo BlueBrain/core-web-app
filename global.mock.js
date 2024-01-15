@@ -38,3 +38,13 @@ export const findDeep = (flatTree, findFn) => flatTree.find(findFn);
 export const reduceDeep = (someValue) => [someValue];
 
 export const morphoviewer = () => null;
+
+jest.mock(
+  'src/api/ontologies/index.ts',
+  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
+);
+
+jest.mock('nuqs', () => ({
+  __esModule: true,
+  useQueryState: () => [null, jest.fn()],
+}));

@@ -13,7 +13,7 @@ import {
   hierarchySelectorId,
   previouslySelectedRegion,
 } from '__tests__/__utils__/BrainRegionPanel/constants';
-import { useBrainRegionFromQuery } from '@/hooks/brain-region-panel';
+import { useSetBrainRegionFromQuery, useExpandRegionTree } from '@/hooks/brain-region-panel';
 import sessionAtom from '@/state/session';
 
 const HydrateAtoms = ({ initialValues, children }: any) => {
@@ -29,19 +29,9 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
-
 jest.mock('src/util/utils.ts', () => ({
   setInitializationValue: () => {},
   getInitializationValue: () => previouslySelectedRegion,
-}));
-
-jest.mock('nuqs', () => ({
-  __esModule: true,
-  useQueryState: () => [null, () => {}],
 }));
 
 async function showSavedOpenRegionTree() {
@@ -103,7 +93,8 @@ describe('Show previous chosen brain region in build', () => {
 function TestComponent() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const brainRegionHierarchyState = useAtomValue(brainRegionHierarchyStateAtom);
-  useBrainRegionFromQuery();
+  useSetBrainRegionFromQuery();
+  useExpandRegionTree();
 
   return (
     <>
