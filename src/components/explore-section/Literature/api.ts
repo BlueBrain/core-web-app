@@ -72,13 +72,16 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
   }
 };
 
+const ML_HEADERS = {
+  accept: 'application/json',
+  'Content-Type': 'application/json',
+  'Cache-Control': 'max-age=604800', // 7 days
+};
+
 const fetchArticleTypes = (): Promise<ArticleTypeSuggestionResponse> => {
   return fetch(`${bbsMlBaseUrl}/suggestions/article_types`, {
     method: 'GET',
-    headers: new Headers({
-      accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
+    headers: new Headers({ ...ML_HEADERS }),
   })
     .then((response: any) => {
       if (response.ok) {
@@ -96,10 +99,7 @@ const fetchAuthorSuggestions = (
   return fetch(`${bbsMlBaseUrl}/suggestions/author`, {
     signal,
     method: 'POST',
-    headers: new Headers({
-      accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
+    headers: new Headers({ ...ML_HEADERS }),
     body: JSON.stringify({
       name: searchTerm,
       limit: 100,
@@ -126,10 +126,7 @@ export const fetchJournalSuggestions = (
   return fetch(`${bbsMlBaseUrl}/suggestions/journal`, {
     signal,
     method: 'POST',
-    headers: new Headers({
-      accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
+    headers: new Headers({ ...ML_HEADERS }),
     body: JSON.stringify({
       keywords: searchTerm,
       limit: 100,
@@ -165,10 +162,7 @@ const fetchParagraphCountForBrainRegionAndExperiment = (
     {
       signal,
       method: 'POST',
-      headers: new Headers({
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      }),
+      headers: new Headers({ ...ML_HEADERS }),
     }
   )
     .then((response: any) => {
@@ -223,10 +217,7 @@ const fetchArticlesForBrainRegionAndExperiment = (
   return fetch(`${url}/retrieval/article_listing${urlQueryParams}`, {
     signal,
     method: 'POST',
-    headers: new Headers({
-      accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
+    headers: new Headers({ ...ML_HEADERS }),
   })
     .then((response: any) => {
       if (response.status === 404) {
