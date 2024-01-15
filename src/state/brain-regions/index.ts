@@ -486,3 +486,6 @@ brainRegionSidebarIsCollapsedAtom.debugLabel = 'brainRegionSidebarIsCollapsedAto
 selectedBrainRegionAtom.debugLabel = 'selectedBrainRegionAtom';
 setSelectedBrainRegionAtom.debugLabel = 'setSelectedBrainRegionAtom';
 brainRegionsAlternateTreeAtom.debugLabel = 'brainRegionsAlternateTreeAtom';
+selectedAlternateViews.debugLabel = 'selectedAlternateViews';
+brainRegionsAtom.debugLabel = 'brainRegionsAtom';
+brainRegionOntologyAtom.debugLabel = 'brainRegionOntologyAtom';

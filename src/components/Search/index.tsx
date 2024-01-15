@@ -3,25 +3,37 @@ import { ConfigProvider, Select } from 'antd';
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
 import { classNames } from '@/util/utils';
 
-type FilterFn = 'start' | 'include';
+type SearchProps<T> = {
+  className?: string;
+  colorBgContainer?: string;
+  onClear?: () => void;
+  handleSelect: SelectProps['onSelect'];
+  mode?: 'multiple' | 'tags';
+  options: T[];
+  placeholder?: string;
+  tagRender?: (props: any) => ReactElement<any, string | JSXElementConstructor<any>>;
+  value?: string[] | string;
+  defaultValue?: string[] | string;
+  useSearchInsteadOfFilter?: boolean;
+  handleSearch?: SelectProps['onSearch'];
+};
 
-function filterOptions({
-  filterFn,
-  input,
-  option,
-}: {
-  filterFn: FilterFn;
-  input: string;
-  option?: string;
-}) {
-  if (filterFn === 'start') {
-    return option?.toLowerCase().startsWith(input.toLowerCase()) ?? false;
-  }
-  if (filterFn === 'include') {
-    return option?.toLowerCase().includes(input.toLowerCase()) ?? false;
-  }
-  return false;
-}
+/**
+ * A search input component that allows users to search and select from a list of options.
+ *
+ * @param {className?: string} className - CSS class name for the search input container.
+ * @param {colorBgContainer?: string} colorBgContainer - Background color of the search input container.
+ * @param {onClear?: () => void} onClear - Callback function to be called when the clear button is clicked.
+ * @param {handleSelect: SelectProps['onSelect']} handleSelect - Callback function to be called when an option is selected.
+ * @param {mode?: 'multiple' | 'tags'} mode - Set mode of Select.
+ * @param {options: T[]} options - Array of options to be displayed in the search input.
+ * @param {placeholder?: string} placeholder - Placeholder text for the search input.
+ * @param {tagRender?: (props: any) => ReactElement<any, string | JSXElementConstructor<any>>} tagRender - Function to render the selected options.
+ * @param {value?: string[] | string} value - Current value of the selected options.
+ * @param {defaultValue?: string[] | string} defaultValue - Default value of the selected options.
+ * @param {useSearchInsteadOfFilter?: boolean} useSearchInsteadOfFilter - Whether to use search prop instead of filter props when searching for options.
+ * @param {onSearch?: SelectProps['onSearch']} onSearch - Callback function to be called when the search input is changed.
+ */
 
 export default function Search<T extends DefaultOptionType>({
   className,
@@ -34,20 +46,13 @@ export default function Search<T extends DefaultOptionType>({
   tagRender,
   value,
   defaultValue,
-  filterFn = 'include',
-}: {
-  className?: string;
-  colorBgContainer?: string;
-  onClear?: () => void;
-  handleSelect: SelectProps['onSelect'];
-  mode?: 'multiple' | 'tags';
-  options: T[];
-  placeholder?: string;
-  tagRender?: (props: any) => ReactElement<any, string | JSXElementConstructor<any>>;
-  value?: string[] | string;
-  defaultValue?: string[] | string;
-  filterFn?: FilterFn;
-}) {
+  handleSearch,
+  useSearchInsteadOfFilter = false,
+}: SearchProps<T>) {
+  if (useSearchInsteadOfFilter && !handleSearch) {
+    throw new Error('Search component use search prop but did not provide one');
+  }
+
   return (
     <div className={classNames('border-b border-white', className)}>
       <ConfigProvider
@@ -68,6 +73,7 @@ export default function Search<T extends DefaultOptionType>({
         }}
       >
         <Select
+          showSearch
           allowClear
           autoClearSearchValue
           className="block w-full my-3 pl-0"
@@ -77,20 +83,22 @@ export default function Search<T extends DefaultOptionType>({
           onDeselect={handleSelect}
           onSelect={handleSelect}
           options={options}
-          filterOption={(input, option) =>
-            filterOptions({ filterFn, input, option: option?.label as string })
-          }
-          filterSort={(optionA, optionB) =>
-            ((optionA?.label as string).toLowerCase() ?? '').localeCompare(
-              (optionB?.label as string).toLowerCase() ?? ''
-            )
-          }
           mode={mode}
-          optionFilterProp="label"
-          showSearch
           tagRender={tagRender}
           value={value}
           defaultValue={defaultValue}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...(useSearchInsteadOfFilter
+            ? { onSearch: handleSearch, filterOption: false }
+            : {
+                optionFilterProp: 'label',
+                filterOption: (input: string, option?: T) =>
+                  ((option?.label as string)?.toLowerCase() ?? '').includes(input.toLowerCase()),
+                filterSort: (optionA: T, optionB: T) =>
+                  ((optionA?.label as string).toLowerCase() ?? '').localeCompare(
+                    (optionB?.label as string).toLowerCase() ?? ''
+                  ),
+              })}
         />
       </ConfigProvider>
     </div>

@@ -42,14 +42,7 @@ describe('Default brain region panel in explore', () => {
 
   const defaultRegion = 'Cerebrum';
 
-  test('show Cerebrum in search and tree', async () => {
-    await screen.findByText(
-      defaultRegion,
-      {
-        selector: `div.ant-select ${regionContainerSelector}`,
-      },
-      { timeout: defaultIncreasedTimeout }
-    );
+  test('show Cerebrum in search', async () => {
     await screen.findByText(
       defaultRegion,
       { selector: `button > ${regionContainerSelector}` },

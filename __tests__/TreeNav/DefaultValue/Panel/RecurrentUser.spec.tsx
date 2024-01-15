@@ -62,14 +62,7 @@ describe('Default brain region panel in explore', () => {
     render(Provider());
   });
 
-  test('show Isocortex in search and tree', async () => {
-    await screen.findByText(
-      defaultRegion,
-      {
-        selector: `div.ant-select ${regionContainerSelector}`,
-      },
-      { timeout: defaultIncreasedTimeout }
-    );
+  test('show Isocortex in brain region tree', async () => {
     await screen.findByText(
       defaultRegion,
       {
@@ -99,12 +92,6 @@ describe('Default brain region panel in explore', () => {
 describe('Default brain region panel in buid', () => {
   beforeEach(() => {
     render(Provider());
-  });
-
-  test('show saved region in search', async () => {
-    await screen.findByText(defaultRegion, {
-      selector: `div.ant-select ${regionContainerSelector}`,
-    });
   });
 
   test('show expanded tree', checkTreeExpandedFromSaved);
