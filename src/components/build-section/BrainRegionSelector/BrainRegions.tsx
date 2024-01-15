@@ -27,7 +27,7 @@ import { BrainRegion } from '@/types/ontologies';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { atlasVisualizationAtom } from '@/state/atlas/atlas';
 import { sectionAtom } from '@/state/application';
-import { useBrainRegionFromQuery } from '@/hooks/brain-region-panel';
+import { useExpandRegionTree, useSetBrainRegionToQuery } from '@/hooks/brain-region-panel';
 
 /**
  * the line component is added for each NavTitle with absolue position
@@ -166,7 +166,8 @@ export default function BrainRegions() {
   const [localSelectedBrainModelConfigId, setLocalSelectedBrainModelConfigId] = useState('');
   const setResetAtlasVisualization = useResetAtom(atlasVisualizationAtom);
   const resetSelectedBrainRegion = useSetAtom(resetSelectedBrainRegionAtom);
-  useBrainRegionFromQuery();
+  useExpandRegionTree();
+  useSetBrainRegionToQuery();
 
   useEffect(() => {
     if (!brainModelConfigId) return;

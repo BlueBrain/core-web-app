@@ -354,11 +354,13 @@ export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | nul
     DEFAULT_BRAIN_REGION_STORAGE_KEY
   );
 
-  const defaultRegion = sectionName === 'explore' ? defaultExploreRegion : null;
+  const isExplore = sectionName === 'explore';
+
+  const defaultRegion = isExplore ? defaultExploreRegion : null;
 
   const searchParams = new URLSearchParams(window.location.search);
   const brainRegionIdQueryParam = searchParams.get(brainRegionIdQueryParamKey);
-  if (brainRegionIdQueryParam) {
+  if (brainRegionIdQueryParam && isExplore) {
     if (
       !initializationBrainRegion ||
       initializationBrainRegion.value.id !== decodeURIComponent(brainRegionIdQueryParam)
@@ -473,9 +475,14 @@ export const selectedBrainRegionWithChildrenAtom = atom<Promise<string[]>>(async
   return descendants?.map((d) => d.id) || [];
 });
 
-// Keeps track of the hierarchy tree of the brain regions
-// it will be expanded based on region selected in useBrainRegionFromQuery
-export const brainRegionHierarchyStateAtom = atom<NavValue>(defaultHierarchyTree);
+/**
+ * Keeps track of the hierarchy tree of the brain regions
+ * It will be expanded based on region selected in useBrainRegionFromQuery hook.
+ */
+export const brainRegionHierarchyStateAtom = atomWithDefault<NavValue | null>((get) => {
+  const selectedBrainRegion = get(selectedBrainRegionAtom);
+  return selectedBrainRegion ? null : defaultHierarchyTree;
+});
 
 brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';
 brainRegionSidebarIsCollapsedAtom.debugLabel = 'brainRegionSidebarIsCollapsedAtom';
