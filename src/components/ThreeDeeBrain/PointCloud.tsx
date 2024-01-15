@@ -11,7 +11,7 @@ import {
   disableLoadingAtom,
   getPointCloudAtom,
 } from '@/components/ThreeDeeBrain/state';
-import { CIRCUIT_NOT_BUILT_ERROR } from '@/constants/errors';
+import { BRAIN_REGION_DOES_NOT_EXIST, CIRCUIT_NOT_BUILT_ERROR } from '@/constants/errors';
 
 type PointCloudMeshProps = {
   brainRegionId: string;
@@ -46,6 +46,22 @@ export function PointCloudMesh({
       if ((pointCloudData.error as Error).message === CIRCUIT_NOT_BUILT_ERROR) {
         info(
           'The cell positions cannot be displayed because the brain model has not been built yet.',
+          5,
+          'topRight',
+          true,
+          'point-cloud-warning'
+        );
+      } else if ((pointCloudData.error as Error).message === BRAIN_REGION_DOES_NOT_EXIST) {
+        info(
+          'The selected brain region can not be visualised',
+          5,
+          'topRight',
+          true,
+          'point-cloud-warning'
+        );
+      } else {
+        info(
+          'Something went wrong when trying to visualize the brain region',
           5,
           'topRight',
           true,
