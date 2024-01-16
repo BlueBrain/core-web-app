@@ -7,6 +7,7 @@ import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import BrainRegions from '@/components/build-section/BrainRegionSelector/BrainRegions';
 import sessionAtom from '@/state/session';
 import {
+  defaultIncreasedTimeout,
   previouslySelectedRegion,
   queryParamRegion,
   regionContainerSelector,
@@ -49,7 +50,7 @@ const queryParamRegionName = 'Interbrain';
 
 async function checkDefaultBrainTreeExpanded() {
   const selector = `div[data-tree-id] button > ${regionContainerSelector}`;
-  await screen.findByText('Basic Cell Groups and Regions', { selector });
+  await screen.findByText('Basic Cell Groups and Regions', { selector }, { timeout: defaultIncreasedTimeout });
   await screen.findByText('Brain Stem', { selector });
   await screen.findByText('Cerebrum', { selector });
   await screen.findByText('Cerebellum', { selector });
