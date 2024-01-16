@@ -52,6 +52,7 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
           );
       }
       return esb.statsAggregation(filter.field, esConfig?.flat?.aggregation || filter.field);
+
     default:
       return undefined;
   }

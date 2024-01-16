@@ -45,9 +45,10 @@ export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', o
 
 export const activeColumnsAtom = atomFamily(
   ({ experimentTypeName }: DataAtomFamilyScopeType) =>
-    atomWithDefault<Promise<string[]>>(async (get) => {
+    atomWithDefault<Promise<string[]> | string[]>(async (get) => {
       const dimensionColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
       const { columns } = dataTypeConfigSelector(experimentTypeName);
+
       return ['index', ...(dimensionColumns || []), ...columns];
     }),
   isListAtomEqual

@@ -132,7 +132,9 @@ export default function CheckList({
     );
 
   const search = () => (
-    <SearchFilter data={data} filter={filter} values={values} onChange={onChange} />
+    <div className="border-b border-white">
+      <SearchFilter data={data} filter={filter} values={values} onChange={onChange} />
+    </div>
   );
 
   return (

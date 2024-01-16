@@ -41,7 +41,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Name',
-    filter: null,
+    filter: 'text',
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.name),
     },

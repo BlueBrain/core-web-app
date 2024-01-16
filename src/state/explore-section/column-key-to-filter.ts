@@ -33,6 +33,13 @@ export default function columnKeyToFilter(key: string): Filter {
         value: null,
         aggregationType: 'buckets',
       };
+    case 'text':
+      return {
+        field: key,
+        type: 'text',
+        value: '',
+        aggregationType: null,
+      };
     default:
       return {
         field: key,

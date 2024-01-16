@@ -1,7 +1,6 @@
 import { ReactElement, JSXElementConstructor } from 'react';
 import { ConfigProvider, Select } from 'antd';
 import { SelectProps, DefaultOptionType } from 'antd/es/select';
-import { classNames } from '@/util/utils';
 
 type SearchProps<T> = {
   className?: string;
@@ -54,7 +53,7 @@ export default function Search<T extends DefaultOptionType>({
   }
 
   return (
-    <div className={classNames('border-b border-white', className)}>
+    <div className={className}>
       <ConfigProvider
         theme={{
           token: {
@@ -83,6 +82,7 @@ export default function Search<T extends DefaultOptionType>({
           onDeselect={handleSelect}
           onSelect={handleSelect}
           options={options}
+          maxTagTextLength={42}
           mode={mode}
           tagRender={tagRender}
           value={value}

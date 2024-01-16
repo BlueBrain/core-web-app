@@ -1,6 +1,14 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
+import { Input, Spin } from 'antd';
 import { useAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import {
@@ -10,14 +18,8 @@ import {
   NestedStatsAggregation,
   Statistics,
 } from '@/types/explore-section/fields';
-import { Filter, GteLteValue, ValueOrRangeFilter, RangeFilter } from '@/components/Filter/types';
-import {
-  CheckList,
-  DateRange,
-  FilterGroup,
-  FilterGroupProps,
-  defaultList,
-} from '@/components/Filter';
+import { Filter, GteLteValue, ValueOrRangeFilter } from '@/components/Filter/types';
+import { CheckList, DateRange, FilterGroup, defaultList } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
@@ -66,7 +68,7 @@ function createFilterItemComponent(
       case 'dateRange':
         return (
           <DateRange
-            filter={filter as RangeFilter}
+            filter={filter}
             onChange={(values: GteLteValue) => updateFilterValues(filter.field, values)}
           />
         );
@@ -74,22 +76,23 @@ function createFilterItemComponent(
       case 'valueRange':
         if (esConfig?.nested) {
           const nestedAgg = aggregations[filter.field] as NestedStatsAggregation;
-          agg = nestedAgg[filter.field][esConfig?.nested.aggregationName] as Statistics;
+          agg = nestedAgg[filter.field][esConfig?.nested.aggregationName];
         } else {
           agg = aggregations[filter.field] as Statistics;
         }
 
         return (
           <ValueRange
-            filter={filter as RangeFilter}
+            filter={filter}
             aggregation={agg}
             onChange={(values: GteLteValue) => updateFilterValues(filter.field, values)}
           />
         );
+
       case 'checkList':
         if (esConfig?.nested) {
           const nestedAgg = aggregations[filter.field] as NestedBucketAggregation;
-          agg = nestedAgg[filter.field][filter.field] as Buckets;
+          agg = nestedAgg[filter.field][filter.field];
         } else {
           agg = aggregations[filter.field] as Buckets;
         }
@@ -108,11 +111,31 @@ function createFilterItemComponent(
       case 'valueOrRange':
         return (
           <ValueOrRange
-            filter={filter as ValueOrRangeFilter}
+            filter={filter}
             setFilter={(value: ValueOrRangeFilter['value']) =>
               updateFilterValues(filter.field, value)
             }
           />
+        );
+
+      case 'text':
+        return (
+          <div className="flex flex-col gap-2">
+            <Input
+              value={filterValues[filter.field] as string}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                updateFilterValues(filter.field, event.target.value)
+              }
+            />
+            <span>
+              Use the asterix character (<code className="font-mono text-semibold">*</code>) to
+              specify a &quot;wildcard&quot; for your search. For example; to search for names{' '}
+              <i>beginning with</i> &quot;AA11&quot;, specify{' '}
+              <code className="font-mono text-semibold">AA11*</code>. To search for names{' '}
+              <i>containing</i> &quot;L5-2&quot;, specify{' '}
+              <code className="font-mono text-bold">*L5-2*</code>.
+            </span>
+          </div>
         );
 
       default:
@@ -140,10 +163,8 @@ export default function ControlPanel({
     const existingIndex = activeColumns.findIndex((existingKey) => existingKey === key);
 
     if (existingIndex === -1) {
-      // @ts-ignore
       setActiveColumns([...activeColumns, key]);
     } else {
-      // @ts-ignore
       setActiveColumns([
         ...activeColumns.slice(0, existingIndex),
         ...activeColumns.slice(existingIndex + 1),
@@ -155,17 +176,14 @@ export default function ControlPanel({
     const values: FilterValues = {};
 
     filters?.forEach((filter: Filter) => {
-      values[filter.field as string] = filter.value;
+      values[filter.field] = filter.value;
     });
 
     setFilterValues(values);
   }, [filters]);
 
   const submitValues = () => {
-    setFilters(
-      // @ts-ignore // TODO: remove this and fix the type error
-      filters?.map((fil: Filter) => ({ ...fil, value: filterValues[fil.field] } as Filter))
-    );
+    setFilters(filters?.map((fil: Filter) => ({ ...fil, value: filterValues[fil.field] })));
   };
 
   if (!activeColumns) return null;
@@ -175,14 +193,17 @@ export default function ControlPanel({
     activeColumnsLength === 1 ? 'column' : 'columns'
   }`;
 
-  const filterItems = filters?.map((filter) => ({
-    content:
-      filter.type && createFilterItemComponent(filter, aggregations, filterValues, setFilterValues),
-    display: activeColumns?.includes(filter.field),
-    label: getFieldLabel(filter.field),
-    type: filter.type,
-    toggleFunc: () => onToggleActive && onToggleActive(filter.field),
-  })) as FilterGroupProps['items'];
+  const filterItems = filters?.map((filter) => {
+    return {
+      content: filter.type
+        ? createFilterItemComponent(filter, aggregations, filterValues, setFilterValues)
+        : undefined,
+      display: activeColumns?.includes(filter.field),
+      label: getFieldLabel(filter.field),
+      type: filter.type,
+      toggleFunc: () => onToggleActive && onToggleActive(filter.field),
+    };
+  });
 
   return (
     <div
@@ -190,6 +211,7 @@ export default function ControlPanel({
       className="z-10 fixed top-0 right-0 bg-primary-8 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]"
     >
       <button
+        autoFocus // eslint-disable-line jsx-a11y/no-autofocus
         type="button"
         onClick={toggleDisplay}
         className="text-white text-right"
@@ -208,7 +230,6 @@ export default function ControlPanel({
       </p>
 
       <div className="flex flex-col gap-12">
-        {/* @ts-ignore : TODO: remove this and fix the type error */}
         <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
         {children}
       </div>

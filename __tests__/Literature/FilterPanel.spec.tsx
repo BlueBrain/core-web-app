@@ -41,11 +41,7 @@ describe('GenerativeQAResults', () => {
     const authorInput = showSuggestionsFor('Authors');
     fireEvent.change(authorInput, { target: { value: searhcTerm } });
 
-    expectSuggestionsToBeVisible([
-      searhcTerm, // If the searchTerm that user enters is not included in the original list of suggestions, it is added to the list and displayed.
-      'Malory Archer',
-      'Sterling Archer',
-    ]);
+    expectSuggestionsToBeVisible(['Malory Archer', 'Sterling Archer']);
   });
 
   const renderComponent = (articles: GArticle[]) => render(FilterPanelProvider(articles));

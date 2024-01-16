@@ -93,6 +93,15 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
       }
 
       break;
+    case 'text':
+      if (filter.value) {
+        filterESBuilder = esb
+          .wildcardQuery(esConfig?.flat?.filter, filter.value)
+          .caseInsensitive(true);
+      }
+
+      break;
+
     default:
       filterESBuilder = undefined;
   }

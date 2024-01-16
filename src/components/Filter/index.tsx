@@ -3,6 +3,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import CheckList, { defaultList } from './CheckList';
 import DateRange from './DateRange';
+import SearchFilter from './SearchFilter';
 import { Filter } from './types';
 import { ChevronIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
@@ -74,4 +75,4 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
   );
 }
 
-export { CheckList, DateRange, FilterGroup, defaultList };
+export { CheckList, DateRange, FilterGroup, SearchFilter, defaultList };

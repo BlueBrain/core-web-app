@@ -83,7 +83,7 @@ export default function SearchFilter({
         label: label as string,
         value: id as string,
       }))}
-      mode="tags"
+      mode="multiple"
       placeholder={`Search for ${EXPLORE_FIELDS_CONFIG[filter.field].vocabulary.plural}`}
       tagRender={tagRender}
       value={options?.reduce(
