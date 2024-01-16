@@ -75,7 +75,7 @@ const getGenerativeQA: ReturnGetGenerativeQA = async ({
 const ML_HEADERS = {
   accept: 'application/json',
   'Content-Type': 'application/json',
-  'Cache-Control': 'max-age=604800', // 7 days
+  'Cache-Control': 'max-age=2592000', // 30 days
 };
 
 const fetchArticleTypes = (): Promise<ArticleTypeSuggestionResponse> => {
