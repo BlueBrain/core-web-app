@@ -82,7 +82,7 @@ describe('Using query param region in explore', () => {
 
   test('saved value not to be displayed', async () => {
     expect(
-      await screen.queryByText(previouslySelectedRegion.value.title, {
+      screen.queryByText(previouslySelectedRegion.value.title, {
         selector: `button > ${regionContainerSelector}`,
       })
     ).not.toBeInTheDocument();
@@ -118,7 +118,7 @@ describe('Using query param region in buid', () => {
 
   test('saved to be displayed', async () => {
     expect(
-      await screen.queryByText(previouslySelectedRegion.value.title, {
+      screen.queryByText(previouslySelectedRegion.value.title, {
         selector: `button > ${regionContainerSelector}`,
       })
     ).not.toBeInTheDocument();
