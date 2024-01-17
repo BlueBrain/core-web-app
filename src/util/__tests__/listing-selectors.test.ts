@@ -614,19 +614,22 @@ describe('Selectors', () => {
           unit: 'dimensionless',
           value: 0.8123269504088237,
         },
+        {
+          compartment: 'ApicalDendrite',
+          label: 'Total Length',
+          statistic: 'minimum',
+          unit: 'μm',
+          value: 0.0,
+        },
+        {
+          compartment: 'ApicalDendrite',
+          label: 'Total Length',
+          statistic: 'maximum',
+          unit: 'μm',
+          value: '0.0',
+        },
       ],
     };
-    it('returns NO_DATA_STRING if source is not present', () => {
-      // @ts-ignore
-      const result = selectorFnMorphologyFeature(undefined, 'compartment', 'label');
-      expect(result).toBe(NO_DATA_STRING);
-    });
-
-    it('returns NO_DATA_STRING if morphologyFeature is not present in source', () => {
-      // @ts-ignore
-      const result = selectorFnMorphologyFeature({}, 'compartment', 'label');
-      expect(result).toBe(NO_DATA_STRING);
-    });
 
     it('returns formatted statistic value if present', () => {
       const result = selectorFnMorphologyFeature(
@@ -634,9 +637,10 @@ describe('Selectors', () => {
         mockSource,
         'NeuronMorphology',
         'Total Length',
+        'mean',
         true
       );
-      expect(result).toBe('13,940 μm');
+      expect(result).toBe(`${formatNumber(13944.989401578903)} μm`);
     });
 
     it('returns formatted statistic value without unit if showUnits is false', () => {
@@ -645,20 +649,51 @@ describe('Selectors', () => {
         mockSource,
         'NeuronMorphology',
         'Total Length',
+        'mean',
         false
       );
       expect(result).toBe(formatNumber(13944.989401578903));
     });
 
     it('returns double the value for Soma Radius', () => {
-      // @ts-ignore
-      const result = selectorFnMorphologyFeature(mockSource, 'Soma', 'Soma Radius', true);
-      expect(result).toBe('10.94 μm');
+      const result = selectorFnMorphologyFeature(
+        // @ts-ignore
+        mockSource,
+        'Soma',
+        'Soma Radius',
+        'minimum',
+        true
+      );
+      expect(result).toBe(`${formatNumber(10.94)} μm`);
     });
 
     it('returns NO_DATA_STRING if statistic is not found', () => {
       // @ts-ignore
-      const result = selectorFnMorphologyFeature(mockSource, 'compartment', 'nonexistent');
+      const result = selectorFnMorphologyFeature(mockSource, 'compartment', 'nonexistent', 'mean');
+      expect(result).toBe(NO_DATA_STRING);
+    });
+
+    it('returns formatted statistic value for 0 value', () => {
+      const result = selectorFnMorphologyFeature(
+        // @ts-ignore
+        mockSource,
+        'ApicalDendrite',
+        'Total Length',
+        'minimum',
+        true
+      );
+      expect(result).toBe(`${formatNumber(0.0)} μm`);
+    });
+
+    it('returns NO DATA STRING when value is not a number', () => {
+      const result = selectorFnMorphologyFeature(
+        // @ts-ignore
+        mockSource,
+        'ApicalDendrite',
+        'Total Length',
+        'maximum',
+        true
+      );
       expect(result).toBe(NO_DATA_STRING);
     });
   });

@@ -1,6 +1,7 @@
 import { format, parseISO, isValid } from 'date-fns';
 import map from 'lodash/map';
-
+import isMatch from 'lodash/isMatch';
+import isNumber from 'lodash/isNumber';
 import { Unionize } from '../typing';
 import { normalizeContributors } from './sort-contributors';
 import { IdLabelEntity, SynapticPosition, SynapticType } from '@/types/explore-section/fields';
@@ -155,24 +156,26 @@ export const selectorFnSynaptic = (
  * @param { ReconstructedNeuronMorphology } source
  * @param {string} compartment - The compartment to serialize.
  * @param {string} label - The label to serialize.
+ * @param {string} statistic - The statistic of to serialize.
  */
 export const selectorFnMorphologyFeature = (
   source: ReconstructedNeuronMorphology,
   compartment: string,
   label: string,
+  statistic: string,
   showUnits?: boolean
 ) => {
   if (!source || !source.morphologyFeature) return NO_DATA_STRING;
 
-  const statistic = source.morphologyFeature.find(
-    (s: any) => s.compartment === compartment && s.label === label
+  const feature = source.morphologyFeature.find((s) =>
+    isMatch(s, { compartment, label, statistic })
   );
 
-  if (statistic && statistic.value) {
-    let { value } = statistic;
-    const unit = showUnits ? ` ${statistic.unit}` : '';
+  if (feature && isNumber(feature?.value)) {
+    let { value } = feature;
+    const unit = showUnits ? ` ${feature.unit}` : '';
 
-    if (label === 'Soma Radius') value = 2 * statistic.value;
+    if (label === 'Soma Radius') value = 2 * feature.value;
 
     return `${formatNumber(value)}${unit}`;
   }

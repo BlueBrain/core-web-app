@@ -77,7 +77,7 @@ export default function Card({ resource, experimentTypeName, activeKeys, score }
           className="pl-3 pt-2"
         />
       </Link>
-      <div className="break-words mt-[1.4rem]">
+      <div className="break-words mt-[1.25rem]">
         <Collapse activeKey={activeKeys} expandIcon={() => null} bordered={false} ghost>
           {Object.entries(groupedCardFields).map(([group, fields]) => (
             <Panel header={group} key={group} className={styles.custom} collapsible="disabled">

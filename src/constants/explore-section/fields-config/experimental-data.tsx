@@ -447,7 +447,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Total Length', true),
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Total Length', 'minimum', true),
     },
   },
   axonMaxBranchOrder: {
@@ -461,7 +461,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders'),
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders', 'maximum'),
     },
   },
   axonArborAsymmetryIndex: {
@@ -475,7 +475,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Partition Asymmetry'),
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Partition Asymmetry', 'mean'),
     },
   },
   basalDendriticTotalLength: {
@@ -489,7 +489,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Total Length', true),
+        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Total Length', 'minimum', true),
     },
   },
   basalDendriteMaxBranchOrder: {
@@ -503,7 +503,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders'),
+        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders', 'maximum'),
     },
   },
   basalArborAsymmetryIndex: {
@@ -517,7 +517,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Partition Asymmetry'),
+        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Partition Asymmetry', 'mean'),
     },
   },
   apicalDendriticTotalLength: {
@@ -531,7 +531,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Total Length', true),
+        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Total Length', 'minimum', true),
     },
   },
   apicalDendtriteMaxBranchOrder: {
@@ -545,7 +545,12 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Section Strahler Orders'),
+        selectorFnMorphologyFeature(
+          r._source,
+          'ApicalDendrite',
+          'Section Strahler Orders',
+          'maximum'
+        ),
     },
   },
   apicalArborAsymmetryIndex: {
@@ -559,7 +564,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Partition Asymmetry'),
+        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Partition Asymmetry', 'mean'),
     },
   },
   neuronMorphologyWidth: {
@@ -568,12 +573,12 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     description: 'Neuron morphology total width',
     filter: null,
     vocabulary: {
-      plural: 'Total width',
-      singular: 'Total width',
+      plural: 'Total Width',
+      singular: 'Total Width',
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Width', true),
+        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Width', 'mean', true),
     },
   },
   neuronMorphologyLength: {
@@ -587,7 +592,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Length', true),
+        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Length', 'mean', true),
     },
   },
   neuronMorphologyDepth: {
@@ -601,7 +606,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Depth'),
+        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Depth', 'mean'),
     },
   },
   somaDiameter: {
@@ -615,7 +620,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', true),
+        selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', 'minimum', true),
     },
   },
 };
