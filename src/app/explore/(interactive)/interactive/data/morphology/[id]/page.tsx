@@ -9,7 +9,6 @@ import { loadable } from 'jotai/utils';
 import createMorphologyDataAtom from '@/components/explore-section/MorphoViewerContainer/state/MorphologyDataAtom';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { DetailType } from '@/constants/explore-section/fields-config/types';
-import MorphoViewerContainer from '@/components/explore-section/MorphoViewerContainer';
 import WithGeneralization from '@/components/explore-section/WithGeneralization';
 import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
 import { NEURON_MORPHOLOGY_FIELDS } from '@/constants/explore-section/detail-fields';
@@ -29,7 +28,6 @@ export default function MorphologyDetailPage() {
             {(detail: DetailType) => (
               <>
                 <MorphoViewerLoader resource={detail} />
-                <MorphoViewerContainer resource={detail} />
                 <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                   <GeneralizationControls experimentTypeName={NEURON_MORPHOLOGY} />
                 </ErrorBoundary>

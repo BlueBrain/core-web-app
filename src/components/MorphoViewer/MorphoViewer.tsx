@@ -5,6 +5,7 @@ import { MorphologyPainter, ColoringType } from '@bbp/morphoviewer';
 import { Scalebar } from './Scalebar';
 import { useSignal } from './hooks/signal';
 import { Warning } from './Warning';
+import { ColorsLegend } from './ColorsLegend';
 import { classNames } from '@/util/utils';
 
 import styles from './morpho-viewer.module.css';
@@ -68,6 +69,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
     >
       <canvas ref={refCanvas}>MorphologyViewer</canvas>
       <Scalebar className={styles.scalebar} painter={refPainter.current} />
+      <ColorsLegend className={styles.legend} painter={refPainter.current} />
       <footer>
         <button type="button" onClick={() => setColorBy(otherColoringMethod)}>
           <div>

@@ -1,0 +1,11 @@
+.main {
+  padding: 0.5em;
+}
+
+.main .color {
+  content: '';
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  border: 1px solid currentColor;
+}

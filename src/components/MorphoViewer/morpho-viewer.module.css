@@ -5,8 +5,14 @@
 
 .scalebar {
   position: absolute;
-  left: 8px;
+  right: 8px;
   top: 8px;
+}
+
+.legend {
+  position: absolute;
+  left: 0px;
+  top: 0px;
 }
 
 .main > canvas {
