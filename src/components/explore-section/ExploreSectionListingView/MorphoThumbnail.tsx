@@ -5,9 +5,21 @@ import { useInView } from 'react-intersection-observer';
 
 import { createHeaders } from '@/util/utils';
 import { useSessionAtomValue } from '@/hooks/hooks';
-import { kgInferenceBaseUrl } from '@/config';
+import { thumbnailGenerationBaseUrl } from '@/config';
 
-export default function MorphoThumbnail({ contentUrl }: { contentUrl: string }) {
+export default function MorphoThumbnail({
+  className,
+  contentUrl,
+  dpi,
+  height,
+  width,
+}: {
+  className?: string;
+  contentUrl: string;
+  dpi?: number;
+  height: number;
+  width: number;
+}) {
   const session = useSessionAtomValue();
   const { ref, inView } = useInView({
     threshold: 0.2,
@@ -23,7 +35,9 @@ export default function MorphoThumbnail({ contentUrl }: { contentUrl: string }) 
       setLoading(true);
 
       const encodedContentUrl = encodeURIComponent(contentUrl);
-      const requestUrl = `${kgInferenceBaseUrl}/generate/morphology-image?content_url=${encodedContentUrl}`;
+      const requestUrl = `${thumbnailGenerationBaseUrl}/generate/morphology-image?content_url=${encodedContentUrl}${
+        dpi ? `&dpi=${dpi}` : ''
+      }`;
 
       fetch(requestUrl, {
         method: 'GET',
@@ -40,20 +54,24 @@ export default function MorphoThumbnail({ contentUrl }: { contentUrl: string }) 
         })
         .catch(() => setLoading(false));
     }
-  }, [contentUrl, session, inView]);
+  }, [contentUrl, dpi, session, inView]);
 
   return (
-    <div ref={ref} className="h-auto flex items-center justify-start">
+    <div ref={ref} className="flex items-center justify-start" style={{ height, width }}>
       {thumbnail ? (
         <Image
           alt={`Morphology preview: ${contentUrl}`}
-          className="max-h-[116px] border border-neutral-2"
+          className={className}
+          height={height}
           src={thumbnail}
-          width={184}
-          height={116}
+          width={width}
         />
       ) : (
-        <Skeleton.Image active={loading} className="!w-[184px] !h-[116px] rounded-none" />
+        <Skeleton.Image
+          active={loading}
+          className="!h-full rounded-none !w-full"
+          rootClassName="!h-full !w-full"
+        />
       )}
     </div>
   );

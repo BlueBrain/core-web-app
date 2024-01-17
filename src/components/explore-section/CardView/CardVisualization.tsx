@@ -4,7 +4,6 @@ import { atomFamily, loadable, selectAtom } from 'jotai/utils';
 import { Spin } from 'antd';
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons';
 import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
-import MorphologyViewer from '@/components/explore-section/MorphoViewerContainer/MorphologyViewer';
 import sessionAtom from '@/state/session';
 import { createHeaders } from '@/util/utils';
 import { FileDistribution } from '@/types/explore-section/es-properties';
@@ -12,6 +11,7 @@ import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
+import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
 
 type CardVisualizationProps = {
   experimentTypeName: string;
@@ -49,14 +49,9 @@ export default function CardVisualization({
         );
       case 'hasData':
         return (
-          <MorphologyViewer
-            data={swc.data}
-            options={{
-              asPolyline: true,
-              focusOn: true,
-              somaMode: 'fromOrphanSections',
-            }}
-          />
+          !!contentUrl && (
+            <MorphoThumbnail contentUrl={contentUrl} dpi={300} height={350} width={350} />
+          )
         );
       default:
         return <div>default</div>;

@@ -23,7 +23,14 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         );
         const { contentUrl } = swcDistribution;
 
-        return <MorphoThumbnail contentUrl={contentUrl} />;
+        return (
+          <MorphoThumbnail
+            className="max-h-[116px] border border-neutral-2"
+            contentUrl={contentUrl}
+            height={116}
+            width={184}
+          />
+        );
       },
     },
     sorter: false,

@@ -10,6 +10,7 @@ export const bbsMlBaseUrl = env.NEXT_PUBLIC_BBS_ML_BASE_URL;
 export const cellSvcBaseUrl = env.NEXT_PUBLIC_CELL_SVC_BASE_URL;
 export const feedbackUrl = env.NEXT_PUBLIC_FEEDBACK_URL;
 export const kgInferenceBaseUrl = env.NEXT_PUBLIC_KG_INFERENCE_BASE_URL;
+export const thumbnailGenerationBaseUrl = env.NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL;
 export const synthesisUrl = env.NEXT_PUBLIC_SYNTHESIS_URL;
 
 export const blueNaas = {

@@ -3,3 +3,4 @@
 /out/
 .vscode/
 __tests__/**/*.json
+/src/env.mjs
