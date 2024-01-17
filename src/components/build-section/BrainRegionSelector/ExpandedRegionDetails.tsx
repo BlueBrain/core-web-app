@@ -25,7 +25,7 @@ import {
   CalculatedCompositionNode,
 } from '@/types/composition/calculation';
 import { QuestionAbout } from '@/types/literature';
-import { cellTypesAtom } from '@/state/build-section/cell-types';
+import { cellTypesByIdAtom } from '@/state/build-section/cell-types';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -88,7 +88,7 @@ function NeuronCompositionEditor({
       : `${baseClasses} gap-2 py-3 text-left text-primary-3 w-full hover:text-white`;
   }, [isLeaf]);
 
-  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
+  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesByIdAtom), []));
   const questionSubject = classObjects?.[id]?.prefLabel ?? title;
 
   return (

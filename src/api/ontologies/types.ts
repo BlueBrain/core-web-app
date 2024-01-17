@@ -27,6 +27,7 @@ export type ClassNexus = {
   representedInAnnotation: boolean;
   regionVolume?: RegionVolume;
   subClassOf: string[];
+  definition?: string;
 };
 type BrainLocationNexus = {
   brainRegion: ClassNexus;

@@ -12,12 +12,17 @@ export enum MorphoMetricGroups {
   NeuronMorphology = 'Neuron Morphology',
 }
 
+export enum FieldType {
+  CellType,
+}
+
 type ExploreFieldConfigStyle = {
   align?: TableCellAlign;
   width?: number;
 };
 
 export type ExploreFieldConfig = {
+  fieldType?: FieldType;
   className?: string;
   esTerms?: EsTermsConfig;
   title: string;

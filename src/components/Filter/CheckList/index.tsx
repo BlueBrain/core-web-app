@@ -1,63 +1,16 @@
 import { ReactNode, useMemo } from 'react';
-import * as Checkbox from '@radix-ui/react-checkbox';
-import { format } from 'date-fns';
-import { InfoCircleFilled } from '@ant-design/icons';
-import { useAtom } from 'jotai';
 import uniqBy from 'lodash/uniqBy';
-import { Filter } from './types';
-import SearchFilter from './SearchFilter';
-import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
-import { CheckIcon } from '@/components/icons';
-import CenteredMessage from '@/components/CenteredMessage';
+import { useAtom } from 'jotai';
+import { InfoCircleFilled } from '@ant-design/icons';
 import { CheckListProps } from '@/types/explore-section/application';
+import { Buckets } from '@/types/explore-section/fields';
+import { Filter } from '@/components/Filter/types';
 import { FiltersRenderLengthAtom } from '@/components/Filter/state';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { Buckets } from '@/types/explore-section/fields';
-
-const DisplayLabel = (filterField: string, key: string): string | null => {
-  switch (filterField) {
-    case 'updatedAt':
-      return format(new Date(Number(key)), 'dd.MM.yyyy');
-    case 'createdBy':
-      return key.substring(key.lastIndexOf('/') + 1);
-    default:
-      return key;
-  }
-};
-
-export function CheckListOption({
-  checked,
-  count,
-  handleCheckedChange,
-  id: key,
-  filterField,
-  label,
-}: {
-  checked: string | boolean;
-  count: number | null;
-  handleCheckedChange: (key: string) => void;
-  id: string;
-  filterField: string;
-  label: string;
-}) {
-  return (
-    <li className="flex items-center justify-between pt-3" key={key}>
-      <span className="font-bold text-white">{DisplayLabel(filterField, label)}</span>
-      <span className="flex items-center justify-between gap-2">
-        {!!count && <span className="text-primary-5">{`${count} datasets`}</span>}
-        <Checkbox.Root
-          className="bg-transparent border border-white h-[14px] rounded w-[14px]"
-          checked={!!checked}
-          onCheckedChange={() => handleCheckedChange(key)}
-        >
-          <Checkbox.Indicator className="flex items-center justify-center w-full">
-            <CheckIcon className="check" fill="#fff" />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-      </span>
-    </li>
-  );
-}
+import SearchFilter from '@/components/Filter/SearchFilter';
+import { DEFAULT_CHECKLIST_RENDER_LENGTH } from '@/constants/explore-section/list-views';
+import CenteredMessage from '@/components/CenteredMessage';
+import { CheckListOption } from '@/components/Filter/CheckList/Option';
 
 export default function CheckList({
   children,
@@ -160,7 +113,6 @@ export default function CheckList({
     </div>
   );
 }
-
 export const defaultList = ({
   options,
   renderLength,

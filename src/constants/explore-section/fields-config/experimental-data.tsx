@@ -5,10 +5,10 @@ import {
   selectorFnLayer,
   selectorFnLayerThickness,
   selectorFnMeanStd,
+  selectorFnMorphologyFeature,
   selectorFnSpecies,
   selectorFnStatistic,
   selectorFnSynaptic,
-  selectorFnMorphologyFeature,
 } from '@/util/explore-section/listing-selectors';
 import {
   eTypeSelectorFn,
@@ -24,6 +24,7 @@ import LayerThicknessField from '@/components/explore-section/Fields/LayerThickn
 import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
 import {
   ExploreFieldsConfigProps,
+  FieldType,
   MorphoMetricGroups,
 } from '@/constants/explore-section/fields-config/types';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
@@ -60,6 +61,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   eType: {
+    fieldType: FieldType.CellType,
     esTerms: {
       flat: {
         filter: 'eType.label.keyword',
@@ -79,6 +81,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   mType: {
+    fieldType: FieldType.CellType,
     esTerms: {
       flat: {
         filter: 'mType.label.keyword',

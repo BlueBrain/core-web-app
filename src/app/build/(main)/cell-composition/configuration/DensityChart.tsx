@@ -17,7 +17,7 @@ import {
   selectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import { analysedCompositionAtom } from '@/state/build-composition';
-import { cellTypesAtom } from '@/state/build-section/cell-types';
+import { cellTypesByIdAtom } from '@/state/build-section/cell-types';
 import { formatNumber } from '@/util/common';
 import { classNames } from '@/util/utils';
 import ColorBox from '@/components/build-section/BrainRegionSelector/ColorBox';
@@ -70,7 +70,7 @@ function MissingSelectedNodes({
 }
 
 export default function DensityChart() {
-  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesAtom), []));
+  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesByIdAtom), []));
   const composition = useAtomValue(analysedCompositionAtom);
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const densityOrCountLabel = useAtomValue(densityOrCountLabelAtom);
