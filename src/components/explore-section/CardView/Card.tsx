@@ -66,7 +66,12 @@ export default function Card({ resource, experimentTypeName, activeKeys, score }
       )}
       <div className="min-h-[350px] min-w-[350px] h-full border-y border-l">
         {inView && (
-          <CardVisualization experimentTypeName={experimentTypeName} resource={resource._source} />
+          <Link href={resourceUrl} passHref>
+            <CardVisualization
+              experimentTypeName={experimentTypeName}
+              resource={resource._source}
+            />
+          </Link>
         )}
       </div>
       <Link href={resourceUrl} passHref>

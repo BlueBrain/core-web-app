@@ -1,7 +1,6 @@
 import { ReactNode, useEffect, useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { InsertRowAboveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import FilterControls from './FilterControls';
 import { RenderButtonProps } from './WithRowSelection';
 import { ExploreESHit } from '@/types/explore-section/es';
@@ -10,10 +9,7 @@ import WithControlPanel from '@/components/explore-section/ExploreSectionListing
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom, dataAtom } from '@/state/explore-section/list-view-atoms';
-import CardView from '@/components/explore-section/CardView';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
-
-type ViewMode = 'table' | 'card';
 
 export default function DefaultListView({
   enableDownload,
@@ -27,7 +23,6 @@ export default function DefaultListView({
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
-  const [viewMode, setViewMode] = useState<ViewMode>('table');
 
   const columns = useExploreColumns(setSortState, sortState, [], null, experimentTypeName);
 
@@ -75,43 +70,14 @@ export default function DefaultListView({
                 brainRegionSource={brainRegionSource}
               />
             </FilterControls>
-            <div className="flex gap-2 place-content-end items-center max-h-6">
-              <div className="text-primary-7">View:</div>
-              <button
-                onClick={() => setViewMode('table')}
-                type="button"
-                aria-label="Set table mode"
-              >
-                <UnorderedListOutlined
-                  className={
-                    viewMode === 'table' ? 'bg-primary-7 p-1 text-neutral-1' : 'text-neutral-3 p-1'
-                  }
-                />
-              </button>
-              <button
-                onClick={() => setViewMode('card')}
-                type="button"
-                aria-label="card-view-button"
-              >
-                <InsertRowAboveOutlined
-                  className={
-                    viewMode === 'card' ? 'bg-primary-7 p-1 text-neutral-1' : 'text-neutral-3 p-1'
-                  }
-                />
-              </button>
-            </div>
-            {viewMode === 'table' ? (
-              <ExploreSectionTable
-                columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
-                dataSource={dataSource}
-                enableDownload={enableDownload}
-                experimentTypeName={experimentTypeName}
-                loading={data.state === 'loading'}
-                renderButton={renderButton}
-              />
-            ) : (
-              <CardView data={dataSource} experimentTypeName={experimentTypeName} />
-            )}
+            <ExploreSectionTable
+              columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
+              dataSource={dataSource}
+              enableDownload={enableDownload}
+              experimentTypeName={experimentTypeName}
+              loading={data.state === 'loading'}
+              renderButton={renderButton}
+            />
           </>
         )}
       </WithControlPanel>

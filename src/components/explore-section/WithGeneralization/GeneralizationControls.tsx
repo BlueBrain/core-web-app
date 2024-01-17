@@ -54,7 +54,7 @@ function GeneralizationControls({ experimentTypeName }: { experimentTypeName: st
 
   return (
     <ConfigProvider theme={theme}>
-      <div className="flex items-center">
+      <div className="flex items-center mt-16">
         <div className={styles.label}>
           Here are the {resourceBasedResponseHitsCount || <Spin />} most similar morphologies
           according to the rules:

@@ -67,15 +67,9 @@ describe('Test main functionalities of interface', () => {
     )
   );
 
-  test('default table view mode', () => {
+  test('table renders', () => {
     // if the table is not present, the getBy will fail
     screen.getByRole('table', { name: 'listing-view-table' });
-  });
-
-  test('changing screen to card view', () => {
-    const tableViewButton = screen.getByRole('button', { name: 'card-view-button' });
-    fireEvent.click(tableViewButton);
-    screen.getByTestId('explore-section-listing-card-view');
   });
 });
 
