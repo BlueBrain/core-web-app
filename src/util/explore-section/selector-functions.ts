@@ -19,7 +19,7 @@ export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
     return `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
   }
   if (detail?.subject?.age?.minValue && detail?.subject?.age?.maxValue) {
-    return `${detail.subject?.age.minValue} - ${detail.subject?.age.maxValue} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
+    return `${detail.subject?.age.minValue} to ${detail.subject?.age.maxValue} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
   }
   return NO_DATA_STRING;
 };

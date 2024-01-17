@@ -29,7 +29,7 @@ describe('selectorFunctions', () => {
             },
           },
         })
-      ).toBe('20 - 30 days Post-natal');
+      ).toBe('20 to 30 days Post-natal');
     });
 
     it('returns formatted range if min and max values are present', () => {
