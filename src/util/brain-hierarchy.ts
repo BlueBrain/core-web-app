@@ -1,58 +1,76 @@
-import { TreeItem } from 'performant-array-to-tree';
 import { OriginalComposition, CompositionOverrideLeafNode } from '@/types/composition/original';
 import { Ancestor, BrainRegion, DefaultBrainViewId } from '@/types/ontologies';
+import { BRAIN_VIEW_LAYER } from '@/constants/brain-hierarchy';
 
 export const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
+
+// This function returns either the hasPart or hasLayerPart array of brain region IDs, depending on the currently selected "view" (think: default or layer-based).
+export function getDescendentsFromView(
+  hasPart?: string[],
+  hasLayerPart?: string[],
+  view?: string
+): string[] | undefined {
+  let descendents;
+
+  // Currently, it seems that "layer" brain regions have the default view ID, even if they will never appear in the default hierarchy.
+  switch (view) {
+    case BRAIN_VIEW_LAYER:
+      descendents = hasLayerPart;
+      break;
+    default: // This means that by default, layer-based views also have the default view ID (see brainRegionOntologyAtom).
+      descendents = hasPart ?? hasLayerPart; // To compensate for this, we first check whether hasPart, before falling-back on hasLayerPart (for the layer-based brain-regions).
+  }
+
+  return descendents;
+}
+
+// This function's purpose is similar to that of itemsInAnnotationReducer(), in that it looks for the descendents of a brain region to recursively check whether at least one of the descendents is represented in the annotation volume.
+// The difference is that this function relies on a flat brainRegions array, whereas itemsInAnnotationReducer() is used to handle the nested tree hierarchy structure.
+export function checkRepresentationOfDescendents(
+  acc: { brainRegions: BrainRegion[]; representedInAnnotation: boolean },
+  brainRegionId: string,
+  _i: number,
+  arr: string[]
+): { brainRegions: BrainRegion[]; representedInAnnotation: boolean } {
+  const { brainRegions, representedInAnnotation } = acc;
+
+  if (representedInAnnotation) {
+    arr.splice(1); // Eject early; it only needs to be true for one.
+
+    return {
+      brainRegions,
+      representedInAnnotation: true,
+    };
+  }
+
+  const brainRegion = brainRegions?.find(({ id }) => id === brainRegionId);
+
+  const descendents = getDescendentsFromView(
+    brainRegion?.hasPart,
+    brainRegion?.hasLayerPart,
+    brainRegion?.view
+  );
+
+  const { representedInAnnotation: descendentsRepresentedInAnnotation } = descendents?.reduce(
+    checkRepresentationOfDescendents,
+    {
+      brainRegions,
+      representedInAnnotation: false,
+    }
+  ) ?? { representedInAnnotation: false }; // If no descendents, then no descendents are represented.
+
+  return {
+    brainRegions,
+    representedInAnnotation:
+      brainRegion?.representedInAnnotation ?? descendentsRepresentedInAnnotation,
+  };
+}
 
 export type RegionFullPathType = {
   id: string;
   name: string;
 };
 
-/**
- * Gets the path from top brain region to node clicked.
- *
- * @param {string} hierarchy - The whole tree hierarchy.
- * @param {string} nodeId - The id clicked.
- *
- * @returns {RegionFullPathType[]} path - List of path.
- */
-export function getBottomUpPath(hierarchy: TreeItem[], nodeId: string): RegionFullPathType[] {
-  // credit https://gist.github.com/sachinpatel88/649f7643010dd9707a2b840a824dc06d
-  function getPaths(nestedObj: TreeItem[], isObjectSelectedCB: any) {
-    if (!nestedObj) return;
-
-    const paths: RegionFullPathType[][] = [];
-    const parentPath: RegionFullPathType[] = [];
-
-    return (function deepCheck(items) {
-      if (!items) return;
-
-      if (!Array.isArray(items)) return paths;
-
-      items.forEach((item) => {
-        parentPath.push({ id: item.id, name: item.title });
-        if (isObjectSelectedCB(item)) {
-          paths.push([...parentPath]);
-        }
-
-        const childrenItems = item.items;
-        if (childrenItems) {
-          deepCheck(childrenItems);
-        }
-        parentPath.pop();
-      });
-
-      return paths;
-    })(nestedObj);
-  }
-
-  const idMatches = ({ id }: { id: string }) => id === nodeId;
-  const paths = getPaths(hierarchy, idMatches);
-
-  if (!paths?.length) return [];
-  return paths[0];
-}
 export function extendLeafNodeWithOverrideProps(
   node: CompositionOverrideLeafNode
 ): CompositionOverrideLeafNode {

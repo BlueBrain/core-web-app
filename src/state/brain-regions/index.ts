@@ -1,9 +1,9 @@
 import { atom } from 'jotai';
-import { atomWithDefault, atomWithReset, selectAtom } from 'jotai/utils';
+import { atomFamily, atomWithReset, selectAtom } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
-import uniqBy from 'lodash/uniqBy';
-import { findDeep, reduceDeep } from 'deepdash-es/standalone';
+
+import { getAncestors } from '@/components/BrainTree/util';
 import sessionAtom from '@/state/session';
 import {
   BrainRegion,
@@ -19,7 +19,11 @@ import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
-import { flattenBrainRegionsTree, itemsInAnnotationReducer } from '@/util/brain-hierarchy';
+import {
+  checkRepresentationOfDescendents,
+  getDescendentsFromView,
+  flattenBrainRegionsTree,
+} from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
   DEFAULT_BRAIN_REGION,
@@ -27,12 +31,6 @@ import {
   ROOT_BRAIN_REGION_URI,
 } from '@/constants/brain-hierarchy';
 import { getInitializationValue, setInitializationValue } from '@/util/utils';
-import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
-import { sectionAtom } from '@/state/application';
-import {
-  defaultExploreRegion,
-  defaultHierarchyTree,
-} from '@/constants/explore-section/default-brain-region';
 
 /*
   Atom dependency graph
@@ -116,6 +114,51 @@ export const brainRegionsAtom = selectAtom<
     })) ?? null
 );
 
+export const brainRegionsWithRepresentationAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  BrainRegion[] | null
+>(brainRegionsAtom, (brainRegions) => {
+  return (
+    brainRegions?.reduce<BrainRegion[]>(
+      (
+        acc,
+        { hasPart, hasLayerPart, id, leaves, representedInAnnotation, title, view, ...rest }
+      ) => {
+        const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
+
+        const { representedInAnnotation: descendentsRepresentedInAnnotation } =
+          descendents?.reduce<{
+            brainRegions: BrainRegion[];
+            representedInAnnotation: boolean;
+          }>(checkRepresentationOfDescendents, {
+            brainRegions,
+            representedInAnnotation: false,
+          }) ?? { representedInAnnotation: false };
+
+        return representedInAnnotation || descendentsRepresentedInAnnotation
+          ? [
+              ...acc,
+              {
+                ancestors: getAncestors(brainRegions, id),
+                id,
+                hasLayerPart,
+                hasPart,
+                label: title, // TODO: Check whether there is always a title...
+                leaves,
+                representedInAnnotation,
+                title,
+                value: id,
+                view,
+                ...rest,
+              },
+            ]
+          : acc;
+      },
+      []
+    ) ?? null
+  );
+});
+
 type BrainRegionId = string;
 type BrainRegionNotation = string;
 
@@ -166,7 +209,7 @@ export const brainRegionByIdMapAtom = selectAtom<
 );
 
 export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
-  const brainRegions = await get(brainRegionsAtom);
+  const brainRegions = await get(brainRegionsWithRepresentationAtom);
   const defaultView = await get(defaultBrainRegionOntologyViewAtom);
   if (!brainRegions || !defaultView) return null;
   const tree = arrayToTree(brainRegions, {
@@ -190,54 +233,48 @@ export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(
 export const brainRegionsTreeWithRepresentationAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   BrainRegion[] | null
->(
-  brainRegionsFilteredTreeAtom,
-  (brainRegionsTree) => brainRegionsTree?.reduce(itemsInAnnotationReducer, []) ?? null
-);
+>(brainRegionsFilteredTreeAtom, (brainRegionsTree) => brainRegionsTree ?? null);
 
 export const selectedAlternateViews = atom<Record<string, BrainViewId>>({});
 
-export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null | undefined>>(
-  async (get) => {
-    const brainRegions = await get(brainRegionsAtom);
-    const defaultTree = await get(brainRegionsTreeWithRepresentationAtom);
-    const views = await get(brainRegionOntologyViewsAtom);
-    const selectedViews = get(selectedAlternateViews);
+export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
+  const brainRegions = await get(brainRegionsWithRepresentationAtom);
+  const defaultTree = await get(brainRegionsFilteredTreeAtom);
+  const views = await get(brainRegionOntologyViewsAtom);
+  const selectedViews = get(selectedAlternateViews);
 
-    const alternateTree = cloneDeep(defaultTree);
+  const alternateTree = cloneDeep(defaultTree);
 
-    // iterate over the currently modified views and apply the alternative children
-    Object.entries(selectedViews).forEach(([brainRegionId, viewId]) => {
-      const view = views?.find((v) => v.id === viewId);
-      if (view && brainRegions && alternateTree) {
-        // first get the children of the brain region id based on the applied view
-        const alternateChildren = buildAlternateChildren(
-          brainRegionId,
-          view.parentProperty,
-          brainRegions,
-          viewId
-        );
+  // iterate over the currently modified views and apply the alternative children
+  Object.entries(selectedViews).forEach(([brainRegionId, viewId]) => {
+    const view = views?.find((v) => v.id === viewId);
+    if (view && brainRegions && alternateTree) {
+      // first get the children of the brain region id based on the applied view
+      const alternateChildren = buildAlternateChildren(
+        brainRegionId,
+        view.parentProperty,
+        brainRegions,
+        viewId
+      );
 
-        // then replace the children of the changed node with the new ones
-        buildAlternateTree(alternateTree[0], brainRegionId, alternateChildren, viewId);
-      }
-    });
-    return alternateTree;
-  }
-);
+      // then replace the children of the changed node with the new ones
+      buildAlternateTree(alternateTree[0], brainRegionId, alternateChildren, viewId);
+    }
+  });
 
+  return alternateTree;
+});
+
+// TODO: Remove this Atom
 export const alternateTreeWithRepresentationAtom = selectAtom<
   Promise<BrainRegion[] | null | undefined>,
   BrainRegion[] | null
->(
-  brainRegionsAlternateTreeAtom,
-  (alternateTree) => alternateTree?.reduce(itemsInAnnotationReducer, []) ?? null
-);
+>(brainRegionsAlternateTreeAtom, (alternateTree) => alternateTree ?? null);
 
 export const alternateArrayWithRepresentationAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   BrainRegion[] | null
->(alternateTreeWithRepresentationAtom, (tree) => flattenBrainRegionsTree(tree));
+>(brainRegionsAlternateTreeAtom, (tree) => flattenBrainRegionsTree(tree));
 
 export const addOrRemoveSelectedAlternateView = atom(
   null,
@@ -347,19 +384,13 @@ export const meshDistributionsAtom = atom<Promise<{ [id: string]: Mesh } | null>
   return getDistributions(session.accessToken);
 });
 
-export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | null>((get) => {
-  const sectionName = get(sectionAtom);
-  if (!sectionName) return null;
+const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
+  DEFAULT_BRAIN_REGION_STORAGE_KEY
+);
 
-  const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-    DEFAULT_BRAIN_REGION_STORAGE_KEY
-  );
-
-  const defaultRegion = sectionName === 'explore' ? defaultExploreRegion : null;
-
-  return initializationBrainRegion ? initializationBrainRegion.value : defaultRegion;
-});
-
+export const selectedBrainRegionAtom = atom<SelectedBrainRegion | null>(
+  initializationBrainRegion ? initializationBrainRegion.value : null
+);
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
 export const literatureSelectedBrainRegionAtom = atomWithReset<SelectedBrainRegion | null>(null);
@@ -395,7 +426,7 @@ export const setSelectedBrainRegionAtom = atom(
   }
 );
 
-export const resetSelectedBrainRegionAtom = atom(null, (get, set) => {
+export const resetSelectedBrainRegionAtom = atom(null, (_get, set) => {
   set(selectedBrainRegionAtom, null);
   set(literatureSelectedBrainRegionAtom, null);
   set(compositionHistoryAtom, []);
@@ -423,69 +454,34 @@ export const setSelectedPostBrainRegionAtom = atom(null, (get, set, id: string, 
 
 export const brainRegionSidebarIsCollapsedAtom = atom(false);
 
+// Keeps track of the visible interactive brain regions
+
+export const visibleBrainRegionsAtom = atomFamily(() => atom<string[]>([]));
+
+export const dataBrainRegionsAtom = atom<Record<string, string[]>>({});
+
 /**
- * Returns the descendants of a list of brain regions based on their id
+ * An array containing all (unique) brainRegions that are selected either manually (keys of `dataBrainRegionsAtom`) or automatically (array values of `dataBrainRegionsAtom`).
  */
-export const getBrainRegionDescendants = (brainRegionIds: string[]) =>
-  atom(async (get) => {
-    const brainRegionTree = await get(brainRegionsFilteredTreeAtom);
-    if (!brainRegionTree) return undefined;
-    // returns unique brain regions (in case there is an overlap of brain regions)
-    return uniqBy(
-      brainRegionIds.reduce((totalDescendants: BrainRegion[], brainRegionId: string) => {
-        // first search for the actual brain region in the tree
-        const brainRegion = findDeep(brainRegionTree, (region) => region.id === brainRegionId, {
-          pathFormat: 'array',
-          childrenPath: ['items'],
-        })?.value;
-        // if not found, return empty array
-        if (!brainRegion) return [];
-        // iterate over the children of the brain region (items) and construct array of descendants
-        const descendants = reduceDeep(
-          brainRegion,
-          (acc, value: BrainRegion) => {
-            if (value.items) {
-              return [...acc, ...value.items];
-            }
-            return acc;
-          },
-          [],
-          { pathFormat: 'array', childrenPath: ['items'] }
-        );
-        // appends the brain region along with the descendants
-        return [...totalDescendants, ...descendants, brainRegion];
-      }, []),
-      'id'
-    );
+export const selectedBrainRegionWithChildrenAtom = atom<string[]>((get) => {
+  const dataBrainRegions = get(dataBrainRegionsAtom);
+  const allSelectedBrainRegions = new Set<string>();
+
+  Object.entries(dataBrainRegions).forEach(([brainRegion, children]) => {
+    allSelectedBrainRegions.add(brainRegion);
+    children.forEach((child) => allSelectedBrainRegions.add(child));
   });
-/**
- * An array containing the selected brain region along with all the descendants
- */
-export const selectedBrainRegionWithChildrenAtom = atom<Promise<string[]>>(async (get) => {
-  const selectedBrainRegion = get(selectedBrainRegionAtom);
-  if (!selectedBrainRegion) return [];
-  const descendants = await get(getBrainRegionDescendants([selectedBrainRegion.id]));
-  return descendants?.map((d) => d.id) || [];
+
+  return Array.from(allSelectedBrainRegions);
 });
 
 // Keeps track of the hierarchy tree of the brain regions
-export const brainRegionHierarchyStateAtom = atomWithDefault<NavValue | null>((get) => {
-  const brainModelConfigId = get(brainModelConfigIdAtom);
-  if (!brainModelConfigId) return null;
-
-  const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>(
-    DEFAULT_BRAIN_REGION_STORAGE_KEY
-  );
-  return initializationBrainRegion
-    ? initializationBrainRegion.brainRegionHierarchyState
-    : defaultHierarchyTree;
-});
+export const brainRegionHierarchyStateAtom = atom<NavValue | null>(
+  initializationBrainRegion ? initializationBrainRegion.brainRegionHierarchyState : null
+);
 
 brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';
 brainRegionSidebarIsCollapsedAtom.debugLabel = 'brainRegionSidebarIsCollapsedAtom';
 selectedBrainRegionAtom.debugLabel = 'selectedBrainRegionAtom';
 setSelectedBrainRegionAtom.debugLabel = 'setSelectedBrainRegionAtom';
 brainRegionsAlternateTreeAtom.debugLabel = 'brainRegionsAlternateTreeAtom';
-selectedAlternateViews.debugLabel = 'selectedAlternateViews';
-brainRegionsAtom.debugLabel = 'brainRegionsAtom';
-brainRegionOntologyAtom.debugLabel = 'brainRegionOntologyAtom';

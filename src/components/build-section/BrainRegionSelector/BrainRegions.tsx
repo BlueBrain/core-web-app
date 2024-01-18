@@ -16,7 +16,7 @@ import {
   brainRegionOntologyViewsAtom,
   selectedBrainRegionAtom,
   setSelectedBrainRegionAtom,
-  brainRegionsAtom,
+  brainRegionsWithRepresentationAtom,
   brainRegionsAlternateTreeAtom,
   brainRegionSidebarIsCollapsedAtom,
   brainRegionHierarchyStateAtom,
@@ -70,7 +70,7 @@ function NavTitle({
 
   const brainRegionViews = useAtomValue(brainRegionOntologyViewsAtom);
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
-  const brainRegions = useAtomValue(brainRegionsAtom);
+  const brainRegions = useAtomValue(brainRegionsWithRepresentationAtom);
   const navTitleRef = useRef<HTMLDivElement>(null);
   const [height, setTitleHeight] = useState<number>(0);
 
@@ -214,7 +214,6 @@ export default function BrainRegions() {
                 content,
                 view,
                 representedInAnnotation,
-                itemsInAnnotation,
               }) => (
                 <NavTitle
                   className="text-base"
@@ -231,7 +230,7 @@ export default function BrainRegions() {
                   }
                   title={brainRegionTitleCaseExceptConjunctions(title)}
                   isExpanded={isExpanded}
-                  isHidden={!representedInAnnotation && !itemsInAnnotation}
+                  isHidden={false}
                   trigger={trigger}
                   content={content}
                   selectedBrainRegion={selectedBrainRegion}
