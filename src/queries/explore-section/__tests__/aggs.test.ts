@@ -1,16 +1,17 @@
 import { Filter } from '@/components/Filter/types';
 import buildAggs, { getAggESBuilder } from '@/queries/explore-section/aggs';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 const checklistFilter: Filter = {
   field: 'brainRegion',
-  type: 'checkList',
+  type: FilterTypeEnum.CheckList,
   value: ['brainRegion1'],
   aggregationType: 'buckets',
 };
 
 const valueRangeFilter: Filter = {
   field: 'layerThickness',
-  type: 'valueRange',
+  type: FilterTypeEnum.ValueRange,
   value: {
     gte: 2,
     lte: 5,
@@ -45,7 +46,7 @@ describe('getFilterESBuilder tests', () => {
   it('should return correct stats builder for nested filter', () => {
     const nestedValueRangeFilter: Filter = {
       field: 'meanstd',
-      type: 'valueRange',
+      type: FilterTypeEnum.ValueRange,
       value: {
         gte: 2,
         lte: 5,

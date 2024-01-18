@@ -1,9 +1,10 @@
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 export const LITERATURE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   categories: {
     title: 'Category',
-    filter: 'search',
+    filter: FilterTypeEnum.Search,
     vocabulary: {
       plural: 'Categories',
       singular: 'Category',
@@ -11,7 +12,7 @@ export const LITERATURE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   articleType: {
     title: 'Article type',
-    filter: 'search',
+    filter: FilterTypeEnum.Search,
     vocabulary: {
       plural: 'Article types',
       singular: 'Article type',
@@ -19,7 +20,7 @@ export const LITERATURE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   journal: {
     title: 'Journal',
-    filter: 'search',
+    filter: FilterTypeEnum.Search,
     vocabulary: {
       plural: 'Journals',
       singular: 'Journal',
@@ -27,7 +28,7 @@ export const LITERATURE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   authors: {
     title: 'Authors',
-    filter: 'search',
+    filter: FilterTypeEnum.Search,
     vocabulary: {
       plural: 'Authors',
       singular: 'Author',
@@ -35,7 +36,7 @@ export const LITERATURE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   publicationDate: {
     title: 'Publication date',
-    filter: 'dateRange',
+    filter: FilterTypeEnum.DateRange,
     vocabulary: {
       plural: 'Publication dates',
       singular: 'Publication date',

@@ -1,6 +1,6 @@
 import { useForm } from 'antd/lib/form/Form';
 import { ConfigProvider, Form, InputNumber } from 'antd';
-import { GteLteValue, RangeFilter } from '@/components/Filter/types';
+import { GteLteValue, ValueFilter } from '@/components/Filter/types';
 import { Statistics } from '@/types/explore-section/fields';
 import ArrowLeftRightIcon from '@/components/icons/ArrowLeftRight';
 import { formatNumber } from '@/util/common';
@@ -11,7 +11,7 @@ export default function ValueRange({
   aggregation,
   onChange,
 }: {
-  filter: RangeFilter;
+  filter: ValueFilter;
   aggregation: Statistics;
   onChange: (value: GteLteValue) => void;
 }) {

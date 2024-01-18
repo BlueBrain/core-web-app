@@ -25,6 +25,7 @@ import {
   getArticleTypeOptions,
 } from '@/components/explore-section/Literature/api';
 import { normalizeString } from '@/util/utils';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 type Props = {
   values: ArticleFilters;
@@ -99,7 +100,7 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
             onChange={(e) => updateFilters({ publicationDate: e })}
             filter={{
               field: 'publicationDate',
-              type: 'dateRange',
+              type: FilterTypeEnum.DateRange,
               aggregationType: 'buckets',
               value: {
                 gte: filters.publicationDate?.gte ?? null,

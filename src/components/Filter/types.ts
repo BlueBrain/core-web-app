@@ -1,3 +1,5 @@
+import { FilterTypeEnum } from '@/types/explore-section/filters';
+
 export type AggregationType = 'buckets' | 'stats' | null;
 
 export interface GteLteValue {
@@ -13,69 +15,45 @@ interface BaseFilter {
 }
 
 export interface CheckListFilter extends Omit<BaseFilter, 'type' | 'value'> {
-  type: 'checkList';
+  type: FilterTypeEnum.CheckList;
   value: string[];
 }
 
 export interface SearchFilter extends Omit<BaseFilter, 'type' | 'value'> {
-  type: 'search';
+  type: FilterTypeEnum.Search;
   value: string[];
 }
 
-export interface RangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
-  type: 'dateRange' | 'valueRange';
+export interface DateRangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
+  type: FilterTypeEnum.DateRange;
   value: GteLteValue;
 }
 
 export interface TextFilter extends Omit<BaseFilter, 'type' | 'value'> {
-  type: 'text';
+  type: FilterTypeEnum.Text;
   value: string;
 }
 
 export interface ValueFilter extends Omit<BaseFilter, 'type' | 'value'> {
-  type: 'value';
-  value: number | string | null;
+  type: FilterTypeEnum.ValueRange;
+  value: GteLteValue;
 }
 
 export interface ValueOrRangeFilter extends Omit<BaseFilter, 'type' | 'value'> {
-  type: 'valueOrRange';
+  type: FilterTypeEnum.ValueOrRange;
   value: number | GteLteValue | null; // "value" | "range" | "all"
 }
 
 export type Filter =
   | CheckListFilter
   | SearchFilter
-  | RangeFilter
+  | DateRangeFilter
   | TextFilter
   | ValueFilter
   | ValueOrRangeFilter
   | BaseFilter;
 
-export type FilterType =
-  | 'checkList'
-  | 'dateRange'
-  | 'search'
-  | 'text'
-  | 'valueOrRange'
-  | 'valueRange'
-  | null;
-
-export type CheckboxOption = {
-  checked: string | boolean;
-  count: number | null;
-  key: string;
-};
-
-export type RangeField =
-  | {
-      max: Date;
-      min: Date;
-      defaultValue?: {
-        gte: Date;
-        lte: Date;
-      };
-    }
-  | undefined;
+export type FilterType = FilterTypeEnum | null;
 
 export type Bucket = {
   doc_count: number;

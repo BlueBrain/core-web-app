@@ -20,7 +20,6 @@ import {
 import Species from '@/components/explore-section/Species';
 import WeightField from '@/components/explore-section/Fields/WeightField';
 import LayerThicknessField from '@/components/explore-section/Fields/LayerThicknessField';
-
 import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
 import {
   ExploreFieldsConfigProps,
@@ -28,11 +27,12 @@ import {
   MorphoMetricGroups,
 } from '@/constants/explore-section/fields-config/types';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   license: {
     title: 'License',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: () => <License />,
     },
@@ -70,7 +70,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'E-Type',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
       deltaResourceViewFn: (resource) => eTypeSelectorFn(resource),
@@ -90,7 +90,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'M-Type',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
       deltaResourceViewFn: (resource) => mTypeSelectorFn(resource),
@@ -109,7 +109,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Species',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: (_t, r) => selectorFnSpecies(r._source?.subjectSpecies),
       deltaResourceViewFn: () => <Species />,
@@ -132,7 +132,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     unit: 'boutons/μm',
     title: 'SEM',
     description: 'Standard error of the mean',
-    filter: 'valueRange',
+    filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
       deltaResourceViewFn: (resource) => semSelectorFn(resource),
@@ -144,7 +144,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   weight: {
     title: 'Weight',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     unit: 'gramms',
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.weight),
@@ -157,7 +157,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   subjectAge: {
     title: 'Age',
-    filter: 'valueRange',
+    filter: FilterTypeEnum.ValueRange,
     esTerms: {
       flat: {
         filter: 'subjectAge.value',
@@ -185,7 +185,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Density',
-    filter: 'valueRange',
+    filter: FilterTypeEnum.ValueRange,
     unit: 'n/mm³',
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'mean'),
@@ -198,7 +198,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   layer: {
     title: 'Layer',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: selectorFnLayer,
       deltaResourceViewFn: (resource) => resource.brainLocation?.layer?.label,
@@ -217,7 +217,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Thickness',
-    filter: 'valueRange',
+    filter: FilterTypeEnum.ValueRange,
     unit: 'μm',
     render: {
       esResourceViewFn: selectorFnLayerThickness,
@@ -230,7 +230,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   reference: {
     title: 'Reference',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.reference),
     },
@@ -241,7 +241,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   conditions: {
     title: 'Conditions',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     unit: 'Cº',
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.conditions),
@@ -263,7 +263,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     unit: 'boutons/μm',
     title: 'Mean ± std',
-    filter: 'valueRange',
+    filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: selectorFnMeanStd,
       deltaResourceViewFn: (resource) => <MeanStdField detail={resource} />,
@@ -284,7 +284,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'N° of Measurements',
-    filter: 'valueRange',
+    filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
       deltaResourceViewFn: (resource) => selectorFnStatisticDetail(resource, 'N'),
@@ -351,7 +351,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         resource.synapticPathway?.preSynaptic.find((synapse) => synapse.about === 'nsg:BrainRegion')
           ?.label,
     },
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     esTerms: {
       nested: {
         nestedPath: 'preSynapticPathway',
@@ -376,7 +376,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           (synapse) => synapse.about === 'nsg:BrainRegion'
         )?.label,
     },
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     esTerms: {
       nested: {
         nestedPath: 'postSynapticPathway',
@@ -400,7 +400,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         resource.synapticPathway?.preSynaptic.find((synapse) => synapse.about === 'BrainCell:Type')
           ?.label,
     },
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     esTerms: {
       nested: {
         nestedPath: 'preSynapticPathway',
@@ -424,7 +424,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         resource.synapticPathway?.postSynaptic.find((synapse) => synapse.about === 'BrainCell:Type')
           ?.label,
     },
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     esTerms: {
       nested: {
         nestedPath: 'postSynapticPathway',

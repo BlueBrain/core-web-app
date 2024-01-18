@@ -28,6 +28,7 @@ import {
   initialAuthorSuggestionsAtom,
   initialJournalSuggestionsAtom,
 } from '@/state/explore-section/literature-filters';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 type Props = {
   areQAParamsVisible: boolean;
@@ -88,7 +89,7 @@ function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props
             onChange={(e) => update('selectedDate', e)}
             filter={{
               field: 'publicationDate',
-              type: 'dateRange',
+              type: FilterTypeEnum.DateRange,
               aggregationType: 'buckets',
               value: currentParameters.selectedDate
                 ? { ...currentParameters.selectedDate }

@@ -1,11 +1,12 @@
 import esb, { Query } from 'elastic-builder';
 import { format } from 'date-fns';
-import { Filter, RangeFilter } from '@/components/Filter/types';
+import { Filter, ValueFilter } from '@/components/Filter/types';
 import { filterHasValue } from '@/components/Filter/util';
 import { getFieldEsConfig } from '@/api/explore-section/fields';
 import dataTypeConfigSelector from '@/util/explore-section/dataTypeConfigSelector';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
-function buildRangeQuery(filter: RangeFilter, esTerm: string) {
+function buildRangeQuery(filter: ValueFilter, esTerm: string) {
   const filterESBuilder = esb.rangeQuery(esTerm);
   if (filter.value.gte) {
     filterESBuilder.gte(filter.value.gte as number);
@@ -22,7 +23,7 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
   let filterESBuilder;
 
   switch (filter.type) {
-    case 'checkList':
+    case FilterTypeEnum.CheckList:
       if (esConfig?.nested) {
         filterESBuilder = esb
           .nestedQuery()
@@ -38,7 +39,7 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
       }
 
       break;
-    case 'dateRange':
+    case FilterTypeEnum.DateRange:
       filterESBuilder = esb.rangeQuery(esConfig?.flat?.filter);
 
       if (filter.value.gte) {
@@ -50,7 +51,7 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
       }
 
       break;
-    case 'valueRange':
+    case FilterTypeEnum.ValueRange:
       if (esConfig?.nested) {
         filterESBuilder = esb
           .nestedQuery()
@@ -66,7 +67,7 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
       }
 
       break;
-    case 'valueOrRange':
+    case FilterTypeEnum.ValueOrRange:
       switch (typeof filter.value) {
         case 'number':
           filterESBuilder = esb.termsQuery(
@@ -93,7 +94,7 @@ export function getFilterESBuilder(filter: Filter): Query | undefined {
       }
 
       break;
-    case 'text':
+    case FilterTypeEnum.Text:
       if (filter.value) {
         filterESBuilder = esb
           .wildcardQuery(esConfig?.flat?.filter, filter.value)

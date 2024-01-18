@@ -19,12 +19,13 @@ import {
   Statistics,
 } from '@/types/explore-section/fields';
 import { Filter, GteLteValue, ValueOrRangeFilter } from '@/components/Filter/types';
-import { CheckList, DateRange, FilterGroup, defaultList } from '@/components/Filter';
+import { CheckList, DateRange, defaultList, FilterGroup } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
 import { activeColumnsAtom } from '@/state/explore-section/list-view-atoms';
 import { getFieldEsConfig, getFieldLabel } from '@/api/explore-section/fields';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 export type ControlPanelProps = {
   children?: ReactNode;
@@ -65,7 +66,7 @@ function createFilterItemComponent(
     if (!aggregations) return null;
 
     switch (type) {
-      case 'dateRange':
+      case FilterTypeEnum.DateRange:
         return (
           <DateRange
             filter={filter}
@@ -73,7 +74,7 @@ function createFilterItemComponent(
           />
         );
 
-      case 'valueRange':
+      case FilterTypeEnum.ValueRange:
         if (esConfig?.nested) {
           const nestedAgg = aggregations[filter.field] as NestedStatsAggregation;
           agg = nestedAgg[filter.field][esConfig?.nested.aggregationName];
@@ -89,7 +90,7 @@ function createFilterItemComponent(
           />
         );
 
-      case 'checkList':
+      case FilterTypeEnum.CheckList:
         if (esConfig?.nested) {
           const nestedAgg = aggregations[filter.field] as NestedBucketAggregation;
           agg = nestedAgg[filter.field][filter.field];
@@ -108,7 +109,7 @@ function createFilterItemComponent(
           </CheckList>
         );
 
-      case 'valueOrRange':
+      case FilterTypeEnum.ValueOrRange:
         return (
           <ValueOrRange
             filter={filter}
@@ -118,7 +119,7 @@ function createFilterItemComponent(
           />
         );
 
-      case 'text':
+      case FilterTypeEnum.Text:
         return (
           <div className="flex flex-col gap-2">
             <Input

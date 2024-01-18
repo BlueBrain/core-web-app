@@ -9,14 +9,13 @@ import get from 'lodash/get';
 import { ConfigProvider, DatePicker } from 'antd';
 import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns'; // eslint-disable-line import/no-extraneous-dependencies
 import { RangeValue } from 'rc-picker/lib/interface'; // eslint-disable-line import/no-extraneous-dependencies
-
 import {
-  GArticle,
-  GenerativeQA,
-  MLFilter,
   FilterFields,
   FilterFieldsType,
   FilterValues,
+  GArticle,
+  GenerativeQA,
+  MLFilter,
 } from '@/types/literature';
 import { Filter, GteLteValue } from '@/components/Filter/types';
 import SearchFilter from '@/components/Filter/SearchFilter';
@@ -31,6 +30,7 @@ import {
 import { normalizedDate } from '@/util/utils';
 import { getFieldLabel } from '@/api/explore-section/fields';
 import { Buckets } from '@/types/explore-section/fields';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 const { RangePicker } = DatePicker.generatePicker<Date>(dateFnsGenerateConfig);
 
@@ -58,7 +58,7 @@ export default function FilterPanel() {
     const referencedArticles = getReferencedArticles(allQuestions, selectedQuestionForFilter);
 
     switch (filter.type) {
-      case 'search':
+      case FilterTypeEnum.Search:
         return (
           <SearchFilter
             data={getFilterBuckets(
@@ -78,7 +78,7 @@ export default function FilterPanel() {
             }}
           />
         );
-      case 'dateRange':
+      case FilterTypeEnum.DateRange:
         return (
           <ConfigProvider
             theme={{
@@ -237,7 +237,7 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
       case 'categories':
         return {
           field: filterField,
-          type: 'search',
+          type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: possibleOptions.length > 0,
           value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
@@ -245,7 +245,7 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
       case 'articleType':
         return {
           field: filterField,
-          type: 'search',
+          type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: possibleOptions.length > 0,
           value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
@@ -253,7 +253,7 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
       case 'journal':
         return {
           field: filterField,
-          type: 'search',
+          type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: Array.from(getPossibleOptions(articles, ['journal', 'doi'])).length > 0,
           value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
@@ -261,7 +261,7 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
       case 'authors':
         return {
           field: filterField,
-          type: 'search',
+          type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: possibleOptions.length > 0,
           value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
@@ -269,7 +269,7 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
       case 'publicationDate':
         return {
           field: filterField,
-          type: 'dateRange',
+          type: FilterTypeEnum.DateRange,
           aggregationType: null,
           hasOptions: true,
           value: noCurrentValue

@@ -8,6 +8,7 @@ import {
 import Contributors from '@/components/explore-section/Contributors';
 import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
 import timeElapsedFromToday from '@/util/date';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   preview: {
@@ -48,7 +49,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Name',
-    filter: 'text',
+    filter: FilterTypeEnum.Text,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.name),
     },
@@ -66,7 +67,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Contributors',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: selectorFnContributors,
       deltaResourceViewFn: () => <Contributors />,
@@ -85,7 +86,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Registration date',
-    filter: 'dateRange',
+    filter: FilterTypeEnum.DateRange,
     render: {
       esResourceViewFn: (_t, r) => selectorFnDate(r._source?.createdAt),
       deltaResourceViewFn: (resource) =>
@@ -98,7 +99,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   createdBy: {
     title: 'Created by',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: (resource) => (
         <span className="capitalize">{resource?._createdBy.split('/').reverse()[0]}</span>
@@ -111,7 +112,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   updatedAt: {
     title: 'Updated at',
-    filter: 'dateRange',
+    filter: FilterTypeEnum.DateRange,
     render: {
       esResourceViewFn: (_t, r) => selectorFnDate(r._source?.updatedAt),
       deltaResourceViewFn: (resource) =>
@@ -124,7 +125,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   description: {
     title: 'Description',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: (resource) => resource.description,
     },

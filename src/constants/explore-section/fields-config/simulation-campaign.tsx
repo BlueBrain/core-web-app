@@ -4,6 +4,7 @@ import ListField from '@/components/explore-section/Fields/ListField';
 import SimulationCampaignStatus from '@/components/explore-section/SimulationCampaignStatus';
 import timeElapsedFromToday from '@/util/date';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   simCampName: {
@@ -48,7 +49,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   dimensions: {
     title: 'Dimensions',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: (resource) => (
         <ListField
@@ -66,7 +67,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   attributes: {
     title: 'Attributes',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: (resource) => (
         <ListField
@@ -84,7 +85,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   simulationCampaignStatus: {
     title: 'Status',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: () => <SimulationCampaignStatus />,
     },
@@ -95,7 +96,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   simulationStatus: {
     title: 'Status',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: (resource) => resource?.status,
     },
@@ -106,7 +107,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   campaign: {
     title: 'Campaign',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: (resource) => resource?.wasGeneratedBy?.['@id'],
     },
@@ -117,7 +118,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   tags: {
     title: 'Tags',
-    filter: 'checkList',
+    filter: FilterTypeEnum.CheckList,
     render: {
       deltaResourceViewFn: () => undefined,
     },

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { ConfigProvider, DatePicker } from 'antd';
 import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns'; // eslint-disable-line import/no-extraneous-dependencies
 import { RangeValue } from 'rc-picker/lib/interface'; // eslint-disable-line import/no-extraneous-dependencies
-import { GteLteValue, RangeFilter } from './types';
+import { GteLteValue, DateRangeFilter } from './types';
 
 const DateRangePicker = DatePicker.generatePicker<Date>(dateFnsGenerateConfig);
 
@@ -10,7 +10,7 @@ export default function DateRange({
   filter,
   onChange,
 }: {
-  filter: RangeFilter;
+  filter: DateRangeFilter;
   onChange: (value: GteLteValue) => void;
 }) {
   const memoizedRender = useMemo(

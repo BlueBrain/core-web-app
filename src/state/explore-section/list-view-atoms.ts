@@ -1,25 +1,26 @@
 import { Atom, atom } from 'jotai';
-import { atomWithDefault, atomFamily } from 'jotai/utils';
+import { atomFamily, atomWithDefault } from 'jotai/utils';
 import uniq from 'lodash/uniq';
 import columnKeyToFilter from './column-key-to-filter';
 import { ExploreDataBrainRegionSource, SortState } from '@/types/explore-section/application';
 import fetchDataQuery from '@/queries/explore-section/data';
 import {
   DataQuery,
-  fetchEsResourcesByType,
   fetchDimensionAggs,
+  fetchEsResourcesByType,
   fetchTotalByExperimentAndRegions,
 } from '@/api/explore-section/resources';
 import sessionAtom from '@/state/session';
 import {
-  PAGE_SIZE,
   PAGE_NUMBER,
+  PAGE_SIZE,
   SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
-import { FlattenedExploreESResponse, ExploreESHit } from '@/types/explore-section/es';
+import { ExploreESHit, FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { selectedBrainRegionWithChildrenAtom } from '@/state/brain-regions';
 import dataTypeConfigSelector from '@/util/explore-section/dataTypeConfigSelector';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 type DataAtomFamilyScopeType = {
   experimentTypeName: string;
@@ -85,7 +86,7 @@ export const filtersAtom = atomFamily(
           (dimension) =>
             ({
               field: dimension,
-              type: 'valueOrRange',
+              type: FilterTypeEnum.ValueOrRange,
               value: { gte: null, lte: null },
               aggregationType: 'stats',
             } as Filter)

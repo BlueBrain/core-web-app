@@ -2,11 +2,14 @@ import omit from 'lodash/omit';
 import isNumber from 'lodash/isNumber';
 import { Filter } from './types';
 import { BrainRegion } from '@/types/ontologies';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
+
 /**
  * Takes array of brainRegions and searches for targetTitle against BrainRegion.title
  * If found all the parent BrainRegions are collected without their items and returned
  * @param {import("./types/ontologies").BrainRegion[]} nodes
  * @param {string} targetTitle
+ * @param collectedBrainRegions
  */
 export function findTitleAndCollectParentBrainRegions(
   nodes: BrainRegion[] | null,
@@ -52,13 +55,13 @@ export function findTitleAndCollectParentBrainRegions(
  */
 export function filterHasValue(filter: Filter) {
   switch (filter.type) {
-    case 'checkList':
+    case FilterTypeEnum.CheckList:
       return filter.value.length !== 0;
-    case 'dateRange':
+    case FilterTypeEnum.DateRange:
       return filter.value.gte || filter.value.lte;
-    case 'valueRange':
+    case FilterTypeEnum.ValueRange:
       return filter.value.gte || filter.value.lte;
-    case 'valueOrRange':
+    case FilterTypeEnum.ValueOrRange:
       if (!filter.value) {
         return false;
       }

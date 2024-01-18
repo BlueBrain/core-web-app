@@ -1,42 +1,42 @@
 import { Filter } from '@/components/Filter/types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 export default function columnKeyToFilter(key: string): Filter {
   const fieldConfig = EXPLORE_FIELDS_CONFIG[key];
-
   switch (fieldConfig.filter) {
-    case 'checkList':
+    case FilterTypeEnum.CheckList:
       return {
         field: key,
-        type: 'checkList',
+        type: FilterTypeEnum.CheckList,
         value: [],
         aggregationType: 'buckets',
       };
-    case 'dateRange':
+    case FilterTypeEnum.DateRange:
       return {
         field: key,
-        type: 'dateRange',
+        type: FilterTypeEnum.DateRange,
         value: { gte: null, lte: null },
         aggregationType: 'stats',
       };
-    case 'valueRange':
+    case FilterTypeEnum.ValueRange:
       return {
         field: key,
-        type: 'valueRange',
+        type: FilterTypeEnum.ValueRange,
         value: { gte: null, lte: null },
         aggregationType: 'stats',
       };
-    case 'valueOrRange':
+    case FilterTypeEnum.ValueOrRange:
       return {
         field: key,
-        type: 'valueOrRange',
+        type: FilterTypeEnum.ValueOrRange,
         value: null,
         aggregationType: 'buckets',
       };
-    case 'text':
+    case FilterTypeEnum.Text:
       return {
         field: key,
-        type: 'text',
+        type: FilterTypeEnum.Text,
         value: '',
         aggregationType: null,
       };

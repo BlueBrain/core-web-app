@@ -1,17 +1,18 @@
 import buildFilters, { getFilterESBuilder } from '@/queries/explore-section/filters';
 import { Filter } from '@/components/Filter/types';
 import { BOUTON_DENSITY } from '@/constants/explore-section/list-views';
+import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 const checklistFilter: Filter = {
   field: 'brainRegion',
-  type: 'checkList',
+  type: FilterTypeEnum.CheckList,
   value: ['brainRegion1'],
   aggregationType: 'buckets',
 };
 
 const valueRangeFilter: Filter = {
   field: 'layerThickness',
-  type: 'valueRange',
+  type: FilterTypeEnum.ValueRange,
   value: {
     gte: 2,
     lte: 5,
@@ -42,7 +43,7 @@ describe('Filters elastic builder', () => {
   it('should build correct range filter when only gte', () => {
     const valueRangeFilterWithoutLTE: Filter = {
       field: 'layerThickness',
-      type: 'valueRange',
+      type: FilterTypeEnum.ValueRange,
       // @ts-ignore
       value: {
         gte: 2,
@@ -64,7 +65,7 @@ describe('Filters elastic builder', () => {
   it('should build correct range filter when nested field', () => {
     const nestedValueRangeFilter: Filter = {
       field: 'meanstd',
-      type: 'valueRange',
+      type: FilterTypeEnum.ValueRange,
       value: {
         gte: 2,
         lte: 5,
@@ -102,7 +103,7 @@ describe('Filters elastic builder', () => {
   it('should build correct date range filter when both lte and gte', () => {
     const dateRangeFilter: Filter = {
       field: 'createdAt',
-      type: 'dateRange',
+      type: FilterTypeEnum.DateRange,
       value: {
         gte: new Date('1994-04-13'),
         lte: new Date('1994-04-15'),
