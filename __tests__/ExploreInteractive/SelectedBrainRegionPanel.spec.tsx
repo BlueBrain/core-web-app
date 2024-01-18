@@ -18,11 +18,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
-
 const mockCountForExperiment = 10;
 
 jest.mock('src/api/explore-section/resources.ts', () => ({

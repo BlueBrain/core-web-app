@@ -58,8 +58,7 @@ export default function BrainTreeSearch({
         optionValue as string,
         label as string,
         leaves ?? null,
-        representedInAnnotation,
-        brainRegionHierarchyState
+        representedInAnnotation
       );
       // This timeout seems to be necessary to "wait" until the nav item has been rendered before attemping to scroll to it.
       setTimeout(() => {

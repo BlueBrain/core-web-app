@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -24,25 +24,28 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
-
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
   unobserve = jest.fn();
   disconnect = jest.fn();
 };
 
+async function checkDefaultBrainTreeExpanded() {
+  const selector = `div[data-tree-id] button > ${regionContainerSelector}`;
+  await screen.findByText('Basic Cell Groups and Regions', { selector });
+  await screen.findByText('Brain Stem', { selector });
+  await screen.findByText('Cerebrum', { selector });
+  await screen.findByText('Cerebellum', { selector });
+}
+
 describe('Default brain region panel in explore', () => {
-  beforeEach(() => {
-    render(Provider());
+  beforeEach(async () => {
+    await waitFor(() => render(Provider()));
   });
 
   const defaultRegion = 'Cerebrum';
 
-  test('show Cerebrum in search', async () => {
+  test('show Cerebrum region tree', async () => {
     await screen.findByText(
       defaultRegion,
       { selector: `button > ${regionContainerSelector}` },
@@ -50,13 +53,7 @@ describe('Default brain region panel in explore', () => {
     );
   });
 
-  test('show expanded tree', async () => {
-    const selector = `div[data-tree-id] button > ${regionContainerSelector}`;
-    await screen.findByText('Basic Cell Groups and Regions', { selector });
-    await screen.findByText('Brain Stem', { selector });
-    await screen.findByText('Cerebrum', { selector });
-    await screen.findByText('Cerebellum', { selector });
-  });
+  test('show expanded tree', checkDefaultBrainTreeExpanded);
 
   function Provider() {
     return (
@@ -74,19 +71,15 @@ describe('Default brain region panel in explore', () => {
 });
 
 describe('Default brain region panel with no atoms', () => {
-  beforeEach(() => {
-    render(Provider());
+  beforeEach(async () => {
+    await waitFor(() => render(Provider()));
   });
 
   test('show empty search', async () => {
     await screen.findByText('Search region...', { selector: `div.ant-select span:not([title])` });
   });
 
-  test('show only root in tree', async () => {
-    await screen.findByText('Basic Cell Groups and Regions');
-    expect(screen.queryByText('Cerebrum')).not.toBeInTheDocument();
-    expect(screen.queryByText('Cerebellum')).not.toBeInTheDocument();
-  });
+  test('show default region tree', checkDefaultBrainTreeExpanded);
 
   function Provider() {
     return (
@@ -103,19 +96,15 @@ describe('Default brain region panel with no atoms', () => {
 });
 
 describe('Default brain region panel in buid', () => {
-  beforeEach(() => {
-    render(Provider());
+  beforeEach(async () => {
+    await waitFor(() => render(Provider()));
   });
 
   test('show empty search', async () => {
     await screen.findByText('Search region...', { selector: `span:not([title])` });
   });
 
-  test('show only root in tree', async () => {
-    await screen.findByText('Basic Cell Groups and Regions');
-    expect(screen.queryByText('Cerebrum')).not.toBeInTheDocument();
-    expect(screen.queryByText('Cerebellum')).not.toBeInTheDocument();
-  });
+  test('show default region tree', checkDefaultBrainTreeExpanded);
 
   function Provider() {
     return (

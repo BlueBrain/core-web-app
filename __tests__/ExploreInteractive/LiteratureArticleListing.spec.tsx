@@ -39,11 +39,6 @@ jest.mock('deepdash-es/standalone', () => ({
   }),
 }));
 
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
-
 const createMockArticle = (
   title: string,
   doi: string,

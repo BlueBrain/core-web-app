@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -24,11 +24,6 @@ function TestProvider({ initialValues, children }: any) {
     </Provider>
   );
 }
-
-jest.mock(
-  'src/api/ontologies/index.ts',
-  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
-);
 
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
@@ -58,8 +53,8 @@ async function checkTreeExpandedFromSaved() {
 }
 
 describe('Default brain region panel in explore', () => {
-  beforeEach(() => {
-    render(Provider());
+  beforeEach(async () => {
+    await waitFor(() => render(Provider()));
   });
 
   test('show Isocortex in brain region tree', async () => {
@@ -90,8 +85,8 @@ describe('Default brain region panel in explore', () => {
 });
 
 describe('Default brain region panel in buid', () => {
-  beforeEach(() => {
-    render(Provider());
+  beforeEach(async () => {
+    await waitFor(() => render(Provider()));
   });
 
   test('show expanded tree', checkTreeExpandedFromSaved);

@@ -9,9 +9,11 @@ import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelec
 import Sidebar from '@/components/explore-section/Sidebar';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { defaultModelRelease } from '@/config';
+import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 
 export default function ExploreInteractiveLayout({ children }: { children: ReactNode }) {
   const setConfigId = useSetAtom(brainModelConfigIdAtom);
+  useSetBrainRegionFromQuery();
 
   // set Release 23.01 as the configuration of explore interactive
   useEffect(() => setConfigId(defaultModelRelease.id), [setConfigId]);

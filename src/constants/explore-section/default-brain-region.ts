@@ -8,3 +8,5 @@ export const defaultExploreRegion = {
 export const defaultHierarchyTree = {
   'http://api.brain-map.org/api/v2/data/Structure/8': null,
 };
+
+export const brainRegionIdQueryParamKey = 'brainRegion';
