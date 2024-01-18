@@ -26,6 +26,7 @@ import {
 } from '@/types/composition/calculation';
 import { QuestionAbout } from '@/types/literature';
 import { cellTypesByIdAtom } from '@/state/build-section/cell-types';
+import { ETYPE_NEXUS_TYPE, MTYPE_NEXUS_TYPE } from '@/constants/ontologies';
 
 /**
  * Maps metrics to units in order to appear in the sidebar
@@ -41,10 +42,10 @@ const metricToUnit = {
 
 function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?: string[] }) {
   const renderType = () => {
-    if (subclasses?.includes('https://neuroshapes.org/MType')) {
+    if (subclasses?.includes(MTYPE_NEXUS_TYPE)) {
       return 'M-type';
     }
-    if (subclasses?.includes('https://neuroshapes.org/EType')) {
+    if (subclasses?.includes(ETYPE_NEXUS_TYPE)) {
       return 'E-type';
     }
     return undefined;

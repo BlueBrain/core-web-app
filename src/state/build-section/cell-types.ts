@@ -5,6 +5,7 @@ import sessionAtom from '@/state/session';
 import { createHeaders } from '@/util/utils';
 import { ClassNexus } from '@/api/ontologies/types';
 import { ATLAS_SEARCH_URL } from '@/constants/build-section';
+import { ETYPE_NEXUS_TYPE, MTYPE_NEXUS_TYPE } from '@/constants/ontologies';
 
 type ClassESResponse = {
   _source: ClassNexus;
@@ -23,12 +24,7 @@ export const cellTypesAtom = selectAtom<Session | null, Promise<any> | null>(
           .boolQuery()
           .must(esb.termQuery('@type', 'Class'))
           .must(esb.termQuery('_deprecated', false))
-          .must(
-            esb.termsQuery('subClassOf', [
-              'https://neuroshapes.org/MType',
-              'https://neuroshapes.org/EType',
-            ])
-          )
+          .must(esb.termsQuery('subClassOf', [MTYPE_NEXUS_TYPE, ETYPE_NEXUS_TYPE]))
       )
       .size(10000);
 
