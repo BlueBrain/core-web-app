@@ -1,9 +1,6 @@
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ExperimentDataTypeName } from '@/constants/explore-section/list-views';
-import {
-  BASE_EXPLORE_PATH,
-  EXPERIMENT_DATA_TYPES,
-} from '@/constants/explore-section/experiment-types';
+import { BASE_EXPLORE_PATH, DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 export const switchStateType = {
   COUNT: 'count',
@@ -37,7 +34,7 @@ export const detailUrlBuilder = (
   resource: ExploreESHit,
   experimentTypeName: ExperimentDataTypeName
 ) =>
-  `${BASE_EXPLORE_PATH}${EXPERIMENT_DATA_TYPES[experimentTypeName].name}/${to64(
+  `${BASE_EXPLORE_PATH}${DATA_TYPES[experimentTypeName].name}/${to64(
     `${resource._source.project.label}!/!${resource._id}`
   )}`;
 

@@ -8,6 +8,7 @@ import {
   SIMULATION_CAMPAIGNS,
 } from '@/constants/explore-section/list-views';
 import { DetailProps } from '@/types/explore-section/application';
+import { DataGroups } from '@/types/explore-section/data-groups';
 
 export type ExperimentConfig = {
   title: string;
@@ -15,6 +16,7 @@ export type ExperimentConfig = {
   columns: Array<string>;
   curated: boolean;
   cardViewFields?: DetailProps[];
+  groups: DataGroups[];
 };
 
 export const INTERACTIVE_PATH = `/explore/interactive/`;
@@ -28,10 +30,11 @@ export const SIMULATION_DATA_TYPES: {
     name: 'simulation-campaigns',
     columns: ['simCampName', 'brainConfiguration', 'createdAt'],
     curated: false,
+    groups: [DataGroups.SimulationData],
   },
 };
 
-export const EXPERIMENT_DATA_TYPES: {
+export const DATA_TYPES: {
   [x: ExperimentDataTypeName]: ExperimentConfig;
 } = {
   [NEURON_MORPHOLOGY]: {
@@ -125,12 +128,14 @@ export const EXPERIMENT_DATA_TYPES: {
         className: 'col-span-2',
       },
     ],
+    groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [ELECTRO_PHYSIOLOGY]: {
     title: 'Electrophysiology',
     name: 'electrophysiology',
     columns: ['brainRegion', 'eType', 'name', 'subjectSpecies', 'contributors', 'createdAt'],
     curated: true,
+    groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [NEURON_DENSITY]: {
     title: 'Neuron density',
@@ -148,6 +153,7 @@ export const EXPERIMENT_DATA_TYPES: {
       'createdAt',
     ],
     curated: false,
+    groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [BOUTON_DENSITY]: {
     title: 'Bouton density',
@@ -163,6 +169,7 @@ export const EXPERIMENT_DATA_TYPES: {
       'createdAt',
     ],
     curated: false,
+    groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [SYNAPSE_PER_CONNECTION]: {
     title: 'Synapse per connection',
@@ -179,5 +186,6 @@ export const EXPERIMENT_DATA_TYPES: {
       'createdAt',
     ],
     curated: false,
+    groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
 };

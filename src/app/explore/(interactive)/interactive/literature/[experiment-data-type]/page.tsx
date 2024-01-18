@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import LiteratureArticlesError from './error';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { ArticleListing } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
 import ArticleListFilters from '@/components/explore-section/Literature/components/ArticleList/ArticleListFilters';
@@ -17,7 +17,7 @@ import { SettingsIcon } from '@/components/icons';
 
 export default function LiteratureArticleListingPage() {
   const params = useParams();
-  const currentExperiment = Object.values(EXPERIMENT_DATA_TYPES).find(
+  const currentExperiment = Object.values(DATA_TYPES).find(
     (experiment) => experiment.name === params?.['experiment-data-type'] ?? ''
   );
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);

@@ -8,7 +8,7 @@ import { BrainRegion } from '@/types/ontologies';
 import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 
 jest.mock('next/navigation', () => ({
@@ -64,7 +64,7 @@ describe('SelectedBrainRegionPanel', () => {
   test('shows count of dataset for all experiment types', async () => {
     await screen.findByRole('heading', { name: /Experimental data/i });
 
-    for await (const [id, config] of Object.entries(EXPERIMENT_DATA_TYPES)) {
+    for await (const [id, config] of Object.entries(DATA_TYPES)) {
       const experimentEle = await screen.findByTestId(`experiment-dataset-${id}`);
       expect(experimentEle.textContent).toContain(config.title);
       expect(experimentEle.textContent).toContain(`${mockCountForExperiment}`);
@@ -74,7 +74,7 @@ describe('SelectedBrainRegionPanel', () => {
   test('shows literature articles count for all experiment types', async () => {
     await screen.findByRole('heading', { name: /Literature/i });
 
-    for await (const [id, config] of Object.entries(EXPERIMENT_DATA_TYPES)) {
+    for await (const [id, config] of Object.entries(DATA_TYPES)) {
       const experimentEle = await screen.findByTestId(`literature-articles-${id}`);
       expect(experimentEle.textContent).toContain(config.title);
     }

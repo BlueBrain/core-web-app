@@ -8,7 +8,7 @@ import {
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { detailUrlBuilder } from '@/util/common';
@@ -47,8 +47,7 @@ export default function Card({ resource, experimentTypeName, activeKeys, score }
   const { ref, inView } = useInView();
 
   const cardFields =
-    reject(EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields, (o) => o.field === 'field') ||
-    [];
+    reject(DATA_TYPES[experimentTypeName]?.cardViewFields, (o) => o.field === 'field') || [];
 
   const resourceUrl = detailUrlBuilder(resource, experimentTypeName);
 

@@ -13,7 +13,7 @@ import {
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 const { Panel } = Collapse;
 
@@ -33,8 +33,7 @@ export default function CardView({ data, experimentTypeName, resourceId }: CardV
   );
 
   const cardFields =
-    reject(EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields, (o) => o.field === 'field') ||
-    [];
+    reject(DATA_TYPES[experimentTypeName]?.cardViewFields, (o) => o.field === 'field') || [];
 
   const filteredLabels = cardFields.map((fieldObj) => fieldObj.field);
 

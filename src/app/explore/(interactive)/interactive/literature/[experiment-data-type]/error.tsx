@@ -1,10 +1,7 @@
 'use client';
 
 import ExperimentSelector from '@/components/explore-section/Literature/components/ExperimentSelector';
-import {
-  EXPERIMENT_DATA_TYPES,
-  ExperimentConfig,
-} from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES, ExperimentConfig } from '@/constants/explore-section/experiment-types';
 
 type Props = {
   noExperimentSelected?: boolean;
@@ -27,9 +24,7 @@ export default function LiteratureArticlesError({
   }
 
   if (noExperimentSelected) {
-    const validExperimentTypes = Object.values(EXPERIMENT_DATA_TYPES).map(
-      (experiment) => experiment.name
-    );
+    const validExperimentTypes = Object.values(DATA_TYPES).map((experiment) => experiment.name);
 
     return (
       <div className="flex mx-10 mt-12 w-full">
