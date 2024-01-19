@@ -39,9 +39,7 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
   const totalByExperimentAndBrainRegion = useAtomValue(totalByExperimentAndBrainRegionAtom);
 
   return (
-    <div className="text-white mb-4 h-52 flex-1">
-      <h3 className="text-gray-400 py-4 uppercase">Literature</h3>
-
+    <div className="text-white">
       {totalByExperimentAndBrainRegion.state === 'loading' && (
         <div className="w-full flex justify-center mt-14">
           <LoadingOutlined />
@@ -52,7 +50,7 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
         'Error loading experiment datasets for brain region.'}
 
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
-        <div className="flex flex-col flex-wrap mb-7 h-36">
+        <div className="flex flex-wrap mb-7 h-36 text-white gap-4">
           {Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) => {
             const details = totalByExperimentAndBrainRegion.data?.[id];
             const total = details?.total ?? 0;

@@ -88,7 +88,7 @@ describe('SelectedBrainRegionPanel', () => {
   });
 
   test('shows count of dataset for all experiment types', async () => {
-    await screen.findByRole('heading', { name: /Experimental data/i });
+    await screen.findByRole('tab', { name: /Experiment data/i });
 
     for await (const [id, config] of Object.entries(EXPERIMENT_DATA_TYPES)) {
       const experimentEle = await screen.findByTestId(`experiment-dataset-${id}`);
@@ -98,7 +98,7 @@ describe('SelectedBrainRegionPanel', () => {
   });
 
   test('shows literature articles count for all experiment types', async () => {
-    await screen.findByRole('heading', { name: /Literature/i });
+    await switchToLiteratureTab();
 
     for await (const [id, config] of Object.entries(EXPERIMENT_DATA_TYPES)) {
       const experimentEle = await screen.findByTestId(`literature-articles-${id}`);
@@ -107,6 +107,7 @@ describe('SelectedBrainRegionPanel', () => {
   });
 
   test('shows 100+ if number of articles is greater than 100', async () => {
+    await switchToLiteratureTab();
     const experimentElement = await screen.findByTestId(
       `literature-articles-${experimentWithMoreThan100Articles}`
     );
@@ -118,6 +119,7 @@ describe('SelectedBrainRegionPanel', () => {
   });
 
   test('shows actual count if number of articles is equal to 100', async () => {
+    await switchToLiteratureTab();
     const experimentElement = await screen.findByTestId(
       `literature-articles-${experimentWith100Articles}`
     );
@@ -129,6 +131,7 @@ describe('SelectedBrainRegionPanel', () => {
   });
 
   test('shows actual count if number of articles is less than 100', async () => {
+    await switchToLiteratureTab();
     const experimentElement = await screen.findByTestId(
       `literature-articles-${experimentWithFewArticles}`
     );
@@ -174,6 +177,11 @@ describe('SelectedBrainRegionPanel', () => {
         <SelectedBrainRegionPanel />
       </TestProvider>
     );
+  }
+
+  async function switchToLiteratureTab() {
+    const tab = await screen.findByRole('tab', { name: /Literature/i });
+    tab.click();
   }
 
   function VizButtons({ brainRegion }: { brainRegion: BrainRegion }) {
