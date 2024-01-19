@@ -8,8 +8,8 @@ export type BrainRegion = {
   id: string;
   isPartOf: string | null;
   isLayerPartOf: string | null;
-  label?: string; // TODO: Get some clarity about the "label" & "title" part of the ontology.
-  title?: string; // It seems that "title" doesn't apply to all brain regions (Isocortex, for example).
+  label: string; // Confirmed by Cristina; "label" should always be present (in the ontology).
+  title?: string; // TODO: Check whether this type actually exists; it may be something that we invented for some reason.
   notation: string;
   colorCode: string;
   items?: BrainRegion[];

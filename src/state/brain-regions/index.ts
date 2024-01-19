@@ -122,7 +122,7 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
     brainRegions?.reduce<BrainRegion[]>(
       (
         acc,
-        { hasPart, hasLayerPart, id, leaves, representedInAnnotation, title, view, ...rest }
+        { hasPart, hasLayerPart, id, label, leaves, representedInAnnotation, title, view, ...rest }
       ) => {
         const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
 
@@ -143,10 +143,10 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
                 id,
                 hasLayerPart,
                 hasPart,
-                label: title, // TODO: Check whether there is always a title...
                 leaves,
                 representedInAnnotation,
                 title,
+                label,
                 value: id,
                 view,
                 ...rest,
