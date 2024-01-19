@@ -61,7 +61,7 @@ const ML_DATE_FORMAT = 'yyyy-MM-dd';
 const UI_DATE_FORMAT = 'dd-MM-yyyy';
 
 const mockFetchArticlesForBrainRegionAndExperiment = jest.fn().mockImplementation(
-  (experimentName, brainRegions, page: number, filters: ArticleListFilters) =>
+  (_experimentName, _brainRegions, page: number, filters: ArticleListFilters) =>
     new Promise((resolve) => {
       const mockResponse: ArticleItem[] = [...Array(50).keys()].map((_, index) =>
         createMockArticle(
@@ -203,7 +203,7 @@ describe('LiteratureArticleListingPage', () => {
 
   test('does not show load more indicator when more articles are not available', async () => {
     mockFetchArticlesForBrainRegionAndExperiment.mockImplementationOnce(
-      (token, name, brainRegions, page: number) =>
+      (_token, _name, _brainRegions, page: number) =>
         new Promise((resolve) => {
           const mockResponse: ArticleItem[] = [...Array(10).keys()].map((_, index) =>
             createMockArticle(`Only 10 articles available ${index}`, `${index}`, 'Mock abstract')

@@ -3,7 +3,6 @@ import { atomFamily, atomWithReset, selectAtom } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { getAncestors } from '@/components/BrainTree/util';
 import sessionAtom from '@/state/session';
 import {
   BrainRegion,
@@ -20,9 +19,8 @@ import {
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
 import {
-  checkRepresentationOfDescendents,
-  getDescendentsFromView,
   flattenBrainRegionsTree,
+  getInAnnotationBrainRegionsReducer,
 } from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
@@ -118,45 +116,13 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
   Promise<BrainRegion[] | null>,
   BrainRegion[] | null
 >(brainRegionsAtom, (brainRegions) => {
-  return (
-    brainRegions?.reduce<BrainRegion[]>(
-      (
-        acc,
-        { hasPart, hasLayerPart, id, label, leaves, representedInAnnotation, title, view, ...rest }
-      ) => {
-        const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
+  const inAnnotationBrainRegionsReducer = brainRegions
+    ? getInAnnotationBrainRegionsReducer(brainRegions)
+    : null;
 
-        const { representedInAnnotation: descendentsRepresentedInAnnotation } =
-          descendents?.reduce<{
-            brainRegions: BrainRegion[];
-            representedInAnnotation: boolean;
-          }>(checkRepresentationOfDescendents, {
-            brainRegions,
-            representedInAnnotation: false,
-          }) ?? { representedInAnnotation: false };
-
-        return representedInAnnotation || descendentsRepresentedInAnnotation
-          ? [
-              ...acc,
-              {
-                ancestors: getAncestors(brainRegions, id),
-                id,
-                hasLayerPart,
-                hasPart,
-                leaves,
-                representedInAnnotation,
-                title,
-                label,
-                value: id,
-                view,
-                ...rest,
-              },
-            ]
-          : acc;
-      },
-      []
-    ) ?? null
-  );
+  return !!brainRegions && inAnnotationBrainRegionsReducer
+    ? brainRegions?.reduce<BrainRegion[]>(inAnnotationBrainRegionsReducer, [])
+    : null;
 });
 
 type BrainRegionId = string;

@@ -10,7 +10,6 @@ import {
 } from '@/api/ontologies/brain-regions';
 import { BrainRegion, BrainRegionOntologyView, BrainViewId } from '@/types/ontologies';
 import { buildAlternateChildren, buildAlternateTree } from '@/state/brain-regions/alternate-view';
-import { itemsInAnnotationReducer } from '@/util/brain-hierarchy';
 
 type Volumes = { [key: string]: number };
 
@@ -80,7 +79,7 @@ function createTreeWithRepresentation({
 }) {
   return {
     brainRegions,
-    treeWithRepresentation: tree.items?.reduce(itemsInAnnotationReducer, []),
+    treeWithRepresentation: tree,
   };
 }
 
@@ -146,7 +145,7 @@ function createAlternateViewTree({
 }
 
 function checkAlternateViewForItemsInAnnotation(alternateTree: BrainRegion[]) {
-  const alternateTreeWithRepresentation = alternateTree.reduce(itemsInAnnotationReducer, []);
+  const alternateTreeWithRepresentation = alternateTree;
 
   const pathToAmmonsHorn = [
     'http://api.brain-map.org/api/v2/data/Structure/688',

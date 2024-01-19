@@ -1,6 +1,7 @@
 import { OriginalComposition, CompositionOverrideLeafNode } from '@/types/composition/original';
 import { Ancestor, BrainRegion, DefaultBrainViewId } from '@/types/ontologies';
 import { BRAIN_VIEW_LAYER } from '@/constants/brain-hierarchy';
+import { getAncestors } from '@/components/BrainTree/util';
 
 export const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -66,6 +67,44 @@ export function checkRepresentationOfDescendents(
   };
 }
 
+export function getInAnnotationBrainRegionsReducer(
+  brainRegions: BrainRegion[]
+): (acc: BrainRegion[], cur: BrainRegion) => BrainRegion[] {
+  return (
+    acc,
+    { hasPart, hasLayerPart, id, label, leaves, representedInAnnotation, title, view, ...rest }
+  ) => {
+    const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
+
+    const { representedInAnnotation: descendentsRepresentedInAnnotation } = descendents?.reduce<{
+      brainRegions: BrainRegion[];
+      representedInAnnotation: boolean;
+    }>(checkRepresentationOfDescendents, {
+      brainRegions,
+      representedInAnnotation: false,
+    }) ?? { representedInAnnotation: false };
+
+    return representedInAnnotation || descendentsRepresentedInAnnotation
+      ? [
+          ...acc,
+          {
+            ancestors: getAncestors(brainRegions, id),
+            id,
+            hasLayerPart,
+            hasPart,
+            leaves,
+            representedInAnnotation,
+            title,
+            label,
+            value: id,
+            view,
+            ...rest,
+          },
+        ]
+      : acc;
+  };
+}
+
 export type RegionFullPathType = {
   id: string;
   name: string;
@@ -93,40 +132,6 @@ export function extendCompositionWithOverrideProps(
   Object.values(composition.hasPart).forEach((node) => extendLeafNodeWithOverrideProps(node));
 
   return composition;
-}
-
-/**
- * Adds the itemsInAnnotation property to every brain region in a tree.
- * @param {BrainRegion[]} accBrainRegions
- * @param {BrainRegion} curBrainRegion
- */
-export function itemsInAnnotationReducer(
-  accBrainRegions: BrainRegion[],
-  curBrainRegion: BrainRegion
-): BrainRegion[] {
-  const { items } = curBrainRegion;
-  // NOT a leaf
-  if (items && items?.length !== 0) {
-    const reducedItems = items.reduce(itemsInAnnotationReducer, []); // First add itemsInAnnotation to any descendents.
-
-    const itemsInAnnotation: boolean = reducedItems
-      .flatMap(
-        ({
-          items: nestedItems,
-          itemsInAnnotation: nestedItemsInAnnotation,
-          representedInAnnotation: nestedRepresentedInAnnotation,
-        }) =>
-          nestedItems?.length !== 0 && nestedItemsInAnnotation
-            ? nestedItemsInAnnotation
-            : nestedRepresentedInAnnotation
-      )
-      .includes(true); // Is it true for at least one of the descendents?
-
-    return [...accBrainRegions, { ...curBrainRegion, items: reducedItems, itemsInAnnotation }];
-  }
-
-  // LEAF
-  return [...accBrainRegions, { ...curBrainRegion, itemsInAnnotation: false }]; // No items? Then no items in annotation.
 }
 
 /**
