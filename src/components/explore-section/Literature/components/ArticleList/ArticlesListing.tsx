@@ -166,9 +166,13 @@ export function ArticleListing({
         <ExperimentSelector currentExperiment={experiment} />
 
         {total ? (
-          <div className="flex flex-col flex-wrap mb-7 h-36" data-testid="total-article-count">
-            <span className="text-gray-400 text-sm mt-6">Articles</span>
-            <span className="text-primary-8 font-semibold text-lg">{total}</span>
+          <div
+            className="flex flex-col flex-wrap mb-7 h-36 mt-6 text-gray-400"
+            data-testid="total-article-count"
+          >
+            <span className="text-gray-400 text-sm mt-6">
+              Number of articles: <span className="text-primary-8 font-semibold">{total}</span>
+            </span>
           </div>
         ) : null}
       </div>

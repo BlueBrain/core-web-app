@@ -189,6 +189,8 @@ export type ArticleListFilters = {
   articleTypes: string[];
 };
 
+export const ML_MAX_ARTICLES_PER_PAGE = 100;
+
 const fetchArticlesForBrainRegionAndExperiment = (
   experimentName: string,
   brainRegions: string[],
@@ -197,7 +199,6 @@ const fetchArticlesForBrainRegionAndExperiment = (
   signal?: AbortSignal
 ): Promise<{ articles: ArticleItem[]; total: number; currentPage: number; pages: number }> => {
   const url = bbsMlBaseUrl;
-  const maxResults = 100;
 
   const params = new URLSearchParams();
 
@@ -207,7 +208,7 @@ const fetchArticlesForBrainRegionAndExperiment = (
   uniqueBrainRegions?.forEach((brainRegion) => params.append('regions', brainRegion));
 
   params.append('topics', experimentName);
-  params.append('number_results', `${maxResults}`);
+  params.append('number_results', `${ML_MAX_ARTICLES_PER_PAGE}`);
   params.append('page', `${page}`);
 
   const paramsWithFilter = addQueryParamsForFilters(params, { ...filters });

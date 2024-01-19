@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 import isNil from 'lodash/isNil';
 import { Tooltip } from 'antd';
+import { ML_MAX_ARTICLES_PER_PAGE } from '../Literature/api';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { BrainRegion } from '@/types/ontologies';
@@ -52,30 +53,37 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
 
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
         <div className="flex flex-col flex-wrap mb-7 h-36">
-          {Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) => (
-            <Link
-              href={`/explore/interactive/literature/${config.name}`}
-              key={config.title}
-              className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer hover:text-primary-4"
-              data-testid={`literature-articles-${id}`}
-            >
-              <span className="font-light">{config.title}</span>
-              <span className="flex items-center font-light">
-                <span className="mr-2">
-                  {isNil(totalByExperimentAndBrainRegion.data?.[id]) ? (
-                    <Tooltip
-                      title={`There was an error when fetching literature data for ${config.title}.`}
-                    >
-                      <WarningFilled />
-                    </Tooltip>
-                  ) : (
-                    `${totalByExperimentAndBrainRegion.data?.[id].total} articles`
-                  )}
+          {Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) => {
+            const details = totalByExperimentAndBrainRegion.data?.[id];
+            const total = details?.total ?? 0;
+
+            return (
+              <Link
+                href={`/explore/interactive/literature/${config.name}`}
+                key={config.title}
+                className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer hover:text-primary-4"
+                data-testid={`literature-articles-${id}`}
+              >
+                <span className="font-light">{config.title}</span>
+                <span className="flex items-center font-light">
+                  <span className="mr-2">
+                    {isNil(details) ? (
+                      <Tooltip
+                        title={`There was an error when fetching literature data for ${config.title}.`}
+                      >
+                        <WarningFilled />
+                      </Tooltip>
+                    ) : (
+                      `${
+                        total > ML_MAX_ARTICLES_PER_PAGE ? `${ML_MAX_ARTICLES_PER_PAGE}+` : total
+                      } articles`
+                    )}
+                  </span>
+                  <ReadOutlined />
                 </span>
-                <ReadOutlined />
-              </span>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
@@ -10,6 +10,11 @@ import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
+import {
+  BOUTON_DENSITY,
+  NEURON_DENSITY,
+  NEURON_MORPHOLOGY,
+} from '@/constants/explore-section/list-views';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,
@@ -19,6 +24,10 @@ jest.mock('next/navigation', () => ({
 }));
 
 const mockCountForExperiment = 10;
+
+const experimentWithFewArticles = BOUTON_DENSITY;
+const experimentWith100Articles = NEURON_MORPHOLOGY;
+const experimentWithMoreThan100Articles = NEURON_DENSITY;
 
 jest.mock('src/api/explore-section/resources.ts', () => ({
   __esModule: true,
@@ -30,18 +39,35 @@ jest.mock('src/api/explore-section/resources.ts', () => ({
   ),
 }));
 
-jest.mock('src/components/explore-section/Literature/api.ts', () => ({
-  _esModule: true,
-  fetchParagraphCountForBrainRegionAndExperiment: jest.fn().mockImplementation(
-    (token, experimentType) =>
-      new Promise((resolve) => {
-        resolve({
-          total: Math.floor(Math.random() * 30),
-          experimentUrl: experimentType.id,
-        });
-      })
-  ),
-}));
+jest.mock('src/components/explore-section/Literature/api.ts', () => {
+  const actual = jest.requireActual('src/components/explore-section/Literature/api.ts');
+  return {
+    ...actual,
+    fetchParagraphCountForBrainRegionAndExperiment: jest.fn().mockImplementation(
+      (token, experimentType) =>
+        new Promise((resolve) => {
+          if (experimentType.name === EXPERIMENT_DATA_TYPES[experimentWith100Articles].title) {
+            resolve({
+              total: 100,
+              experimentUrl: experimentType.id,
+            });
+          } else if (
+            experimentType.name === EXPERIMENT_DATA_TYPES[experimentWithMoreThan100Articles].title
+          ) {
+            resolve({
+              total: 110,
+              experimentUrl: experimentType.id,
+            });
+          } else {
+            resolve({
+              total: mockCountForExperiment,
+              experimentUrl: experimentType.id,
+            });
+          }
+        })
+    ),
+  };
+});
 
 jest.mock('deepdash-es/standalone', () => ({
   __esModule: true,
@@ -53,7 +79,7 @@ jest.mock('deepdash-es/standalone', () => ({
 
 describe('SelectedBrainRegionPanel', () => {
   beforeEach(async () => {
-    render(SelectedBrainRegionPanelProvider());
+    await waitFor(() => render(SelectedBrainRegionPanelProvider()));
   });
 
   test('does not show any tab if no brain region is selected to be visualized', () => {
@@ -78,6 +104,39 @@ describe('SelectedBrainRegionPanel', () => {
       const experimentEle = await screen.findByTestId(`literature-articles-${id}`);
       expect(experimentEle.textContent).toContain(config.title);
     }
+  });
+
+  test('shows 100+ if number of articles is greater than 100', async () => {
+    const experimentElement = await screen.findByTestId(
+      `literature-articles-${experimentWithMoreThan100Articles}`
+    );
+
+    expect(experimentElement.textContent).toMatch(
+      EXPERIMENT_DATA_TYPES[experimentWithMoreThan100Articles].title
+    );
+    expect(experimentElement.textContent).toMatch('100+ articles');
+  });
+
+  test('shows actual count if number of articles is equal to 100', async () => {
+    const experimentElement = await screen.findByTestId(
+      `literature-articles-${experimentWith100Articles}`
+    );
+
+    expect(experimentElement.textContent).toMatch(
+      EXPERIMENT_DATA_TYPES[experimentWith100Articles].title
+    );
+    expect(experimentElement.textContent).toMatch('100 articles');
+  });
+
+  test('shows actual count if number of articles is less than 100', async () => {
+    const experimentElement = await screen.findByTestId(
+      `literature-articles-${experimentWithFewArticles}`
+    );
+
+    expect(experimentElement.textContent).toMatch(
+      EXPERIMENT_DATA_TYPES[experimentWithFewArticles].title
+    );
+    expect(experimentElement.textContent).toMatch(`${mockCountForExperiment} articles`);
   });
 
   const HydrateAtoms = ({ initialValues, children }: any) => {
