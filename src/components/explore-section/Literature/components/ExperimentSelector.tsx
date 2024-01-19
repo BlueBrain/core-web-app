@@ -4,7 +4,9 @@ import { ConfigProvider, Select } from 'antd';
 import { useRouter } from 'next/navigation';
 
 import { DownOutlined } from '@ant-design/icons';
-import { DATA_TYPES, ExperimentConfig } from '@/constants/explore-section/experiment-types';
+import { ExperimentConfig } from '@/constants/explore-section/experiment-types';
+import { filterDataTypes } from '@/util/explore-section/data-types';
+import { DataGroups } from '@/types/explore-section/data-groups';
 
 type Props = {
   currentExperiment?: ExperimentConfig;
@@ -35,7 +37,7 @@ export default function ExperimentSelector({ currentExperiment }: Props) {
           onChange={(experimentName) => {
             router.push(`/explore/interactive/literature/${experimentName}`);
           }}
-          options={Object.values(DATA_TYPES).map((config) => ({
+          options={filterDataTypes(DataGroups.Literature).map((config) => ({
             label: <span className="font-semibold text-base">{config.title}</span>,
             value: config.name,
           }))}

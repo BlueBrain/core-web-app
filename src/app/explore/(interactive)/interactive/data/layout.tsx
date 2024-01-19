@@ -3,19 +3,16 @@
 import { ErrorBoundary } from 'react-error-boundary';
 import { ReactNode } from 'react';
 import type { MenuProps } from 'antd';
-import { Menu, Button } from 'antd';
-import { usePathname, useRouter, useParams } from 'next/navigation';
-
+import { Button, Menu } from 'antd';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import {
-  BASE_EXPLORE_PATH,
-  DATA_TYPES,
-  INTERACTIVE_PATH,
-} from '@/constants/explore-section/experiment-types';
+import { BASE_EXPLORE_PATH, INTERACTIVE_PATH } from '@/constants/explore-section/experiment-types';
 import useTotalResults from '@/hooks/useTotalResults';
 import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
+import { filterDataTypes } from '@/util/explore-section/data-types';
+import { DataGroups } from '@/types/explore-section/data-groups';
 
-const menuItemWidth = `${Math.floor(100 / Object.keys(DATA_TYPES).length)}%`;
+const menuItemWidth = `${Math.floor(100 / filterDataTypes(DataGroups.ExperimentData).length)}%`;
 
 const brainRegionSource = 'selected';
 
@@ -48,12 +45,12 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
   if (params?.id)
     return <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>;
 
-  const items = Object.keys(DATA_TYPES).map((k) => {
+  const items = filterDataTypes(DataGroups.ExperimentData).map((k) => {
     return {
-      active: DATA_TYPES[k].name === activeExperimentPath,
-      label: DATA_TYPES[k].title,
-      key: DATA_TYPES[k].name,
-      experimentTypeName: k,
+      active: k.name === activeExperimentPath,
+      label: k.title,
+      key: k.name,
+      experimentTypeName: k.key,
     };
   });
 

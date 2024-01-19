@@ -8,8 +8,9 @@ import { BrainRegion } from '@/types/ontologies';
 import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
+import { filterDataTypes } from '@/util/explore-section/data-types';
+import { DataGroups } from '@/types/explore-section/data-groups';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,
@@ -62,20 +63,21 @@ describe('SelectedBrainRegionPanel', () => {
   });
 
   test('shows count of dataset for all experiment types', async () => {
-    await screen.findByRole('heading', { name: /Experimental data/i });
+    await screen.findByRole('tab', { name: /Experiment data/i });
 
-    for await (const [id, config] of Object.entries(DATA_TYPES)) {
-      const experimentEle = await screen.findByTestId(`experiment-dataset-${id}`);
+    for await (const config of filterDataTypes(DataGroups.Literature)) {
+      const experimentEle = await screen.findByTestId(`experiment-dataset-${config.key}`);
       expect(experimentEle.textContent).toContain(config.title);
       expect(experimentEle.textContent).toContain(`${mockCountForExperiment}`);
     }
   });
 
   test('shows literature articles count for all experiment types', async () => {
-    await screen.findByRole('heading', { name: /Literature/i });
+    const test = await screen.findByRole('tab', { name: /Literature/i });
+    await test.click();
 
-    for await (const [id, config] of Object.entries(DATA_TYPES)) {
-      const experimentEle = await screen.findByTestId(`literature-articles-${id}`);
+    for await (const config of filterDataTypes(DataGroups.Literature)) {
+      const experimentEle = await screen.findByTestId(`literature-articles-${config.key}`);
       expect(experimentEle.textContent).toContain(config.title);
     }
   });

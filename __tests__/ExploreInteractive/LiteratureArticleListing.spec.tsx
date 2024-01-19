@@ -17,6 +17,8 @@ import { mockArticleResponse, mockAuthors, mockJournals } from '__tests__/__util
 import { normalizeString } from '@/util/utils';
 import { ArticleListFilters } from '@/components/explore-section/Literature/api';
 import sessionAtom from '@/state/session';
+import { filterDataTypes } from '@/util/explore-section/data-types';
+import { DataGroups } from '@/types/explore-section/data-groups';
 
 jest.setTimeout(20_000);
 
@@ -154,7 +156,7 @@ describe('LiteratureArticleListingPage', () => {
 
     const options = screen.getAllByRole('option');
 
-    expect(options.length).toEqual(Object.keys(DATA_TYPES).length);
+    expect(options.length).toEqual(filterDataTypes(DataGroups.Literature).length);
   });
 
   test('navigates to route selected by user', async () => {

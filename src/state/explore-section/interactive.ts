@@ -11,7 +11,7 @@ export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], sig
     if (!session) return null;
 
     return await Promise.allSettled(
-      filterDataTypes([DataGroups.Literature]).map((dataType) =>
+      filterDataTypes(DataGroups.Literature).map((dataType) =>
         fetchParagraphCountForBrainRegionAndExperiment(
           session.accessToken,
           { name: dataType.title, id: dataType.key },

@@ -9,8 +9,9 @@ import Link from 'next/link';
 import isNil from 'lodash/isNil';
 import { Tooltip } from 'antd';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
-import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { BrainRegion } from '@/types/ontologies';
+import { filterDataTypes } from '@/util/explore-section/data-types';
+import { DataGroups } from '@/types/explore-section/data-groups';
 
 type Props = {
   brainRegions: BrainRegion[];
@@ -50,24 +51,24 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
 
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
         <div className="flex flex-wrap mb-7 h-36 text-white gap-4">
-          {Object.entries(DATA_TYPES).map(([id, config]) => (
+          {filterDataTypes(DataGroups.Literature).map((config) => (
             <Link
               href={`/explore/interactive/literature/${config.name}`}
               key={config.title}
               className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer hover:text-primary-4"
-              data-testid={`literature-articles-${id}`}
+              data-testid={`literature-articles-${config.key}`}
             >
               <span className="font-light">{config.title}</span>
               <span className="flex items-center font-light">
                 <span className="mr-2">
-                  {isNil(totalByExperimentAndBrainRegion.data?.[id]) ? (
+                  {isNil(totalByExperimentAndBrainRegion.data?.[config.key]) ? (
                     <Tooltip
                       title={`There was an error when fetching literature data for ${config.title}.`}
                     >
                       <WarningFilled />
                     </Tooltip>
                   ) : (
-                    `${totalByExperimentAndBrainRegion.data?.[id].total} articles`
+                    `${totalByExperimentAndBrainRegion.data?.[config.key].total} articles`
                   )}
                 </span>
                 <ReadOutlined />
