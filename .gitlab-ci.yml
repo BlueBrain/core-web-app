@@ -1,7 +1,6 @@
 include:
   - project: cs/gitlabci-templates
     file: /build-image-using-kaniko.yml
-    ref: add_dockerhub
 
 variables:
   FF_USE_FASTZIP: 'true'
@@ -86,11 +85,14 @@ deploy-aws-prod:
   stage: deploy
   extends:
     - .deploy
-    - .build-image-using-kaniko-for-dockerhub
+    - .build-image-using-kaniko
   before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
     CI_REGISTRY_IMAGE: bluebrain/sbo-core-web-app
+    CI_REGISTRY: https://index.docker.io/v1/
+    CI_REGISTRY_USER: bbpbuildbot
+    CI_REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD_DOCKERHUB
     REGISTRY_IMAGE_TAG: latest
     NEXT_PUBLIC_ENVIRONMENT: prod
     NEXT_PUBLIC_BASE_PATH: /mmb-beta
