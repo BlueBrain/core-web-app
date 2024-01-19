@@ -1,8 +1,9 @@
 import { atom } from 'jotai';
 import sessionAtom from '@/state/session';
 import { ExperimentDatasetCountPerBrainRegion } from '@/api/explore-section/resources';
-import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { fetchParagraphCountForBrainRegionAndExperiment } from '@/components/explore-section/Literature/api';
+import { filterDataTypes } from '@/util/explore-section/data-types';
+import { DataGroups } from '@/types/explore-section/data-groups';
 
 export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], signal: AbortSignal) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {
@@ -10,10 +11,10 @@ export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], sig
     if (!session) return null;
 
     return await Promise.allSettled(
-      Object.entries(DATA_TYPES).map(([id, config]) =>
+      filterDataTypes([DataGroups.Literature]).map((dataType) =>
         fetchParagraphCountForBrainRegionAndExperiment(
           session.accessToken,
-          { name: config.title, id },
+          { name: dataType.title, id: dataType.key },
           brainRegionNames,
           signal
         )

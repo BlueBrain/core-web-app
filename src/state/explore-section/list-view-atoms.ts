@@ -19,8 +19,8 @@ import {
 import { ExploreESHit, FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { selectedBrainRegionWithChildrenAtom } from '@/state/brain-regions';
-import dataTypeConfigSelector from '@/util/explore-section/dataTypeConfigSelector';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
+import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 type DataAtomFamilyScopeType = {
   experimentTypeName: string;
@@ -48,7 +48,7 @@ export const activeColumnsAtom = atomFamily(
   ({ experimentTypeName }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<string[]> | string[]>(async (get) => {
       const dimensionColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
-      const { columns } = dataTypeConfigSelector(experimentTypeName);
+      const { columns } = DATA_TYPES[experimentTypeName];
 
       return ['index', ...(dimensionColumns || []), ...columns];
     }),
@@ -78,7 +78,7 @@ export const dimensionColumnsAtom = atomFamily(({ experimentTypeName }: DataAtom
 export const filtersAtom = atomFamily(
   ({ experimentTypeName }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<Filter[]>>(async (get) => {
-      const { columns } = dataTypeConfigSelector(experimentTypeName);
+      const { columns } = DATA_TYPES[experimentTypeName];
       const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
       return [
         ...columns.map((colKey) => columnKeyToFilter(colKey)),

@@ -1,14 +1,15 @@
 'use client';
 
-import { DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import ExperimentTotal from '@/components/explore-section/ExploreInteractive/ExperimentTotal';
+import { DataGroups } from '@/types/explore-section/data-groups';
+import { filterDataTypes } from '@/util/explore-section/data-types';
 
 export function ExperimentsTotals() {
-
+  const experimentDataTypes = filterDataTypes([DataGroups.ExperimentData]);
   return (
     <div className="flex flex-wrap mb-7 h-36 text-white gap-4">
-      {Object.keys(DATA_TYPES).map((experimentTypeName) => (
-        <ExperimentTotal key={experimentTypeName} experimentTypeName={experimentTypeName} />
+      {experimentDataTypes.map((experimentType) => (
+        <ExperimentTotal key={experimentType.key} experimentTypeName={experimentType.key} />
       ))}
     </div>
   );

@@ -11,6 +11,7 @@ import { DetailProps } from '@/types/explore-section/application';
 import { DataGroups } from '@/types/explore-section/data-groups';
 
 export type ExperimentConfig = {
+  key: string;
   title: string;
   name: string;
   columns: Array<string>;
@@ -22,22 +23,11 @@ export type ExperimentConfig = {
 export const INTERACTIVE_PATH = `/explore/interactive/`;
 export const BASE_EXPLORE_PATH = `${INTERACTIVE_PATH}data/`;
 
-export const SIMULATION_DATA_TYPES: {
-  [x: ExperimentDataTypeName]: ExperimentConfig;
-} = {
-  [SIMULATION_CAMPAIGNS]: {
-    title: 'Simulation campaigns',
-    name: 'simulation-campaigns',
-    columns: ['simCampName', 'brainConfiguration', 'createdAt'],
-    curated: false,
-    groups: [DataGroups.SimulationData],
-  },
-};
-
 export const DATA_TYPES: {
   [x: ExperimentDataTypeName]: ExperimentConfig;
 } = {
   [NEURON_MORPHOLOGY]: {
+    key: NEURON_MORPHOLOGY,
     title: 'Morphology',
     name: 'morphology',
     columns: [
@@ -131,6 +121,7 @@ export const DATA_TYPES: {
     groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [ELECTRO_PHYSIOLOGY]: {
+    key: ELECTRO_PHYSIOLOGY,
     title: 'Electrophysiology',
     name: 'electrophysiology',
     columns: ['brainRegion', 'eType', 'name', 'subjectSpecies', 'contributors', 'createdAt'],
@@ -138,6 +129,7 @@ export const DATA_TYPES: {
     groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [NEURON_DENSITY]: {
+    key: NEURON_DENSITY,
     title: 'Neuron density',
     name: 'neuron-density',
     columns: [
@@ -156,6 +148,7 @@ export const DATA_TYPES: {
     groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [BOUTON_DENSITY]: {
+    key: BOUTON_DENSITY,
     title: 'Bouton density',
     name: 'bouton-density',
     columns: [
@@ -172,6 +165,7 @@ export const DATA_TYPES: {
     groups: [DataGroups.ExperimentData, DataGroups.Literature],
   },
   [SYNAPSE_PER_CONNECTION]: {
+    key: SYNAPSE_PER_CONNECTION,
     title: 'Synapse per connection',
     name: 'synapse-per-connection',
     columns: [
@@ -187,5 +181,13 @@ export const DATA_TYPES: {
     ],
     curated: false,
     groups: [DataGroups.ExperimentData, DataGroups.Literature],
+  },
+  [SIMULATION_CAMPAIGNS]: {
+    key: SIMULATION_CAMPAIGNS,
+    title: 'Simulation campaigns',
+    name: 'simulation-campaigns',
+    columns: ['simCampName', 'brainConfiguration', 'createdAt'],
+    curated: false,
+    groups: [DataGroups.SimulationData],
   },
 };
