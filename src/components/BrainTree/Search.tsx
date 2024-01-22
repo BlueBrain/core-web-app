@@ -54,7 +54,7 @@ export default function BrainTreeSearch({
 
   const handleSelect = useCallback(
     (_labeledValue: string, option: SearchOption) => {
-      const { ancestors, value, title, leaves, representedInAnnotation } = option;
+      const { ancestors, value, title, leaves } = option;
 
       if (!ancestors) return;
 
@@ -80,7 +80,6 @@ export default function BrainTreeSearch({
         value,
         title as string,
         leaves ?? null,
-        representedInAnnotation,
         brainRegionHierarchyState ?? {}
       );
 

@@ -373,14 +373,12 @@ export const setSelectedBrainRegionAtom = atom(
     selectedBrainRegionId: string,
     selectedBrainRegionTitle: string,
     selectedBrainRegionLeaves: string[] | null,
-    selectedBrainRegionRepresentedInAnnotation: boolean,
     brainRegionHierarchyState: Record<string, NavValue>
   ) => {
     const brainRegion = {
       id: selectedBrainRegionId,
       title: selectedBrainRegionTitle,
       leaves: selectedBrainRegionLeaves,
-      representedInAnnotation: selectedBrainRegionRepresentedInAnnotation,
     };
 
     set(selectedBrainRegionAtom, brainRegion);

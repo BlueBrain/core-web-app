@@ -225,7 +225,7 @@ export default function BrainRegions() {
                       title,
                       leaves,
                       representedInAnnotation,
-                      brainRegionHierarchyState
+                      brainRegionHierarchyState ?? {}
                     )
                   }
                   title={brainRegionTitleCaseExceptConjunctions(title)}
