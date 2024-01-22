@@ -8,8 +8,7 @@ export type BrainRegion = {
   id: string;
   isPartOf: string | null;
   isLayerPartOf: string | null;
-  label: string; // Confirmed by Cristina; "label" should always be present (in the ontology).
-  title?: string; // TODO: Check whether this type actually exists; it may be something that we invented for some reason.
+  title: string;
   notation: string;
   colorCode: string;
   items?: BrainRegion[];

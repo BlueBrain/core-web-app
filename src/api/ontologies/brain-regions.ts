@@ -52,7 +52,6 @@ export const serializeBrainRegionsAndVolumes = (
         hasLayerPart: brainRegionPayload.hasLayerPart,
         hasPart: brainRegionPayload.hasPart,
         title: brainRegionPayload.prefLabel,
-        label: brainRegionPayload.label,
         notation: brainRegionPayload.notation,
         leaves,
         representedInAnnotation: brainRegionPayload.representedInAnnotation,
@@ -69,7 +68,7 @@ export const serializeBrainRegionsAndVolumes = (
   return {
     brainRegions: serializedBrainRegions
       .filter(({ id }, index) => !ids.includes(id, index + 1))
-      .sort((a, b) => a.label.localeCompare(b.label)),
+      .sort((a, b) => a.title.localeCompare(b.title)),
     volumes,
   };
 };

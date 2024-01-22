@@ -35,7 +35,7 @@ describe('Default brain region in explore', () => {
   });
 
   test('show opened tree', () => {
-    screen.getByText('{"http://api.brain-map.org/api/v2/data/Structure/8":null}', {
+    screen.getByText('Basic cell groups and regions', {
       selector: hierarchySelector,
     });
   });
@@ -86,7 +86,7 @@ describe('Default brain region in build', () => {
   });
 
   test('show opened tree', () => {
-    screen.getByText('{"http://api.brain-map.org/api/v2/data/Structure/8":null}', {
+    screen.getByText('Basic cell groups and regions', {
       selector: hierarchySelector,
     });
   });

@@ -48,7 +48,7 @@ export function useFieldsOptionsProvider(): (field: keyof SynapticAssignmentRule
     return [...usortedTypes].sort((a, b) => a.localeCompare(b));
   }, [userTypeNames, initialTypeNames]);
   const brainRegions = useAtomValue(brainRegionsAtom);
-  const brainRegionNames = useMemo(() => brainRegions?.map((br) => br.label), [brainRegions]);
+  const brainRegionNames = useMemo(() => brainRegions?.map((br) => br.title), [brainRegions]);
 
   const arrays = useMemo(() => {
     const mTypes: string[] = [];

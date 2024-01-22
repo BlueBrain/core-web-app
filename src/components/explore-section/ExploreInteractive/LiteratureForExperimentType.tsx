@@ -29,7 +29,7 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
 
     return loadable(
       getLiteratureCountForBrainRegion(
-        brainRegions.map((br) => br.label),
+        brainRegions.map((br) => br.title),
         controller.signal
       )
     );

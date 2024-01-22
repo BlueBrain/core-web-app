@@ -172,8 +172,8 @@ export default function ConnectomeEditorSidebar() {
     if (brainRegionsLoaded || brainRegionLeaves === null) return;
 
     brainRegionLeaves.forEach((l) => {
-      setSelectedPreBrainRegion(l.id, l.label);
-      setSelectedPostBrainRegion(l.id, l.label);
+      setSelectedPreBrainRegion(l.id, l.title);
+      setSelectedPostBrainRegion(l.id, l.title);
     });
 
     setBrainRegionsLoaded(true);
@@ -187,7 +187,7 @@ export default function ConnectomeEditorSidebar() {
   const leafTitleById = useMemo(() => {
     const map: { [id: string]: string } = {};
     brainRegionLeaves?.forEach((l) => {
-      map[l.id] = l.label;
+      map[l.id] = l.title;
     });
     return map;
   }, [brainRegionLeaves]);

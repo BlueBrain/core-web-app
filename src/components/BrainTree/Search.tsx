@@ -14,6 +14,8 @@ import { NavValue } from '@/state/brain-regions/types';
 import { BRAIN_VIEW_LAYER } from '@/constants/brain-hierarchy';
 import filterAndSortBasedOnPosition from '@/util/filterAndSortBasedOnPosition';
 
+type SearchOption = Omit<BrainRegion, 'title'> & { label: string; title?: string; value: string };
+
 /**
  * This component is a wrapper for the TreeNav component that renders a TreeNav using the brain regions data.
  * @param BrainTreeSearch.brainTreeNav container of the tree, used to select the node selected from the search dropdown from the brain regions tree
@@ -30,16 +32,17 @@ export default function BrainTreeSearch({
 }) {
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const setSelectedAlternateViews = useSetAtom(selectedAlternateViews);
-  const brainRegionsOptions = useAtomValue(brainRegionsWithRepresentationAtom) as unknown as
-    | BrainRegion[]
-    | null; // TODO: Fix this. Where does "value" come from (if it's not part of BrainRegion)?
-  const [searchOptions, setSearchOptions] = useState<BrainRegion[] | null>(
+  const brainRegionsOptions = useAtomValue(brainRegionsWithRepresentationAtom) as
+    | SearchOption[]
+    | null;
+
+  const [searchOptions, setSearchOptions] = useState<SearchOption[] | null>(
     brainRegionsOptions ?? []
   );
 
   const handleSelect = useCallback(
-    (_labeledValue: string, option: BrainRegion & { value: string }) => {
-      const { ancestors, value, label, leaves, representedInAnnotation } = option;
+    (_labeledValue: string, option: SearchOption) => {
+      const { ancestors, value, title, leaves, representedInAnnotation } = option;
 
       if (!ancestors) return;
 
@@ -63,7 +66,7 @@ export default function BrainTreeSearch({
 
       setSelectedBrainRegion(
         value,
-        label as string,
+        title as string,
         leaves ?? null,
         representedInAnnotation,
         brainRegionHierarchyState
@@ -86,9 +89,13 @@ export default function BrainTreeSearch({
       } else {
         setSearchOptions(
           brainRegionsOptions?.length
-            ? filterAndSortBasedOnPosition<BrainRegion>(
+            ? filterAndSortBasedOnPosition<SearchOption>(
                 value.trim().toLowerCase(),
-                brainRegionsOptions
+                brainRegionsOptions.reduce<SearchOption[]>(
+                  (acc, { title, ...rest }) =>
+                    title ? [...acc, { ...rest, label: title, title }] : acc,
+                  []
+                ) // TODO: This bit is kind-of garbage. For some reason, this function requires a "label", when the actual Ant-D component uses a "title" prop.
               )
             : null
         );
@@ -104,7 +111,7 @@ export default function BrainTreeSearch({
 
   return (
     !!searchOptions && (
-      <Search<BrainRegion>
+      <Search
         useSearchInsteadOfFilter
         className="mb-10"
         options={searchOptions}

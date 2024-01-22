@@ -230,7 +230,6 @@ export default function BrainRegions() {
                   }
                   title={brainRegionTitleCaseExceptConjunctions(title)}
                   isExpanded={isExpanded}
-                  isHidden={false}
                   trigger={trigger}
                   content={content}
                   selectedBrainRegion={selectedBrainRegion}

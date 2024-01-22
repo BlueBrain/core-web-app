@@ -207,7 +207,6 @@ function TreeNav(
           onValueChange={onValueChange}
           path={[id]}
           itemValue={value?.[id] ?? null}
-          test={value?.[id] ?? null}
           colorCode={colorCode}
           {...rest} // eslint-disable-line react/jsx-props-no-spreading
         >

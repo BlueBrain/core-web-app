@@ -13,7 +13,6 @@ const getMockBrainRegion = (
   title: name,
   isPartOf: `${IDPrefix}/48`,
   isLayerPartOf: null,
-  label: 'Mock Brain Region',
   notation: 'ACAv5',
   representedInAnnotation: true,
   view: 'https://neuroshapes.org/BrainRegion',

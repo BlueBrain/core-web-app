@@ -72,7 +72,7 @@ export function getInAnnotationBrainRegionsReducer(
 ): (acc: BrainRegion[], cur: BrainRegion) => BrainRegion[] {
   return (
     acc,
-    { hasPart, hasLayerPart, id, label, leaves, representedInAnnotation, title, view, ...rest }
+    { hasPart, hasLayerPart, id, leaves, representedInAnnotation, title, view, ...rest }
   ) => {
     const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
 
@@ -95,7 +95,6 @@ export function getInAnnotationBrainRegionsReducer(
             leaves,
             representedInAnnotation,
             title,
-            label,
             value: id,
             view,
             ...rest,
