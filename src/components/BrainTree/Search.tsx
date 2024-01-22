@@ -16,6 +16,18 @@ import filterAndSortBasedOnPosition from '@/util/filterAndSortBasedOnPosition';
 
 type SearchOption = Omit<BrainRegion, 'title'> & { label: string; title?: string; value: string };
 
+// TODO: For some reason, filterAndSortBasedOnPosition requires a "label",
+// when the actual Ant-D component uses a "title" prop.
+// This should be fixed and simplified. "title" exists in the ontology, "label" does not.
+// As far as I can see, we have no use for "label". We create it when we create brainRegionsAtom,
+// but doing so only makes the type more complex than it needs to be.
+function searchOptionsReducer(
+  acc: SearchOption[],
+  { title, ...rest }: SearchOption
+): SearchOption[] {
+  return title ? [...acc, { ...rest, label: title, title }] : acc;
+}
+
 /**
  * This component is a wrapper for the TreeNav component that renders a TreeNav using the brain regions data.
  * @param BrainTreeSearch.brainTreeNav container of the tree, used to select the node selected from the search dropdown from the brain regions tree
@@ -37,7 +49,7 @@ export default function BrainTreeSearch({
     | null;
 
   const [searchOptions, setSearchOptions] = useState<SearchOption[] | null>(
-    brainRegionsOptions ?? []
+    brainRegionsOptions?.reduce<SearchOption[]>(searchOptionsReducer, []) ?? []
   );
 
   const handleSelect = useCallback(
@@ -91,11 +103,7 @@ export default function BrainTreeSearch({
           brainRegionsOptions?.length
             ? filterAndSortBasedOnPosition<SearchOption>(
                 value.trim().toLowerCase(),
-                brainRegionsOptions.reduce<SearchOption[]>(
-                  (acc, { title, ...rest }) =>
-                    title ? [...acc, { ...rest, label: title, title }] : acc,
-                  []
-                ) // TODO: This bit is kind-of garbage. For some reason, this function requires a "label", when the actual Ant-D component uses a "title" prop.
+                brainRegionsOptions.reduce<SearchOption[]>(searchOptionsReducer, [])
               )
             : null
         );
