@@ -3,6 +3,7 @@ import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 
 import { sectionAtom } from '@/state/application';
+import { brainRegionHierarchyStateAtom } from '@/state/brain-regions';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import BrainRegions from '@/components/build-section/BrainRegionSelector/BrainRegions';
 import sessionAtom from '@/state/session';
@@ -31,7 +32,9 @@ jest.mock(
 
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
+
   unobserve = jest.fn();
+
   disconnect = jest.fn();
 };
 
@@ -64,6 +67,12 @@ describe('Default brain region panel in explore', () => {
         initialValues={[
           [sessionAtom, { accessToken: 'abc' }],
           [sectionAtom, 'explore'],
+          [
+            brainRegionHierarchyStateAtom,
+            {
+              'http://api.brain-map.org/api/v2/data/Structure/8': null,
+            },
+          ],
           [brainModelConfigIdAtom, '123'],
         ]}
       >
@@ -94,6 +103,7 @@ describe('Default brain region panel with no atoms', () => {
         initialValues={[
           [sessionAtom, { accessToken: 'abc' }],
           [sectionAtom, 'test'],
+          [brainRegionHierarchyStateAtom, {}],
         ]}
       >
         <BrainRegions />
@@ -123,6 +133,7 @@ describe('Default brain region panel in buid', () => {
         initialValues={[
           [sessionAtom, { accessToken: 'abc' }],
           [sectionAtom, 'build'],
+          [brainRegionHierarchyStateAtom, {}],
         ]}
       >
         <BrainRegions />
