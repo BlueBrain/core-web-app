@@ -14,6 +14,7 @@ import {
   brainRegionsFilteredTreeAtom,
   brainRegionLeavesUnsortedArrayAtom,
   leafIdsByRegionIdAtom,
+  selectedBrainRegionAtom,
 } from '@/state/brain-regions';
 import BrainAreaSwitch from '@/components/ConnectomeEditorSidebar/BrainAreaSwitch';
 import { NavValue } from '@/state/brain-regions/types';
@@ -31,11 +32,14 @@ function NavTitle({
   selectedBrainRegions,
   isLeaf,
 }: TitleComponentProps) {
+  const navTitleRef = useRef<HTMLDivElement>(null);
   const leafIdsByRegionId = useAtomValue(leafIdsByRegionIdAtom);
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const checked = useMemo(
     () => leafIdsByRegionId[id ?? '']?.every((brId) => selectedBrainRegions.has(brId)) ?? false,
     [leafIdsByRegionId, id, selectedBrainRegions]
   );
+  const selected = id && selectedBrainRegion?.id === id;
 
   const indeterminate = useMemo(() => {
     if (checked) return false;
@@ -49,9 +53,15 @@ function NavTitle({
     else checkbox = <Checkbox checked={checked} indeterminate={indeterminate} onClick={onClick} />;
   }
 
+  useEffect(() => {
+    if (navTitleRef.current && selected) {
+      navTitleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [navTitleRef, selected]);
+
   return (
     <>
-      <div className="py-3 flex justify-between items-center">
+      <div ref={navTitleRef} className="py-3 flex justify-between items-center">
         <div className="flex gap-2 justify-between items-center">
           {checkbox}
           <button
@@ -219,7 +229,7 @@ export default function ConnectomeEditorSidebar() {
 
             <BrainAreaSwitch />
 
-            <BrainTreeSearch brainTreeNav={brainTreeNavRef?.current} setValue={setNavValue} />
+            <BrainTreeSearch setValue={setNavValue} />
             <BrainTreeNav ref={brainTreeNavRef} setValue={setNavValue} value={navValue}>
               {({
                 colorCode,

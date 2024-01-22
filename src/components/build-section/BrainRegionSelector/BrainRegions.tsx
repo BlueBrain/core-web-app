@@ -77,7 +77,7 @@ function NavTitle({
 
   const selected = id && selectedBrainRegion?.id === id;
 
-  const selectOptions = brainRegionViews?.map((view) => {
+  const viewOptions = brainRegionViews?.map((view) => {
     const brainRegion = brainRegions?.find((br) => br.id === id);
     const isDisabled = !!(brainRegion && !brainRegion[view.childrenProperty as keyof BrainRegion]);
 
@@ -89,8 +89,8 @@ function NavTitle({
   });
 
   const defaultViewOption = useMemo(
-    () => selectOptions?.find((view) => view.value === viewId),
-    [selectOptions, viewId]
+    () => viewOptions?.find((view) => view.value === viewId),
+    [viewOptions, viewId]
   );
 
   useEffect(() => {
@@ -106,12 +106,20 @@ function NavTitle({
     };
   }, [navTitleRef]);
 
+  useEffect(() => {
+    if (navTitleRef.current && selected) {
+      navTitleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [navTitleRef, selected]);
+
   return (
     <>
       <div ref={navTitleRef} className="py-3 first:border-none group">
         <div
           className={classNames(
-            'w-full flex items-center justify-between py-px rounded-full gap-x-1',
+            'w-full flex items-center justify-between py-1 rounded-full gap-x-1',
+            '[&:has(.brain-regions-views-open)]:rounded-md [&:has(.brain-regions-views-open)]:items-start will-change-[transform,height]',
+            '[&:has(.brain-regions-views-open)]:transition-background [&:has(.brain-regions-views-open)]:ease-out [&:has(.brain-regions-views-open)]:py-3',
             selected && 'px-2 transition-all ease-out duration-200 hover:shadow-md'
           )}
           style={selected ? { backgroundColor: colorCode } : {}}
@@ -135,13 +143,21 @@ function NavTitle({
               {title}
             </span>
           </button>
-          <div className="flex gap-2 justify-between items-center [&:not(:has(button.accordion-trigger))]:pr-6">
+          <div
+            className={classNames(
+              'flex gap-2 justify-between items-center',
+              '[&:not(:has(button.accordion-trigger))]:pr-6 [&:has(.brain-regions-views-open)]:items-start'
+            )}
+          >
             <AlternateViewSelector
-              brainRegionViews={brainRegionViews}
-              defaultViewOption={defaultViewOption}
-              id={id}
-              selectOptions={selectOptions}
               selectedBrainRegion={selectedBrainRegion?.id}
+              {...{
+                id,
+                colorCode,
+                brainRegionViews,
+                defaultViewOption,
+                viewOptions,
+              }}
             />
             {trigger?.()}
           </div>
@@ -197,7 +213,6 @@ export default function BrainRegions() {
             />
           </div>
           <BrainTreeSearch
-            brainTreeNav={brainTreeNavRef?.current}
             setValue={setBrainRegionHierarchyState}
             onClear={resetSelectedBrainRegion}
           />

@@ -105,11 +105,14 @@ export function TreeNavItem({
               data-disabled={!items || items.length === 0}
               {...triggerProps} /* eslint-disable-line react/jsx-props-no-spreading */
             >
-              <CaretRightOutlined className={classNames(styles.accordionChevron, 'h-[13px]')} />
+              <CaretRightOutlined
+                style={{ color: colorCode }}
+                className={classNames(styles.accordionChevron, 'mix-blend-difference h-[13px]')}
+              />
             </Accordion.Trigger>
           )
         : null,
-    [items, renderedItems, section]
+    [items, renderedItems, section, colorCode]
   );
 
   const content =

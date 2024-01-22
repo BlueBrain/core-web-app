@@ -1,26 +1,30 @@
-import React, { useCallback } from 'react';
+import { useCallback, useReducer } from 'react';
 import { useSetAtom } from 'jotai';
+import filter from 'lodash/filter';
+
+import SelectView, { ViewOption } from './SelectView';
 import { BrainViewId, BrainRegionOntologyView } from '@/types/ontologies';
 import { addOrRemoveSelectedAlternateView } from '@/state/brain-regions';
-import SelectDropdown, { SelectOption } from '@/components/SelectDropdown';
 
 type AlternateViewProps = {
   brainRegionViews: BrainRegionOntologyView[] | null;
-  defaultViewOption?: SelectOption;
+  defaultViewOption?: ViewOption;
   id?: string;
-  selectOptions?: SelectOption[];
+  viewOptions?: ViewOption[];
   selectedBrainRegion?: string;
+  colorCode?: string;
 };
 
 export default function AlternateViewSelector({
   brainRegionViews,
   defaultViewOption,
   id,
-  selectOptions,
+  viewOptions,
   selectedBrainRegion,
+  colorCode,
 }: AlternateViewProps) {
   const changeSelectedViews = useSetAtom(addOrRemoveSelectedAlternateView);
-
+  const [openDropdown, toggleDropdown] = useReducer((prev) => !prev, false);
   /**
    * Function to trigger the changing of view
    * @param newViewId the selected view id
@@ -35,29 +39,32 @@ export default function AlternateViewSelector({
   );
 
   // first count the non disabled options
-  let nonDisabled = 0;
-  selectOptions?.forEach((option) => {
-    if (!option.isDisabled) {
-      nonDisabled += 1;
-    }
-  });
+  const nonDisabled = filter(viewOptions, ['isDisabled', false]).length ?? 0;
 
   // if the non-disabled options are less than 2, then render only the label
   // without the selector
   if (id === selectedBrainRegion && nonDisabled < 2 && defaultViewOption) {
     return (
-      <span className="text-neutral-1 font-thin text-[10px] text-left mix-blend-difference">
+      <span
+        style={{ color: colorCode }}
+        className="text-neutral-1 font-thin text-[10px] text-left mix-blend-difference"
+      >
         {defaultViewOption.label}
       </span>
     );
   }
 
-  if (id === selectedBrainRegion && brainRegionViews && selectOptions && defaultViewOption) {
+  if (id === selectedBrainRegion && brainRegionViews && viewOptions && defaultViewOption) {
     return (
-      <SelectDropdown
-        defaultOption={defaultViewOption}
-        selectOptions={selectOptions}
-        onChangeFunc={onChangeViewSelection}
+      <SelectView
+        {...{
+          colorCode,
+          openDropdown,
+          defaultViewOption,
+          viewOptions,
+          onChangeViewSelection,
+          toggleDropdown,
+        }}
       />
     );
   }

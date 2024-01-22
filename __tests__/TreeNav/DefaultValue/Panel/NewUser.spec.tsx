@@ -24,9 +24,18 @@ function TestProvider({ initialValues, children }: any) {
   );
 }
 
+jest.mock(
+  'src/api/ontologies/index.ts',
+  () => jest.requireActual('__tests__/__utils__/Ontology').defaultOntologyMock
+);
+
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
 global.ResizeObserver = class MockedResizeObserver {
   observe = jest.fn();
+
   unobserve = jest.fn();
+
   disconnect = jest.fn();
 };
 

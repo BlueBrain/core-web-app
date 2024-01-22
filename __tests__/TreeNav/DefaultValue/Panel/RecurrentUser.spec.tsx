@@ -39,6 +39,8 @@ jest.mock('src/util/utils.ts', () => {
   };
 });
 
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
 const defaultRegion = 'Isocortex';
 
 async function checkTreeExpandedFromSaved() {

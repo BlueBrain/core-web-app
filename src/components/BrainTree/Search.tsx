@@ -17,11 +17,9 @@ import filterAndSortBasedOnPosition from '@/util/filterAndSortBasedOnPosition';
  * @param BrainTreeSearch.setValue Add new opened node to the tree  hierarchy state
  */
 export default function BrainTreeSearch({
-  brainTreeNav,
   setValue,
   onClear = () => {},
 }: {
-  brainTreeNav?: HTMLDivElement | null;
   setValue?: Dispatch<SetStateAction<NavValue>>;
   onClear?: () => void;
 }) {
@@ -60,13 +58,8 @@ export default function BrainTreeSearch({
         leaves ?? null,
         representedInAnnotation
       );
-      // This timeout seems to be necessary to "wait" until the nav item has been rendered before attemping to scroll to it.
-      setTimeout(() => {
-        const selectedNavItem = brainTreeNav?.querySelector(`[data-tree-id="${optionValue}"]`);
-        selectedNavItem?.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
-      }, 500);
     },
-    [brainTreeNav, setSelectedBrainRegion, setSelectedAlternateViews, setValue]
+    [setSelectedBrainRegion, setSelectedAlternateViews, setValue]
   ) as SelectProps['onSelect'];
 
   const handleSearch = useCallback(

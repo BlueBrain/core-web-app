@@ -45,6 +45,7 @@ jest.mock('src/util/utils.ts', () => {
     getInitializationValue: () => previouslySelectedRegion,
   };
 });
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 const queryParamRegionName = 'Interbrain';
 
