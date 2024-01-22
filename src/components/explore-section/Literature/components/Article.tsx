@@ -77,9 +77,9 @@ export default function Article({
   title,
   doi,
   authors,
+  paragraph,
   journal,
   journalISSN,
-  abstract,
   collapseAll,
   publicationDate,
   citationsCount,
@@ -199,7 +199,7 @@ export default function Article({
               : 'line-clamp-2 transition-all delay-75 ease-in'
           )}
         >
-          {abstract}
+          {paragraph}
         </div>
         <button
           type="button"

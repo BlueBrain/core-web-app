@@ -76,6 +76,21 @@ describe('GenerativeQAResults', () => {
     expectArticlesInOrder([article1, article2, article3, article4]);
   });
 
+  it('shows paragraph for articles instead of their abstract', async () => {
+    const mockAbstract = 'Mock abstract';
+    const mockParagraph = 'Mock paragraph';
+    const article1 = getArticle(1, { abstract: mockAbstract, paragraph: `${mockParagraph} 1` });
+    const article2 = getArticle(2, { abstract: mockAbstract, paragraph: `${mockParagraph} 2` });
+    const article3 = getArticle(3, { abstract: mockAbstract, paragraph: `${mockParagraph} 3` });
+    const article4 = getArticle(4, { abstract: mockAbstract, paragraph: `${mockParagraph} 4` });
+
+    renderComponent([article1, article2, article3, article4]);
+    expandArticles();
+
+    expect(screen.getAllByText(new RegExp(mockParagraph))).toHaveLength(4);
+    expect(screen.queryByText(new RegExp(mockAbstract))).not.toBeInTheDocument();
+  });
+
   const HydrateAtoms = ({ initialValues, children }: any) => {
     useHydrateAtoms(initialValues);
     return children;
