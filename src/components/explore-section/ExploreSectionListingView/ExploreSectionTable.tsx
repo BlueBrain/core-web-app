@@ -136,6 +136,7 @@ export function BaseTable({
       rowClassName={styles.tableRow}
       rowKey={(row) => row._source._self}
       rowSelection={rowSelection}
+      scroll={{ x: 'fit-content' }}
     />
   );
 }

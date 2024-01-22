@@ -20,7 +20,7 @@ function NumericResultsInfo({
   );
 
   return (
-    <div className="flex justify-between pl-5 w-full">
+    <div className="flex justify-between w-full pl-4">
       <h1 className="text-primary-9 flex items-center" aria-label="listing-view-title">
         <span aria-label="listing-view-total">
           {total.state === 'loading' ||

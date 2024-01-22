@@ -1,6 +1,7 @@
 .table a {
   @apply text-primary-7;
 }
+
 .headerText,
 .tableHeader {
   @apply flex items-center justify-between text-left text-gray-500 gap-2 w-fit;
@@ -15,7 +16,7 @@
 }
 
 .dragIcons {
-  @apply font-light text-2xl text-neutral-3 rotate-90 cursor-col-resize ml-auto absolute -right-1.5;
+  @apply font-light text-2xl text-neutral-3 rotate-90 cursor-col-resize ml-auto absolute right-0;
   opacity: 0;
 }
 

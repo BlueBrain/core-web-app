@@ -81,7 +81,7 @@ export default function FilterControls({
   }, [activeColumns]);
 
   return (
-    <div className="flex justify-between gap-5 pl-5 w-full flex-1 max-h-14">
+    <div className="flex justify-between gap-5 w-full flex-1 max-h-14">
       <div className="mr-auto">{children}</div>
       <div className="w-full inline-flex gap-2 place-content-end">
         <ClearFilters onClick={clearFilters} />

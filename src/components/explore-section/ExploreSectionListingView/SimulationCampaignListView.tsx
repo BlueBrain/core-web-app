@@ -42,29 +42,31 @@ export default function SimulationCampaignListView({
   }, [setAxes]);
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#d1d1d1' }}>
-      <WithControlPanel experimentTypeName={experimentTypeName} brainRegionSource="root">
-        {({ displayControlPanel, setDisplayControlPanel }) => (
-          <>
-            <div className="flex flex-col pt-10">
-              <NumericResultsInfo
+    <div className="flex min-h-screen bg-[#d1d1d1]">
+      <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full h-full overflow-x-auto overflow-y-hidden">
+        <WithControlPanel experimentTypeName={experimentTypeName} brainRegionSource="root">
+          {({ displayControlPanel, setDisplayControlPanel }) => (
+            <>
+              <div className="flex flex-col pt-10">
+                <NumericResultsInfo
+                  experimentTypeName={experimentTypeName}
+                  brainRegionSource="root"
+                />
+              </div>
+              <FilterControls
+                displayControlPanel={displayControlPanel}
+                setDisplayControlPanel={setDisplayControlPanel}
                 experimentTypeName={experimentTypeName}
-                brainRegionSource="root"
               />
-            </div>
-            <FilterControls
-              displayControlPanel={displayControlPanel}
-              setDisplayControlPanel={setDisplayControlPanel}
-              experimentTypeName={experimentTypeName}
-            />
-            <ListTable
-              columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
-              dataSource={data}
-              loading={loading}
-            />
-          </>
-        )}
-      </WithControlPanel>
+              <ListTable
+                columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
+                dataSource={data}
+                loading={loading}
+              />
+            </>
+          )}
+        </WithControlPanel>
+      </div>
     </div>
   );
 }

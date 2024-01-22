@@ -53,34 +53,36 @@ export default function DefaultListView({
       style={{ background: '#d1d1d1' }}
       data-testid="explore-section-listing-view"
     >
-      <WithControlPanel
-        experimentTypeName={experimentTypeName}
-        brainRegionSource={brainRegionSource}
-      >
-        {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
-          <>
-            <FilterControls
-              filters={filters}
-              displayControlPanel={displayControlPanel}
-              experimentTypeName={experimentTypeName}
-              setDisplayControlPanel={setDisplayControlPanel}
-            >
-              <NumericResultsInfo
+      <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full max-h-[calc(100vh-156px)] h-full overflow-x-auto overflow-y-hidden">
+        <WithControlPanel
+          experimentTypeName={experimentTypeName}
+          brainRegionSource={brainRegionSource}
+        >
+          {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
+            <>
+              <FilterControls
+                filters={filters}
+                displayControlPanel={displayControlPanel}
                 experimentTypeName={experimentTypeName}
-                brainRegionSource={brainRegionSource}
+                setDisplayControlPanel={setDisplayControlPanel}
+              >
+                <NumericResultsInfo
+                  experimentTypeName={experimentTypeName}
+                  brainRegionSource={brainRegionSource}
+                />
+              </FilterControls>
+              <ExploreSectionTable
+                columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
+                dataSource={dataSource}
+                enableDownload={enableDownload}
+                experimentTypeName={experimentTypeName}
+                loading={data.state === 'loading'}
+                renderButton={renderButton}
               />
-            </FilterControls>
-            <ExploreSectionTable
-              columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
-              dataSource={dataSource}
-              enableDownload={enableDownload}
-              experimentTypeName={experimentTypeName}
-              loading={data.state === 'loading'}
-              renderButton={renderButton}
-            />
-          </>
-        )}
-      </WithControlPanel>
+            </>
+          )}
+        </WithControlPanel>
+      </div>
     </div>
   );
 }
