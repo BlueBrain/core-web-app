@@ -15,10 +15,10 @@ import {
   mTypeSelectorFn,
   selectorFnStatisticDetail,
   semSelectorFn,
-  subjectAgeSelectorFn,
 } from '@/util/explore-section/selector-functions';
 import Species from '@/components/explore-section/Species';
 import WeightField from '@/components/explore-section/Fields/WeightField';
+import SubjectAgeField from '@/components/explore-section/Fields/SubjectAgeField';
 import LayerThicknessField from '@/components/explore-section/Fields/LayerThicknessField';
 import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
 import {
@@ -168,7 +168,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.subjectAge?.label),
-      deltaResourceViewFn: (resource) => subjectAgeSelectorFn(resource),
+      deltaResourceViewFn: () => <SubjectAgeField />,
     },
     vocabulary: {
       plural: 'Ages',

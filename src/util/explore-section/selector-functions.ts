@@ -1,5 +1,5 @@
 import find from 'lodash/find';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { DeltaResource, Subject } from '@/types/explore-section/resources';
 import { AnnotationEntity, Series } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
@@ -12,16 +12,25 @@ const annotationArrayFunc = (annotation: AnnotationEntity[] | undefined | null) 
 
 /**
  * Takes delta resource and extracts subject age
+ * @param {import("./types/explore-section/resources").Subject} subject
+ */
+export const ageSelectorFn = (subject: Subject | null) => {
+  if (subject?.age?.value) {
+    return `${subject?.age.value} ${subject?.age.unitCode} ${subject?.age.period}`;
+  }
+  if (subject?.age?.minValue && subject?.age?.maxValue) {
+    return `${subject?.age.minValue} to ${subject?.age.maxValue} ${subject?.age.unitCode} ${subject?.age.period}`;
+  }
+
+  return NO_DATA_STRING;
+};
+
+/**
+ * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
 export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
-  if (detail?.subject?.age?.value) {
-    return `${detail.subject?.age.value} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
-  }
-  if (detail?.subject?.age?.minValue && detail?.subject?.age?.maxValue) {
-    return `${detail.subject?.age.minValue} to ${detail.subject?.age.maxValue} ${detail.subject?.age.unitCode} ${detail.subject?.age.period}`;
-  }
-  return NO_DATA_STRING;
+  return ageSelectorFn(detail?.subject || null);
 };
 
 // renders mtype or 'no MType text if not present

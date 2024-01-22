@@ -7,11 +7,12 @@ import isEqual from 'lodash/isEqual';
 
 import sessionAtom from '@/state/session';
 import { fetchResourceById, queryES } from '@/api/nexus';
-import { DeltaResource, Contributor } from '@/types/explore-section/resources';
+import { DeltaResource, Contributor, Subject } from '@/types/explore-section/resources';
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
 import { getLicenseByIdQuery } from '@/queries/es';
 import { licensesESView } from '@/config';
+import { subjectAgeSelectorFn, ageSelectorFn } from '@/util/explore-section/selector-functions';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -116,6 +117,32 @@ export const speciesDataFamily = atomFamily(
         );
 
         return subject;
+      }
+
+      return null;
+    }),
+  isEqual
+);
+
+export const subjectAgeDataFamily = atomFamily(
+  (resourceInfo?: ResourceInfo) =>
+    atom<Promise<string | null>>(async (get) => {
+      const { session, info } = get(sessionAndInfoFamily(resourceInfo));
+
+      const detail = await get(detailFamily(resourceInfo));
+
+      if (!detail || !detail.subject) return null;
+
+      if (detail.subject?.age) return subjectAgeSelectorFn(detail);
+
+      if (detail.subject['@id']) {
+        const subject: Subject = await fetchResourceById<Subject>(
+          detail.subject['@id'],
+          session,
+          pick(info, ['org', 'project'])
+        );
+
+        return ageSelectorFn(subject);
       }
 
       return null;
