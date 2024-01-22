@@ -4,11 +4,14 @@ import { atom } from 'jotai';
 import pick from 'lodash/pick';
 import { atomFamily } from 'jotai/utils';
 import isEqual from 'lodash/isEqual';
+
 import sessionAtom from '@/state/session';
-import { fetchResourceById } from '@/api/nexus';
+import { fetchResourceById, queryES } from '@/api/nexus';
 import { DeltaResource, Contributor } from '@/types/explore-section/resources';
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
+import { getLicenseByIdQuery } from '@/queries/es';
+import { licensesESView } from '@/config';
 
 export const backToListPathAtom = atom<string | null | undefined>(null);
 
@@ -68,10 +71,13 @@ export const licenseDataFamily = atomFamily(
   (resourceInfo?: ResourceInfo) =>
     atom<Promise<string | null>>(async (get) => {
       const detail = await get(detailFamily(resourceInfo));
+      const session = get(sessionAtom);
 
-      if (!detail || !detail.license) return null;
+      if (!detail || !detail.license || !session) throw new Error('No license found');
 
-      return detail.license?.name || detail.license['@id'];
+      const licenseQuery = getLicenseByIdQuery(detail.license['@id']);
+      const [license] = await queryES<{ label: string }>(licenseQuery, session, licensesESView);
+      return license.label || detail.license['@id'];
     }),
   isEqual
 );

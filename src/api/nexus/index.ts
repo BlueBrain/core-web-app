@@ -278,9 +278,12 @@ export async function updateResource(
 export function queryES<T>(
   query: Record<string, any>,
   session: Session,
-  params?: ComposeUrlParams
+  params?: ComposeUrlParams & { viewId?: string }
 ) {
-  const apiUrl = composeUrl('view', nexus.defaultESIndexId, { viewType: 'es', ...params });
+  const apiUrl = composeUrl('view', params?.viewId ?? nexus.defaultESViewId, {
+    viewType: 'es',
+    ...params,
+  });
 
   return fetch(apiUrl, {
     method: 'POST',

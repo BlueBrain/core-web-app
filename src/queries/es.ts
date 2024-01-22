@@ -477,3 +477,16 @@ export function buildESReportsQuery(simId: string, name?: string, ids?: string[]
 
   return query;
 }
+
+export const getLicenseByIdQuery = (licenseId: string) => ({
+  size: 1,
+  query: {
+    bool: {
+      must: [
+        { term: { '@type': 'License' } },
+        { term: { '@id': licenseId } },
+        { term: { _deprecated: false } },
+      ],
+    },
+  },
+});

@@ -27,7 +27,7 @@ export const nexus = {
   project: PROJECT,
   defaultIdBaseUrl: `https://bbp.epfl.ch/data/${ORG}/${PROJECT}`,
   legacyIdBaseUrl: 'https://bbp.epfl.ch/neurosciencegraph/data/modelconfigurations',
-  defaultESIndexId: 'https://bbp.epfl.ch/neurosciencegraph/data/views/es/dataset',
+  defaultESViewId: 'https://bbp.epfl.ch/neurosciencegraph/data/views/es/dataset',
   defaultContext: 'https://bbp.neuroshapes.org',
 };
 
@@ -92,6 +92,12 @@ export const connInitialRulesFile = {
 
 export const connInitialParamsFile = {
   id: env.NEXT_PUBLIC_CONN_INITIAL_PARAMS_FILE_ID,
+};
+
+export const licensesESView = {
+  org: env.NEXT_PUBLIC_LICENSE_ES_VIEW_ORG,
+  project: env.NEXT_PUBLIC_LICENSE_ES_VIEW_PROJECT,
+  viewId: env.NEXT_PUBLIC_LICENSE_ES_VIEW_ID,
 };
 
 export const autoSaveDebounceInterval = 10000;
