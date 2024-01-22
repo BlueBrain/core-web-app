@@ -361,6 +361,10 @@ export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
 export const literatureSelectedBrainRegionAtom = atomWithReset<SelectedBrainRegion | null>(null);
 
+const defaultBrainRegionHierarchyState = {
+  'http://api.brain-map.org/api/v2/data/Structure/8': null,
+};
+
 export const setSelectedBrainRegionAtom = atom(
   null,
   (
@@ -370,7 +374,7 @@ export const setSelectedBrainRegionAtom = atom(
     selectedBrainRegionTitle: string,
     selectedBrainRegionLeaves: string[] | null,
     selectedBrainRegionRepresentedInAnnotation: boolean,
-    brainRegionHierarchyState: {} | null
+    brainRegionHierarchyState: Record<string, NavValue>
   ) => {
     const brainRegion = {
       id: selectedBrainRegionId,
@@ -387,7 +391,7 @@ export const setSelectedBrainRegionAtom = atom(
     setInitializationValue(DEFAULT_BRAIN_REGION_STORAGE_KEY, {
       ...DEFAULT_BRAIN_REGION,
       value: brainRegion,
-      brainRegionHierarchyState: brainRegionHierarchyState ?? {},
+      brainRegionHierarchyState,
     } satisfies DefaultBrainRegionType);
   }
 );
@@ -443,7 +447,9 @@ export const selectedBrainRegionWithChildrenAtom = atom<string[]>((get) => {
 
 // Keeps track of the hierarchy tree of the brain regions
 export const brainRegionHierarchyStateAtom = atom<NavValue | null>(
-  initializationBrainRegion ? initializationBrainRegion.brainRegionHierarchyState : null
+  initializationBrainRegion
+    ? initializationBrainRegion.brainRegionHierarchyState
+    : defaultBrainRegionHierarchyState
 );
 
 brainRegionHierarchyStateAtom.debugLabel = 'brainRegionHierarchyStateAtom';

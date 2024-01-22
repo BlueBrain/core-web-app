@@ -81,7 +81,7 @@ export default function BrainTreeSearch({
         title as string,
         leaves ?? null,
         representedInAnnotation,
-        brainRegionHierarchyState
+        brainRegionHierarchyState ?? {}
       );
 
       // This timeout seems to be necessary to "wait" until the nav item has been rendered before attemping to scroll to it.
@@ -97,7 +97,11 @@ export default function BrainTreeSearch({
   const handleSearch = useCallback(
     (value: string) => {
       if (!value.trim()) {
-        setSearchOptions(brainRegionsOptions);
+        setSearchOptions(
+          brainRegionsOptions
+            ? brainRegionsOptions.reduce<SearchOption[]>(searchOptionsReducer, [])
+            : null
+        );
       } else {
         setSearchOptions(
           brainRegionsOptions?.length
