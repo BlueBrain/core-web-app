@@ -6,7 +6,7 @@ export enum Field {
   CreatedBy = 'createdBy',
   UpdatedAt = 'updatedAt',
   Description = 'description',
-  Licence = 'license',
+  License = 'license',
   BrainRegion = 'brainRegion',
   EType = 'eType',
   MType = 'mType',

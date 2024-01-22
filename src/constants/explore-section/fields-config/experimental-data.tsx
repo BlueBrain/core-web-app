@@ -31,7 +31,7 @@ import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
-  [Field.Licence]: {
+  [Field.License]: {
     title: 'License',
     filter: FilterTypeEnum.CheckList,
     render: {
