@@ -28,9 +28,10 @@ import {
 } from '@/constants/explore-section/fields-config/types';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
-  license: {
+  [Field.Licence]: {
     title: 'License',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -41,7 +42,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'License',
     },
   },
-  brainRegion: {
+  [Field.BrainRegion]: {
     esTerms: {
       flat: {
         filter: 'brainRegion.label.keyword',
@@ -60,7 +61,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Brain Region',
     },
   },
-  eType: {
+  [Field.EType]: {
     fieldType: FieldType.CellType,
     esTerms: {
       flat: {
@@ -80,7 +81,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'E-Type',
     },
   },
-  mType: {
+  [Field.MType]: {
     fieldType: FieldType.CellType,
     esTerms: {
       flat: {
@@ -100,7 +101,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'M-Type',
     },
   },
-  subjectSpecies: {
+  [Field.SubjectSpecies]: {
     esTerms: {
       flat: {
         filter: 'subjectSpecies.label.keyword',
@@ -119,7 +120,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Species',
     },
   },
-  sem: {
+  [Field.Sem]: {
     esTerms: {
       nested: {
         nestedPath: 'series',
@@ -142,7 +143,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Value',
     },
   },
-  weight: {
+  [Field.Weight]: {
     title: 'Weight',
     filter: FilterTypeEnum.CheckList,
     unit: 'gramms',
@@ -155,7 +156,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Value',
     },
   },
-  subjectAge: {
+  [Field.SubjectAge]: {
     title: 'Age',
     filter: FilterTypeEnum.ValueRange,
     esTerms: {
@@ -174,7 +175,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Age',
     },
   },
-  neuronDensity: {
+  [Field.NeuronDensity]: {
     esTerms: {
       nested: {
         nestedPath: 'series',
@@ -196,7 +197,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Density',
     },
   },
-  layer: {
+  [Field.Layer]: {
     title: 'Layer',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -208,7 +209,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Layer',
     },
   },
-  layerThickness: {
+  [Field.LayerThickness]: {
     esTerms: {
       flat: {
         filter: 'layerThickness.value',
@@ -228,7 +229,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Thickness',
     },
   },
-  reference: {
+  [Field.Reference]: {
     title: 'Reference',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -239,7 +240,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Reference',
     },
   },
-  conditions: {
+  [Field.Conditions]: {
     title: 'Conditions',
     filter: FilterTypeEnum.CheckList,
     unit: 'Cº',
@@ -251,7 +252,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Condition',
     },
   },
-  meanstd: {
+  [Field.MeanSTD]: {
     esTerms: {
       nested: {
         nestedPath: 'series',
@@ -273,7 +274,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Value',
     },
   },
-  numberOfMeasurements: {
+  [Field.NumberOfMeasurements]: {
     esTerms: {
       nested: {
         nestedPath: 'series',
@@ -294,7 +295,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Value',
     },
   },
-  length: {
+  [Field.Length]: {
     title: 'length',
     filter: null,
     vocabulary: {
@@ -302,7 +303,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'length',
     },
   },
-  maximumLength: {
+  [Field.MaximumLength]: {
     title: 'maximum length',
     filter: null,
     vocabulary: {
@@ -310,7 +311,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'maximum length',
     },
   },
-  totalLength: {
+  [Field.TotalLength]: {
     title: 'total length',
     filter: null,
     vocabulary: {
@@ -318,7 +319,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'total length',
     },
   },
-  dendriteStemming: {
+  [Field.DendriteStemming]: {
     title: 'dendrites stemming from soma',
     filter: null,
     vocabulary: {
@@ -326,7 +327,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'dendrite stemming from soma',
     },
   },
-  axon: {
+  [Field.Axon]: {
     title: 'axon',
     filter: null,
     vocabulary: {
@@ -334,7 +335,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'axons',
     },
   },
-  bifurcations: {
+  [Field.Bifurcations]: {
     title: 'bifurcations',
     filter: null,
     vocabulary: {
@@ -342,7 +343,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'bifurcations',
     },
   },
-  preSynapticBrainRegion: {
+  [Field.PreSynapticBrainRegion]: {
     title: 'Brain Region [From]',
     render: {
       esResourceViewFn: (_text, r) =>
@@ -366,7 +367,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Brain Region [From]',
     },
   },
-  postSynapticBrainRegion: {
+  [Field.PostSynapticBrainRegion]: {
     title: 'Brain Region [To]',
     render: {
       esResourceViewFn: (_text, r) =>
@@ -391,7 +392,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Brain Region [To]',
     },
   },
-  preSynapticCellType: {
+  [Field.PreSynapticCellType]: {
     title: 'Cell Type [From]',
     render: {
       esResourceViewFn: (_text, r) =>
@@ -415,7 +416,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Cell Type [From]',
     },
   },
-  postSynapticCellType: {
+  [Field.PostSynapticCellType]: {
     title: 'Cell Type [To]',
     render: {
       esResourceViewFn: (_text, r) =>
@@ -439,7 +440,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Cell Type [To]',
     },
   },
-  axonTotalLength: {
+  [Field.AxonTotalLength]: {
     group: MorphoMetricGroups.Axon,
     title: 'Total Length',
     description: 'Total length of the axon',
@@ -453,7 +454,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'Axon', 'Total Length', 'minimum', true),
     },
   },
-  axonMaxBranchOrder: {
+  [Field.AxonMaxBranchOrder]: {
     group: MorphoMetricGroups.Axon,
     title: 'Maximum Branch Order',
     description: 'Maximum branch order (Strahler index)',
@@ -467,7 +468,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders', 'maximum'),
     },
   },
-  axonArborAsymmetryIndex: {
+  [Field.AxonArborAsymmetryIndex]: {
     group: MorphoMetricGroups.Axon,
     title: 'Arbor Asymmetry Index',
     description: 'Arbor asymmetry index (if calculated)',
@@ -481,7 +482,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'Axon', 'Partition Asymmetry', 'mean'),
     },
   },
-  basalDendriticTotalLength: {
+  [Field.BasalDendriticTotalLength]: {
     group: MorphoMetricGroups.BasalDendrite,
     title: 'Total Length',
     description: 'Total length of the basal dendrites',
@@ -495,7 +496,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Total Length', 'minimum', true),
     },
   },
-  basalDendriteMaxBranchOrder: {
+  [Field.BasalDendriteMaxBranchOrder]: {
     group: MorphoMetricGroups.BasalDendrite,
     title: 'Maximum Branch Order',
     description: 'Maximum branch order (Strahler index)',
@@ -509,7 +510,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders', 'maximum'),
     },
   },
-  basalArborAsymmetryIndex: {
+  [Field.BasalArborAsymmetryIndex]: {
     group: MorphoMetricGroups.BasalDendrite,
     title: 'Arbor Asymmetry Index',
     description: 'Basal Arbor asymmetry index (if calculated)',
@@ -523,7 +524,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Partition Asymmetry', 'mean'),
     },
   },
-  apicalDendriticTotalLength: {
+  [Field.ApicalDendriticTotalLength]: {
     group: MorphoMetricGroups.ApicalDendrite,
     title: 'Total Length',
     description: 'Total length of the apical dendrites',
@@ -537,7 +538,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Total Length', 'minimum', true),
     },
   },
-  apicalDendtriteMaxBranchOrder: {
+  [Field.ApicalDendtriteMaxBranchOrder]: {
     group: MorphoMetricGroups.ApicalDendrite,
     title: 'Maximum Branch Order',
     description: 'Apical Dendrite Maximum branch order (Strahler index)',
@@ -556,7 +557,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         ),
     },
   },
-  apicalArborAsymmetryIndex: {
+  [Field.ApicalArborAsymmetryIndex]: {
     group: MorphoMetricGroups.ApicalDendrite,
     title: 'Arbor Asymmetry Index',
     description: 'Apical Arbor asymmetry index (if calculated)',
@@ -570,7 +571,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Partition Asymmetry', 'mean'),
     },
   },
-  neuronMorphologyWidth: {
+  [Field.NeuronMorphologyWidth]: {
     group: MorphoMetricGroups.NeuronMorphology,
     title: 'Total Width',
     description: 'Neuron morphology total width',
@@ -584,7 +585,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Width', 'mean', true),
     },
   },
-  neuronMorphologyLength: {
+  [Field.NeuronMorphologyLength]: {
     group: MorphoMetricGroups.NeuronMorphology,
     title: 'Total Length',
     description: 'Neuron morphology total Length',
@@ -598,7 +599,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Length', 'mean', true),
     },
   },
-  neuronMorphologyDepth: {
+  [Field.NeuronMorphologyDepth]: {
     group: MorphoMetricGroups.NeuronMorphology,
     title: 'Total Depth',
     description: 'Neuron morphology total Depth',
@@ -612,7 +613,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Depth', 'mean'),
     },
   },
-  somaDiameter: {
+  [Field.SomaDiameter]: {
     group: MorphoMetricGroups.Soma,
     title: 'Diameter',
     description: 'Diameter of the soma',

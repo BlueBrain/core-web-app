@@ -6,30 +6,31 @@ import Detail from '@/components/explore-section/Detail';
 import { DeltaResource } from '@/types/explore-section/resources';
 import EphysViewerContainer from '@/components/explore-section/EphysViewerContainer';
 import { DetailProps } from '@/types/explore-section/application';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 const fields = [
   {
-    field: 'description',
+    field: Field.Description,
     className: 'col-span-3 row-span-2',
   },
   {
-    field: 'eType',
+    field: Field.EType,
     className: 'row-span-2',
   },
   {
-    field: 'subjectSpecies',
+    field: Field.SubjectSpecies,
     className: 'row-span-2',
   },
   {
-    field: 'brainRegion',
+    field: Field.BrainRegion,
     className: 'row-span-2',
   },
   {
-    field: 'contributors',
+    field: Field.Contributors,
     className: 'col-span-3',
   },
   {
-    field: 'createdAt',
+    field: Field.CreatedAt,
   },
 ] as DetailProps[];
 

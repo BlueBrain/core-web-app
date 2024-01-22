@@ -5,9 +5,10 @@ import SimulationCampaignStatus from '@/components/explore-section/SimulationCam
 import timeElapsedFromToday from '@/util/date';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
-  simCampName: {
+  [Field.SimulationCampaignName]: {
     esTerms: {
       flat: {
         filter: 'name.keyword',
@@ -29,7 +30,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Name',
     },
   },
-  brainConfiguration: {
+  [Field.BrainConfiguration]: {
     esTerms: {
       flat: {
         filter: 'nValue',
@@ -47,7 +48,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Brain Configuration',
     },
   },
-  dimensions: {
+  [Field.Dimensions]: {
     title: 'Dimensions',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -65,7 +66,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Dimension',
     },
   },
-  attributes: {
+  [Field.Attributes]: {
     title: 'Attributes',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -83,7 +84,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Attribute',
     },
   },
-  simulationCampaignStatus: {
+  [Field.SimulationCampaignStatus]: {
     title: 'Status',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -94,7 +95,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Status',
     },
   },
-  simulationStatus: {
+  [Field.SimulationStatus]: {
     title: 'Status',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -105,7 +106,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Status',
     },
   },
-  campaign: {
+  [Field.Campaign]: {
     title: 'Campaign',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -116,7 +117,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Campaign',
     },
   },
-  tags: {
+  [Field.Tags]: {
     title: 'Tags',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -127,7 +128,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Tag',
     },
   },
-  startedAt: {
+  [Field.StartedAt]: {
     title: 'started at',
     filter: null,
     render: {
@@ -138,7 +139,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Date',
     },
   },
-  completedAt: {
+  [Field.CompletedAt]: {
     title: 'completed at',
     filter: null,
     render: {

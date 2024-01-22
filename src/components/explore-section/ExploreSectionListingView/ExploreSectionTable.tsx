@@ -14,6 +14,7 @@ import WithRowSelection, {
 } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 import type { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 import styles from '@/app/explore/explore.module.scss';
 
 function CustomTH({
@@ -98,7 +99,7 @@ export function BaseTable({
   const onCellRouteHandler = (col: ColumnGroupType<ExploreESHit> | ColumnType<ExploreESHit>) => {
     return {
       onCell: (record: ExploreESHit) =>
-        col.key !== 'preview'
+        col.key !== Field.Preview
           ? {
               onClick: (e: MouseEvent<HTMLInputElement>) => {
                 e.preventDefault();

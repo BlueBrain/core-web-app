@@ -4,31 +4,32 @@ import Detail from '@/components/explore-section/Detail';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import Simulations from '@/components/explore-section/Simulations';
 import { DetailProps } from '@/types/explore-section/application';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 const fields: DetailProps[] = [
   {
-    field: 'description',
+    field: Field.Description,
   },
   {
-    field: 'brainConfiguration',
+    field: Field.BrainConfiguration,
   },
   {
-    field: 'dimensions',
+    field: Field.Dimensions,
   },
   {
-    field: 'attributes',
+    field: Field.Attributes,
   },
   {
-    field: 'tags',
+    field: Field.Tags,
   },
   {
-    field: 'simulationCampaignStatus',
+    field: Field.SimulationCampaignStatus,
   },
   {
-    field: 'createdBy',
+    field: Field.CreatedBy,
   },
   {
-    field: 'createdAt',
+    field: Field.CreatedAt,
   },
 ];
 

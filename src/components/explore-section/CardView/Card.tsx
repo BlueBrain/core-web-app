@@ -1,7 +1,6 @@
 import { useInView } from 'react-intersection-observer';
 import { Tooltip, Collapse } from 'antd';
 import Link from 'next/link';
-import reject from 'lodash/reject';
 import groupBy from 'lodash/groupBy';
 import {
   ExperimentalTrace,
@@ -46,9 +45,7 @@ const { Panel } = Collapse;
 export default function Card({ resource, experimentTypeName, activeKeys, score }: CardProps) {
   const { ref, inView } = useInView();
 
-  const cardFields =
-    reject(EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields, (o) => o.field === 'field') ||
-    [];
+  const cardFields = EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields || [];
 
   const resourceUrl = detailUrlBuilder(resource, experimentTypeName);
 

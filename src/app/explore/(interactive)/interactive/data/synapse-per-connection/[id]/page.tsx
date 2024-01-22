@@ -4,53 +4,54 @@ import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail from '@/components/explore-section/Detail';
 import { DetailProps } from '@/types/explore-section/application';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 const fields = [
   {
-    field: 'description',
+    field: Field.Description,
     className: 'col-span-3 row-span-2',
   },
   {
-    field: 'preSynapticBrainRegion',
+    field: Field.PreSynapticBrainRegion,
   },
   {
-    field: 'subjectSpecies',
+    field: Field.SubjectSpecies,
   },
   {
-    field: 'meanstd',
+    field: Field.MeanSTD,
   },
   {
-    field: 'postSynapticBrainRegion',
+    field: Field.PostSynapticBrainRegion,
   },
   {
-    field: 'subjectAge',
+    field: Field.SubjectAge,
   },
   {
-    field: 'sem',
+    field: Field.Sem,
   },
   {
-    field: 'contributors',
+    field: Field.Contributors,
     className: 'row-span-2',
   },
   {
-    field: 'createdAt',
+    field: Field.CreatedAt,
     className: 'row-span-2',
   },
   {
-    field: 'license',
+    field: Field.Licence,
     className: 'row-span-2',
   },
   {
-    field: 'preSynapticCellType',
+    field: Field.PreSynapticCellType,
   },
   {
-    field: 'weight',
+    field: Field.Weight,
   },
   {
-    field: 'numberOfMeasurements',
+    field: Field.NumberOfMeasurements,
   },
   {
-    field: 'postSynapticCellType',
+    field: Field.PostSynapticCellType,
   },
 ] as DetailProps[];
 

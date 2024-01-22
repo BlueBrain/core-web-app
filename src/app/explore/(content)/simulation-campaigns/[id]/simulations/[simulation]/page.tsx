@@ -3,22 +3,23 @@
 import Detail from '@/components/explore-section/Detail';
 import SimulationReports from '@/components/explore-section/Simulations/SimulationReports';
 import { DetailProps } from '@/types/explore-section/application';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 const fields: DetailProps[] = [
   {
-    field: 'campaign',
+    field: Field.Campaign,
   },
   {
-    field: 'dimensions',
+    field: Field.Dimensions,
   },
   {
-    field: 'startedAt',
+    field: Field.StartedAt,
   },
   {
-    field: 'completedAt',
+    field: Field.CompletedAt,
   },
   {
-    field: 'simulationStatus',
+    field: Field.SimulationCampaignStatus,
   },
 ];
 

@@ -4,38 +4,39 @@ import { Suspense } from 'react';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import Detail from '@/components/explore-section/Detail';
 import { DetailProps } from '@/types/explore-section/application';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 const fields = [
   {
-    field: 'description',
+    field: Field.Description,
     className: 'col-span-3 row-span-2',
   },
   {
-    field: 'brainRegion',
+    field: Field.BrainRegion,
   },
   {
-    field: 'meanstd',
+    field: Field.MeanSTD,
   },
   {
-    field: 'subjectSpecies',
+    field: Field.SubjectSpecies,
   },
   {
-    field: 'mType',
+    field: Field.MType,
   },
   {
-    field: 'sem',
+    field: Field.Sem,
   },
   {
-    field: 'weight',
+    field: Field.Weight,
   },
   {
-    field: 'contributors',
+    field: Field.Contributors,
   },
   {
-    field: 'createdAt',
+    field: Field.CreatedAt,
   },
   {
-    field: 'numberOfMeasurements',
+    field: Field.NumberOfMeasurements,
     className: 'col-span-2 col-start-5',
   },
 ] as DetailProps[];

@@ -9,9 +9,10 @@ import Contributors from '@/components/explore-section/Contributors';
 import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
 import timeElapsedFromToday from '@/util/date';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
+import { Field } from '@/constants/explore-section/fields-config/enums';
 
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
-  preview: {
+  [Field.Preview]: {
     className: 'text-center',
     title: 'Preview',
     filter: null,
@@ -41,7 +42,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     style: { width: 184 },
   },
-  name: {
+  [Field.Name]: {
     esTerms: {
       flat: {
         filter: 'name.keyword',
@@ -58,7 +59,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Name',
     },
   },
-  contributors: {
+  [Field.Contributors]: {
     esTerms: {
       flat: {
         filter: 'contributors.label.keyword',
@@ -77,7 +78,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Contributor',
     },
   },
-  createdAt: {
+  [Field.CreatedAt]: {
     esTerms: {
       flat: {
         filter: 'createdAt',
@@ -97,7 +98,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Date',
     },
   },
-  createdBy: {
+  [Field.CreatedBy]: {
     title: 'Created by',
     filter: FilterTypeEnum.CheckList,
     render: {
@@ -110,7 +111,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'User',
     },
   },
-  updatedAt: {
+  [Field.UpdatedAt]: {
     title: 'Updated at',
     filter: FilterTypeEnum.DateRange,
     render: {
@@ -123,7 +124,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       singular: 'Date',
     },
   },
-  description: {
+  [Field.Description]: {
     title: 'Description',
     filter: FilterTypeEnum.CheckList,
     render: {

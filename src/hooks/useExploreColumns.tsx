@@ -3,7 +3,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnProps } from 'antd/lib/table';
 import throttle from 'lodash/throttle';
-
 import { ExploreESHit } from '@/types/explore-section/es';
 import { SortState } from '@/types/explore-section/application';
 import { ValueArray } from '@/components/ListTable';
@@ -11,7 +10,7 @@ import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExperimentDataTypeName } from '@/constants/explore-section/list-views';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { classNames } from '@/util/utils';
-
+import { Field } from '@/constants/explore-section/fields-config/enums';
 import styles from '@/app/explore/explore.module.scss';
 
 type ResizeInit = {
@@ -213,8 +212,8 @@ export default function useExploreColumns(
   if (experimentTypeName) {
     return columns.sort((a, b) =>
       a.key && b.key
-        ? EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(a.key as string) -
-          EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(b.key as string)
+        ? EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(a.key as Field) -
+          EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(b.key as Field)
         : -1
     );
   }

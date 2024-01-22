@@ -3,7 +3,6 @@ import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import reject from 'lodash/reject';
 import groupBy from 'lodash/groupBy';
 import { ExploreESHit } from '@/types/explore-section/es';
 import Card from '@/components/explore-section/CardView/Card';
@@ -32,9 +31,7 @@ export default function CardView({ data, experimentTypeName, resourceId }: CardV
     unwrap(resourceBasedResponseResultsAtom(resourceId || ''))
   );
 
-  const cardFields =
-    reject(EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields, (o) => o.field === 'field') ||
-    [];
+  const cardFields = EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields || [];
 
   const filteredLabels = cardFields.map((fieldObj) => fieldObj.field);
 
