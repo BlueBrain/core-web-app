@@ -135,7 +135,7 @@ export const NEURON_DENSITY_FIELDS = [
 export const SYNAPSE_PER_CONNECTION_FIELDS = [
   {
     field: Field.Description,
-    className: 'col-span-3 row-span-2',
+    className: 'row-span-2 col-span-3',
   },
   {
     field: Field.PreSynapticBrainRegion,
@@ -144,39 +144,43 @@ export const SYNAPSE_PER_CONNECTION_FIELDS = [
     field: Field.SubjectSpecies,
   },
   {
-    field: Field.MeanSTD,
+    field: Field.License,
   },
   {
     field: Field.PostSynapticBrainRegion,
   },
   {
     field: Field.SubjectAge,
-  },
-  {
-    field: Field.Sem,
+    className: 'col-span-2',
   },
   {
     field: Field.Contributors,
-    className: 'row-span-2',
+    className: 'row-span-5',
   },
   {
     field: Field.CreatedAt,
-    className: 'row-span-2',
-  },
-  {
-    field: Field.License,
-    className: 'row-span-2',
+    className: 'row-span-5 col-span-2',
   },
   {
     field: Field.PreSynapticCellType,
   },
   {
     field: Field.Weight,
-  },
-  {
-    field: Field.NumberOfMeasurements,
+    className: 'col-span-2',
   },
   {
     field: Field.PostSynapticCellType,
+    className: 'col-span-3',
+  },
+  {
+    field: Field.MeanSTD,
+    className: 'col-span-3',
+  },
+  {
+    field: Field.Sem,
+    className: 'col-span-3',
+  },
+  {
+    field: Field.NumberOfMeasurements,
   },
 ] as DetailProps[];

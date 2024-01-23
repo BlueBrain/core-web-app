@@ -262,7 +262,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         aggregationField: 'series.value',
       },
     },
-    unit: 'boutons/μm',
     title: 'Mean ± std',
     filter: FilterTypeEnum.ValueRange,
     render: {
