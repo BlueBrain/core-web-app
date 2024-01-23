@@ -1,8 +1,10 @@
 import { ReactNode, useEffect, useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+
 import FilterControls from './FilterControls';
 import { RenderButtonProps } from './WithRowSelection';
+import ListingScrollNavControl from './ListingScrollNavControl';
 import { ExploreESHit } from '@/types/explore-section/es';
 import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
@@ -24,6 +26,7 @@ export default function DefaultListView({
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
+  const [dataSource, setDataSource] = useState<ExploreESHit[]>();
   const columns = useExploreColumns(setSortState, sortState, [], null, experimentTypeName);
 
   const data = useAtomValue(
@@ -39,8 +42,6 @@ export default function DefaultListView({
     )
   );
 
-  const [dataSource, setDataSource] = useState<ExploreESHit[]>();
-
   useEffect(() => {
     if (data.state === 'hasData') {
       setDataSource(data.data);
@@ -48,11 +49,7 @@ export default function DefaultListView({
   }, [data, setDataSource]);
 
   return (
-    <div
-      className="h-full"
-      style={{ background: '#d1d1d1' }}
-      data-testid="explore-section-listing-view"
-    >
+    <div className="h-full bg-[#d1d1d1]" data-testid="explore-section-listing-view">
       <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full max-h-[calc(100vh-156px)] h-full overflow-x-auto overflow-y-hidden">
         <WithControlPanel
           experimentTypeName={experimentTypeName}
@@ -78,6 +75,11 @@ export default function DefaultListView({
                 experimentTypeName={experimentTypeName}
                 loading={data.state === 'loading'}
                 renderButton={renderButton}
+              />
+              <ListingScrollNavControl<HTMLDivElement>
+                extraRightSpace={displayControlPanel ? 480 : 0}
+                show={data.state !== 'loading' && Boolean(dataSource?.length)}
+                element={document.querySelector('.ant-table-content') as HTMLDivElement}
               />
             </>
           )}

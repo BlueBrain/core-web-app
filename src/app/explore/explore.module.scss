@@ -1,6 +1,9 @@
 .table a {
   @apply text-primary-7;
 }
+.table table .ant-table td {
+  white-space: nowrap;
+}
 
 .headerText,
 .tableHeader {

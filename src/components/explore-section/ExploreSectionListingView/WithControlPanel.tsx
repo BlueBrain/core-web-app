@@ -44,7 +44,7 @@ export default function WithControlPanel({
 
   return (
     <>
-      <section className="w-full h-full flex flex-col gap-5 bg-white pb-24 pl-3 pr-3 pt-8 relative overflow-auto min-w-0">
+      <section className="w-full h-full flex flex-col gap-5 bg-white pb-24 p-3 pt-8 relative overflow-auto min-w-0">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel, filters })}
         <LoadMoreButton
           experimentTypeName={experimentTypeName}

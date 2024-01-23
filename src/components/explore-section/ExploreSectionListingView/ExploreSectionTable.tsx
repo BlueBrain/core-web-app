@@ -89,7 +89,6 @@ export function BaseTable({
 }: TableProps<ExploreESHit> & { hasError?: boolean; experimentTypeName: string }) {
   const router = useRouter();
   const pathname = usePathname();
-
   const setBackToListPath = useSetAtom(backToListPathAtom);
 
   if (hasError) {
@@ -115,7 +114,7 @@ export function BaseTable({
   return (
     <Table
       aria-label="listing-view-table"
-      className={styles.table}
+      className={classNames(styles.table, '[&_.ant-table-content]:no-scrollbar')}
       columns={
         columns &&
         columns.map((col) => ({
