@@ -7,6 +7,6 @@ declare module 'csstype' {
      * Example:
      *   <div style={{ "--custom-size": "64px" }}>...</div>
      */
-    [index: `--custom-${string}`]: any;
+    [index: `--custom-${string}`]: string | number;
   }
 }

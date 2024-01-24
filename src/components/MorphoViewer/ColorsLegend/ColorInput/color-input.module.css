@@ -1,7 +1,8 @@
 button.main {
-  display: contents;
+  display: block;
   cursor: pointer;
-  border: none;
+  border: 2px solid #7775;
+  border-radius: 0.25em;
   font: inherit;
   display: flex;
   justify-content: flex-start;
@@ -10,6 +11,7 @@ button.main {
   background: none;
   width: auto;
   color: inherit;
+  padding: 0.25em;
 }
 
 button.main > input[type='color'] {

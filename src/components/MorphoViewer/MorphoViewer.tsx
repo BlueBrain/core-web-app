@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable no-param-reassign */
 import { useEffect, useRef, useState } from 'react';
 import { MorphologyPainter, ColoringType } from '@bbp/morphoviewer';
@@ -31,12 +33,6 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
     const painter = refPainter.current;
     painter.canvas = refCanvas.current;
     painter.swc = swc;
-    painter.colors.background = '#fff';
-    painter.colors.soma = '#000';
-    painter.colors.axon = '#05f';
-    painter.colors.basalDendrite = '#f00';
-    painter.colors.apicalDendrite = '#f0f';
-
     const handleWarning = () => {
       setWarning(true);
     };

@@ -1,11 +1,31 @@
 .main {
   padding: 0.5em;
+  display: grid;
+  grid-template-columns: 1fr;
+  place-items: stretch;
+  gap: 0.25em;
 }
 
 .main .color {
   content: '';
-  border-radius: 50%;
+  border-radius: 0.25em;
   width: 1em;
   height: 1em;
   border: 1px solid currentColor;
+}
+
+.main button.reset {
+  border: none;
+  color: currentColor;
+  opacity: 0.5;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5em;
+  cursor: pointer;
+}
+
+.main button.reset > .icon {
+  width: 1em;
+  height: 1em;
 }

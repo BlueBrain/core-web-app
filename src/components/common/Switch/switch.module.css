@@ -1,0 +1,51 @@
+.main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
+  --custom-width: 2em;
+  --custom-height: 1em;
+  --custom-padding: 0.2em;
+  --custom-color-thumb: #fff;
+  --custom-color-main: #003a8c;
+  color: var(--custom-color-main);
+  cursor: pointer;
+}
+
+.main label {
+  flex: 1 1 auto;
+  cursor: pointer;
+}
+
+.SwitchRoot {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: var(--custom-width);
+  height: var(--custom-height);
+  background-color: var(--custom-color-main);
+  border-radius: 9999px;
+  position: relative;
+  filter: grayscale(100%);
+  padding: 0;
+  --size: calc(var(--custom-height) - 2 * var(--custom-padding));
+}
+
+.SwitchRoot[data-state='checked'] {
+  filter: grayscale(0);
+}
+
+.SwitchThumb {
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  background-color: var(--custom-color-thumb);
+  border-radius: 9999px;
+  transition: transform 0.2s;
+  transform: translateX(var(--custom-padding));
+  will-change: transform;
+  margin: 0;
+}
+
+.SwitchThumb[data-state='checked'] {
+  transform: translateX(calc(var(--custom-width) - var(--custom-padding) - var(--size)));
+}
