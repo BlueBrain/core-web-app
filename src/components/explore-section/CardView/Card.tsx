@@ -1,7 +1,6 @@
 import { useInView } from 'react-intersection-observer';
 import { Tooltip, Collapse } from 'antd';
 import Link from 'next/link';
-import upperFirst from 'lodash/upperFirst';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
