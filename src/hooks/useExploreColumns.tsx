@@ -157,8 +157,8 @@ export default function useExploreColumns(
             key,
             title: (
               <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
-                <div>{term.title}</div>
-                {term.unit && <div className={styles.tableHeaderUnits}>[{term?.unit}]</div>}
+                <div className={styles.columnTitle}>{term.title}</div>
+                {term.unit && <span className={styles.tableHeaderUnits}>[{term?.unit}]</span>}
               </div>
             ),
             className: classNames('text-primary-7 cursor-pointer', term?.className),

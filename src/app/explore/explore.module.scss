@@ -144,3 +144,10 @@
     @apply text-black bg-white;
   }
 }
+
+.columnTitle {
+  @apply relative pl-2;
+  &::before {
+    @apply absolute content-[""] h-full bg-[#d9d9d9] w-px end-0 top-0 left-0;
+  }
+}

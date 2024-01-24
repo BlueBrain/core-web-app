@@ -1,5 +1,5 @@
 import { CSSProperties, MouseEvent, ReactNode } from 'react';
-import { Table, TableProps } from 'antd';
+import { ConfigProvider, Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
@@ -33,23 +33,22 @@ function CustomTH({
     ...style,
     fontWeight: '500',
     color: '#434343',
-    verticalAlign: 'middle',
+    verticalAlign: 'baseline',
     boxSizing: 'border-box',
     backgroundColor: 'white',
-    padding: '16px 16px 16px 8px',
   };
 
   return handleResizing ? (
     <th
       {...props} /* eslint-disable-line react/jsx-props-no-spreading */
-      style={modifiedStyle}
-      className="before:!bg-neutral-4"
+      style={{ ...modifiedStyle, padding: '16px 16px 16px 0px' }}
+      className="before:!content-none"
     >
       <div className="flex w-full">
         <button
           className={classNames(
-            'inline-flex w-full',
-            '[&>.ant-table-column-sorters]:inline-flex [&>.ant-table-column-sorters]:gap-2 [&>.ant-table-column-sorters]:flex-none'
+            'inline-flex w-full flex-col items-start',
+            '[&>.ant-table-column-sorters]:inline-flex [&>.ant-table-column-sorters]:!items-start [&>.ant-table-column-sorters]:gap-2 [&>.ant-table-column-sorters]:flex-none'
           )}
           onClick={onClick}
           type="button"
@@ -112,32 +111,34 @@ export function BaseTable({
 
   if (!columns?.length) return null;
   return (
-    <Table
-      aria-label="listing-view-table"
-      className={classNames(styles.table, '[&_.ant-table-content]:no-scrollbar')}
-      columns={
-        columns &&
-        columns.map((col) => ({
-          ...col,
-          ...onCellRouteHandler(col),
-        }))
-      }
-      components={{
-        header: {
-          cell: CustomTH,
-        },
-        body: {
-          cell: CustomCell,
-        },
-      }}
-      dataSource={dataSource}
-      loading={loading}
-      pagination={false}
-      rowClassName={styles.tableRow}
-      rowKey={(row) => row._source._self}
-      rowSelection={rowSelection}
-      scroll={{ x: 'fit-content' }}
-    />
+    <ConfigProvider theme={{ hashed: false }}>
+      <Table
+        aria-label="listing-view-table"
+        className={styles.table}
+        columns={
+          columns &&
+          columns.map((col) => ({
+            ...col,
+            ...onCellRouteHandler(col),
+          }))
+        }
+        components={{
+          header: {
+            cell: CustomTH,
+          },
+          body: {
+            cell: CustomCell,
+          },
+        }}
+        dataSource={dataSource}
+        loading={loading}
+        pagination={false}
+        rowClassName={styles.tableRow}
+        rowKey={(row) => row._source._self}
+        rowSelection={rowSelection}
+        scroll={{ x: 'fit-content' }}
+      />
+    </ConfigProvider>
   );
 }
 
