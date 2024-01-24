@@ -1,7 +1,7 @@
 import { useInView } from 'react-intersection-observer';
 import { Tooltip, Collapse } from 'antd';
 import Link from 'next/link';
-import startCase from 'lodash/startCase';
+import upperFirst from 'lodash/upperFirst';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
@@ -47,12 +47,7 @@ export default function Card({ resource, dataType, activeKeys, score }: CardProp
       <div className="break-words mt-0">
         <Collapse activeKey={activeKeys} expandIcon={() => null} bordered={false} ghost>
           {Object.entries(groupedCardFields).map(([group, fields]) => (
-            <Panel
-              header={startCase(group)}
-              key={group}
-              className={styles.custom}
-              collapsible="disabled"
-            >
+            <Panel header={group} key={group} className={styles.custom} collapsible="disabled">
               <div className="border-l">
                 {fields.map((field, index) => (
                   <div
