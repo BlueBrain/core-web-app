@@ -20,7 +20,7 @@ function QAContainer() {
       resetParameters(initialParameters);
       updateLiterature((prev) => ({ ...prev, areQAParamsVisible: false }));
     };
-  }, []);
+  }, [resetParameters, updateLiterature]);
 
   return (
     <div
