@@ -1,28 +1,30 @@
 'use client';
 
-import ExperimentSelector from '@/components/explore-section/Literature/components/ExperimentSelector';
-import {
-  EXPERIMENT_DATA_TYPES,
-  ExperimentConfig,
-} from '@/constants/explore-section/experiment-types';
+import ExperimentLiteratureHeader from '@/components/explore-section/Literature/components/ArticleList/ExperimentLiteratureHeader';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 
 type Props = {
   noExperimentSelected?: boolean;
   noBrainRegionSelected?: boolean;
-  currentExperiment?: ExperimentConfig;
 };
+
+function ErrorContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="h-screen max-w-7xl w-full flex items-start mx-10 gap-x-4 mt-12 mb-2">
+      <div className="flex flex-col mx-10 mt-12 w-full">{children}</div>
+    </div>
+  );
+}
 
 export default function LiteratureArticlesError({
   noExperimentSelected,
   noBrainRegionSelected,
-  currentExperiment,
 }: Props) {
   if (noBrainRegionSelected) {
     return (
-      <div className="flex mx-10 mt-12 w-full">
-        <ExperimentSelector currentExperiment={currentExperiment} />
+      <ErrorContainer>
         <div className="m-auto self-center border p-4">Please select a brain region.</div>
-      </div>
+      </ErrorContainer>
     );
   }
 
@@ -32,8 +34,8 @@ export default function LiteratureArticlesError({
     );
 
     return (
-      <div className="flex mx-10 mt-12 w-full">
-        <ExperimentSelector />
+      <ErrorContainer>
+        <ExperimentLiteratureHeader />
         <div className="m-auto self-center border p-4">
           <h3 className="text-xl text-center">No articles were found for this experiment type.</h3>
           <p>Please make sure that the experiment type is one of the following:</p>
@@ -44,17 +46,15 @@ export default function LiteratureArticlesError({
             ))}
           </ul>
         </div>
-      </div>
+      </ErrorContainer>
     );
   }
 
   return (
-    <div className="flex mx-10 mt-12 w-full">
-      <ExperimentSelector currentExperiment={currentExperiment} />
-
+    <ErrorContainer>
       <div className="m-auto self-center border p-4">
         There was an error fetching literature data for this experiment type.
       </div>
-    </div>
+    </ErrorContainer>
   );
 }

@@ -193,7 +193,7 @@ export const ML_MAX_ARTICLES_PER_PAGE = 100;
 
 const fetchArticlesForBrainRegionAndExperiment = (
   experimentName: string,
-  brainRegions: string[],
+  brainRegion: string,
   page: number,
   filters: ArticleListFilters,
   signal?: AbortSignal
@@ -202,14 +202,14 @@ const fetchArticlesForBrainRegionAndExperiment = (
 
   const params = new URLSearchParams();
 
-  const uniqueBrainRegions = uniq(
-    brainRegions?.map((br) => encodeURIComponent(normalizeBrainRegionQueryParam(br)))
-  );
-  uniqueBrainRegions?.forEach((brainRegion) => params.append('regions', brainRegion));
+  const encodedBrainRegions = brainRegion
+    ? encodeURIComponent(normalizeBrainRegionQueryParam(brainRegion))
+    : '';
 
-  params.append('topics', experimentName);
-  params.append('number_results', `${ML_MAX_ARTICLES_PER_PAGE}`);
-  params.append('page', `${page}`);
+  params.set('regions', encodedBrainRegions);
+  params.set('topics', experimentName);
+  params.set('number_results', `${ML_MAX_ARTICLES_PER_PAGE}`);
+  params.set('page', `${page}`);
 
   const paramsWithFilter = addQueryParamsForFilters(params, { ...filters });
   const urlQueryParams =

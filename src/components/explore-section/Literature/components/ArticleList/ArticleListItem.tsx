@@ -27,7 +27,9 @@ export default function ArticleListItem({ article, index }: Props) {
 
   return (
     <article>
-      <h6 className="text-sm leading-6 text-gray-400 pt-2 pr-8 mb-2">Article {index + 1}</h6>
+      <h6 className="text-sm leading-6 text-gray-400 pt-2 pr-8 mb-2 uppercase">
+        Article {index + 1}
+      </h6>
       <div className="w-6 h-[2px] bg-gray-300" />
       <div className="flex justify-between items-center">
         <h4 className="mt-3 mb-4 text-primary-8 leading-7 font-bold text-xl">{article.title}</h4>

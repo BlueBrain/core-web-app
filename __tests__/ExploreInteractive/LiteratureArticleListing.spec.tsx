@@ -20,7 +20,12 @@ import { mockArticleResponse, mockAuthors, mockJournals } from '__tests__/__util
 import { normalizeString } from '@/util/utils';
 import { ArticleListFilters } from '@/components/explore-section/Literature/api';
 import sessionAtom from '@/state/session';
+import { articleListingFilterPanelOpenAtom } from '@/state/explore-section/literature-filters';
 
+const ML_DATE_FORMAT = 'yyyy-MM-dd';
+const UI_DATE_FORMAT = 'dd-MM-yyyy';
+const EXPERIMENT_TYPES_BTN = 'experiment-types-button';
+const BrainRegionQueryParams = mockBrainRegions.at(1)?.id;
 jest.setTimeout(20_000);
 
 jest.mock('next/navigation', () => {
@@ -33,6 +38,14 @@ jest.mock('next/navigation', () => {
     notFound: jest.fn().mockReturnValue('Invalid experiment type selected.'),
   };
 });
+
+jest.mock('nuqs', () => ({
+  ...jest.requireActual('nuqs'),
+  useQueryState: (value: string) => {
+    if (value === 'brainRegion') return [BrainRegionQueryParams, () => {}];
+    if (value === 'brainRegionTitle') return [BrainRegionQueryParams, () => {}];
+  },
+}));
 
 jest.mock('deepdash-es/standalone', () => ({
   __esModule: true,
@@ -54,9 +67,6 @@ const createMockArticle = (
   authors: ['Cheryl Tunt', 'Malory Archer'],
   publicationDate: date ?? '2020-12-12',
 });
-
-const ML_DATE_FORMAT = 'yyyy-MM-dd';
-const UI_DATE_FORMAT = 'dd-MM-yyyy';
 
 const mockFetchArticlesForBrainRegionAndExperiment = jest.fn().mockImplementation(
   (experimentName, brainRegions, page: number, filters: ArticleListFilters) =>
@@ -141,22 +151,17 @@ describe('LiteratureArticleListingPage', () => {
 
   test('shows current experiment as selected in the keywords menu', async () => {
     await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
-
-    const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
-    click(keywordsMenu);
-
-    const selectedOption = screen.getByRole('option', { selected: true });
-    expect(selectedOption.textContent).toContain(neuronDensity.title);
+    const expTypesMenuButton = await selectExperimentTypesBtn();
+    expect(expTypesMenuButton.textContent).toContain(neuronDensity.title);
   });
 
   test('shows all experiment types as options', async () => {
     await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
 
-    const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
-    click(keywordsMenu);
+    const expTypesMenuButton = await selectExperimentTypesBtn();
+    click(expTypesMenuButton);
 
-    const options = screen.getAllByRole('option');
-
+    const options = screen.getAllByRole('menuitem');
     expect(options.length).toEqual(Object.keys(EXPERIMENT_DATA_TYPES).length);
   });
 
@@ -167,18 +172,21 @@ describe('LiteratureArticleListingPage', () => {
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     await renderComponentWithRoute(neuronDensity.name, { waitForArticles: true });
 
-    const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
-    click(keywordsMenu);
+    const expTypesMenuButton = await selectExperimentTypesBtn();
+    click(expTypesMenuButton);
 
     const electrophysiologyExperiment =
       DATA_TYPES_TO_CONFIGS[DataType.ExperimentalElectroPhysiology];
-    const electrophysiologyOption = screen.getByRole('option', {
+    const electrophysiologyOption = screen.getByRole('menuitem', {
       name: electrophysiologyExperiment.title,
     });
+
     click(electrophysiologyOption);
 
     expect(mockRouter.push).toHaveBeenCalledWith(
-      '/explore/interactive/literature/electrophysiology'
+      `/explore/interactive/literature/electrophysiology?brainRegion=${encodeURIComponent(
+        BrainRegionQueryParams!
+      )}`
     );
   });
 
@@ -278,7 +286,6 @@ describe('LiteratureArticleListingPage', () => {
     renderComponentWithRoute(neuronDensity.name);
     await openFilterPanel();
     mockFetchArticlesForBrainRegionAndExperiment.mockClear();
-
     typeInInput('Authors', 'Tunt');
     await selectSuggestion('Tunt');
 
@@ -438,10 +445,10 @@ describe('LiteratureArticleListingPage', () => {
   };
 
   const openFilterPanel = async () => {
-    const filterBtn = await findButton('Filter', true);
+    const filterBtn = await findButton('filter');
     click(filterBtn);
   };
-
+  const selectExperimentTypesBtn = async () => await screen.findByTestId(EXPERIMENT_TYPES_BTN);
   const articleListLoadingTestId = 'initial data loading';
 
   const neuronDensity = DATA_TYPES_TO_CONFIGS[DataType.ExperimentalNeuronDensity];
@@ -453,7 +460,6 @@ describe('LiteratureArticleListingPage', () => {
     config?: { waitForArticles?: boolean; authenticatedUser?: boolean }
   ) => {
     const spy = useParams as unknown as jest.Mock;
-
     spy.mockReturnValue({ 'experiment-data-type': name });
 
     await waitFor(() =>
@@ -463,9 +469,8 @@ describe('LiteratureArticleListingPage', () => {
         )
       )
     );
-
     if (config?.waitForArticles) {
-      await screen.findByTestId('total-article-count', {}, { timeout: 3000 });
+      await screen.findByTestId('total-article-count', {}, { timeout: 5000 });
     }
   };
 
@@ -493,12 +498,13 @@ describe('LiteratureArticleListingPage', () => {
           representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
         } as SelectedBrainRegion,
       ],
+      [articleListingFilterPanelOpenAtom, false],
     ];
     if (authenticatedUser) {
       initialAtoms.push([sessionAtom, { accessToken: 'abc' }]);
     }
     return (
-      <TestProvider initialValues={...initialAtoms}>
+      <TestProvider initialValues={initialAtoms}>
         <LiteratureArticleListingPage />
       </TestProvider>
     );

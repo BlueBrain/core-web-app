@@ -10,7 +10,7 @@ import {
 } from '@/components/explore-section/Literature/api';
 import { ArticleTypeSuggestionResponse, Suggestion } from '@/types/literature';
 
-export const articleListingFilterPanelOpen = atom(false);
+export const articleListingFilterPanelOpenAtom = atom(false);
 
 export const initialFilters: ArticleListFilters = {
   publicationDate: null,
@@ -19,7 +19,7 @@ export const initialFilters: ArticleListFilters = {
   articleTypes: [],
 };
 
-export const articleListFilters = atom<ArticleListFilters>(initialFilters);
+export const articleListFiltersAtom = atom<ArticleListFilters>(initialFilters);
 
 /**
  * Fetches (& caches) author suggestions that are shown in literautre q/a page and article listing page when user

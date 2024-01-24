@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { unwrap } from 'jotai/utils';
 import AutoCompleteSearch from '../AutoCompleteSearch';
 import {
-  articleListingFilterPanelOpen,
+  articleListingFilterPanelOpenAtom,
   articleTypeSuggestionsAtom,
   initialAuthorSuggestionsAtom,
   initialJournalSuggestionsAtom,
@@ -34,7 +34,7 @@ type Props = {
 };
 
 export default function ArticleListFilters({ values, onSubmit, onClearFilters }: Props) {
-  const [open, setOpen] = useAtom(articleListingFilterPanelOpen);
+  const [open, setOpen] = useAtom(articleListingFilterPanelOpenAtom);
   const initialAuthorSuggestions = useAtomValue(
     useMemo(() => unwrap(initialAuthorSuggestionsAtom), [])
   );
