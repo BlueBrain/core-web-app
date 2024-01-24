@@ -43,7 +43,7 @@ export default function QAResultList() {
         ref={qaListRef}
         className="flex-1 w-full overflow-auto scroll-auto primary-scrollbar"
         style={{
-          height: `calc(100% - ${areQAParamsVisible ? '31.5rem' : '10.5rem'})`,
+          height: `calc(100% - ${areQAParamsVisible ? '24rem' : '10.5rem'})`,
         }}
       >
         <ul className="flex flex-col items-center justify-start max-w-4xl w-full p-4 mx-auto list-none">

@@ -1,13 +1,26 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSetAtom } from 'jotai';
+
 import QAInteractive from './QAInteractive';
 import QALeftPanel from './QALeftPanel';
 import { classNames } from '@/util/utils';
 import usePathname from '@/hooks/pathname';
+import { initialParameters, literatureAtom, questionsParametersAtom } from '@/state/literature';
 
 function QAContainer() {
   const pathname = usePathname();
   const isBuildSection = pathname?.startsWith('/build');
+  const resetParameters = useSetAtom(questionsParametersAtom);
+  const updateLiterature = useSetAtom(literatureAtom);
+
+  useEffect(() => {
+    return () => {
+      resetParameters(initialParameters);
+      updateLiterature((prev) => ({ ...prev, areQAParamsVisible: false }));
+    };
+  }, []);
 
   return (
     <div

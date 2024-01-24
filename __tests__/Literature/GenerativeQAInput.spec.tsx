@@ -68,8 +68,8 @@ jest.mock('next/navigation', () => {
 });
 
 describe('GenerativeQAInput', () => {
-  beforeEach(() => {
-    render(GenerativeQAInputProvider());
+  beforeEach(async () => {
+    await waitFor(() => render(GenerativeQAInputProvider()));
   });
 
   test('shows input for typing question', () => {
@@ -95,7 +95,7 @@ describe('GenerativeQAInput', () => {
 
     selectTodayAsDate('start');
 
-    const searchBtn = sendRefinedQuestionButton();
+    const searchBtn = sendQuestionButton();
     expect(searchBtn).toBeDisabled();
   });
 
@@ -105,29 +105,27 @@ describe('GenerativeQAInput', () => {
     typeQuestion(defaultQuestion);
     selectTodayAsDate('start');
 
-    const searchBtn = sendRefinedQuestionButton();
+    const searchBtn = sendQuestionButton();
     expect(searchBtn).toBeEnabled();
   });
 
-  test('shows only refined question button when user opens search panel', () => {
+  test('shows only one search button when user opens advanced search panel', () => {
     typeQuestion(defaultQuestion);
-    expect(sendQuestionWithoutParamsButton()).toBeVisible();
+    expect(screen.getAllByRole('button', { name: new RegExp('Search') })).toHaveLength(1);
 
     openRefineSearchPanel();
 
-    expect(sendQuestionWithoutParamsButton()).not.toBeInTheDocument();
-    expect(sendRefinedQuestionButton()).toBeVisible();
+    expect(screen.getAllByRole('button', { name: new RegExp('Search') })).toHaveLength(1);
   });
 
   test('closes parameters panel when user clicks the close button', () => {
     openRefineSearchPanel();
 
-    typeQuestion(defaultQuestion);
-    expect(sendRefinedQuestionButton()).toBeVisible();
+    expect(document.querySelectorAll('input')).toHaveLength(5);
 
     closeRefineSearchPanel();
 
-    expect(sendRefinedQuestionButton('undefined-if-not-found')).toBeFalsy();
+    expect(document.querySelectorAll('input')).toHaveLength(0);
   });
 
   test('selects authors from suggestions', async () => {
@@ -272,15 +270,37 @@ describe('GenerativeQAInput', () => {
     await expectSuggestionsToBeVisible(matchingAuthors);
   });
 
-  const sendQuestionWithoutParamsButton = () => screen.queryByRole('button', { name: 'send' });
+  test('resets advanced search inputs when user clicks the close button', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
 
-  const sendRefinedQuestionButton = (
+    await fillInAdvancedSearchForm();
+
+    closeRefineSearchPanel();
+    expect(document.querySelectorAll('input')).toHaveLength(0);
+
+    openRefineSearchPanel();
+    await expectQAParamsToBeEmpty();
+  });
+
+  test('does not clear question when user closes advanced search panel', async () => {
+    openRefineSearchPanel();
+    typeQuestion(defaultQuestion);
+
+    typeInInput('Article Types', 'paper');
+    closeRefineSearchPanel();
+
+    const questionInput = screen.getByPlaceholderText('Your question');
+    expect(questionInput).toHaveValue(defaultQuestion);
+  });
+
+  const sendQuestionButton = (
     queryType: 'fail-if-not-found' | 'undefined-if-not-found' = 'fail-if-not-found'
   ) => {
     if (queryType === 'fail-if-not-found') {
-      return screen.getByRole('button', { name: 'Search send' });
+      return screen.getByRole('button', { name: new RegExp('Search') });
     }
-    return screen.queryByRole('button', { name: 'Search' });
+    return screen.queryByRole('button', { name: new RegExp('Search') });
   };
 
   const typeQuestion = (question: string) => {
@@ -289,7 +309,7 @@ describe('GenerativeQAInput', () => {
   };
 
   const openRefineSearchPanel = () => {
-    const refineSearchButton = screen.getByRole('button', { name: 'Refine your search' });
+    const refineSearchButton = screen.getByRole('button', { name: 'Filter' });
     fireEvent.click(refineSearchButton);
   };
 
@@ -355,20 +375,40 @@ describe('GenerativeQAInput', () => {
     fireEvent.mouseDown(selectedAuthor);
   };
 
+  const selectedOptionsSelector = '.ant-select-selection-item-content';
+
   const expectOptionsToBeSelected = (options: string[]) => {
     options.forEach((option) => {
-      expect(
-        screen.getByText(option, { selector: '.ant-select-selection-item-content' })
-      ).toBeVisible();
+      expect(screen.getByText(option, { selector: selectedOptionsSelector })).toBeVisible();
     });
   };
 
   const expectOptionsNotToBeSelected = (options: string[]) => {
     options.forEach((option) => {
-      expect(
-        screen.queryByText(option, { selector: '.ant-select-selection-item-content' })
-      ).toBeFalsy();
+      expect(screen.queryByText(option, { selector: selectedOptionsSelector })).toBeFalsy();
     });
+  };
+
+  const fillInAdvancedSearchForm = async () => {
+    selectTodayAsDate('start');
+    selectTodayAsDate('end');
+
+    typeInInput('Article Types', 'paper');
+    await selectSuggestion('Paper');
+
+    typeInInput('Authors', 'Archer');
+    await selectSuggestion('Sterling Archer');
+
+    focusOnInput('Journal');
+    await selectSuggestion('Biology');
+
+    expectOptionsToBeSelected(['Sterling Archer', 'Paper', 'Biology']);
+  };
+
+  const expectQAParamsToBeEmpty = async () => {
+    expect(document.querySelectorAll(selectedOptionsSelector)).toHaveLength(0);
+    expect(screen.getByPlaceholderText('Start date') as HTMLInputElement).toHaveValue('');
+    expect(screen.getByPlaceholderText('End date') as HTMLInputElement).toHaveValue('');
   };
 
   const HydrateAtoms = ({ initialValues, children }: any) => {

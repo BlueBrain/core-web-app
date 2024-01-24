@@ -32,10 +32,10 @@ import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 type Props = {
   areQAParamsVisible: boolean;
-  setAreQAParamsVisible: () => void;
+  closeQAParams: () => void;
 };
 
-function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props) {
+function QuestionParameters({ areQAParamsVisible, closeQAParams }: Props) {
   const update = useQuestionParameter();
 
   const articleTypesResponse = useAtomValue(useMemo(() => unwrap(articleTypeSuggestionsAtom), []));
@@ -76,15 +76,20 @@ function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props
         },
       }}
     >
-      <div className={classNames('relative w-fill', areQAParamsVisible ? 'block' : 'hidden')}>
+      <div
+        className={classNames(
+          'relative w-fill bg-primary-0 rounded-lg px-7 mb-6',
+          areQAParamsVisible ? 'block' : 'hidden'
+        )}
+      >
         <Button
           icon={<CloseOutlined />}
-          onClick={setAreQAParamsVisible}
+          onClick={closeQAParams}
           shape="circle"
           aria-label="close-parameters"
-          className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 -top-6 mr-3"
+          className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 top-2 mr-3"
         />
-        <div className="w-full mt-10">
+        <div className="w-full mt-8">
           <DateRange
             onChange={(e) => update('selectedDate', e)}
             filter={{
@@ -96,7 +101,7 @@ function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props
                 : { ...initialParameters.selectedDate },
             }}
           />
-          <hr className="my-4 border-primary-2" />
+          <hr className="my-3 border-primary-2" />
         </div>
 
         <div className="w-full">
@@ -110,7 +115,7 @@ function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props
               update('selectedJournals', [...selectedValues]);
             }}
           />
-          <hr className="my-4 border-primary-2" />
+          <hr className="my-3 border-primary-2" />
         </div>
 
         <div className="w-full">
@@ -131,10 +136,10 @@ function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props
               )
             }
           />
-          <hr className="my-4 border-primary-2" />
+          <hr className="my-3 border-primary-2" />
         </div>
 
-        <div className="w-full">
+        <div className="w-full mb-3">
           <AutoCompleteSearch
             key="ArticleTypes"
             title="Article Types"
@@ -156,7 +161,6 @@ function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props
               )
             }
           />
-          <hr className="my-4 border-primary-2" />
         </div>
       </div>
     </ConfigProvider>
@@ -164,9 +168,9 @@ function QuestionParameters({ areQAParamsVisible, setAreQAParamsVisible }: Props
 }
 
 // eslint-disable-next-line react/display-name
-export default memo(({ areQAParamsVisible, setAreQAParamsVisible }: Props) => (
+export default memo(({ areQAParamsVisible, closeQAParams: setAreQAParamsVisible }: Props) => (
   <QuestionParameters
     areQAParamsVisible={areQAParamsVisible}
-    setAreQAParamsVisible={setAreQAParamsVisible}
+    closeQAParams={setAreQAParamsVisible}
   />
 ));

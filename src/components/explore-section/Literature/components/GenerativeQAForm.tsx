@@ -25,12 +25,30 @@ type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   type: 'submit' | 'button';
 };
 
-function FormButton({ icon, type, ...props }: FormButtonProps) {
+function SubmitQuestion() {
+  const [{ query, isGenerating }, updateLiterature] = useAtom(literatureAtom);
+  const isQuestionEmpty = query.trim().length === 0;
+  return (
+    <button
+      type="submit"
+      disabled={isQuestionEmpty || isGenerating}
+      title={isQuestionEmpty ? 'Please enter a question' : ''}
+      className="rounded w-max py-1.5 px-4 text-primary-8 border border-gray-200 font-semibold disabled:text-gray-400"
+      onClick={() => {
+        updateLiterature((prev) => ({ ...prev, areQAParamsVisible: false }));
+      }}
+    >
+      Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
+    </button>
+  );
+}
+
+function FormButton({ icon, type, className, ...props }: FormButtonProps) {
   return (
     <button
       onClick={props.onClick}
       type={type === 'submit' ? 'submit' : 'button'}
-      className="text-sm font-medium text-white rounded-lg outline-none focus-within:shadow-none"
+      className="focus-within:shadow-none rounded-lg text-sm text-white outline-none font-medium"
     >
       {icon}
     </button>
@@ -144,13 +162,20 @@ export default function QAForm({
   useAutosizeTextArea(textAreaRef.current, query);
 
   return (
-    <form name="qa-form" className="w-full" onSubmit={onFormSubmit}>
+    <form
+      name="qa-form"
+      className={classNames(
+        'w-full',
+        areQAParamsVisible ? 'flex flex-col-reverse' : 'flex flex-row items-baseline'
+      )}
+      onSubmit={onFormSubmit}
+    >
       {label && (
-        <label htmlFor="gqa-question" className="mb-8 text-base text-slate-400">
+        <label htmlFor="gqa-question" className="mr-2 text-base text-slate-400">
           {label}
         </label>
       )}
-      <div className="pb-1.5 border-b border-sky-400 justify-between items-center gap-2.5 inline-flex w-full">
+      <div className={classNames('w-full pb-1.5 justify-between items-end gap-2.5 flex')}>
         <textarea
           ref={textAreaRef}
           id="gqa-question"
@@ -164,9 +189,9 @@ export default function QAForm({
           tabIndex={0}
           rows={1}
           className={classNames(
-            'm-0 w-full resize-none overflow-y-hidden max-h-52 p-0 min-h-[24px] box-border',
-            'text-base font-semibold bg-transparent outline-none text-primary-8 focus:shadow-none',
-            'placeholder:text-blue-900 placeholder:text-base placeholder:font-normal placeholder:leading-snug'
+            'm-0 w-full resize-none overflow-y-hidden outline-none max-h-52 p-0 pb-2 min-h-[24px] box-border border-b border-gray-200',
+            'text-base font-semibold bg-transparent text-primary-8 focus:shadow-none',
+            'placeholder:text-blue-900 placeholder:text-base placeholder:font-semibold placeholder:leading-snug'
           )}
         />
         <div className="inline-flex items-center justify-center gap-2">
@@ -184,13 +209,7 @@ export default function QAForm({
               icon={<StopLoading className="text-primary-6 w-6 h-6" />}
             />
           ) : (
-            !areQAParamsVisible && (
-              <FormButton
-                type="submit"
-                name="send"
-                icon={<SendOutlined className="text-base -rotate-[30deg] text-primary-8 ml-5" />}
-              />
-            )
+            <SubmitQuestion />
           )}
         </div>
       </div>

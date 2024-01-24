@@ -100,10 +100,10 @@ export default function AutoCompleteSearch({
       onChange={onChange}
       suffixIcon={
         isNil(initialSuggestions) || fetching ? (
-          <Spin size="small" data-testid="loading-suggestions" className="mr-9" />
+          <Spin size="small" data-testid="loading-suggestions" className="absolute mx-2" />
         ) : (
           <DownOutlined
-            className="text-primary-4 mr-7"
+            className="text-primary-4 absolute mx-2"
             onClick={() => {
               setSearchTerm('');
               setOpenSuggestions(true);
@@ -112,7 +112,7 @@ export default function AutoCompleteSearch({
         )
       }
       defaultValue={defaultValues}
-      className="min-w-[120px] rounded w-full"
+      className="min-w-[128px] rounded"
       bordered={false}
       size="middle"
       popupMatchSelectWidth={false}
