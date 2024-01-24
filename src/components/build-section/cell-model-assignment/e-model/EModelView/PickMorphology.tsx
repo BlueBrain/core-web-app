@@ -2,7 +2,7 @@ import { Modal } from 'antd';
 import { useSetAtom } from 'jotai';
 
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
+import { DataType } from '@/constants/explore-section/list-views';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 import { eModelUIConfigAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { convertMorphologyForUI } from '@/services/e-model';
@@ -57,7 +57,7 @@ export default function PickMorphology({ isOpen, onCancel, onOk }: Props) {
         width={width}
       >
         <ExploreSectionListingView
-          experimentTypeName={NEURON_MORPHOLOGY}
+          dataType={DataType.ExperimentalNeuronMorphology}
           enableDownload
           renderButton={pickMorphButtonFn}
           brainRegionSource="root"

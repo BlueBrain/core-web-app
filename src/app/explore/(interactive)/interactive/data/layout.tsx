@@ -9,24 +9,20 @@ import { usePathname, useRouter, useParams } from 'next/navigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import {
   BASE_EXPLORE_PATH,
+  DATA_TYPES_TO_CONFIGS,
   EXPERIMENT_DATA_TYPES,
   INTERACTIVE_PATH,
 } from '@/constants/explore-section/experiment-types';
 import useTotalResults from '@/hooks/useTotalResults';
 import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
+import { DataType } from '@/constants/explore-section/list-views';
 
 const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
 
 const brainRegionSource = 'selected';
 
-function MenuItemLabel({
-  label,
-  experimentTypeName,
-}: {
-  label: string;
-  experimentTypeName: string;
-}) {
-  return `${label} ${useTotalResults({ experimentTypeName, brainRegionSource })}`;
+function MenuItemLabel({ label, dataType }: { label: string; dataType: DataType }) {
+  return `${label} ${useTotalResults({ dataType, brainRegionSource })}`;
 }
 
 export default function ExploreInteractiveDataLayout({ children }: { children: ReactNode }) {
@@ -50,10 +46,10 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
 
   const items = Object.keys(EXPERIMENT_DATA_TYPES).map((k) => {
     return {
-      active: EXPERIMENT_DATA_TYPES[k].name === activeExperimentPath,
-      label: EXPERIMENT_DATA_TYPES[k].title,
-      key: EXPERIMENT_DATA_TYPES[k].name,
-      experimentTypeName: k,
+      active: DATA_TYPES_TO_CONFIGS[k as DataType].name === activeExperimentPath,
+      label: DATA_TYPES_TO_CONFIGS[k as DataType].title,
+      key: DATA_TYPES_TO_CONFIGS[k as DataType].name,
+      dataType: k as DataType,
     };
   });
 
@@ -87,7 +83,7 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
                     flexBasis: menuItemWidth,
                   }}
                 >
-                  <MenuItemLabel label={item.label} experimentTypeName={item.experimentTypeName} />
+                  <MenuItemLabel label={item.label} dataType={item.dataType} />
                 </Menu.Item>
               ))}
             </Menu>

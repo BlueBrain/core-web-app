@@ -5,20 +5,21 @@ import Error from 'next/error';
 import { resourceBasedResponseHitsAtom } from '@/state/explore-section/generalization';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import CardView from '@/components/explore-section/CardView';
+import { DataType } from '@/constants/explore-section/list-views';
 
 export default function WithGeneralization({
   children,
-  experimentTypeName,
+  dataType,
 }: {
   children: (props: { render: ReactNode }) => ReactNode;
-  experimentTypeName: string;
+  dataType: DataType;
 }) {
   const { id: resourceId } = useResourceInfoFromPath() ?? { id: '' };
 
   const resourceBasedResponseHits = useAtomValue(
     useMemo(
-      () => loadable(resourceBasedResponseHitsAtom({ resourceId, experimentTypeName })),
-      [resourceId, experimentTypeName]
+      () => loadable(resourceBasedResponseHitsAtom({ resourceId, dataType })),
+      [resourceId, dataType]
     )
   );
 
@@ -36,7 +37,7 @@ export default function WithGeneralization({
       render = resourceBasedResponseHits.data?.length ? (
         <CardView
           data={resourceBasedResponseHits.data}
-          experimentTypeName={experimentTypeName}
+          dataType={dataType}
           resourceId={resourceId}
         />
       ) : (

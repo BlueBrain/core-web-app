@@ -15,6 +15,7 @@ import WithRowSelection, {
 import type { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { DataType } from '@/constants/explore-section/list-views';
 import styles from '@/app/explore/explore.module.scss';
 
 function CustomTH({
@@ -84,8 +85,8 @@ export function BaseTable({
   hasError,
   loading,
   rowSelection,
-  experimentTypeName,
-}: TableProps<ExploreESHit> & { hasError?: boolean; experimentTypeName: string }) {
+  dataType,
+}: TableProps<ExploreESHit> & { hasError?: boolean; dataType: DataType }) {
   const router = useRouter();
   const pathname = usePathname();
   const setBackToListPath = useSetAtom(backToListPathAtom);
@@ -102,7 +103,7 @@ export function BaseTable({
               onClick: (e: MouseEvent<HTMLInputElement>) => {
                 e.preventDefault();
                 setBackToListPath(pathname);
-                router.push(detailUrlBuilder(record, experimentTypeName));
+                router.push(detailUrlBuilder(record, dataType));
               },
             }
           : {},
@@ -158,21 +159,18 @@ export default function ExploreSectionTable({
   columns,
   dataSource,
   enableDownload,
-  experimentTypeName,
+  dataType,
   hasError,
   loading,
   renderButton,
 }: TableProps<ExploreESHit> & {
   enableDownload?: boolean;
-  experimentTypeName: string;
+  dataType: DataType;
   hasError?: boolean;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   return enableDownload ? (
-    <WithRowSelection
-      renderButton={renderButton ?? defaultRenderButton}
-      experimentTypeName={experimentTypeName}
-    >
+    <WithRowSelection renderButton={renderButton ?? defaultRenderButton} dataType={dataType}>
       {(rowSelection) => (
         <BaseTable
           columns={columns}
@@ -181,7 +179,7 @@ export default function ExploreSectionTable({
           loading={loading}
           rowKey={(row) => row._source._self}
           rowSelection={rowSelection}
-          experimentTypeName={experimentTypeName}
+          dataType={dataType}
         />
       )}
     </WithRowSelection>
@@ -192,7 +190,7 @@ export default function ExploreSectionTable({
       hasError={hasError}
       loading={loading}
       rowKey={(row) => row._source._self}
-      experimentTypeName={experimentTypeName}
+      dataType={dataType}
     />
   );
 }

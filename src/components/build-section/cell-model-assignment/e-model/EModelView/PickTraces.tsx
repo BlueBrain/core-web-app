@@ -7,8 +7,7 @@ import { convertTraceForUI } from '@/services/e-model';
 import { RenderButtonProps } from '@/components/explore-section/ExploreSectionListingView/WithRowSelection';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { ExperimentalTrace } from '@/types/explore-section/es-experiment';
-
-const TYPE = 'https://bbp.epfl.ch/ontologies/core/bmo/ExperimentalTrace';
+import { DataType } from '@/constants/explore-section/list-views';
 
 type Props = {
   isOpen: boolean;
@@ -58,7 +57,7 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
         width={width}
       >
         <ExploreSectionListingView
-          experimentTypeName={TYPE}
+          dataType={DataType.ExperimentalElectroPhysiology}
           enableDownload
           renderButton={pickTraceButtonFn}
           brainRegionSource="root"

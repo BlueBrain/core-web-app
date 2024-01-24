@@ -26,11 +26,12 @@ import { FilterValues } from '@/types/explore-section/application';
 import { activeColumnsAtom } from '@/state/explore-section/list-view-atoms';
 import { getFieldEsConfig, getFieldLabel } from '@/api/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
+import { DataType } from '@/constants/explore-section/list-views';
 
 export type ControlPanelProps = {
   children?: ReactNode;
   toggleDisplay: () => void;
-  experimentTypeName: string;
+  dataType: DataType;
   aggregations?: Aggregations;
   filters: Filter[];
   setFilters: any;
@@ -148,13 +149,13 @@ function createFilterItemComponent(
 export default function ControlPanel({
   children,
   toggleDisplay,
-  experimentTypeName,
+  dataType,
   aggregations,
   filters,
   setFilters,
 }: ControlPanelProps) {
   const [activeColumns, setActiveColumns] = useAtom(
-    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});

@@ -8,13 +8,12 @@ import { BrainRegion } from '@/types/ontologies';
 import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
-import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import {
-  BOUTON_DENSITY,
-  NEURON_DENSITY,
-  NEURON_MORPHOLOGY,
-} from '@/constants/explore-section/list-views';
+  DATA_TYPES_TO_CONFIGS,
+  EXPERIMENT_DATA_TYPES,
+} from '@/constants/explore-section/experiment-types';
+import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
+import { DataType } from '@/constants/explore-section/list-views';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,
@@ -25,9 +24,9 @@ jest.mock('next/navigation', () => ({
 
 const mockCountForExperiment = 10;
 
-const experimentWithFewArticles = BOUTON_DENSITY;
-const experimentWith100Articles = NEURON_MORPHOLOGY;
-const experimentWithMoreThan100Articles = NEURON_DENSITY;
+const experimentWithFewArticles = DataType.ExperimentalBoutonDensity;
+const experimentWith100Articles = DataType.ExperimentalNeuronMorphology;
+const experimentWithMoreThan100Articles = DataType.ExperimentalNeuronDensity;
 
 jest.mock('src/api/explore-section/resources.ts', () => ({
   __esModule: true,
@@ -46,7 +45,7 @@ jest.mock('src/components/explore-section/Literature/api.ts', () => {
     fetchParagraphCountForBrainRegionAndExperiment: jest.fn().mockImplementation(
       (token, experimentType) =>
         new Promise((resolve) => {
-          if (experimentType.name === EXPERIMENT_DATA_TYPES[experimentWith100Articles].title) {
+          if (experimentType.name === DATA_TYPES_TO_CONFIGS[experimentWith100Articles].title) {
             resolve({
               total: 100,
               experimentUrl: experimentType.id,

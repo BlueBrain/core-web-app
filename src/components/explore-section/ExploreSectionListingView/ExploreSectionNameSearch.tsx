@@ -16,6 +16,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import debounce from 'lodash/debounce';
 import { searchStringAtom } from '@/state/explore-section/list-view-atoms';
 import useForwardRef from '@/hooks/useForwardRef';
+import { DataType } from '@/constants/explore-section/list-views';
 
 const Input = forwardRef(
   (
@@ -64,13 +65,11 @@ function Button({
 }
 
 type SearchProps = {
-  experimentTypeName: string;
+  dataType: DataType;
 };
 
-export default function ExploreSectionNameSearch({ experimentTypeName }: SearchProps) {
-  const [searchStringAtomValue, setSearchStringAtomValue] = useAtom(
-    searchStringAtom({ experimentTypeName })
-  );
+export default function ExploreSectionNameSearch({ dataType }: SearchProps) {
+  const [searchStringAtomValue, setSearchStringAtomValue] = useAtom(searchStringAtom({ dataType }));
   const [searchStringLocalState, setSearchStringLocalState] = useState(searchStringAtomValue);
 
   const [active, setActive] = useState<boolean>(false);

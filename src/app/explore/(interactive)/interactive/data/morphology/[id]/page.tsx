@@ -10,7 +10,7 @@ import createMorphologyDataAtom from '@/components/explore-section/MorphoViewerC
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { DetailType } from '@/constants/explore-section/fields-config/types';
 import WithGeneralization from '@/components/explore-section/WithGeneralization';
-import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
+import { DataType } from '@/constants/explore-section/list-views';
 import { NEURON_MORPHOLOGY_FIELDS } from '@/constants/explore-section/detail-views-fields';
 import GeneralizationControls from '@/components/explore-section/WithGeneralization/GeneralizationControls';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
@@ -22,14 +22,14 @@ const Detail = dynamic(() => import('@/components/explore-section/Detail'), { ss
 export default function MorphologyDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <WithGeneralization experimentTypeName={NEURON_MORPHOLOGY}>
+      <WithGeneralization dataType={DataType.ExperimentalNeuronMorphology}>
         {({ render: renderSimilar }) => (
           <Detail fields={NEURON_MORPHOLOGY_FIELDS}>
             {(detail: DetailType) => (
               <>
                 <MorphoViewerLoader resource={detail} />
                 <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-                  <GeneralizationControls experimentTypeName={NEURON_MORPHOLOGY} />
+                  <GeneralizationControls dataType={DataType.ExperimentalNeuronMorphology} />
                 </ErrorBoundary>
                 <div className="min-h-[1500px]">{renderSimilar}</div>
               </>

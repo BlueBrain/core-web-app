@@ -7,10 +7,10 @@ import {
   mockMorphologyResponse,
 } from '../../../../../__tests__/__server__/handlers';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { NEURON_MORPHOLOGY, PAGE_SIZE } from '@/constants/explore-section/list-views';
+import { DataType, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
 
 jest.mock('next/navigation');
 
@@ -60,7 +60,7 @@ describe('Test main functionalities of interface', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
@@ -80,7 +80,7 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
@@ -94,7 +94,7 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
             enableDownload
           />
         </TestProvider>
@@ -110,7 +110,7 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
             enableDownload
           />
         </TestProvider>
@@ -127,7 +127,7 @@ describe('Download button tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
             enableDownload
           />
         </TestProvider>
@@ -149,7 +149,7 @@ describe('Filters panel tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
@@ -194,7 +194,10 @@ describe('Header panel unit tests', () => {
 
     render(
       <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-        <NumericResultsInfo experimentTypeName={NEURON_MORPHOLOGY} brainRegionSource="root" />
+        <NumericResultsInfo
+          dataType={DataType.ExperimentalNeuronMorphology}
+          brainRegionSource="root"
+        />
       </TestProvider>
     );
 
@@ -214,7 +217,7 @@ describe('Load more resources button unit tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
@@ -231,7 +234,7 @@ describe('Load more resources button unit tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
@@ -250,7 +253,7 @@ describe('Listing view table tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
@@ -266,7 +269,7 @@ describe('Listing view table tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
@@ -281,14 +284,14 @@ describe('Listing view table tests', () => {
         <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
           <ExploreSectionListingView
             brainRegionSource="root"
-            experimentTypeName={NEURON_MORPHOLOGY}
+            dataType={DataType.ExperimentalNeuronMorphology}
           />
         </TestProvider>
       )
     );
     const tableHeaders = screen.getAllByRole('columnheader');
     expect(tableHeaders.length).toEqual(
-      EXPERIMENT_DATA_TYPES[NEURON_MORPHOLOGY].columns.length // Preview column has no header.
+      DATA_TYPES_TO_CONFIGS[DataType.ExperimentalNeuronMorphology].columns.length // Preview column has no header.
     );
   });
 });

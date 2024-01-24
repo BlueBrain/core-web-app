@@ -7,8 +7,8 @@ import { ExploreESHit } from '@/types/explore-section/es';
 import { SortState } from '@/types/explore-section/application';
 import { ValueArray } from '@/components/ListTable';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { ExperimentDataTypeName } from '@/constants/explore-section/list-views';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DataType } from '@/constants/explore-section/list-views';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
 import { classNames } from '@/util/utils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import styles from '@/app/explore/explore.module.scss';
@@ -48,7 +48,7 @@ export default function useExploreColumns(
   sortState?: SortState,
   initialColumns: ColumnProps<ExploreESHit>[] = [],
   dimensionColumns?: string[] | null,
-  experimentTypeName?: ExperimentDataTypeName
+  dataType?: DataType
 ): ColumnProps<ExploreESHit>[] {
   const keys = useMemo(() => Object.keys(EXPLORE_FIELDS_CONFIG), []);
   const [columnWidths, setColumnWidths] = useState<{ key: string; width: number }[]>(
@@ -209,11 +209,11 @@ export default function useExploreColumns(
 
   const columns = [...main, ...dimensions];
 
-  if (experimentTypeName) {
+  if (dataType && dataType) {
     return columns.sort((a, b) =>
       a.key && b.key
-        ? EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(a.key as Field) -
-          EXPERIMENT_DATA_TYPES[experimentTypeName].columns.indexOf(b.key as Field)
+        ? DATA_TYPES_TO_CONFIGS[dataType].columns.indexOf(a.key as Field) -
+          DATA_TYPES_TO_CONFIGS[dataType].columns.indexOf(b.key as Field)
         : -1
     );
   }

@@ -20,6 +20,7 @@ import {
   activeColumnsAtom,
 } from '@/state/explore-section/list-view-atoms';
 import { Filter } from '@/components/Filter/types';
+import { DataType } from '@/constants/explore-section/list-views';
 
 function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
@@ -42,7 +43,7 @@ export default function FilterControls({
   children,
   displayControlPanel,
   setDisplayControlPanel,
-  experimentTypeName,
+  dataType,
   filters,
   resourceId,
   disabled,
@@ -50,7 +51,7 @@ export default function FilterControls({
   children?: ReactNode;
   displayControlPanel: boolean;
   setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
-  experimentTypeName: string;
+  dataType: DataType;
   filters?: Filter[];
   resourceId?: string;
   disabled?: boolean;
@@ -58,11 +59,11 @@ export default function FilterControls({
   const [activeColumnsLength, setActiveColumnsLength] = useState<number | undefined>(undefined);
 
   const activeColumns = useAtomValue(
-    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
   );
 
-  const resetFilters = useResetAtom(filtersAtom({ experimentTypeName, resourceId }));
-  const setSearchString = useSetAtom(searchStringAtom({ experimentTypeName }));
+  const resetFilters = useResetAtom(filtersAtom({ dataType, resourceId }));
+  const setSearchString = useSetAtom(searchStringAtom({ dataType }));
 
   const selectedFiltersCount = filters
     ? filters.filter((filter) => filterHasValue(filter)).length
@@ -86,7 +87,7 @@ export default function FilterControls({
       <div className="w-full inline-flex gap-2 place-content-end">
         <ClearFilters onClick={clearFilters} />
         {/* only show search input on listing views. resource id is present on detail views. */}
-        {!resourceId && <ExploreSectionNameSearch experimentTypeName={experimentTypeName} />}
+        {!resourceId && <ExploreSectionNameSearch dataType={dataType} />}
         <FilterBtn disabled={disabled} onClick={() => setDisplayControlPanel(!displayControlPanel)}>
           <div className="flex gap-3 items-center">
             <span className="bg-primary-1 text-primary-9 text-sm font-medium px-2.5 py-1 rounded dark:bg-primary-1 dark:text-primary-9">

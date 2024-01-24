@@ -1,6 +1,6 @@
 import buildFilters, { getFilterESBuilder } from '@/queries/explore-section/filters';
 import { Filter } from '@/components/Filter/types';
-import { BOUTON_DENSITY } from '@/constants/explore-section/list-views';
+import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 const checklistFilter: Filter = {
@@ -128,14 +128,14 @@ describe('test buildFilters functionality', () => {
       [checklistFilter, valueRangeFilter],
       undefined,
       undefined,
-      BOUTON_DENSITY
+      DataType.ExperimentalBoutonDensity
     );
     expect(builder?.toJSON()).toEqual({
       bool: {
         must: [
           {
             term: {
-              '@type.keyword': BOUTON_DENSITY,
+              '@type.keyword': DataTypeToNexusType[DataType.ExperimentalBoutonDensity],
             },
           },
           {

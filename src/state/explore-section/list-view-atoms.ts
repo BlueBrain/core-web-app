@@ -11,26 +11,22 @@ import {
   fetchTotalByExperimentAndRegions,
 } from '@/api/explore-section/resources';
 import sessionAtom from '@/state/session';
-import {
-  PAGE_NUMBER,
-  PAGE_SIZE,
-  SIMULATION_CAMPAIGNS,
-} from '@/constants/explore-section/list-views';
+import { DataType, PAGE_NUMBER, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import { ExploreESHit, FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { Filter } from '@/components/Filter/types';
 import { selectedBrainRegionWithChildrenAtom } from '@/state/brain-regions';
-import dataTypeConfigSelector from '@/util/explore-section/dataTypeConfigSelector';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
 
 type DataAtomFamilyScopeType = {
-  experimentTypeName: string;
+  dataType: DataType;
   brainRegionSource?: ExploreDataBrainRegionSource;
   resourceId?: string;
 };
 
 const isListAtomEqual = (a: DataAtomFamilyScopeType, b: DataAtomFamilyScopeType): boolean =>
   // eslint-disable-next-line lodash/prefer-matches
-  a.experimentTypeName === b.experimentTypeName &&
+  a.dataType === b.dataType &&
   a.brainRegionSource === b.brainRegionSource &&
   a.resourceId === b.resourceId;
 
@@ -45,22 +41,22 @@ export const searchStringAtom = atomFamily(() => atom<string>(''), isListAtomEqu
 export const sortStateAtom = atom<SortState | undefined>({ field: 'createdAt', order: 'desc' });
 
 export const activeColumnsAtom = atomFamily(
-  ({ experimentTypeName }: DataAtomFamilyScopeType) =>
+  ({ dataType }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<string[]> | string[]>(async (get) => {
-      const dimensionColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
-      const { columns } = dataTypeConfigSelector(experimentTypeName);
+      const dimensionColumns = await get(dimensionColumnsAtom({ dataType }));
+      const { columns } = DATA_TYPES_TO_CONFIGS[dataType];
 
       return ['index', ...(dimensionColumns || []), ...columns];
     }),
   isListAtomEqual
 );
 
-export const dimensionColumnsAtom = atomFamily(({ experimentTypeName }: DataAtomFamilyScopeType) =>
+export const dimensionColumnsAtom = atomFamily(({ dataType }: DataAtomFamilyScopeType) =>
   atom<Promise<string[] | null>>(async (get) => {
     const session = get(sessionAtom);
 
     // if the type is not simulation campaign, we dont fetch dimension columns
-    if (!session || experimentTypeName !== SIMULATION_CAMPAIGNS) {
+    if (!session || dataType !== DataType.SimulationCampaigns) {
       return null;
     }
     const dimensionsResponse = await fetchDimensionAggs(session?.accessToken);
@@ -76,10 +72,10 @@ export const dimensionColumnsAtom = atomFamily(({ experimentTypeName }: DataAtom
 );
 
 export const filtersAtom = atomFamily(
-  ({ experimentTypeName }: DataAtomFamilyScopeType) =>
+  ({ dataType }: DataAtomFamilyScopeType) =>
     atomWithDefault<Promise<Filter[]>>(async (get) => {
-      const { columns } = dataTypeConfigSelector(experimentTypeName);
-      const dimensionsColumns = await get(dimensionColumnsAtom({ experimentTypeName }));
+      const { columns } = DATA_TYPES_TO_CONFIGS[dataType];
+      const dimensionsColumns = await get(dimensionColumnsAtom({ dataType }));
       return [
         ...columns.map((colKey) => columnKeyToFilter(colKey)),
         ...(dimensionsColumns || []).map(
@@ -97,7 +93,7 @@ export const filtersAtom = atomFamily(
 );
 
 export const totalByExperimentAndRegionsAtom = atomFamily(
-  ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
     atom<Promise<number | undefined | null>>(async (get) => {
       const session = get(sessionAtom);
 
@@ -109,7 +105,7 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
       if (brainRegionSource === 'selected')
         descendantIds = (await get(selectedBrainRegionWithChildrenAtom)) || [];
 
-      const query = fetchDataQuery(0, 1, [], experimentTypeName, sortState, '', descendantIds);
+      const query = fetchDataQuery(0, 1, [], dataType, sortState, '', descendantIds);
 
       const result = query && (await fetchTotalByExperimentAndRegions(session.accessToken, query));
 
@@ -119,10 +115,10 @@ export const totalByExperimentAndRegionsAtom = atomFamily(
 );
 
 export const queryAtom = atomFamily(
-  ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
     atom<Promise<DataQuery | null>>(async (get) => {
-      const searchString = get(searchStringAtom({ experimentTypeName }));
-      const pageNumber = get(pageNumberAtom({ experimentTypeName }));
+      const searchString = get(searchStringAtom({ dataType }));
+      const pageNumber = get(pageNumberAtom({ dataType }));
       const pageSize = get(pageSizeAtom);
       const sortState = get(sortStateAtom);
 
@@ -131,7 +127,7 @@ export const queryAtom = atomFamily(
           ? (await get(selectedBrainRegionWithChildrenAtom)) || []
           : [];
 
-      const filters = await get(filtersAtom({ experimentTypeName }));
+      const filters = await get(filtersAtom({ dataType }));
 
       if (!filters) {
         return null;
@@ -141,7 +137,7 @@ export const queryAtom = atomFamily(
         pageSize,
         pageNumber,
         filters,
-        experimentTypeName,
+        dataType,
         sortState,
         searchString,
         descendantIds
@@ -151,13 +147,13 @@ export const queryAtom = atomFamily(
 );
 
 export const queryResponseAtom = atomFamily(
-  ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
 
-      const query = await get(queryAtom({ experimentTypeName, brainRegionSource }));
+      const query = await get(queryAtom({ dataType, brainRegionSource }));
       const result = query && (await fetchEsResourcesByType(session.accessToken, query));
 
       return result;
@@ -166,9 +162,9 @@ export const queryResponseAtom = atomFamily(
 );
 
 export const dataAtom = atomFamily<DataAtomFamilyScopeType, Atom<Promise<ExploreESHit[]>>>(
-  ({ experimentTypeName, brainRegionSource }) =>
+  ({ dataType, brainRegionSource }) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ experimentTypeName, brainRegionSource }));
+      const response = await get(queryResponseAtom({ dataType, brainRegionSource }));
 
       if (response?.hits) {
         return response.hits;
@@ -180,9 +176,9 @@ export const dataAtom = atomFamily<DataAtomFamilyScopeType, Atom<Promise<Explore
 );
 
 export const totalAtom = atomFamily(
-  ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
     atom(async (get) => {
-      const response = await get(queryResponseAtom({ experimentTypeName, brainRegionSource }));
+      const response = await get(queryResponseAtom({ dataType, brainRegionSource }));
       const { total } = response ?? {
         total: { value: 0 },
       };
@@ -192,9 +188,9 @@ export const totalAtom = atomFamily(
 );
 
 export const aggregationsAtom = atomFamily(
-  ({ experimentTypeName, brainRegionSource }: DataAtomFamilyScopeType) =>
+  ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
     atom<Promise<FlattenedExploreESResponse['aggs'] | undefined>>(async (get) => {
-      const response = await get(queryResponseAtom({ experimentTypeName, brainRegionSource }));
+      const response = await get(queryResponseAtom({ dataType, brainRegionSource }));
       return response?.aggs;
     }),
   isListAtomEqual

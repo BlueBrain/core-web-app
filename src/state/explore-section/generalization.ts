@@ -18,7 +18,7 @@ import {
 } from '@/types/explore-section/kg-inference';
 
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
-import { PAGE_NUMBER } from '@/constants/explore-section/list-views';
+import { DataType, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { DEFAULT_CARDS_NUMBER } from '@/constants/explore-section/generalization';
 import { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
 import { fetchEsResourcesByType } from '@/api/explore-section/resources';
@@ -46,7 +46,7 @@ type Rule = ResourceBasedGeneralization & { modelName: string; ruleId: string };
 
 type GenFamilyType = {
   resourceId: string;
-  experimentTypeName: string;
+  dataType: DataType;
 };
 
 function flattenRules(formattedRules: Rule[], { rules }: RulesOutput[0]): Rule[] {
@@ -162,7 +162,7 @@ export const resourceBasedResponseResultsAtom = atomFamily((resourceId: string) 
 );
 
 export const resourceBasedResponseRawAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: GenFamilyType) =>
+  ({ resourceId, dataType }: GenFamilyType) =>
     atom<Promise<FlattenedExploreESResponse | null>>(async (get, { signal }) => {
       const session = get(sessionAtom);
 
@@ -176,7 +176,7 @@ export const resourceBasedResponseRawAtom = atomFamily(
 
       if (!ids) return null;
 
-      const filters = await get(filtersAtom({ experimentTypeName, resourceId }));
+      const filters = await get(filtersAtom({ dataType, resourceId }));
 
       const query = fetchDataQueryUsingIds(DEFAULT_CARDS_NUMBER, PAGE_NUMBER, filters, ids);
 
@@ -197,27 +197,27 @@ export const resourceBasedResponseRawAtom = atomFamily(
 );
 
 export const resourceBasedResponseHitsAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: GenFamilyType) =>
+  ({ resourceId, dataType }: GenFamilyType) =>
     atom<Promise<FlattenedExploreESResponse['hits'] | undefined>>(async (get) => {
-      const response = await get(resourceBasedResponseRawAtom({ resourceId, experimentTypeName }));
+      const response = await get(resourceBasedResponseRawAtom({ resourceId, dataType }));
       return response?.hits;
     }),
   isEqual
 );
 
 export const resourceBasedResponseAggregationsAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: GenFamilyType) =>
+  ({ resourceId, dataType }: GenFamilyType) =>
     atom<Promise<FlattenedExploreESResponse['aggs'] | undefined>>(async (get) => {
-      const response = await get(resourceBasedResponseRawAtom({ resourceId, experimentTypeName }));
+      const response = await get(resourceBasedResponseRawAtom({ resourceId, dataType }));
       return response?.aggs;
     }),
   isEqual
 );
 
 export const resourceBasedResponseHitsCountAtom = atomFamily(
-  ({ resourceId, experimentTypeName }: GenFamilyType) =>
+  ({ resourceId, dataType }: GenFamilyType) =>
     atom<Promise<number | undefined>>(async (get) => {
-      const response = await get(resourceBasedResponseRawAtom({ resourceId, experimentTypeName }));
+      const response = await get(resourceBasedResponseRawAtom({ resourceId, dataType }));
       return response?.hits?.length;
     }),
   isEqual

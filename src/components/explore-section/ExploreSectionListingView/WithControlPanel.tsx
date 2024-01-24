@@ -10,10 +10,11 @@ import {
 } from '@/state/explore-section/list-view-atoms';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { Filter } from '@/components/Filter/types';
+import { DataType } from '@/constants/explore-section/list-views';
 
 export default function WithControlPanel({
   children,
-  experimentTypeName,
+  dataType,
   brainRegionSource,
 }: {
   children: (props: {
@@ -22,23 +23,23 @@ export default function WithControlPanel({
     setDisplayControlPanel: Dispatch<SetStateAction<boolean>>;
     filters?: Filter[];
   }) => ReactNode;
-  experimentTypeName: string;
+  dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
 }) {
   const activeColumns = useAtomValue(
-    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
   );
 
   const [displayControlPanel, setDisplayControlPanel] = useState(false);
 
   const [filters, setFilters] = useAtom(
-    useMemo(() => unwrap(filtersAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(() => unwrap(filtersAtom({ dataType })), [dataType])
   );
 
   const aggregations = useAtomValue(
     useMemo(
-      () => unwrap(aggregationsAtom({ experimentTypeName, brainRegionSource })),
-      [experimentTypeName, brainRegionSource]
+      () => unwrap(aggregationsAtom({ dataType, brainRegionSource })),
+      [dataType, brainRegionSource]
     )
   );
 
@@ -46,10 +47,7 @@ export default function WithControlPanel({
     <>
       <section className="w-full h-full flex flex-col gap-5 bg-white pb-24 p-3 pt-8 relative overflow-auto min-w-0">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel, filters })}
-        <LoadMoreButton
-          experimentTypeName={experimentTypeName}
-          brainRegionSource={brainRegionSource}
-        />
+        <LoadMoreButton dataType={dataType} brainRegionSource={brainRegionSource} />
       </section>
       {displayControlPanel && filters && (
         <ControlPanel
@@ -58,7 +56,7 @@ export default function WithControlPanel({
           filters={filters}
           setFilters={setFilters}
           toggleDisplay={() => setDisplayControlPanel(false)}
-          experimentTypeName={experimentTypeName}
+          dataType={dataType}
         />
       )}
     </>

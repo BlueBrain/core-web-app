@@ -1,12 +1,4 @@
-import {
-  BOUTON_DENSITY,
-  ELECTRO_PHYSIOLOGY,
-  ExperimentDataTypeName,
-  NEURON_DENSITY,
-  NEURON_MORPHOLOGY,
-  SYNAPSE_PER_CONNECTION,
-  SIMULATION_CAMPAIGNS,
-} from '@/constants/explore-section/list-views';
+import { DataType } from '@/constants/explore-section/list-views';
 import { DetailProps } from '@/types/explore-section/application';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
@@ -21,21 +13,17 @@ export type ExperimentConfig = {
 export const INTERACTIVE_PATH = `/explore/interactive/`;
 export const BASE_EXPLORE_PATH = `${INTERACTIVE_PATH}data/`;
 
-export const SIMULATION_DATA_TYPES: {
-  [x: ExperimentDataTypeName]: ExperimentConfig;
-} = {
-  [SIMULATION_CAMPAIGNS]: {
+export const SIMULATION_DATA_TYPES = {
+  [DataType.SimulationCampaigns]: {
     title: 'Simulation campaigns',
     name: 'simulation-campaigns',
-    columns: [Field.SimulationCampaignName, Field.SimulationCampaignStatus, Field.CreatedAt],
+    columns: [Field.SimulationCampaignName, Field.BrainConfiguration, Field.CreatedAt],
     curated: false,
   },
 };
 
-export const EXPERIMENT_DATA_TYPES: {
-  [x: ExperimentDataTypeName]: ExperimentConfig;
-} = {
-  [NEURON_MORPHOLOGY]: {
+export const EXPERIMENT_DATA_TYPES = {
+  [DataType.ExperimentalNeuronMorphology]: {
     title: 'Morphology',
     name: 'morphology',
     columns: [
@@ -127,7 +115,7 @@ export const EXPERIMENT_DATA_TYPES: {
       },
     ],
   },
-  [ELECTRO_PHYSIOLOGY]: {
+  [DataType.ExperimentalElectroPhysiology]: {
     title: 'Electrophysiology',
     name: 'electrophysiology',
     columns: [
@@ -140,7 +128,7 @@ export const EXPERIMENT_DATA_TYPES: {
     ],
     curated: true,
   },
-  [NEURON_DENSITY]: {
+  [DataType.ExperimentalNeuronDensity]: {
     title: 'Neuron density',
     name: 'neuron-density',
     columns: [
@@ -157,7 +145,7 @@ export const EXPERIMENT_DATA_TYPES: {
     ],
     curated: false,
   },
-  [BOUTON_DENSITY]: {
+  [DataType.ExperimentalBoutonDensity]: {
     title: 'Bouton density',
     name: 'bouton-density',
     columns: [
@@ -172,7 +160,7 @@ export const EXPERIMENT_DATA_TYPES: {
     ],
     curated: false,
   },
-  [SYNAPSE_PER_CONNECTION]: {
+  [DataType.ExperimentalSynapsePerConnection]: {
     title: 'Synapse per connection',
     name: 'synapse-per-connection',
     columns: [
@@ -188,4 +176,9 @@ export const EXPERIMENT_DATA_TYPES: {
     ],
     curated: false,
   },
+};
+
+export const DATA_TYPES_TO_CONFIGS: Record<DataType, ExperimentConfig> = {
+  ...SIMULATION_DATA_TYPES,
+  ...EXPERIMENT_DATA_TYPES,
 };

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { atomFamily, loadable, selectAtom } from 'jotai/utils';
 import { Spin } from 'antd';
 import { LoadingOutlined, WarningOutlined } from '@ant-design/icons';
-import { NEURON_MORPHOLOGY } from '@/constants/explore-section/list-views';
+import { DataType } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import { createHeaders } from '@/util/utils';
 import { FileDistribution } from '@/types/explore-section/es-properties';
@@ -14,7 +14,7 @@ import {
 import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
 
 type CardVisualizationProps = {
-  experimentTypeName: string;
+  dataType: DataType;
   resource: ReconstructedNeuronMorphology | ExperimentalTrace;
 };
 
@@ -27,10 +27,7 @@ const swcFileAtom = atomFamily((contentUrl?: string) =>
   })
 );
 
-export default function CardVisualization({
-  experimentTypeName,
-  resource,
-}: CardVisualizationProps) {
+export default function CardVisualization({ dataType, resource }: CardVisualizationProps) {
   const contentUrl = resource.distribution?.find(
     (dis: FileDistribution) => dis.encodingFormat === 'application/swc'
   )?.contentUrl;
@@ -58,7 +55,7 @@ export default function CardVisualization({
     }
   };
 
-  if (experimentTypeName === NEURON_MORPHOLOGY) {
+  if (dataType === DataType.ExperimentalNeuronMorphology) {
     return renderSwc();
   }
   return (

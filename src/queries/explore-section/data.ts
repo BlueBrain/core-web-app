@@ -5,12 +5,13 @@ import { Filter } from '@/components/Filter/types';
 import { SortState } from '@/types/explore-section/application';
 import buildFilters from '@/queries/explore-section/filters';
 import buildAggs from '@/queries/explore-section/aggs';
+import { DataType } from '@/constants/explore-section/list-views';
 
 export default function fetchDataQuery(
   size: number,
   currentPage: number,
   filters: Filter[],
-  experimentDataType: string,
+  dataType: DataType,
   sortState?: SortState,
   searchString: string = '',
   descendantIds?: string[]
@@ -21,7 +22,7 @@ export default function fetchDataQuery(
     sort: sortQuery,
     from: (currentPage - 1) * size,
     track_total_hits: true,
-    query: buildFilters(filters, searchString, descendantIds, experimentDataType).toJSON(),
+    query: buildFilters(filters, searchString, descendantIds, dataType).toJSON(),
     ...buildAggs(filters).toJSON(),
   };
 }

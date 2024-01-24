@@ -7,10 +7,11 @@ import {
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { detailUrlBuilder } from '@/util/common';
+import { DataType } from '@/constants/explore-section/list-views';
 import styles from './styles.module.scss';
 
 type TooltipFieldProps = {
@@ -35,19 +36,19 @@ type CardProps = {
   resource: {
     _source: ReconstructedNeuronMorphology | ExperimentalTrace;
   } & ExploreESHit;
-  experimentTypeName: string;
+  dataType: DataType;
   activeKeys: string[];
   score?: number;
 };
 
 const { Panel } = Collapse;
 
-export default function Card({ resource, experimentTypeName, activeKeys, score }: CardProps) {
+export default function Card({ resource, dataType, activeKeys, score }: CardProps) {
   const { ref, inView } = useInView();
 
-  const cardFields = EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields || [];
+  const cardFields = DATA_TYPES_TO_CONFIGS[dataType]?.cardViewFields || [];
 
-  const resourceUrl = detailUrlBuilder(resource, experimentTypeName);
+  const resourceUrl = detailUrlBuilder(resource, dataType);
 
   const groupedCardFields = groupBy(
     cardFields,
@@ -64,10 +65,7 @@ export default function Card({ resource, experimentTypeName, activeKeys, score }
       <div className="min-h-[350px] min-w-[350px] h-full border-y border-l">
         {inView && (
           <Link href={resourceUrl} passHref>
-            <CardVisualization
-              experimentTypeName={experimentTypeName}
-              resource={resource._source}
-            />
+            <CardVisualization dataType={dataType} resource={resource._source} />
           </Link>
         )}
       </div>

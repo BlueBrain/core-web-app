@@ -1,7 +1,6 @@
 import { ReactNode, useEffect, useState, useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-
 import FilterControls from './FilterControls';
 import { RenderButtonProps } from './WithRowSelection';
 import ListingScrollNavControl from './ListingScrollNavControl';
@@ -12,33 +11,34 @@ import NumericResultsInfo from '@/components/explore-section/ExploreSectionListi
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom, dataAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { DataType } from '@/constants/explore-section/list-views';
 
 export default function DefaultListView({
   enableDownload,
-  experimentTypeName,
+  dataType,
   brainRegionSource,
   renderButton,
 }: {
   enableDownload?: boolean;
-  experimentTypeName: string;
+  dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
   const [dataSource, setDataSource] = useState<ExploreESHit[]>();
-  const columns = useExploreColumns(setSortState, sortState, [], null, experimentTypeName);
+  const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
 
   const data = useAtomValue(
     useMemo(
       () =>
         loadable(
           dataAtom({
-            experimentTypeName,
+            dataType,
             brainRegionSource,
           })
         ),
-      [brainRegionSource, experimentTypeName]
+      [brainRegionSource, dataType]
     )
   );
 
@@ -51,28 +51,22 @@ export default function DefaultListView({
   return (
     <div className="h-full bg-[#d1d1d1]" data-testid="explore-section-listing-view">
       <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full max-h-[calc(100vh-156px)] h-full overflow-x-auto overflow-y-hidden">
-        <WithControlPanel
-          experimentTypeName={experimentTypeName}
-          brainRegionSource={brainRegionSource}
-        >
+        <WithControlPanel dataType={dataType} brainRegionSource={brainRegionSource}>
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
             <>
               <FilterControls
                 filters={filters}
                 displayControlPanel={displayControlPanel}
-                experimentTypeName={experimentTypeName}
+                dataType={dataType}
                 setDisplayControlPanel={setDisplayControlPanel}
               >
-                <NumericResultsInfo
-                  experimentTypeName={experimentTypeName}
-                  brainRegionSource={brainRegionSource}
-                />
+                <NumericResultsInfo dataType={dataType} brainRegionSource={brainRegionSource} />
               </FilterControls>
               <ExploreSectionTable
                 columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}
                 dataSource={dataSource}
                 enableDownload={enableDownload}
-                experimentTypeName={experimentTypeName}
+                dataType={dataType}
                 loading={data.state === 'loading'}
                 renderButton={renderButton}
               />

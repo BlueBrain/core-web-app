@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { totalAtom, pageSizeAtom } from '@/state/explore-section/list-view-atoms';
 import { classNames } from '@/util/utils';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
-import { PAGE_SIZE } from '@/constants/explore-section/list-views';
+import { DataType, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import { useLoadableValue } from '@/hooks/hooks';
 
 function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonElement>) {
@@ -21,13 +21,13 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 }
 
 export default function LoadMoreButton({
-  experimentTypeName,
+  dataType,
   brainRegionSource,
 }: HTMLProps<HTMLButtonElement> & {
-  experimentTypeName: string;
+  dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
 }) {
-  const total = useLoadableValue(totalAtom({ experimentTypeName, brainRegionSource }));
+  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource }));
   const [pageSize, setPageSize] = useAtom(pageSizeAtom);
 
   if (total.state === 'loading') return null;

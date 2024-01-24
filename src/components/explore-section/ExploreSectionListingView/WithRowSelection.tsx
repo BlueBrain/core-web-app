@@ -2,6 +2,7 @@ import { Key, ReactNode } from 'react';
 import { useAtom } from 'jotai';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreESHit } from '@/types/explore-section/es';
+import { DataType } from '@/constants/explore-section/list-views';
 
 type RowSelection = {
   selectedRowKeys: Key[];
@@ -16,14 +17,14 @@ export type RenderButtonProps = {
 
 export default function WithRowSelection({
   children,
-  experimentTypeName,
+  dataType,
   renderButton,
 }: {
   children: (rowSelection: RowSelection) => ReactNode;
-  experimentTypeName: string;
+  dataType: DataType;
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
-  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom({ experimentTypeName }));
+  const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom({ dataType }));
   const clearSelectedRows = () => setSelectedRows([]);
 
   return (

@@ -7,10 +7,13 @@ import isUndefined from 'lodash/isUndefined';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import {
+  DATA_TYPES_TO_CONFIGS,
+  EXPERIMENT_DATA_TYPES,
+} from '@/constants/explore-section/experiment-types';
 import { ArticleItem } from '@/api/explore-section/resources';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
-import { ELECTRO_PHYSIOLOGY, NEURON_DENSITY } from '@/constants/explore-section/list-views';
+import { DataType } from '@/constants/explore-section/list-views';
 import { findButton, getButton, selectTodayAsDate } from '__tests__/__utils__/utils';
 import { ARTICLES_PER_PAGE } from '@/components/explore-section/Literature/components/ArticleList/ArticlesListing';
 import { mockArticleResponse, mockAuthors, mockJournals } from '__tests__/__utils__/Literature';
@@ -167,7 +170,8 @@ describe('LiteratureArticleListingPage', () => {
     const keywordsMenu = await screen.findByRole('combobox', { name: 'keywords' });
     click(keywordsMenu);
 
-    const electrophysiologyExperiment = EXPERIMENT_DATA_TYPES[ELECTRO_PHYSIOLOGY];
+    const electrophysiologyExperiment =
+      DATA_TYPES_TO_CONFIGS[DataType.ExperimentalElectroPhysiology];
     const electrophysiologyOption = screen.getByRole('option', {
       name: electrophysiologyExperiment.title,
     });
@@ -440,7 +444,7 @@ describe('LiteratureArticleListingPage', () => {
 
   const articleListLoadingTestId = 'initial data loading';
 
-  const neuronDensity = EXPERIMENT_DATA_TYPES[NEURON_DENSITY];
+  const neuronDensity = DATA_TYPES_TO_CONFIGS[DataType.ExperimentalNeuronDensity];
 
   const selectedItemSelector = '.ant-select-selection-item-content';
 

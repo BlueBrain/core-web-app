@@ -12,13 +12,14 @@ import {
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
+import { DataType } from '@/constants/explore-section/list-views';
 
 const { Panel } = Collapse;
 
 type CardViewProps = {
   data?: ExploreESHit[] | null;
-  experimentTypeName: string;
+  dataType: DataType;
   resourceId?: string;
 };
 
@@ -26,12 +27,12 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   return <CaretRightOutlined rotate={isActive ? 90 : 0} />;
 }
 
-export default function CardView({ data, experimentTypeName, resourceId }: CardViewProps) {
+export default function CardView({ data, dataType, resourceId }: CardViewProps) {
   const resourceBasedResponseResults = useAtomValue(
     unwrap(resourceBasedResponseResultsAtom(resourceId || ''))
   );
 
-  const cardFields = EXPERIMENT_DATA_TYPES[experimentTypeName]?.cardViewFields || [];
+  const cardFields = DATA_TYPES_TO_CONFIGS[dataType]?.cardViewFields || [];
 
   const filteredLabels = cardFields.map((fieldObj) => fieldObj.field);
 
@@ -85,7 +86,7 @@ export default function CardView({ data, experimentTypeName, resourceId }: CardV
               ...d,
               _source: d._source as ReconstructedNeuronMorphology | ExperimentalTrace,
             }}
-            experimentTypeName={experimentTypeName}
+            dataType={dataType}
             score={scoreFinder(d._id)}
           />
         ))}

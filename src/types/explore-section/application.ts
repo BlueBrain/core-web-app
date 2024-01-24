@@ -10,6 +10,7 @@ import {
 import { Filter, GteLteValue } from '@/components/Filter/types';
 import { ExploreResource } from '@/types/explore-section/es';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { DataType } from '@/constants/explore-section/list-views';
 
 // defines the source from where the explore data will be retrieved
 // root: all brain regions are applied
@@ -73,7 +74,7 @@ export type CheckListProps = {
 
 export type SubSectionCardItem = {
   name: string;
-  type: string;
+  type: DataType;
   url: string;
 };
 

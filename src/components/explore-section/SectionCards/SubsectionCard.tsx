@@ -9,12 +9,13 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { getTotalByType } from './hooks';
 import { EyeIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
+import { DataType } from '@/constants/explore-section/list-views';
 
 // TYPE
 type SectionCardsProps = {
   subsection: {
     name: string;
-    type: string;
+    type: DataType;
     url: string;
   };
   cardIndex: number;

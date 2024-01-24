@@ -13,22 +13,17 @@ import {
   sortStateAtom,
   dimensionColumnsAtom,
 } from '@/state/explore-section/list-view-atoms';
+import { DataType } from '@/constants/explore-section/list-views';
 
-export default function SimulationCampaignListView({
-  experimentTypeName,
-}: {
-  experimentTypeName: string;
-}) {
+export default function SimulationCampaignListView({ dataType }: { dataType: DataType }) {
   const activeColumns = useAtomValue(
-    useMemo(() => unwrap(activeColumnsAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(() => unwrap(activeColumnsAtom({ dataType })), [dataType])
   );
-  const data = useAtomValue(
-    useMemo(() => unwrap(dataAtom({ experimentTypeName })), [experimentTypeName])
-  );
+  const data = useAtomValue(useMemo(() => unwrap(dataAtom({ dataType })), [dataType]));
 
   const [sortState, setSortState] = useAtom(sortStateAtom);
   const dimensionColumns = useAtomValue(
-    useMemo(() => unwrap(dimensionColumnsAtom({ experimentTypeName })), [experimentTypeName])
+    useMemo(() => unwrap(dimensionColumnsAtom({ dataType })), [dataType])
   );
   const columns = useExploreColumns(setSortState, sortState, [], dimensionColumns);
   const loading = !data || !dimensionColumns;
@@ -44,19 +39,16 @@ export default function SimulationCampaignListView({
   return (
     <div className="flex min-h-screen h-full bg-[#d1d1d1]">
       <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full h-full overflow-x-auto overflow-y-hidden">
-        <WithControlPanel experimentTypeName={experimentTypeName} brainRegionSource="root">
+        <WithControlPanel dataType={dataType} brainRegionSource="root">
           {({ displayControlPanel, setDisplayControlPanel }) => (
             <>
               <div className="flex flex-col pt-10">
-                <NumericResultsInfo
-                  experimentTypeName={experimentTypeName}
-                  brainRegionSource="root"
-                />
+                <NumericResultsInfo dataType={dataType} brainRegionSource="root" />
               </div>
               <FilterControls
                 displayControlPanel={displayControlPanel}
                 setDisplayControlPanel={setDisplayControlPanel}
-                experimentTypeName={experimentTypeName}
+                dataType={dataType}
               />
               <ListTable
                 columns={columns.filter(({ key }) => (activeColumns || []).includes(key as string))}

@@ -6,17 +6,18 @@ import {
 } from '@/state/explore-section/list-view-atoms';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { useLoadableValue } from '@/hooks/hooks';
+import { DataType } from '@/constants/explore-section/list-views';
 
 function NumericResultsInfo({
-  experimentTypeName,
+  dataType,
   brainRegionSource,
 }: {
-  experimentTypeName: string;
+  dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
 }) {
-  const total = useLoadableValue(totalAtom({ experimentTypeName, brainRegionSource }));
+  const total = useLoadableValue(totalAtom({ dataType, brainRegionSource }));
   const totalByExperimentAndRegions = useLoadableValue(
-    totalByExperimentAndRegionsAtom({ experimentTypeName, brainRegionSource })
+    totalByExperimentAndRegionsAtom({ dataType, brainRegionSource })
   );
 
   return (
