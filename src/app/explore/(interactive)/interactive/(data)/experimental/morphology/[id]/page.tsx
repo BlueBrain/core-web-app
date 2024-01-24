@@ -16,8 +16,6 @@ import GeneralizationControls from '@/components/explore-section/WithGeneralizat
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { MorphoViewer } from '@/components/MorphoViewer';
 import Morphometrics from '@/components/explore-section/Morphometrics';
-import { Field } from '@/constants/explore-section/fields-config/enums';
-import { DetailProps } from '@/types/explore-section/application';
 
 // dynamic importation due to hydration issue in morphology 3d component
 const Detail = dynamic(() => import('@/components/explore-section/Detail'), { ssr: false });
