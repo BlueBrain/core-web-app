@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
 import sessionAtom from '@/state/session';
 import { ExperimentDatasetCountPerBrainRegion } from '@/api/explore-section/resources';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { fetchParagraphCountForBrainRegionAndExperiment } from '@/components/explore-section/Literature/api';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], signal: AbortSignal) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {

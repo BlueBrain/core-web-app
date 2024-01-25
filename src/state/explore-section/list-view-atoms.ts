@@ -16,7 +16,7 @@ import { ExploreESHit, FlattenedExploreESResponse } from '@/types/explore-sectio
 import { Filter } from '@/components/Filter/types';
 import { selectedBrainRegionWithChildrenAtom } from '@/state/brain-regions';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 type DataAtomFamilyScopeType = {
   dataType: DataType;

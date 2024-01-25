@@ -14,11 +14,11 @@ import {
   articleListFiltersAtom,
   articleListingFilterPanelOpenAtom,
 } from '@/state/explore-section/literature-filters';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { ArticleListFilters as Filters } from '@/components/explore-section/Literature/api';
 import If from '@/components/ConditionalRenderer/If';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { brainRegionTitleCaseExceptConjunctions } from '@/util/utils';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 function ExperimentLiteratureHeader({ loading }: { loading?: boolean }) {
   const router = useRouter();

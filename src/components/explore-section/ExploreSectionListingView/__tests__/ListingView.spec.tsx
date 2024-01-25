@@ -10,7 +10,7 @@ import ExploreSectionListingView from '@/components/explore-section/ExploreSecti
 import { DataType, PAGE_SIZE } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 jest.mock('next/navigation');
 

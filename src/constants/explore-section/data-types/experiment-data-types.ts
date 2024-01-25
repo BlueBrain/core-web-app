@@ -1,26 +1,5 @@
 import { DataType } from '@/constants/explore-section/list-views';
-import { DetailProps } from '@/types/explore-section/application';
 import { Field } from '@/constants/explore-section/fields-config/enums';
-
-export type ExperimentConfig = {
-  title: string;
-  name: string;
-  columns: Array<Field>;
-  curated: boolean;
-  cardViewFields?: DetailProps[];
-};
-
-export const INTERACTIVE_PATH = `/explore/interactive/`;
-export const BASE_EXPLORE_PATH = `${INTERACTIVE_PATH}data/`;
-
-export const SIMULATION_DATA_TYPES = {
-  [DataType.SimulationCampaigns]: {
-    title: 'Simulation campaigns',
-    name: 'simulation-campaigns',
-    columns: [Field.SimulationCampaignName, Field.BrainConfiguration, Field.CreatedAt],
-    curated: false,
-  },
-};
 
 export const EXPERIMENT_DATA_TYPES = {
   [DataType.ExperimentalNeuronMorphology]: {
@@ -176,9 +155,4 @@ export const EXPERIMENT_DATA_TYPES = {
     ],
     curated: false,
   },
-};
-
-export const DATA_TYPES_TO_CONFIGS: Record<DataType, ExperimentConfig> = {
-  ...SIMULATION_DATA_TYPES,
-  ...EXPERIMENT_DATA_TYPES,
 };

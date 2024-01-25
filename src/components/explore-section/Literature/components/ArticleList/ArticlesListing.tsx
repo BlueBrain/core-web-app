@@ -13,11 +13,11 @@ import Header from './ExperimentLiteratureHeader';
 import If from '@/components/ConditionalRenderer/If';
 import { ArticleItem } from '@/api/explore-section/resources';
 import { classNames } from '@/util/utils';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { articleListFiltersAtom } from '@/state/explore-section/literature-filters';
 
 import './styles.scss';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 type ListingState = {
   loading: boolean;

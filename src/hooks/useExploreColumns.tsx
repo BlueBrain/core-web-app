@@ -8,9 +8,9 @@ import { SortState } from '@/types/explore-section/application';
 import { ValueArray } from '@/components/ListTable';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { DataType } from '@/constants/explore-section/list-views';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
 import { classNames } from '@/util/utils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import styles from '@/app/explore/explore.module.scss';
 
 type ResizeInit = {

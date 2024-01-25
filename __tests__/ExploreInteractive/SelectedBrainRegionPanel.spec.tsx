@@ -8,12 +8,10 @@ import { BrainRegion } from '@/types/ontologies';
 import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import {
-  DATA_TYPES_TO_CONFIGS,
-  EXPERIMENT_DATA_TYPES,
-} from '@/constants/explore-section/experiment-types';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import { DataType } from '@/constants/explore-section/list-views';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,

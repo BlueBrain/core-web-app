@@ -5,8 +5,8 @@ import { useAtomValue } from 'jotai';
 import { LoadingOutlined, MenuOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { totalByExperimentAndRegionsAtom } from '@/state/explore-section/list-view-atoms';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
 import { DataType } from '@/constants/explore-section/list-views';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 type Props = {
   dataType: DataType;

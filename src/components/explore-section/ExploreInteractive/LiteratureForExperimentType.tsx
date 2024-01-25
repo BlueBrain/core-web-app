@@ -10,8 +10,8 @@ import isNil from 'lodash/isNil';
 import { Tooltip } from 'antd';
 import { ML_MAX_ARTICLES_PER_PAGE } from '../Literature/api';
 import { getLiteratureCountForBrainRegion } from '@/state/explore-section/interactive';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import { BrainRegion } from '@/types/ontologies';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 type Props = {
   brainRegions: BrainRegion[];

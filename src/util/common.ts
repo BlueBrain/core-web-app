@@ -1,9 +1,7 @@
 import { ExploreESHit } from '@/types/explore-section/es';
 import { DataType } from '@/constants/explore-section/list-views';
-import {
-  BASE_EXPLORE_PATH,
-  DATA_TYPES_TO_CONFIGS,
-} from '@/constants/explore-section/experiment-types';
+import { BASE_EXPLORE_PATH } from '@/constants/explore-section/paths';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 export const switchStateType = {
   COUNT: 'count',

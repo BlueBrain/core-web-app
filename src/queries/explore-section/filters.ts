@@ -5,7 +5,7 @@ import { filterHasValue } from '@/components/Filter/util';
 import { getFieldEsConfig } from '@/api/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 function buildRangeQuery(filter: ValueFilter, esTerm: string) {
   const filterESBuilder = esb.rangeQuery(esTerm);

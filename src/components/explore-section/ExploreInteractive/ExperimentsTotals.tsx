@@ -1,8 +1,8 @@
 'use client';
 
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
 import ExperimentTotal from '@/components/explore-section/ExploreInteractive/ExperimentTotal';
 import { DataType } from '@/constants/explore-section/list-views';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 export function ExperimentsTotals() {
   return (

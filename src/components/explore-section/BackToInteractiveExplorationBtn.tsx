@@ -1,7 +1,7 @@
 import { ArrowRightOutlined } from '@ant-design/icons';
 
 import Link from '@/components/Link';
-import { INTERACTIVE_PATH } from '@/constants/explore-section/experiment-types';
+import { INTERACTIVE_PATH } from '@/constants/explore-section/paths';
 
 type Props = {
   href?: string;

@@ -4,13 +4,11 @@ import { ConfigProvider, Select } from 'antd';
 import { useRouter } from 'next/navigation';
 
 import { DownOutlined } from '@ant-design/icons';
-import {
-  EXPERIMENT_DATA_TYPES,
-  ExperimentConfig,
-} from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
+import { DataTypeConfig } from '@/types/explore-section/data-types';
 
 type Props = {
-  currentExperiment?: ExperimentConfig;
+  currentExperiment?: DataTypeConfig;
 };
 
 export default function ExperimentSelector({ currentExperiment }: Props) {

@@ -1,7 +1,7 @@
 'use client';
 
 import ExperimentLiteratureHeader from '@/components/explore-section/Literature/components/ArticleList/ExperimentLiteratureHeader';
-import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/experiment-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 type Props = {
   noExperimentSelected?: boolean;

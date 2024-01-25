@@ -5,17 +5,13 @@ import { ReactNode } from 'react';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { usePathname, useRouter, useParams } from 'next/navigation';
-
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import {
-  BASE_EXPLORE_PATH,
-  DATA_TYPES_TO_CONFIGS,
-  EXPERIMENT_DATA_TYPES,
-  INTERACTIVE_PATH,
-} from '@/constants/explore-section/experiment-types';
 import useTotalResults from '@/hooks/useTotalResults';
 import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
 import { DataType } from '@/constants/explore-section/list-views';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
+import { BASE_EXPLORE_PATH, INTERACTIVE_PATH } from '@/constants/explore-section/paths';
 
 const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
 

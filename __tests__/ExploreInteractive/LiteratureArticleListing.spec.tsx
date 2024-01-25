@@ -7,10 +7,6 @@ import isUndefined from 'lodash/isUndefined';
 import LiteratureArticleListingPage from '@/app/explore/(interactive)/interactive/literature/[experiment-data-type]/page';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
-import {
-  DATA_TYPES_TO_CONFIGS,
-  EXPERIMENT_DATA_TYPES,
-} from '@/constants/explore-section/experiment-types';
 import { ArticleItem } from '@/api/explore-section/resources';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import { DataType } from '@/constants/explore-section/list-views';
@@ -21,6 +17,8 @@ import { normalizeString } from '@/util/utils';
 import { ArticleListFilters } from '@/components/explore-section/Literature/api';
 import sessionAtom from '@/state/session';
 import { articleListingFilterPanelOpenAtom } from '@/state/explore-section/literature-filters';
+import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 const ML_DATE_FORMAT = 'yyyy-MM-dd';
 const UI_DATE_FORMAT = 'dd-MM-yyyy';
