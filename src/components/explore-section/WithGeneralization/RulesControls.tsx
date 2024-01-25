@@ -82,7 +82,7 @@ function RulesControls() {
           <span className="bg-primary-9 rounded-full px-2 text-white">
             {selectedRules?.length ? selectedRules.length : 0}
           </span>{' '}
-          simality rules
+          similarity rules
         </>
       )}
     </span>
