@@ -23,6 +23,7 @@ import {
   Weight,
 } from '@/types/explore-section/fields';
 import { IdWithLabel } from '@/types/explore-section/common';
+import { NeuriteFeature } from '@/types/explore-section/delta-neurite-feature';
 
 export interface Campaign {
   id: string;
@@ -129,6 +130,11 @@ type IdType = {
   type: string;
 };
 
+type TypeValue = {
+  '@value': string;
+  '@type': string;
+};
+
 // Below is the delta response interface definitions
 export type DeltaResource<T = {}> = T & {
   '@context'?: string[] | null;
@@ -160,6 +166,8 @@ export type DeltaResource<T = {}> = T & {
     postSynaptic: (IdWithLabel & { about: string })[];
     preSynaptic: (IdWithLabel & { about: string })[];
   };
+  neuriteFeature?: NeuriteFeature[];
+  somaNumberOfPoints?: TypeValue;
   _constrainedBy: string;
   _createdAt: DateISOString;
   _createdBy: string;

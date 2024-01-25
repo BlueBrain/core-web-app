@@ -15,6 +15,7 @@ import { NEURON_MORPHOLOGY_FIELDS } from '@/constants/explore-section/detail-vie
 import GeneralizationControls from '@/components/explore-section/WithGeneralization/GeneralizationControls';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { MorphoViewer } from '@/components/MorphoViewer';
+import Morphometrics from '@/components/explore-section/Morphometrics';
 
 // dynamic importation due to hydration issue in morphology 3d component
 const Detail = dynamic(() => import('@/components/explore-section/Detail'), { ssr: false });
@@ -27,6 +28,7 @@ export default function MorphologyDetailPage() {
           <Detail fields={NEURON_MORPHOLOGY_FIELDS}>
             {(detail: DetailType) => (
               <>
+                <Morphometrics dataType={DataType.ExperimentalNeuronMorphology} resource={detail} />
                 <MorphoViewerLoader resource={detail} />
                 <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                   <GeneralizationControls dataType={DataType.ExperimentalNeuronMorphology} />

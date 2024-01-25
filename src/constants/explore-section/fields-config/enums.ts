@@ -59,4 +59,6 @@ export enum Field {
   Tags = 'tags',
   StartedAt = 'startedAt',
   CompletedAt = 'completedAt',
+  CumulatedLength = 'cumulatedLength',
+  LongestBranchLength = 'longestBranchLength',
 }

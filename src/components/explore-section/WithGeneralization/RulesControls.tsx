@@ -35,6 +35,7 @@ function RulesControls() {
     } else {
       setSelectedRules([modelName]);
     }
+    setRulesDropdownVisible(true);
   };
 
   if (!allRules) return null;
@@ -72,6 +73,21 @@ function RulesControls() {
     </Menu>
   );
 
+  const selectedRulesDropdownContent = (
+    <span className="mr-2 text-primary-9 font-semibold">
+      {selectedRules?.length === 1 ? (
+        selectedRules[0]
+      ) : (
+        <>
+          <span className="bg-primary-9 rounded-full px-2 text-white">
+            {selectedRules?.length ? selectedRules.length : 0}
+          </span>{' '}
+          simality rules
+        </>
+      )}
+    </span>
+  );
+
   return (
     <ConfigProvider theme={theme}>
       <div className="relative ml-2">
@@ -84,7 +100,7 @@ function RulesControls() {
           className="cursor-pointer	ml-5 bg-white flex gap-10 items-center justify-between max-h-[56px] rounded-md p-5 border-gray-200 border"
         >
           <span className="flex items-center">
-            <span className="mr-2 text-primary-9 font-semibold">shape</span>
+            {selectedRulesDropdownContent}
             <DownOutlined />
           </span>
         </Dropdown>

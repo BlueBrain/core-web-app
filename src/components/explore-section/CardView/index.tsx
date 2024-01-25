@@ -3,8 +3,9 @@ import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import groupBy from 'lodash/groupBy';
+import upperCase from 'lodash/upperCase';
 import { ExploreESHit } from '@/types/explore-section/es';
+import { DataType } from '@/constants/explore-section/list-views';
 import Card from '@/components/explore-section/CardView/Card';
 import { resourceBasedResponseResultsAtom } from '@/state/explore-section/generalization';
 import {
@@ -12,8 +13,7 @@ import {
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/experiment-types';
-import { DataType } from '@/constants/explore-section/list-views';
+import { getGroupedCardFields } from '@/util/explore-section/cardViewUtils';
 
 const { Panel } = Collapse;
 
@@ -32,14 +32,7 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
     unwrap(resourceBasedResponseResultsAtom(resourceId || ''))
   );
 
-  const cardFields = DATA_TYPES_TO_CONFIGS[dataType]?.cardViewFields || [];
-
-  const filteredLabels = cardFields.map((fieldObj) => fieldObj.field);
-
-  const groupedCardFields = groupBy(
-    filteredLabels,
-    (field) => EXPLORE_FIELDS_CONFIG[field].group || 'Metadata'
-  );
+  const groupedCardFields = getGroupedCardFields(dataType);
 
   const [activeKeys, setActiveKeys] = useState(Object.keys(groupedCardFields));
 
@@ -58,19 +51,28 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
       className="grid grid-cols-6 gap-0 pb-2 min-h-fit"
       data-testid="explore-section-listing-card-view"
     >
-      <div className="flex-col pt-[460px] w-full w-min-[450px] col-span-1 break-words">
+      <div className="flex-col w-full w-min-[70rem] pt-[1rem] col-span-1 break-words">
+        <div className="pr-4 font-thin text-neutral-4">SCORE</div>
+        <div className="pr-4 font-thin text-neutral-4 mt-1">PREVIEW</div>
         <Collapse
           activeKey={activeKeys}
           expandIcon={ExpandIcon}
           onChange={handleActiveKeysChange}
           bordered={false}
           ghost
+          className="pt-[23.85rem]"
         >
           {Object.entries(groupedCardFields).map(([group, fields]) => (
-            <Panel header={group} key={group} className="p-0 m-0 border-t border-solid">
-              {fields.map((field) => (
-                <div key={field} className="text-neutral-5 mb-2 h-6 pl-4 ml-4">
-                  {EXPLORE_FIELDS_CONFIG[field].title}
+            <Panel
+              header={
+                <span className="text-md font-semibold text-primary-8">{upperCase(group)}</span>
+              }
+              key={group}
+              className="p-0 m-0 border-y border-solid"
+            >
+              {fields.map((item) => (
+                <div key={item.field} className="text-neutral-4 mb-2 h-6 ml-7 font-thin truncate">
+                  {upperCase(EXPLORE_FIELDS_CONFIG[item.field].title)}
                 </div>
               ))}
             </Panel>

@@ -4,6 +4,8 @@ import { AnnotationEntity, Series } from '@/types/explore-section/fields';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
+import { Field } from '@/constants/explore-section/fields-config/enums';
+import { MorphoMetricTypes } from '@/constants/explore-section/fields-config/types';
 
 const seriesArrayFunc = (series: Series | Series[] | undefined) => series && ensureArray(series);
 
@@ -62,7 +64,7 @@ export const semSelectorFn = (detail: DeltaResource | null) => {
 
 /**
  * Serializes a series array based on its format and string targetting specific statistic
- * @param detail
+ * @param {import("./types/explore-section/resources").DeltaResource} detail
  * @param field the field of series to render
  * @param withUnits whether to render units
  */
@@ -76,4 +78,24 @@ export const selectorFnStatisticDetail = (
   const found = ensureArray(detail?.series).find((el: Series) => el.statistic === field);
   const units = withUnits && found ? found.unitCode : '';
   return found ? `${formatNumber(found.value)} ${units}` : NO_DATA_STRING;
+};
+
+/**
+ * Serializes a series array based on its format and string targetting specific statistic
+ * @param {import("./types/explore-section/resources").DeltaResource} resource
+ * @param {import("./types/explore-section/fields-config/types").MorphoMetricTypes} featureType
+ * @param {import("./types/explore-section/fields-config/types").Field} field where field can be cumulatedLength or longestBranchLength
+ */
+export const selectorFnNeuriteFeature = (
+  resource: DeltaResource,
+  featureType: MorphoMetricTypes,
+  field: Field.CumulatedLength | Field.LongestBranchLength
+): string | number => {
+  const found = resource?.neuriteFeature?.find((nf) => nf['@type'] === featureType);
+
+  if (!found || !found?.[field]) return NO_DATA_STRING;
+
+  const units = found ? found?.[field]?.unitCode : '';
+
+  return found ? `${formatNumber(found?.[field]?.value)} ${units}` : NO_DATA_STRING;
 };

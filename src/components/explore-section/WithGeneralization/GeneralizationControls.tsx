@@ -54,8 +54,8 @@ function GeneralizationControls({ dataType }: { dataType: DataType }) {
     <ConfigProvider theme={theme}>
       <div className="flex items-center mt-16">
         <div className={styles.label}>
-          Here are the {resourceBasedResponseHitsCount || <Spin />} most similar morphologies
-          according to the rules:
+          Here are the {resourceBasedResponseHitsCount || <Spin />} most similar morphologies based
+          on:
         </div>
         <RulesControls />
         {filters && (

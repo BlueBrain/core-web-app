@@ -13,6 +13,7 @@ import {
 import {
   eTypeSelectorFn,
   mTypeSelectorFn,
+  selectorFnNeuriteFeature,
   selectorFnStatisticDetail,
   semSelectorFn,
 } from '@/util/explore-section/selector-functions';
@@ -24,7 +25,7 @@ import MeanStdField from '@/components/explore-section/Fields/MeanStdField';
 import {
   ExploreFieldsConfigProps,
   FieldType,
-  MorphoMetricGroups,
+  MorphoMetricTypes,
 } from '@/constants/explore-section/fields-config/types';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
@@ -440,7 +441,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
   },
   [Field.AxonTotalLength]: {
-    group: MorphoMetricGroups.Axon,
+    group: MorphoMetricTypes.Axon,
     title: 'Total Length',
     description: 'Total length of the axon',
     filter: null,
@@ -450,11 +451,19 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Total Length', 'minimum', true),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.Axon,
+          'Total Length',
+          'minimum',
+          true
+        ),
+      deltaResourceViewFn: (resource) =>
+        selectorFnNeuriteFeature(resource, MorphoMetricTypes.Axon, Field.CumulatedLength),
     },
   },
   [Field.AxonMaxBranchOrder]: {
-    group: MorphoMetricGroups.Axon,
+    group: MorphoMetricTypes.Axon,
     title: 'Maximum Branch Order',
     description: 'Maximum branch order (Strahler index)',
     filter: null,
@@ -464,11 +473,18 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders', 'maximum'),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.Axon,
+          'Section Strahler Orders',
+          'maximum'
+        ),
+      deltaResourceViewFn: (resource) =>
+        selectorFnNeuriteFeature(resource, MorphoMetricTypes.Axon, Field.LongestBranchLength),
     },
   },
   [Field.AxonArborAsymmetryIndex]: {
-    group: MorphoMetricGroups.Axon,
+    group: MorphoMetricTypes.Axon,
     title: 'Arbor Asymmetry Index',
     description: 'Arbor asymmetry index (if calculated)',
     filter: null,
@@ -478,11 +494,16 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Partition Asymmetry', 'mean'),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.Axon,
+          'Partition Asymmetry',
+          'mean'
+        ),
     },
   },
   [Field.BasalDendriticTotalLength]: {
-    group: MorphoMetricGroups.BasalDendrite,
+    group: MorphoMetricTypes.BasalDendrite,
     title: 'Total Length',
     description: 'Total length of the basal dendrites',
     filter: null,
@@ -492,11 +513,19 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Total Length', 'minimum', true),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.BasalDendrite,
+          'Total Length',
+          'minimum',
+          true
+        ),
+      deltaResourceViewFn: (resource) =>
+        selectorFnNeuriteFeature(resource, MorphoMetricTypes.BasalDendrite, Field.CumulatedLength),
     },
   },
   [Field.BasalDendriteMaxBranchOrder]: {
-    group: MorphoMetricGroups.BasalDendrite,
+    group: MorphoMetricTypes.BasalDendrite,
     title: 'Maximum Branch Order',
     description: 'Maximum branch order (Strahler index)',
     filter: null,
@@ -506,11 +535,22 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Axon', 'Section Strahler Orders', 'maximum'),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.Axon,
+          'Section Strahler Orders',
+          'maximum'
+        ),
+      deltaResourceViewFn: (resource) =>
+        selectorFnNeuriteFeature(
+          resource,
+          MorphoMetricTypes.BasalDendrite,
+          Field.LongestBranchLength
+        ),
     },
   },
   [Field.BasalArborAsymmetryIndex]: {
-    group: MorphoMetricGroups.BasalDendrite,
+    group: MorphoMetricTypes.BasalDendrite,
     title: 'Arbor Asymmetry Index',
     description: 'Basal Arbor asymmetry index (if calculated)',
     filter: null,
@@ -520,11 +560,16 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'BasalDendrite', 'Partition Asymmetry', 'mean'),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.BasalDendrite,
+          'Partition Asymmetry',
+          'mean'
+        ),
     },
   },
   [Field.ApicalDendriticTotalLength]: {
-    group: MorphoMetricGroups.ApicalDendrite,
+    group: MorphoMetricTypes.ApicalDendrite,
     title: 'Total Length',
     description: 'Total length of the apical dendrites',
     filter: null,
@@ -534,11 +579,19 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Total Length', 'minimum', true),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.ApicalDendrite,
+          'Total Length',
+          'minimum',
+          true
+        ),
+      deltaResourceViewFn: (resource) =>
+        selectorFnNeuriteFeature(resource, MorphoMetricTypes.ApicalDendrite, Field.CumulatedLength),
     },
   },
   [Field.ApicalDendtriteMaxBranchOrder]: {
-    group: MorphoMetricGroups.ApicalDendrite,
+    group: MorphoMetricTypes.ApicalDendrite,
     title: 'Maximum Branch Order',
     description: 'Apical Dendrite Maximum branch order (Strahler index)',
     filter: null,
@@ -550,14 +603,20 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       esResourceViewFn: (_text, r) =>
         selectorFnMorphologyFeature(
           r._source,
-          'ApicalDendrite',
+          MorphoMetricTypes.ApicalDendrite,
           'Section Strahler Orders',
           'maximum'
+        ),
+      deltaResourceViewFn: (resource) =>
+        selectorFnNeuriteFeature(
+          resource,
+          MorphoMetricTypes.ApicalDendrite,
+          Field.LongestBranchLength
         ),
     },
   },
   [Field.ApicalArborAsymmetryIndex]: {
-    group: MorphoMetricGroups.ApicalDendrite,
+    group: MorphoMetricTypes.ApicalDendrite,
     title: 'Arbor Asymmetry Index',
     description: 'Apical Arbor asymmetry index (if calculated)',
     filter: null,
@@ -567,11 +626,16 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'ApicalDendrite', 'Partition Asymmetry', 'mean'),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.ApicalDendrite,
+          'Partition Asymmetry',
+          'mean'
+        ),
     },
   },
   [Field.NeuronMorphologyWidth]: {
-    group: MorphoMetricGroups.NeuronMorphology,
+    group: MorphoMetricTypes.NeuronMorphology,
     title: 'Total Width',
     description: 'Neuron morphology total width',
     filter: null,
@@ -581,11 +645,17 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Width', 'mean', true),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.NeuronMorphology,
+          'Total Width',
+          'mean',
+          true
+        ),
     },
   },
   [Field.NeuronMorphologyLength]: {
-    group: MorphoMetricGroups.NeuronMorphology,
+    group: MorphoMetricTypes.NeuronMorphology,
     title: 'Total Length',
     description: 'Neuron morphology total Length',
     filter: null,
@@ -595,11 +665,17 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Length', 'mean', true),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.NeuronMorphology,
+          'Total Length',
+          'mean',
+          true
+        ),
     },
   },
   [Field.NeuronMorphologyDepth]: {
-    group: MorphoMetricGroups.NeuronMorphology,
+    group: MorphoMetricTypes.NeuronMorphology,
     title: 'Total Depth',
     description: 'Neuron morphology total Depth',
     filter: null,
@@ -609,11 +685,16 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'NeuronMorphology', 'Total Depth', 'mean'),
+        selectorFnMorphologyFeature(
+          r._source,
+          MorphoMetricTypes.NeuronMorphology,
+          'Total Depth',
+          'mean'
+        ),
     },
   },
   [Field.SomaDiameter]: {
-    group: MorphoMetricGroups.Soma,
+    group: MorphoMetricTypes.Soma,
     title: 'Diameter',
     description: 'Diameter of the soma',
     filter: null,
@@ -624,6 +705,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     render: {
       esResourceViewFn: (_text, r) =>
         selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', 'minimum', true),
+      deltaResourceViewFn: (resource) => resource.somaNumberOfPoints?.['@value'],
     },
   },
 };
