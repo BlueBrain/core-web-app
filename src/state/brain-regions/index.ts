@@ -126,6 +126,14 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
         acc,
         { title, id, hasPart, hasLayerPart, leaves, representedInAnnotation, view, ...rest }
       ) => {
+        const ancestors = getAncestors(brainRegions, id);
+        const existsInBasicCellGroupAndRegions = ancestors.find((ancestor) =>
+          Object.keys(ancestor).reduce<boolean>(
+            (prev, key) => (prev === true || key === BASIC_CELL_GROUPS_AND_REGIONS_ID) ?? prev,
+            false
+          )
+        );
+
         const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
 
         const { representedInAnnotation: descendentsRepresentedInAnnotation } =
@@ -137,11 +145,12 @@ export const brainRegionsWithRepresentationAtom = selectAtom<
             representedInAnnotation: false,
           }) ?? { representedInAnnotation: false };
 
-        return representedInAnnotation || descendentsRepresentedInAnnotation
+        return (representedInAnnotation || descendentsRepresentedInAnnotation) &&
+          existsInBasicCellGroupAndRegions // Filter-out regions that don't appear under Basic Cell Groups and Regions
           ? [
               ...acc,
               {
-                ancestors: getAncestors(brainRegions, id),
+                ancestors,
                 id,
                 hasLayerPart,
                 hasPart,
