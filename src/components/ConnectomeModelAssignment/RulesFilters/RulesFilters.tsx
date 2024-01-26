@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from 'antd';
 import { DownOutlined, PlusSquareOutlined, RightOutlined } from '@ant-design/icons';

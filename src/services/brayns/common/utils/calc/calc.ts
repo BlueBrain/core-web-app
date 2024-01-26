@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import * as Math3D from '@math.gl/core';
 import { Quaternion as ThreeQuaternion } from 'three';
 

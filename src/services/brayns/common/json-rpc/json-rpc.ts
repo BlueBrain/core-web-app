@@ -1,6 +1,4 @@
 /* eslint-disable lodash/import-scope */
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable class-methods-use-this */
 import { isNil } from 'lodash';
@@ -91,7 +89,7 @@ export default class JsonRpcService implements JsonRpcServiceInterface {
 
   purgeRecordedQueries(): {
     entryPoint: string;
-    param?: unknown /* eslint-disable no-continue */;
+    param?: unknown;
   }[] {
     const list = this.recordedQueries;
     this.recordedQueries = [];

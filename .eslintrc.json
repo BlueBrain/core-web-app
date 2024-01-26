@@ -38,6 +38,7 @@
       "error",
       { "blankLine": "always", "prev": "*", "next": "function" }
     ],
+    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
     "lodash/import-scope": [2, "method"],
     "lodash/prefer-lodash-method": "off",
     "lodash/prefer-lodash-typecheck": "off",
@@ -52,6 +53,8 @@
     "consistent-return": "off",
     "@typescript-eslint/return-await": "off",
     "arrow-body-style": "off",
-    "prefer-regex-literals": "off"
+    "prefer-regex-literals": "off",
+    "no-continue": "off",
+    "no-await-in-loop": "off"
   }
 }

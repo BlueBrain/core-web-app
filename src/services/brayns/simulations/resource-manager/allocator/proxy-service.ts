@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 import Settings from '../../../common/settings';
 import { JobAllocatorServiceInterface, JobStatus, ProxyServiceOptions } from './types';
 import { logError } from '@/util/logger';

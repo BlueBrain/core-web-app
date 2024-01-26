@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 import { FilterItemType } from './types';
 import { SynapticAssignmentRule } from '@/types/connectome-model-assignment';
 

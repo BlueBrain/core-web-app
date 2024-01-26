@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 export function isObject(data: unknown): data is Record<string, unknown> {
   if (!data) return false;
   if (Array.isArray(data)) return false;
@@ -25,7 +23,7 @@ export function isArrayBuffer(data: unknown): data is ArrayBuffer {
 
 export function isStringArray(data: unknown): data is string[] {
   if (!Array.isArray(data)) return false;
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const item of data) {
     if (!isString(item)) return false;
   }

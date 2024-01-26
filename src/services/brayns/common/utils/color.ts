@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { logError } from '@/util/logger';
 
 const LUMINANCE_THRESHOLD = 0.62;

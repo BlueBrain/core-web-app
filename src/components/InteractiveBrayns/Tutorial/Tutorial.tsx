@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { SyntheticEvent, useCallback, useRef, useState } from 'react';
 
 import LeftMouseButtonIcon from '../Icons/LeftMouseButtonIcon';

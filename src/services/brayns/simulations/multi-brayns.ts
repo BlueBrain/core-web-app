@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 

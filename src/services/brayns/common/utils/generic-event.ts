@@ -20,7 +20,6 @@ export default class GenericEvent<T> implements GenericEventInterface<T> {
   }
 
   dispatch(arg: T) {
-    // eslint-disable-next-line no-restricted-syntax
     for (const listener of this.listeners) {
       try {
         listener(arg);

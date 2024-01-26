@@ -246,7 +246,7 @@ export default function MacroConnectome({
           );
 
           const selectedCopy = new Set(selectedRef.current);
-          // eslint-disable-next-line no-restricted-syntax
+
           for (const s of deletedShapes) {
             for (let x = s.x0; x <= s.x1; x += 1)
               for (let y = s.y1; y <= s.y0; y += 1) {

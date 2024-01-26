@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { checkSlotId } from '../../utils';
 import Settings from '../../../common/settings';

@@ -10,7 +10,6 @@
  *
  */
 
-/* eslint-disable no-continue */
 /* eslint-disable no-plusplus */
 
 import isDate from 'lodash/isDate';
