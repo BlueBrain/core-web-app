@@ -12,6 +12,7 @@ import { ExploreESHit } from '@/types/explore-section/es';
 import { detailUrlBuilder } from '@/util/common';
 import { getGroupedCardFields } from '@/util/explore-section/cardViewUtils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { BASE_EXPERIMENTAL_EXPLORE_PATH } from '@/constants/explore-section/paths';
 import styles from './styles.module.scss';
 
 type CardProps = {
@@ -28,7 +29,7 @@ const { Panel } = Collapse;
 export default function Card({ resource, dataType, activeKeys, score }: CardProps) {
   const { ref, inView } = useInView();
 
-  const resourceUrl = detailUrlBuilder(resource, dataType);
+  const resourceUrl = detailUrlBuilder(BASE_EXPERIMENTAL_EXPLORE_PATH, resource, dataType);
 
   const groupedCardFields = getGroupedCardFields(dataType);
 

@@ -1,6 +1,5 @@
 import { ExploreESHit } from '@/types/explore-section/es';
 import { DataType } from '@/constants/explore-section/list-views';
-import { BASE_EXPLORE_PATH } from '@/constants/explore-section/paths';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 
 export const switchStateType = {
@@ -31,8 +30,8 @@ export function isNumeric(str: string) {
   ); // ...and ensure strings of whitespace fail
 }
 
-export const detailUrlBuilder = (resource: ExploreESHit, dataType: DataType) =>
-  `${BASE_EXPLORE_PATH}${DATA_TYPES_TO_CONFIGS[dataType]?.name}/${to64(
+export const detailUrlBuilder = (basePath: string, resource: ExploreESHit, dataType: DataType) =>
+  `${basePath}${DATA_TYPES_TO_CONFIGS[dataType]?.name}/${to64(
     `${resource._source.project.label}!/!${resource._id}`
   )}`;
 

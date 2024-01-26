@@ -10,9 +10,11 @@ import BackToInteractiveExplorationBtn from '@/components/explore-section/BackTo
 import { DataType } from '@/constants/explore-section/list-views';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
-import { BASE_EXPLORE_PATH, INTERACTIVE_PATH } from '@/constants/explore-section/paths';
 import { useLoadableValue } from '@/hooks/hooks';
 import { totalByExperimentAndRegionsAtom } from '@/state/explore-section/list-view-atoms';
+import { INTERACTIVE_PATH } from '@/constants/explore-section/paths';
+import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
+import { DataTypeGroup } from '@/types/explore-section/data-types';
 
 const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length) - 0.01}%`;
 
@@ -32,7 +34,10 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
   const router = useRouter();
   const params = useParams();
 
-  const activeExperimentPath = pathname?.split(BASE_EXPLORE_PATH).pop() || 'morphology';
+  const dataTypeGroup = DataTypeGroup.ExperimentalData;
+  const config = EXPERIMENT_DATA_TYPES;
+  const { basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
+  const activePath = pathname?.split(basePath).pop() || 'morphology';
 
   const onClick: MenuProps['onClick'] = (info) => {
     const { key, domEvent } = info;
@@ -40,14 +45,14 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
     domEvent.preventDefault();
     domEvent.stopPropagation();
 
-    router.push(`${BASE_EXPLORE_PATH}${key}`);
+    router.push(`${basePath}${key}`);
   };
 
   const items = useMemo(
     () =>
-      Object.keys(EXPERIMENT_DATA_TYPES).map((dataType) => {
+      Object.keys(config).map((dataType) => {
         const key = DATA_TYPES_TO_CONFIGS[dataType as DataType].name;
-        const active = DATA_TYPES_TO_CONFIGS[dataType as DataType].name === activeExperimentPath;
+        const active = DATA_TYPES_TO_CONFIGS[dataType as DataType].name === activePath;
         const label = DATA_TYPES_TO_CONFIGS[dataType as DataType].title;
 
         return {
@@ -62,7 +67,7 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
           },
         };
       }),
-    [activeExperimentPath]
+    [activePath, config]
   );
 
   if (params?.id)
@@ -75,7 +80,7 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
         <div className="flex-1">
           <Menu
             onClick={onClick}
-            selectedKeys={[activeExperimentPath]}
+            selectedKeys={[activePath]}
             mode="horizontal"
             theme="dark"
             style={{ backgroundColor: '#002766' }}

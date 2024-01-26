@@ -1,9 +1,11 @@
 import { DataType } from '@/constants/explore-section/list-views';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { DataTypeGroup } from '@/types/explore-section/data-types';
 
 export const EXPERIMENT_DATA_TYPES = {
   [DataType.ExperimentalNeuronMorphology]: {
     title: 'Morphology',
+    group: DataTypeGroup.ExperimentalData,
     name: 'morphology',
     columns: [
       Field.Preview,
@@ -96,6 +98,7 @@ export const EXPERIMENT_DATA_TYPES = {
   },
   [DataType.ExperimentalElectroPhysiology]: {
     title: 'Electrophysiology',
+    group: DataTypeGroup.ExperimentalData,
     name: 'electrophysiology',
     columns: [
       Field.BrainRegion,
@@ -109,6 +112,7 @@ export const EXPERIMENT_DATA_TYPES = {
   },
   [DataType.ExperimentalNeuronDensity]: {
     title: 'Neuron density',
+    group: DataTypeGroup.ExperimentalData,
     name: 'neuron-density',
     columns: [
       Field.BrainRegion,
@@ -126,6 +130,7 @@ export const EXPERIMENT_DATA_TYPES = {
   },
   [DataType.ExperimentalBoutonDensity]: {
     title: 'Bouton density',
+    group: DataTypeGroup.ExperimentalData,
     name: 'bouton-density',
     columns: [
       Field.BrainRegion,
@@ -141,6 +146,7 @@ export const EXPERIMENT_DATA_TYPES = {
   },
   [DataType.ExperimentalSynapsePerConnection]: {
     title: 'Synapse per connection',
+    group: DataTypeGroup.ExperimentalData,
     name: 'synapse-per-connection',
     columns: [
       Field.PreSynapticBrainRegion,

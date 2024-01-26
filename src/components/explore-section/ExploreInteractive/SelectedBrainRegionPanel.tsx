@@ -4,9 +4,10 @@ import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { useMemo } from 'react';
 import { ConfigProvider, Tabs } from 'antd';
-import { ExperimentsTotals } from './ExperimentsTotals';
+import { DataTypeGroupTotals } from './DataTypeGroupTotals';
 import { LiteratureForExperimentType } from './LiteratureForExperimentType';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
+import { DataTypeGroup } from '@/types/explore-section/data-types';
 
 export default function SelectedBrainRegionPanel() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
@@ -34,7 +35,7 @@ export default function SelectedBrainRegionPanel() {
                 {
                   key: '1',
                   label: 'Experiment data',
-                  children: <ExperimentsTotals />,
+                  children: <DataTypeGroupTotals dataTypeGroup={DataTypeGroup.ExperimentalData} />,
                 },
                 {
                   key: '2',

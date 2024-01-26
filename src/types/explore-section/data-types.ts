@@ -6,5 +6,11 @@ export type DataTypeConfig = {
   name: string;
   columns: Array<Field>;
   curated: boolean;
+  group: DataTypeGroup;
   cardViewFields?: DetailProps[];
 };
+
+export enum DataTypeGroup {
+  ExperimentalData = 'ExperimentalData',
+  SimulationData = 'SimulationData',
+}

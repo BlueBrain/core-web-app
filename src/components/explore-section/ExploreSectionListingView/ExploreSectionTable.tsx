@@ -17,6 +17,8 @@ import type { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataType } from '@/constants/explore-section/list-views';
+import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
+import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import useResizeObserver from '@/hooks/useResizeObserver';
 import useScrollComplete from '@/hooks/useScrollComplete';
@@ -105,6 +107,8 @@ export function BaseTable({
   const router = useRouter();
   const pathname = usePathname();
   const setBackToListPath = useSetAtom(backToListPathAtom);
+  const { group } = DATA_TYPES_TO_CONFIGS[dataType];
+  const { basePath } = DATA_TYPE_GROUPS_CONFIG[group];
   const [containerDimension, setContainerDimension] = useState<{ height: number; width: number }>({
     height: 0,
     width: 0,
@@ -129,7 +133,7 @@ export function BaseTable({
               onClick: (e: MouseEvent<HTMLInputElement>) => {
                 e.preventDefault();
                 setBackToListPath(pathname);
-                router.push(detailUrlBuilder(record, dataType));
+                router.push(detailUrlBuilder(basePath, record, dataType));
               },
             }
           : {},
