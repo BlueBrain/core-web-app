@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable no-await-in-loop */
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
 import { Vector4 } from '../../common/utils/calc';
 import Settings from '../../common/settings';

@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { Vector3 } from '../../common/utils/calc';
 import GenericEvent from '../../common/utils/generic-event';
 import ImageStream from '../../common/image-stream/image-stream';

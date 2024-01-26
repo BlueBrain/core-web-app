@@ -128,7 +128,6 @@ function useStreamGenerative({
       let captureErrorAtStart = true;
       if (reader) {
         while (!done) {
-          // eslint-disable-next-line no-await-in-loop
           ({ value, done } = await reader.read());
           if (done) break;
           const decodedChunk = decoder.decode(value, { stream: true });

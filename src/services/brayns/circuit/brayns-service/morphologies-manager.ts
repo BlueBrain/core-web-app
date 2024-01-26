@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import Color from '../../common/utils/color';
 import State from '../../common/state';
 import { BraynsWrapperInterface } from '../wrapper/types';

@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { checkSlotId } from '../../utils';
 import Settings from '../../../common/settings';
 import ProxyService from './proxy-service';

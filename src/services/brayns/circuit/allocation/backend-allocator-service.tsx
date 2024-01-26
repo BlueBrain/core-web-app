@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 
-/* eslint-disable no-await-in-loop */
 import Settings from '../../common/settings';
 import Async from '../../common/utils/async';
 import State from '../../common/state';

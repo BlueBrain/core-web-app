@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
 import { BraynsColorTransparent } from '../../common/types';
 import { assertBraynsModelArray } from './types';

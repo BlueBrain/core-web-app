@@ -1,5 +1,4 @@
 /* eslint-disable lodash/import-scope */
-/* eslint-disable no-await-in-loop */
 /* eslint-disable class-methods-use-this */
 import { isNil } from 'lodash';
 import Async from '../utils/async';
