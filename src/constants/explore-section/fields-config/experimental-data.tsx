@@ -131,7 +131,6 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
         aggregationField: 'series.value',
       },
     },
-    unit: 'boutons/μm',
     title: 'SEM',
     description: 'Standard error of the mean',
     filter: FilterTypeEnum.ValueRange,
@@ -188,7 +187,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     title: 'Density',
     filter: FilterTypeEnum.ValueRange,
-    unit: 'n/mm³',
+    unit: '1/mm³',
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'mean'),
       deltaResourceViewFn: (resource) => selectorFnStatisticDetail(resource, 'mean', true),
@@ -264,6 +263,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       },
     },
     title: 'Mean ± std',
+    unit: '1/μm',
     filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: selectorFnMeanStd,

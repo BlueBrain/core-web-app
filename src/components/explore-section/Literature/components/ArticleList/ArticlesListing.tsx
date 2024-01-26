@@ -175,10 +175,10 @@ export function ArticleListing() {
 
   return (
     <div className="flex items-start mx-10 gap-x-4 mt-12 mb-2 w-full">
-      <div className="flex items-start px-4 bg-white min-w-[4rem]">
+      <div className="flex items-start px-4 bg-white min-w-[10rem]">
         <If id="total-count" condition={Boolean(total)}>
           <div className="text-md mt-4 text-primary-8">
-            Articles:{' '}
+            Number of articles:{' '}
             <div className="text-primary-8 font-bold" data-testid="total-article-count">
               {total}
             </div>
