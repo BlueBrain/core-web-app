@@ -29,7 +29,7 @@ function ExperimentTotal({ dataType }: Props) {
 
       {total.state === 'hasData' && (
         <Link
-          href={`/explore/interactive/data/${DATA_TYPES_TO_CONFIGS[dataType].name}`}
+          href={`/explore/interactive/experimental/${DATA_TYPES_TO_CONFIGS[dataType].name}`}
           key={DATA_TYPES_TO_CONFIGS[dataType].title}
           className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 hover:text-primary-4"
           data-testid={`experiment-dataset-${dataType}`}
