@@ -43,7 +43,7 @@ function SubmitQuestion() {
   );
 }
 
-function FormButton({ icon, type, className, ...props }: FormButtonProps) {
+function FormButton({ icon, type, ...props }: FormButtonProps) {
   return (
     <button
       onClick={props.onClick}

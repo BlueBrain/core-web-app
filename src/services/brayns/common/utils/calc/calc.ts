@@ -12,8 +12,6 @@ import CalcInterface, {
   Vector4,
 } from './types';
 
-/* eslint-disable class-methods-use-this */
-
 const EPSILON = 1e-9;
 const COLUMN_X = 0;
 const COLUMN_Y = 1;

@@ -53,8 +53,7 @@ export default class ProxyService implements JobAllocatorServiceInterface {
   /**
    * @returns Content of a text file, or `null` if the file does not exist.
    */
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-  async loadTextFile(jobId: string, filename: string): Promise<string | null> {
+  async loadTextFile(jobId: string, _filename: string): Promise<string | null> {
     return `Reading content of "${jobId}" is not implemented yet!`;
   }
 

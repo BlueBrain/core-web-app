@@ -20,12 +20,10 @@ export default class BackendAllocatorService {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get jobId() {
     return getSessionStorage().getItem(JOBID_STORAGE_KEY) ?? '';
   }
 
-  // eslint-disable-next-line class-methods-use-this
   set jobId(value: string) {
     getSessionStorage().setItem(JOBID_STORAGE_KEY, value);
   }

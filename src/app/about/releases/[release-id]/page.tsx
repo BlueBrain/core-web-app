@@ -4,7 +4,6 @@ import { Metadata } from 'next';
 
 import Release from '@/components/About/Release/Detail';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getOneRelease(_id: string) {
   const file = await fs.readFile(path.resolve(`./public/mock-data/releases-details.json`), 'utf8');
   return JSON.parse(file);

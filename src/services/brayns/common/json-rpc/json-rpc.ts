@@ -1,6 +1,5 @@
-/* eslint-disable lodash/import-scope */
-/* eslint-disable class-methods-use-this */
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
+
 import Async from '../utils/async';
 import GenericEvent from '../utils/generic-event';
 import Progress, {
