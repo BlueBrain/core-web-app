@@ -1,24 +1,30 @@
 'use client';
 
+import { ReactNode, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ReactNode } from 'react';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { usePathname, useRouter, useParams } from 'next/navigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import useTotalResults from '@/hooks/useTotalResults';
 import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
 import { DataType } from '@/constants/explore-section/list-views';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import { BASE_EXPLORE_PATH, INTERACTIVE_PATH } from '@/constants/explore-section/paths';
+import { useLoadableValue } from '@/hooks/hooks';
+import { totalByExperimentAndRegionsAtom } from '@/state/explore-section/list-view-atoms';
 
-const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length)}%`;
+const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length) - 0.01}%`;
 
 const brainRegionSource = 'selected';
 
 function MenuItemLabel({ label, dataType }: { label: string; dataType: DataType }) {
-  return `${label} ${useTotalResults({ dataType, brainRegionSource })}`;
+  const totalByExperimentAndRegions = useLoadableValue(
+    totalByExperimentAndRegionsAtom({ dataType, brainRegionSource })
+  );
+  return `${label} ${
+    totalByExperimentAndRegions.state === 'hasData' ? `(${totalByExperimentAndRegions.data})` : ''
+  }`;
 }
 
 export default function ExploreInteractiveDataLayout({ children }: { children: ReactNode }) {
@@ -37,54 +43,45 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
     router.push(`${BASE_EXPLORE_PATH}${key}`);
   };
 
+  const items = useMemo(
+    () =>
+      Object.keys(EXPERIMENT_DATA_TYPES).map((dataType) => {
+        const key = DATA_TYPES_TO_CONFIGS[dataType as DataType].name;
+        const active = DATA_TYPES_TO_CONFIGS[dataType as DataType].name === activeExperimentPath;
+        const label = DATA_TYPES_TO_CONFIGS[dataType as DataType].title;
+
+        return {
+          key,
+          title: label,
+          label: <MenuItemLabel dataType={dataType as DataType} label={label} />,
+          className: 'text-center font-semibold',
+          style: {
+            backgroundColor: active ? 'white' : '#002766',
+            color: active ? '#002766' : 'white',
+            flexBasis: menuItemWidth,
+          },
+        };
+      }),
+    [activeExperimentPath]
+  );
+
   if (params?.id)
     return <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>;
 
-  const items = Object.keys(EXPERIMENT_DATA_TYPES).map((k) => {
-    return {
-      active: DATA_TYPES_TO_CONFIGS[k as DataType].name === activeExperimentPath,
-      label: DATA_TYPES_TO_CONFIGS[k as DataType].title,
-      key: DATA_TYPES_TO_CONFIGS[k as DataType].name,
-      dataType: k as DataType,
-    };
-  });
-
   return (
-    <div className="h-screen bg-primary-9 flex overflow-hidden">
+    <div className="h-screen bg-primary-9 flex overflow-hidden" id="interactive-data-layout">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <BackToInteractiveExplorationBtn href={INTERACTIVE_PATH} />
-
-        <div className="flex-1 pt-12">
-          <div className="pt-10 pl-10">
-            <div className="flex pl-10 mb-12">
-              <h1 className="py-2 px-8 text-center border border-primary-4 bg-primary-9 text-white text-2xl font-bold cursor-default">
-                Experimental Data
-              </h1>
-            </div>
-            <Menu
-              onClick={onClick}
-              selectedKeys={[activeExperimentPath]}
-              mode="horizontal"
-              theme="dark"
-              style={{ backgroundColor: '#002766' }}
-              className="flex justify-start pl-10"
-            >
-              {items.map((item) => (
-                <Menu.Item
-                  key={item.key}
-                  className="font-semibold text-center min-h-[3.2rem]"
-                  style={{
-                    backgroundColor: item.active ? 'white' : '#002766',
-                    color: item.active ? '#002766' : 'white',
-                    flexBasis: menuItemWidth,
-                  }}
-                >
-                  <MenuItemLabel label={item.label} dataType={item.dataType} />
-                </Menu.Item>
-              ))}
-            </Menu>
-          </div>
-
+        <div className="flex-1">
+          <Menu
+            onClick={onClick}
+            selectedKeys={[activeExperimentPath]}
+            mode="horizontal"
+            theme="dark"
+            style={{ backgroundColor: '#002766' }}
+            className="flex justify-start w-full"
+            items={items}
+          />
           <div className="bg-primary-9 text-white h-full w-full">{children}</div>
         </div>
       </ErrorBoundary>

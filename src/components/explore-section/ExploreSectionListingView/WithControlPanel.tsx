@@ -1,7 +1,7 @@
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from 'react';
 import { useAtomValue, useAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
-import LoadMoreButton from '@/components/explore-section/ExploreSectionListingView/LoadMoreButton';
+
 import ControlPanel from '@/components/explore-section/ControlPanel';
 import {
   activeColumnsAtom,
@@ -45,9 +45,8 @@ export default function WithControlPanel({
 
   return (
     <>
-      <section className="w-full h-full flex flex-col gap-5 bg-white pb-24 p-3 pt-8 relative overflow-auto min-w-0">
+      <section className="w-full h-full flex flex-col gap-5 bg-white relative min-w-0 before:shadow-lg after:shadow-md">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel, filters })}
-        <LoadMoreButton dataType={dataType} brainRegionSource={brainRegionSource} />
       </section>
       {displayControlPanel && filters && (
         <ControlPanel

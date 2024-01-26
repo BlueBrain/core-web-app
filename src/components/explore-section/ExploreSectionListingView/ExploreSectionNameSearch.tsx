@@ -2,8 +2,6 @@ import {
   ChangeEvent,
   ForwardedRef,
   HTMLProps,
-  MouseEventHandler,
-  ReactNode,
   RefObject,
   forwardRef,
   useCallback,
@@ -28,9 +26,10 @@ const Input = forwardRef(
     useEffect(() => ref?.current?.focus(), [ref]); // Auto-focus on render
 
     return (
-      <div className="border border-primary-3 flex items-center">
+      <div className="flex items-center border-b border-neutral-2 w-full max-w-2xl mx-auto focus-within:border-b-primary-8">
         <input
-          className="bg-transparent placeholder:text-neutral-3 text-primary-7 hover:text-primary-5 h-[56] p-3"
+          className="bg-transparent placeholder:text-neutral-3 text-primary-7 py-2 w-full"
+          style={{ outline: 'unset' }}
           onBlur={onBlur}
           onInput={onInput}
           ref={ref}
@@ -38,31 +37,13 @@ const Input = forwardRef(
           type={type}
           value={value}
         />
-        <SearchOutlined className="p-3" />
+        <SearchOutlined className="py-2 text-primary-8" />
       </div>
     );
   }
 );
 
 Input.displayName = 'Input';
-
-function Button({
-  onClick,
-  children,
-}: {
-  children: ReactNode;
-  onClick: MouseEventHandler<HTMLButtonElement>;
-}) {
-  return (
-    <button
-      className="bg-transparent border border-primary-3 flex items-center p-3 text-primary-7"
-      onClick={onClick}
-      type="button"
-    >
-      {children}
-    </button>
-  );
-}
 
 type SearchProps = {
   dataType: DataType;
@@ -71,8 +52,6 @@ type SearchProps = {
 export default function ExploreSectionNameSearch({ dataType }: SearchProps) {
   const [searchStringAtomValue, setSearchStringAtomValue] = useAtom(searchStringAtom({ dataType }));
   const [searchStringLocalState, setSearchStringLocalState] = useState(searchStringAtomValue);
-
-  const [active, setActive] = useState<boolean>(false);
 
   const searchInput: RefObject<HTMLInputElement> = useRef(null);
 
@@ -91,18 +70,13 @@ export default function ExploreSectionNameSearch({ dataType }: SearchProps) {
     setSearchStringLocalState(searchStringAtomValue);
   }, [searchStringAtomValue, setSearchStringLocalState]);
 
-  return active ? (
+  return (
     <Input
-      onBlur={() => setActive(false)}
       onInput={(e: ChangeEvent<HTMLInputElement>) => setSearchStringLocalState(e.target.value)}
       ref={searchInput}
-      placeholder="Search by text..."
+      placeholder="Search for resources..."
       type="text"
       value={searchStringLocalState}
     />
-  ) : (
-    <Button onClick={() => setActive(true)}>
-      <SearchOutlined />
-    </Button>
   );
 }

@@ -9,8 +9,8 @@ import {
 } from 'react';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Input, Spin } from 'antd';
-import { useAtom } from 'jotai';
-import { unwrap } from 'jotai/utils';
+import { useAtom, useSetAtom } from 'jotai';
+import { unwrap, useResetAtom } from 'jotai/utils';
 import {
   Aggregations,
   Buckets,
@@ -23,10 +23,15 @@ import { CheckList, DateRange, defaultList, FilterGroup } from '@/components/Fil
 import ValueRange from '@/components/Filter/ValueRange';
 import ValueOrRange from '@/components/Filter/ValueOrRange';
 import { FilterValues } from '@/types/explore-section/application';
-import { activeColumnsAtom } from '@/state/explore-section/list-view-atoms';
+import {
+  activeColumnsAtom,
+  filtersAtom,
+  searchStringAtom,
+} from '@/state/explore-section/list-view-atoms';
 import { getFieldEsConfig, getFieldLabel } from '@/api/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { DataType } from '@/constants/explore-section/list-views';
+import ClearFilters from '@/components/explore-section/ExploreSectionListingView/ClearFilters';
 
 export type ControlPanelProps = {
   children?: ReactNode;
@@ -159,6 +164,8 @@ export default function ControlPanel({
   );
 
   const [filterValues, setFilterValues] = useState<FilterValues>({});
+  const resetFilters = useResetAtom(filtersAtom({ dataType }));
+  const setSearchString = useSetAtom(searchStringAtom({ dataType }));
 
   const onToggleActive = (key: string) => {
     if (!activeColumns) return;
@@ -207,6 +214,13 @@ export default function ControlPanel({
     };
   });
 
+  // The columnKeyToFilter method receives a string (key)
+  // and in this case it is the equivalent to a filters[x].field
+  const clearFilters = () => {
+    resetFilters();
+    setSearchString('');
+  };
+
   return (
     <div
       data-testid="listing-view-filter-panel"
@@ -235,11 +249,12 @@ export default function ControlPanel({
         <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
         {children}
       </div>
-      <div className="w-full">
+      <div className="w-full flex items-center justify-between mt-4">
+        <ClearFilters onClick={clearFilters} />
         <button
           type="submit"
           onClick={submitValues}
-          className="mt-4 float-right bg-primary-2 py-3 px-8 text-primary-9"
+          className=" float-right bg-primary-2 py-3 px-8 text-primary-9"
         >
           Apply
         </button>

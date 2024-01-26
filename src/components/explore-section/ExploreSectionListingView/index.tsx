@@ -50,7 +50,7 @@ export default function DefaultListView({
 
   return (
     <div className="h-full bg-[#d1d1d1]" data-testid="explore-section-listing-view">
-      <div className="grid grid-cols-[auto_max-content] grid-rows-1 w-full max-h-[calc(100vh-156px)] h-full overflow-x-auto overflow-y-hidden">
+      <div className="relative grid grid-cols-[auto_max-content] grid-rows-1 w-full max-h-[calc(100vh-3.3rem)] h-full overflow-x-auto overflow-y-hidden">
         <WithControlPanel dataType={dataType} brainRegionSource={brainRegionSource}>
           {({ activeColumns, displayControlPanel, setDisplayControlPanel, filters }) => (
             <>
@@ -59,6 +59,7 @@ export default function DefaultListView({
                 displayControlPanel={displayControlPanel}
                 dataType={dataType}
                 setDisplayControlPanel={setDisplayControlPanel}
+                className="sticky top-0 py-5 px-4 !max-h-24"
               >
                 <NumericResultsInfo dataType={dataType} brainRegionSource={brainRegionSource} />
               </FilterControls>
@@ -67,13 +68,15 @@ export default function DefaultListView({
                 dataSource={dataSource}
                 enableDownload={enableDownload}
                 dataType={dataType}
+                brainRegionSource={brainRegionSource}
                 loading={data.state === 'loading'}
                 renderButton={renderButton}
               />
               <ListingScrollNavControl<HTMLDivElement>
                 extraRightSpace={displayControlPanel ? 480 : 0}
+                extraLeftSpace={12}
                 show={data.state !== 'loading' && Boolean(dataSource?.length)}
-                element={document.querySelector('.ant-table-content') as HTMLDivElement}
+                element={document.querySelector('.ant-table-body') as HTMLDivElement}
               />
             </>
           )}

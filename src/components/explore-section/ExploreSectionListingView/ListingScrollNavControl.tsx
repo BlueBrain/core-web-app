@@ -104,7 +104,7 @@ export default function ListingScrollNavControl<T extends HTMLElement>({
         <FloatButton
           onClick={handleScrollToRight}
           icon={<ChevronLast className="w-5 h-5" />}
-          className="z-[2]"
+          className="z-[2] !h-[2.93rem] !bottom-6"
           style={{
             right: extraRightSpace
               ? extraRightSpace + horizantalDefaultFloatValue
@@ -117,7 +117,7 @@ export default function ListingScrollNavControl<T extends HTMLElement>({
         <FloatButton
           onClick={handleScrollToLeft}
           icon={<ChevronLast className="w-5 h-5 transform rotate-180" />}
-          className="z-[2]"
+          className="z-[2] !h-[2.93rem] !bottom-6"
           style={{
             left: Number(displayFloatButtons.left) + (extraLeftSpace ?? 0),
             bottom: bottomFloatValue,

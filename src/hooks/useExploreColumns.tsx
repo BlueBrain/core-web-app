@@ -161,7 +161,10 @@ export default function useExploreColumns(
                 {term.unit && <span className={styles.tableHeaderUnits}>[{term?.unit}]</span>}
               </div>
             ),
-            className: classNames('text-primary-7 cursor-pointer', term?.className),
+            className: classNames(
+              'text-primary-7 cursor-pointer before:!content-none',
+              term?.className
+            ),
             sorter: term?.sorter ?? true,
             ellipsis: true,
             width: columnWidths.find(({ key: colKey }) => colKey === key)?.width,
@@ -187,10 +190,10 @@ export default function useExploreColumns(
         key: dimColumn,
         title: (
           <div className="flex flex-col text-left" style={{ marginTop: '-2px' }}>
-            <div>{dimColumn}</div>
+            <div className={styles.columnTitle}>{dimColumn}</div>
           </div>
         ),
-        className: 'text-primary-7 cursor-pointer',
+        className: 'text-primary-7 cursor-pointer before:!content-none',
         sorter: false,
         ellipsis: true,
         width: columnWidths.find(({ key: colKey }) => colKey === dimColumn)?.width,

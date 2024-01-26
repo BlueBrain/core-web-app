@@ -7,7 +7,7 @@ import {
   mockMorphologyResponse,
 } from '../../../../../__tests__/__server__/handlers';
 import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
-import { DataType, PAGE_SIZE } from '@/constants/explore-section/list-views';
+import { DataType } from '@/constants/explore-section/list-views';
 import sessionAtom from '@/state/session';
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
@@ -170,9 +170,9 @@ describe('Filters panel tests', () => {
   test('pressing hide button hides a column', async () => {
     const filterButton = screen.getByRole('button', { name: 'listing-view-filter-button' });
     fireEvent.click(filterButton);
-    const tableHeaderLengthBeforeHide = screen.getAllByRole('columnheader').length;
+    const tableHeaderLengthBeforeHide = screen.getAllByTestId('column-header').length;
     pressHideColumnButton();
-    const tableHeaderLengthAfterHide = screen.getAllByRole('columnheader').length;
+    const tableHeaderLengthAfterHide = screen.getAllByTestId('column-header').length;
 
     expect(tableHeaderLengthAfterHide).toEqual(tableHeaderLengthBeforeHide - 1);
   });
@@ -180,10 +180,10 @@ describe('Filters panel tests', () => {
   test('pressing show button shows back the column', async () => {
     const filterButton = screen.getByRole('button', { name: 'listing-view-filter-button' });
     fireEvent.click(filterButton);
-    const tableHeaderLengthBeforeHide = screen.getAllByRole('columnheader').length;
+    const tableHeaderLengthBeforeHide = screen.getAllByTestId('column-header').length;
     pressHideColumnButton();
     pressShowColumnButton();
-    const tableHeaderLengthAfterHide = screen.getAllByRole('columnheader').length;
+    const tableHeaderLengthAfterHide = screen.getAllByTestId('column-header').length;
     expect(tableHeaderLengthAfterHide).toEqual(tableHeaderLengthBeforeHide);
   });
 });
@@ -201,32 +201,12 @@ describe('Header panel unit tests', () => {
       </TestProvider>
     );
 
-    const view = screen.getByRole('heading', { name: 'listing-view-title' });
-    await waitFor(() =>
-      expect(view.textContent).toContain(
-        '1,101 matching your filter selection (out of 1,101 in active brain region)'
-      )
-    );
+    const view = screen.getByRole('status', { name: 'listing-view-title' });
+    await waitFor(() => expect(view.textContent).toContain('Results 1,101'));
   });
 });
 
 describe('Load more resources button unit tests', () => {
-  test('Load more resources button shows certain text', async () => {
-    await act(() =>
-      render(
-        <TestProvider initialValues={[[sessionAtom, { accessToken: '123' }]]}>
-          <ExploreSectionListingView
-            brainRegionSource="root"
-            dataType={DataType.ExperimentalNeuronMorphology}
-          />
-        </TestProvider>
-      )
-    );
-
-    const loadMoreButton = screen.getByRole('button', { name: 'load-more-resources-button' });
-    expect(loadMoreButton.textContent).toEqual(`Load ${PAGE_SIZE} more results...`);
-  });
-
   test("Load more resources button doesn't show up if there are no more resources", async () => {
     testServer.use(mockEmptyESResponse);
     await act(() =>
@@ -275,7 +255,7 @@ describe('Listing view table tests', () => {
       )
     );
     const tableRows = screen.getAllByRole('row');
-    expect(tableRows.length).toEqual(11);
+    expect(tableRows.length).toEqual(10);
   });
 
   test('table includes all columns', async () => {
@@ -289,7 +269,7 @@ describe('Listing view table tests', () => {
         </TestProvider>
       )
     );
-    const tableHeaders = screen.getAllByRole('columnheader');
+    const tableHeaders = screen.getAllByTestId('column-header');
     expect(tableHeaders.length).toEqual(
       DATA_TYPES_TO_CONFIGS[DataType.ExperimentalNeuronMorphology].columns.length // Preview column has no header.
     );

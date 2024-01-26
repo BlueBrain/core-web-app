@@ -9,7 +9,7 @@ import { useLoadableValue } from '@/hooks/hooks';
 function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
     <button
-      className={classNames('font-semibold mt-2 mx-auto px-14 py-4 rounded-3xl', className)}
+      className={classNames('font-normal mx-auto px-12 py-3 rounded-full', className)}
       type="button"
       disabled={disabled}
       onClick={onClick}
@@ -23,12 +23,19 @@ function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonEle
 export default function LoadMoreButton({
   dataType,
   brainRegionSource,
+  hide,
 }: HTMLProps<HTMLButtonElement> & {
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
+  hide: () => void;
 }) {
   const total = useLoadableValue(totalAtom({ dataType, brainRegionSource }));
-  const [pageSize, setPageSize] = useAtom(pageSizeAtom);
+  const [contentSize, setContentSize] = useAtom(pageSizeAtom);
+
+  const onLoadMore = () => {
+    setContentSize(contentSize + PAGE_SIZE);
+    hide();
+  };
 
   if (total.state === 'loading') return null;
   if (total.state === 'hasError') {
@@ -39,10 +46,10 @@ export default function LoadMoreButton({
     );
   }
 
-  if (total.state === 'hasData' && pageSize > total.data) return null;
+  if (total.state === 'hasData' && contentSize > total.data) return null;
 
   return (
-    <Btn className="bg-primary-8 text-white" onClick={() => setPageSize(pageSize + 30)}>
+    <Btn className="bg-primary-8 text-white" onClick={onLoadMore}>
       <span>Load {PAGE_SIZE} more results...</span>
     </Btn>
   );
