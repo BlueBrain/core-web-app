@@ -56,10 +56,12 @@ export const eTypeSelectorFn = (detail: DeltaResource | null) => {
 // renders standard error of the mean if present
 export const semSelectorFn = (detail: DeltaResource | null) => {
   const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);
-  return (
-    seriesArray?.find((series) => series.statistic === 'standard error of the mean')?.value ||
-    NO_DATA_STRING
-  );
+
+  const value = seriesArray
+    ?.find((series) => series.statistic === 'standard error of the mean')
+    ?.value.toFixed(5);
+
+  return Number(value) || NO_DATA_STRING;
 };
 
 /**

@@ -136,7 +136,7 @@ describe('selectorFunctions', () => {
             },
           ],
         })
-      ).toBe(0.028997860479848495);
+      ).toBe(0.029);
     });
 
     it('returns undefined if sem not present', () => {
