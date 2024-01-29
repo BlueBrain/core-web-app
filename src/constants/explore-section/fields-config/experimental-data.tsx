@@ -30,6 +30,7 @@ import {
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   [Field.License]: {
@@ -500,6 +501,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           'Partition Asymmetry',
           'mean'
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.BasalDendriticTotalLength]: {
@@ -566,6 +568,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           'Partition Asymmetry',
           'mean'
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.ApicalDendriticTotalLength]: {
@@ -632,6 +635,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           'Partition Asymmetry',
           'mean'
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.NeuronMorphologyWidth]: {
@@ -652,6 +656,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           'mean',
           true
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.NeuronMorphologyLength]: {
@@ -672,6 +677,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           'mean',
           true
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.NeuronMorphologyDepth]: {
@@ -691,6 +697,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           'Total Depth',
           'mean'
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.SomaDiameter]: {
