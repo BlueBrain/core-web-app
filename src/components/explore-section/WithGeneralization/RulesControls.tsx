@@ -76,7 +76,7 @@ function RulesControls() {
   const selectedRulesDropdownContent = (
     <span className="mr-2 text-primary-9 font-semibold">
       {selectedRules?.length === 1 ? (
-        selectedRules[0]
+        allRules.find((rule) => rule.modelName === selectedRules[0])?.name
       ) : (
         <>
           <span className="bg-primary-9 rounded-full px-2 text-white">
