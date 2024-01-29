@@ -1,4 +1,3 @@
-import React from 'react';
 import { classNames } from '@/util/utils';
 
 import styles from './avatar.module.css';

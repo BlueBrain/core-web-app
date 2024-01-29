@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { MorphologyPainter } from '@bbp/morphoviewer';
 
 import { classNames } from '@/util/utils';
@@ -34,8 +34,8 @@ interface ScalebarAttributes {
 }
 
 function useScalebar(painter: MorphologyPainter): ScalebarAttributes | null {
-  const [scalebar, setScalebar] = React.useState(painter.computeScalebar());
-  React.useEffect(() => {
+  const [scalebar, setScalebar] = useState(painter.computeScalebar());
+  useEffect(() => {
     const update = () => {
       setScalebar(painter.computeScalebar());
     };

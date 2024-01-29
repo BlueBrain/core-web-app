@@ -1,8 +1,7 @@
-import React from 'react';
 import { DeleteFilled } from '@ant-design/icons';
 
-import { Avatar } from '../../../sub-components/Avatar';
-import { ROLES } from '../../../constants';
+import { Avatar } from '@virtual-lab-create/sub-components/Avatar';
+import { ROLES } from '@virtual-lab-create/constants';
 import { classNames } from '@/util/utils';
 import { VirtualLabMember } from '@/services/virtual-lab/types';
 

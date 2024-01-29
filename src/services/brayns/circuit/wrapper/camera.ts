@@ -1,5 +1,5 @@
-import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
-import Calc, { Vector3 } from '../../common/utils/calc';
+import { JsonRpcServiceInterface } from '@brayns/json-rpc/types';
+import Calc, { Vector3 } from '@brayns/utils/calc';
 
 export default class Camera {
   private queryInProgress = false;

@@ -1,10 +1,9 @@
-import React from 'react';
 import { usePathname } from 'next/navigation';
 
-import { STEPS } from '../../constants';
 import { Button } from '../Button';
 import { CreateButton } from './CreateButton';
 import { Step } from './Step';
+import { STEPS } from '@virtual-lab-create/constants';
 import { classNames } from '@/util/utils';
 
 import styles from './nav-buttons.module.css';

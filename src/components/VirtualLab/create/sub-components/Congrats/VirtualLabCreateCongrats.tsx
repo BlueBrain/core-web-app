@@ -1,14 +1,13 @@
-import React from 'react';
 import { CheckCircleFilled } from '@ant-design/icons';
 
-import { Button } from '../Button';
-import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
-import { EMPTY_VIRTUAL_LAB } from '../../constants';
+import { Button } from '@virtual-lab-create/sub-components/Button';
+import { useCurrentVirtualLab } from '@virtual-lab-create/hooks/current-virtual-lab';
+import { EMPTY_VIRTUAL_LAB } from '@virtual-lab-create/constants';
 import { classNames } from '@/util/utils';
 
 import styles from './virtual-lab-create-congrats.module.css';
 // eslint-disable-next-line import/order
-import commonStyles from '../../common.module.css';
+import commonStyles from '@virtual-lab-create/common.module.css';
 
 export interface VirtualLabCreateCongratsProps {
   className?: string;

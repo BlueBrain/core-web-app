@@ -1,6 +1,6 @@
-import Settings from '../../common/settings';
 import { NODE_STARTUP_SCRIPT } from './startup-scripts';
 import { JobAllocatorServiceInterface, JobStatus } from './types';
+import Settings from '@brayns/settings';
 import { logError } from '@/util/logger';
 import { assertType, isString } from '@/util/type-guards';
 

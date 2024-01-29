@@ -1,4 +1,4 @@
-import JsonRpc from '../../common/json-rpc';
+import JsonRpc from '@brayns/json-rpc';
 import { assertType } from '@/util/type-guards';
 
 export default class BackendService {

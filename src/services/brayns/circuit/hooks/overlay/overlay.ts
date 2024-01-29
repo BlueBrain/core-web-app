@@ -1,23 +1,23 @@
-import React from 'react';
-import State from '../../../common/state';
-import { BraynsMeshOptions } from '../../../common/types';
+import { useCallback, useEffect, useRef } from 'react';
 import OverlayManager from './manager';
+import State from '@brayns/state';
+import { BraynsMeshOptions } from '@brayns/types';
 import { useAtlasVisualizationManager, useVisibleMeshes } from '@/state/atlas';
 
 export function useOverlay(token?: string): {
   handleOverlayCanvasMount: (canvas: HTMLCanvasElement | null) => void;
 } {
   const atlas = useAtlasVisualizationManager();
-  const refMeshes = React.useRef<BraynsMeshOptions[]>([]);
-  const refManager = React.useRef<OverlayManager | null>(null);
+  const refMeshes = useRef<BraynsMeshOptions[]>([]);
+  const refManager = useRef<OverlayManager | null>(null);
   const visibleMeshes = useVisibleMeshes();
-  const paint = React.useCallback(() => {
+  const paint = useCallback(() => {
     const painter = refManager.current;
     if (!painter) return;
 
     window.requestAnimationFrame(() => painter.paint());
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     const meshes: BraynsMeshOptions[] = visibleMeshes.map((mesh) => ({
       url: mesh.contentURL,
       color: mesh.color,
@@ -29,13 +29,13 @@ export function useOverlay(token?: string): {
     }
     manager.showMeshes(meshes);
   }, [visibleMeshes]);
-  React.useEffect(() => {
+  useEffect(() => {
     State.camera.addListener(paint);
     paint();
     return () => State.camera.removeListener(paint);
   }, [paint]);
   return {
-    handleOverlayCanvasMount: React.useCallback(
+    handleOverlayCanvasMount: useCallback(
       (canvas: HTMLCanvasElement | null) => {
         if (!canvas || !token) return;
 

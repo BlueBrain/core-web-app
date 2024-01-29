@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import { Layout } from '../../sub-components/Layout';
-import { Main } from '../../sub-components/Main';
-import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
-import { VIRTUAL_LAB_PLAN_DEFINITIONS } from '../../constants';
-import { PlanSelectButton } from '../../sub-components/PlanSelectButton';
 import { InputBillingInfo } from './InputBillingInfo';
+import { Layout } from '@virtual-lab-create/sub-components/Layout';
+import { Main } from '@virtual-lab-create/sub-components/Main';
+import { useCurrentVirtualLab } from '@virtual-lab-create/hooks/current-virtual-lab';
+import { VIRTUAL_LAB_PLAN_DEFINITIONS } from '@virtual-lab-create/constants';
+import { PlanSelectButton } from '@virtual-lab-create/sub-components/PlanSelectButton';
 
 export interface VirtualLabCreatePlanProps {
   className?: string;

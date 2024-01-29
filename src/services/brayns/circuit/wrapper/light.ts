@@ -1,7 +1,7 @@
-import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
-import { BraynsColorOpaque } from '../../common/types';
-import { Vector3 } from '../../common/utils/calc';
 import { assertBraynsModel } from './types';
+import { JsonRpcServiceInterface } from '@brayns/json-rpc/types';
+import { BraynsColorOpaque } from '@brayns/types';
+import { Vector3 } from '@brayns/utils/calc';
 
 export default class Light {
   constructor(private readonly renderer: JsonRpcServiceInterface) {}

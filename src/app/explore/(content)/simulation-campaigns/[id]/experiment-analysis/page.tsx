@@ -6,15 +6,18 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRightOutlined, LineChartOutlined, RightOutlined } from '@ant-design/icons';
 import { Input, Modal, Form, Button } from 'antd';
 import { useAtomValue } from 'jotai';
-
 import Link from 'next/link';
-import { fetchAnalyses, useAnalyses, Analysis } from '../../shared';
+
+import {
+  fetchAnalyses,
+  useAnalyses,
+  Analysis,
+} from '@/app/explore/(content)/simulation-campaigns/shared';
 import sessionAtom from '@/state/session';
 import { createResource, fetchResourceById } from '@/api/nexus';
 import usePathname from '@/hooks/pathname';
 import { from64 } from '@/util/common';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
-
 import { useSessionAtomValue } from '@/hooks/hooks';
 
 export default function ExperimentAnalyses() {

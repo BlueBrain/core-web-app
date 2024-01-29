@@ -1,9 +1,9 @@
-import Color from '../../common/utils/color';
-import State from '../../common/state';
 import { BraynsWrapperInterface } from '../wrapper/types';
-import { Vector4 } from '../../common/utils/calc';
-import { compareSets } from '../../common/utils/set';
 import regionsInfo from './regions/regions';
+import Color from '@brayns/utils/color';
+import State from '@brayns/state';
+import { Vector4 } from '@brayns/utils/calc';
+import { compareSets } from '@brayns/utils/set';
 import { logError } from '@/util/logger';
 import { AtlasVisualizationManager, CellType } from '@/state/atlas';
 

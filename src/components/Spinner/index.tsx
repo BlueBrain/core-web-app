@@ -1,9 +1,10 @@
-import React from 'react';
+import { ReactNode } from 'react';
+
 import styles from './Spinner.module.css';
 
 export interface SpinnerProps {
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export default function Spinner({ className, children }: SpinnerProps) {

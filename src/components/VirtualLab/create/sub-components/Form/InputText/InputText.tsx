@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from 'react';
 
-import { FieldType } from '../../../types';
+import { FieldType } from '@virtual-lab-create/types';
 import { classNames } from '@/util/utils';
 
 import styles from './input-text.module.css';

@@ -1,8 +1,8 @@
-import CameraTransform from '../../../common/utils/camera-transform';
-import OverlayPainter from '../../overlay-painter';
-import { BraynsMeshOptions } from '../../../common/types';
-import { loadMeshFromNexus } from '../../../common/utils/nexus';
-import Gestures from '../../../common/utils/gestures';
+import CameraTransform from '@brayns/utils/camera-transform';
+import OverlayPainter from '@brayns/../circuit/overlay-painter';
+import { BraynsMeshOptions } from '@brayns/types';
+import { loadMeshFromNexus } from '@brayns/utils/nexus';
+import Gestures from '@brayns/utils/gestures';
 import { logError } from '@/util/logger';
 import { AtlasVisualizationManager } from '@/state/atlas/atlas';
 

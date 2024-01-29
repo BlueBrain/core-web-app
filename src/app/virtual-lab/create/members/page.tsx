@@ -1,6 +1,6 @@
 'use client';
 
-import { VirtualLabCreateMembers } from '@/components/VirtualLab/create';
+import { VirtualLabCreateMembers } from '@virtual-lab-create/index';
 
 export default function CreateLabPage() {
   return <VirtualLabCreateMembers nextPage="congrats" />;

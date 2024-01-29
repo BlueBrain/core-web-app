@@ -1,7 +1,7 @@
-import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
-import { Vector4 } from '../../common/utils/calc';
-import Settings from '../../common/settings';
 import { BraynsWrapperInterface, CircuitLoaderOptions } from './types';
+import { JsonRpcServiceInterface } from '@brayns/json-rpc/types';
+import { Vector4 } from '@brayns/utils/calc';
+import Settings from '@brayns/settings';
 import { assertType } from '@/util/type-guards';
 
 export interface Region {

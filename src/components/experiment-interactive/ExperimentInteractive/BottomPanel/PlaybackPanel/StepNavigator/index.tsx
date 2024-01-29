@@ -1,6 +1,6 @@
 import clamp from 'lodash/clamp';
 
-import { useCurrentSimulationReport } from '../../../hooks/current-report';
+import { useCurrentSimulationReport } from '@experiment-interactive/hooks/current-report';
 import BackwardStep from '@/components/icons/BackwardStep';
 import NumberInput from '@/components/experiment-interactive/ExperimentInteractive/NumberInput';
 import ForwardStep from '@/components/icons/ForwardStep';

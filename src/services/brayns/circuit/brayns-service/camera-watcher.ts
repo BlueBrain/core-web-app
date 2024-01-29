@@ -1,6 +1,6 @@
-import State from '../../common/state';
-import Calc, { Vector3 } from '../../common/utils/calc';
 import BraynsWrapper from '../wrapper/wrapper';
+import State from '@brayns/state';
+import Calc, { Vector3 } from '@brayns/utils/calc';
 import { logError } from '@/util/logger';
 
 /**

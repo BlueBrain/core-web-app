@@ -1,5 +1,4 @@
 import * as Switch from '@radix-ui/react-switch';
-import React from 'react';
 
 import styles from './camera-switch.module.css';
 

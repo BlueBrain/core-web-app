@@ -1,8 +1,8 @@
-import { checkSlotId } from '../../utils';
-import Settings from '../../../common/settings';
 import ProxyService from './proxy-service';
 import AllocatorStorage from './storage';
 import { Allocation } from './types';
+import Settings from '@brayns/settings';
+import { checkSlotId } from '@brayns/../simulations/utils';
 
 export default class Allocator {
   private allocationProcess: Promise<Allocation> | null = null;

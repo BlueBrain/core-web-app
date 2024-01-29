@@ -1,12 +1,12 @@
-import ImageStream from '../../common/image-stream';
-import JsonRpc from '../../common/json-rpc';
-import Settings from '../../common/settings';
-import { Vector3 } from '../../common/utils/calc';
 import { DEFAULT_SIMULATION_COLORRAMP } from '../settings';
 import { BraynsSimulationOptions } from '../types';
 import BackendService from './backend-service';
 import { findSimulationProperties } from './find-simulation-properties';
 import { CampaignSimulation } from './types';
+import { Vector3 } from '@brayns/utils/calc';
+import Settings from '@brayns/settings';
+import JsonRpc from '@brayns/json-rpc';
+import ImageStream from '@brayns/image-stream';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 

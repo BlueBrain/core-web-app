@@ -1,8 +1,9 @@
-import React from 'react';
-import CameraTransform from '../../common/utils/camera-transform';
-import Allocation from '../allocation';
-import BraynsService from '../brayns-service';
-import { BraynsServiceInterface } from '../../common/types';
+import { useEffect, useState } from 'react';
+
+import Allocation from '@brayns/../circuit/allocation';
+import BraynsService from '@brayns/../circuit/brayns-service';
+import CameraTransform from '@brayns/utils/camera-transform';
+import { BraynsServiceInterface } from '@brayns/types';
 import useNotification from '@/hooks/notifications';
 import { logError } from '@/util/logger';
 import { useAtlasVisualizationManager } from '@/state/atlas';
@@ -16,10 +17,8 @@ export function useBraynsService(
 ): null | BraynsServiceInterface | string {
   const atlas = useAtlasVisualizationManager();
   const notif = useNotification();
-  const [braynsService, setBraynsService] = React.useState<null | BraynsServiceInterface | string>(
-    null
-  );
-  React.useEffect(() => {
+  const [braynsService, setBraynsService] = useState<null | BraynsServiceInterface | string>(null);
+  useEffect(() => {
     if (!token || braynsService) return;
 
     Allocation.allocate(token)

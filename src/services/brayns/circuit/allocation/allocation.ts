@@ -1,9 +1,9 @@
-import State from '../../common/state';
-import JsonRpcService from '../../common/json-rpc/json-rpc';
 import BraynsWrapper from '../wrapper/wrapper';
-import JsonRpcSerializerService from '../../common/json-rpc/json-rpc-serializer';
 import BackendAllocatorService from './backend-allocator-service';
 import Persistence from './persistence';
+import State from '@brayns/state';
+import JsonRpcService from '@brayns/json-rpc/json-rpc';
+import JsonRpcSerializerService from '@brayns/json-rpc/json-rpc-serializer';
 import { logError } from '@/util/logger';
 
 const Allocate = {

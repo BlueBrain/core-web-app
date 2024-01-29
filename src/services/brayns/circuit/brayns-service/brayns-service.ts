@@ -1,10 +1,10 @@
-import Async from '../../common/utils/async';
-import { BraynsServiceInterface } from '../../common/types';
 import BackendAllocatorService from '../allocation/backend-allocator-service';
 import BraynsWrapper from '../wrapper/wrapper';
 import CameraWatcher from './camera-watcher';
 import { exportPythonScriptForBraynsRecordedQueries } from './exporter/python';
 import MorphologiesManager from './morphologies-manager';
+import { BraynsServiceInterface } from '@brayns/types';
+import Async from '@brayns/utils/async';
 import { AtlasVisualizationManager, CellType } from '@/state/atlas';
 
 export default class BraynsService implements BraynsServiceInterface {

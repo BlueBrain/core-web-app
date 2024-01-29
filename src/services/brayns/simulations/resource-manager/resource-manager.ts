@@ -1,8 +1,8 @@
-import { CameraTransformInteface as CameraTransformInterface } from '../../common/utils/camera-transform';
-import { MAX_BRAYNS_INSTANCES } from '../settings';
-import { TokenProvider } from '../types';
-import { checkSlotId } from '../utils';
 import BraynsSlot from './brayns-slot';
+import { CameraTransformInteface as CameraTransformInterface } from '@brayns/utils/camera-transform';
+import { MAX_BRAYNS_INSTANCES } from '@brayns/../simulations/settings';
+import { TokenProvider } from '@brayns/../simulations/types';
+import { checkSlotId } from '@brayns/../simulations/utils';
 
 /**
  * This class is responsible of holding the 9 brayns slots

@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 
-import Settings from '../../common/settings';
-import Async from '../../common/utils/async';
-import State from '../../common/state';
-import { JsonRpcServiceAddress } from '../../common/json-rpc/types';
-import { getSessionStorage } from '../../common/state/storage';
 import { BackendAllocationOptions, JobAllocatorServiceInterface, JobStatus } from './types';
 import ProxyService from './proxy-service';
+import Settings from '@brayns/settings';
+import Async from '@brayns/utils/async';
+import State from '@brayns/state';
+import { JsonRpcServiceAddress } from '@brayns/json-rpc/types';
+import { getSessionStorage } from '@brayns/state/storage';
 import { logError } from '@/util/logger';
 
 const JOBID_STORAGE_KEY = 'BackendAllocatorService/JobId';

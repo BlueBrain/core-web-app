@@ -16,7 +16,10 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@brayns/*": ["src/services/brayns/common/*"],
+      "@virtual-lab-create/*": ["src/components/VirtualLab/create/*"],
+      "@experiment-interactive/*": ["src/components/experiment-interactive/ExperimentInteractive/*"]
     },
     "plugins": [
       {

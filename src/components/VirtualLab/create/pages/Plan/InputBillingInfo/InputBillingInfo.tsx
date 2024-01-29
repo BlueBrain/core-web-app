@@ -1,9 +1,7 @@
-import React from 'react';
-
-import { COUNTRIES } from '../../../constants';
-import { useCurrentVirtualLab } from '../../../hooks/current-virtual-lab';
-import { FieldType } from '../../../types';
-import { Form } from '../../../sub-components/Form';
+import { COUNTRIES } from '@virtual-lab-create/constants';
+import { useCurrentVirtualLab } from '@virtual-lab-create/hooks/current-virtual-lab';
+import { FieldType } from '@virtual-lab-create/types';
+import { Form } from '@virtual-lab-create/sub-components/Form';
 import { KeysOfType } from '@/util/typing';
 import { classNames } from '@/util/utils';
 import { VirtualLab } from '@/services/virtual-lab/types';

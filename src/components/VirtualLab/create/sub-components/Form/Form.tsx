@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { ReactNode, useRef } from 'react';
 
-import { FieldType } from '../../types';
 import { InputText } from './InputText';
+import { FieldType } from '@virtual-lab-create/types';
 import { KeysOfType } from '@/util/typing';
 import { classNames } from '@/util/utils';
 

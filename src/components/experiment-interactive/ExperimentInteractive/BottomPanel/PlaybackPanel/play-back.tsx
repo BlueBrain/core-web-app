@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { useCurrentSimulationReport } from '../../hooks/current-report';
-import { usePlaybackSpeed } from '../../hooks/playback-speed';
+import { useCurrentSimulationReport } from '@experiment-interactive/hooks/current-report';
+import { usePlaybackSpeed } from '@experiment-interactive/hooks/playback-speed';
 import { useSimulationCurrentBiologicalTime } from '@/state/experiment-interactive';
 import { MultiBraynsManagerInterface, useMultiBraynsManager } from '@/services/brayns/simulations';
 import { SimulationReport } from '@/services/brayns/simulations/resource-manager/backend-service';

@@ -1,6 +1,7 @@
-import React from 'react';
+import { useMemo } from 'react';
 import Plotly, { PlotData } from 'plotly.js-dist-min';
 import createPlotlyComponent from 'react-plotly.js/factory';
+
 import { convertVolts } from '@/util/explore-section/plotHelpers';
 import useConfig from '@/components/explore-section/EphysViewerContainer/hooks/useConfig';
 import optimizePlotData from '@/util/explore-section/optimizeTrace';
@@ -22,7 +23,7 @@ function ResponsePlot({
   const isVolts = metadata && metadata.v_unit === 'volts';
   const { config, layout, font, style } = useConfig({ selectedSweeps });
 
-  const rawData = React.useMemo(() => {
+  const rawData = useMemo(() => {
     const deltaTime = metadata ? metadata?.dt : 1;
     const zoom = {
       xstart: zoomRanges?.x[0],
@@ -46,13 +47,13 @@ function ResponsePlot({
     return optimizePlotData(allSweepsData, deltaTime, zoom) || [];
   }, [options, dataset, metadata, zoomRanges, allSweeps, isVolts, colorMapper]);
 
-  const selectedResponse: Partial<PlotData>[] = React.useMemo(
+  const selectedResponse: Partial<PlotData>[] = useMemo(
     () => rawData?.filter((data) => selectedSweeps.includes(data.sweepName)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [options, dataset, selectedSweeps, metadata]
   );
 
-  const previewDataResponse: Partial<PlotData>[] = React.useMemo(
+  const previewDataResponse: Partial<PlotData>[] = useMemo(
     () =>
       rawData?.map((data: { sweepName: string }) => {
         const isSelected = selectedSweeps.includes(data.sweepName);

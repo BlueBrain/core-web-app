@@ -1,6 +1,6 @@
-import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
-import { BraynsColorTransparent } from '../../common/types';
 import { assertBraynsModelArray } from './types';
+import { JsonRpcServiceInterface } from '@brayns/json-rpc/types';
+import { BraynsColorTransparent } from '@brayns/types';
 
 export default class Mesh {
   constructor(private readonly renderer: JsonRpcServiceInterface) {}

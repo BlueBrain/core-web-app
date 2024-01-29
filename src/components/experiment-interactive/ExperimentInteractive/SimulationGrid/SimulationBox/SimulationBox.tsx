@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { DeleteFilled } from '@ant-design/icons';
 
-import { SimulationSlot } from '../../hooks';
 import CoordValue from '../../CoordValue';
-import { useAvailableCoords } from '../../hooks/available-coords';
-import { useSimulations } from '../../hooks/simulations/simulations';
-import { useCurrentCampaignDescriptor } from '../../hooks/current-campaign-descriptor';
+import { SimulationSlot } from '@experiment-interactive/hooks';
+import { useAvailableCoords } from '@experiment-interactive/hooks/available-coords';
+import { useSimulations } from '@experiment-interactive/hooks/simulations/simulations';
+import { useCurrentCampaignDescriptor } from '@experiment-interactive/hooks/current-campaign-descriptor';
 import { classNames } from '@/util/utils';
 import BraynsSimulationViewer from '@/services/brayns/simulations/BraynsSimulationViewer';
 import { useMultiBraynsManager } from '@/services/brayns/simulations';

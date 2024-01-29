@@ -1,4 +1,4 @@
-import { useCurrentSimulationReport } from '../../../hooks/current-report';
+import { useCurrentSimulationReport } from '@experiment-interactive/hooks/current-report';
 import NumberInput from '@/components/experiment-interactive/ExperimentInteractive/NumberInput';
 
 export default function StepSize() {

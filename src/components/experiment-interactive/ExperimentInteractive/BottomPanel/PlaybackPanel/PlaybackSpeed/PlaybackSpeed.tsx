@@ -1,6 +1,9 @@
 import { Select } from 'antd';
 
-import { getAllPlaybackSpeedItems, usePlaybackSpeed } from '../../../hooks/playback-speed';
+import {
+  getAllPlaybackSpeedItems,
+  usePlaybackSpeed,
+} from '@experiment-interactive/hooks/playback-speed';
 import { classNames } from '@/util/utils';
 
 import styles from './playback-speed.module.css';

@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 
-import { STEPS } from '../../constants';
 import { NavButtons } from '../NavButtons';
+import { STEPS } from '@virtual-lab-create/constants';
 import { classNames } from '@/util/utils';
 
 import styles from './main.module.css';

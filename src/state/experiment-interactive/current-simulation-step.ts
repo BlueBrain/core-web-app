@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
 
-import { SimulationReport } from '../../services/brayns/simulations/resource-manager/backend-service';
+import { SimulationReport } from '@brayns/../simulations/resource-manager/backend-service';
 
 const atomSimulationCurrentBiologicalTime = atom<number>(0);
 

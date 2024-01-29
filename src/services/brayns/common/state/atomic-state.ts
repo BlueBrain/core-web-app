@@ -1,8 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-plusplus */
-import React from 'react';
 
 import { getLocalStorage, getSessionStorage } from './storage';
 import { logError } from '@/util/logger';
@@ -24,7 +25,7 @@ type Listener<T> = (value: T) => void;
  * const radius = new AtomicState(64);
  *
  * export default function MyCanvas() {
- *   const refPaint = React.useRef<(() => void) | null>(null);
+ *   const refPaint = useRef<(() => void) | null>(null);
  *   const handleCanvasMount = (canvas: HTMLCanvasElement | null) => {
  *     if (!canvas) return;
  *
@@ -41,7 +42,7 @@ type Listener<T> = (value: T) => void;
  *     };
  *     radius.addListener(refPaint.current);
  *   };
- *   React.useEffect(
+ *   useEffect(
  *     () => () => {
  *       if (refPaint.current) radius.removeListener(refPaint.current);
  *     },
@@ -92,8 +93,8 @@ export default class AtomicState<T> {
    * @warning This function must be used only in a React component function.
    */
   useValue(): T {
-    const [value, setValue] = React.useState(this.currentValue);
-    React.useEffect(() => {
+    const [value, setValue] = useState(this.currentValue);
+    useEffect(() => {
       this.listeners.add(setValue);
       return () => {
         this.listeners.delete(setValue);
@@ -110,8 +111,8 @@ export default class AtomicState<T> {
    * @warning This function must be used only in a React component function.
    */
   useState(): [value: T, setValue: (value: T) => void] {
-    const [value, setValue] = React.useState(this.currentValue);
-    React.useEffect(() => {
+    const [value, setValue] = useState(this.currentValue);
+    useEffect(() => {
       this.listeners.add(setValue);
       return () => {
         this.listeners.delete(setValue);

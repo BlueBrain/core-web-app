@@ -1,13 +1,11 @@
-import React from 'react';
-
 import { Header } from '../Header';
-import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
 import { VirtualLabCreateCongrats } from '../Congrats';
+import { useCurrentVirtualLab } from '@virtual-lab-create/hooks/current-virtual-lab';
 import { classNames } from '@/util/utils';
 
 import styles from './layout.module.css';
 // eslint-disable-next-line import/order
-import commonStyles from '../../common.module.css';
+import commonStyles from '@virtual-lab-create/common.module.css';
 
 export interface LayoutProps {
   className?: string;

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { Button } from '../../../sub-components/Button';
-import { Select } from '../../../sub-components/Select';
-import { Form } from '../../../sub-components/Form';
-import { ROLES } from '../../../constants';
 import { NewMember, useNewMember } from './new-member-hook';
+import { ROLES } from '@virtual-lab-create/constants';
+import { Button } from '@virtual-lab-create/sub-components/Button';
+import { Select } from '@virtual-lab-create/sub-components/Select';
+import { Form } from '@virtual-lab-create/sub-components/Form';
 import IconPlus from '@/components/icons/Plus';
 import { classNames } from '@/util/utils';
 import { VirtualLabMember } from '@/services/virtual-lab/types';

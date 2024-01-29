@@ -1,4 +1,4 @@
-import Settings from '../../common/settings';
+import Settings from '@brayns/settings';
 
 const MODULE_ARCHIVE = 'unstable';
 const MODULE_BRAYNS = 'brayns/3.2.0';

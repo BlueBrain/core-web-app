@@ -10,14 +10,14 @@ import {
 } from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
-import State from '../../common/state';
-import Calc from '../../common/utils/calc';
 import {
   applyModifierForBrightness,
   applyModifierForOpacity,
   applyModifierForThickness,
   generateGhostMaterial,
 } from './material';
+import State from '@brayns/state';
+import Calc from '@brayns/utils/calc';
 
 /**
  * This name is used to make the difference between real meshes and other objects

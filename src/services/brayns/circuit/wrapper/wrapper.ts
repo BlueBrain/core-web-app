@@ -1,14 +1,14 @@
-import { Vector3 } from '../../common/utils/calc';
-import GenericEvent from '../../common/utils/generic-event';
-import ImageStream from '../../common/image-stream/image-stream';
 import BackendAllocatorService from '../allocation/backend-allocator-service';
-import { JsonRpcServiceInterface } from '../../common/json-rpc/types';
 import Mesh from './mesh';
 import Storage from './storage';
 import Light from './light';
 import Circuit from './circuit';
 import Camera from './camera';
 import { BraynsWrapperInterface } from './types';
+import { JsonRpcServiceInterface } from '@brayns/json-rpc/types';
+import ImageStream from '@brayns/image-stream/image-stream';
+import GenericEvent from '@brayns/utils/generic-event';
+import { Vector3 } from '@brayns/utils/calc';
 import { assertType } from '@/util/type-guards';
 import { logError } from '@/util/logger';
 

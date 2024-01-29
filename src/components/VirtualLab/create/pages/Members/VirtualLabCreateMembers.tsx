@@ -1,11 +1,10 @@
-import React from 'react';
 import { useSession } from 'next-auth/react';
 
-import { useCurrentVirtualLabMembers } from '../../hooks/current-virtual-lab';
-import { Layout } from '../../sub-components/Layout';
-import { Main } from '../../sub-components/Main';
 import { MemberItem } from './MemberItem';
 import { AddMember } from './AddMember';
+import { useCurrentVirtualLabMembers } from '@virtual-lab-create/hooks/current-virtual-lab';
+import { Layout } from '@virtual-lab-create/sub-components/Layout';
+import { Main } from '@virtual-lab-create/sub-components/Main';
 
 import styles from './virtual-lab-create-members.module.css';
 

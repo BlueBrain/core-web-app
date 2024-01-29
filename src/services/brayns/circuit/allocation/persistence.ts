@@ -1,5 +1,5 @@
-import { JsonRpcServiceAddress } from '../../common/json-rpc/types';
-import { getSessionStorage } from '../../common/state/storage';
+import { JsonRpcServiceAddress } from '@brayns/json-rpc/types';
+import { getSessionStorage } from '@brayns/state/storage';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 

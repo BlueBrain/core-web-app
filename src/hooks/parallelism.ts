@@ -1,4 +1,4 @@
-import React from 'react';
+import { useRef } from 'react';
 
 /**
  * @returns A function that prevents asyncronous functions
@@ -18,7 +18,7 @@ import React from 'react';
  * the second call will be ignored if the first one is not resolved yet.
  */
 export function usePreventParallelism<T = string>() {
-  const refSet = React.useRef(new Set<T>());
+  const refSet = useRef(new Set<T>());
   return async (id: T, action: () => Promise<void>) => {
     if (refSet.current.has(id)) return;
 

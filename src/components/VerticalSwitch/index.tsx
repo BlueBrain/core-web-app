@@ -1,5 +1,5 @@
 import * as Switch from '@radix-ui/react-switch';
-import React from 'react';
+
 import Styles from './vertical-switch.module.css';
 
 type VerticalSwitchProps = {

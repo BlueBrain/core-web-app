@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Button } from '../../Button';
-import { useCurrentVirtualLab } from '../../../hooks/current-virtual-lab';
+import { Button } from '@virtual-lab-create/sub-components/Button';
+import { useCurrentVirtualLab } from '@virtual-lab-create/hooks/current-virtual-lab';
 import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
 import { logError } from '@/util/logger';
 import useNotification from '@/hooks/notifications';

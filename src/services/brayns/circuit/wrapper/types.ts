@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from '../../common/utils/calc';
+import { Vector3, Vector4 } from '@brayns/utils/calc';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 

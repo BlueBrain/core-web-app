@@ -1,5 +1,5 @@
-import Settings from '../../common/settings';
 import { JobAllocatorServiceInterface, JobStatus } from './types';
+import Settings from '@brayns/settings';
 import { logError } from '@/util/logger';
 import { assertType } from '@/util/type-guards';
 

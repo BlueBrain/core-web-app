@@ -1,11 +1,12 @@
 import isEqual from 'lodash/isEqual';
-import Calc, { Vector3 } from '../../common/utils/calc';
-import { CameraTransformInteface } from '../../common/utils/camera-transform';
-import GenericEvent from '../../common/utils/generic-event';
+
 import { TokenProvider } from '../types';
 import Allocator from './allocator';
 import BraynsService from './brayns-service';
 import { CampaignSimulation, SlotInterface, SlotState } from './types';
+import GenericEvent from '@brayns/utils/generic-event';
+import { CameraTransformInteface } from '@brayns/utils/camera-transform';
+import Calc, { Vector3 } from '@brayns/utils/calc';
 import { logError } from '@/util/logger';
 import { SimulationSlot } from '@/components/experiment-interactive/ExperimentInteractive/hooks';
 
