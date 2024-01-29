@@ -464,12 +464,12 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   [Field.AxonMaxBranchOrder]: {
     group: MorphoMetricTypes.Axon,
-    title: 'Maximum Branch Order',
-    description: 'Maximum branch order (Strahler index)',
+    title: 'Strahler number',
+    description: 'Strahler number',
     filter: null,
     vocabulary: {
-      plural: 'Maximum Branch Order',
-      singular: 'Maximum Branch Order',
+      plural: 'Strahler number',
+      singular: 'Strahler number',
     },
     render: {
       esResourceViewFn: (_text, r) =>
@@ -526,12 +526,12 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   [Field.BasalDendriteMaxBranchOrder]: {
     group: MorphoMetricTypes.BasalDendrite,
-    title: 'Maximum Branch Order',
-    description: 'Maximum branch order (Strahler index)',
+    title: 'Strahler number',
+    description: 'Strahler number',
     filter: null,
     vocabulary: {
-      plural: 'Maximum Branch Order',
-      singular: 'Maximum Branch Order',
+      plural: 'Strahler number',
+      singular: 'Strahler number',
     },
     render: {
       esResourceViewFn: (_text, r) =>
@@ -592,12 +592,12 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   [Field.ApicalDendtriteMaxBranchOrder]: {
     group: MorphoMetricTypes.ApicalDendrite,
-    title: 'Maximum Branch Order',
-    description: 'Apical Dendrite Maximum branch order (Strahler index)',
+    title: 'Strahler number',
+    description: 'Apical Dendrite Strahler number',
     filter: null,
     vocabulary: {
-      plural: 'Maximum Branch Order',
-      singular: 'Maximum Branch Order',
+      plural: 'Strahler number',
+      singular: 'Strahler number',
     },
     render: {
       esResourceViewFn: (_text, r) =>
