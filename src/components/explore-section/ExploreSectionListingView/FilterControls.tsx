@@ -94,7 +94,7 @@ export default function FilterControls({
                   disabled ? 'text-primary-8' : 'text-primary-8'
                 )}
               >
-                filters
+                Filters
               </span>
               <span className="text-neutral-4 font-semibold text-xs leading-5">
                 {activeColumnsLength ? (
