@@ -4,65 +4,108 @@ include:
 
 variables:
   FF_USE_FASTZIP: 'true'
-  ARTIFACT_COMPRESSION_LEVEL: 'fast'
-  CACHE_COMPRESSION_LEVEL: 'fast'
-  KUBERNETES_MEMORY_REQUEST: 4Gi
-  KUBERNETES_MEMORY_LIMIT: 8Gi
+  ARTIFACT_COMPRESSION_LEVEL: 'fastest'
+  CACHE_COMPRESSION_LEVEL: 'fastest'
+  KUBERNETES_MEMORY_REQUEST: 2Gi
+  KUBERNETES_MEMORY_LIMIT: 4Gi
   KUBERNETES_CPU_REQUEST: 2
   KUBERNETES_CPU_LIMIT: 4
-  NODE_OPTIONS: --max-old-space-size=4096
 
 default:
   interruptible: true
-  image: node:20-alpine
-  before_script:
+  image: node:21-alpine
+
+.install_packages:
+  script: &install_packages
     - npm ci --cache .npm --prefer-offline
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
+
+.package_cache:
+  cache: &package_cache
+    key:
+      files:
+        - package-lock.json
     paths:
-      - .npm/
-      - .next/cache/
+      - .npm
+    policy: pull-push
+
+.build_cache:
+  cache: &build_cache
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .next/cache
+    policy: pull-push
+
+.heavy_job:
+  variables:
+    KUBERNETES_MEMORY_REQUEST: 4Gi
+    KUBERNETES_MEMORY_LIMIT: 8Gi
+    KUBERNETES_CPU_REQUEST: 3
+    NODE_OPTIONS: --max-old-space-size=4096
 
 stages:
-  - lint
+  - setup
+  - check
   - build
-  - test
   - deploy
 
+setup:
+  stage: setup
+  cache:
+    <<: *package_cache
+    policy: push
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      changes:
+        - package-lock.json
+  script: *install_packages
+
 eslint:
-  stage: lint
+  stage: check
+  cache:
+    <<: *package_cache
+    policy: pull
   script:
+    - *install_packages
     - npm run lint
 
 prettier:
-  stage: lint
+  stage: check
+  cache:
+    <<: *package_cache
+    policy: pull
   script:
+    - *install_packages
     - npm run prettier:check
 
-build:
-  stage: build
+unit-test:
+  stage: check
+  extends: .heavy_job
+  cache:
+    <<: *package_cache
+    policy: pull
   script:
+    - *install_packages
+    - npm run test:ci
+
+build:
+  stage: check
+  extends: .heavy_job
+  cache:
+    - <<: *package_cache
+      policy: pull
+    - <<: *build_cache
+  script:
+    - *install_packages
     - npm run build
   except:
     - develop
     - main
 
-unit-test:
-  stage: test
-  script:
-    - npm run test:ci
-
-.deploy:
-  variables:
-    KUBERNETES_MEMORY_REQUEST: 4Gi
-    KUBERNETES_MEMORY_LIMIT: 8Gi
-
 deploy-bbp-prod:
   stage: deploy
   extends:
-    - .deploy
+    - .heavy_job
     - .build-image-using-kaniko
-  before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
     CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app/prod
@@ -84,9 +127,8 @@ deploy-bbp-prod:
 deploy-aws-prod:
   stage: deploy
   extends:
-    - .deploy
+    - .heavy_job
     - .build-image-using-kaniko
-  before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
     CI_REGISTRY_IMAGE: bluebrain/sbo-core-web-app
@@ -114,9 +156,8 @@ deploy-aws-prod:
 deploy-bbp-dev:
   stage: deploy
   extends:
-    - .deploy
+    - .heavy_job
     - .build-image-using-kaniko
-  before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
     CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app/dev
@@ -141,9 +182,7 @@ deploy-bbp-dev:
 deploy-test:
   stage: deploy
   extends:
-    - .deploy
     - .build-image-using-kaniko
-  before_script: []
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
     CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app/test
