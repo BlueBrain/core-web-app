@@ -14,7 +14,7 @@ export default function Morphometrics({
 }) {
   const groupedCardFields = getGroupedCardFields(dataType);
 
-  // Filter out the 'Metadata' group and groups not in neuriteFeatureTypes
+  // Filter out the 'Metadata' group
   const filteredGroupedCardFields = Object.fromEntries(
     Object.entries(groupedCardFields).filter(([group]) => group !== 'Metadata')
   );
