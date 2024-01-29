@@ -85,7 +85,7 @@ describe('SelectedBrainRegionPanel', () => {
   });
 
   test('shows count of dataset for all experiment types', async () => {
-    await screen.findByRole('tab', { name: /Experiment data/i });
+    await screen.findByRole('tab', { name: /Experimental data/i });
 
     for await (const [id, config] of Object.entries(EXPERIMENT_DATA_TYPES)) {
       const experimentEle = await screen.findByTestId(`experiment-dataset-${id}`);

@@ -39,7 +39,7 @@ export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
 export const mTypeSelectorFn = (detail: DeltaResource | null) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name === 'M-type Annotation'
+    (o: AnnotationEntity) => o.name.toLowerCase() === 'm-type annotation'
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
@@ -48,7 +48,7 @@ export const mTypeSelectorFn = (detail: DeltaResource | null) => {
 export const eTypeSelectorFn = (detail: DeltaResource | null) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name === 'E-type Annotation'
+    (o: AnnotationEntity) => o.name.toLowerCase() === 'e-type annotation'
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };

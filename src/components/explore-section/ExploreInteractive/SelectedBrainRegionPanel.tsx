@@ -34,13 +34,18 @@ export default function SelectedBrainRegionPanel() {
               items={[
                 {
                   key: '1',
-                  label: 'Experiment data',
+                  label: 'Experimental data',
                   children: <DataTypeGroupTotals dataTypeGroup={DataTypeGroup.ExperimentalData} />,
                 },
                 {
                   key: '2',
                   label: 'Literature',
                   children: <LiteratureForExperimentType brainRegions={[selected]} />,
+                },
+                {
+                  key: '3',
+                  label: 'Model data',
+                  children: <DataTypeGroupTotals dataTypeGroup={DataTypeGroup.ModelData} />,
                 },
               ]}
             />

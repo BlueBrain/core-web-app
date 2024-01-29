@@ -12,5 +12,6 @@ export type DataTypeConfig = {
 
 export enum DataTypeGroup {
   ExperimentalData = 'ExperimentalData',
+  ModelData = 'ModelData',
   SimulationData = 'SimulationData',
 }

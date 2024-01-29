@@ -4,17 +4,18 @@ import { ReactNode, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
-import { usePathname, useRouter, useParams } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import BackToInteractiveExplorationBtn from '@/components/explore-section/BackToInteractiveExplorationBtn';
 import { DataType } from '@/constants/explore-section/list-views';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
+import { INTERACTIVE_PATH } from '@/constants/explore-section/paths';
+import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
+import { DataTypeGroup } from '@/types/explore-section/data-types';
+import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
 import { useLoadableValue } from '@/hooks/hooks';
 import { totalByExperimentAndRegionsAtom } from '@/state/explore-section/list-view-atoms';
-import { INTERACTIVE_PATH } from '@/constants/explore-section/paths';
-import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
-import { DataTypeGroup } from '@/types/explore-section/data-types';
 
 const menuItemWidth = `${Math.floor(100 / Object.keys(EXPERIMENT_DATA_TYPES).length) - 0.01}%`;
 
@@ -33,12 +34,13 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
   const pathname = usePathname();
   const router = useRouter();
   const params = useParams();
-
-  const dataTypeGroup = DataTypeGroup.ExperimentalData;
-  const config = EXPERIMENT_DATA_TYPES;
+  const dataTypeGroup = pathname.includes('experimental')
+    ? DataTypeGroup.ExperimentalData
+    : DataTypeGroup.ModelData;
+  const config = pathname.includes('experimental') ? EXPERIMENT_DATA_TYPES : MODEL_DATA_TYPES;
   const { basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
-  const activePath = pathname?.split(basePath).pop() || 'morphology';
 
+  const activePath = pathname?.split(basePath).pop() || 'morphology';
   const onClick: MenuProps['onClick'] = (info) => {
     const { key, domEvent } = info;
 

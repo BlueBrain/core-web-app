@@ -47,7 +47,7 @@ export function DataTypeGroupTotals({ dataTypeGroup }: { dataTypeGroup: DataType
   const { config, basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
 
   return (
-    <div className="flex flex-wrap mb-7 h-36 text-white gap-4">
+    <div className="flex flex-wrap mb-7 max-h-36 text-white gap-4">
       {Object.keys(config).map((dataType) => (
         <DataTypeGroupTotal key={dataType} dataType={dataType as DataType} basePath={basePath} />
       ))}

@@ -184,3 +184,16 @@ export const SYNAPSE_PER_CONNECTION_FIELDS = [
     field: Field.NumberOfMeasurements,
   },
 ] as DetailProps[];
+
+export const E_MODEL_FIELDS = [
+  {
+    field: Field.Description,
+    className: 'col-span-3 row-span-2',
+  },
+  {
+    field: Field.MType,
+  },
+  {
+    field: Field.EType,
+  },
+];

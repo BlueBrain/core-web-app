@@ -7,6 +7,7 @@ export enum DataType {
   ExperimentalSynapsePerConnection = `ExperimentalSynapsePerConnection`,
   ExperimentalNeuronMorphology = `ExperimentalNeuronMorphology`,
   SimulationCampaigns = `SimulationCampaign`,
+  CircuitEModel = 'CircuitEModel',
 }
 
 export const DataTypeToNexusType = {
@@ -16,6 +17,7 @@ export const DataTypeToNexusType = {
   [DataType.ExperimentalSynapsePerConnection]: `${ontologyBaseUrl}/ExperimentalSynapsesPerConnection`,
   [DataType.SimulationCampaigns]: `${neuroShapesBaseUrl}/SimulationCampaign`,
   [DataType.ExperimentalNeuronMorphology]: `${neuroShapesBaseUrl}/ReconstructedNeuronMorphology`,
+  [DataType.CircuitEModel]: `${neuroShapesBaseUrl}/EModel`,
 };
 
 export const DEFAULT_CHECKLIST_RENDER_LENGTH = 8;
