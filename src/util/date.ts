@@ -44,3 +44,5 @@ export function dateColumnInfoToRender(createdAtStr: DateISOString) {
     text,
   };
 }
+
+export const a: string = 1;
