@@ -12,8 +12,10 @@ type GenericLayoutProps = {
 
 export default function GenericLayout({ children }: GenericLayoutProps) {
   return (
-    <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-      <ExploreListingLayout>{children}</ExploreListingLayout>
-    </ErrorBoundary>
+    <div className="h-screen overflow-hidden" id="simulation-campaigns-layout">
+      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+        <ExploreListingLayout>{children}</ExploreListingLayout>
+      </ErrorBoundary>
+    </div>
   );
 }

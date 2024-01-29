@@ -1,10 +1,13 @@
-import { CSSProperties, HTMLProps, ReactNode } from 'react';
+import { CSSProperties, HTMLProps, ReactNode, useState } from 'react';
 import { ConfigProvider, Table, TableProps, Tooltip } from 'antd';
+
 import { isNumeric, to64 } from '@/util/common';
 import usePathname from '@/hooks/pathname';
 import { BrainIcon, InteractiveViewIcon, VirtualLabIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import Link from '@/components/Link';
+import useResizeObserver from '@/hooks/useResizeObserver';
+
 import styles from '@/components/ListTable/list-table.module.scss';
 
 type Column = {
@@ -18,7 +21,7 @@ function ColumnContent(text: string) {
   return isNumeric(text) ? (
     text
   ) : (
-    <span className="bg-neutral-1 px-2 py-2 rounded-md text-center">{text}</span>
+    <span className="bg-neutral-1 px-2 py-2 rounded-md text-center">{JSON.stringify(text)}</span>
   );
 }
 
@@ -52,6 +55,7 @@ function CustomTH({
 }) {
   return (
     <th
+      className="before:!content-none"
       style={{
         ...style,
         background: 'white',
@@ -170,9 +174,20 @@ export function ValueArray({ value }: { value?: string[] }) {
 }
 
 export default function ListTable({ columns, dataSource, loading }: TableProps<any>) {
+  const [containerDimension, setContainerDimension] = useState<{ height: number; width: number }>({
+    height: 0,
+    width: 0,
+  });
+
+  useResizeObserver({
+    element: document.getElementById('simulation-campaigns-layout'),
+    callback: (target) => setContainerDimension(target.getBoundingClientRect()),
+  });
+
   return (
     <ConfigProvider
       theme={{
+        hashed: false,
         components: {
           Table: {
             colorBgContainer: '#fff',
@@ -200,6 +215,7 @@ export default function ListTable({ columns, dataSource, loading }: TableProps<a
         rowClassName="align-top bg-white rounded-md"
         rowKey={(row) => row._source._self}
         tableLayout="fixed"
+        scroll={{ y: containerDimension.height - 120 }}
       />
     </ConfigProvider>
   );
