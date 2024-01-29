@@ -711,7 +711,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', 'minimum', true),
+        selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', 'raw', true),
       deltaResourceViewFn: (resource) => resource.somaNumberOfPoints?.['@value'],
     },
   },
