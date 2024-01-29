@@ -61,5 +61,4 @@ export enum Field {
   CompletedAt = 'completedAt',
   CumulatedLength = 'cumulatedLength',
   LongestBranchLength = 'longestBranchLength',
-  ArborAsymmetryIndex = 'arborAsymmetryIndex',
 }
