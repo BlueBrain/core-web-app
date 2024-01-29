@@ -452,13 +452,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(
-          r._source,
-          MorphoMetricTypes.Axon,
-          'Total Length',
-          'minimum',
-          true
-        ),
+        selectorFnMorphologyFeature(r._source, MorphoMetricTypes.Axon, 'Total Length', 'raw', true),
       deltaResourceViewFn: (resource) =>
         selectorFnNeuriteFeature(resource, MorphoMetricTypes.Axon, Field.CumulatedLength),
     },
@@ -499,7 +493,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.Axon,
           'Partition Asymmetry',
-          'mean'
+          'raw'
         ),
       deltaResourceViewFn: () => NO_DATA_STRING,
     },
@@ -519,7 +513,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.BasalDendrite,
           'Total Length',
-          'minimum',
+          'raw',
           true
         ),
       deltaResourceViewFn: (resource) =>
@@ -566,7 +560,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.BasalDendrite,
           'Partition Asymmetry',
-          'mean'
+          'raw'
         ),
       deltaResourceViewFn: () => NO_DATA_STRING,
     },
@@ -586,7 +580,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.ApicalDendrite,
           'Total Length',
-          'minimum',
+          'raw',
           true
         ),
       deltaResourceViewFn: (resource) =>
@@ -633,7 +627,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.ApicalDendrite,
           'Partition Asymmetry',
-          'mean'
+          'raw'
         ),
       deltaResourceViewFn: () => NO_DATA_STRING,
     },
@@ -653,7 +647,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.NeuronMorphology,
           'Total Width',
-          'mean',
+          'raw',
           true
         ),
       deltaResourceViewFn: () => NO_DATA_STRING,
@@ -662,7 +656,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   [Field.NeuronMorphologyLength]: {
     group: MorphoMetricTypes.NeuronMorphology,
     title: 'Total Length',
-    description: 'Neuron morphology total Length',
+    description: 'Neuron morphology total length',
     filter: null,
     vocabulary: {
       plural: 'Total Length',
@@ -674,7 +668,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.NeuronMorphology,
           'Total Length',
-          'mean',
+          'raw',
           true
         ),
       deltaResourceViewFn: () => NO_DATA_STRING,
@@ -683,7 +677,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   [Field.NeuronMorphologyDepth]: {
     group: MorphoMetricTypes.NeuronMorphology,
     title: 'Total Depth',
-    description: 'Neuron morphology total Depth',
+    description: 'Neuron morphology total depth',
     filter: null,
     vocabulary: {
       plural: 'Total Depth',
@@ -695,7 +689,8 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.NeuronMorphology,
           'Total Depth',
-          'mean'
+          'raw',
+          true
         ),
       deltaResourceViewFn: () => NO_DATA_STRING,
     },
