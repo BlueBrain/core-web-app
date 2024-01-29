@@ -249,7 +249,7 @@ export default function ControlPanel({
         <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
         {children}
       </div>
-      <div className="w-full flex items-center justify-between mt-4">
+      <div className="w-full flex items-center justify-between pt-12">
         <ClearFilters onClick={clearFilters} />
         <button
           type="submit"
