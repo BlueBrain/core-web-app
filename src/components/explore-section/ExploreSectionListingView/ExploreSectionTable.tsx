@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEvent, ReactNode, useRef, useState } from 'react';
+import { CSSProperties, MouseEvent, ReactNode, useCallback, useRef, useState } from 'react';
 import { ConfigProvider, Table, TableProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
@@ -115,9 +115,14 @@ export function BaseTable({
   });
   const tableRef = useRef<TableRef>(null);
 
+  const onResize = useCallback(
+    (target: HTMLElement) => setContainerDimension(target.getBoundingClientRect()),
+    []
+  );
+
   useResizeObserver({
     element: document.getElementById('interactive-data-layout'),
-    callback: (target) => setContainerDimension(target.getBoundingClientRect()),
+    callback: onResize,
   });
 
   useScrollComplete({
