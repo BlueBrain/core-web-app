@@ -1,5 +1,6 @@
 import { Divider } from 'antd';
 import startCase from 'lodash/startCase';
+import omit from 'lodash/omit';
 import { getGroupedCardFields } from '@/util/explore-section/cardViewUtils';
 import { Field } from '@/components/explore-section/DetailHeader';
 import { DetailType } from '@/constants/explore-section/fields-config/types';
@@ -15,9 +16,7 @@ export default function Morphometrics({
   const groupedCardFields = getGroupedCardFields(dataType);
 
   // Filter out the 'Metadata' group
-  const filteredGroupedCardFields = Object.fromEntries(
-    Object.entries(groupedCardFields).filter(([group]) => group !== 'Metadata')
-  );
+  const filteredGroupedCardFields = omit(groupedCardFields, 'Metadata');
 
   return (
     <div className="flex flex-col gap-10 max-w-screen-2xl">
