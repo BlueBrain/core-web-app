@@ -1,8 +1,9 @@
 import { Divider } from 'antd';
 import startCase from 'lodash/startCase';
+import omit from 'lodash/omit';
 import { getGroupedCardFields } from '@/util/explore-section/cardViewUtils';
 import { Field } from '@/components/explore-section/DetailHeader';
-import { DetailType, MorphoMetricTypes } from '@/constants/explore-section/fields-config/types';
+import { DetailType } from '@/constants/explore-section/fields-config/types';
 import { DataType } from '@/constants/explore-section/list-views';
 
 export default function Morphometrics({
@@ -14,24 +15,14 @@ export default function Morphometrics({
 }) {
   const groupedCardFields = getGroupedCardFields(dataType);
 
-  const defaultGroups = [MorphoMetricTypes.Soma];
-  const existingNeuriteFeatureTypes = resource?.neuriteFeature?.map((feature) => feature['@type']);
-  const neuriteFeatureTypes = existingNeuriteFeatureTypes?.length
-    ? [...existingNeuriteFeatureTypes, ...defaultGroups]
-    : defaultGroups;
-
-  // Filter out the 'Metadata' group and groups not in neuriteFeatureTypes
-  const filteredGroupedCardFields = Object.fromEntries(
-    Object.entries(groupedCardFields).filter(
-      ([group]) => group !== 'Metadata' && neuriteFeatureTypes.includes(group)
-    )
-  );
+  // Filter out the 'Metadata' group
+  const filteredGroupedCardFields = omit(groupedCardFields, 'Metadata');
 
   return (
     <div className="flex flex-col gap-10 max-w-screen-2xl">
       <Divider className="w-full" />
       <h1 className="text-xl font-bold text-primary-8">Morphometrics</h1>
-      <div className={`grid gap-4 grid-cols-${neuriteFeatureTypes.length} break-words`}>
+      <div className="grid gap-4 grid-cols-5 break-words">
         {Object.entries(filteredGroupedCardFields).map(([group, fields]) => (
           <div key={group}>
             <h2 className="text-lg font-semibold text-primary-8 mb-8">{startCase(group)}</h2>

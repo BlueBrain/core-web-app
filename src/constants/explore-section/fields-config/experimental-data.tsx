@@ -30,6 +30,7 @@ import {
 import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 
 export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   [Field.License]: {
@@ -451,25 +452,19 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(
-          r._source,
-          MorphoMetricTypes.Axon,
-          'Total Length',
-          'minimum',
-          true
-        ),
+        selectorFnMorphologyFeature(r._source, MorphoMetricTypes.Axon, 'Total Length', 'raw', true),
       deltaResourceViewFn: (resource) =>
         selectorFnNeuriteFeature(resource, MorphoMetricTypes.Axon, Field.CumulatedLength),
     },
   },
   [Field.AxonMaxBranchOrder]: {
     group: MorphoMetricTypes.Axon,
-    title: 'Maximum Branch Order',
-    description: 'Maximum branch order (Strahler index)',
+    title: 'Strahler number',
+    description: 'Strahler number',
     filter: null,
     vocabulary: {
-      plural: 'Maximum Branch Order',
-      singular: 'Maximum Branch Order',
+      plural: 'Strahler number',
+      singular: 'Strahler number',
     },
     render: {
       esResourceViewFn: (_text, r) =>
@@ -498,8 +493,9 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.Axon,
           'Partition Asymmetry',
-          'mean'
+          'raw'
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.BasalDendriticTotalLength]: {
@@ -517,7 +513,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.BasalDendrite,
           'Total Length',
-          'minimum',
+          'raw',
           true
         ),
       deltaResourceViewFn: (resource) =>
@@ -526,12 +522,12 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   [Field.BasalDendriteMaxBranchOrder]: {
     group: MorphoMetricTypes.BasalDendrite,
-    title: 'Maximum Branch Order',
-    description: 'Maximum branch order (Strahler index)',
+    title: 'Strahler number',
+    description: 'Strahler number',
     filter: null,
     vocabulary: {
-      plural: 'Maximum Branch Order',
-      singular: 'Maximum Branch Order',
+      plural: 'Strahler number',
+      singular: 'Strahler number',
     },
     render: {
       esResourceViewFn: (_text, r) =>
@@ -564,8 +560,9 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.BasalDendrite,
           'Partition Asymmetry',
-          'mean'
+          'raw'
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.ApicalDendriticTotalLength]: {
@@ -583,7 +580,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.ApicalDendrite,
           'Total Length',
-          'minimum',
+          'raw',
           true
         ),
       deltaResourceViewFn: (resource) =>
@@ -592,12 +589,12 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   },
   [Field.ApicalDendtriteMaxBranchOrder]: {
     group: MorphoMetricTypes.ApicalDendrite,
-    title: 'Maximum Branch Order',
-    description: 'Apical Dendrite Maximum branch order (Strahler index)',
+    title: 'Strahler number',
+    description: 'Apical Dendrite Strahler number',
     filter: null,
     vocabulary: {
-      plural: 'Maximum Branch Order',
-      singular: 'Maximum Branch Order',
+      plural: 'Strahler number',
+      singular: 'Strahler number',
     },
     render: {
       esResourceViewFn: (_text, r) =>
@@ -630,8 +627,9 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.ApicalDendrite,
           'Partition Asymmetry',
-          'mean'
+          'raw'
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.NeuronMorphologyWidth]: {
@@ -649,15 +647,16 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.NeuronMorphology,
           'Total Width',
-          'mean',
+          'raw',
           true
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.NeuronMorphologyLength]: {
     group: MorphoMetricTypes.NeuronMorphology,
     title: 'Total Length',
-    description: 'Neuron morphology total Length',
+    description: 'Neuron morphology total length',
     filter: null,
     vocabulary: {
       plural: 'Total Length',
@@ -669,15 +668,16 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.NeuronMorphology,
           'Total Length',
-          'mean',
+          'raw',
           true
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.NeuronMorphologyDepth]: {
     group: MorphoMetricTypes.NeuronMorphology,
     title: 'Total Depth',
-    description: 'Neuron morphology total Depth',
+    description: 'Neuron morphology total depth',
     filter: null,
     vocabulary: {
       plural: 'Total Depth',
@@ -689,8 +689,10 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
           r._source,
           MorphoMetricTypes.NeuronMorphology,
           'Total Depth',
-          'mean'
+          'raw',
+          true
         ),
+      deltaResourceViewFn: () => NO_DATA_STRING,
     },
   },
   [Field.SomaDiameter]: {
@@ -704,7 +706,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     },
     render: {
       esResourceViewFn: (_text, r) =>
-        selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', 'minimum', true),
+        selectorFnMorphologyFeature(r._source, 'Soma', 'Soma Radius', 'raw', true),
       deltaResourceViewFn: (resource) => resource.somaNumberOfPoints?.['@value'],
     },
   },
