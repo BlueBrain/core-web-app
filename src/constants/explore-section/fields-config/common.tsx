@@ -1,4 +1,5 @@
 import { format, parseISO } from 'date-fns';
+import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
 import {
   selectorFnBasic,
@@ -6,10 +7,52 @@ import {
   selectorFnDate,
 } from '@/util/explore-section/listing-selectors';
 import Contributors from '@/components/explore-section/Contributors';
-import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
+import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
 import timeElapsedFromToday from '@/util/date';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
+import {
+  ExperimentalTrace,
+  ReconstructedNeuronMorphology,
+} from '@/types/explore-section/es-experiment';
+
+const previewRender = ({
+  distribution,
+  '@type': experimentType,
+}: ReconstructedNeuronMorphology | ExperimentalTrace) => {
+  let previewType:
+    | DataType.ExperimentalNeuronMorphology
+    | DataType.ExperimentalElectroPhysiology
+    | undefined;
+  let encodingFormat: 'application/swc' | 'application/nwb';
+
+  if (experimentType.includes(DataTypeToNexusType.ExperimentalNeuronMorphology)) {
+    encodingFormat = 'application/swc';
+    previewType = DataType.ExperimentalNeuronMorphology;
+  } else if (experimentType.includes(DataTypeToNexusType.ExperimentalElectroPhysiology)) {
+    encodingFormat = 'application/nwb';
+    previewType = DataType.ExperimentalElectroPhysiology;
+  }
+
+  const contentUrl = distribution.reduce<string | undefined>(
+    (acc, dist: { contentUrl: string; encodingFormat: string }) =>
+      dist.encodingFormat === encodingFormat ? dist.contentUrl : acc,
+    undefined
+  );
+
+  return (
+    !!contentUrl &&
+    !!previewType && (
+      <PreviewThumbnail
+        className="max-h-[116px] border border-neutral-2"
+        contentUrl={contentUrl}
+        height={116}
+        type={previewType}
+        width={184}
+      />
+    )
+  );
+};
 
 export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
   [Field.Preview]: {
@@ -17,22 +60,10 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Preview',
     filter: null,
     render: {
-      esResourceViewFn: ({ _source: source }) => {
-        const { distribution } = source;
-        const swcDistribution = distribution.find(
-          (dist: { contentUrl: string; encodingFormat: string }) =>
-            dist.encodingFormat === 'application/swc'
-        );
-        const { contentUrl } = swcDistribution;
+      esResourceViewFn: (_value, record) => {
+        const { _source: source } = record;
 
-        return (
-          <MorphoThumbnail
-            className="max-h-[116px] border border-neutral-2"
-            contentUrl={contentUrl}
-            height={116}
-            width={184}
-          />
-        );
+        return previewRender(source);
       },
     },
     sorter: false,

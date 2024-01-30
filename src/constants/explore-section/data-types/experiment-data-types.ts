@@ -102,6 +102,7 @@ export const EXPERIMENT_DATA_TYPES = {
     group: DataTypeGroup.ExperimentalData,
     name: 'electrophysiology',
     columns: [
+      Field.Preview,
       Field.BrainRegion,
       Field.EType,
       Field.Name,

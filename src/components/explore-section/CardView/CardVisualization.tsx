@@ -11,7 +11,7 @@ import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
-import MorphoThumbnail from '@/components/explore-section/ExploreSectionListingView/MorphoThumbnail';
+import PreviewThumbnail from '@/components/explore-section/ExploreSectionListingView/PreviewThumbnail';
 
 type CardVisualizationProps = {
   dataType: DataType;
@@ -47,7 +47,13 @@ export default function CardVisualization({ dataType, resource }: CardVisualizat
       case 'hasData':
         return (
           !!contentUrl && (
-            <MorphoThumbnail contentUrl={contentUrl} dpi={300} height={350} width={350} />
+            <PreviewThumbnail
+              contentUrl={contentUrl}
+              dpi={300}
+              height={350}
+              type={DataType.ExperimentalNeuronMorphology}
+              width={350}
+            />
           )
         );
       default:

@@ -1,29 +1,39 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Skeleton } from 'antd';
+import { Empty, Skeleton } from 'antd';
 import { useInView } from 'react-intersection-observer';
 
 import { createHeaders } from '@/util/utils';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { thumbnailGenerationBaseUrl } from '@/config';
+import { DataType } from '@/constants/explore-section/list-views';
 
-export default function MorphoThumbnail({
+export const dataTypeToEndpoint = {
+  [DataType.ExperimentalNeuronMorphology]: 'morphology-image',
+  [DataType.ExperimentalElectroPhysiology]: 'trace-image',
+};
+
+export default function PreviewThumbnail({
   className,
   contentUrl,
   dpi,
   height,
+  type: experimentType,
   width,
 }: {
   className?: string;
   contentUrl: string;
   dpi?: number;
   height: number;
+  type: keyof typeof dataTypeToEndpoint;
   width: number;
 }) {
   const session = useSessionAtomValue();
   const { ref, inView } = useInView({
     threshold: 0.2,
   });
+
+  const endpoint = dataTypeToEndpoint[experimentType];
 
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,7 +45,7 @@ export default function MorphoThumbnail({
       setLoading(true);
 
       const encodedContentUrl = encodeURIComponent(contentUrl);
-      const requestUrl = `${thumbnailGenerationBaseUrl}/generate/morphology-image?content_url=${encodedContentUrl}${
+      const requestUrl = `${thumbnailGenerationBaseUrl}/generate/${endpoint}?content_url=${encodedContentUrl}${
         dpi ? `&dpi=${dpi}` : ''
       }`;
 
@@ -54,24 +64,30 @@ export default function MorphoThumbnail({
         })
         .catch(() => setLoading(false));
     }
-  }, [contentUrl, dpi, session, inView]);
+  }, [contentUrl, dpi, endpoint, inView, session]);
+
+  if (thumbnail) {
+    return (
+      <Image
+        alt={`Morphology preview: ${contentUrl}`}
+        className={className}
+        height={height}
+        src={thumbnail}
+        width={width}
+      />
+    );
+  }
 
   return (
     <div ref={ref} className="flex items-center justify-start" style={{ height, width }}>
-      {thumbnail ? (
-        <Image
-          alt={`Morphology preview: ${contentUrl}`}
-          className={className}
-          height={height}
-          src={thumbnail}
-          width={width}
-        />
-      ) : (
+      {loading ? (
         <Skeleton.Image
           active={loading}
           className="!h-full rounded-none !w-full"
           rootClassName="!h-full !w-full"
         />
+      ) : (
+        <Empty description="Missing Image" image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
     </div>
   );
