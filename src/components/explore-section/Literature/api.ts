@@ -20,6 +20,8 @@ import { GteLteValue } from '@/components/Filter/types';
 const normalizeBrainRegionQueryParam = (region: string) =>
   region.toLowerCase().replace(': other', '');
 
+const normalizeQueryParam = (term: string) => term.trim().toLowerCase();
+
 const getGenerativeQA: ReturnGetGenerativeQA = async ({
   question,
   brainRegions,
@@ -96,14 +98,9 @@ const fetchAuthorSuggestions = (
   searchTerm: string,
   signal?: AbortSignal
 ): Promise<AuthorSuggestionResponse> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/author`, {
+  return fetch(`${bbsMlBaseUrl}/suggestions/author?name=${searchTerm}&limit=100`, {
     signal,
-    method: 'POST',
     headers: new Headers({ ...ML_HEADERS }),
-    body: JSON.stringify({
-      name: searchTerm,
-      limit: 100,
-    }),
   })
     .then((response: any) => {
       if (response.ok) {
@@ -123,14 +120,9 @@ export const fetchJournalSuggestions = (
   searchTerm: string,
   signal?: AbortSignal
 ): Promise<JournalSuggestionResponse> => {
-  return fetch(`${bbsMlBaseUrl}/suggestions/journal`, {
+  return fetch(`${bbsMlBaseUrl}/suggestions/journal?keywords=${searchTerm}&limit=100`, {
     signal,
-    method: 'POST',
     headers: new Headers({ ...ML_HEADERS }),
-    body: JSON.stringify({
-      keywords: searchTerm,
-      limit: 100,
-    }),
   })
     .then((response: any) => {
       if (response.ok) {
@@ -142,29 +134,18 @@ export const fetchJournalSuggestions = (
 };
 
 const fetchParagraphCountForBrainRegionAndExperiment = (
-  accessToken: string,
   experimentType: { name: string; id: string },
-  brainRegionNames: string[],
+  brainRegion: string,
   signal: AbortSignal
 ): Promise<ExperimentDatasetCountPerBrainRegion> => {
-  if (!accessToken) throw new Error('Access token should be defined');
+  const params = new URLSearchParams();
+  params.set('topics', normalizeQueryParam(experimentType.name));
+  params.set('regions', normalizeBrainRegionQueryParam(brainRegion));
 
-  const url = bbsMlBaseUrl;
-
-  const brainRegionParams = uniq(
-    brainRegionNames.map((br) => encodeURIComponent(normalizeBrainRegionQueryParam(br)))
-  ).join('&regions=');
-
-  return fetch(
-    `${url}/retrieval/article_count?topics=${encodeURIComponent(
-      experimentType.name
-    )}&regions=${brainRegionParams}`,
-    {
-      signal,
-      method: 'POST',
-      headers: new Headers({ ...ML_HEADERS }),
-    }
-  )
+  return fetch(`${bbsMlBaseUrl}/retrieval/article_count?${params.toString()}`, {
+    signal,
+    headers: new Headers({ ...ML_HEADERS }),
+  })
     .then((response: any) => {
       if (response.ok) {
         return response.json();
@@ -201,14 +182,11 @@ const fetchArticlesForBrainRegionAndExperiment = (
   const url = bbsMlBaseUrl;
 
   const params = new URLSearchParams();
+  const encodedBrainRegions = brainRegion ? normalizeBrainRegionQueryParam(brainRegion) : '';
 
-  const encodedBrainRegions = brainRegion
-    ? encodeURIComponent(normalizeBrainRegionQueryParam(brainRegion))
-    : '';
-
-  params.set('regions', encodedBrainRegions);
-  params.set('topics', experimentName);
   params.set('number_results', `${ML_MAX_ARTICLES_PER_PAGE}`);
+  params.set('topics', normalizeQueryParam(experimentName));
+  params.set('regions', encodedBrainRegions);
   params.set('page', `${page}`);
 
   const paramsWithFilter = addQueryParamsForFilters(params, { ...filters });
@@ -217,7 +195,6 @@ const fetchArticlesForBrainRegionAndExperiment = (
 
   return fetch(`${url}/retrieval/article_listing${urlQueryParams}`, {
     signal,
-    method: 'POST',
     headers: new Headers({ ...ML_HEADERS }),
   })
     .then((response: any) => {

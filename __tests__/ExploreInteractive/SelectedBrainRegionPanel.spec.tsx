@@ -41,7 +41,7 @@ jest.mock('src/components/explore-section/Literature/api.ts', () => {
   return {
     ...actual,
     fetchParagraphCountForBrainRegionAndExperiment: jest.fn().mockImplementation(
-      (token, experimentType) =>
+      (experimentType) =>
         new Promise((resolve) => {
           if (experimentType.name === DATA_TYPES_TO_CONFIGS[experimentWith100Articles].title) {
             resolve({

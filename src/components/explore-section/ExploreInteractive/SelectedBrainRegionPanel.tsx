@@ -40,7 +40,7 @@ export default function SelectedBrainRegionPanel() {
                 {
                   key: '2',
                   label: 'Literature',
-                  children: <LiteratureForExperimentType brainRegions={[selected]} />,
+                  children: <LiteratureForExperimentType brainRegion={selected} />,
                 },
                 {
                   key: '3',

@@ -4,7 +4,7 @@ import { ExperimentDatasetCountPerBrainRegion } from '@/api/explore-section/reso
 import { fetchParagraphCountForBrainRegionAndExperiment } from '@/components/explore-section/Literature/api';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
-export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], signal: AbortSignal) =>
+export const getLiteratureCountForBrainRegion = (brainRegion: string, signal: AbortSignal) =>
   atom<Promise<Record<string, ExperimentDatasetCountPerBrainRegion> | null>>(async (get) => {
     const session = get(sessionAtom);
     if (!session) return null;
@@ -12,9 +12,8 @@ export const getLiteratureCountForBrainRegion = (brainRegionNames: string[], sig
     return await Promise.allSettled(
       Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) =>
         fetchParagraphCountForBrainRegionAndExperiment(
-          session.accessToken,
           { name: config.title, id },
-          brainRegionNames,
+          brainRegion,
           signal
         )
       )

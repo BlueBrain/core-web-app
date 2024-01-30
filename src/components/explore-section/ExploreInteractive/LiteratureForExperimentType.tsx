@@ -14,10 +14,10 @@ import { BrainRegion } from '@/types/ontologies';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 
 type Props = {
-  brainRegions: BrainRegion[];
+  brainRegion: BrainRegion;
 };
 
-export function LiteratureForExperimentType({ brainRegions }: Props) {
+export function LiteratureForExperimentType({ brainRegion }: Props) {
   const previousFetchController = useRef<AbortController>();
 
   const totalByExperimentAndBrainRegionAtom = useMemo(() => {
@@ -28,13 +28,8 @@ export function LiteratureForExperimentType({ brainRegions }: Props) {
     const controller = new AbortController();
     previousFetchController.current = controller;
 
-    return loadable(
-      getLiteratureCountForBrainRegion(
-        brainRegions.map((br) => br.title),
-        controller.signal
-      )
-    );
-  }, [brainRegions]);
+    return loadable(getLiteratureCountForBrainRegion(brainRegion.title, controller.signal));
+  }, [brainRegion]);
 
   const totalByExperimentAndBrainRegion = useAtomValue(totalByExperimentAndBrainRegionAtom);
 
