@@ -1,15 +1,32 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { SelectProps } from 'antd/es/select';
 
 import { generateHierarchyPathTree } from './util';
-import useBrainRegionOptions, { SearchOption } from './useBrainRegionOptions';
-import { BrainLayerViewId } from '@/types/ontologies';
-import { selectedAlternateViews, setSelectedBrainRegionAtom } from '@/state/brain-regions';
+import { BrainLayerViewId, BrainRegion } from '@/types/ontologies';
+import {
+  brainRegionsWithRepresentationAtom,
+  selectedAlternateViews,
+  setSelectedBrainRegionAtom,
+} from '@/state/brain-regions';
 import Search from '@/components/Search';
 import { NavValue } from '@/state/brain-regions/types';
 import { BRAIN_VIEW_LAYER } from '@/constants/brain-hierarchy';
 import filterAndSortBasedOnPosition from '@/util/filterAndSortBasedOnPosition';
+
+type SearchOption = Omit<BrainRegion, 'title'> & { label: string; title?: string; value: string };
+
+// TODO: For some reason, filterAndSortBasedOnPosition requires a "label",
+// when the actual Ant-D component uses a "title" prop.
+// This should be fixed and simplified. "title" exists in the ontology, "label" does not.
+// As far as I can see, we have no use for "label". We create it when we create brainRegionsAtom,
+// but doing so only makes the type more complex than it needs to be.
+function searchOptionsReducer(
+  acc: SearchOption[],
+  { title, ...rest }: SearchOption
+): SearchOption[] {
+  return title ? [...acc, { ...rest, label: title, title }] : acc;
+}
 
 /**
  * This component is a wrapper for the TreeNav component that renders a TreeNav using the brain regions data.
@@ -25,12 +42,16 @@ export default function BrainTreeSearch({
 }) {
   const setSelectedBrainRegion = useSetAtom(setSelectedBrainRegionAtom);
   const setSelectedAlternateViews = useSetAtom(selectedAlternateViews);
-  const brainRegionsOptions = useBrainRegionOptions();
-  const [searchOptions, setSearchOptions] = useState<Array<SearchOption>>(brainRegionsOptions);
+  const brainRegionsOptions = useAtomValue(brainRegionsWithRepresentationAtom) as
+    | SearchOption[]
+    | null;
+  const [searchOptions, setSearchOptions] = useState<SearchOption[] | null>(
+    brainRegionsOptions?.reduce<SearchOption[]>(searchOptionsReducer, []) ?? []
+  );
 
   const handleSelect = useCallback(
     (_labeledValue: string, option: SearchOption) => {
-      const { ancestors, value: optionValue, label, leaves, representedInAnnotation } = option;
+      const { ancestors, value, title, leaves } = option;
 
       if (!ancestors) return;
 
@@ -52,12 +73,7 @@ export default function BrainTreeSearch({
 
       setSelectedAlternateViews(newlySelectedAlternateViews);
 
-      setSelectedBrainRegion(
-        optionValue as string,
-        label as string,
-        leaves ?? null,
-        representedInAnnotation
-      );
+      setSelectedBrainRegion(value, title ?? '', leaves ?? null);
     },
     [setSelectedBrainRegion, setSelectedAlternateViews, setValue]
   ) as SelectProps['onSelect'];
@@ -65,10 +81,19 @@ export default function BrainTreeSearch({
   const handleSearch = useCallback(
     (value: string) => {
       if (!value.trim()) {
-        setSearchOptions(brainRegionsOptions);
+        setSearchOptions(
+          brainRegionsOptions
+            ? brainRegionsOptions.reduce<SearchOption[]>(searchOptionsReducer, [])
+            : null
+        );
       } else {
         setSearchOptions(
-          filterAndSortBasedOnPosition(value.trim().toLowerCase(), brainRegionsOptions)
+          brainRegionsOptions?.length
+            ? filterAndSortBasedOnPosition<SearchOption>(
+                value.trim().toLowerCase(),
+                brainRegionsOptions.reduce<SearchOption[]>(searchOptionsReducer, [])
+              )
+            : null
         );
       }
     },
@@ -81,14 +106,16 @@ export default function BrainTreeSearch({
   };
 
   return (
-    <Search<SearchOption>
-      useSearchInsteadOfFilter
-      className="mb-10"
-      options={searchOptions}
-      placeholder="Search region..."
-      onClear={onClearSearch}
-      handleSelect={handleSelect}
-      handleSearch={handleSearch}
-    />
+    !!searchOptions && (
+      <Search<SearchOption>
+        useSearchInsteadOfFilter
+        className="mb-10"
+        options={searchOptions}
+        placeholder="Search region..."
+        onClear={onClearSearch}
+        handleSelect={handleSelect}
+        handleSearch={handleSearch}
+      />
+    )
   );
 }

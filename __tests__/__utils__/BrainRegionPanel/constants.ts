@@ -5,7 +5,6 @@ export const previouslySelectedRegion = {
     id: 'http://api.brain-map.org/api/v2/data/Structure/315',
     title: 'Isocortex',
     leaves: [],
-    representedInAnnotation: true,
   },
 } satisfies DefaultBrainRegionType;
 

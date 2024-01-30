@@ -9,6 +9,7 @@ import {
   BrainRegion,
   BrainRegionOntology,
   BrainRegionOntologyView,
+  BrainRegionWithRepresentation,
   BrainViewId,
   Mesh,
 } from '@/types/ontologies';
@@ -19,7 +20,10 @@ import {
   compositionHistoryAtom,
   compositionHistoryIndexAtom,
 } from '@/state/build-composition/composition-history';
-import { flattenBrainRegionsTree, itemsInAnnotationReducer } from '@/util/brain-hierarchy';
+import {
+  flattenBrainRegionsTree,
+  getInAnnotationBrainRegionsReducer,
+} from '@/util/brain-hierarchy';
 import {
   BASIC_CELL_GROUPS_AND_REGIONS_ID,
   DEFAULT_BRAIN_REGION_STORAGE_KEY,
@@ -115,6 +119,19 @@ export const brainRegionsAtom = selectAtom<
     })) ?? null
 );
 
+export const brainRegionsWithRepresentationAtom = selectAtom<
+  Promise<BrainRegion[] | null>,
+  BrainRegionWithRepresentation[] | null
+>(brainRegionsAtom, (brainRegions) => {
+  const inAnnotationBrainRegionsReducer = brainRegions
+    ? getInAnnotationBrainRegionsReducer(brainRegions)
+    : null;
+
+  return !!brainRegions && inAnnotationBrainRegionsReducer
+    ? brainRegions?.reduce<BrainRegionWithRepresentation[]>(inAnnotationBrainRegionsReducer, [])
+    : null;
+});
+
 type BrainRegionId = string;
 type BrainRegionNotation = string;
 
@@ -165,7 +182,7 @@ export const brainRegionByIdMapAtom = selectAtom<
 );
 
 export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(async (get) => {
-  const brainRegions = await get(brainRegionsAtom);
+  const brainRegions = await get(brainRegionsWithRepresentationAtom);
   const defaultView = await get(defaultBrainRegionOntologyViewAtom);
   if (!brainRegions || !defaultView) return null;
   const tree = arrayToTree(brainRegions, {
@@ -186,20 +203,12 @@ export const brainRegionsFilteredTreeAtom = atom<Promise<BrainRegion[] | null>>(
   return tree;
 });
 
-export const brainRegionsTreeWithRepresentationAtom = selectAtom<
-  Promise<BrainRegion[] | null>,
-  BrainRegion[] | null
->(
-  brainRegionsFilteredTreeAtom,
-  (brainRegionsTree) => brainRegionsTree?.reduce(itemsInAnnotationReducer, []) ?? null
-);
-
 export const selectedAlternateViews = atom<Record<string, BrainViewId>>({});
 
 export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null | undefined>>(
   async (get) => {
-    const brainRegions = await get(brainRegionsAtom);
-    const defaultTree = await get(brainRegionsTreeWithRepresentationAtom);
+    const brainRegions = await get(brainRegionsWithRepresentationAtom);
+    const defaultTree = await get(brainRegionsFilteredTreeAtom);
     const views = await get(brainRegionOntologyViewsAtom);
     const selectedViews = get(selectedAlternateViews);
 
@@ -224,19 +233,6 @@ export const brainRegionsAlternateTreeAtom = atom<Promise<BrainRegion[] | null |
     return alternateTree;
   }
 );
-
-export const alternateTreeWithRepresentationAtom = selectAtom<
-  Promise<BrainRegion[] | null | undefined>,
-  BrainRegion[] | null
->(
-  brainRegionsAlternateTreeAtom,
-  (alternateTree) => alternateTree?.reduce(itemsInAnnotationReducer, []) ?? null
-);
-
-export const alternateArrayWithRepresentationAtom = selectAtom<
-  Promise<BrainRegion[] | null>,
-  BrainRegion[] | null
->(alternateTreeWithRepresentationAtom, (tree) => flattenBrainRegionsTree(tree));
 
 export const addOrRemoveSelectedAlternateView = atom(
   null,
@@ -385,14 +381,12 @@ export const setSelectedBrainRegionAtom = atom(
     set,
     selectedBrainRegionId: string,
     selectedBrainRegionTitle: string,
-    selectedBrainRegionLeaves: string[] | null,
-    selectedBrainRegionRepresentedInAnnotation: boolean
+    selectedBrainRegionLeaves: string[] | null
   ) => {
     const brainRegion = {
       id: selectedBrainRegionId,
       title: selectedBrainRegionTitle,
       leaves: selectedBrainRegionLeaves,
-      representedInAnnotation: selectedBrainRegionRepresentedInAnnotation,
     };
 
     set(selectedBrainRegionAtom, brainRegion);
@@ -402,7 +396,7 @@ export const setSelectedBrainRegionAtom = atom(
   }
 );
 
-export const resetSelectedBrainRegionAtom = atom(null, (get, set) => {
+export const resetSelectedBrainRegionAtom = atom(null, (_get, set) => {
   set(selectedBrainRegionAtom, null);
   set(literatureSelectedBrainRegionAtom, null);
   set(compositionHistoryAtom, []);

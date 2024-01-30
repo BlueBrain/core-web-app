@@ -222,26 +222,14 @@ export default function BrainRegions() {
               setValue={setBrainRegionHierarchyState}
               value={brainRegionHierarchyState}
             >
-              {({
-                colorCode,
-                id,
-                isExpanded,
-                title,
-                leaves,
-                trigger,
-                content,
-                view,
-                representedInAnnotation,
-                itemsInAnnotation,
-              }) => (
+              {({ colorCode, id, isExpanded, title, leaves, trigger, content, view }) => (
                 <NavTitle
                   className="text-base"
                   colorCode={colorCode}
                   id={id}
-                  onClick={() => setSelectedBrainRegion(id, title, leaves, representedInAnnotation)}
+                  onClick={() => setSelectedBrainRegion(id, title, leaves)}
                   title={brainRegionTitleCaseExceptConjunctions(title)}
                   isExpanded={isExpanded}
-                  isHidden={!representedInAnnotation && !itemsInAnnotation}
                   trigger={trigger}
                   content={content}
                   selectedBrainRegion={selectedBrainRegion}

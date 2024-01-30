@@ -17,9 +17,17 @@ export type BrainRegion = {
   hasLayerPart: string[];
   hasPart: string[];
   view?: BrainViewId;
-  representedInAnnotation: boolean;
-  itemsInAnnotation?: boolean;
+  representedInAnnotation?: boolean; // This property is removed for brainRegionsWithRepresentationAtom
 };
+
+type SearchOption = {
+  ancestors: Record<string, BrainViewId>[];
+  label: string;
+  leaves?: string[];
+  value: string;
+};
+
+export type BrainRegionWithRepresentation = BrainRegion & SearchOption;
 
 export type Mesh = {
   contentUrl: string;
@@ -44,12 +52,10 @@ export type BrainRegionAnnotationIndex = {
   [key: string]: {
     items?: BrainRegion[];
     parts: string[] | undefined;
-    representedInAnnotation: boolean;
   };
 };
 
 export type AnnotationLookup = {
-  representedInAnnotation: boolean;
   hasPart: string[];
   hasLayerPart: string[];
 };

@@ -9,7 +9,6 @@ export type TitleComponentProps = {
   distributions?: Mesh[] | null;
   id?: string;
   isExpanded: boolean;
-  isHidden: boolean;
   onClick?: () => void;
   title?: string;
   selectedBrainRegion?: {

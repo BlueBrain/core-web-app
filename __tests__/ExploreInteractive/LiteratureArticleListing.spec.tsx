@@ -493,7 +493,6 @@ describe('LiteratureArticleListingPage', () => {
           id: mockBrainRegions[1].id,
           title: mockBrainRegions[1].title,
           leaves: mockBrainRegions[1].leaves,
-          representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
         } as SelectedBrainRegion,
       ],
       [articleListingFilterPanelOpenAtom, false],

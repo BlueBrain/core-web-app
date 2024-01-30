@@ -9,10 +9,7 @@ import { PathwaySideSelection as Selection } from '@/types/connectome';
 import { ensureArray } from '@/util/nexus';
 import { classNames } from '@/util/utils';
 
-import {
-  brainRegionByNotationMapAtom,
-  brainRegionsTreeWithRepresentationAtom,
-} from '@/state/brain-regions';
+import { brainRegionByNotationMapAtom, brainRegionsFilteredTreeAtom } from '@/state/brain-regions';
 
 import style from './brain-region-select.module.scss';
 
@@ -194,7 +191,7 @@ export default function MicroConnectomeBrainRegionSelect({
   tagWidth,
   disabled,
 }: BrainRegionSelectProps) {
-  const brainRegionTree = useAtomValue(brainRegionsTreeWithRepresentationAtom);
+  const brainRegionTree = useAtomValue(brainRegionsFilteredTreeAtom);
 
   const selectionSorterFn = useSelectionSorterFn();
 

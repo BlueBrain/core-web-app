@@ -285,7 +285,7 @@ function buildBrainRegionIndex(brainRegions: BrainRegion[]) {
 
       const leafNotations = brainRegion?.leaves
         ?.map((leadId) => brainRegionByIdMap.get(leadId))
-        .filter((leaf) => leaf?.representedInAnnotation)
+        .filter((leaf) => leaf?.representedInAnnotation) // TODO: Update init() function to use brainRegionsWithRepresentationAtom, and then remove this line.
         ?.map((br) => br?.notation as string);
 
       if (Array.isArray(leafNotations) && leafNotations.length === 0) {

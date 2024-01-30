@@ -10,7 +10,6 @@ export const DEFAULT_BRAIN_REGION: DefaultBrainRegionType = {
     id: 'http://api.brain-map.org/api/v2/data/Structure/558',
     title: 'Primary somatosensory area, nose, layer 1',
     leaves: null,
-    representedInAnnotation: true,
   },
 };
 

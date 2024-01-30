@@ -124,7 +124,7 @@ export const brainRegionMTypeArrayAtom = atom<string[] | null>((get) => {
 
   if (!selectedBrainRegion || !selectedMTypeId) return null;
 
-  if (selectedBrainRegion.leaves || !selectedBrainRegion.representedInAnnotation) return null;
+  if (selectedBrainRegion.leaves) return null;
 
   return generateBrainRegionMTypeArray(selectedBrainRegion.id, selectedMTypeId);
 });

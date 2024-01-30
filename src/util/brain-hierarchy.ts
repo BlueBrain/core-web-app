@@ -1,6 +1,17 @@
 import { TreeItem } from 'performant-array-to-tree';
 import { OriginalComposition, CompositionOverrideLeafNode } from '@/types/composition/original';
-import { Ancestor, BrainRegion, DefaultBrainViewId } from '@/types/ontologies';
+import {
+  Ancestor,
+  BrainRegion,
+  BrainRegionWithRepresentation,
+  DefaultBrainViewId,
+} from '@/types/ontologies';
+import {
+  BRAIN_VIEW_LAYER,
+  BASIC_CELL_GROUPS_AND_REGIONS_ID,
+  ROOT_BRAIN_REGION_URI,
+} from '@/constants/brain-hierarchy';
+import { getAncestors } from '@/components/BrainTree/util';
 
 export const BRAIN_REGION_URI_BASE = 'http://api.brain-map.org/api/v2/data/Structure';
 
@@ -8,6 +19,112 @@ export type RegionFullPathType = {
   id: string;
   name: string;
 };
+
+// This function returns either the hasPart or hasLayerPart array of brain region IDs, depending on the currently selected "view" (think: default or layer-based).
+export function getDescendentsFromView(
+  hasPart?: string[],
+  hasLayerPart?: string[],
+  view?: string
+): string[] | undefined {
+  let descendents;
+
+  // Currently, it seems that "layer" brain regions have the default view ID, even if they will never appear in the default hierarchy.
+  switch (view) {
+    case BRAIN_VIEW_LAYER:
+      descendents = hasLayerPart;
+      break;
+    default: // This means that by default, layer-based views also have the default view ID (see brainRegionOntologyAtom).
+      descendents = hasPart ?? hasLayerPart; // To compensate for this, we first check whether hasPart, before falling-back on hasLayerPart (for the layer-based brain-regions).
+  }
+
+  return descendents;
+}
+
+// This function looks for the descendents of a brain region to recursively check whether at least one of the descendents is represented in the annotation volume.
+export function checkRepresentationOfDescendents(
+  acc: { brainRegions: BrainRegion[]; representedInAnnotation: boolean },
+  brainRegionId: string
+): { brainRegions: BrainRegion[]; representedInAnnotation: boolean } {
+  const { brainRegions, representedInAnnotation } = acc;
+
+  if (representedInAnnotation) {
+    return {
+      brainRegions,
+      representedInAnnotation,
+    }; // It only needs to be true for one.
+  }
+
+  const brainRegion = brainRegions?.find(({ id }) => id === brainRegionId);
+
+  const descendents = getDescendentsFromView(
+    brainRegion?.hasPart,
+    brainRegion?.hasLayerPart,
+    brainRegion?.view
+  );
+
+  const { representedInAnnotation: descendentsRepresentedInAnnotation } = descendents?.reduce(
+    checkRepresentationOfDescendents,
+    {
+      brainRegions,
+      representedInAnnotation: false,
+    }
+  ) ?? { representedInAnnotation: false }; // If no descendents, then no descendents are represented.
+
+  return {
+    brainRegions,
+    representedInAnnotation:
+      brainRegion?.representedInAnnotation ?? descendentsRepresentedInAnnotation,
+  };
+}
+
+export function getInAnnotationBrainRegionsReducer(
+  brainRegions: BrainRegion[]
+): (acc: BrainRegionWithRepresentation[], cur: BrainRegion) => BrainRegionWithRepresentation[] {
+  return (
+    acc,
+    { title, id, hasPart, hasLayerPart, leaves, representedInAnnotation, view, ...rest }
+  ) => {
+    const ancestors = getAncestors(brainRegions, id);
+    const existsInBasicCellGroupAndRegions = ancestors.find((ancestor) =>
+      Object.keys(ancestor).reduce<boolean>(
+        (prev, key) => (prev === true || key === BASIC_CELL_GROUPS_AND_REGIONS_ID) ?? prev,
+        false
+      )
+    );
+
+    const descendents = getDescendentsFromView(hasPart, hasLayerPart, view);
+
+    const { representedInAnnotation: descendentsRepresentedInAnnotation } = descendents?.reduce<{
+      brainRegions: BrainRegion[];
+      representedInAnnotation: boolean;
+    }>(checkRepresentationOfDescendents, {
+      brainRegions,
+      representedInAnnotation: false,
+    }) ?? { representedInAnnotation: false };
+
+    // Filter-out regions that don't appear under Basic Cell Groups and Regions
+    // (or that aren't themselves either the Whole Mouse Brain or the Basic Cell Groups & Regions).
+    return ((representedInAnnotation || descendentsRepresentedInAnnotation) &&
+      existsInBasicCellGroupAndRegions) ||
+      [ROOT_BRAIN_REGION_URI, BASIC_CELL_GROUPS_AND_REGIONS_ID].includes(id)
+      ? [
+          ...acc,
+          {
+            ancestors,
+            id,
+            hasLayerPart,
+            hasPart,
+            label: title,
+            leaves,
+            title,
+            value: id,
+            view,
+            ...rest,
+          },
+        ]
+      : acc;
+  };
+}
 
 /**
  * Gets the path from top brain region to node clicked.
@@ -75,40 +192,6 @@ export function extendCompositionWithOverrideProps(
   Object.values(composition.hasPart).forEach((node) => extendLeafNodeWithOverrideProps(node));
 
   return composition;
-}
-
-/**
- * Adds the itemsInAnnotation property to every brain region in a tree.
- * @param {BrainRegion[]} accBrainRegions
- * @param {BrainRegion} curBrainRegion
- */
-export function itemsInAnnotationReducer(
-  accBrainRegions: BrainRegion[],
-  curBrainRegion: BrainRegion
-): BrainRegion[] {
-  const { items } = curBrainRegion;
-  // NOT a leaf
-  if (items && items?.length !== 0) {
-    const reducedItems = items.reduce(itemsInAnnotationReducer, []); // First add itemsInAnnotation to any descendents.
-
-    const itemsInAnnotation: boolean = reducedItems
-      .flatMap(
-        ({
-          items: nestedItems,
-          itemsInAnnotation: nestedItemsInAnnotation,
-          representedInAnnotation: nestedRepresentedInAnnotation,
-        }) =>
-          nestedItems?.length !== 0 && nestedItemsInAnnotation
-            ? nestedItemsInAnnotation
-            : nestedRepresentedInAnnotation
-      )
-      .includes(true); // Is it true for at least one of the descendents?
-
-    return [...accBrainRegions, { ...curBrainRegion, items: reducedItems, itemsInAnnotation }];
-  }
-
-  // LEAF
-  return [...accBrainRegions, { ...curBrainRegion, itemsInAnnotation: false }]; // No items? Then no items in annotation.
 }
 
 /**

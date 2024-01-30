@@ -145,6 +145,5 @@ describe('QAContainer', () => {
     id: 'Abducens nucleus',
     title: 'Abducens nucleus',
     leaves: null,
-    representedInAnnotation: true,
   };
 });

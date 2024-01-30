@@ -40,8 +40,8 @@ export function useSetBrainRegionFromQuery() {
     const foundBrainRegion = brainRegions.find((brainRegion) => brainRegion.id === decodedId);
     if (!foundBrainRegion) return;
 
-    const { id, title, leaves, representedInAnnotation } = foundBrainRegion;
-    setSelectedBrainRegion(id, title, leaves ?? null, representedInAnnotation);
+    const { id, title, leaves } = foundBrainRegion;
+    setSelectedBrainRegion(id, title, leaves ?? null);
   }, [
     selectedBrainRegion,
     brainRegions,

@@ -33,7 +33,7 @@ function PanelTitle({ title, onClick, className }: PanelTitleProps) {
 }
 
 function isLeafNode(brainRegion: SelectedBrainRegion) {
-  return !brainRegion.leaves && brainRegion.representedInAnnotation;
+  return !brainRegion.leaves;
 }
 
 interface PanelExpandedProps {

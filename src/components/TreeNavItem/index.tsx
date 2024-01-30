@@ -11,7 +11,7 @@ import styles from './tree-nav-item.module.css';
 type TreeNavItemProps = {
   className?: string;
   id: any;
-  value: NavValue;
+  itemValue: NavValue;
   onValueChange: (newValue: string[], path: string[]) => void;
   path: string[];
   children: (
@@ -32,7 +32,7 @@ type TreeNavItemProps = {
  * @param {string} args.id
  * @param {boolean} args.isExpanded - Whether an item is expanded or collapsed.
  * @param {TreeItem[]} args.items - The nav items.
- * @param {NavValue} args.value - A tree that reflects the expanded nav items.
+ * @param {NavValue} args.itemValue - A tree that reflects the expanded nav items.
  * @param {(newValue: string[], path: string[]) => void} args.onValueChange - A callback.
  * @param {string[]} args.path - Used for tracking the "current" nav depth level.
  */
@@ -42,7 +42,7 @@ export function TreeNavItem({
   id,
   isExpanded,
   items,
-  value,
+  itemValue,
   onValueChange,
   path,
   colorCode,
@@ -58,7 +58,7 @@ export function TreeNavItem({
     const childRender = children({
       id: itemId,
       isExpanded,
-      value,
+      itemValue,
       items: nestedItems,
       path,
       ...itemProps, // eslint-disable-line react/jsx-props-no-spreading
@@ -74,8 +74,8 @@ export function TreeNavItem({
         id={itemId}
         items={nestedItems}
         className={className}
-        value={value?.[itemId] ?? null}
-        isExpanded={typeof value?.[itemId] !== 'undefined'}
+        itemValue={itemValue?.[itemId] ?? null}
+        isExpanded={typeof itemValue?.[itemId] !== 'undefined'}
         onValueChange={onValueChange}
         path={[...path, itemId]}
         colorCode={colorCode}
@@ -128,7 +128,7 @@ export function TreeNavItem({
               <Accordion.Root
                 onValueChange={(newValue) => onValueChange(newValue, path)}
                 type="multiple"
-                value={value ? Object.keys(value) : []}
+                value={itemValue ? Object.keys(itemValue) : []}
                 asChild
               >
                 <>
@@ -147,7 +147,7 @@ export function TreeNavItem({
     children({
       items,
       id,
-      value,
+      itemValue,
       path,
       trigger,
       content,
@@ -209,7 +209,7 @@ function TreeNav(
           key={id}
           onValueChange={onValueChange}
           path={[id]}
-          value={value?.[id] ?? null}
+          itemValue={value?.[id] ?? null}
           colorCode={colorCode}
           {...rest} // eslint-disable-line react/jsx-props-no-spreading
         >
