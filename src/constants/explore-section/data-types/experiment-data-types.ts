@@ -95,6 +95,7 @@ export const EXPERIMENT_DATA_TYPES = {
         className: 'col-span-2',
       },
     ],
+    mlTopic: 'Neuron morphology',
   },
   [DataType.ExperimentalElectroPhysiology]: {
     title: 'Electrophysiology',
@@ -109,6 +110,7 @@ export const EXPERIMENT_DATA_TYPES = {
       Field.CreatedAt,
     ],
     curated: true,
+    mlTopic: 'Neuron spike',
   },
   [DataType.ExperimentalNeuronDensity]: {
     title: 'Neuron density',
@@ -127,6 +129,7 @@ export const EXPERIMENT_DATA_TYPES = {
       Field.CreatedAt,
     ],
     curated: false,
+    mlTopic: 'cell composition',
   },
   [DataType.ExperimentalBoutonDensity]: {
     title: 'Bouton density',
@@ -143,6 +146,7 @@ export const EXPERIMENT_DATA_TYPES = {
       Field.CreatedAt,
     ],
     curated: false,
+    mlTopic: 'Bouton density',
   },
   [DataType.ExperimentalSynapsePerConnection]: {
     title: 'Synapse per connection',
@@ -160,5 +164,6 @@ export const EXPERIMENT_DATA_TYPES = {
       Field.CreatedAt,
     ],
     curated: false,
+    mlTopic: 'Synapse per connection',
   },
 };

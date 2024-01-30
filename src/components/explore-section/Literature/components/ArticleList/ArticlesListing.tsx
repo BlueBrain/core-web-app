@@ -88,7 +88,7 @@ export function ArticleListing() {
     });
     if (brainRegion && experiment) {
       fetchArticlesForBrainRegionAndExperiment(
-        experiment.title,
+        experiment.mlTopic,
         brainRegion,
         1,
         filters,
@@ -127,7 +127,12 @@ export function ArticleListing() {
 
     setListingState({ loading: true });
     if (brainRegion && experiment) {
-      fetchArticlesForBrainRegionAndExperiment(experiment.title, brainRegion, pageToFetch, filters)
+      fetchArticlesForBrainRegionAndExperiment(
+        experiment.mlTopic,
+        brainRegion,
+        pageToFetch,
+        filters
+      )
         .then((response) => {
           setArticles((prev) => [...prev, ...response.articles]);
           setListingState({

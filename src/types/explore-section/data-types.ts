@@ -8,6 +8,7 @@ export type DataTypeConfig = {
   curated: boolean;
   group: DataTypeGroup;
   cardViewFields?: DetailProps[];
+  mlTopic?: string;
 };
 
 export enum DataTypeGroup {
