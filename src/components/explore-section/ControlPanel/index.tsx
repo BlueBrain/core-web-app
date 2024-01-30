@@ -224,37 +224,39 @@ export default function ControlPanel({
   return (
     <div
       data-testid="listing-view-filter-panel"
-      className="z-10 fixed top-0 right-0 bg-primary-8 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px]"
+      className="z-10 top-0 right-0 bg-primary-8 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px] relative"
     >
-      <button
-        autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-        type="button"
-        onClick={toggleDisplay}
-        className="text-white text-right"
-        aria-label="Close"
-      >
-        <CloseOutlined />
-      </button>
-      <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
-        Filters
-        <small className="font-light text-base text-primary-3">{activeColumnsText}</small>
-      </span>
+      <div className="overflow-auto pb-20">
+        <button
+          autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+          type="button"
+          onClick={toggleDisplay}
+          className="text-white text-right"
+          aria-label="Close"
+        >
+          <CloseOutlined />
+        </button>
+        <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
+          Filters
+          <small className="font-light text-base text-primary-3">{activeColumnsText}</small>
+        </span>
 
-      <p className="text-white">
-        Use the eye icon to hide/show columns. Select the column titles and tick the checkbox of the
-        option(s).
-      </p>
+        <p className="text-white">
+          Use the eye icon to hide/show columns. Select the column titles and tick the checkbox of
+          the option(s).
+        </p>
 
-      <div className="flex flex-col gap-12">
-        <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
-        {children}
+        <div className="flex flex-col gap-12 pb-12">
+          <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
+          {children}
+        </div>
       </div>
-      <div className="w-full flex items-center justify-between pt-12">
+      <div className="w-full flex items-center justify-between px-8 py-12 bg-primary-8 absolute bottom-8 left-0">
         <ClearFilters onClick={clearFilters} />
         <button
           type="submit"
           onClick={submitValues}
-          className=" float-right bg-primary-2 py-3 px-8 text-primary-9"
+          className="bg-primary-2 py-3 px-8 text-primary-9"
         >
           Apply
         </button>
