@@ -3,18 +3,18 @@ import { parseAsString, useQueryState } from 'nuqs';
 import { Menu } from 'antd';
 import { MenuProps } from 'antd/es/menu';
 
-export type EmodelTabKeys = 'emodel-configuration' | 'emodel-analysis' | 'emodel-simulation';
+export type EmodelTabKeys = 'configuration' | 'analysis' | 'simulation';
 export const EMODEL_TABS: Array<{ key: EmodelTabKeys; title: string }> = [
   {
-    key: 'emodel-configuration',
+    key: 'configuration',
     title: 'Configuration',
   },
   {
-    key: 'emodel-analysis',
+    key: 'analysis',
     title: 'Analysis',
   },
   {
-    key: 'emodel-simulation',
+    key: 'simulation',
     title: 'Simulation',
   },
 ];
