@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 import Settings from '../../../common/settings';
 import { JobAllocatorServiceInterface, JobStatus, ProxyServiceOptions } from './types';
 import { logError } from '@/util/logger';
@@ -55,7 +53,6 @@ export default class ProxyService implements JobAllocatorServiceInterface {
   /**
    * @returns Content of a text file, or `null` if the file does not exist.
    */
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   async loadTextFile(jobId: string, filename: string): Promise<string | null> {
     return `Reading content of "${jobId}/${filename}" is not implemented in the server yet!`;
   }
@@ -104,7 +101,6 @@ export default class ProxyService implements JobAllocatorServiceInterface {
     return response;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   private parseJobDetails(data: StatusResponse, jobId: string): JobStatus {
     if (!data.job_running || !data.brayns_started)
       return {

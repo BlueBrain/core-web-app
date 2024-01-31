@@ -1,5 +1,4 @@
 /* eslint-disable no-bitwise */
-/* eslint-disable no-restricted-syntax */
 import VERT from './painter.vert';
 import FRAG from './painter.frag';
 

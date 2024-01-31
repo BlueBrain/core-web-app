@@ -128,7 +128,6 @@ function useStreamGenerative({
       let captureErrorAtStart = true;
       if (reader) {
         while (!done) {
-          // eslint-disable-next-line no-await-in-loop
           ({ value, done } = await reader.read());
           if (done) break;
           const decodedChunk = decoder.decode(value, { stream: true });
@@ -146,7 +145,6 @@ function useStreamGenerative({
           if (decodedChunk.search(STREAM_JSON_DATA_SEPARATOR_REGEX) !== -1) {
             stopAppendAnswer = true;
             jsonMetadataPart += decodedChunk;
-            // eslint-disable-next-line no-continue
             continue;
           }
           if (stopAppendAnswer) {
@@ -173,8 +171,8 @@ function useStreamGenerative({
       }
       // throw error when no reader can be set from the stream
       throw new Error(`
-          It seems there is an error. 
-          it's likely a glitch on our end. 
+          It seems there is an error.
+          it's likely a glitch on our end.
           Please submit your question using the “feedback” button.
         `);
     },

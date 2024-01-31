@@ -1,7 +1,6 @@
 'use client';
 
 /* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-plusplus */
 import React from 'react';
 

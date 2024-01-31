@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { useEffect, useMemo } from 'react';
 import { atom, useAtom } from 'jotai';
 

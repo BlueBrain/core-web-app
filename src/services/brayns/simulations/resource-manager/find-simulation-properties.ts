@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BraynsSimulationOptions } from '../types';
 import { CampaignSimulation } from './types';
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-continue */
 /* eslint-disable max-classes-per-file */
 /**
  * @example

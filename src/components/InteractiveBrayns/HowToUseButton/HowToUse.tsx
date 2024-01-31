@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { classNames } from '@/util/utils';
 import styles from './how-to-use.module.css';
 

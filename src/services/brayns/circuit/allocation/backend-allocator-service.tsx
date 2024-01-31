@@ -1,7 +1,5 @@
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 
-/* eslint-disable no-await-in-loop */
 import Settings from '../../common/settings';
 import Async from '../../common/utils/async';
 import State from '../../common/state';
@@ -22,12 +20,10 @@ export default class BackendAllocatorService {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get jobId() {
     return getSessionStorage().getItem(JOBID_STORAGE_KEY) ?? '';
   }
 
-  // eslint-disable-next-line class-methods-use-this
   set jobId(value: string) {
     getSessionStorage().setItem(JOBID_STORAGE_KEY, value);
   }

@@ -12,7 +12,6 @@ import {
   EventDispatcher as ThreeEventDispatcher,
 } from 'three';
 
-/* eslint no-use-before-define: "off" */
 /* eslint no-shadow: "off" */
 /* eslint prefer-destructuring: "off" */
 /* eslint no-var: "off" */
@@ -20,7 +19,6 @@ import {
 /* eslint no-restricted-properties: "off" */
 /* eslint object-shorthand: "off" */
 /* eslint prefer-exponentiation-operator: "off" */
-/* eslint no-unused-vars: "off" */
 
 /*
  * ES6 adapted source from the example folder of THREEJS (because there is no proper repo for it)

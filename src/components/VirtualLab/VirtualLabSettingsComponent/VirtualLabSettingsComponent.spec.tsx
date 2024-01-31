@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import userEvent, { UserEvent } from '@testing-library/user-event';

@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { logError } from '@/util/logger';
 
 const LUMINANCE_THRESHOLD = 0.62;
@@ -25,7 +24,6 @@ const RX_RGB = /^RGB[\s(?:]+(?:[0-9]+)[^0-9]+(?:[0-9]+)[^0-9]+(?:[0-9]+)/u;
 const RX_RGBA = /^RGBA[\s(?:]+(?:[0-9]+)[^0-9]+(?:[0-9]+)[^0-9]+(?:[0-9]+)[^0-9.]+(?:[0-9.]+)/u;
 const RX_HSL = /^HSL[\s(?:]+(?:[0-9]+)[^0-9]+(?:[0-9]+)[^0-9]+(?:[0-9]+)/u;
 
-// eslint-disable-next-line no-use-before-define
 export type ColorOrString = Color | string;
 
 /**

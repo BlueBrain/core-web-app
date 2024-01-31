@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import { extent, bin } from 'd3';

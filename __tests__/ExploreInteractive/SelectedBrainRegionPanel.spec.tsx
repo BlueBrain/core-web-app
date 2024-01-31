@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';

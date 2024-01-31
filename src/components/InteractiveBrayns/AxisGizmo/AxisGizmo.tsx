@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useCallback, useEffect, useRef } from 'react';
 
 import { logError } from '../../../util/logger';

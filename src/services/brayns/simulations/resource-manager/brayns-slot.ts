@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import isEqual from 'lodash/isEqual';
 import Calc, { Vector3 } from '../../common/utils/calc';
 import { CameraTransformInteface } from '../../common/utils/camera-transform';

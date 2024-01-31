@@ -4,7 +4,6 @@ import { Metadata } from 'next';
 
 import RoadmapFeatureDetail, { RoadmapFeatureDetailProps } from '@/components/About/Roadmap/Detail';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getOneFeature(_id: string): Promise<RoadmapFeatureDetailProps> {
   const file = await fs.readFile(path.resolve('./public/mock-data/roadmap-details.json'), 'utf8');
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { formatNumber } from '@/util/common';
 import { CalculatedCompositionPair } from '@/types/composition/calculation';
 import { NavValue } from '@/state/brain-regions/types';

@@ -1,6 +1,5 @@
-/* eslint-disable class-methods-use-this */
-
 import { Session } from 'next-auth';
+
 import {
   ComputeTime,
   NewMember,

@@ -1,5 +1,3 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
 import CameraTransform from '../../../common/utils/camera-transform';
 import OverlayPainter from '../../overlay-painter';
 import { BraynsMeshOptions } from '../../../common/types';

@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import * as Math3D from '@math.gl/core';
 import { Quaternion as ThreeQuaternion } from 'three';
 
@@ -12,8 +11,6 @@ import CalcInterface, {
   Vector3,
   Vector4,
 } from './types';
-
-/* eslint-disable class-methods-use-this */
 
 const EPSILON = 1e-9;
 const COLUMN_X = 0;

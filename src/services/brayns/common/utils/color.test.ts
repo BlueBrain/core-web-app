@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-loop-func */
-/* eslint-disable no-restricted-syntax */
 /* tslint:disable no-magic-numbers */
 /* tslint:disable number-literal-format */
 
