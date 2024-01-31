@@ -44,7 +44,7 @@ export function DetailsPageSideBackLink() {
 
   return prevPath ? (
     <Link
-      className="pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] h-full flex flex-col items-center"
+      className="fixed pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] h-full flex flex-col items-center"
       href={prevPath}
     >
       <ArrowRightOutlined className="rotate-180 mt-1.5 mb-4" />
