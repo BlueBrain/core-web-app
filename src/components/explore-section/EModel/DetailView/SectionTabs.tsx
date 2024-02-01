@@ -30,7 +30,7 @@ export default function Tabs() {
         key: item.key,
         title: item.title,
         label: item.title,
-        className: 'text-center font-semibold !flex-[1_1_31%]',
+        className: 'text-center font-semibold !flex-[1_1_30%]',
         style: {
           backgroundColor: activeTab === item.key ? '#002766' : 'white',
           color: activeTab === item.key ? 'white' : '#002766',
