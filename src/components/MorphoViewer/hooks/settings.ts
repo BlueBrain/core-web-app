@@ -54,31 +54,31 @@ export function useMorphoViewerSettings(
     [persistentSettings, painter]
   );
 
-  return [
-    settings,
-    (update: Partial<MorphoViewerSettings>) => {
-      const darkMode = update.isDarkMode ?? persistentSettings.darkMode;
-      const newPersistentSettings =
-        darkMode === persistentSettings.darkMode
-          ? writeSettings({
-              ...settings,
-              ...update,
-            })
-          : {
-              ...persistentSettings,
-              darkMode,
-            };
-      saveSettings(newPersistentSettings);
-      setPersistentSettings(newPersistentSettings);
-    },
-    (darkMode?: boolean) => {
-      const defaultSettings = makeDefaultSettings();
-      if (typeof darkMode === 'boolean') {
-        defaultSettings.darkMode = darkMode;
-      }
-      setPersistentSettings(defaultSettings);
-    },
-  ];
+  const update = (value: Partial<MorphoViewerSettings>) => {
+    const darkMode = value.isDarkMode ?? persistentSettings.darkMode;
+    const newPersistentSettings =
+      darkMode === persistentSettings.darkMode
+        ? writeSettings({
+            ...settings,
+            ...value,
+          })
+        : {
+            ...persistentSettings,
+            darkMode,
+          };
+    saveSettings(newPersistentSettings);
+    setPersistentSettings(newPersistentSettings);
+  };
+  const reset = (darkMode?: boolean) => {
+    const defaultSettings = makeDefaultSettings();
+    if (typeof darkMode === 'boolean') {
+      defaultSettings.darkMode = darkMode;
+    }
+    saveSettings(defaultSettings);
+    setPersistentSettings(defaultSettings);
+  };
+
+  return [settings, update, reset];
 }
 
 interface Palette {

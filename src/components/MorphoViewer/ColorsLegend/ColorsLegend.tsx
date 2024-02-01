@@ -41,6 +41,7 @@ export function ColorsLegend({ className, painter }: ColorsLegendProps) {
     painter.eventColorsChange.addListener(handleColorChange);
     return () => painter.eventColorsChange.removeListener(handleColorChange);
   }, [painter]);
+  const borderColor = settings.isDarkMode ? '#595959' : '#F0F0F0';
 
   return (
     <div
@@ -61,7 +62,12 @@ export function ColorsLegend({ className, painter }: ColorsLegendProps) {
         const att = key as keyof typeof LABELS;
         const color = settings[att];
         return (
-          <ColorInput key={key} value={color} onChange={(v) => update({ [att]: v })}>
+          <ColorInput
+            key={key}
+            value={color}
+            onChange={(v) => update({ [att]: v })}
+            borderColor={borderColor}
+          >
             <div
               className={styles.color}
               style={{
