@@ -23,7 +23,7 @@ export default function WithExploreExperiment({
   const onCellClick: OnCellClick = (basePath, record, type) => {
     router.push(detailUrlBuilder(basePath, record, type));
   };
-  
+
   return (
     <ExploreSectionListingView
       {...{
