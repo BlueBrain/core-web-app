@@ -1,13 +1,11 @@
 import { CSSProperties, MouseEvent, ReactNode, useCallback, useRef, useState } from 'react';
 import { ConfigProvider, Table, TableProps } from 'antd';
-import { useRouter } from 'next/navigation';
 import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { useSetAtom } from 'jotai';
 import { ColumnGroupType, ColumnType, TableRef } from 'antd/es/table';
 
 import LoadMoreButton from './LoadMoreButton';
 import usePathname from '@/hooks/pathname';
-import { detailUrlBuilder } from '@/util/common';
 import { backToListPathAtom } from '@/state/explore-section/detail-view-atoms';
 import { ExploreDownloadButton } from '@/components/explore-section/ExploreSectionListingView/DownloadButton';
 import WithRowSelection, {
@@ -24,6 +22,8 @@ import useResizeObserver from '@/hooks/useResizeObserver';
 import useScrollComplete from '@/hooks/useScrollComplete';
 
 import styles from '@/app/explore/explore.module.scss';
+
+export type OnCellClick = (basePath: string, record: ExploreESHit, type: DataType) => void;
 
 function CustomTH({
   children,
@@ -99,12 +99,13 @@ export function BaseTable({
   rowSelection,
   dataType,
   showLoadMore,
+  onCellClick,
 }: TableProps<ExploreESHit> & {
   hasError?: boolean;
   dataType: DataType;
   showLoadMore: (value?: boolean) => void;
+  onCellClick?: (basePath: string, record: ExploreESHit, type: DataType) => void;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const setBackToListPath = useSetAtom(backToListPathAtom);
   const { group } = DATA_TYPES_TO_CONFIGS[dataType];
@@ -138,7 +139,7 @@ export function BaseTable({
               onClick: (e: MouseEvent<HTMLInputElement>) => {
                 e.preventDefault();
                 setBackToListPath(pathname);
-                router.push(detailUrlBuilder(basePath, record, dataType));
+                onCellClick?.(basePath, record, dataType);
               },
             }
           : {},
@@ -208,12 +209,14 @@ export default function ExploreSectionTable({
   hasError,
   loading,
   renderButton,
+  onCellClick,
 }: TableProps<ExploreESHit> & {
   enableDownload?: boolean;
   dataType: DataType;
   hasError?: boolean;
   renderButton?: (props: RenderButtonProps) => ReactNode;
   brainRegionSource: ExploreDataBrainRegionSource;
+  onCellClick?: OnCellClick;
 }) {
   const [displayLoadMoreBtn, setDisplayLoadMoreBtn] = useState(false);
   const toggleDisplayMore = (value?: boolean) => setDisplayLoadMoreBtn((state) => value ?? !state);
@@ -231,6 +234,7 @@ export default function ExploreSectionTable({
               rowSelection={rowSelection}
               dataType={dataType}
               showLoadMore={toggleDisplayMore}
+              onCellClick={onCellClick}
             />
           )}
         </WithRowSelection>
@@ -243,6 +247,7 @@ export default function ExploreSectionTable({
           rowKey={(row) => row._source._self}
           dataType={dataType}
           showLoadMore={toggleDisplayMore}
+          onCellClick={onCellClick}
         />
       )}
       {displayLoadMoreBtn && (
