@@ -127,6 +127,7 @@ export const resourceBasedRequestAtom = atomFamily((resourceId: string) =>
             TargetResourceParameter: resourceId,
             SelectModelsParameter: rules.reduce(reduceSelectedModels, []),
             LimitQueryParameter: limitQueryParameter,
+            SpecifiedTargetResourceType: 'ReconstructedNeuronMorphology',
           },
         }
       : null;

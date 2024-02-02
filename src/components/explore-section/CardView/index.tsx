@@ -60,7 +60,7 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
           onChange={handleActiveKeysChange}
           bordered={false}
           ghost
-          className="pt-[23.85rem]"
+          className="pt-[23.75rem]"
         >
           {Object.entries(groupedCardFields).map(([group, fields]) => (
             <Panel
