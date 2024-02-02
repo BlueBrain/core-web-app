@@ -31,7 +31,7 @@ export default function CheckBox({
         checked={checked}
         className={classNames(
           styles.checkbox,
-          'inline-block align-top relative cursor-pointer border rounded m-0 border-solid',
+          'relative m-0 inline-block cursor-pointer rounded border border-solid align-top',
           'transition-all duration-300'
         )}
         style={
@@ -43,7 +43,7 @@ export default function CheckBox({
         }
       />
       {title && (
-        <label htmlFor={id} className="inline-block ml-1 text-base align-middle cursor-pointer">
+        <label htmlFor={id} className="ml-1 inline-block cursor-pointer align-middle text-base">
           {title}
         </label>
       )}

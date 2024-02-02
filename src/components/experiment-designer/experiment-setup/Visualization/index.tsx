@@ -40,7 +40,7 @@ export default function Visualization({ sectionName }: VisualizationProps) {
   }, [inputSectionParams]);
 
   return (
-    <div className="bg-black flex flex-col justify-center items-center h-full text-white">
+    <div className="flex h-full flex-col items-center justify-center bg-black text-white">
       <SimulationPreview targetsToDisplay={targetsToDisplay} />
     </div>
   );

@@ -121,7 +121,7 @@ function DeleteVirtualLabConfirmation({
         styles={{ body: { maxWidth: '348px' } }}
         closeIcon={<CloseOutlined onClick={onCancel} />}
       >
-        <h3 className="font-bold text-xl">Are you sure you want to delete the virtual lab?</h3>
+        <h3 className="text-xl font-bold">Are you sure you want to delete the virtual lab?</h3>
         <p>
           Type{' '}
           <span className="bg-gray-100 px-2 text-gray-500">
@@ -129,7 +129,7 @@ function DeleteVirtualLabConfirmation({
           </span>
         </p>
 
-        <div className="border-b border-b-500 mt-5">
+        <div className="border-b-500 mt-5 border-b">
           <Input
             ref={inputRef}
             placeholder="Write your confirmation here..."
@@ -145,7 +145,7 @@ function DeleteVirtualLabConfirmation({
             cancel
           </Button>
 
-          <Button onClick={confirmThenDelete} className="text-white bg-[#595959]">
+          <Button onClick={confirmThenDelete} className="bg-[#595959] text-white">
             Confirm
           </Button>
         </div>

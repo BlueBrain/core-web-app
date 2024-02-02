@@ -12,16 +12,16 @@ export default function BrainAreaSwitch() {
     <button
       type="button"
       className={classNames(
-        'bg-neutral-7 p-2 relative rounded w-full',
+        'relative w-full rounded bg-neutral-7 p-2',
         area === 'pre' ? 'text-highlightPost' : 'text-highlightPre'
       )}
       onClick={() => setArea(opposite(area))}
     >
-      <div className="flex flex-col text-left max-h-48 overflow-scroll">
+      <div className="flex max-h-48 flex-col overflow-scroll text-left">
         <div className="text-white">Switch to the </div>
         <div className="capitalize">{`${opposite(area)}-synaptic area`}</div>
       </div>
-      <SwapOutlined className="absolute top-3 right-3" />
+      <SwapOutlined className="absolute right-3 top-3" />
     </button>
   );
 }

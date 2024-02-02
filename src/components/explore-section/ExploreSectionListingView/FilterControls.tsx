@@ -22,8 +22,8 @@ function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonElement>
   return (
     <button
       className={classNames(
-        'flex gap-10 items-center justify-between rounded-md py-2 px-2 max-h-[3rem] border-neutral-2 border',
-        disabled ? 'bg-neutral-100 cursor-not-allowed' : 'bg-white'
+        'flex max-h-[3rem] items-center justify-between gap-10 rounded-md border border-neutral-2 px-2 py-2',
+        disabled ? 'cursor-not-allowed bg-neutral-100' : 'bg-white'
       )}
       onClick={onClick}
       type="button"
@@ -31,7 +31,7 @@ function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonElement>
       disabled={!!disabled}
     >
       {children}
-      <SettingsIcon className="rotate-90 text-primary-8 h-4" />
+      <SettingsIcon className="h-4 rotate-90 text-primary-8" />
     </button>
   );
 }
@@ -74,17 +74,17 @@ export default function FilterControls({
   return (
     <div
       className={classNames(
-        'grid grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5 w-full flex-1 max-h-14',
+        'grid max-h-14 w-full flex-1 grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5',
         className
       )}
     >
       <div className="w-max">{children}</div>
       {!resourceId && <ExploreSectionNameSearch dataType={dataType} />}
-      <div className="w-full inline-flex gap-2 place-content-end">
+      <div className="inline-flex w-full place-content-end gap-2">
         {/* only show search input on listing views. resource id is present on detail views. */}
         <FilterBtn disabled={disabled} onClick={() => setDisplayControlPanel(!displayControlPanel)}>
-          <div className="flex gap-1 items-center">
-            <span className="bg-primary-8 text-white text-sm font-bold px-2.5 py-1 rounded">
+          <div className="flex items-center gap-1">
+            <span className="rounded bg-primary-8 px-2.5 py-1 text-sm font-bold text-white">
               {selectedFiltersCount}
             </span>
             <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ export default function FilterControls({
               >
                 Filters
               </span>
-              <span className="text-neutral-4 font-semibold text-xs leading-5">
+              <span className="text-xs font-semibold leading-5 text-neutral-4">
                 {activeColumnsLength ? (
                   <>
                     {activeColumnsLength} active{' '}

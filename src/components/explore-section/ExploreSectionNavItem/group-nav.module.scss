@@ -24,37 +24,37 @@
 .neuron,
 .layer,
 .pair {
-  @apply px-14 py-8 text-white border-none;
+  @apply border-none px-14 py-8 text-white;
   > a > div > span[role='img'] {
     float: right;
   }
 }
 .ephys {
   grid-area: ephys;
-  @apply border h-full w-full bg-primary-9;
+  @apply h-full w-full border bg-primary-9;
 }
 
 .morph {
   grid-area: morph;
-  @apply border h-full w-full bg-primary-8;
+  @apply h-full w-full border bg-primary-8;
 }
 
 .bouton {
   grid-area: bouton;
-  @apply border h-full w-full bg-primary-7;
+  @apply h-full w-full border bg-primary-7;
 }
 
 .neuron {
   grid-area: neuron;
-  @apply border h-full w-full bg-primary-6;
+  @apply h-full w-full border bg-primary-6;
 }
 
 .layer {
   grid-area: layer;
-  @apply border h-full w-full bg-primary-5;
+  @apply h-full w-full border bg-primary-5;
 }
 
 .pair {
   grid-area: pair;
-  @apply border h-full w-full bg-primary-4;
+  @apply h-full w-full border bg-primary-4;
 }

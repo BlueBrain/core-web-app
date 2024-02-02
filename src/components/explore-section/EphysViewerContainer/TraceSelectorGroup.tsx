@@ -38,7 +38,7 @@ function TraceSelectorGroup({
     return (
       <label // eslint-disable-line jsx-a11y/label-has-associated-control
         className={classNames(
-          'h-[32px] w-[32px] block cursor-pointer flex items-center rounded hover:opacity-75',
+          'block flex h-[32px] w-[32px] cursor-pointer items-center rounded hover:opacity-75',
           isSelected ? 'border-[#1890ff]' : 'border-[#1890ff00]'
         )}
         style={{
@@ -64,9 +64,9 @@ function TraceSelectorGroup({
   return (
     <div className="flex flex-col gap-3">
       <span className="font-bold text-dark">
-        Sweep <small className="font-light text-sm">({sweepsOptions.length} available)</small>
+        Sweep <small className="text-sm font-light">({sweepsOptions.length} available)</small>
       </span>
-      <div className="flex gap-3 items-center">{sweeps}</div>
+      <div className="flex items-center gap-3">{sweeps}</div>
     </div>
   );
 }

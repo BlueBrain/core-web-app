@@ -103,7 +103,7 @@ export default function AutoCompleteSearch({
           <Spin size="small" data-testid="loading-suggestions" className="absolute mx-2" />
         ) : (
           <DownOutlined
-            className="text-primary-4 absolute mx-2"
+            className="absolute mx-2 text-primary-4"
             onClick={() => {
               setSearchTerm('');
               setOpenSuggestions(true);

@@ -19,7 +19,7 @@ function DataTypeGroupTotal({ dataType, basePath }: { dataType: DataType; basePa
   return (
     <>
       {total.state === 'loading' && (
-        <div className="w-full flex justify-center mt-14">
+        <div className="mt-14 flex w-full justify-center">
           <LoadingOutlined />
         </div>
       )}
@@ -29,12 +29,12 @@ function DataTypeGroupTotal({ dataType, basePath }: { dataType: DataType; basePa
         <Link
           href={`${basePath}${DATA_TYPES_TO_CONFIGS[dataType].name}`}
           key={DATA_TYPES_TO_CONFIGS[dataType].title}
-          className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 hover:text-primary-4"
+          className="flex w-2/5 justify-between border-b-2 border-b-gray-500 py-1 hover:text-primary-4"
           data-testid={`experiment-dataset-${dataType}`}
         >
           <span className="font-light">{DATA_TYPES_TO_CONFIGS[dataType].title}</span>
           <span>
-            <span className="font-semibold mr-2">{total.data?.toLocaleString('en-US')}</span>
+            <span className="mr-2 font-semibold">{total.data?.toLocaleString('en-US')}</span>
             <MenuOutlined />
           </span>
         </Link>
@@ -47,7 +47,7 @@ export function DataTypeGroupTotals({ dataTypeGroup }: { dataTypeGroup: DataType
   const { config, basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
 
   return (
-    <div className="flex flex-wrap mb-7 max-h-36 text-white gap-4">
+    <div className="mb-7 flex max-h-36 flex-wrap gap-4 text-white">
       {Object.keys(config).map((dataType) => (
         <DataTypeGroupTotal key={dataType} dataType={dataType as DataType} basePath={basePath} />
       ))}

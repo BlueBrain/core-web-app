@@ -78,7 +78,7 @@ function QuestionParameters({ areQAParamsVisible, closeQAParams }: Props) {
     >
       <div
         className={classNames(
-          'relative w-fill bg-primary-0 rounded-lg px-7 mb-6',
+          'w-fill relative mb-6 rounded-lg bg-primary-0 px-7',
           areQAParamsVisible ? 'block' : 'hidden'
         )}
       >
@@ -87,9 +87,9 @@ function QuestionParameters({ areQAParamsVisible, closeQAParams }: Props) {
           onClick={closeQAParams}
           shape="circle"
           aria-label="close-parameters"
-          className="absolute bg-transparent border-none shadow-none text-primary-8 right-4 top-2 mr-3"
+          className="absolute right-4 top-2 mr-3 border-none bg-transparent text-primary-8 shadow-none"
         />
-        <div className="w-full mt-8">
+        <div className="mt-8 w-full">
           <DateRange
             onChange={(e) => update('selectedDate', e)}
             filter={{
@@ -139,7 +139,7 @@ function QuestionParameters({ areQAParamsVisible, closeQAParams }: Props) {
           <hr className="my-3 border-primary-2" />
         </div>
 
-        <div className="w-full mb-3">
+        <div className="mb-3 w-full">
           <AutoCompleteSearch
             key="ArticleTypes"
             title="Article Types"

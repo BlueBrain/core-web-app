@@ -98,7 +98,7 @@ export default function ExemplarMorphology() {
 
   return (
     <>
-      <div className="text-primary-8 text-2xl font-bold">Exemplar morphology</div>
+      <div className="text-2xl font-bold text-primary-8">Exemplar morphology</div>
 
       <DefaultEModelTable<ExemplarMorphologyDataType>
         dataSource={morphologies || []}
@@ -110,7 +110,7 @@ export default function ExemplarMorphology() {
       {eModelEditMode && (
         <>
           <GenericButton
-            className="border-primary-7 text-primary-7 mt-2"
+            className="mt-2 border-primary-7 text-primary-7"
             text="Assign morphology"
             onClick={() => {
               setOpenPicker(true);

@@ -25,14 +25,14 @@ function QAContainer() {
   return (
     <div
       className={classNames(
-        'box-border relative flex w-full',
+        'relative box-border flex w-full',
         isBuildSection ? 'h-[calc(100vh-40px)]' : 'h-screen'
       )}
     >
-      <div className="flex-shrink-0 mr-5 overflow-hidden overflow-x-hidden">
+      <div className="mr-5 flex-shrink-0 overflow-hidden overflow-x-hidden">
         <QALeftPanel />
       </div>
-      <div className="flex flex-1 w-full h-full">
+      <div className="flex h-full w-full flex-1">
         <QAInteractive />
       </div>
     </div>

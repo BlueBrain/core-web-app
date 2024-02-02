@@ -54,7 +54,7 @@ function ExploreMainMenuItem({
   classname,
 }: ExploreMainMenuProps) {
   return (
-    <div className="relative w-full bg-black group h-1/2 box-border">
+    <div className="group relative box-border h-1/2 w-full bg-black">
       <Image
         priority
         src={img.src}
@@ -63,12 +63,12 @@ function ExploreMainMenuItem({
         width={img.width}
         height={img.height}
       />
-      <div className="absolute h-full top-0 px-5 py-3 lg:p-7 text-white flex flex-col gap-2 w-2/3 lg:w-1/3">
-        <h1 className="font-bold text-xl xl:text-3xl 2xl:text-4xl">{name}</h1>
-        <p className="mb-1 font-normal text-sm xl:text-lg 2xl:text-xl">{description}</p>
+      <div className="absolute top-0 flex h-full w-2/3 flex-col gap-2 px-5 py-3 text-white lg:w-1/3 lg:p-7">
+        <h1 className="text-xl font-bold xl:text-3xl 2xl:text-4xl">{name}</h1>
+        <p className="mb-1 text-sm font-normal xl:text-lg 2xl:text-xl">{description}</p>
         <Link
           href={url}
-          className="relative w-max py-2 xl:py-4 px-7 text-white border border-white text-center text-base lg:text-lg 2xl:text-2xl hover:text-primary-8 hover:bg-white hover:font-bold"
+          className="relative w-max border border-white px-7 py-2 text-center text-base text-white hover:bg-white hover:font-bold hover:text-primary-8 lg:text-lg xl:py-4 2xl:text-2xl"
         >
           {btnLabel}
         </Link>
@@ -79,7 +79,7 @@ function ExploreMainMenuItem({
 
 export default function ExploreMainMenu() {
   return (
-    <div className="w-full flex flex-col h-full items-center gap-1 overflow-hidden">
+    <div className="flex h-full w-full flex-col items-center gap-1 overflow-hidden">
       {EXPLORE_NAVIGATION_LIST.map(({ name, description, url, img, btnLabel, classname }) => (
         <ExploreMainMenuItem
           key={kebabCase(`main-${name}-${url}`)}

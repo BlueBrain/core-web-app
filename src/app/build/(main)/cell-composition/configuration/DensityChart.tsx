@@ -50,7 +50,7 @@ function MissingSelectedNodes({
 
   return (
     !!items.length && (
-      <div className="text-left w-full">
+      <div className="w-full text-left">
         <em>
           {items.length === 1 ? (
             <span className="flex gap-1">
@@ -253,7 +253,7 @@ export default function DensityChart() {
 
   const tagRender = ({ closable, label, onClose, value }: CustomTagProps) => (
     <Tag
-      className="flex font-semibold gap-2 items-center justify-between"
+      className="flex items-center justify-between gap-2 font-semibold"
       closable={closable}
       closeIcon={
         <CloseOutlined className="text-primary-9" style={{ display: 'block', fontSize: 14 }} />
@@ -269,16 +269,16 @@ export default function DensityChart() {
   );
 
   return (
-    <div className="flex flex-col gap-5 h-full w-full">
-      <h1 className="flex font-bold gap-1 items-baseline text-3xl text-primary-9">
+    <div className="flex h-full w-full flex-col gap-5">
+      <h1 className="flex items-baseline gap-1 text-3xl font-bold text-primary-9">
         {selectedBrainRegion?.title ?? 'Please select a brain region.'}
         {!!selectedBrainRegion?.title && (
-          <small className="font-light text-sm">{densityOrCountLabel}</small>
+          <small className="text-sm font-light">{densityOrCountLabel}</small>
         )}
       </h1>
       {sankeyData.links.length > 0 && (
         <>
-          <div className="flex flex-col gap-4 items-center">
+          <div className="flex flex-col items-center gap-4">
             <Select
               allowClear
               autoClearSearchValue
@@ -306,7 +306,7 @@ export default function DensityChart() {
           <div className="h-full w-full" ref={wrapperRef}>
             <svg
               className={classNames(
-                'h-full w-full sankey',
+                'sankey h-full w-full',
                 selectedNodes.length ? 'is-selected' : ''
               )}
               ref={chartRef}

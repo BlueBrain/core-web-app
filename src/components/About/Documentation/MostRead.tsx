@@ -26,14 +26,14 @@ const MOST_READ = [
 
 export default function MostRead() {
   return (
-    <div className="mt-10 mb-4">
-      <h2 className="font-normal text-neutral-3 text-base mb-3">Most read</h2>
+    <div className="mb-4 mt-10">
+      <h2 className="mb-3 text-base font-normal text-neutral-3">Most read</h2>
       <ul className="grid grid-cols-3 gap-3 border-y border-neutral-2 py-3">
         {MOST_READ.map(({ id, title, category, description }) => (
           <li key={id} className="flex flex-col">
             <span className="text-sm uppercase text-neutral-3">{category}</span>
-            <h3 className="font-bold text-lg text-primary-8">{title}</h3>
-            <p className="text-base text-primary-8 font-light line-clamp-2">{description}</p>
+            <h3 className="text-lg font-bold text-primary-8">{title}</h3>
+            <p className="line-clamp-2 text-base font-light text-primary-8">{description}</p>
           </li>
         ))}
       </ul>

@@ -60,7 +60,7 @@ export default function AddVirtualLabMember({
         className="flex justify-between"
       >
         <div className="flex">
-          <div className="rounded-full w-8 h-8 text-center text-white flex items-center justify-center bg-gray-200 mr-3">
+          <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-center text-white">
             -
           </div>
           <Form.Item
@@ -78,7 +78,7 @@ export default function AddVirtualLabMember({
             <Input
               placeholder="Enter email address..."
               type="email"
-              className="placeholder:text-primary-8 border-b border-b-primary-8"
+              className="border-b border-b-primary-8 placeholder:text-primary-8"
             />
           </Form.Item>
         </div>

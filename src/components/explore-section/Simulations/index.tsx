@@ -41,10 +41,10 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   }, [dimensions, resource, setDefaultDimensions]);
 
   return (
-    <div className="flex flex-col gap-4 mt-4">
-      <div className="flex gap-4 items-center justify-end text-primary-7">
-        <div className="flex gap-2 items-baseline mr-auto">
-          <span className="font-bold text-xl">Simulations</span>
+    <div className="mt-4 flex flex-col gap-4">
+      <div className="flex items-center justify-end gap-4 text-primary-7">
+        <div className="mr-auto flex items-baseline gap-2">
+          <span className="text-xl font-bold">Simulations</span>
           <span className="text-xs">
             {simulations?.length ?? <Spin indicator={<LoadingOutlined />} />} simulations
           </span>
@@ -69,7 +69,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
           />
           <Link href={`${path}/experiment-analysis`} className="ml-3 font-light text-primary-8">
             Register new analysis
-            <PlusOutlined className="text-2xl ml-2 translate-y-[2px] border border-gray-200 " />
+            <PlusOutlined className="ml-2 translate-y-[2px] border border-gray-200 text-2xl " />
           </Link>
         </div>
       </div>

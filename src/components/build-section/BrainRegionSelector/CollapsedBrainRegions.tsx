@@ -13,7 +13,7 @@ export default function CollapsedBrainRegionsSidebar({
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
 
   return (
-    <div className="flex flex-col items-center pt-2 w-[40px]">
+    <div className="flex w-[40px] flex-col items-center pt-2">
       <Button
         className="mb-2"
         type="text"
@@ -23,7 +23,7 @@ export default function CollapsedBrainRegionsSidebar({
       />
 
       <div
-        className="text-white flex gap-x-3.5 items-center max-h-[90vh]"
+        className="flex max-h-[90vh] items-center gap-x-3.5 text-white"
         style={{
           writingMode: 'vertical-rl',
           transform: 'rotate(180deg)',
@@ -32,10 +32,10 @@ export default function CollapsedBrainRegionsSidebar({
         role="presentation"
         onClick={() => setIsCollapsed(false)}
       >
-        <div className="text-sm whitespace-nowrap text-secondary-4">
+        <div className="whitespace-nowrap text-sm text-secondary-4">
           {selectedBrainRegion?.title}
         </div>
-        <div className="text-lg font-bold whitespace-nowrap">Brain region</div>
+        <div className="whitespace-nowrap text-lg font-bold">Brain region</div>
       </div>
     </div>
   );

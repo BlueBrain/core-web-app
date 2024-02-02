@@ -64,19 +64,19 @@ export default function ResultError({
         )}
         <div
           className={classNames(
-            'flex flex-col items-start justify-center w-full gap-y-1 max-h-max',
+            'flex max-h-max w-full flex-col items-start justify-center gap-y-1',
             collpaseQuestion ? 'hidden' : 'block'
           )}
         >
-          <div className="bg-orange-50 w-full px-5 py-4 flex flex-col items-center justify-center">
-            <p className="w-full mb-px text-base font-medium text-center text-amber-500 whitespace-pre-line">
+          <div className="flex w-full flex-col items-center justify-center bg-orange-50 px-5 py-4">
+            <p className="mb-px w-full whitespace-pre-line text-center text-base font-medium text-amber-500">
               {GENERATIVE_QA_ERRORS_MAP[statusCode as keyof typeof GENERATIVE_QA_ERRORS_MAP] ??
                 GENERATIVE_QA_ERRORS_MAP.default}
             </p>
             {showRemoveBtn && (
               <Button
                 type="default"
-                className="bg-transparent rounded-none mt-4 text-amber-500 font-bold hover:!border-amber-500 hover:!text-amber-500"
+                className="mt-4 rounded-none bg-transparent font-bold text-amber-500 hover:!border-amber-500 hover:!text-amber-500"
                 onClick={onDelete}
               >
                 Remove question

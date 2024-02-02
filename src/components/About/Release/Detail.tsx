@@ -21,10 +21,10 @@ type ReleaseFeatureItemProps = ReleaseFeature & { id: string; feature: string };
 
 function ReleaseFeatureItem({ id, feature, title, description, notes }: ReleaseFeatureItemProps) {
   return (
-    <div className="snap-start w-full">
-      <h3 className="text-lg text-primary-8 font-bold capitalize mb-2">{title}</h3>
-      <p className="text-sm font-normal text-primary-8 mb-3 text-justify">{description}</p>
-      <ul className="border-y border-neutral-3 px-6 py-5 list-disc">
+    <div className="w-full snap-start">
+      <h3 className="mb-2 text-lg font-bold capitalize text-primary-8">{title}</h3>
+      <p className="mb-3 text-justify text-sm font-normal text-primary-8">{description}</p>
+      <ul className="list-disc border-y border-neutral-3 px-6 py-5">
         {notes.map((note, ind) => (
           // eslint-disable-next-line react/no-array-index-key
           <li key={`note-${id}-${feature}-${ind}`}>
@@ -43,19 +43,19 @@ export default function Release({
 }) {
   const FEATURES_KEYS = Object.keys(features);
   return (
-    <div className="w-full h-full bg-white">
-      <div className="inline-flex px-12 mt-12 items-center justify-between gap-2 w-full">
+    <div className="h-full w-full bg-white">
+      <div className="mt-12 inline-flex w-full items-center justify-between gap-2 px-12">
         <h2 className="text-3xl font-bold text-primary-8">{title}</h2>
-        <div className="grid grid-flow-col gap-1 items-center justify-center">
+        <div className="grid grid-flow-col items-center justify-center gap-1">
           <FilledCalendar className="text-primary-8" />
-          <span className="text-primary-8 text-sm">
+          <span className="text-sm text-primary-8">
             {new Date(date).toLocaleDateString().replaceAll('/', '.')}
           </span>
         </div>
       </div>
-      <div className="pl-12 pr-4 bg-white">
+      <div className="bg-white pl-12 pr-4">
         <div
-          className="grid grid-cols-[30%_30%] grid-rows-1 gap-10 w-full py-12 bg-white overflow-x-scroll no-scrollbar snap-x snap-mandatory overscroll-x-contain"
+          className="no-scrollbar grid w-full snap-x snap-mandatory grid-cols-[30%_30%] grid-rows-1 gap-10 overflow-x-scroll overscroll-x-contain bg-white py-12"
           style={{
             gridTemplateColumns: `repeat(${FEATURES_KEYS.length}, 19vw)`,
           }}

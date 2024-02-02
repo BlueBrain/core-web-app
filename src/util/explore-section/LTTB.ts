@@ -63,7 +63,7 @@ type Indexable<T> = {
 type DownsamplingFunction<
   T,
   Params extends unknown[] = [],
-  Input extends Indexable<T> = Indexable<T>
+  Input extends Indexable<T> = Indexable<T>,
 > = (data: Input, ...params: Params) => Input;
 
 function calculateAverageDataPoint(

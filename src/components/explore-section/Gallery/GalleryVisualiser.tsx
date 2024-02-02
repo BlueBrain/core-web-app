@@ -23,27 +23,27 @@ export default function GalleryVisualliser({ content }: { content: SingleGallery
   };
 
   return (
-    <div className="relative left-1/4 w-3/4 h-screen flex flex-col justify-between p-6 gap-y-4">
-      <div className="w-full overflow-hidden border border-neutral-5 border-solid flex items-center justify-center">
+    <div className="relative left-1/4 flex h-screen w-3/4 flex-col justify-between gap-y-4 p-6">
+      <div className="flex w-full items-center justify-center overflow-hidden border border-solid border-neutral-5">
         <Image
           src={`${basePath}/${content.images[currentActiveImage].src}`}
           alt={content.images[currentActiveImage].alt}
           width={1200}
           height={800}
-          className="w-auto h-full"
+          className="h-full w-auto"
           priority
         />
       </div>
 
       {/* Visualizer */}
-      <div className="w-full grid grid-cols-12 gap-2">
+      <div className="grid w-full grid-cols-12 gap-2">
         {content.images.map((singleImage: GalleryImagesType, index: number) => (
           <button
             type="button"
             key={`gallery-visualizer-${singleImage.name}`}
             onClick={() => setCurrentActiveImage(index)}
             className={classNames(
-              'justify-self-stretch self-stretch overflow-hidden border-solid transition-opacity duration-300 ease-linear hover:opacity-100',
+              'self-stretch justify-self-stretch overflow-hidden border-solid transition-opacity duration-300 ease-linear hover:opacity-100',
               currentActiveImage === index
                 ? 'border-2 border-white opacity-100'
                 : 'border border-neutral-7 opacity-70'
@@ -54,7 +54,7 @@ export default function GalleryVisualliser({ content }: { content: SingleGallery
               alt={singleImage.alt}
               width={800}
               height={800}
-              className="w-full h-auto"
+              className="h-auto w-full"
             />
           </button>
         ))}

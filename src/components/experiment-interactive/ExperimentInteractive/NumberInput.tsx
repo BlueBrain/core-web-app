@@ -64,13 +64,13 @@ export default function NumberInput({
   return (
     <div
       className={classNames(
-        'text-white/50 border border-white/20 inline-flex flex flex-row px-1 gap-2',
+        'flex inline-flex flex-row gap-2 border border-white/20 px-1 text-white/50',
         className
       )}
     >
       <input
         type="number"
-        className="border-none text-white bg-transparent text-right"
+        className="border-none bg-transparent text-right text-white"
         step={step ?? 0.01}
         value={localValue}
         size={size ?? 3}

@@ -25,7 +25,7 @@ function OptionSelect({
     <div className="flex flex-col gap-3">
       <label className="font-bold text-dark" htmlFor="optionSelect">
         {title}
-        <small className="font-light text-sm">
+        <small className="text-sm font-light">
           {numberOfAvailable > 1 && <>&nbsp;({numberOfAvailable} available)</>}
         </small>
       </label>

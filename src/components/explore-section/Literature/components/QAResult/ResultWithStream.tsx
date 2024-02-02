@@ -13,7 +13,7 @@ function ResultOnStreamAnswer() {
   const { answer } = useAtomValue(literatureAtom);
 
   return (
-    <div className="w-full flex items-start text-xl font-normal leading-7 text-blue-900">
+    <div className="flex w-full items-start text-xl font-normal leading-7 text-blue-900">
       {answer}
     </div>
   );

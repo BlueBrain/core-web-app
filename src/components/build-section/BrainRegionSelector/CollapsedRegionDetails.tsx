@@ -14,7 +14,7 @@ export default function CollapsedRegionDetails({
   const densityOrCountLabel = useAtomValue(densityOrCountLabelAtom);
 
   return (
-    <div className="flex flex-col items-center pt-2 w-[40px]">
+    <div className="flex w-[40px] flex-col items-center pt-2">
       <Button
         className="mb-2"
         type="text"
@@ -23,7 +23,7 @@ export default function CollapsedRegionDetails({
         onClick={() => setIsSidebarExpanded(true)}
       />
       <div
-        className="text-white flex gap-x-3.5 items-center"
+        className="flex items-center gap-x-3.5 text-white"
         style={{
           writingMode: 'vertical-rl',
           transform: 'rotate(180deg)',
@@ -35,7 +35,7 @@ export default function CollapsedRegionDetails({
         <div className="text-sm">
           <span className="font-bold">{densityOrCountLabel}</span>
         </div>
-        <div className="text-lg text-secondary-4 font-bold">{title}</div>
+        <div className="text-lg font-bold text-secondary-4">{title}</div>
       </div>
     </div>
   );

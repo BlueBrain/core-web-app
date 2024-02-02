@@ -75,7 +75,7 @@ export default function Search<T extends DefaultOptionType>({
           showSearch
           allowClear
           autoClearSearchValue
-          className="block w-full my-3 pl-0"
+          className="my-3 block w-full pl-0"
           dropdownStyle={{ borderRadius: '4px' }}
           placeholder={placeholder}
           onClear={onClear}

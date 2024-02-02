@@ -13,7 +13,7 @@ export default function ControlPanel() {
   const { showViewSettingsPanel } = useExperimentInteractive();
 
   return (
-    <div className="w-9 h-32 flex-col justify-start items-start gap-1 inline-flex absolute right-0 top-0 m-3">
+    <div className="absolute right-0 top-0 m-3 inline-flex h-32 w-9 flex-col items-start justify-start gap-1">
       <ControlPanelButton onClick={showViewSettingsPanel}>
         <EyeIcon />
       </ControlPanelButton>

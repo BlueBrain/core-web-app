@@ -43,10 +43,10 @@ function MechanismTable({ mechanismCollection }: MechanismTableProps) {
     (mechanismCollection?.processed?.[location] as EModelConfigurationMechanism[]) || [null];
 
   return (
-    <div className="flex gap-8 flex-wrap justify-between">
+    <div className="flex flex-wrap justify-between gap-8">
       {locations.map((location) => (
         <div key={location} className="flex flex-col">
-          <div className="text-gray-400 flex gap-2 items-center my-4">
+          <div className="my-4 flex items-center gap-2 text-gray-400">
             {location.toUpperCase()}
             <DocumentationIcon />
           </div>
@@ -54,7 +54,7 @@ function MechanismTable({ mechanismCollection }: MechanismTableProps) {
             <div key={`${location}_${mechanism?.name}`}>
               {mechanism ? (
                 <div key={mechanism.name} className="font-bold">
-                  <span className="text-sm font-light text-gray-400 mr-2">{index + 1}.</span>
+                  <span className="mr-2 text-sm font-light text-gray-400">{index + 1}.</span>
                   {mechanism.name}
                 </div>
               ) : (

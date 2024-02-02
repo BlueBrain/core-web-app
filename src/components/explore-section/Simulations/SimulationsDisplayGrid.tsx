@@ -46,7 +46,7 @@ function DimensionHeader({ label, value, orientation }: DimensionHeaderProps) {
 
   return (
     <div key={value} className="text-center" style={style}>
-      <div className="text-neutral-4 text-xs">{label}</div>
+      <div className="text-xs text-neutral-4">{label}</div>
       <div>{value}</div>
     </div>
   );
@@ -139,7 +139,7 @@ export default function SimulationsDisplayGrid({
               findSimulation(x, y, xDimension, yDimension, simulations, status, otherDimensions);
 
             return (
-              <Col key={x} span={dataColSpan} className="flex items-center justify-center mt-3">
+              <Col key={x} span={dataColSpan} className="mt-3 flex items-center justify-center">
                 {simulation ? (
                   <SimulationDisplayCard
                     name={display}

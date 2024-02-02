@@ -53,7 +53,7 @@ export default function AddRuleModal({ open, onValidate, onCancel }: AddRuleModa
       width="900px"
       title="Add synapse assignment rule"
       footer={
-        <div className="flex justify-between items-center w-full">
+        <div className="flex w-full items-center justify-between">
           <CustomSelect rule={rule} onChange={setRule} field="synapticType" />
           <div>
             <Button type="text" onClick={handleCancel}>

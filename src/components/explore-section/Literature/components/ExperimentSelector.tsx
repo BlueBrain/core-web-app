@@ -15,7 +15,7 @@ export default function ExperimentSelector({ currentExperiment }: Props) {
   const router = useRouter();
   return (
     <div className="flex flex-col">
-      <span className="text-gray-400 text-sm">Keywords</span>
+      <span className="text-sm text-gray-400">Keywords</span>
       <ConfigProvider
         theme={{
           token: {
@@ -37,12 +37,12 @@ export default function ExperimentSelector({ currentExperiment }: Props) {
             router.push(`/explore/interactive/literature/${experimentName}`);
           }}
           options={Object.values(EXPERIMENT_DATA_TYPES).map((config) => ({
-            label: <span className="font-semibold text-base">{config.title}</span>,
+            label: <span className="text-base font-semibold">{config.title}</span>,
             value: config.name,
           }))}
           popupMatchSelectWidth={false}
-          className="border-b-2 text-primary-8 min-w-max w-36 p-0!"
-          suffixIcon={<DownOutlined className="text-primary-8 text-[8px]" />}
+          className="p-0! w-36 min-w-max border-b-2 text-primary-8"
+          suffixIcon={<DownOutlined className="text-[8px] text-primary-8" />}
         />
       </ConfigProvider>
     </div>

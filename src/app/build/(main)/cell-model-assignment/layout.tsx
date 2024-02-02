@@ -20,8 +20,8 @@ export default function CellModelAssignmentLayout({ children }: Props) {
   const textColor = isInteractive ? 'text-white border-white' : 'text-primary-8 border-primary-8';
 
   return (
-    <div className="flex flex-col h-full">
-      <div className={classNames('flex justify-between p-4 flex-initial', tabsBackgroundColor)}>
+    <div className="flex h-full flex-col">
+      <div className={classNames('flex flex-initial justify-between p-4', tabsBackgroundColor)}>
         <SubsectionTabs className={textColor} />
         <ModeTabs />
       </div>

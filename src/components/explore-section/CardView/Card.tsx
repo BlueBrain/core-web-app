@@ -34,16 +34,16 @@ export default function Card({ resource, dataType, activeKeys, score }: CardProp
   const groupedCardFields = getGroupedCardFields(dataType);
 
   return (
-    <div ref={ref} className="flex-shrink-0 h-fit py-4 px-0 mr-0">
-      {score && <div className="text-primary-7 mb-2 font-bold">{score}</div>}
-      <div className="min-h-[350px] min-w-[350px] h-full border-x border-t">
+    <div ref={ref} className="mr-0 h-fit flex-shrink-0 px-0 py-4">
+      {score && <div className="mb-2 font-bold text-primary-7">{score}</div>}
+      <div className="h-full min-h-[350px] min-w-[350px] border-x border-t">
         {inView && (
           <Link href={resourceUrl} passHref>
             <CardVisualization dataType={dataType} resource={resource._source} />
           </Link>
         )}
       </div>
-      <div className="break-words mt-0">
+      <div className="mt-0 break-words">
         <Collapse activeKey={activeKeys} expandIcon={() => null} bordered={false} ghost>
           {Object.entries(groupedCardFields).map(([group, fields]) => (
             <Panel header={group} key={group} className={styles.custom} collapsible="disabled">
@@ -51,7 +51,7 @@ export default function Card({ resource, dataType, activeKeys, score }: CardProp
                 {fields.map((field, index) => (
                   <div
                     key={field.field}
-                    className={`text-primary-8 pl-4 mb-2 h-6  truncate ${field.className}`}
+                    className={`mb-2 h-6 truncate pl-4  text-primary-8 ${field.className}`}
                   >
                     {field.field === Field.Name ? (
                       <Link href={resourceUrl} passHref>

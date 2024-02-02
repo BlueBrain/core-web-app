@@ -28,7 +28,7 @@ export type FilterGroupProps = {
 function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
   return (
     <Accordion.Root
-      className="divide-y divide-primary-7 flex flex-col space-y-5"
+      className="flex flex-col space-y-5 divide-y divide-primary-7"
       defaultValue={['contributor', 'eType']}
       type="multiple"
     >
@@ -48,15 +48,15 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
 
         return content ? (
           <Accordion.Item className="pt-5" value={label} key={label}>
-            <div className="flex gap-3 items-center ">
+            <div className="flex items-center gap-3 ">
               {toggleFunc && displayTrigger}
               <Accordion.Trigger
                 className={classNames(
                   styles.accordionTrigger,
-                  'flex items-center justify-between w-full'
+                  'flex w-full items-center justify-between'
                 )}
               >
-                <span className="font-bold text-lg text-white">{label}</span>
+                <span className="text-lg font-bold text-white">{label}</span>
                 <ChevronIcon className={styles.chevron} />
               </Accordion.Trigger>
             </div>
@@ -65,7 +65,7 @@ function FilterGroup({ items, filters, setFilters }: FilterGroupProps) {
             </Accordion.Content>
           </Accordion.Item>
         ) : (
-          <div className="flex gap-3 items-center pt-5 text-lg text-white" key={label}>
+          <div className="flex items-center gap-3 pt-5 text-lg text-white" key={label}>
             {displayTrigger}
             <span className="font-bold">{label}</span>
           </div>

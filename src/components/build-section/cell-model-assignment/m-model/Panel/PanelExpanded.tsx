@@ -18,10 +18,10 @@ interface PanelTitleProps {
 
 function PanelTitle({ title, onClick, className }: PanelTitleProps) {
   return (
-    <div className={classNames(className, 'flex justify-between items-start mb-5')}>
-      <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
+    <div className={classNames(className, 'mb-5 flex items-start justify-between')}>
+      <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
         <BrainRegionIcon style={{ height: '1em' }} />
-        <span className="text-secondary-4 text-[16px]">{title ?? 'Select a region first'}</span>
+        <span className="text-[16px] text-secondary-4">{title ?? 'Select a region first'}</span>
       </div>
       <Button
         type="text"
@@ -58,7 +58,7 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
       );
     } else {
       body = (
-        <div className="self-center flex flex-col justify-center gap-10 w-[90%] text-white h-1/2">
+        <div className="flex h-1/2 w-[90%] flex-col justify-center gap-10 self-center text-white">
           <div className="text-3xl">Not a leaf Brain Region</div>
           <div className="text-xl">To display the M-Types, select a leaf Brain Region</div>
         </div>
@@ -67,7 +67,7 @@ export default function PanelExpanded({ setIsSidebarExpanded }: PanelExpandedPro
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto py-6 min-w-[300px]">
+    <div className="flex min-w-[300px] flex-1 flex-col overflow-y-auto py-6">
       <PanelTitle title={brainRegion?.title} onClick={handleClick} className="px-7" />
       {body}
     </div>

@@ -7,19 +7,19 @@
 
 .headerText,
 .tableHeader {
-  @apply flex items-center justify-between text-left text-gray-500 gap-2 w-fit;
+  @apply flex w-fit items-center justify-between gap-2 text-left text-gray-500;
 }
 
 .tableHeaderTitle {
-  @apply cursor-help text-lg font-medium text-left pl-0 text-gray-500;
+  @apply cursor-help pl-0 text-left text-lg font-medium text-gray-500;
 }
 
 .tableHeaderUnits {
-  @apply text-sm font-thin text-left pl-2 text-gray-500;
+  @apply pl-2 text-left text-sm font-thin text-gray-500;
 }
 
 .dragIcons {
-  @apply font-light text-2xl text-neutral-3 rotate-90 cursor-col-resize ml-auto absolute right-0;
+  @apply absolute right-0 ml-auto rotate-90 cursor-col-resize text-2xl font-light text-neutral-3;
   opacity: 0;
 }
 
@@ -104,11 +104,11 @@
     @apply text-xl;
   }
   h1 {
-    @apply text-xl font-bold inline;
+    @apply inline text-xl font-bold;
   }
   button {
     font-size: clamp(1rem, 0.5vw + 5px, 3rem);
-    @apply border border-white px-4 py-2 mt-4;
+    @apply mt-4 border border-white px-4 py-2;
   }
   p {
     font-size: clamp(1rem, 0.4vw + 5px, 3rem);
@@ -118,7 +118,7 @@
 
 .exploreHeader {
   h1 {
-    @apply font-bold uppercase block;
+    @apply block font-bold uppercase;
     font-size: clamp(1rem, 2.5vw, 5rem);
     line-height: 0.8;
     word-spacing: 100vw;
@@ -133,7 +133,7 @@
 .info {
   min-height: 0;
   background-color: black;
-  @apply text-white py-0;
+  @apply py-0 text-white;
   h1 {
     @apply text-xl;
   }
@@ -141,13 +141,13 @@
     @apply w-8/12;
   }
   button {
-    @apply text-black bg-white;
+    @apply bg-white text-black;
   }
 }
 
 .columnTitle {
   @apply relative pl-2;
   &::before {
-    @apply absolute content-[""] h-full bg-[#d9d9d9] w-px end-0 top-0 left-0;
+    @apply absolute end-0 left-0 top-0 h-full w-px bg-[#d9d9d9] content-[""];
   }
 }

@@ -76,7 +76,7 @@ export default function CheckList({
     !!remainingLength &&
     remainingLength > 0 && (
       <button
-        className="bg-primary-9 ml-auto py-3 px-8 rounded text-white w-fit"
+        className="ml-auto w-fit rounded bg-primary-9 px-8 py-3 text-white"
         type="button"
         onClick={() => updateRenderLength()}
       >
@@ -124,18 +124,20 @@ export const defaultList = ({
 }: CheckListProps) => (
   <>
     {options && options.length > defaultRenderLength && search()}
-    <ul className="divide-y divide-white/20 flex flex-col space-y-3">
-      {options?.slice(0, renderLength)?.map(({ checked, count, id, label }) => (
-        <CheckListOption
-          checked={checked}
-          count={count}
-          key={id}
-          handleCheckedChange={handleCheckedChange}
-          id={id}
-          filterField={filterField}
-          label={label}
-        />
-      ))}
+    <ul className="flex flex-col space-y-3 divide-y divide-white/20">
+      {options
+        ?.slice(0, renderLength)
+        ?.map(({ checked, count, id, label }) => (
+          <CheckListOption
+            checked={checked}
+            count={count}
+            key={id}
+            handleCheckedChange={handleCheckedChange}
+            id={id}
+            filterField={filterField}
+            label={label}
+          />
+        ))}
     </ul>
     {options && options.length > defaultRenderLength && loadMoreBtn()}
   </>

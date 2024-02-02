@@ -15,17 +15,17 @@ export default function HomeHeader({
   buttonLabel = 'Back home',
 }: HomeHeaderProps) {
   return (
-    <div className="fixed z-10 top-0 left-0 w-1/3 h-full flex flex-col p-6">
+    <div className="fixed left-0 top-0 z-10 flex h-full w-1/3 flex-col p-6">
       <div className="flex flex-col">
-        <h1 className="text-white text-5xl font-bold inline">{title}</h1>
-        <p className="mt-2 font-thin leading-5 text-primary-2 w-2/3">{description}</p>
+        <h1 className="inline text-5xl font-bold text-white">{title}</h1>
+        <p className="mt-2 w-2/3 font-thin leading-5 text-primary-2">{description}</p>
         <Link href={link}>
           <button
             type="button"
-            className="flex flex-row items-center bg-transparent text-sm text-primary-2 border border-primary-2 py-4 px-6 mt-4 uppercase tracking-wider transition-all ease-liner duration-300 hover:bg-primary-2 hover:text-primary-9"
+            className="ease-liner mt-4 flex flex-row items-center border border-primary-2 bg-transparent px-6 py-4 text-sm uppercase tracking-wider text-primary-2 transition-all duration-300 hover:bg-primary-2 hover:text-primary-9"
           >
-            <ArrowLeftIcon className="w-auto h-2.5" />
-            <div className="block ml-2">{buttonLabel}</div>
+            <ArrowLeftIcon className="h-2.5 w-auto" />
+            <div className="ml-2 block">{buttonLabel}</div>
           </button>
         </Link>
       </div>

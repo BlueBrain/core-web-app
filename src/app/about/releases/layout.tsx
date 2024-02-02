@@ -15,13 +15,13 @@ async function ReleasesList() {
   const releases = await getAllReleases();
   return (
     <>
-      <div className="pl-12 pt-9 pb-5">
-        <h1 className="text-4xl font-bold text-primary-8 pr-4">What has happened in OBP?</h1>
+      <div className="pb-5 pl-12 pt-9">
+        <h1 className="pr-4 text-4xl font-bold text-primary-8">What has happened in OBP?</h1>
         <div />
       </div>
-      <div className="pl-12 py-4 pr-4 bg-white">
+      <div className="bg-white py-4 pl-12 pr-4">
         <div
-          className="w-full overflow-x-scroll no-scrollbar snap-x snap-mandatory overscroll-x-contain grid gap-3"
+          className="no-scrollbar grid w-full snap-x snap-mandatory gap-3 overflow-x-scroll overscroll-x-contain"
           style={{
             gridTemplateColumns: `repeat(${releases.length}, 20vw)`,
           }}

@@ -179,7 +179,7 @@ export default function NavigationSideMenu() {
   const onMenuParentClick = (id: string) => () => toggleCurrentMenu(id);
 
   return (
-    <ul className="relative  max-h-[calc(100vh-220px)] overflow-y-auto primary-scrollbar pr-2">
+    <ul className="primary-scrollbar  relative max-h-[calc(100vh-220px)] overflow-y-auto pr-2">
       {NAVIGATION_SECTIONS.map(({ id: parentId, title: parentTitle, children }) => {
         const isCurrentMenu = currentMenu === parentId;
         return (
@@ -187,19 +187,19 @@ export default function NavigationSideMenu() {
             <button
               type="button"
               onClick={onMenuParentClick(parentId)}
-              className="py-2 first:pt-0 font-bold text-lg text-white line-clamp-1 hover:text-primary-4"
+              className="line-clamp-1 py-2 text-lg font-bold text-white first:pt-0 hover:text-primary-4"
             >
               {parentTitle}
             </button>
-            <div className={classNames('mb-4 relative h-full', isCurrentMenu ? 'flex' : 'hidden')}>
-              <span className="h-full absolute border-s border-primary-2 border-dashed flex items-center justify-center w-6 left-3" />
+            <div className={classNames('relative mb-4 h-full', isCurrentMenu ? 'flex' : 'hidden')}>
+              <span className="absolute left-3 flex h-full w-6 items-center justify-center border-s border-dashed border-primary-2" />
               <ul className="ml-5">
                 {children.map(({ title, id, url }) => {
                   const isCurrentSubMenu = params?.['docs-id'] === id;
                   return (
                     <li
                       className={classNames(
-                        'py-1 px-2 rounded-sm hover:bg-black hover:bg-opacity-20 cursor-pointer',
+                        'cursor-pointer rounded-sm px-2 py-1 hover:bg-black hover:bg-opacity-20',
                         isCurrentSubMenu && 'bg-primary-8 bg-opacity-10'
                       )}
                       key={id}
@@ -207,7 +207,7 @@ export default function NavigationSideMenu() {
                       <Link
                         title={title}
                         href={url}
-                        className="text-base text-white font-normal line-clamp-1 hover:text-primary-4"
+                        className="line-clamp-1 text-base font-normal text-white hover:text-primary-4"
                       >
                         {title}
                       </Link>

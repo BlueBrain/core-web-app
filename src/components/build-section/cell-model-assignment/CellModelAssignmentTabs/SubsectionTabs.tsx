@@ -40,7 +40,7 @@ export default function SubsectionTabs({ className }: Props) {
   const currentMode = pathname?.match('-model/(.+)?')?.[1];
 
   return (
-    <div className="flex justify-start items-center shrink-0 gap-4">
+    <div className="flex shrink-0 items-center justify-start gap-4">
       {modeTabs.map((tab) => (
         <Link
           key={tab.href}

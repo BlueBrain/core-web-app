@@ -28,7 +28,7 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
       shape="circle"
       onClick={() => setEditMode(true)}
       icon={<EditIcon className="ml-2" style={{ color: '#BFBFBF' }} />}
-      className="border-none mt-1"
+      className="mt-1 border-none"
       title="Edit virtual lab information"
       aria-label="Edit virtual lab information"
     />
@@ -123,7 +123,7 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
           >
             <Input
               readOnly={!editMode}
-              className={`font-bold rounded-none ${editMode ? 'border border-gray-200 px-3' : ''}`}
+              className={`rounded-none font-bold ${editMode ? 'border border-gray-200 px-3' : ''}`}
               style={{ width: showEditPrompts ? `50%` : '100%' }}
               title={form.getFieldValue('name')}
               addonAfter={editButton}
@@ -161,7 +161,7 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
           >
             <Input
               readOnly={!editMode}
-              className={`font-bold rounded-none ${editMode ? 'border border-gray-200 px-3' : ''}`}
+              className={`rounded-none font-bold ${editMode ? 'border border-gray-200 px-3' : ''}`}
               style={{
                 width: showEditPrompts ? `50%` : '100%',
               }}
@@ -173,14 +173,14 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
 
           {editMode && (
             <Form.Item>
-              <div className="flex justify-end items-center">
+              <div className="flex items-center justify-end">
                 <Button
                   htmlType="button"
                   onClick={() => {
                     form.resetFields();
                     setEditMode(false);
                   }}
-                  className="text-gray-500 font-semibold"
+                  className="font-semibold text-gray-500"
                 >
                   Cancel
                 </Button>
@@ -190,7 +190,7 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
                   title="Save Changes"
                   htmlType="submit"
                   onClick={onSave}
-                  className="w-40 h-14 rounded-none bg-green-600 font-semibold hover:bg-green-700"
+                  className="h-14 w-40 rounded-none bg-green-600 font-semibold hover:bg-green-700"
                 >
                   Save
                 </Button>

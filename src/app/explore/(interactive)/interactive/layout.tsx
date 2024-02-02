@@ -19,7 +19,7 @@ export default function ExploreInteractiveLayout({ children }: { children: React
   useEffect(() => setConfigId(defaultModelRelease.id), [setConfigId]);
 
   return (
-    <div className="h-screen grid grid-cols-[min-content_min-content_auto] grid-rows-1">
+    <div className="grid h-screen grid-cols-[min-content_min-content_auto] grid-rows-1">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <Sidebar />
       </ErrorBoundary>

@@ -40,7 +40,7 @@ function TreeLineBar({ show, height }: { show: boolean; height?: number }) {
   if (!show) return null;
   return (
     <div
-      className="absolute w-px border-l border-dashed border-primary-4 left-px"
+      className="absolute left-px w-px border-l border-dashed border-primary-4"
       style={
         height
           ? {
@@ -114,19 +114,19 @@ function NavTitle({
 
   return (
     <>
-      <div ref={navTitleRef} className="py-3 first:border-none group">
+      <div ref={navTitleRef} className="group py-3 first:border-none">
         <div
           className={classNames(
-            'w-full flex items-center justify-between py-1 rounded-full gap-x-1',
-            '[&:has(.brain-regions-views-open)]:rounded-md [&:has(.brain-regions-views-open)]:items-start will-change-[transform,height]',
-            '[&:has(.brain-regions-views-open)]:transition-background [&:has(.brain-regions-views-open)]:ease-out [&:has(.brain-regions-views-open)]:py-3',
-            selected && 'px-2 transition-all ease-out duration-200 hover:shadow-md'
+            'flex w-full items-center justify-between gap-x-1 rounded-full py-1',
+            'will-change-[transform,height] [&:has(.brain-regions-views-open)]:items-start [&:has(.brain-regions-views-open)]:rounded-md',
+            '[&:has(.brain-regions-views-open)]:py-3 [&:has(.brain-regions-views-open)]:transition-background [&:has(.brain-regions-views-open)]:ease-out',
+            selected && 'px-2 transition-all duration-200 ease-out hover:shadow-md'
           )}
           style={selected ? { backgroundColor: colorCode } : {}}
         >
           <button
             type="button"
-            className="flex items-center justify-end h-auto gap-3 font-bold border-none"
+            className="flex h-auto items-center justify-end gap-3 border-none font-bold"
             onClick={() => id && onClick()}
           >
             <span
@@ -134,9 +134,9 @@ function NavTitle({
               className={classNames(
                 'mr-auto whitespace-pre-wrap text-left',
                 isExpanded || selectedBrainRegion?.id === id
-                  ? !selected && 'text-primary-4 font-medium'
-                  : !selected && 'text-primary-1 font-light',
-                selected && 'font-bold text-primary-8 line-clamp-1',
+                  ? !selected && 'font-medium text-primary-4'
+                  : !selected && 'font-light text-primary-1',
+                selected && 'line-clamp-1 font-bold text-primary-8',
                 className
               )}
             >
@@ -145,8 +145,8 @@ function NavTitle({
           </button>
           <div
             className={classNames(
-              'flex gap-2 justify-between items-center',
-              '[&:not(:has(button.accordion-trigger))]:pr-6 [&:has(.brain-regions-views-open)]:items-start'
+              'flex items-center justify-between gap-2',
+              '[&:has(.brain-regions-views-open)]:items-start [&:not(:has(button.accordion-trigger))]:pr-6'
             )}
           >
             <AlternateViewSelector
@@ -195,12 +195,12 @@ export default function BrainRegions() {
   }, [brainModelConfigId, localSelectedBrainModelConfigId]);
 
   return brainRegionsTree ? (
-    <div className="flex flex-col flex-1 h-screen bg-primary-8 overflow-hidden">
+    <div className="flex h-screen flex-1 flex-col overflow-hidden bg-primary-8">
       {isCollapsed ? (
         <CollapsedBrainRegionsSidebar setIsCollapsed={setIsCollapsed} />
       ) : (
-        <div className="flex flex-col px-6 py-6 h-full min-w-[340px]">
-          <div className="flex items-start justify-between mb-7">
+        <div className="flex h-full min-w-[340px] flex-col px-6 py-6">
+          <div className="mb-7 flex items-start justify-between">
             <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
               <BrainIcon style={{ height: '1em' }} />
               <span>Brain region</span>
@@ -216,7 +216,7 @@ export default function BrainRegions() {
             setValue={setBrainRegionHierarchyState}
             onClear={resetSelectedBrainRegion}
           />
-          <div className="overflow-y-auto no-scrollbar">
+          <div className="no-scrollbar overflow-y-auto">
             <BrainTreeNav
               ref={brainTreeNavRef}
               setValue={setBrainRegionHierarchyState}
@@ -242,7 +242,7 @@ export default function BrainRegions() {
       )}
     </div>
   ) : (
-    <div className="w-[300px] bg-primary-8 h-screen text-neutral-1 text-3xl flex justify-center items-center">
+    <div className="flex h-screen w-[300px] items-center justify-center bg-primary-8 text-3xl text-neutral-1">
       <LoadingOutlined />
     </div>
   );

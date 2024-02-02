@@ -44,10 +44,10 @@ export function DetailsPageSideBackLink() {
 
   return prevPath ? (
     <Link
-      className="fixed pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] h-full flex flex-col items-center"
+      className="fixed flex h-full w-[40px] flex-col items-center bg-neutral-1 pt-2 text-sm text-primary-8"
       href={prevPath}
     >
-      <ArrowRightOutlined className="rotate-180 mt-1.5 mb-4" />
+      <ArrowRightOutlined className="mb-4 mt-1.5 rotate-180" />
       <div style={{ writingMode: 'vertical-rl', rotate: '180deg' }}>Back to list</div>
     </Link>
   ) : null;
@@ -57,7 +57,7 @@ function ExploreNavigation({ expanded }: { expanded: boolean }) {
   return (
     <ul
       className={classNames(
-        'w-full h-full flex items-start justify-start gap-y-1 flex-col overflow-y-auto primary-scrollbar',
+        'primary-scrollbar flex h-full w-full flex-col items-start justify-start gap-y-1 overflow-y-auto',
         !expanded && 'hidden'
       )}
     >
@@ -76,7 +76,7 @@ function AnonymousExploreSideBarNavigation({ expanded }: { expanded: boolean }) 
   return (
     <div
       className={classNames(
-        'w-full flex flex-col gap-y-1 my-2',
+        'my-2 flex w-full flex-col gap-y-1',
         expanded ? 'items-start' : 'items-center'
       )}
     >

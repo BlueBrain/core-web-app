@@ -40,7 +40,7 @@ export default function ComputeTimeVisualization({ totalTimeInHours, usedTimeInH
   return (
     <>
       <div
-        className="w-full flex h-6 rounded-xl bg-primary-7 overflow-x-hidden my-3"
+        className="my-3 flex h-6 w-full overflow-x-hidden rounded-xl bg-primary-7"
         data-testid="viz-bar-container"
         title={`Used time: ${usedTimeInHours} | Available time: ${totalTimeInHours}`}
       >
@@ -62,7 +62,7 @@ export default function ComputeTimeVisualization({ totalTimeInHours, usedTimeInH
         )}
       </div>
 
-      <div className="m-auto w-max py-2 px-7 border border-primary-7 text-primary-2 font-bold rounded-[32px]">
+      <div className="m-auto w-max rounded-[32px] border border-primary-7 px-7 py-2 font-bold text-primary-2">
         {usedTimeInHours < totalTimeInHours
           ? `${totalTimeInHours - usedTimeInHours} ${
               totalTimeInHours - usedTimeInHours === 1 ? 'hour' : 'hours'

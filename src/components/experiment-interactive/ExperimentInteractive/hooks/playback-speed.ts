@@ -13,7 +13,7 @@ export interface PlaybackSpeedItem {
  */
 export function usePlaybackSpeed(): [
   item: PlaybackSpeedItem,
-  setId: (id: PlaybackSpeedId) => void
+  setId: (id: PlaybackSpeedId) => void,
 ] {
   const [id, setId] = useAtom(atomPlaybackSpeed);
   const item = PLAYBACK_SPEED_ITEMS[id] ?? PLAYBACK_SPEED_ITEMS.default;

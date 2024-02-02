@@ -25,11 +25,11 @@ export default function ParametersContainer({ className }: Props) {
 
   return (
     <div className={className}>
-      <div className="font-bold text-xl text-primary-8">
-        <SettingsIcon className="h-4 inline-block mr-2" />
+      <div className="text-xl font-bold text-primary-8">
+        <SettingsIcon className="mr-2 inline-block h-4" />
         <span>Parameters</span>
       </div>
-      <div className="w-[200px] text-primary-8 mt-6">{body}</div>
+      <div className="mt-6 w-[200px] text-primary-8">{body}</div>
     </div>
   );
 }

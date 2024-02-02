@@ -38,13 +38,13 @@ export default function TopNavigation({ children }: TopNavigationProps) {
 
   return (
     <div
-      className={`flex flex-row w-full h-[40px] relative z-50 border-b ${
-        isLightThemeActive ? `bg-white border-b-neutral-2` : `bg-black border-b-neutral-6`
+      className={`relative z-50 flex h-[40px] w-full flex-row border-b ${
+        isLightThemeActive ? `border-b-neutral-2 bg-white` : `border-b-neutral-6 bg-black`
       }`}
     >
-      <div className="flex min-w-[290px] h-full" ref={primaryDropdownRef} />
+      <div className="flex h-full min-w-[290px]" ref={primaryDropdownRef} />
       <div className="flex flex-grow" ref={pillNavigationRef} />
-      <div className="flex justify-end min-w-[290px] h-full" ref={secondaryDropdownRef} />
+      <div className="flex h-full min-w-[290px] justify-end" ref={secondaryDropdownRef} />
       {children}
     </div>
   );

@@ -8,17 +8,17 @@ type HeaderSingleGalleryProps = {
 
 export default function HeaderSingleGallery({ title, description }: HeaderSingleGalleryProps) {
   return (
-    <div className="fixed z-10 top-0 left-0 w-1/4 h-full flex flex-col p-6">
+    <div className="fixed left-0 top-0 z-10 flex h-full w-1/4 flex-col p-6">
       <div className="flex flex-col">
-        <h1 className="text-white text-5xl font-bold inline leading-none">{title}</h1>
-        <p className="mt-2 font-thin leading-5 text-neutral-3 w-2/3">{description}</p>
+        <h1 className="inline text-5xl font-bold leading-none text-white">{title}</h1>
+        <p className="mt-2 w-2/3 font-thin leading-5 text-neutral-3">{description}</p>
         <Link href="/explore/gallery">
           <button
             type="button"
-            className="flex flex-row items-center bg-transparent text-sm text-white mt-4 pb-1 uppercase border-b-0 border-solid border-b-neutral-4 tracking-wider transition-all ease-liner duration-300 hover:border-b "
+            className="ease-liner mt-4 flex flex-row items-center border-b-0 border-solid border-b-neutral-4 bg-transparent pb-1 text-sm uppercase tracking-wider text-white transition-all duration-300 hover:border-b "
           >
-            <ArrowLeftIcon className="w-auto h-2.5" />
-            <div className="block ml-2">Back to the list</div>
+            <ArrowLeftIcon className="h-2.5 w-auto" />
+            <div className="ml-2 block">Back to the list</div>
           </button>
         </Link>
       </div>

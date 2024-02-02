@@ -45,7 +45,7 @@ export default function SecondaryDropdownItem({
     <DropdownMenu.Item key={label} asChild>
       <button
         type="button"
-        className={`flex flex-row p-3 gap-3 items-center font-bold outline-none ${buttonClasses}`}
+        className={`flex flex-row items-center gap-3 p-3 font-bold outline-none ${buttonClasses}`}
         onClick={handleClick}
       >
         {icon}

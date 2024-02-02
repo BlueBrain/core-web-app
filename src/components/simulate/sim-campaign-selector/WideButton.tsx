@@ -15,10 +15,10 @@ export function WideButton({
   className = 'bg-primary-8',
 }: WideButtonProps) {
   return (
-    <button type="button" className={`flex justify-between items-start p-8 w-full ${className}`}>
+    <button type="button" className={`flex w-full items-start justify-between p-8 ${className}`}>
       <div className="flex flex-col items-start gap-2 text-left">
-        <h3 className="font-bold text-2xl">{title}</h3>
-        <div className="text-primary-3 max-w-[400px]">{description}</div>
+        <h3 className="text-2xl font-bold">{title}</h3>
+        <div className="max-w-[400px] text-primary-3">{description}</div>
       </div>
       {icon}
     </button>

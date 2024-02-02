@@ -16,7 +16,7 @@ export function ExploreDownloadButton({
 
   return session ? (
     <Btn
-      className="bg-primary-8 sticky bottom-0 ml-auto fit-content w-fit"
+      className="fit-content sticky bottom-0 ml-auto w-fit bg-primary-8"
       loading={fetching}
       ariaLabel="download-resources-button"
       onClick={() => {

@@ -14,7 +14,7 @@ export default function Card({ content }: { content: SingleGallery }) {
     <Link
       href={`/explore/gallery/${content.slug.current}`}
       className={classNames(
-        'relative flex flex-col p-3 rounded-md transition-background duration-500 ease-linear',
+        'relative flex flex-col rounded-md p-3 transition-background duration-500 ease-linear',
         mouseStatus ? 'bg-primary-7' : 'bg-primary-8'
       )}
       onMouseOver={() => setMouseStatus(true)}
@@ -24,7 +24,7 @@ export default function Card({ content }: { content: SingleGallery }) {
     >
       <div
         className={classNames(
-          'block w-full shadow-strongImage rounded-sm overflow-hidden origin-center transition-transform duration-500 ease-in-out',
+          'block w-full origin-center overflow-hidden rounded-sm shadow-strongImage transition-transform duration-500 ease-in-out',
           mouseStatus ? 'scale-100' : 'scale-95'
         )}
       >
@@ -34,21 +34,21 @@ export default function Card({ content }: { content: SingleGallery }) {
           width={400}
           height={400}
           className={classNames(
-            'w-full h-auto transform-filter',
+            'transform-filter h-auto w-full',
             mouseStatus ? 'brightness-100' : 'brightness-90'
           )}
         />
       </div>
-      <div className="w-full p-2 flex flex-col">
-        <h2 className="text-white text-2xl font-bold mt-5">{content.title}</h2>
+      <div className="flex w-full flex-col p-2">
+        <h2 className="mt-5 text-2xl font-bold text-white">{content.title}</h2>
 
-        <aside className="flex flex-row items-center gap-x-2 p-1 my-2 border border-primary-6 border-solid">
-          <div className="flex flex-row text-primary-2 text-xs font-normal">127 images</div>
-          <div className="w-px h-3 block bg-primary-6" />
-          <div className="flex flex-row text-primary-2 text-xs font-normal">32 videos</div>
+        <aside className="my-2 flex flex-row items-center gap-x-2 border border-solid border-primary-6 p-1">
+          <div className="flex flex-row text-xs font-normal text-primary-2">127 images</div>
+          <div className="block h-3 w-px bg-primary-6" />
+          <div className="flex flex-row text-xs font-normal text-primary-2">32 videos</div>
         </aside>
 
-        <p className="text-primary-3 font-normal leading-normal">{content.description}</p>
+        <p className="font-normal leading-normal text-primary-3">{content.description}</p>
       </div>
     </Link>
   );

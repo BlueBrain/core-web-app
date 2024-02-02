@@ -4,20 +4,20 @@ import { Campaign } from '@/types/explore-section/resources';
 export default function CampaignDetails(campaign: Campaign) {
   const currentCampaign = campaign;
   return (
-    <div className="p-7 bg-white">
+    <div className="bg-white p-7">
       <div className="text-xs text-primary-7">Simulation Campaign</div>
-      <div className="font-bold text-xl text-primary-7">{currentCampaign.name}</div>
-      <div className="flex justify-between mt-10">
-        <div className="flex-1 text-primary-7 text-xs mr-4">
+      <div className="text-xl font-bold text-primary-7">{currentCampaign.name}</div>
+      <div className="mt-10 flex justify-between">
+        <div className="mr-4 flex-1 text-xs text-primary-7">
           <div className="uppercase text-neutral-4">Description</div>
           <div className="mt-3">{currentCampaign.description}</div>
         </div>
 
-        <div className="flex-1 text-primary-7 text-xs mr-4">
+        <div className="mr-4 flex-1 text-xs text-primary-7">
           <div className="text-xs uppercase text-neutral-4">Brain Configuration</div>
           <div className="mt-3">Release 23.01</div>
         </div>
-        <div className="flex-1 text-primary-7 text-xs mr-4">
+        <div className="mr-4 flex-1 text-xs text-primary-7">
           <div className="text-xs uppercase text-neutral-4">Dimensions</div>
           <div className="mt-3">
             <ul>
@@ -27,11 +27,11 @@ export default function CampaignDetails(campaign: Campaign) {
             </ul>
           </div>
         </div>
-        <div className="flex-1 text-primary-7 text-xs mr-4">
+        <div className="mr-4 flex-1 text-xs text-primary-7">
           <div className="text-xs uppercase text-neutral-4">Attribute</div>
           <div className="mt-3">Attribute</div>
         </div>
-        <div className="flex-1 text-primary-7 text-xs mr-4">
+        <div className="mr-4 flex-1 text-xs text-primary-7">
           <div className="text-xs uppercase text-neutral-4">Tags</div>
           <div className="mt-3">
             <Tag>Tag 1</Tag>
@@ -42,17 +42,17 @@ export default function CampaignDetails(campaign: Campaign) {
             <Tag>Tag 6</Tag>
           </div>
         </div>
-        <div className="flex-1 text-primary-7 text-xs mr-4">
+        <div className="mr-4 flex-1 text-xs text-primary-7">
           <div className="text-xs uppercase text-neutral-4">Status</div>
           <div className="mt-3">{currentCampaign.status}</div>
         </div>
       </div>
-      <div className="flex mt-10">
-        <div className="text-primary-7 text-xs mr-10">
+      <div className="mt-10 flex">
+        <div className="mr-10 text-xs text-primary-7">
           <div className="text-xs uppercase text-neutral-4">User</div>
           <div className="mt-3 capitalize">{currentCampaign.updatedBy}</div>
         </div>
-        <div className="text-primary-7 text-xs mr-4">
+        <div className="mr-4 text-xs text-primary-7">
           <div className="text-xs uppercase text-neutral-4">Updated at</div>
           <div className="mt-3">{currentCampaign.updatedAt}</div>
         </div>

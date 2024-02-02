@@ -19,7 +19,7 @@ export const EMPTY_MEMBER: NewMember = {
 export function useNewMember(): [
   member: NewMember,
   update: (member: Partial<NewMember>) => void,
-  reset: () => void
+  reset: () => void,
 ] {
   const [member, setMember] = useState(EMPTY_MEMBER);
   return [

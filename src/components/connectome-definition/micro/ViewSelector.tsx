@@ -33,7 +33,7 @@ function ColoredCheckbox({ color, children, ...rest }: CheckboxProps & { color: 
 function ColoredBox({ color = '#dadada', size = 16 }: ColoredBoxProps) {
   return (
     <div
-      className="inline-block mr-2 mb-[-2px]"
+      className="mb-[-2px] mr-2 inline-block"
       style={{
         height: `${size}px`,
         width: `${size}px`,
@@ -107,7 +107,7 @@ export default function MicroConnectomeViewSelector({
         </Space>
       </Radio.Group>
 
-      <h3 className="mt-5 mb-3" style={{ color: 'slategray' }}>
+      <h3 className="mb-3 mt-5" style={{ color: 'slategray' }}>
         <VariantEntry
           variantName="disabled"
           checked={!variantExcludeSet.has('disabled')}
@@ -119,7 +119,7 @@ export default function MicroConnectomeViewSelector({
 
       {variantNames.map((variantName) => (
         <div key={variantName}>
-          <h3 className="mt-5 mb-3" style={{ color: variantColorMap.get(variantName) ?? 'gray' }}>
+          <h3 className="mb-3 mt-5" style={{ color: variantColorMap.get(variantName) ?? 'gray' }}>
             <VariantEntry
               variantName={variantName}
               checked={!variantExcludeSet.has(variantName)}

@@ -31,7 +31,7 @@ export default function TargetSelector({
 
   return (
     <div
-      className={classNames('flex gap-3 items-center font-bold', className)}
+      className={classNames('flex items-center gap-3 font-bold', className)}
       aria-label="target-dropdown"
     >
       <div className="grow">Simulated Neurons</div>

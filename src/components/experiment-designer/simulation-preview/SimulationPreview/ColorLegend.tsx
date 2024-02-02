@@ -32,9 +32,9 @@ function LegendItemBox({ label, colorHex, onColorChange }: LegendItemBoxProps) {
 
   return (
     <div key={label} className="flex flex-row items-center gap-2">
-      <div className="w-[10px] h-[10px] relative">
+      <div className="relative h-[10px] w-[10px]">
         <div
-          className="w-[10px] h-[10px] rounded-full p-0 border-0 absolute left-0 top-0"
+          className="absolute left-0 top-0 h-[10px] w-[10px] rounded-full border-0 p-0"
           style={{ backgroundColor: colorHex }}
         />
         <input

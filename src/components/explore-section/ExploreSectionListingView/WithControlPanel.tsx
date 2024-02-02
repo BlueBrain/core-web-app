@@ -45,7 +45,7 @@ export default function WithControlPanel({
 
   return (
     <>
-      <section className="w-full h-full flex flex-col gap-5 bg-white relative min-w-0 before:shadow-lg after:shadow-md">
+      <section className="relative flex h-full w-full min-w-0 flex-col gap-5 bg-white before:shadow-lg after:shadow-md">
         {children({ activeColumns, displayControlPanel, setDisplayControlPanel, filters })}
       </section>
       {displayControlPanel && filters && (

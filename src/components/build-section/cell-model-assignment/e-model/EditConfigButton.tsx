@@ -61,7 +61,7 @@ export default function EditConfigButton({ className }: Props) {
         extraVariablesToReplace={extraVariablesToReplace}
         onLaunchingChange={() => setIsLoading((loading) => !loading)}
         disabled={isLoading || !configIsOk}
-        className="border-green-600 text-white bg-green-600"
+        className="border-green-600 bg-green-600 text-white"
       />
     </>
   );

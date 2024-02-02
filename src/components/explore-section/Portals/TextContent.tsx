@@ -4,26 +4,26 @@ export default function TextContent({ content }: { content: Portal }) {
   const contentDescription = `${content.description.slice(0, 110)}...`;
 
   return (
-    <div className="w-full flex flex-col items-start justify-center pl-5">
+    <div className="flex w-full flex-col items-start justify-center pl-5">
       <h2 className="text-3xl font-bold leading-none text-white">{content.name}</h2>
 
-      <div className="flex flex-row items-center mt-3 mb-2">
-        <div className="flex flex-row gap-x-1 items-center">
+      <div className="mb-2 mt-3 flex flex-row items-center">
+        <div className="flex flex-row items-center gap-x-1">
           {content.categories.map((category: string) => (
             <div
-              className="text-sm text-primary-0 font-light bg-primary-9 rounded-3xl px-4 py-1"
+              className="rounded-3xl bg-primary-9 px-4 py-1 text-sm font-light text-primary-0"
               key={`category-portal-${category}`}
             >
               {category}
             </div>
           ))}
         </div>
-        <div className="font-normal text-xs text-primary-2 ml-2">
+        <div className="ml-2 text-xs font-normal text-primary-2">
           Last update: {content.lastUpdate}
         </div>
       </div>
 
-      <p className="font-light text-primary-1 leading-tight">{contentDescription}</p>
+      <p className="font-light leading-tight text-primary-1">{contentDescription}</p>
     </div>
   );
 }

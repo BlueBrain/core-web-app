@@ -18,7 +18,7 @@ export default function StepperRow({
   stepperName,
 }: StepperRowProps) {
   return (
-    <div className={classNames('flex gap-1 items-center w-full', isChecked ? selectedStyle : '')}>
+    <div className={classNames('flex w-full items-center gap-1', isChecked ? selectedStyle : '')}>
       <input
         type="radio"
         value={stepperName}
@@ -26,7 +26,7 @@ export default function StepperRow({
         name="stepper"
         checked={isChecked}
       />
-      <button type="button" className="text-left grow cursor-pointer" onClick={onRadioSelect}>
+      <button type="button" className="grow cursor-pointer text-left" onClick={onRadioSelect}>
         {stepperName}
       </button>
       {children}

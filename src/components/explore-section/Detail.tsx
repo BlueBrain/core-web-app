@@ -48,9 +48,9 @@ export default function Detail({
   }
 
   return (
-    <div className="flex min-h-screen h-full">
+    <div className="flex h-full min-h-screen">
       <DetailsPageSideBackLink />
-      <div className="bg-white w-full h-full p-7 ml-10 pr-12 flex flex-col gap-7 overflow-auto">
+      <div className="ml-10 flex h-full w-full flex-col gap-7 overflow-auto bg-white p-7 pr-12">
         <DetailHeader fields={fields} detail={detail.data} url={path} />
         {children && detail.data && children(detail.data)}
       </div>

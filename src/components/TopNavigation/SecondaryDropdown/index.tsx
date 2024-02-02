@@ -63,26 +63,26 @@ export default function SecondaryDropdown({
       <DropdownMenu.Root>
         <DropdownMenu.Trigger
           asChild
-          className={`min-w-[190px] h-full border-l ${
+          className={`h-full min-w-[190px] border-l ${
             isLightThemeActive ? `border-neutral-2` : `border-neutral-6`
           }`}
         >
           <button
             type="button"
             onClick={(e) => e.preventDefault()}
-            className={`flex flex-row gap-2 min-w-[190px] h-full items-center justify-between px-5 font-bold outline-none ${
-              isLightThemeActive ? `text-primary-9 bg-white` : `bg-black text-white`
+            className={`flex h-full min-w-[190px] flex-row items-center justify-between gap-2 px-5 font-bold outline-none ${
+              isLightThemeActive ? `bg-white text-primary-9` : `bg-black text-white`
             }`}
           >
-            <div className="flex flex-row flex-grow gap-x-2 justify-center items-center">
+            <div className="flex flex-grow flex-row items-center justify-center gap-x-2">
               {activeItem?.icon}
               {activeItem?.label}
             </div>
-            <ChevronDownIcon className="scale-[200%] origin-center" />
+            <ChevronDownIcon className="origin-center scale-[200%]" />
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
-          <DropdownMenu.Content className="bg-white border-none rounded-none min-w-[190px] flex flex-col relative z-50">
+          <DropdownMenu.Content className="relative z-50 flex min-w-[190px] flex-col rounded-none border-none bg-white">
             {menuItems}
           </DropdownMenu.Content>
         </DropdownMenu.Portal>

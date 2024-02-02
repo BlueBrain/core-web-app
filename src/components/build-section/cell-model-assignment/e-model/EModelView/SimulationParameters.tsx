@@ -48,12 +48,12 @@ export default function SimulationParameters() {
 
   return (
     <>
-      <div className="text-2xl font-bold text-primary-8 my-4">Simulation parameters</div>
-      <div className="flex flex-wrap flex-col h-[75px] gap-2">
+      <div className="my-4 text-2xl font-bold text-primary-8">Simulation parameters</div>
+      <div className="flex h-[75px] flex-col flex-wrap gap-2">
         {paramKeys.map((paramKey) => (
           <div
             key={paramKey}
-            className="w-[200px] flex justify-between items-center text-primary-7"
+            className="flex w-[200px] items-center justify-between text-primary-7"
           >
             <Item
               name={paramKey}
@@ -84,7 +84,7 @@ function Item({ name, value, readOnly, onChange }: ItemProps) {
         disabled={readOnly}
         value={value}
         onChange={(e) => onChange(name, e.target.valueAsNumber)}
-        className="w-[50px] text-right border-2 font-bold rounded"
+        className="w-[50px] rounded border-2 text-right font-bold"
       />
     </>
   );

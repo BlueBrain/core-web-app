@@ -10,8 +10,8 @@ type Props = {
 
 function ErrorContainer({ children }: { children: React.ReactNode }) {
   return (
-    <div className="h-screen max-w-7xl w-full flex items-start mx-10 gap-x-4 mt-12 mb-2">
-      <div className="flex flex-col mx-10 mt-12 w-full">{children}</div>
+    <div className="mx-10 mb-2 mt-12 flex h-screen w-full max-w-7xl items-start gap-x-4">
+      <div className="mx-10 mt-12 flex w-full flex-col">{children}</div>
     </div>
   );
 }
@@ -37,10 +37,10 @@ export default function LiteratureArticlesError({
       <ErrorContainer>
         <ExperimentLiteratureHeader />
         <div className="m-auto self-center border p-4">
-          <h3 className="text-xl text-center">No articles were found for this experiment type.</h3>
+          <h3 className="text-center text-xl">No articles were found for this experiment type.</h3>
           <p>Please make sure that the experiment type is one of the following:</p>
           <br />
-          <ul className="m-auto list-disc w-fit self-center">
+          <ul className="m-auto w-fit list-disc self-center">
             {validExperimentTypes.map((experiment) => (
               <li key={experiment}>{experiment}</li>
             ))}

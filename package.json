@@ -115,7 +115,8 @@
     "jest-environment-jsdom": "^29.5.0",
     "msw": "^2.0.5",
     "postcss": "^8.4.23",
-    "prettier": "^2.8.8",
+    "prettier": "^3.2.4",
+    "prettier-plugin-tailwindcss": "^0.5.11",
     "sass": "^1.62.1",
     "tailwindcss": "^3.3.2"
   }

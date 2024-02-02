@@ -50,7 +50,7 @@ export default function BuildSectionLayout({ children }: BuildSectionLayoutProps
           </ErrorBoundary>
         )}
         {isConnectomeEditor && (
-          <Suspense fallback={<div className="bg-black h-screen w-[40px]" />}>
+          <Suspense fallback={<div className="h-screen w-[40px] bg-black" />}>
             <ConnectomeEditorSidebar />
           </Suspense>
         )}

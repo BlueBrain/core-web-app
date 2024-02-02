@@ -13,7 +13,7 @@ export default function ExperimentInteractive() {
   const [slotSelectorVisible] = useSlotSelectorVisible();
   return (
     <ExperimentInteractiveProvider>
-      <div className="w-full flex flex-col bg-black h-screen text-white relative">
+      <div className="relative flex h-screen w-full flex-col bg-black text-white">
         <SimulationGrid />
         <BottomPanel />
         <ControlPanel />

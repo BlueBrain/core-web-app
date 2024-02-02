@@ -10,7 +10,7 @@ export default function ResetViewButton({ onResetCamera, isDisabled }: ResetView
       type="button"
       onClick={onResetCamera}
       disabled={isDisabled}
-      className={`flex flex-row align-middle items-center ${
+      className={`flex flex-row items-center align-middle ${
         isDisabled ? 'text-neutral-5' : 'text-white'
       }`}
     >

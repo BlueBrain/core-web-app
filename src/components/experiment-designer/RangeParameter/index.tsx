@@ -32,7 +32,7 @@ function ShowRangeResultsLive({ start, end, stepper }: RangeLiveProps) {
       <span className="text-gray-400">Steps used ({values.length})</span>
       <div className="flex flex-wrap gap-2">
         {values.map((step) => (
-          <div key={step} className="px-2 py-1 border text-gray-400 rounded text-center">
+          <div key={step} className="rounded border px-2 py-1 text-center text-gray-400">
             {round(step, 2)}
           </div>
         ))}
@@ -116,9 +116,9 @@ export default function RangeParameter({ paramAtom, className, onChangeParamType
         <div className={classNames(borderStyle, 'p-2')}>
           <div>
             RANGE
-            <span className="text-gray-400 px-2">{data.unit}</span>
+            <span className="px-2 text-gray-400">{data.unit}</span>
           </div>
-          <div className="mb-14 mx-3">
+          <div className="mx-3 mb-14">
             <Slider
               range
               min={min}

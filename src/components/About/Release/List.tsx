@@ -36,30 +36,30 @@ export function ReleaseCard({
   return (
     <div
       id={`release-${id}`}
-      className="snap-start flex flex-col relative h-full border-x bg-[#0027661a] backdrop-blur-[2px] hover:shadow-md"
+      className="relative flex h-full snap-start flex-col border-x bg-[#0027661a] backdrop-blur-[2px] hover:shadow-md"
     >
       <Image alt={title} src={`${basePath}${src}`} {...{ width, height }} />
       <div
         className={classNames(
-          'flex flex-col w-full p-4 transition-background duration-200 ease-out',
+          'flex w-full flex-col p-4 transition-background duration-200 ease-out',
           selected && 'bg-primary-8'
         )}
       >
         <div className="inline-flex items-center justify-between gap-2 py-2">
           <div className="text-sm font-light text-primary-8">Release {version}</div>
-          <div className="grid grid-flow-col gap-1 items-center justify-center">
+          <div className="grid grid-flow-col items-center justify-center gap-1">
             <FilledCalendar className="text-primary-8" />
-            <span className="text-primary-8 text-sm">{format(new Date(date), 'dd.MM.yyyy')}</span>
+            <span className="text-sm text-primary-8">{format(new Date(date), 'dd.MM.yyyy')}</span>
           </div>
         </div>
-        <h3 className="text-xl font-bold text-primary-8 line-clamp-2 py-2">{title}</h3>
-        <p className="text-sm font-light text-primary-8 line-clamp-4">{description}</p>
+        <h3 className="line-clamp-2 py-2 text-xl font-bold text-primary-8">{title}</h3>
+        <p className="line-clamp-4 text-sm font-light text-primary-8">{description}</p>
         <Link
           href={`/about/releases/${id}`}
-          className="text-base font-normal relative w-max px-2 flex flex-col items-center text-primary-8 mt-9"
+          className="relative mt-9 flex w-max flex-col items-center px-2 text-base font-normal text-primary-8"
         >
           Read more
-          <div className="h-[2px] bg-primary-8 w-4/5 absolute bottom-0" />
+          <div className="absolute bottom-0 h-[2px] w-4/5 bg-primary-8" />
         </Link>
       </div>
     </div>

@@ -50,7 +50,7 @@ function ContextualTrigger({
   return (
     <IconButton
       onClick={onTriggerContextualLiterature}
-      className="w-min h-min p-0 hover:!bg-transparent"
+      className="h-min w-min p-0 hover:!bg-transparent"
     >
       <ReadOutlined className={classNames('h-4 text-base text-white', className)} />
     </IconButton>

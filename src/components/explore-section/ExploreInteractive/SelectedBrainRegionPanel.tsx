@@ -16,7 +16,7 @@ export default function SelectedBrainRegionPanel() {
 
   return (
     selected && (
-      <div className="absolute bottom-0 bg-[#000000b3] z-10 w-full px-10 min-h-[200px]">
+      <div className="absolute bottom-0 z-10 min-h-[200px] w-full bg-[#000000b3] px-10">
         <div className="flex">
           <ConfigProvider
             theme={{

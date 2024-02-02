@@ -22,13 +22,13 @@ export default function RulesFilters({ rules, onFilterChange }: RulesFiltersProp
   useFilterUpdate(filterItems, setFilter);
   const handleAdd = useAddHandler(filterItems, setFilterItems);
   return (
-    <div className={`${styles.rulesFilters} text-primary-8 text-sm`}>
+    <div className={`${styles.rulesFilters} text-sm text-primary-8`}>
       <button onClick={toggleDetails} type="button">
-        <SettingsIcon className="rotate-90 inline-block " style={{ width: 12, height: 12 }} />
+        <SettingsIcon className="inline-block rotate-90 " style={{ width: 12, height: 12 }} />
         <div className="-mt-1 ml-1 text-sm">Filter</div>
       </button>
       <button onClick={toggleDetails} type="button">
-        <div className="text-sm inline-block">Total: {filteredRulesCount} rules</div>
+        <div className="inline-block text-sm">Total: {filteredRulesCount} rules</div>
         {showDetails ? <DownOutlined /> : <RightOutlined />}
       </button>
       {showDetails && (

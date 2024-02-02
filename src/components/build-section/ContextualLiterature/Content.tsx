@@ -34,7 +34,7 @@ function RedirectionButton({ title, onClick }: { title: string; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className="px-5 py-3 bg-white border border-gray-400 w-max hover:bg-primary-8 group"
+      className="group w-max border border-gray-400 bg-white px-5 py-3 hover:bg-primary-8"
     >
       <span className="text-base font-bold text-primary-8 group-hover:text-white">{title}</span>
     </button>
@@ -46,7 +46,7 @@ function BackButton({ onSlideBack }: { onSlideBack: () => void }) {
     <button
       type="button"
       onClick={onSlideBack}
-      className="inline-flex items-center px-4 py-3 rounded-md hover:bg-gray-50"
+      className="inline-flex items-center rounded-md px-4 py-3 hover:bg-gray-50"
     >
       <ArrowLeftOutlined className="mr-2 text-base text-gray-400" />
       <span className="text-base font-normal text-gray-500">Back to all questions</span>
@@ -62,7 +62,7 @@ function CurratedQuestions({
   onSelectQuestion: (key: string) => () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center w-full px-2 gap-y-2">
+    <div className="flex w-full flex-col items-center justify-center gap-y-2 px-2">
       {curratedQuestions &&
         Object.entries(curratedQuestions).map(([key, question], index) => (
           <ItemTile
@@ -93,7 +93,7 @@ function ContextualContainer({ children }: { children: React.ReactNode }) {
         open={drawerOpen}
         onClose={onDrawerClose}
         rootClassName="!primary-scrollbar [&>.ant-drawer-content-wrapper]:rounded-bl-2xl"
-        className="rounded-bl-2xl py-3 [&>.ant-drawer-wrapper-body]:!h-[calc(100%-100px)] [&>.ant-drawer-wrapper-body>.ant-drawer-body]:!primary-scrollbar [&>.ant-drawer-wrapper-body]:flex [&>.ant-drawer-wrapper-body]:flex-col-reverse"
+        className="[&>.ant-drawer-wrapper-body>.ant-drawer-body]:!primary-scrollbar rounded-bl-2xl py-3 [&>.ant-drawer-wrapper-body]:flex [&>.ant-drawer-wrapper-body]:!h-[calc(100%-100px)] [&>.ant-drawer-wrapper-body]:flex-col-reverse"
         title={null}
         closeIcon={null}
         width="40vw"
@@ -238,23 +238,23 @@ function ContextualContent() {
   }, [about, densityOrCount, selectedBrainRegion?.title, step, subject]);
 
   return (
-    <div className="w-full h-full my-2">
-      <div className="absolute top-0 z-30 flex items-center justify-center w-10 h-10 bg-white rounded-tl-full rounded-bl-full -left-10">
+    <div className="my-2 h-full w-full">
+      <div className="absolute -left-10 top-0 z-30 flex h-10 w-10 items-center justify-center rounded-bl-full rounded-tl-full bg-white">
         <CloseOutlined
-          className="text-base cursor-pointer text-primary-8"
+          className="cursor-pointer text-base text-primary-8"
           onClick={onDrawerClose}
         />
       </div>
-      <div className="px-2 mt-4 mb-2">About</div>
-      <div className="px-2 mt-px mb-6 text-3xl font-extrabold text-primary-8">{subject}</div>
+      <div className="mb-2 mt-4 px-2">About</div>
+      <div className="mb-6 mt-px px-2 text-3xl font-extrabold text-primary-8">{subject}</div>
       <div className="relative w-full">
         <div
           id="parameter-questions"
           className={classNames(
-            'w-full h-full absolute left-0 right-0 transition-[visibility,opacity] duration-300',
+            'absolute left-0 right-0 h-full w-full transition-[visibility,opacity] duration-300',
             currentSlide === 'results'
-              ? 'opacity-0 z-0 ease-out invisible'
-              : 'opacity-100 z-10 ease-in visible'
+              ? 'invisible z-0 opacity-0 ease-out'
+              : 'visible z-10 opacity-100 ease-in'
           )}
         >
           <CurratedQuestions {...{ curratedQuestions, onSelectQuestion }} />
@@ -262,10 +262,10 @@ function ContextualContent() {
         <div
           id="question-result"
           className={classNames(
-            'w-full h-full absolute left-0 right-0 bg-white transition-[visibility,opacity] duration-300',
+            'absolute left-0 right-0 h-full w-full bg-white transition-[visibility,opacity] duration-300',
             currentSlide === 'results'
-              ? 'opacity-100 z-10 ease-in visible'
-              : 'opacity-0 z-0 ease-out invisible'
+              ? 'visible z-10 opacity-100 ease-in'
+              : 'invisible z-0 opacity-0 ease-out'
           )}
         >
           <BackButton {...{ onSlideBack }} />
@@ -278,8 +278,8 @@ function ContextualContent() {
               />
             </div>
           ) : (
-            <div className="bg-white p-4 my-4 w-full left-0 right-0 z-50 rounded-2xl border border-zinc-100 flex-col justify-start items-start gap-2.5 inline-flex mx-auto">
-              <div className="inline-flex flex-col items-start justify-start w-full px-2 py-3">
+            <div className="left-0 right-0 z-50 mx-auto my-4 inline-flex w-full flex-col items-start justify-start gap-2.5 rounded-2xl border border-zinc-100 bg-white p-4">
+              <div className="inline-flex w-full flex-col items-start justify-start px-2 py-3">
                 <QAForm
                   key={promptResponseNode.key}
                   label={String(currentQuestionIndex)}
@@ -290,7 +290,7 @@ function ContextualContent() {
           )}
           {promptResponseNode.id && (
             <div
-              className="flex flex-col items-center justify-start w-full h-full min-h-[300px] mb-24 px-4"
+              className="mb-24 flex h-full min-h-[300px] w-full flex-col items-center justify-start px-4"
               ref={streamRef}
             >
               {withStreamResult({
@@ -303,7 +303,7 @@ function ContextualContent() {
           )}
         </div>
       </div>
-      <div className="absolute left-0 right-0 bottom-0 py-8 z-50 inline-flex items-center justify-center w-full mx-auto gap-x-3 rounded-bl-2xl bg-white">
+      <div className="absolute bottom-0 left-0 right-0 z-50 mx-auto inline-flex w-full items-center justify-center gap-x-3 rounded-bl-2xl bg-white py-8">
         {promptResponseNode.result && (
           <RedirectionButton title="More options" onClick={gotoOptionMode} />
         )}

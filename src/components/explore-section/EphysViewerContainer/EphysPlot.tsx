@@ -137,7 +137,7 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
         {sweeps.length > 1 && (
           <button
             type="button"
-            className="h-[32px] bg-transparant self-end text-dark"
+            className="bg-transparant h-[32px] self-end text-dark"
             onClick={() => {
               setSelectedSweeps([]);
               setZoomRanges(null);
@@ -147,7 +147,7 @@ function EphysPlot({ options, index, defaultStimulusType, defaultRepetition }: E
           </button>
         )}
       </div>
-      <div className="flex flex-col 2xl:flex-row gap-10">
+      <div className="flex flex-col gap-10 2xl:flex-row">
         <StimulusPlot
           setSelectedSweeps={setSelectedSweeps}
           metadata={selectedMetadata}

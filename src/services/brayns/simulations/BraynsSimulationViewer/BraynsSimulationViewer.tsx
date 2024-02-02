@@ -44,7 +44,7 @@ export default function BraynsSimulationViewer({ className, slot }: BraynsSimula
           </details>
           <center>
             <Button
-              className="flex gap-2 items-center text-sm"
+              className="flex items-center gap-2 text-sm"
               icon={<ReloadOutlined />}
               type="primary"
               onClick={() => {

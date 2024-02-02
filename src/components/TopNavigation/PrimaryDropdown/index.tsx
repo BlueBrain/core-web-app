@@ -60,17 +60,17 @@ export default function PrimaryDropdown({
   const component = useMemo(
     () => (
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild className="min-w-[287px] h-full">
+        <DropdownMenu.Trigger asChild className="h-full min-w-[287px]">
           <button
             type="button"
             onClick={(e) => e.preventDefault()}
-            className={`flex flex-row gap-2 w-full h-full items-center justify-between px-5 font-bold border-transparent outline-none ${
-              isLightThemeActive ? `text-white bg-primary-9` : `text-black bg-white`
+            className={`flex h-full w-full flex-row items-center justify-between gap-2 border-transparent px-5 font-bold outline-none ${
+              isLightThemeActive ? `bg-primary-9 text-white` : `bg-white text-black`
             }`}
           >
             <div className="flex flex-row gap-x-3">
               <div
-                className={`flex flex-row gap-x-2 font-bold items-center ${
+                className={`flex flex-row items-center gap-x-2 font-bold ${
                   isLightThemeActive ? `text-primary-5` : `text-neutral-3`
                 }`}
               >
@@ -78,7 +78,7 @@ export default function PrimaryDropdown({
                   {activeItemIndex + 1}
                 </div>
                 <div
-                  className={`rotate-[48deg] w-[1px] h-[12px] ${
+                  className={`h-[12px] w-[1px] rotate-[48deg] ${
                     isLightThemeActive ? `bg-primary-5` : `bg-neutral-3`
                   } `}
                 />
@@ -86,12 +86,12 @@ export default function PrimaryDropdown({
               </div>
               <div className="font-bold">{activeItem.label}</div>
             </div>
-            <ChevronDownIcon className="scale-[200%] origin-center" />
+            <ChevronDownIcon className="origin-center scale-[200%]" />
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            className={`border-none rounded-none min-w-[287px] flex flex-col relative z-50 ${
+            className={`relative z-50 flex min-w-[287px] flex-col rounded-none border-none ${
               isLightThemeActive ? `bg-primary-9 text-white` : `bg-white text-black`
             }`}
           >

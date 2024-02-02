@@ -40,7 +40,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
 
   if (!simulations)
     return (
-      <div className="w-full h-full bg-black absolute flex justify-center items-center">
+      <div className="absolute flex h-full w-full items-center justify-center bg-black">
         <Spinner> Loading...</Spinner>
       </div>
     );
@@ -64,14 +64,14 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
             <>
               <div onClick={() => setShowFilters(!showFilters)} className="cursor-pointer">
                 <SlidersOutlined />
-                <span className="inline-block ml-1 text-xs">Filter by value</span>
+                <span className="ml-1 inline-block text-xs">Filter by value</span>
               </div>
               {Array.from({ length: availableCoords.length - 2 }, (_, i) => i).map((i) => (
                 <div key={i} />
               ))}
               <div className={`${styles.span2} text-sm`}>
                 Total simulations:
-                <span className="font-bold inline-block ml-1">{filteredSimulations.length}</span>
+                <span className="ml-1 inline-block font-bold">{filteredSimulations.length}</span>
               </div>
             </>
           )}
@@ -91,7 +91,7 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
                 />
               ))}
               <div onClick={() => setFilters({})} className="cursor-pointer">
-                <UndoOutlined /> <span className="inline-block ml-1 text-sm">Reset</span>
+                <UndoOutlined /> <span className="ml-1 inline-block text-sm">Reset</span>
               </div>
             </>
           )}
@@ -132,10 +132,10 @@ export default function SlotsSelector({ className }: SlotsSelectorProps) {
             <div className="text-xl font-bold">Selected simulations</div>
             <div className="text-xs">
               Selected simulations
-              <span className="font-bold inline-block ml-2">{slots.list.length}</span> / 9
+              <span className="ml-2 inline-block font-bold">{slots.list.length}</span> / 9
             </div>
           </div>
-          <div className="text-xs items-center flex justify-end w-1/2">
+          <div className="flex w-1/2 items-center justify-end text-xs">
             You can only select a maximum of 9 simulations
           </div>
         </div>

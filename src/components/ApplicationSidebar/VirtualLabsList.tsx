@@ -55,13 +55,13 @@ export default function VirtualLabsList() {
         },
       }}
     >
-      <div className="inline-flex items-center justify-between w-full" data-testid="all-user-labs">
+      <div className="inline-flex w-full items-center justify-between" data-testid="all-user-labs">
         {virtualLabs.length === 1 ? (
           <div className="p-5" data-testid="current-virtual-lab">
             <VirtualLabLabel labName={currentVirtualLab.name} />
             <Link
               href={`/virtual-lab/lab/${currentVirtualLab.id}`}
-              className="text-primary-3 block font-normal mt-2"
+              className="mt-2 block font-normal text-primary-3"
             >
               Virtual Lab settings
             </Link>
@@ -69,19 +69,19 @@ export default function VirtualLabsList() {
         ) : (
           <div className="w-full">
             {virtualLabListExpanded ? (
-              <div className="p-4 flex justify-end">
+              <div className="flex justify-end p-4">
                 <button
                   onClick={() => setVirtualLabListExpanded(false)}
                   className="border-none text-xs"
                   type="button"
                   aria-label="Collapse Virtual Lab List"
                 >
-                  <UpOutlined className="text-white text-xs!" />
+                  <UpOutlined className="text-xs! text-white" />
                 </button>
               </div>
             ) : (
               <div
-                className="p-4 cursor-pointer"
+                className="cursor-pointer p-4"
                 role="presentation"
                 aria-label="expand virtual lab list"
                 data-testid="current-virtual-lab"
@@ -89,11 +89,11 @@ export default function VirtualLabsList() {
               >
                 <div className="flex items-baseline justify-between">
                   <VirtualLabLabel labName={currentVirtualLab.name} />
-                  <DownOutlined className="text-white text-xs" data-testid="expand-list-icon" />
+                  <DownOutlined className="text-xs text-white" data-testid="expand-list-icon" />
                 </div>
 
                 <button
-                  className="text-primary-3 block font-normal mt-2 w-max"
+                  className="mt-2 block w-max font-normal text-primary-3"
                   onClick={(e) => {
                     // Do not bubble this event to the parent that expands/collapses virtual lab list
                     e.preventDefault();
@@ -123,14 +123,14 @@ export default function VirtualLabsList() {
                         setVirtualLabListExpanded(false);
                         setCurrentVirtualLabId(lab.id);
                       }}
-                      className="w-full flex items-center justify-between mt-3"
+                      className="mt-3 flex w-full items-center justify-between"
                       type="button"
                       aria-label="Show"
                     >
                       <VirtualLabLabel labName={lab.name} />
                       <div
                         className={classNames(
-                          'w-[14px] h-[14px] rounded-full bg-clip-content p-[2px] border border-white',
+                          'h-[14px] w-[14px] rounded-full border border-white bg-clip-content p-[2px]',
                           currentVirtualLabId === lab.id ? 'bg-white' : 'bg-none'
                         )}
                       />

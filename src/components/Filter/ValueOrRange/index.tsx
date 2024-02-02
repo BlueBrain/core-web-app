@@ -102,10 +102,10 @@ export default function ValueOrRange({
         onChange={() => updateFilter(value ?? null, 'value')}
         value="value"
       >
-        <div className="flex gap-2 items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <input
             type="number"
-            className="bg-transparent border border-primary-6 flex gap-2 grow px-2 py-2 rounded-md text-sm"
+            className="flex grow gap-2 rounded-md border border-primary-6 bg-transparent px-2 py-2 text-sm"
             onChange={updateValue}
             value={value}
           />
@@ -118,9 +118,9 @@ export default function ValueOrRange({
         onChange={() => updateFilter(range, 'range')}
         value="range"
       >
-        <div className="flex gap-2 items-center text-sm">
+        <div className="flex items-center gap-2 text-sm">
           <input
-            className="bg-transparent border border-primary-6 min-w-0 px-2 py-2 rounded-md text-center"
+            className="min-w-0 rounded-md border border-primary-6 bg-transparent px-2 py-2 text-center"
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               updateRange({ gte: Number(e.target.value) })
             }
@@ -130,7 +130,7 @@ export default function ValueOrRange({
           />
           <RangeIcon className="shrink-0" />
           <input
-            className="bg-transparent border border-primary-6 min-w-0 px-2 py-2 rounded-md text-center"
+            className="min-w-0 rounded-md border border-primary-6 bg-transparent px-2 py-2 text-center"
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               updateRange({ lte: Number(e.target.value) })
             }

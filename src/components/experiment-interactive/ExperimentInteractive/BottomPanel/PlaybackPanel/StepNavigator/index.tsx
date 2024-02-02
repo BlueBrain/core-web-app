@@ -15,7 +15,7 @@ export default function StepNavigator() {
   const stepBackwards = () => setStep(Math.max(0, step - 1));
   const stepForward = () => setStep(Math.min(lastStep, step + 1));
   return (
-    <div className="inline-flex items-center gap-3 flex">
+    <div className="flex inline-flex items-center gap-3">
       <button type="button" onClick={stepBackwards} aria-label="Step backwards">
         <BackwardStep />
       </button>

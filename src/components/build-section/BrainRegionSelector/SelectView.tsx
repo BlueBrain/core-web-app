@@ -28,7 +28,7 @@ export default function SelectView({
     <div
       style={{ backgroundColor: colorCode }}
       className={classNames(
-        'text-sm w-full min-w-[7rem] w- brain-regions-views',
+        'w- brain-regions-views w-full min-w-[7rem] text-sm',
         openDropdown && 'brain-regions-views-open'
       )}
     >
@@ -36,8 +36,8 @@ export default function SelectView({
         type="button"
         onClick={toggleDropdown}
         className={classNames(
-          'w-full flex items-center justify-between gap-4 border py-1 px-2 select-none mix-blend-difference',
-          openDropdown ? 'rounded-md border-b-0 rounded-b-none' : 'rounded-full'
+          'flex w-full select-none items-center justify-between gap-4 border px-2 py-1 mix-blend-difference',
+          openDropdown ? 'rounded-md rounded-b-none border-b-0' : 'rounded-full'
         )}
         style={{ borderColor: colorCode }}
       >
@@ -47,7 +47,7 @@ export default function SelectView({
         <CaretRightOutlined
           className={classNames(
             'h-[12px] mix-blend-difference',
-            openDropdown && 'transform rotate-90 transition-all ease-out duration-200'
+            openDropdown && 'rotate-90 transform transition-all duration-200 ease-out'
           )}
           style={{ color: colorCode }}
         />
@@ -55,8 +55,8 @@ export default function SelectView({
       <div
         style={{ borderColor: colorCode, color: colorCode }}
         className={classNames(
-          'py-1 px-2 flex-col justify-center gap-y-px mix-blend-difference',
-          openDropdown ? 'flex border border-t-0  rounded-md rounded-t-none' : 'hidden'
+          'flex-col justify-center gap-y-px px-2 py-1 mix-blend-difference',
+          openDropdown ? 'flex rounded-md rounded-t-none  border border-t-0' : 'hidden'
         )}
       >
         {viewOptions
@@ -67,8 +67,8 @@ export default function SelectView({
               key={value}
               onClick={() => onChangeViewSelection(value)}
               className={classNames(
-                'text-left p-1 -mx-1 rounded-sm',
-                'hover:shadow-sm hover:bg-white/20 hover:backdrop-blur-sm hover:font-semibold'
+                '-mx-1 rounded-sm p-1 text-left',
+                'hover:bg-white/20 hover:font-semibold hover:shadow-sm hover:backdrop-blur-sm'
               )}
             >
               {label}

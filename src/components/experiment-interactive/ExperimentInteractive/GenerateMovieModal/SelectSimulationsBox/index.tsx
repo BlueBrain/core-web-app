@@ -21,6 +21,6 @@ export default function SelectSimulationsBox() {
   );
 
   return (
-    <div className={`gap-2 grid grid-cols-${MAX_SIMULATION_PREVIEW_COLS}`}>{simulationBoxes}</div>
+    <div className={`grid gap-2 grid-cols-${MAX_SIMULATION_PREVIEW_COLS}`}>{simulationBoxes}</div>
   );
 }

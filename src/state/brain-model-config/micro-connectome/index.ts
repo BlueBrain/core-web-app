@@ -104,7 +104,7 @@ export const editsAtom = atom<Promise<MicroConnectomeEditEntry[] | null>>(async 
         srcSelection: fromSerialisibleSelection(serialisibleEditEntry.srcSelection),
         dstSelection: fromSerialisibleSelection(serialisibleEditEntry.dstSelection),
         // TODO investigate what's going on with these types, remove type assertion
-      } as MicroConnectomeEditEntry)
+      }) as MicroConnectomeEditEntry
   );
 
   return editEntries;

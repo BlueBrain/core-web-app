@@ -10,7 +10,7 @@ import { isConfigEditableAtom } from '@/state/brain-model-config';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 function Separator() {
-  return <hr className="bg-primary-4 h-px w-full border-0" />;
+  return <hr className="h-px w-full border-0 bg-primary-4" />;
 }
 
 export default function ApplyToAllMTypesPanel() {
@@ -37,10 +37,10 @@ export default function ApplyToAllMTypesPanel() {
   }, [activeModel, mModelItems, selectedBrainRegion, setBulkApplyAll]);
 
   return (
-    <div className="px-7 flex flex-col gap-5 my-3">
+    <div className="my-3 flex flex-col gap-5 px-7">
       <Separator />
 
-      <div className="flex flex-row justify-between font-semibold items-center gap-3 text-white text-sm">
+      <div className="flex flex-row items-center justify-between gap-3 text-sm font-semibold text-white">
         <div className="pr-3">Apply to all M-types</div>
         <div className="flex-grow">
           <DefaultLoadingSuspense>
@@ -49,10 +49,10 @@ export default function ApplyToAllMTypesPanel() {
         </div>
       </div>
 
-      <div className="flex flex-row justify-end items-center gap-3">
+      <div className="flex flex-row items-center justify-end gap-3">
         <button
           type="button"
-          className={`bg-primary-1 text-primary-7 font-semibold p-1 px-6 ${
+          className={`bg-primary-1 p-1 px-6 font-semibold text-primary-7 ${
             isConfigEditable ? '' : 'cursor-not-allowed'
           }`}
           onClick={applyActiveModelToAll}

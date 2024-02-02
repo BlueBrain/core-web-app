@@ -20,10 +20,10 @@ function QASettings() {
         {!isGenerating && (
           <button
             onClick={() => updateLiterature((prev) => ({ ...prev, areQAParamsVisible: true }))}
-            className="flex items-center text-primary-8 p-0 font-semibold ml-4 hover:bg-primary-0!"
+            className="hover:bg-primary-0! ml-4 flex items-center p-0 font-semibold text-primary-8"
             type="button"
           >
-            Filter <SettingsIcon className="rotate-90 ml-2" />
+            Filter <SettingsIcon className="ml-2 rotate-90" />
           </button>
         )}
       </div>
@@ -46,7 +46,7 @@ function GenerativeQABar() {
   return (
     <div
       className={classNames(
-        'flex flex-col items-center justify-center w-full pr-4',
+        'flex w-full flex-col items-center justify-center pr-4',
         !isChatBarMustSlideInDown && !isBuildSection && 'fixed top-1/2 -translate-y-1/2',
         isBuildSection && !isChatBarMustSlideInDown && 'absolute top-1/2 -translate-y-1/2',
         isChatBarMustSlideInDown && 'absolute bottom-0 left-0 right-0'
@@ -54,15 +54,15 @@ function GenerativeQABar() {
     >
       <div
         className={classNames(
-          'bg-white p-4 w-full left-0 z-50 rounded-2xl border border-gray-200 gap-2.5 max-w-4xl mx-auto right-4',
-          'inline-flex flex-col justify-start items-start',
+          'left-0 right-4 z-50 mx-auto w-full max-w-4xl gap-2.5 rounded-2xl border border-gray-200 bg-white p-4',
+          'inline-flex flex-col items-start justify-start',
           isChatBarMustSlideInDown &&
-            'transition-all duration-300 ease-out-expo rounded-b-none pb-0'
+            'rounded-b-none pb-0 transition-all duration-300 ease-out-expo'
         )}
       >
         <div
           className={classNames(
-            'inline-flex flex-col items-start justify-start w-full px-2 pt-4 pb-8',
+            'inline-flex w-full flex-col items-start justify-start px-2 pb-8 pt-4',
             isChatBarMustSlideInDown ? 'rounded-b-none' : 'rounded-lg'
           )}
         >

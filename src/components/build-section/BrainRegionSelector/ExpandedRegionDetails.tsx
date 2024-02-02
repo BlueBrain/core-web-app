@@ -56,8 +56,8 @@ function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?
   }
 
   return (
-    <div className="flex gap-2 items-center">
-      <div className="grow text-primary-8 font-bold">{title}</div>
+    <div className="flex items-center gap-2">
+      <div className="grow font-bold text-primary-8">{title}</div>
       <div className="flex-none text-neutral-4">{renderType()}</div>
     </div>
   );
@@ -128,7 +128,7 @@ function NeuronCompositionEditor({
           </ConfigProvider>
 
           <ContextualTrigger
-            className={isEditable ? 'ml-1 h-max mb-1' : ''}
+            className={isEditable ? 'mb-1 ml-1 h-max' : ''}
             about={about as QuestionAbout}
             subject={questionSubject}
             densityOrCount={densityOrCount}
@@ -199,9 +199,9 @@ function MeTypeDetails({
 
   return (
     <>
-      <h2 className="flex font-bold justify-between text-white text-lg">
+      <h2 className="flex justify-between text-lg font-bold text-white">
         <span className="justify-self-start">NEURONS [{metricToUnit[densityOrCount]}]</span>
-        <small className="font-normal text-base">
+        <small className="text-base font-normal">
           ~ {getMetric(neuronComposition.neuron, densityOrCount)}
         </small>
       </h2>
@@ -258,8 +258,8 @@ function MeTypeDetails({
 
 function Title({ title, onClick }: { title?: string; onClick?: () => void }) {
   return (
-    <div className="flex justify-between items-start mb-5">
-      <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
+    <div className="mb-5 flex items-start justify-between">
+      <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
         <BrainRegionIcon style={{ height: '1em' }} />
         <span className="text-secondary-4">{title}</span>
       </div>
@@ -282,7 +282,7 @@ function UnitsToggle({
 }) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-row gap-2 py-4 border-y border-primary-6">
+      <div className="flex flex-row gap-2 border-y border-primary-6 py-4">
         <div className="flex flex-row gap-3">
           <VerticalSwitch isChecked={isChecked} onChange={onChange} />
           <div className="flex flex-col gap-1 text-primary-1">
@@ -297,9 +297,9 @@ function UnitsToggle({
 
 function NoVolumeAnnotations() {
   return (
-    <div className="flex flex-col gap-3 text-center mt-48">
+    <div className="mt-48 flex flex-col gap-3 text-center">
       <MissingData className="w-full" style={{ color: '#fff' }} />
-      <h3 className="font-semibold text-base text-white">
+      <h3 className="text-base font-semibold text-white">
         No volume annotations
         <br />
         available for this brain region
@@ -340,7 +340,7 @@ function ExpandedRegionDetails({
   }
 
   return composition?.totalComposition.neuron ? (
-    <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 min-w-[300px]">
+    <div className="flex min-w-[300px] flex-col gap-5 overflow-y-auto px-6 py-6">
       {title}
       <UnitsToggle
         isChecked={densityOrCount === 'count'}
@@ -361,7 +361,7 @@ function ExpandedRegionDetails({
       )}
     </div>
   ) : (
-    <div className="flex flex-col gap-5 overflow-y-auto px-6 py-6 w-[300px]">
+    <div className="flex w-[300px] flex-col gap-5 overflow-y-auto px-6 py-6">
       {title}
       <NoVolumeAnnotations />
     </div>

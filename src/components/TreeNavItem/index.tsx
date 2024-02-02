@@ -107,7 +107,7 @@ export function TreeNavItem({
             >
               <CaretRightOutlined
                 style={{ color: colorCode }}
-                className={classNames(styles.accordionChevron, 'mix-blend-difference h-[13px]')}
+                className={classNames(styles.accordionChevron, 'h-[13px] mix-blend-difference')}
               />
             </Accordion.Trigger>
           )
@@ -194,7 +194,7 @@ function TreeNav(
 ) {
   return (
     <Accordion.Root
-      className={classNames('-ml-4 relative', className)}
+      className={classNames('relative -ml-4', className)}
       onValueChange={(newValue) => onValueChange(newValue, [])} // Empty path for root
       ref={ref}
       type="multiple"
@@ -202,7 +202,7 @@ function TreeNav(
     >
       {navItems.map(({ id, items, ...rest }) => (
         <TreeNavItem
-          className={classNames('ml-4 relative', className)}
+          className={classNames('relative ml-4', className)}
           id={id}
           isExpanded={typeof value?.[id] !== 'undefined'}
           items={items}

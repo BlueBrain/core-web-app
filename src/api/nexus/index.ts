@@ -296,7 +296,7 @@ export function queryES<T>(
 
 async function getPayloadByConfig<
   PayloadType extends GeneratorConfigPayload,
-  ConfigType extends GeneratorConfig
+  ConfigType extends GeneratorConfig,
 >(configName: SubConfigName, config: ConfigType, session: Session): Promise<PayloadType> {
   const configVersion = config?.configVersion;
   const useRelease = configVersion === undefined;

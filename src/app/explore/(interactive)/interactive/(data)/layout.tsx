@@ -76,7 +76,7 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
     return <ErrorBoundary FallbackComponent={SimpleErrorComponent}>{children}</ErrorBoundary>;
 
   return (
-    <div className="h-screen bg-primary-9 flex overflow-hidden" id="interactive-data-layout">
+    <div className="flex h-screen overflow-hidden bg-primary-9" id="interactive-data-layout">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <BackToInteractiveExplorationBtn href={INTERACTIVE_PATH} />
         <div className="flex-1">
@@ -86,10 +86,10 @@ export default function ExploreInteractiveDataLayout({ children }: { children: R
             mode="horizontal"
             theme="dark"
             style={{ backgroundColor: '#002766' }}
-            className="flex justify-start w-full"
+            className="flex w-full justify-start"
             items={items}
           />
-          <div className="bg-primary-9 text-white h-full w-full">{children}</div>
+          <div className="h-full w-full bg-primary-9 text-white">{children}</div>
         </div>
       </ErrorBoundary>
     </div>

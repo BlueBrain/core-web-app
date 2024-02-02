@@ -42,7 +42,7 @@ export default function CloneConfigButton({ className }: Props) {
         onClick={() => setEModelEditMode(false)}
         className={defaultButtonColor}
       />
-      <GenericButton text="Build model" className="border-green-600 text-white bg-green-600" />
+      <GenericButton text="Build model" className="border-green-600 bg-green-600 text-white" />
     </>
   );
 

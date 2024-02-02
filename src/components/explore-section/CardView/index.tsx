@@ -48,12 +48,12 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
 
   return (
     <div
-      className="grid grid-cols-6 gap-0 pb-2 min-h-fit"
+      className="grid min-h-fit grid-cols-6 gap-0 pb-2"
       data-testid="explore-section-listing-card-view"
     >
-      <div className="flex-col w-full w-min-[70rem] pt-[1rem] col-span-1 break-words">
+      <div className="w-min-[70rem] col-span-1 w-full flex-col break-words pt-[1rem]">
         <div className="pr-4 font-thin text-neutral-4">SCORE</div>
-        <div className="pr-4 font-thin text-neutral-4 mt-1">PREVIEW</div>
+        <div className="mt-1 pr-4 font-thin text-neutral-4">PREVIEW</div>
         <Collapse
           activeKey={activeKeys}
           expandIcon={ExpandIcon}
@@ -68,10 +68,10 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
                 <span className="text-md font-semibold text-primary-8">{upperCase(group)}</span>
               }
               key={group}
-              className="p-0 m-0 border-y border-solid"
+              className="m-0 border-y border-solid p-0"
             >
               {fields.map((item) => (
-                <div key={item.field} className="text-neutral-4 mb-2 h-6 ml-7 font-thin truncate">
+                <div key={item.field} className="mb-2 ml-7 h-6 truncate font-thin text-neutral-4">
                   {upperCase(EXPLORE_FIELDS_CONFIG[item.field].title)}
                 </div>
               ))}

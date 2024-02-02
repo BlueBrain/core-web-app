@@ -29,7 +29,7 @@ function StatusComponent({ wasBuilt }: StatusProps) {
   }
 
   return (
-    <div className={classNames(statusColor, 'flex items-center gap-1 h-8')}>
+    <div className={classNames(statusColor, 'flex h-8 items-center gap-1')}>
       <StatusIconComponent />
       <div>{status}</div>
     </div>

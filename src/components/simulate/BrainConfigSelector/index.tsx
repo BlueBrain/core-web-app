@@ -44,10 +44,10 @@ export default function BrainConfigSelector({ onSelect }: Props) {
   return (
     <>
       <div className="flex items-end">
-        <span className="grow font-bold text-xl">Assign Circuit</span>
+        <span className="grow text-xl font-bold">Assign Circuit</span>
         <input
           type="text"
-          className="block border-b border-b-primary-1 placeholder-primary-3 bg-primary-9 h-7 py-5 w-[300px]"
+          className="block h-7 w-[300px] border-b border-b-primary-1 bg-primary-9 py-5 placeholder-primary-3"
           placeholder="Search circuits..."
           value={searchInputValue}
           onChange={(e) => setSearch(e.target.value)}

@@ -11,13 +11,13 @@ export default function SimulationReports() {
 
   if (reports) {
     return (
-      <div className="text-primary-7 mt-7">
+      <div className="mt-7 text-primary-7">
         <div className="text-primary-7">
           <span className="text-2xl font-bold">Reports</span>
           <span className="ml-3 text-xs">({reports.length})</span>
         </div>
 
-        <div className="grid grid-cols-3 mt-4">
+        <div className="mt-4 grid grid-cols-3">
           {reports.map(
             ({ blob, name }) =>
               blob && (

@@ -37,16 +37,16 @@ export default function QAResultList() {
   return (
     <div
       id="result-container"
-      className="w-full h-full max-h-screen transition-height duration-700 ease-linear"
+      className="h-full max-h-screen w-full transition-height duration-700 ease-linear"
     >
       <div
         ref={qaListRef}
-        className="flex-1 w-full overflow-auto scroll-auto primary-scrollbar"
+        className="primary-scrollbar w-full flex-1 overflow-auto scroll-auto"
         style={{
           height: `calc(100% - ${areQAParamsVisible ? '24rem' : '10.5rem'})`,
         }}
       >
-        <ul className="flex flex-col items-center justify-start max-w-4xl w-full p-4 mx-auto list-none">
+        <ul className="mx-auto flex w-full max-w-4xl list-none flex-col items-center justify-start p-4">
           {dataSource.map(({ id, ...rest }) =>
             withStreamResult({
               id,

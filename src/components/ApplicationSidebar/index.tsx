@@ -78,15 +78,15 @@ export function NavigationItem({ url, name, description, bgcolor }: NavigationIt
     <li
       key={url}
       className={classNames(
-        'flex mx-auto p-4 cursor-pointer relative w-full hover:bg-primary-7',
+        'relative mx-auto flex w-full cursor-pointer p-4 hover:bg-primary-7',
         bgcolor
       )}
     >
-      <Link href={url} className="w-full mx-auto">
+      <Link href={url} className="mx-auto w-full">
         <h1 className="text-xl font-bold text-white">{name}</h1>
         <p
           title={description}
-          className="select-none mt-1 text-left font-thin text-sm line-clamp-1 text-primary-4"
+          className="mt-1 line-clamp-1 select-none text-left text-sm font-thin text-primary-4"
         >
           {description}
         </p>
@@ -106,7 +106,7 @@ export function AppNavigationItem({
   if (!expanded && showIconOnCollapse) {
     return (
       <Link href={url}>
-        <Icon component={icon} title={title} className="text-primary-4 my-2" />
+        <Icon component={icon} title={title} className="my-2 text-primary-4" />
       </Link>
     );
   }
@@ -114,13 +114,13 @@ export function AppNavigationItem({
     <Link
       href={url}
       className={classNames(
-        'w-full py-3 px-3 inline-flex flex-row items-center justify-between hover:bg-primary-7',
+        'inline-flex w-full flex-row items-center justify-between px-3 py-3 hover:bg-primary-7',
         bgcolor ?? 'bg-transparent',
         !expanded && 'hidden'
       )}
     >
-      <div className="text-white text-base font-semibold">{title}</div>
-      <Icon component={icon} title={title} className="text-white cursor-pointer" />
+      <div className="text-base font-semibold text-white">{title}</div>
+      <Icon component={icon} title={title} className="cursor-pointer text-white" />
     </Link>
   );
 }
@@ -129,7 +129,7 @@ export function AppNavigation({ expanded }: { expanded: boolean }) {
   return (
     <div
       className={classNames(
-        'w-full flex flex-col gap-y-1 my-2',
+        'my-2 flex w-full flex-col gap-y-1',
         expanded ? 'items-start' : 'items-center'
       )}
     >
@@ -148,45 +148,45 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
   const logout = () => signOut({ callbackUrl: '/' });
   if (!expanded) {
-    return <UserOutlined title={userName} className="text-primary-4 text-base cursor-pointer" />;
+    return <UserOutlined title={userName} className="cursor-pointer text-base text-primary-4" />;
   }
   return (
     <div
       className={classNames(
-        'w-full border border-primary-7 my-0 bg-primary-9',
+        'my-0 w-full border border-primary-7 bg-primary-9',
         !expanded && 'hidden',
         'hover:shadow-xl'
       )}
     >
-      <div className="p-5 flex flex-col gap-y-2">
+      <div className="flex flex-col gap-y-2 p-5">
         <div className="inline-flex items-center justify-center gap-2 self-start">
-          <UserOutlined title={userName} className="text-primary-4 text-base" />
-          <span className="text-white font-bold">{userName}</span>
+          <UserOutlined title={userName} className="text-base text-primary-4" />
+          <span className="font-bold text-white">{userName}</span>
         </div>
         <div className="inline-flex flex-row items-center justify-between gap-2">
-          <Link href="/account" className="text-primary-4 text-base font-normal hover:text-white">
+          <Link href="/account" className="text-base font-normal text-primary-4 hover:text-white">
             Account
           </Link>
           <button
             type="button"
             onClick={logout}
-            className="text-primary-4 text-base cursor-pointer font-normal hover:text-white"
+            className="cursor-pointer text-base font-normal text-primary-4 hover:text-white"
           >
             Log out
           </button>
         </div>
       </div>
 
-      <div className="h-px bg-primary-7 w-full" />
+      <div className="h-px w-full bg-primary-7" />
       <VirtualLabsList />
-      <div className="h-px bg-primary-7 w-full" />
+      <div className="h-px w-full bg-primary-7" />
 
       <Link
         href="/virtual-lab/create/information"
-        className="p-5 inline-flex items-center justify-between w-full"
+        className="inline-flex w-full items-center justify-between p-5"
       >
-        <span className="text-white font-medium">Create virtual lab</span>
-        <PlusSquareOutlined className="text-primary-4 w-4 h-4 text-base" />
+        <span className="font-medium text-white">Create virtual lab</span>
+        <PlusSquareOutlined className="h-4 w-4 text-base text-primary-4" />
       </Link>
     </div>
   );
@@ -200,15 +200,15 @@ function ApplicationSidebarHeader({
   return (
     <div
       className={classNames(
-        'flex items-center w-full relative my-1',
+        'relative my-1 flex w-full items-center',
         !expanded ? 'flex-col items-start gap-2' : 'justify-between'
       )}
     >
       <div
         className={classNames(
-          'font-bold text-2xl order-1',
+          'order-1 text-2xl font-bold',
           !expanded &&
-            'relative order-2 top-10 text-lg [writing-mode:vertical-lr] transform -scale-100'
+            'relative top-10 order-2 -scale-100 transform text-lg [writing-mode:vertical-lr]'
         )}
       >
         {title({ expanded })}
@@ -217,14 +217,14 @@ function ApplicationSidebarHeader({
         type="text"
         onClick={toggleExpand}
         className={classNames(
-          'bg-transparent border-none order-2 z-20',
-          !expanded && 'order-1 absolute top-0'
+          'z-20 order-2 border-none bg-transparent',
+          !expanded && 'absolute top-0 order-1'
         )}
         icon={
           expanded ? (
-            <MinusOutlined className="text-white text-sm" />
+            <MinusOutlined className="text-sm text-white" />
           ) : (
-            <PlusOutlined className="text-white text-sm w-[14px] h-[14px]" />
+            <PlusOutlined className="h-[14px] w-[14px] text-sm text-white" />
           )
         }
       />
@@ -257,19 +257,19 @@ export default function ApplicationSidebar({
     <div
       ref={ref}
       className={classNames(
-        'h-screen transition-transform ease-in-out bg-primary-9 text-light',
+        'h-screen bg-primary-9 text-light transition-transform ease-in-out',
         pathname?.includes('/explore/literature') ? 'fixed top-0 z-50' : 'relative',
         expanded
-          ? 'px-5 w-80 flex flex-col items-start justify-start shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
-          : 'w-10 flex flex-col items-center justify-between transition-transform ease-in-out will-change-auto'
+          ? 'flex w-80 flex-col items-start justify-start px-5 shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
+          : 'flex w-10 flex-col items-center justify-between transition-transform ease-in-out will-change-auto'
       )}
     >
       <ApplicationSidebarHeader {...{ title, expanded, toggleExpand }} />
-      <div className="w-full h-[calc(100%-410px)] overflow-y-auto primary-scrollbar flex items-start justify-start gap-y-1 flex-col">
+      <div className="primary-scrollbar flex h-[calc(100%-410px)] w-full flex-col items-start justify-start gap-y-1 overflow-y-auto">
         <Suspense>{children?.({ expanded })}</Suspense>
       </div>
       {(account || navigation) && (
-        <div className="mb-4 w-[calc(100%-2.5rem)] bg-primary-9 z-20 mt-auto flex flex-col items-center justify-center absolute bottom-0">
+        <div className="absolute bottom-0 z-20 mb-4 mt-auto flex w-[calc(100%-2.5rem)] flex-col items-center justify-center bg-primary-9">
           {account?.({ expanded })}
           {navigation?.({ expanded })}
         </div>

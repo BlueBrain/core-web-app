@@ -32,7 +32,7 @@ export default function Pill({ label, isActive, href, onClick }: PillProps) {
   const buttonEl = (
     <button
       type="button"
-      className={`p-0 m-0 rounded-full flex flex-row items-center px-6 ${pillClasses}`}
+      className={`m-0 flex flex-row items-center rounded-full p-0 px-6 ${pillClasses}`}
       onClick={onClick}
     >
       {label}

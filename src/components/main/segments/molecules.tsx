@@ -18,10 +18,10 @@ export type CollapsibleMenuProps = {
 
 export function MainMenuItemHeader({ title, description, opened }: CollapsibleMenuProps) {
   return (
-    <div className="relative inline-flex flex-col w-full items-start justify-start">
+    <div className="relative inline-flex w-full flex-col items-start justify-start">
       <h2
         className={classNames(
-          'text-primary-8 font-bold text-xl',
+          'text-xl font-bold text-primary-8',
           !opened && 'group-hover:text-white'
         )}
       >
@@ -29,7 +29,7 @@ export function MainMenuItemHeader({ title, description, opened }: CollapsibleMe
       </h2>
       <p
         className={classNames(
-          'text-gray-400 font-normal w-1/3 line-clamp-2 text-left',
+          'line-clamp-2 w-1/3 text-left font-normal text-gray-400',
           !opened && 'group-hover:text-white'
         )}
       >
@@ -38,14 +38,14 @@ export function MainMenuItemHeader({ title, description, opened }: CollapsibleMe
       {opened ? (
         <MinusOutlined
           className={classNames(
-            'absolute top-1/2 -translate-y-1/2 right-7 text-primary-8',
+            'absolute right-7 top-1/2 -translate-y-1/2 text-primary-8',
             !opened && 'group-hover:text-white'
           )}
         />
       ) : (
         <PlusOutlined
           className={classNames(
-            'absolute top-1/2 -translate-y-1/2 right-7 text-primary-8',
+            'absolute right-7 top-1/2 -translate-y-1/2 text-primary-8',
             !opened && 'group-hover:text-white'
           )}
         />
@@ -74,16 +74,16 @@ export function CollapsibleMenuItem<T>({
   const onSelectCollapsible = () => onSelect(opened ? null : id);
 
   return (
-    <div className={classNames('bg-white group', opened ? 'shadow-lg' : 'hover:bg-primary-8')}>
+    <div className={classNames('group bg-white', opened ? 'shadow-lg' : 'hover:bg-primary-8')}>
       <button
         type="button"
         onClick={onSelectCollapsible}
-        className={classNames('w-full p-7 cursor-pointer', opened && 'z-20 bg-white')}
+        className={classNames('w-full cursor-pointer p-7', opened && 'z-20 bg-white')}
       >
         <Header {...{ opened, title, description }} />
       </button>
       <div
-        className={classNames('transition-all duration-200 h-full py-7 pt-3', !opened && 'hidden')}
+        className={classNames('h-full py-7 pt-3 transition-all duration-200', !opened && 'hidden')}
       >
         {children({ opened })}
       </div>

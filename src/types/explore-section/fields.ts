@@ -205,7 +205,7 @@ export interface Aggregations {
 export type IdLabel<
   T = {
     [key: string]: string;
-  }
+  },
 > = T & {
   id?: string;
   label?: string;

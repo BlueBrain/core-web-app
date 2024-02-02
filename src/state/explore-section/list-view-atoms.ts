@@ -85,7 +85,7 @@ export const filtersAtom = atomFamily(
               type: FilterTypeEnum.ValueOrRange,
               value: { gte: null, lte: null },
               aggregationType: 'stats',
-            } as Filter)
+            }) as Filter
         ),
       ];
     }),

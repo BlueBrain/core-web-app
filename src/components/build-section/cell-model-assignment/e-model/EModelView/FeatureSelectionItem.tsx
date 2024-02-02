@@ -27,11 +27,11 @@ export default function FeatureSelectionItem({ featureCategory, featureGroup }: 
       <div className="flex justify-between font-bold text-primary-8">
         <div className="my-4">
           <span className="text-xl">{featureCategory}</span>
-          <span className="text-xs font-thin ml-1">({features.length})</span>
+          <span className="ml-1 text-xs font-thin">({features.length})</span>
         </div>
         <div>Selected: {selectedCount}</div>
       </div>
-      <div className="flex gap-3 flex-wrap">
+      <div className="flex flex-wrap gap-3">
         {selectedFeatures.map((feature) => (
           <CustomCheckbox key={feature.uuid} feature={feature} />
         ))}
@@ -44,7 +44,7 @@ export default function FeatureSelectionItem({ featureCategory, featureGroup }: 
 function CustomCheckbox({ feature }: { feature: FeatureItem<AllFeatureKeys> }) {
   return (
     <Tooltip title={feature.description}>
-      <div className="flex rounded-3xl bg-slate-50 py-2 px-4 text-primary-8 gap-2">
+      <div className="flex gap-2 rounded-3xl bg-slate-50 px-4 py-2 text-primary-8">
         <div className="whitespace-nowrap">{feature.displayName}</div>
         {feature.selected && <CheckCircleFilled />}
       </div>

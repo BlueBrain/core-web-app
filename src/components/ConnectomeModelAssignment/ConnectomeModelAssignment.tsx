@@ -85,9 +85,9 @@ export default function ConnectomeModelAssignmentView() {
     <>
       <div className="bg-black">
         <div className="text-white">
-          <h1 className="text-white font-bold p-4">Default synapse model assignments</h1>
+          <h1 className="p-4 font-bold text-white">Default synapse model assignments</h1>
           <div style={{ width: '90%' }}>
-            <div className="w-1/2 flex justify-between" style={{ marginLeft: 16 }}>
+            <div className="flex w-1/2 justify-between" style={{ marginLeft: 16 }}>
               <div>From ⭢</div>
               <div>⭢ To</div>
             </div>
@@ -101,9 +101,9 @@ export default function ConnectomeModelAssignmentView() {
             />
           </div>
         </div>
-        <div className="text-white bg-white relative">
+        <div className="relative bg-white text-white">
           <div className="flex" style={{ height: '50px' }}>
-            <div className="bg-black inline-block" style={{ height: '50px', width: '30px' }} />
+            <div className="inline-block bg-black" style={{ height: '50px', width: '30px' }} />
             <button
               type="button"
               className={rulesTabActive ? ACTIVE_TAB_CLASSNAME : INACTIVE_TAB_CLASSNAME}
@@ -126,8 +126,8 @@ export default function ConnectomeModelAssignmentView() {
             {rulesTabActive && (
               <>
                 <RulesFilters rules={userRules} onFilterChange={setUserRulesFilter} />
-                <div className="text-primary-8 mb-5" style={{ width: '90%' }}>
-                  <div className="w-1/2 flex justify-between" style={{ marginLeft: 8 }}>
+                <div className="mb-5 text-primary-8" style={{ width: '90%' }}>
+                  <div className="flex w-1/2 justify-between" style={{ marginLeft: 8 }}>
                     <div>From ⭢</div>
                     <div>⭢ To</div>
                   </div>
@@ -149,7 +149,7 @@ export default function ConnectomeModelAssignmentView() {
                     <div className="font-bold text-primary-8">Total: {visibleTypesCount} types</div>
                     <Input.Search
                       placeholder="Search for type"
-                      className="w-48 mb-2 text-xs"
+                      className="mb-2 w-48 text-xs"
                       size="small"
                       onChange={(v) => setTypeSearch(v.target.value.toLowerCase())}
                       allowClear
@@ -195,7 +195,7 @@ export default function ConnectomeModelAssignmentView() {
               className={
                 isConfigEditable
                   ? classNames(styles.button, 'bg-primary-8')
-                  : classNames(styles.button, 'bg-gray-300 cursor-not-allowed')
+                  : classNames(styles.button, 'cursor-not-allowed bg-gray-300')
               }
               onClick={() => setAddRuleModalOpen(true)}
               disabled={loading || !isConfigEditable}
@@ -221,7 +221,7 @@ export default function ConnectomeModelAssignmentView() {
               className={
                 isConfigEditable
                   ? classNames(styles.button, 'bg-primary-8')
-                  : classNames(styles.button, 'bg-gray-300 cursor-not-allowed')
+                  : classNames(styles.button, 'cursor-not-allowed bg-gray-300')
               }
               onClick={() => setAddTypeModalOpen(true)}
               disabled={loading || !isConfigEditable}
@@ -263,10 +263,10 @@ export default function ConnectomeModelAssignmentView() {
           },
         }}
       >
-        <div className="text-error mb-8 font-bold text-center w-1/2">
+        <div className="mb-8 w-1/2 text-center font-bold text-error">
           {/* eslint-disable-next-line react/no-unescaped-entities */}
           You can't delete this type because it is used in{' '}
-          <span className="text-white bg-error">{typeUsedinRules} pathways</span>
+          <span className="bg-error text-white">{typeUsedinRules} pathways</span>
         </div>
         <Button type="primary" onClick={() => setTypeUsedInRules(0)}>
           OK

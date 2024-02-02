@@ -44,13 +44,13 @@ function ReadMore({ title, url }: TutorialProps) {
   return (
     <Link
       href={url}
-      className="inline-flex items-center justify-between gap-2 -mx-2 p-2 w-full border-b border-neutral-1 hover:bg-primary-8 hover:bg-opacity-10"
+      className="-mx-2 inline-flex w-full items-center justify-between gap-2 border-b border-neutral-1 p-2 hover:bg-primary-8 hover:bg-opacity-10"
     >
-      <div className="inline-flex gap-2 items-center text-sm text-primary-8">
+      <div className="inline-flex items-center gap-2 text-sm text-primary-8">
         <span>Read more</span>
         <span className="font-bold">{title}</span>
       </div>
-      <ArrowRightOutlined className="text-primary-8 w-4 h-3" />
+      <ArrowRightOutlined className="h-3 w-4 text-primary-8" />
     </Link>
   );
 }
@@ -63,14 +63,14 @@ function Video({ title, url }: TutorialProps) {
           alt="tutorial sample 1"
           width={981}
           height={617}
-          className="w-auto h-auto"
+          className="h-auto w-auto"
           src={`${basePath}/images/img_3d-interactive-brain_placeholder.jpg`}
         />
-        <PlayCircleFilled className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 text-error text-5xl cursor-pointer" />
+        <PlayCircleFilled className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer text-5xl text-error" />
       </div>
       <Link href={url} title={title} className="mt-2">
         <span className="text-sm uppercase text-neutral-3">TUTORIAL</span>
-        <h3 className="font-bold text-xl text-primary-8">{title}</h3>
+        <h3 className="text-xl font-bold text-primary-8">{title}</h3>
       </Link>
     </div>
   );
@@ -79,12 +79,12 @@ function Video({ title, url }: TutorialProps) {
 export default function Tutorial() {
   return (
     <>
-      <div className="py-5 grid grid-flow-col gap-x-12 bg-white">
+      <div className="grid grid-flow-col gap-x-12 bg-white py-5">
         {VIDEO_TUTORIALS.map(({ url, title }) => (
           <Video key={kebabCase(url)} {...{ title, url }} />
         ))}
       </div>
-      <div className="py-5 grid grid-cols-2 gap-x-12 gapx-2 px-2 bg-white">
+      <div className="gapx-2 grid grid-cols-2 gap-x-12 bg-white px-2 py-5">
         {MORE_TUTORIALS.map(({ url, title }) => (
           <ReadMore key={kebabCase(url)} {...{ title, url }} />
         ))}

@@ -20,7 +20,7 @@ function Checkboxes({ data }: { data: ExpDesignerCheckboxParameter[] }) {
       {data.map((checkboxItem: ExpDesignerCheckboxParameter) => {
         const id = generateId('lfp', checkboxItem.id);
         return (
-          <div key={id} className="flex items-center gap-2 ml-3">
+          <div key={id} className="ml-3 flex items-center gap-2">
             <input type="checkbox" id={id} />
             <label htmlFor={id}>{checkboxItem.name}</label>
           </div>

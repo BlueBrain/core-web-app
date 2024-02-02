@@ -63,22 +63,22 @@ export default function CustomAnalysis({
       )}
 
       {fetching && (
-        <div className="flex justify-center items-center" style={{ height: 200 }}>
+        <div className="flex items-center justify-center" style={{ height: 200 }}>
           <Spin indicator={<LoadingOutlined />} />
         </div>
       )}
 
       {report?.multiAnalysis.status === 'Running' && (
-        <div className="flex justify-center items-center" style={{ height: 200 }}>
+        <div className="flex items-center justify-center" style={{ height: 200 }}>
           <RunningAnalysis createdAt={report.multiAnalysis._createdAt} />
         </div>
       )}
 
       {!report && !fetching && !analysisLaunched && !fetchingAnalysisConfigs && (
-        <div className="flex justify-center items-center" style={{ height: 200 }}>
+        <div className="flex items-center justify-center" style={{ height: 200 }}>
           <button
             type="button"
-            className="px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 max-w-sm"
+            className="max-w-sm rounded-lg bg-green-500 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
             onClick={async () => {
               setLaunchingAnalysis(true);
               if (!session) return;
@@ -222,11 +222,11 @@ function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
   if (!executionTime) return null;
 
   return (
-    <div className="flex items-center space-x-4 bg-blue-100 p-4 rounded-md shadow-md">
-      <SyncOutlined className="text-blue-500 text-2xl" spin />
+    <div className="flex items-center space-x-4 rounded-md bg-blue-100 p-4 shadow-md">
+      <SyncOutlined className="text-2xl text-blue-500" spin />
       <div className="text-blue-600">
         <div className="font-semibold">Running analysis...</div>
-        <div className="text-sm mt-1">Started: {executionTime} ago</div>
+        <div className="mt-1 text-sm">Started: {executionTime} ago</div>
       </div>
     </div>
   );

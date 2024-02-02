@@ -47,20 +47,20 @@ export default function BrainConfigEntry({ baseHref, config }: BrainConfigEntryP
 
   return (
     <>
-      <div className="grid grid-cols-[1fr_max-content] items-start gap-2 !w-full">
-        <Link className="inline-flex flex-col items-start group" href={href}>
+      <div className="grid !w-full grid-cols-[1fr_max-content] items-start gap-2">
+        <Link className="group inline-flex flex-col items-start" href={href}>
           <span title={config.name} className="line-clamp-1 group-hover:text-primary-3">
             {config.name}
           </span>
-          <small className="text-primary-3 whitespace-nowrap group-hover:text-white">
+          <small className="whitespace-nowrap text-primary-3 group-hover:text-white">
             {createdAtFormatted}
           </small>
         </Link>
 
-        <div className="text-primary-3 inline-flex items-center justify-between gap-1 w-max">
+        <div className="inline-flex w-max items-center justify-between gap-1 text-primary-3">
           <button
             type="button"
-            className="text-primary-3 disabled:text-primary-7 disabled:cursor-not-allowed hover:text-white"
+            className="text-primary-3 hover:text-white disabled:cursor-not-allowed disabled:text-primary-7"
             onClick={openRenameModal}
             disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
             aria-label="Edit"

@@ -20,7 +20,7 @@ type CardFieldProps = {
 function CardField({ title, value }: CardFieldProps) {
   return (
     <div className="flex-1">
-      <div className="text-neutral-4 font-light text-xs">{title}</div>
+      <div className="text-xs font-light text-neutral-4">{title}</div>
       <div>{value}</div>
     </div>
   );
@@ -61,7 +61,7 @@ export default function SimulationCard({
     Object.entries(simulation.dimensions).map(([key, value]) => {
       if (key !== xDimension && key !== yDimension) {
         return (
-          <div key={key} className="mr-4 flex-2">
+          <div key={key} className="flex-2 mr-4">
             <div>{key}</div>
             <InlineDimension value={value} status={simulation.status} />
           </div>
@@ -87,30 +87,30 @@ export default function SimulationCard({
   const pathName = usePathname();
   return (
     <div
-      className={`simulation-card w-[405px] border rounded rounded-b-none border-neutral-2 border-b-none ${backgroundColor()}`}
+      className={`simulation-card border-b-none w-[405px] rounded rounded-b-none border border-neutral-2 ${backgroundColor()}`}
     >
       <div className="p-4">
-        <div className="flex mb-3">{renderOtherDimensions()}</div>
-        <div className="flex my-2 my-3">
+        <div className="mb-3 flex">{renderOtherDimensions()}</div>
+        <div className="my-2 my-3 flex">
           <CardField title="STATUS" value={renderStatus()} />
           <CardField title="STARTED" value={timeElapsedFromToday(simulation.startedAt)} />
           <CardField title="COMPLETED" value={timeElapsedFromToday(simulation.completedAt)} />
         </div>
         <hr />
-        <div className="mt-2 w-full flex">
-          <div className="text-neutral-4 flex-auto w-64 font-light text-xs">ACTIONS</div>
-          <div className="flex-auto w-16">
+        <div className="mt-2 flex w-full">
+          <div className="w-64 flex-auto text-xs font-light text-neutral-4">ACTIONS</div>
+          <div className="w-16 flex-auto">
             Log <FileTextOutlined />
           </div>
           <Link
             href={buildSimulationDetailURL(org, proj, simulation.id, pathName)}
-            className="flex-auto w-16"
+            className="w-16 flex-auto"
           >
             View <EyeOutlined />
           </Link>
         </div>
       </div>
-      <div className="h-3 bg-primary-5 bottom-border" style={{ background: renderStrapStyles() }} />
+      <div className="bottom-border h-3 bg-primary-5" style={{ background: renderStrapStyles() }} />
     </div>
   );
 }

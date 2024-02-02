@@ -23,7 +23,7 @@ export default function VirtualLabSettingsPage() {
 
   if (currentLab.state === 'loading') {
     return (
-      <div className="h-full w-full m-auto flex justify-center">
+      <div className="m-auto flex h-full w-full justify-center">
         <LoadingOutlined />
       </div>
     );
@@ -31,7 +31,7 @@ export default function VirtualLabSettingsPage() {
 
   if (currentLab.state === 'hasError') {
     return (
-      <div className="h-full w-full m-auto flex justify-center items-center">
+      <div className="m-auto flex h-full w-full items-center justify-center">
         <VirtualLabSettingsError message={`No lab with id ${currentLabId} found.`} />
       </div>
     );

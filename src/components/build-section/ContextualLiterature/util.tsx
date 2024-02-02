@@ -1,11 +1,11 @@
 import { BuildQuestionInput } from '@/types/literature';
 
 const propertyElement = (property?: string) =>
-  property && <b className="px-2 py-px text-teal-600 rounded-md bg-secondary-0">{property}</b>;
+  property && <b className="rounded-md bg-secondary-0 px-2 py-px text-teal-600">{property}</b>;
 const subjectElement = (subject?: string) =>
-  subject && <b className="bg-[#E0F8FF] text-primary-6 rounded-md px-2 py-px">{subject}</b>;
+  subject && <b className="rounded-md bg-[#E0F8FF] px-2 py-px text-primary-6">{subject}</b>;
 const brainRegionElement = (title?: string) =>
-  title && <b className="px-2 py-px bg-orange-100 rounded-md text-amber-600">{title}</b>;
+  title && <b className="rounded-md bg-orange-100 px-2 py-px text-amber-600">{title}</b>;
 
 /**
  *

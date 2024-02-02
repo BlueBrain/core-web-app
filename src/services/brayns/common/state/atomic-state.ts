@@ -62,7 +62,10 @@ export default class AtomicState<T> {
 
   private readonly sessionId = `AtomicState:${(AtomicState.counter++).toString(16)}\r`;
 
-  constructor(initialValue: T, private readonly storage?: AtomicStateStorageOptions<T>) {
+  constructor(
+    initialValue: T,
+    private readonly storage?: AtomicStateStorageOptions<T>
+  ) {
     this.currentValue = initialValue;
     this.id = `AtomicState\n${storage?.id ?? 0}`;
     if (storage) this.loadFromStorage();

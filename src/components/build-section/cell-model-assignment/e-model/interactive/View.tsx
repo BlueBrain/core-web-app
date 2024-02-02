@@ -327,7 +327,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
         }}
       >
         <Button
-          className="absolute top-8 right-8"
+          className="absolute right-8 top-8"
           type="default"
           icon={<MenuFoldOutlined />}
           onClick={() => setSimDrawerOpen(true)}

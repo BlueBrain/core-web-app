@@ -70,7 +70,7 @@ export default function DimensionSelector({ coords }: { coords?: { [id: string]:
   return (
     <>
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-row gap-4 h-fit">
+        <div className="flex h-fit flex-row gap-4">
           <div className="flex-1">
             <DimensionBox
               dimension={xAxisDimension}
@@ -85,7 +85,7 @@ export default function DimensionSelector({ coords }: { coords?: { [id: string]:
           </div>
           {swapVisible && (
             <Button
-              className="flex-none top-1/2 h-auto"
+              className="top-1/2 h-auto flex-none"
               type="link"
               icon={<SwapOutlined />}
               onClick={swapAxes}

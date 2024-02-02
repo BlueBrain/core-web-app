@@ -125,10 +125,10 @@ function CellDensityToolbar({ onReset }: CellDensityToolbarProps) {
 
   return (
     !!isConfigEditable && (
-      <div className="flex gap-2 justify-end">
+      <div className="flex justify-end gap-2">
         {items.map(({ icon, key, children, callback, isDisabled }) => (
           <Button
-            className="flex gap-2 items-center text-sm"
+            className="flex items-center gap-2 text-sm"
             icon={icon}
             key={key}
             type="text"
@@ -201,9 +201,9 @@ function CellDensity() {
   return (
     <ErrorBoundary FallbackComponent={SimpleErrorComponent} resetKeys={[composition]}>
       <DensityChart />
-      <div className="flex justify-between items-center w-full">
+      <div className="flex w-full items-center justify-between">
         <CellDensityToolbar onReset={handleReset} />
-        <div className="flex gap-2 sticky bottom-0">
+        <div className="sticky bottom-0 flex gap-2">
           {isConfigEditable && (
             <FileInputBtn
               accept="application/json"
@@ -258,7 +258,7 @@ export default function ConfigurationView() {
         { children: <CellDistribution />, value: 'distribution' },
         { children: <CellPosition />, value: 'position' },
       ].map(({ children, value }) => (
-        <Tabs.Content className="flex flex-col gap-5 h-full" key={value} value={value}>
+        <Tabs.Content className="flex h-full flex-col gap-5" key={value} value={value}>
           {children}
         </Tabs.Content>
       )),

@@ -44,7 +44,7 @@ export function useMorphoViewerSettings(
 ): [
   settings: MorphoViewerSettings,
   update: (settings: Partial<MorphoViewerSettings>) => void,
-  reset: (darkMode?: boolean) => void
+  reset: (darkMode?: boolean) => void,
 ] {
   const [persistentSettings, setPersistentSettings] = useAtom(persistentSettingsAtom);
   const settings = useMemo(() => readSettings(persistentSettings), [persistentSettings]);

@@ -132,13 +132,13 @@ function AboutSectionItem({ id, title, description, paragraphs }: AboutSection) 
   return (
     <div
       id={`about-article-${id}`}
-      className="w-full min-w-full snap-center flex flex-col relative h-full"
+      className="relative flex h-full w-full min-w-full snap-center flex-col"
     >
-      <div className="px-6 pt-14 pb-6 mb-5 sticky top-0 bg-white">
-        <h1 className="font-bold text-3xl text-primary-8">{title}</h1>
-        <p className="text-base font-normal text-primary-8 mt-2">{description}</p>
+      <div className="sticky top-0 mb-5 bg-white px-6 pb-6 pt-14">
+        <h1 className="text-3xl font-bold text-primary-8">{title}</h1>
+        <p className="mt-2 text-base font-normal text-primary-8">{description}</p>
       </div>
-      <div className="grid grid-flow-col gap-9 px-6 mr-2">
+      <div className="mr-2 grid grid-flow-col gap-9 px-6">
         {paragraphs.map(({ title: pTitle, text, image: src, alt, width, height }) => (
           <div key={kebabCase(`${pTitle}-${alt}`)}>
             {src && height && width && (
@@ -153,13 +153,13 @@ function AboutSectionItem({ id, title, description, paragraphs }: AboutSection) 
                   }}
                 />
                 {alt && (
-                  <span className="text-sm font-normal text-neutral-4 mt-1">
+                  <span className="mt-1 text-sm font-normal text-neutral-4">
                     Figure 1: <span className="text-primary-8">{alt}</span>
                   </span>
                 )}
               </div>
             )}
-            <h2 className="text-2xl font-bold mb-4 text-primary-8">{pTitle}</h2>
+            <h2 className="mb-4 text-2xl font-bold text-primary-8">{pTitle}</h2>
             <article className="text-justify text-primary-8">{text}</article>
           </div>
         ))}
@@ -217,27 +217,27 @@ export default function AboutCarousel() {
   }, []);
 
   return (
-    <div className="w-full h-full relative">
+    <div className="relative h-full w-full">
       <div
-        className="w-full h-[calc(100%-55px)] overflow-x-scroll no-scrollbar snap-x snap-mandatory overscroll-x-contain flex gap-1 overflow-y-auto"
+        className="no-scrollbar flex h-[calc(100%-55px)] w-full snap-x snap-mandatory gap-1 overflow-y-auto overflow-x-scroll overscroll-x-contain"
         ref={refSlider}
       >
         {ABOUT_ARTICLES.map(({ id, description, title, paragraphs }) => (
           <AboutSectionItem key={id} {...{ id, title, description, paragraphs }} />
         ))}
       </div>
-      <nav className="absolute left-1/2 -translate-x-1/2 bottom-4 z-10 flex items-center">
-        <ul className="m-0 p-0 flex gap-1 list-none">
+      <nav className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center">
+        <ul className="m-0 flex list-none gap-1 p-0">
           <li key="indicator-previous" className="box-border">
             <button
               type="button"
               title="previous"
               aria-label="previous"
               disabled={head(ABOUT_ARTICLES)?.id === currentArticle}
-              className="text-primary-8 disabled:text-gray-400 disabled:select-none disabled:pointer-events-none"
+              className="text-primary-8 disabled:pointer-events-none disabled:select-none disabled:text-gray-400"
               onClick={onLeftRightSlide('left')}
             >
-              <LeftOutlined className="text-current w-3 h-3" />
+              <LeftOutlined className="h-3 w-3 text-current" />
             </button>
           </li>
           {ABOUT_ARTICLES.map(({ id, title }) => (
@@ -248,8 +248,8 @@ export default function AboutCarousel() {
                 aria-label={`go to ${title}`}
                 onClick={onTrackItemClick(id)}
                 className={classNames(
-                  'block w-6 mx-[2px] relative py-3 cursor-pointer',
-                  'before:w-6 before:h-1 before:absolute before:top-[calc(50%-1px)] before:left-0 before:[transform-origin:left_center] before:rounded-full',
+                  'relative mx-[2px] block w-6 cursor-pointer py-3',
+                  'before:absolute before:left-0 before:top-[calc(50%-1px)] before:h-1 before:w-6 before:rounded-full before:[transform-origin:left_center]',
                   currentArticle === id
                     ? ' before:bg-primary-8'
                     : 'before:bg-neutral-4 before:opacity-30'
@@ -264,9 +264,9 @@ export default function AboutCarousel() {
               aria-label="next"
               disabled={last(ABOUT_ARTICLES)?.id === currentArticle}
               onClick={onLeftRightSlide('right')}
-              className="text-primary-8 disabled:text-gray-400 disabled:select-none disabled:pointer-events-none"
+              className="text-primary-8 disabled:pointer-events-none disabled:select-none disabled:text-gray-400"
             >
-              <RightOutlined className="text-current w-3 h-3" />
+              <RightOutlined className="h-3 w-3 text-current" />
             </button>
           </li>
         </ul>

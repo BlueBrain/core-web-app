@@ -179,12 +179,12 @@ export function ArticleListing() {
   }, [loading, loadMoreArticles]);
 
   return (
-    <div className="flex items-start mx-10 gap-x-4 mt-12 mb-2 w-full">
-      <div className="flex items-start px-4 bg-white min-w-[10rem]">
+    <div className="mx-10 mb-2 mt-12 flex w-full items-start gap-x-4">
+      <div className="flex min-w-[10rem] items-start bg-white px-4">
         <If id="total-count" condition={Boolean(total)}>
           <div className="text-md mt-4 text-primary-8">
             Number of articles:{' '}
-            <div className="text-primary-8 font-bold" data-testid="total-article-count">
+            <div className="font-bold text-primary-8" data-testid="total-article-count">
               {total}
             </div>
           </div>
@@ -192,13 +192,13 @@ export function ArticleListing() {
       </div>
 
       <div
-        className="flex-1 max-w-7xl mx-auto h-[calc(100vh-3.5rem)] article-list-scrollbar overflow-y-auto"
+        className="article-list-scrollbar mx-auto h-[calc(100vh-3.5rem)] max-w-7xl flex-1 overflow-y-auto"
         ref={refListingContainer}
       >
         <Header {...{ loading }} />
         <If id="error" condition={Boolean(error && experiment && articles.length === 0)}>
           <div
-            className="self-center mx-auto border border-gray-400 p-7 whitespace-pre-line"
+            className="mx-auto self-center whitespace-pre-line border border-gray-400 p-7"
             data-testid="article-listing-error"
           >
             {ARTICLE_LISTING_ERRORS_MAP[(error as { cause: number })?.cause] ??
@@ -206,7 +206,7 @@ export function ArticleListing() {
           </div>
         </If>
         <If id="loading" condition={loading && articles.length === 0}>
-          <div className="flex flex-col grow px-4 w-full" data-testid="initial data loading">
+          <div className="flex w-full grow flex-col px-4" data-testid="initial data loading">
             {[...Array(skeletonItems).keys()].map((_, index) => (
               <Skeleton key={index} paragraph={{ rows: 3 }} className="my-6 px-4" />
             ))}
@@ -214,7 +214,7 @@ export function ArticleListing() {
         </If>
         <If id="data" condition={Boolean(articles.length)}>
           <List
-            className="flex flex-col grow px-4"
+            className="flex grow flex-col px-4"
             itemLayout="vertical"
             size="large"
             dataSource={articles ?? []}

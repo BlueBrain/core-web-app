@@ -15,7 +15,7 @@ export function LoadingHandler({ section }: LoadingHandlerProps) {
       <Spin
         size="large"
         indicator={<LoadingOutlined />}
-        className="text-neutral-3 absolute top-1/2 left-1/2"
+        className="absolute left-1/2 top-1/2 text-neutral-3"
       />
     )
   );

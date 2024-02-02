@@ -27,7 +27,7 @@ export function MainNavigation({ expanded }: { expanded: boolean }) {
   return (
     <ul
       className={classNames(
-        'w-full h-full flex items-start justify-start gap-y-1 flex-col overflow-y-auto primary-scrollbar',
+        'primary-scrollbar flex h-full w-full flex-col items-start justify-start gap-y-1 overflow-y-auto',
         !expanded && 'hidden'
       )}
     >
@@ -40,9 +40,9 @@ export function MainNavigation({ expanded }: { expanded: boolean }) {
 
 export default function Main() {
   return (
-    <div className={classNames('relative bg-primary-9 h-full')}>
+    <div className={classNames('relative h-full bg-primary-9')}>
       <div
-        className="fixed bg-primary-9 inset-0 w-full h-full min-h-screen z-0 bg-blend-lighten bg-no-repeat bg-center [background-size:70%]"
+        className="fixed inset-0 z-0 h-full min-h-screen w-full bg-primary-9 bg-center bg-no-repeat bg-blend-lighten [background-size:70%]"
         style={{
           backgroundImage: `url(${basePath}/images/obp_fullbrain_backdroped.png)`,
         }}
@@ -53,10 +53,10 @@ export default function Main() {
         </ApplicationSidebar>
       </div>
 
-      <div className="h-screen pr-7 pl-14 py-5 justify-end gap-x-2 grid grid-cols-[1fr_3fr]">
-        <div className="flex flex-col w-full gap-y-7">
+      <div className="grid h-screen grid-cols-[1fr_3fr] justify-end gap-x-2 py-5 pl-14 pr-7">
+        <div className="flex w-full flex-col gap-y-7">
           <OBPLogo color="text-white" />
-          <div className="w-90percent z-10">
+          <div className="z-10 w-90percent">
             <DefaultAccountPanel expanded />
           </div>
         </div>

@@ -21,7 +21,7 @@ export default function SimulationRangeInputs() {
   }, [movieGenerationTimeRange.end, movieGenerationTimeRange.start, setMovieGenerationTimeRange]);
 
   return (
-    <div className="flex flex-row gap-5 text-sm font-semibold p-2">
+    <div className="flex flex-row gap-5 p-2 text-sm font-semibold">
       <div className="flex flex-row gap-2">
         Start{' '}
         <NumberInput

@@ -14,11 +14,11 @@ export default function BackToInteractiveExplorationBtn({
 }: Props) {
   return (
     <Link
-      className="pt-2 text-sm bg-neutral-1 text-primary-8 w-[40px] shrink-0 h-full flex flex-col items-center"
+      className="flex h-full w-[40px] shrink-0 flex-col items-center bg-neutral-1 pt-2 text-sm text-primary-8"
       href={href}
       prefetch={prefetch}
     >
-      <ArrowRightOutlined className="rotate-180 mt-1.5 mb-4" />
+      <ArrowRightOutlined className="mb-4 mt-1.5 rotate-180" />
       <div style={{ writingMode: 'vertical-rl', rotate: '180deg' }}>
         Back to interactive exploration
       </div>

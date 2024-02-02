@@ -40,12 +40,12 @@ export default function SimulationCampaignListView({ dataType }: { dataType: Dat
   }, [setAxes]);
 
   return (
-    <div className="flex min-h-screen h-full max-h-screen bg-[#d1d1d1] w-full">
-      <div className="relative grid grid-cols-[auto_max-content] grid-rows-1 w-full h-full overflow-x-auto overflow-y-hidden">
+    <div className="flex h-full max-h-screen min-h-screen w-full bg-[#d1d1d1]">
+      <div className="relative grid h-full w-full grid-cols-[auto_max-content] grid-rows-1 overflow-x-auto overflow-y-hidden">
         <WithControlPanel dataType={dataType} brainRegionSource="root">
           {({ displayControlPanel, setDisplayControlPanel }) => (
             <>
-              <div className="grid grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5 w-full px-5 sticky top-0">
+              <div className="sticky top-0 grid w-full grid-cols-[max-content_1fr_max-content] items-center justify-between gap-5 px-5">
                 <NumericResultsInfo dataType={dataType} brainRegionSource="root" />
                 <FilterControls
                   displayControlPanel={displayControlPanel}
@@ -53,7 +53,7 @@ export default function SimulationCampaignListView({ dataType }: { dataType: Dat
                   dataType={dataType}
                 />
               </div>
-              <div className="px-4 h-full w-full">
+              <div className="h-full w-full px-4">
                 <ListTable
                   {...{
                     columns,

@@ -57,7 +57,7 @@ function CustomTH({
         <button
           className={classNames(
             'inline-flex w-full flex-col items-start',
-            '[&>.ant-table-column-sorters]:inline-flex [&>.ant-table-column-sorters]:!items-start [&>.ant-table-column-sorters]:gap-2 [&>.ant-table-column-sorters]:flex-none'
+            '[&>.ant-table-column-sorters]:inline-flex [&>.ant-table-column-sorters]:flex-none [&>.ant-table-column-sorters]:!items-start [&>.ant-table-column-sorters]:gap-2'
           )}
           onClick={onClick}
           type="button"
@@ -155,7 +155,7 @@ export function BaseTable({
         aria-label="listing-view-table"
         className={classNames(
           styles.table,
-          '[&_.ant-table-sticky-holder]:shadow-md [&_.ant-table-body]:!no-scrollbar'
+          '[&_.ant-table-body]:!no-scrollbar [&_.ant-table-sticky-holder]:shadow-md'
         )}
         columns={
           columns &&

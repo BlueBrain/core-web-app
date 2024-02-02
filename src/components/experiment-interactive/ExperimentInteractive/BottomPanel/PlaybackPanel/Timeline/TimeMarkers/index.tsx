@@ -25,7 +25,7 @@ export default function TimeMarkers() {
       simulationAnnotations.map(({ step, text, color = 'text-green-400' }) => (
         <div
           key={`${step}_${text}`}
-          className={`w-full absolute ${color}`}
+          className={`absolute w-full ${color}`}
           style={{ transform: `translate(${calculatePercentX(step, stepCount)}%, -2px)` }}
         >
           <FrameMarker onClick={() => setPlaybackActiveStep(step)} description={text} />
@@ -35,11 +35,11 @@ export default function TimeMarkers() {
   );
 
   return (
-    <div className="relative mb-2.5 w-full left-1/2 -translate-x-1/2">
+    <div className="relative left-1/2 mb-2.5 w-full -translate-x-1/2">
       {tickPositions.map((tickPosition) => (
         <div
           key={tickPosition}
-          className="w-full absolute border-l border-white/70 h-1.5"
+          className="absolute h-1.5 w-full border-l border-white/70"
           style={{ transform: `translate(${tickPosition}%)` }}
         />
       ))}

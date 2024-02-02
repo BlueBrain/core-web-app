@@ -21,7 +21,7 @@ function ColumnContent(text: string) {
   return isNumeric(text) ? (
     text
   ) : (
-    <span className="bg-neutral-1 px-2 py-2 rounded-md text-center">{JSON.stringify(text)}</span>
+    <span className="rounded-md bg-neutral-1 px-2 py-2 text-center">{JSON.stringify(text)}</span>
   );
 }
 
@@ -125,13 +125,13 @@ export function IndexColContent({
   return (
     <div className="flex flex-col gap-5">
       <Link
-        className="font-bold whitespace-pre-wrap"
+        className="whitespace-pre-wrap font-bold"
         href={`${pathname}/${to64(`${project}!/!${id}`)}`}
       >
         {text}
       </Link>
       <div className="flex flex-wrap items-center gap-3">
-        <span className="text-neutral-4 text-sm uppercase">Open in</span>
+        <span className="text-sm uppercase text-neutral-4">Open in</span>
         <div className="flex items-center gap-3">
           {[
             {
@@ -165,7 +165,7 @@ export function IndexColContent({
 
 export function ValueArray({ value }: { value?: string[] }) {
   return value ? (
-    <div className="bg-neutral-1 flex font-semibold gap-2 px-2 py-1 rounded text-primary-8 w-fit">
+    <div className="flex w-fit gap-2 rounded bg-neutral-1 px-2 py-1 font-semibold text-primary-8">
       {value.map((x, i, arr) => (
         <span key={x}>{i < arr.length - 1 ? `${x},` : x}</span>
       ))}

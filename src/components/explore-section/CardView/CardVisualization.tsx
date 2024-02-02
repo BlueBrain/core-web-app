@@ -40,7 +40,7 @@ export default function CardVisualization({ dataType, resource }: CardVisualizat
         return (
           <Spin
             size="large"
-            className="h-full w-full flex items-center justify-center"
+            className="flex h-full w-full items-center justify-center"
             indicator={<LoadingOutlined />}
           />
         );
@@ -65,7 +65,7 @@ export default function CardVisualization({ dataType, resource }: CardVisualizat
     return renderSwc();
   }
   return (
-    <div className="text-primary-7 flex h-full w-full flex items-center justify-center gap-2">
+    <div className="flex flex h-full w-full items-center justify-center gap-2 text-primary-7">
       <WarningOutlined /> Visualization is not available in this type
     </div>
   );

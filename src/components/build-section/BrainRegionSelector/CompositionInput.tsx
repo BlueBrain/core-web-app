@@ -17,7 +17,7 @@ export default function CompositionInput({
 
   return (
     <input
-      className="bg-transparent text-primary-1 border-solid border border-primary-6 outline-none text-right pr-[3px]"
+      className="border border-solid border-primary-6 bg-transparent pr-[3px] text-right text-primary-1 outline-none"
       type="number"
       min={0}
       value={value}

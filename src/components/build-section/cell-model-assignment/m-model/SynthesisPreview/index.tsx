@@ -89,7 +89,7 @@ export default function SynthesisPreview({ className }: Props) {
 
   return (
     <div className={className}>
-      <div className={classNames('flex flex-col w-1/2', isLoadingStyle)}>
+      <div className={classNames('flex w-1/2 flex-col', isLoadingStyle)}>
         <PlotRenderer plotResponse={imgSources} plotName="barcode" title="Persistence barcode" />
         <PlotRenderer plotResponse={imgSources} plotName="diagram" title="Persistence diagram" />
         <PlotRenderer plotResponse={imgSources} plotName="image" title="Persistence image" />
@@ -99,7 +99,7 @@ export default function SynthesisPreview({ className }: Props) {
         <PlotRenderer plotResponse={imgSources} plotName="synthesis" title="Synthesized neuron" />
       </div>
       {isLoading && (
-        <div className="absolute flex w-full h-full items-center justify-center text-primary-8 text-2xl">
+        <div className="absolute flex h-full w-full items-center justify-center text-2xl text-primary-8">
           Fetching data...
         </div>
       )}

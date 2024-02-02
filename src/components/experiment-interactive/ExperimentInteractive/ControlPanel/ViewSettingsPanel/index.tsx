@@ -13,11 +13,11 @@ export default function ViewSettingsPanel() {
 
   return (
     <div
-      className={`absolute right-0 top-0 w-[250px] flex flex-col text-white bg-black px-3 py-5 rounded-tl-3xl rounded-bl-3xl ${
+      className={`absolute right-0 top-0 flex w-[250px] flex-col rounded-bl-3xl rounded-tl-3xl bg-black px-3 py-5 text-white ${
         isViewSettingsPanelVisible ? `` : `hidden`
       }`}
     >
-      <div className="flex flex-row justify-between text-lg items-center">
+      <div className="flex flex-row items-center justify-between text-lg">
         View settings
         <button
           type="button"
@@ -29,29 +29,29 @@ export default function ViewSettingsPanel() {
         </button>
       </div>
 
-      <div className="flex flex-col w-full aspect-square justify-center items-center">
+      <div className="flex aspect-square w-full flex-col items-center justify-center">
         {/* This needs connecting to Brayns camera  */}
         <AxisGizmo camera={BraynsService.CameraTransform} />
       </div>
 
       <div className="p-3">
-        <div className="flex flex-row items-center text-3xl gap-3">
+        <div className="flex flex-row items-center gap-3 text-3xl">
           <Button type="text">
-            <ZoomOutIcon className="w-[16px] h-[16px]" />
+            <ZoomOutIcon className="h-[16px] w-[16px]" />
           </Button>
-          <div className="w-full flex-grow relative">
-            <div className="text-center w-full bg-white h-[1px]" />
-            <div className="w-[3px] h-[15px] absolute left-1/2 bg-white -translate-y-1/2" />
+          <div className="relative w-full flex-grow">
+            <div className="h-[1px] w-full bg-white text-center" />
+            <div className="absolute left-1/2 h-[15px] w-[3px] -translate-y-1/2 bg-white" />
           </div>
           <Button type="text">
-            <ZoomInIcon className="w-[16px] h-[16px]" />
+            <ZoomInIcon className="h-[16px] w-[16px]" />
           </Button>
         </div>
       </div>
 
       <DisplayWholeBrainCheckbox />
 
-      <div className="border-t border-t-white/20 mt-3">
+      <div className="mt-3 border-t border-t-white/20">
         <ResetViewButton />
       </div>
     </div>

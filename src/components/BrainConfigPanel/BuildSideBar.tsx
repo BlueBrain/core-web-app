@@ -49,11 +49,11 @@ function BrainModelConfigDetails() {
   const detailedCircuit = useAtomValue(detailedCircuitAtom);
 
   return (
-    <div className="w-full mb-4">
-      <div className="flex items-center justify-between w-full">
+    <div className="mb-4 w-full">
+      <div className="flex w-full items-center justify-between">
         <div className="inline-flex items-center gap-1">
-          <UserOutlined className="text-base text-white inline-block" />
-          <span className="align-middle text-white line-clamp-1">
+          <UserOutlined className="inline-block text-base text-white" />
+          <span className="line-clamp-1 align-middle text-white">
             {brainModelConfig?._createdBy?.split('/').at(-1)}
           </span>
           {!!detailedCircuit && (
@@ -75,7 +75,7 @@ function BrainModelConfigDetails() {
           </div>
         )}
       </div>
-      <p className="my-2 text-primary-2 text-xs">{brainModelConfig?.description}</p>
+      <p className="my-2 text-xs text-primary-2">{brainModelConfig?.description}</p>
     </div>
   );
 }
@@ -125,7 +125,7 @@ function CuratedModelLinkBtn({
 }) {
   return (
     <Link
-      className="flex items-center justify-center text-primary-3 border border-primary-3 h-12"
+      className="flex h-12 items-center justify-center border border-primary-3 text-primary-3"
       key={config.id}
       href={`${baseHref}/?brainModelConfigId=${encodeURIComponent(config.id)}`}
     >
@@ -153,10 +153,10 @@ function Collapsible({
 }) {
   return (
     <details className="w-full py-2" open={open}>
-      <summary className="block cursor-pointer group">
-        <div className="flex justify-between items-center">
+      <summary className="group block cursor-pointer">
+        <div className="flex items-center justify-between">
           <span className="text-base font-bold group-hover:text-primary-3">{title}</span>
-          <RightOutlined className="text-primary-3 text-sm w-[14px] h-[14px]" />
+          <RightOutlined className="h-[14px] w-[14px] text-sm text-primary-3" />
         </div>
       </summary>
       <div className="px-2 py-4 transition-all duration-200">{children}</div>
@@ -188,17 +188,17 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
 
   if (!expanded) return null;
   return (
-    <div className="pr-2 w-full">
+    <div className="w-full pr-2">
       <Suspense fallback={null}>
         <BrainModelConfigDetails />
       </Suspense>
 
-      <div className="w-full flex flex-col items-start py-2 mb-3 border-y border-primary-7">
+      <div className="mb-3 flex w-full flex-col items-start border-y border-primary-7 py-2">
         {brainModelConfig && (
           <Button
             type="text"
             icon={<CloneIcon className="text-primary-4" />}
-            className="text-white font-bold text-base px-0 hover:!bg-transparent hover:!text-primary-4"
+            className="px-0 text-base font-bold text-white hover:!bg-transparent hover:!text-primary-4"
             onClick={openCloneModal(brainModelConfig)}
           >
             Duplicate brain model
@@ -207,7 +207,7 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
         <CopyTextBtn
           icon={<LinkOutlined className="text-primary-4" />}
           text={brainModelConfig?.['@id'] ?? ''}
-          className="text-white font-bold text-base px-0 hover:!bg-transparent hover:!text-primary-4"
+          className="px-0 text-base font-bold text-white hover:!bg-transparent hover:!text-primary-4"
         >
           Copy brain model url
         </CopyTextBtn>
@@ -221,7 +221,7 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
         </div>
       </Collapsible>
 
-      <div className="!h-px bg-primary-7 w-full" />
+      <div className="!h-px w-full bg-primary-7" />
 
       <Collapsible title="Recently used configurations">
         <div className="space-y-2">
@@ -231,7 +231,7 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
         </div>
       </Collapsible>
 
-      <div className="h-px bg-primary-7 w-full" />
+      <div className="h-px w-full bg-primary-7" />
 
       <Collapsible title="Public configurations">
         <div className="space-y-2">
@@ -241,7 +241,7 @@ function BuildSideBarControlPanel({ baseHref, expanded }: { baseHref: string; ex
         </div>
       </Collapsible>
 
-      <div className="h-px bg-primary-7 w-full" />
+      <div className="h-px w-full bg-primary-7" />
 
       <Collapsible title="My configurations">
         <div className="space-y-2">

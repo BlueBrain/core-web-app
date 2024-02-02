@@ -37,7 +37,7 @@ export default function AnalysisReportImage({
 
   return (
     <div className="mt-4">
-      <div className="flex mb-3 justify-between items-center text-primary-7">
+      <div className="mb-3 flex items-center justify-between text-primary-7">
         <Checkbox
           onChange={() => setShowDimensionValue(!showDimensionValue)}
           checked={showDimensionValue}
@@ -46,14 +46,14 @@ export default function AnalysisReportImage({
           {title}
         </Checkbox>
         <Link
-          className="border radius-none w-max px-2 py-1"
+          className="radius-none w-max border px-2 py-1"
           href={buildSimulationDetailURL(org, proj, id, pathname)}
         >
           view simulation detail <ArrowRightOutlined className="ml-3" />
         </Link>
       </div>
       <Image alt={id} src={URL.createObjectURL(blob)} height={260} width={425} />
-      <div className="flex text-primary-7 mt-3 justify-between items-center">
+      <div className="mt-3 flex items-center justify-between text-primary-7">
         <div className="flex gap-3">
           <div>
             <UserOutlined />
@@ -65,7 +65,7 @@ export default function AnalysisReportImage({
         </div>
         <button
           type="button"
-          className="border-2 radius-none w-max p-2"
+          className="radius-none w-max border-2 p-2"
           onClick={() => FileSaver.saveAs(blob)}
           aria-label="Download report image"
         >

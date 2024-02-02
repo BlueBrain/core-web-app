@@ -12,7 +12,7 @@ export default function PanelCollapsed({ setIsSidebarExpanded }: PanelCollapsedP
   const { title } = useAtomValue(selectedBrainRegionAtom) ?? { title: '' };
 
   return (
-    <div className="flex flex-col items-center pt-2 w-[40px]">
+    <div className="flex w-[40px] flex-col items-center pt-2">
       <Button
         className="mb-2"
         type="text"
@@ -21,7 +21,7 @@ export default function PanelCollapsed({ setIsSidebarExpanded }: PanelCollapsedP
         onClick={() => setIsSidebarExpanded(true)}
       />
       <div
-        className="text-white flex gap-x-3.5 items-center"
+        className="flex items-center gap-x-3.5 text-white"
         style={{
           writingMode: 'vertical-rl',
           transform: 'rotate(180deg)',

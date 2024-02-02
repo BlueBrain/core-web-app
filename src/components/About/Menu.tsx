@@ -67,7 +67,7 @@ export function MenuSingleItem({ id, title, url, description, bgcolor, selected 
       id={id}
       href={url}
       className={classNames(
-        'py-4 px-5 hover:bg-white text-left group flex-1 basis-1/3',
+        'group flex-1 basis-1/3 px-5 py-4 text-left hover:bg-white',
         bgcolor,
         current && 'bg-white shadow-lg'
       )}
@@ -94,7 +94,7 @@ export function MenuSingleItem({ id, title, url, description, bgcolor, selected 
 
 export default function AboutMenu() {
   return (
-    <div className="inline-flex items-stretch justify-between gap-x-1 gap-y-4 sticky top-0 z-20 bg-primary-8">
+    <div className="sticky top-0 z-20 inline-flex items-stretch justify-between gap-x-1 gap-y-4 bg-primary-8">
       {MENU_LIST.map(({ id, title, url, description, bgcolor, selected }) => (
         <MenuSingleItem
           key={id}

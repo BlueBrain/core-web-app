@@ -142,7 +142,7 @@ export default function MembersPanel({
       okButtonProps: { className: 'hidden' },
       cancelButtonProps: { className: 'hidden' },
       footer: (
-        <div className="flex flex-col justify items-center">
+        <div className="justify flex flex-col items-center">
           <Button onClick={() => removeMember(member)}>Confirm</Button>
           <Button onClick={() => thisModal.destroy()} className="border-none">
             Cancel
@@ -217,12 +217,12 @@ export default function MembersPanel({
       {error && <p className="text-error">There was an error when updating members.</p>}
 
       {savingChanges ? (
-        <Spin data-testid="Saving changes" className="w-full m-auto" />
+        <Spin data-testid="Saving changes" className="m-auto w-full" />
       ) : (
         <ul>
           {members.map((member) => (
             <li
-              className="flex justify-between my-5"
+              className="my-5 flex justify-between"
               data-testid="virtual-lab-member"
               key={member.email}
             >

@@ -29,7 +29,7 @@ export default function DeleteGroupBtn({ onDelete = () => {}, className }: Props
     <>
       <div
         className={classNames(
-          'invisible group-hover:visible self-end border-b-0 cursor-pointer text-red-500 mr-2 px-1',
+          'invisible mr-2 cursor-pointer self-end border-b-0 px-1 text-red-500 group-hover:visible',
           className
         )}
       >
@@ -49,9 +49,9 @@ export default function DeleteGroupBtn({ onDelete = () => {}, className }: Props
         }}
         width={350}
       >
-        <WarningOutlined className="text-red-600 text-7xl mb-6" />
-        <div className="text-center text-2xl mb-6">Are you sure you want to remove this group?</div>
-        <button className="bg-black text-white mb-2 px-6 py-2" type="button" onClick={handleOk}>
+        <WarningOutlined className="mb-6 text-7xl text-red-600" />
+        <div className="mb-6 text-center text-2xl">Are you sure you want to remove this group?</div>
+        <button className="mb-2 bg-black px-6 py-2 text-white" type="button" onClick={handleOk}>
           Delete
         </button>
         <button className="p-4" type="button" onClick={handleCancel}>

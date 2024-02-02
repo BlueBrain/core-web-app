@@ -40,21 +40,21 @@ export default function SimulationThumbnail({
   );
 
   return (
-    <div className="relative overflow-hidden border border-white/20 p-1 h-[90px]">
+    <div className="relative h-[90px] overflow-hidden border border-white/20 p-1">
       <div
-        className="bg-cover bg-center bg-no-repeat w-full h-full absolute"
+        className="absolute h-full w-full bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${basePath}/images/experiment-interactive/mock.png)` }}
         onClick={handleCheckedChange}
         role="presentation"
       />
 
-      <div className="absolute left-1 top-1 font-bold flex flex-row gap-2 items-center justify-start">
+      <div className="absolute left-1 top-1 flex flex-row items-center justify-start gap-2 font-bold">
         <Checkbox.Root
-          className="bg-transparent border border-white h-5 w-5 rounded"
+          className="h-5 w-5 rounded border border-white bg-transparent"
           checked={isChecked}
           onCheckedChange={handleCheckedChange}
         >
-          <Checkbox.Indicator className="flex items-center justify-center w-full">
+          <Checkbox.Indicator className="flex w-full items-center justify-center">
             <CheckIcon className="check" />
           </Checkbox.Indicator>
         </Checkbox.Root>

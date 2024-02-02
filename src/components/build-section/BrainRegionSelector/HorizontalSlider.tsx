@@ -21,7 +21,7 @@ export default function HorizontalSlider({
   step,
 }: HorizontalSliderProps) {
   return (
-    <div className={classNames('flex grow items-center justify-between w-full', className)}>
+    <div className={classNames('flex w-full grow items-center justify-between', className)}>
       <Slider
         className="grow"
         tooltip={{ open: false }}

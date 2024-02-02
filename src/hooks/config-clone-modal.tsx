@@ -40,20 +40,20 @@ interface CloneConfigFormProps<T extends SupportedConfigListTypes> {
 
 function CloneConfigSuccess({ name, startEditing }: { name: string; startEditing: () => void }) {
   return (
-    <div className="flex items-center justify-center flex-col">
+    <div className="flex flex-col items-center justify-center">
       <CheckCircleFilled style={{ fontSize: '5rem', color: '#00B212' }} />
       <div className="w-full" style={{ padding: '.75rem 0 3.75rem' }}>
-        <div className="flex items-center justify-center flex-col gap-1">
-          <p className="text-primary-8 text-base">
+        <div className="flex flex-col items-center justify-center gap-1">
+          <p className="text-base text-primary-8">
             You have successfully clone the configuration. Your cloned configuration
           </p>
-          <h2 className="text-2xl text-primary-8 font-bold">{name}</h2>
-          <p className="text-primary-8 text-base">is ready to use.</p>
+          <h2 className="text-2xl font-bold text-primary-8">{name}</h2>
+          <p className="text-base text-primary-8">is ready to use.</p>
         </div>
       </div>
       <Button
         type="primary"
-        className="ml-2 bg-primary-9 py-6 px-8 rounded-none inline-flex items-center justify-center"
+        className="ml-2 inline-flex items-center justify-center rounded-none bg-primary-9 px-8 py-6"
         onClick={startEditing}
       >
         Start editing
@@ -157,7 +157,7 @@ function CloneConfig<T extends SupportedConfigListTypes>({
             ]}
           >
             <Input
-              className="mt-2 rounded-none !focus:shadow-none border-0 border-b border-primary-8 text-xl"
+              className="!focus:shadow-none mt-2 rounded-none border-0 border-b border-primary-8 text-xl"
               placeholder="Name your configuration..."
             />
           </Form.Item>
@@ -169,21 +169,21 @@ function CloneConfig<T extends SupportedConfigListTypes>({
           >
             <Input.TextArea
               rows={3}
-              className="mt-2 !focus:shadow-none border border-neutral-3 rounded-sm text-base"
+              className="!focus:shadow-none mt-2 rounded-sm border border-neutral-3 text-base"
               placeholder="Write your description here..."
             />
           </Form.Item>
 
-          <div className="text-right mt-8 mr-[-34px]">
+          <div className="mr-[-34px] mt-8 text-right">
             <Button
               onClick={onClose}
-              className="py-6 px-5 shadow-none rounded-none inline-flex items-center justify-center border-none"
+              className="inline-flex items-center justify-center rounded-none border-none px-5 py-6 shadow-none"
             >
               Cancel
             </Button>
             <Button
               type="primary"
-              className="ml-2 bg-primary-8 py-6 px-8 rounded-none inline-flex items-center justify-center"
+              className="ml-2 inline-flex items-center justify-center rounded-none bg-primary-8 px-8 py-6"
               disabled={!formValid}
               onClick={cloneConfig}
               loading={cloningState.status === 'cloning'}
@@ -225,7 +225,7 @@ export default function useCloneConfigModal<T extends SupportedConfigListTypes>(
         mask: { background: '#002766' },
         body: { padding: '60px 40px 20px' },
       },
-      closeIcon: <CloseOutlined className="text-primary-8 text-2xl" />,
+      closeIcon: <CloseOutlined className="text-2xl text-primary-8" />,
       className: '![&>.ant-modal-content]:bg-red-500',
       content: (
         <CloneConfig<T>

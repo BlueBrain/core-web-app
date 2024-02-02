@@ -20,14 +20,14 @@ export default function ResultHeader({
 }: ResultHeaderProps) {
   return (
     <>
-      <div className="inline-flex items-center w-full gap-2">
-        <div className="w-auto h-px bg-neutral-3 flex-[1_1]" />
-        <span className="pl-2 text-sm w-max text-neutral-4">
+      <div className="inline-flex w-full items-center gap-2">
+        <div className="h-px w-auto flex-[1_1] bg-neutral-3" />
+        <span className="w-max pl-2 text-sm text-neutral-4">
           Asked {format(new Date(askedAt), 'dd.MM.yyyy - kk:mm')}
         </span>
       </div>
-      <div className="grid grid-cols-[2fr_1fr] items-center justify-between gap-2  w-full mb-2">
-        <div className="inline-flex items-center justify-start w-full flex-[70%] gap-2 my-5">
+      <div className="mb-2 grid w-full grid-cols-[2fr_1fr] items-center  justify-between gap-2">
+        <div className="my-5 inline-flex w-full flex-[70%] items-center justify-start gap-2">
           <BrainLight />
           <span
             className={classNames(
@@ -39,7 +39,7 @@ export default function ResultHeader({
             {question}
           </span>
         </div>
-        <div className="inline-flex items-center justify-end gap-2 flex-[30%]">
+        <div className="inline-flex flex-[30%] items-center justify-end gap-2">
           {brainRegion?.id && (
             <QABrainRegionPerQuestion id={brainRegion.id} title={brainRegion.title} />
           )}
@@ -47,11 +47,11 @@ export default function ResultHeader({
             aria-label="Expand question"
             type="button"
             onClick={toggleCollapseQuestion}
-            className="flex items-center justify-center w-8 h-8 p-px rounded-full min-w-[2rem] hover:shadow-md"
+            className="flex h-8 w-8 min-w-[2rem] items-center justify-center rounded-full p-px hover:shadow-md"
           >
             <ChevronIcon
               className={classNames(
-                'transition-transform duration-300 ease-in-out text-primary-8 fill-current',
+                'fill-current text-primary-8 transition-transform duration-300 ease-in-out',
                 collpaseQuestion ? 'rotate-0' : 'rotate-90'
               )}
             />

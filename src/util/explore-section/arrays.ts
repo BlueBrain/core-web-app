@@ -6,6 +6,6 @@ export default function uniqueArrayOfObjectsByKey<T extends object, U extends ke
     (val) =>
       ({
         ...array.find((element) => element[key] === val),
-      } as T)
+      }) as T
   );
 }

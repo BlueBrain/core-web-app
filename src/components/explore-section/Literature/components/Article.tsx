@@ -60,7 +60,7 @@ export function ArticleAction({
     <button
       type="button"
       onClick={() => onClick()}
-      className="flex items-center justify-center gap-2 px-2 py-1 text-base font-normal transition-all ease-out rounded-md text-primary-8 hover:bg-gray-200"
+      className="flex items-center justify-center gap-2 rounded-md px-2 py-1 text-base font-normal text-primary-8 transition-all ease-out hover:bg-gray-200"
     >
       {icon}
       <span> {title} </span>
@@ -104,13 +104,13 @@ export default function Article({
 
   return (
     <li className="mb-10 ml-4" data-testid="article-item">
-      <div className="absolute flex items-center justify-center w-2 h-2 mt-1 rounded-full bg-primary-8 first:mt-0 -left-1" />
+      <div className="absolute -left-1 mt-1 flex h-2 w-2 items-center justify-center rounded-full bg-primary-8 first:mt-0" />
 
-      <div className="mb-1 -mt-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+      <div className="-mt-1 mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
         <div className="flex items-start justify-between">
           <h1
             title={title}
-            className="clear-right w-3/5 text-xl line-clamp-2 text-primary-8 hover:font-medium"
+            className="clear-right line-clamp-2 w-3/5 text-xl text-primary-8 hover:font-medium"
           >
             {title}
           </h1>
@@ -141,7 +141,7 @@ export default function Article({
         </div>
       </div>
       {!isCompact && (
-        <div className="flex flex-wrap items-center my-5 gap-x-4 gap-y-1">
+        <div className="my-5 flex flex-wrap items-center gap-x-4 gap-y-1">
           <Tooltip
             title="Authors"
             placement="bottomLeft"
@@ -176,21 +176,21 @@ export default function Article({
           {publicationDate && (
             <ArticlePreview
               title={formatDate(publicationDate)}
-              icon={<CalendarIcon className="w-4 h-4" />}
+              icon={<CalendarIcon className="h-4 w-4" />}
               className="cursor-default"
             />
           )}
           {!isNil(citationsCount) && (
             <ArticlePreview
               title={`Times cited: ${citationsCount}`}
-              icon={<CitationIcon className="w-4 h-4" />}
+              icon={<CitationIcon className="h-4 w-4" />}
               altText={`Number of citations: ${citationsCount}`}
               className="cursor-default"
             />
           )}
         </div>
       )}
-      <article className="bg-[#F5F5F5] mb-4 p-7">
+      <article className="mb-4 bg-[#F5F5F5] p-7">
         <div
           className={classNames(
             'mb-2 text-base font-normal text-gray-500',
@@ -203,7 +203,7 @@ export default function Article({
         </div>
         <button
           type="button"
-          className="px-3 py-2 text-sm bg-white rounded-md"
+          className="rounded-md bg-white px-3 py-2 text-sm"
           onClick={onReadMore}
         >
           {readmore ? 'Read less' : 'Read more'}

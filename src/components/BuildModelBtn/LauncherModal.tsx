@@ -36,11 +36,11 @@ export default function LauncherModal({
         maskClosable={false}
       >
         <div className="flex flex-col items-center">
-          <h4 className="mt-20 mb-2 text-primary-7">We are setting up a couple of things...</h4>
-          <h4 className="mt-2 mb-2 text-primary-7">Please wait</h4>
+          <h4 className="mb-2 mt-20 text-primary-7">We are setting up a couple of things...</h4>
+          <h4 className="mb-2 mt-2 text-primary-7">Please wait</h4>
           <Spin indicator={antLoadingIcon} />
           <GenericButton
-            className="bg-primary-1 text-primary-9 mt-10 mb-20"
+            className="mb-20 mt-10 bg-primary-1 text-primary-9"
             onClick={onClose}
             text="Cancel"
           />
@@ -66,7 +66,7 @@ export default function LauncherModal({
       onCancel={() => onCloseModal(false)}
       styles={{ mask: maskStyle }}
     >
-      <div className="text-primary-7 mb-4 mt-4">
+      <div className="mb-4 mt-4 text-primary-7">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde id vitae natus minima quam,
         necessitatibus atque eligendi reprehenderit accusantium, delectus veniam dolorum a nesciunt
         ipsam minus, ut beatae porro ad?

@@ -83,7 +83,7 @@ export default function PreviewThumbnail({
       {loading ? (
         <Skeleton.Image
           active={loading}
-          className="!h-full rounded-none !w-full"
+          className="!h-full !w-full rounded-none"
           rootClassName="!h-full !w-full"
         />
       ) : (

@@ -19,8 +19,8 @@ export function Background() {
 
 function HeroText() {
   return (
-    <div className="absolute z-20 top-1/2 -translate-y-1/2 lg:left-10percent items-center justify-center">
-      <div className="whitespace-pre-line text-left select-none text-white text-4xl xl:text-7xl 2xl:text-9xl font-bold">{`Leveraging\nsimulation\nneuroscience `}</div>
+    <div className="absolute top-1/2 z-20 -translate-y-1/2 items-center justify-center lg:left-10percent">
+      <div className="select-none whitespace-pre-line text-left text-4xl font-bold text-white xl:text-7xl 2xl:text-9xl">{`Leveraging\nsimulation\nneuroscience `}</div>
     </div>
   );
 }
@@ -35,7 +35,7 @@ export function OBPLogo({
   return (
     <Link
       href="/"
-      className={classNames('z-10 flex flex-col justify-center pr-4 h-auto', color, className)}
+      className={classNames('z-10 flex h-auto flex-col justify-center pr-4', color, className)}
     >
       <ObpLogo />
     </Link>

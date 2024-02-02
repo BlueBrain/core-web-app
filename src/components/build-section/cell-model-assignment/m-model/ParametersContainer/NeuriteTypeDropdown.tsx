@@ -29,19 +29,19 @@ export default function NeuriteTypeDropdown() {
         <button
           type="button"
           onClick={(e) => e.preventDefault()}
-          className="flex w-full items-center justify-between px-3 py-2 border-2 border-primary-8 text-primary-8"
+          className="flex w-full items-center justify-between border-2 border-primary-8 px-3 py-2 text-primary-8"
         >
           <div className="font-bold">{displayName}</div>
-          <ChevronDownIcon className="scale-[200%] origin-center" />
+          <ChevronDownIcon className="origin-center scale-[200%]" />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className="border-2 rounded-none border-t-0 border-primary-8 flex flex-col text-primary-8 w-[150px] text-left bg-white">
+        <DropdownMenu.Content className="flex w-[150px] flex-col rounded-none border-2 border-t-0 border-primary-8 bg-white text-left text-primary-8">
           {options.map((option) => (
             <DropdownMenu.Item
               key={option.label}
               onClick={() => onChange(option)}
-              className="hover:bg-primary-1 p-4 cursor-pointer"
+              className="cursor-pointer p-4 hover:bg-primary-1"
             >
               {option.label}
             </DropdownMenu.Item>

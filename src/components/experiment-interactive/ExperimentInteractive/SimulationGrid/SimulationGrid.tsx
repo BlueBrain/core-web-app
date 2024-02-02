@@ -13,7 +13,7 @@ export default function SimulationGrid() {
       className={classNames(
         styles.simulationGrid,
         styles[`template-${simulationSlots.list.length}`],
-        'flex-grow flex flex-row relative w-full'
+        'relative flex w-full flex-grow flex-row'
       )}
     >
       {simulationSlots.list.map((value, index) => (

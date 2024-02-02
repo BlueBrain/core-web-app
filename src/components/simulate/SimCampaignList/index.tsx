@@ -91,7 +91,7 @@ export default function SimCampaignList() {
               <Button
                 size="small"
                 type="text"
-                className="inline-block mr-2"
+                className="mr-2 inline-block"
                 disabled={config._createdBy.split('/').reverse()[0] !== session?.user.username}
                 onClick={() => openRenameModal(config)}
               >
@@ -101,7 +101,7 @@ export default function SimCampaignList() {
               <Button
                 size="small"
                 type="text"
-                className="inline-block mr-2"
+                className="mr-2 inline-block"
                 onClick={() => openCloneModal(config)}
               >
                 <CloneIcon />

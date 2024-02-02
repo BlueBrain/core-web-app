@@ -65,29 +65,29 @@ function BuildModelItem({
 }: CuratedModel & { openCloneModel: () => void }) {
   const href = `${BUILD_BASE_HREF}?brainModelConfigId=${encodeURIComponent(collapseId(id))}`;
   return (
-    <div className="border border-neutral-2 p-4 rounded-md hover:bg-gray-50 cursor-pointer max-w-[40%]">
+    <div className="max-w-[40%] cursor-pointer rounded-md border border-neutral-2 p-4 hover:bg-gray-50">
       <div className="block">
-        <h3 className="text-primary-8 font-bold text-xl">{name}</h3>
-        <p className="text-gray-400 font-normal w-3/4 line-clamp-2">{description}</p>
+        <h3 className="text-xl font-bold text-primary-8">{name}</h3>
+        <p className="line-clamp-2 w-3/4 font-normal text-gray-400">{description}</p>
       </div>
-      <div className="w-full inline-flex items-center justify-between mt-8">
+      <div className="mt-8 inline-flex w-full items-center justify-between">
         <Link href={href}>
-          <div className="relative py-1 p-4 rounded-md !h-6 box-content hover:bg-primary-0 group">
-            <div className="text-primary-8 flex items-center gap-1 font-bold text-base">
-              <EyeIcon className="text-primary-8 w-5 h-5" />
+          <div className="group relative box-content !h-6 rounded-md p-4 py-1 hover:bg-primary-0">
+            <div className="flex items-center gap-1 text-base font-bold text-primary-8">
+              <EyeIcon className="h-5 w-5 text-primary-8" />
               <span>View</span>
             </div>
-            <div className="h-[1.5px] bg-neutral-3 absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%]  group-hover:bg-primary-0" />
+            <div className="absolute bottom-0 left-1/2 h-[1.5px] w-[80%] -translate-x-1/2 bg-neutral-3  group-hover:bg-primary-0" />
           </div>
         </Link>
         <Button
           type="text"
-          icon={<CloneIcon className="text-primary-8 w-4 h-4" />}
-          className="relative group text-primary-8 font-bold text-base flex items-center justify-center py-1 p-4 h-6 rounded-md box-content hover:!bg-primary-0"
+          icon={<CloneIcon className="h-4 w-4 text-primary-8" />}
+          className="group relative box-content flex h-6 items-center justify-center rounded-md p-4 py-1 text-base font-bold text-primary-8 hover:!bg-primary-0"
           onClick={openCloneModel}
         >
           Clone
-          <div className="h-[1.5px] bg-neutral-3 absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] mx-auto group-hover:bg-primary-0" />
+          <div className="absolute bottom-0 left-1/2 mx-auto h-[1.5px] w-[80%] -translate-x-1/2 bg-neutral-3 group-hover:bg-primary-0" />
         </Button>
       </div>
     </div>
@@ -180,7 +180,7 @@ function ActionColumn({
         disabled={disableEdit}
         aria-label="Edit"
       >
-        <FileTextOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+        <FileTextOutlined className="h-4 w-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
       <button
         title="View"
@@ -189,7 +189,7 @@ function ActionColumn({
         onClick={onView}
         aria-label="View"
       >
-        <EyeOutlined className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+        <EyeOutlined className="h-4 w-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
       <button
         title="Clone"
@@ -198,7 +198,7 @@ function ActionColumn({
         onClick={onClone}
         aria-label="Clone"
       >
-        <CloneIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+        <CloneIcon className="h-4 w-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
     </div>
   );
@@ -388,16 +388,16 @@ function BuildBrowseModel() {
 
   return (
     <div className="relative w-full">
-      <div className="sticky top-0 z-20 bg-white w-full py-8 px-7">
-        <div className="inline-flex items-center justify-between gap-5 w-full">
+      <div className="sticky top-0 z-20 w-full bg-white px-7 py-8">
+        <div className="inline-flex w-full items-center justify-between gap-5">
           <div className="grid grid-flow-col gap-5">
-            <div className="text-primary-8 text-sm font-medium">
+            <div className="text-sm font-medium text-primary-8">
               Brain configuration being built{' '}
               <strong>
                 <Tag bordered={false}>13</Tag>
               </strong>
             </div>
-            <div className="text-primary-8 text-sm font-medium">
+            <div className="text-sm font-medium text-primary-8">
               Brain configuration built{' '}
               <strong>
                 <Tag bordered={false}>24</Tag>
@@ -412,7 +412,7 @@ function BuildBrowseModel() {
                 onClick={toggleConfigSearchType('recent')}
                 className="text-primary-8"
               />
-              <span className="text-primary-8 text-sm font-medium">Show recent models</span>
+              <span className="text-sm font-medium text-primary-8">Show recent models</span>
             </div>
             <div className="inline-flex items-center justify-center gap-2">
               <Switch
@@ -420,7 +420,7 @@ function BuildBrowseModel() {
                 size="small"
                 onClick={toggleConfigSearchType('personal')}
               />
-              <span className="text-primary-8 text-sm font-medium">Show only my models</span>
+              <span className="text-sm font-medium text-primary-8">Show only my models</span>
             </div>
           </div>
         </div>
@@ -443,8 +443,8 @@ export default function BuildMainMenu() {
   const onSelect = (value: BuildMenuKey) => setCurrentMenu(value);
 
   return (
-    <div className="flex flex-col gap-2 w-full">
-      <div className="flex flex-col gap-2 w-full">
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         {BUILD_MENU.map(({ id, title, description, Component }) => (
           <CollapsibleMenuItem<BuildMenuKey>
             key={id}

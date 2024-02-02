@@ -20,7 +20,7 @@ export default function Collapse({
   return (
     <div className={className}>
       <button
-        className="w-full flex justify-between items-center text-primary-3"
+        className="flex w-full items-center justify-between text-primary-3"
         type="button"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >

@@ -27,7 +27,7 @@ function UncheckingWarning({
   if (!nextGroup.checked) return null;
 
   return (
-    <div className="text-warning ml-[50px]">
+    <div className="ml-[50px] text-warning">
       Be aware that unchecking this option will automatically uncheck &quot;{nextGroup.name}
       &quot;
     </div>
@@ -69,11 +69,11 @@ export default function ExecutionStatus() {
         <div className="flex flex-col" key={group.name}>
           <div className="flex items-center">
             <Checkbox
-              className="w-[20px] h-[20px] justify-self-start"
+              className="h-[20px] w-[20px] justify-self-start"
               checked={group.checked}
               onChange={(e) => handleChecked(group.name, e.target.checked)}
             />
-            <div className="text-primary-7 text-2xl ml-[30px]">{group.name}</div>
+            <div className="ml-[30px] text-2xl text-primary-7">{group.name}</div>
           </div>
 
           <UncheckingWarning
@@ -82,7 +82,7 @@ export default function ExecutionStatus() {
             currentIndex={index}
           />
 
-          <div className="flex justify-between mt-5 mb-8 ml-[50px]">
+          <div className="mb-8 ml-[50px] mt-5 flex justify-between">
             {group.items.map((step) => (
               <div className="w-1/3" key={group.name + step.name}>
                 <Suspense fallback={<Spin size="small" className="h-8" />}>

@@ -13,10 +13,10 @@ export function QABrainRegionPerQuestion({ id, title }: SelectedBrainRegionPerQu
   return (
     <div
       id={`brain-region-${id}`}
-      className="inline-flex items-center justify-between w-full gap-2 px-4 py-2 rounded-sm bg-neutral-1 text-primary-8"
+      className="inline-flex w-full items-center justify-between gap-2 rounded-sm bg-neutral-1 px-4 py-2 text-primary-8"
     >
       <BrainIcon />
-      <div title={title} className="flex-1 w-full text-base font-bold line-clamp-1">
+      <div title={title} className="line-clamp-1 w-full flex-1 text-base font-bold">
         {title}
       </div>
     </div>
@@ -30,13 +30,13 @@ function QAContextBrainRegion() {
   return (
     <div
       className={classNames(
-        'flex justify-between gap-2 px-4 py-4 rounded-sm',
+        'flex justify-between gap-2 rounded-sm px-4 py-4',
         isSelectedBrainRegionExists ? 'bg-primary-0 text-primary-8' : 'bg-neutral-1 text-primary-8'
       )}
     >
       <div
         title={!isSelectedBrainRegionExists ? 'All regions' : selectedBrainRegion?.title}
-        className="flex-1 text-lg font-bold line-clamp-1"
+        className="line-clamp-1 flex-1 text-lg font-bold"
         data-testid="selected-brain-region"
       >
         {!isSelectedBrainRegionExists ? 'All regions' : selectedBrainRegion?.title}
@@ -47,7 +47,7 @@ function QAContextBrainRegion() {
         overlayInnerStyle={{ backgroundColor: 'white' }}
         arrow={false}
         overlay={
-          <p className="flex flex-col gap-2 select-none text-primary-8">
+          <p className="flex select-none flex-col gap-2 text-primary-8">
             In order to modify the context, select another brain region from the side panel.
           </p>
         }
@@ -69,7 +69,7 @@ function QABrainRegion() {
     <div className="px-4">
       <Button
         onClick={() => router.back()}
-        className="flex items-center py-6 mb-6 rounded-none text-primary-8"
+        className="mb-6 flex items-center rounded-none py-6 text-primary-8"
       >
         <ArrowLeftOutlined /> Back to configuration
       </Button>

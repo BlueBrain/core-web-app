@@ -176,10 +176,10 @@ export default function sankey(
       linkColor === 'source-target' // eslint-disable-line no-nested-ternary
         ? (d) => `url(#${uid}-link-${d.index})`
         : linkColor === 'source' // eslint-disable-line no-nested-ternary
-        ? ({ source: { id } }) => color(id)
-        : linkColor === 'target'
-        ? ({ target: { id } }) => color(id)
-        : linkColor
+          ? ({ source: { id } }) => color(id)
+          : linkColor === 'target'
+            ? ({ target: { id } }) => color(id)
+            : linkColor
     )
     .attr('stroke-width', ({ width: strokeWidth }) => Math.max(1, strokeWidth))
     .classed('is-selected', ({ source }) => LSel.find((id) => source.id === id))

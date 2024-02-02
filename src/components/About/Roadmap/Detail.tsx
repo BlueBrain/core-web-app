@@ -14,17 +14,17 @@ export default function RoadmapFeatureDetail({
   category,
 }: RoadmapFeatureDetailProps) {
   return (
-    <div id={id} className="snap-start w-full bg-white">
-      <div className="inline-flex flex-col px-12 mt-12 items-start justify-between gap-2 w-full">
+    <div id={id} className="w-full snap-start bg-white">
+      <div className="mt-12 inline-flex w-full flex-col items-start justify-between gap-2 px-12">
         <div className="uppercase text-primary-8">{category}</div>
         <h2 className="text-3xl font-bold text-primary-8">{title}</h2>
       </div>
-      <div className="pl-12 pr-4 py-8 bg-white w-full">
+      <div className="w-full bg-white py-8 pl-12 pr-4">
         <div className="w-3/5">
           <div className="w-full pb-4">
-            <p className="text-base text-primary-8 font-light">{description}</p>
+            <p className="text-base font-light text-primary-8">{description}</p>
           </div>
-          <ul className="border-y border-neutral-3 px-6 py-5 list-disc">
+          <ul className="list-disc border-y border-neutral-3 px-6 py-5">
             {notes.map((note, ind) => (
               // eslint-disable-next-line react/no-array-index-key
               <li key={`note-${id}-${ind}`}>

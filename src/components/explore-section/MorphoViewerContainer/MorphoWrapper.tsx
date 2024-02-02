@@ -26,10 +26,10 @@ function MorphoWrapper({
   const morphologyData = useAtomValue(morphologyDataAtom);
 
   return (
-    <div className="flex flex-col h-full gap-3">
+    <div className="flex h-full flex-col gap-3">
       {!hideTitleOptions && (
         <div className="flex flex-col gap-3">
-          <h1 className="font-bold text-primary-9 text-lg">Morphology 3D Viewer</h1>
+          <h1 className="text-lg font-bold text-primary-9">Morphology 3D Viewer</h1>
           <Button
             className="w-fit"
             size="small"

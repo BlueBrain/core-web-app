@@ -15,17 +15,17 @@ function ItemTile({ index, question, onSelect, isPending, selectable = true }: P
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       className={classNames(
-        'inline-flex items-center justify-between w-full py-4 pl-3 pr-6 border border-gray-200 rounded-md',
+        'inline-flex w-full items-center justify-between rounded-md border border-gray-200 py-4 pl-3 pr-6',
         isPending && 'bg-gray-50',
         selectable
-          ? 'group hover:bg-gray-50 cursor-pointer'
+          ? 'group cursor-pointer hover:bg-gray-50'
           : 'cursor-default select-none shadow-md'
       )}
       onClick={onSelect}
     >
-      <div className="w-[90%] inline-flex flex-col items-start justify-start">
+      <div className="inline-flex w-[90%] flex-col items-start justify-start">
         <span>{index}.</span>
-        <div className="font-normal text-left group-hover:font-bold text-primary-8 text-base leading-9">
+        <div className="text-left text-base font-normal leading-9 text-primary-8 group-hover:font-bold">
           {question}
         </div>
       </div>
@@ -33,7 +33,7 @@ function ItemTile({ index, question, onSelect, isPending, selectable = true }: P
         <LoadingOutlined className="transition-all duration-200 ease-out-expo" />
       ) : (
         selectable && (
-          <SendOutlined className="opacity-0 text-primary-8 group-hover:opacity-100 group-hover:transition-all group-hover:duration-200 group-hover:ease-out-expo" />
+          <SendOutlined className="text-primary-8 opacity-0 group-hover:opacity-100 group-hover:transition-all group-hover:duration-200 group-hover:ease-out-expo" />
         )
       )}
     </div>

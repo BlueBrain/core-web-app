@@ -79,10 +79,10 @@ export default function ExperimentAnalyses() {
 
   return (
     <div className="flex">
-      <div className="stretch-self bg-neutral-1 text-primary-8 w-10 font-bold flex items-start justify-center">
+      <div className="stretch-self flex w-10 items-start justify-center bg-neutral-1 font-bold text-primary-8">
         {simCampaign && (
           <Link
-            className="whitespace-pre text-sm rotate-180 mt-5"
+            className="mt-5 rotate-180 whitespace-pre text-sm"
             href={
               pathname?.replace(/\/experiment-analysis$/, '') || '/explore/simulation-campaigns'
             }
@@ -94,7 +94,7 @@ export default function ExperimentAnalyses() {
         )}
         {!simCampaign && (
           <div
-            className="whitespace-pre text-sm rotate-180 mt-5 cursor-pointer"
+            className="mt-5 rotate-180 cursor-pointer whitespace-pre text-sm"
             style={{ writingMode: 'vertical-rl' }}
             onClick={() => window.history.back()}
           >
@@ -103,9 +103,9 @@ export default function ExperimentAnalyses() {
           </div>
         )}
       </div>
-      <div className="min-h-screen bg-white overflow-auto p-4 flex-1">
+      <div className="min-h-screen flex-1 overflow-auto bg-white p-4">
         <div className="flex justify-between">
-          <div className="text-2xl text-primary-8 font-bold mb-4">Experiment Analyses</div>
+          <div className="mb-4 text-2xl font-bold text-primary-8">Experiment Analyses</div>
           {!!analyses.length && (
             <div>
               <Input.Search
@@ -117,7 +117,7 @@ export default function ExperimentAnalyses() {
               />
               <button
                 onClick={() => setIsModalVisible(true)}
-                className="bg-white text-primary-8 py-2 px-4 shadow-md border border-primary-8 h-9 text-sm w-21 font-bold ml-2"
+                className="w-21 ml-2 h-9 border border-primary-8 bg-white px-4 py-2 text-sm font-bold text-primary-8 shadow-md"
                 type="button"
                 disabled={loading}
               >
@@ -127,7 +127,7 @@ export default function ExperimentAnalyses() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredAnalyses.map((item) => (
             <AnalysisCard key={item['@id']} analysis={item} />
           ))}
@@ -205,7 +205,7 @@ export default function ExperimentAnalyses() {
             </Form.Item>
 
             <Form.Item>
-              <div className="mt-2 float-right">
+              <div className="float-right mt-2">
                 <Button type="primary" onClick={onCancel} className="bg-white text-primary-8">
                   Cancel
                 </Button>
@@ -213,7 +213,7 @@ export default function ExperimentAnalyses() {
                   type="primary"
                   htmlType="submit"
                   loading={loading}
-                  className="bg-primary-8 ml-3"
+                  className="ml-3 bg-primary-8"
                 >
                   Add Analysis
                 </Button>
@@ -254,23 +254,23 @@ function useFetchSimCampaign() {
 function AnalysisCard({ analysis }: { analysis: Analysis }) {
   const [showDetails, setShowDetails] = useState(false);
   return (
-    <div className="border rounded-lg p-4 bg-white shadow-md self-start">
-      <h3 className="text-xl font-semibold mb-4">
+    <div className="self-start rounded-lg border bg-white p-4 shadow-md">
+      <h3 className="mb-4 text-xl font-semibold">
         <span className="mr-2 text-primary-8">
           <LineChartOutlined style={{ fontSize: '16px', color: '#1890ff' }} />
         </span>
         {analysis.name}
       </h3>
 
-      <div className="mt-2 text-sm text-gray-700 min-h-[25px]">
+      <div className="mt-2 min-h-[25px] text-sm text-gray-700">
         <p>{analysis.description}</p>
       </div>
 
       <div
-        className="mt-2 flex justify-between cursor-pointer"
+        className="mt-2 flex cursor-pointer justify-between"
         onClick={() => setShowDetails(!showDetails)}
       >
-        <div className="text-primary-8 font-bold">Details</div>
+        <div className="font-bold text-primary-8">Details</div>
         <RightOutlined />
       </div>
       {showDetails && (
@@ -279,7 +279,7 @@ function AnalysisCard({ analysis }: { analysis: Analysis }) {
             <span className="block font-semibold">Git URL:</span>
             <a
               href={analysis.codeRepository['@id']}
-              className="text-blue-500 hover:underline truncate"
+              className="truncate text-blue-500 hover:underline"
             >
               {analysis.codeRepository['@id']}
             </a>

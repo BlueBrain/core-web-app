@@ -36,7 +36,7 @@ export function LiteratureForExperimentType({ brainRegion }: Props) {
   return (
     <div className="text-white">
       {totalByExperimentAndBrainRegion.state === 'loading' && (
-        <div className="w-full flex justify-center mt-14">
+        <div className="mt-14 flex w-full justify-center">
           <LoadingOutlined />
         </div>
       )}
@@ -45,7 +45,7 @@ export function LiteratureForExperimentType({ brainRegion }: Props) {
         'Error loading experiment datasets for brain region.'}
 
       {totalByExperimentAndBrainRegion.state === 'hasData' && (
-        <div className="flex flex-wrap mb-7 h-36 text-white gap-4">
+        <div className="mb-7 flex h-36 flex-wrap gap-4 text-white">
           {Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) => {
             const details = totalByExperimentAndBrainRegion.data?.[id];
             const total = details?.total ?? 0;
@@ -54,7 +54,7 @@ export function LiteratureForExperimentType({ brainRegion }: Props) {
               <Link
                 href={`/explore/interactive/literature/${config.name}`}
                 key={config.title}
-                className="border-b-2 border-b-gray-500 flex justify-between py-1 w-2/5 cursor-pointer hover:text-primary-4"
+                className="flex w-2/5 cursor-pointer justify-between border-b-2 border-b-gray-500 py-1 hover:text-primary-4"
                 data-testid={`literature-articles-${id}`}
               >
                 <span className="font-light">{config.title}</span>

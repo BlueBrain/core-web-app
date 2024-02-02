@@ -52,16 +52,16 @@ export default function ExperimentDesignerPanel() {
 
           <div style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>Simulate</div>
 
-          <Link className="text-lg text-primary-3 mt-4" href="/">
+          <Link className="mt-4 text-lg text-primary-3" href="/">
             <HomeIcon />
           </Link>
         </div>
       )}
 
       {isOpen && (
-        <div className="h-full overflow-y-auto flex flex-col p-6">
-          <div className="flex gap-x-2 justify-between items-start">
-            <div className="text-3xl overflow-hidden text-ellipsis font-bold">{simCampName}</div>
+        <div className="flex h-full flex-col overflow-y-auto p-6">
+          <div className="flex items-start justify-between gap-x-2">
+            <div className="overflow-hidden text-ellipsis text-3xl font-bold">{simCampName}</div>
             <Button
               type="text"
               size="small"
@@ -70,28 +70,28 @@ export default function ExperimentDesignerPanel() {
             />
           </div>
 
-          <div className="text-primary-3 mt-3">{simCampDescription}</div>
+          <div className="mt-3 text-primary-3">{simCampDescription}</div>
 
-          <div className="text-primary-3 mt-3">
+          <div className="mt-3 text-primary-3">
             <UserOutlined />
             <span className="ml-3">{campaignCreatorUsername || 'Loading...'}</span>
           </div>
 
           <div className="my-6">
-            <div className="bg-primary-5 h-px" />
+            <div className="h-px bg-primary-5" />
           </div>
 
           <div className="text-primary-3">Circuit used</div>
-          <div className="font-bold mt-2">{circuitInfo?.name}</div>
+          <div className="mt-2 font-bold">{circuitInfo?.name}</div>
 
-          <footer className="space-y-2 mt-auto">
+          <footer className="mt-auto space-y-2">
             <FooterLink href="/">
               <span>Home</span>
               <HomeIcon />
             </FooterLink>
 
             <div className="my-6">
-              <div className="bg-primary-5 h-px mb-7" />
+              <div className="mb-7 h-px bg-primary-5" />
             </div>
 
             <FooterLink className="bg-primary-8" href="/build">

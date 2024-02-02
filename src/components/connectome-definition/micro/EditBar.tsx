@@ -53,7 +53,7 @@ function VariantLabel({ variantName }: VariantLabelProps) {
   return (
     <span className="flex items-center" style={{ color: variantColorMap.get(variantName) }}>
       <span
-        className="h-4 w-4 mr-2"
+        className="mr-2 h-4 w-4"
         style={{ backgroundColor: variantColorMap.get(variantName) }}
       />
       {variantLabel[variantName] ?? variantName}
@@ -182,14 +182,14 @@ function EditForm({ value, onChange, disabled }: EditFormProps) {
         disabled={disabled}
       />
 
-      <h3 className="mt-8 mb-2">Hemispheres</h3>
+      <h3 className="mb-2 mt-8">Hemispheres</h3>
       <HemisphereDropdown
         value={value.hemisphereDirection}
         onChange={(hemisphereDirection) => onChange({ ...value, hemisphereDirection })}
         disabled={disabled}
       />
 
-      <h3 className="mt-4 mb-2">Pre-synaptic</h3>
+      <h3 className="mb-2 mt-4">Pre-synaptic</h3>
       <BrainRegionSelect
         value={srcSelectionArr}
         onChange={(selectionArr) => onChange({ ...value, srcSelection: selectionArr.at(-1) })}
@@ -197,7 +197,7 @@ function EditForm({ value, onChange, disabled }: EditFormProps) {
         tagWidth={354}
       />
 
-      <h3 className="mt-4 mb-2">Post-synaptic</h3>
+      <h3 className="mb-2 mt-4">Post-synaptic</h3>
       <BrainRegionSelect
         value={dstSelectionArr}
         onChange={(selectionArr) => onChange({ ...value, dstSelection: selectionArr.at(-1) })}
@@ -205,7 +205,7 @@ function EditForm({ value, onChange, disabled }: EditFormProps) {
         tagWidth={354}
       />
 
-      <h3 className="mt-8 mb-2">Choose a modification type</h3>
+      <h3 className="mb-2 mt-8">Choose a modification type</h3>
       <Select
         className="w-full"
         value={value.operation}
@@ -216,7 +216,7 @@ function EditForm({ value, onChange, disabled }: EditFormProps) {
 
       {value.operation && (
         <>
-          <h3 className="mt-4 mb-2">Choose target algorithm</h3>
+          <h3 className="mb-2 mt-4">Choose target algorithm</h3>
           <Select
             className="w-full"
             value={value.variantName}
@@ -229,7 +229,7 @@ function EditForm({ value, onChange, disabled }: EditFormProps) {
 
       {value.operation === 'setAlgorithm' && value.variantName && (
         <>
-          <h3 className="mt-4 mb-2">Provide parameters</h3>
+          <h3 className="mb-2 mt-4">Provide parameters</h3>
           <Form labelCol={{ span: 10 }} wrapperCol={{ span: 14 }} layout="horizontal" size="small">
             {params.map((param) => (
               <Form.Item key={param.name} label={capitalize(param.name).replace('_', ' ')}>
@@ -248,7 +248,7 @@ function EditForm({ value, onChange, disabled }: EditFormProps) {
 
       {value.operation === 'modifyParams' && value.variantName && (
         <>
-          <h3 className="mt-4 mb-2">Apply linear transformation</h3>
+          <h3 className="mb-2 mt-4">Apply linear transformation</h3>
           <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} layout="horizontal" size="small">
             {params.map((param) => (
               <Form.Item key={param.name} label={capitalize(param.name).replace('_', ' ')}>
@@ -355,9 +355,8 @@ function CreateEditBtn() {
   const addEditGlobal = useSetAtom(addEditAtom);
 
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const [currentEdit, setCurrentEdit] = useState<Partial<MicroConnectomeEditEntry>>(
-    createEmptyEdit()
-  );
+  const [currentEdit, setCurrentEdit] =
+    useState<Partial<MicroConnectomeEditEntry>>(createEmptyEdit());
 
   const addEdit = async () => {
     const edit = currentEdit as MicroConnectomeEditEntry;
@@ -398,9 +397,9 @@ function EditHistoryEntry({ value, onClick, onRemove }: EditHistoryEntryProps) {
   const isEditable = useAtomValue(isConfigEditableAtom);
 
   return (
-    <div className="mt-1 flex justify-between items-center">
+    <div className="mt-1 flex items-center justify-between">
       <button
-        className="truncate mr-2 cursor-pointer"
+        className="mr-2 cursor-pointer truncate"
         title={value.name}
         type="button"
         onClick={() => onClick?.(value)}
@@ -447,7 +446,7 @@ function EditHistory() {
 
   return (
     <>
-      <h3 className="text-lg mt-8 mb-2">
+      <h3 className="mb-2 mt-8 text-lg">
         Connectivity modifications{' '}
         {edits.length && <span className="text-slate-400">({edits.length})</span>}
       </h3>

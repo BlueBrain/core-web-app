@@ -96,7 +96,7 @@ interface EModelCommonProps extends Entity {
         label: string;
       };
       name: string;
-    }
+    },
   ];
   contribution: ContributionEntity;
   distribution: Distribution | Distribution[];
@@ -131,7 +131,7 @@ export interface EModelWorkflow extends EModelCommonProps {
     {
       '@id': string;
       '@type': EModelConfigurationType;
-    }
+    },
   ];
   distribution: Distribution;
   state: string;
@@ -357,7 +357,7 @@ export interface NeuronMorphology extends Entity {
   '@type': [
     'Entity',
     NeuronMorphologyType,
-    'ReconstructedNeuronMorphology' | 'SynthesizedNeuronMorphology'
+    'ReconstructedNeuronMorphology' | 'SynthesizedNeuronMorphology',
   ];
   contribution: ContributionEntity;
   distribution: Distribution;

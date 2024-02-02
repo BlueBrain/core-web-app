@@ -34,7 +34,7 @@ export default function PillNav({ items, onChange, activeItemIndex = -1 }: PillN
 
   const component = (
     <div
-      className={`mx-3 my-1.5 rounded-full flex flex-row ${
+      className={`mx-3 my-1.5 flex flex-row rounded-full ${
         isLightThemeActive ? `bg-neutral-1` : `bg-neutral-5 text-neutral-4`
       }`}
     >

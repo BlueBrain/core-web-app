@@ -12,15 +12,15 @@ export default function OpenCloseIconButton({
   backgroundColor = 'bg-white',
 }: TOpenCloseIconButtonProps) {
   return (
-    <div className="relative w-8 h-8 flex flex-row justify-center items-center">
+    <div className="relative flex h-8 w-8 flex-row items-center justify-center">
       <div
         className={classNames(
-          'block w-4 2xl:w-6 h-0.5 rounded-full origin-center absolute z-20 transition-transform duration-300 ease-in-out transform',
+          'absolute z-20 block h-0.5 w-4 origin-center transform rounded-full transition-transform duration-300 ease-in-out 2xl:w-6',
           status ? '0' : 'rotate-90',
           backgroundColor
         )}
       />
-      <div className={`block w-4 2xl:w-6 h-0.5 ${backgroundColor} rounded-full`} />
+      <div className={`block h-0.5 w-4 2xl:w-6 ${backgroundColor} rounded-full`} />
     </div>
   );
 }

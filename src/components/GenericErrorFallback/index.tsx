@@ -4,8 +4,8 @@ import { WarningOutlined } from '@ant-design/icons';
 
 function SimpleErrorComponent({ error }: { error: Error }) {
   return (
-    <div className="h-full w-full flex flex-col gap-5 items-center p-4 justify-center">
-      <div className="text-2xl flex gap-2">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-5 p-4">
+      <div className="flex gap-2 text-2xl">
         <WarningOutlined />
         <span>An error occurred</span>
       </div>

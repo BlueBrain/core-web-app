@@ -5,5 +5,5 @@ type Props = {
 export default function ErrorMessageLine({ message }: Props) {
   if (!message) return null;
 
-  return <div className="text-red-400 text-xs">{message}</div>;
+  return <div className="text-xs text-red-400">{message}</div>;
 }

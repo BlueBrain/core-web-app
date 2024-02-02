@@ -7,7 +7,7 @@ const atomSlotSelectorVisible = atom(true);
 
 export function useSlotSelectorVisible(): [
   visible: boolean,
-  setVisible: (visible: boolean) => void
+  setVisible: (visible: boolean) => void,
 ] {
   const [visible, setVisible] = useAtom(atomSlotSelectorVisible);
   const slots = useSimulationSlots();

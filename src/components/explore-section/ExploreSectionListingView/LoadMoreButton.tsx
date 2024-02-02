@@ -9,7 +9,7 @@ import { useLoadableValue } from '@/hooks/hooks';
 function Btn({ children, className, disabled, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
     <button
-      className={classNames('font-normal mx-auto px-12 py-3 rounded-full', className)}
+      className={classNames('mx-auto rounded-full px-12 py-3 font-normal', className)}
       type="button"
       disabled={disabled}
       onClick={onClick}
@@ -40,7 +40,7 @@ export default function LoadMoreButton({
   if (total.state === 'loading') return null;
   if (total.state === 'hasError') {
     return (
-      <Btn className="bg-primary-8 cursor-progress text-white" disabled>
+      <Btn className="cursor-progress bg-primary-8 text-white" disabled>
         <div>Data could not be fetched</div>
       </Btn>
     );

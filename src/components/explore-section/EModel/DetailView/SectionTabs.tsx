@@ -51,7 +51,7 @@ export default function Tabs() {
       selectedKeys={[activeTab]}
       mode="horizontal"
       theme="dark"
-      className="flex justify-start w-full"
+      className="flex w-full justify-start"
       items={items}
     />
   );

@@ -1,5 +1,5 @@
 .accordionChevron {
-  @apply text-white transition-transform opacity-50;
+  @apply text-white opacity-50 transition-transform;
 }
 
 .accordionTrigger {
@@ -7,7 +7,7 @@
 }
 
 .accordionTrigger.explore.intermediateTrigger[data-state='closed'] {
-  @apply h-[14px] w-[14px] bg-white rounded-sm;
+  @apply h-[14px] w-[14px] rounded-sm bg-white;
 }
 
 .accordionTrigger.intermediateTrigger[data-state='closed'] .accordionChevron {

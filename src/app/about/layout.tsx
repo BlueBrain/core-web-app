@@ -17,34 +17,34 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isDocs = pathname?.startsWith('/about/docs');
 
   return (
-    <div className={classNames('relative bg-primary-9 h-full')}>
+    <div className={classNames('relative h-full bg-primary-9')}>
       <div
-        className="fixed bg-primary-9 bottom-0 w-full h-full min-h-screen z-0 bg-no-repeat bg-right-bottom [background-size:90%]"
+        className="fixed bottom-0 z-0 h-full min-h-screen w-full bg-primary-9 bg-right-bottom bg-no-repeat [background-size:90%]"
         style={{
           backgroundImage: `url(${basePath}/images/obp_hippocampus.png)`,
         }}
       />
-      <div className="absolute top-7 left-14 py-2">
+      <div className="absolute left-14 top-7 py-2">
         <OBPLogo color="text-white" />
       </div>
-      <div className="fixed top-44 left-14 max-w-[250px] w-full z-10">
-        <Link href="/" className="inline-flex items-center gap-1 group">
-          <ArrowLeftOutlined className="text-white w-5 h-5 group-hover:text-primary-4" />
-          <span className="text-white text-base font-bold group-hover:text-primary-4">
+      <div className="fixed left-14 top-44 z-10 w-full max-w-[250px]">
+        <Link href="/" className="group inline-flex items-center gap-1">
+          <ArrowLeftOutlined className="h-5 w-5 text-white group-hover:text-primary-4" />
+          <span className="text-base font-bold text-white group-hover:text-primary-4">
             Back to Home
           </span>
         </Link>
       </div>
       {isDocs && (
-        <div className="absolute top-56 left-10 z-20 w-80 h-full">
+        <div className="absolute left-10 top-56 z-20 h-full w-80">
           <DocumentationSideMenu />
         </div>
       )}
-      <div className="absolute h-[calc(100vh-40px)] top-7 right-7 flex justify-end w-[calc(100%-3rem)] ml-auto overflow-hidden">
-        <div className="relative flex flex-col justify-start items-stretch gap-1 w-3/4 h-full">
+      <div className="absolute right-7 top-7 ml-auto flex h-[calc(100vh-40px)] w-[calc(100%-3rem)] justify-end overflow-hidden">
+        <div className="relative flex h-full w-3/4 flex-col items-stretch justify-start gap-1">
           <AboutMenu />
-          <div className="overflow-y-auto primary-scrollbar overflow-x-hidden pr-1 h-full">
-            <div className="bg-white h-full flex flex-col">
+          <div className="primary-scrollbar h-full overflow-y-auto overflow-x-hidden pr-1">
+            <div className="flex h-full flex-col bg-white">
               <ErrorBoundary fallback={SimpleErrorComponent}>{children}</ErrorBoundary>
             </div>
           </div>

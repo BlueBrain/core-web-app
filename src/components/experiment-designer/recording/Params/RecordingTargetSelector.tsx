@@ -22,7 +22,7 @@ export default function RecordingTargetSelector({ paramAtom, className }: Props)
   };
 
   return (
-    <div className={classNames('flex gap-3 items-center font-bold', className)}>
+    <div className={classNames('flex items-center gap-3 font-bold', className)}>
       <div className="grow">Target</div>
       <TargetsDropdown onChange={setRecordingTarget} defaultValue={data.value} />
     </div>

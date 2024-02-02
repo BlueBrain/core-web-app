@@ -5,7 +5,7 @@ export default function TimeRange() {
   if (!report) return null;
 
   return (
-    <div className="flex justify-between w-full items-center text-white/70">
+    <div className="flex w-full items-center justify-between text-white/70">
       <div className="text-left">{report.start} ms</div>
       <div className="text-right">{report.end} ms</div>
     </div>

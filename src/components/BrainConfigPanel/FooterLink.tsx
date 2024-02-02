@@ -14,7 +14,7 @@ export default function FooterLink({
   className,
 }: PropsWithChildren<FooterLinkProps>) {
   return (
-    <Link className={classNames('flex justify-between items-center p-3', className)} href={href}>
+    <Link className={classNames('flex items-center justify-between p-3', className)} href={href}>
       {children}
     </Link>
   );

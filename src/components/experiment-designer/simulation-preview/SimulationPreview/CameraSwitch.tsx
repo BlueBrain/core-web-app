@@ -24,7 +24,7 @@ export default function CameraSwitch({ isChecked, onChange }: CameraSwitchProps)
           <div className="flex flex-col gap-1 text-primary-1">
             <button
               type="button"
-              className={`bg-none border-none w-full text-left transition ease-in-out ${
+              className={`w-full border-none bg-none text-left transition ease-in-out ${
                 isChecked ? 'text-neutral-3' : 'text-white'
               }`}
               onClick={() => onChange(false)}
@@ -33,7 +33,7 @@ export default function CameraSwitch({ isChecked, onChange }: CameraSwitchProps)
             </button>
             <button
               type="button"
-              className={`bg-none border-none w-full text-left transition ease-in-out ${
+              className={`w-full border-none bg-none text-left transition ease-in-out ${
                 isChecked ? 'text-white' : 'text-neutral-3'
               }`}
               onClick={() => onChange(true)}

@@ -24,21 +24,21 @@ export default function Navigation({
   currentImage,
 }: NavigationProps) {
   return (
-    <div className="fixed w-15vw bottom-6 left-6 flex flex-col z-50">
-      <header className="w-full flex flex-col mb-12 text-white">
-        <div className="w-full flex flex-row items-center justify-between">
+    <div className="fixed bottom-6 left-6 z-50 flex w-15vw flex-col">
+      <header className="mb-12 flex w-full flex-col text-white">
+        <div className="flex w-full flex-row items-center justify-between">
           <button
             type="button"
             onClick={(e) => navigate(e.currentTarget.name)}
             name="previous"
             aria-label="Navigate"
           >
-            <ChevronIcon className="w-auto h-3 origin-center rotate-180" />
+            <ChevronIcon className="h-3 w-auto origin-center rotate-180" />
           </button>
 
           <div className="flex flex-row items-center text-base">
             <div className="font-bold">{currentImage + 1}</div>
-            <div className="w-6 h-px bg-neutral-4 mx-2" />
+            <div className="mx-2 h-px w-6 bg-neutral-4" />
             <div className="font-light">{totalImages}</div>
           </div>
           <button
@@ -47,20 +47,20 @@ export default function Navigation({
             name="next"
             aria-label="Navigate"
           >
-            <ChevronIcon className="w-auto h-3" />
+            <ChevronIcon className="h-3 w-auto" />
           </button>
         </div>
 
-        <div className="text-xl text-white font-bold mt-2 leading-tight">
+        <div className="mt-2 text-xl font-bold leading-tight text-white">
           {currentImageContent.name}
         </div>
       </header>
 
       <div className="flex flex-col gap-y-1">
         <SingleInfoBox label="Credits" content={currentImageContent.credit} />
-        <div className="block w-full h-px bg-neutral-5" />
+        <div className="block h-px w-full bg-neutral-5" />
         <SingleInfoBox label="Year" content={currentImageContent.year} />
-        <div className="block w-full h-px bg-neutral-5" />
+        <div className="block h-px w-full bg-neutral-5" />
         <SingleInfoBox label="Software" content={currentImageContent.software} />
       </div>
     </div>

@@ -84,9 +84,9 @@ export default function LaunchedSimCampaignList() {
 
   return (
     <>
-      <div className="text-2xl h-10 py-2 mt-7 font-bold">My simulation configurations</div>
+      <div className="mt-7 h-10 py-2 text-2xl font-bold">My simulation configurations</div>
 
-      <div className="flex flex-row justify-between mt-2">
+      <div className="mt-2 flex flex-row justify-between">
         <div className="flex flex-row gap-5">
           <small className="flex flex-row gap-1 self-center">
             <span className="text-primary-4">Simulations running</span>
@@ -112,7 +112,7 @@ export default function LaunchedSimCampaignList() {
           key="status"
           sorter={getSorterFn('status')}
           render={(status: WorkflowExecutionStatusType) => (
-            <div className="flex flex-row gap-3 items-center justify-start">
+            <div className="flex flex-row items-center justify-start gap-3">
               {getStatusIcon(status)} {status}
             </div>
           )}
@@ -146,7 +146,7 @@ export default function LaunchedSimCampaignList() {
                   type="text"
                   className={classNames(
                     defaultActionStyle,
-                    'align-bottom cursor-not-allowed',
+                    'cursor-not-allowed align-bottom',
                     iconColor
                   )}
                   title="Not implemented yet"

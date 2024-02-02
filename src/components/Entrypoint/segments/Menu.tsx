@@ -85,16 +85,16 @@ function EntrypointMenuSingleItem({
   bgcolor: string;
 }) {
   return (
-    <div className={classNames('p-4 h-full box-border cursor-pointer hover:bg-primary-4', bgcolor)}>
-      <h3 className="font-bold text-2xl text-white mb-1 text-left">{title}</h3>
-      <p className="font-normal text-sm text-primary-1 line-clamp-2 text-left">{description}</p>
+    <div className={classNames('box-border h-full cursor-pointer p-4 hover:bg-primary-4', bgcolor)}>
+      <h3 className="mb-1 text-left text-2xl font-bold text-white">{title}</h3>
+      <p className="line-clamp-2 text-left text-sm font-normal text-primary-1">{description}</p>
     </div>
   );
 }
 
 export default function EntrypointMenu() {
   return (
-    <div className="grid grid-cols-[1fr_4fr] w-[calc(100%-3.25rem)] mx-auto left-7 right-7  absolute top-7 z-20">
+    <div className="absolute left-7 right-7 top-7 z-20 mx-auto  grid w-[calc(100%-3.25rem)] grid-cols-[1fr_4fr]">
       <OBPLogo />
       <div className="grid grid-cols-4 gap-1">
         {ENTRYPOINT_MENU_ITEMS.map((props) => withButtonOrLink(EntrypointMenuSingleItem)(props))}

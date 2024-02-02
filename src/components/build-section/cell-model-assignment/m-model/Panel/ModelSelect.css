@@ -1,9 +1,9 @@
 .model-select__control {
-  @apply bg-none border border-white border-opacity-40 w-full rounded-none p-2;
+  @apply w-full rounded-none border border-white border-opacity-40 bg-none p-2;
 }
 
 .model-select__menu {
-  @apply p-0 bg-primary-8 border border-primary-8 w-full font-normal;
+  @apply w-full border border-primary-8 bg-primary-8 p-0 font-normal;
 }
 
 .model-select__indicator {
@@ -19,12 +19,12 @@
 }
 
 .compact-model-select__control {
-  @apply bg-none border-none w-full rounded-none p-0 whitespace-nowrap text-right;
+  @apply w-full whitespace-nowrap rounded-none border-none bg-none p-0 text-right;
   min-height: 0 !important;
 }
 
 .compact-model-select__menu {
-  @apply p-0 bg-primary-8 border border-primary-8 text-left w-full font-normal whitespace-nowrap;
+  @apply w-full whitespace-nowrap border border-primary-8 bg-primary-8 p-0 text-left font-normal;
 }
 
 .compact-model-select__indicator {

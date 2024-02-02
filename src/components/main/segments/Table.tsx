@@ -190,7 +190,7 @@ function DefaultCellRenderer({
     <span
       title={data}
       className={csx(
-        'text-sm text-primary-8 whitespace-pre-wrap break-words line-clamp-2',
+        'line-clamp-2 whitespace-pre-wrap break-words text-sm text-primary-8',
         className
       )}
     >
@@ -363,7 +363,7 @@ function PaginationPoint({
     return (
       <li
         className={csx(
-          'flex items-center justify-center px-4 h-10 leading-tight cursor-auto select-none'
+          'flex h-10 cursor-auto select-none items-center justify-center px-4 leading-tight'
         )}
       >
         <span>{value}</span>
@@ -377,10 +377,10 @@ function PaginationPoint({
         type="button"
         onClick={onClick}
         className={csx(
-          'flex items-center justify-center px-4 h-10 leading-tight border border-gray-300',
-          'hover:text-white hover:bg-primary-4 cursor-pointer select-none',
+          'flex h-10 items-center justify-center border border-gray-300 px-4 leading-tight',
+          'cursor-pointer select-none hover:bg-primary-4 hover:text-white',
           isCurrent && 'bg-primary-8 text-white',
-          isDisabled && 'cursor-not-allowed pointer-events-none'
+          isDisabled && 'pointer-events-none cursor-not-allowed'
         )}
         title={title ?? `Go to page ${value}`}
         disabled={isDisabled}
@@ -419,7 +419,7 @@ function Pagination({
   }
 
   return (
-    <ul className="flex items-center -space-x-px h-10 text-base">
+    <ul className="flex h-10 items-center -space-x-px text-base">
       <PaginationPoint
         onSelect={onNavItemClick(currentPage - 1)}
         value={currentPage - 1}
@@ -470,8 +470,8 @@ export default function Table<T extends TableObject>({
 
   if (loading) {
     return (
-      <div className="w-full py-3 flex items-center justify-center">
-        <LoadingOutlined className="text-primary-8 w-4 h-4" />
+      <div className="flex w-full items-center justify-center py-3">
+        <LoadingOutlined className="h-4 w-4 text-primary-8" />
       </div>
     );
   }
@@ -488,11 +488,11 @@ export default function Table<T extends TableObject>({
     >
       <table
         className={csx(
-          'w-full table-fixed h-full text-sm text-left text-gray-500',
+          'h-full w-full table-fixed text-left text-sm text-gray-500',
           classNames && classNames.table
         )}
       >
-        <thead className={csx('text-xs w-full text-gray-700 bg-gray-50 ', classNames?.header)}>
+        <thead className={csx('w-full bg-gray-50 text-xs text-gray-700 ', classNames?.header)}>
           <tr>
             {columns.map(
               ({ key, name, description, sortable, sortFn, sortPosition, width: w }, ind) => {
@@ -516,7 +516,7 @@ export default function Table<T extends TableObject>({
                     scope="col"
                     key={kebabCase(`${tableName}-column-${ind}`)}
                     className={csx(
-                      'px-6 py-4 bg-gray-50',
+                      'bg-gray-50 px-6 py-4',
                       sticky && 'sticky',
                       typeof stickyHeader === 'boolean' && 'top-0'
                     )}
@@ -527,14 +527,14 @@ export default function Table<T extends TableObject>({
                   >
                     <div
                       className={csx(
-                        'inline-flex flex-row gap-1 w-full',
+                        'inline-flex w-full flex-row gap-1',
                         classNames?.colCell,
                         sortPosition === 'left' ? 'justify-start gap-3' : 'justify-between'
                       )}
                     >
                       <div className="flex flex-col items-start justify-between gap-1">
                         {typeof name === 'string' ? (
-                          <span className="text-sm font-bold select-none text-neutral-4">
+                          <span className="select-none text-sm font-bold text-neutral-4">
                             {name}
                           </span>
                         ) : (
@@ -573,7 +573,7 @@ export default function Table<T extends TableObject>({
                 ? row[rowKey as keyof T]
                 : kebabCase(`${tableName}-row${index}`);
             return (
-              <tr key={reactRowkey} className="bg-white border-b hover:bg-primary-0">
+              <tr key={reactRowkey} className="border-b bg-white hover:bg-primary-0">
                 {columns.map(
                   ({ key, cellRenderer: columnCellRenderer, transformer }, columIndex) => {
                     let Comp = (
@@ -597,14 +597,14 @@ export default function Table<T extends TableObject>({
                       <th
                         scope="row"
                         key={reactColumnKey}
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-pre-wrap"
+                        className="whitespace-pre-wrap px-6 py-4 font-medium text-gray-900"
                       >
                         {Comp}
                       </th>
                     ) : (
                       <td
                         key={reactColumnKey}
-                        className={csx('px-6 py-4 whitespace-pre-wrap relative')}
+                        className={csx('relative whitespace-pre-wrap px-6 py-4')}
                       >
                         {Comp}
                       </td>
@@ -617,7 +617,7 @@ export default function Table<T extends TableObject>({
         </tbody>
       </table>
       {pagination && !loading && Boolean(data.length) && (
-        <div className="py-4 flex items-end justify-end">
+        <div className="flex items-end justify-end py-4">
           <Pagination
             {...{
               onChange,
@@ -633,7 +633,7 @@ export default function Table<T extends TableObject>({
       )}
       {!data.length && (
         <div className="absolute inset-0 top-9 mx-auto inline-flex items-center justify-center py-4">
-          <Empty description="" className="w-20 h-20" />
+          <Empty description="" className="h-20 w-20" />
         </div>
       )}
     </div>

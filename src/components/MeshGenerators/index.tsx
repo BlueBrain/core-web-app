@@ -52,7 +52,7 @@ export default function MeshGenerators({
         cameraType={cameraType}
       />
       {atLeastOneLoading && (
-        <div className="z-50 text-neutral-1 text-4xl absolute inset-1/2">
+        <div className="absolute inset-1/2 z-50 text-4xl text-neutral-1">
           <LoadingOutlined />
         </div>
       )}

@@ -84,15 +84,15 @@ function getStatusIcon(status: WorkflowExecutionStatusType): React.ReactNode {
 
 function TemplateItem({ id, name, description }: CuratedTemplate) {
   return (
-    <div id={id} className="border border-neutral-2 p-4 rounded-md hover:bg-gray-50 cursor-pointer">
+    <div id={id} className="cursor-pointer rounded-md border border-neutral-2 p-4 hover:bg-gray-50">
       <div className="block">
-        <div className="inline-flex items-center justify-between w-full gap-2 mb-3">
-          <h3 className="text-primary-8 font-bold text-lg select-none">{name}</h3>
-          <button type="button" className="text-neutral-4 text-sm hover:text-primary-8">
+        <div className="mb-3 inline-flex w-full items-center justify-between gap-2">
+          <h3 className="select-none text-lg font-bold text-primary-8">{name}</h3>
+          <button type="button" className="text-sm text-neutral-4 hover:text-primary-8">
             Choose
           </button>
         </div>
-        <p className="text-gray-400 text-sm font-normal line-clamp-2">{description}</p>
+        <p className="line-clamp-2 text-sm font-normal text-gray-400">{description}</p>
       </div>
     </div>
   );
@@ -100,17 +100,17 @@ function TemplateItem({ id, name, description }: CuratedTemplate) {
 
 function NewExperiment() {
   return (
-    <div className="px-4 pt-4 pb-6 flex-col items-start justify-start gap-2 border hover:bg-gray-50 border-neutral-2 w-full rounded-md">
-      <div className="inline-flex items-center justify-between w-full gap-3">
-        <h3 className="text-primary-8 font-bold select-none text-xl">New experiments</h3>
+    <div className="w-full flex-col items-start justify-start gap-2 rounded-md border border-neutral-2 px-4 pb-6 pt-4 hover:bg-gray-50">
+      <div className="inline-flex w-full items-center justify-between gap-3">
+        <h3 className="select-none text-xl font-bold text-primary-8">New experiments</h3>
         <Link
           href="/simulate/brain-config-selector"
-          className="text-neutral-4 text-base hover:text-primary-8"
+          className="text-base text-neutral-4 hover:text-primary-8"
         >
           Choose
         </Link>
       </div>
-      <p className="text-gray-400 font-normal select-none w-3/5 line-clamp-2 mb-4">
+      <p className="mb-4 line-clamp-2 w-3/5 select-none font-normal text-gray-400">
         Cillum duis duis dolor nulla. Proident ad eiusmod ut anim magna minim magna ea ex mollit et
         eu Exercitation eiusmod sint qui est elit in irure aliqua commodo irure do eiusmod ad.
       </p>
@@ -120,7 +120,7 @@ function NewExperiment() {
 
 function TemplateList() {
   return (
-    <div className="relative w-full p-7 bg-white flex flex-col items-start text-left gap-2">
+    <div className="relative flex w-full flex-col items-start gap-2 bg-white p-7 text-left">
       <NewExperiment />
       <div className="grid grid-flow-col gap-2">
         {CURATED_TEMPLATES.map(({ id, name, description }) => (
@@ -142,23 +142,23 @@ export function BrowseSimulations() {
   return (
     <Link
       href="/explore/simulation-campaigns"
-      className="relative w-full p-7 bg-white hover:bg-primary-8 flex flex-col items-start text-left cursor-pointer group"
+      className="group relative flex w-full cursor-pointer flex-col items-start bg-white p-7 text-left hover:bg-primary-8"
     >
-      <h2 className="text-primary-8 font-bold text-xl group-hover:text-white">
+      <h2 className="text-xl font-bold text-primary-8 group-hover:text-white">
         Browse simulation experiments
       </h2>
-      <p className="text-gray-400 font-normal w-1/3 line-clamp-2 text-left">
+      <p className="line-clamp-2 w-1/3 text-left font-normal text-gray-400">
         Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
         anim id est laborum.
       </p>
-      <EyeIcon className="absolute right-12 top-1/2 -translate-y-1/2 text-primary-8 group-hover:text-white w-5 h-5" />
+      <EyeIcon className="absolute right-12 top-1/2 h-5 w-5 -translate-y-1/2 text-primary-8 group-hover:text-white" />
     </Link>
   );
 }
 
 function NameColumn({ text }: { text: LaunchedSimCampUIConfigType['name'] }) {
   return (
-    <div className="text-sm font-normal text-primary-8 line-clamp-1" title={text}>
+    <div className="line-clamp-1 text-sm font-normal text-primary-8" title={text}>
       {text}
     </div>
   );
@@ -166,7 +166,7 @@ function NameColumn({ text }: { text: LaunchedSimCampUIConfigType['name'] }) {
 
 function StatusColumn({ row: { status } }: { row: LaunchedSimCampUIConfigType }) {
   return (
-    <div className="flex flex-row gap-2 items-center justify-start text-primary-8">
+    <div className="flex flex-row items-center justify-start gap-2 text-primary-8">
       {getStatusIcon(status)} {status}
     </div>
   );
@@ -176,13 +176,13 @@ function ActionColumn({ row }: { row: LaunchedSimCampUIConfigType }) {
   return (
     <div className="inline-flex flex-row items-center justify-center gap-2">
       <button disabled title="Edit" type="button" className="cursor-pointer" aria-label="Edit">
-        <FileIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+        <FileIcon className="h-4 w-4 text-base text-primary-8 hover:text-primary-4" />
       </button>
       <Link
         title="Settings"
         href={`${EXPIREMENT_BASE_URL}?simulationCampaignUIConfigId=${collapseId(row['@id'])}`}
       >
-        <SettingsIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+        <SettingsIcon className="h-4 w-4 text-base text-primary-8 hover:text-primary-4" />
       </Link>
       {row.status === 'Done' && (
         <Link
@@ -190,7 +190,7 @@ function ActionColumn({ row }: { row: LaunchedSimCampUIConfigType }) {
           className="inline-block"
           title="Clone"
         >
-          <EyeIcon className="w-4 h-4 text-base text-primary-8 hover:text-primary-4" />
+          <EyeIcon className="h-4 w-4 text-base text-primary-8 hover:text-primary-4" />
         </Link>
       )}
     </div>
@@ -305,16 +305,16 @@ function MySimulations() {
 
   return (
     <div className="relative w-full">
-      <div className="sticky top-0 z-20 bg-white w-full py-8 px-7">
-        <div className="inline-flex items-center justify-between gap-5 w-full">
+      <div className="sticky top-0 z-20 w-full bg-white px-7 py-8">
+        <div className="inline-flex w-full items-center justify-between gap-5">
           <div className="grid grid-flow-col gap-5">
-            <div className="text-primary-8 text-sm font-medium">
+            <div className="text-sm font-medium text-primary-8">
               Simulations running{' '}
               <strong>
                 <Tag bordered={false}>{runningSimulationCount}</Tag>
               </strong>
             </div>
-            <div className="text-primary-8 text-sm font-medium">
+            <div className="text-sm font-medium text-primary-8">
               Simulations done{' '}
               <strong>
                 <Tag bordered={false}>{doneSimulationCount}</Tag>
@@ -344,7 +344,7 @@ export default function MainMenu() {
   const [openMySimulations, toggleMySimulation] = useReducer((val) => !val, false);
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex w-full flex-col gap-2">
       <TemplateList />
       <BrowseSimulations />
       <CollapsibleMenuItem<SimulateMenuKey>

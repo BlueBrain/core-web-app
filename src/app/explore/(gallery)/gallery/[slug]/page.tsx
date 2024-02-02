@@ -4,7 +4,7 @@ import GalleryVisualliser from '@/components/explore-section/Gallery/GalleryVisu
 
 export default function SingleGalleryPage() {
   return (
-    <div className="flex flex-row flex-nowrap justify-between w-screen h-screen bg-black">
+    <div className="flex h-screen w-screen flex-row flex-nowrap justify-between bg-black">
       <HeaderSingleGallery
         title={SINGLE_GALLERY_LIST_CONTENT.name}
         description={SINGLE_GALLERY_LIST_CONTENT.description}

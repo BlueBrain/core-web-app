@@ -117,7 +117,7 @@ export default function ExperimentalTraces() {
 
   return (
     <>
-      <div className="text-primary-8 text-2xl font-bold">Experimental traces</div>
+      <div className="text-2xl font-bold text-primary-8">Experimental traces</div>
       {traces && <DefaultEModelTable dataSource={traces} columns={columns} />}
 
       <ErrorMessageLine message={tracesEmptyListMessage} />
@@ -125,7 +125,7 @@ export default function ExperimentalTraces() {
       {eModelEditMode && (
         <>
           <GenericButton
-            className="border-primary-7 text-primary-7 mt-2"
+            className="mt-2 border-primary-7 text-primary-7"
             text="Add trace"
             onClick={() => {
               setOpenPicker(true);

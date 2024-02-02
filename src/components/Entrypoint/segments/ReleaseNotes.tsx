@@ -48,22 +48,22 @@ function ReleaseNote({
   return (
     <div
       className={classNames(
-        'inline-flex flex-row items-start bg-primary-9 group cursor-pointer p-2',
-        'border backdrop-blur-[2px] border-solid border-[rgba(255,255,255,0.20)]',
-        'hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:backdrop-blur-[2px] hover:bg-primary-8 hover:rounded-sm'
+        'group inline-flex cursor-pointer flex-row items-start bg-primary-9 p-2',
+        'border border-solid border-[rgba(255,255,255,0.20)] backdrop-blur-[2px]',
+        'hover:rounded-sm hover:bg-primary-8 hover:shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:backdrop-blur-[2px]'
       )}
     >
       <Image
         src={image.length ? image : `${basePath}/images/obp_fullbrain.png`}
         alt={title}
-        className="w-32 h-auto flex-grow-0 flex-shrink-0"
+        className="h-auto w-32 flex-shrink-0 flex-grow-0"
         width={984}
         height={927}
       />
-      <div className="flex flex-col items-start gap-y-1 flex-1 basis-3/5 p-4">
-        <div className="font-light text-sm text-white line-clamp-1">{release}</div>
-        <h4 className="font-bold text-xl line-clamp-2 text-white mb-3">{title}</h4>
-        {seeable && <EyeIcon className="w-4 h-4 text-white mt-auto" />}
+      <div className="flex flex-1 basis-3/5 flex-col items-start gap-y-1 p-4">
+        <div className="line-clamp-1 text-sm font-light text-white">{release}</div>
+        <h4 className="mb-3 line-clamp-2 text-xl font-bold text-white">{title}</h4>
+        {seeable && <EyeIcon className="mt-auto h-4 w-4 text-white" />}
       </div>
     </div>
   );
@@ -71,16 +71,16 @@ function ReleaseNote({
 
 export default function ReleaseNotes() {
   return (
-    <div className="flex flex-col w-full relative mt-auto z-20">
-      <div className="inline-flex flex-row items-center justify-between w-full mb-4">
-        <h2 className="font-bold text-lg text-white select-none">Release notes</h2>
+    <div className="relative z-20 mt-auto flex w-full flex-col">
+      <div className="mb-4 inline-flex w-full flex-row items-center justify-between">
+        <h2 className="select-none text-lg font-bold text-white">Release notes</h2>
         <Link
           href="/about/releases"
           type="button"
-          className="inline-flex flex-row gap-2 items-center"
+          className="inline-flex flex-row items-center gap-2"
         >
-          <span className="text-white text-base font-bold">All release notes</span>
-          <PlusOutlined className="text-white w-3 h-3" />
+          <span className="text-base font-bold text-white">All release notes</span>
+          <PlusOutlined className="h-3 w-3 text-white" />
         </Link>
       </div>
       <div className="grid grid-flow-col items-stretch gap-2">

@@ -77,15 +77,15 @@ export default function ResultSuccess({
         />
         <div className={`${collpaseQuestion ? 'hidden' : 'block'}`}>
           {children}
-          <div className={`w-full h-px my-6 bg-zinc-300 ${showExtraDetails ? '' : 'hidden'}`} />
+          <div className={`my-6 h-px w-full bg-zinc-300 ${showExtraDetails ? '' : 'hidden'}`} />
           {showExtraDetails && (
             <div className="w-full">
-              <div className="inline-flex items-center justify-between w-full gap-y-3">
-                <div className="flex items-center w-full">
+              <div className="inline-flex w-full items-center justify-between gap-y-3">
+                <div className="flex w-full items-center">
                   <button
                     type="button"
                     onClick={onExpandArticles}
-                    className="h-11 w-[300px] px-3 py-3 gap-1.5 bg-blue-50 text-white shadow-sm  rounded-md relative inline-flex justify-between items-center whitespace-nowrap cursor-pointer no-underline leading-tight transition-all duration-200"
+                    className="relative inline-flex h-11 w-[300px] cursor-pointer items-center justify-between gap-1.5  whitespace-nowrap rounded-md bg-blue-50 px-3 py-3 leading-tight text-white no-underline shadow-sm transition-all duration-200"
                     aria-controls="collapse-content"
                     aria-label="expand-articles"
                   >
@@ -93,7 +93,7 @@ export default function ResultSuccess({
                       <div className="text-base font-normal leading-snug text-blue-900">
                         Based on
                       </div>
-                      <div className="px-1 py-[.2px] bg-blue-900 rounded-[3px] flex-col justify-start items-center inline-flex">
+                      <div className="inline-flex flex-col items-center justify-start rounded-[3px] bg-blue-900 px-1 py-[.2px]">
                         <span className="text-sm font-bold tracking-tight text-blue-50">
                           {articles.length}
                         </span>
@@ -104,7 +104,7 @@ export default function ResultSuccess({
                     </div>
                     <ChevronIcon
                       className={classNames(
-                        'text-primary-8 fill-current',
+                        'fill-current text-primary-8',
                         expandArticles ? '-rotate-90' : 'rotate-90'
                       )}
                     />
@@ -117,17 +117,17 @@ export default function ResultSuccess({
                 </div>
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-2 py-1 cursor-pointer"
+                  className="flex cursor-pointer items-center gap-2 px-2 py-1"
                   onClick={selectQuestion}
                 >
                   <span className="text-base text-primary-8">Filter</span>
-                  <span className="px-2 py-1 bg-gray-200 rounded-sm hover:bg-primary-8 group">
+                  <span className="group rounded-sm bg-gray-200 px-2 py-1 hover:bg-primary-8">
                     <FilterOutlined className="text-primary-8 group-hover:text-white" />
                   </span>
                 </button>
               </div>
               {expandArticles && (
-                <div className="mt-5 block px-1 opacity-100 transition-all ease-out-expo duration-300 overflow-hidden">
+                <div className="mt-5 block overflow-hidden px-1 opacity-100 transition-all duration-300 ease-out-expo">
                   <div className="mt-4 rounded">
                     <ArticlesTimeLine
                       {...{

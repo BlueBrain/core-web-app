@@ -60,14 +60,14 @@ export default function ETypeEntry({
   if (!selectedBrainRegion) return null;
 
   return isExpanded ? (
-    <div className="bg-none border-none m-0 w-full flex flex-col">
-      <div className="font-bold self-start ml-2 text-white">{eType.name}</div>
+    <div className="m-0 flex w-full flex-col border-none bg-none">
+      <div className="ml-2 self-start font-bold text-white">{eType.name}</div>
       {availableEModels.map((eModel) => (
         <button
           key={eModel.id}
           type="button"
           onClick={() => handleClick(eModel, selectedBrainRegion.id)}
-          className={`text-sm px-4 py-2 self-end ${
+          className={`self-end px-4 py-2 text-sm ${
             isEModelSelected(selectedEModel, eModel, mTypeName)
               ? `bg-white text-primary-7`
               : `text-white`

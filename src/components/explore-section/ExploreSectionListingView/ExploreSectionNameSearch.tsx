@@ -26,9 +26,9 @@ const Input = forwardRef(
     useEffect(() => ref?.current?.focus(), [ref]); // Auto-focus on render
 
     return (
-      <div className="flex items-center border-b border-neutral-2 w-full max-w-2xl mx-auto focus-within:border-b-primary-8">
+      <div className="mx-auto flex w-full max-w-2xl items-center border-b border-neutral-2 focus-within:border-b-primary-8">
         <input
-          className="bg-transparent placeholder:text-neutral-3 text-primary-7 py-2 w-full"
+          className="w-full bg-transparent py-2 text-primary-7 placeholder:text-neutral-3"
           style={{ outline: 'unset' }}
           onBlur={onBlur}
           onInput={onInput}

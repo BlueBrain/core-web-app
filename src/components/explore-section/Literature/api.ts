@@ -220,7 +220,7 @@ const fetchArticlesForBrainRegionAndExperiment = (
             journalName: articleResponse.journal_name,
             publicationDate: articleResponse.date,
             citationCount: articleResponse.cited_by,
-          } as ArticleItem)
+          }) as ArticleItem
       );
       return {
         articles,
@@ -265,7 +265,7 @@ const getAuthorOptions = (mlResponse: AuthorSuggestionResponse) =>
         key: authorResponse.name,
         label: authorResponse.name,
         value: authorResponse.name,
-      } as Suggestion)
+      }) as Suggestion
   );
 
 const getJournalOptions = (mlResponse: JournalSuggestionResponse) =>

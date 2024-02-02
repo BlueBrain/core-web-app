@@ -2,7 +2,7 @@ import { Select } from 'antd';
 
 export default function MatrixDisplayDropdown() {
   return (
-    <div className="w-[250px] flex flex-col h-[60px] justify-between">
+    <div className="flex h-[60px] w-[250px] flex-col justify-between">
       <div>Display</div>
       <Select
         defaultValue="Absolute density"

@@ -22,7 +22,7 @@ export default function CoordFilter({ className, coord, value, onChange }: Coord
       <select
         value={value}
         onChange={handleSelectChange}
-        className="bg-black border border-gray-400 text-white"
+        className="border border-gray-400 bg-black text-white"
       >
         {['', ...coord.values.slice().sort((a, b) => a - b)].map((val) => (
           <option key={val} value={val}>

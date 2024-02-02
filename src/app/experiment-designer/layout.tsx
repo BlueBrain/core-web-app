@@ -120,7 +120,7 @@ export default function ExperimentDesignerLayout({ children }: ExperimentDesigne
 
   return (
     <Spin spinning={isLoading}>
-      <div className="h-screen grid grid-cols-[minmax(40px,auto)_1fr]">
+      <div className="grid h-screen grid-cols-[minmax(40px,auto)_1fr]">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
           <ExperimentDesignerPanel />
         </ErrorBoundary>

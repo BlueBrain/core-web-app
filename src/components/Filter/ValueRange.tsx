@@ -45,29 +45,29 @@ export default function ValueRange({
         >
           <Form.Item name="min-range" noStyle>
             <InputNumber
-              className="text-neutral-2 w-32"
+              className="w-32 text-neutral-2"
               placeholder="From"
               type="number"
               step={0.1}
               onChange={submitForm}
             />
           </Form.Item>
-          <div className="w-min mx-2">
+          <div className="mx-2 w-min">
             <ArrowLeftRightIcon />
           </div>
           <Form.Item name="max-range" noStyle>
             <InputNumber
-              className="text-neutral-2 w-32"
+              className="w-32 text-neutral-2"
               placeholder="To"
               type="number"
               step={0.1}
               onChange={submitForm}
             />
           </Form.Item>
-          <div className="text-neutral-2 ml-2">{getFieldUnit(filter.field)}</div>
+          <div className="ml-2 text-neutral-2">{getFieldUnit(filter.field)}</div>
         </Form>
       </ConfigProvider>
-      <div className="text-neutral-2 mt-3 gap-2 flex flex-col">
+      <div className="mt-3 flex flex-col gap-2 text-neutral-2">
         <div>
           <strong>Minimum:</strong> {aggregation.min ? formatNumber(aggregation.min) : 'N/A'}
         </div>

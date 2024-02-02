@@ -30,7 +30,7 @@ function PresetSelector() {
 
   return (
     <>
-      <div className="font-bold text-primary-8 text-xl my-4">Optimization target</div>
+      <div className="my-4 text-xl font-bold text-primary-8">Optimization target</div>
 
       <div className="flex gap-4">
         {presetNames.map((presetName) => {
@@ -39,7 +39,7 @@ function PresetSelector() {
           return (
             <GenericButton
               key={presetName}
-              className={classNames(isSelected ? 'text-white bg-primary-8' : 'text-primary-8')}
+              className={classNames(isSelected ? 'bg-primary-8 text-white' : 'text-primary-8')}
               onClick={() => setFeatureSelectedPreset(presetName)}
               text={presetName}
             />
@@ -47,7 +47,7 @@ function PresetSelector() {
         })}
       </div>
 
-      <div className="text-primary-8 my-4">
+      <div className="my-4 text-primary-8">
         <div>DESCRIPTION</div>
         <div>
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Totam, id tenetur modi iusto

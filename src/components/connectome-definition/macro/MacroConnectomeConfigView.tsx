@@ -223,7 +223,7 @@ export default function ConnectomeConfigurationView() {
           }}
         >
           <div className={styles.sidePanel}>
-            <span className="font-bold text-lg">Custom name for this modified connection</span>
+            <span className="text-lg font-bold">Custom name for this modified connection</span>
             <CloseOutlined
               className="float-right"
               onClick={() => {
@@ -237,7 +237,7 @@ export default function ConnectomeConfigurationView() {
             />
 
             <Input value={editName} onChange={(e) => setEditName(e.currentTarget.value)} />
-            <div className="flex justify-between mb-3 mt-3">
+            <div className="mb-3 mt-3 flex justify-between">
               Offset, synapses/μm³:
               <InputNumber value={offset} step={0.01} onChange={handleOffsetChange} />
             </div>
@@ -269,7 +269,7 @@ export default function ConnectomeConfigurationView() {
                   setCurrentEditIdx(null);
                   selectionShapes.current = [];
                 }}
-                className="w-5/12 ml-2"
+                className="ml-2 w-5/12"
                 type="primary"
               >
                 Cancel

@@ -14,7 +14,7 @@ export function Field({ field, className, data }: FieldProps) {
   const fieldObj = EXPLORE_FIELDS_CONFIG[field];
 
   return (
-    <div className={classNames('text-primary-7 mr-10', className)}>
+    <div className={classNames('mr-10 text-primary-7', className)}>
       <div className="uppercase text-neutral-4">{fieldObj.title}</div>
       <div className="mt-2">
         {fieldObj.render?.deltaResourceViewFn && fieldObj.render?.deltaResourceViewFn(data)}
@@ -35,9 +35,9 @@ export default function DetailHeader({
   if (!detail) return null;
 
   return (
-    <div className="flex flex-col gap-10 max-w-screen-2xl">
+    <div className="flex max-w-screen-2xl flex-col gap-10">
       <DetailHeaderName detail={detail} url={url} />
-      <div className="grid gap-4 grid-cols-6 break-words">
+      <div className="grid grid-cols-6 gap-4 break-words">
         {fields.map(({ className, field }) => (
           <Field key={field} className={className} field={field} data={detail} />
         ))}

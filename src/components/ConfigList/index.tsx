@@ -46,7 +46,7 @@ export default function ConfigList<T extends SupportedConfigListTypes>({
     <ConfigProvider theme={tableTheme}>
       <Table<T>
         size="small"
-        className="mt-6 mb-12"
+        className="mb-12 mt-6"
         loading={isLoading}
         dataSource={configs}
         pagination={configs.length > 10 ? { defaultPageSize: 10 } : false}

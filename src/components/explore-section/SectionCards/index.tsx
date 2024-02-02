@@ -38,44 +38,44 @@ export default function SectionCards({
       id={`explore-navigation-${content.url}`}
       href={content.url}
       className={classNames(
-        'relative w-full h-[calc(25vh-1.4rem)] p-8 2xl:p-14 flex flex-row justify-between items-start',
+        'relative flex h-[calc(25vh-1.4rem)] w-full flex-row items-start justify-between p-8 2xl:p-14',
         backgroundColor
       )}
       onMouseOver={handleMouseOver}
       onMouseOut={() => setMouseOver(false)}
     >
-      <div className="flex flex-col justify-start w-full">
+      <div className="flex w-full flex-col justify-start">
         <div
           className={classNames(
-            'relative flex items-start h-9 2xl:h-11 gap-2 transition-top ease-in-out duration-500',
+            'relative flex h-9 items-start gap-2 transition-top duration-500 ease-in-out 2xl:h-11',
             mouseOver ? '-top-1' : 'top-2'
           )}
         >
           {content.prefixIcon && (
-            <div className="relative flex flex-col items-center justify-center w-6 h-full lg:w-7">
+            <div className="relative flex h-full w-6 flex-col items-center justify-center lg:w-7">
               <Image fill alt={content.name} src={`${basePath}/${content.prefixIcon}`} />
             </div>
           )}
-          <h2 className="relative text-4xl font-bold text-center text-white 2xl:text-5xl">
+          <h2 className="relative text-center text-4xl font-bold text-white 2xl:text-5xl">
             {content.name}
           </h2>
         </div>
         <p
           className={classNames(
-            'relative text-sm 2xl:text-lg w-2/3 font-light text-blue-200 transition-all ease-in-out duration-500',
-            mouseOver ? 'opacity-100 top-2' : 'opacity-0 -top-6'
+            'relative w-2/3 text-sm font-light text-blue-200 transition-all duration-500 ease-in-out 2xl:text-lg',
+            mouseOver ? 'top-2 opacity-100' : '-top-6 opacity-0'
           )}
         >
           {content.description}
         </p>
       </div>
 
-      <EyeIcon className="w-auto h-3 text-white 2xl:h-5" />
+      <EyeIcon className="h-3 w-auto text-white 2xl:h-5" />
     </Link>
   ) : (
     <div
       className={classNames(
-        'relative w-full flex flex-col items-start justify-start transition-height ease-in-out duration-500 overflow-hidden',
+        'relative flex w-full flex-col items-start justify-start overflow-hidden transition-height duration-500 ease-in-out',
         backgroundColor
       )}
       style={{
@@ -86,7 +86,7 @@ export default function SectionCards({
     >
       <button
         type="button"
-        className="relative flex flex-row items-center justify-between w-full py-8 pl-8 pr-6 h-15vh 2xl:pl-14 2xl:pr-10 active:outline-none focus:outline-none"
+        className="relative flex h-15vh w-full flex-row items-center justify-between py-8 pl-8 pr-6 focus:outline-none active:outline-none 2xl:pl-14 2xl:pr-10"
         onClick={() => setSectionStatus(!sectionStatus)}
         onMouseOver={handleMouseOver}
         onFocus={handleMouseOver}
@@ -95,7 +95,7 @@ export default function SectionCards({
       >
         <div className="relative flex flex-col items-start text-left">
           {content.prefixIcon && (
-            <div className="flex flex-col items-center justify-center h-full">
+            <div className="flex h-full flex-col items-center justify-center">
               <Image
                 src={`${basePath}/${content.prefixIcon}`}
                 alt={content.name}
@@ -106,7 +106,7 @@ export default function SectionCards({
           )}
           <h2
             className={classNames(
-              'relative text-2xl 2xl:text-4xl font-bold transition-top ease-in-out duration-500',
+              'relative text-2xl font-bold transition-top duration-500 ease-in-out 2xl:text-4xl',
               mouseOver || sectionStatus ? '-top-1' : 'top-2',
               sectionStatus ? 'text-primary-4' : 'text-white'
             )}
@@ -115,8 +115,8 @@ export default function SectionCards({
           </h2>
           <p
             className={classNames(
-              'relative transition-all ease-in-out duration-500 text-sm 2xl:text-lg font-light',
-              mouseOver || sectionStatus ? 'opacity-100 -top-0.5' : 'opacity-0 -top-6',
+              'relative text-sm font-light transition-all duration-500 ease-in-out 2xl:text-lg',
+              mouseOver || sectionStatus ? '-top-0.5 opacity-100' : '-top-6 opacity-0',
               sectionStatus ? 'text-primary-4' : 'text-blue-200'
             )}
           >

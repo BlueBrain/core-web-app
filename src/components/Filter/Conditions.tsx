@@ -12,7 +12,7 @@ export default function Conditions() {
 
   return (
     <div>
-      <span className="font-semibold text-primary-4 text-lg">Conditions</span>
+      <span className="text-lg font-semibold text-primary-4">Conditions</span>
       <ul className="flex flex-col space-y-5">
         {items.map(({ checked, label }) => (
           <li className="flex items-center justify-between" key={label}>
@@ -22,13 +22,13 @@ export default function Conditions() {
                 defaultChecked={checked}
                 className={classNames(
                   styles.switchRoot,
-                  'bg-transparent border border-primary-4 h-[14px] rounded-full w-[27px]'
+                  'h-[14px] w-[27px] rounded-full border border-primary-4 bg-transparent'
                 )}
               >
                 <Switch.Thumb
                   className={classNames(
                     styles.switchThumb,
-                    'bg-primary-4 block h-[10px] rounded-full transition-transform translate-x-[1px] w-[10px] will-change-transform'
+                    'block h-[10px] w-[10px] translate-x-[1px] rounded-full bg-primary-4 transition-transform will-change-transform'
                   )}
                 />
               </Switch.Root>

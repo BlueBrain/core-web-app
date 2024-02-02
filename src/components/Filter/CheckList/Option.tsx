@@ -36,11 +36,11 @@ export function CheckListOption({
         <span className="flex items-center justify-between gap-2">
           {!!count && <span className="text-primary-5">{`${count} datasets`}</span>}
           <Checkbox.Root
-            className="bg-transparent border border-white h-[14px] rounded w-[14px]"
+            className="h-[14px] w-[14px] rounded border border-white bg-transparent"
             checked={!!checked}
             onCheckedChange={() => handleCheckedChange(key)}
           >
-            <Checkbox.Indicator className="flex items-center justify-center w-full">
+            <Checkbox.Indicator className="flex w-full items-center justify-center">
               <CheckIcon className="check" fill="#fff" />
             </Checkbox.Indicator>
           </Checkbox.Root>

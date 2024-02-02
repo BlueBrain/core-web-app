@@ -35,18 +35,18 @@ export default function ETypeEntry({
   };
 
   return isExpanded ? (
-    <div className="bg-none border-none m-0 w-full flex flex-col">
+    <div className="m-0 flex w-full flex-col border-none bg-none">
       <button
         type="button"
         onClick={handleClick}
-        className={`flex justify-between px-4 py-2 items-center ${
+        className={`flex items-center justify-between px-4 py-2 ${
           isETypeSelected(selectedMEName, eType.name, mTypeName)
             ? `bg-white text-primary-7`
             : `text-white`
         } ${availableEModels.length ? 'cursor-pointer' : 'cursor-not-allowed'}`}
       >
         <div className="font-bold">{eType.name}</div>
-        <div className="font-light text-xs">
+        <div className="text-xs font-light">
           {availableEModels.length ? `${availableEModels.length} model(s)` : 'No e-model'}
         </div>
       </button>

@@ -32,7 +32,7 @@ function ExperimentLiteratureHeader({ loading }: { loading?: boolean }) {
   const menuItems = Object.values(EXPERIMENT_DATA_TYPES).map((config) => ({
     key: config.name,
     title: config.title,
-    label: <span className="font-normal text-base">{config.title}</span>,
+    label: <span className="text-base font-normal">{config.title}</span>,
   }));
 
   const total = getActiveFiltersCount(filters, initialFilters);
@@ -46,39 +46,39 @@ function ExperimentLiteratureHeader({ loading }: { loading?: boolean }) {
 
   return (
     <If id="breadcrumb" condition={Boolean(brainRegionTitle)}>
-      <div className="flex items-center justify-between m-auto px-8 pb-6 max-w-7xl w-full sticky top-0 z-[2] bg-white">
-        <div className="flex w-full gap-1 items-center">
-          <span className="text-base text-neutral-3 mr-4 min-w-fit">Search criteria: </span>
+      <div className="sticky top-0 z-[2] m-auto flex w-full max-w-7xl items-center justify-between bg-white px-8 pb-6">
+        <div className="flex w-full items-center gap-1">
+          <span className="mr-4 min-w-fit text-base text-neutral-3">Search criteria: </span>
           <div className="flex items-center justify-center gap-1">
-            <div className="h-max py-2 px-3 hover:bg-neutral-1 rounded-md text-primary-8 cursor-default">
+            <div className="h-max cursor-default rounded-md px-3 py-2 text-primary-8 hover:bg-neutral-1">
               {brainRegionTitleCaseExceptConjunctions(brainRegionTitle ?? '')}
             </div>
-            <div className="h-max py-2 px-1 select-none">
+            <div className="h-max select-none px-1 py-2">
               <CaretRightFilled className="text-neutral-2" />
             </div>
             <Dropdown trigger={['click']} menu={{ items: menuItems, onClick: onSelectType }}>
               <button
                 type="button"
                 data-testid="experiment-types-button"
-                className="flex items-center gap-2 h-max py-2 px-3 hover:bg-neutral-1 rounded-md text-primary-8"
+                className="flex h-max items-center gap-2 rounded-md px-3 py-2 text-primary-8 hover:bg-neutral-1"
               >
                 {find(menuItems, { key: params['experiment-data-type'] })?.title}
-                <DownOutlined className="text-primary-8 w-3 h-3" />
+                <DownOutlined className="h-3 w-3 text-primary-8" />
               </button>
             </Dropdown>
           </div>
         </div>
         <button
           type="button"
-          className="bg-white flex gap-10 items-center justify-between p-3 rounded-md min-w-fit border border-neutral-2 ml-auto disabled:bg-gray-100"
+          className="ml-auto flex min-w-fit items-center justify-between gap-10 rounded-md border border-neutral-2 bg-white p-3 disabled:bg-gray-100"
           onClick={() => openFilterPanel(true)}
           disabled={loading}
         >
           <div>
-            <span className="text-white text-sm bg-primary-8 font-semibold rounded-md px-3 py-1">
+            <span className="rounded-md bg-primary-8 px-3 py-1 text-sm font-semibold text-white">
               <span data-testid="active-filters-count">{total}</span>
             </span>
-            <span className="text-primary-8 text-base font-bold mr-2">
+            <span className="mr-2 text-base font-bold text-primary-8">
               {' '}
               filter{total > 1 ? 's' : ''}
             </span>

@@ -122,19 +122,19 @@ export default function VirtualLabSettingsComponent({
       <Button
         onClick={() => router.push('/')}
         type="text"
-        className="flex items-center my-6 !text-white"
+        className="my-6 flex items-center !text-white"
       >
         <ArrowLeftOutlined /> Back to
       </Button>
 
       <div className="bg-primary-8">
-        <div className="py-4 px-8 border border-transparent border-b-primary-7">
+        <div className="border border-transparent border-b-primary-7 px-8 py-4">
           <h6>Virtual lab</h6>
-          <h3 className="font-bold text-3xl leading-10" data-testid="virtual-lab-name">
+          <h3 className="text-3xl font-bold leading-10" data-testid="virtual-lab-name">
             {virtualLab.name}
           </h3>
         </div>
-        <div className="py-4 px-8">
+        <div className="px-8 py-4">
           <h5 className="font-bold">Compute hours current usage</h5>
           {computeTime.state === 'loading' && (
             <Skeleton paragraph={{ rows: 1 }} title={{ width: 0 }} />
@@ -166,7 +166,7 @@ export default function VirtualLabSettingsComponent({
         items={[
           {
             key: 1,
-            label: <h3 className="font-bold text-xl color-primary-8">Information</h3>,
+            label: <h3 className="color-primary-8 text-xl font-bold">Information</h3>,
             children: (
               <InformationPanel
                 virtualLab={virtualLab}
@@ -192,7 +192,7 @@ export default function VirtualLabSettingsComponent({
         items={[
           {
             key: 1,
-            label: <h3 className="font-bold text-xl color-primary-8">Members</h3>,
+            label: <h3 className="color-primary-8 text-xl font-bold">Members</h3>,
             children: (
               <MembersPanel
                 members={virtualLab.members}
@@ -221,7 +221,7 @@ export default function VirtualLabSettingsComponent({
         items={[
           {
             key: 1,
-            label: <h3 className="font-bold text-xl color-primary-8">Plan</h3>,
+            label: <h3 className="color-primary-8 text-xl font-bold">Plan</h3>,
             children: (
               <PlanPanel
                 currentPlan={virtualLab.plan ?? 'entry'}
@@ -253,12 +253,12 @@ export default function VirtualLabSettingsComponent({
                 <PlusOutlined style={{ fontSize: '14px' }} />
               )
             }
-            className="mt-4 rounded-none text-primary-8 bg-gray-200"
+            className="mt-4 rounded-none bg-gray-200 text-primary-8"
             key="danger-zone"
             items={[
               {
                 key: 1,
-                label: <h3 className="font-bold text-xl color-primary-8">Danger Zone</h3>,
+                label: <h3 className="color-primary-8 text-xl font-bold">Danger Zone</h3>,
                 children: (
                   <DangerZonePanel
                     onDeleteVirtualLabClick={deleteVirtualLab}

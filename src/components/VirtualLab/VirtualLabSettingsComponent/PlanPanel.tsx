@@ -76,25 +76,25 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
               plan.type === selectedPlan
                 ? 'bg-primary-8 text-white'
                 : 'border border-primary-3 text-primary-8',
-              'p-6 mt-6'
+              'mt-6 p-6'
             )}
           >
-            <h2 className="capitalize text-3xl font-bold mb-4">{plan.type}</h2>
-            <h6 className="text-primary-3 text-sm">Your advantages</h6>
+            <h2 className="mb-4 text-3xl font-bold capitalize">{plan.type}</h2>
+            <h6 className="text-sm text-primary-3">Your advantages</h6>
             <ul className="columns-3 px-5 py-3">
               {plan.advantages.map((advantage, index) => (
-                <li key={index} className="font-semibold list-disc">
+                <li key={index} className="list-disc font-semibold">
                   {advantage}
                 </li>
               ))}
             </ul>
             <div
               className={classNames(
-                'py-3 border-b border-t',
+                'border-b border-t py-3',
                 plan.type === selectedPlan ? 'border-primary-6' : 'border-gray-200'
               )}
             >
-              <span className="font-bold text-3xl">
+              <span className="text-3xl font-bold">
                 {plan.pricePerMonthPerUser.currency} {plan.pricePerMonthPerUser.cost}
               </span>{' '}
               /month /user
@@ -168,7 +168,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                       label="Last name"
                       rules={[{ required: true }]}
                       wrapperCol={{ flex: 1, span: 12 }}
-                      className="flex-1 border-b border-gray-200 ml-5"
+                      className="ml-5 flex-1 border-b border-gray-200"
                     >
                       <Input placeholder="Enter your last name..." bordered={false} />
                     </Form.Item>
@@ -199,7 +199,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                       label="Postal Code"
                       rules={[{ required: true }]}
                       wrapperCol={{ flex: 1, span: 12 }}
-                      className="flex-1 border-b border-gray-200 ml-5"
+                      className="ml-5 flex-1 border-b border-gray-200"
                     >
                       <Input placeholder="Enter your postal code..." bordered={false} />
                     </Form.Item>
@@ -209,7 +209,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                     name="country"
                     label="Country"
                     rules={[{ required: true }]}
-                    className="border-b border-gray-200 w-1/2"
+                    className="w-1/2 border-b border-gray-200"
                   >
                     <Select
                       bordered={false}

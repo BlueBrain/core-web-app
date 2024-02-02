@@ -71,13 +71,13 @@ export function MainMenuSingleItem({
       type="button"
       onClick={onSelect(id)}
       className={classNames(
-        'py-4 px-5 h-full hover:bg-white text-left group flex-1 basis-1/3 flex flex-col items-start justify-stretch',
+        'group flex h-full flex-1 basis-1/3 flex-col items-start justify-stretch px-5 py-4 text-left hover:bg-white',
         selected ? selectedBgColor : bgColor
       )}
     >
       <h3
         className={classNames(
-          'text-lg lg:text-2xl xl:text-3xl font-bold group-hover:text-primary-8',
+          'text-lg font-bold group-hover:text-primary-8 lg:text-2xl xl:text-3xl',
           selected ? selectedTextColor : 'text-white'
         )}
       >
@@ -102,7 +102,7 @@ export function RenderedMainDetails({ id }: { id: MainMenuListKey }) {
 
   const { Component } = menuItem;
   return (
-    <div className="relative overflow-y-auto primary-scrollbar w-full h-full transition-all will-change-contents duration-300 ease-in-out">
+    <div className="primary-scrollbar relative h-full w-full overflow-y-auto transition-all duration-300 ease-in-out will-change-contents">
       <Component />
     </div>
   );
@@ -128,8 +128,8 @@ export default function MainMenu() {
   }, [tab]);
 
   return (
-    <div className="relative flex flex-col justify-start gap-px items-stretch w-full h-[calc(100vh-2.5rem)]">
-      <div className="grid grid-cols-3 gap-x-1 col-start-2 col-span-3 bg-primary-8">
+    <div className="relative flex h-[calc(100vh-2.5rem)] w-full flex-col items-stretch justify-start gap-px">
+      <div className="col-span-3 col-start-2 grid grid-cols-3 gap-x-1 bg-primary-8">
         {MAIN_MENU_LIST.map(
           ({ id, title, description, bgColor, selectedBgColor, selectedTextColor }) => (
             <MainMenuSingleItem

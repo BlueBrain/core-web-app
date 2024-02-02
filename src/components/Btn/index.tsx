@@ -13,7 +13,7 @@ export function Btn({
   return (
     <button
       className={classNames(
-        'flex gap-2 items-center justify-between font-bold px-7 py-4 rounded-none text-white',
+        'flex items-center justify-between gap-2 rounded-none px-7 py-4 font-bold text-white',
         className
       )}
       onClick={onClick}
@@ -39,7 +39,7 @@ export function FileInputBtn({
   return (
     <label
       className={classNames(
-        'cursor-pointer flex gap-2 items-center justify-between font-bold px-7 py-4 rounded-none text-white',
+        'flex cursor-pointer items-center justify-between gap-2 rounded-none px-7 py-4 font-bold text-white',
         className
       )}
       htmlFor={htmlFor}

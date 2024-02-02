@@ -48,15 +48,15 @@ function ImageSetComponent({
   const repCount = Object.keys(repetitions).length;
 
   return (
-    <div className="divide-neutral-2 divide-y flex flex-col gap-3">
-      <div className="flex font-bold gap-2 items-baseline text-primary-9 text-lg">
+    <div className="flex flex-col gap-3 divide-y divide-neutral-2">
+      <div className="flex items-baseline gap-2 text-lg font-bold text-primary-9">
         {stimulusType}
         <small className="font-light">{`${repCount} ${
           repCount === 1 ? 'repetition' : 'repetitions'
         }`}</small>
       </div>
 
-      <div className="grid grid-cols-4 2xl:grid-cols-6 gap-7 pt-5">
+      <div className="grid grid-cols-4 gap-7 pt-5 2xl:grid-cols-6">
         {Object.keys(repetitions).map((repKey) => {
           const sweeps = repetitions[Number(repKey)]?.sort((a: any, b: any) => {
             const aType = (a.about || a.fileName).toLowerCase().includes('response');
@@ -76,9 +76,9 @@ function ImageSetComponent({
           return (
             <div className="flex flex-col gap-2" key={`image-preview-${stimulusType}-${repKey}`}>
               <div className="flex items-center justify-between">
-                <span className="font-light indent-10 text-dark text-lg">Repetition {repKey}</span>
+                <span className="indent-10 text-lg font-light text-dark">Repetition {repKey}</span>
                 <button
-                  className="bg-neutral-1 flex items-center p-3 rounded hover:bg-neutral-2"
+                  className="flex items-center rounded bg-neutral-1 p-3 hover:bg-neutral-2"
                   onClick={onRepetitionClicked(stimulusType, repKey)}
                   type="button"
                   aria-label="Toggle selection"

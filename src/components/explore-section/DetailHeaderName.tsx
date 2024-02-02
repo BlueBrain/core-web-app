@@ -45,10 +45,10 @@ export default function DetailHeaderName({
 
   return (
     <div className="flex flex-col text-primary-7">
-      <div className="font-thin text">Name</div>
+      <div className="text font-thin">Name</div>
       <div className="flex  justify-between">
         <div className="flex items-center gap-5">
-          <div className="font-bold text-2xl">{detail?.name}</div>
+          <div className="text-2xl font-bold">{detail?.name}</div>
           {withRevision && (
             <Dropdown
               menu={{ items }}
@@ -58,7 +58,7 @@ export default function DetailHeaderName({
             >
               <button
                 type="button"
-                className="border border-primary-7 flex gap-2 items-center px-4 py-2 w-fit"
+                className="flex w-fit items-center gap-2 border border-primary-7 px-4 py-2"
               >
                 {latestRevision.state === 'loading' && <Spin indicator={<LoadingOutlined />} />}
                 {latestRevision.state === 'hasData' && (

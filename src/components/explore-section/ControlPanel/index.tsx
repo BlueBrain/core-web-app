@@ -135,12 +135,12 @@ function createFilterItemComponent(
               }
             />
             <span>
-              Use the asterix character (<code className="font-mono text-semibold">*</code>) to
+              Use the asterix character (<code className="text-semibold font-mono">*</code>) to
               specify a &quot;wildcard&quot; for your search. For example; to search for names{' '}
               <i>beginning with</i> &quot;AA11&quot;, specify{' '}
-              <code className="font-mono text-semibold">AA11*</code>. To search for names{' '}
+              <code className="text-semibold font-mono">AA11*</code>. To search for names{' '}
               <i>containing</i> &quot;L5-2&quot;, specify{' '}
-              <code className="font-mono text-bold">*L5-2*</code>.
+              <code className="text-bold font-mono">*L5-2*</code>.
             </span>
           </div>
         );
@@ -224,21 +224,21 @@ export default function ControlPanel({
   return (
     <div
       data-testid="listing-view-filter-panel"
-      className="z-10 top-0 right-0 bg-primary-8 flex flex-col h-screen overflow-y-scroll pl-8 pr-16 py-6 shrink-0 space-y-4 w-[480px] relative"
+      className="relative right-0 top-0 z-10 flex h-screen w-[480px] shrink-0 flex-col space-y-4 overflow-y-scroll bg-primary-8 py-6 pl-8 pr-16"
     >
       <div className="overflow-auto pb-20">
         <button
           autoFocus // eslint-disable-line jsx-a11y/no-autofocus
           type="button"
           onClick={toggleDisplay}
-          className="text-white text-right"
+          className="text-right text-white"
           aria-label="Close"
         >
           <CloseOutlined />
         </button>
-        <span className="flex font-bold gap-2 items-baseline text-2xl text-white">
+        <span className="flex items-baseline gap-2 text-2xl font-bold text-white">
           Filters
-          <small className="font-light text-base text-primary-3">{activeColumnsText}</small>
+          <small className="text-base font-light text-primary-3">{activeColumnsText}</small>
         </span>
 
         <p className="text-white">
@@ -251,12 +251,12 @@ export default function ControlPanel({
           {children}
         </div>
       </div>
-      <div className="w-full flex items-center justify-between px-8 py-12 bg-primary-8 absolute bottom-8 left-0">
+      <div className="absolute bottom-8 left-0 flex w-full items-center justify-between bg-primary-8 px-8 py-12">
         <ClearFilters onClick={clearFilters} />
         <button
           type="submit"
           onClick={submitValues}
-          className="bg-primary-2 py-3 px-8 text-primary-9"
+          className="bg-primary-2 px-8 py-3 text-primary-9"
         >
           Apply
         </button>

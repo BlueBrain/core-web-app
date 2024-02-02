@@ -15,9 +15,9 @@ function NumericResultsInfo({
   const total = useLoadableValue(totalAtom({ dataType, brainRegionSource }));
 
   return (
-    <div className="flex justify-start w-full">
+    <div className="flex w-full justify-start">
       <div
-        className="text-primary-9 flex items-center gap-1"
+        className="flex items-center gap-1 text-primary-9"
         role="status"
         aria-label="listing-view-title"
       >
@@ -27,7 +27,7 @@ function NumericResultsInfo({
             active
             size="default"
             shape="square"
-            className="!min-w-[2.7rem] !max-w-[2.7rem] !max-h-[1.74rem]"
+            className="!max-h-[1.74rem] !min-w-[2.7rem] !max-w-[2.7rem]"
           />
         )}
         {total.state === 'hasData' && <strong>{total.data?.toLocaleString('en-US')}</strong>}

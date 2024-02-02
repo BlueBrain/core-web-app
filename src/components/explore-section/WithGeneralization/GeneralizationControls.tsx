@@ -52,7 +52,7 @@ function GeneralizationControls({ dataType }: { dataType: DataType }) {
 
   return (
     <ConfigProvider theme={theme}>
-      <div className="flex items-center mt-16">
+      <div className="mt-16 flex items-center">
         <div className={styles.label}>
           Here are the {resourceBasedResponseHitsCount || <Spin />} most similar morphologies based
           on:
@@ -72,7 +72,7 @@ function GeneralizationControls({ dataType }: { dataType: DataType }) {
         )}
       </div>
       {displayControlPanel && filters && (
-        <div className="h-screen fixed right-0 top-0 z-50">
+        <div className="fixed right-0 top-0 z-50 h-screen">
           <ControlPanel
             data-testid="detail-view-control-panel"
             aggregations={aggregations}

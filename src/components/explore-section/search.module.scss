@@ -1,8 +1,8 @@
 .search {
-  @apply border-none bg-transparent rounded-none;
+  @apply rounded-none border-none bg-transparent;
 
   button:global(.ant-input-search-button) {
-    @apply text-white bg-primary-7;
+    @apply bg-primary-7 text-white;
 
     &:hover {
       @apply bg-primary-6;

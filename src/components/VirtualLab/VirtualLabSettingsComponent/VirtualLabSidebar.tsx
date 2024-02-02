@@ -12,15 +12,15 @@ export default function VirtualLabSidebar() {
 
   return (
     <div className="w-[16vw]">
-      <h1 className="font-bold text-5xl leading-12 uppercase mb-5">
+      <h1 className="leading-12 mb-5 text-5xl font-bold uppercase">
         Open <br />
         Brain <br />
         Platform
       </h1>
 
-      <div className="border border-primary-7 p-5 pb-3 min-w-[220px]">
+      <div className="min-w-[220px] border border-primary-7 p-5 pb-3">
         <div>
-          <UserOutlined className="text-primary-4 mr-2" />
+          <UserOutlined className="mr-2 text-primary-4" />
           <span className="font-bold">{session?.user.name}</span>
         </div>
         <div className="flex justify-between">
@@ -34,10 +34,10 @@ export default function VirtualLabSidebar() {
               },
             }}
           >
-            <Link href="/account" className="text-primary-5 p-0">
+            <Link href="/account" className="p-0 text-primary-5">
               Account
             </Link>
-            <Button type="text" className="text-primary-5 py-0 px-2" onClick={logout}>
+            <Button type="text" className="px-2 py-0 text-primary-5" onClick={logout}>
               Log out
             </Button>
           </ConfigProvider>

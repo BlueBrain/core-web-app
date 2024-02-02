@@ -10,7 +10,10 @@ export default class ScaleViewer {
 
   private axis: d3.Axis<d3.NumberValue>;
 
-  constructor(private div: HTMLDivElement, max: number) {
+  constructor(
+    private div: HTMLDivElement,
+    max: number
+  ) {
     const { clientWidth: width, clientHeight: height } = div;
     const margins = {
       top: 20,

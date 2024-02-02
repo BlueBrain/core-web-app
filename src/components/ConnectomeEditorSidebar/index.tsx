@@ -61,17 +61,17 @@ function NavTitle({
 
   return (
     <>
-      <div ref={navTitleRef} className="py-3 flex justify-between items-center">
-        <div className="flex gap-2 justify-between items-center">
+      <div ref={navTitleRef} className="flex items-center justify-between py-3">
+        <div className="flex items-center justify-between gap-2">
           {checkbox}
           <button
             type="button"
-            className="h-auto border-none flex gap-3 justify-end items-center"
+            className="flex h-auto items-center justify-end gap-3 border-none"
             onClick={onClick}
           >
             <span
               className={classNames(
-                'font-bold mr-auto text-left text-white whitespace-pre-wrap',
+                'mr-auto whitespace-pre-wrap text-left font-bold text-white',
                 className
               )}
             >
@@ -80,7 +80,7 @@ function NavTitle({
           </button>
         </div>
 
-        <div className="-mr-[4px] flex gap-2 justify-between items-center">
+        <div className="-mr-[4px] flex items-center justify-between gap-2">
           {trigger?.({ fill: '#fff' })}
         </div>
       </div>
@@ -127,7 +127,7 @@ function CollapsedSidebar() {
   );
 
   return (
-    <div className="flex flex-col items-center pt-2 w-[40px]">
+    <div className="flex w-[40px] flex-col items-center pt-2">
       <Button
         className="mb-2"
         type="text"
@@ -136,7 +136,7 @@ function CollapsedSidebar() {
         onClick={() => setArea('pre')}
       />
       <div
-        className="flex gap-x-3.5 items-center"
+        className="flex items-center gap-x-3.5"
         style={{
           writingMode: 'vertical-rl',
           transform: 'rotate(180deg)',
@@ -145,16 +145,16 @@ function CollapsedSidebar() {
         role="presentation"
       >
         <div
-          className="text-lg mb-10 cursor-pointer"
+          className="mb-10 cursor-pointer text-lg"
           onClick={() => setArea('post')}
           role="presentation"
         >
           Post-synaptic{' '}
-          <span className="text-highlightPost capitalize">{topSelectedPostRegion || 'Brain'}</span>
+          <span className="capitalize text-highlightPost">{topSelectedPostRegion || 'Brain'}</span>
         </div>
-        <div className="text-lg cursor-pointer" onClick={() => setArea('pre')} role="presentation">
+        <div className="cursor-pointer text-lg" onClick={() => setArea('pre')} role="presentation">
           Pre-synaptic{' '}
-          <span className="text-highlightPre capitalize">{topSelectedPreRegion || 'Brain'}</span>
+          <span className="capitalize text-highlightPre">{topSelectedPreRegion || 'Brain'}</span>
         </div>
       </div>
     </div>
@@ -203,19 +203,19 @@ export default function ConnectomeEditorSidebar() {
   }, [brainRegionLeaves]);
 
   return (
-    <div className="bg-black flex flex-1 flex-col h-screen">
+    <div className="flex h-screen flex-1 flex-col bg-black">
       {!area ? (
         <CollapsedSidebar />
       ) : (
-        <div className="flex flex-1 flex-col overflow-y-auto px-7 py-6 min-w-[300px]">
+        <div className="flex min-w-[300px] flex-1 flex-col overflow-y-auto px-7 py-6">
           <div className="grid">
-            <div className="flex justify-between mb-7 items-start">
-              <div className="flex space-x-2 justify-start items-center text-2xl text-white font-bold">
+            <div className="mb-7 flex items-start justify-between">
+              <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
                 <Header>
                   {area === 'post' ? (
-                    <div className="text-highlightPost text-xl">Post-synaptic area</div>
+                    <div className="text-xl text-highlightPost">Post-synaptic area</div>
                   ) : (
-                    <div className="text-highlightPre text-xl">Pre-synaptic area</div>
+                    <div className="text-xl text-highlightPre">Pre-synaptic area</div>
                   )}
                 </Header>
               </div>
@@ -243,7 +243,7 @@ export default function ConnectomeEditorSidebar() {
               }) => {
                 return (
                   <NavTitle
-                    className="font-bold uppercase text-lg"
+                    className="text-lg font-bold uppercase"
                     colorCode={colorCode}
                     id={id}
                     title={title}
@@ -268,8 +268,8 @@ export default function ConnectomeEditorSidebar() {
                         <NavTitle
                           className={
                             !nestedIsExpanded
-                              ? 'capitalize text-base font-light'
-                              : 'capitalize text-base'
+                              ? 'text-base font-light capitalize'
+                              : 'text-base capitalize'
                           }
                           onClick={() => {
                             const setFun =

@@ -10,7 +10,7 @@ const atomCurrentVirtualLab = atom<VirtualLabWithOptionalId>(EMPTY_VIRTUAL_LAB);
 
 export function useCurrentVirtualLab(): [
   lab: VirtualLabWithOptionalId,
-  update: (lab: Partial<VirtualLabWithOptionalId>) => void
+  update: (lab: Partial<VirtualLabWithOptionalId>) => void,
 ] {
   const [lab, setLab] = useAtom(atomCurrentVirtualLab);
   return [

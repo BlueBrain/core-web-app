@@ -12,7 +12,7 @@ export default function ResultContainer({
   children: React.ReactNode;
 }) {
   return (
-    <div id={id} className={classNames('w-full mt-3', moreSpace ? 'mb-4' : 'mb-28', className)}>
+    <div id={id} className={classNames('mt-3 w-full', moreSpace ? 'mb-4' : 'mb-28', className)}>
       {children}
     </div>
   );

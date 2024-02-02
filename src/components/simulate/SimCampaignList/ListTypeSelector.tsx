@@ -31,14 +31,14 @@ export default function ListTypeSelector() {
   const [activeTabId, setActiveTabId] = useAtom(searchConfigListTypeAtom);
 
   return (
-    <div className="flex gap-6 mt-6 mb-3">
+    <div className="mb-3 mt-6 flex gap-6">
       {searchTabs.map((tab) => (
         <button
           key={tab.id}
           type="button"
           className={classNames(
-            'h-10 py-2 px-6 rounded-md font-bold mt-4',
-            'text-primary-4 text-2xl flex gap-2 items-center',
+            'mt-4 h-10 rounded-md px-6 py-2 font-bold',
+            'flex items-center gap-2 text-2xl text-primary-4',
             'hover:bg-[#ffffff0f] hover:text-white',
             activeTabId === tab.id ? 'text-white' : null
           )}

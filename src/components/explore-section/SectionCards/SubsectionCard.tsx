@@ -42,17 +42,17 @@ export function SubsectionCard({ subsection, cardIndex }: SectionCardsProps) {
       href={subsection.url}
       key={`explore-section-card-${subsection.name}`}
       className={classNames(
-        'w-full py-4 flex flex-row justify-between items-center px-8 2xl:px-16 leading-tight bg-transparent transition-all duration-300 ease-linear hover:bg-transparentBlack',
-        cardIndex !== 0 ? 'border-t border-t-primary-7 border-solid' : ''
+        'flex w-full flex-row items-center justify-between bg-transparent px-8 py-4 leading-tight transition-all duration-300 ease-linear hover:bg-transparentBlack 2xl:px-16',
+        cardIndex !== 0 ? 'border-t border-solid border-t-primary-7' : ''
       )}
     >
-      <div className="flex flex-col text-white transition-colors ease-linear duration-300">
+      <div className="flex flex-col text-white transition-colors duration-300 ease-linear">
         <h3 className="text-2xl font-bold">{subsection.name}</h3>
         {dataset && <div className="text-sm font-light">{dataset} datasets</div>}
       </div>
 
       <div className="block">
-        <EyeIcon className="w-auto h-3 text-white" />
+        <EyeIcon className="h-3 w-auto text-white" />
       </div>
     </Link>
   );

@@ -27,7 +27,7 @@ export default function CustomAnalysisSelector({
 
   return (
     <>
-      <div className="text-gray-400 mb-2 ml-4">CUSTOM ANALYSIS</div>
+      <div className="mb-2 ml-4 text-gray-400">CUSTOM ANALYSIS</div>
 
       {nodeSetsFound &&
         customAnalysis?.value.map((a, i) => (
@@ -59,12 +59,12 @@ export default function CustomAnalysisSelector({
       {!nodeSetsFound && <span className="ml-4 text-primary-7">No node_sets were found</span>}
 
       <div>
-        <div className="block mt-3 pl-3 text-primary-8">
+        <div className="mt-3 block pl-3 text-primary-8">
           <Link
             className="block flex items-center"
             href={`${window.location.protocol}//${window.location.host}/simulate/experiment-analysis`}
           >
-            <PlusOutlined className="inline-block mr-3 border" />
+            <PlusOutlined className="mr-3 inline-block border" />
             Add analysis
           </Link>
         </div>
@@ -116,8 +116,8 @@ function AnalysisSelector({
   if (!targetList) return null;
 
   return (
-    <div key={analysis.id} className="flex ml-4 mr-5 justify-between">
-      <div className="text-primary-8 mr-3">{analysis.name}</div>
+    <div key={analysis.id} className="ml-4 mr-5 flex justify-between">
+      <div className="mr-3 text-primary-8">{analysis.name}</div>
 
       <Select
         mode="multiple"

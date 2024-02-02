@@ -105,7 +105,7 @@ export default function GenericParamWrapper({
 
   return (
     <div className={overflowStyle}>
-      <div className="text-sky-800 p-6">{description}</div>
+      <div className="p-6 text-sky-800">{description}</div>
 
       <div className="px-6">
         <Divider />

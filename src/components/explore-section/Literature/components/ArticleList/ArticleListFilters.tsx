@@ -79,7 +79,7 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
       destroyOnClose
       maskClosable
       closeIcon={
-        <CloseOutlined className="bg-primary-9 text-xs absolute left-[-30px] top-[0px] w-[40px] h-[30px] pl-3 rounded-tl-[22px] rounded-bl-[22px] text-white cursor-pointer" />
+        <CloseOutlined className="absolute left-[-30px] top-[0px] h-[30px] w-[40px] cursor-pointer rounded-bl-[22px] rounded-tl-[22px] bg-primary-9 pl-3 text-xs text-white" />
       }
       data-testid="article-list-filters"
       width="20vw"
@@ -95,7 +95,7 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
     >
       <div className="w-full">
         <div>
-          <h3 className="font-bold text-xl text-white mb-2">Publication Date</h3>
+          <h3 className="mb-2 text-xl font-bold text-white">Publication Date</h3>
           <DateRange
             onChange={(e) => updateFilters({ publicationDate: e })}
             filter={{
@@ -130,7 +130,7 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
           }}
         >
           <div data-testid="journal-input">
-            <h3 className="font-bold text-xl text-white mt-12">Journal</h3>
+            <h3 className="mt-12 text-xl font-bold text-white">Journal</h3>
             <AutoCompleteSearch
               key="Journal"
               title="Journal"
@@ -145,7 +145,7 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
           </div>
 
           <div data-testid="author-input">
-            <h3 className="font-bold text-xl text-white mt-12">Authors</h3>
+            <h3 className="mt-12 text-xl font-bold text-white">Authors</h3>
             <AutoCompleteSearch
               key="Authors"
               title="Authors"
@@ -160,7 +160,7 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
           </div>
 
           <div data-testid="article-type-input">
-            <h3 className="font-bold text-xl text-white mt-12">Article type</h3>
+            <h3 className="mt-12 text-xl font-bold text-white">Article type</h3>
             <AutoCompleteSearch
               key="ArticleType"
               title="Article type"
@@ -180,14 +180,14 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
         </ConfigProvider>
       </div>
 
-      <div className="w-full flex justify-between">
+      <div className="flex w-full justify-between">
         <button
           type="submit"
           onClick={onClearFilters}
-          className="flex items-center mt-4 py-3 text-primary-2"
+          className="mt-4 flex items-center py-3 text-primary-2"
         >
           Clear Filters
-          <ReloadIcon className="text-primary-2 ml-2" />
+          <ReloadIcon className="ml-2 text-primary-2" />
         </button>
 
         <button
@@ -196,7 +196,7 @@ export default function ArticleListFilters({ values, onSubmit, onClearFilters }:
             onSubmit(filters);
             setOpen(false);
           }}
-          className="mt-4 bg-primary-2 py-3 px-8 text-primary-9"
+          className="mt-4 bg-primary-2 px-8 py-3 text-primary-9"
         >
           Apply
         </button>

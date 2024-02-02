@@ -23,7 +23,7 @@ function DimensionTitle({ title, dismissible, dismissFunc, setStatus }: Dimensio
             setStatus('selection');
           }}
         >
-          <div className="flex flex-row align-center text-primary-6">
+          <div className="align-center flex flex-row text-primary-6">
             <span>Edit axis</span>
             <EditOutlined className="ml-2" />
           </div>
@@ -63,7 +63,7 @@ export default function DimensionBox({
         setStatus={setStatus}
       />
       <div
-        className={`gap-1 h-28 border rounded border-primary-1 py-2.5 px-3.5 text-primary-7 ${renderMargin()}`}
+        className={`h-28 gap-1 rounded border border-primary-1 px-3.5 py-2.5 text-primary-7 ${renderMargin()}`}
       >
         {dimension ? (
           <AssignedDimensionBox dimension={dimension} isAxis={isAxis} />

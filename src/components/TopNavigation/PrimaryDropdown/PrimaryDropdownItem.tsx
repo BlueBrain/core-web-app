@@ -58,7 +58,7 @@ export default function PrimaryDropdownItem({
     () =>
       typeof annotation !== 'undefined' ? (
         <div
-          className={`flex flex-row gap-0.5 text-sm text-error font-light items-center ${ANNOTATION_LABEL_MAP[annotation].textColor}`}
+          className={`flex flex-row items-center gap-0.5 text-sm font-light text-error ${ANNOTATION_LABEL_MAP[annotation].textColor}`}
         >
           <div className="scale-75">{ANNOTATION_LABEL_MAP[annotation].icon}</div>
           {ANNOTATION_LABEL_MAP[annotation].label}
@@ -84,7 +84,7 @@ export default function PrimaryDropdownItem({
     <DropdownMenu.Item asChild>
       <button
         type="button"
-        className={`flex flex-row px-5 py-3 gap-3 text-left items-center outline-none ${buttonClasses}`}
+        className={`flex flex-row items-center gap-3 px-5 py-3 text-left outline-none ${buttonClasses}`}
         onClick={handleClick}
       >
         <div className="flex-1">{label}</div>

@@ -11,7 +11,7 @@ import IconPlay from '@/components/icons/Play';
 export default function PlaybackPanel() {
   const [play, togglePlay] = usePlayback();
   return (
-    <div className="w-full p-5 flex flex-row gap-10 items-stretch">
+    <div className="flex w-full flex-row items-stretch gap-10 p-5">
       <Timeline disabled={play} />
       <div className="text-5xl">
         <button type="button" onClick={togglePlay}>
@@ -19,7 +19,7 @@ export default function PlaybackPanel() {
         </button>
       </div>
       <PlaybackSpeed />
-      <div className="flex flex-col flex-0 justify-between">
+      <div className="flex-0 flex flex-col justify-between">
         <StepSize />
         <StepNavigator />
       </div>

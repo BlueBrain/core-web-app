@@ -5,6 +5,6 @@ type ColorBoxProps = {
 export default function ColorBox({ color }: ColorBoxProps) {
   // setting the background in inline style because tailwind classes cannot work on render
   return (
-    <span className="w-[12px] h-[12px] rounded-sm flex-none grow-0" style={{ background: color }} />
+    <span className="h-[12px] w-[12px] flex-none grow-0 rounded-sm" style={{ background: color }} />
   );
 }

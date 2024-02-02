@@ -14,7 +14,7 @@ export default function StimulationProtocolPage() {
   const focusedAtom = useMemo(() => getFocusedAtom(SECTION_NAME), []);
 
   return (
-    <div className="grid grid-cols-2 h-full">
+    <div className="grid h-full grid-cols-2">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <Params focusedAtom={focusedAtom} />
       </ErrorBoundary>

@@ -14,13 +14,13 @@ type Props = {
 
 export default function BrainConfigSelectorLayout({ children }: Props) {
   return (
-    <div className="min-h-screen flex bg-primary-9 text-white p-8 gap-20">
+    <div className="flex min-h-screen gap-20 bg-primary-9 p-8 text-white">
       <div className="flex flex-col">
         <span className="text-4xl font-bold">New</span>
         <span className="text-2xl">Simulation Campaign</span>
         <Link href="/main">
           <GenericButton
-            className="flex items-center justify-around text-primary-3 border border-primary-3 mt-6"
+            className="mt-6 flex items-center justify-around border border-primary-3 text-primary-3"
             text={
               <>
                 <ArrowLeftOutlined />

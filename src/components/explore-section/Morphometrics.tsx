@@ -19,13 +19,13 @@ export default function Morphometrics({
   const filteredGroupedCardFields = omit(groupedCardFields, 'Metadata');
 
   return (
-    <div className="flex flex-col gap-10 max-w-screen-2xl">
+    <div className="flex max-w-screen-2xl flex-col gap-10">
       <Divider className="w-full" />
       <h1 className="text-xl font-bold text-primary-8">Morphometrics</h1>
-      <div className="grid gap-4 grid-cols-5 break-words">
+      <div className="grid grid-cols-5 gap-4 break-words">
         {Object.entries(filteredGroupedCardFields).map(([group, fields]) => (
           <div key={group}>
-            <h2 className="text-lg font-semibold text-primary-8 mb-8">{startCase(group)}</h2>
+            <h2 className="mb-8 text-lg font-semibold text-primary-8">{startCase(group)}</h2>
             {fields.map((item) => (
               <Field key={item.field} field={item.field} data={resource} className="mb-4" />
             ))}

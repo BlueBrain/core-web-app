@@ -42,7 +42,7 @@ export default function EModelTitle() {
     <>
       <div className={titleStyle}>
         <input
-          className="border-b-2 mr-2 w-1/2"
+          className="mr-2 w-1/2 border-b-2"
           type="text"
           defaultValue={currentName || ''}
           onChange={onEModelNameChange}

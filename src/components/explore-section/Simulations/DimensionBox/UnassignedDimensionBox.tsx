@@ -13,7 +13,7 @@ export default function UnassignedDimensionBox({
       <Select
         bordered={false}
         style={{ width: '100%' }}
-        className="border-solid border-b border-neutral-6 top-1/4"
+        className="top-1/4 border-b border-solid border-neutral-6"
         placeholder="Search dimension..."
         options={dimensionOptions}
         filterOption={(input, option) =>
@@ -28,7 +28,7 @@ export default function UnassignedDimensionBox({
   }
   return (
     <Button
-      className="m-auto flex items-center text-primary-7 top-1/4"
+      className="top-1/4 m-auto flex items-center text-primary-7"
       type="link"
       icon={<PlusCircleOutlined />}
       onClick={() => setStatus('selection')}

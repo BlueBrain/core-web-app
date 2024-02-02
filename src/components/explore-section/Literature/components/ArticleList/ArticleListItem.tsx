@@ -27,19 +27,19 @@ export default function ArticleListItem({ article, index }: Props) {
 
   return (
     <article>
-      <h6 className="text-sm leading-6 text-gray-400 pt-2 pr-8 mb-2 uppercase">
+      <h6 className="mb-2 pr-8 pt-2 text-sm uppercase leading-6 text-gray-400">
         Article {index + 1}
       </h6>
-      <div className="w-6 h-[2px] bg-gray-300" />
-      <div className="flex justify-between items-center">
-        <h4 className="mt-3 mb-4 text-primary-8 leading-7 font-bold text-xl">{article.title}</h4>
+      <div className="h-[2px] w-6 bg-gray-300" />
+      <div className="flex items-center justify-between">
+        <h4 className="mb-4 mt-3 text-xl font-bold leading-7 text-primary-8">{article.title}</h4>
         <div className="flex">
           {article.doi && (
-            <div className="flex mx-2">
+            <div className="mx-2 flex">
               <CopyTextBtn
                 text={article.doi}
                 icon={<CopyIcon />}
-                className="flex items-center justify-center gap-2 px-2 py-1 text-base font-normal rounded-md text-primary-8 hover:bg-gray-200 w-max"
+                className="flex w-max items-center justify-center gap-2 rounded-md px-2 py-1 text-base font-normal text-primary-8 hover:bg-gray-200"
               >
                 Copy DOI
               </CopyTextBtn>
@@ -56,7 +56,7 @@ export default function ArticleListItem({ article, index }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-7 mb-3">
+      <div className="mb-3 flex flex-wrap items-center gap-x-7">
         {article.authors.length > 0 && (
           <Tooltip
             title="Authors"
@@ -95,25 +95,25 @@ export default function ArticleListItem({ article, index }: Props) {
         {article.publicationDate && (
           <ArticlePreview
             title={formatDate(article.publicationDate)}
-            icon={<CalendarIcon className="w-4 h-4" style={{ borderColor: '#D9D9D9' }} />}
+            icon={<CalendarIcon className="h-4 w-4" style={{ borderColor: '#D9D9D9' }} />}
             className="cursor-default"
           />
         )}
         {!isNil(article.citationCount) && (
           <ArticlePreview
             title={`Times cited: ${article.citationCount}`}
-            icon={<CitationIcon className="w-4 h-4" style={{ borderColor: '#D9D9D9' }} />}
+            icon={<CitationIcon className="h-4 w-4" style={{ borderColor: '#D9D9D9' }} />}
             altText={`Number of citations: ${article.citationCount}`}
             className="cursor-default"
           />
         )}
       </div>
-      <p className="text-base text-primary-8 border border-gray-200 px-7 py-3">
+      <p className="border border-gray-200 px-7 py-3 text-base text-primary-8">
         {isNil(article.abstract) ? 'No abstract available' : abstract}
         <br />
         {article.abstract && (
           <Button
-            className="px-3 py-2 text-sm leading-5 text-primary-8 shadow-none rounded-md mt-3 bg-gray-100"
+            className="mt-3 rounded-md bg-gray-100 px-3 py-2 text-sm leading-5 text-primary-8 shadow-none"
             onClick={toggleTrimAbstract}
           >
             {trimAbstract ? 'Read more' : 'Read less'}

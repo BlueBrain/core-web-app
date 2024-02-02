@@ -33,12 +33,12 @@ function SubmitQuestion() {
       type="submit"
       disabled={isQuestionEmpty || isGenerating}
       title={isQuestionEmpty ? 'Please enter a question' : ''}
-      className="rounded w-max py-1.5 px-4 text-primary-8 border border-gray-200 font-semibold disabled:text-gray-400"
+      className="w-max rounded border border-gray-200 px-4 py-1.5 font-semibold text-primary-8 disabled:text-gray-400"
       onClick={() => {
         updateLiterature((prev) => ({ ...prev, areQAParamsVisible: false }));
       }}
     >
-      Search <SendOutlined className="text-base -rotate-[30deg] ml-1" />
+      Search <SendOutlined className="ml-1 -rotate-[30deg] text-base" />
     </button>
   );
 }
@@ -48,7 +48,7 @@ function FormButton({ icon, type, ...props }: FormButtonProps) {
     <button
       onClick={props.onClick}
       type={type === 'submit' ? 'submit' : 'button'}
-      className="focus-within:shadow-none rounded-lg text-sm text-white outline-none font-medium"
+      className="rounded-lg text-sm font-medium text-white outline-none focus-within:shadow-none"
     >
       {icon}
     </button>
@@ -175,7 +175,7 @@ export default function QAForm({
           {label}
         </label>
       )}
-      <div className={classNames('w-full pb-1.5 justify-between items-end gap-2.5 flex')}>
+      <div className={classNames('flex w-full items-end justify-between gap-2.5 pb-1.5')}>
         <textarea
           ref={textAreaRef}
           id="gqa-question"
@@ -189,9 +189,9 @@ export default function QAForm({
           tabIndex={0}
           rows={1}
           className={classNames(
-            'm-0 w-full resize-none overflow-y-hidden outline-none max-h-52 p-0 pb-2 min-h-[24px] box-border border-b border-gray-200',
-            'text-base font-semibold bg-transparent text-primary-8 focus:shadow-none',
-            'placeholder:text-blue-900 placeholder:text-base placeholder:font-semibold placeholder:leading-snug'
+            'm-0 box-border max-h-52 min-h-[24px] w-full resize-none overflow-y-hidden border-b border-gray-200 p-0 pb-2 outline-none',
+            'bg-transparent text-base font-semibold text-primary-8 focus:shadow-none',
+            'placeholder:text-base placeholder:font-semibold placeholder:leading-snug placeholder:text-blue-900'
           )}
         />
         <div className="inline-flex items-center justify-center gap-2">
@@ -206,7 +206,7 @@ export default function QAForm({
             <FormButton
               type="button"
               onClick={onAbort}
-              icon={<StopLoading className="text-primary-6 w-6 h-6" />}
+              icon={<StopLoading className="h-6 w-6 text-primary-6" />}
             />
           ) : (
             <SubmitQuestion />

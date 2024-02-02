@@ -28,7 +28,7 @@ export default function StimulationTargetSelector({
   };
 
   return (
-    <div className={classNames('flex gap-3 items-center font-bold', className)}>
+    <div className={classNames('flex items-center gap-3 font-bold', className)}>
       <div className="grow">Target</div>
       <TargetsDropdown onChange={setSimulateTarget} defaultValue={data.value} />
       <ExportOutlined onClick={onChangeParamType} />

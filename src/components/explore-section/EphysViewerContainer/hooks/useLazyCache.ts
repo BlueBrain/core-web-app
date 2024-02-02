@@ -13,6 +13,6 @@ const cache = createCache({
 export default function useLazyCache<T>() {
   return [cache.add, cache.get] as [
     (key: string, value: any) => void,
-    (key: string) => T | undefined
+    (key: string) => T | undefined,
   ];
 }

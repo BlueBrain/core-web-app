@@ -19,7 +19,7 @@ export default function ActiveStepIndicator({ stepX }: ActiveStepIndicatorProps)
   return (
     <div
       ref={setNodeRef}
-      className="absolute bg-white h-[15px] w-[15px] rounded top-[1px] -translate-x-[7px]"
+      className="absolute top-[1px] h-[15px] w-[15px] -translate-x-[7px] rounded bg-white"
       style={{ left: `calc(${stepX}%)`, ...style }}
       {...listeners}
       {...attributes}

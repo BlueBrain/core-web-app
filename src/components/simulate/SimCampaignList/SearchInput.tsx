@@ -26,7 +26,7 @@ export default function SearchInput() {
   return (
     <input
       type="text"
-      className="block border-b border-b-primary-1 placeholder-primary-3 bg-primary-9 h-7 py-5 w-[300px]"
+      className="block h-7 w-[300px] border-b border-b-primary-1 bg-primary-9 py-5 placeholder-primary-3"
       placeholder="Search simulation campaign configs..."
       value={searchInputValue}
       onChange={(e) => setSearch(e.target.value)}

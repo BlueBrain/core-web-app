@@ -47,7 +47,7 @@ export default function SectionLinks() {
   };
 
   return (
-    <div className="mt-10 flex flex-col sticky top-5 left-0">
+    <div className="sticky left-0 top-5 mt-10 flex flex-col">
       {sectionLinksMap.map(({ text, hash }) => (
         <a
           href={hash}
