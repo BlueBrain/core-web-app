@@ -173,8 +173,8 @@ export interface StimulusEntity {
 }
 
 export interface Buckets {
-  buckets: Bucket[];
-  excludeOwnFilter: { buckets: Bucket[] };
+  buckets?: Bucket[];
+  excludeOwnFilter?: { buckets?: Bucket[] };
 }
 
 export interface NestedBucketAggregation {

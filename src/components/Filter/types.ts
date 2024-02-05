@@ -59,5 +59,5 @@ export type Bucket = {
   doc_count: number;
   key: string | number;
   key_as_string?: string;
-  label?: string;
+  label?: string | { buckets: Bucket[] };
 };

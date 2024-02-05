@@ -224,14 +224,14 @@ export default function ControlPanel({
   return (
     <div
       data-testid="listing-view-filter-panel"
-      className="relative right-0 top-0 z-10 flex h-screen w-[480px] shrink-0 flex-col space-y-4 overflow-y-scroll bg-primary-8 py-6 pl-8 pr-16"
+      className="relative right-0 top-0 z-10 flex w-[480px] shrink-0 flex-col space-y-4 overflow-y-auto bg-primary-8 py-6 pl-8 pr-16"
     >
-      <div className="overflow-auto pb-20">
+      <div className="pb-20">
         <button
           autoFocus // eslint-disable-line jsx-a11y/no-autofocus
           type="button"
           onClick={toggleDisplay}
-          className="text-right text-white"
+          className="float-right text-white"
           aria-label="Close"
         >
           <CloseOutlined />

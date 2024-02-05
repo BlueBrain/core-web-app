@@ -1,9 +1,8 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { ConfigProvider, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
-import { useMemo } from 'react';
-import uniqBy from 'lodash/uniqBy';
 import { Filter } from './types';
+import { useOptions } from './hooks';
 import Search from '@/components/Search';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { Buckets } from '@/types/explore-section/fields';
@@ -19,21 +18,8 @@ export default function SearchFilter({
   values: string[];
   onChange: (newValues: string[]) => void;
 }) {
-  const options = useMemo(() => {
-    const buckets = data?.buckets ?? data?.excludeOwnFilter?.buckets;
-
-    return buckets
-      ? uniqBy(
-          buckets.map((bucket) => ({
-            checked: values?.includes(bucket.key as string),
-            id: bucket.key as string,
-            count: bucket.doc_count,
-            label: bucket.key as string,
-          })),
-          'label'
-        )
-      : [];
-  }, [data, values]);
+  const buckets = data?.buckets ?? data?.excludeOwnFilter?.buckets;
+  const options = useOptions(values, buckets);
 
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];
@@ -72,26 +58,25 @@ export default function SearchFilter({
     );
   };
 
-  const search = () => (
-    <Search
-      colorBgContainer="#002766"
-      onClear={() => onChange([])}
-      handleSelect={(value) => {
-        handleCheckedChange(value as string);
-      }}
-      options={options.map(({ id, label }) => ({
-        label: label as string,
-        value: id as string,
-      }))}
-      mode="multiple"
-      placeholder={`Search for ${EXPLORE_FIELDS_CONFIG[filter.field].vocabulary.plural}`}
-      tagRender={tagRender}
-      value={options?.reduce(
-        (acc, { checked, id }) => (checked ? [...acc, id as string] : acc),
-        [] as string[]
-      )}
-    />
+  return (
+    options &&
+    options.length > 0 && (
+      <Search
+        colorBgContainer="#002766"
+        onClear={() => onChange([])}
+        handleSelect={handleCheckedChange}
+        options={options.map(({ id, label }) => ({
+          label,
+          value: id,
+        }))}
+        mode="multiple"
+        placeholder={`Search for ${EXPLORE_FIELDS_CONFIG[filter.field].vocabulary.plural}`}
+        tagRender={tagRender}
+        value={options.reduce(
+          (acc: string[], { checked, id }) => (checked ? [...acc, id] : acc),
+          []
+        )}
+      />
+    )
   );
-
-  return options && options.length > 0 ? search() : null;
 }

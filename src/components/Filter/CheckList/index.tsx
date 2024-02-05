@@ -1,7 +1,7 @@
-import { ReactNode, useMemo } from 'react';
-import uniqBy from 'lodash/uniqBy';
+import { ReactNode } from 'react';
 import { useAtom } from 'jotai';
 import { InfoCircleFilled } from '@ant-design/icons';
+import { useOptions } from '../hooks';
 import { CheckListProps } from '@/types/explore-section/application';
 import { Buckets } from '@/types/explore-section/fields';
 import { Filter } from '@/components/Filter/types';
@@ -25,21 +25,8 @@ export default function CheckList({
   values: string[];
   onChange: (value: string[]) => void;
 }) {
-  const options = useMemo(() => {
-    const buckets = data?.buckets ?? data?.excludeOwnFilter?.buckets;
-    // returning unique buckets since some times we have same label and different id (eg. contributors)
-    return buckets
-      ? uniqBy(
-          buckets.map((bucket) => ({
-            checked: values?.includes(bucket.key as string),
-            id: bucket.key as string,
-            count: bucket.doc_count,
-            label: bucket.key as string,
-          })),
-          'label'
-        )
-      : undefined;
-  }, [data, values]);
+  const buckets = data.buckets ?? data?.excludeOwnFilter?.buckets;
+  const options = useOptions(values, buckets);
 
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];
