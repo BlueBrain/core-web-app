@@ -5,7 +5,9 @@ import FilterControls from './FilterControls';
 import { RenderButtonProps } from './WithRowSelection';
 import ListingScrollNavControl from './ListingScrollNavControl';
 import { ExploreESHit } from '@/types/explore-section/es';
-import ExploreSectionTable from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
+import ExploreSectionTable, {
+  OnCellClick,
+} from '@/components/explore-section/ExploreSectionListingView/ExploreSectionTable';
 import WithControlPanel from '@/components/explore-section/ExploreSectionListingView/WithControlPanel';
 import NumericResultsInfo from '@/components/explore-section/ExploreSectionListingView/NumericResultsInfo';
 import useExploreColumns from '@/hooks/useExploreColumns';
@@ -18,11 +20,13 @@ export default function DefaultListView({
   dataType,
   brainRegionSource,
   renderButton,
+  onCellClick,
 }: {
   enableDownload?: boolean;
   dataType: DataType;
   brainRegionSource: ExploreDataBrainRegionSource;
   renderButton?: (props: RenderButtonProps) => ReactNode;
+  onCellClick?: OnCellClick;
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
@@ -71,6 +75,7 @@ export default function DefaultListView({
                 brainRegionSource={brainRegionSource}
                 loading={data.state === 'loading'}
                 renderButton={renderButton}
+                onCellClick={onCellClick}
               />
               <ListingScrollNavControl<HTMLDivElement>
                 extraRightSpace={displayControlPanel ? 480 : 0}

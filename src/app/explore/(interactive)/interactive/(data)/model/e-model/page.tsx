@@ -1,10 +1,8 @@
 'use client';
 
-import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
+import WithExploreExperiment from '@/components/explore-section/WithExploreExperiment';
 
 export default function EModelListingPage() {
-  return (
-    <ExploreSectionListingView dataType={DataType.CircuitEModel} brainRegionSource="selected" />
-  );
+  return <WithExploreExperiment dataType={DataType.CircuitEModel} brainRegionSource="selected" />;
 }

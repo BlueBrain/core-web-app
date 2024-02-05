@@ -1,11 +1,11 @@
 'use client';
 
-import DefaultListView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
+import WithExploreExperiment from '@/components/explore-section/WithExploreExperiment';
 
 export default function MorphologyListingPage() {
   return (
-    <DefaultListView
+    <WithExploreExperiment
       enableDownload
       dataType={DataType.ExperimentalNeuronMorphology}
       brainRegionSource="selected"

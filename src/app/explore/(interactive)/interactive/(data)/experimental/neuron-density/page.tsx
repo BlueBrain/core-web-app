@@ -1,11 +1,11 @@
 'use client';
 
-import ExploreSectionListingView from '@/components/explore-section/ExploreSectionListingView';
 import { DataType } from '@/constants/explore-section/list-views';
+import WithExploreExperiment from '@/components/explore-section/WithExploreExperiment';
 
 export default function NeuronDensityListingPage() {
   return (
-    <ExploreSectionListingView
+    <WithExploreExperiment
       enableDownload
       dataType={DataType.ExperimentalNeuronDensity}
       brainRegionSource="selected"
