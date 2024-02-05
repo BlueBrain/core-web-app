@@ -224,9 +224,9 @@ export default function ControlPanel({
   return (
     <div
       data-testid="listing-view-filter-panel"
-      className="relative right-0 top-0 z-10 flex w-[480px] shrink-0 flex-col space-y-4 overflow-y-auto bg-primary-8 py-6 pl-8 pr-16"
+      className="relative right-0 top-0 z-10 flex w-[480px] shrink-0 flex-col space-y-4 overflow-y-auto bg-primary-8 pl-8 pr-16 pt-6"
     >
-      <div className="pb-20">
+      <div>
         <button
           autoFocus // eslint-disable-line jsx-a11y/no-autofocus
           type="button"
@@ -246,12 +246,13 @@ export default function ControlPanel({
           the option(s).
         </p>
 
-        <div className="flex flex-col gap-12 pb-12">
+        <div className="flex flex-col gap-12">
           <FilterGroup items={filterItems} filters={filters} setFilters={setFilters} />
           {children}
         </div>
       </div>
-      <div className="absolute bottom-8 left-0 flex w-full items-center justify-between bg-primary-8 px-8 py-12">
+
+      <div className="sticky bottom-0 left-0 flex w-full items-center justify-between bg-primary-8 px-4 py-6">
         <ClearFilters onClick={clearFilters} />
         <button
           type="submit"
