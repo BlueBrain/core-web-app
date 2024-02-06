@@ -530,7 +530,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       esResourceViewFn: (_text, r) =>
         selectorFnMorphologyFeature(
           r._source,
-          MorphoMetricCompartment.Axon,
+          MorphoMetricCompartment.BasalDendrite,
           'Section Strahler Orders',
           'maximum'
         ),

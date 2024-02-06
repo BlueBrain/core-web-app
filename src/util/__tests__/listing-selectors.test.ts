@@ -673,7 +673,7 @@ describe('Selectors', () => {
       expect(result).toBe(NO_DATA_STRING);
     });
 
-    it('returns formatted statistic value for 0 value', () => {
+    it('returns NO_DATA_STRING for 0 value', () => {
       const result = selectorFnMorphologyFeature(
         // @ts-ignore
         mockSource,
@@ -682,7 +682,7 @@ describe('Selectors', () => {
         'minimum',
         true
       );
-      expect(result).toBe(`${formatNumber(0.0)} μm`);
+      expect(result).toBe(NO_DATA_STRING);
     });
 
     it('returns NO DATA STRING when value is not a number', () => {

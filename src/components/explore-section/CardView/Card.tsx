@@ -56,7 +56,7 @@ export default function Card({ resource, dataType, activeKeys, metrics, score }:
                       return (
                         <div
                           key={field.field}
-                          className={`mb-2 h-6 truncate pl-4  text-primary-8 ${field.className}`}
+                          className={`mb-2 h-6 truncate pl-4 text-primary-8 ${field.className}`}
                         >
                           {field.field === Field.Name ? (
                             <Link href={resourceUrl} passHref>

@@ -178,7 +178,7 @@ export const selectorFnMorphologyFeature = (
 
   const feature = source.featureSeries.find((s) => isMatch(s, { compartment, label, statistic }));
 
-  if (feature && isNumber(feature?.value)) {
+  if (feature && isNumber(feature?.value) && feature?.value !== 0) {
     let { value } = feature;
     const unit = showUnits ? ` ${feature.unit}` : '';
 

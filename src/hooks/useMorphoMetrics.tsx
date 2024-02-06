@@ -24,11 +24,8 @@ export const useMorphometrics = (
     return (
       <div className="mr-10 text-primary-8">
         {showLabel && <div className="uppercase text-neutral-4">{fieldObj.title}</div>}
-        <div className={`${showLabel ? 'mt-2' : 'mt-0'}`}>
-          <div
-            key={field.field}
-            className={`mb-2 h-6 truncate ${showLabel ? '' : 'pl-6'} ${field.className}`}
-          >
+        <div className={`${showLabel ? 'mt-2' : 'ml-6 mt-0'}`}>
+          <div key={field.field} className={`mb-2 h-6 truncate ${field.className}`}>
             {fieldObj?.render?.esResourceViewFn?.(
               'text',
               metrics.find((metric) =>
