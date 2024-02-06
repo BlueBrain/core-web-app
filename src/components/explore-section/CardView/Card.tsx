@@ -4,15 +4,16 @@ import Link from 'next/link';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
+  MorphoMetricCompartment,
 } from '@/types/explore-section/es-experiment';
 import CardVisualization from '@/components/explore-section/CardView/CardVisualization';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { DataType } from '@/constants/explore-section/list-views';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { detailUrlBuilder } from '@/util/common';
-import { getGroupedCardFields } from '@/util/explore-section/cardViewUtils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { BASE_EXPERIMENTAL_EXPLORE_PATH } from '@/constants/explore-section/paths';
+import { useMorphometrics } from '@/hooks/useMorphoMetrics';
 import styles from './styles.module.scss';
 
 type CardProps = {
@@ -21,17 +22,18 @@ type CardProps = {
   } & ExploreESHit;
   dataType: DataType;
   activeKeys: string[];
+  metrics?: ExploreESHit[];
   score?: number;
 };
 
 const { Panel } = Collapse;
 
-export default function Card({ resource, dataType, activeKeys, score }: CardProps) {
+export default function Card({ resource, dataType, activeKeys, metrics, score }: CardProps) {
   const { ref, inView } = useInView();
 
   const resourceUrl = detailUrlBuilder(BASE_EXPERIMENTAL_EXPLORE_PATH, resource, dataType);
 
-  const groupedCardFields = getGroupedCardFields(dataType);
+  const { groupedCardFields, renderMetric } = useMorphometrics(dataType, metrics);
 
   return (
     <div ref={ref} className="mr-0 h-fit flex-shrink-0 px-0 py-4">
@@ -48,26 +50,42 @@ export default function Card({ resource, dataType, activeKeys, score }: CardProp
           {Object.entries(groupedCardFields).map(([group, fields]) => (
             <Panel header={group} key={group} className={styles.custom} collapsible="disabled">
               <div className="border-l">
-                {fields.map((field, index) => (
-                  <div
-                    key={field.field}
-                    className={`mb-2 h-6 truncate pl-4  text-primary-8 ${field.className}`}
-                  >
-                    {field.field === Field.Name ? (
-                      <Link href={resourceUrl} passHref>
-                        <Tooltip title={resource._source.name} className="cursor-pointer">
-                          <div className="text-primary-8">{resource._source.name}</div>
-                        </Tooltip>
-                      </Link>
-                    ) : (
-                      EXPLORE_FIELDS_CONFIG[field.field]?.render?.esResourceViewFn?.(
-                        'text',
-                        resource,
-                        index
-                      )
-                    )}
-                  </div>
-                ))}
+                {fields.map((field) => {
+                  switch (group) {
+                    case 'Metadata':
+                      return (
+                        <div
+                          key={field.field}
+                          className={`mb-2 h-6 truncate pl-4  text-primary-8 ${field.className}`}
+                        >
+                          {field.field === Field.Name ? (
+                            <Link href={resourceUrl} passHref>
+                              <Tooltip title={resource._source.name} className="cursor-pointer">
+                                <div className="text-primary-8">{resource._source.name}</div>
+                              </Tooltip>
+                            </Link>
+                          ) : (
+                            EXPLORE_FIELDS_CONFIG[field.field]?.render?.esResourceViewFn?.(
+                              'text',
+                              resource
+                            )
+                          )}
+                        </div>
+                      );
+                    case MorphoMetricCompartment.NeuronMorphology:
+                      return renderMetric(MorphoMetricCompartment.NeuronMorphology, field);
+                    case MorphoMetricCompartment.ApicalDendrite:
+                      return renderMetric(MorphoMetricCompartment.ApicalDendrite, field);
+                    case MorphoMetricCompartment.BasalDendrite:
+                      return renderMetric(MorphoMetricCompartment.BasalDendrite, field);
+                    case MorphoMetricCompartment.Axon:
+                      return renderMetric(MorphoMetricCompartment.Axon, field);
+                    case MorphoMetricCompartment.Soma:
+                      return renderMetric(MorphoMetricCompartment.Soma, field);
+                    default:
+                      return null;
+                  }
+                })}
               </div>
             </Panel>
           ))}

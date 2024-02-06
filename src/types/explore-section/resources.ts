@@ -119,6 +119,7 @@ export interface Source extends OptionalExploreSectionFields {
     coords: { [key: string]: number[] | number };
     attrs: { [key: string]: number[] };
   };
+  neuronMorphology?: string;
 }
 
 export type DetailAtomResources<T> = DeltaResource<T> & {

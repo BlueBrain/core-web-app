@@ -48,3 +48,24 @@ export function fetchDataQueryUsingIds(
     ...buildAggs(filters).toJSON(),
   };
 }
+
+export function fetchMorphoMetricsUsingIds(
+  size: number,
+  currentPage: number,
+  filters: Filter[],
+  inferredResponseIds: string[],
+  sortState?: SortState
+): DataQuery {
+  const sortQuery = sortState && buildESSort(sortState);
+  const idsQuery = new TermsQuery('neuronMorphology.keyword', inferredResponseIds);
+
+  const boolMustQuery = boolQuery().must([buildFilters(filters), idsQuery]);
+
+  return {
+    size,
+    sort: sortQuery,
+    from: (currentPage - 1) * size,
+    track_total_hits: true,
+    query: boolMustQuery.toJSON(),
+  };
+}

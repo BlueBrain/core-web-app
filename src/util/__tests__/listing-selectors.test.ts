@@ -557,7 +557,7 @@ describe('Selectors', () => {
 
   describe('selectorFnMorphologyFeature', () => {
     const mockSource = {
-      morphologyFeature: [
+      featureSeries: [
         {
           compartment: 'NeuronMorphology',
           label: 'Total Depth',

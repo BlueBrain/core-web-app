@@ -12,6 +12,7 @@ import {
   ExperimentalLayerThickness,
   ExperimentalSynapsesPerConnection,
   ExperimentalTrace,
+  NeuronMorphologyFeatureAnnotation,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
@@ -61,7 +62,10 @@ export const selectorFnContributors = (_text: string, record: Record): string | 
  * @param {string} statistic - The statistic to serialize.
  */
 export const selectorFnStatistic = (
-  source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology>,
+  source: Exclude<
+    Experiment,
+    ExperimentalTrace | ReconstructedNeuronMorphology | NeuronMorphologyFeatureAnnotation
+  >,
   statistic: string
 ) => {
   if (!source) return '';
@@ -76,7 +80,12 @@ export const selectorFnStatistic = (
  */
 export const selectorFnMeanStd = (
   _text: string,
-  record: { _source: Exclude<Experiment, ExperimentalTrace | ReconstructedNeuronMorphology> }
+  record: {
+    _source: Exclude<
+      Experiment,
+      ExperimentalTrace | ReconstructedNeuronMorphology | NeuronMorphologyFeatureAnnotation
+    >;
+  }
 ) => {
   const mean = selectorFnStatistic(record._source, 'mean');
   const std = selectorFnStatistic(record._source, 'standard deviation');
@@ -165,11 +174,9 @@ export const selectorFnMorphologyFeature = (
   statistic: string,
   showUnits?: boolean
 ) => {
-  if (!source || !source.morphologyFeature) return NO_DATA_STRING;
+  if (!source || !source.featureSeries) return NO_DATA_STRING;
 
-  const feature = source.morphologyFeature.find((s) =>
-    isMatch(s, { compartment, label, statistic })
-  );
+  const feature = source.featureSeries.find((s) => isMatch(s, { compartment, label, statistic }));
 
   if (feature && isNumber(feature?.value)) {
     let { value } = feature;

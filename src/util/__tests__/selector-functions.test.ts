@@ -4,10 +4,8 @@ import {
   selectorFnStatisticDetail,
   semSelectorFn,
   subjectAgeSelectorFn,
-  selectorFnNeuriteFeature,
 } from '@/util/explore-section/selector-functions';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
-import { formatNumber } from '@/util/common';
 
 describe('selectorFunctions', () => {
   describe('subjectAgeSelectorFn', () => {
@@ -192,77 +190,6 @@ describe('selectorFunctions', () => {
           'N'
         )
       ).toBe(NO_DATA_STRING);
-    });
-  });
-
-  describe('selectorFnNeuriteFeature', () => {
-    const mockSource = {
-      neuriteFeature: [
-        {
-          '@type': 'Axon',
-          cumulatedLength: {
-            unitCode: 'μm',
-            value: 13702.434000086363,
-          },
-          longestBranchLength: {
-            unitCode: 'μm',
-            value: 5148.730704634398,
-          },
-          longestBranchNumberOfNodes: 2397,
-          name: 'axon features',
-          numberOfProjections: 133,
-        },
-        {
-          '@type': 'BasalDendrite',
-          cumulatedLength: {
-            unitCode: 'μm',
-            value: 4623.512799949973,
-          },
-          longestBranchLength: {
-            unitCode: 'μm',
-            value: 203.55953010233796,
-          },
-          longestBranchNumberOfNodes: 137,
-          name: 'basal dendrite features',
-          numberOfProjections: 45,
-        },
-      ],
-    };
-
-    it('returns formatted cumulatedLength for Axon', () => {
-      // @ts-ignore
-      const result = selectorFnNeuriteFeature(mockSource, 'Axon', 'cumulatedLength');
-      expect(result).toBe(`${formatNumber(13702.434000086363)} μm`);
-    });
-
-    it('returns formatted longestBranchLength for Axon', () => {
-      // @ts-ignore
-      const result = selectorFnNeuriteFeature(mockSource, 'Axon', 'longestBranchLength');
-      expect(result).toBe(`${formatNumber(5148.730704634398)} μm`);
-    });
-
-    it('returns formatted cumulatedLength for BasalDendrite', () => {
-      // @ts-ignore
-      const result = selectorFnNeuriteFeature(mockSource, 'BasalDendrite', 'cumulatedLength');
-      expect(result).toBe(`${formatNumber(4623.512799949973)} μm`);
-    });
-
-    it('returns formatted longestBranchLength for BasalDendrite', () => {
-      // @ts-ignore
-      const result = selectorFnNeuriteFeature(mockSource, 'BasalDendrite', 'longestBranchLength');
-      expect(result).toBe(`${formatNumber(203.55953010233796)} μm`);
-    });
-
-    it('returns NO_DATA_STRING if featureType is not found', () => {
-      // @ts-ignore
-      const result = selectorFnNeuriteFeature(mockSource, 'NonexistentType', 'cumulatedLength');
-      expect(result).toBe(NO_DATA_STRING);
-    });
-
-    it('returns NO_DATA_STRING if field is not found', () => {
-      // @ts-ignore
-      const result = selectorFnNeuriteFeature(mockSource, 'Axon', 'nonexistentField');
-      expect(result).toBe(NO_DATA_STRING);
     });
   });
 });

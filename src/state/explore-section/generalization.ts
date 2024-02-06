@@ -20,8 +20,9 @@ import {
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
 import { DataType, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { DEFAULT_CARDS_NUMBER } from '@/constants/explore-section/generalization';
-import { fetchDataQueryUsingIds } from '@/queries/explore-section/data';
+import { fetchDataQueryUsingIds, fetchMorphoMetricsUsingIds } from '@/queries/explore-section/data';
 import { fetchEsResourcesByType } from '@/api/explore-section/resources';
+import { isNeuronMorphologyFeatureAnnotation } from '@/util/explore-section/typeUnionTargetting';
 
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
 export const expandedRowKeysAtom = atomFamily(() => atom<readonly Key[]>([]));
@@ -220,6 +221,62 @@ export const resourceBasedResponseHitsCountAtom = atomFamily(
     atom<Promise<number | undefined>>(async (get) => {
       const response = await get(resourceBasedResponseRawAtom({ resourceId, dataType }));
       return response?.hits?.length;
+    }),
+  isEqual
+);
+
+export const resourceBasedResponseMorphoMetricsAtom = atomFamily(
+  ({ resourceId, dataType }: GenFamilyType) =>
+    atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
+      const session = get(sessionAtom);
+
+      if (!session) return null;
+
+      const resourceBasedResponseHits = await get(
+        resourceBasedResponseHitsAtom({ resourceId, dataType })
+      );
+
+      if (!resourceBasedResponseHits || resourceBasedResponseHits.length === 0) return null;
+
+      const ids = map(resourceBasedResponseHits, '_id');
+
+      if (!ids) return null;
+
+      const filters = await get(filtersAtom({ dataType, resourceId }));
+
+      const query = fetchMorphoMetricsUsingIds(DEFAULT_CARDS_NUMBER * 5, PAGE_NUMBER, filters, ids);
+
+      const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
+
+      if (!esResponse) return null; // Error
+
+      // Use sortBy to order the results based on the order of IDs in resourceBasedResponseResults
+      esResponse.hits =
+        esResponse && esResponse.hits
+          ? sortBy(esResponse.hits, (item) =>
+              isNeuronMorphologyFeatureAnnotation(item._source)
+                ? ids.indexOf(item._source.neuronMorphology)
+                : -1
+            )
+          : [];
+
+      return esResponse;
+    }),
+  isEqual
+);
+
+export const sourceMorphoMetricsAtom = atomFamily(
+  (resourceId: string) =>
+    atom<Promise<FlattenedExploreESResponse['hits'] | null>>(async (get) => {
+      const session = get(sessionAtom);
+
+      if (!session) return null;
+
+      const query = fetchMorphoMetricsUsingIds(5, PAGE_NUMBER, [], [resourceId]);
+
+      const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
+
+      return esResponse.hits || null;
     }),
   isEqual
 );

@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
-import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
 import upperCase from 'lodash/upperCase';
 import { ExploreESHit } from '@/types/explore-section/es';
 import { DataType } from '@/constants/explore-section/list-views';
 import Card from '@/components/explore-section/CardView/Card';
-import { resourceBasedResponseResultsAtom } from '@/state/explore-section/generalization';
+import {
+  resourceBasedResponseResultsAtom,
+  resourceBasedResponseMorphoMetricsAtom,
+} from '@/state/explore-section/generalization';
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
+import { useUnwrappedValue } from '@/hooks/hooks';
+import { isNeuronMorphologyFeatureAnnotation } from '@/util/explore-section/typeUnionTargetting';
 import { getGroupedCardFields } from '@/util/explore-section/cardViewUtils';
 
 const { Panel } = Collapse;
@@ -27,9 +30,9 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   return <CaretRightOutlined rotate={isActive ? 90 : 0} />;
 }
 
-export default function CardView({ data, dataType, resourceId }: CardViewProps) {
-  const resourceBasedResponseResults = useAtomValue(
-    unwrap(resourceBasedResponseResultsAtom(resourceId || ''))
+export default function CardView({ data, dataType, resourceId = '' }: CardViewProps) {
+  const resourceBasedResponseResults = useUnwrappedValue(
+    resourceBasedResponseResultsAtom(resourceId)
   );
 
   const groupedCardFields = getGroupedCardFields(dataType);
@@ -38,6 +41,10 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
 
   const handleActiveKeysChange = (keys: string | string[]) =>
     setActiveKeys(Array.isArray(keys) ? keys : [keys]);
+
+  const resourceBasedResponseMorphoMetrics = useUnwrappedValue(
+    resourceBasedResponseMorphoMetricsAtom({ resourceId, dataType })
+  );
 
   if (!Array.isArray(data)) {
     return data;
@@ -68,7 +75,7 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
                 <span className="text-md font-semibold text-primary-8">{upperCase(group)}</span>
               }
               key={group}
-              className="m-0 border-y border-solid p-0"
+              className="m-0 truncate border-y border-solid p-0"
             >
               {fields.map((item) => (
                 <div key={item.field} className="mb-2 ml-7 h-6 truncate font-thin text-neutral-4">
@@ -79,7 +86,7 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
           ))}
         </Collapse>
       </div>
-      <div className="col-span-5 flex overflow-x-auto">
+      <div className="w-max-[350px] col-span-5 flex overflow-x-auto">
         {data.map((d) => (
           <Card
             activeKeys={activeKeys}
@@ -89,6 +96,11 @@ export default function CardView({ data, dataType, resourceId }: CardViewProps) 
               _source: d._source as ReconstructedNeuronMorphology | ExperimentalTrace,
             }}
             dataType={dataType}
+            metrics={resourceBasedResponseMorphoMetrics?.hits.filter(
+              (metric) =>
+                isNeuronMorphologyFeatureAnnotation(metric._source) &&
+                d._id === metric._source.neuronMorphology
+            )}
             score={scoreFinder(d._id)}
           />
         ))}

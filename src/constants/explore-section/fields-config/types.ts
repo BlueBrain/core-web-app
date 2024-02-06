@@ -1,16 +1,9 @@
 import { ReactNode } from 'react';
 import { FilterType } from '@/components/Filter/types';
 import { DeltaResource } from '@/types/explore-section/resources';
+import { MorphoMetricCompartment } from '@/types/explore-section/es-experiment';
 
 type TableCellAlign = 'left' | 'right' | 'center';
-
-export enum MorphoMetricTypes {
-  ApicalDendrite = 'ApicalDendrite',
-  BasalDendrite = 'BasalDendrite',
-  Axon = 'Axon',
-  Soma = 'Soma',
-  NeuronMorphology = 'NeuronMorphology',
-}
 
 export enum FieldType {
   CellType,
@@ -29,9 +22,9 @@ export type ExploreFieldConfig = {
   description?: string;
   filter: FilterType;
   unit?: string;
-  group?: MorphoMetricTypes;
+  group?: MorphoMetricCompartment;
   render?: {
-    esResourceViewFn?: (value: any, record: any, index: number) => ReactNode | any;
+    esResourceViewFn?: (value: any, record: any, index?: number) => ReactNode | any;
     deltaResourceViewFn?: (resource: DetailType) => ReactNode | any;
   };
   sorter?: boolean;

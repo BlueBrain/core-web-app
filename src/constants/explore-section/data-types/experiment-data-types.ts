@@ -27,7 +27,7 @@ export const EXPERIMENT_DATA_TYPES = {
         className: 'col-span-2',
       },
       {
-        field: Field.NeuronMorphologyLength,
+        field: Field.NeuronMorphologyHeight,
         className: 'col-span-2',
       },
       {
@@ -39,7 +39,7 @@ export const EXPERIMENT_DATA_TYPES = {
         className: 'col-span-2',
       },
       {
-        field: Field.AxonMaxBranchOrder,
+        field: Field.AxonStrahlerNumber,
         className: 'col-span-2',
       },
       {
@@ -51,7 +51,7 @@ export const EXPERIMENT_DATA_TYPES = {
         className: 'col-span-2',
       },
       {
-        field: Field.BasalDendriteMaxBranchOrder,
+        field: Field.BasalDendriteStrahlerNumber,
         className: 'col-span-2',
       },
       {
@@ -63,7 +63,7 @@ export const EXPERIMENT_DATA_TYPES = {
         className: 'col-span-2',
       },
       {
-        field: Field.ApicalDendtriteMaxBranchOrder,
+        field: Field.ApicalDendtriteStrahlerNumber,
         className: 'col-span-2',
       },
       {
