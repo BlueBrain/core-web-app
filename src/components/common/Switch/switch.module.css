@@ -37,7 +37,7 @@
 
 .SwitchRoot {
   border: 1px solid currentColor;
-  border: 1px solid color-mix(to srgb, currentColor, transparent 50%);
+  border: 1px solid color-mix(in srgb, currentColor, transparent 50%);
   flex: 0 0 auto;
   box-sizing: border-box;
   width: var(--custom-width);

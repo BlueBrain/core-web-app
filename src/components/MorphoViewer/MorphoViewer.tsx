@@ -5,11 +5,11 @@ import { useEffect, useRef } from 'react';
 import { MorphologyPainter } from '@bbp/morphoviewer';
 
 import { FullscreenOutlined } from '@ant-design/icons';
-import { Scalebar } from './Scalebar';
 import { useSignal } from './hooks/signal';
 import { Warning } from './Warning';
 import { Settings } from './Settings';
 import { useMorphoViewerSettings } from './hooks/settings';
+import { VerticalScalebar } from './VerticalScalebar';
 import { classNames } from '@/util/utils';
 
 import styles from './morpho-viewer.module.css';
@@ -69,7 +69,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
       >
         <FullscreenOutlined />
       </button>
-      <Scalebar className={styles.scalebar} painter={painter} />
+      <VerticalScalebar painter={painter} />
       <Warning visible={warning} />
     </div>
   );

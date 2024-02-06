@@ -34,12 +34,6 @@
   color: var(--custom-color-accent);
 }
 
-.scalebar {
-  position: absolute;
-  right: 5em;
-  top: 0.5em;
-}
-
 .legend {
   position: absolute;
   left: 0px;
