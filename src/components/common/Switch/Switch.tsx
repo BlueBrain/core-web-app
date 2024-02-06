@@ -14,17 +14,21 @@ export interface SwitchProps {
    */
   children?: ReactNode;
   /**
-   * In `darkMode`, we will invert the colors.
+   * We can add a label before the thumb for the False value.
    */
-  darkMode?: boolean;
+  labelForFalse?: string;
   /**
-   * Color of the switch background and of the label (in light mode).
+   * We can add a label after the thumb for the True value.
    */
-  mainColor?: string;
+  labelForTrue?: string;
   /**
-   * Color of the thumb (in light mode).
+   * Background color (when false).
    */
-  thumbColor?: string;
+  background?: string;
+  /**
+   * Main color.
+   */
+  color?: string;
 }
 
 export function Switch({
@@ -32,28 +36,45 @@ export function Switch({
   value,
   onChange,
   children,
-  darkMode = false,
-  mainColor = '#003a8c',
-  thumbColor = '#fff',
+  labelForFalse,
+  labelForTrue,
+  background = '#fff',
+  color = '#003a8c',
 }: SwitchProps) {
   const id = useId();
   return (
     <div
       className={classNames(styles.main, className)}
       style={{
-        '--custom-color-main': darkMode ? thumbColor : mainColor,
-        '--custom-color-thumb': darkMode ? mainColor : thumbColor,
+        '--custom-switch-color-front': color,
+        '--custom-switch-color-back': background,
+      }}
+      onDoubleClick={(evt) => {
+        /**
+         * If the user clicks twice on the Switch,
+         * it can throw a DoubleClick event and we want
+         * to swallow it because it could trigger unwanted
+         * behaviour on the parent.
+         * (for instance, in a 3D component that uses double-click
+         * to toggle fullscreen mode).
+         */
+        evt.preventDefault();
+        evt.stopPropagation();
       }}
     >
-      <label htmlFor={id}>{children}</label>
-      <RadixSwitch.Root
-        id={id}
-        className={styles.SwitchRoot}
-        checked={value}
-        onCheckedChange={onChange}
-      >
-        <RadixSwitch.Thumb className={styles.SwitchThumb} />
-      </RadixSwitch.Root>
+      {children && <label htmlFor={id}>{children}</label>}
+      <div>
+        {labelForFalse && <label htmlFor={id}>{labelForFalse}</label>}
+        <RadixSwitch.Root
+          id={id}
+          className={styles.SwitchRoot}
+          checked={value}
+          onCheckedChange={onChange}
+        >
+          <RadixSwitch.Thumb className={styles.SwitchThumb} />
+        </RadixSwitch.Root>
+        {labelForTrue && <label htmlFor={id}>{labelForTrue}</label>}
+      </div>
     </div>
   );
 }

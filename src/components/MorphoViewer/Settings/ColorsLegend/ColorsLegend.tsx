@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from 'react';
-import { MorphologyPainter, colorContrast } from '@bbp/morphoviewer';
+import { MorphologyPainter } from '@bbp/morphoviewer';
 
-import { useMorphoViewerSettings } from '../hooks/settings';
+import { useMorphoViewerSettings } from '../../hooks/settings';
 import { ColorInput } from './ColorInput';
 import { classNames } from '@/util/utils';
 import { ResetIcon } from '@/components/icons';
@@ -41,20 +41,19 @@ export function ColorsLegend({ className, painter }: ColorsLegendProps) {
     painter.eventColorsChange.addListener(handleColorChange);
     return () => painter.eventColorsChange.removeListener(handleColorChange);
   }, [painter]);
-  const borderColor = settings.isDarkMode ? '#595959' : '#F0F0F0';
 
   return (
     <div
       className={classNames(styles.main, className)}
       style={{
         backgroundColor: `color-mix(in srgb, ${background}, transparent 20%)`,
-        color: colorContrast(background, '#000d', '#fffd'),
       }}
     >
       <Switch
+        background="var(--custom-color-back)"
+        color="var(--custom-color-accent)"
         value={settings.isDarkMode}
         onChange={(isDarkMode: boolean) => update({ isDarkMode })}
-        darkMode={settings.isDarkMode}
       >
         Dark mode
       </Switch>
@@ -62,12 +61,7 @@ export function ColorsLegend({ className, painter }: ColorsLegendProps) {
         const att = key as keyof typeof LABELS;
         const color = settings[att];
         return (
-          <ColorInput
-            key={key}
-            value={color}
-            onChange={(v) => update({ [att]: v })}
-            borderColor={borderColor}
-          >
+          <ColorInput key={key} value={color} onChange={(v) => update({ [att]: v })}>
             <div
               className={styles.color}
               style={{

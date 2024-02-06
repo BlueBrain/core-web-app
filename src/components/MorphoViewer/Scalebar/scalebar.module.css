@@ -4,10 +4,10 @@
   height: 2em;
   font-weight: bold;
   text-shadow:
-    0 1px 1px #fff,
-    0 -1px 1px #fff,
-    1px 0 1px #fff,
-    -1px 0 1px #fff;
+    0 1px 1px var(--custom-color-back),
+    0 -1px 1px var(--custom-color-back),
+    1px 0 1px var(--custom-color-back),
+    -1px 0 1px var(--custom-color-back);
 }
 
 .main > hr {
@@ -18,6 +18,6 @@
   padding: 0;
   height: 3px;
   width: 100%;
-  box-shadow: 0 0 2px 1px #fff;
-  background-color: #000;
+  box-shadow: 0 0 2px 1px var(--custom-color-back);
+  background-color: var(--custom-color-text);
 }

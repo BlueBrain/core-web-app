@@ -1,0 +1,51 @@
+.main {
+  position: absolute;
+  left: 1em;
+  top: 1em;
+  padding: 0;
+  overflow: hidden;
+}
+
+.main > * {
+  transition: all 0.2s;
+  pointer-events: all;
+}
+
+.main > button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1em;
+  color: var(--custom-color-accent);
+}
+
+.main > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 1em;
+}
+
+.main.expand > button {
+  transform: translateY(-120%);
+  opacity: 0;
+}
+
+.main.collapse > button {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.main.expand > div {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.main.collapse > div {
+  transform: translateX(-120%);
+  opacity: 0;
+}

@@ -1,0 +1,33 @@
+.sliderRoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  width: 200px;
+  height: 20px;
+}
+
+.sliderTrack {
+  background-color: var(--custom-color-border);
+  position: relative;
+  flex-grow: 1;
+  border-radius: 9999px;
+  height: 3px;
+}
+
+.sliderRange {
+  position: absolute;
+  background-color: var(--custom-color-accent);
+  border-radius: 9999px;
+  height: 100%;
+}
+
+.sliderThumb {
+  display: block;
+  width: 0.75em;
+  height: 0.75em;
+  background-color: var(--custom-color-accent);
+  box-shadow: 0 2px 10px var(--custom-color-back);
+  border-radius: 50%;
+}

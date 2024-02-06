@@ -1,12 +1,43 @@
 .main {
   position: relative;
   border: 1px solid #0008;
+  --custom-color-text: #595959;
+  --custom-color-back: #fff;
+  --custom-color-on-back: #000;
+  --custom-color-accent: #003a8c;
+  --custom-color-border: #d9d9d9;
+  color: var(--custom-color-text);
+}
+
+.main.darkMode {
+  --custom-color-text: #d9d9d9;
+  --custom-color-back: #000;
+  --custom-color-on-back: #fff;
+  --custom-color-accent: #adcfff;
+  --custom-color-border: #595959;
+}
+
+.fullscreenButton {
+  all: unset;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  display: grid;
+  place-items: center;
+  background-color: var(--custom-color-back);
+  border: 1px solid var(--custom-color-border);
+  cursor: pointer;
+}
+
+.fullscreenButton > * {
+  font-size: 2em;
+  color: var(--custom-color-accent);
 }
 
 .scalebar {
   position: absolute;
-  right: 8px;
-  top: 8px;
+  right: 5em;
+  top: 0.5em;
 }
 
 .legend {

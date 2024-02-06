@@ -1,0 +1,23 @@
+.main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--custom-color-accent);
+}
+
+.main > button {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0 0.5em;
+  border: 1px solid var(--custom-color-border);
+}
+
+.main > button > svg {
+  width: 1.5em;
+  height: 1.5em;
+}

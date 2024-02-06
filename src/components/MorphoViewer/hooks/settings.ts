@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable no-param-reassign */
-import { MorphologyPainter } from '@bbp/morphoviewer';
+import { ColoringType, MorphologyPainter } from '@bbp/morphoviewer';
 import { atom, useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
 
@@ -31,6 +31,18 @@ export interface MorphoViewerSettings {
   colorApicalDendrite: string;
   /** CSS color for Axon */
   colorAxon: string;
+  /**
+   * **0** (accurate): real radius taken from the SWC file.
+   * **1** (uniform): constant radius for all dendrites/axon.
+   * This constant is the mean of the real radii.
+   */
+  radiusType: number;
+  /**
+   * Coloration mode:
+   * * **section**: each section has a different color (soma, dendrite, axon, ...).
+   * * **distance**: the color depends on the path distance along the dendrites.
+   */
+  colorBy: ColoringType;
 }
 
 /**
@@ -53,7 +65,6 @@ export function useMorphoViewerSettings(
     () => applySettingsToMorphologyPainter(painter, persistentSettings),
     [persistentSettings, painter]
   );
-
   const update = (value: Partial<MorphoViewerSettings>) => {
     const darkMode = value.isDarkMode ?? persistentSettings.darkMode;
     const newPersistentSettings =
@@ -92,15 +103,25 @@ interface PersistentMorphoViewerSettings {
   darkMode: boolean;
   darkColors: Palette;
   lightColors: Palette;
+  /**
+   * **0** (accurate): real radius taken from the SWC file.
+   * **1** (uniform): constant radius for all dendrites/axon.
+   * This constant is the mean of the real radii.
+   */
+  radiusType: number;
+  /**
+   * Coloration mode:
+   * * **section**: each section has a different color (soma, dendrite, axon, ...).
+   * * **distance**: the color depends on the path distance along the dendrites.
+   */
+  colorBy: ColoringType;
 }
 
-function readSettings({
-  darkMode,
-  darkColors,
-  lightColors,
-}: PersistentMorphoViewerSettings): MorphoViewerSettings {
+function readSettings(settings: PersistentMorphoViewerSettings): MorphoViewerSettings {
+  const { darkMode, darkColors, lightColors } = settings;
   const palette: Palette = darkMode ? darkColors : lightColors;
   return {
+    ...settings,
     isDarkMode: darkMode,
     colorSoma: palette.soma,
     colorBasalDendrite: palette.basalDendrite,
@@ -110,15 +131,19 @@ function readSettings({
 }
 
 function writeSettings({
-  isDarkMode: darkMode,
+  isDarkMode,
   colorSoma,
   colorBasalDendrite,
   colorApicalDendrite,
   colorAxon,
+  radiusType,
+  colorBy,
 }: MorphoViewerSettings): PersistentMorphoViewerSettings {
   const output = loadSettings();
-  output.darkMode = darkMode;
-  const palette: Palette = darkMode ? output.darkColors : output.lightColors;
+  output.colorBy = colorBy;
+  output.radiusType = radiusType;
+  output.darkMode = isDarkMode;
+  const palette: Palette = isDarkMode ? output.darkColors : output.lightColors;
   palette.soma = colorSoma;
   palette.apicalDendrite = colorApicalDendrite;
   palette.basalDendrite = colorBasalDendrite;
@@ -143,6 +168,8 @@ function makeDefaultSettings(): PersistentMorphoViewerSettings {
       apicalDendrite: LIGHT_APICAL_DENDRITE,
       axon: LIGHT_AXON,
     },
+    radiusType: 0,
+    colorBy: 'section',
   };
 }
 
@@ -159,6 +186,8 @@ function assertPersistentMorphoViewerSettings(
     darkMode: 'boolean',
     darkColors: colorsType,
     lightColors: colorsType,
+    radiusType: 'number',
+    colorBy: ['literal', 'section', 'distance'],
   });
 }
 
@@ -182,7 +211,7 @@ function saveSettings(data: PersistentMorphoViewerSettings) {
 
 function applySettingsToMorphologyPainter(
   painter: MorphologyPainter,
-  { darkMode, darkColors, lightColors }: PersistentMorphoViewerSettings
+  { darkMode, darkColors, lightColors, radiusType, colorBy }: PersistentMorphoViewerSettings
 ) {
   const { soma, basalDendrite, apicalDendrite, axon }: Palette = darkMode
     ? darkColors
@@ -193,4 +222,6 @@ function applySettingsToMorphologyPainter(
   painter.colors.basalDendrite = basalDendrite;
   painter.colors.apicalDendrite = apicalDendrite;
   painter.colors.axon = axon;
+  painter.radiusType = radiusType;
+  painter.colorBy = colorBy;
 }

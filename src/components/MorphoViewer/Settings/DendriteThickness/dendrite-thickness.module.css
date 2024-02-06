@@ -1,0 +1,10 @@
+.main {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  color: var(--custom-color-accent);
+}
+
+.slider {
+  grid-column: 1/3;
+}

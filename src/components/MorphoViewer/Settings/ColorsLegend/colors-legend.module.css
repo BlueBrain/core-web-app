@@ -4,6 +4,7 @@
   grid-template-columns: 1fr;
   place-items: stretch;
   gap: 0.25em;
+  color: var(--custom-color-text);
 }
 
 .main .color {

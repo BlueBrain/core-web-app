@@ -1,25 +1,25 @@
 .main {
-  all: inherit;
+  z-index: 999;
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
+  left: 1em;
+  bottom: 1em;
+  max-height: 2em;
   padding: 0;
   margin: 0;
+  border: none;
   transition: all 0.3s;
-  pointer-events: none;
+  color: var(--custom-color-text);
 }
 
-.main > div {
-  font-size: 1.5rem;
-  padding: 0.5em 1em;
-  border-radius: 999vmax;
-  background-color: #fffa;
-  color: #000;
-  border: 0.125em solid currentColor;
+.main > em {
+  font-weight: bold;
+  padding: 0.25em 0.5em;
+  border-radius: 0.125em;
+  background-color: var(--custom-color-back);
+  color: var(--custom-color-accent);
+  border: 0.125em solid var(--custom-color-border);
+  font-variant: normal;
+  font-style: normal;
 }
 
 .hide {
