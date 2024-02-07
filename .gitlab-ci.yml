@@ -182,6 +182,7 @@ deploy-bbp-dev:
 deploy-test:
   stage: deploy
   extends:
+    - .heavy_job
     - .build-image-using-kaniko
   variables:
     CI_PROJECT_DIR: /builds/project/sbo/core-web-app
