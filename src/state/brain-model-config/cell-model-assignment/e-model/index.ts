@@ -491,3 +491,9 @@ export const assembledEModelUIConfigAtom = atom<Promise<EModelUIConfig | null>>(
 
   return configIsFulfilled(config) ? config : null;
 });
+
+selectedEModelAtom.debugLabel = 'selectedEModelAtom';
+eModelNameAtom.debugLabel = 'eModelNameAtom';
+eModelEditModeAtom.debugLabel = 'eModelEditModeAtom';
+eModelUIConfigAtom.debugLabel = 'eModelUIConfigAtom';
+simulationParametersAtom.debugLabel = 'simulationParametersAtom';

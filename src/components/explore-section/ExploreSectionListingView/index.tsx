@@ -81,7 +81,11 @@ export default function DefaultListView({
                 extraRightSpace={displayControlPanel ? 480 : 0}
                 extraLeftSpace={12}
                 show={data.state !== 'loading' && Boolean(dataSource?.length)}
-                element={document.querySelector('.ant-table-body') as HTMLDivElement}
+                element={
+                  typeof document !== 'undefined'
+                    ? (document.querySelector('.ant-table-body') as HTMLDivElement)
+                    : undefined
+                }
               />
             </>
           )}

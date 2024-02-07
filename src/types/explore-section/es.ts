@@ -1,8 +1,22 @@
 import Aggregations from './es-aggs';
+import { ESHitSource } from './es-common';
 import { Experiment } from './es-experiment';
+import { BrainRegion } from './es-properties';
 import { Simulation, SimulationCampaign } from './es-simulation-campaign';
 
-export type ExploreResource = Experiment | Simulation | SimulationCampaign;
+type ElectrophysiologyOrMorphologyType = {
+  '@id': string;
+  identifier: string;
+  label: string;
+};
+
+export type ESeModel = ESHitSource & {
+  eType: ElectrophysiologyOrMorphologyType;
+  mType: ElectrophysiologyOrMorphologyType;
+  brainRegion: BrainRegion;
+};
+
+export type ExploreResource = Experiment | Simulation | SimulationCampaign | ESeModel;
 
 export type ExploreESHit = {
   sort: number[];

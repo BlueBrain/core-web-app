@@ -1,13 +1,15 @@
-import { ConfigProvider, Table } from 'antd';
+import { ConfigProvider, Table, ThemeConfig } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
 import { ExemplarMorphologyDataType, ExperimentalTracesDataType } from '@/types/e-model';
 
-const theme = {
+const theme: ThemeConfig = {
   components: {
     Table: {
       colorText: '#0050B3',
-      colorTextHeading: '#BFBFBF',
+      colorTextHeading: '#8C8C8C',
+      headerBg: 'white',
+      fontWeightStrong: 400,
     },
   },
 };
@@ -32,6 +34,7 @@ export default function DefaultEModelTable<T extends SupportedDataTypes>({
         pagination={{ hideOnSinglePage: true }}
         rowKey="@id"
         columns={columns}
+        rowClassName="[&:last-child_*]:!border-b-0"
       />
     </ConfigProvider>
   );

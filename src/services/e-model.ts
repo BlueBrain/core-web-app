@@ -29,8 +29,7 @@ import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
-
-const NOT_AVAILABLE_STR = 'Data not available';
+import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 
 export function convertRemoteParamsForUI(
   remoteParams: EModelRemoteParameters
@@ -70,19 +69,19 @@ export function convertMorphologyForUI(
     // morph from e-model pipeline
     return {
       ...commonProps,
-      description: NOT_AVAILABLE_STR,
-      brainLocation: NOT_AVAILABLE_STR,
-      mType: NOT_AVAILABLE_STR,
-      contributor: remoteMorphology.contribution.agent.name || NOT_AVAILABLE_STR,
+      description: NO_DATA_STRING,
+      brainLocation: NO_DATA_STRING,
+      mType: NO_DATA_STRING,
+      contributor: remoteMorphology.contribution.agent.name || NO_DATA_STRING,
     };
   }
 
   return {
     // morph from search table
     ...commonProps,
-    description: remoteMorphology.description || NOT_AVAILABLE_STR,
+    description: remoteMorphology.description || NO_DATA_STRING,
     brainLocation: remoteMorphology.brainRegion.label,
-    mType: NOT_AVAILABLE_STR,
+    mType: NO_DATA_STRING,
     contributor: remoteMorphology.contributors?.map((c) => c.label).join(' '),
   };
 }
@@ -97,22 +96,22 @@ export function convertTraceForUI(trace: Trace | ExperimentalTrace): Experimenta
     // trace from e-model pipeline
     return {
       ...commonProps,
-      mType: NOT_AVAILABLE_STR,
-      eType: NOT_AVAILABLE_STR,
-      description: NOT_AVAILABLE_STR,
+      mType: NO_DATA_STRING,
+      eType: NO_DATA_STRING,
+      description: NO_DATA_STRING,
       eCodes: trace.stimulus.map((s) => s.stimulusType.label as ECode),
-      subjectSpecies: trace.subject?.species?.label || NOT_AVAILABLE_STR,
+      subjectSpecies: trace.subject?.species?.label || NO_DATA_STRING,
     };
   }
 
   return {
     // trace from search table
     ...commonProps,
-    mType: NOT_AVAILABLE_STR,
-    eType: NOT_AVAILABLE_STR,
-    description: trace?.description || NOT_AVAILABLE_STR,
+    mType: NO_DATA_STRING,
+    eType: NO_DATA_STRING,
+    description: trace?.description || NO_DATA_STRING,
     eCodes: [],
-    subjectSpecies: NOT_AVAILABLE_STR,
+    subjectSpecies: NO_DATA_STRING,
   };
 }
 

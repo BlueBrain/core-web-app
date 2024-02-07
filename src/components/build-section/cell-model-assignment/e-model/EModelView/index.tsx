@@ -11,15 +11,19 @@ import WorkflowAttributes from './WorkflowAttributes';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 
-export default function EModelView() {
+export default function EModelView({ showTitle = true }: { showTitle?: boolean }) {
   return (
-    <div className="h-[80vh] overflow-auto p-6">
-      <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <DefaultLoadingSuspense>
-          <EModelTitle />
-        </DefaultLoadingSuspense>
-      </ErrorBoundary>
-      <Divider />
+    <>
+      {showTitle && (
+        <>
+          <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
+            <DefaultLoadingSuspense>
+              <EModelTitle />
+            </DefaultLoadingSuspense>
+          </ErrorBoundary>
+          <Divider />
+        </>
+      )}
 
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <DefaultLoadingSuspense>
@@ -64,6 +68,6 @@ export default function EModelView() {
           <WorkflowAttributes />
         </DefaultLoadingSuspense>
       </ErrorBoundary>
-    </div>
+    </>
   );
 }

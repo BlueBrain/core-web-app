@@ -122,7 +122,10 @@ export function BaseTable({
   );
 
   useResizeObserver({
-    element: document.getElementById('interactive-data-layout'),
+    element:
+      typeof document !== 'undefined'
+        ? document.getElementById('interactive-data-layout')
+        : undefined,
     callback: onResize,
   });
 

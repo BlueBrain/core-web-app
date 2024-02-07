@@ -1,4 +1,5 @@
 import { useAtom, useAtomValue } from 'jotai';
+import { CheckCircleFilled } from '@ant-design/icons';
 
 import FeatureSelectionItem from './FeatureSelectionItem';
 import {
@@ -39,9 +40,21 @@ function PresetSelector() {
           return (
             <GenericButton
               key={presetName}
-              className={classNames(isSelected ? 'bg-primary-8 text-white' : 'text-primary-8')}
+              className={classNames(
+                'hover:text-white',
+                isSelected ? 'bg-primary-8 text-white' : 'text-primary-8'
+              )}
               onClick={() => setFeatureSelectedPreset(presetName)}
-              text={presetName}
+              text={
+                isSelected ? (
+                  <div className="flex items-center justify-center gap-2">
+                    {presetName}
+                    <CheckCircleFilled className="text-white" />
+                  </div>
+                ) : (
+                  presetName
+                )
+              }
             />
           );
         })}

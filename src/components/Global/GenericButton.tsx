@@ -6,7 +6,7 @@ import { classNames } from '@/util/utils';
 const defaultStyle = 'h-12 px-8 rounded-none shadow-none';
 
 type Props = {
-  text: string | ReactNode;
+  text: ReactNode;
   className?: string;
   onClick?: () => void;
   disabled?: boolean;

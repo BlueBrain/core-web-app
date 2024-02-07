@@ -26,7 +26,9 @@ export default function ConfigurationPage() {
   } else {
     body = (
       <div>
-        <EModelView />
+        <div className="h-[80vh] overflow-auto p-6">
+          <EModelView />
+        </div>
         {selectedEModel.isOptimizationConfig ? <EditConfigButton /> : <CloneConfigButton />}
       </div>
     );

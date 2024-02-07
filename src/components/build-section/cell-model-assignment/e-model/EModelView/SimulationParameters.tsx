@@ -79,13 +79,16 @@ function Item({ name, value, readOnly, onChange }: ItemProps) {
   return (
     <>
       <span className="grow">{name}</span>
-      <input
-        type="number"
-        disabled={readOnly}
-        value={value}
-        onChange={(e) => onChange(name, e.target.valueAsNumber)}
-        className="w-[50px] rounded border-2 text-right font-bold"
-      />
+      {readOnly ? (
+        <div className="font-bold">{value}</div>
+      ) : (
+        <input
+          type="number"
+          value={value}
+          onChange={(e) => onChange(name, e.target.valueAsNumber)}
+          className="w-[50px] rounded border-2 text-right font-bold"
+        />
+      )}
     </>
   );
 }

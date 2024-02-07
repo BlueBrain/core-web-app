@@ -13,7 +13,7 @@ export default function EModelLayout({ children }: { children: ReactNode }) {
         {() => (
           <>
             <SectionTabs />
-            <div className="-mt-7 h-max w-full flex-1 border border-primary-8">{children}</div>
+            <div className="w-full flex-1">{children}</div>
           </>
         )}
       </Detail>
