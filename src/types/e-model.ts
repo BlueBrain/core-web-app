@@ -1,3 +1,4 @@
+import { FileDistribution } from './explore-section/es-properties';
 import { MModelMenuItem } from './m-model';
 import { BrainLocation, ContributionEntity, Distribution, Entity, ResourceMetadata } from './nexus';
 import {
@@ -35,22 +36,26 @@ export type SimulationParameter = Record<SimulationParameterKeys, number>;
 
 export interface ExemplarMorphologyDataType {
   '@id': string;
+  '@type': string | string[];
   name: string;
   description: string;
   brainLocation: string;
   mType: string;
   contributor: string;
   isPlaceholder: boolean;
+  distribution: Distribution | FileDistribution[];
 }
 
 export interface ExperimentalTracesDataType {
   '@id': string;
+  '@type': string | string[];
   cellName: string;
   mType: string;
   eType: string;
   description: string;
   eCodes: ECode[];
   subjectSpecies: string;
+  distribution: Distribution | FileDistribution[];
 }
 
 type Generation = {

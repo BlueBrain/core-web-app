@@ -1,4 +1,7 @@
 import { format, parseISO } from 'date-fns';
+import find from 'lodash/find';
+import intersection from 'lodash/intersection';
+
 import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
 import {
@@ -15,30 +18,41 @@ import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
 } from '@/types/explore-section/es-experiment';
+import {
+  ExemplarMorphologyDataType as ExemplarMorphologyEModel,
+  ExperimentalTracesDataType as ExperimentalTracesEModel,
+} from '@/types/e-model';
 
-const previewRender = ({
+export const previewRender = ({
   distribution,
   '@type': experimentType,
-}: ReconstructedNeuronMorphology | ExperimentalTrace) => {
+}:
+  | ReconstructedNeuronMorphology
+  | ExperimentalTrace
+  | ExperimentalTracesEModel
+  | ExemplarMorphologyEModel) => {
   let previewType:
     | DataType.ExperimentalNeuronMorphology
     | DataType.ExperimentalElectroPhysiology
     | undefined;
-  let encodingFormat: 'application/swc' | 'application/nwb';
+  let encodingFormat: 'application/swc' | 'application/nwb' | undefined;
 
   if (experimentType.includes(DataTypeToNexusType.ExperimentalNeuronMorphology)) {
     encodingFormat = 'application/swc';
     previewType = DataType.ExperimentalNeuronMorphology;
-  } else if (experimentType.includes(DataTypeToNexusType.ExperimentalElectroPhysiology)) {
+  } else if (
+    intersection(
+      [DataTypeToNexusType.ExperimentalElectroPhysiology, 'ExperimentalTrace'],
+      experimentType
+    ).length
+  ) {
     encodingFormat = 'application/nwb';
     previewType = DataType.ExperimentalElectroPhysiology;
   }
 
-  const contentUrl = distribution.reduce<string | undefined>(
-    (acc, dist: { contentUrl: string; encodingFormat: string }) =>
-      dist.encodingFormat === encodingFormat ? dist.contentUrl : acc,
-    undefined
-  );
+  const contentUrl = Array.isArray(distribution)
+    ? find(distribution, ['encodingFormat', encodingFormat])?.contentUrl
+    : distribution.contentUrl;
 
   return (
     !!contentUrl &&

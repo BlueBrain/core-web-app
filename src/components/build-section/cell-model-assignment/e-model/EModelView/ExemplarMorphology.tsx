@@ -13,6 +13,7 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import { ExemplarMorphologyDataType } from '@/types/e-model';
 import GenericButton from '@/components/Global/GenericButton';
+import { previewRender } from '@/constants/explore-section/fields-config/common';
 
 const nameRenderFn = (name: string) => <div className="font-bold">{name}</div>;
 
@@ -77,6 +78,7 @@ export default function ExemplarMorphology() {
 
   const exemplarMorphologyAsList = exemplarMorphology ? [exemplarMorphology] : [];
   const morphologies = eModelEditMode ? eModelUIConfig?.morphologies : exemplarMorphologyAsList;
+
   const deleteColumn = {
     title: '',
     key: 'action',
@@ -86,7 +88,15 @@ export default function ExemplarMorphology() {
       </button>
     ),
   };
-  const columns = eModelEditMode ? [...defaultColumns, deleteColumn] : defaultColumns;
+
+  const previewColumn = {
+    title: 'Preview',
+    key: 'preview',
+    render: (morphology: ExemplarMorphologyDataType) => previewRender(morphology),
+  };
+
+  const columns = [previewColumn, ...defaultColumns, ...(eModelEditMode ? [deleteColumn] : [])];
+
   let displayMorphologyError = null;
   if (morphologies && morphologies.length !== 1) {
     if (morphologies.length > 1) {

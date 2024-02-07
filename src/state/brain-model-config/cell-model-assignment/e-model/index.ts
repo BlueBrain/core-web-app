@@ -497,3 +497,5 @@ eModelNameAtom.debugLabel = 'eModelNameAtom';
 eModelEditModeAtom.debugLabel = 'eModelEditModeAtom';
 eModelUIConfigAtom.debugLabel = 'eModelUIConfigAtom';
 simulationParametersAtom.debugLabel = 'simulationParametersAtom';
+experimentalTracesAtom.debugLabel = 'experimentalTracesAtom';
+exemplarMorphologyAtom.debugLabel = 'exemplarMorphologyAtom';

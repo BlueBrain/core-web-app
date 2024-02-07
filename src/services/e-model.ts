@@ -61,8 +61,10 @@ export function convertMorphologyForUI(
 ): ExemplarMorphologyDataType {
   const commonProps = {
     '@id': remoteMorphology['@id'],
+    '@type': remoteMorphology['@type'],
     name: remoteMorphology.name,
     isPlaceholder: remoteMorphology['@type'].includes('SynthesizedNeuronMorphology'),
+    distribution: remoteMorphology.distribution,
   };
 
   if ('objectOfStudy' in remoteMorphology) {
@@ -89,7 +91,9 @@ export function convertMorphologyForUI(
 export function convertTraceForUI(trace: Trace | ExperimentalTrace): ExperimentalTracesDataType {
   const commonProps = {
     '@id': trace['@id'],
+    '@type': trace['@type'],
     cellName: trace.name,
+    distribution: trace.distribution,
   };
 
   if ('stimulus' in trace) {

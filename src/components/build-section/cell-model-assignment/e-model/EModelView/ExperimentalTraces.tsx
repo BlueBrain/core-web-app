@@ -15,6 +15,7 @@ import {
 import { ExperimentalTracesDataType } from '@/types/e-model';
 import { eCodesDocumentationUrl } from '@/constants/cell-model-assignment/e-model';
 import GenericButton from '@/components/Global/GenericButton';
+import { previewRender } from '@/constants/explore-section/fields-config/common';
 
 const nameRenderFn = (name: string) => <div className="font-bold">{name}</div>;
 
@@ -102,6 +103,7 @@ export default function ExperimentalTraces() {
   };
 
   const traces = eModelEditMode ? eModelUIConfig?.traces : experimentalTraces;
+
   const deleteColumn = {
     title: '',
     key: 'action',
@@ -111,7 +113,15 @@ export default function ExperimentalTraces() {
       </button>
     ),
   };
-  const columns = eModelEditMode ? [...defaultColumns, deleteColumn] : defaultColumns;
+
+  const previewColumn = {
+    title: 'Preview',
+    key: 'preview',
+    width: 200,
+    render: (trace: ExperimentalTracesDataType) => previewRender(trace),
+  };
+
+  const columns = [previewColumn, ...defaultColumns, ...(eModelEditMode ? [deleteColumn] : [])];
 
   const tracesEmptyListMessage = traces?.length ? '' : 'Select at least one trace';
 
