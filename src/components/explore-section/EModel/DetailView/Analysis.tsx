@@ -21,12 +21,14 @@ export default function Analysis() {
   }
 
   return (
-    <PDFViewerContainer
-      distributions={
-        Array.isArray(detail.data.distribution)
-          ? detail.data.distribution
-          : [detail.data.distribution]
-      }
-    />
+    <div className="-mt-7 h-full border border-primary-8 p-6">
+      <PDFViewerContainer
+        distributions={
+          Array.isArray(detail.data.distribution)
+            ? detail.data.distribution
+            : [detail.data.distribution]
+        }
+      />
+    </div>
   );
 }

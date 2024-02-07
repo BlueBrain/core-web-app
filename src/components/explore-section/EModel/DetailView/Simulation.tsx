@@ -38,7 +38,7 @@ const data: Data[] = new Array(3).fill({
 
 export default function Simulation() {
   return (
-    <div className="flex flex-col divide-y divide-primary-8">
+    <div className="-mt-7 flex h-full flex-col divide-y divide-primary-8 border border-primary-8">
       {data.map(({ charts, description, locations, name, other, statistics }) => (
         <div className="flex gap-12 p-10" key="name">
           <div className="flex basis-3/6 flex-col gap-3">
