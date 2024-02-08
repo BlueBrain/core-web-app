@@ -90,8 +90,9 @@ export default function ExemplarMorphology() {
   };
 
   const previewColumn = {
-    title: 'Preview',
+    title: 'PREVIEW',
     key: 'preview',
+    width: 200,
     render: (morphology: ExemplarMorphologyDataType) => previewRender(morphology),
   };
 

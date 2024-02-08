@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import find from 'lodash/find';
 import intersection from 'lodash/intersection';
+import { Empty } from 'antd';
 
 import { DataType, DataTypeToNexusType } from '@/constants/explore-section/list-views';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
@@ -54,17 +55,18 @@ export const previewRender = ({
     ? find(distribution, ['encodingFormat', encodingFormat])?.contentUrl
     : distribution.contentUrl;
 
-  return (
-    !!contentUrl &&
-    !!previewType && (
-      <PreviewThumbnail
-        className="max-h-[116px] border border-neutral-2"
-        contentUrl={contentUrl}
-        height={116}
-        type={previewType}
-        width={184}
-      />
-    )
+  return !!contentUrl && !!previewType ? (
+    <PreviewThumbnail
+      className="max-h-[116px] border border-neutral-2"
+      contentUrl={contentUrl}
+      height={116}
+      type={previewType}
+      width={184}
+    />
+  ) : (
+    <div className="flex h-[116px] w-[184px] items-center justify-start">
+      <Empty description="Missing Image" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+    </div>
   );
 };
 

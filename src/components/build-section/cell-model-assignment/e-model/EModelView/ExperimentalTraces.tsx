@@ -115,7 +115,7 @@ export default function ExperimentalTraces() {
   };
 
   const previewColumn = {
-    title: 'Preview',
+    title: 'PREVIEW',
     key: 'preview',
     width: 200,
     render: (trace: ExperimentalTracesDataType) => previewRender(trace),
