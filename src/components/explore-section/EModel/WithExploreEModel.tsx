@@ -29,8 +29,8 @@ function buildEModelEntry(source: ESeModel): EModelMenuItem {
   return {
     name: source.name,
     id: source['@id'],
-    eType: source.eType.label,
-    mType: source.mType.label,
+    eType: source.eType?.label ?? '',
+    mType: source.mType?.label ?? '',
     isOptimizationConfig: false,
   } as EModelMenuItem;
 }
