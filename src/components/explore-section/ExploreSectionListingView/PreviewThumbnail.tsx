@@ -87,7 +87,7 @@ export default function PreviewThumbnail({
           rootClassName="!h-full !w-full"
         />
       ) : (
-        <Empty description="Missing Image" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <Empty description="No thumbnail available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
     </div>
   );
