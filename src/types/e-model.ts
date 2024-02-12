@@ -17,6 +17,7 @@ export interface EModelMenuItem {
   mType: string;
   isOptimizationConfig: boolean;
   rev: number;
+  brainRegion?: string;
 }
 
 export interface MEModelMenuItem {

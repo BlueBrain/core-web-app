@@ -1,7 +1,6 @@
-import { ReactNode, useTransition } from 'react';
+import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAtomValue, useSetAtom } from 'jotai/react';
-import find from 'lodash/find';
+import { useSetAtom } from 'jotai/react';
 
 import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
 import { RenderButtonProps } from '../ExploreSectionListingView/WithRowSelection';
@@ -17,13 +16,7 @@ import {
 import { ESeModel } from '@/types/explore-section/es';
 import { setInitializationValue } from '@/util/utils';
 import { DEFAULT_E_MODEL_STORAGE_KEY } from '@/constants/cell-model-assignment/e-model';
-import {
-  brainRegionHierarchyStateAtom,
-  brainRegionsAtom,
-  selectedBrainRegionAtom,
-} from '@/state/brain-regions';
 import { EModelMenuItem } from '@/types/e-model';
-import { generateHierarchyPathTree, getAncestors } from '@/components/BrainTree/util';
 
 function buildEModelEntry(source: ESeModel): EModelMenuItem {
   return {
@@ -32,6 +25,7 @@ function buildEModelEntry(source: ESeModel): EModelMenuItem {
     eType: source.eType?.label ?? '',
     mType: source.mType?.label ?? '',
     isOptimizationConfig: false,
+    brainRegion: source.brainRegion['@id'],
   } as EModelMenuItem;
 }
 
@@ -50,23 +44,14 @@ export default function WithExploreEModel({
   const setSelectedEModel = useSetAtom(selectedEModelAtom);
   const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
   const setEModelEditMode = useSetAtom(eModelEditModeAtom);
-  const brainRegions = useAtomValue(brainRegionsAtom);
-  const setSelectedBrainRegion = useSetAtom(selectedBrainRegionAtom);
-  const setBrainRegionHierarchyState = useSetAtom(brainRegionHierarchyStateAtom);
-  const [, startTransition] = useTransition();
 
   const onCellClick: OnCellClick = (basePath, record, type) => {
     const source = record._source as ESeModel;
     const eModel = buildEModelEntry(source);
     const brainRegionId = source.brainRegion['@id'];
-    const brainRegion = find(brainRegions, ['id', brainRegionId]);
-    const buildUrl = `${detailUrlBuilder(basePath, record, type)}?brainRegion=${encodeURIComponent(
+    const exploreUrl = `${detailUrlBuilder(basePath, record, type)}?brainRegion=${encodeURIComponent(
       brainRegionId
     )}`;
-    const allAncestors = getAncestors(brainRegions ?? [], brainRegionId);
-    const newHierarchyTree = generateHierarchyPathTree(
-      allAncestors.map((entry) => Object.keys(entry)[0])
-    );
 
     setSelectedEModel(eModel);
     setEModelUIConfig({});
@@ -75,15 +60,7 @@ export default function WithExploreEModel({
       value: eModel,
       brainRegionId,
     });
-    startTransition(() => {
-      setBrainRegionHierarchyState(newHierarchyTree);
-      setSelectedBrainRegion({
-        id: brainRegionId,
-        leaves: brainRegion?.leaves || null,
-        title: brainRegion?.title ?? '',
-      });
-    });
-    navigate(buildUrl);
+    navigate(exploreUrl);
   };
 
   return (
