@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { MorphologyPainter } from '@bbp/morphoviewer';
 
-import { useMorphoViewerSettings } from '../../hooks/settings';
+import { MorphoViewerSettings, useMorphoViewerSettings } from '../../hooks/settings';
 import { ColorInput } from './ColorInput';
 import { classNames } from '@/util/utils';
 import { ResetIcon } from '@/components/icons';
@@ -15,19 +15,37 @@ export interface ColorsLegendProps {
   painter: MorphologyPainter;
 }
 
+interface Labels {
+  colorSoma: string;
+  colorBasalDendrite: string;
+  colorApicalDendrite: string;
+  colorAxon: string;
+}
+
 /**
  * This is a mapping between the MorphoViewerSettings'
  * color attributes and the label to display for them.
  */
-const LABELS = {
+const LABELS_EXPANDED: Labels = {
   colorSoma: 'Soma',
   colorBasalDendrite: 'Basal dendrite',
   colorApicalDendrite: 'Apical dendrite',
   colorAxon: 'Axon',
 };
 
+/**
+ * If we don't have both basal and apical dendrites,
+ * we should just write "Dendrite".
+ */
+const LABELS_COLLAPSED: Labels = {
+  colorSoma: 'Soma',
+  colorBasalDendrite: 'Dendrite',
+  colorApicalDendrite: 'Dendrite',
+  colorAxon: 'Axon',
+};
+
 export function ColorsLegend({ className, painter }: ColorsLegendProps) {
-  const [background, setBackground] = useState(painter.colors.background);
+  const [, setBackground] = useState(painter.colors.background);
   const [settings, update, resetColors] = useMorphoViewerSettings(painter);
   const handleReset = () => {
     resetColors(settings.isDarkMode);
@@ -43,12 +61,7 @@ export function ColorsLegend({ className, painter }: ColorsLegendProps) {
   }, [painter]);
 
   return (
-    <div
-      className={classNames(styles.main, className)}
-      style={{
-        backgroundColor: `color-mix(in srgb, ${background}, transparent 20%)`,
-      }}
-    >
+    <div className={classNames(styles.main, className)}>
       <Switch
         background="var(--custom-color-back)"
         color="var(--custom-color-accent)"
@@ -57,25 +70,50 @@ export function ColorsLegend({ className, painter }: ColorsLegendProps) {
       >
         Dark mode
       </Switch>
-      {Object.keys(LABELS).map((key) => {
-        const att = key as keyof typeof LABELS;
-        const color = settings[att];
-        return (
-          <ColorInput key={key} value={color} onChange={(v) => update({ [att]: v })}>
-            <div
-              className={styles.color}
-              style={{
-                backgroundColor: color,
-              }}
-            />
-            <div>{LABELS[att]}</div>
-          </ColorInput>
-        );
-      })}
+      {renderLabels(getProperLabels(painter), settings, update)}
       <button className={styles.reset} type="button" onClick={handleReset}>
         <ResetIcon className={styles.icon} />
         <div>Reset colors</div>
       </button>
     </div>
   );
+}
+
+function renderLabels(
+  labels: Partial<Labels>,
+  settings: MorphoViewerSettings,
+  update: (patch: Partial<MorphoViewerSettings>) => void
+) {
+  return Object.keys(labels).map((key) => {
+    const att = key as keyof Labels;
+    const color = settings[att];
+    return (
+      <ColorInput key={key} value={color} onChange={(v) => update({ [att]: v })}>
+        <div
+          className={styles.color}
+          style={{
+            backgroundColor: color,
+          }}
+        />
+        <div>{labels[att]}</div>
+      </ColorInput>
+    );
+  });
+}
+
+function getProperLabels(painter: MorphologyPainter): Partial<Labels> {
+  const labels = getCorrectLabelsVersionDependingOnDendrites(painter);
+  const output: Partial<Labels> = {};
+  if (painter.hasSoma()) output.colorSoma = labels.colorSoma;
+  if (painter.hasBasalDendrite()) output.colorBasalDendrite = labels.colorBasalDendrite;
+  if (painter.hasApicalDendrite()) output.colorApicalDendrite = labels.colorApicalDendrite;
+  if (painter.hasAxon()) output.colorAxon = labels.colorAxon;
+
+  return output;
+}
+
+function getCorrectLabelsVersionDependingOnDendrites(painter: MorphologyPainter): Labels {
+  if (!painter.hasBasalDendrite()) return LABELS_COLLAPSED;
+  if (!painter.hasApicalDendrite()) return LABELS_COLLAPSED;
+  return LABELS_EXPANDED;
 }

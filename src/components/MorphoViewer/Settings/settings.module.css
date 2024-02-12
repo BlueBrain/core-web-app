@@ -2,8 +2,10 @@
   position: absolute;
   left: 1em;
   top: 1em;
+  height: 2em;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
+  background-color: color-mix(in srgb, var(--custom-color-back), transparent 20%);
 }
 
 .main > * {
@@ -28,6 +30,7 @@
   justify-content: flex-start;
   align-items: stretch;
   gap: 1em;
+  background-color: color-mix(in srgb, var(--custom-color-back), transparent 20%);
 }
 
 .main.expand > button {
