@@ -14,7 +14,6 @@ import { signOut, useSession } from 'next-auth/react';
 
 import VirtualLabsList from './VirtualLabsList';
 import { classNames } from '@/util/utils';
-import usePathname from '@/hooks/pathname';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 
 type TDefaulNavigation = {
@@ -239,7 +238,6 @@ export default function ApplicationSidebar({
   children,
 }: ApplicationSidebarProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
 
   useOnClickOutside(
@@ -257,8 +255,7 @@ export default function ApplicationSidebar({
     <div
       ref={ref}
       className={classNames(
-        'h-screen bg-primary-9 text-light transition-transform ease-in-out',
-        pathname?.includes('/explore/literature') ? 'fixed top-0 z-50' : 'relative',
+        'relative h-screen bg-primary-9 text-light transition-transform ease-in-out',
         expanded
           ? 'flex w-80 flex-col items-start justify-start px-5 shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
           : 'flex w-10 flex-col items-center justify-between transition-transform ease-in-out will-change-auto'

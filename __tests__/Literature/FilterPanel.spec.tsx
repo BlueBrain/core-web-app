@@ -37,9 +37,9 @@ describe('GenerativeQAResults', () => {
       getArticle(1, { authors: ['Sterling Archer', 'Cheryl Tunt'] }),
     ]);
 
-    const searhcTerm = 'Archer';
+    const searchTerm = 'Archer';
     const authorInput = showSuggestionsFor('Authors');
-    fireEvent.change(authorInput, { target: { value: searhcTerm } });
+    fireEvent.change(authorInput, { target: { value: searchTerm } });
 
     expectSuggestionsToBeVisible(['Malory Archer', 'Sterling Archer']);
   });

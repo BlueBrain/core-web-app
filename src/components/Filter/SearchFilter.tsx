@@ -20,7 +20,6 @@ export default function SearchFilter({
 }) {
   const buckets = data?.buckets ?? data?.excludeOwnFilter?.buckets;
   const options = useOptions(values, buckets);
-
   const handleCheckedChange = (value: string) => {
     let newValues = [...values];
     if (values.includes(value)) {

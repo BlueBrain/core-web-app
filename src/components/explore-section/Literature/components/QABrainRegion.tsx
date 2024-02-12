@@ -13,7 +13,7 @@ export function QABrainRegionPerQuestion({ id, title }: SelectedBrainRegionPerQu
   return (
     <div
       id={`brain-region-${id}`}
-      className="inline-flex w-full items-center justify-between gap-2 rounded-sm bg-neutral-1 px-4 py-2 text-primary-8"
+      className="inline-flex w-full items-center justify-between gap-2 rounded-3xl bg-primary-0 px-4 py-2 text-primary-8"
     >
       <BrainIcon />
       <div title={title} className="line-clamp-1 w-full flex-1 text-base font-bold">
@@ -64,15 +64,16 @@ function QABrainRegion() {
   const isBuildSection = pathname?.startsWith('/build');
   const router = useRouter();
 
-  if (!isBuildSection) return null;
   return (
     <div className="px-4">
-      <Button
-        onClick={() => router.back()}
-        className="mb-6 flex items-center rounded-none py-6 text-primary-8"
-      >
-        <ArrowLeftOutlined /> Back to configuration
-      </Button>
+      {isBuildSection && (
+        <Button
+          onClick={() => router.back()}
+          className="mb-6 flex items-center rounded-none py-6 text-primary-8"
+        >
+          <ArrowLeftOutlined /> Back to configuration
+        </Button>
+      )}
       <div className="mb-2 text-lg font-medium text-primary-8">Current context of search: </div>
       <QAContextBrainRegion />
     </div>

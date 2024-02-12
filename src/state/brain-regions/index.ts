@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { atomWithDefault, atomWithReset, selectAtom } from 'jotai/utils';
+import { atomWithDefault, selectAtom } from 'jotai/utils';
 import { arrayToTree } from 'performant-array-to-tree';
 import cloneDeep from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
@@ -372,7 +372,9 @@ export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | nul
 
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());
 export const selectedPostBrainRegionsAtom = atom(new Map<string, string>());
-export const literatureSelectedBrainRegionAtom = atomWithReset<SelectedBrainRegion | null>(null);
+export const literatureSelectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | null>(
+  (get) => get(selectedBrainRegionAtom)
+);
 
 export const setSelectedBrainRegionAtom = atom(
   null,

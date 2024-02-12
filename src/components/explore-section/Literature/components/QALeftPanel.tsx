@@ -2,7 +2,7 @@
 
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import * as Switch from '@radix-ui/react-switch';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import isNil from 'lodash/isNil';
 
@@ -10,29 +10,34 @@ import { useContextSearchParams, useLiteratureDataSource } from '../useContextua
 import QAHistoryNavigation from './QANavigation';
 import QABrainRegion from './QABrainRegion';
 import usePathname from '@/hooks/pathname';
-import { literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
+import { literatureSelectedBrainRegionAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { classNames } from '@/util/utils';
 
 function IgnoreBrainContext() {
+  const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const [brainRegion, setLiteratureSelectedBrainRegion] = useAtom(
     literatureSelectedBrainRegionAtom
   );
-  const reset = () => setLiteratureSelectedBrainRegion(null);
+
+  const toggleBrainRegionContext = (checked: boolean) => {
+    if (checked) {
+      setLiteratureSelectedBrainRegion(null);
+    } else {
+      setLiteratureSelectedBrainRegion(selectedBrainRegion);
+    }
+  };
+
   return (
-    <div className="px-4 pt-2">
+    <div className="flex items-center px-4 pt-2">
       <Switch.Root
         id="select-all-brains"
         className={classNames(
-          'group relative h-4 w-8 rounded-full border border-primary-8 bg-white',
+          'group relative flex h-[16px] w-8 items-center rounded-full border border-primary-8 bg-white',
           'data-[state=checked]:border data-[state=checked]:border-primary-8 data-[state=checked]:bg-primary-8',
           'data-[disabled]:cursor-not-allowed data-[disabled]:border data-[disabled]:border-gray-500 data-[disabled]:bg-gray-300'
         )}
-        title={
-          isNil(brainRegion) ? 'A brain region should be selected' : 'Search in all brain regions'
-        }
-        onCheckedChange={reset}
-        disabled={isNil(brainRegion)}
-        checked={Boolean(brainRegion?.id) === false}
+        title={isNil(brainRegion) ? 'Search in ' : 'Search in all brain regions'}
+        onCheckedChange={toggleBrainRegionContext}
       >
         <Switch.Thumb
           className={classNames(
@@ -76,7 +81,7 @@ function IgnoreContextualLiterature() {
           'data-[state=checked]:border data-[state=checked]:border-primary-8 data-[state=checked]:bg-primary-8',
           'data-[disabled]:cursor-not-allowed data-[disabled]:border data-[disabled]:border-gray-500 data-[disabled]:bg-gray-300'
         )}
-        title="show questions relative on the context"
+        title="show questions relative to the context"
         onCheckedChange={returnDefaultView}
         checked={!isContextualLiterature}
       >
@@ -111,7 +116,7 @@ function QALeftPanel() {
         isBuildSection ? 'w-[290px]' : 'w-96 pr-4'
       )}
     >
-      {isBuildSection && (
+      {true && (
         <>
           <QABrainRegion />
           <div className="mb-5 mt-2">

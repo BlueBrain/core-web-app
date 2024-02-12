@@ -35,14 +35,14 @@ export default function ArticleSorter({ onChange }: SorterProps) {
   };
 
   return (
-    <div className="ml-[10px] flex items-center">
-      <span className="mr-1 font-normal text-neutral-3">Sort by</span>
+    <div className="ml-[10px] flex items-center justify-between rounded border border-solid border-gray-200 pl-4">
+      <span className="font-normal text-primary-8">Sort by:</span>
       <Select
         defaultValue={DefaultSortField}
         options={SortFieldsOptions}
         className={classNames(
-          'min-w-[130px] rounded-none border border-solid border-neutral-2',
-          '[&>.ant-select-selector]:font-bold [&>.ant-select-selector]:text-primary-8'
+          'min-w-[130px]',
+          '[&>.ant-select-selector]:px-2 [&>.ant-select-selector]:font-bold [&>.ant-select-selector]:text-primary-8'
         )}
         popupClassName="!text-primary-8"
         popupMatchSelectWidth={false}
@@ -51,11 +51,10 @@ export default function ArticleSorter({ onChange }: SorterProps) {
         onChange={(value) => onSortFieldChange(value as SortableFieldsType)}
         aria-label="sort-by-field-selector"
       />
-
       <Button
         onClick={onSortDirectionChange}
-        icon={<SortIcon direction={sortDirection} className="text-primary-9" />}
-        className="border-none bg-transparent"
+        icon={<SortIcon direction={sortDirection} className="text-primary-7" />}
+        className="mt-1 border-none bg-transparent"
         aria-label="sort-articles"
       />
     </div>

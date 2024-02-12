@@ -14,7 +14,6 @@ import startCase from 'lodash/startCase';
 import reject from 'lodash/reject';
 
 import { useContextSearchParams, useLiteratureDataSource } from '../useContextualLiteratureContext';
-import { BrainIcon } from '@/components/icons';
 import { classNames } from '@/util/utils';
 import {
   literatureAtom,
@@ -66,7 +65,6 @@ function QAHistoryNavigationItem({
   id,
   index,
   question,
-  brainRegion,
   isNotFound,
   extra,
 }: QAHistoryNavigationItemProps) {
@@ -75,6 +73,7 @@ function QAHistoryNavigationItem({
   const [QAs, updateResult] = useAtom(literatureResultAtom);
   const updatePersistedResults = useSetAtom(persistedLiteratureResultAtom);
   const update = useLiteratureAtom();
+  const { isBuildSection } = useContextSearchParams();
 
   const isActive = activeQuestionId === id;
 
@@ -91,22 +90,24 @@ function QAHistoryNavigationItem({
     }, 1000);
   };
 
-  const showParameters = brainRegion?.id || (extra && (extra.buildStep || extra.DensityOrCount));
+  const showParameters = extra && (extra.buildStep || extra.DensityOrCount);
   return (
     <a
       href={`#${id}`}
       role="button"
       onClick={onClick}
       className={classNames(
-        'gqa-nav-item text-neutral-8 group relative inline-flex w-full cursor-pointer list-none items-center rounded-r-sm py-4 pl-16 pr-2 hover:bg-gray-50',
-        isDeleting && 'animate-scale-down overflow-hidden bg-gray-100 py-4'
+        'gqa-nav-item text-neutral-8 group relative inline-flex w-full cursor-pointer list-none items-center rounded-r-sm py-4 pr-2 hover:bg-gray-50',
+        isDeleting && 'animate-scale-down overflow-hidden bg-gray-100 py-4',
+        isBuildSection ? 'pl-16' : 'pl-7'
       )}
     >
       {isActive && (
         <div
           className={classNames(
-            'absolute left-3 top-6 inline-flex h-[3.5px] w-10 transform rounded-full bg-primary-8 transition-all duration-200 ease-in-expo',
-            isDeleting && 'hidden'
+            'absolute top-6 inline-flex h-[3.5px] transform rounded-full bg-primary-8 transition-all duration-200 ease-in-expo',
+            isDeleting && 'hidden',
+            isBuildSection ? 'left-3 w-10' : 'left-0 w-4'
           )}
         />
       )}
@@ -122,9 +123,6 @@ function QAHistoryNavigationItem({
         </div>
         {showParameters && (
           <div className="my-2 flex w-3/4 flex-col items-start border-b border-t border-gray-200 py-2">
-            {brainRegion?.id && (
-              <IndicationIcon icon={<BrainIcon />} title={brainRegion.title} isActive={isActive} />
-            )}
             {extra && extra.buildStep && (
               <IndicationIcon
                 icon={<AppstoreOutlined />}
@@ -211,7 +209,6 @@ function QAHistoryNavigation() {
             id: qa.id,
             askedAt: qa.askedAt,
             question: qa.question,
-            brainRegion: qa.brainRegion,
             isNotFound: qa.isNotFound,
             extra: (qa as SucceededGenerativeQA).extra,
           }}

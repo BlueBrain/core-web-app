@@ -228,11 +228,50 @@ export const FilterFns: Record<
   },
 };
 
+const initialValues: FilterValues = {
+  categories: [],
+  articleType: [],
+  journal: [],
+  authors: [],
+  publicationDate: { gte: null, lte: null },
+};
+
+export const getActiveFiltersCount = (filters: FilterValues | null) => {
+  if (!filters) {
+    return 0;
+  }
+
+  let activeFilters = 0;
+
+  Object.entries(filters).forEach(([key, value]) => {
+    const filterKey = key as FilterFieldsType;
+
+    switch (filterKey) {
+      case 'categories':
+      case 'articleType':
+      case 'journal':
+      case 'authors':
+        if ((value as string[]).length > (initialValues[filterKey] as string[]).length) {
+          activeFilters += 1;
+        }
+        break;
+      case 'publicationDate':
+        if ((value as GteLteValue).gte !== null || (value as GteLteValue).lte !== null) {
+          activeFilters += 1;
+        }
+        break;
+      default:
+        throw new Error(`Unhandled Filter Field: ${key}`);
+    }
+  });
+
+  return activeFilters;
+};
+
 const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLFilter[] =>
   FilterFields.map((filterField) => {
     const possibleOptions = Array.from(getPossibleOptions(articles, [filterField]));
     const noCurrentValue = isNil(filterValues) || isNil(filterValues[filterField]);
-
     switch (filterField) {
       case 'categories':
         return {
@@ -240,7 +279,9 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
           type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: possibleOptions.length > 0,
-          value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
+          value: noCurrentValue
+            ? [...(initialValues.categories as string[])]
+            : (filterValues[filterField] as string[]),
         };
       case 'articleType':
         return {
@@ -248,7 +289,9 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
           type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: possibleOptions.length > 0,
-          value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
+          value: noCurrentValue
+            ? [...(initialValues.articleType as string[])]
+            : (filterValues[filterField] as string[]),
         };
       case 'journal':
         return {
@@ -256,7 +299,9 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
           type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: Array.from(getPossibleOptions(articles, ['journal', 'doi'])).length > 0,
-          value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
+          value: noCurrentValue
+            ? [...(initialValues.journal as string[])]
+            : (filterValues[filterField] as string[]),
         };
       case 'authors':
         return {
@@ -264,7 +309,9 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
           type: FilterTypeEnum.Search,
           aggregationType: null,
           hasOptions: possibleOptions.length > 0,
-          value: noCurrentValue ? [] : (filterValues[filterField] as string[]),
+          value: noCurrentValue
+            ? [...(initialValues.authors as string[])]
+            : (filterValues[filterField] as string[]),
         };
       case 'publicationDate':
         return {
@@ -273,7 +320,7 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
           aggregationType: null,
           hasOptions: true,
           value: noCurrentValue
-            ? { gte: null, lte: null }
+            ? { ...(initialValues.publicationDate as GteLteValue) }
             : (filterValues[filterField] as GteLteValue),
         };
       default:
