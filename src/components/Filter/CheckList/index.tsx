@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { InfoCircleFilled } from '@ant-design/icons';
 import { useOptions } from '../hooks';
 import { CheckListProps } from '@/types/explore-section/application';
-import { Buckets } from '@/types/explore-section/fields';
+import { BucketAggregation } from '@/types/explore-section/es-aggs';
 import { Filter } from '@/components/Filter/types';
 import { FiltersRenderLengthAtom } from '@/components/Filter/state';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
@@ -20,7 +20,7 @@ export default function CheckList({
   onChange,
 }: {
   children: (props: CheckListProps) => ReactNode;
-  data: Buckets;
+  data: BucketAggregation;
   filter: Filter;
   values: string[];
   onChange: (value: string[]) => void;

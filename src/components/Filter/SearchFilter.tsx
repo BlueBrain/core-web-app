@@ -5,7 +5,7 @@ import { Filter } from './types';
 import { useOptions } from './hooks';
 import Search from '@/components/Search';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
-import { Buckets } from '@/types/explore-section/fields';
+import { BucketAggregation } from '@/types/explore-section/es-aggs';
 
 export default function SearchFilter({
   data,
@@ -13,7 +13,7 @@ export default function SearchFilter({
   values,
   onChange,
 }: {
-  data: Buckets;
+  data: BucketAggregation;
   filter: Filter;
   values: string[];
   onChange: (newValues: string[]) => void;

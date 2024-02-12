@@ -17,7 +17,7 @@ import {
   SubjectWeight,
 } from './es-properties';
 import { ESHitSource } from './es-common';
-import { SynapticPathway } from '@/types/explore-section/fields';
+import { SynapticPathway } from '@/types/explore-section/misc';
 
 type ExperimentProps = ESHitSource & {
   brainRegion: BrainRegion;

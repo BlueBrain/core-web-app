@@ -7,14 +7,14 @@ import OptionSelect from '@/components/explore-section/EphysViewerContainer/Opti
 import TraceSelectorGroup from '@/components/explore-section/EphysViewerContainer/TraceSelectorGroup';
 import {
   ZoomRanges,
-  DataSets,
   Repetition,
   IndexDataValue,
   RABIndex,
-} from '@/types/explore-section/fields';
+  TraceData,
+} from '@/types/explore-section/misc';
 
 interface EphysPlotProps {
-  options: DataSets;
+  options: Record<string, TraceData>;
   index: RABIndex;
   defaultStimulusType?: string;
   defaultRepetition?: string;

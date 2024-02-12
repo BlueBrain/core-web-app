@@ -4,7 +4,8 @@ import isMatch from 'lodash/isMatch';
 import isNumber from 'lodash/isNumber';
 import { Unionize } from '../typing';
 import { normalizeContributors } from './sort-contributors';
-import { IdLabelEntity, SynapticPosition, SynapticType } from '@/types/explore-section/fields';
+import { SynapticPosition, SynapticType } from '@/types/explore-section/misc';
+import { IdWithLabel } from '@/types/explore-section/common';
 import { ensureArray } from '@/util/nexus';
 import { formatNumber } from '@/util/common';
 import {
@@ -140,7 +141,7 @@ export const selectorFnDate = (date: string): string =>
  */
 export const selectorFnBasic = (text?: string): string => text || NO_DATA_STRING;
 
-export const selectorFnSpecies = (species?: IdLabelEntity | IdLabelEntity[]) => {
+export const selectorFnSpecies = (species?: IdWithLabel | IdWithLabel[]) => {
   if (species) {
     return ensureArray(species)
       .map((s) => s.label)

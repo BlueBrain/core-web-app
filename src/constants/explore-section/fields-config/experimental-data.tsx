@@ -26,7 +26,7 @@ import {
   FieldType,
 } from '@/constants/explore-section/fields-config/types';
 import { MorphoMetricCompartment } from '@/types/explore-section/es-experiment';
-import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
+import { SynapticPosition, SynapticType } from '@/types/explore-section/misc';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
