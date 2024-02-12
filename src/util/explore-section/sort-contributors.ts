@@ -2,9 +2,9 @@ import intersection from 'lodash/intersection';
 
 import { localCompareString } from '@/util/common';
 import { ensureArray } from '@/util/nexus';
-import { IdLabel } from '@/types/explore-section/fields';
+import { IdWithLabel } from '@/types/explore-section/common';
 
-export type IdLabelWithType = IdLabel<{ type?: string[] | null }>;
+export type IdLabelWithType = IdWithLabel & { type?: string[] | null };
 
 const SCHEMA_TYPE_ORGANIZATION = ['http://schema.org/Organization', 'Organization'];
 const SCHEMA_TYPE_PERSON = ['http://schema.org/Person', 'Person'];

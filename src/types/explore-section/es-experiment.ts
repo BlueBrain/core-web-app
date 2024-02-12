@@ -18,7 +18,7 @@ import {
 } from './es-properties';
 import { ESHitSource } from './es-common';
 import { IdWithName } from './common';
-import { SynapticPathway } from '@/types/explore-section/fields';
+import { SynapticPathway } from '@/types/explore-section/misc';
 
 type ExperimentProps = ESHitSource & {
   brainRegion: BrainRegion;

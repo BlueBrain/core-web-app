@@ -6,7 +6,7 @@ import {
   DimensionRange,
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
-import { AxesState } from '@/types/explore-section/fields';
+import { AxesState } from '@/types/explore-section/misc';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import { SimulationCampaignResource } from '@/types/explore-section/resources';
 import { pathToResource } from '@/util/explore-section/detail-view';

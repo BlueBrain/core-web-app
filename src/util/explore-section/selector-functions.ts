@@ -1,13 +1,14 @@
 import find from 'lodash/find';
 import { DeltaResource, Subject } from '@/types/explore-section/resources';
-import { AnnotationEntity, Series } from '@/types/explore-section/fields';
+import { Annotation, SeriesStatistic } from '@/types/explore-section/delta-properties';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
 
-const seriesArrayFunc = (series: Series | Series[] | undefined) => series && ensureArray(series);
+const seriesArrayFunc = (series: SeriesStatistic | SeriesStatistic[] | undefined) =>
+  series && ensureArray(series);
 
-const annotationArrayFunc = (annotation: AnnotationEntity[] | undefined | null) =>
+const annotationArrayFunc = (annotation: Annotation[] | undefined | null) =>
   annotation && ensureArray(annotation);
 
 /**
@@ -37,7 +38,7 @@ export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
 export const mTypeSelectorFn = (detail: DeltaResource | null) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name.toLowerCase() === 'm-type annotation'
+    (o: Annotation) => o.name.toLowerCase() === 'm-type annotation'
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
@@ -46,14 +47,14 @@ export const mTypeSelectorFn = (detail: DeltaResource | null) => {
 export const eTypeSelectorFn = (detail: DeltaResource | null) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name.toLowerCase() === 'e-type annotation'
+    (o: Annotation) => o.name.toLowerCase() === 'e-type annotation'
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
 
 // renders standard error of the mean if present
 export const semSelectorFn = (detail: DeltaResource | null) => {
-  const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);
+  const seriesArray: SeriesStatistic[] | undefined = seriesArrayFunc(detail?.series);
 
   const value = seriesArray
     ?.find((series) => series.statistic === 'standard error of the mean')
@@ -75,7 +76,7 @@ export const selectorFnStatisticDetail = (
 ): string | number => {
   if (!detail?.series) return NO_DATA_STRING;
 
-  const found = ensureArray(detail?.series).find((el: Series) => el.statistic === field);
+  const found = ensureArray(detail?.series).find((el: SeriesStatistic) => el.statistic === field);
   const units = withUnits && found ? found.unitCode : '';
   return found ? `${formatNumber(found.value)} ${units}` : NO_DATA_STRING;
 };
