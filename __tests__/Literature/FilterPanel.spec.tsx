@@ -5,6 +5,7 @@ import { Provider } from 'jotai';
 import { GArticle, GenerativeQA } from '@/types/literature';
 import { literatureAtom, literatureResultAtom } from '@/state/literature';
 import FilterPanel from '@/components/explore-section/Literature/components/FilterPanel';
+import { getArticle } from '__tests__/__utils__/Literature';
 
 describe('GenerativeQAResults', () => {
   beforeAll(() => {
@@ -117,34 +118,3 @@ describe('GenerativeQAResults', () => {
     return autocompleteInput;
   };
 });
-
-const getArticle = (id: number, extra: Partial<GArticle>): GArticle => {
-  const randomId = getRandomID();
-  return {
-    id: `${id}`,
-    doi: `doi - ${randomId}`,
-    title: `Title ${randomId}`,
-    authors: ['Malory Archer', 'Dr. Algernop Krieger'],
-    journal: 'Kreiger experiments',
-    paragraph:
-      'The effects of the Krieger Kleanse are, as described, vivid "mind shredding" hallucinations, followed by a near-comatose state.',
-    paragraphId: `paragraph ${randomId}`,
-    section: 'The experiments are done in 3 stages: Pigley I, Pigley II, and Piggley III',
-    abstract: 'Results of strong irradiation by plutonium rods on a pig',
-    articleType: 'editorial notes',
-    publicationDate: '2023-02-20',
-    citationsCount: 2,
-    impactFactor: 3,
-    ...extra,
-  };
-};
-
-const MIN_ID = 100;
-const MAX_ID = 201;
-
-// The maximum is exclusive and the minimum is inclusive
-const getRandomID = (minId = MIN_ID, maxId = MAX_ID) => {
-  const min = Math.ceil(minId);
-  const max = Math.floor(maxId);
-  return Math.floor(Math.random() * (max - min) + min);
-};

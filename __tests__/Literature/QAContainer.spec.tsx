@@ -3,7 +3,11 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
 
-import { selectedBrainRegionAtom, literatureSelectedBrainRegionAtom } from '@/state/brain-regions';
+import {
+  selectedBrainRegionAtom,
+  literatureSelectedBrainRegionAtom,
+  brainRegionSidebarIsCollapsedAtom,
+} from '@/state/brain-regions';
 import { literatureResultAtom } from '@/state/literature';
 import { GenerativeQA, SucceededGenerativeQA } from '@/types/literature';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
@@ -178,6 +182,7 @@ describe('QAContainer', () => {
           [literatureResultAtom, qa],
           [selectedBrainRegionAtom, brainRegion],
           [literatureSelectedBrainRegionAtom, brainRegion],
+          [brainRegionSidebarIsCollapsedAtom, true],
         ]}
       >
         <QAContainer />
