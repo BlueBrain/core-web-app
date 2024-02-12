@@ -20,7 +20,7 @@ export function VerticalScalebar({ className, painter }: VerticalScalebarProps) 
     const canvas = ref.current;
     if (!canvas || !scalebar) return;
 
-    paint(canvas, scalebar);
+    paint(canvas, scalebar, settings.isDarkMode ? '#fffe' : '#000e');
   }, [scalebar, settings]);
 
   if (!scalebar) return null;
@@ -54,7 +54,7 @@ function useScalebar(painter: MorphologyPainter): ScalebarAttributes | null {
   return scalebar;
 }
 
-function paint(canvas: HTMLCanvasElement, scalebar: ScalebarAttributes) {
+function paint(canvas: HTMLCanvasElement, scalebar: ScalebarAttributes, color: string) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
@@ -64,17 +64,17 @@ function paint(canvas: HTMLCanvasElement, scalebar: ScalebarAttributes) {
   canvas.width = w;
   // eslint-disable-next-line no-param-reassign
   canvas.height = h;
-  const fontHeight = 12;
+  const fontHeight = 16;
   const margin = 2 * fontHeight;
   ctx.font = `${fontHeight}px sans-serif`;
-  ctx.fillStyle = 'currentColor';
-  ctx.strokeStyle = 'currentColor';
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
   let y = fontHeight;
   let previousY = y;
   let value = 0;
   while (y < h - margin) {
     const text = `${value}`;
-    ctx.fillText(text, 12, y);
+    ctx.fillText(text, fontHeight, y);
     value += scalebar.value;
     ctx.beginPath();
     ctx.moveTo(1, previousY);
@@ -85,5 +85,5 @@ function paint(canvas: HTMLCanvasElement, scalebar: ScalebarAttributes) {
     y += scalebar.sizeInPixel;
   }
   ctx.font = `bold ${fontHeight}px sans-serif`;
-  ctx.fillText(`[${scalebar.unit}]`, 12, previousY + fontHeight * 2);
+  ctx.fillText(`[${scalebar.unit}]`, fontHeight, previousY + fontHeight * 2);
 }

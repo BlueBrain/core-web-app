@@ -100,3 +100,15 @@
   width: 2em;
   height: 2em;
 }
+
+.rightPanel {
+  position: absolute;
+  right: 0;
+  top: 5em;
+  bottom: 0.5em;
+  width: auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 1em;
+}

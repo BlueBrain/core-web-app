@@ -1,15 +1,16 @@
 'use client';
 
 /* eslint-disable no-param-reassign */
-import { useEffect, useRef } from 'react';
 import { MorphologyPainter } from '@bbp/morphoviewer';
-
 import { FullscreenOutlined } from '@ant-design/icons';
-import { useSignal } from './hooks/signal';
-import { Warning } from './Warning';
+import { useEffect, useRef } from 'react';
+
+import { ColorRamp } from './ColorRamp';
 import { Settings } from './Settings';
-import { useMorphoViewerSettings } from './hooks/settings';
 import { VerticalScalebar } from './VerticalScalebar';
+import { Warning } from './Warning';
+import { useMorphoViewerSettings } from './hooks/settings';
+import { useSignal } from './hooks/signal';
 import { classNames } from '@/util/utils';
 
 import styles from './morpho-viewer.module.css';
@@ -69,7 +70,10 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
       >
         <FullscreenOutlined />
       </button>
-      <VerticalScalebar painter={painter} />
+      <div className={styles.rightPanel}>
+        <ColorRamp painter={painter} />
+        <VerticalScalebar painter={painter} />
+      </div>
       <Warning visible={warning} />
     </div>
   );
