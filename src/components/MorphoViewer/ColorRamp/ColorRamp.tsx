@@ -18,11 +18,9 @@ export function ColorRamp({ className, painter }: ColorRampProps) {
   return (
     <div className={classNames(styles.main, className)}>
       <div className={styles.caption}>
-        Proximity
+        Path distance
         <br />
-        with
-        <br />
-        soma
+        to soma
       </div>
       <div className={styles.colorramp} />
       <div className={styles.value}>0 µm</div>

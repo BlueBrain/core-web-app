@@ -21,6 +21,7 @@
 }
 
 .value {
+  text-align: right;
   font-weight: bold;
   padding: 0 0.5em;
   border-radius: 999vmax;
