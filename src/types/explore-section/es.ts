@@ -1,13 +1,12 @@
+import { IdWithLabel } from './common';
 import Aggregations from './es-aggs';
 import { ESHitSource } from './es-common';
 import { Experiment } from './es-experiment';
 import { BrainRegion } from './es-properties';
 import { Simulation, SimulationCampaign } from './es-simulation-campaign';
 
-type ElectrophysiologyOrMorphologyType = {
-  '@id': string;
+type ElectrophysiologyOrMorphologyType = IdWithLabel & {
   identifier: string;
-  label: string;
 };
 
 export type ESeModel = ESHitSource & {

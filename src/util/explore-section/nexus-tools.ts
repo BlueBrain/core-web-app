@@ -1,5 +1,4 @@
 import get from 'lodash/get';
-import { DeltaResource } from '@/types/explore-section/resources';
 
 import { Distribution } from '@/types/nexus/common';
 
@@ -125,12 +124,6 @@ const ENCODING_FORMAT_LABEL: { [format: string]: string } = {
 export const distributionFormatLabel = (distribution: Distribution): string =>
   ENCODING_FORMAT_LABEL[distribution.encodingFormat] ||
   distribution.encodingFormat.split('/').slice(-1)[0];
-
-// TODO improve type
-export const propAsArray = <T>(
-  resource: DeltaResource<{ [key: string]: any }>,
-  key: string
-): [T] => (Array.isArray(resource[key]) ? resource[key] : [resource[key]]);
 
 // For getting the last part of a uri path as a title or label
 export const labelOf = (inputString: string) => {
