@@ -77,7 +77,11 @@ type SubjectWeight = {
   value?: number;
 };
 
-export type Subject = Type & {
+// TODO: Verify whether "@type" actually ever exists
+// on this property, and if not, then remove the
+// "@type" condition in speciesDataFamily (atom), and
+// set this to simply Id, not IdWithType.
+export type Subject = IdWithType & {
   species: IdWithLabel;
   strain: Label;
   age?: SubjectAge;

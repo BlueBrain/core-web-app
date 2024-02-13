@@ -21,7 +21,7 @@ type ExperimentResource = EntityResource & {
   subject: Subject;
 };
 
-type ExperimentalBoutonDensity = ExperimentResource & {
+export type ExperimentalBoutonDensity = ExperimentResource & {
   annotation: Annotation | Annotation[];
   note: string;
   series: SeriesStatistic | SeriesStatistic[];
@@ -32,7 +32,7 @@ export type ExperimentalLayerThickness = ExperimentResource & {
   series: SeriesStatistic | SeriesStatistic[];
 };
 
-type ExperimentalNeuronDensity = ExperimentResource & {
+export type ExperimentalNeuronDensity = ExperimentResource & {
   annotation: Annotation | Annotation[];
   note: string;
   series: SeriesStatistic | SeriesStatistic[];

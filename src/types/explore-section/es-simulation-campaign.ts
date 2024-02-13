@@ -28,8 +28,9 @@ export type SimulationCampaign = ESHitSource & {
 };
 
 export type Simulation = ESHitSource & {
-  name: string;
+  dimensions: Record<string, number>;
   endedAt: DateISOString;
+  name: string;
   parameter: Coords;
   startedAt: DateISOString;
   status: string;
