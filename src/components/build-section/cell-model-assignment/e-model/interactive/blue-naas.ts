@@ -8,7 +8,7 @@ const BlueNaasCmd = {
   // Cmd target: backend
   SET_MODEL: 'set_model',
   GET_UI_DATA: 'get_ui_data',
-  SET_ICLAMP: 'set_iclamp',
+  SET_INJECTION_LOCATION: 'set_injection_location',
   START_SIM: 'start_simulation',
   // Cmd target: client
   MORPHOLOGY: 'morphology',
@@ -78,7 +78,7 @@ export default class BlueNaas {
   runSim() {
     this.traceData = null;
 
-    this.ws.send(BlueNaasCmd.SET_ICLAMP, this.simConfig?.injectTo);
+    this.ws.send(BlueNaasCmd.SET_INJECTION_LOCATION, this.simConfig?.injectTo);
     this.ws.send(BlueNaasCmd.START_SIM, this.simConfig);
   }
 
