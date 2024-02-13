@@ -1,8 +1,8 @@
 import { Radio, RadioChangeEvent } from 'antd';
 import { FileImageOutlined, LineChartOutlined } from '@ant-design/icons';
 import React, { useMemo } from 'react';
-import { DeltaResource, EPhysImageItem } from '@/types/explore-section/resources';
-import { propAsArray } from '@/util/explore-section/nexus-tools';
+import { EPhysImageItem } from '@/types/explore-section/resources';
+import { ExperimentalTrace } from '@/types/explore-section/delta-experiment';
 import ImageViewContainer from '@/components/explore-section/EphysViewerContainer/ImageViewContainer';
 import GraphViewContainer from '@/components/explore-section/EphysViewerContainer/GraphViewContainer';
 import './styles/ephys-plugin-styles.scss';
@@ -17,13 +17,13 @@ const getStimulusTypeString = (image: EPhysImageItem) => {
   return typeString[typeString.length - 1];
 };
 
-function EphysViewerContainer({ resource }: { resource: DeltaResource }) {
+function EphysViewerContainer({ resource }: { resource: ExperimentalTrace }) {
   const [view, setView] = React.useState<VIEWS>(VIEWS.IMAGE);
   const [selectedRepetition, setSelectedRepetition] = React.useState<string>();
   const stimulusTypes = useMemo(
     () =>
       resource.image
-        ? propAsArray<EPhysImageItem>(resource, 'image')
+        ? resource.image
             .filter((image) => image.about.match(/stimulation/i))
             .map(getStimulusTypeString)
             .sort()
