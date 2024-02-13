@@ -4,7 +4,8 @@ import esb from 'elastic-builder';
 
 import { createHeaders } from '@/util/utils';
 import { Dimension } from '@/components/explore-section/Simulations/types';
-import { ExploreSectionResponse, Simulation } from '@/types/explore-section/resources';
+import { FlattenedExploreESResponse } from '@/types/explore-section/es';
+import { Simulation } from '@/types/explore-section/es-simulation-campaign';
 import { AnalysisReport } from '@/types/explore-section/es-analysis-report';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import { API_SEARCH } from '@/constants/explore-section/queries';
@@ -75,7 +76,7 @@ export async function fetchSimulationsFromEs(accessToken: string, campaignId: st
     }),
   })
     .then((response) => response.json())
-    .then<ExploreSectionResponse>((data) => ({
+    .then<FlattenedExploreESResponse>((data) => ({
       hits: data?.hits?.hits,
       total: data?.hits?.total,
       aggs: data.aggregations,

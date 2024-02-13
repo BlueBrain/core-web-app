@@ -1,9 +1,18 @@
 import { formatNumber } from '@/util/common';
 import useStats from '@/components/explore-section/Fields/useStats';
-import { DeltaResource } from '@/types/explore-section/resources';
+import {
+  ExperimentalBoutonDensity,
+  ExperimentalLayerThickness,
+  ExperimentalNeuronDensity,
+  ExperimentalSynapsesPerConnection,
+} from '@/types/explore-section/delta-experiment';
 
 type MeanStdFieldProps = {
-  detail: DeltaResource;
+  detail:
+    | ExperimentalBoutonDensity
+    | ExperimentalLayerThickness
+    | ExperimentalNeuronDensity
+    | ExperimentalSynapsesPerConnection;
 };
 
 export default function MeanStdField({ detail }: MeanStdFieldProps) {
