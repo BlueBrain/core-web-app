@@ -1,8 +1,8 @@
-import { SimulationStatus } from '@/types/explore-section/misc';
+import { Simulation } from '@/types/explore-section/es-simulation-campaign';
 
 type InlineDimensionsProps = {
   value: number;
-  status: SimulationStatus;
+  status: Simulation['status'];
 };
 
 export default function InlineDimension({ value, status }: InlineDimensionsProps) {

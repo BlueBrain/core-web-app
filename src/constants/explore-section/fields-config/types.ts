@@ -56,11 +56,4 @@ type NestedFieldConfig = {
   aggregationField: string;
 };
 
-export type DetailType = DeltaResource<{
-  brainConfiguration: {};
-  parameter: { coords: { id: string; value: string }; attrs: { id: string; value: string } };
-  status: string;
-  startedAtTime: string;
-  endedAtTime: string;
-  completedAt: string;
-}>;
+export type DetailType = DeltaResource;

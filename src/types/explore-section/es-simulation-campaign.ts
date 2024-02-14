@@ -1,4 +1,5 @@
 import { ESHitSource } from './es-common';
+import { SimulationStatus } from './common';
 import { DateISOString } from '@/types/nexus/common';
 
 type Attrs = {
@@ -33,5 +34,5 @@ export type Simulation = ESHitSource & {
   name: string;
   parameter: Coords;
   startedAt: DateISOString;
-  status: string;
+  status: SimulationStatus;
 };

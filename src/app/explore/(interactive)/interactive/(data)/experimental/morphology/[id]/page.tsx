@@ -8,7 +8,7 @@ import { loadable } from 'jotai/utils';
 
 import createMorphologyDataAtom from '@/components/explore-section/MorphoViewerContainer/state/MorphologyDataAtom';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
-import { DetailType } from '@/constants/explore-section/fields-config/types';
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import WithGeneralization from '@/components/explore-section/WithGeneralization';
 import { DataType } from '@/constants/explore-section/list-views';
 import { NEURON_MORPHOLOGY_FIELDS } from '@/constants/explore-section/detail-views-fields';
@@ -26,10 +26,11 @@ export default function MorphologyDetailPage() {
       <WithGeneralization dataType={DataType.ExperimentalNeuronMorphology}>
         {({ render: renderSimilar }) => (
           <Detail fields={NEURON_MORPHOLOGY_FIELDS}>
-            {(detail: DetailType) => (
+            {(detail) => (
               <>
                 <Morphometrics dataType={DataType.ExperimentalNeuronMorphology} resource={detail} />
-                <MorphoViewerLoader resource={detail} />
+                <MorphoViewerLoader resource={detail as any as ReconstructedNeuronMorphology} />
+                {/* TODO: There must be a better way to do this than "as any as" */}
                 <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                   <GeneralizationControls dataType={DataType.ExperimentalNeuronMorphology} />
                 </ErrorBoundary>
@@ -43,7 +44,7 @@ export default function MorphologyDetailPage() {
   );
 }
 
-function MorphoViewerLoader({ resource }: { resource: DetailType }) {
+function MorphoViewerLoader({ resource }: { resource: ReconstructedNeuronMorphology }) {
   const morphologyDataAtom = useMemo(
     () => loadable(createMorphologyDataAtom(resource)),
     [resource]

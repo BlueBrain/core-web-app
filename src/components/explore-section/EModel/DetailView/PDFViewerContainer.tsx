@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { ConfigProvider, Select } from 'antd';
 import { useState } from 'react';
-import { FileDistribution } from '@/types/explore-section/es-properties';
+import { FileDistribution } from '@/types/explore-section/delta-properties';
 
 const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
   ssr: false,

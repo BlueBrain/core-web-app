@@ -40,7 +40,11 @@ export type ExperimentalNeuronDensity = ExperimentResource & {
 
 export type ExperimentalSynapsesPerConnection = ExperimentResource & {
   series: SeriesStatistic | SeriesStatistic[];
-  synapse: Synapse;
+  synapse: Synapse; // TODO: Check this property against "synapticPathway"
+  synapticPathway: {
+    postSynaptic: { about: string; label: string }[];
+    preSynaptic: { about: string; label: string }[];
+  }; // TODO: Check this property against "synapse". Which one is actually correct?
 };
 
 export type ExperimentalTrace = ExperimentResource & {

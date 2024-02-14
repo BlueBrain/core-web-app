@@ -11,7 +11,8 @@ export default function EphysDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <Detail fields={ELECTRO_PHYSIOLOGY_FIELDS}>
-        {(detail: ExperimentalTrace) => <EphysViewerContainer resource={detail} />}
+        {(detail) => <EphysViewerContainer resource={detail as any as ExperimentalTrace} />}
+        {/* TODO: There should be a better way to do this than "as any as" */}
       </Detail>
     </Suspense>
   );

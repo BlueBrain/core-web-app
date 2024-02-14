@@ -1,9 +1,9 @@
 'use client';
 
 import Detail from '@/components/explore-section/Detail';
-import { SimulationCampaign } from '@/types/explore-section/delta-simulation-campaigns';
 import Simulations from '@/components/explore-section/Simulations';
 import { DetailProps } from '@/types/explore-section/application';
+import { Simulation } from '@/types/explore-section/delta-simulation-campaigns';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
 const fields: DetailProps[] = [
@@ -39,7 +39,8 @@ export default function SimulationCampaignDetailPage() {
       {(detail) => (
         <div>
           <hr />
-          <Simulations resource={detail as SimulationCampaign} />
+          <Simulations resource={detail as any as Simulation} />
+          {/* TODO: We need a better way to differentiate between Simulations and Experiments */}
         </div>
       )}
     </Detail>

@@ -11,7 +11,7 @@ export type DimensionBoxProps = {
   dismissFunc?: () => void;
   dismissible: boolean;
   isAxis: boolean;
-  possibleValues?: number[];
+  possibleValues?: number | number[];
 };
 
 export type UnassignedDimensionBoxProps = {

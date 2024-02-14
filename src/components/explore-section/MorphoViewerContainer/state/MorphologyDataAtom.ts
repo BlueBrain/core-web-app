@@ -3,7 +3,7 @@ import matches from 'lodash/matches';
 import { composeUrl } from '@/util/nexus';
 import { fetchFileByUrl } from '@/api/nexus';
 import sessionAtom from '@/state/session';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 
 const SHAPE = {
   '@type': 'DataDownload',
@@ -11,7 +11,7 @@ const SHAPE = {
 };
 
 export default function createMorphologyDataAtom(
-  resource: DeltaResource
+  resource: ReconstructedNeuronMorphology
 ): Atom<Promise<string> | null> {
   return atom((get) => {
     const session = get(sessionAtom);
