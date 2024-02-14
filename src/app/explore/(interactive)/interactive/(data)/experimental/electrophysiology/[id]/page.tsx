@@ -10,8 +10,8 @@ import { ELECTRO_PHYSIOLOGY_FIELDS } from '@/constants/explore-section/detail-vi
 export default function EphysDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
-      <Detail fields={ELECTRO_PHYSIOLOGY_FIELDS}>
-        {(detail) => <EphysViewerContainer resource={detail as any as ExperimentalTrace} />}
+      <Detail<ExperimentalTrace> fields={ELECTRO_PHYSIOLOGY_FIELDS}>
+        {(detail) => <EphysViewerContainer resource={detail} />}
         {/* TODO: There should be a better way to do this than "as any as" */}
       </Detail>
     </Suspense>

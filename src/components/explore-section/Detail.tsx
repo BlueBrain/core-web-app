@@ -14,12 +14,12 @@ import { DetailType } from '@/constants/explore-section/fields-config/types';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
-export default function Detail({
+export default function Detail<T>({
   fields,
   children,
 }: {
   fields: DetailProps[];
-  children?: (detail: DetailType) => ReactNode;
+  children?: (detail: T) => ReactNode;
 }) {
   const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
 
