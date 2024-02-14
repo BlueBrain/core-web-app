@@ -5,7 +5,7 @@ import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import MorphologyViewer, { MorphoViewerOptions } from './MorphologyViewer';
 import createMorphologyDataAtom from '@/components/explore-section/MorphoViewerContainer/state/MorphologyDataAtom';
-import { DeltaResource } from '@/types/explore-section/resources';
+import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 
 function MorphoWrapper({
   options,
@@ -15,7 +15,7 @@ function MorphoWrapper({
 }: {
   options: MorphoViewerOptions;
   onPolylineClick: VoidFunction;
-  resource: DeltaResource;
+  resource: ReconstructedNeuronMorphology;
   hideTitleOptions?: boolean;
 }) {
   const morphologyDataAtom = useMemo(

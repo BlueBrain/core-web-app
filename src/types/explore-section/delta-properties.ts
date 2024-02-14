@@ -23,6 +23,19 @@ export type Derivation = Type & {
   entity: IdWithType;
 };
 
+export type FileDistribution = {
+  '@type': 'DataDownload';
+  atLocation: Location;
+  contentSize: {
+    unitCode: 'bytes';
+    value: number;
+  };
+  contentUrl: string;
+  encodingFormat: string;
+  label?: string; // TODO: Confirm that this exists. I'm not sure it does.
+  name: string;
+};
+
 type GenerationSoftwareSourceCode = Type & {
   codeRepository: string;
   programmingLanguage: string;
@@ -50,6 +63,14 @@ export type Image = Id & {
   about: string;
   repetition: number;
   stimulusType: Id;
+};
+
+type Location = {
+  '@type': 'Location';
+  location: string;
+  store: IdWithType & {
+    _rev: number;
+  };
 };
 
 export type SeriesStatistic = {

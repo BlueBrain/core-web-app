@@ -1,6 +1,13 @@
 import find from 'lodash/find';
 import { DeltaResource, Subject } from '@/types/explore-section/resources';
 import { Annotation, SeriesStatistic } from '@/types/explore-section/delta-properties';
+import {
+  ExperimentalBoutonDensity,
+  ExperimentalLayerThickness,
+  ExperimentalNeuronDensity,
+  ExperimentalSynapsesPerConnection,
+  ExperimentalTrace,
+} from '@/types/explore-section/delta-experiment';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
@@ -8,7 +15,7 @@ import { formatNumber } from '@/util/common';
 const seriesArrayFunc = (series: SeriesStatistic | SeriesStatistic[] | undefined) =>
   series && ensureArray(series);
 
-const annotationArrayFunc = (annotation: Annotation[] | undefined | null) =>
+const annotationArrayFunc = (annotation: Annotation | Annotation[] | undefined) =>
   annotation && ensureArray(annotation);
 
 /**
@@ -35,7 +42,9 @@ export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
 };
 
 // renders mtype or 'no MType text if not present
-export const mTypeSelectorFn = (detail: DeltaResource | null) => {
+export const mTypeSelectorFn = (
+  detail: ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
+) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
     (o: Annotation) => o.name.toLowerCase() === 'm-type annotation'
@@ -44,7 +53,9 @@ export const mTypeSelectorFn = (detail: DeltaResource | null) => {
 };
 
 // renders etype or 'no EType' text if not present
-export const eTypeSelectorFn = (detail: DeltaResource | null) => {
+export const eTypeSelectorFn = (
+  detail: ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
+) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
     (o: Annotation) => o.name.toLowerCase() === 'e-type annotation'
@@ -53,7 +64,9 @@ export const eTypeSelectorFn = (detail: DeltaResource | null) => {
 };
 
 // renders standard error of the mean if present
-export const semSelectorFn = (detail: DeltaResource | null) => {
+export const semSelectorFn = (
+  detail: ExperimentalBoutonDensity | ExperimentalLayerThickness | ExperimentalSynapsesPerConnection
+) => {
   const seriesArray: SeriesStatistic[] | undefined = seriesArrayFunc(detail?.series);
 
   const value = seriesArray
@@ -70,7 +83,10 @@ export const semSelectorFn = (detail: DeltaResource | null) => {
  * @param withUnits whether to render units
  */
 export const selectorFnStatisticDetail = (
-  detail: DeltaResource,
+  detail:
+    | ExperimentalBoutonDensity
+    | ExperimentalLayerThickness
+    | ExperimentalSynapsesPerConnection,
   field: string,
   withUnits: boolean = false
 ): string | number => {

@@ -8,15 +8,15 @@ import {
 } from '@/components/explore-section/Simulations/types';
 import { AxesState } from '@/types/explore-section/misc';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
-import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { Simulation } from '@/types/explore-section/delta-simulation-campaigns';
 import { pathToResource } from '@/util/explore-section/detail-view';
 
 // Dimensions atoms
 
-function buildDefaultDimensions(resource: SimulationCampaignResource) {
+function buildDefaultDimensions(resource: Simulation) {
   return resource.parameter?.coords
     ? Object.entries(resource.parameter?.coords).map(([id, values]) => {
-        const value: number = values[0];
+        const value: number = (values as Array<number>)[0];
 
         return {
           id,
@@ -30,10 +30,10 @@ export const dimensionsAtom = atom<Dimension[] | null>([]);
 
 export const initializeDimensionsFamily = memoizeOne((path: string) =>
   atom(null, async (get, set) => {
-    const resource = await get(detailFamily(pathToResource(path)));
+    const resource = (await get(detailFamily(pathToResource(path)))) as any as Simulation; // TODO: We need a better way to determine the type of the detail atom
 
     if (resource) {
-      const defaultDimensions = buildDefaultDimensions(resource as SimulationCampaignResource);
+      const defaultDimensions = buildDefaultDimensions(resource);
 
       set(dimensionsAtom, defaultDimensions);
     }

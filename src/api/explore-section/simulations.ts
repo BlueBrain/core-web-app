@@ -5,7 +5,7 @@ import esb from 'elastic-builder';
 import { createHeaders } from '@/util/utils';
 import { Dimension } from '@/components/explore-section/Simulations/types';
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
-import { Simulation } from '@/types/explore-section/es-simulation-campaign';
+import { Simulation } from '@/types/explore-section/delta-simulation-campaigns';
 import { AnalysisReport } from '@/types/explore-section/es-analysis-report';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import { API_SEARCH } from '@/constants/explore-section/queries';

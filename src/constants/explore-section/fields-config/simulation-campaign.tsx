@@ -5,6 +5,7 @@ import SimulationCampaignStatus from '@/components/explore-section/SimulationCam
 import timeElapsedFromToday from '@/util/date';
 import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-config/types';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
+import { Simulation, SimulationCampaign } from '@/types/explore-section/delta-simulation-campaigns';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
 export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
@@ -41,7 +42,8 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: null,
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-      deltaResourceViewFn: (resource) => resource?.brainConfiguration,
+      deltaResourceViewFn: (resource) =>
+        (resource as any as SimulationCampaign)?.brainConfiguration, // TODO: We should have a better way to infer the type than "as any as"
     },
     vocabulary: {
       plural: 'Brain Configurations',
@@ -55,8 +57,11 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       deltaResourceViewFn: (resource) => (
         <ListField
           items={
-            resource.parameter?.coords &&
-            Object.entries(resource.parameter?.coords).map(([k]) => ({ id: k, label: k }))
+            (resource as any as Simulation).parameter?.coords &&
+            Object.entries((resource as any as Simulation).parameter?.coords).map(([k]) => ({
+              id: k,
+              label: k,
+            }))
           }
         />
       ),
@@ -73,8 +78,11 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       deltaResourceViewFn: (resource) => (
         <ListField
           items={
-            resource.parameter?.attrs &&
-            Object.entries(resource.parameter?.attrs).map(([k]) => ({ id: k, label: k }))
+            (resource as any as Simulation).parameter?.attrs &&
+            Object.entries((resource as any as Simulation).parameter?.attrs ?? {}).map(([k]) => ({
+              id: k,
+              label: k,
+            }))
           }
         />
       ),
@@ -99,7 +107,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Status',
     filter: FilterTypeEnum.CheckList,
     render: {
-      deltaResourceViewFn: (resource) => resource?.status,
+      deltaResourceViewFn: (resource) => (resource as any as Simulation)?.status,
     },
     vocabulary: {
       plural: 'Status',
@@ -110,7 +118,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'Campaign',
     filter: FilterTypeEnum.CheckList,
     render: {
-      deltaResourceViewFn: (resource) => resource?.wasGeneratedBy?.['@id'],
+      deltaResourceViewFn: (resource) => (resource as any as Simulation)?.wasGeneratedBy?.['@id'],
     },
     vocabulary: {
       plural: 'Campaigns',
@@ -132,7 +140,8 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'started at',
     filter: null,
     render: {
-      deltaResourceViewFn: (resource) => resource && timeElapsedFromToday(resource.startedAtTime),
+      deltaResourceViewFn: (resource) =>
+        resource && timeElapsedFromToday((resource as any as Simulation).startedAtTime),
     },
     vocabulary: {
       plural: 'Dates',
@@ -143,7 +152,8 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     title: 'completed at',
     filter: null,
     render: {
-      deltaResourceViewFn: (resource) => resource && timeElapsedFromToday(resource.endedAtTime),
+      deltaResourceViewFn: (resource) =>
+        resource && timeElapsedFromToday((resource as any as Simulation).endedAtTime),
     },
     vocabulary: {
       plural: 'Dates',

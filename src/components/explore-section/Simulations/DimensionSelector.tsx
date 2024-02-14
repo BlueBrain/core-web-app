@@ -10,8 +10,9 @@ import {
 } from '@/components/explore-section/Simulations/state';
 import DimensionBox from '@/components/explore-section/Simulations/DimensionBox';
 import { Dimension } from '@/components/explore-section/Simulations/types';
+import { ParameterCoords } from '@/types/explore-section/delta-simulation-campaigns';
 
-export default function DimensionSelector({ coords }: { coords?: { [id: string]: number[] } }) {
+export default function DimensionSelector({ coords }: { coords?: ParameterCoords }) {
   const xAxisDimension = useAtomValue(selectedXDimensionAtom);
   const yAxisDimension = useAtomValue(selectedYDimensionAtom);
   const otherDimensions = useAtomValue(otherDimensionsAtom);

@@ -41,8 +41,6 @@ export type TraceData = {
   x?: any;
 };
 
-export type SimulationStatus = 'Running' | 'Done' | 'Failed';
-
 export type AxesState = {
   xAxis?: string;
   yAxis?: string;

@@ -2,7 +2,10 @@ import { atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import memoizeOne from 'memoize-one';
 import sessionAtom from '../session';
-import { DeltaResource, Simulation } from '@/types/explore-section/resources';
+import {
+  Simulation,
+  SimulationCampaignExecution,
+} from '@/types/explore-section/delta-simulation-campaigns';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { fetchAnalysisReports, fetchSimulationsFromEs } from '@/api/explore-section/simulations';
@@ -19,24 +22,22 @@ const ensuredSessionAtom = atom((get) => {
 export const simCampaignExecutionFamily = atomFamily((path: string) =>
   atom(async (get) => {
     const { session, info } = get(sessionAndInfoFamily(pathToResource(path)));
-    const detail = await get(detailFamily(info));
+    const detail = (await get(detailFamily(info))) as any as Simulation; // TODO: "any as any" must go
     const executionId = detail?.wasGeneratedBy?.['@id'];
 
     if (!executionId || !detail) return null;
 
     const cleanExecutionId = executionId.replace('https://bbp.epfl.ch/neurosciencegraph/data/', '');
 
-    const execution = await fetchResourceById<
-      DeltaResource<
-        { generated: { '@id': string; type: 'SimulationCampaign' } } & {
-          status: string;
-        }
-      >
-    >(cleanExecutionId, session, {
-      org: info.org,
-      project: info.project,
-      idExpand: false,
-    });
+    const execution = await fetchResourceById<SimulationCampaignExecution>(
+      cleanExecutionId,
+      session,
+      {
+        org: info.org,
+        project: info.project,
+        idExpand: false,
+      }
+    );
 
     return execution;
   })
@@ -61,15 +62,19 @@ export const simulationsFamily = atomFamily((path: string) =>
 
     const simulations =
       execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
-    return simulations?.hits.map(({ _source: simulation }) => ({
-      title: simulation.name,
-      completedAt: simulation.endedAt,
-      dimensions: simulation.parameter?.coords,
-      id: simulation['@id'],
-      project: simulation?.project.identifier, // TODO: Possibly no longer necessary
-      startedAt: simulation.startedAt,
-      status: simulation.status,
-    })) as Simulation[] | undefined;
+    return simulations?.hits.map(({ _source }) => {
+      const simulation = _source as any as Simulation;
+
+      return {
+        title: simulation.name,
+        completedAt: simulation.endedAt,
+        dimensions: simulation.parameter?.coords,
+        id: simulation['@id'],
+        project: simulation?.project, // Check: is there a .identifier sub-prop?
+        startedAt: simulation.startedAt,
+        status: simulation.status,
+      };
+    }) as Simulation[] | undefined;
   })
 );
 

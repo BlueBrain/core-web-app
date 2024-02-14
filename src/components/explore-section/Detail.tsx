@@ -39,9 +39,10 @@ export default function Detail({
     return <Error statusCode={400} title="Something went wrong while fetching the data" />;
   }
 
-  if (detail?.data?.reason) {
-    return <Error statusCode={404} title={detail?.data?.reason} />;
-  }
+  // TODO: Check whether this "reason" prop actually exists (when not an ES response)
+  // if (detail?.data?.reason) {
+  //   return <Error statusCode={404} title={detail?.data?.reason} />;
+  // }
 
   if (detail.data === null) {
     return <h1>Selected resource not found</h1>;

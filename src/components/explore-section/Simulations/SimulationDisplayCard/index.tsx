@@ -3,7 +3,7 @@ import { Spin } from 'antd';
 import { useMemo } from 'react';
 import SimulationCard from './SimulationCard';
 import CenteredMessage from '@/components/CenteredMessage';
-import { Simulation } from '@/types/explore-section/resources';
+import { Simulation } from '@/types/explore-section/delta-simulation-campaigns';
 import AnalysisReportImage from '@/components/explore-section/Simulations/SimulationDisplayCard/AnalysisReportImage';
 import { analysisReportsFamily } from '@/state/explore-section/simulation-campaign';
 import { useUnwrappedValue } from '@/hooks/hooks';
