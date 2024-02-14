@@ -55,7 +55,6 @@ export type SimulationCampaign = EntityResource & {
   parameter: Parameter; // TODO: Check whether both Campaigns and Simulations should have this property
   simulations: SimCampSims;
   wasGeneratedBy: IdWithType; // TODO: Check whether both Campaigns and Simulations should have this property
-
 };
 
 export type SimulationCampaignExecution = EntityResource & {

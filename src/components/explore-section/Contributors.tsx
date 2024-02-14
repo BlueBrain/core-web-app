@@ -22,7 +22,9 @@ export const formatContributors = (contributor: DeltaContributor | null): IdLabe
   return { id, type };
 };
 
-export const formatEsContributors = (contributor: ESContributor): IdLabelWithType => {
+export const formatEsContributors = (contributor: ESContributor | null): IdLabelWithType => {
+  if (!contributor) return {};
+
   const { '@id': id, '@type': type, label } = contributor;
 
   if (label) return { id, type, label };
