@@ -255,7 +255,7 @@ export const resourceBasedResponseMorphoMetricsAtom = atomFamily(
         esResponse && esResponse.hits
           ? sortBy(esResponse.hits, (item) =>
               isNeuronMorphologyFeatureAnnotation(item._source)
-                ? ids.indexOf(item._source.neuronMorphology)
+                ? ids.indexOf(item._source.neuronMorphology['@id'])
                 : -1
             )
           : [];

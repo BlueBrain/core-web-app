@@ -8,6 +8,10 @@ export type Label = {
   label: string;
 };
 
+export type Name = {
+  name: string;
+};
+
 export type Type<T = string> = {
   '@type': T;
 };
@@ -17,6 +21,8 @@ type Value<V = number> = {
 };
 
 export type IdWithLabel = Id & Label;
+
+export type IdWithName = Id & Name;
 
 export type IdWithType<T = string> = Id & Type<T>;
 

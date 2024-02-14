@@ -57,7 +57,7 @@ export function fetchMorphoMetricsUsingIds(
   sortState?: SortState
 ): DataQuery {
   const sortQuery = sortState && buildESSort(sortState);
-  const idsQuery = new TermsQuery('neuronMorphology.keyword', inferredResponseIds);
+  const idsQuery = new TermsQuery('neuronMorphology.@id.keyword', inferredResponseIds);
 
   const boolMustQuery = boolQuery().must([buildFilters(filters), idsQuery]);
 

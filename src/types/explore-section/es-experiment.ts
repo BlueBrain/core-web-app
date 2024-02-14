@@ -17,6 +17,7 @@ import {
   SubjectWeight,
 } from './es-properties';
 import { ESHitSource } from './es-common';
+import { IdWithName } from './common';
 import { SynapticPathway } from '@/types/explore-section/fields';
 
 type ExperimentProps = ESHitSource & {
@@ -89,7 +90,7 @@ type MorphologyFeature = {
 };
 
 export type NeuronMorphologyFeatureAnnotation = ExperimentProps & {
-  neuronMorphology: string;
+  neuronMorphology: IdWithName;
   compartment: MorphoMetricCompartment;
 };
 

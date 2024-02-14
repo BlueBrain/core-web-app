@@ -99,7 +99,7 @@ export default function CardView({ data, dataType, resourceId = '' }: CardViewPr
             metrics={resourceBasedResponseMorphoMetrics?.hits.filter(
               (metric) =>
                 isNeuronMorphologyFeatureAnnotation(metric._source) &&
-                d._id === metric._source.neuronMorphology
+                d._id === metric._source.neuronMorphology['@id']
             )}
             score={scoreFinder(d._id)}
           />
