@@ -33,11 +33,11 @@ export const sessionAndInfoFamily = atomFamily(
   isEqual
 );
 
-export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>>>(
+export const detailFamily = atomFamily<ResourceInfo, Atom<any>>(
   (resourceInfo?: ResourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const resource: DeltaResource = await fetchResourceById(info.id, session, {
+      const resource = await fetchResourceById(info.id, session, {
         org: info.org,
         project: info.project,
         rev: info.rev,

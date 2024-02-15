@@ -1,6 +1,5 @@
 'use client';
 
-import { Loadable } from 'jotai/vanilla/utils/loadable';
 import { PDFViewerContainer } from './PDFViewerContainer';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { EModelResource } from '@/types/explore-section/delta-me-model';
@@ -10,7 +9,7 @@ import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 
 export default function Analysis() {
   const resourceInfo = useResourceInfoFromPath();
-  const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<EModelResource>;
+  const detail = useLoadableValue<EModelResource>(detailFamily(resourceInfo));
 
   if (detail.state === 'loading') {
     return <CentralLoadingSpinner />;
