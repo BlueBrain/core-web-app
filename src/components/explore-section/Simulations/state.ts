@@ -30,7 +30,7 @@ export const dimensionsAtom = atom<Dimension[] | null>([]);
 
 export const initializeDimensionsFamily = memoizeOne((path: string) =>
   atom(null, async (get, set) => {
-    const resource = (await get(detailFamily(pathToResource(path)))) as any as Simulation; // TODO: We need a better way to determine the type of the detail atom
+    const resource: Simulation | undefined = (await get(detailFamily(pathToResource(path))))
 
     if (resource) {
       const defaultDimensions = buildDefaultDimensions(resource);
