@@ -134,7 +134,7 @@ function DeleteVirtualLabConfirmation({
             ref={inputRef}
             placeholder="Write your confirmation here..."
             aria-label="confirm lab delete"
-            bordered={false}
+            variant="borderless"
             className="font-bold placeholder:font-normal"
           />
         </div>

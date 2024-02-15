@@ -30,7 +30,7 @@ export default function ExperimentSelector({ currentExperiment }: Props) {
         <Select
           aria-label="keywords"
           placeholder="Experiment type"
-          bordered={false}
+          variant="borderless"
           defaultValue={currentExperiment?.name}
           value={currentExperiment?.name}
           onChange={(experimentName) => {

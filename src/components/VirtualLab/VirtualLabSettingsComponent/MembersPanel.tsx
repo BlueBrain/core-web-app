@@ -242,7 +242,7 @@ export default function MembersPanel({
                 {contextHolder}
                 {userIsAdmin || member.email === currentUser.email ? (
                   <Select
-                    bordered={false}
+                    variant="borderless"
                     placeholder={member.role}
                     value={member.role}
                     aria-label={`role-for-${member.name}`}

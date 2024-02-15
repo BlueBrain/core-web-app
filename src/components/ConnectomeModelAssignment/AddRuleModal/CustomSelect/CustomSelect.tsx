@@ -30,7 +30,7 @@ export default function CustomSelect({ field, rule, onChange }: CustomSelectProp
         id={id}
         value={rule[field]}
         style={{ minWidth: '120px' }}
-        bordered={false}
+        variant="borderless"
         placeholder={`Search ${label}`}
         onChange={(value) => onChange({ ...rule, [field]: value })}
         options={optionsProvider(field).map((value) => ({ value, label: getLabel(value) }))}

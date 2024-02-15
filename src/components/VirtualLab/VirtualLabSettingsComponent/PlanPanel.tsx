@@ -161,7 +161,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                       className="flex-1 border-b border-gray-200"
                       wrapperCol={{ flex: 1, span: 12 }}
                     >
-                      <Input placeholder="Enter your first name..." bordered={false} />
+                      <Input placeholder="Enter your first name..." variant="borderless" />
                     </Form.Item>
                     <Form.Item
                       name="lastname"
@@ -170,7 +170,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                       wrapperCol={{ flex: 1, span: 12 }}
                       className="ml-5 flex-1 border-b border-gray-200"
                     >
-                      <Input placeholder="Enter your last name..." bordered={false} />
+                      <Input placeholder="Enter your last name..." variant="borderless" />
                     </Form.Item>
                   </div>
 
@@ -181,7 +181,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                     className="border-b border-gray-200"
                     wrapperCol={{ flex: 1 }}
                   >
-                    <Input placeholder="Enter your address..." bordered={false} />
+                    <Input placeholder="Enter your address..." variant="borderless" />
                   </Form.Item>
 
                   <div className="flex justify-between">
@@ -192,7 +192,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                       wrapperCol={{ flex: 1, span: 12 }}
                       className="flex-1 border-b border-gray-200"
                     >
-                      <Input placeholder="Enter your city..." bordered={false} />
+                      <Input placeholder="Enter your city..." variant="borderless" />
                     </Form.Item>
                     <Form.Item
                       name="postalCode"
@@ -201,7 +201,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                       wrapperCol={{ flex: 1, span: 12 }}
                       className="ml-5 flex-1 border-b border-gray-200"
                     >
-                      <Input placeholder="Enter your postal code..." bordered={false} />
+                      <Input placeholder="Enter your postal code..." variant="borderless" />
                     </Form.Item>
                   </div>
 
@@ -212,7 +212,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
                     className="w-1/2 border-b border-gray-200"
                   >
                     <Select
-                      bordered={false}
+                      variant="borderless"
                       options={[
                         {
                           label: billingInfo.country,

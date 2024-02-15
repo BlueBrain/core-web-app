@@ -46,7 +46,7 @@ export default function ArticleSorter({ onChange }: SorterProps) {
         )}
         popupClassName="!text-primary-8"
         popupMatchSelectWidth={false}
-        bordered={false}
+        variant="borderless"
         suffixIcon={null}
         onChange={(value) => onSortFieldChange(value as SortableFieldsType)}
         aria-label="sort-by-field-selector"

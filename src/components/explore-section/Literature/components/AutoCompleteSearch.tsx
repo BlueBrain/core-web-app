@@ -113,7 +113,7 @@ export default function AutoCompleteSearch({
       }
       defaultValue={defaultValues}
       className="min-w-[128px] rounded"
-      bordered={false}
+      variant="borderless"
       size="middle"
       popupMatchSelectWidth={false}
       notFoundContent={

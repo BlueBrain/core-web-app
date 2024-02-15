@@ -21,7 +21,7 @@ export default function PlaybackSpeed() {
       </div>
       <Select
         style={{ width: 160, color: '#fff' }}
-        bordered={false}
+        variant="borderless"
         value={item.id}
         onChange={setId}
         options={getAllPlaybackSpeedItems().map((elem) => ({

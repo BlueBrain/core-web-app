@@ -11,7 +11,7 @@ export default function UnassignedDimensionBox({
   if (status === 'selection') {
     return (
       <Select
-        bordered={false}
+        variant="borderless"
         style={{ width: '100%' }}
         className="top-1/4 border-b border-solid border-neutral-6"
         placeholder="Search dimension..."
