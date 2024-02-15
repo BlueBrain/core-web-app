@@ -8,7 +8,7 @@ import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Simulation, SimulationCampaign } from '@/types/explore-section/delta-simulation-campaigns';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
-export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
+export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps<SimulationCampaign> = {
   [Field.SimulationCampaignName]: {
     esTerms: {
       flat: {
@@ -42,8 +42,7 @@ export const SIMULATION_CAMPAIGN_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: null,
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-      deltaResourceViewFn: (resource) =>
-        (resource as any as SimulationCampaign)?.brainConfiguration, // TODO: We should have a better way to infer the type than "as any as"
+      deltaResourceViewFn: (resource) => resource?.brainConfiguration,
     },
     vocabulary: {
       plural: 'Brain Configurations',

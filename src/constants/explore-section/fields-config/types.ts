@@ -14,7 +14,7 @@ type ExploreFieldConfigStyle = {
   width?: number;
 };
 
-export type ExploreFieldConfig = {
+export type ExploreFieldConfig<T> = {
   fieldType?: FieldType;
   className?: string;
   esTerms?: EsTermsConfig;
@@ -25,7 +25,7 @@ export type ExploreFieldConfig = {
   group?: MorphoMetricCompartment;
   render?: {
     esResourceViewFn?: (value: any, record: any, index?: number) => ReactNode | any;
-    deltaResourceViewFn?: (resource: DetailType) => ReactNode | any;
+    deltaResourceViewFn?: (resource: T) => ReactNode | any;
   };
   sorter?: boolean;
   vocabulary: {
@@ -35,8 +35,8 @@ export type ExploreFieldConfig = {
   style?: Partial<ExploreFieldConfigStyle>;
 };
 
-export type ExploreFieldsConfigProps = {
-  [key: string]: ExploreFieldConfig;
+export type ExploreFieldsConfigProps<T> = {
+  [key: string]: ExploreFieldConfig<T>;
 };
 
 type EsTermsConfig = {
