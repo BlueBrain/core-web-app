@@ -1,11 +1,16 @@
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import memoizeOne from 'memoize-one';
 import sessionAtom from '../session';
 import {
   Simulation,
+  SimulationCampaign,
   SimulationCampaignExecution,
 } from '@/types/explore-section/delta-simulation-campaigns';
+import {
+  Simulation as ESSimulation,
+  FormattedSimulation,
+} from '@/types/explore-section/es-simulation-campaign';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { fetchAnalysisReports, fetchSimulationsFromEs } from '@/api/explore-section/simulations';
@@ -22,7 +27,7 @@ const ensuredSessionAtom = atom((get) => {
 export const simCampaignExecutionFamily = atomFamily((path: string) =>
   atom(async (get) => {
     const { session, info } = get(sessionAndInfoFamily(pathToResource(path)));
-    const detail = (await get(detailFamily(info))) as any as Simulation; // TODO: "any as any" must go
+    const detail = (await get(detailFamily(info))) as Simulation;
     const executionId = detail?.wasGeneratedBy?.['@id'];
 
     if (!executionId || !detail) return null;
@@ -50,31 +55,33 @@ memoizeOne acts as an atomFamily with just one element
 export const simCampaignDimensionsFamily = memoizeOne((path: string) =>
   selectAtom(
     detailFamily(pathToResource(path)),
-    // @ts-ignore
-    (simCamp) => simCamp?.parameter?.coords // TODO: Improve type
+    (simCamp) => (simCamp as SimulationCampaign)?.parameter?.coords // TODO: Improve type
   )
 );
 
-export const simulationsFamily = atomFamily((path: string) =>
+export const simulationsFamily = atomFamily<
+  string,
+  Atom<Promise<FormattedSimulation[] | undefined>>
+>((path: string) =>
   atom(async (get) => {
     const session = get(ensuredSessionAtom);
     const execution = await get(simCampaignExecutionFamily(path));
 
     const simulations =
       execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
-    return simulations?.hits.map(({ _source }) => {
-      const simulation = _source as any as Simulation;
-
-      return {
-        title: simulation.name,
-        completedAt: simulation.endedAt,
-        dimensions: simulation.parameter?.coords,
-        id: simulation['@id'],
-        project: simulation?.project, // Check: is there a .identifier sub-prop?
-        startedAt: simulation.startedAt,
-        status: simulation.status,
-      };
-    }) as Simulation[] | undefined;
+    return simulations?.hits.map<FormattedSimulation>(
+      ({ _source: simulation }: { _source: ESSimulation }) => {
+        return {
+          title: simulation.name,
+          completedAt: simulation.endedAt,
+          dimensions: simulation.parameter.coords,
+          id: simulation['@id'],
+          project: simulation.project, // Check: is there a .identifier sub-prop?
+          startedAt: simulation.startedAt,
+          status: simulation.status,
+        };
+      }
+    );
   })
 );
 

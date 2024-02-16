@@ -1,5 +1,5 @@
 import { Key } from 'react';
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import { atomFamily, atomWithDefault } from 'jotai/utils';
 import head from 'lodash/head';
 import isEqual from 'lodash/isEqual';
@@ -22,6 +22,7 @@ import { DataType, PAGE_NUMBER } from '@/constants/explore-section/list-views';
 import { DEFAULT_CARDS_NUMBER } from '@/constants/explore-section/generalization';
 import { fetchDataQueryUsingIds, fetchMorphoMetricsUsingIds } from '@/queries/explore-section/data';
 import { fetchEsResourcesByType } from '@/api/explore-section/resources';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { isNeuronMorphologyFeatureAnnotation } from '@/util/explore-section/typeUnionTargetting';
 
 export const inferredResourcesAtom = atomFamily(() => atom(new Array<InferredResource>()));
@@ -163,9 +164,12 @@ export const resourceBasedResponseResultsAtom = atomFamily((resourceId: string) 
   })
 );
 
-export const resourceBasedResponseRawAtom = atomFamily(
-  ({ resourceId, dataType }: GenFamilyType) =>
-    atom<Promise<FlattenedExploreESResponse | null>>(async (get, { signal }) => {
+export const resourceBasedResponseRawAtom = atomFamily<
+  GenFamilyType,
+  Atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>
+>(
+  ({ resourceId, dataType }) =>
+    atom(async (get, { signal }) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
@@ -198,9 +202,12 @@ export const resourceBasedResponseRawAtom = atomFamily(
   isEqual
 );
 
-export const resourceBasedResponseHitsAtom = atomFamily(
-  ({ resourceId, dataType }: GenFamilyType) =>
-    atom<Promise<FlattenedExploreESResponse['hits'] | undefined>>(async (get) => {
+export const resourceBasedResponseHitsAtom = atomFamily<
+  GenFamilyType,
+  Atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['hits'] | undefined>>
+>(
+  ({ resourceId, dataType }) =>
+    atom(async (get) => {
       const response = await get(resourceBasedResponseRawAtom({ resourceId, dataType }));
       return response?.hits;
     }),
@@ -209,10 +216,12 @@ export const resourceBasedResponseHitsAtom = atomFamily(
 
 export const resourceBasedResponseAggregationsAtom = atomFamily(
   ({ resourceId, dataType }: GenFamilyType) =>
-    atom<Promise<FlattenedExploreESResponse['aggs'] | undefined>>(async (get) => {
-      const response = await get(resourceBasedResponseRawAtom({ resourceId, dataType }));
-      return response?.aggs;
-    }),
+    atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['aggs'] | undefined>>(
+      async (get) => {
+        const response = await get(resourceBasedResponseRawAtom({ resourceId, dataType }));
+        return response?.aggs;
+      }
+    ),
   isEqual
 );
 
@@ -225,9 +234,12 @@ export const resourceBasedResponseHitsCountAtom = atomFamily(
   isEqual
 );
 
-export const resourceBasedResponseMorphoMetricsAtom = atomFamily(
-  ({ resourceId, dataType }: GenFamilyType) =>
-    atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
+export const resourceBasedResponseMorphoMetricsAtom = atomFamily<
+  GenFamilyType,
+  Atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>
+>(
+  ({ resourceId, dataType }) =>
+    atom(async (get) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
@@ -267,16 +279,18 @@ export const resourceBasedResponseMorphoMetricsAtom = atomFamily(
 
 export const sourceMorphoMetricsAtom = atomFamily(
   (resourceId: string) =>
-    atom<Promise<FlattenedExploreESResponse['hits'] | null>>(async (get) => {
-      const session = get(sessionAtom);
+    atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['hits'] | null>>(
+      async (get) => {
+        const session = get(sessionAtom);
 
-      if (!session) return null;
+        if (!session) return null;
 
-      const query = fetchMorphoMetricsUsingIds(5, PAGE_NUMBER, [], [resourceId]);
+        const query = fetchMorphoMetricsUsingIds(5, PAGE_NUMBER, [], [resourceId]);
 
-      const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
+        const esResponse = query && (await fetchEsResourcesByType(session.accessToken, query));
 
-      return esResponse.hits || null;
-    }),
+        return esResponse.hits || null;
+      }
+    ),
   isEqual
 );

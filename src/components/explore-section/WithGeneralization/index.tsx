@@ -6,6 +6,11 @@ import { resourceBasedResponseHitsAtom } from '@/state/explore-section/generaliz
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import CardView from '@/components/explore-section/CardView';
 import { DataType } from '@/constants/explore-section/list-views';
+import { ExploreESHit } from '@/types/explore-section/es';
+import {
+  ReconstructedNeuronMorphology,
+  ExperimentalTrace,
+} from '@/types/explore-section/es-experiment';
 
 export default function WithGeneralization({
   children,
@@ -36,7 +41,11 @@ export default function WithGeneralization({
     case 'hasData':
       render = resourceBasedResponseHits.data?.length ? (
         <CardView
-          data={resourceBasedResponseHits.data}
+          data={
+            resourceBasedResponseHits.data as ExploreESHit<
+              ReconstructedNeuronMorphology | ExperimentalTrace
+            >[]
+          }
           dataType={dataType}
           resourceId={resourceId}
         />

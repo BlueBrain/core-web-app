@@ -17,6 +17,7 @@ import { Filter } from '@/components/Filter/types';
 import { selectedBrainRegionWithChildrenAtom } from '@/state/brain-regions';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 
 type DataAtomFamilyScopeType = {
   dataType: DataType;
@@ -34,7 +35,10 @@ export const pageSizeAtom = atom<number>(PAGE_SIZE);
 
 export const pageNumberAtom = atomFamily(() => atom<number>(PAGE_NUMBER), isListAtomEqual);
 
-export const selectedRowsAtom = atomFamily(() => atom<ExploreESHit[]>([]), isListAtomEqual);
+export const selectedRowsAtom = atomFamily(
+  () => atom<ExploreESHit<ExploreSectionResource>[]>([]),
+  isListAtomEqual
+);
 
 export const searchStringAtom = atomFamily(() => atom<string>(''), isListAtomEqual);
 
@@ -148,7 +152,7 @@ export const queryAtom = atomFamily(
 
 export const queryResponseAtom = atomFamily(
   ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
-    atom<Promise<FlattenedExploreESResponse | null>>(async (get) => {
+    atom<Promise<FlattenedExploreESResponse<ExploreSectionResource> | null>>(async (get) => {
       const session = get(sessionAtom);
 
       if (!session) return null;
@@ -161,7 +165,10 @@ export const queryResponseAtom = atomFamily(
   isListAtomEqual
 );
 
-export const dataAtom = atomFamily<DataAtomFamilyScopeType, Atom<Promise<ExploreESHit[]>>>(
+export const dataAtom = atomFamily<
+  DataAtomFamilyScopeType,
+  Atom<Promise<ExploreESHit<ExploreSectionResource>[]>>
+>(
   ({ dataType, brainRegionSource }) =>
     atom(async (get) => {
       const response = await get(queryResponseAtom({ dataType, brainRegionSource }));
@@ -189,9 +196,11 @@ export const totalAtom = atomFamily(
 
 export const aggregationsAtom = atomFamily(
   ({ dataType, brainRegionSource }: DataAtomFamilyScopeType) =>
-    atom<Promise<FlattenedExploreESResponse['aggs'] | undefined>>(async (get) => {
-      const response = await get(queryResponseAtom({ dataType, brainRegionSource }));
-      return response?.aggs;
-    }),
+    atom<Promise<FlattenedExploreESResponse<ExploreSectionResource>['aggs'] | undefined>>(
+      async (get) => {
+        const response = await get(queryResponseAtom({ dataType, brainRegionSource }));
+        return response?.aggs;
+      }
+    ),
   isListAtomEqual
 );

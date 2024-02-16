@@ -17,17 +17,17 @@ export type ESeModel = ESHitSource & {
 
 export type ExploreResource = Experiment | Simulation | SimulationCampaign | ESeModel;
 
-export type ExploreESHit = {
+export type ExploreESHit<H extends ExploreResource> = {
   sort: number[];
   _id: string;
   _index: string;
-  _source: ExploreResource;
+  _source: H;
 };
 
-export type ExploreESResponse = {
+export type ExploreESResponse<H extends ExploreResource> = {
   aggregations: Aggregations;
   hits: {
-    hits: ExploreESHit[];
+    hits: ExploreESHit<H>[];
     total: {
       relation: string;
       value: number;
@@ -35,8 +35,8 @@ export type ExploreESResponse = {
   };
 };
 
-export type FlattenedExploreESResponse = {
-  aggs: ExploreESResponse['aggregations'];
-  hits: ExploreESResponse['hits']['hits'];
-  total: ExploreESResponse['hits']['total'];
+export type FlattenedExploreESResponse<H extends ExploreResource> = {
+  aggs: ExploreESResponse<H>['aggregations'];
+  hits: ExploreESResponse<H>['hits']['hits'];
+  total: ExploreESResponse<H>['hits']['total'];
 };

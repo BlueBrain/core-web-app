@@ -1,4 +1,4 @@
-import { ESHitSource } from './es-common';
+import { ESHitSource, Project } from './es-common';
 import { SimulationStatus } from './common';
 import { DateISOString } from '@/types/nexus/common';
 
@@ -14,7 +14,7 @@ type Config = {
   name: string;
 };
 
-type Coords = Record<string, number[]>;
+export type Coords = Record<string, number | number[]>; // TODO: Should it really be number | number[]?
 
 type Parameter = {
   attrs: Attrs;
@@ -25,14 +25,26 @@ export type SimulationCampaign = ESHitSource & {
   config: Config;
   description: string;
   parameter: Parameter;
-  status: string;
+  status: SimulationStatus;
 };
 
 export type Simulation = ESHitSource & {
-  dimensions: Record<string, number>;
+  // dimensions: Record<string, number>; // TODO: Should this type be here?
   endedAt: DateISOString;
   name: string;
-  parameter: Coords;
+  parameter: Parameter;
+  startedAt: DateISOString;
+  status: SimulationStatus;
+};
+
+// This represents the type that is created
+// by the simulationsFamily atom.
+export type FormattedSimulation = {
+  title: string;
+  completedAt: DateISOString;
+  dimensions: Coords;
+  id: string;
+  project?: Project;
   startedAt: DateISOString;
   status: SimulationStatus;
 };

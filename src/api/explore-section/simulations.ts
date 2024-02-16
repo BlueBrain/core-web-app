@@ -5,7 +5,10 @@ import esb from 'elastic-builder';
 import { createHeaders } from '@/util/utils';
 import { Dimension } from '@/components/explore-section/Simulations/types';
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
-import { Simulation } from '@/types/explore-section/delta-simulation-campaigns';
+import {
+  Simulation as ESSimulation,
+  FormattedSimulation as FormattedESSimulation,
+} from '@/types/explore-section/es-simulation-campaign';
 import { AnalysisReport } from '@/types/explore-section/es-analysis-report';
 import calculateDimensionValues from '@/api/explore-section/dimensions';
 import { API_SEARCH } from '@/constants/explore-section/queries';
@@ -16,10 +19,10 @@ import { buildESReportsQuery } from '@/queries/es';
  * @param simulation
  * @param dimension
  */
-const simulationIncludesDimension = (simulation: Simulation, dimension: Dimension) => {
+const simulationIncludesDimension = (simulation: FormattedESSimulation, dimension: Dimension) => {
   const dimensionValues = calculateDimensionValues(dimension.value);
 
-  return dimensionValues.includes(simulation.dimensions[dimension.id]);
+  return dimensionValues.includes(simulation.dimensions[dimension.id] as number); // TODO: Remove "as number" and fix.
 };
 
 /**
@@ -27,7 +30,10 @@ const simulationIncludesDimension = (simulation: Simulation, dimension: Dimensio
  * @param simulation
  * @param otherDimensions
  */
-const simulationIncludesAllDimensions = (simulation: Simulation, otherDimensions: Dimension[]) =>
+const simulationIncludesAllDimensions = (
+  simulation: FormattedESSimulation,
+  otherDimensions: Dimension[]
+) =>
   every(otherDimensions, (otherDimension) =>
     simulationIncludesDimension(simulation, otherDimension)
   );
@@ -37,13 +43,13 @@ export default function findSimulation(
   y: number,
   xDimension: Dimension,
   yDimension: Dimension,
-  simulations: Simulation[],
+  simulations: FormattedESSimulation[],
   status: string,
   otherDimensions?: Dimension[]
 ) {
   if (xDimension && yDimension && otherDimensions) {
     const simulation = simulations.find(
-      (sim: Simulation) =>
+      (sim: FormattedESSimulation) =>
         sim.dimensions[xDimension.id] === x && sim.dimensions[yDimension.id] === y
     );
 
@@ -60,7 +66,10 @@ export default function findSimulation(
   return undefined;
 }
 
-export async function fetchSimulationsFromEs(accessToken: string, campaignId: string) {
+export async function fetchSimulationsFromEs(
+  accessToken: string,
+  campaignId: string
+): Promise<FlattenedExploreESResponse<ESSimulation>> {
   if (!accessToken) throw new Error('Access token should be defined');
 
   const query = esb
@@ -76,7 +85,7 @@ export async function fetchSimulationsFromEs(accessToken: string, campaignId: st
     }),
   })
     .then((response) => response.json())
-    .then<FlattenedExploreESResponse>((data) => ({
+    .then((data) => ({
       hits: data?.hits?.hits,
       total: data?.hits?.total,
       aggs: data.aggregations,

@@ -100,5 +100,5 @@ export type Experiment =
   | ExperimentalNeuronDensity
   | ExperimentalSynapsesPerConnection
   | ExperimentalTrace
-  | NeuronMorphologyFeatureAnnotation
+  | NeuronMorphologyFeatureAnnotation // TODO: I don't think that this belongs here (it's not an "experiment")
   | ReconstructedNeuronMorphology;

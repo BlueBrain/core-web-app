@@ -1,7 +1,7 @@
 import { IdWithType, Type, SimulationStatus } from './common';
 import { DateISOString, EntityResource } from '@/types/nexus/common';
 
-export type ParameterCoords = Record<string, number | number[]>; // TODO: Check whether all of these are actually valid
+export type ParameterCoords = Record<string, number[]>;
 
 type ContentSize = {
   unitCode: 'bytes';

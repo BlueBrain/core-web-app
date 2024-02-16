@@ -7,7 +7,9 @@ import { Image, Subject as DeltaSubject } from '@/types/explore-section/delta-pr
 
 export type ExploreSectionResource = ExploreResource;
 
-export type ExploreSectionResponse = ExploreESResponse;
+// TODO: See comment in ./src/constants/explore-section/fields-config/literature.tsx
+// (regarding what to do about this "any" type below)
+export type ExploreSectionResponse = ExploreESResponse<any>;
 
 export interface ESResponseRaw {
   sort?: number[] | null;

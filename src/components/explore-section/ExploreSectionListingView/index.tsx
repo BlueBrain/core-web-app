@@ -13,6 +13,7 @@ import NumericResultsInfo from '@/components/explore-section/ExploreSectionListi
 import useExploreColumns from '@/hooks/useExploreColumns';
 import { sortStateAtom, dataAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
 
 export default function DefaultListView({
@@ -30,7 +31,7 @@ export default function DefaultListView({
 }) {
   const [sortState, setSortState] = useAtom(sortStateAtom);
 
-  const [dataSource, setDataSource] = useState<ExploreESHit[]>();
+  const [dataSource, setDataSource] = useState<ExploreESHit<ExploreSectionResource>[]>();
   const columns = useExploreColumns(setSortState, sortState, [], null, dataType);
 
   const data = useAtomValue(

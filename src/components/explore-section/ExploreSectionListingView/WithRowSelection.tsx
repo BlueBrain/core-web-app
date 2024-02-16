@@ -2,16 +2,17 @@ import { Key, ReactNode } from 'react';
 import { useAtom } from 'jotai';
 import { selectedRowsAtom } from '@/state/explore-section/list-view-atoms';
 import { ExploreESHit } from '@/types/explore-section/es';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 import { DataType } from '@/constants/explore-section/list-views';
 
 type RowSelection = {
   selectedRowKeys: Key[];
-  onChange: (_keys: Key[], rows: ExploreESHit[]) => void;
+  onChange: (_keys: Key[], rows: ExploreESHit<ExploreSectionResource>[]) => void;
   type: 'checkbox' | 'radio';
 };
 
 export type RenderButtonProps = {
-  selectedRows: ExploreESHit[];
+  selectedRows: ExploreESHit<ExploreSectionResource>[];
   clearSelectedRows: () => void;
 };
 
@@ -30,8 +31,11 @@ export default function WithRowSelection({
   return (
     <>
       {children({
-        selectedRowKeys: selectedRows.map(({ _source }: ExploreESHit) => _source._self),
-        onChange: (_keys: Key[], rows: ExploreESHit[]) => setSelectedRows(() => rows),
+        selectedRowKeys: selectedRows.map(
+          ({ _source }: ExploreESHit<ExploreSectionResource>) => _source._self
+        ),
+        onChange: (_keys: Key[], rows: ExploreESHit<ExploreSectionResource>[]) =>
+          setSelectedRows(() => rows),
         type: 'checkbox',
       })}
       {!!(renderButton && selectedRows.length) && renderButton({ selectedRows, clearSelectedRows })}

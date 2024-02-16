@@ -20,8 +20,10 @@ import { getGroupedCardFields } from '@/util/explore-section/cardViewUtils';
 
 const { Panel } = Collapse;
 
+type CardDataType = ReconstructedNeuronMorphology | ExperimentalTrace;
+
 type CardViewProps = {
-  data?: ExploreESHit[] | null;
+  data?: ExploreESHit<CardDataType>[] | null;
   dataType: DataType;
   resourceId?: string;
 };
@@ -93,14 +95,16 @@ export default function CardView({ data, dataType, resourceId = '' }: CardViewPr
             key={d._id}
             resource={{
               ...d,
-              _source: d._source as ReconstructedNeuronMorphology | ExperimentalTrace,
+              _source: d._source,
             }}
             dataType={dataType}
-            metrics={resourceBasedResponseMorphoMetrics?.hits.filter(
-              (metric) =>
-                isNeuronMorphologyFeatureAnnotation(metric._source) &&
-                d._id === metric._source.neuronMorphology['@id']
-            )}
+            metrics={
+              resourceBasedResponseMorphoMetrics?.hits.filter(
+                (metric) =>
+                  isNeuronMorphologyFeatureAnnotation(metric._source) &&
+                  d._id === metric._source.neuronMorphology['@id']
+              ) as ExploreESHit<CardDataType>[] | undefined // TODO: This casting is BAD. See comment about NeuronMorphologyFeatureAnnotation in types/explore-section/es-experiment.ts
+            }
             score={scoreFinder(d._id)}
           />
         ))}

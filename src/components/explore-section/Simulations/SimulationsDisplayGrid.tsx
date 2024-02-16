@@ -15,6 +15,7 @@ import findSimulation from '@/api/explore-section/simulations';
 import NoSimulationFoundCard from '@/components/explore-section/Simulations/NoSimulationFoundCard';
 import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 import { simulationsFamily } from '@/state/explore-section/simulation-campaign';
+import { Simulation } from '@/types/explore-section/delta-simulation-campaigns';
 
 type SimulationDisplayGridProps = {
   display?: string;
@@ -143,7 +144,7 @@ export default function SimulationsDisplayGrid({
                 {simulation ? (
                   <SimulationDisplayCard
                     name={display}
-                    simulation={simulation}
+                    simulation={simulation as any as Simulation} // TODO: Ask Kostas about this on Monday.
                     customReportIds={customReportIds}
                     xDimension={xDimension.id}
                     yDimension={yDimension.id}

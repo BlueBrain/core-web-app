@@ -6,10 +6,11 @@ import { DetailProps } from '@/types/explore-section/application';
 import { isNeuronMorphologyFeatureAnnotation } from '@/util/explore-section/typeUnionTargetting';
 import EXPLORE_FIELDS_CONFIG from '@/constants/explore-section/fields-config';
 import { FlattenedExploreESResponse } from '@/types/explore-section/es';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 
 export const useMorphometrics = (
   dataType: DataType,
-  metrics?: FlattenedExploreESResponse['hits'] | null,
+  metrics?: FlattenedExploreESResponse<ExploreSectionResource>['hits'] | null,
   showLabel?: boolean
 ) => {
   const groupedCardFields = getGroupedCardFields(dataType);

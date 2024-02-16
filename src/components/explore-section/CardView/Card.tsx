@@ -16,13 +16,15 @@ import { BASE_EXPERIMENTAL_EXPLORE_PATH } from '@/constants/explore-section/path
 import { useMorphometrics } from '@/hooks/useMorphoMetrics';
 import styles from './styles.module.scss';
 
+type CardDataType = ReconstructedNeuronMorphology | ExperimentalTrace;
+
 type CardProps = {
   resource: {
-    _source: ReconstructedNeuronMorphology | ExperimentalTrace;
-  } & ExploreESHit;
+    _source: CardDataType;
+  } & ExploreESHit<CardDataType>;
   dataType: DataType;
   activeKeys: string[];
-  metrics?: ExploreESHit[];
+  metrics?: ExploreESHit<CardDataType>[];
   score?: number;
 };
 

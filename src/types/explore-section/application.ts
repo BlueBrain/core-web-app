@@ -20,13 +20,13 @@ export interface SortState {
 
 export type ListViewAtomValues = {
   activeColumns: string[];
-  aggregations: Loadable<FlattenedExploreESResponse['aggs']>;
+  aggregations: Loadable<FlattenedExploreESResponse<ExploreResource>['aggs']>;
   data: Loadable<ExploreResource[] | undefined>;
   filters: Filter[];
   pageSize: number;
   searchString: string;
   sortState: SortState;
-  total: Loadable<FlattenedExploreESResponse['total'] | undefined>;
+  total: Loadable<FlattenedExploreESResponse<ExploreResource>['total'] | undefined>;
 };
 
 export type ListViewAtoms<T> = {

@@ -18,12 +18,17 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 import useResizeObserver from '@/hooks/useResizeObserver';
 import useScrollComplete from '@/hooks/useScrollComplete';
 
 import styles from '@/app/explore/explore.module.scss';
 
-export type OnCellClick = (basePath: string, record: ExploreESHit, type: DataType) => void;
+export type OnCellClick = (
+  basePath: string,
+  record: ExploreESHit<ExploreSectionResource>,
+  type: DataType
+) => void;
 
 function CustomTH({
   children,
@@ -100,11 +105,15 @@ export function BaseTable({
   dataType,
   showLoadMore,
   onCellClick,
-}: TableProps<ExploreESHit> & {
+}: TableProps<ExploreESHit<ExploreSectionResource>> & {
   hasError?: boolean;
   dataType: DataType;
   showLoadMore: (value?: boolean) => void;
-  onCellClick?: (basePath: string, record: ExploreESHit, type: DataType) => void;
+  onCellClick?: (
+    basePath: string,
+    record: ExploreESHit<ExploreSectionResource>,
+    type: DataType
+  ) => void;
 }) {
   const pathname = usePathname();
   const setBackToListPath = useSetAtom(backToListPathAtom);
@@ -134,9 +143,13 @@ export function BaseTable({
     callback: showLoadMore,
   });
 
-  const onCellRouteHandler = (col: ColumnGroupType<ExploreESHit> | ColumnType<ExploreESHit>) => {
+  const onCellRouteHandler = (
+    col:
+      | ColumnGroupType<ExploreESHit<ExploreSectionResource>>
+      | ColumnType<ExploreESHit<ExploreSectionResource>>
+  ) => {
     return {
-      onCell: (record: ExploreESHit) =>
+      onCell: (record: ExploreESHit<ExploreSectionResource>) =>
         col.key !== Field.Preview
           ? {
               onClick: (e: MouseEvent<HTMLInputElement>) => {
@@ -213,7 +226,7 @@ export default function ExploreSectionTable({
   loading,
   renderButton,
   onCellClick,
-}: TableProps<ExploreESHit> & {
+}: TableProps<ExploreESHit<ExploreSectionResource>> & {
   enableDownload?: boolean;
   dataType: DataType;
   hasError?: boolean;
