@@ -4,7 +4,11 @@ import { useHydrateAtoms } from 'jotai/utils';
 
 import sessionAtom from '@/state/session';
 import { BrainRegion } from '@/types/ontologies';
-import SelectedBrainRegionPanel from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionPanel';
+import {
+  DataTypeTabs,
+  DataTypeStatPanel,
+  dataTabAtom,
+} from '@/components/explore-section/ExploreInteractive';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
@@ -165,12 +169,14 @@ describe('SelectedBrainRegionPanel', () => {
               representedInAnnotation: mockBrainRegions[1].representedInAnnotation,
             } as SelectedBrainRegion,
           ],
+          [dataTabAtom, 'experimental-data'],
         ]}
       >
         {mockBrainRegions.map((brainRegion) => (
           <VizButtons key={brainRegion.id} brainRegion={brainRegion} />
         ))}
-        <SelectedBrainRegionPanel />
+        <DataTypeTabs />
+        <DataTypeStatPanel />
       </TestProvider>
     );
   }

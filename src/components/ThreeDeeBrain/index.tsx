@@ -1,9 +1,11 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { Suspense, useEffect, useLayoutEffect, useMemo } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { unwrap, useResetAtom } from 'jotai/utils';
 import { Vector3 } from 'three';
 import { OrbitControls } from '@react-three/drei';
+
+import FullScreen from './FullScreen';
 import { ApplicationSection } from '@/types/common';
 import { brainRegionsAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
 import { ROOT_BRAIN_REGION_URI } from '@/constants/brain-hierarchy';
@@ -81,14 +83,17 @@ function VisualizationHandler({ section }: { section: ApplicationSection }) {
 }
 
 export default function ThreeDeeBrain() {
+  const threeDRef = useRef<HTMLDivElement>(null);
   const section = useAtomValue(sectionAtom);
+
   if (!section) {
     return null;
   }
 
   return (
-    <div className="h-full w-full bg-black">
+    <div ref={threeDRef} className="h-full w-full bg-black">
       <LoadingHandler section={section} />
+      <FullScreen elementRef={threeDRef} />
       <Canvas
         dpr={[1, 2]}
         camera={{
@@ -96,6 +101,7 @@ export default function ThreeDeeBrain() {
           up: [0, -1, 0],
           fov: 55,
           far: 100000,
+          zoom: 1.3,
           type: 'PerspectiveCamera',
         }}
       >
