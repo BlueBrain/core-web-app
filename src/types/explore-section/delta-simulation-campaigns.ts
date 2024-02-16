@@ -67,3 +67,5 @@ export type SimulationCampaignExecution = EntityResource & {
   used_rev: number;
   wasInfluencedBy: IdWithType;
 };
+
+export type SimulationResource = SimulationCampaign | Simulation;

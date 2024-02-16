@@ -1,7 +1,6 @@
 'use client';
 
 import { Suspense, useMemo } from 'react';
-import dynamic from 'next/dynamic';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
@@ -16,21 +15,18 @@ import GeneralizationControls from '@/components/explore-section/WithGeneralizat
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import { MorphoViewer } from '@/components/MorphoViewer';
 import Morphometrics from '@/components/explore-section/Morphometrics';
-
-// dynamic importation due to hydration issue in morphology 3d component
-const Detail = dynamic(() => import('@/components/explore-section/Detail'), { ssr: false });
+import Detail from '@/components/explore-section/Detail';
 
 export default function MorphologyDetailPage() {
   return (
     <Suspense fallback={<CentralLoadingSpinner />}>
       <WithGeneralization dataType={DataType.ExperimentalNeuronMorphology}>
         {({ render: renderSimilar }) => (
-          <Detail fields={NEURON_MORPHOLOGY_FIELDS}>
+          <Detail<ReconstructedNeuronMorphology> fields={NEURON_MORPHOLOGY_FIELDS}>
             {(detail) => (
               <>
                 <Morphometrics dataType={DataType.ExperimentalNeuronMorphology} resource={detail} />
-                <MorphoViewerLoader resource={detail as any as ReconstructedNeuronMorphology} />
-                {/* TODO: There must be a better way to do this than "as any as" */}
+                <MorphoViewerLoader resource={detail} />
                 <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
                   <GeneralizationControls dataType={DataType.ExperimentalNeuronMorphology} />
                 </ErrorBoundary>

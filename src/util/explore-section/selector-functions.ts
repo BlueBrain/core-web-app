@@ -1,13 +1,14 @@
 import find from 'lodash/find';
-import { DeltaResource, Subject } from '@/types/explore-section/resources';
-import { Annotation, SeriesStatistic } from '@/types/explore-section/delta-properties';
+import { Subject } from '@/types/explore-section/resources';
 import {
+  Experiment,
   ExperimentalBoutonDensity,
   ExperimentalLayerThickness,
   ExperimentalNeuronDensity,
   ExperimentalSynapsesPerConnection,
   ExperimentalTrace,
 } from '@/types/explore-section/delta-experiment';
+import { Annotation, SeriesStatistic } from '@/types/explore-section/delta-properties';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
@@ -22,7 +23,7 @@ const annotationArrayFunc = (annotation: Annotation | Annotation[] | undefined) 
  * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").Subject} subject
  */
-export const ageSelectorFn = (subject: Subject | null) => {
+export const ageSelectorFn = (subject: Subject | null): string => {
   if (subject?.age?.value) {
     return `${subject?.age.value} ${subject?.age.unitCode} ${subject?.age.period}`;
   }
@@ -37,7 +38,7 @@ export const ageSelectorFn = (subject: Subject | null) => {
  * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
-export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
+export const subjectAgeSelectorFn = (detail: Experiment | null) => {
   return ageSelectorFn(detail?.subject || null);
 };
 

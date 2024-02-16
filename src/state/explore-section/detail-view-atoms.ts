@@ -12,6 +12,7 @@ import { Contributor as DeltaContributor } from '@/types/explore-section/delta-c
 import {
   ExperimentalTrace,
   ReconstructedNeuronMorphology,
+  Experiment,
 } from '@/types/explore-section/delta-experiment';
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
@@ -33,11 +34,11 @@ export const sessionAndInfoFamily = atomFamily(
   isEqual
 );
 
-export const detailFamily = atomFamily<ResourceInfo, Atom<any>>(
-  (resourceInfo?: ResourceInfo) =>
+export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>>>(
+  (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const resource = await fetchResourceById(info.id, session, {
+      const resource = await fetchResourceById<DeltaResource>(info.id, session, {
         org: info.org,
         project: info.project,
         rev: info.rev,
@@ -55,7 +56,7 @@ export const contributorsDataFamily = atomFamily<
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const detail = await get(detailFamily(resourceInfo));
+      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
 
       if (!detail || !detail.contribution) return null;
 
@@ -108,28 +109,24 @@ export const latestRevisionFamily = atomFamily(
   isEqual
 );
 
-export const speciesDataFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource | null>>>(
+export const speciesDataFamily = atomFamily<ResourceInfo, Atom<Promise<Experiment | null>>>(
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
-      const detail = await get(detailFamily(resourceInfo));
+      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
 
       if (!detail || !detail.subject) return null;
 
       if (detail.subject?.species?.label) return detail;
 
-      if (detail.subject['@id']) {
-        const subject: DeltaResource = await fetchResourceById<DeltaResource>(
-          detail.subject['@id'],
-          session,
-          pick(info, ['org', 'project'])
-        );
+      const subject = await fetchResourceById<Experiment>(
+        detail.subject['@id'],
+        session,
+        pick(info, ['org', 'project'])
+      );
 
-        return subject;
-      }
-
-      return null;
+      return subject;
     }),
   isEqual
 );
@@ -139,14 +136,14 @@ export const subjectAgeDataFamily = atomFamily<ResourceInfo, Atom<Promise<string
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
-      const detail = await get(detailFamily(resourceInfo));
+      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
 
       if (!detail || !detail.subject) return null;
 
       if (detail.subject?.age) return subjectAgeSelectorFn(detail);
 
       if (detail.subject['@id']) {
-        const subject: Subject = await fetchResourceById<Subject>(
+        const subject = await fetchResourceById<Subject>(
           detail.subject['@id'],
           session,
           pick(info, ['org', 'project'])

@@ -32,12 +32,13 @@ import {
   ExperimentalNeuronDensity,
   ExperimentalSynapsesPerConnection,
   ExperimentalTrace,
+  Experiment as DeltaExperiment,
 } from '@/types/explore-section/delta-experiment';
 import { SynapticPosition, SynapticType } from '@/types/explore-section/misc';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
-export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
+export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExperiment> = {
   [Field.License]: {
     title: 'License',
     filter: FilterTypeEnum.CheckList,

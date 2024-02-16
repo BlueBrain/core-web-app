@@ -11,10 +11,11 @@ import DetailHeader from '@/components/explore-section/DetailHeader';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import usePathname from '@/hooks/pathname';
 import { DetailType } from '@/constants/explore-section/fields-config/types';
+import { Experiment } from '@/types/explore-section/delta-experiment';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
-export default function Detail<T>({
+export default function Detail<T extends Experiment>({
   fields,
   children,
 }: {
@@ -53,7 +54,7 @@ export default function Detail<T>({
       <DetailsPageSideBackLink />
       <div className="ml-10 flex h-full w-full flex-col gap-7 overflow-auto bg-white p-7 pr-12">
         <DetailHeader fields={fields} detail={detail.data} url={path} />
-        {children && detail.data && children(detail.data)}
+        {children && detail.data && children(detail.data as T)}
       </div>
     </div>
   );
