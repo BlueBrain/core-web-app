@@ -10,10 +10,11 @@ import { DetailProps } from '@/types/explore-section/application';
 import DetailHeader from '@/components/explore-section/DetailHeader';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import usePathname from '@/hooks/pathname';
-import { DetailType } from '@/constants/explore-section/fields-config/types';
 import { Experiment } from '@/types/explore-section/delta-experiment';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
+
+type ExtendsExperiment<T> = T extends Experiment ? T : never;
 
 export default function Detail<T extends Experiment>({
   fields,
@@ -26,7 +27,7 @@ export default function Detail<T extends Experiment>({
 
   const path = usePathname();
   const resourceInfo = useResourceInfoFromPath();
-  const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<DetailType>;
+  const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<ExtendsExperiment<T>>;
 
   useEffect(() => {
     setBrainRegionSidebarIsCollapsed(true);
@@ -54,7 +55,7 @@ export default function Detail<T extends Experiment>({
       <DetailsPageSideBackLink />
       <div className="ml-10 flex h-full w-full flex-col gap-7 overflow-auto bg-white p-7 pr-12">
         <DetailHeader fields={fields} detail={detail.data} url={path} />
-        {children && detail.data && children(detail.data as T)}
+        {children && detail.data && children(detail.data)}
       </div>
     </div>
   );
