@@ -1,6 +1,7 @@
 'use client';
 
 import { DataTypeTabs, DataTypeStatPanel } from '@/components/explore-section/ExploreInteractive';
+import SelectedBrainRegionMETypes from '@/components/explore-section/ExploreInteractive/SelectedBrainRegionMETypes';
 import ThreeDeeBrain from '@/components/ThreeDeeBrain';
 import { classNames } from '@/util/utils';
 
@@ -19,9 +20,11 @@ export default function InteractivePage() {
         </div>
         <div
           id="neurons-panel"
-          className="ml-4 mr-2 rounded-md border border-neutral-4"
+          className="relative ml-4 mr-2 rounded-md"
           style={{ gridArea: '2 / 1 / 6 / 3' }}
-        />
+        >
+          <SelectedBrainRegionMETypes />
+        </div>
         <div
           id="3d-area"
           className="3d relative ml-2 mr-4 h-full rounded-md border border-neutral-4 p-1"

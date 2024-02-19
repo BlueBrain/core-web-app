@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import { format } from 'date-fns';
 
 export const getButton = (buttonLabel: string, exact: boolean = false): HTMLButtonElement => {
@@ -49,4 +49,12 @@ export const selectTodayAsDate = (type: 'start' | 'end') => {
 
   expect(dateInputAfter).toHaveValue(format(new Date(today), UI_DATE_FORMAT));
   return today;
+};
+
+export const click = (element: HTMLElement) => {
+  act(() => {
+    fireEvent.click(element);
+    fireEvent.focus(element);
+    fireEvent.mouseDown(element);
+  });
 };

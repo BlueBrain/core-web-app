@@ -15,7 +15,8 @@ const customJestConfig = {
   testEnvironment: './test.environment.js',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    'deepdash-es': '<rootDir>/global.mock.js', // deepdash-es is mocked because jest is not able to resolve the module. (see - https://github.com/YuriGor/deepdash/issues/133)
+    'deepdash-es': '<rootDir>/global.mock.js', // deepdash-es is mocked because jest is not able to resolve the module. (see - https://github.com/YuriGor/deepdash/issues/133),
+    '@apache-arrow/es2015-esm': '<rootDir>/global.mock.js',
     morphoviewer: '<rootDir>/global.mock.js',
     d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
     '^d3-(.*)$': '<rootDir>/node_modules/d3-$1/dist/d3-$1.min.js',

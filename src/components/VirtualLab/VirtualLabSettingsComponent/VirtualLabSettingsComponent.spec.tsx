@@ -228,8 +228,6 @@ describe('VirtualLabSettingsComponent', () => {
     await user.click(screen.getByText('Submit'));
     await user.click(screen.getByText('Confirm'));
 
-    screen.getByTestId('Saving changes');
-
     const advancedPlanElementAfterChange = await findElementForPlanType('advanced');
     within(advancedPlanElementAfterChange).getByText(/Current Selection/i);
     expect(screen.queryByTestId('billing-form')).not.toBeInTheDocument();

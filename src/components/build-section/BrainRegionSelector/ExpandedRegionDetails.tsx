@@ -10,6 +10,7 @@ import { unwrap } from 'jotai/utils';
 import ContextualTrigger from '../ContextualLiterature/Trigger';
 import { getMetric } from './util';
 import { NeuronCompositionEditorProps, NeuronCompositionItem } from './types';
+import { metricToUnit } from './MetricToUnit';
 import { handleNavValueChange } from '@/components/BrainTree/util';
 import TreeNav from '@/components/TreeNavItem';
 import { NavValue } from '@/state/brain-regions/types';
@@ -27,18 +28,6 @@ import {
 import { QuestionAbout } from '@/types/literature';
 import { cellTypesByIdAtom } from '@/state/build-section/cell-types';
 import { ETYPE_NEXUS_TYPE, MTYPE_NEXUS_TYPE } from '@/constants/ontologies';
-
-/**
- * Maps metrics to units in order to appear in the sidebar
- */
-const metricToUnit = {
-  density: (
-    <span>
-      /mm<sup>3</sup>
-    </span>
-  ),
-  count: <span>N</span>,
-};
 
 function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?: string[] }) {
   const renderType = () => {

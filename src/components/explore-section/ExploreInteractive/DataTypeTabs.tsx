@@ -33,7 +33,7 @@ export default function DataTypeTabs() {
     selected && (
       <div className="z-10 flex max-h-[65px] w-full items-center justify-between px-4 py-2">
         <h1
-          className="flex items-center justify-center text-3xl font-bold"
+          className="flex items-center justify-center pl-8 text-3xl font-bold"
           style={{ color: selected?.colorCode }}
         >
           <span

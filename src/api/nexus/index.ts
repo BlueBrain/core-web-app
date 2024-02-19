@@ -213,7 +213,6 @@ export function fetchResourceById<T>(
   headerExtraOptions?: Record<string, string> | null
 ) {
   const url = composeUrl('resource', id, options);
-
   return fetch(url, {
     headers: createHeaders(session.accessToken, headerExtraOptions),
   }).then<T>((res) => res.json());
