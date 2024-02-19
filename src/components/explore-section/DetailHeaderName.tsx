@@ -1,8 +1,8 @@
 import { Dropdown, MenuProps, Spin } from 'antd';
 import { useAtomValue } from 'jotai';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { DownloadOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import range from 'lodash/range';
-import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { loadable } from 'jotai/utils';
 import { latestRevisionFamily } from '@/state/explore-section/detail-view-atoms';
 import { DeltaResource } from '@/types/explore-section/resources';
@@ -10,6 +10,8 @@ import Link from '@/components/Link';
 import { InteractiveViewIcon } from '@/components/icons';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import usePathname from '@/hooks/pathname';
+import fetchArchive from '@/api/archive';
+import sessionAtom from '@/state/session';
 
 export default function DetailHeaderName({
   detail,
@@ -27,6 +29,9 @@ export default function DetailHeaderName({
   );
   const simCampMatch = path?.match(/\/explore\/simulation-campaigns\/[a-zA-Z0-9=]*/g);
   const isSimCampDetail = simCampMatch && path === simCampMatch[0];
+
+  const session = useAtomValue(sessionAtom);
+  const [fetching, setFetching] = useState<boolean>(false);
 
   // revisions builder
   const items: MenuProps['items'] = useMemo(() => {
@@ -71,6 +76,23 @@ export default function DetailHeaderName({
             </Dropdown>
           )}
         </div>
+        {session && (
+          <div className="flex items-center gap-2">
+            Download
+            {fetching ? (
+              <Spin className="border border-neutral-2 px-3 py-2" indicator={<LoadingOutlined />} />
+            ) : (
+              <DownloadOutlined
+                className="border border-neutral-2 px-4 py-3"
+                onClick={() => {
+                  setFetching(true);
+                  fetchArchive([detail._self], session, () => setFetching(false));
+                }}
+              />
+            )}
+          </div>
+        )}
+
         {isSimCampDetail && (
           <div className="flex gap-2">
             <Link href={`${path}/experiment-interactive`} className="flex items-center gap-2">
