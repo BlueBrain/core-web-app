@@ -12,7 +12,7 @@ export default function InteractivePage() {
         id="interactive-layout"
         className={classNames(
           'h-full gap-y-4 bg-black',
-          'grid grid-cols-[repeat(4,1fr)] grid-rows-[65px,repeat(4,1fr),minmax(80px,max-content)]'
+          'grid grid-cols-[repeat(4,1fr)] grid-rows-[80px,repeat(4,1fr),minmax(80px,max-content)]'
         )}
       >
         <div id="interactive-header" style={{ gridArea: '1 / 1 / 2 / 6' }}>

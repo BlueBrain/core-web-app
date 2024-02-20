@@ -49,7 +49,7 @@ export default function MenuTabs({
 }) {
   return (
     <div className="text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
-      <ul className="-mb-px flex flex-wrap">
+      <ul className="-mb-px flex flex-nowrap">
         {items.map(({ id, label }) => (
           <Tab
             key={`data-tab-${id}`}

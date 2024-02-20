@@ -31,18 +31,19 @@ export default function DataTypeTabs() {
 
   return (
     selected && (
-      <div className="z-10 flex max-h-[65px] w-full items-center justify-between px-4 py-2">
+      <div className="z-10 flex max-h-[80px] w-full items-start justify-between px-4">
         <h1
-          className="flex items-center justify-center pl-8 text-3xl font-bold"
+          className="flex w-1/2 items-center justify-start self-start  pl-4 pt-2 text-[1.6rem] font-bold"
           style={{ color: selected?.colorCode }}
+          title={selectedBrainRegion?.title}
         >
           <span
-            className="mr-2 inline-block h-[10px] w-[10px] rounded-full leading-9"
+            className="mr-2 inline-block h-[10px] min-h-[10px] w-[10px] min-w-[10px] rounded-full leading-9"
             style={{ background: selected.colorCode }}
           />
-          {selectedBrainRegion?.title}
+          <span className="line-clamp-2">{selectedBrainRegion?.title}</span>
         </h1>
-        <div className="flex">
+        <div className="flex w-fit flex-nowrap">
           <MenuTabs items={DATA_TYPE_TABS} onTabClick={onTabClick} activeKey={dataTypeActiveTab} />
         </div>
       </div>
