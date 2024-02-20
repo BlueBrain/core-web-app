@@ -47,13 +47,17 @@ input[type='number'] {
       scrollbar-width: none; /* Firefox */
     }
 
+    .scrollbar-size {
+      width: 5px;
+      margin-right: 5px;
+      border-radius: 5px;
+    }
+
     .primary-scrollbar {
       scrollbar-color: theme('colors.primary.4') rgba(#000, 0.2);
     }
-
     .primary-scrollbar::-webkit-scrollbar {
-      width: 5px;
-      margin-right: 5px;
+      @apply scrollbar-size;
     }
     .primary-scrollbar::-webkit-scrollbar-track {
       @apply rounded bg-[rgba(0_0_0_0.2)];
@@ -64,6 +68,23 @@ input[type='number'] {
     }
     .primary-scrollbar::-webkit-scrollbar-thumb:hover {
       @apply bg-primary-8;
+    }
+
+    .secondary-scrollbar {
+      scrollbar-color: theme('colors.gray.200') theme('colors.gray.800');
+    }
+    .secondary-scrollbar::-webkit-scrollbar {
+      @apply scrollbar-size;
+    }
+    .secondary-scrollbar::-webkit-scrollbar-track {
+      @apply rounded bg-gray-800;
+    }
+    .secondary-scrollbar::-webkit-scrollbar-thumb {
+      @apply scrollbar-size bg-gray-200;
+      border-radius: 5px;
+    }
+    .secondary-scrollbar::-webkit-scrollbar-thumb:hover {
+      @apply bg-gray-400;
     }
   }
 }

@@ -54,9 +54,7 @@ export function METypeDetails({ composition, meTypesMetadata }: Props) {
           className="flex justify-between text-lg font-bold text-white"
           data-testid="total-count-or-density"
         >
-          <span className="justify-self-start">
-            Morphological types [{metricToUnit[densityOrCount]}]
-          </span>
+          <span className="justify-self-start">Neurons [{metricToUnit[densityOrCount]}]</span>
           <small className="text-base font-normal text-gray-300">
             ~ {getMetric(composition.totalComposition.neuron, densityOrCount)}
           </small>
@@ -67,7 +65,7 @@ export function METypeDetails({ composition, meTypesMetadata }: Props) {
           selectDensityOrCount={(v) => setDensityOrCount(v)}
         />
 
-        <div className="overflow-y-auto border border-gray-500 p-8">
+        <div className="secondary-scrollbar h-full overflow-y-auto border border-gray-500 p-8">
           <h6 className="text-sm font-normal text-gray-400">M-TYPES</h6>
           <TreeNav items={neurons} onValueChange={onValueChange} value={meTypeNavValue}>
             {({ composition: renderedComposition, content, title, trigger, id, isExpanded }) => (
