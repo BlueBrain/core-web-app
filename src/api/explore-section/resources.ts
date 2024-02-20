@@ -2,6 +2,7 @@ import esb, { Sort } from 'elastic-builder';
 import { createHeaders } from '@/util/utils';
 import { API_SEARCH } from '@/constants/explore-section/queries';
 import { ExploreESResponse, FlattenedExploreESResponse } from '@/types/explore-section/es';
+import { Experiment } from '@/types/explore-section/es-experiment';
 
 export type DataQuery = {
   size: number;
@@ -22,7 +23,7 @@ export async function fetchTotalByExperimentAndRegions(
     body: JSON.stringify(dataQuery),
     signal,
   })
-    .then<ExploreESResponse>((response) => response.json())
+    .then<ExploreESResponse<Experiment>>((response) => response.json())
     .then((data) => data?.hits?.total?.value);
 }
 
@@ -30,15 +31,15 @@ export async function fetchEsResourcesByType(
   accessToken: string,
   dataQuery: DataQuery,
   signal?: AbortSignal
-): Promise<FlattenedExploreESResponse> {
+): Promise<FlattenedExploreESResponse<Experiment>> {
   return fetch(API_SEARCH, {
     method: 'POST',
     headers: createHeaders(accessToken),
     body: JSON.stringify(dataQuery),
     signal,
   })
-    .then<ExploreESResponse>((response) => response.json())
-    .then<FlattenedExploreESResponse>((data) => ({
+    .then<ExploreESResponse<Experiment>>((response) => response.json())
+    .then<FlattenedExploreESResponse<Experiment>>((data) => ({
       hits: data?.hits?.hits,
       total: data?.hits?.total,
       aggs: data.aggregations,
@@ -95,8 +96,8 @@ export async function fetchDimensionAggs(accessToken: string) {
     headers: createHeaders(accessToken),
     body: JSON.stringify(query),
   })
-    .then<ExploreESResponse>((response) => response.json())
-    .then<FlattenedExploreESResponse>((data) => ({
+    .then<ExploreESResponse<Experiment>>((response) => response.json())
+    .then<FlattenedExploreESResponse<Experiment>>((data) => ({
       hits: data?.hits?.hits,
       total: data?.hits?.total,
       aggs: data.aggregations,

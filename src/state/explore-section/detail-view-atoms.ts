@@ -1,6 +1,6 @@
 'use client';
 
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import pick from 'lodash/pick';
 import { atomFamily } from 'jotai/utils';
 import isEqual from 'lodash/isEqual';
@@ -8,6 +8,12 @@ import isEqual from 'lodash/isEqual';
 import sessionAtom from '@/state/session';
 import { fetchResourceById, queryES } from '@/api/nexus';
 import { DeltaResource, Contributor, Subject } from '@/types/explore-section/resources';
+import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
+import {
+  ExperimentalTrace,
+  ReconstructedNeuronMorphology,
+  Experiment,
+} from '@/types/explore-section/delta-experiment';
 import { ensureArray } from '@/util/nexus';
 import { ResourceInfo } from '@/types/explore-section/application';
 import { getLicenseByIdQuery } from '@/queries/es';
@@ -28,11 +34,11 @@ export const sessionAndInfoFamily = atomFamily(
   isEqual
 );
 
-export const detailFamily = atomFamily(
-  <T>(resourceInfo?: ResourceInfo) =>
-    atom<Promise<DeltaResource<T> | null>>(async (get) => {
+export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>>>(
+  (resourceInfo) =>
+    atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const resource: DeltaResource<T> = await fetchResourceById(info.id, session, {
+      const resource = await fetchResourceById<DeltaResource>(info.id, session, {
         org: info.org,
         project: info.project,
         rev: info.rev,
@@ -43,11 +49,14 @@ export const detailFamily = atomFamily(
   isEqual
 );
 
-export const contributorsDataFamily = atomFamily(
-  (resourceInfo?: ResourceInfo) =>
+export const contributorsDataFamily = atomFamily<
+  ResourceInfo,
+  Atom<Promise<DeltaContributor[] | null>>
+>(
+  (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
-      const detail = await get(detailFamily(resourceInfo));
+      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
 
       if (!detail || !detail.contribution) return null;
 
@@ -68,10 +77,12 @@ export const contributorsDataFamily = atomFamily(
   isEqual
 );
 
-export const licenseDataFamily = atomFamily(
-  (resourceInfo?: ResourceInfo) =>
-    atom<Promise<string | null>>(async (get) => {
-      const detail = await get(detailFamily(resourceInfo));
+export const licenseDataFamily = atomFamily<ResourceInfo, Atom<Promise<string | null>>>(
+  (resourceInfo) =>
+    atom(async (get) => {
+      const detail = (await get(detailFamily(resourceInfo))) as
+        | ExperimentalTrace
+        | ReconstructedNeuronMorphology;
       const session = get(sessionAtom);
 
       if (!detail || !detail.license || !session) throw new Error('No license found');
@@ -98,45 +109,41 @@ export const latestRevisionFamily = atomFamily(
   isEqual
 );
 
-export const speciesDataFamily = atomFamily(
-  (resourceInfo?: ResourceInfo) =>
-    atom<Promise<DeltaResource | null>>(async (get) => {
+export const speciesDataFamily = atomFamily<ResourceInfo, Atom<Promise<Experiment | null>>>(
+  (resourceInfo) =>
+    atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
-      const detail = await get(detailFamily(resourceInfo));
+      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
 
       if (!detail || !detail.subject) return null;
 
       if (detail.subject?.species?.label) return detail;
 
-      if (detail.subject['@id']) {
-        const subject: DeltaResource = await fetchResourceById<DeltaResource>(
-          detail.subject['@id'],
-          session,
-          pick(info, ['org', 'project'])
-        );
+      const subject = await fetchResourceById<Experiment>(
+        detail.subject['@id'],
+        session,
+        pick(info, ['org', 'project'])
+      );
 
-        return subject;
-      }
-
-      return null;
+      return subject;
     }),
   isEqual
 );
 
-export const subjectAgeDataFamily = atomFamily(
-  (resourceInfo?: ResourceInfo) =>
-    atom<Promise<string | null>>(async (get) => {
+export const subjectAgeDataFamily = atomFamily<ResourceInfo, Atom<Promise<string | null>>>(
+  (resourceInfo) =>
+    atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));
 
-      const detail = await get(detailFamily(resourceInfo));
+      const detail = (await get(detailFamily(resourceInfo))) as Experiment;
 
       if (!detail || !detail.subject) return null;
 
       if (detail.subject?.age) return subjectAgeSelectorFn(detail);
 
       if (detail.subject['@id']) {
-        const subject: Subject = await fetchResourceById<Subject>(
+        const subject = await fetchResourceById<Subject>(
           detail.subject['@id'],
           session,
           pick(info, ['org', 'project'])

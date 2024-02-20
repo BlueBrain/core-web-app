@@ -2,7 +2,11 @@ import { ExploreFieldsConfigProps } from '@/constants/explore-section/fields-con
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
-export const LITERATURE_FIELDS_CONFIG: ExploreFieldsConfigProps = {
+// TODO: If these fields don't have render functions (like Experiment fields have),
+// perhaps we should break-up ExploreFieldsConfigProps into a common type (including
+// title, filter, vocabulary), and a render type (including the render property), and
+// then have a third type which unites the two for use where all are needed (unlike here)
+export const LITERATURE_FIELDS_CONFIG: ExploreFieldsConfigProps<any> = {
   [Field.Categories]: {
     title: 'Category',
     filter: FilterTypeEnum.Search,

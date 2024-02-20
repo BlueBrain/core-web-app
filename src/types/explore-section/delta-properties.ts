@@ -23,6 +23,19 @@ export type Derivation = Type & {
   entity: IdWithType;
 };
 
+export type FileDistribution = {
+  '@type': 'DataDownload';
+  atLocation: Location;
+  contentSize: {
+    unitCode: 'bytes';
+    value: number;
+  };
+  contentUrl: string;
+  encodingFormat: string;
+  label?: string; // TODO: Confirm that this exists. I'm not sure it does.
+  name: string;
+};
+
 type GenerationSoftwareSourceCode = Type & {
   codeRepository: string;
   programmingLanguage: string;
@@ -52,6 +65,14 @@ export type Image = Id & {
   stimulusType: Id;
 };
 
+type Location = {
+  '@type': 'Location';
+  location: string;
+  store: IdWithType & {
+    _rev: number;
+  };
+};
+
 export type SeriesStatistic = {
   statistic: string;
   unitCode: string;
@@ -77,7 +98,11 @@ type SubjectWeight = {
   value?: number;
 };
 
-export type Subject = Type & {
+// TODO: Verify whether "@type" actually ever exists
+// on this property, and if not, then remove the
+// "@type" condition in speciesDataFamily (atom), and
+// set this to simply Id, not IdWithType.
+export type Subject = IdWithType & {
   species: IdWithLabel;
   strain: Label;
   age?: SubjectAge;

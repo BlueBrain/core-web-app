@@ -11,13 +11,12 @@ import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Input, Spin } from 'antd';
 import { useAtom, useSetAtom } from 'jotai';
 import { unwrap, useResetAtom } from 'jotai/utils';
-import {
-  Aggregations,
-  Buckets,
+import Aggregations, {
+  BucketAggregation,
   NestedBucketAggregation,
   NestedStatsAggregation,
   Statistics,
-} from '@/types/explore-section/fields';
+} from '@/types/explore-section/es-aggs';
 import { Filter, GteLteValue, ValueOrRangeFilter } from '@/components/Filter/types';
 import { CheckList, DateRange, defaultList, FilterGroup } from '@/components/Filter';
 import ValueRange from '@/components/Filter/ValueRange';
@@ -101,7 +100,7 @@ function createFilterItemComponent(
           const nestedAgg = aggregations[filter.field] as NestedBucketAggregation;
           agg = nestedAgg[filter.field][filter.field];
         } else {
-          agg = aggregations[filter.field] as Buckets;
+          agg = aggregations[filter.field] as BucketAggregation;
         }
 
         return (

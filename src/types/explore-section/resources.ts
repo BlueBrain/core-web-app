@@ -1,88 +1,15 @@
-import { ReactNode } from 'react';
-import { ContributionEntity, AgentOrIsPartOfOrLicense, DateISOString } from '@/types/nexus';
-import {
-  AtlasSpatialReferenceSystemOrAtlasRelease,
-  BrainRegionOrStimulusTypeOrSpecies,
-  ContributorsEntity,
-  AnnotationEntity,
-  SimulationStatus,
-  StimulusEntity,
-  SubjectSpecies,
-  IdLabelEntity,
-  NumericEntity,
-  ObjectOfStudy,
-  BrainLocation,
-  Aggregations,
-  Distribution,
-  NValueEntity,
-  ImageEntity,
-  SubjectAge,
-  TotalHits,
-  IdLabel,
-  Series,
-  Weight,
-} from '@/types/explore-section/fields';
-import { IdWithLabel } from '@/types/explore-section/common';
 import { NeuriteFeature } from '@/types/explore-section/delta-neurite-feature';
+import { ExploreESResponse, ExploreResource } from '@/types/explore-section/es';
+import { Contributor as DeltaContributor } from '@/types/explore-section/delta-contributor';
+import { Experiment as DeltaExperiment } from '@/types/explore-section/delta-experiment';
+import { SimulationResource as DeltaSimulationResource } from '@/types/explore-section/delta-simulation-campaigns';
+import { Image, Subject as DeltaSubject } from '@/types/explore-section/delta-properties';
 
-export interface Campaign {
-  id: string;
-  org: string;
-  self: string;
-  name: string;
-  project: string;
-  status?: string;
-  description?: string;
-  configuration?: string;
-  dimensions?: string;
-  startedAt?: string;
-  updatedAt?: string;
-  endedAt?: string;
-  createdAt?: string;
-  attributes?: string;
-  updatedBy?: string;
-  tags?: string[];
-}
+export type ExploreSectionResource = ExploreResource;
 
-export interface ExploreSectionResource extends OptionalExploreSectionFields {
-  key: React.Key | string;
-  self: string;
-  id: string;
-  name: string;
-  description: string;
-  subjectSpecies?: string;
-  contributors: string;
-  createdAt: string;
-  brainRegion: string;
-  sortOrder: 'ascend' | 'descend' | null;
-}
-
-export interface OptionalExploreSectionSerializedFields {
-  meanstd?: string | number;
-  mean?: string | number;
-  standardDeviation?: string | number;
-  density?: string | number;
-  sem?: string | number | void;
-  series?: Series[];
-  numberOfMeasurements?: string | number;
-  weight?: string | number | void;
-  conditions?: string;
-}
-
-export interface OptionalExploreSectionFields extends OptionalExploreSectionSerializedFields {
-  reference?: string;
-  neuronDensity?: NValueEntity;
-  layerThickness?: NValueEntity;
-  boutonDensity?: NumericEntity;
-  subjectAge?: SubjectAge;
-  image?: ImageEntity[] | null;
-}
-
-export interface ExploreSectionResponse {
-  hits: ESResponseRaw[];
-  aggs: Aggregations;
-  total: TotalHits;
-}
+// TODO: See comment in ./src/constants/explore-section/fields-config/literature.tsx
+// (regarding what to do about this "any" type below)
+export type ExploreSectionResponse = ExploreESResponse<any>;
 
 export interface ESResponseRaw {
   sort?: number[] | null;
@@ -92,185 +19,19 @@ export interface ESResponseRaw {
   _type: string;
 }
 
-export interface Source extends OptionalExploreSectionFields {
-  [key: string]: any;
-  '@id': string;
-  '@type'?: string | string[] | null;
-  brainRegion?: IdLabelEntity;
-  createdAt: string;
-  createdBy: string;
-  deprecated: boolean;
-  description?: string | null;
-  distribution: Distribution;
-  name: string;
-  project: IdLabelEntity;
-  subjectSpecies?: SubjectSpecies;
-  updatedAt: string;
-  updatedBy: string;
-  _self: string;
-  mType: IdLabelEntity | null;
-  eType: IdLabelEntity | null;
-  layer?: IdLabelEntity[];
-  layerThickness?: NValueEntity;
-  contributors?: ContributorsEntity[] | null;
-  license?: IdLabelEntity | null;
-  organizations?: IdLabelEntity[] | null;
-  parameter?: {
-    coords: { [key: string]: number[] | number };
-    attrs: { [key: string]: number[] };
-  };
-  neuronMorphology?: string;
-}
-
-export type DetailAtomResources<T> = DeltaResource<T> & {
-  contributors: string[] | null;
-};
-
-type IdType = {
-  '@id': string;
-  type: string;
-};
-
-type TypeValue = {
-  '@value': string;
-  '@type': string;
-};
+export type Source = ExploreResource;
 
 // Below is the delta response interface definitions
-export type DeltaResource<T = {}> = T & {
-  '@context'?: string[] | null;
-  '@id': string;
-  '@type'?: string[] | null;
-  atlasRelease: AtlasSpatialReferenceSystemOrAtlasRelease;
-  brainLocation: BrainLocation;
-  description: string;
-  distribution: Distribution;
-  isPartOf: AgentOrIsPartOfOrLicense;
-  license: AgentOrIsPartOfOrLicense;
-  name: string;
-  objectOfStudy: ObjectOfStudy;
-  subject: Subject;
-  contribution?: ContributionEntity[] | null;
-  annotation?: AnnotationEntity[] | null;
-  stimulus?: StimulusEntity[] | null;
-  image?: ImageEntity[] | null;
-  series?: Series[] | Series;
+export type DeltaResource = (DeltaExperiment | DeltaSimulationResource) & {
   reason?: string;
-  attribute?: string;
-  tags?: string[];
-  simulations?: {
-    contentUrl: string;
-  };
-  latestRevision?: number | null | undefined;
-  wasGeneratedBy?: IdType;
-  synapticPathway?: {
-    postSynaptic: (IdWithLabel & { about: string })[];
-    preSynaptic: (IdWithLabel & { about: string })[];
-  };
+};
+
+export type Subject = DeltaSubject;
+
+export type SerializedDeltaResource = DeltaExperiment & {
   neuriteFeature?: NeuriteFeature[];
-  somaNumberOfPoints?: TypeValue;
-  _constrainedBy: string;
-  _createdAt: DateISOString;
-  _createdBy: string;
-  _deprecated: boolean;
-  _incoming: string;
-  _outgoing: string;
-  _project: string;
-  _rev: number;
-  _schemaProject: string;
-  _self: string;
-  _updatedAt: string;
-  _updatedBy: string;
 };
 
-export interface Subject {
-  '@type': string;
-  '@id'?: string;
-  species: BrainRegionOrStimulusTypeOrSpecies;
-  age?: SubjectAge;
-  weight?: Weight;
-}
+export type EPhysImageItem = Image;
 
-export type SimulationCampaignsResponse = {
-  attrs: Record<string, string>;
-  coords: { [key: string]: { [key: string]: number[] | string[] } };
-  data: string[][][];
-  dims: Record<number, string>;
-  name: string;
-};
-
-export type SimulationCampaignResource<T = {}> = DeltaResource<T> & {
-  brainConfiguration: string;
-  status: string;
-  tags: string[];
-  parameter?: {
-    coords: { [key: string]: number[] };
-    attrs: { [key: string]: number[] };
-  };
-  analyses?: string[];
-};
-
-export type Simulation = {
-  title: string;
-  completedAt: string;
-  dimensions: Record<string, number>;
-  id: string;
-  project: string;
-  startedAt: string;
-  status: SimulationStatus;
-};
-
-export type SimulationResource<T> = DeltaResource<T> & {
-  campaign: string;
-  coords: { [key: string]: number };
-  status: SimulationStatus;
-  startedAt: string;
-  completedAt?: string;
-  distribution: { contentUrl: string }[];
-};
-
-export interface SerializedDeltaResource extends OptionalExploreSectionSerializedFields {
-  description?: string;
-  speciesLabel?: string | null;
-  brainRegion?: string;
-  subjectSpecies?: string;
-  createdBy?: string;
-  meanPlusMinusStd?: ReactNode | null;
-  creationDate?: ReactNode;
-  thickness?: ReactNode;
-  brainConfiguration?: string;
-  subjectAge?: string | void;
-  mType?: string | void;
-  eType?: string | void;
-  attribute?: string;
-  status?: string;
-  tags?: ReactNode;
-  updatedAt?: string | null;
-  dimensions?: IdLabel[] | null;
-  coords?: { [key: string]: number };
-  contributors?: IdLabel[] | null;
-  layer?: string;
-  license?: string | null;
-  attrs?: IdLabel[] | null;
-  campaign?: string;
-  startedAt?: string | null;
-  startedAtTime?: string | null;
-  completedAt?: string | null;
-  parameter?: {
-    coords: { [key: string]: number[] };
-    attrs: { [key: string]: number[] };
-  };
-  name?: string;
-  wasGeneratedBy?: string;
-}
-
-export type EPhysImageItem = {
-  '@id': string;
-  repetition: number;
-  about: string;
-  stimulusType: {
-    '@id': string;
-  };
-};
-
-export type Contributor = DeltaResource<{ familyName: string; givenName: string }>;
+export type Contributor = DeltaContributor;

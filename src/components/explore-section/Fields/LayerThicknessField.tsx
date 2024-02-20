@@ -1,9 +1,18 @@
 import { formatNumber } from '@/util/common';
-import { DeltaResource } from '@/types/explore-section/resources';
+import {
+  ExperimentalBoutonDensity,
+  ExperimentalLayerThickness,
+  ExperimentalNeuronDensity,
+  ExperimentalSynapsesPerConnection,
+} from '@/types/explore-section/delta-experiment';
 import useStats from '@/components/explore-section/Fields/useStats';
 
 type LayerThicknessFieldProps = {
-  detail: DeltaResource;
+  detail:
+    | ExperimentalBoutonDensity
+    | ExperimentalLayerThickness
+    | ExperimentalNeuronDensity
+    | ExperimentalSynapsesPerConnection;
 };
 
 export default function LayerThicknessField({ detail }: LayerThicknessFieldProps) {

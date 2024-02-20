@@ -1,20 +1,29 @@
 import find from 'lodash/find';
-import { DeltaResource, Subject } from '@/types/explore-section/resources';
-import { AnnotationEntity, Series } from '@/types/explore-section/fields';
+import { Subject } from '@/types/explore-section/resources';
+import {
+  Experiment,
+  ExperimentalBoutonDensity,
+  ExperimentalLayerThickness,
+  ExperimentalNeuronDensity,
+  ExperimentalSynapsesPerConnection,
+  ExperimentalTrace,
+} from '@/types/explore-section/delta-experiment';
+import { Annotation, SeriesStatistic } from '@/types/explore-section/delta-properties';
 import { ensureArray } from '@/util/nexus';
 import { NO_DATA_STRING } from '@/constants/explore-section/queries';
 import { formatNumber } from '@/util/common';
 
-const seriesArrayFunc = (series: Series | Series[] | undefined) => series && ensureArray(series);
+const seriesArrayFunc = (series: SeriesStatistic | SeriesStatistic[] | undefined) =>
+  series && ensureArray(series);
 
-const annotationArrayFunc = (annotation: AnnotationEntity[] | undefined | null) =>
+const annotationArrayFunc = (annotation: Annotation | Annotation[] | undefined) =>
   annotation && ensureArray(annotation);
 
 /**
  * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").Subject} subject
  */
-export const ageSelectorFn = (subject: Subject | null) => {
+export const ageSelectorFn = (subject: Subject | null): string => {
   if (subject?.age?.value) {
     return `${subject?.age.value} ${subject?.age.unitCode} ${subject?.age.period}`;
   }
@@ -29,31 +38,37 @@ export const ageSelectorFn = (subject: Subject | null) => {
  * Takes delta resource and extracts subject age
  * @param {import("./types/explore-section/resources").DeltaResource} detail
  */
-export const subjectAgeSelectorFn = (detail: DeltaResource | null) => {
+export const subjectAgeSelectorFn = (detail: Experiment | null) => {
   return ageSelectorFn(detail?.subject || null);
 };
 
 // renders mtype or 'no MType text if not present
-export const mTypeSelectorFn = (detail: DeltaResource | null) => {
+export const mTypeSelectorFn = (
+  detail: ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
+) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name.toLowerCase() === 'm-type annotation'
+    (o: Annotation) => o.name.toLowerCase() === 'm-type annotation'
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
 
 // renders etype or 'no EType' text if not present
-export const eTypeSelectorFn = (detail: DeltaResource | null) => {
+export const eTypeSelectorFn = (
+  detail: ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
+) => {
   const entity = find(
     annotationArrayFunc(detail?.annotation),
-    (o: AnnotationEntity) => o.name.toLowerCase() === 'e-type annotation'
+    (o: Annotation) => o.name.toLowerCase() === 'e-type annotation'
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
 
 // renders standard error of the mean if present
-export const semSelectorFn = (detail: DeltaResource | null) => {
-  const seriesArray: Series[] | undefined = seriesArrayFunc(detail?.series);
+export const semSelectorFn = (
+  detail: ExperimentalBoutonDensity | ExperimentalLayerThickness | ExperimentalSynapsesPerConnection
+) => {
+  const seriesArray: SeriesStatistic[] | undefined = seriesArrayFunc(detail?.series);
 
   const value = seriesArray
     ?.find((series) => series.statistic === 'standard error of the mean')
@@ -69,13 +84,16 @@ export const semSelectorFn = (detail: DeltaResource | null) => {
  * @param withUnits whether to render units
  */
 export const selectorFnStatisticDetail = (
-  detail: DeltaResource,
+  detail:
+    | ExperimentalBoutonDensity
+    | ExperimentalLayerThickness
+    | ExperimentalSynapsesPerConnection,
   field: string,
   withUnits: boolean = false
 ): string | number => {
   if (!detail?.series) return NO_DATA_STRING;
 
-  const found = ensureArray(detail?.series).find((el: Series) => el.statistic === field);
+  const found = ensureArray(detail?.series).find((el: SeriesStatistic) => el.statistic === field);
   const units = withUnits && found ? found.unitCode : '';
   return found ? `${formatNumber(found.value)} ${units}` : NO_DATA_STRING;
 };

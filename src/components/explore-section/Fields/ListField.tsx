@@ -1,4 +1,4 @@
-import { IdLabel } from '@/types/explore-section/fields';
+import { IdLabel } from '@/types/explore-section/misc';
 
 export default function ListField<T>({ items }: { items: IdLabel<T>[] | undefined | null }) {
   if (!items) return null;

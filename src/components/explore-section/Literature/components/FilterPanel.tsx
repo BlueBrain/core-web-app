@@ -29,7 +29,7 @@ import {
 } from '@/state/literature';
 import { normalizedDate } from '@/util/utils';
 import { getFieldLabel } from '@/api/explore-section/fields';
-import { Buckets } from '@/types/explore-section/fields';
+import { BucketAggregation } from '@/types/explore-section/es-aggs';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 
 const { RangePicker } = DatePicker.generatePicker<Date>(dateFnsGenerateConfig);
@@ -330,9 +330,9 @@ const mlFilters = (articles: GArticle[], filterValues: FilterValues | null): MLF
 
 const getFilterBuckets = (
   articles: GArticle[],
-  filterName: FilterFieldsType,
+  _filterName: FilterFieldsType,
   filterFields: (keyof GArticle)[]
-): Buckets => {
+): BucketAggregation => {
   const fieldValues = getPossibleOptions(articles, filterFields);
 
   return {

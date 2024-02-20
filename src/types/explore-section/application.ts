@@ -1,14 +1,9 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Loadable } from 'jotai/vanilla/utils/loadable';
-import {
-  TotalHits,
-  Aggregations,
-  IndexDataValue,
-  ZoomRanges,
-} from '@/types/explore-section/fields';
+import { IndexDataValue, ZoomRanges } from '@/types/explore-section/misc';
+import { FlattenedExploreESResponse, ExploreResource } from '@/types/explore-section/es';
 
 import { Filter, GteLteValue } from '@/components/Filter/types';
-import { ExploreResource } from '@/types/explore-section/es';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataType } from '@/constants/explore-section/list-views';
 
@@ -25,13 +20,13 @@ export interface SortState {
 
 export type ListViewAtomValues = {
   activeColumns: string[];
-  aggregations: Loadable<Aggregations>;
+  aggregations: Loadable<FlattenedExploreESResponse<ExploreResource>['aggs']>;
   data: Loadable<ExploreResource[] | undefined>;
   filters: Filter[];
   pageSize: number;
   searchString: string;
   sortState: SortState;
-  total: Loadable<TotalHits | undefined>;
+  total: Loadable<FlattenedExploreESResponse<ExploreResource>['total'] | undefined>;
 };
 
 export type ListViewAtoms<T> = {

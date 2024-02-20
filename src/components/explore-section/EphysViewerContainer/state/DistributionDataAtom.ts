@@ -1,11 +1,13 @@
 import { Session } from 'next-auth';
 import { atom, Atom } from 'jotai';
 import { Distribution, Entity } from '@/types/nexus';
-import { DataSets, RABIndex } from '@/types/explore-section/fields';
+import { TraceData, RABIndex } from '@/types/explore-section/misc';
 import RandomAccessBuffer from '@/util/explore-section/random-access-buffer';
 import useLazyCache from '@/components/explore-section/EphysViewerContainer/hooks/useLazyCache';
 import { fetchFileByUrl, fetchResourceById, listResourceLinksById } from '@/api/nexus';
 import sessionAtom from '@/state/session';
+
+type DataSets = Record<string, TraceData>;
 
 /**
  *

@@ -10,8 +10,10 @@ import {
   fetchResourceByUrl,
 } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
-import { SimulationCampaignResource } from '@/types/explore-section/resources';
-import { SimulationCampaignExecution } from '@/types/explore-section/delta-simulation-campaigns';
+import {
+  SimulationCampaign,
+  SimulationCampaignExecution,
+} from '@/types/explore-section/delta-simulation-campaigns';
 import { BbpWorkflowConfigResource, WorkflowExecution } from '@/types/nexus';
 import { useSessionAtomValue } from '@/hooks/hooks';
 
@@ -101,7 +103,7 @@ export async function getConfigWithMultiAnalysis(
   Fetches the WorkflowExecuton from the sim campaign
 */
 export async function fetchSimCampWorkflowConfig(
-  simCampaign: SimulationCampaignResource,
+  simCampaign: SimulationCampaign,
   session: Session | null
 ) {
   if (!simCampaign.wasGeneratedBy || !session) return;
@@ -170,7 +172,7 @@ function extractAnalysisConfigs(config: string): AnalysisConfig[] | undefined {
 /* 
   Gets the ids of all the launched custom analysis
 */
-export function useAnalysisIds(resource: SimulationCampaignResource): [string[], boolean] {
+export function useAnalysisIds(resource: SimulationCampaign): [string[], boolean] {
   const session = useSessionAtomValue();
   const [customAnalysisIds, setCustomAnalysisIds] = useState<string[]>([]);
   const [fetching, setFetching] = useState(true);

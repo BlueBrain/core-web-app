@@ -12,7 +12,7 @@ import DimensionSelector from './DimensionSelector';
 import SimulationsDisplayGrid from './SimulationsDisplayGrid';
 import { fetchSimCampWorkflowConfig, getConfigWithMultiAnalysis, useAnalysisIds } from './utils';
 import ScheduledIndicator from './ScheduledIndicator';
-import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { SimulationCampaign } from '@/types/explore-section/delta-simulation-campaigns';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { useAnalyses, Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createHeaders, formatTimeDifference } from '@/util/utils';
@@ -24,7 +24,7 @@ export default function CustomAnalysis({
   resource,
   analysisId,
 }: {
-  resource: SimulationCampaignResource;
+  resource: SimulationCampaign;
   analysisId: string;
 }) {
   const { ensureWorkflowAuth } = useWorkflowAuth();
@@ -99,7 +99,7 @@ export default function CustomAnalysis({
 }
 
 function useCumulativeAnalysisReports(
-  simCampaign: SimulationCampaignResource,
+  simCampaign: SimulationCampaign,
   analysisId: string
 ): [ExtendedCumAnalysisReport | undefined, boolean] {
   const session = useSessionAtomValue();
@@ -160,7 +160,7 @@ function useCumulativeAnalysisReports(
 }
 
 async function launchAnalysis(
-  simCampaign: SimulationCampaignResource,
+  simCampaign: SimulationCampaign,
   analysis: Analysis | undefined,
   session: Session | null
 ) {

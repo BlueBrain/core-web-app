@@ -1,13 +1,13 @@
 import dynamic from 'next/dynamic';
 import { ConfigProvider, Select } from 'antd';
 import { useState } from 'react';
-import { Distribution } from '@/types/explore-section/fields';
+import { FileDistribution } from '@/types/explore-section/delta-properties';
 
 const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
   ssr: false,
 });
 
-type AnalysisPDF = Distribution & { name?: string };
+type AnalysisPDF = FileDistribution & { name?: string };
 
 type AnalysisType = 'all' | 'trace' | 'score' | 'distribution';
 

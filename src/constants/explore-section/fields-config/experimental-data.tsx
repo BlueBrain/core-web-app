@@ -26,11 +26,19 @@ import {
   FieldType,
 } from '@/constants/explore-section/fields-config/types';
 import { MorphoMetricCompartment } from '@/types/explore-section/es-experiment';
-import { SynapticPosition, SynapticType } from '@/types/explore-section/fields';
+import {
+  ExperimentalBoutonDensity,
+  ExperimentalLayerThickness,
+  ExperimentalNeuronDensity,
+  ExperimentalSynapsesPerConnection,
+  ExperimentalTrace,
+  Experiment as DeltaExperiment,
+} from '@/types/explore-section/delta-experiment';
+import { SynapticPosition, SynapticType } from '@/types/explore-section/misc';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 
-export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
+export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExperiment> = {
   [Field.License]: {
     title: 'License',
     filter: FilterTypeEnum.CheckList,
@@ -74,7 +82,10 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.eType?.label),
-      deltaResourceViewFn: (resource) => eTypeSelectorFn(resource),
+      deltaResourceViewFn: (resource) =>
+        eTypeSelectorFn(
+          resource as ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
+        ),
     },
     vocabulary: {
       plural: 'E-Types',
@@ -94,7 +105,10 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: FilterTypeEnum.CheckList,
     render: {
       esResourceViewFn: (_t, r) => selectorFnBasic(r._source?.mType?.label),
-      deltaResourceViewFn: (resource) => mTypeSelectorFn(resource),
+      deltaResourceViewFn: (resource) =>
+        mTypeSelectorFn(
+          resource as ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
+        ),
     },
     vocabulary: {
       plural: 'M-Types',
@@ -135,7 +149,13 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'standard error of the mean'),
-      deltaResourceViewFn: (resource) => semSelectorFn(resource),
+      deltaResourceViewFn: (resource) =>
+        semSelectorFn(
+          resource as
+            | ExperimentalBoutonDensity
+            | ExperimentalLayerThickness
+            | ExperimentalSynapsesPerConnection
+        ),
     },
     vocabulary: {
       plural: 'Values',
@@ -189,7 +209,15 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     unit: '1/mm³',
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'mean'),
-      deltaResourceViewFn: (resource) => selectorFnStatisticDetail(resource, 'mean', true),
+      deltaResourceViewFn: (resource) =>
+        selectorFnStatisticDetail(
+          resource as
+            | ExperimentalBoutonDensity
+            | ExperimentalLayerThickness
+            | ExperimentalSynapsesPerConnection,
+          'mean',
+          true
+        ),
     },
     vocabulary: {
       plural: 'Densities',
@@ -221,7 +249,17 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     unit: 'μm',
     render: {
       esResourceViewFn: selectorFnLayerThickness,
-      deltaResourceViewFn: (resource) => <LayerThicknessField detail={resource} />,
+      deltaResourceViewFn: (resource) => (
+        <LayerThicknessField
+          detail={
+            resource as
+              | ExperimentalBoutonDensity
+              | ExperimentalLayerThickness
+              | ExperimentalNeuronDensity
+              | ExperimentalSynapsesPerConnection
+          }
+        />
+      ),
     },
     vocabulary: {
       plural: 'Thicknesses',
@@ -266,7 +304,17 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: selectorFnMeanStd,
-      deltaResourceViewFn: (resource) => <MeanStdField detail={resource} />,
+      deltaResourceViewFn: (resource) => (
+        <MeanStdField
+          detail={
+            resource as
+              | ExperimentalBoutonDensity
+              | ExperimentalLayerThickness
+              | ExperimentalNeuronDensity
+              | ExperimentalSynapsesPerConnection
+          }
+        />
+      ),
     },
     vocabulary: {
       plural: 'Values',
@@ -287,7 +335,14 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
     filter: FilterTypeEnum.ValueRange,
     render: {
       esResourceViewFn: (_t, r) => selectorFnStatistic(r._source, 'N'),
-      deltaResourceViewFn: (resource) => selectorFnStatisticDetail(resource, 'N'),
+      deltaResourceViewFn: (resource) =>
+        selectorFnStatisticDetail(
+          resource as
+            | ExperimentalBoutonDensity
+            | ExperimentalLayerThickness
+            | ExperimentalSynapsesPerConnection,
+          'N'
+        ),
     },
     vocabulary: {
       plural: 'Values',
@@ -348,8 +403,9 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       esResourceViewFn: (_text, r) =>
         selectorFnSynaptic(r._source, SynapticPosition.Pre, SynapticType.BrainRegion),
       deltaResourceViewFn: (resource) =>
-        resource.synapticPathway?.preSynaptic.find((synapse) => synapse.about === 'nsg:BrainRegion')
-          ?.label,
+        (resource as ExperimentalSynapsesPerConnection).synapticPathway?.preSynaptic.find(
+          (synapse) => synapse.about === 'nsg:BrainRegion'
+        )?.label,
     },
     filter: FilterTypeEnum.CheckList,
     esTerms: {
@@ -372,7 +428,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       esResourceViewFn: (_text, r) =>
         selectorFnSynaptic(r._source, SynapticPosition.Post, SynapticType.BrainRegion),
       deltaResourceViewFn: (resource) =>
-        resource.synapticPathway?.postSynaptic.find(
+        (resource as ExperimentalSynapsesPerConnection).synapticPathway?.postSynaptic.find(
           (synapse) => synapse.about === 'nsg:BrainRegion'
         )?.label,
     },
@@ -397,8 +453,9 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       esResourceViewFn: (_text, r) =>
         selectorFnSynaptic(r._source, SynapticPosition.Pre, SynapticType.CellType),
       deltaResourceViewFn: (resource) =>
-        resource.synapticPathway?.preSynaptic.find((synapse) => synapse.about === 'BrainCell:Type')
-          ?.label,
+        (resource as ExperimentalSynapsesPerConnection).synapticPathway?.preSynaptic.find(
+          (synapse) => synapse.about === 'BrainCell:Type'
+        )?.label,
     },
     filter: FilterTypeEnum.CheckList,
     esTerms: {
@@ -421,8 +478,9 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps = {
       esResourceViewFn: (_text, r) =>
         selectorFnSynaptic(r._source, SynapticPosition.Post, SynapticType.CellType),
       deltaResourceViewFn: (resource) =>
-        resource.synapticPathway?.postSynaptic.find((synapse) => synapse.about === 'BrainCell:Type')
-          ?.label,
+        (resource as ExperimentalSynapsesPerConnection).synapticPathway?.postSynaptic.find(
+          (synapse) => synapse.about === 'BrainCell:Type'
+        )?.label,
     },
     filter: FilterTypeEnum.CheckList,
     esTerms: {

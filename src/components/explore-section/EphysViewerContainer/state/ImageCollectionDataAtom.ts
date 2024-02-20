@@ -8,8 +8,8 @@ import { fetchResourceById } from '@/api/nexus';
 import { FileMetadata } from '@/types/nexus';
 import { chainPredicates, hasImage, isFile, not } from '@/util/explore-section/nexus-maybe';
 import uniqueArrayOfObjectsByKey from '@/util/explore-section/arrays';
-import { propAsArray } from '@/util/explore-section/nexus-tools';
-import { DeltaResource, EPhysImageItem } from '@/types/explore-section/resources';
+import { ExperimentalTrace } from '@/types/explore-section/delta-experiment';
+import { EPhysImageItem } from '@/types/explore-section/resources';
 
 const MAX_BYTES_TO_PREVIEW = 3000000;
 
@@ -22,7 +22,7 @@ const getStimulusTypeString = (image: EPhysImageItem) => {
 };
 
 export default function createImageCollectionDataAtom(
-  resource: DeltaResource,
+  resource: ExperimentalTrace,
   page: number,
   stimulusType: string,
   stimulusTypeMap: Map<string, number>
@@ -116,7 +116,7 @@ export default function createImageCollectionDataAtom(
       }
     };
 
-    const promises = propAsArray<EPhysImageItem>(resource, 'image')
+    const promises = resource.image
       .filter(imageShouldBeProcessed)
       .map((imageItem) => processImageCollection(imageItem));
 

@@ -10,22 +10,24 @@ import { DetailProps } from '@/types/explore-section/application';
 import DetailHeader from '@/components/explore-section/DetailHeader';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import usePathname from '@/hooks/pathname';
-import { DetailType } from '@/constants/explore-section/fields-config/types';
+import { DeltaResource } from '@/types/explore-section/resources';
 import { useLoadableValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 
-export default function Detail({
+type ExtendsExperiment<T> = T extends DeltaResource ? T : never;
+
+export default function Detail<T extends DeltaResource>({
   fields,
   children,
 }: {
   fields: DetailProps[];
-  children?: (detail: DetailType) => ReactNode;
+  children?: (detail: ExtendsExperiment<T>) => ReactNode;
 }) {
   const setBrainRegionSidebarIsCollapsed = useSetAtom(brainRegionSidebarIsCollapsedAtom);
 
   const path = usePathname();
   const resourceInfo = useResourceInfoFromPath();
-  const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<DetailType>;
+  const detail = useLoadableValue(detailFamily(resourceInfo)) as Loadable<ExtendsExperiment<T>>;
 
   useEffect(() => {
     setBrainRegionSidebarIsCollapsed(true);

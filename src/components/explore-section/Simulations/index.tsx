@@ -4,7 +4,7 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { Spin } from 'antd';
 import CustomAnalysis from './CustomAnalysis';
-import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { SimulationCampaign } from '@/types/explore-section/delta-simulation-campaigns';
 import DimensionSelector from '@/components/explore-section/Simulations/DimensionSelector';
 import SimulationsDisplayGrid from '@/components/explore-section/Simulations/SimulationsDisplayGrid';
 import {
@@ -20,7 +20,7 @@ import {
 import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
-export default function Simulations({ resource }: { resource: SimulationCampaignResource }) {
+export default function Simulations({ resource }: { resource: SimulationCampaign }) {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('raster');
   const [showStatus, setShowStatus] = useState<string>('all');
   const path = useEnsuredPath();

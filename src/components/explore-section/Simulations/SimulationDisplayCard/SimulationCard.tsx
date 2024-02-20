@@ -1,5 +1,5 @@
 import { EyeOutlined, FileTextOutlined } from '@ant-design/icons';
-import { Simulation } from '@/types/explore-section/resources';
+import { FormattedSimulation } from '@/types/explore-section/es-simulation-campaign';
 import InlineDimension from '@/components/explore-section/Simulations/SimulationDisplayCard/InlineDimension';
 import timeElapsedFromToday from '@/util/date';
 import Link from '@/components/Link';
@@ -7,7 +7,7 @@ import usePathname from '@/hooks/pathname';
 import { buildSimulationDetailURL } from '@/components/explore-section/Simulations/utils';
 
 type SimulationCardProps = {
-  simulation: Simulation;
+  simulation: FormattedSimulation;
   xDimension: string;
   yDimension: string;
 };
@@ -63,7 +63,10 @@ export default function SimulationCard({
         return (
           <div key={key} className="flex-2 mr-4">
             <div>{key}</div>
-            <InlineDimension value={value} status={simulation.status} />
+            <InlineDimension
+              value={value as number} // TODO: Confirm that FormattedSimulation["dimensions"]["coords"] can also be just a number
+              status={simulation.status}
+            />
           </div>
         );
       }

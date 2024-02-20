@@ -1,7 +1,7 @@
-import { IdWithType, Type } from './common';
+import { IdWithType, Type, SimulationStatus } from './common';
 import { DateISOString, EntityResource } from '@/types/nexus/common';
 
-export type ParameterCoords = Record<string, number | number[]>;
+export type ParameterCoords = Record<string, number[]>;
 
 type ContentSize = {
   unitCode: 'bytes';
@@ -25,12 +25,17 @@ type Parameter = {
 };
 
 export type Simulation = EntityResource & {
-  endedAtTime: DateISOString;
+  completedAt: DateISOString; // TODO: Check: Does this field really exist? Is it leftover from a previous type of Simulation?
+  dimensions: Record<string, number>; // TODO: Verify where this prop comes from.
+  endedAt: DateISOString; // TODO: Check: Does this field really exist? Is it leftover from a previous type of Simulation?
+  endedAtTime?: DateISOString;
   log_url: string;
   name: string;
   parameter: Parameter;
-  startedAtTime: DateISOString;
-  status: string;
+  startedAtTime?: DateISOString;
+  startedAt: DateISOString; // TODO: Check: Does this field really exist? Is it leftover from a previous type of Simulation?
+  status: SimulationStatus;
+  title: string; // TODO: Verify where this prop comes from.
   wasGeneratedBy: IdWithType;
 };
 
@@ -54,9 +59,11 @@ export type SimulationCampaignExecution = EntityResource & {
   endedAtTime: string;
   generated: IdWithType;
   startedAtTime: string;
-  status: string;
+  status: SimulationStatus;
   used: IdWithType;
   used_config: IdWithType;
   used_rev: number;
   wasInfluencedBy: IdWithType;
 };
+
+export type SimulationResource = SimulationCampaign | Simulation;

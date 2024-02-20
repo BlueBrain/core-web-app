@@ -13,7 +13,7 @@ import sessionAtom from '@/state/session';
 import { createResource, fetchResourceById } from '@/api/nexus';
 import usePathname from '@/hooks/pathname';
 import { from64 } from '@/util/common';
-import { SimulationCampaignResource } from '@/types/explore-section/resources';
+import { SimulationCampaign } from '@/types/explore-section/delta-simulation-campaigns';
 
 import { useSessionAtomValue } from '@/hooks/hooks';
 
@@ -229,7 +229,7 @@ export default function ExperimentAnalyses() {
 function useFetchSimCampaign() {
   const pathname = usePathname();
   const session = useSessionAtomValue();
-  const [simCampaign, setSimCampaign] = useState<SimulationCampaignResource>();
+  const [simCampaign, setSimCampaign] = useState<SimulationCampaign>();
 
   useEffect(() => {
     if (!pathname || !session || pathname.includes('simulate')) return;
@@ -242,7 +242,7 @@ function useFetchSimCampaign() {
     if (!id) return;
 
     const fetch = async () => {
-      const r = await fetchResourceById<SimulationCampaignResource>(id, session);
+      const r = await fetchResourceById<SimulationCampaign>(id, session);
       setSimCampaign(r);
     };
 

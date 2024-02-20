@@ -1,6 +1,7 @@
 import { ExploreESHit } from '@/types/explore-section/es';
 import { DataType } from '@/constants/explore-section/list-views';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import { ExploreSectionResource } from '@/types/explore-section/resources';
 
 export const switchStateType = {
   COUNT: 'count',
@@ -30,7 +31,11 @@ export function isNumeric(str: string) {
   ); // ...and ensure strings of whitespace fail
 }
 
-export const detailUrlBuilder = (basePath: string, resource: ExploreESHit, dataType: DataType) =>
+export const detailUrlBuilder = (
+  basePath: string,
+  resource: ExploreESHit<ExploreSectionResource>,
+  dataType: DataType
+) =>
   `${basePath}${DATA_TYPES_TO_CONFIGS[dataType]?.name}/${to64(
     `${resource._source.project.label}!/!${resource._id}`
   )}`;

@@ -9,6 +9,7 @@ import {
   DimensionRange,
   DimensionValue,
 } from '@/components/explore-section/Simulations/types';
+import { ParameterCoords } from '@/types/explore-section/delta-simulation-campaigns';
 import { useEnsuredPath, useUnwrappedValue } from '@/hooks/hooks';
 
 export default function AxisDimensionBoxEditForm({
@@ -19,7 +20,9 @@ export default function AxisDimensionBoxEditForm({
   const inputType = useWatch('input-type', form);
   const dimensionValueModified = useSetAtom(modifyDimensionValue);
   const path = useEnsuredPath();
-  const simulationCampaignDimensions = useUnwrappedValue(simCampaignDimensionsFamily(path));
+  const simulationCampaignDimensions = useUnwrappedValue<Promise<ParameterCoords>>(
+    simCampaignDimensionsFamily(path)
+  );
 
   const valueRange: DimensionRange | null = useMemo(() => {
     const dimensionConfig =
@@ -28,8 +31,8 @@ export default function AxisDimensionBoxEditForm({
     if (!dimensionConfig) return null;
     return {
       type: 'range',
-      minValue: dimensionConfig[0],
-      maxValue: dimensionConfig[dimensionConfig.length - 1],
+      minValue: dimensionConfig[0] as unknown as string, // TODO: Should DimensionRange["minValue"] be number?
+      maxValue: dimensionConfig[dimensionConfig.length - 1] as unknown as string, // TODO: Should DimensionRange["maxValue"] be number?
       step: '0.1',
     };
   }, [dimension?.id, simulationCampaignDimensions]);
@@ -126,7 +129,7 @@ export default function AxisDimensionBoxEditForm({
     return Promise.resolve();
   };
 
-  const stepValueValidator = (rule: any, value: string) => {
+  const stepValueValidator = (_rule: any, value: string) => {
     if (form.getFieldValue('input-type') === 'value') {
       return Promise.resolve();
     }
@@ -143,7 +146,7 @@ export default function AxisDimensionBoxEditForm({
    * @param rule
    * @param value
    */
-  const valueValidator = (rule: any, value: string) => {
+  const valueValidator = (_rule: any, value: string) => {
     if (
       valueRange?.minValue === undefined ||
       valueRange?.maxValue === undefined ||

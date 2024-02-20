@@ -22,14 +22,12 @@ export default function PickMorphology({ isOpen, onCancel, onOk }: Props) {
   const width = typeof window !== 'undefined' ? window.innerWidth - 50 : undefined;
   const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
 
-  const onMorphologyAdd = (selectedRows: ExploreESHit[]) => {
+  const onMorphologyAdd = (selectedRows: ExploreESHit<ReconstructedNeuronMorphology>[]) => {
     setEModelUIConfig((oldAtomData) => {
       const savedMorphs = oldAtomData?.morphologies?.length ? [...oldAtomData.morphologies] : [];
       const savedMorphIds = savedMorphs.map((t) => t['@id']);
       const newRows = selectedRows.filter((row) => !savedMorphIds.includes(row._source['@id']));
-      const selectedMorphs = newRows.map((row) =>
-        convertMorphologyForUI(row._source as ReconstructedNeuronMorphology)
-      );
+      const selectedMorphs = newRows.map((row) => convertMorphologyForUI(row._source));
 
       return {
         ...oldAtomData,
@@ -40,7 +38,11 @@ export default function PickMorphology({ isOpen, onCancel, onOk }: Props) {
   };
 
   const pickMorphButtonFn = ({ selectedRows }: RenderButtonProps) => (
-    <button type="button" className={pickButtonStyle} onClick={() => onMorphologyAdd(selectedRows)}>
+    <button
+      type="button"
+      className={pickButtonStyle}
+      onClick={() => onMorphologyAdd(selectedRows as ExploreESHit<ReconstructedNeuronMorphology>[])}
+    >
       Assign morphology
     </button>
   );

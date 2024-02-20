@@ -1,8 +1,16 @@
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import memoizeOne from 'memoize-one';
 import sessionAtom from '../session';
-import { DeltaResource, Simulation } from '@/types/explore-section/resources';
+import {
+  Simulation,
+  SimulationCampaign,
+  SimulationCampaignExecution,
+} from '@/types/explore-section/delta-simulation-campaigns';
+import {
+  Simulation as ESSimulation,
+  FormattedSimulation,
+} from '@/types/explore-section/es-simulation-campaign';
 import { AnalysisReportWithImage } from '@/types/explore-section/es-analysis-report';
 import { fetchFileByUrl, fetchResourceById } from '@/api/nexus';
 import { fetchAnalysisReports, fetchSimulationsFromEs } from '@/api/explore-section/simulations';
@@ -19,24 +27,22 @@ const ensuredSessionAtom = atom((get) => {
 export const simCampaignExecutionFamily = atomFamily((path: string) =>
   atom(async (get) => {
     const { session, info } = get(sessionAndInfoFamily(pathToResource(path)));
-    const detail = await get(detailFamily(info));
+    const detail = (await get(detailFamily(info))) as Simulation;
     const executionId = detail?.wasGeneratedBy?.['@id'];
 
     if (!executionId || !detail) return null;
 
     const cleanExecutionId = executionId.replace('https://bbp.epfl.ch/neurosciencegraph/data/', '');
 
-    const execution = await fetchResourceById<
-      DeltaResource<
-        { generated: { '@id': string; type: 'SimulationCampaign' } } & {
-          status: string;
-        }
-      >
-    >(cleanExecutionId, session, {
-      org: info.org,
-      project: info.project,
-      idExpand: false,
-    });
+    const execution = await fetchResourceById<SimulationCampaignExecution>(
+      cleanExecutionId,
+      session,
+      {
+        org: info.org,
+        project: info.project,
+        idExpand: false,
+      }
+    );
 
     return execution;
   })
@@ -49,27 +55,33 @@ memoizeOne acts as an atomFamily with just one element
 export const simCampaignDimensionsFamily = memoizeOne((path: string) =>
   selectAtom(
     detailFamily(pathToResource(path)),
-    // @ts-ignore
-    (simCamp) => simCamp?.parameter?.coords // TODO: Improve type
+    (simCamp) => (simCamp as SimulationCampaign)?.parameter?.coords // TODO: Improve type
   )
 );
 
-export const simulationsFamily = atomFamily((path: string) =>
+export const simulationsFamily = atomFamily<
+  string,
+  Atom<Promise<FormattedSimulation[] | undefined>>
+>((path: string) =>
   atom(async (get) => {
     const session = get(ensuredSessionAtom);
     const execution = await get(simCampaignExecutionFamily(path));
 
     const simulations =
       execution && (await fetchSimulationsFromEs(session.accessToken, execution.generated['@id']));
-    return simulations?.hits.map(({ _source: simulation }) => ({
-      title: simulation.name,
-      completedAt: simulation.endedAt,
-      dimensions: simulation.parameter?.coords,
-      id: simulation['@id'],
-      project: simulation?.project.identifier, // TODO: Possibly no longer necessary
-      startedAt: simulation.startedAt,
-      status: simulation.status,
-    })) as Simulation[] | undefined;
+    return simulations?.hits.map<FormattedSimulation>(
+      ({ _source: simulation }: { _source: ESSimulation }) => {
+        return {
+          title: simulation.name,
+          completedAt: simulation.endedAt,
+          dimensions: simulation.parameter.coords,
+          id: simulation['@id'],
+          project: simulation.project.identifier,
+          startedAt: simulation.startedAt,
+          status: simulation.status,
+        };
+      }
+    );
   })
 );
 

@@ -3,16 +3,20 @@ interface Bucket {
   doc_count: number;
 }
 
-interface BucketAggregation {
+export interface BucketAggregation {
   buckets: Bucket[];
   excludeOwnFilter: { buckets: Bucket[] };
 }
 
-interface NestedStatsAggregation {
+export interface NestedBucketAggregation {
+  [key: string]: { [key: string]: BucketAggregation };
+}
+
+export interface NestedStatsAggregation {
   [key: string]: { [key: string]: Statistics };
 }
 
-interface Statistics {
+export interface Statistics {
   avg?: number;
   count: number;
   max?: number;
@@ -24,5 +28,5 @@ interface Statistics {
 type StatsAggregation = NestedStatsAggregation | Statistics;
 
 export default interface Aggregations {
-  [key: string]: BucketAggregation | StatsAggregation;
+  [key: string]: BucketAggregation | NestedBucketAggregation | StatsAggregation;
 }

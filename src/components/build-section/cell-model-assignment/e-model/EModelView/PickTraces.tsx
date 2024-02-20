@@ -22,7 +22,7 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
   const width = typeof window !== 'undefined' ? window.innerWidth - 50 : undefined;
   const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
 
-  const onTraceAdd = (selectedRows: ExploreESHit[]) => {
+  const onTraceAdd = (selectedRows: ExploreESHit<ExperimentalTrace>[]) => {
     setEModelUIConfig((oldAtomData) => {
       const savedTraces = oldAtomData?.traces?.length ? [...oldAtomData.traces] : [];
       const savedTraceIds = savedTraces.map((t) => t['@id']);
@@ -40,7 +40,11 @@ export default function PickTraces({ isOpen, onCancel, onOk }: Props) {
   };
 
   const pickTraceButtonFn = ({ selectedRows }: RenderButtonProps) => (
-    <button type="button" className={pickButtonStyle} onClick={() => onTraceAdd(selectedRows)}>
+    <button
+      type="button"
+      className={pickButtonStyle}
+      onClick={() => onTraceAdd(selectedRows as ExploreESHit<ExperimentalTrace>[])}
+    >
       Add trace
     </button>
   );

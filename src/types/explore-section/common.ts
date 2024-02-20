@@ -33,3 +33,9 @@ export type IdLabelWithType<T = string> = IdWithLabel & Type<T>;
 export type LabelWithType<T = string> = Label & Type<T>;
 
 export type TypeWithDate = Type & Value<DateISOString>;
+
+export enum SimulationStatus {
+  running = 'Running',
+  done = 'Done',
+  failed = 'Failed',
+}
