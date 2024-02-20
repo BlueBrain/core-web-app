@@ -1,156 +1,43 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { arrayToTree } from 'performant-array-to-tree';
-import { Button, ConfigProvider, Spin, Tooltip } from 'antd';
-import { MinusOutlined } from '@ant-design/icons';
+
 import { unwrap } from 'jotai/utils';
 
-import ContextualTrigger from '../ContextualLiterature/Trigger';
 import { getMetric } from './util';
-import { NeuronCompositionEditorProps, NeuronCompositionItem } from './types';
-import { metricToUnit } from './MetricToUnit';
 import { handleNavValueChange } from '@/components/BrainTree/util';
 import TreeNav from '@/components/TreeNavItem';
 import { NavValue } from '@/state/brain-regions/types';
 import { densityOrCountAtom, selectedBrainRegionAtom } from '@/state/brain-regions';
-import { BrainRegionIcon, MissingData } from '@/components/icons';
 import VerticalSwitch from '@/components/VerticalSwitch';
-import { formatNumber } from '@/util/common';
-import CompositionInput from '@/components/build-section/BrainRegionSelector/CompositionInput';
 import { isConfigEditableAtom } from '@/state/brain-model-config';
 import { analysedCompositionAtom, computeAndSetCompositionAtom } from '@/state/build-composition';
 import {
   CalculatedCompositionNeuronGlia,
   CalculatedCompositionNode,
 } from '@/types/composition/calculation';
-import { QuestionAbout } from '@/types/literature';
 import { cellTypesByIdAtom } from '@/state/build-section/cell-types';
-import { ETYPE_NEXUS_TYPE, MTYPE_NEXUS_TYPE } from '@/constants/ontologies';
-
-function CompositionTooltip({ title, subclasses }: { title?: string; subclasses?: string[] }) {
-  const renderType = () => {
-    if (subclasses?.includes(MTYPE_NEXUS_TYPE)) {
-      return 'M-type';
-    }
-    if (subclasses?.includes(ETYPE_NEXUS_TYPE)) {
-      return 'E-type';
-    }
-    return undefined;
-  };
-
-  if (!title || !subclasses) {
-    return <div className="text-primary-8">Cell type information could not be retrieved</div>;
-  }
-
-  return (
-    <div className="flex items-center gap-2">
-      <div className="grow font-bold text-primary-8">{title}</div>
-      <div className="flex-none text-neutral-4">{renderType()}</div>
-    </div>
-  );
-}
-
-function NeuronCompositionEditor({
-  composition,
-  title,
-  onSliderChange,
-  trigger, // A callback that returns the <Accordion.Trigger/>
-  content, // A callback that returns the <Accordion.Content/>
-  isEditable,
-  isLeaf,
-  about,
-  id,
-}: NeuronCompositionEditorProps) {
-  const [compositionValue, setCompositionValue] = useState<number>(composition);
-  const densityOrCount = useAtomValue(densityOrCountAtom);
-
-  useEffect(() => {
-    setCompositionValue(composition);
-  }, [composition]);
-
-  // different container classes based on whether its leaf or not
-  const containerClasses = useMemo(() => {
-    const baseClasses = 'flex items-center justify-between whitespace-nowrap';
-    return isLeaf
-      ? `${baseClasses} gap-3 mt-5 pb-0 text-secondary-4`
-      : `${baseClasses} gap-2 py-3 text-left text-primary-3 w-full hover:text-white`;
-  }, [isLeaf]);
-
-  const classObjects = useAtomValue(useMemo(() => unwrap(cellTypesByIdAtom), []));
-  const questionSubject = classObjects?.[id]?.prefLabel ?? title;
-
-  return (
-    <>
-      <div className={containerClasses}>
-        <div className="flex items-center gap-3">
-          <ConfigProvider
-            theme={{
-              components: {
-                Tooltip: {
-                  borderRadius: 0,
-                  paddingSM: 15,
-                  paddingXS: 15,
-                },
-              },
-            }}
-          >
-            <Tooltip
-              overlayStyle={{ width: 'fit-content', maxWidth: '500px' }}
-              color="#FFF"
-              title={
-                classObjects ? (
-                  <CompositionTooltip
-                    title={classObjects?.[id]?.prefLabel}
-                    subclasses={classObjects?.[id]?.subClassOf}
-                  />
-                ) : (
-                  <Spin />
-                )
-              }
-            >
-              <span className={`font-bold ${isLeaf ? 'whitespace-nowrap' : 'text-white'}`}>
-                {title}
-              </span>
-            </Tooltip>
-          </ConfigProvider>
-
-          <ContextualTrigger
-            className={isEditable ? 'mb-1 ml-1 h-max' : ''}
-            about={about as QuestionAbout}
-            subject={questionSubject}
-            densityOrCount={densityOrCount}
-          />
-        </div>
-        <div className={`flex items-center ${isLeaf ? 'gap-3' : 'gap-2'}`}>
-          {isEditable ? (
-            <CompositionInput
-              composition={compositionValue}
-              compositionChangeFunc={onSliderChange}
-            />
-          ) : (
-            <span className="ml-auto text-white">{formatNumber(composition)}</span>
-          )}
-          {!isLeaf && trigger?.()}
-        </div>
-      </div>
-      {isLeaf && trigger?.()}
-      {isLeaf ? content?.() : content?.({ className: '-mt-3' })}
-    </>
-  );
-}
+import METypeTreeItem from '@/components/common/METypeHierarchy/METypeTreeItem';
+import { ClassNexus } from '@/api/ontologies/types';
+import { METypeItem } from '@/components/common/METypeHierarchy/METypeTreeItem/types';
+import { SelectedBrainRegionTitle } from '@/components/common/METypeHierarchy/SelectedBrainRegionTitle';
+import { NoCompositionAvailable } from '@/components/common/METypeHierarchy/NoCompositionAvailable';
+import { metricToUnit } from '@/components/common/METypeHierarchy/MetricToUnit';
 
 function MeTypeDetails({
   neuronComposition,
   meTypeNavValue,
   onValueChange,
   editMode,
+  meTypesMetadata,
 }: {
   neuronComposition: CalculatedCompositionNeuronGlia;
   meTypeNavValue: NavValue;
   onValueChange: (newValue: string[], path: string[]) => void;
   editMode: boolean;
+  meTypesMetadata: Record<string, ClassNexus> | undefined | null;
 }) {
   const densityOrCount = useAtomValue(densityOrCountAtom);
   const composition = useAtomValue(analysedCompositionAtom);
@@ -198,8 +85,10 @@ function MeTypeDetails({
       {neurons && (
         <TreeNav items={neurons} onValueChange={onValueChange} value={meTypeNavValue}>
           {({ composition: renderedComposition, content, title, trigger, id, parentId, about }) => (
-            <NeuronCompositionEditor
+            <METypeTreeItem
               content={content}
+              metadata={meTypesMetadata?.[id]}
+              densityOrCount={densityOrCount}
               title={title}
               trigger={trigger}
               composition={renderedComposition}
@@ -219,9 +108,11 @@ function MeTypeDetails({
                 trigger: nestedTrigger,
                 id: nestedId,
                 about: nestedAbout,
-              }: NeuronCompositionItem) => (
-                <NeuronCompositionEditor
+              }: METypeItem) => (
+                <METypeTreeItem
                   content={nestedContent}
+                  metadata={meTypesMetadata?.[id]}
+                  densityOrCount={densityOrCount}
                   onSliderChange={(newValue: number) => {
                     const node = neuronsToNodes[parentId].items.find(
                       (nestedNode: CalculatedCompositionNode) => nestedNode.id === nestedId
@@ -237,28 +128,11 @@ function MeTypeDetails({
                   id={nestedId}
                 />
               )}
-            </NeuronCompositionEditor>
+            </METypeTreeItem>
           )}
         </TreeNav>
       )}
     </>
-  );
-}
-
-function Title({ title, onClick }: { title?: string; onClick?: () => void }) {
-  return (
-    <div className="mb-5 flex items-start justify-between">
-      <div className="flex items-center justify-start space-x-2 text-2xl font-bold text-white">
-        <BrainRegionIcon style={{ height: '1em' }} />
-        <span className="text-secondary-4">{title}</span>
-      </div>
-      <Button
-        type="text"
-        icon={<MinusOutlined style={{ color: 'white' }} />}
-        onClick={onClick}
-        style={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}
-      />
-    </div>
   );
 }
 
@@ -284,19 +158,6 @@ function UnitsToggle({
   );
 }
 
-function NoVolumeAnnotations() {
-  return (
-    <div className="mt-48 flex flex-col gap-3 text-center">
-      <MissingData className="w-full" style={{ color: '#fff' }} />
-      <h3 className="text-base font-semibold text-white">
-        No volume annotations
-        <br />
-        available for this brain region
-      </h3>
-    </div>
-  );
-}
-
 function ExpandedRegionDetails({
   editMode,
   setIsSidebarExpanded,
@@ -309,6 +170,7 @@ function ExpandedRegionDetails({
   const composition = useAtomValue(analysedCompositionAtom);
   const isConfigEditable = useAtomValue(isConfigEditableAtom);
   const [meTypeNavValue, setNavValue] = useState<NavValue>({});
+  const meTypesMetadata = useAtomValue(useMemo(() => unwrap(cellTypesByIdAtom), []));
 
   const onValueChange = useCallback(
     (newValue: string[], path: string[]) => {
@@ -320,7 +182,12 @@ function ExpandedRegionDetails({
   );
 
   const title = useMemo(
-    () => <Title title={brainRegion?.title} onClick={() => setIsSidebarExpanded(false)} />,
+    () => (
+      <SelectedBrainRegionTitle
+        title={brainRegion?.title}
+        onClick={() => setIsSidebarExpanded(false)}
+      />
+    ),
     [brainRegion?.title, setIsSidebarExpanded]
   );
 
@@ -344,6 +211,7 @@ function ExpandedRegionDetails({
           meTypeNavValue={meTypeNavValue}
           onValueChange={onValueChange}
           editMode={editMode && !!isConfigEditable}
+          meTypesMetadata={meTypesMetadata}
         />
       ) : (
         <div>Composition could not be calculated</div>
@@ -352,7 +220,7 @@ function ExpandedRegionDetails({
   ) : (
     <div className="flex w-[300px] flex-col gap-5 overflow-y-auto px-6 py-6">
       {title}
-      <NoVolumeAnnotations />
+      <NoCompositionAvailable />
     </div>
   );
 }

@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
 import { arrayToTree } from 'performant-array-to-tree';
-import { METypeTreeItem } from './METypeTreeItem';
 import { DensityOrCountToggle } from './DensityOrCountToggle';
-import { DensityOrCount } from './types';
 import { handleNavValueChange } from '@/components/BrainTree/util';
 import { NavValue } from '@/state/brain-regions/types';
 import { AnalysedComposition } from '@/types/composition/calculation';
 import TreeNav from '@/components/TreeNavItem';
 import { ClassNexus } from '@/api/ontologies/types';
 import { getMetric } from '@/components/build-section/BrainRegionSelector/util';
-import { metricToUnit } from '@/components/build-section/BrainRegionSelector/MetricToUnit';
+import METypeTreeItem from '@/components/common/METypeHierarchy/METypeTreeItem';
+import { DensityOrCount } from '@/components/common/METypeHierarchy/METypeTreeItem/types';
+import { metricToUnit } from '@/components/common/METypeHierarchy/MetricToUnit';
 
 type Props = {
   composition: AnalysedComposition;
@@ -80,6 +80,8 @@ export function METypeDetails({ composition, meTypesMetadata }: Props) {
                 isLeaf={false}
                 id={id}
                 isExpanded={isExpanded}
+                densityOrCount={densityOrCount}
+                isEditable={false}
               >
                 {({
                   content: nestedContent,
@@ -96,6 +98,8 @@ export function METypeDetails({ composition, meTypesMetadata }: Props) {
                     isLeaf
                     id={nestedId}
                     metadata={meTypesMetadata?.[nestedId]}
+                    densityOrCount={densityOrCount}
+                    isEditable={false}
                   />
                 )}
               </METypeTreeItem>

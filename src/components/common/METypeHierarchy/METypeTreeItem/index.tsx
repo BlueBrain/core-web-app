@@ -1,10 +1,17 @@
 import { useMemo } from 'react';
-import { METypeTreeItemProps } from './types';
+import { useAtomValue } from 'jotai';
+
+import { METypeTreeItemsProps } from './types';
+import { METypeTooltip } from './METypeTooltip';
 import { ETYPE_NEXUS_TYPE, MTYPE_NEXUS_TYPE } from '@/constants/ontologies';
 import { formatNumber } from '@/util/common';
 import { classNames } from '@/util/utils';
+import CompositionInput from '@/components/build-section/BrainRegionSelector/CompositionInput';
+import { sectionAtom } from '@/state/application';
+import { QuestionAbout } from '@/types/literature';
+import ContextualTrigger from '@/components/build-section/ContextualLiterature/Trigger';
 
-export function METypeTreeItem({
+export default function METypeTreeItem({
   composition,
   title,
   trigger, // A callback that returns the <Accordion.Trigger/>
@@ -13,7 +20,12 @@ export function METypeTreeItem({
   id,
   isExpanded,
   metadata,
-}: METypeTreeItemProps) {
+  onSliderChange,
+  about,
+  isEditable,
+  densityOrCount,
+}: METypeTreeItemsProps) {
+  const sectionName = useAtomValue(sectionAtom);
   const metadataTitle = useMemo(() => {
     if (!metadata?.prefLabel || !metadata.subClassOf) {
       return 'Cell type information could not be retrieved';
@@ -36,11 +48,29 @@ export function METypeTreeItem({
           isLeaf ? 'mt-5 gap-3 pb-0 text-secondary-4' : 'w-full gap-2 py-3 text-left text-primary-3'
         )}
       >
-        <div className="flex items-center gap-3 font-bold" title={`${metadataTitle}`}>
-          {title}
-        </div>
+        {sectionName === 'explore' ? (
+          <div className="flex items-center gap-3 font-bold" title={`${metadataTitle}`}>
+            {title}
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <METypeTooltip metadata={metadata} title={title} isLeaf={isLeaf} />
+
+            <ContextualTrigger
+              className={isEditable ? 'mb-1 ml-1 h-max' : ''}
+              about={about as QuestionAbout}
+              subject={metadata?.prefLabel ?? title}
+              densityOrCount={densityOrCount}
+            />
+          </div>
+        )}
+
         <div className={`flex items-center ${isLeaf ? 'gap-3' : 'gap-2'}`}>
-          <span className="ml-auto text-white">{formatNumber(composition)}</span>
+          {isEditable && onSliderChange ? (
+            <CompositionInput composition={composition} compositionChangeFunc={onSliderChange} />
+          ) : (
+            <span className="ml-auto text-white">{formatNumber(composition)}</span>
+          )}
           {!isLeaf && trigger?.()}
         </div>
       </div>

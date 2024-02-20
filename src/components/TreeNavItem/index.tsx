@@ -202,7 +202,7 @@ function TreeNav(
     >
       {navItems.map(({ id, items, ...rest }) => (
         <TreeNavItem
-          className={classNames('relative ml-4', className)}
+          className={classNames('relative ml-4 last:mb-5', className)}
           id={id}
           isExpanded={typeof value?.[id] !== 'undefined'}
           items={items}
