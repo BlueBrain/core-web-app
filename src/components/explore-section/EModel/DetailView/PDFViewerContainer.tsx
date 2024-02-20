@@ -44,7 +44,7 @@ export function PDFViewerContainer({ distributions }: Props) {
           <DynamicPDFViewer
             url={pdf.contentUrl}
             key={pdf.contentUrl}
-            name={pdf.name ?? pdf.label}
+            type={nameToType(pdf.name ?? pdf.label)}
           />
         ))}
     </div>
@@ -81,4 +81,17 @@ const matchesType = (distribution: AnalysisPDF, type: AnalysisType) => {
 
   const name = distribution.name ?? distribution.label;
   return name.toLowerCase().includes(type);
+};
+
+const nameToType = (name: string) => {
+  if (name.toLowerCase().endsWith('distribution.pdf')) {
+    return 'Distribution';
+  }
+  if (name.toLowerCase().endsWith('traces.pdf')) {
+    return 'Traces';
+  }
+  if (name.toLowerCase().endsWith('scores.pdf')) {
+    return 'Scores';
+  }
+  return 'Other';
 };

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { Divider } from 'antd';
 import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -11,14 +12,14 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 type Props = {
   url: string;
-  name: string;
+  type: string;
 };
 
 const options = {
   standardFontDataUrl: '/standard_fonts/',
 };
 
-export default function PDFViewer({ url, name }: Props) {
+export default function PDFViewer({ url, type }: Props) {
   const [totalPages, setNumPages] = useState<number>();
   const token = useAccessToken();
 
@@ -39,7 +40,7 @@ export default function PDFViewer({ url, name }: Props) {
 
   return (
     <div className="mt-4 flex flex-col items-center">
-      <h5 className="p-3 text-2xl font-semibold">{name}</h5>
+      <h2 className="p-3 text-2xl font-bold text-primary-8">{type}</h2>
       <Document options={options} file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
         {Array.from(new Array(totalPages), (el, index) => (
           <>
@@ -57,6 +58,7 @@ export default function PDFViewer({ url, name }: Props) {
           </>
         ))}
       </Document>
+      <Divider />
     </div>
   );
 }
