@@ -57,6 +57,7 @@ input[type='number'] {
       scrollbar-color: theme('colors.primary.4') rgba(#000, 0.2);
     }
     .primary-scrollbar::-webkit-scrollbar {
+      -webkit-appearance: none;
       @apply scrollbar-size;
     }
     .primary-scrollbar::-webkit-scrollbar-track {
@@ -74,6 +75,7 @@ input[type='number'] {
       scrollbar-color: theme('colors.gray.200') theme('colors.gray.800');
     }
     .secondary-scrollbar::-webkit-scrollbar {
+      -webkit-appearance: none;
       @apply scrollbar-size;
     }
     .secondary-scrollbar::-webkit-scrollbar-track {
