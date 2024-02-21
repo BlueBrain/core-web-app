@@ -114,7 +114,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
     esTerms: {
       flat: {
         filter: 'contributors.label.keyword',
-        aggregation: 'contributors',
+        aggregation: 'contributors.label.keyword',
         sort: 'contributors.label.keyword',
       },
     },

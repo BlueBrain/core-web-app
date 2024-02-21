@@ -29,9 +29,7 @@ export function getAggESBuilder(filter: Filter): Aggregation | undefined {
               )
           );
       }
-      return esb
-        .termsAggregation(filter.field, `${esConfig?.flat?.aggregation}.label.keyword`)
-        .size(100);
+      return esb.termsAggregation(filter.field, esConfig?.flat?.aggregation).size(100);
 
     case 'stats':
       if (esConfig?.nested) {

@@ -54,7 +54,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     esTerms: {
       flat: {
         filter: 'brainRegion.label.keyword',
-        aggregation: 'brainRegion',
+        aggregation: 'brainRegion.label.keyword',
         sort: 'brainRegion.label.keyword',
       },
     },
@@ -74,7 +74,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     esTerms: {
       flat: {
         filter: 'eType.label.keyword',
-        aggregation: 'eType',
+        aggregation: 'eType.label.keyword',
         sort: 'eType.label.keyword',
       },
     },
@@ -97,7 +97,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     esTerms: {
       flat: {
         filter: 'mType.label.keyword',
-        aggregation: 'mType',
+        aggregation: 'mType.label.keyword',
         sort: 'mType.label.keyword',
       },
     },
@@ -119,7 +119,7 @@ export const EXPERIMENTAL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<DeltaExpe
     esTerms: {
       flat: {
         filter: 'subjectSpecies.label.keyword',
-        aggregation: 'subjectSpecies',
+        aggregation: 'subjectSpecies.label.keyword',
         sort: 'subjectSpecies.label.keyword',
       },
     },

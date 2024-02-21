@@ -34,4 +34,7 @@ export type EModelResource = ModelResource & {
   };
   seed: number;
   subject: ModelSubject;
+  score?: number;
 };
+
+export type Model = EModelResource;

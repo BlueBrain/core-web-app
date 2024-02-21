@@ -191,7 +191,21 @@ export const E_MODEL_FIELDS = [
     className: 'col-span-3 row-span-2',
   },
   {
+    field: Field.BrainRegion,
+  },
+  {
+    field: Field.EModelScore,
+  },
+  {
     field: Field.MType,
+    className: 'col-span-3',
+  },
+  {
+    field: Field.Contributors,
+  },
+  {
+    field: Field.CreatedAt,
+    className: 'col-span-2',
   },
   {
     field: Field.EType,

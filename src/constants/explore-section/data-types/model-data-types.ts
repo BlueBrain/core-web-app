@@ -7,7 +7,18 @@ export const MODEL_DATA_TYPES = {
     title: 'E-model',
     group: DataTypeGroup.ModelData,
     name: 'e-model',
-    columns: [Field.MType, Field.EType, Field.BrainRegion, Field.CreatedAt],
+    columns: [
+      Field.Name,
+      Field.BrainRegion,
+      Field.MType,
+      Field.EType,
+      Field.EModelMorphology,
+      Field.EModelScore,
+      Field.BrainRegion,
+      Field.CreatedAt,
+      Field.Contributors,
+    ],
+
     curated: false,
   },
 };
