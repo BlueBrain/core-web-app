@@ -1,3 +1,5 @@
+import omit from 'lodash/omit';
+
 import Renderer, { ClickData, HoverData } from './renderer';
 import Ws from './websocket';
 
@@ -79,7 +81,12 @@ export default class BlueNaas {
     this.traceData = null;
 
     this.ws.send(BlueNaasCmd.SET_INJECTION_LOCATION, this.simConfig?.injectTo);
-    this.ws.send(BlueNaasCmd.START_SIM, this.simConfig);
+    const simParameters = omit(this.simConfig, [
+      'stimulus.paramInfo',
+      'stimulus.stimulusProtocolOptions',
+      'stimulus.stimulusProtocolInfo',
+    ]);
+    this.ws.send(BlueNaasCmd.START_SIM, simParameters);
   }
 
   private onMorphologyLoaded(morphology: Morphology) {

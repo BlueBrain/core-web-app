@@ -1,0 +1,69 @@
+import { SimConfig, SimAction } from './types';
+import { getParamValues } from './utils';
+import {
+  stimulusModuleParams,
+  stimulusParams,
+} from '@/constants/cell-model-assignment/e-model-protocols';
+
+export function simReducer(state: SimConfig, action: SimAction): SimConfig {
+  switch (action.type) {
+    case 'CHANGE_TYPE': {
+      const options = stimulusModuleParams.options.filter((option) =>
+        option.usedBy.includes(action.payload)
+      );
+      const paramInfo = stimulusParams[options?.[0]?.value] || {};
+
+      return {
+        ...state,
+        stimulus: {
+          ...state.stimulus,
+          stimulusType: action.payload,
+          stimulusProtocolOptions: options || [],
+          stimulusProtocolInfo: options?.[0] || null,
+          stimulusProtocol: options?.[0]?.value || null,
+          paramValues: getParamValues(paramInfo),
+          paramInfo,
+        },
+      };
+    }
+    case 'CHANGE_PROTOCOL': {
+      const protocolInfo = stimulusModuleParams.options.find(
+        (option) => option.value === action.payload
+      );
+      const paramInfo = stimulusParams[action.payload] || {};
+
+      return {
+        ...state,
+        stimulus: {
+          ...state.stimulus,
+          stimulusProtocolInfo: protocolInfo || null,
+          stimulusProtocol: protocolInfo?.value || null,
+          paramValues: getParamValues(paramInfo),
+          paramInfo,
+        },
+      };
+    }
+    case 'CHANGE_STIM_PARAM': {
+      return {
+        ...state,
+        stimulus: {
+          ...state.stimulus,
+          paramValues: {
+            ...state.stimulus.paramValues,
+            [action.payload.key]: action.payload.value,
+          },
+        },
+      };
+    }
+    case 'CHANGE_PARAM': {
+      return {
+        ...state,
+        [action.payload.key]: action.payload.value,
+      };
+    }
+    default:
+      return {
+        ...state,
+      };
+  }
+}

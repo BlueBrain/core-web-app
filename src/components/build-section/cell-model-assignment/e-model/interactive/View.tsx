@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useReducer, Dispatch } from 'react';
 import {
   Button,
   ConfigProvider,
@@ -23,7 +23,9 @@ import SimTracePlot from './SimTracePlot';
 import { useEModelUUID, useEnsureModelPackage } from './hooks';
 import BlueNaasCls from './blue-naas';
 import { DEFAULT_SIM_CONFIG } from './constants';
-import { PlotData, SimConfig, TraceData } from './types';
+import { PlotData, SimAction, SimConfig, TraceData } from './types';
+import StimulusProtocolSelect from './StimulusProtocolSelect';
+import { simReducer } from './reducers';
 import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
 
 const baseBannerStyle =
@@ -45,7 +47,7 @@ type SelectionCtrlConfig = {
 
 type SimConfigFormProps = {
   simConfig: SimConfig;
-  onChange: (simConfig: SimConfig) => void;
+  dispatch: Dispatch<SimAction>;
   secNames: string[];
   segNames: string[];
   onSubmit: (simConfig: SimConfig) => void;
@@ -56,22 +58,14 @@ const simConfigFormLayout = {
   wrapperCol: { offset: 6, span: 10 },
 };
 
-function SimConfigForm({ simConfig, onChange, onSubmit, secNames, segNames }: SimConfigFormProps) {
+function SimConfigForm({ simConfig, dispatch, onSubmit, secNames, segNames }: SimConfigFormProps) {
   const [form] = Form.useForm<SimConfig>();
 
   const formSimConfig = Form.useWatch([], form);
 
   const [submittable, setSubmittable] = useState<boolean>(true);
 
-  const [activePanels, setActivePanels] = useState<string[]>(['stimRecConfig', 'generalConfig']);
-
-  const onStimulusLocationChange = (stimulusLocation: string) => {
-    form.setFieldValue('injectTo', stimulusLocation);
-  };
-
-  const onRecordingLocationsChange = (recordingLocations: string[]) => {
-    form.setFieldValue('recordFrom', recordingLocations);
-  };
+  const [activePanels, setActivePanels] = useState<string[]>(['stimConfig', 'generalConfig']);
 
   useEffect(() => {
     form.validateFields().then(
@@ -90,7 +84,7 @@ function SimConfigForm({ simConfig, onChange, onSubmit, secNames, segNames }: Si
     onSubmit(submittedSimConf);
   };
 
-  const stimulusConfigurationPanel = (
+  const injectionAndRecordingPoints = (
     <>
       <Form.Item
         name="injectTo"
@@ -102,21 +96,11 @@ function SimConfigForm({ simConfig, onChange, onSubmit, secNames, segNames }: Si
         <Select
           showSearch
           placeholder="Select stimulus location"
-          onChange={onStimulusLocationChange}
+          onChange={(newVal) =>
+            dispatch({ type: 'CHANGE_PARAM', payload: { key: 'injectTo', value: newVal } })
+          }
           options={secNames.map((secName) => ({ value: secName, label: secName }))}
         />
-      </Form.Item>
-
-      <Form.Item name="delay" label="Delay" rules={[{ required: true }]}>
-        <InputNumber addonAfter="ms" className="w-full" min={0} max={5000} />
-      </Form.Item>
-
-      <Form.Item name="dur" label="Duration" rules={[{ required: true }]}>
-        <InputNumber addonAfter="ms" className="w-full" min={0} max={5000} />
-      </Form.Item>
-
-      <Form.Item name="amp" label="Amperage" rules={[{ required: true }]}>
-        <InputNumber addonAfter="nA" className="w-full" min={-10} max={10} step={0.1} />
       </Form.Item>
 
       <Form.Item
@@ -129,7 +113,9 @@ function SimConfigForm({ simConfig, onChange, onSubmit, secNames, segNames }: Si
         <Select
           showSearch
           placeholder="Select recording locations"
-          onChange={onRecordingLocationsChange}
+          onChange={(newVal) =>
+            dispatch({ type: 'CHANGE_PARAM', payload: { key: 'recordFrom', value: newVal } })
+          }
           mode="multiple"
           options={segNames.map((secName) => ({ value: secName, label: secName }))}
         />
@@ -182,7 +168,6 @@ function SimConfigForm({ simConfig, onChange, onSubmit, secNames, segNames }: Si
       form={form}
       name="simConfigForm"
       initialValues={simConfig}
-      onValuesChange={(_, updatedSimConfig) => onChange(updatedSimConfig)}
       onFinish={onFinish}
       autoComplete="off"
       size="small"
@@ -193,14 +178,21 @@ function SimConfigForm({ simConfig, onChange, onSubmit, secNames, segNames }: Si
         onChange={(keys) => setActivePanels(keys as string[])}
         items={[
           {
-            key: 'stimRecConfig',
-            label: 'Stimulus configuration',
-            children: stimulusConfigurationPanel,
+            key: 'injAndRecConfig',
+            label: 'Injection and Recording configuration',
+            children: injectionAndRecordingPoints,
           },
           {
             key: 'generalConfig',
             label: 'Simulation configuration',
             children: generalConfigPanel,
+          },
+          {
+            key: 'stimConfig',
+            label: 'Stimulus configuration',
+            children: (
+              <StimulusProtocolSelect stimConfig={simConfig.stimulus} dispatch={dispatch} />
+            ),
           },
         ]}
       />
@@ -222,7 +214,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   const [secNames, setSecNames] = useState<string[]>([]);
   const [segNames, setSegNames] = useState<string[]>([]);
 
-  const [simConfig, setSimConfig] = useState({ ...DEFAULT_SIM_CONFIG });
+  const [simConfig, dispatch] = useReducer(simReducer, { ...DEFAULT_SIM_CONFIG });
 
   const [plotData, setPlotData] = useState<PlotData | null>(null);
 
@@ -237,10 +229,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 
     const secName = selectionCtrlConfig.data.segName.replace(/_.*/, '');
 
-    setSimConfig({
-      ...simConfig,
-      injectTo: secName,
-    });
+    dispatch({ type: 'CHANGE_PARAM', payload: { key: 'injectTo', value: secName } });
   };
 
   const addRecording = () => {
@@ -248,9 +237,12 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       throw new Error('SelectionCtrlConfig is not undefined');
     }
 
-    setSimConfig({
-      ...simConfig,
-      recordFrom: [...simConfig.recordFrom, selectionCtrlConfig.data.segName],
+    dispatch({
+      type: 'CHANGE_PARAM',
+      payload: {
+        key: 'recordFrom',
+        value: [...simConfig.recordFrom, selectionCtrlConfig.data.segName],
+      },
     });
   };
 
@@ -361,7 +353,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
         >
           <SimConfigForm
             simConfig={simConfig}
-            onChange={setSimConfig}
+            dispatch={dispatch}
             onSubmit={runSim}
             secNames={secNames}
             segNames={segNames}
