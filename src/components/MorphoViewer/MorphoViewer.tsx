@@ -59,6 +59,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
       className={classNames(styles.main, className, isDarkMode && styles.darkMode)}
       ref={refDiv}
       onDoubleClick={handleFullscreen}
+      data-testid="morpho-viewer"
     >
       <canvas ref={refCanvas}>MorphologyViewer</canvas>
       <Settings painter={painter} />
