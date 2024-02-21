@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAtom } from 'jotai/react';
 
 import { OnCellClick } from '../ExploreSectionListingView/ExploreSectionTable';
@@ -41,6 +41,7 @@ export default function WithExploreEModel({
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const { push: navigate } = useRouter();
+  const params = useSearchParams();
   const setSelectedEModel = useSetAtom(selectedEModelAtom);
   const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
   const setEModelEditMode = useSetAtom(eModelEditModeAtom);
@@ -49,9 +50,10 @@ export default function WithExploreEModel({
     const source = record._source as ESeModel;
     const eModel = buildEModelEntry(source);
     const brainRegionId = source.brainRegion['@id'];
-    const exploreUrl = `${detailUrlBuilder(basePath, record, type)}?brainRegion=${encodeURIComponent(
-      brainRegionId
-    )}`;
+    const newSearhParams = new URLSearchParams(params);
+    newSearhParams.set('eModelBrainRegion', brainRegionId);
+
+    const exploreUrl = `${detailUrlBuilder(basePath, record, type)}?${newSearhParams.toString()}`;
 
     setSelectedEModel(eModel);
     setEModelUIConfig({});
