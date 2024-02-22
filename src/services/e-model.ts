@@ -59,32 +59,36 @@ export function convertRemoteParamsForUI(
 export function convertMorphologyForUI(
   remoteMorphology: NeuronMorphology | ReconstructedNeuronMorphology
 ): ExemplarMorphologyDataType {
+  const swcDistribution = remoteMorphology.distribution.find(
+    (d) => d.encodingFormat === 'application/swc'
+  );
+  if (!swcDistribution) throw new Error('No swc in distribution');
+
   const commonProps = {
     '@id': remoteMorphology['@id'],
     '@type': remoteMorphology['@type'],
     name: remoteMorphology.name,
+    description: remoteMorphology?.description || NO_DATA_STRING,
     isPlaceholder: remoteMorphology['@type'].includes('SynthesizedNeuronMorphology'),
-    distribution: remoteMorphology.distribution,
+    distribution: swcDistribution,
   };
 
   if ('objectOfStudy' in remoteMorphology) {
-    // morph from e-model pipeline
+    // morph from e-model pipeline - NeuronMorphology
     return {
       ...commonProps,
-      description: NO_DATA_STRING,
-      brainLocation: NO_DATA_STRING,
+      brainLocation: remoteMorphology?.brainLocation?.brainRegion?.label || NO_DATA_STRING,
       mType: NO_DATA_STRING,
-      contributor: remoteMorphology.contribution.agent.name || NO_DATA_STRING,
+      contributor: remoteMorphology?.contribution?.agent?.name || NO_DATA_STRING,
     };
   }
 
   return {
-    // morph from search table
+    // morph from search table - ReconstructedNeuronMorphology
     ...commonProps,
-    description: remoteMorphology.description || NO_DATA_STRING,
-    brainLocation: remoteMorphology.brainRegion.label,
-    mType: NO_DATA_STRING,
-    contributor: remoteMorphology.contributors?.map((c) => c.label).join(' '),
+    brainLocation: remoteMorphology?.brainRegion?.label || NO_DATA_STRING,
+    mType: remoteMorphology?.mType?.label || NO_DATA_STRING,
+    contributor: remoteMorphology?.contributors?.map((c) => c.label).join(' '),
   };
 }
 
