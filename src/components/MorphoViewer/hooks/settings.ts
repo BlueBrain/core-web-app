@@ -224,4 +224,5 @@ function applySettingsToMorphologyPainter(
   painter.colors.axon = axon;
   painter.radiusType = radiusType;
   painter.colorBy = colorBy;
+  painter.paint();
 }
