@@ -1,6 +1,6 @@
 import { BrainRegion } from '@/types/ontologies';
 
-const IDPrefix = 'http://api.brain-map.org/api/v2/data/Structure';
+export const IDPrefix = 'http://api.brain-map.org/api/v2/data/Structure';
 
 const getMockBrainRegion = (
   name: string,
@@ -43,6 +43,12 @@ export const mockBrainRegions: BrainRegion[] = [
   getMockBrainRegion('Cerebrum', '567', '#B0F0FF', {
     isPartOf: `${IDPrefix}/8`,
     hasPart: [`${IDPrefix}/614454562`, `${IDPrefix}/596`],
+    items: [
+      getMockBrainRegion('Cerebral cortex', '688', '#B0FFB8', {
+        isPartOf: `${IDPrefix}/567`,
+        hasPart: [`${IDPrefix}/695`],
+      }),
+    ],
   }),
   getMockBrainRegion('Cerebral cortex', '688', '#B0FFB8', {
     isPartOf: `${IDPrefix}/567`,

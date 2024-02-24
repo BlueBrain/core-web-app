@@ -40,12 +40,12 @@ function pressShowColumnButton() {
 
 // TODO: The following components can be re-used in other test suites
 
-export const HydrateAtoms = ({ initialValues, children }: any) => {
+const HydrateAtoms = ({ initialValues, children }: any) => {
   useHydrateAtoms(initialValues);
   return children;
 };
 
-export function TestProvider({ initialValues, children }: any) {
+function TestProvider({ initialValues, children }: any) {
   return (
     <Provider>
       <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
