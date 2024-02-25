@@ -82,13 +82,16 @@ export const serializeBrainRegionsAndVolumes = (
 export const serializeBrainRegionOntologyViews = (
   nexusViews: BrainRegionOntologyViewNexus[]
 ): BrainRegionOntologyView[] =>
-  nexusViews.map((nexusView) => ({
-    id: nexusView['@id'],
-    leafProperty: nexusView.hasLeafHierarchyProperty,
-    parentProperty: nexusView.hasParentHierarchyProperty,
-    childrenProperty: nexusView.hasChildrenHierarchyProperty,
-    title: nexusView.label,
-  }));
+  nexusViews.map((nexusView) => {
+    const leaf = nexusView.hasLeafHierarchyProperty;
+    return {
+      id: nexusView['@id'],
+      leafProperty: leaf,
+      parentProperty: nexusView.hasParentHierarchyProperty,
+      childrenProperty: nexusView.hasChildrenHierarchyProperty,
+      title: nexusView.label,
+    };
+  });
 
 /**
  * Retrieves the brain regions from Nexus
