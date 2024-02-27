@@ -6,6 +6,11 @@ export const defaultOntologyMock = {
   getBrainRegionOntology: jest.fn().mockImplementation(
     () =>
       new Promise((resolve) => {
+        const mockVolumes = mockBrainRegions.reduce(
+          (acc, curr) => ({ ...acc, [curr.id]: 1 }),
+          {} as Record<string, number>
+        );
+
         const mockResponse: BrainRegionOntology = {
           brainRegions: mockBrainRegions,
           views: [
@@ -17,7 +22,7 @@ export const defaultOntologyMock = {
               title: 'BrainRegion',
             },
           ],
-          volumes: {},
+          volumes: mockVolumes,
         };
         resolve(mockResponse);
       })

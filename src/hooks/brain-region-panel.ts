@@ -12,6 +12,7 @@ import {
 import { sectionAtom } from '@/state/application';
 import {
   brainRegionIdQueryParamKey,
+  defaultExploreRegion,
   defaultHierarchyTree,
 } from '@/constants/explore-section/default-brain-region';
 import { generateHierarchyPathTree, getAncestors } from '@/components/BrainTree/util';
@@ -58,6 +59,11 @@ export function useSetBrainRegionToQuery() {
 
   useEffect(() => {
     // set new brain region in query param and save in storage
+    if (!selectedBrainRegion && sectionName === 'explore') {
+      // set initial value first time explore
+      setBrainRegionIdInQuery(defaultExploreRegion.id);
+      return;
+    }
     if (!selectedBrainRegion) return;
 
     const encodedRegionId = encodeURIComponent(selectedBrainRegion.id);

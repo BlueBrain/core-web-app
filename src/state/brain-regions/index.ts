@@ -33,7 +33,6 @@ import { getInitializationValue, setInitializationValue } from '@/util/utils';
 import { sectionAtom } from '@/state/application';
 import {
   brainRegionIdQueryParamKey,
-  defaultExploreRegion,
   defaultHierarchyTree,
 } from '@/constants/explore-section/default-brain-region';
 
@@ -352,8 +351,6 @@ export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | nul
 
   const isExplore = sectionName === 'explore';
 
-  const defaultRegion = isExplore ? defaultExploreRegion : null;
-
   const searchParams = new URLSearchParams(window.location.search);
   const brainRegionIdQueryParam = searchParams.get(brainRegionIdQueryParamKey);
   if (brainRegionIdQueryParam && isExplore) {
@@ -367,7 +364,7 @@ export const selectedBrainRegionAtom = atomWithDefault<SelectedBrainRegion | nul
     }
   }
 
-  return initializationBrainRegion ? initializationBrainRegion.value : defaultRegion;
+  return initializationBrainRegion ? initializationBrainRegion.value : null;
 });
 
 export const selectedPreBrainRegionsAtom = atom(new Map<string, string>());

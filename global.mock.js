@@ -38,7 +38,10 @@ mockIntersectionObserver.mockReturnValue({
 window.IntersectionObserver = mockIntersectionObserver;
 
 // Mocks for function from deepdash-es. The dependency is not resolved with jest, therefore the functions need to be mocked. (see - https://github.com/YuriGor/deepdash/issues/133)
-export const findDeep = (flatTree, findFn) => flatTree.find(findFn);
+export const findDeep = (flatTree, findFn) => ({
+  value: flatTree.find(findFn) ?? flatTree[0].items?.find(findFn),
+});
+
 export const reduceDeep = (someValue) => [someValue];
 
 export const morphoviewer = () => null;
