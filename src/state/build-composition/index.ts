@@ -13,7 +13,6 @@ import {
   brainRegionOntologyVolumesAtom,
   densityOrCountAtom,
   selectedBrainRegionAtom,
-  selectedBrainRegionWithChildrenAtom,
 } from '@/state/brain-regions';
 import {
   compositionHistoryAtom,
@@ -23,7 +22,6 @@ import { OriginalComposition } from '@/types/composition/original';
 import { AnalysedComposition, CalculatedCompositionNode } from '@/types/composition/calculation';
 import { MModelMenuItem } from '@/types/m-model';
 import { EModelMenuItem, MEModelMenuItem } from '@/types/e-model';
-import { defaultExploreRegion } from '@/constants/explore-section/default-brain-region';
 
 // This holds a weak reference to the updatedComposition by it's initial composition
 // This allows GC to dispose the object once it is no longer used by current components
@@ -84,11 +82,7 @@ export const analysedCompositionAtom = atom<Promise<AnalysedComposition | null>>
 
   if (!session || !selectedBrainRegion || !compositionData || !volumes) return null;
   // TODO: the leaf IDS retrieved from BMO are incorrect. Change the implementation to calculate them here
-  let leaves = selectedBrainRegion.leaves ? selectedBrainRegion.leaves : [selectedBrainRegion.id];
-  if (leaves.length === 0 && selectedBrainRegion.id === defaultExploreRegion.id) {
-    leaves = await get(selectedBrainRegionWithChildrenAtom);
-  }
-
+  const leaves = selectedBrainRegion.leaves ? selectedBrainRegion.leaves : [selectedBrainRegion.id];
   return calculateCompositions(compositionData, selectedBrainRegion.id, leaves, volumes);
 });
 
