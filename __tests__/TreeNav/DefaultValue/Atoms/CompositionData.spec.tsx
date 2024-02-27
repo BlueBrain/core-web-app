@@ -8,9 +8,10 @@ import { sectionAtom } from '@/state/application';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { analysedCompositionAtom } from '@/state/build-composition';
 import sessionAtom from '@/state/session';
-import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
-import { SelectedBrainRegion } from '@/state/brain-regions/types';
+import { IDPrefix, mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import { defaultExploreRegion } from '@/constants/explore-section/default-brain-region';
+import { useSetBrainRegionFromQuery, useSetBrainRegionToQuery } from '@/hooks/brain-region-panel';
+import { useQueryState } from 'nuqs';
 
 jest.mock('src/api/nexus', () => {
   const actual = jest.requireActual('src/api/nexus');
@@ -19,16 +20,32 @@ jest.mock('src/api/nexus', () => {
     fetchResourceById: (id: string) => {
       return nexusResourceForBrainRegion(id);
     },
-    fetchJsonFileByUrl: (url: string) => ({ ...configFileForCerebrum(url) }),
+    fetchJsonFileByUrl: (url: string) => ({ ...compositionFileMock(url) }),
+  };
+});
+
+jest.mock('nuqs', () => {
+  let mockQueryParam = '';
+  return {
+    useQueryState: () => [
+      decodeURIComponent(mockQueryParam),
+      (id: string) => (mockQueryParam = id),
+    ],
   };
 });
 
 describe('Default composition data', () => {
-  test('Fetches composition data for (new) users that dont have leaves stored in local storage', async () => {
-    await renderDefaultBrainRegionWithNoLeaves();
+  test('Fetches composition data for (new) users', async () => {
+    await renderDefaultBrainRegionFirstTimeUser();
 
     await screen.findByText(defaultExploreRegion.title);
-    expect(leavesCount()).toEqual('0');
+
+    const brainRegionIdSelectedInQuery = screen.getByTestId('brain-region-in-query').textContent;
+    expect(defaultExploreRegion.id).toEqual(brainRegionIdSelectedInQuery);
+
+    expect(leavesCount()).toEqual('1');
+
+    await screen.findByText(defaultExploreRegion.title);
 
     const expectedComposition =
       mockChild1.composition.neuron.density + mockChild2.composition.neuron.density;
@@ -38,20 +55,14 @@ describe('Default composition data', () => {
   const leavesCount = () => screen.getByTestId('default-region-leaves').textContent;
   const compositionData = () => screen.getByTestId('composition-data').textContent;
 
-  const renderDefaultBrainRegionWithNoLeaves = async () => {
+  const renderDefaultBrainRegionFirstTimeUser = async () => {
     const defaultBrainRegion = mockBrainRegions.find((br) => br.id === defaultExploreRegion.id)!;
     expect(defaultBrainRegion).toBeDefined();
 
-    const selectedBrainRegion = {
-      id: defaultBrainRegion.id,
-      title: defaultBrainRegion.title,
-      leaves: [],
-    } as SelectedBrainRegion;
-
-    await waitFor(() => render(ProviderComponent(selectedBrainRegion)));
+    await waitFor(() => render(ProviderComponent()));
   };
 
-  function ProviderComponent(selectedBrainRegion: SelectedBrainRegion) {
+  function ProviderComponent() {
     const defaultBrainRegion = mockBrainRegions.find((br) => br.id === defaultExploreRegion.id)!;
     expect(defaultBrainRegion).toBeDefined();
 
@@ -61,10 +72,10 @@ describe('Default composition data', () => {
           [sessionAtom, { accessToken: 'abc' }],
           [sectionAtom, 'explore'],
           [brainModelConfigIdAtom, '123'],
-          [selectedBrainRegionAtom, selectedBrainRegion],
+          [selectedBrainRegionAtom, null],
         ]}
       >
-        <TestComponentWithComposition />
+        <TestComponentFirstTimeUserComposition />
       </TestProvider>
     );
   }
@@ -83,13 +94,17 @@ const HydrateAtoms = ({ initialValues, children }: any) => {
   return children;
 };
 
-function TestComponentWithComposition() {
+function TestComponentFirstTimeUserComposition() {
   const selectedBrainRegion = useAtomValue(selectedBrainRegionAtom);
   const composition = useAtomValue(useMemo(() => unwrap(analysedCompositionAtom), []));
+  const [brainRegionIdInQuery] = useQueryState('');
+  useSetBrainRegionFromQuery();
+  useSetBrainRegionToQuery();
 
   return (
     <>
       <div>{selectedBrainRegion?.title}</div>
+      <div data-testid="brain-region-in-query">{brainRegionIdInQuery}</div>
       <div data-testid="default-region-leaves">{selectedBrainRegion?.leaves?.length}</div>
       <div data-testid="composition-data">{composition?.totalComposition.neuron.count}</div>
     </>
@@ -116,7 +131,7 @@ const mockChild2 = {
   },
 };
 
-const configFileForCerebrum = (url: string) => ({
+const compositionFileMock = (url: string) => ({
   [url]: {
     configuration: {
       version: 1,
@@ -124,8 +139,9 @@ const configFileForCerebrum = (url: string) => ({
         density: 'mm^-3',
       },
       overrides: {
-        [defaultExploreRegion.id]: {
-          label: 'Cerebrum',
+        // leaf nodes only
+        [`${IDPrefix}/577`]: {
+          label: 'Primary somatosensory area, upper limb, layer 4',
           about: 'BrainRegion',
           hasPart: {
             A: {

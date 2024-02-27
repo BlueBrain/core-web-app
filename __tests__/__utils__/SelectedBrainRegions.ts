@@ -43,12 +43,7 @@ export const mockBrainRegions: BrainRegion[] = [
   getMockBrainRegion('Cerebrum', '567', '#B0F0FF', {
     isPartOf: `${IDPrefix}/8`,
     hasPart: [`${IDPrefix}/614454562`, `${IDPrefix}/596`],
-    items: [
-      getMockBrainRegion('Cerebral cortex', '688', '#B0FFB8', {
-        isPartOf: `${IDPrefix}/567`,
-        hasPart: [`${IDPrefix}/695`],
-      }),
-    ],
+    leaves: [`${IDPrefix}/577`],
   }),
   getMockBrainRegion('Cerebral cortex', '688', '#B0FFB8', {
     isPartOf: `${IDPrefix}/567`,
@@ -60,4 +55,7 @@ export const mockBrainRegions: BrainRegion[] = [
   }),
   getMockBrainRegion('Isocortex', '315', '#70FF71', { isPartOf: `${IDPrefix}/695` }),
   getMockBrainRegion('Interbrain', '1129', '#FF7080', { isPartOf: `${IDPrefix}/343` }),
+  getMockBrainRegion('Primary somatosensory area, upper limb, layer 4', '577', '#000', {
+    isPartOf: `${IDPrefix}/688`,
+  }),
 ];
