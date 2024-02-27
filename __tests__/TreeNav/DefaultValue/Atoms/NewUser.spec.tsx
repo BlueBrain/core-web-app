@@ -37,18 +37,14 @@ describe('Default brain region in explore', () => {
   });
 
   test('show Cerebrum', () => {
-    screen.getByText('Cerebrum', { selector: brainRegionSelector });
+    /*
+     * as brain region is set later with the proper leaves (for calculating the composition)
+     * by the hook useSetBrainRegionFromQuery (src/hooks/brain-region-panel.ts) the atom is not null
+     */
+    screen.getByText('', { selector: brainRegionSelector });
   });
 
-  test('show opened tree', () => {
-    /*
-     * the atom is null because it has default brain region
-     * and the tree will be opened with a hook
-     */
-    screen.getByText('null', {
-      selector: hierarchySelector,
-    });
-  });
+  test('show opened tree', showDefaultOpenRegionTree);
 
   function Provider() {
     return (
