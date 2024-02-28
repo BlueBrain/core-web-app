@@ -6,8 +6,8 @@ import { MorphoViewerSettings, useMorphoViewerSettings } from '../../hooks/setti
 import { ColorInput } from './ColorInput';
 import { classNames } from '@/util/utils';
 import { EyeIcon, ResetIcon } from '@/components/icons';
-import EyeSlashIcon from '@/components/icons/EyeSlashIcon';
 import { Switch } from '@/components/common/Switch';
+import EyeSlashIcon from '@/components/icons/EyeSlashIcon';
 
 import styles from './colors-legend.module.css';
 
@@ -119,22 +119,6 @@ function renderLabels(
 
 const COLOR = new TgdColor();
 
-/**
- * If opacity is not strictly 1.0, then the section
- * turns invisible. So we can put any value lower than
- * 1.0 to hide a section.
- *
- * We choose 0.99 because, due to alpha premultiplication,
- * the lower the alpha, the lower the resolution of the color.
- *
- * Internally, the colors are stored on unsigned bytes.
- * So if you set a pixel with color (100, 100, 100, 17),
- * then when you read it you will get (90, 90, 90, 17).
- *
- * That's why, if we want to keep the color constant when
- * we toggle it's opacity several time, its better to use
- * high alpha values.
- */
 function toggleOpacity(color: string): string {
   COLOR.parse(color);
   COLOR.A = COLOR.A < 1 ? 1 : 0.99;

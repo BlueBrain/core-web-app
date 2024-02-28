@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable no-param-reassign */
-import { GizmoPainter, MorphologyCanvas } from '@bbp/morphoviewer';
+import { GizmoCanvas, MorphologyCanvas } from '@bbp/morphoviewer';
 import { FullscreenOutlined } from '@ant-design/icons';
 import { useEffect, useRef } from 'react';
 
@@ -27,8 +27,8 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   const refDiv = useRef<HTMLDivElement | null>(null);
   const refMorphoPainter = useRef(new MorphologyCanvas());
   const morphoPainter = refMorphoPainter.current;
-  const refGizmoPainter = useRef(new GizmoPainter());
-  const gizmoPainter = refGizmoPainter.current;
+  const refGizmoCanvas = useRef(new GizmoCanvas());
+  const gizmoPainter = refGizmoCanvas.current;
   const refCanvas = useRef<HTMLCanvasElement | null>(null);
   const [{ isDarkMode }] = useMorphoViewerSettings(morphoPainter);
   const [warning, setWarning] = useSignal(10000);
@@ -36,6 +36,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   useEffect(() => {
     morphoPainter.canvas = refCanvas.current;
     morphoPainter.swc = swc;
+    morphoPainter.minRadius = 0.25;
     const handleWarning = () => {
       setWarning(true);
     };
@@ -47,11 +48,11 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
     };
     morphoPainter.eventMouseWheelWithoutCtrl.addListener(handleWarning);
     morphoPainter.orbiter?.eventOrbitChange.addListener(handleOrbit);
-    gizmoPainter.eventOrientationChange.addListener(morphoPainter.resetCamera);
+    gizmoPainter.eventTipClick.addListener(morphoPainter.resetCamera);
     return () => {
       morphoPainter.eventMouseWheelWithoutCtrl.removeListener(handleWarning);
       morphoPainter.orbiter?.eventOrbitChange.removeListener(handleOrbit);
-      gizmoPainter.eventOrientationChange.removeListener(morphoPainter.resetCamera);
+      gizmoPainter.eventTipClick.removeListener(morphoPainter.resetCamera);
     };
   }, [morphoPainter, gizmoPainter, setWarning, swc]);
 
