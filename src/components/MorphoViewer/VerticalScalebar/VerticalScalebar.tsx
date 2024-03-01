@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MorphologyPainter } from '@bbp/morphoviewer';
+import { MorphologyCanvas } from '@bbp/morphoviewer';
 
 import { useMorphoViewerSettings } from '../hooks/settings';
 import { classNames } from '@/util/utils';
@@ -8,7 +8,7 @@ import styles from './vertical-scalebar.module.css';
 
 export interface VerticalScalebarProps {
   className?: string;
-  painter: MorphologyPainter;
+  painter: MorphologyCanvas;
 }
 
 export function VerticalScalebar({ className, painter }: VerticalScalebarProps) {
@@ -38,7 +38,7 @@ interface ScalebarAttributes {
   unit: string;
 }
 
-function useScalebar(painter: MorphologyPainter): ScalebarAttributes | null {
+function useScalebar(painter: MorphologyCanvas): ScalebarAttributes | null {
   const [scalebar, setScalebar] = useState(painter.computeScalebar());
   useEffect(() => {
     const update = () => {

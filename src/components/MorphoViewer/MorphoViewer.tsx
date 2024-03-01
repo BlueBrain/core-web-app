@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable no-param-reassign */
-import { GizmoPainter, MorphologyPainter } from '@bbp/morphoviewer';
+import { GizmoPainter, MorphologyCanvas } from '@bbp/morphoviewer';
 import { FullscreenOutlined } from '@ant-design/icons';
 import { useEffect, useRef } from 'react';
 
@@ -25,7 +25,7 @@ export interface MorphoViewerProps {
 
 export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   const refDiv = useRef<HTMLDivElement | null>(null);
-  const refMorphoPainter = useRef(new MorphologyPainter());
+  const refMorphoPainter = useRef(new MorphologyCanvas());
   const morphoPainter = refMorphoPainter.current;
   const refGizmoPainter = useRef(new GizmoPainter());
   const gizmoPainter = refGizmoPainter.current;
