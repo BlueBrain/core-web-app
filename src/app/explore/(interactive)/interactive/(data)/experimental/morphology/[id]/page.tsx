@@ -5,7 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
-import createMorphologyDataAtom from '@/components/explore-section/MorphoViewerContainer/state/MorphologyDataAtom';
+import createMorphologyDataAtom from '@/state/morpho-viewer';
 import CentralLoadingSpinner from '@/components/CentralLoadingSpinner';
 import { ReconstructedNeuronMorphology } from '@/types/explore-section/delta-experiment';
 import WithGeneralization from '@/components/explore-section/WithGeneralization';

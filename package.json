@@ -62,7 +62,6 @@
     "lodash": "^4.17.21",
     "memoize-one": "^6.0.0",
     "moment": "^2.29.4",
-    "morphoviewer": "^0.1.20",
     "next": "^14.0.4",
     "next-auth": "^4.22.1",
     "node-cache-engine": "^1.2.0",
