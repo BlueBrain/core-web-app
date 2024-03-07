@@ -4,14 +4,14 @@ import { MorphologyCanvas } from '@bbp/morphoviewer';
 import { useMorphoViewerSettings } from '../hooks/settings';
 import { classNames } from '@/util/utils';
 
-import styles from './vertical-scalebar.module.css';
+import styles from './scalebar.module.css';
 
 export interface VerticalScalebarProps {
   className?: string;
   painter: MorphologyCanvas;
 }
 
-export function VerticalScalebar({ className, painter }: VerticalScalebarProps) {
+export function Scalebar({ className, painter }: VerticalScalebarProps) {
   const [settings] = useMorphoViewerSettings(painter);
   const ref = useRef<HTMLCanvasElement | null>(null);
   const scalebar = useScalebar(painter);
@@ -44,7 +44,7 @@ function useScalebar(painter: MorphologyCanvas): ScalebarAttributes | null {
     const update = () => {
       setScalebar(
         painter.computeScalebar({
-          preferedSizeInPixels: 64,
+          preferedSizeInPixels: 256,
         })
       );
     };
@@ -65,25 +65,30 @@ function paint(canvas: HTMLCanvasElement, scalebar: ScalebarAttributes, color: s
   // eslint-disable-next-line no-param-reassign
   canvas.height = h;
   const fontHeight = 16;
-  const margin = 2 * fontHeight;
+  const margin = fontHeight / 4;
   ctx.font = `${fontHeight}px sans-serif`;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
-  let y = fontHeight;
-  let previousY = y;
+  // For the line to be one precise pixel, we need to
+  // set its x coordinate to 1/2. Otherwise, it will
+  // be blured accross to consecutive pixels.
+  let x = 0.5;
+  const y = (fontHeight + h) / 2;
   let value = 0;
-  while (y < h - margin) {
-    const text = `${value}`;
-    ctx.fillText(text, fontHeight, y);
+  while (x < w) {
+    if (value === 0) {
+      ctx.font = `bold ${fontHeight}px sans-serif`;
+      ctx.fillText(`[${scalebar.unit}]`, x + margin, y);
+    } else {
+      ctx.font = `${fontHeight}px sans-serif`;
+      const text = `${value}`;
+      ctx.fillText(text, x + margin, y);
+    }
     value += scalebar.value;
     ctx.beginPath();
-    ctx.moveTo(1, previousY);
-    ctx.lineTo(1, y);
-    ctx.lineTo(10, y);
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
     ctx.stroke();
-    previousY = y;
-    y += scalebar.sizeInPixel;
+    x += scalebar.sizeInPixel;
   }
-  ctx.font = `bold ${fontHeight}px sans-serif`;
-  ctx.fillText(`[${scalebar.unit}]`, fontHeight, previousY + fontHeight * 2);
 }

@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
 
 import { ColorRamp } from './ColorRamp';
 import { Settings } from './Settings';
-import { VerticalScalebar } from './VerticalScalebar';
+import { Scalebar } from './Scalebar';
 import { Warning } from './Warning';
 import { useMorphoViewerSettings } from './hooks/settings';
 import { useSignal } from './hooks/signal';
@@ -25,36 +25,28 @@ export interface MorphoViewerProps {
 
 export function MorphoViewer({ className, swc }: MorphoViewerProps) {
   const refDiv = useRef<HTMLDivElement | null>(null);
-  const refMorphoPainter = useRef(new MorphologyCanvas());
-  const morphoPainter = refMorphoPainter.current;
+  const refMorphoCanvas = useRef(new MorphologyCanvas());
+  const morphoCanvas = refMorphoCanvas.current;
   const refGizmoCanvas = useRef(new GizmoCanvas());
-  const gizmoPainter = refGizmoCanvas.current;
+  const gizmoCanvas = refGizmoCanvas.current;
   const refCanvas = useRef<HTMLCanvasElement | null>(null);
-  const [{ isDarkMode }] = useMorphoViewerSettings(morphoPainter);
+  const [{ isDarkMode }] = useMorphoViewerSettings(morphoCanvas);
   const [warning, setWarning] = useSignal(10000);
 
   useEffect(() => {
-    morphoPainter.canvas = refCanvas.current;
-    morphoPainter.swc = swc;
-    morphoPainter.minRadius = 0.25;
+    morphoCanvas.canvas = refCanvas.current;
+    morphoCanvas.swc = swc;
+    gizmoCanvas.attachCamera(morphoCanvas.camera);
     const handleWarning = () => {
       setWarning(true);
     };
-    const handleOrbit = () => {
-      const { camera } = morphoPainter;
-      if (!camera) return;
-
-      gizmoPainter.updateOrientationFrom(camera);
-    };
-    morphoPainter.eventMouseWheelWithoutCtrl.addListener(handleWarning);
-    morphoPainter.orbiter?.eventOrbitChange.addListener(handleOrbit);
-    gizmoPainter.eventTipClick.addListener(morphoPainter.resetCamera);
+    morphoCanvas.eventMouseWheelWithoutCtrl.addListener(handleWarning);
+    gizmoCanvas.eventTipClick.addListener(morphoCanvas.interpolateCamera);
     return () => {
-      morphoPainter.eventMouseWheelWithoutCtrl.removeListener(handleWarning);
-      morphoPainter.orbiter?.eventOrbitChange.removeListener(handleOrbit);
-      gizmoPainter.eventTipClick.removeListener(morphoPainter.resetCamera);
+      morphoCanvas.eventMouseWheelWithoutCtrl.removeListener(handleWarning);
+      gizmoCanvas.eventTipClick.removeListener(morphoCanvas.interpolateCamera);
     };
-  }, [morphoPainter, gizmoPainter, setWarning, swc]);
+  }, [morphoCanvas, gizmoCanvas, setWarning, swc]);
 
   const handleFullscreen = () => {
     const div = refDiv.current;
@@ -79,7 +71,7 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
       <canvas className={styles.morphoViewer} ref={refCanvas}>
         MorphologyViewer
       </canvas>
-      <Settings painter={morphoPainter} />
+      <Settings painter={morphoCanvas} />
       <button
         className={styles.fullscreenButton}
         type="button"
@@ -92,14 +84,14 @@ export function MorphoViewer({ className, swc }: MorphoViewerProps) {
         <canvas
           className={styles.gizmo}
           ref={(canvas) => {
-            gizmoPainter.canvas = canvas;
+            gizmoCanvas.canvas = canvas;
           }}
         >
           GizmoViewer
         </canvas>
-        <ColorRamp painter={morphoPainter} />
-        <VerticalScalebar painter={morphoPainter} />
+        <ColorRamp painter={morphoCanvas} />
       </div>
+      <Scalebar painter={morphoCanvas} />
       <Warning visible={warning} />
     </div>
   );

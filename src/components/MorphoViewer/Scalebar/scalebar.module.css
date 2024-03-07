@@ -1,7 +1,10 @@
 .main {
-  position: relative;
-  width: 64px;
-  height: 100%;
+  position: absolute;
+  left: 1em;
+  right: 1em;
+  bottom: 0;
+  height: 32px;
+  width: 100%;
   pointer-events: none;
   color: var(--custom-color-text);
 }
