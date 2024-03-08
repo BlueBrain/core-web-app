@@ -1,43 +1,14 @@
 import { ConfigProvider, Table } from 'antd';
 
 export default function VirtualLabHistoryTable() {
-  const dataSource = [
-    {
-      key: '1',
-      date: '12.02.2024',
-      brainRegion: 'Ventral part of the lateral geniculate complex',
-      type: 'Neuron morphology',
-      createdBy: 'Georges Khazen',
-    },
-    {
-      key: '2',
-      date: '12.02.2024',
-      brainRegion: 'Ventral part of the lateral geniculate complex',
-      type: 'Neuron morphology',
-      createdBy: 'Georges Khazen',
-    },
-    {
-      key: '3',
-      date: '12.02.2024',
-      brainRegion: 'Ventral part of the lateral geniculate complex',
-      type: 'Neuron morphology',
-      createdBy: 'Georges Khazen',
-    },
-    {
-      key: '4',
-      date: '12.02.2024',
-      brainRegion: 'Ventral part of the lateral geniculate complex',
-      type: 'Neuron morphology',
-      createdBy: 'Georges Khazen',
-    },
-    {
-      key: '5',
-      date: '12.02.2024',
-      brainRegion: 'Ventral part of the lateral geniculate complex',
-      type: 'Neuron morphology',
-      createdBy: 'Georges Khazen',
-    },
-  ];
+  // mock data creation
+  const dataSource = [...Array(10).keys()].map((x) => ({
+    key: x,
+    date: '12.02.2024',
+    brainRegion: 'Ventral part of the lateral geniculate complex',
+    type: 'Neuron morphology',
+    createdBy: 'Georges Khazen',
+  }));
 
   const columns = [
     {
