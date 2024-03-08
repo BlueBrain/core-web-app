@@ -12,7 +12,7 @@ export default function VirtualLabProjectLayout({ children }: { children: ReactN
   const [path, current] = useBasePath('project');
 
   return (
-    <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 bg-center bg-no-repeat pr-10 text-white bg-blend-lighten [background-size:70%]">
+    <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 pr-10 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="flex flex-row gap-4">
           <SideMenu
