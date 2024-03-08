@@ -8,7 +8,7 @@ type Props = {
 
 export default function SideMenu({ links, current }: Props) {
   return (
-    <div className="flex h-full w-[40px] flex-col items-center border-r border-primary-7 pt-2">
+    <div className="flex h-full w-[40px] flex-col items-center border-r border-primary-7 px-7 pt-2">
       <div
         className="my-5 flex items-center gap-x-3.5 text-white"
         style={{
