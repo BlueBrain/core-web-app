@@ -2,6 +2,7 @@
 
 import { CloseOutlined, MenuOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import VirtualLabHistoryTable from './VirtualLabHistoryTable';
 
 export default function VirtualLabHistoryPanel() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -20,7 +21,11 @@ export default function VirtualLabHistoryPanel() {
         </div>
         {isOpen ? <CloseOutlined /> : <MenuOutlined />}
       </div>
-      {isOpen && <div>Lorem Ipsum</div>}
+      {isOpen && (
+        <div className="max-h-[300px] overflow-y-scroll">
+          <VirtualLabHistoryTable />
+        </div>
+      )}
     </div>
   );
 }
