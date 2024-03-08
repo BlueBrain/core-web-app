@@ -29,15 +29,17 @@ export default function VirtualLabProjectInteractiveExploreLayout({
           <SideMenu
             links={[
               {
-                key: 'virtual-lab',
-                href: '/virtual-lab/lab/test',
-                content: (
-                  <div className="flex gap-2 font-bold">
-                    <span className="text-primary-3">Virtual lab:</span>Institute of Neuroscience
-                  </div>
-                ),
+                key: 'project',
+                href: '/virtual-lab/lab/test/project/test',
+                content: 'Name of the project',
+              },
+              {
+                key: 'explore',
+                href: '/virtual-lab/lab/test/project/test/explore',
+                content: 'Explore',
               },
             ]}
+            current="explore"
           />
         </div>
       </ErrorBoundary>
