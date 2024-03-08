@@ -1,4 +1,5 @@
 import { Title, StepTabs, Visualization, ParameterView } from '@/components/simulate/single-neuron';
+import LaunchButton from '@/components/simulate/single-neuron/parameters/LaunchButton';
 
 export default function VirtualLabSimulationPage() {
   return (
@@ -13,6 +14,7 @@ export default function VirtualLabSimulationPage() {
           <ParameterView />
         </div>
       </div>
+      <LaunchButton />
     </>
   );
 }

@@ -1,24 +1,27 @@
 'use client';
 
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Form } from 'antd';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import Stimulation from './Stimulation';
 import Recording from './Recording';
 import Conditions from './Conditions';
 import Analysis from './Analysis';
 import Visualization from './Visualization';
-import { simulateStepAtom, simulationConfigAtom } from '@/state/simulate/single-neuron';
+import {
+  simulateStepAtom,
+  simulationConfigAtom,
+  simulationFormIsFilledAtom,
+} from '@/state/simulate/single-neuron';
 import { SimAction, SimConfig } from '@/types/simulate/single-neuron';
-import GenericButton from '@/components/Global/GenericButton';
 
 export default function ParameterView() {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
   const [form] = Form.useForm<SimConfig>();
   const formSimConfig = Form.useWatch([], form);
   const simulateStep = useAtomValue(simulateStepAtom);
-  const [submittable, setSubmittable] = useState<boolean>(true);
+  const setSubmittable = useSetAtom(simulationFormIsFilledAtom);
 
   const onChange = (action: SimAction) => {
     dispatch(action);
@@ -29,7 +32,7 @@ export default function ParameterView() {
       () => setSubmittable(true),
       (validationResult) => setSubmittable(!validationResult.errorFields.length)
     );
-  }, [formSimConfig, form]);
+  }, [formSimConfig, form, setSubmittable]);
 
   useEffect(() => {
     form.setFieldsValue(simConfig);
@@ -65,14 +68,6 @@ export default function ParameterView() {
             <Visualization />
           </div>
         </div>
-
-        <Form.Item noStyle>
-          <GenericButton
-            text="Simulate"
-            className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
-            disabled={!submittable}
-          />
-        </Form.Item>
       </Form>
     </div>
   );
