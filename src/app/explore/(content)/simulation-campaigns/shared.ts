@@ -42,18 +42,21 @@ export interface Analysis {
   branch?: string;
   subdirectory: string;
   name: string;
+  targetEntity?: string;
   description: string;
 }
 
 const analysesAtom = atom<Analysis[]>([]);
 
-export function useAnalyses(): [Analysis[], (a: Analysis[]) => void] {
+export function useAnalyses(targetEntity?: string): [Analysis[], (a: Analysis[]) => void] {
   const session = useAtomValue(sessionAtom);
   const [analyses, setAnalyses] = useAtom(analysesAtom);
 
   useEffect(() => {
     if (!session) return;
-    fetchAnalyses(session, (response: Analysis[]) => setAnalyses(response));
-  }, [session, setAnalyses]);
+    fetchAnalyses(session, (response: Analysis[]) =>
+      setAnalyses(response.filter((a) => targetEntity === a.targetEntity))
+    );
+  }, [session, setAnalyses, targetEntity]);
   return [analyses, setAnalyses];
 }

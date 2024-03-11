@@ -1,5 +1,7 @@
-import { Button } from 'antd';
+import { Button, notification } from 'antd';
 import { Session } from 'next-auth';
+import { useState } from 'react';
+import { RunningAnalysis, useCumulativeAnalysisReports } from '../../Simulations/CustomAnalysis';
 import { getEModelAnalysisWorkflowConfig } from '@/components/explore-section/Simulations/utils';
 import { Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createWorkflowConfigResource } from '@/api/nexus';
@@ -10,24 +12,46 @@ import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 
-export default function Launcher() {
+export default function Launcher({ analysis }: { analysis?: Analysis }) {
   const resourceInfo = useResourceInfoFromPath();
   const eModel = useUnwrappedValue<Promise<EModelResource>>(detailFamily(resourceInfo));
   const session = useSessionAtomValue();
+  const [report, fetching] = useCumulativeAnalysisReports(eModel?._incoming, analysis?.['@id']);
+  const [launching, setLaunching] = useState(false);
+  const [analysisStarted, setAnalysisStartedStated] = useState('');
+
+  if (!analysis || !eModel) return null;
 
   return (
     <>
-      <Button
-        className="float-right"
-        size="large"
-        type="primary"
-        onClick={() => launchAnalysis(eModel?.['@id'], undefined, session)}
-      >
-        Launch Analysis
-      </Button>
+      {!report && !analysisStarted && !fetching && (
+        <>
+          <Button
+            className="float-right"
+            size="large"
+            type="primary"
+            onClick={async () => {
+              if (launching) return;
+              setLaunching(true);
+              await launchAnalysis(eModel?.['@id'], analysis, session);
+              setAnalysisStartedStated(new Date().toISOString());
+            }}
+            disabled={launching}
+          >
+            {launching && <span>Launching analysis ...</span>}
+            {!launching && <span>Launch analysis</span>}
+          </Button>
+          {/* Clearfix fixes weird vertical alignment issue from float-right */}
+          <div className="clear-both" />
+        </>
+      )}
 
-      {/* Clearfix fixes weird vertical alignment issue from float-right */}
-      <div className="clear-both" />
+      {!report && analysisStarted && (
+        <div className="mt-5 flex items-center justify-center">
+          <RunningAnalysis createdAt={analysisStarted} />
+        </div>
+      )}
+      {report && 'Report'}
     </>
   );
 }
@@ -37,17 +61,7 @@ async function launchAnalysis(
   analysis: Analysis | undefined,
   session: Session | null
 ) {
-  if (!session || !eModelId) return;
-
-  analysis = {
-    '@id':
-      'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/93b6eef6-a3db-4b51-a5ba-d2fa6cf936a8',
-    codeRepository: {
-      '@id': 'https://github.com/BlueBrain/blueetl.git',
-    },
-    branch: 'custom-analyses',
-    subdirectory: 'custom_analyses/src/emodel_00',
-  } as Analysis;
+  if (!session || !analysis || !eModelId) return;
 
   const newResource = await createWorkflowConfigResource(
     'analysis.cfg',
@@ -81,5 +95,22 @@ async function launchAnalysis(
       },
       { NAME: 'cfg_name', TYPE: 'string', CONTENT: 'config.cfg' },
     ],
+  });
+
+  notification.success({
+    message: 'Workflow launched successfuly',
+    description: (
+      <span>
+        You can watch the progress of launched tasks in your{' '}
+        <a
+          href={`https://bbp-workflow-${session.user.username}.kcp.bbp.epfl.ch/static/visualiser/index.html#order=4%2Cdesc`}
+          target="_blank"
+        >
+          Workflow dashboard
+        </a>
+        .
+      </span>
+    ),
+    duration: 10,
   });
 }

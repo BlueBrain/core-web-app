@@ -3,6 +3,7 @@ import { ConfigProvider, Select } from 'antd';
 import { useState } from 'react';
 import { FileDistribution } from '@/types/explore-section/delta-properties';
 import EModelAnalysisLauncher from '@/components/explore-section/EModel/DetailView/EModelAnalysisLauncher';
+import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
 
 const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
   ssr: false,
@@ -10,7 +11,7 @@ const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
 
 type AnalysisPDF = FileDistribution & { name?: string };
 
-type AnalysisType = 'all' | 'trace' | 'score' | 'distribution';
+type AnalysisType = 'all' | 'trace' | 'score' | 'distribution' | 'custom';
 
 interface Props {
   distributions: AnalysisPDF[];
@@ -18,6 +19,9 @@ interface Props {
 
 export function PDFViewerContainer({ distributions }: Props) {
   const [type, setType] = useState<AnalysisType>('all');
+  const [analyses] = useAnalyses('EModel');
+  const [analysis, setAnalysis] = useState('');
+  console.log(analysis);
 
   return (
     <div>
@@ -39,16 +43,29 @@ export function PDFViewerContainer({ distributions }: Props) {
           className="m-3 w-44"
         />
       </ConfigProvider>
-      {distributions
-        .filter((distribution) => matchesType(distribution, type))
-        .map((pdf) => (
-          <DynamicPDFViewer
-            url={pdf.contentUrl}
-            key={pdf.contentUrl}
-            type={nameToType(pdf.name ?? pdf.label)}
-          />
-        ))}
-      <EModelAnalysisLauncher />
+      {type !== 'custom' &&
+        distributions
+          .filter((distribution) => matchesType(distribution, type))
+          .map((pdf) => (
+            <DynamicPDFViewer
+              url={pdf.contentUrl}
+              key={pdf.contentUrl}
+              type={nameToType(pdf.name ?? pdf.label)}
+            />
+          ))}
+
+      {type === 'custom' && (
+        <Select
+          className="m-3 w-44"
+          options={analyses.map((a) => ({
+            label: a.name,
+            value: a['@id'],
+          }))}
+          onChange={(value: string) => setAnalysis(value)}
+        />
+      )}
+
+      <EModelAnalysisLauncher analysis={analyses.find((a) => a['@id'] === analysis)} />
     </div>
   );
 }
@@ -70,6 +87,7 @@ const options = [
     label: 'Distribution',
     value: 'distribution',
   },
+  { label: 'Custom', value: 'custom' },
 ];
 
 const matchesType = (distribution: AnalysisPDF, type: AnalysisType) => {
