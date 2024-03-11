@@ -21,7 +21,6 @@ export function PDFViewerContainer({ distributions }: Props) {
   const [type, setType] = useState<AnalysisType>('all');
   const [analyses] = useAnalyses('EModel');
   const [analysis, setAnalysis] = useState('');
-  console.log(analysis);
 
   return (
     <div>

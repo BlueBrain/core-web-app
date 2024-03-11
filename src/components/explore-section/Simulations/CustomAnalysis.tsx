@@ -118,20 +118,14 @@ export function useCumulativeAnalysisReports(
           headers: createHeaders(session.accessToken),
         }).then((r) => r.json());
 
-      console.log('res', res)
-
       const cumulativeAnalysisReportLinks = res._results.filter(
         (l) => l['@type'].includes('CumulativeAnalysisReport') && l._deprecated === false
       );
-
-      console.log('links', cumulativeAnalysisReportLinks)
 
       // Fetch CumulativeAnalysis reports
       const cumulativeAnalysisReports = await Promise.all<CumulativeAnalysisReport>(
         cumulativeAnalysisReportLinks.map((l) => fetchResourceById(l['@id'], session))
       );
-
-      console.log('cum', cumulativeAnalysisReports)
 
       // Newest first
       cumulativeAnalysisReports.sort((a, b) => {
@@ -146,8 +140,6 @@ export function useCumulativeAnalysisReports(
 
         return r.contribution.agent['@id'] === analysisId;
       });
-
-      console.log('foundReport', foundReport)
 
       const multiAnalysis =
         foundReport &&

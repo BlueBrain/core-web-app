@@ -1,16 +1,17 @@
 import { Button, notification } from 'antd';
 import { Session } from 'next-auth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RunningAnalysis, useCumulativeAnalysisReports } from '../../Simulations/CustomAnalysis';
 import { getEModelAnalysisWorkflowConfig } from '@/components/explore-section/Simulations/utils';
 import { Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
-import { createWorkflowConfigResource } from '@/api/nexus';
+import { createWorkflowConfigResource, fetchResourceById } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
 import { launchWorkflowTask } from '@/services/bbp-workflow';
 import { EModelResource } from '@/types/explore-section/delta-model';
 import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
+import PDFViewer from '@/components/explore-section/EModel/DetailView/PDFViewer';
 
 export default function Launcher({ analysis }: { analysis?: Analysis }) {
   const resourceInfo = useResourceInfoFromPath();
@@ -19,6 +20,20 @@ export default function Launcher({ analysis }: { analysis?: Analysis }) {
   const [report, fetching] = useCumulativeAnalysisReports(eModel?._incoming, analysis?.['@id']);
   const [launching, setLaunching] = useState(false);
   const [analysisStarted, setAnalysisStartedStated] = useState('');
+  const [analysisPDFUrl, setAnalysisPDFURL] = useState('');
+
+  useEffect(() => {
+    async function fetchReport() {
+      if (!report || !report.hasPart?.length || !session) return;
+      const res: { distribution: { contentUrl: string } } = await fetchResourceById(
+        report.hasPart[0]['@id'],
+        session
+      );
+      setAnalysisPDFURL(res.distribution.contentUrl);
+    }
+
+    fetchReport();
+  }, [report, session]);
 
   if (!analysis || !eModel) return null;
 
@@ -46,12 +61,12 @@ export default function Launcher({ analysis }: { analysis?: Analysis }) {
         </>
       )}
 
-      {!report && analysisStarted && (
+      {(!report || !analysisPDFUrl) && analysisStarted && (
         <div className="mt-5 flex items-center justify-center">
           <RunningAnalysis createdAt={analysisStarted} />
         </div>
       )}
-      {report && 'Report'}
+      {analysisPDFUrl && <PDFViewer url={analysisPDFUrl} />}
     </>
   );
 }
