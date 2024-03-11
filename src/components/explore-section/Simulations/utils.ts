@@ -204,3 +204,39 @@ export function useAnalysisIds(resource: SimulationCampaign): [string[], boolean
 
   return [customAnalysisIds, fetching];
 }
+
+export function getEModelAnalysisWorkflowConfig(
+  emodelURL: string,
+  analysis: Analysis[],
+  session: Session
+) {
+  const configs = analysis.map(
+    (a) => `{"AnalyseEModel":  {
+        "time": "10:00",
+        "source_code_url": "${a['@id']}",
+        "command": "python '$CODE_PATH/run.py' '$CONFIG_FILE' '$OUTPUT_FILE'",
+        "analysis_config": {
+          "emodel": {
+            "id": "$EMODEL_ID",
+            "url": "$EMODEL_URL",
+            "path": "$EMODEL_PATH",
+            "emodel": "$EMODEL_EMODEL",
+            "etype": "$EMODEL_ETYPE",
+            "iteration": "$EMODEL_ITERATION",
+            "seed": "$EMODEL_SEED"
+          },
+          "output": "$SCRATCH_PATH"
+        }
+    }, "CloneGitRepo": {
+      "git_url": "${a.codeRepository['@id']}",
+      "git_ref": "${a.branch}",
+      "subdirectory": "${a.subdirectory}"}}`
+  );
+
+  return `[MultiAnalyseEModel]
+  workspace-prefix: /gpfs/bbp.cscs.ch/data/scratch/proj134/home/${session.user.username}/SBO/analysis
+  emodel-url: ${emodelURL.replaceAll('%', '%%')}
+  analysis-configs: [${configs}]
+  command: python '$CODE_PATH/run.py' '$CONFIG_FILE' '$OUTPUT_FILE'
+  `;
+}

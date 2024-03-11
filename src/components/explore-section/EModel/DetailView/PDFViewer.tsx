@@ -1,11 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Divider } from 'antd';
 import { useAccessToken } from '@/components/experiment-interactive/ExperimentInteractive/hooks/current-campaign-descriptor';
-import styles from './styles.module.css';
 import { classNames } from '@/util/utils';
+import styles from './styles.module.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.js',
@@ -50,7 +50,7 @@ export default function PDFViewer({ url, type }: Props) {
         className={classNames('w-full', styles.pdf)}
       >
         {Array.from(new Array(totalPages), (el, index) => (
-          <>
+          <Fragment key={url}>
             <Page
               key={`page_${index + 1}`}
               pageNumber={index + 1}
@@ -61,7 +61,7 @@ export default function PDFViewer({ url, type }: Props) {
             <div className="text-center">
               Page {index + 1} of {totalPages}
             </div>
-          </>
+          </Fragment>
         ))}
       </Document>
       <Divider />
