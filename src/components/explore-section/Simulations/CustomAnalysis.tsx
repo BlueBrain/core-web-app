@@ -29,7 +29,7 @@ export default function CustomAnalysis({
 }) {
   const { ensureWorkflowAuth } = useWorkflowAuth();
   const [launchingAnalysis, setLaunchingAnalysis] = useState(false);
-  const [report, fetching] = useCumulativeAnalysisReports(resource, analysisId);
+  const [report, fetching] = useCumulativeAnalysisReports(resource._incoming, analysisId);
   const session = useSessionAtomValue();
   const [analyses] = useAnalyses();
 
@@ -98,9 +98,9 @@ export default function CustomAnalysis({
   );
 }
 
-function useCumulativeAnalysisReports(
-  simCampaign: SimulationCampaign,
-  analysisId: string
+export function useCumulativeAnalysisReports(
+  incoming: string | undefined,
+  analysisId: string | undefined
 ): [ExtendedCumAnalysisReport | undefined, boolean] {
   const session = useSessionAtomValue();
   const [report, setReport] = useState<ExtendedCumAnalysisReport>();
@@ -110,21 +110,28 @@ function useCumulativeAnalysisReports(
 
   useEffect(() => {
     async function fetchCumulativeReports() {
-      if (!session || fetchingRef.current) return;
+      if (!session || fetchingRef.current || !incoming || !analysisId) return;
+
       fetchingRef.current = true;
       const res: { _results: { '@id': string; '@type': string; _deprecated: boolean }[] } =
-        await fetch(simCampaign._incoming, {
+        await fetch(incoming, {
           headers: createHeaders(session.accessToken),
         }).then((r) => r.json());
+
+      console.log('res', res)
 
       const cumulativeAnalysisReportLinks = res._results.filter(
         (l) => l['@type'].includes('CumulativeAnalysisReport') && l._deprecated === false
       );
 
+      console.log('links', cumulativeAnalysisReportLinks)
+
       // Fetch CumulativeAnalysis reports
       const cumulativeAnalysisReports = await Promise.all<CumulativeAnalysisReport>(
         cumulativeAnalysisReportLinks.map((l) => fetchResourceById(l['@id'], session))
       );
+
+      console.log('cum', cumulativeAnalysisReports)
 
       // Newest first
       cumulativeAnalysisReports.sort((a, b) => {
@@ -139,6 +146,8 @@ function useCumulativeAnalysisReports(
 
         return r.contribution.agent['@id'] === analysisId;
       });
+
+      console.log('foundReport', foundReport)
 
       const multiAnalysis =
         foundReport &&
@@ -155,7 +164,7 @@ function useCumulativeAnalysisReports(
     fetchCumulativeReports();
     intervalRef.current = window.setInterval(fetchCumulativeReports, 3600); // Refetch every minute to check for task status
     return () => window.clearInterval(intervalRef.current);
-  }, [simCampaign, session, setFetching, analysisId]);
+  }, [incoming, session, setFetching, analysisId]);
   return [report, fetching];
 }
 
@@ -204,7 +213,7 @@ async function launchAnalysis(
   });
 }
 
-function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
+export function RunningAnalysis({ createdAt }: { createdAt: ISODateString }) {
   const [executionTime, setExecutionTime] = useState('');
 
   useEffect(() => {
