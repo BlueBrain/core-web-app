@@ -34,7 +34,7 @@ export const sessionAndInfoFamily = atomFamily(
   isEqual
 );
 
-export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<DeltaResource>>>(
+export const detailFamily = atomFamily<ResourceInfo, Atom<Promise<any>>>(
   (resourceInfo) =>
     atom(async (get) => {
       const { session, info } = get(sessionAndInfoFamily(resourceInfo));

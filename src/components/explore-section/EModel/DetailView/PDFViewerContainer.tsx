@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import { ConfigProvider, Select } from 'antd';
 import { useState } from 'react';
 import { FileDistribution } from '@/types/explore-section/delta-properties';
+import EModelAnalysisLauncher from '@/components/explore-section/EModel/DetailView/EModelAnalysisLauncher';
 
 const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
   ssr: false,
@@ -47,6 +48,7 @@ export function PDFViewerContainer({ distributions }: Props) {
             type={nameToType(pdf.name ?? pdf.label)}
           />
         ))}
+      <EModelAnalysisLauncher />
     </div>
   );
 }
