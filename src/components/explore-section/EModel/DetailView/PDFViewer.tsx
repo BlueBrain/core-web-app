@@ -14,7 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 type Props = {
   url: string;
-  type: string;
+  type?: string;
 };
 
 const options = {
@@ -42,7 +42,7 @@ export default function PDFViewer({ url, type }: Props) {
 
   return (
     <div className="mt-4 flex flex-col items-center">
-      <h2 className="p-3 text-2xl font-bold text-primary-8">{type}</h2>
+      {type && <h2 className="p-3 text-2xl font-bold text-primary-8">{type}</h2>}
       <Document
         options={options}
         file={pdfFile}
