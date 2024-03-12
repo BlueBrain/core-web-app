@@ -5,13 +5,13 @@ import { usePathname } from 'next/navigation';
  *
  * Example1:
  *
- * If pathname = /virtual/myvl/project/myproject and key = project
- * then path = /virtual/myvl/project and current = myproject
+ * If pathname = /virtual/myvl/project/myproject/explore and key = project
+ * then path = /virtual/myvl/project/myproject and current = explore
  *
  * Example2:
  *
- * If pathname = /virtual/myvl/project and key = project
- * then path = /virtual/myvl/project and current = project
+ * If pathname = /virtual/myvl/project/myproject and key = project
+ * then path = /virtual/myvl/project/myproject and current = project
  *
  *
  * @param key
