@@ -9,17 +9,17 @@ export type LinkItem = {
 
 type Props = {
   links: LinkItem[];
-  current?: string;
+  currentPage?: string;
 };
 
-export default function VerticalLinks({ links, current }: Props) {
+export default function VerticalLinks({ links, currentPage }: Props) {
   return (
     <div className="flex h-fit w-full flex-col border border-primary-7">
       {links.map((link, idx) => (
         <Link
           key={link.key}
           href={link.href}
-          className={`border-primary-7 py-4 font-bold ${current === link.key && 'bg-neutral-1 text-primary-8'} ${idx !== links.length - 1 && 'border-b'}`}
+          className={`border-primary-7 py-4 font-bold ${currentPage === link.key && 'bg-neutral-1 text-primary-8'} ${idx !== links.length - 1 && 'border-b'}`}
         >
           <div className="mx-4">{link.content}</div>
         </Link>
