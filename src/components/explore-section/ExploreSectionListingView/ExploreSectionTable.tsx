@@ -118,7 +118,7 @@ export function BaseTable({
   const pathname = usePathname();
   const setBackToListPath = useSetAtom(backToListPathAtom);
   const { group } = DATA_TYPES_TO_CONFIGS[dataType];
-  const { basePath } = DATA_TYPE_GROUPS_CONFIG[group];
+  const { extensionPath: basePath } = DATA_TYPE_GROUPS_CONFIG[group];
   const [containerDimension, setContainerDimension] = useState<{ height: number; width: number }>({
     height: 0,
     width: 0,

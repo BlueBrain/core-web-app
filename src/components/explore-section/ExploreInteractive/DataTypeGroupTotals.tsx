@@ -2,7 +2,7 @@
 
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-
+import { usePathname } from 'next/navigation';
 import StatItem, { StatError, StatItemSkeleton } from './StatItem';
 import { DataType } from '@/constants/explore-section/list-views';
 import { DataTypeGroup } from '@/types/explore-section/data-types';
@@ -30,7 +30,7 @@ function DataTypeGroupTotal({ dataType, basePath }: { dataType: DataType; basePa
 
       {total.state === 'hasData' && (
         <StatItem
-          href={`${basePath}${DATA_TYPES_TO_CONFIGS[dataType].name}`}
+          href={`${basePath}/${DATA_TYPES_TO_CONFIGS[dataType].name}`}
           key={DATA_TYPES_TO_CONFIGS[dataType].title}
           title={DATA_TYPES_TO_CONFIGS[dataType].title}
           subtitle={records}
@@ -42,12 +42,16 @@ function DataTypeGroupTotal({ dataType, basePath }: { dataType: DataType; basePa
 }
 
 export default function DataTypeGroupTotals({ dataTypeGroup }: { dataTypeGroup: DataTypeGroup }) {
-  const { config, basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
-
+  const { config, extensionPath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
+  const pathName = usePathname();
   return (
     <>
       {Object.keys(config).map((dataType) => (
-        <DataTypeGroupTotal key={dataType} dataType={dataType as DataType} basePath={basePath} />
+        <DataTypeGroupTotal
+          key={dataType}
+          dataType={dataType as DataType}
+          basePath={`${pathName}/${extensionPath}`}
+        />
       ))}
     </>
   );

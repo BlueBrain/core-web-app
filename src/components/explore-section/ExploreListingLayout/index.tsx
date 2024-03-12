@@ -10,7 +10,6 @@ import BackToInteractiveExplorationBtn from '@/components/explore-section/BackTo
 import { DataType } from '@/constants/explore-section/list-views';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
-import { INTERACTIVE_PATH } from '@/constants/explore-section/paths';
 import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
 import { DataTypeGroup } from '@/types/explore-section/data-types';
 import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
@@ -40,7 +39,7 @@ export default function ExploreListingLayout({ children }: { children: ReactNode
     ? DataTypeGroup.ExperimentalData
     : DataTypeGroup.ModelData;
   const config = pathname.includes('experimental') ? EXPERIMENT_DATA_TYPES : MODEL_DATA_TYPES;
-  const { basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
+  const { extensionPath: basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
 
   const activePath = pathname?.split(basePath).pop() || 'morphology';
   const onClick: MenuProps['onClick'] = (info) => {
