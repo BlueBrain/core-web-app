@@ -20,8 +20,8 @@ export default function WithExploreExperiment({
   renderButton?: (props: RenderButtonProps) => ReactNode;
 }) {
   const router = useRouter();
-  const onCellClick: OnCellClick = (basePath, record, type) => {
-    router.push(detailUrlBuilder(basePath, record, type));
+  const onCellClick: OnCellClick = (basePath, record) => {
+    router.push(detailUrlBuilder(basePath, record));
   };
 
   return (

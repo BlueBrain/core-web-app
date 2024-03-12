@@ -1,6 +1,4 @@
 import { ExploreESHit } from '@/types/explore-section/es';
-import { DataType } from '@/constants/explore-section/list-views';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 
 export const switchStateType = {
@@ -34,10 +32,6 @@ export function isNumeric(str: string) {
 export const detailUrlBuilder = (
   basePath: string,
   resource: ExploreESHit<ExploreSectionResource>,
-  dataType: DataType
-) =>
-  `${basePath}${DATA_TYPES_TO_CONFIGS[dataType]?.name}/${to64(
-    `${resource._source.project.label}!/!${resource._id}`
-  )}`;
+) => `${basePath}/${to64(`${resource._source.project.label}!/!${resource._id}`)}`;
 
 export const localCompareString = (a: string, b: string) => a.localeCompare(b);

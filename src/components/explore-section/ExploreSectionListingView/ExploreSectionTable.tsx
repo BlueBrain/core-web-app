@@ -15,8 +15,6 @@ import type { ExploreESHit } from '@/types/explore-section/es';
 import { classNames } from '@/util/utils';
 import { Field } from '@/constants/explore-section/fields-config/enums';
 import { DataType } from '@/constants/explore-section/list-views';
-import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
-import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { ExploreDataBrainRegionSource } from '@/types/explore-section/application';
 import { ExploreSectionResource } from '@/types/explore-section/resources';
 import useResizeObserver from '@/hooks/useResizeObserver';
@@ -117,8 +115,6 @@ export function BaseTable({
 }) {
   const pathname = usePathname();
   const setBackToListPath = useSetAtom(backToListPathAtom);
-  const { group } = DATA_TYPES_TO_CONFIGS[dataType];
-  const { extensionPath: basePath } = DATA_TYPE_GROUPS_CONFIG[group];
   const [containerDimension, setContainerDimension] = useState<{ height: number; width: number }>({
     height: 0,
     width: 0,
@@ -155,7 +151,7 @@ export function BaseTable({
               onClick: (e: MouseEvent<HTMLInputElement>) => {
                 e.preventDefault();
                 setBackToListPath(pathname);
-                onCellClick?.(basePath, record, dataType);
+                onCellClick?.(pathname, record, dataType);
               },
             }
           : {},

@@ -11,8 +11,6 @@ import { DataType } from '@/constants/explore-section/list-views';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import { MODEL_DATA_TYPES } from '@/constants/explore-section/data-types/model-data-types';
-import { DataTypeGroup } from '@/types/explore-section/data-types';
-import { DATA_TYPE_GROUPS_CONFIG } from '@/constants/explore-section/data-type-groups';
 import { useLoadableValue } from '@/hooks/hooks';
 import { totalByExperimentAndRegionsAtom } from '@/state/explore-section/list-view-atoms';
 
@@ -35,20 +33,15 @@ export default function ExploreListingLayout({ children }: { children: ReactNode
   const interactivePageHref = splittedPathname.slice(0, splittedPathname.length - 2).join('/');
   const router = useRouter();
   const params = useParams();
-  const dataTypeGroup = pathname.includes('experimental')
-    ? DataTypeGroup.ExperimentalData
-    : DataTypeGroup.ModelData;
   const config = pathname.includes('experimental') ? EXPERIMENT_DATA_TYPES : MODEL_DATA_TYPES;
-  const { extensionPath: basePath } = DATA_TYPE_GROUPS_CONFIG[dataTypeGroup];
 
-  const activePath = pathname?.split(basePath).pop() || 'morphology';
+  const activePath = pathname?.split('/').pop() || 'morphology';
   const onClick: MenuProps['onClick'] = (info) => {
     const { key, domEvent } = info;
 
     domEvent.preventDefault();
     domEvent.stopPropagation();
-
-    router.push(`${basePath}${key}`);
+    router.push(key);
   };
 
   const items = useMemo(
