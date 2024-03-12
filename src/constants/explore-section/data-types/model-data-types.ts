@@ -1,8 +1,8 @@
 import { DataType } from '@/constants/explore-section/list-views';
 import { Field } from '@/constants/explore-section/fields-config/enums';
-import { DataTypeGroup } from '@/types/explore-section/data-types';
+import { DataTypeConfig, DataTypeGroup } from '@/types/explore-section/data-types';
 
-export const MODEL_DATA_TYPES = {
+export const MODEL_DATA_TYPES: { [key: string]: DataTypeConfig } = {
   [DataType.CircuitEModel]: {
     title: 'E-model',
     group: DataTypeGroup.ModelData,
