@@ -1,7 +1,6 @@
 import DataTypeTabs from './DataTypeTabs';
 import SelectedBrainRegionMETypes from './SelectedBrainRegionMETypes';
 import DataTypeStatPanel from './DataTypeStatPanel';
-import { classNames } from '@/util/utils';
 import ThreeDeeBrain from '@/components/ThreeDeeBrain';
 
 export default function ExploreInteractivePanel() {
@@ -9,10 +8,7 @@ export default function ExploreInteractivePanel() {
     <div className="relative min-h-0 min-w-0 overflow-hidden">
       <div
         id="interactive-layout"
-        className={classNames(
-          'h-full gap-y-4 bg-black',
-          'grid grid-cols-[repeat(4,1fr)] grid-rows-[80px,repeat(4,1fr),minmax(80px,max-content)]'
-        )}
+        className="grid h-full grid-cols-[repeat(4,1fr)] grid-rows-[80px,repeat(4,1fr),minmax(80px,max-content)] gap-y-4 bg-black"
       >
         <div id="interactive-header" style={{ gridArea: '1 / 1 / 2 / 6' }}>
           <DataTypeTabs />
