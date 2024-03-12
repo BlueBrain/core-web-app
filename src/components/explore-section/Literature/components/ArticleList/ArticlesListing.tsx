@@ -88,7 +88,7 @@ export function ArticleListing() {
     });
     if (brainRegion && experiment) {
       fetchArticlesForBrainRegionAndExperiment(
-        experiment.mlTopic,
+        experiment.mlTopic || 'morphology',
         brainRegion,
         1,
         filters,
@@ -128,7 +128,7 @@ export function ArticleListing() {
     setListingState({ loading: true });
     if (brainRegion && experiment) {
       fetchArticlesForBrainRegionAndExperiment(
-        experiment.mlTopic,
+        experiment.mlTopic || 'morphology',
         brainRegion,
         pageToFetch,
         filters
