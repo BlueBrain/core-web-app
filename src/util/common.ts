@@ -31,7 +31,7 @@ export function isNumeric(str: string) {
 
 export const detailUrlBuilder = (
   basePath: string,
-  resource: ExploreESHit<ExploreSectionResource>,
+  resource: ExploreESHit<ExploreSectionResource>
 ) => `${basePath}/${to64(`${resource._source.project.label}!/!${resource._id}`)}`;
 
 export const localCompareString = (a: string, b: string) => a.localeCompare(b);
