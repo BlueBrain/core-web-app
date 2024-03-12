@@ -3,11 +3,11 @@
 import { ReactNode, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSetAtom } from 'jotai';
+
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import SideMenu from '@/components/SideMenu';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { defaultModelRelease } from '@/config';
-
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 
