@@ -1,12 +1,15 @@
 'use client';
 
-import { ConfigProvider, Table } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { ConfigProvider, Select, Table } from 'antd';
+
+type Role = 'administrator' | 'member';
 
 type Member = {
   key: string;
   name: string;
   lastActive: string;
-  role: 'administrator' | 'member';
+  role: Role;
 };
 
 export default function VirtualLabTeamTable() {
@@ -30,7 +33,7 @@ export default function VirtualLabTeamTable() {
       title: 'Icon',
       key: 'icon',
       dataIndex: 'name',
-      render: (record: Member) => {
+      render: (_: any, record: Member) => {
         return (
           <div
             className={`flex h-12 w-12 items-center justify-center bg-blue-500 ${record.role === 'member' ? 'rounded-full' : ''}`}
@@ -52,13 +55,48 @@ export default function VirtualLabTeamTable() {
       key: 'lastActive',
       render: (lastActive: string) => <span className="text-primary-3">{lastActive}</span>,
     },
+    {
+      title: 'Action',
+      key: 'role',
+      dataIndex: 'role',
+      render: (role: Role) => (
+        <ConfigProvider
+          theme={{
+            components: {
+              Select: {
+                colorBgContainer: 'rgba(255, 255, 255, 0)',
+                colorBgElevated: 'rgba(255, 255, 255, 0)',
+                colorBorder: 'rgba(255, 255, 255, 0)',
+                colorText: 'rgb(255, 255, 255)',
+              },
+            },
+          }}
+        >
+          <Select
+            defaultValue={role}
+            style={{ width: 120 }}
+            onChange={() => {}}
+            options={[
+              { value: 'administrator', label: 'Administrator' },
+              { value: 'member', label: 'Member' },
+            ]}
+          />
+        </ConfigProvider>
+      ),
+    },
   ];
 
   return (
-    <div>
-      <div className="flex gap-2">
-        <span>Total members</span>
-        <span className="font-bold">11</span>
+    <div className="my-10">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          <span>Total members</span>
+          <span className="font-bold">11</span>
+        </div>
+        <div role="button" className="flex w-[150px] justify-between border border-primary-7 p-3">
+          <span className="font-bold">Invite member</span>
+          <PlusOutlined />
+        </div>
       </div>
       <ConfigProvider
         theme={{
