@@ -15,6 +15,7 @@ const BlueNaasCmd = {
   // Cmd target: client
   MORPHOLOGY: 'morphology',
   SIM_VOLTAGE: 'sim_voltage',
+  SIM_DONE: 'sim_done',
 };
 
 type BlueNaasInitData = {
@@ -29,6 +30,7 @@ interface BlueNaasConfig {
   onMorphLoaded?: (morphology: Morphology) => void;
   onInit?: (data: BlueNaasInitData) => void;
   onTraceData?: (traceData: TraceData) => void;
+  onSimulationDone?: () => void;
 }
 
 export default class BlueNaas {
@@ -133,6 +135,9 @@ export default class BlueNaas {
         break;
       case BlueNaasCmd.SIM_VOLTAGE:
         this.onTraceStepData(data);
+        break;
+      case BlueNaasCmd.SIM_DONE:
+        this.config?.onSimulationDone?.();
         break;
       default:
         break;
