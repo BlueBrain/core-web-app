@@ -5,7 +5,7 @@ import ThreeDeeBrain from '@/components/ThreeDeeBrain';
 
 export default function ExploreInteractivePanel() {
   return (
-    <div className="relative min-h-0 min-w-0 overflow-hidden">
+    <div className="relative h-full min-w-0 overflow-hidden">
       <div
         id="interactive-layout"
         className="grid h-full grid-cols-[repeat(4,1fr)] grid-rows-[80px,repeat(4,1fr),minmax(80px,max-content)] gap-y-4 bg-black"

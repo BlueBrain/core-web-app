@@ -46,14 +46,14 @@ export default function WithExploreEModel({
   const setEModelUIConfig = useSetAtom(eModelUIConfigAtom);
   const setEModelEditMode = useSetAtom(eModelEditModeAtom);
 
-  const onCellClick: OnCellClick = (basePath, record, type) => {
+  const onCellClick: OnCellClick = (basePath, record) => {
     const source = record._source as ESeModel;
     const eModel = buildEModelEntry(source);
     const brainRegionId = source.brainRegion['@id'];
     const newSearhParams = new URLSearchParams(params);
     newSearhParams.set('eModelBrainRegion', brainRegionId);
 
-    const exploreUrl = `${detailUrlBuilder(basePath, record, type)}?${newSearhParams.toString()}`;
+    const exploreUrl = `${detailUrlBuilder(basePath, record)}?${newSearhParams.toString()}`;
 
     setSelectedEModel(eModel);
     setEModelUIConfig({});

@@ -20,6 +20,9 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
   }),
+  usePathname() {
+    return '';
+  },
 }));
 
 const mockCountForExperiment = 10;

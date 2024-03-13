@@ -12,7 +12,7 @@ export const getLiteratureCountForBrainRegion = (brainRegion: string, signal: Ab
     return await Promise.allSettled(
       Object.entries(EXPERIMENT_DATA_TYPES).map(([id, config]) =>
         fetchParagraphCountForBrainRegionAndExperiment(
-          { name: config.mlTopic, id },
+          { name: config.mlTopic || 'morphology', id },
           brainRegion,
           signal
         )
