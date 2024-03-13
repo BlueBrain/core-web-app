@@ -1,6 +1,5 @@
-'use client';
-
 import { usePathname } from 'next/navigation';
+
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 
 export default function VirtualLabProjectSidebar() {
