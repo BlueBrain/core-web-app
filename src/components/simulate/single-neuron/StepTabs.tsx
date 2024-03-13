@@ -12,6 +12,7 @@ const steps: SimulateStep[] = [
   'conditions',
   'analysis',
   'visualization',
+  'results',
 ];
 
 export default function StepTabs() {

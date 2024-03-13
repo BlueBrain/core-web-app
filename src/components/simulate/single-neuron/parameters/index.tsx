@@ -9,6 +9,7 @@ import Recording from './Recording';
 import Conditions from './Conditions';
 import Analysis from './Analysis';
 import Visualization from './Visualization';
+import Results from './Results';
 import {
   simulateStepAtom,
   simulationConfigAtom,
@@ -66,6 +67,9 @@ export default function ParameterView() {
           </div>
           <div className={simulateStep === 'visualization' ? '' : 'hidden'}>
             <Visualization />
+          </div>
+          <div className={simulateStep === 'results' ? '' : 'hidden'}>
+            <Results />
           </div>
         </div>
       </Form>
