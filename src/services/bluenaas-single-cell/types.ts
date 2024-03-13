@@ -1,18 +1,3 @@
-export interface SimConfig {
-  isFixedDt: boolean;
-  celsius: number;
-  dt: number | null;
-  variableDt: boolean;
-  tstop: number;
-  delay: number;
-  dur: number;
-  amp: number;
-  hypamp: number;
-  vinit: number;
-  injectTo: string;
-  recordFrom: string[];
-}
-
 interface SecMarkerConfigCommon {
   secName: string;
 }
