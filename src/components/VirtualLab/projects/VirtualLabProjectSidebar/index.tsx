@@ -1,11 +1,11 @@
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 
 type Props = {
-  current: string;
+  currentPage: string;
   basePath: string;
 };
 
-export default function VirtualLabProjectSidebar({ current, basePath }: Props) {
+export default function VirtualLabProjectSidebar({ currentPage, basePath }: Props) {
   const linkItems: LinkItem[] = [
     { key: 'project', content: 'Project Home', href: basePath },
     { key: 'library', content: 'Project Library', href: `${basePath}/library` },
@@ -22,7 +22,7 @@ export default function VirtualLabProjectSidebar({ current, basePath }: Props) {
         Project 1
       </h1>
 
-      <VerticalLinks links={linkItems} current={current} />
+      <VerticalLinks links={linkItems} currentPage={currentPage} />
     </div>
   );
 }

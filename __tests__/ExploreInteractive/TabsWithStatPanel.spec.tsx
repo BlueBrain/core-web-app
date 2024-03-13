@@ -4,17 +4,16 @@ import { useHydrateAtoms } from 'jotai/utils';
 
 import sessionAtom from '@/state/session';
 import { BrainRegion } from '@/types/ontologies';
-import {
-  DataTypeTabs,
-  DataTypeStatPanel,
-  dataTabAtom,
-} from '@/components/explore-section/ExploreInteractive';
 import { selectedBrainRegionAtom } from '@/state/brain-regions';
 import { SelectedBrainRegion } from '@/state/brain-regions/types';
 import { mockBrainRegions } from '__tests__/__utils__/SelectedBrainRegions';
 import { DataType } from '@/constants/explore-section/list-views';
 import { EXPERIMENT_DATA_TYPES } from '@/constants/explore-section/data-types/experiment-data-types';
 import { DATA_TYPES_TO_CONFIGS } from '@/constants/explore-section/data-types';
+import DataTypeTabs, {
+  dataTabAtom,
+} from '@/components/explore-section/ExploreInteractive/DataTypeTabs';
+import DataTypeStatPanel from '@/components/explore-section/ExploreInteractive/DataTypeStatPanel';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,
