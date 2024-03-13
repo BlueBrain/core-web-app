@@ -3,6 +3,7 @@
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { usePathname } from 'next/navigation';
+
 import StatItem, { StatError, StatItemSkeleton } from './StatItem';
 import { DataType } from '@/constants/explore-section/list-views';
 import { DataTypeGroup } from '@/types/explore-section/data-types';
