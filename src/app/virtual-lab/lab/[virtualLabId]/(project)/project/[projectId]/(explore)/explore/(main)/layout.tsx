@@ -6,11 +6,8 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import SideMenu from '@/components/SideMenu';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
-import useBasePath from '@/hooks/useBasePath';
 
 export default function VirtualLabProjectLayout({ children }: { children: ReactNode }) {
-  const [path, currentPage] = useBasePath('project');
-
   return (
     <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 bg-center bg-no-repeat pr-10 text-white bg-blend-lighten [background-size:70%]">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -29,7 +26,7 @@ export default function VirtualLabProjectLayout({ children }: { children: ReactN
             ]}
           />
 
-          <VirtualLabProjectSidebar basePath={path} currentPage={currentPage} />
+          <VirtualLabProjectSidebar />
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>

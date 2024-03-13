@@ -6,12 +6,12 @@ import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 export default function VirtualLabProjectSidebar() {
   const currentPage = usePathname().split('/').pop();
   const linkItems: LinkItem[] = [
-    { key: 'project', content: 'Project Home', href: 'project' },
-    { key: 'library', content: 'Project Library', href: `library` },
-    { key: 'team', content: 'Project Team', href: `team` },
-    { key: 'explore', content: 'Explore', href: `explore` },
-    { key: 'build', content: 'Build', href: `build` },
-    { key: 'simulate', content: 'Simulate', href: `simulate` },
+    { key: 'home', content: 'Project Home', href: 'home' },
+    { key: 'library', content: 'Project Library', href: 'library' },
+    { key: 'team', content: 'Project Team', href: 'team' },
+    { key: 'explore', content: 'Explore', href: 'explore' },
+    { key: 'build', content: 'Build', href: 'build' },
+    { key: 'simulate', content: 'Simulate', href: 'simulate' },
   ];
   return (
     <div className="mt-10">
