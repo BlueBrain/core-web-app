@@ -25,7 +25,7 @@ export default function ExperimentDetailViewPage() {
   );
   if (!currentExperiment) notFound();
   let content;
-  // based on the experiment type, decide what kind of content will be rendered 
+  // based on the experiment type, decide what kind of content will be rendered
   switch (currentExperiment) {
     case DataType.ExperimentalNeuronMorphology:
       content = <MorphologyDetailView />;
