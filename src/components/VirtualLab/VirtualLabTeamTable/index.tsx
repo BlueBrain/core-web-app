@@ -1,6 +1,6 @@
 'use client';
 
-import { PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Table } from 'antd';
 
 type Role = 'administrator' | 'member';
@@ -64,17 +64,19 @@ export default function VirtualLabTeamTable() {
           theme={{
             components: {
               Select: {
-                colorBgContainer: 'rgba(255, 255, 255, 0)',
-                colorBgElevated: 'rgba(255, 255, 255, 0)',
+                colorBgContainer: '#002766',
+                colorBgElevated: '#002766',
                 colorBorder: 'rgba(255, 255, 255, 0)',
                 colorText: 'rgb(255, 255, 255)',
+                optionSelectedBg: '#002766',
               },
             },
           }}
         >
           <Select
+            suffixIcon={<DownOutlined style={{ color: 'white' }} />}
             defaultValue={role}
-            style={{ width: 120 }}
+            style={{ width: 200 }}
             onChange={() => {}}
             options={[
               { value: 'administrator', label: 'Administrator' },
