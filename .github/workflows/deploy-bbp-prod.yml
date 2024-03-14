@@ -1,0 +1,42 @@
+name: Deploy BBP Prod
+
+env:
+  FF_USE_FASTZIP: 'true'
+  ARTIFACT_COMPRESSION_LEVEL: 'fastest'
+  CACHE_COMPRESSION_LEVEL: 'fastest'
+  KUBERNETES_MEMORY_REQUEST: 4Gi
+  KUBERNETES_MEMORY_LIMIT: 8Gi
+  KUBERNETES_CPU_REQUEST: 3
+  REGISTRY_IMAGE: ${{ vars.CI_REGISTRY_IMAGE }}
+  REGISTRY_USER: ${{ vars.CI_DOCKERHUB_REGISTRY_AUTH }}
+  NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
+  SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    env:
+      REGISTRY_IMAGE_TAG: 'latest'
+      NEXT_PUBLIC_ENVIRONMENT: prod
+      NEXT_PUBLIC_BASE_PATH: /mmb-beta
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Docker Hub Login
+        uses: docker/login-action@v3
+        with:
+          file: ./Dockerfile
+          username: ${{ vars.CI_DOCKERHUB_REGISTRY_AUTH }}
+          password: ${{ secrets.BBPBUILDBOT_DOCKERHUB_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ vars.CI_DOCKERHUB_REGISTRY_AUTH }}/${{ vars.CI_REGISTRY_IMAGE }}:latest

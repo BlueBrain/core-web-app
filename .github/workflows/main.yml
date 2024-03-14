@@ -1,170 +1,99 @@
-name: OBP CI/CD
-
-env:
-  FF_USE_FASTZIP: 'true'
-  ARTIFACT_COMPRESSION_LEVEL: 'fastest'
-  CACHE_COMPRESSION_LEVEL: 'fastest'
-  KUBERNETES_MEMORY_REQUEST: 4Gi
-  KUBERNETES_MEMORY_LIMIT: 8Gi
-  KUBERNETES_CPU_REQUEST: 3
-  KUBERNETES_CPU_LIMIT: 4
-  NODE_OPTIONS: --max-old-space-size=4096
+name: OBP CI/CD - Linter, Prettier, Test, Build
 
 on:
   push:
     branches:
-      - main
-      - develop
+      - '*'
+      - '!main'
+      - '!develop'
   workflow_dispatch:
 
-# Define caching action outside of jobs will ensure
-# that it is executed before any job starts.
 jobs:
-  check_out_code:
-    runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2    
   install_packages:
     runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
     steps:
-      - name: Install Node.js packages
-        run: npm ci --cache .npm --prefer-offline
-      - name: Cache Node.js packages
-        uses: actions/cache@v2
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-  eslint:
-    runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    steps:
-      - name: Run linter
-        run: npm run lint
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
   prettier:
+    needs: install_packages
     runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
     steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
       - name: Run Prettier
         run: npm run prettier:check
-  unit-test:
+  linter:
+    needs: install_packages
     runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
     steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+  test:
+    needs: [prettier, linter]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
       - name: Run tests
         run: npm run test:ci
   build:
+    needs: [prettier, linter]
     runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    if: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/main' }}
+    env:
+      NODE_OPTIONS: --max-old-space-size=7168
     steps:
-      # Cache .next/cache directory
-      - name: Cache .next/cache
-        uses: actions/cache@v2
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
         with:
-          path: .next/cache
-          key: ${{ runner.os }}-${{ github.ref_slug }}
-          restore-keys: |
-            ${{ runner.os }}-
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
       - name: Build app
         run: npm run build
-  docker-login:
-    runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    steps:
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.CI_DOCKERHUB_REGISTRY_AUTH }}
-          password: ${{ secrets.BBPBUILDBOT_DOCKERHUB_PASSWORD }}
-  deploy-bbp-prod:
-    runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    if: ${{ github.ref == 'refs/heads/develop' }} # TODO: Confirm that this is indeed the correct branch/ref (not main?)
-    env:
-      CI_PROJECT_DIR: /builds/project/sbo/core-web-app
-      CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app/prod
-      CI_COMMIT_SHORT_SHA: $CI_COMMIT_SHORT_SHA
-      REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-${{ github.run_number }}
-      NEXT_PUBLIC_ENVIRONMENT: prod
-      NEXT_PUBLIC_BASE_PATH: /mmb-beta
-      NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
-      SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
-    steps:
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.CI_DOCKERHUB_REGISTRY_AUTH }}
-          password: ${{ secrets.BBPBUILDBOT_DOCKERHUB_PASSWORD }} # TODO: This secret is not yet registered
-
-      - name: Build Docker image
-        run: docker build -t $CI_REGISTRY_USER/$CI_REGISTRY_IMAGE:$REGISTRY_IMAGE_TAG .
-  deploy-bbp-dev:
-    runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    if: ${{ github.ref == 'refs/heads/develop' }}
-    env:
-      CI_PROJECT_DIR: /builds/project/sbo/core-web-app
-      CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app/dev
-      CI_COMMIT_SHORT_SHA: $CI_COMMIT_SHORT_SHA
-      REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-${{ github.run_number }}
-      NEXT_PUBLIC_ENVIRONMENT: dev
-      NEXT_PUBLIC_BASE_PATH: /mmb-beta/dev
-      NEXT_PUBLIC_BBS_ML_URL: https://ml.bbs.master.staging.kcp.bbp.epfl.ch
-      NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
-      SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
-    steps:
-      - name: Build Docker image
-        run: docker build -t $CI_REGISTRY_USER/$CI_REGISTRY_IMAGE:$REGISTRY_IMAGE_TAG .
-  deploy-aws-prod:
-    runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    if: ${{ github.ref == 'refs/heads/develop' }}
-    env:
-      CI_PROJECT_DIR: /builds/project/sbo/core-web-app
-      CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app
-      CI_REGISTRY: https://index.docker.io/v1/
-      CI_REGISTRY_USER: bbpbuildbot
-      CI_REGISTRY_PASSWORD: $BBPBUILDBOT_DOCKERHUB_PASSWORD
-      REGISTRY_IMAGE_TAG: latest
-      NEXT_PUBLIC_ENVIRONMENT: prod
-      NEXT_PUBLIC_BASE_PATH: /mmb-beta
-      NEXT_PUBLIC_NEXUS_URL: https://sbo-nexus-delta.shapes-registry.org/v1
-      NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
-      NEXT_PUBLIC_ATLAS_ES_VIEW_ID: https://sbo-nexus-delta.shapes-registry.org/data/bbp/atlas/98e91247-a3f2-4dae-8cfb-9432fc7d84ae
-      NEXT_PUBLIC_CELL_COMPOSITION_FILE_ID: https://sbo-nexus-delta.shapes-registry.org/data/bbp/atlasdatasetrelease/f3cff4fa-9976-4b6d-b8aa-5fe44ba3878c
-      SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
-    steps:
-      - name: Build Docker image
-        run: docker build -t $CI_REGISTRY_USER/$CI_REGISTRY_IMAGE:$REGISTRY_IMAGE_TAG .
-  deploy-test:
-    runs-on: ubuntu-latest
-    container:
-      image: node:21-alpine
-    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop'
-    env:
-      CI_PROJECT_DIR: /builds/project/sbo/core-web-app
-      CI_REGISTRY_IMAGE: $CI_REGISTRY/project/sbo/core-web-app/test
-      REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-${{ github.run_number }}
-      NEXT_PUBLIC_ENVIRONMENT: test
-      NEXT_PUBLIC_BASE_PATH: /mmb-beta/test
-      NEXT_PUBLIC_BBS_ML_URL: https://ml.bbs.master.staging.kcp.bbp.epfl.ch
-      NEXT_PUBLIC_NEXUS_URL: https://sbo-nexus-delta.shapes-registry.org/v1
-      NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
-      SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
-      CI_REGISTRY_USER: bbpbuildbot # TODO: I added this here, to use below. Is this correct?
-    steps:
-      - name: Build Docker image
-        run: docker build -t $CI_REGISTRY_USER/$CI_REGISTRY_IMAGE:$REGISTRY_IMAGE_TAG .
