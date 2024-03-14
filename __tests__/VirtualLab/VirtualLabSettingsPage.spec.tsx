@@ -3,9 +3,9 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { render, screen } from '@testing-library/react';
 import { useParams } from 'next/navigation';
 
-import VirtualLabSettingsPage from '@/app/virtual-lab/lab/[virtualLabId]/(lab)/page';
 import sessionAtom from '@/state/session';
 import * as MockVirtualLabModule from '@/services/virtual-lab/virtual-lab-service';
+import VirtualLabSettingsPage from '@/app/virtual-lab/lab/[virtualLabId]/(lab)/lab/page';
 
 jest.mock('next-auth/react', () => {
   const originalModule = jest.requireActual('next-auth/react');

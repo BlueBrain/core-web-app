@@ -6,9 +6,17 @@ import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
-import VirtualLabSettingsError from '../error';
+
 import { getVirtualLabAtom } from '@/state/virtual-lab/lab';
 import VirtualLabSettingsComponent from '@/components/VirtualLab/VirtualLabSettingsComponent';
+
+function VirtualLabSettingsError({ message }: { message: string }) {
+  return (
+    <div className="ml-10 border border-primary-7 p-12">
+      <h3>{message}</h3>
+    </div>
+  );
+}
 
 export default function VirtualLabSettingsPage() {
   const params = useParams();

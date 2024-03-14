@@ -1,18 +1,16 @@
+import { usePathname } from 'next/navigation';
+
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 
-type Props = {
-  currentPage: string;
-  basePath: string;
-};
-
-export default function VirtualLabProjectSidebar({ currentPage, basePath }: Props) {
+export default function VirtualLabProjectSidebar() {
+  const currentPage = usePathname().split('/').pop();
   const linkItems: LinkItem[] = [
-    { key: 'project', content: 'Project Home', href: basePath },
-    { key: 'library', content: 'Project Library', href: `${basePath}/library` },
-    { key: 'team', content: 'Project Team', href: `${basePath}/team` },
-    { key: 'explore', content: 'Explore', href: `${basePath}/explore` },
-    { key: 'build', content: 'Build', href: `${basePath}/build` },
-    { key: 'simulate', content: 'Simulate', href: `${basePath}/simulate` },
+    { key: 'home', content: 'Project Home', href: 'home' },
+    { key: 'library', content: 'Project Library', href: 'library' },
+    { key: 'team', content: 'Project Team', href: 'team' },
+    { key: 'explore', content: 'Explore', href: 'explore' },
+    { key: 'build', content: 'Build', href: 'build' },
+    { key: 'simulate', content: 'Simulate', href: 'simulate' },
   ];
   return (
     <div className="mt-10">
