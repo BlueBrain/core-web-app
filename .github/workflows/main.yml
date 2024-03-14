@@ -10,16 +10,6 @@ env:
   KUBERNETES_CPU_LIMIT: 4
   NODE_OPTIONS: --max-old-space-size=4096
 
-defaults: &defaults
-  runs-on: ubuntu-latest
-  run:
-    interruptible: true
-  container:
-    image: node:21-alpine
-  steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-
 on:
   push:
     branches:
@@ -30,9 +20,17 @@ on:
 # Define caching action outside of jobs will ensure
 # that it is executed before any job starts.
 jobs:
+  check_out_code:
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2    
   install_packages:
-    <<: *defaults
-    <<: *install_packages_default
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     steps:
       - name: Install Node.js packages
         run: npm ci --cache .npm --prefer-offline
@@ -41,31 +39,31 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-  setup: # Is this one actually necessary, given that we're already running the cache script before each job?
-    if: ${{ github.event_name == 'push' }}
-    <<: *defaults
-    <<: *install_packages_default
   eslint:
-    <<: *defaults
-    <<: *install_packages_default
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     steps:
       - name: Run linter
         run: npm run lint
   prettier:
-    <<: *defaults
-    <<: *install_packages_default
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     steps:
       - name: Run Prettier
         run: npm run prettier:check
   unit-test:
-    <<: *defaults
-    <<: *install_packages_default
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     steps:
       - name: Run tests
         run: npm run test:ci
   build:
-    <<: *defaults
-    <<: *install_packages_default
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     if: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/main' }}
     steps:
       # Cache .next/cache directory
@@ -79,7 +77,9 @@ jobs:
       - name: Build app
         run: npm run build
   docker-login:
-    <<: *defaults
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     steps:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -87,7 +87,9 @@ jobs:
           username: ${{ secrets.CI_DOCKERHUB_REGISTRY_AUTH }}
           password: ${{ secrets.BBPBUILDBOT_DOCKERHUB_PASSWORD }}
   deploy-bbp-prod:
-    <<: *defaults
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     if: ${{ github.ref == 'refs/heads/develop' }} # TODO: Confirm that this is indeed the correct branch/ref (not main?)
     env:
       CI_PROJECT_DIR: /builds/project/sbo/core-web-app
@@ -108,7 +110,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t $CI_REGISTRY_USER/$CI_REGISTRY_IMAGE:$REGISTRY_IMAGE_TAG .
   deploy-bbp-dev:
-    <<: *defaults
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     if: ${{ github.ref == 'refs/heads/develop' }}
     env:
       CI_PROJECT_DIR: /builds/project/sbo/core-web-app
@@ -124,7 +128,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t $CI_REGISTRY_USER/$CI_REGISTRY_IMAGE:$REGISTRY_IMAGE_TAG .
   deploy-aws-prod:
-    <<: *defaults
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     if: ${{ github.ref == 'refs/heads/develop' }}
     env:
       CI_PROJECT_DIR: /builds/project/sbo/core-web-app
@@ -144,7 +150,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t $CI_REGISTRY_USER/$CI_REGISTRY_IMAGE:$REGISTRY_IMAGE_TAG .
   deploy-test:
-    <<: *defaults
+    runs-on: ubuntu-latest
+    container:
+      image: node:21-alpine
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop'
     env:
       CI_PROJECT_DIR: /builds/project/sbo/core-web-app
