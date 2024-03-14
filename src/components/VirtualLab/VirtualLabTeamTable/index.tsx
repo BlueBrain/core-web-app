@@ -2,32 +2,10 @@
 
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Table } from 'antd';
-
-type Role = 'administrator' | 'member';
-
-type Member = {
-  key: string;
-  name: string;
-  lastActive: string;
-  role: Role;
-};
+import { Member, Role } from './types';
+import { mockMembers } from './mockData';
 
 export default function VirtualLabTeamTable() {
-  const dataSource: Member[] = [
-    {
-      key: '1',
-      name: 'Julian Budd',
-      lastActive: 'Active 5 days ago',
-      role: 'administrator',
-    },
-    {
-      key: '2',
-      name: 'Aleksandra Teska',
-      lastActive: 'Active 5 days ago',
-      role: 'member',
-    },
-  ];
-
   const getInitials = (name: string) => {
     const splitted = name.split(' ');
     return `${splitted[0][0]}${splitted[1][0]}`;
@@ -137,7 +115,7 @@ export default function VirtualLabTeamTable() {
       >
         <Table
           bordered={false}
-          dataSource={dataSource}
+          dataSource={mockMembers}
           pagination={false}
           columns={columns}
           showHeader={false}
