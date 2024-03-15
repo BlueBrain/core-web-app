@@ -23,9 +23,7 @@ export default function VirtualLabTeamTable() {
     const hexBlue = blue.toString(16).padStart(2, '0');
 
     // Concatenating hexadecimal values
-    const hexColor = `#${hexRed}${hexGreen}${hexBlue}`;
-
-    return hexColor;
+    return `#${hexRed}${hexGreen}${hexBlue}`;
   };
 
   const columns = [
