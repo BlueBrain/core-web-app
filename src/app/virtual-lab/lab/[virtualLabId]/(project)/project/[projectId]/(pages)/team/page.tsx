@@ -1,3 +1,5 @@
+import VirtualLabTeamTable from '@/components/VirtualLab/VirtualLabTeamTable';
+
 export default function VirtualLabProjectTeamPage() {
-  return <div>Team</div>;
+  return <VirtualLabTeamTable />;
 }
