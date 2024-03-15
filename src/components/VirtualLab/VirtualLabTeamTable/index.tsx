@@ -8,7 +8,7 @@ import { mockMembers } from './mockData';
 export default function VirtualLabTeamTable() {
   const getInitials = (name: string) => {
     const splitted = name.split(' ');
-    return `${splitted[0][0]}${splitted[1][0]}`;
+    return splitted.length > 1 ? `${splitted[0][0]}${splitted[1][0]}` : splitted[0][0];
   };
 
   const generateRandomHexColor = () => {
