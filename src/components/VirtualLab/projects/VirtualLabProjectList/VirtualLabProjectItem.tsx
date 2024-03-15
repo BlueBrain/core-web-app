@@ -42,7 +42,7 @@ export default function VirtualLabProjectItem({ project }: Props) {
             <span className="text-primary-3">Latest update</span>
             <span className="font-bold">{project.latestUpdate}</span>
           </div>
-          <div>
+          <div className="flex">
             {project.isFavorite ? (
               <StarFilled style={{ fontSize: '18px', color: '#FFD465' }} />
             ) : (
