@@ -7,7 +7,8 @@ type Props = {
 
 export default function VirtualLabProjectItem({ project }: Props) {
   return (
-    <div className="rounded-md border border-primary-6 px-4 py-6">
+    <div className="flex flex-col gap-3 rounded-md border border-primary-6 px-4 py-6">
+      {/* Title row */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{project.title}</h2>
 
@@ -25,6 +26,8 @@ export default function VirtualLabProjectItem({ project }: Props) {
           </div>
         </div>
       </div>
+      {/* Description row */}
+      <div className="max-w-[60%]">{project.description}</div>
     </div>
   );
 }
