@@ -14,7 +14,7 @@ export default function VirtualLabProjectList() {
         {/* Total + Search + Button row */}
         <div className="flex flex-row justify-between">
           {/* Total + Search */}
-          <div className="flex flex-row items-center gap-5">
+          <div className="flex flex-row items-center gap-8">
             <div className="flex gap-2">
               <span className="text-primary-3">Total projects</span>
               <span className="font-bold">{projects.length}</span>
