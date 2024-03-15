@@ -24,6 +24,8 @@ import InteractiveViewIcon from './InteractiveView';
 import VirtualLabIcon from './VirtualLab';
 import FileIcon from './File';
 import AddIcon from './AddIcon';
+import EyeTargetIcon from './EyeTarget';
+import { MembersGroupIcon } from './MembersGroupIcon';
 
 export {
   AddIcon,
@@ -36,12 +38,14 @@ export {
   CheckIcon,
   ChevronIcon,
   EyeIcon,
+  EyeTargetIcon,
   FileIcon,
   GripDotsVerticalIcon,
   HomeIcon,
   LinkIcon,
   LockIcon,
   LockOpenIcon,
+  MembersGroupIcon,
   ResetIcon,
   UndoIcon,
   UserOutlinedIcon,

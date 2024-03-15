@@ -1,14 +1,30 @@
-import { StarFilled, StarOutlined } from '@ant-design/icons';
+import { ReactNode } from 'react';
+import { CalendarOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-design/icons';
+
 import { Project } from './types';
+import Brain from '@/components/icons/Brain';
+import { EyeTargetIcon, MembersGroupIcon } from '@/components/icons';
 
 type Props = {
   project: Project;
 };
 
-function ProjectDetail({ title, detail }: { title: string; detail: number | string }) {
+function ProjectDetail({
+  icon,
+  title,
+  detail,
+}: {
+  icon: ReactNode;
+  title: string;
+  detail: number | string;
+}) {
   return (
-    <div className="flex gap-3">
-      <div className="text-primary-3">{title}</div>
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1">
+        <div>{icon}</div>
+        <div className="text-primary-3">{title}</div>
+      </div>
+
       <div className="font-bold">{detail}</div>
     </div>
   );
@@ -38,13 +54,33 @@ export default function VirtualLabProjectItem({ project }: Props) {
       {/* Description row */}
       <div className="max-w-[70%]">{project.description}</div>
       {/* Last row */}
-      <div className="flex gap-5">
-        <ProjectDetail title="Explore sessions" detail={project.exploreSessions} />
-        <ProjectDetail title="Builds" detail={project.builds} />
+      <div className="flex gap-6">
+        <ProjectDetail
+          icon={<EyeTargetIcon style={{ color: '#69C0FF' }} />}
+          title="Explore sessions"
+          detail={project.exploreSessions}
+        />
+        <ProjectDetail
+          icon={<Brain style={{ color: '#69C0FF' }} />}
+          title="Builds"
+          detail={project.builds}
+        />
         <ProjectDetail title="Simulation experiments" detail={project.simulationExperiments} />
-        <ProjectDetail title="Members" detail={project.members} />
-        <ProjectDetail title="Admin" detail={project.admin} />
-        <ProjectDetail title="Creation date" detail={project.creationDate} />
+        <ProjectDetail
+          icon={<UserOutlined style={{ color: '#69C0FF' }} />}
+          title="Members"
+          detail={project.members}
+        />
+        <ProjectDetail
+          icon={<MembersGroupIcon style={{ color: '#69C0FF' }} />}
+          title="Admin"
+          detail={project.admin}
+        />
+        <ProjectDetail
+          icon={<CalendarOutlined style={{ color: '#69C0FF' }} />}
+          title="Creation date"
+          detail={project.creationDate}
+        />
       </div>
     </div>
   );
