@@ -26,6 +26,11 @@ export default function VirtualLabTeamTable() {
     return `#${hexRed}${hexGreen}${hexBlue}`;
   };
 
+  const roleOptions: { value: Role; label: string }[] = [
+    { value: 'administrator', label: 'Administrator' },
+    { value: 'member', label: 'Member' },
+  ];
+
   const columns = [
     {
       title: 'Icon',
@@ -77,10 +82,7 @@ export default function VirtualLabTeamTable() {
             defaultValue={role}
             style={{ width: 200 }}
             onChange={() => {}}
-            options={[
-              { value: 'administrator', label: 'Administrator' },
-              { value: 'member', label: 'Member' },
-            ]}
+            options={roleOptions}
           />
         </ConfigProvider>
       ),
