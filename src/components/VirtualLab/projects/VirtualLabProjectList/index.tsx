@@ -1,6 +1,7 @@
 'use client';
 
 import { ConfigProvider } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { mockProjects } from './mockData';
 
@@ -34,11 +35,14 @@ export default function VirtualLabProjectList() {
               <input
                 placeholder="Search for projects..."
                 style={{ width: 300 }}
-                className="border-b bg-transparent text-primary-3 outline-none"
+                className="border-b bg-transparent text-primary-3 outline-none placeholder:text-primary-3"
               />
             </ConfigProvider>
           </div>
-          <div>New Project</div>
+          <div role="button" className="flex w-[200px] justify-between border border-primary-7 p-3">
+            <span className="font-bold">New project</span>
+            <PlusOutlined />
+          </div>
         </div>
         {/* Projects row */}
         <div className="flex flex-col gap-4">
