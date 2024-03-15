@@ -12,7 +12,7 @@ export const mockProjects: Project[] = [
     builds: 278,
     simulationExperiments: 15,
     members: 5,
-    Admin: 'Julian Budd',
+    admin: 'Julian Budd',
     creationDate: '12.02.2023',
   },
   {
@@ -26,7 +26,7 @@ export const mockProjects: Project[] = [
     builds: 278,
     simulationExperiments: 15,
     members: 5,
-    Admin: 'Julian Budd',
+    admin: 'Julian Budd',
     creationDate: '12.02.2023',
   },
   {
@@ -40,7 +40,7 @@ export const mockProjects: Project[] = [
     builds: 278,
     simulationExperiments: 15,
     members: 5,
-    Admin: 'Julian Budd',
+    admin: 'Julian Budd',
     creationDate: '12.02.2023',
   },
 ];
