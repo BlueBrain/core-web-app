@@ -3,7 +3,7 @@ import { CalendarOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-d
 
 import { Project } from './types';
 import Brain from '@/components/icons/Brain';
-import { EyeTargetIcon, MembersGroupIcon } from '@/components/icons';
+import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 
 type Props = {
   project: Project;
@@ -19,7 +19,7 @@ function ProjectDetail({
   detail: number | string;
 }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <div className="flex items-center gap-1">
         <div>{icon}</div>
         <div className="text-primary-3">{title}</div>
@@ -32,7 +32,7 @@ function ProjectDetail({
 
 export default function VirtualLabProjectItem({ project }: Props) {
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-primary-6 px-4 py-6">
+    <div className="flex flex-col gap-3 rounded-md border border-primary-6 p-9 ">
       {/* Title row */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{project.title}</h2>
@@ -54,7 +54,7 @@ export default function VirtualLabProjectItem({ project }: Props) {
       {/* Description row */}
       <div className="max-w-[70%]">{project.description}</div>
       {/* Last row */}
-      <div className="flex gap-6">
+      <div className="flex gap-5">
         <ProjectDetail
           icon={<EyeTargetIcon style={{ color: '#69C0FF' }} />}
           title="Explore sessions"
@@ -65,7 +65,11 @@ export default function VirtualLabProjectItem({ project }: Props) {
           title="Builds"
           detail={project.builds}
         />
-        <ProjectDetail title="Simulation experiments" detail={project.simulationExperiments} />
+        <ProjectDetail
+          icon={<StatsEditIcon style={{ color: '#69C0FF' }} />}
+          title="Simulation experiments"
+          detail={project.simulationExperiments}
+        />
         <ProjectDetail
           icon={<UserOutlined style={{ color: '#69C0FF' }} />}
           title="Members"

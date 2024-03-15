@@ -26,6 +26,7 @@ import FileIcon from './File';
 import AddIcon from './AddIcon';
 import EyeTargetIcon from './EyeTarget';
 import { MembersGroupIcon } from './MembersGroupIcon';
+import StatsEditIcon from './StatsEditIcon';
 
 export {
   AddIcon,
@@ -54,6 +55,7 @@ export {
   MissingData,
   IconPlus as PlusIcon,
   SettingsIcon,
+  StatsEditIcon,
   RangeIcon,
   InteractiveViewIcon,
   VirtualLabIcon,
