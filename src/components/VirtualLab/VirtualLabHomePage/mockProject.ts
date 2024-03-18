@@ -1,4 +1,4 @@
-import { VirtualLab } from '@/types/virtual-lab/lab';
+import { VirtualLab } from './types';
 
 export const mockVirtualLab: VirtualLab = {
   title: 'Institute of Neuroscience',

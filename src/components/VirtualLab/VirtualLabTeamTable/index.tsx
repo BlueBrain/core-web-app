@@ -3,7 +3,7 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Table } from 'antd';
 import { mockMembers } from './mockData';
-import { Member, Role } from '@/types/virtual-lab/member';
+import { Member, Role } from './types';
 
 export default function VirtualLabTeamTable() {
   const getInitials = (name: string) => {

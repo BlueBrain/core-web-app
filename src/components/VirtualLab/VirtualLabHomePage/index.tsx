@@ -1,7 +1,6 @@
 import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
-
 import VirtualLabStatistic from '../VirtualLabStatistic';
-import { mockVirtualLab } from '../mockData/project';
+import { mockVirtualLab } from './mockProject';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 
