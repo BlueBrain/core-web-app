@@ -11,7 +11,7 @@ export default function BudgetPanel({ total, totalSpent, remaining }: Props) {
       <div className="flex justify-between">
         <h4 className="font-semibold">Budget</h4>
         <div className="text-primary-2">
-          Total budget: <span>$1650</span>
+          Total budget: <span>$ {total}</span>
         </div>
       </div>
       {/* budget loader */}
@@ -22,10 +22,10 @@ export default function BudgetPanel({ total, totalSpent, remaining }: Props) {
       <div className="flex justify-between">
         <div className="flex flex-row gap-3">
           <div>Total spent</div>
-          <span className="font-bold">$1300</span>
+          <span className="font-bold">$ {totalSpent}</span>
         </div>
         <div className="text-primary-3">
-          Remaining: <span>$350</span>
+          Remaining: <span>$ {remaining}</span>
         </div>
       </div>
     </div>
