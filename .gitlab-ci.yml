@@ -142,6 +142,8 @@ deploy-aws-prod:
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     NEXT_PUBLIC_ATLAS_ES_VIEW_ID: https://sbo-nexus-delta.shapes-registry.org/data/bbp/atlas/98e91247-a3f2-4dae-8cfb-9432fc7d84ae
     NEXT_PUBLIC_CELL_COMPOSITION_FILE_ID: https://sbo-nexus-delta.shapes-registry.org/data/bbp/atlasdatasetrelease/f3cff4fa-9976-4b6d-b8aa-5fe44ba3878c
+    NEXT_PUBLIC_KG_INFERENCE_BASE_URL: https://kg-inference-api.shapes-registry.org
+    NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL: https://thumbnail-generation-api.shapes-registry.org
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
     KANIKO_EXTRA_ARGS: >
       --build-arg=NEXT_PUBLIC_BASE_PATH
@@ -151,6 +153,8 @@ deploy-aws-prod:
       --build-arg=NEXT_PUBLIC_NEXUS_URL
       --build-arg=NEXT_PUBLIC_ATLAS_ES_VIEW_ID
       --build-arg=NEXT_PUBLIC_CELL_COMPOSITION_FILE_ID
+      --build-arg=NEXT_PUBLIC_KG_INFERENCE_BASE_URL
+      --build-arg=NEXT_PUBLIC_THUMBNAIL_GENERATION_BASE_URL
       --build-arg=NODE_OPTIONS
   only:
     - develop
