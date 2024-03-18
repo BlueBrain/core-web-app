@@ -9,4 +9,9 @@ export const mockVirtualLab: VirtualLab = {
   members: 9,
   admin: 'Julian Budd',
   creationDate: '12.02.2023',
+  budget: {
+    total: 1650,
+    totalSpent: 1300,
+    remaining: 350,
+  },
 };
