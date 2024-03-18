@@ -1,9 +1,9 @@
 import { CalendarOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-design/icons';
 
 import VirtualLabStatistic from '../../VirtualLabStatistic';
-import { Project } from './types';
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
+import { Project } from '@/types/virtual-lab/project';
 
 type Props = {
   project: Project;
