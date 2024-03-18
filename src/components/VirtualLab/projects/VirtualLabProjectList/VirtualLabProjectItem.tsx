@@ -31,6 +31,7 @@ function ProjectDetail({
 }
 
 export default function VirtualLabProjectItem({ project }: Props) {
+  const iconStyle = { color: '#69C0FF' };
   return (
     <div className="flex flex-col gap-3 rounded-md border border-primary-6 p-9 ">
       {/* Title row */}
@@ -56,32 +57,28 @@ export default function VirtualLabProjectItem({ project }: Props) {
       {/* Last row */}
       <div className="flex gap-5">
         <ProjectDetail
-          icon={<EyeTargetIcon style={{ color: '#69C0FF' }} />}
+          icon={<EyeTargetIcon style={iconStyle} />}
           title="Explore sessions"
           detail={project.exploreSessions}
         />
+        <ProjectDetail icon={<Brain style={iconStyle} />} title="Builds" detail={project.builds} />
         <ProjectDetail
-          icon={<Brain style={{ color: '#69C0FF' }} />}
-          title="Builds"
-          detail={project.builds}
-        />
-        <ProjectDetail
-          icon={<StatsEditIcon style={{ color: '#69C0FF' }} />}
+          icon={<StatsEditIcon style={iconStyle} />}
           title="Simulation experiments"
           detail={project.simulationExperiments}
         />
         <ProjectDetail
-          icon={<UserOutlined style={{ color: '#69C0FF' }} />}
+          icon={<UserOutlined style={iconStyle} />}
           title="Members"
           detail={project.members}
         />
         <ProjectDetail
-          icon={<MembersGroupIcon style={{ color: '#69C0FF' }} />}
+          icon={<MembersGroupIcon style={iconStyle} />}
           title="Admin"
           detail={project.admin}
         />
         <ProjectDetail
-          icon={<CalendarOutlined style={{ color: '#69C0FF' }} />}
+          icon={<CalendarOutlined style={iconStyle} />}
           title="Creation date"
           detail={project.creationDate}
         />
