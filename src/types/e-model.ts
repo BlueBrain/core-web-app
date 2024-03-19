@@ -139,6 +139,20 @@ export interface EModelWorkflow extends EModelCommonProps {
       '@type': EModelConfigurationType;
     },
   ];
+  generates: [
+    {
+      '@id': string;
+      '@type': EModelType;
+    },
+    {
+      '@id': string;
+      '@type': EModelScriptType;
+    },
+    {
+      '@id': string;
+      '@type': 'FitnessCalculatorConfiguration';
+    },
+  ];
   distribution: Distribution;
   state: string;
 }
@@ -419,6 +433,8 @@ export interface EModelScript extends Entity {
   name: string;
   distribution: Distribution;
   generation: Generation;
+  holding_current: number;
+  threshold_current: number;
 }
 
 export interface EModelScriptResource extends ResourceMetadata, EModelScript {}

@@ -24,6 +24,7 @@ import {
   EModelOptimizationConfigResource,
   EModelResource,
   DefaultEModelType,
+  EModelScript,
 } from '@/types/e-model';
 import { fetchJsonFileById, fetchJsonFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import sessionAtom from '@/state/session';
@@ -370,6 +371,31 @@ const eModelExtractionTargetsConfigurationAtom = atom<
     eModelExtractionTargetsConfigurationId,
     session
   );
+});
+
+/* ------------------------------ EModelScript ------------------------------ */
+
+const eModelScriptIdAtom = atom<Promise<string | null>>(async (get) => {
+  const eModelWorkflow = await get(eModelWorkflowAtom);
+
+  if (!eModelWorkflow) return null;
+
+  const eModelScriptGenerated = eModelWorkflow.generates.find(
+    (generated) => generated['@type'] === 'EModelScript'
+  );
+
+  if (!eModelScriptGenerated) throw new Error('No EModelScript found on EModelWorkflow');
+
+  return eModelScriptGenerated['@id'];
+});
+
+export const eModelScriptAtom = atom<Promise<EModelScript | null>>(async (get) => {
+  const session = get(sessionAtom);
+  const eModelScriptId = await get(eModelScriptIdAtom);
+
+  if (!session || !eModelScriptId) return null;
+
+  return fetchResourceById<EModelScript>(eModelScriptId, session);
 });
 
 /* --------------------------- EModelUIConfigAtom --------------------------- */
