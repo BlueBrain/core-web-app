@@ -1,22 +1,10 @@
 import omit from 'lodash/omit';
-import Renderer, { ClickData, HoverData } from './renderer';
-import Ws from './websocket';
 
+import Renderer, { ClickData, HoverData } from './renderer';
+import Ws, { BlueNaasCmd, WSResponses } from './websocket';
 import type { Morphology, SecMarkerConfig, TraceData } from './types';
 import { SimConfig } from '@/types/simulate/single-neuron';
 import { blueNaas } from '@/config';
-
-const BlueNaasCmd = {
-  // Cmd target: backend
-  SET_MODEL: 'set_model',
-  GET_UI_DATA: 'get_ui_data',
-  SET_INJECTION_LOCATION: 'set_injection_location',
-  START_SIM: 'start_simulation',
-  // Cmd target: client
-  MORPHOLOGY: 'morphology',
-  SIM_VOLTAGE: 'sim_voltage',
-  SIM_DONE: 'sim_done',
-};
 
 type BlueNaasInitData = {
   secNames: string[];
@@ -51,6 +39,8 @@ export default class BlueNaas {
 
   private traceData: TraceData | null = null;
 
+  private assembleTempMap = new Map();
+
   constructor(
     container: HTMLDivElement,
     modelId: string,
@@ -63,13 +53,11 @@ export default class BlueNaas {
 
     this.renderer = new Renderer(container, config);
     this.ws = new Ws(blueNaas.wsUrl, this.onMessage);
-
     this.ws.send(BlueNaasCmd.SET_MODEL, {
       model_id: modelId,
       threshold_current: initialCurrents.thresholdCurrent,
       holding_current: initialCurrents.holdingCurrent,
     });
-    this.ws.send(BlueNaasCmd.GET_UI_DATA);
   }
 
   private ensureSecMarkers() {
@@ -85,20 +73,12 @@ export default class BlueNaas {
 
   setConfig(simConfig: SimConfig) {
     this.simConfig = simConfig;
-
-    this.ensureSecMarkers();
   }
 
   runSim() {
     this.traceData = null;
 
     this.ws.send(BlueNaasCmd.SET_INJECTION_LOCATION, this.simConfig?.injectTo);
-    const simParameters = omit(this.simConfig, [
-      'stimulus.paramInfo',
-      'stimulus.stimulusProtocolOptions',
-      'stimulus.stimulusProtocolInfo',
-    ]);
-    this.ws.send(BlueNaasCmd.START_SIM, simParameters);
   }
 
   private onMorphologyLoaded(morphology: Morphology) {
@@ -118,37 +98,75 @@ export default class BlueNaas {
     this.config.onInit?.({ secNames, segNames });
   }
 
-  private onTraceStepData = (traceStepData: number[]) => {
+  private showPartialData = () => {
     if (!this.simConfig) {
       throw new Error('No sim config found');
     }
 
-    this.traceData = this.simConfig.recordFrom
-      .map((segName) => ({ segName, segIdx: this.segNames.indexOf(segName) }))
-      .map(({ segName, segIdx }, idx) => ({
-        segName,
-        t: this.traceData ? this.traceData[idx].t.concat(traceStepData[0]) : [traceStepData[0]],
-        v: this.traceData
-          ? this.traceData[idx].v.concat(traceStepData[(segIdx as number) + 1])
-          : [traceStepData[(segIdx as number) + 1]],
-      }));
+    const plotData = [...this.assembleTempMap.entries()].map(([key, value]) => {
+      return {
+        t: value.t,
+        v: value.v,
+        label: key,
+      };
+    });
 
-    this.config.onTraceData?.(this.traceData);
+    this.config.onTraceData?.(plotData);
   };
 
-  private onMessage = (cmd: string, data: any) => {
+  private assembleTempSimulationData(data: any) {
+    /*
+      data input {"name":"IV", "offset":2 ,"v":[...] ,"t":[...]}
+    */
+
+    if (this.assembleTempMap.has(data.name)) {
+      const storedData = this.assembleTempMap.get(data.name);
+      if (storedData.offset + 1 !== data.offset) {
+        throw new Error('offset mismatch');
+      }
+      storedData.offset = data.offset;
+      storedData.v = storedData.v.concat(data.v);
+      storedData.t = storedData.t.concat(data.t);
+    } else {
+      if (data.offset !== 0) {
+        throw new Error('first item should be offset 0');
+      }
+      this.assembleTempMap.set(data.name, {
+        offset: 0,
+        v: data.v,
+        t: data.t,
+      });
+    }
+
+    this.showPartialData();
+  }
+
+  private onMessage = (cmd: WSResponses, data: any) => {
     switch (cmd) {
-      case BlueNaasCmd.MORPHOLOGY:
-        this.renderer.addMorphology(data);
-        this.onMorphologyLoaded(data);
+      case 'set_model_done':
+        this.ws.send(BlueNaasCmd.GET_UI_DATA, {});
+        break;
+      case 'get_ui_data_done':
+        this.renderer.addMorphology(data.morphology);
+        this.onMorphologyLoaded(data.morphology);
         this.ensureSecMarkers();
         break;
-      case BlueNaasCmd.SIM_VOLTAGE:
-        this.onTraceStepData(data);
+      case 'partial_data_received':
+        this.assembleTempSimulationData(data);
         break;
-      case BlueNaasCmd.SIM_DONE:
+      case 'start_simulation_done':
         this.config?.onSimulationDone?.();
+        this.showPartialData();
         break;
+      case 'set_injection_location_done': {
+        const simParameters = omit(this.simConfig, [
+          'stimulus.paramInfo',
+          'stimulus.stimulusProtocolOptions',
+          'stimulus.stimulusProtocolInfo',
+        ]);
+        this.ws.send(BlueNaasCmd.START_SIMULATION, simParameters);
+        break;
+      }
       default:
         break;
     }

@@ -39,7 +39,7 @@ export type Morphology = {
 };
 
 type SegTrace = {
-  segName: string;
+  label: string;
   t: number[];
   v: number[];
 };

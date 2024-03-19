@@ -7,11 +7,21 @@ const ReadState = {
 
 const RECONNECT_TIMEOUT = 3000;
 
+export const BlueNaasCmd = {
+  // Cmd target: backend
+  SET_MODEL: 'set_model',
+  GET_UI_DATA: 'get_ui_data',
+  SET_INJECTION_LOCATION: 'set_injection_location',
+  START_SIMULATION: 'start_simulation',
+};
+
+export type WSResponses = `${Lowercase<keyof typeof BlueNaasCmd>}_done` | 'partial_data_received';
+
 type Message = string;
 type Data = any;
 type CmdId = number;
 type MessageQueueEntry = [Message, Data, CmdId | undefined];
-type OnMessageHandler = (cmd: string, data: any) => void;
+type OnMessageHandler = (cmd: WSResponses, data: any) => void;
 
 export default class Ws {
   private cmdId: number = 0;
@@ -97,7 +107,7 @@ export default class Ws {
   private init = () => {
     if (this.closing) return;
 
-    const socket = new WebSocket(this.webSocketUrl);
+    const socket = new WebSocket(this.webSocketUrl, 'Bearer-token');
     this.socket = socket;
 
     socket.addEventListener('open', this.processQueue);
@@ -105,6 +115,10 @@ export default class Ws {
 
     socket.addEventListener('message', (e) => {
       const message = JSON.parse(e.data);
+
+      if (message.message === 'Processing message') {
+        return;
+      }
 
       const cmdId = message.data?.cmdid;
       if (cmdId) {

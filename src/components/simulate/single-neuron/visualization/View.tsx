@@ -127,7 +127,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
         x: entry.t,
         y: entry.v,
         type: 'scatter',
-        name: entry.segName,
+        name: entry.label,
       }));
       setPlotData(updatedPlotData);
     }, 100);
