@@ -43,6 +43,13 @@ export function PDFViewerContainer({ distributions }: Props) {
           popupMatchSelectWidth={false}
           className="m-3 w-44"
         />
+        <Link
+          className="ml-2 inline-flex items-center"
+          href={`${window.location.protocol}//${window.location.host}/simulate/experiment-analysis?targetEntity=EModel`}
+        >
+          <PlusOutlined className="mr-3 inline-block border" />
+          Add analysis
+        </Link>
       </ConfigProvider>
       {type !== 'custom' &&
         distributions

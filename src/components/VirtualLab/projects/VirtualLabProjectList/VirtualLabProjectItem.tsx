@@ -1,34 +1,13 @@
-import { ReactNode } from 'react';
 import { CalendarOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-design/icons';
 
-import { Project } from './types';
+import VirtualLabStatistic from '../../VirtualLabStatistic';
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
+import { MockProject } from '@/types/virtual-lab/projects';
 
 type Props = {
-  project: Project;
+  project: MockProject;
 };
-
-function ProjectDetail({
-  icon,
-  title,
-  detail,
-}: {
-  icon: ReactNode;
-  title: string;
-  detail: number | string;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1">
-        <div>{icon}</div>
-        <div className="text-primary-3">{title}</div>
-      </div>
-
-      <div className="font-bold">{detail}</div>
-    </div>
-  );
-}
 
 export default function VirtualLabProjectItem({ project }: Props) {
   const iconStyle = { color: '#69C0FF' };
@@ -56,28 +35,32 @@ export default function VirtualLabProjectItem({ project }: Props) {
       <div className="max-w-[70%]">{project.description}</div>
       {/* Last row */}
       <div className="flex gap-5">
-        <ProjectDetail
+        <VirtualLabStatistic
           icon={<EyeTargetIcon style={iconStyle} />}
           title="Explore sessions"
           detail={project.exploreSessions}
         />
-        <ProjectDetail icon={<Brain style={iconStyle} />} title="Builds" detail={project.builds} />
-        <ProjectDetail
+        <VirtualLabStatistic
+          icon={<Brain style={iconStyle} />}
+          title="Builds"
+          detail={project.builds}
+        />
+        <VirtualLabStatistic
           icon={<StatsEditIcon style={iconStyle} />}
           title="Simulation experiments"
           detail={project.simulationExperiments}
         />
-        <ProjectDetail
+        <VirtualLabStatistic
           icon={<UserOutlined style={iconStyle} />}
           title="Members"
           detail={project.members}
         />
-        <ProjectDetail
+        <VirtualLabStatistic
           icon={<MembersGroupIcon style={iconStyle} />}
           title="Admin"
           detail={project.admin}
         />
-        <ProjectDetail
+        <VirtualLabStatistic
           icon={<CalendarOutlined style={iconStyle} />}
           title="Creation date"
           detail={project.creationDate}
