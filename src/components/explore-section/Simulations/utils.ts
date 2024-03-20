@@ -60,6 +60,7 @@ function getMultiAnalysisWorkflowConfig(
       "git_url": "${a.codeRepository['@id']}",
       "git_ref": "${a.branch}",
       "subdirectory": "${a.subdirectory}",
+      "command": "${a.command}",
       "git_user": "GUEST",
       "git_password": "WCY_qpuGG8xpKz_S8RNg"}}`
   );
