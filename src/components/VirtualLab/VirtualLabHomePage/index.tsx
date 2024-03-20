@@ -3,10 +3,12 @@
 import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 
 import VirtualLabStatistic from '../VirtualLabStatistic';
+import { mockProjects } from '../projects/VirtualLabProjectList/mockData';
 import DiscoverObpItem from './DiscoverObpItem';
 import { mockVirtualLab } from './mockProject';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
+import ProjectItem from './ProjectItem';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
@@ -15,6 +17,7 @@ import { mockMembers } from 'public/mock-data/virtual-lab/members';
 export default function VirtualLabHomePage() {
   const iconStyle = { color: '#69C0FF' };
   const virtualLab = mockVirtualLab;
+  const projects = mockProjects;
 
   return (
     <div>
@@ -122,15 +125,28 @@ export default function VirtualLabHomePage() {
           />
         </div>
       </div>
-      <div className="mt-10">
+      <div>
         <div className="my-5 text-lg font-bold uppercase">Members</div>
-        <div className="flex-no-wrap flex overflow-x-auto">
+        <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
           {mockMembers.map((member) => (
             <Member
               key={member.key}
               name={member.name}
               lastActive={member.lastActive}
               memberRole={member.role}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="mt-10">
+        <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
+        <div className="flex flex-row gap-5">
+          {projects.map((project) => (
+            <ProjectItem
+              key={project.id}
+              title={project.title}
+              description={project.description}
+              buttonHref=""
             />
           ))}
         </div>
