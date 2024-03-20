@@ -1,4 +1,4 @@
-import { Project } from './types';
+import { Project } from "@/components/VirtualLab/projects/VirtualLabProjectList/types";
 
 export const mockProjects: Project[] = [
   {
