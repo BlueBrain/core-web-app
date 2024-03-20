@@ -24,6 +24,14 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
+    /**
+     * Using WebGL shaders as modules.
+     */
+    config.module.rules.push({
+      test: /\.(vert|frag)$/i,
+      // More information here https://webpack.js.org/guides/asset-modules/
+      type: 'asset/source',
+    });
     return config;
   },
   env: {
