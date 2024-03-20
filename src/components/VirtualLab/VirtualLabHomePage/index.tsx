@@ -4,7 +4,6 @@ import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons'
 
 import VirtualLabStatistic from '../VirtualLabStatistic';
 import DiscoverObpItem from './DiscoverObpItem';
-import { mockVirtualLab } from './mockProject';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
@@ -13,6 +12,7 @@ import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { mockMembers } from 'public/mock-data/virtual-lab/members';
 import { mockProjects } from 'public/mock-data/virtual-lab/projects';
+import { mockVirtualLab } from 'public/mock-data/virtual-lab/lab';
 
 export default function VirtualLabHomePage() {
   const iconStyle = { color: '#69C0FF' };
