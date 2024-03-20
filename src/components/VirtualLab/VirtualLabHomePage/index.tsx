@@ -2,13 +2,12 @@
 
 import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 
-import DiscoverObpItem from './DiscoverObpItem';
 import VirtualLabStatistic from '../VirtualLabStatistic';
+import DiscoverObpItem from './DiscoverObpItem';
 import { mockVirtualLab } from './mockProject';
 import BudgetPanel from './BudgetPanel';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
-import Image from 'next/image';
 
 export default function VirtualLabHomePage() {
   const iconStyle = { color: '#69C0FF' };
@@ -62,34 +61,25 @@ export default function VirtualLabHomePage() {
       />
       <div className="mt-10 flex flex-col gap-5">
         <div className="font-bold uppercase">Discover OBP</div>
-        <div className="relative top-[-60px] w-96">
-          <Image
-            src="/images/obp_whole_brain.webp"
-            width={1158}
-            height={794}
-            alt="Circular"
-            className="relative left-1/2 z-50 h-32 w-32 -translate-x-1/2 translate-y-1/2 transform rounded-full"
+        <div className="flex">
+          <DiscoverObpItem
+            imagePath="/images/obp_whole_brain.webp"
+            title="Explore"
+            subtitle="How do I explore?"
+            body={
+              <ul className="list-inside list-disc">
+                <li>Vivamus sagittis lacus vel augue faucibus dolor auctor.</li>
+                <li>Curabitur blandit tempus porttitor.</li>
+                <li>Donec sed odio dui.</li>
+                <li>
+                  Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac
+                  consectetur ac, vestibulum at eros.
+                </li>
+              </ul>
+            }
+            buttonText="Discover Explore"
+            buttonHref="/"
           />
-          <div className="rounded-md bg-white p-5 pt-20">
-            <div className="flex flex-col gap-3">
-              <div className="uppercase text-neutral-4">Explore</div>
-              <div className="text-2xl font-bold text-primary-8">How do I explore?</div>
-              <div className="text-primary-8">
-                <ul>
-                  <li>Vivamus sagittis lacus vel augue faucibus dolor auctor.</li>
-                  <li>Curabitur blandit tempus porttitor.</li>
-                  <li>Donec sed odio dui.</li>
-                  <li>
-                    Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac
-                    consectetur ac, vestibulum at eros.
-                  </li>
-                </ul>
-              </div>
-              <button type="button" className="border p-3 text-primary-8" onClick={() => {}}>
-                Discover Explore
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
