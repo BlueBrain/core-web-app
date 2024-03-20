@@ -3,8 +3,8 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Table } from 'antd';
 import VirtualLabMemberIcon from '../VirtualLabMemberIcon';
-import { mockMembers } from './mockData';
 import { Member, Role } from './types';
+import { mockMembers } from 'public/mock-data/virtual-lab/members';
 
 export default function VirtualLabTeamTable() {
   const roleOptions: { value: Role; label: string }[] = [

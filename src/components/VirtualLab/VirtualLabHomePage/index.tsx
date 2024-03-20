@@ -10,10 +10,12 @@ import Member from './Member';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
+import { mockMembers } from 'public/mock-data/virtual-lab/members';
 
 export default function VirtualLabHomePage() {
   const iconStyle = { color: '#69C0FF' };
   const virtualLab = mockVirtualLab;
+
   return (
     <div>
       {/* header */}
@@ -122,8 +124,15 @@ export default function VirtualLabHomePage() {
       </div>
       <div className="mt-10">
         <div className="my-5 text-lg font-bold uppercase">Members</div>
-        <div className="flex flex-row gap-5">
-          <Member name="Julian Budd" lastActive="2 days ago" memberRole="administrator" />
+        <div className="flex-no-wrap flex overflow-x-auto">
+          {mockMembers.map((member) => (
+            <Member
+              key={member.key}
+              name={member.name}
+              lastActive={member.lastActive}
+              memberRole={member.role}
+            />
+          ))}
         </div>
       </div>
     </div>
