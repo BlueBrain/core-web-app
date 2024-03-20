@@ -21,7 +21,12 @@ export default function VirtualLabHomePage() {
 
   return (
     <div>
-      <div className="mt-10 flex flex-col gap-4 bg-primary-8 p-8">
+      <div
+        className="mt-10 flex flex-col gap-4 bg-primary-8 bg-no-repeat p-8"
+        style={{
+          backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_blue.png)`,
+        }}
+      >
         <div className="flex flex-row justify-between">
           <div className="max-w-[50%]">
             <div className="text-primary-2">Virtual Lab name</div>
