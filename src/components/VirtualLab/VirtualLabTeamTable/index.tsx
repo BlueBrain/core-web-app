@@ -3,11 +3,11 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Table } from 'antd';
 import VirtualLabMemberIcon from '../VirtualLabMemberIcon';
-import { Member, Role } from './types';
 import { mockMembers } from 'public/mock-data/virtual-lab/members';
+import { MockMember, MockRole } from '@/types/virtual-lab/members';
 
 export default function VirtualLabTeamTable() {
-  const roleOptions: { value: Role; label: string }[] = [
+  const roleOptions: { value: MockRole; label: string }[] = [
     { value: 'administrator', label: 'Administrator' },
     { value: 'member', label: 'Member' },
   ];
@@ -17,7 +17,7 @@ export default function VirtualLabTeamTable() {
       title: 'Icon',
       key: 'icon',
       dataIndex: 'name',
-      render: (_: any, record: Member) => (
+      render: (_: any, record: MockMember) => (
         <VirtualLabMemberIcon name={record.name} role={record.role} />
       ),
     },
@@ -37,7 +37,7 @@ export default function VirtualLabTeamTable() {
       title: 'Action',
       key: 'role',
       dataIndex: 'role',
-      render: (role: Role) => (
+      render: (role: MockRole) => (
         <ConfigProvider
           theme={{
             components: {
