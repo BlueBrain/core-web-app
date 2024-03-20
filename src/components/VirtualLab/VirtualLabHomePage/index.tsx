@@ -6,6 +6,7 @@ import VirtualLabStatistic from '../VirtualLabStatistic';
 import DiscoverObpItem from './DiscoverObpItem';
 import { mockVirtualLab } from './mockProject';
 import BudgetPanel from './BudgetPanel';
+import Member from './Member';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
@@ -117,6 +118,12 @@ export default function VirtualLabHomePage() {
             buttonText="Discover Simulations"
             buttonHref="/"
           />
+        </div>
+      </div>
+      <div className="mt-10">
+        <div className="my-5 text-lg font-bold uppercase">Members</div>
+        <div className="flex flex-row gap-5">
+          <Member name="Julian Budd" lastActive="2 days ago" memberRole="administrator" />
         </div>
       </div>
     </div>
