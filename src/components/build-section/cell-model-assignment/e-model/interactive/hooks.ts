@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import JSZip from 'jszip';
+import { Session } from 'next-auth';
 
 import { blueNaas } from '@/config';
 import {
@@ -10,12 +11,34 @@ import {
 import sessionAtom from '@/state/session';
 import { fetchFileByUrl, fetchResourceById, queryES } from '@/api/nexus';
 import {
+  EModelConfiguration,
   EModelScriptResource,
   NeuronMorphology,
   SubCellularModelScriptResource,
 } from '@/types/e-model';
 
-type EModelConfigUsesRef = SubCellularModelScriptResource | NeuronMorphology;
+type EModelConfigUsesRef = SubCellularModelScriptResource;
+
+async function getMorphologyDistribution(
+  eModelConfiguration: EModelConfiguration,
+  session: Session
+) {
+  const morphology = eModelConfiguration.uses.find(
+    (items) => items['@type'] === 'NeuronMorphology'
+  );
+  if (!morphology) throw new Error('NeuronMorphology not found');
+
+  const resource = await fetchResourceById<NeuronMorphology>(morphology['@id'], session);
+  if (!Array.isArray(resource.distribution))
+    throw new Error('NeuronMorphology distribution is not an array');
+
+  const swc = resource.distribution.find((d) => d.encodingFormat === 'application/swc');
+  if (!swc) throw new Error('SWC format not found in NeuronMorphology distribution');
+
+  const content = await fetchFileByUrl(swc.contentUrl, session).then((res) => res.text());
+
+  return { morphName: swc.name, morphContent: content };
+}
 
 export function useCreateEmodelPackageFile() {
   const session = useAtomValue(sessionAtom);
@@ -27,10 +50,13 @@ export function useCreateEmodelPackageFile() {
       throw new Error('Some deps are not defined');
     }
 
-    // Fetching all files.
+    // fetch only SubCellularModelScripts. Morphologies will be fetched later
+    const subCellularModelScripts = eModelConfiguration.uses.filter(
+      (items) => items['@type'] !== 'NeuronMorphology'
+    );
 
     const modelResources = await Promise.all(
-      eModelConfiguration.uses.map((ref) =>
+      subCellularModelScripts.map((ref) =>
         fetchResourceById<EModelConfigUsesRef>(ref['@id'], session)
       )
     );
@@ -72,13 +98,14 @@ export function useCreateEmodelPackageFile() {
 
     modelResources.forEach((modelFileEntity, idx) => {
       const filename = modelFileEntity.distribution.name;
-
-      if (eModelConfiguration?.uses[idx]['@type'] === 'NeuronMorphology') {
-        packageMorphFolder.file(filename, modelFiles[idx]);
-      } else {
-        packageMechsFolder.file(filename, modelFiles[idx]);
-      }
+      packageMechsFolder.file(filename, modelFiles[idx]);
     });
+
+    const { morphName, morphContent } = await getMorphologyDistribution(
+      eModelConfiguration,
+      session
+    );
+    packageMorphFolder.file(morphName, morphContent);
 
     const emodelPackageBlob = await packageRoot.generateAsync({ type: 'blob' });
     const emodelPackageFile = new File([emodelPackageBlob], 'model-archive.zip');

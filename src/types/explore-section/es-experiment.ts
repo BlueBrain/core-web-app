@@ -71,6 +71,7 @@ export type ReconstructedNeuronMorphology = ExperimentProps & {
   generation: Generation;
   license: License;
   featureSeries: MorphologyFeature[];
+  mType?: MType;
 };
 
 export enum MorphoMetricCompartment {

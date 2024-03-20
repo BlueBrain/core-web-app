@@ -1,18 +1,19 @@
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from 'react';
-import { MorphologyPainter } from '@bbp/morphoviewer';
+import { MorphologyCanvas, TgdColor } from '@bbp/morphoviewer';
 
 import { MorphoViewerSettings, useMorphoViewerSettings } from '../../hooks/settings';
 import { ColorInput } from './ColorInput';
 import { classNames } from '@/util/utils';
-import { ResetIcon } from '@/components/icons';
+import { EyeIcon, ResetIcon } from '@/components/icons';
 import { Switch } from '@/components/common/Switch';
+import EyeSlashIcon from '@/components/icons/EyeSlashIcon';
 
 import styles from './colors-legend.module.css';
 
 export interface ColorsLegendProps {
   className?: string;
-  painter: MorphologyPainter;
+  painter: MorphologyCanvas;
 }
 
 interface Labels {
@@ -84,15 +85,30 @@ function renderLabels(
   settings: MorphoViewerSettings,
   update: (patch: Partial<MorphoViewerSettings>) => void
 ) {
+  const handleToggleVisibility = (att: keyof Labels, color: string) => {
+    update({ [att]: toggleOpacity(color) });
+  };
   return Object.keys(labels).map((key) => {
     const att = key as keyof Labels;
     const color = settings[att];
     return (
       <ColorInput key={key} value={color} onChange={(v) => update({ [att]: v })}>
+        <button
+          className={styles.eye}
+          type="button"
+          onClick={(evt) => {
+            evt.preventDefault();
+            evt.stopPropagation();
+            handleToggleVisibility(att, color);
+          }}
+        >
+          {isOpaque(color) ? <EyeIcon /> : <EyeSlashIcon />}
+        </button>
         <div
           className={styles.color}
           style={{
             backgroundColor: color,
+            opacity: isOpaque(color) ? 1 : 0,
           }}
         />
         <div>{labels[att]}</div>
@@ -101,7 +117,20 @@ function renderLabels(
   });
 }
 
-function getProperLabels(painter: MorphologyPainter): Partial<Labels> {
+const COLOR = new TgdColor();
+
+function toggleOpacity(color: string): string {
+  COLOR.parse(color);
+  COLOR.A = COLOR.A < 1 ? 1 : 0.99;
+  return COLOR.toString();
+}
+
+function isOpaque(color: string) {
+  COLOR.parse(color);
+  return COLOR.A >= 1;
+}
+
+function getProperLabels(painter: MorphologyCanvas): Partial<Labels> {
   const labels = getCorrectLabelsVersionDependingOnDendrites(painter);
   const output: Partial<Labels> = {};
   if (painter.hasSoma()) output.colorSoma = labels.colorSoma;
@@ -112,7 +141,7 @@ function getProperLabels(painter: MorphologyPainter): Partial<Labels> {
   return output;
 }
 
-function getCorrectLabelsVersionDependingOnDendrites(painter: MorphologyPainter): Labels {
+function getCorrectLabelsVersionDependingOnDendrites(painter: MorphologyCanvas): Labels {
   if (!painter.hasBasalDendrite()) return LABELS_COLLAPSED;
   if (!painter.hasApicalDendrite()) return LABELS_COLLAPSED;
   return LABELS_EXPANDED;

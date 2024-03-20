@@ -18,7 +18,7 @@ import { Filter } from '@/components/Filter/types';
 import { DataType } from '@/constants/explore-section/list-views';
 import { classNames } from '@/util/utils';
 
-function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonElement>) {
+export function FilterBtn({ disabled, children, onClick }: HTMLProps<HTMLButtonElement>) {
   return (
     <button
       className={classNames(

@@ -44,7 +44,7 @@ export interface ExemplarMorphologyDataType {
   mType: string;
   contributor: string;
   isPlaceholder: boolean;
-  distribution: Distribution | FileDistribution[];
+  distribution: Distribution | FileDistribution;
 }
 
 export interface ExperimentalTracesDataType {
@@ -366,9 +366,17 @@ export interface NeuronMorphology extends Entity {
     'ReconstructedNeuronMorphology' | 'SynthesizedNeuronMorphology',
   ];
   contribution: ContributionEntity;
-  distribution: Distribution;
+  distribution: Distribution[];
   objectOfStudy: EModelObjectOfStudy;
   name: string;
+  description: string;
+  brainLocation?: {
+    '@type': 'BrainLocation';
+    brainRegion: {
+      '@id': string;
+      label: string;
+    };
+  };
 }
 
 export interface NeuronMorphologyResource extends ResourceMetadata, NeuronMorphology {}

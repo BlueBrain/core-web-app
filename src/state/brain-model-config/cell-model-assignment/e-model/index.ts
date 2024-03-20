@@ -57,8 +57,11 @@ const initializationBrainRegion = getInitializationValue<DefaultBrainRegionType>
 const initializationEModel = getInitializationValue<DefaultEModelType>(DEFAULT_E_MODEL_STORAGE_KEY);
 
 const useSavedEModel =
-  initializationBrainRegion &&
-  initializationBrainRegion?.value?.id === initializationEModel?.brainRegionId;
+  (initializationBrainRegion &&
+    initializationBrainRegion?.value?.id === initializationEModel?.brainRegionId) ||
+  (typeof window !== 'undefined' &&
+    initializationEModel?.brainRegionId ===
+      new URLSearchParams(window.location.search).get('eModelBrainRegion'));
 
 export const selectedEModelAtom = atom<EModelMenuItem | null>(
   useSavedEModel ? initializationEModel.value : null

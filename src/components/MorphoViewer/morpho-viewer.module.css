@@ -40,7 +40,7 @@
   top: 0px;
 }
 
-.main > canvas {
+.morphoViewer {
   position: absolute;
   left: 0;
   top: 0;
@@ -105,10 +105,21 @@
   position: absolute;
   right: 0;
   top: 5em;
-  bottom: 0.5em;
+  bottom: 64px;
   width: auto;
   display: flex;
   justify-content: flex-start;
-  align-items: stretch;
+  align-items: flex-start;
   gap: 1em;
+}
+
+.rightPanel > * {
+  align-self: stretch;
+}
+
+.gizmo {
+  --size: 10em;
+  width: var(--size);
+  height: var(--size);
+  align-self: flex-start;
 }

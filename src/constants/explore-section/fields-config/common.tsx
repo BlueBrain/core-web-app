@@ -40,7 +40,12 @@ export const previewRender = ({
     | undefined;
   let encodingFormat: 'application/swc' | 'application/nwb' | undefined;
 
-  if (experimentType.includes(DataTypeToNexusType.ExperimentalNeuronMorphology)) {
+  if (
+    intersection(
+      [DataTypeToNexusType.ExperimentalNeuronMorphology, 'NeuronMorphology'],
+      experimentType
+    ).length
+  ) {
     encodingFormat = 'application/swc';
     previewType = DataType.ExperimentalNeuronMorphology;
   } else if (
@@ -114,7 +119,7 @@ export const COMMON_FIELDS_CONFIG: ExploreFieldsConfigProps<
     esTerms: {
       flat: {
         filter: 'contributors.label.keyword',
-        aggregation: 'contributors',
+        aggregation: 'contributors.label.keyword',
         sort: 'contributors.label.keyword',
       },
     },

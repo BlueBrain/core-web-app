@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MorphologyPainter } from '@bbp/morphoviewer';
+import { MorphologyCanvas } from '@bbp/morphoviewer';
 import { CloseIcon } from 'next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon';
 
 import { ColorsLegend } from './ColorsLegend';
@@ -13,7 +13,7 @@ import styles from './settings.module.css';
 
 export interface SettingsProps {
   className?: string;
-  painter: MorphologyPainter;
+  painter: MorphologyCanvas;
 }
 
 export function Settings({ className, painter }: SettingsProps) {

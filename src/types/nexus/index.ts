@@ -698,3 +698,16 @@ export type CanonicalMorphologyModelConfigPayload = {
     };
   };
 };
+
+export interface SingleNeuronSimulation extends Entity {
+  '@type': ['Entity', 'SingleNeuronSimulation'];
+  name: string;
+  description: string;
+  used: {
+    '@type': 'EModel';
+    '@id': string;
+  };
+  distribution: Distribution;
+}
+
+export interface SingleNeuronSimulationResource extends ResourceMetadata, SingleNeuronSimulation {}

@@ -13,7 +13,7 @@ function buildESSort({ field, order }: SortState): Sort | undefined {
   }
 
   if (!esConfig.nested) {
-    return esb.sort(esConfig.flat?.sort).order(order).unmappedType('keyword');
+    return esb.sort(esConfig.flat?.sort).order(order);
   }
 
   return esb

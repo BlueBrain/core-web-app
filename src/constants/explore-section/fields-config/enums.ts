@@ -62,4 +62,6 @@ export enum Field {
   CompletedAt = 'completedAt',
   CumulatedLength = 'cumulatedLength',
   LongestBranchLength = 'longestBranchLength',
+  EModelMorphology = 'eModelMorphology',
+  EModelScore = 'eModelScore',
 }

@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable no-param-reassign */
-import { ColoringType, MorphologyPainter } from '@bbp/morphoviewer';
+import { ColoringType, MorphologyCanvas } from '@bbp/morphoviewer';
 import { atom, useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
 
@@ -52,7 +52,7 @@ export interface MorphoViewerSettings {
  * @param painter The painter to update when the settings change.
  */
 export function useMorphoViewerSettings(
-  painter: MorphologyPainter
+  painter: MorphologyCanvas
 ): [
   settings: MorphoViewerSettings,
   update: (settings: Partial<MorphoViewerSettings>) => void,
@@ -62,7 +62,7 @@ export function useMorphoViewerSettings(
   const settings = useMemo(() => readSettings(persistentSettings), [persistentSettings]);
 
   useEffect(
-    () => applySettingsToMorphologyPainter(painter, persistentSettings),
+    () => applySettingsToMorphologyCanvas(painter, persistentSettings),
     [persistentSettings, painter]
   );
   const update = (value: Partial<MorphoViewerSettings>) => {
@@ -209,8 +209,8 @@ function saveSettings(data: PersistentMorphoViewerSettings) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-function applySettingsToMorphologyPainter(
-  painter: MorphologyPainter,
+function applySettingsToMorphologyCanvas(
+  painter: MorphologyCanvas,
   { darkMode, darkColors, lightColors, radiusType, colorBy }: PersistentMorphoViewerSettings
 ) {
   const { soma, basalDendrite, apicalDendrite, axon }: Palette = darkMode
@@ -224,4 +224,5 @@ function applySettingsToMorphologyPainter(
   painter.colors.axon = axon;
   painter.radiusType = radiusType;
   painter.colorBy = colorBy;
+  painter.paint();
 }

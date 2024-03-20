@@ -1,5 +1,5 @@
 import React from 'react';
-import { MorphologyPainter } from '@bbp/morphoviewer';
+import { MorphologyCanvas } from '@bbp/morphoviewer';
 
 import { useMorphoViewerSettings } from '../../hooks/settings';
 import { classNames } from '@/util/utils';
@@ -9,7 +9,7 @@ import styles from './color-mode.module.css';
 
 export interface ColorModeProps {
   className?: string;
-  painter: MorphologyPainter;
+  painter: MorphologyCanvas;
 }
 
 export function ColorMode({ className, painter }: ColorModeProps) {

@@ -33,7 +33,7 @@ const { Panel } = Collapse;
 export default function Card({ resource, dataType, activeKeys, metrics, score }: CardProps) {
   const { ref, inView } = useInView();
 
-  const resourceUrl = detailUrlBuilder(BASE_EXPERIMENTAL_EXPLORE_PATH, resource, dataType);
+  const resourceUrl = detailUrlBuilder(BASE_EXPERIMENTAL_EXPLORE_PATH, resource);
 
   const { groupedCardFields, renderMetric } = useMorphometrics(dataType, metrics);
 

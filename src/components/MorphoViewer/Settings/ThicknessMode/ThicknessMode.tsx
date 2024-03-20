@@ -1,4 +1,4 @@
-import { MorphologyPainter } from '@bbp/morphoviewer';
+import { MorphologyCanvas } from '@bbp/morphoviewer';
 
 import { useMorphoViewerSettings } from '../../hooks/settings';
 import { Switch } from '@/components/common/Switch';
@@ -8,7 +8,7 @@ import styles from './thickness-mode.module.css';
 
 export interface ThicknessModeProps {
   className?: string;
-  painter: MorphologyPainter;
+  painter: MorphologyCanvas;
 }
 
 export function ThicknessMode({ className, painter }: ThicknessModeProps) {

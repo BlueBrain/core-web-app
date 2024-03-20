@@ -1,4 +1,4 @@
-import { RefObject, useReducer } from 'react';
+import { RefObject, useEffect, useReducer } from 'react';
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 
 export default function FullScreen({
@@ -11,15 +11,21 @@ export default function FullScreen({
   const onFullScreenEnter = () => {
     if (elementRef?.current && !document.fullscreenElement) {
       elementRef.current.requestFullscreen();
-      toggleFullScreen();
     }
   };
   const onFullScreenExit = () => {
     if (elementRef?.current && document.fullscreenElement && document.exitFullscreen) {
       document.exitFullscreen();
-      toggleFullScreen();
     }
   };
+
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', toggleFullScreen);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', toggleFullScreen);
+    };
+  }, []);
 
   return (
     <div className="absolute left-4 top-4 z-50 cursor-pointer text-white">

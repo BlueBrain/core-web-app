@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MorphologyPainter } from '@bbp/morphoviewer';
+import { MorphologyCanvas } from '@bbp/morphoviewer';
 
 import { classNames } from '@/util/utils';
 import { Slider } from '@/components/common/Slider';
@@ -8,7 +8,7 @@ import styles from './dendrite-thickness.module.css';
 
 export interface DendriteThicknessProps {
   className?: string;
-  painter: MorphologyPainter;
+  painter: MorphologyCanvas;
 }
 
 export function DendriteThickness({ className, painter }: DendriteThicknessProps) {
@@ -32,7 +32,7 @@ export function DendriteThickness({ className, painter }: DendriteThicknessProps
 }
 
 function useRadiusMultiplier(
-  painter: MorphologyPainter,
+  painter: MorphologyCanvas,
   value: number
 ): [number, (value: number) => void] {
   const [radiusMultiplier, setRadiusMultiplier] = useState(value);
