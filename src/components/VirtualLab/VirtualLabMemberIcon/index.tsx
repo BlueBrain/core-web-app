@@ -1,4 +1,4 @@
-import { Role } from '../VirtualLabTeamTable/types';
+import { Role } from "@/types/virtual-lab/members";
 
 type Props = {
   role: Role;

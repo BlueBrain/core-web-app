@@ -1,4 +1,4 @@
-import { Member } from '@/components/VirtualLab/VirtualLabTeamTable/types';
+import { Member } from "@/types/virtual-lab/members";
 
 export const mockMembers: Member[] = [
   {

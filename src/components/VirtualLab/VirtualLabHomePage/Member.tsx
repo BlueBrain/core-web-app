@@ -1,5 +1,5 @@
 import VirtualLabMemberIcon from '../VirtualLabMemberIcon';
-import { Role } from '../VirtualLabTeamTable/types';
+import { Role } from '@/types/virtual-lab/members';
 
 type Props = {
   name: string;
