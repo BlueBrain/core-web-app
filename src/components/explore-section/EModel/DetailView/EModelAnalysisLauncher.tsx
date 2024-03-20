@@ -42,7 +42,8 @@ export default function Launcher({ analysis }: { analysis?: Analysis }) {
   return (
     <>
       {!report && !analysisStarted && !fetching && (
-        <>
+        <div>
+          <div>{analysis.description}</div>
           <Button
             className="float-right"
             size="large"
@@ -62,7 +63,7 @@ export default function Launcher({ analysis }: { analysis?: Analysis }) {
           </Button>
           {/* Clearfix fixes weird vertical alignment issue from float-right */}
           <div className="clear-both" />
-        </>
+        </div>
       )}
 
       {(!report || !analysisPDFUrl) && analysisStarted && (
