@@ -8,7 +8,7 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
 export default function VirtualLabPageLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="inset-0 z-0 m-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 bg-center text-white">
+    <div className="inset-0 z-0 mx-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 bg-center pt-10 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="flex flex-row gap-4">
           <VirtualLabSidebar />
