@@ -65,11 +65,14 @@ export default function ExperimentAnalyses({
           '@type': 'ConfigurationTemplate',
         },
         description: values.description ?? '',
+        targetEntity: searchParams?.targetEntity,
       },
       session
     );
 
-    fetchAnalyses(session, (response: Analysis[]) => setAnalyses(response));
+    fetchAnalyses(session, (response: Analysis[]) =>
+      setAnalyses(response.filter((a) => a.targetEntity === searchParams?.targetEntity))
+    );
     setLoading(false);
     onCancel();
   };

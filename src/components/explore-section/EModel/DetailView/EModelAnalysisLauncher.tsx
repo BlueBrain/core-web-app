@@ -6,14 +6,16 @@ import { getEModelAnalysisWorkflowConfig } from '@/components/explore-section/Si
 import { Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createWorkflowConfigResource, fetchResourceById } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
-import { launchWorkflowTask } from '@/services/bbp-workflow';
+import { launchWorkflowTask, launchUnicoreWorkflowSetup } from '@/services/bbp-workflow';
 import { EModelResource } from '@/types/explore-section/delta-model';
 import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
 import PDFViewer from '@/components/explore-section/EModel/DetailView/PDFViewer';
+import { useWorkflowAuth } from '@/components/WorkflowLauncherBtn';
 
 export default function Launcher({ analysis }: { analysis?: Analysis }) {
+  const { ensureWorkflowAuth } = useWorkflowAuth();
   const resourceInfo = useResourceInfoFromPath();
   const eModel = useUnwrappedValue<Promise<EModelResource>>(detailFamily(resourceInfo));
   const session = useSessionAtomValue();
@@ -46,8 +48,10 @@ export default function Launcher({ analysis }: { analysis?: Analysis }) {
             size="large"
             type="primary"
             onClick={async () => {
-              if (launching) return;
+              if (launching || !session) return;
               setLaunching(true);
+              await launchUnicoreWorkflowSetup(session.accessToken);
+              await ensureWorkflowAuth(session.user.username);
               await launchAnalysis(eModel?.['@id'], analysis, session);
               setAnalysisStartedStated(new Date().toISOString());
             }}
