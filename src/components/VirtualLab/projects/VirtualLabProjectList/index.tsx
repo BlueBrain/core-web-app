@@ -3,7 +3,7 @@
 import { ConfigProvider } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
-import { mockProjects } from './mockData';
+import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 
 export default function VirtualLabProjectList() {
   const projects = mockProjects;
