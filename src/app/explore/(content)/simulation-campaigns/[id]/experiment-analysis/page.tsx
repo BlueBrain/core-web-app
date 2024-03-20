@@ -17,8 +17,12 @@ import { SimulationCampaign } from '@/types/explore-section/delta-simulation-cam
 
 import { useSessionAtomValue } from '@/hooks/hooks';
 
-export default function ExperimentAnalyses() {
-  const [analyses, setAnalyses] = useAnalyses();
+export default function ExperimentAnalyses({
+  searchParams,
+}: {
+  searchParams?: { targetEntity?: string };
+}) {
+  const [analyses, setAnalyses] = useAnalyses(searchParams?.targetEntity);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -98,7 +102,7 @@ export default function ExperimentAnalyses() {
             style={{ writingMode: 'vertical-rl' }}
             onClick={() => window.history.back()}
           >
-            Back to simulation configuration
+            Back to configuration
             <ArrowRightOutlined className="mt-6" />
           </div>
         )}
