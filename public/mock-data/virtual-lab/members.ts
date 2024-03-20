@@ -1,6 +1,6 @@
-import { Member } from "@/types/virtual-lab/members";
+import { MockMember } from '@/types/virtual-lab/members';
 
-export const mockMembers: Member[] = [
+export const mockMembers: MockMember[] = [
   {
     key: '1',
     name: 'Julian Budd',

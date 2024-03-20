@@ -3,10 +3,10 @@ import { CalendarOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-d
 import VirtualLabStatistic from '../../VirtualLabStatistic';
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
-import { Project } from '@/types/virtual-lab/projects';
+import { MockProject } from '@/types/virtual-lab/projects';
 
 type Props = {
-  project: Project;
+  project: MockProject;
 };
 
 export default function VirtualLabProjectItem({ project }: Props) {

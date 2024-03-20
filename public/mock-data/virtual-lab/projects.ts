@@ -1,6 +1,6 @@
-import { Project } from '@/types/virtual-lab/projects';
+import { MockProject } from '@/types/virtual-lab/projects';
 
-export const mockProjects: Project[] = [
+export const mockProjects: MockProject[] = [
   {
     id: 1,
     title: 'Thalamus exploration project 1',

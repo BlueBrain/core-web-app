@@ -1,7 +1,7 @@
-import { Role } from "@/types/virtual-lab/members";
+import { MockRole } from '@/types/virtual-lab/members';
 
 type Props = {
-  role: Role;
+  role: MockRole;
   name: string;
 };
 

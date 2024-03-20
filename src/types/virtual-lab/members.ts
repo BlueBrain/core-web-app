@@ -1,8 +1,8 @@
-export type Role = 'administrator' | 'member';
+export type MockRole = 'administrator' | 'member';
 
-export type Member = {
+export type MockMember = {
   key: string;
   name: string;
   lastActive: string;
-  role: Role;
+  role: MockRole;
 };
