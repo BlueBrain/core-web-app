@@ -3,7 +3,7 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { ConfigProvider, Select, Table } from 'antd';
 import VirtualLabMemberIcon from '../VirtualLabMemberIcon';
-import { mockMembers } from 'public/mock-data/virtual-lab/members';
+import { mockMembers } from '@/components/VirtualLab/mockData/members';
 import { MockMember, MockRole } from '@/types/virtual-lab/members';
 
 export default function VirtualLabTeamTable() {

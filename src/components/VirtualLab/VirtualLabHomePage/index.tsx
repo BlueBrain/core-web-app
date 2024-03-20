@@ -10,9 +10,9 @@ import ProjectItem from './ProjectItem';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
-import { mockMembers } from 'public/mock-data/virtual-lab/members';
-import { mockProjects } from 'public/mock-data/virtual-lab/projects';
-import { mockVirtualLab } from 'public/mock-data/virtual-lab/lab';
+import { mockMembers } from '@/components/VirtualLab/mockData/members';
+import { mockProjects } from '@/components/VirtualLab/mockData/projects';
+import { mockVirtualLab } from '@/components/VirtualLab/mockData/lab';
 
 export default function VirtualLabHomePage() {
   const iconStyle = { color: '#69C0FF' };
