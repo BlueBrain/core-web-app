@@ -36,4 +36,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ vars.CI_DOCKERHUB_REGISTRY_AUTH }}/${{ vars.CI_REGISTRY_IMAGE }}:${{ env.REGISTRY_IMAGE_TAG }}
+          tags: ${{ vars.BBPBUILDBOT_DOCKERHUB_USER }}/${{ vars.CI_REGISTRY_IMAGE }}:${{ env.REGISTRY_IMAGE_TAG }}
