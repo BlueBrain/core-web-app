@@ -30,9 +30,11 @@ export default function VirtualLabHomePage() {
         )}
       >
         <div className="flex flex-row justify-between">
-          <div className="max-w-[50%]">
-            <div className="text-primary-2">Virtual Lab name</div>
-            <h2 className="text-4xl font-bold">{virtualLab.title}</h2>
+          <div className="flex max-w-[50%] flex-col gap-2">
+            <div>
+              <div className="text-primary-2">Virtual Lab name</div>
+              <h2 className="text-5xl font-bold">{virtualLab.title}</h2>
+            </div>
             <div>{virtualLab.description}</div>
           </div>
           <div>
