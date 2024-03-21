@@ -21,7 +21,7 @@ export default function Analysis() {
   }
 
   return (
-    <div className="-mt-7 h-full border border-primary-8 p-6">
+    <div className="-mt-7 border border-primary-8 p-6">
       <PDFViewerContainer
         distributions={
           Array.isArray(detail.data.distribution)
