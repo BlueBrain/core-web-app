@@ -7,12 +7,14 @@ import DiscoverObpItem from './DiscoverObpItem';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
+import { classNames } from '@/util/utils';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { mockMembers } from '@/components/VirtualLab/mockData/members';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 import { mockVirtualLab } from '@/components/VirtualLab/mockData/lab';
+import Styles from './home-page.module.css';
 
 export default function VirtualLabHomePage() {
   const iconStyle = { color: '#69C0FF' };
@@ -22,10 +24,10 @@ export default function VirtualLabHomePage() {
   return (
     <div>
       <div
-        className="mt-10 flex flex-col gap-4 bg-primary-8 bg-no-repeat p-8"
-        style={{
-          backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_blue.png)`,
-        }}
+        className={classNames(
+          'relative mt-10 flex flex-col gap-4 bg-primary-8 p-8',
+          Styles.bannerImg
+        )}
       >
         <div className="flex flex-row justify-between">
           <div className="max-w-[50%]">

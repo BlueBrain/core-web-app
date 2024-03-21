@@ -1,0 +1,14 @@
+.bannerImg:before {
+  content: '';
+  background-image: url(/images/virtual-lab/obp_hippocampus_original.png);
+  background-size: cover;
+  background-position: right;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.25;
+  mix-blend-mode: plus-lighter;
+}
