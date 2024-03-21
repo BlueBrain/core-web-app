@@ -1,7 +1,11 @@
 import dynamic from 'next/dynamic';
 import { ConfigProvider, Select } from 'antd';
 import { useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 import { FileDistribution } from '@/types/explore-section/delta-properties';
+import EModelAnalysisLauncher from '@/components/explore-section/EModel/DetailView/EModelAnalysisLauncher';
+import { useAnalyses } from '@/app/explore/(content)/simulation-campaigns/shared';
+import Link from '@/components/Link';
 
 const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
   ssr: false,
@@ -9,7 +13,7 @@ const DynamicPDFViewer = dynamic(() => import('./PDFViewer'), {
 
 type AnalysisPDF = FileDistribution & { name?: string };
 
-type AnalysisType = 'all' | 'trace' | 'score' | 'distribution';
+type AnalysisType = 'all' | 'trace' | 'score' | 'distribution' | 'custom';
 
 interface Props {
   distributions: AnalysisPDF[];
@@ -17,6 +21,8 @@ interface Props {
 
 export function PDFViewerContainer({ distributions }: Props) {
   const [type, setType] = useState<AnalysisType>('all');
+  const [analyses] = useAnalyses('EModel');
+  const [analysis, setAnalysis] = useState('');
 
   return (
     <div>
@@ -37,16 +43,45 @@ export function PDFViewerContainer({ distributions }: Props) {
           popupMatchSelectWidth={false}
           className="m-3 w-44"
         />
+        <Link
+          className="ml-2 inline-flex items-center"
+          href={`${window.location.protocol}//${window.location.host}/simulate/experiment-analysis?targetEntity=EModel`}
+        >
+          <PlusOutlined className="mr-3 inline-block border" />
+          Add analysis
+        </Link>
       </ConfigProvider>
-      {distributions
-        .filter((distribution) => matchesType(distribution, type))
-        .map((pdf) => (
-          <DynamicPDFViewer
-            url={pdf.contentUrl}
-            key={pdf.contentUrl}
-            type={nameToType(pdf.name ?? pdf.label)}
-          />
-        ))}
+      {type !== 'custom' &&
+        distributions
+          .filter((distribution) => matchesType(distribution, type))
+          .map((pdf) => (
+            <DynamicPDFViewer
+              url={pdf.contentUrl}
+              key={pdf.contentUrl}
+              type={nameToType(pdf.name ?? pdf.label)}
+            />
+          ))}
+
+      {type === 'custom' && (
+        <Select
+          className="m-3 inline-block w-44"
+          options={analyses.map((a) => ({
+            label: a.name,
+            value: a['@id'],
+          }))}
+          onChange={(value: string) => setAnalysis(value)}
+        />
+      )}
+
+      <Link
+        className="ml-2 inline-flex items-center"
+        href={`${window.location.protocol}//${window.location.host}/simulate/experiment-analysis?targetEntity=EModel`}
+      >
+        <PlusOutlined className="mr-3 inline-block border" />
+        Add analysis
+      </Link>
+
+      <EModelAnalysisLauncher analysis={analyses.find((a) => a['@id'] === analysis)} />
     </div>
   );
 }
@@ -68,6 +103,7 @@ const options = [
     label: 'Distribution',
     value: 'distribution',
   },
+  { label: 'Custom', value: 'custom' },
 ];
 
 const matchesType = (distribution: AnalysisPDF, type: AnalysisType) => {
