@@ -3,7 +3,7 @@ import ExperimentAnalyses from '@/app/explore/(content)/simulation-campaigns/[id
 export default function ExperimentAnalysis({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string };
+  searchParams?: { targetEntity?: string };
 }) {
   return <ExperimentAnalyses searchParams={searchParams} />;
 }

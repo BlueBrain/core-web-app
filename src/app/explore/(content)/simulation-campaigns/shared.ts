@@ -55,6 +55,7 @@ export function useAnalyses(targetEntity?: string): [Analysis[], (a: Analysis[])
   useEffect(() => {
     if (!session) return;
     fetchAnalyses(session, (response: Analysis[]) =>
+      // TODO: Cleanup nexus data to always include targetEntity
       setAnalyses(response.filter((a) => targetEntity === a.targetEntity))
     );
   }, [session, setAnalyses, targetEntity]);
