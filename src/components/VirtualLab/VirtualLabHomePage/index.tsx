@@ -7,7 +7,6 @@ import DiscoverObpItem from './DiscoverObpItem';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
-import { classNames } from '@/util/utils';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
@@ -23,12 +22,13 @@ export default function VirtualLabHomePage() {
 
   return (
     <div>
-      <div
-        className={classNames(
-          'relative mt-10 flex flex-col gap-4 bg-primary-8 p-8',
-          Styles.bannerImg
-        )}
-      >
+      <div className="relative mt-10 flex flex-col gap-4 bg-primary-8 p-8">
+        <div
+          className={Styles.bannerImg}
+          style={{
+            backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
+          }}
+        />
         <div className="flex flex-row justify-between">
           <div className="flex max-w-[50%] flex-col gap-2">
             <div>
