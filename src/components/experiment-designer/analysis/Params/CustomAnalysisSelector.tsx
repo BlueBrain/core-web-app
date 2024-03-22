@@ -21,7 +21,7 @@ export default function CustomAnalysisSelector({
   const customAnalysis = useCustomAnalysisConfig();
   const targetList = useLoadable(loadable(targetListAtom), null);
 
-  const [analyses] = useAnalyses();
+  const [analyses] = useAnalyses('SimulationCampaign');
   const setCustomAnalysis = useSetCustomAnalysis(focusedAtom);
   const nodeSetsFound = !!targetList && targetList.length > 0;
 
@@ -62,7 +62,7 @@ export default function CustomAnalysisSelector({
         <div className="mt-3 block pl-3 text-primary-8">
           <Link
             className="block flex items-center"
-            href={`${window.location.protocol}//${window.location.host}/simulate/experiment-analysis`}
+            href={`${window.location.protocol}//${window.location.host}/mmb-beta/simulate/experiment-analysis?targetEntity=SimulationCampaign`}
           >
             <PlusOutlined className="mr-3 inline-block border" />
             Add analysis
