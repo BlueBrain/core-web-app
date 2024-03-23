@@ -10,7 +10,7 @@ export default function VirtualLabProjectExplorePage() {
           fill
           src={`${basePath}/images/green-brain.webp`}
           alt="whole-brain"
-          className="object-center"
+          className="object-contain object-center"
         />
       </div>
       <div className="absolute left-4 top-4 flex flex-col items-start justify-center">
