@@ -26,7 +26,11 @@ export default function Launcher({ analysis }: { analysis?: Analysis }) {
 
   useEffect(() => {
     async function fetchReport() {
-      if (!report || !report.hasPart?.length || !session) return;
+      if (!report || !report.hasPart?.length || !session) {
+        setAnalysisPDFURL('');
+        return;
+      }
+
       const res: { distribution: { contentUrl: string } } = await fetchResourceById(
         report.hasPart[0]['@id'],
         session
