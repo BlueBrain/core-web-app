@@ -1,6 +1,5 @@
-.bannerImg:before {
+.bannerImg {
   content: '';
-  background-image: url(/images/virtual-lab/obp_hippocampus_original.png);
   background-size: 200%;
   background-position: right 50% bottom 15%;
   background-repeat: no-repeat;
