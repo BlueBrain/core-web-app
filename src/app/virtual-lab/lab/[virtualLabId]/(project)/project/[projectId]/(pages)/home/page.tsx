@@ -17,7 +17,7 @@ export default function VirtualLabProjectPage() {
     <div>
       <div className="relative mt-10 flex flex-col gap-4 overflow-hidden bg-primary-8 p-8">
         <div
-          className="absolute inset-0 left-[600px] top-[-300px] h-[700px] w-[869px] rotate-[230deg] transform bg-cover bg-right-bottom bg-no-repeat"
+          className="absolute left-[728px] top-[-480px] h-[722px] w-[869px] rotate-[-135deg] transform bg-[length:70%] bg-left-top bg-no-repeat"
           style={{
             backgroundImage: `url(${basePath}/images/virtual-lab/obp_neocortex.png)`,
           }}
