@@ -16,8 +16,26 @@ export default function VirtualLabSidebar() {
 
   const linkItems: LinkItem[] = [
     { key: 'lab', content: 'The Virtual Lab', href: 'lab' },
-    { key: 'projects', content: 'Projects', href: 'projects' },
-    { key: 'team', content: 'Team', href: 'team' },
+    {
+      key: 'projects',
+      content: (
+        <div className="flex justify-between">
+          <span>Projects</span>
+          <span className="font-normal text-primary-3">9</span>
+        </div>
+      ),
+      href: 'projects',
+    },
+    {
+      key: 'team',
+      content: (
+        <div className="flex justify-between">
+          <span>Team</span>
+          <span className="font-normal text-primary-3">23 members</span>
+        </div>
+      ),
+      href: 'team',
+    },
     { key: 'admin', content: 'Admin', href: 'admin' },
   ];
   return (
