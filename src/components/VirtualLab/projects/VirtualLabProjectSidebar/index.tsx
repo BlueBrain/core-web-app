@@ -21,7 +21,7 @@ export default function VirtualLabProjectSidebar() {
     { key: 'simulate', content: 'Simulate', href: 'simulate' },
   ];
   return (
-    <div className="mt-10 flex flex-col gap-5">
+    <div className="m-8 flex flex-col gap-5">
       <h1 className="leading-12 text-5xl font-bold uppercase text-primary-5">
         Thalamus <br />
         Exploration <br />
