@@ -13,5 +13,10 @@ export default function VirtualLabSidebar() {
     { key: 'team', content: 'Team', href: 'team' },
     { key: 'admin', content: 'Admin', href: 'admin' },
   ];
-  return <VerticalLinks links={linkItems} currentPage={currentPage} />;
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="text-5xl font-bold uppercase text-primary-5">Institute of Neuroscience</div>
+      <VerticalLinks links={linkItems} currentPage={currentPage} />
+    </div>
+  );
 }
