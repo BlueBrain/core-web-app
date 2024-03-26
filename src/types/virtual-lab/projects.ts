@@ -10,4 +10,9 @@ export type MockProject = {
   members: number;
   admin: string;
   creationDate: string;
+  budget: {
+    total: number;
+    totalSpent: number;
+    remaining: number;
+  };
 };
