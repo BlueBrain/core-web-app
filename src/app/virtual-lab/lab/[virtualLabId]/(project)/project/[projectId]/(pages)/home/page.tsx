@@ -6,6 +6,8 @@ import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { basePath } from '@/config';
+import Member from '@/components/VirtualLab/VirtualLabHomePage/Member';
+import { mockMembers } from '@/components/VirtualLab/mockData/members';
 
 export default function VirtualLabProjectPage() {
   const project = mockProjects[0];
@@ -15,9 +17,9 @@ export default function VirtualLabProjectPage() {
     <div>
       <div className="relative mt-10 flex flex-col gap-4 bg-primary-8 p-8">
         <div
-          // className={Styles.bannerImg}
+          className="absolute top-0 h-full w-full rotate-[220deg] "
           style={{
-            backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
+            backgroundImage: `url(${basePath}/images/virtual-lab/obp_neocortex.png)`,
           }}
         />
         <div className="flex flex-row justify-between">
@@ -67,6 +69,19 @@ export default function VirtualLabProjectPage() {
         totalSpent={project.budget.totalSpent}
         remaining={project.budget.remaining}
       />
+      <div>
+        <div className="my-10 text-lg font-bold uppercase">Members</div>
+        <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
+          {mockMembers.map((member) => (
+            <Member
+              key={member.key}
+              name={member.name}
+              lastActive={member.lastActive}
+              memberRole={member.role}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

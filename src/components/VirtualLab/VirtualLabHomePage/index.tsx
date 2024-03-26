@@ -135,7 +135,7 @@ export default function VirtualLabHomePage() {
       </div>
       <div>
         <div className="my-5 text-lg font-bold uppercase">Members</div>
-        <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
+        <div className="flex-no-wrap flex overflow-y-hidden">
           {mockMembers.map((member) => (
             <Member
               key={member.key}
