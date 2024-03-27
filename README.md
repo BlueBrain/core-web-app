@@ -11,7 +11,6 @@ This is the repository for the Open Brain Platform's core web application.
   - [Development](#development)
   - [Testing](#testing)
 - [Additional Resources](#additional-resources)
-  - [Next.js](#next.js)
 - [Contribution Guidelines](#contribution-guidelines)
 - [Acknowledgement](#acknowledgment)
 
@@ -45,7 +44,7 @@ yarn test
 
 ## Additional Resources
 
-## Next.js
+### Next.js
 
 This application is based-on the Next.js web framework. To learn more about Next.js, the following resources are recommended:
 
