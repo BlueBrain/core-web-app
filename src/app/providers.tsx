@@ -21,7 +21,7 @@ export default function Providers({ children }: ProvidersProps) {
       <JotaiProvider>
         <DevTools {...{ isInitialOpen: false }} />
         <ThemeProvider>
-          <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={5 * 60}>
+          <SessionProvider basePath={`${basePath}/api/auth`} refetchInterval={2 * 60}>
             <SessionStateProvider>{children}</SessionStateProvider>
           </SessionProvider>
         </ThemeProvider>

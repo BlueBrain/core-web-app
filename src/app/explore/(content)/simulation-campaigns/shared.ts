@@ -53,7 +53,7 @@ export function useAnalyses(targetEntity?: string): [Analysis[], (a: Analysis[])
   const [analyses, setAnalyses] = useAtom(analysesAtom);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || !targetEntity) return;
     fetchAnalyses(session, (response: Analysis[]) =>
       // TODO: Cleanup nexus data to always include targetEntity
       setAnalyses(response.filter((a) => targetEntity === a.targetEntity))

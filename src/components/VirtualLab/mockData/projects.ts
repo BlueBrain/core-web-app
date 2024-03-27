@@ -14,6 +14,11 @@ export const mockProjects: MockProject[] = [
     members: 5,
     admin: 'Julian Budd',
     creationDate: '12.02.2023',
+    budget: {
+      total: 1650,
+      totalSpent: 1300,
+      remaining: 350,
+    },
   },
   {
     id: 2,
@@ -28,6 +33,11 @@ export const mockProjects: MockProject[] = [
     members: 5,
     admin: 'Julian Budd',
     creationDate: '12.02.2023',
+    budget: {
+      total: 1650,
+      totalSpent: 1300,
+      remaining: 350,
+    },
   },
   {
     id: 3,
@@ -42,5 +52,10 @@ export const mockProjects: MockProject[] = [
     members: 5,
     admin: 'Julian Budd',
     creationDate: '12.02.2023',
+    budget: {
+      total: 1650,
+      totalSpent: 1300,
+      remaining: 350,
+    },
   },
 ];

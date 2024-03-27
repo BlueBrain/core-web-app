@@ -27,7 +27,7 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
   const dimensions = useAtomValue(dimensionsAtom);
   const setDefaultDimensions = useSetAtom(initializeDimensionsFamily(path));
   const simulations = useUnwrappedValue(simulationsFamily(path));
-  const [analyses] = useAnalyses();
+  const [analyses] = useAnalyses('SimulationCampaign');
 
   const isCustom = useMemo(
     () => !displayOptions.map((o) => o.value).includes(selectedDisplay),
@@ -67,7 +67,10 @@ export default function Simulations({ resource }: { resource: SimulationCampaign
               ...analyses.map((a) => ({ label: a.name, value: a['@id'] })),
             ]}
           />
-          <Link href={`${path}/experiment-analysis`} className="ml-3 font-light text-primary-8">
+          <Link
+            href={`${path}/experiment-analysis?targetEntity=SimulationCampaign`}
+            className="ml-3 font-light text-primary-8"
+          >
             Register new analysis
             <PlusOutlined className="ml-2 translate-y-[2px] border border-gray-200 text-2xl " />
           </Link>

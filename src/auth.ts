@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
     {
       clientId,
       id: 'keycloak',
-      name: 'BBP Keycloak',
+      name: 'Keycloak',
       type: 'oauth',
 
       // next-auth package requires clientSecret because it supports only confidential clients,
@@ -94,8 +94,11 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      // Return previous token if the access token has not expired yet
-      if (typeof token.accessTokenExpires === 'number' && Date.now() < token.accessTokenExpires) {
+      // Return previous token if the access token has not expired / is not close to expiration yet.
+      if (
+        typeof token.accessTokenExpires === 'number' &&
+        Date.now() < token.accessTokenExpires - 2 * 60 * 1000
+      ) {
         return token;
       }
 
@@ -109,14 +112,14 @@ export const authOptions: NextAuthOptions = {
           username: token.sub as string,
         },
         accessToken: token.accessToken as string,
-        expires: session.expires,
+
+        expires: new Date(token.accessTokenExpires as number).toISOString(),
         error: token.error as string,
       };
     },
   },
   session: {
     strategy: 'jwt',
-    // 30 minutes (< 1 hour of access token to have time to request a new access token using refresh token)
     maxAge: 1800,
   },
 } satisfies NextAuthOptions;
