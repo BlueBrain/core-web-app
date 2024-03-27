@@ -1,0 +1,99 @@
+name: OBP CI/CD - Linter, Prettier, Test, Build
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!main'
+      - '!develop'
+  workflow_dispatch:
+
+jobs:
+  install_packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+  prettier:
+    needs: install_packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
+      - name: Run Prettier
+        run: npm run prettier:check
+  linter:
+    needs: install_packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+  test:
+    needs: [prettier, linter]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:ci
+  build:
+    needs: [prettier, linter]
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=7168
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set-up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node.js packages
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
