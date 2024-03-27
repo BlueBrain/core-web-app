@@ -1,11 +1,9 @@
-/* eslint-disable react/no-unstable-nested-components */
-
 'use client';
 
 import { Button, Collapse, ConfigProvider, Skeleton } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 
@@ -15,7 +13,12 @@ import InformationPanel from './InformationPanel';
 import MembersPanel from './MembersPanel';
 import PlanPanel, { Plan } from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
-import { VirtualLab, NewMember, VirtualLabMember } from '@/services/virtual-lab/types';
+import {
+  VirtualLab,
+  NewMember,
+  VirtualLabMember,
+  VirtualLabPlanType,
+} from '@/services/virtual-lab/types';
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
 import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
 import useNotification from '@/hooks/notifications';
@@ -24,6 +27,14 @@ type Props = {
   virtualLab: VirtualLab;
   user: Session['user'];
 };
+
+function expandIcon({ isActive }: { isActive?: boolean }) {
+  return isActive ? (
+    <MinusOutlined style={{ fontSize: '14px' }} />
+  ) : (
+    <PlusOutlined style={{ fontSize: '14px' }} />
+  );
+}
 
 export default function VirtualLabSettingsComponent({
   virtualLab: initialVirtualLab,
@@ -41,7 +52,7 @@ export default function VirtualLabSettingsComponent({
   const computeTimeAtom = useMemo(() => loadable(getComputeTimeAtom(virtualLab.id)), [virtualLab]);
   const computeTime = useAtomValue(computeTimeAtom);
 
-  const saveInformation = (update: Omit<Partial<VirtualLab>, 'id'>): Promise<void> => {
+  const saveInformation = async (update: Omit<Partial<VirtualLab>, 'id'>): Promise<void> => {
     return service
       .edit(user, virtualLab.id, update)
       .then((updatedLab) => {
@@ -52,7 +63,7 @@ export default function VirtualLabSettingsComponent({
       });
   };
 
-  const changePlan = (newPlan: Plan, billingInfo: VirtualLab['billing']): Promise<void> => {
+  const changePlan = async (newPlan: Plan, billingInfo: VirtualLab['billing']): Promise<void> => {
     return service
       .changePlan(user, virtualLab.id, newPlan, billingInfo)
       .then((updatedLab) => {
@@ -63,13 +74,13 @@ export default function VirtualLabSettingsComponent({
       });
   };
 
-  const inviteNewMember = (newMember: NewMember): Promise<void> => {
+  const inviteNewMember = async (newMember: NewMember): Promise<void> => {
     return service.inviteNewMember(newMember, virtualLab.id, user).catch((err) => {
       throw err;
     });
   };
 
-  const changeMemberRole = (
+  const changeMemberRole = async (
     memberToChange: VirtualLabMember,
     newRole: VirtualLabMember['role']
   ) => {
@@ -88,7 +99,7 @@ export default function VirtualLabSettingsComponent({
       });
   };
 
-  const removeMember = (member: VirtualLabMember) => {
+  const removeMember = async (member: VirtualLabMember) => {
     return service.removeMember(member, virtualLab.id, user).then(() => {
       setVirtualLab({
         ...virtualLab,
@@ -97,12 +108,69 @@ export default function VirtualLabSettingsComponent({
     });
   };
 
-  const deleteVirtualLab = () => {
+  const deleteVirtualLab = async () => {
     return service.deleteVirtualLab(user, virtualLab.id).then(() => {
       notify.success(`Virtual lab ${virtualLab.name} is now deleted`);
       router.push('/');
     });
   };
+
+  const expandableItems: Array<{
+    content: ReactNode;
+    key: string;
+    title: string;
+    isAdminPanel?: boolean;
+  }> = [
+    {
+      content: (
+        <InformationPanel virtualLab={virtualLab} allowEdit={userIsAdmin} save={saveInformation} />
+      ),
+      key: 'information',
+      title: 'Information',
+    },
+    {
+      content: (
+        <MembersPanel
+          members={virtualLab.members}
+          userIsAdmin={userIsAdmin}
+          currentUser={user}
+          onRemoveMember={removeMember}
+          onAddMember={inviteNewMember}
+          onChangeRole={changeMemberRole}
+        />
+      ),
+      key: 'members',
+      title: 'Members',
+    },
+    {
+      content: (
+        <PlanPanel
+          currentPlan={virtualLab.plan ?? VirtualLabPlanType.entry}
+          billingInfo={virtualLab.billing}
+          userIsAdmin={userIsAdmin}
+          onChangePlan={changePlan}
+        />
+      ),
+      key: 'plan',
+      title: 'Plan',
+    },
+    ...(userIsAdmin
+      ? [
+          {
+            content: (
+              <DangerZonePanel
+                onDeleteVirtualLabClick={deleteVirtualLab}
+                labName={virtualLab.name}
+              />
+            ),
+            key: 'danger-zone',
+            title: 'Danger Zone',
+
+            isAdminPanel: true,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <ConfigProvider
@@ -151,124 +219,49 @@ export default function VirtualLabSettingsComponent({
         </div>
       </div>
 
-      <Collapse
-        expandIconPosition="end"
-        expandIcon={({ isActive }) =>
-          isActive ? (
-            <MinusOutlined style={{ fontSize: '14px' }} />
-          ) : (
-            <PlusOutlined style={{ fontSize: '14px' }} />
-          )
-        }
-        className="mt-4 rounded-none text-primary-8"
-        bordered={false}
-        key="information"
-        items={[
-          {
-            key: 1,
-            label: <h3 className="color-primary-8 text-xl font-bold">Information</h3>,
-            children: (
-              <InformationPanel
-                virtualLab={virtualLab}
-                allowEdit={userIsAdmin}
-                save={saveInformation}
-              />
-            ),
-          },
-        ]}
-      />
-
-      <Collapse
-        expandIconPosition="end"
-        expandIcon={({ isActive }) =>
-          isActive ? (
-            <MinusOutlined style={{ fontSize: '14px' }} />
-          ) : (
-            <PlusOutlined style={{ fontSize: '14px' }} />
-          )
-        }
-        className="mt-4 rounded-none text-primary-8"
-        key="members"
-        items={[
-          {
-            key: 1,
-            label: <h3 className="color-primary-8 text-xl font-bold">Members</h3>,
-            children: (
-              <MembersPanel
-                members={virtualLab.members}
-                userIsAdmin={userIsAdmin}
-                currentUser={user}
-                onRemoveMember={removeMember}
-                onAddMember={inviteNewMember}
-                onChangeRole={changeMemberRole}
-              />
-            ),
-          },
-        ]}
-      />
-
-      <Collapse
-        expandIconPosition="end"
-        expandIcon={({ isActive }) =>
-          isActive ? (
-            <MinusOutlined style={{ fontSize: '14px' }} />
-          ) : (
-            <PlusOutlined style={{ fontSize: '14px' }} />
-          )
-        }
-        className="mt-4 rounded-none text-primary-8"
-        key="plan"
-        items={[
-          {
-            key: 1,
-            label: <h3 className="color-primary-8 text-xl font-bold">Plan</h3>,
-            children: (
-              <PlanPanel
-                currentPlan={virtualLab.plan ?? 'entry'}
-                billingInfo={virtualLab.billing}
-                userIsAdmin={userIsAdmin}
-                onChangePlan={changePlan}
-              />
-            ),
-          },
-        ]}
-      />
-
-      {userIsAdmin && (
-        <ConfigProvider
-          theme={{
-            components: {
-              Collapse: {
-                colorBgContainer: '#e5e7eb',
-              },
-            },
-          }}
-        >
+      {expandableItems.filter(Boolean).map(({ content, key, isAdminPanel, title }) =>
+        isAdminPanel ? (
           <Collapse
             expandIconPosition="end"
-            expandIcon={({ isActive }) =>
-              isActive ? (
-                <MinusOutlined style={{ fontSize: '14px' }} />
-              ) : (
-                <PlusOutlined style={{ fontSize: '14px' }} />
-              )
-            }
-            className="mt-4 rounded-none bg-gray-200 text-primary-8"
-            key="danger-zone"
+            expandIcon={expandIcon}
+            className="mt-4 rounded-none text-primary-8"
+            bordered={false}
+            key={key}
             items={[
               {
                 key: 1,
-                label: <h3 className="color-primary-8 text-xl font-bold">Danger Zone</h3>,
-                children: (
-                  <DangerZonePanel
-                    onDeleteVirtualLabClick={deleteVirtualLab}
-                    labName={virtualLab.name}
-                  />
-                ),
+                label: <h3 className="color-primary-8 text-xl font-bold">{title}</h3>,
+                children: content,
               },
             ]}
           />
-        </ConfigProvider>
+        ) : (
+          <ConfigProvider
+            key={key}
+            theme={{
+              components: {
+                Collapse: {
+                  colorBgContainer: '#e5e7eb',
+                },
+              },
+            }}
+          >
+            <Collapse
+              expandIconPosition="end"
+              expandIcon={expandIcon}
+              className="mt-4 rounded-none text-primary-8"
+              bordered={false}
+              key={key}
+              items={[
+                {
+                  key: 1,
+                  label: <h3 className="color-primary-8 text-xl font-bold">{title}</h3>,
+                  children: content,
+                },
+              ]}
+            />
+          </ConfigProvider>
+        )
       )}
     </ConfigProvider>
   );
