@@ -10,7 +10,7 @@ import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLa
 
 export default function VirtualLabProjectLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 pr-10 text-white">
+    <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 bg-primary-9 pr-10 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="flex flex-row gap-4">
           <SideMenu
