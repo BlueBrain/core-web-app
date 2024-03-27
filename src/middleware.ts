@@ -1,9 +1,13 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 
 export async function middleware(request: NextRequest) {
   const session = await getToken({ req: request });
-  const sessionValid = session?.user && session?.accessToken;
+
+  const sessionValid =
+    session?.expires && new Date(session.expires as string).getTime() > Date.now();
+
   const requestUrl = request.nextUrl.pathname;
 
   // if the user is the authenticated and want to access home page
@@ -13,15 +17,12 @@ export async function middleware(request: NextRequest) {
     url.pathname = `/main`;
     return NextResponse.redirect(url);
   }
+
   // if the user is not authenticated at all
   // then redirect him to the home/login page
   // if it's successfull then redirect him to the origin request page
   if (!sessionValid && requestUrl !== '/') {
-    const url = request.nextUrl.clone();
-    if (requestUrl) url.searchParams.append('origin', encodeURIComponent(requestUrl));
-    url.pathname = '/';
-
-    return NextResponse.redirect(url);
+    return nextAuthMiddleware(request as NextRequestWithAuth);
   }
 }
 
@@ -31,6 +32,6 @@ export const config = {
   matcher: [
     '/',
     '/main',
-    '/(build|simulate|simulations|main|experiment-designer|svc|virtual-lab)/(.*)',
+    '/(build|simulate|simulations|main|explore|experiment-designer|svc|virtual-lab)/(.*)',
   ],
 };

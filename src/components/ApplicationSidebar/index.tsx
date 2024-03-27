@@ -13,6 +13,7 @@ import Icon, {
 import { signOut, useSession } from 'next-auth/react';
 
 import VirtualLabsList from './VirtualLabsList';
+import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 
@@ -145,7 +146,7 @@ export function AppNavigation({ expanded }: { expanded: boolean }) {
 export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
   const { data } = useSession();
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
-  const logout = () => signOut({ callbackUrl: '/' });
+  const logout = () => signOut({ callbackUrl: `${basePath}/` });
   if (!expanded) {
     return <UserOutlined title={userName} className="cursor-pointer text-base text-primary-4" />;
   }
