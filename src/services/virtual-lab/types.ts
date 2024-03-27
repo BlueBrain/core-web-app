@@ -17,7 +17,12 @@ export interface VirtualLab {
   };
 }
 
-export type VirtualLabPlanType = 'entry' | 'beginner' | 'intermediate' | 'advanced';
+export enum VirtualLabPlanType {
+  entry = 'entry',
+  beginner = 'beginner',
+  intermediate = 'intermediate',
+  advanced = 'advanced',
+}
 
 const VirtualLabMemberTypeDef: TypeDef = {
   name: 'string',
