@@ -24,7 +24,7 @@ export default function VirtualLabProjectExplorePage() {
       <div className="absolute bottom-4 right-4">
         <div className="flex flex-col items-center justify-center gap-3">
           <Link
-            href="/explore/interactive"
+            href="explore/interactive"
             className="relative w-full flex-1 border border-white px-7 py-2 text-center text-base text-white hover:bg-white hover:font-bold hover:text-primary-8 lg:text-lg xl:py-4 2xl:text-2xl"
           >
             Start exploring

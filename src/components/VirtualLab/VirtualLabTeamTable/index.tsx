@@ -31,7 +31,7 @@ export default function VirtualLabTeamTable() {
       title: 'Last active',
       dataIndex: 'lastActive',
       key: 'lastActive',
-      render: (lastActive: string) => <span className="text-primary-3">{lastActive}</span>,
+      render: (lastActive: string) => <span className="text-primary-3">Active {lastActive}</span>,
     },
     {
       title: 'Action',
