@@ -17,11 +17,9 @@ export default function VirtualLabProjectPage() {
     <div>
       <div className="relative mt-10 flex flex-col gap-4 overflow-hidden bg-primary-8 p-8">
         <div
-          className="absolute right-[-150px] top-[-220px]  h-[500px] w-[500px]  rotate-[-135deg] transform bg-left-top bg-no-repeat"
+          className="absolute right-[-150px] top-[-220px] h-[500px] w-[500px]  rotate-[-135deg] transform  bg-cover bg-left-top bg-right-top bg-no-repeat"
           style={{
             backgroundImage: `url(${basePath}/images/virtual-lab/obp_neocortex.png)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'top right',
           }}
         />
         <div className="flex flex-row justify-between">
