@@ -5,6 +5,20 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 
+export function AdminPanelProjectList() {
+  const projects = mockProjects;
+
+  return (
+    <div className="flex flex-col divide-y">
+      {projects.map((project) => (
+        <div key={project.id} className="flex">
+          <span>{project.title}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function VirtualLabProjectList() {
   const projects = mockProjects;
 

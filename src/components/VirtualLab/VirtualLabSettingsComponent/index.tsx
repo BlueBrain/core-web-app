@@ -6,8 +6,8 @@ import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icon
 import { ReactNode, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-
 import { Session } from 'next-auth';
+import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import InformationPanel from './InformationPanel';
 import MembersPanel from './MembersPanel';
@@ -28,7 +28,38 @@ type Props = {
   user: Session['user'];
 };
 
-function expandIcon({ isActive }: { isActive?: boolean }) {
+function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
+  const computeTimeAtom = useMemo(() => loadable(getComputeTimeAtom(virtualLab.id)), [virtualLab]);
+  const computeTime = useAtomValue(computeTimeAtom);
+
+  return (
+    <div className="bg-primary-8">
+      <div className="border border-transparent border-b-primary-7 px-8 py-4">
+        <h6>Virtual lab</h6>
+        <h3 className="text-3xl font-bold leading-10" data-testid="virtual-lab-name">
+          {virtualLab.name}
+        </h3>
+      </div>
+      <div className="px-8 py-4">
+        <h5 className="font-bold">Compute hours current usage</h5>
+        {computeTime.state === 'loading' && (
+          <Skeleton paragraph={{ rows: 1 }} title={{ width: 0 }} />
+        )}
+        {computeTime.state === 'hasError' && (
+          <p>There was an error while retrieving compute time.</p>
+        )}
+        {computeTime.state === 'hasData' && (
+          <ComputeTimeVisualization
+            usedTimeInHours={computeTime.data?.usedTimeInHours ?? 0}
+            totalTimeInHours={computeTime.data?.totalTimeInHours ?? 0}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ExpandIcon({ isActive }: { isActive?: boolean }) {
   return isActive ? (
     <MinusOutlined style={{ fontSize: '14px' }} />
   ) : (
@@ -48,9 +79,6 @@ export default function VirtualLabSettingsComponent({
 
   const userIsAdmin =
     virtualLab.members.find((member) => member.email === user?.email)?.role === 'admin';
-
-  const computeTimeAtom = useMemo(() => loadable(getComputeTimeAtom(virtualLab.id)), [virtualLab]);
-  const computeTime = useAtomValue(computeTimeAtom);
 
   const saveInformation = async (update: Omit<Partial<VirtualLab>, 'id'>): Promise<void> => {
     return service
@@ -154,6 +182,11 @@ export default function VirtualLabSettingsComponent({
       key: 'plan',
       title: 'Plan',
     },
+    {
+      content: <AdminPanelProjectList />,
+      key: 'projects',
+      title: 'Projects',
+    },
     ...(userIsAdmin
       ? [
           {
@@ -194,36 +227,12 @@ export default function VirtualLabSettingsComponent({
       >
         <ArrowLeftOutlined /> Back to
       </Button>
-
-      <div className="bg-primary-8">
-        <div className="border border-transparent border-b-primary-7 px-8 py-4">
-          <h6>Virtual lab</h6>
-          <h3 className="text-3xl font-bold leading-10" data-testid="virtual-lab-name">
-            {virtualLab.name}
-          </h3>
-        </div>
-        <div className="px-8 py-4">
-          <h5 className="font-bold">Compute hours current usage</h5>
-          {computeTime.state === 'loading' && (
-            <Skeleton paragraph={{ rows: 1 }} title={{ width: 0 }} />
-          )}
-          {computeTime.state === 'hasError' && (
-            <p>There was an error while retrieving compute time.</p>
-          )}
-          {computeTime.state === 'hasData' && (
-            <ComputeTimeVisualization
-              usedTimeInHours={computeTime.data?.usedTimeInHours ?? 0}
-              totalTimeInHours={computeTime.data?.totalTimeInHours ?? 0}
-            />
-          )}
-        </div>
-      </div>
-
-      {expandableItems.filter(Boolean).map(({ content, key, isAdminPanel, title }) =>
+      <HeaderPanel virtualLab={virtualLab} />
+      {expandableItems.map(({ content, key, isAdminPanel, title }) =>
         isAdminPanel ? (
           <Collapse
             expandIconPosition="end"
-            expandIcon={expandIcon}
+            expandIcon={ExpandIcon}
             className="mt-4 rounded-none text-primary-8"
             bordered={false}
             key={key}
@@ -248,7 +257,7 @@ export default function VirtualLabSettingsComponent({
           >
             <Collapse
               expandIconPosition="end"
-              expandIcon={expandIcon}
+              expandIcon={ExpandIcon}
               className="mt-4 rounded-none text-primary-8"
               bordered={false}
               key={key}
