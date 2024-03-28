@@ -22,6 +22,7 @@ async function refreshAccessToken(token: TokenSet) {
       method: 'POST',
       body: new URLSearchParams({
         client_id: clientId,
+        client_secret: clientSecret,
         grant_type: 'refresh_token',
         refresh_token: token.refreshToken as string,
       }),
