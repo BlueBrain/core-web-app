@@ -5,16 +5,52 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 
+// TODO: Consolodate this with the ExpandIcon in @/components/VirtualLab/VirtualLabSettingsComponent
+function ExpandIcon({ isActive }: { isActive?: boolean }) {
+  return isActive ? (
+    <MinusOutlined style={{ fontSize: '14px' }} />
+  ) : (
+    <PlusOutlined style={{ fontSize: '14px' }} />
+  );
+}
+
 export function AdminPanelProjectList() {
   const projects = mockProjects;
 
   return (
-    <div className="flex flex-col divide-y">
-      {projects.map((project) => (
-        <div key={project.id} className="flex">
-          <span>{project.title}</span>
-        </div>
-      ))}
+    <div className="flex flex-col gap-4 divide-y">
+      <div>Completed jobs:</div>
+      <Collapse
+        expandIconPosition="end"
+        expandIcon={ExpandIcon}
+        className="font-bold"
+        bordered={false}
+        items={projects.map((project) => ({
+          key: project.id,
+          label: (
+            <div className="flex justify-between">
+              <span className="font-bold">{project.title}</span>
+              <div className="flex">
+                <span>{project.budget.totalSpent}</span>
+                <span className="text-primary-7">out of</span>
+                <span>{project.budget.total}</span>
+                <span>{project.budget.total}</span>
+              </div>
+            </div>
+          ),
+          children: (
+            <div className="flex justify-between">
+              <span className="font-bold">{project.title}</span>
+              <div className="flex">
+                <span>{project.budget.totalSpent}</span>
+                <span className="text-primary-7">out of</span>
+                <span>{project.budget.total}</span>
+                <span>{project.budget.total}</span>
+              </div>
+            </div>
+          ),
+        }))}
+      />
     </div>
   );
 }
