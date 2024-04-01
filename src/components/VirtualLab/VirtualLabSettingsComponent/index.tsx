@@ -28,6 +28,51 @@ type Props = {
   user: Session['user'];
 };
 
+function SettingsPanelItem({ title, value }: { title: ReactNode; value: string }) {
+  const isEditable = useState(false);
+
+  return (
+    <div className="flex flex-col">
+      <span>Lab Name</span>
+      {isEditable ? (
+        <input value={value} /> // TODO: update this block to use state
+      ) : (
+        <span>{title}</span>
+      )}
+    </div>
+  );
+}
+
+function SettingsPanel() {
+  const items = [
+    {
+      title: 'Lab Name',
+      value: 'Institute of Neuroscience',
+    },
+    {
+      title: 'Description',
+      value: 'A neuroscience lab is a digital simulation...',
+    },
+    {
+      title: 'Reference email',
+      value: 'harry.anderson@epfl.ch',
+    },
+    {
+      title: 'Localisation',
+      value: 'Geneva, Switzerland',
+    },
+  ];
+
+  // TODO: Figure out whether returning simply SettingsPanelItem would work.
+  return (
+    <div>
+      {items.map((item) => (
+        <SettingsPanelItem key={item.title} title={item.title} value={item.value} />
+      ))}
+    </div>
+  );
+}
+
 function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
   const computeTimeAtom = useMemo(() => loadable(getComputeTimeAtom(virtualLab.id)), [virtualLab]);
   const computeTime = useAtomValue(computeTimeAtom);
@@ -186,6 +231,11 @@ export default function VirtualLabSettingsComponent({
       content: <AdminPanelProjectList />,
       key: 'projects',
       title: 'Projects',
+    },
+    {
+      content: <SettingsPanel />,
+      key: 'lab-settings',
+      title: 'Lab Settings',
     },
     ...(userIsAdmin
       ? [
