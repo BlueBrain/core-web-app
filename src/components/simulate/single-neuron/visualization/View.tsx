@@ -6,7 +6,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import throttle from 'lodash/throttle';
 
-import { PositionedPoptip } from '@/services/bluenaas-single-cell/PositionedPopover';
+import { PositionedPopover } from './PositionedPopover';
 import { useEModelUUID, useEnsureModelPackage } from '@/services/bluenaas-single-cell/hooks';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
@@ -142,7 +142,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       <div className="h-full" ref={containerRef} />
 
       {selectionCtrlConfig && (
-        <PositionedPoptip config={selectionCtrlConfig.position}>
+        <PositionedPopover config={selectionCtrlConfig.position}>
           <Button
             onClick={setInjection}
             disabled={simConfig.injectTo === selectionCtrlConfig.data.segName.replace(/_.*/, '')}
@@ -155,7 +155,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
           >
             Add Recording
           </Button>
-        </PositionedPoptip>
+        </PositionedPopover>
       )}
     </div>
   );

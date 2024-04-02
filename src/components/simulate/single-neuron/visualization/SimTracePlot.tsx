@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import Plotly, { Layout, Config } from 'plotly.js-dist-min';
-import { PlotData } from './types';
+
+import { PlotData } from '@/services/bluenaas-single-cell/types';
 
 const PLOT_LAYOUT: Partial<Layout> = {
   plot_bgcolor: '#141414',
