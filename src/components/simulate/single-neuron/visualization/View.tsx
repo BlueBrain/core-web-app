@@ -12,7 +12,10 @@ import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { SimAction } from '@/types/simulate/single-neuron';
 import { PlotData, TraceData } from '@/services/bluenaas-single-cell/types';
-import { selectedEModelAtom } from '@/state/brain-model-config/cell-model-assignment/e-model';
+import {
+  eModelScriptAtom,
+  selectedEModelAtom,
+} from '@/state/brain-model-config/cell-model-assignment/e-model';
 import {
   blueNaasInstanceRefAtom,
   plotDataAtom,
@@ -21,6 +24,7 @@ import {
   simulationConfigAtom,
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
+import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
 
 const baseBannerStyle =
   'flex h-full items-center justify-center text-4xl bg-gray-950 text-gray-100';
@@ -51,6 +55,9 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   const setSecNames = useSetAtom(secNamesAtom);
   const setSegNames = useSetAtom(segNamesAtom);
   const setPlotData = useSetAtom(plotDataAtom);
+
+  // this atom contains the threshold and holding values to initialize the model properly
+  const eModelScript = useAtomValue(eModelScriptAtom);
 
   const [selectionCtrlConfig, setSelectionCtrlConfig] = useState<SelectionCtrlConfig | null>(null);
 
@@ -84,6 +91,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 
   useEffect(() => {
     if (!containerRef.current) return;
+    if (!eModelScript?.holding_current || !eModelScript.threshold_current) return;
 
     const onClick = (data: any) => {
       setSelectionCtrlConfig({
@@ -120,13 +128,22 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       setPlotData(updatedPlotData);
     }, 100);
 
-    blueNaasInstance.current = new BlueNaasCls(containerRef.current, modelId, DEFAULT_SIM_CONFIG, {
-      onClick,
-      onHoverEnd,
-      onInit,
-      onTraceData,
-      onSimulationDone: simulationDoneCB,
-    });
+    blueNaasInstance.current = new BlueNaasCls(
+      containerRef.current,
+      modelId,
+      DEFAULT_SIM_CONFIG,
+      {
+        thresholdCurrent: eModelScript.threshold_current,
+        holdingCurrent: eModelScript.holding_current,
+      },
+      {
+        onClick,
+        onHoverEnd,
+        onInit,
+        onTraceData,
+        onSimulationDone: simulationDoneCB,
+      }
+    );
 
     // eslint-disable-next-line consistent-return
     return () => {
@@ -135,7 +152,15 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       blueNaasInstance.current.destroy();
       blueNaasInstance.current = null;
     };
-  }, [modelId, setBlueNaasInstanceRef, setSecNames, setSegNames, setPlotData, simulationDoneCB]);
+  }, [
+    modelId,
+    setBlueNaasInstanceRef,
+    setSecNames,
+    setSegNames,
+    setPlotData,
+    simulationDoneCB,
+    eModelScript,
+  ]);
 
   return (
     <div className="relative h-full w-full">
@@ -191,5 +216,9 @@ export default function EModelInteractiveView() {
     return <div className={baseBannerStyle}>{msg}</div>;
   }
 
-  return <BlueNaas modelId={blueNaasModelId} />;
+  return (
+    <DefaultLoadingSuspense>
+      <BlueNaas modelId={blueNaasModelId} />
+    </DefaultLoadingSuspense>
+  );
 }
