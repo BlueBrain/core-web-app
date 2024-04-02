@@ -21,6 +21,7 @@ import {
   plotDataAtom,
   secNamesAtom,
   segNamesAtom,
+  simulateStepAtom,
   simulationConfigAtom,
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
@@ -49,10 +50,11 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
   const setBlueNaasInstanceRef = useSetAtom(blueNaasInstanceRefAtom);
   const simulationDoneCB = useSetAtom(simulationDoneAtom);
+  const setSimulateStep = useSetAtom(simulateStepAtom);
 
   const blueNaasInstance = useRef<BlueNaasCls | null>(null);
 
-  const setSecNames = useSetAtom(secNamesAtom);
+  const [secNames, setSecNames] = useAtom(secNamesAtom);
   const setSegNames = useSetAtom(segNamesAtom);
   const setPlotData = useSetAtom(plotDataAtom);
 
@@ -119,6 +121,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     };
 
     const onTraceData = throttle((data: TraceData) => {
+      setSimulateStep('results');
       const updatedPlotData: PlotData = data.map((entry) => ({
         x: entry.t,
         y: entry.v,
@@ -160,11 +163,16 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     setPlotData,
     simulationDoneCB,
     eModelScript,
+    setSimulateStep,
   ]);
 
   return (
     <div className="relative h-full w-full">
       <div className="h-full" ref={containerRef} />
+
+      {!secNames.length ? (
+        <div className="absolute left-[30%] top-[50%] text-4xl text-gray-100">Loading Model...</div>
+      ) : null}
 
       {selectionCtrlConfig && (
         <PositionedPopover config={selectionCtrlConfig.position}>
