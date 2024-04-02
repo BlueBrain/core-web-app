@@ -72,5 +72,5 @@ export type StimulusConfig = {
 export type SimAction =
   | { type: 'CHANGE_TYPE'; payload: StimulusType }
   | { type: 'CHANGE_PROTOCOL'; payload: StimulusModule }
-  | { type: 'CHANGE_STIM_PARAM'; payload: { key: string; value: number | null } }
-  | { type: 'CHANGE_PARAM'; payload: { key: string; value: unknown } };
+  | { type: 'CHANGE_STIM_PARAM'; payload: { key: keyof StimulusParameter; value: number | null } }
+  | { type: 'CHANGE_PARAM'; payload: { key: keyof SimConfig; value: unknown } };

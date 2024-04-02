@@ -1,9 +1,12 @@
 import { atom } from 'jotai';
 import { atomWithReducer } from 'jotai/utils';
+import { MutableRefObject } from 'react';
 
 import { simReducer } from './redurcers';
 import { SimAction, SimConfig, SimulateStep } from '@/types/simulate/single-neuron';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
+import { PlotData } from '@/services/bluenaas-single-cell/types';
+import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 
 export const simulateStepAtom = atom<SimulateStep>('stimulation');
 
@@ -26,3 +29,7 @@ export const simulationStatusAtom = atom({
 });
 
 export const simulationFormIsFilledAtom = atom(false);
+
+export const blueNaasInstanceRefAtom = atom<MutableRefObject<BlueNaasCls | null> | null>(null);
+
+export const plotDataAtom = atom<PlotData | null>(null);

@@ -1,7 +1,9 @@
+import omit from 'lodash/omit';
 import Renderer, { ClickData, HoverData } from './renderer';
 import Ws from './websocket';
 
-import type { Morphology, SecMarkerConfig, SimConfig, TraceData } from './types';
+import type { Morphology, SecMarkerConfig, TraceData } from './types';
+import { SimConfig } from '@/types/simulate/single-neuron';
 import { blueNaas } from '@/config';
 
 const BlueNaasCmd = {
@@ -13,6 +15,7 @@ const BlueNaasCmd = {
   // Cmd target: client
   MORPHOLOGY: 'morphology',
   SIM_VOLTAGE: 'sim_voltage',
+  SIM_DONE: 'sim_done',
 };
 
 type BlueNaasInitData = {
@@ -27,6 +30,7 @@ interface BlueNaasConfig {
   onMorphLoaded?: (morphology: Morphology) => void;
   onInit?: (data: BlueNaasInitData) => void;
   onTraceData?: (traceData: TraceData) => void;
+  onSimulationDone?: () => void;
 }
 
 export default class BlueNaas {
@@ -79,7 +83,12 @@ export default class BlueNaas {
     this.traceData = null;
 
     this.ws.send(BlueNaasCmd.SET_INJECTION_LOCATION, this.simConfig?.injectTo);
-    this.ws.send(BlueNaasCmd.START_SIM, this.simConfig);
+    const simParameters = omit(this.simConfig, [
+      'stimulus.paramInfo',
+      'stimulus.stimulusProtocolOptions',
+      'stimulus.stimulusProtocolInfo',
+    ]);
+    this.ws.send(BlueNaasCmd.START_SIM, simParameters);
   }
 
   private onMorphologyLoaded(morphology: Morphology) {
@@ -126,6 +135,9 @@ export default class BlueNaas {
         break;
       case BlueNaasCmd.SIM_VOLTAGE:
         this.onTraceStepData(data);
+        break;
+      case BlueNaasCmd.SIM_DONE:
+        this.config?.onSimulationDone?.();
         break;
       default:
         break;

@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 
 import {
+  blueNaasInstanceRefAtom,
   simulationConfigAtom,
   simulationResultsAtom,
   simulationStatusAtom,
@@ -52,4 +53,17 @@ export const createSingleNeuronSimulationAtom = atom<
 export const launchSimulationAtom = atom(null, (get, set) => {
   const simulationStatus = get(simulationStatusAtom);
   set(simulationStatusAtom, { ...simulationStatus, launched: true });
+
+  const blueNaasInstanceRef = get(blueNaasInstanceRefAtom);
+
+  if (!blueNaasInstanceRef?.current) {
+    throw new Error('No BlueNaaS instance');
+  }
+
+  blueNaasInstanceRef.current.runSim();
+});
+
+export const simulationDoneAtom = atom(null, (get, set) => {
+  const simulationStatus = get(simulationStatusAtom);
+  set(simulationStatusAtom, { ...simulationStatus, finished: true });
 });

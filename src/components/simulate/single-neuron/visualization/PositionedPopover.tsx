@@ -6,7 +6,7 @@ type PositionConfig = {
   y: number;
 };
 
-type PositionedPoptipProps = {
+type PositionedPopoverProps = {
   config: PositionConfig;
   children: ReactNode;
 };
@@ -16,7 +16,7 @@ const PopoverTarget = {
   HEIGHT: 12,
 };
 
-export function PositionedPoptip({ config, children }: PositionedPoptipProps) {
+export function PositionedPopover({ config, children }: PositionedPopoverProps) {
   const [hoverTargetHidden, setHoverTargetHidden] = useState<boolean>(true);
 
   useEffect(() => setHoverTargetHidden(false), [config]);
