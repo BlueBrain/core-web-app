@@ -6,17 +6,14 @@ export default function VirtualLabTopMenu() {
   const { data: session } = useSession();
 
   return (
-    <div className="flex h-14 w-fit justify-end border border-primary-7">
-      <Link className="w-48 border-r border-primary-7 p-4 font-bold" href="/getting-started">
+    <div className="z-10 flex h-14 w-fit justify-end gap-2">
+      <Link className="w-48 bg-primary-9 p-4  font-bold" href="/getting-started">
         Getting Started
       </Link>
-      <Link className="w-48 border-r border-primary-7 p-4 font-bold" href="/about">
+      <Link className="w-48 bg-primary-9 p-4  font-bold" href="/about">
         About
       </Link>
-      <Link
-        className="w-48 border-r border-primary-7 p-4 font-bold"
-        href={session?.user ? 'user' : 'login'}
-      >
+      <Link className="w-48 bg-primary-9 p-4  font-bold" href={session?.user ? 'user' : 'login'}>
         {session?.user ? (
           <>
             <UserOutlined className="mr-2 text-primary-4" />
