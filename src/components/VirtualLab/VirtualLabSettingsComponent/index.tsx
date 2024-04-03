@@ -1,15 +1,16 @@
 'use client';
 
-import { Button, Collapse, ConfigProvider, Skeleton } from 'antd';
+import type { InputProps } from 'antd/lib/input/Input';
+import { Button, Collapse, ConfigProvider, Skeleton, Input } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Session } from 'next-auth';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
-import InformationPanel from './InformationPanel';
+import FormPanel from './InformationPanel';
 import MembersPanel from './MembersPanel';
 import PlanPanel, { Plan } from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
@@ -22,56 +23,12 @@ import {
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
 import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
 import useNotification from '@/hooks/notifications';
+import { VALID_EMAIL_REGEXP } from '@/util/utils';
 
 type Props = {
   virtualLab: VirtualLab;
   user: Session['user'];
 };
-
-function SettingsPanelItem({ title, value }: { title: ReactNode; value: string }) {
-  const isEditable = useState(false);
-
-  return (
-    <div className="flex flex-col">
-      <span>Lab Name</span>
-      {isEditable ? (
-        <input value={value} /> // TODO: update this block to use state
-      ) : (
-        <span>{title}</span>
-      )}
-    </div>
-  );
-}
-
-function SettingsPanel() {
-  const items = [
-    {
-      title: 'Lab Name',
-      value: 'Institute of Neuroscience',
-    },
-    {
-      title: 'Description',
-      value: 'A neuroscience lab is a digital simulation...',
-    },
-    {
-      title: 'Reference email',
-      value: 'harry.anderson@epfl.ch',
-    },
-    {
-      title: 'Localisation',
-      value: 'Geneva, Switzerland',
-    },
-  ];
-
-  // TODO: Figure out whether returning simply SettingsPanelItem would work.
-  return (
-    <div>
-      {items.map((item) => (
-        <SettingsPanelItem key={item.title} title={item.title} value={item.value} />
-      ))}
-    </div>
-  );
-}
 
 function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
   const computeTimeAtom = useMemo(() => loadable(getComputeTimeAtom(virtualLab.id)), [virtualLab]);
@@ -188,18 +145,100 @@ export default function VirtualLabSettingsComponent({
     });
   };
 
+  const renderInput = useCallback(
+    ({
+      addonAfter,
+      className,
+      disabled,
+      placeholder,
+      readOnly,
+      style,
+      title,
+      value,
+    }: InputProps) => {
+      return (
+        <Input
+          disabled={disabled}
+          placeholder={placeholder}
+          required
+          className={className}
+          title={title}
+          value={value}
+          style={style}
+          readOnly={readOnly}
+          addonAfter={addonAfter}
+        />
+      );
+    },
+    []
+  );
+
+  const renderTextArea = useCallback(
+    ({ className, disabled, placeholder, readOnly, style, title, value }: InputProps) => {
+      return (
+        <Input.TextArea
+          disabled={disabled}
+          placeholder={placeholder}
+          autoSize
+          required
+          className={className}
+          title={title}
+          value={value}
+          style={style}
+          readOnly={readOnly}
+        />
+      );
+    },
+    []
+  );
+
   const expandableItems: Array<{
     content: ReactNode;
     key: string;
     title: string;
-    isAdminPanel?: boolean;
   }> = [
     {
       content: (
-        <InformationPanel virtualLab={virtualLab} allowEdit={userIsAdmin} save={saveInformation} />
+        <FormPanel
+          initialValues={{
+            name: virtualLab.name,
+            referenceEMail: virtualLab.referenceEMail,
+            description: virtualLab.description,
+          }}
+          allowEdit={userIsAdmin}
+          save={saveInformation}
+          items={[
+            {
+              children: renderInput,
+              label: 'Lab Name',
+              name: 'name',
+              required: true,
+            },
+            {
+              children: renderTextArea,
+              label: 'Description',
+              name: 'description',
+              style: {
+                maxWidth: '700px',
+              },
+            },
+            {
+              children: renderInput,
+              label: 'Reference email',
+              name: 'referenceEMail',
+              rules: [
+                {
+                  required: true,
+                  pattern: VALID_EMAIL_REGEXP,
+                  message: 'Entered value is not the correct email format',
+                },
+              ],
+            },
+          ]}
+        />
       ),
-      key: 'information',
-      title: 'Information',
+      key: 'settings',
+      title: 'Lab Settings',
     },
     {
       content: (
@@ -233,9 +272,73 @@ export default function VirtualLabSettingsComponent({
       title: 'Projects',
     },
     {
-      content: <SettingsPanel />,
-      key: 'lab-settings',
-      title: 'Lab Settings',
+      content: (
+        <FormPanel
+          initialValues={{
+            organization: virtualLab.billing.organization,
+            firstname: virtualLab.billing.firstname,
+            lastname: virtualLab.billing.lastname,
+            address: virtualLab.billing.address,
+            city: virtualLab.billing.city,
+            postalCode: virtualLab.billing.postalCode,
+            country: virtualLab.billing.country,
+          }}
+          allowEdit={userIsAdmin}
+          save={saveInformation}
+          items={[
+            {
+              children: renderInput,
+              label: 'Organization',
+              name: 'organization',
+              required: true,
+            },
+            {
+              children: renderInput,
+              label: 'First name',
+              name: 'firstname',
+              required: true,
+            },
+            {
+              children: renderInput,
+              label: 'Last name',
+              name: 'lastname',
+              required: true,
+            },
+            {
+              children: renderInput,
+              label: 'Address',
+              name: 'address',
+              required: true,
+            },
+            {
+              children: renderInput,
+              label: 'City',
+              name: 'city',
+              required: true,
+            },
+            {
+              children: renderInput,
+              label: 'Country',
+              name: 'country',
+              required: true,
+            },
+            {
+              children: renderInput,
+              label: 'Reference email',
+              name: 'referenceEMail',
+              rules: [
+                {
+                  required: true, // TODO: Can this be un-nested from "rules"?
+                  pattern: VALID_EMAIL_REGEXP,
+                  message: 'Entered value is not the correct email format',
+                },
+              ],
+            },
+          ]}
+        />
+      ),
+      key: 'billing',
+      title: 'Billing',
     },
     ...(userIsAdmin
       ? [
@@ -248,8 +351,6 @@ export default function VirtualLabSettingsComponent({
             ),
             key: 'danger-zone',
             title: 'Danger Zone',
-
-            isAdminPanel: true,
           },
         ]
       : []),
@@ -263,9 +364,12 @@ export default function VirtualLabSettingsComponent({
         },
         components: {
           Collapse: {
-            headerBg: '#fff',
+            headerBg: 'transparent', // Used in conjunction with "background" style definition below
             headerPadding: '24px 28px',
             contentPadding: '40px 28px',
+            borderRadiusLG: 0,
+            contentBg: '#002766',
+            colorBorder: '#002766',
           },
         },
       }}
@@ -277,51 +381,25 @@ export default function VirtualLabSettingsComponent({
       >
         <ArrowLeftOutlined /> Back to
       </Button>
-      <HeaderPanel virtualLab={virtualLab} />
-      {expandableItems.map(({ content, key, isAdminPanel, title }) =>
-        isAdminPanel ? (
-          <Collapse
-            expandIconPosition="end"
-            expandIcon={ExpandIcon}
-            className="mt-4 rounded-none text-primary-8"
-            bordered={false}
-            key={key}
-            items={[
-              {
-                key: 1,
-                label: <h3 className="color-primary-8 text-xl font-bold">{title}</h3>,
-                children: content,
-              },
-            ]}
-          />
-        ) : (
-          <ConfigProvider
-            key={key}
-            theme={{
-              components: {
-                Collapse: {
-                  colorBgContainer: '#e5e7eb',
-                },
-              },
-            }}
-          >
-            <Collapse
-              expandIconPosition="end"
-              expandIcon={ExpandIcon}
-              className="mt-4 rounded-none text-primary-8"
-              bordered={false}
+      <div className="flex flex-col gap-1">
+        <HeaderPanel virtualLab={virtualLab} />
+        <Collapse
+          accordion
+          expandIconPosition="end"
+          expandIcon={ExpandIcon}
+          className="flex flex-col gap-1 text-primary-8"
+        >
+          {expandableItems.map(({ content, key, title }) => (
+            <Collapse.Panel
               key={key}
-              items={[
-                {
-                  key: 1,
-                  label: <h3 className="color-primary-8 text-xl font-bold">{title}</h3>,
-                  children: content,
-                },
-              ]}
-            />
-          </ConfigProvider>
-        )
-      )}
+              style={{ background: '#fff' }} // Allows for more control than headerBg above
+              header={<h3 className="color-primary-8 text-xl font-bold">{title}</h3>}
+            >
+              {content}
+            </Collapse.Panel>
+          ))}
+        </Collapse>
+      </div>
     </ConfigProvider>
   );
 }

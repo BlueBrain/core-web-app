@@ -1,20 +1,24 @@
-'use client';
-
-import { Button, ConfigProvider, Form, Input, Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { Button, ConfigProvider, Form, Spin } from 'antd';
+import type { FormItemProps } from 'antd/lib/form/FormItem';
+import type { InputProps } from 'antd/lib/input/Input';
+import { ReactNode, useEffect, useState } from 'react';
 import EditIcon from '@/components/icons/Edit';
 import { VirtualLab } from '@/services/virtual-lab/types';
-import { VALID_EMAIL_REGEXP } from '@/util/utils';
+
+type RenderInputProps = Omit<FormItemProps, 'children'> & {
+  children: (props: InputProps) => ReactNode;
+};
 
 type Props = {
-  virtualLab: VirtualLab;
+  items: Array<RenderInputProps>;
+  initialValues: Partial<VirtualLab> | VirtualLab['billing'];
   allowEdit: boolean;
   save: (update: Partial<VirtualLab>) => Promise<void>;
 };
 
 type InformationForm = { name: string; description: string; referenceEMail: string };
 
-export default function InformationPanel({ virtualLab, allowEdit, save }: Props) {
+export default function InformationPanel({ initialValues, allowEdit, save, items }: Props) {
   const [editMode, setEditMode] = useState(false);
   const [savingChanges, setSavingChanges] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -103,101 +107,77 @@ export default function InformationPanel({ virtualLab, allowEdit, save }: Props)
       {savingChanges ? (
         <Spin data-testid="Saving changes" />
       ) : (
-        <Form
-          layout="vertical"
-          form={form}
-          requiredMark={false}
-          initialValues={{
-            name: virtualLab.name,
-            referenceEMail: virtualLab.referenceEMail,
-            description: virtualLab.description,
+        <ConfigProvider
+          theme={{
+            components: {
+              Form: {
+                labelColor: '#69C0FF',
+              },
+              Input: {
+                activeBg: 'transparent',
+                borderRadius: 0,
+                colorBgContainer: 'transparent',
+                colorText: '#fff',
+                colorTextDisabled: '#fff',
+                colorTextPlaceholder: '#8C8C8C',
+              },
+            },
           }}
         >
-          {saveError && <p className="text-error">There was an error in saving information.</p>}
-          <Form.Item
-            name="name"
-            label="Lab Name"
-            validateTrigger="onBlur"
-            rules={[{ required: true }]}
-            className={`w-full ${editMode ? 'border-b' : ''}`}
-          >
-            <Input
-              readOnly={!editMode}
-              className={`rounded-none font-bold ${editMode ? 'border border-gray-200 px-3' : ''}`}
-              style={{ width: showEditPrompts ? `50%` : '100%' }}
-              title={form.getFieldValue('name')}
-              addonAfter={editButton}
-              required
-            />
-          </Form.Item>
-
-          <div className="flex items-center">
-            <Form.Item name="description" label="Description" className="w-1/2">
-              <Input.TextArea
-                readOnly={!editMode}
-                style={{
-                  maxWidth: '700px',
-                }}
-                className={`rounded-none ${editMode ? 'border border-gray-200 px-3' : ''}`}
-                title={form.getFieldValue('description')}
-                placeholder="description"
-                autoSize
-              />
-            </Form.Item>
-            {editButton}
-          </div>
-          <Form.Item
-            validateTrigger="onBlur"
-            rules={[
-              {
-                required: true,
-                pattern: VALID_EMAIL_REGEXP,
-                message: 'Entered value is not the correct email format',
-              },
-            ]}
-            name="referenceEMail"
-            label="Reference Contact"
-            className={`w-full ${editMode ? 'border-b' : ''}`}
-          >
-            <Input
-              readOnly={!editMode}
-              className={`rounded-none font-bold ${editMode ? 'border border-gray-200 px-3' : ''}`}
-              style={{
-                width: showEditPrompts ? `50%` : '100%',
-              }}
-              addonAfter={editButton}
-              title={form.getFieldValue('referenceEmail')}
-              type="email"
-            />
-          </Form.Item>
-
-          {editMode && (
-            <Form.Item>
-              <div className="flex items-center justify-end">
-                <Button
-                  htmlType="button"
-                  onClick={() => {
-                    form.resetFields();
-                    setEditMode(false);
-                  }}
-                  className="font-semibold text-gray-500"
+          <Form layout="vertical" form={form} requiredMark={false} initialValues={initialValues}>
+            {saveError && <p className="text-error">There was an error in saving information.</p>}
+            {items.map(({ children, label, name, required, rules }) => {
+              return (
+                <Form.Item
+                  key={name}
+                  name={name}
+                  label={required ? `${label}*` : label}
+                  validateTrigger="onBlur"
+                  rules={[{ ...rules, required }]}
+                  className={`w-full ${editMode ? 'border-b' : ''}`}
+                  required={required}
                 >
-                  Cancel
-                </Button>
-                <Button
-                  disabled={!submittable}
-                  type="primary"
-                  title="Save Changes"
-                  htmlType="submit"
-                  onClick={onSave}
-                  className="h-14 w-40 rounded-none bg-green-600 font-semibold hover:bg-green-700"
-                >
-                  Save
-                </Button>
-              </div>
-            </Form.Item>
-          )}
-        </Form>
+                  {children({
+                    addonAfter: editButton,
+                    className: `${editMode ? 'font-bold border border-gray-200 px-3' : ''}`,
+                    disabled: !editMode,
+                    placeholder: `${label}...`, // TODO: Come up with a system for more intelligent placeholder text
+                    readOnly: !editMode,
+                    style: { fontWeight: 'light', width: showEditPrompts ? `50%` : '100%' },
+                    title: form.getFieldValue(name),
+                  })}
+                </Form.Item>
+              );
+            })}
+
+            {editMode && (
+              <Form.Item>
+                <div className="flex items-center justify-end">
+                  <Button
+                    htmlType="button"
+                    onClick={() => {
+                      form.resetFields();
+                      setEditMode(false);
+                    }}
+                    className="font-semibold text-gray-500"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    disabled={!submittable}
+                    type="primary"
+                    title="Save Changes"
+                    htmlType="submit"
+                    onClick={onSave}
+                    className="h-14 w-40 rounded-none bg-green-600 font-semibold hover:bg-green-700"
+                  >
+                    Save
+                  </Button>
+                </div>
+              </Form.Item>
+            )}
+          </Form>
+        </ConfigProvider>
       )}
     </ConfigProvider>
   );
