@@ -10,7 +10,7 @@ export default function MainVirtualLabLayout({ children }: { children: ReactNode
         <div className="w-[100px] text-3xl font-bold">Open Brain Platform</div>
         <VirtualLabTopMenu />
       </div>
-      <div className="h-full">{children}</div>
+      {children}
     </div>
   );
 }

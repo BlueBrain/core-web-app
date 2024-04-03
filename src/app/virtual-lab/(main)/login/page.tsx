@@ -7,7 +7,7 @@ export default function VirtualLabLoginPage() {
   const [form] = Form.useForm();
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex h-full items-center justify-center">
       <div className="flex h-[600px] w-[450px] flex-col gap-8">
         <div>
           <h3 className="text-3xl font-bold">Virtual labs</h3>
