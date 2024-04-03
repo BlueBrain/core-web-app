@@ -31,7 +31,9 @@ export default function VirtualLabProjectLayout({ children }: { children: ReactN
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="mt-10">
-          <VirtualLabTopMenu />
+          <div className="flex justify-end">
+            <VirtualLabTopMenu />
+          </div>
           {children}
         </div>
       </ErrorBoundary>

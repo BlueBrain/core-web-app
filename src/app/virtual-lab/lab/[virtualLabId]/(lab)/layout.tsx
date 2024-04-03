@@ -16,7 +16,9 @@ export default function VirtualLabPageLayout({ children }: { children: ReactNode
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="ml-6">
-          <VirtualLabTopMenu />
+          <div className="flex justify-end">
+            <VirtualLabTopMenu />
+          </div>
           {children}
         </div>
       </ErrorBoundary>
