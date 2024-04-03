@@ -13,9 +13,9 @@ export default function VirtualLabProjectExplorePage() {
           className="object-center"
         />
       </div>
-      <div className="absolute left-4 top-4 flex flex-col items-start justify-center">
+      <div className="absolute left-10 top-10 flex flex-col items-start justify-center">
         <h1 className="mb-3 text-3xl font-bold text-white">Atlas based exploration</h1>
-        <p className="text-md w-1/2 text-white">
+        <p className="w-1/4 text-lg text-white">
           Browse the experimental data, all the different data related to the current model and some
           generated during all simulation experiment. Go deeper into knowledge discovery with our
           literature search AI tool.
