@@ -1,7 +1,7 @@
 'use client';
 
-import { ConfigProvider } from 'antd';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Collapse, ConfigProvider } from 'antd';
+import { PlusOutlined, SearchOutlined, MinusOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 
@@ -18,40 +18,45 @@ export function AdminPanelProjectList() {
   const projects = mockProjects;
 
   return (
-    <div className="flex flex-col gap-4 divide-y">
-      <div>Completed jobs:</div>
-      <Collapse
-        expandIconPosition="end"
-        expandIcon={ExpandIcon}
-        className="font-bold"
-        bordered={false}
-        items={projects.map((project) => ({
-          key: project.id,
-          label: (
-            <div className="flex justify-between">
-              <span className="font-bold">{project.title}</span>
-              <div className="flex">
-                <span>{project.budget.totalSpent}</span>
-                <span className="text-primary-7">out of</span>
-                <span>{project.budget.total}</span>
-                <span>{project.budget.total}</span>
+    <Collapse
+      accordion
+      expandIconPosition="end"
+      expandIcon={ExpandIcon}
+      className="font-bold"
+      bordered={false}
+      items={projects.map((project) => ({
+        key: project.id,
+        label: (
+          <div className="flex justify-between">
+            <h4 className="text-2xl font-bold">{project.title}</h4>
+            <div className="flex gap-1">
+              <span>{project.budget.totalSpent}</span>
+              <span className="text-primary-7">out of</span>
+              <span>{project.budget.total}</span>
+            </div>
+          </div>
+        ),
+        children: (
+          <div className="flex flex-col gap-2">
+            <div className="font-medium uppercase">Completed jobs:</div>
+            <div className="flex gap-4">
+              <div className="flex items-baseline gap-2">
+                <span className="items-center justify-center rounded bg-primary-7 p-2 font-mono text-white">
+                  {project.builds}
+                </span>
+                Build
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="items-center justify-center rounded bg-primary-7 p-2 font-mono text-white">
+                  {project.simulationExperiments}
+                </span>
+                Simulate
               </div>
             </div>
-          ),
-          children: (
-            <div className="flex justify-between">
-              <span className="font-bold">{project.title}</span>
-              <div className="flex">
-                <span>{project.budget.totalSpent}</span>
-                <span className="text-primary-7">out of</span>
-                <span>{project.budget.total}</span>
-                <span>{project.budget.total}</span>
-              </div>
-            </div>
-          ),
-        }))}
-      />
-    </div>
+          </div>
+        ),
+      }))}
+    />
   );
 }
 

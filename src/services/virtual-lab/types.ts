@@ -8,6 +8,7 @@ export interface VirtualLab {
   members: VirtualLabMember[];
   plan?: VirtualLabPlanType;
   billing: {
+    organization: string;
     firstname: string;
     lastname: string;
     address: string;
