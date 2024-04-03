@@ -15,7 +15,10 @@ export const BlueNaasCmd = {
   START_SIMULATION: 'start_simulation',
 };
 
-export type WSResponses = `${Lowercase<keyof typeof BlueNaasCmd>}_done` | 'partial_data_received';
+export type WSResponses =
+  | `${Lowercase<keyof typeof BlueNaasCmd>}_done`
+  | 'partial_simulation_data'
+  | 'partial_morphology_data';
 
 type Message = string;
 type Data = any;

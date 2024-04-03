@@ -41,6 +41,8 @@ export default class BlueNaas {
 
   private assembleTempMap = new Map();
 
+  private assembleMorphTempStr = '';
+
   constructor(
     container: HTMLDivElement,
     modelId: string,
@@ -146,13 +148,18 @@ export default class BlueNaas {
       case 'set_model_done':
         this.ws.send(BlueNaasCmd.GET_UI_DATA, {});
         break;
-      case 'get_ui_data_done':
-        this.renderer.addMorphology(data.morphology);
-        this.onMorphologyLoaded(data.morphology);
+      case 'get_ui_data_done': {
+        const morphology = JSON.parse(this.assembleMorphTempStr);
+        this.renderer.addMorphology(morphology);
+        this.onMorphologyLoaded(morphology);
         this.ensureSecMarkers();
         break;
-      case 'partial_data_received':
+      }
+      case 'partial_simulation_data':
         this.assembleTempSimulationData(data);
+        break;
+      case 'partial_morphology_data':
+        this.assembleMorphTempStr = `${this.assembleMorphTempStr}${String(data)}`;
         break;
       case 'start_simulation_done':
         this.config?.onSimulationDone?.();
