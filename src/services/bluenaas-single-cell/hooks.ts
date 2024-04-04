@@ -3,7 +3,6 @@ import { useAtomValue } from 'jotai';
 import JSZip from 'jszip';
 import { Session } from 'next-auth';
 
-import { blueNaas } from '@/config';
 import {
   eModelAtom,
   eModelConfigurationAtom,
@@ -118,38 +117,4 @@ export function useEModelUUID() {
   const eModel = useAtomValue(eModelAtom);
 
   return eModel?.['@id'].split('/').at(-1) as string;
-}
-
-export function useEnsureModelPackage() {
-  const eModelUUID = useEModelUUID();
-  const createEmodelPackageFile = useCreateEmodelPackageFile();
-
-  return useCallback(async () => {
-    const packageExistsRes = await fetch(`${blueNaas.deploymentUrl}/models/${eModelUUID}`, {
-      method: 'HEAD',
-    });
-
-    switch (packageExistsRes.status) {
-      case 204:
-        return;
-      case 404:
-        break;
-      default:
-        throw new Error('Unexpected reply from BlueNaaS');
-    }
-
-    const emodelPackageFile = await createEmodelPackageFile();
-
-    const formData = new FormData();
-    formData.append('file', emodelPackageFile);
-
-    const packageUploadRes = await fetch(`${blueNaas.deploymentUrl}/models/${eModelUUID}`, {
-      body: formData,
-      method: 'POST',
-    });
-
-    if (!packageUploadRes.ok) {
-      throw new Error('Failed to upload e-model package to BlueNaaS');
-    }
-  }, [createEmodelPackageFile, eModelUUID]);
 }

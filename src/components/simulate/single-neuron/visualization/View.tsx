@@ -8,7 +8,7 @@ import throttle from 'lodash/throttle';
 
 import { PositionedPopover } from './PositionedPopover';
 import TraceLoader from './TraceLoader';
-import { useEModelUUID, useEnsureModelPackage } from '@/services/bluenaas-single-cell/hooks';
+import { useEModelUUID } from '@/services/bluenaas-single-cell/hooks';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { SimAction } from '@/types/simulate/single-neuron';
@@ -197,7 +197,6 @@ export default function EModelInteractiveView() {
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
 
   const eModelUUID = useEModelUUID();
-  const ensureModelPackage = useEnsureModelPackage();
 
   const [blueNaasModelId, setBlueNaasModelId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -221,14 +220,11 @@ export default function EModelInteractiveView() {
     const init = async () => {
       setBlueNaasModelId(null);
       setLoading(true);
-
-      await ensureModelPackage();
-
       setBlueNaasModelId(eModelUUID);
     };
 
     init();
-  }, [eModelUUID, ensureModelPackage, selectedEModel?.isOptimizationConfig]);
+  }, [eModelUUID, selectedEModel?.isOptimizationConfig]);
 
   if (!blueNaasModelId) {
     const msg = loading ? 'Loading...' : 'Select a leaf region and an already built E-Model';
