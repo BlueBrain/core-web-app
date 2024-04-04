@@ -10,6 +10,7 @@ const virtualLab = {
   members: [],
   plan: VirtualLabPlanType.intermediate,
   billing: {
+    organization: 'EPFL',
     firstname: 'Harry',
     lastname: 'Anderson',
     address: 'Chem. des Mines 9',
