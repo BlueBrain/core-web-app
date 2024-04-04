@@ -1,6 +1,7 @@
 'use client';
 
 import type { InputProps } from 'antd/lib/input/Input';
+import type { TextAreaProps } from 'antd/lib/input/TextArea';
 import { Button, Collapse, ConfigProvider, Skeleton, Input } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
@@ -11,13 +12,13 @@ import { Session } from 'next-auth';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import FormPanel from './InformationPanel';
-import MembersPanel from './MembersPanel';
+// import MembersPanel from './MembersPanel';
 import PlanPanel, { Plan } from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 import {
   VirtualLab,
-  NewMember,
-  VirtualLabMember,
+  // NewMember,
+  // VirtualLabMember,
   VirtualLabPlanType,
 } from '@/services/virtual-lab/types';
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
@@ -104,39 +105,39 @@ export default function VirtualLabSettingsComponent({
       });
   };
 
-  const inviteNewMember = async (newMember: NewMember): Promise<void> => {
-    return service.inviteNewMember(newMember, virtualLab.id, user).catch((err) => {
-      throw err;
-    });
-  };
+  //   const inviteNewMember = async (newMember: NewMember): Promise<void> => {
+  //     return service.inviteNewMember(newMember, virtualLab.id, user).catch((err) => {
+  //       throw err;
+  //     });
+  //   };
 
-  const changeMemberRole = async (
-    memberToChange: VirtualLabMember,
-    newRole: VirtualLabMember['role']
-  ) => {
-    return service
-      .changeRole(memberToChange, newRole, virtualLab.id, user)
-      .then((updatedMember) => {
-        setVirtualLab({
-          ...virtualLab,
-          members: virtualLab.members.map((m) =>
-            m.email === memberToChange.email ? { ...updatedMember } : { ...m }
-          ),
-        });
-      })
-      .catch((err) => {
-        throw err;
-      });
-  };
+  //   const changeMemberRole = async (
+  //     memberToChange: VirtualLabMember,
+  //     newRole: VirtualLabMember['role']
+  //   ) => {
+  //     return service
+  //       .changeRole(memberToChange, newRole, virtualLab.id, user)
+  //       .then((updatedMember) => {
+  //         setVirtualLab({
+  //           ...virtualLab,
+  //           members: virtualLab.members.map((m) =>
+  //             m.email === memberToChange.email ? { ...updatedMember } : { ...m }
+  //           ),
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         throw err;
+  //       });
+  //   };
 
-  const removeMember = async (member: VirtualLabMember) => {
-    return service.removeMember(member, virtualLab.id, user).then(() => {
-      setVirtualLab({
-        ...virtualLab,
-        members: virtualLab.members.filter((m) => m.email !== member.email),
-      });
-    });
-  };
+  //   const removeMember = async (member: VirtualLabMember) => {
+  //     return service.removeMember(member, virtualLab.id, user).then(() => {
+  //       setVirtualLab({
+  //         ...virtualLab,
+  //         members: virtualLab.members.filter((m) => m.email !== member.email),
+  //       });
+  //     });
+  //   };
 
   const deleteVirtualLab = async () => {
     return service.deleteVirtualLab(user, virtualLab.id).then(() => {
@@ -145,36 +146,28 @@ export default function VirtualLabSettingsComponent({
     });
   };
 
-  const renderInput = useCallback(
-    ({
-      addonAfter,
-      className,
-      disabled,
-      placeholder,
-      readOnly,
-      style,
-      title,
-      value,
-    }: InputProps) => {
+  const renderInput: (props: InputProps) => ReactNode = useCallback(
+    ({ addonAfter, className, disabled, placeholder, readOnly, style, title, type, value }) => {
       return (
         <Input
+          addonAfter={addonAfter}
+          className={className}
           disabled={disabled}
           placeholder={placeholder}
-          required
-          className={className}
-          title={title}
-          value={value}
-          style={style}
           readOnly={readOnly}
-          addonAfter={addonAfter}
+          required
+          style={style}
+          title={title}
+          type={type}
+          value={value}
         />
       );
     },
     []
   );
 
-  const renderTextArea = useCallback(
-    ({ className, disabled, placeholder, readOnly, style, title, value }: InputProps) => {
+  const renderTextArea: (props: TextAreaProps) => ReactNode = useCallback(
+    ({ className, disabled, placeholder, readOnly, style, title, value }) => {
       return (
         <Input.TextArea
           disabled={disabled}
@@ -226,6 +219,7 @@ export default function VirtualLabSettingsComponent({
               children: renderInput,
               label: 'Reference email',
               name: 'referenceEMail',
+              type: 'email',
               rules: [
                 {
                   required: true,
@@ -240,20 +234,20 @@ export default function VirtualLabSettingsComponent({
       key: 'settings',
       title: 'Lab Settings',
     },
-    {
-      content: (
-        <MembersPanel
-          members={virtualLab.members}
-          userIsAdmin={userIsAdmin}
-          currentUser={user}
-          onRemoveMember={removeMember}
-          onAddMember={inviteNewMember}
-          onChangeRole={changeMemberRole}
-        />
-      ),
-      key: 'members',
-      title: 'Members',
-    },
+    //     {
+    //       content: (
+    //         <MembersPanel
+    //           members={virtualLab.members}
+    //           userIsAdmin={userIsAdmin}
+    //           currentUser={user}
+    //           onRemoveMember={removeMember}
+    //           onAddMember={inviteNewMember}
+    //           onChangeRole={changeMemberRole}
+    //         />
+    //       ),
+    //       key: 'members',
+    //       title: 'Members',
+    //     },
     {
       content: (
         <PlanPanel

@@ -1,12 +1,14 @@
 import { Button, ConfigProvider, Form, Spin } from 'antd';
 import type { FormItemProps } from 'antd/lib/form/FormItem';
 import type { InputProps } from 'antd/lib/input/Input';
+import type { TextAreaProps } from 'antd/lib/input/TextArea';
 import { ReactNode, useEffect, useState } from 'react';
 import EditIcon from '@/components/icons/Edit';
 import { VirtualLab } from '@/services/virtual-lab/types';
 
 type RenderInputProps = Omit<FormItemProps, 'children'> & {
-  children: (props: InputProps) => ReactNode;
+  children: (props: InputProps & TextAreaProps) => ReactNode;
+  type?: string;
 };
 
 type Props = {
@@ -126,7 +128,7 @@ export default function InformationPanel({ initialValues, allowEdit, save, items
         >
           <Form layout="vertical" form={form} requiredMark={false} initialValues={initialValues}>
             {saveError && <p className="text-error">There was an error in saving information.</p>}
-            {items.map(({ children, label, name, required, rules }) => {
+            {items.map(({ children, label, name, required, rules, type }) => {
               return (
                 <Form.Item
                   key={name}
@@ -145,6 +147,7 @@ export default function InformationPanel({ initialValues, allowEdit, save, items
                     readOnly: !editMode,
                     style: { fontWeight: 'light', width: showEditPrompts ? `50%` : '100%' },
                     title: form.getFieldValue(name),
+                    type, // TODO: I'm not sure that "type" is actually being attached to the rendered Input
                   })}
                 </Form.Item>
               );

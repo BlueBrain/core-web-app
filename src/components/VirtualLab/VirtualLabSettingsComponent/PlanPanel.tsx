@@ -1,14 +1,13 @@
 /* eslint-disable react/no-array-index-key */
 
-'use client';
-
 import { Button, ConfigProvider, Form, Input, Modal, Select, Spin } from 'antd';
 import { useState } from 'react';
 
-import { VirtualLab } from '@/services/virtual-lab/types';
+import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
 import { classNames } from '@/util/utils';
 
 export type Plan = Exclude<VirtualLab['plan'], undefined>;
+
 type Props = {
   currentPlan: Plan;
   billingInfo: VirtualLab['billing'];
@@ -65,7 +64,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
   return savingChanges ? (
     <Spin data-testid="Saving changes" />
   ) : (
-    <div data-testid="plans-collapsible-content">
+    <div data-testid="plans-collapsible-content" className="flex flex-col gap-6">
       {changePlanError && <p className="text-error">There was an error in switching plans.</p>}
 
       {PLANS_DETAILS.map((plan) => (
@@ -75,8 +74,8 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
             className={classNames(
               plan.type === selectedPlan
                 ? 'bg-primary-8 text-white'
-                : 'border border-primary-3 text-primary-8',
-              'mt-6 p-6'
+                : 'border border-primary-3 text-white',
+              'p-6'
             )}
           >
             <h2 className="mb-4 text-3xl font-bold capitalize">{plan.type}</h2>
@@ -97,7 +96,7 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
               <span className="text-3xl font-bold">
                 {plan.pricePerMonthPerUser.currency} {plan.pricePerMonthPerUser.cost}
               </span>{' '}
-              /month /user
+              / month /user
             </div>
             {contextHolder}
 
@@ -252,22 +251,22 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
 
 export const PLANS_DETAILS: PlanDetails[] = [
   {
-    type: 'entry',
+    type: VirtualLabPlanType.entry,
     advantages: [...Array(3).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
     pricePerMonthPerUser: { cost: 0, currency: '$' },
   },
   {
-    type: 'beginner',
+    type: VirtualLabPlanType.beginner,
     advantages: [...Array(6).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
     pricePerMonthPerUser: { cost: 40, currency: '$' },
   },
   {
-    type: 'intermediate',
+    type: VirtualLabPlanType.intermediate,
     advantages: [...Array(8).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
     pricePerMonthPerUser: { cost: 120, currency: '$' },
   },
   {
-    type: 'advanced',
+    type: VirtualLabPlanType.advanced,
     advantages: [...Array(9).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
     pricePerMonthPerUser: { cost: 140, currency: '$' },
   },
