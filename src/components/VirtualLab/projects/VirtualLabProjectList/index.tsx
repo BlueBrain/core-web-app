@@ -18,48 +18,65 @@ export function AdminPanelProjectList() {
   const projects = mockProjects;
 
   return (
-    <Collapse
-      accordion
-      expandIconPosition="end"
-      expandIcon={ExpandIcon}
-      className="font-bold"
-      bordered={false}
-      items={projects.map((project) => ({
-        key: project.id,
-        label: (
-          <div className="flex justify-between">
-            <h4 className="text-2xl font-bold">{project.title}</h4>
-            <div className="flex gap-1">
-              <span>{project.budget.totalSpent}</span>
-              <span className="text-primary-7">out of</span>
-              <span>{project.budget.total}</span>
-            </div>
-          </div>
-        ),
-        children: (
-          <div className="flex flex-col gap-2">
-            <div className="font-medium uppercase">Completed jobs:</div>
-            <div className="flex gap-4">
-              <div className="flex items-baseline gap-2">
-                <span className="items-center justify-center rounded bg-primary-7 p-2 font-mono text-white">
-                  {project.builds}
-                </span>
-                Build
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="items-center justify-center rounded bg-primary-7 p-2 font-mono text-white">
-                  {project.simulationExperiments}
-                </span>
-                Simulate
+    <ConfigProvider
+      theme={{
+        token: {
+          colorText: '#fff',
+        },
+        components: {
+          Collapse: {
+            headerPadding: '20px 0',
+            contentPadding: '20px',
+            // contentBg: '#002766',
+            colorBorder: '#69C0FF',
+          },
+        },
+      }}
+    >
+      <Collapse
+        accordion
+        expandIconPosition="end"
+        expandIcon={ExpandIcon}
+        className="font-bold"
+        bordered={false}
+        items={projects.map((project) => ({
+          key: project.id,
+          label: (
+            <div className="flex justify-between items-center">
+              <h4 className="text-xl font-bold">{project.title}</h4>
+              <div className="flex items-center gap-1 text-lg font-light">
+                <span>{project.budget.totalSpent}</span>
+                <span className="text-primary-3">out of</span>
+                <span>{project.budget.total}</span>
               </div>
             </div>
-          </div>
-        ),
-      }))}
-    />
+          ),
+          children: (
+            <div className="flex flex-col gap-2 text-white">
+              <div className="font-medium uppercase">Completed jobs:</div>
+              <div className="flex gap-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="items-center justify-center rounded bg-white p-2 font-mono text-primary-9">
+                    {project.builds}
+                  </span>
+                  <span className="font-light">Build</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="items-center justify-center rounded bg-white p-2 font-mono text-primary-9">
+                    {project.simulationExperiments}
+                  </span>
+                  <span className="font-light">Simulate</span>
+                </div>
+              </div>
+            </div>
+          ),
+        }))}
+      />
+    </ConfigProvider>
   );
 }
 
+// TODO: Remove this component (I don't think it's being used anywhere)
 export default function VirtualLabProjectList() {
   const projects = mockProjects;
 
