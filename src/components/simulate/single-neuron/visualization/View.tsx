@@ -7,7 +7,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import throttle from 'lodash/throttle';
 
 import { PositionedPopover } from './PositionedPopover';
-import LoadingSpinner from './LoadingSpinner';
+import TraceLoader from './TraceLoader';
 import { useEModelUUID, useEnsureModelPackage } from '@/services/bluenaas-single-cell/hooks';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
@@ -169,9 +169,9 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 
   return (
     <div className="relative h-full w-full">
-      {!secNames.length && <LoadingSpinner />}
+      {secNames.length === 0 && <TraceLoader />}
 
-      <div className="h-full" ref={containerRef} />
+      <div style={{ height: secNames.length > 0 ? '100vh' : '0vh' }} ref={containerRef} />
 
       {selectionCtrlConfig && (
         <PositionedPopover config={selectionCtrlConfig.position}>
