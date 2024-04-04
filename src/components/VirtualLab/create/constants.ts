@@ -1,5 +1,5 @@
 import { VirtualLabWithOptionalId, VirtualLabPlanDefinition } from './types';
-import { VirtualLabMember } from '@/services/virtual-lab/types';
+import { VirtualLabMember, VirtualLabPlanType } from '@/services/virtual-lab/types';
 
 export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   name: '',
@@ -7,6 +7,7 @@ export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   referenceEMail: '',
   members: [],
   billing: {
+    organization: '',
     firstname: '',
     lastname: '',
     address: '',
@@ -36,25 +37,25 @@ const FAKE_ADVANTAGES: string[] = [
 
 export const VIRTUAL_LAB_PLAN_DEFINITIONS: VirtualLabPlanDefinition[] = [
   {
-    type: 'entry',
+    type: VirtualLabPlanType.entry,
     title: 'Entry',
     price: 0,
     advantages: FAKE_ADVANTAGES,
   },
   {
-    type: 'beginner',
+    type: VirtualLabPlanType.beginner,
     title: 'Beginner',
     price: 40,
     advantages: FAKE_ADVANTAGES,
   },
   {
-    type: 'intermediate',
+    type: VirtualLabPlanType.intermediate,
     title: 'Intermediate',
     price: 80,
     advantages: FAKE_ADVANTAGES,
   },
   {
-    type: 'advanced',
+    type: VirtualLabPlanType.advanced,
     title: 'Advanced',
     price: 120,
     advantages: FAKE_ADVANTAGES,
