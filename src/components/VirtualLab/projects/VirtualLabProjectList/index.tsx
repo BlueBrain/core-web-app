@@ -42,7 +42,7 @@ export function AdminPanelProjectList() {
         items={projects.map((project) => ({
           key: project.id,
           label: (
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <h4 className="text-xl font-bold">{project.title}</h4>
               <div className="flex items-center gap-1 text-lg font-light">
                 <span>{project.budget.totalSpent}</span>
