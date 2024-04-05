@@ -13,26 +13,35 @@ interface InviteResponse {
   };
 }
 
+export enum InviteErrorCodes {
+  UNAUTHORIZED = 1,
+  INVALID_LINK = 2,
+  INVITE_ALREADY_ACCEPTED = 3,
+  UNKNOWN = 4,
+}
+
 export async function GET(req: NextRequest) {
-  return NextResponse.redirect(new URL(`/?errorcode=4`, req.url));
+  // return NextResponse.redirect(new URL(`/?errorcode=4`, req.url));
   const session = await getServerSession(authOptions);
   if (!session) {
     return nextAuthMiddleware(req as NextRequestWithAuth);
   }
   const sessionToken = session.accessToken;
+  if (!sessionToken) {
+    return NextResponse.redirect(new URL(`/?errorcode=${InviteErrorCodes.UNAUTHORIZED}`, req.url));
+  }
   const inviteToken = req.nextUrl.searchParams.get('token');
 
-  if (!inviteToken || !sessionToken) {
-    return NextResponse.json(
-      { error: 'Accepting invite failed because the invite id or session id is invalid' },
-      { status: 500 }
-    );
+  if (!inviteToken) {
+    return NextResponse.redirect(new URL(`/?errorcode=${InviteErrorCodes.INVALID_LINK}`, req.url));
   }
 
   try {
     const response = await processInvite(sessionToken, inviteToken);
     if (response.message.includes('already accepted')) {
-      throw new Error('Invite is already accepted');
+      return NextResponse.redirect(
+        new URL(`/?errorcode=${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}`, req.url)
+      );
     }
     const { origin, virtual_lab_id: labId, project_id: projectId } = response.data;
 
@@ -44,23 +53,20 @@ export async function GET(req: NextRequest) {
           new URL(`/virtual-lab/lab/${labId}/project/${projectId!}/home`, req.url)
         );
       default:
-        return NextResponse.json(
-          {
-            error: `Unknown origin received from server. Expected Lab or Project but got ${origin}`,
-          },
-          { status: 500 }
+        captureException(
+          new Error(
+            `User ${session.user.username} could not accept invite ${inviteToken} because unknown origin returned by server`
+          ),
+          { extra: origin }
         );
+        return NextResponse.redirect(new URL(`/?errorcode=${InviteErrorCodes.UNKNOWN}`, req.url));
     }
   } catch (err: any) {
     captureException(
       new Error(`User ${session.user.username} could not accept invite ${inviteToken}`),
       { extra: err }
     );
-    // TODO: How to better show errors
-    return NextResponse.json(
-      { error: 'There was an error when processing invite', details: err?.statusText },
-      { status: 500 }
-    );
+    return NextResponse.redirect(new URL(`/?errorcode=${InviteErrorCodes.UNKNOWN}`, req.url));
   }
 }
 
