@@ -36,7 +36,7 @@ export function AdminPanelProjectList() {
         accordion
         expandIconPosition="end"
         expandIcon={ExpandIcon}
-        className="font-bold px-[28px]"
+        className="px-[28px] font-bold"
         bordered={false}
         items={projects.map((project) => ({
           key: project.id,
