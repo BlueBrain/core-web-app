@@ -297,7 +297,7 @@ export default function VirtualLabSettingsComponent({
           Collapse: {
             headerBg: 'transparent', // Used in conjunction with "background" style definition below
             headerPadding: '24px 28px',
-            contentPadding: '5px 28px 20px',
+            contentPadding: '20px 28px 20px',
             borderRadiusLG: 0,
             contentBg: '#002766',
             colorBorder: '#002766',
