@@ -1,16 +1,8 @@
-type MockBudget = {
-  total: number;
-  totalSpent: number;
-  remaining: number;
-};
 
-export type MockVirtualLab = {
-  title: string;
+export type VirtualLab = {
+  id: string;
+  name: string;
   description: string;
-  builds: number;
-  simulationExperiments: number;
-  members: number;
-  admin: string;
   creationDate: string;
-  budget: MockBudget;
+  budget: number;
 };

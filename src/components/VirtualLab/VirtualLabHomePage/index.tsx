@@ -1,5 +1,7 @@
 'use client';
 
+import { loadable } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
 import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 
 import VirtualLabStatistic from '../VirtualLabStatistic';
@@ -14,12 +16,27 @@ import Brain from '@/components/icons/Brain';
 import { mockMembers } from '@/components/VirtualLab/mockData/members';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 import { mockVirtualLab } from '@/components/VirtualLab/mockData/lab';
+import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import Spinner from '@/components/Spinner';
 import Styles from './home-page.module.css';
 
-export default function VirtualLabHomePage() {
+type Props = {
+  id: string;
+};
+
+export default function VirtualLabHomePage({ id }: Props) {
   const iconStyle = { color: '#69C0FF' };
   const virtualLab = mockVirtualLab;
   const projects = mockProjects;
+
+  const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+  console.log(virtualLabDetail);
+  if (virtualLabDetail.state === 'loading') {
+    return <Spinner />;
+  }
+  if (virtualLabDetail.state === 'hasError') {
+    return <div>Something went wrong</div>;
+  }
   return (
     <div>
       <WelcomeUserBanner title={virtualLab.title} />
@@ -34,7 +51,7 @@ export default function VirtualLabHomePage() {
           <div className="flex max-w-[50%] flex-col gap-2">
             <div>
               <div className="text-primary-2">Virtual Lab name</div>
-              <h2 className="text-5xl font-bold">{virtualLab.title}</h2>
+              <h2 className="text-5xl font-bold">{virtualLabDetail.data?.name}</h2>
             </div>
             <div>{virtualLab.description}</div>
           </div>
@@ -43,25 +60,21 @@ export default function VirtualLabHomePage() {
           </div>
         </div>
         <div className="flex gap-5">
-          <VirtualLabStatistic
-            icon={<Brain style={iconStyle} />}
-            title="Builds"
-            detail={virtualLab.builds}
-          />
+          <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail={10} />
           <VirtualLabStatistic
             icon={<StatsEditIcon style={iconStyle} />}
             title="Simulation experiments"
-            detail={virtualLab.simulationExperiments}
+            detail={10}
           />
           <VirtualLabStatistic
             icon={<UserOutlined style={iconStyle} />}
             title="Members"
-            detail={virtualLab.members}
+            detail={10}
           />
           <VirtualLabStatistic
             icon={<MembersGroupIcon style={iconStyle} />}
             title="Admin"
-            detail={virtualLab.admin}
+            detail="Julian Budd"
           />
           <VirtualLabStatistic
             icon={<CalendarOutlined style={iconStyle} />}
@@ -70,11 +83,7 @@ export default function VirtualLabHomePage() {
           />
         </div>
       </div>
-      <BudgetPanel
-        total={virtualLab.budget.total}
-        totalSpent={virtualLab.budget.totalSpent}
-        remaining={virtualLab.budget.remaining}
-      />
+      <BudgetPanel total={virtualLabDetail.data?.budget || 0} totalSpent={300} remaining={350} />
       <div className="mt-10 flex flex-col gap-5">
         <div className="font-bold uppercase">Discover OBP</div>
         <div className="flex flex-row gap-3">
