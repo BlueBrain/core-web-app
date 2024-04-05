@@ -27,7 +27,6 @@ export function AdminPanelProjectList() {
           Collapse: {
             headerPadding: '20px 0',
             contentPadding: '20px',
-            // contentBg: '#002766',
             colorBorder: '#69C0FF',
           },
         },
@@ -37,7 +36,7 @@ export function AdminPanelProjectList() {
         accordion
         expandIconPosition="end"
         expandIcon={ExpandIcon}
-        className="font-bold"
+        className="font-bold px-[28px]"
         bordered={false}
         items={projects.map((project) => ({
           key: project.id,
