@@ -123,7 +123,7 @@ export default function InformationPanel({
           }}
         >
           <Form
-            className={classNames('divide-y divide-primary-3', className)}
+            className={classNames('px-[28px] divide-y divide-primary-3', className)}
             layout="vertical"
             form={form}
             requiredMark={false}

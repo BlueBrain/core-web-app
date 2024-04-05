@@ -1,0 +1,12 @@
+.flexWithGap {
+  --cols: 3;
+  --gap: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: var(--gap);
+  justify-content: center;
+}
+
+.flexWithGap > div {
+  flex-basis: calc(100% / var(--cols) - var(--gap) / var(--cols) * (var(--cols) - 1));
+}

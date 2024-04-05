@@ -171,9 +171,6 @@ export default function VirtualLabSettingsComponent({
               children: renderTextArea,
               label: 'Description',
               name: 'description',
-              style: {
-                maxWidth: '700px',
-              },
             },
             {
               children: renderInput,
@@ -201,6 +198,37 @@ export default function VirtualLabSettingsComponent({
           billingInfo={virtualLab.billing}
           userIsAdmin={userIsAdmin}
           onChangePlan={changePlan}
+          items={[
+            {
+              type: VirtualLabPlanType.entry,
+              advantages: [...Array(3).keys()].map(
+                () => 'Cras mattis consectetur purus sit amet fermentum.'
+              ),
+              pricePerMonthPerUser: { cost: 0, currency: '$' },
+            },
+            {
+              type: VirtualLabPlanType.beginner,
+              advantages: [...Array(6).keys()].map(
+                () => 'Cras mattis consectetur purus sit amet fermentum.'
+              ),
+              pricePerMonthPerUser: { cost: 40, currency: '$' },
+            },
+            {
+              type: VirtualLabPlanType.intermediate,
+              advantages: [...Array(8).keys()].map(
+                () => 'Cras mattis consectetur purus sit amet fermentum.'
+              ),
+              pricePerMonthPerUser: { cost: 120, currency: '$' },
+            },
+            {
+              type: VirtualLabPlanType.advanced,
+              advantages: [...Array(9).keys()].map(
+                () => 'Cras mattis consectetur purus sit amet fermentum.'
+              ),
+              pricePerMonthPerUser: { cost: 140, currency: '$' },
+              className: '!basis-2/5',
+            },
+          ]}
         />
       ),
       key: 'plan',
@@ -297,7 +325,7 @@ export default function VirtualLabSettingsComponent({
           Collapse: {
             headerBg: 'transparent', // Used in conjunction with "background" style definition below
             headerPadding: '24px 28px',
-            contentPadding: '20px 28px 20px',
+            contentPadding: '20px 0 20px',
             borderRadiusLG: 0,
             contentBg: '#002766',
             colorBorder: '#002766',

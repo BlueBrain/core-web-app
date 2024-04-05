@@ -3,25 +3,35 @@
 import { Button, Form, Modal, Spin } from 'antd';
 import { useState } from 'react';
 
-import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
+import { VirtualLab } from '@/services/virtual-lab/types';
 import { classNames } from '@/util/utils';
 
-export type Plan = Exclude<VirtualLab['plan'], undefined>;
+import Styles from './plan-panel.module.css';
 
-type Props = {
-  currentPlan: Plan;
-  billingInfo: VirtualLab['billing'];
-  userIsAdmin: boolean;
-  onChangePlan: (newPlan: Plan, billingInfo: VirtualLab['billing']) => Promise<void>;
-};
+export type Plan = Exclude<VirtualLab['plan'], undefined>;
 
 type PlanDetails = {
   type: Plan;
   advantages: string[];
   pricePerMonthPerUser: { cost: number; currency: string };
+  className?: string;
 };
 
-export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, billingInfo }: Props) {
+type Props = {
+  currentPlan: Plan;
+  billingInfo: VirtualLab['billing'];
+  items: PlanDetails[];
+  userIsAdmin: boolean;
+  onChangePlan: (newPlan: Plan, billingInfo: VirtualLab['billing']) => Promise<void>;
+};
+
+export default function PlanPanel({
+  currentPlan,
+  items,
+  userIsAdmin,
+  onChangePlan,
+  billingInfo,
+}: Props) {
   const [modal, contextHolder] = Modal.useModal();
   const [form] = Form.useForm<VirtualLab['billing']>();
 
@@ -55,24 +65,31 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
       });
   };
 
-  return savingChanges ? (
-    <Spin data-testid="saving-changes" />
-  ) : (
-    <div data-testid="plans-collapsible-content" className="flex flex-col gap-6">
-      {changePlanError && <p className="text-error">There was an error in switching plans.</p>}
+  if (changePlanError) {
+    return <p className="text-error">There was an error in switching plans.</p>;
+  }
 
-      {PLANS_DETAILS.map((plan) => (
-        <div key={plan.type}>
-          <div
-            data-testid="plan-details"
-            className={classNames(
-              plan.type === selectedPlan
-                ? 'bg-primary-8 text-white'
-                : 'border border-primary-3 text-white',
-              'p-6'
-            )}
-          >
-            <h2 className="mb-4 text-3xl font-bold capitalize">{plan.type}</h2>
+  if (savingChanges) {
+    return <Spin data-testid="saving-changes" />;
+  }
+
+  return (
+    <div data-testid="plans-collapsible-content" className={Styles.flexWithGap}>
+      {items.map((plan) => (
+        <div
+          data-testid="plan-details"
+          className={classNames(
+            'p-6',
+            plan.type === selectedPlan
+              ? 'bg-primary-8 text-white'
+              : 'border border-primary-3 text-white',
+            plan.className
+          )}
+          key={plan.type}
+        >
+          <h2 className="mb-4 text-3xl font-bold capitalize">{plan.type}</h2>
+
+          <div>
             <h6 className="text-sm text-primary-3">Your advantages</h6>
             <ul className="columns-3 px-5 py-3">
               {plan.advantages.map((advantage, index) => (
@@ -95,47 +112,24 @@ export default function PlanPanel({ currentPlan, userIsAdmin, onChangePlan, bill
             {contextHolder}
 
             {plan.type === selectedPlan && <p className="mt-4 font-semibold">Current Selection</p>}
-
-            {userIsAdmin && plan.type !== selectedPlan && plan.type !== currentPlan ? (
-              <Button
-                className="mt-4 rounded-none border border-gray-300"
-                onClick={() => {
-                  setSelectedPlan(plan.type);
-
-                  if (plan.type === 'entry') {
-                    showConfirmationForSwitchingPlan(plan.type);
-                  }
-                }}
-              >
-                Select
-              </Button>
-            ) : null}
           </div>
+
+          {userIsAdmin && plan.type !== selectedPlan && plan.type !== currentPlan && (
+            <Button
+              className="mt-4 rounded-none border border-gray-300"
+              onClick={() => {
+                setSelectedPlan(plan.type);
+
+                if (plan.type === 'entry') {
+                  showConfirmationForSwitchingPlan(plan.type);
+                }
+              }}
+            >
+              Select
+            </Button>
+          )}
         </div>
       ))}
     </div>
   );
 }
-
-export const PLANS_DETAILS: PlanDetails[] = [
-  {
-    type: VirtualLabPlanType.entry,
-    advantages: [...Array(3).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
-    pricePerMonthPerUser: { cost: 0, currency: '$' },
-  },
-  {
-    type: VirtualLabPlanType.beginner,
-    advantages: [...Array(6).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
-    pricePerMonthPerUser: { cost: 40, currency: '$' },
-  },
-  {
-    type: VirtualLabPlanType.intermediate,
-    advantages: [...Array(8).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
-    pricePerMonthPerUser: { cost: 120, currency: '$' },
-  },
-  {
-    type: VirtualLabPlanType.advanced,
-    advantages: [...Array(9).keys()].map(() => 'Cras mattis consectetur purus sit amet fermentum.'),
-    pricePerMonthPerUser: { cost: 140, currency: '$' },
-  },
-];
