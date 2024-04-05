@@ -5,7 +5,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import VirtualLabsList from './VirtualLabsList';
 import sessionAtom from '@/state/session';
 import { createMockVirtualLab } from '__tests__/__utils__/VirtualLab';
-import * as MockVirtualLabModule from '@/services/virtual-lab/virtual-lab-service';
+import * as MockVirtualLabModule from '@/services/virtual-lab';
 import { currentVirtualLabIdAtom } from '@/state/virtual-lab/lab';
 
 jest.mock('@/services/virtual-lab/virtual-lab-service');

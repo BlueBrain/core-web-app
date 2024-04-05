@@ -16,7 +16,7 @@ import PlanPanel, { Plan } from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
-import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
+import VirtualLabService from '@/services/virtual-lab';
 import useNotification from '@/hooks/notifications';
 import { VALID_EMAIL_REGEXP } from '@/util/utils';
 

@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import sessionAtom from '../session';
 import { VirtualLab } from '@/services/virtual-lab/types';
-import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
+import VirtualLabService from '@/services/virtual-lab';
 
 export const currentVirtualLabIdAtom = atom<string | null>(null);
 
