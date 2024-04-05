@@ -31,6 +31,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/',
+    '/virtual-lab',
     '/main',
     '/(build|simulate|simulations|main|explore|experiment-designer|svc|virtual-lab)/(.*)',
   ],
