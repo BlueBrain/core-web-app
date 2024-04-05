@@ -12,15 +12,9 @@ import { Session } from 'next-auth';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import FormPanel from './InformationPanel';
-// import MembersPanel from './MembersPanel';
 import PlanPanel, { Plan } from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
-import {
-  VirtualLab,
-  // NewMember,
-  // VirtualLabMember,
-  VirtualLabPlanType,
-} from '@/services/virtual-lab/types';
+import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
 import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
 import VirtualLabService from '@/services/virtual-lab/virtual-lab-service';
 import useNotification from '@/hooks/notifications';
@@ -104,40 +98,6 @@ export default function VirtualLabSettingsComponent({
         throw err;
       });
   };
-
-  //   const inviteNewMember = async (newMember: NewMember): Promise<void> => {
-  //     return service.inviteNewMember(newMember, virtualLab.id, user).catch((err) => {
-  //       throw err;
-  //     });
-  //   };
-
-  //   const changeMemberRole = async (
-  //     memberToChange: VirtualLabMember,
-  //     newRole: VirtualLabMember['role']
-  //   ) => {
-  //     return service
-  //       .changeRole(memberToChange, newRole, virtualLab.id, user)
-  //       .then((updatedMember) => {
-  //         setVirtualLab({
-  //           ...virtualLab,
-  //           members: virtualLab.members.map((m) =>
-  //             m.email === memberToChange.email ? { ...updatedMember } : { ...m }
-  //           ),
-  //         });
-  //       })
-  //       .catch((err) => {
-  //         throw err;
-  //       });
-  //   };
-
-  //   const removeMember = async (member: VirtualLabMember) => {
-  //     return service.removeMember(member, virtualLab.id, user).then(() => {
-  //       setVirtualLab({
-  //         ...virtualLab,
-  //         members: virtualLab.members.filter((m) => m.email !== member.email),
-  //       });
-  //     });
-  //   };
 
   const deleteVirtualLab = async () => {
     return service.deleteVirtualLab(user, virtualLab.id).then(() => {
@@ -234,20 +194,6 @@ export default function VirtualLabSettingsComponent({
       key: 'settings',
       title: 'Lab Settings',
     },
-    //     {
-    //       content: (
-    //         <MembersPanel
-    //           members={virtualLab.members}
-    //           userIsAdmin={userIsAdmin}
-    //           currentUser={user}
-    //           onRemoveMember={removeMember}
-    //           onAddMember={inviteNewMember}
-    //           onChangeRole={changeMemberRole}
-    //         />
-    //       ),
-    //       key: 'members',
-    //       title: 'Members',
-    //     },
     {
       content: (
         <PlanPanel
@@ -268,6 +214,7 @@ export default function VirtualLabSettingsComponent({
     {
       content: (
         <FormPanel
+          className="grid grid-cols-2"
           initialValues={{
             organization: virtualLab.billing.organization,
             firstname: virtualLab.billing.firstname,
@@ -281,6 +228,7 @@ export default function VirtualLabSettingsComponent({
           save={saveInformation}
           items={[
             {
+              className: 'col-span-2',
               children: renderInput,
               label: 'Organization',
               name: 'organization',
@@ -299,6 +247,7 @@ export default function VirtualLabSettingsComponent({
               required: true,
             },
             {
+              className: 'col-span-2',
               children: renderInput,
               label: 'Address',
               name: 'address',
@@ -315,18 +264,6 @@ export default function VirtualLabSettingsComponent({
               label: 'Country',
               name: 'country',
               required: true,
-            },
-            {
-              children: renderInput,
-              label: 'Reference email',
-              name: 'referenceEMail',
-              rules: [
-                {
-                  required: true, // TODO: Can this be un-nested from "rules"?
-                  pattern: VALID_EMAIL_REGEXP,
-                  message: 'Entered value is not the correct email format',
-                },
-              ],
             },
           ]}
         />

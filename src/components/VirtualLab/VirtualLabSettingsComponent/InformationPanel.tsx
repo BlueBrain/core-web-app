@@ -5,6 +5,7 @@ import type { TextAreaProps } from 'antd/lib/input/TextArea';
 import { ReactNode, useEffect, useState } from 'react';
 import EditIcon from '@/components/icons/Edit';
 import { VirtualLab } from '@/services/virtual-lab/types';
+import { classNames } from '@/util/utils';
 
 type RenderInputProps = Omit<FormItemProps, 'children'> & {
   children: (props: InputProps & TextAreaProps) => ReactNode;
@@ -12,15 +13,22 @@ type RenderInputProps = Omit<FormItemProps, 'children'> & {
 };
 
 type Props = {
-  items: Array<RenderInputProps>;
-  initialValues: Partial<VirtualLab> | VirtualLab['billing'];
   allowEdit: boolean;
+  className?: string;
+  initialValues: Partial<VirtualLab> | VirtualLab['billing'];
+  items: Array<RenderInputProps>;
   save: (update: Partial<VirtualLab>) => Promise<void>;
 };
 
 type InformationForm = { name: string; description: string; referenceEMail: string };
 
-export default function InformationPanel({ initialValues, allowEdit, save, items }: Props) {
+export default function InformationPanel({
+  allowEdit,
+  className,
+  initialValues,
+  items,
+  save,
+}: Props) {
   const [editMode, setEditMode] = useState(false);
   const [savingChanges, setSavingChanges] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -62,6 +70,7 @@ export default function InformationPanel({ initialValues, allowEdit, save, items
   };
 
   const values = Form.useWatch([], form);
+
   useEffect(() => {
     form
       .validateFields({ validateOnly: true })
@@ -76,30 +85,7 @@ export default function InformationPanel({ initialValues, allowEdit, save, items
   return (
     <ConfigProvider
       theme={{
-        token: {
-          colorBgContainer: 'transparent',
-          colorBgContainerDisabled: 'transparent',
-          colorBorder: 'transparent',
-          colorTextDisabled: '#003A8C',
-          colorText: '#003A8C',
-          controlPaddingHorizontal: 0,
-          lineWidth: 0,
-          borderRadius: 0,
-        },
         components: {
-          Form: {
-            verticalLabelPadding: 0,
-            labelColor: '#BFBFBF',
-          },
-          Input: {
-            paddingInline: 0,
-            paddingBlock: 1,
-            hoverBorderColor: 'transparent',
-            addonBg: 'transparent',
-            // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
-            fontSize: 20,
-            fontSizeLG: 20,
-          },
           Button: {
             defaultShadow: 'none',
           },
@@ -114,44 +100,66 @@ export default function InformationPanel({ initialValues, allowEdit, save, items
             components: {
               Form: {
                 labelColor: '#69C0FF',
+                itemMarginBottom: 3,
+                verticalLabelPadding: 0,
               },
               Input: {
                 activeBg: 'transparent',
+                addonBg: 'transparent',
                 borderRadius: 0,
                 colorBgContainer: 'transparent',
+                colorBorder: 'transparent',
                 colorText: '#fff',
                 colorTextDisabled: '#fff',
                 colorTextPlaceholder: '#8C8C8C',
+                // Antd uses `fontSizeLG` when no suffix/prefix icons are shown, and `fontSize` when these icons are shown. In both these cases, we want the same font size for our UI.
+                fontSize: 16,
+                fontSizeLG: 16,
+                hoverBorderColor: 'transparent',
+                paddingInline: 0,
+                paddingBlock: 0,
               },
             },
           }}
         >
-          <Form layout="vertical" form={form} requiredMark={false} initialValues={initialValues}>
+          <Form
+            className={classNames('divide-y divide-primary-3', className)}
+            layout="vertical"
+            form={form}
+            requiredMark={false}
+            initialValues={initialValues}
+          >
             {saveError && <p className="text-error">There was an error in saving information.</p>}
-            {items.map(({ children, label, name, required, rules, type }) => {
-              return (
-                <Form.Item
-                  key={name}
-                  name={name}
-                  label={required ? `${label}*` : label}
-                  validateTrigger="onBlur"
-                  rules={[{ ...rules, required }]}
-                  className={`w-full ${editMode ? 'border-b' : ''}`}
-                  required={required}
-                >
-                  {children({
-                    addonAfter: editButton,
-                    className: `${editMode ? 'font-bold border border-gray-200 px-3' : ''}`,
-                    disabled: !editMode,
-                    placeholder: `${label}...`, // TODO: Come up with a system for more intelligent placeholder text
-                    readOnly: !editMode,
-                    style: { fontWeight: 'light', width: showEditPrompts ? `50%` : '100%' },
-                    title: form.getFieldValue(name),
-                    type, // TODO: I'm not sure that "type" is actually being attached to the rendered Input
-                  })}
-                </Form.Item>
-              );
-            })}
+            {items.map(
+              ({ className: itemClassName, children, label, name, required, rules, type }) => {
+                return (
+                  <Form.Item
+                    key={name}
+                    name={name}
+                    label={required ? `${label}*` : label}
+                    validateTrigger="onBlur"
+                    rules={[{ ...rules, required }]}
+                    className={classNames(
+                      `w-full pb-1 pt-8`,
+                      editMode ? 'border-b' : '',
+                      itemClassName
+                    )}
+                    required={required}
+                  >
+                    {children({
+                      addonAfter: editButton,
+                      className: `${editMode ? 'font-bold border border-gray-200 px-3' : ''}`,
+                      disabled: !editMode,
+                      placeholder: `${label}...`, // TODO: Come up with a system for more intelligent placeholder text
+                      readOnly: !editMode,
+                      style: { fontWeight: 'light', width: showEditPrompts ? `50%` : '100%' }, // TODO: Check whether this breaks the layout
+                      title: form.getFieldValue(name),
+                      type, // TODO: I'm not sure that "type" is actually being attached to the rendered Input (see "email")
+                    })}
+                  </Form.Item>
+                );
+              }
+            )}
 
             {editMode && (
               <Form.Item>
