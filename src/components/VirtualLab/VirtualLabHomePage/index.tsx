@@ -2,7 +2,8 @@
 
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
-import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
+import { CalendarOutlined, EditOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 
 import VirtualLabStatistic from '../VirtualLabStatistic';
 import DiscoverObpItem from './DiscoverObpItem';
@@ -17,7 +18,6 @@ import { mockMembers } from '@/components/VirtualLab/mockData/members';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 import { mockVirtualLab } from '@/components/VirtualLab/mockData/lab';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
-import Spinner from '@/components/Spinner';
 import Styles from './home-page.module.css';
 
 type Props = {
@@ -30,12 +30,19 @@ export default function VirtualLabHomePage({ id }: Props) {
   const projects = mockProjects;
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
-  console.log(virtualLabDetail);
   if (virtualLabDetail.state === 'loading') {
-    return <Spinner />;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
   }
   if (virtualLabDetail.state === 'hasError') {
-    return <div>Something went wrong</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="rounded-lg border p-8">Virtual Lab not found</div>
+      </div>
+    );
   }
   return (
     <div>
