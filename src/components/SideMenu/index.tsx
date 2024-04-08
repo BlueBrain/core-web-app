@@ -29,10 +29,10 @@ export default function SideMenu({ links, current, lab }: Props) {
 
   const linkClassName = (linkKey: string) => {
     let baseClass = 'flex w-full items-center justify-between capitalize';
-    if (expanded) baseClass += ' border border-white';
+    if (expanded) baseClass += ' border border-primary-4';
     if (current === linkKey && !expanded)
       baseClass += ' rounded-full bg-primary-5 px-[1px] py-4 text-primary-9';
-    if (current === linkKey && expanded) baseClass = 'hidden';
+    if ((current === linkKey || linkKey === 'literature') && expanded) baseClass = 'hidden';
     return baseClass;
   };
 
@@ -48,21 +48,30 @@ export default function SideMenu({ links, current, lab }: Props) {
     >
       <div
         className={classNames(
-          'my-5 w-full border border-green-400 font-semibold text-white',
+          'my-5 w-full font-semibold text-white',
           expanded ? 'flex-row' : 'flex items-center gap-x-3.5',
           !expanded && 'rotate-180 transform cursor-e-resize [writing-mode:vertical-rl]'
         )}
         role="presentation"
       >
         {links.map((link) => (
-          <div className="flex w-full flex-col items-start border border-primary-5" key={link.key}>
-            {expanded && <span className="mb-2 text-sm text-white">Label</span>}
+          <div className="flex w-full flex-col items-start" key={link.key}>
+            {expanded && <span className="mb-2 text-sm uppercase text-white">{link.label}</span>}
             <Link href={link.href} className={linkClassName(link.key)}>
               {link.content}
               {expanded && <ArrowRightOutlined className="ml-2" />}
             </Link>
           </div>
         ))}
+        {lab && expanded && (
+          <div className="flex w-full flex-col items-start" key={lab.key}>
+            {expanded && <span className="mb-2 text-sm uppercase text-white">{lab.label}</span>}
+            <Link href={lab.href} className={linkClassName(lab.key)}>
+              {lab.content}
+              {expanded && <ArrowRightOutlined className="ml-2" />}
+            </Link>
+          </div>
+        )}
       </div>
       <Button
         type="text"

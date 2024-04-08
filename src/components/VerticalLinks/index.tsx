@@ -5,6 +5,7 @@ export type LinkItem = {
   key: string;
   content: string | ReactNode;
   href: string;
+  label?: string;
 };
 
 type Props = {

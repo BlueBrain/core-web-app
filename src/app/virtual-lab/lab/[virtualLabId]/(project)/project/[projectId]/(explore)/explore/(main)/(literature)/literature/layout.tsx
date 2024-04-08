@@ -27,6 +27,7 @@ export default function GenericLayout({ children, params }: LiteratureLayoutProp
             links={[
               {
                 key: 'project',
+                label: 'Project',
                 href: '/virtual-lab/lab/test/project/test',
                 content: params.projectId,
               },
@@ -44,6 +45,7 @@ export default function GenericLayout({ children, params }: LiteratureLayoutProp
             current="explore"
             lab={{
               key: 'virtualLab',
+              label: 'Virtual Lab',
               href: '/virtual-lab/lab/test',
               content: params.virtualLabId,
             }}
