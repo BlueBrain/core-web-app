@@ -271,11 +271,7 @@ export default function ApplicationSidebar({
   );
 }
 
-
-
-export function ApplicationSidebarWrapper({
-  children,
-}: {children: ReactNode}) {
+export function ApplicationSidebarWrapper({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
 

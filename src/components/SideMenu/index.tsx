@@ -3,7 +3,10 @@ import { useReducer, useRef } from 'react';
 import { Button } from 'antd';
 import { HomeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { LinkItem } from '../VerticalLinks';
-import {ApplicationSidebarHeader, ApplicationSidebarWrapper} from '@/components/ApplicationSidebar';
+import {
+  ApplicationSidebarHeader,
+  ApplicationSidebarWrapper,
+} from '@/components/ApplicationSidebar';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
 
@@ -23,7 +26,7 @@ export function VlabLinks({ children }: any) {
     <div
       className={classNames(
         'relative my-1 flex w-full items-center',
-        !expanded ? 'flex-col items-start gap-2' : 'justify-between flex-col'
+        !expanded ? 'flex-col items-start gap-2' : 'flex-col justify-between'
       )}
     >
       <div
@@ -54,13 +57,12 @@ export function VlabLinks({ children }: any) {
   );
 }
 
-
 export function VlabSidebar({ links, current, lab }: Props) {
-  console.log("VlabSidebar links", links, "current", current, "lab", lab);
+  console.log('VlabSidebar links', links, 'current', current, 'lab', lab);
   return (
     <ApplicationSidebarWrapper>
-        <VlabLinks>
-          {links.map((link) => (
+      <VlabLinks>
+        {links.map((link) => (
           <Link
             key={link.key}
             href={link.href}
@@ -76,7 +78,7 @@ export function VlabSidebar({ links, current, lab }: Props) {
       </VlabLinks>
     </ApplicationSidebarWrapper>
   );
-};
+}
 
 export default function SideMenu({ links, current, lab }: Props) {
   const ref = useRef<HTMLDivElement>(null);

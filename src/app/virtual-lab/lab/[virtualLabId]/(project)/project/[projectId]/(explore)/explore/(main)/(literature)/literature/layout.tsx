@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import SideMenu, {VlabSidebar} from '@/components/SideMenu';
+import SideMenu, { VlabSidebar } from '@/components/SideMenu';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 
