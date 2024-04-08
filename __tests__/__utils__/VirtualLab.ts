@@ -1,4 +1,4 @@
-import { VirtualLab } from '@/services/virtual-lab/types';
+import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
 
 export const createMockVirtualLab = (id: string, extra?: Partial<VirtualLab>): VirtualLab => ({
   id,
@@ -25,8 +25,9 @@ export const createMockVirtualLab = (id: string, extra?: Partial<VirtualLab>): V
       lastActive: Date.now(),
     },
   ],
-  plan: 'beginner',
+  plan: VirtualLabPlanType.entry,
   billing: {
+    organization: 'International Secret Intelligence Service',
     firstname: 'Malory',
     lastname: 'Archer',
     address: '456 Popeyes Suds and Duds',

@@ -1,10 +1,81 @@
 'use client';
 
-import { ConfigProvider } from 'antd';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Collapse, ConfigProvider } from 'antd';
+import { PlusOutlined, SearchOutlined, MinusOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 
+// TODO: Consolodate this with the ExpandIcon in @/components/VirtualLab/VirtualLabSettingsComponent
+function ExpandIcon({ isActive }: { isActive?: boolean }) {
+  return isActive ? (
+    <MinusOutlined style={{ fontSize: '14px' }} />
+  ) : (
+    <PlusOutlined style={{ fontSize: '14px' }} />
+  );
+}
+
+export function AdminPanelProjectList() {
+  const projects = mockProjects;
+
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorText: '#fff',
+        },
+        components: {
+          Collapse: {
+            headerPadding: '20px 0',
+            contentPadding: '20px',
+            colorBorder: '#69C0FF',
+          },
+        },
+      }}
+    >
+      <Collapse
+        accordion
+        expandIconPosition="end"
+        expandIcon={ExpandIcon}
+        className="px-[28px] font-bold"
+        bordered={false}
+        items={projects.map((project) => ({
+          key: project.id,
+          label: (
+            <div className="flex items-center justify-between">
+              <h4 className="text-xl font-bold">{project.title}</h4>
+              <div className="flex items-center gap-1 text-lg font-light">
+                <span>{project.budget.totalSpent}</span>
+                <span className="text-primary-3">out of</span>
+                <span>{project.budget.total}</span>
+              </div>
+            </div>
+          ),
+          children: (
+            <div className="flex flex-col gap-2 text-white">
+              <div className="font-medium uppercase">Completed jobs:</div>
+              <div className="flex gap-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="items-center justify-center rounded bg-white p-2 font-mono text-primary-9">
+                    {project.builds}
+                  </span>
+                  <span className="font-light">Build</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="items-center justify-center rounded bg-white p-2 font-mono text-primary-9">
+                    {project.simulationExperiments}
+                  </span>
+                  <span className="font-light">Simulate</span>
+                </div>
+              </div>
+            </div>
+          ),
+        }))}
+      />
+    </ConfigProvider>
+  );
+}
+
+// TODO: Remove this component (I don't think it's being used anywhere)
 export default function VirtualLabProjectList() {
   const projects = mockProjects;
 

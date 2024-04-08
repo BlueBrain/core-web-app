@@ -8,6 +8,7 @@ export interface VirtualLab {
   members: VirtualLabMember[];
   plan?: VirtualLabPlanType;
   billing: {
+    organization: string;
     firstname: string;
     lastname: string;
     address: string;
@@ -17,7 +18,12 @@ export interface VirtualLab {
   };
 }
 
-export type VirtualLabPlanType = 'entry' | 'beginner' | 'intermediate' | 'advanced';
+export enum VirtualLabPlanType {
+  entry = 'entry',
+  beginner = 'beginner',
+  intermediate = 'intermediate',
+  advanced = 'advanced',
+}
 
 const VirtualLabMemberTypeDef: TypeDef = {
   name: 'string',

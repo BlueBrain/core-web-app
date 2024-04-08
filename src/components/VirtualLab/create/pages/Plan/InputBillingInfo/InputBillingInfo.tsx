@@ -46,6 +46,12 @@ export function InputBillingInfo({ className, onValidityChange }: InputBillingIn
 const RX_NAME = '[\\p{L}].*';
 
 const FIELDS: Record<KeysOfType<VirtualLab['billing'], string>, FieldType> = {
+  organization: {
+    required: true,
+    label: 'Organization',
+    placeholder: 'Enter your organization...',
+    title: 'Should start with a letter',
+  },
   firstname: {
     required: true,
     label: 'First name',
