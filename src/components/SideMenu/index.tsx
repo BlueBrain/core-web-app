@@ -1,14 +1,9 @@
 import Link from 'next/link';
 import { useReducer, useRef } from 'react';
-import { Button } from 'antd';
-import { HomeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { HomeOutlined } from '@ant-design/icons';
 import { LinkItem } from '../VerticalLinks';
-import {
-  ApplicationSidebarHeader,
-  ApplicationSidebarWrapper,
-} from '@/components/ApplicationSidebar';
+import { ApplicationSidebarHeader } from '@/components/ApplicationSidebar';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
-import { classNames } from '@/util/utils';
 
 type Props = {
   links: LinkItem[];
@@ -18,66 +13,6 @@ type Props = {
 
 function MainSidebarHeader({ expanded }: { expanded: boolean }) {
   return expanded ? <span>OBP</span> : <span>Menu</span>;
-}
-
-export function VlabLinks({ children }: any) {
-  const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
-  return (
-    <div
-      className={classNames(
-        'relative my-1 flex w-full items-center',
-        !expanded ? 'flex-col items-start gap-2' : 'flex-col justify-between'
-      )}
-    >
-      <div
-        className={classNames(
-          'order-1 text-2xl font-bold',
-          !expanded &&
-            'relative top-10 order-2 -scale-100 transform text-lg [writing-mode:vertical-lr]'
-        )}
-      >
-        {children}
-      </div>
-      <Button
-        type="text"
-        onClick={toggleExpand}
-        className={classNames(
-          'z-20 order-2 border-none bg-transparent',
-          !expanded && 'absolute top-0 order-1'
-        )}
-        icon={
-          expanded ? (
-            <MinusOutlined className="text-sm text-white" />
-          ) : (
-            <PlusOutlined className="h-[14px] w-[14px] text-sm text-white" />
-          )
-        }
-      />
-    </div>
-  );
-}
-
-export function VlabSidebar({ links, current, lab }: Props) {
-  console.log('VlabSidebar links', links, 'current', current, 'lab', lab);
-  return (
-    <ApplicationSidebarWrapper>
-      <VlabLinks>
-        {links.map((link) => (
-          <Link
-            key={link.key}
-            href={link.href}
-            className={
-              current === link.key
-                ? `rounded-full bg-primary-5 p-2 capitalize text-primary-9`
-                : 'capitalize'
-            }
-          >
-            {link.content}
-          </Link>
-        ))}
-      </VlabLinks>
-    </ApplicationSidebarWrapper>
-  );
 }
 
 export default function SideMenu({ links, current, lab }: Props) {
