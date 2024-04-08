@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { useReducer, useRef } from 'react';
-import { HomeOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { HomeOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { LinkItem } from '../VerticalLinks';
-import { ApplicationSidebarHeader } from '@/components/ApplicationSidebar';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
+import { classNames } from '@/util/utils';
 
 type Props = {
   links: LinkItem[];
@@ -11,14 +12,9 @@ type Props = {
   lab?: LinkItem;
 };
 
-function MainSidebarHeader({ expanded }: { expanded: boolean }) {
-  return expanded ? <span>OBP</span> : <span>Menu</span>;
-}
-
 export default function SideMenu({ links, current, lab }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
-  const title = MainSidebarHeader;
 
   useOnClickOutside(
     ref,
@@ -33,7 +29,6 @@ export default function SideMenu({ links, current, lab }: Props) {
 
   return (
     <div className="flex h-full w-[40px] flex-col items-center justify-between border-r border-primary-7 px-7 py-2 text-lg font-semibold">
-      <ApplicationSidebarHeader {...{ title, expanded, toggleExpand }} />
       <div
         className="my-5 flex items-center gap-x-3.5 text-white"
         style={{
@@ -57,6 +52,18 @@ export default function SideMenu({ links, current, lab }: Props) {
           </Link>
         ))}
       </div>
+      <Button
+        type="text"
+        onClick={toggleExpand}
+        className={classNames('absolute top-0 z-20 order-2', !expanded && 'order-1')}
+        icon={
+          expanded ? (
+            <MinusOutlined className="text-sm text-white" />
+          ) : (
+            <PlusOutlined className="h-[14px] w-[14px] text-sm text-white" />
+          )
+        }
+      />
       {lab && (
         <div className="text-primary-3">
           <Link

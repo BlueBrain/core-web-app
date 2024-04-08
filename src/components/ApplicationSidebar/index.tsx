@@ -187,7 +187,7 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
   );
 }
 
-export function ApplicationSidebarHeader({
+function ApplicationSidebarHeader({
   title,
   expanded,
   toggleExpand,
