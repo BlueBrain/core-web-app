@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useReducer, useRef } from 'react';
 import { Button } from 'antd';
-import { HomeOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { HomeOutlined, PlusOutlined, MinusOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { LinkItem } from '../VerticalLinks';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
@@ -46,17 +46,20 @@ export default function SideMenu({ links, current, lab }: Props) {
         role="presentation"
       >
         {links.map((link) => (
-          <Link
-            key={link.key}
-            href={link.href}
-            className={
-              current === link.key
-                ? `rounded-full bg-primary-5 px-[1px] py-4 capitalize text-primary-9`
-                : 'capitalize'
-            }
-          >
-            {link.content}
-          </Link>
+          <div className="flex w-full flex-col items-start" key={link.key}>
+            {expanded && <span className="mb-2 text-sm text-white">Label</span>}
+            <Link
+              href={link.href}
+              className={
+                current === link.key
+                  ? `flex w-full items-center justify-between rounded-full bg-primary-5 px-[1px] py-4 capitalize text-primary-9 ${expanded ? 'border border-white' : ''}`
+                  : `flex w-full items-center justify-between capitalize ${expanded ? 'border border-white' : ''}`
+              }
+            >
+              {link.content}
+              {expanded && <ArrowRightOutlined className="ml-2" />}
+            </Link>
+          </div>
         ))}
       </div>
       <Button
