@@ -28,9 +28,17 @@ export default function SideMenu({ links, current, lab }: Props) {
   );
 
   return (
-    <div className="flex h-full w-[40px] flex-col items-center justify-between border-r border-primary-7 px-7 py-2 text-lg font-semibold">
+    <div
+      ref={ref}
+      className={classNames(
+        'relative h-screen bg-primary-9 text-light transition-transform ease-in-out',
+        expanded
+          ? 'flex w-80 flex-col items-start justify-start px-5 shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
+          : 'flex w-10 flex-col items-center justify-between pt-6 transition-transform ease-in-out will-change-auto'
+      )}
+    >
       <div
-        className="my-5 flex items-center gap-x-3.5 text-white"
+        className="my-5 flex items-center gap-x-3.5 font-semibold text-white"
         style={{
           writingMode: 'vertical-rl',
           transform: 'rotate(180deg)',
@@ -44,7 +52,7 @@ export default function SideMenu({ links, current, lab }: Props) {
             href={link.href}
             className={
               current === link.key
-                ? `rounded-full bg-primary-5 p-2 capitalize text-primary-9`
+                ? `rounded-full bg-primary-5 px-[1px] py-4 capitalize text-primary-9`
                 : 'capitalize'
             }
           >
@@ -55,7 +63,7 @@ export default function SideMenu({ links, current, lab }: Props) {
       <Button
         type="text"
         onClick={toggleExpand}
-        className={classNames('absolute top-0 z-20 order-2', !expanded && 'order-1')}
+        className={classNames('absolute top-1 z-20 order-2', !expanded && 'order-1')}
         icon={
           expanded ? (
             <MinusOutlined className="text-sm text-white" />
@@ -65,7 +73,7 @@ export default function SideMenu({ links, current, lab }: Props) {
         }
       />
       {lab && (
-        <div className="text-primary-3">
+        <div className="absolute bottom-0 z-20 mb-4 mt-auto flex w-[calc(100%-2.5rem)] flex-col items-center justify-center bg-primary-9 text-primary-3">
           <Link
             key={lab.key}
             href={lab.href}
