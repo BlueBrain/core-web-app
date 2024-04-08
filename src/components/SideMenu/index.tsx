@@ -89,7 +89,7 @@ export default function SideMenu({ links, current, lab }: Props) {
           )
         }
       />
-      {lab && (
+      {lab && !expanded && (
         <div className="absolute bottom-0 z-20 mb-4 mt-auto flex w-[calc(100%-2.5rem)] flex-col items-center justify-center bg-primary-9 text-primary-3">
           <Link
             key={lab.key}
