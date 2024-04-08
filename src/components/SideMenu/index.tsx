@@ -49,14 +49,16 @@ export default function SideMenu({ links, current, lab }: Props) {
       <div
         className={classNames(
           'my-5 w-full font-semibold text-white',
-          expanded ? 'mt-10 flex-row' : 'flex items-center gap-x-3.5',
+          expanded ? 'mt-14 flex-row' : 'flex items-center gap-x-3.5',
           !expanded && 'rotate-180 transform cursor-e-resize [writing-mode:vertical-rl]'
         )}
         role="presentation"
       >
         {lab && expanded && (
           <div className="my-4 flex w-full flex-col items-start" key={lab.key}>
-            {expanded && <span className="text-sm uppercase text-white">{lab.label}</span>}
+            {expanded && (
+              <span className="text-lg font-thin uppercase text-primary-4">{lab.label}</span>
+            )}
             <Link href={lab.href} className={linkClassName(lab.key)}>
               {lab.content}
               {expanded && <ArrowRightOutlined className="ml-2" />}
@@ -65,7 +67,9 @@ export default function SideMenu({ links, current, lab }: Props) {
         )}
         {links.map((link) => (
           <div className="flex w-full flex-col items-start" key={link.key}>
-            {expanded && <span className="text-sm uppercase text-white">{link.label}</span>}
+            {expanded && (
+              <span className="text-lg font-thin uppercase text-primary-4">{link.label}</span>
+            )}
             <Link href={link.href} className={linkClassName(link.key)}>
               {link.content}
               {expanded && <ArrowRightOutlined className="ml-2" />}
@@ -76,7 +80,7 @@ export default function SideMenu({ links, current, lab }: Props) {
       <Button
         type="text"
         onClick={toggleExpand}
-        className={classNames('absolute top-1 z-20 order-2', !expanded && 'order-1')}
+        className={classNames('absolute top-1 z-20 order-2', expanded && 'right-1 top-5')}
         icon={
           expanded ? (
             <MinusOutlined className="text-sm text-white" />
