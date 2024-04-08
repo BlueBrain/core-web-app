@@ -10,5 +10,5 @@ export default function VirtualLabSettingsPage({
   params,
 }: ServerSideComponentProp<{ virtualLabId: string }>) {
   const { virtualLabId } = params;
-  return <VirtualLabHomePage id="ba512c55-c579-4403-8075-7534a838912c" />;
+  return <VirtualLabHomePage id={virtualLabId} />;
 }
