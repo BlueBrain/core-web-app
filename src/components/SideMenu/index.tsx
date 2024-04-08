@@ -38,12 +38,11 @@ export default function SideMenu({ links, current, lab }: Props) {
       )}
     >
       <div
-        className="my-5 flex items-center gap-x-3.5 font-semibold text-white"
-        style={{
-          writingMode: 'vertical-rl',
-          transform: 'rotate(180deg)',
-          cursor: 'e-resize',
-        }}
+        className={classNames(
+          'my-5 font-semibold text-white',
+          expanded ? 'flex-row' : 'flex items-center gap-x-3.5',
+          !expanded && 'rotate-180 transform cursor-e-resize [writing-mode:vertical-rl]'
+        )}
         role="presentation"
       >
         {links.map((link) => (
