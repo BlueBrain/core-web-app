@@ -79,7 +79,7 @@ export default function VirtualLabHomePage({ id }: Props) {
           <VirtualLabStatistic
             icon={<CalendarOutlined style={iconStyle} />}
             title="Creation date"
-            detail={virtualLab.creationDate}
+            detail={virtualLab.created_at}
           />
         </div>
       </div>
