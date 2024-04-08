@@ -1,4 +1,4 @@
-import { Suspense, useReducer, useRef } from 'react';
+import { Suspense, useReducer, useRef, ReactNode } from 'react';
 import { Button } from 'antd';
 import Link from 'next/link';
 import kebabCase from 'lodash/kebabCase';
@@ -187,7 +187,7 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
   );
 }
 
-function ApplicationSidebarHeader({
+export function ApplicationSidebarHeader({
   title,
   expanded,
   toggleExpand,
@@ -267,6 +267,40 @@ export default function ApplicationSidebar({
           {navigation?.({ expanded })}
         </div>
       )}
+    </div>
+  );
+}
+
+
+
+export function ApplicationSidebarWrapper({
+  children,
+}: {children: ReactNode}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
+
+  useOnClickOutside(
+    ref,
+    () => {
+      if (expanded) toggleExpand();
+    },
+    ['mousedown', 'touchstart'],
+    (event) => {
+      return event && (event.target as HTMLElement)?.closest('.ant-modal-root');
+    }
+  );
+
+  return (
+    <div
+      ref={ref}
+      className={classNames(
+        'relative h-screen bg-primary-9 text-light transition-transform ease-in-out',
+        expanded
+          ? 'flex w-80 flex-col items-start justify-start px-5 shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
+          : 'flex w-10 flex-col items-center justify-between transition-transform ease-in-out will-change-auto'
+      )}
+    >
+      {children}
     </div>
   );
 }

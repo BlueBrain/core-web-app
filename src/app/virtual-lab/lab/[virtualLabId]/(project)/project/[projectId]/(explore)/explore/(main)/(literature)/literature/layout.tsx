@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import SideMenu from '@/components/SideMenu';
+import SideMenu, {VlabSidebar} from '@/components/SideMenu';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 
@@ -23,7 +23,7 @@ export default function GenericLayout({ children, params }: LiteratureLayoutProp
     <div className="grid h-screen grid-cols-[min-content_min-content_auto] grid-rows-1">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="flex flex-row gap-4">
-          <SideMenu
+          <VlabSidebar
             links={[
               {
                 key: 'project',
@@ -42,7 +42,7 @@ export default function GenericLayout({ children, params }: LiteratureLayoutProp
               },
             ]}
             current="explore"
-            home={{
+            lab={{
               key: 'virtualLab',
               href: '/virtual-lab/lab/test',
               content: params.virtualLabId,
