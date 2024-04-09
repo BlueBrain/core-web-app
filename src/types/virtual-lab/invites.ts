@@ -1,24 +1,15 @@
-export interface InviteResponse {
-  message: string;
-  data: {
-    virtual_lab_id: string;
-    project_id?: string;
-    origin: 'Lab' | 'Project';
-  };
-}
+import { VlmResponse } from './common';
 
-export interface InviteError {
-  error_code: string;
-  message: string;
-  details: string | null;
-}
+type InviteData = {
+  virtual_lab_id: string;
+  project_id?: string;
+  origin: 'Lab' | 'Project';
+};
 
-export function isVlmResponse(response: any): response is InviteResponse {
+export type InviteResponse = VlmResponse<InviteData>;
+
+export function isVlmInviteResponse(response: any): response is InviteResponse {
   return response?.data?.origin && response?.data?.virtual_lab_id;
-}
-
-export function isInviteError(response: any): response is InviteError {
-  return response?.error_code && response?.message;
 }
 
 export enum InviteErrorCodes {

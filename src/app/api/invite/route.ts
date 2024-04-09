@@ -4,13 +4,8 @@ import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 import { captureException } from '@sentry/nextjs';
 import { Session } from 'next-auth';
 import { authOptions } from '@/auth';
-import {
-  InviteError,
-  InviteErrorCodes,
-  InviteResponse,
-  isInviteError,
-  isVlmResponse,
-} from '@/types/virtual-lab/invites';
+import { InviteErrorCodes, InviteResponse, isVlmInviteResponse } from '@/types/virtual-lab/invites';
+import { VlmError, isVlmError } from '@/types/virtual-lab/common';
 
 export async function GET(req: NextRequest): Promise<any> {
   const session = await getServerSession(authOptions);
@@ -27,7 +22,7 @@ export async function GET(req: NextRequest): Promise<any> {
   }
 
   const response = await processInvite(session.accessToken, inviteToken);
-  if (!isVlmResponse(response)) {
+  if (!isVlmInviteResponse(response)) {
     const url = getErrorUrl(response, session, inviteToken);
     return NextResponse.redirect(new URL(url, req.url));
   }
@@ -57,7 +52,7 @@ export async function GET(req: NextRequest): Promise<any> {
 const baseRedirectUrl = '/?errorcode=';
 
 const getErrorUrl = (
-  response: InviteError | any,
+  response: VlmError | any,
   session: Session | null,
   inviteToken: string | null
 ): string => {
@@ -73,7 +68,7 @@ const getErrorUrl = (
     return `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}`;
   }
 
-  if (isInviteError(response)) {
+  if (isVlmError(response)) {
     captureException(new Error(`User invite could not be accepted because of VLM Error`), {
       extra: { vliError: response, username: session?.user?.name, invite: inviteToken },
     });
@@ -97,7 +92,7 @@ const getErrorUrl = (
 const processInvite = async (
   sessionToken: string,
   inviteToken: string
-): Promise<InviteResponse | InviteError> => {
+): Promise<InviteResponse | VlmError> => {
   return fetch(`http://localhost:8000/invites?token=${inviteToken}`, {
     method: 'POST',
     headers: {
@@ -105,7 +100,7 @@ const processInvite = async (
       Accept: 'application/json',
       Authorization: `Bearer ${sessionToken}`,
     },
-  }).then<InviteResponse | InviteError>((response) => {
+  }).then<InviteResponse | VlmError>((response) => {
     return response.json();
   });
 };
