@@ -35,7 +35,7 @@ export default function AcceptInviteErrorDialog({ errorCode }: { errorCode: stri
   }, []);
 
   return (
-    <Modal open={open} onCancel={() => setOpen(false)} footer={null}>
+    <Modal open={open} onCancel={() => setOpen(false)} footer={null} centered>
       {getInviteErrorMessage(errorCode)}
     </Modal>
   );
