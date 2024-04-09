@@ -83,6 +83,8 @@ export const env = createEnv({
     NEXT_PUBLIC_LICENSE_ES_VIEW_ORG: z.string().min(1),
     NEXT_PUBLIC_LICENSE_ES_VIEW_PROJECT: z.string().min(1),
     NEXT_PUBLIC_LICENSE_ES_VIEW_ID: z.string().url(),
+
+    NEXT_PUBLIC_VIRTUAL_LAB_API_URL: z.string().url()
   },
 
   experimental__runtimeEnv: {
@@ -153,5 +155,7 @@ export const env = createEnv({
     NEXT_PUBLIC_LICENSE_ES_VIEW_ORG: process.env.NEXT_PUBLIC_LICENSE_ES_VIEW_ORG,
     NEXT_PUBLIC_LICENSE_ES_VIEW_PROJECT: process.env.NEXT_PUBLIC_LICENSE_ES_VIEW_PROJECT,
     NEXT_PUBLIC_LICENSE_ES_VIEW_ID: process.env.NEXT_PUBLIC_LICENSE_ES_VIEW_ID,
+
+    NEXT_PUBLIC_VIRTUAL_LAB_API_URL: process.env.NEXT_PUBLIC_VIRTUAL_LAB_API_URL
   },
 });

@@ -40,7 +40,13 @@ export default function VirtualLabHomePage({ id }: Props) {
   if (virtualLabDetail.state === 'hasError') {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="rounded-lg border p-8">Virtual Lab not found</div>
+        <div className="rounded-lg border p-8">
+          {(virtualLabDetail.error as Error).message === 'Status: 404' ? (
+            <>Virtual Lab not found</>
+          ) : (
+            <>Something went wrong when fetching virtual lab</>
+          )}
+        </div>
       </div>
     );
   }
