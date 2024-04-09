@@ -31,10 +31,15 @@ export async function GET(req: NextRequest): Promise<any> {
 
   switch (origin) {
     case 'Lab':
-      return NextResponse.redirect(new URL(`/virtual-lab/lab/${labId}/lab`, req.url));
+      return NextResponse.redirect(
+        new URL(`/virtual-lab/lab/${labId}/lab?invite_accepted=true`, req.url)
+      );
     case 'Project':
       return NextResponse.redirect(
-        new URL(`/virtual-lab/lab/${labId}/project/${projectId!}/home`, req.url)
+        new URL(
+          `/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`,
+          req.url
+        )
       );
     default:
       captureException(

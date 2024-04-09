@@ -7,6 +7,7 @@ import DiscoverObpItem from './DiscoverObpItem';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
+import WelcomeUserBanner from './WelcomeUserBanner';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
@@ -19,9 +20,9 @@ export default function VirtualLabHomePage() {
   const iconStyle = { color: '#69C0FF' };
   const virtualLab = mockVirtualLab;
   const projects = mockProjects;
-
   return (
     <div>
+      <WelcomeUserBanner title={virtualLab.title} />
       <div className="relative mt-10 flex flex-col gap-4 bg-primary-8 p-8">
         <div
           className={Styles.bannerImg}
