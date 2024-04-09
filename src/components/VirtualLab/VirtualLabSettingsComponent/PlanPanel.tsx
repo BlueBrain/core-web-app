@@ -2,27 +2,23 @@
 
 import { Button, Form, Modal, Spin } from 'antd';
 import { useState } from 'react';
-
-import { VirtualLab } from '@/services/virtual-lab/types';
 import { classNames } from '@/util/utils';
-
+import { MockBilling, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 import Styles from './plan-panel.module.css';
 
-export type Plan = Exclude<VirtualLab['plan'], undefined>;
-
 type PlanDetails = {
-  type: Plan;
+  type: VirtualLabPlanType;
   advantages: string[];
   pricePerMonthPerUser: { cost: number; currency: string };
   className?: string;
 };
 
 type Props = {
-  currentPlan: Plan;
-  billingInfo: VirtualLab['billing'];
+  currentPlan: VirtualLabPlanType;
+  billingInfo: MockBilling;
   items: PlanDetails[];
   userIsAdmin: boolean;
-  onChangePlan: (newPlan: Plan, billingInfo: VirtualLab['billing']) => Promise<void>;
+  onChangePlan: (newPlan: VirtualLabPlanType, billingInfo: MockBilling) => Promise<void>;
 };
 
 export default function PlanPanel({
@@ -33,13 +29,13 @@ export default function PlanPanel({
   billingInfo,
 }: Props) {
   const [modal, contextHolder] = Modal.useModal();
-  const [form] = Form.useForm<VirtualLab['billing']>();
+  const [form] = Form.useForm<MockBilling>();
 
-  const [selectedPlan, setSelectedPlan] = useState<Plan>(currentPlan);
+  const [selectedPlan, setSelectedPlan] = useState<VirtualLabPlanType>(currentPlan);
   const [changePlanError, setChangePlanError] = useState(false);
   const [savingChanges, setSavingChanges] = useState(false);
 
-  const showConfirmationForSwitchingPlan = (newPlan: Plan) => {
+  const showConfirmationForSwitchingPlan = (newPlan: VirtualLabPlanType) => {
     modal.confirm({
       content: `Are you sure you want to switch from ${currentPlan} to ${newPlan} plan?`,
       okText: 'Confirm',
@@ -49,7 +45,7 @@ export default function PlanPanel({
     });
   };
 
-  const switchPlan = (newPlan: Plan) => {
+  const switchPlan = (newPlan: VirtualLabPlanType) => {
     setSavingChanges(true);
     const updatedBilling = newPlan === 'entry' ? billingInfo : form.getFieldsValue();
 

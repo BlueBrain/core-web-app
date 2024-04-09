@@ -135,7 +135,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
         <FormPanel
           initialValues={{
             name: virtualLabDetail.data?.name,
-            referenceEMail: virtualLabDetail.data?.reference_email,
+            reference_email: virtualLabDetail.data?.reference_email,
             description: virtualLabDetail.data?.description,
           }}
           allowEdit={userIsAdmin}

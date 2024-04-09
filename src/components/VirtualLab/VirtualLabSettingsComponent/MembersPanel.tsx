@@ -8,8 +8,8 @@ import { ReactNode, useState } from 'react';
 import { Session } from 'next-auth';
 import { Avatar } from '../create/sub-components/Avatar';
 import AddVirtualLabMember from './AddVirtualLabMember';
-import { NewMember, VirtualLabMember } from '@/services/virtual-lab/types';
 import useNotification from '@/hooks/notifications';
+import { NewMember, VirtualLabMember } from '@/types/virtual-lab/lab';
 
 type Props = {
   members: VirtualLabMember[];

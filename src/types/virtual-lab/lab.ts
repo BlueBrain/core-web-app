@@ -43,3 +43,22 @@ export enum VirtualLabPlanType {
   intermediate = 'intermediate',
   advanced = 'advanced',
 }
+
+export interface VirtualLabMember {
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+  lastActive?: number;
+}
+
+export type NewMember = Pick<VirtualLabMember, 'email' | 'role'>;
+
+export type MockBilling = {
+  organization: string;
+  firstname: string;
+  lastname: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+};
