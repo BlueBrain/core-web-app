@@ -4,6 +4,7 @@ import VirtualLabStatistic from '../../VirtualLabStatistic';
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import { Project } from '@/types/virtual-lab/lab';
+import { formatDate } from '@/util/utils';
 
 type Props = {
   project: Project;
@@ -20,7 +21,7 @@ export default function VirtualLabProjectItem({ project }: Props) {
         <div className="flex items-center justify-between gap-6">
           <div className="flex gap-2">
             <span className="text-primary-3">Latest update</span>
-            <span className="font-bold">{project.updated_at}</span>
+            <span className="font-bold">{formatDate(project.updated_at)}</span>
           </div>
           <div className="flex">
             {/* {project.isFavorite ? (
@@ -60,7 +61,7 @@ export default function VirtualLabProjectItem({ project }: Props) {
         <VirtualLabStatistic
           icon={<CalendarOutlined style={iconStyle} />}
           title="Creation date"
-          detail={project.created_at}
+          detail={formatDate(project.created_at)}
         />
       </div>
     </div>
