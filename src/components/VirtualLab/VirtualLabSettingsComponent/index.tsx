@@ -2,23 +2,18 @@
 
 import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
-import { Button, Collapse, ConfigProvider, Skeleton, Input } from 'antd';
+import { Button, Collapse, ConfigProvider, Input } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { ReactNode, useCallback } from 'react';
 import { Session } from 'next-auth';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import FormPanel from './InformationPanel';
-import PlanPanel, { Plan } from './PlanPanel';
+import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
-import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
-import { getComputeTimeAtom } from '@/state/virtual-lab/lab';
-import VirtualLabService from '@/services/virtual-lab';
-import useNotification from '@/hooks/notifications';
 import { VALID_EMAIL_REGEXP } from '@/util/utils';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
 type Props = {
   virtualLab: VirtualLab;
@@ -26,9 +21,6 @@ type Props = {
 };
 
 function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
-  const computeTimeAtom = useMemo(() => loadable(getComputeTimeAtom(virtualLab.id)), [virtualLab]);
-  const computeTime = useAtomValue(computeTimeAtom);
-
   return (
     <div className="bg-primary-8">
       <div className="border border-transparent border-b-primary-7 px-8 py-4">
@@ -39,18 +31,7 @@ function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
       </div>
       <div className="px-8 py-4">
         <h5 className="font-bold">Compute hours current usage</h5>
-        {computeTime.state === 'loading' && (
-          <Skeleton paragraph={{ rows: 1 }} title={{ width: 0 }} />
-        )}
-        {computeTime.state === 'hasError' && (
-          <p>There was an error while retrieving compute time.</p>
-        )}
-        {computeTime.state === 'hasData' && (
-          <ComputeTimeVisualization
-            usedTimeInHours={computeTime.data?.usedTimeInHours ?? 0}
-            totalTimeInHours={computeTime.data?.totalTimeInHours ?? 0}
-          />
-        )}
+        <ComputeTimeVisualization usedTimeInHours={50} totalTimeInHours={100} />
       </div>
     </div>
   );
@@ -68,43 +49,15 @@ export default function VirtualLabSettingsComponent({
   virtualLab: initialVirtualLab,
   user,
 }: Props) {
-  const [virtualLab, setVirtualLab] = useState(initialVirtualLab);
-
   const router = useRouter();
-  const notify = useNotification();
-  const service = new VirtualLabService();
 
-  const userIsAdmin =
-    virtualLab.members.find((member) => member.email === user?.email)?.role === 'admin';
+  const userIsAdmin = true;
 
-  const saveInformation = async (update: Omit<Partial<VirtualLab>, 'id'>): Promise<void> => {
-    return service
-      .edit(user, virtualLab.id, update)
-      .then((updatedLab) => {
-        setVirtualLab(updatedLab);
-      })
-      .catch((err) => {
-        throw err;
-      });
-  };
+  const saveInformation = async (): Promise<void> => {};
 
-  const changePlan = async (newPlan: Plan, billingInfo: VirtualLab['billing']): Promise<void> => {
-    return service
-      .changePlan(user, virtualLab.id, newPlan, billingInfo)
-      .then((updatedLab) => {
-        setVirtualLab(updatedLab);
-      })
-      .catch((err) => {
-        throw err;
-      });
-  };
+  const changePlan = async (): Promise<void> => {};
 
-  const deleteVirtualLab = async () => {
-    return service.deleteVirtualLab(user, virtualLab.id).then(() => {
-      notify.success(`Virtual lab ${virtualLab.name} is now deleted`);
-      router.push('/');
-    });
-  };
+  const deleteVirtualLab = async () => {};
 
   const renderInput: (props: InputProps) => ReactNode = useCallback(
     ({ addonAfter, className, disabled, placeholder, readOnly, style, title, type, value }) => {
@@ -154,9 +107,9 @@ export default function VirtualLabSettingsComponent({
       content: (
         <FormPanel
           initialValues={{
-            name: virtualLab.name,
-            referenceEMail: virtualLab.referenceEMail,
-            description: virtualLab.description,
+            name: initialVirtualLab.name,
+            referenceEMail: initialVirtualLab.reference_email,
+            description: initialVirtualLab.description,
           }}
           allowEdit={userIsAdmin}
           save={saveInformation}
@@ -194,8 +147,8 @@ export default function VirtualLabSettingsComponent({
     {
       content: (
         <PlanPanel
-          currentPlan={virtualLab.plan ?? VirtualLabPlanType.entry}
-          billingInfo={virtualLab.billing}
+          currentPlan={initialVirtualLab.plan ?? VirtualLabPlanType.entry}
+          billingInfo={initialVirtualLab.billing}
           userIsAdmin={userIsAdmin}
           onChangePlan={changePlan}
           items={[

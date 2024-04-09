@@ -1,12 +1,12 @@
-import { CalendarOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-design/icons';
+import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 
 import VirtualLabStatistic from '../../VirtualLabStatistic';
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
-import { MockProject } from '@/types/virtual-lab/projects';
+import { Project } from '@/types/virtual-lab/lab';
 
 type Props = {
-  project: MockProject;
+  project: Project;
 };
 
 export default function VirtualLabProjectItem({ project }: Props) {
@@ -15,19 +15,20 @@ export default function VirtualLabProjectItem({ project }: Props) {
     <div className="flex flex-col gap-3 rounded-md border border-primary-6 p-9 ">
       {/* Title row */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{project.title}</h2>
+        <h2 className="text-2xl font-bold">{project.name}</h2>
 
         <div className="flex items-center justify-between gap-6">
           <div className="flex gap-2">
             <span className="text-primary-3">Latest update</span>
-            <span className="font-bold">{project.latestUpdate}</span>
+            <span className="font-bold">{project.updated_at}</span>
           </div>
           <div className="flex">
-            {project.isFavorite ? (
+            {/* {project.isFavorite ? (
               <StarFilled style={{ fontSize: '18px', color: '#FFD465' }} />
-            ) : (
-              <StarOutlined style={{ fontSize: '18px' }} />
-            )}
+            ) : ( */}
+            {/* TODO: we dont have a favorite functionality yet */}
+            <StarOutlined style={{ fontSize: '18px' }} />
+            {/* )} */}
           </div>
         </div>
       </div>
@@ -38,32 +39,28 @@ export default function VirtualLabProjectItem({ project }: Props) {
         <VirtualLabStatistic
           icon={<EyeTargetIcon style={iconStyle} />}
           title="Explore sessions"
-          detail={project.exploreSessions}
+          detail={350}
         />
-        <VirtualLabStatistic
-          icon={<Brain style={iconStyle} />}
-          title="Builds"
-          detail={project.builds}
-        />
+        <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail={18} />
         <VirtualLabStatistic
           icon={<StatsEditIcon style={iconStyle} />}
           title="Simulation experiments"
-          detail={project.simulationExperiments}
+          detail={30}
         />
         <VirtualLabStatistic
           icon={<UserOutlined style={iconStyle} />}
           title="Members"
-          detail={project.members}
+          detail="MEMBERS NOT RETRIEVED"
         />
         <VirtualLabStatistic
           icon={<MembersGroupIcon style={iconStyle} />}
           title="Admin"
-          detail={project.admin}
+          detail="ADMIN NOT RETRIEVED"
         />
         <VirtualLabStatistic
           icon={<CalendarOutlined style={iconStyle} />}
           title="Creation date"
-          detail={project.creationDate}
+          detail={project.created_at}
         />
       </div>
     </div>

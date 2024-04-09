@@ -1,9 +1,11 @@
 'use client';
 
-import { Collapse, ConfigProvider } from 'antd';
-import { PlusOutlined, SearchOutlined, MinusOutlined } from '@ant-design/icons';
+import { Collapse, ConfigProvider, Spin } from 'antd';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
+import { PlusOutlined, SearchOutlined, MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
-import { mockProjects } from '@/components/VirtualLab/mockData/projects';
+import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/lab';
 
 // TODO: Consolodate this with the ExpandIcon in @/components/VirtualLab/VirtualLabSettingsComponent
 function ExpandIcon({ isActive }: { isActive?: boolean }) {
@@ -14,8 +16,27 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   );
 }
 
-export function AdminPanelProjectList() {
-  const projects = mockProjects;
+type Props = {
+  id: string;
+};
+
+export function AdminPanelProjectList({ id }: Props) {
+  const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
+  if (virtualLabProjects.state === 'loading') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
+  }
+
+  if (virtualLabProjects.state === 'hasError') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="rounded-lg border p-8">Something went wrong when fetching projects</div>
+      </div>
+    );
+  }
 
   return (
     <ConfigProvider
@@ -38,15 +59,15 @@ export function AdminPanelProjectList() {
         expandIcon={ExpandIcon}
         className="px-[28px] font-bold"
         bordered={false}
-        items={projects.map((project) => ({
+        items={virtualLabProjects.data?.results.map((project) => ({
           key: project.id,
           label: (
             <div className="flex items-center justify-between">
-              <h4 className="text-xl font-bold">{project.title}</h4>
+              <h4 className="text-xl font-bold">{project.name}</h4>
               <div className="flex items-center gap-1 text-lg font-light">
-                <span>{project.budget.totalSpent}</span>
+                <span>350</span>
                 <span className="text-primary-3">out of</span>
-                <span>{project.budget.total}</span>
+                <span>{project.budget}</span>
               </div>
             </div>
           ),
@@ -56,13 +77,13 @@ export function AdminPanelProjectList() {
               <div className="flex gap-4">
                 <div className="flex items-baseline gap-2">
                   <span className="items-center justify-center rounded bg-white p-2 font-mono text-primary-9">
-                    {project.builds}
+                    18
                   </span>
                   <span className="font-light">Build</span>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="items-center justify-center rounded bg-white p-2 font-mono text-primary-9">
-                    {project.simulationExperiments}
+                    350
                   </span>
                   <span className="font-light">Simulate</span>
                 </div>
@@ -76,8 +97,23 @@ export function AdminPanelProjectList() {
 }
 
 // TODO: Remove this component (I don't think it's being used anywhere)
-export default function VirtualLabProjectList() {
-  const projects = mockProjects;
+export default function VirtualLabProjectList({ id }: Props) {
+  const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
+  if (virtualLabProjects.state === 'loading') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
+  }
+
+  if (virtualLabProjects.state === 'hasError') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="rounded-lg border p-8">Something went wrong when fetching projects</div>
+      </div>
+    );
+  }
 
   return (
     <div className="my-5">
@@ -88,7 +124,7 @@ export default function VirtualLabProjectList() {
           <div className="flex flex-row items-center gap-8">
             <div className="flex gap-2">
               <span className="text-primary-3">Total projects</span>
-              <span className="font-bold">{projects.length}</span>
+              <span className="font-bold">{virtualLabProjects.data?.results.length}</span>
             </div>
             <ConfigProvider
               theme={{
@@ -119,7 +155,7 @@ export default function VirtualLabProjectList() {
         </div>
         {/* Projects row */}
         <div className="flex flex-col gap-4">
-          {projects.map((project) => (
+          {virtualLabProjects.data?.results.map((project) => (
             <VirtualLabProjectItem key={project.id} project={project} />
           ))}
         </div>
