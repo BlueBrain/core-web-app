@@ -12,7 +12,6 @@ import Icon, {
 } from '@ant-design/icons';
 import { signOut, useSession } from 'next-auth/react';
 
-import VirtualLabsList from './VirtualLabsList';
 import { basePath } from '@/config';
 import { classNames } from '@/util/utils';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
@@ -176,10 +175,6 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
           </button>
         </div>
       </div>
-
-      <div className="h-px w-full bg-primary-7" />
-      <VirtualLabsList />
-      <div className="h-px w-full bg-primary-7" />
 
       <Link
         href="/virtual-lab/create/information"

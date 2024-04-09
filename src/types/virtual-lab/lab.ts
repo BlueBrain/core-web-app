@@ -5,13 +5,13 @@ export type VirtualLabAPIResponse = {
   };
 };
 
-export type VirtualLabAPIListResponse = {
+export type VirtualLabAPIListResponse<ResponseType> = {
   message: string;
-  data: VirtualLabAPIListData;
+  data: VirtualLabAPIListData<ResponseType>;
 };
 
-export type VirtualLabAPIListData = {
-  results: Project[];
+export type VirtualLabAPIListData<ReponseType> = {
+  results: ReponseType[];
   page: number;
   size: number;
   page_size: number;
