@@ -2,22 +2,24 @@
 
 import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
-import { Button, Collapse, ConfigProvider, Input } from 'antd';
+import { Button, Collapse, ConfigProvider, Input, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
-import { ArrowLeftOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ReactNode, useCallback } from 'react';
-import { Session } from 'next-auth';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import FormPanel from './InformationPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 import { VALID_EMAIL_REGEXP } from '@/util/utils';
-import { VirtualLab } from '@/types/virtual-lab/lab';
+import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
+
+import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 
 type Props = {
-  virtualLab: VirtualLab;
-  user: Session['user'];
+  id: string;
 };
 
 function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
@@ -45,19 +47,22 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   );
 }
 
-export default function VirtualLabSettingsComponent({
-  virtualLab: initialVirtualLab,
-  user,
-}: Props) {
+export default function VirtualLabSettingsComponent({ id }: Props) {
   const router = useRouter();
-
   const userIsAdmin = true;
-
   const saveInformation = async (): Promise<void> => {};
-
   const changePlan = async (): Promise<void> => {};
-
   const deleteVirtualLab = async () => {};
+
+  const mockBilling = {
+    organization: 'EPFL',
+    firstname: 'Harry',
+    lastname: 'Anderson',
+    address: 'Chem. des Mines 9',
+    city: 'Geneva',
+    postalCode: '1202',
+    country: 'CH',
+  };
 
   const renderInput: (props: InputProps) => ReactNode = useCallback(
     ({ addonAfter, className, disabled, placeholder, readOnly, style, title, type, value }) => {
@@ -98,6 +103,28 @@ export default function VirtualLabSettingsComponent({
     []
   );
 
+  const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+  if (virtualLabDetail.state === 'loading') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
+  }
+  if (virtualLabDetail.state === 'hasError') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="rounded-lg border p-8">
+          {(virtualLabDetail.error as Error).message === 'Status: 404' ? (
+            <>Virtual Lab not found</>
+          ) : (
+            <>Something went wrong when fetching virtual lab</>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const expandableItems: Array<{
     content: ReactNode;
     key: string;
@@ -107,9 +134,9 @@ export default function VirtualLabSettingsComponent({
       content: (
         <FormPanel
           initialValues={{
-            name: initialVirtualLab.name,
-            referenceEMail: initialVirtualLab.reference_email,
-            description: initialVirtualLab.description,
+            name: virtualLabDetail.data?.name,
+            referenceEMail: virtualLabDetail.data?.reference_email,
+            description: virtualLabDetail.data?.description,
           }}
           allowEdit={userIsAdmin}
           save={saveInformation}
@@ -147,8 +174,8 @@ export default function VirtualLabSettingsComponent({
     {
       content: (
         <PlanPanel
-          currentPlan={initialVirtualLab.plan ?? VirtualLabPlanType.entry}
-          billingInfo={initialVirtualLab.billing}
+          currentPlan={VirtualLabPlanType.entry}
+          billingInfo={mockBilling}
           userIsAdmin={userIsAdmin}
           onChangePlan={changePlan}
           items={[
@@ -188,7 +215,7 @@ export default function VirtualLabSettingsComponent({
       title: 'Plan',
     },
     {
-      content: <AdminPanelProjectList />,
+      content: <AdminPanelProjectList id={id} />,
       key: 'projects',
       title: 'Projects',
     },
@@ -196,15 +223,7 @@ export default function VirtualLabSettingsComponent({
       content: (
         <FormPanel
           className="grid grid-cols-2"
-          initialValues={{
-            organization: virtualLab.billing.organization,
-            firstname: virtualLab.billing.firstname,
-            lastname: virtualLab.billing.lastname,
-            address: virtualLab.billing.address,
-            city: virtualLab.billing.city,
-            postalCode: virtualLab.billing.postalCode,
-            country: virtualLab.billing.country,
-          }}
+          initialValues={mockBilling}
           allowEdit={userIsAdmin}
           save={saveInformation}
           items={[
@@ -258,7 +277,7 @@ export default function VirtualLabSettingsComponent({
             content: (
               <DangerZonePanel
                 onDeleteVirtualLabClick={deleteVirtualLab}
-                labName={virtualLab.name}
+                labName={virtualLabDetail.data?.name || ''}
               />
             ),
             key: 'danger-zone',
@@ -294,7 +313,7 @@ export default function VirtualLabSettingsComponent({
         <ArrowLeftOutlined /> Back to
       </Button>
       <div className="flex flex-col gap-1">
-        <HeaderPanel virtualLab={virtualLab} />
+        <HeaderPanel virtualLab={virtualLabDetail.data} />
         <Collapse
           accordion
           expandIconPosition="end"

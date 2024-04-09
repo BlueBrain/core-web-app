@@ -5,14 +5,14 @@ import { getVirtualLabDetail, getVirtualLabProjects } from '@/services/virtual-l
 import { VirtualLab, VirtualLabAPIListData } from '@/types/virtual-lab/lab';
 
 export const virtualLabDetailAtomFamily = atomFamily((virtualLabId: string) =>
-  atom<Promise<VirtualLab | null>>(async () => {
+  atom<Promise<VirtualLab>>(async () => {
     const response = await getVirtualLabDetail(virtualLabId);
-    return response.data.virtual_lab || null;
+    return response.data.virtual_lab;
   })
 );
 
 export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
-  atom<Promise<VirtualLabAPIListData | null>>(async () => {
+  atom<Promise<VirtualLabAPIListData>>(async () => {
     const response = await getVirtualLabProjects(virtualLabId);
     return response.data;
   })

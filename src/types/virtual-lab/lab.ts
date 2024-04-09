@@ -1,7 +1,7 @@
 export type VirtualLabAPIResponse = {
   message: string;
   data: {
-    virtual_lab?: VirtualLab;
+    virtual_lab: VirtualLab;
   };
 };
 
@@ -36,3 +36,10 @@ export type Project = {
   created_at: string;
   updated_at: string;
 };
+
+export enum VirtualLabPlanType {
+  entry = 'entry',
+  beginner = 'beginner',
+  intermediate = 'intermediate',
+  advanced = 'advanced',
+}
