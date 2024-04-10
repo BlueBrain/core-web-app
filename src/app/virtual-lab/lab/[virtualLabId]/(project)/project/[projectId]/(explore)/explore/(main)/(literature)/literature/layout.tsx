@@ -32,7 +32,7 @@ export default function GenericLayout({ children, params }: LayoutProps) {
                 href: `${labProjectUrl}/explore`,
                 content: Content.Explore,
                 role: Role.Section,
-                styles: ' rounded-full bg-primary-5 py-3 text-primary-9',
+                styles: ' rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
               },
               {
                 key: LinkItemKey.Literature,
@@ -40,6 +40,19 @@ export default function GenericLayout({ children, params }: LayoutProps) {
                 content: Content.Literature,
                 role: Role.Current,
                 styles: 'text-primary-3',
+              },
+              {
+                key: LinkItemKey.Scale,
+                href: '/virtual-lab/lab/test/project/test/literature',
+                content: 'single neuron',
+                role: Role.Scale,
+                label: Label.Scale,
+              },
+              {
+                key: LinkItemKey.ScaleBuild,
+                href: '/virtual-lab/lab/test/project/test/literature',
+                content: 'build',
+                role: Role.Scale,
               },
             ]}
             lab={{

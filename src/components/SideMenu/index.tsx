@@ -29,8 +29,8 @@ export default function SideMenu({ links, lab }: Props) {
   );
 
   const linkClassName = (link: LinkItem) => {
-    let baseClass = `flex w-full items-center justify-between capitalize ${link.styles}`;
-    if (expanded) baseClass += 'py-3 px-2 border border-primary-4';
+    let baseClass = `flex w-full items-center justify-between capitalize ${link.styles} `;
+    if (expanded) baseClass += 'py-3 px-2 border border-primary-6 text-lg';
     if ((link.role === Role.Section || link.role === Role.Current) && expanded)
       baseClass = 'hidden';
     return baseClass;
@@ -48,8 +48,8 @@ export default function SideMenu({ links, lab }: Props) {
     >
       <div
         className={classNames(
-          'my-5 w-full font-semibold text-white',
-          expanded ? 'mt-14 flex-row' : 'flex items-center gap-x-3.5',
+          'my-6 w-full font-semibold text-white',
+          expanded ? 'mt-12 flex-row' : 'flex items-center gap-x-3.5',
           !expanded && 'rotate-180 transform cursor-e-resize [writing-mode:vertical-rl]'
         )}
         role="presentation"
