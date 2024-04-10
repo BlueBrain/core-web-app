@@ -28,11 +28,8 @@ export default function SideMenu({ links, lab }: Props) {
   );
 
   const linkClassName = (link: LinkItem) => {
-    let baseClass = 'flex w-full items-center justify-between capitalize';
-    if (expanded) baseClass += ' py-3 px-2 border border-primary-4';
-    if (link.role === Role.Section && !expanded)
-      baseClass += ' rounded-full bg-primary-5 py-3 text-primary-9';
-    if (link.role === Role.Current && !expanded) baseClass += ' text-primary-3';
+    let baseClass = `flex w-full items-center justify-between capitalize ${link.styles}`;
+    if (expanded) baseClass += 'py-3 px-2 border border-primary-4';
     if ((link.role === Role.Section || link.role === Role.Current) && expanded)
       baseClass = 'hidden';
     return baseClass;

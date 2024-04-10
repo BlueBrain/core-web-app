@@ -8,6 +8,7 @@ export type LinkItem = {
   href: string;
   label?: Label;
   role?: Role;
+  styles?: string;
 };
 
 type Props = {

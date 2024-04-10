@@ -37,12 +37,14 @@ export default function GenericLayout({ children, params }: LiteratureLayoutProp
                 href: '/virtual-lab/lab/test/project/test/explore',
                 content: Content.Explore,
                 role: Role.Section,
+                styles: ' rounded-full bg-primary-5 py-3 text-primary-9',
               },
               {
                 key: LinkItemKey.Literature,
                 href: '/virtual-lab/lab/test/project/test/literature',
                 content: Content.Literature,
                 role: Role.Current,
+                styles: 'text-primary-3',
               },
             ]}
             lab={{
