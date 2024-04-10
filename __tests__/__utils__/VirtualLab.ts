@@ -1,39 +1,12 @@
-import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
 export const createMockVirtualLab = (id: string, extra?: Partial<VirtualLab>): VirtualLab => ({
   id,
   name: `Mock Lab ${id}`,
   description: 'Sploosh',
-  referenceEMail: 'sterling.archer@secretservice.cc',
-  members: [
-    {
-      name: 'Sterling Archer',
-      email: 'sterling.archer@secretservice.cc',
-      role: 'user',
-      lastActive: Date.now(),
-    },
-    {
-      name: 'Malory Archer',
-      email: 'malory.archer@secretservice.cc',
-      role: 'admin',
-      lastActive: Date.now(),
-    },
-    {
-      name: 'Algernop Krieger',
-      email: 'drkrieger@secretservice.cc',
-      role: 'admin',
-      lastActive: Date.now(),
-    },
-  ],
-  plan: VirtualLabPlanType.entry,
-  billing: {
-    organization: 'International Secret Intelligence Service',
-    firstname: 'Malory',
-    lastname: 'Archer',
-    address: '456 Popeyes Suds and Duds',
-    city: 'New York City',
-    postalCode: '456',
-    country: 'Switzerland',
-  },
+  reference_email: 'sterling.archer@secretservice.cc',
+  budget: 0,
+  created_at: '',
+  plan_id: 0,
   ...extra,
 });

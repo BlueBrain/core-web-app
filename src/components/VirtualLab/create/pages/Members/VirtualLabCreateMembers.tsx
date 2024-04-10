@@ -1,12 +1,11 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
 
-import { useCurrentVirtualLabMembers } from '../../hooks/current-virtual-lab';
 import { Layout } from '../../sub-components/Layout';
 import { Main } from '../../sub-components/Main';
 import { MemberItem } from './MemberItem';
 import { AddMember } from './AddMember';
-
+import { VirtualLabMember } from '@/types/virtual-lab/lab';
 import styles from './virtual-lab-create-members.module.css';
 
 export interface VirtualLabCreateMembersProps {
@@ -15,7 +14,7 @@ export interface VirtualLabCreateMembersProps {
 }
 
 export function VirtualLabCreateMembers({ className, nextPage }: VirtualLabCreateMembersProps) {
-  const { members, addMember, removeMember } = useCurrentVirtualLabMembers();
+  const members: VirtualLabMember[] = [];
   const session = useSession().data;
   return (
     <Layout className={className}>
@@ -26,12 +25,12 @@ export function VirtualLabCreateMembers({ className, nextPage }: VirtualLabCreat
             <MemberItem
               key={member.email}
               value={member}
-              onDelete={removeMember}
+              onDelete={() => {}}
               readonly={member.email === session?.user.email}
             />
           ))}
         </div>
-        <AddMember onNew={addMember} currentMembersEmails={members.map(({ email }) => email)} />
+        <AddMember onNew={() => {}} currentMembersEmails={members.map(({ email }) => email)} />
       </Main>
     </Layout>
   );

@@ -7,8 +7,7 @@ import { ROLES } from '../../../constants';
 import { NewMember, useNewMember } from './new-member-hook';
 import IconPlus from '@/components/icons/Plus';
 import { classNames } from '@/util/utils';
-import { VirtualLabMember } from '@/services/virtual-lab/types';
-
+import { VirtualLabMember } from '@/types/virtual-lab/lab';
 import styles from './add-member.module.css';
 
 export interface AddMemberProps {
@@ -67,6 +66,7 @@ const FIELDS = {
     pattern: RX_NAME,
   },
   email: { type: 'email', label: 'EMail', required: true, placeholder: "Member's email" },
+  role: 'user',
 };
 
 function makeVirtualLabMember(member: NewMember): VirtualLabMember {

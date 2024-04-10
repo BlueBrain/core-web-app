@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-import { VirtualLabMember } from '@/services/virtual-lab/types';
+import { VirtualLabMember } from '@/types/virtual-lab/lab';
 
 export interface NewMember {
   firstname: string;
