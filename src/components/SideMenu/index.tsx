@@ -39,10 +39,10 @@ export default function SideMenu({ links, lab }: Props) {
     <div
       ref={ref}
       className={classNames(
-        'relative h-screen bg-primary-9 text-light transition-transform ease-in-out',
+        'relative flex h-screen flex-col bg-primary-9 text-light transition-transform ease-in-out',
         expanded
-          ? 'flex w-80 flex-col items-start justify-start px-5 shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
-          : 'flex w-10 flex-col items-center justify-between pt-6 transition-transform ease-in-out will-change-auto'
+          ? 'w-80 items-start justify-start px-5 shadow-[0px_5px_15px_rgba(0,0,0,.35)]'
+          : 'w-10 items-center justify-between pt-6 will-change-auto'
       )}
     >
       <div
@@ -94,25 +94,31 @@ export default function SideMenu({ links, lab }: Props) {
           )
         }
       />
-      {lab && !expanded && (
-        <div className="absolute bottom-0 z-20 mb-4 mt-auto flex w-[calc(100%-2.5rem)] flex-col items-center justify-center bg-primary-9 text-primary-3">
-          <Link
-            key={lab.key}
-            href={lab.href}
-            className="capitalize"
-            style={{
-              writingMode: 'vertical-rl',
-              transform: 'rotate(180deg)',
-              cursor: 'e-resize',
-            }}
-          >
-            {lab.content}
-          </Link>
-          <Link href={lab.href} className="pl-[6px]">
-            <HomeOutlined />
-          </Link>
-        </div>
-      )}
+      {!expanded && <SideMenuBottom lab={lab} />}
     </div>
+  );
+}
+
+function SideMenuBottom({ lab }: { lab?: LinkItem }) {
+  return (
+    lab && (
+      <div className="absolute bottom-0 z-20 mb-4 mt-auto flex w-[calc(100%-2.5rem)] flex-col items-center justify-center bg-primary-9 text-primary-3">
+        <Link
+          key={lab.key}
+          href={lab.href}
+          className="capitalize"
+          style={{
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            cursor: 'e-resize',
+          }}
+        >
+          {lab.content}
+        </Link>
+        <Link href={lab.href} className="pl-[6px]">
+          <HomeOutlined />
+        </Link>
+      </div>
+    )
   );
 }
