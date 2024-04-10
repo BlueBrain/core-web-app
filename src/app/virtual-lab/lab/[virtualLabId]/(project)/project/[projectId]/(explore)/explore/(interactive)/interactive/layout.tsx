@@ -23,6 +23,9 @@ export default function VirtualLabProjectInteractiveExploreLayout({
   // set Release 23.01 as the configuration of explore interactive
   useEffect(() => setConfigId(defaultModelRelease.id), [setConfigId]);
 
+  const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;
+  const labProjectUrl = `${labUrl}/project/${params.projectId}`;
+
   return (
     <div className="grid h-screen grid-cols-[min-content_min-content_auto] grid-rows-1">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -32,12 +35,12 @@ export default function VirtualLabProjectInteractiveExploreLayout({
               {
                 key: LinkItemKey.Project,
                 label: Label.Project,
-                href: '/virtual-lab/lab/test/project/test',
+                href: `${labProjectUrl}/home`,
                 content: params.projectId,
               },
               {
                 key: LinkItemKey.Explore,
-                href: '/virtual-lab/lab/test/project/test/explore',
+                href: `${labProjectUrl}/explore`,
                 content: Content.Explore,
                 role: Role.Section,
                 styles: ' rounded-full bg-primary-5 py-3 text-primary-9',
@@ -46,7 +49,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
             lab={{
               key: LinkItemKey.VirtualLab,
               label: Label.VirtualLab,
-              href: '/virtual-lab/lab/test',
+              href: labUrl,
               content: params.virtualLabId,
             }}
           />
