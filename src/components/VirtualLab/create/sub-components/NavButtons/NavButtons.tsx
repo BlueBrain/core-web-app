@@ -1,9 +1,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
-
 import { STEPS } from '../../constants';
 import { Button } from '../Button';
-import { CreateButton } from './CreateButton';
 import { Step } from './Step';
 import { classNames } from '@/util/utils';
 
@@ -24,7 +22,7 @@ export function NavButtons({ className, nextPage, step, disabled }: NavButtonsPr
         Cancel
       </Button>
       {step === 'members' ? (
-        <CreateButton disabled={disabled} />
+        <div>create</div>
       ) : (
         <Button href={pathname} disabled={disabled}>
           Next
