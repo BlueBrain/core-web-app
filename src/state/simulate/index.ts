@@ -14,6 +14,7 @@ import {
   getWorkflowExecutionsQuery,
 } from '@/queries/es';
 import { getCurrentDate } from '@/util/utils';
+import { SimulationType } from '@/types/virtual-lab/lab';
 
 export const refetchTriggerAtom = atom<{}>({});
 export const triggerRefetchAtom = atom(null, (_get, set) => set(refetchTriggerAtom, {}));
@@ -106,4 +107,4 @@ export const launchedSimCampaignListAtom = atom<Promise<LaunchedSimCampUIConfigT
   }
 );
 
-export const selectedSimulationScopeAtom = atom<string | null>(null);
+export const selectedSimulationScopeAtom = atom<SimulationType | null>(null);

@@ -30,3 +30,10 @@ export type MockBilling = {
   postalCode: string;
   country: string;
 };
+
+export enum SimulationType {
+  ionChannel = 'ion-channel',
+  singleNeuron = 'single-neuron',
+  pairedNeuron = 'paired-neuron',
+  synaptome = 'synaptome',
+}

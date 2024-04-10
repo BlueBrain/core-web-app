@@ -1,14 +1,12 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import SideMenu from '@/components/SideMenu';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
 
-export default function VirtualLabProjectLayout({ children }: { children: ReactNode }) {
+export default function VirtualLabProjectLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 bg-primary-9 pr-10 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
