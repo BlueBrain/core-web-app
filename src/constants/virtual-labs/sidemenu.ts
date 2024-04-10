@@ -14,8 +14,12 @@ export enum Content {
 }
 
 export enum LinkItemKey {
+  Admin = 'admin',
+  Team = 'team',
   Project = 'project',
+  Projects = 'projects',
   Explore = 'explore',
   Literature = 'literature',
   VirtualLab = 'virtualLab',
+  Lab = 'lab',
 }
