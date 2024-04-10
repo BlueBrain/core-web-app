@@ -1,6 +1,5 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
@@ -8,16 +7,9 @@ import SideMenu from '@/components/SideMenu';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { LayoutProps } from '@/types/virtual-lab/layout';
 
-type LiteratureLayoutProps = {
-  children: ReactNode;
-  params: {
-    virtualLabId: string;
-    projectId: string;
-  };
-};
-
-export default function GenericLayout({ children, params }: LiteratureLayoutProps) {
+export default function GenericLayout({ children, params }: LayoutProps) {
   useSetBrainRegionFromQuery();
 
   return (

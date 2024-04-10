@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSetAtom } from 'jotai';
 
@@ -10,12 +10,13 @@ import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { defaultModelRelease } from '@/config';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
+import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { LayoutProps } from '@/types/virtual-lab/layout';
 
 export default function VirtualLabProjectInteractiveExploreLayout({
   children,
-}: {
-  children: ReactNode;
-}) {
+  params,
+}: LayoutProps) {
   const setConfigId = useSetAtom(brainModelConfigIdAtom);
   useSetBrainRegionFromQuery();
 
@@ -29,17 +30,25 @@ export default function VirtualLabProjectInteractiveExploreLayout({
           <SideMenu
             links={[
               {
-                key: 'project',
+                key: LinkItemKey.Project,
+                label: Label.Project,
                 href: '/virtual-lab/lab/test/project/test',
-                content: 'Name of the project',
+                content: params.projectId,
               },
               {
-                key: 'explore',
+                key: LinkItemKey.Explore,
                 href: '/virtual-lab/lab/test/project/test/explore',
-                content: 'Explore',
+                content: Content.Explore,
+                role: Role.Section,
+                styles: ' rounded-full bg-primary-5 py-3 text-primary-9',
               },
             ]}
-            current="explore"
+            lab={{
+              key: LinkItemKey.VirtualLab,
+              label: Label.VirtualLab,
+              href: '/virtual-lab/lab/test',
+              content: params.virtualLabId,
+            }}
           />
         </div>
       </ErrorBoundary>

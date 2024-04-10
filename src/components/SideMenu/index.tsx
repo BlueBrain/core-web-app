@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import { useReducer, useRef } from 'react';
 import { Button } from 'antd';
-import { HomeOutlined, PlusOutlined, MinusOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { LinkItem } from '../VerticalLinks';
+import LinkComponent from './LinkComponent';
+import SideMenuBottom from './SideMenuBottom';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
 import { Role } from '@/constants/virtual-labs/sidemenu';
@@ -54,32 +55,15 @@ export default function SideMenu({ links, lab }: Props) {
         role="presentation"
       >
         {lab && expanded && (
-          <div className="my-4 flex w-full flex-col items-start" key={lab.key}>
-            {expanded && (
-              <span className="text-lg font-thin uppercase text-primary-4">{lab.label}</span>
-            )}
-            <Link href={lab.href} className={linkClassName(lab)}>
-              {lab.content}
-              {expanded && <ArrowRightOutlined className="ml-2" />}
-            </Link>
-          </div>
+          <LinkComponent link={lab} expanded={expanded} linkClassName={linkClassName} />
         )}
         {links.map((link) => (
-          <div
-            className={classNames(
-              'flex flex-col items-start',
-              link.role === Role.Section ? 'w-2/3' : 'w-full'
-            )}
+          <LinkComponent
             key={link.key}
-          >
-            {expanded && (
-              <span className="text-lg font-thin uppercase text-primary-4">{link.label}</span>
-            )}
-            <Link href={link.href} className={linkClassName(link)}>
-              {link.content}
-              {expanded && <ArrowRightOutlined className="ml-2" />}
-            </Link>
-          </div>
+            link={link}
+            expanded={expanded}
+            linkClassName={linkClassName}
+          />
         ))}
       </div>
       <Button
@@ -96,29 +80,5 @@ export default function SideMenu({ links, lab }: Props) {
       />
       {!expanded && <SideMenuBottom lab={lab} />}
     </div>
-  );
-}
-
-function SideMenuBottom({ lab }: { lab?: LinkItem }) {
-  return (
-    lab && (
-      <div className="absolute bottom-0 z-20 mb-4 mt-auto flex w-[calc(100%-2.5rem)] flex-col items-center justify-center bg-primary-9 text-primary-3">
-        <Link
-          key={lab.key}
-          href={lab.href}
-          className="capitalize"
-          style={{
-            writingMode: 'vertical-rl',
-            transform: 'rotate(180deg)',
-            cursor: 'e-resize',
-          }}
-        >
-          {lab.content}
-        </Link>
-        <Link href={lab.href} className="pl-[6px]">
-          <HomeOutlined />
-        </Link>
-      </div>
-    )
   );
 }
