@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 import { atom } from 'jotai';
 import sessionAtom from '../session';
 import { VirtualLab } from '@/services/virtual-lab/types';
@@ -31,3 +32,5 @@ export const getComputeTimeAtom = (labId: string) =>
     const service = new VirtualLabService();
     return service.getComputeTime(labId);
   });
+
+export const projectTopMenuRefAtom = atom<RefObject<HTMLDivElement> | null>(null);

@@ -14,3 +14,10 @@ export type MockVirtualLab = {
   creationDate: string;
   budget: MockBudget;
 };
+
+export enum SimulationType {
+  ionChannel = 'ion-channel',
+  singleNeuron = 'single-neuron',
+  pairedNeuron = 'paired-neuron',
+  synaptome = 'synaptome',
+}
