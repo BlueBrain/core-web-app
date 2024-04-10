@@ -3,8 +3,8 @@
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
-import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSettingsComponent/VirtualLabSidebar';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
+import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSidebar';
 
 export default function VirtualLabPageLayout({ children }: { children: ReactNode }) {
   return (
