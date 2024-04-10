@@ -1,21 +1,17 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import SideMenu from '@/components/SideMenu';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
+import { LayoutProps } from '@/types/virtual-lab/layout';
+import { Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
-export default function VirtualLabProjectLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: { virtualLabId: string; projectId: string };
-}) {
-  const { virtualLabId, projectId } = params;
+export default function VirtualLabProjectLayout({ children, params }: LayoutProps) {
+  const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;
+  const labProjectUrl = `${labUrl}/project/${params.projectId}`;
   return (
     <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 bg-primary-9 pr-10 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -23,18 +19,21 @@ export default function VirtualLabProjectLayout({
           <SideMenu
             links={[
               {
-                key: 'virtual-lab',
-                href: '/virtual-lab/lab/test',
-                content: (
-                  <div className="flex gap-2 font-bold">
-                    <span className="text-primary-3">Virtual lab:</span>Institute of Neuroscience
-                  </div>
-                ),
+                key: LinkItemKey.Project,
+                label: Label.Project,
+                href: `${labProjectUrl}/home`,
+                content: params.projectId,
               },
             ]}
+            lab={{
+              key: LinkItemKey.VirtualLab,
+              label: Label.VirtualLab,
+              href: labUrl,
+              content: params.virtualLabId,
+            }}
           />
 
-          <VirtualLabProjectSidebar virtualLabId={virtualLabId} projectId={projectId} />
+          <VirtualLabProjectSidebar virtualLabId={params.virtualLabId} projectId={params.projectId} />
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
