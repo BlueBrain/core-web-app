@@ -36,7 +36,7 @@ function ScopeSelector({
       >
         All
       </button>
-      {[SimulationScope.cellular, SimulationScope.circuit, SimulationScope.system].map((scope) => (
+      {(Object.keys(SimulationScope) as Array<SimulationScope>).map((scope) => (
         <button
           key={scope}
           className={classNames('text-lg', selectedScope === scope && 'font-bold underline')}
