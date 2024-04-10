@@ -5,14 +5,14 @@ import { HomeOutlined, PlusOutlined, MinusOutlined, ArrowRightOutlined } from '@
 import { LinkItem } from '../VerticalLinks';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
+import { Role } from '@/constants/virtual-labs/sidemenu';
 
 type Props = {
   links: LinkItem[];
-  current?: string;
   lab?: LinkItem;
 };
 
-export default function SideMenu({ links, current, lab }: Props) {
+export default function SideMenu({ links, lab }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
 
@@ -27,12 +27,14 @@ export default function SideMenu({ links, current, lab }: Props) {
     }
   );
 
-  const linkClassName = (linkKey: string) => {
+  const linkClassName = (link: LinkItem) => {
     let baseClass = 'flex w-full items-center justify-between capitalize';
     if (expanded) baseClass += ' py-3 px-2 border border-primary-4';
-    if (current === linkKey && !expanded)
-      baseClass += ' rounded-full bg-primary-5 px-[1px] py-4 text-primary-9';
-    if ((current === linkKey || linkKey === 'literature') && expanded) baseClass = 'hidden';
+    if (link.role === Role.Section && !expanded)
+      baseClass += ' rounded-full bg-primary-5 py-3 text-primary-9';
+    if (link.role === Role.Current && !expanded) baseClass += ' text-primary-3';
+    if ((link.role === Role.Section || link.role === Role.Current) && expanded)
+      baseClass = 'hidden';
     return baseClass;
   };
 
@@ -59,18 +61,24 @@ export default function SideMenu({ links, current, lab }: Props) {
             {expanded && (
               <span className="text-lg font-thin uppercase text-primary-4">{lab.label}</span>
             )}
-            <Link href={lab.href} className={linkClassName(lab.key)}>
+            <Link href={lab.href} className={linkClassName(lab)}>
               {lab.content}
               {expanded && <ArrowRightOutlined className="ml-2" />}
             </Link>
           </div>
         )}
         {links.map((link) => (
-          <div className="flex w-full flex-col items-start" key={link.key}>
+          <div
+            className={classNames(
+              'flex flex-col items-start',
+              link.role === Role.Section ? 'w-2/3' : 'w-full'
+            )}
+            key={link.key}
+          >
             {expanded && (
               <span className="text-lg font-thin uppercase text-primary-4">{link.label}</span>
             )}
-            <Link href={link.href} className={linkClassName(link.key)}>
+            <Link href={link.href} className={linkClassName(link)}>
               {link.content}
               {expanded && <ArrowRightOutlined className="ml-2" />}
             </Link>

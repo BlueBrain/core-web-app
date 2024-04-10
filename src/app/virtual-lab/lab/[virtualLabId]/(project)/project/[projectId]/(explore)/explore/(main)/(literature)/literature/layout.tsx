@@ -7,6 +7,7 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import SideMenu from '@/components/SideMenu';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
+import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
 type LiteratureLayoutProps = {
   children: ReactNode;
@@ -26,26 +27,27 @@ export default function GenericLayout({ children, params }: LiteratureLayoutProp
           <SideMenu
             links={[
               {
-                key: 'project',
-                label: 'Project',
-                href: '/virtual-lab/lab/test/project/test',
+                key: LinkItemKey.Project,
+                label: Label.Project,
+                href: '/virtual-lab/lab/test/project/test/home',
                 content: params.projectId,
               },
               {
-                key: 'explore',
+                key: LinkItemKey.Explore,
                 href: '/virtual-lab/lab/test/project/test/explore',
-                content: 'Explore',
+                content: Content.Explore,
+                role: Role.Section,
               },
               {
-                key: 'literature',
+                key: LinkItemKey.Literature,
                 href: '/virtual-lab/lab/test/project/test/literature',
-                content: params.projectId,
+                content: Content.Literature,
+                role: Role.Current,
               },
             ]}
-            current="explore"
             lab={{
-              key: 'virtualLab',
-              label: 'Virtual Lab',
+              key: LinkItemKey.VirtualLab,
+              label: Label.VirtualLab,
               href: '/virtual-lab/lab/test',
               content: params.virtualLabId,
             }}
