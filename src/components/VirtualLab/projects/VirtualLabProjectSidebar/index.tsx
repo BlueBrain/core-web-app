@@ -3,7 +3,7 @@ import { Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
-
+import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import {
   virtualLabProjectDetailsAtomFamily,
@@ -46,9 +46,9 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
   const currentPage = usePathname().split('/').pop();
 
   const linkItems: LinkItem[] = [
-    { key: 'home', content: 'Project Home', href: 'home' },
+    { key: LinkItemKey.Home, content: 'Project Home', href: 'home' },
     {
-      key: 'library',
+      key: LinkItemKey.Library,
       content: (
         <div className="flex justify-between">
           <span>Project Library</span>
@@ -58,7 +58,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       href: 'library',
     },
     {
-      key: 'team',
+      key: LinkItemKey.Team,
       content: (
         <div className="flex justify-between">
           <span>Project Team</span>
@@ -67,9 +67,9 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       ),
       href: 'team',
     },
-    { key: 'explore', content: 'Explore', href: 'explore' },
-    { key: 'build', content: 'Build', href: 'build' },
-    { key: 'simulate', content: 'Simulate', href: 'simulate' },
+    { key: LinkItemKey.Explore, content: 'Explore', href: 'explore' },
+    { key: LinkItemKey.Build, content: 'Build', href: 'build' },
+    { key: LinkItemKey.Simulate, content: 'Simulate', href: 'simulate' },
   ];
   return (
     <div className="m-8 flex flex-col gap-5">
