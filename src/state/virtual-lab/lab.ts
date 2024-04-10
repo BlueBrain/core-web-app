@@ -22,11 +22,9 @@ export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
   })
 );
 
-export const virtualLabOfUserAtom = atom<Promise<VirtualLabAPIListData<VirtualLab>>>(
-  async () => {
-    const response = await getVirtualLabsOfUser();
-    return response.data;
-  }
-);
+export const virtualLabOfUserAtom = atom<Promise<VirtualLabAPIListData<VirtualLab>>>(async () => {
+  const response = await getVirtualLabsOfUser();
+  return response.data;
+});
 
 export const currentVirtualLabIdAtom = atom<string | null>(null);

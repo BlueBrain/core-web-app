@@ -103,5 +103,5 @@ export const licensesESView = {
 export const autoSaveDebounceInterval = 10000;
 
 export const virtualLabApi = {
-  url: env.NEXT_PUBLIC_VIRTUAL_LAB_API_URL
-}
+  url: env.NEXT_PUBLIC_VIRTUAL_LAB_API_URL,
+};
