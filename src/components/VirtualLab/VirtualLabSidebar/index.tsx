@@ -7,7 +7,7 @@ import { useAtomValue } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import VirtualLabsSelect from './VirtualLabsSelect';
-import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabDetailAtomFamily, virtualLabProjectsAtomFamily } from '@/state/virtual-lab/lab';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 
 type Props = {
@@ -17,7 +17,12 @@ type Props = {
 export default function VirtualLabSidebar({ virtualLabId }: Props) {
   const currentPage = usePathname().split('/').pop();
   const virtualLab = useAtomValue(loadable(virtualLabDetailAtomFamily(virtualLabId)));
+  const projects = useAtomValue(loadable(virtualLabProjectsAtomFamily(virtualLabId)));
 
+  /**
+   * Renders the title of the virtual lab based on the request status
+   * @returns
+   */
   const renderVirtualLabTitle = () => {
     if (virtualLab.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
@@ -30,6 +35,20 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
     return null;
   };
 
+  /**
+   * Renders the amount of projects in the virtual lab based on the request status
+   * @returns
+   */
+  const renderProjectsAmount = () => {
+    if (projects.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (projects.state === 'hasData') {
+      return projects.data.results.length;
+    }
+    return null;
+  };
+
   const linkItems: LinkItem[] = [
     { key: 'lab', content: 'The Virtual Lab', href: 'lab' },
     {
@@ -37,7 +56,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
       content: (
         <div className="flex justify-between">
           <span>Projects</span>
-          <span className="font-normal text-primary-3">9</span>
+          <span className="font-normal text-primary-3">{renderProjectsAmount()}</span>
         </div>
       ),
       href: 'projects',
