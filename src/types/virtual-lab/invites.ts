@@ -1,9 +1,10 @@
 import { VlmResponse } from './common';
 
-type InviteData = {
+export type InviteData = {
   virtual_lab_id: string;
   project_id?: string;
   origin: 'Lab' | 'Project';
+  status?: string;
 };
 
 export type InviteResponse = VlmResponse<InviteData>;

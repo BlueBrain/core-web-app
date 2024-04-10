@@ -27,17 +27,23 @@ export async function GET(req: NextRequest): Promise<any> {
     return NextResponse.redirect(new URL(url, req.url));
   }
 
-  const { origin, virtual_lab_id: labId, project_id: projectId } = response.data;
-
+  const { origin, status, virtual_lab_id: labId, project_id: projectId } = response.data;
   switch (origin) {
     case 'Lab':
       return NextResponse.redirect(
-        new URL(`/virtual-lab/lab/${labId}/lab?invite_accepted=true`, req.url)
+        new URL(
+          status === 'already_accepted'
+            ? `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}`
+            : `/virtual-lab/lab/${labId}/lab?invite_accepted=true`,
+          req.url
+        )
       );
     case 'Project':
       return NextResponse.redirect(
         new URL(
-          `/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`,
+          status === 'already_accepted'
+            ? `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}&project_id=${projectId}`
+            : `/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`,
           req.url
         )
       );
@@ -69,10 +75,6 @@ const getErrorUrl = (
     return `${baseRedirectUrl}${InviteErrorCodes.INVALID_LINK}`;
   }
 
-  if (response.message?.includes('already accepted')) {
-    return `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}`;
-  }
-
   if (isVlmError(response)) {
     captureException(new Error(`User invite could not be accepted because of VLM Error`), {
       extra: { vliError: response, username: session?.user?.name, invite: inviteToken },
@@ -81,7 +83,7 @@ const getErrorUrl = (
       return `${baseRedirectUrl}${InviteErrorCodes.UNAUTHORIZED}`;
     }
 
-    if (response.message === 'Invite Token is not valid') {
+    if (response.error_code === 'TOKEN_EXPIRED') {
       return `${baseRedirectUrl}${InviteErrorCodes.TOKEN_EXPIRED}`;
     }
 
