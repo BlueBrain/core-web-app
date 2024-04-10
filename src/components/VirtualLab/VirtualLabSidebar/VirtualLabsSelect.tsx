@@ -1,11 +1,17 @@
+'use client';
+
 import { ConfigProvider, Select, Spin } from 'antd';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { usePathname, useRouter } from 'next/navigation';
 import { virtualLabOfUserAtom } from '@/state/virtual-lab/lab';
 
 export default function VirtualLabsSelect() {
   const virtualLabs = useAtomValue(loadable(virtualLabOfUserAtom));
+  const router = useRouter();
+  const path = usePathname();
+
   if (virtualLabs.state === 'loading') {
     return <Spin indicator={<LoadingOutlined />} />;
   }
@@ -35,8 +41,10 @@ export default function VirtualLabsSelect() {
     >
       <Select
         suffixIcon={<SwapOutlined style={{ color: '#40A9FF' }} />}
-        defaultValue="1"
-        onChange={() => {}}
+        defaultValue="Switch Virtual Lab"
+        onChange={(selected) => {
+          router.push(`/virtual-lab/lab/${selected}/${path.split('/').reverse()[0]}`);
+        }}
         options={virtualLabOptions}
       />
     </ConfigProvider>
