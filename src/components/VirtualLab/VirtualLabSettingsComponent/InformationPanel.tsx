@@ -50,12 +50,11 @@ export default function InformationPanel({
 
   const onSave = () => {
     setSavingChanges(true);
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { name, description, reference_email } = form.getFieldsValue();
+    const { name, description, reference_email: referenceEmail } = form.getFieldsValue();
     save({
       name,
       description,
-      reference_email,
+      reference_email: referenceEmail,
     })
       .then(() => {
         setSaveError(false);
