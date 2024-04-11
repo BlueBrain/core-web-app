@@ -32,6 +32,7 @@ export const config = {
   matcher: [
     '/',
     '/main',
+    '/api/invite',
     '/(build|simulate|simulations|main|explore|experiment-designer|svc|virtual-lab)/(.*)',
   ],
 };

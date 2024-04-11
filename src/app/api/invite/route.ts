@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth/next';
 import { NextRequest, NextResponse } from 'next/server';
-import nextAuthMiddleware, { NextRequestWithAuth } from 'next-auth/middleware';
 import { captureException } from '@sentry/nextjs';
 import { Session } from 'next-auth';
 import { authOptions } from '@/auth';
@@ -9,10 +8,7 @@ import { VlmError, isVlmError } from '@/types/virtual-lab/common';
 
 export async function GET(req: NextRequest): Promise<any> {
   const session = await getServerSession(authOptions);
-  if (!session) {
-    return nextAuthMiddleware(req as NextRequestWithAuth);
-  }
-  if (!session.accessToken) {
+  if (!session?.accessToken) {
     return NextResponse.redirect(new URL(getErrorUrl(null, session, null), req.url));
   }
 
@@ -21,7 +17,7 @@ export async function GET(req: NextRequest): Promise<any> {
     return NextResponse.redirect(new URL(getErrorUrl(null, session, inviteToken ?? null), req.url));
   }
 
-  const response = await processInvite(session.accessToken, inviteToken);
+  const response = await processInvite(session?.accessToken, inviteToken);
   if (!isVlmInviteResponse(response)) {
     const url = getErrorUrl(response, session, inviteToken);
     return NextResponse.redirect(new URL(url, req.url));
