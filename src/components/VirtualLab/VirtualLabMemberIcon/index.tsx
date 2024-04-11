@@ -1,15 +1,14 @@
-import { Role } from "@/types/virtual-lab/members";
-
+import { Role } from '@/types/virtual-lab/members';
 
 type Props = {
   role: Role;
-  name: string;
+  first_name: string;
+  last_name: string;
 };
 
-export default function VirtualLabMemberIcon({ role, name }: Props) {
-  const getInitials = (_name: string) => {
-    const splitted = _name.split(' ');
-    return splitted.length > 1 ? `${splitted[0][0]}${splitted[1][0]}` : splitted[0][0];
+export default function VirtualLabMemberIcon({ role, first_name, last_name }: Props) {
+  const getInitials = () => {
+    return `${first_name[0]} ${last_name[0]}`;
   };
 
   const generateRandomHexColor = () => {
@@ -32,7 +31,7 @@ export default function VirtualLabMemberIcon({ role, name }: Props) {
       style={{ backgroundColor: generateRandomHexColor() }}
       className={`flex h-12 w-12 items-center justify-center ${role === 'member' ? 'rounded-full' : ''}`}
     >
-      <span className="text-2xl font-bold text-white">{getInitials(name)}</span>
+      <span className="text-2xl font-bold text-white">{getInitials()}</span>
     </div>
   );
 }

@@ -161,9 +161,11 @@ export default function VirtualLabHomePage({ id }: Props) {
           {virtualLabDetail.data.users.map((user) => (
             <Member
               key={user.id}
-              name={`${user.first_name} ${user.last_name}`}
+              name={user.name}
               lastActive="N/A"
               memberRole={user.role}
+              first_name={user.first_name}
+              last_name={user.last_name}
             />
           ))}
         </div>

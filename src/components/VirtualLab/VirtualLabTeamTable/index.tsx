@@ -1,14 +1,42 @@
 'use client';
 
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { ConfigProvider, Select, Table } from 'antd';
+import { DownOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { ConfigProvider, Select, Spin, Table } from 'antd';
+import { loadable } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
 import VirtualLabMemberIcon from '../VirtualLabMemberIcon';
-import { mockMembers } from '@/components/VirtualLab/mockData/members';
-import { MockMember, MockRole } from '@/types/virtual-lab/members';
+import { MockRole, Role, VirtualLabMember } from '@/types/virtual-lab/members';
+import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 
-export default function VirtualLabTeamTable() {
-  const roleOptions: { value: MockRole; label: string }[] = [
-    { value: 'administrator', label: 'Administrator' },
+type Props = {
+  virtualLabId: string;
+};
+
+export default function VirtualLabTeamTable({ virtualLabId }: Props) {
+  const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(virtualLabId)));
+  if (virtualLabDetail.state === 'loading') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
+  }
+  if (virtualLabDetail.state === 'hasError') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="rounded-lg border p-8">
+          {(virtualLabDetail.error as Error).message === 'Status: 404' ? (
+            <>Virtual Lab not found</>
+          ) : (
+            <>Something went wrong when fetching virtual lab</>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const roleOptions: { value: Role; label: string }[] = [
+    { value: 'admin', label: 'Administrator' },
     { value: 'member', label: 'Member' },
   ];
 
@@ -17,8 +45,12 @@ export default function VirtualLabTeamTable() {
       title: 'Icon',
       key: 'icon',
       dataIndex: 'name',
-      render: (_: any, record: MockMember) => (
-        <VirtualLabMemberIcon name={record.name} role={record.role} />
+      render: (_: any, record: VirtualLabMember) => (
+        <VirtualLabMemberIcon
+          first_name={record.first_name}
+          last_name={record.last_name}
+          role={record.role}
+        />
       ),
     },
     {
@@ -29,9 +61,9 @@ export default function VirtualLabTeamTable() {
     },
     {
       title: 'Last active',
-      dataIndex: 'lastActive',
-      key: 'lastActive',
-      render: (lastActive: string) => <span className="text-primary-3">Active {lastActive}</span>,
+      dataIndex: 'last_active',
+      key: 'last_active',
+      render: () => <span className="text-primary-3">Active N/A</span>,
     },
     {
       title: 'Action',
@@ -68,7 +100,7 @@ export default function VirtualLabTeamTable() {
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <span>Total members</span>
-          <span className="font-bold">11</span>
+          <span className="font-bold">{virtualLabDetail.data.users.length}</span>
         </div>
         <div role="button" className="flex w-[150px] justify-between border border-primary-7 p-3">
           <span className="font-bold">Invite member</span>
@@ -89,7 +121,7 @@ export default function VirtualLabTeamTable() {
       >
         <Table
           bordered={false}
-          dataSource={mockMembers}
+          dataSource={virtualLabDetail.data.users}
           pagination={false}
           columns={columns}
           showHeader={false}
