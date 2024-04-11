@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Role } from '@/types/virtual-lab/members';
 
 type Props = {
@@ -7,9 +8,9 @@ type Props = {
 };
 
 export default function VirtualLabMemberIcon({ role, first_name, last_name }: Props) {
-  const getInitials = () => {
+  const getInitials = useMemo(() => {
     return `${first_name[0]} ${last_name[0]}`;
-  };
+  }, [first_name, last_name]);
 
   const generateRandomHexColor = () => {
     // Generating random RGB values
