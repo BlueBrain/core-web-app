@@ -7,7 +7,7 @@ import { ROLES } from '../../../constants';
 import { NewMember, useNewMember } from './new-member-hook';
 import IconPlus from '@/components/icons/Plus';
 import { classNames } from '@/util/utils';
-import { VirtualLabMember } from '@/types/virtual-lab/lab';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
 import styles from './add-member.module.css';
 
 export interface AddMemberProps {

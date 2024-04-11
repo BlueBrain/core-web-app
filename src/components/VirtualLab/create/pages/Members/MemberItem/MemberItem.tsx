@@ -4,7 +4,7 @@ import { DeleteFilled } from '@ant-design/icons';
 import { Avatar } from '../../../sub-components/Avatar';
 import { ROLES } from '../../../constants';
 import { classNames } from '@/util/utils';
-import { VirtualLabMember } from '@/types/virtual-lab/lab';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
 import styles from './member-item.module.css';
 
 export interface MemberItemProps {

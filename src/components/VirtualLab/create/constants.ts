@@ -1,5 +1,6 @@
 import { VirtualLabWithOptionalId, VirtualLabPlanDefinition } from './types';
-import { VirtualLabMember, VirtualLabPlanType } from '@/types/virtual-lab/lab';
+import { VirtualLabPlanType } from '@/types/virtual-lab/lab';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   id: '',

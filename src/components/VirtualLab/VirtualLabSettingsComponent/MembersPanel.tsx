@@ -9,7 +9,8 @@ import { Session } from 'next-auth';
 import { Avatar } from '../create/sub-components/Avatar';
 import AddVirtualLabMember from './AddVirtualLabMember';
 import useNotification from '@/hooks/notifications';
-import { NewMember, VirtualLabMember } from '@/types/virtual-lab/lab';
+import { NewMember } from '@/types/virtual-lab/lab';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 type Props = {
   members: VirtualLabMember[];

@@ -1,10 +1,7 @@
 import { virtualLabApi } from '@/config';
-import {
-  Project,
-  VirtualLab,
-  VirtualLabAPIListResponse,
-  VirtualLabAPIResponse,
-} from '@/types/virtual-lab/lab';
+import { VirtualLab } from '@/types/virtual-lab/lab';
+import { VirtualLabAPIListResponse, VirtualLabAPIResponse } from '@/types/virtual-lab/api';
+import { Project } from '@/types/virtual-lab/projects';
 
 // Add the bearer token from the frontend below
 // This constant will be replaced by the actual login token as soon as login is implemented

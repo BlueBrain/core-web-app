@@ -6,3 +6,9 @@ export type MockMember = {
   lastActive: string;
   role: MockRole;
 };
+export interface VirtualLabMember {
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+  lastActive?: number;
+}

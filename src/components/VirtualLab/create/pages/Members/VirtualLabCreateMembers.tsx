@@ -5,7 +5,7 @@ import { Layout } from '../../sub-components/Layout';
 import { Main } from '../../sub-components/Main';
 import { MemberItem } from './MemberItem';
 import { AddMember } from './AddMember';
-import { VirtualLabMember } from '@/types/virtual-lab/lab';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
 import styles from './virtual-lab-create-members.module.css';
 
 export interface VirtualLabCreateMembersProps {

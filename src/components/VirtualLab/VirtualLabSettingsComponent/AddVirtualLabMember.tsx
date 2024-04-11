@@ -2,7 +2,8 @@
 
 import { Button, ConfigProvider, Form, Input, Select } from 'antd';
 import { VALID_EMAIL_REGEXP } from '@/util/utils';
-import { NewMember, VirtualLabMember } from '@/types/virtual-lab/lab';
+import { NewMember } from '@/types/virtual-lab/lab';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export default function AddVirtualLabMember({
   onSendInvite,

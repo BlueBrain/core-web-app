@@ -3,7 +3,7 @@ import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
 import VirtualLabStatistic from '../../VirtualLabStatistic';
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
-import { Project } from '@/types/virtual-lab/lab';
+import { Project } from '@/types/virtual-lab/projects';
 import { formatDate } from '@/util/utils';
 
 type Props = {
