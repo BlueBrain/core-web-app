@@ -15,7 +15,6 @@ import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
-import { mockVirtualLab } from '@/components/VirtualLab/mockData/lab';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import Styles from './home-page.module.css';
 
@@ -25,7 +24,6 @@ type Props = {
 
 export default function VirtualLabHomePage({ id }: Props) {
   const iconStyle = { color: '#69C0FF' };
-  const virtualLab = mockVirtualLab;
   const projects = mockProjects;
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
@@ -56,16 +54,16 @@ export default function VirtualLabHomePage({ id }: Props) {
         <div
           className={Styles.bannerImg}
           style={{
-            backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
+            backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocaqmpus_original.png)`,
           }}
         />
         <div className="flex flex-row justify-between">
           <div className="flex max-w-[50%] flex-col gap-2">
             <div>
               <div className="text-primary-2">Virtual Lab name</div>
-              <h2 className="text-5xl font-bold">{virtualLabDetail.data?.name}</h2>
+              <h2 className="text-5xl font-bold">{virtualLabDetail.data.name}</h2>
             </div>
-            <div>{virtualLab.description}</div>
+            <div>{virtualLabDetail.data.description}</div>
           </div>
           <div>
             <EditOutlined />
@@ -91,7 +89,7 @@ export default function VirtualLabHomePage({ id }: Props) {
           <VirtualLabStatistic
             icon={<CalendarOutlined style={iconStyle} />}
             title="Creation date"
-            detail={virtualLab.created_at}
+            detail={virtualLabDetail.data.created_at}
           />
         </div>
       </div>

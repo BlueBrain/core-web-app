@@ -10,11 +10,12 @@ export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   reference_email: '',
   budget: 1,
   plan_id: 0,
+  users: [],
 };
 
 export const ROLES: Record<VirtualLabMember['role'], string> = {
   admin: 'Administrator',
-  user: 'User',
+  member: 'Member',
 };
 
 export const STEPS = {

@@ -9,4 +9,5 @@ export const mockVirtualLab: VirtualLab = {
   budget: 1650,
   reference_email: 'user@domain.com',
   plan_id: 1,
+  users: [],
 };
