@@ -5,7 +5,7 @@ import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { PlusOutlined, SearchOutlined, MinusOutlined, LoadingOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
-import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 
 // TODO: Consolodate this with the ExpandIcon in @/components/VirtualLab/VirtualLabSettingsComponent
 function ExpandIcon({ isActive }: { isActive?: boolean }) {

@@ -6,7 +6,9 @@ import {
   VirtualLabAPIResponse,
 } from '@/types/virtual-lab/lab';
 
-const accessToken = 'Bearer ';
+// Add the bearer token from the frontend below
+// This constant will be replaced by the actual login token as soon as login is implemented
+const accessToken = 'Bearer <TOKEN>';
 
 export async function getVirtualLabDetail(id: string): Promise<VirtualLabAPIResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {

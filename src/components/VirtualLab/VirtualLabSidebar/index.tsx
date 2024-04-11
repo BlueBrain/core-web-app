@@ -7,7 +7,8 @@ import { useAtomValue } from 'jotai';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import VirtualLabsSelect from './VirtualLabsSelect';
-import { virtualLabDetailAtomFamily, virtualLabProjectsAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 
 type Props = {
