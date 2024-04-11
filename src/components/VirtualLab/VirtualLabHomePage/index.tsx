@@ -163,8 +163,8 @@ export default function VirtualLabHomePage({ id }: Props) {
               name={user.name}
               lastActive="N/A"
               memberRole={user.role}
-              first_name={user.first_name}
-              last_name={user.last_name}
+              firstName={user.first_name}
+              lastName={user.last_name}
             />
           ))}
         </div>

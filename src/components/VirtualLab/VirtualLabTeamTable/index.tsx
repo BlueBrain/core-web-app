@@ -47,8 +47,8 @@ export default function VirtualLabTeamTable({ virtualLabId }: Props) {
       dataIndex: 'name',
       render: (_: any, record: VirtualLabMember) => (
         <VirtualLabMemberIcon
-          first_name={record.first_name}
-          last_name={record.last_name}
+          firstName={record.first_name}
+          lastName={record.last_name}
           role={record.role}
         />
       ),

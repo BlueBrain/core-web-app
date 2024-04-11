@@ -3,14 +3,14 @@ import { Role } from '@/types/virtual-lab/members';
 
 type Props = {
   role: Role;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
 };
 
-export default function VirtualLabMemberIcon({ role, first_name, last_name }: Props) {
+export default function VirtualLabMemberIcon({ role, firstName, lastName }: Props) {
   const initials = useMemo(() => {
-    return `${first_name[0]} ${last_name[0]}`;
-  }, [first_name, last_name]);
+    return `${firstName[0]} ${lastName[0]}`;
+  }, [firstName, lastName]);
 
   const generateRandomHexColor = () => {
     // Generating random RGB values

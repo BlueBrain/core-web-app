@@ -77,8 +77,8 @@ export default function VirtualLabProjectPage() {
           {mockMembers.map((member) => (
             <Member
               key={member.key}
-              first_name="TO BE REPLACED"
-              last_name="TO BE REPLACED"
+              firstName="TO BE REPLACED"
+              lastName="TO BE REPLACED"
               name={member.name}
               lastActive={member.lastActive}
               memberRole="member"
