@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function VirtualLabMemberIcon({ role, first_name, last_name }: Props) {
-  const getInitials = useMemo(() => {
+  const initials = useMemo(() => {
     return `${first_name[0]} ${last_name[0]}`;
   }, [first_name, last_name]);
 
@@ -32,7 +32,7 @@ export default function VirtualLabMemberIcon({ role, first_name, last_name }: Pr
       style={{ backgroundColor: generateRandomHexColor() }}
       className={`flex h-12 w-12 items-center justify-center ${role === 'member' ? 'rounded-full' : ''}`}
     >
-      <span className="text-2xl font-bold text-white">{getInitials()}</span>
+      <span className="text-2xl font-bold text-white">{initials}</span>
     </div>
   );
 }
