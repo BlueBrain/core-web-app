@@ -1,10 +1,7 @@
 'use client';
 
 import VirtualLabHomePage from '@/components/VirtualLab/VirtualLabHomePage';
-
-interface ServerSideComponentProp<Params> {
-  params: Params;
-}
+import { ServerSideComponentProp } from '@/types/common';
 
 export default function VirtualLabSettingsPage({
   params,

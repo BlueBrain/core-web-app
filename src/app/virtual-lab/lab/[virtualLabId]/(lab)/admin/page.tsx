@@ -1,8 +1,5 @@
 import VirtualLabSettingsComponent from '@/components/VirtualLab/VirtualLabSettingsComponent';
-
-interface ServerSideComponentProp<Params> {
-  params: Params;
-}
+import { ServerSideComponentProp } from '@/types/common';
 
 export default function VirtualLabAdminPage({
   params,

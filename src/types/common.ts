@@ -34,3 +34,7 @@ export type SelectOption = {
 };
 
 export type ApplicationSection = 'explore' | 'build' | 'simulate';
+
+export interface ServerSideComponentProp<Params> {
+  params: Params;
+}

@@ -1,8 +1,5 @@
 import VirtualLabProjectList from '@/components/VirtualLab/projects/VirtualLabProjectList';
-
-interface ServerSideComponentProp<Params> {
-  params: Params;
-}
+import { ServerSideComponentProp } from '@/types/common';
 
 export default function VirtualLabProjectsPage({
   params,
