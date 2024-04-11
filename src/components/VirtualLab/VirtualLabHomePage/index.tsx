@@ -10,6 +10,7 @@ import DiscoverObpItem from './DiscoverObpItem';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
+import { formatDate } from '@/util/utils';
 import WelcomeUserBanner from './WelcomeUserBanner';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
@@ -70,26 +71,26 @@ export default function VirtualLabHomePage({ id }: Props) {
           </div>
         </div>
         <div className="flex gap-5">
-          <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail={10} />
+          <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
           <VirtualLabStatistic
             icon={<StatsEditIcon style={iconStyle} />}
             title="Simulation experiments"
-            detail={10}
+            detail="N/A"
           />
           <VirtualLabStatistic
             icon={<UserOutlined style={iconStyle} />}
             title="Members"
-            detail={10}
+            detail={virtualLabDetail.data.users.length}
           />
           <VirtualLabStatistic
             icon={<MembersGroupIcon style={iconStyle} />}
             title="Admin"
-            detail="Julian Budd"
+            detail={virtualLabDetail.data.users.find((user) => user.role === 'admin')?.name || '-'}
           />
           <VirtualLabStatistic
             icon={<CalendarOutlined style={iconStyle} />}
             title="Creation date"
-            detail={virtualLabDetail.data.created_at}
+            detail={formatDate(virtualLabDetail.data.created_at)}
           />
         </div>
       </div>
