@@ -17,42 +17,53 @@ export async function GET(req: NextRequest): Promise<any> {
     return NextResponse.redirect(new URL(getErrorUrl(null, session, inviteToken ?? null), req.url));
   }
 
-  const response = await processInvite(session?.accessToken, inviteToken);
-  if (!isVlmInviteResponse(response)) {
-    const url = getErrorUrl(response, session, inviteToken);
-    return NextResponse.redirect(new URL(url, req.url));
-  }
+  try {
+    const response = await processInvite(session?.accessToken, inviteToken);
+    if (!isVlmInviteResponse(response)) {
+      const url = getErrorUrl(response, session, inviteToken);
+      return NextResponse.redirect(new URL(url, req.url));
+    }
 
-  const { origin, status, virtual_lab_id: labId, project_id: projectId } = response.data;
-  switch (origin) {
-    case 'Lab':
-      return NextResponse.redirect(
-        new URL(
-          status === 'already_accepted'
-            ? `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}`
-            : `/virtual-lab/lab/${labId}/lab?invite_accepted=true`,
-          req.url
-        )
-      );
-    case 'Project':
-      return NextResponse.redirect(
-        new URL(
-          status === 'already_accepted'
-            ? `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}&project_id=${projectId}`
-            : `/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`,
-          req.url
-        )
-      );
-    default:
-      captureException(
-        new Error(
-          `User ${session.user.username} could not accept invite ${inviteToken} because unknown origin returned by server`
-        ),
-        { extra: origin }
-      );
-      return NextResponse.redirect(
-        new URL(`${baseRedirectUrl}${InviteErrorCodes.UNKNOWN}`, req.url)
-      );
+    const { origin, status, virtual_lab_id: labId, project_id: projectId } = response.data;
+    switch (origin) {
+      case 'Lab':
+        return NextResponse.redirect(
+          new URL(
+            status === 'already_accepted'
+              ? `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}`
+              : `/virtual-lab/lab/${labId}/lab?invite_accepted=true`,
+            req.url
+          )
+        );
+      case 'Project':
+        return NextResponse.redirect(
+          new URL(
+            status === 'already_accepted'
+              ? `${baseRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}&project_id=${projectId}`
+              : `/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`,
+            req.url
+          )
+        );
+      default:
+        captureException(
+          new Error(
+            `User ${session.user.username} could not accept invite ${inviteToken} because unknown origin returned by server`
+          ),
+          { extra: origin }
+        );
+        return NextResponse.redirect(
+          new URL(`${baseRedirectUrl}${InviteErrorCodes.UNKNOWN}`, req.url)
+        );
+    }
+  } catch (err: any) {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    captureException(
+      new Error(
+        `User ${session?.user?.username} could not accept invite ${inviteToken} because of an unknown error`
+      )
+    );
+    return NextResponse.redirect(new URL(`${baseRedirectUrl}${InviteErrorCodes.UNKNOWN}`, req.url));
   }
 }
 
