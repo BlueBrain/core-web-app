@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth/next';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { redirect } from 'next/navigation';
 import { captureException } from '@sentry/nextjs';
 import { Session } from 'next-auth';
 import { authOptions } from '@/auth';
@@ -10,40 +11,38 @@ import { basePath } from '@/config';
 export async function GET(req: NextRequest): Promise<any> {
   const session = await getServerSession(authOptions);
   if (!session?.accessToken) {
-    return NextResponse.redirect(new URL(getErrorUrl(null, session, null), req.url));
+    redirect(getErrorUrl(null, session, null));
   }
 
   const inviteToken = req.nextUrl.searchParams.get('token');
   if (!inviteToken) {
-    return NextResponse.redirect(new URL(getErrorUrl(null, session, inviteToken ?? null), req.url));
+    redirect(getErrorUrl(null, session, inviteToken ?? null));
+    return;
   }
 
   const response = await processInvite(session?.accessToken, inviteToken);
   if (!isVlmInviteResponse(response)) {
     const url = getErrorUrl(response, session, inviteToken);
-    return NextResponse.redirect(new URL(url, req.url));
+    redirect(url);
+    return;
   }
 
   const { origin, status, virtual_lab_id: labId, project_id: projectId } = response.data;
   switch (origin) {
     case 'Lab':
-      return NextResponse.redirect(
-        new URL(
-          status === 'already_accepted'
-            ? `${errorRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}`
-            : `${basePath}/virtual-lab/lab/${labId}/lab?invite_accepted=true`,
-          req.url
-        )
+      redirect(
+        status === 'already_accepted'
+          ? `${errorRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}`
+          : `${basePath}/virtual-lab/lab/${labId}/lab?invite_accepted=true`
       );
+      break;
     case 'Project':
-      return NextResponse.redirect(
-        new URL(
-          status === 'already_accepted'
-            ? `${errorRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}&project_id=${projectId}`
-            : `${basePath}/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`,
-          req.url
-        )
+      redirect(
+        status === 'already_accepted'
+          ? `${errorRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}&project_id=${projectId}`
+          : `${basePath}/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`
       );
+      break;
     default:
       captureException(
         new Error(
@@ -51,9 +50,7 @@ export async function GET(req: NextRequest): Promise<any> {
         ),
         { extra: origin }
       );
-      return NextResponse.redirect(
-        new URL(`${errorRedirectUrl}${InviteErrorCodes.UNKNOWN}`, req.url)
-      );
+      redirect(`${errorRedirectUrl}${InviteErrorCodes.UNKNOWN}`);
   }
 }
 
@@ -97,7 +94,7 @@ const processInvite = async (
   sessionToken: string,
   inviteToken: string
 ): Promise<InviteResponse | VlmError> => {
-  return fetch(`http://localhost:8000/invites?token=${inviteToken}`, {
+  return fetch(`https://bbp.epfl.ch/vlm/invites?token=${inviteToken}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
