@@ -1,75 +1,105 @@
+/* eslint-disable no-param-reassign */
 import { getServerSession } from 'next-auth/next';
 import { NextRequest, NextResponse } from 'next/server';
 import { captureException } from '@sentry/nextjs';
 import { Session } from 'next-auth';
+import { NextURL } from 'next/dist/server/web/next-url';
 import { authOptions } from '@/auth';
-import { InviteErrorCodes, InviteResponse, isVlmInviteResponse } from '@/types/virtual-lab/invites';
+import {
+  InviteData,
+  InviteErrorCodes,
+  InviteResponse,
+  isVlmInviteResponse,
+} from '@/types/virtual-lab/invites';
 import { VlmError, isVlmError } from '@/types/virtual-lab/common';
-import { basePath } from '@/config';
+
+const errorPath = '/';
+const projectPath = (labId: string, projectId: string) =>
+  `/virtual-lab/lab/${labId}/project/${projectId!}/home`;
+const labPath = (labId: string) => `/virtual-lab/lab/${labId}/lab`;
 
 export async function GET(req: NextRequest): Promise<any> {
+  const inviteToken = req.nextUrl.searchParams.get('token');
+  const url = req.nextUrl.clone();
+  url.searchParams.delete('token');
+
   const session = await getServerSession(authOptions);
   if (!session?.accessToken) {
-    return NextResponse.redirect(new URL(getErrorUrl(null, session, null), req.url));
+    return NextResponse.redirect(getErrorUrl(url, null, session, null));
   }
 
-  const inviteToken = req.nextUrl.searchParams.get('token');
   if (!inviteToken) {
-    return NextResponse.redirect(new URL(getErrorUrl(null, session, inviteToken ?? null), req.url));
+    return NextResponse.redirect(getErrorUrl(url, null, session, inviteToken ?? null));
   }
 
   const response = await processInvite(session?.accessToken, inviteToken);
   if (!isVlmInviteResponse(response)) {
-    const url = getErrorUrl(response, session, inviteToken);
-    return NextResponse.redirect(new URL(url, req.url));
+    return NextResponse.redirect(getErrorUrl(url, response, session, inviteToken));
   }
 
-  const { origin, status, virtual_lab_id: labId, project_id: projectId } = response.data;
-  switch (origin) {
+  switch (response.data.origin) {
     case 'Lab':
-      return NextResponse.redirect(
-        new URL(
-          status === 'already_accepted'
-            ? `${errorRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}`
-            : `${basePath}/virtual-lab/lab/${labId}/lab?invite_accepted=true`,
-          req.url
-        )
-      );
+      return NextResponse.redirect(getLabUrl(url, response.data));
     case 'Project':
-      return NextResponse.redirect(
-        new URL(
-          status === 'already_accepted'
-            ? `${errorRedirectUrl}${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}&project_id=${projectId}`
-            : `${basePath}/virtual-lab/lab/${labId}/project/${projectId!}/home?invite_accepted=true`,
-          req.url
-        )
-      );
+      return NextResponse.redirect(getProjectUrl(url, response.data));
     default:
       captureException(
         new Error(
           `User ${session.user.username} could not accept invite ${inviteToken} because unknown origin returned by server`
         ),
-        { extra: origin }
+        { extra: response.data.origin }
       );
-      return NextResponse.redirect(
-        new URL(`${errorRedirectUrl}${InviteErrorCodes.UNKNOWN}`, req.url)
-      );
+      return NextResponse.redirect(getErrorUrl(url, response, session, inviteToken));
   }
 }
 
-const errorRedirectUrl = `${basePath}/?errorcode=`;
+const getProjectUrl = (url: NextURL, vlmData: InviteData): NextURL => {
+  const { status, virtual_lab_id: labId, project_id: projectId, origin } = vlmData;
+  if (status === 'already_accepted') {
+    url.pathname = errorPath;
+    url.searchParams.set('errorcode', `${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}`);
+    url.searchParams.set('origin', origin);
+    url.searchParams.set('lab_id', labId);
+    url.searchParams.set('project_id', projectId!);
+    return url;
+  }
+
+  url.pathname = projectPath(labId, projectId!);
+  url.searchParams.set('invite_accepted', 'true');
+  return url;
+};
+
+const getLabUrl = (url: NextURL, vlmData: InviteData): NextURL => {
+  const { status, virtual_lab_id: labId, origin } = vlmData;
+  if (status === 'already_accepted') {
+    url.pathname = errorPath;
+    url.searchParams.set('errorcode', `${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}`);
+    url.searchParams.set('origin', origin);
+    url.searchParams.set('lab_id', labId);
+    return url;
+  }
+
+  url.pathname = labPath(labId);
+  url.searchParams.set('invite_accepted', 'true');
+  return url;
+};
 
 const getErrorUrl = (
+  url: NextURL,
   response: VlmError | any,
   session: Session | null,
   inviteToken: string | null
-): string => {
+): NextURL => {
+  url.pathname = errorPath;
+
   if (!session?.accessToken) {
-    return `${errorRedirectUrl}${InviteErrorCodes.UNAUTHORIZED}`;
+    url.searchParams.set('errorcode', `${InviteErrorCodes.UNAUTHORIZED}`);
+    return url;
   }
 
   if (!inviteToken) {
-    return `${errorRedirectUrl}${InviteErrorCodes.INVALID_LINK}`;
+    url.searchParams.set('errorcode', `${InviteErrorCodes.INVALID_LINK}`);
+    return url;
   }
 
   if (isVlmError(response)) {
@@ -77,20 +107,25 @@ const getErrorUrl = (
       extra: { vliError: response, username: session?.user?.name, invite: inviteToken },
     });
     if (response.error_code === 'AUTHORIZATION_ERROR') {
-      return `${errorRedirectUrl}${InviteErrorCodes.UNAUTHORIZED}`;
+      url.searchParams.set('errorcode', `${InviteErrorCodes.UNAUTHORIZED}`);
+      return url;
     }
 
     if (response.error_code === 'TOKEN_EXPIRED') {
-      return `${errorRedirectUrl}${InviteErrorCodes.TOKEN_EXPIRED}`;
+      url.searchParams.set('errorcode', `${InviteErrorCodes.TOKEN_EXPIRED}`);
+      return url;
     }
 
-    return `${errorRedirectUrl}${InviteErrorCodes.UNKNOWN}`;
+    url.searchParams.set('errorcode', `${InviteErrorCodes.TOKEN_EXPIRED}`);
+    return url;
   }
 
   captureException(new Error(`User invite could not be accepted because of Unknown error`), {
     extra: { error: response, username: session?.user?.name, invite: inviteToken },
   });
-  return `${errorRedirectUrl}${InviteErrorCodes.UNKNOWN}`;
+
+  url.searchParams.set('errorcode', `${InviteErrorCodes.UNKNOWN}`);
+  return url;
 };
 
 const processInvite = async (
