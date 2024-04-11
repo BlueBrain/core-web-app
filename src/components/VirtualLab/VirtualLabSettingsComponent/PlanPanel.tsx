@@ -1,15 +1,13 @@
-/* eslint-disable react/no-array-index-key */
-
 import { Button, Form, Modal, Spin } from 'antd';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { classNames } from '@/util/utils';
 import { MockBilling, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 import Styles from './plan-panel.module.css';
 
 type PlanDetails = {
   type: VirtualLabPlanType;
-  advantages: string[];
-  pricePerMonthPerUser: { cost: number; currency: string };
+  description: ReactNode;
+  pricing: { cost: number; currency: string };
   className?: string;
 };
 
@@ -83,46 +81,33 @@ export default function PlanPanel({
           )}
           key={plan.type}
         >
-          <h2 className="mb-4 text-3xl font-bold capitalize">{plan.type}</h2>
-
+          <div className="flex items-baseline justify-between">
+            <h2 className="mb-4 text-3xl font-bold capitalize">{plan.type}</h2>
+            <span className="text-lg">
+              {plan.pricing.currency}&nbsp;
+              <big className="text-3xl font-bold">{plan.pricing.cost}</big> / month / user
+            </span>
+          </div>
           <div>
-            <h6 className="text-sm text-primary-3">Your advantages</h6>
-            <ul className="columns-3 px-5 py-3">
-              {plan.advantages.map((advantage, index) => (
-                <li key={index} className="list-disc font-semibold">
-                  {advantage}
-                </li>
-              ))}
-            </ul>
-            <div
-              className={classNames(
-                'border-b border-t py-3',
-                plan.type === selectedPlan ? 'border-primary-6' : 'border-gray-200'
-              )}
-            >
-              <span className="text-3xl font-bold">
-                {plan.pricePerMonthPerUser.currency} {plan.pricePerMonthPerUser.cost}
-              </span>{' '}
-              / month /user
-            </div>
-            {contextHolder}
-
+            {plan.description}
             {plan.type === selectedPlan && <p className="mt-4 font-semibold">Current Selection</p>}
           </div>
-
           {userIsAdmin && plan.type !== selectedPlan && plan.type !== currentPlan && (
-            <Button
-              className="mt-4 rounded-none border border-gray-300"
-              onClick={() => {
-                setSelectedPlan(plan.type);
+            <>
+              {contextHolder}
+              <Button
+                className="mt-4 rounded-none border border-gray-300"
+                onClick={() => {
+                  setSelectedPlan(plan.type);
 
-                if (plan.type === 'entry') {
-                  showConfirmationForSwitchingPlan(plan.type);
-                }
-              }}
-            >
-              Select
-            </Button>
+                  if (plan.type === 'entry') {
+                    showConfirmationForSwitchingPlan(plan.type);
+                  }
+                }}
+              >
+                Select
+              </Button>
+            </>
           )}
         </div>
       ))}
