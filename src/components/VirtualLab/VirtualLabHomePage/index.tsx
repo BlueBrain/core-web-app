@@ -52,7 +52,7 @@ export default function VirtualLabHomePage({ id }: Props) {
   }
   return (
     <div>
-      <WelcomeUserBanner title={virtualLab.title} />
+      <WelcomeUserBanner title={virtualLabDetail.data.name} />
       <div className="relative mt-10 flex flex-col gap-4 bg-primary-8 p-8">
         <div
           className={Styles.bannerImg}
