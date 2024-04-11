@@ -1,5 +1,7 @@
 export type MockRole = 'administrator' | 'member';
 
+export type Role = 'admin' | 'member';
+
 export type MockMember = {
   key: string;
   name: string;
@@ -7,8 +9,12 @@ export type MockMember = {
   role: MockRole;
 };
 export interface VirtualLabMember {
+  id: string;
+  username: string;
+  created_at: string;
+  first_name: string;
+  last_name: string;
+  invite_accepted: boolean;
+  role: Role;
   name: string;
-  email: string;
-  role: 'admin' | 'user';
-  lastActive?: number;
 }

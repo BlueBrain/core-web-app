@@ -40,13 +40,13 @@ export default function VirtualLabProjectItem({ project }: Props) {
         <VirtualLabStatistic
           icon={<EyeTargetIcon style={iconStyle} />}
           title="Explore sessions"
-          detail={350}
+          detail="N/A"
         />
-        <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail={18} />
+        <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
         <VirtualLabStatistic
           icon={<StatsEditIcon style={iconStyle} />}
           title="Simulation experiments"
-          detail={30}
+          detail="N/A"
         />
         <VirtualLabStatistic
           icon={<UserOutlined style={iconStyle} />}

@@ -14,7 +14,6 @@ import WelcomeUserBanner from './WelcomeUserBanner';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
-import { mockMembers } from '@/components/VirtualLab/mockData/members';
 import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 import { mockVirtualLab } from '@/components/VirtualLab/mockData/lab';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
@@ -159,12 +158,12 @@ export default function VirtualLabHomePage({ id }: Props) {
       <div>
         <div className="my-5 text-lg font-bold uppercase">Members</div>
         <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
-          {mockMembers.map((member) => (
+          {virtualLabDetail.data.users.map((user) => (
             <Member
-              key={member.key}
-              name={member.name}
-              lastActive={member.lastActive}
-              memberRole={member.role}
+              key={user.id}
+              name={`${user.first_name} ${user.last_name}`}
+              lastActive="N/A"
+              memberRole={user.role}
             />
           ))}
         </div>

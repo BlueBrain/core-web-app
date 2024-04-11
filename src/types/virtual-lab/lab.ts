@@ -8,6 +8,7 @@ export type VirtualLab = {
   reference_email: string;
   budget: number;
   plan_id: number;
+  users: VirtualLabMember[];
 };
 
 export enum VirtualLabPlanType {
@@ -16,8 +17,6 @@ export enum VirtualLabPlanType {
   intermediate = 'intermediate',
   advanced = 'advanced',
 }
-
-export type NewMember = Pick<VirtualLabMember, 'email' | 'role'>;
 
 export type MockBilling = {
   organization: string;

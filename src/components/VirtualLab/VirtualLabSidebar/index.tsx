@@ -50,6 +50,19 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
     return null;
   };
 
+  /**
+   * Returns the amount of virtual lab members
+   */
+  const renderUsersAmount = () => {
+    if (virtualLab.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (virtualLab.state === 'hasData') {
+      return virtualLab.data.users.length;
+    }
+    return null;
+  };
+
   const linkItems: LinkItem[] = [
     { key: 'lab', content: 'The Virtual Lab', href: 'lab' },
     {
@@ -67,7 +80,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
       content: (
         <div className="flex justify-between">
           <span>Team</span>
-          <span className="font-normal text-primary-3">23 members</span>
+          <span className="font-normal text-primary-3">{renderUsersAmount()} members</span>
         </div>
       ),
       href: 'team',

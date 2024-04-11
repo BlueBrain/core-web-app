@@ -1,10 +1,10 @@
 import VirtualLabMemberIcon from '../VirtualLabMemberIcon';
-import { MockRole } from '@/types/virtual-lab/members';
+import { Role } from '@/types/virtual-lab/members';
 
 type Props = {
   name: string;
   lastActive: string;
-  memberRole: MockRole;
+  memberRole: Role;
 };
 
 export default function Member({ name, lastActive, memberRole }: Props) {
