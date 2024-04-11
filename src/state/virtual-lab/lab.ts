@@ -3,7 +3,7 @@ import { atomFamily } from 'jotai/utils';
 
 import { getVirtualLabDetail, getVirtualLabsOfUser } from '@/services/virtual-lab/labs';
 import { VirtualLab } from '@/types/virtual-lab/lab';
-import { VirtualLabAPIListData } from '@/types/virtual-lab/api';
+import { VirtualLabAPIListData } from '@/types/virtual-lab/common';
 
 export const virtualLabDetailAtomFamily = atomFamily((virtualLabId: string) =>
   atom<Promise<VirtualLab>>(async () => {

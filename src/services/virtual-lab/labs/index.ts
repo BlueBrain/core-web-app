@@ -1,13 +1,13 @@
 import { virtualLabApi } from '@/config';
-import { VirtualLab } from '@/types/virtual-lab/lab';
-import { VirtualLabAPIListResponse, VirtualLabAPIResponse } from '@/types/virtual-lab/api';
+import { VirtualLab, VirtualLabResponse } from '@/types/virtual-lab/lab';
 import { Project } from '@/types/virtual-lab/projects';
+import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 
 // Add the bearer token from the frontend below
 // This constant will be replaced by the actual login token as soon as login is implemented
 const accessToken = 'Bearer <TOKEN>';
 
-export async function getVirtualLabDetail(id: string): Promise<VirtualLabAPIResponse> {
+export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'GET',
     headers: { Authorization: accessToken, accept: 'application/json' },
@@ -18,7 +18,9 @@ export async function getVirtualLabDetail(id: string): Promise<VirtualLabAPIResp
   return response.json();
 }
 
-export async function getVirtualLabsOfUser(): Promise<VirtualLabAPIListResponse<VirtualLab>> {
+export async function getVirtualLabsOfUser(): Promise<
+  VlmResponse<VirtualLabAPIListData<VirtualLab>>
+> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs`, {
     method: 'GET',
     headers: { Authorization: accessToken, accept: 'application/json' },
@@ -31,7 +33,7 @@ export async function getVirtualLabsOfUser(): Promise<VirtualLabAPIListResponse<
 
 export async function getVirtualLabProjects(
   id: string
-): Promise<VirtualLabAPIListResponse<Project>> {
+): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/projects`, {
     method: 'GET',
     headers: { Authorization: accessToken, accept: 'application/json' },

@@ -9,6 +9,14 @@ export interface VlmError {
   details: string | null;
 }
 
+export interface VirtualLabAPIListData<ReponseType> {
+  results: ReponseType[];
+  page: number;
+  size: number;
+  page_size: number;
+  total: number;
+}
+
 export function isVlmError(response: any): response is VlmError {
   return response?.error_code && response?.message;
 }

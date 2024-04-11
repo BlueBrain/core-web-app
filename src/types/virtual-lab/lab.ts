@@ -1,3 +1,4 @@
+import { VlmResponse } from './common';
 import { VirtualLabMember } from './members';
 
 export type VirtualLab = {
@@ -10,6 +11,8 @@ export type VirtualLab = {
   plan_id: number;
   users: VirtualLabMember[];
 };
+
+export type VirtualLabResponse = VlmResponse<{ virtual_lab: VirtualLab }>;
 
 export enum VirtualLabPlanType {
   entry = 'entry',
