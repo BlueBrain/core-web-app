@@ -94,7 +94,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    if (!eModelScript?.holding_current || !eModelScript.threshold_current) return;
+    if (!eModelScript) return;
 
     const onClick = (data: any) => {
       setSelectionCtrlConfig({
@@ -137,8 +137,8 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       modelId,
       DEFAULT_SIM_CONFIG,
       {
-        thresholdCurrent: eModelScript.threshold_current,
-        holdingCurrent: eModelScript.holding_current,
+        thresholdCurrent: eModelScript.threshold_current ?? 0,
+        holdingCurrent: eModelScript.holding_current ?? 0,
       },
       {
         onClick,
