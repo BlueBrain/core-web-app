@@ -87,11 +87,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
           />
         </div>
       </div>
-      <BudgetPanel
-        total={projectDetails.data.budget}
-        totalSpent={300}
-        remaining={projectDetails.data.budget - 300}
-      />
+      <BudgetPanel total={projectDetails.data.budget} totalSpent={300} remaining={350} />
       <div>
         <div className="my-10 text-lg font-bold uppercase">Members</div>
         <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
