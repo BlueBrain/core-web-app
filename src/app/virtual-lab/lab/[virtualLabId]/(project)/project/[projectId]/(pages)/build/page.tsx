@@ -39,13 +39,14 @@ function ScopeSelector({
       {(Object.keys(SimulationScope) as Array<SimulationScope>).map((scope) => (
         <button
           key={scope}
-          className={classNames('text-lg', selectedScope === scope && 'font-bold underline')}
+          className={classNames(
+            'text-lg capitalize',
+            selectedScope === scope && 'font-bold underline'
+          )}
           onClick={() => setSelectedScope(scope)}
           type="button"
         >
-          {
-            scope.charAt(0).toUpperCase() + scope.slice(1) // Capitalize first letter
-          }
+          {scope}
         </button>
       ))}
     </>
@@ -59,33 +60,33 @@ const items = [
   {
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    key: SimulationType.ionChannel,
+    key: SimulationType.IonChannel,
     scope: 'cellular',
-    src: `${imgBasePath}/${SimulationType.ionChannel}.png`,
+    src: `${imgBasePath}/${SimulationType.IonChannel}.png`,
     title: 'Ion Channel',
   },
   {
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    key: SimulationType.singleNeuron,
+    key: SimulationType.SingleNeuron,
     scope: 'circuit',
-    src: `${imgBasePath}/${SimulationType.singleNeuron}.png`,
+    src: `${imgBasePath}/${SimulationType.SingleNeuron}.png`,
     title: 'Single Neuron',
   },
   {
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    key: SimulationType.pairedNeuron,
+    key: SimulationType.PairedNeuron,
     scope: 'circuit',
-    src: `${imgBasePath}/${SimulationType.pairedNeuron}.png`,
+    src: `${imgBasePath}/${SimulationType.PairedNeuron}.png`,
     title: 'Paired Neuron',
   },
   {
     description:
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    key: SimulationType.synaptome,
+    key: SimulationType.Synaptome,
     scope: 'system',
-    src: `${imgBasePath}/${SimulationType.synaptome}.png`,
+    src: `${imgBasePath}/${SimulationType.Synaptome}.png`,
     title: 'Synaptome',
   },
 ];

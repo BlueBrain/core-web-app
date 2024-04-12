@@ -174,34 +174,34 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
     {
       content: (
         <PlanPanel
-          currentPlan={VirtualLabPlanType.entry}
+          currentPlan={VirtualLabPlanType.Entry}
           billingInfo={mockBilling}
           userIsAdmin={userIsAdmin}
           onChangePlan={changePlan}
           items={[
             {
-              type: VirtualLabPlanType.entry,
+              type: VirtualLabPlanType.Entry,
               advantages: [...Array(3).keys()].map(
                 () => 'Cras mattis consectetur purus sit amet fermentum.'
               ),
               pricePerMonthPerUser: { cost: 0, currency: '$' },
             },
             {
-              type: VirtualLabPlanType.beginner,
+              type: VirtualLabPlanType.Beginner,
               advantages: [...Array(6).keys()].map(
                 () => 'Cras mattis consectetur purus sit amet fermentum.'
               ),
               pricePerMonthPerUser: { cost: 40, currency: '$' },
             },
             {
-              type: VirtualLabPlanType.intermediate,
+              type: VirtualLabPlanType.Intermediate,
               advantages: [...Array(8).keys()].map(
                 () => 'Cras mattis consectetur purus sit amet fermentum.'
               ),
               pricePerMonthPerUser: { cost: 120, currency: '$' },
             },
             {
-              type: VirtualLabPlanType.advanced,
+              type: VirtualLabPlanType.Advanced,
               advantages: [...Array(9).keys()].map(
                 () => 'Cras mattis consectetur purus sit amet fermentum.'
               ),
