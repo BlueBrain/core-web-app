@@ -21,6 +21,10 @@ const labPath = (labId: string) => `/virtual-lab/lab/${labId}/lab`;
 export async function GET(req: NextRequest): Promise<any> {
   const inviteToken = req.nextUrl.searchParams.get('token');
   const url = req.nextUrl.clone();
+
+  // eslint-disable-next-line no-console
+  console.log('URL basepath when request is received', url);
+
   url.searchParams.delete('token');
 
   const session = await getServerSession(authOptions);
@@ -116,7 +120,9 @@ const getErrorUrl = (
       return url;
     }
 
-    url.searchParams.set('errorcode', `${InviteErrorCodes.TOKEN_EXPIRED}`);
+    // eslint-disable-next-line no-console
+    console.log('URL basepath at time of redirection', url);
+    url.searchParams.set('errorcode', `${InviteErrorCodes.UNKNOWN}`);
     return url;
   }
 
