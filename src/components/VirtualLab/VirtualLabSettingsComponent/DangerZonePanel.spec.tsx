@@ -5,11 +5,9 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DangerZonePanel from './DangerZonePanel';
 import sessionAtom from '@/state/session';
-import { VirtualLab } from '@/services/virtual-lab/types';
 import { createMockVirtualLab } from '__tests__/__utils__/VirtualLab';
 import { changeInputValue, getButton } from '__tests__/__utils__/utils';
-
-jest.mock('@/services/virtual-lab/virtual-lab-service');
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
 jest.mock('next/navigation', () => ({
   __esModule: true,

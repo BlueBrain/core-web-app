@@ -17,17 +17,17 @@ export function VirtualLabCreatePlan({ className, nextPage }: VirtualLabCreatePl
   const [billingValid, setBillingValid] = useState(false);
   return (
     <Layout className={className}>
-      <Main nextPage={nextPage} canGoNext={lab.plan === 'entry' || billingValid} step="plan">
+      <Main nextPage={nextPage} canGoNext={lab.plan_id === 1 || billingValid} step="plan">
         <h2>Plan</h2>
         {VIRTUAL_LAB_PLAN_DEFINITIONS.map((plan) => (
           <PlanSelectButton
             key={plan.type}
             plan={plan}
-            selected={lab.plan === plan.type}
-            onSelect={(selection) => updateLab({ plan: selection.type })}
+            selected={lab.plan_id === 1}
+            onSelect={() => updateLab({})}
           />
         ))}
-        {lab.plan && <InputBillingInfo onValidityChange={setBillingValid} />}
+        {lab.plan_id && <InputBillingInfo onValidityChange={setBillingValid} />}
       </Main>
     </Layout>
   );

@@ -1,25 +1,21 @@
 import { VirtualLabWithOptionalId, VirtualLabPlanDefinition } from './types';
-import { VirtualLabMember, VirtualLabPlanType } from '@/services/virtual-lab/types';
+import { VirtualLabPlanType } from '@/types/virtual-lab/lab';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
+  id: '',
+  created_at: '',
   name: '',
   description: '',
-  referenceEMail: '',
-  members: [],
-  billing: {
-    organization: '',
-    firstname: '',
-    lastname: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
-  },
+  reference_email: '',
+  budget: 1,
+  plan_id: 0,
+  users: [],
 };
 
 export const ROLES: Record<VirtualLabMember['role'], string> = {
   admin: 'Administrator',
-  user: 'User',
+  member: 'Member',
 };
 
 export const STEPS = {

@@ -16,3 +16,11 @@ export type MockProject = {
     remaining: number;
   };
 };
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  budget: number;
+  created_at: string;
+  updated_at: string;
+};

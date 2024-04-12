@@ -1,5 +1,11 @@
-import VirtualLabHomePage from '@/components/VirtualLab/VirtualLabHomePage';
+'use client';
 
-export default function VirtualLabSettingsPage() {
-  return <VirtualLabHomePage />;
+import VirtualLabHomePage from '@/components/VirtualLab/VirtualLabHomePage';
+import { ServerSideComponentProp } from '@/types/common';
+
+export default function VirtualLabSettingsPage({
+  params,
+}: ServerSideComponentProp<{ virtualLabId: string }>) {
+  const { virtualLabId } = params;
+  return <VirtualLabHomePage id={virtualLabId} />;
 }

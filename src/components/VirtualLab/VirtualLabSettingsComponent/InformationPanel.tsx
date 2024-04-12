@@ -4,8 +4,8 @@ import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
 import { ReactNode, useEffect, useState } from 'react';
 import EditIcon from '@/components/icons/Edit';
-import { VirtualLab } from '@/services/virtual-lab/types';
 import { classNames } from '@/util/utils';
+import { MockBilling, VirtualLab } from '@/types/virtual-lab/lab';
 
 type RenderInputProps = Omit<FormItemProps, 'children'> & {
   children: (props: InputProps & TextAreaProps) => ReactNode;
@@ -15,12 +15,12 @@ type RenderInputProps = Omit<FormItemProps, 'children'> & {
 type Props = {
   allowEdit: boolean;
   className?: string;
-  initialValues: Partial<VirtualLab> | VirtualLab['billing'];
+  initialValues: Partial<VirtualLab> | MockBilling;
   items: Array<RenderInputProps>;
   save: (update: Partial<VirtualLab>) => Promise<void>;
 };
 
-type InformationForm = { name: string; description: string; referenceEMail: string };
+type InformationForm = { name: string; description: string; reference_email: string };
 
 export default function InformationPanel({
   allowEdit,
@@ -50,11 +50,11 @@ export default function InformationPanel({
 
   const onSave = () => {
     setSavingChanges(true);
-    const { name, description, referenceEMail } = form.getFieldsValue();
+    const { name, description, reference_email: referenceEmail } = form.getFieldsValue();
     save({
       name,
       description,
-      referenceEMail,
+      reference_email: referenceEmail,
     })
       .then(() => {
         setSaveError(false);

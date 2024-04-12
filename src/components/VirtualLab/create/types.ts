@@ -1,4 +1,4 @@
-import { VirtualLab, VirtualLabPlanType } from '@/services/virtual-lab/types';
+import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 import { KeysOfType } from '@/util/typing';
 
 export type VirtualLabWithOptionalId = Omit<VirtualLab, 'id'> & { id?: string };

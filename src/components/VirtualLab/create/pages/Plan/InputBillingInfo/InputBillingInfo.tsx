@@ -1,13 +1,11 @@
 import React from 'react';
 
 import { COUNTRIES } from '../../../constants';
-import { useCurrentVirtualLab } from '../../../hooks/current-virtual-lab';
 import { FieldType } from '../../../types';
 import { Form } from '../../../sub-components/Form';
 import { KeysOfType } from '@/util/typing';
 import { classNames } from '@/util/utils';
-import { VirtualLab } from '@/services/virtual-lab/types';
-
+import { MockBilling } from '@/types/virtual-lab/lab';
 import styles from './input-billing-info.module.css';
 
 export interface InputBillingInfoProps {
@@ -16,24 +14,14 @@ export interface InputBillingInfoProps {
 }
 
 export function InputBillingInfo({ className, onValidityChange }: InputBillingInfoProps) {
-  const [lab, updateLab] = useCurrentVirtualLab();
-  const { billing } = lab;
-  const updateBilling = (partialBilling: Partial<VirtualLab['billing']>) => {
-    updateLab({
-      billing: {
-        ...lab.billing,
-        ...partialBilling,
-      },
-    });
-  };
-  if (!lab.plan || lab.plan === 'entry') return null;
+  const updateBilling = () => {};
 
   return (
     <div className={classNames(styles.main, className)}>
       <h1>Billing</h1>
       <section>
         <Form
-          value={billing}
+          value={{}}
           onChange={updateBilling}
           onValidityChange={onValidityChange}
           fields={FIELDS}
@@ -45,7 +33,7 @@ export function InputBillingInfo({ className, onValidityChange }: InputBillingIn
 
 const RX_NAME = '[\\p{L}].*';
 
-const FIELDS: Record<KeysOfType<VirtualLab['billing'], string>, FieldType> = {
+const FIELDS: Record<KeysOfType<MockBilling, string>, FieldType> = {
   organization: {
     required: true,
     label: 'Organization',
