@@ -33,25 +33,25 @@ const FAKE_ADVANTAGES: string[] = [
 
 export const VIRTUAL_LAB_PLAN_DEFINITIONS: VirtualLabPlanDefinition[] = [
   {
-    type: VirtualLabPlanType.entry,
+    type: VirtualLabPlanType.Entry,
     title: 'Entry',
     price: 0,
     advantages: FAKE_ADVANTAGES,
   },
   {
-    type: VirtualLabPlanType.beginner,
+    type: VirtualLabPlanType.Beginner,
     title: 'Beginner',
     price: 40,
     advantages: FAKE_ADVANTAGES,
   },
   {
-    type: VirtualLabPlanType.intermediate,
+    type: VirtualLabPlanType.Intermediate,
     title: 'Intermediate',
     price: 80,
     advantages: FAKE_ADVANTAGES,
   },
   {
-    type: VirtualLabPlanType.advanced,
+    type: VirtualLabPlanType.Advanced,
     title: 'Advanced',
     price: 120,
     advantages: FAKE_ADVANTAGES,

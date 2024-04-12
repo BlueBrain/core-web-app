@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
@@ -16,3 +17,5 @@ export const virtualLabsOfUserAtom = atom<Promise<VirtualLabAPIListData<VirtualL
   const response = await getVirtualLabsOfUser();
   return response.data;
 });
+
+export const projectTopMenuRefAtom = atom<RefObject<HTMLDivElement> | null>(null);

@@ -15,10 +15,10 @@ export type VirtualLab = {
 export type VirtualLabResponse = VlmResponse<{ virtual_lab: VirtualLab }>;
 
 export enum VirtualLabPlanType {
-  entry = 'entry',
-  beginner = 'beginner',
-  intermediate = 'intermediate',
-  advanced = 'advanced',
+  Entry = 'entry',
+  Beginner = 'beginner',
+  Intermediate = 'intermediate',
+  Advanced = 'advanced',
 }
 
 export type MockBilling = {
@@ -30,3 +30,10 @@ export type MockBilling = {
   postalCode: string;
   country: string;
 };
+
+export enum SimulationType {
+  IonChannel = 'ion-channel',
+  SingleNeuron = 'single-neuron',
+  PairedNeuron = 'paired-neuron',
+  Synaptome = 'synaptome',
+}
