@@ -5,7 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import SideMenu from '@/components/SideMenu';
-import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
+import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar/VirtualLabProjectSidebar';
 
 export default function VirtualLabProjectLayout({ children }: { children: ReactNode }) {
   return (

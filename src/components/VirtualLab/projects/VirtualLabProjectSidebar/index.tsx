@@ -1,11 +1,49 @@
 import { usePathname } from 'next/navigation';
 
-import { ConfigProvider, Select } from 'antd';
-import { SwapOutlined } from '@ant-design/icons';
+import { ConfigProvider, Select, Spin } from 'antd';
+import { useAtomValue } from 'jotai';
+import { loadable } from 'jotai/utils';
+import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
 import { mockProjects } from '../../mockData/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
+import {
+  virtualLabProjectDetailsAtomFamily,
+  virtualLabProjectUsersAtomFamily,
+} from '@/state/virtual-lab/projects';
 
-export default function VirtualLabProjectSidebar() {
+type Props = {
+  virtualLabId: string;
+  projectId: string;
+};
+
+export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Props) {
+  const projectDetails = useAtomValue(
+    loadable(virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId }))
+  );
+  const projectUsers = useAtomValue(
+    loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
+  );
+
+  const renderProjectTitle = () => {
+    if (projectDetails.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (projectDetails.state === 'hasData') {
+      return projectDetails.data.name;
+    }
+    return null;
+  };
+
+  const renderUserAmount = () => {
+    if (projectUsers.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (projectUsers.state === 'hasData') {
+      return projectUsers.data.length;
+    }
+    return null;
+  };
+
   const currentPage = usePathname().split('/').pop();
   const projectOptions = mockProjects.map((project) => ({
     value: project.id,
@@ -29,7 +67,7 @@ export default function VirtualLabProjectSidebar() {
       content: (
         <div className="flex justify-between">
           <span>Project Team</span>
-          <span className="font-normal text-primary-3">9 members</span>
+          <span className="font-normal text-primary-3">{renderUserAmount()} members</span>
         </div>
       ),
       href: 'team',
@@ -41,9 +79,7 @@ export default function VirtualLabProjectSidebar() {
   return (
     <div className="m-8 flex flex-col gap-5">
       <h1 className="leading-12 text-5xl font-bold uppercase text-primary-5">
-        Thalamus <br />
-        Exploration <br />
-        Project 1
+        {renderProjectTitle()}
       </h1>
       <ConfigProvider
         theme={{
