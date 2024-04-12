@@ -27,7 +27,12 @@ export function simReducer(state: SimConfig, action: SimAction): SimConfig {
       const protocolInfo = stimulusModuleParams.options.find(
         (option) => option.value === action.payload
       );
-      const paramInfo = stimulusParams[action.payload] || {};
+      if (!protocolInfo) throw new Error(`Protocol info ${action.payload} not found`);
+
+      const paramInfo = stimulusParams[action.payload];
+      if (!paramInfo) throw new Error(`Parameters for protocol ${action.payload} not found`);
+      // duration depending on protocol
+      paramInfo.stop_time.defaultValue = protocolInfo.duration;
 
       return {
         ...state,
