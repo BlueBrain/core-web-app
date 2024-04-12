@@ -13,9 +13,9 @@ import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import { SimulationType } from '@/types/virtual-lab/lab';
 
 enum SimulationScope {
-  cellular = 'cellular',
-  circuit = 'circuit',
-  system = 'system',
+  Cellular = 'cellular',
+  Circuit = 'circuit',
+  System = 'system',
 }
 
 function ScopeSelector({
