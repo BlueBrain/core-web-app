@@ -22,6 +22,7 @@ type Props = {
 
 export function AdminPanelProjectList({ id }: Props) {
   const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
+
   if (virtualLabProjects.state === 'loading') {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -108,6 +109,7 @@ export function AdminPanelProjectList({ id }: Props) {
 
 export default function VirtualLabProjectList({ id }: Props) {
   const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
+
   if (virtualLabProjects.state === 'loading') {
     return (
       <div className="flex h-screen items-center justify-center">

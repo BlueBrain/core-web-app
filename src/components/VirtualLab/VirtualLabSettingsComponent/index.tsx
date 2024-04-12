@@ -104,6 +104,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
   );
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+
   if (virtualLabDetail.state === 'loading') {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -111,6 +112,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
       </div>
     );
   }
+
   if (virtualLabDetail.state === 'hasError') {
     return (
       <div className="flex h-screen items-center justify-center">
