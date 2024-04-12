@@ -28,7 +28,7 @@ export default function LaunchButton() {
       <GenericButton
         text="Simulate"
         className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
-        disabled={!submittable || !secNames.length}
+        disabled={!submittable || secNames.length === 0}
         onClick={launchSimulation}
       />
     );

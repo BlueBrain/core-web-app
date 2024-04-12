@@ -194,13 +194,26 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 }
 
 export default function EModelInteractiveView() {
-  const selectedEModel = useAtomValue(selectedEModelAtom);
+  const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
 
   const eModelUUID = useEModelUUID();
   const ensureModelPackage = useEnsureModelPackage();
 
   const [blueNaasModelId, setBlueNaasModelId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // TODO: remove this when model fetchable from backend
+  useEffect(() => {
+    setSelectedEModel({
+      name: 'EM__fa285b7__cADpyr__12',
+      id: 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/c8181452-b108-4b99-a176-786fb8f6b19b',
+      eType: 'cADpyr',
+      mType: 'L2_TPC:A',
+      isOptimizationConfig: false,
+      rev: 3,
+      brainRegion: 'http://api.brain-map.org/api/v2/data/Structure/558',
+    });
+  }, []);
 
   useEffect(() => {
     if (!eModelUUID || selectedEModel?.isOptimizationConfig) return;
