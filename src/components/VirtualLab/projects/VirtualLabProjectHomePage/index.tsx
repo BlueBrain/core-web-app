@@ -11,10 +11,11 @@ import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/ico
 import Brain from '@/components/icons/Brain';
 import { basePath } from '@/config';
 import Member from '@/components/VirtualLab/VirtualLabHomePage/Member';
-import { mockMembers } from '@/components/VirtualLab/mockData/members';
 import WelcomeUserBanner from '@/components/VirtualLab/VirtualLabHomePage/WelcomeUserBanner';
-
-import { virtualLabProjectDetailsAtomFamily } from '@/state/virtual-lab/projects';
+import {
+  virtualLabProjectDetailsAtomFamily,
+  virtualLabProjectUsersAtomFamily,
+} from '@/state/virtual-lab/projects';
 import { formatDate } from '@/util/utils';
 
 type Props = {
@@ -28,6 +29,39 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
   const projectDetails = useAtomValue(
     loadable(virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId }))
   );
+  const projectUsers = useAtomValue(
+    loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
+  );
+
+  const renderUsers = () => {
+    if (projectUsers.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (projectUsers.state === 'hasData') {
+      return projectUsers.data.map((user) => (
+        <Member
+          key={user.id}
+          firstName="TO BE REPLACED"
+          lastName="TO BE REPLACED"
+          name={user.name}
+          lastActive="N/A"
+          memberRole="member"
+        />
+      ));
+    }
+    return null;
+  };
+
+  const renderUserAmount = () => {
+    if (projectUsers.state === 'loading') {
+      return <Spin indicator={<LoadingOutlined />} />;
+    }
+    if (projectUsers.state === 'hasData') {
+      return projectUsers.data.length;
+    }
+    return null;
+  };
+
   if (projectDetails.state === 'loading') {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -73,7 +107,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
           <VirtualLabStatistic
             icon={<UserOutlined style={iconStyle} />}
             title="Members"
-            detail="N/A"
+            detail={renderUserAmount()}
           />
           <VirtualLabStatistic
             icon={<MembersGroupIcon style={iconStyle} />}
@@ -90,18 +124,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
       <BudgetPanel total={projectDetails.data.budget} totalSpent={300} remaining={350} />
       <div>
         <div className="my-10 text-lg font-bold uppercase">Members</div>
-        <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
-          {mockMembers.map((member) => (
-            <Member
-              key={member.key}
-              firstName="TO BE REPLACED"
-              lastName="TO BE REPLACED"
-              name={member.name}
-              lastActive={member.lastActive}
-              memberRole="member"
-            />
-          ))}
-        </div>
+        <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">{renderUsers()}</div>
       </div>
     </div>
   );
