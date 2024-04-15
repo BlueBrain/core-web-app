@@ -1,14 +1,12 @@
-import { loadable } from 'jotai/utils';
-import { useAtomValue } from 'jotai';
 import { useReducer, useRef } from 'react';
-import { Button } from 'antd';
+import { Button, Divider } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { LinkItem, LabItem } from '../VerticalLinks';
 import LinkComponent from './LinkComponent';
 import SideMenuBottom from './SideMenuBottom';
+import LabsAndProjectsCollapse from './LabsAndProjectsCollapse';
 import { classNames } from '@/util/utils';
 import { Role } from '@/constants/virtual-labs/sidemenu';
-import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 
 type Props = {
   links: LinkItem[];
@@ -18,12 +16,6 @@ type Props = {
 export default function SideMenu({ links, lab }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
-
-  const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(lab.id)));
-
-  if (virtualLabProjects.state === 'hasData') {
-    console.log('🚀 ~ SideMenu ~ virtualLabProjects:', virtualLabProjects.data);
-  }
 
   const linkClassName = (link: LinkItem) => {
     let baseClass = `flex w-full items-center justify-between capitalize ${link.styles}`;
@@ -60,6 +52,15 @@ export default function SideMenu({ links, lab }: Props) {
             linkClassName={linkClassName}
           />
         ))}
+        {expanded && (
+          <>
+            <Divider />
+            <div>
+              <h1 className="font-thin text-primary-1">Your Virtual Labs</h1>
+              <LabsAndProjectsCollapse />
+            </div>
+          </>
+        )}
       </div>
       <Button
         type="text"
