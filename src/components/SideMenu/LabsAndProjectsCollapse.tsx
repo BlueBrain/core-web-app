@@ -11,8 +11,9 @@ function VirtualLabProjects({ labId }: { labId: string }) {
   if (virtualLabProjectsLoadable.state === 'hasData') {
     return (
       <>
+        <h1 className="pl-2 font-thin text-primary-3">Projects</h1>
         {virtualLabProjectsLoadable.data.results.map((project) => (
-          <p className="text-white" key={project.id}>
+          <p className="py-2 pl-4 text-white" key={project.id}>
             {project.name}
           </p>
         ))}
@@ -30,11 +31,13 @@ export default function LabsAndProjectsCollapse() {
   if (virtualLabsLoadable.state === 'hasData') {
     const items = virtualLabsLoadable.data.results.map((lab) => ({
       key: lab.id,
-      label: lab.name,
+      label: <div style={{ backgroundColor: 'primary-4', color: 'white' }}>{lab.name}</div>,
       children: <VirtualLabProjects labId={lab.id} />,
     }));
 
-    return <Collapse bordered={false} ghost items={items} expandIconPosition="end" />;
+    return (
+      <Collapse bordered={false} ghost items={items} expandIconPosition="end" className="w-full" />
+    );
   }
 
   // Handle loading and error states as needed

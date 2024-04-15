@@ -52,16 +52,16 @@ export default function SideMenu({ links, lab }: Props) {
             linkClassName={linkClassName}
           />
         ))}
-        {expanded && (
-          <>
-            <Divider />
-            <div>
-              <h1 className="font-thin text-primary-1">Your Virtual Labs</h1>
-              <LabsAndProjectsCollapse />
-            </div>
-          </>
-        )}
       </div>
+      {expanded && (
+        <>
+          <Divider />
+          <div>
+            <h1 className="font-thin text-primary-3">Your Virtual Labs</h1>
+            <LabsAndProjectsCollapse />
+          </div>
+        </>
+      )}
       <Button
         type="text"
         onClick={toggleExpand}
