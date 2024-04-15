@@ -5,7 +5,7 @@ import { Button } from 'antd';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import Confetti from 'react-confetti';
+import Realistic from 'react-canvas-confetti/dist/presets/realistic';
 
 import { basePath } from '@/config';
 import Styles from './home-page.module.css';
@@ -26,10 +26,19 @@ export default function WelcomeUserBanner({ title }: { title: string }) {
       setConfettiDimension({ width: 100, height: 100 });
     }
   }, [bannerRef]);
+
   return (
     show && (
       <div className="relative">
-        <Confetti width={100} onConfettiComplete={() => console.log('Confetti Complete')} />
+        <Realistic
+          autorun={{ speed: 0.3 }}
+          width="200%"
+          style={{
+            position: 'fixed',
+            top: '0px',
+          }}
+          decorateOptions={(options) => ({ ...options })}
+        />
         <div
           className="relative mt-10 flex bg-gradient-to-r from-[#345D36] to-[#6DC371] p-8"
           ref={bannerRef}
