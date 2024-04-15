@@ -1,9 +1,9 @@
 import { usePathname } from 'next/navigation';
-
-import { ConfigProvider, Select, Spin } from 'antd';
+import { Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
+
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import {
   virtualLabProjectDetailsAtomFamily,
