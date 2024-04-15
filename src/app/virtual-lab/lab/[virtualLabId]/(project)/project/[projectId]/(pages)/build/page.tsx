@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useAtom, useAtomValue } from 'jotai';
 import { Dispatch, useState, SetStateAction } from 'react';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 import WithExploreEModel from '@/components/explore-section/EModel/WithExploreEModel';
 import { DataType } from '@/constants/explore-section/list-views';
 import { selectedSimulationScopeAtom } from '@/state/simulate';
@@ -53,7 +54,7 @@ function ScopeSelector({
   return projectTopMenuRef?.current && createPortal(controls, projectTopMenuRef.current);
 }
 
-const imgBasePath = `/images/virtual-lab/simulate`;
+const imgBasePath = `${basePath}/images/virtual-lab/simulate`;
 
 const items = [
   {
