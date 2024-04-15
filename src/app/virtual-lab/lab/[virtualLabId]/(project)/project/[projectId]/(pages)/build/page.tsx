@@ -54,7 +54,7 @@ function ScopeSelector({
   return projectTopMenuRef?.current && createPortal(controls, projectTopMenuRef.current);
 }
 
-const imgBasePath = `/${basePath}images/virtual-lab/simulate`;
+const imgBasePath = `${basePath}/images/virtual-lab/simulate`;
 
 const items = [
   {
