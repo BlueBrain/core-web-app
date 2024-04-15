@@ -5,10 +5,21 @@ import { Button } from 'antd';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import Realistic from 'react-canvas-confetti/dist/presets/realistic';
+import Confetti, { ConfettiConfig } from 'react-dom-confetti';
 
 import { basePath } from '@/config';
 import Styles from './home-page.module.css';
+
+const config: ConfettiConfig = {
+  angle: 90,
+  spread: 360,
+  startVelocity: 60,
+  elementCount: 200,
+  dragFriction: 0.12,
+  duration: 10000,
+  stagger: 0,
+  colors: ['#a864fd', '#29cdff', '#78ff44', '#ff718d', '#fdff6a'],
+};
 
 export default function WelcomeUserBanner({ title }: { title: string }) {
   const { data } = useSession();
@@ -16,29 +27,20 @@ export default function WelcomeUserBanner({ title }: { title: string }) {
   const userName = data?.user.name ?? data?.user.username ?? data?.user.email ?? '';
 
   const [show, setShow] = useState<boolean>(!!params.get('invite_accepted'));
-  const [confettiDimension, setConfettiDimension] = useState({ width: 0, height: 0 });
+  const [explode, setExplode] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (bannerRef.current) {
-      const bannerStyles = bannerRef.current.computedStyleMap;
-      console.log('Banner Styles', bannerStyles);
-      setConfettiDimension({ width: 100, height: 100 });
+      setExplode(true);
     }
   }, [bannerRef]);
 
   return (
     show && (
-      <div className="relative">
-        <Realistic
-          autorun={{ speed: 0.3 }}
-          width="200%"
-          style={{
-            position: 'fixed',
-            top: '0px',
-          }}
-          decorateOptions={(options) => ({ ...options })}
-        />
+      <div>
+        <div className="flex max-h-screen w-full justify-center">
+          <Confetti active={explode} config={config} />
+        </div>
         <div
           className="relative mt-10 flex bg-gradient-to-r from-[#345D36] to-[#6DC371] p-8"
           ref={bannerRef}
