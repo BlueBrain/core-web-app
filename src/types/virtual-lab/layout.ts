@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type LayoutProps = {
+export type LabProjectLayoutProps = {
   children: ReactNode;
   params: {
     virtualLabId: string;

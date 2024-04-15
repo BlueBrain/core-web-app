@@ -7,9 +7,9 @@ import SideMenu from '@/components/SideMenu';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
-import { LayoutProps } from '@/types/virtual-lab/layout';
+import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
 
-export default function GenericLayout({ children, params }: LayoutProps) {
+export default function GenericLayout({ children, params }: LabProjectLayoutProps) {
   useSetBrainRegionFromQuery();
 
   const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;

@@ -10,7 +10,6 @@ import VirtualLabsSelect from './VirtualLabsSelect';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
-
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
 type Props = {

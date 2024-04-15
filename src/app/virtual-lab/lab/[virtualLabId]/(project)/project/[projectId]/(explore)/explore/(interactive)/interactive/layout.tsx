@@ -11,12 +11,12 @@ import { defaultModelRelease } from '@/config';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
-import { LayoutProps } from '@/types/virtual-lab/layout';
+import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
 
 export default function VirtualLabProjectInteractiveExploreLayout({
   children,
   params,
-}: LayoutProps) {
+}: LabProjectLayoutProps) {
   const setConfigId = useSetAtom(brainModelConfigIdAtom);
   useSetBrainRegionFromQuery();
 

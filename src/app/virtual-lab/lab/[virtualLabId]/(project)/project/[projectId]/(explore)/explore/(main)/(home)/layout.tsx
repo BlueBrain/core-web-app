@@ -5,11 +5,10 @@ import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import SideMenu from '@/components/SideMenu';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
-import { LayoutProps } from '@/types/virtual-lab/layout';
+import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
 import { Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
-
-export default function VirtualLabProjectLayout({ children, params }: LayoutProps) {
+export default function VirtualLabProjectLayout({ children, params }: LabProjectLayoutProps) {
   const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;
   return (
