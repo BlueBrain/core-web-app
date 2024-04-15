@@ -68,10 +68,12 @@ export default function VirtualLabHomePage({ id }: Props) {
     <div>
       <WelcomeUserBanner title={virtualLabDetail.data.name} />
       <VirtualLabBanner
+        id={virtualLabDetail.data.id}
         name={virtualLabDetail.data.name}
         description={virtualLabDetail.data.description}
         users={virtualLabDetail.data.users}
         createdAt={virtualLabDetail.data.created_at}
+        withEditButton
       />
       <BudgetPanel total={virtualLabDetail.data?.budget || 0} totalSpent={300} remaining={350} />
       <div className="mt-10 flex flex-col gap-5">

@@ -8,13 +8,24 @@ import { VirtualLabMember } from '@/types/virtual-lab/members';
 import Styles from './virtual-lab-banner.module.css';
 
 type Props = {
+  id: string;
   name: string;
   description: string;
   users?: VirtualLabMember[];
   createdAt: string;
+  withLink?: boolean;
+  withEditButton?: boolean;
 };
 
-export default function VirtualLabBanner({ name, description, users, createdAt }: Props) {
+export default function VirtualLabBanner({
+  name,
+  description,
+  users,
+  createdAt,
+  id,
+  withLink = false,
+  withEditButton = false,
+}: Props) {
   const iconStyle = { color: '#69C0FF' };
 
   return (
@@ -25,17 +36,21 @@ export default function VirtualLabBanner({ name, description, users, createdAt }
           backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
         }}
       />
-      <div className="flex flex-row justify-between">
+      <div className="z-[1000] flex flex-row justify-between">
         <div className="flex max-w-[50%] flex-col gap-2">
           <div>
             <div className="text-primary-2">Virtual Lab name</div>
-            <h2 className="text-5xl font-bold">{name}</h2>
+            {withLink ? (
+              <a className="text-5xl font-bold" href={`/virtual-lab/lab/${id}/lab`}>
+                {name}
+              </a>
+            ) : (
+              <div className="text-5xl font-bold">{name}</div>
+            )}
           </div>
           <div>{description}</div>
         </div>
-        <div>
-          <EditOutlined />
-        </div>
+        {withEditButton && <EditOutlined />}
       </div>
       <div className="flex gap-5">
         <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
