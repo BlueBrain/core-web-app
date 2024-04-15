@@ -104,6 +104,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
   );
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+
   if (virtualLabDetail.state === 'loading') {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -111,6 +112,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
       </div>
     );
   }
+
   if (virtualLabDetail.state === 'hasError') {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -181,31 +183,37 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
           items={[
             {
               type: VirtualLabPlanType.Entry,
-              advantages: [...Array(3).keys()].map(
-                () => 'Cras mattis consectetur purus sit amet fermentum.'
+              description: (
+                <div className="flex flex-col gap-1">
+                  <h4 className="font-bold text-primary-3">CAPABILITIES</h4>
+                  <ul className="list-disc pl-4">
+                    <li>Unlimited download</li>
+                    <li>
+                      Unlimited AI-assisted knowledge discovery based-on neuroscience literature
+                    </li>
+                  </ul>
+                  <h4 className="font-bold text-primary-3">Support</h4>
+                  <ul className="list-disc pl-4">
+                    <li>Open Brain cellular lab support</li>
+                  </ul>
+                </div>
               ),
-              pricePerMonthPerUser: { cost: 0, currency: '$' },
+              pricing: { cost: 0, currency: '$' },
             },
             {
               type: VirtualLabPlanType.Beginner,
-              advantages: [...Array(6).keys()].map(
-                () => 'Cras mattis consectetur purus sit amet fermentum.'
-              ),
-              pricePerMonthPerUser: { cost: 40, currency: '$' },
+              description: 'Cras mattis consectetur purus sit amet fermentum.',
+              pricing: { cost: 40, currency: '$' },
             },
             {
               type: VirtualLabPlanType.Intermediate,
-              advantages: [...Array(8).keys()].map(
-                () => 'Cras mattis consectetur purus sit amet fermentum.'
-              ),
-              pricePerMonthPerUser: { cost: 120, currency: '$' },
+              description: 'Cras mattis consectetur purus sit amet fermentum.',
+              pricing: { cost: 40, currency: '$' },
             },
             {
               type: VirtualLabPlanType.Advanced,
-              advantages: [...Array(9).keys()].map(
-                () => 'Cras mattis consectetur purus sit amet fermentum.'
-              ),
-              pricePerMonthPerUser: { cost: 140, currency: '$' },
+              description: 'Cras mattis consectetur purus sit amet fermentum.',
+              pricing: { cost: 40, currency: '$' },
               className: '!basis-2/5',
             },
           ]}
@@ -216,8 +224,8 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
     },
     {
       content: <AdminPanelProjectList id={id} />,
-      key: 'projects',
-      title: 'Projects',
+      key: 'budgets',
+      title: 'Budgets',
     },
     {
       content: (
