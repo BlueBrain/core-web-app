@@ -4,7 +4,6 @@ import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { LinkItem } from '../VerticalLinks';
 import LinkComponent from './LinkComponent';
 import SideMenuBottom from './SideMenuBottom';
-import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { classNames } from '@/util/utils';
 import { Role } from '@/constants/virtual-labs/sidemenu';
 
@@ -16,17 +15,6 @@ type Props = {
 export default function SideMenu({ links, lab }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
-
-  useOnClickOutside(
-    ref,
-    () => {
-      if (expanded) toggleExpand();
-    },
-    ['mousedown', 'touchstart'],
-    (event) => {
-      return event && (event.target as HTMLElement)?.closest('.ant-modal-root');
-    }
-  );
 
   const linkClassName = (link: LinkItem) => {
     let baseClass = `flex w-full items-center justify-between capitalize ${link.styles}`;
