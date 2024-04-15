@@ -4,7 +4,7 @@ import { atomFamily } from 'jotai/utils';
 
 import {
   getVirtualLabDetail,
-  getVirtualLabMembers,
+  getVirtualLabUsers,
   getVirtualLabsOfUser,
 } from '@/services/virtual-lab/labs';
 import { VirtualLab } from '@/types/virtual-lab/lab';
@@ -20,7 +20,7 @@ export const virtualLabDetailAtomFamily = atomFamily((virtualLabId: string) =>
 
 export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
   atom<Promise<VirtualLabMember[]>>(async () => {
-    const response = await getVirtualLabMembers(virtualLabId);
+    const response = await getVirtualLabUsers(virtualLabId);
     return response.data.users;
   })
 );

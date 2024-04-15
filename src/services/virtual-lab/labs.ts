@@ -16,7 +16,7 @@ export async function getVirtualLabDetail(id: string): Promise<VirtualLabRespons
   return response.json();
 }
 
-export async function getVirtualLabMembers(virtualLabId: string): Promise<UsersResponse> {
+export async function getVirtualLabUsers(virtualLabId: string): Promise<UsersResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/users`, {
     method: 'GET',
     headers: createVLApiHeaders(temporaryToken),
