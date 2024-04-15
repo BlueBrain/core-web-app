@@ -15,8 +15,8 @@ import { formatDate } from '@/util/utils';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
-import { mockProjects } from '@/components/VirtualLab/mockData/projects';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import Styles from './home-page.module.css';
 
 type Props = {
@@ -25,9 +25,27 @@ type Props = {
 
 export default function VirtualLabHomePage({ id }: Props) {
   const iconStyle = { color: '#69C0FF' };
-  const projects = mockProjects;
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+  const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
+
+  const renderProjects = () => {
+    if (virtualLabProjects.state === 'loading') {
+      return <Spin size="large" indicator={<LoadingOutlined />} />;
+    }
+    if (virtualLabProjects.state === 'hasData') {
+      return virtualLabProjects.data.results.map((project) => (
+        <ProjectItem
+          key={project.id}
+          title={project.name}
+          description={project.description}
+          buttonHref=""
+        />
+      ));
+    }
+    return null;
+  };
+
   if (virtualLabDetail.state === 'loading') {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -171,16 +189,7 @@ export default function VirtualLabHomePage({ id }: Props) {
       </div>
       <div className="mt-10">
         <div className="my-5 text-lg font-bold uppercase">Highlighted Projects</div>
-        <div className="flex flex-row gap-5">
-          {projects.map((project) => (
-            <ProjectItem
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              buttonHref=""
-            />
-          ))}
-        </div>
+        <div className="flex flex-row gap-5">{renderProjects()}</div>
       </div>
     </div>
   );

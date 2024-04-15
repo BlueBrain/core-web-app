@@ -8,7 +8,7 @@ export default function VirtualLabsSelect() {
       href="/virtual-lab/select"
       className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
     >
-      <span>Switch Virtual Lab</span> <SwapOutlined />
+      <span>Switch virtual lab</span> <SwapOutlined />
     </a>
   );
 }

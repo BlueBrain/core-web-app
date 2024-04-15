@@ -4,7 +4,6 @@ import { ConfigProvider, Select, Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
-import { mockProjects } from '../../mockData/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import {
   virtualLabProjectDetailsAtomFamily,
@@ -45,10 +44,6 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
   };
 
   const currentPage = usePathname().split('/').pop();
-  const projectOptions = mockProjects.map((project) => ({
-    value: project.id,
-    label: project.title,
-  }));
 
   const linkItems: LinkItem[] = [
     { key: 'home', content: 'Project Home', href: 'home' },
@@ -81,28 +76,12 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       <h1 className="leading-12 text-5xl font-bold uppercase text-primary-5">
         {renderProjectTitle()}
       </h1>
-      <ConfigProvider
-        theme={{
-          components: {
-            Select: {
-              colorBgContainer: '#002766',
-              colorBgElevated: '#002766',
-              colorBorder: '#0050B3',
-              colorText: '#69C0FF',
-              optionSelectedBg: '#002766',
-              borderRadius: 0,
-              controlHeight: 40,
-            },
-          },
-        }}
+      <a
+        href={`/virtual-lab/${virtualLabId}/projects`}
+        className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
       >
-        <Select
-          suffixIcon={<SwapOutlined style={{ color: '#40A9FF' }} />}
-          defaultValue={projectOptions[0].value}
-          onChange={() => {}}
-          options={projectOptions}
-        />
-      </ConfigProvider>
+        <span>Switch project</span> <SwapOutlined />
+      </a>
 
       <VerticalLinks links={linkItems} currentPage={currentPage} />
     </div>
