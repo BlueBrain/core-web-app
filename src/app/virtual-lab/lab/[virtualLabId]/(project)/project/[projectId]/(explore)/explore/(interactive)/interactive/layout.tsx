@@ -48,6 +48,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
             ]}
             lab={{
               key: LinkItemKey.VirtualLab,
+              id: params.virtualLabId,
               label: Label.VirtualLab,
               href: labUrl,
               content: params.virtualLabId,

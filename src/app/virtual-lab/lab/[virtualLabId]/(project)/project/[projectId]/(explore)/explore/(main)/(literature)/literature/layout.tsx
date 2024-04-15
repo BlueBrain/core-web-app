@@ -25,7 +25,7 @@ export default function GenericLayout({ children, params }: LabProjectLayoutProp
                 key: LinkItemKey.Project,
                 label: Label.Project,
                 href: `${labProjectUrl}/home`,
-                content: params.projectId,
+                content: 'Local test project',
               },
               {
                 key: LinkItemKey.Explore,
@@ -57,9 +57,10 @@ export default function GenericLayout({ children, params }: LabProjectLayoutProp
             ]}
             lab={{
               key: LinkItemKey.VirtualLab,
+              id: params.virtualLabId,
               label: Label.VirtualLab,
               href: labUrl,
-              content: params.virtualLabId,
+              content: 'Test',
             }}
           />
         </div>

@@ -6,6 +6,7 @@ import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
 import { UsersResponse } from '@/types/virtual-lab/members';
 
 export async function getVirtualLabDetail(id: string): Promise<VirtualLabResponse> {
+  console.log('🚀 ~ getVirtualLabDetail ~ temporaryToken:', temporaryToken);
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'GET',
     headers: createVLApiHeaders(temporaryToken),

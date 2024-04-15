@@ -1,20 +1,29 @@
+import { loadable } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
 import { useReducer, useRef } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { LinkItem } from '../VerticalLinks';
+import { LinkItem, LabItem } from '../VerticalLinks';
 import LinkComponent from './LinkComponent';
 import SideMenuBottom from './SideMenuBottom';
 import { classNames } from '@/util/utils';
 import { Role } from '@/constants/virtual-labs/sidemenu';
+import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 
 type Props = {
   links: LinkItem[];
-  lab?: LinkItem;
+  lab: LabItem;
 };
 
 export default function SideMenu({ links, lab }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
+
+  const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(lab.id)));
+
+  if (virtualLabProjects.state === 'hasData') {
+    console.log('🚀 ~ SideMenu ~ virtualLabProjects:', virtualLabProjects.data);
+  }
 
   const linkClassName = (link: LinkItem) => {
     let baseClass = `flex w-full items-center justify-between capitalize ${link.styles}`;
@@ -42,9 +51,7 @@ export default function SideMenu({ links, lab }: Props) {
         )}
         role="presentation"
       >
-        {lab && expanded && (
-          <LinkComponent link={lab} expanded={expanded} linkClassName={linkClassName} />
-        )}
+        {expanded && <LinkComponent link={lab} expanded={expanded} linkClassName={linkClassName} />}
         {links.map((link) => (
           <LinkComponent
             key={link.key}

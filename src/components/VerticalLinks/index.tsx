@@ -11,6 +11,8 @@ export type LinkItem = {
   styles?: string;
 };
 
+export type LabItem = LinkItem & { id: string };
+
 type Props = {
   links: LinkItem[];
   currentPage?: string;
