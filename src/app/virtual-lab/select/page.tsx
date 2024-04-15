@@ -1,5 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 
+import VirtualLabSelect from '@/components/VirtualLab/VirtualLabSelect';
+
 export default function VirtualLabSelectPage() {
   return (
     <div>
@@ -10,6 +12,7 @@ export default function VirtualLabSelectPage() {
           <PlusOutlined />
         </div>
       </div>
+      <VirtualLabSelect />
     </div>
   );
 }

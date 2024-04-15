@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { basePath } from '@/config';
-import Styles from './home-page.module.css';
+import Styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 
 export default function WelcomeUserBanner({ title }: { title: string }) {
   const { data } = useSession();

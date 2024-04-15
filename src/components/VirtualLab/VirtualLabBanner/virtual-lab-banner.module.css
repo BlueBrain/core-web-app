@@ -1,0 +1,14 @@
+.bannerImg {
+    content: '';
+    background-size: 200%;
+    background-position: right 50% bottom 15%;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.25;
+    mix-blend-mode: plus-lighter;
+  }
+  

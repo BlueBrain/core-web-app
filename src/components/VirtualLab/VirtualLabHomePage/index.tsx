@@ -3,31 +3,25 @@
 import { useCallback } from 'react';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
-import { CalendarOutlined, EditOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 
-import VirtualLabStatistic from '../VirtualLabStatistic';
+import VirtualLabBanner from '../VirtualLabBanner';
 import DiscoverObpItem from './DiscoverObpItem';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
 import WelcomeUserBanner from './WelcomeUserBanner';
-import { formatDate } from '@/util/utils';
 import { basePath } from '@/config';
-import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
-import Brain from '@/components/icons/Brain';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
-import Styles from './home-page.module.css';
 
 type Props = {
   id: string;
 };
 
 export default function VirtualLabHomePage({ id }: Props) {
-  const iconStyle = { color: '#69C0FF' };
-
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
   const notification = useNotification();
@@ -73,49 +67,12 @@ export default function VirtualLabHomePage({ id }: Props) {
   return (
     <div>
       <WelcomeUserBanner title={virtualLabDetail.data.name} />
-      <div className="relative mt-10 flex flex-col gap-4 bg-primary-8 p-8">
-        <div
-          className={Styles.bannerImg}
-          style={{
-            backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocaqmpus_original.png)`,
-          }}
-        />
-        <div className="flex flex-row justify-between">
-          <div className="flex max-w-[50%] flex-col gap-2">
-            <div>
-              <div className="text-primary-2">Virtual Lab name</div>
-              <h2 className="text-5xl font-bold">{virtualLabDetail.data.name}</h2>
-            </div>
-            <div>{virtualLabDetail.data.description}</div>
-          </div>
-          <div>
-            <EditOutlined />
-          </div>
-        </div>
-        <div className="flex gap-5">
-          <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
-          <VirtualLabStatistic
-            icon={<StatsEditIcon style={iconStyle} />}
-            title="Simulation experiments"
-            detail="N/A"
-          />
-          <VirtualLabStatistic
-            icon={<UserOutlined style={iconStyle} />}
-            title="Members"
-            detail={virtualLabDetail.data.users.length}
-          />
-          <VirtualLabStatistic
-            icon={<MembersGroupIcon style={iconStyle} />}
-            title="Admin"
-            detail={virtualLabDetail.data.users.find((user) => user.role === 'admin')?.name || '-'}
-          />
-          <VirtualLabStatistic
-            icon={<CalendarOutlined style={iconStyle} />}
-            title="Creation date"
-            detail={formatDate(virtualLabDetail.data.created_at)}
-          />
-        </div>
-      </div>
+      <VirtualLabBanner
+        name={virtualLabDetail.data.name}
+        description={virtualLabDetail.data.description}
+        users={virtualLabDetail.data.users}
+        createdAt={virtualLabDetail.data.created_at}
+      />
       <BudgetPanel total={virtualLabDetail.data?.budget || 0} totalSpent={300} remaining={350} />
       <div className="mt-10 flex flex-col gap-5">
         <div className="font-bold uppercase">Discover OBP</div>
