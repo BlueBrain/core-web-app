@@ -43,7 +43,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
                 href: `${labProjectUrl}/explore`,
                 content: Content.Explore,
                 role: Role.Section,
-                styles: ' rounded-full bg-primary-5 py-3 text-primary-9',
+                styles: 'rounded-full bg-primary-5 py-3 text-primary-9',
               },
             ]}
             lab={{
