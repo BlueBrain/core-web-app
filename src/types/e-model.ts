@@ -107,7 +107,7 @@ interface EModelCommonProps extends Entity {
   ];
   contribution: ContributionEntity;
   distribution: Distribution | Distribution[];
-  emodel: string;
+  eModel: string;
   eType: string;
   iteration: string;
   name: string;
