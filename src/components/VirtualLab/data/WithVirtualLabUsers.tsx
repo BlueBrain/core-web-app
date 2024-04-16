@@ -1,13 +1,12 @@
-'use client';
-
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { ComponentType } from 'react';
 
-import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
+import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
+import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 
 type WithVirtualLabUsersProps = {
   users: VirtualLabMember[];
@@ -15,27 +14,34 @@ type WithVirtualLabUsersProps = {
 
 export default function withVirtualLabUsers(
   WrappedComponent: ComponentType<WithVirtualLabUsersProps>,
-  virtualLabId: string
+  virtualLabId: string,
+  projectId?: string
 ) {
   function WithVirtualLabUsers() {
-    const virtualLabMembers = useAtomValue(loadable(virtualLabMembersAtomFamily(virtualLabId)));
-    if (virtualLabMembers.state === 'loading') {
+    const usersAtom = projectId
+      ? virtualLabProjectUsersAtomFamily({ virtualLabId, projectId })
+      : virtualLabMembersAtomFamily(virtualLabId);
+
+    const users = useAtomValue(loadable(usersAtom));
+
+    if (users.state === 'loading') {
       return (
         <div className="flex h-screen items-center justify-center">
           <Spin size="large" indicator={<LoadingOutlined />} />
         </div>
       );
     }
-    if (virtualLabMembers.state === 'hasError') {
+    if (users.state === 'hasError') {
+      const errorMessage = projectId
+        ? 'Something went wrong when fetching virtual lab project users'
+        : 'Something went wrong when fetching virtual lab users';
       return (
         <div className="flex h-screen items-center justify-center">
-          <div className="rounded-lg border p-8">
-            Something went wrong when fetching virtual lab users
-          </div>
+          <div className="rounded-lg border p-8">{errorMessage}</div>
         </div>
       );
     }
-    return <WrappedComponent users={virtualLabMembers.data} />;
+    return <WrappedComponent users={users.data} />;
   }
   return WithVirtualLabUsers;
 }

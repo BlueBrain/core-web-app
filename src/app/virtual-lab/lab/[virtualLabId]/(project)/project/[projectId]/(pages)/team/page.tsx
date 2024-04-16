@@ -1,14 +1,14 @@
 'use client';
 
 import VirtualLabTeamTable from '@/components/VirtualLab/VirtualLabTeamTable';
-import withVirtualLabProjectUsers from '@/components/VirtualLab/data/WithVirtualLabProjectUsers';
+import withVirtualLabUsers from '@/components/VirtualLab/data/WithVirtualLabUsers';
 import { ServerSideComponentProp } from '@/types/common';
 
 export default function VirtualLabProjectTeamPage({
   params,
 }: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
   const { virtualLabId, projectId } = params;
-  const WithVirtualLabProjectUsers = withVirtualLabProjectUsers(
+  const WithVirtualLabProjectUsers = withVirtualLabUsers(
     VirtualLabTeamTable,
     virtualLabId,
     projectId
