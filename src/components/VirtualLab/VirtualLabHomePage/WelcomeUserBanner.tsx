@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { basePath } from '@/config';
-import Styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
+import styles from '../VirtualLabBanner/virtual-lab-banner.module.css';
 
 export default function WelcomeUserBanner({ title }: { title: string }) {
   const { data } = useSession();
@@ -17,7 +17,7 @@ export default function WelcomeUserBanner({ title }: { title: string }) {
     show && (
       <div className="relative mt-10 flex bg-gradient-to-r from-[#345D36] to-[#6DC371] p-8">
         <div
-          className={Styles.bannerImg}
+          className={styles.bannerImg}
           style={{
             backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
           }}
