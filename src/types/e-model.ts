@@ -81,6 +81,7 @@ export interface EModel extends EModelCommonProps {
   generation: Generation;
   seed: number;
   brainLocation?: BrainLocation;
+  mType?: string;
   subject: {
     '@type': 'Subject';
     species: {
@@ -106,8 +107,8 @@ interface EModelCommonProps extends Entity {
   ];
   contribution: ContributionEntity;
   distribution: Distribution | Distribution[];
-  emodel: string;
-  etype: string;
+  eModel: string;
+  eType: string;
   iteration: string;
   name: string;
   objectOfStudy: EModelObjectOfStudy;

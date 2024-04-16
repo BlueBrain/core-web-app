@@ -418,8 +418,9 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
     const eModels = await queryES<EModelResource>(eModelsQuery, session);
     // pick the e-models compatible with latest structure
     const withGeneration = eModels.filter((eModel) => 'generation' in eModel);
+    const withEType = withGeneration.filter((eModel) => 'eType' in eModel);
 
-    const filteredByLocation = withGeneration.filter((eModel) => {
+    const filteredByLocation = withEType.filter((eModel) => {
       // as they don't have brain location, they can be use everywhere
       if (!eModel.brainLocation) return true;
 
@@ -436,8 +437,8 @@ export const eModelByETypeMappingAtom = atom<Promise<EModelByETypeMappingType | 
     const eModelMenuItems: EModelMenuItem[] = filteredByLocation.map((eModel: EModelResource) => ({
       name: eModel.name,
       id: eModel['@id'] || '',
-      eType: eModel.etype,
-      mType: '',
+      eType: eModel.eType || '',
+      mType: eModel.mType || '',
       isOptimizationConfig: false,
       rev: eModel._rev,
     }));

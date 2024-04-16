@@ -73,7 +73,7 @@ export function useCreateEmodelPackageFile() {
     const hocFileESQuery = {
       query: {
         term: {
-          'name.keyword': `${eModelConfiguration?.etype} EModel`,
+          'name.keyword': `${eModelConfiguration?.eType} EModel`,
         },
       },
     };
