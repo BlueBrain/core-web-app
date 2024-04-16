@@ -1,4 +1,5 @@
 import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
+
 import VirtualLabStatistic from '../VirtualLabStatistic';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
