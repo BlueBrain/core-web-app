@@ -1,5 +1,17 @@
-import VirtualLabTeamTable from '@/components/VirtualLab/VirtualLabTeamTable';
+'use client';
 
-export default function VirtualLabProjectTeamPage() {
-  return <VirtualLabTeamTable virtualLabId="to-be-replaced-by-actual-id" />;
+import VirtualLabTeamTable from '@/components/VirtualLab/VirtualLabTeamTable';
+import withVirtualLabUsers from '@/components/VirtualLab/data/WithVirtualLabUsers';
+import { ServerSideComponentProp } from '@/types/common';
+
+export default function VirtualLabProjectTeamPage({
+  params,
+}: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
+  const { virtualLabId, projectId } = params;
+  const WithVirtualLabProjectUsers = withVirtualLabUsers(
+    VirtualLabTeamTable,
+    virtualLabId,
+    projectId
+  );
+  return <WithVirtualLabProjectUsers />;
 }

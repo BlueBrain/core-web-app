@@ -1,4 +1,5 @@
 import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
 import VirtualLabStatistic from '../../VirtualLabStatistic';
 import Brain from '@/components/icons/Brain';
@@ -16,7 +17,9 @@ export default function VirtualLabProjectItem({ project }: Props) {
     <div className="flex flex-col gap-3 rounded-md border border-primary-6 p-9 ">
       {/* Title row */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{project.name}</h2>
+        <Link className="text-2xl font-bold" href={`project/${project.id}/home`}>
+          {project.name}
+        </Link>
 
         <div className="flex items-center justify-between gap-6">
           <div className="flex gap-2">

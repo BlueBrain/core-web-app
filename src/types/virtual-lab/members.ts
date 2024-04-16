@@ -1,3 +1,5 @@
+import { VlmResponse } from './common';
+
 export type MockRole = 'administrator' | 'member';
 
 export type Role = 'admin' | 'member';
@@ -18,3 +20,5 @@ export interface VirtualLabMember {
   role: Role;
   name: string;
 }
+
+export type UsersResponse = VlmResponse<{ users: VirtualLabMember[] }>;

@@ -7,7 +7,7 @@ export default function VirtualLabStatistic({
 }: {
   icon: ReactNode;
   title: string;
-  detail: number | string;
+  detail: number | string | ReactNode;
 }) {
   return (
     <div className="flex items-center gap-2">

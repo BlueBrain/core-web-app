@@ -1,8 +1,9 @@
 import { createVLApiHeaders } from './common';
 import { temporaryToken } from './temporaryToken';
 import { virtualLabApi } from '@/config';
-import { Project } from '@/types/virtual-lab/projects';
+import { Project, ProjectResponse } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
+import { UsersResponse } from '@/types/virtual-lab/members';
 
 export async function getVirtualLabProjects(
   id: string
@@ -11,6 +12,40 @@ export async function getVirtualLabProjects(
     method: 'GET',
     headers: createVLApiHeaders(temporaryToken),
   });
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function getVirtualLabProjectDetails(
+  virtualLabId: string,
+  projectId: string
+): Promise<ProjectResponse> {
+  const response = await fetch(
+    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}`,
+    {
+      method: 'GET',
+      headers: createVLApiHeaders(temporaryToken),
+    }
+  );
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function getVirtualLabProjectUsers(
+  virtualLabId: string,
+  projectId: string
+): Promise<UsersResponse> {
+  const response = await fetch(
+    `${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects/${projectId}/users`,
+    {
+      method: 'GET',
+      headers: createVLApiHeaders(temporaryToken),
+    }
+  );
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }

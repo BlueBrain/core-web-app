@@ -1,3 +1,5 @@
+import { VlmResponse } from './common';
+
 export type MockProject = {
   id: number;
   title: string;
@@ -16,6 +18,9 @@ export type MockProject = {
     remaining: number;
   };
 };
+
+export type ProjectResponse = VlmResponse<{ project: Project }>;
+
 export type Project = {
   id: string;
   name: string;
@@ -23,4 +28,17 @@ export type Project = {
   budget: number;
   created_at: string;
   updated_at: string;
+  virtual_lab: {
+    id: string;
+    name: string;
+    description: string;
+  };
+  owner: {
+    id: string;
+    username: string;
+    created_at: string;
+    first_name: string;
+    last_name: string;
+    name: string;
+  };
 };

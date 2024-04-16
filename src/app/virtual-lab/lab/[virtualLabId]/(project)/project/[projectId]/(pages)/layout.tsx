@@ -8,7 +8,14 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import SideMenu from '@/components/SideMenu';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
 
-export default function VirtualLabProjectLayout({ children }: { children: ReactNode }) {
+export default function VirtualLabProjectLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: { virtualLabId: string; projectId: string };
+}) {
+  const { virtualLabId, projectId } = params;
   return (
     <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 bg-primary-9 pr-10 text-white">
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
@@ -27,7 +34,7 @@ export default function VirtualLabProjectLayout({ children }: { children: ReactN
             ]}
           />
 
-          <VirtualLabProjectSidebar />
+          <VirtualLabProjectSidebar virtualLabId={virtualLabId} projectId={projectId} />
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
