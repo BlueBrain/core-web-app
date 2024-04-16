@@ -77,7 +77,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
         {renderProjectTitle()}
       </h1>
       <a
-        href={`/virtual-lab/${virtualLabId}/projects`}
+        href={`/virtual-lab/lab/${virtualLabId}/projects`}
         className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
       >
         <span>Switch project</span> <SwapOutlined />
