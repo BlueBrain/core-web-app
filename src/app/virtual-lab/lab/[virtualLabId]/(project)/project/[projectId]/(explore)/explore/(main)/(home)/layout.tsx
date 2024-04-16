@@ -33,7 +33,10 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
             }}
           />
 
-          <VirtualLabProjectSidebar virtualLabId={params.virtualLabId} projectId={params.projectId} />
+          <VirtualLabProjectSidebar
+            virtualLabId={params.virtualLabId}
+            projectId={params.projectId}
+          />
         </div>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
