@@ -1,22 +1,31 @@
 'use client';
 
-import type { InputProps } from 'antd/lib/input/Input';
-import type { TextAreaProps } from 'antd/lib/input/TextArea';
-import { Button, Collapse, ConfigProvider, Input, Spin } from 'antd';
+import { Button, Collapse, ConfigProvider, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode } from 'react';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
-import FormPanel from './InformationPanel';
+import FormPanel, { renderInput, renderTextArea } from './InformationPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 import { VALID_EMAIL_REGEXP } from '@/util/utils';
+import { patchVirtualLab } from '@/services/virtual-lab/labs';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+
+const mockBilling = {
+  organization: 'EPFL',
+  firstname: 'Harry',
+  lastname: 'Anderson',
+  address: 'Chem. des Mines 9',
+  city: 'Geneva',
+  postalCode: '1202',
+  country: 'CH',
+};
 
 type Props = {
   id: string;
@@ -50,58 +59,11 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
 export default function VirtualLabSettingsComponent({ id }: Props) {
   const router = useRouter();
   const userIsAdmin = true;
-  const saveInformation = async (): Promise<void> => {};
+  const saveInformation = async (formData: Partial<VirtualLab>): Promise<void> => {
+    patchVirtualLab(formData, id);
+  };
   const changePlan = async (): Promise<void> => {};
   const deleteVirtualLab = async () => {};
-
-  const mockBilling = {
-    organization: 'EPFL',
-    firstname: 'Harry',
-    lastname: 'Anderson',
-    address: 'Chem. des Mines 9',
-    city: 'Geneva',
-    postalCode: '1202',
-    country: 'CH',
-  };
-
-  const renderInput: (props: InputProps) => ReactNode = useCallback(
-    ({ addonAfter, className, disabled, placeholder, readOnly, style, title, type, value }) => {
-      return (
-        <Input
-          addonAfter={addonAfter}
-          className={className}
-          disabled={disabled}
-          placeholder={placeholder}
-          readOnly={readOnly}
-          required
-          style={style}
-          title={title}
-          type={type}
-          value={value}
-        />
-      );
-    },
-    []
-  );
-
-  const renderTextArea: (props: TextAreaProps) => ReactNode = useCallback(
-    ({ className, disabled, placeholder, readOnly, style, title, value }) => {
-      return (
-        <Input.TextArea
-          disabled={disabled}
-          placeholder={placeholder}
-          autoSize
-          required
-          className={className}
-          title={title}
-          value={value}
-          style={style}
-          readOnly={readOnly}
-        />
-      );
-    },
-    []
-  );
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
 
@@ -157,7 +119,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
             {
               children: renderInput,
               label: 'Reference email',
-              name: 'referenceEMail',
+              name: 'reference_email',
               type: 'email',
               rules: [
                 {
