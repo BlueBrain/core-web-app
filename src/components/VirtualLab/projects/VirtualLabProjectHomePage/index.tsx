@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { CalendarOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { useAtomValue } from 'jotai';
@@ -17,6 +18,7 @@ import {
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
 import { formatDate } from '@/util/utils';
+import useNotification from '@/hooks/notifications';
 
 type Props = {
   virtualLabId: string;
@@ -25,6 +27,7 @@ type Props = {
 
 export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: Props) {
   const iconStyle = { color: '#69C0FF' };
+  const notification = useNotification();
 
   const projectDetails = useAtomValue(
     loadable(virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId }))
@@ -33,7 +36,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
     loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
   );
 
-  const renderUsers = () => {
+  const renderUsers = useCallback(() => {
     if (projectUsers.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
@@ -49,8 +52,9 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
         />
       ));
     }
+    notification.error('Something went wrong when fetching users');
     return null;
-  };
+  }, [notification, projectUsers]);
 
   const renderUserAmount = () => {
     if (projectUsers.state === 'loading') {

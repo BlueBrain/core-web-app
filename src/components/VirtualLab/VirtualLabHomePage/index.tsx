@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { CalendarOutlined, EditOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons';
@@ -17,6 +18,7 @@ import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
+import useNotification from '@/hooks/notifications';
 import Styles from './home-page.module.css';
 
 type Props = {
@@ -28,8 +30,9 @@ export default function VirtualLabHomePage({ id }: Props) {
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
+  const notification = useNotification();
 
-  const renderProjects = () => {
+  const renderProjects = useCallback(() => {
     if (virtualLabProjects.state === 'loading') {
       return <Spin size="large" indicator={<LoadingOutlined />} />;
     }
@@ -43,8 +46,9 @@ export default function VirtualLabHomePage({ id }: Props) {
         />
       ));
     }
+    notification.error('Something went wrong when fetching project items');
     return null;
-  };
+  }, [notification, virtualLabProjects]);
 
   if (virtualLabDetail.state === 'loading') {
     return (
