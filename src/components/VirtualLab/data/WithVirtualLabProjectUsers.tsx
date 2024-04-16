@@ -9,12 +9,12 @@ import { ComponentType } from 'react';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
 
-type WithVirtualLabUsersProps = {
+type WithVirtualLabProjectUsersProps = {
   users: VirtualLabMember[];
 };
 
 export default function withVirtualLabProjectUsers(
-  WrappedComponent: ComponentType<WithVirtualLabUsersProps>,
+  WrappedComponent: ComponentType<WithVirtualLabProjectUsersProps>,
   virtualLabId: string,
   projectId: string
 ) {
