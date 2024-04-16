@@ -1,4 +1,3 @@
-// LabsAndProjectsCollapse.tsx
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { Collapse } from 'antd';
