@@ -4,7 +4,7 @@ import VirtualLabSelect from '@/components/VirtualLab/VirtualLabSelect';
 
 export default function VirtualLabSelectPage() {
   return (
-    <div>
+    <div className="flex flex-col gap-10">
       <div className="flex items-center justify-between">
         <div className="font-bold uppercase">Your virtual labs</div>
         <div role="button" className="flex w-[150px] justify-between border border-primary-7 p-3">
