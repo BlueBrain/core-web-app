@@ -5,7 +5,7 @@ import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { formatDate } from '@/util/utils';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
-import Styles from './virtual-lab-banner.module.css';
+import styles from './virtual-lab-banner.module.css';
 
 type Props = {
   id: string;
@@ -31,7 +31,7 @@ export default function VirtualLabBanner({
   return (
     <div className="relative mt-10 flex min-h-[250px] flex-col justify-between gap-4 bg-primary-8 p-8">
       <div
-        className={Styles.bannerImg}
+        className={styles.bannerImg}
         style={{
           backgroundImage: `url(${basePath}/images/virtual-lab/obp_hippocampus_original.png)`,
         }}
