@@ -4,7 +4,11 @@ import { useAtomValue, useSetAtom } from 'jotai';
 
 import { useSaveSimulationModal } from './modal-hooks';
 import GenericButton from '@/components/Global/GenericButton';
-import { simulationFormIsFilledAtom, simulationStatusAtom } from '@/state/simulate/single-neuron';
+import {
+  secNamesAtom,
+  simulationFormIsFilledAtom,
+  simulationStatusAtom,
+} from '@/state/simulate/single-neuron';
 import { launchSimulationAtom } from '@/state/simulate/single-neuron-setter';
 
 export default function LaunchButton() {
@@ -13,6 +17,7 @@ export default function LaunchButton() {
   const launchSimulation = useSetAtom(launchSimulationAtom);
   const { createModal: createSaveResultModal, contextHolder: saveResultModalContext } =
     useSaveSimulationModal();
+  const secNames = useAtomValue(secNamesAtom);
 
   const { launched, finished } = simulationStatus;
 
@@ -23,7 +28,7 @@ export default function LaunchButton() {
       <GenericButton
         text="Simulate"
         className="w-15 absolute bottom-5 right-5 mt-8 bg-primary-8 text-white"
-        disabled={!submittable}
+        disabled={!submittable || secNames.length === 0}
         onClick={launchSimulation}
       />
     );

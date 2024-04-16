@@ -3,7 +3,8 @@ export type SimulateStep =
   | 'recording'
   | 'conditions'
   | 'analysis'
-  | 'visualization';
+  | 'visualization'
+  | 'results';
 
 // ------------------ Stimulation protocols types ------------------
 

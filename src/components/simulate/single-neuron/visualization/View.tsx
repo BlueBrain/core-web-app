@@ -7,6 +7,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import throttle from 'lodash/throttle';
 
 import { PositionedPopover } from './PositionedPopover';
+import TraceLoader from './TraceLoader';
 import { useEModelUUID, useEnsureModelPackage } from '@/services/bluenaas-single-cell/hooks';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
@@ -21,6 +22,7 @@ import {
   plotDataAtom,
   secNamesAtom,
   segNamesAtom,
+  simulateStepAtom,
   simulationConfigAtom,
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
@@ -49,10 +51,11 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
   const setBlueNaasInstanceRef = useSetAtom(blueNaasInstanceRefAtom);
   const simulationDoneCB = useSetAtom(simulationDoneAtom);
+  const setSimulateStep = useSetAtom(simulateStepAtom);
 
   const blueNaasInstance = useRef<BlueNaasCls | null>(null);
 
-  const setSecNames = useSetAtom(secNamesAtom);
+  const [secNames, setSecNames] = useAtom(secNamesAtom);
   const setSegNames = useSetAtom(segNamesAtom);
   const setPlotData = useSetAtom(plotDataAtom);
 
@@ -119,6 +122,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     };
 
     const onTraceData = throttle((data: TraceData) => {
+      setSimulateStep('results');
       const updatedPlotData: PlotData = data.map((entry) => ({
         x: entry.t,
         y: entry.v,
@@ -160,11 +164,14 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     setPlotData,
     simulationDoneCB,
     eModelScript,
+    setSimulateStep,
   ]);
 
   return (
     <div className="relative h-full w-full">
-      <div className="h-full" ref={containerRef} />
+      {secNames.length === 0 && <TraceLoader />}
+
+      <div style={{ height: secNames.length > 0 ? '100vh' : '0vh' }} ref={containerRef} />
 
       {selectionCtrlConfig && (
         <PositionedPopover config={selectionCtrlConfig.position}>
@@ -187,13 +194,26 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 }
 
 export default function EModelInteractiveView() {
-  const selectedEModel = useAtomValue(selectedEModelAtom);
+  const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
 
   const eModelUUID = useEModelUUID();
   const ensureModelPackage = useEnsureModelPackage();
 
   const [blueNaasModelId, setBlueNaasModelId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // TODO: remove this when model fetchable from backend
+  useEffect(() => {
+    setSelectedEModel({
+      name: 'EM__fa285b7__cADpyr__12',
+      id: 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/c8181452-b108-4b99-a176-786fb8f6b19b',
+      eType: 'cADpyr',
+      mType: 'L2_TPC:A',
+      isOptimizationConfig: false,
+      rev: 3,
+      brainRegion: 'http://api.brain-map.org/api/v2/data/Structure/558',
+    });
+  }, []);
 
   useEffect(() => {
     if (!eModelUUID || selectedEModel?.isOptimizationConfig) return;
