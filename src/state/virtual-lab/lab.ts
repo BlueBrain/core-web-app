@@ -31,3 +31,9 @@ export const virtualLabsOfUserAtom = atom<Promise<VirtualLabAPIListData<VirtualL
 });
 
 export const projectTopMenuRefAtom = atom<RefObject<HTMLDivElement> | null>(null);
+
+
+export const userVirtualLabTotalsAtom = atom<Promise<number>>(async (get) => {
+  const virtualLabs = await get(virtualLabsOfUserAtom);
+  return virtualLabs.total;
+});
