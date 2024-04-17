@@ -213,7 +213,7 @@ export default function EModelInteractiveView() {
       rev: 3,
       brainRegion: 'http://api.brain-map.org/api/v2/data/Structure/558',
     });
-  }, []);
+  }, [setSelectedEModel]);
 
   useEffect(() => {
     if (!eModelUUID || selectedEModel?.isOptimizationConfig) return;
