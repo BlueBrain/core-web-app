@@ -7,6 +7,7 @@ import { loadable } from 'jotai/utils';
 import { useCallback } from 'react';
 
 import VirtualLabAndProject from './VirtualLabAndProject';
+import DashboardTotals from './DashboardTotals';
 import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 
 export default function VirtualLabDashboard() {
@@ -34,10 +35,7 @@ export default function VirtualLabDashboard() {
     <div className="inset-0 z-0 grid grid-cols-[1fr_4fr] grid-rows-1 bg-primary-9 text-white">
       <div className="flex flex-col gap-4 text-primary-5">
         <div className="text-5xl font-bold uppercase">Your virtual labs and projects</div>
-        <div className="flex flex-col">
-          <div>Total labs: N/A</div>
-          <div>Total projects: N/A</div>
-        </div>
+        <DashboardTotals />
       </div>
 
       <div className="flex flex-col gap-5">{renderVirtualLabs()}</div>

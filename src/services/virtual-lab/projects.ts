@@ -51,3 +51,14 @@ export async function getVirtualLabProjectUsers(
   }
   return response.json();
 }
+
+export async function getUsersProjects(): Promise<VlmResponse<VirtualLabAPIListData<Project>>> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/projects`, {
+    method: 'GET',
+    headers: createVLApiHeaders(temporaryToken),
+  });
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
+}
