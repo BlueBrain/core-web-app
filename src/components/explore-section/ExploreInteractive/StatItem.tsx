@@ -29,7 +29,7 @@ export default function StatItem({
 
 export function StatItemSkeleton() {
   return (
-    <div className="opacity-85 flex h-[50px] w-full animate-pulse justify-between rounded-sm bg-neutral-7 px-3 py-4" />
+    <div className="flex h-[50px] w-full animate-pulse justify-between rounded-sm bg-neutral-7 px-3 py-4 opacity-85" />
   );
 }
 

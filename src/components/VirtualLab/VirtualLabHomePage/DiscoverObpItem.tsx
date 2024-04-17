@@ -23,7 +23,7 @@ export default function DiscoverObpItem({
 }: Props) {
   const router = useRouter();
   return (
-    <div className="max-w-96 relative top-[-60px]">
+    <div className="relative top-[-60px] max-w-96">
       <Image
         src={imagePath}
         width={1158}
