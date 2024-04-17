@@ -1,6 +1,5 @@
 import { createVLApiHeaders } from './common';
 import { temporaryToken } from './temporaryToken';
-import { DateISOString } from '@/types/nexus';
 import { virtualLabApi } from '@/config';
 import { VirtualLab, VirtualLabResponse } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData, VlmResponse } from '@/types/virtual-lab/common';
@@ -45,24 +44,38 @@ export async function patchVirtualLab(
   formData: Partial<VirtualLab>,
   id: string
 ): Promise<
-  VlmResponse<
-    VirtualLabAPIListData<{
-      virtual_lab: {
-        name: string;
-        description: string;
-        reference_email: string;
-        budget: number;
-        id: string;
-        plan_id: number;
-        created_at: DateISOString;
-      };
-    }>
-  >
+  VlmResponse<{
+    virtual_lab: VirtualLab;
+  }>
 > {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
     method: 'PATCH',
     headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getPlans(): Promise<
+  VlmResponse<{
+    all_plans: [
+      {
+        id: number;
+        name: string;
+        price: number;
+        features: Record<string, Array<string>>;
+      },
+    ];
+  }>
+> {
+  const response = await fetch(`${virtualLabApi.url}/plans`, {
+    method: 'GET',
+    headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
   });
 
   if (!response.ok) {

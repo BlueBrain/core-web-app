@@ -137,6 +137,11 @@ export default function InformationPanel({
         <ConfigProvider
           theme={{
             components: {
+              Button: {
+                colorBgContainer: '#00B212',
+                colorBgContainerDisabled: '#00B212', // Same as colorBgContainer
+                colorTextDisabled: '#262626',
+              },
               Form: {
                 labelColor: '#69C0FF',
                 itemMarginBottom: 3,
@@ -213,7 +218,7 @@ export default function InformationPanel({
                     Cancel
                   </Button>
                   <Button
-                    className="h-14 rounded-none bg-secondary-3 font-semibold text-primary-8"
+                    className="h-14 rounded-none font-semibold text-primary-8"
                     disabled={!submittable}
                     title="Save Changes"
                     htmlType="submit"

@@ -4,8 +4,8 @@ import { Button, Collapse, ConfigProvider, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ReactNode } from 'react';
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { useSetAtom, useAtomValue } from 'jotai';
+import { loadable, unwrap } from 'jotai/utils';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
 import FormPanel, { renderInput, renderTextArea } from './InformationPanel';
@@ -15,7 +15,7 @@ import { VALID_EMAIL_REGEXP } from '@/util/utils';
 import { patchVirtualLab } from '@/services/virtual-lab/labs';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
-import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabDetailAtomFamily, virtualLabPlansAtom } from '@/state/virtual-lab/lab';
 
 const mockBilling = {
   organization: 'EPFL',
@@ -59,13 +59,89 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
 export default function VirtualLabSettingsComponent({ id }: Props) {
   const router = useRouter();
   const userIsAdmin = true;
+
+  const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+  const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
+
   const saveInformation = async (formData: Partial<VirtualLab>): Promise<void> => {
     patchVirtualLab(formData, id);
   };
-  const changePlan = async (): Promise<void> => {};
+
+  const changePlan = async (formData: Partial<VirtualLab>): Promise<void> => {
+    const { data } = await patchVirtualLab(formData, id);
+
+    const { virtual_lab: virtualLab } = data;
+
+    setVirtualLabDetail(
+      new Promise((resolve) => {
+        resolve(virtualLab);
+      })
+    );
+  };
   const deleteVirtualLab = async () => {};
 
-  const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+  const plans = useAtomValue(unwrap(virtualLabPlansAtom));
+
+  const planDescriptions = [
+    {
+      id: 1,
+      name: VirtualLabPlanType.Entry,
+      description: (
+        <div className="flex flex-col gap-1">
+          <h4 className="font-bold text-primary-3">CAPABILITIES</h4>
+          <ul className="list-disc pl-4">
+            <li>Unlimited downloads</li>
+            <li>Unlimited AI-assisted knowledge discovery based-on neuroscience literature</li>
+          </ul>
+          <h4 className="font-bold text-primary-3">BUILD & SIMULATE</h4>
+          <ul className="list-disc pl-4">
+            <li>Ion channel</li>
+            <li>Single neuron</li>
+            <li>Paired neuron</li>
+          </ul>
+          <h4 className="font-bold text-primary-3">COMPUTE & STORAGE CREDITS</h4>
+          <ul className="list-disc pl-4">
+            <li>Free compute resources</li>
+            <li>Additional compute resources can be purchased</li>
+          </ul>
+          <h4 className="font-bold text-primary-3">SUPPORT</h4>
+          <ul className="list-disc pl-4">
+            <li>Open Brain cellular lab support</li>
+          </ul>
+        </div>
+      ),
+      pricing: { cost: 20, currency: '$' },
+    },
+    {
+      id: 2,
+      name: VirtualLabPlanType.Beginner,
+      description: 'Cras mattis consectetur purus sit amet fermentum.',
+      pricing: { cost: 100, currency: '$' },
+    },
+    {
+      id: 3,
+      name: VirtualLabPlanType.Intermediate,
+      description: 'Cras mattis consectetur purus sit amet fermentum.',
+      pricing: { cost: 1000, currency: '$' },
+    },
+  ];
+
+  const plansWithDescriptions = plans?.reduce<
+    Array<{
+      id: number;
+      name: VirtualLabPlanType;
+      description: ReactNode;
+      pricing: { cost: number; currency: string };
+    }>
+  >(
+    (acc1, { id: planId }) =>
+      planDescriptions.reduce(
+        (acc2, { id: vlPlanId, name, description, pricing }) =>
+          vlPlanId === planId ? [...acc2, { id: planId, name, description, pricing }] : acc2,
+        acc1
+      ),
+    []
+  );
 
   if (virtualLabDetail.state === 'loading') {
     return (
@@ -136,49 +212,12 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
       title: 'Lab Settings',
     },
     {
-      content: (
+      content: !!plansWithDescriptions && (
         <PlanPanel
-          currentPlan={VirtualLabPlanType.Entry}
-          billingInfo={mockBilling}
+          currentPlan={virtualLabDetail.data?.plan_id}
+          items={plansWithDescriptions}
           userIsAdmin={userIsAdmin}
-          onChangePlan={changePlan}
-          items={[
-            {
-              type: VirtualLabPlanType.Entry,
-              description: (
-                <div className="flex flex-col gap-1">
-                  <h4 className="font-bold text-primary-3">CAPABILITIES</h4>
-                  <ul className="list-disc pl-4">
-                    <li>Unlimited download</li>
-                    <li>
-                      Unlimited AI-assisted knowledge discovery based-on neuroscience literature
-                    </li>
-                  </ul>
-                  <h4 className="font-bold text-primary-3">Support</h4>
-                  <ul className="list-disc pl-4">
-                    <li>Open Brain cellular lab support</li>
-                  </ul>
-                </div>
-              ),
-              pricing: { cost: 0, currency: '$' },
-            },
-            {
-              type: VirtualLabPlanType.Beginner,
-              description: 'Cras mattis consectetur purus sit amet fermentum.',
-              pricing: { cost: 40, currency: '$' },
-            },
-            {
-              type: VirtualLabPlanType.Intermediate,
-              description: 'Cras mattis consectetur purus sit amet fermentum.',
-              pricing: { cost: 40, currency: '$' },
-            },
-            {
-              type: VirtualLabPlanType.Advanced,
-              description: 'Cras mattis consectetur purus sit amet fermentum.',
-              pricing: { cost: 40, currency: '$' },
-              className: '!basis-2/5',
-            },
-          ]}
+          onChange={changePlan}
         />
       ),
       key: 'plan',
