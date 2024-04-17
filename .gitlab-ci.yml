@@ -171,7 +171,7 @@ deploy-bbp-dev:
     REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-$(date +%s)
     NEXT_PUBLIC_ENVIRONMENT: dev
     NEXT_PUBLIC_BASE_PATH: /mmb-beta/dev
-    NEXT_PUBLIC_BBS_ML_URL: https://ml.bbs.master.staging.kcp.bbp.epfl.ch
+    NEXT_PUBLIC_BBS_ML_URL: https://openbrainplatform.org/api/literature/
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
     KANIKO_EXTRA_ARGS: >
@@ -197,7 +197,7 @@ deploy-test:
     REGISTRY_IMAGE_TAG: $CI_COMMIT_SHORT_SHA-$(date +%s)
     NEXT_PUBLIC_ENVIRONMENT: test
     NEXT_PUBLIC_BASE_PATH: /mmb-beta/test
-    NEXT_PUBLIC_BBS_ML_URL: https://ml.bbs.master.staging.kcp.bbp.epfl.ch
+    NEXT_PUBLIC_BBS_ML_URL: https://openbrainplatform.org/api/literature/
     NEXT_PUBLIC_SENTRY_DSN: $SENTRY_DSN
     SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
     KANIKO_EXTRA_ARGS: >
