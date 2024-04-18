@@ -31,7 +31,7 @@ export default function DashboardTotals() {
     if (virtualLabTotals.state === 'hasData') {
       return virtualLabTotals.data;
     }
-    notify.error('Something went wrong when fetching project totals');
+    notify.error('Something went wrong when fetching virtual lab totals');
     return null;
   }, [notify, virtualLabTotals]);
 
