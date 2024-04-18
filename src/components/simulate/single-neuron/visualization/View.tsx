@@ -19,7 +19,7 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import {
   blueNaasInstanceRefAtom,
-  plotDataAtom,
+  simulationPlotDataAtom,
   secNamesAtom,
   segNamesAtom,
   simulateStepAtom,
@@ -57,7 +57,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 
   const [secNames, setSecNames] = useAtom(secNamesAtom);
   const setSegNames = useSetAtom(segNamesAtom);
-  const setPlotData = useSetAtom(plotDataAtom);
+  const setPlotData = useSetAtom(simulationPlotDataAtom);
 
   // this atom contains the threshold and holding values to initialize the model properly
   const eModelScript = useAtomValue(eModelScriptAtom);

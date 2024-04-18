@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
 
-import { plotDataAtom } from '@/state/simulate/single-neuron';
+import { simulationPlotDataAtom } from '@/state/simulate/single-neuron';
 
 const SimTracePlot = dynamic(
   () => import('@/components/simulate/single-neuron/visualization/SimTracePlot'),
@@ -12,7 +12,7 @@ const SimTracePlot = dynamic(
 );
 
 export default function Results() {
-  const plotData = useAtomValue(plotDataAtom);
+  const plotData = useAtomValue(simulationPlotDataAtom);
 
   if (!plotData?.length)
     return (
