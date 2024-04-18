@@ -1,6 +1,7 @@
 import { Select, Form, InputNumber } from 'antd';
 import { useAtomValue } from 'jotai';
 
+import AmperageRangeComponent from './AmperageRangeComponent';
 import { SimAction, SimConfig } from '@/types/simulate/single-neuron';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
@@ -20,6 +21,7 @@ export default function Stimulation({ onChange, simConfig }: Props) {
       <StimulationMode onChange={onChange} />
       <StimulationProtocol onChange={onChange} simConfig={simConfig} />
       <Parameters onChange={onChange} simConfig={simConfig} />
+      <AmperageRangeComponent onChange={onChange} amplitudes={simConfig.stimulus.amplitudes} />
     </>
   );
 }

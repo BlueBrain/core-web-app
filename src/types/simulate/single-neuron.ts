@@ -10,7 +10,7 @@ export type SimulateStep =
 
 export type StimulusType = 'current_clamp' | 'voltage_clamp' | 'conductance';
 
-export type StimulusModule = 'hyperpolarizing' | 'noise_step' | 'seclamp';
+export type StimulusModule = 'ap_waveform' | 'idrest' | 'iv' | 'fire_pattern';
 
 export type StimulusTypeDropdownOptionType = {
   label: string;
@@ -68,10 +68,12 @@ export type StimulusConfig = {
   stimulusProtocolOptions: StimulusModuleDropdownOptionType[];
   paramInfo: StimulusParameter;
   paramValues: Record<string, number | null>;
+  amplitudes: number[];
 };
 
 export type SimAction =
   | { type: 'CHANGE_TYPE'; payload: StimulusType }
   | { type: 'CHANGE_PROTOCOL'; payload: StimulusModule }
   | { type: 'CHANGE_STIM_PARAM'; payload: { key: keyof StimulusParameter; value: number | null } }
-  | { type: 'CHANGE_PARAM'; payload: { key: keyof SimConfig; value: unknown } };
+  | { type: 'CHANGE_PARAM'; payload: { key: keyof SimConfig; value: unknown } }
+  | { type: 'CHANGE_AMPLITUDES'; payload: number[] };

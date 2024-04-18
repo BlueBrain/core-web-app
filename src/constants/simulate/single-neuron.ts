@@ -28,116 +28,70 @@ export const stimulusModuleParams: StimulusDropdownInfo & {
   value: 'step',
   options: [
     {
-      label: 'Hyperpolarizing IClamp',
-      value: 'hyperpolarizing',
+      label: 'AP_WAVEFORM',
+      value: 'ap_waveform',
       usedBy: ['current_clamp'],
-      description: 'Hyperpolarising step current clamp',
+      description: '',
     },
     {
-      label: 'Noise Step IClamp',
-      value: 'noise_step',
+      label: 'IDREST',
+      value: 'idrest',
       usedBy: ['current_clamp'],
-      description: 'Step current with noise on top',
+      description: '',
     },
     {
-      label: 'SEClamp (Voltage Clamp)',
-      value: 'seclamp',
-      usedBy: ['voltage_clamp'],
-      description: 'Voltage clamp',
+      label: 'IV',
+      value: 'iv',
+      usedBy: ['current_clamp'],
+      description: '',
+    },
+    {
+      label: 'FIRE_PATTERN',
+      value: 'fire_pattern',
+      usedBy: ['current_clamp'],
+      description: '',
     },
   ],
 };
 
 const commonParams: { [key: string]: FunctionParameterNumber } = {
-  start_time: {
-    name: 'Start time',
-    description: 'time to start the stimulus',
-    defaultValue: 0,
-    min: 0,
-    max: 1000,
-    step: 1,
-    unit: 'ms',
-  },
   stop_time: {
     name: 'Stop time',
     description: 'time to stop the stimulus',
-    defaultValue: 100,
+    defaultValue: 1000,
     min: 0,
-    max: 1000,
+    max: 10000,
     step: 1,
     unit: 'ms',
   },
 };
 
-const amp: FunctionParameterNumber = {
-  name: 'Amp',
-  description: 'TODO',
-  defaultValue: 0.7,
-  min: -10,
-  max: 10,
-  step: 0.1,
-  unit: 'nA',
-};
-
 export const stimulusParams: ConditionalStimulusParamsTypes = {
-  hyperpolarizing: {
+  ap_waveform: {
     ...commonParams,
-    level: amp,
   },
-  noise_step: {
+  idrest: {
     ...commonParams,
-    mean: {
-      name: 'mean',
-      description: 'TODO',
-      defaultValue: 0,
-      min: 0,
-      max: 100,
-      step: 0.1,
-      unit: 'TODO',
-    },
-    variance: {
-      name: 'variance',
-      description: 'TODO',
-      defaultValue: 0,
-      min: 0,
-      max: 100,
-      step: 0.1,
-      unit: 'TODO',
-    },
   },
-  seclamp: {
-    // TODO: it does not have start_time???
-    stop_time: {
-      name: 'stop_time',
-      description: 'Time at which voltage clamp should stop',
-      defaultValue: 0,
-      min: 0,
-      max: 1000,
-      step: 1,
-      unit: 'ms',
-    },
-    level: {
-      name: 'amp',
-      description: 'Voltage level of the vc',
-      defaultValue: 0.7,
-      min: -100,
-      max: 100,
-      step: 1,
-      unit: 'mV',
-    },
+  iv: {
+    ...commonParams,
+  },
+  fire_pattern: {
+    ...commonParams,
   },
 };
 
 export const DEFAULT_STIM_CONFIG: StimulusConfig = {
   stimulusType: 'current_clamp',
-  stimulusProtocol: 'hyperpolarizing',
+  stimulusProtocol: 'iv',
   stimulusProtocolOptions: stimulusModuleParams.options.filter((option) =>
     option.usedBy.includes('current_clamp')
   ),
   stimulusProtocolInfo:
-    stimulusModuleParams.options.find((option) => option.value === 'hyperpolarizing') || null,
-  paramInfo: stimulusParams.hyperpolarizing,
-  paramValues: getParamValues(stimulusParams.hyperpolarizing),
+    stimulusModuleParams.options.find((option) => option.value === 'iv') || null,
+  paramInfo: stimulusParams.iv,
+  paramValues: getParamValues(stimulusParams.iv),
+  amplitudes: [40, 80, 120],
 };
 
 export const DEFAULT_SIM_CONFIG: SimConfig = {

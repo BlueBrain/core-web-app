@@ -52,6 +52,15 @@ export function simReducer(state: SimConfig, action: SimAction): SimConfig {
         },
       };
     }
+    case 'CHANGE_AMPLITUDES': {
+      return {
+        ...state,
+        stimulus: {
+          ...state.stimulus,
+          amplitudes: action.payload,
+        },
+      };
+    }
     case 'CHANGE_PARAM': {
       return {
         ...state,
