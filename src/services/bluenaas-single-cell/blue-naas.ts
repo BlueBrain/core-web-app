@@ -46,6 +46,8 @@ export default class BlueNaas {
 
   private thresholdCurrent = 1;
 
+  private stimulusProtocol = 'iv';
+
   constructor(
     container: HTMLDivElement,
     modelId: string,
@@ -154,11 +156,15 @@ export default class BlueNaas {
   updateStimuliPreview(amplitudes: number[]) {
     this.ws.send(BlueNaasCmd.GET_STIMULI_PLOT_DATA, {
       stimulus: {
-        stimulusProtocol: 'iv',
+        stimulusProtocol: this.stimulusProtocol,
         amplitudes,
         thresholdCurrent: this.thresholdCurrent,
       },
     });
+  }
+
+  setStimulusProtocol(protocol: string) {
+    this.stimulusProtocol = protocol;
   }
 
   private onMessage = (cmd: WSResponses, data: any) => {

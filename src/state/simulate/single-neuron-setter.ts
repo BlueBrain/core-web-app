@@ -80,3 +80,16 @@ export const simulationDoneAtom = atom(null, (get, set) => {
   const simulationStatus = get(simulationStatusAtom);
   set(simulationStatusAtom, { ...simulationStatus, finished: true });
 });
+
+export const setStimulusProtcolsAtom = atom<null, [string], void>(
+  null,
+  (get, set, protocolName) => {
+    const blueNaasInstanceRef = get(blueNaasInstanceRefAtom);
+
+    if (!blueNaasInstanceRef?.current) {
+      throw new Error('No BlueNaaS instance');
+    }
+
+    blueNaasInstanceRef.current.setStimulusProtocol(protocolName);
+  }
+);

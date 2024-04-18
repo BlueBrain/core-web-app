@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual';
 
 import PlotRenderer from './PlotRenderer';
 import { PlotData } from '@/services/bluenaas-single-cell/types';
-import { blueNaasInstanceRefAtom } from '@/state/simulate/single-neuron';
+import { blueNaasInstanceRefAtom, protocolNameAtom } from '@/state/simulate/single-neuron';
 
 type Props = {
   amplitudes: number[];
@@ -17,7 +17,9 @@ export default function StimuliPreviewPlot({ amplitudes }: Props) {
   const [stimuliPreviewPlotData, setStimuliPreviewPlotData] = useState<PlotData | null>(null);
   const blueNaasInstanceRef = useAtomValue(blueNaasInstanceRefAtom);
   const [renderedAmplitudes, setRenderedAmplitudes] = useState<number[]>([]);
+  const [renderedProtocolName, setRenderedProtocolName] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const protocolName = useAtomValue(protocolNameAtom);
 
   const onStimuliPreviewData = (data: PlotData) => {
     setStimuliPreviewPlotData(data);
@@ -33,21 +35,26 @@ export default function StimuliPreviewPlot({ amplitudes }: Props) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateStimuliPreview = useCallback(
-    debounce((amplitudesToRender) => {
-      if (isEqual(renderedAmplitudes, amplitudesToRender)) return;
+    debounce((amplitudesToRender, protocolToRender) => {
+      if (
+        isEqual(renderedAmplitudes, amplitudesToRender) &&
+        isEqual(renderedProtocolName, protocolToRender)
+      )
+        return;
 
       blueNaasInstanceRef?.current?.updateStimuliPreview(amplitudesToRender);
       setRenderedAmplitudes(amplitudesToRender);
+      setRenderedProtocolName(protocolToRender);
     }, 1500),
-    [blueNaasInstanceRef, renderedAmplitudes]
+    [blueNaasInstanceRef, renderedAmplitudes, renderedProtocolName]
   );
 
   useEffect(() => {
     if (!blueNaasInstanceRef?.current) return;
 
     setLoading(true);
-    updateStimuliPreview(amplitudes);
-  }, [amplitudes, updateStimuliPreview, blueNaasInstanceRef]);
+    updateStimuliPreview(amplitudes, protocolName);
+  }, [amplitudes, updateStimuliPreview, blueNaasInstanceRef, protocolName]);
 
   if (!stimuliPreviewPlotData) return null;
 

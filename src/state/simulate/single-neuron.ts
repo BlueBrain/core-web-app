@@ -33,3 +33,8 @@ export const simulationFormIsFilledAtom = atom(false);
 export const blueNaasInstanceRefAtom = atom<MutableRefObject<BlueNaasCls | null> | null>(null);
 
 export const simulationPlotDataAtom = atom<PlotData | null>(null);
+
+export const protocolNameAtom = atom<string | null>((get) => {
+  const simulationConfig = get(simulationConfigAtom);
+  return simulationConfig.stimulus.stimulusProtocol;
+});

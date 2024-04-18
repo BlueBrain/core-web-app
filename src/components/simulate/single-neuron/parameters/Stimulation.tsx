@@ -1,10 +1,11 @@
 import { Select, Form, InputNumber } from 'antd';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 import AmperageRangeComponent from './AmperageRangeComponent';
 import { SimAction, SimConfig } from '@/types/simulate/single-neuron';
 import { secNamesAtom } from '@/state/simulate/single-neuron';
 import { stimulusTypeParams } from '@/constants/simulate/single-neuron';
+import { setStimulusProtcolsAtom } from '@/state/simulate/single-neuron-setter';
 
 type OnChangeProp = {
   onChange: (action: SimAction) => void;
@@ -63,6 +64,8 @@ function StimulationMode({ onChange }: OnChangeProp) {
 }
 
 function StimulationProtocol({ onChange, simConfig }: Props) {
+  const setStimulusProtcols = useSetAtom(setStimulusProtcolsAtom);
+
   return (
     <Form.Item
       name={['stimulus', 'stimulusProtocol']}
@@ -72,7 +75,10 @@ function StimulationProtocol({ onChange, simConfig }: Props) {
       <Select
         placeholder="Select stimulus protocol"
         options={simConfig.stimulus.stimulusProtocolOptions}
-        onSelect={(newVal) => onChange({ type: 'CHANGE_PROTOCOL', payload: newVal })}
+        onSelect={(newVal) => {
+          onChange({ type: 'CHANGE_PROTOCOL', payload: newVal });
+          setStimulusProtcols(newVal);
+        }}
         className="text-left"
       />
     </Form.Item>
