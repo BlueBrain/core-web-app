@@ -68,11 +68,7 @@ describe('VirtualLabSettingsComponent', () => {
     });
   };
 
-  const renderComponentWithLab = (
-    name: string,
-    adminMode?: boolean,
-    extra?: Partial<VirtualLab>
-  ) => {
+  const renderComponentWithLab = (name: string, extra?: Partial<VirtualLab>) => {
     const user = userEvent.setup();
     const virtualLab = createMockVirtualLab(name, extra);
 
@@ -97,7 +93,7 @@ describe('VirtualLabSettingsComponent', () => {
   function MembersPanelProvider({ name }: VirtualLab) {
     return (
       <TestProvider initialValues={[[sessionAtom, { accessToken: 'abc' }]]}>
-        <DangerZonePanel labName={name} onDeleteVirtualLabClick={onDeleteVirtualLabClick} />
+        <DangerZonePanel name={name} onClick={onDeleteVirtualLabClick} />
       </TestProvider>
     );
   }

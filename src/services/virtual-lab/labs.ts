@@ -61,6 +61,23 @@ export async function patchVirtualLab(
   return response.json();
 }
 
+export async function deleteVirtualLab(id: string): Promise<
+  VlmResponse<{
+    virtual_lab: VirtualLab;
+  }>
+> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+    method: 'DELETE',
+    headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
 export async function getPlans(): Promise<
   VlmResponse<{
     all_plans: [

@@ -16,7 +16,7 @@ type Props = {
   className?: string;
   initialValues: Partial<VirtualLab> | MockBilling;
   items: Array<RenderInputProps>;
-  save: (update: Partial<VirtualLab>) => Promise<void>;
+  onSubmit: (update: Partial<VirtualLab>) => Promise<void>;
 };
 
 type InformationForm = { name: string; description: string; reference_email: string };
@@ -75,7 +75,7 @@ export default function InformationPanel({
   className,
   initialValues,
   items,
-  save,
+  onSubmit,
 }: Props) {
   const [editMode, setEditMode] = useState(false);
   const [savingChanges, setSavingChanges] = useState(false);
@@ -90,7 +90,7 @@ export default function InformationPanel({
 
     const { name, description, reference_email: referenceEmail } = form.getFieldsValue();
 
-    save({
+    onSubmit({
       name,
       description,
       reference_email: referenceEmail,
@@ -149,7 +149,6 @@ export default function InformationPanel({
               },
               Input: {
                 activeBg: 'transparent',
-                // activeBorderColor:  'transparent',
                 borderRadius: 0,
                 colorBgContainer: 'transparent',
                 colorBorder: 'transparent',
@@ -205,7 +204,7 @@ export default function InformationPanel({
             )}
 
             {editMode ? (
-              <Form.Item>
+              <Form.Item className="col-span-2">
                 <div className="my-4 flex items-center justify-end gap-2">
                   <Button
                     className="h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
@@ -229,7 +228,7 @@ export default function InformationPanel({
                 </div>
               </Form.Item>
             ) : (
-              <div className="flex items-center justify-end gap-2 py-4">
+              <div className="col-span-2 flex items-center justify-end gap-2 py-4">
                 <Button
                   className="h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
                   htmlType="button"

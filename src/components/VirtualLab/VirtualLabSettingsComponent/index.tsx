@@ -12,7 +12,7 @@ import FormPanel, { renderInput, renderTextArea } from './InformationPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 import { VALID_EMAIL_REGEXP } from '@/util/utils';
-import { patchVirtualLab } from '@/services/virtual-lab/labs';
+import { deleteVirtualLab, patchVirtualLab } from '@/services/virtual-lab/labs';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
 import { virtualLabDetailAtomFamily, virtualLabPlansAtom } from '@/state/virtual-lab/lab';
@@ -25,10 +25,6 @@ const mockBilling = {
   city: 'Geneva',
   postalCode: '1202',
   country: 'CH',
-};
-
-type Props = {
-  id: string;
 };
 
 function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
@@ -56,20 +52,14 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   );
 }
 
-export default function VirtualLabSettingsComponent({ id }: Props) {
+export default function VirtualLabSettingsComponent({ id }: { id: string }) {
   const router = useRouter();
   const userIsAdmin = true;
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
-
-  const saveInformation = async (formData: Partial<VirtualLab>): Promise<void> => {
-    patchVirtualLab(formData, id);
-  };
-
-  const changePlan = async (formData: Partial<VirtualLab>): Promise<void> => {
+  const updateVirtualLab = async (formData: Partial<VirtualLab>): Promise<void> => {
     const { data } = await patchVirtualLab(formData, id);
-
     const { virtual_lab: virtualLab } = data;
 
     setVirtualLabDetail(
@@ -78,7 +68,28 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
       })
     );
   };
-  const deleteVirtualLab = async () => {};
+  const updateBilling = async (_update: Partial<VirtualLab>): Promise<void> => {};
+  const onDeleteVirtualLab = async (): Promise<VirtualLab> => {
+    const { data } = await deleteVirtualLab(id);
+    const { virtual_lab: virtualLab } = data;
+
+    setVirtualLabDetail(
+      new Promise((resolve) => {
+        resolve({
+          id: '',
+          name: '',
+          description: '',
+          created_at: '',
+          reference_email: '',
+          budget: 0,
+          plan_id: 0,
+          users: [],
+        }); // TODO: Find a way to simply set this to Null instead.
+      })
+    );
+
+    return new Promise((resolve) => resolve(virtualLab)); // eslint-disable-line no-promise-executor-return
+  };
 
   const plans = useAtomValue(unwrap(virtualLabPlansAtom));
 
@@ -126,6 +137,8 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
     },
   ];
 
+  // Merge API Plan data with the planDescriptions objects.
+  // TODO: Ask JDC whether to keep plan data in Frontend or Backend.
   const plansWithDescriptions = plans?.reduce<
     Array<{
       id: number;
@@ -173,13 +186,13 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
     {
       content: (
         <FormPanel
+          allowEdit={userIsAdmin}
           initialValues={{
             name: virtualLabDetail.data?.name,
             reference_email: virtualLabDetail.data?.reference_email,
             description: virtualLabDetail.data?.description,
           }}
-          allowEdit={userIsAdmin}
-          save={saveInformation}
+          onSubmit={updateVirtualLab}
           items={[
             {
               children: renderInput,
@@ -217,7 +230,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
           currentPlan={virtualLabDetail.data?.plan_id}
           items={plansWithDescriptions}
           userIsAdmin={userIsAdmin}
-          onChange={changePlan}
+          onChange={updateVirtualLab}
         />
       ),
       key: 'plan',
@@ -231,10 +244,9 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
     {
       content: (
         <FormPanel
+          allowEdit={userIsAdmin}
           className="grid grid-cols-2"
           initialValues={mockBilling}
-          allowEdit={userIsAdmin}
-          save={saveInformation}
           items={[
             {
               className: 'col-span-2',
@@ -275,6 +287,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
               required: true,
             },
           ]}
+          onSubmit={updateBilling}
         />
       ),
       key: 'billing',
@@ -285,8 +298,8 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
           {
             content: (
               <DangerZonePanel
-                onDeleteVirtualLabClick={deleteVirtualLab}
-                labName={virtualLabDetail.data?.name || ''}
+                onClick={onDeleteVirtualLab}
+                name={virtualLabDetail.data?.name || ''}
               />
             ),
             key: 'danger-zone',

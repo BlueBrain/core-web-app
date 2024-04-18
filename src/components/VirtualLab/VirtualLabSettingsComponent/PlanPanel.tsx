@@ -91,7 +91,7 @@ export default function PlanPanel({ currentPlan, items, userIsAdmin, onChange }:
             {plan.id === currentPlan && <p className="mt-4 font-semibold">Current Selection</p>}
             {userIsAdmin && plan.id !== currentPlan && (
               <Button
-                className="mt-4 rounded-none border border-gray-300"
+                className="mt-4 block rounded-none border border-gray-300"
                 onClick={() => {
                   switchPlan(plan.id);
                 }}
