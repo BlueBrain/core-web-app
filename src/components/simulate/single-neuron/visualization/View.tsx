@@ -8,7 +8,7 @@ import throttle from 'lodash/throttle';
 
 import { PositionedPopover } from './PositionedPopover';
 import TraceLoader from './TraceLoader';
-import { useEModelUUID, useEnsureModelPackage } from '@/services/bluenaas-single-cell/hooks';
+import { useEModelUUID } from '@/services/bluenaas-single-cell/hooks';
 import BlueNaasCls from '@/services/bluenaas-single-cell/blue-naas';
 import { DEFAULT_SIM_CONFIG } from '@/constants/simulate/single-neuron';
 import { SimAction } from '@/types/simulate/single-neuron';
@@ -19,7 +19,7 @@ import {
 } from '@/state/brain-model-config/cell-model-assignment/e-model';
 import {
   blueNaasInstanceRefAtom,
-  plotDataAtom,
+  simulationPlotDataAtom,
   secNamesAtom,
   segNamesAtom,
   simulateStepAtom,
@@ -57,7 +57,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
 
   const [secNames, setSecNames] = useAtom(secNamesAtom);
   const setSegNames = useSetAtom(segNamesAtom);
-  const setPlotData = useSetAtom(plotDataAtom);
+  const setPlotData = useSetAtom(simulationPlotDataAtom);
 
   // this atom contains the threshold and holding values to initialize the model properly
   const eModelScript = useAtomValue(eModelScriptAtom);
@@ -93,8 +93,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   }, [simConfig]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    if (!eModelScript?.holding_current || !eModelScript.threshold_current) return;
+    if (!containerRef.current || !eModelScript) return;
 
     const onClick = (data: any) => {
       setSelectionCtrlConfig({
@@ -137,8 +136,8 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       modelId,
       DEFAULT_SIM_CONFIG,
       {
-        thresholdCurrent: eModelScript.threshold_current,
-        holdingCurrent: eModelScript.holding_current,
+        thresholdCurrent: eModelScript.threshold_current ?? 0,
+        holdingCurrent: eModelScript.holding_current ?? 0,
       },
       {
         onClick,
@@ -197,7 +196,6 @@ export default function EModelInteractiveView() {
   const [selectedEModel, setSelectedEModel] = useAtom(selectedEModelAtom);
 
   const eModelUUID = useEModelUUID();
-  const ensureModelPackage = useEnsureModelPackage();
 
   const [blueNaasModelId, setBlueNaasModelId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -221,14 +219,11 @@ export default function EModelInteractiveView() {
     const init = async () => {
       setBlueNaasModelId(null);
       setLoading(true);
-
-      await ensureModelPackage();
-
       setBlueNaasModelId(eModelUUID);
     };
 
     init();
-  }, [eModelUUID, ensureModelPackage, selectedEModel?.isOptimizationConfig]);
+  }, [eModelUUID, selectedEModel?.isOptimizationConfig]);
 
   if (!blueNaasModelId) {
     const msg = loading ? 'Loading...' : 'Select a leaf region and an already built E-Model';
