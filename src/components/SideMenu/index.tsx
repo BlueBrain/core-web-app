@@ -55,7 +55,7 @@ export default function SideMenu({ links, lab }: Props) {
       </div>
       {expanded && (
         <>
-          <Divider className='bg-primary-5' />
+          <Divider className="bg-primary-5" />
           <h1 className="text-md w-full font-thin uppercase text-primary-4">Your Virtual Labs</h1>
           <LabsAndProjectsCollapse />
         </>
