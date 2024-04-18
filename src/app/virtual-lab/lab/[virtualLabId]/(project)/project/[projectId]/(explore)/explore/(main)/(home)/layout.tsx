@@ -28,7 +28,7 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
               key: LinkItemKey.VirtualLab,
               id: params.virtualLabId,
               label: Label.VirtualLab,
-              href: labUrl,
+              href: `${labUrl}/lab`,
               content: params.virtualLabId,
             }}
           />

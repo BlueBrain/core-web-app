@@ -59,7 +59,7 @@ export default function GenericLayout({ children, params }: LabProjectLayoutProp
               key: LinkItemKey.VirtualLab,
               id: params.virtualLabId,
               label: Label.VirtualLab,
-              href: labUrl,
+              href: `${labUrl}/lab`,
               content: 'Test',
             }}
           />
