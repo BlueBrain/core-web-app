@@ -93,8 +93,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   }, [simConfig]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    if (!eModelScript) return;
+    if (!containerRef.current || !eModelScript) return;
 
     const onClick = (data: any) => {
       setSelectionCtrlConfig({
