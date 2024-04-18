@@ -39,7 +39,7 @@ export default function VirtualLabProjectItem({ project }: Props) {
       {/* Description row */}
       <div className="max-w-[70%]">{project.description}</div>
       {/* Last row */}
-      <div className="flex gap-5">
+      <div className="flex flex-wrap gap-5">
         <VirtualLabStatistic
           icon={<EyeTargetIcon style={iconStyle} />}
           title="Explore sessions"

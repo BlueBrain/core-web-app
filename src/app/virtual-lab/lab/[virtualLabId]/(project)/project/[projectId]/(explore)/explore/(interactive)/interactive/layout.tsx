@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSetAtom } from 'jotai';
 
@@ -10,17 +10,21 @@ import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
 import { defaultModelRelease } from '@/config';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
+import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
 
 export default function VirtualLabProjectInteractiveExploreLayout({
   children,
-}: {
-  children: ReactNode;
-}) {
+  params,
+}: LabProjectLayoutProps) {
   const setConfigId = useSetAtom(brainModelConfigIdAtom);
   useSetBrainRegionFromQuery();
 
   // set Release 23.01 as the configuration of explore interactive
   useEffect(() => setConfigId(defaultModelRelease.id), [setConfigId]);
+
+  const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;
+  const labProjectUrl = `${labUrl}/project/${params.projectId}`;
 
   return (
     <div className="grid h-screen grid-cols-[min-content_min-content_auto] grid-rows-1">
@@ -29,17 +33,26 @@ export default function VirtualLabProjectInteractiveExploreLayout({
           <SideMenu
             links={[
               {
-                key: 'project',
-                href: '/virtual-lab/lab/test/project/test',
-                content: 'Name of the project',
+                key: LinkItemKey.Project,
+                label: Label.Project,
+                href: `${labProjectUrl}/home`,
+                content: params.projectId,
               },
               {
-                key: 'explore',
-                href: '/virtual-lab/lab/test/project/test/explore',
-                content: 'Explore',
+                key: LinkItemKey.Explore,
+                href: `${labProjectUrl}/explore`,
+                content: Content.Explore,
+                role: Role.Section,
+                styles: 'rounded-full bg-primary-5 py-3 text-primary-9',
               },
             ]}
-            current="explore"
+            lab={{
+              key: LinkItemKey.VirtualLab,
+              id: params.virtualLabId,
+              label: Label.VirtualLab,
+              href: `${labUrl}/lab`,
+              content: params.virtualLabId,
+            }}
           />
         </div>
       </ErrorBoundary>

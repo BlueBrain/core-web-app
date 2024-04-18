@@ -65,7 +65,7 @@ export default function VirtualLabHomePage({ id }: Props) {
     );
   }
   return (
-    <div>
+    <div className="pb-5">
       <WelcomeUserBanner title={virtualLabDetail.data.name} />
       <VirtualLabBanner
         id={virtualLabDetail.data.id}

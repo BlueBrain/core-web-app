@@ -10,6 +10,7 @@ import VirtualLabsSelect from './VirtualLabsSelect';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
+import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
 type Props = {
   virtualLabId: string;
@@ -64,9 +65,9 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
   };
 
   const linkItems: LinkItem[] = [
-    { key: 'lab', content: 'The Virtual Lab', href: 'lab' },
+    { key: LinkItemKey.Lab, content: 'The Virtual Lab', href: 'lab' },
     {
-      key: 'projects',
+      key: LinkItemKey.Projects,
       content: (
         <div className="flex justify-between">
           <span>Projects</span>
@@ -76,7 +77,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
       href: 'projects',
     },
     {
-      key: 'team',
+      key: LinkItemKey.Team,
       content: (
         <div className="flex justify-between">
           <span>Team</span>
@@ -85,7 +86,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
       ),
       href: 'team',
     },
-    { key: 'admin', content: 'Admin', href: 'admin' },
+    { key: LinkItemKey.Admin, content: 'Admin', href: 'admin' },
   ];
   return (
     <div className="mr-12 flex w-full flex-col gap-5">
