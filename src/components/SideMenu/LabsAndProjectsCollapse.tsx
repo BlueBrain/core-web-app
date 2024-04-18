@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { Collapse, ConfigProvider } from 'antd';
-import { RightOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { Collapse, ConfigProvider, Spin } from 'antd';
+import { RightOutlined, ArrowRightOutlined, LoadingOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
@@ -50,6 +50,10 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
 }
 export default function LabsAndProjectsCollapse() {
   const virtualLabsLoadable = useAtomValue(loadable(virtualLabsOfUserAtom));
+
+  if (virtualLabsLoadable.state === 'loading') {
+    return <Spin indicator={<LoadingOutlined />} />;
+  }
 
   if (virtualLabsLoadable.state === 'hasData') {
     const items = virtualLabsLoadable.data.results.map((lab) => ({
