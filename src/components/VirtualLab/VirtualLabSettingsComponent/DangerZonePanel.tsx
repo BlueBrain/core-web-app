@@ -147,7 +147,7 @@ export default function DangerZonePanel({
         labName={name}
       />
 
-      {infoText && <p className={error ? 'text-error' : 'text-info'}>{infoText}</p>}
+      {infoText && <p className={error ? 'text-error' : 'text-white'}>{infoText}</p>}
 
       <Button
         className="ml-auto h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
