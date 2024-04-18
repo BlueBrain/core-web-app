@@ -2,7 +2,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
-import { useCallback } from 'react';
+import { Loadable } from 'jotai/vanilla/utils/loadable';
 
 import useNotification from '@/hooks/notifications';
 import { userProjectsTotalAtom } from '@/state/virtual-lab/projects';
@@ -13,32 +13,27 @@ export default function DashboardTotals() {
   const virtualLabTotals = useAtomValue(loadable(userVirtualLabTotalsAtom));
   const notify = useNotification();
 
-  const renderProjectTotals = useCallback(() => {
-    if (projectTotals.state === 'loading') {
+  const renderTotals = (totals: Loadable<Promise<number>>, errorMessage: string) => {
+    if (totals.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (projectTotals.state === 'hasData') {
-      return projectTotals.data;
+    if (totals.state === 'hasData') {
+      return totals.data;
     }
-    notify.error('Something went wrong when fetching project totals');
+    notify.error(errorMessage);
     return null;
-  }, [notify, projectTotals]);
-
-  const renderVirtualLabTotals = useCallback(() => {
-    if (virtualLabTotals.state === 'loading') {
-      return <Spin indicator={<LoadingOutlined />} />;
-    }
-    if (virtualLabTotals.state === 'hasData') {
-      return virtualLabTotals.data;
-    }
-    notify.error('Something went wrong when fetching virtual lab totals');
-    return null;
-  }, [notify, virtualLabTotals]);
+  };
 
   return (
     <div className="flex flex-col">
-      <div>Total labs: {renderVirtualLabTotals()}</div>
-      <div>Total projects: {renderProjectTotals()}</div>
+      <div>
+        Total labs:
+        {renderTotals(virtualLabTotals, 'Something went wrong when fetching lab totals')}
+      </div>
+      <div>
+        Total projects:
+        {renderTotals(projectTotals, 'Something went wrong when fetching project totals')}
+      </div>
     </div>
   );
 }
