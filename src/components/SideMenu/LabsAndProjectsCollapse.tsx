@@ -9,6 +9,10 @@ import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
 function VirtualLabProjects({ labId }: { labId: string }) {
   const virtualLabProjectsLoadable = useAtomValue(loadable(virtualLabProjectsAtomFamily(labId)));
 
+  if (virtualLabProjectsLoadable.state === 'loading') {
+    return <Spin indicator={<LoadingOutlined />} />;
+  }
+
   if (virtualLabProjectsLoadable.state === 'hasData') {
     return (
       <div className="w-[16.1rem]">
@@ -27,7 +31,6 @@ function VirtualLabProjects({ labId }: { labId: string }) {
     );
   }
 
-  // Handle loading and error states as needed
   return null;
 }
 
@@ -98,6 +101,5 @@ export default function LabsAndProjectsCollapse() {
     );
   }
 
-  // Handle loading and error states as needed
   return null;
 }
