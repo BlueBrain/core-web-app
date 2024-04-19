@@ -11,7 +11,7 @@ import { userVirtualLabTotalsAtom } from '@/state/virtual-lab/lab';
 export default function DashboardTotals() {
   const projectTotals = useAtomValue(loadable(userProjectsTotalAtom));
   const virtualLabTotals = useAtomValue(loadable(userVirtualLabTotalsAtom));
-  const notify = useNotification();
+  const { error } = useNotification();
 
   const renderTotals = (totals: Loadable<Promise<number>>, errorMessage: string) => {
     if (totals.state === 'loading') {
@@ -20,7 +20,7 @@ export default function DashboardTotals() {
     if (totals.state === 'hasData') {
       return totals.data;
     }
-    notify.error(errorMessage);
+    error(errorMessage, 5, 'topRight', true, 'render-total-error-message');
     return null;
   };
 
