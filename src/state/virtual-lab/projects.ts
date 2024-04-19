@@ -5,6 +5,7 @@ import isEqual from 'lodash/isEqual';
 import { Project } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData } from '@/types/virtual-lab/common';
 import {
+  getUsersProjects,
   getVirtualLabProjectDetails,
   getVirtualLabProjectUsers,
   getVirtualLabProjects,
@@ -36,3 +37,13 @@ export const virtualLabProjectUsersAtomFamily = atomFamily(
     }),
   isEqual
 );
+
+export const userProjectsAtom = atom<Promise<VirtualLabAPIListData<Project>>>(async () => {
+  const response = await getUsersProjects();
+  return response.data;
+});
+
+export const userProjectsTotalAtom = atom<Promise<number>>(async (get) => {
+  const projects = await get(userProjectsAtom);
+  return projects.total;
+});

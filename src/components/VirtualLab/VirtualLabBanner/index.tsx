@@ -30,7 +30,7 @@ export default function VirtualLabBanner({
   const iconStyle = { color: '#69C0FF' };
 
   return (
-    <div className="relative mt-10 flex min-h-[250px] flex-col justify-between gap-4 bg-primary-8 p-8">
+    <div className="relative flex min-h-[250px] flex-col justify-between gap-4 bg-primary-8 p-8">
       <div
         className={styles.bannerImg}
         style={{

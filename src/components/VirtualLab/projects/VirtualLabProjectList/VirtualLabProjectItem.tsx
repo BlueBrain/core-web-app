@@ -17,7 +17,10 @@ export default function VirtualLabProjectItem({ project }: Props) {
     <div className="flex flex-col gap-3 rounded-md border border-primary-6 p-9 ">
       {/* Title row */}
       <div className="flex items-center justify-between">
-        <Link className="text-2xl font-bold" href={`project/${project.id}/home`}>
+        <Link
+          className="text-2xl font-bold"
+          href={`/virtual-lab/lab/${project.virtual_lab.id}/project/${project.id}/home`}
+        >
           {project.name}
         </Link>
 
