@@ -19,7 +19,6 @@ export enum VirtualLabPlanType {
   Entry = 'Cellular lab',
   Beginner = 'Circuit lab',
   Intermediate = 'System lab',
-  Advanced = 'advanced',
 }
 
 export type MockBilling = {

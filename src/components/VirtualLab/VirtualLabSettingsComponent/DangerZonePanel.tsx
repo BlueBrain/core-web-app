@@ -1,3 +1,4 @@
+// import redirect from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Input, InputRef, Modal, Spin } from 'antd';
 import { useRef, useState } from 'react';
@@ -133,6 +134,8 @@ export default function DangerZonePanel({
       })
       .finally(() => {
         setSavingChanges(false);
+
+        // setTimeout(() => redirect(path)); // TODO: Use this to redirect back to /virtual-lab
       });
   };
 

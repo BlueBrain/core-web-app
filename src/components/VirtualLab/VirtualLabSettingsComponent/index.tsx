@@ -73,20 +73,7 @@ export default function VirtualLabSettingsComponent({ id }: { id: string }) {
     const { data } = await deleteVirtualLab(id);
     const { virtual_lab: virtualLab } = data;
 
-    setVirtualLabDetail(
-      new Promise((resolve) => {
-        resolve({
-          id: '',
-          name: '',
-          description: '',
-          created_at: '',
-          reference_email: '',
-          budget: 0,
-          plan_id: 0,
-          users: [],
-        }); // TODO: Find a way to simply set this to Null instead.
-      })
-    );
+    virtualLabDetailAtomFamily.remove(id);
 
     return new Promise((resolve) => resolve(virtualLab)); // eslint-disable-line no-promise-executor-return
   };
