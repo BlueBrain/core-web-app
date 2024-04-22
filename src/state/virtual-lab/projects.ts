@@ -1,5 +1,5 @@
-import { atom } from 'jotai';
-import { atomFamily } from 'jotai/utils';
+import { PrimitiveAtom, atom } from 'jotai';
+import { atomFamily, atomWithDefault } from 'jotai/utils';
 import isEqual from 'lodash/isEqual';
 
 import { Project } from '@/types/virtual-lab/projects';
@@ -12,8 +12,11 @@ import {
 } from '@/services/virtual-lab/projects';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
-export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
-  atom<Promise<VirtualLabAPIListData<Project>>>(async () => {
+export const virtualLabProjectsAtomFamily = atomFamily<
+  string,
+  PrimitiveAtom<Promise<VirtualLabAPIListData<Project>>>
+>((virtualLabId) =>
+  atomWithDefault(async () => {
     const response = await getVirtualLabProjects(virtualLabId);
 
     return response.data;
