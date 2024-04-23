@@ -3,8 +3,13 @@ import { Select, InputNumber } from 'antd';
 import range from 'lodash/range';
 import round from 'lodash/round';
 import isEqual from 'lodash/isEqual';
+import dynamic from 'next/dynamic';
 
 import { SimAction } from '@/types/simulate/single-neuron';
+
+const StimuliPreviewPlot = dynamic(() => import('../visualization/StimuliPreviewPlot'), {
+  ssr: false,
+});
 
 const amperageInitialState = {
   start: 40,
@@ -155,6 +160,7 @@ export default function AmperageRangeComponent({ onChange, amplitudes }: Props) 
           </span>
         ))}
       </div>
+      <StimuliPreviewPlot amplitudes={amperageState.computed} />
     </>
   );
 }

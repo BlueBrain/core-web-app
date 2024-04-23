@@ -14,6 +14,7 @@ export const BlueNaasCmd = {
   GET_UI_DATA: 'get_ui_data',
   SET_INJECTION_LOCATION: 'set_injection_location',
   START_SIMULATION: 'start_simulation',
+  GET_STIMULI_PLOT_DATA: 'get_stimuli_plot_data',
 };
 
 const APIGatewayResponse = {

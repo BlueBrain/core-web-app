@@ -2,7 +2,7 @@ import omit from 'lodash/omit';
 
 import Renderer, { ClickData, HoverData } from './renderer';
 import Ws, { BlueNaasCmd, WSResponses } from './websocket';
-import type { Morphology, SecMarkerConfig, TraceData } from './types';
+import type { Morphology, PlotData, SecMarkerConfig, TraceData } from './types';
 import { SimConfig } from '@/types/simulate/single-neuron';
 import { blueNaas } from '@/config';
 
@@ -19,6 +19,7 @@ interface BlueNaasConfig {
   onInit?: (data: BlueNaasInitData) => void;
   onTraceData?: (traceData: TraceData) => void;
   onSimulationDone?: () => void;
+  onStimuliPreviewData?: (data: PlotData) => void;
 }
 
 interface InitialCurrents {
@@ -43,6 +44,8 @@ export default class BlueNaas {
 
   private assembleMorphTempStr = '';
 
+  private thresholdCurrent = 1;
+
   constructor(
     container: HTMLDivElement,
     modelId: string,
@@ -55,6 +58,7 @@ export default class BlueNaas {
 
     this.renderer = new Renderer(container, config);
     this.ws = new Ws(blueNaas.wsUrl, this.onMessage);
+    this.thresholdCurrent = initialCurrents.thresholdCurrent;
     this.ws.send(BlueNaasCmd.SET_MODEL, {
       model_id: modelId,
       threshold_current: initialCurrents.thresholdCurrent,
@@ -143,6 +147,20 @@ export default class BlueNaas {
     this.showPartialData();
   }
 
+  setCallbackStimuliPreview(cb: BlueNaasConfig['onStimuliPreviewData']) {
+    this.config.onStimuliPreviewData = cb;
+  }
+
+  updateStimuliPreview(amplitudes: number[]) {
+    this.ws.send(BlueNaasCmd.GET_STIMULI_PLOT_DATA, {
+      stimulus: {
+        stimulusProtocol: 'iv',
+        amplitudes,
+        thresholdCurrent: this.thresholdCurrent,
+      },
+    });
+  }
+
   private onMessage = (cmd: WSResponses, data: any) => {
     switch (cmd) {
       case 'set_model_done':
@@ -172,6 +190,10 @@ export default class BlueNaas {
           'stimulus.stimulusProtocolInfo',
         ]);
         this.ws.send(BlueNaasCmd.START_SIMULATION, simParameters);
+        break;
+      }
+      case 'get_stimuli_plot_data_done': {
+        this.config?.onStimuliPreviewData?.(data);
         break;
       }
       default:
