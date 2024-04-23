@@ -6,6 +6,7 @@ const ReadState = {
 };
 
 const RECONNECT_TIMEOUT = 3000;
+const POLLING_INTERVAL = 5000;
 
 export const BlueNaasCmd = {
   // Cmd target: backend
@@ -13,6 +14,11 @@ export const BlueNaasCmd = {
   GET_UI_DATA: 'get_ui_data',
   SET_INJECTION_LOCATION: 'set_injection_location',
   START_SIMULATION: 'start_simulation',
+};
+
+const APIGatewayResponse = {
+  RETRY: 'Retry later',
+  PROCESSING: 'Processing message',
 };
 
 export type WSResponses =
@@ -43,6 +49,8 @@ export default class Ws {
 
   private socket!: WebSocket;
 
+  private serviceUp = false;
+
   constructor(webSocketUrl: string, onMessage: OnMessageHandler) {
     this.webSocketUrl = webSocketUrl;
 
@@ -55,28 +63,28 @@ export default class Ws {
     if (this.closing) {
       throw new Error('Can not use a closing websocket');
     }
-
-    switch (this.socket.readyState) {
-      case ReadState.OPEN: {
-        this.socket.send(
-          JSON.stringify({
-            cmd: message,
-            cmdid: cmdId,
-            context: this.messageContext,
-            data,
-            timestamp: Date.now(),
-          })
-        );
-        break;
-      }
-      case ReadState.CONNECTING:
-      case ReadState.CLOSING:
-      case ReadState.CLOSED:
-      default: {
-        this.messageQueue.push([message, data, cmdId]);
-        break;
-      }
+    // as we need to wait for the service to be up, we queue the messages
+    if (!this.serviceUp) {
+      this.messageQueue.push([message, data, cmdId]);
+    } else {
+      this._send(message, data, cmdId);
     }
+  }
+
+  _send(message: Message, data?: Data, cmdId?: CmdId) {
+    if (this.socket.readyState !== ReadState.OPEN || !this.serviceUp) {
+      throw new Error('Websocket is not open');
+    }
+
+    this.socket.send(
+      JSON.stringify({
+        cmd: message,
+        cmdid: cmdId,
+        context: this.messageContext,
+        data,
+        timestamp: Date.now(),
+      })
+    );
   }
 
   async request(message: Message, data: Data) {
@@ -107,20 +115,41 @@ export default class Ws {
     this.socket.close();
   }
 
+  sendCheckUpMsg() {
+    if (this.socket.readyState !== ReadState.OPEN) return;
+    if (this.serviceUp) return;
+
+    this.socket.send(JSON.stringify({}));
+  }
+
   private init = () => {
     if (this.closing) return;
 
     const socket = new WebSocket(this.webSocketUrl, 'Bearer-token');
     this.socket = socket;
 
-    socket.addEventListener('open', this.processQueue);
+    // send message to check until the service is up
+    socket.addEventListener('open', () => this.sendCheckUpMsg());
     socket.addEventListener('close', this.reconnect);
 
     socket.addEventListener('message', (e) => {
       const message = JSON.parse(e.data);
 
-      if (message.message === 'Processing message') {
-        return;
+      // coming as status messages from single-cell api gateway
+      const apiGatewayMsg = message?.message;
+      switch (apiGatewayMsg) {
+        case APIGatewayResponse.RETRY:
+          setTimeout(() => this.sendCheckUpMsg(), POLLING_INTERVAL);
+          return;
+        case APIGatewayResponse.PROCESSING:
+          if (!this.serviceUp) {
+            // process all messages sent while the service was warming up
+            this.serviceUp = true;
+            this.processQueue();
+          }
+          return;
+        default:
+          break;
       }
 
       const cmdId = message.data?.cmdid;
@@ -152,7 +181,7 @@ export default class Ws {
       const message = this.messageQueue.shift();
       if (!message) return;
 
-      this.send(...message);
+      this._send(...message);
     }
   };
 }
