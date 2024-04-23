@@ -22,6 +22,7 @@ export type StimulusModuleDropdownOptionType = {
   value: StimulusModule;
   usedBy: StimulusType[];
   description: string;
+  duration: number;
 };
 
 type FunctionParameter = {
@@ -49,11 +50,7 @@ export type StimulusDropdownInfo = {
 };
 
 export interface SimConfig {
-  isFixedDt: boolean;
   celsius: number;
-  dt: number | null;
-  variableDt: boolean;
-  tstop: number;
   hypamp: number;
   vinit: number;
   injectTo: string;

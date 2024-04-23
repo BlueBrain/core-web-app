@@ -9,18 +9,6 @@ type Props = {
 export default function Conditions({ onChange }: Props) {
   return (
     <div className="flex gap-6">
-      <Form.Item name="tstop" label="Time stop" rules={[{ required: true }]}>
-        <InputNumber
-          addonAfter="ms"
-          className="w-full"
-          min={0}
-          max={5000}
-          onChange={(newVal) =>
-            onChange({ type: 'CHANGE_PARAM', payload: { key: 'tstop', value: newVal } })
-          }
-        />
-      </Form.Item>
-
       <Form.Item name="celsius" label="Temperature" rules={[{ required: true }]}>
         <InputNumber
           addonAfter="°C"

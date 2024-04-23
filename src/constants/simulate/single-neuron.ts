@@ -21,6 +21,7 @@ export const stimulusTypeParams: StimulusDropdownInfo & {
   ],
 };
 
+// taken from https://github.com/BlueBrain/BlueCelluLab/blob/main/bluecellulab/stimulus/factory.py#L311
 export const stimulusModuleParams: StimulusDropdownInfo & {
   options: StimulusModuleDropdownOptionType[];
 } = {
@@ -32,24 +33,28 @@ export const stimulusModuleParams: StimulusDropdownInfo & {
       value: 'ap_waveform',
       usedBy: ['current_clamp'],
       description: '',
+      duration: 550,
     },
     {
       label: 'IDREST',
       value: 'idrest',
       usedBy: ['current_clamp'],
       description: '',
+      duration: 1850,
     },
     {
       label: 'IV',
       value: 'iv',
       usedBy: ['current_clamp'],
       description: '',
+      duration: 3500,
     },
     {
       label: 'FIRE_PATTERN',
       value: 'fire_pattern',
       usedBy: ['current_clamp'],
       description: '',
+      duration: 4100,
     },
   ],
 };
@@ -57,8 +62,8 @@ export const stimulusModuleParams: StimulusDropdownInfo & {
 const commonParams: { [key: string]: FunctionParameterNumber } = {
   stop_time: {
     name: 'Stop time',
-    description: 'time to stop the stimulus',
-    defaultValue: 1000,
+    description: 'time to stop the stimulus.',
+    defaultValue: 3500,
     min: 0,
     max: 10000,
     step: 1,
@@ -95,11 +100,7 @@ export const DEFAULT_STIM_CONFIG: StimulusConfig = {
 };
 
 export const DEFAULT_SIM_CONFIG: SimConfig = {
-  isFixedDt: false,
   celsius: 34,
-  variableDt: true,
-  dt: null,
-  tstop: 1000,
   hypamp: 0,
   vinit: -73,
   injectTo: 'soma[0]',

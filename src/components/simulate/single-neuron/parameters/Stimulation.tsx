@@ -91,6 +91,7 @@ function Parameters({ onChange, simConfig }: Props) {
           tooltip={info.description}
         >
           <InputNumber
+            disabled
             addonAfter={info.unit}
             className="w-full text-right"
             step={info.step}
