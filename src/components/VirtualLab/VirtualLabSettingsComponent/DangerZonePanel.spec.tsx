@@ -12,7 +12,7 @@ import { VirtualLab } from '@/types/virtual-lab/lab';
 jest.mock('next/navigation', () => ({
   __esModule: true,
   useParams: jest.fn(),
-  useRouter: jest.fn(),
+  useRouter: jest.fn(() => ({ push: jest.fn() })),
 }));
 
 const successNotification = jest.fn();
