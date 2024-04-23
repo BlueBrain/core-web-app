@@ -1,7 +1,8 @@
 import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
-// import Link from 'next/link';
-
+import Link from 'next/link';
 import VirtualLabStatistic from '../../VirtualLabStatistic';
+import usePathname from '@/hooks/pathname';
+
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import { Project } from '@/types/virtual-lab/projects';
@@ -57,24 +58,22 @@ function ProjectStats({ project }: { project: Project }) {
 }
 
 export default function VirtualLabProjectItem({ project }: { project: Project }) {
+  const pathname = usePathname();
+
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-primary-6 p-9">
+    <Link
+      className="flex flex-col gap-3 rounded-md border border-primary-6 p-9"
+      href={`${pathname}/../project/${project.id}/home`}
+    >
       <div className="flex items-center justify-between">
-        {/* Temporarily removing this until Dinika updates the response for POST requests
-        <Link
-          className="text-2xl font-bold"
-          href={`/virtual-lab/lab/${project.virtual_lab_id}/project/${project.id}/home`}
-        >
-          {project.name}
-        </Link>
-        */}
         <div className="flex items-center justify-between gap-6">
           <div className="flex gap-2">
             <span className="text-primary-3">Latest update</span>
             <span className="font-bold">{formatDate(project.updated_at)}</span>
           </div>
           <div className="flex">
-            {/* {project.isFavorite ? (
+            {/* Temporarily removing this until we update the response for POST requests to include star status
+	    {project.isFavorite ? (
               <StarFilled style={{ fontSize: '18px', color: '#FFD465' }} />
             ) : ( */}
             {/* TODO: we dont have a favorite functionality yet */}
@@ -86,6 +85,6 @@ export default function VirtualLabProjectItem({ project }: { project: Project })
       <h3 className="text-4xl font-bold">{project.name}</h3>
       <p>{project.description}</p>
       <ProjectStats project={project} />
-    </div>
+    </Link>
   );
 }
