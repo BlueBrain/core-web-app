@@ -8,7 +8,6 @@ import { loadable } from 'jotai/utils';
 import { PlusOutlined, MinusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
-import GenericButton from '@/components/Global/GenericButton';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
 
@@ -26,13 +25,20 @@ function NewProjectModalFooter({
   ) : (
     <Form.Item>
       <div className="flex items-center justify-end">
-        <GenericButton onClick={close} text="Cancel" className="text-black" />
+        <Button
+          title="Cancel"
+          htmlType="submit"
+          onClick={close}
+          className="h-14 w-40 rounded-none bg-transparent font-light text-primary-8 hover:bg-neutral-1"
+        >
+          Cancel
+        </Button>
         <Button
           type="primary"
           title="Save Changes"
           htmlType="submit"
           onClick={onSubmit}
-          className="h-14 w-40 rounded-none bg-green-600 font-semibold hover:bg-green-700"
+          className="h-14 w-40 rounded-none bg-primary-8 font-semibold hover:bg-primary-7"
         >
           Save
         </Button>
@@ -90,7 +96,7 @@ const formItems: Array<ModalInputProps> = [
 
 function NewProjectModalForm({ form }: { form: FormInstance }) {
   return (
-    <Form form={form} layout="vertical">
+    <Form form={form} layout="vertical" style={{ paddingBlockStart: 40 }}>
       <ConfigProvider
         theme={{
           components: {
@@ -151,7 +157,6 @@ function NewProjectModal({
   return (
     <>
       <Modal
-        title={<h1 className="text-primary-7">Build your model</h1>}
         footer={
           <NewProjectModalFooter
             close={() => setOpen(false)}
@@ -159,6 +164,7 @@ function NewProjectModal({
             onSubmit={onSubmit}
           />
         }
+        onCancel={() => setOpen(false)}
         open={open}
         styles={{ mask: { backgroundColor: '#0050B3D9' } }}
       >
@@ -321,9 +327,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
   return (
     <div className="my-5">
       <div className="flex flex-col gap-6">
-        {/* Total + Search + Button row */}
         <div className="flex flex-row justify-between">
-          {/* Total + Search */}
           <div className="flex flex-row items-center gap-8">
             <div className="flex gap-2">
               <span className="text-primary-3">Total projects</span>
@@ -337,14 +341,13 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
                 ? (newProject: Project) =>
                     setVirtualLabProjects({
                       ...virtualLabProjects.data,
-                      results: [...virtualLabProjects.data.results, newProject], // TODO: Fix this by figuring-out how to type atomWithDefault for Promise OR just a value
+                      results: [...virtualLabProjects.data.results, newProject],
                     })
                 : () => {}
             }
             virtualLabId={id}
           />
         </div>
-        {/* Projects row */}
         <div className="flex flex-col gap-4">
           {virtualLabProjects.data?.results.map((project) => (
             <VirtualLabProjectItem key={project.id} project={project} />
