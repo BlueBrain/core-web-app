@@ -1,20 +1,20 @@
 import { useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
 
-import { simulationPlotDataAtom } from '@/state/simulate/single-neuron';
+import { simulationPlotDataAtom, simulationStatusAtom } from '@/state/simulate/single-neuron';
 
-const SimTracePlot = dynamic(
-  () => import('@/components/simulate/single-neuron/visualization/SimTracePlot'),
+const PlotRenderer = dynamic(
+  () => import('@/components/simulate/single-neuron/visualization/PlotRenderer'),
   {
     ssr: false,
-    loading: () => <>Loading...</>,
   }
 );
 
 export default function Results() {
   const plotData = useAtomValue(simulationPlotDataAtom);
+  const simulationStatus = useAtomValue(simulationStatusAtom);
 
-  if (!plotData?.length)
+  if (!plotData?.length) {
     return (
       <div className="flex flex-col items-center justify-center gap-6">
         <div className="text-4xl">No results to display</div>
@@ -23,6 +23,22 @@ export default function Results() {
         </div>
       </div>
     );
+  }
 
-  return plotData && <SimTracePlot className="mt-8" data={plotData} />;
+  // plotData with one element is a placeholder to show something
+  // in the plot when we launched simulation but still processing
+  const isLoading = simulationStatus.launched && plotData.length === 1;
+
+  return (
+    plotData && (
+      <PlotRenderer
+        className="mt-8"
+        data={plotData}
+        isLoading={isLoading}
+        plotConfig={{
+          yAxisTitle: 'Voltage, mV',
+        }}
+      />
+    )
+  );
 }

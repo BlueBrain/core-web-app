@@ -1,5 +1,9 @@
+'use client';
+
 import { useRef, useEffect, useState } from 'react';
 import Plotly, { Layout, Config } from 'plotly.js-dist-min';
+import { Spin } from 'antd';
+import lodashSet from 'lodash/set';
 
 import { PlotData } from '@/services/bluenaas-single-cell/types';
 
@@ -20,7 +24,7 @@ const PLOT_LAYOUT: Partial<Layout> = {
     zeroline: false,
     showline: true,
     linecolor: '#888888',
-    title: { text: 'Voltage, mV', font: { size: 12 }, standoff: 6 },
+    title: { text: 'Current, nA', font: { size: 12 }, standoff: 6 },
   },
   legend: {
     orientation: 'h',
@@ -39,12 +43,18 @@ const PLOT_CONFIG: Partial<Config> = {
   displaylogo: false,
 };
 
-type SimTracePlotProps = {
-  data: PlotData;
-  className?: string;
+type PlotConfig = {
+  yAxisTitle?: string;
 };
 
-export default function SimTracePlot({ className, data }: SimTracePlotProps) {
+type Props = {
+  data: PlotData;
+  className?: string;
+  isLoading?: boolean;
+  plotConfig?: PlotConfig;
+};
+
+export default function PlotRenderer({ className, data, isLoading, plotConfig }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -53,6 +63,10 @@ export default function SimTracePlot({ className, data }: SimTracePlotProps) {
     if (!containerRef.current) return;
 
     const container = containerRef.current;
+
+    if (plotConfig?.yAxisTitle) {
+      lodashSet(PLOT_LAYOUT, 'yaxis.title.text', plotConfig.yAxisTitle);
+    }
 
     if (!initialized) {
       Plotly.newPlot(container, data, PLOT_LAYOUT, PLOT_CONFIG);
@@ -65,7 +79,16 @@ export default function SimTracePlot({ className, data }: SimTracePlotProps) {
     return () => {
       Plotly.purge(container);
     };
-  }, [data, initialized]);
+  }, [data, initialized, plotConfig]);
 
-  return <div style={{ border: '1px solid #424242' }} className={className} ref={containerRef} />;
+  return (
+    <div className="relative">
+      <div className={className} ref={containerRef} style={{ opacity: isLoading ? 0.5 : 1 }} />
+      {isLoading && (
+        <div className="absolute top-0 flex h-full w-full items-center justify-center text-sm text-gray-500">
+          <Spin size="large" />
+        </div>
+      )}
+    </div>
+  );
 }
