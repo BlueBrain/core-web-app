@@ -1,11 +1,12 @@
 import { VlmResponse } from './common';
 import { VirtualLabMember } from './members';
+import { DateISOString } from '@/types/nexus';
 
 export type VirtualLab = {
   id: string;
   name: string;
   description: string;
-  created_at: string;
+  created_at: DateISOString;
   reference_email: string;
   budget: number;
   plan_id: number;
@@ -15,10 +16,9 @@ export type VirtualLab = {
 export type VirtualLabResponse = VlmResponse<{ virtual_lab: VirtualLab }>;
 
 export enum VirtualLabPlanType {
-  Entry = 'entry',
-  Beginner = 'beginner',
-  Intermediate = 'intermediate',
-  Advanced = 'advanced',
+  Entry = 'Cellular lab',
+  Beginner = 'Circuit lab',
+  Intermediate = 'System lab',
 }
 
 export type MockBilling = {

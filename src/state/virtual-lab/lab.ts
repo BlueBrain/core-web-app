@@ -1,21 +1,24 @@
 import { RefObject } from 'react';
-import { atom } from 'jotai';
-import { atomFamily } from 'jotai/utils';
+import { PrimitiveAtom, atom } from 'jotai';
+import { atomFamily, atomWithDefault } from 'jotai/utils';
 
 import {
   getVirtualLabDetail,
   getVirtualLabUsers,
   getVirtualLabsOfUser,
+  getPlans,
 } from '@/services/virtual-lab/labs';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData } from '@/types/virtual-lab/common';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
-export const virtualLabDetailAtomFamily = atomFamily((virtualLabId: string) =>
-  atom<Promise<VirtualLab>>(async () => {
-    const response = await getVirtualLabDetail(virtualLabId);
-    return response.data.virtual_lab;
-  })
+export const virtualLabDetailAtomFamily = atomFamily<string, PrimitiveAtom<Promise<VirtualLab>>>(
+  (virtualLabId) =>
+    atomWithDefault(async () => {
+      const response = await getVirtualLabDetail(virtualLabId);
+
+      return response.data.virtual_lab;
+    })
 );
 
 export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
@@ -35,4 +38,20 @@ export const projectTopMenuRefAtom = atom<RefObject<HTMLDivElement> | null>(null
 export const userVirtualLabTotalsAtom = atom<Promise<number>>(async (get) => {
   const virtualLabs = await get(virtualLabsOfUserAtom);
   return virtualLabs.total;
+});
+
+export const virtualLabPlansAtom = atom<
+  Promise<
+    Array<{
+      id: number;
+      name: string;
+      price: number;
+      features: Record<string, Array<string>>;
+    }>
+  >
+>(async () => {
+  const { data } = await getPlans();
+  const { all_plans: allPlans } = data;
+
+  return allPlans;
 });

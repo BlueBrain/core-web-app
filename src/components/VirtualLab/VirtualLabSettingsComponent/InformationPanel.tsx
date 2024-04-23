@@ -1,9 +1,8 @@
-import { Button, ConfigProvider, Form, Spin } from 'antd';
-import type { FormItemProps } from 'antd/lib/form/FormItem';
 import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
+import { Button, ConfigProvider, Form, Input, Spin } from 'antd';
+import type { FormItemProps } from 'antd/lib/form/FormItem';
 import { ReactNode, useEffect, useState } from 'react';
-import EditIcon from '@/components/icons/Edit';
 import { classNames } from '@/util/utils';
 import { MockBilling, VirtualLab } from '@/types/virtual-lab/lab';
 
@@ -17,17 +16,66 @@ type Props = {
   className?: string;
   initialValues: Partial<VirtualLab> | MockBilling;
   items: Array<RenderInputProps>;
-  save: (update: Partial<VirtualLab>) => Promise<void>;
+  onSubmit: (update: Partial<VirtualLab>) => Promise<void>;
 };
 
 type InformationForm = { name: string; description: string; reference_email: string };
+
+export const renderInput: (props: InputProps) => ReactNode = ({
+  className,
+  disabled,
+  placeholder,
+  readOnly,
+  style,
+  title,
+  type,
+  value,
+}) => {
+  return (
+    <Input
+      className={className}
+      disabled={disabled}
+      placeholder={placeholder}
+      readOnly={readOnly}
+      required
+      style={style}
+      title={title}
+      type={type}
+      value={value}
+    />
+  );
+};
+
+export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
+  className,
+  disabled,
+  placeholder,
+  readOnly,
+  style,
+  title,
+  value,
+}) => {
+  return (
+    <Input.TextArea
+      disabled={disabled}
+      placeholder={placeholder}
+      autoSize
+      required
+      className={className}
+      title={title}
+      value={value}
+      style={style}
+      readOnly={readOnly}
+    />
+  );
+};
 
 export default function InformationPanel({
   allowEdit,
   className,
   initialValues,
   items,
-  save,
+  onSubmit,
 }: Props) {
   const [editMode, setEditMode] = useState(false);
   const [savingChanges, setSavingChanges] = useState(false);
@@ -37,21 +85,12 @@ export default function InformationPanel({
 
   const showEditPrompts = allowEdit && !editMode; // if editting is allowed, and user is not only in editting mode, we show edit prompts.
 
-  const editButton = showEditPrompts && (
-    <Button
-      shape="circle"
-      onClick={() => setEditMode(true)}
-      icon={<EditIcon className="ml-2" style={{ color: '#BFBFBF' }} />}
-      className="mt-1 border-none"
-      title="Edit virtual lab information"
-      aria-label="Edit virtual lab information"
-    />
-  );
-
   const onSave = () => {
     setSavingChanges(true);
+
     const { name, description, reference_email: referenceEmail } = form.getFieldsValue();
-    save({
+
+    onSubmit({
       name,
       description,
       reference_email: referenceEmail,
@@ -98,6 +137,11 @@ export default function InformationPanel({
         <ConfigProvider
           theme={{
             components: {
+              Button: {
+                colorBgContainer: '#00B212',
+                colorBgContainerDisabled: '#00B212', // Same as colorBgContainer
+                colorTextDisabled: '#262626',
+              },
               Form: {
                 labelColor: '#69C0FF',
                 itemMarginBottom: 3,
@@ -105,7 +149,6 @@ export default function InformationPanel({
               },
               Input: {
                 activeBg: 'transparent',
-                addonBg: 'transparent',
                 borderRadius: 0,
                 colorBgContainer: 'transparent',
                 colorBorder: 'transparent',
@@ -123,7 +166,11 @@ export default function InformationPanel({
           }}
         >
           <Form
-            className={classNames('divide-y divide-primary-3 px-[28px]', className)}
+            className={classNames(
+              'divide-y px-[28px]',
+              editMode ? 'divide-white' : 'divide-primary-3',
+              className
+            )}
             layout="vertical"
             form={form}
             requiredMark={false}
@@ -139,16 +186,11 @@ export default function InformationPanel({
                     label={required ? `${label}*` : label}
                     validateTrigger="onBlur"
                     rules={[{ ...rules, required }]}
-                    className={classNames(
-                      `w-full pb-1 pt-8`,
-                      editMode ? 'border-b' : '',
-                      itemClassName
-                    )}
+                    className={classNames(`w-full pb-1 pt-8`, editMode ? '' : '', itemClassName)}
                     required={required}
                   >
                     {children({
-                      addonAfter: editButton,
-                      className: `${editMode ? 'font-bold border border-gray-200 px-3' : ''}`,
+                      className: `${editMode ? 'font-bold' : ''}`,
                       disabled: !editMode,
                       placeholder: `${label}...`, // TODO: Come up with a system for more intelligent placeholder text
                       readOnly: !editMode,
@@ -161,31 +203,40 @@ export default function InformationPanel({
               }
             )}
 
-            {editMode && (
-              <Form.Item>
-                <div className="flex items-center justify-end">
+            {editMode ? (
+              <Form.Item className="col-span-2">
+                <div className="my-4 flex items-center justify-end gap-2">
                   <Button
+                    className="h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
                     htmlType="button"
                     onClick={() => {
                       form.resetFields();
                       setEditMode(false);
                     }}
-                    className="font-semibold text-gray-500"
                   >
                     Cancel
                   </Button>
                   <Button
+                    className="h-14 rounded-none font-semibold text-primary-8"
                     disabled={!submittable}
-                    type="primary"
                     title="Save Changes"
                     htmlType="submit"
                     onClick={onSave}
-                    className="h-14 w-40 rounded-none bg-green-600 font-semibold hover:bg-green-700"
                   >
                     Save
                   </Button>
                 </div>
               </Form.Item>
+            ) : (
+              <div className="col-span-2 flex items-center justify-end gap-2 py-4">
+                <Button
+                  className="h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
+                  htmlType="button"
+                  onClick={() => setEditMode(true)}
+                >
+                  Edit virtual lab information
+                </Button>
+              </div>
             )}
           </Form>
         </ConfigProvider>

@@ -50,12 +50,6 @@ export const VIRTUAL_LAB_PLAN_DEFINITIONS: VirtualLabPlanDefinition[] = [
     price: 80,
     advantages: FAKE_ADVANTAGES,
   },
-  {
-    type: VirtualLabPlanType.Advanced,
-    title: 'Advanced',
-    price: 120,
-    advantages: FAKE_ADVANTAGES,
-  },
 ];
 
 export const RX_EMAIL = /^[^ \t@]+@[^ \t@]+$/g;

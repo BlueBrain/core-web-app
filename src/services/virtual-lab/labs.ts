@@ -39,3 +39,65 @@ export async function getVirtualLabsOfUser(): Promise<
   }
   return response.json();
 }
+
+export async function patchVirtualLab(
+  formData: Partial<VirtualLab>,
+  id: string
+): Promise<
+  VlmResponse<{
+    virtual_lab: VirtualLab;
+  }>
+> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+    method: 'PATCH',
+    headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function deleteVirtualLab(id: string): Promise<
+  VlmResponse<{
+    virtual_lab: VirtualLab;
+  }>
+> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}`, {
+    method: 'DELETE',
+    headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getPlans(): Promise<
+  VlmResponse<{
+    all_plans: [
+      {
+        id: number;
+        name: string;
+        price: number;
+        features: Record<string, Array<string>>;
+      },
+    ];
+  }>
+> {
+  const response = await fetch(`${virtualLabApi.url}/plans`, {
+    method: 'GET',
+    headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+
+  return response.json();
+}

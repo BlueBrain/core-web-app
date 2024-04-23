@@ -1,61 +1,9 @@
-'use client';
-
+import { useRouter } from 'next/navigation';
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Input, InputRef, Modal, Spin } from 'antd';
 import { useRef, useState } from 'react';
-
-export default function DangerZonePanel({
-  onDeleteVirtualLabClick,
-  labName,
-}: {
-  labName: string;
-  onDeleteVirtualLabClick: () => Promise<void>;
-}) {
-  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-  const [error, setError] = useState(false);
-  const [savingChanges, setSavingChanges] = useState(false);
-
-  const onDeletionConfirm = () => {
-    setShowConfirmationDialog(false);
-    setSavingChanges(true);
-
-    onDeleteVirtualLabClick()
-      .then(() => {
-        setError(false);
-      })
-      .catch(() => {
-        setError(true);
-      })
-      .finally(() => {
-        setSavingChanges(false);
-      });
-  };
-
-  return savingChanges ? (
-    <Spin />
-  ) : (
-    <div>
-      <DeleteVirtualLabConfirmation
-        open={showConfirmationDialog}
-        onCancel={() => setShowConfirmationDialog(false)}
-        onConfirm={onDeletionConfirm}
-        labName={labName}
-      />
-      {error && <p className="text-error">There was an error when deleting this lab.</p>}
-
-      <Button
-        danger
-        type="primary"
-        onClick={() => {
-          setShowConfirmationDialog(true);
-        }}
-        className="rounded-none"
-      >
-        Delete Virtual Lab
-      </Button>
-    </div>
-  );
-}
+import { VirtualLab } from '@/types/virtual-lab/lab';
+import { basePath } from '@/config';
 
 function DeleteVirtualLabConfirmation({
   open,
@@ -123,7 +71,7 @@ function DeleteVirtualLabConfirmation({
       >
         <h3 className="text-xl font-bold">Are you sure you want to delete the virtual lab?</h3>
         <p>
-          Type{' '}
+          Type&nbsp;
           <span className="bg-gray-100 px-2 text-gray-500">
             Delete &lt;your virtual lab name&gt;
           </span>
@@ -142,7 +90,7 @@ function DeleteVirtualLabConfirmation({
 
         <div className="mt-5">
           <Button type="text" onClick={onCancel} className="text-gray-700">
-            cancel
+            Cancel
           </Button>
 
           <Button onClick={confirmThenDelete} className="bg-[#595959] text-white">
@@ -151,5 +99,84 @@ function DeleteVirtualLabConfirmation({
         </div>
       </Modal>
     </ConfigProvider>
+  );
+}
+
+export default function DangerZonePanel({
+  onClick,
+  name,
+}: {
+  name: string;
+  onClick: () => Promise<VirtualLab>;
+}) {
+  const { push } = useRouter();
+  const [deleted, setDeleted] = useState<boolean>(false);
+  const [infoText, setInfoText] = useState<string | null>(null);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+  const [error, setError] = useState(false);
+  const [savingChanges, setSavingChanges] = useState(false);
+
+  const onDeletionConfirm = () => {
+    setShowConfirmationDialog(false);
+    setSavingChanges(true);
+
+    onClick()
+      .then((deletedLab: VirtualLab) => {
+        setError(false);
+
+        const { name: virtualLabName } = deletedLab;
+
+        setInfoText(`You have now deleted ${virtualLabName}.`);
+      })
+      .catch((response: { message: string }) => {
+        setError(true);
+
+        const { message } = response;
+
+        setInfoText(`There was an error when deleting this lab. ${message}.`);
+      })
+      .finally(() => {
+        setSavingChanges(false);
+        setDeleted(true);
+
+        setTimeout(() => push(`${basePath}/virtual-lab`), 3000);
+      });
+  };
+
+  return savingChanges ? (
+    <Spin />
+  ) : (
+    <div className="flex items-center justify-between">
+      <DeleteVirtualLabConfirmation
+        open={showConfirmationDialog}
+        onCancel={() => setShowConfirmationDialog(false)}
+        onConfirm={onDeletionConfirm}
+        labName={name}
+      />
+
+      {infoText && <p className={error ? 'text-error' : 'text-white'}>{infoText}</p>}
+
+      <ConfigProvider
+        theme={{
+          components: {
+            Button: {
+              colorTextDisabled: '#fff',
+            },
+          },
+        }}
+      >
+        <Button
+          className="ml-auto h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
+          danger
+          onClick={() => {
+            setShowConfirmationDialog(true);
+          }}
+          type="primary"
+          disabled={deleted}
+        >
+          Delete Virtual Lab
+        </Button>
+      </ConfigProvider>
+    </div>
   );
 }

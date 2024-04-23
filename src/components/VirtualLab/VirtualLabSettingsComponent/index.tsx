@@ -1,25 +1,30 @@
 'use client';
 
-import type { InputProps } from 'antd/lib/input/Input';
-import type { TextAreaProps } from 'antd/lib/input/TextArea';
-import { Button, Collapse, ConfigProvider, Input, Spin } from 'antd';
+import { Button, Collapse, ConfigProvider, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { ReactNode, useCallback } from 'react';
-import { useAtomValue } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { ReactNode } from 'react';
+import { useSetAtom, useAtomValue } from 'jotai';
+import { loadable, unwrap } from 'jotai/utils';
 import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
-import FormPanel from './InformationPanel';
+import FormPanel, { renderInput, renderTextArea } from './InformationPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 import { VALID_EMAIL_REGEXP } from '@/util/utils';
+import { deleteVirtualLab, patchVirtualLab } from '@/services/virtual-lab/labs';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
-import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabDetailAtomFamily, virtualLabPlansAtom } from '@/state/virtual-lab/lab';
 
-type Props = {
-  id: string;
+const mockBilling = {
+  organization: 'EPFL',
+  firstname: 'Harry',
+  lastname: 'Anderson',
+  address: 'Chem. des Mines 9',
+  city: 'Geneva',
+  postalCode: '1202',
+  country: 'CH',
 };
 
 function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
@@ -47,63 +52,96 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   );
 }
 
-export default function VirtualLabSettingsComponent({ id }: Props) {
+export default function VirtualLabSettingsComponent({ id }: { id: string }) {
   const router = useRouter();
   const userIsAdmin = true;
-  const saveInformation = async (): Promise<void> => {};
-  const changePlan = async (): Promise<void> => {};
-  const deleteVirtualLab = async () => {};
-
-  const mockBilling = {
-    organization: 'EPFL',
-    firstname: 'Harry',
-    lastname: 'Anderson',
-    address: 'Chem. des Mines 9',
-    city: 'Geneva',
-    postalCode: '1202',
-    country: 'CH',
-  };
-
-  const renderInput: (props: InputProps) => ReactNode = useCallback(
-    ({ addonAfter, className, disabled, placeholder, readOnly, style, title, type, value }) => {
-      return (
-        <Input
-          addonAfter={addonAfter}
-          className={className}
-          disabled={disabled}
-          placeholder={placeholder}
-          readOnly={readOnly}
-          required
-          style={style}
-          title={title}
-          type={type}
-          value={value}
-        />
-      );
-    },
-    []
-  );
-
-  const renderTextArea: (props: TextAreaProps) => ReactNode = useCallback(
-    ({ className, disabled, placeholder, readOnly, style, title, value }) => {
-      return (
-        <Input.TextArea
-          disabled={disabled}
-          placeholder={placeholder}
-          autoSize
-          required
-          className={className}
-          title={title}
-          value={value}
-          style={style}
-          readOnly={readOnly}
-        />
-      );
-    },
-    []
-  );
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
+  const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
+  const updateVirtualLab = async (formData: Partial<VirtualLab>): Promise<void> => {
+    const { data } = await patchVirtualLab(formData, id);
+    const { virtual_lab: virtualLab } = data;
+
+    setVirtualLabDetail(
+      new Promise((resolve) => {
+        resolve(virtualLab);
+      })
+    );
+  };
+  const updateBilling = async (_update: Partial<VirtualLab>): Promise<void> => {};
+  const onDeleteVirtualLab = async (): Promise<VirtualLab> => {
+    const { data } = await deleteVirtualLab(id);
+    const { virtual_lab: virtualLab } = data;
+
+    virtualLabDetailAtomFamily.remove(id);
+
+    return new Promise((resolve) => resolve(virtualLab)); // eslint-disable-line no-promise-executor-return
+  };
+
+  const plans = useAtomValue(unwrap(virtualLabPlansAtom));
+
+  const planDescriptions = [
+    {
+      id: 1,
+      name: VirtualLabPlanType.Entry,
+      description: (
+        <div className="flex flex-col gap-1">
+          <h4 className="font-bold text-primary-3">CAPABILITIES</h4>
+          <ul className="list-disc pl-4">
+            <li>Unlimited downloads</li>
+            <li>Unlimited AI-assisted knowledge discovery based-on neuroscience literature</li>
+          </ul>
+          <h4 className="font-bold text-primary-3">BUILD & SIMULATE</h4>
+          <ul className="list-disc pl-4">
+            <li>Ion channel</li>
+            <li>Single neuron</li>
+            <li>Paired neuron</li>
+          </ul>
+          <h4 className="font-bold text-primary-3">COMPUTE & STORAGE CREDITS</h4>
+          <ul className="list-disc pl-4">
+            <li>Free compute resources</li>
+            <li>Additional compute resources can be purchased</li>
+          </ul>
+          <h4 className="font-bold text-primary-3">SUPPORT</h4>
+          <ul className="list-disc pl-4">
+            <li>Open Brain cellular lab support</li>
+          </ul>
+        </div>
+      ),
+      pricing: { cost: 20, currency: '$' },
+    },
+    {
+      id: 2,
+      name: VirtualLabPlanType.Beginner,
+      description: 'Cras mattis consectetur purus sit amet fermentum.',
+      pricing: { cost: 100, currency: '$' },
+    },
+    {
+      id: 3,
+      name: VirtualLabPlanType.Intermediate,
+      description: 'Cras mattis consectetur purus sit amet fermentum.',
+      pricing: { cost: 1000, currency: '$' },
+    },
+  ];
+
+  // Merge API Plan data with the planDescriptions objects.
+  // TODO: Ask JDC whether to keep plan data in Frontend or Backend.
+  const plansWithDescriptions = plans?.reduce<
+    Array<{
+      id: number;
+      name: VirtualLabPlanType;
+      description: ReactNode;
+      pricing: { cost: number; currency: string };
+    }>
+  >(
+    (acc1, { id: planId }) =>
+      planDescriptions.reduce(
+        (acc2, { id: vlPlanId, name, description, pricing }) =>
+          vlPlanId === planId ? [...acc2, { id: planId, name, description, pricing }] : acc2,
+        acc1
+      ),
+    []
+  );
 
   if (virtualLabDetail.state === 'loading') {
     return (
@@ -135,13 +173,13 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
     {
       content: (
         <FormPanel
+          allowEdit={userIsAdmin}
           initialValues={{
             name: virtualLabDetail.data?.name,
             reference_email: virtualLabDetail.data?.reference_email,
             description: virtualLabDetail.data?.description,
           }}
-          allowEdit={userIsAdmin}
-          save={saveInformation}
+          onSubmit={updateVirtualLab}
           items={[
             {
               children: renderInput,
@@ -157,7 +195,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
             {
               children: renderInput,
               label: 'Reference email',
-              name: 'referenceEMail',
+              name: 'reference_email',
               type: 'email',
               rules: [
                 {
@@ -174,49 +212,12 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
       title: 'Lab Settings',
     },
     {
-      content: (
+      content: !!plansWithDescriptions && (
         <PlanPanel
-          currentPlan={VirtualLabPlanType.Entry}
-          billingInfo={mockBilling}
+          currentPlan={virtualLabDetail.data?.plan_id}
+          items={plansWithDescriptions}
           userIsAdmin={userIsAdmin}
-          onChangePlan={changePlan}
-          items={[
-            {
-              type: VirtualLabPlanType.Entry,
-              description: (
-                <div className="flex flex-col gap-1">
-                  <h4 className="font-bold text-primary-3">CAPABILITIES</h4>
-                  <ul className="list-disc pl-4">
-                    <li>Unlimited download</li>
-                    <li>
-                      Unlimited AI-assisted knowledge discovery based-on neuroscience literature
-                    </li>
-                  </ul>
-                  <h4 className="font-bold text-primary-3">Support</h4>
-                  <ul className="list-disc pl-4">
-                    <li>Open Brain cellular lab support</li>
-                  </ul>
-                </div>
-              ),
-              pricing: { cost: 0, currency: '$' },
-            },
-            {
-              type: VirtualLabPlanType.Beginner,
-              description: 'Cras mattis consectetur purus sit amet fermentum.',
-              pricing: { cost: 40, currency: '$' },
-            },
-            {
-              type: VirtualLabPlanType.Intermediate,
-              description: 'Cras mattis consectetur purus sit amet fermentum.',
-              pricing: { cost: 40, currency: '$' },
-            },
-            {
-              type: VirtualLabPlanType.Advanced,
-              description: 'Cras mattis consectetur purus sit amet fermentum.',
-              pricing: { cost: 40, currency: '$' },
-              className: '!basis-2/5',
-            },
-          ]}
+          onChange={updateVirtualLab}
         />
       ),
       key: 'plan',
@@ -230,10 +231,9 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
     {
       content: (
         <FormPanel
+          allowEdit={userIsAdmin}
           className="grid grid-cols-2"
           initialValues={mockBilling}
-          allowEdit={userIsAdmin}
-          save={saveInformation}
           items={[
             {
               className: 'col-span-2',
@@ -274,6 +274,7 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
               required: true,
             },
           ]}
+          onSubmit={updateBilling}
         />
       ),
       key: 'billing',
@@ -284,8 +285,8 @@ export default function VirtualLabSettingsComponent({ id }: Props) {
           {
             content: (
               <DangerZonePanel
-                onDeleteVirtualLabClick={deleteVirtualLab}
-                labName={virtualLabDetail.data?.name || ''}
+                onClick={onDeleteVirtualLab}
+                name={virtualLabDetail.data?.name || ''}
               />
             ),
             key: 'danger-zone',
