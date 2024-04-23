@@ -1,6 +1,5 @@
 import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
-// import Link from 'next/link';
-
+import Link from 'next/link';
 import VirtualLabStatistic from '../../VirtualLabStatistic';
 import usePathname from '@/hooks/pathname';
 import Brain from '@/components/icons/Brain';
