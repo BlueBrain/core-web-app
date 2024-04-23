@@ -1,8 +1,9 @@
-// import redirect from 'next/router';
+import { useRouter } from 'next/navigation';
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Input, InputRef, Modal, Spin } from 'antd';
 import { useRef, useState } from 'react';
 import { VirtualLab } from '@/types/virtual-lab/lab';
+import { basePath } from '@/config';
 
 function DeleteVirtualLabConfirmation({
   open,
@@ -108,6 +109,8 @@ export default function DangerZonePanel({
   name: string;
   onClick: () => Promise<VirtualLab>;
 }) {
+  const { push } = useRouter();
+  const [deleted, setDeleted] = useState<boolean>(false);
   const [infoText, setInfoText] = useState<string | null>(null);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
   const [error, setError] = useState(false);
@@ -134,8 +137,9 @@ export default function DangerZonePanel({
       })
       .finally(() => {
         setSavingChanges(false);
+        setDeleted(true);
 
-        // setTimeout(() => redirect(path)); // TODO: Use this to redirect back to /virtual-lab
+        setTimeout(() => push(`${basePath}/virtual-lab`), 3000);
       });
   };
 
@@ -152,16 +156,27 @@ export default function DangerZonePanel({
 
       {infoText && <p className={error ? 'text-error' : 'text-white'}>{infoText}</p>}
 
-      <Button
-        className="ml-auto h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
-        danger
-        onClick={() => {
-          setShowConfirmationDialog(true);
+      <ConfigProvider
+        theme={{
+          components: {
+            Button: {
+              colorTextDisabled: '#fff',
+            },
+          },
         }}
-        type="primary"
       >
-        Delete Virtual Lab
-      </Button>
+        <Button
+          className="ml-auto h-14 rounded-none bg-neutral-3 font-semibold text-neutral-7"
+          danger
+          onClick={() => {
+            setShowConfirmationDialog(true);
+          }}
+          type="primary"
+          disabled={deleted}
+        >
+          Delete Virtual Lab
+        </Button>
+      </ConfigProvider>
     </div>
   );
 }
