@@ -22,7 +22,6 @@ import {
   simulationPlotDataAtom,
   secNamesAtom,
   segNamesAtom,
-  simulateStepAtom,
   simulationConfigAtom,
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
@@ -51,7 +50,6 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   const [simConfig, dispatch] = useAtom(simulationConfigAtom);
   const setBlueNaasInstanceRef = useSetAtom(blueNaasInstanceRefAtom);
   const simulationDoneCB = useSetAtom(simulationDoneAtom);
-  const setSimulateStep = useSetAtom(simulateStepAtom);
 
   const blueNaasInstance = useRef<BlueNaasCls | null>(null);
 
@@ -121,7 +119,6 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     };
 
     const onTraceData = throttle((data: TraceData) => {
-      setSimulateStep('results');
       const updatedPlotData: PlotData = data.map((entry) => ({
         x: entry.t,
         y: entry.v,
@@ -163,7 +160,6 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     setPlotData,
     simulationDoneCB,
     eModelScript,
-    setSimulateStep,
   ]);
 
   return (
