@@ -1,8 +1,8 @@
 import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+
 import VirtualLabStatistic from '../../VirtualLabStatistic';
 import usePathname from '@/hooks/pathname';
-
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import { Project } from '@/types/virtual-lab/projects';

@@ -8,6 +8,7 @@ import { loadable } from 'jotai/utils';
 import { PlusOutlined, MinusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
+import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
 
@@ -82,13 +83,15 @@ function NewProjectModalInput({
 
 const formItems: Array<ModalInputProps> = [
   {
-    children: (props) => <Input {...(props as ComponentProps<typeof Input>)} />, // eslint-disable-line react/jsx-props-no-spreading
+    children: (props) => <Input maxLength={80} {...(props as ComponentProps<typeof Input>)} />, // eslint-disable-line react/jsx-props-no-spreading
     label: 'PROJECT NAME',
     name: 'name',
     required: true,
   },
   {
-    children: (props) => <Input.TextArea {...(props as ComponentProps<typeof Input.TextArea>)} />, // eslint-disable-line react/jsx-props-no-spreading
+    children: (props) => (
+      <Input.TextArea maxLength={288} {...(props as ComponentProps<typeof Input.TextArea>)} /> // eslint-disable-line react/jsx-props-no-spreading
+    ),
     label: 'PROJECT DESCRIPTION',
     name: 'description',
   },
@@ -129,9 +132,11 @@ function NewProjectModalForm({ form }: { form: FormInstance }) {
 }
 
 function NewProjectModal({
+  onFail,
   onSuccess,
   virtualLabId,
 }: {
+  onFail: (error: string) => void;
   onSuccess: (newProject: Project) => void;
   virtualLabId: string;
 }) {
@@ -145,13 +150,18 @@ function NewProjectModal({
 
     const { name, description } = form.getFieldsValue();
 
-    const { data } = await createProject({ name, description }, virtualLabId).finally(() => {
-      setLoading(false);
-      setOpen(false);
-      form.resetFields();
-    });
-
-    onSuccess(data.project);
+    return createProject({ name, description }, virtualLabId)
+      .then((response) => {
+        form.resetFields();
+        setOpen(false);
+        onSuccess(response.data.project);
+      })
+      .catch((error) => {
+        return onFail(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -307,6 +317,7 @@ function SearchProjects() {
 export default function VirtualLabProjectList({ id }: { id: string }) {
   const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
   const setVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(id));
+  const notification = useNotification();
 
   if (virtualLabProjects.state === 'loading') {
     return (
@@ -336,13 +347,13 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
             <SearchProjects />
           </div>
           <NewProjectModal
+            onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
             onSuccess={
               virtualLabProjects.data
-                ? (newProject: Project) =>
-                    setVirtualLabProjects({
-                      ...virtualLabProjects.data,
-                      results: [...virtualLabProjects.data.results, newProject],
-                    })
+                ? (newProject: Project) => {
+                    setVirtualLabProjects();
+                    notification.success(`${newProject.name} has been created.`);
+                  }
                 : () => {}
             }
             virtualLabId={id}
