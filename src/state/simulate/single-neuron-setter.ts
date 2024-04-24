@@ -2,7 +2,9 @@ import { atom } from 'jotai';
 
 import {
   blueNaasInstanceRefAtom,
+  simulateStepAtom,
   simulationConfigAtom,
+  simulationPlotDataAtom,
   simulationResultsAtom,
   simulationStatusAtom,
   singleNeuronIdAtom,
@@ -15,6 +17,7 @@ import {
 import sessionAtom from '@/state/session';
 import { createJsonFile, createResource } from '@/api/nexus';
 import { createDistribution } from '@/util/nexus';
+import { PlotData } from '@/services/bluenaas-single-cell/types';
 
 export const createSingleNeuronSimulationAtom = atom<
   null,
@@ -61,6 +64,16 @@ export const launchSimulationAtom = atom(null, (get, set) => {
   }
 
   blueNaasInstanceRef.current.runSim();
+  set(simulateStepAtom, 'results');
+  const initialPlotData: PlotData = [
+    {
+      x: [0],
+      y: [0],
+      type: 'scatter',
+      name: '',
+    },
+  ];
+  set(simulationPlotDataAtom, initialPlotData);
 });
 
 export const simulationDoneAtom = atom(null, (get, set) => {
