@@ -64,7 +64,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
         </div>
       </div>
       <Modal
-        title="Virtual Lab Information"
+        title={null}
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
