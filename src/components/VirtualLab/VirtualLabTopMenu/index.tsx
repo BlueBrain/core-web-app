@@ -1,9 +1,11 @@
-import { useSetAtom } from 'jotai';
-import { ReactNode, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { Button, Modal } from 'antd';
+import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
+import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '@/components/VirtualLab/create';
 
 type Props = {
   extraItems?: ReactNode[];
@@ -11,31 +13,66 @@ type Props = {
 
 export default function VirtualLabTopMenu({ extraItems }: Props) {
   const { data: session } = useSession();
-
   const localRef = useRef(null);
-
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentStep, setCurrentStep] = useState('information');
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleNext = () => {
+    setCurrentStep('plan');
+  };
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
   }, [localRef, setProjectTopMenuRef]);
 
   return (
-    <div className="flex h-14 w-full justify-between">
-      <div className="flex gap-4" ref={localRef} />
-      <div className="flex w-fit items-center justify-end border border-primary-7">
-        <Link className="w-52 border-r border-primary-7 p-4 font-bold" href="/getting-started">
-          Getting Started
-        </Link>
-        <Link className="w-52 border-r border-primary-7 p-4 font-bold" href="/about">
-          About
-        </Link>
-        <div className="flex w-52 flex-row justify-between border-r border-primary-7 px-2 font-bold">
-          <span className="font-bold">{session?.user.name}</span>
-          <UserOutlined className="mr-2 text-primary-4" />
+    <>
+      <div className="flex h-14 w-full justify-between">
+        <div className="flex gap-4" ref={localRef} />
+        <div className="flex w-fit items-center justify-end border border-primary-7">
+          <Button
+            className="h-full w-52 border-none py-4 font-bold text-white"
+            type="link"
+            onClick={showModal}
+          >
+            Create Virtual Lab
+          </Button>
+          <Link className="w-52 border-x border-primary-7 p-4 font-bold" href="/getting-started">
+            Getting Started
+          </Link>
+          <Link className="w-52 border-r border-primary-7 p-4 font-bold" href="/about">
+            About
+          </Link>
+          <div className="flex w-52 flex-row justify-between border-r border-primary-7 p-4 font-bold">
+            <span className="font-bold">{session?.user.name}</span>
+            <UserOutlined className="mr-2 text-primary-4" />
+          </div>
+          {extraItems}
         </div>
-        {extraItems}
       </div>
-    </div>
+      <Modal
+        title="Virtual Lab Information"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        {currentStep === 'information' && <VirtualLabCreateInformation onNext={handleNext} />}
+        {currentStep === 'plan' && <VirtualLabCreatePlan onNext={handleNext} />}
+      </Modal>
+    </>
   );
 }

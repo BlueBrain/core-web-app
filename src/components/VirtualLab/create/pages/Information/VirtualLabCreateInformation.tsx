@@ -8,19 +8,25 @@ import { FieldType } from '../../types';
 
 export interface VirtualLabCreateInformationProps {
   className?: string;
-  nextPage: string;
+  onNext: () => void;
 }
 
 export function VirtualLabCreateInformation({
   className,
-  nextPage,
+  onNext,
 }: VirtualLabCreateInformationProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
   const [valid, setValid] = useState(false);
 
+  const handleNext = () => {
+    if (valid) {
+      onNext();
+    }
+  };
+
   return (
     <Layout className={className}>
-      <Main nextPage={nextPage} canGoNext={valid} step="information">
+      <Main onNext={handleNext} canGoNext step="information">
         <h2>Information</h2>
         <Form value={lab} onChange={updateLab} onValidityChange={setValid} fields={FIELDS} />
       </Main>

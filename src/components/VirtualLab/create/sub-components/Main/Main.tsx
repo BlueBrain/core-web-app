@@ -8,18 +8,18 @@ import styles from './main.module.css';
 
 export interface MainProps {
   className?: string;
-  nextPage: string;
   canGoNext: boolean;
   step: keyof typeof STEPS;
   children: ReactNode;
+  onNext: () => void;
 }
 
-export function Main({ className, canGoNext, nextPage, step, children }: MainProps) {
+export function Main({ className, canGoNext, step, children, onNext }: MainProps) {
   return (
     <div className={classNames(styles.main, className)}>
       <div>{children}</div>
       <footer>
-        <NavButtons disabled={!canGoNext} nextPage={nextPage} step={step} />
+        <NavButtons disabled={!canGoNext} step={step} onNext={onNext} />
       </footer>
     </div>
   );

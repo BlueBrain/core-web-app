@@ -1,7 +1,8 @@
 .main {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  place-items: stretch;
+  place-items: center;
   gap: 0.5em;
   overflow: auto;
+  margin: 0 auto;
 }

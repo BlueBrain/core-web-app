@@ -9,15 +9,15 @@ import { InputBillingInfo } from './InputBillingInfo';
 
 export interface VirtualLabCreatePlanProps {
   className?: string;
-  nextPage: string;
+  onNext: () => void;
 }
 
-export function VirtualLabCreatePlan({ className, nextPage }: VirtualLabCreatePlanProps) {
+export function VirtualLabCreatePlan({ className, onNext }: VirtualLabCreatePlanProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
   const [billingValid, setBillingValid] = useState(false);
   return (
     <Layout className={className}>
-      <Main nextPage={nextPage} canGoNext={lab.plan_id === 1 || billingValid} step="plan">
+      <Main canGoNext={lab.plan_id === 1 || billingValid} step="plan" onNext={onNext}>
         <h2>Plan</h2>
         {VIRTUAL_LAB_PLAN_DEFINITIONS.map((plan) => (
           <PlanSelectButton

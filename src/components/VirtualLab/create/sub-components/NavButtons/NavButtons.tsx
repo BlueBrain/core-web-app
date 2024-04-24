@@ -1,5 +1,4 @@
 import React from 'react';
-import { usePathname } from 'next/navigation';
 import { STEPS } from '../../constants';
 import { Button } from '../Button';
 import { Step } from './Step';
@@ -9,13 +8,12 @@ import styles from './nav-buttons.module.css';
 
 export interface NavButtonsProps {
   className?: string;
-  nextPage: string;
   step: keyof typeof STEPS;
   disabled?: boolean;
+  onNext: () => void;
 }
 
-export function NavButtons({ className, nextPage, step, disabled }: NavButtonsProps) {
-  const pathname = goto(usePathname(), nextPage);
+export function NavButtons({ className, step, disabled, onNext }: NavButtonsProps) {
   return (
     <div className={classNames(styles.main, className)}>
       <Button variant="text" href="/">
@@ -24,7 +22,7 @@ export function NavButtons({ className, nextPage, step, disabled }: NavButtonsPr
       {step === 'members' ? (
         <div>create</div>
       ) : (
-        <Button href={pathname} disabled={disabled}>
+        <Button onClick={onNext} disabled={disabled}>
           Next
         </Button>
       )}
@@ -37,11 +35,4 @@ export function NavButtons({ className, nextPage, step, disabled }: NavButtonsPr
       </div>
     </div>
   );
-}
-
-function goto(path: string | null, page: string) {
-  const parts = (path ?? '/').split('/');
-  parts.pop();
-  parts.push(page);
-  return parts.join('/');
 }
