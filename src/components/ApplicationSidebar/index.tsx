@@ -8,7 +8,6 @@ import Icon, {
   ArrowRightOutlined,
   UserOutlined,
   HomeOutlined,
-  PlusSquareOutlined,
 } from '@ant-design/icons';
 import { signOut, useSession } from 'next-auth/react';
 
@@ -175,14 +174,6 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
           </button>
         </div>
       </div>
-
-      <Link
-        href={`${basePath}/virtual-lab/create/information`}
-        className="inline-flex w-full items-center justify-between p-5"
-      >
-        <span className="font-medium text-white">Create virtual lab</span>
-        <PlusSquareOutlined className="h-4 w-4 text-base text-primary-4" />
-      </Link>
     </div>
   );
 }
