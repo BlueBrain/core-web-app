@@ -13,14 +13,17 @@ export default function DashboardTotals() {
   const virtualLabTotals = useAtomValue(loadable(userVirtualLabTotalsAtom));
   const { error } = useNotification();
 
-  const renderTotals = (totals: Loadable<Promise<number>>, errorMessage: string) => {
+  const renderTotals = (totals: Loadable<Promise<number | undefined>>, errorMessage: string) => {
     if (totals.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (totals.state === 'hasData') {
+    if (totals.state === 'hasData' && totals.data !== undefined) {
       return totals.data;
     }
-    error(errorMessage, 5, 'topRight', true, 'render-total-error-message');
+    if (totals.state === 'hasError') {
+      error(errorMessage, 5, 'topRight', true, 'render-total-error-message');
+    }
+
     return null;
   };
 
