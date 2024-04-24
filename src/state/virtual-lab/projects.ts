@@ -13,13 +13,11 @@ import {
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
-  atomWithRefresh<Promise<VirtualLabAPIListData<Project>>>(
-    async () => {
-      const response = await getVirtualLabProjects(virtualLabId);
+  atomWithRefresh<Promise<VirtualLabAPIListData<Project>>>(async () => {
+    const response = await getVirtualLabProjects(virtualLabId);
 
-      return response.data;
-    }
-  )
+    return response.data;
+  })
 );
 
 export const virtualLabProjectDetailsAtomFamily = atomFamily(
