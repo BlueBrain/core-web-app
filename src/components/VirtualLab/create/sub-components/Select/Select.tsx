@@ -6,7 +6,6 @@ import styles from './select.module.css';
 export interface SelectProps<T extends string> {
   className?: string;
   label: string;
-  placeholder?: string;
   options: Record<T, string> | string[];
   value: string;
   onChange(value: T): void;
@@ -15,7 +14,6 @@ export interface SelectProps<T extends string> {
 export function Select<T extends string>({
   className,
   label,
-  placeholder,
   options,
   value,
   onChange,
@@ -28,7 +26,7 @@ export function Select<T extends string>({
   return (
     <div className={classNames(styles.main, className)}>
       <label htmlFor={id}>{label}</label>
-      <select id={id} placeholder={placeholder} value={value} onChange={handleChange}>
+      <select id={id} value={value} onChange={handleChange}>
         {Object.keys(items).map((key) => (
           <option key={key} value={key}>
             {items[key]}

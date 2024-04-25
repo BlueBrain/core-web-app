@@ -23,7 +23,7 @@ const customJestConfig = {
   },
   testPathIgnorePatterns: ['__tests__/__utils__', '__tests__/__server__/*'],
   setupFiles: ['./global.mock.js'],
-  setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'], // Provides utilities for expectations like "toBeInTheDocument"/,
+  setupFilesAfterEnv: ['@testing-library/jest-dom'], // Provides utilities for expectations like "toBeInTheDocument"/,
   testEnvironmentOptions: {
     customExportConditions: [''],
   },

@@ -43,7 +43,7 @@ export default function BrainConfigSelectorPage() {
             defaultValue={campaignDescription}
             onChange={(e) => setCampaignDescription(e.target.value)}
             placeholder="Simulation campaign description..."
-            className="min-h-10 block w-full p-3 text-black"
+            className="block min-h-10 w-full p-3 text-black"
             rows={4}
           />
           <RequiredMessage text={campaignDescription} fieldName="description" />

@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import { Titillium_Web } from 'next/font/google';
+
 import Providers from './providers';
 import Feedback from '@/components/Feedback';
 import '@/styles/globals.scss';
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" className={`${titilliumWeb.variable} font-sans`}>
       <body>
         <Providers>
-          {children}
+          <Suspense fallback={null}>{children}</Suspense>
           <Feedback />
         </Providers>
       </body>
