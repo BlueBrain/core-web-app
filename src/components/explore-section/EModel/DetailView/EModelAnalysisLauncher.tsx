@@ -7,7 +7,6 @@ import { Analysis } from '@/app/explore/(content)/simulation-campaigns/shared';
 import { createWorkflowConfigResource, fetchResourceById } from '@/api/nexus';
 import { composeUrl } from '@/util/nexus';
 import { launchWorkflowTask, launchUnicoreWorkflowSetup } from '@/services/bbp-workflow';
-import { EModelResource } from '@/types/explore-section/delta-model';
 import { useSessionAtomValue, useUnwrappedValue } from '@/hooks/hooks';
 import useResourceInfoFromPath from '@/hooks/useResourceInfoFromPath';
 import { detailFamily } from '@/state/explore-section/detail-view-atoms';
@@ -17,7 +16,7 @@ import { useWorkflowAuth } from '@/components/WorkflowLauncherBtn';
 export default function Launcher({ analysis }: { analysis?: Analysis }) {
   const { ensureWorkflowAuth } = useWorkflowAuth();
   const resourceInfo = useResourceInfoFromPath();
-  const eModel = useUnwrappedValue<Promise<EModelResource>>(detailFamily(resourceInfo));
+  const eModel = useUnwrappedValue(detailFamily(resourceInfo));
   const session = useSessionAtomValue();
   const [report, fetching] = useCumulativeAnalysisReports(eModel?._incoming, analysis?.['@id']);
   const [launching, setLaunching] = useState(false);
