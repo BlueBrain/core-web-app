@@ -490,3 +490,36 @@ export const getLicenseByIdQuery = (licenseId: string) => ({
     },
   },
 });
+
+export const getPaperListQuery = (vlabId: string, projectId: string, searchString: string = '') => ({
+  size: DEFAULT_SIZE,
+  query: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            must: { term: { _deprecated: false } },
+          },
+        },
+        {
+          bool: {
+            must: { term: { vlabId } },
+          },
+        },
+        {
+          bool: {
+            must: { term: { projectId } },
+          },
+        },
+        {
+          bool: {
+            must: { term: { '@type': 'Paper' } },
+          },
+        },
+        idExistsFilter,
+      ],
+      must: createSearchStringQuery(searchString),
+    },
+  },
+  sort: searchString ? undefined : [defaultCreationDateSort],
+});

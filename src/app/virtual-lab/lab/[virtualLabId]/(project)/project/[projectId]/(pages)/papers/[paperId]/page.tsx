@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const Editor = dynamic(() => import('@/components/PaperEditor'), { ssr: false });
+const Editor = dynamic(() => import('@/components/papers/PaperEditor'), { ssr: false });
 
 function PaperPage() {
   return (

@@ -711,3 +711,18 @@ export interface SingleNeuronSimulation extends Entity {
 }
 
 export interface SingleNeuronSimulationResource extends ResourceMetadata, SingleNeuronSimulation {}
+
+export interface Paper extends Entity {
+  '@type': ['Paper', 'Entity'];
+  name: string;
+  description: string;
+  tags: string[];
+
+  // TODO: remove virtualLabId and projectId properties when vlabs/project data separation is done.
+  virtualLabId: string;
+  projectId: string;
+
+  distribution: Distribution;
+}
+
+export interface PaperResource extends ResourceMetadata, Paper {}

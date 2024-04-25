@@ -411,26 +411,31 @@ export default function ToolbarPlugin() {
             {
               label: 'Horizontal Rule',
               key: 'horizontalRule',
+              disabled: true,
               icon: <LineOutlined />,
             },
             {
               label: 'Page Break',
               key: 'pageBreak',
+              disabled: true,
               icon: <ScissorOutlined />,
             },
             {
               label: 'Image',
               key: 'image',
+              disabled: true,
               icon:<FileImageOutlined />,
             },
             {
               label: 'Inline image',
               key: 'inlineImage',
+              disabled: true,
               icon: <FileImageOutlined />,
             },
             {
               label: 'Table',
               key: 'table',
+              disabled: true,
               icon: <TableOutlined />,
             },
           ],
