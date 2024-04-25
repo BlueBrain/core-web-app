@@ -52,14 +52,14 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   );
 }
 
-export default function VirtualLabSettingsComponent({ id }: { id: string }) {
+export default function VirtualLabSettingsComponent({ id, token }: { id: string; token: string }) {
   const router = useRouter();
   const userIsAdmin = true;
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
   const updateVirtualLab = async (formData: Partial<VirtualLab>): Promise<void> => {
-    const { data } = await patchVirtualLab(formData, id);
+    const { data } = await patchVirtualLab(formData, id, token);
     const { virtual_lab: virtualLab } = data;
 
     setVirtualLabDetail(
@@ -70,7 +70,7 @@ export default function VirtualLabSettingsComponent({ id }: { id: string }) {
   };
   const updateBilling = async (_update: Partial<VirtualLab>): Promise<void> => {};
   const onDeleteVirtualLab = async (): Promise<VirtualLab> => {
-    const { data } = await deleteVirtualLab(id);
+    const { data } = await deleteVirtualLab(id, token);
     const { virtual_lab: virtualLab } = data;
 
     virtualLabDetailAtomFamily.remove(id);
@@ -214,7 +214,7 @@ export default function VirtualLabSettingsComponent({ id }: { id: string }) {
     {
       content: !!plansWithDescriptions && (
         <PlanPanel
-          currentPlan={virtualLabDetail.data?.plan_id}
+          currentPlan={virtualLabDetail.data?.plan_id || 0}
           items={plansWithDescriptions}
           userIsAdmin={userIsAdmin}
           onChange={updateVirtualLab}
@@ -322,7 +322,7 @@ export default function VirtualLabSettingsComponent({ id }: { id: string }) {
         <ArrowLeftOutlined /> Back to
       </Button>
       <div className="flex flex-col gap-1">
-        <HeaderPanel virtualLab={virtualLabDetail.data} />
+        {virtualLabDetail.data && <HeaderPanel virtualLab={virtualLabDetail.data} />}
         <Collapse
           accordion
           expandIconPosition="end"
