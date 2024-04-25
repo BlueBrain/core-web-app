@@ -29,7 +29,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
     if (virtualLab.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (virtualLab.state === 'hasData') {
+    if (virtualLab.state === 'hasData' && virtualLab.data) {
       return (
         <div className="text-5xl font-bold uppercase text-primary-5">{virtualLab.data.name}</div>
       );
@@ -45,7 +45,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
     if (projects.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (projects.state === 'hasData') {
+    if (projects.state === 'hasData' && projects.data) {
       return projects.data.results.length;
     }
     return null;
@@ -58,7 +58,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
     if (virtualLab.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (virtualLab.state === 'hasData') {
+    if (virtualLab.state === 'hasData' && virtualLab.data) {
       return virtualLab.data.users.length;
     }
     return null;

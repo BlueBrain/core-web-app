@@ -13,7 +13,7 @@ function VirtualLabProjects({ labId }: { labId: string }) {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
-  if (virtualLabProjectsLoadable.state === 'hasData') {
+  if (virtualLabProjectsLoadable.state === 'hasData' && virtualLabProjectsLoadable.data) {
     return (
       <div className="w-[16.1rem]">
         <h1 className="text-md mb-2 font-thin uppercase text-primary-4">Projects</h1>
@@ -58,7 +58,7 @@ export default function LabsAndProjectsCollapse() {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
-  if (virtualLabsLoadable.state === 'hasData') {
+  if (virtualLabsLoadable.state === 'hasData' && virtualLabsLoadable.data) {
     const items = virtualLabsLoadable.data.results.map((lab) => ({
       key: lab.id,
       header: (

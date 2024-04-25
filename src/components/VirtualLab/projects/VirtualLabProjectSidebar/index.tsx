@@ -27,7 +27,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
     if (projectDetails.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (projectDetails.state === 'hasData') {
+    if (projectDetails.state === 'hasData' && projectDetails.data) {
       return projectDetails.data.name;
     }
     return null;
@@ -37,7 +37,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
     if (projectUsers.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (projectUsers.state === 'hasData') {
+    if (projectUsers.state === 'hasData' && projectUsers.data) {
       return projectUsers.data.length;
     }
     return null;
