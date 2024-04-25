@@ -12,7 +12,7 @@ Object.defineProperty(global, 'crypto', {
 describe('util/id.test.ts', () => {
   describe('Nexus configuration', () => {
     it('correct endpoint', () => {
-      expect(nexus.url).toBe('https://bbp.epfl.ch/nexus/v1');
+      expect(nexus.url).toBe('https://sbo-nexus-delta.shapes-registry.org/v1');
     });
     it('correct id base url', () => {
       expect(nexus.defaultIdBaseUrl).toBe(
