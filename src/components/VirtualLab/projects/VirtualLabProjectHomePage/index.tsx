@@ -40,8 +40,8 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
     if (projectUsers.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (projectUsers.state === 'hasData' && projectUsers.data) {
-      return projectUsers.data.map((user) => (
+    if (projectUsers.state === 'hasData') {
+      return projectUsers.data?.map((user) => (
         <Member
           key={user.id}
           firstName="TO BE REPLACED"
@@ -63,8 +63,8 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
     if (projectUsers.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (projectUsers.state === 'hasData' && projectUsers.data) {
-      return projectUsers.data.length;
+    if (projectUsers.state === 'hasData') {
+      return projectUsers.data?.length;
     }
     return null;
   };

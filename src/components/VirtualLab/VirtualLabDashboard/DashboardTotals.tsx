@@ -17,7 +17,7 @@ export default function DashboardTotals() {
     if (totals.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (totals.state === 'hasData' && totals.data !== undefined) {
+    if (totals.state === 'hasData') {
       return totals.data;
     }
     if (totals.state === 'hasError') {

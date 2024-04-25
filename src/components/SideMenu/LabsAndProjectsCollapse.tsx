@@ -13,11 +13,11 @@ function VirtualLabProjects({ labId }: { labId: string }) {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
-  if (virtualLabProjectsLoadable.state === 'hasData' && virtualLabProjectsLoadable.data) {
+  if (virtualLabProjectsLoadable.state === 'hasData') {
     return (
       <div className="w-[16.1rem]">
         <h1 className="text-md mb-2 font-thin uppercase text-primary-4">Projects</h1>
-        {virtualLabProjectsLoadable.data.results.map((project) => (
+        {virtualLabProjectsLoadable.data?.results.map((project) => (
           <Link
             href={`/virtual-lab/lab/${labId}/project/${project.id}/home`}
             key={project.id}
@@ -58,8 +58,8 @@ export default function LabsAndProjectsCollapse() {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
-  if (virtualLabsLoadable.state === 'hasData' && virtualLabsLoadable.data) {
-    const items = virtualLabsLoadable.data.results.map((lab) => ({
+  if (virtualLabsLoadable.state === 'hasData') {
+    const items = virtualLabsLoadable.data?.results.map((lab) => ({
       key: lab.id,
       header: (
         <h3 className="w-[17.5rem] truncate text-xl font-semibold text-white" style={headerStyle}>
@@ -91,7 +91,7 @@ export default function LabsAndProjectsCollapse() {
           className="w-full"
           expandIcon={ExpandIcon}
         >
-          {items.map((item) => (
+          {items?.map((item) => (
             <Collapse.Panel key={item.key} header={item.header}>
               {item.children}
             </Collapse.Panel>

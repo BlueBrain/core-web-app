@@ -47,8 +47,8 @@ function ProjectsAmount({ virtualLabId }: Props) {
   if (projects.state === 'loading') {
     return <Spin indicator={<LoadingOutlined />} />;
   }
-  if (projects.state === 'hasData' && projects.data) {
-    return projects.data.results.length;
+  if (projects.state === 'hasData') {
+    return projects.data?.results.length;
   }
   return null;
 }

@@ -22,8 +22,8 @@ export default function VirtualLabAndProject({ id, name, description, createdAt 
     if (projects.state === 'loading') {
       return <Spin indicator={<LoadingOutlined />} />;
     }
-    if (projects.state === 'hasData' && projects.data) {
-      return projects.data.results.map((project) => (
+    if (projects.state === 'hasData') {
+      return projects.data?.results.map((project) => (
         <VirtualLabProjectItem key={project.id} project={project} />
       ));
     }
