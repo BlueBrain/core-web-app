@@ -69,12 +69,12 @@ export async function getUsersProjects(
 }
 
 export async function createProject(
-  { name, description }: { name: string; description: string },
+  { name, description, token }: { name: string; description: string; token: string },
   virtualLabId: string
 ): Promise<VlmResponse<{ project: Project }>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects`, {
     method: 'POST',
-    headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
+    headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name,
       description,

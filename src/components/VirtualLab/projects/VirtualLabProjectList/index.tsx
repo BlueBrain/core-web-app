@@ -11,6 +11,7 @@ import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
+import { useSession } from 'next-auth/react';
 
 function NewProjectModalFooter({
   close,
@@ -142,15 +143,19 @@ function NewProjectModal({
 }) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
+  const session = useSession();
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 
   const onSubmit = async () => {
+    if (!session.data) {
+      return;
+    }
     setLoading(true);
 
     const { name, description } = form.getFieldsValue();
 
-    return createProject({ name, description }, virtualLabId)
+    return createProject({ name, description, token: session.data.accessToken }, virtualLabId)
       .then((response) => {
         form.resetFields();
         setOpen(false);
