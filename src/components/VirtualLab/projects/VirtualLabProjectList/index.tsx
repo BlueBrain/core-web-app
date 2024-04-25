@@ -1,17 +1,17 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { Button, Collapse, ConfigProvider, Modal, Spin, Form, Input } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
 import { ComponentProps, ReactElement, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { loadable } from 'jotai/utils';
+import { loadable, unwrap } from 'jotai/utils';
 import { PlusOutlined, MinusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
-import { useSession } from 'next-auth/react';
 
 function NewProjectModalFooter({
   close,
@@ -320,22 +320,14 @@ function SearchProjects() {
 }
 
 export default function VirtualLabProjectList({ id }: { id: string }) {
-  const virtualLabProjects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
+  const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
   const setVirtualLabProjects = useSetAtom(virtualLabProjectsAtomFamily(id));
   const notification = useNotification();
 
-  if (virtualLabProjects.state === 'loading') {
+  if (!virtualLabProjects) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Spin size="large" indicator={<LoadingOutlined />} />
-      </div>
-    );
-  }
-
-  if (virtualLabProjects.state === 'hasError') {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="rounded-lg border p-8">Something went wrong when fetching projects</div>
       </div>
     );
   }
@@ -347,14 +339,14 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
           <div className="flex flex-row items-center gap-8">
             <div className="flex gap-2">
               <span className="text-primary-3">Total projects</span>
-              <span className="font-bold">{virtualLabProjects.data?.results.length}</span>
+              <span className="font-bold">{virtualLabProjects.results.length}</span>
             </div>
             <SearchProjects />
           </div>
           <NewProjectModal
             onFail={(error: string) => notification.error(`Project creation failed: ${error}`)}
             onSuccess={
-              virtualLabProjects.data
+              virtualLabProjects
                 ? (newProject: Project) => {
                     setVirtualLabProjects();
                     notification.success(`${newProject.name} has been created.`);
@@ -365,7 +357,7 @@ export default function VirtualLabProjectList({ id }: { id: string }) {
           />
         </div>
         <div className="flex flex-col gap-4">
-          {virtualLabProjects.data?.results.map((project) => (
+          {virtualLabProjects.results.map((project) => (
             <VirtualLabProjectItem key={project.id} project={project} />
           ))}
         </div>
