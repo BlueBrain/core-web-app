@@ -60,5 +60,38 @@ export async function getUsersProjects(): Promise<VlmResponse<VirtualLabAPIListD
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }
+
   return response.json();
+}
+
+export async function createProject(
+  { name, description }: { name: string; description: string },
+  virtualLabId: string
+): Promise<VlmResponse<{ project: Project }>> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects`, {
+    method: 'POST',
+    headers: { ...createVLApiHeaders(temporaryToken), 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name,
+      description,
+      include_members: [
+        {
+          email: 'harry.anderson@epfl.ch', // TODO: Update this
+          role: 'admin',
+        },
+      ],
+    }),
+  });
+
+  if (response.ok) {
+    return response.json();
+  }
+
+  if (response.status === 400) {
+    const { message } = await response.json();
+
+    throw new Error(message);
+  }
+
+  throw new Error(`Undocumented error, ${response.status}`);
 }
