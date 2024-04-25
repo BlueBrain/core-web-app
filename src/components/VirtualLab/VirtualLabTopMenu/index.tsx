@@ -30,7 +30,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
         <Link className="w-52 border-r border-primary-7 p-4 font-bold" href="/about">
           About
         </Link>
-        <div className="flex w-52 flex-row justify-between border-r border-primary-7 p-4 font-bold">
+        <div className="flex w-52 flex-row justify-between border-r border-primary-7 px-2 font-bold">
           <span className="font-bold">{session?.user.name}</span>
           <UserOutlined className="mr-2 text-primary-4" />
         </div>

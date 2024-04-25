@@ -1,17 +1,18 @@
-import { useAtomValue } from 'jotai';
+'use client';
+
+import { useSession } from 'next-auth/react';
 
 import VirtualLabSettingsComponent from '@/components/VirtualLab/VirtualLabSettingsComponent';
-import sessionAtom from '@/state/session';
 import { ServerSideComponentProp } from '@/types/common';
 
 export default function VirtualLabAdminPage({
   params,
 }: ServerSideComponentProp<{ virtualLabId: string }>) {
   const { virtualLabId } = params;
-  const session = useAtomValue(sessionAtom);
+  const session = useSession();
 
-  if (session) {
-    return <VirtualLabSettingsComponent id={virtualLabId} token={session.accessToken} />;
+  if (session.data) {
+    return <VirtualLabSettingsComponent id={virtualLabId} token={session.data.accessToken} />;
   }
   return null;
 }
