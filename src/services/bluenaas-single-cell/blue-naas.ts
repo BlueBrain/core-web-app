@@ -52,6 +52,7 @@ export default class BlueNaas {
     container: HTMLDivElement,
     modelId: string,
     simConfig: SimConfig,
+    token: string,
     initialCurrents: InitialCurrents,
     config: BlueNaasConfig = {}
   ) {
@@ -59,7 +60,7 @@ export default class BlueNaas {
     this.config = config;
 
     this.renderer = new Renderer(container, config);
-    this.ws = new Ws(blueNaas.wsUrl, this.onMessage);
+    this.ws = new Ws(blueNaas.wsUrl, token, this.onMessage);
     this.thresholdCurrent = initialCurrents.thresholdCurrent;
     this.ws.send(BlueNaasCmd.SET_MODEL, {
       model_id: modelId,
