@@ -26,12 +26,12 @@ export default function VirtualLabPageLayout({
         </Suspense>
       </ErrorBoundary>
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
-        <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
-          <div className="ml-6">
+        <div className="ml-6">
+          <Suspense fallback={<Spin indicator={<LoadingOutlined />} />}>
             <VirtualLabTopMenu />
             {children}
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
       </ErrorBoundary>
     </div>
   );

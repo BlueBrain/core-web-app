@@ -1,3 +1,5 @@
+'use client';
+
 import { Collapse, CollapseProps, ConfigProvider } from 'antd';
 
 type Props = {

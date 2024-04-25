@@ -34,7 +34,7 @@ export default function VirtualLabHomePage({ id }: Props) {
             withEditButton
           />
         </div>
-        <BudgetPanel total={virtualLabDetail.budget || 0} totalSpent={300} remaining={350} />
+        <BudgetPanel total={virtualLabDetail.budget} totalSpent={300} remaining={350} />
         <div className="mt-10 flex flex-col gap-5">
           <div className="font-bold uppercase">Discover OBP</div>
           <div className="flex flex-row gap-3">
