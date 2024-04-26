@@ -5,7 +5,7 @@ import { RightOutlined, ArrowRightOutlined, LoadingOutlined } from '@ant-design/
 import Link from 'next/link';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { virtualLabsOfUserAtom } from '@/state/virtual-lab/lab';
-import { basePath } from '@/config';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 function VirtualLabProjects({ labId }: { labId: string }) {
   const virtualLabProjectsLoadable = useAtomValue(loadable(virtualLabProjectsAtomFamily(labId)));
@@ -20,7 +20,7 @@ function VirtualLabProjects({ labId }: { labId: string }) {
         <h1 className="text-md mb-2 font-thin uppercase text-primary-4">Projects</h1>
         {virtualLabProjectsLoadable.data?.results.map((project) => (
           <Link
-            href={`${basePath}/virtual-lab/lab/${labId}/project/${project.id}/home`}
+            href={`${generateVlProjectUrl(labId, project.id)}/home`}
             key={project.id}
             className="flex items-center justify-between text-lg font-semibold text-white"
           >
