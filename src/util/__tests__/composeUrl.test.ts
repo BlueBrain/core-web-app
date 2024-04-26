@@ -62,7 +62,7 @@ describe('Files', () => {
   const fileUrlWithRev = `${fileUrlNoRev}${revParam}${rev}`;
 
   const fullFileUrlWithRev =
-    'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F8a9b7a11-3629-48d4-aeba-bd991c1696bd?rev=1013';
+    'https://sbo-nexus-delta.shapes-registry.org/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F8a9b7a11-3629-48d4-aeba-bd991c1696bd?rev=1013';
 
   it('code encoding correct url', () => {
     expect(fileUrlWithRev).toBe(fullFileUrlWithRev);
