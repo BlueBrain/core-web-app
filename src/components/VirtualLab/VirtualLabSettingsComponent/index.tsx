@@ -1,18 +1,19 @@
 'use client';
 
-import { Button, Collapse, ConfigProvider, Spin } from 'antd';
-import { useRouter } from 'next/navigation';
-import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ReactNode } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
-import { AdminPanelProjectList } from '../projects/VirtualLabProjectList';
+import { Button, Collapse, ConfigProvider, Spin } from 'antd';
+import { useRouter } from 'next/navigation';
+import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+
+import ProjectsPanel from './ProjectsPanel';
 import ComputeTimeVisualization from './ComputeTimeVisualization';
-import FormPanel, { renderInput, renderTextArea } from './InformationPanel';
+import FormPanel, { renderInput, renderTextArea } from './FormPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
-import { VALID_EMAIL_REGEXP } from '@/util/utils';
 import { deleteVirtualLab, patchVirtualLab } from '@/services/virtual-lab/labs';
+import { VALID_EMAIL_REGEXP } from '@/util/utils';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
 import { virtualLabDetailAtomFamily, virtualLabPlansAtom } from '@/state/virtual-lab/lab';
@@ -58,6 +59,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
+
   const updateVirtualLab = async (formData: Partial<VirtualLab>): Promise<void> => {
     const { data } = await patchVirtualLab(formData, id, token);
     const { virtual_lab: virtualLab } = data;
@@ -68,7 +70,6 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       })
     );
   };
-  const updateBilling = async (_update: Partial<VirtualLab>): Promise<void> => {};
   const onDeleteVirtualLab = async (): Promise<VirtualLab> => {
     const { data } = await deleteVirtualLab(id, token);
     const { virtual_lab: virtualLab } = data;
@@ -173,13 +174,12 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     {
       content: (
         <FormPanel
-          allowEdit={userIsAdmin}
           initialValues={{
             name: virtualLabDetail.data?.name,
             reference_email: virtualLabDetail.data?.reference_email,
             description: virtualLabDetail.data?.description,
           }}
-          onSubmit={updateVirtualLab}
+          onFinish={updateVirtualLab}
           items={[
             {
               children: renderInput,
@@ -224,14 +224,13 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       title: 'Plan',
     },
     {
-      content: <AdminPanelProjectList id={id} />,
+      content: <ProjectsPanel expandIcon={ExpandIcon} virtualLabId={id} />,
       key: 'budgets',
       title: 'Budgets',
     },
     {
       content: (
         <FormPanel
-          allowEdit={userIsAdmin}
           className="grid grid-cols-2"
           initialValues={mockBilling}
           items={[
@@ -274,7 +273,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
               required: true,
             },
           ]}
-          onSubmit={updateBilling}
+          onFinish={() => new Promise(() => {})}
         />
       ),
       key: 'billing',
