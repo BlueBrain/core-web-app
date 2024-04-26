@@ -491,7 +491,11 @@ export const getLicenseByIdQuery = (licenseId: string) => ({
   },
 });
 
-export const getPaperListQuery = (vlabId: string, projectId: string, searchString: string = '') => ({
+export const getPaperListQuery = (
+  virtualLabId: string,
+  projectId: string,
+  searchString: string = ''
+) => ({
   size: DEFAULT_SIZE,
   query: {
     bool: {
@@ -503,7 +507,7 @@ export const getPaperListQuery = (vlabId: string, projectId: string, searchStrin
         },
         {
           bool: {
-            must: { term: { vlabId } },
+            must: { term: { virtualLabId } },
           },
         },
         {

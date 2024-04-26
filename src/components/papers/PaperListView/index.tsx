@@ -15,7 +15,8 @@ import { createFile, createResource, queryES } from '@/api/nexus';
 import { getPaperListQuery } from '@/queries/es';
 import sessionAtom from '@/state/session';
 import { PaperResource } from '@/types/nexus';
-import { createDistribution } from '@/util/nexus';
+import { collapseId, createDistribution } from '@/util/nexus';
+import { useRouter } from 'next/navigation';
 
 
 // State
@@ -285,6 +286,8 @@ export default function PaperListView({ virtualLabId, projectId }: PaperListView
   const paperList = useAtomValue(useMemo(() => unwrap(paperListAtom, () => []), [paperListAtom]));
   const refreshPaperList = useSetAtom(paperListAtom);
 
+  const router = useRouter();
+
   const { createModal, contextHolder } = useCreatePaperModal(virtualLabId, projectId);
 
   useEffect(() => {
@@ -310,7 +313,12 @@ export default function PaperListView({ virtualLabId, projectId }: PaperListView
         <Button
           className="mt-8"
           icon={<PlusOutlined />}
-          onClick={() => createModal((createdPaper) => refreshPaperList())}
+          onClick={() => createModal((createdPaper) => {
+            refreshPaperList();
+
+            const paperCollapsedId = collapseId(createdPaper['@id']);
+            router.push(`/virtual-lab/lab/${virtualLabId}/proect/${projectId}/papers/${paperCollapsedId}`);
+          })}
         >Create new paper</Button>
       </div>
 
