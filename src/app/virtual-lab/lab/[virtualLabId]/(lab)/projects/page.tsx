@@ -1,3 +1,5 @@
+'use client';
+
 import VirtualLabProjectList from '@/components/VirtualLab/projects/VirtualLabProjectList';
 import { ServerSideComponentProp } from '@/types/common';
 

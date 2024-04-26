@@ -2,6 +2,7 @@ import { atom } from 'jotai';
 import { atomFamily, atomWithRefresh } from 'jotai/utils';
 import isEqual from 'lodash/isEqual';
 
+import sessionAtom from '../session';
 import { Project } from '@/types/virtual-lab/projects';
 import { VirtualLabAPIListData } from '@/types/virtual-lab/common';
 import {
@@ -13,8 +14,12 @@ import {
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
-  atomWithRefresh<Promise<VirtualLabAPIListData<Project>>>(async () => {
-    const response = await getVirtualLabProjects(virtualLabId);
+  atomWithRefresh<Promise<VirtualLabAPIListData<Project> | undefined>>(async (get) => {
+    const session = get(sessionAtom);
+    if (!session) {
+      return;
+    }
+    const response = await getVirtualLabProjects(virtualLabId, session?.accessToken);
 
     return response.data;
   })
@@ -22,8 +27,16 @@ export const virtualLabProjectsAtomFamily = atomFamily((virtualLabId: string) =>
 
 export const virtualLabProjectDetailsAtomFamily = atomFamily(
   ({ virtualLabId, projectId }: { virtualLabId: string; projectId: string }) =>
-    atom<Promise<Project>>(async () => {
-      const response = await getVirtualLabProjectDetails(virtualLabId, projectId);
+    atom<Promise<Project | undefined>>(async (get) => {
+      const session = get(sessionAtom);
+      if (!session) {
+        return;
+      }
+      const response = await getVirtualLabProjectDetails(
+        virtualLabId,
+        projectId,
+        session.accessToken
+      );
       return response.data.project;
     }),
   isEqual
@@ -31,19 +44,37 @@ export const virtualLabProjectDetailsAtomFamily = atomFamily(
 
 export const virtualLabProjectUsersAtomFamily = atomFamily(
   ({ virtualLabId, projectId }: { virtualLabId: string; projectId: string }) =>
-    atom<Promise<VirtualLabMember[]>>(async () => {
-      const response = await getVirtualLabProjectUsers(virtualLabId, projectId);
+    atom<Promise<VirtualLabMember[] | undefined>>(async (get) => {
+      const session = get(sessionAtom);
+      if (!session) {
+        return;
+      }
+      const response = await getVirtualLabProjectUsers(
+        virtualLabId,
+        projectId,
+        session.accessToken
+      );
       return response.data.users;
     }),
   isEqual
 );
 
-export const userProjectsAtom = atom<Promise<VirtualLabAPIListData<Project>>>(async () => {
-  const response = await getUsersProjects();
-  return response.data;
-});
+export const userProjectsAtom = atom<Promise<VirtualLabAPIListData<Project> | undefined>>(
+  async (get) => {
+    const session = get(sessionAtom);
+    if (!session) {
+      return;
+    }
+    const response = await getUsersProjects(session.accessToken);
+    return response.data;
+  }
+);
 
-export const userProjectsTotalAtom = atom<Promise<number>>(async (get) => {
+export const userProjectsTotalAtom = atom<Promise<number | undefined>>(async (get) => {
+  const session = get(sessionAtom);
+  if (!session) {
+    return;
+  }
   const projects = await get(userProjectsAtom);
-  return projects.total;
+  return projects?.total || 0;
 });

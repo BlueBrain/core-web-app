@@ -20,20 +20,22 @@ export default function VirtualLabSelect() {
   if (virtualLabs.state === 'hasError') {
     return <>Something went wrong when fetching virtual labs</>;
   }
-
-  return (
-    <div className="flex flex-col gap-5">
-      {virtualLabs.data.results.map((vl) => (
-        <VirtualLabBanner
-          key={vl.id}
-          id={vl.id}
-          name={vl.name}
-          description={vl.description}
-          users={vl.users}
-          createdAt={vl.created_at}
-          withLink
-        />
-      ))}
-    </div>
-  );
+  if (virtualLabs.data) {
+    return (
+      <div className="flex flex-col gap-5">
+        {virtualLabs.data.results.map((vl) => (
+          <VirtualLabBanner
+            key={vl.id}
+            id={vl.id}
+            name={vl.name}
+            description={vl.description}
+            users={vl.users}
+            createdAt={vl.created_at}
+            withLink
+          />
+        ))}
+      </div>
+    );
+  }
+  return null;
 }

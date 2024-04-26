@@ -23,7 +23,7 @@ export default function VirtualLabAndProject({ id, name, description, createdAt 
       return <Spin indicator={<LoadingOutlined />} />;
     }
     if (projects.state === 'hasData') {
-      return projects.data.results.map((project) => (
+      return projects.data?.results.map((project) => (
         <VirtualLabProjectItem key={project.id} project={project} />
       ));
     }

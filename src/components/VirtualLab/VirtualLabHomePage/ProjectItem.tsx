@@ -9,7 +9,7 @@ type Props = {
 export default function ProjectItem({ title, description, buttonHref }: Props) {
   const router = useRouter();
   return (
-    <div className="max-w-[320px] rounded bg-white p-6 text-primary-8">
+    <div className="w-[350px] rounded bg-white p-6 text-primary-8">
       <div className="text-xl font-bold">{title}</div>
       <div className="truncate">{description}</div>
       <button

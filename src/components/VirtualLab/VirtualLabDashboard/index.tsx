@@ -18,7 +18,7 @@ export default function VirtualLabDashboard() {
       return <Spin indicator={<LoadingOutlined />} />;
     }
     if (virtualLabs.state === 'hasData') {
-      return virtualLabs.data.results.map((vl) => (
+      return virtualLabs.data?.results.map((vl) => (
         <VirtualLabAndProject
           key={vl.id}
           id={vl.id}

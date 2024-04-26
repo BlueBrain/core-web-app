@@ -41,7 +41,10 @@ export default function withVirtualLabUsers(
         </div>
       );
     }
-    return <WrappedComponent users={users.data} />;
+    if (users.data) {
+      return <WrappedComponent users={users.data} />;
+    }
+    return <WrappedComponent users={[]} />;
   }
   return WithVirtualLabUsers;
 }
