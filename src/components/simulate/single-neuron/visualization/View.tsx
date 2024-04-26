@@ -199,13 +199,13 @@ export default function EModelInteractiveView() {
   // TODO: remove this when model fetchable from backend
   useEffect(() => {
     setSelectedEModel({
-      name: 'EM__fa285b7__cADpyr__12',
-      id: 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/c8181452-b108-4b99-a176-786fb8f6b19b',
+      name: 'EM__1372346__cADpyr__13',
+      id: 'https://bbp.epfl.ch/data/bbp/mmb-point-neuron-framework-model/e990f748-a856-4be0-a7d3-9f0bc336447c',
       eType: 'cADpyr',
-      mType: 'L2_TPC:A',
+      mType: 'L5_TPC:A',
       isOptimizationConfig: false,
-      rev: 3,
-      brainRegion: 'http://api.brain-map.org/api/v2/data/Structure/558',
+      rev: 10,
+      brainRegion: 'http://api.brain-map.org/api/v2/data/Structure/8',
     });
   }, [setSelectedEModel]);
 
