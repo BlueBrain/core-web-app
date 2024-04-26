@@ -16,7 +16,7 @@ describe('Resource', () => {
   const resourceUrlWithRev = `${resourceUrlNoRev}${revParam}${rev}`;
 
   const fullResourceUrlWithRev =
-    'https://sbo-nexus-delta.shapes-registry.org/v1/resources/bbp/mmb-point-neuron-framework-model/_/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fcellcompositionconfigs%2F20000425-4ecf-4968-92a0-ad68feb5ba47?rev=989';
+    'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/_/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fcellcompositionconfigs%2F20000425-4ecf-4968-92a0-ad68feb5ba47?rev=989';
 
   it('code encoding correct url', () => {
     expect(resourceUrlWithRev).toBe(fullResourceUrlWithRev);
@@ -62,7 +62,7 @@ describe('Files', () => {
   const fileUrlWithRev = `${fileUrlNoRev}${revParam}${rev}`;
 
   const fullFileUrlWithRev =
-    'https://sbo-nexus-delta.shapes-registry.org/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F8a9b7a11-3629-48d4-aeba-bd991c1696bd?rev=1013';
+    'https://bbp.epfl.ch/nexus/v1/files/bbp/mmb-point-neuron-framework-model/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F8a9b7a11-3629-48d4-aeba-bd991c1696bd?rev=1013';
 
   it('code encoding correct url', () => {
     expect(fileUrlWithRev).toBe(fullFileUrlWithRev);
