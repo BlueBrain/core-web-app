@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Button, Modal } from 'antd';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { InviteErrorCodes } from '@/types/virtual-lab/invites';
-import { basePath } from '@/config';
 
 const getInviteErrorMessage = (code?: string): string => {
   try {
