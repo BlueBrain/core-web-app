@@ -5,11 +5,11 @@ import { Button } from '../Button';
 import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
 import { EMPTY_VIRTUAL_LAB } from '../../constants';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 import styles from './virtual-lab-create-congrats.module.css';
 // eslint-disable-next-line import/order
 import commonStyles from '../../common.module.css';
-import { basePath } from '@/config';
 
 export interface VirtualLabCreateCongratsProps {
   className?: string;

@@ -9,6 +9,7 @@ import {
   virtualLabProjectDetailsAtomFamily,
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
+import { basePath } from '@/config';
 
 type Props = {
   virtualLabId: string;

@@ -1,7 +1,7 @@
 'use client';
 
-import { basePath } from '@/config';
 import { SwapOutlined } from '@ant-design/icons';
+import { basePath } from '@/config';
 
 export default function VirtualLabsSelect() {
   return (
