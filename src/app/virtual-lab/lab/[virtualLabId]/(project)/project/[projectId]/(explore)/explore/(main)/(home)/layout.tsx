@@ -7,9 +7,11 @@ import SideMenu from '@/components/SideMenu';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
 import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
 import { Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { generateLabUrl } from '@/util/virtual-lab/urls';
 
 export default function VirtualLabProjectLayout({ children, params }: LabProjectLayoutProps) {
-  const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;
+  const labUrl = generateLabUrl(params.virtualLabId);
+
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;
   return (
     <div className="inset-0 z-0 mb-10 mr-10 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 bg-center bg-no-repeat pr-10 text-white bg-blend-lighten [background-size:70%]">

@@ -9,6 +9,7 @@ import {
   virtualLabProjectDetailsAtomFamily,
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
+import { basePath } from '@/config';
 
 type Props = {
   virtualLabId: string;
@@ -77,7 +78,7 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
         {renderProjectTitle()}
       </h1>
       <a
-        href={`/virtual-lab/lab/${virtualLabId}/projects`}
+        href={`${basePath}/virtual-lab/lab/${virtualLabId}/projects`}
         className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
       >
         <span>Switch project</span> <SwapOutlined />

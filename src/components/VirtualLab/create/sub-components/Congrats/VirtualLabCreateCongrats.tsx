@@ -5,6 +5,7 @@ import { Button } from '../Button';
 import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
 import { EMPTY_VIRTUAL_LAB } from '../../constants';
 import { classNames } from '@/util/utils';
+import { basePath } from '@/config';
 
 import styles from './virtual-lab-create-congrats.module.css';
 // eslint-disable-next-line import/order
@@ -29,7 +30,7 @@ export function VirtualLabCreateCongrats({ className }: VirtualLabCreateCongrats
             </header>
             <h1>Congratulations! Your virtual lab has been created.</h1>
             <Button
-              href={`/virtual-lab/lab/${lab.id}`}
+              href={`${basePath}/virtual-lab/lab/${lab.id}`}
               variant="primary"
               onClick={resetCurrentVirtualLab}
             >
@@ -37,7 +38,7 @@ export function VirtualLabCreateCongrats({ className }: VirtualLabCreateCongrats
             </Button>
           </>
         ) : (
-          <Button href="/virtual-lab/create/information" variant="text">
+          <Button href={`${basePath}/virtual-lab/create/information`} variant="text">
             Please create a Virtual Lab
           </Button>
         )}

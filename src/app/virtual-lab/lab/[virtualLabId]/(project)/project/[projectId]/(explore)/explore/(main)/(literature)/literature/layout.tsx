@@ -8,11 +8,13 @@ import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelec
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
+import { generateLabUrl } from '@/util/virtual-lab/urls';
 
 export default function GenericLayout({ children, params }: LabProjectLayoutProps) {
   useSetBrainRegionFromQuery();
 
-  const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;
+  const labUrl = generateLabUrl(params.virtualLabId);
+
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;
 
   return (
