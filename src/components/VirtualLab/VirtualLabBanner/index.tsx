@@ -42,7 +42,7 @@ export default function VirtualLabBanner({
           <div>
             <div className="text-primary-2">Virtual Lab name</div>
             {withLink ? (
-              <a className="text-5xl font-bold" href={`/virtual-lab/lab/${id}/lab`}>
+              <a className="text-5xl font-bold" href={`${basePath}/virtual-lab/lab/${id}/lab`}>
                 {name}
               </a>
             ) : (

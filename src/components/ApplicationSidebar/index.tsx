@@ -177,7 +177,7 @@ export function DefaultAccountPanel({ expanded }: { expanded: boolean }) {
       </div>
 
       <Link
-        href="/virtual-lab/create/information"
+        href={`${basePath}/virtual-lab/create/information`}
         className="inline-flex w-full items-center justify-between p-5"
       >
         <span className="font-medium text-white">Create virtual lab</span>

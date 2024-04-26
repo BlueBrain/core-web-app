@@ -2,11 +2,12 @@ import { captureException } from '@sentry/nextjs';
 
 import { InviteData, InviteErrorCodes } from '@/types/virtual-lab/invites';
 import { VlmError, isVlmError } from '@/types/virtual-lab/common';
+import { basePath } from '@/config';
 
 const errorPath = '/';
 const projectPath = (labId: string, projectId: string) =>
-  `/virtual-lab/lab/${labId}/project/${projectId!}/home`;
-const labPath = (labId: string) => `/virtual-lab/lab/${labId}/lab`;
+  `${basePath}/virtual-lab/lab/${labId}/project/${projectId!}/home`;
+const labPath = (labId: string) => `${basePath}/virtual-lab/lab/${labId}/lab`;
 
 export const getLabUrl = (vlmData: InviteData): string => {
   const { status, virtual_lab_id: labId, origin } = vlmData;

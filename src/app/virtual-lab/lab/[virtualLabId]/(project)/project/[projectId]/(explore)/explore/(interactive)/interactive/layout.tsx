@@ -7,7 +7,7 @@ import { useSetAtom } from 'jotai';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import SideMenu from '@/components/SideMenu';
 import { idAtom as brainModelConfigIdAtom } from '@/state/brain-model-config';
-import { defaultModelRelease } from '@/config';
+import { basePath, defaultModelRelease } from '@/config';
 import { useSetBrainRegionFromQuery } from '@/hooks/brain-region-panel';
 import { BrainRegionsSidebar } from '@/components/build-section/BrainRegionSelector';
 import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
@@ -23,7 +23,7 @@ export default function VirtualLabProjectInteractiveExploreLayout({
   // set Release 23.01 as the configuration of explore interactive
   useEffect(() => setConfigId(defaultModelRelease.id), [setConfigId]);
 
-  const labUrl = `/virtual-lab/lab/${params.virtualLabId}`;
+  const labUrl = `${basePath}/virtual-lab/lab/${params.virtualLabId}`;
   const labProjectUrl = `${labUrl}/project/${params.projectId}`;
 
   return (

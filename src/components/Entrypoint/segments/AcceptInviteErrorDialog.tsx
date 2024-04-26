@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Button, Modal } from 'antd';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { InviteErrorCodes } from '@/types/virtual-lab/invites';
+import { basePath } from '@/config';
 
 const getInviteErrorMessage = (code?: string): string => {
   try {
@@ -55,7 +56,7 @@ function InviteRedirectButton() {
     return (
       <Button
         className="ml-auto mt-10 block rounded-none bg-primary-8 text-white"
-        onClick={() => push(`/virtual-lab/lab/${labId}/lab`)}
+        onClick={() => push(`${basePath}/virtual-lab/lab/${labId}/lab`)}
       >
         Go to Lab
       </Button>
@@ -65,7 +66,7 @@ function InviteRedirectButton() {
   if (origin === 'Project' && !!labId && !!projectId) {
     return (
       <Button
-        onClick={() => push(`/virtual-lab/lab/${labId}/project/${projectId!}/home`)}
+        onClick={() => push(`${basePath}/virtual-lab/lab/${labId}/project/${projectId!}/home`)}
         className="ml-auto mt-10 block rounded-none bg-primary-8 text-white"
       >
         Go to Project
