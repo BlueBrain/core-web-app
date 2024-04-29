@@ -10,13 +10,13 @@ export interface VirtualLabCreateMembersProps {
 }
 
 export function VirtualLabCreateMembers({ className, onNext }: VirtualLabCreateMembersProps) {
-  const [members, setMembers] = useState([{email: 'admin@example.com', name: 'Test user'}]);
-  const [newMember, setNewMember] = useState({email: '', name: ''});
+  const [members, setMembers] = useState([{ email: 'admin@example.com', name: 'Test user' }]);
+  const [newMember, setNewMember] = useState({ email: '', name: '' });
 
   const handleAddMember = () => {
     if (newMember.email && newMember.name) {
       setMembers([...members, newMember]);
-      setNewMember({email: '', name: ''});
+      setNewMember({ email: '', name: '' });
     }
   };
 
@@ -31,12 +31,12 @@ export function VirtualLabCreateMembers({ className, onNext }: VirtualLabCreateM
         </ul>
         <input
           value={newMember.email}
-          onChange={(e) => setNewMember({...newMember, email: e.target.value})}
+          onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
           placeholder="Enter new member email..."
         />
         <input
           value={newMember.name}
-          onChange={(e) => setNewMember({...newMember, name: e.target.value})}
+          onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
           placeholder="Enter new member name..."
         />
         <Button onClick={handleAddMember}>Add member +</Button>

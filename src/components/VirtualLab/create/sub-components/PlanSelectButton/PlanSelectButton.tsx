@@ -21,8 +21,9 @@ export function PlanSelectButton({ className, plan, selected, onSelect }: PlanSe
         <fieldset key={category}>
           <legend>{category}</legend>
           <ul>
-            {items.map((item) => (
-              <li>{item}</li>
+            {items.map((item, itemIndex) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <li key={itemIndex}>{item}</li>
             ))}
           </ul>
         </fieldset>
