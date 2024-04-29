@@ -55,7 +55,7 @@ function InviteRedirectButton() {
     return (
       <Button
         className="ml-auto mt-10 block rounded-none bg-primary-8 text-white"
-        onClick={() => push(`/virtual-lab/lab/${labId}/lab`)}
+        onClick={() => push(`/virtual-lab/lab/${labId}/overview`)}
       >
         Go to Lab
       </Button>
