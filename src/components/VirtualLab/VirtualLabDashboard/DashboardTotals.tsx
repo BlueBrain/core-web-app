@@ -28,7 +28,7 @@ export default function DashboardTotals() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-row gap-7">
       <div>
         Total labs:
         {renderTotals(virtualLabTotals, 'Something went wrong when fetching lab totals')}
