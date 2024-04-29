@@ -9,6 +9,7 @@ export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   reference_email: '',
   budget: 1,
   plan_id: 0,
+  users: [],
   include_members: [],
 };
 
