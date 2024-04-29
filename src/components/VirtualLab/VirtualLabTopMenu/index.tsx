@@ -4,8 +4,14 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button, Modal } from 'antd';
 import { useSetAtom } from 'jotai';
+import {STEPS} from '../create/constants';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
-import { VirtualLabCreateInformation, VirtualLabCreatePlan } from '@/components/VirtualLab/create';
+import {
+  VirtualLabCreateInformation,
+  VirtualLabCreatePlan,
+  VirtualLabCreateMembers,
+} from '@/components/VirtualLab/create';
+
 
 type Props = {
   extraItems?: ReactNode[];
@@ -16,7 +22,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentStep, setCurrentStep] = useState('information');
+  const [currentStep, setCurrentStep] = useState(STEPS[0]);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -31,7 +37,10 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   };
 
   const handleNext = () => {
-    setCurrentStep('plan');
+    const currentStepIndex = STEPS.indexOf(currentStep);
+    if (currentStepIndex < STEPS.length - 1) {
+      setCurrentStep(STEPS[currentStepIndex + 1]);
+    }
   };
 
   useEffect(() => {
@@ -73,6 +82,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
       >
         {currentStep === 'information' && <VirtualLabCreateInformation onNext={handleNext} />}
         {currentStep === 'plan' && <VirtualLabCreatePlan onNext={handleNext} />}
+        {currentStep === 'members' && <VirtualLabCreateMembers onNext={handleNext} />}
       </Modal>
     </>
   );

@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 
-import { STEPS } from '../../constants';
 import { NavButtons } from '../NavButtons';
 import { classNames } from '@/util/utils';
 
@@ -9,7 +8,7 @@ import styles from './main.module.css';
 export interface MainProps {
   className?: string;
   canGoNext: boolean;
-  step: keyof typeof STEPS;
+  step:  string;
   children: ReactNode;
   onNext: () => void;
 }

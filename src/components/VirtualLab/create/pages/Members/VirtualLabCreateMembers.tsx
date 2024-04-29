@@ -22,7 +22,7 @@ export function VirtualLabCreateMembers({ className, onNext }: VirtualLabCreateM
 
   return (
     <Layout className={className}>
-      <Main onNext={onNext} canGoNext step="members">
+      <Main onNext={onNext} canGoNext={false} step="members">
         <h2>Members</h2>
         <ul>
           {members.map((member, index) => (

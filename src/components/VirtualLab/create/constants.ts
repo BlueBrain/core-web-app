@@ -16,13 +16,9 @@ export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
 export const ROLES: Record<VirtualLabMember['role'], string> = {
   admin: 'Administrator',
   member: 'Member',
-};
+}
 
-export const STEPS = {
-  information: 'Information',
-  plan: 'Plan',
-  members: 'Members',
-};
+export const STEPS = ['information', 'plan', 'members'];
 
 const FAKE_ADVANTAGES: string[] = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',

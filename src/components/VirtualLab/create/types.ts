@@ -4,7 +4,6 @@ import { KeysOfType } from '@/util/typing';
 export type VirtualLabWithOptionalId = Omit<VirtualLab, 'id'> & { id?: string };
 
 export type VirtualLabStringKeys = KeysOfType<VirtualLabWithOptionalId, string>;
-
 export interface VirtualLabPlanDefinition {
   id: number;
   name: string;
