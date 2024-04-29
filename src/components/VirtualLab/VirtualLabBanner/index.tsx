@@ -1,4 +1,5 @@
 import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
 import VirtualLabStatistic from '../VirtualLabStatistic';
 import { basePath } from '@/config';
@@ -6,6 +7,7 @@ import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { formatDate } from '@/util/utils';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
+import { generateLabUrl } from '@/util/virtual-lab/urls';
 import styles from './virtual-lab-banner.module.css';
 
 type Props = {
@@ -28,6 +30,7 @@ export default function VirtualLabBanner({
   withEditButton = false,
 }: Props) {
   const iconStyle = { color: '#69C0FF' };
+  const labUrl = generateLabUrl(id);
 
   return (
     <div className="relative flex min-h-[250px] flex-col justify-between gap-4 bg-primary-8 p-8">
@@ -42,9 +45,9 @@ export default function VirtualLabBanner({
           <div>
             <div className="text-primary-2">Virtual Lab name</div>
             {withLink ? (
-              <a className="text-5xl font-bold" href={`${basePath}/virtual-lab/lab/${id}/lab`}>
+              <Link className="text-5xl font-bold" href={`${labUrl}/lab`}>
                 {name}
-              </a>
+              </Link>
             ) : (
               <div className="text-5xl font-bold">{name}</div>
             )}

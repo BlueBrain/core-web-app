@@ -52,12 +52,12 @@ export default class Ws {
 
   private serviceUp = false;
 
-  constructor(webSocketUrl: string, onMessage: OnMessageHandler) {
+  constructor(webSocketUrl: string, token: string, onMessage: OnMessageHandler) {
     this.webSocketUrl = webSocketUrl;
 
     this.onMessage = onMessage;
 
-    this.init();
+    this.init(token);
   }
 
   send(message: Message, data?: Data, cmdId?: CmdId) {
@@ -123,10 +123,10 @@ export default class Ws {
     this.socket.send(JSON.stringify({}));
   }
 
-  private init = () => {
+  private init = (token: string) => {
     if (this.closing) return;
 
-    const socket = new WebSocket(this.webSocketUrl, 'Bearer-token');
+    const socket = new WebSocket(this.webSocketUrl, `Bearer-${token}`);
     this.socket = socket;
 
     // send message to check until the service is up

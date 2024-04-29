@@ -32,13 +32,14 @@ export default function VirtualLabDashboard() {
   }, [virtualLabs]);
 
   return (
-    <div className="inset-0 z-0 grid grid-cols-[1fr_4fr] grid-rows-1 bg-primary-9 text-white">
-      <div className="flex flex-col gap-4 text-primary-5">
-        <div className="text-5xl font-bold uppercase">Your virtual labs and projects</div>
-        <DashboardTotals />
+    <div className="ml-[20%] bg-primary-9 text-white">
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
+          <div className="text-5xl font-bold uppercase">Your virtual labs and projects</div>
+          <DashboardTotals />
+        </div>
+        {renderVirtualLabs()}
       </div>
-
-      <div className="flex flex-col gap-5">{renderVirtualLabs()}</div>
     </div>
   );
 }

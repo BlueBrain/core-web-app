@@ -26,6 +26,7 @@ import {
 } from '@/state/simulate/single-neuron';
 import { simulationDoneAtom } from '@/state/simulate/single-neuron-setter';
 import DefaultLoadingSuspense from '@/components/DefaultLoadingSuspense';
+import { useSessionAtomValue } from '@/hooks/hooks';
 
 const baseBannerStyle =
   'flex h-full items-center justify-center text-4xl bg-gray-950 text-gray-100';
@@ -56,6 +57,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   const [secNames, setSecNames] = useAtom(secNamesAtom);
   const setSegNames = useSetAtom(segNamesAtom);
   const setPlotData = useSetAtom(simulationPlotDataAtom);
+  const session = useSessionAtomValue();
 
   // this atom contains the threshold and holding values to initialize the model properly
   const eModelScript = useAtomValue(eModelScriptAtom);
@@ -91,7 +93,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
   }, [simConfig]);
 
   useEffect(() => {
-    if (!containerRef.current || !eModelScript) return;
+    if (!containerRef.current || !eModelScript || !session?.accessToken) return;
 
     const onClick = (data: any) => {
       setSelectionCtrlConfig({
@@ -132,6 +134,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
       containerRef.current,
       modelId,
       DEFAULT_SIM_CONFIG,
+      session.accessToken,
       {
         thresholdCurrent: eModelScript.threshold_current ?? 0,
         holdingCurrent: eModelScript.holding_current ?? 0,
@@ -160,6 +163,7 @@ export function BlueNaas({ modelId }: BlueNaasProps) {
     setPlotData,
     simulationDoneCB,
     eModelScript,
+    session,
   ]);
 
   return (

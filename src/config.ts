@@ -14,7 +14,6 @@ export const thumbnailGenerationBaseUrl = env.NEXT_PUBLIC_THUMBNAIL_GENERATION_B
 export const synthesisUrl = env.NEXT_PUBLIC_SYNTHESIS_URL;
 
 export const blueNaas = {
-  deploymentUrl: env.NEXT_PUBLIC_BLUE_NAAS_DEPLOYMENT_URL,
   wsUrl: env.NEXT_PUBLIC_BLUE_NAAS_WS_URL,
 };
 

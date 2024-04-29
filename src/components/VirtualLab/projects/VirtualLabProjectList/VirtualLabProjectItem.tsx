@@ -2,11 +2,11 @@ import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
 import Link from 'next/link';
 
 import VirtualLabStatistic from '../../VirtualLabStatistic';
-import usePathname from '@/hooks/pathname';
 import Brain from '@/components/icons/Brain';
 import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import { Project } from '@/types/virtual-lab/projects';
 import { formatDate } from '@/util/utils';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 function ProjectStats({ project }: { project: Project }) {
   const iconStyle = { color: '#69C0FF' };
@@ -58,12 +58,12 @@ function ProjectStats({ project }: { project: Project }) {
 }
 
 export default function VirtualLabProjectItem({ project }: { project: Project }) {
-  const pathname = usePathname();
+  const projectUrl = generateVlProjectUrl(project.virtual_lab.id, project.id);
 
   return (
     <Link
       className="flex flex-col gap-3 rounded-md border border-primary-6 p-9"
-      href={`${pathname}/../project/${project.id}/home`}
+      href={`${projectUrl}/home`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-between gap-6">
