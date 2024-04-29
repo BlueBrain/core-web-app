@@ -57,7 +57,7 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
   const currentPage = usePathname().split('/').pop();
 
   const linkItems: LinkItem[] = [
-    { key: LinkItemKey.Lab, content: 'The Virtual Lab', href: 'lab' },
+    { key: LinkItemKey.Lab, content: 'Overview', href: 'overview' },
     {
       key: LinkItemKey.Projects,
       content: (
