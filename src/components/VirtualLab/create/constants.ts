@@ -1,5 +1,4 @@
-import { VirtualLabWithOptionalId, VirtualLabPlanDefinition } from './types';
-import { VirtualLabPlanType } from '@/types/virtual-lab/lab';
+import { VirtualLabWithOptionalId } from './types';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
@@ -19,34 +18,6 @@ export const ROLES: Record<VirtualLabMember['role'], string> = {
 };
 
 export const STEPS = ['information', 'plan', 'members'];
-
-const FAKE_ADVANTAGES: string[] = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-  'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-];
-
-export const VIRTUAL_LAB_PLAN_DEFINITIONS: VirtualLabPlanDefinition[] = [
-  {
-    type: VirtualLabPlanType.Entry,
-    title: 'Entry',
-    price: 0,
-    advantages: FAKE_ADVANTAGES,
-  },
-  {
-    type: VirtualLabPlanType.Beginner,
-    title: 'Beginner',
-    price: 40,
-    advantages: FAKE_ADVANTAGES,
-  },
-  {
-    type: VirtualLabPlanType.Intermediate,
-    title: 'Intermediate',
-    price: 80,
-    advantages: FAKE_ADVANTAGES,
-  },
-];
 
 export const RX_EMAIL = /^[^ \t@]+@[^ \t@]+$/g;
 
