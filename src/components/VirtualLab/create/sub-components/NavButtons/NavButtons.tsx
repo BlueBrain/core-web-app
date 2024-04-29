@@ -15,9 +15,8 @@ export interface NavButtonsProps {
   disabled?: boolean;
 }
 
-const { onNext, onCancel } = useModalNavigation();
-
 export function NavButtons({ className, step, disabled }: NavButtonsProps) {
+  const { onNext, onCancel } = useModalNavigation();
   const session = useSession();
   const notification = useNotification();
   const [loading, setLoading] = useState(false);

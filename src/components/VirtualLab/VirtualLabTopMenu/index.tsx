@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useState, useEffect, useRef, ReactNode, useMemo, useCallback } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -32,16 +32,21 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
     setIsModalVisible(false);
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     const currentStepIndex = STEPS.indexOf(currentStep);
     if (currentStepIndex < STEPS.length - 1) {
       setCurrentStep(STEPS[currentStepIndex + 1]);
     }
-  };
+  }, [currentStep]);
+
+  const handleCancel = useCallback(() => {
+    setIsModalVisible(false);
+  }, []);
+
+  const providerValue = useMemo(
+    () => ({ onNext: handleNext, onCancel: handleCancel }),
+    [handleNext, handleCancel]
+  );
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
@@ -72,7 +77,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
           {extraItems}
         </div>
       </div>
-      <ModalNavigationContext.Provider value={{ onNext: handleNext, onCancel: handleCancel }}>
+      <ModalNavigationContext.Provider value={providerValue}>
         <Modal
           title={null}
           open={isModalVisible}
