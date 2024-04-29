@@ -98,7 +98,7 @@ export default function VirtualLabHomePage({ id }: Props) {
         <div>
           <div className="my-5 text-lg font-bold uppercase">Members</div>
           <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
-            {virtualLabDetail.include_members.map((user) => (
+            {virtualLabDetail.users.map((user) => (
               <Member
                 key={user.id}
                 name={user.name}
