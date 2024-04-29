@@ -23,7 +23,6 @@ export const renderInput: (props: InputProps) => ReactNode = ({
   style,
   title,
   type,
-  // value,
 }) => {
   return (
     <Input
@@ -44,7 +43,6 @@ export const renderTextArea: (props: TextAreaProps) => ReactNode = ({
   placeholder,
   style,
   title,
-  // value,
 }) => {
   return (
     <Input.TextArea
@@ -69,6 +67,7 @@ function SettingsFormItem({
   rules,
 }: Omit<FormItemProps, 'children'> & {
   children: (props: InputProps & TextAreaProps) => ReactNode;
+  disabled: InputProps['disabled'];
 }) {
   return (
     <Form.Item
@@ -87,21 +86,19 @@ function SettingsFormItem({
   );
 }
 
-function SettingsFormButton({ children, className, disabled, htmlType, onClick }: ButtonProps) {
+function SettingsFormButton({ children, className, ...buttonProps }: ButtonProps) {
   return (
     <Button
       className={classNames('h-14 rounded-none font-semibold', className)}
-      disabled={disabled}
-      htmlType={htmlType}
       title="Save Changes"
-      onClick={onClick}
+      {...buttonProps} // eslint-disable-line react/jsx-props-no-spreading
     >
       {children}
     </Button>
   );
 }
 
-function SettingsForm({ children, className, form, initialValues }: FormProps) {
+function SettingsForm({ children, className, ...formProps }: FormProps) {
   return (
     <ConfigProvider
       theme={{
@@ -138,11 +135,12 @@ function SettingsForm({ children, className, form, initialValues }: FormProps) {
       <Form
         className={classNames('divide-y px-[28px]', className)}
         layout="vertical"
-        form={form}
         requiredMark={false}
-        initialValues={initialValues}
+        {...formProps} // eslint-disable-line react/jsx-props-no-spreading
       >
-        {children}
+        {
+          children as ReactNode // TODO: Find-out why this type-casting is necessary.
+        }
       </Form>
     </ConfigProvider>
   );
@@ -152,43 +150,53 @@ export default function FormPanel({
   className,
   initialValues,
   items,
+  name,
   onFinish,
 }: Omit<FormProps, 'onFinish'> & {
   items: Array<RenderInputProps>;
-  onFinish: (values: Partial<VirtualLab>) => Promise<void>;
+  onFinish: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
 }) {
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  // const [errorFields, setErrorFields] = useState<Array<{ name: string; errors: Array<string> }>>(); TODO: Use this for AntD form validation.
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const [form] = Form.useForm<InformationForm>();
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Spin size="large" indicator={<LoadingOutlined />} />
-      </div>
-    );
-  }
+  // if (errorFields?.length) {
+  //     return (
+  //       <div>
+  //         <p className="text-error">Something went wrong.</p>
+  //         <ul>
+  //           {errorFields.map(({ name, errors }) => {
+  //             <li>
+  //               <span>{name}</span>
+  //               <ul>
+  //                 {errors.map((error) => (
+  //                   <li>{error}</li>
+  //                 ))}
+  //               </ul>
+  //             </li>;
+  //           })}
+  //         </ul>
+  //       </div>
+  //     );
+  //   }
 
-  if (error) {
-    return <p className="text-error">Something went wrong.</p>;
-  }
-
-  const formItems = items.map(({ name, ...props }) => (
+  const formItems = items.map(({ name: formItemName, ...formItemProps }) => (
     <SettingsFormItem
-      {...props} // eslint-disable-line react/jsx-props-no-spreading
-      key={name}
+      key={formItemName}
       disabled={disabled}
-      name={name}
-      // value={form.getFieldValue(name)}
+      name={formItemName}
+      {...formItemProps} // eslint-disable-line react/jsx-props-no-spreading
     />
   ));
 
   const submitBlock = (
-    <div className="col-span-2 my-4 flex items-center justify-end gap-2">
+    <div className="col-span-2 flex items-center justify-end gap-2 py-4">
       <SettingsFormButton
         className="bg-neutral-3 text-neutral-7"
+        disabled={loading}
         htmlType="button"
         onClick={() => {
           form.resetFields();
@@ -198,17 +206,19 @@ export default function FormPanel({
       >
         Cancel
       </SettingsFormButton>
+
       <Form.Item>
         <SettingsFormButton
           className="text-primary-8"
-          disabled={disabled}
+          disabled={disabled || loading}
           htmlType="submit"
           onClick={() => {
             setLoading(true);
-            // form.submit(); TODO: Investigate the form submit on Monday.
+
+            form.submit();
           }}
         >
-          Save
+          {loading ? <Spin size="small" indicator={<LoadingOutlined />} /> : 'Save'}
         </SettingsFormButton>
       </Form.Item>
     </div>
@@ -216,6 +226,7 @@ export default function FormPanel({
 
   const editBlock = (
     <div className="col-span-2 flex items-center justify-end gap-2 py-4">
+      {!!serverError && <p className="text-white">{`Something went wrong. ${serverError}`}</p>}
       <SettingsFormButton
         className="bg-neutral-3 text-neutral-7"
         htmlType="button"
@@ -228,11 +239,14 @@ export default function FormPanel({
 
   if (disabled) {
     return (
-      <SettingsForm className="divide-white" form={form} initialValues={initialValues}>
-        <>
-          {formItems}
-          {editBlock}
-        </>
+      <SettingsForm
+        className="divide-white"
+        form={form}
+        initialValues={initialValues}
+        name={name} // TODO: Check whether this prop is necessary.
+      >
+        {formItems}
+        {editBlock}
       </SettingsForm>
     );
   }
@@ -242,25 +256,32 @@ export default function FormPanel({
       className={classNames(className, 'divide-primary-3')}
       form={form}
       initialValues={initialValues}
-      onFinish={(values) =>
-        onFinish(values)
+      name={name} // TODO: Check whether this prop is necessary.
+      // onFinishFailed={(errorInfo) => {
+      // const { errorFields } = errorInfo;
+
+      // setErrorFields(errorFields);
+
+      // setLoading(false);
+      // }}
+      onFinish={async (values) => {
+        return onFinish(values)
           .then(() => {
-            setError(false);
+            setServerError(null);
           })
-          .catch(() => {
-            setError(true);
+          .catch((error) => {
+            setServerError(error);
+
             form.resetFields();
           })
           .finally(() => {
             setLoading(false);
             setDisabled(true);
-          })
-      }
+          });
+      }}
     >
-      <>
-        {formItems}
-        {submitBlock}
-      </>
+      {formItems}
+      {submitBlock}
     </SettingsForm>
   );
 }
