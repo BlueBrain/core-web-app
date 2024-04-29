@@ -174,8 +174,9 @@ export default class BlueNaas {
         break;
       case 'get_ui_data_done': {
         const morphology = JSON.parse(this.assembleMorphTempStr);
-        this.renderer.addMorphology(morphology);
-        this.onMorphologyLoaded(morphology);
+        const prunedMorph = this.renderer.removeNoDiameterSection(morphology);
+        this.renderer.addMorphology(prunedMorph);
+        this.onMorphologyLoaded(prunedMorph);
         this.ensureSecMarkers();
         break;
       }

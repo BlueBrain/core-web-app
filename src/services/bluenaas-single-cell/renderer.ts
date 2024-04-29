@@ -358,6 +358,17 @@ export default class BlueNaasRenderer {
     this.animationFrameHandle = requestAnimationFrame(this.startRenderLoop);
   };
 
+  removeNoDiameterSection(morphology: Morphology) {
+    // workaround sinde the implementation of stub axon in hoc files
+    const pruned = Object.entries(morphology).reduce((acc: Morphology, [secName, sec]) => {
+      if (!sec.diam) return acc;
+
+      acc[secName] = sec;
+      return acc;
+    }, {});
+    return pruned satisfies Morphology;
+  }
+
   addMorphology = (morphology: Morphology) => {
     this.morphology = morphology;
 
