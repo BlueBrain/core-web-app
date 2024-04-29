@@ -30,7 +30,7 @@ export default function VirtualLabHomePage({ id }: Props) {
             id={virtualLabDetail.id}
             name={virtualLabDetail.name}
             description={virtualLabDetail.description}
-            users={virtualLabDetail.users}
+            users={virtualLabDetail.include_members}
             createdAt={virtualLabDetail.created_at}
             withEditButton
           />
@@ -98,7 +98,7 @@ export default function VirtualLabHomePage({ id }: Props) {
         <div>
           <div className="my-5 text-lg font-bold uppercase">Members</div>
           <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
-            {virtualLabDetail.users.map((user) => (
+            {virtualLabDetail.include_members.map((user) => (
               <Member
                 key={user.id}
                 name={user.name}
