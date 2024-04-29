@@ -44,8 +44,8 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
       return projectUsers.data?.map((user) => (
         <Member
           key={user.id}
-          firstName="TO BE REPLACED"
-          lastName="TO BE REPLACED"
+          firstName={user.first_name}
+          lastName={user.last_name}
           name={user.name}
           lastActive="N/A"
           memberRole="member"
