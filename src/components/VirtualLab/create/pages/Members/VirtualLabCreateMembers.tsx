@@ -6,10 +6,9 @@ import { Button } from '../../sub-components/Button';
 
 export interface VirtualLabCreateMembersProps {
   className?: string;
-  onNext: () => void;
 }
 
-export function VirtualLabCreateMembers({ className, onNext }: VirtualLabCreateMembersProps) {
+export function VirtualLabCreateMembers({ className }: VirtualLabCreateMembersProps) {
   const [members, setMembers] = useState([{ email: 'admin@example.com', name: 'Test user' }]);
   const [newMember, setNewMember] = useState({ email: '', name: '' });
 
@@ -22,7 +21,7 @@ export function VirtualLabCreateMembers({ className, onNext }: VirtualLabCreateM
 
   return (
     <Layout className={className}>
-      <Main onNext={onNext} canGoNext step="members">
+      <Main canGoNext step="members">
         <h2>Members</h2>
         <ul>
           {members.map((member) => (

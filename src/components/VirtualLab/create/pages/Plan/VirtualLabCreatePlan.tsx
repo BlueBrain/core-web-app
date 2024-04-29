@@ -13,10 +13,9 @@ import { virtualLabPlansAtom } from '@/state/virtual-lab/lab';
 
 export interface VirtualLabCreatePlanProps {
   className?: string;
-  onNext: () => void;
 }
 
-export function VirtualLabCreatePlan({ className, onNext }: VirtualLabCreatePlanProps) {
+export function VirtualLabCreatePlan({ className }: VirtualLabCreatePlanProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
   const [billingValid, setBillingValid] = useState(false);
   const virtualLabPlansLoadable = useAtomValue(loadable(virtualLabPlansAtom));
@@ -33,7 +32,7 @@ export function VirtualLabCreatePlan({ className, onNext }: VirtualLabCreatePlan
 
   return (
     <Layout className={className}>
-      <Main canGoNext={lab.plan_id !== null || billingValid} step="plan" onNext={onNext}>
+      <Main canGoNext={lab.plan_id !== null || billingValid} step="plan">
         <h2>Plan</h2>
         {virtualLabPlans?.map((plan) => (
           <PlanSelectButton

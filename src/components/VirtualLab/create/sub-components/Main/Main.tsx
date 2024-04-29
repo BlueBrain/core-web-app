@@ -10,15 +10,14 @@ export interface MainProps {
   canGoNext: boolean;
   step: string;
   children: ReactNode;
-  onNext: () => void;
 }
 
-export function Main({ className, canGoNext, step, children, onNext }: MainProps) {
+export function Main({ className, canGoNext, step, children }: MainProps) {
   return (
     <div className={classNames(styles.main, className)}>
       <div>{children}</div>
       <footer>
-        <NavButtons disabled={!canGoNext} step={step} onNext={onNext} />
+        <NavButtons disabled={!canGoNext} step={step} />
       </footer>
     </div>
   );

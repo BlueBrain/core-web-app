@@ -6,17 +6,18 @@ import { Step } from './Step';
 import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
-
+import { useModalNavigation } from '@/components/VirtualLab/create/contexts/ModalNavigationContext';
 import styles from './nav-buttons.module.css';
 
 export interface NavButtonsProps {
   className?: string;
   step: string;
   disabled?: boolean;
-  onNext: () => void;
 }
 
-export function NavButtons({ className, step, disabled, onNext }: NavButtonsProps) {
+const { onNext, onCancel } = useModalNavigation();
+
+export function NavButtons({ className, step, disabled }: NavButtonsProps) {
   const session = useSession();
   const notification = useNotification();
   const [loading, setLoading] = useState(false);
@@ -43,7 +44,7 @@ export function NavButtons({ className, step, disabled, onNext }: NavButtonsProp
 
   return (
     <div className={classNames(styles.main, className)}>
-      <Button variant="text" href="/">
+      <Button variant="text" onClick={onCancel}>
         Cancel
       </Button>
       {step === 'members' ? (

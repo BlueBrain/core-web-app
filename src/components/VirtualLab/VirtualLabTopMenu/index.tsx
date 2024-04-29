@@ -6,6 +6,7 @@ import { Button, Modal } from 'antd';
 import { useSetAtom } from 'jotai';
 import { STEPS } from '../create/constants';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
+import ModalNavigationContext from '@/components/VirtualLab/create/contexts/ModalNavigationContext';
 import {
   VirtualLabCreateInformation,
   VirtualLabCreatePlan,
@@ -71,18 +72,20 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
           {extraItems}
         </div>
       </div>
-      <Modal
-        title={null}
-        open={isModalVisible}
-        width={800}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        {currentStep === 'information' && <VirtualLabCreateInformation onNext={handleNext} />}
-        {currentStep === 'plan' && <VirtualLabCreatePlan onNext={handleNext} />}
-        {currentStep === 'members' && <VirtualLabCreateMembers onNext={handleNext} />}
-      </Modal>
+      <ModalNavigationContext.Provider value={{ onNext: handleNext, onCancel: handleCancel }}>
+        <Modal
+          title={null}
+          open={isModalVisible}
+          width={800}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          {currentStep === 'information' && <VirtualLabCreateInformation />}
+          {currentStep === 'plan' && <VirtualLabCreatePlan />}
+          {currentStep === 'members' && <VirtualLabCreateMembers />}
+        </Modal>
+      </ModalNavigationContext.Provider>
     </>
   );
 }
