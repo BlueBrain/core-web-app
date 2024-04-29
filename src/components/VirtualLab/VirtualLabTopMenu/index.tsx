@@ -40,6 +40,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   }, [currentStep]);
 
   const handleCancel = useCallback(() => {
+    setCurrentStep(STEPS[0]);
     setIsModalVisible(false);
   }, []);
 
