@@ -1,6 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Dropdown, Space } from 'antd';
-import { AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, BoldOutlined, DownOutlined, FileImageOutlined, ItalicOutlined, LineOutlined, LinkOutlined, PlusOutlined, RedoOutlined, ScissorOutlined, StrikethroughOutlined, TableOutlined, UnderlineOutlined, UndoOutlined } from '@ant-design/icons';
+import {
+  AlignCenterOutlined,
+  AlignLeftOutlined,
+  AlignRightOutlined,
+  BoldOutlined,
+  DownOutlined,
+  FileImageOutlined,
+  ItalicOutlined,
+  LineOutlined,
+  LinkOutlined,
+  PlusOutlined,
+  RedoOutlined,
+  ScissorOutlined,
+  StrikethroughOutlined,
+  TableOutlined,
+  UnderlineOutlined,
+  UndoOutlined,
+} from '@ant-design/icons';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, $getNearestNodeOfType, mergeRegister } from '@lexical/utils';
@@ -73,7 +90,6 @@ export default function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
 
-
   const toolbarRef = useRef(null);
 
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph');
@@ -145,55 +161,33 @@ export default function ToolbarPlugin() {
       if (elementDOM !== null) {
         setSelectedElementKey(elementKey);
         if ($isListNode(element)) {
-          const parentList = $getNearestNodeOfType<ListNode>(
-            anchorNode,
-            ListNode,
-          );
-          const type = parentList
-            ? parentList.getListType()
-            : element.getListType();
+          const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode);
+          const type = parentList ? parentList.getListType() : element.getListType();
           setBlockType(type);
         } else {
-          const type = $isHeadingNode(element)
-            ? element.getTag()
-            : element.getType();
+          const type = $isHeadingNode(element) ? element.getTag() : element.getType();
           if (type in blockTypeToBlockName) {
             setBlockType(type as keyof typeof blockTypeToBlockName);
           }
           if ($isCodeNode(element)) {
-            const language =
-              element.getLanguage() as keyof typeof CODE_LANGUAGE_MAP;
-            setCodeLanguage(
-              language ? CODE_LANGUAGE_MAP[language] || language : '',
-            );
+            const language = element.getLanguage() as keyof typeof CODE_LANGUAGE_MAP;
+            setCodeLanguage(language ? CODE_LANGUAGE_MAP[language] || language : '');
             return;
           }
         }
       }
 
       // Handle buttons
-      setFontSize(
-        $getSelectionStyleValueForProperty(selection, 'font-size', '15px'),
-      );
-      setFontColor(
-        $getSelectionStyleValueForProperty(selection, 'color', '#000'),
-      );
-      setBgColor(
-        $getSelectionStyleValueForProperty(
-          selection,
-          'background-color',
-          '#fff',
-        ),
-      );
-      setFontFamily(
-        $getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'),
-      );
+      setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '15px'));
+      setFontColor($getSelectionStyleValueForProperty(selection, 'color', '#000'));
+      setBgColor($getSelectionStyleValueForProperty(selection, 'background-color', '#fff'));
+      setFontFamily($getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'));
       let matchingParent;
       if ($isLinkNode(parent)) {
         // If node is a link, we need to fetch the parent paragraph node to set format
         matchingParent = $findMatchingParent(
           node,
-          (parentNode) => $isElementNode(parentNode) && !parentNode.isInline(),
+          (parentNode) => $isElementNode(parentNode) && !parentNode.isInline()
         );
       }
 
@@ -203,8 +197,8 @@ export default function ToolbarPlugin() {
         $isElementNode(matchingParent)
           ? matchingParent.getFormatType()
           : $isElementNode(node)
-          ? node.getFormatType()
-          : parent?.getFormatType() || 'left',
+            ? node.getFormatType()
+            : parent?.getFormatType() || 'left'
       );
     }
   }, [activeEditor]);
@@ -255,24 +249,24 @@ export default function ToolbarPlugin() {
             $patchStyleText(selection, styles);
           }
         },
-        skipHistoryStack ? {tag: 'historic'} : {},
+        skipHistoryStack ? { tag: 'historic' } : {}
       );
     },
-    [activeEditor],
+    [activeEditor]
   );
 
   const onFontColorSelect = useCallback(
     (value: string, skipHistoryStack: boolean) => {
-      applyStyleText({color: value}, skipHistoryStack);
+      applyStyleText({ color: value }, skipHistoryStack);
     },
-    [applyStyleText],
+    [applyStyleText]
   );
 
   const onBgColorSelect = useCallback(
     (value: string, skipHistoryStack: boolean) => {
-      applyStyleText({'background-color': value}, skipHistoryStack);
+      applyStyleText({ 'background-color': value }, skipHistoryStack);
     },
-    [applyStyleText],
+    [applyStyleText]
   );
 
   const insertLink = useCallback(() => {
@@ -297,7 +291,7 @@ export default function ToolbarPlugin() {
         }
       });
     },
-    [activeEditor, selectedElementKey],
+    [activeEditor, selectedElementKey]
   );
 
   return (
@@ -404,7 +398,7 @@ export default function ToolbarPlugin() {
       />
 
       <Dropdown
-        trigger={["click"]}
+        trigger={['click']}
         menu={{
           // TODO This is to be implemented.
           items: [
@@ -424,7 +418,7 @@ export default function ToolbarPlugin() {
               label: 'Image',
               key: 'image',
               disabled: true,
-              icon:<FileImageOutlined />,
+              icon: <FileImageOutlined />,
             },
             {
               label: 'Inline image',
@@ -439,7 +433,7 @@ export default function ToolbarPlugin() {
               icon: <TableOutlined />,
             },
           ],
-          onClick: () => {}
+          onClick: () => {},
         }}
       >
         <Button>

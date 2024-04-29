@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { atomFamily, atomWithRefresh, unwrap } from 'jotai/utils';
-import { Button, Form, Input, Modal } from 'antd';
+import { atomFamily, atomWithRefresh, loadable, unwrap } from 'jotai/utils';
+import { Button, Form, Input, Modal, Table } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai';
 import Link from 'next/link';
 import isEqual from 'lodash/isEqual';
@@ -10,14 +10,14 @@ import { CheckCircleFilled, CloseOutlined, PlusOutlined } from '@ant-design/icon
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import debounce from 'lodash/debounce';
+import { useRouter } from 'next/navigation';
 
 import { createFile, createResource, queryES } from '@/api/nexus';
 import { getPaperListQuery } from '@/queries/es';
 import sessionAtom from '@/state/session';
-import { PaperResource } from '@/types/nexus';
+import { DateISOString, PaperResource } from '@/types/nexus';
 import { collapseId, createDistribution } from '@/util/nexus';
-import { useRouter } from 'next/navigation';
-
+import { dateColumnInfoToRender } from '@/util/date';
 
 // State
 
@@ -47,9 +47,7 @@ function CreatePaperSuccess({ name, startEditing }: { name: string; startEditing
       <CheckCircleFilled style={{ fontSize: '5rem', color: '#00B212' }} />
       <div className="w-full" style={{ padding: '.75rem 0 3.75rem' }}>
         <div className="flex flex-col items-center justify-center gap-1">
-          <p className="text-base text-primary-8">
-            You have successfully created new paper
-          </p>
+          <p className="text-base text-primary-8">You have successfully created new paper</p>
           <h2 className="text-2xl font-bold text-primary-8">{name}</h2>
           <p className="text-base text-primary-8"> and it is ready for use.</p>
         </div>
@@ -76,11 +74,7 @@ type FormValidity = {
   description: boolean;
 };
 
-function CreatePaperForm({
-  createPaperFn,
-  onCreateSuccess,
-  onClose,
-}: CreatePaperFormProps) {
+function CreatePaperForm({ createPaperFn, onCreateSuccess, onClose }: CreatePaperFormProps) {
   const { data: session } = useSession();
   const [form] = Form.useForm();
 
@@ -142,8 +136,7 @@ function CreatePaperForm({
             <h2 className="text-2xl font-bold text-primary-8">Create new paper</h2>
           </div>
           <p className="text-primary-8">
-            You are about to create a new paper. You can now give it a name and start
-            working on it.
+            You are about to create a new paper. You can now give it a name and start working on it.
           </p>
         </div>
         <Form
@@ -217,26 +210,34 @@ function CreatePaperForm({
 
 // Hooks
 function useCreatePaperModal(virtualLabId: string, projectId: string) {
-  const [
-    modal,
-    contextHolder,
-  ] = Modal.useModal();
+  const [modal, contextHolder] = Modal.useModal();
   const destroyRef = useRef<() => void>();
   const onClose = () => destroyRef?.current?.();
 
-  const createPaperFn = useCallback(async (name: string, description: string, session: Session) => {
-    const payloadMeta = await createFile('null', 'lexical-editor--state.json', 'application/json', session);
-    return createResource<PaperResource>({
-      '@context': ['https://bbp.neuroshapes.org'],
-      '@type': ['Paper', 'Entity'],
-      name,
-      description,
-      virtualLabId,
-      projectId,
-      tags: [],
-      distribution: createDistribution(payloadMeta),
-    }, session);
-  }, [virtualLabId, projectId]);
+  const createPaperFn = useCallback(
+    async (name: string, description: string, session: Session) => {
+      const payloadMeta = await createFile(
+        'null',
+        'lexical-editor--state.json',
+        'application/json',
+        session
+      );
+      return createResource<PaperResource>(
+        {
+          '@context': ['https://bbp.neuroshapes.org'],
+          '@type': ['Paper', 'Entity'],
+          name,
+          description,
+          virtualLabId,
+          projectId,
+          tags: [],
+          distribution: createDistribution(payloadMeta),
+        },
+        session
+      );
+    },
+    [virtualLabId, projectId]
+  );
 
   const createModal = (onCreateSuccess: (createdPaper: PaperResource) => void) => {
     const { destroy } = modal.confirm({
@@ -275,6 +276,46 @@ function useCreatePaperModal(virtualLabId: string, projectId: string) {
   };
 }
 
+// TODO deduplicate.
+const dateRenderer = (createdAtStr: DateISOString) => {
+  const dateColumnInfo = dateColumnInfoToRender(createdAtStr);
+  if (!dateColumnInfo) return null;
+
+  return <span title={dateColumnInfo.tooltip}>{dateColumnInfo.text}</span>;
+};
+
+const paperTableColumns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    render: (_name: string, paper: PaperResource) => (
+      <Link
+        href={`/virtual-lab/lab/${paper.virtualLabId}/project/${paper.projectId}/papers/${paper['@id']}}`}
+      >
+        {paper.name}
+      </Link>
+    ),
+  },
+  {
+    title: 'Description',
+    dataIndex: 'description',
+    key: 'description',
+  },
+  {
+    title: 'Created by',
+    dataIndex: '_createdBy',
+    key: 'createdBy',
+    render: (createdBy: string) => createdBy.split('/').at(-1),
+  },
+  {
+    title: 'Date created',
+    dataIndex: '_createdAt',
+    key: 'description',
+    render: dateRenderer,
+  },
+];
+
 type PaperListViewProps = {
   virtualLabId: string;
   projectId: string;
@@ -284,6 +325,7 @@ export default function PaperListView({ virtualLabId, projectId }: PaperListView
   const paperListAtom = paperListAtomFamily({ virtualLabId, projectId });
 
   const paperList = useAtomValue(useMemo(() => unwrap(paperListAtom, () => []), [paperListAtom]));
+  // TODO Add loading state.
   const refreshPaperList = useSetAtom(paperListAtom);
 
   const router = useRouter();
@@ -296,30 +338,33 @@ export default function PaperListView({ virtualLabId, projectId }: PaperListView
 
   return (
     <div>
-      <h3>List of project papers</h3>
-      <ul>
-        {paperList.map((paper) => (
-          <li key={paper['@id']}>
-            <Link
-              href={`/virtual-lab/lab/${virtualLabId}/proect/${projectId}/papers/${paper['@id']}}`}
-            >
-              {paper.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <h3 className="text-xl">List of project papers</h3>
+
+      <Table
+        className="mt-8"
+        columns={paperTableColumns}
+        dataSource={paperList}
+        rowKey="@id"
+        locale={{ emptyText: 'No papers found' }}
+      />
 
       <div className="text-right">
         <Button
           className="mt-8"
           icon={<PlusOutlined />}
-          onClick={() => createModal((createdPaper) => {
-            refreshPaperList();
+          onClick={() =>
+            createModal((createdPaper) => {
+              refreshPaperList();
 
-            const paperCollapsedId = collapseId(createdPaper['@id']);
-            router.push(`/virtual-lab/lab/${virtualLabId}/proect/${projectId}/papers/${paperCollapsedId}`);
-          })}
-        >Create new paper</Button>
+              const paperCollapsedId = collapseId(createdPaper['@id']);
+              router.push(
+                `/virtual-lab/lab/${virtualLabId}/project/${projectId}/papers/${paperCollapsedId}`
+              );
+            })
+          }
+        >
+          Create new paper
+        </Button>
       </div>
 
       {contextHolder}

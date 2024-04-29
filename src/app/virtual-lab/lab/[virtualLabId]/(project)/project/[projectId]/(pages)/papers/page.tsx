@@ -1,7 +1,9 @@
-import PaperListView from "@/components/papers/PaperListView";
-import { ServerSideComponentProp } from "@/types/common";
+import PaperListView from '@/components/papers/PaperListView';
+import { ServerSideComponentProp } from '@/types/common';
 
-function PaperListPage({ params }: ServerSideComponentProp<{ virtualLabId: string, projectId: string }>) {
+function PaperListPage({
+  params,
+}: ServerSideComponentProp<{ virtualLabId: string; projectId: string }>) {
   const { virtualLabId, projectId } = params;
 
   return (

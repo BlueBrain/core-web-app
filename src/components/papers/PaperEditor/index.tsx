@@ -5,9 +5,7 @@
 import { useState, useLayoutEffect } from 'react';
 import { Select } from 'antd';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import {
-  $getSelection,
-} from 'lexical';
+import { $getSelection } from 'lexical';
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -18,6 +16,7 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
 import ToolbarPlugin from './plugins/ToolbarPlugin';
+import RemoteStorePlugin from './plugins/RemoteStorePlugin';
 import { expand, summarize } from './services/ml';
 
 import style from './paper-editor.module.css';
@@ -118,7 +117,13 @@ function onError(error) {
   console.error(error);
 }
 
-export default function Editor() {
+interface EditorProps {
+  virtualLabId: string;
+  projectId: string;
+  paperId: string;
+}
+
+export default function Editor({ virtualLabId, projectId, paperId }: EditorProps) {
   const initialConfig = {
     namespace: 'MyEditor',
     theme,
@@ -134,12 +139,11 @@ export default function Editor() {
     }
   };
 
-
-
   return (
     <div>
       <LexicalComposer initialConfig={initialConfig}>
         <div className={style.editorContainer}>
+          <RemoteStorePlugin virtualLabId={virtualLabId} projectId={projectId} paperId={paperId} />
           <CommandSPlugin />
           <ToolbarPlugin />
           <div className={style.editorInner}>
