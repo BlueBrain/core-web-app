@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Dropdown, Space } from 'antd';
 import {
@@ -323,7 +324,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
-        className={`${style.toolbarItem} ${style.spaced} ` + (isBold ? `${style.active}` : '')}
+        className={`${style.toolbarItem} ${style.spaced} ${isBold ? style.active : ''}`}
         aria-label="Format Bold"
         icon={<BoldOutlined />}
       />
@@ -333,7 +334,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
-        className={`${style.toolbarItem} ${style.spaced} ` + (isItalic ? `${style.active}` : '')}
+        className={`${style.toolbarItem} ${style.spaced} ${isItalic ? style.active : ''}`}
         icon={<ItalicOutlined />}
         aria-label="Format Italics"
       />
@@ -343,7 +344,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
-        className={`${style.toolbarItem} ${style.spaced} ` + (isUnderline ? `${style.active}` : '')}
+        className={`${style.toolbarItem} ${style.spaced} ${isUnderline ? style.active : ''}`}
         icon={<UnderlineOutlined />}
         aria-label="Format Underline"
       />
@@ -352,9 +353,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
         }}
-        className={
-          `${style.toolbarItem} ${style.spaced} ` + (isStrikethrough ? `${style.active}` : '')
-        }
+        className={`${style.toolbarItem} ${style.spaced} ${isStrikethrough ? style.active : ''}`}
         icon={<StrikethroughOutlined />}
         aria-label="Format Strikethrough"
       />
@@ -362,7 +361,7 @@ export default function ToolbarPlugin() {
       <Button
         // disabled={!isEditable} // TODO Add
         onClick={insertLink}
-        className={`${style.toolbarItem} ${style.spaced}` + (isLink ? 'active' : '')}
+        className={`${style.toolbarItem} ${style.spaced} ${isLink ? style.active : ''}`}
         aria-label="Insert link"
         icon={<LinkOutlined />}
         title="Insert link"

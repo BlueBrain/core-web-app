@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { atomFamily, atomWithRefresh, loadable, unwrap } from 'jotai/utils';
+import { atomFamily, atomWithRefresh, unwrap } from 'jotai/utils';
 import { Button, Form, Input, Modal, Table } from 'antd';
 import { useAtomValue, useSetAtom } from 'jotai';
 import Link from 'next/link';

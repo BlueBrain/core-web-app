@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/button-has-type */
 
 import { useState, useLayoutEffect } from 'react';
@@ -71,7 +72,6 @@ function CommandSPlugin() {
       // check if the user pressed cmd + k
       if (e.metaKey && e.key === 'k') {
         e.preventDefault();
-        console.log('CMD + k pressed');
         setSelectOpen(true);
       }
     };
@@ -113,7 +113,8 @@ const theme = {
   root: 'p-4 border-slate-500 border-2 rounded h-full min-h-[200px] focus:outline-none focus-visible:border-black',
 };
 
-function onError(error) {
+function onError(error: Error) {
+  // eslint-disable-next-line no-console
   console.error(error);
 }
 

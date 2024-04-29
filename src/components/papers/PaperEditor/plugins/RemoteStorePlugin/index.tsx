@@ -22,9 +22,10 @@ interface RemoteStorePluginProps {
 }
 
 export default function RemoteStorePlugin({
-  virtualLabId,
-  projectId,
   paperId,
+  // To be used after full vlab/project support is implemented.
+  virtualLabId: _virtualLabId,
+  projectId: _projectId,
 }: RemoteStorePluginProps) {
   const session = useAtomValue(sessionAtom);
 
