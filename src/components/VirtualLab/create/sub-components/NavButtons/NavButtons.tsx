@@ -1,9 +1,10 @@
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { Button } from '../Button';
+import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
 import { Step } from './Step';
-import { classNames } from '@/util/utils';
 import useNotification from '@/hooks/notifications';
+import { classNames } from '@/util/utils';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
 
 import styles from './nav-buttons.module.css';
@@ -15,10 +16,11 @@ export interface NavButtonsProps {
   onNext: () => void;
 }
 
-export function NavButtons({ className, step, disabled, onNext, virtualLab }: NavButtonsProps) {
+export function NavButtons({ className, step, disabled, onNext }: NavButtonsProps) {
   const session = useSession();
   const notification = useNotification();
   const [loading, setLoading] = useState(false);
+  const [lab] = useCurrentVirtualLab();
 
   const handleCreate = async () => {
     if (!session.data) {
@@ -26,9 +28,9 @@ export function NavButtons({ className, step, disabled, onNext, virtualLab }: Na
     }
     setLoading(true);
 
-    return createVirtualLab({ ...virtualLab, token: session.data.accessToken })
+    return createVirtualLab({ lab, token: session.data.accessToken })
       .then((response) => {
-        notification.success(`${response.data.virtualLab.name} has been created.`);
+        notification.success(`${response.data.virtual_lab.name} has been created.`);
         onNext();
       })
       .catch((error) => {
@@ -54,7 +56,7 @@ export function NavButtons({ className, step, disabled, onNext, virtualLab }: Na
         </Button>
       )}
       <hr />
-      <div>{STEPS[step]}</div>
+      <div>{step}</div>
       <div>
         <Step selected={step === 'information'} />
         <Step selected={step === 'plan'} />

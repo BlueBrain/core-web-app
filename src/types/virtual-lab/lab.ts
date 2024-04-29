@@ -10,7 +10,7 @@ export type VirtualLab = {
   reference_email: string;
   budget: number;
   plan_id: number;
-  users: VirtualLabMember[];
+  include_members: VirtualLabMember[];
 };
 
 export type VirtualLabResponse = VlmResponse<{ virtual_lab: VirtualLab }>;

@@ -3,20 +3,19 @@ import { VirtualLabPlanType } from '@/types/virtual-lab/lab';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
-  id: '',
   created_at: '',
   name: '',
   description: '',
   reference_email: '',
   budget: 1,
   plan_id: 0,
-  users: [],
+  include_members: [],
 };
 
 export const ROLES: Record<VirtualLabMember['role'], string> = {
   admin: 'Administrator',
   member: 'Member',
-}
+};
 
 export const STEPS = ['information', 'plan', 'members'];
 

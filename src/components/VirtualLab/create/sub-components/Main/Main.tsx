@@ -8,7 +8,7 @@ import styles from './main.module.css';
 export interface MainProps {
   className?: string;
   canGoNext: boolean;
-  step:  string;
+  step: string;
   children: ReactNode;
   onNext: () => void;
 }

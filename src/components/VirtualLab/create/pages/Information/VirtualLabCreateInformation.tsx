@@ -37,7 +37,7 @@ export function VirtualLabCreateInformation({
 const FIELDS: Record<string, FieldType> = {
   name: { label: "Virtual lab's name", required: true, placeholder: "Enter your lab's name..." },
   description: { label: 'Description', placeholder: 'Enter your description...' },
-  referenceEMail: {
+  reference_email: {
     label: 'Reference email',
     type: 'email',
     required: true,

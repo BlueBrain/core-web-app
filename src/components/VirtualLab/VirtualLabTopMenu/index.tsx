@@ -4,14 +4,13 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button, Modal } from 'antd';
 import { useSetAtom } from 'jotai';
-import {STEPS} from '../create/constants';
+import { STEPS } from '../create/constants';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import {
   VirtualLabCreateInformation,
   VirtualLabCreatePlan,
   VirtualLabCreateMembers,
 } from '@/components/VirtualLab/create';
-
 
 type Props = {
   extraItems?: ReactNode[];

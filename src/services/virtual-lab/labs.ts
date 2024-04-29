@@ -109,21 +109,16 @@ export async function getPlans(token: string): Promise<
 }
 
 export async function createVirtualLab({
-  name,
-  description,
+  lab,
   token,
 }: {
-  name: string;
-  description: string;
+  lab: Partial<VirtualLab>;
   token: string;
 }): Promise<VlmResponse<{ virtual_lab: VirtualLab }>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs`, {
     method: 'POST',
     headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name,
-      description,
-    }),
+    body: JSON.stringify(lab),
   });
 
   if (response.ok) {
