@@ -21,8 +21,8 @@ export function PlanSelectButton({ className, plan, selected, onSelect }: PlanSe
         <fieldset key={category}>
           <legend>{category}</legend>
           <ul>
-            {items.map((item, itemIndex) => (
-              <li key={`catkey-${itemIndex}`}>{item}</li>
+            {items.map((item) => (
+              <li>{item}</li>
             ))}
           </ul>
         </fieldset>
