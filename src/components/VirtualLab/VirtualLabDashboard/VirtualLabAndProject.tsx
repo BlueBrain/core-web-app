@@ -23,9 +23,16 @@ export default function VirtualLabAndProject({ id, name, description, createdAt 
       return <Spin indicator={<LoadingOutlined />} />;
     }
     if (projects.state === 'hasData') {
-      return projects.data?.results.map((project) => (
-        <VirtualLabProjectItem key={project.id} project={project} />
-      ));
+      return (
+        <>
+          {projects.data?.results && projects.data?.results.length > 0 && (
+            <div className="font-bold uppercase text-primary-3">My Projects</div>
+          )}
+          {projects.data?.results.map((project) => (
+            <VirtualLabProjectItem key={project.id} project={project} />
+          ))}
+        </>
+      );
     }
 
     return null;
@@ -40,10 +47,7 @@ export default function VirtualLabAndProject({ id, name, description, createdAt 
         createdAt={createdAt}
         withLink
       />
-      <div className="ml-20 mt-5 flex flex-col gap-5">
-        <div className="font-bold uppercase text-primary-3">My Projects</div>
-        {renderProjects()}
-      </div>
+      <div className="ml-20 mt-5 flex flex-col gap-5">{renderProjects()}</div>
     </div>
   );
 }
