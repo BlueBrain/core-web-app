@@ -1,9 +1,10 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { useSetAtom, useAtomValue } from 'jotai';
 import { loadable, unwrap } from 'jotai/utils';
 import { Button, Collapse, ConfigProvider, Spin } from 'antd';
+import { CollapseProps } from 'antd/lib/collapse/Collapse';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -12,11 +13,11 @@ import ComputeTimeVisualization from './ComputeTimeVisualization';
 import FormPanel, { renderInput, renderTextArea } from './FormPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
-import { deleteVirtualLab, patchVirtualLab } from '@/services/virtual-lab/labs';
-import { VALID_EMAIL_REGEXP } from '@/util/utils';
-import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
+import { deleteVirtualLab, patchVirtualLab } from '@/services/virtual-lab/labs';
 import { virtualLabDetailAtomFamily, virtualLabPlansAtom } from '@/state/virtual-lab/lab';
+import { VALID_EMAIL_REGEXP, classNames } from '@/util/utils';
+import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
 const mockBilling = {
   organization: 'EPFL',
@@ -53,6 +54,40 @@ function ExpandIcon({ isActive }: { isActive?: boolean }) {
   );
 }
 
+function CustomCollapse({ className, items }: CollapseProps) {
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorText: '#003A8C',
+        },
+        components: {
+          Collapse: {
+            headerBg: 'transparent', // Used in conjunction with "background" style definition below
+            headerPadding: '24px 28px',
+            contentPadding: '20px 0 20px',
+            borderRadiusLG: 0,
+            contentBg: '#002766',
+            colorBorder: '#002766',
+          },
+        },
+      }}
+    >
+      <Collapse
+        accordion
+        expandIconPosition="end"
+        expandIcon={ExpandIcon}
+        className={classNames(className)}
+        items={items?.map((item) => ({
+          ...item,
+          style: { background: '#fff' },
+          headerClass: 'color-primary-8 text-xl font-bold',
+        }))}
+      />
+    </ConfigProvider>
+  );
+}
+
 export default function VirtualLabSettingsComponent({ id, token }: { id: string; token: string }) {
   const router = useRouter();
   const userIsAdmin = true;
@@ -60,24 +95,28 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
 
-  const updateVirtualLab = async (formData: Partial<VirtualLab>): Promise<void> => {
-    const { data } = await patchVirtualLab(formData, id, token);
-    const { virtual_lab: virtualLab } = data;
+  const updateVirtualLab = useCallback(
+    async (formData: Partial<VirtualLab>): Promise<void> => {
+      const { data } = await patchVirtualLab(formData, id, token);
+      const { virtual_lab: virtualLab } = data;
 
-    setVirtualLabDetail(
-      new Promise((resolve) => {
-        resolve(virtualLab);
-      })
-    );
-  };
-  const onDeleteVirtualLab = async (): Promise<VirtualLab> => {
+      setVirtualLabDetail(
+        new Promise((resolve) => {
+          resolve(virtualLab);
+        })
+      );
+    },
+    [id, setVirtualLabDetail, token]
+  );
+
+  const onDeleteVirtualLab = useCallback(async (): Promise<VirtualLab> => {
     const { data } = await deleteVirtualLab(id, token);
     const { virtual_lab: virtualLab } = data;
 
     virtualLabDetailAtomFamily.remove(id);
 
     return new Promise((resolve) => resolve(virtualLab)); // eslint-disable-line no-promise-executor-return
-  };
+  }, [id, token]);
 
   const plans = useAtomValue(unwrap(virtualLabPlansAtom));
 
@@ -125,6 +164,53 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     },
   ];
 
+  const settings = useMemo(
+    () =>
+      virtualLabDetail.state === 'hasData'
+        ? {
+            children: (
+              <FormPanel
+                initialValues={{
+                  name: virtualLabDetail.data?.name,
+                  reference_email: virtualLabDetail.data?.reference_email,
+                  description: virtualLabDetail.data?.description,
+                }}
+                items={[
+                  {
+                    children: renderInput,
+                    label: 'Lab Name',
+                    name: 'name',
+                    required: true,
+                  },
+                  {
+                    children: renderTextArea,
+                    label: 'Description',
+                    name: 'description',
+                  },
+                  {
+                    children: renderInput,
+                    label: 'Reference email',
+                    name: 'reference_email',
+                    type: 'email',
+                    rules: [
+                      {
+                        required: true,
+                        pattern: VALID_EMAIL_REGEXP,
+                        message: 'Entered value is not the correct email format',
+                      },
+                    ],
+                  },
+                ]}
+                name="settings" // TODO: Check whether this prop is necessary.
+                onFinish={updateVirtualLab}
+              />
+            ),
+            label: 'Lab Settings',
+          }
+        : {},
+    [updateVirtualLab, virtualLabDetail]
+  );
+
   // Merge API Plan data with the planDescriptions objects.
   // TODO: Ask JDC whether to keep plan data in Frontend or Backend.
   const plansWithDescriptions = plans?.reduce<
@@ -144,92 +230,35 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     []
   );
 
-  if (virtualLabDetail.state === 'loading') {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Spin size="large" indicator={<LoadingOutlined />} />
-      </div>
-    );
-  }
+  const plan = useMemo(
+    () =>
+      virtualLabDetail.state === 'hasData'
+        ? {
+            children: !!plansWithDescriptions && (
+              <PlanPanel
+                currentPlan={virtualLabDetail.data?.plan_id || 0}
+                items={plansWithDescriptions}
+                userIsAdmin={userIsAdmin}
+                onChange={updateVirtualLab}
+              />
+            ),
+            label: 'Plan',
+          }
+        : {},
+    [plansWithDescriptions, updateVirtualLab, userIsAdmin, virtualLabDetail]
+  );
 
-  if (virtualLabDetail.state === 'hasError') {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="rounded-lg border p-8">
-          {(virtualLabDetail.error as Error).message === 'Status: 404' ? (
-            <>Virtual Lab not found</>
-          ) : (
-            <>Something went wrong when fetching virtual lab</>
-          )}
-        </div>
-      </div>
-    );
-  }
+  const budget = useMemo(
+    () => ({
+      children: <ProjectsPanel expandIcon={ExpandIcon} virtualLabId={id} />,
+      label: 'Budgets',
+    }),
+    [id]
+  );
 
-  const expandableItems: Array<{
-    content: ReactNode;
-    key: string;
-    title: string;
-  }> = [
-    {
-      content: (
-        <FormPanel
-          initialValues={{
-            name: virtualLabDetail.data?.name,
-            reference_email: virtualLabDetail.data?.reference_email,
-            description: virtualLabDetail.data?.description,
-          }}
-          onFinish={updateVirtualLab}
-          items={[
-            {
-              children: renderInput,
-              label: 'Lab Name',
-              name: 'name',
-              required: true,
-            },
-            {
-              children: renderTextArea,
-              label: 'Description',
-              name: 'description',
-            },
-            {
-              children: renderInput,
-              label: 'Reference email',
-              name: 'reference_email',
-              type: 'email',
-              rules: [
-                {
-                  required: true,
-                  pattern: VALID_EMAIL_REGEXP,
-                  message: 'Entered value is not the correct email format',
-                },
-              ],
-            },
-          ]}
-        />
-      ),
-      key: 'settings',
-      title: 'Lab Settings',
-    },
-    {
-      content: !!plansWithDescriptions && (
-        <PlanPanel
-          currentPlan={virtualLabDetail.data?.plan_id || 0}
-          items={plansWithDescriptions}
-          userIsAdmin={userIsAdmin}
-          onChange={updateVirtualLab}
-        />
-      ),
-      key: 'plan',
-      title: 'Plan',
-    },
-    {
-      content: <ProjectsPanel expandIcon={ExpandIcon} virtualLabId={id} />,
-      key: 'budgets',
-      title: 'Budgets',
-    },
-    {
-      content: (
+  const billing = useMemo(
+    () => ({
+      children: (
         <FormPanel
           className="grid grid-cols-2"
           initialValues={mockBilling}
@@ -276,43 +305,59 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
           onFinish={() => new Promise(() => {})}
         />
       ),
-      key: 'billing',
-      title: 'Billing',
-    },
-    ...(userIsAdmin
-      ? [
-          {
-            content: (
+      label: 'Billing',
+    }),
+    []
+  );
+
+  const dangerZone = useMemo(
+    () =>
+      virtualLabDetail.state === 'hasData' && userIsAdmin
+        ? {
+            children: (
               <DangerZonePanel
                 onClick={onDeleteVirtualLab}
                 name={virtualLabDetail.data?.name || ''}
               />
             ),
-            key: 'danger-zone',
-            title: 'Danger Zone',
-          },
-        ]
-      : []),
-  ];
+            label: 'Danger Zone',
+          }
+        : {},
+    [onDeleteVirtualLab, userIsAdmin, virtualLabDetail]
+  );
+
+  const collapseItems: CollapseProps['items'] = useMemo(
+    () =>
+      [settings, plan, budget, billing, dangerZone].filter(
+        (item) => Object.keys(item).length !== 0 // Filter-out any "empty" panels (ex. DangerZone when not admin).
+      ),
+    [settings, plan, budget, billing, dangerZone]
+  );
+
+  if (virtualLabDetail.state === 'loading') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spin size="large" indicator={<LoadingOutlined />} />
+      </div>
+    );
+  }
+
+  if (virtualLabDetail.state === 'hasError') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="rounded-lg border p-8">
+          {(virtualLabDetail.error as Error).message === 'Status: 404' ? (
+            <>Virtual Lab not found</>
+          ) : (
+            <>Something went wrong when fetching virtual lab</>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorText: '#003A8C',
-        },
-        components: {
-          Collapse: {
-            headerBg: 'transparent', // Used in conjunction with "background" style definition below
-            headerPadding: '24px 28px',
-            contentPadding: '20px 0 20px',
-            borderRadiusLG: 0,
-            contentBg: '#002766',
-            colorBorder: '#002766',
-          },
-        },
-      }}
-    >
+    <div className="flex flex-col gap-1">
       <Button
         onClick={() => router.push('/')}
         type="text"
@@ -320,25 +365,8 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       >
         <ArrowLeftOutlined /> Back to
       </Button>
-      <div className="flex flex-col gap-1">
-        {virtualLabDetail.data && <HeaderPanel virtualLab={virtualLabDetail.data} />}
-        <Collapse
-          accordion
-          expandIconPosition="end"
-          expandIcon={ExpandIcon}
-          className="flex flex-col gap-1 text-primary-8"
-        >
-          {expandableItems.map(({ content, key, title }) => (
-            <Collapse.Panel
-              key={key}
-              style={{ background: '#fff' }} // Allows for more control than headerBg above
-              header={<h3 className="color-primary-8 text-xl font-bold">{title}</h3>}
-            >
-              {content}
-            </Collapse.Panel>
-          ))}
-        </Collapse>
-      </div>
-    </ConfigProvider>
+      {virtualLabDetail.data && <HeaderPanel virtualLab={virtualLabDetail.data} />}
+      <CustomCollapse className="flex flex-col gap-1 text-primary-8" items={collapseItems} />
+    </div>
   );
 }
