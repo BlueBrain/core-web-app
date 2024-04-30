@@ -8,8 +8,8 @@ import { CollapseProps } from 'antd/lib/collapse/Collapse';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined, LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
+import BudgetPanel from '../VirtualLabHomePage/BudgetPanel';
 import ProjectsPanel from './ProjectsPanel';
-import ComputeTimeVisualization from './ComputeTimeVisualization';
 import FormPanel, { renderInput, renderTextArea } from './FormPanel';
 import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
@@ -28,23 +28,6 @@ const mockBilling = {
   postalCode: '1202',
   country: 'CH',
 };
-
-function HeaderPanel({ virtualLab }: { virtualLab: VirtualLab }) {
-  return (
-    <div className="bg-primary-8">
-      <div className="border border-transparent border-b-primary-7 px-8 py-4">
-        <h6>Virtual lab</h6>
-        <h3 className="text-3xl font-bold leading-10" data-testid="virtual-lab-name">
-          {virtualLab.name}
-        </h3>
-      </div>
-      <div className="px-8 py-4">
-        <h5 className="font-bold">Compute hours current usage</h5>
-        <ComputeTimeVisualization usedTimeInHours={50} totalTimeInHours={100} />
-      </div>
-    </div>
-  );
-}
 
 function ExpandIcon({ isActive }: { isActive?: boolean }) {
   return isActive ? (
@@ -192,6 +175,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                     label: 'Reference email',
                     name: 'reference_email',
                     type: 'email',
+                    required: true,
                     rules: [
                       {
                         required: true,
@@ -365,7 +349,12 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
       >
         <ArrowLeftOutlined /> Back to
       </Button>
-      {virtualLabDetail.data && <HeaderPanel virtualLab={virtualLabDetail.data} />}
+      <BudgetPanel
+        title={<h3 className="text-3xl font-bold">{virtualLabDetail.data?.name}</h3>}
+        total={virtualLabDetail.data?.budget ?? 0}
+        totalSpent={300}
+        remaining={350}
+      />
       <CustomCollapse className="flex flex-col gap-1 text-primary-8" items={collapseItems} />
     </div>
   );
