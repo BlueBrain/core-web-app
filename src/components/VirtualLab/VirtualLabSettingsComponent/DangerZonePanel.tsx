@@ -3,7 +3,6 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Input, InputRef, Modal, Spin } from 'antd';
 import { useRef, useState } from 'react';
 import { VirtualLab } from '@/types/virtual-lab/lab';
-import { basePath } from '@/config';
 
 function DeleteVirtualLabConfirmation({
   open,
