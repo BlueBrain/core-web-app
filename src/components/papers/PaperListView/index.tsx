@@ -291,7 +291,7 @@ const paperTableColumns = [
     key: 'name',
     render: (_name: string, paper: PaperResource) => (
       <Link
-        href={`/virtual-lab/lab/${paper.virtualLabId}/project/${paper.projectId}/papers/${paper['@id']}}`}
+        href={`/virtual-lab/lab/${paper.virtualLabId}/project/${paper.projectId}/papers/${collapseId(paper['@id'])}`}
       >
         {paper.name}
       </Link>

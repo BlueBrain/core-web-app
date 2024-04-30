@@ -13,7 +13,7 @@ import {
 import { autoSaveDebounceInterval } from '@/config';
 import sessionAtom from '@/state/session';
 import { PaperResource } from '@/types/nexus';
-import { createDistribution } from '@/util/nexus';
+import { createDistribution, expandId } from '@/util/nexus';
 
 interface RemoteStorePluginProps {
   virtualLabId?: string;
@@ -40,7 +40,10 @@ export default function RemoteStorePlugin({
     if (initialised || !session) return;
 
     const init = async () => {
-      const remotePaperResource = await fetchResourceById<PaperResource>(paperId, session);
+      const remotePaperResource = await fetchResourceById<PaperResource>(
+        expandId(paperId),
+        session
+      );
       const editorStateObj = await fetchJsonFileByUrl<SerializedEditorState>(
         remotePaperResource.distribution.contentUrl,
         session
