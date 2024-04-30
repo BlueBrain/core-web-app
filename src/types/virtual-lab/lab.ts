@@ -38,3 +38,9 @@ export enum SimulationType {
   PairedNeuron = 'paired-neuron',
   Synaptome = 'synaptome',
 }
+export interface VirtualLabPlanDefinition {
+  id: number;
+  name: string;
+  features: Record<string, string[]>;
+  price: number;
+}

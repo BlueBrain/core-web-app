@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { VirtualLabPlanDefinition } from '../../types';
 import { Button } from '../Button';
+import { VirtualLabPlanDefinition } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
 
 import styles from './plan-select-button.module.css';
