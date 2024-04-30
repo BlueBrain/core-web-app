@@ -13,9 +13,16 @@ type Props = {
   name: string;
   description: string;
   createdAt: string;
+  showOnlyLabs: boolean;
 };
 
-export default function VirtualLabAndProject({ id, name, description, createdAt }: Props) {
+export default function VirtualLabAndProject({
+  id,
+  name,
+  description,
+  createdAt,
+  showOnlyLabs,
+}: Props) {
   const projects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
 
   const renderProjects = useCallback(() => {
@@ -47,7 +54,7 @@ export default function VirtualLabAndProject({ id, name, description, createdAt 
         createdAt={createdAt}
         withLink
       />
-      <div className="ml-20 mt-5 flex flex-col gap-5">{renderProjects()}</div>
+      {!showOnlyLabs && <div className="ml-20 mt-5 flex flex-col gap-5">{renderProjects()}</div>}
     </div>
   );
 }
