@@ -3,13 +3,15 @@ import { Spin } from 'antd';
 import { useAtomValue } from 'jotai';
 import { loadable } from 'jotai/utils';
 import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
+import Link from 'next/link';
+
 import { LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
 import {
   virtualLabProjectDetailsAtomFamily,
   virtualLabProjectUsersAtomFamily,
 } from '@/state/virtual-lab/projects';
-import { basePath } from '@/config';
+import { generateLabUrl } from '@/util/virtual-lab/urls';
 
 type Props = {
   virtualLabId: string;
@@ -78,12 +80,12 @@ export default function VirtualLabProjectSidebar({ virtualLabId, projectId }: Pr
       <h1 className="leading-12 text-5xl font-bold uppercase text-primary-5">
         {renderProjectTitle()}
       </h1>
-      <a
-        href={`${basePath}/virtual-lab/lab/${virtualLabId}/projects`}
+      <Link
+        href={`${generateLabUrl(virtualLabId)}/projects`}
         className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
       >
         <span>Switch project</span> <SwapOutlined />
-      </a>
+      </Link>
 
       <VerticalLinks links={linkItems} currentPage={currentPage} />
     </div>

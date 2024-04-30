@@ -12,6 +12,7 @@ import WelcomeUserBanner from './WelcomeUserBanner';
 import { basePath } from '@/config';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
+import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
 type Props = {
   id: string;
@@ -119,7 +120,7 @@ export default function VirtualLabHomePage({ id }: Props) {
                   key={project.id}
                   title={project.name}
                   description={project.description}
-                  buttonHref=""
+                  buttonHref={`${generateVlProjectUrl(id, project.id)}/home`}
                 />
               ))}
           </div>

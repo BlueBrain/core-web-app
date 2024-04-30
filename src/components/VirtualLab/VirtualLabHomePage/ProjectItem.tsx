@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type Props = {
   title: string;
@@ -7,20 +7,13 @@ type Props = {
 };
 
 export default function ProjectItem({ title, description, buttonHref }: Props) {
-  const router = useRouter();
   return (
-    <div className="w-[350px] rounded bg-white p-6 text-primary-8">
+    <div className="flex w-[350px] flex-col gap-3 rounded bg-white p-6 text-primary-8">
       <div className="text-xl font-bold">{title}</div>
       <div className="truncate">{description}</div>
-      <button
-        className="mt-5 border px-6 py-2 font-semibold"
-        type="button"
-        onClick={() => {
-          router.push(buttonHref);
-        }}
-      >
+      <Link className="border px-6 py-2 font-semibold" type="button" href={buttonHref}>
         View project
-      </button>
+      </Link>
     </div>
   );
 }

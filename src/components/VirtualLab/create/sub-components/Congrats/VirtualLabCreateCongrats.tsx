@@ -6,6 +6,7 @@ import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
 import { EMPTY_VIRTUAL_LAB } from '../../constants';
 import { classNames } from '@/util/utils';
 import { basePath } from '@/config';
+import { generateLabUrl } from '@/util/virtual-lab/urls';
 
 import styles from './virtual-lab-create-congrats.module.css';
 // eslint-disable-next-line import/order
@@ -30,7 +31,7 @@ export function VirtualLabCreateCongrats({ className }: VirtualLabCreateCongrats
             </header>
             <h1>Congratulations! Your virtual lab has been created.</h1>
             <Button
-              href={`${basePath}/virtual-lab/lab/${lab.id}`}
+              href={generateLabUrl(lab.id)}
               variant="primary"
               onClick={resetCurrentVirtualLab}
             >
