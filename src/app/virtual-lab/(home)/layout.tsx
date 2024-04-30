@@ -2,27 +2,15 @@
 
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { PlusOutlined } from '@ant-design/icons';
 
 import { ModalStateProvider } from '@/components/VirtualLab/create/contexts/ModalStateContext';
-import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
+import { CreateVirtualLabButton } from '@/components/VirtualLab/VirtualLabTopMenu/CreateVirtualLabButton';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
 export default function VirtualLabPageLayout({ children }: { children: ReactNode }) {
-  const { showModal } = useModalState();
-
-  const extraHeaderItems: ReactNode[] = [
-    <div
-      key={1}
-      className="flex w-52 flex-row justify-between border-r border-primary-7 p-4 font-bold"
-      onClick={showModal}
-    >
-      <span className="font-bold">Create virtual lab</span>
-      <PlusOutlined />
-    </div>,
-  ];
+  const extraHeaderItems: ReactNode[] = [<CreateVirtualLabButton key={1} />];
 
   return (
     <div className="bg-primary-9 p-10 text-white">

@@ -4,11 +4,11 @@ import { loadable } from 'jotai/utils';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
+import { InputBillingInfo } from './InputBillingInfo';
 import { Layout } from '@/components/VirtualLab/create/sub-components/Layout';
 import { Main } from '@/components/VirtualLab/create/sub-components/Main';
 import { useCurrentVirtualLab } from '@/components/VirtualLab/create/hooks/current-virtual-lab';
 import { PlanSelectButton } from '@/components/VirtualLab/create/sub-components/PlanSelectButton';
-import { InputBillingInfo } from './InputBillingInfo';
 import { virtualLabPlansAtom } from '@/state/virtual-lab/lab';
 
 export interface VirtualLabCreatePlanProps {

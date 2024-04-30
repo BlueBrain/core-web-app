@@ -2,7 +2,7 @@ import { useEffect, useRef, ReactNode } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useSetAtom } from 'jotai';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
 import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
@@ -33,13 +33,6 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
       <div className="flex h-14 w-full justify-between">
         <div className="flex gap-4" ref={localRef} />
         <div className="flex w-fit items-center justify-end border border-primary-7">
-          <Button
-            className="h-full w-52 border-none py-4 font-bold text-white"
-            type="link"
-            onClick={showModal}
-          >
-            Create Virtual Lab
-          </Button>
           <Link className="w-52 border-x border-primary-7 p-4 font-bold" href="/getting-started">
             Getting Started
           </Link>
