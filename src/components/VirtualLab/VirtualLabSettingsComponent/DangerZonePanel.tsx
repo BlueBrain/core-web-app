@@ -139,7 +139,7 @@ export default function DangerZonePanel({
         setSavingChanges(false);
         setDeleted(true);
 
-        setTimeout(() => push(`${basePath}/virtual-lab`), 3000);
+        setTimeout(() => push(`/virtual-lab`), 3000);
       });
   };
 

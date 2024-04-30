@@ -36,7 +36,7 @@ function ScopeSelector({
       >
         All
       </button>
-      {(Object.keys(SimulationScope) as Array<SimulationScope>).map((scope) => (
+      {(Object.values(SimulationScope) as Array<SimulationScope>).map((scope) => (
         <button
           key={scope}
           className={classNames(
@@ -145,7 +145,7 @@ function ScopeCarousel() {
   );
 }
 
-export default function VirtualLabProjectSimulatePage() {
+export default function VirtualLabProjectBuildPage() {
   return (
     <div className="flex flex-col gap-10 pt-6">
       <ScopeCarousel />
