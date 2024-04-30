@@ -17,7 +17,7 @@ export const ROLES: Record<VirtualLabMember['role'], string> = {
   member: 'Member',
 };
 
-export const STEPS = ['information', 'plan', 'members'];
+export const STEPS = ['information', 'plan'];
 
 export const RX_EMAIL = /^[^ \t@]+@[^ \t@]+$/g;
 
