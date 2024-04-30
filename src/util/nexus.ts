@@ -3,7 +3,7 @@ import { nexus } from '@/config';
 import { Distribution, FileMetadata } from '@/types/nexus';
 import { metadataKeys, revParamRegexp } from '@/constants/nexus';
 
-export function collapseId(nexusId: string) {
+export function collapseId(nexusId: string): string {
   if (!nexusId) return nexusId;
 
   // TODO: remove this once we create new Release configs with proper id
