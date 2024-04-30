@@ -22,7 +22,7 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
 
-  const { isModalVisible, currentStep, showModal, handleOk, handleCancel } = useModalState();
+  const { isModalVisible, currentStep, handleOk, handleCancel } = useModalState();
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
