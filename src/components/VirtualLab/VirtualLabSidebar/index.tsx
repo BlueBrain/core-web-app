@@ -5,9 +5,9 @@ import { Spin } from 'antd';
 import { usePathname } from 'next/navigation';
 import { loadable, unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, SwapOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
-import VirtualLabsSelect from './VirtualLabsSelect';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import VerticalLinks, { LinkItem } from '@/components/VerticalLinks';
@@ -87,7 +87,12 @@ export default function VirtualLabSidebar({ virtualLabId }: Props) {
   return (
     <div className="mr-12 flex w-full flex-col gap-5">
       <VirtualLabTitle virtualLabId={virtualLabId} />
-      <VirtualLabsSelect />
+      <Link
+        href="/virtual-lab"
+        className="flex items-center justify-between border border-primary-7 p-3 text-primary-3"
+      >
+        <span>Switch virtual lab</span> <SwapOutlined />
+      </Link>
       <VerticalLinks links={linkItems} currentPage={currentPage} />
     </div>
   );
