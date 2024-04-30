@@ -1,6 +1,6 @@
 import { RefObject } from 'react';
 import { PrimitiveAtom, atom } from 'jotai';
-import { atomFamily, atomWithDefault } from 'jotai/utils';
+import { atomFamily, atomWithDefault, atomWithRefresh } from 'jotai/utils';
 
 import sessionAtom from '../session';
 
@@ -40,16 +40,16 @@ export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
   })
 );
 
-export const virtualLabsOfUserAtom = atom<Promise<VirtualLabAPIListData<VirtualLab> | undefined>>(
-  async (get) => {
-    const session = get(sessionAtom);
-    if (!session) {
-      return;
-    }
-    const response = await getVirtualLabsOfUser(session.accessToken);
-    return response.data;
+export const virtualLabsOfUserAtom = atomWithRefresh<
+  Promise<VirtualLabAPIListData<VirtualLab> | undefined>
+>(async (get) => {
+  const session = get(sessionAtom);
+  if (!session) {
+    return;
   }
-);
+  const response = await getVirtualLabsOfUser(session.accessToken);
+  return response.data;
+});
 
 export const projectTopMenuRefAtom = atom<RefObject<HTMLDivElement> | null>(null);
 

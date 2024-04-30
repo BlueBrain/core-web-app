@@ -15,7 +15,11 @@ import PlanPanel from './PlanPanel';
 import DangerZonePanel from './DangerZonePanel';
 
 import { deleteVirtualLab, patchVirtualLab } from '@/services/virtual-lab/labs';
-import { virtualLabDetailAtomFamily, virtualLabPlansAtom } from '@/state/virtual-lab/lab';
+import {
+  virtualLabDetailAtomFamily,
+  virtualLabsOfUserAtom,
+  virtualLabPlansAtom,
+} from '@/state/virtual-lab/lab';
 import { VALID_EMAIL_REGEXP, classNames } from '@/util/utils';
 import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
 
@@ -77,6 +81,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
 
   const virtualLabDetail = useAtomValue(loadable(virtualLabDetailAtomFamily(id)));
   const setVirtualLabDetail = useSetAtom(virtualLabDetailAtomFamily(id));
+  const refreshVirtualLabsOfUser = useSetAtom(virtualLabsOfUserAtom);
 
   const updateVirtualLab = useCallback(
     async (formData: Partial<VirtualLab>): Promise<void> => {
@@ -97,9 +102,10 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
     const { virtual_lab: virtualLab } = data;
 
     virtualLabDetailAtomFamily.remove(id);
+    refreshVirtualLabsOfUser();
 
     return new Promise((resolve) => resolve(virtualLab)); // eslint-disable-line no-promise-executor-return
-  }, [id, token]);
+  }, [id, refreshVirtualLabsOfUser, token]);
 
   const plans = useAtomValue(unwrap(virtualLabPlansAtom));
 
