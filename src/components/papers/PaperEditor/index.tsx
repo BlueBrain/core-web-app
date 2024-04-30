@@ -68,7 +68,7 @@ function CommandSPlugin() {
   };
 
   useLayoutEffect(() => {
-    const onKeyDown = (e) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       // check if the user pressed cmd + k
       if (e.metaKey && e.key === 'k') {
         e.preventDefault();
