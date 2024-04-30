@@ -3,6 +3,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Input, InputRef, Modal, Spin } from 'antd';
 import { useRef, useState } from 'react';
 import { VirtualLab } from '@/types/virtual-lab/lab';
+import { basePath } from '@/config';
 
 function DeleteVirtualLabConfirmation({
   open,
@@ -138,7 +139,7 @@ export default function DangerZonePanel({
         setSavingChanges(false);
         setDeleted(true);
 
-        setTimeout(() => push('/virtual-lab'), 3000);
+        setTimeout(() => push(`${basePath}/virtual-lab`), 3000);
       });
   };
 
