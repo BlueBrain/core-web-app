@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef, ReactNode, useMemo, useCallback } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button, Modal } from 'antd';
 import { useSetAtom } from 'jotai';
-import { STEPS } from '../create/constants';
 import { projectTopMenuRefAtom } from '@/state/virtual-lab/lab';
-import ModalNavigationContext from '@/components/VirtualLab/create/contexts/ModalNavigationContext';
+import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
+
 import {
   VirtualLabCreateInformation,
   VirtualLabCreatePlan,
@@ -21,33 +21,8 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
   const { data: session } = useSession();
   const localRef = useRef(null);
   const setProjectTopMenuRef = useSetAtom(projectTopMenuRefAtom);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentStep, setCurrentStep] = useState(STEPS[0]);
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleNext = useCallback(() => {
-    const currentStepIndex = STEPS.indexOf(currentStep);
-    if (currentStepIndex < STEPS.length - 1) {
-      setCurrentStep(STEPS[currentStepIndex + 1]);
-    }
-  }, [currentStep]);
-
-  const handleCancel = useCallback(() => {
-    setCurrentStep(STEPS[0]);
-    setIsModalVisible(false);
-  }, []);
-
-  const providerValue = useMemo(
-    () => ({ onNext: handleNext, onCancel: handleCancel }),
-    [handleNext, handleCancel]
-  );
+  const { isModalVisible, currentStep, showModal, handleOk, handleCancel } = useModalState();
 
   useEffect(() => {
     setProjectTopMenuRef(localRef);
@@ -78,20 +53,18 @@ export default function VirtualLabTopMenu({ extraItems }: Props) {
           {extraItems}
         </div>
       </div>
-      <ModalNavigationContext.Provider value={providerValue}>
-        <Modal
-          title={null}
-          open={isModalVisible}
-          width={800}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          footer={null}
-        >
-          {currentStep === 'information' && <VirtualLabCreateInformation />}
-          {currentStep === 'plan' && <VirtualLabCreatePlan />}
-          {currentStep === 'members' && <VirtualLabCreateMembers />}
-        </Modal>
-      </ModalNavigationContext.Provider>
+      <Modal
+        title={null}
+        open={isModalVisible}
+        width={800}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        {currentStep === 'information' && <VirtualLabCreateInformation />}
+        {currentStep === 'plan' && <VirtualLabCreatePlan />}
+        {currentStep === 'members' && <VirtualLabCreateMembers />}
+      </Modal>
     </>
   );
 }

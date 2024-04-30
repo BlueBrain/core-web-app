@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { Layout } from '../../sub-components/Layout';
-import { Main } from '../../sub-components/Main';
-import { Button } from '../../sub-components/Button';
+import { Layout } from '@/components/VirtualLab/create/sub-components/Layout';
+import { Main } from '@/components/VirtualLab/create/sub-components/Main';
+import { Button } from '@/components/VirtualLab/create/sub-components/Button';
 
 export interface VirtualLabCreateMembersProps {
   className?: string;

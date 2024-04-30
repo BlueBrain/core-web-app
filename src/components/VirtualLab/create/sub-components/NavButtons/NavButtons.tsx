@@ -6,7 +6,7 @@ import { Step } from './Step';
 import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
 import { createVirtualLab } from '@/services/virtual-lab/labs';
-import { useModalNavigation } from '@/components/VirtualLab/create/contexts/ModalNavigationContext';
+import { useModalState } from '@/components/VirtualLab/create/contexts/ModalStateContext';
 import styles from './nav-buttons.module.css';
 
 export interface NavButtonsProps {
@@ -16,7 +16,7 @@ export interface NavButtonsProps {
 }
 
 export function NavButtons({ className, step, disabled }: NavButtonsProps) {
-  const { onNext, onCancel } = useModalNavigation();
+  const { handleNext, handleCancel } = useModalState();
   const session = useSession();
   const notification = useNotification();
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
     return createVirtualLab({ lab, token: session.data.accessToken })
       .then((response) => {
         notification.success(`${response.data.virtual_lab.name} has been created.`);
-        onNext();
+        handleNext();
       })
       .catch((error) => {
         notification.error(`Virtual Lab creation failed: ${error}`);
@@ -43,7 +43,7 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
 
   return (
     <div className={classNames(styles.main, className)}>
-      <Button variant="text" onClick={onCancel}>
+      <Button variant="text" onClick={handleCancel}>
         Cancel
       </Button>
       {step === 'members' ? (
@@ -51,7 +51,7 @@ export function NavButtons({ className, step, disabled }: NavButtonsProps) {
           {loading ? 'Creating...' : 'Create'}
         </Button>
       ) : (
-        <Button onClick={onNext} disabled={disabled}>
+        <Button onClick={handleNext} disabled={disabled}>
           Next
         </Button>
       )}

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
-import { Form } from '../../sub-components/Form';
-import { Layout } from '../../sub-components/Layout';
-import { Main } from '../../sub-components/Main';
-import { FieldType } from '../../types';
+import { Form } from '@/components/VirtualLab/create/sub-components/Form';
+import { Layout } from '@/components/VirtualLab/create/sub-components/Layout';
+import { Main } from '@/components/VirtualLab/create/sub-components/Main';
+import { FieldType } from '@/components/VirtualLab/create/types';
 
 export interface VirtualLabCreateInformationProps {
   className?: string;

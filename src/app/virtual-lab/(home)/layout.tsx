@@ -8,9 +8,7 @@ import { ModalStateProvider } from '@/components/VirtualLab/create/contexts/Moda
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 
-
 export default function VirtualLabPageLayout({ children }: { children: ReactNode }) {
-  
   const extraHeaderItems: ReactNode[] = [
     <div
       key={1}
