@@ -158,30 +158,9 @@ export default function FormPanel({
 }) {
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
-  // const [errorFields, setErrorFields] = useState<Array<{ name: string; errors: Array<string> }>>(); TODO: Use this for AntD form validation.
   const [serverError, setServerError] = useState<string | null>(null);
 
   const [form] = Form.useForm<InformationForm>();
-
-  // if (errorFields?.length) {
-  //     return (
-  //       <div>
-  //         <p className="text-error">Something went wrong.</p>
-  //         <ul>
-  //           {errorFields.map(({ name, errors }) => {
-  //             <li>
-  //               <span>{name}</span>
-  //               <ul>
-  //                 {errors.map((error) => (
-  //                   <li>{error}</li>
-  //                 ))}
-  //               </ul>
-  //             </li>;
-  //           })}
-  //         </ul>
-  //       </div>
-  //     );
-  //   }
 
   const formItems = items.map(({ name: formItemName, ...formItemProps }) => (
     <SettingsFormItem
@@ -257,13 +236,6 @@ export default function FormPanel({
       form={form}
       initialValues={initialValues}
       name={name} // TODO: Check whether this prop is necessary.
-      // onFinishFailed={(errorInfo) => {
-      // const { errorFields } = errorInfo;
-
-      // setErrorFields(errorFields);
-
-      // setLoading(false);
-      // }}
       onFinish={async (values) => {
         return onFinish(values)
           .then(() => {
