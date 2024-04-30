@@ -13,9 +13,11 @@ export interface MainProps {
 }
 
 export function Main({ className, canGoNext, step, children }: MainProps) {
+  const validChildren = React.Children.toArray(children).filter(Boolean); // Remove falsy / 0 from children
+
   return (
     <div className={classNames(styles.main, className)}>
-      <div>{children}</div>
+      <div>{validChildren}</div>
       <footer>
         <NavButtons disabled={!canGoNext} step={step} />
       </footer>
