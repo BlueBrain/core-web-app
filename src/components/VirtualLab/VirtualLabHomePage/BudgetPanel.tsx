@@ -1,20 +1,27 @@
 'use client';
 
+import { ReactNode } from 'react';
 import { Collapse, CollapseProps, ConfigProvider } from 'antd';
 
 type Props = {
+  title?: ReactNode;
   total: number;
   totalSpent: number;
   remaining: number;
 };
 
-export default function BudgetPanel({ total, totalSpent, remaining }: Props) {
+export default function BudgetPanel({
+  title = <h4 className="font-semibold">Budget</h4>,
+  total,
+  totalSpent,
+  remaining,
+}: Props) {
   const items: CollapseProps['items'] = [
     {
       key: '1',
       label: (
-        <div className="flex justify-between text-white">
-          <h4 className="font-semibold">Budget</h4>
+        <div className="flex items-center justify-between text-white">
+          {title}
           <div className="text-primary-2">
             Total budget: <span>$ {total}</span>
           </div>

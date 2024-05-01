@@ -1,9 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Input, InputRef, Modal, Spin } from 'antd';
-import { useRef, useState } from 'react';
 import { VirtualLab } from '@/types/virtual-lab/lab';
-import { basePath } from '@/config';
 
 function DeleteVirtualLabConfirmation({
   open,
@@ -116,6 +115,8 @@ export default function DangerZonePanel({
   const [error, setError] = useState(false);
   const [savingChanges, setSavingChanges] = useState(false);
 
+  let redirectTimeout: ReturnType<typeof setTimeout>;
+
   const onDeletionConfirm = () => {
     setShowConfirmationDialog(false);
     setSavingChanges(true);
@@ -139,9 +140,11 @@ export default function DangerZonePanel({
         setSavingChanges(false);
         setDeleted(true);
 
-        setTimeout(() => push(`${basePath}/virtual-lab`), 3000);
+        redirectTimeout = setTimeout(() => push(`/virtual-lab`), 3000);
       });
   };
+
+  useEffect(() => clearTimeout(redirectTimeout));
 
   return savingChanges ? (
     <Spin />
