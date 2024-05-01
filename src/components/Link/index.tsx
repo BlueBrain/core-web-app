@@ -11,6 +11,7 @@ type LinkProps = {
   preserveLocationSearchParams?: boolean;
   preservedSearchParamKeys?: string[];
   prefetch?: boolean;
+  onClick?: () => void;
 };
 
 /**
@@ -24,6 +25,7 @@ export default function Link({
   preserveLocationSearchParams = false,
   preservedSearchParamKeys,
   prefetch = true,
+  onClick,
 }: PropsWithChildren<LinkProps>) {
   const locationSearchParams = useSearchParams();
 
@@ -54,6 +56,7 @@ export default function Link({
       href={hrefWLocationSearchParams}
       style={style}
       prefetch={prefetch}
+      onClick={onClick}
     >
       {children}
     </NextLink>
