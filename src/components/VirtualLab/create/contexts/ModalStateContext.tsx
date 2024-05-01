@@ -10,7 +10,14 @@ interface ModalStateContextProps {
   handleCancel: () => void;
 }
 
-const ModalStateContext = createContext<ModalStateContextProps | undefined>(undefined);
+const ModalStateContext = createContext<ModalStateContextProps | undefined>({
+  isModalVisible: false,
+  currentStep: 'information',
+  showModal: () => {},
+  handleOk: () => {},
+  handleNext: () => {},
+  handleCancel: () => {},
+});
 
 export const useModalState = () => {
   const context = useContext(ModalStateContext);
