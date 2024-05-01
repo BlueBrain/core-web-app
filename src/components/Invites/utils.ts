@@ -12,7 +12,7 @@ export const getLabUrl = (vlmData: InviteData): string => {
     return `${errorPath}?errorcode=${InviteErrorCodes.INVITE_ALREADY_ACCEPTED}&origin=${origin}&lab_id=${labId}`;
   }
 
-  return `${generateLabUrl(labId)}/lab?invite_accepted=true`;
+  return `${generateLabUrl(labId)}/overview?invite_accepted=true`;
 };
 
 export const getProjectUrl = (vlmData: InviteData): string => {
