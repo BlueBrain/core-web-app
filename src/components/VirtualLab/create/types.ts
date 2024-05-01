@@ -1,16 +1,6 @@
-import { VirtualLab, VirtualLabPlanType } from '@/types/virtual-lab/lab';
-import { KeysOfType } from '@/util/typing';
+import { VirtualLab } from '@/types/virtual-lab/lab';
 
 export type VirtualLabWithOptionalId = Omit<VirtualLab, 'id'> & { id?: string };
-
-export type VirtualLabStringKeys = KeysOfType<VirtualLabWithOptionalId, string>;
-
-export interface VirtualLabPlanDefinition {
-  type: VirtualLabPlanType;
-  title: string;
-  advantages: string[];
-  price: number;
-}
 
 export interface FieldType {
   label: string;

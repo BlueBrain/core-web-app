@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 
-import { STEPS } from '../../constants';
 import { NavButtons } from '../NavButtons';
 import { classNames } from '@/util/utils';
 
@@ -8,18 +7,19 @@ import styles from './main.module.css';
 
 export interface MainProps {
   className?: string;
-  nextPage: string;
   canGoNext: boolean;
-  step: keyof typeof STEPS;
+  step: string;
   children: ReactNode;
 }
 
-export function Main({ className, canGoNext, nextPage, step, children }: MainProps) {
+export function Main({ className, canGoNext, step, children }: MainProps) {
+  const validChildren = React.Children.toArray(children).filter(Boolean); // Remove falsy / 0 from children
+
   return (
     <div className={classNames(styles.main, className)}>
-      <div>{children}</div>
+      <div>{validChildren}</div>
       <footer>
-        <NavButtons disabled={!canGoNext} nextPage={nextPage} step={step} />
+        <NavButtons disabled={!canGoNext} step={step} />
       </footer>
     </div>
   );

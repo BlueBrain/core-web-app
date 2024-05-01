@@ -11,6 +11,7 @@ export type VirtualLab = {
   budget: number;
   plan_id: number;
   users: VirtualLabMember[];
+  include_members?: VirtualLabMember[];
 };
 
 export type VirtualLabResponse = VlmResponse<{ virtual_lab: VirtualLab }>;
@@ -36,4 +37,10 @@ export enum SimulationType {
   SingleNeuron = 'single-neuron',
   PairedNeuron = 'paired-neuron',
   Synaptome = 'synaptome',
+}
+export interface VirtualLabPlanDefinition {
+  id: number;
+  name: string;
+  features: Record<string, string[]>;
+  price: number;
 }

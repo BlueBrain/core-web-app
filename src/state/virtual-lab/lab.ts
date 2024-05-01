@@ -14,6 +14,8 @@ import { VirtualLab } from '@/types/virtual-lab/lab';
 import { VirtualLabAPIListData } from '@/types/virtual-lab/common';
 import { VirtualLabMember } from '@/types/virtual-lab/members';
 
+export const refreshAtom = atom(0);
+
 export const virtualLabDetailAtomFamily = atomFamily<
   string,
   PrimitiveAtom<Promise<VirtualLab | undefined>>
@@ -44,6 +46,7 @@ export const virtualLabsOfUserAtom = atomWithRefresh<
   Promise<VirtualLabAPIListData<VirtualLab> | undefined>
 >(async (get) => {
   const session = get(sessionAtom);
+  get(refreshAtom);
   if (!session) {
     return;
   }

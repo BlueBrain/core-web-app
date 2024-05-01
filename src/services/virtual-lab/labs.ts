@@ -107,3 +107,29 @@ export async function getPlans(token: string): Promise<
 
   return response.json();
 }
+
+export async function createVirtualLab({
+  lab,
+  token,
+}: {
+  lab: Partial<VirtualLab>;
+  token: string;
+}): Promise<VlmResponse<{ virtual_lab: VirtualLab }>> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs`, {
+    method: 'POST',
+    headers: { ...createVLApiHeaders(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify(lab),
+  });
+
+  if (response.ok) {
+    return response.json();
+  }
+
+  if (response.status === 400) {
+    const { message } = await response.json();
+
+    throw new Error(message);
+  }
+
+  throw new Error(`Undocumented error, ${response.status}`);
+}

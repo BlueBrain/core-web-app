@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { VirtualLabPlanDefinition } from '../../types';
 import { Button } from '../Button';
+import { VirtualLabPlanDefinition } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
 
 import styles from './plan-select-button.module.css';
@@ -15,17 +15,19 @@ export interface PlanSelectButtonProps {
 
 export function PlanSelectButton({ className, plan, selected, onSelect }: PlanSelectButtonProps) {
   return (
-    <div className={classNames(styles.main, className, selected && styles.selected)}>
-      <h1>{plan.title}</h1>
-      <fieldset>
-        <legend>Your advantages</legend>
-        <ul>
-          {plan.advantages.map((advantage, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <li key={`adv-${index}`}>{advantage}</li>
-          ))}
-        </ul>
-      </fieldset>
+    <div className={classNames(styles.main, className, selected && styles.selected)} key={plan.id}>
+      <h1>{plan.name}</h1>
+      {Object.entries(plan.features).map(([category, items]) => (
+        <fieldset key={category}>
+          <legend>{category}</legend>
+          <ul>
+            {items.map((item, itemIndex) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <li key={itemIndex}>{item}</li>
+            ))}
+          </ul>
+        </fieldset>
+      ))}
       <div className={styles.price}>
         <div>{plan.price > 0 ? `$ ${plan.price}` : 'Free'}</div>
         {plan.price > 0 && <small>/ month / user</small>}

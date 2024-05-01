@@ -1,26 +1,22 @@
 import { useState } from 'react';
 
 import { useCurrentVirtualLab } from '../../hooks/current-virtual-lab';
-import { Form } from '../../sub-components/Form';
-import { Layout } from '../../sub-components/Layout';
-import { Main } from '../../sub-components/Main';
-import { FieldType } from '../../types';
+import { Form } from '@/components/VirtualLab/create/sub-components/Form';
+import { Layout } from '@/components/VirtualLab/create/sub-components/Layout';
+import { Main } from '@/components/VirtualLab/create/sub-components/Main';
+import { FieldType } from '@/components/VirtualLab/create/types';
 
 export interface VirtualLabCreateInformationProps {
   className?: string;
-  nextPage: string;
 }
 
-export function VirtualLabCreateInformation({
-  className,
-  nextPage,
-}: VirtualLabCreateInformationProps) {
+export function VirtualLabCreateInformation({ className }: VirtualLabCreateInformationProps) {
   const [lab, updateLab] = useCurrentVirtualLab();
   const [valid, setValid] = useState(false);
 
   return (
     <Layout className={className}>
-      <Main nextPage={nextPage} canGoNext={valid} step="information">
+      <Main canGoNext={valid} step="information">
         <h2>Information</h2>
         <Form value={lab} onChange={updateLab} onValidityChange={setValid} fields={FIELDS} />
       </Main>
@@ -31,7 +27,7 @@ export function VirtualLabCreateInformation({
 const FIELDS: Record<string, FieldType> = {
   name: { label: "Virtual lab's name", required: true, placeholder: "Enter your lab's name..." },
   description: { label: 'Description', placeholder: 'Enter your description...' },
-  referenceEMail: {
+  reference_email: {
     label: 'Reference email',
     type: 'email',
     required: true,
