@@ -20,7 +20,7 @@ export enum LinkItemKey {
   Build = 'build',
   Explore = 'explore',
   Home = 'home',
-  Lab = 'lab',
+  Lab = 'overview',
   Library = 'library',
   Literature = 'literature',
   Papers = 'papers',
