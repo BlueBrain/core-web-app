@@ -26,6 +26,7 @@ export default function VirtualLabDashboard() {
           name={vl.name}
           description={vl.description}
           createdAt={vl.created_at}
+          users={vl.users}
           showOnlyLabs={showOnlyLabs}
         />
       ));

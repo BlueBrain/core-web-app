@@ -1,5 +1,8 @@
-import { CalendarOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
+import { CalendarOutlined, LoadingOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { loadable } from 'jotai/utils';
+import { useAtomValue } from 'jotai';
+import { Spin } from 'antd';
 
 import VirtualLabStatistic from '../../VirtualLabStatistic';
 import Brain from '@/components/icons/Brain';
@@ -7,6 +10,21 @@ import { EyeTargetIcon, MembersGroupIcon, StatsEditIcon } from '@/components/ico
 import { Project } from '@/types/virtual-lab/projects';
 import { formatDate } from '@/util/utils';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import { virtualLabProjectUsersAtomFamily } from '@/state/virtual-lab/projects';
+
+function MemberAmount({ virtualLabId, projectId }: { virtualLabId: string; projectId: string }) {
+  const users = useAtomValue(
+    loadable(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
+  );
+
+  if (users.state === 'loading') {
+    return <Spin indicator={<LoadingOutlined />} />;
+  }
+  if (users.state === 'hasError') {
+    return '-';
+  }
+  return users.data?.length || '-';
+}
 
 function ProjectStats({ project }: { project: Project }) {
   const iconStyle = { color: '#69C0FF' };
@@ -33,13 +51,13 @@ function ProjectStats({ project }: { project: Project }) {
           title: 'Simulation experiments',
         },
         {
-          detail: 'MEMBERS NOT RETRIEVED',
+          detail: <MemberAmount virtualLabId={project.virtual_lab.id} projectId={project.id} />,
           icon: <UserOutlined style={iconStyle} />,
           key: 'members',
           title: 'Members',
         },
         {
-          detail: 'ADMIN NOT RETRIEVED',
+          detail: project.owner.name,
           icon: <MembersGroupIcon style={iconStyle} />,
           key: 'admin',
           title: 'Admin',
