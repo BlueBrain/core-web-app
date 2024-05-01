@@ -42,15 +42,13 @@ export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
   })
 );
 
-export const virtualLabsOfUserAtom = atom<Promise<VirtualLabAPIListData<VirtualLab> | undefined>>(
-  async (get) => {
-    get(refreshAtom);
-    const session = get(sessionAtom);
-    if (!session) {
-      return;
-    }
-    const response = await getVirtualLabsOfUser(session.accessToken);
-    return response.data;
+export const virtualLabsOfUserAtom = atomWithRefresh<
+  Promise<VirtualLabAPIListData<VirtualLab> | undefined>
+>(async (get) => {
+  const session = get(sessionAtom);
+  get(refreshAtom);
+  if (!session) {
+    return;
   }
   const response = await getVirtualLabsOfUser(session.accessToken);
   return response.data;
