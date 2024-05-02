@@ -78,7 +78,11 @@ export default function RemoteStorePlugin({
       );
 
       const distribution = createDistribution(updatedPayloadMeta);
-      const updatedPaperResource = { ...paperResource, distribution };
+      const updatedPaperResource = {
+        ...paperResource,
+        '@type': ['Paper', 'Entity'],
+        distribution
+      };
 
       const newResourceMeta = await updateResource(updatedPaperResource, session);
 
