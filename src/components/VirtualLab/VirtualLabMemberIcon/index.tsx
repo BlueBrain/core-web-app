@@ -30,7 +30,7 @@ export default function VirtualLabMemberIcon({ role, firstName, lastName }: Prop
   return (
     <div
       style={{ backgroundColor: generateRandomHexColor() }}
-      className={`flex h-12 w-12 items-center justify-center ${role === 'member' ? 'rounded-full' : ''}`}
+      className={`inline-flex h-12 w-12 items-center justify-center ${role === 'member' ? 'rounded-full' : ''}`}
     >
       <span className="text-2xl font-bold text-white">{initials}</span>
     </div>
