@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+
+import colorDictionary from './availableColors';
 import { Role } from '@/types/virtual-lab/members';
 
 type Props = {
@@ -12,22 +14,23 @@ export default function VirtualLabMemberIcon({ role, firstName, lastName }: Prop
     return `${firstName[0]}${lastName[0]}`;
   }, [firstName, lastName]);
 
-  const generateHexColor = () => {
+  const index = useMemo(() => {
     const codePoint = firstName.codePointAt(0);
-    const availableColors = ['#FA8C16', '#6EC2FF', '#44C798', '#FFE666', '#AB8F6E', '#C95DD2'];
+
     if (codePoint) {
-      const index = codePoint % availableColors.length;
-      return availableColors[index];
+      return codePoint % colorDictionary.length;
     }
-    return availableColors[0];
-  };
+    return 0;
+  }, [firstName]);
 
   return (
     <div
-      style={{ backgroundColor: generateHexColor() }}
+      style={{ backgroundColor: colorDictionary[index].background }}
       className={`flex h-12 w-12 items-center justify-center ${role === 'member' ? 'rounded-full' : ''}`}
     >
-      <span className="text-2xl font-bold text-primary-9">{initials}</span>
+      <span className="text-2xl font-bold" style={{ color: colorDictionary[index].color }}>
+        {initials}
+      </span>
     </div>
   );
 }
