@@ -3,17 +3,15 @@
 import { ReactNode, Suspense, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
-
+import { HomeOutlined, LoadingOutlined } from '@ant-design/icons';
+import { useAtomValue } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSidebar';
-import style from './layout.module.scss';
 import { classNames } from '@/util/utils';
-import { useAtomValue } from 'jotai';
-import { unwrap } from 'jotai/utils';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
-import { HomeOutlined } from '@ant-design/icons';
+import style from './layout.module.scss';
 
 export default function VirtualLabPageLayout({
   children,
@@ -29,7 +27,7 @@ export default function VirtualLabPageLayout({
     <div className="flex">
       <div className="flex h-screen w-[35px] flex-col items-center justify-between border-r border-primary-7">
         <div>
-          <div className="mt-2 text-2xl text-center">+</div>
+          <div className="mt-2 text-center text-2xl">+</div>
           <div className={classNames(style.rotate, 'text-right')}>
             {!!virtualLab && (
               <span className="text-primary-2">
