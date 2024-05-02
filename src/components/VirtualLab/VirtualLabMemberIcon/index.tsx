@@ -12,7 +12,7 @@ export default function VirtualLabMemberIcon({ role, firstName, lastName }: Prop
     return `${firstName[0]}${lastName[0]}`;
   }, [firstName, lastName]);
 
-  const generateRandomHexColor = () => {
+  const generateHexColor = () => {
     const codePoint = firstName.codePointAt(0);
     const availableColors = ['#FA8C16', '#6EC2FF', '#44C798', '#FFE666', '#AB8F6E', '#C95DD2'];
     if (codePoint) {
@@ -24,7 +24,7 @@ export default function VirtualLabMemberIcon({ role, firstName, lastName }: Prop
 
   return (
     <div
-      style={{ backgroundColor: generateRandomHexColor() }}
+      style={{ backgroundColor: generateHexColor() }}
       className={`flex h-12 w-12 items-center justify-center ${role === 'member' ? 'rounded-full' : ''}`}
     >
       <span className="text-2xl font-bold text-primary-9">{initials}</span>
