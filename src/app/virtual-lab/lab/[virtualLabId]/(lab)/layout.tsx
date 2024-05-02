@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, Suspense } from 'react';
+import { ReactNode, Suspense, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -10,6 +10,9 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import VirtualLabSidebar from '@/components/VirtualLab/VirtualLabSidebar';
 import style from './layout.module.scss';
 import { classNames } from '@/util/utils';
+import { useAtomValue } from 'jotai';
+import { unwrap } from 'jotai/utils';
+import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
 
 export default function VirtualLabPageLayout({
   children,
@@ -18,11 +21,19 @@ export default function VirtualLabPageLayout({
   children: ReactNode;
   params: { virtualLabId: string };
 }) {
+  const virtualLab = useAtomValue(
+    useMemo(() => unwrap(virtualLabDetailAtomFamily(params.virtualLabId)), [params.virtualLabId])
+  );
   return (
     <div className="flex">
-      <div className="h-screen text-right">
-        <div className={style.rotate}>here i am bro</div>
-        <div className={style.rotate}>second</div>
+      <div className="flex h-screen w-[35px] justify-center border-r border-primary-7 text-right">
+        <div className={style.rotate}>
+          {!!virtualLab && (
+            <span className="text-primary-2">
+              Virtual lab: <span className="text-white">{virtualLab.name}</span>
+            </span>
+          )}
+        </div>
       </div>
       <div className="inset-0 z-0 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 p-10 text-white">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
