@@ -13,6 +13,7 @@ import { classNames } from '@/util/utils';
 import { useAtomValue } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { HomeOutlined } from '@ant-design/icons';
 
 export default function VirtualLabPageLayout({
   children,
@@ -26,16 +27,22 @@ export default function VirtualLabPageLayout({
   );
   return (
     <div className="flex">
-      <div className="flex h-screen w-[35px] justify-center border-r border-primary-7 text-right">
-        <div className={style.rotate}>
-          {!!virtualLab && (
-            <span className="text-primary-2">
-              Virtual lab: <span className="text-white">{virtualLab.name}</span>
-            </span>
-          )}
+      <div className="flex h-screen w-[35px] flex-col items-center justify-between border-r border-primary-7">
+        <div>
+          <div className="mt-2 text-2xl text-center">+</div>
+          <div className={classNames(style.rotate, 'text-right')}>
+            {!!virtualLab && (
+              <span className="text-primary-2">
+                Virtual lab: <span className="text-white">{virtualLab.name}</span>
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="mb-5">
+          <HomeOutlined />
         </div>
       </div>
-      <div className="inset-0 z-0 grid h-screen grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 p-10 text-white">
+      <div className="inset-0 z-0 grid h-screen w-full grid-cols-[1fr_3fr] grid-rows-1 overflow-y-scroll bg-primary-9 p-10 text-white">
         <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
           <Suspense fallback={null}>
             <div className="flex flex-row gap-4">
