@@ -28,7 +28,7 @@ export default function VirtualLabPageLayout({
       <div className="flex h-screen w-[35px] flex-col items-center justify-between border-r border-primary-7">
         <div>
           <div className="mt-2 text-center text-2xl">+</div>
-          <div className={classNames(style.rotate, 'text-right')}>
+          <div className={classNames('mt-4 rotate-180 text-right', style.writingModeVertical)}>
             {!!virtualLab && (
               <span className="text-primary-2">
                 Virtual lab: <span className="text-white">{virtualLab.name}</span>
