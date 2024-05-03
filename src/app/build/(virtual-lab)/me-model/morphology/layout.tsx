@@ -37,6 +37,7 @@ type MorphologyTab = {
   link: string;
   name: string;
   morphType: MEModelMorphologyType;
+  disabled?: boolean;
 };
 
 const morphologyTabs: MorphologyTab[] = [
@@ -49,6 +50,7 @@ const morphologyTabs: MorphologyTab[] = [
     link: '/build/me-model/morphology/synthetised',
     name: 'Synthetised Morphology',
     morphType: 'synthetised',
+    disabled: true,
   },
 ];
 
@@ -59,12 +61,13 @@ function Item({ tab }: { tab: MorphologyTab }) {
 
   const style = classNames(
     isSelected ? 'bg-primary-8 text-white' : 'text-primary-8 bg-white',
-    'px-7 py-2 border'
+    'px-7 py-2 border',
+    tab.disabled ? 'text-slate-500 pointer-events-none bg-slate-100' : 'cursor-pointer'
   );
 
   return (
-    <Link href={tab.link}>
-      <div className={style}>{tab.name}</div>
+    <Link className={style} href={tab.link}>
+      {tab.name}
     </Link>
   );
 }
