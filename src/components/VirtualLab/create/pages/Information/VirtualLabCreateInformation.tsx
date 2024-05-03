@@ -33,4 +33,5 @@ const FIELDS: Record<string, FieldType> = {
     required: true,
     placeholder: 'Enter an email here...',
   },
+  entity: { label: 'Entity', required: true, placeholder: "Enter your entity's name..." },
 };

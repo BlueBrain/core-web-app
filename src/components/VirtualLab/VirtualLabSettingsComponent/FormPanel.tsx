@@ -219,7 +219,7 @@ export default function FormPanel({
   if (disabled) {
     return (
       <SettingsForm
-        className="divide-white"
+        className={classNames(className, 'divide-white')}
         form={form}
         initialValues={initialValues}
         name={name} // TODO: Check whether this prop is necessary.
