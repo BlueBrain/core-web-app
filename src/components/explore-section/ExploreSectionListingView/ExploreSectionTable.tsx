@@ -126,10 +126,13 @@ export function BaseTable({
     []
   );
 
+  // added new id explore-table-container-for-observable because we are using this component
+  // outside of the explore and we want to resize the table acording to the screen size as well
   useResizeObserver({
     element:
       typeof document !== 'undefined'
-        ? document.getElementById('interactive-data-layout')
+        ? document.getElementById('interactive-data-layout') ||
+          document.getElementById('explore-table-container-for-observable')
         : undefined,
     callback: onResize,
   });
