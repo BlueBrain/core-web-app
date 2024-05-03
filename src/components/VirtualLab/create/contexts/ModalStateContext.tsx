@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import { STEPS } from '@/components/VirtualLab/create/constants';
 
 interface ModalStateContextProps {
@@ -10,7 +17,7 @@ interface ModalStateContextProps {
   handleCancel: () => void;
 }
 
-const ModalStateContext = createContext<ModalStateContextProps | undefined>({
+const ModalStateContext = createContext<ModalStateContextProps>({
   isModalVisible: false,
   currentStep: 'information',
   showModal: () => {},
@@ -21,13 +28,15 @@ const ModalStateContext = createContext<ModalStateContextProps | undefined>({
 
 export const useModalState = () => {
   const context = useContext(ModalStateContext);
+
   if (!context) {
     throw new Error('useModalState must be used within a ModalStateProvider');
   }
+
   return context;
 };
 
-export function ModalStateProvider({ children }: React.PropsWithChildren<{}>) {
+export function ModalStateProvider({ children }: PropsWithChildren) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(STEPS[0]);
 

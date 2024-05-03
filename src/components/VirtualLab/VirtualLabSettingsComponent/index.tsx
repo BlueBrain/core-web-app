@@ -68,7 +68,7 @@ function CustomCollapse({ className, items }: CollapseProps) {
         items={items?.map((item) => ({
           ...item,
           style: { background: '#fff' },
-          headerClass: 'color-primary-8 text-xl font-bold',
+          headerClass: 'color-primary-8 text-xl font-bold !items-center', // TODO: See whether there's a better way to align center.
         }))}
       />
     </ConfigProvider>
@@ -159,6 +159,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
         ? {
             children: (
               <FormPanel
+                className="grid grid-cols-2"
                 initialValues={{
                   name: virtualLabDetail.data?.name,
                   reference_email: virtualLabDetail.data?.reference_email,
@@ -166,12 +167,14 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                 }}
                 items={[
                   {
+                    className: 'col-span-2',
                     children: renderInput,
                     label: 'Lab Name',
                     name: 'name',
                     required: true,
                   },
                   {
+                    className: 'col-span-2',
                     children: renderTextArea,
                     label: 'Description',
                     name: 'description',
@@ -182,6 +185,7 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                     name: 'reference_email',
                     type: 'email',
                     required: true,
+                    // TODO: Figure-out whether "rules" prop is actually useful.
                     rules: [
                       {
                         required: true,
@@ -189,6 +193,11 @@ export default function VirtualLabSettingsComponent({ id, token }: { id: string;
                         message: 'Entered value is not the correct email format',
                       },
                     ],
+                  },
+                  {
+                    children: renderInput,
+                    label: 'Entity',
+                    name: 'entity',
                   },
                 ]}
                 name="settings" // TODO: Check whether this prop is necessary.
