@@ -34,12 +34,6 @@ export default function VirtualLabProjectInteractiveExploreLayout({
           <SideMenu
             links={[
               {
-                key: LinkItemKey.Project,
-                label: Label.Project,
-                href: `${labProjectUrl}/home`,
-                content: params.projectId,
-              },
-              {
                 key: LinkItemKey.Explore,
                 href: `${labProjectUrl}/explore`,
                 content: Content.Explore,
@@ -52,7 +46,13 @@ export default function VirtualLabProjectInteractiveExploreLayout({
               id: params.virtualLabId,
               label: Label.VirtualLab,
               href: `${labUrl}/overview`,
-              content: params.virtualLabId,
+            }}
+            project={{
+              key: LinkItemKey.Project,
+              id: params.projectId,
+              virtualLabId: params.virtualLabId,
+              label: Label.Project,
+              href: `${labProjectUrl}/home`,
             }}
           />
         </div>

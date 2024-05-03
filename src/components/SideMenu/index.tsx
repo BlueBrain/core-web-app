@@ -1,29 +1,21 @@
 import { useReducer, useRef } from 'react';
 import { Button, Divider } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { LinkItem, LabItem } from '../VerticalLinks';
-import LinkComponent from './LinkComponent';
+import { LinkItem, LabItem, ProjectItem } from '../VerticalLinks';
+import { LinkComponent, LabLinkComponent, ProjectLinkComponent } from './LinkComponent';
 import SideMenuBottom from './SideMenuBottom';
 import LabsAndProjectsCollapse from './LabsAndProjectsCollapse';
 import { classNames } from '@/util/utils';
-import { Role } from '@/constants/virtual-labs/sidemenu';
 
 type Props = {
   links: LinkItem[];
   lab: LabItem;
+  project?: ProjectItem;
 };
 
-export default function SideMenu({ links, lab }: Props) {
+export default function SideMenu({ links, lab, project }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpand] = useReducer((val: boolean) => !val, false);
-
-  const linkClassName = (link: LinkItem) => {
-    let baseClass = `flex w-full items-center justify-between capitalize ${link.styles}`;
-    if (expanded) baseClass += ' py-3 px-2 border border-primary-6 text-lg';
-    if ((link.role === Role.Section || link.role === Role.Current) && expanded)
-      baseClass = 'hidden';
-    return baseClass;
-  };
 
   return (
     <div
@@ -43,14 +35,12 @@ export default function SideMenu({ links, lab }: Props) {
         )}
         role="presentation"
       >
-        {expanded && <LinkComponent link={lab} expanded={expanded} linkClassName={linkClassName} />}
+        {expanded && <LabLinkComponent lab={lab} />}
+
+        {project && <ProjectLinkComponent project={project} expanded={expanded} />}
+
         {links.map((link) => (
-          <LinkComponent
-            key={link.key}
-            link={link}
-            expanded={expanded}
-            linkClassName={linkClassName}
-          />
+          <LinkComponent key={link.key} link={link} expanded={expanded} />
         ))}
       </div>
       {expanded && (
@@ -72,7 +62,7 @@ export default function SideMenu({ links, lab }: Props) {
           )
         }
       />
-      {!expanded && <SideMenuBottom lab={lab} />}
+      {!expanded && lab && <SideMenuBottom lab={lab} />}
     </div>
   );
 }

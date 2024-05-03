@@ -6,7 +6,7 @@ import VirtualLabTopMenu from '@/components/VirtualLab/VirtualLabTopMenu';
 import SideMenu from '@/components/SideMenu';
 import VirtualLabProjectSidebar from '@/components/VirtualLab/projects/VirtualLabProjectSidebar';
 import { LabProjectLayoutProps } from '@/types/virtual-lab/layout';
-import { Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { Role, Label, Content, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 
 export default function VirtualLabProjectLayout({ children, params }: LabProjectLayoutProps) {
@@ -20,10 +20,11 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
           <SideMenu
             links={[
               {
-                key: LinkItemKey.Project,
-                label: Label.Project,
-                href: `${labProjectUrl}/home`,
-                content: params.projectId,
+                key: LinkItemKey.Explore,
+                href: `${labProjectUrl}/explore`,
+                content: Content.Explore,
+                role: Role.Section,
+                styles: ' rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
               },
             ]}
             lab={{
@@ -31,7 +32,13 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
               id: params.virtualLabId,
               label: Label.VirtualLab,
               href: `${labUrl}/overview`,
-              content: params.virtualLabId,
+            }}
+            project={{
+              key: LinkItemKey.Project,
+              id: params.projectId,
+              virtualLabId: params.virtualLabId,
+              label: Label.Project,
+              href: `${labProjectUrl}/home`,
             }}
           />
 

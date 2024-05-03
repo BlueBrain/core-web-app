@@ -24,17 +24,11 @@ export default function GenericLayout({ children, params }: LabProjectLayoutProp
           <SideMenu
             links={[
               {
-                key: LinkItemKey.Project,
-                label: Label.Project,
-                href: `${labProjectUrl}/home`,
-                content: 'Local test project',
-              },
-              {
                 key: LinkItemKey.Explore,
                 href: `${labProjectUrl}/explore`,
                 content: Content.Explore,
                 role: Role.Section,
-                styles: ' rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
+                styles: 'rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
               },
               {
                 key: LinkItemKey.Literature,
@@ -62,7 +56,13 @@ export default function GenericLayout({ children, params }: LabProjectLayoutProp
               id: params.virtualLabId,
               label: Label.VirtualLab,
               href: `${labUrl}/overview`,
-              content: 'Test',
+            }}
+            project={{
+              key: LinkItemKey.Project,
+              id: params.projectId,
+              virtualLabId: params.virtualLabId,
+              label: Label.Project,
+              href: `${labProjectUrl}/home`,
             }}
           />
         </div>
