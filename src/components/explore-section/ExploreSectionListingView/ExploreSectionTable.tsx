@@ -239,7 +239,11 @@ export default function ExploreSectionTable({
   return (
     <>
       {enableDownload ? (
-        <WithRowSelection renderButton={renderButton ?? defaultRenderButton} dataType={dataType} selectionType={selectionType}>
+        <WithRowSelection
+          renderButton={renderButton ?? defaultRenderButton}
+          dataType={dataType}
+          selectionType={selectionType}
+        >
           {(rowSelection) => (
             <BaseTable
               columns={columns}
