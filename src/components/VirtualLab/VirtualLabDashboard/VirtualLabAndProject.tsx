@@ -1,12 +1,11 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useAtomValue } from 'jotai';
-import { loadable, unwrap } from 'jotai/utils';
+import { loadable } from 'jotai/utils';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import VirtualLabProjectItem from '../projects/VirtualLabProjectList/VirtualLabProjectItem';
 import VirtualLabBanner from '../VirtualLabBanner';
-import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 
 type Props = {
@@ -25,7 +24,6 @@ export default function VirtualLabAndProject({
   showOnlyLabs,
 }: Props) {
   const projects = useAtomValue(loadable(virtualLabProjectsAtomFamily(id)));
-  const users = useAtomValue(useMemo(() => unwrap(virtualLabMembersAtomFamily(id)), [id]));
 
   const renderProjects = useCallback(() => {
     if (projects.state === 'loading') {
@@ -54,7 +52,6 @@ export default function VirtualLabAndProject({
         name={name}
         description={description}
         createdAt={createdAt}
-        users={users}
         withLink
       />
       {!showOnlyLabs && <div className="ml-20 mt-5 flex flex-col gap-5">{renderProjects()}</div>}
