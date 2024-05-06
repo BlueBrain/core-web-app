@@ -69,7 +69,17 @@ export async function getUsersProjects(
 }
 
 export async function createProject(
-  { name, description, token }: { name: string; description: string; token: string },
+  {
+    name,
+    description,
+    token,
+    includeMembers,
+  }: {
+    name: string;
+    description: string;
+    includeMembers: { email: string; role: 'admin' | 'member' }[];
+    token: string;
+  },
   virtualLabId: string
 ): Promise<VlmResponse<{ project: Project }>> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${virtualLabId}/projects`, {
@@ -78,12 +88,7 @@ export async function createProject(
     body: JSON.stringify({
       name,
       description,
-      include_members: [
-        {
-          email: 'harry.anderson@epfl.ch', // TODO: Update this
-          role: 'admin',
-        },
-      ],
+      include_members: includeMembers,
     }),
   });
 

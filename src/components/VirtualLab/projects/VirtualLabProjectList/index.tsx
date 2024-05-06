@@ -1,10 +1,10 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { Button, ConfigProvider, Modal, Spin, Form, Input } from 'antd';
+import { Button, ConfigProvider, Modal, Spin, Form, Input, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form/Form';
-import { ComponentProps, ReactElement, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { ComponentProps, ReactElement, useMemo, useState } from 'react';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import { PlusOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import VirtualLabProjectItem from './VirtualLabProjectItem';
@@ -12,6 +12,11 @@ import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import useNotification from '@/hooks/notifications';
 import { createProject } from '@/services/virtual-lab/projects';
 import { Project } from '@/types/virtual-lab/projects';
+import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
+import { useUnwrappedValue } from '@/hooks/hooks';
+import { VirtualLabMember } from '@/types/virtual-lab/members';
+
+const { Option } = Select;
 
 function NewProjectModalFooter({
   close,
@@ -98,7 +103,14 @@ const formItems: Array<ModalInputProps> = [
   },
 ];
 
-function NewProjectModalForm({ form }: { form: FormInstance }) {
+function NewProjectModalForm({
+  form,
+  members,
+}: {
+  form: FormInstance;
+  members: VirtualLabMember[];
+}) {
+  const [selectedMembers, setSelectedMembers] = useAtom(selectedMembersAtom);
   return (
     <Form form={form} layout="vertical" style={{ paddingBlockStart: 40 }}>
       <ConfigProvider
@@ -127,10 +139,42 @@ function NewProjectModalForm({ form }: { form: FormInstance }) {
         }}
       >
         {formItems.map(NewProjectModalInput)}
+        {selectedMembers.map((member) => (
+          <div key={member.id}>
+            <div key={member.id}>{member.name}</div>
+            <Select
+              style={{ width: 200 }}
+              value={member.role}
+              onChange={(v) => {
+                const m = members.find((m_) => m_.id === v);
+                if (m) setSelectedMembers([...selectedMembers, { ...member, role: v }]);
+              }}
+            >
+              <Option value="admin">Admin</Option>
+              <Option value="member">Member</Option>
+            </Select>
+          </div>
+        ))}
+        <Select
+          style={{ width: 200 }}
+          placeholder="Add member"
+          onChange={(v) => {
+            const m = members.find((member) => member.id === v);
+            if (m) setSelectedMembers([...selectedMembers, m]);
+          }}
+        >
+          {members.map((member) => (
+            <Option value={member.id} key={member.id}>
+              {member.name}
+            </Option>
+          ))}
+        </Select>
       </ConfigProvider>
     </Form>
   );
 }
+
+const selectedMembersAtom = atom<VirtualLabMember[]>([]);
 
 function NewProjectModal({
   onFail,
@@ -144,6 +188,14 @@ function NewProjectModal({
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const session = useSession();
+  const members = useUnwrappedValue(
+    virtualLabMembersAtomFamily(virtualLabId)
+  ) as VirtualLabMember[];
+  const selectedMembers = useAtomValue(selectedMembersAtom);
+  const includeMembers = useMemo(
+    () => selectedMembers.map((m) => ({ email: m.email, role: m.role })),
+    [selectedMembers]
+  );
 
   const [form] = Form.useForm<{ name: string; description: string }>();
 
@@ -155,7 +207,10 @@ function NewProjectModal({
 
     const { name, description } = form.getFieldsValue();
 
-    return createProject({ name, description, token: session.data.accessToken }, virtualLabId)
+    return createProject(
+      { name, description, includeMembers, token: session.data.accessToken },
+      virtualLabId
+    )
       .then((response) => {
         form.resetFields();
         setOpen(false);
@@ -183,7 +238,7 @@ function NewProjectModal({
         open={open}
         styles={{ mask: { backgroundColor: '#0050B3D9' } }}
       >
-        <NewProjectModalForm form={form} />
+        <NewProjectModalForm form={form} members={members} />
       </Modal>
       <button
         type="button"
