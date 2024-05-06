@@ -3,13 +3,24 @@ import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   created_at: '',
+  entity: '',
   name: '',
   description: '',
   reference_email: '',
   budget: 1,
   plan_id: 0,
-  users: [],
   include_members: [],
+  admin: {
+    id: '',
+    username: '',
+    email: '',
+    created_at: '',
+    first_name: '',
+    last_name: '',
+    invite_accepted: false,
+    role: '',
+    name: '',
+  },
 };
 
 export const ROLES: Record<VirtualLabMember['role'], string> = {

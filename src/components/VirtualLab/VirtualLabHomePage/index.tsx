@@ -31,7 +31,6 @@ export default function VirtualLabHomePage({ id }: Props) {
             id={virtualLabDetail.id}
             name={virtualLabDetail.name}
             description={virtualLabDetail.description}
-            users={virtualLabDetail.include_members}
             createdAt={virtualLabDetail.created_at}
             withEditButton
           />

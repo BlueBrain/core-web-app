@@ -29,7 +29,6 @@ export default function VirtualLabSelect() {
             id={vl.id}
             name={vl.name}
             description={vl.description}
-            users={vl.users}
             createdAt={vl.created_at}
             withLink
           />
