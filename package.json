@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "tsc": "npx tsc --noEmit",
     "prettier:check": "prettier --check . --log-level warn",
     "prettier:write": "prettier --write . --log-level warn",
     "test": "jest --watch",
