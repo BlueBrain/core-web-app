@@ -32,6 +32,8 @@ export default function VirtualLabHomePage({ id }: Props) {
             name={virtualLabDetail.name}
             description={virtualLabDetail.description}
             createdAt={virtualLabDetail.created_at}
+            simulationExperiments="N/A"
+            buildModels="N/A"
             withEditButton
           />
         </div>

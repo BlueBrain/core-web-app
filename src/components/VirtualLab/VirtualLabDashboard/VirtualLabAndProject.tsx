@@ -52,6 +52,9 @@ export default function VirtualLabAndProject({
         name={name}
         description={description}
         createdAt={createdAt}
+        simulationExperiments="N/A"
+        buildModels="N/A"
+        users={users}
         withLink
       />
       {!showOnlyLabs && <div className="ml-20 mt-5 flex flex-col gap-5">{renderProjects()}</div>}
