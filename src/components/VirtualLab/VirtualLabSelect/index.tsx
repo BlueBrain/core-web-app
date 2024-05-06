@@ -25,6 +25,7 @@ export default function VirtualLabSelect() {
   if (virtualLabs.data) {
     return (
       <div className="flex flex-col gap-5">
+<<<<<<< HEAD
         {virtualLabs.data.results.map((vl) => {
           return (
             <VirtualLabBanner
@@ -37,6 +38,20 @@ export default function VirtualLabSelect() {
             />
           );
         })}
+=======
+        {virtualLabs.data.results.map((vl) => (
+          <VirtualLabBanner
+            key={vl.id}
+            id={vl.id}
+            name={vl.name}
+            description={vl.description}
+            createdAt={vl.created_at}
+            simulationExperiments="N/A"
+            buildModels="N/A"
+            withLink
+          />
+        ))}
+>>>>>>> d1f4db6f (Make virtuallabbanner component re-usable)
       </div>
     );
   }
