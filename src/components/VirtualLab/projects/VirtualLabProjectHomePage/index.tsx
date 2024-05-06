@@ -116,7 +116,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
             <VirtualLabStatistic
               icon={<MembersGroupIcon style={iconStyle} />}
               title="Admin"
-              detail={projectDetails.owner.name}
+              detail={projectDetails.admin.name}
             />
             <VirtualLabStatistic
               icon={<CalendarOutlined style={iconStyle} />}

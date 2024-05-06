@@ -51,13 +51,13 @@ function ProjectStats({ project }: { project: Project }) {
           title: 'Simulation experiments',
         },
         {
-          detail: <MemberAmount virtualLabId={project.virtual_lab.id} projectId={project.id} />,
+          detail: <MemberAmount virtualLabId={project.virtual_lab_id} projectId={project.id} />,
           icon: <UserOutlined style={iconStyle} />,
           key: 'members',
           title: 'Members',
         },
         {
-          detail: project.owner.name,
+          detail: project.admin.name,
           icon: <MembersGroupIcon style={iconStyle} />,
           key: 'admin',
           title: 'Admin',
@@ -76,7 +76,7 @@ function ProjectStats({ project }: { project: Project }) {
 }
 
 export default function VirtualLabProjectItem({ project }: { project: Project }) {
-  const projectUrl = generateVlProjectUrl(project.virtual_lab.id, project.id);
+  const projectUrl = generateVlProjectUrl(project.virtual_lab_id, project.id);
 
   return (
     <Link

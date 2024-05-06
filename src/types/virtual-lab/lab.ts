@@ -6,12 +6,23 @@ export type VirtualLab = {
   id: string;
   name: string;
   description: string;
+  entity: string;
   created_at: DateISOString;
   reference_email: string;
   budget: number;
   plan_id: number;
-  users: VirtualLabMember[];
   include_members?: VirtualLabMember[];
+  admin: {
+    id: string;
+    username: string;
+    email: string;
+    created_at: string;
+    first_name: string;
+    last_name: string;
+    invite_accepted: boolean;
+    role: string;
+    name: string;
+  };
 };
 
 export type VirtualLabResponse = VlmResponse<{ virtual_lab: VirtualLab }>;
