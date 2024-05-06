@@ -4,6 +4,7 @@ import { Field } from './enums';
 import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Model } from '@/types/explore-section/delta-model';
 import { formatNumber } from '@/util/common';
+import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
 
 export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
   [Field.EModelMorphology]: {
@@ -44,5 +45,22 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       plural: 'Model cumulated score',
       singular: 'Model cumulated scores',
     },
+  },
+  [Field.EModelResponse]: {
+    className: 'text-center',
+    title: 'Response',
+    filter: null,
+    render: {
+      esResourceViewFn: (_value, record) => {
+        const { _source: source } = record;
+
+        return <EModelTracePreview emodel={source} height={116} width={184} />;
+      },
+    },
+    vocabulary: {
+      plural: 'responses',
+      singular: 'response',
+    },
+    style: { width: 184 },
   },
 };
