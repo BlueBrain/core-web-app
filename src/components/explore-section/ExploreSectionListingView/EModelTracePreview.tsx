@@ -11,12 +11,12 @@ import { composeUrl } from '@/util/nexus';
 
 export default function EModelTracePreview({
   className,
-  emodel,
+  images,
   height,
   width,
 }: {
   className?: string;
-  emodel: EModel;
+  images: EModel['image'];
   height: number;
   width: number;
 }) {
@@ -25,10 +25,8 @@ export default function EModelTracePreview({
   const session = useSessionAtomValue();
   const { ref, inView } = useInView();
 
-  const { image } = emodel;
-
   useEffect(() => {
-    if (!image || !session || !inView) return;
+    if (!images || !session || !inView) return;
 
     const fetchFile = async (url: string) => {
       setLoading(true);
@@ -40,12 +38,12 @@ export default function EModelTracePreview({
       });
     };
 
-    if (image.length === 1) {
-      const id = image[0]['@id'];
+    if (images.length === 1) {
+      const id = images[0]['@id'];
       const url = composeUrl('file', id);
       fetchFile(url);
-    } else if (image.length > 1) {
-      const thumbnailImgObj = image.find((i) => i.about?.endsWith('thumbnail'));
+    } else if (images.length > 1) {
+      const thumbnailImgObj = images.find((i) => i.about?.endsWith('thumbnail'));
       if (!thumbnailImgObj) {
         throw new Error('No thumbnail image found in image array.');
       }
@@ -53,9 +51,9 @@ export default function EModelTracePreview({
       const url = composeUrl('file', id);
       fetchFile(url);
     }
-  }, [session, image, inView]);
+  }, [session, images, inView]);
 
-  if (!Array.isArray(image)) {
+  if (!Array.isArray(images)) {
     throw new Error('Image attribute is not an array.');
   }
 
@@ -63,7 +61,7 @@ export default function EModelTracePreview({
     return <div>Loading...</div>;
   }
 
-  if (!image || !src) {
+  if (!images || !src) {
     return <div ref={ref}>Not available</div>;
   }
 

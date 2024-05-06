@@ -5,6 +5,7 @@ import { FilterTypeEnum } from '@/types/explore-section/filters';
 import { Model } from '@/types/explore-section/delta-model';
 import { formatNumber } from '@/util/common';
 import EModelTracePreview from '@/components/explore-section/ExploreSectionListingView/EModelTracePreview';
+import { EModel } from '@/types/e-model';
 
 export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
   [Field.EModelMorphology]: {
@@ -54,7 +55,8 @@ export const MODEL_DATA_FIELDS_CONFIG: ExploreFieldsConfigProps<Model> = {
       esResourceViewFn: (_value, record) => {
         const { _source: source } = record;
 
-        return <EModelTracePreview emodel={source} height={116} width={184} />;
+        const images = (source as EModel)?.image;
+        return <EModelTracePreview images={images} height={116} width={184} />;
       },
     },
     vocabulary: {
