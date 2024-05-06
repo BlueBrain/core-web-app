@@ -10,7 +10,7 @@ import Member from './Member';
 import ProjectItem from './ProjectItem';
 import WelcomeUserBanner from './WelcomeUserBanner';
 import { basePath } from '@/config';
-import { virtualLabDetailAtomFamily } from '@/state/virtual-lab/lab';
+import { virtualLabDetailAtomFamily, virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
 
@@ -20,6 +20,7 @@ type Props = {
 
 export default function VirtualLabHomePage({ id }: Props) {
   const virtualLabDetail = useAtomValue(unwrap(virtualLabDetailAtomFamily(id)));
+  const virtualLabUsers = useAtomValue(unwrap(virtualLabMembersAtomFamily(id)));
   const virtualLabProjects = useAtomValue(unwrap(virtualLabProjectsAtomFamily(id)));
   if (virtualLabDetail) {
     return (
@@ -98,7 +99,7 @@ export default function VirtualLabHomePage({ id }: Props) {
         <div>
           <div className="my-5 text-lg font-bold uppercase">Members</div>
           <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
-            {virtualLabDetail.users.map((user) => (
+            {virtualLabUsers?.map((user) => (
               <Member
                 key={user.id}
                 name={user.name}
