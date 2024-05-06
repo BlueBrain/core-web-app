@@ -17,7 +17,9 @@ type Props = {
   id: string;
   name: string;
   description: string;
-  createdAt: string;
+  createdAt?: string;
+  simulationExperiments?: string;
+  buildModels?: string;
   withLink?: boolean;
   withEditButton?: boolean;
 };
@@ -27,6 +29,8 @@ export default function VirtualLabBanner({
   description,
   createdAt,
   id,
+  simulationExperiments,
+  buildModels,
   withLink = false,
   withEditButton = false,
 }: Props) {
@@ -44,7 +48,7 @@ export default function VirtualLabBanner({
         }}
       />
       <div className="z-[1000] flex flex-row justify-between">
-        <div className="flex max-w-[50%] flex-col gap-2">
+        <div className="flex max-w-[70%] flex-col gap-2">
           <div>
             <div className="text-primary-2">Virtual Lab name</div>
             {withLink ? (
@@ -60,27 +64,43 @@ export default function VirtualLabBanner({
         {withEditButton && <EditOutlined />}
       </div>
       <div className="flex gap-5">
-        <VirtualLabStatistic icon={<Brain style={iconStyle} />} title="Builds" detail="N/A" />
-        <VirtualLabStatistic
-          icon={<StatsEditIcon style={iconStyle} />}
-          title="Simulation experiments"
-          detail="N/A"
-        />
-        <VirtualLabStatistic
-          icon={<UserOutlined style={iconStyle} />}
-          title="Members"
-          detail={users?.length || 0}
-        />
-        <VirtualLabStatistic
-          icon={<MembersGroupIcon style={iconStyle} />}
-          title="Admin"
-          detail={users?.find((user) => user.role === 'admin')?.name || '-'}
-        />
-        <VirtualLabStatistic
-          icon={<CalendarOutlined style={iconStyle} />}
-          title="Creation date"
-          detail={formatDate(createdAt)}
-        />
+        {buildModels && (
+          <VirtualLabStatistic
+            icon={<Brain style={iconStyle} />}
+            title="Builds"
+            detail={buildModels}
+          />
+        )}
+
+        {simulationExperiments && (
+          <VirtualLabStatistic
+            icon={<StatsEditIcon style={iconStyle} />}
+            title="Simulation experiments"
+            detail={simulationExperiments}
+          />
+        )}
+
+        {users && (
+          <VirtualLabStatistic
+            icon={<UserOutlined style={iconStyle} />}
+            title="Members"
+            detail={users?.length || 0}
+          />
+        )}
+        {users && (
+          <VirtualLabStatistic
+            icon={<MembersGroupIcon style={iconStyle} />}
+            title="Admin"
+            detail={users?.find((user) => user.role === 'admin')?.name || '-'}
+          />
+        )}
+        {createdAt && (
+          <VirtualLabStatistic
+            icon={<CalendarOutlined style={iconStyle} />}
+            title="Creation date"
+            detail={formatDate(createdAt)}
+          />
+        )}
       </div>
     </div>
   );

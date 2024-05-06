@@ -30,6 +30,8 @@ export default function VirtualLabSelect() {
             name={vl.name}
             description={vl.description}
             createdAt={vl.created_at}
+            simulationExperiments="N/A"
+            buildModels="N/A"
             withLink
           />
         ))}
