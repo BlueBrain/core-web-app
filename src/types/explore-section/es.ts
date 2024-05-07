@@ -13,6 +13,11 @@ export type ESeModel = ESHitSource & {
   eType: ElectrophysiologyOrMorphologyType;
   mType: ElectrophysiologyOrMorphologyType;
   brainRegion: BrainRegion;
+  image?: {
+    '@id': string;
+    about?: string;
+    identifier?: string;
+  }[];
 };
 
 export type ExploreResource = Experiment | Simulation | SimulationCampaign | ESeModel;

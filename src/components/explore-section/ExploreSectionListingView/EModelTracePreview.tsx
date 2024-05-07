@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { useInView } from 'react-intersection-observer';
-import { EModel } from '@/types/e-model';
+import { ESeModel } from '@/types/explore-section/es';
 import { fetchFileByUrl } from '@/api/nexus';
 import { useSessionAtomValue } from '@/hooks/hooks';
 import { composeUrl } from '@/util/nexus';
@@ -16,7 +16,7 @@ export default function EModelTracePreview({
   width,
 }: {
   className?: string;
-  images: EModel['image'];
+  images: ESeModel['image'];
   height: number;
   width: number;
 }) {

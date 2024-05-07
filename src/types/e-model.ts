@@ -89,11 +89,6 @@ export interface EModel extends EModelCommonProps {
       label: string;
     };
   };
-  image?: {
-    '@id': string;
-    about?: string;
-    identifier?: string;
-  }[];
 }
 
 export interface EModelResource extends ResourceMetadata, EModel {}
