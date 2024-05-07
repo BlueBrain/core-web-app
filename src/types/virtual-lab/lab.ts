@@ -12,17 +12,6 @@ export type VirtualLab = {
   budget: number;
   plan_id: number;
   include_members?: VirtualLabMember[];
-  admin: {
-    id: string;
-    username: string;
-    email: string;
-    created_at: string;
-    first_name: string;
-    last_name: string;
-    invite_accepted: boolean;
-    role: string;
-    name: string;
-  };
 };
 
 export type VirtualLabResponse = VlmResponse<{ virtual_lab: VirtualLab }>;

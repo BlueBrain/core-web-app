@@ -30,13 +30,4 @@ export type Project = {
   created_at: string;
   updated_at: string;
   virtual_lab_id: string;
-  admin: {
-    id: string;
-    username: string;
-    email: string;
-    created_at: string;
-    first_name: string;
-    last_name: string;
-    name: string;
-  };
 };
