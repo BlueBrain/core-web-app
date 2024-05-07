@@ -47,6 +47,10 @@ export const getErrorUrl = (
     if (response.error_code === 'TOKEN_EXPIRED') {
       return `${errorPath}?errorcode=${InviteErrorCodes.TOKEN_EXPIRED}`;
     }
+
+    if (response.error_code === 'INVALID_REQUEST') {
+      return `${errorPath}?errorcode=${InviteErrorCodes.INVALID_LINK}`;
+    }
     return `${errorPath}?errorcode=${InviteErrorCodes.UNKNOWN}`;
   }
 

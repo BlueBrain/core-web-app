@@ -14,7 +14,7 @@ const getInviteErrorMessage = (code?: string): string => {
       case InviteErrorCodes.TOKEN_EXPIRED:
         return 'The invite link has expired.';
       case InviteErrorCodes.INVALID_LINK:
-        return 'Invite link is invalid.';
+        return 'The invite link is invalid.';
       case InviteErrorCodes.INVITE_ALREADY_ACCEPTED:
         return 'This invite is already accepted.';
       case InviteErrorCodes.UNKNOWN:
