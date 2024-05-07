@@ -14,7 +14,10 @@ function VirtualLabProjects({ labId }: { labId: string }) {
     return <Spin indicator={<LoadingOutlined />} />;
   }
 
-  if (virtualLabProjectsLoadable.state === 'hasData') {
+  if (
+    virtualLabProjectsLoadable.state === 'hasData' &&
+    virtualLabProjectsLoadable.data?.results?.length
+  ) {
     return (
       <div className="w-[16.1rem]">
         <h1 className="text-md mb-2 font-thin uppercase text-primary-4">Projects</h1>
@@ -32,7 +35,7 @@ function VirtualLabProjects({ labId }: { labId: string }) {
     );
   }
 
-  return null;
+  return <span className="text-white">No projects found</span>;
 }
 
 const headerStyle = {

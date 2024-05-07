@@ -19,20 +19,19 @@ export default function VirtualLabProjectLayout({ children, params }: LabProject
       <ErrorBoundary FallbackComponent={SimpleErrorComponent}>
         <div className="flex flex-row gap-4">
           <SideMenu
-            links={[
-              {
-                key: LinkItemKey.Project,
-                label: Label.Project,
-                href: `${labProjectUrl}/home`,
-                content: params.projectId,
-              },
-            ]}
+            links={[]}
             lab={{
               key: LinkItemKey.VirtualLab,
               id: params.virtualLabId,
               label: Label.VirtualLab,
               href: `${labUrl}/overview`,
-              content: params.virtualLabId,
+            }}
+            project={{
+              key: LinkItemKey.Project,
+              id: params.projectId,
+              virtualLabId: params.virtualLabId,
+              label: Label.Project,
+              href: `${labProjectUrl}/home`,
             }}
           />
 

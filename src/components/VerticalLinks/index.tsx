@@ -2,16 +2,21 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import { Role, Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
 
-export type LinkItem = {
+export type GenericLinkItem = {
   key: LinkItemKey;
-  content: string | ReactNode;
   href: string;
   label?: Label;
   role?: Role;
   styles?: string;
 };
 
-export type LabItem = LinkItem & { id: string };
+export type LinkItem = GenericLinkItem & {
+  content: string | ReactNode;
+};
+
+export type LabItem = GenericLinkItem & { id: string };
+
+export type ProjectItem = LabItem & { virtualLabId: string };
 
 type Props = {
   links: LinkItem[];
