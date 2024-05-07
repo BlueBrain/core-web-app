@@ -1,7 +1,7 @@
 .bannerImg {
     content: '';
-    background-size: 200%;
-    background-position: right 50% bottom 15%;
+    background-size: 100%;
+    background-position: right 50% bottom 80%;
     background-repeat: no-repeat;
     position: absolute;
     top: 0;
