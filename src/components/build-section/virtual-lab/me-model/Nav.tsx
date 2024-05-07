@@ -2,7 +2,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import SimpleErrorComponent from '@/components/GenericErrorFallback';
 import SideMenu from '@/components/SideMenu';
-import { Label, LinkItemKey } from '@/constants/virtual-labs/sidemenu';
+import { Content, Label, LinkItemKey, Role } from '@/constants/virtual-labs/sidemenu';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 
 export default function Nav() {
@@ -17,18 +17,25 @@ export default function Nav() {
       <SideMenu
         links={[
           {
-            key: LinkItemKey.Project,
-            label: Label.Project,
-            href: `${labProjectUrl}/home`,
-            content: params.projectId,
+            key: LinkItemKey.Build,
+            href: `${labProjectUrl}/build`,
+            content: Content.Build,
+            role: Role.Section,
+            styles: 'rounded-full bg-primary-5 py-3 text-primary-9 w-2/3',
           },
         ]}
         lab={{
           key: LinkItemKey.VirtualLab,
           id: params.virtualLabId,
           label: Label.VirtualLab,
-          href: `${labUrl}/lab`,
-          content: params.virtualLabId,
+          href: `${labUrl}/overview`,
+        }}
+        project={{
+          key: LinkItemKey.Project,
+          id: params.projectId,
+          virtualLabId: params.virtualLabId,
+          label: Label.Project,
+          href: `${labProjectUrl}/home`,
         }}
       />
     </ErrorBoundary>
