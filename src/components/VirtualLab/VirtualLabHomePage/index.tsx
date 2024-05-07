@@ -4,15 +4,14 @@ import { unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 
 import VirtualLabBanner from '../VirtualLabBanner';
-import DiscoverObpItem from './DiscoverObpItem';
 import BudgetPanel from './BudgetPanel';
 import Member from './Member';
 import ProjectItem from './ProjectItem';
 import WelcomeUserBanner from './WelcomeUserBanner';
-import { basePath } from '@/config';
 import { virtualLabDetailAtomFamily, virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { virtualLabProjectsAtomFamily } from '@/state/virtual-lab/projects';
 import { generateVlProjectUrl } from '@/util/virtual-lab/urls';
+import DiscoverObpPanel from '@/components/VirtualLab/DiscoverObpPanel';
 
 type Props = {
   id: string;
@@ -38,65 +37,7 @@ export default function VirtualLabHomePage({ id }: Props) {
           />
         </div>
         <BudgetPanel total={virtualLabDetail.budget} totalSpent={300} remaining={350} />
-        <div className="mt-10 flex flex-col gap-5">
-          <div className="font-bold uppercase">Discover OBP</div>
-          <div className="flex flex-row gap-3">
-            <DiscoverObpItem
-              imagePath={`${basePath}/images/virtual-lab/obp_full_brain_blue.png`}
-              title="Explore"
-              subtitle="How do I explore?"
-              body={
-                <ul className="list-inside list-disc">
-                  <li>Vivamus sagittis lacus vel augue faucibus dolor auctor.</li>
-                  <li>Curabitur blandit tempus porttitor.</li>
-                  <li>Donec sed odio dui.</li>
-                  <li>
-                    Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac
-                    consectetur ac, vestibulum at eros.
-                  </li>
-                </ul>
-              }
-              buttonText="Discover Explore"
-              buttonHref="/"
-            />
-            <DiscoverObpItem
-              imagePath={`${basePath}/images/virtual-lab/obp_vl_build.png`}
-              title="Build"
-              subtitle="How can I build models?"
-              body={
-                <ul className="list-inside list-disc">
-                  <li>Vivamus sagittis lacus vel augue faucibus dolor auctor.</li>
-                  <li>Curabitur blandit tempus porttitor.</li>
-                  <li>Donec sed odio dui.</li>
-                  <li>
-                    Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac
-                    consectetur ac, vestibulum at eros.
-                  </li>
-                </ul>
-              }
-              buttonText="Discover Models"
-              buttonHref="/"
-            />
-            <DiscoverObpItem
-              imagePath={`${basePath}/images/virtual-lab/obp_vl_simulate.png`}
-              title="Simulate"
-              subtitle="How can I launch simulations?"
-              body={
-                <ul className="list-inside list-disc">
-                  <li>Vivamus sagittis lacus vel augue faucibus dolor auctor.</li>
-                  <li>Curabitur blandit tempus porttitor.</li>
-                  <li>Donec sed odio dui.</li>
-                  <li>
-                    Vestibulum id ligula porta felis euismod semper. Morbi leo risus, porta ac
-                    consectetur ac, vestibulum at eros.
-                  </li>
-                </ul>
-              }
-              buttonText="Discover Simulations"
-              buttonHref="/"
-            />
-          </div>
-        </div>
+        <DiscoverObpPanel />
         <div>
           <div className="my-5 text-lg font-bold uppercase">Members</div>
           <div className="flex-no-wrap flex overflow-x-auto overflow-y-hidden">
