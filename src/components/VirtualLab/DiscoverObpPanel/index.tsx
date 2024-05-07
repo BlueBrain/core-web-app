@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import DiscoverLinks from './DiscoverLinks';
+=======
+>>>>>>> 39549410 (Add virtual lab cta banner)
 import DiscoverObpItem from './DiscoverObpItem';
 import { basePath } from '@/config';
 
@@ -6,7 +9,11 @@ export default function DiscoverObpPanel() {
   return (
     <div className="mt-10 flex flex-col gap-5">
       <div className="font-bold uppercase">Discover OBP</div>
+<<<<<<< HEAD
       <div className="flex w-full flex-row gap-3">
+=======
+      <div className="flex flex-row gap-3">
+>>>>>>> 39549410 (Add virtual lab cta banner)
         <DiscoverObpItem
           imagePath={`${basePath}/images/virtual-lab/obp_full_brain_blue.png`}
           title="Explore"
@@ -22,6 +29,7 @@ export default function DiscoverObpPanel() {
               </li>
             </ul>
           }
+<<<<<<< HEAD
           bottomElement={
             <DiscoverLinks
               topLink="/virtual-lab/tutorials/explore"
@@ -30,6 +38,10 @@ export default function DiscoverObpPanel() {
               bottomText="Start exploring"
             />
           }
+=======
+          buttonText="Discover Explore"
+          buttonHref="/"
+>>>>>>> 39549410 (Add virtual lab cta banner)
         />
         <DiscoverObpItem
           imagePath={`${basePath}/images/virtual-lab/obp_vl_build.png`}
@@ -46,6 +58,7 @@ export default function DiscoverObpPanel() {
               </li>
             </ul>
           }
+<<<<<<< HEAD
           bottomElement={
             <DiscoverLinks
               topLink="/virtual-lab/tutorials/build"
@@ -54,6 +67,10 @@ export default function DiscoverObpPanel() {
               bottomText="View models"
             />
           }
+=======
+          buttonText="Discover Models"
+          buttonHref="/"
+>>>>>>> 39549410 (Add virtual lab cta banner)
         />
         <DiscoverObpItem
           imagePath={`${basePath}/images/virtual-lab/obp_vl_simulate.png`}
@@ -70,6 +87,7 @@ export default function DiscoverObpPanel() {
               </li>
             </ul>
           }
+<<<<<<< HEAD
           bottomElement={
             <DiscoverLinks
               topLink="/virtual-lab/tutorials/simulate"
@@ -78,6 +96,10 @@ export default function DiscoverObpPanel() {
               bottomText="View simulations"
             />
           }
+=======
+          buttonText="Discover Simulations"
+          buttonHref="/"
+>>>>>>> 39549410 (Add virtual lab cta banner)
         />
       </div>
     </div>
