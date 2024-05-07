@@ -1,12 +1,15 @@
+import { useMemo } from 'react';
+import { useAtomValue } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 import VirtualLabStatistic from '../VirtualLabStatistic';
+import { virtualLabMembersAtomFamily } from '@/state/virtual-lab/lab';
 import { basePath } from '@/config';
 import { MembersGroupIcon, StatsEditIcon } from '@/components/icons';
 import Brain from '@/components/icons/Brain';
 import { formatDate } from '@/util/utils';
-import { VirtualLabMember } from '@/types/virtual-lab/members';
 import { generateLabUrl } from '@/util/virtual-lab/urls';
 import styles from './virtual-lab-banner.module.css';
 
@@ -14,7 +17,6 @@ type Props = {
   id: string;
   name: string;
   description: string;
-  users?: VirtualLabMember[];
   createdAt: string;
   withLink?: boolean;
   withEditButton?: boolean;
@@ -23,12 +25,13 @@ type Props = {
 export default function VirtualLabBanner({
   name,
   description,
-  users,
   createdAt,
   id,
   withLink = false,
   withEditButton = false,
 }: Props) {
+  const users = useAtomValue(useMemo(() => unwrap(virtualLabMembersAtomFamily(id)), [id]));
+
   const iconStyle = { color: '#69C0FF' };
   const labUrl = generateLabUrl(id);
 

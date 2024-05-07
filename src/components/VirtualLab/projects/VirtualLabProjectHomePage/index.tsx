@@ -76,6 +76,10 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
     unwrap(virtualLabProjectDetailsAtomFamily({ virtualLabId, projectId }))
   );
 
+  const projectUsers = useAtomValue(
+    unwrap(virtualLabProjectUsersAtomFamily({ virtualLabId, projectId }))
+  );
+
   if (projectDetails) {
     return (
       <div>
@@ -116,7 +120,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
             <VirtualLabStatistic
               icon={<MembersGroupIcon style={iconStyle} />}
               title="Admin"
-              detail={projectDetails.owner.name}
+              detail={projectUsers?.find(({ role }) => role === 'admin')?.name}
             />
             <VirtualLabStatistic
               icon={<CalendarOutlined style={iconStyle} />}

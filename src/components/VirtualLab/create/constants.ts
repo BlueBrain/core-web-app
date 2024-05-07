@@ -3,12 +3,12 @@ import { VirtualLabMember } from '@/types/virtual-lab/members';
 
 export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   created_at: '',
+  entity: '',
   name: '',
   description: '',
   reference_email: '',
   budget: 1,
   plan_id: 0,
-  users: [],
   include_members: [],
 };
 

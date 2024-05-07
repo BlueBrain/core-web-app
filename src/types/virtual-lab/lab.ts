@@ -6,11 +6,11 @@ export type VirtualLab = {
   id: string;
   name: string;
   description: string;
+  entity: string;
   created_at: DateISOString;
   reference_email: string;
   budget: number;
   plan_id: number;
-  users: VirtualLabMember[];
   include_members?: VirtualLabMember[];
 };
 
