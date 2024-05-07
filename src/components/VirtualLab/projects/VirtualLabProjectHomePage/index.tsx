@@ -120,7 +120,7 @@ export default function VirtualLabProjectHomePage({ virtualLabId, projectId }: P
             <VirtualLabStatistic
               icon={<MembersGroupIcon style={iconStyle} />}
               title="Admin"
-              detail={projectUsers?.[0].name}
+              detail={projectUsers?.find(({ role }) => role === 'admin')?.name}
             />
             <VirtualLabStatistic
               icon={<CalendarOutlined style={iconStyle} />}

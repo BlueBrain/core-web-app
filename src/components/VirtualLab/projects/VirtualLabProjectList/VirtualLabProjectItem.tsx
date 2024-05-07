@@ -68,7 +68,7 @@ function ProjectStats({ project }: { project: Project }) {
           title: 'Members',
         },
         {
-          detail: projectUsers?.[0].name,
+          detail: projectUsers?.find(({ role }) => role === 'admin')?.name,
           icon: <MembersGroupIcon style={iconStyle} />,
           key: 'admin',
           title: 'Admin',
