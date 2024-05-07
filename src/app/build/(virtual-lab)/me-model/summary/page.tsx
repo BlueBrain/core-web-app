@@ -3,6 +3,8 @@
 import { useAtomValue } from 'jotai';
 
 import { selectedEModelAtom, selectedMModelAtom } from '@/state/virtual-lab/build/me-model';
+import MorphologyCard from '@/components/build-section/virtual-lab/me-model/MorphologyCard';
+import EModelCard from '@/components/build-section/virtual-lab/me-model/EModelCard';
 
 export default function SummaryPage() {
   const selectedEModel = useAtomValue(selectedEModelAtom);
@@ -17,18 +19,10 @@ export default function SummaryPage() {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-10">
-      <div className="text-2xl font-bold">ME Model</div>
-      <div>
-        <div className="text-xl font-bold">M-Model</div>
-        <div>{mModelPicked.name}</div>
-        <div>{mModelPicked['@id']}</div>
-      </div>
-      <div>
-        <div className="text-xl font-bold">E-Model</div>
-        <div>{eModelPicked.name}</div>
-        <div>{eModelPicked['@id']}</div>
-      </div>
+    <div className="flex h-full flex-col gap-10 p-10">
+      <div className="text-2xl font-bold text-primary-8">Single Neuron</div>
+      <MorphologyCard />
+      <EModelCard />
     </div>
   );
 }
