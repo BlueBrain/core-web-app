@@ -13,6 +13,7 @@ export enum Label {
 export enum Content {
   Literature = 'literature',
   Explore = 'explore',
+  Build = 'build',
 }
 
 export enum LinkItemKey {
