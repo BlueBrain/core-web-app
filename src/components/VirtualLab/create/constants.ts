@@ -10,17 +10,6 @@ export const EMPTY_VIRTUAL_LAB: VirtualLabWithOptionalId = {
   budget: 1,
   plan_id: 0,
   include_members: [],
-  admin: {
-    id: '',
-    username: '',
-    email: '',
-    created_at: '',
-    first_name: '',
-    last_name: '',
-    invite_accepted: false,
-    role: '',
-    name: '',
-  },
 };
 
 export const ROLES: Record<VirtualLabMember['role'], string> = {

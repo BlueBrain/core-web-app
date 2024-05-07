@@ -1,6 +1,6 @@
 import { CalendarOutlined, LoadingOutlined, StarOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { loadable } from 'jotai/utils';
+import { loadable, unwrap } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { Spin } from 'antd';
 
@@ -27,6 +27,17 @@ function MemberAmount({ virtualLabId, projectId }: { virtualLabId: string; proje
 }
 
 function ProjectStats({ project }: { project: Project }) {
+  const { created_at: createdAt, id: projectId, virtual_lab_id: virtualLabId } = project;
+
+  const projectUsers = useAtomValue(
+    unwrap(
+      virtualLabProjectUsersAtomFamily({
+        virtualLabId,
+        projectId,
+      })
+    )
+  );
+
   const iconStyle = { color: '#69C0FF' };
 
   return (
@@ -51,19 +62,19 @@ function ProjectStats({ project }: { project: Project }) {
           title: 'Simulation experiments',
         },
         {
-          detail: <MemberAmount virtualLabId={project.virtual_lab_id} projectId={project.id} />,
+          detail: <MemberAmount virtualLabId={virtualLabId} projectId={projectId} />,
           icon: <UserOutlined style={iconStyle} />,
           key: 'members',
           title: 'Members',
         },
         {
-          detail: project.admin.name,
+          detail: projectUsers?.[0].name,
           icon: <MembersGroupIcon style={iconStyle} />,
           key: 'admin',
           title: 'Admin',
         },
         {
-          detail: formatDate(project.created_at),
+          detail: formatDate(createdAt),
           icon: <CalendarOutlined style={iconStyle} />,
           key: 'creation-date',
           title: 'Creation date',
