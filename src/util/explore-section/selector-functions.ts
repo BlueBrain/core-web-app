@@ -46,9 +46,8 @@ export const subjectAgeSelectorFn = (detail: Experiment | null) => {
 export const mTypeSelectorFn = (
   detail: ExperimentalBoutonDensity | ExperimentalNeuronDensity | ExperimentalTrace
 ) => {
-  const entity = find(
-    annotationArrayFunc(detail?.annotation),
-    (o: Annotation) => o.name.toLowerCase() === 'm-type annotation'
+  const entity = find(annotationArrayFunc(detail?.annotation), (o: Annotation) =>
+    o['@type'].includes('MTypeAnnotation')
   );
   return entity ? entity.hasBody?.label : NO_DATA_STRING;
 };
