@@ -30,7 +30,7 @@ function Pricing({ currency, price }: { currency: string; price: number }) {
 function PanelHeader({ children, title }: { children: ReactNode; title: string }) {
   return (
     <div className="flex items-baseline justify-between">
-      <h2 className="mb-4 text-3xl font-bold capitalize">{title}</h2>
+      <h2 className="mb-4 text-4xl font-bold capitalize">{title}</h2>
       {children}
     </div>
   );
