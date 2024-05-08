@@ -1,17 +1,13 @@
 import { createVLApiHeaders } from './common';
 import { PaymentMethod } from '@/types/virtual-lab/billing';
 import { virtualLabApi } from '@/config';
-import { StripeCustomer, StripeSetup } from '@/types/stripe';
 
 type NewPaymentMethodPayload = {
-  customerId: string;
-  paymentMethodId: string;
+  setupIntentId: string;
   name: string;
   email: string;
-  brand?: string;
-  expireAt?: string;
-  last4?: string;
 };
+
 
 type VirtualLabPaymentMethodsResponse = {
   data: {
@@ -27,74 +23,33 @@ type AddVirtualLabPaymentMethodResponse = {
   };
 };
 
-export async function createStripeSetupIntent({
-  virtualLabId,
-}: {
-  virtualLabId: string;
-}): Promise<StripeSetup> {
-  const data = await fetch('/api/billing/setup', {
+export type SetupIntentResponse = {
+  data: {
+    id: string;
+    client_secret: string;
+    customer_id: string;
+  };
+};
+
+
+export async function generateSetupIntent(id: string, token: string,): Promise<SetupIntentResponse> {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/setup-intent`, {
     method: 'POST',
-    body: JSON.stringify({
-      virtualLabId,
-    }),
+    headers: createVLApiHeaders(token),
   });
-  const result: StripeSetup = await data.json();
-  return result;
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
 }
 
-export async function updateStripeCustomer({
-  customerId,
-  name,
-  email,
-}: {
-  customerId: string;
-  name: string;
-  email: string;
-}): Promise<StripeCustomer> {
-  const data = await fetch('/api/billing/customer', {
-    method: 'POST',
-    body: JSON.stringify({
-      customerId,
-      name,
-      email,
-    }),
-  });
-  const result: StripeCustomer = await data.json();
-  return result;
-}
-
-export async function updateVirtualLabPaymentMethods({
-  customerId,
-  virtualLabId,
-  setupIntent,
-  name,
-  email,
-}: {
-  customerId: string;
-  virtualLabId: string;
-  setupIntent: string;
-  name: string;
-  email: string;
-}): Promise<StripeCustomer> {
-  const data = await fetch('/api/billing/vlab/payment-methods', {
-    method: 'POST',
-    body: JSON.stringify({
-      virtualLabId,
-      customerId,
-      setupIntent,
-      name,
-      email,
-    }),
-  });
-  const result: StripeCustomer = await data.json();
-  return result;
-}
 
 export async function getVirtualLabPaymentMethods(
   id: string,
   token: string
 ): Promise<VirtualLabPaymentMethodsResponse> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods`, {
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment_methods`, {
     method: 'GET',
     headers: createVLApiHeaders(token),
   });
@@ -104,16 +59,42 @@ export async function getVirtualLabPaymentMethods(
   return response.json();
 }
 
-export async function AddNewPaymentMethodToVirtualLab(
+export async function addNewPaymentMethodToVirtualLab(
   id: string,
   token: string,
   payload: NewPaymentMethodPayload
 ): Promise<AddVirtualLabPaymentMethodResponse> {
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods`, {
-    method: 'GET',
-    headers: createVLApiHeaders(token),
+
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment_methods`, {
+    method: 'POST',
+    headers: {
+      ...createVLApiHeaders(token),
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify(payload),
   });
+
+  if (!response.ok) {
+    throw new Error(`Status: ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function updateDefaultPaymentMethodToVirtualLab(
+  id: string,
+  token: string,
+  paymentMethodId: string,
+): Promise<AddVirtualLabPaymentMethodResponse> {
+
+  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods/default`, {
+    method: 'PATCH',
+    headers: {
+      ...createVLApiHeaders(token),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ "payment_method_id": paymentMethodId }),
+  });
+
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);
   }

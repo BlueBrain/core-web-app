@@ -1,36 +1,22 @@
-import { CreditCardOutlined, LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
-import { Spin } from 'antd';
 
-import { PaymentMethod } from '@/types/virtual-lab/billing';
-import { KeysToCamelCase } from '@/util/typing';
+import PaymentMethodCard from './PaymentMethodCard';
 import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
 
-function PaymentMethodCard({
-  id,
-  cardholderName,
-  cardNumber,
-  expireAt,
-}: Pick<KeysToCamelCase<PaymentMethod>, 'id' | 'cardNumber' | 'cardholderName' | 'expireAt'>) {
-  return (
-    <div id={id} className="mb-3 rounded-md border-primary-5 ">
-      <CreditCardOutlined />
-      <div>{cardholderName}</div>
-      <div>
-        {cardNumber}, {expireAt}
-      </div>
-    </div>
-  );
+type Props = {
+  virtualLabId: string;
 }
 
-export default function PaymentMethodsList({ virtualLabId }: { virtualLabId: string }) {
+export default function PaymentMethodsList({ virtualLabId }: Props) {
   const paymentMethodsAtom = virtualLabPaymentMethodsAtomFamily(virtualLabId);
   const paymentMethods = useAtomValue(loadable(paymentMethodsAtom));
 
   if (paymentMethods.state === 'loading') {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex items-center justify-center">
         <Spin size="large" indicator={<LoadingOutlined />} />
       </div>
     );
@@ -44,16 +30,24 @@ export default function PaymentMethodsList({ virtualLabId }: { virtualLabId: str
       </div>
     );
   }
+  if (paymentMethods.data && !paymentMethods.data.length) {
+    return (
+      <div className='mb-2'>
+        <h3 className='font-bold text-primary-8 text-base'>Select payment method</h3>
+        <p className='font-normal text-sm text-neutral-4'>You will be able to select the card of your choice for either covering the monthly payment based on your selected plan or for the credit used on computation</p>
+      </div>
+    )
+  }
 
   return (
-    <div className="grid grid-flow-col gap-2">
+    <div className="flex flex-col items-center gap-2 w-full">
       {paymentMethods.data.map((pm) => (
         <PaymentMethodCard
           key={pm.id}
           id={pm.id}
           cardholderName={pm.cardholder_name}
           cardNumber={pm.card_number}
-          expireAt={pm.expire_at}
+          virtualLabId={virtualLabId}
         />
       ))}
     </div>

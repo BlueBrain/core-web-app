@@ -1,21 +1,25 @@
 import { PaymentElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
-import { ComponentProps, FormEvent, useReducer, useState, useEffect, useRef } from 'react';
-import { Button, ConfigProvider } from 'antd';
+import { ComponentProps, FormEvent, useReducer, useState, useEffect, useRef, DispatchWithoutAction } from 'react';
+import { Button, ConfigProvider, Spin } from 'antd';
 import { Stripe } from '@stripe/stripe-js';
 
+import { useAtomValue, useSetAtom } from 'jotai';
+import { LoadingOutlined } from '@ant-design/icons';
 import getStripe, { getErrorMessage } from './getStripe';
 import useNotification from '@/hooks/notifications';
 import { classNames } from '@/util/utils';
-import LoadingIcon from '@/components/icons/LoadingIcon';
-import { StripeSetup } from '@/types/stripe';
 import {
-  createStripeSetupIntent,
-  updateStripeCustomer,
-  updateVirtualLabPaymentMethods,
+  SetupIntentResponse,
+  addNewPaymentMethodToVirtualLab,
+  generateSetupIntent,
 } from '@/services/virtual-lab/billing';
+import sessionAtom from '@/state/session';
+import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
 
-type Props = {
+
+type PaymentFormProps = {
   virtualLabId: string;
+  toggleOpenStripeForm: DispatchWithoutAction;
 };
 
 type PaymentFormState = {
@@ -23,7 +27,11 @@ type PaymentFormState = {
   error: string | null;
 };
 
-function StripeInput({ title, id, name, ...props }: ComponentProps<'input'> & { title: string }) {
+
+function StripeInput(
+  { title, id, name, ...props }:
+    ComponentProps<'input'> & { title: string }
+) {
   return (
     <div className="mb-3">
       <label
@@ -54,12 +62,15 @@ function StripeInput({ title, id, name, ...props }: ComponentProps<'input'> & { 
   );
 }
 
-export function Form({ virtualLabId, customerId }: { customerId: string; virtualLabId: string }) {
-  const [stripeElementsReady, setStipeElementsReady] = useState(false);
-
+export function Form(
+  { virtualLabId, toggleOpenStripeForm }: PaymentFormProps
+) {
+  const session = useAtomValue(sessionAtom);
   const elements = useElements();
   const stripe = useStripe();
   const { error: errorNotify } = useNotification();
+  const refreshPaymentMethods = useSetAtom(virtualLabPaymentMethodsAtomFamily(virtualLabId));
+  const [stripeElementsReady, setStipeElementsReady] = useState(false);
   const [formState, setFormState] = useReducer(
     (prev: PaymentFormState, next: Partial<PaymentFormState>) => ({
       ...prev,
@@ -70,12 +81,13 @@ export function Form({ virtualLabId, customerId }: { customerId: string; virtual
       error: null,
     }
   );
+
   const formLoaded = stripe && elements;
   const disableForm = !formLoaded || formState.loading;
 
   const onStripeElementsReady = () => setStipeElementsReady(true);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handlePaymentMethodSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormState({ loading: true });
 
@@ -102,20 +114,18 @@ export function Form({ virtualLabId, customerId }: { customerId: string; virtual
         setFormState({
           error: error.message,
         });
-      } else {
-        const customer = await updateStripeCustomer({
-          customerId,
-          name,
-          email,
-        });
-
-        await updateVirtualLabPaymentMethods({
+      } else if (session) {
+        await addNewPaymentMethodToVirtualLab(
           virtualLabId,
-          customerId: customer.id,
-          name,
-          email,
-          setupIntent: setupIntent.id,
-        });
+          session.accessToken,
+          {
+            name,
+            email,
+            setupIntentId: setupIntent.id,
+          }
+        );
+        toggleOpenStripeForm();
+        refreshPaymentMethods();
       }
     } catch (error) {
       errorNotify(getErrorMessage(error));
@@ -124,29 +134,33 @@ export function Form({ virtualLabId, customerId }: { customerId: string; virtual
       });
     } finally {
       setFormState({ loading: false });
-      elements.getElement('payment')?.clear();
       target.reset();
+      elements.getElement('payment')?.clear();
     }
   };
 
   return (
-    <form name="stripe-payment-method-form" className="mx-auto max-w-[50%]" onSubmit={handleSubmit}>
+    <form
+      name="stripe-payment-method-form"
+      className="mx-auto w-full max-w-2xl"
+      onSubmit={handlePaymentMethodSubmit}
+    >
       {stripeElementsReady && (
         <>
           <div className="w-full">
             <StripeInput
+              type="email"
               id="cardholder-email"
               name="cardholder-email"
-              type="email"
               title="Email"
               required
             />
           </div>
           <div className="w-full">
             <StripeInput
+              type="text"
               id="cardholder-name"
               name="cardholder-name"
-              type="text"
               title="Cardholder name"
               required
             />
@@ -172,34 +186,52 @@ export function Form({ virtualLabId, customerId }: { customerId: string; virtual
   );
 }
 
-export default function PaymentForm({ virtualLabId }: Props) {
-  const [stripePromise, setStripePromise] = useState<Stripe | null>(null);
-  const [{ clientSecret, customerId }, setStripeSetupObject] = useState<StripeSetup>({
-    clientSecret: '',
-    customerId: '',
-    intentId: '',
-  });
+export default function PaymentForm({ virtualLabId, toggleOpenStripeForm }: PaymentFormProps) {
   const stripeRef = useRef(false);
+  const session = useAtomValue(sessionAtom);
+  const { error: errorNotify } = useNotification();
+  const [stripePromise, setStripePromise] = useState<Stripe | null>(null);
+  const [loadingStripe, setLoadingStripe] = useState(false);
+
+  const [{ client_secret: clientSecret, customer_id: customerId }, setStripeSetupObject] = useState<SetupIntentResponse["data"]>({
+    id: '',
+    client_secret: '',
+    customer_id: '',
+  });
+
 
   useEffect(() => {
     async function initializeStripe() {
-      const [stripeSetup, stripeObject] = await Promise.all([
-        createStripeSetupIntent({
-          virtualLabId,
-        }),
-        getStripe(),
-      ]);
-      setStripePromise(stripeObject);
-      setStripeSetupObject(stripeSetup);
+      try {
+        setLoadingStripe(true);
+        if (session) {
+          const [stripeSetup, stripeObject] = await Promise.all([
+            generateSetupIntent(virtualLabId, session.accessToken),
+            getStripe(),
+          ]);
+          setStripePromise(stripeObject);
+          setStripeSetupObject(stripeSetup.data);
+          setLoadingStripe(false);
+        }
+      } catch (error) {
+        errorNotify("We're having some trouble setting up your payment options at the moment. Please try again in a little while.", undefined, "topRight", true, virtualLabId)
+        setLoadingStripe(false);
+        toggleOpenStripeForm()
+      }
     }
 
     if (virtualLabId && !stripeRef.current) {
       initializeStripe();
       stripeRef.current = true;
     }
-  }, [virtualLabId]);
+  }, [errorNotify, session, toggleOpenStripeForm, virtualLabId]);
 
-  if (!clientSecret) return <LoadingIcon />;
+
+  if (loadingStripe) return (
+    <div className="flex items-center justify-center py-7">
+      <Spin size="large" indicator={<LoadingOutlined />} />
+    </div>
+  )
 
   return (
     <Elements
@@ -228,7 +260,7 @@ export default function PaymentForm({ virtualLabId }: Props) {
         },
       }}
     >
-      <Form {...{ customerId, virtualLabId }} />
+      <Form {...{ customerId, virtualLabId, toggleOpenStripeForm }} />
     </Elements>
   );
 }

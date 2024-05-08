@@ -1,5 +1,5 @@
 export type StripeSetup = {
-  intentId: string;
+  id: string;
   clientSecret: string;
   customerId: string;
 };
