@@ -8,7 +8,6 @@ type NewPaymentMethodPayload = {
   email: string;
 };
 
-
 type VirtualLabPaymentMethodsResponse = {
   data: {
     virtual_lab_id: string;
@@ -31,8 +30,7 @@ export type SetupIntentResponse = {
   };
 };
 
-
-export async function generateSetupIntent(id: string, token: string,): Promise<SetupIntentResponse> {
+export async function generateSetupIntent(id: string, token: string): Promise<SetupIntentResponse> {
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/setup-intent`, {
     method: 'POST',
     headers: createVLApiHeaders(token),
@@ -43,7 +41,6 @@ export async function generateSetupIntent(id: string, token: string,): Promise<S
   }
   return response.json();
 }
-
 
 export async function getVirtualLabPaymentMethods(
   id: string,
@@ -64,12 +61,11 @@ export async function addNewPaymentMethodToVirtualLab(
   token: string,
   payload: NewPaymentMethodPayload
 ): Promise<AddVirtualLabPaymentMethodResponse> {
-
   const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment_methods`, {
     method: 'POST',
     headers: {
       ...createVLApiHeaders(token),
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
   });
@@ -83,17 +79,19 @@ export async function addNewPaymentMethodToVirtualLab(
 export async function updateDefaultPaymentMethodToVirtualLab(
   id: string,
   token: string,
-  paymentMethodId: string,
+  paymentMethodId: string
 ): Promise<AddVirtualLabPaymentMethodResponse> {
-
-  const response = await fetch(`${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods/default`, {
-    method: 'PATCH',
-    headers: {
-      ...createVLApiHeaders(token),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ "payment_method_id": paymentMethodId }),
-  });
+  const response = await fetch(
+    `${virtualLabApi.url}/virtual-labs/${id}/billing/payment-methods/default`,
+    {
+      method: 'PATCH',
+      headers: {
+        ...createVLApiHeaders(token),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ payment_method_id: paymentMethodId }),
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`Status: ${response.status}`);

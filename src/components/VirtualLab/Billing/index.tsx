@@ -9,18 +9,17 @@ type Props = {
   virtualLabId: string;
 };
 
-
 export default function Billing({ virtualLabId }: Props) {
   const [openStripeForm, toggleOpenStripeForm] = useReducer((val) => !val, false);
 
   return (
-    <div className="w-full bg-white py-7 px-7 flex flex-col items-center justify-center">
-      <div className='max-w-2xl w-full'>
-        <div className='py-3'>
+    <div className="flex w-full flex-col items-center justify-center bg-white px-7 py-7">
+      <div className="w-full max-w-2xl">
+        <div className="py-3">
           <PaymentMethodsList virtualLabId={virtualLabId} />
           {!openStripeForm && (
             <button
-              className="rounded-md border border-neutral-3 !p-5 flex items-center justify-between gap-3 text-primary-7 w-full mt-2 hover:bg-gray-100"
+              className="mt-2 flex w-full items-center justify-between gap-3 rounded-md border border-neutral-3 !p-5 text-primary-7 hover:bg-gray-100"
               type="button"
               onClick={toggleOpenStripeForm}
             >
@@ -35,7 +34,7 @@ export default function Billing({ virtualLabId }: Props) {
             <PaymentForm
               {...{
                 virtualLabId,
-                toggleOpenStripeForm
+                toggleOpenStripeForm,
               }}
             />
           </>

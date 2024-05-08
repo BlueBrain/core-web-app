@@ -44,8 +44,6 @@ export const virtualLabMembersAtomFamily = atomFamily((virtualLabId: string) =>
   })
 );
 
-
-
 export const virtualLabPaymentMethodsAtomFamily = atomFamily((virtualLabId: string) =>
   atomWithRefresh<Promise<Array<PaymentMethod> | undefined>>(async (get) => {
     const session = get(sessionAtom);

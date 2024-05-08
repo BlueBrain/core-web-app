@@ -8,7 +8,7 @@ import { virtualLabPaymentMethodsAtomFamily } from '@/state/virtual-lab/lab';
 
 type Props = {
   virtualLabId: string;
-}
+};
 
 export default function PaymentMethodsList({ virtualLabId }: Props) {
   const paymentMethodsAtom = virtualLabPaymentMethodsAtomFamily(virtualLabId);
@@ -32,15 +32,18 @@ export default function PaymentMethodsList({ virtualLabId }: Props) {
   }
   if (paymentMethods.data && !paymentMethods.data.length) {
     return (
-      <div className='mb-2'>
-        <h3 className='font-bold text-primary-8 text-base'>Select payment method</h3>
-        <p className='font-normal text-sm text-neutral-4'>You will be able to select the card of your choice for either covering the monthly payment based on your selected plan or for the credit used on computation</p>
+      <div className="mb-2">
+        <h3 className="text-base font-bold text-primary-8">Select payment method</h3>
+        <p className="text-sm font-normal text-neutral-4">
+          You will be able to select the card of your choice for either covering the monthly payment
+          based on your selected plan or for the credit used on computation
+        </p>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="flex flex-col items-center gap-2 w-full">
+    <div className="flex w-full flex-col items-center gap-2">
       {paymentMethods.data.map((pm) => (
         <PaymentMethodCard
           key={pm.id}
