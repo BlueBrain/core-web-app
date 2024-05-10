@@ -9,6 +9,7 @@ import type { InputProps } from 'antd/lib/input/Input';
 import type { TextAreaProps } from 'antd/lib/input/TextArea';
 import merge from 'lodash/merge';
 
+import useNotification from '@/hooks/notifications';
 import { VirtualLab } from '@/types/virtual-lab/lab';
 import { classNames } from '@/util/utils';
 
@@ -21,6 +22,7 @@ type InformationForm = { name: string; description: string; reference_email: str
 
 export const renderInput: (props: InputProps) => ReactNode = ({
   disabled,
+  name,
   placeholder,
   style,
   title,
@@ -30,6 +32,7 @@ export const renderInput: (props: InputProps) => ReactNode = ({
     <Input
       className={disabled ? '' : 'font-bold'}
       disabled={disabled}
+      name={name}
       placeholder={placeholder}
       required
       style={{ ...style, borderTop: 'none', borderRight: 'none', borderLeft: 'none' }}
@@ -82,6 +85,7 @@ function SettingsFormItem({
     >
       {children({
         disabled,
+        name,
         placeholder: `${label}...`,
       })}
     </Form.Item>
@@ -162,16 +166,18 @@ export default function FormPanel({
   initialValues,
   items,
   name,
-  onFinish,
+  onValuesChange,
 }: Omit<FormProps, 'onFinish'> & {
   items: Array<RenderInputProps>;
-  onFinish: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
+  onValuesChange: (values: Partial<VirtualLab>) => Promise<void>; // Modify typing to allow for Promise return.
 }) {
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const [form] = Form.useForm<InformationForm>();
+
+  const notification = useNotification();
 
   const formItems = items.map(({ name: formItemName, ...formItemProps }) => (
     <SettingsFormItem
@@ -205,7 +211,7 @@ export default function FormPanel({
           onClick={() => {
             setLoading(true);
 
-            form.submit();
+            // form.submit();
           }}
         >
           {loading ? <Spin size="small" indicator={<LoadingOutlined />} /> : 'Save'}
@@ -252,14 +258,14 @@ export default function FormPanel({
       form={form}
       initialValues={initialValues}
       name={name} // TODO: Check whether this prop is necessary.
-      onFinish={async (values) => {
-        return onFinish(values)
+      onValuesChange={async (values) => {
+        return onValuesChange(values)
           .then(() => {
             setServerError(null);
+            notification.success(`Virtual Lab has been updated.`);
           })
           .catch((error) => {
             setServerError(error);
-
             form.resetFields();
           })
           .finally(() => {
